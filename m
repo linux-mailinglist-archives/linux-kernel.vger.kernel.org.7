@@ -1,200 +1,238 @@
-Return-Path: <linux-kernel+bounces-890770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED939C40E44
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:31:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E4CC40E1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3ED2C4F4CA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:29:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDAF41881FCB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A461428853A;
-	Fri,  7 Nov 2025 16:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA75287505;
+	Fri,  7 Nov 2025 16:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E7RW+IWp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwiPSA39"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0983B304BBD
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D5527FD45
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762532938; cv=none; b=K7S3LIRz72ygRcg+d9kl+RiLtgIpY/YxyJLhZPT35kezLG+wBuOsocd6I5kqnWQvh1tOEep7sZ3P27S2sWZUQl7PGFWqdJYTXZW5mjgOPPVb/Az2HXA7W4NliKCI/rsljPn7uZ6Tm6wQZnE/t9cV8N/HPo3TtoIwjC1XHTFxt5s=
+	t=1762532972; cv=none; b=NQQuOSi1KGe+7j5c6Xjq5qhA7wwLJ8TTIKzJJO5tj6PTeIhuRPwLGeQXKwSViLeiD4zUzRO8TrkDvWtQbIF0fyOONGKIpCK2OtqR1VZGkQjguacvQjyKWqp7B4RPHe6SWvJqcQ69h07ekh2zGWQ2s7GjVx45VzqE+cT7aHLA3Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762532938; c=relaxed/simple;
-	bh=0/TSiHGhpKwTA84G4EkQuBQsCOiD8IV0dGgQgMPBFao=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Q3UfS6qCeQKLC+Aqrh3QPraVYk9M2L8Q5o9+UbyeRAvgMcdCSsidOb9ZvuEI09YGommVflY2RKAE8iGyAnxz2gMUWNcwVhJ/0VH3iXZgJ19vTkVSOiVIR8KFcpxS2X8Y0FBwxvWpG2pvqFqh0d6AzuYmljdVfleZgS1ef/4gcps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E7RW+IWp; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762532936; x=1794068936;
-  h=date:from:to:cc:subject:message-id;
-  bh=0/TSiHGhpKwTA84G4EkQuBQsCOiD8IV0dGgQgMPBFao=;
-  b=E7RW+IWpVyxeMpxXkClKOvGtaTRbEN9Pq/HGhaElVxvOdkBXj8H5juk4
-   SOxYlozlGTx85OmwLh/N1jJ1iXcpH7GVeyte+k19wRCwnwmrV5IPxjAQy
-   drFF0fM3O3g/bahN4skyH4AvKtcGsDQNFpcrrpQIpljij0++UdGQ9mxYT
-   pImsnD2Dutr5MWJkCAdtlO/d75bHhSCcMu0ytuNMVTKHBQSLoBXnsMjdb
-   Mc1NBp2xEzjbdYvalasy+GkPSYmHfj3oQatNxHgnp9IwPa94aVi5FLwcI
-   s1FMvs3Y64iwSR8bQIfRByoYA1nzMOh0W/jPjbiRK/2DM9+fR0rG1kIis
-   Q==;
-X-CSE-ConnectionGUID: 34zh38YSQ4OcOVPel3ntog==
-X-CSE-MsgGUID: ip4IMkzOTaWOe/4HFhTJ8w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="75295224"
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
-   d="scan'208";a="75295224"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 08:28:55 -0800
-X-CSE-ConnectionGUID: nEjicwx4QASgYsnp7Fh1hw==
-X-CSE-MsgGUID: RLzYCiRiT8+9pMCRljJF8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
-   d="scan'208";a="192172907"
-Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 07 Nov 2025 08:28:53 -0800
-Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vHPKU-00006f-2f;
-	Fri, 07 Nov 2025 16:28:50 +0000
-Date: Sat, 08 Nov 2025 00:28:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:locking/urgent] BUILD SUCCESS
- 4cb5ac2626b5704ed712ac1d46b9d89fdfc12c5d
-Message-ID: <202511080042.Sc68qcGs-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1762532972; c=relaxed/simple;
+	bh=rgcoRhyGIK5TkOpZt0kZTN7koiw5JU/Ow/kogtLB0pg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b7X8tjGpxrpzI9luIPPBWAsEAF8kxE+oOSxQ0Vf7ChVNHtWmdG1zGeUvhHfeuYEZP/znL7Q2jf9aQSNB36JmA0qyx4JrCf9BRA0NkIecg9xvF/X4PX0Inz2K3vZapRtwjDr3z9kUIt+g/Z/wB3DDuG/g9XKNDDnQI7z9KlCL+Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XwiPSA39; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-43325758260so7809675ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:29:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762532970; x=1763137770; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KpUHhwLLVw048cC2Tr3FEbA9y73h0hyI54ZDUH0t8tg=;
+        b=XwiPSA39nsnkdh5yq9hmq5Q1pQhU/l4yfBPXNq8URc3djc/fKxv8xAtGNqRydKvsJt
+         GF7Bpn6csmRSNYYywLHFyVnjvnflwb29uopg0mh8XIbOhEBsibU2nX0E+RoBUgaxZgLs
+         B6l+p5yn0YXi+SDNYzdbqb88zoD5UmG/IXfojwVE/lBy8LwpK+uiX1KH+2rvlzs2xONI
+         hqutrbyQ027+4Pje0IqvZSS/fnayj3Xtv1qV1FwsqDTdwSI2Ay1YT1vqeEHat4porGTD
+         tWFJqRmYe8+2yOUjWKWuO6IxfauB9GEYVidybLZ6IezgvNKp6ac1LTYMBDm6M2Zpob2K
+         Np/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762532970; x=1763137770;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=KpUHhwLLVw048cC2Tr3FEbA9y73h0hyI54ZDUH0t8tg=;
+        b=J86G7rQKga+IkPMgpgLeLGe5AFn98U5qoGR4bM/qOMs5P+UUfE/ScPKOSCrbixrKfY
+         U9atfTrIpYhj2nm08vF9VCPya1Svf/hO8JdRIjF3BvgIGPtKNdWAqtlOQQb5jFIa8tyr
+         lvhRUHoDNMKsgmWKv6dLPulJ+xdjccbXZQDpdl3e5uQgNJ5BhprG0D+jwM8/AQEVm/GP
+         h7aFMMkcEwZEPleLjeVLO13/onab3Zej8yEoCLosdQHnAjm1lPzN3qQUO+R1H2UchpPa
+         qXfLY7vUHCRjcdFHPWvjVi2N7kW00R+bw378RLrneXljqrOOQpIzRIZNmOa/eYoiPOPW
+         oWRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgGN7FgLQUf2UkLDhJ5ERKWSnl28EwgSJOQoU9q7HxJANiP8fciTT5bTV2zhXmbJPNBvj0ldIcgwkeOAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkS0XhQVtRpDBbwvBgr/HnOYRa1/diVTgwOqNBAZvR+50IcZwY
+	85Cw1HOE7ILSHs7Ac6RUUCdXZzhz19iP7G25ReYlpnN0ZDWDhtQuWeLBfZcaDiENAAWM9n1A5Qb
+	rNeywQhKNTtDM62LtLMdlTw1C59L/okE=
+X-Gm-Gg: ASbGncs9wZxEJiWARQo3FnhvNglcM6RQGfwVVE6UKVOxGURvbiEvdC+UMfJ0BzNIOmU
+	DJPr6S6/EWinxljIdBDhqo0Apgrt6MDVj5QIyaAjAWLxE/kuFkw5jDjuUrpQhGNWgWAA0pd2cYj
+	eZgLcWljyfg7vhokfXxxTqew7MATVajwJ5K8tVk3+dPDytKSSX+bY/F2NmStDm88Tl2EKA0o4oI
+	EyyyG9+zd/j7ju0wXUPIqnxoV0Mt++ze6Yk7RDaMIa2psMUz7kXxXaH0LRQiG+f8bXAzx/mp9ph
+	cQyqFCxgzX6pSu7r1jsjv548LUeWFVk4/pLTOEABGYZXykzK48r+kvc/IIeIMzQGYOzKKo3j678
+	iVs41AxgdbnHskztV4O57lpXMfhnkpbCqRXFRkGdNYos3ncK1FGPcgtQXDR1LJI5j5xWCbPSbW/
+	lSEUbe1w==
+X-Google-Smtp-Source: AGHT+IHLBeBsljRup9vfyIw0zMlrDC0E78/7aLQDxLzaAjO0KjqOY+HyEIQe54ZnzvQGmNPUrUss4m9CIjqFlxlmgpc=
+X-Received: by 2002:a05:6e02:168e:b0:433:46a7:be57 with SMTP id
+ e9e14a558f8ab-43367e17daamr795725ab.8.1762532970241; Fri, 07 Nov 2025
+ 08:29:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250910170000.6475-1-gpaoloni@redhat.com> <2025102111-facility-dismay-322e@gregkh>
+ <CA+wEVJZEho_9kvaGYstc=5f6iHGi69x=_0zT+jrC2EqSFUQMWQ@mail.gmail.com>
+ <2025102124-punctuate-kilogram-da50@gregkh> <CA+wEVJajSGzb85YTiv98yAY3bcJFS0Qp_xjLc++wnU8t=wDAOg@mail.gmail.com>
+ <2025102211-wolverine-cradling-b4ec@gregkh>
+In-Reply-To: <2025102211-wolverine-cradling-b4ec@gregkh>
+From: Chuck Wolber <chuckwolber@gmail.com>
+Date: Fri, 7 Nov 2025 16:29:13 +0000
+X-Gm-Features: AWmQ_bn6uEo7-A9xvlR4_AxUEmBwxnRKzTpVyrh4GYZ_AQq2WQg29VVKDwL_Wwo
+Message-ID: <CAB=6tBSaGfKq4RgV=nbw28Yq59jHMrVOkm_dx2bqD1AjU37oaw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/3] Add testable code specifications
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Gabriele Paoloni <gpaoloni@redhat.com>, shuah@kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, safety-architecture@lists.elisa.tech, acarmina@redhat.com, 
+	kstewart@linuxfoundation.org, chuck@wolber.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/urgent
-branch HEAD: 4cb5ac2626b5704ed712ac1d46b9d89fdfc12c5d  futex: Optimize per-cpu reference counting
+On Wed, Oct 22, 2025 at 5:13=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Wed, Oct 22, 2025 at 04:06:10PM +0200, Gabriele Paoloni wrote:
+> > > Every in-kernel api documented in a "formal" way like this?  Or a sub=
+set?
+> > > If a subset, which ones specifically?  How many?  And who is going to=
+ do
+> > > that?  And who is going to maintain it?  And most importantly, why is=
+ it
+> > > needed at all?
 
-elapsed time: 1661m
+I appreciate the questions. I sense there may be some confusion over who th=
+is
+is intended to benefit.
 
-configs tested: 108
-configs skipped: 3
+The design of the Linux kernel is emergent. This is a fundamental property =
+of
+the way it is developed, and the source of its greatest strength. But it ha=
+s
+some shortcomings that place a burden on kernel maintainers, all kernel
+testing, and even people who wish to contribute.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+We intend this as a tool to address those areas.
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20251107    gcc-8.5.0
-arc                   randconfig-002-20251107    gcc-9.5.0
-arm                               allnoconfig    clang-22
-arm                     davinci_all_defconfig    clang-19
-arm                         lpc32xx_defconfig    clang-17
-arm                        multi_v7_defconfig    gcc-15.1.0
-arm                   randconfig-001-20251107    clang-17
-arm                   randconfig-002-20251107    gcc-13.4.0
-arm                   randconfig-003-20251107    clang-22
-arm                   randconfig-004-20251107    gcc-8.5.0
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20251107    gcc-8.5.0
-arm64                 randconfig-002-20251107    clang-22
-arm64                 randconfig-003-20251107    gcc-8.5.0
-arm64                 randconfig-004-20251107    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20251107    gcc-12.5.0
-csky                  randconfig-002-20251107    gcc-13.4.0
-hexagon                           allnoconfig    clang-22
-hexagon               randconfig-001-20251107    clang-22
-hexagon               randconfig-002-20251107    clang-22
-i386                              allnoconfig    gcc-14
-i386        buildonly-randconfig-001-20251107    clang-20
-i386        buildonly-randconfig-002-20251107    clang-20
-i386        buildonly-randconfig-003-20251107    gcc-13
-i386        buildonly-randconfig-004-20251107    gcc-14
-i386        buildonly-randconfig-005-20251107    clang-20
-i386        buildonly-randconfig-006-20251107    clang-20
-i386                                defconfig    clang-20
-i386                  randconfig-001-20251107    clang-20
-i386                  randconfig-002-20251107    gcc-13
-i386                  randconfig-003-20251107    clang-20
-i386                  randconfig-004-20251107    clang-20
-i386                  randconfig-005-20251107    gcc-14
-i386                  randconfig-006-20251107    clang-20
-i386                  randconfig-007-20251107    clang-20
-i386                  randconfig-011-20251107    gcc-14
-i386                  randconfig-012-20251107    clang-20
-i386                  randconfig-013-20251107    clang-20
-i386                  randconfig-014-20251107    gcc-14
-i386                  randconfig-015-20251107    clang-20
-i386                  randconfig-016-20251107    clang-20
-i386                  randconfig-017-20251107    clang-20
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20251107    gcc-15.1.0
-loongarch             randconfig-002-20251107    clang-19
-m68k                              allnoconfig    gcc-15.1.0
-m68k                          sun3x_defconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                           ip22_defconfig    gcc-15.1.0
-mips                   sb1250_swarm_defconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                 randconfig-001-20251107    gcc-11.5.0
-nios2                 randconfig-002-20251107    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251107    gcc-8.5.0
-parisc                randconfig-002-20251107    gcc-12.5.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc               randconfig-001-20251107    clang-22
-powerpc               randconfig-002-20251107    clang-22
-powerpc64             randconfig-001-20251107    gcc-14.3.0
-powerpc64             randconfig-002-20251107    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                 randconfig-001-20251106    clang-22
-riscv                 randconfig-002-20251106    gcc-12.5.0
-s390                              allnoconfig    clang-22
-s390                  randconfig-001-20251106    gcc-8.5.0
-s390                  randconfig-002-20251106    gcc-14.3.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20251106    gcc-11.5.0
-sh                    randconfig-002-20251106    gcc-13.4.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251107    gcc-11.5.0
-sparc                 randconfig-002-20251107    gcc-15.1.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20251107    gcc-8.5.0
-sparc64               randconfig-002-20251107    gcc-9.5.0
-um                                allnoconfig    clang-22
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251107    clang-22
-um                    randconfig-002-20251107    clang-22
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64      buildonly-randconfig-003-20251107    gcc-14
-x86_64      buildonly-randconfig-005-20251107    gcc-14
-x86_64                              defconfig    gcc-14
-x86_64                randconfig-004-20251107    clang-20
-x86_64                randconfig-011-20251107    gcc-14
-x86_64                randconfig-012-20251107    gcc-14
-x86_64                randconfig-013-20251107    clang-20
-x86_64                randconfig-014-20251107    clang-20
-x86_64                randconfig-015-20251107    gcc-14
-x86_64                randconfig-016-20251107    gcc-14
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251107    gcc-10.5.0
-xtensa                randconfig-002-20251107    gcc-10.5.0
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> > > For some reason Linux has succeeded in pretty much every place an
+> > > operating system is needed for cpus that it can run on (zephyr for th=
+ose
+> > > others that it can not.)  So why are we suddenly now, after many deca=
+des,
+> > > requiring basic user/kernel stuff to be formally documented like this=
+?
+
+You are correct, the kernel has succeeded over many decades, and will conti=
+nue
+succeeding for many decades to come.
+
+With the exception of some very narrow situations, the emergent design (or
+"nuanced complexity" if you prefer that term) of the Linux kernel is not
+communicated in a broadly consistent way. This affects the way the kernel i=
+s
+tested, and also the way it is developed. Even veteran kernel maintainers a=
+re
+tripping over nuance and complexity.
+
+
+> > Let me try to answer starting from the "why".
+>
+> Let's ignore the "why" for now, and get to the "how" and "what" which you
+> skipped from my questions above.
+>
+> _Exactly_ how many in-kernel functions are you claiming is needed to be
+> documented in this type of way before Linux would become "acceptable" to
+> these regulatory agencies, and which ones _specifically_ are they?
+
+Exactly zero. This is not for regulators.
+
+
+> Without knowing that, we could argue about the format all day long, and
+> yet have nothing to show for it.
+
+As this is not intended for regulators, it is not clear to me that catering=
+ to
+their desires would be a good use of anyone's time.
+
+I say this as a software engineer who works in a _highly_ regulated industr=
+y,
+and who knows the relevant regulations quite well. There are good ideas bur=
+ied
+in those regulations, but (in their default form) they are _not_ appropriat=
+e
+for the Linux kernel development process.
+
+
+> And then, I have to ask, exactly "who" is going to do that work.
+
+The intent is to allow for a separate maintainer path. There is more to it =
+than
+that, but I do not want to bury the lede here.
+
+
+> I'll point at another "you must do this for reasons" type of request we h=
+ave
+> had in the past, SPDX.  Sadly that task was never actually finished as it
+> looks like no one really cared to do the real work involved.  We got othe=
+r
+> benefits out of that effort, but the "goal" that people started that effo=
+rt
+> with was never met.  Part of that is me not pushing back hard enough on t=
+he
+> "who is going to do the work" part of that question, which is important i=
+n
+> stuff like this.
+
+Well, I am sorry for that. I am not quite sure how to respond, but I certai=
+nly
+sympathize with past frustrations. I have plenty of my own.
+
+We are not offering a silver bullet here, and the work to describe the kern=
+el's
+design will be finished when the work of development is finished. This is j=
+ust
+an attempt to fill in a semantic gap that is responsible for a great deal o=
+f
+technical debt and maintainer burnout.
+
+
+> If you never complete the effort, your end goal of passing Linux off to t=
+hose
+> customers will never happen.
+
+It is not clear to me what customers you are talking about. That is certain=
+ly
+not a goal in the mind of anyone working on this project that I am aware of=
+.
+
+
+> So, try to answer that, with lots and lots of specifics, and then, if we
+> agree that it is a sane thing to attempt (i.e. you are going to do all th=
+e
+> work and it actually would be possible to complete), then we can argue ab=
+out
+> the format of the text :)
+
+I respect what you are saying here, and perhaps the point of confusion came
+from the safety related source? As is often the case in science and
+engineering, we are borrowing (and _heavily_ modifying) a technique that is
+found in a different domain.
+
+The intent is to target technical debt and maintainer burnout by filling in=
+ a
+semantic gap that occurs when a human idea is turned into code. Ironically,
+this is why the safety regulations were written in the first place, but lit=
+tle
+consideration was given to development methodology during that process.
+
+Thank you,
+
+..Ch:W..
 
