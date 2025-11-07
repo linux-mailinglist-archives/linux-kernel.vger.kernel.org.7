@@ -1,130 +1,130 @@
-Return-Path: <linux-kernel+bounces-890836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A145C41230
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:45:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A06C4123C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:46:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6215618847DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:45:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACE65562739
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EDA3370E1;
-	Fri,  7 Nov 2025 17:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED613376AC;
+	Fri,  7 Nov 2025 17:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPyiuHMe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="liDl2Xni"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35528258CE7;
-	Fri,  7 Nov 2025 17:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F0833711C;
+	Fri,  7 Nov 2025 17:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762537460; cv=none; b=oOZQlURu2Cl3V8TvJr4LBcPfth3JQ90HNqte6AkNqJtB3FnGe3wBZCpknL9fRFQORTKPCx4HRLp/SbGcWz2hBtBXkfKqY14Jb85m1QOENKe2RYHUtd1ZG3cqQRtYtiDwBksTsxcWCOgz51xj84+gX8aA5DzyelHZBsES1P+OBa8=
+	t=1762537509; cv=none; b=ArPa7m/1DtsNW9xXNw6wblE+wSrJFfbMSuJQkfVOpJ0ZWzJbKQvdJfkE/TuxaIPWdKl4GF+B/oc1lkjTf45ui5h9D+G59sxn3MBF0Qz8WAR4ZYQ1E0uTTqEZXfMpNFbq3GJiQgZIy3liCxBS5dGWtTPU/yOyFPXc/qeZvdV5pWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762537460; c=relaxed/simple;
-	bh=vUXVxSlqnlNC2tbqdDtNDX2ebfN1pxrOSHo7fEAw12Y=;
+	s=arc-20240116; t=1762537509; c=relaxed/simple;
+	bh=8UBP4r5CsBAmdMBC7TGsubOEbdmbQ9s7WdxZkROZk/0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jaApRAzSSxEhrsL1q+U+X+LEa25xMlIfYK+o7KGgTh7WS8VLCXzlqP4GcRWnRgAi+PGsTn2vDZKCtWmaGgch977J4Q/nQCDil8TOmeAcoJT1ROKXmqcGF4GWo6++FuKKdgFRjx5JOFZBHQASm2J08/FjWJBaepyq37TMzyMJefQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPyiuHMe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C74EC4CEF8;
-	Fri,  7 Nov 2025 17:44:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rp9hVburdg4bA4Np8X+c++3fYrvL6YHX9isvJCVXeymB/JV8btZSdRnr6tFFP8VP07Z9QTnqPOdeA+Y00i1s8h+bKD6Ta2ivL3Poj1C3byUiils/Lx09lGXogvnyz8L4jnicAOQNsD2VSincPGVjxJHapLIYuBJ4r9qFAFm52Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=liDl2Xni; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC82EC4CEF8;
+	Fri,  7 Nov 2025 17:45:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762537459;
-	bh=vUXVxSlqnlNC2tbqdDtNDX2ebfN1pxrOSHo7fEAw12Y=;
+	s=k20201202; t=1762537509;
+	bh=8UBP4r5CsBAmdMBC7TGsubOEbdmbQ9s7WdxZkROZk/0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nPyiuHMehYfo3g71SbYqe2NgLFsFFVMXj4vT7odT8obZ75hR69ps6sjFs7W80FROW
-	 hsZ6pFPi88FRX2UD5Cm6+HC771R2+6brdPgwss1tTPliJYG2gsSBF458IPzk2biX4F
-	 RNucbaE7viPNG0fA44kswLaF1vDw1xdcVm24mb9XAzFuUudPzZP2zjF7PkN8uRFPi3
-	 v/mOgSdMqYEV8CsIQEdTu+nRG2wJjym0S+q1IPuIpdL1evYiCtDNkU1SRaMYdZVVx9
-	 XorcU2JIf9Jvp9EVNM6QQghP36vq0hw9+ssncfOeRNtG4AI3En7iA7OjYAWpfAG3M0
-	 mh5MCTsRK1scA==
-Date: Fri, 7 Nov 2025 09:44:17 -0800
-From: Drew Fustini <fustini@kernel.org>
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+	b=liDl2XninbWYIcqybmOwmVOzJLQd/CoAGBZLnfDn3BSnQlhAmpHku3GmkbZDBWCsF
+	 ej3bn4e0fR7wpfU60f+u2Zy+BNdbyS+NTlfS/NkMFfIJ2o3IuEfhrnlHj0bcztYHb7
+	 NZ7G+o3qUwk0quMF+K+pMXl6sWa8l4eZWbGxR3/BxnihXtdXjeW7nMtEHED7v7i/Cy
+	 I3CaF9gPPpcZi8m/A/UVDF0Yzt7PsOIpBAkRVu31XQ/hXxgIbeBYf+M+m/1IRl5HTn
+	 A2eTVfG/MxD9XTEdJ8fGDZ05KCZoEQV/iyGlIjqmMh/StX0+ujfcarDZEPeX2UyElz
+	 Zu++h6f3uhhbQ==
+Date: Fri, 7 Nov 2025 17:45:02 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Nilesh Laad <nilesh.laad@oss.qualcomm.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kornel =?utf-8?Q?Dul=C4=99ba?= <mindal@semihalf.com>,
-	Adrien Ricciardi <aricciardi@baylibre.com>,
-	James Morse <james.morse@arm.com>,
-	Atish Kumar Patra <atishp@rivosinc.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Vasudevan Srinivasan <vasu@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>, guo.wenjia23@zte.com.cn,
-	liu.qingtao2@zte.com.cn, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv <linux-riscv-bounces@lists.infradead.org>
-Subject: Re: [PATCH v4 3/3] RISC-V: Add support for srmcfg CSR from Ssqosid
- ext
-Message-ID: <aQ4v8QhQjRYrxNK3@x1>
-References: <20251007-ssqosid-v4-0-e8b57e59d812@kernel.org>
- <20251007-ssqosid-v4-3-e8b57e59d812@kernel.org>
- <DDDL94HT7HYF.3VU2WQYU4WZY5@ventanamicro.com>
- <aOqjggmTr4ioHwB/@x1>
- <DDH2Q0N2HLKF.2QSW4DB5FTJI6@ventanamicro.com>
+	Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, venkata.valluru@oss.qualcomm.com,
+	jessica.zhang@oss.qualcomm.com, Yi Zhang <zhanyi@qti.qualcomm.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: bridge: lt9211c: Add bindings
+Message-ID: <20251107-batting-wimp-b98f79cf6318@spud>
+References: <20251107-add-lt9211c-bridge-v2-0-b0616e23407c@oss.qualcomm.com>
+ <20251107-add-lt9211c-bridge-v2-1-b0616e23407c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="J84/gdKCYWS1iHDH"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DDH2Q0N2HLKF.2QSW4DB5FTJI6@ventanamicro.com>
+In-Reply-To: <20251107-add-lt9211c-bridge-v2-1-b0616e23407c@oss.qualcomm.com>
 
-On Mon, Oct 13, 2025 at 11:06:50AM +0200, Radim Krčmář wrote:
-> 2025-10-11T11:35:46-07:00, Drew Fustini <fustini@kernel.org>:
-> > On Thu, Oct 09, 2025 at 08:47:27AM +0200, Radim Krčmář wrote:
-> >> 2025-10-07T23:21:12-07:00, Drew Fustini <fustini@kernel.org>:
-> >> > diff --git a/arch/riscv/include/asm/qos.h b/arch/riscv/include/asm/qos.h
-> >> > +static inline void __switch_to_srmcfg(struct task_struct *next)
-> >> > +{
-> >> > +	u32 *cpu_srmcfg_ptr = this_cpu_ptr(&cpu_srmcfg);
-> >> > +	u32 thread_srmcfg;
-> >> > +
-> >> > +	thread_srmcfg = READ_ONCE(next->thread.srmcfg);
-> >> > +
-> >> > +	if (thread_srmcfg != *cpu_srmcfg_ptr) {
-> >> 
-> >> Wouldn't prev->thread.srmcfg have the value of CSR_SRMCFG when executing
-> >> switch_to?
-> >
-> > Thanks for reviewing. Yes, you are right that prev->thread.srmcfg should
-> > have same value as CSR_SRMCFG. Are you suggesting that the cpu_srmcfg is
-> > not necessary as prev->thread.srmcfg should have same value?
-> 
-> Yes, it would be more consistent with other context switched state.
-> I just wasn't sure if srmcfg doesn't have special race conditions.
 
-I did some testing and the per-cpu cache of CSR_SRMCFG is needed. This
-is because thread.srmcfg is changed asynchronously from when CSR_SRMCFG
-is updated in __switch_to_srmcfg.
+--J84/gdKCYWS1iHDH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The srmcfg value for a thread is updated when a user writes the pid to a
-control group's tasks file in the resctrl virtual filesystem:
+On Fri, Nov 07, 2025 at 06:32:58PM +0530, Nilesh Laad wrote:
+> From: Yi Zhang <zhanyi@qti.qualcomm.com>
+>=20
+> Add bindings for lt9211c.
+>=20
+> Signed-off-by: Yi Zhang <zhanyi@qti.qualcomm.com>
+> Signed-off-by: Nilesh Laad <nilesh.laad@oss.qualcomm.com>
+> ---
+>  .../bindings/display/bridge/lontium,lt9211c.yaml   | 113 +++++++++++++++=
+++++++
+>  1 file changed, 113 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/bridge/lontium,lt9=
+211c.yaml b/Documentation/devicetree/bindings/display/bridge/lontium,lt9211=
+c.yaml
+> new file mode 100644
+> index 000000000000..619f718618d6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/lontium,lt9211c.ya=
+ml
+> @@ -0,0 +1,113 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bridge/lontium,lt9211c.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Lontium LT9211C DSI/LVDS/DPI to DSI/LVDS/DPI bridge.
+> +
+> +maintainers:
+> +  - Marek Vasut <marex@denx.de>
 
-void resctrl_arch_set_closid_rmid(struct task_struct *tsk, u32 closid, u32 rmid)
-{
-       u32 srmcfg;
+Why is Marek here?
+The patch seems fine, but this is confusing.
 
-       WARN_ON_ONCE((closid & SRMCFG_RCID_MASK) != closid);
-       WARN_ON_ONCE((rmid & SRMCFG_MCID_MASK) != rmid);
+--J84/gdKCYWS1iHDH
+Content-Type: application/pgp-signature; name="signature.asc"
 
-       srmcfg = rmid << SRMCFG_MCID_SHIFT;
-       srmcfg |= closid;
-       WRITE_ONCE(tsk->thread.srmcfg, srmcfg);
-}
+-----BEGIN PGP SIGNATURE-----
 
-I'm getting a full patch series ready that has both the Ssqosid and the
-CBQRI resctrl patches, and I will post that soon. I'm also preparing
-a freshly rebased Qemu series that adds the CBQRI controllers.
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ4wHgAKCRB4tDGHoIJi
+0mh7AQDLr/nyRgvC1Ynncg3iPh/plfKOkx0hTqa5hBFd+ADX7QD9GZ0tkFjapgio
+gGLJ2bq5QYL2qjNC3za8P8n5yFrcXAc=
+=AjS0
+-----END PGP SIGNATURE-----
 
-Thanks,
-Drew
+--J84/gdKCYWS1iHDH--
 
