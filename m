@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-890401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA3DC3FF7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:48:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B08C3FF82
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:48:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EEA4034DE69
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3038A3AED6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B9C254855;
-	Fri,  7 Nov 2025 12:47:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D568B1F0E25;
-	Fri,  7 Nov 2025 12:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF93D25A2B5;
+	Fri,  7 Nov 2025 12:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWY6Uqs3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFDA1F0E25;
+	Fri,  7 Nov 2025 12:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762519674; cv=none; b=B8jlRlm1Tz9fbXYkJYPUyO5Q/8OEJ47XMhMFVI3SLmHI0dK7e42eMFhWafO275G9B8N78qChyLUzd/Z4fo1hhATMIEwQHYKeIoGeTGGvFW5RGrvZqPMVlSPj1p0nCjkWRUnv1mjKbx+c6qZdUBuVhqrFXgUbKkb8Pi3dBjBhBk0=
+	t=1762519709; cv=none; b=tKRRk0ZCHmCOH6PQ6755yWqE9q6U9WISDqVRYXXZQgFDe4APVMinMe3zrVIzTHzfao93tzHhXMIs4nlL0lR73dukAb6lSgKQBWAycpNd5R9AOdJ1mDr/pBSPttgSqr9tYfhmbrNkZMRf7Qtbn5tPZxYEPmOk8g6qvIYdrXk/Qpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762519674; c=relaxed/simple;
-	bh=CEgc/NS99qazVHAQDfHLiodJedpBCIz4nJU1UO0mzdA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Eh7nW+aqMwMcfGGfveEMGLWy5fudjBqd/Uvs4MDwRY5Q12c/3PDxUFKE8BvrfVLKCBhkoFC6GAlZlCfgcpfTSORxfO30Mp2x3iNRFY+0730V1c+3Vw22n5GGJgqlVbGqpOveO2CWS3WxgP2nv9RdQHgu8wbAD1HB1ToadqbyAxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4BB7C1515;
-	Fri,  7 Nov 2025 04:47:44 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D2A93F66E;
-	Fri,  7 Nov 2025 04:47:47 -0800 (PST)
-Message-ID: <11205aed-007c-4eef-ae84-5f7b2d27fc9b@arm.com>
-Date: Fri, 7 Nov 2025 12:47:46 +0000
+	s=arc-20240116; t=1762519709; c=relaxed/simple;
+	bh=9qSpx02PB3M67S0+FIcoFz4YcqafdeNqSH47zWxo8Oo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=maVmS8tRbuawtKbP8ncbKq4qOeFgJBWPZpqzk/tiHYbhDjmpvkNkBQVa4fhVUyI0W+0oxQc3424Tek0v49WXiOBzECsuBDkOF9fBK95fzqTJMqjyQPUTT1u5YPIGdp5+xUiSNr5t9AMzKlysHvzjEChU8NjyfoIU64BrAtoOIbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWY6Uqs3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BCFCC4CEF5;
+	Fri,  7 Nov 2025 12:48:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762519708;
+	bh=9qSpx02PB3M67S0+FIcoFz4YcqafdeNqSH47zWxo8Oo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hWY6Uqs3xV0XnCp16NuZJIxZJ72EXVkK6J2LYghXf1r89fkeLr8IVZ5DevgjVFU+n
+	 rVdsqfmf46QoMJRW8NqDOHJ6q1S0RrwGdOjUcyMWAGRCq/GbeOQDmK6BxAADaKXpht
+	 fyS+ncUot5nHzz/FSfpot1pzhrRPqX9l7LJyyG84jd5BFoAflM9XNoMJBV9jynype8
+	 rAcocx2dALGYG2bsdmG9tbwE9nit1zA1a74b7RMrQMhEzBypE8V3dZTZ2OUHl6B+7B
+	 o7ApnNZrn8max5ngqQujon2D3PZAhDdthiC6BIQvkdqh966W1qxGIZvTYTMTRjWwhc
+	 2Wf0fDjJNSvCA==
+Date: Fri, 7 Nov 2025 13:48:25 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v2 0/16] SRCU updates for v6.19
+Message-ID: <aQ3qmdoxktGZRUiL@localhost.localdomain>
+References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
+ <aQvXA3A5XHn-Tjhh@pavilion.home>
+ <20251106110610.44599177@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/33] arm_mpam: Add basic mpam driver
-To: james.morse@arm.com
-Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, gshan@redhat.com,
- guohanjun@huawei.com, jeremy.linton@arm.com, jonathan.cameron@huawei.com,
- kobak@nvidia.com, lcherian@marvell.com, lenb@kernel.org,
- linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, lpieralisi@kernel.org, peternewman@google.com,
- quic_jiles@quicinc.com, rafael@kernel.org, robh@kernel.org,
- rohit.mathew@arm.com, scott@os.amperecomputing.com, sdonthineni@nvidia.com,
- sudeep.holla@arm.com, tan.shaopeng@fujitsu.com, will@kernel.org,
- xhao@linux.alibaba.com
-References: <20251107123450.664001-1-ben.horgan@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20251107123450.664001-1-ben.horgan@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251106110610.44599177@batman.local.home>
 
-This is a v4. Apologies for forgetting the version number!
-
-On 11/7/25 12:34, Ben Horgan wrote:
-> Hi all,
+Le Thu, Nov 06, 2025 at 11:06:10AM -0500, Steven Rostedt a écrit :
+> On Thu, 6 Nov 2025 00:00:19 +0100
+> Frederic Weisbecker <frederic@kernel.org> wrote:
 > 
-> This version of the series comes to you from me as James is otherwise
-> engaged. I hope I have done his work justice. I've made quite a few
-Thanks,
+> > Applied to rcu/srcu, thanks!
+> 
+> I have issues with patch 10, so please do not apply it.
 
-Ben
+Ok, dropping it, thanks!
 
+-- 
+Frederic Weisbecker
+SUSE Labs
 
