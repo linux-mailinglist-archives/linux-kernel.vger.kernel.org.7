@@ -1,142 +1,106 @@
-Return-Path: <linux-kernel+bounces-890062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1A9C3F2D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:34:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E101EC3F2E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:35:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBC064E98EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:34:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D859D188E77C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7158B302CC9;
-	Fri,  7 Nov 2025 09:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B393043D7;
+	Fri,  7 Nov 2025 09:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fEglRBsP"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxDD8XJ5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6182FFFB8;
-	Fri,  7 Nov 2025 09:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC062F6574;
+	Fri,  7 Nov 2025 09:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762508058; cv=none; b=Z42WWph0HfLdd7zsGe4frGeHpBSgmQR7K9EC67K4KyAvLwCfpsLRO8n+HiC7f/au0IfQgeGI1Mk0k/8MFzwzx4l5KNo4PCAreYZbGvghIFpw77ibUHzb6QnNNIBYtipynLfFE3nsK+cFdA6MLWzvkyXRSSWodmvOf/28LKlNytc=
+	t=1762508063; cv=none; b=s8lprEALasMyQYmyeaLK9xFCVGT+ph1FJX9v5c/VBLbYhNebRLLi2EEXLRsxsZ8a5bRwHlkuqTQ65hb+LtuKDkqgF9MzNkRDOMUsl+oNWV46l3/Jc/Ryy+OURlSvt/mjn1iPTIK5hTRaEZUTZoWGKMggGMpxT7vpf+kU7rBdBBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762508058; c=relaxed/simple;
-	bh=a5UV+lpy9dJymplUqRI6ybHCajuv+eTwea9Ciur0RJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pj2Ye3a6heFcHnulNQgZ7yVxF3BWrf2Lb4sX5BuAqpblZV9DOABc17nvbwLshC7O1TiKdKvLmPUYzC3YSwl8mDllBDCBtG9vem8B8cYvfMG1ttxJkojEuYIhKMlfPzevmVumxcfkDtEX6+BrpvN1IO8MgXJumSOJ91bWbXRQXuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fEglRBsP; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762508053;
-	bh=a5UV+lpy9dJymplUqRI6ybHCajuv+eTwea9Ciur0RJs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fEglRBsPOQsTZmKXs8OKcLH0cWVanEagjfT04Qjlwm4ZuF27ym/Sjv9+KBKd20oiL
-	 PnLIyErMJ3DYtEnAaB47eEveSPBg38+YWCKY49ISzuiBAozG6wW4K3buwuDchX7QDN
-	 jEJge2CO6mPLeiXUGXN7is7jvmirC1WEcblWgoOlJsKrSu9lHmnQezKKubpf9mxvpS
-	 1OZ/cAp9k9PwvrdQHBx3cY9gW3oF4XhKR5VthJYIP0CSPrzwaGdjZcivalB5SNFc0b
-	 V1MgH/4a/XlmjhwqgN/Kwyis1+sms8+fu87uiJqs2XShNfPoLVHOyQr8+30TPH6WFA
-	 I9Oywewz2w9qg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1B10C17E0097;
-	Fri,  7 Nov 2025 10:34:13 +0100 (CET)
-Message-ID: <5faabbd0-2e7b-46ec-8da0-7be24f2e888e@collabora.com>
-Date: Fri, 7 Nov 2025 10:34:12 +0100
+	s=arc-20240116; t=1762508063; c=relaxed/simple;
+	bh=b8R1CDSDpojhuYBWHDM+d1NPiz/Bo7/dWl4kOM7jZfc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CdnbymLvlKSBg1AwUQdLnbGwOaT9TQ7VhxgXBOxaOzOaCsgLYcHjJ5r7EJp8VgDSOGA0irkIgY8YSQLBBBFOARLFf35B9c0/e+KvJPmdAPrBOtUaGgJErGpBj2vPOhKy/GHTDB0X7ezMhjMi8iCqawsk6DEs8eXMReg8xH+RKqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxDD8XJ5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29B2EC4CEF8;
+	Fri,  7 Nov 2025 09:34:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762508060;
+	bh=b8R1CDSDpojhuYBWHDM+d1NPiz/Bo7/dWl4kOM7jZfc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=mxDD8XJ5tfK0QAmAnM+hfakfmYb7I5LqEWpL22jUZZXhSravEg9Apis4S7hrrX1MM
+	 Ry9nH+dI2jK+iU56vZU6U0P4+UuKh2CfxrKxLJEIGeW9Rr06yScfN+ro/w9ikNUWEo
+	 KQJy3mEjBaJnGBJolu3ufIW1926nnrp2cU886rGBwx00Py44L6jua20TL0VsOX8XfO
+	 ZH2/qTTFgqopxmADiYFVxtRPNkaJ4TYFXzDDhNlT6viDr0nSEzcYQ61QZvKcv/3UN7
+	 mZmcRVa+CJezDNOjrLjKU3GfeVDsg/QJWCh1iNKPz3QXdRCL6VI5ekYsICe07OyjB+
+	 yRdQPUpTHSlHA==
+From: Mark Brown <broonie@kernel.org>
+To: Olivier Moysan <olivier.moysan@foss.st.com>, 
+ Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251106-restricted-pointers-stm-v1-1-7d03eb5020ba@linutronix.de>
+References: <20251106-restricted-pointers-stm-v1-1-7d03eb5020ba@linutronix.de>
+Subject: Re: [PATCH] ASoC: stm32: dfsdm: don't use %pK through printk
+Message-Id: <176250805658.2488867.15310894982146426101.b4-ty@kernel.org>
+Date: Fri, 07 Nov 2025 09:34:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/21] clk: mediatek: fix mfg mux issue
-To: "irving.ch.lin" <irving-ch.lin@mediatek.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Richard Cochran <richardcochran@gmail.com>
-Cc: Qiqi Wang <qiqi.wang@mediatek.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org, netdev@vger.kernel.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, sirius.wang@mediatek.com,
- vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
-References: <20251106124330.1145600-1-irving-ch.lin@mediatek.com>
- <20251106124330.1145600-4-irving-ch.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251106124330.1145600-4-irving-ch.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-a6db3
 
-Il 06/11/25 13:41, irving.ch.lin ha scritto:
-> From: Irving-CH Lin <irving-ch.lin@mediatek.com>
+On Thu, 06 Nov 2025 15:41:57 +0100, Thomas Weißschuh wrote:
+> In the past %pK was preferable to %p as it would not leak raw pointer
+> values into the kernel log.
+> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+> the regular %p has been improved to avoid this issue.
+> Furthermore, restricted pointers ("%pK") were never meant to be used
+> through printk(). They can still unintentionally leak raw pointers or
+> acquire sleeping locks in atomic contexts.
 > 
-> MFG mux design is different for MTK SoCs,
-> For MT8189, we need to enable parent first
-> to garentee parent clock stable.
-> 
+> [...]
 
-Title:
-clk: mediatek: clk-mux: Make sure bypass clk enabled while setting MFG rate
+Applied to
 
-Also, please add a Fixes tag, this is not only useful for MT8189 - for the
-others, this worked because the bypass (alt) clock is already enabled due to
-it being a MFG power domain requirement, but the parent still needs to be enabled
-otherwise there's no input clock to MFG during the PLL reconfiguration.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Besides, please clarify the commit description (and no, 8189 is not special
-and doesn't really have a mux design that is all that different from the others).
+Thanks!
 
-> Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-> ---
->   drivers/clk/mediatek/clk-mux.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
-> index c5af6dc078a3..15309c7dbbfb 100644
-> --- a/drivers/clk/mediatek/clk-mux.c
-> +++ b/drivers/clk/mediatek/clk-mux.c
-> @@ -414,16 +414,20 @@ static int mtk_clk_mux_notifier_cb(struct notifier_block *nb,
->   	struct clk_notifier_data *data = _data;
->   	struct clk_hw *hw = __clk_get_hw(data->clk);
->   	struct mtk_mux_nb *mux_nb = to_mtk_mux_nb(nb);
-> +	struct clk_hw *p_hw = clk_hw_get_parent_by_index(hw,
-> +							 mux_nb->bypass_index);
+[1/1] ASoC: stm32: dfsdm: don't use %pK through printk
+      commit: 4db4ce15706d6423cc4cac4b05114b0469507bad
 
-Fits in one line, 84 columns is ok.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
->   	int ret = 0;
->   
->   	switch (event) {
->   	case PRE_RATE_CHANGE:
-> +		clk_prepare_enable(p_hw->clk);
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-You have to check for error here - if you can't enable the clock, your system
-is going to crash as soon as you switch parents.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Cheers,
-Angelo
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
->   		mux_nb->original_index = mux_nb->ops->get_parent(hw);
->   		ret = mux_nb->ops->set_parent(hw, mux_nb->bypass_index);
->   		break;
->   	case POST_RATE_CHANGE:
->   	case ABORT_RATE_CHANGE:
->   		ret = mux_nb->ops->set_parent(hw, mux_nb->original_index);
-> +		clk_disable_unprepare(p_hw->clk);
->   		break;
->   	}
->   
-
+Thanks,
+Mark
 
 
