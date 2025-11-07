@@ -1,112 +1,140 @@
-Return-Path: <linux-kernel+bounces-890907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CAFC415B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:55:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3985C415A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:55:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ADB3C4E81C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9381618889B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7688333C525;
-	Fri,  7 Nov 2025 18:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC25433BBBD;
+	Fri,  7 Nov 2025 18:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gWXqy87Q"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F20F2F83A5;
-	Fri,  7 Nov 2025 18:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wm+Oa9C6"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE9833B964;
+	Fri,  7 Nov 2025 18:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762541697; cv=none; b=Y627MIPZ+AQqRYct1DMTPFa3uucW9GnPVlhH/b4PB1g1AxaTooN3nJS1gEuXbOb2b2sR30RuSC/9v4ZiZ4hcbyOOxh2kaLQJ9w7VpholhyoGCjJSquwSyrMTbwBCVJ3ONR1h+vlXV9HArh6j9U0forVuXU0hT8etiizqv27Cdrc=
+	t=1762541691; cv=none; b=jkY1xxdYjxza5rSofW9ivJh8OOZjOYA5gIf97pL06K4vtDDCEu498fMA4Z1vFFQbXF7jZSmOxCjhvtUpLk6HxVJDdNt0G5nCxbNtPfnCFZchXSvXbkxrGYO7ny9UBcve6Dx6U3KOLmg3JC1OXrMc0j71csiFgwimCzCnOCC6Dls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762541697; c=relaxed/simple;
-	bh=Gt7M6TvmbPVEnVHc+m2Qlrw4lJaSgvuDjqGiqmRkhQQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Enwl/Z8kOgg8UksXG2GesyI31kiDywZ9O+0xngqj0euypq6qING+2N3oPMATjxd3avJaJhdVc93GerIJ/xprbLLtCte4cjEzbFBI+HL5fGw47h6FEXC4gHw1IdrXhGJIhz34ZHnpr1EhnNmSKkTTFd7/63nLP6rsBDd8KM+PlTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gWXqy87Q; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.201.246] (unknown [4.194.122.162])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 4AB5B201209F;
-	Fri,  7 Nov 2025 10:54:43 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4AB5B201209F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762541690;
-	bh=AsvG4/AVmdCT1R9teXGFMlUfCqRmKhnjLGXUPdWX5JE=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=gWXqy87QJctZ8cONqwSbD3oxF1lilgIW6UEqbaGcKCq3uSYhTlVw7GgBkv7j5ZxyB
-	 wge1609GEoSXAa6ugdJ/93Wt0T3mbzlFIVTN1NsgpcAczaJnCIVJO/YW3nZGYNZKl7
-	 encS+zWyeHA6w9MEXSdEg9ZuzPd4zcWufbD4ccpA=
-Message-ID: <b6a7f974-75ee-42fb-944c-e61d1e0238a1@linux.microsoft.com>
-Date: Fri, 7 Nov 2025 10:54:41 -0800
+	s=arc-20240116; t=1762541691; c=relaxed/simple;
+	bh=T5Rw6eWbPlE27qTm/Y51A5DLe5CKLXrJE8yBA6UrFuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JHeP3Q/T5KYF7iaWDDKdctcdYNC7174tqdyg67LnaLxSbDvSAkRnVZLw8jMkZfZjkBpoSj9dHpKGaesUlvIvD4PnF7YoxM4UEu6/D8BIeEhLYuxUwbSasCo2/f+yqAcIdgidmgsFetFkDXjv2aBNOR8IVwBKWKSdYuAjGKLM+oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wm+Oa9C6; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-95.bb.dnainternet.fi [82.203.161.95])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5891B111F;
+	Fri,  7 Nov 2025 19:52:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1762541570;
+	bh=T5Rw6eWbPlE27qTm/Y51A5DLe5CKLXrJE8yBA6UrFuw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wm+Oa9C6Gi4k4YZUlAj74M3wS8m7LFsTeP8uiJemarhggDXSx0cAHpWMnLk5pFtGL
+	 czvnQ4dmulBRace93soXdOvIr7hInH9xghsFxPHOY8pIwWDr0nZd5/Qd7cToxKGqmx
+	 fx5nvc+2KOD5qgHhY4wmsZ0zyFgl40HA+c0fXv3o=
+Date: Fri, 7 Nov 2025 20:54:41 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Michael Riesch <michael.riesch@collabora.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	=?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Gerald Loacker <gerald.loacker@wolfvision.net>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Collabora Kernel Team <kernel@collabora.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Alexander Shiyan <eagle.alexander923@gmail.com>,
+	Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Mehdi Djait <mehdi.djait@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bryan O'Donoghue <bod@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v14 00/18] media: rockchip: add a driver for the rockchip
+ camera interface
+Message-ID: <20251107185441.GG5558@pendragon.ideasonboard.com>
+References: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
+ <aQ4tJg8r_j4NyKhv@kekkonen.localdomain>
+ <074cd08e-0412-49f9-8dd9-b1f96eb11717@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
- easwar.hariharan@linux.microsoft.com, Tejun Heo <tj@kernel.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Michal Hocko <mhocko@suse.com>, "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>
-Subject: Re: [PATCH] mshv_eventfd: add WQ_PERCPU to alloc_workqueue users
-To: Marco Crivellari <marco.crivellari@suse.com>
-References: <20251107132712.182499-1-marco.crivellari@suse.com>
-From: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <20251107132712.182499-1-marco.crivellari@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <074cd08e-0412-49f9-8dd9-b1f96eb11717@collabora.com>
 
-On 11/7/2025 5:27 AM, Marco Crivellari wrote:
-> Currently if a user enqueues a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> This lack of consistency cannot be addressed without refactoring the API.
+On Fri, Nov 07, 2025 at 07:41:59PM +0100, Michael Riesch wrote:
+> On 11/7/25 18:32, Sakari Ailus wrote:
+> > On Fri, Oct 24, 2025 at 02:51:29PM +0200, Michael Riesch via B4 Relay wrote:
+> >> Habidere,
+> >>
+> >> This series introduces support for the Rockchip Camera Interface (CIF),
+> >> which is featured in many Rockchip SoCs in different variations.
+> >> For example, the PX30 Video Input Processor (VIP) is able to receive
+> >> video data via the Digital Video Port (DVP, a parallel data interface)
+> >> and transfer it into system memory using a double-buffering mechanism
+> >> called ping-pong mode.
+> >> The RK3568 Video Capture (VICAP) unit, on the other hand, features a
+> >> DVP and a MIPI CSI-2 receiver that can receive video data independently
+> >> (both using the ping-pong scheme).
+> >> The different variants may have additional features, such as scaling
+> >> and/or cropping.
+> >> Finally, the RK3588 VICAP unit constitutes an essential piece of the
+> >> camera interface with one DVP, six MIPI CSI-2 receivers, scale/crop
+> >> units, and a data path multiplexer (to scaler units, to ISP, ...).
+> > 
+> > I understand both RK3568 and RK3588 include an ISP. Do you have insight on
+> > how would this work, should the support for the ISP be added later on?
 > 
-> alloc_workqueue() treats all queues as per-CPU by default, while unbound
-> workqueues must opt-in via WQ_UNBOUND.
+> Short answer: Yes and yes.
 > 
-> This default is suboptimal: most workloads benefit from unbound queues,
-> allowing the scheduler to place worker threads where they’re needed and
-> reducing noise when CPUs are isolated.
+> Long answer:
 > 
-> This continues the effort to refactor workqueue APIs, which began with
-> the introduction of new workqueues and a new alloc_workqueue flag in:
-> 
-> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-> 
-> This change adds a new WQ_PERCPU flag to explicitly request
-> alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
-> 
-> With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-> any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-> must now use WQ_PERCPU.
-> 
-> Once migration is complete, WQ_UNBOUND can be removed and unbound will
-> become the implicit default.
-> 
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
-> ---
->  drivers/hv/mshv_eventfd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+> The patch series at hand adds support for the PX30 VIP and the RK3568
+> VICAP. I cannot really say something about the PX30, but on the RK3568
+> VICAP and ISP are orthogonal (the ISP features its own MIPI CSI-2
+> receiver, different from that introduced in this series). Thus, ISP
+> support can be introduced anytime (whenever someone is motivated ;-)).
 
-Thank you for the well-written commit message.
+Won't they both be connected to the same sensor though, and probably the
+same D-PHY in the SoC ? They don't seem entirely separate to me.
 
-Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+A block diagram that shows connections between the CSI-2 pins, D-PHY,
+CSI-2 receivers, VICAP and ISP could help.
 
-Thanks,
-Easwar (he/him)
+> Once this patch series is merged, I'll push out changes that introduce
+> support for the RK3588 VICAP. We can discuss the integration of any
+> RK3588 ISP in this scope then -- and there may be some things to discuss
+> as there the VICAP and the ISP(s) are directly connected by means of a
+> MUX unit in the VICAP.
+> 
+> Alright?
+
+-- 
+Regards,
+
+Laurent Pinchart
 
