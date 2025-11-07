@@ -1,169 +1,164 @@
-Return-Path: <linux-kernel+bounces-890682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B215C40A9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:49:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201F0C40AA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:49:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0607E3AC178
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:49:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F233F1897C4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7343B328B6A;
-	Fri,  7 Nov 2025 15:49:01 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF3332AAD6;
+	Fri,  7 Nov 2025 15:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="hhxoEx3/"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AFA2E92BB
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7E52F692C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762530541; cv=none; b=WDnTTziKYdRhOnIJdyMNLpa8pSwOlXhRvZFA+SlSgFwDapo7pr8nalGjdP7kRHxylAz+w9ZVqvv5PliVhb5rdD813Z86CvgKQQw4htQUzNkFqRKycM0y33okCVOpCpe0b+j5PD9M3ehj0frmFuK3b3NnzonrqZ0Kv5+tIemqaP0=
+	t=1762530560; cv=none; b=Zwpy/ma7CCbYLhanbnIphRSBlCgNutjpT0dOzrh7XcwQ68tEGBHqw4og4IZaJq/vagrIJluca7W1xrFTS6QYr1v4MJQwHV9dizslBxE92qczn8B/SThxbKV/e9F7E3JLLcTF8h72BY11wcf24J+o31VnRMBXI7ZpJYTrv8oZAc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762530541; c=relaxed/simple;
-	bh=NDEH5s9tkXaml4bnZXmxi+KpRoZxflbXTn8hmlbtc68=;
+	s=arc-20240116; t=1762530560; c=relaxed/simple;
+	bh=/6Y4zC9sj6dMH09rggUUO+LoSiudUJWecVQ+hbH+ODM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGWCFmMzqB/7RWzZ6ksmEp6JvmYlGmAKBCOCz8xskRRNsJnTvyksgt/z+f2tJ7c+nw5G5wVO5TVqj6NsCVamduKosS9I3x9E/weKu92zmI27lhP7PAFOD0onOO4cXkDR66gjTy7fdrWGKUqXoL++eLu9YVpf2bKNPpFAKM94dMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1vHOhh-0003vL-EO; Fri, 07 Nov 2025 16:48:45 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1vHOhg-007YOX-2q;
-	Fri, 07 Nov 2025 16:48:44 +0100
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1vHOhg-006qle-2T;
-	Fri, 07 Nov 2025 16:48:44 +0100
-Date: Fri, 7 Nov 2025 16:48:44 +0100
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Daniel Thompson <daniel@riscstar.com>
-Cc: Uwe =?iso-8859-15?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Daniel Thompson <danielt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
-	Pengutronix <kernel@pengutronix.de>, linux-pwm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] backlight: pwm_bl: apply the initial backlight state
- with sane defaults
-Message-ID: <aQ4U3LHBQ7WcYKUd@pengutronix.de>
-References: <20250731-blpwm-v1-1-0171fd31bff9@pengutronix.de>
- <aQNRK5ksNDMMve0x@aspen.lan>
- <t6wtfnmnclnzwdpbmdcalvyf3mulmpexnryolxkygqkpx7vdwz@dqwbwvlzawrr>
- <aQ4HY5Hncv1fvxVk@aspen.lan>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TxPFCsKBLi+AixrStpGu9nJ7GBe4rOPe+SxoBztznDpc1YrzMINe3RomRuzUY6by+A+P163iSh9QJrynURoMGZZu5cCOyG+3tRpx3FAfY9yvAbGPNdveAGLowfk1LlQi6Igr92gBhHQ3EQCBmaWBpa6lEXWeD44YCtjdTqOOllc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=hhxoEx3/; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ed69197d32so12564831cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:49:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1762530557; x=1763135357; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0v6eg6ng71W2ihQc/lk64rXLMci9QzB5Z5WSHkaUZyQ=;
+        b=hhxoEx3/gwCynSDwkgkMCVN6+1lbh0AU/qJN4BVXpoZv9lIqp4Q0Sc/cxcqzET6m3g
+         PHLP6ASfdIFcRhz/wkwh2rlh0rPWCSghciX3DOy+nC8FgM4jJNk60dz5DKo1n/rl85mJ
+         fR9tSwasmX8lNC9ZplW+3FVxLGo6KuGg8/lk9C3irXE5LwXGk4/A2hc3XYzsRTICP/li
+         UU8WBOP5yWRx/FeppIgNAtVRcP68MJWhsS8oGY4y3wLSLza7blL10t7q7J/XqpgSPUaL
+         7LVagrhPNwW0bp344IQnDpqxb0w5/2X/SBWd85lPsKJ9KOdQ2Hs0MfE83/lPOgp73pfu
+         yOow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762530557; x=1763135357;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0v6eg6ng71W2ihQc/lk64rXLMci9QzB5Z5WSHkaUZyQ=;
+        b=IMLRIDq8Bm90XKdRp4OjU1WlqFYShCYEU8rX02aIPiTghRLuH2qErzWcyU2HuZ5mKO
+         weZZ1toF1SdHjLiN8f/Wk+yveSV1vDReKXN3yhOltMop+ht1QInAO/530dgofZCXhDaT
+         CL3EMhI5Cno2oLjLnV3/HuuCtmXm39K4gg8HzrKkqAoGyhJod9+mowHa9SrsY5YdfvMX
+         qfbXEJo92BYTCHvV81iGSvrprSqz4j0fwMhvabjKibG1JsAecEshSXFyZ0v03veTX4jw
+         oakbip9uyZgLsFXzRo7XKVDuw0f87dXhFrLcBlYB4Q1UMJ6aLTdDoWer+TqQUrcWAcD2
+         Cqtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUb5lUcji+tuL01mwybUAKNAQYWE/vDA4KtSu/+cFy7J7thGZ5wZ06ABRXA7KPAxzWMQOL0EZV2wiga870=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwclRSwVM9pnFiVPabX2EKSMssSlEK6Gq1KJNWF1hKKRS8lhfBz
+	JID/3m6ZVGsYGuN4MRaDFwKpoZg7fsI4uRQlTbQOCs7h87l5OZVHEU6yqxp++m9Mmg==
+X-Gm-Gg: ASbGncuGiiY65RFXsDAo8lrMw2RcmD+4VNORWuzX6WEAMWPpNgrKtHeUehbpfMhju2T
+	ROYNgSTWLsIpaBnECesgepZT8lYqGaxhiGXVGTpByT4h8JR0Eo8YVH5zsiaZ2YZzMgHd69F/Vsj
+	EhR9qlt1ltr/qjLl/A6FLP4KWUbkRxVjWQfxHWMds4eEW+VKdTYv5tU16+j6Ko8GdtWe9vW2Hhj
+	dix3rNBeOk2a+kvL45WvxwOERK0q3xQz/3msZhB6kMD2mVAk+Mpvgu5VMhaDpfkwsUtsB4nPvlN
+	e7+s7cJri4CPtJMpvGIqutfmYryY4Tvr9TGWB9bnksUmRHjrEDvs87YGVoyBc9Vz0NfBkTTA40o
+	5DxA7/vyDMHdM/vw4qxdxb14fe1N/N63G5DG3UFpTjh6pxkIlwcstfkbG+uNjJg49u/xFZGtHp/
+	X7yrkv0U/U+Oi3
+X-Google-Smtp-Source: AGHT+IGv4LvT9OxkoIkqXESdEl9EKbK/wl0vLym3A5YbB9ZFv23y4EMfP2ZZvGqODR86AGem03ZGxA==
+X-Received: by 2002:ac8:5803:0:b0:4ed:66df:8023 with SMTP id d75a77b69052e-4ed949747c4mr43829531cf.30.1762530557379;
+        Fri, 07 Nov 2025 07:49:17 -0800 (PST)
+Received: from rowland.harvard.edu ([2601:19b:d03:1700::db9a])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-880829fa47bsm41535246d6.48.2025.11.07.07.49.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 07:49:16 -0800 (PST)
+Date: Fri, 7 Nov 2025 10:49:13 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: ccc194101@163.com, Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+	Alan Swanson <reiver@improbability.net>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
+	Chen Changcheng <chenchangcheng@kylinos.cn>
+Subject: Re: [PATCH] usb: usb-storage: No additional quirks need to be added
+ to the ECD819-SU3 optical drive.
+Message-ID: <c7bf59b5-8078-4b47-b56a-7b5568272d07@rowland.harvard.edu>
+References: <20251107061046.32339-1-ccc194101@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/DGy73+seDFVJgbs"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQ4HY5Hncv1fvxVk@aspen.lan>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20251107061046.32339-1-ccc194101@163.com>
 
+On Fri, Nov 07, 2025 at 02:10:46PM +0800, ccc194101@163.com wrote:
+> From: Chen Changcheng <chenchangcheng@kylinos.cn>
+> 
+> The optical drive of ECD819-SU3 has the same vid and pid as INIC-3069,
+> as follows:
+> T:  Bus=02 Lev=02 Prnt=02 Port=01 Cnt=01 Dev#=  3 Spd=5000 MxCh= 0
+> D:  Ver= 3.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
+> P:  Vendor=13fd ProdID=3940 Rev= 3.10
+> S:  Manufacturer=HL-DT-ST
+> S:  Product= DVD+-RW GT80N
+> S:  SerialNumber=423349524E4E38303338323439202020
+> C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr=144mA
+> I:* If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=02 Prot=50 Driver=usb-storage
+> E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=0a(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> 
+> This will result in the optical drive device also adding
+> the quirks of US_FL_NO_ATA_1X. When performing an erase operation,
+> it will fail, and the reason for the failure is as follows:
+> [  388.967742] sr 5:0:0:0: [sr0] tag#0 Send: scmd 0x00000000d20c33a7
+> [  388.967742] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
+> [  388.967773] sr 5:0:0:0: [sr0] tag#0 Done: SUCCESS Result: hostbyte=DID_TARGET_FAILURE driverbyte=DRIVER_OK cmd_age=0s
+> [  388.967773] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
+> [  388.967803] sr 5:0:0:0: [sr0] tag#0 Sense Key : Illegal Request [current]
+> [  388.967803] sr 5:0:0:0: [sr0] tag#0 Add. Sense: Invalid field in cdb
+> [  388.967803] sr 5:0:0:0: [sr0] tag#0 scsi host busy 1 failed 0
+> [  388.967803] sr 5:0:0:0: Notifying upper driver of completion (result 8100002)
+> [  388.967834] sr 5:0:0:0: [sr0] tag#0 0 sectors total, 0 bytes done.
+> 
+> Signed-off-by: Chen Changcheng <chenchangcheng@kylinos.cn>
+> ---
+>  drivers/usb/storage/unusual_uas.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
+> index 1477e31d7763..6d32b787bff8 100644
+> --- a/drivers/usb/storage/unusual_uas.h
+> +++ b/drivers/usb/storage/unusual_uas.h
+> @@ -97,6 +97,12 @@ UNUSUAL_DEV(0x125f, 0xa94a, 0x0160, 0x0160,
+>  		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+>  		US_FL_NO_ATA_1X),
+>  
+> +UNUSUAL_DEV(0x13fd, 0x3940, 0x0310, 0x0310,
+> +		"Initio Corporation",
+> +		"external DVD burner ECD819-SU3",
+> +		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+> +		NULL),
+> +
+>  /* Reported-by: Benjamin Tissoires <benjamin.tissoires@redhat.com> */
+>  UNUSUAL_DEV(0x13fd, 0x3940, 0x0000, 0x9999,
+>  		"Initio Corporation",
 
---/DGy73+seDFVJgbs
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It's unprecedented to have two quirks with the same VID and PID, where 
+the second augments the first by virtue of its wider range of bcdDevice 
+values.
 
-On Fri, Nov 07, 2025 at 02:51:15PM +0000, Daniel Thompson wrote:
->On Fri, Nov 07, 2025 at 09:00:33AM +0100, Uwe Kleine-K=F6nig wrote:
->> On Thu, Oct 30, 2025 at 11:51:07AM +0000, Daniel Thompson wrote:
->> > On Thu, Jul 31, 2025 at 10:47:18AM +0200, Michael Grzeschik wrote:
->> > > Currently when calling pwm_apply_might_sleep in the probe routine
->> > > the pwm will be configured with an not fully defined state.
->> > >
->> > > The duty_cycle is not yet set in that moment. There is a final
->> > > backlight_update_status call that will have a properly setup state.
->> > > However this change in the backlight can create a short flicker if t=
-he
->> > > backlight was already preinitialised.
->> > >
->> > > We fix the flicker by moving the pwm_apply after the default duty_cy=
-cle
->> > > can be calculated.
->> > >
->> > > Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
->> >
->> > Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org>
->>
->> I guess this tag resulted in Lee picking up the change. I wonder if you
->> share my concern and who's responsibility it is now to address it.
->
->You mean the ordering the backlight registration versus setting the
->properties in the probe method?
->
->I definitely share the concern that there's a short window where
->something could request a brightness via sysfs and then have it
->overwritten by the remains of the probe method. Likewise I can't see
->why there would be any problem moving the call to
->pwm_backlight_initial_power_state() before the backlight is registered.
->Thus I'd be happy to see the backlight registered later in the probe
->method.
->
->On the other hand I don't see any problem calling
->backlight_update_status() from the probe method. This is a relatively
->common approach in backlight drivers to impose the initial brightness
->on the hardware without needing extra code paths.
->backlight_update_status() is guarded with a mutex and should be
->idempotent for most drivers. Therefore it is OK even if something gets
->in via sysfs and provokes an update before the probe method has started
->it's own update.
->
->In terms of who should follow up I've got no strong opinions on that.
->It's worth noting that I don't own any hardware that uses a PWM
->backlight so I'm not in a position to test it!
+As explained in commit 89f23d51defc ("uas: Add US_FL_IGNORE_RESIDUE for 
+Initio Corporation INIC-3069"), the original Initio Corporation 
+quirk in unusual_uas.h was added as a copy of the corresponding quirk in 
+unusual_devs.h, which applies only to bcdDevice = 0x0209.  Should we 
+simply limit the existing unusual_uas.h quirk in the same way?
 
-Depending on the setup of the hardware, calling pwm_apply_might_sleep
-inbetween before having a fixed definition of how the pwm should be
-setup, makes the backlight flicker. Therefor it is better to touch
-it as late as possible.
+Benjamin and Alan, you two appear to be the people who originally
+reported the need for this uas quirk.  Do you have any objection to 
+changing the bcdDevice range from 0x0000 - 0x9999 to 0x0209 - 0x0209?  
+Or can you suggest a range that does not include 0x0310?
 
-Michael
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---/DGy73+seDFVJgbs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmkOFNkACgkQC+njFXoe
-LGSKTQ//bm8FDOeYWnsvF9jE4OYmkN9C6U7e/pvbXazGuOH2vAskda9idMA38/4d
-8w4cTUgMUCU3IzaTBXOnDC1Zsh1baUbrknKw40Zfp80S9GWubKljfkpjh8OANL8a
-JP0SL+txKMAp0wC5KfNR1j4fDqwiYhTnc+G8nTL5idsmXuVWYOxKTydGJ/PHG2l5
-1DEsDBKHMpA1p9m+oSlGuE4P0GjB/mQseJYvyS4GSVlI+PlqqR58PUSPqpCDQFVA
-4kwvXbFnhZbuFTlgFUoCrZfHKO1CMCuEH384v2QoJiAl9P0jWsbWEOkf5CAqRRU9
-CSA9R4ZOQ834QBhDUdCsTyhMPuSmex5tGLmvkeqtcq16n5SkJzL8BMYHGQHl8RQN
-oI3/rwNIGJKGGWumv3kHIJsCcnDAcFS+cDgGbVdFfF+dpsGWiCO3BWCXXO7KMH4l
-cWl2fUk9FgYAyqB8pUSFEmNdbx0/yIhtKjvSUq5ZTrwqtevSa67hpAijc8G+VorT
-7l7f6Evl+iuQisHKRkdKgcpgWsRyekdnYa6JwVGak5oIj2FeymkxVY4+uMEBKaD9
-8uP4/zJ1wMCMC6U/n87nzL/VR9oXDPtoM8LFeFF6BwQ5KuPxudKAVbTnm1P0NTmg
-IpO5OUhlXOu4eQcEIFv7iJ8CVF7vvUcHNz0FSJIJHIm1sh8/Mn0=
-=nlcW
------END PGP SIGNATURE-----
-
---/DGy73+seDFVJgbs--
+Alan Stern
 
