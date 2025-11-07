@@ -1,240 +1,234 @@
-Return-Path: <linux-kernel+bounces-890807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031BEC41029
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:19:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF4BC4102F
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF5913AE43A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:19:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB2544E2BF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C37132BF4B;
-	Fri,  7 Nov 2025 17:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD3732BF4B;
+	Fri,  7 Nov 2025 17:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="Gj2HM1Fr"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011064.outbound.protection.outlook.com [40.107.74.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5DqYg68"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047D2261581;
-	Fri,  7 Nov 2025 17:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762535968; cv=fail; b=das2Z6rRwoXkOJAPddYWcwC/znJf23tG4q2f3+vY0g8KZdC8riIc7ZcWcIACN02P9t9bqZ5HbGAqdTtXhZxy/gZ6yqLMSSbfomVjA3+HXzAADlv0x3Y3Qk5J+8WiV15Np0YzHSRWLWKnu5ay+l8Iwph4OpzuSKA6j8FdfJbS+p8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762535968; c=relaxed/simple;
-	bh=31ozhILpejwflkWDS0XN2ja+rK1UkFA33T6Fb3xKqEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dwa4vYE4VAoAqLZgKg9nPWSpqnpegKlt27etY1i4yiNBvyfQveoM5Sj1ZyFeAAORc61yUPkvL7r/7NlhFABEL9741ISXyKwJFvLJ1A1rK53RpNJOZzrPN0jgBYPdy75HkVztoExdX7qSXlZ1/B/Z3WzGXgjVkVJNZY2CkaxJ95s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=Gj2HM1Fr; arc=fail smtp.client-ip=40.107.74.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w+7xN5waqRYWpkPjO9tL/DNEcPJFwoa7TcVILrepv279FBd4nlg2J04cgacKT5exEEufAez5YenpzZnjGNiZ/pJitAJEwAM2wmA9hJSX1P1sbzkw0vgbchCbvzBYn2hXv9zf7xzqtPrlSUaJ4OEXM9m7F7TVNKq5MMW0LIupo3+J22nIgL9Z/fu6qAq78kugb4tPastTRh2gNFV23qv1uCOncU6B61Ky5rFMH9Vleu44ptt6PJOBWgA+kz0Ekpb6C5zCxrgNe4J31ZnqM5H1TFagXBIVXSpK4SCMQFMr+32CHaEW4wxXN82UyQRZqvSK8kdjYhSBNDRIbSYklIfGrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KYg2Sho4TeRs85pMUl/NAPub9THw+uEAe6tDijaQZ10=;
- b=o/KgLRrvH8TuE0RUi/iOUyra5nxDgi+zFv4X26HtjMiB91+IIau2ZAzihhzQnlnucNXRWx/7XLlfm6YP4kubD29NfK4XcFRqYpRDLzmIZ46r0mjVwSKSrcGtXD8RczHCNJeCDrS2X4+yGQ09rhGS2/oy7xioRk7+5+GbYfo5d4M0HDAsN9uVkaJnAYEI3uZj0VEv/jx3cXA4/c8j/aaZgXKbdA9lDi7Q2at+p9nZJiS8FVhEuX+7ktiqANGFY9Jc5MMINJmiKQoTbihqzE3vqXmEIdr2g+zO6VEzf1STAJYIhMeGMgev5SwskLXwSwLxUqBnuCXGGwFQ4giNKGzkHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KYg2Sho4TeRs85pMUl/NAPub9THw+uEAe6tDijaQZ10=;
- b=Gj2HM1FrBClJKDtUfZU2OhcD/12NuUtQI1dD1y96KOHnZK2v/MNzZw30UbwM3cqWqMJYfg13IOao6mvqp73al+H1pYtCV8P6TwpFxU8eznoPh10wZ3ZtuGCYDL3NtQtK72yl41ODm8+Qby2TFCismxdbFafPwhSelaUA8Qkzifs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TY3PR01MB11948.jpnprd01.prod.outlook.com (2603:1096:400:409::5)
- by OSRPR01MB11662.jpnprd01.prod.outlook.com (2603:1096:604:22e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.10; Fri, 7 Nov
- 2025 17:19:20 +0000
-Received: from TY3PR01MB11948.jpnprd01.prod.outlook.com
- ([fe80::1de5:890d:9c69:172]) by TY3PR01MB11948.jpnprd01.prod.outlook.com
- ([fe80::1de5:890d:9c69:172%4]) with mapi id 15.20.9320.008; Fri, 7 Nov 2025
- 17:19:14 +0000
-Date: Fri, 7 Nov 2025 18:18:49 +0100
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	tomm.merciai@gmail.com, linux-kernel@vger.kernel.org,
-	Vinod Koul <vkoul@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF22261581;
+	Fri,  7 Nov 2025 17:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762536025; cv=none; b=Bm4sVLUeYX/0je2pNHUxRYFY9gSyocWI7Ph07QC7tnIBMG1y+nuic8Xwdb0a4nP+ZTHe6cHWQWIMyLiL/gJGx1iUnGqjQrvmG6LEnE+DrUryqEQeSDpSp8HIhSugdXclbizQTJs8bRbcYfOW/Y2OlwTO99/Tm0abBj1ecy4UkWw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762536025; c=relaxed/simple;
+	bh=oxDwYCkrdj5zrZ8eK9rx/ixf+coTfobB+mmKr0plunM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5uH0UsEOhGgiFLj8rePmhxLYkF5zvshjzLH4zeWp0hxeU8sQdQngz3MxwoIitmGn/0JH69+Akr3Nkptv2m1FGxDz6BkqNWX1VLTSMTF+CoP1yweTdVQ7EEDpqzDsVRRr1KE9SMvaqqKrp6CG0ANAv/rgd4Escju+8R4e4cVlwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H5DqYg68; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8F5DC4CEF7;
+	Fri,  7 Nov 2025 17:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762536025;
+	bh=oxDwYCkrdj5zrZ8eK9rx/ixf+coTfobB+mmKr0plunM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H5DqYg68rq3zVGZMHb1G+n9EpqbvDQKJrpFVNHiVJLLFbZ5pY6AViB9hzMd9VqC5M
+	 mGKjRFnWZnyQf3T+SFj/OvyzEJ8mg297kyCDFXE8zqDRflD3BtHcB9pBRu9hxSBaOr
+	 pHXELra7/krwGXctjJ24pwXMVHH+dquYdiHz56qvXcVCJQhbVCxGqNnlFaBZ/EItv7
+	 DWCCMZrrJnLsBlmLOUdloFLYrlZ5bzI+xKmCmxRnQeEsPMZPlfpEBGYLMliTYsQVI8
+	 NNolAV9+5w7V/+MtAMJ8LA6bjUaFChAq1Lk/AtvtxGz+llwFdFOxuOBd0wZKT3M1T4
+	 t1NH4Y2MCHWAA==
+Date: Fri, 7 Nov 2025 17:20:19 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Cc: E Shattow <e@freeshell.de>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH v2 04/21] dt-bindings: reset: renesas,rzv2h-usb2phy: Add
- '#mux-state-cells' property
-Message-ID: <aQ4p-XS_8ImhRRKN@tom-desktop>
-References: <cover.1762354366.git.tommaso.merciai.xr@bp.renesas.com>
- <961741af7d4ec945945164759fe0d78bb3cf4d9d.1762354366.git.tommaso.merciai.xr@bp.renesas.com>
- <176236298431.1342996.14167666722083112438.robh@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <176236298431.1342996.14167666722083112438.robh@kernel.org>
-X-ClientProxiedBy: FR4P281CA0398.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cf::16) To OS7PR01MB11955.jpnprd01.prod.outlook.com
- (2603:1096:604:23e::7)
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Subject: Re: [PATCH v2 0/8] Add support for StarFive VisionFive 2 Lite board
+Message-ID: <20251107-frenzy-cloning-4b279cfe932c@spud>
+References: <20251107095530.114775-1-hal.feng@starfivetech.com>
+ <c05d8bcc-3024-45cd-8630-b0595682e778@freeshell.de>
+ <6d0fb6aa-6d88-4069-a5e5-9e910523888e@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY3PR01MB11948:EE_|OSRPR01MB11662:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ddc129e-59a9-46e9-f196-08de1e21c5df
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wit8OHFYwBptDlOO+/ljn1mXpRlVmlgrKrU9f1G3P6OgXIhguHuF+y7Yricb?=
- =?us-ascii?Q?cjZq3CWnRVAI/gj0cqndnyuL9j9Ahw3CVSrdpVm8LkNFwPQWcOYsvybbsaEA?=
- =?us-ascii?Q?SM+ChhRp6g7fuuvVfreb9jXtBv4TlOrL5fH38wJN63vXGEjJDyyPWT/zn0Rr?=
- =?us-ascii?Q?NOePoi6gt/VLgx6mZB540D+CrN5p+vQUKnU6Cr+yBAqcZsaJUyjO9/GDM7Zz?=
- =?us-ascii?Q?jDYJk2RFh0vt9yGRq/jtnQ+W2tRDGTXBu89WjOBpyRxqjDzaNOI4aHfRa1iX?=
- =?us-ascii?Q?XDjcUei2pLyq8BSLQ9iLi/8y9SeSLfCBPOIeM739HevJWQDxfHe+gqjcUWQy?=
- =?us-ascii?Q?yRCXZLxPCYrZZVVY1twhP9jY++pabwu+tZ6lHPLEDlZtsub8tiUBW/wtWuzM?=
- =?us-ascii?Q?mIk+MIfyOG+PCKZV1VxEeBn0ZnNkqo9zm19boytFgvxHkcidrQfPEeUx6g4o?=
- =?us-ascii?Q?UTe9hMueb+TBDNW5U/aUMyFHo/4uAwfTo6pO+kPDEq5ykspHA6EGpv9hFdvt?=
- =?us-ascii?Q?JT0mYL+GKQcnE0/DyrXFXc3+Zn+FlsxZcP1J8RLqjbbstXQDcQX5z4BT+nUD?=
- =?us-ascii?Q?g8ZIjaSQwgOzTtLYoJIS2D8ptjmMZTlv9OdS4zOqAQw5MPBVRGdVeRQHl7XG?=
- =?us-ascii?Q?gjRmYvu0MqeKU20ub0awCKyTQPsUue4jbcDzMOM51tdAW2N7Ey5QCDqHqIHt?=
- =?us-ascii?Q?QFKL7H1La2kND9gTqG+sdt96o33wJ9EV0+AhE10JxlddrgZMxok117pN5Vsj?=
- =?us-ascii?Q?enhynqzOe16+b8Arj7+aHxA92FIFsGhByjk9Q2Z3E/aLGpsQYo+L1ZVZlCIA?=
- =?us-ascii?Q?Bo4A8+7Zb1MSFeXk7JaTsIK2p6MQSApiLaOXAEC0yugFR7BrgE3SqaphsC9N?=
- =?us-ascii?Q?KYw/YjhIa/7mLFtTXiP6gUY2TLGvU6+3J/MG/mvrB8emIpyzPUd1ZSBXnE/P?=
- =?us-ascii?Q?7htYceMV2bqRGmxaF5dzeqshYorzNEhuJKQKfaWb7u7+m1KUT3sFoEjpfRJf?=
- =?us-ascii?Q?Wz9c97XheyucG5soE7Ijet4AoL1d4+gIybM2uZbsXqaKwQXqM7gYHed7gD3U?=
- =?us-ascii?Q?TV80dADsXOeuK2MaAclFzMNietm1As8UR2MSImO6esBsqaGbI9Emr2GK+IDS?=
- =?us-ascii?Q?6GZ7QmrvjYw6TOyQM1zB9eo4P1a9AS6xVYv8DEYWW8Lk4C9QVNnMV6A6e4p3?=
- =?us-ascii?Q?khol3et08N+2fnpze4m8lpU54tQD1qFps+m+BiHwacNdzMxqyho/Qca7hHaD?=
- =?us-ascii?Q?+zTexK8KNKbasfQCCE0/UsxeGv2uRdIuIAXS50OX5EGJyLWFz8UxMIML4IhK?=
- =?us-ascii?Q?DMESy7N/mKzQBzBDlQaxjlhz+DtLo6mY8sn51zG2AQdWjg00Mj0+12scszxJ?=
- =?us-ascii?Q?nbttgLiZ+YOSF0/oe6f9h8v/ObC0uw/2MyrZ7kcNRYXBleoba0gnlJ8WsPvY?=
- =?us-ascii?Q?1mVvV5O6BYQ3icm447i+RB2xRFW30yLADeqlXoALy4Y1VfySlTR9/w99ImYj?=
- =?us-ascii?Q?Ltnse8kDwm5JXjHYXU8lm1LR0jIHRRwkEWQF?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11948.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zjWLMgFPPFHj8FRG+tH7me7LAlve3XRijzt+Vx8WWidKjsRXvh7T8WX2g/Ko?=
- =?us-ascii?Q?nk1ZlPJPw53faPcId44z6PE1I1rNqaw+qXY3+pkphavXy1zwzouIPRJZZrDE?=
- =?us-ascii?Q?EZcYoLWVayIamsY9Ka+CJ7MTd6hnGuusKLqakyylk1HZlIlvUCzeER9bi4Fd?=
- =?us-ascii?Q?0wl5lKVHTvtp5DVGHjF3tnOLJRBK1wm+j8GsCuDiBs6qdYmw+MbUxRS5IDFg?=
- =?us-ascii?Q?D1eOK6r+osyhX6nS2nvq0819hcOve4X/m/bxlQ/lik39NqgBb7Ly/AEZB0hF?=
- =?us-ascii?Q?DA+wo1uon0HTiKf9bXT0wJs29Axeq0d3JkLEP5YMZGGvgfSr8CHqo6KwFjzI?=
- =?us-ascii?Q?59Pic29gI9QS4NJGkOBSD7T+Er35DsbIuN/cioH6ZlWOqyxvshmtzofI5qMe?=
- =?us-ascii?Q?C9irzTR5aLN78mIaRPpYmOyF+CRA8ldFHzzfiSENer2IxVC7lYI8BS9rJRFG?=
- =?us-ascii?Q?FZJB+sDF1cZJ4HIptY4EdVt0oIiGYrfC9YXGzRcuXhUOKM+DSw5/zGqM91Ba?=
- =?us-ascii?Q?JC3LjaBfwzMPo8sPoZLGv7ldN4dHVgGOLi4QW1YZnngUzQPfPrifeL5q9VFS?=
- =?us-ascii?Q?cxggC+rmsElbdiZfrv3C9eGmKx6KxBlQjtKaoBTYLBnkW0+DfSJTXDp7VBxc?=
- =?us-ascii?Q?0G2QvCIEDQBxWxbgY/V8CMhFW5K7v8xCzqvlwPS+3D+W13b8lzm9oXakOq9p?=
- =?us-ascii?Q?2vJm1dtRUWNf8IazAOFQAMItVqsfTH3ZSQH18XkNRysCUYe84GCBW4h8sbOW?=
- =?us-ascii?Q?orC693I+OWKF6mWlkaTv4twdkYrZXLsuMmzGYIAomxYkcrFi4ZT+BQn/rypO?=
- =?us-ascii?Q?kuuWnEFYNEr69hRa5fZbPsVclPR39FhhWYaUqjaXfCDC94Ih5kvzNbfqS6e6?=
- =?us-ascii?Q?ysOS/eP6qzLmdoo/RfQLRZ09h/iCpbpShTCcwcC5kvltqn0FC/om+kGPAUPh?=
- =?us-ascii?Q?ESFII7TaxRNuAyGEM+sJHnofjY8SOAGjs2DH3PPEnbkc398IMO5v9ekcawOh?=
- =?us-ascii?Q?cCkKYy9NcMFu74109POhqaLfPlAUmzPCgEe2uOjB+lf8qfQZa9sxeBjnzW/i?=
- =?us-ascii?Q?IEgVQhmIe55PTFT8oaVBKH2ybloXOtPGpzYZ8fI4LLGOELndY2hmlWMdxCQF?=
- =?us-ascii?Q?pLm7dV0Q47xkizGzVbUiOq6Tj8KZQ3atf/tatWtjxCR4BL8Jy1C9l5GFTN9r?=
- =?us-ascii?Q?nfHrzOhQMAanvVlY556yDmff3SHhI7K15rts9P1EnhqwUWkxbyzttC6cur3K?=
- =?us-ascii?Q?XsM/MmgJ6BDb/PRuDEEcbXX/LUGH2QkeP+dJGdFmKbWCI3zpyfDT8hr+46TC?=
- =?us-ascii?Q?uLN9ODX54p6uhM/LWJChLEQsYOjw3O010Uq/rY2RKOiOFxdIKkThGlk2rTXE?=
- =?us-ascii?Q?cf3wunByTddk+tc1/EW7JckrKfdPmL77z1LAgUfzz9OKe+5zpxlLmC/B4oEo?=
- =?us-ascii?Q?s4azHVuLkP4DuN2NrNZuEMjv83Damdnf1Yx53s2d6+E4c090MLjhQLuX2fuc?=
- =?us-ascii?Q?xucX/aTX3hrAOk+HlObHCNKY7BI1d153RKRWDFdw09EgJgzQtJtegR5KSpjg?=
- =?us-ascii?Q?CHz71plqzq1ePpLSQxFe6bfsfZ847tkN/OTsAZrre6RSHi+2y3sSXsoHGT9s?=
- =?us-ascii?Q?gT6HoJp0tjB3bpHw/P3Wj7Q=3D?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ddc129e-59a9-46e9-f196-08de1e21c5df
-X-MS-Exchange-CrossTenant-AuthSource: OS7PR01MB11955.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 17:19:14.2727
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KVOT0PgunIu4+43UmBcsXIRHBDvcT29H019cy4OvaOIksRBDSHQvJyxaIBaBIoqTC8z/Zleut9mlThahdyK0ypWB6uclp43WLLLF8t+tQNrWwq+Gw4D4z0+i9+WxrRSc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSRPR01MB11662
-
-Hi Rob,
-
-On Wed, Nov 05, 2025 at 11:16:24AM -0600, Rob Herring (Arm) wrote:
-> 
-> On Wed, 05 Nov 2025 16:39:00 +0100, Tommaso Merciai wrote:
-> > Add the '#mux-state-cells' property to the Renesas RZ/V2H(P) USB2PHY
-> > reset binding to support describing the USB VBUS_SEL multiplexer as a
-> > mux-controller.
-> > 
-> > This is required to properly configure the USB PHY power selection on
-> > RZ/V2H(P), RZ/G3E SoCs.
-> > 
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > ---
-> > v1->v2:
-> >  - New patch
-> > 
-> >  .../bindings/reset/renesas,rzv2h-usb2phy-reset.yaml          | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.example.dtb: reset-controller@15830000 (renesas,r9a09g057-usb2phy-reset): $nodename:0: 'reset-controller@15830000' does not match '^mux-controller(@.*|-([0-9]|[1-9][0-9]+))?$'
-> 	from schema $id: http://devicetree.org/schemas/mux/mux-controller.yaml
-
-In v3 I will model mux controller as internal for the reset-controller:
-
-	reset-controller@15830000 {
-		compatible = "renesas,r9a09g057-usb2phy-reset";
-	        reg = <0x15830000 0x10000>;
-		clocks = <&cpg CPG_MOD 0xb6>;
-	        resets = <&cpg 0xaf>;
-		power-domains = <&cpg>;
-	        #reset-cells = <0>;
-
-		mux-controller {
-	          #mux-state-cells = <1>;
-		};
-	};
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="98XJ8Lpr/rFGdbIm"
+Content-Disposition: inline
+In-Reply-To: <6d0fb6aa-6d88-4069-a5e5-9e910523888e@canonical.com>
 
 
-Thanks & Regards,
-Tommaso
+--98XJ8Lpr/rFGdbIm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/961741af7d4ec945945164759fe0d78bb3cf4d9d.1762354366.git.tommaso.merciai.xr@bp.renesas.com
-> 
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
-> 
+On Fri, Nov 07, 2025 at 12:21:46PM +0100, Heinrich Schuchardt wrote:
+> On 11/7/25 12:11, E Shattow wrote:
+> >=20
+> >=20
+> > On 11/7/25 01:55, Hal Feng wrote:
+> > > VisionFive 2 Lite is a mini SBC based on the StarFive JH7110S industr=
+ial
+> > > SoC which can run at -40~85 degrees centigrade and up to 1.25GHz.
+> > >=20
+> > > Board features:
+> > > - JH7110S SoC
+> > > - 4/8 GiB LPDDR4 DRAM
+> > > - AXP15060 PMIC
+> > > - 40 pin GPIO header
+> > > - 1x USB 3.0 host port
+> > > - 3x USB 2.0 host port
+> > > - 1x M.2 M-Key (size: 2242)
+> > > - 1x MicroSD slot (optional non-removable 64GiB eMMC)
+> > > - 1x QSPI Flash
+> > > - 1x I2C EEPROM
+> > > - 1x 1Gbps Ethernet port
+> > > - SDIO-based Wi-Fi & UART-based Bluetooth
+> > > - 1x HDMI port
+> > > - 1x 2-lane DSI
+> > > - 1x 2-lane CSI
+> > >=20
+> > > VisionFive 2 Lite schematics: https://doc-en.rvspace.org/VisionFive2L=
+ite/PDF/VF2_LITE_V1.10_TF_20250818_SCH.pdf
+> > > VisionFive 2 Lite Quick Start Guide: https://doc-en.rvspace.org/Visio=
+nFive2Lite/VisionFive2LiteQSG/index.html
+> > > More documents: https://doc-en.rvspace.org/Doc_Center/visionfive_2_li=
+te.html
+> > >=20
+> > > Changes since v1:
+> > > - Drop patch 1 because it is applied.
+> > > - Rename jh7110.dtsi to jh711x.dtsi.
+> > > - Move the content of jh7110-common.dtsi to the new file
+> > >    jh711x-common.dtsi and move opp table to jh7110-common.dtsi.
+> > > patch 4:
+> > > - Move the uncommon nodes to jh7110-common.dtsi instead of board dts.
+> > > patch 5:
+> > > - Add jh7110s-common.dtsi and include it in jh7110s-starfive-visionfi=
+ve-2-lite.dtsi.
+> > >=20
+> > > Changes since RFC:
+> > > - Add jh7110s compatible to the generic cpufreq driver.
+> > > - Fix the dtbs_check error by adding the missing "enable-gpios" prope=
+rty
+> > >    in jh7110 pcie dt-bindings.
+> > > - Rebase on the latest mainline.
+> > > - Add VisionFive 2 Lite eMMC board device tree and add a common board=
+ dtsi
+> > >    for VisionFive 2 Lite variants.
+> > > - Add usb switch pin configuration (GPIO62).
+> > > - Improve the commit messages.
+> > >=20
+> > > History:
+> > > v1: https://lore.kernel.org/all/20251016080054.12484-1-hal.feng@starf=
+ivetech.com/
+> > > RFC: https://lore.kernel.org/all/20250821100930.71404-1-hal.feng@star=
+fivetech.com/
+> > >=20
+> > > Hal Feng (8):
+> > >    dt-bindings: PCI: starfive,jh7110-pcie: Add enable-gpios property
+> > >    dt-bindings: riscv: Add StarFive JH7110S SoC and VisionFive 2 Lite
+> > >      board
+> > >    riscv: dts: starfive: Rename jh7110.dtsi to jh711x.dtsi
+> > >    riscv: dts: starfive: Split jh7110-common.dtsi and move opp table =
+to
+> > >      it
+> > >    riscv: dts: starfive: jh711x-common: Move out some nodes to jh7110
+> > >      common dtsi
+> > >    riscv: dts: starfive: Add common board dtsi for JH7110s and Vision=
+Five
+> > >      2 Lite variants
+> > >    riscv: dts: starfive: Add VisionFive 2 Lite board device tree
+> > >    riscv: dts: starfive: Add VisionFive 2 Lite eMMC board device tree
+> > >=20
+> > >   .../bindings/pci/starfive,jh7110-pcie.yaml    |   4 +
+> > >   .../devicetree/bindings/riscv/starfive.yaml   |   6 +
+> > >   arch/riscv/boot/dts/starfive/Makefile         |   3 +
+> > >   .../boot/dts/starfive/jh7110-common.dtsi      | 653 +--------------=
+--
+> > >   .../boot/dts/starfive/jh7110s-common.dtsi     |  27 +
+> > >   ...h7110s-starfive-visionfive-2-lite-emmc.dts |  22 +
+> > >   .../jh7110s-starfive-visionfive-2-lite.dts    |  20 +
+> > >   .../jh7110s-starfive-visionfive-2-lite.dtsi   | 126 ++++
+> > >   .../boot/dts/starfive/jh711x-common.dtsi      | 656 +++++++++++++++=
++++
+> > >   .../dts/starfive/{jh7110.dtsi =3D> jh711x.dtsi} |  16 -
+> > >   10 files changed, 879 insertions(+), 654 deletions(-)
+> > >   create mode 100644 arch/riscv/boot/dts/starfive/jh7110s-common.dtsi
+> > >   create mode 100644 arch/riscv/boot/dts/starfive/jh7110s-starfive-vi=
+sionfive-2-lite-emmc.dts
+> > >   create mode 100644 arch/riscv/boot/dts/starfive/jh7110s-starfive-vi=
+sionfive-2-lite.dts
+> > >   create mode 100644 arch/riscv/boot/dts/starfive/jh7110s-starfive-vi=
+sionfive-2-lite.dtsi
+> > >   create mode 100644 arch/riscv/boot/dts/starfive/jh711x-common.dtsi
+> > >   rename arch/riscv/boot/dts/starfive/{jh7110.dtsi =3D> jh711x.dtsi} =
+(99%)
+> > >=20
+> > >=20
+> > > base-commit: df5d79720b152e7ff058f11ed7e88d5b5c8d2a0c
+> >=20
+> > Small nit that "lite-emmc" is confusing together. In patches to U-Boot
+> > dev mailing list the EEPROM product id is demonstrated to be with "SL"
+> > suffix when compared to VisionFive 2 (JH7110) so I suggest avoid
+> > confusion in upstream and use for VisionFive 2 Lite (JH7110S) these
+> > compatible names:
+> >=20
+> > starfive,visionfive-2sl-lite
+> > starfive,visionfive-2sl-emmc
+> >=20
+> > Also filenames:
+> >=20
+> > jh7110s-starfive-visionfive-2sl-lite.dts
+> > jh7110s-starfive-visionfive-2sl.dtsi
+> > jh7110s-starfive-visionfive-2sl-emmc.dts
+> >=20
+> > What do you think?
+> >=20
+>=20
+> This is a serial number for the Lite board:
+> VF7110SL-2310-D002E000-xxxxxxxx
+>=20
+> Here E000 encodes that we have no eMMC.
+>=20
+> The S is part of 7110S which we already have in 'jh7110s'. And the L is
+> already decoded as 'lite' in this patch series. Duplicating this informat=
+ion
+> as 'sl' as you suggested provides no benefit.
+>=20
+> Let's just stick with Hal's suggestion.
+
+The marketing materials etc call it the visionfive 2 lite, for example
+on kickstarter: https://www.kickstarter.com/projects/starfive/visionfive-2-=
+lite-unlock-risc-v-sbc-at-199
+I'm happy enough with what Hal has here as a result.
+
+--98XJ8Lpr/rFGdbIm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ4qUwAKCRB4tDGHoIJi
+0syIAQD+Er+PMhGz0kEbUyrWG+rkw0VQZymPYFA4k1wpI8zTpQD/c/7P+rG/2fm/
+YoL8btigKOHdPBIBOGqtNCtKrN3/QAI=
+=NTsO
+-----END PGP SIGNATURE-----
+
+--98XJ8Lpr/rFGdbIm--
 
