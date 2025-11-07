@@ -1,356 +1,240 @@
-Return-Path: <linux-kernel+bounces-890806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7A9C41020
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:19:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 031BEC41029
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D442E3A9002
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:18:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF5913AE43A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4071D3321AD;
-	Fri,  7 Nov 2025 17:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C37132BF4B;
+	Fri,  7 Nov 2025 17:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="HZFRCpqU"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="Gj2HM1Fr"
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011064.outbound.protection.outlook.com [40.107.74.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C81C1C3314;
-	Fri,  7 Nov 2025 17:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047D2261581;
+	Fri,  7 Nov 2025 17:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762535931; cv=fail; b=uzq+uGLTN0rfJuuQmXO3+UyBzO4ehvRriRIZo/BBZVbrcnbfGraFkakCk+fNuQfmY7KjF9zmi9sOvTnq6Cw2ir5n+AUE/fC6PJor1d30qK4n1KH5/M42aQYfPUorMs907EUh3vA9BqYjeGPNmNeRv9itFC/6WEVwFGGf4f+YBjc=
+	t=1762535968; cv=fail; b=das2Z6rRwoXkOJAPddYWcwC/znJf23tG4q2f3+vY0g8KZdC8riIc7ZcWcIACN02P9t9bqZ5HbGAqdTtXhZxy/gZ6yqLMSSbfomVjA3+HXzAADlv0x3Y3Qk5J+8WiV15Np0YzHSRWLWKnu5ay+l8Iwph4OpzuSKA6j8FdfJbS+p8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762535931; c=relaxed/simple;
-	bh=Qrtxomsdt10ToLqj7IFx7BjFWFMcVNw3JF9WGA+m+3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Jg0Y2V41GGH6Dd8IW7fK/1SoVOhQBcaqY4oDOdKLYpOhxJwH5FTy/7v81bOS5zJnBVwEttJyLCEYtIdfbSEfpyuTZzwTCEokF6RB3i6903IEbx08C1Pdj/e1JWgjC/idKkaJTFVz4zItxb2+36o2JlQmplBTjnv0Fv4wBTUjSNI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=HZFRCpqU; arc=fail smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A7H7nYV613495;
-	Fri, 7 Nov 2025 18:18:03 +0100
-Received: from pa4pr04cu001.outbound.protection.outlook.com (mail-francecentralazon11013053.outbound.protection.outlook.com [40.107.162.53])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4a8e5818jw-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 18:18:03 +0100 (CET)
+	s=arc-20240116; t=1762535968; c=relaxed/simple;
+	bh=31ozhILpejwflkWDS0XN2ja+rK1UkFA33T6Fb3xKqEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dwa4vYE4VAoAqLZgKg9nPWSpqnpegKlt27etY1i4yiNBvyfQveoM5Sj1ZyFeAAORc61yUPkvL7r/7NlhFABEL9741ISXyKwJFvLJ1A1rK53RpNJOZzrPN0jgBYPdy75HkVztoExdX7qSXlZ1/B/Z3WzGXgjVkVJNZY2CkaxJ95s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=Gj2HM1Fr; arc=fail smtp.client-ip=40.107.74.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ye3gCN2InVpRqtQrKismp6rUBL/8BRg2JwSfk92uUlizlKYotqrclXpktDPdg4Zr33m4A9NcIs6BvrupTYL0tNTzCLXr+74lQndFktq0wheKhLytiWR+uGXViF8u3OKKOpUiYbqFKQLBcaynstYfWbuw6JSBDIL4Y1SsohkfAXy/U6wRgypn/8LxJjDFbGJTZOv7CQ8n2ROP9/9ZCcRqQJXxYBk07E6qRxi5zNyn4GuXaMZpRE8byO6Xd9wu/HsGyXfkTo5Ca5wqb3nqJE0WmxiCeRWalHLV265zuHo1bZq+jICpSkTk9c+2Mt1kQQK8Nra2yezBaK+qMml49q+Ucg==
+ b=w+7xN5waqRYWpkPjO9tL/DNEcPJFwoa7TcVILrepv279FBd4nlg2J04cgacKT5exEEufAez5YenpzZnjGNiZ/pJitAJEwAM2wmA9hJSX1P1sbzkw0vgbchCbvzBYn2hXv9zf7xzqtPrlSUaJ4OEXM9m7F7TVNKq5MMW0LIupo3+J22nIgL9Z/fu6qAq78kugb4tPastTRh2gNFV23qv1uCOncU6B61Ky5rFMH9Vleu44ptt6PJOBWgA+kz0Ekpb6C5zCxrgNe4J31ZnqM5H1TFagXBIVXSpK4SCMQFMr+32CHaEW4wxXN82UyQRZqvSK8kdjYhSBNDRIbSYklIfGrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AW79ZD/FbkkktiQ9UllVxny9QSCXfvdhm+ZitVGQL4M=;
- b=IrRrkqyWJUpju0bbeR6M23T9E4FCy/kEvT8l6Qrn4WtoPQwzKTTPd+3t1vzvuZik7Gc2ZlPAYz0bxM+RlqgChZ5A6HrH2wdavsM6mdWHDSJweGXLX50QDozgEHtnIN2sutOhs1v2iG4UPZCoxrHvE1k8WYX0L/NjLdcJmVf36iXfrDeskyA9ORvX1k50gtmCrBqj38slWrux1emkg7ywsIaRypE9QqVatbT/Dip8tYCi9ntG59f5FqTnxIec9+qeZ8Q1sm/Bq6nSvFnQVUqMeRGCHQJ/F/cKLwgpZ/jYIuuYM0eVekOq/K3/QGz+iDdrgvpu5K3w/QyL4EXIOpG4Ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.60) smtp.rcpttodomain=nxp.com smtp.mailfrom=foss.st.com; dmarc=fail
- (p=none sp=none pct=100) action=none header.from=foss.st.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
+ bh=KYg2Sho4TeRs85pMUl/NAPub9THw+uEAe6tDijaQZ10=;
+ b=o/KgLRrvH8TuE0RUi/iOUyra5nxDgi+zFv4X26HtjMiB91+IIau2ZAzihhzQnlnucNXRWx/7XLlfm6YP4kubD29NfK4XcFRqYpRDLzmIZ46r0mjVwSKSrcGtXD8RczHCNJeCDrS2X4+yGQ09rhGS2/oy7xioRk7+5+GbYfo5d4M0HDAsN9uVkaJnAYEI3uZj0VEv/jx3cXA4/c8j/aaZgXKbdA9lDi7Q2at+p9nZJiS8FVhEuX+7ktiqANGFY9Jc5MMINJmiKQoTbihqzE3vqXmEIdr2g+zO6VEzf1STAJYIhMeGMgev5SwskLXwSwLxUqBnuCXGGwFQ4giNKGzkHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AW79ZD/FbkkktiQ9UllVxny9QSCXfvdhm+ZitVGQL4M=;
- b=HZFRCpqUQSNLj/V1e5RoFaLNJVjQIg2mmT1jkQNxsEPeiI9WHMAvc4BLf8jNzkZogdNt42iNmkobKzyRksFFozLPIgAr1xiixqb1YJEvBxxfHaot3/zBW9B5Ob/mN5gj3cv10zak6M1WMkpcNsAvwBBRGJQLmRNtScT3I0zLPsGQe4fPL0Fx8YE/3Skc1IJRtWrTDV7wMQ4dCBypRZu2Av+r1yZ9khVBcvsXrdZusexcsoSG2pJmknIqtcXYtxCYshLjYbsb3rP5Qm878IBWvFyECZpumnUPg185XgN6pwud3LGCSM0BvjNejGftg1gV2JqTZ+SIxklHn5pFrOxD5A==
-Received: from DU6P191CA0070.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:53e::18)
- by DB5PR10MB7823.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4a4::20) with
+ bh=KYg2Sho4TeRs85pMUl/NAPub9THw+uEAe6tDijaQZ10=;
+ b=Gj2HM1FrBClJKDtUfZU2OhcD/12NuUtQI1dD1y96KOHnZK2v/MNzZw30UbwM3cqWqMJYfg13IOao6mvqp73al+H1pYtCV8P6TwpFxU8eznoPh10wZ3ZtuGCYDL3NtQtK72yl41ODm8+Qby2TFCismxdbFafPwhSelaUA8Qkzifs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TY3PR01MB11948.jpnprd01.prod.outlook.com (2603:1096:400:409::5)
+ by OSRPR01MB11662.jpnprd01.prod.outlook.com (2603:1096:604:22e::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.9; Fri, 7 Nov
- 2025 17:18:00 +0000
-Received: from DU6PEPF0000A7DE.eurprd02.prod.outlook.com
- (2603:10a6:10:53e:cafe::28) by DU6P191CA0070.outlook.office365.com
- (2603:10a6:10:53e::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.12 via Frontend Transport; Fri,
- 7 Nov 2025 17:17:56 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.60)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.60; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.60) by
- DU6PEPF0000A7DE.mail.protection.outlook.com (10.167.8.38) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 17:18:00 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
- (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 7 Nov
- 2025 18:18:07 +0100
-Received: from [10.48.87.127] (10.48.87.127) by STKDAG1NODE2.st.com
- (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Fri, 7 Nov
- 2025 18:17:58 +0100
-Message-ID: <734f830c-947c-495b-ac9f-98d439e821f2@foss.st.com>
-Date: Fri, 7 Nov 2025 18:17:57 +0100
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.10; Fri, 7 Nov
+ 2025 17:19:20 +0000
+Received: from TY3PR01MB11948.jpnprd01.prod.outlook.com
+ ([fe80::1de5:890d:9c69:172]) by TY3PR01MB11948.jpnprd01.prod.outlook.com
+ ([fe80::1de5:890d:9c69:172%4]) with mapi id 15.20.9320.008; Fri, 7 Nov 2025
+ 17:19:14 +0000
+Date: Fri, 7 Nov 2025 18:18:49 +0100
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	tomm.merciai@gmail.com, linux-kernel@vger.kernel.org,
+	Vinod Koul <vkoul@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v2 04/21] dt-bindings: reset: renesas,rzv2h-usb2phy: Add
+ '#mux-state-cells' property
+Message-ID: <aQ4p-XS_8ImhRRKN@tom-desktop>
+References: <cover.1762354366.git.tommaso.merciai.xr@bp.renesas.com>
+ <961741af7d4ec945945164759fe0d78bb3cf4d9d.1762354366.git.tommaso.merciai.xr@bp.renesas.com>
+ <176236298431.1342996.14167666722083112438.robh@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <176236298431.1342996.14167666722083112438.robh@kernel.org>
+X-ClientProxiedBy: FR4P281CA0398.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cf::16) To OS7PR01MB11955.jpnprd01.prod.outlook.com
+ (2603:1096:604:23e::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
-To: Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Shawn
- Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Jonathan
- Corbet <corbet@lwn.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Bartosz
- Golaszewski" <brgl@bgdev.pl>
-CC: Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam
-	<festevam@gmail.com>,
-        "linux-remoteproc@vger.kernel.org"
-	<linux-remoteproc@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "imx@lists.linux.dev" <imx@lists.linux.dev>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Randy Dunlap
-	<rdunlap@infradead.org>, Andrew Lunn <andrew@lunn.ch>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-References: <20251104203315.85706-1-shenwei.wang@nxp.com>
- <PAXPR04MB8459C54EAF106184E7A378D888C5A@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <05a0c630-3bd5-4307-8b94-1889ba191c33@foss.st.com>
- <PAXPR04MB91858EA1057672295ECF793889C5A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <aff734de-0d61-4239-9e67-78a4ab258c30@foss.st.com>
- <PAXPR04MB918581030A9FC05E13874BDB89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <PAXPR04MB918581030A9FC05E13874BDB89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF0000A7DE:EE_|DB5PR10MB7823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 08bd935b-86ec-4221-3129-08de1e219a4b
+X-MS-TrafficTypeDiagnostic: TY3PR01MB11948:EE_|OSRPR01MB11662:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8ddc129e-59a9-46e9-f196-08de1e21c5df
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013|13003099007|921020|7053199007;
+	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UDFLZDB5Vi9tcG1ZeDJDaHBEQ2pkb3dxR01JbG05YkdaWTM3ZWZLdk5MYWNE?=
- =?utf-8?B?TjFxVEY1R1dXaUFiSURRR0k0dExOemF4R1dzdTBrU3l1eVFoKzRyVG1MUm5H?=
- =?utf-8?B?K0Z6a251NXVYU01jQTFBa0lkTlp3QURJeHRTUlk1Mk5MQ2c1bWdRRHRhZkZ0?=
- =?utf-8?B?c1RZK09TanVhbGU5Y0p1a01ueDkxTldDVXdwMzN6MXVpNWZueUdWcGZPY25z?=
- =?utf-8?B?aGpTcGRDa3gyUWJlaTg4ejFNTmd1dUt5aWJMVlFWRTZjY3hGakY5OTdpMVYz?=
- =?utf-8?B?RGJWaHZKbGY1cmxyZ0dWcm5jNFc2MlY3MWdjS0xhdDhGYkxZM1lTaEZ4VHFa?=
- =?utf-8?B?WU5zWkhrcWFleHZEYTZxd05QQm1EVmNySlR2ZkVpZVJqZGtReW8zcEJhMzhu?=
- =?utf-8?B?elVUMVRnN013bnd5N1JlMUNvZmJjelgwR1NIa2FqRkROdVBlelNwRHRwTU53?=
- =?utf-8?B?NEh5RVNnQ2Z4OE1VMWE5bU1BOUcyaXA0cWxKQW5MaTU3YkRla3RwbmdiTHFs?=
- =?utf-8?B?T1ZzOFZaeENyNVpLRkViMTR6NUhKRzhZTkdYbE92VTNKbEtvREFXeExKcG9k?=
- =?utf-8?B?WDZZVm9SbWI2TU5QWWlDT3o5RXZMVzM1N1lRMW04akQ4RTQ4cFFYaDVFUlRw?=
- =?utf-8?B?T3pQSGd3STZLZjhsZWMrZnVYcmFaNFNVNm9zYmlRdFViNWhZcE5RVlFZNS9w?=
- =?utf-8?B?TjdOQURoRzRVUkJUTjBMZVJoTXIwSGk5RENrVldlekRpYTFUMS9wejdHMVFT?=
- =?utf-8?B?bjIycjArbzNOcE50enlnYm8wRWVWNFl0SERTejlveFBDTVBqcmVWU3Blem1W?=
- =?utf-8?B?dlJWRHp4TGtIMC9PbVZ6RW9KeGg0M2FMSzcxMC9tV0lWK3NKOU9ZN1Z0WHhM?=
- =?utf-8?B?R0habHpPcGNIY2hVZm55clJzNXVOcDYrWHdSRVN1TjV4c2lSdVZPbmtIejRj?=
- =?utf-8?B?TjBXSndJVHhRdWxGejQxZGtZZGp3QXVwcjZTSXRqWFVnUnVBS3M5UHNHTlJs?=
- =?utf-8?B?R2ltbm54bnZkamNHUnhkUktxTGlLV2M4K1BRaVhGRW82bVRDSzRDd2lGK24w?=
- =?utf-8?B?YnJIR0VwNEVydVUyRXdUMnlkbzhDcVhXc2xYRlUrRGVNZUVkbTZKYnNsQUxu?=
- =?utf-8?B?ZzVvZ2o3UVBzUGZJMUZUSTlsVDVQQ0FQOVpIR1RkMjBFRGszcElpYkxpYzFw?=
- =?utf-8?B?WTd3YTZlbDNEZVRLRTFtcUtvWUlnRENKb0NiWGVKV1A5UFhMd1hHZHpiL3R4?=
- =?utf-8?B?RkIwOXlOVnprZjlSbUgxOW01RDA5djUrSEJVTlYzOFBFU1pyT2pxT3BvKzFT?=
- =?utf-8?B?Q1lJTlpFVHo1QlFhYllpYkpzU3VYY215M1hCSWRPM0I3NEw4V3lPWC9EZEVG?=
- =?utf-8?B?aFJZdlMreUh2SzBtY3VPQ3MrY2RkVjIybnZXZGR1Vk1GeXprNWpuZ0tPdDZr?=
- =?utf-8?B?SmZsMnArOUt4Q1pNR210anFaeTJ6OVloWnIycW5HSmNHNWRINW1ob2lPRGJQ?=
- =?utf-8?B?OWtoT3pPR0s3QUN4NVN1RVRRVXBkaGdiUzBUc0RQb3FHUmZiOHhqWWlWU1FD?=
- =?utf-8?B?c2RQbVlET3ZBSDJ1cWZzOFE1MlF1eUFyYlZaWmk1SWlCQ2ZjZjUrUmpDUXU2?=
- =?utf-8?B?dFFQNHVRYnFTcVZXOHRFdFhYaTZ2a0NjamYrRnFPb2EyZC9FNWRBRTRiYlcv?=
- =?utf-8?B?UFduTFcreVRYNFJKWEhpanVsOGRKdFdXZmhPbWF4MVlSd2VuQ3BGUmpKeWVY?=
- =?utf-8?B?R2IwR3BLcHN6QjNaZzA1NWlBLy8wNWw1RHJYVkFhTG1UNlJiem9HVkpJdjVm?=
- =?utf-8?B?ZVdGeVM3WDVDWnFlNGtZcnkvdGFYS1dZSWJsODZNa2pVdnRQV25YdEkrelZ0?=
- =?utf-8?B?VUQ2SDZLTDR6Y2laREowVk8zVDJiZFpWa1ZOd3BCem5ESW1ibUNzNSt2ZTBM?=
- =?utf-8?B?cXR3aHc1dGJIWTRWNGJab0ttWC9kSm1LOXpSbFh2d2Ziek5kZGc5RTN6WUFq?=
- =?utf-8?B?dFQ1MFJHVW1meDNGMnFIRElPM2ZMOXdNQmJFU2xWWWU5SEVrOE1OVSt1ZUpw?=
- =?utf-8?B?NHBRQ3pBdHpUM0pTZkJERU5MN09QTEdHdFRNT1hldjdDbkRrUTdxellFYXdT?=
- =?utf-8?Q?PU8SvH50vvGec0RF056Z4JO76?=
+	=?us-ascii?Q?wit8OHFYwBptDlOO+/ljn1mXpRlVmlgrKrU9f1G3P6OgXIhguHuF+y7Yricb?=
+ =?us-ascii?Q?cjZq3CWnRVAI/gj0cqndnyuL9j9Ahw3CVSrdpVm8LkNFwPQWcOYsvybbsaEA?=
+ =?us-ascii?Q?SM+ChhRp6g7fuuvVfreb9jXtBv4TlOrL5fH38wJN63vXGEjJDyyPWT/zn0Rr?=
+ =?us-ascii?Q?NOePoi6gt/VLgx6mZB540D+CrN5p+vQUKnU6Cr+yBAqcZsaJUyjO9/GDM7Zz?=
+ =?us-ascii?Q?jDYJk2RFh0vt9yGRq/jtnQ+W2tRDGTXBu89WjOBpyRxqjDzaNOI4aHfRa1iX?=
+ =?us-ascii?Q?XDjcUei2pLyq8BSLQ9iLi/8y9SeSLfCBPOIeM739HevJWQDxfHe+gqjcUWQy?=
+ =?us-ascii?Q?yRCXZLxPCYrZZVVY1twhP9jY++pabwu+tZ6lHPLEDlZtsub8tiUBW/wtWuzM?=
+ =?us-ascii?Q?mIk+MIfyOG+PCKZV1VxEeBn0ZnNkqo9zm19boytFgvxHkcidrQfPEeUx6g4o?=
+ =?us-ascii?Q?UTe9hMueb+TBDNW5U/aUMyFHo/4uAwfTo6pO+kPDEq5ykspHA6EGpv9hFdvt?=
+ =?us-ascii?Q?JT0mYL+GKQcnE0/DyrXFXc3+Zn+FlsxZcP1J8RLqjbbstXQDcQX5z4BT+nUD?=
+ =?us-ascii?Q?g8ZIjaSQwgOzTtLYoJIS2D8ptjmMZTlv9OdS4zOqAQw5MPBVRGdVeRQHl7XG?=
+ =?us-ascii?Q?gjRmYvu0MqeKU20ub0awCKyTQPsUue4jbcDzMOM51tdAW2N7Ey5QCDqHqIHt?=
+ =?us-ascii?Q?QFKL7H1La2kND9gTqG+sdt96o33wJ9EV0+AhE10JxlddrgZMxok117pN5Vsj?=
+ =?us-ascii?Q?enhynqzOe16+b8Arj7+aHxA92FIFsGhByjk9Q2Z3E/aLGpsQYo+L1ZVZlCIA?=
+ =?us-ascii?Q?Bo4A8+7Zb1MSFeXk7JaTsIK2p6MQSApiLaOXAEC0yugFR7BrgE3SqaphsC9N?=
+ =?us-ascii?Q?KYw/YjhIa/7mLFtTXiP6gUY2TLGvU6+3J/MG/mvrB8emIpyzPUd1ZSBXnE/P?=
+ =?us-ascii?Q?7htYceMV2bqRGmxaF5dzeqshYorzNEhuJKQKfaWb7u7+m1KUT3sFoEjpfRJf?=
+ =?us-ascii?Q?Wz9c97XheyucG5soE7Ijet4AoL1d4+gIybM2uZbsXqaKwQXqM7gYHed7gD3U?=
+ =?us-ascii?Q?TV80dADsXOeuK2MaAclFzMNietm1As8UR2MSImO6esBsqaGbI9Emr2GK+IDS?=
+ =?us-ascii?Q?6GZ7QmrvjYw6TOyQM1zB9eo4P1a9AS6xVYv8DEYWW8Lk4C9QVNnMV6A6e4p3?=
+ =?us-ascii?Q?khol3et08N+2fnpze4m8lpU54tQD1qFps+m+BiHwacNdzMxqyho/Qca7hHaD?=
+ =?us-ascii?Q?+zTexK8KNKbasfQCCE0/UsxeGv2uRdIuIAXS50OX5EGJyLWFz8UxMIML4IhK?=
+ =?us-ascii?Q?DMESy7N/mKzQBzBDlQaxjlhz+DtLo6mY8sn51zG2AQdWjg00Mj0+12scszxJ?=
+ =?us-ascii?Q?nbttgLiZ+YOSF0/oe6f9h8v/ObC0uw/2MyrZ7kcNRYXBleoba0gnlJ8WsPvY?=
+ =?us-ascii?Q?1mVvV5O6BYQ3icm447i+RB2xRFW30yLADeqlXoALy4Y1VfySlTR9/w99ImYj?=
+ =?us-ascii?Q?Ltnse8kDwm5JXjHYXU8lm1LR0jIHRRwkEWQF?=
 X-Forefront-Antispam-Report:
-	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013)(13003099007)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 17:18:00.3496
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11948.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zjWLMgFPPFHj8FRG+tH7me7LAlve3XRijzt+Vx8WWidKjsRXvh7T8WX2g/Ko?=
+ =?us-ascii?Q?nk1ZlPJPw53faPcId44z6PE1I1rNqaw+qXY3+pkphavXy1zwzouIPRJZZrDE?=
+ =?us-ascii?Q?EZcYoLWVayIamsY9Ka+CJ7MTd6hnGuusKLqakyylk1HZlIlvUCzeER9bi4Fd?=
+ =?us-ascii?Q?0wl5lKVHTvtp5DVGHjF3tnOLJRBK1wm+j8GsCuDiBs6qdYmw+MbUxRS5IDFg?=
+ =?us-ascii?Q?D1eOK6r+osyhX6nS2nvq0819hcOve4X/m/bxlQ/lik39NqgBb7Ly/AEZB0hF?=
+ =?us-ascii?Q?DA+wo1uon0HTiKf9bXT0wJs29Axeq0d3JkLEP5YMZGGvgfSr8CHqo6KwFjzI?=
+ =?us-ascii?Q?59Pic29gI9QS4NJGkOBSD7T+Er35DsbIuN/cioH6ZlWOqyxvshmtzofI5qMe?=
+ =?us-ascii?Q?C9irzTR5aLN78mIaRPpYmOyF+CRA8ldFHzzfiSENer2IxVC7lYI8BS9rJRFG?=
+ =?us-ascii?Q?FZJB+sDF1cZJ4HIptY4EdVt0oIiGYrfC9YXGzRcuXhUOKM+DSw5/zGqM91Ba?=
+ =?us-ascii?Q?JC3LjaBfwzMPo8sPoZLGv7ldN4dHVgGOLi4QW1YZnngUzQPfPrifeL5q9VFS?=
+ =?us-ascii?Q?cxggC+rmsElbdiZfrv3C9eGmKx6KxBlQjtKaoBTYLBnkW0+DfSJTXDp7VBxc?=
+ =?us-ascii?Q?0G2QvCIEDQBxWxbgY/V8CMhFW5K7v8xCzqvlwPS+3D+W13b8lzm9oXakOq9p?=
+ =?us-ascii?Q?2vJm1dtRUWNf8IazAOFQAMItVqsfTH3ZSQH18XkNRysCUYe84GCBW4h8sbOW?=
+ =?us-ascii?Q?orC693I+OWKF6mWlkaTv4twdkYrZXLsuMmzGYIAomxYkcrFi4ZT+BQn/rypO?=
+ =?us-ascii?Q?kuuWnEFYNEr69hRa5fZbPsVclPR39FhhWYaUqjaXfCDC94Ih5kvzNbfqS6e6?=
+ =?us-ascii?Q?ysOS/eP6qzLmdoo/RfQLRZ09h/iCpbpShTCcwcC5kvltqn0FC/om+kGPAUPh?=
+ =?us-ascii?Q?ESFII7TaxRNuAyGEM+sJHnofjY8SOAGjs2DH3PPEnbkc398IMO5v9ekcawOh?=
+ =?us-ascii?Q?cCkKYy9NcMFu74109POhqaLfPlAUmzPCgEe2uOjB+lf8qfQZa9sxeBjnzW/i?=
+ =?us-ascii?Q?IEgVQhmIe55PTFT8oaVBKH2ybloXOtPGpzYZ8fI4LLGOELndY2hmlWMdxCQF?=
+ =?us-ascii?Q?pLm7dV0Q47xkizGzVbUiOq6Tj8KZQ3atf/tatWtjxCR4BL8Jy1C9l5GFTN9r?=
+ =?us-ascii?Q?nfHrzOhQMAanvVlY556yDmff3SHhI7K15rts9P1EnhqwUWkxbyzttC6cur3K?=
+ =?us-ascii?Q?XsM/MmgJ6BDb/PRuDEEcbXX/LUGH2QkeP+dJGdFmKbWCI3zpyfDT8hr+46TC?=
+ =?us-ascii?Q?uLN9ODX54p6uhM/LWJChLEQsYOjw3O010Uq/rY2RKOiOFxdIKkThGlk2rTXE?=
+ =?us-ascii?Q?cf3wunByTddk+tc1/EW7JckrKfdPmL77z1LAgUfzz9OKe+5zpxlLmC/B4oEo?=
+ =?us-ascii?Q?s4azHVuLkP4DuN2NrNZuEMjv83Damdnf1Yx53s2d6+E4c090MLjhQLuX2fuc?=
+ =?us-ascii?Q?xucX/aTX3hrAOk+HlObHCNKY7BI1d153RKRWDFdw09EgJgzQtJtegR5KSpjg?=
+ =?us-ascii?Q?CHz71plqzq1ePpLSQxFe6bfsfZ847tkN/OTsAZrre6RSHi+2y3sSXsoHGT9s?=
+ =?us-ascii?Q?gT6HoJp0tjB3bpHw/P3Wj7Q=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ddc129e-59a9-46e9-f196-08de1e21c5df
+X-MS-Exchange-CrossTenant-AuthSource: OS7PR01MB11955.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 17:19:14.2727
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08bd935b-86ec-4221-3129-08de1e219a4b
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF0000A7DE.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR10MB7823
-X-Proofpoint-ORIG-GUID: RXcPG9rDqH30y6nXnblajuK1qsFiKTAL
-X-Proofpoint-GUID: RXcPG9rDqH30y6nXnblajuK1qsFiKTAL
-X-Authority-Analysis: v=2.4 cv=QuRTHFyd c=1 sm=1 tr=0 ts=690e29cb cx=c_pps
- a=u/VjwGDIQwVVfJn6M+ag/w==:117 a=uCuRqK4WZKO1kjFMGfU4lQ==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=FOPVHIcnkjUA:10 a=IkcTkHD0fZMA:10
- a=6UeiqGixMTsA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=JfrnYn6hAAAA:8 a=8b9GpE9nAAAA:8 a=8AirrxEcAAAA:8
- a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=07d9gI8wAAAA:8 a=pGLkceISAAAA:8
- a=CVH9J4VzQPHUzZAsogMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=a37Z7SghD2UA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=T3LWEMljR5ZiDmsYVIUa:22
- a=ST-jHhOKWsTCqRlWije3:22 a=cvBusfyB2V15izCimMoJ:22 a=e2CUPOnPG4QKp8I52DXD:22
- a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDE0MyBTYWx0ZWRfX8aRb0+4GAgvl
- 0oIdoBuEN98KCYL3lxeMhHUlEzwFkeIWkPranaKQ91iRuKZiDy1cfc07dST5St1sDt2/QY1Tk1R
- I0NHr2Ejmr642RxWROLBRtMLrw8YYf78nkVD90QWrTW8xpIhNbyTRI+jfRDebolns8UJ7xoiVOS
- QbJoPLuSfUwnVO4fXR/33+cmU+8NVdH2g1Dn0oUFIz7ZNbBE/0KJFUnL08ctKyAkrhcDmGY5ZIO
- kMfgSmoexJ7dwJ4wtqg2v9qDOmPXer6OkjXw2IWHjVfSOCIGRLf1VuBEKmU20cHHLpn7ggZXv0O
- YbNb9eYp3LJofw2rINKpONtf5mOCzCLMoqP1mkZMtqpLkcX+Km5z3SaZiyRo8n7KVTmN8M+116s
- isyjIfuXqUsNcLfiKzLkMC9G8EvGDQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_04,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015
- spamscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- impostorscore=0 bulkscore=0 suspectscore=0 phishscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070143
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KVOT0PgunIu4+43UmBcsXIRHBDvcT29H019cy4OvaOIksRBDSHQvJyxaIBaBIoqTC8z/Zleut9mlThahdyK0ypWB6uclp43WLLLF8t+tQNrWwq+Gw4D4z0+i9+WxrRSc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSRPR01MB11662
 
-hi Shenwei
+Hi Rob,
 
-On 11/6/25 17:26, Shenwei Wang wrote:
-> Hi Arnaud,
+On Wed, Nov 05, 2025 at 11:16:24AM -0600, Rob Herring (Arm) wrote:
 > 
->> -----Original Message-----
->> From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
->> Sent: Thursday, November 6, 2025 4:17 AM
->> To: Shenwei Wang <shenwei.wang@nxp.com>; Peng Fan <peng.fan@nxp.com>;
->> Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier
->> <mathieu.poirier@linaro.org>; Rob Herring <robh@kernel.org>; Krzysztof
->> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn
->> Guo <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
->> Jonathan Corbet <corbet@lwn.net>; Linus Walleij <linus.walleij@linaro.org>;
->> Bartosz Golaszewski <brgl@bgdev.pl>
->> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
->> <festevam@gmail.com>; linux-remoteproc@vger.kernel.org;
->> devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-
->> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
->> doc@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; Randy Dunlap
->> <rdunlap@infradead.org>; Andrew Lunn <andrew@lunn.ch>; linux-
->> gpio@vger.kernel.org
->> Subject: [EXT] Re: [PATCH v5 0/5] Enable Remote GPIO over RPMSG on i.MX
->> Platform
->>
->> Hi Shenwei,
->>
->> On 11/5/25 15:12, Shenwei Wang wrote:
->>> Hi Arnaud,
->>>
->>>> -----Original Message-----
->>>>
->>>> On 11/5/25 02:12, Peng Fan wrote:
->>>>> Hi Shenwei
->>>>>
->>>>>> Subject: [PATCH v5 0/5] Enable Remote GPIO over RPMSG on i.MX
->>>>>> Platform
->>>>>>
->>>>>> Support the remote devices on the remote processor via the RPMSG
->>>>>> bus on i.MX platform.
->>>>>>
->>>>>
->>>>> I have not look into the details of new version, but before that,
->>>>> just want to check, have we agreed on what Arnaud suggested?
->>>>> or continue to proceed to be this as i.MX specific?
->>>>
->>>> Thanks, Peng, for pointing this out. Regarding the V3 discussions, it
->>>> seems that I am not the only one suggesting a generic driver.
->>>>
->>>
->>> As I mentioned before, the only i.MX-specific part is the transport protocol over
->> the RPMSG bus.
->>> In this v5 patches, we’ve included detailed documentation for the
->>> protocol in a separate file. Any platform that follows the same protocol should
->> work right out of the box.
->>>
->>> If you spot anything that could be improved, please let me know!
->>
->> My concerns remain the same as those shared previously:
->>
->> 1) The simpler one: gpio-imx-rpmsg.c should be renamed to gpio-rpmsg.c.
->>
+> On Wed, 05 Nov 2025 16:39:00 +0100, Tommaso Merciai wrote:
+> > Add the '#mux-state-cells' property to the Renesas RZ/V2H(P) USB2PHY
+> > reset binding to support describing the USB VBUS_SEL multiplexer as a
+> > mux-controller.
+> > 
+> > This is required to properly configure the USB PHY power selection on
+> > RZ/V2H(P), RZ/G3E SoCs.
+> > 
+> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> > ---
+> > v1->v2:
+> >  - New patch
+> > 
+> >  .../bindings/reset/renesas,rzv2h-usb2phy-reset.yaml          | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
 > 
-> Agree. Will fix it in the next version.
+> My bot found errors running 'make dt_binding_check' on your patch:
 > 
->> 2) The more complex one: the driver should be independent of the remoteproc
->> driver. The rpmsg protocol relies on virtio and can be used in contexts other than
->> remoteproc. In other words, the struct rpmsg_driver and its associated
->> operations should be defined within the rpmsg-gpio driver, not in the remoteproc
->> driver.
->>
+> yamllint warnings/errors:
 > 
-> The GPIO driver operates independently of the remoteproc driver. 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.example.dtb: reset-controller@15830000 (renesas,r9a09g057-usb2phy-reset): $nodename:0: 'reset-controller@15830000' does not match '^mux-controller(@.*|-([0-9]|[1-9][0-9]+))?$'
+> 	from schema $id: http://devicetree.org/schemas/mux/mux-controller.yaml
 
-The channel_device_map table in imx_rproc.c would give me the opposite 
-feeling
+In v3 I will model mux controller as internal for the reset-controller:
 
-It functions based
-> on the defined GPIO-RPMSG transport protocol. Any remoteproc that supports
-> this protocol can exchange data with the GPIO driver via the underlying rpmsg bus.
-> Placing the rpmsg_driver (which manages the rpmsg channel) within the remoteproc
-> driver is more logical, as rpmsg channels run on the rpmsg bus. This bus is defined inside
-> the remoteproc device tree node and is populated by the corresponding remoteproc driver.
+	reset-controller@15830000 {
+		compatible = "renesas,r9a09g057-usb2phy-reset";
+	        reg = <0x15830000 0x10000>;
+		clocks = <&cpg CPG_MOD 0xb6>;
+	        resets = <&cpg 0xaf>;
+		power-domains = <&cpg>;
+	        #reset-cells = <0>;
 
-
-Regarding imx_of_rpmsg_node_init(), It seems you rely on device tree in 
-the rproc platform to register rpmsg drivers. This implies you are 
-creating drivers based on a device description. To me, this does not 
-appear to be a valid implementation, but perhaps such an approach 
-already exists in the Linux kernel?
+		mux-controller {
+	          #mux-state-cells = <1>;
+		};
+	};
 
 
-For your information, I'm facing a similar issue with my remoteproc_tee 
-series [1]. The advice I received was to look at the PCIe DT 
-implementation (I haven't had time to explore it yet). This advice also 
-seems relevant to your series.
-
-Do you also have a look to rpmsg_virtio_bus ? it seems a good candidate 
-to match the device tree properties with the rpmsg device?
-
-In the end, this is my point of view. Perhaps it is better to wait for 
-others before deciding on the direction...
-
-Thanks,
-Arnaud
-
-[1]https://lists.infradead.org/pipermail/linux-arm-kernel/2025-October/1069154.html
+Thanks & Regards,
+Tommaso
 
 > 
-> Thanks,
-> Shenwei
+> doc reference errors (make refcheckdocs):
 > 
->>
->> Thanks,
->> Arnaud
->>
->>>
->>> Thanks,
->>> Shenwei
->>>
->>>> Thanks,
->>>> Arnaud
->>>>
->>>>>
->>>>> Thanks
->>>>> Peng.
->>>
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/961741af7d4ec945945164759fe0d78bb3cf4d9d.1762354366.git.tommaso.merciai.xr@bp.renesas.com
 > 
-
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
 
