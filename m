@@ -1,212 +1,208 @@
-Return-Path: <linux-kernel+bounces-890886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00A2C414A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:31:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E57C414AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:32:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C53C74EE07B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:31:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969EE189C52F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DADA3358A7;
-	Fri,  7 Nov 2025 18:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEF3331A51;
+	Fri,  7 Nov 2025 18:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QjehJNty"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AWiu0LaS"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013060.outbound.protection.outlook.com [40.93.196.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D065E212549;
-	Fri,  7 Nov 2025 18:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762540298; cv=none; b=f8JB+W0sS7oWJg8oJ7dwU863JpxUr8RCM3B46hs+cWFLGX4aDpG9SsqH5q/U45QvL08VrT8bVfDDyMr0YmMPeQyyzVk94py1y7pW02x9RkPGkk/utDwKPCrLNaPO5KoCTw9YCI5tlcOXoQNJurhTbizqBlJj+zL92BkE1l20aIg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762540298; c=relaxed/simple;
-	bh=Ivwc2M/ZDTDNDN4wnIiRBUD82UImX2K8AEI+zfxIyOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mBULh4tYApqcRbrfG8N30Udj+uyvIDnjyN5UIvktRjm0JLZxXLWHsPXWVZGmGGOniAc1T+Pvq/paGmXommbQeOL2fi1BaIkhzetne9wqqm9BH3TLiFaCbBtXvQ12PyEzbOW3nJlmiGGxOFZe+Tb/6LSFeZokc9KrTusHAmjZnp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QjehJNty; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762540297; x=1794076297;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Ivwc2M/ZDTDNDN4wnIiRBUD82UImX2K8AEI+zfxIyOU=;
-  b=QjehJNty07AyRTT8mFTZFkJ+gyf9Et8Lr4NdNSVcVtU0+GFYzjvt1SrT
-   4XDxdgfdAbqpPC4sw6S24sGRs2PtwTrcsju1q4RYQr8ijMCB6/tk+UqlZ
-   cGwMhk/4NyqPwn2nIXNIFco1oVMCCnYH8jE5kQo+bYgbNYdn3okm/LNZ5
-   gMIJWHVtsaLEOC5PyvpiwsuWlet6Q4EJGvoI7bDIW0JBVGs5Zw5b+xXxT
-   bdEeVrasIvMqph+Y8Pg6IufYK8grbgM5ZRf7Z6FgNmWAATNBE93XXvbrm
-   uGlaXLWbevLmd5r0lLD2djNW+6b5y53CLm8aUn/DcvWm2EP076yTAxSYP
-   g==;
-X-CSE-ConnectionGUID: pf7D3dhER1C1k2StT3nfCw==
-X-CSE-MsgGUID: nY4RxRUqRXCyd/GGoYa6Rw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="64731682"
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
-   d="scan'208";a="64731682"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 10:31:36 -0800
-X-CSE-ConnectionGUID: RgnJVNmPQuS+l15b/XeJnA==
-X-CSE-MsgGUID: T3lEpinBQaalfC++rcdn3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
-   d="scan'208";a="187355309"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.112]) ([10.125.111.112])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 10:31:35 -0800
-Message-ID: <d84eafa5-0038-436e-aa53-9675d4e630b6@intel.com>
-Date: Fri, 7 Nov 2025 11:31:34 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B88274B58
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762540336; cv=fail; b=YtdEu6xm+g80hpjoA8Jh7EiVbe19Q/FAC+G5LTVfc9i4KMysVW8QcYVnSkBsN0r32FIEhY0QZSJlghNaQdLzl6iQIJi8VyDA8ErrM1KT+fk+6GKjX2NxjSRNQn3NY6mT0sBjOwPkHeuHXN17GVNZhqU2IAPRDIZsrjw5kk0Tr6A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762540336; c=relaxed/simple;
+	bh=f1DVmQj6fFCoGFtqDRKNtSh98aJT7gwGI/0DhRNG7Lc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=AGpgPP8+xNZ1Mx9siUkT4B5SOeF2ONmxWhyfEuqmnTyeNAZDicoGJ6w1iHLNMVUjO9O+wWl0OwDd3+60rWQvi0k4ontJmFAAgzgLrMiDPbIsULUyG8dlHFGkfoJ0K0GzKmgtH1SFXiQ4P2z1sfHlyCV6+aRrfCBA/n/OqDZhV3g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AWiu0LaS; arc=fail smtp.client-ip=40.93.196.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pveJkpwbp/qr3LeR+YEgrI9ccM1jOeiNOZxnPl4Kcg9hWPSddrhScPB3y61igO7+uPPMPvc3/aldmKUOj30lumstMzmpA+swqHL/4FwOSKBOijB0uzkJp3/cXXEt0/q3u4tU80y5ty3WEYFLwtJw9RZbzyhH1qUm3W15COmUU+5OwWv8oUAC9aTJ/+lZhyNKQ4OVWApekjYSbzQuAmYoIX9aAl4YaatElIhLdQ/LX0YTPJGtdtNTsX/F7Jlu0nSO2jMiaFpwF3caKCzadOU0A5COOA96Wkj+bPWdjW8sMaE8JqkqkaQoihyIWmUR0AjrgScvy9Z5zW4tOPvnls6fFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GOJvyRHng1SpKmMK9rR5qX3xPmvQsgLf77BPgMeM6II=;
+ b=tVzDNoTfD2p2wSuCSskX+FH69Bk3Cxmxi5arOXpFuh3xG6C0DBGpvRsJ1EUR5rwAt3d36apjfn2p7W8QymKcgVlo3Hioa8U6OOZ+jrTQGoBvLYDDWjvD8Mlx0y3wqMOIae0F+KhjEgATaql/gXeB5G49qHmd3GzCQoqATFrghCt05xmuxfcZjElwr/krOdmRf67/e3oz+UpXcIbeO4WC8nPAQ76IlWtvM87Cn6Lf/EQZYaDgiuVymM1+r5g1m66J8xwyEmCGux3EQnBFYlbWUSimyh+trGe0SYeHc5021e33N0P5vCm6EGDBlSxHLbu1o2m6SiqGPQmA+qCyJHhhuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GOJvyRHng1SpKmMK9rR5qX3xPmvQsgLf77BPgMeM6II=;
+ b=AWiu0LaSJfkxaGl02sJJsvROdZt9ySfZJ/uU0TdQ6T/zG5hrEMV1h2xOVjbb+z8XW9EtVIRvWGPyP4iNDKJ4JVKkVOqh9RHqI45nZWaQD28EQPRef06at5ZZKqVXqeoHqsXSqvL3G+idszt5pcRiLK9yF3y28KqAiYA5qGrwmEtNMLQByPFvWypuqqUyE9vx+9MyFo6Wueywuaj1Iqgn/btZ12vAJEYgRYiidi5M1+uRr31l4uF+qLGm6jJP0Wl/Agy9aAvDYVJrm85QpOw2x4iS04R4MF43KstB1uvbBnEPiwxcKDy86WSYCf6DhsAoIvNXukTxhuyKKnlY964Zjg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by PH7PR12MB6718.namprd12.prod.outlook.com (2603:10b6:510:1b1::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Fri, 7 Nov
+ 2025 18:32:11 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9298.006; Fri, 7 Nov 2025
+ 18:32:11 +0000
+Date: Fri, 7 Nov 2025 14:32:09 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Wei Wang <wei.w.wang@hotmail.com>,
+	"alex@shazbot.org" <alex@shazbot.org>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	Alexey Kardashevskiy <aik@amd.com>
+Subject: Re: [PATCH v2 2/2] vfio/type1: Set IOMMU_MMIO in dma->prot for
+ MMIO-backed addresses
+Message-ID: <20251107183209.GP1732817@nvidia.com>
+References: <SI2PR01MB439373CA7A023D8EC4C42040DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+ <SI2PR01MB4393DFDCB2788CB823DAEC64DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+ <20251107010349.GD1708009@nvidia.com>
+ <SI2PR01MB43930E5D802B02D3FCD5ED9ADCC3A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+ <20251107141632.GL1732817@nvidia.com>
+ <SI2PR01MB4393E04163E5AC9FD45D56EFDCC3A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+ <20251107155704.GM1732817@nvidia.com>
+ <SI2PR01MB4393E3BBA776A1B9FC6400D4DCC3A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+ <20251107163614.GN1732817@nvidia.com>
+ <087b3567-5c74-4472-827d-e5a47761a994@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <087b3567-5c74-4472-827d-e5a47761a994@amd.com>
+X-ClientProxiedBy: BN0PR04CA0203.namprd04.prod.outlook.com
+ (2603:10b6:408:e9::28) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6 v7] acpi/ghes: Add helper to copy CXL protocol error
- info to work struct
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- linux-cxl@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
- Hanjun Guo <guohanjun@huawei.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org
-References: <20251104182446.863422-1-fabio.m.de.francesco@linux.intel.com>
- <20251104182446.863422-6-fabio.m.de.francesco@linux.intel.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251104182446.863422-6-fabio.m.de.francesco@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|PH7PR12MB6718:EE_
+X-MS-Office365-Filtering-Correlation-Id: 34bca4c6-2c4b-4d5c-c0ea-08de1e2bf695
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UAcg6+SOx5P+1W52O9s5I4aIBpNv7/sB3avJjuOqyYqhc/1lnAdNZasY18se?=
+ =?us-ascii?Q?xFhVdOg2td/EDJXsscaQZPvpki9h1KmBv9fyI8oY4+e4O2vZoStRkpRG+5Yw?=
+ =?us-ascii?Q?K+EvYhvgbGWX2U/N7TE4oUlLYuqj6C2bS+TK4lKRYvowe7pRsS5PkG4ociQQ?=
+ =?us-ascii?Q?tfWOPHrOwActkmrgJCFM0LfNJaiGZOcIRHFd57M9rKzJKhZ5Ajs+druD3hIB?=
+ =?us-ascii?Q?BhkDazE9Lnw+YbR9gO1+iOGjxJ6WT8Fq1pK0GT+Dz1IBcXxUZSGHRMqCfQ7p?=
+ =?us-ascii?Q?SUJWxQjRiLz0nDEObAeydi8B+xYouN10qtSh+u25mmmNhFVhvMjUvvYrBV7q?=
+ =?us-ascii?Q?ziGxOMEq5nmj3FokYRXapbVlKMjvLTxpcz1Z3t8/bQqBIZ9NFkz9YQcPcoSf?=
+ =?us-ascii?Q?+Oyg1J4K/DJjPiHDO+sP0u1RqQTbYD5FFOUolvLyuKhqHdD0cu329eoXAWkP?=
+ =?us-ascii?Q?BkBHpOQQWDNYmnIM943OFmPRPGLyuWiKpgYnLQSu5YG0Jrxsfn8oZ+Kn0iIX?=
+ =?us-ascii?Q?IN5gvMmdNVe8pEsNmF5coYn62d3u5kPhKDzlBFEk+weWZR3HqpdeoqtDs2QQ?=
+ =?us-ascii?Q?ARRYwJZl69DRchBGhZvkGW7OYb9KshBA4mp7EEskYYkHNHpkXbUs03aaVtZs?=
+ =?us-ascii?Q?fwoxic1296dhzzPsX1LorG+zjc3Vi0Rel2GHJq0OiYoJygZN3qiAqzWFTeaN?=
+ =?us-ascii?Q?0XoSD1TVnHgfQ5GMg/WOexPb4gYTcw9Okl8HEpSSloApH+1zhhOVKiAiJBRI?=
+ =?us-ascii?Q?DOxnF5dZEr5wPX3402edMfoqYSH6MQw1SEUoodrROmm14Zp69nKRqDh2UFBI?=
+ =?us-ascii?Q?b4XmkUfDFqzSiv/IVU2luNlZAJ73nGEYCdj4KT0SzlYttAx/faUv8zjz8IQV?=
+ =?us-ascii?Q?1YHPb7NsTUt9UBMldncn9dudA6zNypZsb1KgkV3Cp6+czD1t/Qp8fdlaM6lw?=
+ =?us-ascii?Q?ZT8ezWsoN1czgU+wX7rvHhbcmShQb66ZxnNYFPd9pk/oVGywCOgsA+r4ITDW?=
+ =?us-ascii?Q?fUqQfZR1ASIjamxUECEjdz0mQ0sNFv6gERAVKZOet9x+F16muh9m1pqGsJAe?=
+ =?us-ascii?Q?oczAFNQI7HS8V3SnWOPLCmiQfPQLGtZES6R+KXBWrtroUOMdPn8/q+dSATun?=
+ =?us-ascii?Q?/VHVmy1NQlcwesZi9VgKwng9pUSc8o0zxJ32/VC5bZkPCAhKqDIBOcLx1RHO?=
+ =?us-ascii?Q?Q7kzrCfx6ltub83XcdQENOT3LFkx/pf9TdJ2n40ESAZAHTK101YbaqQNsfhi?=
+ =?us-ascii?Q?/vndAPUeUKotYmiSeMB9/XsXrqoBMuPYixYt+VZKO8Hk7evU5Dib1zu/UiiL?=
+ =?us-ascii?Q?7MjRmnoVU+2ViaQXLIbicPHSB5arV6SqhzN+uASSnmZMGdPKOqxQ5lYfznmx?=
+ =?us-ascii?Q?RpKjAl4NLnEtDDYE7wqLFDUX86enl6wtdLedBYuI2/1lO0KgW3ABifmEQ7ci?=
+ =?us-ascii?Q?ExhJMyGnBZauVrIkmF1xozUi54NMIXmU?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?0qJbeQW3wvuYpAdJjgrVuSMo1lIOUvO/oMAQn+jFqe2MhC1VGKB+PnCNTDgN?=
+ =?us-ascii?Q?NkayNLypG9SLmisaZGrPEyEbDZ0pfOQDFKG3XX40yuAkkgjrn/UtrAXdn8m1?=
+ =?us-ascii?Q?7qHkiE44FtvBZ5/6P90MOyzCVI3pmwuHidmUTgo0pRBQ6hEAONMmtzzBlp21?=
+ =?us-ascii?Q?lB4mYE35kOuTKyiFqk7jgFIeLmoL5SNacn7zF80AcEeofAUnmaOAQosiWwSn?=
+ =?us-ascii?Q?6oGXLX+B0VSGQwDYrr9HTqo0+LmJj9od0337pOJVfx+9pcbMooV6mK0Tzejr?=
+ =?us-ascii?Q?9m3DZECEPvDAMvw9wjSUq13awTpJCvrZJ32juvdE6SkcnLnz0hLHViXgwCVq?=
+ =?us-ascii?Q?L9wV4YiIOXp8M6k+mz4v/8/nMQS1ZW8tbvb20KgRb0+jueBBKq5xoAjXKJcH?=
+ =?us-ascii?Q?kIaJpDBgPcftu/wDiT9uFCqNAxxqI/qPpF94+ihwpWpSbKBtKL1MpqwuoZSd?=
+ =?us-ascii?Q?LYYpwYPkPYnH0Yjbdei4vGTE6WGWKyvsRcWtsIRufS/FuUEmqNTvXOkLuFMd?=
+ =?us-ascii?Q?mpKl5pFwbnuTuBRKGn+BIpn2G9DcNsmbbKeCHns50OUdlFh7JdpPYbAXwoOu?=
+ =?us-ascii?Q?fWcXpMOFznmzBC3DRzjm9MAdd7xoP/r7W90jC9HEkquIqtdGavGb0EP+vwpv?=
+ =?us-ascii?Q?hu66SZ5q+87gfQ9X67YkVHe4Eia6+Uy+oAz8jlM8oOdAaRFsmaeTixiDowTt?=
+ =?us-ascii?Q?bG9sBluHk9pqD8HgqT7bRb3FfrHafo91WgxuP5D97MrI3OlQWsiOu7I5gKLE?=
+ =?us-ascii?Q?N0bvRQki1nQWA9lwpVsLxKAXvBWhbZmt7W1pkEy8KMLo+G/yy5Jq/uZLOIub?=
+ =?us-ascii?Q?Kmxhfb7Z1YFLOGbxDrSO9fKMWnUAaq6XHGDxSAJuaU8s2NuS+mV8OXkxCHUv?=
+ =?us-ascii?Q?Gnw4Ll6TGKPjGdbOL2GXhizNUPk1lvxURbenv7mJoFqqnwDHmYCXN53SzLiq?=
+ =?us-ascii?Q?oOM7y5YIPSIr8sdz9RuRCS+CyQywFv/9Bv6cFDWbG+F7fk799rFqt1EMxiQN?=
+ =?us-ascii?Q?TfEvJMUT1Xc84f1a6HFTc+EUdt0LqxNRLpHXcdENU7lGgqogtyrMuGg1evyL?=
+ =?us-ascii?Q?ZvXp0ATtWuoO+qDWXd7JqU3xO1ZbfFeR00okH/Xi/ae2H4ZzJj38i3b1Vay3?=
+ =?us-ascii?Q?hLFizjsUobWkQeEmfAg3E38JsWDaZRH8toQSE8/gDEgX6U5okjsZxEtipQbk?=
+ =?us-ascii?Q?OoUtz1S0p276RuiOj3UuVgT1S3BJt8PHtV+/WD42YRScDpoBRFk8rtY9li/7?=
+ =?us-ascii?Q?NE5XqFAalp4VF99wMTSm7RQJy3hl9/tFnlsqO9W5PFgkm5iHdLcXju3yFcsr?=
+ =?us-ascii?Q?se9fqgklvrkofLzRst88q+hjqk5wfyW6UtjLWOwX0gCU4cfA+Tt0VD8VSehT?=
+ =?us-ascii?Q?ea4hGbXFwk/wmiUnN+eAM8YNNTV6OzZIUmJ12Ls+8Sn51+44RqyzCOdPbXrN?=
+ =?us-ascii?Q?3SaIXnfsixvA4bAiVML7HtXC73BEDPuQeFvk2lhaKM9+Eoe8p+Ua2OoOM8KE?=
+ =?us-ascii?Q?cckoHBldIBIXuaP0y/9w31wUeemt0VxKEYaUH8uOLpUbPro2PnUe0eYDoXSO?=
+ =?us-ascii?Q?b+XBLHbJK9fEchiOY30=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34bca4c6-2c4b-4d5c-c0ea-08de1e2bf695
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 18:32:11.0925
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kn7iH3O2xdPUINCKNA27IYd9AfKB1keIiICSbH8CJwDcxA23ha+xYrIQONV5Kl22
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6718
 
+On Fri, Nov 07, 2025 at 11:56:51AM -0600, Tom Lendacky wrote:
 
+> When you are on bare-metal, or in the hypervisor, System Memory Encryption
+> (SME) deals with the encryption bit set in the page table entries
+> (including the nested page table entries for guests). 
 
-On 11/4/25 11:22 AM, Fabio M. De Francesco wrote:
-> Make a helper out of cxl_cper_post_prot_err() that checks the CXL agent
-> type and copy the CPER CXL protocol errors information to a work data
-> structure.
-> 
-> Export the new symbol for reuse by ELOG.
-> 
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+So "decrypted" means something about AMD's unique memory encryption
+scheme on bare metal but in a CC guest it is a cross arch 'shared with
+hypervisor' flag?
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
->  drivers/acpi/apei/ghes.c | 42 ++++++++++++++++++++++++++--------------
->  include/cxl/event.h      | 10 ++++++++++
->  2 files changed, 37 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index e69ae864f43d..2f4632d9855a 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -734,20 +734,12 @@ int cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err)
->  }
->  EXPORT_SYMBOL_GPL(cxl_cper_sec_prot_err_valid);
->  
-> -static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
-> -				   int severity)
-> +int cxl_cper_setup_prot_err_work_data(struct cxl_cper_prot_err_work_data *wd,
-> +				      struct cxl_cper_sec_prot_err *prot_err,
-> +				      int severity)
->  {
-> -	struct cxl_cper_prot_err_work_data wd;
->  	u8 *dvsec_start, *cap_start;
->  
-> -	if (cxl_cper_sec_prot_err_valid(prot_err))
-> -		return;
-> -
-> -	guard(spinlock_irqsave)(&cxl_cper_prot_err_work_lock);
-> -
-> -	if (!cxl_cper_prot_err_work)
-> -		return;
-> -
->  	switch (prot_err->agent_type) {
->  	case RCD:
->  	case DEVICE:
-> @@ -756,20 +748,40 @@ static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
->  	case RP:
->  	case DSP:
->  	case USP:
-> -		memcpy(&wd.prot_err, prot_err, sizeof(wd.prot_err));
-> +		memcpy(&wd->prot_err, prot_err, sizeof(wd->prot_err));
->  
->  		dvsec_start = (u8 *)(prot_err + 1);
->  		cap_start = dvsec_start + prot_err->dvsec_len;
->  
-> -		memcpy(&wd.ras_cap, cap_start, sizeof(wd.ras_cap));
-> -		wd.severity = cper_severity_to_aer(severity);
-> +		memcpy(&wd->ras_cap, cap_start, sizeof(wd->ras_cap));
-> +		wd->severity = cper_severity_to_aer(severity);
->  		break;
->  	default:
->  		pr_err_ratelimited("CXL CPER invalid agent type: %d\n",
->  				   prot_err->agent_type);
-> -		return;
-> +		return -EINVAL;
->  	}
->  
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(cxl_cper_setup_prot_err_work_data);
-> +
-> +static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
-> +				   int severity)
-> +{
-> +	struct cxl_cper_prot_err_work_data wd;
-> +
-> +	if (cxl_cper_sec_prot_err_valid(prot_err))
-> +		return;
-> +
-> +	guard(spinlock_irqsave)(&cxl_cper_prot_err_work_lock);
-> +
-> +	if (!cxl_cper_prot_err_work)
-> +		return;
-> +
-> +	if (cxl_cper_setup_prot_err_work_data(&wd, prot_err, severity))
-> +		return;
-> +
->  	if (!kfifo_put(&cxl_cper_prot_err_fifo, wd)) {
->  		pr_err_ratelimited("CXL CPER kfifo overflow\n");
->  		return;
-> diff --git a/include/cxl/event.h b/include/cxl/event.h
-> index 4d7d1036ea9c..94081aec597a 100644
-> --- a/include/cxl/event.h
-> +++ b/include/cxl/event.h
-> @@ -322,12 +322,22 @@ static inline int cxl_cper_prot_err_kfifo_get(struct cxl_cper_prot_err_work_data
->  
->  #ifdef CONFIG_ACPI_APEI_PCIEAER
->  int cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err);
-> +int cxl_cper_setup_prot_err_work_data(struct cxl_cper_prot_err_work_data *wd,
-> +				      struct cxl_cper_sec_prot_err *prot_err,
-> +				      int severity);
->  #else
->  static inline int
->  cxl_cper_sec_prot_err_valid(struct cxl_cper_sec_prot_err *prot_err)
->  {
->  	return -EOPNOTSUPP;
->  }
-> +static inline int
-> +cxl_cper_setup_prot_err_work_data(struct cxl_cper_prot_err_work_data *wd,
-> +				  struct cxl_cper_sec_prot_err *prot_err,
-> +				  int severity)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
->  #endif
->  
->  #endif /* _LINUX_CXL_EVENT_H */
+What about CXL memory? What about ZONE_DEVICE coherent memory? Do
+these get the C bit set too?
 
+:( :( :(
+
+> In the guest (prior to Trusted I/O / TDISP), decrypted (or shared) memory
+> is used because a device cannot DMA to or from guest memory using the
+> guest encryption key. So all DMA must go to "decrypted" memory or be
+> bounce-buffered through "decrypted" memory (SWIOTLB) - basically memory
+> that does not get encrypted/decrypted using the guest encryption key.
+
+Where is the code for this? As I wrote we always do sme_set in the
+iommu driver, even on guests, even for "decrypted" bounce buffered
+memory.
+
+That sounds like a bug by your explanation?
+
+Does this mean vIOMMU has never worked in AMD CC guests?
+
+> It is not until we get to Trusted I/O / TDISP where devices will be able
+> to DMA directly to guest encrypted memory and guests will require secure
+> MMIO addresses which will need the encryption bit set (Alexey can correct
+> me on the TIO statements if they aren't correct, as he is closer to it all).
+
+So in this case we do need to do sme_set on MMIO even though that MMIO
+is not using the dram encryption key?
+
+Jason
 
