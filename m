@@ -1,87 +1,105 @@
-Return-Path: <linux-kernel+bounces-889675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4190FC3E378
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:11:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2478DC3E37E
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA96D188B8B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:11:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6731886AEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8092E8B62;
-	Fri,  7 Nov 2025 02:11:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE7D2F25E0;
+	Fri,  7 Nov 2025 02:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="oTND7xti"
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757C7299A8A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 02:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E4E2ECE97
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 02:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762481464; cv=none; b=pkscpz3LpMpLZNeslwDuLlVB+d7bOrJU+zgIzhy7JK5H1E1+QukzY/JbU062DtgkvCBOCRfI87iacNlPL+gHQhIYieaz+RPNuzoZJajNpdFZKneK42MN9UBWJsMuB+PQtEqWRxsUjzzClccMyOB2jlyH/b4zj01tmAhg5+x2xOc=
+	t=1762481530; cv=none; b=XvwET415Iab1pSNtiYOm0wnv/E/sDZ40X5yE+xi7G0fjDKQps7HN97Io+GI54ZBvR145iIA4x3d8PL22Yw0ESIJMve051BWWnKa+tp38TYdr5XCKr6Q83TZAgoEFlMjwkIjyWZioVZKXx+2dvNiiSuMvg7S8xvZoIvyvrW0dDWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762481464; c=relaxed/simple;
-	bh=0BFMlGiWoh3QyhnS4Dt+cKa9+NznTVPuXomrd9QfrSY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=oOZ0wNUT4kvBnnP6HTE66lPxaatbg8p8FI/4gmHbgfIUk4lcoEHtbWFspkUZyZrhyVIKk4/B4z574YdiLdJRzXVW89iL8fiZ2+GlDPXdSxPKC938m3HtLNb6wzxSe7RMgNJ87tFKnwnrWmrgtbigUh0Qe6maHune9iiwV/4PNn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-4334c9649d2so3378335ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 18:11:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762481462; x=1763086262;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fPLQI1ZFUweZp6JYNSCOE2sI4gLIkz+jc/DqHeHlzrQ=;
-        b=NMOi8xoh2LB9NOc3dD0td2Rxkf3N98dmge5CYQ3WmaT11SFFT1t8yLjetqPhVRoaCu
-         BNC512SVoLvtQs/elg5iCEtE/1QwZ3fCsZf8nZXTKOCSUOoJaMXmANX8xf6q1p91wRQ7
-         xKkNOyuExlv9KYGpuMgCMkF75TefWabMWJHpaZaEb18yJ7JuXIvMcO7hQTqPqMHGQ6B3
-         aelkf1rMDgrlBdyDQCEOANdjHgdFLhAcZEPYyGYAhjf19YuR8spnqt8cAd7FNkbqaQnf
-         BbnVou+gKC/d4+BdPTl2O+NZGbTo/TxXbYHwHl3iRGFt9W08FtnU8YeAEclLb/bbgkJQ
-         f1BA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbvRjeFZhok0vWiFjaHMIvdL/8x12dgFKB1Ag6CAznvqGR8dUgrncJq2zbEyIMKm85RlHjdWuVFHYI9Nw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybBu3NojbRFo1KncidlGlTxxyejTCQTUcAKaySGkTLobnAPSNW
-	I4PsKJaqzDoWJEAT9x4QouQXMIsCQFiaUcw+eoGf1P04EXSjnqj4/WbUxw7zxZonsoHM5/p/vKk
-	FiklUegR/saPsKo+TWtA8iPsWXMmmMnDDFjJp3BKtvHGLxddqQBcwuAITzLo=
-X-Google-Smtp-Source: AGHT+IF+w+hJfX8jXvlY4UKeCQXgcaWWKOeC1/0WyXIdfCGYWBOffj5pMQhcm06mnNzoZkRkjDPik3VH2wdkqhIYul5SyH0EM96q
+	s=arc-20240116; t=1762481530; c=relaxed/simple;
+	bh=0Kd3k8MrGVEdb2T54AztInB1tCRKQ2x1zCDizw7cUjM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TNHBeGIDKHAajuA5aMQPKdg4DvR5xXViheFUPLMDDcYwzjYTcGUNp88+b8C35g3iAe5oRhjsvnjZg++wMLVg+IqUjMVdSBNIMZk5ZHs5HNaqiids66X+GPyLbVHYo7BKz4EVKBX3xYHOx9UVv/YIq3YWFJkxzNNRgxZF6TVzTOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=oTND7xti; arc=none smtp.client-ip=113.46.200.224
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=ttYbeCKJ3OLF2JIak+cm/+0cAJg3a7naHdhTZ5oTJCM=;
+	b=oTND7xti/NC2W3lp57ZxBg2RHkOYc/x3+yPpDVhMGAvw36UguiT3bsave9p82GjGlyyJlPVeJ
+	riF/XR32j7XsPV8Z5V3xtQ+vm+V4FQD0LAWcXx1na6m0zI3r0qH38BwDsXDVzMiYcML6iuRsn1G
+	5/ha/SAcUUlu419yWmwHzwM=
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4d2jFb4zgPz1cyV7;
+	Fri,  7 Nov 2025 10:10:27 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4D3F3140159;
+	Fri,  7 Nov 2025 10:12:04 +0800 (CST)
+Received: from kwepemq100008.china.huawei.com (7.202.195.91) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 7 Nov 2025 10:12:04 +0800
+Received: from DESKTOP-DKE2JV6.huawei.com (10.67.110.146) by
+ kwepemq100008.china.huawei.com (7.202.195.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 7 Nov 2025 10:12:03 +0800
+From: Liyuan Pang <pangliyuan1@huawei.com>
+To: <markus.elfring@web.de>
+CC: <alexandre.torgue@foss.st.com>, <chengzhihao1@huawei.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mtd@lists.infradead.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+	<mcoquelin.stm32@gmail.com>, <miquel.raynal@bootlin.com>,
+	<pangliyuan1@huawei.com>, <richard@nod.at>, <vigneshr@ti.com>,
+	<wanqian10@huawei.com>, <young.liuyang@huawei.com>
+Subject: Re: [PATCH] ubi: fastmap: fix ubi->fm memory leak
+Date: Fri, 7 Nov 2025 10:11:37 +0800
+Message-ID: <20251107021137.874150-1-pangliyuan1@huawei.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <dff05531-f5e3-400a-abf0-a5307c50357e@web.de>
+References: <dff05531-f5e3-400a-abf0-a5307c50357e@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:160c:b0:433:4f43:231e with SMTP id
- e9e14a558f8ab-4335f3e1a4cmr24180625ab.4.1762481462642; Thu, 06 Nov 2025
- 18:11:02 -0800 (PST)
-Date: Thu, 06 Nov 2025 18:11:02 -0800
-In-Reply-To: <20251107003518.8936-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690d5536.a70a0220.22f260.0016.GAE@google.com>
-Subject: Re: [syzbot] [sctp?] BUG: corrupted list in sctp_destroy_sock
-From: syzbot <syzbot+ba535cb417f106327741@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="y"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemq100008.china.huawei.com (7.202.195.91)
 
-Hello,
+On Thu, 6 Nov 2025 16:16:05 +0100, Markus Elfring wrote:
+>…
+>> +++ b/drivers/mtd/ubi/fastmap.c
+>> @@ -1644,3 +1644,15 @@ int ubi_update_fastmap(struct ubi_device *ubi)
+>…
+>> +void ubi_free_fastmap(struct ubi_device *ubi)
+>> +{
+>> +	int i;
+>> +
+>> +	if (ubi->fm) {
+> +		for (i = 0; i < ubi->fm->used_blocks; i++)
+> +			kmem_cache_free(ubi_wl_entry_slab, ubi->fm->e[i]);
+>…
+> +	}
+> +}
+>…
+>
+> May the local variable “i” be defined in the loop header?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I think it's better to leave it as it is, most of the code in
+ubi defines variables outside the loop header, and defining
+"i" in the loop header may cause compilation error in some old
+kernel versions that use C89.
 
-Reported-by: syzbot+ba535cb417f106327741@syzkaller.appspotmail.com
-Tested-by: syzbot+ba535cb417f106327741@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         25e63e55 netkit: Document fast vs slowpath members via..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c92a58580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3c2e630e5d8a0109
-dashboard link: https://syzkaller.appspot.com/bug?extid=ba535cb417f106327741
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10a47812580000
-
-Note: testing is done by a robot and is best-effort only.
+Regards,
+Liyuan
 
