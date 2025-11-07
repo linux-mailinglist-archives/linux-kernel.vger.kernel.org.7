@@ -1,167 +1,142 @@
-Return-Path: <linux-kernel+bounces-889885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54C3C3EC3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:33:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F33FAC3EC2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:32:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38D2D3B00DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:31:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 451C04EC95A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF353093BF;
-	Fri,  7 Nov 2025 07:31:32 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A64307AD9;
+	Fri,  7 Nov 2025 07:31:33 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CB12D3A6D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70B52853F7
 	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762500691; cv=none; b=SbJxuz7rfHoug6+NtY3v7E0nIT85MFjMbQ2xu0TVewhe+DAwsGZAjOcvywYVClsZamB4/XSBfbd7nfzB+gipQTmty3PMRK0WNZI4iR7Cb6YHMOMu73Y7nhSD/XGK6qaaMcFP8yKXwOq/xZ6VcnVbE7auZ8jtzK3XDLIwk/6t+LI=
+	t=1762500692; cv=none; b=WQ6SsBqygyg5Lf9b/6IHSUKvTZM1ThiLW/IcgEKrmBvlYOyk+5Q0fMxUc/G4aSTYPdP94pHPnpzVeAtggwnLxpNq6XgmzGTygr9TqK4xzYQdFqhLU9jUmIL3rP7TkDLDqyn/jYtzsUUnIZ39/Kf5RYKYTeaoJ+1ZLv68YSCp9+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762500691; c=relaxed/simple;
-	bh=XjB0m3lhpum+kNFv1N6CbMC3QAg71MXUb9/tvtzc4sY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aL74PyspnmQAiDtvGlJDlKuym/Ctk/qR3iw++bP69XZ0byXamRkHaR5IylcnCCYnjNA9W4Y+rvJJInDY6rbt36ZKyeM9VSqW8xlbVhbNJnVr5waA+RGx4FNqxWuMeEL2Rn+FKfFy+ZzGxLwbCvYFGhvpmnTTQ8GZBhoN/C90Tm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+	s=arc-20240116; t=1762500692; c=relaxed/simple;
+	bh=hmBQunOCM5ZmhF1k490t04BJn11l0BugsBMHywhEaok=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SUAHKxRI7aYRwF0+LoEMfwhVxLeCfLgi12ENKZgYpq4D/Ovc82chsIvZAC6PEw+Y0f1k4Trualc0cypDo8x9NxuO6/FxsC3wCa4eVReaPNxd5kwOGpEBNB4bMOwdyXxlpSHM1xCaefND4OIgxqrxEnJYP+yEBLDwOkkhq18WUXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-94866b3853cso40737539f.3
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-93e86696b5fso38744939f.1
         for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:31:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762500688; x=1763105488;
+        d=1e100.net; s=20230601; t=1762500687; x=1763105487;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aHi0GSDWw+DFPzwz+Hy0dteO68RU8wWgdmOIcy+/qFc=;
-        b=jK0Cx7z0bPvMG8K1X18b1r5w0N2Yr0i83Cf9VouM6aZdWXWtAtl8BvNEf3Th4EDOOU
-         Q3KKQvxNpxS/l/Uioh078TW5dV0E1+FfnLxtobcxs5gdaJ1W655KGr9sm+fHnu79+Gck
-         JM0T1dLC2nLNfXTTeE6/Pbuy5UEA3tKHRorSWr61uGGBKDpB57A3+IpyovR6I5OpEY+L
-         Fp6aRYo7LPegiyXqyxTultxIc7yo8OYg3GbN95aUXjcCoVmrui1hP5E3NnOf++KJst/J
-         s+issndqIuFwnrmLKHDejFF48Ask6HPIPU9IJxypPgZ6Hp4RzwTQ/ryP7rp2nlcUP+vw
-         MbWw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+I/wvZEoNOs4HdaJlGdaf7LZiwOGYObG3V5P80JLAP6kCpzglpWGhVtJDdAM9RjqwsXb3MQvkubAEbGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ0orHog/xs41yxiuyXMg5ABBMYLJCWZptPnhCQ6gFyHqHVDVA
-	3lOqSyVFQKno39C72ys120im+AQmvZyteqYWL7VdPpZP17a32xWe7HNuoFwgVWjL1GWGLwnDuM7
-	kokgRnnuRZrWfaXVMbxtkO8E8wQ47zeT31Fv3GdCEdXx8bSCBdq8cILaiL0I=
-X-Google-Smtp-Source: AGHT+IE8e6TZwBMJKL7y90nEbznBhuBiS/GtlVHJKR1ml/b1KG3VAoMOrpAzwKfMju3KxqSIT3PgxZH9QyyiaDLlAFUqlAPy4kZp
+        bh=DC5whZ6xjAg9orncDEXG9Mf4Zikpjttx0BkeAU8vHTQ=;
+        b=EbXcwfCyblBFrDHx/jn61XzSaN6ThwfO/OjOgBnACIpry13RqTBy4w+12gnzsrAwvc
+         Vgr0H0AT5vxcyIZ7Qt50kgf90XirrzMI57u99eCsHe86mFU4hpN2WJiD8isl8a218SGg
+         LfNxbPdAmOuklpBRnW/ghwl3FaqdGBALGQQ8K80mHXcns2rPNcHm0oX4V7raOK+MdRhQ
+         MgBgU+4fY2RO1CqRffzYDMQ2aO43cWw/FIPpOj+CXXhrT7wQBAOcBhZ9i97SZVFOFjMD
+         TyKCT0S2AUUqIlcM+wg3KPB8/PTngW6EWqQH1q/DcP0Juci6A2d/44HgQJSbT65jH2fZ
+         iKRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkVV4Lsywo66rlt52EM0dFE8APmncIQOTV2fmwsT2Wkl8lqRP1wUjfL1Hkq4PMUnu3AOOE4LD5bWGkdTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCILsWshyBNtXAb0f0EPmGLjsk2tEx5jJQV3LH5l8S/BvK9G1c
+	9bZSJchpbSdiIgAWFnJvU6DoLAMCMJoQgI6NL5d2PlZ6G0MbSbKW7iMMcb7Wff+tbnIIruDH+Zs
+	bgg5rB/PwFEGozNl8XlXpQ6Lt+W2oBdYZgmBr8czxgPUiXop1lyYsiz8jbOg=
+X-Google-Smtp-Source: AGHT+IF1mWmFU+QuzP+6G0raJVSuUbhvWf35rIhwvg/7kKBEsHrx+TEWgqipXwdks6Tvvg+v62pf8jfuYyIcJq7AP3kS3CRjzES2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3486:b0:433:3315:e9ee with SMTP id
- e9e14a558f8ab-4335f41dccamr34232925ab.10.1762500687896; Thu, 06 Nov 2025
+X-Received: by 2002:a05:6e02:1a64:b0:433:290f:c201 with SMTP id
+ e9e14a558f8ab-4335f3d0389mr32665345ab.11.1762500687581; Thu, 06 Nov 2025
  23:31:27 -0800 (PST)
 Date: Thu, 06 Nov 2025 23:31:27 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690da04f.a70a0220.22f260.0028.GAE@google.com>
-Subject: [syzbot] [net?] [mm?] INFO: rcu detected stall in rescuer_thread (2)
-From: syzbot <syzbot+d5f7a5097c24c7c2dbbb@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Message-ID: <690da04f.a70a0220.22f260.0027.GAE@google.com>
+Subject: [syzbot] [fs?] WARNING in destroy_super_work
+From: syzbot <syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
+	anna-maria@linutronix.de, bpf@vger.kernel.org, brauner@kernel.org, 
+	bsegall@google.com, cgroups@vger.kernel.org, david@redhat.com, 
+	dietmar.eggemann@arm.com, frederic@kernel.org, hannes@cmpxchg.org, 
+	jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, kees@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
+	mingo@redhat.com, mjguzik@gmail.com, mkoutny@suse.com, oleg@redhat.com, 
+	paul@paul-moore.com, peterz@infradead.org, rostedt@goodmis.org, 
+	rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org, 
+	vbabka@suse.cz, vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, 
+	vschneid@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    b1d9154878ce Merge branch 'net-mlx5e-shampo-fixes-for-64kb..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=15cc5bcd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
-dashboard link: https://syzkaller.appspot.com/bug?extid=d5f7a5097c24c7c2dbbb
+HEAD commit:    982312090977 Add linux-next specific files for 20251103
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b2932f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=43cc0e31558cb527
+dashboard link: https://syzkaller.appspot.com/bug?extid=1957b26299cf3ff7890c
 compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=134820b4580000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1347817c580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/bef31d61ceb8/disk-b1d91548.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/67c31be6c377/vmlinux-b1d91548.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7b9f62743e14/bzImage-b1d91548.xz
+disk image: https://storage.googleapis.com/syzbot-assets/40058f8a830c/disk-98231209.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1d7f42e8639f/vmlinux-98231209.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d8bb0284f393/bzImage-98231209.xz
+
+The issue was bisected to:
+
+commit 3c9820d5c64aeaadea7ffe3a6bb99d019a5ff46a
+Author: Christian Brauner <brauner@kernel.org>
+Date:   Wed Oct 29 12:20:24 2025 +0000
+
+    ns: add active reference count
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=101e9bcd980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=121e9bcd980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=141e9bcd980000
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d5f7a5097c24c7c2dbbb@syzkaller.appspotmail.com
+Reported-by: syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
+Fixes: 3c9820d5c64a ("ns: add active reference count")
 
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	(detected by 0, t=12991 jiffies, g=11121, q=1246 ncpus=2)
-rcu: All QSes seen, last rcu_preempt kthread activity 3112 (4294972946-4294969834), jiffies_till_next_fqs=1, root ->qsmask 0x0
-rcu: rcu_preempt kthread starved for 3112 jiffies! g11121 f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:27288 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00080000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5325 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
- __schedule_loop kernel/sched/core.c:7011 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7026
- schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
- rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2083
- rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2285
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 6005 Comm: kworker/R-wg-cr Not tainted syzkaller #0 PREEMPT(full) 
+------------[ cut here ]------------
+WARNING: ./include/linux/ns_common.h:229 at __ns_ref_put include/linux/ns_common.h:229 [inline], CPU#0: kworker/0:6/6108
+WARNING: ./include/linux/ns_common.h:229 at put_user_ns include/linux/user_namespace.h:189 [inline], CPU#0: kworker/0:6/6108
+WARNING: ./include/linux/ns_common.h:229 at destroy_super_work+0x15c/0x1a0 fs/super.c:280, CPU#0: kworker/0:6/6108
+Modules linked in:
+CPU: 0 UID: 0 PID: 6108 Comm: kworker/0:6 Not tainted syzkaller #0 PREEMPT(full) 
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: wg-crypt-wg2 wg_packet_tx_worker
-RIP: 0010:rb_erase+0xb/0xe60 lib/rbtree.c:441
-Code: ca 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 41 57 41 56 41 55 <41> 54 53 48 83 ec 28 48 89 f3 49 89 fd 48 b9 00 00 00 00 00 fc ff
-RSP: 0018:ffffc90000a08ce0 EFLAGS: 00000046
-RAX: 0000000000000000 RBX: ffff8880b8927c90 RCX: ffff88801f7a5ac0
-RDX: 0000000000010000 RSI: ffff8880b8927c90 RDI: ffff88807de66340
-RBP: 1ffff1100fbccc68 R08: ffffffff8f7cdc77 R09: 1ffffffff1ef9b8e
-R10: dffffc0000000000 R11: fffffbfff1ef9b8f R12: ffff8880b8927c98
-R13: dffffc0000000000 R14: ffff88807de66340 R15: 1ffff11017124f93
-FS:  0000000000000000(0000) GS:ffff88812623c000(0000) knlGS:0000000000000000
+Workqueue: events destroy_super_work
+RIP: 0010:__ns_ref_put include/linux/ns_common.h:229 [inline]
+RIP: 0010:put_user_ns include/linux/user_namespace.h:189 [inline]
+RIP: 0010:destroy_super_work+0x15c/0x1a0 fs/super.c:280
+Code: 90 63 ff 48 81 c3 a8 fc ff ff 48 89 df e8 ec 90 63 ff 4c 89 f7 5b 41 5c 41 5d 41 5e 41 5f 5d e9 8a 91 e1 ff e8 45 df 86 ff 90 <0f> 0b 90 e9 6d ff ff ff e8 37 df 86 ff 4c 89 e7 be 03 00 00 00 e8
+RSP: 0018:ffffc900030d7a48 EFLAGS: 00010293
+RAX: ffffffff823a294b RBX: ffff88805639c898 RCX: ffff88802ab59e80
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
+RBP: 0000000000000004 R08: ffff88807477565b R09: 1ffff1100e8eeacb
+R10: dffffc0000000000 R11: ffffed100e8eeacc R12: ffff888074775658
+R13: dffffc0000000000 R14: ffff88805639c000 R15: ffff8880747754c8
+FS:  0000000000000000(0000) GS:ffff888125eda000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000056323a462a38 CR3: 000000002891e000 CR4: 00000000003526f0
+CR2: 000000c008044000 CR3: 0000000077ad4000 CR4: 00000000003526f0
 Call Trace:
- <IRQ>
- rb_erase_cached include/linux/rbtree.h:126 [inline]
- timerqueue_del+0xae/0x100 lib/timerqueue.c:57
- __remove_hrtimer kernel/time/hrtimer.c:1114 [inline]
- __run_hrtimer kernel/time/hrtimer.c:1757 [inline]
- __hrtimer_run_queues+0x364/0xc60 kernel/time/hrtimer.c:1841
- hrtimer_interrupt+0x45b/0xaa0 kernel/time/hrtimer.c:1903
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline]
- __sysvec_apic_timer_interrupt+0x10b/0x410 arch/x86/kernel/apic/apic.c:1058
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [inline]
- sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1052
- </IRQ>
  <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
-RIP: 0010:queued_write_lock_slowpath+0x125/0x260 kernel/locking/qrwlock.c:85
-Code: 00 01 00 00 43 0f b6 04 27 84 c0 74 35 89 d9 80 e1 07 80 c1 03 38 c1 7c 29 48 89 df e8 e4 b8 dc f6 eb 1f f3 90 43 0f b6 04 27 <84> c0 74 14 89 d9 80 e1 07 80 c1 03 38 c1 7c 08 48 89 df e8 c3 b8
-RSP: 0018:ffffc90003337300 EFLAGS: 00000206
-RAX: 0000000000000000 RBX: ffffffff8f3dd900 RCX: ffffffff8b490058
-RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffffffff8f3dd900
-RBP: ffffc900033373b0 R08: ffffffff8f3dd903 R09: 1ffffffff1e7bb20
-R10: dffffc0000000000 R11: fffffbfff1e7bb21 R12: dffffc0000000000
-R13: 1ffff92000666e64 R14: ffffc90003337350 R15: 1ffffffff1e7bb20
- queued_write_lock include/asm-generic/qrwlock.h:101 [inline]
- do_raw_write_lock+0x1f2/0x260 kernel/locking/spinlock_debug.c:211
- ___neigh_create+0xe81/0x2260 net/core/neighbour.c:690
- ip6_finish_output2+0x1175/0x1480 net/ipv6/ip6_output.c:128
- NF_HOOK_COND include/linux/netfilter.h:307 [inline]
- ip6_output+0x340/0x550 net/ipv6/ip6_output.c:247
- ip6tunnel_xmit include/net/ip6_tunnel.h:162 [inline]
- udp_tunnel6_xmit_skb+0x68d/0xb30 net/ipv6/ip6_udp_tunnel.c:112
- send6+0x5ac/0x8d0 drivers/net/wireguard/socket.c:152
- wg_socket_send_skb_to_peer+0x111/0x1d0 drivers/net/wireguard/socket.c:178
- wg_packet_create_data_done drivers/net/wireguard/send.c:251 [inline]
- wg_packet_tx_worker+0x1c8/0x7c0 drivers/net/wireguard/send.c:276
- process_one_work kernel/workqueue.c:3263 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
- rescuer_thread+0x53c/0xdd0 kernel/workqueue.c:3523
+ process_one_work+0x94a/0x15d0 kernel/workqueue.c:3267
+ process_scheduled_works kernel/workqueue.c:3350 [inline]
+ worker_thread+0x9b0/0xee0 kernel/workqueue.c:3431
  kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork+0x52d/0xa70 arch/x86/kernel/process.c:158
  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
  </TASK>
 
@@ -173,6 +148,7 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
