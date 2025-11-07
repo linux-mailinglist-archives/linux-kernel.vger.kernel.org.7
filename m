@@ -1,206 +1,326 @@
-Return-Path: <linux-kernel+bounces-891077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32E2C41C70
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 22:25:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58FEDC41C7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 22:43:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1175E3AF943
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 21:25:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08873A58B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 21:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D1E2F5492;
-	Fri,  7 Nov 2025 21:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C02B3019B4;
+	Fri,  7 Nov 2025 21:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dfkQqhzQ"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011046.outbound.protection.outlook.com [52.101.62.46])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+nxGHDl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2157624DD1F;
-	Fri,  7 Nov 2025 21:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762550718; cv=fail; b=VAmx08JLpvwGJ0Pdi6VL2O1VnEaU3uKinjYSQr0b0oPT7fy9Z7qAKWYHTjadyv6HxGWtQOPwIq3UMmMICniZBWPlyxiN6/XEeG8+spLmsGDCMp8KPeAwvdHYTrd+jShbvobxGNP45xojLPRGD7Ecg8Xs1vnLpwthugCr6l6+lCQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762550718; c=relaxed/simple;
-	bh=KaO9vJ0vTzlZWgGZB3iWwMjx8FFGnPHH97qu1VoYD3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=m7+x3jykWvHrrLZ3+Bxp10vfGXJZkXELDUrXATcRVb6E0nspUylDHe91jXO5R2D5jVmDqzt1tKrtbBPy486SYjYVsOByONdqrQeQptCjOZeGhiJAANfJtEnJVXfsLpHzRoVC7Ahzb7n5RI9WbM9waZVdZKI5i5KQYMBm3Qn21xc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dfkQqhzQ; arc=fail smtp.client-ip=52.101.62.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ovu2H2buTgWc4DkotrlVOt1sF16LbQ4ETHf5jW8zQLUhj7pLCVTnWygMGYjhP89dX39i4Z/LEgkizNXtCA6nGNE9wERyz0mXhIFGvgVLfnX9dvWDMRv+y0UrRf3NZ5eMLY/7QxWehJKm4H8vVciE8bFi43XJ3KchXxVBHRNE9rxtoyysbMEJAz79KaBw3HNDpR5fAmRXV9HBut5Z1HJ0Ml/WCECaoGMKQYqjGfCG7HlRxJJHydPSGNk2WMOPSZtgiPrjdrVmjkcRzRLj2AuIG+xYUz9hDpofHgK9sL4NGcYhc6vxIT4VDh0weEFNDLRRx0P4WDh7MsaSdsJGJvqC0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=49f/dsrE0aeRW4jFyUv4zhu7dsTAIMmUkRxf8KHWCuA=;
- b=fs39GV1WCB11jUtFFUrg2qGQB4IBlNrGX86e71T4gzSYaRxC4lH3GZxjQQvNlOpz1NbNNGGdWhhseuYKM553I199CPeZ/OQ7BeT20PuxY2GmbAR2TnwevqSlMZUzxFVs/vtAvVj8FBClWAGQOAX1pXl7AHG0Ro33fOjCGmyiO2FkFzG1jUVHnBDaGi/QoW61HrWB+SvyBjuXveOGSK6mHOCvSb3rdQJGyVoSHpY8lUrcqTgE5J0xWwtB0puSzLe95DE71e2Ctp4CAWuno0ImIMqL7G+CNcXDep/9ERtUXf7Pyw44XH2mRO35OLScJnN8YyraP8BAm+ecibCMCus2pA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=49f/dsrE0aeRW4jFyUv4zhu7dsTAIMmUkRxf8KHWCuA=;
- b=dfkQqhzQI4FhRcviJEB6c25BzUyljOLOxL4B6FiPKnKjKrJduNy1cPRQGuna405+ezoCW/3DmHCxl3Cp8onaaE8aEJtnU85dOZr8+OB1c1nJ9U4H8QnbLMLzOCOaBmNwXxy0z8K12mRBoCyczMegkgmQiV+rjfQegyLJbgoc3+M=
-Received: from DM6PR11CA0029.namprd11.prod.outlook.com (2603:10b6:5:190::42)
- by DM3PPFA09EE1970.namprd10.prod.outlook.com (2603:10b6:f:fc00::c3b) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
- 2025 21:25:12 +0000
-Received: from DS1PEPF0001709B.namprd05.prod.outlook.com
- (2603:10b6:5:190:cafe::7a) by DM6PR11CA0029.outlook.office365.com
- (2603:10b6:5:190::42) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.13 via Frontend Transport; Fri,
- 7 Nov 2025 21:25:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
-Received: from lewvzet200.ext.ti.com (198.47.23.194) by
- DS1PEPF0001709B.mail.protection.outlook.com (10.167.18.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 21:25:12 +0000
-Received: from DLEE212.ent.ti.com (157.170.170.114) by lewvzet200.ext.ti.com
- (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 7 Nov
- 2025 15:25:07 -0600
-Received: from DLEE203.ent.ti.com (157.170.170.78) by DLEE212.ent.ti.com
- (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 7 Nov
- 2025 15:25:07 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE203.ent.ti.com
- (157.170.170.78) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 7 Nov 2025 15:25:07 -0600
-Received: from [10.249.35.170] ([10.249.35.170])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A7LP6r73649310;
-	Fri, 7 Nov 2025 15:25:06 -0600
-Message-ID: <76078ce8-aec3-4a3c-b866-926fc284692e@ti.com>
-Date: Fri, 7 Nov 2025 15:25:06 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843D72D373F;
+	Fri,  7 Nov 2025 21:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762551778; cv=none; b=pKacYHHsSIfXJ6PmVCuk582Vk5WZOWlh/StsGOkdX/V3x49Nu+5a8S2Ulk6bxHH7QXfLLPYKY3dPpYsMkl2J//R5akBx8mwI96VguFL9U1PL9bQY+IclKnwR34xfZBFn4svezcq23PpGmwQTTT731gxIxqh8+n1gsKNICmIyupk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762551778; c=relaxed/simple;
+	bh=Qi5rdv1cLi6FjllauKJFwU0rxY8XG3HO6f4YGpav/uM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGkVszD7CAAcgsArKsnvLmKbzu7UQAXxpdMAA7OxYYr6nRyd+Yt8k5lFmYHv1LubE2Z8urYSlp2EWe9MpPLVUYpxPBL5TdzW8nnbWlOW+zaS5EGkBT4emWwy3DNaY1DmEKcip0/RSeY933bi5x7hOD0Oz2/nCVu+zy01J3oFImc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+nxGHDl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85CCBC4CEF8;
+	Fri,  7 Nov 2025 21:42:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762551778;
+	bh=Qi5rdv1cLi6FjllauKJFwU0rxY8XG3HO6f4YGpav/uM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N+nxGHDlfr4dJPh3lcGHrgpQ7fOdacTxFtmf/GVSCPhYze1kt2jBA0aPbhyZA/vRm
+	 VJvUnUPtd+Zis0nEy3uKdzoZJnH9zVkYNNigd0u2AE/5tOOP+mYqcCCmOA90wb6Yty
+	 ub68X8kUrObZg2+Qtjxgr/gxqOuqkK6zwWW1US4GwNizf5fSxQxepR8lDw+JEfPWll
+	 M2FNSQTRCWAUCBZyHZRV1ci+gYiXq3AcExcAAfXw2zOrb91Vi7rVd+3emTXkabqFbH
+	 Uw7RwGAUo0tEgUABtPpxEa69Uzr+r60Xnxsn+BT/1vTu2MT0RZGekiQo5jgI/29A/Z
+	 bnpaOW5KiyfDQ==
+Date: Fri, 7 Nov 2025 13:42:56 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Chen, Zide" <zide.chen@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	thomas.falcon@intel.com, dapeng1.mi@linux.intel.com,
+	xudong.hao@intel.com
+Subject: Re: [PATCH] perf tools: Refactor precise_ip fallback logic
+Message-ID: <aQ5n4ML9lxY4VAxi@google.com>
+References: <20251022220802.1335131-1-zide.chen@intel.com>
+ <aPrktlANBHFtV52B@google.com>
+ <576a7d2b-0a82-4738-8b86-507e4d841524@intel.com>
+ <aP1ucJiJYBavTHV7@google.com>
+ <e10d671a-eb89-4e06-a1eb-e2f12ee41d70@intel.com>
+ <aQl3qfyTdAb68l1l@google.com>
+ <652bf158-ba9e-4a97-b4c3-3a7f7e39fe85@intel.com>
+ <aQzugcpRvOcPEEro@google.com>
+ <5f84fe4f-90ef-42d6-8a3a-c1f515a7832a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Enable 1GHz OPP am335x-bonegreen-eco
-To: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>, Aaro Koskinen
-	<aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman
-	<khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
-	<tony@atomide.com>, Lee Jones <lee@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>
-CC: Andrew Davis <afd@ti.com>, Bajjuri Praneeth <praneeth@ti.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, <linux-omap@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<stable@vger.kernel.org>
-References: <20251106-fix_tps65219-v2-0-a7d608c4272f@bootlin.com>
-Content-Language: en-US
-From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-In-Reply-To: <20251106-fix_tps65219-v2-0-a7d608c4272f@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0001709B:EE_|DM3PPFA09EE1970:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6f2c3631-08e7-448e-ea15-08de1e4422d0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OFFIK3BKOEo0bnVyM3loUk03bVp5ZmFCdUZySHUrL3pGd3FUa3lYSndXY01M?=
- =?utf-8?B?ZXdFRDMyNXVxemdnVEFyOGhsbytWZzZ0eXFlT0pHYzhFYWZUcyt6QmxTeXRC?=
- =?utf-8?B?RXJLakNBaWFTVzlQZGtiSVRtOHNPYnprSmIvYmwyampxTzhuU00yN05rSElV?=
- =?utf-8?B?WXYza05ncDdmd01QSEo5VVdFYjNPV1dkcDBEalFJMU1qLyswaEtuTG9Kb2hp?=
- =?utf-8?B?NjRGeHR6bXpab1d2c0h0OGxGZTFIb2U5QmVaeHhWUUxZeDFySmtNTlB2NHVn?=
- =?utf-8?B?Ums1VlhVTlIycnphOVU2dytlWXBSbWhkbks1cmFvK00vSjlvYTkvZjU1Zm5x?=
- =?utf-8?B?ZytqRzVFNTU3UGlyTWZWTWdSUVJha0h5d015V25ndUpaMTlqSjY5cWNaamVP?=
- =?utf-8?B?OTZmUXplckNIRWN6MXpLUUkxMzhGS0I3L0pYTTVHakIzQ0UyZy9mWUc2NlUv?=
- =?utf-8?B?V1lETHZSUDBUMG9tekk0M2NTZm1Pa2l3VzNaWjhoRHM1WDlIZnlRSlNKL0JK?=
- =?utf-8?B?V0RGWGMvd0c1eUVQdkM1Q0QyWlZvZ2F1UDV2bE05K0hRSm1SbmcrRFBaRXE4?=
- =?utf-8?B?TzZrMVhPdWZET3h4SDRrSTcxaGZFL3V2NkN5dWVHbzVBcElmdERkTE9GSnht?=
- =?utf-8?B?RmNEUXg3VU9XSDBpTGVqakgrV2NmY3RyRGJDejdUM3JQc3dXZUJVdm4xNy83?=
- =?utf-8?B?Rlh6Z0cwT3ZkbHpFNmZSbUlCemZZbDN2SnMzQlV0U1IxcjVUZStYc1JoWUli?=
- =?utf-8?B?K3BFTFZ2b3h2aXE3SGk3S01aa3BVTnF0anN1ZG42Y01FQk1vT3ZvaEI0dWVk?=
- =?utf-8?B?akhnWTgxRUVpS042NTV2UjE4dXR3SXBTcXhkenVmYTFEUmRQUzNFMDhGangv?=
- =?utf-8?B?VWtOa3dFa1MrcE16c0tDT0VhWlBmcnoxQ1hOUGlPMU9hMnlXSTVTWjRTVi80?=
- =?utf-8?B?elluWXpIeDhvZElzSG52TmZsVHI5cEtkNzBEMjUvc09pTHZodUJGTm1xbWlF?=
- =?utf-8?B?RzZiazZjRlhNWEZxOFc2c3d0YXR5QWg1ZlJEekVKYm1iRlBJbW1ydHpRWUE5?=
- =?utf-8?B?Tk0wOWgyWnE4ZEwxV1ozRDlSL0JEdVhNeEVlVUdrNE1tdDVhWm13QmNtWHZN?=
- =?utf-8?B?V2pKUW9oUVpBUGswOVBhTnNrc3ZTMWxscjNTSnVOVlcva1NidTVkN0ZFNnJm?=
- =?utf-8?B?eGVaYVVWbGJoaDU2a1ZYNTRtbU1oTjVSYUY0ZHhFeFFEZ1EvZG1LKzFtQ2Zn?=
- =?utf-8?B?M0JYeU1hQ0ltVytGUlpXbG5HeWJOZTQ2K0pwVmJpSGFyM3RCVThPczNIeFEr?=
- =?utf-8?B?WVQ5dnNCUnRNSHVEekFoUGQveFdaS3RzRU1EY0lpVkplcVZZMnhScy80bHJv?=
- =?utf-8?B?NStzYWM1Z01zc1pDOHIzNGpMTlpjdXdlNkVoYVhMa2Zic1RNKzI1b1VDZUdz?=
- =?utf-8?B?UTcycVlTMUZVTkhOZXNzWUIzVllYeHBLL3d0MnpQcGMvbUI1TEhsY1lHK01w?=
- =?utf-8?B?Um00SmZYMmM2UEJpdVh2aCswUlpuUk5QMmhrYzZZN0JMb2JjcDBTY2NIU3o2?=
- =?utf-8?B?VENaTGZpQkFsVjBsb3pxMkkxTXhsYkdxUFRjZ2pIQy82UjJ0NlAzTDJRaXBy?=
- =?utf-8?B?eWVoTEo3aCtmS09LU0VPeGtNYUpXV0U5R3dTVHpBZDJ3ZWY1RGhrZ3F1aW1w?=
- =?utf-8?B?ODJnSmlneEJ5bGJrODFJN0R5bU95S3ZSV1N1dFk2bFBXTmlHRGpkNlYrVENz?=
- =?utf-8?B?amNpeDV4cGorTFZSekZtK2wyMmNpR1hZamN1dkZjZVJlam8zL3dnZ2lMc3Ix?=
- =?utf-8?B?ZVdSd1dRZmNISnlMdDhlcDI2UHJnY2dhQXR0R0tWUjFCZXVKZ0VidTNsdm55?=
- =?utf-8?B?N1ZCY3J1c2Vlay9NNGVMTVJUVDI1eU1JM2Zoa3AxNHFUeXNBREdkYm1MYm5l?=
- =?utf-8?B?N1BhbUVObWtId3dSWjY0Uk1vOVZDWmcrZzNaY2hMUDVVMkpyelpPTkRuNkRJ?=
- =?utf-8?B?QVROVEFITDROWXhWMzdYeVMxYkRFdmVXcnVHTjMwaHJRRW5lci94UHlEaTQr?=
- =?utf-8?B?YW1PckxnQmE5ckRYODlvd3pBRkMxWlg4N3AyeTVlVkZVQ2VnWG5URlpBZURD?=
- =?utf-8?Q?6Zk4HblER7cvLjjeDDgJHMEmZ?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 21:25:12.3334
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f2c3631-08e7-448e-ea15-08de1e4422d0
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF0001709B.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFA09EE1970
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5f84fe4f-90ef-42d6-8a3a-c1f515a7832a@intel.com>
 
-Hi Kory,
+On Thu, Nov 06, 2025 at 05:23:09PM -0800, Chen, Zide wrote:
+> 
+> 
+> On 11/6/2025 10:52 AM, Namhyung Kim wrote:
+> > On Tue, Nov 04, 2025 at 11:10:44AM -0800, Chen, Zide wrote:
+> >>
+> >>
+> >> On 11/3/2025 7:48 PM, Namhyung Kim wrote:
+> >>> Hello,
+> >>>
+> >>> Sorry for the delay.
+> >>>
+> >>> On Mon, Oct 27, 2025 at 11:56:52AM -0700, Chen, Zide wrote:
+> >>>>
+> >>>>
+> >>>> On 10/25/2025 5:42 PM, Namhyung Kim wrote:
+> >>>>> On Fri, Oct 24, 2025 at 11:03:17AM -0700, Chen, Zide wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>> On 10/23/2025 7:30 PM, Namhyung Kim wrote:
+> >>>>>>> Hello,
+> >>>>>>>
+> >>>>>>> On Wed, Oct 22, 2025 at 03:08:02PM -0700, Zide Chen wrote:
+> >>>>>>>> Commit c33aea446bf555ab ("perf tools: Fix precise_ip fallback logic")
+> >>>>>>>> unconditionally called the precise_ip fallback and moved it after the
+> >>>>>>>> missing-feature checks so that it could handle EINVAL as well.
+> >>>>>>>>
+> >>>>>>>> However, this introduced an issue: after disabling missing features,
+> >>>>>>>> the event could fail to open, which makes the subsequent precise_ip
+> >>>>>>>> fallback useless since it will always fail.
+> >>>>>>>>
+> >>>>>>>> For example, run the following command on Intel SPR:
+> >>>>>>>>
+> >>>>>>>> $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
+> >>>>>>>>
+> >>>>>>>> Opening the event "cpu/mem-loads,ldlat=3/PS" returns EINVAL when
+> >>>>>>>> precise_ip == 3. It then sets attr.inherit = false, which triggers a
+> >>>>>>>
+> >>>>>>> I'm curious about this part.  Why the kernel set 'inherit = false'?  IOW
+> >>>>>>> how did the leader event (mem-loads-aux) succeed with inherit = true
+> >>>>>>> then?
+> >>>>>>
+> >>>>>> Initially, the inherit = true for both the group leader
+> >>>>>> (cpu/mem-loads-aux/S) and the event in question (cpu/mem-loads,ldlat=3/PS).
+> >>>>>>
+> >>>>>> When the second event fails with EINVAL, the current logic calls
+> >>>>>> evsel__detect_missing_features() first. Since this is a PERF_SAMPLE_READ
+> >>>>>> event, the inherit attribute falls back to false, according to the
+> >>>>>> fallback order implemented in evsel__detect_missing_features().
+> >>>>>
+> >>>>> Right, that means the kernel doesn't support PERF_SAMPLE_READ with
+> >>>>> inherit = true.  How did the first event succeed to open then?
+> >>>>
+> >>>> The perf tool sets PERF_SAMPLE_TID for Inherit + PERF_SAMPLE_READ
+> >>>> events, as implemented in commit 90035d3cd876 ("tools/perf: Allow
+> >>>> inherit + PERF_SAMPLE_READ when opening event").
+> >>>>
+> >>>> Meanwhile, commit 7e8b255650fc ("perf: Support PERF_SAMPLE_READ with
+> >>>> inherit") rejects a perf event if has_inherit_and_sample_read(attr) is
+> >>>> true and PERF_SAMPLE_TID is not set in attr->sample_type.
+> >>>>
+> >>>> Therefore, the first event succeeded, while the one opened in
+> >>>> evsel__detect_missing_features() which doesn't have PERF_SAMPLE_TID failed.
+> >>>
+> >>> Why does the first succeed and the second fail?  Don't they have the
+> >>> same SAMPLE_READ and SAMPLE_TID + inherit flags?
+> >>
+> >> Sorry, my previous reply wasn’t entirely accurate. The first event
+> >> (cpu/mem-loads-aux/S) succeeds because it’s not a precise event
+> >> (precise_ip == 0).
+> > 
+> > I'm not sure how it matters.  I've tested the same command line on SPR
+> > and got this message.  It says it failed to open because of inherit and
+> > SAMPE_READ.  It didn't have precise_ip too.
+> > 
+> >   $ perf record -e cpu/mem-loads-aux/S -vv true |& less
+> >   ...
+> >   ------------------------------------------------------------
+> >   perf_event_attr:
+> >     type                             4 (cpu)
+> >     size                             136
+> >     config                           0x8203 (mem-loads-aux)
+> >     { sample_period, sample_freq }   4000
+> >     sample_type                      IP|TID|TIME|READ|ID|PERIOD
+> >     read_format                      ID|LOST
+> >     disabled                         1
+> >     inherit                          1
+> >     mmap                             1
+> >     comm                             1
+> >     freq                             1
+> >     enable_on_exec                   1
+> >     task                             1
+> >     sample_id_all                    1
+> >     mmap2                            1
+> >     comm_exec                        1
+> >     ksymbol                          1
+> >     bpf_event                        1
+> >   ------------------------------------------------------------
+> >   sys_perf_event_open: pid 1161023  cpu 0  group_fd -1  flags 0x8
+> >   sys_perf_event_open failed, error -22
+> >   Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
+> >   ...
+> > 
+> > And it fell back to no-inherit and succeeded.  
+> 
+> On my SPR, with either kernel 6.18.0-rc4 or the older 6.17.0-rc6, my
+> test results are different from yours — I didn’t see any EINVAL, and
+> there was no fallback. :)
 
-On 11/6/2025 4:49 AM, Kory Maincent (TI.com) wrote:
-> The vdd_mpu regulator maximum voltage was previously limited to 1.2985V,
-> which prevented the CPU from reaching the 1GHz operating point. This
-> limitation was put in place because voltage changes were not working
-> correctly, causing the board to stall when attempting higher frequencies.
-> Increase the maximum voltage to 1.3515V to allow the full 1GHz OPP to be
-> used.
->
-> Add a TPS65219 PMIC driver fixes that properly implement the LOCK register
-> handling, to make voltage transitions work reliably.
->
-> Changes in v2:
-> - Setup a custom regmap_bus only for the TPS65214 instead of checking
->   the chip_id every time reg_write is called.
-> - Add the am335x-bonegreen-eco devicetree change in the same patch
->   series.
+Yep, your kernel is recent and has the following commit.
 
-Reviewed-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+7e8b255650fcfa1d0 ("perf: Support PERF_SAMPLE_READ with inherit")
 
->
-> Signed-off-by: Kory Maincent (TI.com) <kory.maincent@bootlin.com>
-> ---
-> Kory Maincent (TI.com) (2):
->       mfd: tps65219: Implement LOCK register handling for TPS65214
->       ARM: dts: am335x-bonegreen-eco: Enable 1GHz OPP by increasing vdd_mpu voltage
->
->  arch/arm/boot/dts/ti/omap/am335x-bonegreen-eco.dts |  2 +-
->  drivers/mfd/tps65219.c                             | 51 +++++++++++++++++++++-
->  include/linux/mfd/tps65219.h                       |  2 +
->  3 files changed, 53 insertions(+), 2 deletions(-)
-> ---
-> base-commit: 1c353dc8d962de652bc7ad2ba2e63f553331391c
-> change-id: 20251106-fix_tps65219-dd62141d22cf
->
-> Best regards,
+My kernel is 6.6 and it rejects such a combination.  I'll test it on
+newer kernels later.
+
+> 
+> It’s strange, but even so, since there’s no group leader in this case, I
+> assume that when it falls back to non-inherit, it should pass the
+> following check.
+> 
+>         if (task && group_leader &&
+>             group_leader->attr.inherit != attr.inherit) {
+>                 err = -EINVAL;
+>                 goto err_task;
+>         }
+> 
+> > I've also found that it
+> > worked even with precise_ip = 3.
+> > 
+> >   $ perf record -e cpu/mem-loads-aux/PS -vv true |& less
+> >   ...
+> >   sys_perf_event_open: pid 1172834  cpu 0  group_fd -1  flags 0x8
+> >   sys_perf_event_open failed, error -22
+> >   Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
+> >   ------------------------------------------------------------
+> >   perf_event_attr:
+> >     type                             4 (cpu)
+> >     size                             136
+> >     config                           0x8203 (mem-loads-aux)
+> >     { sample_period, sample_freq }   4000
+> >     sample_type                      IP|TID|TIME|READ|ID|PERIOD
+> >     read_format                      ID|LOST
+> >     disabled                         1
+> >     mmap                             1
+> >     comm                             1
+> >     freq                             1
+> >     enable_on_exec                   1
+> >     task                             1
+> >     precise_ip                       3         <<<---- here
+> >     sample_id_all                    1
+> >     mmap2                            1
+> >     comm_exec                        1
+> >     ksymbol                          1
+> >     bpf_event                        1
+> >   ------------------------------------------------------------
+> >   sys_perf_event_open: pid 1172834  cpu 0  group_fd -1  flags 0x8 = 4
+> >   ...
+> 
+> Again, on my machine, I didn’t see EINVAL, and no fallback to
+> non-inherit. In my test, glc_get_event_constraints() successfully forces
+> this event (config == 0x8203) to fixed counter 0, so there’s no issue here.
+
+That means your missing_features.inherit_sample_read should not be set.
+It's strange you have that with the recent kernels.
+
+Can you run these commands and show the output here?
+
+  $ perf record -e task-clock:S  true
+  $ perf evlist -v
+
+Thanks,
+Namhyung
+
+> 
+> > And it works fine on my machine.
+> > 
+> >   $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads/PS}' ls
+> >   ...
+> >   [ perf record: Woken up 1 times to write data ]
+> >   [ perf record: Captured and wrote 0.033 MB perf.data (6 samples) ]
+> 
+> I don't know why it works for you, but in my tests, this event:
+> 
+> Opening: cpu/mem-loads/PS
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             4 (cpu)
+>   size                             248
+>   config                           0x1cd
+> (mem_trans_retired.load_latency_gt_1024)
+>   { sample_period, sample_freq }   4000
+>   sample_type                      IP|TID|TIME|READ|ID|PERIOD
+>   read_format                      ID|GROUP|LOST
+>   inherit                          1
+>   freq                             1
+>   precise_ip                       3
+>   sample_id_all                    1
+>   { bp_addr, config1 }             0x3
+> ------------------------------------------------------------
+> 
+> It gets emptyconstraint, then it can't schedule the event on any counter
+> and x86_schedule_events() returns -EINVAL.
+> 
+> glc_get_event_constraints()
+> {
+>         struct event_constraint *c;
+> 	
+> 	// It gets the constraint INTEL_PLD_CONSTRAINT(0x1cd, 0xfe)
+> 	// from intel_pebs_constraints(),
+>         c = icl_get_event_constraints(cpuc, idx, event);
+> 
+> 	// When it tries to force :ppp event to fixed counter 0
+>         if ((event->attr.precise_ip == 3) &&
+>             !constraint_match(&fixed0_constraint, event->hw.config)) {
+> 
+> 		// It happens the constrain doesn't mask fixed counter 0
+>                 if (c->idxmsk64 & BIT_ULL(0)) {
+>                         return &counter0_constraint;
+> 		
+> 		// It gets here.
+>                 return &emptyconstraint;
+>         }
+> 
+>         return c;
+> }
+> 
+> After that, it falls back to non-inherit, and it fails again because the
+> inherit attribute differs from the group leader’s. This carries over to
+> the precise_ip fallback path in the current code.
+> 
+> >>
+> >> The second event fails with -EINVAL because, on some platforms, events
+> >> with precise_ip = 3 must be scheduled on fixed counter 0, and it fails
+> >> if it happens that this counter is unavailable.
+> >>
+> >> In the current code, the first fallback attempt (inherit = 0) also fails
+> >> because the inherit attribute differs from that of the group leader
+> >> (first event).
+> > 
+> > So I don't understand this.  Either the first event failed due to
+> > inherit set or the second event should succeed with inherit.  Maybe
+> > there's an unknown bug or something.
+> > 
+> > Thanks,
+> > namhyung
+> > 
+> 
 
