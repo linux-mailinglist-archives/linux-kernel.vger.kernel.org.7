@@ -1,160 +1,150 @@
-Return-Path: <linux-kernel+bounces-889811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255A7C3E97C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:11:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BFCC3E988
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D84E73A821A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:11:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B627F4E6318
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAA32D594B;
-	Fri,  7 Nov 2025 06:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F1MuBIhi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396102D4B68;
+	Fri,  7 Nov 2025 06:14:40 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE68617A2E8;
-	Fri,  7 Nov 2025 06:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D47A17A2E8
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 06:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762495879; cv=none; b=A6iAVuxfAPBY2QZ+kHRSP4xe0nAKYTsKiq35VXoL9Kc29w18RkLaITMx1WjMLqkHLc6MpfhPnOPpT7bIdQIWgMWkP8IrE0YpsKjfYwP8OFgZ8PBXWb418J9mbT/H7XthLkjwqsD1zCMv+y/dGlt1okKrDPFdjYr5oPpyENdpnAI=
+	t=1762496079; cv=none; b=jcFolXmer2LGJ7j07WF8dpxTzxlS7haUDawkKJnFNEJF/xg+371IH6EbZUQLIZ8DU98NlTfjtYXNQg/VA0d4rPiRasNDDf64xCmnh59Od/IPHryc76r7z+kViZeZyUq7Ji+/7DuvSNeiOGvJ3reLXdGgW8FC/9XNfp+6V5sBvsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762495879; c=relaxed/simple;
-	bh=l5tph7wcgt5aBnQKOXSjkNg80MMPbjG+hYLFf0ASMlM=;
+	s=arc-20240116; t=1762496079; c=relaxed/simple;
+	bh=ZdWsqjVruZhGrwl0hRJIdAZZQer8vjk0cSilGugNYPo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T8CUzJVvKiTBiIa0xOyIgwC5ij+fAELa22JO7R4uPkVtMw8QvzUcYXAN/6Cvuh8E26OpAhccWUU4W/jbVkihtvUWYmvhg/uB+slVNE6KaN+K0wykkSlo5ELY8Qh30+zxmj16kYsRJ4rI4gul72Z3+aYSsOIl5HDTwUsudWadzRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F1MuBIhi; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762495877; x=1794031877;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=l5tph7wcgt5aBnQKOXSjkNg80MMPbjG+hYLFf0ASMlM=;
-  b=F1MuBIhi4cVjTQwdTz5DKe2gT8mmtiI8DtzTAX7w0d/SHuVO6a6jTZWx
-   JQhasAlfvNYpWl6aYQ9JZQPQyjesVDzab+Nu75N2zh0lsskyZ/Lubtx3F
-   G3wz+YQHhEHHsqMYpInZI7RZSsOolkiN5usfnkFr4f5N8/ufQ+c4SWM4w
-   ySAiIp4ebcj7mp2BBUX97ieVN14Fsz9QlXc6BLnFwAYI0cLCQipCwpIXJ
-   KlscLGGnDWPyb4D3NNjI5AqNOgcHNDqgfSb0W4mWydlMMZRLo5bgrnAij
-   mpeHc4XFSrZsC2BM+Yq5FO9XyjZ5uel3oAZVnvi/VQc2TmrYaXmnmDVwu
-   A==;
-X-CSE-ConnectionGUID: Aox04W3eSiyCKzqRMFrTxQ==
-X-CSE-MsgGUID: 9PzhqyleSWarhNcQFD6yVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="63655380"
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="63655380"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 22:11:17 -0800
-X-CSE-ConnectionGUID: 0pWOSzl5Q0OO5jEFJRVJxw==
-X-CSE-MsgGUID: rrRN/hZERfuj2u9uwvLrrg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="192055918"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.65]) ([10.124.232.65])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 22:11:12 -0800
-Message-ID: <09210c12-cc61-4af5-bd13-830fd9650f9b@linux.intel.com>
-Date: Fri, 7 Nov 2025 14:11:09 +0800
+	 In-Reply-To:Content-Type; b=L8TufNOrDvoq31wFXQ7475VSIA3jeTEtdoRe1tGpaFPV6eOU3/qngRxeusM5JI1ulskOXqS7eQki2t9Vh9tiC4Ap8Qtl4jPgew62yNI4pB7OOCsBYJeTCFhDIrUSXWHrb1PEkRAsMGTR3JrX/9SGiwxBTiAgXRlTl5r+s99CiF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 04a739dabba111f0a38c85956e01ac42-20251107
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:717e5da2-3c3b-4bab-b8af-984e191e9646,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:a46f60b23166b366801f7e82fd989115,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|15|50,E
+	DM:-3,IP:nil,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA
+	:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 04a739dabba111f0a38c85956e01ac42-20251107
+X-User: yangzhao@kylinos.cn
+Received: from [10.42.8.181] [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <yangzhao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 1200331251; Fri, 07 Nov 2025 14:14:29 +0800
+Message-ID: <900f69d4-6ef9-fe1e-d664-e248e41da752@kylinos.cn>
+Date: Fri, 7 Nov 2025 14:14:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v9 10/12] perf/x86/intel: Update dyn_constranit base on
- PEBS event precise level
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>, Zide Chen <zide.chen@intel.com>,
- Falcon Thomas <thomas.falcon@intel.com>, Xudong Hao <xudong.hao@intel.com>
-References: <20251029102136.61364-1-dapeng1.mi@linux.intel.com>
- <20251029102136.61364-11-dapeng1.mi@linux.intel.com>
- <20251106145217.GA4067720@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] tee: fix illegal pointer dereference in tee_shm_put()
 Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20251106145217.GA4067720@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
+ Sumit Garg <sumit.garg@kernel.org>
+References: <20251106102008.1310234-1-yangzhao@kylinos.cn>
+ <CAHUa44FAUyQNBKmzugu-_gv_Jy_AftZqq=RSbKUnK1QQbL8Z9A@mail.gmail.com>
+From: yangzhao <yangzhao@kylinos.cn>
+In-Reply-To: <CAHUa44FAUyQNBKmzugu-_gv_Jy_AftZqq=RSbKUnK1QQbL8Z9A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hi，
 
-On 11/6/2025 10:52 PM, Peter Zijlstra wrote:
-> On Wed, Oct 29, 2025 at 06:21:34PM +0800, Dapeng Mi wrote:
->> arch-PEBS provides CPUIDs to enumerate which counters support PEBS
->> sampling and precise distribution PEBS sampling. Thus PEBS constraints
->> should be dynamically configured base on these counter and precise
->> distribution bitmap instead of defining them statically.
+This issue is indeed caused by the mismatch between the TEE version and 
+the kernel version. Currently, this patch is only designed to address 
+the problem of ensuring that the kernel does not panic when the TEE 
+version is incorrect.
+
+The virt_addr_valid() is used to check the validity of the pointer 
+address, because during the test, it did occur that the shm->ctx pointer 
+address is the address between the user space and the kernel space. At 
+this point, using IS_ERR_OR_NULL cannot detect the legitimacy of the 
+pointer address.
+
+The problem can be viewed at the link: 
+https://github.com/OP-TEE/optee_os/issues/7575
+
+Thanks.
+
+On 2025/11/6 19:31, Jens Wiklander wrote:
+> Hi,
+>
+> On Thu, Nov 6, 2025 at 11:20 AM yangzhao <yangzhao@kylinos.cn> wrote:
+>> In tee_shm_put(), there is not only the NULL pointer dereference,
+>> but also the illegal pointer dereference.
 >>
->> Update event dyn_constraint base on PEBS event precise level.
-> What happened to this:
+>> shutdown() --->
+>>      __optee_disable_shm_cache -->
+>>          shm = reg_pair_to_ptr(...);
+>>          tee_shm_free(shm); -->
+>>              tee_shm_put(shm); //crash: shm->ctx maybe NULL pointer or illegal pointer
+>>
+>> Check whether the pointer is NULL and whether the pointer address is valid.
+>>
+>> This issue occurs when rich world uses the 6.x version of the kernel and
+>> optee secure world uses a lower version (such as version 3.2), and it is
+>> highly likely to trigger a kernel panic when conducting hibernate tests.
+> It sounds like the root of the problem is in the TEE rather than in
+> the kernel. How about fixing the TEE to avoid supplying garbage
+> pointers?
 >
->   https://lore.kernel.org/all/e0b25b3e-aec0-4c43-9ab2-907186b56c71@linux.intel.com/
-
-About the issue, Kan ever posted a patch to mitigate the risk, but it seems
-the patch is not merged yet.
-
-https://lore.kernel.org/all/20250512175542.2000708-1-kan.liang@linux.intel.com/
-
-
->
->
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> Fixes: e4a718a3a47e ("tee: fix NULL pointer dereference in tee_shm_put")
+>> Signed-off-by: yangzhao <yangzhao@kylinos.cn>
 >> ---
->>  arch/x86/events/intel/core.c | 11 +++++++++++
->>  arch/x86/events/intel/ds.c   |  1 +
->>  2 files changed, 12 insertions(+)
+>>   drivers/tee/tee_shm.c | 9 ++++++++-
+>>   1 file changed, 8 insertions(+), 1 deletion(-)
 >>
->> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
->> index 6e04d73dfae5..40ccfd80d554 100644
->> --- a/arch/x86/events/intel/core.c
->> +++ b/arch/x86/events/intel/core.c
->> @@ -4252,6 +4252,8 @@ static int intel_pmu_hw_config(struct perf_event *event)
->>  	}
->>  
->>  	if (event->attr.precise_ip) {
->> +		struct arch_pebs_cap pebs_cap = hybrid(event->pmu, arch_pebs_cap);
+>> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
+>> index 4a47de4bb2e5..de01d16409c1 100644
+>> --- a/drivers/tee/tee_shm.c
+>> +++ b/drivers/tee/tee_shm.c
+>> @@ -722,7 +722,14 @@ void tee_shm_put(struct tee_shm *shm)
+>>          struct tee_device *teedev;
+>>          bool do_release = false;
+>>
+>> -       if (!shm || !shm->ctx || !shm->ctx->teedev)
+>> +       /* checking pointer */
+>> +       if (IS_ERR_OR_NULL(shm) || !virt_addr_valid(shm))
+> The IS_ERR_OR_NULL() check might make sense, but the virt_addr_valid()
+> does not. virt_addr_valid() might catch a few garbage pointers, but
+> the real problem is that someone is supplying garbage pointers.
+>
+>> +               return;
 >> +
->>  		if ((event->attr.config & INTEL_ARCH_EVENT_MASK) == INTEL_FIXED_VLBR_EVENT)
->>  			return -EINVAL;
->>  
->> @@ -4265,6 +4267,15 @@ static int intel_pmu_hw_config(struct perf_event *event)
->>  		}
->>  		if (x86_pmu.pebs_aliases)
->>  			x86_pmu.pebs_aliases(event);
+>> +       if (IS_ERR_OR_NULL(shm->ctx) || !virt_addr_valid(shm->ctx))
+>> +               return;
 >> +
->> +		if (x86_pmu.arch_pebs) {
->> +			u64 cntr_mask = hybrid(event->pmu, intel_ctrl) &
->> +						~GLOBAL_CTRL_EN_PERF_METRICS;
->> +			u64 pebs_mask = event->attr.precise_ip >= 3 ?
->> +						pebs_cap.pdists : pebs_cap.counters;
->> +			if (cntr_mask != pebs_mask)
->> +				event->hw.dyn_constraint &= pebs_mask;
->> +		}
->>  	}
->>  
->>  	if (needs_branch_stack(event)) {
->> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
->> index 5c26a5235f94..1179980f795b 100644
->> --- a/arch/x86/events/intel/ds.c
->> +++ b/arch/x86/events/intel/ds.c
->> @@ -3005,6 +3005,7 @@ static void __init intel_arch_pebs_init(void)
->>  	x86_pmu.pebs_buffer_size = PEBS_BUFFER_SIZE;
->>  	x86_pmu.drain_pebs = intel_pmu_drain_arch_pebs;
->>  	x86_pmu.pebs_capable = ~0ULL;
->> +	x86_pmu.flags |= PMU_FL_PEBS_ALL;
->>  
->>  	x86_pmu.pebs_enable = __intel_pmu_pebs_enable;
->>  	x86_pmu.pebs_disable = __intel_pmu_pebs_disable;
->> -- 
->> 2.34.1
+>> +       if (IS_ERR_OR_NULL(shm->ctx->teedev) || !virt_addr_valid(shm->ctx->teedev))
+>>                  return;
+> shm->ctx or shm->ctx->teedev should never be an ERR pointer. The
+> virt_addr_valid() test doesn't make sense.
+>
+> Cheers,
+> Jens
+>
+>>          teedev = shm->ctx->teedev;
+>> --
+>> 2.25.1
 >>
 
