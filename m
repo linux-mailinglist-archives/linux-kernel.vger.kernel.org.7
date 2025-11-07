@@ -1,330 +1,195 @@
-Return-Path: <linux-kernel+bounces-890117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB99C3F410
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:50:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7F9C3F3EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:49:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C48B14E86BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:50:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AF38634D230
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E992D9EED;
-	Fri,  7 Nov 2025 09:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F612D8795;
+	Fri,  7 Nov 2025 09:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nKMLx4mB";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WXfe2uhG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="fw1/iwM8"
+Received: from pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.68.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007BB302758
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B26A21767A;
+	Fri,  7 Nov 2025 09:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.68.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762509010; cv=none; b=LDofL1EwX8Z9ryQQsBvAv73n+ciqH6npfpYtM8HDJzLEkxqPgGCKxk2WsgK4SJ2/vyo7CwwdXlki9XIT32FKqa1d0NIVvNil9Nuwg7MS3Gf4WiNJmrwg991u5RW7viyjLsd5ntZn1hL+4YfaZwIrtIBUjLboqDibtYUh3Ijl4Bg=
+	t=1762508989; cv=none; b=OcHYyLxXgP4PWTKcGqf6MmDvUJtidIiI/TQnV5OO3TzkDUPb8tLmssSz/JMKMsCtsMZ/x1MrHxsof+gAK4xf8IH4NxPpaCAuazBvd4kG5Xi15OJ2cmBoVPilmsBIvwFj7xEJs/dgMtljCTGW+Nxu4GAYWM0lIKkN5VuXmtHVolI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762509010; c=relaxed/simple;
-	bh=SWt+hwwNe9PsHYcemvNKv0BC8yiebaVK1kJWCfMgI1o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=n1NBgRkqErQVU5rBCsRQ+YOtdwm0rTlRQOSIbVWuN22ZJRcnHINhl4RAB5qqyqRx9DCcOaAEdLhqE0bcO4LhQ2cu3mY0nUlWIqE0/ZrTfAKqtC54F6MdjwPdzh5XqSMlVQihc81gyRsWN5FwwqFHHW5I26uLdp2yhHMNZsWU9sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nKMLx4mB; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WXfe2uhG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A779wkr3748809
-	for <linux-kernel@vger.kernel.org>; Fri, 7 Nov 2025 09:50:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FftA7wD5WcLIKyBHSrsSa+81tJSqladI38d/XqLnx0Q=; b=nKMLx4mBJylbl7O6
-	ugoYPTw8Dr2VPQd8UfW2ElCx/fhdZJmYt0AQuTXxe8ch6yJpz9/JSHI7b/hb4xqV
-	tBh8e5UhfDEs6lH7B07uAHFspfFBWI7+mLkBiH83GicrwY5F7tjWS0FUtCSkOc0t
-	dY2MtNhaQpzFskTe7dueWRSF8y/dd9rGIYdgO7Q9DNpFZZeEhSCg3tqdcZ3c0Se4
-	AZCU3Osk2zVxQCz2R11iGG6YjK4UyLtX3vGAtePe2dutTaL0WhaYltGoX/CNKtf9
-	6jAUPePwDXcG057CnbVFCQBmdobLcnBsH2BPkrKujWFIA7tnLB13g88SHu0k45dm
-	/SbfEg==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8sy6ksvg-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:50:07 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2954d676f9dso5761505ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:50:07 -0800 (PST)
+	s=arc-20240116; t=1762508989; c=relaxed/simple;
+	bh=XkaQOlFtCI/XMXzkUTOuiDcM6Wrh7/NO7yO+DoduRBA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dDnLiQxy4Va7Ne53F763yfNtsonGtJyxM3RnjCQLXQs12eeOv/uMxSF21xjKv1m5AzICDsqpiQo/eAFYheu5PjFKDBvwAndykXQOaWnUwzEOAH6wK4yQ4nF/qtXKHfeKb/c0buqJZ88Olh3cL/CTEfJg7RCemAX28zGdgckDaj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=fw1/iwM8; arc=none smtp.client-ip=44.246.68.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762509007; x=1763113807; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FftA7wD5WcLIKyBHSrsSa+81tJSqladI38d/XqLnx0Q=;
-        b=WXfe2uhGWKxpIwrOiM5tPFYlMtecymD6fdskIndqEU3KsJb+kFwg0OM7B7enNfWlj8
-         lBZzs5f+cw4jCUgvo2407wQRLQsViZ2BUtpDGStRZeeorHxG0myOrF7DyI2CDaWA/5LG
-         n4XstxtpEufYQSYufJPrkEInzMxeOrSAfhA8DQtKP0uxKj46LMyWaaWOqIZHNQWZ/pPC
-         tMwUnTdRXTWJyTTZ4DXfDf85GH14SjdH8NK331osSaQMVkDKXmoL9uv6hSmL+YgeTao+
-         bjPCGLK/3ZqMZJBbsiLMgiBDCh9bQNtxxWAxJrDahrsj0hyHqHdeVqiKmF5VdhU/wKF2
-         +naQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762509007; x=1763113807;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FftA7wD5WcLIKyBHSrsSa+81tJSqladI38d/XqLnx0Q=;
-        b=G5Q7JhLxWVDOs99O3vQor4I4EaL7ZVyl1Cf7/OaZnYviodGGjoBK9PgPndu3gR9gxm
-         1Yr0eoP9daY8zLlr+S3UextQUGH+hnwaPhW2Noejqgg+s+iDkc4ZVUFFnZRx4JJt3tCM
-         vf3j30pPWHcTsSrWxynfFMfOhq+9T0sDI0AU4kYz2WjFs9PwSChevQlYEUTTPFQUuu6q
-         Wh5JF1bSsPFRzwx5PCHq5tKvAOX0cDMWkY62CoXjc8fZ0MoiVWlUEvICMnsSTKDT5huL
-         SFF1UDyWMateHO+MamhlNbIGCcNq5EKqpCc3ajOXGkIun5j7mxP03LToqCorCsy6e8PV
-         SDEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIFsA5c1XT+mHEBsxtpgqPpvBhHFuwC1uercWHLm4ZgxfrTpLHgkg/lfJsCM8ZOw+4Bu9HkeGSyPlLCs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvXIfQUQRLaDh5vLPsuNCEG2DMifs2Kd0GmPCmoDOuxDl2Me59
-	l+qqLIGgzwfO/sp4ogwkBI2Oe6gkeTQLlaZkh3KO7oS3AqCk0BeSBMsOHWo2jvAe7oCSvEWpd8c
-	6N5iKxaemT+4gqFMikRtfhxCvhg0xOmEgFll8oosOYjQnkUynaVccGgpJLZkptK4QBkw=
-X-Gm-Gg: ASbGncueay7SclRQ7pk/pZDkvwKHDRWmNA6Mv/nGOBsB5/680q488ZUzN/eNUqu25Ui
-	6HVDa5ogNMIE4T+pBhQdawsxHAhOTaqZ2soPinasOyDHkpgUhPnLbFa0c76ZR+hgensrpCdG6HM
-	nCyArgMOd3P5ILyhEQYnOm/0GiREHFRd4C7rkuGXsTZ3srfEFDwaSIJLUCvu5rFa5+i7R8bgrB2
-	5RUFs096iGxAJIBtNzAD2R3v3iYiyeL5rljFui65OrrkZeYS2M7KpKTF7IcRi9t77Cm/8Fk+dPz
-	EtA/LOiBc48TbGM62k/Cne/ZajBQMSnVhM36a7O+uZF3rGRvEjFLaJvibxI0nvE9/uQIx7okwwE
-	JiIsuJjanaNQmWFmt+BRG8Q8YPFRE3vTyAw==
-X-Received: by 2002:a17:903:32ce:b0:295:6427:87d4 with SMTP id d9443c01a7336-297c0492f8cmr35286485ad.50.1762509006657;
-        Fri, 07 Nov 2025 01:50:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF+OhC0kQKeF3lJKFeh8PrGewuybdud4syNwZDglqOOeCSHYsix1JhEzofjLGLKdKTgNeH1MA==
-X-Received: by 2002:a17:903:32ce:b0:295:6427:87d4 with SMTP id d9443c01a7336-297c0492f8cmr35286065ad.50.1762509006043;
-        Fri, 07 Nov 2025 01:50:06 -0800 (PST)
-Received: from hu-vgarodia-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5f011sm54975895ad.25.2025.11.07.01.50.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 01:50:05 -0800 (PST)
-From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-Date: Fri, 07 Nov 2025 15:19:37 +0530
-Subject: [PATCH v3 2/6] media: iris: Add support for multiple TZ content
- protection(CP) configs
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1762508987; x=1794044987;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tSmOMSfMDPnh2RnGvEKnRHhJf3u17n26UTMXVggCb24=;
+  b=fw1/iwM8hCUYy3+V3HKNxWtT79zPK6nNTrENA07kbg5M7vdadUzCu9Hm
+   cOfKRbUjNOendALF7/xRWKvBSbPaosYR1YW/epgK5jz8clsyCzue2WJCf
+   2EBaOC7C3DNLQ9H3n5prRPOn3rZBh8uedspWriFj7jZokMzTmN0/ggG6W
+   7vfMGblCzbraobGwVx1cIjNbTKmW1WUF6HFCwT+vjxbUNTH4iJ/qeYbsY
+   Z3VMXhx1/c7aT1IzbJ6cFMHfNmyNRbiZCr0F/kiSMhKUwlj2BZ380SUNx
+   brkXSvBaEd1r1cbADsEPhuBDYcVvzeyeMgEPflSMiJJw/gQ2UivAQAgOf
+   Q==;
+X-CSE-ConnectionGUID: Nq04Ner7T1iISROkPCGKRg==
+X-CSE-MsgGUID: QoTYeIQ2T72oQgSQfm8RBQ==
+X-IronPort-AV: E=Sophos;i="6.19,286,1754956800"; 
+   d="scan'208";a="6610224"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 09:49:43 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [205.251.233.234:3609]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.6.26:2525] with esmtp (Farcaster)
+ id c7de7f36-394a-411d-a4d8-9f571b0cb2a5; Fri, 7 Nov 2025 09:49:43 +0000 (UTC)
+X-Farcaster-Flow-ID: c7de7f36-394a-411d-a4d8-9f571b0cb2a5
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Fri, 7 Nov 2025 09:49:43 +0000
+Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
+ (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29; Fri, 7 Nov 2025
+ 09:49:41 +0000
+Date: Fri, 7 Nov 2025 09:49:38 +0000
+From: Jakub Acs <acsjakub@amazon.de>
+To: Vlastimil Babka <vbabka@suse.cz>
+CC: <linux-mm@kvack.org>, Hugh Dickins <hughd@google.com>, Jann Horn
+	<jannh@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	<akpm@linux-foundation.org>, <david@redhat.com>, <xu.xin16@zte.com.cn>,
+	<chengming.zhou@linux.dev>, <peterx@redhat.com>, <axelrasmussen@google.com>,
+	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] mm/ksm: fix flag-dropping behavior in ksm_madvise
+Message-ID: <20251107094938.GA71570@dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com>
+References: <20251001090353.57523-1-acsjakub@amazon.de>
+ <20251001090353.57523-2-acsjakub@amazon.de>
+ <13c7242e-3a40-469b-9e99-8a65a21449bb@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251107-knp_video-v3-2-50c86cbb0eb8@oss.qualcomm.com>
-References: <20251107-knp_video-v3-0-50c86cbb0eb8@oss.qualcomm.com>
-In-Reply-To: <20251107-knp_video-v3-0-50c86cbb0eb8@oss.qualcomm.com>
-To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vishnu Reddy <busanna.reddy@oss.qualcomm.com>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762508991; l=7571;
- i=vikash.garodia@oss.qualcomm.com; s=20241104; h=from:subject:message-id;
- bh=SWt+hwwNe9PsHYcemvNKv0BC8yiebaVK1kJWCfMgI1o=;
- b=ytqnH069b0RH0alLGzZQWkUay5hIu1VdnwrpqJ82snWmN8auwothoDwFn3wv1A6AME1d2AgVe
- Um49iSq2wQDAy8ahGr6GnnaDMiElK+OgRbomw5A5Ch9MYNlowj9MvXL
-X-Developer-Key: i=vikash.garodia@oss.qualcomm.com; a=ed25519;
- pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
-X-Authority-Analysis: v=2.4 cv=AYu83nXG c=1 sm=1 tr=0 ts=690dc0cf cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=Jj_6bxtXlEvj8rQV6ZgA:9 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDA3OCBTYWx0ZWRfX3Hrs6fi3VIj9
- Dt7wh/j4xzMPk+KG75uvAA1185MKbDDhxwL5WlZf2H52ocCf1VsqaWl48m3fcuO+ZcRIeIGGGvx
- pcdM1vuJHRezTpCpJmSJ3VtaszNRVWPF3jDqDXWpFIaLkdDDEA6/PDxx7IRnKwRa2uwvN8g3qCD
- KA6jizRldq+oLw1xepyL3qTdAZA9C+I4fjtfGrt8azzY0f77/IYYVKOQ0dnHo8G75AIJdxryD3I
- YaDN4KHh9HACXKCKo2u19/vjBHtCGZpgv3D6zN631Bq03K4I3uuLz7lHmuZ1SAMftWVq6gtjmE6
- j67B+a7Vr6s+fMbqnjaK0QDXHYLI0j+xQo3iMFAbQHgQXODMxwMnGXp3W5AbBt4KrFCYfzlFzna
- iQb0a9HXM7K6CRV22gUTYmxpDPDzWw==
-X-Proofpoint-ORIG-GUID: ocxEv_QTXkmVei7eq-yrHR9XVy52vJba
-X-Proofpoint-GUID: ocxEv_QTXkmVei7eq-yrHR9XVy52vJba
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070078
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <13c7242e-3a40-469b-9e99-8a65a21449bb@suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-ClientProxiedBy: EX19D041UWB004.ant.amazon.com (10.13.139.143) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-vpu4 needs an additional configuration with respect to CP regions. Make
-the CP configuration as array such that the multiple configuration can be
-managed per platform.
+On Thu, Nov 06, 2025 at 11:39:28AM +0100, Vlastimil Babka wrote:
+> On 10/1/25 11:03, Jakub Acs wrote:
+> > syzkaller discovered the following crash: (kernel BUG)
+> > 
+> > [   44.607039] ------------[ cut here ]------------
+> > [   44.607422] kernel BUG at mm/userfaultfd.c:2067!
+> > [   44.608148] Oops: invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
+> > [   44.608814] CPU: 1 UID: 0 PID: 2475 Comm: reproducer Not tainted 6.16.0-rc6 #1 PREEMPT(none)
+> > [   44.609635] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> > [   44.610695] RIP: 0010:userfaultfd_release_all+0x3a8/0x460
+> > 
+> > <snip other registers, drop unreliable trace>
+> > 
+> > [   44.617726] Call Trace:
+> > [   44.617926]  <TASK>
+> > [   44.619284]  userfaultfd_release+0xef/0x1b0
+> > [   44.620976]  __fput+0x3f9/0xb60
+> > [   44.621240]  fput_close_sync+0x110/0x210
+> > [   44.622222]  __x64_sys_close+0x8f/0x120
+> > [   44.622530]  do_syscall_64+0x5b/0x2f0
+> > [   44.622840]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [   44.623244] RIP: 0033:0x7f365bb3f227
+> > 
+> > Kernel panics because it detects UFFD inconsistency during
+> > userfaultfd_release_all(). Specifically, a VMA which has a valid pointer
+> > to vma->vm_userfaultfd_ctx, but no UFFD flags in vma->vm_flags.
+> > 
+> > The inconsistency is caused in ksm_madvise(): when user calls madvise()
+> > with MADV_UNMEARGEABLE on a VMA that is registered for UFFD in MINOR
+> > mode, it accidentally clears all flags stored in the upper 32 bits of
+> > vma->vm_flags.
+> > 
+> > Assuming x86_64 kernel build, unsigned long is 64-bit and unsigned int
+> > and int are 32-bit wide. This setup causes the following mishap during
+> > the &= ~VM_MERGEABLE assignment.
+> > 
+> > VM_MERGEABLE is a 32-bit constant of type unsigned int, 0x8000'0000.
+> > After ~ is applied, it becomes 0x7fff'ffff unsigned int, which is then
+> > promoted to unsigned long before the & operation. This promotion fills
+> > upper 32 bits with leading 0s, as we're doing unsigned conversion (and
+> > even for a signed conversion, this wouldn't help as the leading bit is
+> > 0). & operation thus ends up AND-ing vm_flags with 0x0000'0000'7fff'ffff
+> > instead of intended 0xffff'ffff'7fff'ffff and hence accidentally clears
+> > the upper 32-bits of its value.
+> > 
+> > Fix it by changing `VM_MERGEABLE` constant to unsigned long, using the
+> > BIT() macro.
+> > 
+> > Note: other VM_* flags are not affected:
+> > This only happens to the VM_MERGEABLE flag, as the other VM_* flags are
+> > all constants of type int and after ~ operation, they end up with
+> > leading 1 and are thus converted to unsigned long with leading 1s.
+> > 
+> > Note 2:
+> > After commit 31defc3b01d9 ("userfaultfd: remove (VM_)BUG_ON()s"), this is
+> > no longer a kernel BUG, but a WARNING at the same place:
+> > 
+> > [   45.595973] WARNING: CPU: 1 PID: 2474 at mm/userfaultfd.c:2067
+> > 
+> > but the root-cause (flag-drop) remains the same.
+> > 
+> > Fixes: 7677f7fd8be76 ("userfaultfd: add minor fault registration mode")
+> 
+> Late to the party, but it seems to me the correct Fixes: should be
+> f8af4da3b4c1 ("ksm: the mm interface to ksm")
+> which introduced the flag and the buggy clearing code, no?
+> 
+> Commit 7677f7fd8be76 is just one that notices it, right? But there are other
+> flags in >32 bit area, including pkeys etc. Sounds rather dangerous if they
+> can be cleared using a madvise.
+> 
+> So we can't amend the Fixes: now but maybe could advise stable to backport
+> for even older versions than based on 7677f7fd8be76 ?
+> 
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Co-developed-by: Vishnu Reddy <busanna.reddy@oss.qualcomm.com>
-Signed-off-by: Vishnu Reddy <busanna.reddy@oss.qualcomm.com>
-Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
----
- drivers/media/platform/qcom/iris/iris_firmware.c   | 23 ++++++++++++---------
- .../platform/qcom/iris/iris_platform_common.h      |  3 ++-
- .../media/platform/qcom/iris/iris_platform_gen2.c  | 24 ++++++++++++++--------
- .../platform/qcom/iris/iris_platform_sm8250.c      | 15 ++++++++------
- 4 files changed, 39 insertions(+), 26 deletions(-)
+Good point. It was a bit tricky to determine the correct "fixes" tag, as
+there were more candidates:
+- the commit that initially introduced VM_MERGEABLE as a constant with
+  different inferred type to other vm_flags constants
+- the commit that first started using upper 32 bits of vm_flags and did
+  not make sure the constants are defined safely
+- f8af4da3b4c1 indeed, as the one that makes the drop actually possible
+- 7677f7fd8be76 that shows us a path where the drop manifests
 
-diff --git a/drivers/media/platform/qcom/iris/iris_firmware.c b/drivers/media/platform/qcom/iris/iris_firmware.c
-index 9ab499fad946446a87036720f49c9c8d311f3060..9186e0144dc0df4045c9995adc5fc93993cc3fba 100644
---- a/drivers/media/platform/qcom/iris/iris_firmware.c
-+++ b/drivers/media/platform/qcom/iris/iris_firmware.c
-@@ -70,9 +70,9 @@ static int iris_load_fw_to_memory(struct iris_core *core, const char *fw_name)
- 
- int iris_fw_load(struct iris_core *core)
- {
--	struct tz_cp_config *cp_config = core->iris_platform_data->tz_cp_config_data;
-+	const struct tz_cp_config *cp_config;
- 	const char *fwpath = NULL;
--	int ret;
-+	int i, ret;
- 
- 	ret = of_property_read_string_index(core->dev->of_node, "firmware-name", 0,
- 					    &fwpath);
-@@ -91,14 +91,17 @@ int iris_fw_load(struct iris_core *core)
- 		return ret;
- 	}
- 
--	ret = qcom_scm_mem_protect_video_var(cp_config->cp_start,
--					     cp_config->cp_size,
--					     cp_config->cp_nonpixel_start,
--					     cp_config->cp_nonpixel_size);
--	if (ret) {
--		dev_err(core->dev, "protect memory failed\n");
--		qcom_scm_pas_shutdown(core->iris_platform_data->pas_id);
--		return ret;
-+	for (i = 0; i < core->iris_platform_data->tz_cp_config_data_size; i++) {
-+		cp_config = &core->iris_platform_data->tz_cp_config_data[i];
-+		ret = qcom_scm_mem_protect_video_var(cp_config->cp_start,
-+						     cp_config->cp_size,
-+						     cp_config->cp_nonpixel_start,
-+						     cp_config->cp_nonpixel_size);
-+		if (ret) {
-+			dev_err(core->dev, "qcom_scm_mem_protect_video_var failed: %d\n", ret);
-+			qcom_scm_pas_shutdown(core->iris_platform_data->pas_id);
-+			return ret;
-+		}
- 	}
- 
- 	return ret;
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-index df03de08c44839c1b6c137874eb7273c638d5f2c..ae49e95ba2252fc1442f7c81d8010dbfd86da0da 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-+++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-@@ -220,7 +220,8 @@ struct iris_platform_data {
- 	u32 inst_fw_caps_dec_size;
- 	struct platform_inst_fw_cap *inst_fw_caps_enc;
- 	u32 inst_fw_caps_enc_size;
--	struct tz_cp_config *tz_cp_config_data;
-+	const struct tz_cp_config *tz_cp_config_data;
-+	u32 tz_cp_config_data_size;
- 	u32 core_arch;
- 	u32 hw_response_timeout;
- 	struct ubwc_config_data *ubwc_config;
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-index fea800811a389a58388175c733ad31c4d9c636b0..00c6b9021b98aac80612b1bb9734c8dac8146bd9 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-+++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-@@ -648,11 +648,13 @@ static struct ubwc_config_data ubwc_config_sm8550 = {
- 	.bank_spreading = 1,
- };
- 
--static struct tz_cp_config tz_cp_config_sm8550 = {
--	.cp_start = 0,
--	.cp_size = 0x25800000,
--	.cp_nonpixel_start = 0x01000000,
--	.cp_nonpixel_size = 0x24800000,
-+static const struct tz_cp_config tz_cp_config_sm8550[] = {
-+	{
-+		.cp_start = 0,
-+		.cp_size = 0x25800000,
-+		.cp_nonpixel_start = 0x01000000,
-+		.cp_nonpixel_size = 0x24800000,
-+	},
- };
- 
- static const u32 sm8550_vdec_input_config_params_default[] = {
-@@ -771,7 +773,8 @@ struct iris_platform_data sm8550_data = {
- 	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8550_dec),
- 	.inst_fw_caps_enc = inst_fw_cap_sm8550_enc,
- 	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8550_enc),
--	.tz_cp_config_data = &tz_cp_config_sm8550,
-+	.tz_cp_config_data = tz_cp_config_sm8550,
-+	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_sm8550),
- 	.core_arch = VIDEO_ARCH_LX,
- 	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
- 	.ubwc_config = &ubwc_config_sm8550,
-@@ -864,7 +867,8 @@ struct iris_platform_data sm8650_data = {
- 	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8550_dec),
- 	.inst_fw_caps_enc = inst_fw_cap_sm8550_enc,
- 	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8550_enc),
--	.tz_cp_config_data = &tz_cp_config_sm8550,
-+	.tz_cp_config_data = tz_cp_config_sm8550,
-+	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_sm8550),
- 	.core_arch = VIDEO_ARCH_LX,
- 	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
- 	.ubwc_config = &ubwc_config_sm8550,
-@@ -947,7 +951,8 @@ struct iris_platform_data sm8750_data = {
- 	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8550_dec),
- 	.inst_fw_caps_enc = inst_fw_cap_sm8550_enc,
- 	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8550_enc),
--	.tz_cp_config_data = &tz_cp_config_sm8550,
-+	.tz_cp_config_data = tz_cp_config_sm8550,
-+	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_sm8550),
- 	.core_arch = VIDEO_ARCH_LX,
- 	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
- 	.ubwc_config = &ubwc_config_sm8550,
-@@ -1035,7 +1040,8 @@ struct iris_platform_data qcs8300_data = {
- 	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_qcs8300_dec),
- 	.inst_fw_caps_enc = inst_fw_cap_qcs8300_enc,
- 	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_qcs8300_enc),
--	.tz_cp_config_data = &tz_cp_config_sm8550,
-+	.tz_cp_config_data = tz_cp_config_sm8550,
-+	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_sm8550),
- 	.core_arch = VIDEO_ARCH_LX,
- 	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
- 	.ubwc_config = &ubwc_config_sm8550,
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-index 1b1b6aa751106ee0b0bc71bb0df2e78340190e66..8927c3ff59dab59c7d2cbcd92550f9ee3a2b5c1e 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-+++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-@@ -278,11 +278,13 @@ static const char * const sm8250_opp_clk_table[] = {
- 	NULL,
- };
- 
--static struct tz_cp_config tz_cp_config_sm8250 = {
--	.cp_start = 0,
--	.cp_size = 0x25800000,
--	.cp_nonpixel_start = 0x01000000,
--	.cp_nonpixel_size = 0x24800000,
-+static const struct tz_cp_config tz_cp_config_sm8250[] = {
-+	{
-+		.cp_start = 0,
-+		.cp_size = 0x25800000,
-+		.cp_nonpixel_start = 0x01000000,
-+		.cp_nonpixel_size = 0x24800000,
-+	},
- };
- 
- static const u32 sm8250_vdec_input_config_param_default[] = {
-@@ -348,7 +350,8 @@ struct iris_platform_data sm8250_data = {
- 	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8250_dec),
- 	.inst_fw_caps_enc = inst_fw_cap_sm8250_enc,
- 	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8250_enc),
--	.tz_cp_config_data = &tz_cp_config_sm8250,
-+	.tz_cp_config_data = tz_cp_config_sm8250,
-+	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_sm8250),
- 	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
- 	.num_vpp_pipe = 4,
- 	.max_session_count = 16,
+Looking back, I agree f8af4da3b4c1 is the better option, but as you
+said, that won't be changed now.
 
--- 
-2.34.1
+Nevertheless, I'll send the backports after a round of kselftests,
+thanks for pointing this out.
+
+Have a good day,
+Jakub
+ 
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Christof Hellmis
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
 
 
