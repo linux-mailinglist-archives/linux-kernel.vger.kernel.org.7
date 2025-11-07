@@ -1,105 +1,149 @@
-Return-Path: <linux-kernel+bounces-889879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8F0C3EC02
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:30:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE466C3EC0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2710D188CB11
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:30:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC4D34EB13C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE63B308F3B;
-	Fri,  7 Nov 2025 07:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8Yy/JTb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABBC30217B;
+	Fri,  7 Nov 2025 07:30:30 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBC22FB602
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFD21AA1D2
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762500601; cv=none; b=g51FOxyz4AOzPrQoC/VkyhwmPBaefE0n8xVK+leMP18bo9uvqT0ic04RIhTVhj0Wg3wwu3Xwq+zmNAhelfxy2tmsS1qZYXH0d7z/1Z1zkfLMpXwHoRUGETpi9USlUTtpQEpGT4nVs6INdSPD1l9vH5InuPbEmRQI5Tc5sIcr+hw=
+	t=1762500630; cv=none; b=Ltmia3sHPDbhfK89xT8E+eWCZ11kIJA16FxXt+W7gfBoQsAyRKhvOGd/NBdWu1NtKNymPAPh6q3tBIR1hpoP2WMPhDOJov4jWRU1KTWdRHNmt7v9q1rSarlC4B60rU75j6UCMExIwdfXpac6vgLcHhkyyfcvmKkRdHYftdLxyWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762500601; c=relaxed/simple;
-	bh=0k/4QNOUemavZRM5AvbADrQGHF4kzm1DwuxWGRY7jxs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jpgg3wmPuX9wPDIx9OnnhPBXSrjg93hZPy0N7Otqy9NKc5zBZmkW6VhiVP+Mz+OrIHbMTyEpJIM2ZOGgD3/SJHv8KWrwBtttcnFrtqRiG5CPtuvNYPWW4CHWzViq15IjbhKBTQ6cbtNIis8jgCVtX5K6ulHDXVu8R+bT1OAC31A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8Yy/JTb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3498C4AF09
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762500600;
-	bh=0k/4QNOUemavZRM5AvbADrQGHF4kzm1DwuxWGRY7jxs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Y8Yy/JTbkpMAQ+9glG9IYLNSC9wrSFSCznDVUsaXREztSmFbr+/WXEVxHsh1nfe3M
-	 K6MrVhlkVfiqh+V1tcN82btGg1vERjNp4FTdKazMuyl+tVajODxxy6Jhh5ZgKFD36S
-	 76jqEgGahcqU6fDwPLGpYVlRQ3vnM8xLFmKWLcqHjKuolqm7MCmvQtzst0h9tMpvYh
-	 AsDM5LmeRVqNILFAGDIm2wCmSTLlBhV739b+QJXlpXh8x4s3oNM297Vg0Icd86TapM
-	 kGNAlbIYzHrLnBybVPG07Rtpn5Q63qmewIyJV26K20WNVof03w9hn/A4hj+4GzxWbP
-	 jqqTAA0QO0XRA==
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-641458f71ffso460819a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:30:00 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXQvBvmYYxLQByvg4CPu45wEorMOsxvEi6Nls09vDKAGuilibZH4Qe5ZAM65LrAiv+DTS8a+8QEUmqLXg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfcC2ZvtQ/bk6YdHXuexHufFkP+DUqQ/+6husTOM968xxIP9mO
-	c0Bp2UI7KqcFSJVdMusHZGIhVSMtQV93syD9tRxRmpuuBzweAQ8Mp7Sb5cKXNiOKq+lL+z1BrjR
-	iUuxyPM/5EEysxwdyZ74V/nrtgT5D2co=
-X-Google-Smtp-Source: AGHT+IEEqSEbBT2gOLAIiEzEt3XyHlCm/Sy7SKJj6NpY39BtIpvPnBcuZZkA9JM5llYlltGgdqDj+a8KBw9sRh1/yQI=
-X-Received: by 2002:a17:907:2d2b:b0:b72:6728:5bb1 with SMTP id
- a640c23a62f3a-b72c0e986f9mr197926466b.56.1762500599010; Thu, 06 Nov 2025
- 23:29:59 -0800 (PST)
+	s=arc-20240116; t=1762500630; c=relaxed/simple;
+	bh=2k51oEy1wZDZS3+4S8C70iHgogedvYziIarvQYK/Or8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DUZxkp0mrHkW0mRA/ma98JF/KstPqPyRFuvXYeB0okb0lUgDRcNvsFRa2Ur7K7ZdU5GO7SMqOWAtQdbadsLSGLkOuf4jctLO50wAhBy07aKUyYoQfaSyTMbvVTjYDxfrbLFo8mhg8d3o/mLGi1agsk4PbXuawHREd3W6rIbMR+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-43322b98837so4883665ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:30:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762500627; x=1763105427;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rPxYHjnO12MHR50muRIGPWkB6uCToTIOy8FbrPLJHnk=;
+        b=EbEw9KlnLRCnTR3n2TuhDcNvOfzskRGT9NYYXRBUT8qDF3VjxlAOUezs5EMh7w6Ai5
+         Dzvb8YbUNb49yxs/t16yrjQt9mnok2kgBKFoA09NGyR/PuRM7Y63oLaE4W9m+zReQpqv
+         aZBrFEmFzTUa7E5ij41TVoWt1rtNtI2AlVan2DN86V6UGeb1cyjG88JSAvsCmFafLGkB
+         xgrJVWhVJsh1ge1N6QIKYKXvlrqJnEcNjpn9Vj1Jl1PESPnuw4vXYhRJm3DmxLvc789s
+         DARRzxx88KFLPEhqMlFz9oIvYNw+g9ATpTvJE7ZASstppvM0ESRDZdPhwjhV2MmQjY84
+         BufQ==
+X-Gm-Message-State: AOJu0YzFkte7mqBNqFkhxMl41hh08gKJGDYuJcmCo+EyDd7IAouKsXYi
+	jd5AN9saoJ1LWOT4gK01v2zMjVFqU6nALqsqXW/ggTSF1CQatwagGvL9X1LVEdpdHzNgHa2qvPx
+	s83oSGipdbLYMEBRE9XcOtBgXxi12hFXPx0bud1/lPfGkW01ITMOAPSi5kdnr2Q==
+X-Google-Smtp-Source: AGHT+IEG9f5ZU2gL6JNAk7kLQ0ek86EsJmg5GAy4iiUqG6Nju9sSfebPnWAoL2/1yrb8+561PZpLyYpB2WpePb9TjzW75y/6Fw23
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <690d2bd5.a70a0220.22f260.000f.GAE@google.com>
-In-Reply-To: <690d2bd5.a70a0220.22f260.000f.GAE@google.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Fri, 7 Nov 2025 16:29:46 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8HxiEGLS4zBFEKAcxT_qtAFM8Ng0YKZ5seTnB3A_-RVQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bkTi5Rpu8-GCzyy2Ci7sgiyDnxdQX0aAB7UMaQ0qYE_X1ORBuTvEUu7zdc
-Message-ID: <CAKYAXd8HxiEGLS4zBFEKAcxT_qtAFM8Ng0YKZ5seTnB3A_-RVQ@mail.gmail.com>
-Subject: Re: [syzbot] [exfat?] WARNING in __rt_mutex_slowlock_locked (2)
-To: syzbot <syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: multipart/mixed; boundary="0000000000001f42310642fc2655"
-
---0000000000001f42310642fc2655
+X-Received: by 2002:a05:6e02:12c5:b0:433:3505:51c2 with SMTP id
+ e9e14a558f8ab-4335f3b3bedmr34042285ab.9.1762500627654; Thu, 06 Nov 2025
+ 23:30:27 -0800 (PST)
+Date: Thu, 06 Nov 2025 23:30:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690da013.a70a0220.22f260.0024.GAE@google.com>
+Subject: [syzbot] [kernel?] WARNING in alloc_pid
+From: syzbot <syzbot+36d7fcb891b92b056986@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-#syz test
+Hello,
 
---0000000000001f42310642fc2655
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-exfat-return-error-if-start_clu-is-invalid.patch"
-Content-Disposition: attachment; 
-	filename="0001-exfat-return-error-if-start_clu-is-invalid.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mhojbsdt0>
-X-Attachment-Id: f_mhojbsdt0
+syzbot found the following issue on:
 
-RnJvbSAyNTg5MmU4ZGU5NTVkNzE3ODU5ZjAyZThkYTY1YzEwOTE1NmM0ZWUxIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBOYW1qYWUgSmVvbiA8bGlua2luamVvbkBrZXJuZWwub3JnPgpE
-YXRlOiBGcmksIDcgTm92IDIwMjUgMTY6Mjc6MTAgKzA5MDAKU3ViamVjdDogW1BBVENIXSBleGZh
-dDogcmV0dXJuIGVycm9yIGlmIC0+c3RhcnRfY2x1IGlzIGludmFsaWQKClNpZ25lZC1vZmYtYnk6
-IE5hbWphZSBKZW9uIDxsaW5raW5qZW9uQGtlcm5lbC5vcmc+Ci0tLQogZnMvZXhmYXQvbmFtZWku
-YyB8IDUgKystLS0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25z
-KC0pCgpkaWZmIC0tZ2l0IGEvZnMvZXhmYXQvbmFtZWkuYyBiL2ZzL2V4ZmF0L25hbWVpLmMKaW5k
-ZXggNzQ1ZGNlMjlkZGI1Li40ZGQwOWRhMWFhOTIgMTAwNjQ0Ci0tLSBhL2ZzL2V4ZmF0L25hbWVp
-LmMKKysrIGIvZnMvZXhmYXQvbmFtZWkuYwpAQCAtNjU3LDEwICs2NTcsOSBAQCBzdGF0aWMgaW50
-IGV4ZmF0X2ZpbmQoc3RydWN0IGlub2RlICpkaXIsIGNvbnN0IHN0cnVjdCBxc3RyICpxbmFtZSwK
-IAogCWluZm8tPnN0YXJ0X2NsdSA9IGxlMzJfdG9fY3B1KGVwMi0+ZGVudHJ5LnN0cmVhbS5zdGFy
-dF9jbHUpOwogCWlmICghaXNfdmFsaWRfY2x1c3RlcihzYmksIGluZm8tPnN0YXJ0X2NsdSkgJiYg
-aW5mby0+c2l6ZSkgewotCQlleGZhdF93YXJuKHNiLCAic3RhcnRfY2x1IGlzIGludmFsaWQgY2x1
-c3RlcigweCV4KSIsCisJCWV4ZmF0X2ZzX2Vycm9yKHNiLCAic3RhcnRfY2x1IGlzIGludmFsaWQg
-Y2x1c3RlcigweCV4KSIsCiAJCQkJaW5mby0+c3RhcnRfY2x1KTsKLQkJaW5mby0+c2l6ZSA9IDA7
-Ci0JCWluZm8tPnZhbGlkX3NpemUgPSAwOworCQlyZXR1cm4gLUVJTzsKIAl9CiAKIAlpZiAoaW5m
-by0+dmFsaWRfc2l6ZSA+IGluZm8tPnNpemUpIHsKLS0gCjIuMjUuMQoK
---0000000000001f42310642fc2655--
+HEAD commit:    84d39fb9d529 Add linux-next specific files for 20251105
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=164ea532580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=413cf24e78b667b9
+dashboard link: https://syzkaller.appspot.com/bug?extid=36d7fcb891b92b056986
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174d2084580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14a3a114580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/49de85e8d717/disk-84d39fb9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4fd90ea7659f/vmlinux-84d39fb9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/235e0ee874fe/bzImage-84d39fb9.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+36d7fcb891b92b056986@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: ./include/linux/ns_common.h:288 at __ns_ref_active_get include/linux/ns_common.h:288 [inline], CPU#0: syz-executor/5947
+WARNING: ./include/linux/ns_common.h:288 at alloc_pid+0xad6/0xc70 kernel/pid.c:285, CPU#0: syz-executor/5947
+Modules linked in:
+CPU: 0 UID: 0 PID: 5947 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:__ns_ref_active_get include/linux/ns_common.h:288 [inline]
+RIP: 0010:alloc_pid+0xad6/0xc70 kernel/pid.c:285
+Code: cc e8 8e ab 34 00 be 02 00 00 00 eb 0a e8 82 ab 34 00 be 01 00 00 00 48 89 df e8 35 41 0a 03 e9 84 fa ff ff e8 6b ab 34 00 90 <0f> 0b 90 e9 2c fd ff ff e8 5d ab 34 00 90 0f 0b 90 e9 5b fd ff ff
+RSP: 0018:ffffc900034679d8 EFLAGS: 00010293
+RAX: ffffffff818cc255 RBX: ffff888027d75998 RCX: ffff888027f95b80
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: ffff8880288abc01 R08: ffff888027d7599b R09: 1ffff11004faeb33
+R10: dffffc0000000000 R11: ffffed1004faeb34 R12: dffffc0000000000
+R13: 1ffff110051157b1 R14: ffff888027d75830 R15: dffffc0000000000
+FS:  0000555571fd2500(0000) GS:ffff888125a8b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2d78f156c0 CR3: 000000002fc74000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ copy_process+0x18e7/0x3930 kernel/fork.c:2196
+ kernel_clone+0x21e/0x840 kernel/fork.c:2609
+ __do_sys_clone kernel/fork.c:2750 [inline]
+ __se_sys_clone kernel/fork.c:2734 [inline]
+ __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2734
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2d78185e13
+Code: 1f 84 00 00 00 00 00 64 48 8b 04 25 10 00 00 00 45 31 c0 31 d2 31 f6 bf 11 00 20 01 4c 8d 90 d0 02 00 00 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 35 89 c2 85 c0 75 2c 64 48 8b 04 25 10 00 00
+RSP: 002b:00007ffeeee4fee8 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2d78185e13
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000555571fd27d0 R11: 0000000000000246 R12: 0000000000000000
+R13: 00000000000927c0 R14: 000000000001955c R15: 00007ffeeee50080
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
