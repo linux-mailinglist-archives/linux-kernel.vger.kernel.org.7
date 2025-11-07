@@ -1,166 +1,121 @@
-Return-Path: <linux-kernel+bounces-889633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE69C3E1C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:18:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2662DC3E1C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:19:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 857843AB1E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2C6F188AE92
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639C82F6585;
-	Fri,  7 Nov 2025 01:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWMy1MxU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06D42F5487;
+	Fri,  7 Nov 2025 01:19:02 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A947E258EC1;
-	Fri,  7 Nov 2025 01:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C892F531A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 01:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762478315; cv=none; b=EUNRkGHxskTsrMbBDzcCvyfe4i3Fpb0AWMuUfUldo7J4y87/qgdYuTfN2hN8OIW6tjNjb2/CbEgVUvO0SYVfmjvYo53YesOEkV0UYsjksecPN4yziJ0pG4Drb31pxROzZs0boxIpofUorDyE+y34kJvW+wf2zU//34qkZwK8wcY=
+	t=1762478342; cv=none; b=BVMhf2csJ0+Sc6PfVOfEVhJKEjRwj37pqSoQ8b5f4F7kA0yR+WDMoYhUsyTRWZvY5iV7qgNaIobfj83HOAhWoj77S1T/yPP0CFsusK0JrOSOgDyliEokKrXweZfeQkrv+69mXMvFARXK3SEX/WMF7WkPmLqmJDp8Tgmn3nPDibQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762478315; c=relaxed/simple;
-	bh=rtuRpvmIO025oKHiCTjuNzRE/bOZ6K9jegUDzon8gt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QpoE84WovID8wCq1ODt7drNzM1L94LKqzH/XtV661FcAtGmWO8VkEHCl1ExeiAtaRSU99HJ8Uf9SbkrXAMe/XFIF9x13sY7g7HYgsKr8fOnqoDyw5ZYe6T8TJi1fl+b+zUND83JWvIohsEWtNLfThXKf5CAmYEodf4eD3adIlVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWMy1MxU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B595C4CEF7;
-	Fri,  7 Nov 2025 01:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762478315;
-	bh=rtuRpvmIO025oKHiCTjuNzRE/bOZ6K9jegUDzon8gt4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AWMy1MxUfKg9pWpjvxXVtHPrW4xCrqSy3FtY6swJ49XLpR611ErvJao9xj2pwItkT
-	 F3zIG8Cw4qNxjZCPP0GN/isyW6zznum3oaVgrsck+BZ1/8fKNFkvL1aP1h+HOxtF+4
-	 E93SqY4NdR6aVLwBblNu+8snLfso96zUa/iFhbRLVs7Wi2d78frCsTc3iomDVEboo6
-	 a3XOcbQlRfu3D3DwpGs5hF4PscV5BRBbMtD+VkIG7KxtLNotCcjVnJkYx7I0+llHVa
-	 NfuApYPFk0EVj2rIiswbG/2kbwHh9mklhLqm7nX39HnJHSrfholo0GQWDhNmS8UFvA
-	 GHBw76da08IOA==
-Date: Thu, 6 Nov 2025 17:18:33 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Joshua Washington <joshwash@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jesper
- Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>, Simon Horman <horms@kernel.org>, Willem de
- Bruijn <willemb@google.com>, ziweixiao@google.com, Vedant Mathur
- <vedantmathur@google.com>
-Subject: Re: [PATCH net v1 2/2] gve: use max allowed ring size for ZC
- page_pools
-Message-ID: <20251106171833.72fe18a9@kernel.org>
-In-Reply-To: <qhi7uuq52irirmviv3xex6h5tc4w4x6kcjwhqh735un3kpcx5x@2phgy3mnmg4p>
-References: <20251105200801.178381-1-almasrymina@google.com>
-	<20251105200801.178381-2-almasrymina@google.com>
-	<20251105171142.13095017@kernel.org>
-	<CAHS8izNg63A9W5GkGVgy0_v1U6_rPgCj1zu2_5QnUKcR9eTGFg@mail.gmail.com>
-	<20251105182210.7630c19e@kernel.org>
-	<CAHS8izP0y1t4LU3nBj4h=3zw126dMtMNHUiXASuqDNyVuyhFYQ@mail.gmail.com>
-	<qhi7uuq52irirmviv3xex6h5tc4w4x6kcjwhqh735un3kpcx5x@2phgy3mnmg4p>
+	s=arc-20240116; t=1762478342; c=relaxed/simple;
+	bh=+KFj5rGnHv27vIKb5+keI4itoupavrQMKtAXgOjiUmw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=szhnX4NTaL8euSMSpNMU0UIFLsZ5w4tFNw07FkMTn9r+EigzWMqwx3dvJRIHJw3CYDlNC8Xzt7rUo9lBsA6oHTX4xt9mWGOvkDw9NKxoZCHaMmhs9Ed2oyUjWLgv9loO/+Wa/wZQ0lmpQxZxlW3O2aPkkKMpXTzoyzfh68fCJeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-93bc56ebb0aso68026039f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 17:19:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762478340; x=1763083140;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FWCdtFeRiTYHHo48qr1uxFIsc2bW5Uiytm2WAQQjOmg=;
+        b=f1iEqKnlX90pqhJHQWI24HNnbtVLXmCvQUFLwuhpIl0PRQ7kQw6xR9LwYI84EV4rb0
+         G03Ftbv3mlmdVB71NkQNT8HNw4E0cEyeRmTfqf2HVZNzHUVYPwNg0iX96yt1Ts4SpweY
+         vVpYDP4RBhQJhKqSSMnGSTuNw8ugBJkO4BpQQi1tMnits0X533ReVpamPmIijfNxRAFR
+         MoQcPWatHp05A09/02yc83cpMJmwICGdo+I2LLY2ro0HQZUow9aQPWfMY8W4P66dCI98
+         5tBqegh5vWYzOooRnvMcSr9GGEkAbOeNyCizdO69eLeKqOCl7aH8HulKTCVTY6kNcHCd
+         JAnw==
+X-Gm-Message-State: AOJu0YzETR6yIT+4V2LcBfJV+x2Ym+L9SKRDmpeCm1mV9gCHfIHEv9UI
+	ELt5F0Sb3p5lk0LCCFVfKAekrQCQhqE2NKEawDtaEnZIjHoqvaVZRM9ZVKDqEHYoqc/QgR2ZSCW
+	CJlmbbPPVmlX8nUaBYhz3YokKCw7eGAgsouV1rTTGlmNDPs8SUfImPzGbYOQ=
+X-Google-Smtp-Source: AGHT+IFysJ+Exr5l6lqZ0/zaCMJKXcFqlE+3sTsiBUsIQiz3UNq5mIAgOktC+R6wT9isOCCyqS0o2zHdzh8u2TetVON7miUgGSGg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:216d:b0:431:d721:266d with SMTP id
+ e9e14a558f8ab-4335f4a7c75mr23445405ab.31.1762478340096; Thu, 06 Nov 2025
+ 17:19:00 -0800 (PST)
+Date: Thu, 06 Nov 2025 17:19:00 -0800
+In-Reply-To: <6907edce.a70a0220.37351b.0014.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690d4904.a70a0220.22f260.0015.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [nbd?] KASAN: slab-use-after-free Write in
+ recv_work (3)
+From: syzbot <syzbot+56fbf4c7ddf65e95c7cc@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 6 Nov 2025 17:25:43 +0000 Dragos Tatulea wrote:
-> On Wed, Nov 05, 2025 at 06:56:46PM -0800, Mina Almasry wrote:
-> > On Wed, Nov 5, 2025 at 6:22=E2=80=AFPM Jakub Kicinski <kuba@kernel.org>=
- wrote: =20
-> > > Increasing cache sizes to the max seems very hacky at best.
-> > > The underlying implementation uses genpool and doesn't even
-> > > bother to do batching.
-> >=20
-> > OK, my bad. I tried to think through downsides of arbitrarily
-> > increasing the ring size in a ZC scenario where the underlying memory
-> > is pre-pinned and allocated anyway, and I couldn't think of any, but I
-> > won't argue the point any further.
-> >  =20
-> I see a similar issue with io_uring as well: for a 9K MTU with 4K ring
-> size there are ~1% allocation errors during a simple zcrx test.
->=20
-> mlx5 calculates 16K pages and the io_uring zcrx buffer matches exactly
-> that size (16K * 4K). Increasing the buffer doesn't help because the
-> pool size is still what the driver asked for (+ also the
-> internal pool limit). Even worse: eventually ENOSPC is returned to the
-> application. But maybe this error has a different fix.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Hm, yes, did you trace it all the way to where it comes from?
-page pool itself does not have any ENOSPC AFAICT. If the cache
-is full we free the page back to the provider via .release_netmem
+***
 
-> Adapting the pool size to the io_uring buffer size works very well. The
-> allocation errors are gone and performance is improved.
->=20
-> AFAIU, a page_pool with underlying pre-allocated memory is not really a
-> cache. So it is useful to be able to adapt to the capacity reserved by
-> the application.
->=20
-> Maybe one could argue that the zcrx example from liburing could also be
-> improved. But one thing is sure: aligning the buffer size to the
-> page_pool size calculated by the driver based on ring size and MTU
-> is a hassle. If the application provides a large enough buffer, things
-> should "just work".
+Subject: Re: [syzbot] [nbd?] KASAN: slab-use-after-free Write in recv_work (3)
+Author: lizhi.xu@windriver.com
 
-Yes, there should be no ENOSPC. I think io_uring is more thorough
-in handling the corner cases so what you're describing is more of=20
-a concern..
+#syz test
 
-Keep in mind that we expect multiple page pools from one provider.
-We want the pages to flow back to the MP level so other PPs can grab
-them.
-
-> > > The latter. We usually have the opposite problem - drivers configure
-> > > the cache way too large for any practical production needs and waste
-> > > memory.
-> >=20
-> > Sounds good, does this sound like roughly what we're looking for here?
-> > I'm thinking configuring pp->ring size could be simpler than
-> > rx-buf-len because it's really all used by core, so maybe not
-> > something we need to bubble all the way down to the driver, so
-> > something like:
-> >=20
-> > - We add a new field, netdev_rx_queue[->mp_params?]->pp_ring_size.
-
-My series was extending dev->cfg / dev->cfg_pending to also have
-per-queue params. So the user config goes there, not in the queue
-struct.
-
-> > - We add a netlink api to configure the above.
-> > - When a pp is being created, we check
-> > netdev_rx_queue[->mp_params]->pp_ring_size, if it's set, then it
-> > overrides the driver-provided value.
->=20
-> And you would do the last item in page_pool_init() when mp_ops and
-> pp_ring_size is set?
-
-Yes.
-
-> > Does that make sense? =20
-> It does to me.=20
->=20
-> I would add that for this case the page_pool limit should not apply at
-> all anymore. Maybe you thought about this but I didn't see it mentioned.
->=20
-> > I don't immediately see why the driver needs to
-> > be told the pp_ring_size via the queue API, as it's really needed by
-> > the pp anyway, no? Or am I missing something? =20
-> It doesn't. The only corner case to take care of is when the pool_size
-> is below what the driver asked for.
-
-Hm, I can't think why driver would care. Of course if someone sets the
-cache size to a tiny value and enables IOMMU=3Dstrict they shouldn't
-expect great performance..
-
-If a driver appears that has a min I think we can plumb thru the
-checking later.=20
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index a853c65ac65d..d5de9bac68f1 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -1024,9 +1024,9 @@ static void recv_work(struct work_struct *work)
+ 	nbd_mark_nsock_dead(nbd, nsock, 1);
+ 	mutex_unlock(&nsock->tx_lock);
+ 
+-	nbd_config_put(nbd);
+ 	atomic_dec(&config->recv_threads);
+ 	wake_up(&config->recv_wq);
++	nbd_config_put(nbd);
+ 	kfree(args);
+ }
+ 
+@@ -1540,7 +1540,10 @@ static int nbd_start_device(struct nbd_device *nbd)
+ 		args->index = i;
+ 		queue_work(nbd->recv_workq, &args->work);
+ 	}
+-	return nbd_set_size(nbd, config->bytesize, nbd_blksize(config));
++	error = nbd_set_size(nbd, config->bytesize, nbd_blksize(config));
++	if (error)
++		flush_workqueue(nbd->recv_workq);
++	return error;
+ }
+ 
+ static int nbd_start_device_ioctl(struct nbd_device *nbd)
+@@ -2355,6 +2358,7 @@ static int nbd_genl_reconfigure(struct sk_buff *skb, struct genl_info *info)
+ 	}
+ 	mutex_unlock(&nbd_index_mutex);
+ 
++	mutex_lock(&nbd->config_lock);
+ 	config = nbd_get_config_unlocked(nbd);
+ 	if (!config) {
+ 		dev_err(nbd_to_dev(nbd),
+@@ -2363,7 +2367,6 @@ static int nbd_genl_reconfigure(struct sk_buff *skb, struct genl_info *info)
+ 		return -EINVAL;
+ 	}
+ 
+-	mutex_lock(&nbd->config_lock);
+ 	if (!test_bit(NBD_RT_BOUND, &config->runtime_flags) ||
+ 	    !nbd->pid) {
+ 		dev_err(nbd_to_dev(nbd),
 
