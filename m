@@ -1,147 +1,166 @@
-Return-Path: <linux-kernel+bounces-890271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C209EC3FAB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:13:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A38C3FAC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2D43A8866
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:13:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA12B3AF392
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E108C31DDBF;
-	Fri,  7 Nov 2025 11:13:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026603207;
-	Fri,  7 Nov 2025 11:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4272E320A00;
+	Fri,  7 Nov 2025 11:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="luiBTTBq"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA21331DDBF
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762514014; cv=none; b=QeaNeSrl51oTWojRv9EEd5GSBrcuRJLlXvd8Bv+5jHuwWyYtA3j9fLTjukrqR6hRelRXO2KB5l0y3cMxUjNQ2VKWeQjdLLLsXhpRxflM1zrBl4OZe3brucDmpNDY+C/uBDXEBokBo4h3wGSzX6DFQS3OEYwNouducuRaayZDLZM=
+	t=1762514053; cv=none; b=mb4VU3w9yuqrBzOsuAJ5wKsT4DSJp+udY9k/9HMhW83WiSl96iGQMxem9AML49WiWMd2ZSv8KN1DojaRGXjiW24oJd1sAQCo8rTd6/NAB1CpZEqOO0EmqgYCXHoSsOYmvewD7r3+grz5giK00sEOQXgP5R0WOP/5sBtZ8KsAfQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762514014; c=relaxed/simple;
-	bh=wcjIESsao+1zJZZHHAcwvWkQUWvBcOdgvfdZlvxEZ8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P75uo9VLgdWyRdC9jqzJY5+kYQHSgCY2FBg6S0+sCCfnuK/jC7YXY7YzTSCg/ngoSZ3h+sD2buPJ65daJUtn4e7FUGO0MUy9X26KVM2uQdKOpUiHHmgd73ktpynQMc51aCwKyZhbtLo7wd7QlavIv0q5+dMLl63/I2+UsYUqQfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 802C51477;
-	Fri,  7 Nov 2025 03:13:24 -0800 (PST)
-Received: from [10.1.36.52] (unknown [10.1.36.52])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 21B713F63F;
-	Fri,  7 Nov 2025 03:13:28 -0800 (PST)
-Message-ID: <84dab8b1-ea28-4dcc-9721-9aaa6fcd12ba@arm.com>
-Date: Fri, 7 Nov 2025 11:13:15 +0000
+	s=arc-20240116; t=1762514053; c=relaxed/simple;
+	bh=Z7IPw5CPkkm8JcNSROY9Rb8Po+uOfMzr3L63jIIDVFM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WIh4VobSKhx2QLcbjtF0OrzwjZ10A/l7H7EFcPoJ/6feTYsSdx0wKpf1cLbTkuhXQz5Q24cIzCFEj615a2FeMhIArIXq25zAkDpaWeJeRGB1cf87/rovzyk0VD21vizTlhphH+dI+r/X+HGzPlF+rkGqesHUqoCewX01IbtY474=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=luiBTTBq; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b70fb7b531cso112504166b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:14:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762514050; x=1763118850; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Z7IPw5CPkkm8JcNSROY9Rb8Po+uOfMzr3L63jIIDVFM=;
+        b=luiBTTBqWyYVxLyfjIjqWhL/TJ+aTGylHamIgM1BRtHW5ij3i3o5qpvRxapwh7561R
+         w4GRGBK1McbigXxWw+/q6TgbJYU/E3UViPtoXds9dTCc5575WylTzZcVG+/rCsYKnQTw
+         vSrNbf1MluN1tWVqTd+CNpC9Xpf1DUXSpmjY1X34V2ZVpnn/rvI+fbAOALIfHo0hV9Bj
+         9tGlvH6KP9jreduQoMZ5wtNRU45+XI/5DCPuUKvIWmRZ3xciAee9jK+MAvSR1V5b+6o4
+         D+v1nPgUb9YPcDqWNcIVJy2IwY1VCKPsJUjvsVbTtGlc4HSGP5HmTFOSzLnYYT5srUiO
+         Ah+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762514050; x=1763118850;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z7IPw5CPkkm8JcNSROY9Rb8Po+uOfMzr3L63jIIDVFM=;
+        b=bVRPAZZeJ8Yx0h/3XE7VleP4rUreLdl032hF+8Eag17Q/1VhxlqHNJtHydz3xbVr+Q
+         HtpXUqW5Gyqmjtygu9XoCzm/+dxgESjVKuVE92gv1+90IzQy9bpwmUK9cZ1gLgYE15L3
+         AWcbUGUGGm4qTVP1TqwQcKGe81S67/y9Q//o2XThd+ccbdHSl9lublKohELNR2p81lBA
+         MehmkffWy2A20AMWPoW1zqB66O2YF1QPGjAoBj8eYtXYTQZ79DgbfIuK4g6hfiZXO66U
+         Sau73BevRvhgFUTH7O3hzIuMH1RlU5oOo6PY4LajZSdpUS/QbPZBHXDGmbqEZwI9ThhH
+         nUnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWm4feBbX2iAHJUv6JHih+vZsoSpZKoQryerQuBOKnak9MTOcvJIzb8CvZAAyaNB3XILLWZvIKd7tL37no=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7ddi9oQsVL1rPpVbJXsBZiHi6fisGHgyXHwZJyrB/W+aKHGQz
+	AN8enS3gbed814hur0alNrDqX9DtGiZKzVAjBGqgmywvIS1uqrWousASSy0uOSmXp/U=
+X-Gm-Gg: ASbGncvo9t3qXi14M0PdlmQbSs6MzC1/T9Ndru9/Yf7nXA0n4pJIwIOf3FG1BepMdNb
+	3OQEt3YFtRSE8L0vkc1BTorqRPODZRRn5bdyycUQIb5mg00By6YHlyLF4doOr5DJqCOi3Ef8CCz
+	W1PFWcvKmHeq7OFt7IED4V+6/f+KRaKVq++DaD/TNhLrY1fVYwrfEpvq+GH7H+eiJYNMUsvNHhA
+	5JpzMqs7AJGHsZoaVPd/17Fv8Dcd787MmU82OImxlhpKCjIUqlsWbs7ec1E7GfxulMf1w4tu6Cl
+	zm2dwHfYFpcuc+mHZ2mU0KjpxqfmX6k1rhkZaRqvusOopig/GNmRzjAI7YwM+/LZNR06JRY2KNI
+	7pSgbK+sIGQSyMPzvGyEMg/t8Hjwd8hFB1qm61qEkBWS8ztId0mO7C3fpTxyKk63czCDSTIizyO
+	JUsGTfrg0jl42TM14/bbrhniPy7DL05BPGQg==
+X-Google-Smtp-Source: AGHT+IFXZ+Ksq+F4K5MrYL+0Ly42CejCgVP+A4n4kcnrW9kMuuDkI5VXyfDYyP5cJO6HwQMmVPf1ww==
+X-Received: by 2002:a17:907:3f28:b0:b3d:5088:213d with SMTP id a640c23a62f3a-b72c0cf643dmr254948266b.42.1762514049980;
+        Fri, 07 Nov 2025 03:14:09 -0800 (PST)
+Received: from [172.20.148.133] ([87.213.113.147])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97e457sm212986366b.43.2025.11.07.03.14.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 03:14:09 -0800 (PST)
+Message-ID: <46b008c946e36ea0b317691356ff874c4a78882d.camel@linaro.org>
+Subject: Re: [PATCH v3 04/20] regulator: dt-bindings: add s2mpg11-pmic
+ regulators
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,  Lee Jones <lee@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Peter Griffin	 <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, 	kernel-team@android.com,
+ linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org
+Date: Fri, 07 Nov 2025 11:14:09 +0000
+In-Reply-To: <20251104-zircon-lobster-of-agility-cbcbb0@kuoka>
+References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
+	 <20251103-s2mpg1x-regulators-v3-4-b8b96b79e058@linaro.org>
+	 <20251104-zircon-lobster-of-agility-cbcbb0@kuoka>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/12] mm: enable lazy_mmu sections to nest
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-8-kevin.brodsky@arm.com>
- <87ms5050g0.ritesh.list@gmail.com>
- <50d1b63a-88d7-4484-82c0-3bde96e3207d-agordeev@linux.ibm.com>
- <87ikfn3yvs.ritesh.list@gmail.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <87ikfn3yvs.ritesh.list@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 06/11/2025 16:32, Ritesh Harjani (IBM) wrote:
-> Alexander Gordeev <agordeev@linux.ibm.com> writes:
->
->> On Wed, Nov 05, 2025 at 02:19:03PM +0530, Ritesh Harjani wrote:
->>>> + * in_lazy_mmu_mode() can be used to check whether the lazy MMU mode is
->>>> + * currently enabled.
->>>>   */
->>>>  #ifdef CONFIG_ARCH_HAS_LAZY_MMU_MODE
->>>>  static inline void lazy_mmu_mode_enable(void)
->>>>  {
->>>> -	arch_enter_lazy_mmu_mode();
->>>> +	struct lazy_mmu_state *state = &current->lazy_mmu_state;
->>>> +
->>>> +	VM_WARN_ON_ONCE(state->nesting_level == U8_MAX);
->>>> +	/* enable() must not be called while paused */
->>>> +	VM_WARN_ON(state->nesting_level > 0 && !state->active);
->>>> +
->>>> +	if (state->nesting_level++ == 0) {
->>>> +		state->active = true;
->>>> +		arch_enter_lazy_mmu_mode();
->>>> +	}
->>>>  }
->>> Some architectures disables preemption in their
->>> arch_enter_lazy_mmu_mode(). So shouldn't the state->active = true should
->>> happen after arch_enter_lazy_mmu_mode() has disabled preemption()? i.e.
->> Do you have some scenario in mind that could cause an issue?
->>
-> No not really. But that's a deviation from what previous arch hooks were
-> expecting. Although thinking this through - I don't have any usecase
-> where this can be a problem.
+On Tue, 2025-11-04 at 10:39 +0100, Krzysztof Kozlowski wrote:
+> On Mon, Nov 03, 2025 at 07:14:43PM +0000, Andr=C3=A9 Draszik wrote:
+> > +=C2=A0 The S2MPG11 PMIC provides 12 buck, 1 buck-boost, and 15 LDO reg=
+ulators.
+> > +
+> > +=C2=A0 See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.=
+yaml for
+> > +=C2=A0 additional information and example.
+> > +
+> > +definitions:
+>=20
+> defs:
 
-Which arch hook expectations are you referring to?
+All existing bindings are using definitions, not defs. Shouldn't this stay
+consistent?
 
-> But let me re-visit some of the code paths on ppc64 lazy mmu... 
->
-> Looking at the arch specific usecase I see we always do get_cpu_var()
-> for accessing the per-cpu batch array which disables preemption before
-> accessing the per-cpu structure.. This per-cpu structure is where we
-> batch pte updates...
+[...]
 
-arch_enter() disables preemption so accesses to per-CPU variables
-anywhere in the section shouldn't be an issue either way.
+> > +patternProperties:
+> > +=C2=A0 # 12 bucks
+> > +=C2=A0 "^buck(([1-9]|10)s|[ad])$":
+> > +=C2=A0=C2=A0=C2=A0 type: object
+> > +=C2=A0=C2=A0=C2=A0 $ref: regulator.yaml#
+> > +=C2=A0=C2=A0=C2=A0 unevaluatedProperties: false
+> > +=C2=A0=C2=A0=C2=A0 description:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Properties for a single buck regulator.
+> > +
+> > +=C2=A0=C2=A0=C2=A0 allOf:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - $ref: "#/definitions/s2mpg11-ext-cont=
+rol"
+>=20
+> defs
+>=20
+> > +
+> > +=C2=A0=C2=A0=C2=A0 properties:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regulator-ramp-delay:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum: [6250, 12500, 25000]
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default: 6250
+> > +
+>=20
+> ....
+>=20
+>=20
+> > +=C2=A0=C2=A0=C2=A0 allOf:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - $ref: "#/definitions/s2mpg11-ext-cont=
+rol"
+> > +
+> > +=C2=A0=C2=A0=C2=A0 properties:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regulator-ramp-delay:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum: [6250, 12500]
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default: 6250
+> > +
+> > +additionalProperties: false
+>=20
+> This goes to the end, after allOf, see example-schema.
 
-The bigger picture (regarding patch 9) is that what in_lazy_mmu_state()
-returns is based on the current task's state (not a per-CPU variable),
-and always false while in interrupt. As a result whether preemption is
-disabled or not should make no difference, only program order matters.
+Will fix.
 
-- Kevin
+Thanks for your review Krzysztof.
 
-> For e.g... 
->   
->     arch_enter_lazy_mmu_mode()
->         hpte_need_flush()
->             get_cpu_var()   // this takes care of preempt_disable() 
->             adds vpns to per-cpu batch[i]
->             put_cpu_var()   // 
->     arch_leave_lazy_mmu_mode()
->
->> IOW, what could go wrong if the process is scheduled to another
->> CPU before preempt_disable() is called?
-> So from above - I don't think your sequence to update
->    state->active = true 
-> before calling arch_enter hook should be a problem.
-> Based on above this looks mostly ok to me.
->
-> -ritesh
+Cheers,
+A.
 
