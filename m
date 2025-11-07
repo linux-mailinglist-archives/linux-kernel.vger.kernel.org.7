@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-890924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BD0C41655
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:10:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF55C4165E
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:10:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43982189E8A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:11:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE72C189E6F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE012E62D4;
-	Fri,  7 Nov 2025 19:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F532F8BD0;
+	Fri,  7 Nov 2025 19:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYvRmFu3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="taJ52/QS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A678F8F7D;
-	Fri,  7 Nov 2025 19:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1901A2F658D;
+	Fri,  7 Nov 2025 19:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762542636; cv=none; b=ptip2wOLEGrWTgFkCyntboqCng2EpXr1ogF/EnIziyuFtvAzWKSQmWakinpEHenmiUvomKFxsgvNVZe+aLGATtDtP5ByslGKvWU9uQUwQn3YPBN46qNV2Rn3rNs9BRQt0MV9BMrmo2BNpCA4xRY8BPBx9NMSwA8XyPAUhNyo41M=
+	t=1762542639; cv=none; b=C0doSt85Tt4Rxp8nj1udrAbkYKZp0M/T1HkWFRSLwB0s/mQ3RPF/508hhqY57PuVY+L8/scB6OfXRCSr//3VxTiIOfUNMB2EJCpI0Bc2tywfrAeFpBrm/30+DXARUFyInlcQN0T8spymkQFDA5pU6ZmbjpoVSo5gAeAMDEnsLlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762542636; c=relaxed/simple;
-	bh=8qHn8+UQeIk9f/F1IbujgP2G6FPbz+JtMSg9BBac8wM=;
+	s=arc-20240116; t=1762542639; c=relaxed/simple;
+	bh=jsvtojKHC70pzd/PwY0huHPPGZn/UlmB64cgS2Ou5Ww=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=QDBlZ9oplyFAZEOhWMJxLhDsWxHrip5QDlLZ/7qmskavYaXMy82B9LKBbkY56oN7wPADiDCAtqsbs4Pt3GsUSoGJULaAuyvju/5eEUZvqa+gH0KzMFd0y/ia1LMgy2SpdcJyplQ3qFAD5ht3DDEPRMovy5+veYypt6Gt9KYoLmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYvRmFu3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36B3EC4CEF5;
-	Fri,  7 Nov 2025 19:10:36 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=plCmWOVlILenrHXicG4vs0VHsy8dP8rs+3uB2KB8pS/r2qQiWveCihxa95hZ/opQUJea0Cj6PcYiNO+zwerC6AunPD0RjHptyZXSbkhRXwml4er6ol9sU1JqaCEtmun9RjRSPYt4sofpV7m8yrQgcsAzykp+Svrico6YspGTKRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=taJ52/QS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A581DC4CEF8;
+	Fri,  7 Nov 2025 19:10:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762542636;
-	bh=8qHn8+UQeIk9f/F1IbujgP2G6FPbz+JtMSg9BBac8wM=;
+	s=k20201202; t=1762542638;
+	bh=jsvtojKHC70pzd/PwY0huHPPGZn/UlmB64cgS2Ou5Ww=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=eYvRmFu3U47ztgsKcePCbN703bi9algtBCqXOVUQZ5CYQzLC+bMluR3X3BynZrzQQ
-	 7ycUSEJm1dr1fDYxjLTA6yvcxru+C/t77UMgj1lzSCsIlyhKmy5+R28JEdl0jqiuT4
-	 FRpFAiMfoOtWLoIwACTV7VXWcey2Bh5l//rtJNL80CGunuBuGEowGYM/nu3Pxn9FCG
-	 xd6qw+DiPMfzarzD8qBeyTcVtRhP8cgQqTskCw8YrTzTfsRat1Ck+i1rhMv/8qUy2Y
-	 LHEYHz5Qcyf3QPIvyzPyqEu35lpzxvT3SRaaZ06/Wu/WkuoJ7bziB/Fxy+foMYKk6J
-	 hAik583Lf2thA==
+	b=taJ52/QSxncs1yEimhj5qxrr1m7uUWD4a8kLHXI12rOxEW2irKnI3F9lfGcqfH1E1
+	 Z+S53vyhczcVO85R+76gDKcCwCBsPcthfW4P5DIkgCzz8OWIi9SApXQfI2tvNGd6DM
+	 JenweTgwwuJdDkpRak4Tl5T7Nc6upQOjI0+fKrQx7isWg6QGXfS3f9Pcfxd3qk/dN4
+	 wB0gGgMHhBM6849ET5QeTya2g/lhXVdZOTVvLGQq/zImLsVmlHo9e7DK24OP01DCHw
+	 Zn5Y3XqsO0oLyUOkwoKDNYn95SuWWzalnxEmPV1N6JmUmeHRlUteE0fQhNgfL4gXDJ
+	 Gq80WPYUkhr6w==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE37339FEB7D;
-	Fri,  7 Nov 2025 19:10:09 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BDA39FEB7D;
+	Fri,  7 Nov 2025 19:10:12 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,48 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 1/5] Bluetooth: 6lowpan: reset link-local header on
- ipv6
- recv path
+Subject: Re: [PATCH 0/3] Bluetooth: btusb: Add new VID/PID for RTL8852BE-VT
 From: patchwork-bot+bluetooth@kernel.org
 Message-Id: 
- <176254260850.1132280.1139292633245300172.git-patchwork-notify@kernel.org>
-Date: Fri, 07 Nov 2025 19:10:08 +0000
-References: 
- <467024bf1ba60184bff304d23de33abb0ed2384f.1762194056.git.pav@iki.fi>
-In-Reply-To: 
- <467024bf1ba60184bff304d23de33abb0ed2384f.1762194056.git.pav@iki.fi>
-To: Pauli Virtanen <pav@iki.fi>
-Cc: linux-bluetooth@vger.kernel.org, marcel@holtmann.org,
- johan.hedberg@gmail.com, luiz.dentz@gmail.com, linux-kernel@vger.kernel.org,
- pmenzel@molgen.mpg.de
+ <176254261098.1132280.13623781765700879277.git-patchwork-notify@kernel.org>
+Date: Fri, 07 Nov 2025 19:10:10 +0000
+References: <20251105055041.456142-1-max.chou@realtek.com>
+In-Reply-To: <20251105055041.456142-1-max.chou@realtek.com>
+To: Max Chou <max.chou@realtek.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ hildawu@realtek.com, alex_lu@realsil.com.cn, niall_ni@realsil.com.cn,
+ kidman@realtek.com
 
 Hello:
 
 This series was applied to bluetooth/bluetooth-next.git (master)
 by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-On Mon,  3 Nov 2025 20:29:46 +0200 you wrote:
-> Bluetooth 6lowpan.c netdev has header_ops, so it must set link-local
-> header for RX skb, otherwise things crash, eg. with AF_PACKET SOCK_RAW
+On Wed, 5 Nov 2025 13:50:38 +0800 you wrote:
+> This patch series adds new VID/PID support for RTL8852BE-VT.
 > 
-> Add missing skb_reset_mac_header() for uncompressed ipv6 RX path.
-> 
-> For the compressed one, it is done in lowpan_header_decompress().
+> Max Chou (3):
+>   Bluetooth: btusb: Add new VID/PID 0x0489/0xE12F for RTL8852BE-VT
+>   Bluetooth: btusb: Add new VID/PID 0x13d3/0x3618 for RTL8852BE-VT
+>   Bluetooth: btusb: Add new VID/PID 0x13d3/0x3619 for RTL8852BE-VT
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,1/5] Bluetooth: 6lowpan: reset link-local header on ipv6 recv path
-    https://git.kernel.org/bluetooth/bluetooth-next/c/7de8dc9b760c
-  - [v2,2/5] Bluetooth: 6lowpan: fix BDADDR_LE vs ADDR_LE_DEV address type confusion
-    https://git.kernel.org/bluetooth/bluetooth-next/c/c7409a88d204
-  - [v2,3/5] Bluetooth: L2CAP: export l2cap_chan_hold for modules
-    https://git.kernel.org/bluetooth/bluetooth-next/c/35d11c1cf51d
-  - [v2,4/5] Bluetooth: 6lowpan: Don't hold spin lock over sleeping functions
-    https://git.kernel.org/bluetooth/bluetooth-next/c/e1cd2d7db0bf
-  - [v2,5/5] Bluetooth: 6lowpan: add missing l2cap_chan_lock()
-    https://git.kernel.org/bluetooth/bluetooth-next/c/fde5b271c88f
+  - [1/3] Bluetooth: btusb: Add new VID/PID 0x0489/0xE12F for RTL8852BE-VT
+    https://git.kernel.org/bluetooth/bluetooth-next/c/234c42bfac07
+  - [2/3] Bluetooth: btusb: Add new VID/PID 0x13d3/0x3618 for RTL8852BE-VT
+    https://git.kernel.org/bluetooth/bluetooth-next/c/121a21fd7599
+  - [3/3] Bluetooth: btusb: Add new VID/PID 0x13d3/0x3619 for RTL8852BE-VT
+    https://git.kernel.org/bluetooth/bluetooth-next/c/92f51644e1cf
 
 You are awesome, thank you!
 -- 
