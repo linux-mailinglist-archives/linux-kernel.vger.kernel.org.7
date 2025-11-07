@@ -1,70 +1,93 @@
-Return-Path: <linux-kernel+bounces-890440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964A4C400FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:14:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7D4C40102
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:15:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 225E74E95AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:14:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220A8188271F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E668E2D738B;
-	Fri,  7 Nov 2025 13:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BCE21FF3F;
+	Fri,  7 Nov 2025 13:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GRgpHqSV"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BlHoPCu3"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9D8290D81;
-	Fri,  7 Nov 2025 13:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A422D63F2
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762521280; cv=none; b=dhDko4xyTpC3p8A/4OQfq3N0pgxppdSGVvb9NuHzGehm4UUyf3z2VqzbLRgvXm5LJhNxyF0UEQlHpvLilNU9Akaq6Z17l8QIWwiMeA7FZYPZLIRXqJZz2p64SzPYKJEjlsK4jsFZKIo6nl/EV6D1Gm3/7YaHNhI059pa1jXfYtw=
+	t=1762521304; cv=none; b=nu7KIPdr3Rw/O1qj6hI4qz04g07MArL11IrStWyeiQHEyIUSrJD17h6QjclwNsJqWML0bnSkMaEpReM6oNPyYID9Vsqk/FOw5zq/2chpGeC5U5So63peKYuXSvjxOSDPHJ/Shw4eyrovcV4UxrvCTPZSno+FYz2aw87X4RZbpxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762521280; c=relaxed/simple;
-	bh=TP2jmT2RpugQ2S0KiJtUP705KeCOHsguj5RaLKyYm8g=;
+	s=arc-20240116; t=1762521304; c=relaxed/simple;
+	bh=0mPhFFV27EI4HWkCT/K0CutZwM23pABS/zg6xhegD68=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2wkUBYlJTaYSjgBqUkMoEUuK8UUQC/dwXdrIlmyzqoM6hynWtthhM02GnfjCv1HbzvY8XHqh3eZCjlixzgpgU743aJBAyxC6lqYi5wIdue17B4CXx2ifrWOQUPTTsbsNZu2MxkA9p3rY4YsVBrOKqM+bS+0cuPpu9eEuVtaJJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GRgpHqSV; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=uL3/14aUyri5EUeLDBCTF+oCd5vtc1g9i23NSwdUYFY=; b=GRgpHqSV1mMywlq/Z65HWV+tkB
-	TjlCSEpMC6DuheWw9lwrwt+N//+aR0fEpi8P1zk3/ZpyAYOdf4NN/T7LT0DD8Km6K7+tEVP681/h6
-	AO/+RyzDtG2UULAfwmChgxaqw/dacXJvYidLqgHw39c3CsFJExWyGVOy0dtdpXeG20tU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vHMIF-00DE9j-AA; Fri, 07 Nov 2025 14:14:19 +0100
-Date: Fri, 7 Nov 2025 14:14:19 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next] net: phy: mscc: Add support for PHY LEDs on
- VSC8541
-Message-ID: <2dabb0d5-f28f-4fdc-abeb-54119ab1f2cf@lunn.ch>
-References: <20251106200309.1096131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ee6a79ae-4857-44e4-b8e9-29cdd80d828f@lunn.ch>
- <CA+V-a8vFEHr+3yR7=JAki3YDe==dAUv3m4PrD-nWhVg8hXgJcQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A43zyPv1xm5MedLLCC3ST8rpe9qWI8yQ1Ix5aNsQ/IRA4gSq4KrxNQDW+nO3o62yz9pV1mlSrhkx1yODx6onEYKZPFVUYbgi2np9fuubicMc0E1qIDy42MHd3w616Lg0C0IOxV0Q8XBnLvAy2cimB97Ms94Xe9xQZaUvMY1HbZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BlHoPCu3; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b7200568b13so132207066b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:15:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762521300; x=1763126100; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8HZ8kO1EbOdno/Z6LWKvw9cCt6xKTq52Mcwxm+AjrMQ=;
+        b=BlHoPCu3NqtLtozYF0ZyHTBdobJJ/cANVGnsDwuY6T8dx2F6BpG8CLWuG2V1KWCPn9
+         rJqzhFhR33ZMV++LnBz96/RuLoQJElQKD/XgdMcwXWV7h9QKhE6GKnV5S15pYGxSNGqu
+         KqaXf2ahPz1ifbkNBO7u8j2yiZH6M0K6PrgMzHi6k6ovXdGBxghrOCwCc/pEwIl/Eo01
+         Pk2HH4fQOf3Bw6VYHGk0nxbI0DXzJSh5ufcLRQ9l6RwgF98tgxr22FjT0cjpknUAGNCF
+         BA2TawykZDjdpivWUQQk7vyA0EjOpZxziWhEOwjmij06OkYHzpG2iI9J48haI79hsRab
+         cxqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762521300; x=1763126100;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8HZ8kO1EbOdno/Z6LWKvw9cCt6xKTq52Mcwxm+AjrMQ=;
+        b=pSDx9q/t81ITYvDuc72ABG+QABgpZcSFy7fpvxgfzZs0zU5dcPoX+gOWQ+0sPL/F7z
+         o3HJtUegE/qCeEOrsE6GliMHXtIH+poy82Z5JX9MHaRGeTAY5kti3wnIptzZ+EgPQiCS
+         HU+SUeSnUcwY9+PleHSRECAOfyaImf37TMBRenZyynx3s1A1Vu43lK08QJO9eeDt04WJ
+         fAlpImM1iHmPasDV6I4KjFM8swKtnAdvVocJ9YQ/zKnxeQI8RSQqw7N2FCUASIQEzHVO
+         ctivWfO8Ocmrl/fjaij6AZewzyiqoOwNT0v6nBhSp/0exJ8zjYQuCV6sgtYyvGZrLPkh
+         iTJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV58gvs3T3pwQh9T94OBayyW9i/979XdDJV6+2ab8BhNYfzj40/BY1IhoAuGxc7bIKPsNa0k1gZFbq4e7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdwIJdu/08GKygYznM8t6bDvzWWlGW0zgRLL9QK6eTLTWVxtUf
+	TtNGv8Ch1rPWTIu8uifAEsL2TEL3b5XDxB0BtE3G8kOoJGXqjlkGOG2Ny/NOH9uHmgM=
+X-Gm-Gg: ASbGncsbm+xg8OuVjGSJNP6n1CEtQDmKqyVl+/HaC1Iy6kLydfqbUL6EmijkZByfmPG
+	WiPKbS4RyxGhbEMnYde2o4AeI5DC3QpX8BkIPJhE9e9UNb3DRIsPPHr12clOlgT5pUfShIvjgkd
+	engaE4/GuzX8ohwDl1+BuiEDOEnQkB49OBA852DtRgnMP4fPNqo8lz+2QyQ0PW0n1D1anouCs2G
+	VE28RpGQu+1VlO0+FjYldbNKUwt12S1PcT4+pSqDpU5D+tvcwVgmEEULD5A5w0WWUJ/csmamaI2
+	SnnkHnXvgeTpsf+dYHi9JZDiOoU8Jk2/wkF7RPBcmXGIvBGYJ2UPUBL4qLpvIx5o3gF6PqdnhGu
+	j0lClpR7TVNjEOnD4L/tIkRDlpN40ELuBt6+NnKC2vy71bSxH0cgNZLHy1vWu7LhEO3hOrnBn+0
+	mUN5A=
+X-Google-Smtp-Source: AGHT+IFE2eYy0+Px5WausE/jRL0XZhUzH9bbFk8nsiudCpX/vMQhbSO5rZNKcgvz0+P/IDwF6D5asw==
+X-Received: by 2002:a17:907:2da2:b0:b6d:5914:30c with SMTP id a640c23a62f3a-b72c090e4b7mr299535266b.34.1762521300369;
+        Fri, 07 Nov 2025 05:15:00 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa24d1fsm233492666b.73.2025.11.07.05.14.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 05:14:59 -0800 (PST)
+Date: Fri, 7 Nov 2025 14:14:57 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: bot+bpf-ci@kernel.org
+Cc: petr.pavlu@suse.com, rostedt@goodmis.org, ast@kernel.org,
+	akpm@linux-foundation.org, kees@kernel.org, daniel@iogearbox.net,
+	john.fastabend@gmail.com, mhiramat@kernel.org, mark.rutland@arm.com,
+	mcgrof@kernel.org, da.gomez@kernel.org, samitolvanen@google.com,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	andrii@kernel.org, martin.lau@kernel.org, eddyz87@gmail.com,
+	yonghong.song@linux.dev, clm@meta.com, ihor.solodrai@linux.dev
+Subject: Re: [PATCH 2/6] kallsyms: Cleanup code for appending the module
+ buildid
+Message-ID: <aQ3w0awU61mrS_AF@pathway.suse.cz>
+References: <20251105142319.1139183-3-pmladek@suse.com>
+ <451acb410ee1ce42f7fb2da9f3b8162708f40788cb849cc0f50851ad16813349@mail.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,30 +96,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+V-a8vFEHr+3yR7=JAki3YDe==dAUv3m4PrD-nWhVg8hXgJcQ@mail.gmail.com>
+In-Reply-To: <451acb410ee1ce42f7fb2da9f3b8162708f40788cb849cc0f50851ad16813349@mail.kernel.org>
 
-> > > @@ -2343,6 +2532,26 @@ static int vsc85xx_probe(struct phy_device *phydev)
-> > >       if (!vsc8531->stats)
-> > >               return -ENOMEM;
-> > >
-> > > +     phy_id = phydev->drv->phy_id & phydev->drv->phy_id_mask;
-> > > +     if (phy_id == PHY_ID_VSC8541) {
+On Wed 2025-11-05 14:59:53, bot+bpf-ci@kernel.org wrote:
+> > diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+> > index 1e7635864..9455e3bb0 100644
+> > --- a/kernel/kallsyms.c
+> > +++ b/kernel/kallsyms.c
+> > @@ -423,6 +423,37 @@ int lookup_symbol_name(unsigned long addr, char *symname)
+> >  	return lookup_module_symbol_name(addr, symname);
+> >  }
 > >
-> > The VSC8541 has its own probe function, vsc8514_probe(). Why is this
-> > needed?
-> >
-> vsc85xx_probe() is used for other PHYs along with VSC8541 hence this
-> check, vsc8514_probe() is for 8514 PHY.
+> > +#ifdef CONFIG_STACKTRACE_BUILD_ID
+> > +
+> > +static int append_buildid(char *buffer,  const char *modname,
+> > +			  const unsigned char *buildid)
+> > +{
+> > +	if (!modname)
+> > +		return 0;
+> > +
+> > +	if (!buildid) {
+> > +		pr_warn_once("Undefined buildid for the module %s\n", modname);
+> > +		return 0;
+> > +	}
+> 
+> When ftrace_mod_address_lookup() succeeds in kallsyms_lookup_buildid(),
+> it sets *modname but doesn't initialize *modbuildid. This leaves the
+> buildid variable uninitialized when __sprint_symbol() calls
+> append_buildid().
 
-Ah, sorry. I was looking at 8514, not 8541. So yes, this is needed.
+Just for record. This is a great analyze. This patchset is fixing
+this bug in a later patch. ;-)
 
-However, i think all the current probe functions could do with some
-cleanup. There is a lot of repeated code. That could all be moved into
-a vsc85xx_probe_common(), and then a vsc8514_probe() added, which uses
-this common function to do most of the work, and then handles LEDs.
+> Can the check above read uninitialized memory?> 
+> Looking at kallsyms_lookup_buildid():
+> - module_address_lookup() properly initializes both modname and
+>   modbuildid
+> - bpf_address_lookup() sets modname=NULL (so append_buildid isn't
+>   called)
+> - ftrace_mod_address_lookup() sets modname=mod_map->mod->name but has
+>   no modbuildid parameter
+> 
+> The commit message mentions wanting to catch when lookup functions don't
+> handle buildid, but shouldn't kallsyms_lookup_buildid() initialize
+> *modbuildid=NULL before calling the lookup functions to avoid undefined
+> behavior?
 
-Also, is the LED handling you are adding here specific to the 8541? If
-you look at the datasheets for the other devices, are any the same?
+It seems that we are going this way, see
+https://lore.kernel.org/all/aQ3vWIqG31BgE4YD@pathway.suse.cz/
 
-	Andrew
+Best Regards,
+Petr
 
