@@ -1,64 +1,51 @@
-Return-Path: <linux-kernel+bounces-889818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86940C3E9B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:18:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450E5C3E9C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:20:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 440E23A9D20
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:18:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 665CE4EA683
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B706258CDF;
-	Fri,  7 Nov 2025 06:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BFB299952;
+	Fri,  7 Nov 2025 06:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SfShe/kq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T+y+/CwW"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C7B28E0F;
-	Fri,  7 Nov 2025 06:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93082AD25;
+	Fri,  7 Nov 2025 06:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762496282; cv=none; b=pYbl5PZ3tWNQFyWEBqCCzZrXQvyagFVa0/dzEqx/PWhRvimjIM4ahmZP1BRU4FUCgQtjSdNmxqCLdMb4Dt/XixzuXXzhuERXFxQfeg8BcSVwu4wfobhj3Ckb6eOQbWhMSJdsH179rXRV2t/bozzAvSYJJcWfrpWjHEW0qX6D5lM=
+	t=1762496404; cv=none; b=k+RHi6t8OvjsIjFYQFSBJZrQPaw/hr9CeAgoMDocOvGRXdCGD9HY3okVvAufrd5QWe4cl4uMrNsUWNQbSISul4WzIZTjIduoxW7bqgvkLHNe2o0/XPUpLPjx64p2dZBqxnAauoCYFzUs5UTFUggxlUC7YHwAXO4A8sGsdXz5qnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762496282; c=relaxed/simple;
-	bh=Gc2DcugMerleuLdTzEOs7wom9vBWWElMe7aSSbZk8pE=;
+	s=arc-20240116; t=1762496404; c=relaxed/simple;
+	bh=QK4tnVEnx0dnUu1VZrRPH5XHyZSuEa5wnts9WKB07xc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hP4bYgQnDmFD8ohmwf8Q6Bi4M1ymqHZcxmVo9li0yxU699cHIg3VrhslBqYaNzKkgwU2ituodvWEMdx2msMdAbHSI8xfJhHfCtQxF+lm7cwy6qkItAvYKRIQ47C+yCYzGba99OlpWzhqGLBu/LahQYru8vpNcaclxE2vMZlFqCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SfShe/kq; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762496281; x=1794032281;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Gc2DcugMerleuLdTzEOs7wom9vBWWElMe7aSSbZk8pE=;
-  b=SfShe/kqZb9gdD4fN20EBCUDAf1Dt4UuDAFPzmujSRrdKljBtjAYRh3f
-   TWqPhrZKDEHgilp5Z/LyJ7Ir17A+PzYAeAhEeTwXV8IY/kj0MVi1MDZ2H
-   fsm9pAWAsGYNyHyy4H0ckmH/BZkk/FzJQIOJbpVAucHs6JVhI8KYFGNYf
-   OjgYKm3fDEgaiN5I6ctaZ4Sx4kxRSI4eohnJytJdNKe3eeEYvcv/NA2Ys
-   hCSZ3eUmLr6Vnbza0nmARnp1TSnrZzHq7Ta4J9277Jlb0FiCDxp8Lp6HD
-   c6DIDWjQcPUxVczK17fh7bexkdHJJolWE9E0XkshS+7aWEpIn1x6rE/VV
-   A==;
-X-CSE-ConnectionGUID: YTevIMWeRy25MAFFnjhBdg==
-X-CSE-MsgGUID: XBEYtbcFSiKjPIbCZwMAGg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="64527388"
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="64527388"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 22:18:01 -0800
-X-CSE-ConnectionGUID: qxQtCjk9Spuq1kbAWsoU0Q==
-X-CSE-MsgGUID: 9dAMnShkRY+ph1PB/oK2Qg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="187908005"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.240.49]) ([10.124.240.49])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 22:17:59 -0800
-Message-ID: <e071595c-f038-4118-9686-61dae28d4814@intel.com>
-Date: Fri, 7 Nov 2025 14:17:54 +0800
+	 In-Reply-To:Content-Type; b=trYwP7i5cXkFhc5QyLFKXnp3n/af0KkefdUrStdWNd0JrzS5yzcn5EC/NCs3wY4MBzNP+PxW4+Ous9lvpVEOd8JTelPGLUrXSoRCSm70jS7B3UctP+gLlzCPpclmEwwJgt4zt6x8wL/6BmJzgV0Ha/EZN00WzBd8rwff19v6DX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T+y+/CwW; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=cx/OeR/TpXmHZozLgJx6VvSjc4tPJLhnHkHJTi2lSbo=; b=T+y+/CwWjmHf+F0zKFUbi4yg0S
+	pOqOmPKpfXbvaGTKYWi0KY47yOEBYUKywOJpBvGz7l94PhtsE4inro+ZXGbNDIS/ObLv4iGARtDZT
+	PA3XwsvZ3HbMBk55wj8LvauK3bCqjydtgy/En9ZhIs7hU+E0YLPGJ9PCWgKQPJed3/m943DDcYbDR
+	cUHUL9H2RmlJ7XruSVjh1iD2dagE8FIf777IVhmZVfiDrQlQnhaItGshJJ3wN/RYxAYKhqXj1ySx1
+	ZTT/aQYmqdgQW9aj9R+Cgzp6Kwb46grGj2GYC+mQkH+1cVQYJQmiAWGEIzIY+jl3uOcfw3SWU2UbY
+	o1logx0g==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vHFpH-0000000GjAS-2VnY;
+	Fri, 07 Nov 2025 06:19:59 +0000
+Message-ID: <1f9aa097-27c2-49c0-b01c-cd0377143bb4@infradead.org>
+Date: Thu, 6 Nov 2025 22:19:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,71 +53,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: x86: Add a help to dedup loading guest/host XCR0 and
- XSS
-To: Chao Gao <chao.gao@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251106101138.2756175-1-binbin.wu@linux.intel.com>
- <aQ1kG5u8GPdEwoEy@intel.com>
+Subject: Re: [PATCH v8 01/11] dmaengine: Add DMA_PREP_LOCK/DMA_PREP_UNLOCK
+ flags
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Vinod Koul <vkoul@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Thara Gopinath <thara.gopinath@gmail.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ Udit Tiwari <quic_utiwari@quicinc.com>,
+ Daniel Perez-Zoghbi <dperezzo@quicinc.com>,
+ Md Sadre Alam <mdalam@qti.qualcomm.com>
+Cc: dmaengine@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-crypto@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20251106-qcom-qce-cmd-descr-v8-0-ecddca23ca26@linaro.org>
+ <20251106-qcom-qce-cmd-descr-v8-1-ecddca23ca26@linaro.org>
 Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <aQ1kG5u8GPdEwoEy@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251106-qcom-qce-cmd-descr-v8-1-ecddca23ca26@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/7/2025 11:14 AM, Chao Gao wrote:
-> s/help/helper in the subject.
-> 
-> On Thu, Nov 06, 2025 at 06:11:38PM +0800, Binbin Wu wrote:
->> Add and use a helper, kvm_load_xfeatures(), to dedup the code that loads
->> guest/host xfeatures by passing XCR0 and XSS values accordingly.
->>
->> No functional change intended.
->>
->> Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
-> 
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
-> 
-> <snip>
-> 
->> @@ -11406,7 +11391,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
->> 	vcpu->mode = OUTSIDE_GUEST_MODE;
->> 	smp_wmb();
->>
->> -	kvm_load_host_xfeatures(vcpu);
->> +	kvm_load_xfeatures(vcpu, kvm_host.xcr0, kvm_host.xss);
-> 
-> Nit: given that xcr0/xss are either guest or host values, would it be slightly
-> better for this helper to accept a boolean (e.g., bool load_guest) to convey
-> that the API loads guest (or host) values rather than arbitrary xcr0/xss
-> values? like fpu_swap_kvm_fpstate().
 
-This really is a good idea!
 
-Allow arbitrary input but skip the write when vcpu->arch.{xcr0,ia32_xss} 
-== kvm_host.{xcr0,ia32_xss} does introduce confusion.
+On 11/6/25 3:33 AM, Bartosz Golaszewski wrote:
+>  Documentation/driver-api/dmaengine/provider.rst | 9 +++++++++
+>  include/linux/dmaengine.h                       | 6 ++++++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/Documentation/driver-api/dmaengine/provider.rst b/Documentation/driver-api/dmaengine/provider.rst
+> index 1594598b331782e4dddcf992159c724111db9cf3..6428211405472dd1147e363f5786acc91d95ed43 100644
+> --- a/Documentation/driver-api/dmaengine/provider.rst
+> +++ b/Documentation/driver-api/dmaengine/provider.rst
+> @@ -630,6 +630,15 @@ DMA_CTRL_REUSE
+>    - This flag is only supported if the channel reports the DMA_LOAD_EOT
+>      capability.
+>  
+> +- DMA_PREP_LOCK
+> +
+> +  - If set, the DMA controller will be locked for the duration of the current
+> +    transaction.
+> +
+> +- DMA_PREP_UNLOCK
+> +
+> +  - If set, DMA will release he controller lock.
 
-> static void kvm_load_xfeatures(struct kvm_vcpu *vcpu, bool load_guest)
-> {
-> 	u64 xcr0 = load_guest ? vcpu->arch.xcr0 : kvm_host.xcr0;
-> 	u64 xss  = load_guest ? vcpu->arch.ia32_xss : kvm_host.xss;
-> 
-> 	if (vcpu->arch.guest_state_protected)
-> 		return;
-> 
->> 	/*
->> 	 * Sync xfd before calling handle_exit_irqoff() which may
->>
->> base-commit: a996dd2a5e1ec54dcf7d7b93915ea3f97e14e68a
->> prerequisite-patch-id: 9aafd634f0ab2033d7b032e227d356777469e046
->> prerequisite-patch-id: 656ce1f5aa97c77a9cf6125713707a5007b2c7ba
->> prerequisite-patch-id: d6328b8c0fdb8593bb534ab7378821edcf9f639d
->> prerequisite-patch-id: c7f36d1cedc4ae6416223d2225460944629b3d4f
->> -- 
->> 2.46.0
->>
->>
-> 
+                                the
+
+> +
+>  General Design Notes
+
+-- 
+~Randy
 
 
