@@ -1,99 +1,234 @@
-Return-Path: <linux-kernel+bounces-890623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42333C407D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:00:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0C5C405EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:31:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49A853AF367
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:57:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9782189EA80
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8402E3365;
-	Fri,  7 Nov 2025 14:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA29E31D387;
+	Fri,  7 Nov 2025 14:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="Mw2jgJ49"
-Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="inUXtKxx";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="mLk97YuD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCA732ABD1;
-	Fri,  7 Nov 2025 14:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFE12C21FC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762527118; cv=none; b=SkafqgOqm1oiZiAYNH2CHkLMJinaDKefO8/uBsMe86VReC9ZaRGKEM6Z7wP5/JJsz14ZDslr4Guq84K6eZlSDLF1Nliogh0oGqkf9h7t9G1c2wyMxnWq6hypP1VL+vJU4dk75IR8mA0knO64GHmMY4Z6Gi324YVW7uyCmEI2PjY=
+	t=1762525870; cv=none; b=ocVjjNUpcehEn8sL+PJt718YXzJhVJkvW4qoPBv5TQXocP7BGPFCxI8mgPYifInPUJxbn6k8/8cG9Vc1z7WVyvit7xMofq1tXD2++xqaAN1jNyfFSjGmufZafppL6dMmFPGXMXoJ9W7zSwPsjTUWvuM5Mmd36QIQKqsTiiFd7nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762527118; c=relaxed/simple;
-	bh=yY+LqNbrriJtrASwv4EJBgyPp/ul+xS6nFrrSNxOa78=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=EQu2iqKdIFsosl6vHkAc0XKHaGYmb4/GVKI0bZATISHBopJ7xw+sbF8m7MajKA95EuzBYtnB2RvIgR56nKoABOkajLzcHjb9mrOrxOpZ0S5x5ntpsKQxC6D6AuvbrKrc1WRFfcbQ4BRs6NnuCH//sg/rSmKx7OAqXcer22COEnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=Mw2jgJ49; arc=none smtp.client-ip=143.255.12.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fp3+7qnkGj3SD8ZunpmtK+vZqqmCCDW44o0W2oGVpHE=; b=Mw2jgJ49ez8biiAxasIexEy7W6
-	WRKyIjpx2ReCRc3Me0y1Dqif2VAtrank49xgfqoqF8WQ6WQuNzH0G47MPvBgFZpHDz1kJVgoZ+YaN
-	54FacZhD8utA2W4E+KqTjLxljGw4cejmGgT2Nr7mER92KyrUCD9U0AEC2HZJv9CYNM8gcb9kzunKI
-	tCGXQRPP8WaT+StEENw5TOfpuM/YImF/KRP3+6eUUZFKJieljmC0mf29lnUFeHMqr1cvpdfkE1l35
-	CGUjttw9XumO8eFYGygXwlT8MTjFIYVLrNORp5Jsj/4nWM/+sx93UU0mkNk/VtA2EApCmZBBEkd+a
-	WjOEgfOQ==;
-Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
-	id 1vHNUE-0000000151N-1j2X;
-	Fri, 07 Nov 2025 11:30:46 -0300
-Message-ID: <f25e47415998a9d9360ac87eca7292a2@manguebit.org>
-From: Paulo Alcantara <pc@manguebit.org>
-To: Edward Adam Davis <eadavis@qq.com>,
- syzbot+72afd4c236e6bc3f4bac@syzkaller.appspotmail.com
-Cc: bharathsm@microsoft.com, linux-cifs@vger.kernel.org,
- linux-kernel@vger.kernel.org, ronniesahlberg@gmail.com,
- samba-technical@lists.samba.org, sfrench@samba.org, sprasad@microsoft.com,
- syzkaller-bugs@googlegroups.com, tom@talpey.com
-Subject: Re: [PATCH] cifs: client: fix memory leak in
- smb3_fs_context_parse_param
-In-Reply-To: <tencent_5D8667DBC6ECD2FF464349ADEEFD2EE84C06@qq.com>
-References: <690da014.a70a0220.22f260.0026.GAE@google.com>
- <tencent_5D8667DBC6ECD2FF464349ADEEFD2EE84C06@qq.com>
-Date: Fri, 07 Nov 2025 11:30:46 -0300
+	s=arc-20240116; t=1762525870; c=relaxed/simple;
+	bh=4ACT8X04sb6fAW3+47LxhHcq7/anCem7+kuAeIdPdiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hvBp619vwywvofoT6JnL0Sh9gvcMk92h8ykvYKgUk7dqaimOHuskM9ygy83yuPz9N5s9K4q4Gb0Ut36+xK3vKU10Y7Kh3T4UQY1bC7rbFqHBv+w70qsrVJb0aMYmF5B985WnVtBKGdXC+ff2wfCwFZh1hMTntwTBtS+AMxh24/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=inUXtKxx; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=mLk97YuD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762525866;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xL9UWKNVFseJyc8ZZEBbh4eUS+K/pGNVZX2OMNyP0Mg=;
+	b=inUXtKxxpvoKoiMhHMCyllN35vmj7MmRtAGRgvpLGYxqHHNA5edy7z+jAh09f0+QfM/YUU
+	HN0XqewB+W/OIBS0Zud9MzEJot9jG69ZB7gKwTCurrj+LIBCZnq08BNDAkSX1uKZIE3FFx
+	AF9fkUoplu/7e/uvuYB0Vpd8rBDA6vE=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-8mAXn-hIOfmV6LZ65I7iFA-1; Fri, 07 Nov 2025 09:31:05 -0500
+X-MC-Unique: 8mAXn-hIOfmV6LZ65I7iFA-1
+X-Mimecast-MFC-AGG-ID: 8mAXn-hIOfmV6LZ65I7iFA_1762525862
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b72a11466c2so92878766b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:31:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762525862; x=1763130662; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xL9UWKNVFseJyc8ZZEBbh4eUS+K/pGNVZX2OMNyP0Mg=;
+        b=mLk97YuDYnfIMKSd3JKJTZrltUK5pFbg40ErvP8RuWFTwQaOgCdWIEABTiQkxTvgXS
+         IN+8xcaiO2Wz70H8leqWjgwlAEPtfBF3tc6Z+k9ZLfvPbevMmJr1cf/HTHrx+xhWNy/N
+         SfvR8k3VQSudhECmQeU+1VtiePzpZ1tjOwtPWXn4HLsfEOh+/o6rgNlYLYjXyjluVs2X
+         bKmdLt9Rq6A1RIBuHeJ39twkX3f+84ZaJyagUzUEfANjCBv+sGJ5w6efmik0heIpsSOn
+         OiNEPO/8OI1eLrPOHRWuRR7I8VfRE7+ynJEsWqEY3HVsZCqt14548/7O9I06rwb9mArS
+         DpyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762525862; x=1763130662;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xL9UWKNVFseJyc8ZZEBbh4eUS+K/pGNVZX2OMNyP0Mg=;
+        b=INoC1dJjd7UoR5adn+EEwlBPOS1Vs7zul+/Smk0/+Zk0MVNftW0B6rfi+I3CbMyuXS
+         lFTWSAUXYfBGKetpi0WWK4QVS2n1QLX87SSVzgGp7IyD65FrVyXQzFDTzYar81ElX4BM
+         8fJFKQ0TKnrX6ecJz8AzzISVNOKwr0DaLKFM2TARyZ6AFRMsBPJrvO+MFZK1zBJj/J7t
+         +t3BF44cYm1NOIX/fE1Vqk7f68r0BRICWWQ2EbKTkh4HkLt87i2ni7w2n9IATruju8WX
+         z375oyx7xajgni/AHq0qQUka0ux6tunvkmsTe85H7OkD8wUekihgxND8b9n4mr+cjMsJ
+         73Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCURrUtz36lgXaMPkQrWuOaGhlFbjcWV3crvbbpcJ2+WcuJ/ZX5YVsC9MxNu66HTwmn63ZHGqwpVVWdu1u0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykoWveqdcVRJM9Bry9dnivhZ4xm0B+KYF0c5C1pV+CeSg4S48H
+	LRyMn60DCYo1AwzfwtsduIJj381SVfvkTjtyRd0INWdrIoNqnftH+m2x5AJeAiW7TQp9lgzTXgj
+	fhhVQyb2nppAxRBGzKJUW2YA11kuOJlYumNKAYDgw2UvorsC0O96d2q80hqF2CWWsFw==
+X-Gm-Gg: ASbGncvyHS+/I6uTOKfi30mv9YxukmoaftujBMvmwe9BO70wd2Uldv4eRhPH3uHFTwI
+	UUQ1yEfCgSKy9dAnZqjD9PwxgEOT2gn4qcAhKGNrvbhizZhDzdKVR40ziC78RlqPJJCJG2FcmKG
+	9m3wwPxvf5m9/KJtABiIdpI4MjoQz+TCgT0O4dh1BVYW+uCu1WY8wKZGPB29o5LI9oUvZ0j5erZ
+	pQPSdtdbPL6pP8kQlDQn5ozwQIZuwX14Ru7iI76s6C0MjS8ftYb8nwux/bUv3vqPLo3NpGygNFO
+	ukPS8mT29CHz5DdRNfnJX3eC1/4/y725ECQuig1sUs1b/YSnBb34ewE5XjGaLU3tPiOJFLZE/QO
+	nbP13L/IuV5yErYk3Pe8o8dYuP8zI773cIhFWVK0ls8Y1nXejY5w=
+X-Received: by 2002:a17:907:9713:b0:b70:b4db:ae83 with SMTP id a640c23a62f3a-b72c0db4a61mr338301366b.60.1762525862153;
+        Fri, 07 Nov 2025 06:31:02 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFVGP6jVhYiYdDeDEvDFwhwEthJq43aCkNDIhOMB5uynFpxGPUKrXfFtjd4lbRPq2WOuVI1vw==
+X-Received: by 2002:a17:907:9713:b0:b70:b4db:ae83 with SMTP id a640c23a62f3a-b72c0db4a61mr338295766b.60.1762525861624;
+        Fri, 07 Nov 2025 06:31:01 -0800 (PST)
+Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa11295sm256401966b.67.2025.11.07.06.30.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 06:31:01 -0800 (PST)
+Date: Fri, 7 Nov 2025 15:30:58 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v8 06/14] vsock/virtio: add netns to virtio
+ transport common
+Message-ID: <4d365ifyw5ncyboonznnnm6ua7psyt3ripzpvtyd35qa5zsgwv@f2kfgzgoc26c>
+References: <20251023-vsock-vmtest-v8-0-dea984d02bb0@meta.com>
+ <20251023-vsock-vmtest-v8-6-dea984d02bb0@meta.com>
+ <hkwlp6wpiik35zesxqfe6uw7m6uayd4tcbvrg55qhhej3ox33q@lah2dwed477g>
+ <aQ1e3/DZbgnYw4Ja@devvm11784.nha0.facebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <aQ1e3/DZbgnYw4Ja@devvm11784.nha0.facebook.com>
 
-Edward Adam Davis <eadavis@qq.com> writes:
+On Thu, Nov 06, 2025 at 06:52:15PM -0800, Bobby Eshleman wrote:
+>On Thu, Nov 06, 2025 at 05:20:05PM +0100, Stefano Garzarella wrote:
+>> On Thu, Oct 23, 2025 at 11:27:45AM -0700, Bobby Eshleman wrote:
+>> > From: Bobby Eshleman <bobbyeshleman@meta.com>
+>> >
+>> > Enable network namespace support in the virtio-vsock common transport
+>> > layer by declaring namespace pointers in the transmit and receive
+>> > paths.
+>> >
+>> > The changes include:
+>> > 1. Add a 'net' field to virtio_vsock_pkt_info to carry the namespace
+>> >   pointer for outgoing packets.
+>> > 2. Store the namespace and namespace mode in the skb control buffer when
+>> >   allocating packets (except for VIRTIO_VSOCK_OP_RST packets which do
+>> >   not have an associated socket).
+>> > 3. Retrieve namespace information from skbs on the receive path for
+>> >   lookups using vsock_find_connected_socket_net() and
+>> >   vsock_find_bound_socket_net().
+>> >
+>> > This allows users of virtio transport common code
+>> > (vhost-vsock/virtio-vsock) to later enable namespace support.
+>> >
+>> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+>> > ---
+>> > Changes in v7:
+>> > - add comment explaining the !vsk case in 
+>> > virtio_transport_alloc_skb()
+>> > ---
+>> > include/linux/virtio_vsock.h            |  1 +
+>> > net/vmw_vsock/virtio_transport_common.c | 21 +++++++++++++++++++--
+>> > 2 files changed, 20 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
+>> > index 29290395054c..f90646f82993 100644
+>> > --- a/include/linux/virtio_vsock.h
+>> > +++ b/include/linux/virtio_vsock.h
+>> > @@ -217,6 +217,7 @@ struct virtio_vsock_pkt_info {
+>> > 	u32 remote_cid, remote_port;
+>> > 	struct vsock_sock *vsk;
+>> > 	struct msghdr *msg;
+>> > +	struct net *net;
+>> > 	u32 pkt_len;
+>> > 	u16 type;
+>> > 	u16 op;
+>> > diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+>> > index dcc8a1d5851e..b8e52c71920a 100644
+>> > --- a/net/vmw_vsock/virtio_transport_common.c
+>> > +++ b/net/vmw_vsock/virtio_transport_common.c
+>> > @@ -316,6 +316,15 @@ static struct sk_buff *virtio_transport_alloc_skb(struct virtio_vsock_pkt_info *
+>> > 					 info->flags,
+>> > 					 zcopy);
+>> >
+>> > +	/*
+>> > +	 * If there is no corresponding socket, then we don't have a
+>> > +	 * corresponding namespace. This only happens For VIRTIO_VSOCK_OP_RST.
+>> > +	 */
+>>
+>> So, in virtio_transport_recv_pkt() should we check that `net` is not set?
+>>
+>> Should we set it to NULL here?
+>>
+>
+>Sounds good to me.
+>
+>> > +	if (vsk) {
+>> > +		virtio_vsock_skb_set_net(skb, info->net);
+>>
+>> Ditto here about the net refcnt, can the net disappear?
+>> Should we use get_net() in some way, or the socket will prevent that?
+>>
+>
+>As long as the socket has an outstanding skb it can't be destroyed and
+>so will have a reference to the net, that is after skb_set_owner_w() and
+>freeing... so I think this is okay.
+>
+>But, maybe we could simplify the implied relationship between skb, sk,
+>and net by removing the VIRTIO_VSOCK_SKB_CB(skb)->net entirely, and only
+>ever referring to sock_net(skb->sk)? I remember originally having a
+>reason for adding it to the cb, but my hunch is it that it was probably
+>some confusion over the !vsk case.
+>
+>WDYT?
 
-> The user calls fsconfig twice, but when the program exits, free() only
-> frees ctx->source for the second fsconfig, not the first.
-> Regarding fc->source, there is no code in the fs context related to its
-> memory reclamation.
->
-> To fix this memory leak, release the source memory corresponding to ctx
-> or fc before each parsing.
->
-> syzbot reported:
-> BUG: memory leak
-> unreferenced object 0xffff888128afa360 (size 96):
->   backtrace (crc 79c9c7ba):
->     kstrdup+0x3c/0x80 mm/util.c:84
->     smb3_fs_context_parse_param+0x229b/0x36c0 fs/smb/client/fs_context.c:1444
->
-> BUG: memory leak
-> unreferenced object 0xffff888112c7d900 (size 96):
->   backtrace (crc 79c9c7ba):
->     smb3_fs_context_fullpath+0x70/0x1b0 fs/smb/client/fs_context.c:629
->     smb3_fs_context_parse_param+0x2266/0x36c0 fs/smb/client/fs_context.c:1438
->
-> Reported-by: syzbot+72afd4c236e6bc3f4bac@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=72afd4c236e6bc3f4bac
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  fs/smb/client/fs_context.c | 2 ++
->  1 file changed, 2 insertions(+)
+If vsk == NULL, I'm expecting that also skb->sk is not valid, right?
 
-Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+Indeed we call skb_set_owner_w() only if vsk != NULL in 
+virtio_transport_alloc_skb().
+
+Maybe we need to change virtio_transport_recv_pkt() where the `net` 
+should be passed in some way by the caller, so maybe this is the reason 
+why you needed it in the cb. But also in that case, I think we can get 
+the `net` in some way and pass it to virtio_transport_recv_pkt() and 
+avoid the change in the cb:
+- vsock_lookpback.c in vsock_loopback_work() we can use vsock->net
+- vhost/vsock.c in vhost_vsock_handle_tx_kick(), ditto we can use 
+   vsock->net
+- virtio_transport.c we can just pass always the dummy_net
+
+Same fot the net_mode.
+
+Maybe the real problem is in the send_pkt callbacks, where the skb is 
+used to get the socket, but as you mention, I think in this path 
+skb_set_owner_w() is already called, so we can get that info from there 
+in some way.
+
+Not sure, but yeah, if we can remove that, it will be much clear IMO.
+
+Thanks,
+Stefano
+
 
