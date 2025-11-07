@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-889997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F48C3F08D
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:52:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599DCC3F09F
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:53:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A9773A821C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:52:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 374224E9EAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6E02D0608;
-	Fri,  7 Nov 2025 08:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13232D6E66;
+	Fri,  7 Nov 2025 08:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="crnlqXG7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMuOvj0Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0464B2D9ED1;
-	Fri,  7 Nov 2025 08:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28865295516;
+	Fri,  7 Nov 2025 08:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762505550; cv=none; b=hxMRqJtZVoBKK4UCVXJZxXtTIPbg94lDXDs2xGK6PDQ/lREJRaMk1sxTf+ogDD0mqawqKxJK7rJJTGqaIGgXf5PtQOmWvEn2d/Wrx8dM/B3g9szwlpupoNg3gRYDKLW9QRazBZNAOg3FNHtJwjNxXo33knhr0td5UsNLYI0r7A8=
+	t=1762505610; cv=none; b=XJdiSwrZnzOmkLF4bES/jueqE9x+COuDOW8NpPiMujaMx0VDB8U8MblB6Sxz/BDWwURxQ4oTVVHlq9ymBKSlQ0T8CyQdTbiFVdndLnx2jrz1IZdRp8NWBZFNrzY0uuYXc13HtT/Heo2L9PQbeprPMHctrtF0CtYu6ZXLXU4CTcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762505550; c=relaxed/simple;
-	bh=o/G3wbVvU7m9CXAclIRCBPaXp+MGOiwJ0ei//pu/DU0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WOOxnXBVOHUxHgoEEWU1mS9/o1YyBuwPdQcpqklijWHky7z+QG9M3GzgBQaxxX4C0Jsy9W+2QA3O1lOscGqb1CYsrrrQt7gU3IQ11rj+KDXTKM+nBKRsKf+rO84ENqkSglTuCsYAsItkU7dPVR+7v38gWL+Mrk70v9ttNL9egXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=crnlqXG7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E1DC4CEF8;
-	Fri,  7 Nov 2025 08:52:26 +0000 (UTC)
+	s=arc-20240116; t=1762505610; c=relaxed/simple;
+	bh=nPTi+SRWdBNdBtOKjt7WzWSq++sZMLkBbtvgv9XbRLM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XFPeWx6qio0XyjlKKTfOzqIZgV61ijxadAyCrSvgESY1/3S95nyn4kmxR2gkMIyMGvjxUPsBpmm14/wwUzI31TVUG0TIynnlf8Njd+XNI/PjWxGOu8tZmmw9JdAfirqrBH+5woopklRwJgY1Y9QuOpD9klqmw/kJD+CPTVBCPco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMuOvj0Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9C76C113D0;
+	Fri,  7 Nov 2025 08:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762505549;
-	bh=o/G3wbVvU7m9CXAclIRCBPaXp+MGOiwJ0ei//pu/DU0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=crnlqXG7MVhdeTKz9VRa1Aw9qWa6ZS23FJedjohTRuIMpNjqQtK2D4NhBjtU8IlBr
-	 tWwZodNsrZdqM2IdLTh/IuUesGOeXndjWgkET29lGiuR+on9XK5ahFFGQsB5GRLWWg
-	 dMXf7BUKo0mlkhiF+qDC2usfqb5FxCNdl/sBteEq83DyyMQKF3URqxsvinrm/bk4uD
-	 8YJJ3Tgw6CxSmLKT0YtczmaRKR2nn8eTySF7fn0S1B/alX0lg48l4rw65hFa/qeomw
-	 EXYCx5t+scwlUc1Xo23bdLgeqTcU/CzZve3MhQiNftNRUtBi3ihidPEQvmgrkMFFu1
-	 X3L9D227iOU0A==
-Message-ID: <d5275ccc-96a8-48eb-bc4e-e355aae597a3@kernel.org>
-Date: Fri, 7 Nov 2025 09:52:25 +0100
+	s=k20201202; t=1762505609;
+	bh=nPTi+SRWdBNdBtOKjt7WzWSq++sZMLkBbtvgv9XbRLM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=KMuOvj0QlwrolFnGl6LFOYwWrw9/W/xZEuLmymByaj6L0/1Y7WNMc1Jix3XgcK4tz
+	 489/4ysImnZTg55XqUGB8Nk8m/md4hT++/Wm5zbBdcOaLCuPPdI7MB9XTwTGKxv2VH
+	 Af/9MMEY5B41hiHpQBFFQtii1jxSfPPa3wXl8JX8pzh6BfPRNJXXoSYKX7q2Abd50A
+	 ybYObxdo9f+wjpS/+l3jPdkleGlcOHxkdpD7HHSB88aPTfHL3DgOSa2CgSN0xZQ3Cw
+	 eiAtEJB/QFtdZsDvxpJaCq95bLdU0f4TkTBmhRXBp0XDkBa42JwtqgW3ujwzoEfe1P
+	 ZSfxzw8oZlchg==
+Message-ID: <d2127339-914e-44f1-a994-315d151b08c5@kernel.org>
+Date: Fri, 7 Nov 2025 09:53:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] dt-bindings: clock: airoha: Document support for
- AN7583 clock
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251106195935.1767696-1-ansuelsmth@gmail.com>
- <20251106195935.1767696-5-ansuelsmth@gmail.com>
- <20251107-fancy-premium-lynx-dc9bbd@kuoka>
- <690da391.5d0a0220.33eed5.80b7@mx.google.com>
- <ab520621-b11d-4763-a7b7-fe7dfafdca6c@kernel.org>
- <690dabc8.7b0a0220.35db7d.1d97@mx.google.com>
+Subject: Re: [PATCH v3 4/5] dt-bindings: arm: airoha: Add the chip-scu node
+ for AN7583 SoC
 From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20251106225929.1778398-1-ansuelsmth@gmail.com>
+ <20251106225929.1778398-5-ansuelsmth@gmail.com>
+ <20251107-splendid-alpaca-of-influence-97216f@kuoka>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -109,69 +106,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <690dabc8.7b0a0220.35db7d.1d97@mx.google.com>
+In-Reply-To: <20251107-splendid-alpaca-of-influence-97216f@kuoka>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/11/2025 09:20, Christian Marangi wrote:
-> On Fri, Nov 07, 2025 at 09:12:48AM +0100, Krzysztof Kozlowski wrote:
->> On 07/11/2025 08:45, Christian Marangi wrote:
->>> On Fri, Nov 07, 2025 at 08:42:15AM +0100, Krzysztof Kozlowski wrote:
->>>> On Thu, Nov 06, 2025 at 08:59:31PM +0100, Christian Marangi wrote:
->>>>> Document support for Airoha AN7583 clock based on the EN7523
->>>>> clock schema.
->>>>>
->>>>> Add additional binding for additional clock and reset lines.
->>>>>
->>>>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
->>>>> ---
->>>>>  .../bindings/clock/airoha,en7523-scu.yaml     |  5 +-
->>>>>  include/dt-bindings/clock/en7523-clk.h        |  3 +
->>>>>  .../dt-bindings/reset/airoha,an7583-reset.h   | 62 +++++++++++++++++++
->>>>>  3 files changed, 69 insertions(+), 1 deletion(-)
->>>>>  create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
->>>>> index fe2c5c1baf43..2d53b96356c5 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
->>>>> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
->>>>> @@ -30,6 +30,7 @@ properties:
->>>>>    compatible:
->>>>>      items:
->>>>>        - enum:
->>>>> +          - airoha,an7583-scu
->>>>
->>>> That's random order. Keep it sorted.
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>>
->>>
->>> Hi Krzysztof,
->>>
->>> I was also not cetrain on the correct order.
+On 07/11/2025 08:45, Krzysztof Kozlowski wrote:
+> On Thu, Nov 06, 2025 at 11:59:13PM +0100, Christian Marangi wrote:
+>> Document support for Airoha AN7583 chip-scu node.
 >>
->> Why? The rule was expressed on mailing list many, many times and only
->> Sunxi or maybe one more SoC does it differently.
+>> This is similar to Airoha EN7581 with the addition of the presence of
+>> thermal sensor in addition to controlling HW PIN and other miscellaneous
+>> pheriperals.
 >>
->>>
->>> We have En7523 and en7581 and then An7583.
->>>
->>> So should I put it at last following the number order or the
->>> alphabetical order?
->> All such lists or enumerations are ordered alphanumerically.
+>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+>> ---
+>>  .../bindings/arm/airoha,en7581-chip-scu.yaml       | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
 >>
+>> diff --git a/Documentation/devicetree/bindings/arm/airoha,en7581-chip-scu.yaml b/Documentation/devicetree/bindings/arm/airoha,en7581-chip-scu.yaml
+>> index 67c449d804c2..0d042fb90a78 100644
+>> --- a/Documentation/devicetree/bindings/arm/airoha,en7581-chip-scu.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/airoha,en7581-chip-scu.yaml
+>> @@ -18,16 +18,30 @@ properties:
+>>    compatible:
+>>      items:
+>>        - enum:
+>> +          - airoha,an7583-chip-scu
 > 
-> Ok so I think the proposed order follows alphanumerically order.
-> 
->            - airoha,An7583-scu
->            - airoha,En7523-scu
->            - airoha,En7581-scu
-> 
-> Maybe the A vs E was confusing?
+> Again, random order.
 
-Yes, my bad, I missed the a/e. The list is correct, sorry.
+D'oh! That's a correct order. Missed a/e difference.
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
