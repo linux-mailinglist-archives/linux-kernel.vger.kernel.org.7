@@ -1,161 +1,206 @@
-Return-Path: <linux-kernel+bounces-890908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB9DC415BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:55:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01335C415D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:59:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01B5A3A7AD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A299189E4B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945CD33B97B;
-	Fri,  7 Nov 2025 18:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8AC340282;
+	Fri,  7 Nov 2025 18:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XdoTi6BG"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H59v75Ni"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00220335095
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5D333CEA8;
+	Fri,  7 Nov 2025 18:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762541736; cv=none; b=h4nW97SL9m58foT3+qQQ4SOMXNBa04OmCCM93zMu5hWG1ZIMnEA9Y+8cd6UukTCRmXq99De7R/aIZSrkjE2F8+zeroxpprAyUc3gyGIZazB+xuDT6j+TjLGR9/vWyafIPEUe1vHHmruRmifny7zuenutG6uQcwa5ttZMrIFG5uI=
+	t=1762541923; cv=none; b=oOrWT/WtaSGTmZWpMsAyWJkW+Wa83PzmeCi0FhRoZrsAnZ7eQ8DtE+CEd9DSTwVpFbcT/ovwy35otzl/Tn+9p4yR8oQ/tDmk1ZQDLpOfHjoUqgMPkY8tUjU7ESeDSYQIrFzEvgQEZGvfe65mux3XEK7puJ9GZ8bUYkJku0ZpDzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762541736; c=relaxed/simple;
-	bh=IdtM5FvAG0CA3/E9xLGv8ZkSNkz0C6s2910O2wI6WPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t1uI4LJjnkheoxMZaoOVa/B1FMbQYRHaSjz7xuNMi0jcOhaNq36u0jm/QbwrPomH3A/HQquYvWGrmAeis5+Xw1j7xNAkOxHWBC/r9X3V5WxeI9QPBeJezASbFR4OO/IiklVGCJ4Xl1u8w4SpVtdevKqsW3BWbTwP//TBRBbDa1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XdoTi6BG; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4710683a644so7229645e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:55:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762541732; x=1763146532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HYOFjOauC9uTwp6iLyWT9D/OqXU3tri/WbPZz+gGnEI=;
-        b=XdoTi6BGPJHgh8HuCKKgiZgd+1b066E9SePyQ9tPFBGkk0fnKYhhuk6u5VYahSojLD
-         zX8xHiO7Z7fm376QDK4qsL+gYRzffUIPcXLKmKb9OnD4poYo7F0NZJssI7Iz5Dfzpbyl
-         4kDM6dnd4Dy4qYUeNKv8jTLIHPiSmMnxstIGcz8lQKwxTjgWW/XYY7YptDmSfrialHN7
-         D+A42kfndtnO0UUd5wxuq+ocD+/ZA28QqmM10DsVzRwoVEBgRgHAZ1WTFAwql1Ehenxk
-         a2FlJL/AL3YYhNJIaUtNCn7wgJ1BZ3dZn/jhUzZwE+PkjsGFAgcVMOkxqzU6MB0o1BlR
-         wxPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762541732; x=1763146532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HYOFjOauC9uTwp6iLyWT9D/OqXU3tri/WbPZz+gGnEI=;
-        b=saXyYqJfy+hGRZKs2VS/BxpiJ+im+Sgz8XGfk8n9tH6IloJQ5DV7RKVro1w7t5SxwJ
-         /mis3Xzs73di/WAPMIUrtTK3uXxj3tJ4+KNlD6KxXniYejKHGLfejU2elPmL481CRLgL
-         boYCfob7zkoTtzAI0c146CmjGat5RFb7T+pzmGz1gjQvwSQ8/KqpVOsWTNFLyIE0ZHmI
-         bmyKI7PX0xbnTMdNR65dewMqhHqMg9m5tsyj7TwVvjeCrPj8xJpwvrOOUJdvHxHV3s0B
-         8aF4seJg7kHw/3ibQE+qsU5hq3ZmRa5vUOE2xqMq6xR65Vd9ARdiiqxTxXnOGaKn0Qk4
-         r5MA==
-X-Forwarded-Encrypted: i=1; AJvYcCVT/g0k5ZoBo85iPPb4tzOY5gRQyXOA0QDzgkm87gmf74m1kAtHjeM/sGNiTmNKG0sosdTyvJQ/wCIJ7WU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDyI9G+odphySBgXEcIm5v1oqbp9z3ZdjTJM8Hw4FaQLJgWm2x
-	N3hYFZEAou5MDr8IqN4UphZ3cfMfvSqq7EODntI2aQEpVtSTsTz9+TV//EsKBSEL6qNdiuFp6HM
-	XiYD69xeX8J4YPFL0HIZzcEq1X112a9A=
-X-Gm-Gg: ASbGncuBKK9JqTU+hjp6tJFVjKNOrzfVs8dA3nkJM60Q/z3wQ4aPePIfT51lmeqeepf
-	2iopTD35pELJ13E8uA5Y+2O20P8E25fXbcC67qpLxmbcz4Zsz3+1wj4BLokKdgeqaOPjXHQUfuN
-	7iN3YeJmLuxv9iDI+ijO3MJIFFXXysMjfbAzxS27BABK06YryeU4dkwoN7/C7356E+fa3QCzGxf
-	CFnmGcqJrOhItLEklwhHPVJftINw8rM32wD4uAl6aiUzzrjADnFtMBZN70x
-X-Google-Smtp-Source: AGHT+IHRiq8LOI7XDfcnPBif5Be5tlbEofXfFjh2SF9CKa5iZ2LCl/Y697lC6+uXYXH4qXNN3Gqe5tbSe6dhD42hJjI=
-X-Received: by 2002:a05:600c:1d0d:b0:477:bf1:8c82 with SMTP id
- 5b1f17b1804b1-47772dfba72mr4536435e9.15.1762541732159; Fri, 07 Nov 2025
- 10:55:32 -0800 (PST)
+	s=arc-20240116; t=1762541923; c=relaxed/simple;
+	bh=bOUbnZvb2TbWof6JwYRWtCUjJZ+np312O1qVpM42BAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H9TCIRg3b9h++Fo3Wzci5wvQZ3FtVyvuMpuW/ggrpBTWtIenztLxNNy4teBNCWKDaidLLOkSBzMCxWeKLpqGEODj2YIwSkXCTbjTbYSXbivQqp793Tn6Jrd+k42inzb3MVRR5iq/O+gWDCCDIrEMOasmE+MJv/30HTJZias6qjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H59v75Ni; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=PjiF0FDj1ggdA8+srznADWIujFetT2w1WcC08yNm+xE=; b=H59v75NiiIx555adWgSui938BX
+	Yc3i1CYEaGF7O6kQ1NqaqRVT/Zz7Cswv0/fmOzsuOsqzoIRagasqeUrHrhrdChqEbZeXwaG25NO+S
+	5wwiT1Bk++lMCO2rTIpSkO6LuvNwiSk1/lj7Setie4/hO5vXucwRTkyP4yelMuEJS4S3/t3xpANoZ
+	fMWvRG+69LUGWzme6PVDco0ZFCeM7vfUpGeksDZI3z5FpBYHlU5+MqvBB/XCUz0tSEk1fDzrRkUZ2
+	YHwjo2XWY68XJ4S/UyDHNpcYYoIRz6GCK8IoBHNkuYm6Mq2NkrCY2ePjJ4l6ltSL9O9XJUZxKJPhW
+	/Noao/Cg==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vHRfI-00000000bYE-3FZm;
+	Fri, 07 Nov 2025 18:58:28 +0000
+Message-ID: <0c265a9b-fdc5-40d7-845f-30910f1ac6ea@infradead.org>
+Date: Fri, 7 Nov 2025 10:58:27 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106200309.1096131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ee6a79ae-4857-44e4-b8e9-29cdd80d828f@lunn.ch> <CA+V-a8vFEHr+3yR7=JAki3YDe==dAUv3m4PrD-nWhVg8hXgJcQ@mail.gmail.com>
- <2dabb0d5-f28f-4fdc-abeb-54119ab1f2cf@lunn.ch>
-In-Reply-To: <2dabb0d5-f28f-4fdc-abeb-54119ab1f2cf@lunn.ch>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 7 Nov 2025 18:55:05 +0000
-X-Gm-Features: AWmQ_bnn3KbAT4rF9IvIcF36WFZWDqZECyk5JzQF2JLVOWx3xWwFfMtNq7cdMzE
-Message-ID: <CA+V-a8uk-9pUrpXF3GDjwuDJBxpASpW8g5pHNBkd44JhF8AEew@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: phy: mscc: Add support for PHY LEDs on VSC8541
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Vladimir Oltean <vladimir.oltean@nxp.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 05/11] PCI/P2PDMA: Document DMABUF model
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Logan Gunthorpe
+ <logang@deltatee.com>, Jens Axboe <axboe@kernel.dk>,
+ Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Ankit Agrawal <ankita@nvidia.com>, Yishai Hadas <yishaih@nvidia.com>,
+ Shameer Kolothum <skolothumtho@nvidia.com>, Kevin Tian
+ <kevin.tian@intel.com>, Alex Williamson <alex@shazbot.org>,
+ Krishnakant Jaju <kjaju@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, iommu@lists.linux.dev, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ kvm@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20251106-dmabuf-vfio-v7-0-2503bf390699@nvidia.com>
+ <20251106-dmabuf-vfio-v7-5-2503bf390699@nvidia.com>
+ <135df7eb-9291-428b-9c86-d58c2e19e052@infradead.org>
+ <20251107160120.GD15456@unreal>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251107160120.GD15456@unreal>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Andrew,
+	
 
-On Fri, Nov 7, 2025 at 1:14=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> > > > @@ -2343,6 +2532,26 @@ static int vsc85xx_probe(struct phy_device *=
-phydev)
-> > > >       if (!vsc8531->stats)
-> > > >               return -ENOMEM;
-> > > >
-> > > > +     phy_id =3D phydev->drv->phy_id & phydev->drv->phy_id_mask;
-> > > > +     if (phy_id =3D=3D PHY_ID_VSC8541) {
-> > >
-> > > The VSC8541 has its own probe function, vsc8514_probe(). Why is this
-> > > needed?
-> > >
-> > vsc85xx_probe() is used for other PHYs along with VSC8541 hence this
-> > check, vsc8514_probe() is for 8514 PHY.
->
-> Ah, sorry. I was looking at 8514, not 8541. So yes, this is needed.
->
-> However, i think all the current probe functions could do with some
-> cleanup. There is a lot of repeated code. That could all be moved into
-> a vsc85xx_probe_common(), and then a vsc8514_probe() added, which uses
-> this common function to do most of the work, and then handles LEDs.
->
-Certainly the probes can be simplified into a single function. I'll
-create a patch for this.
+On 11/7/25 8:01 AM, Leon Romanovsky wrote:
+> On Thu, Nov 06, 2025 at 10:15:07PM -0800, Randy Dunlap wrote:
+>>
+>>
+>> On 11/6/25 6:16 AM, Leon Romanovsky wrote:
+>>> From: Jason Gunthorpe <jgg@nvidia.com>
+>>>
+>>> Reflect latest changes in p2p implementation to support DMABUF lifecycle.
+>>>
+>>> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+>>> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+>>> ---
+>>>  Documentation/driver-api/pci/p2pdma.rst | 95 +++++++++++++++++++++++++--------
+>>>  1 file changed, 72 insertions(+), 23 deletions(-)
+>>>
+>>> diff --git a/Documentation/driver-api/pci/p2pdma.rst b/Documentation/driver-api/pci/p2pdma.rst
+>>> index d0b241628cf1..69adea45f73e 100644
+>>> --- a/Documentation/driver-api/pci/p2pdma.rst
+>>> +++ b/Documentation/driver-api/pci/p2pdma.rst
+>>> @@ -9,22 +9,47 @@ between two devices on the bus. This type of transaction is henceforth
+>>>  called Peer-to-Peer (or P2P). However, there are a number of issues that
+>>>  make P2P transactions tricky to do in a perfectly safe way.
+>>>  
+>>> -One of the biggest issues is that PCI doesn't require forwarding
+>>> -transactions between hierarchy domains, and in PCIe, each Root Port
+>>> -defines a separate hierarchy domain. To make things worse, there is no
+>>> -simple way to determine if a given Root Complex supports this or not.
+>>> -(See PCIe r4.0, sec 1.3.1). Therefore, as of this writing, the kernel
+>>> -only supports doing P2P when the endpoints involved are all behind the
+>>> -same PCI bridge, as such devices are all in the same PCI hierarchy
+>>> -domain, and the spec guarantees that all transactions within the
+>>> -hierarchy will be routable, but it does not require routing
+>>> -between hierarchies.
+>>> -
+>>> -The second issue is that to make use of existing interfaces in Linux,
+>>> -memory that is used for P2P transactions needs to be backed by struct
+>>> -pages. However, PCI BARs are not typically cache coherent so there are
+>>> -a few corner case gotchas with these pages so developers need to
+>>> -be careful about what they do with them.
+>>> +For PCIe the routing of TLPs is well defined up until they reach a host bridge
+>>
+>> Define what TLP means?
+> 
+> In PCIe "world", TLP is very well-known and well-defined acronym, which
+> means Transaction Layer Packet.
 
-> Also, is the LED handling you are adding here specific to the 8541? If
-> you look at the datasheets for the other devices, are any the same?
->
-Looking at the below datasheets the LED handlings seem to be the same.
-Do you want me to add this for all the PHYs? Note I can only test this
-on 8541 PHY only.
+It's your choice (or Bjorn's). I'm just reviewing...
 
-VSC8541: https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/Pro=
-ductDocuments/DataSheets/VMDS-10496.pdf
-VSC8502: https://ww1.microchip.com/downloads/en/DeviceDoc/VSC8502-03_Datash=
-eet_60001742B.pdf
-VSC8514: https://ww1.microchip.com/downloads/en/DeviceDoc/VMDS-10446.pdf
-VSC8501: https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/Pro=
-ductDocuments/DataSheets/VSC8501-03_Datasheet_60001741B.pdf
-VSC8504: https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/Pro=
-ductDocuments/DataSheets/60001810A.pdf
-VSC8530: https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/Pro=
-ductDocuments/DataSheets/VMDS-10516.pdf
-VSC8584: https://ww1.microchip.com/downloads/en/DeviceDoc/VMDS-10455.pdf
-VSC8582: https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/Pro=
-ductDocuments/DataSheets/VMDS-10421.pdf
-VSC8575: https://ww1.microchip.com/downloads/en/DeviceDoc/VMDS-10457.pdf
-VSC8574: https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/Pro=
-ductDocuments/DataSheets/60001807A.pdf
-VSC8572: https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/Pro=
-ductDocuments/DataSheets/60001808A.pdf
-VSC8562: https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/Pro=
-ductDocuments/DataSheets/VMDS-10475.pdf
-VSC8552: https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/Pro=
-ductDocuments/DataSheets/60001809A.pdf
+>>                                    well-defined
+> 
+> Thanks
+> 
+> diff --git a/Documentation/driver-api/pci/p2pdma.rst b/Documentation/driver-api/pci/p2pdma.rst
+> index 69adea45f73e..7530296a5dea 100644
+> --- a/Documentation/driver-api/pci/p2pdma.rst
+> +++ b/Documentation/driver-api/pci/p2pdma.rst
+> @@ -9,17 +9,17 @@ between two devices on the bus. This type of transaction is henceforth
+>  called Peer-to-Peer (or P2P). However, there are a number of issues that
+>  make P2P transactions tricky to do in a perfectly safe way.
+> 
+> -For PCIe the routing of TLPs is well defined up until they reach a host bridge
+> -or root port. If the path includes PCIe switches then based on the ACS settings
+> -the transaction can route entirely within the PCIe hierarchy and never reach the
+> -root port. The kernel will evaluate the PCIe topology and always permit P2P
+> -in these well defined cases.
+> +For PCIe the routing of Transaction Layer Packets (TLPs) is well-defined up
+> +until they reach a host bridge or root port. If the path includes PCIe switches
+> +then based on the ACS settings the transaction can route entirely within
+> +the PCIe hierarchy and never reach the root port. The kernel will evaluate
+> +the PCIe topology and always permit P2P in these well-defined cases.
+> 
+>  However, if the P2P transaction reaches the host bridge then it might have to
+>  hairpin back out the same root port, be routed inside the CPU SOC to another
+>  PCIe root port, or routed internally to the SOC.
+> 
+> -As this is not well defined or well supported in real HW the kernel defaults to
+> +As this is not well-defined or well supported in real HW the kernel defaults to
+Nit:                              well-supported
 
-Cheers,
-Prabhakar
+The rest of it looks good. Thanks.
+
+>  blocking such routing. There is an allow list to allow detecting known-good HW,
+>  in which case P2P between any two PCIe devices will be permitted.
+> 
+> @@ -39,7 +39,7 @@ delegates lifecycle management to the providing driver. It is expected that
+>  drivers using this option will wrap their MMIO memory in DMABUF and use DMABUF
+>  to provide an invalidation shutdown. These MMIO pages have no struct page, and
+>  if used with mmap() must create special PTEs. As such there are very few
+> -kernel uAPIs that can accept pointers to them, in particular they cannot be used
+> +kernel uAPIs that can accept pointers to them; in particular they cannot be used
+>  with read()/write(), including O_DIRECT.
+> 
+>  Building on this, the subsystem offers a layer to wrap the MMIO in a ZONE_DEVICE
+> @@ -154,7 +154,7 @@ access happens.
+>  Usage With DMABUF
+>  =================
+> 
+> -DMABUF provides an alternative to the above struct page based
+> +DMABUF provides an alternative to the above struct page-based
+>  client/provider/orchestrator system. In this mode the exporting driver will wrap
+>  some of its MMIO in a DMABUF and give the DMABUF FD to userspace.
+> 
+> @@ -162,10 +162,10 @@ Userspace can then pass the FD to an importing driver which will ask the
+>  exporting driver to map it.
+> 
+>  In this case the initiator and target pci_devices are known and the P2P subsystem
+> -is used to determine the mapping type. The phys_addr_t based DMA API is used to
+> +is used to determine the mapping type. The phys_addr_t-based DMA API is used to
+>  establish the dma_addr_t.
+> 
+> -Lifecycle is controlled by DMABUF move_notify(), when the exporting driver wants
+> +Lifecycle is controlled by DMABUF move_notify(). When the exporting driver wants
+>  to remove() it must deliver an invalidation shutdown to all DMABUF importing
+>  drivers through move_notify() and synchronously DMA unmap all the MMIO.
+> 
+
+-- 
+~Randy
+
 
