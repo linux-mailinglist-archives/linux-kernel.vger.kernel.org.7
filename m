@@ -1,264 +1,461 @@
-Return-Path: <linux-kernel+bounces-889572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26735C3DEFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:01:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 791AAC3DF06
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:03:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9E2F18848C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:02:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F6384E494E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1911F0E32;
-	Fri,  7 Nov 2025 00:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="WZYAC5pt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Psg2gNos"
-Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72242199E94;
+	Fri,  7 Nov 2025 00:03:31 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C23A33993;
-	Fri,  7 Nov 2025 00:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA6B2C9D;
+	Fri,  7 Nov 2025 00:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762473681; cv=none; b=ufJ4zqM+wyIPsjRK193FvrNokGG8H5JotQCaEz+5/ywGO0gzCbAKdeXXS87qBajmt7/nSDGn52hFA2/0C4NSQD5WZQ3FY1D2zwrkGJ2e58HdCXT3JVihuupOidW4o11gd7t94HiSh/ADjaY6BOHWPJtd/MtYyP+Kta8ZdkjZ8ts=
+	t=1762473810; cv=none; b=XzY52MWz8AV4tHxmKRxhQ076sV6MmuLJgqn0Ah2HoR3lcGoVeEaTVj0WI3hl6ynV+9ULY8PTUYUb3q/0CY8QgaI8VJj7zV+pyczI7x6Pmgizuh2/ksAMdwFJG02fW4e0jkrjChAOkT/bZs4USqox7iT/B++ZDTRIWeeAKfe7YZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762473681; c=relaxed/simple;
-	bh=MufCujU/0LsEsdoh25mDaMBAKJ5uFyL9+gDf2+vBd+0=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=oHYXEcTSYoHyVkX72EIqQp/P5StWGobo798vrgPKFkPEkyNRL5ulqc34y95dBzU5Q70jyjXpa6GEl3JMrRYy72FKDLvfRAtsDuZPNxrlAQyxUhrdj6GtCfXZaxIIc/Z6SGzkmAFCGOCwEtUPUkJZUwttL8x470KeSzTiJxH2JMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=WZYAC5pt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Psg2gNos; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailflow.phl.internal (Postfix) with ESMTP id 2F76A13801BB;
-	Thu,  6 Nov 2025 19:01:16 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Thu, 06 Nov 2025 19:01:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1762473676; x=1762480876; bh=H6fp6wT7I155+JjI5U+YS+I+wpfi8UjlpY4
-	LU8fjdU4=; b=WZYAC5ptT+JI+E3LCYQDPMrHgn2+EeezTwSX9Fj81LnO57sEIW0
-	r5bog5i33AtRsNThYOW5jDpkHJo5LmpOQU7UBC/WI2CsBHqkVpPTyHV/ApxUM1tN
-	z6dVSfEJthkopAMT44s7CyEjRA2sDrA7Y2ef+eMrFuZp33UeziEFvqR18wUswgoZ
-	7iPlUWWsOUPV/ZTTFBfyHToZxwjR9SvGXXZHsmi76QwHLy2cwbWHeeTpiMc4d1Bx
-	XeBUu2V3z1ClTvl5FdR+kiB+ei1mybka1yZ1GjCONTkXDJfd+mNjp5j/C8/VHSTP
-	dThaFVWL2uE50jq2dsohAmGrZdbMqVO7Ang==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762473676; x=
-	1762480876; bh=H6fp6wT7I155+JjI5U+YS+I+wpfi8UjlpY4LU8fjdU4=; b=P
-	sg2gNosOUgNreOPGLlVE9k8r0A93bFTvKl0A1YiFCaR0/yxDdKMWNofRmX2pbv2C
-	pRquqzDxvSlnoOFKUo3q0Ir6NiXbOSxcJH8T5/d9/oXcWZsBYNknHCW+NvYGKU2G
-	Ni1/LdQGu7Us7ontcePjlATrS/pgRVzjGEEX7HanmFiC2g+ePTDJ5SSAtpJBah0H
-	UWRXuHQQCAsLEu8BLIO90FsUNkSBOy8aoz2K3RYVbczfmOyGIUeyWzmqDvAPkDRA
-	jQU6SMudoXVNKkegC9Kaz3mNZdYl5nPuZwKwE6TAABXrWOiDglM1NlGb8+vPxFje
-	mse7RGNm/dK9IXvzGfidw==
-X-ME-Sender: <xms:xDYNaRhNbUJHsahPPmb6piowRnF47nS9W-BDbBUWZMioGCLB0QKE0Q>
-    <xme:xDYNadGCoPUcs45mlm9G-M-v6BypV59NlC8i5D0rXfDdqG1vicJvxUwSAeEgzm-AW
-    mM9E_dg4ffodJEGnHgTyJ5KyY9-2grnnN8X99UhFArcj-pfDw>
-X-ME-Received: <xmr:xDYNaZhYRnJe2Zwy43UTfxOwR_mAMlSeo2ztdDGjHNPtTGiDI9p-9jO_eGsbdcJ0bT11eVgdtj8wsq09LuBid3ldax93JTUA9nFc7WrB4ws3>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeekudeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepleegpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepfhhrrghnkhdrlhhisehvihhvohdrtghomhdprhgtphhtthhopehlihhn
-    uhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhnihhlfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    lhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:xDYNaRZM3kLhMQrgyC03y_mvDTyKIhHr-UZRyaVoDw1bUdd3TO5KWQ>
-    <xmx:xDYNab6BMLI1rNIb697RuBsl1xbiAOh3-jJjQLerAQCMMocsAIIZ6A>
-    <xmx:xDYNaWzpKwiCJssErWAKaC5Omh24WDMdd_ESMwy-1QKK0c3T8HNikg>
-    <xmx:xDYNadOOkUDnvT6bORX3tFjgvG8jH6RVTiJmdbw7J549hUUGJI3E9w>
-    <xmx:zDYNaZmP4HdGrgNN2fuf1yLCRS5MEi7pUT3ZiXhJ138U_-MYPTZPl43i>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 6 Nov 2025 19:00:45 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1762473810; c=relaxed/simple;
+	bh=XkEqAbpWK1F/QeROk/YoCWEbTvCPTwUtq06/WbExako=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aI0a2/r4kx3jsVBqMY0jYY5pSPioumAnZ+PWJmun48WnyTadeGtXbxjOtAU1osNYske+cRZHqMjnU+ANBmE61HBT6d7cspay0Y0iV0tsrjICDmqDypzqfeUC6x36kTfF47GAJstST94h2znoUkMq0fzg8+qpk1SYoHcQTv23JQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 5855B1602E9;
+	Fri,  7 Nov 2025 00:03:19 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id 4B30B2000E;
+	Fri,  7 Nov 2025 00:03:17 +0000 (UTC)
+Date: Thu, 6 Nov 2025 19:03:14 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Sebastian Andrzej
+ Siewior <bigeasy@linutronix.de>, bpf@vger.kernel.org, frederic@kernel.org
+Subject: Re: [PATCH v2 10/16] tracing: Guard __DECLARE_TRACE() use of
+ __DO_TRACE_CALL() with SRCU-fast
+Message-ID: <20251106190314.5a43cc10@gandalf.local.home>
+In-Reply-To: <eb59555d-f3e8-47c9-b519-a7b628e68885@paulmck-laptop>
+References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
+	<20251105203216.2701005-10-paulmck@kernel.org>
+	<20251106110230.08e877ff@batman.local.home>
+	<522b01cf-0cb6-4766-9102-2d08a3983d8a@paulmck-laptop>
+	<20251106121005.76087677@gandalf.local.home>
+	<eb59555d-f3e8-47c9-b519-a7b628e68885@paulmck-laptop>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Eric Van Hensbergen" <ericvh@kernel.org>,
- "Latchesar Ionkov" <lucho@ionkov.net>,
- "Dominique Martinet" <asmadeus@codewreck.org>,
- "Christian Schoenebeck" <linux_oss@crudebyte.com>,
- "David Sterba" <dsterba@suse.com>, "David Howells" <dhowells@redhat.com>,
- "Marc Dionne" <marc.dionne@auristor.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
- "Chris Mason" <clm@fb.com>, "Xiubo Li" <xiubli@redhat.com>,
- "Ilya Dryomov" <idryomov@gmail.com>, "Jan Harkes" <jaharkes@cs.cmu.edu>,
- coda@cs.cmu.edu, "Tyler Hicks" <code@tyhicks.com>,
- "Jeremy Kerr" <jk@ozlabs.org>, "Ard Biesheuvel" <ardb@kernel.org>,
- "Namjae Jeon" <linkinjeon@kernel.org>,
- "Sungjong Seo" <sj1557.seo@samsung.com>,
- "Yuezhang Mo" <yuezhang.mo@sony.com>, "Theodore Ts'o" <tytso@mit.edu>,
- "Andreas Dilger" <adilger.kernel@dilger.ca>,
- "Jaegeuk Kim" <jaegeuk@kernel.org>, "Chao Yu" <chao@kernel.org>,
- "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>,
- "Miklos Szeredi" <miklos@szeredi.hu>,
- "Andreas Gruenbacher" <agruenba@redhat.com>,
- "Viacheslav Dubeyko" <slava@dubeyko.com>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Yangtao Li" <frank.li@vivo.com>, "Richard Weinberger" <richard@nod.at>,
- "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Mikulas Patocka" <mikulas@artax.karlin.mff.cuni.cz>,
- "Muchun Song" <muchun.song@linux.dev>,
- "Oscar Salvador" <osalvador@suse.de>,
- "David Hildenbrand" <david@redhat.com>,
- "David Woodhouse" <dwmw2@infradead.org>,
- "Dave Kleikamp" <shaggy@kernel.org>,
- "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>,
- "Ryusuke Konishi" <konishi.ryusuke@gmail.com>,
- "Konstantin Komarov" <almaz.alexandrovich@paragon-software.com>,
- "Mark Fasheh" <mark@fasheh.com>, "Joel Becker" <jlbec@evilplan.org>,
- "Joseph Qi" <joseph.qi@linux.alibaba.com>,
- "Bob Copeland" <me@bobcopeland.com>,
- "Mike Marshall" <hubcap@omnibond.com>,
- "Martin Brandenburg" <martin@omnibond.com>,
- "Amir Goldstein" <amir73il@gmail.com>,
- "Steve French" <sfrench@samba.org>, "Paulo Alcantara" <pc@manguebit.org>,
- "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
- "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
- "Bharath SM" <bharathsm@microsoft.com>,
- "Zhihao Cheng" <chengzhihao1@huawei.com>,
- "Hans de Goede" <hansg@kernel.org>, "Carlos Maiolino" <cem@kernel.org>,
- "Hugh Dickins" <hughd@google.com>,
- "Baolin Wang" <baolin.wang@linux.alibaba.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Kees Cook" <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
- linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
- codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, gfs2@lists.linux.dev,
- linux-um@lists.infradead.org, linux-mm@kvack.org,
- linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
- linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
- linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
- linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, linux-xfs@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Subject:
- Re: [PATCH] vfs: remove the excl argument from the ->create() inode_operation
-In-reply-to: <f5927a9bb985b9ad241bc5f9fc32acfd35340222.camel@kernel.org>
-References: <20251105-create-excl-v1-1-a4cce035cc55@kernel.org>,
- <176237780417.634289.15818324160940255011@noble.neil.brown.name>,
- <6758176514cdd6e2ceacb3bd0e4d63fb8784b7c6.camel@kernel.org>,
- <f5927a9bb985b9ad241bc5f9fc32acfd35340222.camel@kernel.org>
-Date: Fri, 07 Nov 2025 11:00:34 +1100
-Message-id: <176247363419.634289.473957828516111884@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4B30B2000E
+X-Stat-Signature: zc9e6rgd5xusdweu4gb5fnogzic9p9h1
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/L/2veC7BunS4aMCWe1Jwr0caXYicMHjY=
+X-HE-Tag: 1762473797-145445
+X-HE-Meta: U2FsdGVkX1//rXLqd7SwHVeLbChXQu+QgxB/IQabZfGLCd1QZW9hSE98HtOahPCyZF8QP5pHU3MlgIUG2DP23H+MBDUbBlZ14Wd2A9y5sPGJyf83fz5BmjNZqqaZvqqFUswnh0cvktsVfLj1wFi/PoiCqj3pf+yoTAILbA1sOUEsN0FLuVyIBB+O6/gB/XFDaWvNUFdD7bdwJBYfnLrFmNhxKGK2f6b5mMjt+6H/hJf7mEBqsiHC6S3eVL9IFY6Q+WaqROvf4Gm2X+3sYws3PnVkLL0OVtutjTrwf/PxIr6pqGTgb8raiX01lbOttRiI+dGsGNLqplN9YhKSMQiXYm1KXKpm22CE
 
-On Fri, 07 Nov 2025, Jeff Layton wrote:
-> On Thu, 2025-11-06 at 07:07 -0500, Jeff Layton wrote:
-> > On Thu, 2025-11-06 at 08:23 +1100, NeilBrown wrote:
-> > > On Thu, 06 Nov 2025, Jeff Layton wrote:
-> > > > Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
-> > > > the "excl" argument to the ->create() inode_operation is always set to
-> > > > true. Remove it, and fix up all of the create implementations.
-> > >=20
-> > > nonono
-> > >=20
-> > >=20
-> > > > @@ -3802,7 +3802,7 @@ static struct dentry *lookup_open(struct nameid=
-ata *nd, struct file *file,
-> > > >  		}
-> > > > =20
-> > > >  		error =3D dir_inode->i_op->create(idmap, dir_inode, dentry,
-> > > > -						mode, open_flag & O_EXCL);
-> > > > +						mode);
-> > >=20
-> > > "open_flag & O_EXCL" is not the same as "true".
-> > >=20
-> > > It is true that "all calls to vfs_create() pass true for 'excl'"
-> > > The same is NOT true for inode_operations.create.
-> > >=20
-> >=20
-> > I don't think this is a problem, actually:
-> >=20
-> > Almost all of the existing ->create() operations ignore the "excl"
-> > bool. There are only two that I found that do not: NFS and GFS2. Both
-> > of those have an ->atomic_open() operation though, so lookup_open()
-> > will never call ->create() for those filesystems. This means that -
-> > > create() _is_ always called with excl =3D=3D true.
->=20
-> How about this for a revised changelog, which makes the above clear:
->=20
->     vfs: remove the excl argument from the ->create() inode_operation
->    =20
->     Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
->     the "excl" argument to the ->create() inode_operation is always set to
->     true in vfs_create().
->    =20
->     There is another call to ->create() in lookup_open() that can set it to
->     either true or false. All of the ->create() operations in the kernel
->     ignore the excl argument, except for NFS and GFS2. Both NFS and GFS2
->     have an ->atomic_open() operation, however so lookup_open() will never
->     call ->create() on those filesystems.
->    =20
->     Remove the "excl" argument from the ->create() operation, and fix up the
->     filesystems accordingly.
+On Thu, 6 Nov 2025 09:52:28 -0800
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
 
-Thanks, that is a substantial improvement.  I see your point now and I
-think this is a really nice cleanup to make - thanks.
+> Ah, thank you for the clarification!  Will do.
 
-I think the commit message could be improved further by leading with the
-detail that is central - that most ->create function ignore 'excl'.
+Actually, I was looking to get rid of that preempt disable in that syscall
+code. You could use this patch instead. I made the necessary updates. It
+still needs preemption disabled when PREEMPT_RT is not set, but this should
+be fine, and hopefully doesn't conflict too badly with my own changes.
 
- With two exceptions, ->create() methods provided by filesystems ignore
- the "excl" flag.  Those exception are NFS and GFS2 which both also
- provide ->atomic_open.
+To get an idea, by blindly adding the preempt disable on non-RT we have this:
 
- excl is always true when ->create is called from vfs_create() (since
- commit......) so the only time it can be false is when it is called by
- lookup_open() for filesystems that do not provide ->atomic_open.
+         chronyd-544     [006] ...1.   110.216639: lock_release: 0000000099631762 &mm->mmap_lock
+         chronyd-544     [006] ...1.   110.216640: lock_acquire: 000000003660b68f read rcu_read_lock_trace
+         chronyd-544     [006] ...1.   110.216641: lock_acquire: 0000000099631762 read &mm->mmap_lock
+         chronyd-544     [006] ...1.   110.216641: lock_release: 0000000099631762 &mm->mmap_lock
+         chronyd-544     [006] .....   110.216642: sys_exit: NR 270 = 0
+         chronyd-544     [006] ...1.   110.216642: lock_acquire: 0000000099631762 read &mm->mmap_lock
+         chronyd-544     [006] ...1.   110.216643: lock_release: 0000000099631762 &mm->mmap_lock
+         chronyd-544     [006] .....   110.216643: sys_pselect6 -> 0x0
+         chronyd-544     [006] ...1.   110.216644: lock_release: 000000003660b68f rcu_read_lock_trace
+         chronyd-544     [006] d..1.   110.216644: irq_disable: caller=do_syscall_64+0x37a/0x9a0 parent=0x0
+         chronyd-544     [006] d..1.   110.216645: irq_enable: caller=exit_to_user_mode_loop+0x57/0x140 parent=0x0
+         chronyd-544     [006] ...1.   110.216646: lock_acquire: 0000000099631762 read &mm->mmap_lock
 
- So the excl flag to ->create is either ignored or true.  So we can
- remove it and change NFS and GFS2 to acts as though it were true.
+All those "...1." is the tracer saying that preempt was disabled when it
+was not. The two without it ("....") are the syscall routines (which didn't
+change).
 
->=20
-> Maybe we also need some comments or updates to Documentation/ to make
-> it clear that ->create() always implies O_EXCL semantics?
+Now with RT enabled:
 
-Definitely, something in porting.rst and something in vfs.rst.
+ systemd-journal-435     [006] d..2.    63.884924: lock_release: 00000000ee02c684 &lock->wait_lock
+ systemd-journal-435     [006] d..2.    63.884924: irq_enable: caller=_raw_spin_unlock_irqrestore+0x44/0x70 parent=0x0
+ systemd-journal-435     [006] ....1    63.884926: lock_acquire: 00000000501e1144 read &mm->mmap_lock
+ systemd-journal-435     [006] ....1    63.884926: lock_release: 00000000501e1144 &mm->mmap_lock
+ systemd-journal-435     [006] ....1    63.884927: lock_acquire: 0000000000a1d734 read rcu_read_lock_trace
+ systemd-journal-435     [006] ....1    63.884928: lock_acquire: 00000000501e1144 read &mm->mmap_lock
+ systemd-journal-435     [006] ....1    63.884929: lock_release: 00000000501e1144 &mm->mmap_lock
+ systemd-journal-435     [006] .....    63.884929: sys_exit: NR 232 = 1
+ systemd-journal-435     [006] ....1    63.884929: lock_acquire: 00000000501e1144 read &mm->mmap_lock
+ systemd-journal-435     [006] ....1    63.884930: lock_release: 00000000501e1144 &mm->mmap_lock
+ systemd-journal-435     [006] .....    63.884930: sys_epoll_wait -> 0x1
+ systemd-journal-435     [006] ....1    63.884931: lock_release: 0000000000a1d734 rcu_read_lock_trace
+ systemd-journal-435     [006] d..1.    63.884931: irq_disable: caller=do_syscall_64+0x37a/0x9a0 parent=0x0
+ systemd-journal-435     [006] d..1.    63.884932: irq_enable: caller=exit_to_user_mode_loop+0x57/0x140 parent=0x0
+ systemd-journal-435     [006] ....1    63.884933: lock_acquire: 00000000501e1144 read &mm->mmap_lock
+ systemd-journal-435     [006] ....1    63.884933: lock_release: 00000000501e1144 &mm->mmap_lock
+ systemd-journal-435     [006] ....1    63.884934: lock_acquire: 00000000501e1144 read &mm->mmap_lock
+ systemd-journal-435     [006] ....1    63.884935: lock_release: 00000000501e1144 &mm->mmap_lock
+ systemd-journal-435     [006] ....1    63.884935: rseq_update: cpu_id=6 node_id=0 mm_cid=0
+ systemd-journal-435     [006] d..1.    63.884936: irq_disable: caller=exit_to_user_mode_loop+0x3d/0x140 parent=0x0
+ systemd-journal-435     [006] d..1.    63.884937: x86_fpu_regs_activated: x86/fpu: 00000000e86f3727 load: 1 xfeatures: 3 xcomp_bv: 0
+ systemd-journal-435     [006] d..1.    63.884938: irq_enable: caller=do_syscall_64+0x167/0x9a0 parent=0x0
+ systemd-journal-435     [006] d..1.    63.884944: irq_disable: caller=do_syscall_64+0x35/0x9a0 parent=0x0
 
-I would be worth saying somewhere that if the fs needs to mediate
-non-exclusive creation, it must provide atomic_open().
+It gets a bit more confusing. We see "migrate disabled" (the last number)
+except when preemption is enabled. That's because in your code, we only do
+the migrate dance when preemption is disabled:
 
-Thanks,
-NeilBrown
+> +			if (IS_ENABLED(CONFIG_PREEMPT_RT) && preemptible()) {	\
+> +				guard(srcu_fast_notrace)(&tracepoint_srcu);	\
+> +				guard(migrate)();				\
+> +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
+> +			} else {						\
+> +				guard(preempt_notrace)();			\
+> +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
+> +			}
 
+And that will make accounting in the trace event callback much more
+difficult, when it's sometimes disabling migration and sometimes disabling
+preemption. It must do one or the other. It can't be conditional like that.
 
-> --=20
-> Jeff Layton <jlayton@kernel.org>
->=20
+With my update below, it goes back to normal:
 
+            bash-1040    [004] d..2.    49.339890: lock_release: 000000001d24683a tasklist_lock
+            bash-1040    [004] d..2.    49.339890: irq_enable: caller=_raw_write_unlock_irq+0x28/0x50 parent=0x0
+            bash-1040    [004] ...1.    49.339891: lock_release: 00000000246b21a5 rcu_read_lock
+            bash-1040    [004] .....    49.339891: lock_acquire: 0000000084e3738a read &mm->mmap_lock
+            bash-1040    [004] .....    49.339892: lock_release: 0000000084e3738a &mm->mmap_lock
+            bash-1040    [004] .....    49.339892: lock_acquire: 00000000f5b22878 read rcu_read_lock_trace
+            bash-1040    [004] .....    49.339892: lock_acquire: 0000000084e3738a read &mm->mmap_lock
+            bash-1040    [004] .....    49.339893: lock_release: 0000000084e3738a &mm->mmap_lock
+            bash-1040    [004] .....    49.339893: sys_exit: NR 109 = 0
+            bash-1040    [004] .....    49.339893: lock_acquire: 0000000084e3738a read &mm->mmap_lock
+            bash-1040    [004] .....    49.339894: lock_release: 0000000084e3738a &mm->mmap_lock
+            bash-1040    [004] .....    49.339894: sys_setpgid -> 0x0
+            bash-1040    [004] .....    49.339895: lock_release: 00000000f5b22878 rcu_read_lock_trace
+            bash-1040    [004] d....    49.339895: irq_disable: caller=do_syscall_64+0x37a/0x9a0 parent=0x0
+            bash-1040    [004] d....    49.339895: irq_enable: caller=do_syscall_64+0x167/0x9a0 parent=0x0
+            bash-1040    [004] d....    49.339897: irq_disable: caller=irqentry_enter+0x57/0x60 parent=0x0
+
+I did some minor testing of this patch both with and without PREEMPT_RT
+enabled. This replaces this current patch. Feel free to use it.
+
+-- Steve
+
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 04307a19cde3..0a276e51d855 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -221,6 +221,26 @@ static inline unsigned int tracing_gen_ctx_dec(void)
+ 	return trace_ctx;
+ }
+ 
++/*
++ * When PREEMPT_RT is enabled, trace events are called with disabled
++ * migration. The trace events need to know if the tracepoint disabled
++ * migration or not so that what is recorded to the ring buffer shows
++ * the state of when the trace event triggered, and not the state caused
++ * by the trace event.
++ */
++#ifdef CONFIG_PREEMPT_RT
++static inline unsigned int tracing_gen_ctx_dec_cond(void)
++{
++	unsigned int trace_ctx;
++
++	trace_ctx = tracing_gen_ctx_dec();
++	/* The migration counter starts at bit 4 */
++	return trace_ctx - (1 << 4);
++}
++#else
++# define tracing_gen_ctx_dec_cond() tracing_gen_ctx_dec()
++#endif
++
+ struct trace_event_file;
+ 
+ struct ring_buffer_event *
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 826ce3f8e1f8..5294110c3e84 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -100,6 +100,25 @@ void for_each_tracepoint_in_module(struct module *mod,
+ }
+ #endif /* CONFIG_MODULES */
+ 
++/*
++ * BPF programs can attach to the tracepoint callbacks. But if the
++ * callbacks are called with preemption disabled, the BPF programs
++ * can cause quite a bit of latency. When PREEMPT_RT is enabled,
++ * instead of disabling preemption, use srcu_fast_notrace() for
++ * synchronization. As BPF programs that are attached to tracepoints
++ * expect to stay on the same CPU, also disable migration.
++ */
++#ifdef CONFIG_PREEMPT_RT
++extern struct srcu_struct tracepoint_srcu;
++# define tracepoint_sync() synchronize_srcu(&tracepoint_srcu);
++# define tracepoint_guard()				\
++	guard(srcu_fast_notrace)(&tracepoint_srcu);	\
++	guard(migrate)()
++#else
++# define tracepoint_sync() synchronize_rcu();
++# define tracepoint_guard() guard(preempt_notrace)()
++#endif
++
+ /*
+  * tracepoint_synchronize_unregister must be called between the last tracepoint
+  * probe unregistration and the end of module exit to make sure there is no
+@@ -115,7 +134,7 @@ void for_each_tracepoint_in_module(struct module *mod,
+ static inline void tracepoint_synchronize_unregister(void)
+ {
+ 	synchronize_rcu_tasks_trace();
+-	synchronize_rcu();
++	tracepoint_sync();
+ }
+ static inline bool tracepoint_is_faultable(struct tracepoint *tp)
+ {
+@@ -266,12 +285,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 		return static_branch_unlikely(&__tracepoint_##name.key);\
+ 	}
+ 
+-#define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
++#define __DECLARE_TRACE(name, proto, args, cond, data_proto)			\
+ 	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto)) \
+ 	static inline void __do_trace_##name(proto)			\
+ 	{								\
+ 		if (cond) {						\
+-			guard(preempt_notrace)();			\
++			tracepoint_guard();				\
+ 			__DO_TRACE_CALL(name, TP_ARGS(args));		\
+ 		}							\
+ 	}								\
+diff --git a/include/trace/perf.h b/include/trace/perf.h
+index a1754b73a8f5..348ad1d9b556 100644
+--- a/include/trace/perf.h
++++ b/include/trace/perf.h
+@@ -71,6 +71,7 @@ perf_trace_##call(void *__data, proto)					\
+ 	u64 __count __attribute__((unused));				\
+ 	struct task_struct *__task __attribute__((unused));		\
+ 									\
++	guard(preempt_notrace)();					\
+ 	do_perf_trace_##call(__data, args);				\
+ }
+ 
+@@ -85,9 +86,8 @@ perf_trace_##call(void *__data, proto)					\
+ 	struct task_struct *__task __attribute__((unused));		\
+ 									\
+ 	might_fault();							\
+-	preempt_disable_notrace();					\
++	guard(preempt_notrace)();					\
+ 	do_perf_trace_##call(__data, args);				\
+-	preempt_enable_notrace();					\
+ }
+ 
+ /*
+diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
+index 4f22136fd465..6fb58387e9f1 100644
+--- a/include/trace/trace_events.h
++++ b/include/trace/trace_events.h
+@@ -429,6 +429,22 @@ do_trace_event_raw_event_##call(void *__data, proto)			\
+ 	trace_event_buffer_commit(&fbuffer);				\
+ }
+ 
++/*
++ * When PREEMPT_RT is enabled, the tracepoint does not disable preemption
++ * but instead disables migration. The callbacks for the trace events
++ * need to have a consistent state so that it can reflect the proper
++ * preempt_disabled counter.
++ */
++#ifdef CONFIG_PREEMPT_RT
++/* disable preemption for RT so that the counters still match */
++# define trace_event_guard() guard(preempt_notrace)()
++/* Have syscalls up the migrate disable counter to emulate non-syscalls */
++# define trace_syscall_event_guard() guard(migrate)()
++#else
++# define trace_event_guard()
++# define trace_syscall_event_guard()
++#endif
++
+ #undef DECLARE_EVENT_CLASS
+ #define DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print)	\
+ __DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
+@@ -436,6 +452,7 @@ __DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
+ static notrace void							\
+ trace_event_raw_event_##call(void *__data, proto)			\
+ {									\
++	trace_event_guard();						\
+ 	do_trace_event_raw_event_##call(__data, args);			\
+ }
+ 
+@@ -447,9 +464,9 @@ static notrace void							\
+ trace_event_raw_event_##call(void *__data, proto)			\
+ {									\
+ 	might_fault();							\
+-	preempt_disable_notrace();					\
++	trace_syscall_event_guard();					\
++	guard(preempt_notrace)();					\
+ 	do_trace_event_raw_event_##call(__data, args);			\
+-	preempt_enable_notrace();					\
+ }
+ 
+ /*
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index e00da4182deb..000665649fcb 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -659,13 +659,7 @@ void *trace_event_buffer_reserve(struct trace_event_buffer *fbuffer,
+ 	    trace_event_ignore_this_pid(trace_file))
+ 		return NULL;
+ 
+-	/*
+-	 * If CONFIG_PREEMPTION is enabled, then the tracepoint itself disables
+-	 * preemption (adding one to the preempt_count). Since we are
+-	 * interested in the preempt_count at the time the tracepoint was
+-	 * hit, we need to subtract one to offset the increment.
+-	 */
+-	fbuffer->trace_ctx = tracing_gen_ctx_dec();
++	fbuffer->trace_ctx = tracing_gen_ctx_dec_cond();
+ 	fbuffer->trace_file = trace_file;
+ 
+ 	fbuffer->event =
+diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+index 0f932b22f9ec..3f699b198c56 100644
+--- a/kernel/trace/trace_syscalls.c
++++ b/kernel/trace/trace_syscalls.c
+@@ -28,6 +28,18 @@ syscall_get_enter_fields(struct trace_event_call *call)
+ 	return &entry->enter_fields;
+ }
+ 
++/*
++ * When PREEMPT_RT is enabled, it disables migration instead
++ * of preemption. The pseudo syscall trace events need to match
++ * so that the counter logic recorded into he ring buffer by
++ * trace_event_buffer_reserve() still matches what it expects.
++ */
++#ifdef CONFIG_PREEMPT_RT
++# define preempt_rt_guard()  guard(migrate)()
++#else
++# define preempt_rt_guard()
++#endif
++
+ extern struct syscall_metadata *__start_syscalls_metadata[];
+ extern struct syscall_metadata *__stop_syscalls_metadata[];
+ 
+@@ -310,6 +322,7 @@ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
+ 	 * buffer and per-cpu data require preemption to be disabled.
+ 	 */
+ 	might_fault();
++	preempt_rt_guard();
+ 	guard(preempt_notrace)();
+ 
+ 	syscall_nr = trace_get_syscall_nr(current, regs);
+@@ -355,6 +368,7 @@ static void ftrace_syscall_exit(void *data, struct pt_regs *regs, long ret)
+ 	 * buffer and per-cpu data require preemption to be disabled.
+ 	 */
+ 	might_fault();
++	preempt_rt_guard();
+ 	guard(preempt_notrace)();
+ 
+ 	syscall_nr = trace_get_syscall_nr(current, regs);
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 62719d2941c9..6a6bcf86bfbe 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -25,6 +25,12 @@ enum tp_func_state {
+ extern tracepoint_ptr_t __start___tracepoints_ptrs[];
+ extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
+ 
++/* In PREEMPT_RT, SRCU is used to protect the tracepoint callbacks */
++#ifdef CONFIG_PREEMPT_RT
++DEFINE_SRCU_FAST(tracepoint_srcu);
++EXPORT_SYMBOL_GPL(tracepoint_srcu);
++#endif
++
+ enum tp_transition_sync {
+ 	TP_TRANSITION_SYNC_1_0_1,
+ 	TP_TRANSITION_SYNC_N_2_1,
+@@ -34,6 +40,7 @@ enum tp_transition_sync {
+ 
+ struct tp_transition_snapshot {
+ 	unsigned long rcu;
++	unsigned long srcu_gp;
+ 	bool ongoing;
+ };
+ 
+@@ -46,6 +53,9 @@ static void tp_rcu_get_state(enum tp_transition_sync sync)
+ 
+ 	/* Keep the latest get_state snapshot. */
+ 	snapshot->rcu = get_state_synchronize_rcu();
++#ifdef CONFIG_PREEMPT_RT
++	snapshot->srcu_gp = start_poll_synchronize_srcu(&tracepoint_srcu);
++#endif
+ 	snapshot->ongoing = true;
+ }
+ 
+@@ -56,6 +66,10 @@ static void tp_rcu_cond_sync(enum tp_transition_sync sync)
+ 	if (!snapshot->ongoing)
+ 		return;
+ 	cond_synchronize_rcu(snapshot->rcu);
++#ifdef CONFIG_PREEMPT_RT
++	if (!poll_state_synchronize_srcu(&tracepoint_srcu, snapshot->srcu_gp))
++		synchronize_srcu(&tracepoint_srcu);
++#endif
+ 	snapshot->ongoing = false;
+ }
+ 
+@@ -101,10 +115,22 @@ static inline void *allocate_probes(int count)
+ 	return p == NULL ? NULL : p->probes;
+ }
+ 
++#ifdef CONFIG_PREEMPT_RT
++static void srcu_free_old_probes(struct rcu_head *head)
++{
++	kfree(container_of(head, struct tp_probes, rcu));
++}
++
++static void rcu_free_old_probes(struct rcu_head *head)
++{
++	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
++}
++#else
+ static void rcu_free_old_probes(struct rcu_head *head)
+ {
+ 	kfree(container_of(head, struct tp_probes, rcu));
+ }
++#endif
+ 
+ static inline void release_probes(struct tracepoint *tp, struct tracepoint_func *old)
+ {
+@@ -112,6 +138,13 @@ static inline void release_probes(struct tracepoint *tp, struct tracepoint_func
+ 		struct tp_probes *tp_probes = container_of(old,
+ 			struct tp_probes, probes[0]);
+ 
++		/*
++		 * Tracepoint probes are protected by either RCU or
++		 * Tasks Trace RCU and also by SRCU.  By calling the SRCU
++		 * callback in the [Tasks Trace] RCU callback we cover
++		 * both cases. So let us chain the SRCU and [Tasks Trace]
++		 * RCU callbacks to wait for both grace periods.
++		 */
+ 		if (tracepoint_is_faultable(tp))
+ 			call_rcu_tasks_trace(&tp_probes->rcu, rcu_free_old_probes);
+ 		else
 
