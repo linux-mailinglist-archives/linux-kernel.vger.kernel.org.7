@@ -1,85 +1,78 @@
-Return-Path: <linux-kernel+bounces-889599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA20C3E035
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:48:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BADBC3E0DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:54:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B573B4E5C7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:48:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86EC93A845C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AED52E54A0;
-	Fri,  7 Nov 2025 00:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EC13019C5;
+	Fri,  7 Nov 2025 00:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="mZ+16pMD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAKoh/wK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743B42B9A8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E702EB5A2;
+	Fri,  7 Nov 2025 00:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762476522; cv=none; b=Jd5sFtYQBlQA9VXAVNusgIB3qGxMgGFU7w9P9tR1sKC6wFNdPCosPAmzKIL0BrUDyr0b52Z2qFULjgxilK4Tx6fzrrtMbcjtCiDNQxpAiovCdLxat9QA3oQ+2Fmsh3mwN64gMHJu6e1wZMTaTKNWlBZGuzor6KzW2ZxXHcdez1Q=
+	t=1762476603; cv=none; b=KjtonAanq/jfVtGGJzagbIuw0N7h2gyXVajVBOhhElso216B4wBe9HoGy5iXQmMaHc96I36OFfcHQ4fL3Mpd7u23lxowfi4bqYwBex2qEVsfmPbAVXCLpcywrNDXyYGEI2TNthPOgXiFlLe5irQw7I2JUlScW4B4nB5Lny5zNm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762476522; c=relaxed/simple;
-	bh=MictNU5+MsXk7TZOzf+J7ibUODHO2bWENl4pfZuABB8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=iQfmNfupUAE5ETIwZ+EOCFYFf3uMohC0+oxo7JEbxJalOJjvWd6WRPVqDvSDrFUDDfPdBg6f+vW4DGMfWc9spAu1rM/XOtfvCYJVo9329T4eqSzvbXT47MrP2qpr8ZXO0+RYU25a/JEytw/ZXhEFTwEgE7AmLWW08OQoXxNyWkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=mZ+16pMD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A18AC4CEFB;
-	Fri,  7 Nov 2025 00:48:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1762476522;
-	bh=MictNU5+MsXk7TZOzf+J7ibUODHO2bWENl4pfZuABB8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mZ+16pMD4Zj8wYN/Tnds/Kdb6aAo9uyCxvi9LINQNDdjVMjJIAnlfcPd6JOc/RyYI
-	 iWb4v/ISf4y9bJlYuKcxTjncfFg9G3W+ZW0ENg4Y/s8hF2UJD8yk0JDQPAU9GFTNjN
-	 dZNNQbNllnwnkK8HIxpzmqywwOWPvgnWT/r/bSuc=
-Date: Thu, 6 Nov 2025 16:48:40 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Carlos Llamas <cmllamas@google.com>
-Cc: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, Breno Leitao
- <leitao@debian.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Miroslav
- Benes <mbenes@suse.cz>, Mark Brown <broonie@kernel.org>, Puranjay Mohan
- <puranjay@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas
- <catalin.marinas@arm.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
-Subject: Re: [PATCH] scripts/decode_stacktrace.sh: fix build ID and PC
- source parsing
-Message-Id: <20251106164840.c594ed684d22c97a6df7e364@linux-foundation.org>
-In-Reply-To: <aQvzC6HqCrCKd2uK@google.com>
-References: <20251030010347.2731925-1-cmllamas@google.com>
-	<20251030205758.b3a4de16bc8ce7ca90383f86@linux-foundation.org>
-	<aQvzC6HqCrCKd2uK@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762476603; c=relaxed/simple;
+	bh=J6DK8914qKi298MkORyqsooyEmiDASCGi5X9vMb2iQc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=D2HQx631YdRzSMlgyr8Vp/31OJ4u6TwDs3Tl8HbpA9OA1vpBXeYf3BmGSKcPhx3zbyAiRKTcsKq5hEPF/6Yxte9+mFl14QCSJpZEiVNH3huGxzKuDr72nv84ZG4Zl39khkcoTWaGcPTC33z632SmdVCmqXtVEWU9VFYPYB5VQW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAKoh/wK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83ED3C116C6;
+	Fri,  7 Nov 2025 00:50:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762476603;
+	bh=J6DK8914qKi298MkORyqsooyEmiDASCGi5X9vMb2iQc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=LAKoh/wKhypRjZjXx3XMhRjXV8lLGkWhMUYlvGfrQX/SY29R7708xYCwyYeD/2WK9
+	 08vlyAs8PwgzCmSdNgUYuUIgALXsiBuvA1sV3kuK4C6ZlItwyK++flltpdj7mboHEQ
+	 Ajx27DACL8KskbcPP5Faq/a8A52nmJ/IkoqTiOroN1jgioeS1v/U2nhkfW2Kc1wC1J
+	 On7NRn4lAzYQiYqL5xt95tyJ9fLClmX4sTw24vbSUTRMj4qZZbfhfK9JYGXicf2dIr
+	 ZNHua1qFPQjReBjCb9biW6rBrFx6jPNpiH7zWWxmpwFplPioAy4qZh65Oab0k79dLC
+	 Uy/TMWBEEruwQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7149439EF974;
+	Fri,  7 Nov 2025 00:49:37 +0000 (UTC)
+Subject: Re: [GIT PULL] ACPI fixes for v6.18-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0heXyzAAP5mH-kP9iS9yGJ-ceGFUJG5m-FL-rMMWx4eJg@mail.gmail.com>
+References: <CAJZ5v0heXyzAAP5mH-kP9iS9yGJ-ceGFUJG5m-FL-rMMWx4eJg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-acpi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0heXyzAAP5mH-kP9iS9yGJ-ceGFUJG5m-FL-rMMWx4eJg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.18-rc5
+X-PR-Tracked-Commit-Id: 771e8f483583728cd2ef164f7c2256c4bf2adf4c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3a157bdfc8d23c3fbfbeea47ff721fe9ef254b25
+Message-Id: <176247657596.436188.14174138608508406909.pr-tracker-bot@kernel.org>
+Date: Fri, 07 Nov 2025 00:49:35 +0000
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Thu, 6 Nov 2025 00:59:55 +0000 Carlos Llamas <cmllamas@google.com> wrote:
+The pull request you sent on Thu, 6 Nov 2025 22:27:54 +0100:
 
-> > I view the Fixes: as a recommendation we make to -stable maintainers
-> > saying "I think this should be backported to <here> and later".  As
-> > such, giving them multiple backporting targets must make their little
-> > heads spin.
-> 
-> So I've heard conflicting arguments about backporting patches to stable
-> for these scripts. That's why I skipped the Cc: stable tag. IIRC, the
-> argument is that one should always run the ToT scripts? <shrug>
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.18-rc5
 
-Seems weird.  Later scripts may use features which aren't present in
-older kernels.  Moreso with selftests, of course.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3a157bdfc8d23c3fbfbeea47ff721fe9ef254b25
 
-> You are right about the multiple Fixes: though. I should have only used:
-> 
->   Fixes: 2bff77c665ed ("scripts/decode_stacktrace.sh: fix decoding of lines with an additional info")
+Thank you!
 
-Updated, thanks.
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
