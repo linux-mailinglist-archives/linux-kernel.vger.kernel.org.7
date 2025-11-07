@@ -1,569 +1,78 @@
-Return-Path: <linux-kernel+bounces-890733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F786C40CAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:12:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B8CFC40D42
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:18:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52EB94EAAF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:12:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 28C994F6088
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E8D32AADC;
-	Fri,  7 Nov 2025 16:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F7B2571D7;
+	Fri,  7 Nov 2025 16:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="yy2gdQ6o"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAPnwUEW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901221E5B70
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924F02459DD
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762531947; cv=none; b=d3AIb5R9yCwlqdnPoGm5r3gkufxmDCTSipjD6UTb5UVg5JCSMQxWTBhQdh85BOos2ohEM5AGvjOCqjk8yD+nDiDTqwfQuICJpXu4NrTnEulurxUv9uX5HHcu+xf/UmLZZDG6gA8R6FyAMVMdeQajFmXUZAxpX0M3QTHMWCbqhXo=
+	t=1762532123; cv=none; b=RooFup5vGxmakt/S6sEihE1nxCRiYsdxj4how4qNJKCPE/FLLjUeIIjCmw0pszK937ckioE/RDapiOnS/WnQowmXZeO0s8ZZqlAlXdoCrVh6EOPVgsdi9L+O/kWkeuUX3FdsQFO1AYbyXUlW2Rgj3iCjzVYBDjag5XYxHXsYsyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762531947; c=relaxed/simple;
-	bh=e1BqN2xUtIgwvbFQi+eIxxSm5aSMM2ruQwQa3oEQ9/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0OPcooeCDCFgQrVKYr1REsQ2XGlHgOXPesqKFBNQcxEJTqD/BvngpCeUeR5jnujtpof9Lb9xZUt5Kxdg7qR4oqV0yX6buhplFfyxl9Aa5S16cQVj1pk0ugVIVFD3bxzUxZmgm2IwV6SykyK/xMMVjenoIEwpmVcOWwl1yxrr7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=yy2gdQ6o; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-477549b3082so8540255e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:12:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1762531943; x=1763136743; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4I9Nmi0x1XRh5MmNss3uO6kHDeCcgFZXdE1zsROAGYg=;
-        b=yy2gdQ6ok+pIyaUKSx4p1de4Yk4FihWddQn7zX1byh4z/5qez7TXR38W4i27pvMfkj
-         L/YXO7a8h7NNpfOTA0qCptZ8tJuM1C6mENr+D1So8loNIfIaJTG2HmVW9F8ITMuvELLN
-         EXX54gLWKwCaeikHAmDQ//mFExh7IlndKFASAWdv65PDVuIAgjTpxeFewNRbqX5AHEDL
-         6rIokXUZKyUgw6Ecl7dlbKo2mp2ypmJken2vkO5QJkZ9ZfgRvmkEnMxSZ2ZJmCl/u7yj
-         2TrqkjhYXHoPb+J6THq+zXFSJzzL8z2HF8hPcx0j31aPDI+A392JT55Cnl9BrE2QoOk1
-         RpXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762531943; x=1763136743;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4I9Nmi0x1XRh5MmNss3uO6kHDeCcgFZXdE1zsROAGYg=;
-        b=qIRm3GHx3CQwnk6nIqR5pC1SX1KrUSf07vL9YRFWygZhoyyrNhfu3Lv/YprwcqKcNP
-         xQNYsV6hZC7I1FiPERgeSkOdHtkm9jISmEs8pJdbBBoVZSbMDZ6hGdU0iuAZyy69RNED
-         0iyt4uKRQCYFp9x2S5breT1syThcXGXnXDDoyh2Md7Zvab/T4WAZrD7Z3Db4F2JsFB1W
-         qRtn9gSSIi671ckw/RNoLYaZLqM8ANha9ydRVV0JQMBNVDzpcCkAesWKe6VjKhuSlfxJ
-         Hzqm5oOp6QqadnVFlefoau3q3t1fGbhQRbNF/0Rd84DEHTO+Mh+b7yY4XU3vTAg+XhZ2
-         A16g==
-X-Forwarded-Encrypted: i=1; AJvYcCWUYUkz9ZDKIsLF7LViPlOiqaf+dlxphRPxFmptZ4wXKL0XklqR+prBXjwJY0a8bgQCusCpc6G6GEieWBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj0qX9/SW29PhXWPdWkvMuozBziAvVR6TNaYwlLSOLOklZRLVj
-	WCLVL0v164pZRXSYuuDdJnP5kEvgIdP8/lc34H2hu01cMDLieojfJKhS6sqthK3HLHc=
-X-Gm-Gg: ASbGnct+8VrQV2JCd26f5ypEkgiYYswJ5+Z5WcXe7UiJdRgaLL6BfBBcCd8fmuRNH9h
-	MVbYbttGdWZpBD2ZlOAb79jMgUi7kMIYjfqwKJ04aZ3eU1rr7kzUhqeKN3CzE5DNBn8VUQWkVxz
-	2X34gppQ0GYxirzNsBprUeNmlVQoqBkMSdLCSBTc7V8IParbtCPYlndngYKhlVeMk/FGfaSB6DU
-	ptfhaWjwaNIIclA6rSuyXdl6+COlOZ8B4GrKyedOriCMYjTy3ZEGCbACW/5HFLN4LR8Yc7aGnR8
-	DV4w3o85LsEuyUt49UiyCKUhxfoH2ak2nSXE8R1lunW6BhlYw48S5Ep+HxvLqCxFpsE3o2bQSFJ
-	yVmI5mik7Gfq8ilGBd0mrYXxfGT2vuKclrdSism8FY7Igv2nUkUUZsMtnmNpCgOvYUBj9eHaluy
-	JGh94DggtWxhusqpwB5/v+0dOO7hFr81nlu9d8wXKmr/Sf28NjrMIv8Qmnspc=
-X-Google-Smtp-Source: AGHT+IGHroTzRo1cJ44LOHTxL+NRy7sTi9c/ImeIIStaKdw3lsU0/qp1TjSL/vM3MWErBezrq59Q0A==
-X-Received: by 2002:a05:6000:1884:b0:429:cbba:b247 with SMTP id ffacd0b85a97d-42ae58d03b4mr3192709f8f.23.1762531942614;
-        Fri, 07 Nov 2025 08:12:22 -0800 (PST)
-Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62b23csm6015125f8f.10.2025.11.07.08.12.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 08:12:21 -0800 (PST)
-Date: Fri, 7 Nov 2025 16:14:17 +0000
-From: Daniel Thompson <daniel@riscstar.com>
-To: maudspierings@gocontroll.com
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 2/4] backlight: add max25014atg backlight
-Message-ID: <aQ4a2SBDldYgQb56@aspen.lan>
-References: <20251107-max25014-v5-0-9a6aa57306bf@gocontroll.com>
- <20251107-max25014-v5-2-9a6aa57306bf@gocontroll.com>
+	s=arc-20240116; t=1762532123; c=relaxed/simple;
+	bh=ys8dgtD3RUaBzNc5Xsrp8F5DAsv+9q2O+B6OqqyIe/E=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=k5T77B8Zwrpd+I7srdpk1crjM/5COwJv4t/dW3oREbge9D1hidu5O+5x0QI3klwCDOtbpXlBEk4gGit5Zd6pgfsVkmtBOMdIKtYX14Ry/YLeTGQxRhk4ClS5glx1lwtVE2x2hFRhnOcixhwEtmMkEJ4pXyrzEwgrflPoB1IZlgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAPnwUEW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D1ADC4CEF7;
+	Fri,  7 Nov 2025 16:15:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762532123;
+	bh=ys8dgtD3RUaBzNc5Xsrp8F5DAsv+9q2O+B6OqqyIe/E=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=FAPnwUEWsXLlO+5OVlMo47VATplsbZZuXzApsP5Ncrc9fbQXYKjwbcSogadHY8elh
+	 8V02lSvli1iVfq4xgS3WQExa7wTiQMdIaCuEyplmhkgCXElCMW1KpHD3uiwYY7IOqn
+	 8Moz5+2atqkYKsEJYPDu40A+Kh4n4eCHHztbNNQbDEd74K4BLBCVoPua5u5Vi+iA8+
+	 Dw7Ib3NLq647V2sQxgVfmr7FS1B8KliViQJWFv6fBvoiCohygHPbCOGzQFQ71LUNnM
+	 aAVbZf1N8QR/FRPeDHkSE+SlgzF/LGyJ6n8CpflCG8TCZ9W+pD0osFalLNcvvu62iN
+	 ZLWgczWmuQ5YA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB13439F1DED;
+	Fri,  7 Nov 2025 16:14:56 +0000 (UTC)
+Subject: Re: [GIT PULL] tracing: A few minor fixes for v6.18
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20251107082444.45c4536d@gandalf.local.home>
+References: <20251107082444.45c4536d@gandalf.local.home>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20251107082444.45c4536d@gandalf.local.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-v6.18-rc4
+X-PR-Tracked-Commit-Id: 53afec2c8fb2a562222948cb1c2aac48598578c9
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5b95a50001f1fbcae6b7fe211a02f37a04dd9a4b
+Message-Id: <176253209553.1082484.16063175408614996604.pr-tracker-bot@kernel.org>
+Date: Fri, 07 Nov 2025 16:14:55 +0000
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Tomas Glozar <tglozar@redhat.com>, John Kacur <jkacur@redhat.com>, Zhang Chujun <zhangchujun@cmss.chinamobile.com>, Zilin Guan <zilin@seu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107-max25014-v5-2-9a6aa57306bf@gocontroll.com>
 
-On Fri, Nov 07, 2025 at 01:49:59PM +0100, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maudspierings@gocontroll.com>
->
-> The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
-> with integrated boost controller.
->
-> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
-> diff --git a/drivers/video/backlight/max25014.c b/drivers/video/backlight/max25014.c
-> new file mode 100644
-> index 000000000000..36bae508697e
-> --- /dev/null
-> +++ b/drivers/video/backlight/max25014.c
-> @@ -0,0 +1,409 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Backlight driver for Maxim MAX25014
-> + *
-> + * Copyright (C) 2025 GOcontroll B.V.
-> + * Author: Maud Spierings <maudspierings@gocontroll.com>
-> + */
-> +
-> +#include <linux/backlight.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +
-> +#define MAX25014_ISET_DEFAULT_100 11
-> +#define MAX_BRIGHTNESS            100
-> +#define MIN_BRIGHTNESS            0
-> +#define TON_MAX                   130720 /* @153Hz */
-> +#define TON_STEP                  1307 /* @153Hz */
-> +#define TON_MIN                   0
-> +
-> +#define MAX25014_DEV_ID           0x00
-> +#define MAX25014_REV_ID           0x01
-> +#define MAX25014_ISET             0x02
-> +#define MAX25014_IMODE            0x03
-> +#define MAX25014_TON1H            0x04
-> +#define MAX25014_TON1L            0x05
-> +#define MAX25014_TON2H            0x06
-> +#define MAX25014_TON2L            0x07
-> +#define MAX25014_TON3H            0x08
-> +#define MAX25014_TON3L            0x09
-> +#define MAX25014_TON4H            0x0A
-> +#define MAX25014_TON4L            0x0B
-> +#define MAX25014_TON_1_4_LSB      0x0C
-> +#define MAX25014_SETTING          0x12
-> +#define MAX25014_DISABLE          0x13
-> +#define MAX25014_BSTMON           0x14
-> +#define MAX25014_IOUT1            0x15
-> +#define MAX25014_IOUT2            0x16
-> +#define MAX25014_IOUT3            0x17
-> +#define MAX25014_IOUT4            0x18
-> +#define MAX25014_OPEN             0x1B
-> +#define MAX25014_SHORT_GND        0x1C
-> +#define MAX25014_SHORT_LED        0x1D
-> +#define MAX25014_MASK             0x1E
-> +#define MAX25014_DIAG             0x1F
-> +
-> +#define MAX25014_IMODE_HDIM       BIT(2)
-> +#define MAX25014_ISET_ENABLE      BIT(5)
-> +#define MAX25014_ISET_PSEN        BIT(4)
-> +#define MAX25014_DIAG_HW_RST      BIT(2)
-> +#define MAX25014_SETTING_FPWM     GENMASK(6, 4)
-> +
-> +struct max25014 {
-> +	struct i2c_client *client;
-> +	struct backlight_device *bl;
-> +	struct regmap *regmap;
-> +	struct gpio_desc *enable;
-> +	struct regulator *vin; /* regulator for boost converter Vin rail */
-> +	uint32_t iset;
-> +	uint8_t strings_mask;
-> +};
-> +
-> +static const struct regmap_config max25014_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.max_register = MAX25014_DIAG,
-> +};
-> +
-> +/**
-> + * @brief control the brightness with i2c registers
-> + *
-> + * @param regmap trivial
-> + * @param brt brightness
-> + * @return int
-> + */
-> +static int max25014_register_control(struct regmap *regmap, uint32_t brt)
+The pull request you sent on Fri, 7 Nov 2025 08:24:44 -0500:
 
-This isn't a good name for a function. It doesn't really say what it
-does. Please find a more descriptive name.
+> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-v6.18-rc4
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5b95a50001f1fbcae6b7fe211a02f37a04dd9a4b
 
-> +{
-> +	uint32_t reg = TON_STEP * brt;
-> +	int ret;
-> +	/*
-> +	 * 18 bit number lowest, 2 bits in first register,
-> +	 * next lowest 8 in the L register, next 8 in the H register
-> +	 * Seemingly setting the strength of only one string controls all of
-> +	 * them, individual settings don't affect the outcome.
-> +	 */
-> +
-> +	ret = regmap_write(regmap, MAX25014_TON_1_4_LSB, reg & 0b00000011);
-> +	if (ret != 0)
-> +		return ret;
-> +	ret = regmap_write(regmap, MAX25014_TON1L, (reg >> 2) & 0b11111111);
-> +	if (ret != 0)
-> +		return ret;
-> +	return regmap_write(regmap, MAX25014_TON1H, (reg >> 10) & 0b11111111);
-> +}
-> +
-> +static int max25014_check_errors(struct max25014 *maxim)
-> +{
-> +	uint8_t i;
-> +	int ret;
-> +	uint32_t val;
-> +
-> +	ret = regmap_read(maxim->regmap, MAX25014_OPEN, &val);
-> +	if (ret != 0)
-> +		return ret;
-> +	if (val > 0) {
-> +		dev_err(&maxim->client->dev, "Open led strings detected on:\n");
-> +		for (i = 0; i < 4; i++) {
-> +			if (val & 1 << i)
-> +				dev_err(&maxim->client->dev, "string %d\n", i + 1);
-> +		}
-> +		return -EIO;
-> +	}
-> +
-> +	ret = regmap_read(maxim->regmap, MAX25014_SHORT_GND, &val);
-> +	if (ret != 0)
-> +		return ret;
-> +	if (val > 0) {
-> +		dev_err(&maxim->client->dev, "Short to ground detected on:\n");
-> +		for (i = 0; i < 4; i++) {
-> +			if (val & 1 << i)
-> +				dev_err(&maxim->client->dev, "string %d\n", i + 1);
-> +		}
-> +		return -EIO;
-> +	}
-> +
-> +	ret = regmap_read(maxim->regmap, MAX25014_SHORT_GND, &val);
-> +	if (ret != 0)
-> +		return ret;
-> +	if (val > 0) {
-> +		dev_err(&maxim->client->dev, "Shorted led detected on:\n");
-> +		for (i = 0; i < 4; i++) {
-> +			if (val & 1 << i)
-> +				dev_err(&maxim->client->dev, "string %d\n", i + 1);
-> +		}
-> +		return -EIO;
-> +	}
-> +
-> +	ret = regmap_read(maxim->regmap, MAX25014_DIAG, &val);
-> +	if (ret != 0)
-> +		return ret;
-> +	/*
-> +	 * The HW_RST bit always starts at 1 after power up.
-> +	 * It is reset on first read, does not indicate an error.
-> +	 */
-> +	if (val > 0 && val != MAX25014_DIAG_HW_RST) {
-> +		if (val & 0b1)
-> +			dev_err(&maxim->client->dev,
-> +				"Overtemperature shutdown\n");
-> +		if (val & 0b10)
-> +			dev_err(&maxim->client->dev,
-> +				 "Chip is getting too hot (>125C)\n");
-> +		if (val & 0b1000)
-> +			dev_err(&maxim->client->dev,
-> +				"Boost converter overvoltage\n");
-> +		if (val & 0b10000)
-> +			dev_err(&maxim->client->dev,
-> +				"Boost converter undervoltage\n");
-> +		if (val & 0b100000)
-> +			dev_err(&maxim->client->dev, "IREF out of range\n");
-> +		return -EIO;
-> +	}
-> +	return 0;
-> +}
-> +
-> +/*
-> + * 1. disable unused strings
-> + * 2. set dim mode
-> + * 3. set initial brightness
+Thank you!
 
-How does this code set the initial brightness? It doens't set the
-MAX25014_TON* registers.
-
-
-> + * 4. set setting register
-> + * 5. enable the backlight
-> + */
-> +static int max25014_configure(struct max25014 *maxim)
-> +{
-> +	int ret;
-> +	uint32_t val;
-> +
-> +	ret = regmap_write(maxim->regmap, MAX25014_DISABLE,
-> +			   maxim->strings_mask);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	ret = regmap_write(maxim->regmap, MAX25014_IMODE, MAX25014_IMODE_HDIM);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	ret = regmap_read(maxim->regmap, MAX25014_SETTING, &val);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	ret = regmap_write(maxim->regmap, MAX25014_SETTING,
-> +			   val & ~MAX25014_SETTING_FPWM);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	ret = regmap_write(maxim->regmap, MAX25014_ISET,
-> +			   maxim->iset | MAX25014_ISET_ENABLE |
-> +			   MAX25014_ISET_PSEN);
-> +	return ret;
-> +}
-> +
-> +static int max25014_update_status(struct backlight_device *bl_dev)
-> +{
-> +	struct max25014 *maxim = bl_get_data(bl_dev);
-> +
-> +	if (backlight_is_blank(maxim->bl))
-> +		bl_dev->props.brightness = 0;
-> +
-> +	return max25014_register_control(maxim->regmap,
-> +					 bl_dev->props.brightness);
-> +}
-> +
-> +static const struct backlight_ops max25014_bl_ops = {
-> +	.options = BL_CORE_SUSPENDRESUME,
-> +	.update_status = max25014_update_status,
-> +};
-> +
-> +static int max25014_parse_dt(struct max25014 *maxim,
-> +			     uint32_t *initial_brightness)
-> +{
-> +	struct device *dev = &maxim->client->dev;
-> +	struct device_node *node = dev->of_node;
-> +	struct fwnode_handle *child;
-> +	uint32_t strings[4];
-> +	int res, i;
-> +
-> +	if (!node) {
-> +		dev_err(dev, "no platform data\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	child = device_get_next_child_node(dev, NULL);
-> +	if (child) {
-> +		res = fwnode_property_count_u32(child, "led-sources");
-> +		if (res > 0) {
-> +			fwnode_property_read_u32_array(child, "led-sources",
-> +						       strings, res);
-> +
-> +			/* set all strings as disabled, then enable those in led-sources*/
-> +			maxim->strings_mask = 0xf;
-> +			for (i = 0; i < res; i++) {
-> +				if (strings[i] <= 4)
-> +					maxim->strings_mask &= ~BIT(strings[i]);
-> +			}
-> +		}
-> +
-> +		fwnode_property_read_u32(child, "default-brightness",
-> +					 initial_brightness);
-> +
-> +		fwnode_handle_put(child);
-> +	}
-> +
-> +	maxim->iset = MAX25014_ISET_DEFAULT_100;
-> +	of_property_read_u32(node, "maxim,iset", &maxim->iset);
-> +
-> +	if (maxim->iset < 0 || maxim->iset > 15) {
-> +		dev_err(dev,
-> +			"Invalid iset, should be a value from 0-15, entered was %d\n",
-> +			maxim->iset);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (*initial_brightness < 0 || *initial_brightness > 100) {
-> +		dev_err(dev,
-> +			"Invalid initial brightness, should be a value from 0-100, entered was %d\n",
-> +			*initial_brightness);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int max25014_probe(struct i2c_client *cl)
-> +{
-> +	struct backlight_device *bl;
-> +	const struct i2c_device_id *id = i2c_client_get_device_id(cl);
-> +	struct max25014 *maxim;
-> +	struct backlight_properties props;
-> +	int ret;
-> +	uint32_t initial_brightness = 50;
-> +
-> +	maxim = devm_kzalloc(&cl->dev, sizeof(struct max25014), GFP_KERNEL);
-> +	if (!maxim)
-> +		return -ENOMEM;
-> +
-> +	maxim->client = cl;
-> +
-> +	ret = max25014_parse_dt(maxim, &initial_brightness);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	maxim->vin = devm_regulator_get_optional(&maxim->client->dev, "power");
-
-I would have expected to see devm_regulator_get() here. Why do you care
-whether you get a real regulator or a dummy if you just NULL check
-maxim->vin everywhere?
-
-
-> +	if (IS_ERR(maxim->vin)) {
-> +		if (PTR_ERR(maxim->vin) == -EPROBE_DEFER)
-> +			return -EPROBE_DEFER;
-> +		maxim->vin = NULL;
-> +	}
-> +
-> +	if (maxim->vin) {
-
-If you had called devm_regulator_get() there would be no need for a NULL
-check here.
-
-
-> +		ret = regulator_enable(maxim->vin);
-> +		if (ret < 0) {
-> +			dev_err(&maxim->client->dev,
-> +				"failed to enable Vin: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	maxim->enable = devm_gpiod_get_optional(&maxim->client->dev, "enable",
-> +						GPIOD_ASIS);
-> +	if (IS_ERR(maxim->enable)) {
-> +		ret = PTR_ERR(maxim->enable);
-> +		dev_err(&maxim->client->dev, "failed to get enable gpio: %d\n",
-> +			ret);
-> +		goto disable_vin;
-> +	}
-> +
-> +	if (maxim->enable)
-> +		gpiod_set_value_cansleep(maxim->enable, 1);
-
-No need for NULL pointer check here (see
-https://elixir.bootlin.com/linux/v6.18-rc4/source/drivers/gpio/gpiolib.c#L358-L363 ).
-
-
-> +
-> +	/* Enable can be tied to vin rail wait if either is available */
-> +	if (maxim->enable || maxim->vin) {
-> +		/* Datasheet Electrical Characteristics tSTARTUP 2ms */
-> +		usleep_range(2000, 2500);
-> +	}
-
-If you really want to keep the devm_regulator_get_optional() I guess
-maybe you could persuade me it's need to avoid this sleep... although
-I'd be fairly happy to remove the NULL checks here too!
-
-
-> +
-> +	maxim->regmap = devm_regmap_init_i2c(cl, &max25014_regmap_config);
-> +	if (IS_ERR(maxim->regmap)) {
-> +		ret = PTR_ERR(maxim->regmap);
-> +		dev_err(&maxim->client->dev,
-> +			"failed to initialize the i2c regmap: %d\n", ret);
-> +		goto disable_full;
-> +	}
-> +
-> +	i2c_set_clientdata(cl, maxim);
-> +
-> +	ret = max25014_check_errors(maxim);
-> +	if (ret) { /* error is already reported in the above function */
-> +		goto disable_full;
-> +	}
-> +
-> +	ret = max25014_configure(maxim);
-> +	if (ret) {
-> +		dev_err(&maxim->client->dev, "device config err: %d", ret);
-> +		goto disable_full;
-> +	}
-> +
-> +	memset(&props, 0, sizeof(props));
-> +	props.type = BACKLIGHT_PLATFORM;
-> +	props.max_brightness = MAX_BRIGHTNESS;
-> +	props.brightness = initial_brightness;
-> +	props.scale = BACKLIGHT_SCALE_LINEAR;
-> +
-> +	bl = devm_backlight_device_register(&maxim->client->dev, id->name,
-> +					    &maxim->client->dev, maxim,
-> +					    &max25014_bl_ops, &props);
-> +	if (IS_ERR(bl))
-> +		return PTR_ERR(bl);
-> +
-> +	maxim->bl = bl;
-> +
-> +	return 0;
-> +
-> +disable_full:
-> +	if (maxim->enable)
-> +		gpiod_set_value_cansleep(maxim->enable, 0);
-
-Again, NULL check isn't needed.
-
-> +disable_vin:
-> +	if (maxim->vin)
-> +		regulator_disable(maxim->vin);
-> +	return ret;
-> +}
-> +
-> +static void max25014_remove(struct i2c_client *cl)
-> +{
-> +	struct max25014 *maxim = i2c_get_clientdata(cl);
-> +
-> +	maxim->bl->props.brightness = 0;
-> +	max25014_update_status(maxim->bl);
-> +	if (maxim->enable)
-> +		gpiod_set_value_cansleep(maxim->enable, 0);
-
-Lose the NULL check.
-
-> +	if (maxim->vin)
-> +		regulator_disable(maxim->vin);
-> +}
-> +
-> +static const struct of_device_id max25014_dt_ids[] = {
-> +	{ .compatible = "maxim,max25014", },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, max25014_dt_ids);
-> +
-> +static const struct i2c_device_id max25014_ids[] = {
-> +	{ "max25014" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, max25014_ids);
-> +
-> +static struct i2c_driver max25014_driver = {
-> +	.driver = {
-> +		.name = KBUILD_MODNAME,
-> +		.of_match_table = of_match_ptr(max25014_dt_ids),
-> +	},
-> +	.probe = max25014_probe,
-> +	.remove = max25014_remove,
-> +	.id_table = max25014_ids,
-> +};
-> +module_i2c_driver(max25014_driver);
-> +
-> +MODULE_DESCRIPTION("Maxim MAX25014 backlight driver");
-> +MODULE_AUTHOR("Maud Spierings <maudspierings@gocontroll.com>");
-> +MODULE_LICENSE("GPL");
-
-
-Daniel.
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
