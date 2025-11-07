@@ -1,112 +1,96 @@
-Return-Path: <linux-kernel+bounces-889732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2AFBC3E5B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:36:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B1A5C3E4DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:07:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F2063AC6AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:36:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AAA44E3F33
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A962EBB90;
-	Fri,  7 Nov 2025 03:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A9724886E;
+	Fri,  7 Nov 2025 03:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="N/AjtPdW"
-Received: from mail-m2412.xmail.ntesmail.com (mail-m2412.xmail.ntesmail.com [45.195.24.12])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="uPJ2hOP/"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C90413D891;
-	Fri,  7 Nov 2025 03:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4902AF1B
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 03:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762486598; cv=none; b=aFYK4VISAStqmHkdIVTFLIssXym9RsOtHuKW71f9ZJ08bz1GTd+0VRNlx8lhWFOY5r31SoVGSD30vR8JkFq4fbdgz2Aeu6UD7UDq3fwIFgA2XM1MiD81IpOWjFC1+UsEm4XD6wNHbI57m78fktMIBOgSTW1lVdOJdsa9Cg2Gmt0=
+	t=1762484866; cv=none; b=JnGpPMHqYZXnhDEl30B2nCBVuTEQPhAnR2wwMQxlcM0Br5wQrL4fN7fL8VPpcEBvDC6HFgPdtePWSjj/WYeMtIsh86GpRfXWUnffxQp9UKBanC9KZynoxt6ksY8PRET6um8TV70OvF3AM1T4IRHcNXQPk2V/AwZNr+5gqEwIYJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762486598; c=relaxed/simple;
-	bh=uhQp4XIMiDylw9wRBxbeocknEojR0/ndrfGwuOyRdX4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pF+VOv3j9sXPwhvExbxo1dQ71DPLPSzsyuzkhwjJw0tnfGOmLluRQ+OtJNizIVI0JSe90mmxBheSPnc192tSitiRU1mMdiguJvXM5fvQy5GIRs3WExyRvdhLaSsLdP2Pp1F6NFHTuXRHIzhHepCTlXETbd/D/NpYP1LK3riMauI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=N/AjtPdW; arc=none smtp.client-ip=45.195.24.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.129] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 28b7d0bc4;
-	Fri, 7 Nov 2025 11:01:05 +0800 (GMT+08:00)
-Message-ID: <d9e257bd-806c-48b4-bb22-f1342e9fc15a@rock-chips.com>
-Date: Fri, 7 Nov 2025 11:01:04 +0800
+	s=arc-20240116; t=1762484866; c=relaxed/simple;
+	bh=AQJfYkgpF8M+7ag03gUO0WbJqUQBHhZrdV7imAlPQs0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cNkb+TFzW9Lv3C3buTPo6tMHhdf7s8CUBDdjKT/omEP/yp9FeXzIjP5Fx2+uVP/2pkP9kpqx36CSMsOTlSq0TZj8W4UYZ/BEfUuaknIIGZs/BZ7Uyrbq8WWtEJf1BzrcGLECUqJ2NwX1i3SJnPGTciwNUlS34ExKYemoFEvK2q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=uPJ2hOP/; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4d2kWW3J1sz9tWy;
+	Fri,  7 Nov 2025 04:07:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762484855;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jx2bBAIXMGIZv7u/FcJ32DGgtD9uv0lkYEYQRNJYCc0=;
+	b=uPJ2hOP/+o0SiGaTgGPIiT+z3ILPYbXujp1D/JGrbmRks3K1EDPF9/Prur54HKDJfeOyYN
+	ai8+melom3FpWK8MADkv28PIXqt1gpPEy2zP0T9ULSDeGWidyWAAgWNcnys/5KRQybETMt
+	pThMr/WQv7Cnp/g8DK6qgIaz9UUSGx7bwP+0kPeO0Bdl+6T1ASimqdF+RvEqqDAKTjKp1s
+	tv5Rg7TG5zWtRQNLfs4rlqucoEj0F9pkbL6OC82Ji1P94A7R+WaqCce59ZuPq5VCxM4Xv7
+	yOM2V0qzJ0TXTMLIC0M/zSB1WrARYS3bFFl7FnAMDLDkDhsnqS4PRjjbU1lrLQ==
+Message-ID: <4ec46455-a872-45ae-963e-cb2a76f5a845@mailbox.org>
+Date: Fri, 7 Nov 2025 04:07:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Johan Jonker <jbx6244@gmail.com>,
- linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: rockchip: align bindings to PCIe spec
-To: Geraldo Nascimento <geraldogabriel@gmail.com>,
- Ye Zhang <ye.zhang@rock-chips.com>
-References: <4b5ffcccfef2a61838aa563521672a171acb27b2.1762321976.git.geraldogabriel@gmail.com>
- <ba120577-42da-424d-8102-9d085c1494c8@rock-chips.com>
- <aQsIXcQzeYop6a0B@geday>
- <67b605b0-7046-448a-bc9b-d3ac56333809@rock-chips.com>
- <aQ1c7ZDycxiOIy8Y@geday>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <aQ1c7ZDycxiOIy8Y@geday>
+Subject: Re: [PATCH] drm/etnaviv: add HWDB entry for GC8000 Nano Ultra VIP
+ r6205
+To: Christian Gmeiner <christian.gmeiner@gmail.com>,
+ Gert Wollny <gert.wollny@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Simona Vetter <simona@ffwll.ch>,
+ etnaviv@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250919183042.273687-1-marek.vasut@mailbox.org>
+ <CAH9NwWcK_z_4CcDBRYS2nf3AxYV9-XwirvTd+O9uJtHMhyA3Og@mail.gmail.com>
+ <CAH9NwWdkjpV5YHmOpuCE=f7RVm1kXzqAOgN6=Sx1s-wxO_SGGA@mail.gmail.com>
+ <4ac9dd98-adc8-4be9-9f5c-4e653f656453@mailbox.org>
+ <CAH9NwWd+1MSBGdn6G0zRQgmC7cHCmG3BSxeDUQV-waMG75E2KQ@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAH9NwWd+1MSBGdn6G0zRQgmC7cHCmG3BSxeDUQV-waMG75E2KQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a5c42adf909cckunmd8a05e02f6b7ea
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkIaTlYfTkwdH0JKSxgYSE1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=N/AjtPdWxmqb/pFSs6gykwYAJznoZ8eog/K1ggyHgiHswHpN2h06IuYOiipUjuL3fkrH9tNI7iUErn2M+xn58GJHlBeesAuUuwLcF7xohvnZc6VYwGmJh+ip2Ox71RepKsnJaUNoX4XVoE81ZYMa3tVHxJcOI2tPNeo7AAFKCxQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=zVsNu3y1SfXzBdfw48QrW2mnVPUuj41sgD9Q3ySf0jw=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 1f2d2d18baad58fb76b
+X-MBO-RS-META: ptcbbyfqd96su78xegda7fk6isrd8b7f
 
-+ Ye Zhang
+On 11/5/25 2:44 PM, Christian Gmeiner wrote:
 
-在 2025/11/07 星期五 10:43, Geraldo Nascimento 写道:
-> On Wed, Nov 05, 2025 at 04:56:36PM +0800, Shawn Lin wrote:
->> 在 2025/11/05 星期三 16:18, Geraldo Nascimento 写道:
->>> Hi Shawn, glad to hear from you.
->>>
->>> Perhaps the following change is better? It resolves the issue
->>> without the added complication of open drain. After you questioned
->>> if open drain is actually part of the spec, I remembered that
->>> GPIO_OPEN_DRAIN is actually (GPIO_SINGLE_ENDED | GPIO_LINE_OPEN_DRAIN)
->>> so I decided to test with just GPIO_SINGLE_ENDED and it works.
-> 
-> Shawn,
-> 
-> I quote from the PCIe Mini Card Electromechanical Specification Rev 1.2
-> 
-> "3.4.1. Logic Signal Requirements
-> 
-> The 3.3V card logic levels for single-ended digital signals (WAKE#,
-> CLKREQ#, PERST#, and W_DISABLE#) are given in Table 3-7. [...]"
-> 
-> So while you are correct that PERST# is most definitely not Open Drain,
-> there's evidence on the spec that defines this signal as Single-Ended.
-> 
+Hello everyone,
 
-This's true. But I couldn't find any user in dts using either
-GPIO_SINGLE_ENDED or GPIO_OPEN_DRAIN for PCIe PERST#. I'm curious
-how these two flags affect actual behavior of chips. Ye, could you
-please help check it?
-
-> Thanks,
-> Geraldo Nascimento
+>> I _think_ I will try to respin the flop reset patchset next.
 > 
+> Gert told me on irc that he has reworked the series already and just
+> needs to do some testing. Maybe wait another 1-2 weeks
+> and/or sync with him directly.
 
+Let me add Gert on CC . I can also do that testing and provide TB if 
+that would be helpful, I already tested the previous series and have MP2 
+on my desk now.
+
+-- 
+Best regards,
+Marek Vasut
 
