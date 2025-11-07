@@ -1,82 +1,54 @@
-Return-Path: <linux-kernel+bounces-887756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B94C3900F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:37:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B33C38F29
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:14:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 463423B72C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:35:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE98E4E622E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CE0245021;
-	Thu,  6 Nov 2025 03:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SCTxI+6X"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB77B22A4DB;
+	Thu,  6 Nov 2025 03:14:14 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4394E2BAF9
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6199121A434
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762400154; cv=none; b=ub2gMqaBnjRDXG5PcaolXrjWn1ir2v1WduHOnoYRC08gSuAVY+Iv4O3PrSw3myqOAQ4ctCPwyzInD13AqGv4uSpwIbgWHG0BcaiaNnXd/iUDsvFlbH5azYx6XBxbmYUiv+tD5Sf68c6L7iRr6E0UGHn3w0+GT6q4eLNNEpxlY2s=
+	t=1762398854; cv=none; b=MradJJluvvg4e32D9MZLjGQOJcO7jK0qC1A+yXks4Fp7SNlyrAha35BQay0LC+/gc+SmvWekNQGhKoK0fQTxLSjYJcvzWuYtX8OxyrCgc4e4rVgYAhWKShutVoGQv4yHi29FLN1GQToSGP39/cbKwqbrYI2WARDqiyNTXteIjLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762400154; c=relaxed/simple;
-	bh=zgNTFpCXM3o9g2ZXsFBLXyEVmzMgXOrMc94PnKAGIk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rmtr6DQu49SuZC2EcOIkCXUsV3umcK38I9bgNJhFvI+aMe0hVKECtI2TVpVO+J1eR+Fz0CM3zVfH2jwCEkU+KiaU+JuvAKCKib13iyT1G+nbI28xxLVDgb2EB3e4s6/YlC8TD2E8ChnOgImaC3MJhnvlG2uTq/Y9sPHHZD9ZSxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SCTxI+6X; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762400154; x=1793936154;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=zgNTFpCXM3o9g2ZXsFBLXyEVmzMgXOrMc94PnKAGIk4=;
-  b=SCTxI+6XAV6S6AGCv3OWFEXLCIMj+RjXiG9/XHXIBizcEtpoukqG1cG+
-   4beNCAYbBgxqJoBUERJrGqFhJXFfHsMW1Ljw72AXFGWfV2jUeFB1cO3Hi
-   oT0K2rfbDtifn87Er9Lqby3q31TB7J+gOXkkCbDkU9M/sKluYf9BDB69Q
-   7ubl39s7pGfs0lVhr5wYcw3Fsnl7bCquenkdnMiPhaYHhfSp86n3Xfmqk
-   gxCZ/jeiLrZA+dPgCigxrqFeHR6K/g2KPNvQNT4PVwaZEfbHW8pzTNbbZ
-   Jd5FdbufJr4qofoLQb/pLkUOyTZhurigNRhV123u48+7zH6Bysm4KAwFJ
-   A==;
-X-CSE-ConnectionGUID: F8qKnSjhSu2q8a/G7lknlQ==
-X-CSE-MsgGUID: ewc6KoeESla0mOvtfKzkAQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="81930332"
-X-IronPort-AV: E=Sophos;i="6.19,283,1754982000"; 
-   d="scan'208";a="81930332"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 19:35:53 -0800
-X-CSE-ConnectionGUID: 8eewTtwKTtSfZG6ABkdL9A==
-X-CSE-MsgGUID: 9FhqImc5SwqqvQ0/2wOfbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,283,1754982000"; 
-   d="scan'208";a="187351125"
-Received: from junxiao.bj.intel.com ([10.238.152.69])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 19:35:49 -0800
-From: Junxiao Chang <junxiao.chang@intel.com>
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
+	s=arc-20240116; t=1762398854; c=relaxed/simple;
+	bh=KbAXQMm5nLpMX1hJGkYjOXKvjWpYHCFll8tDCbpHPoI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RM91Bmv5LIaOxZzEm+42oCWEW4S4i0aOaE8MpBjodMhtH3HzeNhx+xrs2fCUWpb/hF+tAiHBVVyej8T4G9KB4MNTJcAhwuw7gQVITDPo1Yaevj8VDv4GLKfHBMYOC/+792dCiANN3TSbLXVp4/HD4r5/GvZ/Uzv4PmMINq7YV8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowADHMWx9Egxp0C2hAQ--.194S2;
+	Thu, 06 Nov 2025 11:14:05 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: kenneth.feng@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
 	airlied@gmail.com,
 	simona@ffwll.ch,
-	bigeasy@linutronix.de,
-	clrkwllms@kernel.org,
-	rostedt@goodmis.org,
-	daniele.ceraolospurio@intel.com,
-	alexander.usyskin@intel.com,
-	intel-xe@lists.freedesktop.org,
+	lijo.lazar@amd.com,
+	asad.kamal@amd.com,
+	Hawking.Zhang@amd.com,
+	kevinyang.wang@amd.com,
+	ganglxie@amd.com
+Cc: amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Cc: baoli.zhang@intel.com,
-	junxiao.chang@intel.com
-Subject: [PATCH] drm/me/gsc: mei interrupt top half should be in irq disabled context
-Date: Fri,  7 Nov 2025 11:31:52 +0800
-Message-ID: <20251107033152.834960-1-junxiao.chang@intel.com>
-X-Mailer: git-send-email 2.43.0
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] drm/amd/pm: Remove unneeded semicolon
+Date: Sat,  8 Nov 2025 00:57:28 +0800
+Message-Id: <20251107165728.1365265-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,49 +56,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowADHMWx9Egxp0C2hAQ--.194S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZFWDuF4rXw4DXFWDZryUGFg_yoWftrb_CF
+	y8JF9xur97CF98KF1UArWFqa4IyFs8urWktasF9ayrWw47XFs8Xa4ftF1DXw4fCF1UXasr
+	J3WkXF15Z39xGjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbqkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6ry26F1DM28lY4IEw2IIxx
+	k0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK
+	6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7
+	xvwVC2z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26F
+	4UJVW0owAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS
+	5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIec
+	xEwVAFwVW8GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRH
+	UDAUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-MEI GSC interrupt comes from i915 or xe driver. It has top half and
-bottom half. Top half is called from i915/xe interrupt handler. It
-should be in irq disabled context.
+Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+semantic patch at scripts/coccinelle/misc/semicolon.cocci.
 
-With RT kernel(PREEMPT_RT enabled), by default IRQ handler is in
-threaded IRQ. MEI GSC top half might be in threaded IRQ context.
-generic_handle_irq_safe API could be called from either IRQ or
-process context, it disables local IRQ then calls MEI GSC interrupt
-top half.
-
-This change fixes B580 GPU boot issue with RT enabled.
-
-Fixes: e02cea83d32d ("drm/xe/gsc: add Battlemage support")
-Tested-by: Baoli Zhang <baoli.zhang@intel.com>
-Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- drivers/gpu/drm/xe/xe_heci_gsc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_12_ppt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/xe/xe_heci_gsc.c b/drivers/gpu/drm/xe/xe_heci_gsc.c
-index a415ca4887914..32d509b113915 100644
---- a/drivers/gpu/drm/xe/xe_heci_gsc.c
-+++ b/drivers/gpu/drm/xe/xe_heci_gsc.c
-@@ -221,7 +221,7 @@ void xe_heci_gsc_irq_handler(struct xe_device *xe, u32 iir)
- 	if (xe->heci_gsc.irq < 0)
- 		return;
+diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_12_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_12_ppt.c
+index 24aaef1494a4..3aa674d348c7 100644
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_12_ppt.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_12_ppt.c
+@@ -913,7 +913,7 @@ void smu_v13_0_12_get_gpu_metrics(struct smu_context *smu, void **table,
+ 			gpu_metrics->gfx_below_host_limit_total_acc
+ 				[i] = SMUQ10_ROUND(
+ 				metrics->GfxclkBelowHostLimitTotalAcc[inst]);
+-		};
++		}
+ 	}
  
--	ret = generic_handle_irq(xe->heci_gsc.irq);
-+	ret = generic_handle_irq_safe(xe->heci_gsc.irq);
- 	if (ret)
- 		drm_err_ratelimited(&xe->drm, "error handling GSC irq: %d\n", ret);
- }
-@@ -241,7 +241,7 @@ void xe_heci_csc_irq_handler(struct xe_device *xe, u32 iir)
- 	if (xe->heci_gsc.irq < 0)
- 		return;
- 
--	ret = generic_handle_irq(xe->heci_gsc.irq);
-+	ret = generic_handle_irq_safe(xe->heci_gsc.irq);
- 	if (ret)
- 		drm_err_ratelimited(&xe->drm, "error handling GSC irq: %d\n", ret);
- }
+ 	gpu_metrics->xgmi_link_width = metrics->XgmiWidth;
 -- 
-2.43.0
+2.25.1
 
 
