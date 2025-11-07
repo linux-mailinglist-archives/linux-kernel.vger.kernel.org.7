@@ -1,193 +1,227 @@
-Return-Path: <linux-kernel+bounces-890481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A9FC4028A
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:41:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4B7C4029B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:42:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553DD1883A2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:42:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AEF804F043F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21EB2F291D;
-	Fri,  7 Nov 2025 13:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D88A2F361F;
+	Fri,  7 Nov 2025 13:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rfr252Xc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hOgdHBfo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Mt0WyBo2"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEDD2F12C5;
-	Fri,  7 Nov 2025 13:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147872F12C5;
+	Fri,  7 Nov 2025 13:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762522895; cv=none; b=LHnDaqgD7p9P096YDQ2dhZfCChhAirnbmVjaWtGt/QRJmj55tluo5WLtflXBxfC2apVFMUnhm1g8YGqW9ZWnaAzn6z9dqynCqWDGHTbaQmav0VN8BqdNyfk1m7jr2dmSQaurfDzxvgnBczAi4dyFiQM6QZkq7BT7Y3Hc95nLqIc=
+	t=1762522909; cv=none; b=ApNPO01KHvrzxkinYRYjkziKIwVVYE+o8lK1ZSeLtZL515/T3AgGXIMq+hSpqbozgeu1AlhQ7wzkKZnQMAMGH8QHwLh5GBqRxZVdyx6mn9sOWScg5XmLdjtLx4tihhjYNtIFp8q5NrTPv/72OOdgz7hJ+I6tX71qtCQsLJqiDGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762522895; c=relaxed/simple;
-	bh=bX8MCxO0wT49e0+2aFrqM0RJ8xou+QnZeO3rKTGprV4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kyGaGnJfk1A2h59wxui+57FIluVbl5TyZJp0M8Umd3/ce1l76nMoB/DE5iLzqeoHvBrYWr4lb3+XTAo+3yekS7ZRmUeMJD8BZAeylEf7HKNp6epa4pblfDbT1SuGEbx+i/dlFOenenOX1ncEXW1bxAq3HyOwddPtkElf8qLtSFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rfr252Xc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hOgdHBfo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762522890;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UQ9noBC6jYHpesi21iR41wacPz1nSToTuWL/a29XHiA=;
-	b=Rfr252XcjH5h+UUrJg/pmHzom8K256tRHq3+XOxMpc5mvk/FBD7zawbZc+FBMfzDg6JWJm
-	Mzl2SO/sj/xDa39sASpyyoP6S3G9uyKdvg9R+0IYkbqaYgY3tqtVZnhLlS3+QI2O9Vr/7/
-	vYKOXKTmznhPyndd5YtDpSCKbXlWB6LYpOwd0Fnz7+7kVlmnyltXyB2HxtjOAKHSrnhwHn
-	SbVUOnXSo9BWL+3YQYJLKuQsCT8/sfx49vHreaLzA/2b1m1KtGXTTzw4GpsAwq+cBHytGA
-	6IWsxCA0V1ohfpmidKQc/QVEjs4872qeHPN6LkOdHXDohbnkk9782R/w9rzfSA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762522890;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UQ9noBC6jYHpesi21iR41wacPz1nSToTuWL/a29XHiA=;
-	b=hOgdHBfoRYMa2wIRjwpw1clVkYTVr9ky7h14gp6dC/iF9rk2OTn09LiBFhE8YiT7N1QP+m
-	r+HFrMbi4idy7RDQ==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, syzbot
- <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>,
- "amurray@thegoodpenguin.co.uk" <amurray@thegoodpenguin.co.uk>,
- brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
-In-Reply-To: <aQ3ck9Bltoac7-0d@pathway.suse.cz>
-References: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
- <69096836.a70a0220.88fb8.0006.GAE@google.com>
- <CAJnrk1Yo4dRVSaPCaAGkHc+in03KaTXJ+KxckhLoSrRxbEdDBg@mail.gmail.com>
- <aQpFLJM96uRpO4S-@pathway.suse.cz> <87ldkk34yj.fsf@jogness.linutronix.de>
- <aQuABK25fdBVTGZc@pathway.suse.cz> <87bjlgqmk5.fsf@jogness.linutronix.de>
- <87tsz7iea2.fsf@jogness.linutronix.de> <aQzLX_y8PvBMiZ9f@pathway.suse.cz>
- <87h5v73s5g.fsf@jogness.linutronix.de> <aQ3ck9Bltoac7-0d@pathway.suse.cz>
-Date: Fri, 07 Nov 2025 14:47:29 +0106
-Message-ID: <871pma0xkm.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1762522909; c=relaxed/simple;
+	bh=tpsTqs/Y7T2Yvoo+xOTlHiByURwvXqjJIVJB/t75ng4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tYXJn91c9l9psaXTh2yYZ3GLm/3DpEHjvb+QspdcIjpH5QJuG5SGGmQ4LGvBPbl0o9sKKTVd1G52UzanwwHtz7bXd6HWVNeKnTXhlLh/JQVzY84YMT9kbhvvn+k8amB/ZgMYCWos18hm+zIeggOeps9N9zIUvk6NhhvMX4gNkCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Mt0WyBo2; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762522905;
+	bh=tpsTqs/Y7T2Yvoo+xOTlHiByURwvXqjJIVJB/t75ng4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Mt0WyBo2k7zdUdi15ebiZyiNTF3LnC08Rab5FRqhzZD5QmpfCtuNqlpaV8NfGavVm
+	 OaHaxJRF5ZRglCF9gksUiqgwYhDb4RUNuqusYYGrPgWOHEVxhFjosoSDTB2rM5XAIb
+	 VPdUQAr6AYQdJxwffBZCX+0A0ywQ0xWEBW0+THxbnVI+ZtKdol00m9cuZPma4UnKQO
+	 NPHH4F2fY7WNPej8o13U+u2vm2Q2xSchx8YU/G+0N7Z++S96WoiN8B2HZfbeZsSJDE
+	 k69q2N+nk2WxBVWumVZGs7qdBBSUrJ8F6ACKYlD+l3lkocxyIJMmPh128Da6FFGNaP
+	 iFeJ2WrK4DtQw==
+Received: from [IPv6:2606:6d00:11:ef24::c41] (unknown [IPv6:2606:6d00:11:ef24::c41])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D06D517E0CA1;
+	Fri,  7 Nov 2025 14:41:43 +0100 (CET)
+Message-ID: <19cdb1996557824554789dccc805014b0fa2deda.camel@collabora.com>
+Subject: Re: [PATCH v4 1/5] media: uapi: videodev2: Add support for AV1
+ stateful decoder
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Hans Verkuil <hverkuil+cisco@kernel.org>, Deepa Guthyappa Madivalara	
+ <deepa.madivalara@oss.qualcomm.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,  Abhinav Kumar
+ <abhinav.kumar@linux.dev>, Bryan O'Donoghue <bod@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>, Bryan
+ O'Donoghue <bryan.odonoghue@linaro.org>
+Date: Fri, 07 Nov 2025 08:41:41 -0500
+In-Reply-To: <6198674a-2af0-4906-9ffe-bc10e68eb5c5@kernel.org>
+References: <20251103-av1d_stateful_v3-v4-0-33cc1eaa83f2@oss.qualcomm.com>
+	 <20251103-av1d_stateful_v3-v4-1-33cc1eaa83f2@oss.qualcomm.com>
+	 <6198674a-2af0-4906-9ffe-bc10e68eb5c5@kernel.org>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-es5HQ6y1SajJNzU3gUQu"
+User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 
-On 2025-11-07, Petr Mladek <pmladek@suse.com> wrote:
-> What about?
->
-> /*
->  * Return true when @lpos1 is lower than @lpos2 and both values
->  * look sane.
->  *
->  * They are considered insane when the difference is bigger than
->  * the data buffer size. It happens when the values are read
->  * without locking and another CPU already moved the ring buffer
->  * head and/or tail.
->  *
->  * The caller must behave carefully. The changes based on this
->  * check must be done using cmpxchg() to confirm that the check
->  * worked with valid values.
->  */
-> static bool lpos1_before_lpos2_sane(struct prb_data_ring *data_ring,
-> 				    unsined long lpos1, unsigned long lpos2)
-> {
-> 	return lpos2 - lpos1 - 1 < DATA_SIZE(data_ring);
-> }
->
-> Feel free to come up with any other function name or description.
 
-I prefer "_bounded" to "_sane". And I really don't care if it is
-"before" or "lt". I was only stating why I chose "before" instead of
-something else. But I really don't care. Really.
+--=-es5HQ6y1SajJNzU3gUQu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-My preferences would be:
+Le vendredi 07 novembre 2025 =C3=A0 10:25 +0100, Hans Verkuil a =C3=A9crit=
+=C2=A0:
+> On 03/11/2025 14:24, Deepa Guthyappa Madivalara wrote:
+> > Introduce a new pixel format, V4L2_PIX_FMT_AV1, to the
+> > Video4Linux2(V4L2) API. This format is intended for AV1
+> > bitstreams in stateful decoding/encoding workflows.
+> > The fourcc code 'AV10' is used to distinguish
+> > this format from the existing V4L2_PIX_FMT_AV1_FRAME,
+> > which is used for stateless AV1 decoder implementation.
+> >=20
+> > Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> > Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> > Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcom=
+m.com>
+> > ---
+> > =C2=A0Documentation/userspace-api/media/v4l/pixfmt-compressed.rst | 8 +=
++++++++
+> > =C2=A0include/uapi/linux/videodev2.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
+> > =C2=A02 files changed, 9 insertions(+)
+> >=20
+> > diff --git a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rs=
+t b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> > index c7efb0465db6480fe35be8557728c196e0e530f4..0c70410ffd4d58e0719d3cf=
+13ad336c97b454ae9 100644
+> > --- a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> > +++ b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> > @@ -275,6 +275,14 @@ Compressed Formats
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of macroblocks to deco=
+de a full corresponding frame to the matching
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 capture buffer.
+> > =C2=A0
+> > +=C2=A0=C2=A0=C2=A0 * .. _V4L2-PIX-FMT-AV1:
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``V4L2_PIX_FMT_AV1``
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 'AV01'
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - AV1 compressed video frame. This form=
+at is adapted for implementing AV1
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pipeline. The decoder imple=
+ments stateful video decoder and expects one
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Temporal Unit per buffer fr=
+om OBU-stream or AnnexB.
+>=20
+> OK, but the next patch says:
+>=20
+> 		case V4L2_PIX_FMT_AV1:		descr =3D "AV1 OBU stream"; break;
+>=20
+> And Nicolas said here:
 
-lpos1_before_lpos2_bounded()
+Hmm, good catch, we had quite a bit of back and forth actually on the subje=
+ct.
+The discussion went toward that this is OBU Stream format, but it is concei=
+vable
+to enable Annex B support in the future using a control. That mandates that=
+ OBU
+stream must always be supported for that format.
 
-lpos1_lt_lpos2_bounded()
+I'd drop the "or AnnexB". Then I'd try and harmonize how we write OBU strea=
+m, I
+prefer without the -.
 
-But I can live with lpos1_before_lpos2_sane() if you think "_sane" is
-better.
+>=20
+> https://lore.kernel.org/linux-media/544147436308901fba85d6de48380c0c1eea7=
+c67.camel@ndufresne.ca/
+>=20
+> "Perhaps "AV1 OBU stream", so its clear its no Annex B ?"
+>=20
+> So if this is just for OBU streams and not Annex B, then the description =
+is wrong.
+>=20
+> Since I'm no AV1 expert and have no idea what the difference between OBU =
+and Annex B streams is,
+> I can only comment on what looks like an inconsistency.
 
->> You have overlooked that I inverted the check. It is no longer checking:
->> 
->>     next_pos <= head_pos
->> 
->> but is instead checking:
->> 
->>     !(head_pos < next_pos)
->> 
->> IOW, if "next has not overtaken head".
->
-> I see. I missed this. Hmm, this would be correct when the comparsion was
-> mathemathical (lt, le). But is this correct in our case when take
-> into account the ring buffer wrapping?
->
-> The original check returned "false" when the difference between head_lpos
-> and next_lpos was bigger than the data ring size.
->
-> The new check would return "true", aka "!false", in this case.
+Annex B is very unlike H.264 annex b. Its adds a wrapper around time units,
+making it faster to walk through displayable frames when you have the abili=
+ty to
+skip bytes. I've only ever seen it in tests vectors so far. My impression i=
+s
+that we'll never have a hardware that requires that.
 
-Sure, but that is not possible. Even if we assume there has been
-corrupted data, the new get_data() will catch that.
+Nicolas
 
-> Hmm, it seems that the buffer wrapping is not possible because
-> this code is called when desc_reopen_last() succeeded. And nobody
-> is allowed to free reopened block.
+>=20
+> Regards,
+>=20
+> 	Hans
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 The encoder generates one T=
+emporal Unit per buffer.
+> > =C2=A0.. raw:: latex
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0 \normalsize
+> > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videod=
+ev2.h
+> > index becd08fdbddb857f8f2bf205d2164dc6e20e80b2..cf0b71bbe0f9d397e1e6c88=
+433a0fc3ba11fb947 100644
+> > --- a/include/uapi/linux/videodev2.h
+> > +++ b/include/uapi/linux/videodev2.h
+> > @@ -775,6 +775,7 @@ struct v4l2_pix_format {
+> > =C2=A0#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /=
+* H264 parsed slices */
+> > =C2=A0#define V4L2_PIX_FMT_HEVC_SLICE v4l2_fourcc('S', '2', '6', '5') /=
+* HEVC parsed slices */
+> > =C2=A0#define V4L2_PIX_FMT_AV1_FRAME v4l2_fourcc('A', 'V', '1', 'F') /*=
+ AV1 parsed frame */
+> > +#define V4L2_PIX_FMT_AV1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v4l2_fourcc('A'=
+, 'V', '0', '1') /* AV1 */
+> > =C2=A0#define V4L2_PIX_FMT_SPK=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v4l2_fourc=
+c('S', 'P', 'K', '0') /* Sorenson Spark */
+> > =C2=A0#define V4L2_PIX_FMT_RV30=C2=A0=C2=A0=C2=A0=C2=A0 v4l2_fourcc('R'=
+, 'V', '3', '0') /* RealVideo 8 */
+> > =C2=A0#define V4L2_PIX_FMT_RV40=C2=A0=C2=A0=C2=A0=C2=A0 v4l2_fourcc('R'=
+, 'V', '4', '0') /* RealVideo 9 & 10 */
+> >=20
 
-Correct.
+--=-es5HQ6y1SajJNzU3gUQu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-> Anyway, I consider using (!lpos1_before_lpos2()) as highly confusing
-> in this case.
+-----BEGIN PGP SIGNATURE-----
 
-I think if you look at what the new check is checking instead of trying
-to mentally map the old check to the new check, it is not confusing.
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaQ33FQAKCRDZQZRRKWBy
+9GApAQD3K5fkh0Zh8EvSjULexP615g0OO4cvr2/lqmKcRy8RIAEA2q/rLvQIoZQb
+tpPtU48yqYAS7+2v+BzGQALQyzp5QwU=
+=8PzL
+-----END PGP SIGNATURE-----
 
-> I would either keep the code as is.
-
-:-/ That defeats the whole purpose of the new helper, which is simply
-comparing the relative position of two lpos values. That is exactly what
-is being done here.
-
-I would prefer adding an additional lpos1_le_lpos2_bounded() variant
-before leaving the old code. A new variant is unnecessary, but at least
-we would have all logical position comparison code together.
-
-> Maybe we could add a comment explaining that
->
-> 	if (head_lpos - next_lpos < DATA_SIZE(data_ring)) {
->
-> might fail only when the substraction is negative. It should never be
-> positive because head_lpos advanced more than the data buffer size
-> over next_lpos because the data block is reopened and nobody could
-> free it.
->
-> Maybe, we could even add a check for this.
-
-If data is being illegally manipulated underneath us, we are screwed
-anyway. I see no point in sprinkling checks around in case someone is
-modifying our data even though we have exclusive access to it.
-
-> I think about fixing this in a separate patch and pushing this
-> into linux-next ASAP to fix the regression.
->
-> We could improve the other comparisons later...
->
-> How does that sound?
-
-Sure. Are you planning on letting 6.19 pull 2 patches or will you fold
-them for the 6.19 pull?
-
-> Should I prepare the patch for get_data() are you going to do so?
-
-I would prefer you do it so that we do not need any more discussing for
-the quick fix. ;-)
-
-John
+--=-es5HQ6y1SajJNzU3gUQu--
 
