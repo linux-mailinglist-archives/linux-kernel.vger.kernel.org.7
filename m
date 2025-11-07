@@ -1,252 +1,251 @@
-Return-Path: <linux-kernel+bounces-890815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF85C41065
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:24:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61958C41074
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87BE1A404AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF644189FB02
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D2D33556F;
-	Fri,  7 Nov 2025 17:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3248F3346AE;
+	Fri,  7 Nov 2025 17:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="VXNDD4+r"
-Received: from fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.75.33.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gYbR19Hz"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526B83346AE;
-	Fri,  7 Nov 2025 17:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.75.33.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AEC333758
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762536239; cv=none; b=oyhLN/lQQC5515BZgIT+FyyisASibC1NxC4C3CUkkoioFQKkSATacLyHLtRfTHpb0gj0+MBQ6767WgEafdBjmrwcUEjYWZavegQcZMI7rUomsQIiK8LHjT0Daa0n+2D8iI9HL5eRlbqdl+g2W/syHkwbdIcnkQoJfJQl5qV2uy4=
+	t=1762536264; cv=none; b=cQAQpzyzUUdS5n4SsGpK3DxzNHAuVrpbQ+wyDK2rNTOhU5COoK6KRH5E0dNZTTQMRbAleZ5bEb+n13/YShtOHp5ylucfJkrkuCA+EJ0kdsl2Y5Zn8VHnuJUcmBjZ6sab5RR2leKcAtoJPwDUlyebu3L8U/j47Gd7m/v9EhdkylI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762536239; c=relaxed/simple;
-	bh=gLi7de/NPl4CutCbcHyElhUzdggKS3dZs6ObArdEYbs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pBY/YOLQsObzD2Xz0+wxPWuM+cQMHIqeFbawDOb4SBBZLEKjpIwHOXPsVQ1SXLws+jOu7h5PvVhNeHPlv9WYwyXIusa/9DmBA4Gi6R/BKiisjlcl16ugDnXdfcZAUjXb7dDIoWxa4Z2VHvHBs1tUknTmVavqP/6D6KYyHt8Gwok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=VXNDD4+r; arc=none smtp.client-ip=3.75.33.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1762536264; c=relaxed/simple;
+	bh=AlQPvxeTWsW6Hz0xZBVZ7BIgT45M5nsaeb4ujq7+qBg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W/NHjN/jtsrmWF0FeyvrIw8S+2GIH+gN3J0f7JULKGsXyl5CNYieKvxNA6QZq1oHhGjtBhhDvh1FHLs7OSJWG0hMDQYrud+WfpWd3XvAk7S5zOgu5nTHvZbvKdEq1bXmCzlFzeBFUbQxwHlJGEbnEkqZMyijuFnkfZwYVR7Wkt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gYbR19Hz; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-640e9a53ff6so1962575a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:24:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1762536237; x=1794072237;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=o6wcqFFajh7A/LsdWzRuMS1HeEL9V3ml4dPEALpSF3E=;
-  b=VXNDD4+r6GivoVgSDwoaQ2BG1mDCQu9Kz/XtxJwu3+JAxNl/4tIbQXt1
-   lK7I4q8XDmbi6yqthf6G7ycWBxErTbhHQnPOT2p3+tuzE0dCPS2V+pjmh
-   7twctb5v+aqlGZCPRL3d+kuvK/d0fSeORtxnG0gqPkjHWVhoMdn2x+N+i
-   Amw6Jv5CKq4k0VwdMgnOyaZvJj060oQMz5MkDVCnJxk6egIF6JhwJhMR2
-   YFiekU1ToZeKwjFBTtolF/JNGy1AQCU/0cWVcJ92GpxdS75ur84D944dC
-   x4UP/y1ldSO3/Kik/hmkeFBpR6DDUe/rs2tOJEVwtIGM2XWJJc4ekGhHv
-   w==;
-X-CSE-ConnectionGUID: hWjyRCz+SZyv1J236BTcDQ==
-X-CSE-MsgGUID: J4rqY35IROKEYxpnVVSXaA==
-X-IronPort-AV: E=Sophos;i="6.19,287,1754956800"; 
-   d="scan'208";a="4849373"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 17:23:54 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [54.240.197.226:28723]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.11.74:2525] with esmtp (Farcaster)
- id 5bb66a71-c62c-4d84-9175-7e585abc3994; Fri, 7 Nov 2025 17:23:54 +0000 (UTC)
-X-Farcaster-Flow-ID: 5bb66a71-c62c-4d84-9175-7e585abc3994
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Fri, 7 Nov 2025 17:23:53 +0000
-Received: from [192.168.9.244] (10.106.83.15) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29; Fri, 7 Nov 2025
- 17:23:50 +0000
-Message-ID: <add94932-290c-4037-b4e6-c3c760240819@amazon.com>
-Date: Fri, 7 Nov 2025 17:23:49 +0000
+        d=google.com; s=20230601; t=1762536261; x=1763141061; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QnS25iCFOS3ovWTIrIeDxR8HEFggFuUwFd6B+OJUBA8=;
+        b=gYbR19HzxZT4xkJURiTy7lh+2zrcFVhfU9JYH2jTN/dXlfVNsjvtdj9wWCGV4sos1x
+         pdFOn8VdLGwuAKNbf1dp/lNa7E4SoIbEziX2rqinGKiAoXc3W8a/Gs028w9EhUbsWkd2
+         GiYH7GC2oxrmHNnM6aOcAHrEXamy+GfKoaBvWQF6BPXkgiJSJUmS3gyvddLp/P7IZmB+
+         QyuvFeGNIabbnsYuhgUfHeSFQXGZJxhN+4ICc2bOxee3IvLvIgb4QIYzV70RtQt7fqQu
+         QYEaMT5/Mi8xqrOPsnMPmNuVjD+VFdJOA1BoTSAFNQXcpFCajwLA6NYgA4eoH37IVPvY
+         WMAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762536261; x=1763141061;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=QnS25iCFOS3ovWTIrIeDxR8HEFggFuUwFd6B+OJUBA8=;
+        b=rbokgVPY/bgg538I6/7PAY6UBXCMuQfoJ6NPoVd/XtOAtOvJtBbVk8eIpvY4UQiG60
+         ibiMxq7szdN9uGcFNrihcWdg44D/NZy/Dfd7atB7EE3s9n+XSaqI7qVtTB7gataD9eWt
+         xJpjBevBNvr1mMnkQNKbCr4lQvawOpcolhpYS3LjVCXc9gMGLlIerz0d0L5UwHnAzvrV
+         cLKhWGLsm417AQ6ptQWc88I6oklh1t3h3Put/6In7eTeR4/zJpkhOTusFcjMCefwqLtt
+         wNDoPoBe26Ep/TMhHUrju0NbrRaa451HVYBZDKzhw82YByll8bQ/h9xWzgJw2og1Te5u
+         9QRg==
+X-Gm-Message-State: AOJu0YyTReHxd3GUD97ljhBfS/mDpSVZgW17Ro2s1UQ7DJSWQby+QM+a
+	BZWTU+OsBRI4IZ1t7MZE2+4KbzivhBOsPN8ZPblOj2wbknTzBqhVH1EmIneg0cz7bCzBRylaElD
+	6ix1XLQ2X6Nri75URuktIgTj2wpPlhgMUPJwGj/c=
+X-Gm-Gg: ASbGncvubB15ddokp8ZQMGC8nqVgFItZPgUVF11toOF5XOJZ6SNji77L3egoY83SaUO
+	sX2qbzBo+yX3Z1e05udi375GyO/sm2wDg6LbvXz5LIi/3FnjDWraTxEU5iIp6/37G3VhRL6aY5e
+	Xy/4Xp8Wkuf4h/wcMNfGVQPzGcDnxzgY3E2IU0NVLkp9ZWn5XqeXRmfCOEUkd2kAmZVtPgeyeoI
+	eWwYI+LezX/Ua/iviWCzvDMlx0wSFXaB72al8q/fxX3xy4Jo5QqUDekfeBQ0uY71c5Qun7Kp9J5
+	TQVQ7JQ33tdE5LI5vA==
+X-Google-Smtp-Source: AGHT+IER8m14wbp3nvaGgeGxNvCD+sCkJgkPy3QG3Ozx5JlNqGV7U1EWQOMfVzq1oGsghRpa8Iq9nPMDZHVP/KzwMGE=
+X-Received: by 2002:a17:907:3e9f:b0:b6d:505e:3da1 with SMTP id
+ a640c23a62f3a-b72e036bbf6mr5469766b.7.1762536260496; Fri, 07 Nov 2025
+ 09:24:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v7 00/12] Direct Map Removal Support for guest_memfd
-To: Brendan Jackman <jackmanb@google.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <maz@kernel.org>,
-	<oliver.upton@linux.dev>, <joey.gouly@arm.com>, <suzuki.poulose@arm.com>,
-	<yuzenghui@huawei.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<luto@kernel.org>, <peterz@infradead.org>, <willy@infradead.org>,
-	<akpm@linux-foundation.org>, <david@redhat.com>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>, <song@kernel.org>,
-	<jolsa@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<andrii@kernel.org>, <martin.lau@linux.dev>, <eddyz87@gmail.com>,
-	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
-	<sdf@fomichev.me>, <haoluo@google.com>, <jgg@ziepe.ca>,
-	<jhubbard@nvidia.com>, <peterx@redhat.com>, <jannh@google.com>,
-	<pfalcato@suse.de>, <shuah@kernel.org>, <seanjc@google.com>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<kvmarm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <xmarcalx@amazon.co.uk>,
-	<kalyazin@amazon.co.uk>, <jackabt@amazon.co.uk>, <derekmn@amazon.co.uk>,
-	<tabba@google.com>, <ackerleytng@google.com>, Patrick Roy
-	<patrick.roy@campus.lmu.de>
-References: <20250924151101.2225820-1-patrick.roy@campus.lmu.de>
- <DE2L1SAOC55E.E4JY62WJQ2A8@google.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <DE2L1SAOC55E.E4JY62WJQ2A8@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D002EUA001.ant.amazon.com (10.252.50.66) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+References: <20251030001857.681432-1-jstultz@google.com> <20251030001857.681432-7-jstultz@google.com>
+ <aQ4OAn0bugNVv1bA@jlelli-thinkpadt14gen4.remote.csb>
+In-Reply-To: <aQ4OAn0bugNVv1bA@jlelli-thinkpadt14gen4.remote.csb>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 7 Nov 2025 09:24:08 -0800
+X-Gm-Features: AWmQ_bm-ajffiy_WQk5Td8yQhfxzNvWkA-qZVPXvdH_5r7KCMzGXP-nG2Fsmk4U
+Message-ID: <CANDhNCpL+3dwSDV_yDfcpW66i2jGwjDF42RW+kKg7XmXLESwzw@mail.gmail.com>
+Subject: Re: [PATCH v23 6/9] sched: Handle blocked-waiter migration (and
+ return migration)
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Suleiman Souhlal <suleiman@google.com>, kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 7, 2025 at 7:19=E2=80=AFAM Juri Lelli <juri.lelli@redhat.com> w=
+rote:
+> On 30/10/25 00:18, John Stultz wrote:
+> > +#ifdef CONFIG_SCHED_PROXY_EXEC
+> > +static inline void proxy_set_task_cpu(struct task_struct *p, int cpu)
+> > +{
+> > +     unsigned int wake_cpu;
+> > +
+> > +     /*
+> > +      * Since we are enqueuing a blocked task on a cpu it may
+> > +      * not be able to run on, preserve wake_cpu when we
+> > +      * __set_task_cpu so we can return the task to where it
+> > +      * was previously runnable.
+> > +      */
+> > +     wake_cpu =3D p->wake_cpu;
+> > +     __set_task_cpu(p, cpu);
+> > +     p->wake_cpu =3D wake_cpu;
+> > +}
+> > +#endif /* CONFIG_SCHED_PROXY_EXEC */
+> > +
+>
+> ...
+>
+> > +static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
+> > +                            struct task_struct *p, int target_cpu)
+> >  {
+> > -     if (!__proxy_deactivate(rq, donor)) {
+> > -             /*
+> > -              * XXX: For now, if deactivation failed, set donor
+> > -              * as unblocked, as we aren't doing proxy-migrations
+> > -              * yet (more logic will be needed then).
+> > -              */
+> > -             clear_task_blocked_on(donor, NULL);
+> > +     struct rq *target_rq =3D cpu_rq(target_cpu);
+> > +
+> > +     lockdep_assert_rq_held(rq);
+> > +
+> > +     /*
+> > +      * Since we're going to drop @rq, we have to put(@rq->donor) firs=
+t,
+> > +      * otherwise we have a reference that no longer belongs to us.
+> > +      *
+> > +      * Additionally, as we put_prev_task(prev) earlier, its possible =
+that
+> > +      * prev will migrate away as soon as we drop the rq lock, however=
+ we
+> > +      * still have it marked as rq->curr, as we've not yet switched ta=
+sks.
+> > +      *
+> > +      * So call proxy_resched_idle() to let go of the references befor=
+e
+> > +      * we release the lock.
+> > +      */
+> > +     proxy_resched_idle(rq);
+> > +
+> > +     WARN_ON(p =3D=3D rq->curr);
+> > +
+> > +     deactivate_task(rq, p, 0);
+> > +     proxy_set_task_cpu(p, target_cpu);
+>
+> We use proxy_set_task_cpu() here. BTW, can you comment/expand on why an
+> ad-hoc set_task_cpu() is needed for proxy?
 
+Since with proxy, we keep blocked waiters on the runqueue,
+proxy-migrations may move those lock waiters to cpu runqueues where
+they can't run. Ideally when the mutex is released, we want the waiter
+to wake up on the same cpu it would have woken on if it has been
+blocked.  So for proxy-migrations, we want to preserve the wake_cpu
+value when we change the task_cpu.
 
-On 07/11/2025 15:54, Brendan Jackman wrote:
-> On Wed Sep 24, 2025 at 3:10 PM UTC, Patrick Roy wrote:
->> From: Patrick Roy <roypat@amazon.co.uk>
->>
->> [ based on kvm/next ]
->>
->> Unmapping virtual machine guest memory from the host kernel's direct map is a
->> successful mitigation against Spectre-style transient execution issues: If the
->> kernel page tables do not contain entries pointing to guest memory, then any
->> attempted speculative read through the direct map will necessarily be blocked
->> by the MMU before any observable microarchitectural side-effects happen. This
->> means that Spectre-gadgets and similar cannot be used to target virtual machine
->> memory. Roughly 60% of speculative execution issues fall into this category [1,
->> Table 1].
->>
->> This patch series extends guest_memfd with the ability to remove its memory
->> from the host kernel's direct map, to be able to attain the above protection
->> for KVM guests running inside guest_memfd.
->>
->> Additionally, a Firecracker branch with support for these VMs can be found on
->> GitHub [2].
->>
->> For more details, please refer to the v5 cover letter [v5]. No
->> substantial changes in design have taken place since.
->>
->> === Changes Since v6 ===
->>
->> - Drop patch for passing struct address_space to ->free_folio(), due to
->>    possible races with freeing of the address_space. (Hugh)
->> - Stop using PG_uptodate / gmem preparedness tracking to keep track of
->>    direct map state.  Instead, use the lowest bit of folio->private. (Mike, David)
->> - Do direct map removal when establishing mapping of gmem folio instead
->>    of at allocation time, due to impossibility of handling direct map
->>    removal errors in kvm_gmem_populate(). (Patrick)
->> - Do TLB flushes after direct map removal, and provide a module
->>    parameter to opt out from them, and a new patch to export
->>    flush_tlb_kernel_range() to KVM. (Will)
->>
->> [1]: https://download.vusec.net/papers/quarantine_raid23.pdf
->> [2]: https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
-> 
-> I just got around to trying this out, I checked out this patchset using
-> its base-commit and grabbed the Firecracker branch. Things seem OK until
-> I set the secrets_free flag in the Firecracker config which IIUC makes
-> it set GUEST_MEMFD_FLAG_NO_DIRECT_MAP.
-> 
-> If I set it, I find the guest doesn't show anything on the console.
-> Running it in a VM and attaching GDB suggests that it's entering the
-> guest repeatedly, it doesn't seem like the vCPU thread is stuck or
-> anything. I'm a bit clueless about how to debug that (so far, whenever
-> I've broken KVM, things always exploded very dramatically).
-> 
-> Anyway, if I then kill the firecracker process, the host sometimes
-> crashes, I think this is the most suggestive splat I've seen:
-> 
-> [   99.673420][    T2] BUG: unable to handle page fault for address: ffff888012804000
-> [   99.676216][    T2] #PF: supervisor write access in kernel mode
-> [   99.678381][    T2] #PF: error_code(0x0002) - not-present page
-> [   99.680499][    T2] PGD 2e01067 P4D 2e01067 PUD 2e02067 PMD 12801063 PTE 800fffffed7fb020
-> [   99.683374][    T2] Oops: Oops: 0002 [#1] SMP
-> [   99.685004][    T2] CPU: 0 UID: 0 PID: 2 Comm: kthreadd Not tainted 6.17.0-rc7-00366-g473c46a3cb2a #106 NONE
-> [   99.688514][    T2] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.1 11/11/2019
-> [   99.691547][    T2] RIP: 0010:clear_page_erms+0x7/0x10
-> [   99.693440][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
-> [   99.700188][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
-> [   99.702321][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
-> [   99.705100][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
-> [   99.707861][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
-> [   99.710648][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
-> [   99.713412][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
-> [   99.716191][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
-> [   99.719316][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   99.721648][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
-> [   99.724421][    T2] Call Trace:
-> [   99.725608][    T2]  <TASK>
-> [   99.726646][    T2]  get_page_from_freelist+0x6fe/0x14b0
-> [   99.728583][    T2]  ? fs_reclaim_acquire+0x43/0xe0
-> [   99.730325][    T2]  ? find_held_lock+0x2b/0x80
-> [   99.731965][    T2]  __alloc_frozen_pages_noprof+0x147/0x2d0
-> [   99.734003][    T2]  __alloc_pages_noprof+0x5/0x50
-> [   99.735766][    T2]  copy_process+0x1b1/0x1b30
-> [   99.737398][    T2]  ? lock_is_held_type+0x89/0x100
-> [   99.739157][    T2]  ? kthreadd+0x25/0x190
-> [   99.740664][    T2]  kernel_clone+0x59/0x390
-> [   99.742213][    T2]  ? kthreadd+0x25/0x190
-> [   99.743728][    T2]  kernel_thread+0x55/0x70
-> [   99.745310][    T2]  ? kthread_complete_and_exit+0x20/0x20
-> [   99.747265][    T2]  kthreadd+0x117/0x190
-> [   99.748748][    T2]  ? kthread_is_per_cpu+0x30/0x30
-> [   99.750509][    T2]  ret_from_fork+0x16b/0x1e0
-> [   99.752193][    T2]  ? kthread_is_per_cpu+0x30/0x30
-> [   99.753992][    T2]  ret_from_fork_asm+0x11/0x20
-> [   99.755717][    T2]  </TASK>
-> [   99.756861][    T2] CR2: ffff888012804000
-> [   99.758353][    T2] ---[ end trace 0000000000000000 ]---
-> [   99.760319][    T2] RIP: 0010:clear_page_erms+0x7/0x10
-> [   99.762209][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
-> [   99.769129][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
-> [   99.771297][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
-> [   99.774126][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
-> [   99.777013][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
-> [   99.779827][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
-> [   99.782641][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
-> [   99.785487][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
-> [   99.788671][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   99.791012][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
-> [   99.793863][    T2] Kernel panic - not syncing: Fatal exception
-> [   99.796760][    T2] Kernel Offset: disabled
-> [   99.798296][    T2] ---[ end Kernel panic - not syncing: Fatal exception ]---
-> 
-> This makes me suspect the kvm_gmem_folio_restore_direct_map() path isn't
-> working or isn't getting called.
-> 
-> If anyone wants help trying to reproduce this let me know.
+For instance, if we were proxy-migrated as a donor to a cpu outside of
+our affinity set, we don't want the wake_cpu hint to suggest that we
+should be woken on a cpu we can't run on.
 
-Hi Brendan,
+> > +static void proxy_force_return(struct rq *rq, struct rq_flags *rf,
+> > +                            struct task_struct *p)
+> > +{
+> > +     struct rq *this_rq, *target_rq;
+> > +     struct rq_flags this_rf;
+> > +     int cpu, wake_flag =3D 0;
+> > +
+> > +     lockdep_assert_rq_held(rq);
+> > +     WARN_ON(p =3D=3D rq->curr);
+> > +
+> > +     get_task_struct(p);
+> > +
+> > +     /*
+> > +      * We have to zap callbacks before unlocking the rq
+> > +      * as another CPU may jump in and call sched_balance_rq
+> > +      * which can trip the warning in rq_pin_lock() if we
+> > +      * leave callbacks set.
+> > +      */
+> > +     zap_balance_callbacks(rq);
+> > +     rq_unpin_lock(rq, rf);
+> > +     raw_spin_rq_unlock(rq);
+> > +
+> > +     /*
+> > +      * We drop the rq lock, and re-grab task_rq_lock to get
+> > +      * the pi_lock (needed for select_task_rq) as well.
+> > +      */
+> > +     this_rq =3D task_rq_lock(p, &this_rf);
+> > +     update_rq_clock(this_rq);
+> > +
+> > +     /*
+> > +      * Since we let go of the rq lock, the task may have been
+> > +      * woken or migrated to another rq before we  got the
+> > +      * task_rq_lock. So re-check we're on the same RQ. If
+> > +      * not, the task has already been migrated and that CPU
+> > +      * will handle any futher migrations.
+> > +      */
+> > +     if (this_rq !=3D rq)
+> > +             goto err_out;
+> > +
+> > +     /* Similarly, if we've been dequeued, someone else will wake us *=
+/
+> > +     if (!task_on_rq_queued(p))
+> > +             goto err_out;
+> > +
+> > +     /*
+> > +      * Since we should only be calling here from __schedule()
+> > +      * -> find_proxy_task(), no one else should have
+> > +      * assigned current out from under us. But check and warn
+> > +      * if we see this, then bail.
+> > +      */
+> > +     if (task_current(this_rq, p) || task_on_cpu(this_rq, p)) {
+> > +             WARN_ONCE(1, "%s rq: %i current/on_cpu task %s %d  on_cpu=
+: %i\n",
+> > +                       __func__, cpu_of(this_rq),
+> > +                       p->comm, p->pid, p->on_cpu);
+> > +             goto err_out;
+> >       }
+> > -     return NULL;
+> > +
+> > +     proxy_resched_idle(this_rq);
+> > +     deactivate_task(this_rq, p, 0);
+> > +     cpu =3D select_task_rq(p, p->wake_cpu, &wake_flag);
+> > +     set_task_cpu(p, cpu);
+>
+> But, then use the 'standard' set_task_cpu() for the return migration. Is
+> that intended?
 
-Thanks for trying to run it!
+Yep. On return migration, we want the task to be returned to the
+runqueue it would have woken on (which wake_cpu provides a hint, but
+select_task_rq can always choose somewhere else more appropriate).
+Once the cpu has been selected, it's then fine if the wake_cpu is then
+set to cpu the task now being assigned to.
 
-Just as a sanity check, the way it is known for us to work is we apply 
-all patches from [1].  For booted VMs (as opposed to restored from 
-snapshot), apart from the v6 of the direct map removal series, the only 
-additional patch is a fix for kvmclock on x86 [2].  Please let me know 
-if you see the same issue with that patch applied too.
-
-Nikita
-
-[1] 
-https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding/resources/hiding_ci/linux_patches
-[2] 
-https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding/resources/hiding_ci/linux_patches/11-kvm-clock
-
+thanks
+-john
 
