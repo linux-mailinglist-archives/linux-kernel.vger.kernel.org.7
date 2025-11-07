@@ -1,138 +1,157 @@
-Return-Path: <linux-kernel+bounces-891101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B79C41D82
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 23:35:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 770DCC41D85
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 23:38:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 94F284E7428
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 22:35:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F092E1896EE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 22:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EEF314A6D;
-	Fri,  7 Nov 2025 22:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D93C30FC2C;
+	Fri,  7 Nov 2025 22:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="gwskUpuJ"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q2+YlgGZ"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A052192EE;
-	Fri,  7 Nov 2025 22:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AAD2DC338
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 22:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762554927; cv=none; b=VEMmWm+StNGd9+3I2NLgfIvkLmxKS3F3IuT6lOsChqK49yfSWqrhBm6EeytqgewZGUsWot0DB2Da34oMteEa5Z+jCRg3Gjw0uQ7I4xpZZBxORlA+7OA2Jjz6kTYvpDiNM0AU+cA+KSjUmqND0kKnuNvbOaAi/0fqNrFDhkei2pU=
+	t=1762555092; cv=none; b=OztPKMkNAt3cjyRlJvUfhv6WuE4eEv5dBkIaYtPVxK/mFgCRx47uByUVmswfFphsb+VDQ/iG2LXXcbdYPh3dL7j89frQsUSLCiy+9LCf8q8/3KLVgooTqBZgSrN7bq/bq7beXctI3vMU9u2SUHM/Is4QJ94wrCwpa1f751GtuwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762554927; c=relaxed/simple;
-	bh=XFl4H7zlaSjNeZC0YFUU21tNjZ/wnYPimecT/uq5tKQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=S1xtH2u4rErEkLWHkV8kpO0zban8Az3Fo5CgS3FzsfqI7gAcBe9jwQcf/kEBHs/+oD0CROQFAF5+/7CmLYxDyVKG0JtNYN6j17lP22Sxuz8necqIIgcp6xrjpwNdZRVyOj2kZL8+zlc08KJQvi+MxucdhheR5s4Z9MjQV2dvD/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=gwskUpuJ; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 65A4040AED
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1762554918; bh=1SMRxhNRshB8vecJq42CGMcQSf+tMG9pcOEmrtJR/2o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gwskUpuJ4a2g0JY5PiFttMjCeJQuS5S9UEPZocWG6S53nMlyt4gNfosYgLoQ6Jwhj
-	 dtsb6S+afpYrUIi0QfyDP5S6e0bDBizWxKwt/uIC0tV/2BUoFA5ZIOjasCC/wOB6C5
-	 IvBnQSvlGwdiy84Vv7DtwNnU0ThlI1+rpNmvLMNs2Mlba7j5UvudGA8dWS/wNWoEhb
-	 QQZECfmiJHj8aTYEDJFrkXseci/C7M7RQmHvvaOKNnK8EDDOg1KshyEqtA+pwvZFub
-	 CJuACGdj/HuNVrTYEYhxm/X8rI6+e/rYpIzGlIZWWTn5T4qJ87Gv51ZI5YPYmAqjvD
-	 ATLFFKQC18bmQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 65A4040AED;
-	Fri,  7 Nov 2025 22:35:18 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: NeilBrown <neil@brown.name>, Jeff Layton <jlayton@kernel.org>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, Christian
- Schoenebeck <linux_oss@crudebyte.com>, David Sterba <dsterba@suse.com>,
- David Howells <dhowells@redhat.com>, Marc Dionne
- <marc.dionne@auristor.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, "Tigran
- A. Aivazian" <aivazian.tigran@gmail.com>, Chris Mason <clm@fb.com>, Xiubo
- Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Jan Harkes
- <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, Tyler Hicks <code@tyhicks.com>,
- Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>, Namjae Jeon
- <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang
- Mo <yuezhang.mo@sony.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
- <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu
- <chao@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Miklos
- Szeredi <miklos@szeredi.hu>, Andreas Gruenbacher <agruenba@redhat.com>,
- Viacheslav Dubeyko <slava@dubeyko.com>, John Paul Adrian Glaubitz
- <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>, Richard
- Weinberger <richard@nod.at>, Anton Ivanov
- <anton.ivanov@cambridgegreys.com>, Johannes Berg
- <johannes@sipsolutions.net>, Mikulas Patocka
- <mikulas@artax.karlin.mff.cuni.cz>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>,
- David Woodhouse <dwmw2@infradead.org>, Dave Kleikamp <shaggy@kernel.org>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- Ryusuke Konishi <konishi.ryusuke@gmail.com>, Konstantin Komarov
- <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>,
- Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
- Bob Copeland <me@bobcopeland.com>, Mike Marshall <hubcap@omnibond.com>,
- Martin Brandenburg <martin@omnibond.com>, Amir Goldstein
- <amir73il@gmail.com>, Steve French <sfrench@samba.org>, Paulo Alcantara
- <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam
- Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Bharath SM
- <bharathsm@microsoft.com>, Zhihao Cheng <chengzhihao1@huawei.com>, Hans de
- Goede <hansg@kernel.org>, Carlos Maiolino <cem@kernel.org>, Hugh Dickins
- <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Andrew
- Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, "Gustavo
- A. R. Silva" <gustavoars@kernel.org>, "Matthew Wilcox (Oracle)"
- <willy@infradead.org>, linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
- linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
- codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, gfs2@lists.linux.dev,
- linux-um@lists.infradead.org, linux-mm@kvack.org,
- linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
- linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
- linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
- linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, linux-xfs@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, Jeff Layton
- <jlayton@kernel.org>
-Subject: LLM disclosure (was: [PATCH v2] vfs: remove the excl argument from
- the ->create() inode_operation)
-In-Reply-To: <176255458305.634289.5577159882824096330@noble.neil.brown.name>
-References: <20251107-create-excl-v2-1-f678165d7f3f@kernel.org>
- <176255458305.634289.5577159882824096330@noble.neil.brown.name>
-Date: Fri, 07 Nov 2025 15:35:17 -0700
-Message-ID: <87ikfl1nfe.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1762555092; c=relaxed/simple;
+	bh=rtZVSAacOqPDAFhwZey31w9nuqAAxwnJYwwpxH186z4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rWo17UMWaKIVXgsueE99nPfe2wmYd3lus2apBVwCXDUDmH7xstJBW8fz9bJHYKMOkbEOtYobmXF2oRB4nLCzCyLNfYfb0jPub16bTzKKJMcd3ZrdEw2I8jykb/fB6JnG+lIZ0UX+tIqJouISQx6TdikTJKO+9YuQ7GQfK+VMvEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q2+YlgGZ; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-ba433d88288so962443a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 14:38:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762555090; x=1763159890; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i6ZWrSszRgf+OK0UMrDoILB8VEgH0P7tEZvUBb1KzcU=;
+        b=q2+YlgGZ7CpdEYAzisJNRDxLQQAUBwLxVkQWMBf6UWvaH3JpRSSk2A8tvW8Ae1YKe9
+         xBDdXy6HroB9/wj++BUPckKd9nUSLAp7DV+jbV0iLxaMB+Wu+/r1Euc/OrTr8U8gaosK
+         RfVpR7RCXAXdqr9f61y5M9/UI2Xqfljq4Mvs8KpxDNmcn7HCYkcusE/Tk2LS9oB1Ug0M
+         V/N/KsU9z3TzAydSdmL+79tmmszFZ6UV19zh9IZgzneckMAe3aV4ajAbNjq542unHwHR
+         KQiHVK/0484jZLWevKELATqDScqhYiQ2YYuswMYTK14Q/j8A5vgd6ZVPn/jAfjwgzIhY
+         dxGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762555090; x=1763159890;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i6ZWrSszRgf+OK0UMrDoILB8VEgH0P7tEZvUBb1KzcU=;
+        b=H3gltRsHr0vXmflw67uvixNqmd5THxx0ElBdbJlhyk7LtBDCQ/2yX79hoaM8g3QubS
+         NZEV6EFVSrNoQq9pMqH2ZhzXmD0KdqSDjMSHEHS4lQACAuQTi5vViDhGIxkvB1jhvQvl
+         PMDehBgdiqaG4eudnVA7giz67gvul+M5QysKYH3gOP9VMFNr0mitYRwx/ChhPwvNjBDq
+         EmjrofQl3l9ce/ZMnmUbMOwGpeFAdaEcwNC6RYNN8JLEtX2zGIZ8rwh5M//5TgWjKVWB
+         bdhSMHJs1fg4Kvxao6rTZfZUQhnVEE3pwvkaafNuajwBk4q7pGNa1MhhLUZK4bq5xKNW
+         N9dg==
+X-Forwarded-Encrypted: i=1; AJvYcCWM27X+hlFMktoJQK3SYEwZxaMmb1Vb7fjsxCShmkWYbJ2pr0a/zaAwCiudh/CDvQHN/b9DlvlrBj45y6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpv1sUDjnBvK7h4C5zAVzLZ+lNhut2uKF3BmlMwOtseiJHMjXs
+	7CXUQDXOkpiUUwaQrAAz3Sf9m78Ib3uc9p9pQhbxnh/Av8Ucximf0HmIQgXfPR/VRYYPLoE2GrL
+	xAPTN/w==
+X-Google-Smtp-Source: AGHT+IEV6rezXdMLPCPwuqWjMz8IR9xWFef3dr3uacIFfEdeI79wnVgSP3RuuWePVcrDflpsPEvEVN3urR0=
+X-Received: from pge26.prod.google.com ([2002:a05:6a02:2d1a:b0:b85:7a45:1f8e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3286:b0:34f:d380:5f2b
+ with SMTP id adf61e73a8af0-353a18e5b2emr949487637.17.1762555090163; Fri, 07
+ Nov 2025 14:38:10 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri,  7 Nov 2025 14:38:07 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251107223807.860845-1-seanjc@google.com>
+Subject: [GIT PULL] KVM: x86 fixes and a guest_memd fix for 6.18
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-NeilBrown <neilb@ownmail.net> writes:
+Please pull a variety of fixes that fall into one of three categories:
 
-> On Sat, 08 Nov 2025, Jeff Layton wrote:
+ - Recent-ish TDX-induced bugs (VM death on SEAMCALL/TDCALL, and my
+   paperbag GVA_IS_VALID goof).
 
->> Full disclosure: I did use Claude code to generate the first
->> approximation of this patch, but I had to fix a number of things that it
->> missed.  I probably could have given it better prompts. In any case, I'm
->> not sure how to properly attribute this (or if I even need to).
->
-> My understanding is that if you fully understand (and can defend) the
-> code change with all its motivations and implications as well as if you
-> had written it yourself, then you don't need to attribute whatever fancy
-> text editor or IDE (e.g.  Claude) that you used to help produce the
-> patch.
+ - Long-standing issues that were exposed and/or are made releavnt by
+   6.18 (guest_memfd UAF race, GALog unregister and ir_list_lock from AVIC).
 
-The proposed policy for such things is here, under review right now:
+ - Bugs introduce in 6.18 (splat when emulating INIT for CET XSTATE).
 
-  https://lore.kernel.org/all/20251105231514.3167738-1-dave.hansen@linux.intel.com/
+The following changes since commit 4361f5aa8bfcecbab3fc8db987482b9e08115a6a:
 
-jon
+  Merge tag 'kvm-x86-fixes-6.18-rc2' of https://github.com/kvm-x86/linux into HEAD (2025-10-18 10:25:43 +0200)
+
+are available in the Git repository at:
+
+  https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.18-rc5
+
+for you to fetch changes up to d0164c161923ac303bd843e04ebe95cfd03c6e19:
+
+  KVM: VMX: Fix check for valid GVA on an EPT violation (2025-11-06 06:06:18 -0800)
+
+----------------------------------------------------------------
+KVM x86 fixes for 6.18:
+
+ - Inject #UD if the guest attempts to execute SEAMCALL or TDCALL as KVM
+   doesn't support virtualization the instructions, but the instructions
+   are gated only by VMXON, i.e. will VM-Exit instead of taking a #UD and
+   thus result in KVM exiting to userspace with an emulation error.
+
+ - Unload the "FPU" when emulating INIT of XSTATE features if and only if
+   the FPU is actually loaded, instead of trying to predict when KVM will
+   emulate an INIT (CET support missed the MP_STATE path).  Add sanity
+   checks to detect and harden against similar bugs in the future.
+
+ - Unregister KVM's GALog notifier (for AVIC) when kvm-amd.ko is unloaded.
+
+ - Use a raw spinlock for svm->ir_list_lock as the lock is taken during
+   schedule(), and "normal" spinlocks are sleepable locks when PREEMPT_RT=y.
+
+ - Remove guest_memfd bindings on memslot deletion when a gmem file is dying
+   to fix a use-after-free race found by syzkaller.
+
+ - Fix a goof in the EPT Violation handler where KVM checks the wrong
+   variable when determining if the reported GVA is valid.
+
+----------------------------------------------------------------
+Chao Gao (1):
+      KVM: x86: Call out MSR_IA32_S_CET is not handled by XSAVES
+
+Maxim Levitsky (1):
+      KVM: SVM: switch to raw spinlock for svm->ir_list_lock
+
+Sean Christopherson (7):
+      KVM: VMX: Inject #UD if guest tries to execute SEAMCALL or TDCALL
+      KVM: x86: Unload "FPU" state on INIT if and only if its currently in-use
+      KVM: x86: Harden KVM against imbalanced load/put of guest FPU state
+      KVM: SVM: Initialize per-CPU svm_data at the end of hardware setup
+      KVM: SVM: Unregister KVM's GALog notifier on kvm-amd.ko exit
+      KVM: SVM: Make avic_ga_log_notifier() local to avic.c
+      KVM: guest_memfd: Remove bindings on memslot deletion when gmem is dying
+
+Sukrit Bhatnagar (1):
+      KVM: VMX: Fix check for valid GVA on an EPT violation
+
+ arch/x86/include/uapi/asm/vmx.h |  1 +
+ arch/x86/kvm/svm/avic.c         | 24 +++++++++++++--------
+ arch/x86/kvm/svm/svm.c          | 15 +++++++------
+ arch/x86/kvm/svm/svm.h          |  4 ++--
+ arch/x86/kvm/vmx/common.h       |  2 +-
+ arch/x86/kvm/vmx/nested.c       |  8 +++++++
+ arch/x86/kvm/vmx/vmx.c          |  8 +++++++
+ arch/x86/kvm/x86.c              | 48 +++++++++++++++++++++++++----------------
+ virt/kvm/guest_memfd.c          | 47 ++++++++++++++++++++++++++++------------
+ 9 files changed, 106 insertions(+), 51 deletions(-)
 
