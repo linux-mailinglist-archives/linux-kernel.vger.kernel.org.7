@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-890064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1CEC3F2E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:35:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE279C3F2F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:35:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08582188EA7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:35:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423E1188E9DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C55304BDE;
-	Fri,  7 Nov 2025 09:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7B8302143;
+	Fri,  7 Nov 2025 09:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyc00Umb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koCdZds9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC00C3043C0;
-	Fri,  7 Nov 2025 09:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8653019DA;
+	Fri,  7 Nov 2025 09:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762508063; cv=none; b=QZMP0zx0hGv9e/D2gV3K6KF4iBF58Ngbl0Pv8t2Q9B+OBaio0FjAbqNST0lu43ucYsfIGg3s9GkCgeAGGVoj2C9Z1w44K9FzDg7aH3ClceDJnNE/QZKeaHBRMdVgKBfbYfVr5+YaJ3B7ryAC+4IUiwxaY6+C/433T9i4ILA344g=
+	t=1762508071; cv=none; b=kS74S07Vv/Zmgw1oa4DWBU1OI4GIEb9fd3T7G16bembAsvq2fvjQSyhzgOWHW4Tx6SJIldDV++97eo0ttev0u6Wg0I8dveEQqEAVxeJMGibcIkiQxM6NxJE0qkNe/nDjm9Pr2lnPb8IYWPuFgOCqlGxRJQG+2Iz+7bCbbNdath8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762508063; c=relaxed/simple;
-	bh=zL+4rcyTARsIe4hJxa00Ims71iycI5pdNXjIiz9peTQ=;
+	s=arc-20240116; t=1762508071; c=relaxed/simple;
+	bh=NtX+5fn+kE5HkWQvbOADti+9aZQIyL4Npwg2RYFPXmc=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EuG+JHTPn5hSNyk3AfiTPkVWqYKYbrn/SAsFVZjd5Z9SIWGDT5HDeBJFH9kpdhQBu1PcQv7nemdvh3IMVIXTPpHGh8FF22D5A9TkB1K1qYQE5KyEQsRMczdTyav7yzKtV4UL+MWRxvAo2ygFTXc2qM4zU9iUGk2HgyAYojHSg9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyc00Umb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F33C113D0;
-	Fri,  7 Nov 2025 09:34:21 +0000 (UTC)
+	 MIME-Version:Content-Type; b=JGW3cSnicfcjLXPYLu88bU3una7LBcYQEXqMRq0u10ejqjxXKMkdk8/zTjtfXKLQuPj0e7pY+Fk4POV+xhCBiXkrQ4K2dsQ74oyKCoY4KoBhFQvUdCN3l2v0Oi3yt7xgw1mevjAJTZsKLFxiiJtnl6iMySZ4WypNz04MLa5Jl04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koCdZds9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C38C116C6;
+	Fri,  7 Nov 2025 09:34:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762508063;
-	bh=zL+4rcyTARsIe4hJxa00Ims71iycI5pdNXjIiz9peTQ=;
+	s=k20201202; t=1762508070;
+	bh=NtX+5fn+kE5HkWQvbOADti+9aZQIyL4Npwg2RYFPXmc=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jyc00Umb1JORVOZ2GpMEINSZ9j7D4zfvsDFu8ztoyHs/9qoQ8SHnjGvDd/78XNJPT
-	 hSebqSP/Nkzn8IFu+TOvBdvNUJq/GoYNYn8bCp8RL32J4g39sBj4c7tIxCN15Xx7Xw
-	 6P5thM/Pp5uKwwN52ASrUWbzmY245gJrU+U4q+bZI2HdlDAokr4tDmVncRFpfpzpL3
-	 bjvgIhhiCtT6RiSw5/9CjCeLVklwYA0lsbY0fm49gcheJ5vgb4g3aV9RtyrLwc9K8S
-	 MSjOsJoDvWnksHoscILjHsumIwHPgJMZCJ481lEMji8FpnOIWXeoQPXQF16FzXEMTi
-	 ZCMf783Oi5iFw==
+	b=koCdZds9yXGyuaAF7TL5P29yTmWzu4zDko5m6Zm6K7xhvAD2Wr2tUXMXbSBe56IjA
+	 R8+/rLbgfrEbihBBMjJKEOkEzCn7veYpBXFfhAgGyFdKPTjPVRKp1mzrPNQBFGI3GP
+	 1b9GFs5PT5ZcBcwG9gdUjKTnb8XFpzNt4o5Z7cikBwuy+wAq4vDud4GZE7AJxJRRGj
+	 lCxn0YcK1izSOclHMxnZjN4vaw/orLZsnD0UUETXf7O0dglJruRySPALQlACmbblRV
+	 sevhOG2VrslPfEZCY9KkScWZx7oKfIijzALVemZS+Sg0O+QUlzv3FSspi1SKGWplaF
+	 uXt1Jc+0L6Lkw==
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, 
- alexey.klimov@linaro.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-In-Reply-To: <20251014153541.283899-1-srinivas.kandagatla@oss.qualcomm.com>
-References: <20251014153541.283899-1-srinivas.kandagatla@oss.qualcomm.com>
-Subject: Re: [PATCH] ASoC: codecs: pm4125: remove duplicate code
-Message-Id: <176250805971.2488867.8965802820499372032.b4-ty@kernel.org>
-Date: Fri, 07 Nov 2025 09:34:19 +0000
+To: mkl@pengutronix.de, frank.li@nxp.com, shawnguo@kernel.org, 
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+ carlos.song@nxp.com
+Cc: linux-spi@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251027110256.543314-1-carlos.song@nxp.com>
+References: <20251027110256.543314-1-carlos.song@nxp.com>
+Subject: Re: [PATCH v2] spi: imx: add i.MX51 ECSPI target mode support
+Message-Id: <176250806608.2489052.17181780089794986836.b4-ty@kernel.org>
+Date: Fri, 07 Nov 2025 09:34:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,20 +61,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-a6db3
 
-On Tue, 14 Oct 2025 16:35:41 +0100, Srinivas Kandagatla wrote:
-> With recent addition of wcd-common, lot of code duplication in
-> pm4125 codec can be removed now.
+On Mon, 27 Oct 2025 19:02:56 +0800, carlos.song@nxp.com wrote:
+> ECSPI in i.MX51 and i.MX53 support target mode. Current code only support
+> i.MX53. Remove is_imx53_ecspi() check for target mode to support i.MX51.
 > 
 > 
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] ASoC: codecs: pm4125: remove duplicate code
-      commit: 6951be397ca8b8b167c9f99b5a11c541148c38cb
+[1/1] spi: imx: add i.MX51 ECSPI target mode support
+      commit: 4e92abd0a11b91af3742197a9ca962c3c00d0948
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
