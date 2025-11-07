@@ -1,83 +1,81 @@
-Return-Path: <linux-kernel+bounces-890582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7DBC40683
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:40:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE63C40695
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9520189C041
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:40:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 280DE4E5370
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A56329C4B;
-	Fri,  7 Nov 2025 14:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6C0261588;
+	Fri,  7 Nov 2025 14:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfhIWza9"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b="XCk/uYpM"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44DC2E6CCD
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096AA2C21EA
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762526425; cv=none; b=AnidY7T8bvNE5WqSrEzmlabR2VT4j1LKyGE0Rj34VoAgOG/nMXUkSuJlYhHN1UADfRoMj9/uSJsAtbvnfI7O/3j1bVtlrJP7OgaLGCtFB+8yu9B+dDuN5mRtWctum7w2pNPBQeIClITWkeDsEWl9wxFHPq3OQxYmYrqefHLJFd4=
+	t=1762526546; cv=none; b=kZp+NmF4ChLTqTHiseywfP2K7f1+zkvvy8oK/n/poK7SAcY6jAmfu3/hTzkpCB3fF+/akJ+EUj0yrxB7dhuA7sHO8+RDgB+Q4gFo/HXqNeZxeUV3CC4kRufaO1FjC34NTrt4E4xNO5+a9F3jvKZDTau5hEpqNqWk6EYcoOsbrM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762526425; c=relaxed/simple;
-	bh=5rIM6bQKZCsCAdxLkLPTH7YrpQmQsdkFo+HxpLuQoKw=;
+	s=arc-20240116; t=1762526546; c=relaxed/simple;
+	bh=YhkEMFPyXkL0KtUMLEtWSj3UnsHN3o6spA2WdOO4V/Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q5EJDOKCCIcCDx/xJBAXPlU6DAv8hypqzq/MAjo3He8yjjUNs6sKTt40ebkmXYuQpQH3mYaPIHDX774VMmNHEQOvXdZpnVfX16cfaZBUpoYbcEnpi7JkCTqqUejXIUijvNnpbx/5UVtBJARedILRfDuP+EL3hu+wqtvsZuL3w5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfhIWza9; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-29555415c5fso10743435ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:40:23 -0800 (PST)
+	 In-Reply-To:Content-Type; b=tLOppLO4YLiXpCl94bKe5JlB3fjkpYpnWB9tj1B7XglL9lM+vJZdsBI+J3T47s33nTo43Rm5W4oAcG5esQhEOQ8xS/1at7o3/hCTL9FNjZYlABKMZmL3SBZT3YL6xWPYGX8PV8J4llodJnUQ4gmsDvFF0m/gXX2Fz66HoFtYSA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=pass smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b=XCk/uYpM; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ursulin.net
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4711b95226dso8309085e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:42:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762526423; x=1763131223; darn=vger.kernel.org;
+        d=ursulin.net; s=google; t=1762526543; x=1763131343; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=4HS21bJTAjOGfhmndTU6cJHTPCBeMsxYMNbP9hGxFzQ=;
-        b=XfhIWza9xLWOtCssOp2UQr/KP/fxv3jZoQz6swIrBko0lZ8Y7g4za4JJ6IHgUeuelF
-         zH6u5Vm8Fdg2SBKUFnxE1CrKoRlhCB6EfuaZOKfAEDQyQtK13hoBaZLNDSBPJReyAh1F
-         Wdq7rc2o8vtmQUeLfJ6wLfCGU5VZVidNyQoejj3aLizFKo4XA3zi/YL+1+A42B5263cL
-         +uSEYRc60FLWzfReaCoaxP960xU/EnS69EkIqwSrOvjsslHQozbh/hXLpHVvxJZN1SgT
-         HaiPnstT0f4LdY6vCiOwHmQKs3q+HJHztQjj1psc9Q6YwBDSsCYw/g9Oa1GzVmM7Dx0I
-         zcTA==
+        bh=7prOgZ8tel5yXZ1o8muDswYilsSv/7VLhnLi/dbDFKk=;
+        b=XCk/uYpMcoEZGdJ64vDPs0T2xE74YKsOpqP7Q1YYBdQo5qr6nmCnCka0L3oV90ga2W
+         k4JNjyMn84XMSnBi5dcoyytiCH3wcb5YddOjnP+IvkjIjaStHa91FMTHz0E050LNk/lQ
+         bPm/rCONgh2BXLmgXG3x4+p3Xnlt+a/uQoIIKX/qMF5FV/tf8jtH90QdW0A4xd4j+VFj
+         a/U2b7C0gCZfcmn/doM+E9Cv6mTIO+T3eB8G/vAjpOy4wa0At7xHBfhnIoNDG2e9wB6a
+         nAy5CFh8QCrkNFb2QGpAYHk9Lo26wxPE4fvmG/N33lXXSW1/OOuZv3Z7zp+HF+YNyGNP
+         ffRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762526423; x=1763131223;
+        d=1e100.net; s=20230601; t=1762526543; x=1763131343;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4HS21bJTAjOGfhmndTU6cJHTPCBeMsxYMNbP9hGxFzQ=;
-        b=Ahy5x8HhOT0q/rBrM3JT7bQ53bIdaY6aTil8pKDoMWHY85lyOoeb5z2/no7/tU+9Mw
-         +Mf1EAh92aLsP8y35ZKp/YQSqFmIBSrqFrdEyL5Zj8vINQnsYjxXViB5Wc38qEAp5SxH
-         7Cnn1GZejDelM8VcQSgm0ESBeGJhgLCph97VxrBz7fHuJVftR3y46oPzrHFYO1OJ9ZXC
-         4AcyMYJk+shatOLCDKec32arN3cEbXI/Ov0UAL9x7S0FwqUsWja0hRWVNilJDBG/NRzw
-         ghC26EB98mhC0Pg6C2Al8Tobx9Kv71oOL/cwPz5yAEyNfbzxuFOx6Trq3coET3ryEzAJ
-         nZWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0lY9Dz35zRSgPQhTDcWMF0S75+w0QdrgokOlHxkU8Bs5HAQMQbJNZt/X7+bokGCL0NBuP3fXalObZNRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEjunxV+p/ckTTSRQqLEosQAKtXaK9k1zND2F/vQo9sXofjlpE
-	XMyv5EFbUi3K5RkhfIf7+cSHSBjH7Bo4ApEIPGPRlJFboh/Dl4mXezRR
-X-Gm-Gg: ASbGnctgWIxjZBTNCtKsw2CSbU6QxpvsKLfrnKCNY7hL8QlojOcCkTxx9qqipnYiyxB
-	zSwvg3fQTuZBeElvfGLboDfXMHKc/TAuBJc7aEoB6M/wericmL1BQZ0s+AfRgk0DCR4HdQdj9RA
-	S2S1R23IV2MiFgfxIzpEygNMDB5J9jtMzDmRNpZCJh8MPiet66zAtVsxuOKCrl/hXfmV3PWApcW
-	XNplvN+vpxoQdI4aWagumqlE1YoPPiPKBBacmoFU5EHo8fkC177b0Qg8Y10rLCukVfEZm3PYTjD
-	Um8W1f3MZyUGBcBygZZ/UMr7+kHaPhdJVfNVMosRFH7Mc7QNZoOwssvNtHjo6XP9aVWiXLv19GE
-	nSkhT0+StBTZJ2QKaRmU0/qlDMC6w1pBxzbkKr4YaRjUn+rOXsTgFrA1nxs8wJL5yA/p26/fL1G
-	2rsfSje3+i3vhG+VDYpGabkF13HxmPMcBvD3RDO4dypNNlI3nMrF+XraU+SeSNkeAfTS/HwaVnk
-	H50z+Ona1ge/X+FoUlZ8NQosjfByDld+sbPSb76uQw8UeqE3XN1P2Pc/S3WlN/eSfj2u4ICuxLx
-	BfupTlOt97amgdPcrwM=
-X-Google-Smtp-Source: AGHT+IF3Ke6lqajaU/cezFyKlwzUXjz+57rGoWMaQpTcrQQJAhbCTNALp/gqR8k3U00asbNywguQig==
-X-Received: by 2002:a17:902:9344:b0:295:3eb5:6de1 with SMTP id d9443c01a7336-297c044f779mr31766365ad.34.1762526422575;
-        Fri, 07 Nov 2025 06:40:22 -0800 (PST)
-Received: from ?IPV6:2402:e280:21d3:2:b586:93ae:6db3:2abb? ([2402:e280:21d3:2:b586:93ae:6db3:2abb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651ccca64sm62199445ad.105.2025.11.07.06.40.17
+        bh=7prOgZ8tel5yXZ1o8muDswYilsSv/7VLhnLi/dbDFKk=;
+        b=fWsPq2FA8OI15e5f9Re/dSjfzrS6+wXNu9Xvsk6skgyXLt5rWMch30EXIGkaGIE/Je
+         jtrJ1cYeS8XvfMzSSL3hpzRz3vrTPW0Vsq8kaL1Yt3M29AWHgWntQ+zH/IJYGsVE7iMw
+         2LcZPRiNAl4H/V45qnHXKc5fc2WYKaZYaQA2nV8tpz+VJ5VPHGvkh+4nvaZLX1rZ4lNx
+         k/OihPEgadYsqveQQUSMtXd6nqN+X1NvlcJBoI/ZMD3bjPJB3OzfeMbxDuwNYfZnWov4
+         QhtKqO8Zkz92PAEcSMI+mfWYwCXMVSWYiaisbZ+LBXypsnkNvzZ5lujbqxoPzn5Il850
+         W5Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCWr8FOnIb+Z8FU/TE5L7vLhaxy7aQTZVTMMxDaVXn93wTmujFnhARDptmAr/Wy1YSOmBmcAgZUOAU/xTnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVwWJNObEELtN9VMtqHJmPkNGjqpBFjBvLOQL2RGSz0MBfb4Ys
+	E9V/m3nd+/IFOJfCcoIF6EXk5meMA0Ejn6OLfY0A6OA6i0XxlJvdoHwoA5/nGfDK+KM=
+X-Gm-Gg: ASbGnctwQ8TovvLfvHDSdKlMwTAYc8DQ/Plf2CmBDOooRQPrPKR9dB1K5h5IVsYck+Y
+	AsBzyN7pZvdqQfjqpPhvHQGpL4/yfgMCpq+VZCBHmQzvbgXAKvwWmPuWQfoOQVGfvBQM1/rDiyX
+	ome+pu1aLiuhSTAFXsTE7FNcrkRtecqABJxxVYAHthbJsw7QJ/o2ykVRAJOL5dk5B+id2ZhNdSp
+	riJFX+GYe51FyNvFOWwpkfvYZXTUN3paQh3UqtPy8SBv4hTjq5MDsTrHHgUh3Djk4etLaKR+47u
+	YhY8Mnr9YxX9d49q72tKdVh0ySrMh6+gdYF4nZ6Zq+1KxO5aPIosmyU+F4fi9nQVG6a5Ot2XYtv
+	LmrVGV+reEk6W1aLUShzj0aTiBQo2o7zbsBgfxbyiwjSVkC1Ovf27gKZu8JjUI5WRNVwBfmVltj
+	cyd0XkebCfN9/PdSQTZiyjvXOjD/1z3XvI0asutQ==
+X-Google-Smtp-Source: AGHT+IFkEE4UDmmRrIx59Og0BV5rIttUH98hXp8gThHGY47mG53iV90+MszFRauDaM04dctxkf46hw==
+X-Received: by 2002:a05:600c:3105:b0:477:63db:c718 with SMTP id 5b1f17b1804b1-4776bc93508mr24815935e9.16.1762526543053;
+        Fri, 07 Nov 2025 06:42:23 -0800 (PST)
+Received: from [192.168.0.101] ([90.240.106.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bd087b1sm61344375e9.16.2025.11.07.06.42.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 06:40:22 -0800 (PST)
-Message-ID: <38483816-8477-4c17-9c62-37d122b0a55a@gmail.com>
-Date: Fri, 7 Nov 2025 20:10:15 +0530
+        Fri, 07 Nov 2025 06:42:22 -0800 (PST)
+Message-ID: <c4a10ad7-22c0-412c-a456-d2dd0f049ac9@ursulin.net>
+Date: Fri, 7 Nov 2025 14:42:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,677 +83,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/3] iio: adc: Add support for TI ADS1120
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-iio@vger.kernel.org, jic23@kernel.org, dlechner@baylibre.com,
- nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
- <20251030163411.236672-3-ajithanandhan0406@gmail.com>
- <20251030175433.00004cc2@huawei.com>
-Content-Language: en-US
-From: Ajith Anandhan <ajithanandhan0406@gmail.com>
-In-Reply-To: <20251030175433.00004cc2@huawei.com>
+Subject: Re: [PATCH] drm/sched: Don't crash kernel on wrong params
+To: Philipp Stanner <phasta@kernel.org>,
+ Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251107125508.235449-2-phasta@kernel.org>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <20251107125508.235449-2-phasta@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 10/30/25 11:24 PM, Jonathan Cameron wrote:
-> On Thu, 30 Oct 2025 22:04:10 +0530
-> Ajith Anandhan <ajithanandhan0406@gmail.com> wrote:
->
->> Add driver for the Texas Instruments ADS1120, a precision 16-bit
->> analog-to-digital converter with an SPI interface.
->>
->> The driver provides:
->> - 4 single-ended voltage input channels
->> - Programmable gain amplifier (1 to 128)
->> - Configurable data rates (20 to 1000 SPS)
->> - Single-shot conversion mode
->>
->> Link: https://www.ti.com/lit/gpn/ads1120
-> Datasheet:
->
->> Signed-off-by: Ajith Anandhan <ajithanandhan0406@gmail.com>
-> Hi Ajith
->
-> Various comments inline.  Mostly superficial stuff but the DMA safety
-> of SPI buffers needs fixing.  There is a useful talk from this given
-> by Wolfram Sang if you want to understand more about this
-> https://www.youtube.com/watch?v=JDwaMClvV-s
->
-> Thanks,
->
-> Jonathan
->
->
-> Thank you for the detailed review and the helpful video reference!
->> diff --git a/drivers/iio/adc/ti-ads1120.c b/drivers/iio/adc/ti-ads1120.c
->> new file mode 100644
->> index 000000000..07a6fb309
->> --- /dev/null
->> +++ b/drivers/iio/adc/ti-ads1120.c
->> @@ -0,0 +1,509 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * TI ADS1120 4-channel, 2kSPS, 16-bit delta-sigma ADC
->> + *
->> + * Datasheet: https://www.ti.com/lit/gpn/ads1120
->> + *
->> + * Copyright (C) 2025 Ajith Anandhan <ajithanandhan0406@gmail.com>
->> + */
->> +
->> +#include <linux/delay.h>
->> +#include <linux/device.h>
->> +#include <linux/err.h>
->> +#include <linux/kernel.h>
-> Figure out what you are actually using. There is ongoing effort to not include
-> kernel.h in drivers because there is usually a small set of more appropriate
-> fine grained includes.
->
-Sure. I'll replace kernel.h with the specific includes needed.
->> +#include <linux/module.h>
->> +#include <linux/mod_devicetable.h>
->> +#include <linux/mutex.h>
->> +#include <linux/spi/spi.h>
->> +
->> +#include <linux/iio/iio.h>
->> +
->> +/* Commands */
->> +#define ADS1120_CMD_RESET		0x06
->> +#define ADS1120_CMD_START		0x08
->> +#define ADS1120_CMD_PWRDWN		0x02
->> +#define ADS1120_CMD_RDATA		0x10
->> +#define ADS1120_CMD_RREG		0x20
->> +#define ADS1120_CMD_WREG		0x40
->> +
->> +/* Registers */
->> +#define ADS1120_REG_CONFIG0		0x00
->> +#define ADS1120_REG_CONFIG1		0x01
->> +#define ADS1120_REG_CONFIG2		0x02
->> +#define ADS1120_REG_CONFIG3		0x03
->> +
->> +/* Config Register 0 bit definitions */
->> +#define ADS1120_MUX_MASK		GENMASK(7, 4)
->> +#define ADS1120_MUX_AIN0_AVSS		0x80
->> +#define ADS1120_MUX_AIN1_AVSS		0x90
->> +#define ADS1120_MUX_AIN2_AVSS		0xa0
->> +#define ADS1120_MUX_AIN3_AVSS		0xb0
->> +
->> +#define ADS1120_GAIN_MASK		GENMASK(3, 1)
-> Better to name these so it's obvious which register they are in.
-> #define ADS1120_CFG0_GAIN_MSK or similar.
-> Saves anyone checking every time that it's being written to
-> the appropriate register.
-I'll rename all masks to include register names.
->> +#define ADS1120_GAIN_1			0x00
->> +#define ADS1120_GAIN_2			0x02
->> +#define ADS1120_GAIN_4			0x04
->> +#define ADS1120_GAIN_8			0x06
->> +#define ADS1120_GAIN_16			0x08
->> +#define ADS1120_GAIN_32			0x0a
->> +#define ADS1120_GAIN_64			0x0c
->> +#define ADS1120_GAIN_128		0x0e
-> Same as called out for DR below. (applies in other places
-> as well).
-Sure.
->> +
->> +#define ADS1120_PGA_BYPASS		BIT(0)
->> +
->> +/* Config Register 1 bit definitions */
->> +#define ADS1120_DR_MASK			GENMASK(7, 5)
->> +#define ADS1120_DR_20SPS		0x00
->> +#define ADS1120_DR_45SPS		0x20
->> +#define ADS1120_DR_90SPS		0x40
->> +#define ADS1120_DR_175SPS		0x60
->> +#define ADS1120_DR_330SPS		0x80
->> +#define ADS1120_DR_600SPS		0xa0
->> +#define ADS1120_DR_1000SPS		0xc0
-> Define these as values of the field (So not shifted)
->
-> #define ADS1120_DR_20SPS	0
-> #define ADS1120_DR_45SPS	1
-> etc.
-> Then use FIELD_PREP(ADS1120_DR_MASK, ADIS1120_DR_20SPS)
-> and similar to set them.
-I'll use the FIELD_PREP and fix the values.
->
->> +
->> +#define ADS1120_MODE_MASK		GENMASK(4, 3)
->> +#define ADS1120_MODE_NORMAL		0x00
-> No other values for a 2 bit field? Define all values even
-> if you only use one for now.  Makes it easier to review the
-> values
-I'll define all the available values.
->> +
->> +#define ADS1120_CM_SINGLE		0x00
->> +#define ADS1120_CM_CONTINUOUS		BIT(2)
->> +
->> +#define ADS1120_TS_EN			BIT(1)
->> +#define ADS1120_BCS_EN			BIT(0)
->> +
->> +/* Config Register 2 bit definitions */
->> +#define ADS1120_VREF_MASK		GENMASK(7, 6)
->> +#define ADS1120_VREF_INTERNAL		0x00
->> +#define ADS1120_VREF_EXT_REFP0		0x40
->> +#define ADS1120_VREF_EXT_AIN0		0x80
->> +#define ADS1120_VREF_AVDD		0xc0
->> +
->> +#define ADS1120_REJECT_MASK		GENMASK(5, 4)
->> +#define ADS1120_REJECT_OFF		0x00
->> +#define ADS1120_REJECT_50_60		0x10
->> +#define ADS1120_REJECT_50		0x20
->> +#define ADS1120_REJECT_60		0x30
->> +
->> +#define ADS1120_PSW_EN			BIT(3)
->> +
->> +#define ADS1120_IDAC_MASK		GENMASK(2, 0)
->> +
->> +/* Config Register 3 bit definitions */
->> +#define ADS1120_IDAC1_MASK		GENMASK(7, 5)
->> +#define ADS1120_IDAC2_MASK		GENMASK(4, 2)
->> +#define ADS1120_DRDYM_EN		BIT(1)
->> +
->> +/* Default configuration values */
->> +#define ADS1120_DEFAULT_GAIN		1
->> +#define ADS1120_DEFAULT_DATARATE	175
-> These should be just handled by writing the registers in init.
-> The defines in of themselves don't help over seeing the default
-> set in code.
-Sure.I'll write it at init.
->
->> +
->> +struct ads1120_state {
->> +	struct spi_device	*spi;
->> +	struct mutex		lock;
-> Locks should always have comments to say what data they protect.
-I'll add the appropriate comments.
->
->> +	/*
->> +	 * Used to correctly align data.
->> +	 * Ensure natural alignment for potential future timestamp support.
-> You don't do that except by coincidence of IIO_DMA_MINALIGN being large
-> enough. So this comment is misleading - Drop it.
-Sure.
->
->> +	 */
->> +	u8 data[4] __aligned(IIO_DMA_MINALIGN);
-> Unless everything after this is used for DMA buffers you have defeated
-> the point of the __aligned 'trick'.  We need to ensure nothing that isn't
-> used for DMA and can potentially be modified in parallel with this
-> is not in the cache line.  Probably a case of just moving data to the
-> end of the structure.
-I'll move the data buffer to the end of the struct.
->
->> +
->> +	u8 config[4];
->> +	int current_channel;
->> +	int gain;
->> +	int datarate;
->> +	int conv_time_ms;
->> +};
->> +
->> +struct ads1120_datarate {
->> +	int rate;
->> +	int conv_time_ms;
->> +	u8 reg_value;
->> +};
->> +
->> +static const struct ads1120_datarate ads1120_datarates[] = {
->> +	{ 20,   51, ADS1120_DR_20SPS },
-> As above, use the field values not the shifted ones.
-Agreed.
->
->> +	{ 45,   24, ADS1120_DR_45SPS },
->> +	{ 90,   13, ADS1120_DR_90SPS },
->> +	{ 175,   7, ADS1120_DR_175SPS },
->> +	{ 330,   4, ADS1120_DR_330SPS },
->> +	{ 600,   3, ADS1120_DR_600SPS },
->> +	{ 1000,  2, ADS1120_DR_1000SPS },
->> +};
->> +static int ads1120_write_cmd(struct ads1120_state *st, u8 cmd)
->> +{
->> +	st->data[0] = cmd;
->> +	return spi_write(st->spi, st->data, 1);
->> +}
->> +
->> +static int ads1120_write_reg(struct ads1120_state *st, u8 reg, u8 value)
->> +{
->> +	u8 buf[2];
->> +
->> +	if (reg > ADS1120_REG_CONFIG3)
->> +		return -EINVAL;
->> +
->> +	buf[0] = ADS1120_CMD_WREG | (reg << 2);
->> +	buf[1] = value;
->> +
->> +	return spi_write(st->spi, buf, 2);
-> sizeof(buf);
->
-> However DMA safety thing applies here as well so you can't just use
-> a buffer in the stack.  Can use spi_write_then_read() though as that bounce
-> buffers.
-I prefer to use the global buffer for now.
->
->> +}
->> +
->> +static int ads1120_set_channel(struct ads1120_state *st, int channel)
->> +{
->> +	u8 mux_val;
->> +	u8 config0;
->> +
->> +	if (channel < 0 || channel > 3)
->> +		return -EINVAL;
->> +
->> +	/* Map channel to AINx/AVSS single-ended input */
->> +	mux_val = ADS1120_MUX_AIN0_AVSS + (channel << 4);
->> +
->> +	config0 = (st->config[0] & ~ADS1120_MUX_MASK) | mux_val;
->> +	st->config[0] = config0;
-> FIELD_MODIFY() after the defines are field values (not shifted version)
-> and that << 4 is gone.
-I'll use the FIELD_MODIFY with proper arguments.
->
->> +
->> +	return ads1120_write_reg(st, ADS1120_REG_CONFIG0, config0);
->> +}
->> +
->> +static int ads1120_set_gain(struct ads1120_state *st, int gain_val)
->> +{
->> +	u8 gain_bits;
->> +	u8 config0;
->> +	int i;
->> +
->> +	/* Find gain in supported values */
->> +	for (i = 0; i < ARRAY_SIZE(ads1120_gain_values); i++) {
->> +		if (ads1120_gain_values[i] == gain_val) {
->> +			gain_bits = i << 1;
-> 			gain_bits = BIT(i);
->
->> +			goto found;
-> Avoid this goto by the following simplifying code flow.
 
-I'll refactor it.
-
->
-> 			break;
->> +		}
->> +	}
-> 	if (i == ARRAY_SIZE(ads1120_gain_values)
-> 		return -EINVAL;
->
-> 	config0 = ...
->
->> +	return -EINVAL;
->> +
->> +found:
->> +	config0 = (st->config[0] & ~ADS1120_GAIN_MASK) | gain_bits;
->> +	st->config[0] = config0;
-> FIELD_MODIFY()
-Sure.
->
->> +	st->gain = gain_val;
-> Similar to below - I'd not store this explicitly. Where it is used
-> is not a fast path so add loop to look it up there.
->
-> It's much easier to be sure there is no getting out of sync with
-> only one store of information, even if it does bloat the code a it.
-MSTM. I'll correct it.
->
->> +
->> +	return ads1120_write_reg(st, ADS1120_REG_CONFIG0, config0);
->> +}
->> +
->> +static int ads1120_set_datarate(struct ads1120_state *st, int rate)
->> +{
->> +	u8 config1;
->> +	int i;
->> +
->> +	/* Find data rate in supported values */
->> +	for (i = 0; i < ARRAY_SIZE(ads1120_datarates); i++) {
->> +		if (ads1120_datarates[i].rate == rate) {
-> Flip logic to reduce indent
-> 		if (ads1120_datarates[i].rate != rate)
-> 			continue;
->
-> 		config1 =...
-I'll follow the same.
->> +			config1 = (st->config[1] & ~ADS1120_DR_MASK) |
->> +				  ads1120_datarates[i].reg_value;
-> FIELD_MODIFY() once reg_value is the field value not a shifted version of it.
-> And operate directly on st->config[1]
-Agreed.
->
->> +			st->config[1] = config1;
->> +			st->datarate = rate;
->> +			st->conv_time_ms = ads1120_datarates[i].conv_time_ms;
->> +
->> +			return ads1120_write_reg(st, ADS1120_REG_CONFIG1,
->> +						 config1);
->> +		}
->> +	}
->> +
->> +	return -EINVAL;
->> +}
->> +
->> +static int ads1120_read_raw_adc(struct ads1120_state *st, int *val)
->> +{
->> +	u8 rx_buf[4];
->> +	u8 tx_buf[4] = { ADS1120_CMD_RDATA, 0xff, 0xff, 0xff };
->> +	int ret;
->> +	struct spi_transfer xfer = {
->> +		.tx_buf = tx_buf,
->> +		.rx_buf = rx_buf,
->> +		.len = 4,
->> +	};
->> +
->> +	ret = spi_sync_transfer(st->spi, &xfer, 1);
-> SPI requires DMA safe buffers.  2 ways to make that true
-> here.
-> 1. Put a buffer at the end of iio_priv() structure and mark it
->     __aligned(IIO_DMA_MINALIGN);
-> 2. Allocate on the heap here.
-> (Can't use spi_write_then read() here if those '0xff's are required values).
-I have chose to move(option 1) the buffer to the end of structure.
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Data format: 16-bit two's complement MSB first
->> +	 * rx_buf[0] is echo of command
->> +	 * rx_buf[1] is MSB of data
->> +	 * rx_buf[2] is LSB of data
->> +	 */
->> +	*val = (s16)((rx_buf[1] << 8) | rx_buf[2]);
-> 	*val = sign_extend32(get_unaligned_be16(&rx_buf[1]), 15);
-> or something along those lines.
-I'll fix.
->
->> +
->> +	return 0;
->> +}
->> +
->> +static int ads1120_read_measurement(struct ads1120_state *st, int channel,
->> +				    int *val)
->> +{
->> +	int ret;
->> +
->> +	ret = ads1120_set_channel(st, channel);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Start single-shot conversion */
-> This all seems fairly standard so not sure what your RFC question was
-> looking for feedback on wrt to how you did single conversions?
-
-I was indeed concerned about using the polling(adding wait) method to 
-read adc values.
-
-That's the reason i have asked it in the cover letter.
-
->
->> +	ret = ads1120_write_cmd(st, ADS1120_CMD_START);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Wait for conversion to complete */
->> +	msleep(st->conv_time_ms);
->> +
->> +	/* Read the result */
->> +	ret = ads1120_read_raw_adc(st, val);
->> +	if (ret)
->> +		return ret;
->> +
->> +	st->current_channel = channel;
->> +
->> +	return 0;
->> +}
->> +
->> +static int ads1120_read_raw(struct iio_dev *indio_dev,
->> +			    struct iio_chan_spec const *chan,
->> +			    int *val, int *val2, long mask)
->> +{
->> +	struct ads1120_state *st = iio_priv(indio_dev);
->> +	int ret;
->> +
->> +	switch (mask) {
->> +	case IIO_CHAN_INFO_RAW:
->> +		mutex_lock(&st->lock);
->> +		ret = ads1120_read_measurement(st, chan->channel, val);
-> guard() as below.
-Sure.
->
->> +		mutex_unlock(&st->lock);
->> +		if (ret)
->> +			return ret;
->> +		return IIO_VAL_INT;
->> +
->> +	case IIO_CHAN_INFO_SCALE:
->> +		*val = st->gain;
->> +		return IIO_VAL_INT;
->> +
->> +	case IIO_CHAN_INFO_SAMP_FREQ:
->> +		*val = st->datarate;
->> +		return IIO_VAL_INT;
->> +
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +}
->> +
->> +static int ads1120_write_raw(struct iio_dev *indio_dev,
->> +			     struct iio_chan_spec const *chan,
->> +			     int val, int val2, long mask)
->> +{
->> +	struct ads1120_state *st = iio_priv(indio_dev);
->> +	int ret;
->> +
->> +	switch (mask) {
->> +	case IIO_CHAN_INFO_SCALE:
->> +		mutex_lock(&st->lock);
-> include cleanup.h and use
->
-> 		guard(mutex)(&st->lock;
-> 		return ads1120_set_gain(st, val);
-> here.  Similar for other cases.
-I'll include cleanup.h and use guard instead of handling mutex directly.
+On 07/11/2025 12:55, Philipp Stanner wrote:
+> drm_sched_job_arm() just panics the kernel with BUG_ON() in case of an
+> entity being NULL. While drm_sched_job_arm() crashing or not effectively
+> arming jobs is certainly a huge issue that needs to be noticed,
+> completely shooting down the kernel reduces the probability of reaching
+> and debugging a system to 0.
+> 
+> Moreover, the checkpatch script by now strongly discourages all new uses
+> of BUG_ON() for this reason.
+> 
+> Replace the BUG_ON() in drm_sched_job_arm() with a WARN_ON().
+> 
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
+>   drivers/gpu/drm/scheduler/sched_main.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> index 1d4f1b822e7b..3bf4ae0ca4bc 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -857,7 +857,7 @@ void drm_sched_job_arm(struct drm_sched_job *job)
+>   	struct drm_gpu_scheduler *sched;
+>   	struct drm_sched_entity *entity = job->entity;
 >   
->> +		ret = ads1120_set_gain(st, val);
->> +		mutex_unlock(&st->lock);
->> +		return ret;
->> +
->> +	case IIO_CHAN_INFO_SAMP_FREQ:
->> +		mutex_lock(&st->lock);
->> +		ret = ads1120_set_datarate(st, val);
->> +		mutex_unlock(&st->lock);
->> +		return ret;
->> +
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +}
->> +
->> +static int ads1120_read_avail(struct iio_dev *indio_dev,
->> +			      struct iio_chan_spec const *chan,
->> +			      const int **vals, int *type, int *length,
->> +			      long mask)
->> +{
->> +	static const int datarates[] = { 20, 45, 90, 175, 330, 600, 1000 };
-> I'd put this up alongside the register defines.  Much easier to see it aligns
-> with those that way.
-I'll fix.
->> +
->> +	switch (mask) {
->> +	case IIO_CHAN_INFO_SCALE:
->> +		*vals = ads1120_gain_values;
->> +		*type = IIO_VAL_INT;
->> +		*length = ARRAY_SIZE(ads1120_gain_values);
->> +		return IIO_AVAIL_LIST;
->> +
->> +	case IIO_CHAN_INFO_SAMP_FREQ:
->> +		*vals = datarates;
->> +		*type = IIO_VAL_INT;
->> +		*length = ARRAY_SIZE(datarates);
->> +		return IIO_AVAIL_LIST;
->> +
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +}
-> ...
->
->> +
->> +static int ads1120_init(struct ads1120_state *st)
->> +{
->> +	int ret;
->> +
->> +	/* Reset device to default state */
-> I think that is is obvious enough from the function name that I'd
-> drop this comment.
-I'll remove the comment.
->
->> +	ret = ads1120_reset(st);
->> +	if (ret) {
->> +		dev_err(&st->spi->dev, "Failed to reset device\n");
->> +		return ret;
-> return dev_err_probe()
-Noted.
->
->> +	}
->> +
->> +	/*
->> +	 * Configure Register 0:
->> +	 * - Input MUX: AIN0/AVSS (updated per channel read)
->> +	 * - Gain: 1
->> +	 * - PGA bypassed (lower power consumption)
->> +	 */
->> +	st->config[0] = ADS1120_MUX_AIN0_AVSS | ADS1120_GAIN_1 |
->> +			ADS1120_PGA_BYPASS;
->> +	ret = ads1120_write_reg(st, ADS1120_REG_CONFIG0, st->config[0]);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Configure Register 1:
->> +	 * - Data rate: 175 SPS
->> +	 * - Mode: Normal
->> +	 * - Conversion mode: Single-shot
->> +	 * - Temperature sensor: Disabled
->> +	 * - Burnout current: Disabled
-> If you want to make this more self documenting you can use
-> the definition changes above and
-> 	st->config[1] = FIELD_PREP(ADS1120_CFG1_DR_MASK, ADS1120_CFG1_DR_175_SPS) |
-> 			FIELD_PREP(ADS1120_CFG1_MODE_MASK, ADS1120_CFG1_MODE_NORMAL) |
-> 			FIELD_PREP(ADS1120_CFG1_CONTINOUS, 0) |
-> 			FIELD_PREP(ADS1120_CFG1_TEMP, 0) |
-> 			FIELD_PREP(ADS1120_CFG1_BCS, 0);
-> So provide field writes with 0 rather than setting them by their absence.
-I'll use FIELD_PREP and add the fields with 0 to show their disable status.
->
->
-> 	
->> +	 */
->> +	st->config[1] = ADS1120_DR_175SPS | ADS1120_MODE_NORMAL |
->> +			ADS1120_CM_SINGLE;
->> +	ret = ads1120_write_reg(st, ADS1120_REG_CONFIG1, st->config[1]);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Configure Register 2:
->> +	 * - Voltage reference: AVDD
->> +	 * - 50/60Hz rejection: Off
->> +	 * - Power switch: Off
->> +	 * - IDAC: Off
->> +	 */
->> +	st->config[2] = ADS1120_VREF_AVDD | ADS1120_REJECT_OFF;
-> Currently config[2] and config[3] are unused outside this function.
-> Might make sense to use local variables for now.
-I'll use local variables for config[2] and config[3].
->
->> +	ret = ads1120_write_reg(st, ADS1120_REG_CONFIG2, st->config[2]);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Configure Register 3:
->> +	 * - IDAC1: Disabled
->> +	 * - IDAC2: Disabled
->> +	 * - DRDY mode: DOUT/DRDY pin behavior
->> +	 */
->> +	st->config[3] = ADS1120_DRDYM_EN;
->> +	ret = ads1120_write_reg(st, ADS1120_REG_CONFIG3, st->config[3]);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Set default operating parameters */
->> +	st->gain = ADS1120_DEFAULT_GAIN;
->> +	st->datarate = ADS1120_DEFAULT_DATARATE;
->> +	st->conv_time_ms = 7; /* For 175 SPS */
-> I'd set these alongside where you do the writes.
-> Where possible just retrieve the value from what is cached in the config[]
-> registers rather than having two ways to get to related info.
-Sure, I'll fix.
->
->> +	st->current_channel = -1;
->> +
->> +	return 0;
->> +}
->> +
->> +static int ads1120_probe(struct spi_device *spi)
->> +{
-> There are enough uses of spi->dev that I'd add a local variable
-> 	struct device *dev = &spi->dev;
->
-I'll add local var to handle it.
->> +	struct iio_dev *indio_dev;
->> +	struct ads1120_state *st;
->> +	int ret;
->> +
->> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
->> +	if (!indio_dev)
->> +		return -ENOMEM;
->> +
->> +	st = iio_priv(indio_dev);
->> +	st->spi = spi;
->> +
->> +	mutex_init(&st->lock);
-> 	ret = devm_mutex_init(&spi->dev, st->lock);
-> 	if (ret)
-> 		return ret;
->
-> This helper is so easy to use it makes sense to use it here even though
-> the lock debugging it enables is unlikely to be particularly useful.
-Agreed.
->
->> +
->> +	indio_dev->name = "ads1120";
->> +	indio_dev->modes = INDIO_DIRECT_MODE;
->> +	indio_dev->channels = ads1120_channels;
->> +	indio_dev->num_channels = ARRAY_SIZE(ads1120_channels);
->> +	indio_dev->info = &ads1120_info;
->> +
->> +	ret = ads1120_init(st);
->> +	if (ret) {
->> +		dev_err(&spi->dev, "Failed to initialize device: %d\n", ret);
->> +		return ret;
-> For errors in code only called form probe path use
-> 		return dev_err_probe(&spi->dev, ret, "Failed to initialize device\n");
->
-> Whilst this particular path presumably doesn't defer it is still a useful
-> helper and pretty prints the return value + takes a few lines less than what
-> you currently have.
-Agreed. I'll follow the same.
->
->> +	}
->> +
->> +	return devm_iio_device_register(&spi->dev, indio_dev);
->> +}
+> -	BUG_ON(!entity);
+> +	WARN_ON(!entity);
+>   	drm_sched_entity_select_rq(entity);
 
-I’ll post v2 with these fixes shortly.
+void drm_sched_entity_select_rq(struct drm_sched_entity *entity)
+{
+	struct dma_fence *fence;
+	struct drm_gpu_scheduler *sched;
+	struct drm_sched_rq *rq;
 
-BR,
+	/* single possible engine and already selected */
+	if (!entity->sched_list)
 
-Ajith.
+Still the same end result.
 
+I believe best practice is to simply not have BUG_ON's followed by null 
+pointer dereferences since they add no value. Ie. it should just be 
+removed and not replaced.
+
+Regards,
+
+Tvrtko
+
+Regards,
+
+Tvrtko
+
+>   	sched = entity->rq->sched;
+>   
 
 
