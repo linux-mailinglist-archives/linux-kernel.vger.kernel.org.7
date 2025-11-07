@@ -1,252 +1,160 @@
-Return-Path: <linux-kernel+bounces-890038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA4DC3F1E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:20:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B6EC3F1EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:21:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4EF814E3037
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9FA8188944F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1040299927;
-	Fri,  7 Nov 2025 09:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KmIb4O7M"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35AE26E6F0;
+	Fri,  7 Nov 2025 09:21:04 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8AD21FF36
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98391EE033
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762507214; cv=none; b=drEERctDBe7aQnIpXfbSN/YX1bi9T7S6wkvBERcSrWEzP6QPar0+qscG1+Lvmz5vs4iwq+X0AOSwKg9Sh0LK3jjP/2R0R6r7iI4F+s+J3mWP+HOX3EzOW0iORWVh5kWlF+l6jEYiBtKPwkyexVIgjcDE1nrx+3GPawarTvFTg2o=
+	t=1762507264; cv=none; b=UQyCSI+dcbAEFCqHP7CjYIsaZ8OuJehJh/bRCoryw1kSJeNswdVsaBpt3C7a3cqCeo2l9J/yc848uHG0qmIuAKufRUuobBgrxK6VeQ7SW4+M9+1cMBKs81FfCouUqT+Hqf/GTMkEBpAhht1uXy/YgAirb3Jrvm4bg7nVCPigq7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762507214; c=relaxed/simple;
-	bh=3MosL8TNsl+fh5+ZP1UUipe2sd2rgEv/ZSWiLJR94IQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PwxJCNwSi2lUiqP1Svu6VRuNxsCoNp1TpreqFw7ZUmTtu0+aQGJf4MJM3B4KVdbutu1TqFP6bxF9LW7ILKVy46JCxi5e5YbN4iVU1q0Mg0VltoD4rN8d2Aw3EbdhryDs2TnT/rLNqaictmU6LHPV4kq4L36Njfud7v4ChwQZJp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KmIb4O7M; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7869dee42cdso5881697b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:20:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762507211; x=1763112011; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uoqLCX1qiItMDiutWIth5zGqvXX6r/EG8mt1uDZRz6Q=;
-        b=KmIb4O7MoOZsrxfjHw1u+NyNciHaCmEgxfJAtGhydUyyOfpQ6EG84AeP2RLijBmJMg
-         3OgxIzZ6S1L1RR0bR7tA70YYxkQUsJz/lPCCyjJ7Lp3qDPq/EORCRFMQvZxqYLaHlSsw
-         kVm11ll/PvvWWeEGpW2o0DWe2VLgUMrWtHtsXKLw+IR9OOb4hB4X1HxxCmrKbLGk+9pL
-         HbVhUAImHNYSct42DStIXlZsXYoTI8CkNki6Vq1NQzHDAChzRxJ7lxYYAD6DkXiETfLM
-         t+H3gfwAQCsSJws6cAnVIaEo9jVFLq9cVhpmSjvLT/Qf4wN01ZeI5EmLleZ7TbaPVCVW
-         KQ7A==
+	s=arc-20240116; t=1762507264; c=relaxed/simple;
+	bh=pK7waILPARxcXz7rtyXj7yiSb3tmvpYR/ILHsidPIvM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SaoIZpLFfUZfCaakWdyFOcN1kt7lVRWHxhH4j+9b6//6vZ4+NYWs+bmahjQjVXC6L8gmeWT05pAXx+q7R5U65qPqT+ymSRkR3SP1WxOndC6AOAUxoBph+tID7SJz4Gm8OHxWTtXw3c2dtuDsQ10nCYPaMXPoTA7m/bb42I2RHJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-9484c2ac07cso41258139f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:21:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762507211; x=1763112011;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=uoqLCX1qiItMDiutWIth5zGqvXX6r/EG8mt1uDZRz6Q=;
-        b=fuYtJdSnP7Fa2EETNZ8X3M75PjA6GY8IsJleXacOMihFQYFZ2ZCKHRAXG8LOXQnHiK
-         tMEU/fiNhESvCnaHSw0gaL9VRHaHwocpQPZ3BiKRmy+8RaOJq/gSzuq/1erH0j+1VGh9
-         WM48FbNot+M6xCNWGPF9ZiJll5uLfZWQSWj+XFoK9URKBI3uslfrK/QAl96u7Q6w9dQz
-         WstOLGEW/oIEh9RZMTastsTtkAi9PM0NF3dEUFGd/R50eMG1cz30HRaIS1ZO4TJS3OZf
-         fySWlFNuyDJN73aKpDVsXEIrmt9V6UChGBJ+PJ+1EUHu6PNRp+iaGoF//fZ9JCKU2Z41
-         27+w==
-X-Forwarded-Encrypted: i=1; AJvYcCV+sNutU9Z1REdVZFnCpezPugsIdydA39OmoMBFlsPFB+dY+p5gcLbtq1H9FTRrAIv/UI3CJGb/k5d17eQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpJlwtTaU7hCwsDoFYu3B6qN3q122ENunNDK3fDN+Qc0K+VxWW
-	8ewCmmazHOKaNxZjgXTEUSco9YCf/wvnQcwJTJ0WMhIHS3W5SSKGIhApbenxsJhXAeDtlwBu55c
-	r6Ec8RU9Ko76DiLrS6+Qlw7a+VE6v/SjSY44Qlc74
-X-Gm-Gg: ASbGnctngQrhuGblPlHthm/FMRqUxVJSvfXa1d0KBfukOVnFq8xHNa1KVOkvY4E37KH
-	F/Zn96idaMUj/ukty4/fTrk8GRNUbgdaoGxVtSoKGcZJ9jCn0bitSx7fTh06a+WQemoRoGMsr+A
-	IOvdfPcS3vqxIBpRw2tjffpdsKssBqI3B4nXdoTOIVYdSdAt/NbUB9MjlS5Ka02Fad0AbfgXbkw
-	7UxD5jmSO7euM36KM8GuSEqL748sG+FJgSlZVo0LbAygqqQoOf2OL/OdYfhpNeCbrSwoptE
-X-Google-Smtp-Source: AGHT+IG8VpET8emZXcMKB+hCY1i1Mi69eoCVSFJn32lzvkOPHES+Qy9iKFaFJEBLMPv7m4TU1GKbOfxalwq+URtOtYk=
-X-Received: by 2002:a05:690e:248a:b0:63e:336c:20e1 with SMTP id
- 956f58d0204a3-640c9d909ddmr502053d50.25.1762507210883; Fri, 07 Nov 2025
- 01:20:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762507262; x=1763112062;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jBzaZiTF40i9kCKfIHVKyk6BmH3UvxrY9UMO8UA8Vc4=;
+        b=Pa69/9AvZdbLNY269ZEH4OTM4UZO6MLviITfTwHEv1XZ0yLliCpaebiRT9hjJ2GO+z
+         cbU3IFF/2maPENykRMDnmiLZCZLO7HvZJoN+h3YYqDJVlEQMRmeJHRQtCNcJ6LGjF0wY
+         Np0gL0TdQaOERlFTkrbIHUMnavd4QPDUkM+3oAIhNG5+G8QWHR/i88kaPOdCARDYr49a
+         O43ElFot1Xg3SaOHtVwO5Te+T15cJdTXTh2MgV++mqTWyYhX0pI/mFhamFoGXfCB24g7
+         0/2xDbXvY2rVZgFKgn0N1fYeGqal3DkBfEfWgNna1YPrrNvj/jdNx5CwULGA0oGbOMIo
+         iqDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDIQJTz7FuPg+djY1eTQbxdm26hWMRVlZGtsA/YhlzPTnZTvdG/lCu2e4vYWxSdnrtmreA1cEsU+FECGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3XpqMu0froTNIVIN5zHy1wiGD8h+TDur2GGIBvvwZ1/fRpUpP
+	+c1x9XIsa9j3sh/GyWcgSj1ooYk3nObZJzXoi0CTY1PleXJAbkO56g8NG9nZe/vzKIMysm6K/Bz
+	0Hk9PT8cT20zTPxhsvJlDnhltShawYgT1JUrKcxawcVyi0/aQpkxQoCEDfmI=
+X-Google-Smtp-Source: AGHT+IHGLAwHFHSGCw1ZqlWFhU2e1nkPgbz4KlSind5XkWscGKQ44OLznWywo773nHUb0ZLTLi5ZuqjmhQZpsDqyJ8/b7Ftx4nDD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106155008.879042-1-nhudson@akamai.com> <CACGkMEt1xybppvu2W42qWfabbsvRdH=1iycoQBOxJ3-+frFW6Q@mail.gmail.com>
- <5DBF230C-4383-4066-A4FB-56B80B42954E@akamai.com> <CANn89iK_v3CWvf7=QakbB3dwvJEOxuVjEn14rjmONaa1rKVWKw@mail.gmail.com>
- <7D7750CA-4637-4D4A-970C-CB1260E3ADBC@akamai.com>
-In-Reply-To: <7D7750CA-4637-4D4A-970C-CB1260E3ADBC@akamai.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 7 Nov 2025 01:19:59 -0800
-X-Gm-Features: AWmQ_bnb_GwEQ90Aj9uGel-5UqTxeVbMOegx7XOiPmv--Ak3uxj5EftZZVfCkO4
-Message-ID: <CANn89iKr4LUSaXk_5p-cot6rxDngLJ8G6_F1eouF3mGRXdHhUg@mail.gmail.com>
-Subject: Re: [PATCH] tun: use skb_attempt_defer_free in tun_do_read
-To: "Hudson, Nick" <nhudson@akamai.com>
-Cc: Jason Wang <jasowang@redhat.com>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:1fc2:b0:433:377:ab8 with SMTP id
+ e9e14a558f8ab-4335f47ef1amr29709715ab.23.1762507262108; Fri, 07 Nov 2025
+ 01:21:02 -0800 (PST)
+Date: Fri, 07 Nov 2025 01:21:02 -0800
+In-Reply-To: <5715ad57-d676-ecde-1636-1634b49316d6@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690db9fe.a70a0220.22f260.002f.GAE@google.com>
+Subject: Re: [syzbot] [tipc?] KMSAN: uninit-value in tipc_rcv (2)
+From: syzbot <syzbot+9a4fbb77c9d4aacd3388@syzkaller.appspotmail.com>
+To: hariconscious@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 7, 2025 at 1:16=E2=80=AFAM Hudson, Nick <nhudson@akamai.com> wr=
-ote:
->
->
->
-> > On 7 Nov 2025, at 09:11, Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > !-------------------------------------------------------------------|
-> >  This Message Is From an External Sender
-> >  This message came from outside your organization.
-> > |-------------------------------------------------------------------!
-> >
-> > On Fri, Nov 7, 2025 at 12:41=E2=80=AFAM Hudson, Nick <nhudson@akamai.co=
-m> wrote:
-> >>
-> >>
-> >>
-> >>> On 7 Nov 2025, at 02:21, Jason Wang <jasowang@redhat.com> wrote:
-> >>>
-> >>> !-------------------------------------------------------------------|
-> >>> This Message Is From an External Sender
-> >>> This message came from outside your organization.
-> >>> |-------------------------------------------------------------------!
-> >>>
-> >>> On Thu, Nov 6, 2025 at 11:51=E2=80=AFPM Nick Hudson <nhudson@akamai.c=
-om> wrote:
-> >>>>
-> >>>> On a 640 CPU system running virtio-net VMs with the vhost-net driver=
-, and
-> >>>> multiqueue (64) tap devices testing has shown contention on the zone=
- lock
-> >>>> of the page allocator.
-> >>>>
-> >>>> A 'perf record -F99 -g sleep 5' of the CPUs where the vhost worker t=
-hreads run shows
-> >>>>
-> >>>>   # perf report -i perf.data.vhost --stdio --sort overhead  --no-chi=
-ldren | head -22
-> >>>>   ...
-> >>>>   #
-> >>>>      100.00%
-> >>>>               |
-> >>>>               |--9.47%--queued_spin_lock_slowpath
-> >>>>               |          |
-> >>>>               |           --9.37%--_raw_spin_lock_irqsave
-> >>>>               |                     |
-> >>>>               |                     |--5.00%--__rmqueue_pcplist
-> >>>>               |                     |          get_page_from_freelis=
-t
-> >>>>               |                     |          __alloc_pages_noprof
-> >>>>               |                     |          |
-> >>>>               |                     |          |--3.34%--napi_alloc_=
-skb
-> >>>>   #
-> >>>>
-> >>>> That is, for Rx packets
-> >>>> - ksoftirqd threads pinned 1:1 to CPUs do SKB allocation.
-> >>>> - vhost-net threads float across CPUs do SKB free.
-> >>>>
-> >>>> One method to avoid this contention is to free SKB allocations on th=
-e same
-> >>>> CPU as they were allocated on. This allows freed pages to be placed =
-on the
-> >>>> per-cpu page (PCP) lists so that any new allocations can be taken di=
-rectly
-> >>>> from the PCP list rather than having to request new pages from the p=
-age
-> >>>> allocator (and taking the zone lock).
-> >>>>
-> >>>> Fortunately, previous work has provided all the infrastructure to do=
- this
-> >>>> via the skb_attempt_defer_free call which this change uses instead o=
-f
-> >>>> consume_skb in tun_do_read.
-> >>>>
-> >>>> Testing done with a 6.12 based kernel and the patch ported forward.
-> >>>>
-> >>>> Server is Dual Socket AMD SP5 - 2x AMD SP5 9845 (Turin) with 2 VMs
-> >>>> Load generator: iPerf2 x 1200 clients MSS=3D400
-> >>>>
-> >>>> Before:
-> >>>> Maximum traffic rate: 55Gbps
-> >>>>
-> >>>> After:
-> >>>> Maximum traffic rate 110Gbps
-> >>>> ---
-> >>>> drivers/net/tun.c | 2 +-
-> >>>> net/core/skbuff.c | 2 ++
-> >>>> 2 files changed, 3 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> >>>> index 8192740357a0..388f3ffc6657 100644
-> >>>> --- a/drivers/net/tun.c
-> >>>> +++ b/drivers/net/tun.c
-> >>>> @@ -2185,7 +2185,7 @@ static ssize_t tun_do_read(struct tun_struct *=
-tun, struct tun_file *tfile,
-> >>>>               if (unlikely(ret < 0))
-> >>>>                       kfree_skb(skb);
-> >>>>               else
-> >>>> -                       consume_skb(skb);
-> >>>> +                       skb_attempt_defer_free(skb);
-> >>>>       }
-> >>>>
-> >>>>       return ret;
-> >>>> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> >>>> index 6be01454f262..89217c43c639 100644
-> >>>> --- a/net/core/skbuff.c
-> >>>> +++ b/net/core/skbuff.c
-> >>>> @@ -7201,6 +7201,7 @@ nodefer:  kfree_skb_napi_cache(skb);
-> >>>>       DEBUG_NET_WARN_ON_ONCE(skb_dst(skb));
-> >>>>       DEBUG_NET_WARN_ON_ONCE(skb->destructor);
-> >>>>       DEBUG_NET_WARN_ON_ONCE(skb_nfct(skb));
-> >>>> +       DEBUG_NET_WARN_ON_ONCE(skb_shared(skb));
-> >>>
-> >>> I may miss something but it looks there's no guarantee that the packe=
-t
-> >>> sent to TAP is not shared.
-> >>
-> >> Yes, I did wonder.
-> >>
-> >> How about something like
-> >>
-> >> /**
-> >> * consume_skb_attempt_defer - free an skbuff
-> >> * @skb: buffer to free
-> >> *
-> >> * Drop a ref to the buffer and attempt to defer free it if the usage c=
-ount
-> >> * has hit zero.
-> >> */
-> >> void consume_skb_attempt_defer(struct sk_buff *skb)
-> >> {
-> >> if (!skb_unref(skb))
-> >> return;
-> >>
-> >> trace_consume_skb(skb, __builtin_return_address(0));
-> >>
-> >> skb_attempt_defer_free(skb);
-> >> }
-> >> EXPORT_SYMBOL(consume_skb_attempt_defer);
-> >>
-> >> and an inline version for the !CONFIG_TRACEPOINTS case
-> >
-> > I will take care of the changes, have you seen my recent series ?
->
-> Great, thanks. I did see your series and will evaluate the improvement in=
- our test setup.
->
-> >
-> >
-> > I think you are missing a few points=E2=80=A6.
->
-> Sure, still learning.
+Hello,
 
-Sure !
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel BUG in tipc_buf_acquire
 
-Make sure to add in your dev .config : CONFIG_DEBUG_NET=3Dy
+tipc: Started in network mode
+tipc: Node identity 5e9377e8cc82, cluster identity 4711
+tipc: tipc_buf_acquire
+skbuff: skb_over_panic: text:ffffffff8fe53c01 len:76 put:76 head:0000000000000000 data:00000000000000d0 tail:0x11c end:0x0 dev:<NULL>
+------------[ cut here ]------------
+kernel BUG at net/core/skbuff.c:212!
+Oops: invalid opcode: 0000 [#1] SMP PTI
+CPU: 0 UID: 0 PID: 6600 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:skb_panic+0x2d3/0x340 net/core/skbuff.c:212
+Code: d0 44 8b 45 cc 4c 8b 8d 58 ff ff ff 41 52 ff b5 70 ff ff ff ff b5 68 ff ff ff ff b5 60 ff ff ff e8 d2 5d ee ff 48 83 c4 20 90 <0f> 0b e8 c6 8f 69 01 48 83 7d a0 00 0f 84 6a ff ff ff 48 8b 7d c0
+RSP: 0018:ffff88801f8cf0e8 EFLAGS: 00010286
+RAX: 0000000000000085 RBX: ffff88811718cda0 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: ffff88801f8cf1a0 R08: ffffea000000000f R09: 0000000000000000
+R10: ffff888237c7e028 R11: ffff88823f278d40 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f26537fe6c0(0000) GS:ffff8881aaf8d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2654574620 CR3: 0000000049ab8000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ skb_over_panic net/core/skbuff.c:217 [inline]
+ skb_put+0x1f5/0x250 net/core/skbuff.c:2583
+ tipc_buf_acquire+0x141/0x1b0 net/tipc/msg.c:77
+ tipc_disc_create+0x12f/0x870 net/tipc/discover.c:359
+ tipc_enable_bearer net/tipc/bearer.c:348 [inline]
+ __tipc_nl_bearer_enable+0x1f61/0x2a00 net/tipc/bearer.c:1047
+ __tipc_nl_compat_doit net/tipc/netlink_compat.c:371 [inline]
+ tipc_nl_compat_doit+0x67b/0xa10 net/tipc/netlink_compat.c:393
+ tipc_nl_compat_handle net/tipc/netlink_compat.c:-1 [inline]
+ tipc_nl_compat_recv+0x1007/0x1670 net/tipc/netlink_compat.c:1321
+ genl_family_rcv_msg_doit+0x338/0x3f0 net/netlink/genetlink.c:1115
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xacf/0xc10 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x54d/0x680 net/netlink/af_netlink.c:2552
+ genl_rcv+0x41/0x60 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0xf04/0x12b0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x10b3/0x1250 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x333/0x3d0 net/socket.c:742
+ ____sys_sendmsg+0x7e0/0xd80 net/socket.c:2630
+ ___sys_sendmsg+0x271/0x3b0 net/socket.c:2684
+ __sys_sendmsg net/socket.c:2716 [inline]
+ __do_sys_sendmsg net/socket.c:2721 [inline]
+ __se_sys_sendmsg net/socket.c:2719 [inline]
+ __x64_sys_sendmsg+0x211/0x3e0 net/socket.c:2719
+ x64_sys_call+0x1dfd/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:47
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f265458eb69
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f26537fe038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f26547b5fa0 RCX: 00007f265458eb69
+RDX: 0000000000000000 RSI: 00002000000002c0 RDI: 0000000000000006
+RBP: 00007f2654611df1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f26547b5fa0 R15: 00007ffe744cefd8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:skb_panic+0x2d3/0x340 net/core/skbuff.c:212
+Code: d0 44 8b 45 cc 4c 8b 8d 58 ff ff ff 41 52 ff b5 70 ff ff ff ff b5 68 ff ff ff ff b5 60 ff ff ff e8 d2 5d ee ff 48 83 c4 20 90 <0f> 0b e8 c6 8f 69 01 48 83 7d a0 00 0f 84 6a ff ff ff 48 8b 7d c0
+RSP: 0018:ffff88801f8cf0e8 EFLAGS: 00010286
+RAX: 0000000000000085 RBX: ffff88811718cda0 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: ffff88801f8cf1a0 R08: ffffea000000000f R09: 0000000000000000
+R10: ffff888237c7e028 R11: ffff88823f278d40 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f26537fe6c0(0000) GS:ffff8881aaf8d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2654574620 CR3: 0000000049ab8000 CR4: 00000000003526f0
+
+
+Tested on:
+
+commit:         4a0c9b33 Merge tag 'probes-fixes-v6.18-rc4' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a79084580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2901a6a99b67fbcc
+dashboard link: https://syzkaller.appspot.com/bug?extid=9a4fbb77c9d4aacd3388
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=107a332f980000
+
 
