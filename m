@@ -1,156 +1,164 @@
-Return-Path: <linux-kernel+bounces-890671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE0BC40A11
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:38:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99DAFC409FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22EAA4ECCC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:38:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1EE3E3481C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB00F32ED3C;
-	Fri,  7 Nov 2025 15:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BF12F83BC;
+	Fri,  7 Nov 2025 15:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ezEn+KTn"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="RGSqIHxf"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1199E32C326
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDB2328B71
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762529871; cv=none; b=RAnveP3ld3KfwgqeGWTvt2O8AL6x5lJyobzcoExS2+Ou7FEi1afjw9s2ID82u4DrMD8RJxMm+kbCHUAsOnb7HRYyzuJyWQIyjVGx9ntkQ/ukyGV0TQpzqNMiWx0wGJAy4YShzqcXqLqfy6yLjX49w6zhd8TxD/kRf1QkbmFA78Y=
+	t=1762529858; cv=none; b=V3dpgy5X5fJI6/zIGQkqU2tBeMuXOKa7W8xhKQIQ967L0poNurjBPv+hvQ/BCLIT2aCgHsGCC3RyEfnHidzfi7OvSZQCXD/jhpaRk/hdpfRmYaUHZ+Z8rBaW6q3tpoySz6nCrRiFRiBt9RLxkrMG+Pk+PQkd0u4yPNgIIDp5z1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762529871; c=relaxed/simple;
-	bh=mPQ47w/zAfUpHgqm7tWAUuazXErGJ2t+HqxJi7cN+Fg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dh+y8kKtsMx3S0HRe64riKDRdjhrN25D46lxmkVCpUxHN3u2MJcP3TffG/BzmAd4DrW8d+lzROscNfWRUPuMUhPEYk06aC4MLA36ULyNEyMDNb2LXNr8F3g9voG9IsP0rS1e+XS5iLln0pRNkBLQWxaFsmRNrblIajufxNefFQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ezEn+KTn; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ece1102998so531229f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:37:48 -0800 (PST)
+	s=arc-20240116; t=1762529858; c=relaxed/simple;
+	bh=U73VfZVPei+sXAyCbJ8QNNU/cCw1JIKNZKQiNsX1rQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r5P0Gc5pZ0KVtGRfdeCTVyyOREeVN7II9nq79d0SYSgH/hyD+HustymBqm2OvnI+0tdB2dLHARjHEZOi9G5H7vz98AdtVtstZqf5wLZHq/V/ZakR27OlYKtvCf8q0wmsQv4eFII26QKS4bBLk+NJ/f4iIs6wh31k+HghHsCv+j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=RGSqIHxf; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8b22624bcdaso113357185a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:37:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762529867; x=1763134667; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PYlVzA960q272CsXQuy54o8lCSBlxUjmuT/lBHNgOu0=;
-        b=ezEn+KTnrLfYk6W8nBbaH8irxEiQ4o7zODZvHGZA+tAz4t/t9MdtHGXrkHZTK33J3S
-         +UHv4DrpkZJMNS1wQtKyC+RVS2aA1i3WhQNrpSuo0sc0t2vNVowO/+4CT9IaEjJkZD8p
-         yvBxOYYPAuC5lh1dCjW5WP9JIC27eMJr1cUbOigH8riPjmRBM2gyX+2MCRPs+E4nKKsc
-         xqnckn9dQIo3d7lCU6PqrkUX616tEAZ642cvDUPhufCIGXFQ7i4QFKaQJt32ZsBuNmDz
-         CCC+1M7T+Wk1qqC0h8wNAgEjAUBkMCrBHTmAyxFaGuDgJnLLWhC1eDV8vP8awBJq+TU5
-         /yvw==
+        d=ziepe.ca; s=google; t=1762529855; x=1763134655; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TTtDSJx1x/PVy7VsksX52GulTROdwKgJamdYGcKgBXk=;
+        b=RGSqIHxfSgipTrrfG0dKEK69eM4fAqA+DqWcvcvXdXxAjuEZHehAHEgdRvp6fROIjY
+         HUu1i+HIb7u+c/pufXn+KMKGbUgGGAIvb+0xaFqROPRhQVAW5hGC3O58K4tdRvHhehHp
+         L4/wZYE6l2H0tTyK61SMsiDvaWeGAx/8DsOkaKxwIYFa0cyUbhfkxRWAxYNyRw4DsOD7
+         K1NiWv5pOZGd5y3k1aKxV4P8tgcVxfC6zO8C72mSe0VlvQMYRN2zQ5j5kk8tY97O/nj4
+         Tz3k/Qf4dY/J3O0j1gNxsoLvpwHDUVdVibaom9fXmKcLEsMwKf/oRsCQh3t78N1pWn+i
+         PTwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762529867; x=1763134667;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PYlVzA960q272CsXQuy54o8lCSBlxUjmuT/lBHNgOu0=;
-        b=R1qUjl76j6Qd6oaIORBDAFNxhXfeKzYkZwXKOy65QP+RxATIvZKKJ6/DN8G06rk7A0
-         ePlcGjAp7O4esNqN0lqWd7OPjK0Zli/8oN5vtxB8gq9PlzvsMC2R2N9ryw4mQbA5ALDo
-         1aDnw39Bw1RxgkGkD8NbmFp84UZTTSyLvWYjnrqIJIw7cLeh5Eh6+RpYAUOAcPyy8aAV
-         xJPpcw0eSPF/OS4ugFiGPPw11rthrkrY+mdaVW1psDk+9L2mx/fKqxgrrESz66r/c8rA
-         1UgL9VRxixyuuTWZO5tPZRoKnK1AkKvBxQQ2c5AFCloNLYLlKjJsADxo9IaG2sKp1yLl
-         j1Iw==
-X-Gm-Message-State: AOJu0Yw2Xd0VfBjSaBhfbvlpUnIJanOKpPaGHJcsngMvaC6kDR/uT5tr
-	l0NpdzWNHx3oOgRJt3Pqa1p6rJ3ww7HWPDCENp9vqY27/yMUM1ZmFreni+lS90TkO+v4C7fuFlz
-	0E6Ia
-X-Gm-Gg: ASbGncs/zgqCIJajsbURZncE7WKemXfPPPPrUl0AEh8TTx59pVHWGeHBil4arsdwb18
-	XaIiY2aaDKb8zXnxs9nVe77dH+lNEPN5AmVI923B2JF8EURuWgJt8OfBxLEwt3/nMXIB3wPYY5j
-	8rIhjHMmSYf62Jr7DiF24V/G+iyAkEilIB6LFzDWuOTzUWoOpdAD6HdEn0Q3YT5KDIZ+b/SeoOI
-	HjxfAkCaegZCcBuKcVKROf+5CpLooVRZ2XLCe4MWZVIsHflC93uYSfrXoa7+OvKpV+s+xJGo8K3
-	kWGsQN5jIy5dckL9QzvVxvYMCCoEvsoy96QmPKBsAumvK4FhH1kNj7jDZoJCcWjNvDGaAqGNjpC
-	RzNtSbRD6QuIQm3ub6ELT8cOq7SN2qwfZsD+nFLleTK6EjZTC8S3m8n6e/ICzFmD9jgm/RWN9sk
-	DnB1NpdIxMw/lzrZEaXqAhPHPQ
-X-Google-Smtp-Source: AGHT+IGYhcS+M6tSBMjY0Hp3kRBjPTX80aXF3ObfGQ195hEhJg3fYy/Wcot1z8cXfnMCDUR5aSHR2A==
-X-Received: by 2002:a05:6000:612:b0:427:167:c2ce with SMTP id ffacd0b85a97d-42ae5adcbabmr3068885f8f.42.1762529867007;
-        Fri, 07 Nov 2025 07:37:47 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac67845ccsm5763460f8f.36.2025.11.07.07.37.46
+        d=1e100.net; s=20230601; t=1762529855; x=1763134655;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TTtDSJx1x/PVy7VsksX52GulTROdwKgJamdYGcKgBXk=;
+        b=p5WwVCohxuhi1K3IWV94QAkBdqfUdqqCmHASTeAl6aEu9J1Zv9dE6Y+U8rL31oT68H
+         ueT5kEUpO0I5J95IlCcq+QiS8xJ6Sv9uzANLWD2LkeGVIc4BI6Buoz9ZYzX6SXEY1EQO
+         EqTLkxvSMqVKJJ33L5BSXiHVa7u1jMnhXmPAeiLbh2kUPrA1TLI4WnUx9vMcTU74yI++
+         oarmODI7DMPFqDNpgwU2Dbpx+WeuhqQqOfMwJThzuhmSpdol088+o++305JFvJNGwHtP
+         7zBanva+orGcPnagspJTwbfsO4eci7oqH8s1Flr0UZcJZdiRjZabA2MXCPfi9TElnYZD
+         eKfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjjjv0Iwln8f17qxyBVht1F954zyX/IYSRup97rnkGwwVallx1Wy22o2GrKpVR75STAOblL9JZVdm/Kgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCZzpiybjQ0xH9G5F0kvV6g/jU0gcX7WspPmkFzL2sKWMhvkNG
+	vsqDJmYXTCCKT7IkWeWTJOyWa+9LyeF2WWsN6jw2LngG0LnFa+jA5Yd79KWg0hsF0uo=
+X-Gm-Gg: ASbGncth6UFkGuOozpNPaAVOmirtydMEc2aqItZfE4Yty67ORbpzfomvEgMWHCClkbe
+	F8RUo8hn4ch3Le6z7UraDfLeFbop+ITFmMxc7pte/vCPjEO+S78gmTd5SeVqIh5+LV0y+I8DAdX
+	vYCX5jwmEWgvtIR6cd7SqsIBB7PNBQPqI9P+uWw7a73qYs/yYRV7dA9+ULQU8K0+gODCJB6Szif
+	lSA/ls7LUok0xUGdahqTmuZopKTQu2Go4NcoGcTJQreN97rtEui8ozSVYG2/djzpI+0kxvTraQf
+	NvE1Ym9YNRJy3F9VCllEfRnk3G05b17Tw3CQeVqkkewPZtxzQPyDPHI40JiOb6eJrA7kQeZc0PV
+	q6/76zIYcpowi1acnUdNf3Ny1cxalkBs95cj4V0kIT2QwwjyJ4jBivL4aJZaxkb2hXa2Z79kcJ8
+	XBhaoZrjpSTU5PPVqNF18nZtYpLdxUWPrTEAHOIlEM1yL5eA==
+X-Google-Smtp-Source: AGHT+IEPJ6hN+mVZfnke7tAQY25fK3ncGeAOvxPOwHZta5yIVQiKNYC3Ws0X4V3lyEKu5T3+tHR1ew==
+X-Received: by 2002:a05:620a:4088:b0:8b1:8082:aec5 with SMTP id af79cd13be357-8b2453235e5mr449121985a.58.1762529854796;
+        Fri, 07 Nov 2025 07:37:34 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2357dbc51sm427542085a.29.2025.11.07.07.37.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 07:37:46 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 2/2] usb: typec: anx7411: add WQ_PERCPU to alloc_workqueue users
-Date: Fri,  7 Nov 2025 16:37:31 +0100
-Message-ID: <20251107153737.301413-3-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251107153737.301413-1-marco.crivellari@suse.com>
-References: <20251107153737.301413-1-marco.crivellari@suse.com>
+        Fri, 07 Nov 2025 07:37:34 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vHOWr-00000007nqz-3GJt;
+	Fri, 07 Nov 2025 11:37:33 -0400
+Date: Fri, 7 Nov 2025 11:37:33 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Kriish Sharma <kriish.sharma2006@gmail.com>
+Cc: Leon Romanovsky <leon@kernel.org>,
+	Vlad Dumitrescu <vdumitrescu@nvidia.com>,
+	Parav Pandit <parav@nvidia.com>, Edward Srouji <edwards@nvidia.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
+Subject: Re: [PATCH] RDMA/core: Fix uninitialized gid in
+ ib_nl_process_good_ip_rsep()
+Message-ID: <20251107153733.GA1859178@ziepe.ca>
+References: <20251107041002.2091584-1-kriish.sharma2006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107041002.2091584-1-kriish.sharma2006@gmail.com>
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistency cannot be addressed without refactoring the API.
+On Fri, Nov 07, 2025 at 04:10:02AM +0000, Kriish Sharma wrote:
+> KMSAN reported a use of uninitialized memory in hex_byte_pack()
+> via ip6_string() when printing %pI6 from ib_nl_handle_ip_res_resp().
+> If the LS_NLA_TYPE_DGID attribute is missing, 'gid' remains
+> uninitialized before being used in pr_info(), leading to a
+> KMSAN uninit-value report.
+> 
+> Reported-by: syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=938fcd548c303fe33c1a
+> Fixes: ae43f8286730 ("IB/core: Add IP to GID netlink offload")
+> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+> ---
+>  drivers/infiniband/core/addr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
+> index 61596cda2b65..4c602fcae12f 100644
+> --- a/drivers/infiniband/core/addr.c
+> +++ b/drivers/infiniband/core/addr.c
+> @@ -99,7 +99,7 @@ static inline bool ib_nl_is_good_ip_resp(const struct nlmsghdr *nlh)
+>  static void ib_nl_process_good_ip_rsep(const struct nlmsghdr *nlh)
+>  {
+>  	const struct nlattr *head, *curr;
+> -	union ib_gid gid;
+> +	union ib_gid gid = {};
+>  	struct addr_req *req;
+>  	int len, rem;
+>  	int found = 0;
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+This doesn't seem right.
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+We have this as the only caller:
 
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
+	if (ib_nl_is_good_ip_resp(nlh))
+		ib_nl_process_good_ip_rsep(nlh);
 
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+And ib_nl_is_good_ip_resp() does:
 
-This change adds a new WQ_PERCPU flag to explicitly request
-alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+	ret = nla_parse_deprecated(tb, LS_NLA_TYPE_MAX - 1, nlmsg_data(nlh),
+				   nlmsg_len(nlh), ib_nl_addr_policy,
+				   NULL);
 
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
+static const struct nla_policy ib_nl_addr_policy[LS_NLA_TYPE_MAX] = {
+	[LS_NLA_TYPE_DGID] = {.type = NLA_BINARY,
+		.len = sizeof(struct rdma_nla_ls_gid),
+		.validation_type = NLA_VALIDATE_MIN,
+		.min = sizeof(struct rdma_nla_ls_gid)},
+};
 
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
+So I expect the nla_parse_deprecated() to fail if this:
 
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/usb/typec/anx7411.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+	nla_for_each_attr(curr, head, len, rem) {
+		if (curr->nla_type == LS_NLA_TYPE_DGID)
+			memcpy(&gid, nla_data(curr), nla_len(curr));
+	}
 
-diff --git a/drivers/usb/typec/anx7411.c b/drivers/usb/typec/anx7411.c
-index 0ae0a5ee3fae..2e8ae1d2faf9 100644
---- a/drivers/usb/typec/anx7411.c
-+++ b/drivers/usb/typec/anx7411.c
-@@ -1516,8 +1516,7 @@ static int anx7411_i2c_probe(struct i2c_client *client)
- 
- 	INIT_WORK(&plat->work, anx7411_work_func);
- 	plat->workqueue = alloc_workqueue("anx7411_work",
--					  WQ_FREEZABLE |
--					  WQ_MEM_RECLAIM,
-+					  WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
- 					  1);
- 	if (!plat->workqueue) {
- 		dev_err(dev, "fail to create work queue\n");
--- 
-2.51.1
+Doesn't find a DGID.
 
+So how can gid be uninitialized?
+
+The fix to whatever this is should be in ib_nl_is_good_ip_resp().
+
+Jason
 
