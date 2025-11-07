@@ -1,178 +1,152 @@
-Return-Path: <linux-kernel+bounces-890462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D397DC401BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:27:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC04C401C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:28:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE9E3A9D65
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597E618891D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A412DE70B;
-	Fri,  7 Nov 2025 13:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396922E22BD;
+	Fri,  7 Nov 2025 13:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfEr2VVI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Fjst45OB"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACB92DC76A;
-	Fri,  7 Nov 2025 13:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7222DF140
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762522034; cv=none; b=O5kYjUVW5+VUeGtKkxuS0mHML7eh+QXSVJl7/w2x2bc7tYufSpKuSPUizvO+7DMWFLL3A/+zJ9u4xZeydwTt0hHzZiUckfAi7E6IyLX2ODgJ40zwSBGk4BJsY5Ld20GgmVD5ueG7E+VtYkMt4A/niKWpw0Uh7+MvjwNUwd+DBkk=
+	t=1762522046; cv=none; b=nO6GO4f0OtXiyGNnKew8PGJFFVN8Hp1LGtoiH4yRaWaJA/6LBHFILnM/bO0fXH+p+USExE2YWbKXSpc1RV7pvSxVM5sNjqeQiyc0qA8mNv2jm8M7UkJcYA5PcHM+Q7uSlFYym93KKkhVQQxdf0d+0DcBr992zofPEvyVKkLf8L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762522034; c=relaxed/simple;
-	bh=H2fyQgGEPrr0B9L7SM/CUSxgfDy3yr/Zqy7wNEwuzqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KYBkwgtOrtf2pFJ6Ukg/FZnlUxMM4LvDChhAbWnaZdxWBYo4UEkLH8LiVeNk2O4SWUHiq2BB/O5i9jlABBJxzwfJohpLeO5Yfvd7AyKsUANpAl2iEVv0atx/MWUws2Mc18y8clQsqe8ogtRK8aHyYaQHvQX+De+DW30qBTcW8WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfEr2VVI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30246C16AAE;
-	Fri,  7 Nov 2025 13:27:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762522034;
-	bh=H2fyQgGEPrr0B9L7SM/CUSxgfDy3yr/Zqy7wNEwuzqc=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=QfEr2VVIldH8VSEcCHUZXT+sXm5bJGz3KK6JCEYEz3j8yr6v17WywCGNRoVDw5jgC
-	 guGj3uWvo2uIdpFME+Q/xOLIQVnsPo2eUE2CFsRWD2LXwKFPSeOjdf9djQb5JyskZw
-	 tTYFG7w4lto3MyYMyHbjgl+QPagiMh3Y3tDzI/9yV0uMKwQBqiP93d/hd/nK72hMbe
-	 JqfS9x9tzK0DaUfgFF2GU2eP24ZEfShS05pjq3CbF7m/LESAj0WGH47C1wHiSWODhd
-	 s7V8FgQFsQED1lcAEjAhFKVvwxazzYPq5f3SBOYIU3x/CL825n+K6HtEWxANl5/xRi
-	 5NR9+eXNlOwMg==
-Message-ID: <eb86cb58-6520-4a24-9e04-f10e2466fac6@kernel.org>
-Date: Fri, 7 Nov 2025 14:27:07 +0100
+	s=arc-20240116; t=1762522046; c=relaxed/simple;
+	bh=xOgIgUMI+BwDiOq38R4O8HSLT6TrQvpp/zCzKFcAC5M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GDMV9e/tDzS/5JIM4qpo1H7gmwK4uHDLduJRLZQRX8h5BVqQPJpQ6xtahRQw4B7cFTn5hT+DQ2WYnxSKZPzKl698D3mcrnNGN8RJY07cHLpiii9mUo45etyV2mXDWTq4EuGI4lr3TKVArDO83bjc9+Pda0nqxyAxd/rJWJlw0gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Fjst45OB; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-426f1574a14so460290f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:27:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762522040; x=1763126840; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gpDBdHac69yHdTxfS3btmvWgT1JTkvIR7tXnz5+sQMg=;
+        b=Fjst45OBz35+4Bm29+PhAJ7YQZmD2SYiwbQ/UXlJDFH30ESQ2Ao83E3ervY7mhqzLD
+         CIiKqEQ1iZq6yMKqUwtmUEfknXQxMs/3ZQGzLgqsVBAGKfUC4CtCc0U2GQCg+ntn8hLP
+         8GNQe0SdW00QkMOhlAKEWPymraLckuZarBm3lBlRVBx5ttT75/hHe8Qwv5/vpehTD2lJ
+         7jTrIR78ILxK8zULOBRDB4capkWnpXH7kzrNTwfrDG0+yR+Jv95NOtdOh2Rai8SnrSyC
+         Cb8AIVQ3q+vuegvMPTl09EBIaH8eeqb+Xqo2OQTKtaCNmcUJzU0d59lNhXaTQtb8eAzH
+         2ffQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762522040; x=1763126840;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gpDBdHac69yHdTxfS3btmvWgT1JTkvIR7tXnz5+sQMg=;
+        b=Wuomr10HmPhk5KDhZPK87ZFj3EGM7sEokhkd5eLJitEXe0Cqre3hA0IL+S2mNb9Oqa
+         1Dn6/WuRG59SwVIImyD1yqxGtbzmB+TcIkpMGQ+61xvJiP/riaEoOHvMZdcwQrio9XrY
+         N/nyWVB0TtY4zouvGHPC/JnTwA5clxN18/rwh6iph3zkngIfqQtv8pF+1ApZGJSiKqhJ
+         Vy3wCyVabm0b9nmrPgjE0epU6b47S2calt31V9sMMIO4xdm1zTDzFTziLgqsDuLlCVSN
+         jNUE1hx8smcVAvDd7/v2Vo1DrhgbPvc7tW/kNnRP3ywalbCC4Mz8/SQqp3/gEwIkV+qh
+         +Rvw==
+X-Gm-Message-State: AOJu0YwQ10Qdm+PpSdXU38MP4nu/ddeuRb+MwrzXRIa8f2VV8ElXSjmA
+	QpqfBhPyvgqBvyKXlRoWmR+S3beAPh5mrKeyglriBEOtvJmwvwpYs4MscDQL7mPTs3OeCkwvC3i
+	5zj3m
+X-Gm-Gg: ASbGncvLh3armgP2iXD/lhUDTlIlsLXi1zBeOXHBAXPbQBrkcJ8WA9CR3bcDNrpWGbO
+	UV5/Yc6P7hwq81tQykZXmgSq8rcBDz46wB5gJpL3fLMBAdzL6XWjFtijy0GUR9tedsPF0wwtlGQ
+	TfwpoJ2D5BHDZ2A5brBvv606vnR0tob/Jhz9HfdsOTLLyrN7M3aCg2vu2FOgZAUshZgkkqI1I7v
+	nVuw1FAi5xvl/aQsIKPSTgil0TbLYmAanUorr/vr5KYkpxB4v5PoiMhufV+TYbUd0dOy3QnBNWD
+	r4s+SUoOWnRGV63FYg7M6PVqzXIDUk9FuHKBwe4DBxxKr+0hLMWutRPalpF463X7gp9XsxBRaDy
+	W0RfdqmVkEPzfHRoURYmKQrtcGlKH/iwE8iExzqqbIidaXdOq3pZj4rB56v2vFFLoEEFNJ//9hM
+	MN1Cpq7Tu+QTAIcXDzzHIzFmIA
+X-Google-Smtp-Source: AGHT+IGXoQU2aKwjfhm9zFbD1wEw86QWRNpD8ObJ2BhZ4tbaRurd6UaGdy791fVPME62ucuMSvHuLQ==
+X-Received: by 2002:a5d:5d06:0:b0:427:921:8985 with SMTP id ffacd0b85a97d-42ae5ac206bmr2453743f8f.40.1762522040253;
+        Fri, 07 Nov 2025 05:27:20 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b29e4b9bdsm907220f8f.32.2025.11.07.05.27.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 05:27:18 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-hyperv@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	"K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>
+Subject: [PATCH] mshv_eventfd: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 14:27:12 +0100
+Message-ID: <20251107132712.182499-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: drm/bridge: Update reg-name list for
- cdns,mhdp8546 compatible
-To: Harikrishna Shenoy <h-shenoy@ti.com>, robh@kernel.org,
- Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
- andrzej.hajda@intel.com, conor+dt@kernel.org, devarsht@ti.com,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- jernej.skrabec@gmail.com, jonas@kwiboo.se, krzk+dt@kernel.org,
- linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, neil.armstrong@linaro.org, rfoss@kernel.org,
- s-jain1@ti.com, simona@ffwll.ch, sjakhade@cadence.com, tzimmermann@suse.de,
- u-kumar1@ti.com, yamonkar@cadence.com, pthombar@cadence.com
-References: <20251107131535.1841393-1-h-shenoy@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251107131535.1841393-1-h-shenoy@ti.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07/11/2025 14:15, Harikrishna Shenoy wrote:
-> Remove j721e-intg register name from reg-name list for cdns,mhdp8546
-> compatible. The j721e-intg registers are specific to TI SoCs, so they
-> are not required for compatibles other than ti,j721e-mhdp8546.
-> 
-> Move the register name constraints to the appropriate compatibility
-> sections to ensure the correct register names are used with each
-> compatible value.
-> 
-> Fixes: 7169d082e7e6 ("dt-bindings: drm/bridge: MHDP8546 bridge binding changes for HDCP")
-> Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
-> ---
-> 
-> Links to some discussions pointing to need for a fixes patch: 
-> https://lore.kernel.org/all/20250903220312.GA2903503-robh@kernel.org/
-> https://lore.kernel.org/all/d2367789-6b54-4fc2-bb7c-609c0fe084d3@ti.com/
-> 
->  .../bindings/display/bridge/cdns,mhdp8546.yaml      | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
-> index c2b369456e4e2..2fdb4f7108ed5 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
-> @@ -30,10 +30,6 @@ properties:
->  
->    reg-names:
->      minItems: 1
-> -    items:
-> -      - const: mhdptx
-> -      - const: j721e-intg
-> -      - const: mhdptx-sapb
->  
->    clocks:
->      maxItems: 1
-> @@ -103,7 +99,10 @@ allOf:
->            maxItems: 3
->          reg-names:
->            minItems: 2
-> -          maxItems: 3
-> +          items:
-> +            - const: mhdptx
-> +            - const: j721e-intg
-> +            - const: mhdptx-sapb
->      else:
->        properties:
->          reg:
-> @@ -111,7 +110,9 @@ allOf:
->            maxItems: 2
->          reg-names:
->            minItems: 1
-> -          maxItems: 2
-> +          items:
-> +            - const: mhdptx
-> +            - const: mhdptx-sapb
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
 
-This does not match regs now. Look which entry is the second - it is
-always DSS_EDP0_INTG_CFG_VP.
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
-Optional item should be the last, not the middle. That's why DT
-maintainers ask (and it is even documented) to post complete bindings.
-Complete means all registers, entire address space.
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
 
-Best regards,
-Krzysztof
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
+
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+This change adds a new WQ_PERCPU flag to explicitly request
+alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
+
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/hv/mshv_eventfd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hv/mshv_eventfd.c b/drivers/hv/mshv_eventfd.c
+index 806674722868..2a80af1d610a 100644
+--- a/drivers/hv/mshv_eventfd.c
++++ b/drivers/hv/mshv_eventfd.c
+@@ -592,7 +592,7 @@ static void mshv_irqfd_release(struct mshv_partition *pt)
+ 
+ int mshv_irqfd_wq_init(void)
+ {
+-	irqfd_cleanup_wq = alloc_workqueue("mshv-irqfd-cleanup", 0, 0);
++	irqfd_cleanup_wq = alloc_workqueue("mshv-irqfd-cleanup", WQ_PERCPU, 0);
+ 	if (!irqfd_cleanup_wq)
+ 		return -ENOMEM;
+ 
+-- 
+2.51.1
+
 
