@@ -1,165 +1,198 @@
-Return-Path: <linux-kernel+bounces-891023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03FD7C41A26
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:51:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68140C41A65
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:54:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13D463BBC7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:51:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1FD93BFA8D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DDD30EF9A;
-	Fri,  7 Nov 2025 20:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023D630EF7D;
+	Fri,  7 Nov 2025 20:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PwpJW9oO"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yprmy1Z9"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613002C3248;
-	Fri,  7 Nov 2025 20:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A402230EF64
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762548703; cv=none; b=CHsSSzdJTqpqh6Za8EkrXaR+fV1mGTVPskNK2scT5QMK/4u3cC54xqQkT1/6y++OLmIeI7iHApJ5YsW7/m6g2fCvS2+hXNlWXGYljVcpGDf91nkxvap5YP/yp7JFlE0DTMUPcxYwuepNDD7kRwP9FQInkgvGItORf0IaNwLDjCo=
+	t=1762548826; cv=none; b=aVuwqiz9eQGkmf5xMqHcaQaITIzbkkHxQSdILND9034wCxZUo1hPLHsjy95GNsPHKlaMT0JU1EN5OJUyApH3PFkDtKDdCT/WqQM7Fj676DwX85pMvr6D+HDd6MmAp7SMSv2CEfGMI+WrcGn/LcVVIrlhH9JaEtOkqxZ6YrvsD6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762548703; c=relaxed/simple;
-	bh=8UovAiOWTROIXZYM+ZVGV+MUbMteVqZyd+P1kJY5714=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XFwgeszM+XqGp4c5z/ztcW4+fQSSI6unDR4urtDtPplCT49Zz0s+4h6TiuvxsCfaD1GQZ1QZSwEoCJuWTSjQD+1Otowdw6a4Xrrfzaxpg3thxd3lyj9ipFPC2x4+fU7JhQTZOYixVk/AS/meZH5oLCBJVK5zIgCSY7+DJv6m03M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PwpJW9oO; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762548699;
-	bh=8UovAiOWTROIXZYM+ZVGV+MUbMteVqZyd+P1kJY5714=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PwpJW9oOEFMqTwZPZKr4AcwLhrUGSHyEZdZloMFfJkZNeWHxC8gLE8fZCEmqhK62c
-	 A2cl0V710LDQdQM54axRs5ZpzuEz1uk0ruczX5ImU0ybiDx9oo5En6YUz+qu0KKO1A
-	 6gxkjEiCF0oPIFCMoCNOfTqOTNlfcbQY9kzTPqnS29cuOVJ70XYrDrEFhPbln5A9YU
-	 BBjLgTbdxX96s6FDW0aaaxXLjfBIGM+lcoVijXj9E6j/BtdEJP9F3sU0etd/00P7O7
-	 efPwYzWpT37DH9qhvqetbqsF5Z9HgOFWshuslCWI8BcD/4ivTKMytg1tFRM64hSWIy
-	 AySk/Fmm926Vg==
-Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2C3BC17E12D5;
-	Fri,  7 Nov 2025 21:51:38 +0100 (CET)
-Message-ID: <13c43edb-9592-4779-a39a-7856bb0f964d@collabora.com>
-Date: Fri, 7 Nov 2025 21:51:37 +0100
+	s=arc-20240116; t=1762548826; c=relaxed/simple;
+	bh=EpVgqo2v/0JBXNziS+eCmvU2qI9GWnrR9mDBLBMOyJ8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jvyXhHGNpJZLHCImNFFM3hFPxD70qM+UyFuixKR60AcXpfsOT41UUjgU/4JV1bJf/GrWACRJ51fLNq3Dp4xf/b0Znlybe6wZYP66OJS6HnS2r2f8i4xVecrCF6XzEc1nC7sZcRHfaii+9eET6iGlJkg/E9c+z+T4YkStbibPNGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yprmy1Z9; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-656ce705ddaso632809eaf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:53:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762548823; x=1763153623; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0gOuYDt+s1jtJNdWwVbx2gWl2Jr6Jhg5Tz5DiyqP1X0=;
+        b=yprmy1Z966rIFlM+qGbh1I1KSht4ihc8O2DXeNR4cSzL91SRsC2o7mtlXOoOaaW/Eh
+         DniRONBYs/zajJYb+rmqmQxAcdyhS2W709r+Yj88OFyy/SsGuZnaJBThs/U6ec6HNTAM
+         3FUj8S4Mye/+lj1KkwNK0EaT+UIATa0m+cKaHKTtmGVD9ElDz46fsyzW0VSSwpdrhlIt
+         Hw/aDnU61PX4Dbt1NBtC5Ug5DU1kvRzosDKRhtce5FTbLgr+EvyQXLRdXL22zq+rdHlB
+         eOqUOVlBNzw+oqc++PQt/WqwPKyxgBi0Bq+TAIyx8QVPMy/EfTlhadmdv4q3ffTtBVcb
+         H+3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762548823; x=1763153623;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0gOuYDt+s1jtJNdWwVbx2gWl2Jr6Jhg5Tz5DiyqP1X0=;
+        b=i43G1yD4GUqzxPLTDtJTlbvxSeESePPcDb0lwiAkva8uyDr1o3ida4wlLarhyZsuc1
+         /zg3eHFrJghGxfejzHwdDCAPenOrk270irI2N8kD+aOtMngs3EM0UWslMtPeN3QsRgNH
+         lBTZznrNHC7N1Bx7b33lOocqnQb64JzVq2l8VgGiayongpBTHbs9M44tOcL4MQIujYj9
+         9Vh6/OFTwPmzkGwi+gGftOHSeBn4FvjaN//ipESG6VfRRnqcc0exGDOsa8Mu05xyDdgz
+         veSJJDtMGaOUa8bWgV4tivZoGhkQZN7+6tfCmMHpmY2WQ7Xz4GH1QMOdEJZ6QP8czSPa
+         WpJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA/IX8yPKvsmhBRJdGmTXAnLiQhRXnd6HwPiMhXtKTskDV2cx1L75mymgoa6OXGURum2xQgLF9lpSI9kE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4ICjPyuOMoIH7B4RRmCnpGShKlmpW8rNYyzXfgHceOJ48k5DD
+	HoSjDgtREieFHo9H/apgPO4hsuWMHx8SEmni1D8nAaV9UXUax7aRCH1B2X0GRZE9wOY=
+X-Gm-Gg: ASbGncsVp3y6/zpbywquRbKpCcj15/GCRdb2smy0k1bEg5zMxKKkvKpSN4v/Nml54ma
+	VtcQFDTiGsVb2AzMyva/QJHtJLEIMdQaAMEbuwLQDtaA1pjqxpvLgQIZHxSaW1QWgj4kDz/dmjt
+	v3laEEnloVSU2Fd4XdtGeRzGzzRK6hScJPmHlWN6ZzdZMzuSECgzg20N9WCDmPecpK858cNKkuc
+	yhgKsmuFdWgvFjkHZeNF4gn/zzHb9cHJO/9FkSYLGfdWup0LZJbvSxm7JmNFq0eZwLLBUrf4RiC
+	36402/0esDGcibkR19O35iac5jjc5bokK5UkdKtkT10u+pjwOw0YByvX7cZViwuj6Uve7Vbayy5
+	Zz8k4mmwW6ysWmVWx4zol5a2aMWmqZ71eyJxjvbvGMj4fKrL5xlX1742SmSSutUlMgv70TT/vHo
+	0PO5PL
+X-Google-Smtp-Source: AGHT+IFXl+nfu0q8+xI0hJxiOW52RV8VlfHFe9go24ubMqqAb1xpi3RHHUr4UHdBzwIkl2Fv+CCopQ==
+X-Received: by 2002:a05:6808:2210:b0:44f:8f02:c75a with SMTP id 5614622812f47-4502a321198mr396341b6e.1.1762548822596;
+        Fri, 07 Nov 2025 12:53:42 -0800 (PST)
+Received: from [127.0.1.1] ([2600:8803:e7e4:500:7bb8:950b:327d:4ba4])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-656c57eae5esm2915601eaf.16.2025.11.07.12.53.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 12:53:40 -0800 (PST)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH v2 0/6] spi: add multi-bus support
+Date: Fri, 07 Nov 2025 14:52:46 -0600
+Message-Id: <20251107-spi-add-multi-bus-support-v2-0-8a92693314d9@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 00/18] media: rockchip: add a driver for the rockchip
- camera interface
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mehdi Djait <mehdi.djait@linux.intel.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Gerald Loacker <gerald.loacker@wolfvision.net>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Markus Elfring <Markus.Elfring@web.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Kever Yang <kever.yang@rock-chips.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Collabora Kernel Team <kernel@collabora.com>,
- Paul Kocialkowski <paulk@sys-base.io>,
- Alexander Shiyan <eagle.alexander923@gmail.com>,
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- Mehdi Djait <mehdi.djait@bootlin.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bryan O'Donoghue <bod@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-References: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
- <aQ4tJg8r_j4NyKhv@kekkonen.localdomain>
- <074cd08e-0412-49f9-8dd9-b1f96eb11717@collabora.com>
- <20251107185441.GG5558@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <20251107185441.GG5558@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB5cDmkC/32OSw6DMAxEr4K8rquEEtqy6j0qFoSYYolfk4BAi
+ Ls3wL7LsfXmzQqOLJODLFrB0sSO+y6E+BJBWRfdh5BNyBCLWImHVOgGxsIYbMfGM+rRoRuHobc
+ epb4pI1SpkiqFwA+WKp6P7nd+ZkvfMSj8eQRdOMKyb1v2WdTR7HHXSCnusAM1O9/b5dg2yYM4/
+ kImf2ZMEkXoeT5KGZu0UtVLF0vD2tI1qCDftu0H02BJT/YAAAA=
+X-Change-ID: 20250815-spi-add-multi-bus-support-1b35d05c54f6
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marcelo Schmitt <marcelo.schmitt@analog.com>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>
+Cc: Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-iio@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3831; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=EpVgqo2v/0JBXNziS+eCmvU2qI9GWnrR9mDBLBMOyJ8=;
+ b=kA0DAAoBwswgAf8Bj8AByyZiAGkOXCWjOokw1YvHZeERiY9tQ7lCxYJJapSJOmws90Rt0RNVW
+ okBMwQAAQoAHRYhBOwY2Z5iDoPWnNhomMLMIAH/AY/ABQJpDlwlAAoJEMLMIAH/AY/ATXMIAJed
+ rE8vL5+a+BrfFb//ZywMaqJHgbc6yfLEwR1QYIVbcFdkuVUwckiftr83YA9YPVs3adFkT6+jYju
+ dVzMj6AlOFSdRSJMSSKY+ZzXd4wvMSEgvjx+eFeqCte1u4SmVjIrL+jqOEFfx/8gJetez2VZFsd
+ oqdHK8lp4Yskptr+uv5hkSileILVb83Uv/vpPBBt/wbZlUKWSLM5CMhkDbWQfoBhygNwuyHXduo
+ VNl6l2l2UotMuJO9yLvCNXVzb0eB6X5bKLNzsVbPsv2zES3zBf+5vP9fUwsFpiDU0Gd1FxQSE+5
+ TqHw4FlobsZW1kY1LECU4OrvsFKgHpZ19w6fK2k=
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Hi Laurent,
+This series is adding support for SPI controllers and peripherals that
+have multiple SPI data buses (data buses being independent sets of
+SDI/SDO lines, each with their own serializer/deserializer).
 
-On 11/7/25 19:54, Laurent Pinchart wrote:
-> On Fri, Nov 07, 2025 at 07:41:59PM +0100, Michael Riesch wrote:
->> On 11/7/25 18:32, Sakari Ailus wrote:
->>> On Fri, Oct 24, 2025 at 02:51:29PM +0200, Michael Riesch via B4 Relay wrote:
->>>> Habidere,
->>>>
->>>> This series introduces support for the Rockchip Camera Interface (CIF),
->>>> which is featured in many Rockchip SoCs in different variations.
->>>> For example, the PX30 Video Input Processor (VIP) is able to receive
->>>> video data via the Digital Video Port (DVP, a parallel data interface)
->>>> and transfer it into system memory using a double-buffering mechanism
->>>> called ping-pong mode.
->>>> The RK3568 Video Capture (VICAP) unit, on the other hand, features a
->>>> DVP and a MIPI CSI-2 receiver that can receive video data independently
->>>> (both using the ping-pong scheme).
->>>> The different variants may have additional features, such as scaling
->>>> and/or cropping.
->>>> Finally, the RK3588 VICAP unit constitutes an essential piece of the
->>>> camera interface with one DVP, six MIPI CSI-2 receivers, scale/crop
->>>> units, and a data path multiplexer (to scaler units, to ISP, ...).
->>>
->>> I understand both RK3568 and RK3588 include an ISP. Do you have insight on
->>> how would this work, should the support for the ISP be added later on?
->>
->> Short answer: Yes and yes.
->>
->> Long answer:
->>
->> The patch series at hand adds support for the PX30 VIP and the RK3568
->> VICAP. I cannot really say something about the PX30, but on the RK3568
->> VICAP and ISP are orthogonal (the ISP features its own MIPI CSI-2
->> receiver, different from that introduced in this series). Thus, ISP
->> support can be introduced anytime (whenever someone is motivated ;-)).
-> 
-> Won't they both be connected to the same sensor though, and probably the
-> same D-PHY in the SoC ? They don't seem entirely separate to me.
+This series covers this specific use case:
 
-The MIPI CSI-2 DPHY is shared, indeed. Thus, they *maybe technically
-could be* connected to the same sensor, but I don't know whether that
-works and fail to see why anyone would to such a thing (if it is about
-raw capture, the MIPI CSI-2 receiver in the ISP can do that on its own).
++--------------+    +---------+
+| SPI          |    | SPI     |
+| Controller   |    | ADC     |
+|              |    |         |
+|          CS0 |--->| CS      |
+|         SCLK |--->| SCLK    |
+|          SDO |--->| SDI     |
+|         SDI0 |<---| SDOA    |
+|         SDI1 |<---| SDOB    |
+|         SDI2 |<---| SDOC    |
+|         SDI3 |<---| SDOD    |
++--------------+     +--------+
 
-The DPHY can be operated in split mode, with two lanes for VICAP and two
-lanes for ISP. This is not implemented yet, but can be done at a later
-stage on PHY level (not media related). In this case, ISP and VICAP can
-receive data from different subdevices via CSI-2.
+The ADC is a simultaneous sampling ADC that can convert 4 samples at the
+same time. It has 4 data output lines (SDOA-D) that each contain the
+data of one of the 4 channels. So it requires a SPI controller with 4
+separate deserializers in order to receive all of the information at the
+same time.
 
-BTW the ISP is able to process the data captured by VICAP, but
-apparently this includes a RAM round trip (VICAP captures to memory, ISP
-operates in mem2mem mode).
+This should also work for the use case in [1] as well. (Some of the
+patches in this series were already submitted there). In that case the
+SPI controller is used kind of like it is two separate SPI controllers,
+each with its own chip select, clock, and data lines.
 
-> A block diagram that shows connections between the CSI-2 pins, D-PHY,
-> CSI-2 receivers, VICAP and ISP could help.
-> 
->> Once this patch series is merged, I'll push out changes that introduce
->> support for the RK3588 VICAP. We can discuss the integration of any
->> RK3588 ISP in this scope then -- and there may be some things to discuss
->> as there the VICAP and the ISP(s) are directly connected by means of a
->> MUX unit in the VICAP.
->>
->> Alright?
-> 
+[1]: https://lore.kernel.org/linux-spi/20250616220054.3968946-1-sean.anderson@linux.dev/
+
+The DT bindings are a fairly straight-forward mapping of which pins on
+the peripheral are connected to which pins on the controller. The SPI
+core code parses this and makes the information available to drivers.
+When a peripheral driver sees that multiple data buses are wired up, it
+can chose to use them when sending messages.
+
+The SPI message API is a bit higher-level than just specifying the
+number of data lines for a SPI transfer though. I did some research on
+other SPI controllers that have this feature. They tend to be the kind
+meant for connecting to two flash memory chips at the same time but can
+be used more generically as well. They generally have the option to
+either use one bus at a time (Sean's use case), or can mirror the same
+data on multiple buses (no users of this yet) or can perform striping
+of a single data FIFO/DMA stream to/from the two buses (our use case).
+
+For now, the API assumes that if you want to do mirror/striping, then
+you want to use all available data buses. Otherwise, it just uses the
+first data bus for "normal" SPI transfers.
+
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+Changes in v2:
+- Renamed devicetree property spi-buses to spi-data-buses. (Driver code
+  was already using spi->data_buses, so it matches).
+- Fixed a small bug in the AXI ADC driver changes.
+- Moved one line of code in the ADC driver changes.
+- Link to v1: https://lore.kernel.org/r/20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com
+
+---
+David Lechner (6):
+      spi: dt-bindings: Add spi-data-buses property
+      spi: Support multi-bus controllers
+      spi: add multi_bus_mode field to struct spi_transfer
+      spi: axi-spi-engine: support SPI_MULTI_BUS_MODE_STRIPE
+      dt-bindings: iio: adc: adi,ad7380: add spi-buses property
+      iio: adc: ad7380: Add support for multiple SPI buses
+
+ .../devicetree/bindings/iio/adc/adi,ad7380.yaml    |  22 ++++
+ .../bindings/spi/spi-peripheral-props.yaml         |  12 ++
+ drivers/iio/adc/ad7380.c                           |  42 ++++---
+ drivers/spi/spi-axi-spi-engine.c                   | 128 ++++++++++++++++++++-
+ drivers/spi/spi.c                                  |  28 ++++-
+ include/linux/spi/spi.h                            |  23 ++++
+ 6 files changed, 237 insertions(+), 18 deletions(-)
+---
+base-commit: 1a26618e7466b8d825989201086c235e76aa999a
+change-id: 20250815-spi-add-multi-bus-support-1b35d05c54f6
 
 Best regards,
-Michael
-
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
