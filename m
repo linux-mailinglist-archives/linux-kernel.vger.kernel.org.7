@@ -1,132 +1,85 @@
-Return-Path: <linux-kernel+bounces-889644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DD6C3E221
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:30:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095CAC3E233
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:33:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18D0C4E88C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:30:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D4254E3CCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437082F4A10;
-	Fri,  7 Nov 2025 01:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8204C2F6936;
+	Fri,  7 Nov 2025 01:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="YzkxDR/V"
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZDtFRxT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59492E9ECE;
-	Fri,  7 Nov 2025 01:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE7B262FFC;
+	Fri,  7 Nov 2025 01:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762479017; cv=none; b=VWKb/mNb5B6AJi1ZpdEXl0SfU5y3ioXTsf1HQgc8TDrA8IKbyWYLx81BkyRs63XMYuTrFr3NEpKnujVm5LmKQk0ApvegBZPtIZOmGeARajA2JhsXJVxPa1l9o+3GL9ebdXkig2+Hvb0y3vX5HYgtO/tlpZlZeLoEENobQb+I9j8=
+	t=1762479205; cv=none; b=nStleW1gBe8G2B6xWPAy59Od0OpBk++EcIHVKznRDsK2EkGOUo+kXRVQCmbrBxdUAPM/YaTeeH6wUYZKGrpBDrFLSYuD7CAKmNaaV4zIC/yavtLF7RtwJ6mSDHOXPV+BnZeFxXAqohTVjNIkyDaVvXc8ponHoktDDn8LDMtvzik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762479017; c=relaxed/simple;
-	bh=aogQJJfyjDXHY3kQzCAsj7IX0vVUjUq6HzwCBdUdhaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eg2WPsA1yCLqGe4USIxEdDGEiq0Wo2AxO80gpPucw2PE3mAAsBnldSeTob0okzdM24Wh0LpSnqxkjVsMpMdlPLmbmN5c6Un/Nzt0l5Jc3XGNdo56EZoNfEqDB7H/WHql5cqhDvbMbUwud4IhTZFRV96mW4C9l5JL41NEohTvSqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=YzkxDR/V; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1762479002;
-	bh=35L+rrx9K1LdyqVcy5E43gyFYLFh2mo/NaELv+Hva9Y=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=YzkxDR/Vbl4FI0I933v84cPW3l30HkqrZiY3l9usp+KFBTKTGUBWZUokznkKQW87q
-	 xp/cYcqboOQRUj21f085UwIdSTYOmjXtIP6zMNJkZgZA6d8+YmJOfv8npgtlt1hfD0
-	 EH6KhUl4Eql9SIvUdDAk83uscGTzZqViV7nCDCN4=
-X-QQ-mid: esmtpsz18t1762478998t36cfe8cb
-X-QQ-Originating-IP: XYy2puoEOwMWms+dhGae90A2kQraig8IBA6V6nniF3E=
-Received: from = ( [183.48.246.190])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 07 Nov 2025 09:29:56 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13916769930896062852
-EX-QQ-RecipientCnt: 14
-Date: Fri, 7 Nov 2025 09:29:56 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Lee Jones <lee@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>, Andi Shyti <andi.shyti@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-i2c@vger.kernel.org,
-	linux-rtc@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: (subset) [PATCH v2 1/4] mfd: simple-mfd-i2c: remove select I2C_K1
-Message-ID: <71DB25E553BE0B04+aQ1LlKzeR-FkZA83@kernel.org>
-References: <20251027-p1-kconfig-fix-v2-1-49688f30bae8@linux.spacemit.com>
- <176244506110.1925720.10807118665958896958.b4-ty@kernel.org>
+	s=arc-20240116; t=1762479205; c=relaxed/simple;
+	bh=PK7Z65DZGnYLDCAiL5Ph+9HVPYcOYAtAYKPp1a9+thY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dgUwFDBhe1NDhbiAJVuQSTbzL7w0PyTuMqJXUdKAgNPsW9yveaz+0k6QSqaX0RO+ucxV6RJk1qtL7DB9rwEey5x+CJCJEjCTOeeS/748HZHnDQxdPyWS2fQOXRn0rsQsNMejEp7a+oSBWlKZqDUPdA5JYYilR7VcoCpKqwNV3JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZDtFRxT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2743CC116C6;
+	Fri,  7 Nov 2025 01:33:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762479205;
+	bh=PK7Z65DZGnYLDCAiL5Ph+9HVPYcOYAtAYKPp1a9+thY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HZDtFRxTxzd3xikS/f+aycu7YIXmI9UGBNqjJz6+mH/rWmM5sdTd2jsJMxzcCdzq2
+	 hyDD7hww9hoFo5X224lwyesdTFd3RRyYt3gp0GGgs7Uhe+GOyUeZZj+wSkl469Kh3q
+	 TSiNFhkZ6AAHXrCeg54DIWesWe6qwatLr5UXZ5XhbnUmacVzzwf79bZz9Zms3ooyP4
+	 kcRrom2suZUgXqhwfDEcvFI1pUj4YyTVaUX2gMSPvI/uC0JfIDRpT/WRkIDWLW9HBm
+	 82ZMVREYe5M7qwXkVriF+ggbDIg/oN1dLDh3xCTKsX1Ko0LLnuHQ4/BSTEO0jOzvab
+	 LPE5mWFmXkW7g==
+Date: Thu, 6 Nov 2025 17:33:20 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
+ sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
+ mbloch@nvidia.com, andrew+netdev@lunn.ch, edumazet@google.com,
+ pabeni@redhat.com, akpm@linux-foundation.org, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
+ ilias.apalodimas@linaro.org, willy@infradead.org, brauner@kernel.org,
+ kas@kernel.org, yuzhao@google.com, usamaarif642@gmail.com,
+ baolin.wang@linux.alibaba.com, almasrymina@google.com, toke@redhat.com,
+ asml.silence@gmail.com, bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+ sfr@canb.auug.org.au, dw@davidwei.uk, ap420073@gmail.com,
+ dtatulea@nvidia.com
+Subject: Re: [RFC mm v5 1/2] page_pool: check nmdesc->pp to see its usage as
+ page pool for net_iov not page-backed
+Message-ID: <20251106173320.2f8e683a@kernel.org>
+In-Reply-To: <20251103075108.26437-2-byungchul@sk.com>
+References: <20251103075108.26437-1-byungchul@sk.com>
+	<20251103075108.26437-2-byungchul@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <176244506110.1925720.10807118665958896958.b4-ty@kernel.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: Nwz8Cs33/LprE0VPwvJ0w0lsXff3KaW0gOSYF6lYac9qw9KDBBL41uU+
-	Q9Sqd8ET3hzZuOV7LqcYIBjU/eDsdBWb9V0sF8iL0xHua3JHD0hosJ1BRfYTt7M1mX1pvD4
-	GJBKXmegDaXt/TjoZbTW7Jupg15sgjnYRmaB4oXgABa+G52kX/WKmI8t+5P2l6uD6u0dPNf
-	TwV/8JJFYj45dZRFD6PRkCwgBcrqCMTIowUPC1vcfKK1p/jmS3YmWjlJMWJWD+LTJc2Gg1n
-	y6sMzoQVIuzxgwTKwPbCk/tV6Y2kjUaQZ5WCVQtzhxtSuVy0bKkUqcH0J3LDkzqzvtFZedL
-	pNq/JBOMlrcXKLHX6oN6gxN6lkMtMJ4pYJxLbk76cHkdEnDnWV9rHr7gh972jRlMSwXRzmm
-	rymsMfG62Uh/2zHLf+h3EuTqFoUoBpSWBVOS5PxM8ECCbE4C26EGsLwm8i/n/tB/v4Ix7og
-	yh+o8F7Xmbut8QTtI2FZLI9yOHAttj7y9dVhVW001aW4cDL/4OA08sCL0AFr28o4Zgi7PiA
-	j+HkECMHmAa39DJJFoRkro/TfRboJOMmYvv9rYXJ9XlKQYlNvya+z3YHtkxDjxdp+4+GTS7
-	RYQXi0alcZW1JK65AjJJ9SIbKCxR5a6iystl5thBED+tM38mvxS5PhV5KtwAYqb/kdjOSFE
-	njk7d9eQ0IXhAqk3zPYa7GZOuai3C7rfbU8xMbv5MrwWKeOtAzgXDvae4t0qKM3P79Rl1I/
-	mcUFqmEqTIzj/S8n797UsG0JTlagTB+uouQN2o4AAoPcv4GgMXD+UDJVBJtDY1tXTjsLCSg
-	FF734xQOhnfvI4vkbx7LmKe+X4GryWAd6wFBp50ZBEofP66z1yUhsE/XL7obpR5Q4i46kaN
-	JME9VyjrvLXYhyhTXjzXx+hPs4G1RO9wYlgWTfPTfGcvJYs/4VvpjiOMOJ1W0JroZGugLXB
-	uI2vXo2z9lze9FAlJF7dBX6mVr3Ygbwxlpolw6VOdjLU8+LKsqXVxHeyS59BLa1gDbLy4UA
-	5+M+F63tZh35KhNN1E+gOhDhxwAfgOuDmrTqONKTUB2FvxwIiZ1KNtCDI/LhLedZlgA8/yO
-	Ccr2n1ZLvE0
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 06, 2025 at 04:04:21PM +0000, Lee Jones wrote:
-> On Mon, 27 Oct 2025 13:48:05 +0800, Troy Mitchell wrote:
-> > select will force a symbol to a specific value without considering
-> > its dependencies. As a result, the i2c-k1 driver will fail to build
-> > when OF or COMMON_CLK are disabled.
-> > 
-> > The reason for removing I2C_K1 instead of adding a depends on condition
-> > is to keep the possibility for other SoCs to use this PMIC.
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [1/4] mfd: simple-mfd-i2c: remove select I2C_K1
->       commit: ecf6bc474ae97c404e2125b413eb0ef3627b03c5
-Hi Lee,
+On Mon,  3 Nov 2025 16:51:07 +0900 Byungchul Park wrote:
+> However, for net_iov not
+> page-backed, the identification cannot be based on the page_type.
+> Instead, nmdesc->pp can be used to see if it belongs to a page pool, by
+> making sure nmdesc->pp is NULL otherwise.
 
-I think you didn't notice this reply [1]
-(Maybe because he was replying to the cover letter).
-
-As Aurelien mentioned, the current shutdown/reboot (and possibly the regulator
-as well) intends to use the `default MFD_SPACEMIT_P1`.
-So if there’s no `default m if ARCH_SPACEMIT`,
-the default value in subdevices may not make much sense.
-
-But don’t worry — to make things easier for you, I’ll send an additional
-patch based on your branch (in this series).
-
-How does that sound?
-
-Link: https://lore.kernel.org/all/aP9IVckJT-k2_O4K@aurel32.net/ [1]
-> 
-> --
-> Lee Jones [李琼斯]
-> 
-> 
+Please explain why. Isn't the type just a value in a field?
+Which net_iov could also set accordingly.. ?
 
