@@ -1,306 +1,152 @@
-Return-Path: <linux-kernel+bounces-890344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B78D4C3FDA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:10:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11646C3FDCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8844F4E6113
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:10:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A03BA4E73B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0E23271F4;
-	Fri,  7 Nov 2025 12:10:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4812DEA8C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 12:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C9532721B;
+	Fri,  7 Nov 2025 12:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tpBHtU6H"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CF131BCBC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 12:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762517422; cv=none; b=KiT85uDYLFM2DT8lwPnSy7xDUAF8wpF9IotYNFdf1gDmWprpgDALB36a4vgX942bXxYRs9JBkdNy5ElxsqZA7cTos8DAdnriyLRE2WLGGiOOYA0KPha2hHpogg7QGdYelLkW+l4J9PnS0SF8a2qqPYQVU1VJAnGAfeYM2sAIewk=
+	t=1762517569; cv=none; b=CO7+BdmY5/0nvUE2NtC+FLlzuv5pxB5NZj3gSGgT6Xyb5Mzvws+hAdNrNiWtugUbYOHpT45fOgPxbo2rcyH+a0dSfKVgiNM7vfxDEYY2Av1xfEu8JZF8RnEV4iB1hI0Z/2cX+ABdAOwD8s8AshW1QAHQFiNWNaL9WgPLDvRMuC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762517422; c=relaxed/simple;
-	bh=6DUrrUjFqJnGqs6qApHxKcN9Q/u3nt/6Cxz4JWY15t4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VioKQMvNlsZD1JjEsgOyOqj69MKVWyEk9TlkBHiiUnpdNLbIUc4FxywJbZyYT+hpyzhwu7vB6zATrTsxXtb5b2M2rXJN2L/zVHK3lafpxUhBEd1K/5AGO/Cm1sWwFXBo6InbFMiUHAx+mNIkyeiqPW4c2mynzelVfFCl9P/xi2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46C6B1516;
-	Fri,  7 Nov 2025 04:10:12 -0800 (PST)
-Received: from [10.57.86.134] (unknown [10.57.86.134])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E6EB3F66E;
-	Fri,  7 Nov 2025 04:10:18 -0800 (PST)
-Message-ID: <823463ee-f8c9-4023-892e-6e6532a1a813@arm.com>
-Date: Fri, 7 Nov 2025 12:10:17 +0000
+	s=arc-20240116; t=1762517569; c=relaxed/simple;
+	bh=Tfpbm92o9W7BVvnGiM2caH4qh7ZyE+P+DguJ0PvN6mQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Wd6/vyoYF1GSIGYpH0FYhA52KsxdLDFwYfZ9U62tkke2xSDuuvHzx/wfayAnNEf24XmxHNgYvD+U7Pquon1JPzPcqSdujgdNoCI1TLQ+aM5eI14YPKmOAEgPKh0uF/yeiMY22j5wEY8YT2iwprk+YAfzKyu6pLwQYip/cn/Ai5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tpBHtU6H; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b726a3c3214so58724566b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 04:12:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762517565; x=1763122365; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jiMZz3p9r1cXUEtJOvXENsRsqsu1S4GTx2JzdMxXhCI=;
+        b=tpBHtU6H+uXNawvpoCU6gmGnXVQWUKcfsKVxFE+D8QNj4HARSbp6TnAW6uvuj4qgb8
+         Ep6t/ejz9fVp7xs12kzya9XyD+fL48Jsc0TA3Uf7VJUEMUb9sf0ChK/1XFEsVfINkdYk
+         zPsgwUwryAKVbT0ly27gQYkH/kmjXN0DXEazIYsEjFTFtkMizU20NR2yHMLilOQiO4G5
+         2QrFv625cl3ZQSIa1OIcFSPzk1+YbeXbrz2NQLQAFOn8sMMBITasCBJlzgTFHXMgD2c3
+         GseWHjVlUX+pH0Ph1H8STTfMMp5FrZrI6eUcHQ+SORgQkwjsiSyHnhSY9AgYmT57gAxN
+         xm5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762517565; x=1763122365;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jiMZz3p9r1cXUEtJOvXENsRsqsu1S4GTx2JzdMxXhCI=;
+        b=VccHXH9GW56H/kbMeRWLgDtmba3pdEDqULT7sIUx0+uh+2LqVdIIZ0KQoFjETGjyHC
+         AQMzIM+5pIkF7MM2j5E0Jdg4H9WULLQFUbHGMq4wIbnUSEjKra8qCj+6C+x+T2frUzvB
+         EK0iGwAm/UdnHlf+xP6EmF2UeRSiPzqo9UD1bEz5wGzDl1OTS3BCrw7NCYHJP+Av0dOW
+         U8HJjTYP2JRthoSYCEqzCGaBen4Dgn4eui6ay923j/C9kf9dZO4lRMgME1lRdandsaaM
+         JzDbD27lJEarSrneawnCi3sOuh8d9D/wNuswH97MhBckkO8U59Y7+N1I8lyIuoOJjf0+
+         e+wA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8uDGWN5Bb5hWr9qaA6xD3p1T/pkLykJA9INUWIFkeHjXok3jCXGvxKLb9gLA0JgSKTEbXxIr5YPdwUW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyimXePuPON2YBpDWqzz5Q4CusCfLknYt6oPuMcAnwR6+cKmp9M
+	YqrWzD3U1174x17Nrg0NPXphUPDpUSZNQ++K0yVNtQW1T5qehhUmW+gXHmUaFSmpraAwhGolSPY
+	7iNoVwuAKyMkFoPFFDQ==
+X-Google-Smtp-Source: AGHT+IFz1d7JwOnWSoe0fVf8qRe2tAmBflmhL4Mg+i45pACLer1ETGlr4r2lHbYGUH0n6LT169uz4zsABZFzda8=
+X-Received: from ejdaz21.prod.google.com ([2002:a17:906:8f15:b0:b72:5aa5:2d0b])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:6d16:b0:b6d:7e04:7a24 with SMTP id a640c23a62f3a-b72c0ac01aemr279299066b.36.1762517565061;
+ Fri, 07 Nov 2025 04:12:45 -0800 (PST)
+Date: Fri, 7 Nov 2025 12:12:43 +0000
+In-Reply-To: <0f7186b3-16bd-44b7-a3fe-637af9d25dd3@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] arm64: mm: Don't sleep in
- split_kernel_leaf_mapping() when in atomic context
-Content-Language: en-GB
-To: Yang Shi <yang@os.amperecomputing.com>, catalin.marinas@arm.com,
- will@kernel.org, david@redhat.com, ardb@kernel.org, dev.jain@arm.com,
- scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Guenter Roeck <groeck@google.com>
-References: <20251106160945.3182799-1-ryan.roberts@arm.com>
- <20251106160945.3182799-2-ryan.roberts@arm.com>
- <d6d7e038-aa94-491a-8ad6-f48541b98b6a@os.amperecomputing.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <d6d7e038-aa94-491a-8ad6-f48541b98b6a@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <cover.1762422915.git.lorenzo.stoakes@oracle.com>
+ <fe38b1a43364f72d1ce7a6217e53a33c9c0bb0c5.1762422915.git.lorenzo.stoakes@oracle.com>
+ <yja2mhwa4bzatbthjjq5rolqlkfgcbmppic3caaiwi6jc63rbc@cims6rqnotvj>
+ <043dcbdb-e069-46e7-8f79-8fdaf354fb44@lucifer.local> <aQ24HAAxYLhIvV5U@google.com>
+ <0f7186b3-16bd-44b7-a3fe-637af9d25dd3@lucifer.local>
+Message-ID: <aQ3iO40QYEM6Dxfs@google.com>
+Subject: Re: [PATCH v2 1/5] mm: introduce VM_MAYBE_GUARD and make visible in /proc/$pid/smaps
+From: Alice Ryhl <aliceryhl@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Pedro Falcato <pfalcato@suse.de>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jann Horn <jannh@google.com>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Andrei Vagin <avagin@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 06/11/2025 20:46, Yang Shi wrote:
+On Fri, Nov 07, 2025 at 09:44:22AM +0000, Lorenzo Stoakes wrote:
+> On Fri, Nov 07, 2025 at 09:13:00AM +0000, Alice Ryhl wrote:
+> > On Thu, Nov 06, 2025 at 02:54:33PM +0000, Lorenzo Stoakes wrote:
+> > > +cc Alice for rust stuff
+> > >
+> > > On Thu, Nov 06, 2025 at 02:27:56PM +0000, Pedro Falcato wrote:
+> > > > On Thu, Nov 06, 2025 at 10:46:12AM +0000, Lorenzo Stoakes wrote:
+> > > > >  /*
+> > > > >   * vm_flags in vm_area_struct, see mm_types.h.
+> > > > >   * When changing, update also include/trace/events/mmflags.h
+> > > > > @@ -296,6 +298,7 @@ extern unsigned int kobjsize(const void *objp);
+> > > > >  #define VM_UFFD_MISSING	0
+> > > > >  #endif /* CONFIG_MMU */
+> > > > >  #define VM_PFNMAP	0x00000400	/* Page-ranges managed without "struct page", just pure PFN */
+> > > > > +#define VM_MAYBE_GUARD	BIT(VM_MAYBE_GUARD_BIT)	/* The VMA maybe contains guard regions. */
+> > > >
+> > > > Don't we also need an adjustment on the rust side for this BIT()? Like we
+> > > > for f04aad36a07c ("mm/ksm: fix flag-dropping behavior in ksm_madvise").
+> > >
+> > > That's a bit unhelpful if rust can't cope with extremely basic assignments like
+> > > that and we just have to know to add helpers :/
+> > >
+> > > We do BIT() stuff for e.g. VM_HIGH_ARCH_n, VM_UFFD_MINOR_BIT,
+> > > VM_ALLOW_ANY_UNCACHED_BIT, VM_DROPPABLE_BIT and VM_SEALED_BIT too and no such
+> > > helpers there, So not sure if this is required?
+> > >
+> > > Alice - why is it these 'non-trivial' defines were fine but VM_MERGEABLE was
+> > > problematic? That seems strange.
+> > >
+> > > I see [0], so let me build rust here and see if it moans, if it moans I'll add
+> > > it.
+> > >
+> > > [0]:https://lore.kernel.org/oe-kbuild-all/CANiq72kOhRdGtQe2UVYmDLdbw6VNkiMtdFzkQizsfQV0gLY1Hg@mail.gmail.com/
+> >
+> > When you use #define to declare a constant whose right-hand-side
+> > contains a function-like macro such as BIT(), bindgen does not define a
+> > Rust version of that constant. However, VM_MAYBE_GUARD is not referenced
+> > in Rust anywhere, so that isn't a problem.
+> >
+> > It was a problem with VM_MERGEABLE because rust/kernel/mm/virt.rs
+> > references it.
+> >
+> > Note that it's only the combination of #define and function-like macro
+> > that triggers this condition. If the constant is defined using another
+> > mechanism such as enum {}, then bindgen will generate the constant no
+> > matter how complex the right-hand-side is. The problem is that bindgen
+> > can't tell whether a #define is just a constant or not.
 > 
-> 
-> On 11/6/25 8:09 AM, Ryan Roberts wrote:
->> It has been reported that split_kernel_leaf_mapping() is trying to sleep
->> in non-sleepable context. It does this when acquiring the
->> pgtable_split_lock mutex, when either CONFIG_DEBUG_PAGEALLOC or
->> CONFIG_KFENCE are enabled, which change linear map permissions within
->> softirq context during memory allocation and/or freeing. All other paths
->> into this function are called from sleepable context and so are safe.
->>
->> But it turns out that the memory for which these 2 features may attempt
->> to modify the permissions is always mapped by pte, so there is no need
->> to attempt to split the mapping. So let's exit early in these cases and
->> avoid attempting to take the mutex.
->>
->> There is one wrinkle to this approach; late-initialized kfence allocates
->> it's pool from the buddy which may be block mapped. So we must hook that
->> allocation and convert it to pte-mappings up front. Previously this was
->> done as a side-effect of kfence protecting all the individual pages in
->> its pool at init-time, but this no longer works due to the added early
->> exit path in split_kernel_leaf_mapping().
->>
->> So instead, do this via the existing arch_kfence_init_pool() arch hook,
->> and reuse the existing linear_map_split_to_ptes() infrastructure.
->>
->> Closes: https://lore.kernel.org/all/f24b9032-0ec9-47b1-8b95-
->> c0eeac7a31c5@roeck-us.net/
->> Fixes: a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full")
->> Tested-by: Guenter Roeck <groeck@google.com>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> 
-> Reviewed-by: Yang Shi <yang@os.amperecomputing.com>
-> 
-> Just a nit below:
-> 
->> ---
->>   arch/arm64/include/asm/kfence.h |  3 +-
->>   arch/arm64/mm/mmu.c             | 92 +++++++++++++++++++++++----------
->>   2 files changed, 67 insertions(+), 28 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/kfence.h b/arch/arm64/include/asm/kfence.h
->> index a81937fae9f6..21dbc9dda747 100644
->> --- a/arch/arm64/include/asm/kfence.h
->> +++ b/arch/arm64/include/asm/kfence.h
->> @@ -10,8 +10,6 @@
->>     #include <asm/set_memory.h>
->>   -static inline bool arch_kfence_init_pool(void) { return true; }
->> -
->>   static inline bool kfence_protect_page(unsigned long addr, bool protect)
->>   {
->>       set_memory_valid(addr, 1, !protect);
->> @@ -25,6 +23,7 @@ static inline bool arm64_kfence_can_set_direct_map(void)
->>   {
->>       return !kfence_early_init;
->>   }
->> +bool arch_kfence_init_pool(void);
->>   #else /* CONFIG_KFENCE */
->>   static inline bool arm64_kfence_can_set_direct_map(void) { return false; }
->>   #endif /* CONFIG_KFENCE */
->> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> index b8d37eb037fc..a364ac2c9c61 100644
->> --- a/arch/arm64/mm/mmu.c
->> +++ b/arch/arm64/mm/mmu.c
->> @@ -708,6 +708,16 @@ static int split_kernel_leaf_mapping_locked(unsigned long
->> addr)
->>       return ret;
->>   }
->>   +static inline bool force_pte_mapping(void)
->> +{
->> +    bool bbml2 = system_capabilities_finalized() ?
->> +        system_supports_bbml2_noabort() : cpu_supports_bbml2_noabort();
->> +
->> +    return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
->> +               is_realm_world())) ||
->> +        debug_pagealloc_enabled();
->> +}
->> +
->>   static DEFINE_MUTEX(pgtable_split_lock);
->>     int split_kernel_leaf_mapping(unsigned long start, unsigned long end)
->> @@ -723,6 +733,16 @@ int split_kernel_leaf_mapping(unsigned long start,
->> unsigned long end)
->>       if (!system_supports_bbml2_noabort())
->>           return 0;
->>   +    /*
->> +     * If the region is within a pte-mapped area, there is no need to try to
->> +     * split. Additionally, CONFIG_DEBUG_PAGEALLOC and CONFIG_KFENCE may
->> +     * change permissions from atomic context so for those cases (which are
->> +     * always pte-mapped), we must not go any further because taking the
->> +     * mutex below may sleep.
-> 
-> The path 3 changed the comment, but since patch 3 just does some cleanup and
-> code deduplication, there is no functional change, so why not just use the
-> comment from patch 3?
+> Thanks, I guess we can update as we go as rust needs. Or I can do a big update
+> as part of my VMA flag series respin?
 
-The reason I changed it is because in patch 3 we introduce
-split_leaf_mapping_possible(), which is also doing the
-!system_supports_bbml2_noabort() check above, so this original comment only
-applies to a subset of the reasons we may exit here. It felt confusing to me. So
-I decided to simplify it. The rationale is all captured in the commit log, so I
-didn't think it was a big deal.
+Whenever you think is a good time works for me.
 
-Thanks,
-Ryan
+I think it would be nice to move those constants so they use enum {}
+instead of #define at some point.
 
-> 
-> Thanks,
-> Yang
-> 
->> +     */
->> +    if (force_pte_mapping() || is_kfence_address((void *)start))
->> +        return 0;
->> +
->>       /*
->>        * Ensure start and end are at least page-aligned since this is the
->>        * finest granularity we can split to.
->> @@ -758,30 +778,30 @@ int split_kernel_leaf_mapping(unsigned long start,
->> unsigned long end)
->>       return ret;
->>   }
->>   -static int __init split_to_ptes_pud_entry(pud_t *pudp, unsigned long addr,
->> -                      unsigned long next,
->> -                      struct mm_walk *walk)
->> +static int split_to_ptes_pud_entry(pud_t *pudp, unsigned long addr,
->> +                   unsigned long next, struct mm_walk *walk)
->>   {
->> +    gfp_t gfp = *(gfp_t *)walk->private;
->>       pud_t pud = pudp_get(pudp);
->>       int ret = 0;
->>         if (pud_leaf(pud))
->> -        ret = split_pud(pudp, pud, GFP_ATOMIC, false);
->> +        ret = split_pud(pudp, pud, gfp, false);
->>         return ret;
->>   }
->>   -static int __init split_to_ptes_pmd_entry(pmd_t *pmdp, unsigned long addr,
->> -                      unsigned long next,
->> -                      struct mm_walk *walk)
->> +static int split_to_ptes_pmd_entry(pmd_t *pmdp, unsigned long addr,
->> +                   unsigned long next, struct mm_walk *walk)
->>   {
->> +    gfp_t gfp = *(gfp_t *)walk->private;
->>       pmd_t pmd = pmdp_get(pmdp);
->>       int ret = 0;
->>         if (pmd_leaf(pmd)) {
->>           if (pmd_cont(pmd))
->>               split_contpmd(pmdp);
->> -        ret = split_pmd(pmdp, pmd, GFP_ATOMIC, false);
->> +        ret = split_pmd(pmdp, pmd, gfp, false);
->>             /*
->>            * We have split the pmd directly to ptes so there is no need to
->> @@ -793,9 +813,8 @@ static int __init split_to_ptes_pmd_entry(pmd_t *pmdp,
->> unsigned long addr,
->>       return ret;
->>   }
->>   -static int __init split_to_ptes_pte_entry(pte_t *ptep, unsigned long addr,
->> -                      unsigned long next,
->> -                      struct mm_walk *walk)
->> +static int split_to_ptes_pte_entry(pte_t *ptep, unsigned long addr,
->> +                   unsigned long next, struct mm_walk *walk)
->>   {
->>       pte_t pte = __ptep_get(ptep);
->>   @@ -805,12 +824,18 @@ static int __init split_to_ptes_pte_entry(pte_t *ptep,
->> unsigned long addr,
->>       return 0;
->>   }
->>   -static const struct mm_walk_ops split_to_ptes_ops __initconst = {
->> +static const struct mm_walk_ops split_to_ptes_ops = {
->>       .pud_entry    = split_to_ptes_pud_entry,
->>       .pmd_entry    = split_to_ptes_pmd_entry,
->>       .pte_entry    = split_to_ptes_pte_entry,
->>   };
->>   +static int range_split_to_ptes(unsigned long start, unsigned long end,
->> gfp_t gfp)
->> +{
->> +    return walk_kernel_page_table_range_lockless(start, end,
->> +                    &split_to_ptes_ops, NULL, &gfp);
->> +}
->> +
->>   static bool linear_map_requires_bbml2 __initdata;
->>     u32 idmap_kpti_bbml2_flag;
->> @@ -847,11 +872,9 @@ static int __init linear_map_split_to_ptes(void *__unused)
->>            * PTE. The kernel alias remains static throughout runtime so
->>            * can continue to be safely mapped with large mappings.
->>            */
->> -        ret = walk_kernel_page_table_range_lockless(lstart, kstart,
->> -                        &split_to_ptes_ops, NULL, NULL);
->> +        ret = range_split_to_ptes(lstart, kstart, GFP_ATOMIC);
->>           if (!ret)
->> -            ret = walk_kernel_page_table_range_lockless(kend, lend,
->> -                        &split_to_ptes_ops, NULL, NULL);
->> +            ret = range_split_to_ptes(kend, lend, GFP_ATOMIC);
->>           if (ret)
->>               panic("Failed to split linear map\n");
->>           flush_tlb_kernel_range(lstart, lend);
->> @@ -1002,6 +1025,33 @@ static void __init arm64_kfence_map_pool(phys_addr_t
->> kfence_pool, pgd_t *pgdp)
->>       memblock_clear_nomap(kfence_pool, KFENCE_POOL_SIZE);
->>       __kfence_pool = phys_to_virt(kfence_pool);
->>   }
->> +
->> +bool arch_kfence_init_pool(void)
->> +{
->> +    unsigned long start = (unsigned long)__kfence_pool;
->> +    unsigned long end = start + KFENCE_POOL_SIZE;
->> +    int ret;
->> +
->> +    /* Exit early if we know the linear map is already pte-mapped. */
->> +    if (!system_supports_bbml2_noabort() || force_pte_mapping())
->> +        return true;
->> +
->> +    /* Kfence pool is already pte-mapped for the early init case. */
->> +    if (kfence_early_init)
->> +        return true;
->> +
->> +    mutex_lock(&pgtable_split_lock);
->> +    ret = range_split_to_ptes(start, end, GFP_PGTABLE_KERNEL);
->> +    mutex_unlock(&pgtable_split_lock);
->> +
->> +    /*
->> +     * Since the system supports bbml2_noabort, tlb invalidation is not
->> +     * required here; the pgtable mappings have been split to pte but larger
->> +     * entries may safely linger in the TLB.
->> +     */
->> +
->> +    return !ret;
->> +}
->>   #else /* CONFIG_KFENCE */
->>     static inline phys_addr_t arm64_kfence_alloc_pool(void) { return 0; }
->> @@ -1009,16 +1059,6 @@ static inline void arm64_kfence_map_pool(phys_addr_t
->> kfence_pool, pgd_t *pgdp) {
->>     #endif /* CONFIG_KFENCE */
->>   -static inline bool force_pte_mapping(void)
->> -{
->> -    bool bbml2 = system_capabilities_finalized() ?
->> -        system_supports_bbml2_noabort() : cpu_supports_bbml2_noabort();
->> -
->> -    return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
->> -               is_realm_world())) ||
->> -        debug_pagealloc_enabled();
->> -}
->> -
->>   static void __init map_mem(pgd_t *pgdp)
->>   {
->>       static const u64 direct_map_end = _PAGE_END(VA_BITS_MIN);
-> 
-
+Alice
 
