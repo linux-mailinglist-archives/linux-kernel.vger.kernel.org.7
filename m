@@ -1,148 +1,134 @@
-Return-Path: <linux-kernel+bounces-890128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2813AC3F48E
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:58:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1202DC3F494
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F364D4ECF71
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:58:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7DF8188B093
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC602EBB84;
-	Fri,  7 Nov 2025 09:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="D06raH48"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1032F5A3F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761882FFDF4;
+	Fri,  7 Nov 2025 09:59:50 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E275184;
+	Fri,  7 Nov 2025 09:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762509479; cv=none; b=ELUB+JKKSwac1OmjpJWfWvBUOk90m1GtC0J19B6xzu3SWflYoypUonvhjHlmfnX6pehZpag/cMl/XxYfybPXuo9TmzgeOdfBWfrd3Hc4/nfv/GYuslO+AdSR7KueIhFA4BRrfMJVq6b+f3N8LF8Jb+l3lHMwczmsWDxs8o6iHUA=
+	t=1762509590; cv=none; b=V6kqA5ts8SLZvGf/iyI7fEprNX8TAK1UglrPOEXnIzJI2aSTdAAZNAQBMi0k1jsD9EfO67uAkZ4M6SnbASMLsFuN7o8o0Iexrqg3uQpszO62z3sPMpZqzGMnjymdi9NIUXUxsJlJ7zJO7zeDVHyBsak+JGsAHLOS03LHvU/NVoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762509479; c=relaxed/simple;
-	bh=KQApMmeyeroojj1oOh/JwuYBVW4ykgOBnlMtNZQB+YA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aixKh2BYUo6GMGwrHO4wceUBJDzuugYrHiD5O90rOf59zVPjL+mtF7xYzmW6cRmQiYrM3oxWEIcV5FR9orO5/lc+C0XFYax7kUXgbqXBAKK6ddLvtIh+dUjnazdmk/rfGpT8K2VWILFqnnJW6I9k+apEciKJb6UYJtDbP2Sh6TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=D06raH48; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ee130237a8so335254f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:57:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762509476; x=1763114276; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KQApMmeyeroojj1oOh/JwuYBVW4ykgOBnlMtNZQB+YA=;
-        b=D06raH48kP1ho67e3kOoT2LSpBXFcforv+fHeGj5MEwPYSXcDSNfUODM38z37QiRAN
-         qSriMCIQLsNFPjrWgWV0RwkHEwLckKxnbmnA/OEW2gV1MN/jowT6RDaLfcxKBNCdh0Bk
-         gbQYCLiq5lKs2NM0yXwDTiV/EUc4q6CiMoCio/AxqcIF+c0iIVGYi6xGG82Yu0L8ctWX
-         FDBSjKE5fPjm0PUTvCBTXbX+Ss+KIWTZNHmbR8+rHiHXLa/NUAD3Z7RLPElRhoBbquGm
-         VVCyCR21AMX2lxjJLgFN9267TudGZvBNt6gLpB7V6wFvmXKQ5WA5Ev9D0eK9o4SHUOdX
-         m6dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762509476; x=1763114276;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KQApMmeyeroojj1oOh/JwuYBVW4ykgOBnlMtNZQB+YA=;
-        b=xQIyuKFt0KbgesqR3w5JwA7IAgv1MGGHAtYCBiweDeEP4b2vSqWCax0gafxYfAL2WY
-         paiMIQtGUFqkg6oaAwYdcZQDs6hxh2vs4BdzImpczoKJ3Y700Hpci78CcL+m0c6l1vI6
-         mkC8P2FUD7Rw5ijw3gsKr46mZVh+zEWLovvcVzsyljKCJAKUkAFNMEaGhoKV0u28paxU
-         cr2DGzhp2yf4b04AMasurkKEMHPelU9T6z/7JwTU8X60YjU5N155tX6reWkIskCwl6GE
-         2jXVPPbccevWaHgzq7mgb6qCBpRlNKmrUo6Av/lwgndmWESzj2C7iNKoKcu9YIOAa0AU
-         8EFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfWLbEc+IjYnfjaHqawwJcTAH1f1qfzl0eP5MP54nIpZbYY5TjQMIp5wBaYkbzAGt2Xmb2fbt+yNJRRY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB/Fvid1Q9+INcNitgtytDiDa5as8M3RbFI497QJ5JU1KsPDd2
-	HG3yWyS6J6mDF1ZGhx/7ZOreU5tx3GixctuSWfC72ttT8Xmxa8Ql7zrqA3WdnQdKq/puHGQUQuX
-	QdWhN
-X-Gm-Gg: ASbGncsa1S0I1i0uUO+0RXOn+MPm6Wwhqii4J5yCm9nGDsdVx6ndneBZqL+KGdLhY0/
-	FfkNv18hChc8Y3EAYFTRndI1/tJ2NllesNRHcmnfnB5RU4QCisWySUteDU5/ymh41FtQAR0eUgQ
-	CYvFDSFD4hDnNTXdriE1kjqz3vSD2pnhgLVR3ThmtM15PjLv6Xc2nO05g5EX07lKP2+oZ2d5xQF
-	uMA9LNNH8+vBdjYOey81gouYCUwZPWDwWRXf5cn9thlue3sJr3iHzW0iNPIjw1U801UrtkqF6Ye
-	O4SibVMauZko42lyxw2CA7UG0IDxMXfQDJzv0znPt6ohLnUpyhVO8DYGkYX8K3BcqWTysMMnB0I
-	ouarcIpJ67IaizdhAKmU3Iw2+huQNk8u7YFoYPhDS6aWsZlxwOWbtZZzFUjwvbIEjyoTbrnDChw
-	1LCMYdudmZ1/fRPdPKMic8
-X-Google-Smtp-Source: AGHT+IGYXYnlAsEjuk23F3IZ/BoFx5TsEGM0egBLAX1ErlqS5ss+2CzpuASNt4N0drqS+uWjT87dzA==
-X-Received: by 2002:a05:6000:656:b0:429:bb40:eecd with SMTP id ffacd0b85a97d-42aefb43e0emr1979840f8f.52.1762509476103;
-        Fri, 07 Nov 2025 01:57:56 -0800 (PST)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675ca3csm4397591f8f.23.2025.11.07.01.57.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 01:57:55 -0800 (PST)
-Date: Fri, 7 Nov 2025 10:57:54 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH cgroup/for-6.18-fixes] cgroup: Skip showing PID 0 in
- cgroup.procs and cgroup.threads
-Message-ID: <5r6yyuleoru7h6wcbdw673nlfzzbsc24sltmfg5hk2mj6a34xa@2xo7a3jhhkef>
-References: <2016aece61b4da7ad86c6eca2dbcfd16@kernel.org>
+	s=arc-20240116; t=1762509590; c=relaxed/simple;
+	bh=dSn4bpScevxDxseiwBrGPM6q9KPe63Brm/aAq2AAz08=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SgUNynr9KE4J1rd21ByKPOaEZkj7nLZ+hE1L7UoJhcTM944wqcwwInWBKKg30Xbh2GKnRk4D7E+0+CnXr1BZ9sccrY7r3YTieQFhtP+v2YGmc5YBd0oIBXLrrBrWJhUT529GUdolhpRPKBi8mLiDpFhGV2kFIHGrVx6ihWdG/Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.45])
+	by gateway (Coremail) with SMTP id _____8Axz78Lww1pukIgAA--.2298S3;
+	Fri, 07 Nov 2025 17:59:39 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.45])
+	by front1 (Coremail) with SMTP id qMiowJAx_8EGww1ptL4qAQ--.58299S2;
+	Fri, 07 Nov 2025 17:59:38 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Vishal Moola <vishal.moola@gmail.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org,
+	linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH Resend] mm: Refine __{pgd,p4d,pud,pmd,pte}_alloc_one_*() about HIGHMEM
+Date: Fri,  7 Nov 2025 17:59:22 +0800
+Message-ID: <20251107095922.3106390-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xbm34c74aqa2td24"
-Content-Disposition: inline
-In-Reply-To: <2016aece61b4da7ad86c6eca2dbcfd16@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAx_8EGww1ptL4qAQ--.58299S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7uw1fGryUXF4rKr1xAr43urX_yoW8CryxpF
+	s7C3y8X398JFyrWa10y3Z7Cr17tw45GF47AF42gFy5Z3W3tw1xGFyDtFW7ZFZrZFZ5ZFW5
+	Wrsxtay3AFnIvrcCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5
+	McIj6I8E87Iv67AKxVWxJVW8Jr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
+	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
+	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU82jg7UUUUU==
 
+__{pgd,p4d,pud,pmd,pte}_alloc_one_*() always allocate pages with GFP
+flag GFP_PGTABLE_KERNEL/GFP_PGTABLE_USER. These two macros are defined
+as follows:
 
---xbm34c74aqa2td24
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH cgroup/for-6.18-fixes] cgroup: Skip showing PID 0 in
- cgroup.procs and cgroup.threads
-MIME-Version: 1.0
+ #define GFP_PGTABLE_KERNEL	(GFP_KERNEL | __GFP_ZERO)
+ #define GFP_PGTABLE_USER	(GFP_PGTABLE_KERNEL | __GFP_ACCOUNT)
 
-Hello.
+There is no __GFP_HIGHMEM in them, so we needn't to clear __GFP_HIGHMEM
+explicitly.
 
-On Thu, Nov 06, 2025 at 12:07:45PM -1000, Tejun Heo <tj@kernel.org> wrote:
-> css_task_iter_next() pins and returns a task, but the task can do whatever
-> between that and cgroup_procs_show() being called, including dying and
-> losing its PID. When that happens, task_pid_vnr() returns 0.
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+Resend because the lines begin with # was eaten by git.
 
-task_pid_vnr() would return 0 also when the process is not from reader's
-pidns (IMO more common than the transitional effect).
+ include/asm-generic/pgalloc.h | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-> Showing "0" in cgroup.procs or cgroup.threads is confusing and can lead to
-> surprising outcomes. For example, if a user tries to kill PID 0, it kills
-> all processes in the current process group.
+diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
+index 3c8ec3bfea44..706e87b43b19 100644
+--- a/include/asm-generic/pgalloc.h
++++ b/include/asm-generic/pgalloc.h
+@@ -18,8 +18,7 @@
+  */
+ static inline pte_t *__pte_alloc_one_kernel_noprof(struct mm_struct *mm)
+ {
+-	struct ptdesc *ptdesc = pagetable_alloc_noprof(GFP_PGTABLE_KERNEL &
+-			~__GFP_HIGHMEM, 0);
++	struct ptdesc *ptdesc = pagetable_alloc_noprof(GFP_PGTABLE_KERNEL, 0);
+ 
+ 	if (!ptdesc)
+ 		return NULL;
+@@ -172,7 +171,6 @@ static inline pud_t *__pud_alloc_one_noprof(struct mm_struct *mm, unsigned long
+ 
+ 	if (mm == &init_mm)
+ 		gfp = GFP_PGTABLE_KERNEL;
+-	gfp &= ~__GFP_HIGHMEM;
+ 
+ 	ptdesc = pagetable_alloc_noprof(gfp, 0);
+ 	if (!ptdesc)
+@@ -226,7 +224,6 @@ static inline p4d_t *__p4d_alloc_one_noprof(struct mm_struct *mm, unsigned long
+ 
+ 	if (mm == &init_mm)
+ 		gfp = GFP_PGTABLE_KERNEL;
+-	gfp &= ~__GFP_HIGHMEM;
+ 
+ 	ptdesc = pagetable_alloc_noprof(gfp, 0);
+ 	if (!ptdesc)
+@@ -270,7 +267,6 @@ static inline pgd_t *__pgd_alloc_noprof(struct mm_struct *mm, unsigned int order
+ 
+ 	if (mm == &init_mm)
+ 		gfp = GFP_PGTABLE_KERNEL;
+-	gfp &= ~__GFP_HIGHMEM;
+ 
+ 	ptdesc = pagetable_alloc_noprof(gfp, order);
+ 	if (!ptdesc)
+-- 
+2.47.3
 
-It's still info about present processes.
-
->=20
-> Skip entries with PID 0 by returning SEQ_SKIP.
-
-It's likely OK to skip for these exiting tasks but with the external pidns =
-tasks
-in mind, reading cgroup.procs now may give false impression of an empty
-cgroup.
-
-Where does the 0 from of the exiting come from? (Could it be
-distinguished from foreign pidns?)
-
-Thanks,
-Michal
-
---xbm34c74aqa2td24
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaQ3CkBsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AiL5AD9H1iQzx9lGKNZBRyzM1W5
-RyQlf1K/qfz8QEBX+SwBuXMBAM2seBFyUe3eN6EcRsWiedVguCDdbBxoEEDM8d5T
-m+0G
-=NBTZ
------END PGP SIGNATURE-----
-
---xbm34c74aqa2td24--
 
