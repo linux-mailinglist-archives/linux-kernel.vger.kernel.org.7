@@ -1,219 +1,271 @@
-Return-Path: <linux-kernel+bounces-890705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D36C40B7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:58:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 710EAC40BD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:03:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 638231A4123A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:59:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EA37D3503D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7724D32E6A3;
-	Fri,  7 Nov 2025 15:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63D329ACFD;
+	Fri,  7 Nov 2025 16:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FxXdlNjf"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013036.outbound.protection.outlook.com [52.101.72.36])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mZca7uQQ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36CB29ACE5;
-	Fri,  7 Nov 2025 15:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762531117; cv=fail; b=UUp7aedkHqI40KN5VtXqyZCngQkhRIQAK/ZzPz4tVC2stigeXmjVipE7EBVvS9XvFSf/eSVBFQmZpQcfDihPLw/BM9D+L9Wo8Pw8+jCGqPL1X3r4Gpb8omhUwqChQZl2EfctL1r7nWKRJC+aKebnn556ieO8Hptx8d2Irv4l7Ow=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762531117; c=relaxed/simple;
-	bh=cKxTiXfEg26QanjWwlHBpdV9EjzkQzBWR7uDpptVGGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TBql6yySmGoKCOGraCjt1aPOG2JCW3a53Fy5iknJghbBLeL7l8JEd02wsx9z/DuoTvTEZJ3r3VsNecpWnzzyZv9JaWLQHsCR7f/lbfrgtjNG4S4kpXQAITQq2Xn5cBAP8MsYeuWHGmCrGtpZ9F8gxfqgcWIayhfwoSKLhEu2NvE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FxXdlNjf; arc=fail smtp.client-ip=52.101.72.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zGHAJ0FETQo6r96UbjA2VwMGb/JgEFTSuXI27wMhpm9AwnuvhLnbpS1XjcjyU2LnBKib0WnL9tvV0UZlQb50MJI69hBphFnyirwHJbKkZvmRTTGO0jEez9l4f5WRgDDCqBvhNTlletH0WrpiiiqrTXetxZLU4wPAOTtV32xJNR8DlYbyedWsd5UqIu8LUg9kC7vbf9CmnZ9QqVhnEGzQ9+TPCZzlSrCFSJAmZe48s8495y6+qpPowQl4V2smnxNvbfgmqg3hw6F8d0M3eRTcMgjZ+Tokg6y4VT8PaRsD6kAXbTKHL37U7mzW88FyCIYSUfoD8vynsU+ov5PsJEE+ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a8arjA4Js81pjpng5838Gh/Pt8912EmX44lVjEzB8ZY=;
- b=YOBk9OA6le/BxK0O9Gm6hAxJ4hhdFr1mA2MkWU+oFl8ISnB/Ug1OHSZ9waDhicBM2qHWbuyhLaM25vdhnPkdvInErlMwtTHDift6UP/NE1ZI2VGWG+EHOS9700u9Sp2/eOwUnsC2v3tl7GYpAkn61xzelzpHODnKY094SF/hqMh/uCP1NyUXyQ+pLTfOEUKVgY8yUdgu8d5M4303NXpnRyxH+uSytsj5Jz0EORVNLol5+rKYXraSNBo9kjyMcWnVSYtbcgCbXvp+bHdEsds1GMCbsJ7aRvwy+hl7TJdo/w3AEQVNnA+rbCgSGIoRDOCjtRN7rjjeC4qai+dUnTu7eg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a8arjA4Js81pjpng5838Gh/Pt8912EmX44lVjEzB8ZY=;
- b=FxXdlNjf0MdrNZhNGlOrYVOC0NK2RQ1YOY1ZPY/y0D856+GNh1/pjKJL9iPfvVS0LHoMkfSuamnC6/qwDV5ntfaxxhrQLLgy6lSVgBW6+f2WCF4EIZtCMnM1MevGD1B4PlQ93Mo0MVf+PbC+zRbWLnFoaz2RxAL/I1PgxZtFQaS8M1bx6dXXuMBeX2qzxQyUO/A4pF8BYTWcPP52hUaewsd9bhd9fF9zTh40kVq3Li75rmruFusAFKRKDOxakwwVAL1QBX4qzu3cAG8aARH13C/m/JsZ3HehfWd7plyVNeAQ8cusvhBmdXevPIxlkn57kXLgwaajpHd/K9QgkkKfXQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by DB9PR04MB9673.eurprd04.prod.outlook.com (2603:10a6:10:305::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.9; Fri, 7 Nov
- 2025 15:58:31 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
- 15:58:31 +0000
-Date: Fri, 7 Nov 2025 10:58:21 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Josua Mayer <josua@solid-run.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jon Nettleton <jon@solid-run.com>,
-	Mikhail Anikin <mikhail.anikin@solid-run.com>,
-	Yazan Shhady <yazan.shhady@solid-run.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 04/11] Input: ilitek_ts_i2c: fix warning with gpio
- controllers that sleep
-Message-ID: <aQ4XHWtxukLuSuuB@lizhi-Precision-Tower-5810>
-References: <20251107-imx8mp-hb-iiot-v2-0-d8233ded999e@solid-run.com>
- <20251107-imx8mp-hb-iiot-v2-4-d8233ded999e@solid-run.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107-imx8mp-hb-iiot-v2-4-d8233ded999e@solid-run.com>
-X-ClientProxiedBy: PH8PR20CA0016.namprd20.prod.outlook.com
- (2603:10b6:510:23c::20) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD7D1F8AC5;
+	Fri,  7 Nov 2025 16:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762531399; cv=none; b=srvoePwi5/zOYdmBr+UuGoHvRFIJUqYXsqCcZXlp81eGXHvMj/OAHzVEGFiVtRUI8PXI+Gfk+KxeTDDu3HAb0dBXSUU4wZER6qNKzphQkb2EyR2PuYUdeYFkvY5acHeRx5G3bnrbXJXmh9TicINM7GS+PPrhWavwnR2FVRB1lWM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762531399; c=relaxed/simple;
+	bh=r20tjYRZESwm0Xe8JSfhSGhruuGcTelqhRdKQHovH8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z3mej49sekoAiMWrzpj2cJ8gJp4CgqLnX8QwWIkSbQVUv/YRfm5lF/HK62iIgPBQs173rHlfHITxoXfZytvWNa5v9FPhRvQ0EIlo5XAqB1WSvPE61W0k5A3xGJ41Wplk5jSrSmQYgKlb5iUuBXiEMmQeYjLRqmz2z3+vCZFoqXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mZca7uQQ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7Cf4Lk019513;
+	Fri, 7 Nov 2025 16:03:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=w4A9d23bQNuNhMRhy9flyx2rXxLNd6naylhFbxC/z
+	44=; b=mZca7uQQNnvetu9sjgb8+3TflIhTZYnX2po+WuS3l+S3MWfOcuF9t91tR
+	L2aHiaKYadKlq3lmIJeFZoJpv/CrTlAdvQ1L+/Y5UFjy1g2MwQUBoJSOnAWhWitL
+	1pdajc1jba/95f4ZkM79NKEjLkF6un/om6zGRCdx1W+ocfbumaBd5FbYSvQnHmju
+	92Aap+HnD+yQjZEIMpj7lqVR4rSEr6zDCjjXxQiIQT+xkKCRvQzPnMUQ2cnu/Eao
+	NzCEwOnUTvlte8TlN4cGgrnT6UBnup8WnC8JKlOoPbogJitW80fqCy+gNXTi8RX8
+	Hmy+zYlO29mV62TgsbfRZupSsDYfg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a58mmcg0k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 16:03:10 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A7Fk1FT017159;
+	Fri, 7 Nov 2025 16:03:09 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a58mmcg0h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 16:03:09 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7Ergt4027371;
+	Fri, 7 Nov 2025 16:03:09 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5vwyuqkx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 16:03:09 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A7G35Bh57541114
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Nov 2025 16:03:05 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1706320040;
+	Fri,  7 Nov 2025 16:03:04 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0B2F620043;
+	Fri,  7 Nov 2025 16:03:03 +0000 (GMT)
+Received: from li-26e6d1cc-3485-11b2-a85c-83dbc1845c5e.ibm.com.com (unknown [9.111.68.113])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  7 Nov 2025 16:03:02 +0000 (GMT)
+From: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+To: Alexander Potapenko <glider@google.com>
+Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Juergen Christ <jchrist@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+Subject: [PATCH v2] s390/fpu: Fix false-positive kmsan report in fpu_vstl function
+Date: Fri,  7 Nov 2025 16:59:16 +0100
+Message-ID: <20251107155914.1407772-3-aleksei.nikiforov@linux.ibm.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|DB9PR04MB9673:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7dc0552d-bf50-4a1b-ea1b-08de1e167fba
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|19092799006|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?VCc1rxOfGJGvCDVTm5h2glhSXcF6P7dmw9BPu6FnZiqVzXeb8uEgdekHe7IG?=
- =?us-ascii?Q?p5Q1IeVlGAFIeFIfxs8EaeSXXNDiRE/9MVYARpAtGHrQ944RgN8rbsEVZj4L?=
- =?us-ascii?Q?NZA+8KsMvxDz4reqaqBOzMTNZNwafZjWus6bSeVs7hQMVm12Tcje5fZrN3yk?=
- =?us-ascii?Q?oC2a9Za/aRvAsAj85fUK6AcEl1YAfMyZrp9URdw3QKEK2D611odRRQFDjF3H?=
- =?us-ascii?Q?PIlkMMoTxv/gYKUeWXcRrlYr+t9cK7me79mgdTtD+kRyJ/DFwpb1CTAItxae?=
- =?us-ascii?Q?ZOy0xwBLGqdVo7eKFoiIqbVMnTlDY6As6w1rDHGKy1HM1oB2H6NmG6ByfBTg?=
- =?us-ascii?Q?lo5BBDWW7KHIbHTmMh4vqGu8msVN1zJYn7qbh60djYAbra8CrRZEMP8f9uin?=
- =?us-ascii?Q?/CCMdOP3DU0KcK9Hh6pdFhl3+yEX1MPwaxEm19vHMPW5S4YkvvWuppd41Ou0?=
- =?us-ascii?Q?f5fNR1oYOo4j6mlflKKAF/VHheP1xIWkn2autZBSmvXvDwTs3Z1YfF7Zt7y8?=
- =?us-ascii?Q?r4texBmHohBGGuUDCDesmjFuWJLmWMQQy/prM60l3tC0A21P8u3LlriQzIbw?=
- =?us-ascii?Q?MiMJTX0eoukeklR0Jx3LQ/IGcRlramLjEN5Ikootfr327S9Qe+oP1sE3hOb8?=
- =?us-ascii?Q?YU3b67Uk6qDSVCVEoGZ0d1C5rofhXQ411fSv76g6R7hdnSW9SrOobCjblWva?=
- =?us-ascii?Q?P+tLM2dOg80flnipLeUkcja8dQGeEyrrYbPvFdajeOHFXFvCpFzwHWa8Ezb5?=
- =?us-ascii?Q?ct9xrI41Fl8uuIf/cc43RY0nJUcKBs5Mgl3eJfWvEZni+0aDA6xFGWY0BmIC?=
- =?us-ascii?Q?8ucFiiwGp/+RzOttuOAvTk9C14uWEBPhi7oKde+eggig71XpFBomz7+DJ5TA?=
- =?us-ascii?Q?KvRHVlV3HWlC9X16+CGdfQrIgsV1ABHBINJ294PS0YgUrmFl9k4udkZseRsg?=
- =?us-ascii?Q?mZznqIY/IryFQsqZzU5F00njE/Sd6SJv2AHo+l9amma/96jEmWyXkT7y4NIl?=
- =?us-ascii?Q?c3A2T1mMlNJ0yAWy/EdROjpkj/oExdBfHk7ZaVkizgbSYwMZDjR8oNlj7YQs?=
- =?us-ascii?Q?F1jyoudW9eXFNJauWbpHmG7y36eo9uC23LZ8w4zGogLQjuWDpn+0mKgyhuv7?=
- =?us-ascii?Q?Hrs5hfw96ePPjyJ6XfqrNwP0lp4R2Mts5bsqjwgHKFU4Q6zbOZq95WBRbrHZ?=
- =?us-ascii?Q?Kjd8qx6B1COPERKdWm4Td5ziawMLljgtmkk3xP2F9fZKYQHzv+gB3OkAawMr?=
- =?us-ascii?Q?XDmGmXaj87pio/yTCtUDNer2gsfDf+QW1RH4urlGUPCD5+4rZWUad7EEB2eO?=
- =?us-ascii?Q?rWUy0UJzyL5Vw/Lpy2CvAlWj9yINQPBnfud1Mmo9TQvKLOBhtqy5N4olin9b?=
- =?us-ascii?Q?EsfgtfmJnyp39SlZSj0yAck2igadlzEd0r9YL/s0+Y2mhH+31eDLYARf9L6Q?=
- =?us-ascii?Q?in2aoTPOHUc8AU3DyN9ZwGfZ3STGmxDYvcfjfh5JcH+82+OhZIoM5urK3aYs?=
- =?us-ascii?Q?zSCWny8kDJ6wzAC7IlQ1k/nD/icSJT/rNxAq?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?+WIfKWuMC/xllO8eqh23QKj06h/cwWrhQHVu0BLGGS+I0XgxQMf1G1b3JMJl?=
- =?us-ascii?Q?/Qrl8tiGL89oS17zkC7V5DcJgI1up3uLQ8uY3R6g+8yRXM47jCivBWpSlKl0?=
- =?us-ascii?Q?/egEeU3v44ptEG3AK/5ByuuzvGgO637YQeeYBPv8rBtkZqqqis8DoChLSKvC?=
- =?us-ascii?Q?Nw3Q+YWrL46kkAIvbOG2h2awpaNrFuCArubR0cY3p6mF+odryw13qSii5HBB?=
- =?us-ascii?Q?KxVq6+EU9EfBWXijVVSSHa7l8EOlrT27H0H/cVwQO9CnArv5Zr1Lj8C4nbDU?=
- =?us-ascii?Q?PSXtsuxG5mrlBNBB7SKqDKnx+BJpVltmjoQejpRGKCczkaVxqDAeyIh85zNG?=
- =?us-ascii?Q?bqSvmuyc4dw4D22sk6K+/x97LoVQRSYMgdhDlAmsrLRAdF/d/M8qnXRCcmmJ?=
- =?us-ascii?Q?i5DeYCNGHYWLRqCkLVdl9R6g+0OcUE5MNsyEHdOob2zzmSNP6TMXTOG++Q6D?=
- =?us-ascii?Q?f2XsLhVjBxI59Rdfw8uIz4Mgzh67LFk2LQJwIE7TQuEr02jstUnBC63WXY9J?=
- =?us-ascii?Q?3DAalnQLrJiIByDxsdqujPfFBL7KZkIBAC0yioSrOVRW/pJUpTra94XHEdNc?=
- =?us-ascii?Q?UaGJSZ8ygoUsZhJFBmClkDprHUiCcDnWu1xNq9RTiiu0dQZa8bEaKppDACUG?=
- =?us-ascii?Q?hKmVT0kNqzfONh26MObVhkH20v5vi31aH60bITQ+P5MAG1je8X4yfpdIKE7A?=
- =?us-ascii?Q?zaMAV6rGxwFxJTLTlUchuxPcoljFRTI1Xkf3H0o17S60gAQ5X+Sg4pqwNNH6?=
- =?us-ascii?Q?gWnGwv72RpozCftw+W1YpwcqHPKyFjUrTw/AtPKZHFVSXJPaJYJoGuYMIis4?=
- =?us-ascii?Q?gMOD3mXyUYiTC+GmZB95YPftZ1mzA1/Q6RyQUEqmRy5KUGrCfBFHhrMT8G+v?=
- =?us-ascii?Q?lOdO4+Rceg7eSwW+LvIwcdmB9QAFldJ0tMR+Hmuiy1k4j9mp+PQ9L6BnROcW?=
- =?us-ascii?Q?w2Gw1Ww9Z1hTE4Syo3ybmsoPBgw4Thl/U05RH/KN6Tkd6/tS2azhj6HgqEsH?=
- =?us-ascii?Q?UcvWLBZTH0JNrpoBQzVAUR+ygjSAL0216vXGVlJmAy8NMl+k914sG2aRX8gl?=
- =?us-ascii?Q?7nMpvh3k0Y5upPh7qb1FErEcsl3Omrqiah+DoPMjbfuCDg3E7IWpwyt7Nv1t?=
- =?us-ascii?Q?w4sNlnMsLTivG6BP7Fpn6WWWISeabQTVG9hr2UbCxUzBiA6vHRP87Uwl6xGX?=
- =?us-ascii?Q?yhoWge6GKu192czooaQ7Rlt6223+VxavvXHDNi0RohZn6owkqIZe2o7ER8Od?=
- =?us-ascii?Q?+FX4SP34vCAO4VxLkd5SdPfLiSPlP9BY73wDec3/nWbKs5ZUwnYNAXDSlhfQ?=
- =?us-ascii?Q?GC/ODqzQwT214Q/jxPkAX3idEVo4Knaq+wV+urZ1kaL6i2haLDBvMFnAFgL5?=
- =?us-ascii?Q?J5/Hqkggj/dG+7LAmTLsf/WO2wZE0W/UXRyo9S+j+paZbwEnNjD4qq2rf231?=
- =?us-ascii?Q?lXqzGSxlJIPKYvtk/NPTI14StD8u6SRMkGE7NYVWcdQr3g+BcfqutluMnM4V?=
- =?us-ascii?Q?lsX4LfkGGHV8MBLzqNES7CGcO3U10vFsRVE2wX2MRrC8gRNRor0ha4x3ox4S?=
- =?us-ascii?Q?uQX9JplZtSHmLc5qSWHklDG2PFzeb3SGTUECdlXk?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7dc0552d-bf50-4a1b-ea1b-08de1e167fba
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 15:58:31.6125
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FA4MaF1+GUMApkVoBgyRMOVgO5t5Pix5l7vgs2Zh6MrwhPOmhnHCoTINXa17PCDlhxKyKNh9NIq2+Pn3MWn9RA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9673
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 9jqrWA-ia39gvYpirWftQH_iDWl3y8Dy
+X-Proofpoint-GUID: rPSf5ZDD9EV4xZn6VMao3w7nsr3deqo3
+X-Authority-Analysis: v=2.4 cv=SqidKfO0 c=1 sm=1 tr=0 ts=690e183e cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8
+ a=0aw50RnvYNmxmIOuCV4A:9 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwOSBTYWx0ZWRfX/oSvR0FUaEIT
+ 3lJoYJ+VTY/Xa3vFCiah4fMxzrrkQOloce+vq2zXj2OQ6eFfLRuCVWxLdrxiQXsXv/7ZZtC94cU
+ ZFvQ4gwcOgN7lPJ1jKlwl2bCUHJh8gw56UoadSnSnbypaFIJll7h73svZFjBRfL+Jjxa8FSQGP1
+ FVuyjtC4JxIVDo1wet4P/tLdmCFNmciTGwk3ADquAjxswecjnrTsc3XxShiU0tAydCfcHv9hOQK
+ Gl+G3PGhzu0WpLns1VUr5WnnUCQgxC4x6biKK7z0skjjJUy14b1DNRh5ZCzolB6GnE9p8l4V2dN
+ HVcsX84za0P9jetOhKSvgTbVSIyBEdClEhwcos1Slfl5o90nc3mb7dc8hOhf/Nc4EcWhxQTReCi
+ 0ChgnGsxKjIXrE8FfeW19yJMt6AwLg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_04,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 impostorscore=0 adultscore=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010009
 
-On Fri, Nov 07, 2025 at 12:46:11PM +0100, Josua Mayer wrote:
-> The ilitek touchscreen driver uses the non-sleeping gpiod_set_value
-> function for reset.
->
-> When the connected gpio controller needs to sleep as is common for i2c
-> based expanders, this causes noisy complaints in kernel log.
->
-> Reset is not time-critical, switch to the gpiod_set_value_cansleep
-> variant.
+A false-positive kmsan report is detected when running ping command.
 
-Suggest use simple words
+An inline assembly instruction 'vstl' can write varied amount of bytes
+depending on value of 'index' argument. If 'index' > 0, 'vstl' writes
+at least 2 bytes.
 
-Switch to using gpiod_set_value_cansleep() when controlling reset_gpio to
-support GPIO providers that may sleep, such as I2C GPIO expanders.
+clang generates kmsan write helper call depending on inline assembly
+constraints. Constraints are evaluated compile-time, but value of
+'index' argument is known only at runtime.
 
-Frank
->
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
-> ---
->  drivers/input/touchscreen/ilitek_ts_i2c.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/input/touchscreen/ilitek_ts_i2c.c b/drivers/input/touchscreen/ilitek_ts_i2c.c
-> index 0dd632724a003..8c5a54b336816 100644
-> --- a/drivers/input/touchscreen/ilitek_ts_i2c.c
-> +++ b/drivers/input/touchscreen/ilitek_ts_i2c.c
-> @@ -396,9 +396,9 @@ static const struct ilitek_protocol_map ptl_func_map[] = {
->  static void ilitek_reset(struct ilitek_ts_data *ts, int delay)
->  {
->  	if (ts->reset_gpio) {
-> -		gpiod_set_value(ts->reset_gpio, 1);
-> +		gpiod_set_value_cansleep(ts->reset_gpio, 1);
->  		mdelay(10);
-> -		gpiod_set_value(ts->reset_gpio, 0);
-> +		gpiod_set_value_cansleep(ts->reset_gpio, 0);
->  		mdelay(delay);
->  	}
->  }
->
-> --
-> 2.51.0
->
+clang currently generates call to __msan_instrument_asm_store with 1 byte
+as size. Manually call kmsan function to indicate correct amount of bytes
+written and fix false-positive report.
+
+This change fixes following kmsan reports:
+
+[   36.563119] =====================================================
+[   36.563594] BUG: KMSAN: uninit-value in virtqueue_add+0x35c6/0x7c70
+[   36.563852]  virtqueue_add+0x35c6/0x7c70
+[   36.564016]  virtqueue_add_outbuf+0xa0/0xb0
+[   36.564266]  start_xmit+0x288c/0x4a20
+[   36.564460]  dev_hard_start_xmit+0x302/0x900
+[   36.564649]  sch_direct_xmit+0x340/0xea0
+[   36.564894]  __dev_queue_xmit+0x2e94/0x59b0
+[   36.565058]  neigh_resolve_output+0x936/0xb40
+[   36.565278]  __neigh_update+0x2f66/0x3a60
+[   36.565499]  neigh_update+0x52/0x60
+[   36.565683]  arp_process+0x1588/0x2de0
+[   36.565916]  NF_HOOK+0x1da/0x240
+[   36.566087]  arp_rcv+0x3e4/0x6e0
+[   36.566306]  __netif_receive_skb_list_core+0x1374/0x15a0
+[   36.566527]  netif_receive_skb_list_internal+0x1116/0x17d0
+[   36.566710]  napi_complete_done+0x376/0x740
+[   36.566918]  virtnet_poll+0x1bae/0x2910
+[   36.567130]  __napi_poll+0xf4/0x830
+[   36.567294]  net_rx_action+0x97c/0x1ed0
+[   36.567556]  handle_softirqs+0x306/0xe10
+[   36.567731]  irq_exit_rcu+0x14c/0x2e0
+[   36.567910]  do_io_irq+0xd4/0x120
+[   36.568139]  io_int_handler+0xc2/0xe8
+[   36.568299]  arch_cpu_idle+0xb0/0xc0
+[   36.568540]  arch_cpu_idle+0x76/0xc0
+[   36.568726]  default_idle_call+0x40/0x70
+[   36.568953]  do_idle+0x1d6/0x390
+[   36.569486]  cpu_startup_entry+0x9a/0xb0
+[   36.569745]  rest_init+0x1ea/0x290
+[   36.570029]  start_kernel+0x95e/0xb90
+[   36.570348]  startup_continue+0x2e/0x40
+[   36.570703]
+[   36.570798] Uninit was created at:
+[   36.571002]  kmem_cache_alloc_node_noprof+0x9e8/0x10e0
+[   36.571261]  kmalloc_reserve+0x12a/0x470
+[   36.571553]  __alloc_skb+0x310/0x860
+[   36.571844]  __ip_append_data+0x483e/0x6a30
+[   36.572170]  ip_append_data+0x11c/0x1e0
+[   36.572477]  raw_sendmsg+0x1c8c/0x2180
+[   36.572818]  inet_sendmsg+0xe6/0x190
+[   36.573142]  __sys_sendto+0x55e/0x8e0
+[   36.573392]  __s390x_sys_socketcall+0x19ae/0x2ba0
+[   36.573571]  __do_syscall+0x12e/0x240
+[   36.573823]  system_call+0x6e/0x90
+[   36.573976]
+[   36.574017] Byte 35 of 98 is uninitialized
+[   36.574082] Memory access of size 98 starts at 0000000007aa0012
+[   36.574218]
+[   36.574325] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G    B            N  6.17.0-dirty #16 NONE
+[   36.574541] Tainted: [B]=BAD_PAGE, [N]=TEST
+[   36.574617] Hardware name: IBM 3931 A01 703 (KVM/Linux)
+[   36.574755] =====================================================
+
+[   63.532541] =====================================================
+[   63.533639] BUG: KMSAN: uninit-value in virtqueue_add+0x35c6/0x7c70
+[   63.533989]  virtqueue_add+0x35c6/0x7c70
+[   63.534940]  virtqueue_add_outbuf+0xa0/0xb0
+[   63.535861]  start_xmit+0x288c/0x4a20
+[   63.536708]  dev_hard_start_xmit+0x302/0x900
+[   63.537020]  sch_direct_xmit+0x340/0xea0
+[   63.537997]  __dev_queue_xmit+0x2e94/0x59b0
+[   63.538819]  neigh_resolve_output+0x936/0xb40
+[   63.539793]  ip_finish_output2+0x1ee2/0x2200
+[   63.540784]  __ip_finish_output+0x272/0x7a0
+[   63.541765]  ip_finish_output+0x4e/0x5e0
+[   63.542791]  ip_output+0x166/0x410
+[   63.543771]  ip_push_pending_frames+0x1a2/0x470
+[   63.544753]  raw_sendmsg+0x1f06/0x2180
+[   63.545033]  inet_sendmsg+0xe6/0x190
+[   63.546006]  __sys_sendto+0x55e/0x8e0
+[   63.546859]  __s390x_sys_socketcall+0x19ae/0x2ba0
+[   63.547730]  __do_syscall+0x12e/0x240
+[   63.548019]  system_call+0x6e/0x90
+[   63.548989]
+[   63.549779] Uninit was created at:
+[   63.550691]  kmem_cache_alloc_node_noprof+0x9e8/0x10e0
+[   63.550975]  kmalloc_reserve+0x12a/0x470
+[   63.551969]  __alloc_skb+0x310/0x860
+[   63.552949]  __ip_append_data+0x483e/0x6a30
+[   63.553902]  ip_append_data+0x11c/0x1e0
+[   63.554912]  raw_sendmsg+0x1c8c/0x2180
+[   63.556719]  inet_sendmsg+0xe6/0x190
+[   63.557534]  __sys_sendto+0x55e/0x8e0
+[   63.557875]  __s390x_sys_socketcall+0x19ae/0x2ba0
+[   63.558869]  __do_syscall+0x12e/0x240
+[   63.559832]  system_call+0x6e/0x90
+[   63.560780]
+[   63.560972] Byte 35 of 98 is uninitialized
+[   63.561741] Memory access of size 98 starts at 0000000005704312
+[   63.561950]
+[   63.562824] CPU: 3 UID: 0 PID: 192 Comm: ping Tainted: G    B            N  6.17.0-dirty #16 NONE
+[   63.563868] Tainted: [B]=BAD_PAGE, [N]=TEST
+[   63.564751] Hardware name: IBM 3931 A01 703 (KVM/Linux)
+[   63.564986] =====================================================
+
+Fixes: dcd3e1de9d17 ("s390/checksum: provide csum_partial_copy_nocheck()")
+Signed-off-by: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+---
+ arch/s390/include/asm/fpu-insn.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/s390/include/asm/fpu-insn.h b/arch/s390/include/asm/fpu-insn.h
+index 135bb89c0a89..8f2dd6e879ff 100644
+--- a/arch/s390/include/asm/fpu-insn.h
++++ b/arch/s390/include/asm/fpu-insn.h
+@@ -12,6 +12,7 @@
+ #ifndef __ASSEMBLER__
+ 
+ #include <linux/instrumented.h>
++#include <linux/kmsan.h>
+ #include <asm/asm-extable.h>
+ 
+ asm(".include \"asm/fpu-insn-asm.h\"\n");
+@@ -393,6 +394,7 @@ static __always_inline void fpu_vstl(u8 v1, u32 index, const void *vxr)
+ 		     : [vxr] "=Q" (*(u8 *)vxr)
+ 		     : [index] "d" (index), [v1] "I" (v1)
+ 		     : "memory");
++	kmsan_unpoison_memory(vxr, size);
+ }
+ 
+ #else /* CONFIG_CC_HAS_ASM_AOR_FORMAT_FLAGS */
+@@ -409,6 +411,7 @@ static __always_inline void fpu_vstl(u8 v1, u32 index, const void *vxr)
+ 		: [vxr] "=R" (*(u8 *)vxr)
+ 		: [index] "d" (index), [v1] "I" (v1)
+ 		: "memory", "1");
++	kmsan_unpoison_memory(vxr, size);
+ }
+ 
+ #endif /* CONFIG_CC_HAS_ASM_AOR_FORMAT_FLAGS */
+-- 
+2.43.7
+
 
