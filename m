@@ -1,62 +1,39 @@
-Return-Path: <linux-kernel+bounces-890345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9764CC3FDC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:11:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78D4C3FDA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC181895C4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:11:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8844F4E6113
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1E332779A;
-	Fri,  7 Nov 2025 12:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fJpGf1I2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8DA2DEA8C;
-	Fri,  7 Nov 2025 12:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0E23271F4;
+	Fri,  7 Nov 2025 12:10:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4812DEA8C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 12:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762517477; cv=none; b=gLphT6iN8lHmmu3t4HLiUeDmZ8A2LVg5z3riWWUlih5l55cjAXPjGPGZEMu8UXTPgjxmJSRIikJx1D3XMvuw2UL1pmIM4mChWnDeEbLQCPXs6vFP+p3T7p+YYa2H0hia6HK4ZEceE1Y3fysI0VDO8LAoBsia19CaqxWdU5rLvZc=
+	t=1762517422; cv=none; b=KiT85uDYLFM2DT8lwPnSy7xDUAF8wpF9IotYNFdf1gDmWprpgDALB36a4vgX942bXxYRs9JBkdNy5ElxsqZA7cTos8DAdnriyLRE2WLGGiOOYA0KPha2hHpogg7QGdYelLkW+l4J9PnS0SF8a2qqPYQVU1VJAnGAfeYM2sAIewk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762517477; c=relaxed/simple;
-	bh=hpVr8iyO7KGqD2WBV4SGKNp+0Tu8kexwAFvNHJZsQLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aWtSyWEPDvLNcEDydoKcduFf0efKeFzhdng+uwpFI0V/YlkPHeuUDSL/UUUZeK9CaLQ5Jq945UQS6qUvOmvCRj6FUDw/6aZDsKWVGVcMcXIkOTpMI43d/PFClH6ebdrSV+XMY6nbBglU6fXAbXfoFpl4lu2N6W35TtsPAkCEDXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fJpGf1I2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A758uSr557751;
-	Fri, 7 Nov 2025 12:11:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SKJwrIblNVll+XvukvV4wZxNBbHDoBGgVYbGrDMsKq8=; b=fJpGf1I25+oZVvsF
-	+kT9cRiP4mO/XNbfkk1VXzR1t8t6QBSHtTK4QWm+YPI+0noF/4Y6Ex03gijgdRfN
-	Uh1xt1mszDB/rBxL+7J1Ov09NzN/BuCoTxKIfjfEDX0G/h0jeDUGzviqoc2ezeX3
-	VT9YO0odaGk3XnjWurPbkMNhzLT6d/QJpKRI+LxS0S3NqAe3h/Wp9ua+wgUlGnbk
-	1hbVD83cci0sH8od3XzA626YFqG4vYnBzfHJ9+YKEa4YACKH0WHlQBg84Zw8OyI9
-	gSFWoLU3iMILOeEGYz71RjDoMWTk4E82Yt3tkg1JRMmhpntTIoC4sGzKAxEK5AYt
-	VZkMsQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8yr9u00a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 12:11:11 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5A7CBBMW025956
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Nov 2025 12:11:11 GMT
-Received: from [10.239.96.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Fri, 7 Nov
- 2025 04:09:58 -0800
-Message-ID: <ace738bf-f40f-46ac-9b17-bac658d2a290@quicinc.com>
-Date: Fri, 7 Nov 2025 20:09:56 +0800
+	s=arc-20240116; t=1762517422; c=relaxed/simple;
+	bh=6DUrrUjFqJnGqs6qApHxKcN9Q/u3nt/6Cxz4JWY15t4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VioKQMvNlsZD1JjEsgOyOqj69MKVWyEk9TlkBHiiUnpdNLbIUc4FxywJbZyYT+hpyzhwu7vB6zATrTsxXtb5b2M2rXJN2L/zVHK3lafpxUhBEd1K/5AGO/Cm1sWwFXBo6InbFMiUHAx+mNIkyeiqPW4c2mynzelVfFCl9P/xi2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46C6B1516;
+	Fri,  7 Nov 2025 04:10:12 -0800 (PST)
+Received: from [10.57.86.134] (unknown [10.57.86.134])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E6EB3F66E;
+	Fri,  7 Nov 2025 04:10:18 -0800 (PST)
+Message-ID: <823463ee-f8c9-4023-892e-6e6532a1a813@arm.com>
+Date: Fri, 7 Nov 2025 12:10:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,110 +41,266 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Bluetooth: btusb: add new custom firmwares
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_chejiang@quicinc.com>, <quic_jiaymao@quicinc.com>,
-        <quic_chezhou@quicinc.com>
-References: <20251107021345.2759890-1-quic_shuaz@quicinc.com>
- <jztfgic2kbziqradykdmyqv6st3lue23snweawlxtmprqd3ifu@t3gw2o4g5qfx>
-Content-Language: en-US
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-In-Reply-To: <jztfgic2kbziqradykdmyqv6st3lue23snweawlxtmprqd3ifu@t3gw2o4g5qfx>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=DrpbOW/+ c=1 sm=1 tr=0 ts=690de1df cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=Z3BhJ2cJuhskXHIy3gwA:9 a=QEXdDO2ut3YA:10 a=1R1Xb7_w0-cA:10
- a=OREKyDgYLcYA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: 0NKRCAy15mT4tuWyXgxV_4RLIx39QKIl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDA5OSBTYWx0ZWRfX90rD9E6BZHBk
- hqE5Z9YGHFBYGqniqdiuPdmKfweVOmZXxqwZr4sfp3ZC9oTRhbmd8Vk6ZSPbYd2gu1+bEyFRDpu
- pySUw48PMgM8kQUuH9FfHrgL8sEXaJDftjq9dGANseWDbTfV7HbTE+8m2OLNmmkWvt0J7dVFkvD
- mPNs8OacUdDTZcQqxzdT1ttl28HxYHWBeRnL1LMo6bdVgooiilUBB+EG15t3q6IXc5pEOsrOsnf
- iVJkvpPoybVHHojjs7L5kjlTQJrkmIT8vsOzDWFuik//E52ZdVvpmrTCZlkaRXsY36Jvz4/HV7A
- XSikZZMtfM/FkH4wbrTlrI9l8wSAmyd7lG8tpbLzshtTfdQre+ySuQKyjrf9waDkdcVRua41i4p
- 3HfVLt4pf3E5g1QdCIc7oXfklZ6r7A==
-X-Proofpoint-GUID: 0NKRCAy15mT4tuWyXgxV_4RLIx39QKIl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 adultscore=0 impostorscore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 malwarescore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511070099
+Subject: Re: [PATCH v2 1/3] arm64: mm: Don't sleep in
+ split_kernel_leaf_mapping() when in atomic context
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, catalin.marinas@arm.com,
+ will@kernel.org, david@redhat.com, ardb@kernel.org, dev.jain@arm.com,
+ scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Guenter Roeck <groeck@google.com>
+References: <20251106160945.3182799-1-ryan.roberts@arm.com>
+ <20251106160945.3182799-2-ryan.roberts@arm.com>
+ <d6d7e038-aa94-491a-8ad6-f48541b98b6a@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <d6d7e038-aa94-491a-8ad6-f48541b98b6a@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Dmitry
-
-On 11/7/2025 11:13 AM, Dmitry Baryshkov wrote:
-> On Fri, Nov 07, 2025 at 10:13:45AM +0800, Shuai Zhang wrote:
->> There are custom-made firmwares based on board ID for a given QCA BT
->> chip sometimes, and they are different with existing firmwares and put
->> in a separate subdirectory to avoid conflict, for example:
->> QCA2066, as a variant of WCN6855, has firmwares under 'qca/QCA2066/'
->> of linux-firmware repository.
+On 06/11/2025 20:46, Yang Shi wrote:
 > 
-> These are generic phrases regarding QCA2066. Describe why and what is
-> done in the patch (e.g. why do you add new entry to that table).
 > 
+> On 11/6/25 8:09 AM, Ryan Roberts wrote:
+>> It has been reported that split_kernel_leaf_mapping() is trying to sleep
+>> in non-sleepable context. It does this when acquiring the
+>> pgtable_split_lock mutex, when either CONFIG_DEBUG_PAGEALLOC or
+>> CONFIG_KFENCE are enabled, which change linear map permissions within
+>> softirq context during memory allocation and/or freeing. All other paths
+>> into this function are called from sleepable context and so are safe.
 >>
->> Cc: stable@vger.kernel.org
+>> But it turns out that the memory for which these 2 features may attempt
+>> to modify the permissions is always mapped by pte, so there is no need
+>> to attempt to split the mapping. So let's exit early in these cases and
+>> avoid attempting to take the mutex.
+>>
+>> There is one wrinkle to this approach; late-initialized kfence allocates
+>> it's pool from the buddy which may be block mapped. So we must hook that
+>> allocation and convert it to pte-mappings up front. Previously this was
+>> done as a side-effect of kfence protecting all the individual pages in
+>> its pool at init-time, but this no longer works due to the added early
+>> exit path in split_kernel_leaf_mapping().
+>>
+>> So instead, do this via the existing arch_kfence_init_pool() arch hook,
+>> and reuse the existing linear_map_split_to_ptes() infrastructure.
+>>
+>> Closes: https://lore.kernel.org/all/f24b9032-0ec9-47b1-8b95-
+>> c0eeac7a31c5@roeck-us.net/
+>> Fixes: a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full")
+>> Tested-by: Guenter Roeck <groeck@google.com>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 > 
-> There is little point for CC'ing stable if this is not a fix (and it's
-> not, it lacks a corresponding tag).
+> Reviewed-by: Yang Shi <yang@os.amperecomputing.com>
 > 
-
-I tried not adding Cc: stable@vger.kernel.org, but this question occurred.
-
-FYI: kernel test robot notices the stable kernel rule is not satisfied.
-
-The check is based on https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html#option-1
-
-Rule: add the tag "Cc: stable@vger.kernel.org" in the sign-off area to have the patch automatically included in the stable tree."
-
-
-
->> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
-> 
-> Please migrate to the @oss.qualcomm.com address.
-
-I am currently submitting an application for an OSS account.
-
+> Just a nit below:
 > 
 >> ---
->>  drivers/bluetooth/btusb.c | 1 +
->>  1 file changed, 1 insertion(+)
+>>   arch/arm64/include/asm/kfence.h |  3 +-
+>>   arch/arm64/mm/mmu.c             | 92 +++++++++++++++++++++++----------
+>>   2 files changed, 67 insertions(+), 28 deletions(-)
 >>
->> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
->> index dcbff7641..7175e9b2d 100644
->> --- a/drivers/bluetooth/btusb.c
->> +++ b/drivers/bluetooth/btusb.c
->> @@ -3273,6 +3273,7 @@ static const struct qca_device_info qca_devices_table[] = {
->>  
->>  static const struct qca_custom_firmware qca_custom_btfws[] = {
->>  	{ 0x00130201, 0x030A, "QCA2066" },
->> +	{ 0x00130201, 0x030B, "QCA2066" },
->>  	{ },
->>  };
->>  
->> -- 
->> 2.34.1
->>
+>> diff --git a/arch/arm64/include/asm/kfence.h b/arch/arm64/include/asm/kfence.h
+>> index a81937fae9f6..21dbc9dda747 100644
+>> --- a/arch/arm64/include/asm/kfence.h
+>> +++ b/arch/arm64/include/asm/kfence.h
+>> @@ -10,8 +10,6 @@
+>>     #include <asm/set_memory.h>
+>>   -static inline bool arch_kfence_init_pool(void) { return true; }
+>> -
+>>   static inline bool kfence_protect_page(unsigned long addr, bool protect)
+>>   {
+>>       set_memory_valid(addr, 1, !protect);
+>> @@ -25,6 +23,7 @@ static inline bool arm64_kfence_can_set_direct_map(void)
+>>   {
+>>       return !kfence_early_init;
+>>   }
+>> +bool arch_kfence_init_pool(void);
+>>   #else /* CONFIG_KFENCE */
+>>   static inline bool arm64_kfence_can_set_direct_map(void) { return false; }
+>>   #endif /* CONFIG_KFENCE */
+>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+>> index b8d37eb037fc..a364ac2c9c61 100644
+>> --- a/arch/arm64/mm/mmu.c
+>> +++ b/arch/arm64/mm/mmu.c
+>> @@ -708,6 +708,16 @@ static int split_kernel_leaf_mapping_locked(unsigned long
+>> addr)
+>>       return ret;
+>>   }
+>>   +static inline bool force_pte_mapping(void)
+>> +{
+>> +    bool bbml2 = system_capabilities_finalized() ?
+>> +        system_supports_bbml2_noabort() : cpu_supports_bbml2_noabort();
+>> +
+>> +    return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
+>> +               is_realm_world())) ||
+>> +        debug_pagealloc_enabled();
+>> +}
+>> +
+>>   static DEFINE_MUTEX(pgtable_split_lock);
+>>     int split_kernel_leaf_mapping(unsigned long start, unsigned long end)
+>> @@ -723,6 +733,16 @@ int split_kernel_leaf_mapping(unsigned long start,
+>> unsigned long end)
+>>       if (!system_supports_bbml2_noabort())
+>>           return 0;
+>>   +    /*
+>> +     * If the region is within a pte-mapped area, there is no need to try to
+>> +     * split. Additionally, CONFIG_DEBUG_PAGEALLOC and CONFIG_KFENCE may
+>> +     * change permissions from atomic context so for those cases (which are
+>> +     * always pte-mapped), we must not go any further because taking the
+>> +     * mutex below may sleep.
 > 
+> The path 3 changed the comment, but since patch 3 just does some cleanup and
+> code deduplication, there is no functional change, so why not just use the
+> comment from patch 3?
 
-Best,regard
-Shuai
+The reason I changed it is because in patch 3 we introduce
+split_leaf_mapping_possible(), which is also doing the
+!system_supports_bbml2_noabort() check above, so this original comment only
+applies to a subset of the reasons we may exit here. It felt confusing to me. So
+I decided to simplify it. The rationale is all captured in the commit log, so I
+didn't think it was a big deal.
+
+Thanks,
+Ryan
+
+> 
+> Thanks,
+> Yang
+> 
+>> +     */
+>> +    if (force_pte_mapping() || is_kfence_address((void *)start))
+>> +        return 0;
+>> +
+>>       /*
+>>        * Ensure start and end are at least page-aligned since this is the
+>>        * finest granularity we can split to.
+>> @@ -758,30 +778,30 @@ int split_kernel_leaf_mapping(unsigned long start,
+>> unsigned long end)
+>>       return ret;
+>>   }
+>>   -static int __init split_to_ptes_pud_entry(pud_t *pudp, unsigned long addr,
+>> -                      unsigned long next,
+>> -                      struct mm_walk *walk)
+>> +static int split_to_ptes_pud_entry(pud_t *pudp, unsigned long addr,
+>> +                   unsigned long next, struct mm_walk *walk)
+>>   {
+>> +    gfp_t gfp = *(gfp_t *)walk->private;
+>>       pud_t pud = pudp_get(pudp);
+>>       int ret = 0;
+>>         if (pud_leaf(pud))
+>> -        ret = split_pud(pudp, pud, GFP_ATOMIC, false);
+>> +        ret = split_pud(pudp, pud, gfp, false);
+>>         return ret;
+>>   }
+>>   -static int __init split_to_ptes_pmd_entry(pmd_t *pmdp, unsigned long addr,
+>> -                      unsigned long next,
+>> -                      struct mm_walk *walk)
+>> +static int split_to_ptes_pmd_entry(pmd_t *pmdp, unsigned long addr,
+>> +                   unsigned long next, struct mm_walk *walk)
+>>   {
+>> +    gfp_t gfp = *(gfp_t *)walk->private;
+>>       pmd_t pmd = pmdp_get(pmdp);
+>>       int ret = 0;
+>>         if (pmd_leaf(pmd)) {
+>>           if (pmd_cont(pmd))
+>>               split_contpmd(pmdp);
+>> -        ret = split_pmd(pmdp, pmd, GFP_ATOMIC, false);
+>> +        ret = split_pmd(pmdp, pmd, gfp, false);
+>>             /*
+>>            * We have split the pmd directly to ptes so there is no need to
+>> @@ -793,9 +813,8 @@ static int __init split_to_ptes_pmd_entry(pmd_t *pmdp,
+>> unsigned long addr,
+>>       return ret;
+>>   }
+>>   -static int __init split_to_ptes_pte_entry(pte_t *ptep, unsigned long addr,
+>> -                      unsigned long next,
+>> -                      struct mm_walk *walk)
+>> +static int split_to_ptes_pte_entry(pte_t *ptep, unsigned long addr,
+>> +                   unsigned long next, struct mm_walk *walk)
+>>   {
+>>       pte_t pte = __ptep_get(ptep);
+>>   @@ -805,12 +824,18 @@ static int __init split_to_ptes_pte_entry(pte_t *ptep,
+>> unsigned long addr,
+>>       return 0;
+>>   }
+>>   -static const struct mm_walk_ops split_to_ptes_ops __initconst = {
+>> +static const struct mm_walk_ops split_to_ptes_ops = {
+>>       .pud_entry    = split_to_ptes_pud_entry,
+>>       .pmd_entry    = split_to_ptes_pmd_entry,
+>>       .pte_entry    = split_to_ptes_pte_entry,
+>>   };
+>>   +static int range_split_to_ptes(unsigned long start, unsigned long end,
+>> gfp_t gfp)
+>> +{
+>> +    return walk_kernel_page_table_range_lockless(start, end,
+>> +                    &split_to_ptes_ops, NULL, &gfp);
+>> +}
+>> +
+>>   static bool linear_map_requires_bbml2 __initdata;
+>>     u32 idmap_kpti_bbml2_flag;
+>> @@ -847,11 +872,9 @@ static int __init linear_map_split_to_ptes(void *__unused)
+>>            * PTE. The kernel alias remains static throughout runtime so
+>>            * can continue to be safely mapped with large mappings.
+>>            */
+>> -        ret = walk_kernel_page_table_range_lockless(lstart, kstart,
+>> -                        &split_to_ptes_ops, NULL, NULL);
+>> +        ret = range_split_to_ptes(lstart, kstart, GFP_ATOMIC);
+>>           if (!ret)
+>> -            ret = walk_kernel_page_table_range_lockless(kend, lend,
+>> -                        &split_to_ptes_ops, NULL, NULL);
+>> +            ret = range_split_to_ptes(kend, lend, GFP_ATOMIC);
+>>           if (ret)
+>>               panic("Failed to split linear map\n");
+>>           flush_tlb_kernel_range(lstart, lend);
+>> @@ -1002,6 +1025,33 @@ static void __init arm64_kfence_map_pool(phys_addr_t
+>> kfence_pool, pgd_t *pgdp)
+>>       memblock_clear_nomap(kfence_pool, KFENCE_POOL_SIZE);
+>>       __kfence_pool = phys_to_virt(kfence_pool);
+>>   }
+>> +
+>> +bool arch_kfence_init_pool(void)
+>> +{
+>> +    unsigned long start = (unsigned long)__kfence_pool;
+>> +    unsigned long end = start + KFENCE_POOL_SIZE;
+>> +    int ret;
+>> +
+>> +    /* Exit early if we know the linear map is already pte-mapped. */
+>> +    if (!system_supports_bbml2_noabort() || force_pte_mapping())
+>> +        return true;
+>> +
+>> +    /* Kfence pool is already pte-mapped for the early init case. */
+>> +    if (kfence_early_init)
+>> +        return true;
+>> +
+>> +    mutex_lock(&pgtable_split_lock);
+>> +    ret = range_split_to_ptes(start, end, GFP_PGTABLE_KERNEL);
+>> +    mutex_unlock(&pgtable_split_lock);
+>> +
+>> +    /*
+>> +     * Since the system supports bbml2_noabort, tlb invalidation is not
+>> +     * required here; the pgtable mappings have been split to pte but larger
+>> +     * entries may safely linger in the TLB.
+>> +     */
+>> +
+>> +    return !ret;
+>> +}
+>>   #else /* CONFIG_KFENCE */
+>>     static inline phys_addr_t arm64_kfence_alloc_pool(void) { return 0; }
+>> @@ -1009,16 +1059,6 @@ static inline void arm64_kfence_map_pool(phys_addr_t
+>> kfence_pool, pgd_t *pgdp) {
+>>     #endif /* CONFIG_KFENCE */
+>>   -static inline bool force_pte_mapping(void)
+>> -{
+>> -    bool bbml2 = system_capabilities_finalized() ?
+>> -        system_supports_bbml2_noabort() : cpu_supports_bbml2_noabort();
+>> -
+>> -    return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
+>> -               is_realm_world())) ||
+>> -        debug_pagealloc_enabled();
+>> -}
+>> -
+>>   static void __init map_mem(pgd_t *pgdp)
+>>   {
+>>       static const u64 direct_map_end = _PAGE_END(VA_BITS_MIN);
+> 
 
 
