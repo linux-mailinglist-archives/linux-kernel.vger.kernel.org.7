@@ -1,77 +1,104 @@
-Return-Path: <linux-kernel+bounces-890402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B08C3FF82
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:48:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2119DC4002B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:01:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3038A3AED6B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:48:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA3B24E3993
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF93D25A2B5;
-	Fri,  7 Nov 2025 12:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD75122538F;
+	Fri,  7 Nov 2025 13:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWY6Uqs3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="h95Veo2Q"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFDA1F0E25;
-	Fri,  7 Nov 2025 12:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8011E3DE5
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762519709; cv=none; b=tKRRk0ZCHmCOH6PQ6755yWqE9q6U9WISDqVRYXXZQgFDe4APVMinMe3zrVIzTHzfao93tzHhXMIs4nlL0lR73dukAb6lSgKQBWAycpNd5R9AOdJ1mDr/pBSPttgSqr9tYfhmbrNkZMRf7Qtbn5tPZxYEPmOk8g6qvIYdrXk/Qpw=
+	t=1762520495; cv=none; b=nwNIf3grq3e9FKRXbXow2T8EqcfIhVxS2SyU+GU89LBs0cQ1IeTwvjG9rBJgQYMNv3pXEtwfEYvveMKBIzSRcReqH0JSFA/erozWmvn3i/brLuvKGJjSNLfMRRDURBXz/qc/D6DyvJUmsgexXoKvmV/iGH+tt5/JrdxADo6b8zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762519709; c=relaxed/simple;
-	bh=9qSpx02PB3M67S0+FIcoFz4YcqafdeNqSH47zWxo8Oo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=maVmS8tRbuawtKbP8ncbKq4qOeFgJBWPZpqzk/tiHYbhDjmpvkNkBQVa4fhVUyI0W+0oxQc3424Tek0v49WXiOBzECsuBDkOF9fBK95fzqTJMqjyQPUTT1u5YPIGdp5+xUiSNr5t9AMzKlysHvzjEChU8NjyfoIU64BrAtoOIbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWY6Uqs3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BCFCC4CEF5;
-	Fri,  7 Nov 2025 12:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762519708;
-	bh=9qSpx02PB3M67S0+FIcoFz4YcqafdeNqSH47zWxo8Oo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hWY6Uqs3xV0XnCp16NuZJIxZJ72EXVkK6J2LYghXf1r89fkeLr8IVZ5DevgjVFU+n
-	 rVdsqfmf46QoMJRW8NqDOHJ6q1S0RrwGdOjUcyMWAGRCq/GbeOQDmK6BxAADaKXpht
-	 fyS+ncUot5nHzz/FSfpot1pzhrRPqX9l7LJyyG84jd5BFoAflM9XNoMJBV9jynype8
-	 rAcocx2dALGYG2bsdmG9tbwE9nit1zA1a74b7RMrQMhEzBypE8V3dZTZ2OUHl6B+7B
-	 o7ApnNZrn8max5ngqQujon2D3PZAhDdthiC6BIQvkdqh966W1qxGIZvTYTMTRjWwhc
-	 2Wf0fDjJNSvCA==
-Date: Fri, 7 Nov 2025 13:48:25 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v2 0/16] SRCU updates for v6.19
-Message-ID: <aQ3qmdoxktGZRUiL@localhost.localdomain>
-References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
- <aQvXA3A5XHn-Tjhh@pavilion.home>
- <20251106110610.44599177@batman.local.home>
+	s=arc-20240116; t=1762520495; c=relaxed/simple;
+	bh=/9zEo37xXtXmMm7pfbmvKBJmh0YoopjN/ESZ+hB+f2I=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Hq/FeKxo3axEEgSL7+jec7S4DMBm0blsHFmSCEvEFGSoLBHq3Dx764qUf/O5IzgfM44xNTUm7fpbOK+F7hzJtlgA5okxq7Vig03M8ZUcabbWs1vhhaDfLY+iFVa59RcAl+aBXKCrEwet1cMMP21CQUnyMUIucimIGwk08B+58yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=h95Veo2Q; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1762520481; bh=1ZAnV/SuPIay8Pw4JRN71gMOCxNbyZpcURzE/SP/HDs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=h95Veo2QfmY9s/6tue3aBAYMLXIzwdmpayD0dSiGAzrTdJac6mREqFwjFTAOYBmkk
+	 5R1mZRE4f+0PUGOmkfDMmZ0nGcjWS1/XS8cOvSIu8Dlughw61eYWwZF4XlbcXv8KrF
+	 0P8wwpDVYpJGRQbqlJiXRdB8N3J2h1EXnKIdAhdU=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.201.7.117])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id C33A061A; Fri, 07 Nov 2025 20:48:51 +0800
+X-QQ-mid: xmsmtpt1762519731t764rkiz5
+Message-ID: <tencent_884C1769576F66DEB36003674976C3A32405@qq.com>
+X-QQ-XMAILINFO: MEx+xBdGVwfVvMRmOUtQqgS3YGAlBp0SedT+I1ZVF5sCCpLh2RkJo1BKlwXUFR
+	 MCx37C5Z/5iNZUKwB3imbx/IlGNCY7QbHAtudxMrjteEweBdZFVo3f+fVmKqPfDSAqdtqiXrA8Pu
+	 hbRy2gf4QmB03J8E9wdQfvATRh6wEwl+Q5yIiuf6eq2ItTWN4FvH2ynjRIGkbmRWfYjUDDIlzMNJ
+	 TKVFJQ3S0EXYpPWDds6S/I9ge6ykoGWKpYJAzMFf73Tk9pHGb9I2qCmdywSk/MqHbupPhruPw7zE
+	 h44oPBw8k7jJMWOJky6nWSzsabLRF17uQ9ZApJrGOIPNilMlFy7ZjQZZmYlj8e5jo98I14145pFi
+	 RYjxFl1kzSD1uOsW8M5isg0vfJhpTC2MGgc3SmksI2uKXDYfgKwCq93HOiUxFQ4pTqvblz0VVbZp
+	 RXS7oYPZ7iHJGazX0EoXcIxtuIPD0UdV0WCmbHXrbb4Rydd1a2gEmygjtnuxa+CTFh4q8+6v7tn+
+	 QDxqeGX0l+lDMigmn5ioVsf8oBd9WQ+Jwuu1uIEwtE11heRxrTdTkvogfwTFURXFvICebGlBL2Bg
+	 PxfYFS+gMSRneDTzI8E5k+GTXylLydi2W8ifCN7KDv77d0dnLL8hW6V6A8fdfV96Zbk7Otxa1HZh
+	 +v052JIuF5a90lUBAxvIB2MZKSALOToD05fPsB2tJYtByYqTUNPvExRQDc/3AJjC2kziwQUWWJpI
+	 AQlGCT8QlJGHZtnXuBEcgDVWWEHBdqD5qzBhrLDH91Xn01FNPi4PPUP2FR9wQ3HVrye9vHFEknYN
+	 ndLoGpG1hwgCevSgUfmeI8+uw0yBZs9RjtGFVfqdB5YJMK4obQ/2S7AxyyX3tXXxH4/iuWM9fCcr
+	 4g8uhHZuvDSKcWD+zkBVgyTZeQ5bCcinAn28oql9QlnN71E1qnUAcUi82/dDsPetFxFe/6wkdYmH
+	 KXSee3lztMrYg4QNM6FWi1PiOqYCaV
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+72afd4c236e6bc3f4bac@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [cifs?] memory leak in smb3_fs_context_parse_param
+Date: Fri,  7 Nov 2025 20:48:52 +0800
+X-OQ-MSGID: <20251107124851.3827801-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <690da014.a70a0220.22f260.0026.GAE@google.com>
+References: <690da014.a70a0220.22f260.0026.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251106110610.44599177@batman.local.home>
 
-Le Thu, Nov 06, 2025 at 11:06:10AM -0500, Steven Rostedt a écrit :
-> On Thu, 6 Nov 2025 00:00:19 +0100
-> Frederic Weisbecker <frederic@kernel.org> wrote:
-> 
-> > Applied to rcu/srcu, thanks!
-> 
-> I have issues with patch 10, so please do not apply it.
+#syz test
 
-Ok, dropping it, thanks!
-
+diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+index e60927b2a7c8..0e1949bcd6ea 100644
+--- a/fs/smb/client/fs_context.c
++++ b/fs/smb/client/fs_context.c
+@@ -1435,12 +1435,16 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
+ 			cifs_errorf(fc, "Unknown error parsing devname\n");
+ 			goto cifs_parse_mount_err;
+ 		}
++		kfree_sensitive(ctx->source);
++		ctx->source = NULL;
+ 		ctx->source = smb3_fs_context_fullpath(ctx, '/');
+ 		if (IS_ERR(ctx->source)) {
+ 			ctx->source = NULL;
+ 			cifs_errorf(fc, "OOM when copying UNC string\n");
+ 			goto cifs_parse_mount_err;
+ 		}
++		kfree_sensitive(fc->source);
++		fc->source = NULL;
+ 		fc->source = kstrdup(ctx->source, GFP_KERNEL);
+ 		if (fc->source == NULL) {
+ 			cifs_errorf(fc, "OOM when copying UNC string\n");
 -- 
-Frederic Weisbecker
-SUSE Labs
+2.43.0
+
+
 
