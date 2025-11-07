@@ -1,99 +1,192 @@
-Return-Path: <linux-kernel+bounces-890169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7D7C3F615
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:18:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB99C3F614
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:18:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9CA03A6A61
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:17:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A3834EFD25
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579723019DE;
-	Fri,  7 Nov 2025 10:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CA72FD673;
+	Fri,  7 Nov 2025 10:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYLLuF3F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RVqfRCZw";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YpDDELeJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D482AD22;
-	Fri,  7 Nov 2025 10:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDD02AD22
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762510633; cv=none; b=pPE08DHcaKTSMzv0Q1B9gW6vknIKVOWhkUulQi/I5PWmG2Wc8t2As239QY11+0ISk9mdhRpFD52PZpOZwGK5dLZ8O1k41+MggxjgkPscOoJI2ejYKtepdJi94zHk9cZhMiQioa9WLbGptT9Hse5jsu/lOhs7x74DO3RovPDW+CE=
+	t=1762510650; cv=none; b=G6AKVgqXhjljdjGoLwDmYLZJ60fHrSZw+s/zy6C63S/xAA4Yom3kjTcIYv/S6XmKid1pWNR9I/CRpqz3VCRP1g1QOTQPSUc0+r/8KoXNM9QSfbf6uq7AJ16eDGmuncUdgub+l58DpuYDqPZt4oGNZaEplIL6iiKyksMCZ0BluZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762510633; c=relaxed/simple;
-	bh=+hJogo2dkd8m91uRqbkg5Gd4jOsDSmCD2rToG/IWvyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uMX+3T0S6CGZCzrw7YmsXXvWrxR58vUuFlr2ztNiutBoudR9YfgCkbOcePWaXymZRpnALwKwBkZXOkxsArKNhF4h5UvSQcXjC6vWd/N1saM+IIbQCJ8p89iMM4PhlsaztaeQSUQiUeWnMVTUa29IDidu9fEISuSDVgC/NnYNdU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYLLuF3F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2554EC4CEF8;
-	Fri,  7 Nov 2025 10:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762510633;
-	bh=+hJogo2dkd8m91uRqbkg5Gd4jOsDSmCD2rToG/IWvyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JYLLuF3F3b4GHtYWGWmgiCTxM7c+DNYHsRg/CoB8a42Ozi2nURMMuNtrP5hNt3Es6
-	 cN1Ax3+5vC4CE5g8PcypvGYOYHx1uJjn5VscTaQuTtYNmWH86DOZZ8w2u6GsLVjbHd
-	 +cMcEAkOqvieimeznyCHICoVtou/JO1l9AgXhuB9Vud8jQBnT9vFMTX44TucQSt1gC
-	 Y4Ty0IceUH3BUbLD9yj8y+HjrmXUqUFUITH/aDh2q1ivtNP3GoXirEjMmd+h4n2N7M
-	 Q+p1GIIu4etJHnYvs5tXwmVMv7FCvLPosWB1FIoCfDtaoqDGbY9li6dN37EnbDJddk
-	 NB8Z2cqdmYj4g==
-Date: Fri, 7 Nov 2025 10:17:09 +0000
-From: Simon Horman <horms@kernel.org>
-To: Zilin Guan <zilin@seu.edu.cn>
-Cc: chuck.lever@oracle.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com,
-	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jianhao.xu@seu.edu.cn
-Subject: Re: [PATCH] net/handshake: Fix memory leak in tls_handshake_accept()
-Message-ID: <aQ3HJRwkz6j512o7@horms.kernel.org>
-References: <20251106144511.3859535-1-zilin@seu.edu.cn>
+	s=arc-20240116; t=1762510650; c=relaxed/simple;
+	bh=2qs1VG1n9bjiENuAjdiCJJSJcQywxwAJEW6SFZp+G7I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CKGcWmQ9HA/54cgOLBjywg0G3h/UbJa4UFofjeDYNvd7b68CBqN5UF2wmmBgcZwO7NNs8ApZ2c0UD5rNNa6taXf/hyw9kb9WB91hRBQi3yHj5bP7gPiJiknvonhJlKgbB6K+ENK+ktG/r2hU9bhMGQPKSbG8QzRRmfUpd5fpWX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RVqfRCZw; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YpDDELeJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A77jfJo3749438
+	for <linux-kernel@vger.kernel.org>; Fri, 7 Nov 2025 10:17:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VB0as2X5rpIdpcXtCyAvYkLDtHq+50iUEPo6nofU0HI=; b=RVqfRCZwtn03rQYw
+	y1tVIWooVijUQhG+dkJdwmLnX130OlTFVOPw9wL5FA8dUGq0DWl/BF0RXbKseiYX
+	yGDkrhtqhAZQygkom+Sfb2ndqg5iPHHcRV4XsSRoLmiDsFu1d59J7a5cHwccNUu2
+	bhFfPQob8kwarW7UFGPqWRHuWDPmJK/7IPPrJ1omQIMfArGBy3UANVjDyF9uG9Po
+	2kZTUKATVYi+uJSeB0co/uKZ4qDzyMvl1mlMOhNnKgZr267lYXRwx+Z3rmKK+n70
+	5bnBAi+2vdlF8wgpErX2YNHV+gHnbGFw90XCG4B5yYkmUg8DkSX8SmPakVS6k17S
+	++RNLw==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8sy6kvuc-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:17:27 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b22624000dso14161685a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:17:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762510647; x=1763115447; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VB0as2X5rpIdpcXtCyAvYkLDtHq+50iUEPo6nofU0HI=;
+        b=YpDDELeJ1/DmshR+ehv/RQOOKc8HpFcMbhTMT5vG1tcq4zrBtGeISu6wkLHZ4GNqzz
+         qStzJec+hyjP878Pp5354lZeWqHOppnC9uFUPaGe3t+Mvk/UWNbUelSSAJOF96BTEjvX
+         zu54zRQfBq3WhUHiMsu27GuoD1VEugIMVQZpFUoYMEPd7aukuwLZ/y9RD393gBkW/3X4
+         KpCkCCEoxAMrqtmosct+uNkUq3lnJUuO/Fob9XB8XInL3vw92bb8FtmBFA2k8p4rBlmo
+         XCQxYsEwXsgWlpCCnfC8LquuPEDdkCjfb6BAeCEVQhiybyPp0rK6f7o/NHtU4H0Oqk+1
+         AkaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762510647; x=1763115447;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VB0as2X5rpIdpcXtCyAvYkLDtHq+50iUEPo6nofU0HI=;
+        b=fy2ADl4en0+LbLTzOa4SvyECFaKLp33BAyck/BGPij8ObA/xOhKrPr2db2uYDQJ85E
+         c/wfgEWGLcTn/IURnKcOhaeTW6NotgGtD5m5mScL6dAQZod3zl5zpFuuxGeIT/o/mLHl
+         GrBALICs117if60qynI4gN/YCLLDEUgw6w4rWT4U4NdEsoXMqu091k8/Medi8asyurLd
+         gtgEE3f8IsmtxdvC0igfS+Q3H+0wlq4M//A9k95VMfSkmATv0OpMV6jE1762m6gZHtd/
+         1WqqjI3mJs0sDNqDm5go+p/j53ZQiN65NgrcTPdpg08JjnjPx8L6sgoTK83js+OMOI8X
+         Ijbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUT4YAJHkM0r6e9yq03uxKdT1EcJ9ZR0GaVEvc2q4KKzxdWQkMUZHxa7jbRumGRPLcINIoOZ7y4vYhedYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM8SYxgDtsprOfPjqtzm18hBcInYi8NfUtVUoV86eEGt+xmyK1
+	0Ik89UOQHNWLpKfOQN7TMvk4LdSK39cHWtFycvB7NWYM7Y/BporhtYGeyhvq/VveyLhirnEmuRx
+	38hVYe50A/0tzMfSbntPM9/dEKviub8MWmr/YvxwdYGJWosQyZC66WvKnZBUvhGU2Onc=
+X-Gm-Gg: ASbGncvAjOWLzmbEe9I5j4NLGAppsiLYR7EGbBkXKUefRI9FVnFsS6vHQMaEsRrJru9
+	TdnpkNRVgovo4+2RHnqLuxaLEqnsl6KrkL1D60mvqSAf4X91erKulO+azYR50gRzGjmWfs0t9Qi
+	i+nM9MKk4k+UcTZJ2BKgS/NfBLfUHCWoWrq7Ov4SxoM/lJB9Hn6ekGI48oPMVOP3WqYCZLckK1I
+	k0yXGus5oixV6SnRbJdDY/09igNg0cERA4icabpCm5G20nvL29UInrMWS3oAG6AF539FFBPNcUO
+	b4aDidb4QhsobSW+zKwKKgMORo3Apz9VQGD41A59yGhxZ7Z39pv8hw6LacbOluSmEEgW6bHnEVo
+	MVGy/cKJmLCMvf+f+Z/fa6Y3l2yf/lCPtjJeGVZLOO9tHIywFNh44PUAi
+X-Received: by 2002:a05:622a:15ce:b0:4ed:6e12:f576 with SMTP id d75a77b69052e-4ed94a37e04mr19204901cf.8.1762510647126;
+        Fri, 07 Nov 2025 02:17:27 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF+bmYMl9sgolDCLtI/3Z/25Cac3Pm5sw0YnJKVwj4DCLlvp+FVu1J9wmfnutrUm1ga/1XlbQ==
+X-Received: by 2002:a05:622a:15ce:b0:4ed:6e12:f576 with SMTP id d75a77b69052e-4ed94a37e04mr19204671cf.8.1762510646566;
+        Fri, 07 Nov 2025 02:17:26 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f813eabsm3712122a12.11.2025.11.07.02.17.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Nov 2025 02:17:25 -0800 (PST)
+Message-ID: <7a5d188d-989f-4843-a10d-0fbad94a9ef0@oss.qualcomm.com>
+Date: Fri, 7 Nov 2025 11:17:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106144511.3859535-1-zilin@seu.edu.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 10/14] firmware: qcom_scm: Add SHM bridge handling for
+ PAS when running without QHEE
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251104-kvm_rproc_v6-v6-0-7017b0adc24e@oss.qualcomm.com>
+ <20251104-kvm_rproc_v6-v6-10-7017b0adc24e@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251104-kvm_rproc_v6-v6-10-7017b0adc24e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=AYu83nXG c=1 sm=1 tr=0 ts=690dc737 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=rBf8QGEbTI05NIq0_6IA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDA4MyBTYWx0ZWRfX8i9ZqFH6yltm
+ zID3j0zvWb7k94X6ADR5nM7sh7e1ywzM81CRE7JLkoXKxb6wE177QFB0SRaXbzd0ykyNPLkT6b3
+ PLuhe1wV2blF4Prk3boBl/JMBETMdukpQkc6CMblmTd2XkHVt/uyMMDuvXBxCu2uq0NwRP0B95g
+ 1A+fP+6r1PbwFhbf38QyXe1V9UL8lFMNg6BanXvWXgHpoDKSRAFGbQ2SpvGWtSD2scgPXYOGMWN
+ g9ulQxIVkqTbroJ9zu5s5DtwxC4Ikl5TSeUCLWN4vckKo9yYvWJv99ppWtzQwE0yYxtKvMd+/JL
+ st8Exev7vIbycKBx3mUbmvyC1qv6nsBzjBy1H8waI/T7DsGt8DYKqbCwTuIie7hpj2qU5ju0c7D
+ VL0JlasjoMrT5DEB38sxfYI0wxOGjA==
+X-Proofpoint-ORIG-GUID: z3Hhby2aVkx1WQBn2913mgYSpFzi4iSj
+X-Proofpoint-GUID: z3Hhby2aVkx1WQBn2913mgYSpFzi4iSj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_02,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
+ clxscore=1015 spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070083
 
-On Thu, Nov 06, 2025 at 02:45:11PM +0000, Zilin Guan wrote:
-> In tls_handshake_accept(), a netlink message is allocated using
-> genlmsg_new(). In the error handling path, genlmsg_cancel() is called
-> to cancel the message construction, but the message itself is not freed.
-> This leads to a memory leak.
+On 11/4/25 8:35 AM, Mukesh Ojha wrote:
+> On SoCs running with a non-Gunyah-based hypervisor, Linux must take
+> responsibility for creating the SHM bridge both for metadata (before
+> calling qcom_scm_pas_init_image()) and for remoteproc memory (before
+> calling qcom_scm_pas_auth_and_reset()). We have taken care the things
+> required for qcom_scm_pas_auth_and_reset().
 > 
-> Fix this by calling nlmsg_free() in the error path after genlmsg_cancel()
-> to release the allocated memory.
+> Lets put these awareness of above conditions into
+> qcom_scm_pas_init_image() and qcom_scm_pas_metadata_release().
 > 
-> Fixes: 2fd5532044a89 ("net/handshake: Add a kernel API for requesting a TLSv1.3 handshake")
-> Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 > ---
->  net/handshake/tlshd.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/firmware/qcom/qcom_scm.c | 35 ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 34 insertions(+), 1 deletion(-)
 > 
-> diff --git a/net/handshake/tlshd.c b/net/handshake/tlshd.c
-> index 081093dfd553..8f9532a15f43 100644
-> --- a/net/handshake/tlshd.c
-> +++ b/net/handshake/tlshd.c
-> @@ -259,6 +259,7 @@ static int tls_handshake_accept(struct handshake_req *req,
->  
->  out_cancel:
->  	genlmsg_cancel(msg, hdr);
-
-Hi Zilin Guan,
-
-I don't think genlmsg_cancel() is necessary if msg is freed on the next line.
-If so, I suggest removing it, and renaming out_cancel accordingly.
-
-> +	nlmsg_free(msg);
->  out:
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index aabdef295492..9d3e45ec73ac 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -625,6 +625,33 @@ static int __qcom_scm_pas_init_image(u32 pas_id, dma_addr_t mdata_phys, void *me
 >  	return ret;
 >  }
-> -- 
-> 2.34.1
-> 
+>  
+> +static int qcom_scm_pas_prep_and_init_image(struct qcom_scm_pas_context *ctx,
+> +					    const void *metadata, size_t size)
+> +{
+> +	struct qcom_scm_pas_metadata *mdt_ctx;
+> +	struct qcom_scm_res res;
+> +	phys_addr_t mdata_phys;
+> +	void *mdata_buf;
+> +	int ret;
+> +
+> +	mdata_buf = qcom_tzmem_alloc(__scm->mempool, size, GFP_KERNEL);
+> +	if (!mdata_buf)
+> +		return -ENOMEM;
+
+I'm still a little sour about this function having to be separate just
+because we use a different allocator..
+
+Did we conclude that using set_dma_ops(some_tzmem_ops) was not going to
+work?
+
+Konrad
 
