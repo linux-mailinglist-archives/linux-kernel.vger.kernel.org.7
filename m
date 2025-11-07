@@ -1,160 +1,110 @@
-Return-Path: <linux-kernel+bounces-889964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB3DC3EEDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:19:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EAF4C3EEE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:19:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F1EB24EB1E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2751883704
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFA230F7E2;
-	Fri,  7 Nov 2025 08:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875AC30F537;
+	Fri,  7 Nov 2025 08:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wLfbKMEn"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="rb3HwtgN"
+Received: from fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.156.205.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8801DE2A7;
-	Fri,  7 Nov 2025 08:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB93262FC0
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.156.205.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762503559; cv=none; b=lRvqWQdaRS+LOgAjcvIcpgEAmmRVFGfqh8rouUrWKMvUaiNnVIGRZOcrAJoqpuwoDjyvP9o+9WQDAUCo7MmbdobbYnJgK3sLUCeZYH6v1L3Fn04uIAti+M9x+OWG/iy2AJZyD46rDRGPK7peVZcauojnTYJgrpHPhAtSSikltKM=
+	t=1762503574; cv=none; b=to2iVJiJs+tel6e6pyZFW0TWR2jKB02hzrV04oc2Mg67kLLLQmNycyehKnwMlFw52wd6y7ukzcrJUCJ6kKGKJZxSG428BsGC33iBi4kIK/6HvEahycerlcNwqXFeZkiCmByg9+yH3UlHXpgd0Zle0j5BFvxQqQMiL+Wb25TDRAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762503559; c=relaxed/simple;
-	bh=igvuWLrm3Oaj4vFwhWtAgcEk43I6V7dWsGRq1ugNtPs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=s1xLMPx9Z+y59NAvVY5NKpeO/JZxm/ZuGzLOeqEoyfKvGgxKDkcs9oBp59hLVMpFA16yxdltW+l0qUc1Pi7pJwgoQGp3eaDBQhL1tM3g5RsQ0KvOeXVU3nlBpHw3E/mCOMxUu4GcVH032I4RoN9KWCRdVqIYDtcRyrmSHsXXwyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wLfbKMEn; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1762503531; x=1763108331; i=markus.elfring@web.de;
-	bh=igvuWLrm3Oaj4vFwhWtAgcEk43I6V7dWsGRq1ugNtPs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=wLfbKMEnMq225+mREsQ3/QmorvkWphPayrqAY4V9O0zktymyOk/LUiJadomtd/P5
-	 vlj5e15vBhLOORiVRXkwvm4wcF8xJ9qDdepoqVoh5ItOkb8+NBaNqX1wj8jQoCyeV
-	 cvOcHAZos3CmGGoe1oaihAB2Zk0SLIhJC/bf+DNm3CWfQAHMSH/LmL7LgKeW2CF1U
-	 1lZe0Uk2VsEkAgAiAuodnbXpPRieLegmg08mNhnlcGAbKsg8GJKDNWVvRBQ4ue+MY
-	 c1rJt5sKL+7W6edxhtygwG02MtF2A2mRAEREaPdZUiNM2jdyn5BS9PwAGhyJJHEaX
-	 fVHcE2XWH9Rymr15dg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.187]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzTPQ-1wCQg70FdY-00tYv9; Fri, 07
- Nov 2025 09:18:51 +0100
-Message-ID: <1d0676ce-a831-41ba-ba64-492ce797eb1f@web.de>
-Date: Fri, 7 Nov 2025 09:18:45 +0100
+	s=arc-20240116; t=1762503574; c=relaxed/simple;
+	bh=Okz0T+2CL4bs/7/AgL5CQMeGxGIkYXtVvI9MXdL3cO8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DdivLNNd1cE+4XDbdWczCmVoXuYTrKqYcjv6gYW4+/T1ZB8xlCS81r7PkyrleHg7UAatp0d8nEvIaxPk9T+QUTcoKUtfYDu2PO7zdce8IbqYTXjlIKGq4xCrvLPFGsm9yWqsG/8jinUxHjtdyQZUfrxBMkjgdKzS2hV4D7wmlTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=rb3HwtgN; arc=none smtp.client-ip=18.156.205.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1762503573; x=1794039573;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=vN74N/f0kqrLSBtZchQLOpLJra6T02Bk60kvjsc3zFw=;
+  b=rb3HwtgNeJ5a2Z4n7IfaunYshuUAedRXUJEv76FKj1nPTroqjbNr4Yb1
+   a2m11VIEhFKIThWlzgE20vEkP7+rHJuiFlrczvXoSg/zaq9JVrCBoIilP
+   e267yQEXTWRBpC3mnA7ymqAtg0xlIhrNEOXBb/OaydhZbwz/scQ0Ox6WQ
+   TUeTvbh9lOMctYG+SV+4L8g+QLOUktKQARgzEoHqT/3OHFyUdbe1yQNOs
+   KNIocwpks2M1b+LI9n+JYqa1JvnIlbOfGk5vzBd7uVSqQI5hlo8eSlCSn
+   ZWMTIPnZFoM5bVBzH1SFB9ZvNmpX2eEJEj4NBSGCxYsBKrjBnPduTNApN
+   Q==;
+X-CSE-ConnectionGUID: 0F7Zf6NzS6mAv0MoBlCXRA==
+X-CSE-MsgGUID: /wUSzA3kQf2TVJKPaCoyRg==
+X-IronPort-AV: E=Sophos;i="6.19,286,1754956800"; 
+   d="scan'208";a="4808309"
+Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
+  by internal-fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 08:19:15 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [54.240.197.233:21353]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.25.163:2525] with esmtp (Farcaster)
+ id dbff45c3-fe59-4f90-8a9e-0823c34a4a7b; Fri, 7 Nov 2025 08:19:15 +0000 (UTC)
+X-Farcaster-Flow-ID: dbff45c3-fe59-4f90-8a9e-0823c34a4a7b
+Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Fri, 7 Nov 2025 08:19:13 +0000
+Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.221) by
+ EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Fri, 7 Nov 2025 08:19:09 +0000
+From: Fernand Sieber <sieberf@amazon.com>
+To: John Stultz <jstultz@google.com>
+CC: <peterz@infradead.org>, <aubrey.li@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>, <lkp@intel.com>, <oe-lkp@lists.linux.dev>,
+	<oliver.sang@intel.com>, <x86@kernel.org>, <yu.c.chen@intel.com>
+Subject: Re: [tip:sched/core] [sched/fair] 79104becf4: BUG:kernel_NULL_pointer_dereference,address
+Date: Fri, 7 Nov 2025 10:18:52 +0200
+Message-ID: <20251107081852.121111-1-sieberf@amazon.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CANDhNCpZWFsxZsmbXY2Q6DBfovqas8haepdYyx=RpWsZGDKN0A@mail.gmail.com>
+References: <20251106104022.195157-1-sieberf@amazon.com> <CANDhNCpZWFsxZsmbXY2Q6DBfovqas8haepdYyx=RpWsZGDKN0A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, linux-fsi@lists.ozlabs.org,
- Benjamin Herrenschmidt <benh@kernel.crashing.org>,
- Eddie James <eajames@linux.ibm.com>, Ninad Palsule <ninad@linux.ibm.com>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>
-References: <20251107070931.30549-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] fsi: Fix error handling in fsi_slave_init
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251107070931.30549-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mcha/1MCJG+PHAz38ckF1ZMQYxHS8D0eH6WjvgrBjl4HtnJJLuu
- Wn5uOUG1pastSuPzGtz/SIkGAWGFE/OZOuUcgvM3lBFYoxCLbVIwCPaMv6I1M5MwS1Srhx3
- SJnKixLusba7V7QRUtfTKha0jojsOiSrgy0ZUxUMP6dFsLTzM9pPGIafAULLO6XZYXQ3cf1
- nGIkhox5cUYQbQOBf6bcw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rfvK7t5zJIA=;4aYmQlY0UbjiDCHk98XeqwrFVZU
- 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
- zFU/w==
+X-ClientProxiedBy: EX19D035UWA002.ant.amazon.com (10.13.139.60) To
+ EX19D003EUB001.ant.amazon.com (10.252.51.97)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-> fsi_slave_init() calls device_initialize() for slave->dev
-> unconditionally. However, in the error paths, put_device() is not
-> called, leading to an imbalance in the device reference count.
-=E2=80=A6
+On Thu, Nov 6, 2025 at 3:57 PM John Stultz <jstultz@google.com> wrote:
+> Fernand, Thank you so much for root causing this, and helping validate
+> the fix works!
+> I apologise for missing this case in my testing.  I'll try to see if I
+> can include the trinity test in my regular stress testing.
+>
+> Do let me know if you do see any other proxy related issues!
 
-Would an other word wrapping be a bit nicer for such a change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.18-rc4#n658
+Hi John,
 
-Regards,
-Markus
+No problem.
+
+I'm curious to understand more about the regular stress testing you are 
+referring to, can you give me some pointers please?
+
+Thanks,
+Fernand
+
+
+
+Amazon Development Centre (South Africa) (Proprietary) Limited
+29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
+Registration Number: 2004 / 034463 / 07
+
 
