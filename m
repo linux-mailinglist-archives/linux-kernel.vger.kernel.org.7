@@ -1,150 +1,169 @@
-Return-Path: <linux-kernel+bounces-890959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549FDC4175B
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:45:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA39BC41761
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:46:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 085824E3E2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52EDE189BA6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53880334690;
-	Fri,  7 Nov 2025 19:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E7E2F90CA;
+	Fri,  7 Nov 2025 19:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ip6BYIc0"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PD8oE/ul"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012054.outbound.protection.outlook.com [52.101.53.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2353191D4
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762544712; cv=none; b=YSjrHaCmdHEdzDlmAazVrcouGrzRaIxR+YaCBJLI2wdPo8X2FbHDrm915AYrhOgqhY5oUmsCHTOImjSX4YA/zSZDV+EDBwyxtRzT/zfwEhdBecgWtVoiozckdd8tEb5Iw44Oc/dm6hdsTECNSRVOGnJTfkRIxALGWEJ39GgBf0U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762544712; c=relaxed/simple;
-	bh=LJd4Lt7kd+i0Y3qfV8wxl3MYHl5ygopfsMQ71Ksl2t0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tf4XwVfm2m2/hpNvebgjkBaRA27KPGu8y2h5jsD01Tx300Eg8rQAsdHSKnQQpzJh/+uJGs/sAcM9Gc+wgjxjuImEyd4TvWxGmGwGdCXRYIlsiAyTPElTeGREJI31Z0U2vc/P93f3SsL/ieDwKMYzbnJGn/UafiLIKqDGrvb3hEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ip6BYIc0; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7a59ec9bef4so1338162b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:45:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762544709; x=1763149509; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LJd4Lt7kd+i0Y3qfV8wxl3MYHl5ygopfsMQ71Ksl2t0=;
-        b=Ip6BYIc0KsSJYUifZxNC4bhLYAGJOrP5+vzkMuEu0kid06sRgJEkqxRqQ8XeKS23/7
-         sVjJKTWGT0WO1zDLDLpAek15uL11UU+lFhzn65CWngkeRwRgT2rYdvaLjtQCeMdmU4Oh
-         WA6p8EOz2Y9htRlM0khXt0B76PC68McpExi08v4O2cnez25ZmFnvMhsN9Ez1yDN/gEaL
-         BB5RkWmuvWEtuEy0IkcXIuWNqmLQC8waXlHHeL6s5ElF7oJfNJO9ZJv03dNv5CdhayIN
-         wUZQHJKTEInn1ZHoWHcgqmA0ZSZwCK1isMYk/AS4PCV5t7Zh58+syLMQKAzByfYZID/0
-         ImSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762544709; x=1763149509;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LJd4Lt7kd+i0Y3qfV8wxl3MYHl5ygopfsMQ71Ksl2t0=;
-        b=KgygjL1RTec+HJwworJWlYr1mMCu93hW8FulWAJk0lnjA/mf+0jeHzHjJlqRP3jlcL
-         20uEWyAnFNL34kT+ct7FnLVnY1bucA5hSrVMcCTnHQmiteSce97hOYSljVqdzVB7CWWy
-         JG4ejLMJ0eF1fXUHI0fqAusx1/n1PZMmxpMWR2zEf3dpHC9r8b22HR9jacoYIiHBpxrc
-         wg3c7bTs49WwKHTDMj/E5k9SfVcpesenj9zfcG6pI/EJ5AwVh51txEV/1BYt2RpipSf6
-         bzeDfaWUttnIMASO02hLHW40FL89NuJdcpgTxiHmPGe+JwCLJm36M83JZE1VyJ77xqfA
-         rKoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWth5m70prxslbtcGIfAYQLjT7URUd8yydQRDJUPHsnnDch3hC740RoZs8e8kPF1nUHYs1GNd1Ux5Vkfps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO//XoOTxAOmIJTVcDVVvvJlETe3GQ9UQxqg4h7UsuZNcxvAxI
-	gNNleMEiUGID2J1z1paYzhQco7idbzt/YcfZXnQLKPbja8GgpEqHiHhn
-X-Gm-Gg: ASbGncvc9hmPN4L7bFO2adrydT+sCWrogKEjdENYaq40zwGsAj9xy00Dd25i1asNW0/
-	e1eNzR34Zi6n+Eo38vTGNfju6knw2GMxEaDB3uQVlwCcag9rtFGLhzO7Zu5mJmJLk5hMbWZ3+Cu
-	FZPFX2m4YLiHWqt+hF5LzAxXQ8Gb4iznEw9Tf5LflUyTaLb8iWt58trY5jS8GOesYK+pObLz9JC
-	UeXr+LbowOQ6dTMxhVOAo1ihdfW1Sgu3D+uxeEAWuEFSRUPqEbs+YMrN34y4tsqrTRmfxrlk8J8
-	HIIPpK+gavdQPkTY99F8nz8+GyMsUgm0b6Ug0RXkfd/A3PQXdz6q2hwNsun258lZ7Ixt+J0cKFC
-	g9ut464+QMPDzEzZYgOkm+l/WbiyCuiN+icCDhWfeAZJHMEund6FLWsFoJEkaE8XAxJLVGEN/+9
-	XDmsxuy1Ov9SKYx+k5NQ==
-X-Google-Smtp-Source: AGHT+IFiX8juAEVF6aTi9i63b/PQSeOvdU+AnVPuYkFlsVgI/R4sPMc6j3BNKqpkZFA0b6LAUANSng==
-X-Received: by 2002:a05:6a00:114a:b0:7aa:9723:3217 with SMTP id d2e1a72fcca58-7b226d893a0mr478395b3a.25.1762544709234;
-        Fri, 07 Nov 2025 11:45:09 -0800 (PST)
-Received: from [192.168.0.56] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17a688sm3749017b3a.40.2025.11.07.11.45.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 11:45:08 -0800 (PST)
-Message-ID: <4c33ab7a31ccbc1235bd183a5e4bfa4f94896c63.camel@gmail.com>
-Subject: Re: [PATCH] libbpf: fix BTF dedup to support recursive typedef
- definitions
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: paulhoussel2@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, 	john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, 	jolsa@kernel.org
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Houssel	
- <paul.houssel@orange.com>, Martin Horth <martin.horth@telecom-sudparis.eu>,
-  Ouail Derghal <ouail.derghal@imt-atlantique.fr>, Guilhem Jazeron
- <guilhem.jazeron@inria.fr>, Ludovic Paillat	 <ludovic.paillat@inria.fr>,
- Robin Theveniaut <robin.theveniaut@irit.fr>,  Tristan d'Audibert
- <tristan.daudibert@gmail.com>
-Date: Fri, 07 Nov 2025 11:45:04 -0800
-In-Reply-To: <20251107153408.159342-1-paulhoussel2@gmail.com>
-References: <20251107153408.159342-1-paulhoussel2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5806E1D61A3
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762544756; cv=fail; b=sQpslVGZZzsOSug77WmtthwV93y9SIVj6Yz23/EZUzqjuhVvFw5qPZiWsHuDKQjc6Mz7PgK29AlTw4BZMJ/ftt13E8qxi3/WSHNvbGlesXxANRci7q3PIj/L84yKb1G2X+M+5VB1jRzRSfSjgQ6BgQebSNhHt1aLTFNO14BVRtw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762544756; c=relaxed/simple;
+	bh=+3c3rvIfAQnYUc35fEOovYmMEF5FaaMPWbaLV9GLIHY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D8XD6nBf7qBHZpJGyBjB18FYdKjTJSfjCK1/Z5B1KmJKjiFtemNm0LsQpaBfQHXQvBNFEPyPXvIccgBIcTGAGo/rS0hdyhV36avDGOE5Mg6dC16kTbnBL4kzmPNSaireLDrqLWQIZRdRQYWhER4mp/51EgZfyAOin16cXMEaQnA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PD8oE/ul; arc=fail smtp.client-ip=52.101.53.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d1O66+b4kFb+dhfYLAhYoj+I8dUaZiM+m2CeUqupjubaczJBZ/coffKwpSZPhqXT28VRlkKpjcSfvhwnxnxN81P/q+xcUsuw5CLy/rcWPjxA+mpvE0WvCsZ0nAGOLdb7XafMrn43SLKCjUcsxNSbol/7yw8eCOOc/KsPGJtvSw2Ed8tA/BMxrGkddJZZRNkNutJZEutCStWp/xnlAAXz9Irnde/gx+ctvHNY8t1DnAJrBDq+TOBg8fJj+RrmdarEpmnCm09kbdDUPpx/C4hVZ99ufZ6pXQnEScZ7nTVaLaeq0Ew/72CkEgrWLwewaduPjY/ck753oNfC2YG9P7gRPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Xbsx73ziLWM+uc7K6mSFexwRv1AKA38YsQrZfRs7Ies=;
+ b=BMGHrc7SpG2ZhTNOuHpE/LlZZ/4dITT8+kpBXHxD0bCE/57SdAJoGpki1JMDOicMeyK99xGv3gapmVI/p8bWzbrMENt201+bXz55JSRUda6m+a5reS2qw/A+EcvFtkE5GT9fCzQyqabFEVSvlLd7gWgZE2KksMWC+p8b9aJX1KLzud/Ha/UhLhb2mAbYKZ3pxWzEiqj257UR0bIlRvthiTbSy3TvAikaoK36A69rXsnVUSyK2rjcEtqLigMNddCH1RC38lagBhNmNDQ85bXFAwuwULWu14/7Re3wBmX/5MQazchZB6+8U6E+SOSQhG6SsJJwl8yqjUv0VIDa6zaoQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xbsx73ziLWM+uc7K6mSFexwRv1AKA38YsQrZfRs7Ies=;
+ b=PD8oE/uluKjN0cfxp8pvOWVUT4i4E0ZzgPBOhC5Cz/vaAjREtUtYl7zxbeCzY7P+Fw/nmco7mFn6T9PiFk1wUsclom/BKBxDbN9yLAT4jMdwhYM1f3avEWAh0bIgGR5OPZ7ubDl4O/FAY40rzuhbb9GypHHqVUijAQCg1b4dYCGH4VgOCax84Y+8kU7sQBB02aahGdmEnN/ewUHyS3MfFA4l2AzduuUhGfn+9DkxzcxMVfBVBpdvd8z3CECer8nMBvpRr88RieQbB4nIVpFRaWy90rJKL9KJE4j0W2rqpFZZhAFwhTzbtEV04ipuuQqRup/d456FuBD8YAckVNx1Sw==
+Received: from DS7PR06CA0047.namprd06.prod.outlook.com (2603:10b6:8:54::27) by
+ PH7PR12MB8796.namprd12.prod.outlook.com (2603:10b6:510:272::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Fri, 7 Nov
+ 2025 19:45:49 +0000
+Received: from CY4PEPF0000E9DA.namprd05.prod.outlook.com
+ (2603:10b6:8:54:cafe::81) by DS7PR06CA0047.outlook.office365.com
+ (2603:10b6:8:54::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.19 via Frontend Transport; Fri,
+ 7 Nov 2025 19:45:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CY4PEPF0000E9DA.mail.protection.outlook.com (10.167.241.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 19:45:48 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 7 Nov
+ 2025 11:45:29 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Fri, 7 Nov 2025 11:45:28 -0800
+Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 7 Nov 2025 11:45:28 -0800
+Date: Fri, 7 Nov 2025 11:45:27 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Ryan Huang <tzukui@google.com>
+CC: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Joerg
+ Roedel" <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, Pranjal
+ Shrivastava <praan@google.com>, Kevin Tian <kevin.tian@intel.com>, Lu Baolu
+	<baolu.lu@linux.intel.com>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Daniel Mentz
+	<danielmentz@google.com>
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix error check in
+ arm_smmu_alloc_cd_tables
+Message-ID: <aQ5MV0I6hMjVCF63@Asurada-Nvidia>
+References: <20251107190917.2858684-1-tzukui@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251107190917.2858684-1-tzukui@google.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9DA:EE_|PH7PR12MB8796:EE_
+X-MS-Office365-Filtering-Correlation-Id: 80a96d0a-3ccf-4645-157d-08de1e36403e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|7416014|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NP9GRzYDg46D29cHlzKXvzDXuKDpWp+6Z2GhxZjO/XrnqtdXjP7wLB6Jfpw0?=
+ =?us-ascii?Q?fxUg7aRbX8Oi1mthAnnU3OglkIl6wWHWS8+7aThJsTwrjeo77q8c0CwrHeJb?=
+ =?us-ascii?Q?MpcPYk26JO2g8gKQAV7f0XaFncW+5xK0a/qjgxFlwCqRPvQNMul99XkWeyJr?=
+ =?us-ascii?Q?FvQV0Ct7RXxY+VPyoL38JZN5QXc5kq+h9qc2l68BZDo0LYafhcV6fZ60RLW2?=
+ =?us-ascii?Q?NtANo3TQDKPgFfRVUrk8BZgg1vdmdqA8ij2BRymO74JeSDM/0rgwnBlmhBvD?=
+ =?us-ascii?Q?+GDDy0qzYiW7gS+N0pYWD9bjX06VuxqDqfPoeU5c/HKp9vJ44MT9VRBad0Lt?=
+ =?us-ascii?Q?svt1aCsiaBJDl0krEQ5439IjZXSk+4cgaZAJ6OWtb+LAZfzsnKCi8uZj9lTo?=
+ =?us-ascii?Q?5PgiojfwuEjATU8CNA6RwZ1sWZCrDWaRUFDW/jjOQiQpsKwxR9AW/HYl2VVf?=
+ =?us-ascii?Q?CatRrDGSvOzC4PZhxAf6deo5q7Z/yzgDrdU2p177Mxw0L5PQJXx4MNl/e3Ua?=
+ =?us-ascii?Q?qtXA4/rsIL3HZsBIs7wJxpWjOyqzCfFt4K3YyJ/L/yrPFP0EBJ34QQtZVdQU?=
+ =?us-ascii?Q?PaOqEPU6OHGaAukshnUxl8sWSe0smQ18kPGWZ2YP3SS4YOSeqq+eBd9/dl+m?=
+ =?us-ascii?Q?TArHHlyHp0klg5g+mPZkgoewSaXlzw347pSq2YGfrRiR27r+nujH79gwkMQt?=
+ =?us-ascii?Q?65oI280qRQ3+1MJTBoEfFZDHj7Kn5m0lJ8NqCNvULYLyjb6uevLPOrwQWEhB?=
+ =?us-ascii?Q?bOMFPQW1bBSCUcqi9VP9YEpvamczJ/X5gqgYU6/85ddd+vNUqBqG2Ls8+cGQ?=
+ =?us-ascii?Q?6jqTgnkx9ORtFfRjw30l/nJaZgLeI6Fy46gAE5cn+uDjg099uEPbVZevA/dH?=
+ =?us-ascii?Q?yywEarlSXRBTkmHzplxIPZbAYdCV8vDPmDBx3Z+0OwFfY2mZPB1tjYeRCcdU?=
+ =?us-ascii?Q?T5fTyXGbhxPnpoycait1LsLZkx8MPFojgf+S7kDkvEmjgr+Hb/zO3Gddlkk5?=
+ =?us-ascii?Q?+Ijs/UfRBUKVvjzniz3K4Sq7Y49gDeviFyfUUt8d/49MgNFeK983GMaJTrJz?=
+ =?us-ascii?Q?2TvmuS3Sg8KcyaxYBGzXDnE0u4XM4SSnJzxfXnF9hDuVcs/gP7vV+ePGS/71?=
+ =?us-ascii?Q?UTThoOm7QsKv+0vhvhyYtLLHW+VjLLUOQP2fc39F1Qk55Cm9MACpRkUD2nQv?=
+ =?us-ascii?Q?UvK7Ta5caEu3Z05HtU005hTnrGj8aKY5aONXylqBrLZSp4ZVAP+hswiihYmF?=
+ =?us-ascii?Q?ajxnHazgnePJMVWZTdBUa//cXOi+opeHblyXUGrDDHTZvzobUMpecjsB5AWl?=
+ =?us-ascii?Q?OwDlUVIJHXidz92CFZc/Ih49rcVkhhd2+7ltjo5Ytkes6tnqy7bGbXMXvKi5?=
+ =?us-ascii?Q?G0gvx+W10eLUkg9NhsxuzapWpjV5yicklLi3DfwwfewuTwJOWH4x0tlRHiHf?=
+ =?us-ascii?Q?E/0Hym9f2/iRXAtKXhZN1bKLn/msvBPT57em8gRcEKVbiGCWdEFoEE3QSIwq?=
+ =?us-ascii?Q?Gk0+RBBye8zJUNqiLMIcJ1/nIeWtoE3t75xYj45JKNNCyGlJBWYB8ZaOoal3?=
+ =?us-ascii?Q?qcAWmaWjl8HMOTXYFmU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 19:45:48.7072
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 80a96d0a-3ccf-4645-157d-08de1e36403e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9DA.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8796
 
-On Fri, 2025-11-07 at 16:34 +0100, paulhoussel2@gmail.com wrote:
-> From: Paul Houssel <paul.houssel@orange.com>
->=20
-> Handle recursive typedefs in BTF deduplication
->=20
-> Pahole fails to encode BTF for some Go projects (e.g. Kubernetes and
-> Podman) due to recursive type definitions that create reference loops
-> not representable in C. These recursive typedefs trigger a failure in
-> the BTF deduplication algorithm.
->=20
-> This patch extends btf_dedup_ref_type() to properly handle potential
-> recursion for BTF_KIND_TYPEDEF, similar to how recursion is already
-> handled for BTF_KIND_STRUCT. This allows pahole to successfully
-> generate BTF for Go binaries using recursive types without impacting
-> existing C-based workflows.
->=20
-> Co-developed-by: Martin Horth <martin.horth@telecom-sudparis.eu>
-> Signed-off-by: Martin Horth <martin.horth@telecom-sudparis.eu>
-> Co-developed-by: Ouail Derghal <ouail.derghal@imt-atlantique.fr>
-> Signed-off-by: Ouail Derghal <ouail.derghal@imt-atlantique.fr>
-> Co-developed-by: Guilhem Jazeron <guilhem.jazeron@inria.fr>
-> Signed-off-by: Guilhem Jazeron <guilhem.jazeron@inria.fr>
-> Co-developed-by: Ludovic Paillat <ludovic.paillat@inria.fr>
-> Signed-off-by: Ludovic Paillat <ludovic.paillat@inria.fr>
-> Co-developed-by: Robin Theveniaut <robin.theveniaut@irit.fr>
-> Signed-off-by: Robin Theveniaut <robin.theveniaut@irit.fr>
-> Suggested-by: Tristan d'Audibert <tristan.daudibert@gmail.com>
-> Signed-off-by: Paul Houssel <paul.houssel@orange.com>
->=20
-> ---
-> The issue was originally observed when attempting to encode BTF for
-> Kubernetes binaries (kubectl, kubeadm):
->=20
-> $ git clone --depth 1 https://github.com/kubernetes/kubernetes
-> $ cd ./kubernetes
-> $ make kubeadm DBG=3D1
-> $ pahole --btf_encode_detached=3Dkubeadm.btf _output/bin/kubeadm
-> btf_encoder__encode: btf__dedup failed!
-> Failed to encode BTF
-
-Hi Paul,
-
-Could you please provide some details on why would you like to use BTF
-for golang programs? Also, is this the only scenario when golang
-generated DWARF has loops not possible in C code?
-
-[...]
+On Fri, Nov 07, 2025 at 11:09:17AM -0800, Ryan Huang wrote:
+> In arm_smmu_alloc_cd_tables(), the error check following the
+> dma_alloc_coherent() for cd_table->l2.l1tab incorrectly tests
+> cd_table->l2.l2ptrs.
+> 
+> This means an allocation failure for l1tab goes undetected, causing
+> the function to return 0 (success) erroneously.
+> 
+> Correct the check to test cd_table->l2.l1tab.
+> 
+> Fixes: e3b1be2e73db ("iommu/arm-smmu-v3: Reorganize struct arm_smmu_ctx_desc_cfg")
+> Signed-off-by: Daniel Mentz <danielmentz@google.com>
+> Signed-off-by: Ryan Huang <tzukui@google.com>
+ 
+Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
 
