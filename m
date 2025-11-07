@@ -1,60 +1,95 @@
-Return-Path: <linux-kernel+bounces-890869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68758C413F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:15:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F4AC413F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:16:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F6243BC90F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:15:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7678D3BEC10
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD1627145F;
-	Fri,  7 Nov 2025 18:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1DD326D4F;
+	Fri,  7 Nov 2025 18:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ex7uFGyx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UE6nluFp"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C76220F2C;
-	Fri,  7 Nov 2025 18:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92313156661
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762539299; cv=none; b=dswhipbUF00sv5BvLx6Vqe1Dsftg4vGuNP66nh8Mlo2qSO3s6Ik+UtvncpRP/QHJwj73JjnUATNYyd3N8ZFRUW0TrVYq07mY0mP4mQK7SXg8un/Vz1T4D9ZNFtAy0GWBh6Y9QohVTg3vYbk96HdtXTEMfflM6b23fLI7wF7vaBk=
+	t=1762539384; cv=none; b=mDLgqSiO0djP27oDKsIVBUS5mJWJjaB8rdvBpHVGr6BzNOALfkAh+aY1B+5Wsxg7tRu2PrgGzIxxf00sADlIBaIV22R8bONmNsJeDZG3e6fUFkOifDMmt8lfn1KXiDKA5nIVRaobtxex6wYH8pSRlPjblxqDX9DmDYsfMVzYD4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762539299; c=relaxed/simple;
-	bh=yYukpopBNcB5pj9s1/ex82dxZOSh9SeOKr0wtFTyyck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NTHYm8GAwvYcZwvcV7nd9zubz8utJm4UeZOjkY5OLB0RkO7RDYTono8fFEWNmUYxb78T49MvM5qhR6VQtkjK6MTJZ2LuNsSgpqI9eivMs4HrJZfCiF90wxXhow6I40rcSgpUXdJUVmcSliT7mUYZgum8ZWdt9n/wL8Pn0XrQhPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ex7uFGyx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88403C4CEF7;
-	Fri,  7 Nov 2025 18:14:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762539298;
-	bh=yYukpopBNcB5pj9s1/ex82dxZOSh9SeOKr0wtFTyyck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ex7uFGyxHtpiYIYVkb2bLv0xd14hQzwKNoa5BmsodlSsQfflkK8CLRtCoxIzRmPFc
-	 sof+pFvpPo5JKPSXHdYinXzbha4Tdukz2XzD8q2qiIeYzoM04VOxvYkiyc66LNWxaw
-	 83xGlTjBf6aOxC6fGHy/ynK3vmw7A4AwW+R9GYy0yZmjpr6lnn498SkPGof3GzVKci
-	 RkHHDfWq1qD5nu+QqnOsTSHV5iAoRLh6LlT9WbZcBCDegxLL0MVrRkXifpwqon0Iq6
-	 HUwUK/Be39c8U6f0togzdOzl0XHsR0JK5kfhwIHrRuo12Z/jyBdDvLqPoBJbPtFaGd
-	 sq7gCkyMpYA0w==
-Date: Fri, 7 Nov 2025 18:14:57 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: Wei Liu <wei.liu@kernel.org>, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, muislam@microsoft.com,
-	kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com,
-	longli@microsoft.com, mhklinux@outlook.com,
-	skinsburskii@linux.microsoft.com, romank@linux.microsoft.com,
-	Jinank Jain <jinankjain@microsoft.com>
-Subject: Re: [PATCH v2] mshv: Extend create partition ioctl to support cpu
- features
-Message-ID: <20251107181457.GC4041739@liuwe-devbox-debian-v2.local>
-References: <1761860431-11208-1-git-send-email-nunodasneves@linux.microsoft.com>
- <20251031183109.GC2612078@liuwe-devbox-debian-v2.local>
- <28ab51c0-fe14-4122-8828-3f680207865d@linux.microsoft.com>
+	s=arc-20240116; t=1762539384; c=relaxed/simple;
+	bh=7NAI5FTEyIjlm2QNRL+eBBHPdSk1Sz6seoRXTUUH+h0=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAfBCy+EVKe9L+qq57Y9yQYnXjO485kQeV/oh1RfmQ8CnnLpmcufudhX0yMc7RjdpnvYWsUw2VAp4gkPECJhoiScDXvGCUFXlYTLekFwCRaAfxZjBuNKBYd9wMky74iU+sWGxs62YdOXsdvc3mA7PF2S24dGNTX6EWeycra+l5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UE6nluFp; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-429b72691b4so841537f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:16:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762539381; x=1763144181; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=tVJ2xtJlmj5EezO+VKSHrAcAYjS9yDJNYT/T6/c6kPg=;
+        b=UE6nluFpxEZoWh57vmSk/hMa4YWOQZv2LrubOYKt080kzcbRhfKlVsjzu527iAxx3f
+         i4jH6LbeBu+rWsarkhgvVO3Fel10ahN6nGkV4o6nCK4cmYMFaRyZcXhoqRTbbaB7xBST
+         D6eBLFK3/QwNtK/FqAsZN3sUMl+UgEsZDZr539IowhmAfqS5LmdLkOuZgoktAqg15upA
+         RbSxvNBGjyfaGHFTjZZTQbq8UDToxTj9JLKfn+xj/Ou4iSqgdiHP6lsSpwUGQ3cJnow9
+         NVdrrpysnFNCPzAs8U7Sdi7yHmCNmfpTVqvea2IGq8ioEoKIidmSlO7kfLQ//xlwTixq
+         li4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762539381; x=1763144181;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tVJ2xtJlmj5EezO+VKSHrAcAYjS9yDJNYT/T6/c6kPg=;
+        b=egQMvEfrRGwm95UNJqnpayhtJ4CAg8d5AdbNRNkKgIkFsJGbzHaMWY+wTlHIknXQXz
+         lsWQb7Vgxj9OD8V0zYO9TS4jqFMwWjTNEId8/y+SjVQ3NQkHqAxpWCwiodjXSMev3KIY
+         OwUYJsA92LddiNccHpvFWPZfqfcxV1vVCeNLWxj4XIpJUG64aZ9SkQ6guDxKsfnqyEsa
+         w3PqJV6+LauJyRZ+iGF5Cc5Z94u+kGHTBL9Pk3ABH7gbEHJMJetPPv4KEw0+980byHYy
+         fadMtmphaSOq3G5T7l62wEnKhnP3SU8yo/7b7DoklIovajtr3M6axOnysdJYG2mAq5Uj
+         eAFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSh3+m5ln6u6C35n9li/Z9DB3G7Bvt9UhkYHMPsmf0IfXAxh8ci5YIv+I7cAFdAZY4KAe60fWURZogvfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk6iesQX03YW6Tk2Yv36HWKNjc0nK17KMKDn8p/BZTojF4YwVS
+	80EXpGhCuZ1hCQBKq+i2uFnTXBMN0lebvjom9IOGG9RSAqhrntJxjVAC
+X-Gm-Gg: ASbGncuV20/8A2jZ31cQOREiQ0jYogli6LGfePzAxgLIo10D0bjVE89SDeo4HrkodLj
+	loqIu5nWu/mXEMBlQBWSJ4nKFCnrtkR+YCEHYYQQfQdg30i9z9xC7G/U8dETRCywxSnks1L2nWC
+	k21WbucHD/XZTmTViWppsPcYvRldrcXHKAQNv3JhekC7lpXr5TVmSHxfutTGlRqR8jmH5UYV7ZF
+	xi82UDE2vlUaD7Dp45NuKylzG8hiYxmGVw7nemMNgqXSrrWBG+3lk9pcl/bO6tDlJspdWeG1evk
+	kOhZERKiJlvvBsq5Oe7cjLKJKXf/cWMm4MaY8uQInvcXah3JBlCdA6j4Uh2SiXltMZAscuvkOf5
+	78knrsknRvrD6vN6IsHAGBxaTuY9vqAeHevERVkNUP47qViq+/znU4cAGo17AFbtxsHdK7K6Nkx
+	/ygWGidf7HLXSNu64WFBm5Mt43NVnGr4F1cVy9YsI=
+X-Google-Smtp-Source: AGHT+IEp8RA70w6dQWLu5Sj+5AV/4tZ1eqge9CXFqZ79B7Chsq8jWBSCViddS2yq0HyDzJ/vWl+q5Q==
+X-Received: by 2002:a05:6000:25c3:b0:429:c851:69ab with SMTP id ffacd0b85a97d-42ae5af4abemr3058281f8f.55.1762539380754;
+        Fri, 07 Nov 2025 10:16:20 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac679c5dcsm8032998f8f.44.2025.11.07.10.16.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 10:16:20 -0800 (PST)
+Message-ID: <690e3774.5d0a0220.2246e9.71a5@mx.google.com>
+X-Google-Original-Message-ID: <aQ43cbO7Lu_IBJek@Ansuel-XPS.>
+Date: Fri, 7 Nov 2025 19:16:17 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: soc: Add bindings for Airoha SCU
+ Serdes lines
+References: <20251107160251.2307088-1-ansuelsmth@gmail.com>
+ <20251107160251.2307088-2-ansuelsmth@gmail.com>
+ <20251107-crisping-doable-365d6b7d60a6@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,69 +98,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <28ab51c0-fe14-4122-8828-3f680207865d@linux.microsoft.com>
+In-Reply-To: <20251107-crisping-doable-365d6b7d60a6@spud>
 
-On Fri, Oct 31, 2025 at 01:08:45PM -0700, Nuno Das Neves wrote:
-> On 10/31/2025 11:31 AM, Wei Liu wrote:
-> > On Thu, Oct 30, 2025 at 02:40:31PM -0700, Nuno Das Neves wrote:
-> >> From: Muminul Islam <muislam@microsoft.com>
-> >>
-> >> The existing mshv create partition ioctl does not provide a way to
-> >> specify which cpu features are enabled in the guest. This was done
-> >> to reduce unnecessary complexity in the API.
-> >>
-> >> However, some new scenarios require fine-grained control over the
-> >> cpu feature bits.
-> >>
-> >> Define a new mshv_create_partition_v2 structure which supports passing
-> >> through the disabled cpu flags and xsave flags to the hypervisor
-> >> directly.
-> >>
-> >> When these are not specified (pt_num_cpu_fbanks == 0) or the old
-> >> structure is used, define a set of default flags which cover most
-> >> cases.
-> >>
-> >> Retain backward compatibility with the old structure via a new flag
-> >> MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES which enables the new struct.
-> >>
-> >> Co-developed-by: Jinank Jain <jinankjain@microsoft.com>
-> >> Signed-off-by: Jinank Jain <jinankjain@microsoft.com>
-> >> Signed-off-by: Muminul Islam <muislam@microsoft.com>
-> >> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> >> ---
-> >> Changes in v2:
-> >> - Fix compilation issues [kernel test robot]
-> >>
-> >> ---
-> >>  drivers/hv/mshv_root_main.c | 176 ++++++++++++++++++++++++++++++++----
-> >>  include/hyperv/hvhdk.h      |  86 +++++++++++++++++-
+On Fri, Nov 07, 2025 at 06:14:31PM +0000, Conor Dooley wrote:
+> On Fri, Nov 07, 2025 at 05:02:43PM +0100, Christian Marangi wrote:
+> > The Airoha AN7581 SoC can configure the SCU serdes lines for multiple
+> > purpose. For example the Serdes for the USB1 port can be both
+> > used for USB 3.0 operation or for Ethernet. Or the USB2 serdes can both
+> > used for USB 3.0 operation or for PCIe.
 > > 
-> > There is no mention of updating hvhdk.h in the commit message.
+> > The PCIe Serdes can be both used for PCIe operation or for Ethernet.
 > > 
-> Ah, that's true..
+> > Add bindings to permit correct reference of the different ports in DT,
+> > mostly to differentiate the different supported modes internally to the
+> > drivers.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  include/dt-bindings/soc/airoha,scu-ssr.h | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >  create mode 100644 include/dt-bindings/soc/airoha,scu-ssr.h
+> > 
+> > diff --git a/include/dt-bindings/soc/airoha,scu-ssr.h b/include/dt-bindings/soc/airoha,scu-ssr.h
+> > new file mode 100644
+> > index 000000000000..a14cef465dad
+> > --- /dev/null
+> > +++ b/include/dt-bindings/soc/airoha,scu-ssr.h
+> > @@ -0,0 +1,11 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> > +
+> > +#ifndef __DT_BINDINGS_AIROHA_SCU_SSR_H
+> > +#define __DT_BINDINGS_AIROHA_SCU_SSR_H
+> > +
+> > +#define AIROHA_SCU_SERDES_PCIE1		0
+> > +#define AIROHA_SCU_SERDES_PCIE2		1
+> > +#define AIROHA_SCU_SERDES_USB1		0
+> > +#define AIROHA_SCU_SERDES_USB2		1
 > 
-> > Can you split out this part to a separate commit?
-> 
-> I put the header changes in this patch because a patch containing
-> those alone doesn't have much merit on its own.
-> 
-> I know we have split header changes into separate patches in the
-> past but I'm not sure it's always the right choice.
-> 
+> I'm going to assume that 01 01 is correct here.
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-This makes it easier for me or other maintainers to track specifically
-the header changes.
+Yes the value are then translated in the driver internally.
 
-> Thinking about this, I could also split it up another way: one
-> patch to introduce the new cpu features flags and use them in the
-> driver, and one patch to introduce mshv_create_partition_v2.
-
-That's fine by me.
-
-Wei
-
-> 
-> Nuno> 
-> > Wei
-> 
+-- 
+	Ansuel
 
