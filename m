@@ -1,322 +1,231 @@
-Return-Path: <linux-kernel+bounces-890763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B329C40DF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:28:07 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC92C40D84
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A77FC4F2291
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:24:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 956383507C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D8A2777E0;
-	Fri,  7 Nov 2025 16:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5467F2652BD;
+	Fri,  7 Nov 2025 16:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="o/vCcZS9"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZAkhHDDb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1374F17A316
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762532663; cv=none; b=akWeGduadvVxarabtW7V/n4MaYr0Mht4WTGsw65/pzuf/vfhW/D8Y2a58HVqMdc/ohzE5PIHl6VeuRYK/q3yIh0MUL9Oj98tSYlj9B3KykQP8t36PjPBUXfO+DChMfXSt9AtUPzt7Gs+L5+qEqzgTDATOEIBB/TEKLjp8oNBLHY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762532663; c=relaxed/simple;
-	bh=FBrhRwcSzON985gPvbnn1KiA3A3s+8iA8cSvWh2KEik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=Ip2OmfUnXc02Ey4QGPFPqYePWeQQoAKMVkxp/AObc+rORM28CkCLod6PVOY3z/ZW80uQbKisROaqxCr1SyRdkPnnAz09XH+oUaG34LIy7yLq9BSQIY196gOwd5uhA26kJ0eWVrXHfEyzKbFc8wM1PLL6dKDFywl2H4gQ30p20Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=o/vCcZS9; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7GM1wd002735;
-	Fri, 7 Nov 2025 16:23:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Dsfblb
-	iVy50iyzWSSQtr3TVl9NRjbvAm1vCXT9V2WE0=; b=o/vCcZS9mChH/kf0kQTxiu
-	VgCkZbMnICvgKIEObzgUFkcf7ml1AjqvF/beox0ldUYjWkCfyKyn14MK9W8rtMap
-	f0Vm1KxptBVscE+01PtyHj542CMvTAZNmfyBHu+X9IiQ23IzzEVo+Se9Dzf3DH5i
-	fMxOiY1WdeP3v70zHjqcy98jIb2UdzVBKFUG1S/7YIRC8+3MEfE65UxtSqbaec4t
-	fJ+B8LtTuhbQTfULL4KLNwqYj9JkAdhcGGjowIiFzDMCv6CulitG/IVXJ5l0CzwB
-	KH60rUWuf/3rAvFvdbUVk91kmyfWTw1QM4KqpWQO2v4+QV4kSTLnOmUi4tk/A7Rg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a58mmcm5h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 16:23:27 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A7GBoUQ010201;
-	Fri, 7 Nov 2025 16:23:26 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a58mmcm5c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 16:23:26 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7EBU8o025569;
-	Fri, 7 Nov 2025 16:23:25 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5vht3uyu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 16:23:25 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A7GNLG331326666
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Nov 2025 16:23:21 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B3CDE20063;
-	Fri,  7 Nov 2025 16:23:21 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 468EE20040;
-	Fri,  7 Nov 2025 16:23:15 +0000 (GMT)
-Received: from [9.39.18.215] (unknown [9.39.18.215])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Nov 2025 16:23:15 +0000 (GMT)
-Message-ID: <5a2678a6-66e5-4c15-b95a-ce9f977f79e5@linux.ibm.com>
-Date: Fri, 7 Nov 2025 21:53:13 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89694262FC7
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762532470; cv=fail; b=eqIEblBmxX1SqN1PBTqIgQY9OAwLbflN13mh4LmDXgnH8OnDtv7jSswyBXs3+lRowfCFgEIXMzFiwQlvWHHO1zRx1OeRcCX+h9tZAuRAiAslXDWcO9Khyx/n88WHp+VPGCwssLY7BYtk1UVSc1pjUD7x05yLTiMhGtH+/2F7NDY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762532470; c=relaxed/simple;
+	bh=baaBsMInhaoELZvoxzBFOESRxkB+Px6DvMfYihLI0UQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=grWggEd7lUeO0QjALpC5v3e413wL/2xKWdWDyKxuOtInxCgaYIBHShnytAtPkhRFGjSuX01kora4+RIoirj7WLVXAsHKClvgIPwFHGMCoXHpi1po2s0Si5Dd0BVxOQqxpah5yxQiN7Foq5O1cyUaXttTQMnNO40vJpo0as0UzDA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZAkhHDDb; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762532468; x=1794068468;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=baaBsMInhaoELZvoxzBFOESRxkB+Px6DvMfYihLI0UQ=;
+  b=ZAkhHDDbXJKU3Ld/Pj24+oshpKrmOjPzZUo+FppD+h+syZbOUJ9D7W+R
+   wlGep3YIlgZuBA7jiIse2J8Lk4UV/fkXAUvXdWhSXp+iyCgOEieYr6VmD
+   +KEFxBEy57+Y3KZmjthv6XMmEWkbFhK2A/kmOpUSDu7Fn7h+IJ/hNsdnZ
+   hDFjwwerT2ifYSYf8XgEj9art+lk29GSrTObB8AD86O0SOxgHKAOBNr7n
+   wcZi41pq1MXts8R1hURRzo8WJ8A2KcGEaWYeFR+Yo+TjqTFuCTQVabE9B
+   es4LsI+o0LxBXBmdqSB+3IWU3Qr0H+We104Mc/W+pRb0x3N6ZocM/pzyB
+   g==;
+X-CSE-ConnectionGUID: CQh68iH+QmK35ku+nQRABQ==
+X-CSE-MsgGUID: ap1hegxsSBKFRgbxrotobg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64591863"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64591863"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 08:21:08 -0800
+X-CSE-ConnectionGUID: e29sHiwvRYSyAI7FF+3jEw==
+X-CSE-MsgGUID: UlSnY1ESSlCzeUdadW3b5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
+   d="scan'208";a="188505207"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 08:21:07 -0800
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 7 Nov 2025 08:21:07 -0800
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 7 Nov 2025 08:21:07 -0800
+Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.11) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 7 Nov 2025 08:21:07 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=S8ivfapQ60Yt/K7DnkTYSt9oiXiGSYCR2Bx/omNcQLRUmHL/sgm8RfWkzRrwedCzr89eF13HLD9gR6iOqyJM8wNs7UIL1s9cHJ9rTAwWxBdMksSSrjtaV8UTQJYxZTxNoZztjxixcwvMiqQIj8eSVkzvMPFKvrY1kPgtarVp4XwqyaQNNH5tCSHOMqbqIpSU5beJduS6bipvRrAd3kM9lTLkGMwWnVYPtMM7dXZFad2VGX4YyU8/45fZ5nQv2M6zyQ3tHpHcLooiOobQYa6HGuM4ZHycvRfdhH44ctkhDmr0TsiFP9S6fU4D/Tj0tpSJ5zKt/xFqoYUnGnI9A9tZeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e1us3hBXaxl3gyJOP0Mwu+bByrbUt6p2iIT7zMwCbLo=;
+ b=Hf0Q9bh7w+zd9QewkPjmbzWYAR6mxDhzoZOVkGUVCtY6TToVaAYX8AMKiDpxxlNMTfQZ6fHVZYT6K8LCs7VboJbmE3rih880nOhZ+Tf3oN5WCn2EHOGGqcxBqNsucP5KMVYl6HMRal01HeqVm7lU8CUQZcQj9POaDIByEi91s/YYuboBBN9nXsmBLHK9S8SdztSysjMqJrp9RxJVDF0E+eiKAVpl6CATs9TM3dj3HcckGnwC/XpSfII3gp5zWM3Jn2AjGT292BoNi1oqOig8EXBIRjz4+4eBbAQhk9ZWbHFnPQwp2FcXl1OTjvqU3XkNeuHKC+71seu66lMSaodlzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c) by SA1PR11MB7085.namprd11.prod.outlook.com
+ (2603:10b6:806:2ba::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
+ 2025 16:21:05 +0000
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::8289:cecc:ea5b:f0c]) by PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::8289:cecc:ea5b:f0c%8]) with mapi id 15.20.9298.012; Fri, 7 Nov 2025
+ 16:21:04 +0000
+Date: Fri, 7 Nov 2025 10:23:32 -0600
+From: Ira Weiny <ira.weiny@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ira Weiny
+	<ira.weiny@intel.com>
+CC: <nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Dan Williams
+	<dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Dave
+ Jiang" <dave.jiang@intel.com>
+Subject: Re: [PATCH v1 1/1] libnvdimm/labels: Get rid of redundant 'else'
+Message-ID: <690e1d0428207_301e35100f6@iweiny-mobl.notmuch>
+References: <20251105183743.1800500-1-andriy.shevchenko@linux.intel.com>
+ <690d4178c4d4_29fa161007f@iweiny-mobl.notmuch>
+ <aQ2iJUZUDf5FLAW-@smile.fi.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aQ2iJUZUDf5FLAW-@smile.fi.intel.com>
+X-ClientProxiedBy: BY3PR05CA0041.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b::16) To PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] Generic IRQ entry/exit support for powerpc
-To: Mukesh Kumar Chaurasiya <mkchauras@linux.ibm.com>, maddy@linux.ibm.com,
-        mpe@ellerman.id.au, npiggin@gmail.com
-References: <20251102115358.1744304-1-mkchauras@linux.ibm.com>
-Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: christophe.leroy@csgroup.eu, oleg@redhat.com, kees@kernel.org,
-        luto@amacapital.net, wad@chromium.org, mchauras@linux.ibm.com,
-        thuth@redhat.com, akpm@linux-foundation.org, macro@orcam.me.uk,
-        ldv@strace.io, deller@gmx.de, charlie@rivosinc.com,
-        bigeasy@linutronix.de, segher@kernel.crashing.org,
-        thomas.weissschuh@linutronix.de, menglong8.dong@gmail.com,
-        ankur.a.arora@oracle.com, peterz@infradead.org, namcao@linutronix.de,
-        tglx@linutronix.de, kan.liang@linux.intel.com, mingo@kernel.org,
-        atrajeev@linux.vnet.ibm.com, mark.barnett@arm.com,
-        coltonlewis@google.com, rppt@kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20251102115358.1744304-1-mkchauras@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: xBjNzwAGArkd9zRFf8743xnFRLWEab_U
-X-Proofpoint-GUID: SSC2i9FCI_yJg6NNrJkaWxCSQqUa4o9J
-X-Authority-Analysis: v=2.4 cv=SqidKfO0 c=1 sm=1 tr=0 ts=690e1cff cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=LwpTY9eDNtmqyekYXdUA:9 a=QEXdDO2ut3YA:10 a=nl4s5V0KI7Kw-pW0DWrs:22
- a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwOSBTYWx0ZWRfXw/zJ4rnKFJRC
- 5NzWA5vG38xGbuWPp0ZyjzNIbmyoBHW6rSmIRZVnDAQxWYUzAgrG8/Ggxx4LlJKhEaWcAcJfS/v
- 7TiBCjneC9OFSliWaXMx7AFegAaBYhVXfIJ5tgtaivPzh/cvE9Wio+fc/FV4BnxGUTfABxW6GnU
- Wzxa/LanQhah9QRZM3lL0cJoeqPpmJSWjXB094LvXMyLLhpfiL6VCYfKLVC9/SHIahtwsmGRyqr
- XrzRgV791+U1nlVpzJThNd39ksNRfNQiLf86LEbARFoMAhXzYjU/BpZfNPpTGg+q4SFIMQpwlBc
- HG9XoyBNnxyzV5oY4usjarbCO+iwcwsv3142uY5H7B76mxUTj1PlF2CxZUQfni9cBmOvaWXQh7I
- aPLpgWliHzrVTM+Qx6DlkmTipDVE0w==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_04,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1011 impostorscore=0 adultscore=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010009
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|SA1PR11MB7085:EE_
+X-MS-Office365-Filtering-Correlation-Id: db6d2ace-98ab-4b91-2028-08de1e19a64b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?NtBA5znqYxU5Ci3rNoDtM15JzsTd1iARjaWnSkfgpbsmdbcKcAH6I1Py397u?=
+ =?us-ascii?Q?7Zy2bcvN+D668TMbCWlvirX/PZV64btwZ1wjHjlOzUfviU0LuAL8RjEDjRDX?=
+ =?us-ascii?Q?kX2ibC8qcagbK1PepmfymSCdgPud6L23wy66WoTaOtTd+OQKZCWhIREUAaRM?=
+ =?us-ascii?Q?1gFn3lHTV5oec3XPFkclziP0MXoxbZZvIqbMAvKFlfcIDfcc+W/v29vO6rUK?=
+ =?us-ascii?Q?yiW76mX3u5V+O8lwTNK401OHKn65e5sEm8I2DaLsbuGuT5cmcs6EHKBRAjO4?=
+ =?us-ascii?Q?ZYbmxEnZIZtEJA+b22cudza7xhQG4s6ZgOUr+kriTf++EI6eWxkWBBKJQoMn?=
+ =?us-ascii?Q?ICstaNgo4rNC1+qmztef7nEjNlHp/AQbBDtP+Wo3bOfp7bngHoQffSZni1e8?=
+ =?us-ascii?Q?xmP4Lk2r7iPpT71Sd/KQJbMUs3UsLFqO7rp3splelr5f/Bekppr3LfYuQRQg?=
+ =?us-ascii?Q?xsKBLy0alW6kiaEHmNcl1nbXXE5lDmBjr/WALlTyDOYKYufWSPCZ+FWnQSqR?=
+ =?us-ascii?Q?EjiUVgBlp6sMGLgEx7kUlFpA7ipxfAwf6xsf2cJta1H01ZOvT3f0JdubCfUW?=
+ =?us-ascii?Q?WYNxNVbyOlM/Jfo4mmadK5Fa7LsP1ZOztEb2O6OwRlwJzb1CtuYi9Bn6meEE?=
+ =?us-ascii?Q?CLewV9+drJ+grqYtakJsuNEiF0TnfsRcsgxC71zWpXoTEOQt7lN1gsbDUeSS?=
+ =?us-ascii?Q?acJFsXsNpU9QJhBgoHVgGwlFKtDV367uFSaZK3+O1J//E+DWRgt7Groy1NKw?=
+ =?us-ascii?Q?yf9YsQeJ7e8V0NGETrM6AteCxzDH+R9Rz0oBC6ITjVjK8xgNoz3v+pTalPmV?=
+ =?us-ascii?Q?5MZ0VlpBMjYGVa0SvbqDWVURA0tY89A6vXFFOvXuXCAVfZBwS2JLBETeelWR?=
+ =?us-ascii?Q?wyNk20tlk4d8LjLiErshXeRgTNbPTuBLxIBdM5X6G2k8HTKDY7rep67tZR+Y?=
+ =?us-ascii?Q?3y8vDRxvkynYnluDqCpWCIfpaSFrJ0Zt/P/2PRvyVuC/BHkEpocZgWpw3GBv?=
+ =?us-ascii?Q?gmhFgeSK/riuJuoFT3ZOGmGGqcsLlOPbwyc/l5N+dXz2qA2teE7xHllzDaN/?=
+ =?us-ascii?Q?J75AgU7lPxTUMmQF9rdDA8d57xECuroxe9+xRvCEe3sDxkiM+9eoG/si3zAP?=
+ =?us-ascii?Q?CtE2YBd/s9OIYXqXBBHE1z1qq2nCLCAM/T/yJyKsMUlKYM+tdR9GGd0Npzfm?=
+ =?us-ascii?Q?6k9DUFxZfG5RJ/7bawHx9I+ULzDGChqjgagkEiNGatQNR4il7GWaC4iSzRyS?=
+ =?us-ascii?Q?CujDoGf65nzEC1cyc7/ljj+pEa6FoE2iLeQBBHRrXL2918utzFahBt6WcdGu?=
+ =?us-ascii?Q?Zwm4KaQZwZ+bvL2pFlR4/V+qCcdCzfzYEc0s22oFbylSbg7kjandMjh+qKYZ?=
+ =?us-ascii?Q?P8oR7GZVIbH2l11QgyCcVQCsfZEAQ45Jm4dfNsj21QbKqyw1OGm9vHAJEhil?=
+ =?us-ascii?Q?db03c4kA51LcUfFYUJAytjhfkjumlv0t?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IHcihRYBJjUJ0jUwKAqan7yGuBSpthBBiBl8zgPVTBEtyYZQ8dFzmnnpLLhl?=
+ =?us-ascii?Q?GPu1kruLhrriU5oM01rD+4Bsjw7n/AfRSGHIDjgADf1iefGb3JAcYl2PQ2Cd?=
+ =?us-ascii?Q?p3Bv3Z9Jh6I/uJGOvAPKmw+9WT7R6bSdP+++eqKz5bRv1KEn6X8S30+vgonm?=
+ =?us-ascii?Q?MujCJt7MIecDbQQ+5UD74FEkeaVpXEBaZYwfn6sGfbVJuxPUMGV8h7GKi306?=
+ =?us-ascii?Q?ICl1EhvNnrig1C6KdEe10RVyeZcF3HE4fmpUDiopgkuZOI5oMwXL6EqagUU6?=
+ =?us-ascii?Q?T5K+0diZqcYvPzgKU6i/JTGSOfQTLfKw2/gWfTrxtvV0b/osqqdOsdGqq2/X?=
+ =?us-ascii?Q?fNFOCVVCRqXTduREmVXRYkHuR80GpBmkbdkt6JtmQM0Oe9HNgv1TPOkWJnVP?=
+ =?us-ascii?Q?l7350G5zDnIXFAKwtdTv5BhrWz7a9gygL7OE78p79O6+HqGVd3hFYRbOX1mF?=
+ =?us-ascii?Q?DXzEB71AOA9RibDLaTXGkKFCrEU7l8hLARaTBjIOfvyLbUZfmv9BpRKc18YT?=
+ =?us-ascii?Q?OGbs2nTxgoodGGNYLIP5dwcSTEvz0EOd7cqk1GP12I1YWyyVPEmKEfVBSsp0?=
+ =?us-ascii?Q?KGchDHT0rrq82DWkRKcfALQ3dHL+YVsOXHN9i26+nHW7wZ9QaXqTwMtceNxb?=
+ =?us-ascii?Q?gmrz2vdxuSmThgghaRXNfZmzTtWzIkh8XzN/vuNdgAwmt/MnnUYc/2kcLTgv?=
+ =?us-ascii?Q?1pRYulsSRLPNbcG4TVrM+CbikCJ3CSdr7tPqwglYyRIPnwZch7GuH0TtEaTa?=
+ =?us-ascii?Q?UTDf7XkS6jWZ/5rG/ALrnq1Ln1jsZxBur/xQe0i8n/VpwWAw7wMGogYbkGRA?=
+ =?us-ascii?Q?3gXfmnw8CNlrnWGe+EATRt6rvnk3zd9Zya2EKyS5RLgFObyCkhZFuS9C4WVD?=
+ =?us-ascii?Q?RuNm4AoXmeifDxwB8bKkocgrOV2PYn+UtZ4sLWmDsgGr6Vvcc/tvZxehOeju?=
+ =?us-ascii?Q?0zL67zIL/UgL2RrM14WluobfJ7kc+YdANNsl2D0mPhR6BqYPkp/rzHh3IhAm?=
+ =?us-ascii?Q?aWKex3krHGSBpGhyPPpJyw//83mfM3apcMLzES+nWB0PPYwiX8rX/Vt40II5?=
+ =?us-ascii?Q?GByAxaFKYtl83y4VcxdMUfkrbFIhrakDKhg+uedCTLTpvwRbiZUJJ2Ocm51u?=
+ =?us-ascii?Q?vBlFY2ybUIS98rdj4ABmOqXsTN3kTOhb4uB29ymC7ua4Y1o0l+664EEqiXhE?=
+ =?us-ascii?Q?SGdR6fKxDmiGftqVg7QbMjfK8Y631zixEyKQsZTmd7Y+nWKBt+MEz1qlbjby?=
+ =?us-ascii?Q?wy/4xTpFmQ190s2lnFdR8vrLp+61XN/zoktQFqQjjUo03Mx+apGhM/a6coKF?=
+ =?us-ascii?Q?6ap/Us2xLi431MyNxO6SIp5HLDeECcMH8PCaXJoQWAwGUprEBWD+3klcgIvZ?=
+ =?us-ascii?Q?BcN2ostezHn0ObX6BAD/60EdyLG0zCSZCTQElz8fW1yj3rUmfCYKc4IEOQVG?=
+ =?us-ascii?Q?iI4LD5dKAdL8KDZ4vVVpjtn90aPGgT5Yq3qEnZF1OaDPkqrX/kjFYTIbpRzL?=
+ =?us-ascii?Q?qd9jbgeVdyzc9dQsmQiqtWZv+Ma/fz4culT5rCehbuuk6GTXnP7PuAoX0Sqp?=
+ =?us-ascii?Q?jixnE7IZeJRoHySttCclkjWYgFT/RzKt4TMQVOY2?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: db6d2ace-98ab-4b91-2028-08de1e19a64b
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 16:21:04.8746
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Yy0QGSMkEoFTrS8Q3cFQ9szq3YtYLKwUeNhAzn4heWcOu+SkY5nn/S3++SPpoXym6REXFpWBOaoQIuI67x+Oqg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7085
+X-OriginatorOrg: intel.com
 
+Andy Shevchenko wrote:
+> On Thu, Nov 06, 2025 at 06:46:48PM -0600, Ira Weiny wrote:
+> > Andy Shevchenko wrote:
 
+[snip]
 
-On 11/2/25 5:23 PM, Mukesh Kumar Chaurasiya wrote:
-> Adding support for the generic irq entry/exit handling for PowerPC. The
-> goal is to bring PowerPC in line with other architectures that already
-> use the common irq entry infrastructure, reducing duplicated code and
-> making it easier to share future changes in entry/exit paths.
+> > > -	else if (claim_class == NVDIMM_CCLASS_UNKNOWN) {
+> > > -		/*
+> > > -		 * If we're modifying a namespace for which we don't
+> > > -		 * know the claim_class, don't touch the existing guid.
+> > > -		 */
+> > > -		return target;
+> > > -	} else
+> > > +	if (claim_class == NVDIMM_CCLASS_NONE)
+> > >  		return &guid_null;
+> > > +
+> > > +	/*
+> > > +	 * If we're modifying a namespace for which we don't
+> > > +	 * know the claim_class, don't touch the existing guid.
+> > > +	 */
+> > > +	return target;
+> > 
+> > This is not an equivalent change.
 > 
-> This is slightly tested of ppc64le and ppc32.
-> 
-> The performance benchmarks from perf bench basic syscall are below:
-> 
-> | Metric     | W/O Generic Framework | With Generic Framework | Change |
-> | ---------- | --------------------- | ---------------------- | ------ |
-> | Total time | 0.939 [sec]           | 0.938 [sec]            | ~0%    |
-> | usecs/op   | 0.093900              | 0.093882               | ~0%    |
-> | ops/sec    | 1,06,49,615           | 1,06,51,725            | ~0%    |
-> 
-> Thats very close to performance earlier with arch specific handling.
-> 
-> Tests done:
->   - Build and boot on ppc64le pseries.
->   - Build and boot on ppc64le powernv8 powernv9 powernv10.
->   - Build and boot on ppc32.
->   - Performance benchmark done with perf syscall basic on pseries.
-> 
+> It's (okau. almost. later on that). The parameter to the function is enum and
+> the listed values of the enum is all there.
 
-Hi Mukesh.
+True.
 
-The context tracking is not correct.
-too many warning when booted with nohz_full=<>
+> The problematic part can be if
+> somebody supplies an arbitrary value here. Yes, in such a case it will change
+> behaviour and I think it is correct in my case as UNKNOWN is unknown, and NONE
+> is actually well known UUID.
 
-Did some fiddling, but no luck still in avoiding the warnings.
-Below helps to boot into atleast (less warning in comparison)
+Yea putting this in the commit message but more importantly knowing you
+looked through the logic of how claim class is used is what I'm looking
+for.
 
-diff --git a/arch/powerpc/include/asm/entry-common.h b/arch/powerpc/include/asm/entry-common.h
-index 466cfafc10ad..a66cafc94b5e 100644
---- a/arch/powerpc/include/asm/entry-common.h
-+++ b/arch/powerpc/include/asm/entry-common.h
-@@ -217,20 +217,11 @@ static inline void arch_interrupt_enter_prepare(struct pt_regs *regs)
-  
-         if (user_mode(regs)) {
-                 kuap_lock();
--               CT_WARN_ON(ct_state() != CT_STATE_USER);
--               user_exit_irqoff();
-  
-                 account_cpu_user_entry();
-                 account_stolen_time();
-         } else {
-                 kuap_save_and_lock(regs);
--               /*
--                * CT_WARN_ON comes here via program_check_exception,
--                * so avoid recursion.
--                */
--               if (TRAP(regs) != INTERRUPT_PROGRAM)
--                       CT_WARN_ON(ct_state() != CT_STATE_KERNEL &&
--                                  ct_state() != CT_STATE_IDLE);
-                 INT_SOFT_MASK_BUG_ON(regs, is_implicit_soft_masked(regs));
-                 INT_SOFT_MASK_BUG_ON(regs, regs_irqs_disabled(regs) &&
-                                      search_kernel_restart_table(regs->nip));
-diff --git a/arch/powerpc/kernel/interrupt.c b/arch/powerpc/kernel/interrupt.c
-index ce59431f977c..c7cf9a3f1202 100644
---- a/arch/powerpc/kernel/interrupt.c
-+++ b/arch/powerpc/kernel/interrupt.c
-@@ -118,16 +118,18 @@ notrace unsigned long syscall_exit_prepare(unsigned long r3,
-                 regs->exit_flags |= _TIF_RESTOREALL;
-         }
-  
--again:
-+       local_irq_disable();
-+
-+       user_exit_irqoff();
-         syscall_exit_to_user_mode(regs);
-  
--       user_enter_irqoff();
--       if (!prep_irq_for_enabled_exit(true)) {
--               user_exit_irqoff();
--               local_irq_enable();
--               local_irq_disable();
--               goto again;
--       }
-+again:
-+       if (!prep_irq_for_enabled_exit(true)) {
-+               local_irq_enable();
-+               local_irq_disable();
-+               goto again;
-+       }
-+
-  
-         /* Restore user access locks last */
-         kuap_user_restore(regs);
-@@ -155,16 +157,15 @@ notrace unsigned long syscall_exit_restart(unsigned long r3, struct pt_regs *reg
-  #ifdef CONFIG_PPC_BOOK3S_64
-         set_kuap(AMR_KUAP_BLOCKED);
-  #endif
--again:
-+       user_exit_irqoff();
-         syscall_exit_to_user_mode(regs);
-  
--       user_enter_irqoff();
--       if (!prep_irq_for_enabled_exit(true)) {
--               user_exit_irqoff();
--               local_irq_enable();
--               local_irq_disable();
--               goto again;
--       }
-+again:
-+       if (!prep_irq_for_enabled_exit(true)) {
-+               local_irq_enable();
-+               local_irq_disable();
-+               goto again;
-+       }
-  
-         regs->exit_result |= regs->exit_flags;
-  
-@@ -178,7 +179,6 @@ notrace unsigned long interrupt_exit_user_prepare(struct pt_regs *regs)
-  
-         BUG_ON(regs_is_unrecoverable(regs));
-         BUG_ON(regs_irqs_disabled(regs));
--       CT_WARN_ON(ct_state() == CT_STATE_USER);
-  
-         /*
-          * We don't need to restore AMR on the way back to userspace for KUAP.
-@@ -188,17 +188,17 @@ notrace unsigned long interrupt_exit_user_prepare(struct pt_regs *regs)
-  
-         local_irq_disable();
-         regs->exit_flags = 0;
--again:
-+
-+       user_exit_irqoff();
-         irqentry_exit_to_user_mode(regs);
-         check_return_regs_valid(regs);
-  
--       user_enter_irqoff();
--       if (!prep_irq_for_enabled_exit(true)) {
--               user_exit_irqoff();
--               local_irq_enable();
--               local_irq_disable();
--               goto again;
--       }
-+again:
-+       if (!prep_irq_for_enabled_exit(true)) {
-+               local_irq_enable();
-+               local_irq_disable();
-+               goto again;
-+       }
-  
-         /* Restore user access locks last */
-         kuap_user_restore(regs);
-@@ -222,20 +222,6 @@ notrace unsigned long interrupt_exit_kernel_prepare(struct pt_regs *regs)
-  
-         if (regs_is_unrecoverable(regs))
-                 unrecoverable_exception(regs);
--       /*
--        * CT_WARN_ON comes here via program_check_exception, so avoid
--        * recursion.
--        *
--        * Skip the assertion on PMIs on 64e to work around a problem caused
--        * by NMI PMIs incorrectly taking this interrupt return path, it's
--        * possible for this to hit after interrupt exit to user switches
--        * context to user. See also the comment in the performance monitor
--        * handler in exceptions-64e.S
--        */
--       if (!IS_ENABLED(CONFIG_PPC_BOOK3E_64) &&
--           TRAP(regs) != INTERRUPT_PROGRAM &&
--           TRAP(regs) != INTERRUPT_PERFMON)
--               CT_WARN_ON(ct_state() == CT_STATE_USER);
-  
-         kuap = kuap_get_and_assert_locked();
-  
-@@ -316,7 +302,6 @@ notrace unsigned long interrupt_exit_user_restart(struct pt_regs *regs)
-  #endif
-  
-         trace_hardirqs_off();
--       user_exit_irqoff();
-         account_cpu_user_entry();
-  
-         BUG_ON(!user_mode(regs));
-diff --git a/arch/powerpc/kernel/syscall.c b/arch/powerpc/kernel/syscall.c
-index df1c9a8d62bc..e041b187b1b7 100644
---- a/arch/powerpc/kernel/syscall.c
-+++ b/arch/powerpc/kernel/syscall.c
-@@ -20,6 +20,9 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
-         syscall_fn f;
-  
-         add_random_kstack_offset();
-+
-+       local_irq_disable();
-+       user_enter_irqoff();
-         r0 = syscall_enter_from_user_mode(regs, r0);
-  
-         if (unlikely(r0 >= NR_syscalls)) {
+Thanks,
+Ira
+
+[snip]
 
