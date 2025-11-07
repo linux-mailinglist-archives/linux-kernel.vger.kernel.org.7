@@ -1,181 +1,87 @@
-Return-Path: <linux-kernel+bounces-890315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30732C3FC5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:45:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91006C3FC55
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:45:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8A1E1892ECC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:45:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3AAF134BF1F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1117D2F1FD5;
-	Fri,  7 Nov 2025 11:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E8631BCBD;
+	Fri,  7 Nov 2025 11:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXWmGg0J"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjHfKi2u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5EE2D9EF2
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD2926ED4D;
+	Fri,  7 Nov 2025 11:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762515919; cv=none; b=bXEfy7foniMPHkztyqFgRyTAUIlKIWfWGUcbLXNEiIYzf2gpxPTF5qLvFeLi2vNR+zl9YSJdIGf+e+NHqevkvD8nmFfJ4rmBQwHEEIavWgDLxXiPrgNPnNX/zIZx1lonuZSV+SHaxsMGKvH2SwLkCkj95xhImeqbM01FRvGoPB4=
+	t=1762515903; cv=none; b=iUj1fTgoEQq9/HdJ9JQV+YNPh1m4AX1ptHYujE35M6WzpaOA1Ah0SLw3aJFmbMb5udRJK0qq4jCNXM2Y6HZnKgCojSml68+KJTMcRN2Us9rFT0myaaG7ye+Fun9L+FN5Cl5FfpQ0rhpOFpoRF+1YGh44JuJxIIuBVlh+33x4UuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762515919; c=relaxed/simple;
-	bh=J/aI4rKmxspso1/MCo9q/nVgTvxtSI/RPPnCjmkZ3cE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cNFHgGX0w5TYy0fHB41AwHYFbsulkGoJJ0pkSVhDZsVPNVQdm/3REWzzUKPtqhw7BMZzuji0s/F9MFPjaw8Z05jr+UpBwiqOYrJbk65uFBoMH49T6ToQEBph/lyw6uKUFm26I/rNjcwlQb615jv5QYBeqervgUCpd7Zg/45mSNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XXWmGg0J; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7aa9be9f03aso606931b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:45:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762515917; x=1763120717; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P3UolEFy3bRdP252sm4YQ2agYywAUHuWFJXJIEy7jek=;
-        b=XXWmGg0JNlez0SkMg/AnaDYb2Wpi62VZD0MkDPerJyygC5aaRMGj9IQN74kgFkCyce
-         5WwkqZm8qEK98/7Ya2ux08ftJkb2p4VNM0AFVjVeHwAk1+6D9+1Vmm2pjeD+aBv9wZm3
-         enToORStbQohav9T3DxlfAAF6UaEUhLYOoKPpQgvlGszLozaQgC/jVj+9qYmOzHfOlyh
-         LNcPpeVlmdoO2jqweVMHg0tFWwm1A5ybSBNnj72NIxmBdmPXTCRmdqEfv6ZSIJH5ALJ6
-         g2jL70O3JTJXhOjBgJN5fodEytNc5s9lgDUcMWqriAmfPGcNJG33VGA+ygVoonLZS16g
-         8STw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762515917; x=1763120717;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=P3UolEFy3bRdP252sm4YQ2agYywAUHuWFJXJIEy7jek=;
-        b=si0whz3DwMkK3o6Dr0rxX1jQLxPkpejA6LnxHDqYdDTsalyqISdeCmYy95rtq+pZN2
-         +xbvm3GckZi7uTzCKArisOiqsi2hMi/4HCsZH1WrUe2B15dD/oG6Vz6L2i52o7Kry+zs
-         GCNuowAWARFaEFuuKrFVyQMxtDpT1kZvTC1K2atoOXImQb4891P6HHilA6mCWBqCeiaP
-         9JDeKROEUleBhdLyfIegF1MagJr3ZOi9JgP4ZCLhNoXMSu39X4WVEwYP/V23xP64QKSF
-         NMULInFLZmPr+bCOr8BPd+e/9b4F++uwmj9hQjMmNB3maCrLLMg1N50TFJ4h+1XaUlhV
-         ZA8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUwMCPRkl+66TLMsX1W6vvZBCSnq4zsqKja236ubhdWEFfIqXV0h6Ha+MluKw+xRi8Lvsc1d8hec7iGsr0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyROVMli0aZoq8vs+25wezGoOEWoc/iI1o/+HjmCRi3kKIEfbC8
-	bt6b9WRdVcePv9kVFJRLYqR4awN2QuTYLMDXQgeDE/eC4qJkMhYBH9bn
-X-Gm-Gg: ASbGncsNPdBmN1tNSYfnHq6KWM8psZqMOngHDGd6PSoHCBFrIL1k+py2l+wMB5mdy0a
-	slHZhddqjp/fPH8KOXhRm9HdMAsn1hAOcD1hqLcQJJz4b/5ek/01gqn9PiNtH13TiYsi1TSb8rT
-	MKlnkp0p254/PQ0HrDduy1/mZIS7JKSli05hVBDBXyJCT/sWZ2dfoAOR5+LpXKKOb3hpkhQsqGV
-	cxhT8DCDkfCawFIMehDZTO2J6A2QX+nBfagu2+mtFC9TXB8XWPWPCqrfTvWS/2DQIbeCw8uJ5Fl
-	wUzLTgHBLJDU4ARlmQsTdqxvv/5a+Rmb40WuZGOl/g+DFv88XLD7anZRrg96qbPTbXdqc+7M5zx
-	2v2+rCiOW87Khy3skjpurhvi6TUHqscaKDs6xI7XcGJeeLcwG/Xba9MeZgcVGOZddzvf+dutn+S
-	DcNF26
-X-Google-Smtp-Source: AGHT+IEgK3+y79M6QAxgxitqK9nN+XnGR2GDAi2/FrE6+S2IrZU3wlJefPhdXptP4GRU9s4WXBb9ew==
-X-Received: by 2002:a17:90b:35cf:b0:340:e8e9:cc76 with SMTP id 98e67ed59e1d1-3434c4eca56mr3374514a91.11.1762515916704;
-        Fri, 07 Nov 2025 03:45:16 -0800 (PST)
-Received: from EBJ9932692.tcent.cn ([43.129.202.66])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0ca1e718asm2717145b3a.30.2025.11.07.03.45.12
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 07 Nov 2025 03:45:16 -0800 (PST)
-From: Lance Yang <ioworker0@gmail.com>
-To: chenhuacai@loongson.cn
-Cc: akpm@linux-foundation.org,
-	arnd@arndb.de,
-	chenhuacai@kernel.org,
-	jack@suse.cz,
-	kevin.brodsky@arm.com,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	david@kernel.org,
-	lorenzo.stoakes@oracle.com,
-	vishal.moola@gmail.com,
-	Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH Resend] mm: Refine __{pgd,p4d,pud,pmd,pte}_alloc_one_*() about HIGHMEM
-Date: Fri,  7 Nov 2025 19:44:55 +0800
-Message-ID: <20251107114455.59111-1-ioworker0@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251107095922.3106390-1-chenhuacai@loongson.cn>
-References: <20251107095922.3106390-1-chenhuacai@loongson.cn>
+	s=arc-20240116; t=1762515903; c=relaxed/simple;
+	bh=+McGhPRb5DdZk00rlQ5Ayy5G8ZwJFq26blt5i33MCu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=r5jsCiy22cATAAp9oDzWRdN1RS2vCZjcivrBdDLEJKke/XJ8n2Qo/mWlHG5EmX6c66x5Bc8Bzbj0VQI69Ji1YsQfRzybiMEOHPG+BkQQhkH9+zy3CiUs+wsPas++ncVtJsb/NHehyWPQhpwSjVGWLJGxgE295AOLQPqjXkJitWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjHfKi2u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB9A0C4CEF5;
+	Fri,  7 Nov 2025 11:45:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762515901;
+	bh=+McGhPRb5DdZk00rlQ5Ayy5G8ZwJFq26blt5i33MCu4=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=gjHfKi2uWnxZ5Dh4b3/Op19IrMW6ITEHL4lUR5Cq+m+f6roFi1h3P0K5UFmi28dkl
+	 zg4/lxAc2PoavYW1mPZTFL1GxqtlTQ4qMkoluuxAOdWtdi/+oMHNNpumZ+OhR6sYbz
+	 oQctf1/E2ipCVOe43ZctPcoLcM4aubqs3qj9V+7voOehxdrOYAABNlaEv1E9VykNN7
+	 v7wAeQoQPfsSxT0EoX2rmFclcQ3a6ZDGe9qSnOzMKjpNHw9ZRPKWZMDzlewODr4clP
+	 hO1EOkvrNAdoTGCw4xWVrrkmdy/B5n++TDw1GsZhitRePJhX4VncoLlo02iuKrnTcw
+	 Fdbp31XJtWr5Q==
+Message-ID: <c8a32a8b-f37f-44b3-ac31-7f6d6f608dd2@kernel.org>
+Date: Fri, 7 Nov 2025 05:44:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] dt-bindings: firmware: svc: Add IOMMU support for
+ Agilex5
+To: Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <cover.1762387665.git.khairul.anuar.romli@altera.com>
+ <dc40029c970d33b433e763202e6622a0a2f12d72.1762387665.git.khairul.anuar.romli@altera.com>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <dc40029c970d33b433e763202e6622a0a2f12d72.1762387665.git.khairul.anuar.romli@altera.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Lance Yang <lance.yang@linux.dev>
 
 
-On Fri,  7 Nov 2025 17:59:22 +0800, Huacai Chen wrote:
-> __{pgd,p4d,pud,pmd,pte}_alloc_one_*() always allocate pages with GFP
-> flag GFP_PGTABLE_KERNEL/GFP_PGTABLE_USER. These two macros are defined
-> as follows:
+On 11/6/25 17:35, Khairul Anuar Romli wrote:
+> In Agilex5, the TBU (Translation Buffer Unit) can now operate in non-secure
+> mode, enabling Linux to utilize it through the IOMMU framework. This allows
+> improved memory management capabilities in non-secure environments. With
+> Agilex5 lifting this restriction, we are now extending the device tree
+> bindings to support IOMMU for the Agilex5 SVC.
 > 
->  #define GFP_PGTABLE_KERNEL	(GFP_KERNEL | __GFP_ZERO)
->  #define GFP_PGTABLE_USER	(GFP_PGTABLE_KERNEL | __GFP_ACCOUNT)
-> 
-> There is no __GFP_HIGHMEM in them, so we needn't to clear __GFP_HIGHMEM
-> explicitly.
-
-Nice cleanup!
-
-> 
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
 > ---
-> Resend because the lines begin with # was eaten by git.
-> 
->  include/asm-generic/pgalloc.h | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
-> index 3c8ec3bfea44..706e87b43b19 100644
-> --- a/include/asm-generic/pgalloc.h
-> +++ b/include/asm-generic/pgalloc.h
-> @@ -18,8 +18,7 @@
->   */
->  static inline pte_t *__pte_alloc_one_kernel_noprof(struct mm_struct *mm)
->  {
-> -	struct ptdesc *ptdesc = pagetable_alloc_noprof(GFP_PGTABLE_KERNEL &
-> -			~__GFP_HIGHMEM, 0);
-> +	struct ptdesc *ptdesc = pagetable_alloc_noprof(GFP_PGTABLE_KERNEL, 0);
+> Changes in v6:
+> 	- Reinstate AllOf to avoid re-indentation on future addition to
+> 	  the logical condition.
+> Changes in v6:
+> 	- Use contains enum instead of const
 
-I looked into the history and it seems you are right. This defensive pattern
-was likely introduced by Vishal Moola in commit c787ae5[1].
+This should be v5. Krzysztof gave you his Reviewed-by: in v5, you should 
+include his Reviewed-by: in this version.
 
-After this cleanup, would it make sense to add a BUILD_BUG_ON() somewhere
-to check that __GFP_HIGHMEM is not present in GFP_PGTABLE_KERNEL and
-GFP_PGTABLE_USER? This would prevent any future regression ;)
-
-Just a thought ...
-
-[1] https://github.com/torvalds/linux/commit/c787ae5b391496f4f63bc942c18eb9fdee05741f
-
-Cheers,
-Lance
-
->  
->  	if (!ptdesc)
->  		return NULL;
-> @@ -172,7 +171,6 @@ static inline pud_t *__pud_alloc_one_noprof(struct mm_struct *mm, unsigned long
->  
->  	if (mm == &init_mm)
->  		gfp = GFP_PGTABLE_KERNEL;
-> -	gfp &= ~__GFP_HIGHMEM;
->  
->  	ptdesc = pagetable_alloc_noprof(gfp, 0);
->  	if (!ptdesc)
-> @@ -226,7 +224,6 @@ static inline p4d_t *__p4d_alloc_one_noprof(struct mm_struct *mm, unsigned long
->  
->  	if (mm == &init_mm)
->  		gfp = GFP_PGTABLE_KERNEL;
-> -	gfp &= ~__GFP_HIGHMEM;
->  
->  	ptdesc = pagetable_alloc_noprof(gfp, 0);
->  	if (!ptdesc)
-> @@ -270,7 +267,6 @@ static inline pgd_t *__pgd_alloc_noprof(struct mm_struct *mm, unsigned int order
->  
->  	if (mm == &init_mm)
->  		gfp = GFP_PGTABLE_KERNEL;
-> -	gfp &= ~__GFP_HIGHMEM;
->  
->  	ptdesc = pagetable_alloc_noprof(gfp, order);
->  	if (!ptdesc)
+Dinh
 
