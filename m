@@ -1,247 +1,153 @@
-Return-Path: <linux-kernel+bounces-889752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D19B1C3E6A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 05:11:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6350C3E70E
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 05:21:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93D8A4E8443
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 04:11:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73FDA3A33B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 04:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB3A1991D2;
-	Fri,  7 Nov 2025 04:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A896B25CC74;
+	Fri,  7 Nov 2025 04:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJTH0xva"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OHb31Pyz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62CB2773DE;
-	Fri,  7 Nov 2025 04:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8381E5205;
+	Fri,  7 Nov 2025 04:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762488705; cv=none; b=Nb64Dew2XioyzwrHQVMBXXOu0q0PgRzIlQyUWxHfuenOD4MC9997LaB4ShQnrAlOXq/Em+qo4uE7HCLXmk+HYqPrm9QAP+YfA593aP+Zg6BofQtOoR/LtSRRFseTiLeDc+fo8aYjQFYtldeQMWx2u8L4HFi/CP7eSzva7pUH9KA=
+	t=1762489302; cv=none; b=OawhBHlQIFQZSzcMn39U+LwICyE3Hq66Ozx8gGZ2YbmoAQlJm8MAY7B+6lfvxO97YHEFMpo4l7QuKx9s3ESucDtyWNuL94dXZB52/84cjTFbHi6hvwX/kxyKRgS5gVRmJ0wsuV7XmmS7TVkudtF6Jn8W6oSO88+3gRXyLBt2Loc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762488705; c=relaxed/simple;
-	bh=th2E8+QU+yfvvJ5Gmg7E/hGmAuvFHm0uZFOBD3mOAQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p0/MyacUYUwCu0HpliKbQZ0uHOYnkMNYr565lf22wOPZSdq2UGzTtlCh4u5M/lKZXaJflB2Xnf66rz7tBF1M+eLUF31v4RMaJHwimzluRJMTXbJKbznLmHYk7cC22ShwEX2nV563pYn3+aNS82pohBB2+9aa8Z38BD9sWiSGQ6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJTH0xva; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BE3FC4CEF5;
-	Fri,  7 Nov 2025 04:11:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762488705;
-	bh=th2E8+QU+yfvvJ5Gmg7E/hGmAuvFHm0uZFOBD3mOAQ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FJTH0xvaAjFduWgMUvyjzqRRTDtuJr9QlxUpra1sv4Re+hAYK/Xz7XBcl2OU/VOit
-	 O1bt/7rczePeLP/TB9ttV6CDeNVgu/OSr7zLPKiUX+UU03uGNHDZs/4QBX1cJi7QoT
-	 Yl4/EwuV/5pqPjJ5UE3jW2egIi3OfZecbliQXvslvJrwaZLDoHvMm/UkdOAFhS1SPy
-	 9agiEZCjEvB5L3GM85j/xvKbJm+JFDgfAJxqRtVzLgJA3GbsALIuNxk4ClrZMK8Tm6
-	 GnyVyX50JimD6tIL9ZHT7/+pbKCm2IdQSt4MJBV/dSHs7tuZ9nn21SOu717nSXNp9s
-	 825/PoaWf/Kwg==
-Date: Fri, 7 Nov 2025 04:11:40 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Benson Leung <bleung@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
-Message-ID: <aQ1xfHuyg1y8eJQ_@google.com>
-References: <20251016054204.1523139-6-tzungbi@kernel.org>
- <20251016123149.GA88213@nvidia.com>
- <aPGryj-V5PQZRtoI@google.com>
- <20251017134916.GK3901471@nvidia.com>
- <aPJp3hP44n96Rug9@tzungbi-laptop>
- <20251017162116.GA316284@nvidia.com>
- <aPT-7TTgW_Xop99j@tzungbi-laptop>
- <20251020115734.GH316284@nvidia.com>
- <aPcQ99MZse5zmv3o@google.com>
- <20251021121536.GG316284@nvidia.com>
+	s=arc-20240116; t=1762489302; c=relaxed/simple;
+	bh=dZoLS+7V1h/k1eViXOZOBE1tBLiJPUsDAgsuaRt2Bt8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YAKh+EWEUdmuOlZogi0Ce2uJhkF9tf5GhISTRQsXTe6tI9F0m5hsZWdIrdkWbo0Gyz9MXsVCCbRp30SvfiwTt49gnigq7PubRjBVBtSr5M83lRmAvYtY8vOo5JXFjLqWZzaZA9KYTUQBe+YCUHahzqBLGBx/BgCtOqVGU2gTGPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OHb31Pyz; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762489300; x=1794025300;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=dZoLS+7V1h/k1eViXOZOBE1tBLiJPUsDAgsuaRt2Bt8=;
+  b=OHb31PyzGtz8KPdoL7FwD7OAAZU3WXuRR3LN4qMx5K6DZGMv/FRjJRzC
+   FFJh29NPH3dUnOZ1/21zW/FgKJ+k2fGhQMRC4cLQHi5AHlv8uzRPaU6Wu
+   G+1Hrn4TG9SuKWc8EaYixjE3Anq2HIMscXhZBaqC1P/86laFYrskfgufU
+   uLf/C4NuhgQCoMnL/Cc7IF3qjUTyNyJyD2vw/TZzTqNpSnvNgY9lLTih4
+   PJZuQNrpRlBBo4nh62Yud9YEibkF8kXGd9cMzPRw3HIJZcV4M9JQKWHZU
+   cnVWvxQkcd5ON7I0sdY3GJyYapDpbFKdrowWUIWYDcS89ag71k4S6Fp00
+   A==;
+X-CSE-ConnectionGUID: GHcTq23tSYKO90IUAdtg4w==
+X-CSE-MsgGUID: 1y7V2A6JRLCiLSp42kxMrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="75990516"
+X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
+   d="scan'208";a="75990516"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 20:21:39 -0800
+X-CSE-ConnectionGUID: 3PFtc6aMRMCaFogMpBTC8A==
+X-CSE-MsgGUID: X8qcnzcQRiOEnX5XHSJXCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
+   d="scan'208";a="211387851"
+Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 20:21:37 -0800
+Message-ID: <599eb00e-a034-4809-8f5a-893597016133@linux.intel.com>
+Date: Fri, 7 Nov 2025 12:21:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021121536.GG316284@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: x86: Add a help to dedup loading guest/host XCR0 and
+ XSS
+To: Chao Gao <chao.gao@intel.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251106101138.2756175-1-binbin.wu@linux.intel.com>
+ <aQ1kG5u8GPdEwoEy@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <aQ1kG5u8GPdEwoEy@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 21, 2025 at 09:15:36AM -0300, Jason Gunthorpe wrote:
-> On Tue, Oct 21, 2025 at 04:49:59AM +0000, Tzung-Bi Shih wrote:
-> 
-> > I didn't get the idea.  With a mutex, how to handle the opening files?
-> > 
-> > Are they something like: (?)
-> > - Maintain a list for opening files in both .open() and .release().
-> > - In misc_deregister_sync(), traverse the list, do something (what?), and
-> >   wait for the userspace programs close the files.
-> 
-> You don't need any list, we don't want to close files.
-> 
-> Something like this, it is very simple. You can replace the rwsem with
-> a srcu. srcu gives faster read locking but much slower sync.
-> 
-> diff --git a/fs/char_dev.c b/fs/char_dev.c
-> index c2ddb998f3c943..69bbfe9de4f3bb 100644
-> --- a/fs/char_dev.c
-> +++ b/fs/char_dev.c
-> @@ -5,6 +5,7 @@
->   *  Copyright (C) 1991, 1992  Linus Torvalds
->   */
->  
-> +#include <linux/cleanup.h>
->  #include <linux/init.h>
->  #include <linux/fs.h>
->  #include <linux/kdev_t.h>
-> @@ -343,6 +344,74 @@ void __unregister_chrdev(unsigned int major, unsigned int baseminor,
->  	kfree(cd);
->  }
->  
-> +struct cdev_sync_data {
-> +	struct rw_semaphore sem;
-> +	const struct file_operations *orig_fops;
-> +	struct file_operations sync_fops;
-> +	bool revoked;
-> +};
-> +
-> +static int cdev_sync_open(struct inode *inode, struct file *filp)
-> +{
-> +	struct cdev *p = inode->i_cdev;
-> +	struct cdev_sync_data *sync = p->sync;
-> +	const struct file_operations *fops;
-> +	int ret;
-> +
-> +	scoped_cond_guard(rwsem_read_kill, return -ERESTARTSYS, &sync->sem) {
-> +		if (sync->revoked)
-> +			return -ENODEV;
-> +
-> +		fops = fops_get(sync->orig_fops);
-> +		if (fops->open) {
-> +			ret = filp->f_op->open(inode, filp);
-> +			if (ret) {
-> +				fops_put(fops);
-> +				return ret;
-> +			}
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +static void cdev_sync_release(struct inode *inode, struct file *filp)
-> +{
-> +	struct cdev *p = inode->i_cdev;
-> +	struct cdev_sync_data *sync = p->sync;
-> +
-> +	/*
-> +	 * Release can continue to be called after unregister. The driver must
-> +	 * only clean up memory.
-> +	 */
-> +	 if (sync->orig_fops->release)
-> +		 sync->orig_fops->release(inode, filp);
-> +	fops_put(sync->orig_fops);
-> +}
-> +
-> +/* Must call before chrdev_open can happen */
-> +static int cdev_sync_init(struct cdev *p)
-> +{
-> +	struct cdev_sync_data *sync;
-> +
-> +	sync = kzalloc(sizeof(*sync), GFP_KERNEL);
-> +	if (!sync)
-> +		return -ENOMEM;
-> +	sync->sync_fops.owner = THIS_MODULE;
-> +	sync->sync_fops.open = cdev_sync_open;
-> +	sync->sync_fops.release = cdev_sync_release;
-> +	// ..
-> +	p->is_sync = true;
-> +	p->sync = sync;
-> +}
-> +
-> +static int cdev_sync_revoke(struct cdev *p)
-> +{
-> +	struct cdev_sync_data *sync = p->sync;
-> +
-> +	guard(rwsem_write)(&sync->sem);
-> +	sync->revoked = true;
-> +}
-> +
->  static DEFINE_SPINLOCK(cdev_lock);
->  
->  static struct kobject *cdev_get(struct cdev *p)
-> @@ -405,7 +474,11 @@ static int chrdev_open(struct inode *inode, struct file *filp)
->  		return ret;
->  
->  	ret = -ENXIO;
-> -	fops = fops_get(p->ops);
-> +	if (p->is_sync)
-> +		fops = fops_get(p->ops);
-> +	else
-> +		fops = fops_get(&p->sync->sync_fops);
-> +
->  	if (!fops)
->  		goto out_cdev_put;
->  
-> diff --git a/include/linux/cdev.h b/include/linux/cdev.h
-> index 0e8cd6293debba..28f0445011df20 100644
-> --- a/include/linux/cdev.h
-> +++ b/include/linux/cdev.h
-> @@ -11,13 +11,19 @@ struct file_operations;
->  struct inode;
->  struct module;
->  
-> +struct cdev_sync_data;
-> +
->  struct cdev {
->  	struct kobject kobj;
->  	struct module *owner;
-> -	const struct file_operations *ops;
-> +	union {
-> +		const struct file_operations *ops;
-> +		struct cdev_sync_data *sync;
-> +	};
->  	struct list_head list;
->  	dev_t dev;
->  	unsigned int count;
-> +	bool is_sync;
->  } __randomize_layout;
->  
->  void cdev_init(struct cdev *, const struct file_operations *);
-> diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-> index f1aaf676a874a1..298c7d4d8abb5e 100644
-> --- a/include/linux/rwsem.h
-> +++ b/include/linux/rwsem.h
-> @@ -253,6 +253,7 @@ extern void up_write(struct rw_semaphore *sem);
->  DEFINE_GUARD(rwsem_read, struct rw_semaphore *, down_read(_T), up_read(_T))
->  DEFINE_GUARD_COND(rwsem_read, _try, down_read_trylock(_T))
->  DEFINE_GUARD_COND(rwsem_read, _intr, down_read_interruptible(_T), _RET == 0)
-> +DEFINE_GUARD_COND(rwsem_read, _kill, down_read_killable(_T), _RET == 0)
->  
->  DEFINE_GUARD(rwsem_write, struct rw_semaphore *, down_write(_T), up_write(_T))
->  DEFINE_GUARD_COND(rwsem_write, _try, down_write_trylock(_T))
 
-Realized the approach doesn't work for the issue I'm looking into.
 
-- All misc devices share the same cdev[1].  If misc_deregister() calls
-  cdev_sync_revoke(), the misc stop working due to one of the miscdevice
-  deregistered.
-- The context (struct cdev_sync_data) should be the same lifecycle with
-  the opening file (e.g. struct file).  Otherwise, when accessing the
-  context in the fops wrappers, it results an UAF.  For example, the
-  sturct cdev is likely freed after cdev_sync_revoke().
+On 11/7/2025 11:14 AM, Chao Gao wrote:
+> s/help/helper in the subject.
+>
+> On Thu, Nov 06, 2025 at 06:11:38PM +0800, Binbin Wu wrote:
+>> Add and use a helper, kvm_load_xfeatures(), to dedup the code that loads
+>> guest/host xfeatures by passing XCR0 and XSS values accordingly.
+>>
+>> No functional change intended.
+>>
+>> Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+>
+> <snip>
+>
+>> @@ -11406,7 +11391,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+>> 	vcpu->mode = OUTSIDE_GUEST_MODE;
+>> 	smp_wmb();
+>>
+>> -	kvm_load_host_xfeatures(vcpu);
+>> +	kvm_load_xfeatures(vcpu, kvm_host.xcr0, kvm_host.xss);
+> Nit: given that xcr0/xss are either guest or host values, would it be slightly
+> better for this helper to accept a boolean (e.g., bool load_guest) to convey
+> that the API loads guest (or host) values rather than arbitrary xcr0/xss
+> values? like fpu_swap_kvm_fpstate().
 
-[2] is a follow-up series of my original approach.
+Make sense.
 
-[1] https://elixir.bootlin.com/linux/v6.17/source/drivers/char/misc.c#L299
-[2] https://lore.kernel.org/chrome-platform/20251106152712.11850-1-tzungbi@kernel.org
+>
+> static void kvm_load_xfeatures(struct kvm_vcpu *vcpu, bool load_guest)
+> {
+> 	u64 xcr0 = load_guest ? vcpu->arch.xcr0 : kvm_host.xcr0;
+> 	u64 xss  = load_guest ? vcpu->arch.ia32_xss : kvm_host.xss;
+
+Since they are only used once, I even want to open code them as:
+
+static void kvm_load_xfeatures(struct kvm_vcpu *vcpu, bool load_guest)
+{
+         if (vcpu->arch.guest_state_protected)
+                 return;
+
+         if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
+                 if (vcpu->arch.xcr0 != kvm_host.xcr0)
+                         xsetbv(XCR_XFEATURE_ENABLED_MASK,
+                                load_guest ? vcpu->arch.xcr0 : kvm_host.xcr0);
+
+                 if (guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVES) &&
+                     vcpu->arch.ia32_xss != kvm_host.xss)
+                         wrmsrq(MSR_IA32_XSS,
+                                load_guest ? vcpu->arch.ia32_xss : kvm_host.xss);
+         }
+}
+
+>
+> 	if (vcpu->arch.guest_state_protected)
+> 		return;
+>
+>> 	/*
+>> 	 * Sync xfd before calling handle_exit_irqoff() which may
+>>
+>> base-commit: a996dd2a5e1ec54dcf7d7b93915ea3f97e14e68a
+>> prerequisite-patch-id: 9aafd634f0ab2033d7b032e227d356777469e046
+>> prerequisite-patch-id: 656ce1f5aa97c77a9cf6125713707a5007b2c7ba
+>> prerequisite-patch-id: d6328b8c0fdb8593bb534ab7378821edcf9f639d
+>> prerequisite-patch-id: c7f36d1cedc4ae6416223d2225460944629b3d4f
+>> -- 
+>> 2.46.0
+>>
+>>
+
 
