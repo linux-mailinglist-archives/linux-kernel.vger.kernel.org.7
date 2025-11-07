@@ -1,84 +1,206 @@
-Return-Path: <linux-kernel+bounces-890457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38425C4018A
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:26:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A627BC401A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6698424A69
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:26:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCB51886EC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3C62DC780;
-	Fri,  7 Nov 2025 13:26:01 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B772E3AEA;
+	Fri,  7 Nov 2025 13:26:33 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2D82DCF5D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527612DF6E9;
+	Fri,  7 Nov 2025 13:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762521960; cv=none; b=ldfULOsbPNZuGmlIOt9JVx2c6/FOweMG7T74cmds2vwx3kdvpVmAvpLbVhGbBAtVROTygn8SrXNZ5RfgDSIv1M/ZS+TF2dcqXkmjfe4QBf4xarmzB5j1nWacI0PS4gWBT26asBO5iMlkfSkceJ89t603WcWe2iYQL051qCSs1JY=
+	t=1762521993; cv=none; b=eWioLWkVXnW7dAqMft3Ain1jhC5N+KYwIPg1blTE/in2PZnJRMKXkjmDaOn8cvaUPK/xp68ZQVxG/pBimdeymuh8sd9cGb2CviuwCeCqEp8tEh9LK6UatXmgPL4XrIutTGHoqRca8jJI9MWWKSDZao7ZKEXAAUsldHeLAuEHCBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762521960; c=relaxed/simple;
-	bh=F3HoWWL2iPXP2AITSwQw6GlZ1uNOvQA21H8sYHX5tFE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AadZTyo0uO0o6llL5aPJ1sa4yFuphI90DKbs0acJaXI9ix2WsYxlhTNvh15J92zWBIDPQvr8xTwuSOfAMkT8nGNhekMTARTPEqpGcMKmH02qTj0bvL0KJJMljOR7waTJfSp3+fEoV00DSY+nRu+M0ogfBkHQrJIh0HbJt152Syw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vHMTV-00041n-73; Fri, 07 Nov 2025 14:25:57 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vHMTU-007XJu-1V;
-	Fri, 07 Nov 2025 14:25:56 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vHMTU-000000007SM-1eC5;
-	Fri, 07 Nov 2025 14:25:56 +0100
-Message-ID: <908ca24da436028417ed916a1a1abb3b642cc646.camel@pengutronix.de>
-Subject: Re: [PATCH 1/2] reset: rzg2l-usbphy-ctrl: Propagate the return
- value of regmap_field_update_bits()
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Claudiu
- Beznea <claudiu.beznea.uj@bp.renesas.com>
-Date: Fri, 07 Nov 2025 14:25:56 +0100
-In-Reply-To: <20251106143327.3049052-2-claudiu.beznea.uj@bp.renesas.com>
-References: <20251106143327.3049052-1-claudiu.beznea.uj@bp.renesas.com>
-	 <20251106143327.3049052-2-claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1762521993; c=relaxed/simple;
+	bh=NaMRGXzSpOd+qF17eyyM82wbKddjMJ02bhCEEG6G+a0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n+mxw6Hc76A10gbKFKMcvfBGULXci6jm5nV/DDkDXef3O+zsfmDb0fjp+9ZbZK1cP27LdUZ/UqOhKI1xL/+YqESt5S9PM8JW2G2qemK41YoMtH7MftQS5Ib1/fdL1xQWNvAylrkTtRRoH0wAkIhbIdrEbLaFUoZY0CYEoTgL8uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EAE322016A6;
+	Fri,  7 Nov 2025 14:26:23 +0100 (CET)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B61E7201819;
+	Fri,  7 Nov 2025 14:26:23 +0100 (CET)
+Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 8CB0F1800096;
+	Fri,  7 Nov 2025 21:26:22 +0800 (+08)
+From: Lakshay Piplani <lakshay.piplani@nxp.com>
+To: alexandre.belloni@bootlin.com,
+	linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org
+Cc: pankit.garg@nxp.com,
+	vikash.bansal@nxp.com,
+	priyanka.jain@nxp.com,
+	shashank.rebbapragada@nxp.com,
+	Lakshay Piplani <lakshay.piplani@nxp.com>
+Subject: [PATCH v5 1/2] dt-bindings: rtc: Add pcf85053 support
+Date: Fri,  7 Nov 2025 18:56:17 +0530
+Message-Id: <20251107132618.2246407-1-lakshay.piplani@nxp.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Do, 2025-11-06 at 16:33 +0200, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> Propagate the return value of regmap_field_update_bits() to avoid losing
-> any possible error. With this, the return type of
-> rzg2l_usbphy_ctrl_set_pwrrdy() was updated accordingly.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Add device tree bindings for NXP PCF85053 RTC chip.
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Pankit Garg <pankit.garg@nxp.com>
+Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
+---
+V4 -> V5: - Updated schema validation logic to enforce correct combinations of
+            'nxp,interface' and 'nxp,write-access' using oneOf clauses.
+          - Refined property descriptions for clarity and hardware alignment.
+V3 -> V4: Add dedicated nxp,pcf85053.yaml.
+          Remove entry from trivial-rtc.yaml.
+V2 -> V3: Moved MAINTAINERS file changes to the driver patch
+V1 -> V2: Handled dt-bindings by trivial-rtc.yaml
 
-regards
-Philipp
+ .../devicetree/bindings/rtc/nxp,pcf85053.yaml | 115 ++++++++++++++++++
+ 1 file changed, 115 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
+
+diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
+new file mode 100644
+index 000000000000..1b3fbde00001
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
+@@ -0,0 +1,115 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright 2025 NXP
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rtc/nxp,pcf85053.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP PCF85053 Real Time Clock
++
++maintainers:
++  - Pankit Garg <pankit.garg@nxp.com>
++  - Lakshay Piplani <lakshay.piplani@nxp.com>
++
++properties:
++  compatible:
++    enum:
++      - nxp,pcf85053
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  nxp,interface:
++    $ref: /schemas/types.yaml#/definitions/string
++    enum: [ primary, secondary ]
++    description: |
++      Identifies this host's logical role in a multi-host topology for the
++      PCF85053 RTC. The device exposes a "TWO" ownership bit in the CTRL
++      register that gates which host may write time/alarm registers.
++        - "primary": Designated host that *may* claim write ownership (set
++          CTRL.TWO=1) **if** write-access is explicitly requested.
++        - "secondary": Peer host that writes only when CTRL.TWO=0 (default).
++
++      This property helps the driver determine whether it should attempt to
++      claim write-access.
++
++      The actual role depends on whether 'nxp,write-access' is also specified.
++      Supported configurations are:-
++        1. Primary with 'nxp,write-access' -> primary claims write ownership.
++        2. Primary without 'nxp,write-access' -> primary is ready only; secondary may write.
++        3. Secondary (must not specify 'nxp,write-access') -> Secondary writes only
++           when no primary claims ownership.
++
++  nxp,write-access:
++    type: boolean
++    description: |
++      Request the driver to claim write ownership at probe time by setting
++      CTRL.TWO=1. This property is only valid when nxp,interface="primary".
++      The driver will not modify any other CTRL bits (HF/DM/etc.) and will not
++      clear any status/interrupt flags at probe.
++
++required:
++  - compatible
++  - reg
++  - nxp,interface
++
++additionalProperties: false
++
++allOf:
++  - $ref: rtc.yaml#
++  - if:
++      properties:
++        nxp,interface:
++          const: secondary
++    then:
++      not:
++        required: [ "nxp,write-access" ]
++
++examples:
++  # Single host example.
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      rtc@6f {
++        compatible = "nxp,pcf85053";
++        reg = <0x6f>;
++        nxp,interface = "primary";
++        nxp,write-access;
++        interrupt-parent = <&gpio2>;
++        interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
++      };
++    };
++
++  # Dual-host example: one primary that claims writes; one secondary that never claims writes.
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c0 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      rtc@6f {
++        compatible = "nxp,pcf85053";
++        reg = <0x6f>;
++        nxp,interface = "primary";
++        nxp,write-access;
++        interrupt-parent = <&gpio2>;
++        interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
++      };
++    };
++
++    i2c1 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      rtc@6f {
++        compatible = "nxp,pcf85053";
++        reg = <0x6f>;
++        nxp,interface = "secondary";
++      };
++    };
+-- 
+2.25.1
+
 
