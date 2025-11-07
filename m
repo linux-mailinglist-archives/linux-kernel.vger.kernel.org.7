@@ -1,168 +1,198 @@
-Return-Path: <linux-kernel+bounces-890303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A44C3FC07
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:36:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A66B2C3FD3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:57:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DCEA189231B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:36:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DC6713495AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F41287508;
-	Fri,  7 Nov 2025 11:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B108B320A3F;
+	Fri,  7 Nov 2025 11:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hMK24NHU"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ee+M2woi"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A908224AF7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B6030DD07
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762515380; cv=none; b=qqKstNxtFxYPf+f6Ft1HfoP0VkVp2kBUjyCNUN+3B4LIh3q/ZWO4TozLqgbuI7eV4eNQDU8g0WDQfl78F1X3DWd6KXOH37/7U3tq8SrkPN8wSVNcLNBMKdIeoo9G2b91nLkEs8CMmt5uRmzfcqFTYDtutx/2ibFIZUE5dCsB5Z8=
+	t=1762516663; cv=none; b=DQuliAIovh1IqH5/aEaqY+TxFDszq1URNzd8ZRFirhfZD01zrt8Jp7F3RO7Yc1F8zQSXXRVy52Z2MpbRFiD6XDnWRc82+aHZ3TJsQTWOYNHicTjwjEboBKoyRakJwU3wXZRnZwVGQbUKEVoy1aSgIvoXobWorRtQR1uqmW+jiQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762515380; c=relaxed/simple;
-	bh=zc7EQnNjmRr1XU6lGykGKLz8scv8SLWTjQFPhZxkdgc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sKF+e7zJgH+wdL4kRr87WZXheuo2RMSNfo4aq7rs5MIszPROQT86gfI7dvmFeAU8bGkpM5nRMNQu/zjoimU9ni1W8xWAJ2WKN2wWi97HBRT+xc8GYxsHfNlZA1LXSceQZj5rmvdwUrXsB45Dds9xC9JWAVftrKnyCDDv441HFQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hMK24NHU; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-429bf011e6cso637229f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:36:18 -0800 (PST)
+	s=arc-20240116; t=1762516663; c=relaxed/simple;
+	bh=V6i41dL8eu8FQb/kAEXtgcYlRbNtBOZAKd/lJ0lMtnw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Pi2CRrBPqKWSeX7Uu0JoLEJsGzkp2yCCqG2gv4zLCBLF587LUA3b37jywjgGciJq4/0Z/AjEMuKsmd4eZGPE69MJxTmXyh8db83mJHYtmHYEOSuKM/QjukiC76Lo1a4ozMyjYyZfy3U6sCIVDdHdljD+npZMs+/6d9xH+94PLW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ee+M2woi; arc=none smtp.client-ip=209.85.215.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-ba507fe592dso408292a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:57:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762515376; x=1763120176; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9JTGRP3Os3ULo6Z7owLq7b27T5LEh91I3qkDXn2bT8s=;
-        b=hMK24NHU9ASeLfzpQwXI3mQ8ZPbx7MZzgknsb9/jUcllKOnHSJMpNqq1Gutemwp9DL
-         IjTBCWNdyASJ+ZPC5Il0NrujHNNdbHBvUaI2DpY7scAH5L/GrH1H3P9mYQjocu49JrLK
-         rfYAsKcMGleMOQVdueBwIlwybFNIwHRzKFSD381oJHW9BEOqPnCEX4V22YOkPSY8+r/o
-         j8R932bX3JTTMvFJcbvOV72tDp/JwnhDp3ozgWthc6o81SyfIfvkdmIVc9XvoxPR6dIw
-         CEHa5yGtkSgDYxj2TV0qoiJ+7ngzujYV5NoH9cjeZdiDCrElDZK0YSlqA0/R2qSzws7V
-         TbLg==
+        d=gmail.com; s=20230601; t=1762516661; x=1763121461; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=monGLLl72k03rW+XBHxv2n4ze7FfAMEbwcdE5Jp88/k=;
+        b=ee+M2woiouXgrySHJuE6/DQeBcQ4FGGGWqltl2spK44D5S7xUcyF642+G2UMP8Zip/
+         wiQBsSj3B1WinR2KLfl6aDrVNMMbMsBg25UCp7HCc1Sa1Yn4IuCj2ptJgtMAZJtuIXFj
+         FAPSaGjQwnsl7u3KFQnayPfYcUs9xzwVepq0lLLqpOqlgTZN+Np2aopTrkiE4CCAXGNv
+         2E4IEywS1W4nQ34jGqZBarIe9DR1bMzU4SOnywIKuphaf2+b1puO5SFg8+VFyVy2FY19
+         GZqiwOhkG1Fp9jztch8ruIJE1brEbH6exnHg1myv52XiuUkmWdxRX6olY9OCa4cJ4LSh
+         4QrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762515376; x=1763120176;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9JTGRP3Os3ULo6Z7owLq7b27T5LEh91I3qkDXn2bT8s=;
-        b=WBksqrtYg18+/1j+PQdiJferdIwUa0oxiVE37/s8UAPQquCKqsF1Q+txvFCrZD7JzM
-         dNAavukUUddHOxoJjViNbVDXYq0VXnlKAHN6ndF3z2MM+f0A4rz4gXg40K4fQdwY94Mo
-         1yb+cMDR48wGheADZ2WxDMxgiDAAb0KzKQCno99rNs8IlRAiMWYhgGL4PqgIT5KAu3qT
-         lyyvLSOpXmKiYf2KYqavqgMZnf9mYCaCym3xxkpMVXVoI2IvVnAfjD8MBSDoMTB3bObG
-         94M9rJKJGp62e1m16GxuMJSwJGcpmSSEVck+85vLtr8zoxADkrYpplJ8ZWnmiyFuY92H
-         hSbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyGI4NJk1rgmzj2ZwTAaJ46dFzOclharGRXJC8C4d/4qMty3h4Hirj9Z8n/j9MKS1omSTa+vp3Ccul9zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4kkDikBSIbA5vjuhDcOgEfYC7diIgFWbN1VnwSB1gtRoCQ/KA
-	ywltskj2pe4rra64P3fdlWE5HHCJ6FtcIRTUr40FsOJkRhLLQXba6gu3upyed6wo5eM=
-X-Gm-Gg: ASbGncvA41e5yCbZmh5zMBeP2EJ9JTEyzwZSvNvAfoMs8c6JInH+SOoqqkHQP/rDCmN
-	S1+1wquX2RCYCevLXg68PkiQAeIXEAEGhBHyv24i+6JQRMMxor+bRGw82vxk8vtt+l0DXYSq/eY
-	6mB5CQB80qrnAIQ43vd100zB0BOvxEZ5vgf/tW4P3Sb7VlV402YOQVvA/GfzpGcLOFcCOArMPAi
-	WKQXCm+cPXvV1q7GqTD5ZBYaXMynmrJwZfyhVdDPagyl+TmkVYI2/SOka+v5sBZJTCgta7KqKFs
-	87ji3m0Dlqv4QqheZx4xy9qpfRE/XiVwdndx64axhT5ZfOhinp3WK9cF8wpLoHrtAXWPZsTzrH+
-	06Bi8/x4vik75kqMZndMFusyKU81pXCE7enSbro2M7iiGZC+DBKgzXBbL2BTN3Iq/MKNElDFXEj
-	vxcnVjT6x6ZGgjzhHDgTHcCkKCJ+3fPFciwjKI
-X-Google-Smtp-Source: AGHT+IG2dUCqDcfLmg6GQ5lAlXBIqxs9KWH+YNv4QsB30IZJTtg9NVCN7IdyFXcfIOHqLU7l2omYAg==
-X-Received: by 2002:a05:6000:184e:b0:429:f0a4:22e with SMTP id ffacd0b85a97d-42ae5ae9b17mr2326856f8f.54.1762515376522;
-        Fri, 07 Nov 2025 03:36:16 -0800 (PST)
-Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-42ac679c5dcsm5661874f8f.44.2025.11.07.03.36.15
+        d=1e100.net; s=20230601; t=1762516661; x=1763121461;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=monGLLl72k03rW+XBHxv2n4ze7FfAMEbwcdE5Jp88/k=;
+        b=Or1gF4m5XTCG0XmiarGFXEyq7fQYlxdTLkGFItbixwY4wsY3BlpgeHDkMf8e414NdG
+         SMWU5Izb+7OT6M1kwezsFEcmQffimr7sD+K4LxKN1hUqWRxggemVVWG5YWZCo/QZkM58
+         d2vaGqFSAm3nD3Om348fRGeEKD1sWr8v/YxQkkammqB6TYw7Y6x9bOQBmw94iJoAK59h
+         jjGaMXpyCBkXjcYpHxXYWM7pGKC983U4xzKjmy0QmZxv4BNeL6sS7zK8pGgn2NfUpgCM
+         Xlyv7UZB5Ge29/+S4n6K5ElcaLCcJDisgMU9uCmB6bL74Zh0H3qPftGugzOXNCAFI3CO
+         7ftw==
+X-Forwarded-Encrypted: i=1; AJvYcCVB/TWZat0puIxE/MzPPpkQFjHi1fRoi60b8AUy6pu/QyMY+0H//gEDAT3vSxQKfUw9s6vIEofYNaNmkI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+HRLnkntFH3wv9HvFFwU2/VB3rR6h50M2jv9vKdiRyoQ3kzIY
+	gZSRsmOFK0b7wY4UNFeYyi4dGZa/Fy6+yGrsmZhsYaAr5aoAhe1jELMG
+X-Gm-Gg: ASbGncuOYG24af5D3DXaogChQeuNmrGDsdXHGrhxPagg8S2mIg1D/U/a7zhwJAJjEoB
+	fzw9AqryQ3HebOcvXBOV+4xSPa3F9RD43m/X8R2wEeD/1PiNct1ZeQBGhDiz7nbeiFqhN35hF9T
+	3qFgYQ9wC+F/QkiZ/xu7BAttUZINlQdadaEughdU5z36kGMEP5XO/cQtGW91S9esHihpmTdJady
+	ZCqrakKerwzi446Ua/tjX6n2P/Fim4jmbifY0W2lf1WySeboMrR6teVpWdLZTgHNKoWP3m6HVXN
+	1eZVl++h1U2592mzcjf7tzMcEa//3RN0lFmsnMdGa25lKSGQjYbT0MvoKxf82lQzEEWh+wKTP1d
+	HcSay1mFwvK+qsvWUqcLzRKNqg+fI3ZzecRF+iQkeOqlPwXAqbvHG+dpDQuSHjQ+YoPzZRy68MI
+	e0/0WXVPatVQaVtcOK0tcOvzVbx0NEXNKY
+X-Google-Smtp-Source: AGHT+IG2JNYUVu7xIzD0M5+jz0kLb7Hm7r7y9xBYeK5/FwHh5dDyBrOGwBvYmi7VcMJsmKn3/mqWGw==
+X-Received: by 2002:a17:903:2284:b0:297:d6c2:d06 with SMTP id d9443c01a7336-297d6c20d85mr8354715ad.20.1762516660819;
+        Fri, 07 Nov 2025 03:57:40 -0800 (PST)
+Received: from ehlo.thunderbird.net ([150.230.217.250])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c9c2a2sm58337585ad.93.2025.11.07.03.57.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 03:36:16 -0800 (PST)
-Message-ID: <d783184f-6598-479a-99f3-e142e83bbb81@linaro.org>
-Date: Fri, 7 Nov 2025 12:36:14 +0100
+        Fri, 07 Nov 2025 03:57:40 -0800 (PST)
+Date: Fri, 07 Nov 2025 19:36:58 +0800
+From: Coia Prant <coiaprant@gmail.com>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+CC: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ robh@kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_3/3=5D_arm64=3A_dts=3A_rockchip=3A?=
+ =?US-ASCII?Q?_Add_devicetree_for_the_9Tripod_X3568_v4?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20251107110020.226562-1-amadeus@jmu.edu.cn>
+References: <20251103171702.1518730-4-coiaprant@gmail.com> <20251107110020.226562-1-amadeus@jmu.edu.cn>
+Message-ID: <6F2972A5-047F-48A5-B409-C3F3E71643AD@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] iio: adc: Add the NXP SAR ADC support for the
- s32g2/3 platforms
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
- linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
- ghennadi.procopciuc@oss.nxp.com
-References: <20251017164238.1908585-1-daniel.lezcano@linaro.org>
- <20251017164238.1908585-3-daniel.lezcano@linaro.org>
- <aPP0uVZu1T7tTQGo@ashevche-desk.local>
- <050f96d5-e60c-4b33-b6d2-24fb3925e378@linaro.org>
- <aQMvqHGN7r6babgw@smile.fi.intel.com>
- <c4c14051-2ba2-4d80-a22d-4deb3709f727@linaro.org>
- <aQSvZT73NBWZFVfk@smile.fi.intel.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <aQSvZT73NBWZFVfk@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 10/31/25 13:45, Andy Shevchenko wrote:
-> On Fri, Oct 31, 2025 at 12:32:03PM +0100, Daniel Lezcano wrote:
->> On 10/30/25 10:28, Andy Shevchenko wrote:
->>> On Thu, Oct 30, 2025 at 09:27:21AM +0100, Daniel Lezcano wrote:
->>>> On 10/18/25 22:12, Andy Shevchenko wrote:
->>>>> On Fri, Oct 17, 2025 at 06:42:38PM +0200, Daniel Lezcano wrote:
-> 
-> [ ... ]
-> 
->>>>>> +	dma_samples = (u32 *)dma_buf->buf;
->>>>>
->>>>> Is it aligned properly for this type of casting?
->>>>
->>>> TBH, I don't know the answer :/
->>>>
->>>> How can I check that ?
->>>
->>> Is buf defined as a pointer to u32 / int or bigger? or is it just byte buffer?
->>> If the latter, how does the address of it being formed? Does it come from a heap
->>> (memory allocator)? If yes, we are fine, as this is usually the case for all
->>> (k)malloc'ed memory.
->>
->> buf is a byte buffer allocated with dmam_alloc_coherent(..., GFP_KERNEL)
-> 
-> We are fine :-)
-> 
-> ...
-> 
->>>>>> +	dmaengine_tx_status(info->dma_chan, info->cookie, &state);
->>>>>
->>>>> No return value check?
->>>>
->>>> The return value is not necessary here because the caller of the callback
->>>> will check with dma_submit_error() in case of error which covers the
->>>> DMA_ERROR case and the other cases are not useful because the residue is
->>>> taken into account right after.
->>>
->>> In some cases it might return DMA_PAUSE (and actually this is the correct way
->>> to get residue, one needs to pause the channel to read it, otherwise it will
->>> give outdated / incorrect information).
->>
->> But if the residue is checked in the callback routine without checking
->> DMA_PAUSED, the result is the same no ?
-> 
-> DMA in some corner cases might have already be charged for the next transfer.
-> Do you have a synchronisation between DMA start and residue check?
-> 
-> I.o.w. this may work for your case, but in general it's not guaranteed. The proper
-> read of residue is to: pause DMA --> read residue --> resume DMA.
-> 
+On November 7, 2025 7:00:20 PM GMT+08:00, Chukun Pan <amadeus@jmu=2Eedu=2Ec=
+n> wrote:
+>Hi,
+>
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4-camera-demo=
+=2Edtso
+>> @@ -0,0 +1,84 @@
+>> +// SPDX-License-Identifier: (GPL-2=2E0-or-later OR MIT)
+>> +
+>> +// This is a sample reference, due to lack of hardware can not be test=
+ed, at your own risk
+>
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4-video-demo=
+=2Edtso
+>> @@ -0,0 +1,154 @@
+>> +// SPDX-License-Identifier: (GPL-2=2E0-or-later OR MIT)
+>> +
+>> +// This is a sample reference, due to lack of hardware can not be test=
+ed, at your own risk
+>
+>Why are these demo DT Overlays needed? Are these optional accessories?
+>These untested DT Overlays should be removed=2E
+>
+>> +	vcc3v3_pcie: regulator-vcc3v3-pcie {
+>> +		compatible =3D "regulator-gpio";
+>
+>This should use regulator-fixed=2E
+>
+>> +		regulator-name =3D "vcc3v3_pcie";
+>> +		regulator-min-microvolt =3D <100000>;
+>> +		regulator-max-microvolt =3D <3300000>;
+>> +		pinctrl-names =3D "default";
+>> +		pinctrl-0 =3D <&vcc3v3_pcie_en_pin>;
+>
+>Is this the name from the schematic?
+>
+>> +	pinctrl-names =3D "default";
+>> +	pinctrl-0 =3D <&gmac0_miim
+>> +			&gmac0_tx_bus2
+>> +			&gmac0_rx_bus2
+>> +			&gmac0_rgmii_clk
+>> +			&gmac0_rgmii_bus
+>> +			&gmac0_clkinout>;
+>
+>> +	pinctrl-names =3D "default";
+>> +	pinctrl-0 =3D <&gmac1m1_miim
+>> +			&gmac1m1_tx_bus2
+>> +			&gmac1m1_rx_bus2
+>> +			&gmac1m1_rgmii_clk
+>> +			&gmac1m1_rgmii_bus
+>> +			&gmac1m1_clkinout>;
+>
+>Align Indentation=2E
+>
+>> +		codec {
+>> +			rockchip,mic-in-differential;
+>> +		};
+>
+>Is it confirmed to be differential signaling?
+>
+>> +	pmic {
+>> +		pmic_int: pmic_int {
+>> +			rockchip,pins =3D
+>> +				<0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
+>
+>No line break is needed here=2E
+>
+>> +/* Required remotectl for IR receiver */
+>> +&pwm7 {
+>> +	status =3D "disabled";
+>> +};
+>
+>This should be replaced with gpio-ir-receiver=2E
+>
+>> +&sdmmc2 {
+>> +	bus-width =3D <4>;
+>> +	disable-wp;
+>
+>The disable-wp property does not apply to SDIO cards=2E
+>
+>> +	sd-uhs-sdr12;
+>> +	sd-uhs-sdr25;
+>> +	sd-uhs-sdr50;
+>> +	sd-uhs-sdr104;
+>
+>Just declare the highest supported speed=2E
 
-I'll use the new callback function dma_async_tx_callback_result() which 
-should prevent that and allows to remove the spinlock at the same time
+PCIe and MIC picked from OEM source codes=2E
+
+PMIC picked from RK3568-EVB=2E
+
+Since parts of the OEM source code are not available in mainline, I refer =
+to other boards (e=2Eg=2E RK3568-EVB or RK3568-ROC-PC), but I don't have a =
+camera or screen to test, so I mark them as demo=2E
+
+Do I need to release a new set of patches?
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Thanks
 
