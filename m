@@ -1,109 +1,226 @@
-Return-Path: <linux-kernel+bounces-890943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D489EC416E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:23:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD4EC416E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:24:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AA3C3B3B08
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:23:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2177E3B7BE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9123009F5;
-	Fri,  7 Nov 2025 19:23:21 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB5A301473;
+	Fri,  7 Nov 2025 19:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YeWHFoTk"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6FB1A9F96
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1781A9F96
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762543400; cv=none; b=dd2JxbbJiyQlCBMTIUPznBkh7vP1zXG47Ir/ZwMVvR+y9sfFU1p2sOzLOf3ZIp9IczJYQet1u9O6U3z5w/pyEO6QfzN5NamG9uhp+/UHthxuofam+YrW8J+pf2IcVp4th1n0YxOzKBPqoz7/IfA3LDEtgqexw2tb5t0YrnWtZ9Y=
+	t=1762543466; cv=none; b=csN9a3zxZ+b3z3TC47yHWZGLBM/Xea9jUq86IoogOKq2aN/KDI4qb1xn9shS/elb+vcS2vUELoxAJquJBHZSE4MofwFa4IWn+jYrEOuJNtq8t/6iuvvoZ7fEskxCb0Hj53Tgo0GIohlP0AxHrUj6OT0AhKkf0EKFZk35UYrWAz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762543400; c=relaxed/simple;
-	bh=eXlCXSwjIH2VjjXEkoOn5qykH1tJrGt4S2/7SveqtKQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=jW5wWW6zSUkS10GvR0G8x06ESLMavtKpIvWqdVXPc/TG9dfpiVFkti43LwRZW4EYRbaOAPgMJNvZ+Mb+zO5iZ182t1Yau3iBbgJX1iTaBEY8NGkRqdPP1fX2ajD4mg2DdIgMok8t6G2HDJNRmliTTBuLp4eMsrzl6ZnTJFJiGMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id EDA862CFC9B;
-	Fri,  7 Nov 2025 20:23:14 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id 2R6fOeHHtymO; Fri,  7 Nov 2025 20:23:14 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 813442CFC87;
-	Fri,  7 Nov 2025 20:23:14 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id zqOd4E8HCNTp; Fri,  7 Nov 2025 20:23:14 +0100 (CET)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 4A11611C056;
-	Fri,  7 Nov 2025 20:23:14 +0100 (CET)
-Date: Fri, 7 Nov 2025 20:23:14 +0100 (CET)
-From: Richard Weinberger <richard@nod.at>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-mtd <linux-mtd@lists.infradead.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	linux-stm32 <linux-stm32@st-md-mailman.stormreply.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	alexandre torgue <alexandre.torgue@foss.st.com>, 
-	mcoquelin stm32 <mcoquelin.stm32@gmail.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, wanqian10@huawei.com, 
-	Yang Liu <young.liuyang@huawei.com>, 
-	chengzhihao1 <chengzhihao1@huawei.com>, 
-	Liyuan Pang <pangliyuan1@huawei.com>
-Message-ID: <79797154.158914.1762543394141.JavaMail.zimbra@nod.at>
-In-Reply-To: <14f5091f-b647-40c9-9c32-6a705c2d6c37@web.de>
-References: <20251107100057.1091153-1-pangliyuan1@huawei.com> <7857ab09-7808-4abe-9df1-66235291436b@web.de> <DF8B15D4-4819-47E6-9BB0-268AD0204C86@nod.at> <14f5091f-b647-40c9-9c32-6a705c2d6c37@web.de>
-Subject: Re: [v2] ubi: fastmap: fix ubi->fm memory leak
+	s=arc-20240116; t=1762543466; c=relaxed/simple;
+	bh=0aeA0EQ/qtUV1nnZR6e5uPNh1f0VQwXUpiK9gDrTR5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=giIbm5NNDbzwy6TSwwH2++gLydgW+xQzM6xJhMl8XJgW9wHUilcwv+zXlmHhxFce/km8Dd82Rk2EDA2MN/PmObgjDLf/eBy8Cqkt8/FPMMC7ElCy9ZfQdnQSiux5uZj++0hgEDquhjkHIyR9uX3jWUYDDvtOo4VS7d64qWnaZ1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YeWHFoTk; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8b220ddc189so143027785a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:24:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762543463; x=1763148263; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YE0Sm4vbE8ykdJ1HuAxgdJ0mqOLChjiDAanVsAowUHM=;
+        b=YeWHFoTk+NUDaGZG3VmXa8xldLXDrmrMwH95Z3s4uDzEpGmq1Qd+icoqzVR6Keaetu
+         4+68XwS4n40OHUJi+3W9G+Nqe0pvJdEcau7bvowtAX89yIBoUqVzbjog39tzUuKXwlIo
+         5Z8GmdMJmRhOJFgLQZiQ8eXmLgBoMEAZPw/wDqcbH+rcXIQr0Bc0E+5aIFGjCr0FfZLM
+         xr32Yv8KaPmwAGBSMQN0C+4dRo8CqvQCDsDP7kCm/VuJpMVBPsbCZTjiYEImB4o9aE5i
+         Ru2A8hn/cdZbEKNOqFs4GH+878u3qM8TAExHrEylw065ZVaKM0dPZkYY0Q0q3ShHqh3c
+         1aUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762543463; x=1763148263;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YE0Sm4vbE8ykdJ1HuAxgdJ0mqOLChjiDAanVsAowUHM=;
+        b=PSOZmBiHbn9Vy8+MHhXwgKCT16G1tuaLmqGG88IyXX8uzsgBiocoH4TOFYHiiXYU1l
+         Ef+nv0BMKQNsVS7DCI/9yhd5ndZwyllpz1HFcuuKMsy0Xj/Z3sRk7duXfHXhcXyXlt+F
+         X1KJsry2x32Ej2roX8QP+HUAXhwEdXUXdaL8ZCYChk71fgCZvSeKhE23FjmAMuT7Y5bv
+         uf7hLQB+P+oC2TMFUvTGzonrGKrKEkGz3KOv2wzVDfgmccFf6uwCZhC8zCP6i5qC/H5k
+         dMrBwgItklckwJSut72GG8OrLP/VqvXETiBjZzD83j+Kvieb1PljDCSmkVk2pMgKjBV/
+         cYFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeq66SWleI0igDASIUxZHcmRH9ZxlaJ6XfQqkzJy65rtl9nZUljVpf4JG7xcJVvhS7rZWc9IEaDccDfjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeJLn9luL+DQWXiw0oRBZ+JXfLtL4tQ0/TajRmw5pieKK0BrBK
+	pxuV3rNl3uqSkgU2BXpCUYIFv5TGKVE5DGBsRsNA3tEnoXg8mvGPIzM6
+X-Gm-Gg: ASbGncuWJmQAF5qvo+q2mr76HwELFEeUtfShpVB+DQz1iIdRqJyJ1PuSB1KrISS96K4
+	AN8qIHS7AOAVBHqb3U0BGMM3QEKt3tblAeuLjPNyvieUIarEcsObylOZZ4Fuq79knAhk54Yg3ew
+	7vAJL4tnxXmRq/FFmc/6yHV/hfz32IDnyyimV4OCtACFPuDrPwrDySb3Tm+wxk8WAKX2v5rnGvw
+	uq38YuQftwSfVIoH7tOsexFbBEXk2fMXyllrlOR/Z8Ux1PQ2T+tjqA5yFE3tQR5Xfp3ZDD8Qurf
+	hJEn9M9HGDfLHrdfGdmioznrMwlcwbxa5NfEgpM3+IoUR9RBvj13eAtAd9o4eGkoS3SHpcycLxU
+	x9OCzVn36BGnRtwJmCnyEFl9kUlOd2NmolGn1NfBkEij/a23Mv+A+4PckDjFTkoMHA3Xdu7dfZF
+	++TKXEEo32uXQu4qIkd59R/2dfTBfoC9Y69tSqQvaQ9/xZdgPphb/n5mylI4DWVfJlIw/OaK4OB
+	R94yPaaxHMtZO20yN9ezQ==
+X-Google-Smtp-Source: AGHT+IFdpz2lkLypQ1YAYGXXNqpB8UlvpOAw4vPZY4Y75ma7L6WvqhCiWCs17MNIjJSpgJsL+FXkbw==
+X-Received: by 2002:ac8:5fd1:0:b0:4eb:9eb8:c9d5 with SMTP id d75a77b69052e-4eda4fb4876mr2741691cf.58.1762543463118;
+        Fri, 07 Nov 2025 11:24:23 -0800 (PST)
+Received: from lima-default.. (pool-108-50-252-180.nwrknj.fios.verizon.net. [108.50.252.180])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eda57bf2cdsm251561cf.31.2025.11.07.11.24.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 11:24:22 -0800 (PST)
+From: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>
+To: ast@kernel.org
+Cc: m.shachnai@rutgers.edu,
+	srinivas.narayana@rutgers.edu,
+	santosh.nagarakatte@rutgers.edu,
+	paul.chaignon@gmail.com,
+	Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/1] bpf, verifier: Detect empty intersection between tnum and ranges
+Date: Fri,  7 Nov 2025 14:23:27 -0500
+Message-ID: <20251107192328.2190680-1-harishankar.vishwanathan@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF143 (Linux)/8.8.12_GA_3809)
-Thread-Topic: fastmap: fix ubi->fm memory leak
-Thread-Index: fBqM9AqfBycgbGob73i+cfkQqy6K6g==
+Content-Transfer-Encoding: 8bit
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Markus Elfring" <Markus.Elfring@web.de>
->> > You may occasionally put more than 60 characters into text lines
->> > of such a change description.
->> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.18-rc4#n658
->=20
->> Feel free to ignore everything Markus says.
->=20
-> Does your feedback indicate then also that Linux development process
-> documentation may be overlooked any more?
+This RFC introduces an algorithm called tnum_step that can be used to
+detect when a tnum and the range have an empty intersection. This can
+help the verifier avoid walking dead branches that lead to range
+invariant violations. I am sending this as a patchset to keep the
+motivation (this email) separate from the details of algorithm
+(following email).
 
-The only reason why you are not on my kill file is that I can protect newbi=
-es from you.
+Several fuzzing campaigns have reported programs that trigger "REG
+INVARIANTS VIOLATION" errors in the verifier [1, 2, 3, 4]. These
+invariant violations happen when the verifier refines register bounds in
+a branch that is actually dead. When reg_bounds_sync() attempts to
+update the tnum and the range in such a dead branch, it can produce
+inconsistent ranges, for example, a register state with umin > umax or
+var_off values incompatible with the range bounds.
 
-To quote GregKH[0]:
-> Markus, you seem to have sent a nonsensical or otherwise pointless
-> review comment to a patch submission on a Linux kernel developer mailing
-> list.  I strongly suggest that you not do this anymore.  Please do not
-> bother developers who are actively working to produce patches and
-> features with comments that, in the end, are a waste of time.
+There is a solution is in the works by Eduard [5] to modify verifier's
+logic to use the fact that the register's tnum and range bounds are
+incompatible to detect that a branch cannot be taken. Detecting an empty
+intersection between the range and the tnum could be a useful primitive
+to detect incompatiblity.
 
-> Patch submitter, please ignore Markus's suggestion; you do not need to
-> follow it at all.  The person/bot/AI that sent it is being ignored by
-> almost all Linux kernel maintainers for having a persistent pattern of
-> behavior of producing distracting and pointless commentary, and
-> inability to adapt to feedback.  Please feel free to also ignore emails
-> from them.
+* Detecting Empty Intersections
 
-Thanks,
-//richard
+Consider a range r [umin, umax] and a tnum t (tval, tmask). A simple way
+to check if the range and the tnum intersect is to compare their
+bounds:
 
-[0] https://lore.kernel.org/lkml/2025110516-cubical-drowsily-7acd@gregkh/
+	tmin = tval
+	tmax = tval | tmask
+
+	if (tmin > umax || tmax < umin)
+		return -1;  // no intersection
+
+However, this approach fails when the tnum represents a non-contiguous
+set of values, and the range lies entirely "in-between". For example:
+
+	t = x0x1	{1, 3, 9, 11}
+	r = [4, 8]	{4, 5, 6, 7, 8}
+
+Here, tmin <= umax && tmax >= umin, yet the two sets have no
+intersection.
+
+To implement set intersection for tnum and ranges, it would be useful to
+have the ability to walk through the values in the tnum. If the next
+valid tnum value after umin already jumps past umax, then there is no
+value of t in [umin, umax]. In other words, we need a "step" function
+for tnums that can determine the next numerically larger concrete value
+that is contained in the tnum's set.
+
+* The tnum_step() primitive
+
+To correctly detect these cases, we introduce a new helper:
+
+    u64 tnum_step(struct tnum t, u64 z);
+
+This function returns the smallest number greater than z that is
+representable by the tnum t. Using tnum_step(), intersection detection
+can be implemented as:
+
+	if (tmin > umax || tmax < umin)
+		return -1;  // no intersection
+
+	/* next valid tnum value after umin already jumps past umax,
+	* implying there's no value of t in [umin, umax].
+	*/
+	if (tnum_step(t, umin) > umax)
+		return -1;  // no intersection
+
+	return 1;  // intersection exists
+
+* A sound and complete procedure that runs in constant time
+
+At first glance, one might expect that computing tnum_step() would
+require iterating over the individual bits of t and z. However, the
+procedure for tnum_step(), introduced in the next patch, derives the
+next tnum value greater than z purely through bitwise operations, and
+thus runs in constant time.
+
+Importantly, using the tnum_step() primitive we can construct a
+range-tnum intersection test (as shown) that is both *sound and
+complete*: it never reports "no intersection" when there is one, and
+does not miss any cases of "no intersection".
+
+* Usage in the verifier and next steps
+
+The tnum_step() procedure is self-contained and can be incorporated
+as-is.
+
+Regarding incorporating the range-tnum intersection test, as it
+stands, if is_branch_taken() cannot determine that a branch is dead,
+reg_set_min_max()->regs_refine_cond_op() are called to update the
+register bounds.
+
+We can incorporate the range-tnum intersection test after the calls to
+regs_refine_cond_op() or the calls to reg_bounds_sync(). If there is no
+intersection between the ranges and the tnum, we are on a dead branch.
+
+Alternatively, the range-tnum intersection check could be incorporated
+as part of Eduard's upcoming patchset, which is expected to rework the
+logic in reg_set_min_max() and is_branch_taken().
+
+Looking forward to hearing any feedback and suggestions.
+
+[1] https://lore.kernel.org/bpf/aKWytdZ8mRegBE0H@mail.gmail.com/
+[2] https://lore.kernel.org/bpf/75b3af3d315d60c1c5bfc8e3929ac69bb57d5cea.1752099022.git.paul.chaignon@gmail.com/
+[3] https://lore.kernel.org/bpf/CACkBjsZen6AA1jXqgmA=uoZZJt5bLu+7Hz3nx3BrvLAP=CqGuA@mail.gmail.com/T/#e6604e4092656b192cf617c98f9a00b16c67aad87
+[4] https://lore.kernel.org/bpf/aPJZs5h7ihqOb-e6@mail.gmail.com/
+[5] https://lore.kernel.org/bpf/CAEf4BzY_f=iNKC2CVz-myfe_OERN9XWHiuNG6vng43-MXUAvSw@mail.gmail.com/
+
+Harishankar Vishwanathan (1):
+  bpf, verifier: Introduce tnum_step to step through tnum's members
+
+ include/linux/tnum.h |  3 ++-
+ kernel/bpf/tnum.c    | 52 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+), 1 deletion(-)
+
+-- 
+2.45.2
+
 
