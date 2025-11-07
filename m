@@ -1,107 +1,137 @@
-Return-Path: <linux-kernel+bounces-889935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8C9C3EE04
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:07:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BCEC3EE0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:08:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5999D3A76FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A3318882C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8194930F819;
-	Fri,  7 Nov 2025 08:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58BA30F92D;
+	Fri,  7 Nov 2025 08:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akH+XDkX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLZ5cJkh"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32127494;
-	Fri,  7 Nov 2025 08:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AF726F29F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762502829; cv=none; b=SDD2Z/2xsZOJzQCk3p9QluvkhMISeSxscRJ4V0rexWUKjIdz6Wuy9i++pXv0G5XIgeRnFiyUMGlvAdvNoPOU5WY21YfO1BWWB93nl3WulOQgIY26+EC44tHddBJYVoW9wzWgeMFo1yWln7gqvIQwWVLS/PAUsVVkCGG35F5MhQs=
+	t=1762502883; cv=none; b=rvVVQHbs1IGeAnCRXWPxk8GEBFEm593M43JFnuG0z6wfD7NawnXs8FJu9w6lTdsCGHo7mFIzxIkHibGDhyFw+tmi8ZtGMMkWihtN+PibrHfm2SoCQv6nyLazGFb2v/gZb2b+ZePluIRj93EtOoLZj22jN5huDtJGF/B2cFmyy4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762502829; c=relaxed/simple;
-	bh=HBIK1GiJMOogWFE7QnovK5jtCIImRIAOv5n/huCbSt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dj5Fc9RqUapS3eGevrqtHrlGfH1KQlSFs3YaM3P7WBXeAcmU7fQtZd5a1oV+hU2faXcjM8vho7GI7LA1+yjcqGv/0WoBJeuFZjaWFJYcpa8Ju7jo0w39JzndYVfhEIh+yARi9IW40hXpkyPYIGhg6ka5NbJAVzwo73Z4kY2s+b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akH+XDkX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4EF6C116B1;
-	Fri,  7 Nov 2025 08:07:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762502828;
-	bh=HBIK1GiJMOogWFE7QnovK5jtCIImRIAOv5n/huCbSt0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=akH+XDkXoTVbqWlRInUz6loheIC4pAhoEucFetdLhZ2KMww65IIvBFLlHYkUJbh6q
-	 jbZ7ETmrPkOdB9ah5Jz2OooWo9EoilXHUVBOh9cUu2MTdp61OCJF7HT+uSVnJpSVJ5
-	 qcDU5HqYog9rMy41ZAt3GlOMSPYomJ776izVRkTusMtF1xaDelE7WaRY8Yv43BU3a2
-	 VseZIZ4hHbZ27dj2HvZyXBD4n3PEvDIP6gvWRnO+fh717y4wMc4nOO97szersggjNP
-	 Y6o4OW0fnK7TEeasnHHpKVZGYnPRDxaMqjpgOnDB8HEIFakO+T7rdACGS/mFgmk8l0
-	 d7uWlbaIM/Pgg==
-Date: Fri, 7 Nov 2025 09:07:05 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
-Cc: robin.murphy@arm.com, will@kernel.org, joro@8bytes.org, 
-	robh@kernel.org, dmitry.baryshkov@oss.qualcomm.com, 
-	konrad.dybcio@oss.qualcomm.com, bjorn.andersson@oss.qualcomm.com, bod@kernel.org, 
-	conor+dt@kernel.org, krzk+dt@kernel.org, saravanak@google.com, 
-	prakash.gupta@oss.qualcomm.com, vikash.garodia@oss.qualcomm.com, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/6] of: iommu-map parsing for multi-cell IOMMU
-Message-ID: <20251107-active-uber-impala-8d9118@kuoka>
-References: <cover.1762235099.git.charan.kalla@oss.qualcomm.com>
+	s=arc-20240116; t=1762502883; c=relaxed/simple;
+	bh=7pgqQSLNxYY7EJISqsid9AK1bmRm9KX+sTAAQz6Z6Hs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FLXqvH05+xFVUsY3CHwzQPRVysqRQ9fuvIgnFKjBigc4WnB3kImafIJmgqM1/GMgFjgEjPDQZwNe6cMr5JNRNBpxuCeaaNLP77VHtCJlnNB7zzhV7/pZws1y20HLnSWBH6xhDywSPkjLqEBG9K6VFPwQKU5ZBXcugiYkvsh0plE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLZ5cJkh; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64080ccf749so789243a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 00:08:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762502880; x=1763107680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rajoUmRPnySxOOnX7A1RIrBkqp/yGkZaJwwdcAfDN6U=;
+        b=DLZ5cJkhKO3IuJt03dP/smFXzfVt7FNG/F3l1RUY9BG+zzDfIRRfxpTMz69DO0baEl
+         JoH3w+4gcz+453DoSdHnYo5M0ZSyR3SUncIQyOVUGDBNHL/8l30nrbrWOAlUrIQmFeoF
+         fFfI/2Z1LI/Ho74YM8BiyDLhhWlhBawTc8LydU8aCBZ9hdE1SMekyaDTjIMZG/QV4TAz
+         FS3Tv6Pw9IZsPXnpH1rqh/xKkMNnUNwndC8T3e6Z/KltLiYBw6JWamwuIaiViwnyvt5W
+         PGjUd/Xqas/zYKPsY+4SqcC2GEcwDGrhB2EeT7xbhKSza4AXN0YpvkJ4ec6BJtCX9pSR
+         JwVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762502880; x=1763107680;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rajoUmRPnySxOOnX7A1RIrBkqp/yGkZaJwwdcAfDN6U=;
+        b=q37AJdnnwl2/5K4ZNIo72l174X5VJ5nhpFt9gHmFgBSaybbYwzd5+e12HKauJV4k5h
+         tv+bmQ2Ze5wfvRyEa7djRTV3nCW09OGdXMFEHZc5UiP77MYcfxDQX2/JCpvIs5UquyMh
+         wCONsnY6+Z8V7+ds/Liw7uGTK/U6OdJuyT7s1PhlnBen6xmcOpxVlfrqVPZ4lx57ckZU
+         u1oapWKdTEKAraVmqoRkKWvsG9n7N1EtFloNJ9dVbawcSRDpQ2PJrVi8958RSPHq7IvD
+         2pD1tWmz4Nhy57LfKXMWYx4BaqOg386xNTzuh72vG2+SJlhB2qsIbWxk3HxLXMSIn0wA
+         2e+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUH5kfzTaRSGW0hIEocTiBQ2RmzOUhuIbGHa6+w/KdIDUOopnTWuHYuZDEAm8Jss9zjTM8/G/1ZATmgTh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUbdwBWHnsBOW8ael/w68qH8X1aV4+NOZ9Sb3E84dd/WdNAleb
+	5RslErkjl7ZS+B6Y3lLX1d6kFqH0h2FQczXddAFvajZbX/Mg4ewFK+Sc
+X-Gm-Gg: ASbGncvXPgq/l+1L7CO9uFI7hwN9+KqaI6gMoGTb+wsJN486B4BxdAJkoC44RZFxdHN
+	1pEZRd39PG6+fy0Ixruj2KPI+8kKg2ewJ0DpwU6QeLxznXqE0u28j6UEb9/f5EG6JsmEtFj5hKj
+	G5SI0RYnbZEQKRaJQ+pZKuzU9PBLtV5/V6pnXrSnfZyVQVHODEuE2hXE0GKcrwJqkZvZR2Bweut
+	MNvIYADgnRPddbkautrNSKK24Q85c8gN8s49Spa7KWwzB5x/eUPKpbw5g71EcYnMNX9aTq7N9kJ
+	AshsRiL+jFDQ+HUoQk715zH9/FcmAQhDrmwL+W7HpSh7r4imwd7OyKhSwThb+63Zd1adY7UQbje
+	brEBNo6wc73ubQGUCtZ8xPNQtz2mvfTR0VyQPo2Likdwl/YMVJ3UxDwluOj5pnWfEjjf9E4pBCZ
+	RzdADQyPglBkqj6Pr9JbHE/3t8PSvSQC7CrmObqADw4umZv79Fg/DkH4GLvjH+GwUGhp5wFtcM6
+	T/vJA==
+X-Google-Smtp-Source: AGHT+IHswEuiKJmXiY0EIHAe+BZtSgz7sojXyfyfy+l5UKKqokrRbUAW/iGvN9ZOnAwdkPQbCg7XeA==
+X-Received: by 2002:a05:6402:5202:b0:640:96fe:c7c2 with SMTP id 4fb4d7f45d1cf-6413eeb9d78mr2308475a12.5.1762502879314;
+        Fri, 07 Nov 2025 00:07:59 -0800 (PST)
+Received: from localhost (dslb-002-205-018-238.002.205.pools.vodafone-ip.de. [2.205.18.238])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f713a68sm3545810a12.2.2025.11.07.00.07.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 00:07:58 -0800 (PST)
+From: Jonas Gorski <jonas.gorski@gmail.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/8] net: dsa: b53: add support for BCM5389/97/98 and BCM63XX ARL formats
+Date: Fri,  7 Nov 2025 09:07:41 +0100
+Message-ID: <20251107080749.26936-1-jonas.gorski@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1762235099.git.charan.kalla@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 04, 2025 at 02:20:59PM +0530, Charan Teja Kalla wrote:
-> The iommu-map property has been defined for the PCIe usecase and has
-> been hardcoded to assume single cell for IOMMU specification, ignoring
-> the #iommu-cells completely. Since the initial definition the iommu-maps
-> property has been reused for other usecases and we can no longer assume
-> that the single IOMMU cell properly describes the necessary IOMMU
-> streams. Expand the iommu-map to take #iommu-cells into account, while
-> keeping the compatibility with the existing DTs, which assume single
-> argument. 
-> 
-> Unlike single iommu-cell, it is complex to establish a linear relation
-> between input 'id' and output specifier for multi iommu-cells. To handle
-> such cases, rely on arch-specific drivers called through
-> of_iommu_xlate() from of_iommu layer, aswell it is expected the 'len'
-> passed is always 1. In the of_iommu layer, the below relation is
-> established before calling into vendor specific driver: 
-> 
-> a) For platform devices, 'rid' defined in the iommu-map tuple indicates
-> a function, through a bit position, which is compared against passed
-> input 'id' that represents a bitmap of functions represented by the
-> device.
-> 
-> b) For others, 'rid' is compared against the input 'id' as an integer
-> value.
-> 
-> Thus the final representation when #iommu-cells=n is going to be,
-> iommu-map = <rid/functionid IOMMU_phandle cell0 .. celln len>;, where
-> len = 1.
-> 
-> The RFC for this patch set is found at [2].
+Currently b53 assumes that all switches apart from BCM5325/5365 use the
+same ARL formats, but there are actually multiple formats in use.
 
-So that's a v2 or v3? Then number your patchsets correctly.
+Older switches use a format apparently introduced with BCM5387/BCM5389,
+while newer chips use a format apparently introduced with BCM5395.
 
-Try yourself -  b4 diff cover.1762235099.git.charan.kalla@oss.qualcomm.com
+Note that these numbers are not linear, BCM5397/BCM5398 use the older
+format.
 
-Works? No.
+In addition to that the switches integrated into BCM63XX SoCs use their
+own format. While accessing these normal read/write ARL entries are the
+same format as BCM5389 one, the search format is different.
 
-Where is the changelog?
+So in order to support all these different format, split all code
+accessing these entries into chip-family specific functions, and collect
+them in appropriate arl ops structs to keep the code cleaner.
 
-Best regards,
-Krzysztof
+Sent as net-next since the ARL accesses have never worked before, and
+the extensive refactoring might be too much to warrant a fix.
+
+Jonas Gorski (8):
+  net: dsa: b53: b53_arl_read{,25}(): use the entry for comparision
+  net: dsa: b53: move reading ARL entries into their own function
+  net: dsa: b53: move writing ARL entries into their own functions
+  net: dsa: b53: provide accessors for accessing ARL_SRCH_CTL
+  net: dsa: b53: split reading search entry into their own functions
+  net: dsa: b53: move ARL entry functions into ops struct
+  net: dsa: b53: add support for 5389/5397/5398 ARL entry format
+  net: dsa: b53: add support for bcm63xx ARL entry format
+
+ drivers/net/dsa/b53/b53_common.c | 316 +++++++++++++++++++++----------
+ drivers/net/dsa/b53/b53_priv.h   |  71 +++++++
+ drivers/net/dsa/b53/b53_regs.h   |  22 +++
+ 3 files changed, 312 insertions(+), 97 deletions(-)
+
+
+base-commit: 6fc33710cd6c55397e606eeb544bdf56ee87aae5
+-- 
+2.43.0
 
 
