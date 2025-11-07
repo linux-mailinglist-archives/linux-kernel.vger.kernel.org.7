@@ -1,195 +1,214 @@
-Return-Path: <linux-kernel+bounces-890194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BF7C3F752
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:31:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01EE7C3F7C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:34:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DB3F3A3832
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:30:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB7004EE545
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A3A309EE0;
-	Fri,  7 Nov 2025 10:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E7C322A26;
+	Fri,  7 Nov 2025 10:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wpanJxG3"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hApn78O+"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A3D306B3F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A9531E0EA
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762511403; cv=none; b=R1Rv2Te7Z/IhtO03iuJLs9psz+2OkVtQuCWWOV282c9gLwuP0zHXcquonzL10qYmDRQxJt/756CP44IGFSxufosJTdb1LE/vKryThS2AkT47qJ3sJuYapEQrvs/Wsa3ZNpN7tVPay3Vth0QmTE0fKScKrpdtG0XQXrZdbFYjw/E=
+	t=1762511431; cv=none; b=ml/N0ds9XyyFogesPfFtykGz43L7z4/SxpOfcCVzsOZhuxjlzMJc+8Hi22wS408wyQyDPsP2Mfta/uvoIrjixuoRPkg+I5wZ+htjmOWoTGB/BU8kBRNrpzX0xM3iwNADb5uT8B1u22Uxj4skAscVRMdaUDQCEu6pzu+80rW4H+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762511403; c=relaxed/simple;
-	bh=m5d721Yy3lW2doEUut7bEWlUQ9IUBg3A54OTCGOC4vA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i95BxoFqVL3DWzUbXdK0NqpzsWbcM/lwKB8QrHvMP1VE1WUwSG+T7ItffhoSG40JdOrTUEJVyCO7dnDFSCUtGvPn7LCUd1I5PluPEMAZieEZzNFzOzlh+ZUhWbGUAdhXPWbeKDa7o1CDTCz6v0nszJZ4gLPieSD7WgXhJ3ix8cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wpanJxG3; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so351218f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:30:01 -0800 (PST)
+	s=arc-20240116; t=1762511431; c=relaxed/simple;
+	bh=BTzIyLnQ2pVcjPzl4+AQTmQgi4C/R6FPWEbJ7GZ3dIQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qUXVo12t0EuZoJv0fY10+A3IV2VwaEMrekhY2qwbvPch7eCika98XpB5g3mt+7MKonXnwrXFQt7pgb70bEM4x/qwiPlpI6/tP91uVFLT8BOZdI8iEYwXRIdGI5GskdGtB9bGANkLrDe0p7qXCK5fuqDFaV6zP69GYzRd+Z2nz+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hApn78O+; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47112a73785so3562235e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:30:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762511400; x=1763116200; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:reply-to:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762511426; x=1763116226; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lzJdDr8jT3GemwsLQrjuBPmeNqyjPaYBy9t5ryQykAI=;
-        b=wpanJxG3wFyBNXZ578PiJuh8mBEBPByYwtG90tdFDSarou9jehtLo8Ohm06Bv89Q/k
-         O5ZnRh+/Fq618Cq/m9eh5xvE5eKj8gU/c/cKoHM5kAOPn07GToDBOt5cQ/3bUQseD0+F
-         n5w08H9dHHJvEEokTWcZLyCUGCj37CTZkN4O0DQ+eIYJP953SJj3cLGvL7++BIcuCWog
-         R0Pd37Ifjp5qiiOrEUco0FSQAOHbtAVMYZCKG4gzcHVJrJzg0mCUyeL9CHa8y78qges8
-         Co07M7zoyf3BCYJIBPdNhAWjhvGAtcWPkOp6YxSP7ZAELvdwUK4MP/Z4DPcqrj1qhijD
-         LJqA==
+        bh=A7G2ramQk2hxdGs1tmlSj6o/OfknwFPaFfxdjJIosVo=;
+        b=hApn78O+cXcTB31x5Ha4XSlG8Nc268JYMhOoxokLg1eMV80/mWPTDs78F50z+kS7DS
+         bGVjfvuPBI87DdhckB2X0TUPQBYjlwkBkLx9Ow+oqEEmBvSnCx9VO9Pa8n2ZH9cZATwK
+         ZAd5UrUgwq8eS9naFy94aGvvfKVTAXsLP9vc7hX9Ua/Ugu6sHnjv/QSVmg7+sABu2mxf
+         /zO6Ujb0GPB162/jgl8MGFsQK9QegRmOToO58VkQWsVHgHadivf5W4W6nP3AfTIucAf1
+         6KwrJPPao28Nf/a+iXxm44+6BGrSkelwsKwNIkjcm0tnvqSfgxn3X/Lxet3J2YRQXorq
+         DqYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762511400; x=1763116200;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:reply-to:user-agent
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lzJdDr8jT3GemwsLQrjuBPmeNqyjPaYBy9t5ryQykAI=;
-        b=mkjL2O/cDrxBglyknEhSAu2m8fXEF26rDuxpX7x6nKpVoD5SLM2U4C/oL/EDQIBMBE
-         AVilmUHaHcHR1NBizhchJdjYSGy9MysARxm4r+td41+ZDaszUm3S5szv7gM9UNUMG3X6
-         ndPTnUCMEu7U05pgBsNsXMrngXVRxqJhDsada/PY1gq5wB//+MD8LfNBoLwWyGDPe3A1
-         Zhs9iUjEDMJCUZGZgNP4IaG4oVmTEzKYivc11ttgEHHH+JX5AI+DAgVngjrWzUolj3cb
-         izMIwJ/corZMdrBMx+NgVO4L1IxAAGT7cR7/sIFeE95534DYEw5VjszR3U7MV7i82gwP
-         Z/qA==
-X-Forwarded-Encrypted: i=1; AJvYcCWakHeWLbCCMDHpxA0bRV3ZfdHAzZ2bspWM4Oci3i3r1IEoO/GkbFSeBwozOXtHNlK2SsvuIjMUofn6m6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsk6z4wBfEffTjlIzDlH6gR9JRwkKOE+vzDQuZ8mQoSLCMTTUu
-	FTxb8ZN0vI6I+3IAuW1M42tqBfyfCXhvSHYgCz5Uy1YD+OPdn6Ke3ML2kI7RVTPhmWQ=
-X-Gm-Gg: ASbGnctVpHKo+dsByO1BzxRnA6cKmnZB2oSGk/fdDj1bL1BU5jFqiVl140N0vkxJ/f6
-	gbqMbtWFhIvzfsZFGusEjPTkvujqdjkhteq3+zmR4gbu0jGFzCiuUio5GKerE6tij6GqvmB2ajf
-	+pfvrs3uIiKTVSQKTB/bXba3HzmF2By2tMU2rCYB/IzduNkUcBSYTNp9BrFYJkEIwhYqidqPwSY
-	VEvWVmvzg69emwAxIct9lq7sAuSYNOFZD/Qtt8LA+KEvfZV51pI6hmithpfj+iw5tQw25wpf6IU
-	0UFbKJldmzNcuHkN98oIa50dwe94uwx0zaeRfIRLuWAOvUs2Lg2tpqlNK+knyLCMllp9msEi0Cq
-	MibBymxHhepjvUUYGBAfB41hTaarj9Xj++MSB6kuNOSxG4WPIFLLvHVoewkZHuNrjY0rEX/3UIL
-	Hrk2dL+olj1ODWcjnFat+uZv17Z0b+K/1Hyg==
-X-Google-Smtp-Source: AGHT+IE69e5l5cOozP9JY3Ziazpg/eov5deqOjoVSoYmOv/JqlCyW2ba+BjI9566+vMU8zMOQoHwdQ==
-X-Received: by 2002:a05:6000:26c6:b0:429:8c31:84c9 with SMTP id ffacd0b85a97d-42aefb496bamr2186903f8f.61.1762511399906;
-        Fri, 07 Nov 2025 02:29:59 -0800 (PST)
-Received: from [192.168.27.65] (home.rastines.starnux.net. [82.64.67.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac679214asm4687520f8f.38.2025.11.07.02.29.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 02:29:59 -0800 (PST)
-Message-ID: <54fd0f0c-fd76-4230-9cae-cae6037b5b08@linaro.org>
-Date: Fri, 7 Nov 2025 11:29:57 +0100
+        d=1e100.net; s=20230601; t=1762511426; x=1763116226;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=A7G2ramQk2hxdGs1tmlSj6o/OfknwFPaFfxdjJIosVo=;
+        b=NdaP8QlO0Jqe8TRIoV4zaK328N/99/viZeCz1sBM0ufwlJeykS1Wkgpj2UAsI6mXUi
+         ZXAGumCFhAignpdTO+DQdTyo6vJWmj57Cw638mWsmysWGj9By/Rvk7BHvoC5lcgh12KA
+         oZnAN4j1K3NdHox/jNtqwDEkzaEbPyH/JbPoG4JB3ibl1MGEmj2TnFyolLwmEAGaNCfj
+         hlDwBLfrgubdz0He+S2FeXROjbbHWiLAePK90CM0oLWQ45EWsboOvD2a3mzTL6e4cO9N
+         suGfP4W+SL14r9L/1S7IoqI2dWWxP+Y+A/QL1R+MOM01QFbbTqk9GeyAlkJjwS96D8/A
+         De5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWMCl5dXyoUnYKjshoNwiaPUpjNYaFExFhKZa1tqzKclAJfFdT6jEGUegebUKlJCjw2dvD8sgIay5VAC7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjPYGBjNRIQIIXrHN76rQyM/mh2DieY8Nwn5CN/1W5e8xBkBeP
+	/1ZqHSZi/mTJWi5mYlpp6211KF390qpoktX/bOuJwOe7/SWRc3OLw7x4VmjoQU1xH3w=
+X-Gm-Gg: ASbGncslN3Ew03VghW8sGbJFWe7/2X6A8FsSmm7xlPi/7DhSp/tdwWRp56TcNFcUaSa
+	qcGyA7ao6EVP5QK9MR8TkaiPumyHqu1B4c9fmSF7qikFDFqlqcWXaC4RMMKdQQzq9UUzMiyAJwL
+	KiIjO4nmA+A+aVO2Hyxk8QMUZ6AK3v8Kzgn9L+I6c+xNz+avXfva3d08QkRewILLr8L3Vl0HXq3
+	8SmuXKxmDAiXjeDV8GXFEfheouXbeoeTyfh00YNBeMSlaUHJ+poXtqNWd1LkknpOGtlgMrB/Ujj
+	+2TwwY1LsVDwHwaDdncbdb7SV+7DfCI1ALe24sTciOwzXP24U6HQvdQx4nKwobJ9Gx46JHDN8Bq
+	OyHcsccv7Qj3NrlJxBgcdc3ZZV/nHutYK+UczPyPnGmUv/vcxEjOgwE+xa+SpSWyLzEq/TJjfKH
+	GRZGw=
+X-Google-Smtp-Source: AGHT+IHIBx2tJqRLVHmEw90vFp0rp7ojXL3UXgjP5mQ5luFxcEaSq2ZhQysTlSzW77Ym94NwaGSiSA==
+X-Received: by 2002:a05:600c:4695:b0:476:d494:41d2 with SMTP id 5b1f17b1804b1-4776bd04cc9mr22964605e9.29.1762511425524;
+        Fri, 07 Nov 2025 02:30:25 -0800 (PST)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:fb6d:2ee:af61:f551])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac67920fcsm4414864f8f.39.2025.11.07.02.30.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 02:30:24 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 07 Nov 2025 11:29:57 +0100
+Subject: [PATCH v5 7/8] net: stmmac: qcom-ethqos: define a callback for
+ setting the serdes speed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC] arm64: dts: qcom: x1e80100: Fix USB combo PHYs SS1
- and SS2 ref clocks
-To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
- Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Cc: Taniya Das <taniya.das@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251103-dts-qcom-x1e80100-fix-combo-ref-clks-v1-1-f395ec3cb7e8@linaro.org>
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20251103-dts-qcom-x1e80100-fix-combo-ref-clks-v1-1-f395ec3cb7e8@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251107-qcom-sa8255p-emac-v5-7-01d3e3aaf388@linaro.org>
+References: <20251107-qcom-sa8255p-emac-v5-0-01d3e3aaf388@linaro.org>
+In-Reply-To: <20251107-qcom-sa8255p-emac-v5-0-01d3e3aaf388@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+ Jose Abreu <joabreu@synopsys.com>, Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Matthew Gerlach <matthew.gerlach@altera.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Keguang Zhang <keguang.zhang@gmail.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Jan Petrous <jan.petrous@oss.nxp.com>, 
+ s32@nxp.com, Romain Gantois <romain.gantois@bootlin.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Heiko Stuebner <heiko@sntech.de>, Chen Wang <unicorn_wang@outlook.com>, 
+ Inochi Amaoto <inochiama@gmail.com>, Emil Renner Berthing <kernel@esmil.dk>, 
+ Minda Chen <minda.chen@starfivetech.com>, Drew Fustini <fustini@kernel.org>, 
+ Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+ Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
+ Shuang Liang <liangshuang@eswincomputing.com>, 
+ Zhi Li <lizhi2@eswincomputing.com>, 
+ Shangjuan Wei <weishangjuan@eswincomputing.com>, 
+ "G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>, 
+ Clark Wang <xiaoning.wang@nxp.com>, Linux Team <linux-imx@nxp.com>, 
+ Frank Li <Frank.Li@nxp.com>, David Wu <david.wu@rock-chips.com>, 
+ Samin Guo <samin.guo@starfivetech.com>, 
+ Christophe Roullier <christophe.roullier@foss.st.com>, 
+ Swathi K S <swathi.ks@samsung.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, 
+ Drew Fustini <dfustini@tenstorrent.com>, linux-sunxi@lists.linux.dev, 
+ linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org, 
+ imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, sophgo@lists.linux.dev, 
+ linux-riscv@lists.infradead.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1914;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=Yczz6nmRkpIoGqMAKNVvyF3zmCEkrzboH4PyVFVc9jM=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBpDcopMMZ8M5zQYmizMBW3totvKz7P+ctBnkiJX
+ 04NgM1FS42JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaQ3KKQAKCRARpy6gFHHX
+ ckX/EAC9NUTeuFc1Qq8u9nvzBzxll6MRRMehTj3Mt9pnQD7hqBrWvtqc1jkjY1i2hL6D8DqCTNM
+ ADwHBwy0x5IGuvWAJgJBtkLFqjNVBn4RkdBeT+fgNbc065JK/E5gq7+k/5CFt5J/F+vtYIMdUn2
+ ACgjrXNcC1mGlubZtKqKfS7JYyF+ghRRLlL+Z6JFM77knoDS0e68XGH9wa9xSSur4rV1Z0dP0tL
+ fugNnQ1QTejMfr7s8TEqIJUz4LUt9vj/mQK18PmZ/rCG5KRMU5elHEmQpzMMS5Hm4pJr/qghOW5
+ hLfCpdzX8hXSeBe4J1Tqbmaepw1sZH76HsiPITTMz4FMAfz1fMDewaqq7RTgZCv2owuCs19v5SO
+ ekn0rEpj7GFrQARyyOJ4+BFtm1IM6NXNFoEOec6ol+AoYS3CgMjxn8f2bvBVp7/yoY+kT8yFc/b
+ QPgf/DeZGqa+fiZNjmUE5h7gv50ss4MqfK4zDAjPeaMF24qClKLWvvrH45j7PiNQFpa4BTG6D69
+ r39IcYnucrELGDsODIPAKsBCAxWjQvw4XF7hlU7iYYvhCdUyyJPGAA5B+oKdpKV/zsULdmpSTQY
+ gCuDCRrYfZkwiknvEqG20ltxDvZ66jVSUECOq7C2J0RA5MQwN1aNdvRTV4zOUcQkj0BojlaFihE
+ yL6mFKj/t21Xc+w==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On 11/3/25 17:51, Abel Vesa wrote:
-> It seems the USB combo SS1 and SS2 ref clocks have another gate, unlike
-> the SS0. These gates are part of the TCSR clock controller.
-> 
-> At least on Dell XPS 13 (9345), if the ref clock provided by the TCSR
-> clock controller for SS1 PHY is disabled on the clk_disable_unused late
-> initcall, the PHY fails to initialize. It doesn't happen on the SS0 PHY
-> and the SS2 is not used on this device.
-> 
-> This doesn't seem to be a problem on CRD though. It might be that the
-> RPMh has a vote for it from some other consumer and does not actually
-> disable it when ther kernel drops its vote.
-> 
-> Either way, these TCSR provided clocks seem to be the correct ones for
-> the SS1 and SS2, so use them instead.
-> 
-> Fixes: 4af46b7bd66f ("arm64: dts: qcom: x1e80100: Add USB nodes")
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
-> I dropped the clk_ignore_unused on my XPS13 a while ago, but only
-> realized now that usb_1_ss1_qmpphy (the left hand Type-C port)
-> doesn't initialize successfully.
-> 
-> Traced it to the TCSR_USB_4_2_CLKREF_EN and then checked the Glymur DT
-> patchset. It seems it already does this for the SS1 and SS2 PHYs:
-> https://lore.kernel.org/all/20250925-v3_glymur_introduction-v1-23-24b601bbecc0@oss.qualcomm.com/
-> 
-> I think replacing the bi_tcxo is the better option, since the bi_tcxo
-> is already the parent of every clock provided by the TCSR, including
-> these for the SS1 and SS2 combo PHYs.
-> ---
->   arch/arm64/boot/dts/qcom/hamoa.dtsi | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/hamoa.dtsi b/arch/arm64/boot/dts/qcom/hamoa.dtsi
-> index a17900eacb20396a9792efcfcd6ce6dd877435d1..9c9e567731556ff532fa64c7595e2570b0597da3 100644
-> --- a/arch/arm64/boot/dts/qcom/hamoa.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/hamoa.dtsi
-> @@ -2937,7 +2937,7 @@ usb_1_ss1_qmpphy: phy@fda000 {
->   			reg = <0 0x00fda000 0 0x4000>;
->   
->   			clocks = <&gcc GCC_USB3_SEC_PHY_AUX_CLK>,
-> -				 <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&tcsr TCSR_USB4_1_CLKREF_EN>,
->   				 <&gcc GCC_USB3_SEC_PHY_COM_AUX_CLK>,
->   				 <&gcc GCC_USB3_SEC_PHY_PIPE_CLK>;
->   			clock-names = "aux",
-> @@ -3008,7 +3008,7 @@ usb_1_ss2_qmpphy: phy@fdf000 {
->   			reg = <0 0x00fdf000 0 0x4000>;
->   
->   			clocks = <&gcc GCC_USB3_TERT_PHY_AUX_CLK>,
-> -				 <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&tcsr TCSR_USB4_2_CLKREF_EN>,
->   				 <&gcc GCC_USB3_TERT_PHY_COM_AUX_CLK>,
->   				 <&gcc GCC_USB3_TERT_PHY_PIPE_CLK>;
->   			clock-names = "aux",
-> 
-> ---
-> base-commit: 131f3d9446a6075192cdd91f197989d98302faa6
-> change-id: 20251103-dts-qcom-x1e80100-fix-combo-ref-clks-bcbffeb4269d
-> 
-> Best regards,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Ahead of adding support for firmware driven power management, let's
+allow different ways of setting the PHY speed. To that end create a
+callback with a single implementation for now, that will be extended
+later.
+
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+index 09f122062dec87aa11804af2769ddff4964e6596..446f06b591a0b70992c7a431b56cf88c1b6718fd 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+@@ -120,6 +120,7 @@ struct qcom_ethqos {
+ 	struct ethqos_emac_pm_ctx pm;
+ 	phy_interface_t phy_mode;
+ 	int serdes_speed;
++	int (*set_serdes_speed)(struct qcom_ethqos *ethqos);
+ 
+ 	const struct ethqos_emac_por *por;
+ 	unsigned int num_por;
+@@ -640,11 +641,16 @@ static int ethqos_configure_rgmii(struct qcom_ethqos *ethqos, int speed)
+ 	return 0;
+ }
+ 
++static int ethqos_set_serdes_speed_phy(struct qcom_ethqos *ethqos)
++{
++	return phy_set_speed(ethqos->pm.serdes_phy, ethqos->serdes_speed);
++}
++
+ static void ethqos_set_serdes_speed(struct qcom_ethqos *ethqos, int speed)
+ {
+ 	if (ethqos->serdes_speed != speed) {
+-		phy_set_speed(ethqos->pm.serdes_phy, speed);
+ 		ethqos->serdes_speed = speed;
++		ethqos->set_serdes_speed(ethqos);
+ 	}
+ }
+ 
+@@ -865,6 +871,7 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(ethqos->pm.serdes_phy),
+ 				     "Failed to get serdes phy\n");
+ 
++	ethqos->set_serdes_speed = ethqos_set_serdes_speed_phy;
+ 	ethqos->serdes_speed = SPEED_1000;
+ 	ethqos_update_link_clk(ethqos, SPEED_1000);
+ 	ethqos_set_func_clk_en(ethqos);
+
+-- 
+2.51.0
+
 
