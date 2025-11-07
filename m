@@ -1,99 +1,102 @@
-Return-Path: <linux-kernel+bounces-890439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD23C400F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:13:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 964A4C400FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:14:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B275D3AE54D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:12:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 225E74E95AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82842D7DC3;
-	Fri,  7 Nov 2025 13:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E668E2D738B;
+	Fri,  7 Nov 2025 13:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmUk856L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GRgpHqSV"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD1B2D7D59
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9D8290D81;
+	Fri,  7 Nov 2025 13:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762521170; cv=none; b=aC2WDCFvPab0VhFCXqCHzesyTNGMOclFf5vKaWNi1YOltPmEXHZD7mqZrgPENvhaobr9EIeY3mYu6OVEOjw2TyJxnwV2N3HaL6e7XIo1/6Z5NMELMnVJ21/+hBO93OUylbvBrul4gqIzIVvqkrQB/tTGuNgx1Stht1wz+9opCyA=
+	t=1762521280; cv=none; b=dhDko4xyTpC3p8A/4OQfq3N0pgxppdSGVvb9NuHzGehm4UUyf3z2VqzbLRgvXm5LJhNxyF0UEQlHpvLilNU9Akaq6Z17l8QIWwiMeA7FZYPZLIRXqJZz2p64SzPYKJEjlsK4jsFZKIo6nl/EV6D1Gm3/7YaHNhI059pa1jXfYtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762521170; c=relaxed/simple;
-	bh=FWO/8gHk53RYXD8wsffSK2ke0SFZ1bG9gjIfGIFTJuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r7JA9jrdia5n8CK/CFiWAP3pGLpMriSARm1I5tZfb5Q0C0jR8czXCO/27W8UG6c+2NWxrWI6T6oBjseui9nr8lkp0qhCKnNV70LL94qtCjBw8kgr6q3CE4bluhuUwxawrG886HwxDnZc5IX3UAnoRd+Ko0FoLciXr1M+JUAGE2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmUk856L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD7AEC2BCB5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:12:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762521169;
-	bh=FWO/8gHk53RYXD8wsffSK2ke0SFZ1bG9gjIfGIFTJuI=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=VmUk856LB3Ktid9JTM1p/HRUccXaDtTvjP+q4dhPWT4wSln/qPkV/VQu6vernisKV
-	 TOiBfbwqozLZk5euuhK+PjZQPMezUhrIMdpfuKw2WKuqOZ9jIxlM+qYSwGmHlb53q7
-	 YFWTsYSshNNpUqj4G0nHtU6ckASu72pJffLn1WR8CTKW3neiXm4XGYq8wXTMRuiXF0
-	 YQTpO7XP/wsIoQ4PycZ9vGqeoMSSJWdUR0iew6wB1xUFKvfd1ZL3P5VabnSdmxy6IY
-	 Em8ZkCAL4zE8XdO+35qZJIBafvwOzJSsIhwygOORffdFKPGIo4jxcwhjKvwckqScZx
-	 kHA3V9Bh9hbtw==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-37a48fc48deso6842091fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:12:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVNsFVM1VyvmTU3rAVcd7bwEDVYdmO2RYgJag7cqajT95aTdgOOTxApOcm3ReO8T11U6nsdHDCurjb1gXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfG2g4HNh55RRCTix8P//VXIu4JPb7ivXCPRzp6RHs+6f59pAD
-	3fKJcgEbR2JKLEQcK+wlOtQ9uHUo1rER8aEayF2ZQoIRWDs4+YNB4xISH9H+xhib28r3ZTOXCKH
-	hW4zg68x2lGE/4VWIWTSLuQ2VEy4L9J4=
-X-Google-Smtp-Source: AGHT+IEi60U+MS5fuwhOECte6O05g72+EAD4tfI6rsUD0G2v7W8zO7uqdgB+Fmi8wi+riCfy3k40Cuh7KGFUeVlePak=
-X-Received: by 2002:a05:651c:4014:b0:373:a675:cd5f with SMTP id
- 38308e7fff4ca-37a73335a70mr6546391fa.39.1762521167522; Fri, 07 Nov 2025
- 05:12:47 -0800 (PST)
+	s=arc-20240116; t=1762521280; c=relaxed/simple;
+	bh=TP2jmT2RpugQ2S0KiJtUP705KeCOHsguj5RaLKyYm8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2wkUBYlJTaYSjgBqUkMoEUuK8UUQC/dwXdrIlmyzqoM6hynWtthhM02GnfjCv1HbzvY8XHqh3eZCjlixzgpgU743aJBAyxC6lqYi5wIdue17B4CXx2ifrWOQUPTTsbsNZu2MxkA9p3rY4YsVBrOKqM+bS+0cuPpu9eEuVtaJJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GRgpHqSV; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=uL3/14aUyri5EUeLDBCTF+oCd5vtc1g9i23NSwdUYFY=; b=GRgpHqSV1mMywlq/Z65HWV+tkB
+	TjlCSEpMC6DuheWw9lwrwt+N//+aR0fEpi8P1zk3/ZpyAYOdf4NN/T7LT0DD8Km6K7+tEVP681/h6
+	AO/+RyzDtG2UULAfwmChgxaqw/dacXJvYidLqgHw39c3CsFJExWyGVOy0dtdpXeG20tU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vHMIF-00DE9j-AA; Fri, 07 Nov 2025 14:14:19 +0100
+Date: Fri, 7 Nov 2025 14:14:19 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next] net: phy: mscc: Add support for PHY LEDs on
+ VSC8541
+Message-ID: <2dabb0d5-f28f-4fdc-abeb-54119ab1f2cf@lunn.ch>
+References: <20251106200309.1096131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <ee6a79ae-4857-44e4-b8e9-29cdd80d828f@lunn.ch>
+ <CA+V-a8vFEHr+3yR7=JAki3YDe==dAUv3m4PrD-nWhVg8hXgJcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106-b4-of-match-matchine-data-v1-0-d780ea1780c2@linaro.org> <20251106-b4-of-match-matchine-data-v1-4-d780ea1780c2@linaro.org>
-In-Reply-To: <20251106-b4-of-match-matchine-data-v1-4-d780ea1780c2@linaro.org>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Fri, 7 Nov 2025 22:12:34 +0900
-X-Gmail-Original-Message-ID: <CAGb2v65fcCEqJEdSuH+n1BFtoBxSCxEXaxAk7norRWzpPoT2cg@mail.gmail.com>
-X-Gm-Features: AWmQ_bknqHyNaA5_RcBhQtheiViI_1Nkl4lCccfeS9SBJtkNwcoPaIb-tzaunfo
-Message-ID: <CAGb2v65fcCEqJEdSuH+n1BFtoBxSCxEXaxAk7norRWzpPoT2cg@mail.gmail.com>
-Subject: Re: [PATCH 04/13] cpufreq: sun50i: Simplify with of_machine_device_match()
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Yangtao Li <tiny.windzz@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Maximilian Luz <luzmaximilian@gmail.com>, Hans de Goede <hansg@kernel.org>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Daniel Lezcano <daniel.lezcano@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+V-a8vFEHr+3yR7=JAki3YDe==dAUv3m4PrD-nWhVg8hXgJcQ@mail.gmail.com>
 
-On Fri, Nov 7, 2025 at 4:08=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Replace open-coded getting root OF node and matching against it with
-> new of_machine_device_match() helper.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > > @@ -2343,6 +2532,26 @@ static int vsc85xx_probe(struct phy_device *phydev)
+> > >       if (!vsc8531->stats)
+> > >               return -ENOMEM;
+> > >
+> > > +     phy_id = phydev->drv->phy_id & phydev->drv->phy_id_mask;
+> > > +     if (phy_id == PHY_ID_VSC8541) {
+> >
+> > The VSC8541 has its own probe function, vsc8514_probe(). Why is this
+> > needed?
+> >
+> vsc85xx_probe() is used for other PHYs along with VSC8541 hence this
+> check, vsc8514_probe() is for 8514 PHY.
 
-Acked-by: Chen-Yu Tsai <wens@kernel.org>
+Ah, sorry. I was looking at 8514, not 8541. So yes, this is needed.
+
+However, i think all the current probe functions could do with some
+cleanup. There is a lot of repeated code. That could all be moved into
+a vsc85xx_probe_common(), and then a vsc8514_probe() added, which uses
+this common function to do most of the work, and then handles LEDs.
+
+Also, is the LED handling you are adding here specific to the 8541? If
+you look at the datasheets for the other devices, are any the same?
+
+	Andrew
 
