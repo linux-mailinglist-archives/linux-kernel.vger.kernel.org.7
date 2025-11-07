@@ -1,75 +1,69 @@
-Return-Path: <linux-kernel+bounces-889590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E604EC3DFC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:32:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743B4C3DFCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:32:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2B11334B1CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:32:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F8F04E3E99
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E5E2D7DDF;
-	Fri,  7 Nov 2025 00:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8112C0299;
+	Fri,  7 Nov 2025 00:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CZPOYo3u"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eNzBkg6K"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016F01FDE01;
-	Fri,  7 Nov 2025 00:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FA11ACEAF
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762475514; cv=none; b=W+wotvs+Vek/pzlKgZx5MoSLC16dxYKxfc4rOA9XvcpN+203wHi9y5o9teVPeMWRpCBmVXJFkCsPA4UAnVF+KVqoCInSaG1ajvp9vh5NO3D0YO22ln7Aq+yWDbAenltADIzXg3hPzkacKJ+JcMOnZcJjrwNWkJjULqwxxQ++oS4=
+	t=1762475560; cv=none; b=Y51yIfcPLv8UIRZeqFCZMkTq3u1Mq/nnvuORm7LLRrDdzuZY/ok9u1mSFPtHR3rvzAcQ75+B3in/1QOaZ+WURYPaPG9N/MY8XFhxA9k8vI/4NptZJS4jO2V69AxF47j9u6Wp5i2wf2uRn5c2DbNJNruzMAG7VyKX8ncM4TAm9zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762475514; c=relaxed/simple;
-	bh=Bhw06MzPVitzuw9ZzTSxcfKyEvizNYpmQ1+N96EYn7I=;
+	s=arc-20240116; t=1762475560; c=relaxed/simple;
+	bh=kwn44RFmF+ScDQ88lnEFKYUpvFmZuUMwZzCJpYunGhk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OLRAcjLt1NWUWyk9iFabz14ppH74y71Wf5i4RSxDuLOg6K+R3FAvcuze8J+WRgB1/AdWiC5TjV31DPDUpS9V2gdBlPK08WeA1n8we9UiuGT81LZIlrWze8vrzGNwZPr9rBrav0PrVZ94a2b0jfU9GhHrHS6cSzWvt79LL3OaEUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CZPOYo3u; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=nm+ruK6YXpYa0FVN7vklPuk3dDu/x7WWIncBNwCg4gA=; b=CZPOYo3uFzYmwxaWAr1YlkKO9N
-	NR/Bn3Kz7EoMQNnQlc/T5FUNhctQMu99TI/7cgmTGZ4XkBRvykElfAlbzPRYS5jEPTaMqoOK4Ytjf
-	aCFJpMonKjUiYJtq02T9DdnYSn8az6Sr4FFVKJK9tGRSPIuz/Ergw4/4AJ/99Y8spqq8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vHAOD-00DAQV-VJ; Fri, 07 Nov 2025 01:31:41 +0100
-Date: Fri, 7 Nov 2025 01:31:41 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-Message-ID: <cadcbbc7-2024-413a-8e9b-bde5fa233df5@lunn.ch>
-References: <20251104203315.85706-1-shenwei.wang@nxp.com>
- <20251104203315.85706-4-shenwei.wang@nxp.com>
- <9fd8ccd9-560a-43b4-a48d-f7a3eaa07eb1@lunn.ch>
- <PAXPR04MB9185C4A4B91F863CFD49718E89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <0be8c911-3c31-40da-b431-e5a24339c0f9@lunn.ch>
- <PAXPR04MB9185D9EBE8F46715FD114A2989C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lszwKJW//JPYAKRupvlbERiWtrkC53B3Jmfq9sXgXQ/br1wzwjH3pPoaA2LTaK5KboCnpzflv9jrf7q2izwmybECCwK1i/CM7YRsg0zH/IR60joGwGWi++XGR0D5bVic/WM1+eJ+cxK1SHRk3kGOa0A18F4aox1bGDKWdKzpBiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eNzBkg6K; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 6 Nov 2025 16:32:16 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762475546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yS+MdoGbxE+vBEvrR0CnerAzSJJp4Z3mqFdZ5Yqa+T8=;
+	b=eNzBkg6Kp9rQ0bVoqyfWj29RngbJ3M1n/97CJR9Q36ISS02qWfS1JkYlK+aDrdOwTdJH2i
+	XjFHIdUCx4np7ciNjWCqoFw1MMs6lO4am2h3v3Wr+emlfOMM1TtBzEaqaNbgDUI2Ifzq5V
+	O0JzIJJGDKpHnupigi96k+Bnz64SUro=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	oe-lkp@lists.linux.dev, lkp@intel.com, Andrew Morton <akpm@linux-foundation.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@linux.com>, Martin Liu <liumartin@google.com>, 
+	David Rientjes <rientjes@google.com>, SeongJae Park <sj@kernel.org>, Michal Hocko <mhocko@suse.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Sweet Tea Dorminy <sweettea@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <liam.howlett@oracle.com>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Christian Brauner <brauner@kernel.org>, 
+	Wei Yang <richard.weiyang@gmail.com>, David Hildenbrand <david@redhat.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>, Yu Zhao <yuzhao@google.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, christian.koenig@amd.com
+Subject: Re: [RFC PATCH v7 2/2] mm: Fix OOM killer inaccuracy on large
+ many-core systems
+Message-ID: <6hmgutxgdchs4qz6hprwsecwoygwszn5ywixxrvnereilegcsx@mxroaotaw2me>
+References: <20251031144232.15284-3-mathieu.desnoyers@efficios.com>
+ <202511061432.4e534796-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,108 +72,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB9185D9EBE8F46715FD114A2989C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+In-Reply-To: <202511061432.4e534796-lkp@intel.com>
+X-Migadu-Flow: FLOW_OUT
 
-> > > > > +- **wk**: Wakeup enable.
-> > > > > +
-> > > > > +  - 0: Disable wakeup from GPIO
-> > > > > +  - 1: Enable wakeup from GPIO
-> > > >
-> > > > What do you mean by wakeup?
-> > > >
-> > >
-> > > The gpio line can be enabled as an wakeup source for the system.
-> > 
-> > Keep going.....
-> > 
-> > Does that imply if none of the lines have wakeup enabled, the GPIO controller can
-> > be suspended when Linux suspends? How does the GPIO controller know it can
-> > suspend? There is no message for that. How does it know to come out of
-> > suspension?
-> > 
+On Thu, Nov 06, 2025 at 02:53:09PM +0800, kernel test robot wrote:
 > 
-> The power state of the remote GPIO controller is entirely managed by the remote firmware. 
-> The remote firmware operates as an independent system from Linux, with its own power states 
-> and policies for transitioning between modes. The wakeup field is solely intended to inform the 
-> remote firmware whether the GPIO line should be used as a wakeup source for the Linux system.
-
-O.K. How does the firmware use this information? How should it change
-its behaviour? 
-
-> > > > > +Notification Message
-> > > > > +--------------------
-> > > > > +
-> > > > > +Notifications are sent with **Type=2 (GPIO_RPMSG_NOTIFY)**:
-> > > > > +
-> > > > > +.. code-block:: none
-> > > > > +
-> > > > > +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+----+
-> > > > > +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05..0x09 |0x0A |0x0B |0x0C |0x0D|
-> > > > > +   | 5   | 1   | 0   | 2   | 0   |  0        |line |port | 0   | 0  |
-> > > > > +
-> > > > > + +-----+-----+-----+-----+-----+-----------+-----+-----+-----+---
-> > > > > + -+
-> > > > > +
-> > > > > +- **line**: The GPIO line index.
-> > > > > +- **port**: The GPIO controller index.
-> > > >
-> > > > There is no need to acknowledge the notification? How do level interrupts
-> > work?
-> > > >
-> > >
-> > > Currently, there is no need to acknowledge the message, as the
-> > > interrupt is managed entirely by the remote firmware. On the Linux
-> > > side, a single notification message is received when an interrupt is triggered.
-> > 
-> > That sounds broken.
-> > 
-> > A level interrupt is not cleared until the level changes. The typical flow is:
-> > 
-> > Interrupt fires.
-> > 
-> > Interrupt is masked
-> > 
-> > Interrupt handler is called, which reads/write registers in the device who pin is
-> > connected to the GPIO
-> > 
-> > Interrupt is unmasked
-> > 
 > 
-> The sequences you mentioned above are managed entirely by the remote firmware. On the Linux 
-> side, it only receives a notification message when a GPIO line is triggered, which then invokes the 
-> corresponding interrupt handler.
+> Hello,
 > 
-> Since the interrupt handling sequences are implemented in the remote firmware, the Linux driver 
-> can treat level-triggered and edge-triggered types in the same manner.
+> kernel test robot noticed "BUG:Bad_rss-counter_state_mm:#type:MM_ANONPAGES_val:#Comm:kworker##Pid" on:
+> 
+> commit: 25ae03e80acad812e536694c1a07a3f57784ae23 ("[RFC PATCH v7 2/2] mm: Fix OOM killer inaccuracy on large many-core systems")
+> url: https://github.com/intel-lab-lkp/linux/commits/Mathieu-Desnoyers/lib-Introduce-hierarchical-per-cpu-counters/20251031-224455
+> base: https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-everything
+> patch link: https://lore.kernel.org/all/20251031144232.15284-3-mathieu.desnoyers@efficios.com/
+> patch subject: [RFC PATCH v7 2/2] mm: Fix OOM killer inaccuracy on large many-core systems
+> 
+> in testcase: boot
+> 
+> config: x86_64-randconfig-002-20251103
+> compiler: clang-20
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> in fact, we observed various BUG:Bad_rss-counter_state_mm issues for this commit
+> but clean on parent, as below
+> 
+> +------------------------------------------------------------------------+------------+------------+
+> |                                                                        | 05880dc4af | 25ae03e80a |
+> +------------------------------------------------------------------------+------------+------------+
+> | BUG:Bad_rss-counter_state_mm:#type:MM_FILEPAGES_val:#Comm:kworker##Pid | 0          | 10         |
+> | BUG:Bad_rss-counter_state_mm:#type:MM_ANONPAGES_val:#Comm:kworker##Pid | 0          | 17         |
+> | BUG:Bad_rss-counter_state_mm:#type:MM_ANONPAGES_val:#Comm:swapper_Pid  | 0          | 2          |
+> | BUG:Bad_rss-counter_state_mm:#type:MM_ANONPAGES_val:#Comm:modprobe_Pid | 0          | 3          |
+> | BUG:Bad_rss-counter_state_mm:#type:MM_FILEPAGES_val:#Comm:modprobe_Pid | 0          | 1          |
+> +------------------------------------------------------------------------+------------+------------+
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202511061432.4e534796-lkp@intel.com
+> 
+> 
+> [   14.858862][   T67] BUG: Bad rss-counter state mm:ffff8881000655c0 type:MM_ANONPAGES val:0 Comm:kworker/u9:0 Pid:67
+> [   14.894890][   T69] BUG: Bad rss-counter state mm:ffff888100061cc0 type:MM_FILEPAGES val:0 Comm:kworker/u9:0 Pid:69
+> [   14.896108][   T69] BUG: Bad rss-counter state mm:ffff888100061cc0 type:MM_ANONPAGES val:0 Comm:kworker/u9:0 Pid:69
 
-That is wrong. Edge and level are different and need different
-handling. That is why the GPIO framework and the interrupt core
-handles them differently.
-
-The devices i mostly deal with are Ethernet PHYs. These are level
-devices, the interrupt is active low. Within the PHY there are
-multiple interrupt sources, which all get logically NORed together to
-form the interrupt output line. Talking to the PHY over MDIO is
-slow. Sometimes you need to read multiple registers to find out what
-caused the interrupt and clear it. So your initial read suggests
-interrupt source Y triggered the interrupt. While you are clearing Y,
-source X becomes active. After you have cleared Y, the NORed interrupt
-line is still active, because of X. The interrupt handler exits, the
-IRQ core reenabled the interrupt, and you expect it to fire again so
-that you go handle source X. If it does not fire again, you have lost
-an interrupt, and potentially the hardware stops working.
-
-There are also other use cases of level interrupts. You sometimes see
-two PHY devices sharing one level interrupt. You get the same sort of
-race condition. PHY #1 pulls the interrupt low, triggering an
-interrupt. While handling it, PHY #2 also pulls it low. When the
-handler exits, it has only handled the interrupt from PHY #1. PHY #2
-is still pulling the interrupt low, and needs its handler calling. So
-it is required the interrupt fires again when it is re-enabled.
-
-Given the protocol you have defined, how do you tell the firmware that
-Linux has finished handling the interrupt, and it should notify Linux
-again if the interrupt is still active?
-
-	Andrew
+Hmm this shows that percpu_counter_tree_precise_sum() is returning 0 but
+percpu_counter_tree_approximate_sum() is off more than
+counter->inaccuracy. I have not dig deeper to find why but this needs to
+be resolved before considering this series for upstream.
 
