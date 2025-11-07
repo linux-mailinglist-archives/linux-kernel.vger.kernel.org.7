@@ -1,166 +1,209 @@
-Return-Path: <linux-kernel+bounces-889923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E49EC3ED76
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:00:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B220CC3EDB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:01:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C580B188D274
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 372733B0369
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D5A2E54AA;
-	Fri,  7 Nov 2025 08:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B4A30FF13;
+	Fri,  7 Nov 2025 08:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qJTqgt8+"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AmyoA+YH"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689E130F7E0;
-	Fri,  7 Nov 2025 08:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3181630F939
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762502408; cv=none; b=KtBQrPZLnLF28INQOQslH0yI7i1Bo9oN7tJj1urO6x82QVekWONNz0FN0kA5eS2ez8NMsT4z+XlI6I0iw6z94rYJ4BYKPxzFbCBkK2cO1+GmXz1gjNl7bCTr6UPzyMat0EL5080IRKmtqvUZQDUCPP9JUiokMKJrNldm+mUnQdY=
+	t=1762502437; cv=none; b=ACBkt2lAa6iLRXfm5mwPKxRrTn5YvfUQuJIy5w3wQsDi81IwvNWcHb4uf+hRCHhJDchAu56dJfQdF8NQ7pPfYzrwYbvxSkBhm3iBSqXtQISJ/Y0KZry6QK+5WRSn2BxYQ0vMgz8rAD6aSdZtG+JBUH6cKFmBKdoL8GRONeiG8tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762502408; c=relaxed/simple;
-	bh=6LY9cpZF0ej81jxSfOOkfdTDloE3QZtfZiE2+WUUQXg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kIYrPUPSIqy6fXPe8XwKoygoMwhhNTNSU0LWsRVntjOrwOX5xAhF/a6PaOEGvJK+6HzG6mHHUEfZ+q+H3F10s3Du3kQQWdt16JfQjyO/LGnE2MCrwnziaWsvGw69Za+TkxT4Cawcp1mkzI1A8qJUUBUn7CaZgOgM5I6519PyHSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qJTqgt8+; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6ISsFo012968;
-	Fri, 7 Nov 2025 07:59:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=yvOWkn
-	ffWVW7ut0O5keAMv7VSuXUyNFGItujwAD4XSw=; b=qJTqgt8+Wz5zHJIVULffxG
-	6FLTy6NLq1h34/NsGmlhVLVhR1xACmWqa0+PthHf/k/ExwSd6xol1EfwEOKJBTXW
-	k+SgikTM6CbYdfUzQJBfbOvFEsn4HtEv71XpV1ztSevdaA01JWihYhLp6C+7rPO8
-	A1JVYSNJVBVhONOkyYfbhXMMsATUBLJ+yhJCHKS32gKn1kdJE+An6ua83hP8wEan
-	H2iJfA4EWS4oF+71V9SyghuvbiNjZH9tP3t4nKrrCDbY+IhsfyUrt216KHJvKPUe
-	KSIx9Vlul4UrkNb9BcteoJQ8C5vP7qCpmiuhypL+FcFb8JsfLMFXaHIIO7G55Ddg
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59vuujn0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 07:59:56 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A77jHGE018659;
-	Fri, 7 Nov 2025 07:59:55 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5whnsmqh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 07:59:55 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A77xp2d56361462
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Nov 2025 07:59:51 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6F3702004B;
-	Fri,  7 Nov 2025 07:59:51 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0615F20043;
-	Fri,  7 Nov 2025 07:59:51 +0000 (GMT)
-Received: from [127.0.0.1] (unknown [9.111.27.154])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Nov 2025 07:59:50 +0000 (GMT)
-Message-ID: <7fa4fcf9db0bd2e1a8d325ffae9c55eeb9ac41ba.camel@linux.ibm.com>
-Subject: Re: [PATCH 4/5] perf test java symbol: Fix a false negative in
- symbol regex
-From: Ilya Leoshkevich <iii@linux.ibm.com>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Heiko
- Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander
- Gordeev <agordeev@linux.ibm.com>
-Date: Fri, 07 Nov 2025 08:59:50 +0100
-In-Reply-To: <aQ1UuVQdjZa7HYOF@google.com>
-References: <20251105191626.34998-1-iii@linux.ibm.com>
-	 <20251105191626.34998-5-iii@linux.ibm.com> <aQ1UuVQdjZa7HYOF@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762502437; c=relaxed/simple;
+	bh=gTrtMTVdIq8o2Lv2gAG8UVNbAa67NI0LZcaPzCP9uxA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g8OmJGqF922PXGdRrxWpdQmzURDWfYS3364TQpiYN5VK5SOWkWKHuSiIkJQtRMA+AjTLKs6rnhm6YWTEnkean98O2vQksOdeHTfulKyzwcLmY9TdGu5YnmFb0B7jFD7/GaJ+Q8Hd3u3Is/rL4TCrTp+C7GuySGa1rUakVF4khGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AmyoA+YH; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64034284521so727367a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 00:00:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762502433; x=1763107233; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L4L8nwY5tA46qS9RhjMiBvwIJ3m3PvlUWeeZDUBNYNE=;
+        b=AmyoA+YHQZgstGRmD8U6Uc5Qp3lHeC8gVhIBg5c7IDTiz9uxO1MKh5pvTLMYZ1uWXu
+         ZOiCh/0sWFaopk+f5KfR3BcFOL9zYZNgwM+yWnrs/cvXnteu3aoXVLpBmW9Pfhsbf51W
+         laGx54OYB+zhf/9On7oJS1XjUSQyqr2R4q7FPf5IKZPIZLj6jE2u+xaaRonDpdo8cYNo
+         sT26cX0LyiU9BpU1+93/AVTPh27969l83AWVEOF9a/s1OW3QFogNfFxrcAkv9htYErpE
+         eVO+m5sjBQ7LePaEsHPnv1juoEuTT3WWZG2NexOODGf77B/buQoApHYTaAQa3EaoqGXO
+         dy/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762502433; x=1763107233;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=L4L8nwY5tA46qS9RhjMiBvwIJ3m3PvlUWeeZDUBNYNE=;
+        b=EVzfRo/4PXFGXxPHhA4TKnQJ2bMi74bKM58Ohl7OV3GQIDEuceNss/93NUSlm2TUqo
+         H/9Yd7Ddle2nF2ZR1E3+C8PzcCYGqqzgsur393OnGecGB5m5ktkKs/iSOiH9KnNTDMeO
+         FhU6JDnKNVcbWtTzy4fVyXZGDDIpsoRmJhcBv6Sfh9KKINRJUnYYx+rnw+vLP25d8UM3
+         qr8BGVuoAx3Zsjwrl948D7kKLY5I09z6ryyUW1LRzAnhSz+4IxUCIAIHCZjubhpWzuvV
+         kT1k/ZN/SgGYvM6kiVBisICeTER0XnQNgcK3mc0Q3cYZ0SHw155+9gNt4Ds5JIA8cs5M
+         zoAw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/IKXACvLv438dvJ2tVcS3N13WEvnN/GJX16RUzT+LO0p0ulCff4/BOPxreeRLcd+cqVeP1uyPXcNWnrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDG9vejeSOK3dnod3tnb1ujUrdyiqTm7s8Bm2tmETG5elN+ycp
+	aG1pl4jvQqxQHH9UnEf3yy8P1oUkZ29q7wLYn0NI8Fx82WRGnZISYXK2JppIrtSzsVDPTt+VRg7
+	tqt/okO+czbj1pnr7v1yk34qi12Vaifk=
+X-Gm-Gg: ASbGncuLGJYf2vSAtO5BYdOe4T5hrC9mrOXuSoXzzPzoA0APjchOTTODaYRqzaAQZKV
+	iH7EedZUy3gR4ZPjOSbu2kPuedpIOmJAwpTSlC7DElaChucguwiTI8c+XWDqcCwlDuoDOV5+mW1
+	6hfxj+DJfkRDMp/KHUSxI7+YslWWZCDaEyQu9MKirhSzUCYVsSuNHRaJeF1SYbJorbCum6pnSy3
+	NQK6g4wVaNx4rTFgSKuqoB5zev6MwHxOURgjzWmaYw1Q4kJHw834UW8smdDthDfnjT0BO5Y
+X-Google-Smtp-Source: AGHT+IF1uok4S2/ZJxGVMG6j0RZBxmZiPcUtNqCXKtotlWPr6F8OAXOZaMRmuRE8uDgHau7bT5W5RrHY3dcLjEjQckY=
+X-Received: by 2002:a17:907:3cd6:b0:b70:6f46:d401 with SMTP id
+ a640c23a62f3a-b72c093317amr195124066b.11.1762502433125; Fri, 07 Nov 2025
+ 00:00:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Kb6pIddpouzfzeZKKgsLyLUsLrsIlfC3
-X-Proofpoint-GUID: Kb6pIddpouzfzeZKKgsLyLUsLrsIlfC3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfXxcuHhxaajb7M
- Urnjr7GqsSSjVgZ/aXxqmVhsAqPjpd8kqnZMT3nt2inQteBJBU7yyQq+m9Y76e7SWf+rAo2Jtll
- W87D2dGD9RW5jGKeOnbDAEdMu5VJDT5mDy1oXh5nsB4JWFFatqN+fmIO+zRFw2JMoUOGJGXeSrU
- oACZiJpc3GX2n2JAcc6jjgKxoSINy58BmVfRtTWKw1l1Yz/VYK0HDlyjY8VNqNBBgbCbMtRaYB4
- vmiyQmCnPY3YOgewbx+54gfa+S/2Vrw8Ar5qGgCshRi+ycKD2jIjE+UIk17CXqqcMhg9yb/z5R8
- uipsO4VC1xE5ZcNIDbJUrfIIPdrCboYI43MskBEaXkX6+6UAae356wZlHd9L5GtOwuOz/hVQrLx
- +5FWGWyzpyNAo1f8axhPFiVH2iWlZA==
-X-Authority-Analysis: v=2.4 cv=U6qfzOru c=1 sm=1 tr=0 ts=690da6fc cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=KQ6_QMOoaT4zaDH1_Y0A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_01,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
- clxscore=1015 malwarescore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511010021
+References: <cover.1762435376.git.geert+renesas@glider.be> <cfc32f8530d5c0d4a7fb33c482a4bf549f26ec24.1762435376.git.geert+renesas@glider.be>
+ <aQy0T2vUINze_6_q@smile.fi.intel.com> <CAMuHMdXVUJq36GvNUQE8FnHsX+=1jG4GOJ_034r=fgr_Rw4Djg@mail.gmail.com>
+ <aQzIIqNnTY41giH_@smile.fi.intel.com> <CAMuHMdW8ndAdGnSHopYFMWvw7wk7wKz_7+N91M1jRHoqK1KBrg@mail.gmail.com>
+ <c62eb5a727f149fb9d8b4a4c8d77418a@realtek.com>
+In-Reply-To: <c62eb5a727f149fb9d8b4a4c8d77418a@realtek.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 7 Nov 2025 09:59:56 +0200
+X-Gm-Features: AWmQ_bndsm6ikZxAsR6MbqZ_7CJczSuokLGcsZHpDoyZxbjksOeSkgDr0jWR8fA
+Message-ID: <CAHp75VeMqvywS20603yDSo-C3KCu+i+8vvDNuz3h9e8Ma9BOCw@mail.gmail.com>
+Subject: Re: [PATCH v6 12/26] bitfield: Add less-checking __FIELD_{GET,PREP}()
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Yury Norov <yury.norov@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
+	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
+	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Jianping Shen <Jianping.Shen@de.bosch.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, "qat-linux@intel.com" <qat-linux@intel.com>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, 
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>, 
+	"linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	linux-wireless <linux-wireless@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-11-06 at 18:08 -0800, Namhyung Kim wrote:
-> On Wed, Nov 05, 2025 at 08:10:27PM +0100, Ilya Leoshkevich wrote:
-> > There are a lot of symbols like
-> > InterpreterRuntime::resolve_get_put()
-> > in the perf report output, so the existing regex unfortunately
-> > always
-> > matches something. Replace it with a more precise one.
-> >=20
-> > Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-> > ---
-> > =C2=A0tools/perf/tests/shell/test_java_symbol.sh | 4 +++-
-> > =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/tools/perf/tests/shell/test_java_symbol.sh
-> > b/tools/perf/tests/shell/test_java_symbol.sh
-> > index f36c9321568c5..4c6bc57b87181 100755
-> > --- a/tools/perf/tests/shell/test_java_symbol.sh
-> > +++ b/tools/perf/tests/shell/test_java_symbol.sh
-> > @@ -55,8 +55,10 @@ fi
-> > =C2=A0# Below is an example of the instruction samples reporting:
-> > =C2=A0#=C2=A0=C2=A0 8.18%=C2=A0 jshell=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 jitted-50116-29.so=C2=A0=C2=A0=C2=A0 [.] Interp=
-reter
-> > =C2=A0#=C2=A0=C2=A0 0.75%=C2=A0 Thread-1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 jitted-83602-1670.so=C2=A0 [.]
-> > jdk.internal.jimage.BasicImageReader.getString(int)
-> > +# Look for them, while avoiding false positives from lines like
-> > this:
-> > +#=C2=A0=C2=A0 0.03%=C2=A0 jshell=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 libjvm.so=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [.]
-> > InterpreterRuntime::resolve_get_put(JavaThread*, Bytecodes::Code)
-> > =C2=A0perf report --stdio -i "$PERF_INJ_DATA" 2>&1 |
-> > -	grep -E " +[0-9]+\.[0-9]+% .*
-> > (Interpreter|jdk\.internal).*" >/dev/null 2>&1
-> > +	grep ' jshell .* jitted-.*\.so .*
-> > \(Interpreter$\|jdk\.internal\)' &>/dev/null
->=20
-> Maybe 'jshell' part can go away as well.. but it's up to you. :)
->=20
-> Thanks,
-> Namhyung
+On Fri, Nov 7, 2025 at 3:16=E2=80=AFAM Ping-Ke Shih <pkshih@realtek.com> wr=
+ote:
+>
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Thu, 6 Nov 2025 at 17:09, Andy Shevchenko
+> > <andriy.shevchenko@intel.com> wrote:
+> > > On Thu, Nov 06, 2025 at 03:49:03PM +0100, Geert Uytterhoeven wrote:
+> > > > On Thu, 6 Nov 2025 at 15:44, Andy Shevchenko
+> > > > <andriy.shevchenko@intel.com> wrote:
+> > > > > On Thu, Nov 06, 2025 at 02:34:00PM +0100, Geert Uytterhoeven wrot=
+e:
+> > > > > > The BUILD_BUG_ON_MSG() check against "~0ull" works only with "u=
+nsigned
+> > > > > > (long) long" _mask types.  For constant masks, that condition i=
+s usually
+> > > > > > met, as GENMASK() yields an UL value.  The few places where the
+> > > > > > constant mask is stored in an intermediate variable were fixed =
+by
+> > > > > > changing the variable type to u64 (see e.g. [1] and [2]).
+> > > > > >
+> > > > > > However, for non-constant masks, smaller unsigned types should =
+be valid,
+> > > > > > too, but currently lead to "result of comparison of constant
+> > > > > > 18446744073709551615 with expression of type ... is always
+> > > > > > false"-warnings with clang and W=3D1.
+> > > > > >
+> > > > > > Hence refactor the __BF_FIELD_CHECK() helper, and factor out
+> > > > > > __FIELD_{GET,PREP}().  The later lack the single problematic ch=
+eck, but
+> > > > > > are otherwise identical to FIELD_{GET,PREP}(), and are intended=
+ to be
+> > > > > > used in the fully non-const variants later.
+> >
+> > > > > > +     BUILD_BUG_ON_MSG(__bf_cast_unsigned(mask, mask) >        =
+       \
+> > > > > > +                      __bf_cast_unsigned(reg, ~0ull),         =
+       \
+> > > > > > +                      pfx "type of reg too small for mask")
+> > > > >
+> > > > > Perhaps we may convert this (and others?) to static_assert():s at=
+ some point?
+> > > >
+> > > > Nick tried that before, without success:
+> > > > https://lore.kernel.org/all/CAKwvOdm_prtk1UQNJQGidZm44Lk582S3p=3Dof=
+0y46+rVjnSgXJg@mail.gmail.com
+> > >
+> > > Ah, this is unfortunate.
+> >
+> > Of course, it might be an actual bug in the i915 driver...
+> >
+> > The extra checking in field_prep() in case the compiler can
+> > determine that the mask is a constant already found a possible bug
+> > in drivers/net/wireless/realtek/rtw89/core.c:rtw89_roc_end():
+> >
+> >     rtw89_write32_mask(rtwdev, reg, B_AX_RX_FLTR_CFG_MASK, rtwdev->hal.=
+rx_fltr);
+> >
+> > drivers/net/wireless/realtek/rtw89/reg.h:
+> >
+> >     #define B_AX_RX_MPDU_MAX_LEN_MASK GENMASK(21, 16)
+> >     #define B_AX_RX_FLTR_CFG_MASK ((u32)~B_AX_RX_MPDU_MAX_LEN_MASK)
+> >
+> > so it looks like B_AX_RX_FLTR_CFG_MASK is not the proper mask for
+> > this operation...
+>
+> The purpose of the statements is to update values excluding bits of
+> B_AX_RX_MPDU_MAX_LEN_MASK. The use of B_AX_RX_FLTR_CFG_MASK is tricky, bu=
+t
+> the operation is correct because bit 0 is set, so __ffs(mask) returns 0 i=
+n
+> rtw89_write32_mask(). Then, operation looks like
+>
+>    orig =3D read(reg);
+>    new =3D (orig & ~mask) | (data & mask);
+>    write(new);
+>
+> Since we don't use FIELD_{GET,PREP} macros with B_AX_RX_FLTR_CFG_MASK, ho=
+w
+> can you find the problem? Please guide us. Thanks.
 
-You are right, jdk.internal stuff may appear in Thread-1, as one can
-see in the existing example. I will drop jshell from the regex.
+Isn't FIELD_MODIFY() what you want to use?
 
-[...]
->=20
+--=20
+With Best Regards,
+Andy Shevchenko
 
