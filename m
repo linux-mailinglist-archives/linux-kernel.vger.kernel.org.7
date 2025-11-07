@@ -1,89 +1,104 @@
-Return-Path: <linux-kernel+bounces-889714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B20C3E4C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:06:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7B5C3E4D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18062188B833
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:06:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E4203AD8E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239B2227BB9;
-	Fri,  7 Nov 2025 03:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0732F5A0D;
+	Fri,  7 Nov 2025 03:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b="cn57xZ0o"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a06yzr2B"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB3E21767A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 03:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E273C22A4EB
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 03:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762484777; cv=none; b=uHOe2NKJvIFl5mtO/26AQlTVY2ypzJIVNsoqh3oKmTXqzUvLFFVpSZBnwqloCYBUXYs+6meMtxLHS8spOF+PA/xhebKVCShoiy0TK50Okoo/vLO4s+bCN8QTNC/4TLWfqoQEkKerLnUS28J8+Deh3jBEvYKEnH+lKKsqeamd8kw=
+	t=1762484830; cv=none; b=Z9EZSXDO5X9wOOq+gynsfmead90Tymz2Uij4LHdcmyyyP9kLJJGTs8MoNP+ZJty2XgyUFSb1OhdIRcLKqBR1gRFw7hBSdJKOYjF5bOPCDbva/BGxpha0VvFg88xp7+XZkXTlVoOww/VnW3PZY7cVQw+rLcQovrXZsvpw1ewb6Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762484777; c=relaxed/simple;
-	bh=SqF6cjAe5fIGfKljFwR84iVXlUipV5ARm6YRakF57pM=;
+	s=arc-20240116; t=1762484830; c=relaxed/simple;
+	bh=808AlwEZ1o2mA4OcdatRSl+Gb85ZdMLrOwB3CyxK1Ks=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQSL5ImdhcjrT1inkJTDXukg55qxTh0xo6QeBhewbbhDLiNjVi1pk45U2QKuIChSQbqoT5TwF1kTxGgMeEkhDYfDdHXFIYpqmha5DivicCJ4xaBKUHM/5mcUglCxJTgyXPNyc43xiAkt1kWqflHhO4FfPxoalDB0LTKKSDB7GJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca; spf=none smtp.mailfrom=draconx.ca; dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b=cn57xZ0o; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=draconx.ca
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-879b99b7ca8so3407306d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 19:06:15 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AOctxRfc2oeYR1mg1Lp4WnTa2LwfbUCy/aI1+5cDBKG1UbB7ly7Dzb6PBdZ3BWNNvOtK3KGMJ226KFvVncIfMftKnqkWwvW/vmzcrI+5Z5Id0uZgNiPBYA8aU9igS4qfx+anafkPr8edsISiCTQm6Bw2yeJUhTBmgXCcfep//jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a06yzr2B; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7864cef1976so4062597b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 19:07:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=draconx-ca.20230601.gappssmtp.com; s=20230601; t=1762484775; x=1763089575; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762484826; x=1763089626; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E56miCz2ucyW7p5RTNikjLhgl4gC4pK61qcfT2Qpt0U=;
-        b=cn57xZ0oPlgAD+CBSKMswSkoX9xKQS1HixdXW5ECEdl1/YgEelftUJw1DUcEfh+duA
-         CqyX7f9UdS2NaP2m4VEwp/qSKjRqSQDW17RbaRWRXGTqnivMrDDO91IRo5di4cHofFo4
-         dDmQShLEs015pKEKpL5+2L1UsNOF0CCOCELwr7VtTZodwebonazUVnNh52D0rcis0esS
-         z9KV+2j1vbSwr3RhKOGq0fn9HINj478kHnk0DOEWVuwsrTs0VH637mEM4F+1mdG3XZr6
-         s+cYsLKU+BMUC+arbyjobnJQiPwtQZS8rT7DMBjEc8kNkXUA+YVqrxCLg6UDZ1dBhD6f
-         oIeQ==
+        bh=hR77XGy8gKTpCV+3sSlL3axBPG4R/F86P0C6FJqRU38=;
+        b=a06yzr2BZTwGYHArjHp9LGVTPlbRMRUAT0X+aLCvbKOYdB/uHjGpJNkdYmuLtITb8N
+         FN/4qcMRd8g3E0Cs814vxGEKkfOFXXVLZhvXoFyNeUxGPUbz2GZHTy2xkaT/9CD5D4e7
+         8/MWLBX+fZwSGrhWWSvT1J23CHiyEZYReXa+0mIjDVW4WYM5KDiIlGPJNoN02W36v3G9
+         dN853tmWvBjgeJG4CvSoIUs44A2era9m5KjEk6IP5J+6HXoXDcRMgJBEuuEjgB4M9W+H
+         RKmFPZBewnny9dfsbO+hGTOeCYZsUIzcCGgK1MdVuJOviDttthrRQ3IXzv2qg679brxf
+         rUHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762484775; x=1763089575;
+        d=1e100.net; s=20230601; t=1762484826; x=1763089626;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E56miCz2ucyW7p5RTNikjLhgl4gC4pK61qcfT2Qpt0U=;
-        b=Ez48TzWESLQnUlfx4QfrFPqJD6T/GcEf2+FUY7YRj+rB644W5WyOHMdajzEaxsz73I
-         tGhFFCCuc0v38h3cJg8zbgSmzNVwYXUeXwUmGN9iPflkJTR3X9ygk2s/5R+BLpgeIfg2
-         c++MSI6q6t8vqOCXfNTRuDaYaqKRNuPegbZr2nJbBbhUiwXD7g57mwG6nkv783fh/AFL
-         owyz5NrJq/aqJ9MVUSZAw5WgMaj5VUnDMCrt2unLW4ckDKtfALfIpx4cvUm//PnLQVEa
-         Y9HdeLyY8U1mB2lF+VvuZCJ1DGRxJ1iMvISXajnWnv276q7uEB6Ur6P5Do1v8vHscIxC
-         uARw==
-X-Forwarded-Encrypted: i=1; AJvYcCW44wxH01cczB3OOFbWAJM71zwdCeqIyidikEusKZKcjPOcZ3dRvf2zVCa+1g1FaLXahyAVXQvn4+x7TKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbwP7WP1mNqGGt4rk0xps8YDj6Z1akr5awujWvPrBCk4i3i4nk
-	OoP0WJOmlZxlzK4b357wcHO/asG/vjT0fI5SIgixZNmensghQkcHKrFKRO4nE4a9Ht4=
-X-Gm-Gg: ASbGncvA5SVQF5LhJlz7ApQGDpvWxiNGrfpuBWC+LpUlzmWpPAwUDUIvlo1HcCmfeRO
-	ihHGFCLi/DHoJAbjKQR0brWsoIoI+FsD6FN7qFocWnAhWDLrFz41Xan93kn20BadSOXilMqEcPV
-	irN0Ohy6xj2ue5Mc5EyqYx7yuuHHy1LNnVj/nFSdFHMJdPW5sTX9YdjbGW13QmQ4yeKRM3YUeP6
-	TETF8xAGRgElzdrbfv89FQ+ORxFSGfusRzuokQnib7mnN9RNuO5/TXVdh7+EKt0plAFR3wu88cB
-	89HCvNSI5Jxa4scpruBqXrvKnbkj+/CcDvG/cVSD0zymHQURlmWkQlR7CS6gkThJ/Y04H2/BJyF
-	njaq9JDS2SnAYT+uahtO4iojizEG0g1zuszDt0gSTL6zYHbdeXlH7o01yiJMyn5qiC0GPSx8I7J
-	dzbpnoYerxnixGqyeVmZA+6Pzy4pOosDYRdPJwvaYO
-X-Google-Smtp-Source: AGHT+IEwrtDh+N2RU8TdlIkL8MsNx2X7a1H9tD28kPSplx5JFVcsb0223J9Fj+vOzbjZ1jDImx6R0g==
-X-Received: by 2002:a05:6214:4004:b0:87c:108f:676c with SMTP id 6a1803df08f44-88167b17ed2mr26261796d6.25.1762484774711;
-        Thu, 06 Nov 2025 19:06:14 -0800 (PST)
-Received: from localhost (ip-24-156-181-135.user.start.ca. [24.156.181.135])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-88082a38210sm30548476d6.55.2025.11.06.19.06.13
+        bh=hR77XGy8gKTpCV+3sSlL3axBPG4R/F86P0C6FJqRU38=;
+        b=KS/27/miLJ2Vg4y+BoPg1birV7X972wBWB400vcn3s0H1vAkEaOsXsqkQh27G1dDZU
+         ig7X0p4La9ydl5jnsqBYIFzge16cSYLqNEj8OAQXOivIjuOx2ZbNYIxFsXrgv8+sVDGj
+         6RNALfZLasnKa7NUq4FtEUlIn2L5xdPWWqJ4t+RVCnkAICA8C1NqVSgs5ZZ/WdGGx5Y0
+         NQEyeZemzSlrk5w99yEwydF5JhThOToKrr19mpaLa7CCFaJw6gPMJlTBivatfHVLNv3x
+         oUPCZ1D/Jc2/aAK27lNo0AZcUOXEfz6VTE+ZKki4Csc6Qe/Nx8K9w+p0QprRMnONVhDy
+         ucBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUm0JPPOpio6GBNfqHzK8zoYZM7QrDlOdCZWtfxC61siNIQ6xwqx5EyW3zCvhnKoBT5v8jTgJsd0ivSE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPG7Ry9IxZRerxYNpkJuw90e16uEYg0cBqkyRZtecJO2+7hPJu
+	MzguSbxn/V2naaRggLu5zr1/zeqJ/u+VoOciR3/HHR3IzgwF0TciJfv7
+X-Gm-Gg: ASbGncvDOf1sst53ss24gA/fLhu7CKU1+bKW959672Mw/9L7WbJW5+wkkqXqMcFHQXm
+	zp0UaFHSpkYN6qWo+qYRcPegv0QtH5SuJkX8QJJulHDSG3oj1FGFFnbeT+diqDzKvCVzJWqOlqa
+	ARAVXzSHM14adk82ogGQKQzimCoI3SUocyNkLFZRfIqFXvepANmnTIyWuqamHtxcXD59Sg3lnbh
+	rls1dWrwGBN696uqisdEk+3x8eLSUCdO887zSB5QJt5pBtwebEXFFQUYXplQAy7YIe7Ue7QKAv8
+	7TFhZQEkSUW61X+BinUSZ2o9vZwMKrjg6kA4U9eE1XS7nTHik6vbJWDbUAZhE/XiyLlYr8etCJX
+	NKAWfabZrZQdAlpx1lVajmUXVP73O7uJWECYw+Eiwvyy4YW+3ecizbRnlvhHy1x9ZYaP1MUdWY5
+	JsvPpIwabMlcZeqRCDn8SQ61SIOE/aUy/5rsvq
+X-Google-Smtp-Source: AGHT+IFB590VLlupKmRJu3Xg8gkOtJWd0diOwJuCAD9JFt31fECUBp8uUIrK8y6sj/IrmT+p0bOb1A==
+X-Received: by 2002:a05:690c:d84:b0:783:7768:55e6 with SMTP id 00721157ae682-787caaeead8mr1823477b3.13.1762484826556;
+        Thu, 06 Nov 2025 19:07:06 -0800 (PST)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:5b::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-787c68c4025sm2798627b3.26.2025.11.06.19.07.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 19:06:14 -0800 (PST)
-Date: Thu, 6 Nov 2025 22:06:12 -0500
-From: Nick Bowler <nbowler@draconx.ca>
-To: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: Esben Haabendal <esben@geanix.com>, linux-kernel@vger.kernel.org, 
-	regressions@lists.linux.dev, linux-rtc@vger.kernel.org, stable@vger.kernel.org, 
-	sparclinux@vger.kernel.org
-Subject: Re: PROBLEM: hwclock busted w/ M48T59 RTC (regression)
-Message-ID: <e7ezfmqnbduq7jdc7osicqp4rnztu466gpbcxaoj54jfigsvvp@iroscsnamy3c>
-References: <krmiwpwogrvpehlqdrugb5glcmsu54qpw3mteonqeqymrvzz37@dzt7mes7qgxt>
- <DmLaDrfp-izPBqLjB9SAGPy3WVKOPNgg9FInsykhNO3WPEWgltKF5GoDknld3l5xoJxovduV8xn8ygSupvyIFOCCZl0Q0aTXwKT2XhPM1n8=@geanix.com>
- <ni6gdeax2itvzagwbqkw6oj5xsbx6vqsidop6cbj2oqneovjib@mrwzqakbla35>
- <35bd11bf-23fa-4ce9-96fb-d10ad6cd546e@leemhuis.info>
+        Thu, 06 Nov 2025 19:07:06 -0800 (PST)
+Date: Thu, 6 Nov 2025 19:07:04 -0800
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v8 07/14] vhost/vsock: add netns support
+Message-ID: <aQ1iWCvSdrat1Y5v@devvm11784.nha0.facebook.com>
+References: <20251023-vsock-vmtest-v8-0-dea984d02bb0@meta.com>
+ <20251023-vsock-vmtest-v8-7-dea984d02bb0@meta.com>
+ <juxkmz3vskdopukejobv745j6qqx45hhcdjtjw7gcpgz6fj5ws@ckz7dvyup6mq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,15 +107,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <35bd11bf-23fa-4ce9-96fb-d10ad6cd546e@leemhuis.info>
+In-Reply-To: <juxkmz3vskdopukejobv745j6qqx45hhcdjtjw7gcpgz6fj5ws@ckz7dvyup6mq>
 
-On Thu, Nov 06, 2025 at 11:25:55AM +0100, Thorsten Leemhuis wrote:
-> Just wondering: was this fixed in between? Just asking, as I noticed the
-> culprit was backported to various stable/longterm series recently
+On Thu, Nov 06, 2025 at 05:21:35PM +0100, Stefano Garzarella wrote:
+> On Thu, Oct 23, 2025 at 11:27:46AM -0700, Bobby Eshleman wrote:
+> > From: Bobby Eshleman <bobbyeshleman@meta.com>
+> > 
+> > Add the ability to isolate vhost-vsock flows using namespaces.
+> > 
+> > The VM, via the vhost_vsock struct, inherits its namespace from the
+> > process that opens the vhost-vsock device. vhost_vsock lookup functions
+> > are modified to take into account the mode (e.g., if CIDs are matching
+> > but modes don't align, then return NULL).
+> > 
+> > vhost_vsock now acquires a reference to the namespace.
+> > 
+> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+> > ---
+> > Changes in v7:
+> > - remove the check_global flag of vhost_vsock_get(), that logic was both
+> >  wrong and not necessary, reuse vsock_net_check_mode() instead
+> > - remove 'delete me' comment
+> > Changes in v5:
+> > - respect pid namespaces when assigning namespace to vhost_vsock
+> > ---
+> > drivers/vhost/vsock.c | 44 ++++++++++++++++++++++++++++++++++----------
+> > 1 file changed, 34 insertions(+), 10 deletions(-)
 
-I am not aware of any fix.  I just retested both 6.18-rc4 and 6.17.7 and
-there is no change in behaviour.
+[...]
 
-Thanks,
-  Nick
+> > static int vhost_vsock_dev_open(struct inode *inode, struct file *file)
+> > {
+> > +
+> > 	struct vhost_virtqueue **vqs;
+> > 	struct vhost_vsock *vsock;
+> > +	struct net *net;
+> > 	int ret;
+> > 
+> > 	/* This struct is large and allocation could fail, fall back to vmalloc
+> > @@ -669,6 +684,14 @@ static int vhost_vsock_dev_open(struct inode *inode, struct file *file)
+> > 		goto out;
+> > 	}
+> > 
+> > +	net = current->nsproxy->net_ns;
+> > +	vsock->net = get_net_track(net, &vsock->ns_tracker, GFP_KERNEL);
+> > +
+> > +	/* Cache the mode of the namespace so that if that netns mode changes,
+> > +	 * the vhost_vsock will continue to function as expected.
+> > +	 */
+> 
+> I think we should document this in the commit description and in both we
+> should add also the reason. (IIRC, it was to simplify everything and prevent
+> a VM from changing modes when running and then tracking all its packets)
+> 
+
+Sounds good!
+
+> > +	vsock->net_mode = vsock_net_mode(net);
+> > +
+> > 	vsock->guest_cid = 0; /* no CID assigned yet */
+> > 	vsock->seqpacket_allow = false;
+> > 
+> > @@ -708,7 +731,7 @@ static void vhost_vsock_reset_orphans(struct sock *sk)
+> > 	 */
+> > 
+> > 	/* If the peer is still valid, no need to reset connection */
+> > -	if (vhost_vsock_get(vsk->remote_addr.svm_cid))
+> > +	if (vhost_vsock_get(vsk->remote_addr.svm_cid, sock_net(sk), vsk->net_mode))
+> > 		return;
+> > 
+> > 	/* If the close timeout is pending, let it expire.  This avoids races
+> > @@ -753,6 +776,7 @@ static int vhost_vsock_dev_release(struct inode *inode, struct file *file)
+> > 	virtio_vsock_skb_queue_purge(&vsock->send_pkt_queue);
+> > 
+> > 	vhost_dev_cleanup(&vsock->dev);
+> > +	put_net_track(vsock->net, &vsock->ns_tracker);
+> 
+> Doing this after virtio_vsock_skb_queue_purge() should ensure that all skbs
+> have been drained, so there should be no one flying with this netns. Perhaps
+> this clarifies my doubts about the skb net, but should we do something
+> similar for loopback as well?
+
+100% - for loopback the skb purge is done in the net exit hook, which is
+called just before netns destruction. Maybe it is worth commenting that
+context there too.
+
+> And maybe we should document that also in the virtio_vsock_skb_cb.
+> 
+
+sgtm!
+
+Best,
+Bobby
 
