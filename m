@@ -1,285 +1,100 @@
-Return-Path: <linux-kernel+bounces-890490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311F6C402EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:47:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B834DC4022F
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE155189CEFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:48:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3EE73AD281
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FDE31A06C;
-	Fri,  7 Nov 2025 13:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789D82E8B61;
+	Fri,  7 Nov 2025 13:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FT9miOed"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="csAjAb7m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705CE30ACE8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7264284889;
+	Fri,  7 Nov 2025 13:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762523259; cv=none; b=ldpXhwOxpSrvfrNQuzJuJl7+GNG1aBLXS7yT1r64iTqC5CISCfFBA2ndgcfIBCKEDQt/HJwqi/25VaR8bCN+7eUx/9YFOcKW3fjsnQ1io1gkAAe0yr3dN/cXQ7sYj+qFRaj3KTrGXI2G67l4Rj0Qx9G0NOqAYli26zc0JeIM1eM=
+	t=1762522489; cv=none; b=il3Io0WhC8bYNAm8hXTPrVISgdAmXWPu8qRfzF0T95TGy/GkqaSjhxPlv7LlvSD5Hfp3vyo20BOObSsZMlgokQKidh6QkypKEj1FzGlicseojUhxC0m2NutHp41BGBvOg0Nf6tNT2Kj3K0Gs42AXVkmyEGrIybGfLrd8b1l/HmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762523259; c=relaxed/simple;
-	bh=zCtUB0kJgbflfpJTzS83w9kNi++5EDfPqOkRqqFOjvo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EhzkPUFH6z0O+6XSdeqoMX+lyznPBGCPBxyE1b0VCCmpOUq6Q/fmzH0QRO933UgeUPGi7R367R4tQCZK4Z4QDIFsUuuNd1KZY+btVXK1w2pCIG2AzGUg4jkK2Phyu3TZekUEHg4u1JjUZasIO4Lavd7ak4b3cwBvqv1c4BNzE20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FT9miOed; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47114a40161so8017245e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:47:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762523256; x=1763128056; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zWSPaSWS2zth6+PcTM9lvcWZNPGKHMYvx8IpRuSIilo=;
-        b=FT9miOed/9myQdRUSCzD9jNy9IKNE9XPMMDHKqb9E7ZuK7654TUJcoDBWrtY9Cu5u4
-         AwH9tsxcWDc8ac8ktlAjvtmPkwGX4Z5c4rvEZcmFzw02Pu2QzdpyG7O/S9YKGO824ZXu
-         PJEdOAMbD5c4tTIcDBrcC0URP0pUK9Uvdxxfe1GcURmrYXMGsZdFOuh5H+cmYY9xF8KP
-         usPhiyQVUDSSoCemy8Tjk0aNyiLnQ70+GXGB89Cxy/WDcKWihUWjoBgCFlSgACXN4/Mq
-         qSJAYoiqh/jQONnpbtZ8xiTIDwblZjV8oZlabcbNbR9BuBOcZY3XvNZ1kcdUCXULkDYS
-         b7cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762523256; x=1763128056;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zWSPaSWS2zth6+PcTM9lvcWZNPGKHMYvx8IpRuSIilo=;
-        b=gAypfsLY2iPC1/Ly7Y9WOiGu0QqpfUMgRG1fpk9/jRcDDqzpq4j+Iw7v/oEHav04MZ
-         Xgfe2AoHdpUwSI2dqenaUlImHfmBWyASOhyyAenM38AdAv0MdNcN6zRfc3TP8gJ+fsUJ
-         6RP3/e9bTfUPt6f/VadOVepoEa20sC4MYqll0ZRUMOurHYfygcd2a42ELsF2xI+42cpR
-         TUlrOec7hlPW8O8M5xnhycLqZdsb2YNeXUJ4Mfi1WNw/fWKS1HUySwWZI3/n83NCmzfF
-         Bc3xCbSsFKoKq5zryGMkFJqRrGBLXz1tzvxapTuTaUqnAU1BTWGJqUUeP3q6oMWKvSsc
-         ji1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXysp3GR6n2JkvxrU2r9hgiBzWUVF1GymGDoTOG8O/BlTBsCbWQx33Rv68X3OfZ7fglnkUBMNhB9QnEJi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPQZ4LJGFagwhjpl4INMmODGvPMPWFijV+dJJyHnTcgTGIuqB7
-	wEVSl/Avb/uRnz7Wg2YWaD1EODEmamclusaDZo95D3FZrSZlL4JzbAnnqUWl5njCFm8cE8lruZp
-	Lx9r/HPIJy209H/EZQBx49PZBooveS0w=
-X-Gm-Gg: ASbGnctl32yYwu3HbMJxLXQwtD2HIlFl9RQEM6lf2NTqY8kU9Vkold8ZHlF+vQkM6Jt
-	BmMfeZ6qBTItcUKgwMgrZA6tID6WspK2g2FL4Hx7wMYTOiMJ0e0LIYqGyR7emWJerthAKgbXI9B
-	7QJQd+fvETI856xb3ihSTSz8Oc0l1x9RXOsVoEumVuqp2mmEDMlhk6TDB1dd8Ocn75fr6/0W2gG
-	IWoMaLvEEJgFdwq8bmZNQKN7vQozBPB0v29YWvh7KS9J9LORpj72xJ1Sft7UBecb37t
-X-Google-Smtp-Source: AGHT+IHoCbebjRQ/F0AyxfxqE5yFe7njZFryj4eYWvUfMZslexGJ65ZIOsJmR2KnVpMSLW4HS91VwaPplAc9t+kmEeE=
-X-Received: by 2002:a5d:64c8:0:b0:429:cdde:be1e with SMTP id
- ffacd0b85a97d-42ae5afbd09mr2814924f8f.39.1762523255527; Fri, 07 Nov 2025
- 05:47:35 -0800 (PST)
+	s=arc-20240116; t=1762522489; c=relaxed/simple;
+	bh=GZ1aR9vyKGpOf7GGJN4F566g8/j1fnBtFxg9TQ8LTV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUKHZlqO4Wkii9uGCaqHDSDaEJhR0NrDXN6DvwqFwpQ8Dwer0XgjMYq2ZQUez8tBpLqmFD2xZ738u8EM2s7HuZng+0Y/zmsdHn2nhZTK8YKp4VoxXrayUy3/RM4qdKeRHLBDaROJuUpdi07pY1WDsvFhxexnCuYFihjaVECBbBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=csAjAb7m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C94C19421;
+	Fri,  7 Nov 2025 13:34:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762522485;
+	bh=GZ1aR9vyKGpOf7GGJN4F566g8/j1fnBtFxg9TQ8LTV0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=csAjAb7mGFsqx+jfwzUVkcCZbX87Qv5IOMRvCXEF9CB+kgSMXusMQRfkWRBzmUX9f
+	 hbMA7FSl2VHpww5ujPh0o1Sl8uSpHbQyDj3QyriTWqBLq5NBbrYKkw45orJAAa/tsc
+	 X1CiWgQzFTwixR/ZIjdZJiRj+L9CXOX59g5vULlBUZ1mAqH1MfyEofeiSjz4jNSjdT
+	 mWMu5UKmjJym4wNFYvtovGe9NJB5gtsXXPIpwA4mHq/YoHsElg/ZzZ3vY1+ROnyH7R
+	 IvihDf2vhihy0H/lL2evyqs4eb2rQP94wsJRRlObud+hFnceAyxAQyBDCn+chkkDXH
+	 /LKH38exKdo7Q==
+Date: Fri, 7 Nov 2025 03:34:43 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH cgroup/for-6.18-fixes] cgroup: Skip showing PID 0 in
+ cgroup.procs and cgroup.threads
+Message-ID: <aQ31cwAFCS4Tvb7T@slm.duckdns.org>
+References: <2016aece61b4da7ad86c6eca2dbcfd16@kernel.org>
+ <5r6yyuleoru7h6wcbdw673nlfzzbsc24sltmfg5hk2mj6a34xa@2xo7a3jhhkef>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104161327.41004-1-simon.schippers@tu-dortmund.de>
- <CANn89iLLwWvbnCKKRrV2c7eo+4UduLVgZUWR=ZoZ+SPHRGf=wg@mail.gmail.com>
- <f2a363d3-40d7-4a5f-a884-ec147a167ef5@tu-dortmund.de> <CAGRyCJERd93kE3BsoXCVRuRAVuvubt5udcyNMuEZBTcq2r+hcw@mail.gmail.com>
- <c29f8763-6e0e-4601-90be-e88769d23d2a@tu-dortmund.de> <CAGRyCJE1_xQQDfu1Tk3miZX-5T-+6rarzgPGo3=K-1zsFKpr+g@mail.gmail.com>
- <676869a2-2e0d-4527-8494-db910b3a0018@tu-dortmund.de>
-In-Reply-To: <676869a2-2e0d-4527-8494-db910b3a0018@tu-dortmund.de>
-From: Daniele Palmas <dnlplm@gmail.com>
-Date: Fri, 7 Nov 2025 14:34:15 +0100
-X-Gm-Features: AWmQ_blkAQLtJ2tBRDYo_MNiveSgo6AZthE4z-ntNx8CP03ei1Xpu37X5c1GoDw
-Message-ID: <CAGRyCJGRqJuh=d8AomhYx08bGuf4dcOJ8o0JrsqqUeVyK8SAcw@mail.gmail.com>
-Subject: Re: [PATCH net-next v1 0/1] usbnet: Add support for Byte Queue Limits (BQL)
-To: Simon Schippers <simon.schippers@tu-dortmund.de>
-Cc: Eric Dumazet <edumazet@google.com>, oneukum@suse.com, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5r6yyuleoru7h6wcbdw673nlfzzbsc24sltmfg5hk2mj6a34xa@2xo7a3jhhkef>
 
-Hi Simon,
+Hello,
 
-Il giorno gio 6 nov 2025 alle ore 11:00 Simon Schippers
-<simon.schippers@tu-dortmund.de> ha scritto:
->
-> On 11/6/25 09:38, Daniele Palmas wrote:
-> > Hi Simon,
-> >
-> > Il giorno mer 5 nov 2025 alle ore 12:05 Simon Schippers
-> > <simon.schippers@tu-dortmund.de> ha scritto:
-> >>
-> >> On 11/5/25 11:35, Daniele Palmas wrote:
-> >>> Hello Simon,
-> >>>
-> >>> Il giorno mer 5 nov 2025 alle ore 11:40 Simon Schippers
-> >>> <simon.schippers@tu-dortmund.de> ha scritto:
-> >>>>
-> >>>> On 11/4/25 18:02, Eric Dumazet wrote:
-> >>>>> On Tue, Nov 4, 2025 at 8:14=E2=80=AFAM Simon Schippers
-> >>>>> <simon.schippers@tu-dortmund.de> wrote:
-> >>>>>>
-> >>>>>> During recent testing, I observed significant latency spikes when =
-using
-> >>>>>> Quectel 5G modems under load. Investigation revealed that the issu=
-e was
-> >>>>>> caused by bufferbloat in the usbnet driver.
-> >>>>>>
-> >>>>>> In the current implementation, usbnet uses a fixed tx_qlen of:
-> >>>>>>
-> >>>>>> USB2: 60 * 1518 bytes =3D 91.08 KB
-> >>>>>> USB3: 60 * 5 * 1518 bytes =3D 454.80 KB
-> >>>>>>
-> >>>>>> Such large transmit queues can be problematic, especially for cell=
-ular
-> >>>>>> modems. For example, with a typical celluar link speed of 10 Mbit/=
-s, a
-> >>>>>> fully occupied USB3 transmit queue results in:
-> >>>>>>
-> >>>>>> 454.80 KB / (10 Mbit/s / 8 bit/byte) =3D 363.84 ms
-> >>>>>>
-> >>>>>> of additional latency.
-> >>>>>
-> >>>>> Doesn't 5G need to push more packets to the driver to get good aggr=
-egation ?
-> >>>>>
-> >>>>
-> >>>> Yes, but not 455 KB for low speeds. 5G requires a queue of a few ms =
-to
-> >>>> aggregate enough packets for a frame but not of several hundred ms a=
-s
-> >>>> calculated in my example. And yes, there are situations where 5G,
-> >>>> especially FR2 mmWave, reaches Gbit/s speeds where a big queue is
-> >>>> required. But the dynamic queue limit approach of BQL should be well
-> >>>> suited for these varying speeds.
-> >>>>
-> >>>
-> >>> out of curiosity, related to the test with 5G Quectel, did you test
-> >>> enabling aggregation through QMAP (kernel module rmnet) or simply
-> >>> qmi_wwan raw_ip ?
-> >>>
-> >>> Regards,
-> >>> Daniele
-> >>>
-> >>
-> >> Hi Daniele,
-> >>
-> >> I simply used qmi_wwan. I actually never touched rmnet before.
-> >> Is the aggregation through QMAP what you and Eric mean with aggregatio=
-n?
-> >> Because then I misunderstood it, because I was thinking about aggregat=
-ing
-> >> enough (and not too many) packets in the usbnet queue.
-> >>
-> >
-> > I can't speak for Eric, but, yes, that is what I meant for
-> > aggregation, this is the common way those high-cat modems are used:
->
-> Hi Daniele,
->
-> I think I *really* have to take a look at rmnet and aggregation through
-> QMAP for future projects :)
->
-> > it's not clear to me if the change you are proposing could have any
-> > impact when rmnet is used, that's why I was asking the test
-> > conditions.
-> >
-> > Thanks,
-> > Daniele
-> >
->
-> This patch has an impact on the underlying USB physical transport of
-> rmnet. From my understanding, the call stack is as follows:
->
-> rmnet_map_tx_aggregate or rmnet_send_skb
->
-> |
-> | Calling dev_queue_xmit(skb)
-> V
->
-> qmi_wwan used for USB modem
->
-> |
-> |  ndo_start_xmit(skb, net) is called
-> V
->
-> usbnet_start_xmit is executed where the size of the internal queue is
-> dynamically changed using the Byte Queue Limits algorithm by this patch.
->
-> Correct me if I am wrong, but I think in the end usbnet is used.
->
+On Fri, Nov 07, 2025 at 10:57:54AM +0100, Michal Koutný wrote:
+> On Thu, Nov 06, 2025 at 12:07:45PM -1000, Tejun Heo <tj@kernel.org> wrote:
+> > css_task_iter_next() pins and returns a task, but the task can do whatever
+> > between that and cgroup_procs_show() being called, including dying and
+> > losing its PID. When that happens, task_pid_vnr() returns 0.
+> 
+> task_pid_vnr() would return 0 also when the process is not from reader's
+> pidns (IMO more common than the transitional effect).
 
-Exactly, I was just wondering if this patch had any effect on the
-overall throughput performance once the aggregation is enabled.
+Hmm... haven't thought about that.
 
-Hopefully I'll be able to perform some tests once the patch is merged.
+> > Showing "0" in cgroup.procs or cgroup.threads is confusing and can lead to
+> > surprising outcomes. For example, if a user tries to kill PID 0, it kills
+> > all processes in the current process group.
+> 
+> It's still info about present processes.
+> 
+> > 
+> > Skip entries with PID 0 by returning SEQ_SKIP.
+> 
+> It's likely OK to skip for these exiting tasks but with the external pidns tasks
+> in mind, reading cgroup.procs now may give false impression of an empty
+> cgroup.
+> 
+> Where does the 0 from of the exiting come from? (Could it be
+> distinguished from foreign pidns?)
 
-Thanks,
-Daniele
+Yeah, I think it can be distinguished. We just need to check whether the
+task has pid attached at all after getting 0 return from task_pid_vnr().
 
-> Thanks,
-> Simon
->
-> >> Thanks
-> >>
-> >>>>>>
-> >>>>>> To address this issue, this patch introduces support for
-> >>>>>> Byte Queue Limits (BQL) [1][2] in the usbnet driver. BQL dynamical=
-ly
-> >>>>>> limits the amount of data queued in the driver, effectively reduci=
-ng
-> >>>>>> latency without impacting throughput.
-> >>>>>> This implementation was successfully tested on several devices as
-> >>>>>> described in the commit.
-> >>>>>>
-> >>>>>>
-> >>>>>>
-> >>>>>> Future work
-> >>>>>>
-> >>>>>> Due to offloading, TCP often produces SKBs up to 64 KB in size.
-> >>>>>
-> >>>>> Only for rates > 500 Mbit. After BQL, we had many more improvements=
- in
-> >>>>> the stack.
-> >>>>> https://lwn.net/Articles/564978/
-> >>>>>
-> >>>>>
-> >>>>
-> >>>> I also saw these large SKBs, for example, for my USB2 Android tether=
-ing,
-> >>>> which advertises a network speed of < 500 Mbit/s.
-> >>>> I saw these large SKBs by looking at the file:
-> >>>>
-> >>>> cat /sys/class/net/INTERFACE/queues/tx-0/byte_queue_limits/inflight
-> >>>>
-> >>>> For UDP-only traffic, inflight always maxed out at MTU size.
-> >>>>
-> >>>> Thank you for your replies!
-> >>>>
-> >>>>>> To
-> >>>>>> further decrease buffer bloat, I tried to disable TSO, GSO and LRO=
- but it
-> >>>>>> did not have the intended effect in my tests. The only dirty worka=
-round I
-> >>>>>> found so far was to call netif_stop_queue() whenever BQL sets
-> >>>>>> __QUEUE_STATE_STACK_XOFF. However, a proper solution to this issue=
- would
-> >>>>>> be desirable.
-> >>>>>>
-> >>>>>> I also plan to publish a scientific paper on this topic in the nea=
-r
-> >>>>>> future.
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>> Simon
-> >>>>>>
-> >>>>>> [1] https://medium.com/@tom_84912/byte-queue-limits-the-unauthoriz=
-ed-biography-61adc5730b83
-> >>>>>> [2] https://lwn.net/Articles/469652/
-> >>>>>>
-> >>>>>> Simon Schippers (1):
-> >>>>>>   usbnet: Add support for Byte Queue Limits (BQL)
-> >>>>>>
-> >>>>>>  drivers/net/usb/usbnet.c | 8 ++++++++
-> >>>>>>  1 file changed, 8 insertions(+)
-> >>>>>>
-> >>>>>> --
-> >>>>>> 2.43.0
-> >>>>>>
-> >>>>
+Thanks.
+
+-- 
+tejun
 
