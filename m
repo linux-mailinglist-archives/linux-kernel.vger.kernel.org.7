@@ -1,181 +1,117 @@
-Return-Path: <linux-kernel+bounces-890921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988B6C41643
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:09:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0443BC41649
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:09:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7846A4E6640
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:09:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594FC1899162
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A3A2D663D;
-	Fri,  7 Nov 2025 19:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396782D7810;
+	Fri,  7 Nov 2025 19:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w9jQ924h"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eN4G8/Pt"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB1529D270
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5F726CE3F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762542547; cv=none; b=m7yb823fkmKh1bjfZaOmXMRy3yJHpuVX5iJgHmPvocn3odFKvuTyWEgJJKnd8/sCROGuHpXLlD3fmrGVx6KzgRThUSWEiKl2+VVypNN/LBhDxB33TMjaoZEsAuvjmXhGdCh6/fkeCGSuYcMzduRDhVnV7VQZRTqHatqiFCjPSqY=
+	t=1762542565; cv=none; b=uliqRD8NgwjD34vGEuT3xFs0pHG8yLY4JS2SJ+xx8LvrQMXSjLc7DCfUhILB8Mkxd1dbYuE/ITbhIXQYygBMq/NO1DnVSVJwxhJmrsUzGFWSTyosp6aygfweh93MbgNqTuqu0vevcVPHaaV4PcSSVnGUHSXKXTM8RVLqsl4LcYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762542547; c=relaxed/simple;
-	bh=8Sh01qsQnFqXTjo/cJT7q03gWfer8OL1PrCWFV7VHIA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=c5dPPQSvgFwmUOtS2se/AOI57zGuzns0EYAj2hj4S5pl4ykbXVTIw5SL2PTqwMNPmd94Wms7Cra9HSJPdJItLTPhynzrEHXxA+eAj7ex523GBgqEpwDgZ6hqfDxIlbL+V95wj/e28fjCOmCoa1bAD89o5ltwdX5hzJl2MCPhfXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w9jQ924h; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1762542565; c=relaxed/simple;
+	bh=Jio0dLTMHWuJSbVzrU/hSMiGj/f2giYmy7YHRCXWFCk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ljXzqA8Fn1e5K3dHxOYOmw28RKwWbw6LuA7goEsDhbox2d0zqj80LYhZ8JYqIezTrefjDPc8t34ZIGm4sbVGacRNjsKa1YdqYVuuhhek6NPYM2gKYqea1zsEt0cjyNQViebsrQK+q11it8xbREEW5Sw6+9AjE12BD8IFcxFMGYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tzukui.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eN4G8/Pt; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-340d3b1baafso1761015a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:09:05 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tzukui.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b8f8e1f1044so1733162a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:09:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762542545; x=1763147345; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X77mgdPoU1VHaudK74YxkC46spvrpO5NvEWTm3wV9vw=;
-        b=w9jQ924hxBWCZu74pfwvP2w2UALLbIuD8d/t+P0BXcMZ+g5GYzf6FEpau8MYO0etbv
-         Bizl4Dvtw7fi7vLeb/b1eUueeaLevKmQ/BZqeCSWc0JBLWd8pqm3hBJXteFtVvJvOVzw
-         OUAppJqvrazDwOvBXWyrPsPNXt7W4hxH0kNOc+xXgR3jso67oHQfVwlP52XwHdj6q+Uh
-         Ot7B5w34uyoAVA7hmgxRvtlvaLvXduLRJ0ToJFdXBXajD47iZgBqqKs2W/58/wSndkgD
-         kdRn3bdmWcqTACG/pF57ncxnPG2l7cMTArwFghG4NHLoLtmNrWExh+EWKotJFPP11Dz3
-         chWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762542545; x=1763147345;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+        d=google.com; s=20230601; t=1762542563; x=1763147363; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=X77mgdPoU1VHaudK74YxkC46spvrpO5NvEWTm3wV9vw=;
-        b=N3zjgZRPFruTx5xBAtOk9Boi2yIDgYJeJSN4VoxNDwI0LZHjIv6zUutvcgmYdeoCi6
-         pmEB7gCFFh/+qtWQiv/zB84ri6yhSIO+1bsRehLYVBAItV1/wLeu1DzRs5MobFNTu1yW
-         I3HRYCN3o6sURt96qK2RfU5WHOn5hqDXGmxc7LBu3yUr8nLhM0ynQmhP6G/GpLfiIGuq
-         WXVVSn245ctbq9S9usywHZZrttPEVVKTnMJdSBlsc05JlHYovhyAtsFQaXFGV5Mx5yqH
-         koYr98tDQiymnbQMChWMaFurhf9YQxWlPZvI+alCWIwvuUwjgQTbwpps4vFJe/Y759G6
-         uVdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXv+y+hiMCXfXImvaxTkLbiZNTRVM+uhP+sfFSvPmL/KXjFGTy645vRNXcUHuIS2HlxfsfgTsdhGKn9piY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeJ6ImDvPPa/xbK46Am8cwyOTT6mmbfgetMov0xropLpMQZjdp
-	46rTo9NKuvhY/bxlWxn5iqknz32DU7Pf9MBD7BMsq4YwUCu9UyfGchjlJuX4j48r7tYTiHAHUUg
-	uLWsMIQ==
-X-Google-Smtp-Source: AGHT+IGH7LL6GV2gLbWjUzWfRR4A8LykKgi383PZhU1U0IWxftK363fN1GI5ZstiN7+YwdfTqgRZ/o9SlrQ=
-X-Received: from pjbdt5.prod.google.com ([2002:a17:90a:fa45:b0:341:7640:eb1e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3811:b0:340:29ce:f7fa
- with SMTP id 98e67ed59e1d1-3436cb7ae1emr293287a91.7.1762542545053; Fri, 07
- Nov 2025 11:09:05 -0800 (PST)
-Date: Fri, 7 Nov 2025 11:09:03 -0800
-In-Reply-To: <599eb00e-a034-4809-8f5a-893597016133@linux.intel.com>
+        bh=0NVzA0RssgZmBwPsMPQrXHwqZYSq1RpFtucbk/ffCh4=;
+        b=eN4G8/PtR/ZBgS+FbJb5VWo6XeurcZv36ZnFNjgZ2ETdhucnrYEgv6B0cbPYTSZILA
+         t99bTN7aym6vvMBWMr7uF04+7NYC57W591uWr66cYnRaw/tWDtKSUXqNDBoWb/QHRXMq
+         F65Cs5F5qQhnd46DuriHdzT96C/suzq+o0BGWPo/u9bgzNhKdkzOAgsz6Y90Qu9fCUcz
+         Gibo6n5j/oy7m8m9Th0tGvIg2PduR1Bidhj3yK0CmsDfsMkaGWMgN/eCFIhIToWEy13n
+         XDSeXgFIC+9t3yMbln5O311EQaEbzZ19aEIjbaaNB3eDzGRxdxYi3Ht5M79DGTQZlGN1
+         Sgag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762542563; x=1763147363;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0NVzA0RssgZmBwPsMPQrXHwqZYSq1RpFtucbk/ffCh4=;
+        b=uoinWgMLUAcm1ECmpO3TdBSGz8BSGsTNOWCgZb/RajlVoXSI57wey5HEFruYQ9ny+O
+         sM7I/Khv6xxaMWPhJazrf4rmo8lzOTDpdUZezivMqm8cs6jG4JUvji8UGLxPXR7BAOGW
+         7A32XlLEUJAL5aiws//1DKjg7G6oJ3wrRHrcq+AcolfpQwgb31KJpxNsh75z6xSFPSdf
+         AYYMaZXD+6IDj22elHoy3suNP/IIcYgRXDgVDMjhEx5pAhQUg0XaP14rrXxNmGyTz43w
+         KDGB1TPg/qjnsfBxPYFkAwY0PPEXIrsSyjBpSHltrnc+s2cksoxAur77xmNbopqR9fKN
+         cYYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmPHT5pPGdrrbmTBB3qyo2SBtn9jRCwb4FqYcbmufc+khDxguKhU/OIvLplasr0b/QQFdOI9tfs6uJb1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhP/kD4ZDj0GYsw9LE5DvJmc/X1iEmFlTM01GA45gLDH6pFvC/
+	IJ+XSC5guCucMX6ZNCqSYQX6zlHwuks9P+OTVVErHcKyU9tsOBkYt5WjC8j+uRpZeEFJGchP11K
+	kntBu3Q==
+X-Google-Smtp-Source: AGHT+IERV/3DbTV3WeqT5ErpZeSNkgmJgFP4LV8NkvrM2+uwaUCdMTQHV1trZquhgmdySuzjgVBwK8cSeuo=
+X-Received: from ploc8.prod.google.com ([2002:a17:902:8488:b0:290:b156:3774])
+ (user=tzukui job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:94e:b0:297:d6c0:90b3
+ with SMTP id d9443c01a7336-297e564e7b0mr2374475ad.23.1762542563521; Fri, 07
+ Nov 2025 11:09:23 -0800 (PST)
+Date: Fri,  7 Nov 2025 11:09:17 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251106101138.2756175-1-binbin.wu@linux.intel.com>
- <aQ1kG5u8GPdEwoEy@intel.com> <599eb00e-a034-4809-8f5a-893597016133@linux.intel.com>
-Message-ID: <aQ5Dz4UznE9a0N2-@google.com>
-Subject: Re: [PATCH] KVM: x86: Add a help to dedup loading guest/host XCR0 and XSS
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Chao Gao <chao.gao@intel.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251107190917.2858684-1-tzukui@google.com>
+Subject: [PATCH] iommu/arm-smmu-v3: Fix error check in arm_smmu_alloc_cd_tables
+From: Ryan Huang <tzukui@google.com>
+To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, Nicolin Chen <nicolinc@nvidia.com>, 
+	Pranjal Shrivastava <praan@google.com>, Kevin Tian <kevin.tian@intel.com>, 
+	Lu Baolu <baolu.lu@linux.intel.com>
+Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Ryan Huang <tzukui@google.com>, 
+	Daniel Mentz <danielmentz@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 07, 2025, Binbin Wu wrote:
->=20
->=20
-> On 11/7/2025 11:14 AM, Chao Gao wrote:
-> > s/help/helper in the subject.
-> >=20
-> > On Thu, Nov 06, 2025 at 06:11:38PM +0800, Binbin Wu wrote:
-> > > Add and use a helper, kvm_load_xfeatures(), to dedup the code that lo=
-ads
-> > > guest/host xfeatures by passing XCR0 and XSS values accordingly.
-> > >=20
-> > > No functional change intended.
-> > >=20
-> > > Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
-> > Reviewed-by: Chao Gao <chao.gao@intel.com>
-> >=20
-> > <snip>
-> >=20
-> > > @@ -11406,7 +11391,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *=
-vcpu)
-> > > 	vcpu->mode =3D OUTSIDE_GUEST_MODE;
-> > > 	smp_wmb();
-> > >=20
-> > > -	kvm_load_host_xfeatures(vcpu);
-> > > +	kvm_load_xfeatures(vcpu, kvm_host.xcr0, kvm_host.xss);
-> > Nit: given that xcr0/xss are either guest or host values, would it be s=
-lightly
-> > better for this helper to accept a boolean (e.g., bool load_guest) to c=
-onvey
-> > that the API loads guest (or host) values rather than arbitrary xcr0/xs=
-s
-> > values? like fpu_swap_kvm_fpstate().
->=20
-> Make sense.
+In arm_smmu_alloc_cd_tables(), the error check following the
+dma_alloc_coherent() for cd_table->l2.l1tab incorrectly tests
+cd_table->l2.l2ptrs.
 
-I don't love passing true/false, but I Xiaoyao does make a good a point tha=
-t
-subtly requiring the caller to pass vcpu->arch.xcr0 vs. kvm_host.xcr0 is we=
-ird
-and confusing.
+This means an allocation failure for l1tab goes undetected, causing
+the function to return 0 (success) erroneously.
 
-> > static void kvm_load_xfeatures(struct kvm_vcpu *vcpu, bool load_guest)
-> > {
-> > 	u64 xcr0 =3D load_guest ? vcpu->arch.xcr0 : kvm_host.xcr0;
-> > 	u64 xss  =3D load_guest ? vcpu->arch.ia32_xss : kvm_host.xss;
->=20
-> Since they are only used once, I even want to open code them as:=20
+Correct the check to test cd_table->l2.l1tab.
 
-+100, I find your version much more intuitive.
+Fixes: e3b1be2e73db ("iommu/arm-smmu-v3: Reorganize struct arm_smmu_ctx_desc_cfg")
+Signed-off-by: Daniel Mentz <danielmentz@google.com>
+Signed-off-by: Ryan Huang <tzukui@google.com>
+---
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> static void kvm_load_xfeatures(struct kvm_vcpu *vcpu, bool load_guest)
-> {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (vcpu->arch.guest_state_protected)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return;
->=20
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)=
-) {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (vcpu->arch.xc=
-r0 !=3D kvm_host.xcr0)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 xsetbv(XCR_XFEATURE_ENABLED_MASK,
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0load_guest ? vcpu->arch.xcr0 : kvm_ho=
-st.xcr0);
->=20
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (guest_cpu_cap=
-_has(vcpu, X86_FEATURE_XSAVES) &&
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 vcp=
-u->arch.ia32_xss !=3D kvm_host.xss)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 wrmsrq(MSR_IA32_XSS,
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0load_guest ? vcpu->arch.ia32_xss : kv=
-m_host.xss);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
-> }
->=20
-> >=20
-> > 	if (vcpu->arch.guest_state_protected)
-> > 		return;
-> >=20
-> > > 	/*
-> > > 	 * Sync xfd before calling handle_exit_irqoff() which may
-> > >=20
-> > > base-commit: a996dd2a5e1ec54dcf7d7b93915ea3f97e14e68a
-> > > prerequisite-patch-id: 9aafd634f0ab2033d7b032e227d356777469e046
-> > > prerequisite-patch-id: 656ce1f5aa97c77a9cf6125713707a5007b2c7ba
-> > > prerequisite-patch-id: d6328b8c0fdb8593bb534ab7378821edcf9f639d
-> > > prerequisite-patch-id: c7f36d1cedc4ae6416223d2225460944629b3d4f
-> > > --=20
-> > > 2.46.0
-> > >=20
-> > >=20
->=20
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+index 2a8b46b948f0..9780f40ba3e6 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -1464,7 +1464,7 @@ static int arm_smmu_alloc_cd_tables(struct arm_smmu_master *master)
+ 		cd_table->l2.l1tab = dma_alloc_coherent(smmu->dev, l1size,
+ 							&cd_table->cdtab_dma,
+ 							GFP_KERNEL);
+-		if (!cd_table->l2.l2ptrs) {
++		if (!cd_table->l2.l1tab) {
+ 			ret = -ENOMEM;
+ 			goto err_free_l2ptrs;
+ 		}
+-- 
+2.51.2.1041.gc1ab5b90ca-goog
+
 
