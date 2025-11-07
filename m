@@ -1,164 +1,156 @@
-Return-Path: <linux-kernel+bounces-890683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 201F0C40AA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:49:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43EC0C40AAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:49:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F233F1897C4D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:49:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FA391A456FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF3332AAD6;
-	Fri,  7 Nov 2025 15:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D276E32AAD6;
+	Fri,  7 Nov 2025 15:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="hhxoEx3/"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WnLN/78y"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7E52F692C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F8E329E7A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762530560; cv=none; b=Zwpy/ma7CCbYLhanbnIphRSBlCgNutjpT0dOzrh7XcwQ68tEGBHqw4og4IZaJq/vagrIJluca7W1xrFTS6QYr1v4MJQwHV9dizslBxE92qczn8B/SThxbKV/e9F7E3JLLcTF8h72BY11wcf24J+o31VnRMBXI7ZpJYTrv8oZAc8=
+	t=1762530569; cv=none; b=Qb2kQPom5TLWts7wAl30ednTUrrY2oVrQQvxjAxnD52WCcQRfHAIM8Elq0EnlweXLcdYRNLFIoyrroXCbT5mQVfYwikmZypdU5/I4/9cfqow5JyjQN91aUWVPfYNucRPI+oQUWEjtxK1bSWWs54uM75koQsglVbXKShubduDyIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762530560; c=relaxed/simple;
-	bh=/6Y4zC9sj6dMH09rggUUO+LoSiudUJWecVQ+hbH+ODM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TxPFCsKBLi+AixrStpGu9nJ7GBe4rOPe+SxoBztznDpc1YrzMINe3RomRuzUY6by+A+P163iSh9QJrynURoMGZZu5cCOyG+3tRpx3FAfY9yvAbGPNdveAGLowfk1LlQi6Igr92gBhHQ3EQCBmaWBpa6lEXWeD44YCtjdTqOOllc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=hhxoEx3/; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ed69197d32so12564831cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:49:18 -0800 (PST)
+	s=arc-20240116; t=1762530569; c=relaxed/simple;
+	bh=27VE+i4w0x2v9vXfjkwHZYZx7SWxOyXyFMIchgV6VXM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cuc+Qbk30yfIR7hJrNQVV+S5cxkwtUsiFC53qwWxaLUBSgsLk8EQMNxGdsHaCEhJMKRDs368/CrbJwFRG/+BXLHq0ctId4UhJaYz8dcs12AwxTrh0vH1BOr0mgQpamjKo1kmIKCPhmv+PUXDyyn/cbL85UMJ7AKazBSWfGoK4Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WnLN/78y; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4775638d819so5262485e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:49:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1762530557; x=1763135357; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0v6eg6ng71W2ihQc/lk64rXLMci9QzB5Z5WSHkaUZyQ=;
-        b=hhxoEx3/gwCynSDwkgkMCVN6+1lbh0AU/qJN4BVXpoZv9lIqp4Q0Sc/cxcqzET6m3g
-         PHLP6ASfdIFcRhz/wkwh2rlh0rPWCSghciX3DOy+nC8FgM4jJNk60dz5DKo1n/rl85mJ
-         fR9tSwasmX8lNC9ZplW+3FVxLGo6KuGg8/lk9C3irXE5LwXGk4/A2hc3XYzsRTICP/li
-         UU8WBOP5yWRx/FeppIgNAtVRcP68MJWhsS8oGY4y3wLSLza7blL10t7q7J/XqpgSPUaL
-         7LVagrhPNwW0bp344IQnDpqxb0w5/2X/SBWd85lPsKJ9KOdQ2Hs0MfE83/lPOgp73pfu
-         yOow==
+        d=suse.com; s=google; t=1762530565; x=1763135365; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CieNdBP+iDUkzWsYIh1zY2fr6PrC6rMrfQxyOHiJYwM=;
+        b=WnLN/78yOG2LCA6lR4rsnKSWLX7cUHNK/qLZkFwxHKQ0RsK7yv98gXfGZeI+ymz19i
+         89QwiV3QyFFjnNkgCfrv/S5tyJLfuCCqkq4S/Gx4w6dmKtDaZTjOEk/iLqQYZEfYIV51
+         qUqNpaR4HFVL2wz2g4PiEE1D4FMojwQtQvrwybS3mXGhXBMxmbx3N3Vn2pwNaBD7wTFx
+         yhhcCBiZxeaf2Y8Vf3+zKflTkDqvCmm2E54XlYIgR7xS+eX+GsOJk7tLssDPLQd6bToF
+         s7OorbwNhyhvQiK+85nlRQVCNdRp652uaI+bZhw2ME98gnTLR9HPtlZrOZcakcLShJGT
+         M31Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762530557; x=1763135357;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0v6eg6ng71W2ihQc/lk64rXLMci9QzB5Z5WSHkaUZyQ=;
-        b=IMLRIDq8Bm90XKdRp4OjU1WlqFYShCYEU8rX02aIPiTghRLuH2qErzWcyU2HuZ5mKO
-         weZZ1toF1SdHjLiN8f/Wk+yveSV1vDReKXN3yhOltMop+ht1QInAO/530dgofZCXhDaT
-         CL3EMhI5Cno2oLjLnV3/HuuCtmXm39K4gg8HzrKkqAoGyhJod9+mowHa9SrsY5YdfvMX
-         qfbXEJo92BYTCHvV81iGSvrprSqz4j0fwMhvabjKibG1JsAecEshSXFyZ0v03veTX4jw
-         oakbip9uyZgLsFXzRo7XKVDuw0f87dXhFrLcBlYB4Q1UMJ6aLTdDoWer+TqQUrcWAcD2
-         Cqtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUb5lUcji+tuL01mwybUAKNAQYWE/vDA4KtSu/+cFy7J7thGZ5wZ06ABRXA7KPAxzWMQOL0EZV2wiga870=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwclRSwVM9pnFiVPabX2EKSMssSlEK6Gq1KJNWF1hKKRS8lhfBz
-	JID/3m6ZVGsYGuN4MRaDFwKpoZg7fsI4uRQlTbQOCs7h87l5OZVHEU6yqxp++m9Mmg==
-X-Gm-Gg: ASbGncuGiiY65RFXsDAo8lrMw2RcmD+4VNORWuzX6WEAMWPpNgrKtHeUehbpfMhju2T
-	ROYNgSTWLsIpaBnECesgepZT8lYqGaxhiGXVGTpByT4h8JR0Eo8YVH5zsiaZ2YZzMgHd69F/Vsj
-	EhR9qlt1ltr/qjLl/A6FLP4KWUbkRxVjWQfxHWMds4eEW+VKdTYv5tU16+j6Ko8GdtWe9vW2Hhj
-	dix3rNBeOk2a+kvL45WvxwOERK0q3xQz/3msZhB6kMD2mVAk+Mpvgu5VMhaDpfkwsUtsB4nPvlN
-	e7+s7cJri4CPtJMpvGIqutfmYryY4Tvr9TGWB9bnksUmRHjrEDvs87YGVoyBc9Vz0NfBkTTA40o
-	5DxA7/vyDMHdM/vw4qxdxb14fe1N/N63G5DG3UFpTjh6pxkIlwcstfkbG+uNjJg49u/xFZGtHp/
-	X7yrkv0U/U+Oi3
-X-Google-Smtp-Source: AGHT+IGv4LvT9OxkoIkqXESdEl9EKbK/wl0vLym3A5YbB9ZFv23y4EMfP2ZZvGqODR86AGem03ZGxA==
-X-Received: by 2002:ac8:5803:0:b0:4ed:66df:8023 with SMTP id d75a77b69052e-4ed949747c4mr43829531cf.30.1762530557379;
-        Fri, 07 Nov 2025 07:49:17 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:d03:1700::db9a])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-880829fa47bsm41535246d6.48.2025.11.07.07.49.16
+        d=1e100.net; s=20230601; t=1762530565; x=1763135365;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CieNdBP+iDUkzWsYIh1zY2fr6PrC6rMrfQxyOHiJYwM=;
+        b=nS3VFSd3KOEjUQJS24hc4PvEMSVx4r33CX5nHj60om25SNoY7aHoJjzoIzW+PunL2i
+         IbhNx6D8utxYhKjh5P9JYXEpzyBuO/1VrfMfInik/JzIHQaCNYTlvAhz4p0+KT335uHE
+         VvPZA6eBfe49xH2rEhJuQPvUYQNV3L78lPeZ3NtJDucb12Y8an8kyX1UgeXzH/ERxTy7
+         a4hHEA/Iu869JNJ7eHonSju6u69yzswZTkg1tXvm+QZVDcSgsAXYbQWmKMIqwcKHi8VH
+         2XuDNRJJD0iMxNWguo0TEtxlVmOldD5S3J2APP5UmfwNrFDw6L3IUbynloZvzVkKq2Db
+         ivHg==
+X-Gm-Message-State: AOJu0YyNERYDeEy8mUuOPs8KTb5xUdpxv38V1xYIWYN5MmfIedhym+Vf
+	Cv9XBUBlgx1eS3ntl7aJ6cGayESG1/M3tNFTBQ15OvDOFopJDqDOLiccsecCGja1iGdwWUAVbmi
+	bc3aB
+X-Gm-Gg: ASbGnct6NS21yrSoVt5agupyBS25q5r7i+vNYdTsllzIHzpZhYE0mEpO35wZr6NzdJf
+	8MLd16ibscubXcn7nXasz2VQdNKZ/c6YS82WiTO2IETB7wSP/PFHmw5Amqs3QZrdZSrF6qxe8ZK
+	pgbN6lClZ7XVzCvte+Pa9c6XfIIhKxSTWLWxpTgs/na1/wxTRDu4GT4fEgNSSLq2Adqj/0w1ra+
+	8MfLqf7avTfr/bfm5AVFel2P0Yt4+D7OgVuoJIsyxELZ4RW/SBAA5mFO3Z/TQ7P33huBHJk6+7u
+	x2AvmVHfbZb2gVWJFmpnp9cFJBThORqwzA+yHbmdM1MN3Y5ydkzYXgfKfaN0kR9SHo1AfUnAXtn
+	fbvJZca4YUHJdCEGnRSt8GS1gpeC/lI7r9EjtLvvcu1JaQdGx24GnFX4oXvft6kJTa5H0nWiNKR
+	hhdJIjguRc3t3mGY1mMXzwCZar/CjdQeOIAoY=
+X-Google-Smtp-Source: AGHT+IHCPrN7eR+D+kU2SwBA7nmLBnku+5xo6MtDpIgXiSpETxbxNcs9TulWIMc7l8A5LJZmRcmwdA==
+X-Received: by 2002:a05:600c:1c9a:b0:45f:2922:2aef with SMTP id 5b1f17b1804b1-4776bcbf80emr41226985e9.28.1762530565117;
+        Fri, 07 Nov 2025 07:49:25 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62bf40sm5875338f8f.9.2025.11.07.07.49.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 07:49:16 -0800 (PST)
-Date: Fri, 7 Nov 2025 10:49:13 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: ccc194101@163.com, Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	Alan Swanson <reiver@improbability.net>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
-	Chen Changcheng <chenchangcheng@kylinos.cn>
-Subject: Re: [PATCH] usb: usb-storage: No additional quirks need to be added
- to the ECD819-SU3 optical drive.
-Message-ID: <c7bf59b5-8078-4b47-b56a-7b5568272d07@rowland.harvard.edu>
-References: <20251107061046.32339-1-ccc194101@163.com>
+        Fri, 07 Nov 2025 07:49:24 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	"Michael S . Tsirkin" <mst@redhat.com>,
+	David Hildenbrand <david@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio Perez <eperezma@redhat.com>
+Subject: [PATCH 0/2] add WQ_PERCPU to alloc_workqueue() in virtio_balloon and vduse
+Date: Fri,  7 Nov 2025 16:49:15 +0100
+Message-ID: <20251107154917.313090-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107061046.32339-1-ccc194101@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 07, 2025 at 02:10:46PM +0800, ccc194101@163.com wrote:
-> From: Chen Changcheng <chenchangcheng@kylinos.cn>
-> 
-> The optical drive of ECD819-SU3 has the same vid and pid as INIC-3069,
-> as follows:
-> T:  Bus=02 Lev=02 Prnt=02 Port=01 Cnt=01 Dev#=  3 Spd=5000 MxCh= 0
-> D:  Ver= 3.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-> P:  Vendor=13fd ProdID=3940 Rev= 3.10
-> S:  Manufacturer=HL-DT-ST
-> S:  Product= DVD+-RW GT80N
-> S:  SerialNumber=423349524E4E38303338323439202020
-> C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr=144mA
-> I:* If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=02 Prot=50 Driver=usb-storage
-> E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=0a(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> 
-> This will result in the optical drive device also adding
-> the quirks of US_FL_NO_ATA_1X. When performing an erase operation,
-> it will fail, and the reason for the failure is as follows:
-> [  388.967742] sr 5:0:0:0: [sr0] tag#0 Send: scmd 0x00000000d20c33a7
-> [  388.967742] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
-> [  388.967773] sr 5:0:0:0: [sr0] tag#0 Done: SUCCESS Result: hostbyte=DID_TARGET_FAILURE driverbyte=DRIVER_OK cmd_age=0s
-> [  388.967773] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
-> [  388.967803] sr 5:0:0:0: [sr0] tag#0 Sense Key : Illegal Request [current]
-> [  388.967803] sr 5:0:0:0: [sr0] tag#0 Add. Sense: Invalid field in cdb
-> [  388.967803] sr 5:0:0:0: [sr0] tag#0 scsi host busy 1 failed 0
-> [  388.967803] sr 5:0:0:0: Notifying upper driver of completion (result 8100002)
-> [  388.967834] sr 5:0:0:0: [sr0] tag#0 0 sectors total, 0 bytes done.
-> 
-> Signed-off-by: Chen Changcheng <chenchangcheng@kylinos.cn>
-> ---
->  drivers/usb/storage/unusual_uas.h | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
-> index 1477e31d7763..6d32b787bff8 100644
-> --- a/drivers/usb/storage/unusual_uas.h
-> +++ b/drivers/usb/storage/unusual_uas.h
-> @@ -97,6 +97,12 @@ UNUSUAL_DEV(0x125f, 0xa94a, 0x0160, 0x0160,
->  		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
->  		US_FL_NO_ATA_1X),
->  
-> +UNUSUAL_DEV(0x13fd, 0x3940, 0x0310, 0x0310,
-> +		"Initio Corporation",
-> +		"external DVD burner ECD819-SU3",
-> +		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-> +		NULL),
-> +
->  /* Reported-by: Benjamin Tissoires <benjamin.tissoires@redhat.com> */
->  UNUSUAL_DEV(0x13fd, 0x3940, 0x0000, 0x9999,
->  		"Initio Corporation",
+Hi,
 
-It's unprecedented to have two quirks with the same VID and PID, where 
-the second augments the first by virtue of its wider range of bcdDevice 
-values.
+=== Current situation: problems ===
 
-As explained in commit 89f23d51defc ("uas: Add US_FL_IGNORE_RESIDUE for 
-Initio Corporation INIC-3069"), the original Initio Corporation 
-quirk in unusual_uas.h was added as a copy of the corresponding quirk in 
-unusual_devs.h, which applies only to bcdDevice = 0x0209.  Should we 
-simply limit the existing unusual_uas.h quirk in the same way?
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
 
-Benjamin and Alan, you two appear to be the people who originally
-reported the need for this uas quirk.  Do you have any objection to 
-changing the bcdDevice range from 0x0000 - 0x9999 to 0x0209 - 0x0209?  
-Or can you suggest a range that does not include 0x0310?
+This leads to different scenarios if a work item is scheduled on an
+isolated CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
 
-Alan Stern
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
+
+        schedule_delayed_work(, 1);
+
+Will move the timer on an housekeeping CPU, and schedule the work there.
+
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+
+This lack of consistency cannot be addressed without refactoring the API.
+
+=== Recent changes to the WQ API ===
+
+The following, address the recent changes in the Workqueue API:
+
+- commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+- commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+The old workqueues will be removed in a future release cycle.
+
+=== Introduced Changes by this series ===
+
+1) [P 1-2] WQ_PERCPU added to alloc_workqueue()
+
+    This adds a new WQ_PERCPU flag to explicitly request alloc_workqueue()
+    to be per-cpu when WQ_UNBOUND has not been specified.
+
+Thanks!
+
+Marco Crivellari (2):
+  virtio_balloon: add WQ_PERCPU to alloc_workqueue users
+  vduse: add WQ_PERCPU to alloc_workqueue users
+
+ drivers/vdpa/vdpa_user/vduse_dev.c | 3 ++-
+ drivers/virtio/virtio_balloon.c    | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+-- 
+2.51.1
+
 
