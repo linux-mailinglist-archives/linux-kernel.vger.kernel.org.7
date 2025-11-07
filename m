@@ -1,214 +1,238 @@
-Return-Path: <linux-kernel+bounces-890663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C172C409BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:35:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4860C409E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:37:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F11A4F1521
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:35:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B81AB188B1F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38FD32B9BA;
-	Fri,  7 Nov 2025 15:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565D432B996;
+	Fri,  7 Nov 2025 15:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CBjXHOYy"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KR2yb5c9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7810E3081B5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D953081B5
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762529714; cv=none; b=lLKZAcaV9RZXIy7w6VDGfbL6nPllr9UH/W/MehjG8mOI2K2GGGvQNQZAuYxZaV4xBiPKa3nTejr0cV+OdOq8T53otxjSLgcxhosZ5gH8yWzznmd5acDxoPOhjBMo5ea0XooU1h4Fmq5bt8faqRe7RD8bOcQMIhYjjdDUyS/rJV0=
+	t=1762529815; cv=none; b=rFOPY0RPg+1A+KigqylZu+1v9yWwMOtO5DeWy/akUWefwUl3qhZYAlyldy6Bx7NzV8aYxZODw6lrJh7ZLW91SQWrG1mevwaaUAeab+EMlaAye1lJUU01Ww7eEBfFEYv4oJQUWc6CQ6uTWTnT8Ja9WRUPPYICRUIN1cSGuAKwHgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762529714; c=relaxed/simple;
-	bh=7m90U4fRlmTtbaduAz/n40bucosBtxg2Nlzb525AIWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aySE8UQABkqY8Re4WtmwwXc28Sava8dq0m0dl8bRYmTOq/E2NBu4BK47oOgzqmXzohN9te8Yl01lMmEX22pX7zOFCqNMAmC2NDWPxK55Eu7OpNi6q/gIOUW7vvPgh/eJ09mG47Qj9oD/4vvTKofCwJ9gaqN5Xr7NxwEphaR7Aaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CBjXHOYy; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d71bcac45so8457537b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:35:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762529711; x=1763134511; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hg5UfzPKclS12jZ/MM0cVARNy4+o8xhJZIOiFJg4L64=;
-        b=CBjXHOYykeExWbAdUzaTfxbv+hYeDnJ4OE6LMEsIQ+j1HllMQbTwIrF1ZEDn7jXbaG
-         lDM2Uj71u4sDtbD+vGnxUFHY34GPfx3h1iW1JsUxF8CYD3oxAyQxZbZplmBquMOloTwP
-         oRPywO8QmaIR6yh3L4Hcuck/OkBnD05U+hfOWzV/GEhqkGUyL0NYgE2trQfhP5MA7DoZ
-         LQpahZrpYOlvRREH+zpYiz2WBgdGz4j+YhGxFHwBjcPyqqb7GU/IMiM7XEpmL1F9pPbk
-         H1bgVT9cQsFpWEguqlEo19mGxZbreY0161jBsEn/zIuo0yFqfn26o9DZH7p0Aat4utdn
-         RyuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762529711; x=1763134511;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hg5UfzPKclS12jZ/MM0cVARNy4+o8xhJZIOiFJg4L64=;
-        b=HtLGkqxnvV/cTJxt2l5uiHBjFKxuNxlXk1yyvy5UI46y8qng+DzZ091rn++wqCSTBL
-         7okGVtmxFuxk7pmrpoPpkF6+Z8jEAqcvQtZoIUNk5cWBWSqT0RmMsRcD1aHsv4WKdg94
-         Ll29wsyE+pol1eiK05QqoPz1NulRGBwboid8CT2gCAze0dZGb1/id6B1eF7LW8qLa+mf
-         SkgywTDQ1QuvfF+Fb6ojZHXlxBo9wyph2dc6WYIJwDIwCBo3Fjj29hXBlM6yLtfyrxSL
-         OnDHAWn9QFt4p/EPye15W0b7UmFgLLvUCvDW9w1p5Quvxv3oS6NZQdJb+U6OLAv0+zd5
-         Y3NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXfgbqmAhmwV5jkPzxyxMERUm7AfPwKmMcwsWO+/dh+37mMsLAU8oT8AaI5w34DfLuli3i55sWqyUPPrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDgERnhXY63kaTy8mluZH6Y+Esg/3BDAaZHmUUil7MvGI36kzN
-	8SR33j2mrQWHmK/il9+Dtf5LRunWgXj12bPwYeUvLkb/TN078cYMDNti
-X-Gm-Gg: ASbGnctJ/EBL09qGiskct+bbw3FWFS0FRm+heLdHMqsIiPxxrSE8/4VFozT8qvrBg7O
-	No6zeeLzBtYoa2ID86Jhs99OnB4CjawO25RfpmRzjxQtCx4M+mbyqCKTm9IKeP7GJbcdAusM4/s
-	d29H0kVX3GjOIVryC8GEaTX9NSMO9xdNUslCRgFpTQjKcq5zDEjjqWl+p0yWPTfgozLksgQ5FyP
-	ACc4idrNkgmU1sOcdgtfWngZqpqTNqkQcicGDRTe7oDOOGNvf98plQf6aZ3Bp5MCNAOLb+I8W4j
-	c3+A/8hEVmALTeIHogG1NbYKJ2rYADgFp7/mfFN9nQHT6qQKDORuYBsOWtTdsxi7/kUuSA8cM4S
-	6C5RKI5VLWdwtk/MhzRsAqtJxHfp5+oXFGdHxyGXRUkeCA+T6zBeknUUjibjVLwEc7omrWavnEl
-	fhL9GrDpcqexhdFcz2E2i6SzizXOEXL7SZVGUZ
-X-Google-Smtp-Source: AGHT+IFwUXomSgFrXOP5T+Zd2zXzyVOrxyGJXDnXPE08lhO8nln1/YwLRBm5iwzEweMUqR/HaaHj6g==
-X-Received: by 2002:a05:690c:360e:b0:786:a984:c064 with SMTP id 00721157ae682-787c53f0603mr27190947b3.35.1762529711161;
-        Fri, 07 Nov 2025 07:35:11 -0800 (PST)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:70::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787cb4db618sm4770327b3.32.2025.11.07.07.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 07:35:10 -0800 (PST)
-Date: Fri, 7 Nov 2025 07:35:09 -0800
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v3 04/11] selftests/vsock: avoid multi-VM
- pidfile collisions with QEMU
-Message-ID: <aQ4RrcB0tzMWch1S@devvm11784.nha0.facebook.com>
-References: <20251106-vsock-selftests-fixes-and-improvements-v3-0-519372e8a07b@meta.com>
- <20251106-vsock-selftests-fixes-and-improvements-v3-4-519372e8a07b@meta.com>
- <aQ4LaUi9wTnEN8KA@horms.kernel.org>
+	s=arc-20240116; t=1762529815; c=relaxed/simple;
+	bh=Si2Bq8Ogur87f5qpKbgXK8PPxENzv8KywcYsabwMvc8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RdxH2rkfhZeS48o97aV8/hZMkWjGskYLe+qZc+Hza9RPHbJQCrpvW9yVCJtjlp5u8hhhBKHzDdipJexeZSf1Tf3LJPk8FTLaQ5RWqJlVOolrulTlDZg6lBqh5z3JbJ32kOt4IA6N4/4uve9ePsfhJHf3fiJIzAWpk/nc8RdFG8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KR2yb5c9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A2DDC19421
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:36:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762529815;
+	bh=Si2Bq8Ogur87f5qpKbgXK8PPxENzv8KywcYsabwMvc8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KR2yb5c9YsDcniYO9MhFxn8ROzzP61FaKLLKDq/2b0fX45fmexiKPW71Yl2Hulsey
+	 Hj9RkVvIM53wgNnTNQcgv+X47CExD2V8a7VNT1nt2GLFcg/14zQpQ+p4wOD4ocRvUT
+	 KlFcMNQlUg7rq0LG89sjO+JMYD94clcTjMSifQNhBs56V7XdZjAZ8Xcn0hQPPkdjzo
+	 PibnhB0ikeVEnpA1eNtQqkO+AVZ8pFy3DAATyJ7Y3c/9N43zCzm7Y2nPxRi8Xlftb1
+	 Sxr678V6g52OJibI388rn67K527nhkcmAHw6ZDImKOTq6w2MJopZcNxm8m2DAVZYID
+	 EodC5E2P/xtYw==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-656b52c0f88so385845eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:36:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWmhCNCxGsTpohkoRIPWlhoO1hyhxL5+s6In7Y42vRJqcm96fIsL6iIqJ+I9SESNtBAPZNr8q4wjr54KdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjRf9Xmg/qFJMEZKimAUUpBz/lPXfBNhNzMvkH3pPenPijNy09
+	ooC6XthlBPU4XsxK/lplehG8j5bio9f6t764AWg3JdE6uAnIyew8WKoHWnOhJS6VqWuNMoHqZR5
+	WjPI6IZw46K0aAxC7dqstVYVRyapx6ss=
+X-Google-Smtp-Source: AGHT+IF+hF0a/4jdccGprT1Ok5sOlEoV5zNYSD6Sa1iO8XyJe7DWuz0CF46Gyo7rs83DksyLvuUHXTduouMUBwzEkNA=
+X-Received: by 2002:a05:6808:c145:b0:441:8f74:fcc with SMTP id
+ 5614622812f47-45015f57eebmr2100597b6e.57.1762529814298; Fri, 07 Nov 2025
+ 07:36:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQ4LaUi9wTnEN8KA@horms.kernel.org>
+References: <20251106113938.34693-1-adelodunolaoluwa@yahoo.com> <20251106113938.34693-2-adelodunolaoluwa@yahoo.com>
+In-Reply-To: <20251106113938.34693-2-adelodunolaoluwa@yahoo.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 7 Nov 2025 16:36:43 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gG3C4r-d+v2xGPqcF1Hn927NR7yBA7kLx4t6TjEo0rGA@mail.gmail.com>
+X-Gm-Features: AWmQ_bln76la9sUIlc6o0dhJ2_1ERWzWQa1zkPxNs6CHxbD_ok4RRm8d0omTNBU
+Message-ID: <CAJZ5v0gG3C4r-d+v2xGPqcF1Hn927NR7yBA7kLx4t6TjEo0rGA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] power/swap: add missing params and Return:
+ descriptions to kernel-doc comments
+To: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+Cc: rafael@kernel.org, lenb@kernel.org, pavel@kernel.org, 
+	anna-maria@linutronix.de, frederic@kernel.org, mingo@kernel.org, 
+	tglx@linutronix.de, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 07, 2025 at 03:08:25PM +0000, Simon Horman wrote:
-> On Thu, Nov 06, 2025 at 04:49:48PM -0800, Bobby Eshleman wrote:
-> 
-> ...
-> 
-> > @@ -90,15 +85,19 @@ vm_ssh() {
-> >  }
-> >  
-> >  cleanup() {
-> > -	if [[ -s "${QEMU_PIDFILE}" ]]; then
-> > -		pkill -SIGTERM -F "${QEMU_PIDFILE}" > /dev/null 2>&1
-> > -	fi
-> > +	local pidfile
-> >  
-> > -	# If failure occurred during or before qemu start up, then we need
-> > -	# to clean this up ourselves.
-> > -	if [[ -e "${QEMU_PIDFILE}" ]]; then
-> > -		rm "${QEMU_PIDFILE}"
-> > -	fi
-> > +	for pidfile in "${PIDFILES[@]}"; do
-> > +		if [[ -s "${pidfile}" ]]; then
-> > +			pkill -SIGTERM -F "${pidfile}" > /dev/null 2>&1
-> > +		fi
-> > +
-> > +		# If failure occurred during or before qemu start up, then we need
-> > +		# to clean this up ourselves.
-> > +		if [[ -e "${pidfile}" ]]; then
-> > +			rm "${pidfile}"
-> > +		fi
-> > +	done
-> >  }
-> 
-> Hi Bobby,
-> 
-> This is completely untested, but it looks to me
-> like cleanup() could be implemented more succinctly like this.
-> 
-> cleanup() {
-> 	terminate_pidfiles "${PIDFILES[@]}"
-> }
-> 
+On Thu, Nov 6, 2025 at 12:40=E2=80=AFPM Sunday Adelodun
+<adelodunolaoluwa@yahoo.com> wrote:
+>
+> Kernel-doc checks (scripts/kernel-doc) reported a number of warnings
+> for missing parameters and `Return:` descriptions in kernel/power/swap.c.
+> These missing return descriptions make the generated documentation
+> noisy and break doc-build when -Werror is used.
+>
+> Update the kernel-doc comment blocks to add explicit
+> Return: lines (and a few parameter tags where helpful) for the functions
+> that were triggering warnings. No functional code changes are made.
+>
+> Example warnings that motivated this change:
+>  - Warning: kernel/power/swap.c:535 No description found for return value
+>    of 'save_image'
+>  - Warning: kernel/power/swap.c:687 No description found for return value
+>   of 'save_compressed_image'
+>  - Warning: kernel/power/swap.c:941 No description found for return value
+>    of 'swsusp_write'
+>
+> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
 
-Oh right! I reverted the deletion and completely forgot about
-terminate_pidfiles().
+These comments need more changes to become proper kerneldocs and in
+some cases it is not even necessary because the functions in question
+are static.
 
-> >  
-> >  check_args() {
-> > @@ -188,10 +187,35 @@ handle_build() {
-> >  	popd &>/dev/null
-> >  }
-> >  
-> > +create_pidfile() {
-> > +	local pidfile
-> > +
-> > +	pidfile=$(mktemp "${PIDFILE_TEMPLATE}")
-> > +	PIDFILES+=("${pidfile}")
-> > +
-> > +	echo "${pidfile}"
-> > +}
-> > +
-> > +terminate_pidfiles() {
-> > +	local pidfile
-> > +
-> > +	for pidfile in "$@"; do
-> > +		if [[ -s "${pidfile}" ]]; then
-> > +			pkill -SIGTERM -F "${pidfile}" > /dev/null 2>&1
-> > +		fi
-> > +
-> > +		if [[ -e "${pidfile}" ]]; then
-> > +			rm -f "${pidfile}"
-> > +		fi
-> > +	done
-> 
-> I think it would be useful to remove $pidfile from $PIDFILES.
-> This might be easier to implement if PIDFILES was an associative array.
-> 
+If the goal is to avoid warnings, why don't you change them all to
+non-kerneldoc regular comments?
 
-Using an associative makes sense, this way we can trim the set.
-
-> > +}
-> > +
-> 
-> ...
-> 
-> > @@ -498,7 +529,8 @@ handle_build
-> >  echo "1..${#ARGS[@]}"
-> >  
-> >  log_host "Booting up VM"
-> > -vm_start
-> > +pidfile="$(create_pidfile)"
-> > +vm_start "${pidfile}"
-> >  vm_wait_for_ssh
-> >  log_host "VM booted up"
-> >  
-> 
-> > @@ -522,6 +554,8 @@ for arg in "${ARGS[@]}"; do
-> >  	cnt_total=$(( cnt_total + 1 ))
-> >  done
-> >  
-> > +terminate_pidfiles "${pidfile}"
-> 
-> I am assuming that there will be more calls to terminate_pidfiles
-> in subsequent patch-sets.
-> 
-> Else I think terminate_pidfiles can be removed
-> and instead we can rely on cleanup().
-> 
-
-Indeed, later patches will use terminate_pidfiles() in between spin up /
-shut down of multiple VMs.
-
-
-Thanks again, will incorporate your feedback in the next!
-
-Best,
-Bobby
+> ---
+>  kernel/power/swap.c | 35 +++++++++++++++++++++++++++++++----
+>  1 file changed, 31 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+> index 0beff7eeaaba..3f0df7a26bc3 100644
+> --- a/kernel/power/swap.c
+> +++ b/kernel/power/swap.c
+> @@ -341,6 +341,8 @@ unsigned int swsusp_header_flags;
+>   *     and get its index (if so)
+>   *
+>   *     This is called before saving image
+> + *
+> + *     Return: 0 on success, negative error code on failure.
+>   */
+>  static int swsusp_swap_check(void)
+>  {
+> @@ -367,6 +369,8 @@ static int swsusp_swap_check(void)
+>   *     @buf:           Address we're writing.
+>   *     @offset:        Offset of the swap page we're writing to.
+>   *     @hb:            bio completion batch
+> + *
+> + *     Return: 0 on success, negative error code on failure.
+>   */
+>
+>  static int write_page(void *buf, sector_t offset, struct hib_bio_batch *=
+hb)
+> @@ -528,6 +532,11 @@ static int swap_writer_finish(struct swap_map_handle=
+ *handle,
+>
+>  /**
+>   *     save_image - save the suspend image data
+> + *     @handle: swap map handle for writing the image
+> + *     @snapshot: snapshot handle to read pages from
+> + *     @nr_to_write: number of pages to write
+> + *
+> + *     Return: 0 on success, negative error on failure
+>   */
+>
+>  static int save_image(struct swap_map_handle *handle,
+> @@ -676,6 +685,8 @@ static int compress_threadfn(void *data)
+>   * @handle: Swap map handle to use for saving the image.
+>   * @snapshot: Image to read data from.
+>   * @nr_to_write: Number of pages to save.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+>   */
+>  static int save_compressed_image(struct swap_map_handle *handle,
+>                                  struct snapshot_handle *snapshot,
+> @@ -906,8 +917,9 @@ static int save_compressed_image(struct swap_map_hand=
+le *handle,
+>
+>  /**
+>   *     enough_swap - Make sure we have enough swap to save the image.
+> + *     @nr_pages: number of pages we need to save
+>   *
+> - *     Returns TRUE or FALSE after checking the total amount of swap
+> + *     Return: TRUE or FALSE after checking the total amount of swap
+>   *     space available from the resume partition.
+>   */
+>
+> @@ -930,6 +942,8 @@ static int enough_swap(unsigned int nr_pages)
+>   *     them synced (in case something goes wrong) but we DO not want to =
+mark
+>   *     filesystem clean: it is not. (And it does not matter, if we resum=
+e
+>   *     correctly, we'll mark system clean, anyway.)
+> + *
+> + *     Return: 0 on success, negative error code on failure.
+>   */
+>
+>  int swsusp_write(unsigned int flags)
+> @@ -1078,9 +1092,12 @@ static int swap_reader_finish(struct swap_map_hand=
+le *handle)
+>  }
+>
+>  /**
+> - *     load_image - load the image using the swap map handle
+> - *     @handle and the snapshot handle @snapshot
+> - *     (assume there are @nr_pages pages to load)
+> + *     load_image - load the image using the swap map and snapshot handl=
+es
+> + *     @handle: pointer to the swap map used for reading swap pages
+> + *     @snapshot: pointer to the snapshot handle that tracks image pages
+> + *     @nr_to_read: number of pages to read from the snapshot
+> + *
+> + *     Return: 0 on success, negative error code on failure.
+>   */
+>
+>  static int load_image(struct swap_map_handle *handle,
+> @@ -1195,6 +1212,8 @@ static int decompress_threadfn(void *data)
+>   * @handle: Swap map handle to use for loading data.
+>   * @snapshot: Image to copy uncompressed data into.
+>   * @nr_to_read: Number of pages to load.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+>   */
+>  static int load_compressed_image(struct swap_map_handle *handle,
+>                                  struct snapshot_handle *snapshot,
+> @@ -1529,6 +1548,8 @@ static int load_compressed_image(struct swap_map_ha=
+ndle *handle,
+>   *     swsusp_read - read the hibernation image.
+>   *     @flags_p: flags passed by the "frozen" kernel in the image header=
+ should
+>   *               be written into this memory location
+> + *
+> + *     Return: 0 on success, negative error code on failure.
+>   */
+>
+>  int swsusp_read(unsigned int *flags_p)
+> @@ -1567,6 +1588,10 @@ static void *swsusp_holder;
+>  /**
+>   * swsusp_check - Open the resume device and check for the swsusp signat=
+ure.
+>   * @exclusive: Open the resume device exclusively.
+> + *
+> + * Return:
+> + *        0 if a valid hibernation image is found,
+> + *        negative error code on failure.
+>   */
+>
+>  int swsusp_check(bool exclusive)
+> @@ -1631,6 +1656,8 @@ void swsusp_close(void)
+>
+>  /**
+>   *      swsusp_unmark - Unmark swsusp signature in the resume device
+> + *
+> + *      Return: 0 on success, negative error code on failure.
+>   */
+>
+>  #ifdef CONFIG_SUSPEND
+> --
+> 2.43.0
+>
 
