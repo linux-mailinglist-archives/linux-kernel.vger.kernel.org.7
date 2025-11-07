@@ -1,558 +1,159 @@
-Return-Path: <linux-kernel+bounces-890726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BC5C40C33
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:08:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5782AC40C51
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:09:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D2A0D4E14A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:08:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AB9B4E9B95
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54422C08BA;
-	Fri,  7 Nov 2025 16:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7FA330300;
+	Fri,  7 Nov 2025 16:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lDre/oK/"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="kiH0DTPg"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0448274670
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266EB279DCC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762531718; cv=none; b=iXI8Bx0GUDIN4C77xSauEBGeiv4pCOHh5Nzpe5SN4Uint+nmlYKDK5mmhOnOozoDbeKKLa3qyt3Xa5AVQ9Fwzc2lJhC8hS8U1SXQYDZ+7j+tjnmh3WP/2ahZht24MrOWQvKEBnpG3JLWEPG9wFFgNYx3rqIqUSSX1OUS1GHy8As=
+	t=1762531735; cv=none; b=F5EyoQTZc5AQc3L6Gcu14vHJuxM2OwnO6QVBLx3ami0F8A4LuH/OlOuu3kA5lv1T4a3ZDqxcpKASvZciNSZhzAM/vUymxr/QAdlczUi+dx1RT7xkWhAMOErocngRgZBz4BL9IYRgYr9CDcIv9ECCbpDP8qK1fzbn+lNTTHDMB3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762531718; c=relaxed/simple;
-	bh=v2636y6SnFaTVCSjjbjZJKimjt10rP6/82G7hqdLntE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=fRTS/6lSmNJF7rHXpYbutETDvw3hZOpwxC4zlG7bUjYMno3WFCspVCrcr7uj6heRoJIMatlr49sU5IEdj/R5plqDgN6NmyFFY+H+p3mRKhTguYxKJGHH2Dgm7LiRQfgmsrY5AEsZhqW1VNlPyYAbQHr8wH9P0fEyGYdqFUo8dt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lDre/oK/; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id BAFD6C0FAA4;
-	Fri,  7 Nov 2025 16:08:11 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DD63A606A6;
-	Fri,  7 Nov 2025 16:08:32 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D2C9D118524EA;
-	Fri,  7 Nov 2025 17:08:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762531712; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=9KrRC/iuUffalSwvZGHWZynkxntW24OS0RG9e613pho=;
-	b=lDre/oK/dVXuW+FoyGuK86hFY4guh3sWJxP1aGmqoiA65ZVUqAJs8wAj1RR1IKljBSeNIC
-	0ZAKVIe0jFKWKogtrAsbBx9SelGMZt9km1ayzh1R2nRC/MFtC6K01Wq7Q7oSjw/et8NS+t
-	ywd+ze5KbMaMnZ4dSfvZ0J5iCIdT9wCas0Ep8c8RwuA6j20Hsb/uBa7OCWV/bCDyb578eo
-	cf8L1f93fzbjqjV6IHiG7TZntf+s5AO9XE59MnrkVGmNoZUramOU60kQnhPsUfZiKMqGPd
-	HhXUYxCOCVFMGlHbi4a4V3y154GA+2jYM7bhSCXgNZ3vBGJG5XvF8m8gHDk4JA==
+	s=arc-20240116; t=1762531735; c=relaxed/simple;
+	bh=1UB7MjUKjWV6747T2U48We331jDJpIjDCkO4sdbS0zo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=T8zTAz/YPAzqWJVRrrYCNSclYXEE6xKP/XkCeA22uha45NBHmMq++yj5TeZt6qInk9KwREBexpuAS60dTM+A13v893ptNp8lSyPDXNFkvC2nu7/rGqEWtjnS/wGMfQ7BGc+HMvupa9u1EKq/B85id/VOlnkLJ+q2VPv3b2IvKgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=kiH0DTPg; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-640f0f82da9so1809793a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:08:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1762531730; x=1763136530; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vi4OlyDfrFyMuA//87+yq4v93Npa9bmKSRfzlMv2g0g=;
+        b=kiH0DTPgOyugBgO2kpcmOOvWRpvp6FJwy3XPbkaPqjdEyjZGJNaqviyfUNYcHJ5m5n
+         vayYwe+yuCYPjb+0yyqQkRi98h0bPAiLrn/AdVJ07s5nUNM7rfb+8470OCya/dBtpREm
+         /scTBslkqV2sqIiAEX7iMgVz+wxIZBTzS5kb1AJS0XDrUis0O/628kSHdhXmtZ9lmHT/
+         BoO5NDeheK0sey2W6XL/OKRQcCp17BC8YIN2+eDvK4rRBDQnxLENi+AynKag+oxjRl3p
+         fWJSSdJseCTofkryqXOjnkuQwgumbwuHTvxtNlP9t0HthBZPY0SVa3r6GPNIe3MZVG5D
+         bx7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762531730; x=1763136530;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vi4OlyDfrFyMuA//87+yq4v93Npa9bmKSRfzlMv2g0g=;
+        b=wqf8R5QJGZOma/PG8GYJSSJ1Bmm47elGdvsfkOcwXWzqUXOaEAq6DG5Ck+aHlf8Swi
+         ML5J6KejpSbHdHg+u1mQ7P8WhRdJ51rg5rHwK5mY58vMnnrZTMk471IOmS73OdzlRKWj
+         EUxvet+5jGWPZE1MWkci1g5Q4f5RrGH6GeupdyzhOvENu0sj6K2bXp7+qwgedC5Y0eKh
+         BEtoVapfchT9hXsKDuiPpi7BlsLsTJgjMSrqWEL4ZaR262KOrYmcYk5RtOkB9iEnfmWL
+         WtBlGZ6Fc6rngQehJQeGrR6SThf+gfLrwEaIR6oCNBfVQ1whfkFXa8GjbGQdOYI8sxrE
+         Eb7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXUKspvObF5Um5mYAonzuifmMmrK6BJ6hde2k7VVywQxBACUPXj7R6tEQQvzbqQtGTIB6bXQzcAnOADRNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN1krlnqlWa+1uRtrT6B6J6XrVu9Ri4JaapJHLeUMbEQ5/x56+
+	0Fjm9H4rvb25xm4Wwe7hwbugNJN6FKDcJ0KAZ2CwF/wLypmzWx6zP+aevGK3dIQoPMg=
+X-Gm-Gg: ASbGncu5gcTtjb1shjdjXufHd1Ai7vpFDBMp1mFZcxnC4u6Vqt5kxPd5LRIFyVt1dDC
+	PKz2z1RQsH0SjTg7rPA3Tsw1YWqE7zM/HjoyE8CDLyQ92kvvt764BKscVPhR0PYdauHM2wfTpGR
+	0MQLMMhL6/5RhDPLW03Y/MkDNBW2j+DdUQp/SEpQsfAvFezvSp2LMlfL/dSYY2Se5nrYmrpH6Ox
+	m2Oxw+zPCtqxriKE5OZNlmlDX06SH9JB9ZEX2oMASVvBNTz+gVkGH8TdJz2Mim39HWwjOUt7qFF
+	rJgwfiPlyJcwkUdfaZ9ZZrSXGr6Zu616R81k7bLkZ8BxkkSsDaptdRDib9VstNaVXiLtBRXJIMe
+	PPl2gCy9n31acmJW3LA80XtaTP6suPVV88coD2DgufrKrrsuFfUZrgBPOhkKErH0AWgadmY34ZU
+	f1gE5ENddn2sGOeRi5bSrBSGHguHBnLyXDDsdZY7+qU1GQe7uENlNKMe8=
+X-Google-Smtp-Source: AGHT+IGT7CaeEz6g3FtTP8c/NtDzRQa7iR2B6l8J10WYQFcAMOVl4hOnUuV2ukorx8UFB+TFYGU87g==
+X-Received: by 2002:a05:6402:35c3:b0:640:bb20:41c7 with SMTP id 4fb4d7f45d1cf-6413f059b62mr3497605a12.7.1762531730417;
+        Fri, 07 Nov 2025 08:08:50 -0800 (PST)
+Received: from [172.16.220.100] (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f713959sm4444376a12.5.2025.11.07.08.08.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 08:08:50 -0800 (PST)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH 0/5] Enable QoS configuration for SM6350
+Date: Fri, 07 Nov 2025 17:08:46 +0100
+Message-Id: <20251107-sm6350-icc-qos-v1-0-8275e5fc3f61@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 07 Nov 2025 17:08:25 +0100
-Message-Id: <DE2LCFM56Z2Y.2V9NIXP26QOM2@bootlin.com>
-Subject: Re: [PATCH] samsung-dsim: move drm_bridge_add() call to probe
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-To: "Maxime Ripard" <mripard@kernel.org>
-Cc: "Inki Dae" <inki.dae@samsung.com>, "Jagan Teki"
- <jagan@amarulasolutions.com>, "Marek Szyprowski"
- <m.szyprowski@samsung.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>,
- "Neil Armstrong" <neil.armstrong@linaro.org>, "Robert Foss"
- <rfoss@kernel.org>, "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
- "Jonas Karlman" <jonas@kwiboo.se>, "Jernej Skrabec"
- <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
- <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, "dri-devel"
- <dri-devel-bounces@lists.freedesktop.org>
-X-Mailer: aerc 0.20.1
-References: <20250725-drm-bridge-samsung-dsim-add-in-probe-v1-1-b23d29c23fbd@bootlin.com> <20250728-diligent-brainy-hyena-109dde@houat> <20250728194430.082f9952@booty> <20250731-tactful-jellyfish-of-perspective-cb0324@houat>
-In-Reply-To: <20250731-tactful-jellyfish-of-perspective-cb0324@houat>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI8ZDmkC/02Nyw6CMBBFf4XM2kn6CC30VwwLWqbaGKi2iCSEf
+ 7fCxuU5yT13g0wpUAZTbZBoCTnEqQC/VODu/XQjDENhEEzUnDONeVSyZhicw1fMOEjeem8lKeu
+ hjJ6JfFiP4LU7OdHrXbrzKcH2mdDFcQyzqSZaZzzaTDTwf2qqn2aKS0z0ielxXLJBWi206nXbm
+ EVCt+9fyLdVBcMAAAA=
+X-Change-ID: 20251107-sm6350-icc-qos-d319ffb3e6bf
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762531729; l=2705;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=1UB7MjUKjWV6747T2U48We331jDJpIjDCkO4sdbS0zo=;
+ b=7mpYa6QY9OFMGZX59eWyR/bGGqlpm0cTZ2rZeg4gqwW2L/pDo3zmdposoVlJ/5J4/B0Y6VqqF
+ 8M6lLN3Ar3xA+DqZB5IsIbN52MtSNhpgNhytT26zJHBmDsSzdOqs7Kb
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Hi Maxime,
+Update dt-bindings, driver and dts in order to configure the QoS
+registers for the various SM6350 interconnects.
 
-On Thu Jul 31, 2025 at 12:05 PM CEST, Maxime Ripard wrote:
-> On Mon, Jul 28, 2025 at 07:44:30PM +0200, Luca Ceresoli wrote:
->> Hi Maxime,
->>
->> thanks for the quick feedback.
->>
->> On Mon, 28 Jul 2025 10:10:38 +0200
->> Maxime Ripard <mripard@kernel.org> wrote:
->>
->> > Hi,
->> >
->> > On Fri, Jul 25, 2025 at 05:28:03PM +0200, Luca Ceresoli wrote:
->> > > This bridge driver calls drm_bridge_add() in the DSI host .attach ca=
-llback
->> > > instead of in the probe function. This looks strange, even though
->> > > apparently not a problem for currently supported use cases.
->> > >
->> > > However it is a problem for supporting hotplug of DRM bridges, which=
- is in
->> > > the works [0][1][2]. The problematic case is when this DSI host is a=
-lways
->> > > present while its DSI device is hot-pluggable. In such case with the
->> > > current code the DRM card will not be populated until after the DSI =
-device
->> > > attaches to the host, and which could happen a very long time after
->> > > booting, or even not happen at all.
->> > >
->> > > Supporting hotplug in the latest public draft is based on an ugly
->> > > workaround in the hotplug-bridge driver code. This is visible in the
->> > > hotplug_bridge_dsi_attach implementation and documentation in [3] (b=
-ut
->> > > keeping in mind that workaround is complicated as it is also circumv=
-enting
->> > > another problem: updating the DSI host format when the DSI device ge=
-ts
->> > > connected).
->> > >
->> > > As a preliminary step to supporting hotplug in a proper way, and als=
-o make
->> > > this driver cleaner, move drm_bridge_add() at probe time, so that th=
-e
->> > > bridge is available during boot.
->> > >
->> > > However simply moving drm_bridge_add() prevents populating the whole=
- card
->> > > when the hot-pluggable addon is not present at boot, for another
->> > > reason. The reason is:
->> > >
->> > >  * now the encoder driver finds this bridge instead of getting
->> > >    -EPROBE_DEFER as before
->> > >  * but it cannot attach it because the bridge attach function in tur=
-n tries
->> > >    to attach to the following bridge, which has not yet been hot-plu=
-gged
->> > >
->> > > This needs to be fixed in the bridge attach function by simply retur=
-ning
->> > > -EPROBE_DEFER ifs the following bridge (i.e. the DSI device) is not =
-yet
->> > > present.
->> > >
->> > > [0] https://lpc.events/event/18/contributions/1750/
->> > > [1] https://lore.kernel.org/lkml/20240924174254.711c7138@booty/
->> > > [2] https://lore.kernel.org/lkml/20250723-drm-bridge-alloc-getput-fo=
-r_each_bridge-v1-0-be8f4ae006e9@bootlin.com/
->> > > [3] https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-4-bc=
-4dfee61be6@bootlin.com/
->> > >
->> > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->> >
->> > There's many things lacking from that commit log to evaluate whether
->> > it's a good solution or not:
->>
->> Before answering your questions: I realized my patch is incomplete, it
->> should also move drm_bridge_remove() to samsung_dsim_remove() for
->> symmetry. This is a trivial change and it's done and tested locally:
->>
->> @@ -1825,8 +1825,6 @@ static int samsung_dsim_host_detach(struct mipi_ds=
-i_host *host,
->>
->>  	samsung_dsim_unregister_te_irq(dsi);
->>
->> -	drm_bridge_remove(&dsi->bridge);
->> -
->>  	return 0;
->>  }
->>
->> @@ -2069,6 +2067,8 @@ void samsung_dsim_remove(struct platform_device *p=
-dev)
->>  {
->>  	struct samsung_dsim *dsi =3D platform_get_drvdata(pdev);
->>
->> +	drm_bridge_remove(&dsi->bridge);
->> +
->>  	pm_runtime_disable(&pdev->dev);
->>
->>  	if (dsi->plat_data->host_ops && dsi->plat_data->host_ops->unregister_h=
-ost)
->>
->>
->> Let me reorder your questions so the replies follow a step-by-step
->> path.
->>
->> > - What is the next bridge in your case? Did you try with a device
->> >   controlled through DCS, or with a bridge connected through I2C/SPI
->> >   that would typically have a lifetime disconnected from the DSI host.
->>
->> The pipeline is the following:
->>
->> |--------------------- fixed components --------------------|     |-----=
---- hot-pluggable addon --------|
->> |--------------- i.MX8MP ------------|
->>
->> +----------------+    +------------+     +------------------+     +-----=
---------------+      +----------+
->> |                |    |samsung-dsim|     |hotplug DSI bridge|     |   TI=
- SN65DSI84    |      |LVDS panel|
->> |fsl,imx8mp-lcdif| A  |            |  B  |                  |  C  |     =
-              |  D   |          |
->> |                +--->|    DSI host+---->|device        host+---->|DSI h=
-ost   LVDS out+----->|LVDS in   |
->> +----------------+    +------------+ DSI +------------------+ DSI +-----=
---------------+ LVDS +----------+
->>                                                                         =
-   ^
->>                                                                       I2=
-C -'
->>
->> This is a device tree based system (i.MX8MP, ARM64).
->>
->> This is the only hot-pluggable hardware I have access to and there is no
->> DCS.
->>
->> In the hardware the next bridge after the samsung-dsim is the sn65dsi84
->> (ti-sn65dsi83.c driver), and there the hotplug connector is between
->> them.
->>
->> In the software implementation the next bridge is currently the
->> hotplug-bridge, which "represents" the hotplug connector (!=3D DRM
->> connector). As discussed in the past, the hotplug-bridge may be removed
->> in future implementations but at the current stage of my work on DRM it
->> is still needed.
->>
->> The hotplug-bridge is not (yet?) in mainline, and so aren't some other
->> bits. However they haven't changed much since my old v4 series [0].
->
-> I'd like to take the hotplug DSI bridge out of the equation for now.
-> Does this issue happen without it?
->
->> Also, I expect this patch to be mostly valid regardless of whether the
->> hotplug-bridge will or not be in the final design.
->>
->> > - What is the typical sequence of probe / attach on your board?
->>
->> The probe/attach sequence before this patch is the following. This is
->> in the case the hotpluggable addon is not connected during boot, which
->> is the most problematic one.
->>
->>  1) The lcdif starts probing, but probe is deferred until (6.)
->>     because the samsung-dsim has not probed yet.
->>     Code path: lcdif_probe() -> lcdif_load() -> lcdif_attach_bridge() ->
->>                devm_drm_of_get_bridge() -> -EPROBE_DEFER
->>  2) samsung-dsim probes, but does not drm_bridge_add() itself, so the
->>     lcdif driver cannot find it
->>  3) lcdif tries to probe again
->>     A) it does not find the next bridge and returns -EPROBE_DEFER
->>  4) hotplug-bridge probes, including:
->>     A) drm_bridge_add()
->>     B) mipi_dsi_attach() to register as a "fake" DSI device to
->>        the samsung-dsim DSI host
->>        - this registration is fake, meaning it has a fake format;
->>          it's needed or the samsung-dsim driver would not
->>          drm_bridge_add() itself and the lcdif would not populate the
->>          DRM card
->>     C) look for the next bridge but in the typical case the TI bridge
->>        has not probed yet; this is not fatal by design of the
->>        hotplug-bridge (that's its goal indeed)
->>  5) reacting to 4.B, in the samsung_dsim_host_attach() func does, among
->>     other things, drm_bridge_add() itself
->>  6) lcdif tries to probe again
->>     A) this triggers a chain of drm_bridge_attach:
->>        * lcdif calls drm_bridge_attach() on the samsung-dsim
->>        * samsung-dsim calls drm_bridge_attach() on the hotplug-bridge
->>     B) the DRM card is populated and accessible to userspace
->>
->> When the addon is connected (can be hours later or even never):
->>
->>  7) the TI SN65DSI84 driver probes, including:
->>     * drm_bridge_add()
->>        - thanks to notifiers ([0] patch 2) the hotplug bridge is
->>          informed and takes note of its next_bridge
->>     * does mipi_dsi_attach() on its host (hotplug bridge)
->>  8) the hotplug-bridge DSI host side reacts to the mipi_dsi_attach() fro=
-m
->>     the TI DSI device by calling:
->>     * mipi_dsi_detach() on the samsung-dsim to remove the
->>       fake registration
->>     * mipi_dsi_attach() with the correct format from the sn65dsi84
->>
->> Note: after 5) the global bridge_list has a samsung-dsim bridge, while
->> after an addon insertion/removal there is no samsung-dsim in there
->> anymore. This is due to the fake registration, which happens only the
->> first time: at every addon removal samsung_dsim_host_detach() will
->> drm_bridge_remove() itself.
->>
->> With the patch applied the sequence would become:
->>
->>  1) The lcdif starts probing multiple times, but probe is deferred
->>     until (5.) because the samsung-dsim has not probed yet.
->>     (so far no changes)
->>  2) samsung-dsim probes, _and_ does drm_bridge_add() itself
->>  3) lcdif tries to probe again
->>     A) this triggers a lcdif probe and a chain of drm_bridge_attach:
->>        * lcdif calls drm_bridge_attach() on the samsung-dsim
->>        * samsung-dsim returns -EPROBE_DEFER because there is no next
->>          bridge yet (with another error the lcdif would fail without
->>          further deferral)
->>  4) the hotplug-bridge probes
->>  5) lcdif tries to probe again
->>     A) this triggers a lcdif probe and a chain of drm_bridge_attach:
->>        * lcdif calls drm_bridge_attach() on the samsung-dsim
->>        * samsung-dsim calls drm_bridge_attach() on the hotplug-bridge
->>     B) the DRM card is populated and accessible to userspace
->>
->> When the addon is connected (can be hours later or even never):
->>
->>  6) the TI SN65DSI84 driver probes, including:
->>     A) drm_bridge_add()
->>        - thanks to notifiers ([0] patch 2) the hotplug bridge is
->>          informed and takes note of its next_bridge
->>     B) does mipi_dsi_attach() on its host (hotplug bridge)
->>     (so far no changes)
->>  7) the hotplug-bridge DSI host side reacts to the mipi_dsi_attach() fro=
-m
->>     the TI DSI device without detaching/attaching from/to the
->>     samsung-dsim, but only by notifying to samsung-dsim the new format;
->>     for this my current draft adds a .format_changed op to struct
->>     mipi_dsi_host_ops, so the hotplug bridge can inform about the new
->>     format, but in the end we might as well get rid of the hotplug
->>     bridge entirely
->
-> Thanks for the writeup. I'd still like to know what it looks like
-> without the hotplug-bridge in there.
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Luca Weiss (5):
+      dt-bindings: interconnect: qcom,sm6350-rpmh: Add clocks for QoS
+      interconnect: qcom: icc-rpmh: Get parent's regmap for nested NoCs
+      interconnect: qcom: sm6350: Remove empty BCM arrays
+      interconnect: qcom: sm6350: enable QoS configuration
+      arm64: dts: qcom: sm6350: Add clocks for aggre1 & aggre2 NoC
 
-Here I am after a long time, having finally found time to experiment what
-happens without the hotplug-bridge. It's unavoidably long, so I've split it
-is logical steps.
-
-
-** Foreword: device tree **
-
-By the current device tree description, the hotplug-bridge is "in the
-middle" between two bridges: the last bridge in the fixed part and the
-first bridge on the hotpluggable addon (respectively samsung-dsim and
-ti-sn65dsi84 in my case). So there are two bidirectional remote-endpoint
-connections between them:
-
-  samsung-dsim <=3D> hotplug-bridge <=3D> ti-sn65dsi84
-
-With this DT represnetation, removing the hotplug-bridge means the other
-two bridges cannot find each other via the usual graph walking procedures,
-so wothing can work.
-
-In order to focus on the DRM aspects for the sake of this experiment, I
-have added a workaround in the samsung-dsim and ti-sn65dsi83 drivers, so
-they can find each other. It is based on doing an additional
-of_graph_get_remote_node() to "jump over" the hotplug-bridge DT node.
-
-
-** Step 0: current samsung-dsim code **
-
-This is the initial situation after adding the workaround mentioned in the
-foreword.
-
-When booting without add-on and using the current upstream samsung-dsim
-code, which calls drm_bridge_add() in samsung_dsim_host_attach(), this
-happens:
-
- [1 and 2 can happen in any order, same result]
-
- 1) samsung-dsim probes (does not drm_bridge_add() itself)
- 2) The lcdif starts probing multiple times, but
-    lcdif_probe
-    -> lcdif_load
-       -> lcdif_attach_bridge
-          -> devm_drm_of_get_bridge() returns -EPROBE_DEFER because
-             the samsung-dsim is not in the global bridge_list
-             (deferred probe pending: imx-lcdif: Cannot connect bridge)
-
- =3D> The card cannot probe
-
-When the addon is connected:
-
- [lcdif tries to probe again and defers multiple times as before]
-
- 3) sn65dsi83_probe
-    -> sn65dsi83_host_attach       (finds samsung-dsim, see foreword)
-       -> samsung_dsim_host_attach (finds ti-sn65dsi83, see foreword)
-          -> drm_bridge_add()
-    =3D> samsung-dsim() bridge published in global bridge_list
-
- 4) lcdif tries to probe again
-    lcdif_probe
-    -> lcdif_load
-       -> lcdif_attach_bridge
-          -> devm_drm_of_get_bridge() --> OK, returns samsung-dsim ptr
-          -> drm_bridge_attach() on the found bridge
-             -> samsung_dsim_attach
-                -> drm_bridge_attach
-                   -> sn65dsi83_attach
-                      ...
- =3D> card probed
-
-When the addon is removed:
-
- 5) sn65dsi83_remove
-    -> samsung_dsim_host_detach (via devm)
-       -> mipi_dsi_detach
-          -> samsung_dsim_host_detach
-
- =3D> the card is still populated
-
-So the main problem here is that the card does not get probed before the
-add-on is added, because the lcdif cannot find the samsung-dsim bridge.
-
-
-** Step 1: drm_bridge_add() moved to samsung_dsim_probe() **
-
-To let the lcdif find the samsung-dsim bridge, I added this patch to move
-drm_bridge_add() to probe time.
-
-With this, when booting without add-on:
-
- [1 and 2 can happen in any order, same result, thanks to the addition in
-  samsung_dsim_attach() of:
-     if (!dsi->out_bridge)
-        return -EPROBE_DEFER;
- ]
-
- 1) samsung-dsim probes (and adds to drm_bridge_add() itself)
- 2) The lcdif starts probing multiple times, but
-    lcdif_probe
-    -> lcdif_load
-       -> lcdif_attach_bridge
-          -> devm_drm_of_get_bridge() --> OK, returns samsung-dsim ptr
-          -> drm_bridge_attach()
-             -> samsung_dsim_attach()
-                -> if (!dsi->out_bridge)
-                   return -EPROBE_DEFER; -> deferral because addon
-                                            bridge not yet present
-
- =3D> The card still cannot probe
-
-When the addon is connected, similarly to step 0 the card probes after
-samsung-dsim can find the ti-sn65dsi84 bridge. Details not shown, not much
-different.
-
-So, one step forward (lcdif finds the samsung-dsim bridge) but not yet
-enough to probe the card without an add-on connected. The blocking point is
-that the attach callback in the samsung-dsim driver returns -EPROBE_DEFER
-if the next bridge is not present.
-
-The hotplug-bridge handles this in a simple way: if the next bridge is not
-present (!hpb->next_bridge) then it just returns 0 (it's normal, it can be
-hot plugged later on), so the upstream components up to the encoder can
-fully probe.
-
-
-** Step 2: samsung_dsim_attach() does not error if out_bridge not present *=
-*
-
-By using in samsung_dsim_attach() this the same approach as the
-hotplug-bridge:
-
- static int samsung_dsim_attach(struct drm_bridge *bridge,
-                               struct drm_encoder *encoder,
-                               enum drm_bridge_attach_flags flags)
- {
-        struct samsung_dsim *dsi =3D bridge_to_dsi(bridge);
-
-+       if (!dsi->out_bridge)
-+               return 0;
-+
-       return drm_bridge_attach(encoder, dsi->out_bridge, bridge,
-                                flags);
- }
-
-i.e. returning 0 (OK) and not -EPROBE_DEFER as in this patch, the resulting
-probe sequence is:
-
- 1) samsung-dsim probes (and adds to drm_bridge_add() itself)
- 2) The lcdif probes:
-    lcdif_probe
-    -> lcdif_load
-       -> lcdif_attach_bridge
-          -> devm_drm_of_get_bridge() --> OK, returns samsung-dsim ptr
-          -> drm_bridge_attach()
-             -> samsung_dsim_attach() --> NEW: out_bridge returns 0
-
- =3D> The card probes!
-
-When the addon is connected:
-
- 3) sn65dsi83_probe
-    -> sn65dsi83_host_attach       (finds samsung-dsim, see foreword)
-       -> samsung_dsim_host_attach (finds ti-sn65dsi83, see foreword)
-
-One step forward, but not yet enough. Now we have a card but:
-- bridges on the add-on have not been attached (*)
-- after the add-on is added there is still no drm_connector
-
-(*) Note: the additional, always-disconnected drm_connector that was
-    discussed in the past [0] is not present anymore in my hotplug-bridge
-    design as I have successfully got rid of it.
-[0] https://lore.kernel.org/all/ourjepuvkhzpemhak3t6do3or6shrj4cq2plhii4afg=
-ej4qhkk@p6tvptupr3ey/
-
-Creation of the drm_connector is one of the features provided by the hotplu=
-g-bridge.
-
-
-** Step 3: samsung-dsim continues the attach chain **
-
-The added 'return 0' in samsung_dsim_attach() make the following
-drm_bridge_attach() call be skipped (in the hotplug case at least). As
-there are no other places where the attach sequence is started, attach
-simply does never happen.
-
-So, as a proof of concept at least, I added in samsung_dsim_host_attach() a
-call to samsung_dsim_attach().
-
-When the addon is connected the probe sequence is the same as before, and
-when adding the addon this happens:
-
- 3) sn65dsi83_probe
-    -> sn65dsi83_host_attach       (finds samsung-dsim, see foreword)
-       -> samsung_dsim_host_attach (finds ti-sn65dsi83, see foreword)
-          -> samsung_dsim_attach(..., flags=3D0)    <--- NEW
-             -> drm_bridge_attach(..., flags=3D0)
-                -> sn65dsi83_attach(..., flags=3D0)
-                   ...up to the panel-bridge attach
-
-Now the attach chain after the samsung-dsim bridge is continued, all
-bridges are attached, the drm_connector is created by the final bridge
-(panel-bridge) and the card is fully working.
-
-This works by passing flags =3D 0 to attach. Is it an accepted practice to
-not set the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag for new code?
-
-Aside from the above question, it's noteworthy that I have done a few
-changes to the samsung-dsim driver from step 0 to step 3. It's less than 10
-lines, but some not trivial, and some details are still missing. Those
-would need to be replicated to any drivers willing to make the following
-component hot-pluggable.
-
-Overall it looks to me that managing the attach chain by individual drivers
-is unavoidably getting more complicated, and moving it to a centralized
-place appears like a better approach to avoid complicating several
-drivers. However each bridge driver calls the attach to the next bridge
-(via drm_bridge_attach()), so I don't know how centralization could happen
-without changing that established behaviour.
-
-I have a few vague ideas in my mind, but I'll let them settle while I wait
-for some feedback to this e-mail before taking decisions on the direction
-to follow.
-
-I look forward to receiving your comments.
+ .../bindings/interconnect/qcom,sm6350-rpmh.yaml    |  65 ++++-
+ arch/arm64/boot/dts/qcom/sm6350.dtsi               |   3 +
+ drivers/interconnect/qcom/icc-rpmh.c               |  12 +-
+ drivers/interconnect/qcom/sm6350.c                 | 298 ++++++++++++++++++++-
+ 4 files changed, 356 insertions(+), 22 deletions(-)
+---
+base-commit: 33b5a67d76ce575ea38bc3de55719a6cdf42287d
+change-id: 20251107-sm6350-icc-qos-d319ffb3e6bf
+prerequisite-change-id: 20250613-rework-icc-0d3b7276a798:v3
+prerequisite-patch-id: dc49cf2810a33db590997c9e9969f09fcbba207e
+prerequisite-patch-id: bd229a10bfd7485726f341f1bbc179fa032e4beb
+prerequisite-patch-id: ea3e9a509dc2d590f647560df3fa773165d5df48
+prerequisite-patch-id: 95b82df224ac0515c56d41cad8547099248697c1
+prerequisite-patch-id: c793efccb33da5b78d634fc0f7259c01854c7da2
+prerequisite-patch-id: b25a3cc84427ed3d321575d32dee239aa6dcfa65
+prerequisite-patch-id: 8262f845f906a575f9ee06c002d8626c7b25a87e
+prerequisite-patch-id: f3b9493e64d90665d7093c7f7af335452010cf13
+prerequisite-patch-id: 4e05eb6178064d4b4541fccbff31e18d4e5ae258
+prerequisite-patch-id: 4c169d0f54fb39999cf62eaba98208fd94e0d250
+prerequisite-patch-id: 91f18aff5b2cc765964c8991647dd53e75e97648
+prerequisite-patch-id: 7749a4cc2e2e8e2ac191844f8c42f338d0a80392
+prerequisite-patch-id: 75a9009c7cdbeb94b2c7528f6ecc54d7a4b7a6be
+prerequisite-patch-id: 9566648a76666548a85084664ba6fd4a240fe602
+prerequisite-patch-id: c2ba63308bedf78640d64d9662ebfe2ceb7e6d26
+prerequisite-patch-id: a08ad34a60042b2693b91f24712ccc10e0d5666b
+prerequisite-patch-id: 8227a4926c64a28215b6c03d43df5518d72094e8
+prerequisite-patch-id: 15ece9c03dbae75dbfb1b16a2e2c1d2ed1766c82
+prerequisite-patch-id: e69ae611580f951450269b4a7df8789f6b2e2c89
+prerequisite-patch-id: 5e54f850197bc33dc581ff8907fcad1dccef20a8
+prerequisite-patch-id: 73caecb9e342117c2a83832f0d2346119466a899
+prerequisite-patch-id: 79abd6d335f0bdd8725c27797d4fbc7ffc017007
+prerequisite-patch-id: faa043f224857fad9bd8368d83d5154e3f7013c1
+prerequisite-patch-id: 5d7fdb3ea01a6066079dd89a4e494165b75159db
+prerequisite-patch-id: 0234857c8f0119652dcf3fd6e7e1fe051f40a6ea
 
 Best regards,
-Luca
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
