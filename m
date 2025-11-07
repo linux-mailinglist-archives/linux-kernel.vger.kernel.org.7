@@ -1,192 +1,118 @@
-Return-Path: <linux-kernel+bounces-890170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB99C3F614
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:18:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37E6C3F60B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:17:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A3834EFD25
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:17:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 296F234B3D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CA72FD673;
-	Fri,  7 Nov 2025 10:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E456302748;
+	Fri,  7 Nov 2025 10:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RVqfRCZw";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YpDDELeJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKvIDht7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDD02AD22
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DF02FFDCC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762510650; cv=none; b=G6AKVgqXhjljdjGoLwDmYLZJ60fHrSZw+s/zy6C63S/xAA4Yom3kjTcIYv/S6XmKid1pWNR9I/CRpqz3VCRP1g1QOTQPSUc0+r/8KoXNM9QSfbf6uq7AJ16eDGmuncUdgub+l58DpuYDqPZt4oGNZaEplIL6iiKyksMCZ0BluZM=
+	t=1762510659; cv=none; b=k0H1SZcq4oXX2Rs7qWmCABy1DaWlwK8il3RDcm7PbOmDLfKsdVquhV5VPt7HCwqqbzFT9agnC4MiH0H0PnjOpvAzG3vVrtSU2AtrR7aTh3OlNy02b/thIYoTv1S7FjjQP+0rmQ5K+8hufbukKM8NNqcJ4VqR7JJVkGMd4GxkpgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762510650; c=relaxed/simple;
-	bh=2qs1VG1n9bjiENuAjdiCJJSJcQywxwAJEW6SFZp+G7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CKGcWmQ9HA/54cgOLBjywg0G3h/UbJa4UFofjeDYNvd7b68CBqN5UF2wmmBgcZwO7NNs8ApZ2c0UD5rNNa6taXf/hyw9kb9WB91hRBQi3yHj5bP7gPiJiknvonhJlKgbB6K+ENK+ktG/r2hU9bhMGQPKSbG8QzRRmfUpd5fpWX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RVqfRCZw; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YpDDELeJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A77jfJo3749438
-	for <linux-kernel@vger.kernel.org>; Fri, 7 Nov 2025 10:17:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VB0as2X5rpIdpcXtCyAvYkLDtHq+50iUEPo6nofU0HI=; b=RVqfRCZwtn03rQYw
-	y1tVIWooVijUQhG+dkJdwmLnX130OlTFVOPw9wL5FA8dUGq0DWl/BF0RXbKseiYX
-	yGDkrhtqhAZQygkom+Sfb2ndqg5iPHHcRV4XsSRoLmiDsFu1d59J7a5cHwccNUu2
-	bhFfPQob8kwarW7UFGPqWRHuWDPmJK/7IPPrJ1omQIMfArGBy3UANVjDyF9uG9Po
-	2kZTUKATVYi+uJSeB0co/uKZ4qDzyMvl1mlMOhNnKgZr267lYXRwx+Z3rmKK+n70
-	5bnBAi+2vdlF8wgpErX2YNHV+gHnbGFw90XCG4B5yYkmUg8DkSX8SmPakVS6k17S
-	++RNLw==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8sy6kvuc-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:17:27 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b22624000dso14161685a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:17:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762510647; x=1763115447; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VB0as2X5rpIdpcXtCyAvYkLDtHq+50iUEPo6nofU0HI=;
-        b=YpDDELeJ1/DmshR+ehv/RQOOKc8HpFcMbhTMT5vG1tcq4zrBtGeISu6wkLHZ4GNqzz
-         qStzJec+hyjP878Pp5354lZeWqHOppnC9uFUPaGe3t+Mvk/UWNbUelSSAJOF96BTEjvX
-         zu54zRQfBq3WhUHiMsu27GuoD1VEugIMVQZpFUoYMEPd7aukuwLZ/y9RD393gBkW/3X4
-         KpCkCCEoxAMrqtmosct+uNkUq3lnJUuO/Fob9XB8XInL3vw92bb8FtmBFA2k8p4rBlmo
-         XCQxYsEwXsgWlpCCnfC8LquuPEDdkCjfb6BAeCEVQhiybyPp0rK6f7o/NHtU4H0Oqk+1
-         AkaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762510647; x=1763115447;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VB0as2X5rpIdpcXtCyAvYkLDtHq+50iUEPo6nofU0HI=;
-        b=fy2ADl4en0+LbLTzOa4SvyECFaKLp33BAyck/BGPij8ObA/xOhKrPr2db2uYDQJ85E
-         c/wfgEWGLcTn/IURnKcOhaeTW6NotgGtD5m5mScL6dAQZod3zl5zpFuuxGeIT/o/mLHl
-         GrBALICs117if60qynI4gN/YCLLDEUgw6w4rWT4U4NdEsoXMqu091k8/Medi8asyurLd
-         gtgEE3f8IsmtxdvC0igfS+Q3H+0wlq4M//A9k95VMfSkmATv0OpMV6jE1762m6gZHtd/
-         1WqqjI3mJs0sDNqDm5go+p/j53ZQiN65NgrcTPdpg08JjnjPx8L6sgoTK83js+OMOI8X
-         Ijbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUT4YAJHkM0r6e9yq03uxKdT1EcJ9ZR0GaVEvc2q4KKzxdWQkMUZHxa7jbRumGRPLcINIoOZ7y4vYhedYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM8SYxgDtsprOfPjqtzm18hBcInYi8NfUtVUoV86eEGt+xmyK1
-	0Ik89UOQHNWLpKfOQN7TMvk4LdSK39cHWtFycvB7NWYM7Y/BporhtYGeyhvq/VveyLhirnEmuRx
-	38hVYe50A/0tzMfSbntPM9/dEKviub8MWmr/YvxwdYGJWosQyZC66WvKnZBUvhGU2Onc=
-X-Gm-Gg: ASbGncvAjOWLzmbEe9I5j4NLGAppsiLYR7EGbBkXKUefRI9FVnFsS6vHQMaEsRrJru9
-	TdnpkNRVgovo4+2RHnqLuxaLEqnsl6KrkL1D60mvqSAf4X91erKulO+azYR50gRzGjmWfs0t9Qi
-	i+nM9MKk4k+UcTZJ2BKgS/NfBLfUHCWoWrq7Ov4SxoM/lJB9Hn6ekGI48oPMVOP3WqYCZLckK1I
-	k0yXGus5oixV6SnRbJdDY/09igNg0cERA4icabpCm5G20nvL29UInrMWS3oAG6AF539FFBPNcUO
-	b4aDidb4QhsobSW+zKwKKgMORo3Apz9VQGD41A59yGhxZ7Z39pv8hw6LacbOluSmEEgW6bHnEVo
-	MVGy/cKJmLCMvf+f+Z/fa6Y3l2yf/lCPtjJeGVZLOO9tHIywFNh44PUAi
-X-Received: by 2002:a05:622a:15ce:b0:4ed:6e12:f576 with SMTP id d75a77b69052e-4ed94a37e04mr19204901cf.8.1762510647126;
-        Fri, 07 Nov 2025 02:17:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF+bmYMl9sgolDCLtI/3Z/25Cac3Pm5sw0YnJKVwj4DCLlvp+FVu1J9wmfnutrUm1ga/1XlbQ==
-X-Received: by 2002:a05:622a:15ce:b0:4ed:6e12:f576 with SMTP id d75a77b69052e-4ed94a37e04mr19204671cf.8.1762510646566;
-        Fri, 07 Nov 2025 02:17:26 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f813eabsm3712122a12.11.2025.11.07.02.17.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 02:17:25 -0800 (PST)
-Message-ID: <7a5d188d-989f-4843-a10d-0fbad94a9ef0@oss.qualcomm.com>
-Date: Fri, 7 Nov 2025 11:17:23 +0100
+	s=arc-20240116; t=1762510659; c=relaxed/simple;
+	bh=arlVfPdYe3UiKIacT71hJyo52FEEmenfhFoMLnTXSxg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pHuAkjltwC8DW3aHzM//WEbTplLHbxAUllalGAWpg3lTnCZDlDRN1xBA/Kn0x7lDuyAiFLV7k5hQHceyL4LHwMQwszejLVv3t0Iuxk8d1lmBTH+VUV6z9e4XEZsLCcFMZZJ9OibXwGz107Bi3tZTGXGMckKJNSiT8lkD0F7StkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKvIDht7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87B78C4AF0E
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:17:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762510659;
+	bh=arlVfPdYe3UiKIacT71hJyo52FEEmenfhFoMLnTXSxg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YKvIDht7l4oVHTr7yJEvsNIsb6BKJ3Q54wIifctbIk2EbgxotNt3ffPiqiNncuub0
+	 XR76U/PZPV76GMSz6xsvjB30wuQL5sOH7pY2aC70OEoTRomaAV1cOheaqZufrvggXI
+	 pM2Sl+2Ds3hS4TTWARTssK3+qY/cOKhDwRjbLGgNab0USzt+xu4oqdwsnKOTEoZ8yE
+	 QKbu6E0Cc3Dok0IZ8hM9NuTa7qtA+YPBL45qVB4kRr34Itj9Qe4ERQY5SNNNzZh304
+	 qggnqVtkudivimbpGnKG+r3q3gYEpN0tIvjn+FwY9qAjaPABGYyvV7xD8nUCN2YY6u
+	 tJWZ6qfVJGUuQ==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5942b58ac81so465708e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:17:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVlN0dI+NbtsTQH00libfDOMPLaIH0QvNnaJVC+ZKzQAEAimb0V7p6GvrW+7YRAdpl4tanY9DwIqBuUgro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgaDN9woRIuctlGBHbAw/t7w+5Dn5qlXeImH2twE0bTUDTKMnU
+	z/0QnJhktxkOzolvtL4o83RYz0L1y4EGDCdT8GnTCQe4yKlcNmH3qyBq2qzUS4FZb6kr2YxwEdi
+	cN3wHthtwCw98uVFpOi+lvJEmAGgP2/U=
+X-Google-Smtp-Source: AGHT+IE/XYYxpOEX/Z7mBSZkdLHtJSOaW05OPzavoiOdoVqrUeqP4sb22fq75J96c7knabnGnpYkV8NFT+EOwV21q0U=
+X-Received: by 2002:a05:6512:114b:b0:58a:f865:d7a6 with SMTP id
+ 2adb3069b0e04-59456ba0021mr819044e87.48.1762510657742; Fri, 07 Nov 2025
+ 02:17:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/14] firmware: qcom_scm: Add SHM bridge handling for
- PAS when running without QHEE
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251104-kvm_rproc_v6-v6-0-7017b0adc24e@oss.qualcomm.com>
- <20251104-kvm_rproc_v6-v6-10-7017b0adc24e@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251104-kvm_rproc_v6-v6-10-7017b0adc24e@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=AYu83nXG c=1 sm=1 tr=0 ts=690dc737 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=rBf8QGEbTI05NIq0_6IA:9
- a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDA4MyBTYWx0ZWRfX8i9ZqFH6yltm
- zID3j0zvWb7k94X6ADR5nM7sh7e1ywzM81CRE7JLkoXKxb6wE177QFB0SRaXbzd0ykyNPLkT6b3
- PLuhe1wV2blF4Prk3boBl/JMBETMdukpQkc6CMblmTd2XkHVt/uyMMDuvXBxCu2uq0NwRP0B95g
- 1A+fP+6r1PbwFhbf38QyXe1V9UL8lFMNg6BanXvWXgHpoDKSRAFGbQ2SpvGWtSD2scgPXYOGMWN
- g9ulQxIVkqTbroJ9zu5s5DtwxC4Ikl5TSeUCLWN4vckKo9yYvWJv99ppWtzQwE0yYxtKvMd+/JL
- st8Exev7vIbycKBx3mUbmvyC1qv6nsBzjBy1H8waI/T7DsGt8DYKqbCwTuIie7hpj2qU5ju0c7D
- VL0JlasjoMrT5DEB38sxfYI0wxOGjA==
-X-Proofpoint-ORIG-GUID: z3Hhby2aVkx1WQBn2913mgYSpFzi4iSj
-X-Proofpoint-GUID: z3Hhby2aVkx1WQBn2913mgYSpFzi4iSj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070083
+References: <20251029210310.1155449-1-sohil.mehta@intel.com>
+ <20251029210310.1155449-6-sohil.mehta@intel.com> <3e9c4fdd-88a8-4597-9405-d865fb837d95@intel.com>
+ <cac58a25-eda6-4738-966f-a4e42818aa6c@app.fastmail.com> <6dec8398-3f7c-44db-a30d-33593af0217f@intel.com>
+ <efd6ec82-5576-41f1-a244-2f80d72e93e4@intel.com> <ee2fce64-91ce-4b78-b2f9-33364ea0c52f@intel.com>
+ <20251107090406.GU3245006@noisy.programming.kicks-ass.net>
+ <CAMj1kXFQaGaz37MNKXXjhUKy_mP-5teCDj80-hjUPHw4x+TKrA@mail.gmail.com> <20251107101003.GB1618871@noisy.programming.kicks-ass.net>
+In-Reply-To: <20251107101003.GB1618871@noisy.programming.kicks-ass.net>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 7 Nov 2025 11:17:26 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHFQYN8QF5Sd4ObsCziM-0gitGS5D1S1qCscKpQaZVDLA@mail.gmail.com>
+X-Gm-Features: AWmQ_bnMcv5ykNOoKNY2OE119Vgn62Zu9BQlLgx3zSXeTiu2CQ91Pez_S2fCPXA
+Message-ID: <CAMj1kXHFQYN8QF5Sd4ObsCziM-0gitGS5D1S1qCscKpQaZVDLA@mail.gmail.com>
+Subject: Re: [PATCH v11 5/9] x86/efi: Disable LASS while mapping the EFI
+ runtime services
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>, Sohil Mehta <sohil.mehta@intel.com>, 
+	Andy Lutomirski <luto@kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>, 
+	Sean Christopherson <seanjc@google.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-doc@vger.kernel.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/4/25 8:35 AM, Mukesh Ojha wrote:
-> On SoCs running with a non-Gunyah-based hypervisor, Linux must take
-> responsibility for creating the SHM bridge both for metadata (before
-> calling qcom_scm_pas_init_image()) and for remoteproc memory (before
-> calling qcom_scm_pas_auth_and_reset()). We have taken care the things
-> required for qcom_scm_pas_auth_and_reset().
-> 
-> Lets put these awareness of above conditions into
-> qcom_scm_pas_init_image() and qcom_scm_pas_metadata_release().
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->  drivers/firmware/qcom/qcom_scm.c | 35 ++++++++++++++++++++++++++++++++++-
->  1 file changed, 34 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index aabdef295492..9d3e45ec73ac 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -625,6 +625,33 @@ static int __qcom_scm_pas_init_image(u32 pas_id, dma_addr_t mdata_phys, void *me
->  	return ret;
->  }
->  
-> +static int qcom_scm_pas_prep_and_init_image(struct qcom_scm_pas_context *ctx,
-> +					    const void *metadata, size_t size)
-> +{
-> +	struct qcom_scm_pas_metadata *mdt_ctx;
-> +	struct qcom_scm_res res;
-> +	phys_addr_t mdata_phys;
-> +	void *mdata_buf;
-> +	int ret;
-> +
-> +	mdata_buf = qcom_tzmem_alloc(__scm->mempool, size, GFP_KERNEL);
-> +	if (!mdata_buf)
-> +		return -ENOMEM;
+On Fri, 7 Nov 2025 at 11:10, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Fri, Nov 07, 2025 at 10:22:30AM +0100, Ard Biesheuvel wrote:
+>
+> > There is also PRM, which is much worse, as it permits devices in the
+> > ACPI namespace to call firmware routines that are mapped privileged in
+> > the OS address space in the same way. I objected to this at the time,
+> > and asked for a facility where we could at least mark such code as
+> > unprivileged (and run it as such) but this was ignored, as Intel and
+> > MS had already sealed the deal and put this into production. This is
+> > much worse than typical EFI routines, as the PRM code is ODM/OEM code
+> > rather than something that comes from the upstream EFI implementation.
+> > It is basically a dumping ground for code that used to run in SMM
+> > because it was too ugly to run anywhere else. </rant>
+>
+> 'https://uefi.org/sites/default/files/resources/Platform Runtime Mechanism - with legal notice.pdf'
+>
+> Has on page 16, section 3.1:
+>
+>   8. PRM handlers must not contain any privileged instructions.
+>
+> So we should be able to actually run this crap in ring3, right?
 
-I'm still a little sour about this function having to be separate just
-because we use a different allocator..
+How interesting! This wasn't in the draft that I reviewed at the time,
+so someone did listen.
 
-Did we conclude that using set_dma_ops(some_tzmem_ops) was not going to
-work?
-
-Konrad
+So it does seem feasible to drop privileges and reacquire them in
+principle, as long as we ensure that all the memory touched by the PRM
+services (stack, code, data, MMIO regions) is mapped appropriately in
+the EFI memory map.
 
