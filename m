@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-890826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 502B5C410D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:36:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8236C410D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3057189625D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:36:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99C394E83F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF63334C24;
-	Fri,  7 Nov 2025 17:36:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7C6335071;
+	Fri,  7 Nov 2025 17:36:44 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E323224AF7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D97324DFF3
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762536965; cv=none; b=XY4zCJ2NBzjwbJ/1ZB8Ip8IGzoH1ZPHJPbrxBspzMdqPJFBBhIHKV90/bWXeAfD+DDYtnHNfVYjM793AVD8GSyEDAIPp9Wam0VFZf7ek/d23V4Ue2KbhIRoBdswOaogRhNG3/XyPs2iD7pk13E8acW6Y4G7ro1jOuD2d5dWdh/o=
+	t=1762537004; cv=none; b=pGDepSMjEFmcXNYJ3m2iB1sgQKE1CaFt+7IctJmW5BXIRyoNjO6MeFtbggusNrTrr9vyGySpEGKl+XsqgaFiYuk//zD/tPpDaI6mdEP5NEVSDDKCWmnDl3Dc5q0fq/MYztJWrrqP3UKOuNWU6Q6W8/A+hJyiCKMRlHSCHVjNZAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762536965; c=relaxed/simple;
-	bh=hhcVNclrRlDWdAyMtcmSMqqrVt/4rtKTFpnXfMnqtjU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=II+g78mNWXqOLs5+9pzkxR7jCwn2hItZEy34vOyz2+/ehOtrGUAnHEkpdYDhtlt36Oejhgy4FhEQvSPFghziDKY1qVdf6gBFQ7GGWCF4NStdqQ5XXDKrqeVQI5E2KZLXK+VLHVA+z2proHooP/wEK/d6koa9GDCD21jTtAYCLus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43330d77c3aso33032635ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:36:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762536962; x=1763141762;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QLosnNpzKxnPjxB45qBPLE2C54FnPBfHn4s/OTYMrZg=;
-        b=n2EjCxM3EbhzmwddhZq1i031Ef+oKAzyMeLxidGUJ/PsFUMm1Xw8SChXLFPOcnf7vr
-         eFvkOO5d7gR+AzjTA7z8ITRWTm9UV86oTZ4d9JwbPKRqTASGJcU5jeQ++FfuTaPQNZ1D
-         mfd6C7hluWE5eeodtmwVkt1vud3ELkCIxEPP0rxr3qs6TcrVRRG1xP3kuTwUYNIW0pwQ
-         EjnB3nM4Iwlj4FVcoCi/9/IgflqOGUabr6UqhGRkArXk9VsQbQyQz7Gd3ZqlD8jAr3qd
-         +//5t6UBffxMnuJywi+4XmRQTM5wlvUcJtrT9r71zrJrR1Zh0HGXL1eJiOiUCPF57ZCD
-         ubUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6t14b8uxxEU1jD++X9Cw/uBYOsWbiqx29O6PuV15vuivIfOJd99OHef3BAly1qBzGILUk4XAnUhsV3GI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH1f9nifkmw7H7XvakJAzfXyx2EUK1DHO1sJG20Y01gH10CgHl
-	WElwxUNHAMYWIoZtTK8jb2PmdjsbovqSicuKEtxQ7C+7Yjx5zyou0MEYGnViTqcVUYrvjzYZkQt
-	i20d6JYChi4UtWh0MBGeCETYf0QIHwyyLOlxJQk2l7JHC5heAAM0/DJSJnCk=
-X-Google-Smtp-Source: AGHT+IFDqUqSlStkyaedPPL2C3W3wSzVF71mP+wrY217vJHYhzaI0hjbVio1OQHGcx/rf9iS2CXOqzyzLIbhwAl75zd1MnnmKTtF
+	s=arc-20240116; t=1762537004; c=relaxed/simple;
+	bh=1FondDeDCTGznWVHUCg8nQ7VBrZtsywoGfADbYgzvn4=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=pAoIBgHRb/dSVKVj8WM5IQch/YbHxIBi43PaDbC5awrS/vff/jVqPknnEnagJrj++rfNgayxaIwfBNnhJOjngvSuxRVRXNo4O90G4MtMmyEfPkZy6ZzC0cB8uuECooz8MCpxOSQLXeV1pPMzIhbmEWP0dy+ze3p7FTYnXrZzER0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id D7BCD88E09;
+	Fri,  7 Nov 2025 17:36:33 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 949A36000B;
+	Fri,  7 Nov 2025 17:36:31 +0000 (UTC)
+Date: Fri, 07 Nov 2025 12:36:30 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org
+CC: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Tomas Glozar <tglozar@redhat.com>,
+ John Kacur <jkacur@redhat.com>,
+ Zhang Chujun <zhangchujun@cmss.chinamobile.com>
+Subject: =?US-ASCII?Q?Re=3A_=5Bfor-linus=5D=5BPATCH_3/3=5D_tracing/tools=3A_Fix_in?=
+ =?US-ASCII?Q?corrcet_short_option_in_usage_text_for_--threads?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <af44f010-313f-46ea-b1ef-9be43bbf4f14@efficios.com>
+References: <20251107130730.158197641@kernel.org> <20251107130758.272051237@kernel.org> <af44f010-313f-46ea-b1ef-9be43bbf4f14@efficios.com>
+Message-ID: <8D8513E9-6527-4AFD-B8FD-146448D867BF@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4c:0:b0:433:5736:968f with SMTP id
- e9e14a558f8ab-43367df3cd3mr4953745ab.13.1762536962654; Fri, 07 Nov 2025
- 09:36:02 -0800 (PST)
-Date: Fri, 07 Nov 2025 09:36:02 -0800
-In-Reply-To: <CAJ9gUkF9p18DjsCWf6yatsv5jstKbUx_PcqdgKaHk1bs5XxfKA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690e2e02.a70a0220.22f260.0059.GAE@google.com>
-Subject: Re: [syzbot] [scsi?] UBSAN: shift-out-of-bounds in sg_build_indirect
-From: syzbot <syzbot+270f1c719ee7baab9941@syzkaller.appspotmail.com>
-To: kshitijvparanjape@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-././include/linux/compiler_types.h:603:45: error: call to '__compiletime_assert_1195' declared with attribute error: max(((1UL) << 12), size) signedness error
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Stat-Signature: mmmegaa7o7mx7hxguguuu5sfuzrsiz3p
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 949A36000B
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX196iZTFHedHkhRyK1IGdthF+gtP5YYNHNM=
+X-HE-Tag: 1762536991-900020
+X-HE-Meta: U2FsdGVkX1/G9LpLVrW9HX7w8oQBPMUhTLxqy78Gy+ZegSOgITgKkjyhvjBOnfpvzK/euLbPjoCTD+m+qUStDXDtwvRSOg2MCyOHIYB350USv2QCGYRzUbDSuXMfAocdtFRQD/axdku9TaHmBOPgWHb/S5ce84f06KShj+EzOLhGiCLaIS3gFxTuuQqY90EKzCO6SBmtNGtMvYkMRdwTd0GJszkRKh1OpbB5ETocmijuxIwRbSCTmnqKEht6e9RlMfZxQIR2C4fz795odhIX19oLywz8iD5D3X+by2Ei2wRJQplva2ahkdxAtrIh3rk7Cq/W0pf14QCnskLU6OKglViNl+l3b+OW95fy/NMWlpwdhU7o5r/f/yc3mFM1x6ZRqm+HLVAlggGuawpJIkU55Q==
 
 
-Tested on:
 
-commit:         da32d155 Merge tag 'gpio-fixes-for-v6.18-rc5' of git:/..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=40c8b8384bc47ab0
-dashboard link: https://syzkaller.appspot.com/bug?extid=270f1c719ee7baab9941
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16cd7012580000
+On November 7, 2025 8:37:13 AM EST, Mathieu Desnoyers <mathieu=2Edesnoyers=
+@efficios=2Ecom> wrote:
+>On 2025-11-07 08:07, Steven Rostedt wrote:
+>
+>Nit: Subject: incorrcet -> incorrect
 
+I saw that just as I did the pull request but figured it wasn't big enough=
+ to stop the request=2E
+
+-- Steve=20
+
+>
+>Thanks,
+>
+>Mathieu
+>
 
