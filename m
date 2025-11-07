@@ -1,206 +1,148 @@
-Return-Path: <linux-kernel+bounces-890910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01335C415D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:59:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEF8C415C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:59:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A299189E4B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:00:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C774C3AA44D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8AC340282;
-	Fri,  7 Nov 2025 18:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3586B33F39C;
+	Fri,  7 Nov 2025 18:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H59v75Ni"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxkRGH2T"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5D333CEA8;
-	Fri,  7 Nov 2025 18:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABE033CE8A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762541923; cv=none; b=oOrWT/WtaSGTmZWpMsAyWJkW+Wa83PzmeCi0FhRoZrsAnZ7eQ8DtE+CEd9DSTwVpFbcT/ovwy35otzl/Tn+9p4yR8oQ/tDmk1ZQDLpOfHjoUqgMPkY8tUjU7ESeDSYQIrFzEvgQEZGvfe65mux3XEK7puJ9GZ8bUYkJku0ZpDzQ=
+	t=1762541913; cv=none; b=hQEn+/FF0IbkiHshnikQDs4LL12T87ra2OkiVWDN38XzXfUau/MzzvUCZPY34OvjELKJhkx7c0O8mNA9eyY9Ny1wty3dlZW+ggPea0xdGkbdIu9wg5l+D5+ZFSlT0e3bc0pxIwLoxECZRS88ojF4aDPKQvkZVXpB+c28qQt78Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762541923; c=relaxed/simple;
-	bh=bOUbnZvb2TbWof6JwYRWtCUjJZ+np312O1qVpM42BAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H9TCIRg3b9h++Fo3Wzci5wvQZ3FtVyvuMpuW/ggrpBTWtIenztLxNNy4teBNCWKDaidLLOkSBzMCxWeKLpqGEODj2YIwSkXCTbjTbYSXbivQqp793Tn6Jrd+k42inzb3MVRR5iq/O+gWDCCDIrEMOasmE+MJv/30HTJZias6qjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H59v75Ni; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=PjiF0FDj1ggdA8+srznADWIujFetT2w1WcC08yNm+xE=; b=H59v75NiiIx555adWgSui938BX
-	Yc3i1CYEaGF7O6kQ1NqaqRVT/Zz7Cswv0/fmOzsuOsqzoIRagasqeUrHrhrdChqEbZeXwaG25NO+S
-	5wwiT1Bk++lMCO2rTIpSkO6LuvNwiSk1/lj7Setie4/hO5vXucwRTkyP4yelMuEJS4S3/t3xpANoZ
-	fMWvRG+69LUGWzme6PVDco0ZFCeM7vfUpGeksDZI3z5FpBYHlU5+MqvBB/XCUz0tSEk1fDzrRkUZ2
-	YHwjo2XWY68XJ4S/UyDHNpcYYoIRz6GCK8IoBHNkuYm6Mq2NkrCY2ePjJ4l6ltSL9O9XJUZxKJPhW
-	/Noao/Cg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vHRfI-00000000bYE-3FZm;
-	Fri, 07 Nov 2025 18:58:28 +0000
-Message-ID: <0c265a9b-fdc5-40d7-845f-30910f1ac6ea@infradead.org>
-Date: Fri, 7 Nov 2025 10:58:27 -0800
+	s=arc-20240116; t=1762541913; c=relaxed/simple;
+	bh=RjrzCirQRAEDbjwBlo3vQ/iH4XgQ/gFqjek9EfoLwkI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fD3kaWW7Q1JeQCHGD5Ku2iIk9iXBnJ0UH47N/Rb42YMXJAUusRaX8cOCq+ljd1w97TcsR4fDx/oyfVoxKDeeQ8ZkR02ar8y7HdQUVu5vs24aXdFVOwcwZHEVNUyK/Q+2M2ffzPIoC68KFfK+LEfCgzeHwRI2LLxx9diMy0AJujQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PxkRGH2T; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-290aaff555eso10106595ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762541911; x=1763146711; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RjrzCirQRAEDbjwBlo3vQ/iH4XgQ/gFqjek9EfoLwkI=;
+        b=PxkRGH2TIiAF0PDEfx7e261KG4HHCHINVzILcYN2g3JsxpgBrE9iAKZtrwtiFKhs8H
+         HLTeK2tGIABxPeo7KZaKvq0Qrmo4ppG0xcf637oop5SrT25Y6+4Od7pdC5j9NSoTgORg
+         g7zFOtBbD1AMQoGuNubrEXs2QpxHTEZ4AoYGDXpH8Sv+6RNOphIkpgcrxameXZHtNwYD
+         NbzRGs/aPSbBX54hmOxIL0i8m+j62Xbr6RkRA7KW7ly5RNcrBWxctS99M2JSPnOQZX8N
+         ob9Ahigb7wOKIjvNAdjrkdsbw/VFRRysivR5X6L57z8/fu4SkaFL/2E/nZtPF8wrjW/G
+         UunQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762541911; x=1763146711;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RjrzCirQRAEDbjwBlo3vQ/iH4XgQ/gFqjek9EfoLwkI=;
+        b=v0c1wkuVFRv77dxGErOPr66Fr//MOUmvFH/KXa7KO2GUBl5/2AhQn2sRgdGBSCSZ7v
+         ldnz49uqrXf4oRrNOa+B6d/ShUSPWm5IV52+b/dVDneyaQzNhOxNFeUbj0hcopksCmld
+         T1FcwzswGUv9oAV1EZQTjM27UA34QyIOeeGZYPLdH3isM9EaeO2i2K4DOnnL+Zvtvxki
+         TkBVgVZJeGrbAR7Ur3yZtiHIMavTqM1PV/4MYBqaJnX1TXVZSnOvpC1/mEFMAZ+cDWWN
+         s9I2wcpl/EQQFYqDIB98IQLF3VhiDd41N+ZRtFyNEShXb8ACNGWAx3DZu0CrIo2DSiVU
+         OX/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXrywzizgYMa/maVAo1y/A6cnez7RGyNIQkHCHuErP9H7B+f0DsAwEpkMV9Tx146KTsg1o1wA7+FTTlgd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwstIwDOfV0bdI4HEd1CfcQZxdZ+04AAZOpsHZED8xQu1LUYMxL
+	gRxRZLmo1D0KP6cAjahyf8ALqypafNi4VA2zPyI96xtLO9KxK6YUxAY+ityYm0nA
+X-Gm-Gg: ASbGncs9dG31D7i732aBN2sizzYDtSahUBR4zsKkMh1DmGJ3oUdd9ytmisdT8eByRrP
+	eJG5dlOM2udNzsTkIeMxrUntxOZYOeJVkNgRHVydojW88tLf+zhuc7LLN54wz7YjIW4u+KJq+8h
+	KrzkUBwBjCrqOKh2V9q8KPP//NlzJkX3RfG4HL0Opvmr2OprEfNgsbeLj1YsTxZFN5tmqooLvm4
+	j18w6uceWrEnR7m1lUpnO0iqKZsJ1ZxUbEacsWGiXhAGn0j6ANs2R3mDOnEjNQksx9ZklhWOn6R
+	BhhZ7/iAXovHu7q42iDpDgi4wG2ekVPzr39wnGjw9/F+gCKJSCnALL2HEzZeSDrMaa/sU5hXrde
+	DkwoNx9uRu8Jbrq0JYIFTO4YMmylSCJIak6aAvXnsbig5yfSbDgeuoN+2z1cYa6t8Xp70m21O
+X-Google-Smtp-Source: AGHT+IGpMuuRbaDk+Z+7AaaKmSwq/CPtj/ja76biPbWaMcvP2DENiGEkr+xomRRcSSIxRfBq0JnZdg==
+X-Received: by 2002:a17:903:1745:b0:295:5945:2920 with SMTP id d9443c01a7336-297e56c9ea9mr1236415ad.34.1762541911527;
+        Fri, 07 Nov 2025 10:58:31 -0800 (PST)
+Received: from [192.168.0.56] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5e5bdsm66901325ad.39.2025.11.07.10.58.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 10:58:31 -0800 (PST)
+Message-ID: <5a8c765f8e2b4473d9833d468ea43ad8ea7e57b6.camel@gmail.com>
+Subject: Re: [PATCH v5 6/7] btf: Add lazy sorting validation for binary
+ search
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Donglin Peng <dolinux.peng@gmail.com>, bot+bpf-ci@kernel.org, Alexei
+ Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ zhangxiaoqin@xiaomi.com, LKML	 <linux-kernel@vger.kernel.org>, bpf
+ <bpf@vger.kernel.org>, Alan Maguire	 <alan.maguire@oracle.com>, Song Liu
+ <song@kernel.org>, pengdonglin	 <pengdonglin@xiaomi.com>, Andrii Nakryiko
+ <andrii@kernel.org>, Daniel Borkmann	 <daniel@iogearbox.net>, Martin KaFai
+ Lau <martin.lau@kernel.org>, Yonghong Song	 <yonghong.song@linux.dev>,
+ Chris Mason <clm@meta.com>, Ihor Solodrai	 <ihor.solodrai@linux.dev>
+Date: Fri, 07 Nov 2025 10:58:27 -0800
+In-Reply-To: <CAADnVQLkS0o+fzh8SckPpdSQ+YZgbBBwsCgeqHk_76pZ+cchXQ@mail.gmail.com>
+References: <20251106131956.1222864-7-dolinux.peng@gmail.com>
+	 <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
+	 <CAErzpmtRYnSpLuO=oM7GgW0Sss2+kQ2cJsZiDmZmz04fD0Noyg@mail.gmail.com>
+	 <74d4c8e40e61dad369607ecd8b98f58a515479f0.camel@gmail.com>
+	 <CAADnVQLkS0o+fzh8SckPpdSQ+YZgbBBwsCgeqHk_76pZ+cchXQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 05/11] PCI/P2PDMA: Document DMABUF model
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Logan Gunthorpe
- <logang@deltatee.com>, Jens Axboe <axboe@kernel.dk>,
- Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Ankit Agrawal <ankita@nvidia.com>, Yishai Hadas <yishaih@nvidia.com>,
- Shameer Kolothum <skolothumtho@nvidia.com>, Kevin Tian
- <kevin.tian@intel.com>, Alex Williamson <alex@shazbot.org>,
- Krishnakant Jaju <kjaju@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, iommu@lists.linux.dev, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- kvm@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20251106-dmabuf-vfio-v7-0-2503bf390699@nvidia.com>
- <20251106-dmabuf-vfio-v7-5-2503bf390699@nvidia.com>
- <135df7eb-9291-428b-9c86-d58c2e19e052@infradead.org>
- <20251107160120.GD15456@unreal>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251107160120.GD15456@unreal>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-	
+On Fri, 2025-11-07 at 10:54 -0800, Alexei Starovoitov wrote:
 
-On 11/7/25 8:01 AM, Leon Romanovsky wrote:
-> On Thu, Nov 06, 2025 at 10:15:07PM -0800, Randy Dunlap wrote:
->>
->>
->> On 11/6/25 6:16 AM, Leon Romanovsky wrote:
->>> From: Jason Gunthorpe <jgg@nvidia.com>
->>>
->>> Reflect latest changes in p2p implementation to support DMABUF lifecycle.
->>>
->>> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
->>> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
->>> ---
->>>  Documentation/driver-api/pci/p2pdma.rst | 95 +++++++++++++++++++++++++--------
->>>  1 file changed, 72 insertions(+), 23 deletions(-)
->>>
->>> diff --git a/Documentation/driver-api/pci/p2pdma.rst b/Documentation/driver-api/pci/p2pdma.rst
->>> index d0b241628cf1..69adea45f73e 100644
->>> --- a/Documentation/driver-api/pci/p2pdma.rst
->>> +++ b/Documentation/driver-api/pci/p2pdma.rst
->>> @@ -9,22 +9,47 @@ between two devices on the bus. This type of transaction is henceforth
->>>  called Peer-to-Peer (or P2P). However, there are a number of issues that
->>>  make P2P transactions tricky to do in a perfectly safe way.
->>>  
->>> -One of the biggest issues is that PCI doesn't require forwarding
->>> -transactions between hierarchy domains, and in PCIe, each Root Port
->>> -defines a separate hierarchy domain. To make things worse, there is no
->>> -simple way to determine if a given Root Complex supports this or not.
->>> -(See PCIe r4.0, sec 1.3.1). Therefore, as of this writing, the kernel
->>> -only supports doing P2P when the endpoints involved are all behind the
->>> -same PCI bridge, as such devices are all in the same PCI hierarchy
->>> -domain, and the spec guarantees that all transactions within the
->>> -hierarchy will be routable, but it does not require routing
->>> -between hierarchies.
->>> -
->>> -The second issue is that to make use of existing interfaces in Linux,
->>> -memory that is used for P2P transactions needs to be backed by struct
->>> -pages. However, PCI BARs are not typically cache coherent so there are
->>> -a few corner case gotchas with these pages so developers need to
->>> -be careful about what they do with them.
->>> +For PCIe the routing of TLPs is well defined up until they reach a host bridge
->>
->> Define what TLP means?
-> 
-> In PCIe "world", TLP is very well-known and well-defined acronym, which
-> means Transaction Layer Packet.
+[...]
 
-It's your choice (or Bjorn's). I'm just reviewing...
+> > > > > @@ -610,7 +674,7 @@ s32 btf_find_by_name_kind(const struct
+> > > > > btf
+> > > > > *btf, const char *name, u8 kind)
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > > > >=20
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0 if (btf->nr_sorted_types !=3D BTF_NEED_=
+SORT_CHECK) {
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (btf_check_sorted((struct btf *)btf)=
+) {
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^
+> > > >=20
+> > > > The const cast here enables the concurrent writes discussed
+> > > > above.
+> > > > Is
+> > > > there a reason to mark the btf parameter as const if we're
+> > > > modifying it?
+> > >=20
+> > > Hi team, is casting away const an acceptable approach for our
+> > > codebase?
+> >=20
+> > Casting away const is undefined behaviour, e.g. see paragraph
+> > 6.7.3.6
+> > N1570 ISO/IEC 9899:201x Programming languages =E2=80=94 C.
+> >=20
+> > Both of the problems above can be avoided if kernel will do sorted
+> > check non-lazily. But Andrii and Alexei seem to like that property.
+>=20
+> Ihor is going to move BTF manipulations into resolve_btfid.
+> Sorting of BTF should be in resolve_btfid as well.
+> This way the build process will guarantee that BTF is sorted
+> to the kernel liking. So the kernel doesn't even need to check
+> that BTF is sorted.
 
->>                                    well-defined
-> 
-> Thanks
-> 
-> diff --git a/Documentation/driver-api/pci/p2pdma.rst b/Documentation/driver-api/pci/p2pdma.rst
-> index 69adea45f73e..7530296a5dea 100644
-> --- a/Documentation/driver-api/pci/p2pdma.rst
-> +++ b/Documentation/driver-api/pci/p2pdma.rst
-> @@ -9,17 +9,17 @@ between two devices on the bus. This type of transaction is henceforth
->  called Peer-to-Peer (or P2P). However, there are a number of issues that
->  make P2P transactions tricky to do in a perfectly safe way.
-> 
-> -For PCIe the routing of TLPs is well defined up until they reach a host bridge
-> -or root port. If the path includes PCIe switches then based on the ACS settings
-> -the transaction can route entirely within the PCIe hierarchy and never reach the
-> -root port. The kernel will evaluate the PCIe topology and always permit P2P
-> -in these well defined cases.
-> +For PCIe the routing of Transaction Layer Packets (TLPs) is well-defined up
-> +until they reach a host bridge or root port. If the path includes PCIe switches
-> +then based on the ACS settings the transaction can route entirely within
-> +the PCIe hierarchy and never reach the root port. The kernel will evaluate
-> +the PCIe topology and always permit P2P in these well-defined cases.
-> 
->  However, if the P2P transaction reaches the host bridge then it might have to
->  hairpin back out the same root port, be routed inside the CPU SOC to another
->  PCIe root port, or routed internally to the SOC.
-> 
-> -As this is not well defined or well supported in real HW the kernel defaults to
-> +As this is not well-defined or well supported in real HW the kernel defaults to
-Nit:                              well-supported
-
-The rest of it looks good. Thanks.
-
->  blocking such routing. There is an allow list to allow detecting known-good HW,
->  in which case P2P between any two PCIe devices will be permitted.
-> 
-> @@ -39,7 +39,7 @@ delegates lifecycle management to the providing driver. It is expected that
->  drivers using this option will wrap their MMIO memory in DMABUF and use DMABUF
->  to provide an invalidation shutdown. These MMIO pages have no struct page, and
->  if used with mmap() must create special PTEs. As such there are very few
-> -kernel uAPIs that can accept pointers to them, in particular they cannot be used
-> +kernel uAPIs that can accept pointers to them; in particular they cannot be used
->  with read()/write(), including O_DIRECT.
-> 
->  Building on this, the subsystem offers a layer to wrap the MMIO in a ZONE_DEVICE
-> @@ -154,7 +154,7 @@ access happens.
->  Usage With DMABUF
->  =================
-> 
-> -DMABUF provides an alternative to the above struct page based
-> +DMABUF provides an alternative to the above struct page-based
->  client/provider/orchestrator system. In this mode the exporting driver will wrap
->  some of its MMIO in a DMABUF and give the DMABUF FD to userspace.
-> 
-> @@ -162,10 +162,10 @@ Userspace can then pass the FD to an importing driver which will ask the
->  exporting driver to map it.
-> 
->  In this case the initiator and target pci_devices are known and the P2P subsystem
-> -is used to determine the mapping type. The phys_addr_t based DMA API is used to
-> +is used to determine the mapping type. The phys_addr_t-based DMA API is used to
->  establish the dma_addr_t.
-> 
-> -Lifecycle is controlled by DMABUF move_notify(), when the exporting driver wants
-> +Lifecycle is controlled by DMABUF move_notify(). When the exporting driver wants
->  to remove() it must deliver an invalidation shutdown to all DMABUF importing
->  drivers through move_notify() and synchronously DMA unmap all the MMIO.
-> 
-
--- 
-~Randy
-
+This would be great.
+Does this imply that module BTFs are sorted too?
 
