@@ -1,301 +1,97 @@
-Return-Path: <linux-kernel+bounces-890693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C66C40AEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:53:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F344C40AFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:54:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62A4F1884A66
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:54:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 438EA564A2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB3A2C237E;
-	Fri,  7 Nov 2025 15:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EDB329C59;
+	Fri,  7 Nov 2025 15:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="uyS6dEx5"
-Received: from YT5PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11021133.outbound.protection.outlook.com [40.107.192.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxplMiDs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEE8184540;
-	Fri,  7 Nov 2025 15:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.192.133
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762530821; cv=fail; b=iPCY0gxQnSWLP7O3zHRNmi2xQX3QvUn+AOynPmWeIdFvGBbYPZemZL4kvn37fDcDflblwL9NEL/veVFcoe5glphQ3xyMwl+3hrkEhK7W44Q3QJxrHE2Kogkufqp7vLhrNlwl0RiQlZvHqwbiBKNlTCL35LlAxUmxKUzfa2PAEqw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762530821; c=relaxed/simple;
-	bh=NX68SZ+lp++gJIF0ZPdZ/kTMzXH15RQQBaWDino74Bw=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OI/cgX2/fev52NNysRgsYCupN6DXnha3RF3L5Gs+pzX89/+/Z7vVLJjwIk9OIiWAbJTBxb9Af3y57niOfp9p8Z3eMswz6jOirdur4PBtS0Wzi4bmVRDbw3gbyyw2vwylEr24g/9z0E14v9rY0ZKQLexqMgqhpwu8s6raomiis9Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=uyS6dEx5; arc=fail smtp.client-ip=40.107.192.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UtSx4UiYUgms0vtNCyWlblgJGkG6tvKroNBLJmILF7cuLszQhADcRpXXSdN0Khw8r6nOAPTrzYgju/VyLaR9LLO1/w0rEYDH6PvbnJHHhBULrePY5gd/uZeIIdaCyHnjqIK3Mvm35qzq6D6+tDFjECvhh9+ABP2eKMOHlAz5XXbjTRTa6eSvWZd/6jc5oa5RyZKy3Q9FCRTidf084iMG4H2Rm7QDzP3c++MkYQH11mHRrLeBQqhWiXxmw1gRrY5EdYQBuEyeACNo0kM2WDP3/PmY4Mla69zs7gWfOpvCcwqV0cEA70ETKdsIoMFtn35tEjrEBfs18kROlVMz4fZ1Ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SqsXwDfFxylF3avGzTXd8Ynrg+KWkFKB3T+mY4YOZDM=;
- b=ggep9qpc5o8UGi5z7TSBaLU+uzzVQjCHcnp6yT7EE9fW/HUiJG18dqz0DUCzi5yW2nNwFGuMYfENyjG56qsSFbEvSbmnGRtoy7KhByEtfEMtnJ+/fNj+rDJM3juYRAgdaSsV6oIctzCNceyOYYMqh2isRY1Ly4CJUZRVJN69xB6sI3GrixZkffMMrMP4kbPt6nhgFb+WXmHcHQeYqqRVb67zYh0DhQ4PCtycfeeN2MqPiBYFVZcvqtjgjGaBoLrviH8+A85cj0nzemUVL92rx91Hylt24HvvNEz/si2397tR8TCz5xQW9wNEumcTuC/WAu5JUAu+4uY+jFSz3fBrkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SqsXwDfFxylF3avGzTXd8Ynrg+KWkFKB3T+mY4YOZDM=;
- b=uyS6dEx5lJOJpzh+tafqimTLoqLdAXxqzZNdVVpjtyvbfeR7r6LAI4nvFg26pehjh0h0BzwCKWCHFmHm0XGh2CKRXl9sGenaAdlS9aqADxL8oTROwgZhynRPNAaPqji/ExXpkoClFkUUYIgd/H6+tZK7hYhcw3x0n6NEsqy31NXlNLT39rh55Kep6WxsgyuPpvpE6I+6zxU4/u1rZI0HfyvREF2Wof87GYs3VaFItpNzqojBLDJdbyK+LtQN/Xl0xRAWFjV7DBPO1GDF9frpQqVrxR84/k1/lNaPjPt3J0o/lmfA7CbsoQsLNv7/lUaBZCV+mxnoXBt96ZF9v9EruA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT2PR01MB11469.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:163::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Fri, 7 Nov
- 2025 15:53:36 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9298.012; Fri, 7 Nov 2025
- 15:53:36 +0000
-Message-ID: <7b76f0e4-6148-4290-a295-7ceeb1ef2feb@efficios.com>
-Date: Fri, 7 Nov 2025 10:53:34 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v7 2/2] mm: Fix OOM killer inaccuracy on large
- many-core systems
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>,
- kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
- Andrew Morton <akpm@linux-foundation.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
- Christoph Lameter <cl@linux.com>, Martin Liu <liumartin@google.com>,
- David Rientjes <rientjes@google.com>, SeongJae Park <sj@kernel.org>,
- Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Sweet Tea Dorminy <sweettea@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <liam.howlett@oracle.com>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, Christian Brauner <brauner@kernel.org>,
- Wei Yang <richard.weiyang@gmail.com>, David Hildenbrand <david@redhat.com>,
- Miaohe Lin <linmiaohe@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Yu Zhao <yuzhao@google.com>, Roman Gushchin <roman.gushchin@linux.dev>,
- Mateusz Guzik <mjguzik@gmail.com>, Matthew Wilcox <willy@infradead.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- christian.koenig@amd.com
-References: <20251031144232.15284-3-mathieu.desnoyers@efficios.com>
- <202511061432.4e534796-lkp@intel.com>
- <6hmgutxgdchs4qz6hprwsecwoygwszn5ywixxrvnereilegcsx@mxroaotaw2me>
- <7732c2eb-e547-47a8-93b3-1d1b4d9c27e8@efficios.com>
-Content-Language: en-US
-In-Reply-To: <7732c2eb-e547-47a8-93b3-1d1b4d9c27e8@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: YT4PR01CA0322.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10a::11) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED3432E142
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762530837; cv=none; b=g46dQwS6JRO7NCF/Z3yM4fT2OvcAz50Z5oJ59h8h14lbEUJbKbGc81l6Y4/nggyM+P4UfkIrS6sxBEEbYTuxltsLrItW6FP8BJUcJDAW4xshMzBr/d3uw/BevQJMSGGE921AerzOKyCNHFnOWfPIiOUj/mt118JFpI1M37NsQEY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762530837; c=relaxed/simple;
+	bh=ettcBPzq9vc4d1Q2YzwL5tu0nxYFQpwu/MvrU+Xm5OY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J1IIi+N9DPIsgs8fWWPk3ZwTT6fyfZi9ZuYtUAlwGn3kcqSZHv/379AVz/2RNq72c8K58M8bdnRKmY7hUI4dKJ3VXdZSFhuJjihpCVsX/erxcH0o0XX+LgGJoi10aFBIGhomcESBmWl/DGawNQzZJ7AGh5v1dyR5oSygNNKmJhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lxplMiDs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1FAFC4CEF7;
+	Fri,  7 Nov 2025 15:53:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762530836;
+	bh=ettcBPzq9vc4d1Q2YzwL5tu0nxYFQpwu/MvrU+Xm5OY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lxplMiDsGPW2hmIqOmG3M/34/cHrntNpLBakDz8CGs09Ju7aioqGhBVXUiEaOdMMU
+	 rsjxWJIsDBBJpzxXPX7b0B4px02H130YHfddFe6GVGcohU3s5F/wYS4QPqM/0GFh6j
+	 t2rlVnta2EhUvPpaCXXXuPSg19DwBV7c9yJkGSjObvt0d8yKZgcqq4sgvA/e5F6l/c
+	 sWxSpNs9QqdeqZ9G9WYsd4fszlCoxx2ZLuSQ9wH5Jy8/Hh6U3PoK8466RX5+ALmy49
+	 6EjBQ5ixXvm7Ubf1ikeCUeblmht2MXhvB41+o9cgjkdb4oMUpRKeusUcKfxWKvqvJM
+	 7BS2bsd86M31w==
+From: Will Deacon <will@kernel.org>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Adrian=20Barna=C5=9B?= <abarnas@google.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Dylan Hatch <dylanbhatch@google.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 0/2] arm64: modules: Reject loading of malformed modules
+Date: Fri,  7 Nov 2025 15:53:42 +0000
+Message-Id: <176252752075.602788.16693792309857347530.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250922130427.2904977-1-abarnas@google.com>
+References: <20250922130427.2904977-1-abarnas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB11469:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0119735c-0cc5-4cb2-db8c-08de1e15cfb0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TGplSjlocld6ZG5CN1JpSmM4RkVTeCtJV0JGMlpZRUp6WEF1aUFZeW1Wa3ps?=
- =?utf-8?B?THlScnRVbmpKL3ZMdzY0ZVovVURXUlkxVmhKTnBqMm4xWTFWNFQxR2p6b3R4?=
- =?utf-8?B?bHA1ZGFxQlpXUnk1bjdXOS9oSjRZQk55cXk1V0pmTjFubmRDLzhycW5DKy84?=
- =?utf-8?B?NTgxQlN4OEg4bEJZOU9hTXJRWkgxR0dTenRIdzVBNGE2eGNZVVlxQVlIZzFC?=
- =?utf-8?B?a1R5OUw2cXlKdDBHbERBb1JubEx2NXVrOVhUWHhuU214TjB3ZWxtVkwxTmlq?=
- =?utf-8?B?U0Q3QjF5a0wxUGxOdERIZmxwUm16UmU4em51QVdMYzhLa052Ymg4M0RkcUV5?=
- =?utf-8?B?OVI0bVNUZW8wY2NoMkpwcGxHelJ3cGlVQUFEUzZ3ZmtPYW5pWE45UjFpMjMx?=
- =?utf-8?B?L3Q4S2o0SlN0U25HRzR5dDI2UzV4d0tmUWRiL0EzMnRTcWtRSXRlUDRGYU9D?=
- =?utf-8?B?aElTL2lNS09vYzFwcFhTOGFqSzJVbDNpcTlCVkpBTlIxTDFLSjMwUHZXMnYv?=
- =?utf-8?B?MzZqRTZneW83MVFJbTdqOGhwcmJYSHIySzVtZ1BiRHFkei9Lb1QrYWs5bE5N?=
- =?utf-8?B?cE5uN2IxY0JhMnRaSVNYcnFsZHdaVlJJK2tQdnFPZUlLazFjZDZOVk1vVjg1?=
- =?utf-8?B?dGVNOGhsNERtYWsvT1NQelFhMm1ieSt5aVBhNlA0ZDBMaklHZlBSQy8zSFNJ?=
- =?utf-8?B?TEZoajczOXRVVVdpbmFLTDQ5RWNsS2xjWWxKdldodHdtNGlOeXR1N0hjQndy?=
- =?utf-8?B?MlA3cDNsVVp2d1YzcUJsZ2tRRW1ucC96QlhjbnlXb1BCT2M2ZnA3K0lxeFBy?=
- =?utf-8?B?cGM5ZER1NWplT0RNenUwSnNyWmdKdUE1WlZFZ0J4ZFNKS0tINFQ5WUV5TkVm?=
- =?utf-8?B?NEhwT2Z1c3M2NmxOZzZCN21MZjlDOUlBb0lPS24wYjBjUjB2RmNZL1hSTHRN?=
- =?utf-8?B?dVVpc3IzalZSVmxTTXJpNkZtSXpCeDl4YXRaUXo2K09TMDdINXFxNEdoNXI1?=
- =?utf-8?B?ZDR2NnhOdHFPQnZ6bGVyRTA0UzhXS29yQjJ3UGZnc3AyS3hoSnR4VXE5SE5I?=
- =?utf-8?B?aDAvSFJwM0ZXYUVDR3BLc3hNa1FKclZ6QThiNEFRVXhpQ2lPUml3Q0syS0pt?=
- =?utf-8?B?cUlkaDRNVUpraWpKWEd6QzRBRldvdmVXZ2dJRU40anZ6eUluenBHMHgyR1d6?=
- =?utf-8?B?RFpOcnJuek5ZYm9pcnpJQjJ4NjEzS2JzeE91eTR1WVlINTZibE5VRWpVc1Zu?=
- =?utf-8?B?ZjhsMElxVkJHQWtPRVd3VGhVWlRsUHZYTk04YVBQTFp5UzFUK21DLzJGUUdO?=
- =?utf-8?B?WDZFSXhXWHpjcWtwSGk3eExCK2lUYWNjS3ZBTVRjaUlnUy9XdGhpMzE5YWlJ?=
- =?utf-8?B?anlKdS9aSHRYQTlnZlVTYW9hVlljY2FOZklWZDVSMmcwN1FxTFh6dU5GNHpW?=
- =?utf-8?B?ZEhCYVc5SjJ4MFBIVWRsLzc3UFBaZVdWaHBaVyt1MlUvSGZQZEcvTVhhK1Bk?=
- =?utf-8?B?aFp6NDhQR1U2aEdvVXd4V0kxOHFRaHdaYlA0Z085Z0ZNUHVXVnE0RjhRVEls?=
- =?utf-8?B?UFBDaGtkWWRGVllvVnhBeFV5NG1xOEJhVWlhT2V3bWdoUEszVUpMMFNwQUs0?=
- =?utf-8?B?bVJuNmZhczhabGJQT0xNZ1lFU3dYVjVSeTBPZ1BhVHlVMnltUEsxMHhvcWxC?=
- =?utf-8?B?MDNTclAvOXMyckpwTEkrRngyWlp1RjVycU9wdndKWmpPaEZPYTlRdXpCSXhM?=
- =?utf-8?B?Z0tOb1ArL0ZNMHFDN0huSWsyWFYvRmVSbE1CV044SXB1ck5yNlpmbTEzQktQ?=
- =?utf-8?B?Ny9qZEJweGRYWUFOSDdxYXplTDNvVk9ZY2x3azlaMnNHQk81YW1YaGNnYURm?=
- =?utf-8?B?MHhyZWRaL0U3bGg1Zm52d0htTzJRT1BJcjFzUm1ZQm4xL0E9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(7416014)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eFM4UitFclVVdlcxamczYTJmVHJoWHRMZFhyQ3RucjhscUZlRmdHbCsxZThC?=
- =?utf-8?B?YzhGY3ZlamI3azAwc2djMnEzWWQwamdKMjZpUTU0UjlxTlVIYk5NWUFSK1pN?=
- =?utf-8?B?UXpWc202anBpVkhkSTRuZmZIU1NKVWxaV2Voa3c4aWJFS2hPSldSSHRWZFFn?=
- =?utf-8?B?V3hSZU9CYkdENk5IbUNNT2MrTkJiNWcvL1hVNWV5SUhGZUpJdkFKK3ArcVBl?=
- =?utf-8?B?cm5NUCtYMnpNZHc4RzRYQ3BaM2hpeG9PV24wSW9Makhkc0szWThHeEMzSG9w?=
- =?utf-8?B?cXRmYmw5c3FDYUtaR2o0cWN3SlAvT0hseWdCY2QxNXdCN0IzTEI2SkhZUzRw?=
- =?utf-8?B?ajZEM1lSWkxsbG93dzZMSm1aOXZRWDRvL3ZBVGJNSDF0cTR3cENyZThndm53?=
- =?utf-8?B?SGJYenpia2pFOUdXcWdLL2g1Q2s2L01scml0VU1qMUVSRTdNYVVnVkVHdk9j?=
- =?utf-8?B?SWRpVG5tVXE3ei9jclJ3bGVnR3R0UzNtbWsweTUyUFFqdVIyTEhRK09JcjZK?=
- =?utf-8?B?cVVIMjdqM0JHcXVUK0o4M3dIYzJwRkxESFlXaXUrVGR0K3BndmhscVQzOERQ?=
- =?utf-8?B?T0d3VjNWQjJ4Z0Y2REhHaVJIMGgyMjl1b29xNi9NMTNlY1krSDIwSnI2VjhB?=
- =?utf-8?B?OGpnSllmSmU3S0dnYjVIRFFaUnM0clE1ZTZhTzRPdFV4dmRVeTRsVXJOMUND?=
- =?utf-8?B?RC9aU09EdUJPbWhtWG9weGRmL0xoQnJiNWQySlQyUDE0Qk9vTWZ1dGRxb2tx?=
- =?utf-8?B?VzFVclZtTlY1TDFnWHhTQnRPcG5WU2JpVFZ2aHVPdmVzL2lITXMrNUw0RmpD?=
- =?utf-8?B?UC9mY1kvelJvL1phRkhEQkpOZk5zNFpKWlkzTFFXK3hrRDBDWWhLUk5Ub3Nz?=
- =?utf-8?B?bVVHY3llTkduc3I4bTdlUExzcDJCb2VTMHpUc2tBV0ZzQWY4NW9GaXd1Z1Ix?=
- =?utf-8?B?TGphd2N5bldVYk1RVGFRN3FvQzdPcVI3T0xWQ0U4UjhucWtTdXQxdmF2a05R?=
- =?utf-8?B?QWJHeWNxT01KZkV5RHhTUHhHNGEzY0lOWHBEYmxyUnJVZDJEKzRFejdNeDZV?=
- =?utf-8?B?TDFXQUs1TmZhYmFhTHBYc3lGR3BFMStGN3JrSHFlL0h0MXFHa0xEcCtnSlYz?=
- =?utf-8?B?di9PMTk0NHNoWVdQSG5HUUlNRDVWRFdyb2JySk5hR3g3MWUxZWR6QnlLRnR4?=
- =?utf-8?B?WmQzVmRRdmpOZmQ1Z0pMUjdGcS8zTVJuL045ZEVJTU9iUzJBYzFCRm53SVlU?=
- =?utf-8?B?RzNlczhkY09yMkhSOFRMVVppWEYzbTNkK0pkODBUU00va0hVRFZ2djlGT0N3?=
- =?utf-8?B?RTFjTlU3RENHWmdlYVN5bGp0czlrTy9yeVZ1UGUrMXlCdjRneWdhTVZqc0JM?=
- =?utf-8?B?OVBkeTNYMnY3NldnTE16ZmxBWXVNQml4VmxWaGJoUUJSTVlEcG9uaDlGNUI5?=
- =?utf-8?B?cGtNYmQzQXJHTWE5UVNuY0orQms4NlhtNjJrT0lJMHRSNjhQWWRuVmxJK054?=
- =?utf-8?B?ak1zdVgzS2FJWFZ3aWhsN1ZKSmR0cGNQTTl0amNwTzhEcHA4VWV1WU9sT3FJ?=
- =?utf-8?B?dTQwN0ZHcE5mbmZFc3N5aktvc2ZCOWNDUXRqS2lHekE1ZVpSdUM4NkJnNThp?=
- =?utf-8?B?Sy9xdlFCRFNhcWRqd0t0ZFJEZkNRZ0pLUXlYazQ5T0dZUVdibHVyVC83THpW?=
- =?utf-8?B?NVY1MVJrMjNJZklkbVFrZE5CUnp3a0ZiSngyY0loVVR0VVlsQU1JM090NFQ4?=
- =?utf-8?B?dWdQTFZqc0VhQi84STkrMVFSbit2RW5venZvRFpHY3hiQ0FtUnNWdFZyQk02?=
- =?utf-8?B?bG5IYWR4clYyc21xY2RvY3JaNUVEVGR6dmJ4RmlyVHprSHBsWDJlMU42N2Vv?=
- =?utf-8?B?OG50QTA0ZnJORGlmL3o3L3pFZjlIQVdsaWFvUkNiMEpEM0tSU1YvU0xOanhz?=
- =?utf-8?B?dEwxTDRPUzNUb0pObU91NjYrSTdpbWJMVnBBRFRVZTlHMWVyMjdLdVpVaHN2?=
- =?utf-8?B?b3RoSmQ1V1REYitNclRjWmlyeGRiWVdNY0Y0aVQ3M3RvSUdHWVVVTWJsNWl6?=
- =?utf-8?B?a0ZzTnlYdjVhRXJhckFoU1FpdHpjT2M3MjJxektZWW5TOUFwYzlQWFdONnpz?=
- =?utf-8?B?QXRmWlRHWW1FYjRLTVJXZWZWak9pVDc2eHEzQmlmQjExZEo2d3diMEp5STUw?=
- =?utf-8?B?RnB6VDNrZUk2NmRkbTN4WHRuK09SbGs1QVovdWlhdDNUUkE0M0FpUDVlWkhH?=
- =?utf-8?Q?gcx4XccAjgHoY1bkigANKqNFYPLVY8NV2giL99PDvU=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0119735c-0cc5-4cb2-db8c-08de1e15cfb0
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 15:53:36.2554
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DK5p+Mz6O2ewRsdMTV1LgE9iVlvHAqW3V5kBv55+ywysmTowMFdtkzz1zwsHSZu8/EKUileKf4MJw8Fo0TeQEHXnXL0cSo7u9jbJWoKHabU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB11469
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2025-11-07 09:43, Mathieu Desnoyers wrote:
-> On 2025-11-06 19:32, Shakeel Butt wrote:
+On Mon, 22 Sep 2025 13:04:25 +0000, Adrian Barnaś wrote:
+> Here is version two of the patches I previously posted here:
+> 
+>   v1: https://lore.kernel.org/all/20250919122321.946462-1-abarnas@google.com/
+> 
+> Changes:
+>   * Renamed the parameter `is_module` to `skip_dry_run` in scs_patch()
+>   * Moved comments to module_finalize() and improve justification
+>   * Instead of rejecting all modules with callback, reject those with cb
+>     pointing outside core kernel text
+>   * Replace -EPERM to -ENOEXEC when rejecting modules with incorrect cb
+>   * Fix missing return in apply_alternatives_module() placeholder
 > 
 > [...]
-> 
->>> [   14.858862][   T67] BUG: Bad rss-counter state mm:ffff8881000655c0 
->>> type:MM_ANONPAGES val:0 Comm:kworker/u9:0 Pid:67
->>> [   14.894890][   T69] BUG: Bad rss-counter state mm:ffff888100061cc0 
->>> type:MM_FILEPAGES val:0 Comm:kworker/u9:0 Pid:69
->>> [   14.896108][   T69] BUG: Bad rss-counter state mm:ffff888100061cc0 
->>> type:MM_ANONPAGES val:0 Comm:kworker/u9:0 Pid:69
->>
->> Hmm this shows that percpu_counter_tree_precise_sum() is returning 0 but
->> percpu_counter_tree_approximate_sum() is off more than
->> counter->inaccuracy. I have not dig deeper to find why but this needs to
->> be resolved before considering this series for upstream.
-> 
-> I notice that those BUG show up while loading modules at boot in kworker 
-> context, e.g.:
-> 
-> [   14.858862][   T67] BUG: Bad rss-counter state mm:ffff8881000655c0 
-> type:MM_ANONPAGES val:0 Comm:kworker/u9:0 Pid:67
-> [   14.894890][   T69] BUG: Bad rss-counter state mm:ffff888100061cc0 
-> type:MM_FILEPAGES val:0 Comm:kworker/u9:0 Pid:69
-> [   14.896108][   T69] BUG: Bad rss-counter state mm:ffff888100061cc0 
-> type:MM_ANONPAGES val:0 Comm:kworker/u9:0 Pid:69
-> [   14.918858][   T71] module: module-autoload: duplicate request for 
-> module crypto-aes
-> [   14.919479][   T71] module: module-autoload: duplicate request for 
-> module crypto-aes-all
-> [   14.920801][    T1] krb5: Running aes128-cts-hmac-sha256-128 enc 
-> plain<block
-> [   14.921844][    T1] krb5: Running aes128-cts-hmac-sha256-128 enc 
-> plain==block
-> [   14.922852][    T1] krb5: Running aes128-cts-hmac-sha256-128 enc 
-> plain>block
-> [   14.923843][    T1] krb5: Running aes256-cts-hmac-sha384-192 enc no 
-> plain
-> [   14.939591][    T1] krb5: Running aes256-cts-hmac-sha384-192 enc 
-> plain<block
-> [   14.940614][    T1] krb5: Running aes256-cts-hmac-sha384-192 enc 
-> plain==block
-> [   14.941586][    T1] krb5: Running aes256-cts-hmac-sha384-192 enc 
-> plain>block
-> [   14.942547][    T1] krb5: Running camellia128-cts-cmac enc no plain
-> [   15.018568][   T85] BUG: Bad rss-counter state mm:ffff888160f81340 
-> type:MM_ANONPAGES val:0 Comm:kworker/u9:0 Pid:85b
-> 
-> I used "module_init" similarly to lib/percpu_counter.c, but I think it
-> happens too late in the boot sequence:
-> 
->    module_init(percpu_counter_startup);
-> 
-> module_init maps to __initcall within a built-in compile unit, which
-> maps to device_initcall(), which happens quite late within the sequence
-> called from do_initcalls(), called from do_basic_setup().
-> 
-> And even do_basic_setup is documented as:
-> 
->   * Ok, the machine is now initialized. None of the devices
->   * have been touched yet, but the CPU subsystem is up and
->   * running, and memory and process management works.
-> 
-> which clearly requires that the mm subsystem is expected to
-> be ready at that point.
-> 
-> It probably was not an issue for the non-hierarchical percpu
-> counters because all it was initializing is handling of CPU hotplug,
-> but the new hierarchical counters initialize the pre-calculated
-> inaccuracy value which is used to figure out whether the approximate
-> sum is sufficient to compare values or if the precise sum is needed.
-> 
-> I think this is why we are hitting this BUG.
-> 
-> Now I wonder where I should move this initialization. It requires
-> "nr_cpu_ids" to be initialized, and pretty much need to be done
-> before mms are created. I'm starting to suspect that the module init
-> code can spawn kworkers that have a mm before the init process runs.
 
-At least on x86, nr_cpu_ids appears to be set by set_nr_cpu_ids()
-through early_param("possible_cpus", setup_possible_cpus), which is
-AFAIU called from parse_early_param(), which happens very early in the
-boot sequence.
+Applied to arm64 (for-next/fixes), thanks!
 
-It would make sense to call an explicit percpu counter tree init
-function from start_kernel() between the call to mm_core_init() and the
-call to maple_tree_init(). This way it would be initialized right after
-mm, but given that the hierarchical counter tree is a lib that can be
-used for other purposes than mm accounting, I think it makes sense
-to call its init explicitly from start_kernel() rather than bury
-it within mm_core_init().
+[1/2] arm64: Fail module loading if dynamic SCS patching fails
+      https://git.kernel.org/arm64/c/6d4a0fbd34a4
+[2/2] arm64: Reject modules with internal alternative callbacks
+      https://git.kernel.org/arm64/c/8e8ae788964a
 
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
+Cheers,
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
