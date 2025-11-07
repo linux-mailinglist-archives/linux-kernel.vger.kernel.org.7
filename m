@@ -1,91 +1,133 @@
-Return-Path: <linux-kernel+bounces-889804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F732C3E913
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 06:58:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C264AC3E94C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:03:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B220D3AE352
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 05:57:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F64188BBC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A722E0B47;
-	Fri,  7 Nov 2025 05:56:45 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F74A2D2388;
+	Fri,  7 Nov 2025 06:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPV+Cg2w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E782D5950;
-	Fri,  7 Nov 2025 05:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0002C280A20;
+	Fri,  7 Nov 2025 06:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762495004; cv=none; b=jlbwMsw7CZ2ek7t7tzT+G0RWsSFuCGPnnTGh2pUQVQKrnpUBi2Vg3wHnj98LtSdezM4oYhjLO3H50oV0WI+ZvnBuGoUDhEvYt8rrH0on9+BoE2kHO1DoK62xB0jhbZosqHeUeSa3o7qK25S8c8hiYDn1L2jBMtOhBFv1Vz7I0aM=
+	t=1762495399; cv=none; b=fbG1yYL4Z14pOqoa7UScQ8DTW/JuQR4FNvon0+r/iQb+rWVvsNSsrPwLfJ34yOn8Cn/vm2FSm9qOOwaMGNbcY2cMLCocxOENcxAhy4ylFIBaPhlzQxuPje3/b89Ess5pCF3XiAs9VeGMQJP98oNXGozsIrLcJSistR0WXUjeHkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762495004; c=relaxed/simple;
-	bh=ny2XylRjq1EK6h3i/HZ7JxOmnPtg8Rs65J2/1rfDoY8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pZij61wcJDPRqhKUZ7SC2FYfV6bf66D2ArKsajVl/y5KoTDWmuw7X8OFBVFP7BgSskVevn8Wf54l7R81yXysnbIaE/L+oDaXZt/4pHFc7lIcOznNs8YhIKvgi+S/IBBTnb/yZHddSokTjB3lyQW3fJ2C3RoCVEiC1BnX9BD/Oeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 7 Nov
- 2025 13:56:30 +0800
-Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 7 Nov 2025 13:56:30 +0800
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: ryan_chen <ryan_chen@aspeedtech.com>, <bmc-sw@aspeedtech.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
-	<andrew@codeconstruct.com.au>, <jk@codeconstruct.com.au>, Lee Jones
-	<lee@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
-	<will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson
-	<bjorn.andersson@oss.qualcomm.com>, Geert Uytterhoeven
-	<geert@linux-m68k.org>, Nishanth Menon <nm@ti.com>,
-	<nfraprado@collabora.com>, Taniya Das <quic_tdas@quicinc.com>, Lad Prabhakar
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Kuninori Morimoto
-	<kuninori.morimoto.gx@renesas.com>, Eric Biggers <ebiggers@kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v7 5/5] arm64: configs: Update defconfig for AST2700 platform support
-Date: Fri, 7 Nov 2025 13:56:29 +0800
-Message-ID: <20251107055629.4075519-6-ryan_chen@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251107055629.4075519-1-ryan_chen@aspeedtech.com>
-References: <20251107055629.4075519-1-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1762495399; c=relaxed/simple;
+	bh=TlVvyjy8Qz5ChlDvWPbBxE+vA1IB1QZdK1yG9sKb7DI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LHU21cHd4+Ldo9xtFs9KBGZaQqP+WPkl6AOPs/FP3oddOnvzGF5wQZ2Ev2N8c2elUZhdn5c10sMjEOHNzWbwyhYsjbiTOimkAYCesPWJcqVacQUnP9M2CL3/1tYV0O9+F94fvDEQm9CghXY0eFvpMuBSJvxkehJWlzJHq1tpE4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPV+Cg2w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D186FC4CEF5;
+	Fri,  7 Nov 2025 06:03:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762495398;
+	bh=TlVvyjy8Qz5ChlDvWPbBxE+vA1IB1QZdK1yG9sKb7DI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LPV+Cg2wMPbNl1q2cCNQmh8ekcy8rJwpZ2QzvQr3CkIRAs6QlBnp5w6K4bnjX3O7e
+	 mZ7z7nM9j1sVHLYXXpeSFgtswQjKBsjoc5cYhXX1NG0/mom6XoCGKVaCGP8YB29LJ6
+	 AXqZgFQSBMTQpJemxdrpoMEzOp05DEB3yocDtCdzkv0j4EtaxbZ06gHugQwxPq0qaL
+	 nzLKSNxtaylvIc3zfm8mbqndZDqhpYstZs39ys3kMmPlsAl/39qPIGtE4MOtZXeT6d
+	 3K9c5ozOP6/ZoQP7AD8NDIdO/6hacVbF52jW752Le2R+WlgjJwi1PI5anY1W8uQFXY
+	 Tz2SFKS7br/tg==
+Date: Fri, 7 Nov 2025 11:33:04 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org, 
+	Christian Zigotzky <chzigotzky@xenosoft.de>, mad skateman <madskateman@gmail.com>, 
+	"R . T . Dickinson" <rtd2@xtra.co.nz>, Darren Stevens <darren@stevens-zone.net>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lukas Wunner <lukas@wunner.de>, 
+	luigi burdo <intermediadc@hotmail.com>, Al <al@datazap.net>, Roland <rol7and@gmx.com>, 
+	Hongxing Zhu <hongxing.zhu@nxp.com>, hypexed@yahoo.com.au, linuxppc-dev@lists.ozlabs.org, 
+	debian-powerpc@lists.debian.org, linux-kernel@vger.kernel.org, 
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 1/2] PCI/ASPM: Cache Link Capabilities so quirks can
+ override them
+Message-ID: <6fni6w6aolqgxazmepiw2clwjq54yt76pjswx7zmdgebj4svqz@mggk4qyhdrrt>
+References: <20251106183643.1963801-1-helgaas@kernel.org>
+ <20251106183643.1963801-2-helgaas@kernel.org>
+ <944388a9-1f5d-41e4-8270-ac1fb6cf73e1@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <944388a9-1f5d-41e4-8270-ac1fb6cf73e1@rock-chips.com>
 
-Enable options for ASPEED AST2700 SoC.
+On Fri, Nov 07, 2025 at 09:17:09AM +0800, Shawn Lin wrote:
+> 在 2025/11/07 星期五 2:36, Bjorn Helgaas 写道:
+> > From: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > Cache the PCIe Link Capabilities register in struct pci_dev so quirks can
+> > remove features to avoid hardware defects.  The idea is:
+> > 
+> >    - set_pcie_port_type() reads PCIe Link Capabilities and caches it in
+> >      dev->lnkcap
+> > 
+> >    - HEADER quirks can update the cached dev->lnkcap to remove advertised
+> >      features that don't work correctly
+> > 
+> >    - pcie_aspm_cap_init() relies on dev->lnkcap and ignores any features not
+> >      advertised there
+> > 
+> 
+> Quick test with a NVMe shows it works.
+> 
+> Before this patch,  lspci -vvv dumps:
+> 
+>  LnkCap: Port #0, Speed 16GT/s, Width x4, ASPM L1, Exit Latency L1 <64us
+>          ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
+>  LnkCtl: ASPM L1 Enabled; RCB 64 bytes, LnkDisable- CommClk+
+> 
+> 
+> Capabilities: [21c v1] L1 PM Substates
+>          L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
+> L1_PM_Substates+
+>                    PortCommonModeRestoreTime=10us PortTPowerOnTime=10us
+>          L1SubCtl1: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
+>                     T_CommonMode=0us LTR1.2_Threshold=26016ns
+> 
+> After this patch + a local quirk patch like your patch 2, it shows:
+> 
+>  LnkCap: Port #0, Speed 16GT/s, Width x4, ASPM L1, Exit Latency L1 <64us
+>          ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
+>  LnkCtl: ASPM Disabled; RCB 64 bytes, LnkDisable- CommClk-
+> 
+> Capabilities: [21c v1] L1 PM Substates
+>           L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
+> L1_PM_Substates+
+>                     PortCommonModeRestoreTime=10us PortTPowerOnTime=10us
+>           L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
+>                      T_CommonMode=0us LTR1.2_Threshold=0ns
+> 
+> 
+> 
+> One things I noticed is CommClk in LnkCtl is changed.
 
-Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+That's not because of this series, but because of your quirk that disables L0s
+and L1. Common Clock Configuration happens only when ASPM is enabled, if it is
+disabled, PCI core will not configure it (the value remains untouched). That's
+why it was enabled before your quirk and disabled afterwards.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e3a2d37bd104..ca2978dd1ccc 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -39,6 +39,7 @@ CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_ALPINE=y
- CONFIG_ARCH_APPLE=y
- CONFIG_ARCH_ARTPEC=y
-+CONFIG_ARCH_ASPEED=y
- CONFIG_ARCH_AXIADO=y
- CONFIG_ARCH_BCM=y
- CONFIG_ARCH_BCM2835=y
+This bit is also only used to report the L0s and L1 Exit latencies by the
+devices.
+
+- Mani
+
 -- 
-2.34.1
-
+மணிவண்ணன் சதாசிவம்
 
