@@ -1,61 +1,68 @@
-Return-Path: <linux-kernel+bounces-889704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52AB7C3E476
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:47:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0836FC3E47B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:48:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A59F4EC7C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:46:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E22304E87A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2058F2EA178;
-	Fri,  7 Nov 2025 02:46:38 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C84B2E091C;
+	Fri,  7 Nov 2025 02:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CNy72u2a"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F64BF9EC
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 02:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ACCF9EC;
+	Fri,  7 Nov 2025 02:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762483597; cv=none; b=Yx2wW3puf85zobcIxsDbNmvugj1qSPyEV+LjN8aBuqGFvaLONdYUlwgP6wS+UdW1xCQthXM04cBzzbfNHLnhIoVLlcDIIUcpefzf9SF2poD1bh2IRtXRTMfE5ZB5INT7IeKR/FTCTCci5Fe0z0LdgNLjp1PrubzLqVzngSyEo0o=
+	t=1762483726; cv=none; b=VBI65atmHjwgX3psvDYp1xAWbUUT9m44NMftXB5RtJjLq1Od86dYDBkrcv12/NtHwhmV1wFe0KrkHpOkTq1R1frZNg76yoRFvIQOOLhglDo4wXpOW/HERhiaanmndBI8co30NLY4fTnoH8djQgy566fJU/EYEvInBIHmnvr4h3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762483597; c=relaxed/simple;
-	bh=D5YvcLxZycEMWeTJcQOa4lVO0cmT4lxYT5JWsqlwf18=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AtGTkwRrtejEfiP1DPoqdC9swZGwsytkBAqZ1uK+WY5DHoUgoAJ43+qFSw0z9L826e3l+vV1pUJMpRahWElGPRbvNtwTeqkznDuNu7fGwu6Y1+7x93cPVe0Od7ToMkpmIsE/gF6rqCA4YH57qE3x8RqnFzyUbcWqp/WVa8zjMSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: f376a834bb8311f0a38c85956e01ac42-20251107
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:59d87bc8-a230-4055-88ca-d90d54663399,IP:0,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:25
-X-CID-META: VersionHash:a9d874c,CLOUDID:2418c3808d3b5942ec5250576dd24885,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|15|50,EDM:5,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: f376a834bb8311f0a38c85956e01ac42-20251107
-X-User: liqiang01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <liqiang01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1342834673; Fri, 07 Nov 2025 10:46:24 +0800
-From: Li Qiang <liqiang01@kylinos.cn>
-To: tomeu@tomeuvizoso.net,
-	ogabbay@kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Li Qiang <liqiang01@kylinos.cn>
-Subject: [PATCH] drm/rocket: Add scheds pointer to file_priv and fix memory leaks
-Date: Fri,  7 Nov 2025 10:46:20 +0800
-Message-Id: <20251107024620.912403-1-liqiang01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762483726; c=relaxed/simple;
+	bh=Nzxc++sU6mUt4sg8GFpT//GCEmkIIBR7C7SAwadAP+8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sC4ALIdALIbP+QG2TufbTHpP21x5DgbJnD79SrNnZdfH/iFDGyDk2AffhxN4kXSDFNuANt25sIc8GVtb6J4AGvvE5yiqEq1kKiqUvPipRi4NG8qVze8JgKe9tLyul7Tc58j+mpZq5da6lDWaHcVDnHbZyhbz+VEtb80H1eilQVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CNy72u2a; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=bq
+	TmSsEZd+iT+od1QkOZ1tdQHRJRxsI2AoEOj94xfW4=; b=CNy72u2aKnljlSCj25
+	KRQxao++3j4QN1GE4UrfYZgE5q0luhtwS+VkoDD8k5j4wF6EJZQ4BqcBD0Dnm7bC
+	+hxvMbJTA6RGdpEmtTwujXHCVRIQ1Ou4bBGYCEVXYZ2KEMeO+gOycibXdfkcaeVr
+	v9g4A1UDHb/Ec4VqYaSGmikUk=
+Received: from ubuntu.. (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3F9fFXQ1pJFfeCA--.1066S2;
+	Fri, 07 Nov 2025 10:47:36 +0800 (CST)
+From: Hang Shu <m18080292938@163.com>
+To: ojeda@kernel.org
+Cc: Hang Shu <hangshu847@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Yutaro Ohno <yutaro.ono.418@gmail.com>,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>,
+	Borys Tyran <borys.tyran@protonmail.com>,
+	Charalampos Mitrodimas <charmitro@posteo.net>,
+	Daniel Sedlak <daniel@sedlak.dev>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Matt Gilbride <mattgilbride@google.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] rust: correct documentation comment for rbtree cursor peek_next method
+Date: Fri,  7 Nov 2025 02:47:16 +0000
+Message-ID: <20251107024720.369067-1-m18080292938@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,74 +70,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3F9fFXQ1pJFfeCA--.1066S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xr18GryfKFyktFyfXF1UKFg_yoWfCFX_WF
+	s0qF18Aay8uFWjv3sxArs3AFy0gr4xGr4Fkw17KrW7KFyUCF4UJrn5Wr90qr93GrWIgrZr
+	Zr1Sg3WDKw129jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0g_-DUUUUU==
+X-CM-SenderInfo: bpryimqqszjmity6il2tof0z/1tbiPRj+kWkNW44zwAAAsI
 
-The rocket driver allocates an array of struct drm_gpu_scheduler pointers
-for each file via kmalloc_array() in rocket_job_open(). However, the
-allocated memory was not stored in rocket_file_priv and therefore never
-freed on file close, leading to a memory leak.
+From: Hang Shu <hangshu847@gmail.com>
 
-This patch introduces a new `scheds` field in struct rocket_file_priv to
-store the allocated pointer array, and frees it properly in
-rocket_job_close() after the scheduler entity is destroyed.
+The peek_next method's doc comment incorrectly stated it accesses the
+"previous" node when it actually accesses the next node. This commit
+fixes the documentation to accurately reflect the method's behavior.
 
-This ensures correct lifetime tracking of scheduler arrays and resolves
-the leak detected by code review and potential KASAN reports.
-
-Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
+Fixes: 98c14e40e07a ("rust: rbtree: add cursor")
+Signed-off-by: Hang Shu <hangshu847@gmail.com>
 ---
- drivers/accel/rocket/rocket_drv.h |  1 +
- drivers/accel/rocket/rocket_job.c | 10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ rust/kernel/rbtree.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/accel/rocket/rocket_drv.h b/drivers/accel/rocket/rocket_drv.h
-index 2c673bb99ccc..759a08596dad 100644
---- a/drivers/accel/rocket/rocket_drv.h
-+++ b/drivers/accel/rocket/rocket_drv.h
-@@ -24,6 +24,7 @@ struct rocket_file_priv {
- 	struct mutex mm_lock;
+diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+index b8fe6be6fcc4..9e178dacddf1 100644
+--- a/rust/kernel/rbtree.rs
++++ b/rust/kernel/rbtree.rs
+@@ -835,7 +835,7 @@ pub fn peek_prev(&self) -> Option<(&K, &V)> {
+         self.peek(Direction::Prev)
+     }
  
- 	struct drm_sched_entity sched_entity;
-+	struct drm_gpu_scheduler **scheds;
- };
- 
- struct rocket_iommu_domain *rocket_iommu_domain_get(struct rocket_file_priv *rocket_priv);
-diff --git a/drivers/accel/rocket/rocket_job.c b/drivers/accel/rocket/rocket_job.c
-index acd606160dc9..820d96f010f2 100644
---- a/drivers/accel/rocket/rocket_job.c
-+++ b/drivers/accel/rocket/rocket_job.c
-@@ -502,6 +502,9 @@ int rocket_job_open(struct rocket_file_priv *rocket_priv)
- 	unsigned int core;
- 	int ret;
- 
-+	if (unlikely(!scheds))
-+		return -ENOMEM;
-+
- 	for (core = 0; core < rdev->num_cores; core++)
- 		scheds[core] = &rdev->cores[core].sched;
- 
-@@ -509,8 +512,12 @@ int rocket_job_open(struct rocket_file_priv *rocket_priv)
- 				    DRM_SCHED_PRIORITY_NORMAL,
- 				    scheds,
- 				    rdev->num_cores, NULL);
--	if (WARN_ON(ret))
-+	if (WARN_ON(ret)) {
-+		kfree(scheds);
- 		return ret;
-+	}
-+
-+	rocket_priv->scheds = scheds;
- 
- 	return 0;
- }
-@@ -520,6 +527,7 @@ void rocket_job_close(struct rocket_file_priv *rocket_priv)
- 	struct drm_sched_entity *entity = &rocket_priv->sched_entity;
- 
- 	kfree(entity->sched_list);
-+	kfree(rocket_priv->scheds);
- 	drm_sched_entity_destroy(entity);
- }
- 
+-    /// Access the previous node without moving the cursor.
++    /// Access the next node without moving the cursor.
+     pub fn peek_next(&self) -> Option<(&K, &V)> {
+         self.peek(Direction::Next)
+     }
 -- 
-2.25.1
+2.43.0
 
 
