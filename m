@@ -1,147 +1,132 @@
-Return-Path: <linux-kernel+bounces-889643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CAD1C3E20C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:29:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51DD6C3E221
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 890854E9860
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:29:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18D0C4E88C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CCA2F6174;
-	Fri,  7 Nov 2025 01:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437082F4A10;
+	Fri,  7 Nov 2025 01:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxJdsgmg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="YzkxDR/V"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CD3286D64;
-	Fri,  7 Nov 2025 01:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59492E9ECE;
+	Fri,  7 Nov 2025 01:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762478961; cv=none; b=bIAMra/PACckhOcvdGuUkHWRtL/d+jnwWZ85KD8sTD/OgfTJfA0WXpBTUgmShFOAvJGZyOPRAc7eaU7KvuKIEZEWQM8vIBmI/3QrRV7XnPP/MYKT0m2fedDcwi43Icy+sE9+gsy3sy6d6eCH0rJ9FAGVDNCbxGF831c03Ugoo4k=
+	t=1762479017; cv=none; b=VWKb/mNb5B6AJi1ZpdEXl0SfU5y3ioXTsf1HQgc8TDrA8IKbyWYLx81BkyRs63XMYuTrFr3NEpKnujVm5LmKQk0ApvegBZPtIZOmGeARajA2JhsXJVxPa1l9o+3GL9ebdXkig2+Hvb0y3vX5HYgtO/tlpZlZeLoEENobQb+I9j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762478961; c=relaxed/simple;
-	bh=GbsyoaoMgC5ugJX7CDMoP2LUinPt69SQz5ZnttGKylU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cNY8uomGM6fdXslApabJvf4JJISNCHre0seBBpCasebFau3xqfETcXCyxG3lu83qCedFxNS9rdKZrGvgeId1hxkKJyat47PnryPvFSuc13ZAaqPI+iI/rJ3znOEHHDEmbu66NjIjoS4ukgXe8ZJF3HLRduCzQuzalZya0M0WmzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxJdsgmg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87FB4C4CEF7;
-	Fri,  7 Nov 2025 01:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762478961;
-	bh=GbsyoaoMgC5ugJX7CDMoP2LUinPt69SQz5ZnttGKylU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PxJdsgmg+BdMKGKF2RoB25bnZSE0JPB5UXZySz2/x9cQ0eoqEhJnzGsNRM/PP8VeU
-	 PiNLzTIlwkEPxzPBSo2GYUzwS386Ix8S+rTuRI5WpGxNtWvL1fZiuoGjNxqCmkwopq
-	 gDXGmXV79vMnoz9xJrSJXllSV0IDpLB4pBfm7tdh7BGni0nha6IaCK9d488cLTzUNn
-	 +qa+fUhUgjYHsLBpMkQT83JZtN1UZLzbUrf4Wznb4Puh6wu1EQ9GKndEerhXX++2/p
-	 03UWY8xFnLtf7xh4zjhiSkSVai5Fi9ex/qBu3giLMObs1+tMvXCHOrDXloA0xGdvSx
-	 M0a1B0E33uiag==
-Date: Thu, 6 Nov 2025 17:29:19 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: netdev@vger.kernel.org, Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?=
- <toke@toke.dk>, Eric Dumazet <eric.dumazet@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
- ihor.solodrai@linux.dev, "Michael S. Tsirkin" <mst@redhat.com>,
- makita.toshiaki@lab.ntt.co.jp, toshiaki.makita1@gmail.com,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel-team@cloudflare.com
-Subject: Re: [PATCH net V3 1/2] veth: enable dev_watchdog for detecting
- stalled TXQs
-Message-ID: <20251106172919.24540443@kernel.org>
-In-Reply-To: <176236369293.30034.1875162194564877560.stgit@firesoul>
-References: <176236363962.30034.10275956147958212569.stgit@firesoul>
-	<176236369293.30034.1875162194564877560.stgit@firesoul>
+	s=arc-20240116; t=1762479017; c=relaxed/simple;
+	bh=aogQJJfyjDXHY3kQzCAsj7IX0vVUjUq6HzwCBdUdhaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eg2WPsA1yCLqGe4USIxEdDGEiq0Wo2AxO80gpPucw2PE3mAAsBnldSeTob0okzdM24Wh0LpSnqxkjVsMpMdlPLmbmN5c6Un/Nzt0l5Jc3XGNdo56EZoNfEqDB7H/WHql5cqhDvbMbUwud4IhTZFRV96mW4C9l5JL41NEohTvSqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=YzkxDR/V; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1762479002;
+	bh=35L+rrx9K1LdyqVcy5E43gyFYLFh2mo/NaELv+Hva9Y=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=YzkxDR/Vbl4FI0I933v84cPW3l30HkqrZiY3l9usp+KFBTKTGUBWZUokznkKQW87q
+	 xp/cYcqboOQRUj21f085UwIdSTYOmjXtIP6zMNJkZgZA6d8+YmJOfv8npgtlt1hfD0
+	 EH6KhUl4Eql9SIvUdDAk83uscGTzZqViV7nCDCN4=
+X-QQ-mid: esmtpsz18t1762478998t36cfe8cb
+X-QQ-Originating-IP: XYy2puoEOwMWms+dhGae90A2kQraig8IBA6V6nniF3E=
+Received: from = ( [183.48.246.190])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 07 Nov 2025 09:29:56 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13916769930896062852
+EX-QQ-RecipientCnt: 14
+Date: Fri, 7 Nov 2025 09:29:56 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Lee Jones <lee@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-i2c@vger.kernel.org,
+	linux-rtc@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: (subset) [PATCH v2 1/4] mfd: simple-mfd-i2c: remove select I2C_K1
+Message-ID: <71DB25E553BE0B04+aQ1LlKzeR-FkZA83@kernel.org>
+References: <20251027-p1-kconfig-fix-v2-1-49688f30bae8@linux.spacemit.com>
+ <176244506110.1925720.10807118665958896958.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <176244506110.1925720.10807118665958896958.b4-ty@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: Nwz8Cs33/LprE0VPwvJ0w0lsXff3KaW0gOSYF6lYac9qw9KDBBL41uU+
+	Q9Sqd8ET3hzZuOV7LqcYIBjU/eDsdBWb9V0sF8iL0xHua3JHD0hosJ1BRfYTt7M1mX1pvD4
+	GJBKXmegDaXt/TjoZbTW7Jupg15sgjnYRmaB4oXgABa+G52kX/WKmI8t+5P2l6uD6u0dPNf
+	TwV/8JJFYj45dZRFD6PRkCwgBcrqCMTIowUPC1vcfKK1p/jmS3YmWjlJMWJWD+LTJc2Gg1n
+	y6sMzoQVIuzxgwTKwPbCk/tV6Y2kjUaQZ5WCVQtzhxtSuVy0bKkUqcH0J3LDkzqzvtFZedL
+	pNq/JBOMlrcXKLHX6oN6gxN6lkMtMJ4pYJxLbk76cHkdEnDnWV9rHr7gh972jRlMSwXRzmm
+	rymsMfG62Uh/2zHLf+h3EuTqFoUoBpSWBVOS5PxM8ECCbE4C26EGsLwm8i/n/tB/v4Ix7og
+	yh+o8F7Xmbut8QTtI2FZLI9yOHAttj7y9dVhVW001aW4cDL/4OA08sCL0AFr28o4Zgi7PiA
+	j+HkECMHmAa39DJJFoRkro/TfRboJOMmYvv9rYXJ9XlKQYlNvya+z3YHtkxDjxdp+4+GTS7
+	RYQXi0alcZW1JK65AjJJ9SIbKCxR5a6iystl5thBED+tM38mvxS5PhV5KtwAYqb/kdjOSFE
+	njk7d9eQ0IXhAqk3zPYa7GZOuai3C7rfbU8xMbv5MrwWKeOtAzgXDvae4t0qKM3P79Rl1I/
+	mcUFqmEqTIzj/S8n797UsG0JTlagTB+uouQN2o4AAoPcv4GgMXD+UDJVBJtDY1tXTjsLCSg
+	FF734xQOhnfvI4vkbx7LmKe+X4GryWAd6wFBp50ZBEofP66z1yUhsE/XL7obpR5Q4i46kaN
+	JME9VyjrvLXYhyhTXjzXx+hPs4G1RO9wYlgWTfPTfGcvJYs/4VvpjiOMOJ1W0JroZGugLXB
+	uI2vXo2z9lze9FAlJF7dBX6mVr3Ygbwxlpolw6VOdjLU8+LKsqXVxHeyS59BLa1gDbLy4UA
+	5+M+F63tZh35KhNN1E+gOhDhxwAfgOuDmrTqONKTUB2FvxwIiZ1KNtCDI/LhLedZlgA8/yO
+	Ccr2n1ZLvE0
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On Wed, 05 Nov 2025 18:28:12 +0100 Jesper Dangaard Brouer wrote:
-> The changes introduced in commit dc82a33297fc ("veth: apply qdisc
-> backpressure on full ptr_ring to reduce TX drops") have been found to cau=
-se
-> a race condition in production environments.
->=20
-> Under specific circumstances, observed exclusively on ARM64 (aarch64)
-> systems with Ampere Altra Max CPUs, a transmit queue (TXQ) can become
-> permanently stalled. This happens when the race condition leads to the TXQ
-> entering the QUEUE_STATE_DRV_XOFF state without a corresponding queue wak=
-e-up,
-> preventing the attached qdisc from dequeueing packets and causing the
-> network link to halt.
->=20
-> As a first step towards resolving this issue, this patch introduces a
-> failsafe mechanism. It enables the net device watchdog by setting a timeo=
-ut
-> value and implements the .ndo_tx_timeout callback.
->=20
-> If a TXQ stalls, the watchdog will trigger the veth_tx_timeout() function,
-> which logs a warning and calls netif_tx_wake_queue() to unstall the queue
-> and allow traffic to resume.
->=20
-> The log message will look like this:
->=20
->  veth42: NETDEV WATCHDOG: CPU: 34: transmit queue 0 timed out 5393 ms
->  veth42: veth backpressure stalled(n:1) TXQ(0) re-enable
->=20
-> This provides a necessary recovery mechanism while the underlying race
-> condition is investigated further. Subsequent patches will address the ro=
-ot
-> cause and add more robust state handling.
->=20
-> Fixes: dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to =
-reduce TX drops")
-> Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
-> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+On Thu, Nov 06, 2025 at 04:04:21PM +0000, Lee Jones wrote:
+> On Mon, 27 Oct 2025 13:48:05 +0800, Troy Mitchell wrote:
+> > select will force a symbol to a specific value without considering
+> > its dependencies. As a result, the i2c-k1 driver will fail to build
+> > when OF or COMMON_CLK are disabled.
+> > 
+> > The reason for removing I2C_K1 instead of adding a depends on condition
+> > is to keep the possibility for other SoCs to use this PMIC.
+> > 
+> > [...]
+> 
+> Applied, thanks!
+> 
+> [1/4] mfd: simple-mfd-i2c: remove select I2C_K1
+>       commit: ecf6bc474ae97c404e2125b413eb0ef3627b03c5
+Hi Lee,
 
-I think this belongs in net-next.. Fail safe is not really a bug fix.
-I'm slightly worried we're missing a corner case and will cause
-timeouts to get printed for someone's config.
+I think you didn't notice this reply [1]
+(Maybe because he was replying to the cover letter).
 
-> +static void veth_tx_timeout(struct net_device *dev, unsigned int txqueue)
-> +{
-> +	struct netdev_queue *txq =3D netdev_get_tx_queue(dev, txqueue);
-> +
-> +	netdev_err(dev, "veth backpressure stalled(n:%ld) TXQ(%u) re-enable\n",
-> +		   atomic_long_read(&txq->trans_timeout), txqueue);
+As Aurelien mentioned, the current shutdown/reboot (and possibly the regulator
+as well) intends to use the `default MFD_SPACEMIT_P1`.
+So if there’s no `default m if ARCH_SPACEMIT`,
+the default value in subdevices may not make much sense.
 
-If you think the trans_timeout is useful, let's add it to the message
-core prints? And then we can make this msg just veth specific, I don't
-think we should be repeating what core already printed.
+But don’t worry — to make things easier for you, I’ll send an additional
+patch based on your branch (in this series).
 
-> +	netif_tx_wake_queue(txq);
-> +}
-> +
->  static int veth_open(struct net_device *dev)
->  {
->  	struct veth_priv *priv =3D netdev_priv(dev);
-> @@ -1711,6 +1723,7 @@ static const struct net_device_ops veth_netdev_ops =
-=3D {
->  	.ndo_bpf		=3D veth_xdp,
->  	.ndo_xdp_xmit		=3D veth_ndo_xdp_xmit,
->  	.ndo_get_peer_dev	=3D veth_peer_dev,
-> +	.ndo_tx_timeout		=3D veth_tx_timeout,
->  };
-> =20
->  static const struct xdp_metadata_ops veth_xdp_metadata_ops =3D {
-> @@ -1749,6 +1762,7 @@ static void veth_setup(struct net_device *dev)
->  	dev->priv_destructor =3D veth_dev_free;
->  	dev->pcpu_stat_type =3D NETDEV_PCPU_STAT_TSTATS;
->  	dev->max_mtu =3D ETH_MAX_MTU;
-> +	dev->watchdog_timeo =3D msecs_to_jiffies(5000);
-> =20
->  	dev->hw_features =3D VETH_FEATURES;
->  	dev->hw_enc_features =3D VETH_FEATURES;
->=20
->=20
+How does that sound?
 
+Link: https://lore.kernel.org/all/aP9IVckJT-k2_O4K@aurel32.net/ [1]
+> 
+> --
+> Lee Jones [李琼斯]
+> 
+> 
 
