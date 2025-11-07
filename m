@@ -1,145 +1,225 @@
-Return-Path: <linux-kernel+bounces-890029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D34C3F18D
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:13:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE26C3F1BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:14:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB2F188DF2C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:13:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFA73B08D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59A2318141;
-	Fri,  7 Nov 2025 09:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDDA3191A8;
+	Fri,  7 Nov 2025 09:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZJ+Tzia"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o+8kokxi"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7143115A2
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95F9318146
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762506774; cv=none; b=kSUXIgeCYk8h53B/A1P7OiqqQ0pnaS/V1nqeHXGa/yOJ33s6aWKKph2Q+jDc1P8AAR0JTNkkeKKNHA5O9t+H5te/uXtEVLt+g5TuP0K3Eeg6lWZFo9lbtdZDcwxynuBmMlZK594UT8yw1PMIzOBFtVF89O5IJtucjC5EHQHdAt0=
+	t=1762506785; cv=none; b=o6lrwZLiOR8apougHF6/Ys0usPRzgxs4p6L98v4Nyk/Ivpu+q4/NJQAoFfL/zeP9zNHZj18BqtaHgGmymvFxXE6J3K7xjtHCl7pyNHcTs83+TT1ssHF/Ts09TnKSFigJdl/A6nB/4Nbf6q8bFLDs6rOvtZZfjyzEQrs8TbuwwSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762506774; c=relaxed/simple;
-	bh=ySb+pop94SqpdbyZsYpGfmunwgkKv5LASXUw8Mbt2b0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QaX50VLeZg22HRbvg6cTUs4xtXqqT4753b6A8h/tiFw+yJ9U+afH7JFh6FgJATpl09iF+e82osY/J+OK9zQiKSw9z2AHR8059bW/z8arv6LlxnbAZ98AhDomxeaD61MVjKliB8qu3pbilr3eFbN5js4Zdwaef8/woFL+2FPrQN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mZJ+Tzia; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so282813f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:12:52 -0800 (PST)
+	s=arc-20240116; t=1762506785; c=relaxed/simple;
+	bh=+R07ubDuBhff2ujrABNBpUwsrjtH0A9CyxuTQ0jmk/4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=FGro05gIxqvJ8Fj4LqKwnOsHllxNTAiYY83iCuUHVbMHXawL9QPMe3SLpCLPtO9+lHw0b21Lgn9ZGYi/mTBCBrdUC90lKWqOPgU5wA2jLSO+jZ9/A7qdWIDgqU71YV1PnGI543p3NCqeY2gJ3kH2NWHnWyVA+zcD9qlrOqqGx/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o+8kokxi; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4775f51ce36so4840965e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:13:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762506771; x=1763111571; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cwbNx98NAV67oyTmVbgDZ/t5BsyU5lLwVlOoJ6t3e0g=;
-        b=mZJ+TziathtEj0lCeVghoJ8qe5Og/eCculTzvtfLW7O4TCQmbpYaopK8zm+OfFQAVe
-         50Cl9A9mjJX1v6BDyftxzxMIOK4K4XmF3xdtLz3dYY2n2dHduLbqcBrc7lpEZc8/pSQ+
-         AmtSmiTIa/pswSLxfcxQ6a8wS+HWHlofa2FnCPKICvxo9m1PL0BDQHMVQWwd0nKgDuf4
-         /aIq3e3Uy0tGEmL6tBbwmdlRlqdG0e8xcVU+ovpw2qE+R9zEOuNXpFezzj4R2XDNVFZ3
-         wZS1kAIAlLEzs63cLGCBj+4cmz9hmrM97e5HMceViOtkiGL/8jACByqHknakrcpI76XU
-         cY+A==
+        d=google.com; s=20230601; t=1762506781; x=1763111581; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=h6hr5KyHBQ4i3KpvRUNSLwzvnbvgDhJcoWyAtNcMbQg=;
+        b=o+8kokxiq8sV7eembw85qpl/iqp7HCScn0Plv9OSCqxXkMrZYV5YYb3pHXCsGn/VwQ
+         DbRpL6BeW6hgXoFdsJJSgzf6HRL9m3pyCfDp+zJNQbfbp0KsRAsz/sxoHzXCDZ55L0BL
+         xigvoBUKNvmYrRNu3QOGd6GzT/GB/1XrdjgE3nKBIhyVfJlm+DZqsn1/SxMEw83Sz8TD
+         o4X8EBshU6VrvdtW2TBXu9FAeNR8qc4sJXcAc+zFGKB/eYpXo6ac3uLqCO/zWmTZ+pQ5
+         hGUZsyjSoSeehI8uXQ7jYGwplcBaxCzxjYEt4SBAfTNUGjx2PE40cTpZPH+quhq0Wx6L
+         +9vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762506771; x=1763111571;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=cwbNx98NAV67oyTmVbgDZ/t5BsyU5lLwVlOoJ6t3e0g=;
-        b=Vyq184oX5O1rcb6y9OUZE+kSlNCstP31z9FTvsUfXn1AIVJYAFnPJ4yBKkrRHHPJ3U
-         d7hwDfzvjAJdWGZR7WJp4WCe6cHpCMwZuk2Mc/lgv0JNt/qQpD0d9gHB6D73tTqPbwrl
-         YraMnEdYfd9LG5KF/q9IU9GHWxkmeUUeBd6kRKjRHIVv1yPyafzytaW0m6XZGoarHT8u
-         DL/YnwZtJx7PBwf8l99qmxTzn6SXnu0hGgy/0jXARmsD3+QrG6ZkfhN+GjEWFZo7vP8h
-         LAl4mEDd1LoX+cZNDgUNtCN1O2UseYHKjtKCSwp7HjaajkkiZ+eaArPGOJqpnkQRlvZS
-         wheQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTGY4OxVgF5b7ov5tdpli9Pugp9D8ossbp/saSn7efYPkFYp1KzVSfD6IXGux6KLP2fzgHA3be3IBMsV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGWPm3W1y0bEhW8poOBVlxldb1uUFRHnLah+DxQSsNrd9nwWdr
-	7B2tjkUYTVGGapETnwNv3q4xCC3/Hh77IC3ddFwPVgkcLlFO9yQwk8e5
-X-Gm-Gg: ASbGncvcO/0Vhy+r+Hmp9e/ZdsgE9SW8/OSnu3gy2ETn1ULdki356u2etfAAaftjmOu
-	2tNK5mzvRHOhDPo/07Csjkliv59kJJRQxmojQ6UHHaPIopHO0h1VmKNNc0xJkH5pCpGC7i7DhmS
-	SwuZV6Jh9kMcVrmvtoAte8meiZ8OK+syPUkqSqM+y7gps4N+6M+ycdtsljOj1a+ZYu1aub8SQws
-	wmw4QFPYuEktWogiY9cROcJx8g/86lcdulkT3AB9Q7ygYj91PqlHI+BAyBnhg5DZaKJKcEo/jaQ
-	PusR3HvtNNxa533C5NoFPu6aEEMBvBpCkQYlLLQndsDRzm14ahDrtaV7spapqoWEjBOhxz79d7/
-	lhUVmyUaTKHMaQgRYG+5ewrN8Oj61tqZUdPEuzEPyfY4yGiSkZoWPiR7mMouQX3cbEv7Mm4Qb80
-	4BbXccIiWNKiIaRPPIJnvscfkrjnHmbX7uByguX/Nv2g/lIRQYs8kH
-X-Google-Smtp-Source: AGHT+IG9saNXs40oR1IEnqn2ZJqpHZqHgNAPFU5PXOa3lUzB4P6UMLrs3Ay2s/I5KpU2wmqmBc0PbQ==
-X-Received: by 2002:a05:6000:40db:b0:3e7:5f26:f1e5 with SMTP id ffacd0b85a97d-42ae58812c9mr1862887f8f.23.1762506770833;
-        Fri, 07 Nov 2025 01:12:50 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62bf35sm4130393f8f.7.2025.11.07.01.12.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 01:12:50 -0800 (PST)
-Date: Fri, 7 Nov 2025 09:12:46 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Junrui Luo <moonafterrain@outlook.com>, linux-kernel@vger.kernel.org,
- pmladek@suse.com, rostedt@goodmis.org, andriy.shevchenko@linux.intel.com,
- tiwai@suse.com, perex@perex.cz, linux-sound@vger.kernel.org,
- mchehab@kernel.org, awalls@md.metrocast.net, linux-media@vger.kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org
-Subject: Re: [PATCH 1/4] lib/sprintf: add scnprintf_append() helper function
-Message-ID: <20251107091246.4e5900f4@pumpkin>
-In-Reply-To: <20251106213833.546c8eaba8aec6aa6a5e30b6@linux-foundation.org>
-References: <20251107051616.21606-1-moonafterrain@outlook.com>
-	<SYBPR01MB788110A77D7F0F7A27F0974FAFC3A@SYBPR01MB7881.ausprd01.prod.outlook.com>
-	<20251106213833.546c8eaba8aec6aa6a5e30b6@linux-foundation.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1762506781; x=1763111581;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h6hr5KyHBQ4i3KpvRUNSLwzvnbvgDhJcoWyAtNcMbQg=;
+        b=lJWGJQlJTBgiApCr5ez5UXRia2NuwzBng71OKSLsLl1mkEkCApm2W156pNIwbcDmqM
+         QoLjDEXjgfqZJR/Bh6bAVRl3wZMrnMMr/XO/UTK/P4EOhNEf2abJJDfL+tnbGJ/Ymn+A
+         BhsFrkevS8DwLkpTgMdnidFH6gJLyBtxdUQbT9w0yKFtyxt9cvdpAGsHJ6eMuANz4l96
+         uvTM4ZKdwYOtnHlS7yQqZMtXTjkacWYL7LUpzCFi74oO0hiRmL0nWSG4smzu9tJPbX0X
+         vDSy3P9h4lDEM/TDHEvSfDTnmORt8Po7VlspQRWPel6SmBM+FB3M1SdA7xHiiHldTyAs
+         x+iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0SmGtvxCRMWs3/v5uh6voRLD6c0utcAMYae+shcEsBVZfz486wWzZVYOt0lNSx21nG1SZ0w5iOL4NcwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwabwCr/objBeaeM12HBfVPkLXaqSfgptJEzKNLTFr1+U6qB5ZS
+	06P1RDu+gYjSjeh0PKc4KEqkkqBk9FOaVr5cFLEc8e+M9VYi8yrKK68UNhrb7vbJHqKxW+Sh1kI
+	QfFJK4HnvB4/ljJm4wg==
+X-Google-Smtp-Source: AGHT+IHUZEz+bT2nDPlYtV/C/QNEpv2U8khomuJk8Z2Iy1Z4Tlg4ge5tYPMjbGtCECv4gTvvdLMJU3QqC9ERcYo=
+X-Received: from wmcu6.prod.google.com ([2002:a7b:c046:0:b0:476:4b14:2edf])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4592:b0:477:3e07:217a with SMTP id 5b1f17b1804b1-4776bcc9c7emr20623525e9.36.1762506781268;
+ Fri, 07 Nov 2025 01:13:01 -0800 (PST)
+Date: Fri, 7 Nov 2025 09:13:00 +0000
+In-Reply-To: <043dcbdb-e069-46e7-8f79-8fdaf354fb44@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <cover.1762422915.git.lorenzo.stoakes@oracle.com>
+ <fe38b1a43364f72d1ce7a6217e53a33c9c0bb0c5.1762422915.git.lorenzo.stoakes@oracle.com>
+ <yja2mhwa4bzatbthjjq5rolqlkfgcbmppic3caaiwi6jc63rbc@cims6rqnotvj> <043dcbdb-e069-46e7-8f79-8fdaf354fb44@lucifer.local>
+Message-ID: <aQ24HAAxYLhIvV5U@google.com>
+Subject: Re: [PATCH v2 1/5] mm: introduce VM_MAYBE_GUARD and make visible in /proc/$pid/smaps
+From: Alice Ryhl <aliceryhl@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Pedro Falcato <pfalcato@suse.de>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jann Horn <jannh@google.com>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Andrei Vagin <avagin@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, 6 Nov 2025 21:38:33 -0800
-Andrew Morton <akpm@linux-foundation.org> wrote:
-
-> On Fri,  7 Nov 2025 13:16:13 +0800 Junrui Luo <moonafterrain@outlook.com> wrote:
+On Thu, Nov 06, 2025 at 02:54:33PM +0000, Lorenzo Stoakes wrote:
+> +cc Alice for rust stuff
 > 
-> > +/**
-> > + * scnprintf_append - Append a formatted string to a buffer
-> > + * @buf: The buffer to append to (must be null-terminated)
-> > + * @size: The size of the buffer
-> > + * @fmt: Format string
-> > + * @...: Arguments for the format string
-> > + *
-> > + * This function appends a formatted string to an existing null-terminated
-> > + * buffer. It is safe to use in a chain of calls, as it returns the total
-> > + * length of the string.
-> > + *
-> > + * Returns: The total length of the string in @buf  
+> On Thu, Nov 06, 2025 at 02:27:56PM +0000, Pedro Falcato wrote:
+> > On Thu, Nov 06, 2025 at 10:46:12AM +0000, Lorenzo Stoakes wrote:
+> > > Currently, if a user needs to determine if guard regions are present in a
+> > > range, they have to scan all VMAs (or have knowledge of which ones might
+> > > have guard regions).
+> > >
+> > > Since commit 8e2f2aeb8b48 ("fs/proc/task_mmu: add guard region bit to
+> > > pagemap") and the related commit a516403787e0 ("fs/proc: extend the
+> > > PAGEMAP_SCAN ioctl to report guard regions"), users can use either
+> > > /proc/$pid/pagemap or the PAGEMAP_SCAN functionality to perform this
+> > > operation at a virtual address level.
+> > >
+> > > This is not ideal, and it gives no visibility at a /proc/$pid/smaps level
+> > > that guard regions exist in ranges.
+> > >
+> > > This patch remedies the situation by establishing a new VMA flag,
+> > > VM_MAYBE_GUARD, to indicate that a VMA may contain guard regions (it is
+> > > uncertain because we cannot reasonably determine whether a
+> > > MADV_GUARD_REMOVE call has removed all of the guard regions in a VMA, and
+> > > additionally VMAs may change across merge/split).
+> > >
+> > > We utilise 0x800 for this flag which makes it available to 32-bit
+> > > architectures also, a flag that was previously used by VM_DENYWRITE, which
+> > > was removed in commit 8d0920bde5eb ("mm: remove VM_DENYWRITE") and hasn't
+> > > bee reused yet.
+> > >
+> > > We also update the smaps logic and documentation to identify these VMAs.
+> > >
+> > > Another major use of this functionality is that we can use it to identify
+> > > that we ought to copy page tables on fork.
+> > >
+> > > We do not actually implement usage of this flag in mm/madvise.c yet as we
+> > > need to allow some VMA flags to be applied atomically under mmap/VMA read
+> > > lock in order to avoid the need to acquire a write lock for this purpose.
+> > >
+> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > ---
+> > >  Documentation/filesystems/proc.rst | 1 +
+> > >  fs/proc/task_mmu.c                 | 1 +
+> > >  include/linux/mm.h                 | 3 +++
+> > >  include/trace/events/mmflags.h     | 1 +
+> > >  mm/memory.c                        | 4 ++++
+> > >  tools/testing/vma/vma_internal.h   | 3 +++
+> > >  6 files changed, 13 insertions(+)
+> > >
+> > > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> > > index 0b86a8022fa1..b8a423ca590a 100644
+> > > --- a/Documentation/filesystems/proc.rst
+> > > +++ b/Documentation/filesystems/proc.rst
+> > > @@ -591,6 +591,7 @@ encoded manner. The codes are the following:
+> > >      sl    sealed
+> > >      lf    lock on fault pages
+> > >      dp    always lazily freeable mapping
+> > > +    gu    maybe contains guard regions (if not set, definitely doesn't)
+> > >      ==    =======================================
+> >
+> > The nittiest
+> > of nits:     =============================================================
 > 
-> It wouldn't hurt to describe the behavior when this runs out of space
-> in *buf.
+> Sigh :) OK will fix.
 > 
+> >
+> >
+> > >
+> > >  Note that there is no guarantee that every flag and associated mnemonic will
+> > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > > index 8a9894aefbca..a420dcf9ffbb 100644
+> > > --- a/fs/proc/task_mmu.c
+> > > +++ b/fs/proc/task_mmu.c
+> > > @@ -1147,6 +1147,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+> > >  		[ilog2(VM_MAYSHARE)]	= "ms",
+> > >  		[ilog2(VM_GROWSDOWN)]	= "gd",
+> > >  		[ilog2(VM_PFNMAP)]	= "pf",
+> > > +		[ilog2(VM_MAYBE_GUARD)]	= "gu",
+> > >  		[ilog2(VM_LOCKED)]	= "lo",
+> > >  		[ilog2(VM_IO)]		= "io",
+> > >  		[ilog2(VM_SEQ_READ)]	= "sr",
+> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > > index 6e5ca5287e21..2a5516bff75a 100644
+> > > --- a/include/linux/mm.h
+> > > +++ b/include/linux/mm.h
+> > > @@ -271,6 +271,8 @@ extern struct rw_semaphore nommu_region_sem;
+> > >  extern unsigned int kobjsize(const void *objp);
+> > >  #endif
+> > >
+> > > +#define VM_MAYBE_GUARD_BIT 11
+> > > +
+> > >  /*
+> > >   * vm_flags in vm_area_struct, see mm_types.h.
+> > >   * When changing, update also include/trace/events/mmflags.h
+> > > @@ -296,6 +298,7 @@ extern unsigned int kobjsize(const void *objp);
+> > >  #define VM_UFFD_MISSING	0
+> > >  #endif /* CONFIG_MMU */
+> > >  #define VM_PFNMAP	0x00000400	/* Page-ranges managed without "struct page", just pure PFN */
+> > > +#define VM_MAYBE_GUARD	BIT(VM_MAYBE_GUARD_BIT)	/* The VMA maybe contains guard regions. */
+> >
+> > Don't we also need an adjustment on the rust side for this BIT()? Like we
+> > for f04aad36a07c ("mm/ksm: fix flag-dropping behavior in ksm_madvise").
 > 
+> That's a bit unhelpful if rust can't cope with extremely basic assignments like
+> that and we just have to know to add helpers :/
 > 
-> The whole thing is a bit unweildy - how much space must the caller
-> allocate for `buf'?  I bet that's a wild old guess.
+> We do BIT() stuff for e.g. VM_HIGH_ARCH_n, VM_UFFD_MINOR_BIT,
+> VM_ALLOW_ANY_UNCACHED_BIT, VM_DROPPABLE_BIT and VM_SEALED_BIT too and no such
+> helpers there, So not sure if this is required?
+> 
+> Alice - why is it these 'non-trivial' defines were fine but VM_MERGEABLE was
+> problematic? That seems strange.
+> 
+> I see [0], so let me build rust here and see if it moans, if it moans I'll add
+> it.
+> 
+> [0]:https://lore.kernel.org/oe-kbuild-all/CANiq72kOhRdGtQe2UVYmDLdbw6VNkiMtdFzkQizsfQV0gLY1Hg@mail.gmail.com/
 
-That is true for all the snprintf() functions.
+When you use #define to declare a constant whose right-hand-side
+contains a function-like macro such as BIT(), bindgen does not define a
+Rust version of that constant. However, VM_MAYBE_GUARD is not referenced
+in Rust anywhere, so that isn't a problem.
 
-> I wonder if we should instead implement a kasprintf() version of this
-> which reallocs each time and then switch all the callers over to that.
+It was a problem with VM_MERGEABLE because rust/kernel/mm/virt.rs
+references it.
 
-That adds the cost of a malloc, and I, like kasprintf() probably ends up
-doing all the work of snprintf twice.
+Note that it's only the combination of #define and function-like macro
+that triggers this condition. If the constant is defined using another
+mechanism such as enum {}, then bindgen will generate the constant no
+matter how complex the right-hand-side is. The problem is that bindgen
+can't tell whether a #define is just a constant or not.
 
-I'd be tempted to avoid the strlen() by passing in the offset.
-So (say):
-#define scnprintf_at(buf, len, off, ...) \
-	scnprintf((buf) + off, (len) - off, __VA_ARGS__)
-
-Then you can chain calls, eg:
-	off = scnprintf(buf, sizeof buf, ....);
-	off += scnprintf_at(buf, sizeof buf, off, ....);
-
-    David
+Alice
 
