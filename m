@@ -1,128 +1,179 @@
-Return-Path: <linux-kernel+bounces-890310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EDD9C3FC3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:44:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A4EC3FC4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:44:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3BD0634BD47
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64BB41892436
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D5931D748;
-	Fri,  7 Nov 2025 11:43:46 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8BE320A31;
+	Fri,  7 Nov 2025 11:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAsxCuXa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0A03168FD
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEA131A541;
+	Fri,  7 Nov 2025 11:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762515825; cv=none; b=HQx38+NMR/xc16kijSlpH9szXqPExAcSeupjiTOzSSILqSdhJWDPeIYYxsvER7Xu7itoN7GcWz4m/0Q9kz2qTF1FQE3ost8/qDARbTPBw4aEfaeov/WJr68dOSg5oWr3Ag7G+jg/nZd6QcH0c0nRJR/iEEZqHuNPBXBUUdowNOI=
+	t=1762515864; cv=none; b=Tr2YVsd971vB/ls1I3GtKRzOwhpbIq2I6S0XOUPoFvs/0t0gDQYK+Sau1AQOCT3OSDZaILRzt8AOI51H8/ZPnu18lacGMvyWV66CS/CcJ9uG0AXv9fCQ7BVniDnW5OJy39ZVJw+wx6v42j1Md7GTHKl+C7yMCPMfwToidLAmm9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762515825; c=relaxed/simple;
-	bh=7XjYNgUx6rZaXD1kxM8Bcq/1XssSIsXFqwOfPkeINoM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=F3mpADH2xdDCoa6ybsv/My0lxbJAnH7a8yOrWDoXmKIIVu0GR+0594Fy8cbOlVlXlX+IP+YNZ0vfvdZlyne7Tjy7R29ElH1e9Bs5+ARgkipacB+BhHhoClJpGKkQrj3/NFIHkfP/MDewoojSEe2rIh9gcTB2R19fpvuMjK44LL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4331d49b5b3so19799095ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:43:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762515823; x=1763120623;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KjTc2u1Lbv7yBpUV5/+qs7EROnDaI/ku1EfRStKnaFk=;
-        b=jaqcHfl2UvajhNlVjAFtB1mncgpi65NOkJHbn6n4YGFSaY1m+spjefVmR1hA6mX+XQ
-         edf/itTOtzCLcpWBCRRUhWKr2LV15KH371VmWqslfqlf+koTaQKDAWPtOp0y/IFB07pY
-         VuKnYlyAxClh2eFoqhILWTzG5558gZGnkXbW1BS25NuExkQCKNz7vhr0UnZim4xslIpq
-         sX/mEd+JqKexVDpUuPL0fD20dqB6bPDPgzUpFGoaXmDo1SiAYw6GVpeiVdedXpRNdyFZ
-         oj1Snmn1wsfo8IcfRNwc4kXX2mnzS6Y0e6BcNQLic8Yre6BtEgDXNCE+Rnbu5HCykzrI
-         0eYw==
-X-Gm-Message-State: AOJu0YwaugRQ+H063g7nbOWqB7t9HOWfkFinu7bFYWzJMA6XX+te2wO0
-	URl195tUzub+3HL5Mq2sXAx9qRJazpG+kwrzSR/AilltwpYxMosfg7+nRg+QgwENJX2zDBsCm8r
-	Hu9MVEP/AdEEX/dItxIyZ6Ic8QVAPQ+129T01CijllFk3PXabg4LZ1AIrZ8s=
-X-Google-Smtp-Source: AGHT+IGzf2hrsRLc5hY1wVbQxORKQu0HZJjjyRJnGn8N9Hyt+GoOoYuOclSUl5KT+u4yT+up9kQgDE+YlAPx3td/o6lmQC23T9oI
+	s=arc-20240116; t=1762515864; c=relaxed/simple;
+	bh=r8/pj/KN/8+FilylEfrnzaY5pwZnIr6KxYsofkXqxZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z8QbvdETjVraBV3D6rFcK4B3qIM8UPqxoCcuf4+yGM5KLcgYbYeCV4VHnD0xtw7od7SPpfWcvPLIZinac6fkzDEe6HFQl71RF7TKIsTkOk7NIdQWpl28TSNz4U5VGNXuXhCIyo8F1w9GZvk5LyIkdsEGBVP3OcqE6gbAyE8cnrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAsxCuXa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D327C116C6;
+	Fri,  7 Nov 2025 11:44:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762515863;
+	bh=r8/pj/KN/8+FilylEfrnzaY5pwZnIr6KxYsofkXqxZo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nAsxCuXaRteTRWHGbVHTxWsDXv1YsNKTjT28AknYUqskWJp++FB1hmHft5i2H4kZw
+	 M6GQ8SA0os6BdcnNYZk9d/CHsNuYOnIDM3Jwei63V4KEdCQ5vtDZ798ek+OrNJuW2c
+	 yQTTsa/LboKiUjFtjZz4o0CC6nGbtIEfZq1UhIRp7Sz1ClDCQOzE6bPgnEzebfNvWr
+	 CHM12WlRgAm1nXUICtioOs5hbIxV45pLB6rYOJlNFQ5KOoJMcF8PatgRSTXTx8Nwce
+	 JhZdHaXQlbZrZhGjrVB7BcozKEJrZCvyvZQNeqoBZxsU0MN4rOWEecHc+y9VK/J33P
+	 IcTxjUJAslwcg==
+Date: Fri, 7 Nov 2025 17:14:04 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: vkoul@kernel.org
+Cc: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>, andersson@kernel.org, 
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	jingoohan1@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
+	bhelgaas@google.com, johan+linaro@kernel.org, kishon@kernel.org, 
+	neil.armstrong@linaro.org, abel.vesa@linaro.org, kw@linux.com, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com, 
+	quic_krichai@quicinc.com, quic_vbadigan@quicinc.com, 
+	Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Subject: Re: [PATCH v14 0/5] pci: qcom: Add QCS8300 PCIe support
+Message-ID: <mmzrkh7nyjnrmymvtionsiv54nv7wgqx4l5d42g4yt6rjhtq4f@wnztvnzccv3n>
+References: <20251024095609.48096-1-ziyue.zhang@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2164:b0:433:5736:968f with SMTP id
- e9e14a558f8ab-4335f40b525mr49593945ab.13.1762515823406; Fri, 07 Nov 2025
- 03:43:43 -0800 (PST)
-Date: Fri, 07 Nov 2025 03:43:43 -0800
-In-Reply-To: <690bfb9e.050a0220.2e3c35.0013.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690ddb6f.a70a0220.22f260.0044.GAE@google.com>
-Subject: Forwarded: [PATCH] nsfs: skip active reference management on initial namespaces
-From: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251024095609.48096-1-ziyue.zhang@oss.qualcomm.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Oct 24, 2025 at 05:56:04PM +0800, Ziyue Zhang wrote:
+> This series depend on this patch
+> https://lore.kernel.org/all/20250826-pakala-v2-3-74f1f60676c6@oss.qualcomm.com/
+> 
+> This series adds document, phy, configs support for PCIe in QCS8300.
+> It also adds 'link_down' reset for sa8775p.
+> 
+> Have follwing changes:
+> 	- Add dedicated schema for the PCIe controllers found on QCS8300.
+> 	- Add compatible for qcs8300 platform.
+> 	- Add configurations in devicetree for PCIe0, including registers, clocks, interrupts and phy setting sequence.
+> 	- Add configurations in devicetree for PCIe1, including registers, clocks, interrupts and phy setting sequence.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
 
-***
+Hi Vinod,
 
-Subject: [PATCH] nsfs: skip active reference management on initial namespaces
-Author: kartikey406@gmail.com
+Could you please pick up the PHY DT binding patch?
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+- Mani
 
-Initial namespaces (init_net, init_uts_ns, init_pid_ns, etc.) are
-statically allocated and exist for the entire lifetime of the system.
-They should not participate in active reference counting.
+> ---
+> Changes in v14:
+> - rebase patches
+> - Link to v13: https://lore.kernel.org/all/20250908073848.3045957-1-ziyue.zhang@oss.qualcomm.com/
+> 
+> Changes in v13:
+> - Fix dtb error
+> - Link to v12: https://lore.kernel.org/all/20250905071448.2034594-1-ziyue.zhang@oss.qualcomm.com/
+> 
+> Changes in v12:
+> - rebased pcie phy bindings
+> - Link to v11: https://lore.kernel.org/all/20250826091205.3625138-1-ziyue.zhang@oss.qualcomm.com/
+> 
+> Changes in v11:
+> - move phy/perst/wake to pcie bridge node (Mani)
+> - Link to v10: https://lore.kernel.org/all/20250811071131.982983-1-ziyue.zhang@oss.qualcomm.com/
+> 
+> Changes in v10:
+> - Update PHY max_items (Johan)
+> - Link to v9: https://lore.kernel.org/all/20250725104037.4054070-1-ziyue.zhang@oss.qualcomm.com/
+> 
+> Changes in v9:
+> - Fix DTB error (Vinod)
+> - Link to v8: https://lore.kernel.org/all/20250714081529.3847385-1-ziyue.zhang@oss.qualcomm.com/
+> 
+> Changes in v8:
+> - rebase sc8280xp-qmp-pcie-phy change to solve conflicts.
+> - Add Fixes tag to phy change (Johan)
+> - Link to v7: https://lore.kernel.org/all/20250625092539.762075-1-quic_ziyuzhan@quicinc.com/
+> 
+> Changes in v7:
+> - rebase qcs8300-ride.dtsi change to solve conflicts.
+> - Link to v6: https://lore.kernel.org/all/20250529035635.4162149-1-quic_ziyuzhan@quicinc.com/
+> 
+> Changes in v6:
+> - move the qcs8300 and sa8775p phy compatibility entry into the list of PHYs that require six clocks
+> - Update QCS8300 and sa8775p phy dt, remove aux clock.
+> - Fixed compile error found by kernel test robot
+> - Link to v5: https://lore.kernel.org/all/20250507031019.4080541-1-quic_ziyuzhan@quicinc.com/
+> 
+> Changes in v5:
+> - Add QCOM PCIe controller version in commit msg (Mani)
+> - Modify platform dts change subject (Dmitry)
+> - Fixed compile error found by kernel test robot
+> - Link to v4: https://lore.kernel.org/linux-phy/20241220055239.2744024-1-quic_ziyuzhan@quicinc.com/
+> 
+> Changes in v4:
+> - Add received tag
+> - Fixed compile error found by kernel test robot
+> - Link to v3: https://lore.kernel.org/lkml/202412211301.bQO6vXpo-lkp@intel.com/T/#mdd63e5be39acbf879218aef91c87b12d4540e0f7
+> 
+> Changes in v3:
+> - Add received tag(Rob & Dmitry)
+> - Update pcie_phy in gcc node to soc dtsi(Dmitry & Konrad)
+> - remove pcieprot0 node(Konrad & Mani)
+> - Fix format comments(Konrad)
+> - Update base-commit to tag: next-20241213(Bjorn)
+> - Corrected of_device_id.data from 1.9.0 to 1.34.0.
+> - Link to v2: https://lore.kernel.org/all/20241128081056.1361739-1-quic_ziyuzhan@quicinc.com/
+> 
+> Changes in v2:
+> - Fix some format comments and match the style in x1e80100(Konrad)
+> - Add global interrupt for PCIe0 and PCIe1(Konrad)
+> - split the soc dtsi and the platform dts into two changes(Konrad)
+> - Link to v1: https://lore.kernel.org/all/20241114095409.2682558-1-quic_ziyuzhan@quicinc.com/
+> 
+> 
+> Ziyue Zhang (5):
+>   dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings
+>     for qcs8300
+>   arm64: dts: qcom: qcs8300: enable pcie0
+>   arm64: dts: qcom: qcs8300-ride: enable pcie0 interface
+>   arm64: dts: qcom: qcs8300: enable pcie1
+>   arm64: dts: qcom: qcs8300-ride: enable pcie1 interface
+> 
+>  .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |  17 +-
+>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts     |  84 +++++
+>  arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 310 +++++++++++++++++-
+>  3 files changed, 394 insertions(+), 17 deletions(-)
+> 
+> 
+> base-commit: 72fb0170ef1f45addf726319c52a0562b6913707
+> -- 
+> 2.34.1
+> 
 
-When operations involve initial namespaces, both ns_ref_active_get()
-and ns_ref_active_put() were managing active references on them.
-This caused the active reference count to become imbalanced, leading
-to warnings in __ns_ref_active_get() and __ns_ref_active_put().
-
-Fix by adding is_initial_namespace() checks in both the
-ns_ref_active_get and ns_ref_active_put macros. Initial namespaces
-are now completely excluded from active reference management,
-treating them as permanent kernel resources.
-
-Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- include/linux/ns_common.h | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-index bd4492ef6ffc..b22c692b5f38 100644
---- a/include/linux/ns_common.h
-+++ b/include/linux/ns_common.h
-@@ -289,7 +289,10 @@ static __always_inline void __ns_ref_active_get(struct ns_common *ns)
- 	VFS_WARN_ON_ONCE(is_initial_namespace(ns) && __ns_ref_active_read(ns) <= 0);
- }
- #define ns_ref_active_get(__ns) \
--	do { if (__ns) __ns_ref_active_get(to_ns_common(__ns)); } while (0)
-+	do { \
-+		if ((__ns) && !is_initial_namespace(&(__ns)->ns)) \
-+			__ns_ref_active_get(to_ns_common(__ns)); \
-+	} while (0)
- 
- static __always_inline bool __ns_ref_active_get_not_zero(struct ns_common *ns)
- {
-@@ -314,7 +317,10 @@ static __always_inline void __ns_ref_active_put(struct ns_common *ns)
- 	}
- }
- #define ns_ref_active_put(__ns) \
--	do { if (__ns) __ns_ref_active_put(to_ns_common(__ns)); } while (0)
-+	do { \
-+		if ((__ns) && !is_initial_namespace(&(__ns)->ns)) \
-+			__ns_ref_active_put(to_ns_common(__ns)); \
-+	} while (0)
- 
- static __always_inline struct ns_common *__must_check ns_get_unless_inactive(struct ns_common *ns)
- {
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
 
