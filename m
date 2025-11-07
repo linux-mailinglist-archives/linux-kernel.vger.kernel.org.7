@@ -1,279 +1,569 @@
-Return-Path: <linux-kernel+bounces-890746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01502C40D0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:15:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F786C40CAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:12:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C59218860D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:15:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52EB94EAAF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DF333031E;
-	Fri,  7 Nov 2025 16:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E8D32AADC;
+	Fri,  7 Nov 2025 16:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+qcIQht"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="yy2gdQ6o"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD5332F745
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901221E5B70
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762532020; cv=none; b=vGkR8pVA4BjArNhI5pBRmJYv/d0xccoXvSTI08PSw190cUUawflUhdtq6ryf7c4IzqRai8fgmE1r2XHegYUfPgP+3nqbB7/nqi1rxdcJQsrax6DramB4NmCBC5YQzReMmAeauKb9loyoxQ4PxSLcEbsEdxvdJU1xH2Cc7mCpsIQ=
+	t=1762531947; cv=none; b=d3AIb5R9yCwlqdnPoGm5r3gkufxmDCTSipjD6UTb5UVg5JCSMQxWTBhQdh85BOos2ohEM5AGvjOCqjk8yD+nDiDTqwfQuICJpXu4NrTnEulurxUv9uX5HHcu+xf/UmLZZDG6gA8R6FyAMVMdeQajFmXUZAxpX0M3QTHMWCbqhXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762532020; c=relaxed/simple;
-	bh=hrrLzMnZuUkom8I9qzvbne/uAV8TzA4LfzM4RMkjwr0=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ov6NorJoicRJTY5+yj19kTsBmtQek37XbNDjm4NtTvwPq2J3EvVQ3J9vh2GGZhn+ozi6KZjCT/WLm/d7TOai6bHQSWLTcOUOI3b83Bwa141WKg6aCggu1IqZ6Vag3IjjhbfmchKe9f9ECRVv2Sy1b1JMnciUlXhgcL7077DAcEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+qcIQht; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47721743fd0so4649755e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:13:38 -0800 (PST)
+	s=arc-20240116; t=1762531947; c=relaxed/simple;
+	bh=e1BqN2xUtIgwvbFQi+eIxxSm5aSMM2ruQwQa3oEQ9/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q0OPcooeCDCFgQrVKYr1REsQ2XGlHgOXPesqKFBNQcxEJTqD/BvngpCeUeR5jnujtpof9Lb9xZUt5Kxdg7qR4oqV0yX6buhplFfyxl9Aa5S16cQVj1pk0ugVIVFD3bxzUxZmgm2IwV6SykyK/xMMVjenoIEwpmVcOWwl1yxrr7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=yy2gdQ6o; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-477549b3082so8540255e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:12:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762532017; x=1763136817; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O+2QowXYpWUDNBNFW/v/Du0vqKDWkaTMrOXjle7suXI=;
-        b=m+qcIQhtWZ3B4d6IWHIaKaK+sbDFkgcfMoFnlZT+wZnbZWLo4P8f8AAYo3JrDY2I5s
-         yW4ZyOsiPsvSSpIgXkOpwSz3hSP0D0ilTk7ZAg4j1znIjtpLF7cV1TMIiBP72Y5cBVUD
-         fQRrA9xXvoGDTtUoS9mqsJNztEGGk+uNhguwF1WurpQjEupW2m6jGmVn/ExRw3xP1KDS
-         mZTddyK0R4cq5FHAQBe0zYacuIAURyA5SvxlFHIEckpPkeeI9+IcA+HnNGaI92Xs04eM
-         1PUbR3kqM9Q7xAkjU3nJ9MXVbhqZWazGvMa4oeYzkW7EIiGisazklx7SL9geCNUmcjd6
-         zOFA==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1762531943; x=1763136743; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4I9Nmi0x1XRh5MmNss3uO6kHDeCcgFZXdE1zsROAGYg=;
+        b=yy2gdQ6ok+pIyaUKSx4p1de4Yk4FihWddQn7zX1byh4z/5qez7TXR38W4i27pvMfkj
+         L/YXO7a8h7NNpfOTA0qCptZ8tJuM1C6mENr+D1So8loNIfIaJTG2HmVW9F8ITMuvELLN
+         EXX54gLWKwCaeikHAmDQ//mFExh7IlndKFASAWdv65PDVuIAgjTpxeFewNRbqX5AHEDL
+         6rIokXUZKyUgw6Ecl7dlbKo2mp2ypmJken2vkO5QJkZ9ZfgRvmkEnMxSZ2ZJmCl/u7yj
+         2TrqkjhYXHoPb+J6THq+zXFSJzzL8z2HF8hPcx0j31aPDI+A392JT55Cnl9BrE2QoOk1
+         RpXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762532017; x=1763136817;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=O+2QowXYpWUDNBNFW/v/Du0vqKDWkaTMrOXjle7suXI=;
-        b=BrtuBEqE4YCHplBYMf8cPUtS5qQncBBjvL96H1iMB049vMgUwZmgyGrIuARTsBnh3W
-         SqFObn0PtRRozOeqpNUYLRh9DzZOzCTgLhxltpmr68Pvo0f9GLuEAR4m/WSHnvizXWi0
-         YnVCD7tjqfYhQZ6DH6bQ8bFIKmhYk9o16UIGK9UmxFaeiOzLT0vybluJPXQJOYRD+rzT
-         8j/AIxRhs5EpFYsmSbsFfV2howfhRM/wDLBwi/uQ4lg8wG5BM5vMRvVYtZ+OJ2wjW3Pw
-         7Ur0v5OMeVAy+VEeIEcqyxOL0yRf9DjG05GtqawWcNxTGIH19+qfPOIGRQ33Swf6C5PS
-         BG7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWI17ZG8QFJ5k8DzfGeSsJJ4gpnXIha93UWXojMFt5uETrrNQhjKcs7uB2Jaj7BEDfhE/7j2EzoKPhkDQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydBCpfWXC6kPG6ZiiAJhD4qJW5bHrFwGR10Mb68z+8S4YNphDO
-	K14GlTo0U4jE/2fkSo3z2Ftgw5Bakz8/oqV2V8+5yD8oN1bE2pfXSzLK
-X-Gm-Gg: ASbGncsRMGo6w7ptK9vSYgYHFr2k5NUP+ToiTZ9G6ba7R9IsykSzbpwkcXzGlmYbhg/
-	lViPdQPJ9HkMEJ3r8HcF9PyF4Gimq0gR6Frkjwyv9F4UWnHqtzAPOsEAHmSzad+ZwpNXzTHZOuM
-	qAaC+iHne2HDEXj/5spexUdv8iW48rcIWkWzR9Cfi+ZLFTlOYyl5ADt0oZJPGbawDFY0A1ztbni
-	cbjtW40T8i/sq6ESbt6Nr2d3XSFMduUxa50ANRdcezjtHbEM6C4efkk/ACpPNiFOMAIGegrFHLD
-	B51zT1aGNdsglkARcRu5JagZFB+i1Vt/+b6DbX3cQHn1vlFgvt9dvcuhur3HRbtBzfBYZB60GNI
-	xp/mGiamv8juQ09PM58QdEaXzyrpDydiMKd7VvOnt25qCFdbkbtRAxzzn6nd0Dqg0lUJYAL/S+a
-	VqyktfJ//LKYfhq5PqFFgaGwr57HEk6g==
-X-Google-Smtp-Source: AGHT+IFf54WC2Uf++sWgay3sGNYG9nzxh5bQFeAeRu/9OkjQp9eqwqxV99cKveK7+HnvOOQH779Igw==
-X-Received: by 2002:a05:600c:524f:b0:477:54b3:3478 with SMTP id 5b1f17b1804b1-4776bc86518mr28366765e9.8.1762532016729;
-        Fri, 07 Nov 2025 08:13:36 -0800 (PST)
-Received: from Ansuel-XPS24 (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4776bd087b1sm66665955e9.16.2025.11.07.08.13.35
+        d=1e100.net; s=20230601; t=1762531943; x=1763136743;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4I9Nmi0x1XRh5MmNss3uO6kHDeCcgFZXdE1zsROAGYg=;
+        b=qIRm3GHx3CQwnk6nIqR5pC1SX1KrUSf07vL9YRFWygZhoyyrNhfu3Lv/YprwcqKcNP
+         xQNYsV6hZC7I1FiPERgeSkOdHtkm9jISmEs8pJdbBBoVZSbMDZ6hGdU0iuAZyy69RNED
+         0iyt4uKRQCYFp9x2S5breT1syThcXGXnXDDoyh2Md7Zvab/T4WAZrD7Z3Db4F2JsFB1W
+         qRtn9gSSIi671ckw/RNoLYaZLqM8ANha9ydRVV0JQMBNVDzpcCkAesWKe6VjKhuSlfxJ
+         Hzqm5oOp6QqadnVFlefoau3q3t1fGbhQRbNF/0Rd84DEHTO+Mh+b7yY4XU3vTAg+XhZ2
+         A16g==
+X-Forwarded-Encrypted: i=1; AJvYcCWUYUkz9ZDKIsLF7LViPlOiqaf+dlxphRPxFmptZ4wXKL0XklqR+prBXjwJY0a8bgQCusCpc6G6GEieWBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj0qX9/SW29PhXWPdWkvMuozBziAvVR6TNaYwlLSOLOklZRLVj
+	WCLVL0v164pZRXSYuuDdJnP5kEvgIdP8/lc34H2hu01cMDLieojfJKhS6sqthK3HLHc=
+X-Gm-Gg: ASbGnct+8VrQV2JCd26f5ypEkgiYYswJ5+Z5WcXe7UiJdRgaLL6BfBBcCd8fmuRNH9h
+	MVbYbttGdWZpBD2ZlOAb79jMgUi7kMIYjfqwKJ04aZ3eU1rr7kzUhqeKN3CzE5DNBn8VUQWkVxz
+	2X34gppQ0GYxirzNsBprUeNmlVQoqBkMSdLCSBTc7V8IParbtCPYlndngYKhlVeMk/FGfaSB6DU
+	ptfhaWjwaNIIclA6rSuyXdl6+COlOZ8B4GrKyedOriCMYjTy3ZEGCbACW/5HFLN4LR8Yc7aGnR8
+	DV4w3o85LsEuyUt49UiyCKUhxfoH2ak2nSXE8R1lunW6BhlYw48S5Ep+HxvLqCxFpsE3o2bQSFJ
+	yVmI5mik7Gfq8ilGBd0mrYXxfGT2vuKclrdSism8FY7Igv2nUkUUZsMtnmNpCgOvYUBj9eHaluy
+	JGh94DggtWxhusqpwB5/v+0dOO7hFr81nlu9d8wXKmr/Sf28NjrMIv8Qmnspc=
+X-Google-Smtp-Source: AGHT+IGHroTzRo1cJ44LOHTxL+NRy7sTi9c/ImeIIStaKdw3lsU0/qp1TjSL/vM3MWErBezrq59Q0A==
+X-Received: by 2002:a05:6000:1884:b0:429:cbba:b247 with SMTP id ffacd0b85a97d-42ae58d03b4mr3192709f8f.23.1762531942614;
+        Fri, 07 Nov 2025 08:12:22 -0800 (PST)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62b23csm6015125f8f.10.2025.11.07.08.12.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 08:13:36 -0800 (PST)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Srinivas Kandagatla <srini@kernel.org>,
+        Fri, 07 Nov 2025 08:12:21 -0800 (PST)
+Date: Fri, 7 Nov 2025 16:14:17 +0000
+From: Daniel Thompson <daniel@riscstar.com>
+To: maudspierings@gocontroll.com
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] nvmem: airoha: Add support for SMC eFUSE
-Date: Fri,  7 Nov 2025 17:13:22 +0100
-Message-ID: <20251107161325.2309275-3-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251107161325.2309275-1-ansuelsmth@gmail.com>
-References: <20251107161325.2309275-1-ansuelsmth@gmail.com>
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/4] backlight: add max25014atg backlight
+Message-ID: <aQ4a2SBDldYgQb56@aspen.lan>
+References: <20251107-max25014-v5-0-9a6aa57306bf@gocontroll.com>
+ <20251107-max25014-v5-2-9a6aa57306bf@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107-max25014-v5-2-9a6aa57306bf@gocontroll.com>
 
-Add support for SMC eFUSE on AN7581 SoC. The SoC have 2 set of 2048 bits of
-eFUSE that are used to read calibration value for PCIe, Thermal, USB and
-other specific info of the SoC like revision and HW device present.
+On Fri, Nov 07, 2025 at 01:49:59PM +0100, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maudspierings@gocontroll.com>
+>
+> The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
+> with integrated boost controller.
+>
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> diff --git a/drivers/video/backlight/max25014.c b/drivers/video/backlight/max25014.c
+> new file mode 100644
+> index 000000000000..36bae508697e
+> --- /dev/null
+> +++ b/drivers/video/backlight/max25014.c
+> @@ -0,0 +1,409 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Backlight driver for Maxim MAX25014
+> + *
+> + * Copyright (C) 2025 GOcontroll B.V.
+> + * Author: Maud Spierings <maudspierings@gocontroll.com>
+> + */
+> +
+> +#include <linux/backlight.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/i2c.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +
+> +#define MAX25014_ISET_DEFAULT_100 11
+> +#define MAX_BRIGHTNESS            100
+> +#define MIN_BRIGHTNESS            0
+> +#define TON_MAX                   130720 /* @153Hz */
+> +#define TON_STEP                  1307 /* @153Hz */
+> +#define TON_MIN                   0
+> +
+> +#define MAX25014_DEV_ID           0x00
+> +#define MAX25014_REV_ID           0x01
+> +#define MAX25014_ISET             0x02
+> +#define MAX25014_IMODE            0x03
+> +#define MAX25014_TON1H            0x04
+> +#define MAX25014_TON1L            0x05
+> +#define MAX25014_TON2H            0x06
+> +#define MAX25014_TON2L            0x07
+> +#define MAX25014_TON3H            0x08
+> +#define MAX25014_TON3L            0x09
+> +#define MAX25014_TON4H            0x0A
+> +#define MAX25014_TON4L            0x0B
+> +#define MAX25014_TON_1_4_LSB      0x0C
+> +#define MAX25014_SETTING          0x12
+> +#define MAX25014_DISABLE          0x13
+> +#define MAX25014_BSTMON           0x14
+> +#define MAX25014_IOUT1            0x15
+> +#define MAX25014_IOUT2            0x16
+> +#define MAX25014_IOUT3            0x17
+> +#define MAX25014_IOUT4            0x18
+> +#define MAX25014_OPEN             0x1B
+> +#define MAX25014_SHORT_GND        0x1C
+> +#define MAX25014_SHORT_LED        0x1D
+> +#define MAX25014_MASK             0x1E
+> +#define MAX25014_DIAG             0x1F
+> +
+> +#define MAX25014_IMODE_HDIM       BIT(2)
+> +#define MAX25014_ISET_ENABLE      BIT(5)
+> +#define MAX25014_ISET_PSEN        BIT(4)
+> +#define MAX25014_DIAG_HW_RST      BIT(2)
+> +#define MAX25014_SETTING_FPWM     GENMASK(6, 4)
+> +
+> +struct max25014 {
+> +	struct i2c_client *client;
+> +	struct backlight_device *bl;
+> +	struct regmap *regmap;
+> +	struct gpio_desc *enable;
+> +	struct regulator *vin; /* regulator for boost converter Vin rail */
+> +	uint32_t iset;
+> +	uint8_t strings_mask;
+> +};
+> +
+> +static const struct regmap_config max25014_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = MAX25014_DIAG,
+> +};
+> +
+> +/**
+> + * @brief control the brightness with i2c registers
+> + *
+> + * @param regmap trivial
+> + * @param brt brightness
+> + * @return int
+> + */
+> +static int max25014_register_control(struct regmap *regmap, uint32_t brt)
 
-eFuse value are taken by sending SMC command. ATF is responsible of
-validaing the data and rejecting reading protected data (like Private
-Key). In such case the SMC command will return non-zero value on a0
-register.
+This isn't a good name for a function. It doesn't really say what it
+does. Please find a more descriptive name.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/nvmem/Kconfig             |  13 ++++
- drivers/nvmem/Makefile            |   2 +
- drivers/nvmem/airoha-smc-efuses.c | 118 ++++++++++++++++++++++++++++++
- 3 files changed, 133 insertions(+)
- create mode 100644 drivers/nvmem/airoha-smc-efuses.c
 
-diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-index bf47a982cf62..c2de26977c95 100644
---- a/drivers/nvmem/Kconfig
-+++ b/drivers/nvmem/Kconfig
-@@ -28,6 +28,19 @@ source "drivers/nvmem/layouts/Kconfig"
- 
- # Devices
- 
-+config NVMEM_AIROHA_SMC_EFUSES
-+	tristate "Airoha SMC eFuse support"
-+	depends on ARCH_AIROHA || COMPILE_TEST
-+	depends on HAVE_ARM_SMCCC
-+	default ARCH_AIROHA
-+	help
-+	  Say y here to enable support for reading eFuses on Airoha AN7581
-+	  SoCs. These are e.g. used to store factory programmed
-+	  calibration data required for the PCIe or the USB-C PHY or Thermal.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called nvmem-airoha-smc-efuses.
-+
- config NVMEM_AN8855_EFUSE
- 	tristate "Airoha AN8855 eFuse support"
- 	depends on MFD_AIROHA_AN8855 || COMPILE_TEST
-diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-index 7252b8ec88d4..f6f2bc51dee1 100644
---- a/drivers/nvmem/Makefile
-+++ b/drivers/nvmem/Makefile
-@@ -10,6 +10,8 @@ nvmem_layouts-y			:= layouts.o
- obj-y				+= layouts/
- 
- # Devices
-+obj-$(CONFIG_NVMEM_AIROHA_SMC_EFUSES)	+= nvmem-airoha-smc-efuses.o
-+nvmem-airoha-smc-efuses-y 		:= airoha-smc-efuses.o
- obj-$(CONFIG_NVMEM_AN8855_EFUSE)	+= nvmem-an8855-efuse.o
- nvmem-an8855-efuse-y 			:= an8855-efuse.o
- obj-$(CONFIG_NVMEM_APPLE_EFUSES)	+= nvmem-apple-efuses.o
-diff --git a/drivers/nvmem/airoha-smc-efuses.c b/drivers/nvmem/airoha-smc-efuses.c
-new file mode 100644
-index 000000000000..bb279d149519
---- /dev/null
-+++ b/drivers/nvmem/airoha-smc-efuses.c
-@@ -0,0 +1,118 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  Author: Christian Marangi <ansuelsmth@gmail.com>
-+ */
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-provider.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+
-+#define AIROHA_SMC_EFUSE_FID		0x82000001
-+#define AIROHA_SMC_EFUSE_SUB_ID_READ	0x44414552
-+
-+#define AIROHA_EFUSE_CELLS		64
-+
-+struct airoha_efuse_bank_priv {
-+	u8 bank_index;
-+};
-+
-+static int airoha_efuse_read(void *context, unsigned int offset,
-+			     void *val, size_t bytes)
-+{
-+	struct regmap *regmap = context;
-+
-+	return regmap_bulk_read(regmap, offset,
-+				val, bytes / sizeof(u32));
-+}
-+
-+static int airoha_efuse_reg_read(void *context, unsigned int offset,
-+				 unsigned int *val)
-+{
-+	struct airoha_efuse_bank_priv *priv = context;
-+	struct arm_smccc_res res;
-+
-+	arm_smccc_1_1_invoke(AIROHA_SMC_EFUSE_FID,
-+			     AIROHA_SMC_EFUSE_SUB_ID_READ,
-+			     priv->bank_index, offset, 0, 0, 0, 0, &res);
-+
-+	/* check if SMC reported an error */
-+	if (res.a0)
-+		return -EIO;
-+
-+	*val = res.a1;
-+	return 0;
-+}
-+
-+static const struct regmap_config airoha_efuse_regmap_config = {
-+	.reg_read = airoha_efuse_reg_read,
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+};
-+
-+static int airoha_efuse_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	for_each_child_of_node_scoped(dev->of_node, child) {
-+		struct nvmem_config airoha_nvmem_config = {
-+			.name = "airoha-efuse",
-+			.size = AIROHA_EFUSE_CELLS * sizeof(u32),
-+			.stride = sizeof(u32),
-+			.word_size = sizeof(u32),
-+			.reg_read = airoha_efuse_read,
-+		};
-+		struct airoha_efuse_bank_priv *priv;
-+		struct nvmem_device *nvmem;
-+		struct regmap *regmap;
-+		u32 bank;
-+
-+		ret = of_property_read_u32(child, "reg", &bank);
-+		if (ret)
-+			return ret;
-+
-+		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+		if (!priv)
-+			return -ENOMEM;
-+
-+		priv->bank_index = bank;
-+
-+		regmap = devm_regmap_init(dev, NULL, priv,
-+					  &airoha_efuse_regmap_config);
-+		if (IS_ERR(regmap))
-+			return PTR_ERR(regmap);
-+
-+		airoha_nvmem_config.priv = regmap;
-+		airoha_nvmem_config.dev = dev;
-+		airoha_nvmem_config.id = bank;
-+		nvmem = devm_nvmem_register(dev, &airoha_nvmem_config);
-+		if (IS_ERR(nvmem))
-+			return PTR_ERR(nvmem);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id airoha_efuse_of_match[] = {
-+	{ .compatible = "airoha,an7581-efuses", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, airoha_efuse_of_match);
-+
-+static struct platform_driver airoha_efuse_driver = {
-+	.probe = airoha_efuse_probe,
-+	.driver = {
-+		.name = "airoha-efuse",
-+		.of_match_table = airoha_efuse_of_match,
-+	},
-+};
-+module_platform_driver(airoha_efuse_driver);
-+
-+MODULE_AUTHOR("Christian Marangi <ansuelsmth@gmail.com>");
-+MODULE_DESCRIPTION("Driver for Airoha SMC eFUSEs");
-+MODULE_LICENSE("GPL");
--- 
-2.51.0
+> +{
+> +	uint32_t reg = TON_STEP * brt;
+> +	int ret;
+> +	/*
+> +	 * 18 bit number lowest, 2 bits in first register,
+> +	 * next lowest 8 in the L register, next 8 in the H register
+> +	 * Seemingly setting the strength of only one string controls all of
+> +	 * them, individual settings don't affect the outcome.
+> +	 */
+> +
+> +	ret = regmap_write(regmap, MAX25014_TON_1_4_LSB, reg & 0b00000011);
+> +	if (ret != 0)
+> +		return ret;
+> +	ret = regmap_write(regmap, MAX25014_TON1L, (reg >> 2) & 0b11111111);
+> +	if (ret != 0)
+> +		return ret;
+> +	return regmap_write(regmap, MAX25014_TON1H, (reg >> 10) & 0b11111111);
+> +}
+> +
+> +static int max25014_check_errors(struct max25014 *maxim)
+> +{
+> +	uint8_t i;
+> +	int ret;
+> +	uint32_t val;
+> +
+> +	ret = regmap_read(maxim->regmap, MAX25014_OPEN, &val);
+> +	if (ret != 0)
+> +		return ret;
+> +	if (val > 0) {
+> +		dev_err(&maxim->client->dev, "Open led strings detected on:\n");
+> +		for (i = 0; i < 4; i++) {
+> +			if (val & 1 << i)
+> +				dev_err(&maxim->client->dev, "string %d\n", i + 1);
+> +		}
+> +		return -EIO;
+> +	}
+> +
+> +	ret = regmap_read(maxim->regmap, MAX25014_SHORT_GND, &val);
+> +	if (ret != 0)
+> +		return ret;
+> +	if (val > 0) {
+> +		dev_err(&maxim->client->dev, "Short to ground detected on:\n");
+> +		for (i = 0; i < 4; i++) {
+> +			if (val & 1 << i)
+> +				dev_err(&maxim->client->dev, "string %d\n", i + 1);
+> +		}
+> +		return -EIO;
+> +	}
+> +
+> +	ret = regmap_read(maxim->regmap, MAX25014_SHORT_GND, &val);
+> +	if (ret != 0)
+> +		return ret;
+> +	if (val > 0) {
+> +		dev_err(&maxim->client->dev, "Shorted led detected on:\n");
+> +		for (i = 0; i < 4; i++) {
+> +			if (val & 1 << i)
+> +				dev_err(&maxim->client->dev, "string %d\n", i + 1);
+> +		}
+> +		return -EIO;
+> +	}
+> +
+> +	ret = regmap_read(maxim->regmap, MAX25014_DIAG, &val);
+> +	if (ret != 0)
+> +		return ret;
+> +	/*
+> +	 * The HW_RST bit always starts at 1 after power up.
+> +	 * It is reset on first read, does not indicate an error.
+> +	 */
+> +	if (val > 0 && val != MAX25014_DIAG_HW_RST) {
+> +		if (val & 0b1)
+> +			dev_err(&maxim->client->dev,
+> +				"Overtemperature shutdown\n");
+> +		if (val & 0b10)
+> +			dev_err(&maxim->client->dev,
+> +				 "Chip is getting too hot (>125C)\n");
+> +		if (val & 0b1000)
+> +			dev_err(&maxim->client->dev,
+> +				"Boost converter overvoltage\n");
+> +		if (val & 0b10000)
+> +			dev_err(&maxim->client->dev,
+> +				"Boost converter undervoltage\n");
+> +		if (val & 0b100000)
+> +			dev_err(&maxim->client->dev, "IREF out of range\n");
+> +		return -EIO;
+> +	}
+> +	return 0;
+> +}
+> +
+> +/*
+> + * 1. disable unused strings
+> + * 2. set dim mode
+> + * 3. set initial brightness
 
+How does this code set the initial brightness? It doens't set the
+MAX25014_TON* registers.
+
+
+> + * 4. set setting register
+> + * 5. enable the backlight
+> + */
+> +static int max25014_configure(struct max25014 *maxim)
+> +{
+> +	int ret;
+> +	uint32_t val;
+> +
+> +	ret = regmap_write(maxim->regmap, MAX25014_DISABLE,
+> +			   maxim->strings_mask);
+> +	if (ret != 0)
+> +		return ret;
+> +
+> +	ret = regmap_write(maxim->regmap, MAX25014_IMODE, MAX25014_IMODE_HDIM);
+> +	if (ret != 0)
+> +		return ret;
+> +
+> +	ret = regmap_read(maxim->regmap, MAX25014_SETTING, &val);
+> +	if (ret != 0)
+> +		return ret;
+> +
+> +	ret = regmap_write(maxim->regmap, MAX25014_SETTING,
+> +			   val & ~MAX25014_SETTING_FPWM);
+> +	if (ret != 0)
+> +		return ret;
+> +
+> +	ret = regmap_write(maxim->regmap, MAX25014_ISET,
+> +			   maxim->iset | MAX25014_ISET_ENABLE |
+> +			   MAX25014_ISET_PSEN);
+> +	return ret;
+> +}
+> +
+> +static int max25014_update_status(struct backlight_device *bl_dev)
+> +{
+> +	struct max25014 *maxim = bl_get_data(bl_dev);
+> +
+> +	if (backlight_is_blank(maxim->bl))
+> +		bl_dev->props.brightness = 0;
+> +
+> +	return max25014_register_control(maxim->regmap,
+> +					 bl_dev->props.brightness);
+> +}
+> +
+> +static const struct backlight_ops max25014_bl_ops = {
+> +	.options = BL_CORE_SUSPENDRESUME,
+> +	.update_status = max25014_update_status,
+> +};
+> +
+> +static int max25014_parse_dt(struct max25014 *maxim,
+> +			     uint32_t *initial_brightness)
+> +{
+> +	struct device *dev = &maxim->client->dev;
+> +	struct device_node *node = dev->of_node;
+> +	struct fwnode_handle *child;
+> +	uint32_t strings[4];
+> +	int res, i;
+> +
+> +	if (!node) {
+> +		dev_err(dev, "no platform data\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	child = device_get_next_child_node(dev, NULL);
+> +	if (child) {
+> +		res = fwnode_property_count_u32(child, "led-sources");
+> +		if (res > 0) {
+> +			fwnode_property_read_u32_array(child, "led-sources",
+> +						       strings, res);
+> +
+> +			/* set all strings as disabled, then enable those in led-sources*/
+> +			maxim->strings_mask = 0xf;
+> +			for (i = 0; i < res; i++) {
+> +				if (strings[i] <= 4)
+> +					maxim->strings_mask &= ~BIT(strings[i]);
+> +			}
+> +		}
+> +
+> +		fwnode_property_read_u32(child, "default-brightness",
+> +					 initial_brightness);
+> +
+> +		fwnode_handle_put(child);
+> +	}
+> +
+> +	maxim->iset = MAX25014_ISET_DEFAULT_100;
+> +	of_property_read_u32(node, "maxim,iset", &maxim->iset);
+> +
+> +	if (maxim->iset < 0 || maxim->iset > 15) {
+> +		dev_err(dev,
+> +			"Invalid iset, should be a value from 0-15, entered was %d\n",
+> +			maxim->iset);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (*initial_brightness < 0 || *initial_brightness > 100) {
+> +		dev_err(dev,
+> +			"Invalid initial brightness, should be a value from 0-100, entered was %d\n",
+> +			*initial_brightness);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int max25014_probe(struct i2c_client *cl)
+> +{
+> +	struct backlight_device *bl;
+> +	const struct i2c_device_id *id = i2c_client_get_device_id(cl);
+> +	struct max25014 *maxim;
+> +	struct backlight_properties props;
+> +	int ret;
+> +	uint32_t initial_brightness = 50;
+> +
+> +	maxim = devm_kzalloc(&cl->dev, sizeof(struct max25014), GFP_KERNEL);
+> +	if (!maxim)
+> +		return -ENOMEM;
+> +
+> +	maxim->client = cl;
+> +
+> +	ret = max25014_parse_dt(maxim, &initial_brightness);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	maxim->vin = devm_regulator_get_optional(&maxim->client->dev, "power");
+
+I would have expected to see devm_regulator_get() here. Why do you care
+whether you get a real regulator or a dummy if you just NULL check
+maxim->vin everywhere?
+
+
+> +	if (IS_ERR(maxim->vin)) {
+> +		if (PTR_ERR(maxim->vin) == -EPROBE_DEFER)
+> +			return -EPROBE_DEFER;
+> +		maxim->vin = NULL;
+> +	}
+> +
+> +	if (maxim->vin) {
+
+If you had called devm_regulator_get() there would be no need for a NULL
+check here.
+
+
+> +		ret = regulator_enable(maxim->vin);
+> +		if (ret < 0) {
+> +			dev_err(&maxim->client->dev,
+> +				"failed to enable Vin: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	maxim->enable = devm_gpiod_get_optional(&maxim->client->dev, "enable",
+> +						GPIOD_ASIS);
+> +	if (IS_ERR(maxim->enable)) {
+> +		ret = PTR_ERR(maxim->enable);
+> +		dev_err(&maxim->client->dev, "failed to get enable gpio: %d\n",
+> +			ret);
+> +		goto disable_vin;
+> +	}
+> +
+> +	if (maxim->enable)
+> +		gpiod_set_value_cansleep(maxim->enable, 1);
+
+No need for NULL pointer check here (see
+https://elixir.bootlin.com/linux/v6.18-rc4/source/drivers/gpio/gpiolib.c#L358-L363 ).
+
+
+> +
+> +	/* Enable can be tied to vin rail wait if either is available */
+> +	if (maxim->enable || maxim->vin) {
+> +		/* Datasheet Electrical Characteristics tSTARTUP 2ms */
+> +		usleep_range(2000, 2500);
+> +	}
+
+If you really want to keep the devm_regulator_get_optional() I guess
+maybe you could persuade me it's need to avoid this sleep... although
+I'd be fairly happy to remove the NULL checks here too!
+
+
+> +
+> +	maxim->regmap = devm_regmap_init_i2c(cl, &max25014_regmap_config);
+> +	if (IS_ERR(maxim->regmap)) {
+> +		ret = PTR_ERR(maxim->regmap);
+> +		dev_err(&maxim->client->dev,
+> +			"failed to initialize the i2c regmap: %d\n", ret);
+> +		goto disable_full;
+> +	}
+> +
+> +	i2c_set_clientdata(cl, maxim);
+> +
+> +	ret = max25014_check_errors(maxim);
+> +	if (ret) { /* error is already reported in the above function */
+> +		goto disable_full;
+> +	}
+> +
+> +	ret = max25014_configure(maxim);
+> +	if (ret) {
+> +		dev_err(&maxim->client->dev, "device config err: %d", ret);
+> +		goto disable_full;
+> +	}
+> +
+> +	memset(&props, 0, sizeof(props));
+> +	props.type = BACKLIGHT_PLATFORM;
+> +	props.max_brightness = MAX_BRIGHTNESS;
+> +	props.brightness = initial_brightness;
+> +	props.scale = BACKLIGHT_SCALE_LINEAR;
+> +
+> +	bl = devm_backlight_device_register(&maxim->client->dev, id->name,
+> +					    &maxim->client->dev, maxim,
+> +					    &max25014_bl_ops, &props);
+> +	if (IS_ERR(bl))
+> +		return PTR_ERR(bl);
+> +
+> +	maxim->bl = bl;
+> +
+> +	return 0;
+> +
+> +disable_full:
+> +	if (maxim->enable)
+> +		gpiod_set_value_cansleep(maxim->enable, 0);
+
+Again, NULL check isn't needed.
+
+> +disable_vin:
+> +	if (maxim->vin)
+> +		regulator_disable(maxim->vin);
+> +	return ret;
+> +}
+> +
+> +static void max25014_remove(struct i2c_client *cl)
+> +{
+> +	struct max25014 *maxim = i2c_get_clientdata(cl);
+> +
+> +	maxim->bl->props.brightness = 0;
+> +	max25014_update_status(maxim->bl);
+> +	if (maxim->enable)
+> +		gpiod_set_value_cansleep(maxim->enable, 0);
+
+Lose the NULL check.
+
+> +	if (maxim->vin)
+> +		regulator_disable(maxim->vin);
+> +}
+> +
+> +static const struct of_device_id max25014_dt_ids[] = {
+> +	{ .compatible = "maxim,max25014", },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, max25014_dt_ids);
+> +
+> +static const struct i2c_device_id max25014_ids[] = {
+> +	{ "max25014" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, max25014_ids);
+> +
+> +static struct i2c_driver max25014_driver = {
+> +	.driver = {
+> +		.name = KBUILD_MODNAME,
+> +		.of_match_table = of_match_ptr(max25014_dt_ids),
+> +	},
+> +	.probe = max25014_probe,
+> +	.remove = max25014_remove,
+> +	.id_table = max25014_ids,
+> +};
+> +module_i2c_driver(max25014_driver);
+> +
+> +MODULE_DESCRIPTION("Maxim MAX25014 backlight driver");
+> +MODULE_AUTHOR("Maud Spierings <maudspierings@gocontroll.com>");
+> +MODULE_LICENSE("GPL");
+
+
+Daniel.
 
