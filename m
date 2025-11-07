@@ -1,255 +1,150 @@
-Return-Path: <linux-kernel+bounces-890958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 909C6C4174C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:42:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549FDC4175B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:45:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8BED1892BBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:42:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 085824E3E2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFD830ACFA;
-	Fri,  7 Nov 2025 19:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53880334690;
+	Fri,  7 Nov 2025 19:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Osj8V4Ip"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012027.outbound.protection.outlook.com [40.93.195.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ip6BYIc0"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6858F2D5950
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762544525; cv=fail; b=CMniK78rE3wPYVh9Nb87NydqO3t+98/Sojp9/ivAsSJuDSjwDMAYykFqOBtfX0MHCSa6rgpo2bdxAL4kNcXqE+XR3h4JnnBX8D9xwdfGy20WysrEF3ADRXjkf263YZNKqAmF6tHNUIv3ENHKAyw2Xxx8A12ueGeJB3Slo9gp5ic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762544525; c=relaxed/simple;
-	bh=oxMBvVzeKa0QtWG5sDPCcUTKXhghFlptAmEJUmwlof0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Aw4dF9fFPQ/6UQkDGVq2PSq6XCj6VfdpSlX5XBEeeJ+IaB1822OSkEi7HnCdAqtN/LcPUi05x/RvvrYsq3CcDtccWjUnRkIA6ySpSEbzbPh3WP4iF6p9+IJqL871Nzkayq52CuP6kWwaxctMfiEDBJ0IBAt5uWqAYQbfj52oOkA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Osj8V4Ip; arc=fail smtp.client-ip=40.93.195.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rlk59HjkiT0NiavK6JmQme+7x/VFNeJuNwDdb1GkJNnHsXWXb1BrQz4+6vdoI1BP4uHgMpXexm9xe/oT9OhI5KEbFANKUYQbntsHRcPfFy+2CRQZPQchTdVqFiWmCBrR2WIPwGKsO3W6W1HjDiAMi5WehCG5loO9+m2z4pTQJd1fyoVRZYNkYT2Wln2/T708eEGsATEun8fUOJjP82Pi+2jXNmhDfST/CjQAB++gUi/7pcho4wZ3dma/Bgp+BgB5x7PdTPKAx1S7ZryQhGWcMoNRxf+QYctupZcakiMgA7ws9CCOYALj5UNo024Hfab2ovA0V+CCim7H9yzeWPdQMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NqtnPgtF5yctwk76pSe0qteHYUJjfn3HlddK4ffPwEM=;
- b=Sw/AvQjPTYuK9KtwFzR00Zt/56dxjcw9vGv+Kwk57HZkzrPth7VwX9hGfta5EBnGnUh6509FaXlgqQnSrdM+k1pQMh5OWiUDmVIv6YHzBTE/RQSVON9EzVDxEZ+EKnyAvCRtZymZoVBXQCtoP/LsWAUelrr8SpjF7esW9W+43xHnGpOoHboKV11QoHuq3uORlEQd2k9ONs7Ct/dSSiPiv/T7rv9ZZ1Ft3CQ2+xsAPsIbh3LEUCrsLfNheDfvhyPdXxtqIvEpugIHFFi8btmTymUFSEmA0on0c6EExa4koVjxD6p0Ynpc1EBskBgzvc7lKqU3V+GOsOtB4gzMOU58LA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NqtnPgtF5yctwk76pSe0qteHYUJjfn3HlddK4ffPwEM=;
- b=Osj8V4Ipz755IEGHi7JYDSgCJt5QdN4FwvTCbJY/8dOlQ0jQtKfhi04oVyRhxjcqp0OQUNB1ojim/XJEEQTIY/YPru14oNuz/JrjEbYuZNAZkWKXx2nMoEUN4G22neOntfaTBANJFVA5VEvS1U3pyHTRCFqr7+Ia/O9ZGtXwJTTymW1UvdQEUyaR4TglS1LS/oiUqvC8uTnnBAYYAaBiN2GljER42QdzpKlPa4IMW45M4umauEfP6hWDkwjw6k2PZ6H0CPam4EQcDARRZlFTVSHsr6t4E21VTiQiIrHu1z0bk8mWgyLZfsQkAT/oOSU/orDWNhkWPoEKbqLoemtheg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by PH8PR12MB7280.namprd12.prod.outlook.com (2603:10b6:510:220::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
- 2025 19:41:59 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9298.006; Fri, 7 Nov 2025
- 19:41:59 +0000
-Date: Fri, 7 Nov 2025 15:41:58 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, jean-philippe@linaro.org, robin.murphy@arm.com,
-	joro@8bytes.org, balbirs@nvidia.com, miko.lenczewski@arm.com,
-	peterz@infradead.org, kevin.tian@intel.com, praan@google.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/7] iommu/arm-smmu-v3: Introduce a per-domain
- arm_smmu_invs array
-Message-ID: <20251107194158.GB1932966@nvidia.com>
-References: <cover.1761590851.git.nicolinc@nvidia.com>
- <b7560a95f474bd642e037d5a43cfe5be76ea3fe7.1761590851.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7560a95f474bd642e037d5a43cfe5be76ea3fe7.1761590851.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: BL1PR13CA0238.namprd13.prod.outlook.com
- (2603:10b6:208:2bf::33) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2353191D4
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762544712; cv=none; b=YSjrHaCmdHEdzDlmAazVrcouGrzRaIxR+YaCBJLI2wdPo8X2FbHDrm915AYrhOgqhY5oUmsCHTOImjSX4YA/zSZDV+EDBwyxtRzT/zfwEhdBecgWtVoiozckdd8tEb5Iw44Oc/dm6hdsTECNSRVOGnJTfkRIxALGWEJ39GgBf0U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762544712; c=relaxed/simple;
+	bh=LJd4Lt7kd+i0Y3qfV8wxl3MYHl5ygopfsMQ71Ksl2t0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tf4XwVfm2m2/hpNvebgjkBaRA27KPGu8y2h5jsD01Tx300Eg8rQAsdHSKnQQpzJh/+uJGs/sAcM9Gc+wgjxjuImEyd4TvWxGmGwGdCXRYIlsiAyTPElTeGREJI31Z0U2vc/P93f3SsL/ieDwKMYzbnJGn/UafiLIKqDGrvb3hEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ip6BYIc0; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7a59ec9bef4so1338162b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:45:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762544709; x=1763149509; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LJd4Lt7kd+i0Y3qfV8wxl3MYHl5ygopfsMQ71Ksl2t0=;
+        b=Ip6BYIc0KsSJYUifZxNC4bhLYAGJOrP5+vzkMuEu0kid06sRgJEkqxRqQ8XeKS23/7
+         sVjJKTWGT0WO1zDLDLpAek15uL11UU+lFhzn65CWngkeRwRgT2rYdvaLjtQCeMdmU4Oh
+         WA6p8EOz2Y9htRlM0khXt0B76PC68McpExi08v4O2cnez25ZmFnvMhsN9Ez1yDN/gEaL
+         BB5RkWmuvWEtuEy0IkcXIuWNqmLQC8waXlHHeL6s5ElF7oJfNJO9ZJv03dNv5CdhayIN
+         wUZQHJKTEInn1ZHoWHcgqmA0ZSZwCK1isMYk/AS4PCV5t7Zh58+syLMQKAzByfYZID/0
+         ImSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762544709; x=1763149509;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LJd4Lt7kd+i0Y3qfV8wxl3MYHl5ygopfsMQ71Ksl2t0=;
+        b=KgygjL1RTec+HJwworJWlYr1mMCu93hW8FulWAJk0lnjA/mf+0jeHzHjJlqRP3jlcL
+         20uEWyAnFNL34kT+ct7FnLVnY1bucA5hSrVMcCTnHQmiteSce97hOYSljVqdzVB7CWWy
+         JG4ejLMJ0eF1fXUHI0fqAusx1/n1PZMmxpMWR2zEf3dpHC9r8b22HR9jacoYIiHBpxrc
+         wg3c7bTs49WwKHTDMj/E5k9SfVcpesenj9zfcG6pI/EJ5AwVh51txEV/1BYt2RpipSf6
+         bzeDfaWUttnIMASO02hLHW40FL89NuJdcpgTxiHmPGe+JwCLJm36M83JZE1VyJ77xqfA
+         rKoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWth5m70prxslbtcGIfAYQLjT7URUd8yydQRDJUPHsnnDch3hC740RoZs8e8kPF1nUHYs1GNd1Ux5Vkfps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO//XoOTxAOmIJTVcDVVvvJlETe3GQ9UQxqg4h7UsuZNcxvAxI
+	gNNleMEiUGID2J1z1paYzhQco7idbzt/YcfZXnQLKPbja8GgpEqHiHhn
+X-Gm-Gg: ASbGncvc9hmPN4L7bFO2adrydT+sCWrogKEjdENYaq40zwGsAj9xy00Dd25i1asNW0/
+	e1eNzR34Zi6n+Eo38vTGNfju6knw2GMxEaDB3uQVlwCcag9rtFGLhzO7Zu5mJmJLk5hMbWZ3+Cu
+	FZPFX2m4YLiHWqt+hF5LzAxXQ8Gb4iznEw9Tf5LflUyTaLb8iWt58trY5jS8GOesYK+pObLz9JC
+	UeXr+LbowOQ6dTMxhVOAo1ihdfW1Sgu3D+uxeEAWuEFSRUPqEbs+YMrN34y4tsqrTRmfxrlk8J8
+	HIIPpK+gavdQPkTY99F8nz8+GyMsUgm0b6Ug0RXkfd/A3PQXdz6q2hwNsun258lZ7Ixt+J0cKFC
+	g9ut464+QMPDzEzZYgOkm+l/WbiyCuiN+icCDhWfeAZJHMEund6FLWsFoJEkaE8XAxJLVGEN/+9
+	XDmsxuy1Ov9SKYx+k5NQ==
+X-Google-Smtp-Source: AGHT+IFiX8juAEVF6aTi9i63b/PQSeOvdU+AnVPuYkFlsVgI/R4sPMc6j3BNKqpkZFA0b6LAUANSng==
+X-Received: by 2002:a05:6a00:114a:b0:7aa:9723:3217 with SMTP id d2e1a72fcca58-7b226d893a0mr478395b3a.25.1762544709234;
+        Fri, 07 Nov 2025 11:45:09 -0800 (PST)
+Received: from [192.168.0.56] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17a688sm3749017b3a.40.2025.11.07.11.45.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 11:45:08 -0800 (PST)
+Message-ID: <4c33ab7a31ccbc1235bd183a5e4bfa4f94896c63.camel@gmail.com>
+Subject: Re: [PATCH] libbpf: fix BTF dedup to support recursive typedef
+ definitions
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: paulhoussel2@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, 	john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, 	jolsa@kernel.org
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Houssel	
+ <paul.houssel@orange.com>, Martin Horth <martin.horth@telecom-sudparis.eu>,
+  Ouail Derghal <ouail.derghal@imt-atlantique.fr>, Guilhem Jazeron
+ <guilhem.jazeron@inria.fr>, Ludovic Paillat	 <ludovic.paillat@inria.fr>,
+ Robin Theveniaut <robin.theveniaut@irit.fr>,  Tristan d'Audibert
+ <tristan.daudibert@gmail.com>
+Date: Fri, 07 Nov 2025 11:45:04 -0800
+In-Reply-To: <20251107153408.159342-1-paulhoussel2@gmail.com>
+References: <20251107153408.159342-1-paulhoussel2@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|PH8PR12MB7280:EE_
-X-MS-Office365-Filtering-Correlation-Id: afc48fb9-2583-443e-09bd-08de1e35b752
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Nlq45Ylt9ADmvigiyAOvcyxkpSltEmz+Slo61nMdJMvFiPxkfylDyotwh2Y2?=
- =?us-ascii?Q?LyhzGbjp/3o70stsJHrZiPtmeRWDBC07qyKkaZi1Dze6FhJ4Ljrf8I88MueR?=
- =?us-ascii?Q?irk2KAaQJs9qwZcUI86eGuETMNAv578klGdjgOR9Ih3yVb4b5z6+ROAk7YKL?=
- =?us-ascii?Q?mExXi85y5p+Sf9fcT2JiTNwrhGT1Gp/lJhNL2NMknMjYdFowXw+/Dafs8TLh?=
- =?us-ascii?Q?FrYyvyRH50RvhwXuu8zgw09uyo+/JtzLmunHN2Ehf/SFyh1lI5g2/qwV+bcx?=
- =?us-ascii?Q?dBDXDLjQ3vvdFXzaOcV4w6Otav/pTiuCdrTZRAdHbZ60228tfBJsjvxw7L+t?=
- =?us-ascii?Q?0SRB4cmw++o4qTcBCJm17sQAz9TbaJm/BTiNeQFOzBkaemvZz1DZFBxhe+TF?=
- =?us-ascii?Q?CddQowKMPSHN8XZlMSNi0OcSjyLjFWXbUBP+D7lJ7rFo5TFW5J4qm/PGb3cO?=
- =?us-ascii?Q?zQOMyU/sk8yyAYxMOmtwoa1iLkvIOM09ufbq8pHQx9IK1i60obUx5T8lGLSn?=
- =?us-ascii?Q?q5WvIMnZPbQqUPjg+KcQu6GHDobyJ8R+faDLFYomYfsh5js6rKhXc6Z+Wkr6?=
- =?us-ascii?Q?QYhinfW4LX6VI3ALaQ1/xiUT7M6b3PQf0ty1AgDMgBqvnhkOvXr1oNpGs3Go?=
- =?us-ascii?Q?aqXWeRda/FveGRPV6rF7AJoG4J8+CKBlV5DZxnWx2y0arog0kmMFEPlJl2n8?=
- =?us-ascii?Q?HK+Lqqo7xafoYPgAVGsPALGkUl0wpmpF4saKLgnqvWoSOB50ZUVCfZooQe6f?=
- =?us-ascii?Q?cyfBYgMaDG5sSY4LDUSmd8R6YQ9dCBRNaPMqUG+1h57MtwwPmgGyLxIVRkSB?=
- =?us-ascii?Q?tdv1InzE8FSNmkv3DGHZJZKZG8tmzFYLmKRsTCUDbr9Go0UdjgkuQGTGHyBM?=
- =?us-ascii?Q?pw0j+QaJC3tYlwyfjl7wWbgQ7/uxTFF7iva+2BdfTkQKW65jbZZqjpvZPD+s?=
- =?us-ascii?Q?ghwOBPU75XUwNDURk8z7gqqOyZNkmWbF6pypYd4UYWlLjLNr8XoAX1RBfrwl?=
- =?us-ascii?Q?aPSE2u6Bsct2yAi6eOjfiWQT3HSXMfawt+hwBzejTEaoZ7L/kF8ih7MNLMZu?=
- =?us-ascii?Q?yisIrIcyGpULoZuKiPmWaTpTgC7PvEDxWLJQNv8QGg1vvhrxMZZ1wBXBaeoi?=
- =?us-ascii?Q?F/xTNIwOgvFx2IbE8jtOqS3StmEjTsq+cu37xRI9iB/+SANZa3g1P5o1JJaZ?=
- =?us-ascii?Q?tcQ4FC2urqvS+nePYPAnosqLpX9xY8EDmopYqJKmRxbw7Eg8AMTC1XccTBcG?=
- =?us-ascii?Q?d8oA1Asj1vICeC0hUy22gx09+66PjnGGEAi3fIpmbJYtEuZxG4D0mPyjUpLW?=
- =?us-ascii?Q?HWoNCglGUle7aA22QKjICATF1ynkp8PQFGiL/sTp7Vqn4u/6rqXDlGKcYW3D?=
- =?us-ascii?Q?nvbJxEFqH6DgeHIifhBRFJbsMbmQooTDw56pyt4spq3r5zS4gomzlUtNttBN?=
- =?us-ascii?Q?Cu0fjTPUeCDfrO1RRLUFpUneYCQ/OsLt?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?TLcYpZx3i0pWxFNTTAxib9+QhptW5q6QUdpaKc7pTYJgprs/ExL9pCj718h0?=
- =?us-ascii?Q?tSyQpwa/6sygJfitek/BOgq+HUu0ZmSIYWYvO6/4ABJ6/5A7R0M9WduP+MKs?=
- =?us-ascii?Q?TBBPkDovyOnhmmB/YyOWlw0T3JEfP4U1EdOhBAIexse6hmS52Qmya3FSC4W8?=
- =?us-ascii?Q?01nMex/b7ORU89e68D7nYthgEo+AMqfnRHJT39vlU2mEeFEOKO0jZMjnoNVW?=
- =?us-ascii?Q?EoIbI/8cXE/hpF6x/kAJXaWtKiSNjK/j0VdKxN6u8UTnpaDi4pvMO5w3ol/s?=
- =?us-ascii?Q?iVb1U75dbbAGX9MPhucNvjQNSTLvdAWw2x9AD5RQ9AIKkFZd3WrBXP1e8OVz?=
- =?us-ascii?Q?LSaoktI5Lgk/qXQ87kKBKm4oe4C06fLPJLDuYdXh6YOSPKh5xeE+bLvT9bc0?=
- =?us-ascii?Q?h2aoSmkwIq5BhkGMERQ1uPq4tXxOTq1MBedUafHtH1eZGikiDnRdTDfgOWfN?=
- =?us-ascii?Q?4pAPhNoVAvEXpjsljdHthJCG/bf2LH9GoadqbGnbTd31NlssegOxcHoquRK5?=
- =?us-ascii?Q?rtl0JZzU2U6AMNmnulMPcxdrRU7jB2qiQc2UoVPilXbNw1jSSzQcYSUNcWDE?=
- =?us-ascii?Q?8yHPXffaOx7M8oZMJFDdcq9eehzUuCtNDXGGvPyQwEFjbVzN6Qq7fX763waJ?=
- =?us-ascii?Q?6MJiWMCTYCNNkh3Q70A5MOYcjsp4h64n+UbiUyTFH+paCKW+laxzK5x/iC70?=
- =?us-ascii?Q?PxZD4ANM1ULwvmW5RMbFAqPM4sJ7zmn8AHSs2p0Or0W53OeaJvH8FiotKEf2?=
- =?us-ascii?Q?59dN9Cn4T7J2+wqMxUduZMhf8mGsO+49/024e13jdeKZ0DlqoBSxjDllWg+8?=
- =?us-ascii?Q?e49UYzMr+oTO4/kDofUcdFw1PxiGboSOU90e4FBpNjJ4DoFs4gtarGuKeasZ?=
- =?us-ascii?Q?gVZ7tx3TwTytLDGRylgIZgaT9Zam1V60hR8oBbv3rpFlFhMPI+t/ZInjTDrK?=
- =?us-ascii?Q?gq69vHMm1iZoqW6GGy4Ds9IA1YAqKqLb1mVAC8BwVDkvNy/2zpek8S4MEprJ?=
- =?us-ascii?Q?isYKM/AmpPEBfI1t6JrifgDZ722TIVU7UgY2k4C7guXn0T3sM8DumEnlJ1TN?=
- =?us-ascii?Q?4fj9j3AAQ5XRtmlyfpLUFHa4HtNgwndza21WAXFO2XKK8kKZKKPCZdv+XFTy?=
- =?us-ascii?Q?kdFbBf0izxVSzM+eYx9/Qn3GWuWIafX2+tjqO7zAeh7YzZuBskcDlQ1MIOFt?=
- =?us-ascii?Q?H8IWzgr+9L0nz2ilgohaTSAUJ12eWKSPTtQZh4F8Drfm2OTvLJsI2WSJe8bO?=
- =?us-ascii?Q?XzzZ1x+AL0pK0OH8H0wHwQ4tpEij2SMYmsoy8+SnN6c2IcQOsxgQznBvttJp?=
- =?us-ascii?Q?JZnPQa7AVLin4yE5y+bYIBGR52ZxCtGcaiuw6DOy/HPaNuPVpSnS0lpBR/SX?=
- =?us-ascii?Q?XwRZx2Uph9JidkzWK2cv3tyGlA1pYnNI0/ds9tnK0hS/gJnPO2j+Lhf4X8iC?=
- =?us-ascii?Q?k3SfVopqaQ9Bp2YhxlZhLIBMtQE8CWpKlKF5OvsPo0rldsqq9um29F3zIeIY?=
- =?us-ascii?Q?+sxCL//pQ+rRydwNIcSXXbAGfMo69SrwUIiLfwFE+SfDESWC06pXcp9SjhWN?=
- =?us-ascii?Q?l9IHVb70BgUKoCkvlO4=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: afc48fb9-2583-443e-09bd-08de1e35b752
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 19:41:59.3485
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6THDymQid7Ho9jN2HhajswRo9kjqstLdeDMFFD4PcBzUoC3nUzVD7wY7iET6Ck37
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7280
 
-On Mon, Oct 27, 2025 at 11:54:17AM -0700, Nicolin Chen wrote:
-> +struct arm_smmu_invs *arm_smmu_invs_merge(struct arm_smmu_invs *invs,
-> +					  struct arm_smmu_invs *to_merge)
-> +{
-> +	struct arm_smmu_invs *new_invs;
-> +	struct arm_smmu_inv *new;
-> +	size_t num_trashes = 0;
-> +	size_t num_adds = 0;
-> +	size_t i, j;
-> +
-> +	for (i = j = 0; i != invs->num_invs || j != to_merge->num_invs;) {
-> +		int cmp = arm_smmu_invs_cmp(invs, i, to_merge, j);
-> +
-> +		/* Skip any unwanted trash entry */
-> +		if (cmp < 0 && !refcount_read(&invs->inv[i].users)) {
+On Fri, 2025-11-07 at 16:34 +0100, paulhoussel2@gmail.com wrote:
+> From: Paul Houssel <paul.houssel@orange.com>
+>=20
+> Handle recursive typedefs in BTF deduplication
+>=20
+> Pahole fails to encode BTF for some Go projects (e.g. Kubernetes and
+> Podman) due to recursive type definitions that create reference loops
+> not representable in C. These recursive typedefs trigger a failure in
+> the BTF deduplication algorithm.
+>=20
+> This patch extends btf_dedup_ref_type() to properly handle potential
+> recursion for BTF_KIND_TYPEDEF, similar to how recursion is already
+> handled for BTF_KIND_STRUCT. This allows pahole to successfully
+> generate BTF for Go binaries using recursive types without impacting
+> existing C-based workflows.
+>=20
+> Co-developed-by: Martin Horth <martin.horth@telecom-sudparis.eu>
+> Signed-off-by: Martin Horth <martin.horth@telecom-sudparis.eu>
+> Co-developed-by: Ouail Derghal <ouail.derghal@imt-atlantique.fr>
+> Signed-off-by: Ouail Derghal <ouail.derghal@imt-atlantique.fr>
+> Co-developed-by: Guilhem Jazeron <guilhem.jazeron@inria.fr>
+> Signed-off-by: Guilhem Jazeron <guilhem.jazeron@inria.fr>
+> Co-developed-by: Ludovic Paillat <ludovic.paillat@inria.fr>
+> Signed-off-by: Ludovic Paillat <ludovic.paillat@inria.fr>
+> Co-developed-by: Robin Theveniaut <robin.theveniaut@irit.fr>
+> Signed-off-by: Robin Theveniaut <robin.theveniaut@irit.fr>
+> Suggested-by: Tristan d'Audibert <tristan.daudibert@gmail.com>
+> Signed-off-by: Paul Houssel <paul.houssel@orange.com>
+>=20
+> ---
+> The issue was originally observed when attempting to encode BTF for
+> Kubernetes binaries (kubectl, kubeadm):
+>=20
+> $ git clone --depth 1 https://github.com/kubernetes/kubernetes
+> $ cd ./kubernetes
+> $ make kubeadm DBG=3D1
+> $ pahole --btf_encode_detached=3Dkubeadm.btf _output/bin/kubeadm
+> btf_encoder__encode: btf__dedup failed!
+> Failed to encode BTF
 
-Do we need cmp < 0 here and in all these other similar ifs? Can't we
-just fully ignore trash entries no matter how they cmopare to the
-other list?
+Hi Paul,
 
-If cmp ==0 and we do num_trash++ then the next iteration will see j
-ass cmp > 1 so it will do num_adds++ and the two will cancel out.
+Could you please provide some details on why would you like to use BTF
+for golang programs? Also, is this the only scenario when golang
+generated DWARF has loops not possible in C code?
 
-> +			num_trashes++;
-> +			i++;
-> +			continue;
-> +		}
-> +
-> +		if (cmp < 0) {
-> +			/* not found in to_merge, leave alone */
-> +			i++;
-> +		} else if (cmp == 0) {
-> +			/* same item */
-> +			i++;
-> +			j++;
-> +		} else {
-> +			/* unique to to_merge */
-> +			num_adds++;
-> +			j++;
-> +		}
-> +	}
-> +
-> +	new_invs = arm_smmu_invs_alloc(invs->num_invs - num_trashes + num_adds);
-> +	if (IS_ERR(new_invs))
-> +		return new_invs;
-> +
-> +	new = new_invs->inv;
-> +	for (i = j = 0; i != invs->num_invs || j != to_merge->num_invs;) {
-> +		int cmp = arm_smmu_invs_cmp(invs, i, to_merge, j);
-> +
-> +		if (cmp <= 0 && !refcount_read(&invs->inv[i].users)) {
-> +			i++;
-> +			continue;
-> +		}
-> +
-> +		if (cmp < 0) {
-> +			*new = invs->inv[i];
-> +			i++;
-> +		} else if (cmp == 0) {
-> +			*new = invs->inv[i];
-> +			refcount_inc(&new->users);
-> +			i++;
-> +			j++;
-> +		} else {
-> +			*new = to_merge->inv[j];
-> +			refcount_set(&new->users, 1);
-> +			j++;
-> +		}
-> +
-> +		if (new != new_invs->inv)
-> +			WARN_ON_ONCE(arm_smmu_inv_cmp(new - 1, new) == 1);
-
-I'd add a little comment here:
-
-   Check that the resulting list is sorted, this also checks that
-   to_merge is sorted.
-
-
-> static inline void arm_smmu_domain_free(struct arm_smmu_domain *smmu_domain)
-> {
-> +       kfree_rcu(rcu_dereference_protected(smmu_domain->invs, true), rcu);
-
-It is working as is, but maybe a small comment
-
- No concurrency with invalidation is possible at this point
-
-And you can just use kfree instead of kfree_rcu.
-
-When the domain is destroyed the caller has to guarentee it isn't
-calling map/unmap/etc anymore from any parallel threds or it will
-UAF. So we know there can be, and will never be, no concurrent read
-side cricitical regions on the RCU.
-
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-
-Jason
+[...]
 
