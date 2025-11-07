@@ -1,251 +1,249 @@
-Return-Path: <linux-kernel+bounces-890157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12448C3F596
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:12:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86660C3F5A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:13:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F6164E9A1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:12:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 415A54E9808
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C253626ED59;
-	Fri,  7 Nov 2025 10:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95581302748;
+	Fri,  7 Nov 2025 10:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="V6WwEu5p";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Zl2tMz4G"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWwQj/mf"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361AE2FD1B1
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762510319; cv=fail; b=aWdvaxU6XINelm6q1f8SmJklNGBGACqlERutncCIwRl6xufIZSpvp8ir46VUFBT4Eu1kt6ukamiR68Lj6u/nh2GQ/SXOJuQkru8U/x8Onj6PCHrIj/8a5J+017ZBN8w9gzE6DRQf//rK/H2UNuszF/2qlZH1d6v0QzqjTbhWw8w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762510319; c=relaxed/simple;
-	bh=mUTA79A1RgKHOtKw1KCi7cbWJL15pPKTFLu7nMKdorM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=l0iQcUjtlguDxhyJGKuNaKxLeJRh+5viO84g37uOm4Ys+poVyFwUpdpqztKomDNFBlt6M2/pFZE/2urHXWQRY5sdYB/1gween/wdxTtP0zJ6Rh5rBXeBcUe81GjjxVqn9PufofJDYX8uHRWrDBVRcSZKSK+QyCZfbOSIB0y256U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=V6WwEu5p; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Zl2tMz4G; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A78uVq3008408;
-	Fri, 7 Nov 2025 10:10:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=a7okJVBoTTmEJbkhGv
-	I+L7mVNF2AIhh/Ht1KOaW3uX4=; b=V6WwEu5payInMsLHM+4MCwj+wiPKLjbyMa
-	47wKeXQC3oTQCXoxu5Zp+eusKIfqbws6wEcEMYgEPQ/OFTN3UqoDiCSwD8HLvyQ8
-	sotiN4847nI/4ixxSU8VWvE/roXrMobLRVpx/i3F3hsKMvjpcEY+7enRSEijRdgq
-	qDorLqNmUmOm6pu7faf1nrRT9J+3nHtp5mWP1xrHt3R0CEYjvGnLR+q7puaTZWuI
-	wVmHCN3oMGICoPJ0pCm0TaJTlPvqSvBoAIbeUZxflzfXbUUeMggEsJOcOqn65wZO
-	SKwHLrG6KH4mk0A4qulDIsco6ZFFv5vD1vkcvt0u3JgXaiSSSdOw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a8yprhhw0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 07 Nov 2025 10:10:58 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A77wLVp039448;
-	Fri, 7 Nov 2025 10:10:57 GMT
-Received: from bl2pr02cu003.outbound.protection.outlook.com (mail-eastusazon11011063.outbound.protection.outlook.com [52.101.52.63])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a58ndanq3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 07 Nov 2025 10:10:57 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AaI3SK0LTflC06MvTnneF48TnQhdBvEF5J7G30XAS5vw5kbHlOZHlHmI4f7Qiw+w9nIJH9pnRhUXisFOaP4GFHPpKv90OCWXzZcyKnKHC8UTiioTQbSTew/1Y2AaxTgJXnTwbQQmoMKah1SJU3DeBOYfNN+fbQspVv9v2wxfhWKjIbwXkPNQhBqJdukOFjJBknooF3bxpBLASzDV2iEoCJZP4p9aHMGtsjfOqqSfKAXw0UZZFH9b5JQa0OUUtAQARN4NT2cF02CYIh1SytgmbKk3qHQqm7Xn/Do8m9bpPFnVSpfK/JcbQ3ZgkABsfPqQij2xYfuy8qTqrv3wmpDBXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a7okJVBoTTmEJbkhGvI+L7mVNF2AIhh/Ht1KOaW3uX4=;
- b=eu/SmnD41YJRv7YtKQCxjhkipFRcEfTJhJoNGaY9ZD6jgekmnkdgplHTwhfyL186WEao8+f4r1q+GgffnzFiqkLPhjyQGl9v6o4kMmRLKl7lWaQ9HxC7rqxw8ZFIplnL+8YPMpl5Rzy4bNkAaUfLqpZkhETRDgNhRtGE0p2Ivk9Nl8AkFn4lEZTK3kRVpzNlGuOoky+qnta3poRnerY9uZJaU7mixnR2aVswvNDH67ZrfaZIiRneBTKm6HPRY7sTU5MqW7NybPnlBszj8WYb+xNarU81NCbbcy5yOXKx1BblhAOMMMAraLi4gXnwyqAcyJq775MGfeDrrwboe2kadQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE2F3019D8
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762510404; cv=none; b=Ta5dJWxS9goFsPsLtTJjzGiXXeHEARsJQ/xgNCttkHIFLF5+DzrjfGfumH6OMbKLQ6khEMSuPCYEcZOfnDqVr8whBLZjmwRORrlFqUZnvOqkk9iZRts8hz0cd/dg6SZb5qEDqVyTgp6rzZsQ+taspefG11DaWqm6PCMh1j+973g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762510404; c=relaxed/simple;
+	bh=p54O8RFY7n+zRVjeBfEWzWigzrQVcI4n5XMu0wSwBzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XSiQh7pJCEJPI7Tc+cBzPR59zGhh/bQyLePP6WVBT0iZLCFrM3IGGZrEAlHRW2t43QeBq6INoD7oEPfhiYqZ/QmsJNb6It05l3+whufOXd+UknvqKuR2Qce530Mv9Fu9738lgxjjYGqL9lrt0CdJ2q1zsHph+nZp65epPCStFUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mWwQj/mf; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b626a4cd9d6so89866166b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:13:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a7okJVBoTTmEJbkhGvI+L7mVNF2AIhh/Ht1KOaW3uX4=;
- b=Zl2tMz4G0vlTq2FiwLxrqyB4YhNQfdwyYTGRVhBrmPF89EXCPBsC3Iy8Tb68jtbwTI3xCUwKWZvklNCETNyFJxD2IOpFZzc+qfvX+a47tO8cgiLGCm0tr/VVBE8Y+xnbfiGpOubd92Ck5jRheCJYHrm90MmY6gdvkIKx7pbw4JY=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SA1PR10MB6296.namprd10.prod.outlook.com (2603:10b6:806:253::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Fri, 7 Nov
- 2025 10:10:54 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
- 10:10:54 +0000
-Date: Fri, 7 Nov 2025 10:10:51 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>
-Cc: "Garg, Shivank" <shivankg@amd.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>,
-        Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        zokeefe@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: madvise(MADV_COLLAPSE) fails with EINVAL on dirty file-backed
- text pages
-Message-ID: <671d07a0-0041-4825-9e6e-978907cb4d29@lucifer.local>
-References: <4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com>
- <8bc796e2-f652-4c12-a347-7b778ae7f899@arm.com>
- <ozkb6mcxuymlz7tm4vcnqf266gd4ruiik2zal2koo5ffprgxfk@35godtyix2cf>
- <43a8c8a6-388b-4c73-9a62-ee57dfb9ba5a@lucifer.local>
- <77a54f63-f5da-42a2-b24d-5c8a0f41d1e6@gmail.com>
- <0b84865c-5b23-4be6-9902-af9d5e63c182@amd.com>
- <0e616478-96d4-41e9-b6c1-fa641c36fba3@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e616478-96d4-41e9-b6c1-fa641c36fba3@gmail.com>
-X-ClientProxiedBy: LO4P123CA0212.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a5::19) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=gmail.com; s=20230601; t=1762510401; x=1763115201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xBG3yseegGQ7KkrzPwoa8hJbgG/nUl+f+ZjFLhxHqe8=;
+        b=mWwQj/mfNGYr2KsG55HG2uBOirbopszYVZsorhz2vdktbNMm6Zi212WzPebYbiHvdm
+         8GHWBTXjVMp4fOu4MiAQiCSc2wIALFITu7nQrhcJ/BgGQ+V54Y0x/fhNa8cMzOFs1BQ3
+         SEuPgZFP5rURTJwJMDIpyJ3Tf6624V30KihUgH1bsAJ+6G0X2hfwNeP3mw7sYMZZqbpQ
+         plRw6iM/0tVCxuHHOv/yWcwbnGB5ngQ/UTIdk8kvUfTIiiyHwdgSkrZYlrmw/6sd7mfe
+         30Ohb2F6ExNp0q4WeWUprkGwZzELxMBcb5/SYHVbv/6tFpKeN9KlEHm/rFmAA06yWbTD
+         BaOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762510401; x=1763115201;
+        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
+         :from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xBG3yseegGQ7KkrzPwoa8hJbgG/nUl+f+ZjFLhxHqe8=;
+        b=rPyq7gNdzNYN2Kh13m4okK/ucBk7s2MTcNvfMA9qkRowlnUhDzArxcKpjLh0LV9sxq
+         cw2r/gcV1+QVMYabaCrEcVW4LRCCBStlYKkEbxfgdT+STkWT6P6vqG4gPLCXsuansepq
+         lvAGZlxq42pSx42FrcAgyWZ1+ttWVwvEG0OR9ksf1LCgi/oynjIaN4gtnQdnsJ++iv+R
+         P/mPA/oy99AEYpEKhQBsl0aKxMuXYy4xKm8PzQVoipq3WM4Q1KMQ2CRmErTqOGcC+PuH
+         eBvkhHAYKc60HvaAZnfKD7/ml5T2wzQxcwvmYL8/8g6Z0F3sAZUqlw29lXetTvg9YY+D
+         MGCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIiIBvQcysG7Ek50WYsAfoOZMb2rbWLMePuzSSyc1bOnSyI0gQTGazZc+9TPYk4djrwltHuW7y0Nm2cik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqS3d4hmtzAduKTFwSv4EzhvYRmhwqfLGI72Kn0OMi68uvH2UL
+	mbh1rvr6PzikgL75R8i9nmtEx8sPeJOAOmQm50S2rt/YQ6gIkVliANrWQ7TYHQ==
+X-Gm-Gg: ASbGncuYPL1QF+0z2mMFNFkBndpoeXe9PU29Fag4USyKYdECKyp+mGl58+EmHLdrOjJ
+	/jA5WzYHLFrbRKsWgmaDeqRUBjaCHMb1t4gPj4kDTZWApV5/dTsS5W+RdBgmIlyjskjkhiWONX+
+	d/WOGJGSDSpNpjVw1spkks+ldhv33glpTBof7oCdWICeWYqVnnLpE+cSr1MMFHmoKvmv/NOenCZ
+	1fv+kWv4rZ0q7Fi7xzdfLx8hoX1MQbABtTSrLmG2ZAn3jrMLVtLSZ2615YSrqqV05DkWvmAVz9f
+	s+htKDPFHXOLauFVRa8lcLZ2bcC5egkQ+kugFumU0oI1ijx5LFxJZbiUypvCLTy7E8bOLDCVXf+
+	Pluii4XC6ukcYA60Bom00Jk4IpDoyERAmhnSOUHcLDRVWd4wT2/0tjiJ/R9rvEs/1RjwL+hKM8h
+	XPBqbwUj0yixbcKIgNm6k2w7Ka
+X-Google-Smtp-Source: AGHT+IE4ZUym8B7oEhCQSVqwEk2oiRy3Shfqh7Joj+Z+pomLQhTj8e4KI/UaQ8y66MPHPylOnelYuA==
+X-Received: by 2002:a17:907:8689:b0:b46:8bad:6972 with SMTP id a640c23a62f3a-b72c0ae3affmr247134666b.38.1762510401040;
+        Fri, 07 Nov 2025 02:13:21 -0800 (PST)
+Received: from foxbook (bfd52.neoplus.adsl.tpnet.pl. [83.28.41.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbcaeaasm210237466b.1.2025.11.07.02.13.19
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Fri, 07 Nov 2025 02:13:20 -0800 (PST)
+Date: Fri, 7 Nov 2025 11:13:17 +0100
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: xhci: Assume that endpoints halt as specified
+Message-ID: <20251107111317.69be45a5.michal.pecio@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SA1PR10MB6296:EE_
-X-MS-Office365-Filtering-Correlation-Id: 94fa66c0-9109-4abe-b670-08de1de5efac
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eupGBJYcAZbS/niuEB/rvOhTXMKNKYUNpqRh0/nqe6yJaUpG6y8ou+qH+Eul?=
- =?us-ascii?Q?nyCp5FlfAp32MVeL5//rlwCXGjRGWAjrwmBWWRsxueGNvEgr6QCAkv9RAXtO?=
- =?us-ascii?Q?6SiW56pJmoEj4vN553BkZ5dE1wvqGbtR5LiZomw2m9TDvNfCG1BJKBnXuRYt?=
- =?us-ascii?Q?9rgpee8Injaye3GY40QNSwRKe84vq4uxsU04MxJUVHJBT8AadR8VpX/d14Tm?=
- =?us-ascii?Q?WEsqzcDER3Tn2VFC74EWbeG8Wg+R29UQyyxVfHERYIa9hxNXLS+ZlXXiH6b7?=
- =?us-ascii?Q?druIXhuvPGZt06ZhxeHLnkr9QTbR6m4D50NTTylL6nje5VKhyg4z0d8ctjtk?=
- =?us-ascii?Q?NdpnUZ4GPmgQPf2MQ8+AeAXNIPpiI587sd6VP8z/Ihl3JQQgLgMLoS8buakp?=
- =?us-ascii?Q?htEOU8UMwhG8vGPq8YJPGSd46KV0+sBkdm1wo3vf4sSMcMs5A+MMaKRkS1jf?=
- =?us-ascii?Q?03ukR4s185pa1G10T96V4Xp3MSrZXviSbYAUXDPrVKSh+YpXbSNybVDZBFt9?=
- =?us-ascii?Q?/KhPQW7qBlR/EzxPYy6MFkIj8aJcBQbBLtXVGAH4ZOmKFR5I2kyWEceaUAVg?=
- =?us-ascii?Q?+EK6irpDWG5oCPI9Zx/SZCvx4uLT2tT067FOlwcUdWwfv6v7zVxT2AR8RRoG?=
- =?us-ascii?Q?jqjvqwsIntQrA7GOW7/s+gSjuw0PQdtiMJF4X0LJIxCsnwbO9Q8ayQalL6yX?=
- =?us-ascii?Q?OYBUKmcQnVkwAP0B75hAXIJG3R6OevsTqG4xdxt76euYr3VawZQrJpvq8Tne?=
- =?us-ascii?Q?F7OuERURO8B6Hj5ytZHsAW7ePiVNrYRZ/PoK+COkNX2FvmML4DhrBZqMb0Ri?=
- =?us-ascii?Q?4+4O5K6n2DQqG9FgEFSOHy8HHQW6OLrmdvMssAAdGTMCaizLsrmwdPmNTjya?=
- =?us-ascii?Q?FgO1MZBsu5V5+HPTRHJ3hXsBkerJrH8G1SYcqqZFWaoNst9Sxi6C2CjeTk+2?=
- =?us-ascii?Q?pSUysNLKceEQOYkzZv5as6NdRf21M5X5kgjPpZUkjlR5duXEk1cYKzbm868/?=
- =?us-ascii?Q?KjiqGKD+N9gGM3XONT8vWdDCuATG+szU6y0gASQdYsus7pbSjBCxyS+XPCNO?=
- =?us-ascii?Q?7tGrVP/Z8BdlnOHYyd/lGYcxNGKE11sqQ468vFDY4NOx/HYDCABKXDbOzO8B?=
- =?us-ascii?Q?N7+LsUa7bZoyMBseRNNgOgSw1AuIe13GGAiEyUzYDkh39Ti5ho62v6tuN3lN?=
- =?us-ascii?Q?+1oKAA2ij0sQFNnbGgHZiLrynSsrS/xB/EebvFBO2dbl3+nWHiqMkYiLWvxB?=
- =?us-ascii?Q?ce11oax2nkOFoSuiEZ5xFJhURHbjRMg8jTpZThqvQDy+87xMJ+UIf3JMWyzF?=
- =?us-ascii?Q?mEH2Cq0IQrcBmxqQvIpSTUvzVyk7NY4nk+8Ls/ScAhufpm1urMqjhRdWymre?=
- =?us-ascii?Q?s6j/0f+30YosRMrsAAGUbjStfKlSHDPhbdee169ijdhJx9p/R4iAUnQYSyyf?=
- =?us-ascii?Q?iUahALMY+R/AtEWR6P1SizIt6++1vxC6?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?U83vji2pWUnZ/0TXTIIl3xti4+7mmHvdKnGn+aHMVR5bGXCMlD02z3AnqUmX?=
- =?us-ascii?Q?wDmNZFV+wWQ3X6TtcVDWXNOatT5wVfsJqsyk4Lv+UJqcbSeH0sliVpgKcXch?=
- =?us-ascii?Q?RjnF38sOT6NW4tMbQY1Z3pyDO7SxIiv8OQvxz7wvvIgmJxUwHfc05rWb9+t8?=
- =?us-ascii?Q?mCUyPXJn+z8GYW0cA4Vn9Zs1Nm9uiGJedanmhnrUf/UpjNckm95L3qhZRgd9?=
- =?us-ascii?Q?vdxNInFi7UHp26pmNXbsafCRPjZM22DQfwiID8OVB08TYmZ9FdoS5CFG3mO7?=
- =?us-ascii?Q?XDrhKvQ9pfLWecekLpx3H/4wW6MjU+njsY6ENW+B6EumvevFyhenDnHqMndo?=
- =?us-ascii?Q?MiNIwhkmxMrNs5FhIH0T7hMbD2d8eIhHsZU3zXXAffaSdeG7i/HOa6aZDov7?=
- =?us-ascii?Q?DkvK0K/6Opidomzp6JKwPFX+FVttmyQ3/SgNXMgsod+gpV3rud0vdiyw641u?=
- =?us-ascii?Q?uEMXKmduUCyQhWGKzehj/9j1BiDbPT9YOucEb9jRLuE8D97o40GuIyFxAsYk?=
- =?us-ascii?Q?718gYDDeIPeLKrjS2UhWKAE2vmfVHtKhswfYb2w76//lPV5IAHlnZKhesk0v?=
- =?us-ascii?Q?FD8IRlxyiMcfKdEpijOJ2IKdPpgvVgghMJRMpSoJzwkCN49si+eNNYOSam0m?=
- =?us-ascii?Q?t6ikTa+aTaCpIHCIIUXlOiK8td1BRd3/uHbyd0OoSDC6kmqfp4fVXMTrBcYh?=
- =?us-ascii?Q?53VAevGbLAd62fTpy0kSktgwPWXinse8wJhWbkwShY5h9P2R2TMzGmku5j2Q?=
- =?us-ascii?Q?tZflYEWFSymh/89VmUL1BOUhTmK40YQipzh7HuyZerW1pPA0yFwv856h9yJb?=
- =?us-ascii?Q?NBhrz11E+1c2ZFHwkTuqSxVDt8ISb/S8KHxYf4zZWB1Lq3dFLFYpPX1+e86F?=
- =?us-ascii?Q?QpiqH9eRByDoa4GwwHMPdMUVkbzGvuuzLLAKMwnmlNwtSOK9kdqu+Cp+eG4E?=
- =?us-ascii?Q?y61rQzaOVth1TWROYJByiihHsNSaZS1ifatpbU+QfyA6yuKhti5A5ouIhOTM?=
- =?us-ascii?Q?21hgdztBeUmQyP4BTXzwJCE/bu4X7TZNc6uN2oW3tUn0VvfooJpgCFwCm34X?=
- =?us-ascii?Q?odmsuGFw9T+g+AXFgUmZGO+YVzEa5VXF7xUkLiNeKurY0JtC0l2+EwPrauvw?=
- =?us-ascii?Q?1n/ixxOezUzDpNvHaYXn3qRZmQTNmrECr8e3/m7zhpE9OtlkzqgBIIokFdwA?=
- =?us-ascii?Q?3bkljA/V38wpwm5a4fWOyLIMS1XKFWLgHtueAFGNHmr6aOzUm5yEesaMXxoJ?=
- =?us-ascii?Q?Em5KFav/gAhObNPtIWWvjFLlkhC/R62z9NL+2T0enFmlo+aWOsivEy8IiNde?=
- =?us-ascii?Q?lZPrlNRJ5P3Yjg4MYr6xyK+IfS7WLxnvfnl17OYQHuhr9Iu2aukgLEruFjM9?=
- =?us-ascii?Q?X3fY4uDt+rl/8pNmFxDy0MUwdZqRRlDCMUGzaHhJtHfvnf4LeNId1Lkjv5a6?=
- =?us-ascii?Q?fNutly/kYWcPa8sRjvbuJ3+tMI4SFFncF7g9Nq4rZV5WRA1Zwk2Ggq1pTwLC?=
- =?us-ascii?Q?cptfIYfoPA3v29vES+wxqKgrLLCKudZE7qQjeehCLQ79H7cGUBVA+LJXwYD3?=
- =?us-ascii?Q?u+8QZLq53IlMHf3HpRvHkH2L55uwWLMQ4flnmj0Hb0mtC6NS/mlWbSP96VLr?=
- =?us-ascii?Q?3w=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	rmzdU7WkH+MSm0k8afpt+g+TFtLCA3L7DSp2BfUUpcHwmSP+AFF0lOO2gChJvpFvEjuu5nRZ1YSfQSuh28AFI0YCXkvGgVNsfLOmqfQBkhYm9h7UspbxlPolvWlCXV286Om/FmBcuzL+035cPS7AQ6eNWLLe8JL847jIeiXfTQtAYjgxXqkC8nmwHHR32KwSPAE7v1XGiqhOOsaVRUZ6YduPSPvPAD4O27n0lSuytSNCQLAq7ccGTsQ98M1FXwt1pdMhEP0MYuQH0zBFAGZdGVk8pJ8LzEO9FOqCipqAW/wqJdp9+EkLhCObCgbZStguhI+fCEUVXNQba3Rf8vQBiVoDkIk3IcOEJQnC51OWqmT9wFuSi+JYxVMnkJ8cjg5XYggOg+ig4c5HzqXD3YhqDt0EwIROwYy1Wior1AufOdyWECxrHGGE2l22BThXByyGrhoOauwFwwmC4LOajlzehqQS2cKbiv678okT62+vlhnHGQ7a/knrMOP0mk0siSOD9zdWrlKi3OakBcrCjD3zi0lQ2ra5F08pUtVOIC0aicVZfIKh5wOd6v1rA6r7YOsanstdhc/JxeF2Y8fPs61eJF2y8mlbLypPlTMXh4FgwDQ=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94fa66c0-9109-4abe-b670-08de1de5efac
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 10:10:53.9530
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WTS55fTka49/Xb5Cw7QUJLdtDejQXutWVb1SQWAMgpyALhg5cQO06oWGfkzP+Pm+R4R+qgsLE0AtlWauMXe1pIESUsln6brssRCbDPbkGUQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB6296
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 suspectscore=0
- mlxlogscore=740 malwarescore=0 spamscore=0 adultscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511070081
-X-Authority-Analysis: v=2.4 cv=fe+gCkQF c=1 sm=1 tr=0 ts=690dc5b2 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=20KFwNOVAAAA:8 a=DMEIo-l9ndPevZZYed0A:9 a=CjuIK1q_8ugA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: DlXDqDDckZ4Q6qSVKgB4MCAbK3RliAfw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDEzNCBTYWx0ZWRfX8+zu9dpbxfTd
- kIbI91er99qzjeCWX42mNvYp+7tVOUN8TTKEU2NmmrZpKNL+zrQXE/hwDlJjvXmIh5/sIHoI95G
- t9oo12Bz27fSr7dG/9kcmd72AaZhm4DNvaqsH2gijraIUHqeDFwqPq6JHRZVXKy9ntYtxAPReLk
- x2IJmPB+84ljCp7R4H9acHhgG3ihXDp6e3D4xwowoFh3kcJAQyxDloxJ7AEM5O8+dFfo3NEl2Hb
- hz4m9jEvO6yaXbVBD+g0epex6sLD3J0SuvWemRXBRDtzmognGBWDZERFAHvGgeoQhSkOe1lheig
- xXXyOVpQUnMkSHvarvLBfDHh+gQ1Gmg2pxTUFh5JdTmqjT9UeuyXyRQQTrEd+W0BlWptj2AxOT/
- fePOtj27wy0rRA/lDHGsD6XPV5d6RQ==
-X-Proofpoint-GUID: DlXDqDDckZ4Q6qSVKgB4MCAbK3RliAfw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 07, 2025 at 10:12:02AM +0100, David Hildenbrand (Red Hat) wrote:
->
-> >
-> > 5. Yes, I'm calling madvise(MADV_COLLAPSE) on the text portion of the executable, using the address
-> >     range obtained from /proc/self/maps. IIUC, this should benefit applications by reducing ITLB pressure.
-> >
-> > I agree with the suggestions to either Return EAGAIN instead of EINVAL or At minimum, document the
-> > EINVAL return for dirty pages. I'm happy to work on a patch.
->
-> Of course, we could detect that we are in MADV_COLLAPSE and simply writeback ourselves. After all,
-> user space asked for a collapse, and it's not khugepaged that will simple revisit it later.
->
-> I did something similar in
->
-> commit ab73b29efd36f8916c6cc9954e912c4723c9a1b0
-> Author: David Hildenbrand <david@redhat.com>
-> Date:   Fri May 16 14:39:46 2025 +0200
->
->     s390/uv: Improve splitting of large folios that cannot be split while dirty
->     Currently, starting a PV VM on an iomap-based filesystem with large
->     folio support, such as XFS, will not work. We'll be stuck in
->     unpack_one()->gmap_make_secure(), because we can't seem to make progress
->     splitting the large folio.
->
-> Where I effectively use filemap_write_and_wait_range().
->
-> It could be used early to writeback the whole range to collapse once, possibly.
+xHCI 4.8.3 recommends that software should simply assume endpoints to
+halt after certain events, without looking at the Endpoint Context for
+confirmation, because HCs may be slow to update that.
 
-I agree, let's just do a sync flush unconditionally and fix this that way.
+While no cases of such "slowness" appear to be known, different problem
+exists on AMD Promontory chipsets: they may halt and generate a transfer
+event, but fail to ever update the Endpoint Context at all, at least not
+until some command is queued and fails with Context State Error. This is
+easily triggered by disconnecting D- of a full speed serial device.
 
-This is simpler than I thought, the key bit of information is that we have
-freshly written the executable so it sits in the page cache but dirty.
+Possibly similar bug in non-AMD hardware has been reported to linux-usb.
 
-Thanks, Lorenzo
+In such case, failed TD is given back without erasing from the ring and
+endpoint isn't reset. If some URB is unlinked later, Stop Endpoint fails
+and its handler resets the endpoint. On next submission it will restart
+on the stale TD. Outcome is UAF on success, or another halt on error and
+then Dequeue doesn't move and URBs are stuck. Unlinking and resubmitting
+the URBs causes unlimited ring expansion if the situation repeats.
+
+This can be solved by ignoring Endpoint Context State and trusting that
+endpoints halt when required, except one known case in ancient hardware.
+The check for "Already resolving halted ep" becomes redundant, because
+for these completion codes we now jump to xhci_handle_halted_endpoint()
+which deals with pending EP_HALTED internally.
+
+Link: https://lore.kernel.org/linux-usb/20250311234139.0e73e138@foxbook/
+Link: https://lore.kernel.org/linux-usb/20250918055527.4157212-1-zhangjinpeng@kylinos.cn/
+Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+---
+ drivers/usb/host/xhci-ring.c | 73 ++++++++++++------------------------
+ 1 file changed, 23 insertions(+), 50 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index fc0043ca85a4..a038464bd6ac 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -2185,24 +2185,31 @@ static void xhci_clear_hub_tt_buffer(struct xhci_hcd *xhci, struct xhci_td *td,
+  * External device side is also halted in functional stall cases. Class driver
+  * will clear the device halt with a CLEAR_FEATURE(ENDPOINT_HALT) request later.
+  */
+-static bool xhci_halted_host_endpoint(struct xhci_ep_ctx *ep_ctx, unsigned int comp_code)
++static bool xhci_halted_host_endpoint(struct xhci_hcd *xhci, struct xhci_ep_ctx *ep_ctx,
++				      unsigned int comp_code)
+ {
+-	/* Stall halts both internal and device side endpoint */
+-	if (comp_code == COMP_STALL_ERROR)
+-		return true;
++	int ep_type = CTX_TO_EP_TYPE(le32_to_cpu(ep_ctx->ep_info2));
+ 
+-	/* TRB completion codes that may require internal halt cleanup */
+-	if (comp_code == COMP_USB_TRANSACTION_ERROR ||
+-	    comp_code == COMP_BABBLE_DETECTED_ERROR ||
+-	    comp_code == COMP_SPLIT_TRANSACTION_ERROR)
++	switch (comp_code) {
++	case COMP_STALL_ERROR:
++		/* on xHCI this always halts, including protocol stall */
++		return true;
++	case COMP_BABBLE_DETECTED_ERROR:
+ 		/*
+ 		 * The 0.95 spec says a babbling control endpoint is not halted.
+ 		 * The 0.96 spec says it is. Some HW claims to be 0.95
+ 		 * compliant, but it halts the control endpoint anyway.
+ 		 * Check endpoint context if endpoint is halted.
+ 		 */
+-		if (GET_EP_CTX_STATE(ep_ctx) == EP_STATE_HALTED)
+-			return true;
++		if (xhci->hci_version <= 0x95 && ep_type == CTRL_EP)
++			return GET_EP_CTX_STATE(ep_ctx) == EP_STATE_HALTED;
++
++		fallthrough;
++	case COMP_USB_TRANSACTION_ERROR:
++	case COMP_SPLIT_TRANSACTION_ERROR:
++		/* these errors halt all non-isochronous endpoints */
++		return ep_type != ISOC_IN_EP && ep_type != ISOC_OUT_EP;
++	}
+ 
+ 	return false;
+ }
+@@ -2239,41 +2246,9 @@ static void finish_td(struct xhci_hcd *xhci, struct xhci_virt_ep *ep,
+ 		 * the ring dequeue pointer or take this TD off any lists yet.
+ 		 */
+ 		return;
+-	case COMP_USB_TRANSACTION_ERROR:
+-	case COMP_BABBLE_DETECTED_ERROR:
+-	case COMP_SPLIT_TRANSACTION_ERROR:
+-		/*
+-		 * If endpoint context state is not halted we might be
+-		 * racing with a reset endpoint command issued by a unsuccessful
+-		 * stop endpoint completion (context error). In that case the
+-		 * td should be on the cancelled list, and EP_HALTED flag set.
+-		 *
+-		 * Or then it's not halted due to the 0.95 spec stating that a
+-		 * babbling control endpoint should not halt. The 0.96 spec
+-		 * again says it should.  Some HW claims to be 0.95 compliant,
+-		 * but it halts the control endpoint anyway.
+-		 */
+-		if (GET_EP_CTX_STATE(ep_ctx) != EP_STATE_HALTED) {
+-			/*
+-			 * If EP_HALTED is set and TD is on the cancelled list
+-			 * the TD and dequeue pointer will be handled by reset
+-			 * ep command completion
+-			 */
+-			if ((ep->ep_state & EP_HALTED) &&
+-			    !list_empty(&td->cancelled_td_list)) {
+-				xhci_dbg(xhci, "Already resolving halted ep for 0x%llx\n",
+-					 (unsigned long long)xhci_trb_virt_to_dma(
+-						 td->start_seg, td->start_trb));
+-				return;
+-			}
+-			/* endpoint not halted, don't reset it */
+-			break;
+-		}
+-		/* Almost same procedure as for STALL_ERROR below */
+-		xhci_clear_hub_tt_buffer(xhci, td, ep);
+-		xhci_handle_halted_endpoint(xhci, ep, td, EP_HARD_RESET);
+-		return;
+-	case COMP_STALL_ERROR:
++	}
++
++	if (xhci_halted_host_endpoint(xhci, ep_ctx, trb_comp_code)) {
+ 		/*
+ 		 * xhci internal endpoint state will go to a "halt" state for
+ 		 * any stall, including default control pipe protocol stall.
+@@ -2284,14 +2259,12 @@ static void finish_td(struct xhci_hcd *xhci, struct xhci_virt_ep *ep,
+ 		 * stall later. Hub TT buffer should only be cleared for FS/LS
+ 		 * devices behind HS hubs for functional stalls.
+ 		 */
+-		if (ep->ep_index != 0)
++		if (!(ep->ep_index == 0 && trb_comp_code == COMP_STALL_ERROR))
+ 			xhci_clear_hub_tt_buffer(xhci, td, ep);
+ 
+ 		xhci_handle_halted_endpoint(xhci, ep, td, EP_HARD_RESET);
+ 
+ 		return; /* xhci_handle_halted_endpoint marked td cancelled */
+-	default:
+-		break;
+ 	}
+ 
+ 	xhci_dequeue_td(xhci, td, ep_ring, td->status);
+@@ -2368,7 +2341,7 @@ static void process_ctrl_td(struct xhci_hcd *xhci, struct xhci_virt_ep *ep,
+ 	case COMP_STOPPED_LENGTH_INVALID:
+ 		goto finish_td;
+ 	default:
+-		if (!xhci_halted_host_endpoint(ep_ctx, trb_comp_code))
++		if (!xhci_halted_host_endpoint(xhci, ep_ctx, trb_comp_code))
+ 			break;
+ 		xhci_dbg(xhci, "TRB error %u, halted endpoint index = %u\n",
+ 			 trb_comp_code, ep->ep_index);
+@@ -2979,7 +2952,7 @@ static int handle_tx_event(struct xhci_hcd *xhci,
+ 	return 0;
+ 
+ check_endpoint_halted:
+-	if (xhci_halted_host_endpoint(ep_ctx, trb_comp_code))
++	if (xhci_halted_host_endpoint(xhci, ep_ctx, trb_comp_code))
+ 		xhci_handle_halted_endpoint(xhci, ep, td, EP_HARD_RESET);
+ 
+ 	return 0;
+-- 
+2.48.1
 
