@@ -1,197 +1,214 @@
-Return-Path: <linux-kernel+bounces-890000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB73BC3F0A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:54:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73EA6C3F0D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:00:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 70B7D4EBA96
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:53:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E77453AFA59
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2052C17A0;
-	Fri,  7 Nov 2025 08:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF211316910;
+	Fri,  7 Nov 2025 09:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mttVLyU5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DOXnMeol";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mttVLyU5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DOXnMeol"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="AbJJe5aS"
+Received: from mail31.out.titan.email (mail31.out.titan.email [3.66.49.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03C5295516
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A6C3161BD
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.66.49.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762505615; cv=none; b=Yv3znopoIB4BWtJnEDNnX1jhKEt1DFk1WhqU6C0EeWJy8n/s3hMG5JLxy9bD5ZPuDJYRiWx/n5an9zEP2MH+DX1b5bHqx9oQCDCcHdp0x/Rz6aDQSVngFASVeX2khlLgmAs82rLMg0wRYele8JW8D+ZZg05xCkhn9WwstJdx4WY=
+	t=1762506054; cv=none; b=qW+Q/MYxm4ETbkZzrYKJ/InC2whnZhtuhHGQYwUF4u/p8TI2OpNlJ21VMtjZNul2CBmCswdX0jh4+fnETnNtwZO5QeIxNI0vxkxU8pa0lBmRrlzD4RSu1wvWrRfMRmk6KzT/llllsYvRMgv6ncoy3dJ1HiAI4wmjC5SlM+ejmn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762505615; c=relaxed/simple;
-	bh=4DcGltQlTVkfLHxmEwfjEoP1zzKaff6r+M6hcoJiYsM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=LpAUHDVjF/v9gw8ULgChBRDTzdOxPZNXQH9XwLBEbzBHQCIPbvMe35t21E1aifZsfDtIwvWIU2G5H+dmF7+wMtg4vXI8rblxz8Hf43UpZ01vGav23i3K2MQas8qmz3okIUJUN6DqctRlcmRY9qnvxY/nM8E0S6VF6jtB7/uriT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mttVLyU5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DOXnMeol; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mttVLyU5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DOXnMeol; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9102121196;
-	Fri,  7 Nov 2025 08:53:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762505611; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=OI+g9VEn/lEjydhs1xOusp0hhTH8pGOALrK0SGGXGuU=;
-	b=mttVLyU5nYz4nSQEYswqriFYUtcaUfJsl8b0ZT/jxmoq2TX5lddeaYKIy/uWLJUi6yd+49
-	GiWZOGR/weElSSn7KtHArqHGMSb9KyCIuX6FH7WCwneDJO2A5n8ugjC9qM7RtqBQOPWq5M
-	VxTq9XFNzXCg2clV+rx6iiA3EsEWPqw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762505611;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=OI+g9VEn/lEjydhs1xOusp0hhTH8pGOALrK0SGGXGuU=;
-	b=DOXnMeolrIqKTq6hovhbao+XArJpKFNPUn9z3I48ksOevHEh2WVtkOkwhnEN+U2/9Q/VkK
-	nAl0dgvwa6P961AA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mttVLyU5;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=DOXnMeol
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762505611; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=OI+g9VEn/lEjydhs1xOusp0hhTH8pGOALrK0SGGXGuU=;
-	b=mttVLyU5nYz4nSQEYswqriFYUtcaUfJsl8b0ZT/jxmoq2TX5lddeaYKIy/uWLJUi6yd+49
-	GiWZOGR/weElSSn7KtHArqHGMSb9KyCIuX6FH7WCwneDJO2A5n8ugjC9qM7RtqBQOPWq5M
-	VxTq9XFNzXCg2clV+rx6iiA3EsEWPqw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762505611;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=OI+g9VEn/lEjydhs1xOusp0hhTH8pGOALrK0SGGXGuU=;
-	b=DOXnMeolrIqKTq6hovhbao+XArJpKFNPUn9z3I48ksOevHEh2WVtkOkwhnEN+U2/9Q/VkK
-	nAl0dgvwa6P961AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7AF66132DD;
-	Fri,  7 Nov 2025 08:53:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WaCxHYuzDWmQYAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 07 Nov 2025 08:53:31 +0000
-Message-ID: <2dfea88a-5ba1-4311-87d2-e1e66c2f885e@suse.cz>
-Date: Fri, 7 Nov 2025 09:53:31 +0100
+	s=arc-20240116; t=1762506054; c=relaxed/simple;
+	bh=muV2N7v4aoMWuYj7xzEzSG+eBFireccMGSYLPi8bYI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tDdLyF47Aq7sDuS0z5AwSn160in8lyqz+eYL9jORF7kzj8YwDEi3VDlBQui6ep44uWTjZ3Qlfjbobir3nnE2iDBeVrm5L9Y77yG1l4gHeHxMhhu7XO3McQGr0SCx6+Fvhha8q0zZpblkdWOXLRoMyUfOiT9xaeFFjOCatAQ1Mso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=AbJJe5aS; arc=none smtp.client-ip=3.66.49.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=techsingularity.net
+Received: from localhost (localhost [127.0.0.1])
+	by smtp-out0101.titan.email (Postfix) with ESMTP id 4d2tCJ0hxkz7t7P;
+	Fri,  7 Nov 2025 08:54:04 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=YRqYXVu6WzSFD+2pcmPY2jw5Ua96o2Ec3QNBcPJmv0k=;
+	c=relaxed/relaxed; d=techsingularity.net;
+	h=date:subject:to:in-reply-to:from:cc:message-id:references:mime-version:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1762505644; v=1;
+	b=AbJJe5aSNLktp49NDge6wG1vD+vLRvwmOpH9yoH7h+qr6lkV55jeqJUzKHYdiZDn1zQoytN3
+	Dp2HN360n7F04jKRSijFzHNlzzGJFb4jje4sQlEmxCYGeKq+9uR5JiwKVI7zShGLWUK9foobgjt
+	dP3Lyf3BRwfoomMImCvw71zc=
+Received: from techsingularity.net (ip-84-203-16-53.broadband.digiweb.ie [84.203.16.53])
+	by smtp-out0101.titan.email (Postfix) with ESMTPA id 4d2tCG5rZdz7t7M;
+	Fri,  7 Nov 2025 08:54:02 +0000 (UTC)
+Date: Fri, 7 Nov 2025 08:53:57 +0000
+Feedback-ID: :mgorman@techsingularity.net:techsingularity.net:flockmailId
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Chris Mason <clm@meta.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] sched/fair: Reimplement NEXT_BUDDY to align with
+ EEVDF goals
+Message-ID: <xkjbg4f2uddir25s6hv2b37v6iymj7aunuryulyuqdu3ksv2rx@3abkcrnjjbtr>
+References: <20251103110445.3503887-1-mgorman@techsingularity.net>
+ <20251103110445.3503887-3-mgorman@techsingularity.net>
+ <ddfde793-ad6e-4517-96b8-662dcb78acc8@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [GIT PULL] slab fix for 6.18-rc5
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Harry Yoo <harry.yoo@oracle.com>, David Rientjes <rientjes@google.com>,
- Christoph Lameter <cl@gentwo.org>, Roman Gushchin
- <roman.gushchin@linux.dev>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 9102121196
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.51
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <ddfde793-ad6e-4517-96b8-662dcb78acc8@linux.ibm.com>
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1762505643924282568.27018.2626393450855210035@prod-euc1-smtp-out1001.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=Rqw/LDmK c=1 sm=1 tr=0 ts=690db3ab
+	a=SAet2ifMzLisiRUXZwfs3w==:117 a=SAet2ifMzLisiRUXZwfs3w==:17
+	a=Q9fys5e9bTEA:10 a=CEWIc4RMnpUA:10 a=syCfx7UZdFrStxbyFggA:9
+	a=PUjeQqilurYA:10
 
-Hi Linus,
+On Thu, Nov 06, 2025 at 03:18:30AM +0530, Madadi Vineeth Reddy wrote:
+> Hi Mel,
+> 
+> On 03/11/25 16:34, Mel Gorman wrote:
+> > Reimplement NEXT_BUDDY preemption to take into account the deadline and
+> > eligibility of the wakee with respect to the waker. In the event
+> > multiple buddies could be considered, the one with the earliest deadline
+> > is selected.
+> > 
+> > Sync wakeups are treated differently to every other type of wakeup. The
+> > WF_SYNC assumption is that the waker promises to sleep in the very near
+> > future. This is violated in enough cases that WF_SYNC should be treated
+> > as a suggestion instead of a contract. If a waker does go to sleep almost
+> > immediately then the delay in wakeup is negligible. In all other cases,
+> > it's throttled based on the accumulated runtime of the waker so there is
+> > a chance that some batched wakeups have been issued before preemption.
+> 
+> [..snip..]
+> 
+> > +static inline enum preempt_wakeup_action
+> > +__do_preempt_buddy(struct rq *rq, struct cfs_rq *cfs_rq, int wake_flags,
+> > +		 struct sched_entity *pse, struct sched_entity *se)
+> > +{
+> > +	bool pse_before;
+> > +
+> > +	/*
+> > +	 * Ignore wakee preemption on WF_FORK as it is less likely that
+> > +	 * there is shared data as exec often follow fork. Do not
+> > +	 * preempt for tasks that are sched_delayed as it would violate
+> > +	 * EEVDF to forcibly queue an ineligible task.
+> > +	 */
+> > +	if ((wake_flags & WF_FORK) || pse->sched_delayed)
+> > +		return PREEMPT_WAKEUP_NONE;
+> > +
+> > +	/* Reschedule if waker is no longer eligible. */
+> > +	if (in_task() && !entity_eligible(cfs_rq, se))
+> > +		return PREEMPT_WAKEUP_RESCHED;
+> > +
+> > +	/*
+> > +	 * Keep existing buddy if the deadline is sooner than pse.
+> > +	 * The older buddy may be cache cold and completely unrelated
+> > +	 * to the current wakeup but that is unpredictable where as
+> > +	 * obeying the deadline is more in line with EEVDF objectives.
+> > +	 */
+> > +	if (cfs_rq->next && entity_before(cfs_rq->next, pse))
+> > +		return PREEMPT_WAKEUP_NEXT;
+> 
+> IIUC, the logic attempts to maintain deadline ordering among buddies, but
+> this doesn't address tasks already on the runqueue.
+> 
 
-please pull the latest slab fixes from:
+It's addressed in that a buddy is only selected if it is eligible to
+run. Buddies in this context are receiving preferential treatment in
+terms of ordering but the other tasks on the queue should not be
+starved either.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.18-rc5
+> So with frequent wakeups, queued tasks (even with earlier deadlines) may be
+> unfairly delayed. I understand that this would fade away quickly as the
+> woken up task that got to run due to buddy preference would accumulate negative
+> lag and would not be eligible to run again, but the starvation could be higher if
+> wakeups are very high.
+> 
 
-Thanks,
-Vlastimil
+They shouldn't get starved as such, only delayed as the buddies become
+eligible while other tasks on the runqueue have positive lag.
 
-======================================
+> To test this, I ran schbench (many message and worker threads) together with
+> stress-ng (CPU-bound), and observed stress-ng's bogo-ops throughput dropped by
+> around 64%.
+> 
 
-* Fix for potential infinite loop in kmalloc_nolock() when debugging
-  is enabled for the cache (Vlastimil Babka)
+Stress-NG bogo-ops are by definition, bogus ops. The amount of work
+executed depends on the stressor and the timing of when they execute.
+Hence, a drop of 64% may or may not matter to the general case because the
+drop may be due to a different mix of "operations", some of which may task
+1ms and others that take a minute but are both "1 operation".
 
-----------------------------------------------------------------
-Vlastimil Babka (1):
-      slab: prevent infinite loop in kmalloc_nolock() with debugging
+> This shows a significant regression for CPU-bound tasks under heavy wakeup loads.
+> Thoughts?
 
- mm/slub.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+I 100% accept that NEXT_BUDDY can affect timings of workloads but stress-ng
+is not the best workload to use for performance testing at all because
+the bogoops metric is by definition, bogus. There may be a good reason
+to revisit if PICK_BUDDY should have been moved to __pick_eevdf or if
+PICK_BUDDY should be applied if the slice is not protected but stressng
+is a terrible workload to justify a decision either way.
+
+> I also ran schbench and hackbench. All these were run on a Power11 System
+> containing 4 sockets and 160 CPUs spread across 4 NUMA nodes.
+> 
+> schbench(new) 99.0th latency (lower is better)
+> ========
+> load        	baseline[pct imp](std%)       With patch[pct imp]( std%)
+> 20mt, 10wt      1.00 [ 0.00]( 0.24)           0.97 [ +3.00]( 0.18)
+> 20mt, 20wt      1.00 [ 0.00]( 0.33)           1.00 [  0.00]( 0.12)
+> 20mt, 40wt      1.00 [ 0.00]( 2.84)           0.76 [ +24.0]( 0.32)
+> 20mt, 80wt      1.00 [ 0.00]( 3.66)           0.66 [ +34.0]( 0.72)
+> 20mt, 160wt     1.00 [ 0.00](12.92)           0.88 [ +12.0]( 6.77)
+> 
+> mt=message threads ; wt=worker threads
+> 
+> schbench being a wakeup sensitive workload showed good improvement.
+> 
+
+Good news because NEXT_BUDDY is primarily about prioritising an eligible
+wakee over another eligible task to preserve hotness.
+
+> 
+> hackbench (lower is better)
+> ========
+> case              load        baseline[pct imp](std%)      With patch[pct imp]( std%)
+> process-sockets   1-groups    1.00 [ 0.00]( 5.21)            0.91 [ +9.00]( 5.50)
+> process-sockets   4-groups    1.00 [ 0.00]( 7.30)            1.01 [ -1.00]( 4.27)
+> process-sockets   12-groups   1.00 [ 0.00]( 2.44)            1.00 [  0.00]( 1.78)
+> process-sockets   30-groups   1.00 [ 0.00]( 2.05)            1.04 [ -4.00]( 0.86)
+> process-sockets   48-groups   1.00 [ 0.00]( 2.25)            1.04 [ -4.00]( 1.03)
+> process-sockets   79-groups   1.00 [ 0.00]( 2.28)            1.05 [ -5.00]( 1.67)
+> process-sockets   110-groups  1.00 [ 0.00]( 11.17)           1.04 [ -4.00]( 8.64)
+> 
+> process-pipe      1-groups     1.00 [ 0.00]( 8.21)            0.84 [+16.00](13.00)
+> process-pipe      4-groups     1.00 [ 0.00]( 5.54)            0.95 [ +5.00]( 4.21)
+> process-pipe      12-groups    1.00 [ 0.00]( 3.96)            1.04 [ -4.00]( 2.26)
+> process-pipe      30-groups    1.00 [ 0.00]( 7.64)            1.20 [ -20.0]( 3.63)
+> process-pipe      48-groups    1.00 [ 0.00]( 6.28)            1.04 [ -4.00]( 8.48)
+> process-pipe      79-groups    1.00 [ 0.00]( 6.19)            1.01 [ -1.00]( 4.36)
+> process-pipe      110-groups   1.00 [ 0.00]( 10.23)           0.94 [ +6.00]( 5.21)
+> 
+> Didn't notice significant improvement or regression in Hackbench. Mostly in the noise
+> range.
+> 
+
+Expected for hackbench because the degree of overload is so generally
+high and cache hotness has limited benefit for it as so little data is
+shared.
+
+-- 
+Mel Gorman
+SUSE Labs
 
