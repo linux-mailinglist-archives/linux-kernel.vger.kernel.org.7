@@ -1,169 +1,164 @@
-Return-Path: <linux-kernel+bounces-889886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33FAC3EC2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:32:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D717C3EC32
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:32:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 451C04EC95A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:31:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB90C188D2C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A64307AD9;
-	Fri,  7 Nov 2025 07:31:33 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603D32C325F;
+	Fri,  7 Nov 2025 07:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GReEUAi6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70B52853F7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A17757EA
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762500692; cv=none; b=WQ6SsBqygyg5Lf9b/6IHSUKvTZM1ThiLW/IcgEKrmBvlYOyk+5Q0fMxUc/G4aSTYPdP94pHPnpzVeAtggwnLxpNq6XgmzGTygr9TqK4xzYQdFqhLU9jUmIL3rP7TkDLDqyn/jYtzsUUnIZ39/Kf5RYKYTeaoJ+1ZLv68YSCp9+g=
+	t=1762500756; cv=none; b=IPwEPHui4Ie4NHjePlQgetBo8FPaQGoouYxfYG78MC1KWFfgKek/RjwWmk1qQV66e1VxH/A0E9EMXOV/cGTjE8uHjKEQyGCXniqq5iYXkizLR9BmvMtss4WebFEnqchKVHo/rk65+ZTsEV2ko8WchJ8uHtSZ9aTTkEmFV83dKEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762500692; c=relaxed/simple;
-	bh=hmBQunOCM5ZmhF1k490t04BJn11l0BugsBMHywhEaok=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SUAHKxRI7aYRwF0+LoEMfwhVxLeCfLgi12ENKZgYpq4D/Ovc82chsIvZAC6PEw+Y0f1k4Trualc0cypDo8x9NxuO6/FxsC3wCa4eVReaPNxd5kwOGpEBNB4bMOwdyXxlpSHM1xCaefND4OIgxqrxEnJYP+yEBLDwOkkhq18WUXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-93e86696b5fso38744939f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:31:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762500687; x=1763105487;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DC5whZ6xjAg9orncDEXG9Mf4Zikpjttx0BkeAU8vHTQ=;
-        b=EbXcwfCyblBFrDHx/jn61XzSaN6ThwfO/OjOgBnACIpry13RqTBy4w+12gnzsrAwvc
-         Vgr0H0AT5vxcyIZ7Qt50kgf90XirrzMI57u99eCsHe86mFU4hpN2WJiD8isl8a218SGg
-         LfNxbPdAmOuklpBRnW/ghwl3FaqdGBALGQQ8K80mHXcns2rPNcHm0oX4V7raOK+MdRhQ
-         MgBgU+4fY2RO1CqRffzYDMQ2aO43cWw/FIPpOj+CXXhrT7wQBAOcBhZ9i97SZVFOFjMD
-         TyKCT0S2AUUqIlcM+wg3KPB8/PTngW6EWqQH1q/DcP0Juci6A2d/44HgQJSbT65jH2fZ
-         iKRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkVV4Lsywo66rlt52EM0dFE8APmncIQOTV2fmwsT2Wkl8lqRP1wUjfL1Hkq4PMUnu3AOOE4LD5bWGkdTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCILsWshyBNtXAb0f0EPmGLjsk2tEx5jJQV3LH5l8S/BvK9G1c
-	9bZSJchpbSdiIgAWFnJvU6DoLAMCMJoQgI6NL5d2PlZ6G0MbSbKW7iMMcb7Wff+tbnIIruDH+Zs
-	bgg5rB/PwFEGozNl8XlXpQ6Lt+W2oBdYZgmBr8czxgPUiXop1lyYsiz8jbOg=
-X-Google-Smtp-Source: AGHT+IF1mWmFU+QuzP+6G0raJVSuUbhvWf35rIhwvg/7kKBEsHrx+TEWgqipXwdks6Tvvg+v62pf8jfuYyIcJq7AP3kS3CRjzES2
+	s=arc-20240116; t=1762500756; c=relaxed/simple;
+	bh=mDfbrHz9kw8ifW33hcdV9ABO8aMA+nwDDmDrwz/YQns=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=euh5IQ+0fsdYHXRCAHzkPT4JOJAjPpG4EGiILiZSob0Fh6VOhLTRhIRIFFYE15UKW+Dedi6UXPtw/LuGQxPvpRC7tKEWIiZ6epUksVwxQ49dqjB4ka7sf+9DqAEpUzPmv0GpJtv9zx5bEQ5QFPdtRD6WmTVZ2Eg6XPJiVY3VPng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GReEUAi6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3F8C4C113D0;
+	Fri,  7 Nov 2025 07:32:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762500756;
+	bh=mDfbrHz9kw8ifW33hcdV9ABO8aMA+nwDDmDrwz/YQns=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=GReEUAi6l0mLNeFXwIAtQ+qBRuAiFiIcprY9uOq3Zqa4/dCXqUeWVqGZqI7n4aHBA
+	 Z7IJHzkkSC2m6jRd9hi9JPQymm3Ln24E2s4Gu8PZfFttvRB4n6qoAEj1jwl2FYBJS6
+	 kFxfcKRfjpMSig6j1cVqah3RnPIGKKPHMT9t7Wre+Fx/FiJ6STrfUgDiXCyB+fUd3O
+	 MPdr8oHo9+eLalJwgCWHePzAoOycPmQxmvXo2lSNBqMhgQjOgw1Du6U7dM+4IYSk1A
+	 RY4Qp0t7c7E7wm1tzevsK8f+xB/WcsuDn/QpFeD+F97WbzOC88mLkvmvb8hv94n9Wx
+	 HvEe1kq596kkw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3063ACCF9F8;
+	Fri,  7 Nov 2025 07:32:36 +0000 (UTC)
+From: Shubhang Kaushik via B4 Relay <devnull+shubhang.os.amperecomputing.com@kernel.org>
+Date: Thu, 06 Nov 2025 23:32:02 -0800
+Subject: [PATCH RESEND] sched/fair: Add helper to handle leaf cfs_rq
+ addition
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a64:b0:433:290f:c201 with SMTP id
- e9e14a558f8ab-4335f3d0389mr32665345ab.11.1762500687581; Thu, 06 Nov 2025
- 23:31:27 -0800 (PST)
-Date: Thu, 06 Nov 2025 23:31:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690da04f.a70a0220.22f260.0027.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING in destroy_super_work
-From: syzbot <syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com>
-To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
-	anna-maria@linutronix.de, bpf@vger.kernel.org, brauner@kernel.org, 
-	bsegall@google.com, cgroups@vger.kernel.org, david@redhat.com, 
-	dietmar.eggemann@arm.com, frederic@kernel.org, hannes@cmpxchg.org, 
-	jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, kees@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
-	mingo@redhat.com, mjguzik@gmail.com, mkoutny@suse.com, oleg@redhat.com, 
-	paul@paul-moore.com, peterz@infradead.org, rostedt@goodmis.org, 
-	rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org, 
-	vbabka@suse.cz, vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, 
-	vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251106-20251010_shubhang_os_amperecomputing_com-v1-1-7535957d8ac6@os.amperecomputing.com>
+X-B4-Tracking: v=1; b=H4sIAHGgDWkC/x2NwQqDMBBEf0X2bGA30CL9FZGgyVr3oAlZLQXx3
+ 7v19t4wzJygXIUVXs0JlT+ikjcTahuIy7i92UkyB4/+QYRPdwMSBl2O6d8IWcO4Fq4c81qOXSw
+ ycp66lOIU584j2FypPMv3vuqH6/oBb0UK2HoAAAA=
+X-Change-ID: 20251106-20251010_shubhang_os_amperecomputing_com-218ddcbcf820
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Aaron Lu <ziqianlu@bytedance.com>, Josh Don <joshdon@google.com>, 
+ Ben Segall <bsegall@google.com>, Shubhang Kaushik <sh@gentwo.org>, 
+ "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: linux-kernel@vger.kernel.org, 
+ Shubhang Kaushik <shubhang@os.amperecomputing.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762500755; l=2695;
+ i=shubhang@os.amperecomputing.com; s=20251010; h=from:subject:message-id;
+ bh=aKWrfbrWZwZxexxzXXzIOYzVUS/84glWsxcQQQBhEVQ=;
+ b=f7GhnM6dkbGAobj4iPP8Pbqq/tKTG2Le/PfAq2IgU5t8nEwTUwhBeTUpu6ZGpqlZTCQbOy8L8
+ 1G8L4yN8GFTByz2LYufKFG+++ycr/G9YbuZQ36Oq+yhmsRPMrWZyRTp
+X-Developer-Key: i=shubhang@os.amperecomputing.com; a=ed25519;
+ pk=jc8YIRvxPSyJaBRe5y+a4N0RXKBUEcAh8+OFhlROXPY=
+X-Endpoint-Received: by B4 Relay for
+ shubhang@os.amperecomputing.com/20251010 with auth_id=539
+X-Original-From: Shubhang Kaushik <shubhang@os.amperecomputing.com>
+Reply-To: shubhang@os.amperecomputing.com
 
-Hello,
+From: Shubhang Kaushik <shubhang@os.amperecomputing.com>
 
-syzbot found the following issue on:
+Refactor the logic for adding a cfs_rq to the leaf list into a helper
+function.
 
-HEAD commit:    982312090977 Add linux-next specific files for 20251103
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b2932f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=43cc0e31558cb527
-dashboard link: https://syzkaller.appspot.com/bug?extid=1957b26299cf3ff7890c
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1347817c580000
+The existing code repeated the logic to check if the cfs_rq was
+throttled and added it to the leaf list. This change extracts that
+logic into the static inline helper `__cfs_rq_maybe_add_leaf()`, which
+is a more robust naming convention for an internal helper.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/40058f8a830c/disk-98231209.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1d7f42e8639f/vmlinux-98231209.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d8bb0284f393/bzImage-98231209.xz
+This refactoring removes code duplication and makes the parent function,
+`propagate_entity_cfs_rq()`, cleaner and easier to read.
 
-The issue was bisected to:
+Signed-off-by: Shubhang Kaushik <shubhang@os.amperecomputing.com>
+---
+ kernel/sched/fair.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-commit 3c9820d5c64aeaadea7ffe3a6bb99d019a5ff46a
-Author: Christian Brauner <brauner@kernel.org>
-Date:   Wed Oct 29 12:20:24 2025 +0000
-
-    ns: add active reference count
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=101e9bcd980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=121e9bcd980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=141e9bcd980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
-Fixes: 3c9820d5c64a ("ns: add active reference count")
-
-------------[ cut here ]------------
-WARNING: ./include/linux/ns_common.h:229 at __ns_ref_put include/linux/ns_common.h:229 [inline], CPU#0: kworker/0:6/6108
-WARNING: ./include/linux/ns_common.h:229 at put_user_ns include/linux/user_namespace.h:189 [inline], CPU#0: kworker/0:6/6108
-WARNING: ./include/linux/ns_common.h:229 at destroy_super_work+0x15c/0x1a0 fs/super.c:280, CPU#0: kworker/0:6/6108
-Modules linked in:
-CPU: 0 UID: 0 PID: 6108 Comm: kworker/0:6 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: events destroy_super_work
-RIP: 0010:__ns_ref_put include/linux/ns_common.h:229 [inline]
-RIP: 0010:put_user_ns include/linux/user_namespace.h:189 [inline]
-RIP: 0010:destroy_super_work+0x15c/0x1a0 fs/super.c:280
-Code: 90 63 ff 48 81 c3 a8 fc ff ff 48 89 df e8 ec 90 63 ff 4c 89 f7 5b 41 5c 41 5d 41 5e 41 5f 5d e9 8a 91 e1 ff e8 45 df 86 ff 90 <0f> 0b 90 e9 6d ff ff ff e8 37 df 86 ff 4c 89 e7 be 03 00 00 00 e8
-RSP: 0018:ffffc900030d7a48 EFLAGS: 00010293
-RAX: ffffffff823a294b RBX: ffff88805639c898 RCX: ffff88802ab59e80
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: 0000000000000004 R08: ffff88807477565b R09: 1ffff1100e8eeacb
-R10: dffffc0000000000 R11: ffffed100e8eeacc R12: ffff888074775658
-R13: dffffc0000000000 R14: ffff88805639c000 R15: ffff8880747754c8
-FS:  0000000000000000(0000) GS:ffff888125eda000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c008044000 CR3: 0000000077ad4000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- process_one_work+0x94a/0x15d0 kernel/workqueue.c:3267
- process_scheduled_works kernel/workqueue.c:3350 [inline]
- worker_thread+0x9b0/0xee0 kernel/workqueue.c:3431
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x52d/0xa70 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 25970dbbb27959bc130d288d5f80677f75f8db8b..13140fab37ce7870f8079e789ff24c409747e27d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -13169,6 +13169,18 @@ prio_changed_fair(struct rq *rq, struct task_struct *p, int oldprio)
+ }
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
++/*
++ * If a task gets attached to this cfs_rq and, before being queued,
++ * it gets migrated to another CPU (e.g., due to reasons like affinity change),
++ * this cfs_rq must remain on leaf cfs_rq list. This allows the
++ * removed load to decay properly; otherwise, it can cause a fairness problem.
++ */
++static inline void __cfs_rq_maybe_add_leaf(struct cfs_rq *cfs_rq)
++{
++	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
++		list_add_leaf_cfs_rq(cfs_rq);
++}
++
+ /*
+  * Propagate the changes of the sched_entity across the tg tree to make it
+  * visible to the root
+@@ -13177,14 +13189,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ {
+ 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+ 
+-	/*
+-	 * If a task gets attached to this cfs_rq and before being queued,
+-	 * it gets migrated to another CPU due to reasons like affinity
+-	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
+-	 * that removed load decayed or it can cause faireness problem.
+-	 */
+-	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
+-		list_add_leaf_cfs_rq(cfs_rq);
++	__cfs_rq_maybe_add_leaf(cfs_rq);
+ 
+ 	/* Start to propagate at parent */
+ 	se = se->parent;
+@@ -13194,8 +13199,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ 
+ 		update_load_avg(cfs_rq, se, UPDATE_TG);
+ 
+-		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
+-			list_add_leaf_cfs_rq(cfs_rq);
++		__cfs_rq_maybe_add_leaf(cfs_rq);
+ 	}
+ 
+ 	assert_list_leaf_cfs_rq(rq_of(cfs_rq));
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
+change-id: 20251106-20251010_shubhang_os_amperecomputing_com-218ddcbcf820
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Best regards,
+-- 
+Shubhang Kaushik <shubhang@os.amperecomputing.com>
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
