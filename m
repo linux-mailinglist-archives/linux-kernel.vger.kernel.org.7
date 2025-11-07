@@ -1,183 +1,221 @@
-Return-Path: <linux-kernel+bounces-890828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DE3C410E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:37:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29904C410EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:37:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0AF03A5F10
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:37:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B66B54E73A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246EC24DFF3;
-	Fri,  7 Nov 2025 17:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD8E3358C9;
+	Fri,  7 Nov 2025 17:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P9bvmQ2D"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRN45tTn"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3FC3358BB
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58910335071
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762537029; cv=none; b=QI0sP2IPLpdJLDE/UPcS0Vo01PGCe+J94z/Ydz4u99IHj/l0ziXaaXHKky7JpefGxpv2ByukM0nRwVKIiUNIAOA7dEyQzNvDmdnmb5+3mRLykO8iJLKnDJJ5tk4/OEwi+W6TCkgpyiVdZFztBq4x6uFqdfOiC1C8hRtk9Md8U38=
+	t=1762537065; cv=none; b=eaUXmhJc7zY6o9XjNADaVh4ZFH6Ty7k3Fkci9TVultxJ9CXFUtcgXbQ8qKkQIvPAXOGJQG17sAGmCzz8G4DCyRn8smh1H6p/DvP5NDv5EdoGXtFYkfwYhXlolhdzBr+lvWUFiqhCuCWAJ8kZk2QWOL0tIHSuJMvKKCBqNZaithk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762537029; c=relaxed/simple;
-	bh=Lx3bFQ3NiP4uoTXJligat5YBVbYSgoMH3tTDsWSPIac=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=N9AshZzofWIP6JzP5ZNSOlnHLDSrE8L1SMAXGAaTsfoG/mhbt90twe5Wyb3U7kEFdbMKzt1fGot1X/JF3OY84VzVug7+NFs5ilSg9PUN9iHDc5SyyqIPc6UUSqvnuKRmdbu3xMx466RFvkX77B1Qgf4OEowAMAVoQe1dL5EGQ/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P9bvmQ2D; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-429c93a28ebso777621f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:37:05 -0800 (PST)
+	s=arc-20240116; t=1762537065; c=relaxed/simple;
+	bh=ufIasMXmrbykI1h7RIcJjNYMxgJoIysu+7F6qFsRmBI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lrP/OixGjmc832aNeGj+JviklHpopXe5rGfKQqonJJ+8lFgBZqVfv8tS4JpL+YPUgh/MnYUSacj3p6Yoz/PiEtg65QOFQDxJZSpcwxq+H19TPvTIPST9Khs2PwG57P6x7wChkINhdtP4vwcq0oVN3U84JgifX+r6AZvmwmaganw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRN45tTn; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-426fc536b5dso645321f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:37:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762537024; x=1763141824; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zhz7gcsikgOjW44ogPO6UQeW+YT4AB9gKFb1aT581fI=;
-        b=P9bvmQ2DdHFQGaXVosN7z50YtAoWXDvGhEpUoslH5au84lQCn831C9zDK4pfZKbDS4
-         XVHZcr4LQFqwmjTiQebheCRYPJ/XNRSIyzVb0LW1UQ9Zb4daMn7jcek37pgTfFzjtUFx
-         91Cuw9RtJciYAE8f+jJCkXAuvQM2HF3Si2l5/Ti3qyCVH0wCy/fe8rP1KKB959OLoGv8
-         iw7yDlULYlQCgqh5ykcX39r5wAW1LTc1HIcjKxvJoWUDoA1wOYemWtFE9t7RoQM5aHH7
-         uxP64yDOeG6X8b0dp6ZMIYhNwlsGNQoR7H20a10RKp0lhDIfXucjxiJ0pWVhUirM2jaa
-         WbaA==
+        d=gmail.com; s=20230601; t=1762537062; x=1763141862; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AHObz/27sv0COJISHz74cJj2IGM7c2IBQU/5nIifxWg=;
+        b=DRN45tTn58oaMcU4kyAZFdBAAN5H17FaGvGm7edj/WA+dmxpgwVJHxnggaswS3LUtB
+         /T6DtSy53K+wkGgu6iBb5w1gLIiHzOMthfp+to9aPlfvemajkEweJrnO2ZrNoMhjoUsA
+         kRaGZ7kavcvw1RMvsbSBvE2M5dDaK3sqTE0aksKcE297E8hoiHxvMX9z+HO8zQpgDdfT
+         qY58AS/Cuv9bF7xqLoXO2I0YA/6V5xQsO/IyyJB4CLwHHeYFIY3zNP76GKFMvqT6RwR9
+         yMf8+1hTD37abC2PeJjBQPZ9xCQ8HNmaQ9afunDf9zJivLKsIQRbaR36g9AoVYN21RpT
+         ioMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762537024; x=1763141824;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zhz7gcsikgOjW44ogPO6UQeW+YT4AB9gKFb1aT581fI=;
-        b=rF9S0bkYVa+Cv+gsY7x+BfgFka0h/4HDNKlHAfbsclqCx4m5Zr3xLh8v33fv3ZM8bS
-         kF7PaC4MUsviH0uHkwMEu2pPKMVPi2yqINQPLWBB3RdwoloQ+AQ/namubTwXCdH4Upkz
-         r0rPmg+McF2cFFER+Kz9Suc9lbHaV2xp1uAt+7Hk25c42VwD3377pJGqpwTvD+Qo72TS
-         jJrWpCswjgtVsFGWurFsTuhH8WwxhYVnwsEchbEcBf4xZS5sFqVxJ4SdNjF8GKoFUU4K
-         3iGIDBrSGrFcJx8FoUwKJTLic+cx/NTM1hELkQFCk5Kki0mF8MXiueaWFYdeCwRZz3SR
-         kvgg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2pLkdM1WFk2J70qJHOyIUAzsVLcmSgH9igJBbdW1r7IXa2lbmnuppIcolGzSN8OgsJ+cRikAQAnWl+yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6oGoRI8HNkx3kSv+Ea6yM7BJzX7CipAE2fnMbchMrz5Go1asq
-	pMg/a7dc2RO2GSXvW0JgRz8KmHVCjGkZGI5eqEG8ydGGSfBMXUHwsOAmhiqKTOF2zVOqXxFweCz
-	GsM+1oWqMtMoeqw==
-X-Google-Smtp-Source: AGHT+IFJF2Ksc6u55CE+GD/K60cqff3jO8p1vj7rkxXgTU2hADlFy8fEI1U56A7kvOlzF5vcUeX5HHSZeZ5zgA==
-X-Received: from wrbfq11.prod.google.com ([2002:a05:6000:2a0b:b0:429:ccad:3298])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:178b:b0:429:d725:4114 with SMTP id ffacd0b85a97d-42ae5ac5374mr3668462f8f.39.1762537024246;
- Fri, 07 Nov 2025 09:37:04 -0800 (PST)
-Date: Fri, 07 Nov 2025 17:37:03 +0000
-In-Reply-To: <DE2L1SAOC55E.E4JY62WJQ2A8@google.com>
+        d=1e100.net; s=20230601; t=1762537062; x=1763141862;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=AHObz/27sv0COJISHz74cJj2IGM7c2IBQU/5nIifxWg=;
+        b=dkRNhyvvWoRdgvZGiEWX/XzL5MlFcw3OjUXCkATDBttmBHBS3zLgnjEUho7CGQziyh
+         +qpwoiYGnqbdJtVUlR0taVavaRAuyEnkOYlQr4Kj2gAz9SMDfb0GLtq/5i+EE3cWEd7I
+         7OLoWI1GN/fItrJ2NyDk6Ag5PjKy9j+Qed4QpvUlQ+OcDLOwnCVT7EdcX5Ih5cHfob6r
+         Guz2nH0Hw8fvIco7wRMIYNnEi2Ei7tr5NMQQ7JKLb2G5ssJL0zvAIJ8DfID+MbNnH4PY
+         v9sArK6Kc3kpMchKqKZ1BQw63MQvCf6Klq0jHnjLdcORDeGqLdu5T9daJ5/6tx8xuqBY
+         +5HA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRQajuguZ1XtKkVwzyMba7tErByvExa5wiiNypsk/3seEmSF1c6JI/rDKfazsiQo7qJmENFB3hXKjGFDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbzt+eJ3xhV0DQD6MGMINYL+k+UfdCEKG1Y6Tisbny3OmQe4Qk
+	OySDumUz55DwrvrzS8xEdgFmtQbdQREUgsoQ9SFrnkrB8rTZ1I+y+Nl1B6R0T92l/bvlRMtZ/xV
+	04vpWqalmH9H40/S7Dz/zfh+LeDULWCk=
+X-Gm-Gg: ASbGnctt/uBPmet2GPvf02aA6VN71BZsUeVWm6u2B6KA8izOwEu3fQHrKoVGua1/s7u
+	Fp0ZKVVo9IwJw+FAundyANHZm7mWWlu+82ujpdwFiAJiXQvNYdgJ6DB58kcaR1E5nYXeAitEJ/a
+	2WgAL308gCloCi6vYW3BzS0T4nYghGuCujEWpErrAEN0xDzls9tjsfJ/zaX5IjKsfiSm8VVSixU
+	PTIzSKzhh9IvNhSLbpvl0RG5XtLh57e7ZqTCqq/6ZudriVbCaCyrjmSUXmTWFKmkykkzWEQ+jB1
+	AXFCBIl52WXVcAfEWMGzkIVuEz4F
+X-Google-Smtp-Source: AGHT+IGJ9JVXSNfoFVt0zgc1KaFggpC3AxcNToWkOlY0xNrMkdGAWaJ3AOy9YEsJYQDtSGrGASi28GHO+RGf3ibia2A=
+X-Received: by 2002:a05:6000:4008:b0:429:bac1:c7f5 with SMTP id
+ ffacd0b85a97d-42ae5ae82c8mr3566390f8f.44.1762537061514; Fri, 07 Nov 2025
+ 09:37:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924151101.2225820-1-patrick.roy@campus.lmu.de> <DE2L1SAOC55E.E4JY62WJQ2A8@google.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DE2N8AOQ1A0Y.1PVEXY6ULPCFV@google.com>
-Subject: Re: [PATCH v7 00/12] Direct Map Removal Support for guest_memfd
-From: Brendan Jackman <jackmanb@google.com>
-To: Brendan Jackman <jackmanb@google.com>, Patrick Roy <patrick.roy@campus.lmu.de>
-Cc: Patrick Roy <roypat@amazon.co.uk>, <pbonzini@redhat.com>, <corbet@lwn.net>, 
-	<maz@kernel.org>, <oliver.upton@linux.dev>, <joey.gouly@arm.com>, 
-	<suzuki.poulose@arm.com>, <yuzenghui@huawei.com>, <catalin.marinas@arm.com>, 
-	<will@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>, 
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>, 
-	<luto@kernel.org>, <peterz@infradead.org>, <willy@infradead.org>, 
-	<akpm@linux-foundation.org>, <david@redhat.com>, <lorenzo.stoakes@oracle.com>, 
-	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <rppt@kernel.org>, 
-	<surenb@google.com>, <mhocko@suse.com>, <song@kernel.org>, <jolsa@kernel.org>, 
-	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>, 
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>, 
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>, 
-	<haoluo@google.com>, <jgg@ziepe.ca>, <jhubbard@nvidia.com>, 
-	<peterx@redhat.com>, <jannh@google.com>, <pfalcato@suse.de>, 
-	<shuah@kernel.org>, <seanjc@google.com>, <kvm@vger.kernel.org>, 
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
-	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>, 
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>, <bpf@vger.kernel.org>, 
-	<linux-kselftest@vger.kernel.org>, <xmarcalx@amazon.co.uk>, 
-	<kalyazin@amazon.co.uk>, <jackabt@amazon.co.uk>, <derekmn@amazon.co.uk>, 
-	<tabba@google.com>, <ackerleytng@google.com>
+MIME-Version: 1.0
+References: <20251105142319.1139183-1-pmladek@suse.com> <20251105142319.1139183-4-pmladek@suse.com>
+ <CAADnVQ+kbQ4uwtKjD1DRCf702v0rEthy6hU4COAU9CyU53wTHg@mail.gmail.com> <aQ3vWIqG31BgE4YD@pathway.suse.cz>
+In-Reply-To: <aQ3vWIqG31BgE4YD@pathway.suse.cz>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 7 Nov 2025 09:37:29 -0800
+X-Gm-Features: AWmQ_bkSjVWhwwiyAdu8xQ2wTU8xFFXQd6OpWnFcdI-Hml8q4hACs20Z2y_lQms
+Message-ID: <CAADnVQL3q1GYZDWeRyAzz79H2WdW6w=hy+uyUfYABq1RLE-Taw@mail.gmail.com>
+Subject: Re: [PATCH 3/6] kallsyms/bpf: Set module buildid in bpf_address_lookup()
+To: Petr Mladek <pmladek@suse.com>
+Cc: Petr Pavlu <petr.pavlu@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, linux-modules@vger.kernel.org, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri Nov 7, 2025 at 3:54 PM UTC, Brendan Jackman wrote:
-> On Wed Sep 24, 2025 at 3:10 PM UTC, Patrick Roy wrote:
->> From: Patrick Roy <roypat@amazon.co.uk>
->>
->> [ based on kvm/next ]
->>
->> Unmapping virtual machine guest memory from the host kernel's direct map is a
->> successful mitigation against Spectre-style transient execution issues: If the
->> kernel page tables do not contain entries pointing to guest memory, then any
->> attempted speculative read through the direct map will necessarily be blocked
->> by the MMU before any observable microarchitectural side-effects happen. This
->> means that Spectre-gadgets and similar cannot be used to target virtual machine
->> memory. Roughly 60% of speculative execution issues fall into this category [1,
->> Table 1].
->>
->> This patch series extends guest_memfd with the ability to remove its memory
->> from the host kernel's direct map, to be able to attain the above protection
->> for KVM guests running inside guest_memfd.
->>
->> Additionally, a Firecracker branch with support for these VMs can be found on
->> GitHub [2].
->>
->> For more details, please refer to the v5 cover letter [v5]. No
->> substantial changes in design have taken place since.
->>
->> === Changes Since v6 ===
->>
->> - Drop patch for passing struct address_space to ->free_folio(), due to
->>   possible races with freeing of the address_space. (Hugh)
->> - Stop using PG_uptodate / gmem preparedness tracking to keep track of
->>   direct map state.  Instead, use the lowest bit of folio->private. (Mike, David)
->> - Do direct map removal when establishing mapping of gmem folio instead
->>   of at allocation time, due to impossibility of handling direct map
->>   removal errors in kvm_gmem_populate(). (Patrick)
->> - Do TLB flushes after direct map removal, and provide a module
->>   parameter to opt out from them, and a new patch to export
->>   flush_tlb_kernel_range() to KVM. (Will)
->>
->> [1]: https://download.vusec.net/papers/quarantine_raid23.pdf
->> [2]: https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
+On Fri, Nov 7, 2025 at 5:08=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrote=
+:
 >
-> I just got around to trying this out, I checked out this patchset using
-> its base-commit and grabbed the Firecracker branch. Things seem OK until
-> I set the secrets_free flag in the Firecracker config which IIUC makes
-> it set GUEST_MEMFD_FLAG_NO_DIRECT_MAP.
+> On Wed 2025-11-05 18:53:23, Alexei Starovoitov wrote:
+> > On Wed, Nov 5, 2025 at 6:24=E2=80=AFAM Petr Mladek <pmladek@suse.com> w=
+rote:
+> > >
+> > > Make bpf_address_lookup() compatible with module_address_lookup()
+> > > and clear the pointer to @modbuildid together with @modname.
+> > >
+> > > It is not strictly needed because __sprint_symbol() reads @modbuildid
+> > > only when @modname is set. But better be on the safe side and make
+> > > the API more safe.
+> > >
+> > > Fixes: 9294523e3768 ("module: add printk formats to add module build =
+ID to stacktraces")
+> > > Signed-off-by: Petr Mladek <pmladek@suse.com>
+> > > ---
+> > >  include/linux/filter.h | 15 +++++++++++----
+> > >  kernel/kallsyms.c      |  4 ++--
+> > >  2 files changed, 13 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/include/linux/filter.h b/include/linux/filter.h
+> > > index f5c859b8131a..b7b95840250a 100644
+> > > --- a/include/linux/filter.h
+> > > +++ b/include/linux/filter.h
+> > > @@ -1362,12 +1362,18 @@ struct bpf_prog *bpf_prog_ksym_find(unsigned =
+long addr);
+> > >
+> > >  static inline int
+> > >  bpf_address_lookup(unsigned long addr, unsigned long *size,
+> > > -                  unsigned long *off, char **modname, char *sym)
+> > > +                  unsigned long *off, char **modname,
+> > > +                  const unsigned char **modbuildid, char *sym)
+> > >  {
+> > >         int ret =3D __bpf_address_lookup(addr, size, off, sym);
+> > >
+> > > -       if (ret && modname)
+> > > -               *modname =3D NULL;
+> > > +       if (ret) {
+> > > +               if (modname)
+> > > +                       *modname =3D NULL;
+> > > +               if (modbuildid)
+> > > +                       *modbuildid =3D NULL;
+> > > +       }
+> > > +
+> > >         return ret;
+> > >  }
+> > >
+> > > @@ -1433,7 +1439,8 @@ static inline struct bpf_prog *bpf_prog_ksym_fi=
+nd(unsigned long addr)
+> > >
+> > >  static inline int
+> > >  bpf_address_lookup(unsigned long addr, unsigned long *size,
+> > > -                  unsigned long *off, char **modname, char *sym)
+> > > +                  unsigned long *off, char **modname,
+> > > +                  const unsigned char **modbuildid, char *sym)
+> > >  {
+> > >         return 0;
+> > >  }
+> > > diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+> > > index 9455e3bb07fc..efb12b077220 100644
+> > > --- a/kernel/kallsyms.c
+> > > +++ b/kernel/kallsyms.c
+> > > @@ -374,8 +374,8 @@ static int kallsyms_lookup_buildid(unsigned long =
+addr,
+> > >         ret =3D module_address_lookup(addr, symbolsize, offset,
+> > >                                     modname, modbuildid, namebuf);
+> > >         if (!ret)
+> > > -               ret =3D bpf_address_lookup(addr, symbolsize,
+> > > -                                        offset, modname, namebuf);
+> > > +               ret =3D bpf_address_lookup(addr, symbolsize, offset,
+> > > +                                        modname, modbuildid, namebuf=
+);
+> >
+> > The initial bpf_address_lookup() 8 years ago was trying
+> > to copy paste args and style of kallsyms_lookup().
+> > It was odd back then. This change is doubling down on the wrong thing.
+> > It's really odd to pass a pointer into bpf_address_lookup()
+> > so it zero initializes it.
+> > bpf ksyms are in the core kernel. They're never in modules.
+> > Just call __bpf_address_lookup() here and remove the wrapper.
 >
-> If I set it, I find the guest doesn't show anything on the console.
-> Running it in a VM and attaching GDB suggests that it's entering the
-> guest repeatedly, it doesn't seem like the vCPU thread is stuck or
-> anything. I'm a bit clueless about how to debug that (so far, whenever
-> I've broken KVM, things always exploded very dramatically).
+> I agree that it is ugly. It would make sense to initialize the
+> pointers in kallsyms_lookup_buildid and call there
+> __bpf_address_lookup() variant. Something like:
+>
+> static int kallsyms_lookup_buildid(unsigned long addr,
+>                         unsigned long *symbolsize,
+>                         unsigned long *offset, char **modname,
+>                         const unsigned char **modbuildid, char *namebuf)
+> {
+>         int ret;
+>
+>         if (modname)
+>                 *modname =3D NULL;
+>         if (modbuildid)
+>                 *modbuildid =3D NULL;
+>         namebuf[0] =3D 0;
+> [...]
+>         if (!ret)
+>                 ret =3D __bpf_address_lookup(addr, symbolsize, offset, na=
+mebuf);
+>
+> }
 
-I discovered that Firecracker has a GDB stub, so I can just attach to
-that and see what the guest is up to.
+Yes. Exactly.
 
-The issue that the pvclock_vcpu_time_info in kvmclock is all zero:
+> As a result bpf_address_lookup() won't have any caller.
+> And __bpf_address_lookup() would have two callers.
 
-(gdb) backtrace
-#0  pvclock_tsc_khz (src=0xffffffff83a03000 <hv_clock_boot>) at ../arch/x86/kernel/pvclock.c:28
-#1  0xffffffff8109d137 in kvm_get_tsc_khz () at ../arch/x86/include/asm/kvmclock.h:11
-#2  0xffffffff835c1842 in kvm_get_preset_lpj () at ../arch/x86/kernel/kvmclock.c:128
-#3  kvmclock_init () at ../arch/x86/kernel/kvmclock.c:332
-#4  0xffffffff835c1487 in kvm_init_platform () at ../arch/x86/kernel/kvm.c:982
-#5  0xffffffff835a83df in setup_arch (cmdline_p=cmdline_p@entry=0xffffffff82e03f00) at ../arch/x86/kernel/setup.c:916
-#6  0xffffffff83595a22 in start_kernel () at ../init/main.c:925
-#7  0xffffffff835a7354 in x86_64_start_reservations (
-    real_mode_data=real_mode_data@entry=0x36326c0 <error: Cannot access memory at address 0x36326c0>) at ../arch/x86/kernel/head64.c:507
-#8  0xffffffff835a7466 in x86_64_start_kernel (real_mode_data=0x36326c0 <error: Cannot access memory at address 0x36326c0>)
-    at ../arch/x86/kernel/head64.c:488
-#9  0xffffffff8103e7fd in secondary_startup_64 () at ../arch/x86/kernel/head_64.S:413
-#10 0x0000000000000000 in ?? ()
-(gdb) p *src
-$3 = {version = 0, pad0 = 0, tsc_timestamp = 0, system_time = 0, tsc_to_system_mul = 0, tsc_shift = 0 '\000', flags = 0 '\000', 
-  pad = "\000"}
+yep
 
-This causes a divide by zero in kvm_get_tsc_khz().
+> It would make sense to remove bpf_address_lookup() and
+> rename __bpf_address_lookup() to bpf_address_lookup().
 
-Probably the only reason I didn't see any console output is that I
-forgot to set earlyprintk, oops...
+yep
 
+> How does that sound?
+> Would you prefer to do this in one patch or in two steps, please?
+
+Whichever way is easier. I think it's fine to do it in one go,
+though it crosses different subsystems.
 
