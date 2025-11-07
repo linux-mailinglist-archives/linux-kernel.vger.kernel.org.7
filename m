@@ -1,204 +1,107 @@
-Return-Path: <linux-kernel+bounces-889833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF20C3EA34
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:41:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54770C3EA3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:42:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC5E0188A3E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:42:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2E8D188A499
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734002FBE13;
-	Fri,  7 Nov 2025 06:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EEB2FC037;
+	Fri,  7 Nov 2025 06:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RxGX48Cm"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zYuAKSnc"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B672FBDED
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 06:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B262FBDFE;
+	Fri,  7 Nov 2025 06:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762497703; cv=none; b=k2V1/oMmYOdDEFX7LeMubZj/GfVhoNqAcZS8RdR1BgV41X4INBktvrzwFWI/qPBOqr29cFx0QEnSwRjcSbARae/Gxkoy/fIfCZUigaaE16euodWmhAHS5UoPF7Bc1RtVeOIPVk6jNkN2uSGMIhzqI4VKYgNBVi2bEUS1rc+neiY=
+	t=1762497718; cv=none; b=uaFA+5ep2QoM5pa4Cd4cFO/46Kzy+m3Nbd3n/mEB0VNGawTX9B7EmdYRp3H8mhr8Reu9zhtqGTBHqS8XSP+BP4aY/OwCbQy7jZ4wwj+6cVOT2iFGFdPnxc2ZZByaqMeFs+dDvLHzRIQbZAaZgApC7F0Iq9Oay74w219uzRZQRHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762497703; c=relaxed/simple;
-	bh=nGC+MuGSDBmvcckGeZiHtCXApGgufkorHPF8aYwIXGE=;
+	s=arc-20240116; t=1762497718; c=relaxed/simple;
+	bh=xMkU6lise77F07+L4SSLLGnVhJlaos8b4vhOhX4fGXs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V+sBUbnb0dzx4yVpG+wAq2P8/NU6bg4tAyVvA2kj9YsT+mVYgaR8qhfXz9iHy5/HTx3L63dxozRpGinpV6BEjTeneolLEzEniWkqVRIRucAA7zc5EwKkvKfCc2kg2tardJGJyGA6BbNh0jhr716/wrNlpcqqJJ2QNxCe5Lgzxw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RxGX48Cm; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762497687;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xRWYTILqG8LMnvyFfHYVWRrcjOpnBFKXzOGTUrz8/2Y=;
-	b=RxGX48Cmlw64YK5Ash4JRiXe2KJcl8QsfvG5d0NVo2Whq/SC69I/M24gsIFV+OyovHivHT
-	fTnAopzzhAy5DrElU2jfYVcKVMstboD4H8pUwQmskXdksEHwaodJwlSKF0dLe8EisvS2Ee
-	ZMiH38qPA510qUuKZEL+BJcBoOGrICI=
-Date: Fri, 7 Nov 2025 14:41:13 +0800
+	 In-Reply-To:Content-Type; b=TgrFrAKN2r5LzAert4vT2w+mTVjK9Gt9Du2kErW3CHCsM9Eg1xREtEzntz40cewOdZNHI9a0SeR0ESoXlRm19bYNXnmy73apzH5zcJnmZLebsxe17Ib6xYpkavwCIKNBQ1EBaSG0HIHG8bS136nc5l24NY9q/Ti+lPFfSzUaf6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zYuAKSnc; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=ctUBfFMWOMihIJ5Bxg5QZ83jQAfvmlzaJtuMNo0vOjE=; b=zYuAKSncUam05tJjY1i3KtR5n7
+	DQSfea0nuf0pV2owXbxYjV4VIRlNnrO+AfPO/GvdvtfGtQRmVaPfa/Aiz/E+RHWG7RreH3j+bkxJ2
+	dqqRxBP4FS+ygOfcv02VApaICUB9w9a1VGCsXFCfm3VZnflccVAYCkbgYiZGKATcCaHygeQOVzAOb
+	efkdjj0bhDbrq3BelURquGSaU6iHiAdAcvkarbuWduhx6xGGlds4bvsfczX5XMUJRF4SFnAm+abcf
+	5puHOUDHL6cKMoCO4I6oHKv0iT8SRyMcrkVZtLqvwE8AR54zyk3uQCOJl9XPlvz/nXyDhF3oF0To7
+	nZ+cBLdA==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vHGAV-0000000GkQ1-0Jpo;
+	Fri, 07 Nov 2025 06:41:55 +0000
+Message-ID: <bdc3c01b-193b-467b-9534-cb94f198aa01@infradead.org>
+Date: Thu, 6 Nov 2025 22:41:54 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
- roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
- david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
- imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
- axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
- akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, Muchun Song <songmuchun@bytedance.com>,
- Qi Zheng <zhengqi.arch@bytedance.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- linux-rt-devel@lists.linux.dev
-References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
- <97ea4728568459f501ddcab6c378c29064630bb9.1761658310.git.zhengqi.arch@bytedance.com>
- <aQ1_f_6KPRZknUGS@harry>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Qi Zheng <qi.zheng@linux.dev>
-In-Reply-To: <aQ1_f_6KPRZknUGS@harry>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] misc devices formatting devices
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Akshay Gupta <akshay.gupta@amd.com>, Srujana Challa <schalla@marvell.com>,
+ Vamsi Attunuru <vattunuru@marvell.com>, Julien Panis <jpanis@baylibre.com>
+References: <20251104041812.31402-1-bagasdotme@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251104041812.31402-1-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi Harry,
 
-On 11/7/25 1:11 PM, Harry Yoo wrote:
-> On Tue, Oct 28, 2025 at 09:58:17PM +0800, Qi Zheng wrote:
->> From: Muchun Song <songmuchun@bytedance.com>
->>
->> In a subsequent patch, we'll reparent the LRU folios. The folios that are
->> moved to the appropriate LRU list can undergo reparenting during the
->> move_folios_to_lru() process. Hence, it's incorrect for the caller to hold
->> a lruvec lock. Instead, we should utilize the more general interface of
->> folio_lruvec_relock_irq() to obtain the correct lruvec lock.
->>
->> This patch involves only code refactoring and doesn't introduce any
->> functional changes.
->>
->> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
->> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
->> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->> ---
->>   mm/vmscan.c | 46 +++++++++++++++++++++++-----------------------
->>   1 file changed, 23 insertions(+), 23 deletions(-)
->>
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index 3a1044ce30f1e..660cd40cfddd4 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -2016,9 +2016,9 @@ static unsigned long shrink_inactive_list(unsigned long nr_to_scan,
->>   	nr_reclaimed = shrink_folio_list(&folio_list, pgdat, sc, &stat, false,
->>   					 lruvec_memcg(lruvec));
->>   
->> -	spin_lock_irq(&lruvec->lru_lock);
->> -	move_folios_to_lru(lruvec, &folio_list);
->> +	move_folios_to_lru(&folio_list);
->>   
->> +	spin_lock_irq(&lruvec->lru_lock);
->>   	__mod_lruvec_state(lruvec, PGDEMOTE_KSWAPD + reclaimer_offset(sc),
->>   					stat.nr_demoted);
+
+On 11/3/25 8:18 PM, Bagas Sanjaya wrote:
+> Hi,
 > 
-> Maybe I'm missing something or just confused for now, but let me ask...
+> Here is a small docs formatting cleanup for assorted miscellaneous devices.
+> Patches [2-3/3] are split from my previous macro references fixup patch [1].
 > 
-> How do we make sure the lruvec (and the mem_cgroup containing the
-> lruvec) did not disappear (due to offlining) after move_folios_to_lru()?
-
-We obtained lruvec through the following method:
-
-memcg = mem_cgroup_iter(target_memcg, NULL, partial);
-do {
-     struct lruvec *lruvec = mem_cgroup_lruvec(memcg, pgdat);
-
-     shrink_lruvec(lruvec, sc);
-     --> shrink_inactive_list
-} while ((memcg = mem_cgroup_iter(target_memcg, memcg, partial)));
-
-The mem_cgroup_iter() will hold the refcount of this memcg, so IIUC,
-the memcg will not disappear at this time.
-
+> Enjoy!
 > 
->>   	__mod_node_page_state(pgdat, NR_ISOLATED_ANON + file, -nr_taken);
->> @@ -2166,11 +2166,10 @@ static void shrink_active_list(unsigned long nr_to_scan,
->>   	/*
->>   	 * Move folios back to the lru list.
->>   	 */
->> -	spin_lock_irq(&lruvec->lru_lock);
->> -
->> -	nr_activate = move_folios_to_lru(lruvec, &l_active);
->> -	nr_deactivate = move_folios_to_lru(lruvec, &l_inactive);
->> +	nr_activate = move_folios_to_lru(&l_active);
->> +	nr_deactivate = move_folios_to_lru(&l_inactive);
->>   
->> +	spin_lock_irq(&lruvec->lru_lock);
->>   	__count_vm_events(PGDEACTIVATE, nr_deactivate);
->>   	count_memcg_events(lruvec_memcg(lruvec), PGDEACTIVATE, nr_deactivate);
->>   
->> @@ -4735,14 +4734,15 @@ static int evict_folios(unsigned long nr_to_scan, struct lruvec *lruvec,
->>   			set_mask_bits(&folio->flags.f, LRU_REFS_FLAGS, BIT(PG_active));
->>   	}
->>   
->> -	spin_lock_irq(&lruvec->lru_lock);
->> -
->> -	move_folios_to_lru(lruvec, &list);
->> +	move_folios_to_lru(&list);
->>   
->> +	local_irq_disable();
->>   	walk = current->reclaim_state->mm_walk;
->>   	if (walk && walk->batched) {
->>   		walk->lruvec = lruvec;
->> +		spin_lock(&lruvec->lru_lock);
->>   		reset_batch_size(walk);
->> +		spin_unlock(&lruvec->lru_lock);
->>   	}
+> [1]: https://lore.kernel.org/linux-doc/20251104022242.19224-1-bagasdotme@gmail.com/
 > 
-> Cc'ing RT folks as they may not want to disable IRQ on PREEMPT_RT.
+> Bagas Sanjaya (3):
+>   Documentation: amd-sbi: Wrap miscdevice listing snippet in literal
+>     code block
+>   Documentation: mrvl-cn10k-dpi: Fix macro cross-reference syntax
+>   Documentation: tps6594-pfsm: Fix macro cross-reference syntax
+
+for all 3 patches:
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+>  Documentation/misc-devices/amd-sbi.rst        |  6 ++++--
+>  Documentation/misc-devices/mrvl_cn10k_dpi.rst |  4 ++--
+>  Documentation/misc-devices/tps6594-pfsm.rst   | 12 ++++++------
+>  3 files changed, 12 insertions(+), 10 deletions(-)
 > 
-> IIRC there has been some effort in MM to reduce the scope of
-> IRQ-disabled section in MM when PREEMPT_RT config was added to the
-> mainline. spin_lock_irq() doesn't disable IRQ on PREEMPT_RT.
-
-Thanks for this information.
-
 > 
-> Also, this will break RT according to Documentation/locking/locktypes.rst:
->> The changes in spinlock_t and rwlock_t semantics on PREEMPT_RT kernels
->> have a few implications. For example, on a non-PREEMPT_RT kernel
->> the following code sequence works as expected:
->>
->> local_irq_disable();
->> spin_lock(&lock);
->>
->> and is fully equivalent to:
->>
->> spin_lock_irq(&lock);
->> Same applies to rwlock_t and the _irqsave() suffix variants.
->>
->> On PREEMPT_RT kernel this code sequence breaks because RT-mutex requires
->> a fully preemptible context. Instead, use spin_lock_irq() or
->> spin_lock_irqsave() and their unlock counterparts.
->>
->> In cases where the interrupt disabling and locking must remain separate,
->> PREEMPT_RT offers a local_lock mechanism. Acquiring the local_lock pins
->> the task to a CPU, allowing things like per-CPU interrupt disabled locks
->> to be acquired. However, this approach should be used only where absolutely
->> necessary.
+> base-commit: 27600b51fbc8b9a4eba18c8d88d7edb146605f3f
 
-But how do we determine if it's necessary?
-
-Thanks,
-Qi
-
-> 
-
+-- 
+~Randy
 
