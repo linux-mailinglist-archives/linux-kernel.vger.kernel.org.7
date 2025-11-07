@@ -1,277 +1,146 @@
-Return-Path: <linux-kernel+bounces-890679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA7BC40A77
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:46:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 759A7C40A7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E77E03AC4FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:46:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684771883CAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563432E8B9E;
-	Fri,  7 Nov 2025 15:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA03232E156;
+	Fri,  7 Nov 2025 15:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="J92/7rvv"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TDWntB76"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D3A2C2369
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808BE32D7E0;
+	Fri,  7 Nov 2025 15:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762530361; cv=none; b=AQMyRIIQCHYiKkvsS+TqHjhPx8K77qpIfXjKyFmsNm5XmK+WCmFyVaEPfS7K5feFIpv/ScMV1opoJi1FPbH+gtHANT14fGRoQLHOLDQCdWj0VFS5PAFbp4zFdTalF9BE6v2sueQVyHLXuo784x8HTYaReDHVV+mLYdoNL0p0JdM=
+	t=1762530380; cv=none; b=nprdfmOx1VmvX2NkL9ec0xv6YIL1YLbCE7FTGlQTwKd6adJiYC/Pe9P0s8dZLs/6IgLlgM1E4s08B27o58PEvGHUAuYhGfOhQi9o/JVEJM8jBLRSutgWExj/bMPl7QOieLGWZrvWR9BUA9jCSJs3EUDKw5n+3/R+slPg+EYanq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762530361; c=relaxed/simple;
-	bh=Bo8hOLP5wIkBbrnuws1pinQ4AYj9Sz8IvZxz60kmJmU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q+Y3gsQdws8eZDQBNFne4XBUzD+HYk4ml4fDWk9Rj1I9+J94La6b8DmLasonkPCa2O/5ZKw+Z74a+Go30iCsd+bZtmYuHM4EO2Yu7W1kHjU1rl6C33V+nfML7afln5xtuaw0RIpuD2/hFEzLLyJzLOMyKJ/A7BB4gi/tFKMbziM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=J92/7rvv; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b727f330dd2so146066166b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:45:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762530358; x=1763135158; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Bo8hOLP5wIkBbrnuws1pinQ4AYj9Sz8IvZxz60kmJmU=;
-        b=J92/7rvvhFFuALw9nNM56YbrhULbcAumzVIJUTqaIVXE7Pg0z3UkhgsVThqzk/N3Ux
-         yvg91iyUBkmoShLfwY7oc1C2yPmAx/lHNJ19+8wrrwkNaQz4JkJtRxPclns7md572fE4
-         bleD6F70oKhKXUUgr4wY2oYNiRz86Mgv1mO/Zv1Dt071UygBhPAdVIN2DSTsPsrtkclZ
-         5axX0V89d97QFave8RnZ7yQrSyIKkc+5SBWDP+gVun0TrCJke7qmNMl/ZOl47DHrExsy
-         MZniXPEWH0OFUwJDDzr7jzaxcKSopq8jrk+4MI7KPgIjb54YOzQ9mdxx4ZnKPV1z3E5z
-         OzlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762530358; x=1763135158;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bo8hOLP5wIkBbrnuws1pinQ4AYj9Sz8IvZxz60kmJmU=;
-        b=LqC3S1PVFfI57sx779uichep0IJ3cwY7fqBPFUZsBaMF6mc0qL3JoYHFwdG8UOr1+1
-         HnnUQRbBnLZdO7lrotsqmCgXOC2Wryeb5wm90m6OtK7wdwJgxH6hX7kVC0o3Z4jec+0R
-         YuSrtMSxQTURlFreG6tWfjSr1z0UNuBVZoFt66v09gJhQEpWM0rX94pDnfMMTkYiJNAo
-         fCBueSpuTblYkm6xrv0mwy4p/j9ngsbaR11Y9bc6ltiaw9VnUncD18CU89mjcapRJDbF
-         2BH/NaoyJclqEWKjKVt1MHk5VTvVqdtpgX7F49v1y8ie8lgUxmu3jDa3sUfSepkkRwor
-         Eidg==
-X-Gm-Message-State: AOJu0YwJ3Qmwa4OIj4juXlEUbm2OZr4FwU4X06d+ZpsFIg2QtsQGIOSq
-	FoYXjsmQ3bvcwoz/Gkl4UZBJFO9D6riQh+ADV37Y6JfRsVR7BVzqhTrh0r2Lwq2Bgso=
-X-Gm-Gg: ASbGnctr8FOEZtq+qBisK5NBSLoCuIFu6Sdqn+LTJJBJhVFa/NigksYTWV0pAH2Cq/4
-	zfY7SbrsVUSOfu3jMt2uXODR8tGTzyfkyTepugs3F4uFJwwNhcKWmoyL+3udDtr6xut76R9hvUB
-	MVrtB3Iac1r6ky8rrFKY0kcoDAM7VXYnCDcJ2P3VDZSnbiPp6hiItp2waDu3CHMgN9GDLUDF8e8
-	ygggN/ZafD0bzmotL3S7Uq31nhNFDXolhdY7qhxA27qsUmzfCqIj6pbn+KFuM5Vd1hnv5kjtByT
-	HWSJQyH0MwiYpjql5pN6foRGkWLCEYzeHo9MGxJo9aanXl3i+df7c4ItxNOq+A6aB/6IgNtCsuQ
-	3d9D3xEmBOKMXcFeUHRJK1S3dgiGLIodzJM8mwAHibPvOvzn3dYfyy0jBp0yIzBCkMa79Z8U4jD
-	EXcSDzrGFkD6bOUEHBufh+8v5uudmUypHvPFlhuOCO/JNnARwyaGqe+5tU6BHjuTGcXh0BYvthx
-	1Ik/Ed/FjnwPNjplO1u+kFw0t3lzn7jcSjovkM=
-X-Google-Smtp-Source: AGHT+IFuCx4lTV36ytxTOyAJ/RoowaLhIeY2jVZHeX87aG97vvwLOiA38P+znCtMJ8WqDnaM5A4vXg==
-X-Received: by 2002:a17:907:6096:b0:b6d:4dc2:7be3 with SMTP id a640c23a62f3a-b72c08dc800mr387131266b.9.1762530357944;
-        Fri, 07 Nov 2025 07:45:57 -0800 (PST)
-Received: from ?IPV6:2003:e5:870e:1500:7795:3e8a:56c1:ae53? (p200300e5870e150077953e8a56c1ae53.dip0.t-ipconnect.de. [2003:e5:870e:1500:7795:3e8a:56c1:ae53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9bdf15sm274044366b.62.2025.11.07.07.45.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 07:45:57 -0800 (PST)
-Message-ID: <ed4971b3-49ea-4263-b225-80a643bca0c4@suse.com>
-Date: Fri, 7 Nov 2025 16:45:56 +0100
+	s=arc-20240116; t=1762530380; c=relaxed/simple;
+	bh=hOz9aMEOW6B+di25hxqFYc5gSXWNe9oczqafeIXvjP8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nQ/3XrL8GwBCJ1d7Ge4m2DFmZR2YB62d2hfaBBeKaHtiVq9AduYW8f7Ch/NHY4ASkAct1/5mKP6hUK/iU4scGPE/hxGj3rfahZzYT/KLazOsIqBvtiGEDmNuA+49/+IXXiuE03MHJBHohAVfSMeCMa+MAyBP2lEDikg9CfVO40s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TDWntB76; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762530377; x=1794066377;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=hOz9aMEOW6B+di25hxqFYc5gSXWNe9oczqafeIXvjP8=;
+  b=TDWntB76tUplsbn5YH1uauz4LvWrmd5YxRyGdG8pYheaM4QN/TdcmMSZ
+   EXzevchxWVEuQuXQFR1AX6C2JjuxkIkrC7TBSUCBKtxyX13QwjROlLGRx
+   XtPFTztyKyrEoVHGvfMwFwpLYsHOdKtRqGP5ExTXAC0DztB4wvAAxkauV
+   FyllTrwSDbQtND8J3di7/DBn4FB/1XMLnZA/h0DHHXw3nmerWegyLkVrw
+   rZNkWSEsJw3W1DU95PqWICa6LkHt+bOAqX0WKOJYLgZiXHMNkBkywmAjO
+   1D5HxBi3frKr+yFUGFRHxF4lyKKzOVW7e1gMJViRZBzA8+EnwzQZd89vZ
+   Q==;
+X-CSE-ConnectionGUID: XHJvDpLFQr+AFGP6a5r3Ug==
+X-CSE-MsgGUID: 56SvSzOSTcKex/E2lCuz0A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="68519972"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
+   d="scan'208";a="68519972"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 07:46:17 -0800
+X-CSE-ConnectionGUID: y3Bn7e2QShiptPbwWzALKg==
+X-CSE-MsgGUID: 0lU8iujtTFS3nqH07Fv8UA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
+   d="scan'208";a="225324820"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO mnyman-desk.intel.com) ([10.245.245.61])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 07:46:15 -0800
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+To: uttkarsh.aggarwal@oss.qualcomm.com
+Cc: mathias.nyman@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	wesley.cheng@oss.qualcomm.com
+Subject: [TESTPATCH] xhci: testpatch add temporary debug to cmd ring handling
+Date: Fri,  7 Nov 2025 17:46:03 +0200
+Message-ID: <20251107154604.1301374-1-mathias.nyman@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <5e55d9ba-6b4f-4d92-bb47-04b4a68328d2@linux.intel.com>
+References: <5e55d9ba-6b4f-4d92-bb47-04b4a68328d2@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/12] x86/xen: simplify flush_lazy_mmu()
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-3-kevin.brodsky@arm.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <20251029100909.3381140-3-kevin.brodsky@arm.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------2KDMQGlJELWzw0JdPjGXTYgs"
+Content-Transfer-Encoding: 8bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------2KDMQGlJELWzw0JdPjGXTYgs
-Content-Type: multipart/mixed; boundary="------------knysrRNvahQGLFPAzdME9JNX";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-Message-ID: <ed4971b3-49ea-4263-b225-80a643bca0c4@suse.com>
-Subject: Re: [PATCH v4 02/12] x86/xen: simplify flush_lazy_mmu()
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-3-kevin.brodsky@arm.com>
-In-Reply-To: <20251029100909.3381140-3-kevin.brodsky@arm.com>
+print messages with CMDDBG prefix if command ring is cleared
+with pending commands, or fails to start due to sw state
 
---------------knysrRNvahQGLFPAzdME9JNX
-Content-Type: multipart/mixed; boundary="------------0xpsCIW0ItmLiouLur0gOGNm"
+TESTPATCH
 
---------------0xpsCIW0ItmLiouLur0gOGNm
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+---
+ drivers/usb/host/xhci-ring.c |  5 ++++-
+ drivers/usb/host/xhci.c      | 16 ++++++++++++++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-T24gMjkuMTAuMjUgMTE6MDgsIEtldmluIEJyb2Rza3kgd3JvdGU6DQo+IGFyY2hfZmx1c2hf
-bGF6eV9tbXVfbW9kZSgpIGlzIGNhbGxlZCB3aGVuIG91dHN0YW5kaW5nIGJhdGNoZWQNCj4g
-cGd0YWJsZSBvcGVyYXRpb25zIG11c3QgYmUgY29tcGxldGVkIGltbWVkaWF0ZWx5LiBUaGVy
-ZSBzaG91bGQNCj4gaG93ZXZlciBiZSBubyBuZWVkIHRvIGxlYXZlIGFuZCByZS1lbnRlciBs
-YXp5IE1NVSBjb21wbGV0ZWx5LiBUaGUNCj4gb25seSBwYXJ0IG9mIHRoYXQgc2VxdWVuY2Ug
-dGhhdCB3ZSByZWFsbHkgbmVlZCBpcyB4ZW5fbWNfZmx1c2goKTsNCj4gY2FsbCBpdCBkaXJl
-Y3RseS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEtldmluIEJyb2Rza3kgPGtldmluLmJyb2Rz
-a3lAYXJtLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IEp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNl
-LmNvbT4NCg0KDQpKdWVyZ2VuDQo=
---------------0xpsCIW0ItmLiouLur0gOGNm
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index b9e676d37a33..f8029d837428 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -421,8 +421,11 @@ static unsigned int xhci_ring_expansion_needed(struct xhci_hcd *xhci, struct xhc
+ /* Ring the host controller doorbell after placing a command on the ring */
+ void xhci_ring_cmd_db(struct xhci_hcd *xhci)
+ {
+-	if (!(xhci->cmd_ring_state & CMD_RING_STATE_RUNNING))
++	if (!(xhci->cmd_ring_state & CMD_RING_STATE_RUNNING)) {
++		xhci_err(xhci, "%pS Failed to start cmd ring, sw cmd_ring_state %d\n",
++			 __builtin_return_address(0), xhci->cmd_ring_state);
+ 		return;
++	}
+ 
+ 	xhci_dbg(xhci, "// Ding dong!\n");
+ 
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index d3063f796130..fe157813c136 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -504,6 +504,14 @@ static void xhci_set_cmd_ring_deq(struct xhci_hcd *xhci)
+ 	dma_addr_t deq_dma;
+ 	u64 crcr;
+ 
++	if (!list_empty(&xhci->cmd_list))
++		xhci_err(xhci, "%pS CMDDBG set cmd ring deq pendig commands\n",
++			 __builtin_return_address(0));
++	if (xhci->cmd_ring->dequeue != xhci->cmd_ring->enqueue)
++		xhci_err(xhci,"%pS CMDDBG set cmd ring deq: %p and enq %p mismatch\n",
++			 __builtin_return_address(0),
++			 xhci->cmd_ring->dequeue, xhci->cmd_ring->enqueue);
++
+ 	deq_dma = xhci_trb_virt_to_dma(xhci->cmd_ring->deq_seg, xhci->cmd_ring->dequeue);
+ 	deq_dma &= CMD_RING_PTR_MASK;
+ 
+@@ -871,6 +879,14 @@ static void xhci_clear_command_ring(struct xhci_hcd *xhci)
+ 	struct xhci_segment *seg;
+ 
+ 	ring = xhci->cmd_ring;
++
++	if (!list_empty(&xhci->cmd_list))
++		xhci_err(xhci, "CMDDBG Clearing command ring with pendig commands\n");
++
++	if (ring->dequeue != ring->enqueue)
++		xhci_err(xhci,"CMDDBG clear cmd ring deq: %p and enq %p mismatch\n",
++			 ring->dequeue, ring->enqueue);
++
+ 	xhci_for_each_ring_seg(ring->first_seg, seg) {
+ 		/* erase all TRBs before the link */
+ 		memset(seg->trbs, 0, sizeof(union xhci_trb) * (TRBS_PER_SEGMENT - 1));
+-- 
+2.43.0
 
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
-
---------------0xpsCIW0ItmLiouLur0gOGNm--
-
---------------knysrRNvahQGLFPAzdME9JNX--
-
---------------2KDMQGlJELWzw0JdPjGXTYgs
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmkOFDQFAwAAAAAACgkQsN6d1ii/Ey+9
-7Qf/T56S47fDqEb7wrI6i48Xr9hbJbL1cOc88MTixDkHAfIu70HOLvfAW2G+G73cTTY/1IFY+cr+
-wk6KhYqguuIbbFGh6hlD2neoBl0l4Fiujn0c9wTKQbJrDL6h8jDeODAFWmkuyd0Rtnawy6o+0tgP
-OLmQ4vhbq2u58C6zzLGQWIz6csmJqnGTKYGIQZI/h7xUZhz/b/RzD8p5aTRMGfVraJlKwuNAsKmp
-/f7DpPGGCI7nCZWglBlKRFiGM/bZFdt9rZRV30JAFzq5kyUL6Lp3Y0nGp91si4slpitgwPxEG3M6
-oApGVoFTsieG0o5HaiDhf8c0R7g+2PiCjn5h6HxMIA==
-=Eb3P
------END PGP SIGNATURE-----
-
---------------2KDMQGlJELWzw0JdPjGXTYgs--
 
