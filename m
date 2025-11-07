@@ -1,219 +1,149 @@
-Return-Path: <linux-kernel+bounces-890487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723CFC402C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:44:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD08C402CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B3C3B95DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:44:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2EE23BBD32
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3822F546D;
-	Fri,  7 Nov 2025 13:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4D430101E;
+	Fri,  7 Nov 2025 13:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="PtIXN1Ne"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011018.outbound.protection.outlook.com [52.101.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GPA4gY34"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8A82F531C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762523063; cv=fail; b=OjyLeUOJznJrO1lGR1knicI4L4YKYSi92hBhhyvCwSWanRvtw26RCMMAWsYuNfVBlfVb0rShSS3T75UYX2y6CFwPyjzU7wrhisKq3F2oImZ72lP6r24yhh/0VGgeFqRxeDLpigdpSeIEq0MH9I9iZzA/8Hz74eglzzMIg7DBhRs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762523063; c=relaxed/simple;
-	bh=jeAmo6WLw0EK6MNRRtvKEebkEwhbF7BwL25Z9h+vpHE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dDMervkTpr2bnfBOD95ud9GouvF2Xbh1pEusa4nKbNVgR9HNKW7kMinpwssGV8mbjbtwF9eZJm1m+CyVWBXoCG73doq+CoMdrulQxIz8xXCfTc1fsRBt3DXfOQSYVPaBWQhBy5qz4IKFP2DLrk27DGU94/NsR6ui3E0cX8A7Fns=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=PtIXN1Ne; arc=fail smtp.client-ip=52.101.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k3kf0FnbyBKfwkaLT1ApC2U6UmvQPRPi4kHEH/6l5hnn84rWRgkKhhc9eRVkCQ/T/WR6cCDiZ39NwijEofppR/M1xhvCx2YCP19gMopNkl7Tl/IT1DwMqzyakDYXR9S3iq96sCJKUkV3wtEL15giVaXRqaY0arxoGZabBObNGgWYityU5ncfS+Qts1bHPw3OeMKSP7OMO4h1sZjF5sIX/bpud1NlgHzFwr/4iz5rgHmI0aNnKm4UJ8uzlEMFZHVMDgSPXK6ECW0WoAouVGHFN3g4Hu/kIYgD/Lz3ImJj3vb2n2kJPfZbh1b9U7fqQl1HjvZzdxh8VuWIqq5e2NedbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jeAmo6WLw0EK6MNRRtvKEebkEwhbF7BwL25Z9h+vpHE=;
- b=RYi0cdzt0koE6+7Hgu3oWroVEmAYyw09buCg6nIuSJRh2SiOo23yxg7TG/iFsWpzko1Bx7QtFON5SgnW7le3M5YQtTooNjGUgaL02gjEGblKcgvKEPrTL51WoAcz+flKvxMiRyHu7uQvXLGoTAM/uCnfkUiGMsxMpKr+Eg9M9VuCUZMVuXUfJY6WLvhcy+sGgKpEnKDnu3lDeWK7YFaI7qYhtcS/HEcQfiyudDXZSNdXRQ1yp6hMBvmVhk8wJ5prI0Z0fR3nhbgE/e8sFkW02g48OWEJidgE4+4GEdifj7+1wyVhuuZnBG+E83g7As7pVPtldABpGBFBLRrdhoDNww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jeAmo6WLw0EK6MNRRtvKEebkEwhbF7BwL25Z9h+vpHE=;
- b=PtIXN1NeR4mddW3MG0cwzSeFvztXJCJ/pc61VSqHavRk31uqyhnv6+kat5zWC+hsqDqE7y9ng8+YIMRNeA7aQBOw7rBRVFYEbdh6hSrdFOWuERFPoQFYUva4R1bi6c24P+XpEddTdVTv/UOnIaHl8wNlEG/ybXXIdBmc5iNnLEllzoXiQO9Pj17i9pITt9aHSX/cXyVdBSSl/7YOLrkKJQ8hgLQRac+nRSKfgxpWXtqxmNGI+7nNqLQZx1TSVUGYsLs7k4+sVanZGtUb/POdt15P0dejGjTFv9EIcFTz2iuTY3gH1WG/AWw3kn2PwHEzQV0AqL3b4xv5Y+K8tYHmlg==
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b6::22)
- by PAVPR10MB7467.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:2f6::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
- 2025 13:44:17 +0000
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9126:d21d:31c4:1b9f]) by AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9126:d21d:31c4:1b9f%3]) with mapi id 15.20.9275.013; Fri, 7 Nov 2025
- 13:44:17 +0000
-From: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>, "arnd@arndb.de"
-	<arnd@arndb.de>
-CC: "hui.wang@canonical.com" <hui.wang@canonical.com>, "mwalle@kernel.org"
-	<mwalle@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "florent.trinh-thai@cs-soprasteria.com"
-	<florent.trinh-thai@cs-soprasteria.com>
-Subject: Re: [PATCH] eeprom: at25: convert to spi-mem API
-Thread-Topic: [PATCH] eeprom: at25: convert to spi-mem API
-Thread-Index:
- AQHb66DA/2ST5DqqmUGvisuiiSELdrTh5/AAgAICrICAAIdYAIADcAkAgAAV6YCAAAoQAA==
-Date: Fri, 7 Nov 2025 13:44:17 +0000
-Message-ID: <b0028d72d839e4053e1493f02dd4197cf5005c91.camel@siemens.com>
-References: <20250702222823.864803-1-alexander.sverdlin@siemens.com>
-	 <638496dd-ec60-4e53-bad7-eb657f67d580@csgroup.eu>
-	 <2025110513-manliness-repayment-d005@gregkh>
-	 <db80adb8b8006fbdeee77a386feabb81537d27e6.camel@siemens.com>
-	 <e0037dc532f3aecb101c78e7d91b66430b15d541.camel@siemens.com>
-	 <3e265b9e-c0f4-452d-b1da-3c708517e30a@app.fastmail.com>
-In-Reply-To: <3e265b9e-c0f4-452d-b1da-3c708517e30a@app.fastmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR10MB6867:EE_|PAVPR10MB7467:EE_
-x-ms-office365-filtering-correlation-id: 8c60fc16-2d7b-4997-ddc8-08de1e03bf0c
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?UmFzMWxNU0tRSDIwSFV3Z1NzSklwZUFoaDZ3WmdRK3NLME9sZ3dCaWhQOU9r?=
- =?utf-8?B?YjV6SVJndXNKM1hpc3VYQlh0aE54UG9oalpIZFRMN1Y4WldqUW1vSG9XTmxo?=
- =?utf-8?B?Y21SbUdrUktZQVJZckRzWEtONlVGZERZMGR0MnRqdzhyNE13OEtzMlpHdzhN?=
- =?utf-8?B?dlNaOENDbGU3NEFXTEJrTW0yamNMazdVNGg3eld2MHMrMVJ1SVVyeTB3L2RL?=
- =?utf-8?B?YnVHcVh6WTVrUHhoRUNub001YlBiRUpWbzBLT1BoNVQ4VmxxMlYwRkNSVGRh?=
- =?utf-8?B?dmgwVWVwaWhTRlNSTTU2WWhLVGR4anRjQTh0TUZWOGF2Qzdrc3Rwa3VmMjZE?=
- =?utf-8?B?dWVpaVpCMzhDS1RiM2VPV2syU0Nob2dhckN4NEpIejBMOU1BeDNMN0t6c1BG?=
- =?utf-8?B?UzhXVTdZRk42akJLVXVvN0tyUDkyOXlQV3BQbDhZWTFsWVlOay81K09VWkM3?=
- =?utf-8?B?M3lMMDREUzM3UXhrTldrV2ZxUmtDT3M5YjBVbFBpNXl2eDJ6Tm53azdRZy9n?=
- =?utf-8?B?OWs3aWFVSUJDSS9VVlZhMVpsMmZkSkdFb1E5QWZiTmtxV21sNHVUYVI0Q0x5?=
- =?utf-8?B?enk2Ly9tbzQvRVA0Z0h3REh3VzB2NEVad1lQSVBVZ3QvRWNDWWxlTTlRSy9E?=
- =?utf-8?B?WVJ0M1RlMUE5QWlidDAzc3d5ZGFGbFd1Q3lmSGhtUk1Oc21od3owSU5pWGth?=
- =?utf-8?B?NFpwdGx6VFljQTJtbWhCdFFwLy95LzgvNldEdTZKdk9pcm04VzU1UElWaUQ2?=
- =?utf-8?B?ajhLeVNtWXE2Z1RSamJFbTd1Zk9pNk0vNW5iUzVQY1kzcnhSNndtbXAzQ1RU?=
- =?utf-8?B?QUdRYzVyeHZlTGQyNEI5SDRYK0FHQkcxQnowYjJFb1lnRDl2U0VYY0pEaWNO?=
- =?utf-8?B?dURpMW5NZXNMNVdOTGhnQVB0MDkrWjg1dERIaHBKWlFGTEJBM0tHL3ByMDQ0?=
- =?utf-8?B?Y1lzTDlQa0FmZlVvWlg4VUxPcnFhdFJYWFB3UlFPaXpIREQ4UmdjbEowOU8z?=
- =?utf-8?B?bVB2bFp4N1FSNzNDUnNVYmp5QUtmcnF0bFI4cVdaL09wNXJ2V2NWc1dQL3lN?=
- =?utf-8?B?RVhsNFQ4NmtKUXRUcWR2cmxwRXgxenRZODE5UENSSGhaTTZXazBGNENHS0h4?=
- =?utf-8?B?S2FucEkyVmpQcERGS1I2NSt5SlNoTjR6RENyNlBkZEFqN09QZ1BlaVlHYTNV?=
- =?utf-8?B?bTdmSDIxTmc0R0JlVThZYVNXZElVYlBHdmZieUFQaWczdW9pVWtORHNLN1Zv?=
- =?utf-8?B?WDgwenp6TE5XcTIzZXRtUjk2Wk9TeWpMRUhkbEdEbElBWWl0UHp4U1pMQ0xY?=
- =?utf-8?B?Z3RlcGU2aTcrTXlJT05Zc1pOWlR5TXp0d2xsVE5QbWw0NHE0RjlnMFJHL2pZ?=
- =?utf-8?B?dGQ4SVBYMXhJUjB3bFNZQ0k3Uml2NE82QlZLNmw0a0pZcEVmczdiWEtzbnVa?=
- =?utf-8?B?aWhNengvYnQ2NExVcmUxS0s2TTBzempVYndhMFIyRU1xUXRhUFNlRFJNbXZl?=
- =?utf-8?B?bERxNnVNNHRQL1JMa0JPQnVwTUZ1WXBuSUdCMVI5Z1Z6QmNCSmhQem9yM1Z6?=
- =?utf-8?B?a1g1a3kvd3JrNHZBZjlwakVuQkl0N01lMDcyTkFpN1pJdkcrOHlHREcvODRt?=
- =?utf-8?B?MjlSQW13QlBmSkFLMVJHaTVZcHczcDEvUG5udW81Wm9WaW1ReWxqUmlUQ05U?=
- =?utf-8?B?NFVDMTZhL3NURnRlQ3Z4UHlTRDR1WkQ3MjRrVEIyTkxJUmViK0UxKzg0S284?=
- =?utf-8?B?OUhkdkRUbVI2ZmRTMGU2TVJtT2c2b0RkVFJ2eWtKZmVkdGpvTGMwT2hBNGp3?=
- =?utf-8?B?ZTIwRjQwQjQwYmp6VHdyczl2TEZRb3E0N05aelNPTGRLNktIaEVLa3BUbGM3?=
- =?utf-8?B?aHUzQ01LVHYrUTE1QzFHZ2xVL1U1eTBrOUprTGM0eDhlemRsOW1HWkNabm5y?=
- =?utf-8?B?NVE2ZlZtVHhlajFuUkNSWVBlSTluL1NCcUx4OFQ4SU9tZGlkQU4wYmozNlpQ?=
- =?utf-8?B?RUdlMThVWTBRPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?ZCtiOVEralZSdEVXNEduYlJrNnl4d0R5VTQ0bnIzYVVuaTBnRGxNRjA4c2F5?=
- =?utf-8?B?ZnZzYUFJSnI4MG51MTY1ZDBBSW9yQ01pZWE4MDdJdFNyUGovTHJDMHRjVzVC?=
- =?utf-8?B?RWV0YThycFc4Vnl4dXRtRDFlOXV6QnNyTzFFelhHeXJTZWZyTlYvNVFBK2RN?=
- =?utf-8?B?RmR1S3UvOWdWdG1HUHRQTUs4ZC9nci93cHdQZ2IrdmRlUUt4WUU1MFMxLzdt?=
- =?utf-8?B?cWN3Q0dwb1JVYmNmMjU3RlZtMng3UWxRR1F2Z2JEUDFnRmJKK1pnK3JpRzNk?=
- =?utf-8?B?bzJQcmNhSWtoMGlVcE5JN3VnNmJYMG5sYmpaZG1xL2JLUjNpZGpBVXZJTVhI?=
- =?utf-8?B?V29MZWJrUVIyOUtTZHY3RWk3ZXh1YmJOR3hvUkRDRkE2WUwyRlh4WUNid3VV?=
- =?utf-8?B?UmppWU9zTllWWU5GdzFCQ1FFV1crQzROaDEvL2VLd0l5R0JmR0xDRlYybGhE?=
- =?utf-8?B?LzkzenVVZjRQa2F5emdlTitrck5heHk0Z1JwamdLVWx2UHE4d1Yyb0ExekFo?=
- =?utf-8?B?LzU2ZmZNQWxkNWZtUEsxT1Y2dkxyU1FQNWdBeW5IOGdBYjRkZjlDcm1aSEpu?=
- =?utf-8?B?TVZXd0NBT3g3UFJwTzFaRUQxQUdZblR1WUtXQlN6c1FTU1F4Yi80S0tTUzRZ?=
- =?utf-8?B?NjdMbm1TOEU2NzJnNy9Hb2dWVWQxbzNLOXpaTHZ4eEpReTFnOS8vWUUydVdh?=
- =?utf-8?B?NFRHZDBTRzkxV213bEJ4Sm1adXB0SS9zQkxWY3o4Q2VZUE8xUUpIeVNnN3du?=
- =?utf-8?B?UFp5OElYOU9yTG9MYi9IQ0svMnJaVTV6dzg3aGI2ZGhqdnlzdExTYlFuUEhq?=
- =?utf-8?B?MzlaaHdqVUMzUXg5eVdXR2grN09pNTQ3UnA1TkdLR2phNE5yMWhmQzBUOTFz?=
- =?utf-8?B?cjBSRzlSK21DVWI2VjVUMkxJSWhERUR0eGpuMjNqSjV2Z21UQzdabWJqaUJj?=
- =?utf-8?B?U0tzb21iWjNQTmpnaCtsdzc0SEp6WS8relNwUFF3YW9BU2N6cVZySFpCVStB?=
- =?utf-8?B?TnZQazNJVWVackxRQ3N4S2hZSWhGZWtqeE9ucEIwc0tnajBZYTRTeVNvNitj?=
- =?utf-8?B?cVQ1OWhuMjZpYTlTVTNaa0JSb2tYb1BvQXk5b2VsbzFQNHMrc3dCU3MvTkxl?=
- =?utf-8?B?ZXZjYkdEYUkzWS9yYWw3S05tVHc4cXZlSjNHL1M1L1VGeFBBK3IwelQ4Um9y?=
- =?utf-8?B?MGcwbEtPTlFYVFV2ZlY1eFFUTFE1NUptUlhOZW1NejhoWWpycStOU295YlZ3?=
- =?utf-8?B?WHV2TGRwNHVuRWZEeGowVWVoeE13WlBhU1p2THNXdXI3WEhlbTEyTm5ycUx6?=
- =?utf-8?B?UitDVnByNVo0eHltRXYrSmZIUVYrRSsyb2QxS3ljUVFNSkpCbE9xN29mMlpl?=
- =?utf-8?B?SzFUdER0M0VGeHhKWE1JalZ2eitydVNFM1RsNnpybk1XZ1c0VC9NVUxxdmFm?=
- =?utf-8?B?T2wzZmhNSHg4NHIxTGwxb0ZTMlA4OWhhajNmVGZoVU1wYUFLL3B4U0hqVXVM?=
- =?utf-8?B?YVBZY2hGQzNzNUdZNGwyRGxTK3JqN2k1NEFNVE9aanFJcE9oWGw3OFdlSVIw?=
- =?utf-8?B?Uk5LK05VME9TNlRHRUpka1pFNjVrTnhTL09BcW84ckU4N25MdklIV2hFSGNs?=
- =?utf-8?B?TktUVnRNWGpZbWFjM2ZCZ1dFR0g5ZDNrK1NQQWdycDlxdEpnWW15QUtRdm1D?=
- =?utf-8?B?UFIxY09YaUlzWFo1Y0RFQ0ZUWTBYRHllMHF1UVJVT29KeCtRbUcvcCt6NFQy?=
- =?utf-8?B?b0lFdEp4ZzhteldDUUsvbzBsY3p1Sm1mQkpmZCtuM0RLS0ZyMyttODJBSUs1?=
- =?utf-8?B?YkFsV0xSVThrQkIxVHdyK20zalBrdndTTHJGOWtBMFVxRWFLYWppakRjcDJK?=
- =?utf-8?B?MFJ6U3cxUmdFL1NqbXRnaXlFTWcrbzQ3ckFNQlpSN08xS0doOU5TeEFOZlFK?=
- =?utf-8?B?TU8yWHNrQ2NNbGxPakpldkRaNVE1ZXpsV3RqT1E4Y28zcGNrVWt1bzVGcENK?=
- =?utf-8?B?TjlLYUxtL0JDRlgrdXowVS9vUFRmNWpCbitrTzNGU3RIQ0paMFNXd2FvVE5F?=
- =?utf-8?B?TVRHQUdLR0p6WFNuNHBwUDM0UE5Wb3U1U0s1QjVoQitGMWExWWZsOHUyYWlJ?=
- =?utf-8?B?Y2lVcERaQVV3TzRMNXJxVFlnRmFWUkM0TVBXMndzVWJmV2FTUitwbTBRM0dx?=
- =?utf-8?Q?eXiBuxFKy3rkFh+6AhQjEyg=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8C73FD1856CBFA409D3FC072D834B203@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03E42F7ABC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762523110; cv=none; b=b3mm/54XnV8pamF0j5Jw7sVI6/Z7vJeZse9K/qxHiFOBbNMgiccpaQ2u7hRHUVZHIaJrXgbD06mm/R5woOsPl92ayh3fBj63qB56wgoveTnrWeVI5jjmlajoOwKfCYK35PIzyf7bFAYGzREP1WWt9I/kIucmvCbpY9oamqivMgI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762523110; c=relaxed/simple;
+	bh=Z7b9EvNVsTIOgVW854RzAhYgYT7r8jwyeS6vvlP+sCo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AKI0DksmfbHqh891JLchAFmREJtPfdyv5GCrnVWj4ZccA/jCpNwXB4fw3OzwLNPMFUEBLC/8gjt7524mmzty6MokG8tpPqAyg+KOprRhPPP6SRFIXO44zTlDbl80goDbyJ8XxjOysDAn95506RHyxsWKXmvrtiOdxVKK4x5KSHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GPA4gY34; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4775ae5684fso4075095e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:45:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762523104; x=1763127904; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aqlg6h5PejcfsHJcPU/gba8WV8jhIrIxPWFwCEoKBmc=;
+        b=GPA4gY34GeEB9Wotmac5siDaXgRbSNF1gtenJ+AoQ9brwil7+In/L55Efd50P14w4D
+         NOy/z4AxuDp3WUr7iV1W6qr3NpzVPG2m9nyMocKN53A0OtwDTAG9T9Yw6Rj2Pw4joOUG
+         eacmb9+rAKIxO5SXJPT8J3x9uMWItH5Kk8A+pxhJVk9bwUYHAhCcgL9DcKp3CmTJrjik
+         m5AmGk5lEiznFhJX2qst/VVGpLCAUe9SDzj2i3EQw4viQtkHBRtyFfAEK1aGMDqs/oZD
+         wZBmP/egn4BHT/C4ktdSbuIXbUTAGjX0430lJVCGLlZMay7swbPXEGw9ep+Of1xo336P
+         SoNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762523104; x=1763127904;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aqlg6h5PejcfsHJcPU/gba8WV8jhIrIxPWFwCEoKBmc=;
+        b=Bn/aqY7QRYm/CIPq1CTL2Gw0neSzvhVCnURAf0Vhdm4t+kjK74RrDScgyM5HR3hEt6
+         UGSAR/R7F54SVAJ0zR7V/t1+MHsYkld2Yri2/iKLPOMmAG1YqPNKO90bUyDqhPZ6MlWV
+         AGbq2m3gVl1vb1wtnCeGs/FIqXWZ2FS6xmo7z0Cf1GGEH941hzvRrY2k3Flf/n7C2ynu
+         5HFgU1//0ySxvyrNvvhPeI/lbSpAipOjQkrV8NdD3lXLvUxNSb3SIHRl+M4vxd6XmS2w
+         giO9QKUIFiOb5xd2d1W5MBDyAFjPG/4dl+xAIOVSV4lctv6z+Xp4G6nSl7Ngs9Mo5Rxz
+         4wqA==
+X-Gm-Message-State: AOJu0Yx6lmHWQJVaBE5CKlEfPsQZPxl/t21A6I4BvzwMwyDLUAVwUJCI
+	qNUmdEx0vBhXxYNZMwcwQHvrzINPA7sKTniLGuVhCnHRWqz+vFEzKvUeZcp55blRu0iafGYSSxj
+	lZwWJ
+X-Gm-Gg: ASbGncsYsdg9AB76gTrebmEpqSvwm0RtmYnQ9c06RJToJrsDp9OdUzqhwbD9LiZmkPn
+	uFM+mKYtoLHqR0LDGA5wFnsLPzFH4Trx8waSArj8zWfkk3anundcxrLrqgtEr4xjy/ssm7ZdC0C
+	86qNtb3Dr1rxbeSkIfbPBi7XIB0P1vliEy2UWu0ER/UJWZcSuRcjJeuPnNFR3SjEm9shvZ+kVlL
+	pvrLzloJonHK8Ts8nJrEi9i3DLSKxYEKOPGZSKL5WGhaLPzaP2Alcf8lOQI3ZD3SZNiTHHIcodG
+	/vsDZcrrgHQ5MY5emGKI89olEdG/jQYSwiiQWl5dxlMHHxFrH7q3yZdQzhc2Uz6V4ZudecOmfQg
+	MxclRREagBurTAA4rFK9keJUlzHed5Y+hrLnYlYls1+2rC7qf41KfeZu4CKl3YJJztFsgY1GdNL
+	muLzZYMdsoPP18+j3F/tb9t61C
+X-Google-Smtp-Source: AGHT+IFpZyba28WKyl422zPLm41vfwB1Tx6c+F358chDdmmWGy7/8ZYNpD09113Drv9QcArg+dOETQ==
+X-Received: by 2002:a05:600c:1f0d:b0:46e:4586:57e4 with SMTP id 5b1f17b1804b1-4776bcb8963mr24023815e9.24.1762523103775;
+        Fri, 07 Nov 2025 05:45:03 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62b23csm5282046f8f.10.2025.11.07.05.45.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 05:45:03 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Karsten Keil <isdn@linux-pingi.de>
+Subject: [PATCH] isdn: kcapi: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 14:44:52 +0100
+Message-ID: <20251107134452.198378-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c60fc16-2d7b-4997-ddc8-08de1e03bf0c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2025 13:44:17.2102
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HTO6Ku462K3KW6SZMbqzOt3QeaEdrW0Z2mBUs5oSGg5TcAsyawXXipAQIlXFDJ3JkbGew5kpIYl8fUqnkVpjlDTObc+6rz2vv6zh2b4/XDM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB7467
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-SGkgQXJuZCwNCg0KT24gRnJpLCAyMDI1LTExLTA3IGF0IDE0OjA4ICswMTAwLCBBcm5kIEJlcmdt
-YW5uIHdyb3RlOg0KPiA+IENocmlzdG9waGUsIHdoaWxlIEknbSB0cnlpbmcgdG8gZ2V0IG15IGhh
-bmRzIG9uIGEgUFBDMzIgSFcgc2ltaWxhciB0byANCj4gPiB5b3Vycywgd291bGQNCj4gPiB5b3Ug
-YmUgYWJsZSB0byB0ZXN0IHdpdGggQ09ORklHX0RNQV9BUElfREVCVUc9eT8gVGhlIGZhY3QgdGhl
-IEtBU0FOIA0KPiA+IGRvZXNuJ3QgZGV0ZWN0DQo+ID4gYW55dGhpbmcgYWZ0ZXIgdGhlIGZpeCB0
-byBzcGktZnNsLWNwbSB5b3UndmUgbWVudGlvbmVkIG1ha2VzIG1lIHRoaW5rIA0KPiA+IHRoZSBj
-b3JydXB0aW9uDQo+ID4gaXMgZXh0ZXJuYWwgdG8gQ1BVIGNvcmU/IFdpbGwgeW91IHBvc3QgeW91
-IGZpeCB0byBmc2wtY3BtIGNvZGU/DQo+IA0KPiBJIGhhZCBhIGxvb2sgb3ZlciB0aGUgcGF0Y2gg
-YW5kIGRvbid0IGRpZG4ndCBzZWUgYW55dGhpbmcgZXh0cmENCj4gc3VzcGljaW91cywgYnV0IEkg
-d29uZGVyIGlmIHRoaXMgaXMgcG9zc2libHkgYSBwcm9ibGVtIHdpdGggYSBETUENCj4gdG8gc3Rh
-Y2ssIGFzIENocmlzdG9waGUgbWVudGlvbmVkIHRoaXMgc2hvd2luZyB1cCBvbiBhIHN5c3RlbSB3
-aXRoDQo+IFZNQVBfU1RBQ0s9eS4NCj4gDQo+IElmIGZvciBzb21lIHJlYXNvbiB0aGUgb3JpZ2lu
-YWwgZHJpdmVyIHVzZWQgdG8gYm91bmNlIHRoZSBkYXRhIHdoaWxlDQo+IHRoZSBjdXJyZW50IHZl
-cnNpb24gYXR0ZW1wdHMgYSBETUEsIHRoYXQgbWF5IGxlYWQgdG8gYXJiaXRyYXJ5DQo+IGRhdGEg
-Y29ycnVwdGlvbiBmcm9tIHRoZSBpbnZhbGlkIHZpcnRfdG9fcGh5cyh2bWFsbG9jX3BvaW50ZXIp
-DQo+IGNvbnZlcnNpb24uDQoNCkkndmUgdGhvdWdodCBhYm91dCB0aGlzIGFzIHdlbGwsIGJ1dCBp
-biBteSBwYXRjaCBJIGFjdHVhbGx5IGFkZA0KYW5kIGFkZGl0aW9uYWwgYm91bmNlIGJ1ZmZlciwg
-Y29tcGFyaW5nIHRvIHRoZSBvcmlnaW5hbCBjb2RlOg0KDQpodHRwczovL2xvcmUua2VybmVsLm9y
-Zy9hbGwvZDViZTE3N2QtNTA1ZC00ZDcyLTlkMTgtOTEzZTY5YzIzZWE4QGFwcC5mYXN0bWFpbC5j
-b20vDQoNCj4gVGhlIG9wcG9zaXRlIG1pZ2h0IGJlIHRydWUgYXMgd2VsbDogaWYgdGhlICd2YWwn
-IHBvaW50ZXIgcGFzc2VkDQo+IGludG8gdGhlIHJlYWQvd3JpdGUgZnVuY3Rpb25zIHdhcyBwcmV2
-aW91c2x5IGRldGVjdGVkIGFzDQo+IG5lZWRpbmcgYSBib3VuY2UgYnVmZmVyIGRvd24gdGhlIHN0
-YWNrIChzcGkgY29yZSBvciBzcGkNCj4gbWFzdGVyIGRyaXZlcikgYnV0IG5vdyB0aGUgYWRkZWQg
-J2JvdW5jZScgYWxsb2NhdGlvbiBnZXRzDQo+IHBhc3NlZCBkaXJlY3RseSBpbnRvIGEgZG1hIGVu
-Z2luZSwgdGhhdCBtYXkgYWxzbyBmYWlsIGlmIHRoZQ0KPiBHRlBfS0VSTkVMIGFsbG9jYXRpb24g
-aXMgbm90IHN1ZmZpY2llbnQgZm9yIHRoZSByYW5nZSBvcg0KPiBhbGlnbm1lbnQgcmVxdWlyZW1l
-bnRzIG9mIHRoZSBETUEgbWFzdGVyLg0KPiANCj4gQ2hyaXN0b3BoZSwgZG8geW91IGtub3cgdGhl
-IENQTSBETUEgaGFzIGFueSByZXN0cmljdGlvbnMNCj4gdGhlcmUsIGUuZy4gbmVlZGluZyBhIEdG
-UF9ETUEgYWxsb2NhdGlvbj8NCg0KLS0gDQpBbGV4YW5kZXIgU3ZlcmRsaW4NClNpZW1lbnMgQUcN
-Cnd3dy5zaWVtZW5zLmNvbQ0K
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
+
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
+
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
+
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
+
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+This change adds a new WQ_PERCPU flag to explicitly request
+alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
+
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/isdn/capi/kcapi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/isdn/capi/kcapi.c b/drivers/isdn/capi/kcapi.c
+index c5d13bdc239b..e8f7e52354bc 100644
+--- a/drivers/isdn/capi/kcapi.c
++++ b/drivers/isdn/capi/kcapi.c
+@@ -907,7 +907,7 @@ int __init kcapi_init(void)
+ {
+ 	int err;
+ 
+-	kcapi_wq = alloc_workqueue("kcapi", 0, 0);
++	kcapi_wq = alloc_workqueue("kcapi", WQ_PERCPU, 0);
+ 	if (!kcapi_wq)
+ 		return -ENOMEM;
+ 
+-- 
+2.51.1
+
 
