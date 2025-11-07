@@ -1,48 +1,90 @@
-Return-Path: <linux-kernel+bounces-890548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9923C404D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:23:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845EEC40470
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:17:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 83C4134E161
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:23:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88D43A449F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3543A329C4B;
-	Fri,  7 Nov 2025 14:23:26 +0000 (UTC)
-Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81592DA758;
+	Fri,  7 Nov 2025 14:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aSFVdkpm"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D700A328B48;
-	Fri,  7 Nov 2025 14:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392FD2B9B9
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762525405; cv=none; b=nCPIFvJkL5ch7P/3F2Ssz7alQrpzpvi0U9c6pTxqDY3g8PhGzp3RMI3rspeusRBeZtYP1V8qD07iIXt5Ac2GsT+FLg5s9Qxw039aa3/FfzIw7Ms/sXGhJlFNKnkSvgtN7mDoI2N/j4SKtyCK10V/Sp8Gr/PZZAKVV3J1+QcKzwM=
+	t=1762525028; cv=none; b=KWyTH3qRrbOcCEQm3cOdl4q4AZUVR1zwcQXDVISYRZnWO3ZktRAD6PJtxjPEnqRYLnBPsJREpXzIe0Fs640Rudv3fNaOdw5l6sAh4dNvRR2RY7TU+8sQ+OujjjQXea/aUaRBRhYbuVWhI6YNbz6TtRdDueG/J9JTA2xQYv2Zh84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762525405; c=relaxed/simple;
-	bh=9SlaqGcPSvj6PVufICMnZvQnvPxy0cvIV9NGMVLQwxE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Igt6KYAowo2f98C6QwThYO0gCpid+AeZQhw+CAyQWdJ51SpKU/7G4X95fojaVRj58UEJNnBLR1J8Tl7A0cmbD29sJgnYlISNfpEZ/9hJeoWl759/Z+0T8CB05e5LQGigjirxeIgziVx7oNGMO3RapJDFpVA30U0byomkV/ixQb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
-Received: from localhost (unknown [62.77.71.229])
-	by mx.gpxsee.org (Postfix) with ESMTPSA id F3EA079FE5;
-	Fri, 07 Nov 2025 15:17:05 +0100 (CET)
-From: tumic@gpxsee.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
-Subject: [PATCH 3/3] Documentation: admin-guide: media: mgb4: Add GMSL1 & GMSL3-coax modules info
-Date: Fri,  7 Nov 2025 15:16:48 +0100
-Message-ID: <20251107141648.1889-4-tumic@gpxsee.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251107141648.1889-1-tumic@gpxsee.org>
-References: <20251107141648.1889-1-tumic@gpxsee.org>
+	s=arc-20240116; t=1762525028; c=relaxed/simple;
+	bh=ZDojvFpwkc86Vneggax/ZOVs6WBS1eA7tZfZEwxALkE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RpJfIqnlELm00RJlfIwMk85ltDksIY1zm3+gWGJGbuJNS1ZZeml0NzGlSoe7xTQumJpO5N+bBnhZZNffwfDocwBkh45len6feijD8oHt94Bc27xsGahI0S/4wQLGpsgBQN5ZmwGhO0+bEYqGNg8ytO6D6Oybem1OA5ulStcDRRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aSFVdkpm; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-429c2f6a580so746101f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:17:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762525023; x=1763129823; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mzsi+dNp+T2knF7qr9XbCjPuamEIJ82dLXer8FWdVBk=;
+        b=aSFVdkpm7QvfbNXYT6eViUVAlkqSBEJZlsWDJxJ/sA2ussZRBv7Si+KPjRABRiAZ18
+         vdZntKcx8kSJ+KwPBIWyJ6z7W+jsfrLj8aU19sj4uxuRLv+f+MTM9vdlh1Dzieud35XZ
+         grnvYr4JHPItt7jk9qLxTkOgMUuI4KmDk/r/oOQingPJmN0WreRYXlyToxXDi6btGMMJ
+         KDfDkZwkDkl/2HHGxVKLCP2/zDTm8bXLaLM9szLQqvs0UmdwITc07SlEyAOUM3ngN/zs
+         TDBmAP3vnuOuHR13TSnjk2DcK5K9yjGCIVlSYiBMr6lZ4cDSHBC99i4Nr0kkL9hucjl3
+         jC+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762525023; x=1763129823;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mzsi+dNp+T2knF7qr9XbCjPuamEIJ82dLXer8FWdVBk=;
+        b=DHuE2uSpoez1CtEgqkO7qR2nmyWUAc8H9QCGDBd3wrUkbmbXVeSel2kLzPhV/XLG+x
+         K0ZWulJvPq0yfo3GzXWfZYnphZJhwZGGhEhsg/EZ/DHfmLPL6xUYukvv0rOQgc35XXbP
+         OZwg61CGwOYwXhpTPB5oibeMuUt4wnA0Ld7MhuGaqloSFr50XGvZd7ba8zzVzpKq5neQ
+         guqXfZ5upMF6ruuaMNJap1bX9LlAQChyvtORbVOuQqSD+WzVJ8wET20B/qcGg0XUvawz
+         hDQZUvkYVLkr6tfpKQMQ88T1C8zK545g0DdsKlqAbJ3o8pNvq86Ckx59oBK3R/4JxKAU
+         MuvA==
+X-Gm-Message-State: AOJu0YzLmdwL1Iub20D4iyRwOUokY/TqKBaRkCVYLhUTj0taouKpbpVa
+	Q0cOeyISUq2zhTFhbjhZnZUxuIMYoMMklYIzYItOdr5NItOq1SBxpBFIr3Ar2Xy9X3tqs7/HFmz
+	nWAne
+X-Gm-Gg: ASbGnctm3EGhuGKzJJb9QUN6Dkw4uTi7SqO48ir/GfUFUDHVorQyoWGhLt9TBmoD5Kt
+	CAyKQMEmVttnSveco95gEH5hmcFCn9lrsp+jX5l1xRldDdI1tmcaGk9YsayfVPm/Mc68ERJH1bz
+	LyGVynfu671EcgEW7E31yJJA4Wo35nJv3dwB0HRCCsMFSe4R1h3sAKMrT80S1h5cK7NOQ1wxdQd
+	O+mhG9jNPWqPWRPaedprCHIembWFZwX+eoN+3UfymzZa7QIlBMzs2MXDNRkk7EPGjNkw9yQrmWf
+	1ycGTh06XgLoSTJB0d/vehxU79gH8+MpqwgPk7Qpu2EZmwd126BXdAHMnrDmyJuU02zABIHRlog
+	h4SicCj36/r5jxtyzhHZdHSZfSsiAOUo4S4kQ4Z6UlQo6rxQHa7ppIH4l5f1PLm7QadFMBeUnjB
+	2zEg9pHUUtjjcVs/cw8UycYC7k
+X-Google-Smtp-Source: AGHT+IFH0LXgWeIJgtl+gQta4fjJfleBNDxC0sB4rnU1I/EiNKg4zTlVBSSwvX1AJqwzlKSKz64XVQ==
+X-Received: by 2002:a05:6000:2dc9:b0:427:928:787f with SMTP id ffacd0b85a97d-42ae5888a46mr3117979f8f.21.1762525023274;
+        Fri, 07 Nov 2025 06:17:03 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ab6a7ad67sm5989764f8f.0.2025.11.07.06.17.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 06:17:02 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH] mmc: core: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 15:16:54 +0100
+Message-ID: <20251107141654.226947-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,45 +94,57 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Martin Tůma <martin.tuma@digiteqautomotive.com>
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
 
-Add the mgb4 GMSL1 and GMSL3-coax modules info.
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
-Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
+
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
+
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+This change adds a new WQ_PERCPU flag to explicitly request
+alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
+
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- Documentation/admin-guide/media/mgb4.rst | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/mmc/core/block.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/media/mgb4.rst b/Documentation/admin-guide/media/mgb4.rst
-index 5ac69b833a7a..0a8a56e837f7 100644
---- a/Documentation/admin-guide/media/mgb4.rst
-+++ b/Documentation/admin-guide/media/mgb4.rst
-@@ -31,9 +31,11 @@ Global (PCI card) parameters
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index c0ffe0817fd4..6a651ddccf28 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -3275,7 +3275,8 @@ static int mmc_blk_probe(struct mmc_card *card)
+ 	mmc_fixup_device(card, mmc_blk_fixups);
  
-     | 0 - No module present
-     | 1 - FPDL3
--    | 2 - GMSL (one serializer, two daisy chained deserializers)
--    | 3 - GMSL (one serializer, two deserializers)
--    | 4 - GMSL (two deserializers with two daisy chain outputs)
-+    | 2 - GMSL3 (one serializer, two daisy chained deserializers)
-+    | 3 - GMSL3 (one serializer, two deserializers)
-+    | 4 - GMSL3 (two deserializers with two daisy chain outputs)
-+    | 6 - GMSL1
-+    | 8 - GMSL3 coax
- 
- **module_version** (R):
-     Module version number. Zero in case of a missing module.
-@@ -42,7 +44,8 @@ Global (PCI card) parameters
-     Firmware type.
- 
-     | 1 - FPDL3
--    | 2 - GMSL
-+    | 2 - GMSL3
-+    | 3 - GMSL1
- 
- **fw_version** (R):
-     Firmware version number.
+ 	card->complete_wq = alloc_workqueue("mmc_complete",
+-					WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
++					WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_PERCPU,
++					0);
+ 	if (!card->complete_wq) {
+ 		pr_err("Failed to create mmc completion workqueue");
+ 		return -ENOMEM;
 -- 
-2.51.0
+2.51.1
 
 
