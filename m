@@ -1,157 +1,243 @@
-Return-Path: <linux-kernel+bounces-890584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE63C40695
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:42:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133EFC40716
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:53:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 280DE4E5370
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:42:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C5E3562682
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6C0261588;
-	Fri,  7 Nov 2025 14:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b="XCk/uYpM"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E9A32B9B0;
+	Fri,  7 Nov 2025 14:51:29 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096AA2C21EA
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35D72E4279;
+	Fri,  7 Nov 2025 14:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762526546; cv=none; b=kZp+NmF4ChLTqTHiseywfP2K7f1+zkvvy8oK/n/poK7SAcY6jAmfu3/hTzkpCB3fF+/akJ+EUj0yrxB7dhuA7sHO8+RDgB+Q4gFo/HXqNeZxeUV3CC4kRufaO1FjC34NTrt4E4xNO5+a9F3jvKZDTau5hEpqNqWk6EYcoOsbrM4=
+	t=1762527088; cv=none; b=u3pIouZHDPFAAuhZ9+0hunMoGJfr63yxBarECk82xG/pyZ3pK/dSHqPLm8n5qosiLFBb/CCX47YIwimZRW+mr+w5HKsQmVGCAAddiD5gAbIZ0sXLbzgkq1YCMRBVlwDOlQTiSA2hwD+sk/oBYLRyMI4bHQx0lvIrRfGYgdcsd7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762526546; c=relaxed/simple;
-	bh=YhkEMFPyXkL0KtUMLEtWSj3UnsHN3o6spA2WdOO4V/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tLOppLO4YLiXpCl94bKe5JlB3fjkpYpnWB9tj1B7XglL9lM+vJZdsBI+J3T47s33nTo43Rm5W4oAcG5esQhEOQ8xS/1at7o3/hCTL9FNjZYlABKMZmL3SBZT3YL6xWPYGX8PV8J4llodJnUQ4gmsDvFF0m/gXX2Fz66HoFtYSA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=pass smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b=XCk/uYpM; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ursulin.net
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4711b95226dso8309085e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:42:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin.net; s=google; t=1762526543; x=1763131343; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7prOgZ8tel5yXZ1o8muDswYilsSv/7VLhnLi/dbDFKk=;
-        b=XCk/uYpMcoEZGdJ64vDPs0T2xE74YKsOpqP7Q1YYBdQo5qr6nmCnCka0L3oV90ga2W
-         k4JNjyMn84XMSnBi5dcoyytiCH3wcb5YddOjnP+IvkjIjaStHa91FMTHz0E050LNk/lQ
-         bPm/rCONgh2BXLmgXG3x4+p3Xnlt+a/uQoIIKX/qMF5FV/tf8jtH90QdW0A4xd4j+VFj
-         a/U2b7C0gCZfcmn/doM+E9Cv6mTIO+T3eB8G/vAjpOy4wa0At7xHBfhnIoNDG2e9wB6a
-         nAy5CFh8QCrkNFb2QGpAYHk9Lo26wxPE4fvmG/N33lXXSW1/OOuZv3Z7zp+HF+YNyGNP
-         ffRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762526543; x=1763131343;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7prOgZ8tel5yXZ1o8muDswYilsSv/7VLhnLi/dbDFKk=;
-        b=fWsPq2FA8OI15e5f9Re/dSjfzrS6+wXNu9Xvsk6skgyXLt5rWMch30EXIGkaGIE/Je
-         jtrJ1cYeS8XvfMzSSL3hpzRz3vrTPW0Vsq8kaL1Yt3M29AWHgWntQ+zH/IJYGsVE7iMw
-         2LcZPRiNAl4H/V45qnHXKc5fc2WYKaZYaQA2nV8tpz+VJ5VPHGvkh+4nvaZLX1rZ4lNx
-         k/OihPEgadYsqveQQUSMtXd6nqN+X1NvlcJBoI/ZMD3bjPJB3OzfeMbxDuwNYfZnWov4
-         QhtKqO8Zkz92PAEcSMI+mfWYwCXMVSWYiaisbZ+LBXypsnkNvzZ5lujbqxoPzn5Il850
-         W5Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCWr8FOnIb+Z8FU/TE5L7vLhaxy7aQTZVTMMxDaVXn93wTmujFnhARDptmAr/Wy1YSOmBmcAgZUOAU/xTnE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVwWJNObEELtN9VMtqHJmPkNGjqpBFjBvLOQL2RGSz0MBfb4Ys
-	E9V/m3nd+/IFOJfCcoIF6EXk5meMA0Ejn6OLfY0A6OA6i0XxlJvdoHwoA5/nGfDK+KM=
-X-Gm-Gg: ASbGnctwQ8TovvLfvHDSdKlMwTAYc8DQ/Plf2CmBDOooRQPrPKR9dB1K5h5IVsYck+Y
-	AsBzyN7pZvdqQfjqpPhvHQGpL4/yfgMCpq+VZCBHmQzvbgXAKvwWmPuWQfoOQVGfvBQM1/rDiyX
-	ome+pu1aLiuhSTAFXsTE7FNcrkRtecqABJxxVYAHthbJsw7QJ/o2ykVRAJOL5dk5B+id2ZhNdSp
-	riJFX+GYe51FyNvFOWwpkfvYZXTUN3paQh3UqtPy8SBv4hTjq5MDsTrHHgUh3Djk4etLaKR+47u
-	YhY8Mnr9YxX9d49q72tKdVh0ySrMh6+gdYF4nZ6Zq+1KxO5aPIosmyU+F4fi9nQVG6a5Ot2XYtv
-	LmrVGV+reEk6W1aLUShzj0aTiBQo2o7zbsBgfxbyiwjSVkC1Ovf27gKZu8JjUI5WRNVwBfmVltj
-	cyd0XkebCfN9/PdSQTZiyjvXOjD/1z3XvI0asutQ==
-X-Google-Smtp-Source: AGHT+IFkEE4UDmmRrIx59Og0BV5rIttUH98hXp8gThHGY47mG53iV90+MszFRauDaM04dctxkf46hw==
-X-Received: by 2002:a05:600c:3105:b0:477:63db:c718 with SMTP id 5b1f17b1804b1-4776bc93508mr24815935e9.16.1762526543053;
-        Fri, 07 Nov 2025 06:42:23 -0800 (PST)
-Received: from [192.168.0.101] ([90.240.106.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bd087b1sm61344375e9.16.2025.11.07.06.42.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 06:42:22 -0800 (PST)
-Message-ID: <c4a10ad7-22c0-412c-a456-d2dd0f049ac9@ursulin.net>
-Date: Fri, 7 Nov 2025 14:42:21 +0000
+	s=arc-20240116; t=1762527088; c=relaxed/simple;
+	bh=O6vt6068S+r9RtMI6SEMRJdVYUfeonfowKtysbEUe/0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Hgd5/4w1Q8y1uCw3fchvsCjGJQtSyKLfZWamouJmH6zm7XCaXQ8+vEIE2HxE7NUAyCpJS4SyQzNWs0YceRAdOTFBUqFxOf94Y4IIsv82k4MudXosZOXw8inXE/6jJMVRa6a7r1drYgw+R3Zicz3u7Tgy/czquDjQ6DEYLrmmA1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d327C1KX3zYQv1l;
+	Fri,  7 Nov 2025 22:51:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 594F11A0D05;
+	Fri,  7 Nov 2025 22:51:23 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.87.129])
+	by APP2 (Coremail) with SMTP id Syh0CgDnPUZoBw5pRwgbDA--.60770S4;
+	Fri, 07 Nov 2025 22:51:21 +0800 (CST)
+From: libaokun@huaweicloud.com
+To: linux-ext4@vger.kernel.org
+Cc: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	kernel@pankajraghav.com,
+	mcgrof@kernel.org,
+	ebiggers@kernel.org,
+	willy@infradead.org,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	chengzhihao1@huawei.com,
+	libaokun1@huawei.com,
+	libaokun@huaweicloud.com
+Subject: [PATCH v2 00/24] ext4: enable block size larger than page size
+Date: Fri,  7 Nov 2025 22:42:25 +0800
+Message-Id: <20251107144249.435029-1-libaokun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sched: Don't crash kernel on wrong params
-To: Philipp Stanner <phasta@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20251107125508.235449-2-phasta@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <20251107125508.235449-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgDnPUZoBw5pRwgbDA--.60770S4
+X-Coremail-Antispam: 1UD129KBjvJXoW3WF1fGrWDAw4kKw13Wr43trb_yoWxuw1rpa
+	yfJF13Cr45Jw45CFsrWw1ktr48Wa18GryUXry7t348ur1Iyr18t3y7tFy8ZFWjkry3JF1j
+	qF1fJr1xG3WjyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+	628vn2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64
+	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoPEfDUUUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAFBWkMdTBN3AABsy
+
+From: Baokun Li <libaokun1@huawei.com>
+
+Changes since v1:
+ * Collect RVB from Jan Kara and Zhang Yi. (Thanks for your review!)
+ * Patch 4: Just use blocksize in the rounding.(Suggested by Jan Kara)
+ * Patch 7: use kvmalloc() instead of allocating contiguous physical
+    pages.(Suggested by Jan Kara)
+ * Patch 12: Fix some typos.(Suggested by Jan Kara)
+ * Use clearer naming: EXT4_LBLK_TO_PG() and EXT4_PG_TO_LBLK().
+    (Suggested by Jan Kara)
+ * Patch 21: removed. After rebasing on Ted’s latest dev branch, this
+    patch is no longer needed.
+ * Patch 22-23: removed. The issue was resolved by removing the WARN_ON
+    in the MM code, so we now rely on patch [1].(Suggested by Matthew)
+ * Add new Patch 21 to support data=journal under LBS. (Suggested by
+    Jan Kara)
+ * Add new Patch 22 to support fs verity under LBS.
+ * New Patch 23: add the s_max_folio_order field instead of introducing
+    the EXT4_MF_LARGE_FOLIO flag.
+ * New Patch 24: rebase adaptation.
+
+[v1]: https://lore.kernel.org/r/20251025032221.2905818-1-libaokun@huaweicloud.com
+
+======
+
+This series enables block size > page size (Large Block Size) in EXT4.
+
+Since large folios are already supported for regular files, the required
+changes are not substantial, but they are scattered across the code.
+The changes primarily focus on cleaning up potential division-by-zero
+errors, resolving negative left/right shifts, and correctly handling
+mutually exclusive mount options.
+
+One somewhat troublesome issue is that allocating page units greater than
+order-1 with __GFP_NOFAIL in __alloc_pages_slowpath() can trigger an
+unexpected WARN_ON. With LBS support, EXT4 and jbd2 may use __GFP_NOFAIL
+to allocate large folios when reading metadata. The issue was resolved by
+removing the WARN_ON in the MM code, so we now rely on patch [1].
+
+[1]: https://lore.kernel.org/r/20251105085652.4081123-1-libaokun@huaweicloud.com
+
+Patch series based on Ted’s latest dev branch.
+
+`kvm-xfstests -c ext4/all -g auto` has been executed with no new failures.
+`kvm-xfstests -c ext4/64k -g auto` has been executed and no Oops was
+observed, but allocation failures for large folios may trigger warn_alloc()
+warnings.
+
+Here are some performance test data for your reference:
+
+Testing EXT4 filesystems with different block sizes, measuring
+single-threaded dd bandwidth for BIO/DIO with varying bs values.
+
+Before(PAGE_SIZE=4096):
+
+      BIO     | bs=4k    | bs=8k    | bs=16k   | bs=32k   | bs=64k
+--------------|----------|----------|----------|----------|------------
+ 4k           | 1.5 GB/s | 2.1 GB/s | 2.8 GB/s | 3.4 GB/s | 3.8 GB/s
+ 8k (bigalloc)| 1.4 GB/s | 2.0 GB/s | 2.6 GB/s | 3.1 GB/s | 3.4 GB/s
+ 16k(bigalloc)| 1.5 GB/s | 2.0 GB/s | 2.6 GB/s | 3.2 GB/s | 3.6 GB/s
+ 32k(bigalloc)| 1.5 GB/s | 2.1 GB/s | 2.7 GB/s | 3.3 GB/s | 3.7 GB/s
+ 64k(bigalloc)| 1.5 GB/s | 2.1 GB/s | 2.8 GB/s | 3.4 GB/s | 3.8 GB/s
+              
+      DIO     | bs=4k    | bs=8k    | bs=16k   | bs=32k   | bs=64k
+--------------|----------|----------|----------|----------|------------
+ 4k           | 194 MB/s | 366 MB/s | 626 MB/s | 1.0 GB/s | 1.4 GB/s
+ 8k (bigalloc)| 188 MB/s | 359 MB/s | 612 MB/s | 996 MB/s | 1.4 GB/s
+ 16k(bigalloc)| 208 MB/s | 378 MB/s | 642 MB/s | 1.0 GB/s | 1.4 GB/s
+ 32k(bigalloc)| 184 MB/s | 368 MB/s | 637 MB/s | 995 MB/s | 1.4 GB/s
+ 64k(bigalloc)| 208 MB/s | 389 MB/s | 634 MB/s | 1.0 GB/s | 1.4 GB/s
+
+Patched(PAGE_SIZE=4096):
+
+   BIO   | bs=4k    | bs=8k    | bs=16k   | bs=32k   | bs=64k
+---------|----------|----------|----------|----------|------------
+ 4k      | 1.5 GB/s | 2.1 GB/s | 2.8 GB/s | 3.4 GB/s | 3.8 GB/s
+ 8k (LBS)| 1.7 GB/s | 2.3 GB/s | 3.2 GB/s | 4.2 GB/s | 4.7 GB/s
+ 16k(LBS)| 2.0 GB/s | 2.7 GB/s | 3.6 GB/s | 4.7 GB/s | 5.4 GB/s
+ 32k(LBS)| 2.2 GB/s | 3.1 GB/s | 3.9 GB/s | 4.9 GB/s | 5.7 GB/s
+ 64k(LBS)| 2.4 GB/s | 3.3 GB/s | 4.2 GB/s | 5.1 GB/s | 6.0 GB/s
+
+   DIO   | bs=4k    | bs=8k    | bs=16k   | bs=32k   | bs=64k
+---------|----------|----------|----------|----------|------------
+ 4k      | 204 MB/s | 355 MB/s | 627 MB/s | 1.0 GB/s | 1.4 GB/s
+ 8k (LBS)| 210 MB/s | 356 MB/s | 602 MB/s | 997 MB/s | 1.4 GB/s
+ 16k(LBS)| 191 MB/s | 361 MB/s | 589 MB/s | 981 MB/s | 1.4 GB/s
+ 32k(LBS)| 181 MB/s | 330 MB/s | 581 MB/s | 951 MB/s | 1.3 GB/s
+ 64k(LBS)| 148 MB/s | 272 MB/s | 499 MB/s | 840 MB/s | 1.3 GB/s
 
 
-On 07/11/2025 12:55, Philipp Stanner wrote:
-> drm_sched_job_arm() just panics the kernel with BUG_ON() in case of an
-> entity being NULL. While drm_sched_job_arm() crashing or not effectively
-> arming jobs is certainly a huge issue that needs to be noticed,
-> completely shooting down the kernel reduces the probability of reaching
-> and debugging a system to 0.
-> 
-> Moreover, the checkpatch script by now strongly discourages all new uses
-> of BUG_ON() for this reason.
-> 
-> Replace the BUG_ON() in drm_sched_job_arm() with a WARN_ON().
-> 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
->   drivers/gpu/drm/scheduler/sched_main.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 1d4f1b822e7b..3bf4ae0ca4bc 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -857,7 +857,7 @@ void drm_sched_job_arm(struct drm_sched_job *job)
->   	struct drm_gpu_scheduler *sched;
->   	struct drm_sched_entity *entity = job->entity;
->   
-> -	BUG_ON(!entity);
-> +	WARN_ON(!entity);
->   	drm_sched_entity_select_rq(entity);
+The results show:
 
-void drm_sched_entity_select_rq(struct drm_sched_entity *entity)
-{
-	struct dma_fence *fence;
-	struct drm_gpu_scheduler *sched;
-	struct drm_sched_rq *rq;
+ * The code changes have almost no impact on the original 4k write
+   performance of ext4.
+ * Compared with bigalloc, LBS improves BIO write performance by about 50%
+   on average.
+ * Compared with bigalloc, LBS shows degradation in DIO write performance,
+   which increases as the filesystem block size grows and the test bs
+   decreases, with a maximum degradation of about 30%.
 
-	/* single possible engine and already selected */
-	if (!entity->sched_list)
+The DIO regression is primarily due to the increased time spent in
+crc32c_arch() within ext4_block_bitmap_csum_set() during block allocation,
+as the block size grows larger. This indicates that larger filesystem block
+sizes are not always better; please choose an appropriate block size based
+on your I/O workload characteristics.
 
-Still the same end result.
+We are also planning further optimizations for block allocation under LBS
+in the future.
 
-I believe best practice is to simply not have BUG_ON's followed by null 
-pointer dereferences since they add no value. Ie. it should just be 
-removed and not replaced.
+Comments and questions are, as always, welcome.
 
-Regards,
+Thanks,
+Baokun
 
-Tvrtko
+Baokun Li (21):
+  ext4: remove page offset calculation in ext4_block_truncate_page()
+  ext4: remove PAGE_SIZE checks for rec_len conversion
+  ext4: make ext4_punch_hole() support large block size
+  ext4: enable DIOREAD_NOLOCK by default for BS > PS as well
+  ext4: introduce s_min_folio_order for future BS > PS support
+  ext4: support large block size in ext4_calculate_overhead()
+  ext4: support large block size in ext4_readdir()
+  ext4: add EXT4_LBLK_TO_B macro for logical block to bytes conversion
+  ext4: add EXT4_LBLK_TO_PG and EXT4_PG_TO_LBLK for block/page
+    conversion
+  ext4: support large block size in ext4_mb_load_buddy_gfp()
+  ext4: support large block size in ext4_mb_get_buddy_page_lock()
+  ext4: support large block size in ext4_mb_init_cache()
+  ext4: prepare buddy cache inode for BS > PS with large folios
+  ext4: support large block size in ext4_mpage_readpages()
+  ext4: support large block size in ext4_block_write_begin()
+  ext4: support large block size in mpage_map_and_submit_buffers()
+  ext4: support large block size in mpage_prepare_extent_to_map()
+  ext4: make data=journal support large block size
+  ext4: support verifying data from large folios with fs-verity
+  ext4: add checks for large folio incompatibilities when BS > PS
+  ext4: enable block size larger than page size
 
-Regards,
+Zhihao Cheng (3):
+  ext4: remove page offset calculation in ext4_block_zero_page_range()
+  ext4: rename 'page' references to 'folio' in multi-block allocator
+  ext4: support large block size in __ext4_block_zero_page_range()
 
-Tvrtko
+ fs/ext4/dir.c       |   8 +--
+ fs/ext4/ext4.h      |  26 ++++-----
+ fs/ext4/ext4_jbd2.c |   3 +-
+ fs/ext4/extents.c   |   2 +-
+ fs/ext4/inode.c     |  93 ++++++++++++------------------
+ fs/ext4/mballoc.c   | 137 +++++++++++++++++++++++---------------------
+ fs/ext4/namei.c     |   8 +--
+ fs/ext4/readpage.c  |   7 +--
+ fs/ext4/super.c     |  66 +++++++++++++++++----
+ fs/ext4/verity.c    |   2 +-
+ 10 files changed, 187 insertions(+), 165 deletions(-)
 
->   	sched = entity->rq->sched;
->   
+-- 
+2.46.1
 
 
