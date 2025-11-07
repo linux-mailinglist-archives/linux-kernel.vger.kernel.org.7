@@ -1,141 +1,252 @@
-Return-Path: <linux-kernel+bounces-890250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB9BC3F9B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:58:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6EF0C3F9B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:59:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F6C188FE26
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:59:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7793C4EE3BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D69827EFE9;
-	Fri,  7 Nov 2025 10:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHOmJr5Y"
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F7731AF1A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B8131A55F;
+	Fri,  7 Nov 2025 10:59:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D144827EFE9
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762513112; cv=none; b=cGrggd9Uk7fs2qsRslyh1RVPJuDQiP6Tl81a0r2TQ7VORdS3wUisX5pW1D8kTcQsAwfv/7v03qmt9/O/nDKKPH6gZrQ/hiItcxU1uRmCwIuOlxqe8lRZj7ymHLwGUWl2UwJCcn4BhmYqC6ehoC7v9rQ5LEf4E1G0OZHlNfoknYI=
+	t=1762513157; cv=none; b=qvJWxabWhy8q53u07IV4rCVRdQTxUejdc/u26oHUPgBYs89id0tGM+nZ2MG3gqY/G6mCnCRos+aikUKAigkbV7ttYh7Bw7GHr5vgPAHC1SKwsq/zZrVRjBhB97nKcc6HVvE4MuLqqNVo4YjfBYtPUcUZUMx9BMRJTRFgRhB/vkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762513112; c=relaxed/simple;
-	bh=I+1XbG5MKk0JUlX3zpvi5l1EFf07YFs7e7m1N4z3ees=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fBKkRWL6tiUxJZAQEgyAE+oSvkQN4aiz+cotXG7D4bxmmEnssddHYqwadYu+Xls48OS9+zRx793M8wnk2SiT3sxfaAKfkq7EwnwKmc/Cc+XZdWnqT/P6AO4gokXY29PdTPM1ZcG0qbvk1SAzxjJjs/xx03H0SmR3kk58yN3T3n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHOmJr5Y; arc=none smtp.client-ip=74.125.224.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-63f976ef4bdso539230d50.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:58:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762513110; x=1763117910; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DexNAiPrUqW+UF+u1s34KGk1K6Hek62QKMP3UTIAgww=;
-        b=HHOmJr5YbduSMDMcPyV92hZutg8fHgjl9xVKaWlKOzBGvQ+9n0RtEV0lL/maJGHznI
-         15OeGHfkh0M3BtHnMQ5wem5uFW4l29Oymjoh0d+xbvwNS2ubb2VS4D0Jmf7zBDtDZd8V
-         yis/GunYzhpoOABIMc1ibaJH1Zo/NI7Xtngac82oVnhDFO0cwMPJ72gG+lt4KIg+oeWt
-         8/VT6pT9tiQDZzsSwMfpH1HS8FSuxlmglsPCYjPcjH9RzkN5JZKJ2GTKhjsOTZfTFOvg
-         Iu6nOjU9ImE5JoRhN2PL7qtIOBdCGuUhMcMKHIbOjXnWHJg0c/EPKFWUky9dhoatbGcQ
-         JAyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762513110; x=1763117910;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DexNAiPrUqW+UF+u1s34KGk1K6Hek62QKMP3UTIAgww=;
-        b=rYuM4y20gxbLQhc1yjYY+fYW6ioebGmoCxYDFggAvLdk6xa6LpF6NZCcwjHPPpNV19
-         F+4Ef8hRX5IChda0DGGxqQFgJ1wy18mkVdZ6AaYaYwks6DjK24Atgj59aXcduYefMt7q
-         J1BONtDMEFkeBbyLQFdylberOTh1T/UwarReVtOZQFQeGNurowJfZ8orSrNROzkRPRmm
-         tm3b096EsKvd4qjyY/wNCzh/O1swKskSP7hAB+9bogoVmA46gFr7iDzq9TDEjwKC+OjV
-         4G8QFZiC9tYxgtf8S51qErWRAjtZjAtKqcnfecFSLj4vZSFRqba64ELmzootP/hVhqWu
-         5yMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUz3y/A+B9mX7VqjV9gr6XNbSSMM+0LCSZsVnOeJon1nRKNoIPsqrW+O9hPNYB3ZHeJjDNzSyv5eKlnFts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS39bj0SEdEtEEAq1CcJ+NtfF+vSN3XcXrgnKQG+8p0idJPa//
-	6S9T8pxkDrHQ1/20s3+GCeCX9rfkHh7x0s9tb8YXvPU4bKMC1lnENXFrL/LlKPbx7TU=
-X-Gm-Gg: ASbGncvzqfxFHDJN0sszLxTp9usn1cPXItKLm7X6sd0nIaMybXSHYTio1TVVmt7ROxD
-	RLU+d8L5p/4mMEale62Vt/nxFm6tzM75YIbPyQVQEekvf+/wPX37cwZw1uKdhEimRTPiPak4JrG
-	XVFb2XxZmm2iLNnU6kGG942GA0qkbbK5TeLIfwE6wrB6HzP1o9fo+FZbMKDbgaMobT4T/vAAFXq
-	gQFoyYc2jFEiYJlB3zXgx+68o2j8qy+87/4kjvPJOjhAjf0cOogYkVBe/Yu+/iH+Tvi4vXCA7CN
-	YI8YDHt2vxmh4mPd5qtnybqB0M6clfpnAwbcj46Qei+iD3esEl7DOfLq1RCaKggV/BgjpSCjlvg
-	rtgqvFZSsmNDMXHJfDhIwqFNKAxeZU1cHHlIo8WE5tJeQXUm3mFpyQRaFViIvZnKDJBDGvj8Q7o
-	y05FYxYK42LMc=
-X-Google-Smtp-Source: AGHT+IEJRldSXfFeXYiKiO8G4I9T3YZohbEK+rJmYtj24ejpVXVcPSIEgmad6H3oZH3lB6Oe138a5Q==
-X-Received: by 2002:a53:acd8:0:10b0:63f:bca7:ffb2 with SMTP id 956f58d0204a3-640c42a6a83mr1880057d50.33.1762513109848;
-        Fri, 07 Nov 2025 02:58:29 -0800 (PST)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787b13f3f9esm16732927b3.15.2025.11.07.02.58.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 02:58:28 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 8278E42BA568; Fri, 07 Nov 2025 17:58:24 +0700 (WIB)
-Date: Fri, 7 Nov 2025 17:58:23 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH] [v2] Documentation: Provide guidelines for
- tool-generated content
-Message-ID: <aQ3Qz4QuUX1S2her@archie.me>
-References: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
+	s=arc-20240116; t=1762513157; c=relaxed/simple;
+	bh=kdWeWBgUf0wyaYQEnVstrciUXL18zLa6wdRttuCi1ds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GowtPqe0JSWlgbXwivhbbQRVG9zIlJqq1rzWEk6905CJvqn1qznCoaR8qdMtQWBv1Oyrxs5Tq6VONfMC8xU5dY0C7FtVhvPZ8+RdTgDKeeCwNAnWQpREZuZme7OyxeICOawtelDNXKtbzDKD5gQlBclV8gSSxgvmmGMxIXvUf24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 64AC31516;
+	Fri,  7 Nov 2025 02:59:06 -0800 (PST)
+Received: from [10.57.72.216] (unknown [10.57.72.216])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 117533F63F;
+	Fri,  7 Nov 2025 02:59:11 -0800 (PST)
+Message-ID: <5324fd5e-aa65-40db-932c-41475723463e@arm.com>
+Date: Fri, 7 Nov 2025 10:59:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0+GUtBQGmRh9mhO6"
-Content-Disposition: inline
-In-Reply-To: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] drm/panthor: Support 64-bit endpoint_req register
+ for Mali-G1
+To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
+Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+References: <20251027161334.854650-1-karunika.choo@arm.com>
+ <20251027161334.854650-8-karunika.choo@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251027161334.854650-8-karunika.choo@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 27/10/2025 16:13, Karunika Choo wrote:
+> Add support for the 64-bit endpoint_req register introduced in CSF v4.0+
+> GPUs. Unlike a simple register widening, the 64-bit variant occupies the
+> next 64 bits after the original 32-bit field, requiring
+> version-dependent access.
+> 
+> This change introduces helper functions to read, write, and update the
+> endpoint_req register, ensuring correct handling on both pre-v4.0 and
+> v4.0+ firmwares.
+> 
+> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
 
---0+GUtBQGmRh9mhO6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-On Wed, Nov 05, 2025 at 03:15:14PM -0800, Dave Hansen wrote:
-> +Out of Scope
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> ---
+> v2:
+>  * Wrap the CSG_IFACE_VERSION checks for v4.0.0 with
+>    panthor_fw_has_64bit_ep_req().
+>  * Removed wrongly included code from previous patch.
+>  * Reordered CSG_EP_REQ_PRIORITY_GET() and CSG_EP_REQ_PRIORITY() to
+>    reuse CSG_EP_REQ_PRIORITY_MASK definition.
+>  * Updated panthor_fw_csg_endpoint_req_*() functions to accept CSG iface
+>    structure instead of a CSG id.
+>  * Update endpoint_req variables to u64.
+>  * Minor readability and code quality fixes.
+> ---
+>  drivers/gpu/drm/panthor/panthor_fw.c    | 36 +++++++++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_fw.h    | 25 +++++++++++++++--
+>  drivers/gpu/drm/panthor/panthor_sched.c | 21 +++++++++------
+>  3 files changed, 72 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+> index fb1f69ef76fb..2ab974c9a09d 100644
+> --- a/drivers/gpu/drm/panthor/panthor_fw.c
+> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
+> @@ -325,6 +325,42 @@ static bool panthor_fw_has_glb_state(struct panthor_device *ptdev)
+>  	return glb_iface->control->version >= CSF_IFACE_VERSION(4, 1, 0);
+>  }
+> 
+> +static bool panthor_fw_has_64bit_ep_req(struct panthor_device *ptdev)
+> +{
+> +	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
 > +
-> +These guidelines do not apply to tools that make trivial tweaks to
-> +preexisting content. Nor do they pertain to AI tooling that helps with
-> +menial tasks. Some examples:
+> +	return glb_iface->control->version >= CSF_IFACE_VERSION(4, 0, 0);
+> +}
 > +
-> + - Spelling and grammar fix ups, like rephrasing to imperative voice
-> + - Typing aids like identifier completion, common boilerplate or
-> +   trivial pattern completion
-> + - Purely mechanical transformations like variable renaming
-> + - Reformatting, like running Lindent, ``clang-format`` or
-> +   ``rust-fmt``
+> +u64 panthor_fw_csg_endpoint_req_get(struct panthor_device *ptdev,
+> +				    struct panthor_fw_csg_iface *csg_iface)
+> +{
+> +	if (panthor_fw_has_64bit_ep_req(ptdev))
+> +		return csg_iface->input->endpoint_req2;
+> +	else
+> +		return csg_iface->input->endpoint_req;
+> +}
+> +
+> +void panthor_fw_csg_endpoint_req_set(struct panthor_device *ptdev,
+> +				     struct panthor_fw_csg_iface *csg_iface, u64 value)
+> +{
+> +	if (panthor_fw_has_64bit_ep_req(ptdev))
+> +		csg_iface->input->endpoint_req2 = value;
+> +	else
+> +		csg_iface->input->endpoint_req = lower_32_bits(value);
+> +}
+> +
+> +void panthor_fw_csg_endpoint_req_update(struct panthor_device *ptdev,
+> +					struct panthor_fw_csg_iface *csg_iface, u64 value,
+> +					u64 mask)
+> +{
+> +	if (panthor_fw_has_64bit_ep_req(ptdev))
+> +		panthor_fw_update_reqs64(csg_iface, endpoint_req2, value, mask);
+> +	else
+> +		panthor_fw_update_reqs(csg_iface, endpoint_req, lower_32_bits(value),
+> +				       lower_32_bits(mask));
+> +}
+> +
+>  /**
+>   * panthor_fw_conv_timeout() - Convert a timeout into a cycle-count
+>   * @ptdev: Device.
+> diff --git a/drivers/gpu/drm/panthor/panthor_fw.h b/drivers/gpu/drm/panthor/panthor_fw.h
+> index a19ed48b2d0b..fbdc21469ba3 100644
+> --- a/drivers/gpu/drm/panthor/panthor_fw.h
+> +++ b/drivers/gpu/drm/panthor/panthor_fw.h
+> @@ -167,10 +167,11 @@ struct panthor_fw_csg_input_iface {
+>  #define CSG_EP_REQ_TILER(x)			(((x) << 16) & GENMASK(19, 16))
+>  #define CSG_EP_REQ_EXCL_COMPUTE			BIT(20)
+>  #define CSG_EP_REQ_EXCL_FRAGMENT		BIT(21)
+> -#define CSG_EP_REQ_PRIORITY(x)			(((x) << 28) & GENMASK(31, 28))
+>  #define CSG_EP_REQ_PRIORITY_MASK		GENMASK(31, 28)
+> +#define CSG_EP_REQ_PRIORITY(x)			(((x) << 28) & CSG_EP_REQ_PRIORITY_MASK)
+> +#define CSG_EP_REQ_PRIORITY_GET(x)		(((x) & CSG_EP_REQ_PRIORITY_MASK) >> 28)
+>  	u32 endpoint_req;
+> -	u32 reserved2[2];
+> +	u64 endpoint_req2;
+>  	u64 suspend_buf;
+>  	u64 protm_suspend_buf;
+>  	u32 config;
+> @@ -464,6 +465,16 @@ struct panthor_fw_global_iface {
+>  		spin_unlock(&(__iface)->lock); \
+>  	} while (0)
+> 
+> +#define panthor_fw_update_reqs64(__iface, __in_reg, __val, __mask) \
+> +	do { \
+> +		u64 __cur_val, __new_val; \
+> +		spin_lock(&(__iface)->lock); \
+> +		__cur_val = READ_ONCE((__iface)->input->__in_reg); \
+> +		__new_val = (__cur_val & ~(__mask)) | ((__val) & (__mask)); \
+> +		WRITE_ONCE((__iface)->input->__in_reg, __new_val); \
+> +		spin_unlock(&(__iface)->lock); \
+> +	} while (0)
+> +
+>  struct panthor_fw_global_iface *
+>  panthor_fw_get_glb_iface(struct panthor_device *ptdev);
+> 
+> @@ -473,6 +484,16 @@ panthor_fw_get_csg_iface(struct panthor_device *ptdev, u32 csg_slot);
+>  struct panthor_fw_cs_iface *
+>  panthor_fw_get_cs_iface(struct panthor_device *ptdev, u32 csg_slot, u32 cs_slot);
+> 
+> +u64 panthor_fw_csg_endpoint_req_get(struct panthor_device *ptdev,
+> +				    struct panthor_fw_csg_iface *csg_iface);
+> +
+> +void panthor_fw_csg_endpoint_req_set(struct panthor_device *ptdev,
+> +				     struct panthor_fw_csg_iface *csg_iface, u64 value);
+> +
+> +void panthor_fw_csg_endpoint_req_update(struct panthor_device *ptdev,
+> +					struct panthor_fw_csg_iface *csg_iface, u64 value,
+> +					u64 mask);
+> +
+>  int panthor_fw_csg_wait_acks(struct panthor_device *ptdev, u32 csg_id, u32 req_mask,
+>  			     u32 *acked, u32 timeout_ms);
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index 0cc9055f4ee5..d6f5efc10312 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -1139,11 +1139,13 @@ csg_slot_sync_priority_locked(struct panthor_device *ptdev, u32 csg_id)
+>  {
+>  	struct panthor_csg_slot *csg_slot = &ptdev->scheduler->csg_slots[csg_id];
+>  	struct panthor_fw_csg_iface *csg_iface;
+> +	u64 endpoint_req;
+> 
+>  	lockdep_assert_held(&ptdev->scheduler->lock);
+> 
+>  	csg_iface = panthor_fw_get_csg_iface(ptdev, csg_id);
+> -	csg_slot->priority = (csg_iface->input->endpoint_req & CSG_EP_REQ_PRIORITY_MASK) >> 28;
+> +	endpoint_req = panthor_fw_csg_endpoint_req_get(ptdev, csg_iface);
+> +	csg_slot->priority = CSG_EP_REQ_PRIORITY_GET(endpoint_req);
+>  }
+> 
+>  /**
+> @@ -1303,6 +1305,7 @@ csg_slot_prog_locked(struct panthor_device *ptdev, u32 csg_id, u32 priority)
+>  	struct panthor_csg_slot *csg_slot;
+>  	struct panthor_group *group;
+>  	u32 queue_mask = 0, i;
+> +	u64 endpoint_req;
+> 
+>  	lockdep_assert_held(&ptdev->scheduler->lock);
+> 
+> @@ -1329,10 +1332,12 @@ csg_slot_prog_locked(struct panthor_device *ptdev, u32 csg_id, u32 priority)
+>  	csg_iface->input->allow_compute = group->compute_core_mask;
+>  	csg_iface->input->allow_fragment = group->fragment_core_mask;
+>  	csg_iface->input->allow_other = group->tiler_core_mask;
+> -	csg_iface->input->endpoint_req = CSG_EP_REQ_COMPUTE(group->max_compute_cores) |
+> -					 CSG_EP_REQ_FRAGMENT(group->max_fragment_cores) |
+> -					 CSG_EP_REQ_TILER(group->max_tiler_cores) |
+> -					 CSG_EP_REQ_PRIORITY(priority);
+> +	endpoint_req = CSG_EP_REQ_COMPUTE(group->max_compute_cores) |
+> +		       CSG_EP_REQ_FRAGMENT(group->max_fragment_cores) |
+> +		       CSG_EP_REQ_TILER(group->max_tiler_cores) |
+> +		       CSG_EP_REQ_PRIORITY(priority);
+> +	panthor_fw_csg_endpoint_req_set(ptdev, csg_iface, endpoint_req);
+> +
+>  	csg_iface->input->config = panthor_vm_as(group->vm);
+> 
+>  	if (group->suspend_buf)
+> @@ -2230,9 +2235,9 @@ tick_ctx_apply(struct panthor_scheduler *sched, struct panthor_sched_tick_ctx *c
+>  				continue;
+>  			}
+> 
+> -			panthor_fw_update_reqs(csg_iface, endpoint_req,
+> -					       CSG_EP_REQ_PRIORITY(new_csg_prio),
+> -					       CSG_EP_REQ_PRIORITY_MASK);
+> +			panthor_fw_csg_endpoint_req_update(ptdev, csg_iface,
+> +							   CSG_EP_REQ_PRIORITY(new_csg_prio),
+> +							   CSG_EP_REQ_PRIORITY_MASK);
+>  			csgs_upd_ctx_queue_reqs(ptdev, &upd_ctx, csg_id,
+>  						csg_iface->output->ack ^ CSG_ENDPOINT_CONFIG,
+>  						CSG_ENDPOINT_CONFIG);
+> --
+> 2.49.0
+> 
 
-Manually fixing checkpatch warnings is also out-of-scope?
-
-Confused...=20
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---0+GUtBQGmRh9mhO6
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaQ3QxwAKCRD2uYlJVVFO
-o+6XAP9eIWREFzsvbOkD/DBnyaV5DLANoIwaFQ2na3/vPk+W1gD/ZUT/SJ3y/AR3
-lcAHsrSAVDbIMMJ/8Tz37JS6K4zH/w4=
-=VU6W
------END PGP SIGNATURE-----
-
---0+GUtBQGmRh9mhO6--
 
