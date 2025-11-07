@@ -1,199 +1,210 @@
-Return-Path: <linux-kernel+bounces-892306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25AFC44D16
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:05:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEAA1C44EB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:35:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 333F83462CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:05:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C73B4E54CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E00224AE8;
-	Mon, 10 Nov 2025 03:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F7825D527;
+	Mon, 10 Nov 2025 04:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3N87p9e"
-Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lexdT/F2"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A7415ECCC
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127FF21B9C0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762743926; cv=none; b=hDZ8ZPjK7dt1NtpZDSADadChRQ/oDITeJR23RgyeLXrjR7o4uceQRDeYt6XhBCD6Wz73TEYTztd9jr3rvByO/msK0qh6xgYyVPNGF7ftQcUIy4SBbuOIrlPNzpjteeR6D/9Cz0doNWEu+q/I7PkUNywgmALov6r7SHZEY+XdUHs=
+	t=1762749312; cv=none; b=YzUXWdaUFK12Icw5szdU4d4nO1fqHlmnQmrClpJCZgPDQ47ENpSIjM+yEAOAY7s1cL0qzYfANYGVWOw19BFBc9XgEd8jFnFETeplmnf/tJRJHL9H8w1CvonofvWVwSZFfChQ+v3w/y53WZrQDdmak7pxjiahpW1uSb9mLriIkhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762743926; c=relaxed/simple;
-	bh=wTJLcSny+ozUUME7E/75yHBuP85KLM3WHxpiqiIjJn4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LY6B69J2AWsmusIPud6wLirNPhrj2pRqslbjlb9XtOWfFX7nERvFVogMsjHhqOccLXKEBY6b2VWhPFIGg0SeRLBbywdPT4kwANwnc2AROs1Plbr3fovgtbn3zksiMLstJPPHWRzfV9KZhoRkkfPKMZ4DBRB5xItWJ5vUX+25ptY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3N87p9e; arc=none smtp.client-ip=209.85.215.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-ba4874edb5dso1367539a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 19:05:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762743924; x=1763348724; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4yYMpclIl4jEd0u1Ey8OQI5PQ64kH+ym08sCMeZtw38=;
-        b=d3N87p9emPaBiO2hTk4LKpfvK5ukkzB3sCAn3j15RvTIIJvB+1ZQvHax+TeEu5yiaj
-         lpuYeBA0/s/OLCsSc/A3gvFqaOEWZfUcIpvLHqam4IB8XgW3SxcEmX1sr26MsJGVmAU4
-         KvfFfmt/ukag2S71EjnXMDuy6PZmJojlE3zvls/qy3PrdGWCnXXr6nfjV4H+7NZtuogv
-         Ms2POLN73eUtisX8Y3kfSwgrg/ggxyLZewm8rPE8mnqkZlEk1fpPPvnPpWEAf/nC8wBD
-         BVevDJyFSAsIdG685z7tOAZma03t2dXT3kQhkI9MJgGN7+vQXeOvhq0Dk1st2e+986+6
-         Jq2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762743924; x=1763348724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4yYMpclIl4jEd0u1Ey8OQI5PQ64kH+ym08sCMeZtw38=;
-        b=NAK7xcqmcqJeQFN7g4G1AyAZYu7ntWxf6Zlh4GT+8aVW5d2yrU0pw4k1tOoiv0/7Et
-         JWhcoc0R3T95BKbmwyk+MDRB3FvezUrmee3P0lXZFXDrQafHKKzaTR5dROFBrAtEzwcb
-         4kMV9bNutFIoS/uk0LaBqSvOgAvJvTD5fsHUhgkJerTAH6n5N5IrY2/zd1y3rnFHRDlU
-         X5Dng1cnwvgm1p8j3VzmS/67WJo68dXOjpy6pD3Az+TPZnisrEG++kX5SjjLxNkBl7F9
-         A0g1WuXdw0Gg5+tJc2wfnhjEd9N74111wAIC+r7ZyZoLV6Ec60N+/yl+yfrPMAjALB/V
-         CYyA==
-X-Forwarded-Encrypted: i=1; AJvYcCV59nbC6njQr2pJ2cdsdpmBAXLP2mrs/CS+N+ITVJRIunM/MYjR0esOi1udN39ydpH0XU92uY9EXh2GL6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0ucngdAuCV5j37VygMyCVzUR51OUTifuZKytrG4FuNej5f79X
-	TdW94D/wsR3dKFbj+wBYs0RStUP3/c2SOaQlQgUPIcqaqyZgO62yQhnyjCvHcLUtAv9ydcqzy/u
-	N77OziBmagf1g5cJ3XmK4DlFGfQ9SxFY=
-X-Gm-Gg: ASbGncvazZjgiyuzEc1SNw81OgXUztPSGWG06MnZxpBwi7W6S2HZcKO3Fec4MQLDIWk
-	4TovNYhjBVdOEMtHAuGkdj7tI3iKMm+Dr8YSGn626xFsLMsFGSMndvpaZ/BXAmltqgJdbdjXVi9
-	7cidYXtlDGexaf8FDeeRY1ALG396UnT3jlRegdO/Cum/a0ElCrDgs3xx7TqNy7TTXmzokq8MAh5
-	CNsJqGgV+l2Y4MEPzspk4shgkSY4h5Z++9J2JF0pv4MHTGDDC8kP5Mo66EcRBq4WaFfuwFz
-X-Google-Smtp-Source: AGHT+IG9t/HeeWYayeXm7KhvuvGT/UvEbqynFjT+m1ly5m9KjtfVY7CXLEedW55ZpxYxwEkCH/we+ZEI/e9q7ZnAO9E=
-X-Received: by 2002:a17:902:e5cb:b0:295:b7a3:30e6 with SMTP id
- d9443c01a7336-297e562871cmr87238345ad.18.1762743924342; Sun, 09 Nov 2025
- 19:05:24 -0800 (PST)
+	s=arc-20240116; t=1762749312; c=relaxed/simple;
+	bh=qxQcWFEZDKCs4Qp5/D2p72QlkhzRvP9ZQzqijavBSkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=CjE2Lt0hf2NHZh8cVTiDTwwcPT4axPqhmvVb3cCHjEWRt+8Wwa68pdezemBVlmxrFyk3MBpxzIoD9vOYHmrdGy9LUDVZpkHvmz/o6utkUF49B9+Dxmyd8Ui+MVqt7ewvFK4v7eOxPmizUw9EnBu273AyoT3ldDJWrTlial3oi+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lexdT/F2; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251110043502epoutp0246f89f22c339d7c39644deedc8cac692~2iyaqm4Xl2087420874epoutp02v
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:35:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251110043502epoutp0246f89f22c339d7c39644deedc8cac692~2iyaqm4Xl2087420874epoutp02v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1762749302;
+	bh=CmNfyZ8B/JPUeYZvEfmYdeSwWDFaPBDrKgPgdjjzBVA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lexdT/F24ogtLPrGWO/wlopqjnK+zpvTV+zEqTZZ9J39WZ/SzF84X4GaubWF6z8Pm
+	 wFnVzlBrrRgEksm0rOkZlt6MoUZOnKcKU+ehLoBuK0KrqJBth6lm6uj/CazKxQ9SXo
+	 6R68I4ZdPVOiV32hZt1uMFCrYa5AcYGDwqZeXbxc=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20251110043501epcas5p3c73febf60560742c7e60fec9d89395bf~2iyaJ8NHm2710327103epcas5p3j;
+	Mon, 10 Nov 2025 04:35:01 +0000 (GMT)
+Received: from epcpadp1new (unknown [182.195.40.141]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4d4cK15SW0z2SSKj; Mon, 10 Nov
+	2025 04:35:01 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251107123926epcas5p11068433443badb6b8f19acbca16ce5cc~1udf7K1ex1256612566epcas5p1P;
+	Fri,  7 Nov 2025 12:39:26 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251107123919epsmtip1476716405b7dd6adf419018f5de5d3e6~1udZ3ic002787027870epsmtip1y;
+	Fri,  7 Nov 2025 12:39:19 +0000 (GMT)
+Date: Fri, 7 Nov 2025 18:09:12 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V3 13/20] cxl/mem: Refactor cxl pmem region
+ auto-assembling
+Message-ID: <1983025922.01762749301758.JavaMail.epsvc@epcpadp1new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022030840.956589-1-Wenhua.Lin@unisoc.com>
- <CAAfSe-uq6GszSLgtM+UBuwJ6V1Bt0_1Ard8cb6e9MMCsdpJPqw@mail.gmail.com>
- <CAB9BWhdKd93kJxPJv10X5uZ00O8d5NugoehX3_QtjmXQOMhDig@mail.gmail.com> <CAAfSe-sTUC=mW-iO+NK+mq2i8GEv1RaNPvCGgQwb23dOFBigXQ@mail.gmail.com>
-In-Reply-To: <CAAfSe-sTUC=mW-iO+NK+mq2i8GEv1RaNPvCGgQwb23dOFBigXQ@mail.gmail.com>
-From: wenhua lin <wenhua.lin1994@gmail.com>
-Date: Mon, 10 Nov 2025 11:05:13 +0800
-X-Gm-Features: AWmQ_blFNG8JuiLc6Z-BMdaeb5m-Y-A3PFL8UNxEpciVtO2pvsePFvRy-pkrT-0
-Message-ID: <CAB9BWhdHkkm6YYhdZJ2NdaJ6GebZyRi3SN9GLstQv1R7HLe4mQ@mail.gmail.com>
-Subject: Re: [PATCH] serial: sprd: Return -EPROBE_DEFER when uart clock is not ready
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Wenhua Lin <Wenhua.Lin@unisoc.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Cixi Geng <cixi.geng@linux.dev>, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Xiongpeng Wu <xiongpeng.wu@unisoc.com>, Zhaochen Su <Zhaochen.Su@unisoc.com>, 
-	Zhirong Qiu <Zhirong.Qiu@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <361d0e84-9362-4389-a909-37878910b90f@intel.com>
+X-CMS-MailID: 20251107123926epcas5p11068433443badb6b8f19acbca16ce5cc
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----fevm_dXp0U54qslEOU8oiqO.VnigTQz743t4hqwhjBnK2JlQ=_a59d6_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250917134157epcas5p1b30306bc8596b7b50548ddf3683c3b97
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+	<CGME20250917134157epcas5p1b30306bc8596b7b50548ddf3683c3b97@epcas5p1.samsung.com>
+	<20250917134116.1623730-14-s.neeraj@samsung.com>
+	<c7b41eb6-b946-4ac0-9ddd-e75ba4ceb636@intel.com>
+	<1296674576.21759726502325.JavaMail.epsvc@epcpadp1new>
+	<361d0e84-9362-4389-a909-37878910b90f@intel.com>
 
-On Fri, Oct 24, 2025 at 9:42=E2=80=AFAM Chunyan Zhang <zhang.lyra@gmail.com=
-> wrote:
->
-> Hi Wenhua,
->
-> On Thu, 23 Oct 2025 at 10:10, wenhua lin <wenhua.lin1994@gmail.com> wrote=
-:
-> >
-> > On Wed, Oct 22, 2025 at 2:55=E2=80=AFPM Chunyan Zhang <zhang.lyra@gmail=
-.com> wrote:
-> > >
-> > > On Wed, 22 Oct 2025 at 11:09, Wenhua Lin <Wenhua.Lin@unisoc.com> wrot=
-e:
-> > > >
-> > > > In sprd_clk_init(), when devm_clk_get() returns -EPROBE_DEFER
-> > > > for either uart or source clock, we should propagate the
-> > > > error instead of just warning and continuing with NULL clocks.
-> > > >
-> > > > Currently the driver only emits a warning when clock acquisition
-> > > > fails and proceeds with NULL clock pointers. This can lead to
-> > > > issues later when the clocks are actually needed. More importantly,
-> > > > when the clock provider is not ready yet and returns -EPROBE_DEFER,
-> > > > we should return this error to allow deferred probing.
-> > > >
-> > > > This change adds explicit checks for -EPROBE_DEFER after both:
-> > > > 1. devm_clk_get(uport->dev, uart)
-> > > > 2. devm_clk_get(uport->dev, source)
-> > > >
-> > > > When -EPROBE_DEFER is encountered, the function now returns
-> > > > -EPROBE_DEFER to let the driver framework retry probing
-> > > > later when the clock dependencies are resolved.
-> > > >
-> > > > Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
-> > > > ---
-> > > >  drivers/tty/serial/sprd_serial.c | 6 ++++++
-> > > >  1 file changed, 6 insertions(+)
-> > > >
-> > > > diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/=
-sprd_serial.c
-> > > > index 8c9366321f8e..092755f35683 100644
-> > > > --- a/drivers/tty/serial/sprd_serial.c
-> > > > +++ b/drivers/tty/serial/sprd_serial.c
-> > > > @@ -1133,6 +1133,9 @@ static int sprd_clk_init(struct uart_port *up=
-ort)
-> > > >
-> > > >         clk_uart =3D devm_clk_get(uport->dev, "uart");
-> > > >         if (IS_ERR(clk_uart)) {
-> > > > +               if (PTR_ERR(clk_uart) =3D=3D -EPROBE_DEFER)
-> > > > +                       return -EPROBE_DEFER;
-> > > > +
-> > >
-> > > You are making this clock mandatory, sprd_serial driver could work as
-> > > serial ports for logs output without this "uart" clock.
-> >
-> > Hi chunyan:
-> >    Thank you very much for your review.
-> >    This clock is actually mandatory now=EF=BC=8Csome SPRD project use d=
-efault 26M clock,
-> >    some new SPRD project use default 24M clock.  If driver can't parse
->
-> Oh I see, then you can set a different default clock according to the
-> compatible string, that's saying make SPRD_DEFAULT_SOURCE_CLK to be an
-> element of "of_device_id.data".
->
-> Thanks,
-> Chunyan
+------fevm_dXp0U54qslEOU8oiqO.VnigTQz743t4hqwhjBnK2JlQ=_a59d6_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-Hi chunyan:
-   This is not the current issue; it will be considered in future modificat=
-ions.
-   The main reason for this change is that the UART driver is
-built-in, while the CLK driver is loaded as a module (ko).
-   There may be a situation where the UART driver is loaded first.
-   If an EPROBE_DEFER error occurs, the driver will return directly
-and continue waiting for the CLK driver to complete loading.
-
-Thanks
+On 06/10/25 08:55AM, Dave Jiang wrote:
 >
-> > this clock correctly,
-> >    driver will configure wrong baudrate and make the log garbled.
-> >
-> > Thanks
-> >
-> > >
-> > > >                 dev_warn(uport->dev, "uart%d can't get uart clock\n=
-",
-> > > >                          uport->line);
-> > > >                 clk_uart =3D NULL;
-> > > > @@ -1140,6 +1143,9 @@ static int sprd_clk_init(struct uart_port *up=
-ort)
-> > > >
-> > > >         clk_parent =3D devm_clk_get(uport->dev, "source");
-> > > >         if (IS_ERR(clk_parent)) {
-> > > > +               if (PTR_ERR(clk_parent) =3D=3D -EPROBE_DEFER)
-> > > > +                       return -EPROBE_DEFER;
-> > > > +
-> > > >                 dev_warn(uport->dev, "uart%d can't get source clock=
-\n",
-> > > >                          uport->line);
-> > > >                 clk_parent =3D NULL;
-> > > > --
-> > > > 2.34.1
-> > > >
+>
+>On 9/29/25 6:30 AM, Neeraj Kumar wrote:
+>> On 23/09/25 03:37PM, Dave Jiang wrote:
+>>>
+>>>
+>>> On 9/17/25 6:41 AM, Neeraj Kumar wrote:
+>>>> In 84ec985944ef3, devm_cxl_add_nvdimm() sequence was changed and called
+>>>> before devm_cxl_add_endpoint(). It's because cxl pmem region auto-assembly
+>>>> used to get called at last in cxl_endpoint_port_probe(), which requires
+>>>> cxl_nvd presence.
+>>>>
+>>>> For cxl region persistency, region creation happens during nvdimm_probe
+>>>> which need the completion of endpoint probe.
+>>>>
+>>>> In order to accommodate both cxl pmem region auto-assembly and cxl region
+>>>> persistency, refactored following
+>>>>
+>>>> 1. Re-Sequence devm_cxl_add_nvdimm() after devm_cxl_add_endpoint(). This
+>>>>    will be called only after successful completion of endpoint probe.
+>>>>
+>>>> 2. Moved cxl pmem region auto-assembly from cxl_endpoint_port_probe() to
+>>>>    cxl_mem_probe() after devm_cxl_add_nvdimm(). It gurantees both the
+>>>>    completion of endpoint probe and cxl_nvd presence before its call.
+>>>
+>>> Given that we are going forward with this implementation [1] from Dan and drivers like the type2 enabling are going to be using it as well, can you please consider converting this change to Dan's mechanism instead of creating a whole new one?
+>>>
+>>> I think the region discovery can be done via the ops->probe() callback. Thanks.
+>>>
+>>> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/commit/?h=for-6.18/cxl-probe-order&id=88aec5ea7a24da00dc92c7778df4851fe4fd3ec6
+>>>
+>>> DJ
+>>>
+>>
+>> Sure, Let me revisit this.
+>> It seems [1] is there in seperate branch "for-6.18/cxl-probe-order", and not yet merged into next, right?
+>
+>Right. I believe Smita and Alejandro are using that as well. Depending on who gets there first. We can setup an immutable branch at some point.
+>
+>[1]: https://lore.kernel.org/linux-cxl/20250822034202.26896-1-Smita.KoralahalliChannabasappa@amd.com/T/#t
+>
+>DJ
+
+Hi Dave,
+
+As per Dan's [1] newly introduced infra, Following is my understanding.
+
+Currently cxl_pci does not care about the attach state of the cxl_memdev
+because all generic memory expansion functionality can be handled by the
+cxl_core. For accelerators, the driver needs to know and perform driver
+specific initialization if CXL is available, or exectute a fallback to PCIe
+only operation.
+
+Dan's new infra is needed for CXL accelerator device drivers that need to
+make decisions about enabling CXL dependent functionality in the device, or
+falling back to PCIe-only operation.
+
+During cxl_pci_probe() we call devm_cxl_add_memdev(struct cxl_memdev_ops *ops)
+where function pointer as ops gets registered which gets called in cxl_mem_probe()
+using cxlmd->ops->probe()
+
+The probe callback runs after the port topology is successfully attached for
+the given memdev.
+
+So to use this infra we have to pass cxl_region_discovery() as ops parameter
+of devm_cxl_add_memdev() getting called from cxl_pci_probe().
+  
+In this patch-set cxl_region_discovery() signature is different from cxlmd->ops->probe()
+
+    {{{
+	void cxl_region_discovery(struct cxl_port *port)
+	{
+         	device_for_each_child(&port->dev, NULL, discover_region);
+	}
+
+	struct cxl_memdev_ops {
+	        int (*probe)(struct cxl_memdev *cxlmd);
+	};
+    }}}
+
+Even after changing the signature of cxl_region_discovery() as per cxlmd->ops->probe()
+may create problem as when the ops->probe() fails, then it will halts the probe sequence
+of cxl_pci_probe()
+
+It is because discover_region() may fail if two memdevs are participating into one region
+
+Also, region auto assembly is mandatory functionality which creates region
+if (cxled->state == CXL_DECODER_STATE_AUTO) gets satisfied.
+
+Currently region auto assembly (added by a32320b71f085) happens after successfull
+enumeration of endpoint decoders at cxl_endpoint_port_probe(), which I have moved at
+cxl_mem_probe() after devm_cxl_add_nvdimm() which prepares cxl_nvd infra required by it.
+
+As discussed in [1], this patch-set does the movement of auto region assembly from
+cxl_endpoint_port_probe() to cxl_mem_probe() and resolved the conflicting dependency
+of cxl_nvd infra required by both region creation using LSA and auto region assembly.
+
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/commit/?h=for-6.18/cxl-probe-order&id=88aec5ea7a24da00dc92c7778df4851fe4fd3ec6 
+[2]: https://lore.kernel.org/linux-cxl/1931444790.41752909482841.JavaMail.epsvc@epcpadp2new/
+
+Please let me know if my understanding is correct or I am missing something?
+
+
+Regards,
+Neeraj
+
+
+------fevm_dXp0U54qslEOU8oiqO.VnigTQz743t4hqwhjBnK2JlQ=_a59d6_
+Content-Type: text/plain; charset="utf-8"
+
+
+------fevm_dXp0U54qslEOU8oiqO.VnigTQz743t4hqwhjBnK2JlQ=_a59d6_--
+
 
