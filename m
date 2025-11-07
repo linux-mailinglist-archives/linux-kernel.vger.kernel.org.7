@@ -1,208 +1,176 @@
-Return-Path: <linux-kernel+bounces-889619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B62AC3E0E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:54:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE105C3E0F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:57:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEDBA188639A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:55:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CAC91887D99
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BFF2EAD09;
-	Fri,  7 Nov 2025 00:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990A32DF6F7;
+	Fri,  7 Nov 2025 00:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="cOwvxIaF"
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCswt0EE"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEFD2765C4;
-	Fri,  7 Nov 2025 00:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC9026CE02
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762476889; cv=none; b=cfbwKQeH3NhUDp0b7f/Nvv61LW6q2ZX9qggYh3aGH8cml8e8foloo+AeufikxE3bskXrU+7VIst5HJjpuhKwyFUMutPIH5Dddd8Ac4TtpS+hJc2DOL5VydEVZKVyJ0/lW/xSgvLGVXn+SA5h0T2zo4LrnVSBn1QNsETjQcTW0Uc=
+	t=1762477066; cv=none; b=kgmHddtRtrVocDQfGqlCHMHjlnmiExQ33T61kAAADPuBInmQlPWCbVbrG4xnrREY7cFRV3yeTHdHLHUYpEr3BWRQJmqTWWTbx8R2TD/0I0AaY4SfzrYF2DW36wl6vbgvOPlShDRUGUoztIT3tClblzOmPrWbIyxoUfWgX0jN6pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762476889; c=relaxed/simple;
-	bh=AalEmbiH+w8UnS5jXrzbNpRUW084oOmylpSbo8qID4o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oMXC26EMqiPkt/PiRRZnR+LvmPIu/1hNXNiA8E0LhiPNhzRbq5dermuGmq1JYOw/Zd2LDF7HWf7tfAroZ6lnt2SyEQZjMkGCtKbsoF3EqR7JmVNmoupQWURxyV5Yro5jG564CcV+w66uxPIQui/bTunIj/7xOZSBUC+WNE3r+wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=cOwvxIaF; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A6Lg71e2475800;
-	Fri, 7 Nov 2025 00:54:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=YsL2DerlqsXU5xZbFOu83W1kPeiEkYggTA+Rau7FWFg=; b=
-	cOwvxIaFmUhjVglFQ/rd548c3NYoZ7XkkdyUhnr9IcdRX7bn2YZpn42AgGOxY5wA
-	hkkS9qC5Kf5CZI049okLenb4L6+p0TDTWT5MN2p/h0Jy+ZagSoxGadIdMMINMW4V
-	MG6qX7LaAaEzIxmG+JrCxxHtefpOKT5WLmMsL2HI6qETinnGA3z/XpfJrkC1oGl+
-	jpKiKAspENxrljQbN6FMdKnY2SlJwqXOWiELNtb6MY6bcbjIduBsSd1BnuJDnNXJ
-	vIoydvWK5Wen1CCjKHaM9P5NNC58ECNQ5Gn5t1wAunU0dbqBdMJCR4Pm0okMzm/m
-	BOg9yf2HecjdP+7FWPoz9g==
-Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4a8b4ctpkn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 07 Nov 2025 00:54:24 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Thu, 6 Nov 2025 16:54:23 -0800
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Thu, 6 Nov 2025 16:54:20 -0800
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <tiwai@suse.de>
-CC: <hdanton@sina.com>, <linux-kernel@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <lizhi.xu@windriver.com>, <perex@perex.cz>,
-        <syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH] ALSA: usb-audio: Prevent urb from writing out of bounds
-Date: Fri, 7 Nov 2025 08:54:20 +0800
-Message-ID: <20251107005420.3537826-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <87h5v7ru58.wl-tiwai@suse.de>
-References: <87h5v7ru58.wl-tiwai@suse.de>
+	s=arc-20240116; t=1762477066; c=relaxed/simple;
+	bh=QIx6rKMBFfDiS4HvXP04MT76FwtFqaWP2qYF1ZDThYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N5McYzFF/S6lX3XgCdimOHcsPDPTVb2KNxn6weIMMVaRNml/o61PT2G7YV8gSJBJ8rFi5bPMxJ/+R3fboCUTMCYN/SU6hez/dk1RtsZl71R4schGmx4pXkQWZt1KiWuEBW/dYmz5eqpfXXneC8YpWUhUEpLO1LnIluj+FZuVTUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCswt0EE; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8b22b1d3e7fso22599385a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:57:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762477053; x=1763081853; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AmTmAuWcZZ8TrHlA0PNPFsEDtNa6QN4lB5lfJtGBXPQ=;
+        b=XCswt0EEjW91IQUjsE6B0RaR0qEti4w3ukxxGi7xg1IPt0ad1+TbTSMf+2/gfvTIkD
+         DUia/NPO/8SZOqhBS6PfYCa3bQPXR6mV9jb5YVovpRRpfWieaSgc6BQUVGO8Df71RzJS
+         es7n4stLPdSbVLFCPuVcrQZYs3B5PDtIJPmUCjTIUKJ8UOwBbhI0w7Tg1maU9XhoHESg
+         M9rIOS34rjtIzcKE0+aP3nyjCJLta8AV6Ef99Hjlkdzx5FcS1aU1rv0kBI+8PzrSRJvd
+         NHChOPsniQtkA8qw6MYPEQ9HhjErxXOgm+qIKsG89YBLZkEhzspGrSWsnkSuA/81PH32
+         mC9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762477053; x=1763081853;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AmTmAuWcZZ8TrHlA0PNPFsEDtNa6QN4lB5lfJtGBXPQ=;
+        b=kc8PnZNJxEx+oXqeTbfp+W3Tp4vQqOW/O4CjVCWMbG9exkxvj/eALR/jIZtwlwD41H
+         NUBBYWR0oSGpb9P6TFL0PP6gFscfdZhSkgZ0YHiNuY45q4Q+RRxA8IyfZzwmFqh2Rtfg
+         /C518N/jCzbSJ4TWvV/npocakUtGOyRW8MYWIRcQiClyLwEjgtXg2fbecHKQJ5jVHUsx
+         gN8tSBfBjeeDWig7knx34TqgqeyegAcZLr+b+sJkoAfAyqFJfp5oqr4KEi7fSrO6/U4X
+         7UhFRI+9zLB3/dQl7/Cmmj/VI1HZIDcrPfGe1/xZkacAxa1sbMdI6hBC8IGlQ0vnPE+p
+         s+NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNsRVt40jdXYLJ6l/1n9nhhLG69THX4CUxliFAfxZjpTGUY+xOJRmHa2tQH5JdkpOUIbB+tyFXENQZEq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTUoaxJDv9LnBzrtlVoe7aPXV9/8V38GPEoDE2+Bf43WULu8Zb
+	nx8jy3KNxtmJvcAarYAOTpcsYFM+gsPTA/jR/5So/9I7qhojqQx2uxOD
+X-Gm-Gg: ASbGncujoPEvhEmJmDninpXGh3wAjdEbW9kC5gZs0p8SH297xsF/hDfjIz72ptQGLzO
+	eeAFrHSZ6Eepzob8YTxA0Kvv9A5Yfoehv7Mjk6WIwF8PVwASu2gYBXP97+23Xp0rymVHuKUEGlp
+	okNJasI4Rt/K/NrKHyZjBxiRtxwSzWzqsju53g8Uvd0qFcIWLsJphDOOp0zBD4pDzPtPzGjmDhX
+	mgUnD8WOiSP7K0YkF985inOrrshELegNeFjgo0BBmVMrJiSlcwMryzzMM8DG7Edie5LK6f6vgFS
+	tWVOBh8TWuI2zsNmY6CP354CIEMsnaYpIfaEU2EH35obrFTtGaNOE3rWVx1AwaQsaYKyT0P4QOH
+	UVsMFtMsEEB+STyAmI1CLI+YniE5pq6B9Lds3gm/qd8Xd17L/BNBubFh/6tnMKvLBlGV6I/81
+X-Google-Smtp-Source: AGHT+IGSPrynqp7inqEF4hBhUuDdjVXrb1BDsz7SS+ixO0ukO9wh+YU5CvVH5IrgWRaBImngE8S1zA==
+X-Received: by 2002:a05:620a:4541:b0:88b:72c0:aaec with SMTP id af79cd13be357-8b2453689fdmr201926585a.88.1762477053268;
+        Thu, 06 Nov 2025 16:57:33 -0800 (PST)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2355e9a35sm300204985a.20.2025.11.06.16.57.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 16:57:32 -0800 (PST)
+Date: Thu, 6 Nov 2025 19:57:30 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Mitchell Levy <levymitchell0@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Benno Lossin <lossin@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Tyler Hicks <code@tyhicks.com>,
+	Allen Pais <apais@linux.microsoft.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v4 3/9] rust: percpu: Add C bindings for per-CPU variable
+ API
+Message-ID: <aQ1D-skdKLV6xmJo@yury>
+References: <20251105-rust-percpu-v4-0-984b1470adcb@gmail.com>
+ <20251105-rust-percpu-v4-3-984b1470adcb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: b8x5A2osoIiJk9QcW-QDuFFqHZktWgxn
-X-Proofpoint-GUID: b8x5A2osoIiJk9QcW-QDuFFqHZktWgxn
-X-Authority-Analysis: v=2.4 cv=M6hA6iws c=1 sm=1 tr=0 ts=690d4340 cx=c_pps
- a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8
- a=t7CeM3EgAAAA:8 a=3AuMGte_ST6wI1pK_wcA:9 a=DcSpbTIhAlouE1Uv7lRv:22
- a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22 a=poXaRoVlC6wW9_mwW8W4:22
- a=cPQSjfK2_nFv0Q5t_7PE:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDAwNCBTYWx0ZWRfX57eM7/Y1iQd2
- GceM4+7U0ngtiPNdLjFD2iq9Wikjgd6Q6DaR+9+MeC9t2aADuYuHC4gR7yAjK5g1I7uk8KTvdP0
- wxLC9fXt+hSwotFOdvNltfo2BanqrWWxlHYLaPuIW5ZWsRC+Y7M5QYZaBzLb6p/zSB5KcjWnjst
- fP3OffavyVuc6ewGVfOoW49qfBTEOawnmjb3OQMhH2gtplQn1u6JLqMmcKJvjoUxP6grTl1/ZSO
- X2s+h2VwwK7S8g11CHSFqZJgxs/ZkNEqAVeO8pNO8hPOtepy6rMpJhGCmp4gljiUPRSignxt5KL
- bOQB3JUcxe39L4WNFBJIjYpQnYZI4aDR0EAckYC3e2vbG4oVSZ3LBbJraVNYIm8debx4JFtUzlF
- 4woVLOAWT/Vsem1i2r/3jUP+cHT46w==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_05,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 impostorscore=0
- adultscore=0 spamscore=0 suspectscore=0 bulkscore=0 phishscore=0
- clxscore=1011 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511070004
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105-rust-percpu-v4-3-984b1470adcb@gmail.com>
 
-On Thu, 06 Nov 2025 17:41:07 +0100, Takashi Iwai wrote:
-> > > > > > The calculation rule for the actual data length written to the URB's
-> > > > > > transfer buffer differs from that used to allocate the URB's transfer
-> > > > > > buffer, and in this problem, the value used during allocation is smaller.
-> > > > > >
-> > > > > > This ultimately leads to write out-of-bounds errors when writing data to
-> > > > > > the transfer buffer.
-> > > > > >
-> > > > > > To prevent out-of-bounds writes to the transfer buffer, a check between
-> > > > > > the size of the bytes to be written and the size of the allocated bytes
-> > > > > > should be added before performing the write operation.
-> > > > > >
-> > > > > > When the written bytes are too large, -EPIPE is returned instead of
-> > > > > > -EAGAIN, because returning -EAGAIN might result in push back to ready
-> > > > > > list again.
-> > > > > >
-> > > > > > Based on the context of calculating the bytes to be written here, both
-> > > > > > copy_to_urb() and copy_to_urb_quirk() require a check for the size of
-> > > > > > the bytes to be written before execution.
-> > > > > >
-> > > > > > syzbot reported:
-> > > > > > BUG: KASAN: slab-out-of-bounds in copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
-> > > > > > Write of size 264 at addr ffff88801107b400 by task syz.0.17/5461
-> > > > > >
-> > > > > > Call Trace:
-> > > > > >  copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
-> > > > > >  prepare_playback_urb+0x953/0x13d0 sound/usb/pcm.c:1611
-> > > > > >
-> > > > > > Reported-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
-> > > > > > Closes: https://syzkaller.appspot.com/bug?extid=bfd77469c8966de076f7
-> > > > > > Tested-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
-> > > > > > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > > > >
-> > > > > I'm afraid that this doesn't address the root cause at all.
-> > > > > The description above sounds plausible, but not pointing to "why".
-> > > > >
-> > > > > The bytes is frames * stride, so the question is why a too large
-> > > > > frames is calculated.  I couldn't have time to check the details, but
-> > > > > there should be rather some weird condition / parameters to trigger
-> > > > > this, and we should check that at first.
-> > > > During debugging, I discovered that the value of ep->packsize[0] is 22,
-> > > > which causes the counts calculated by
-> > > > counts = snd_usb_endpoint_next_packet_size(ep, ctx, i, avail);
-> > > > to be 22, resulting in a frames value of 22 * 6 = 132;
-> > > > Meanwhile, the stride value is 2, which ultimately results in
-> > > > bytes = frames * stride = 132 * 2 = 264;
-> > > > @@ -1241,6 +1252,10 @@ static int data_ep_set_params(struct snd_usb_endpoint *ep)
-> > > > 	u->buffer_size = maxsize * u->packets;
-> > > > 	...
-> > > > 	u->urb->transfer_buffer =
-> > > >                 usb_alloc_coherent(chip->dev, u->buffer_size,
-> > > >                                    GFP_KERNEL, &u->urb->transfer_dma);
-> > > >
-> > > > Here, when calculating u->buffer_size = maxsize * u->packets;
-> > > > maxsize = 9, packets = 6, which results in only 54 bytes allocated to
-> > > > transfer_buffer;
-> > >
-> > > Hm, so the problem is rather the calculation of the buffer size.
-> > > The size sounds extremely small.  Which parameters (rates, formats,
-> > > etc) are used for achieving this?
-> > rates: 22050
-> > format: 2
-> > channels: 1
-> > /////////////////////////////
-> > stride: 2
-> > packets: 6
-> > data interval: 0
-> > frame_bits: 16
-> > >
-> > > The calculation of u->buffer_size is a bit complex, as maxsize is
-> > > adjusted in many different ways.  Is it limited due to wMaxPacketSize
-> > > setup?
-> > Yes, it's because the value of ep->maxpacksize is 9 that the maxsize
-> > value is 9.
+On Wed, Nov 05, 2025 at 03:01:15PM -0800, Mitchell Levy wrote:
+> Add bindings necessary to implement a Rust per-CPU variable API,
+> specifically per-CPU variable allocation and management of CPU
+> preemption.
 > 
-> OK, then a fix like below would work?
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
-> --- a/sound/usb/endpoint.c
-> +++ b/sound/usb/endpoint.c
-> @@ -1362,6 +1362,11 @@ int snd_usb_endpoint_set_params(struct snd_usb_audio *chip,
->  	ep->sample_rem = ep->cur_rate % ep->pps;
->  	ep->packsize[0] = ep->cur_rate / ep->pps;
->  	ep->packsize[1] = (ep->cur_rate + (ep->pps - 1)) / ep->pps;
-> +	if (ep->packsize[1] > ep->maxpacksize) {
-> +		usb_audio_dbg(chip, "Too small maxpacksize %u for rate %u / pps %u\n",
-> +			      ep->maxpacksize, ep->cur_rate, ep->pps);
-> +		return -EINVAL;
-> +	}
-> 
->  	/* calculate the frequency in 16.16 format */
->  	ep->freqm = ep->freqn;
-Of course, this fix was added after packsize[0] was assigned a value,
-and Hillf Danton has already tested it.
+> Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
 
-However, to be more precise, although both packsize[1] and packsize[0]
-exceed maxpacksize, this example is about packsize[0], so judging packsize[0]
-is more rigorous.
+Acked-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 
-BR,
-Lizhi
+> ---
+>  rust/helpers/helpers.c |  2 ++
+>  rust/helpers/percpu.c  |  9 +++++++++
+>  rust/helpers/preempt.c | 14 ++++++++++++++
+>  3 files changed, 25 insertions(+)
+> 
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 7cf7fe95e41d..2fc8d26cfe66 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -31,9 +31,11 @@
+>  #include "of.c"
+>  #include "page.c"
+>  #include "pci.c"
+> +#include "percpu.c"
+>  #include "pid_namespace.c"
+>  #include "platform.c"
+>  #include "poll.c"
+> +#include "preempt.c"
+>  #include "property.c"
+>  #include "rbtree.c"
+>  #include "rcu.c"
+> diff --git a/rust/helpers/percpu.c b/rust/helpers/percpu.c
+> new file mode 100644
+> index 000000000000..a091389f730f
+> --- /dev/null
+> +++ b/rust/helpers/percpu.c
+> @@ -0,0 +1,9 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/percpu.h>
+> +
+> +void __percpu *rust_helper_alloc_percpu(size_t sz, size_t align)
+> +{
+> +	return __alloc_percpu(sz, align);
+> +}
+> +
+> diff --git a/rust/helpers/preempt.c b/rust/helpers/preempt.c
+> new file mode 100644
+> index 000000000000..2c7529528ddd
+> --- /dev/null
+> +++ b/rust/helpers/preempt.c
+> @@ -0,0 +1,14 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/preempt.h>
+> +
+> +void rust_helper_preempt_disable(void)
+> +{
+> +	preempt_disable();
+> +}
+> +
+> +void rust_helper_preempt_enable(void)
+> +{
+> +	preempt_enable();
+> +}
+> +
+> 
+> -- 
+> 2.34.1
 
