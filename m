@@ -1,148 +1,266 @@
-Return-Path: <linux-kernel+bounces-890041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C51BC3F212
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:22:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE85C3F242
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:24:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9E4E4EAAB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4725188E340
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804AD2D73A6;
-	Fri,  7 Nov 2025 09:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HAOQN8Xf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3C22D46CE
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AB72BDC00;
+	Fri,  7 Nov 2025 09:24:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065F71EE033
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762507364; cv=none; b=X7LEuDHpOfCG461fMdNhxNi7XQo6ezMrnn+iKxAX58qsYU+qRnDED3u0uKkGzfeJBP9BidrBh4rkDIWfaykjIUf8ZdlVuyYuAM4kZ2FqhOor8aUQdfqxKfiBEzEjfApR14+GfzK4sHXYNXEwSnCSCKLIk27k2+qtLnoSulmFAtk=
+	t=1762507477; cv=none; b=QHFz6jUWFumvbLX7ua1iKEnaFg30/cyfq1u3mmJu2zsMor394sFW+dh84FwEOptiJ8LJIzV3nsVNhRG8FUfMwGP4c6ue7vkMdgT6qp84cn7i9akUYxa4Ge1gGvh0hbjPk2CeEQQfmCehYw+roVI12YNzGkc+MSt5bTp80TW8NAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762507364; c=relaxed/simple;
-	bh=iZDRgcEuZ2V744y8rAQO73yQtoqGq8IRRPZO6cq2TFo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q7tmM1aYjyd9cU3x9LuKCK+dSx4D7L2v6oebwTyoqF6MSp4evWTF7hmWc9VQBQya8Y8k6mYKBBScUaKQ+GCMNV39WyuhsNBnr6z2DIZmlOy5ehQ2QYaAF0xDzlERpYA/9J9G58zpIW0NgDl2Wy+Qy88zWJVjji8TMKuanmkW/5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HAOQN8Xf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D0E3C19424
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:22:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762507364;
-	bh=iZDRgcEuZ2V744y8rAQO73yQtoqGq8IRRPZO6cq2TFo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HAOQN8XfV2tXH9zC1JKw3RVTGpCv0TN1PnefYCG1WHeINNgYWpIBMi6hlRHXVxtkp
-	 rTwLJsH5FMLIMaZ6V6NAa89urr1lKWE9y2RlypRN7rrdUpYgJ5kyAkqFywutc9IKcy
-	 DAB24U/MCZcxHvBLBfGKyGOa7c6kyU5OfBx9EPZPDbCvyIo8fCK8aJz/Zyvw6QHyk7
-	 AIGVag1L/CIc6r7ModHLP6AvTeEdz36ch7NQoMojIfb/I23nZ7N+JYCpHEl6asxxSo
-	 L0H68biCD05/JL1/aAizYiP13MxLeE2sDrj0u0/DXLgpLazyZrlYo2hHI+h6uDUjMb
-	 An5MhQFExjzxw==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5943d1d6471so564692e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:22:44 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVwamYJ2mHhK231H99RBKf33kjVVJ8bQ7kuA8LwZh+1h5xt4E0hLFlXCPW9FVEgGQ52kM27WmIa4bSQ4rE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybWq2WOTF7tfg42laXqEeZcnirdufZijDRiCrwOSyp8yQ3YM++
-	JVzngBGwEpf1N8+t3ap/ugE/Txz4fgusQVyMyBq9ky2CpJR/zqCzD5fQhdpeY986DU8NUXg9Zcw
-	5Z5c4VkqBdoSG9RhXSKMHRS+e4lN3AmQ=
-X-Google-Smtp-Source: AGHT+IGlwZWI4oeJf7pO+l1K3S2g+h8ztknlPLUmU6zqyEc5Ck9Im7sNJuCIeml3UJYuz/bNFMn/5SZws7DSXSaNxeo=
-X-Received: by 2002:a05:6512:ad1:b0:592:fd2d:71be with SMTP id
- 2adb3069b0e04-59456b79d0dmr804208e87.34.1762507362356; Fri, 07 Nov 2025
- 01:22:42 -0800 (PST)
+	s=arc-20240116; t=1762507477; c=relaxed/simple;
+	bh=skp9P7Drz50bN4jaSLK+mnXwvhJ7EBjzCtaY6zhs544=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tbL7t2ar/vvDCZTC0CAIwYyHVyAUzeOhDzynbWymp6qkxCGxpu8t1pBsBqw5aZFA4t27gtZcvbWnjL/nSO0o5E2cIlTcCPbnHsWpS4WA0gqS7yfB02jy5RKTeMRuPyuAj8MXT1q2B5TnnZNWUTMkSGAf9Uhlfrm/Wi8wtedMlHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13F721007;
+	Fri,  7 Nov 2025 01:24:26 -0800 (PST)
+Received: from [10.57.72.216] (unknown [10.57.72.216])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B59683F63F;
+	Fri,  7 Nov 2025 01:24:31 -0800 (PST)
+Message-ID: <93055453-1177-4840-86cf-1a6fc8836470@arm.com>
+Date: Fri, 7 Nov 2025 09:24:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029210310.1155449-1-sohil.mehta@intel.com>
- <20251029210310.1155449-6-sohil.mehta@intel.com> <3e9c4fdd-88a8-4597-9405-d865fb837d95@intel.com>
- <cac58a25-eda6-4738-966f-a4e42818aa6c@app.fastmail.com> <6dec8398-3f7c-44db-a30d-33593af0217f@intel.com>
- <efd6ec82-5576-41f1-a244-2f80d72e93e4@intel.com> <ee2fce64-91ce-4b78-b2f9-33364ea0c52f@intel.com>
- <20251107090406.GU3245006@noisy.programming.kicks-ass.net>
-In-Reply-To: <20251107090406.GU3245006@noisy.programming.kicks-ass.net>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 7 Nov 2025 10:22:30 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFQaGaz37MNKXXjhUKy_mP-5teCDj80-hjUPHw4x+TKrA@mail.gmail.com>
-X-Gm-Features: AWmQ_bkVh3g2m014X3CF9FeiWJxHz8daqUtyC2uNOKnv9aB3oJxm48KiajGK_ao
-Message-ID: <CAMj1kXFQaGaz37MNKXXjhUKy_mP-5teCDj80-hjUPHw4x+TKrA@mail.gmail.com>
-Subject: Re: [PATCH v11 5/9] x86/efi: Disable LASS while mapping the EFI
- runtime services
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>, Sohil Mehta <sohil.mehta@intel.com>, 
-	Andy Lutomirski <luto@kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>, 
-	Sean Christopherson <seanjc@google.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-doc@vger.kernel.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/8] drm/panthor: Add arch-specific panthor_hw binding
+To: Liviu Dudau <liviu.dudau@arm.com>, Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+References: <20251027161334.854650-1-karunika.choo@arm.com>
+ <20251027161334.854650-2-karunika.choo@arm.com>
+ <aQDsW3xf2NNUvBN-@e110455-lin.cambridge.arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <aQDsW3xf2NNUvBN-@e110455-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 7 Nov 2025 at 10:04, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Fri, Oct 31, 2025 at 11:12:53AM -0700, Dave Hansen wrote:
->
-> > But there's a pretty broad set of things that are for "security" that
-> > aren't necessary while you're just running trusted ring0 code:
-> >
-> >  * SMAP/SMEP
-> >  * CR pinning itself
-> >  * MSR_IA32_SPEC_CTRL
-> >  * MSR_IA32_TSX_CTRL
-> >
-> > They just haven't mattered until now because they don't have any
-> > practical effect until you actually have code running on _PAGE_USER
-> > mappings trying to attack the kernel.
->
-> But that's just the thing EFI is *NOT* trusted! We're basically
-> disabling all security features (not listed above are CET and CFI) to
-> run this random garbage we have no control over.
->
-> How about we just flat out refuse EFI runtime services? What are they
-> actually needed for? Why are we bending over backwards and subverting
-> our security for this stuff?
+On 28/10/2025 16:16, Liviu Dudau wrote:
+> Hello,
+> 
+> On Mon, Oct 27, 2025 at 04:13:27PM +0000, Karunika Choo wrote:
+>> This patch adds the framework for binding to a specific panthor_hw
+>> structure based on the architecture major value parsed from the GPU_ID
+>> register. This is in preparation of enabling architecture-specific
+>> behaviours based on GPU_ID. As such, it also splits the GPU_ID register
+>> read operation into its own helper function.
+>>
+>> This framework allows a single panthor_hw structure to be shared across
+>> multiple architectures should there be minimal changes between them via
+>> the arch_min and arch_max field of the panthor_hw_entry structure,
+>> instead of duplicating the structure across multiple architectures.
+>>
+>> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
 
-On x86, it is mostly the EFI variable services that user space has
-come to rely on, not only for setting the boot path (which typically
-happens only once at installation time, when the path to GRUB is set
-as the first boot option). Unfortunately, the systemd folks have taken
-a liking to this feature too, and have started storing things in
-there.
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-There is also PRM, which is much worse, as it permits devices in the
-ACPI namespace to call firmware routines that are mapped privileged in
-the OS address space in the same way. I objected to this at the time,
-and asked for a facility where we could at least mark such code as
-unprivileged (and run it as such) but this was ignored, as Intel and
-MS had already sealed the deal and put this into production. This is
-much worse than typical EFI routines, as the PRM code is ODM/OEM code
-rather than something that comes from the upstream EFI implementation.
-It is basically a dumping ground for code that used to run in SMM
-because it was too ugly to run anywhere else. </rant>
+>> ---
+>> v2:
+>>  * merged GPU_ID refactoring patch with the arch-specific panthor_hw
+>>    binding patch (PATCH 01/10 and PATCH 02/10 in v1).
+>> ---
+>>  drivers/gpu/drm/panthor/panthor_device.h |  4 ++
+>>  drivers/gpu/drm/panthor/panthor_hw.c     | 65 +++++++++++++++++++++++-
+>>  drivers/gpu/drm/panthor/panthor_hw.h     |  6 +++
+>>  3 files changed, 74 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+>> index a764111359d2..1457c1255f1f 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_device.h
+>> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+>> @@ -26,6 +26,7 @@ struct panthor_device;
+>>  struct panthor_gpu;
+>>  struct panthor_group_pool;
+>>  struct panthor_heap_pool;
+>> +struct panthor_hw;
+>>  struct panthor_job;
+>>  struct panthor_mmu;
+>>  struct panthor_fw;
+>> @@ -122,6 +123,9 @@ struct panthor_device {
+>>  	/** @csif_info: Command stream interface information. */
+>>  	struct drm_panthor_csif_info csif_info;
+>>
+>> +	/** @hw: GPU-specific data. */
+>> +	struct panthor_hw *hw;
+>> +
+>>  	/** @gpu: GPU management data. */
+>>  	struct panthor_gpu *gpu;
+>>
+>> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
+>> index 4f2858114e5e..b6e7401327c3 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_hw.c
+>> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
+>> @@ -8,6 +8,28 @@
+>>  #define GPU_PROD_ID_MAKE(arch_major, prod_major) \
+>>  	(((arch_major) << 24) | (prod_major))
+>>
+>> +/** struct panthor_hw_entry - HW arch major to panthor_hw binding entry */
+>> +struct panthor_hw_entry {
+>> +	/** @arch_min: Minimum supported architecture major value (inclusive) */
+>> +	u8 arch_min;
+>> +
+>> +	/** @arch_max: Maximum supported architecture major value (inclusive) */
+>> +	u8 arch_max;
+> 
+> I'm not a big fan of this [min, max] range definition. I would expect that,
+> unless a new panthor_hw_entry is defined, the one covering arch X will also
+> cover arch X+1 automatically. With the current implementation we will have
+> to add a patch extending arch_max for an existing panthor_hw_entry when a new
+> GPU architecture is released that is compatible with the previous one at the
+> panthor_hw level *and backport the patch* for older kernels if they can
+> support that hardware.
 
-It would be nice if we could
+I see your point, but I'm not sure it's necessarily a good idea for
+kernels to pretend to support architectures that haven't been released
+yet. Historically we haven't been great at keeping compatibility with
+newer hardware and we might otherwise end up backporting patches just to
+explicitly break compatibility if we didn't have a max.
 
-a) Get rid of SetVirtualAddressMap(), which is another insane hack
-that should never have been supported on 64-bit systems. On arm64, we
-no longer call it unless there is a specific need for it (some Ampere
-Altra systems with buggy firmware will crash otherwise). On x86,
-though, it might be tricky because there so much buggy firmware.
-Perhaps we should phase it out by checking for the UEFI version, so
-that future systems will avoid it. This would mean, however, that EFI
-code remains in the low user address space, which may not be what you
-want (unless we do c) perhaps?)
+Of course you have a much better idea of what's in the pipeline and
+whether future GPUs are going to be better at backwards compatiblity...
 
-b) Run EFI runtime calls in a sandbox VM - there was a PoC implemented
-for arm64 a couple of years ago, but it was very intrusive and the ARM
-intern in question went on to do more satisyfing work.
+> My suggestion is to drop this structure entirely and change panthor_hw_bind_device()
+> to a cascade of if()s starting with the latest arch to have a struct panthor_hw
+> defined. For this patch the function will actually just set ptdev->hw to panthor_hw_arch_v10
+> without any ifs.
 
-c) Unmap the kernel KPTI style while the runtime calls are in
-progress? This should be rather straight-forward, although it might
-not help a lot as the code in question still runs privileged.
+I'm not a fan of cascades of if()s. If we can express it as a simple
+table it will be much easier to read and maintain.
+
+> Also (this is my personal preference) I would merge patch 1/8 and 2/8 so that we
+> don't have just empty structures defined.
+
+I'd usually agree, but there's a rename in the following patch which I
+think should be kept separate from these changes. So I think you'd still
+need a rename patch (panthor_gpu_soft_reset => panthor_hw_soft_reset
+etc) separate.
+
+Thanks,
+Steve
+
+> Best regards,
+> Liviu
+> 
+>> +
+>> +	/** @hwdev: Pointer to panthor_hw structure */
+>> +	struct panthor_hw *hwdev;
+>> +};
+>> +
+>> +static struct panthor_hw panthor_hw_arch_v10 = {};
+>> +
+>> +static struct panthor_hw_entry panthor_hw_match[] = {
+>> +	{
+>> +		.arch_min = 10,
+>> +		.arch_max = 13,
+>> +		.hwdev = &panthor_hw_arch_v10,
+>> +	},
+>> +};
+>> +
+>>  static char *get_gpu_model_name(struct panthor_device *ptdev)
+>>  {
+>>  	const u32 gpu_id = ptdev->gpu_info.gpu_id;
+>> @@ -62,7 +84,6 @@ static void panthor_gpu_info_init(struct panthor_device *ptdev)
+>>  {
+>>  	unsigned int i;
+>>
+>> -	ptdev->gpu_info.gpu_id = gpu_read(ptdev, GPU_ID);
+>>  	ptdev->gpu_info.csf_id = gpu_read(ptdev, GPU_CSF_ID);
+>>  	ptdev->gpu_info.gpu_rev = gpu_read(ptdev, GPU_REVID);
+>>  	ptdev->gpu_info.core_features = gpu_read(ptdev, GPU_CORE_FEATURES);
+>> @@ -117,8 +138,50 @@ static void panthor_hw_info_init(struct panthor_device *ptdev)
+>>  		 ptdev->gpu_info.tiler_present);
+>>  }
+>>
+>> +static int panthor_hw_bind_device(struct panthor_device *ptdev)
+>> +{
+>> +	struct panthor_hw *hdev = NULL;
+>> +	const u32 arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
+>> +	int i = 0;
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(panthor_hw_match); i++) {
+>> +		struct panthor_hw_entry *entry = &panthor_hw_match[i];
+>> +
+>> +		if (arch_major >= entry->arch_min && arch_major <= entry->arch_max) {
+>> +			hdev = entry->hwdev;
+>> +			break;
+>> +		}
+>> +	}
+>> +
+>> +	if (!hdev)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	ptdev->hw = hdev;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int panthor_hw_gpu_id_init(struct panthor_device *ptdev)
+>> +{
+>> +	ptdev->gpu_info.gpu_id = gpu_read(ptdev, GPU_ID);
+>> +	if (!ptdev->gpu_info.gpu_id)
+>> +		return -ENXIO;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  int panthor_hw_init(struct panthor_device *ptdev)
+>>  {
+>> +	int ret = 0;
+>> +
+>> +	ret = panthor_hw_gpu_id_init(ptdev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = panthor_hw_bind_device(ptdev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>>  	panthor_hw_info_init(ptdev);
+>>
+>>  	return 0;
+>> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
+>> index 0af6acc6aa6a..39752de3e7ad 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_hw.h
+>> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
+>> @@ -6,6 +6,12 @@
+>>
+>>  struct panthor_device;
+>>
+>> +/**
+>> + * struct panthor_hw - GPU specific register mapping and functions
+>> + */
+>> +struct panthor_hw {
+>> +};
+>> +
+>>  int panthor_hw_init(struct panthor_device *ptdev);
+>>
+>>  #endif /* __PANTHOR_HW_H__ */
+>> --
+>> 2.49.0
+>>
+> 
+
 
