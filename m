@@ -1,252 +1,115 @@
-Return-Path: <linux-kernel+bounces-890859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB475C4137D
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:05:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86343C4138F
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:06:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5FDC13491F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:05:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 870714E8192
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DD132E140;
-	Fri,  7 Nov 2025 18:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EFE334C09;
+	Fri,  7 Nov 2025 18:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HHRviqZL"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="big0rlkc"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA82F32B98A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0524328B6C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762538701; cv=none; b=EBVhywwl+8A/dGrgpDh4Ket80k8G72t5Fh7IYTADkPRHojuw9MtO5CxvyaNkr2sl2QtH//cRaA0sexzphCDLG+zaercGXDQUsHLZ6M414SdQhKgl3YVOiHIXt2OwId7FeJVizSiNY4cx+ntQykcEZAaMWp3UDNNujB7VLWS+0cs=
+	t=1762538781; cv=none; b=Q9J7m+DJGAs0+5H0bTAH1xitpfTK/Of0oJxs0FdGXCJ+numE+SSm+acY7lJiN+TukrUXhbCLO4IKLxevGIcY+FT14FtPo1L+fKh9gzAcpLT9KqzWJ7bSz7MKTdb+vKDC/vFGmNlDLpqbdfFisdue/YWewMGFr8oavrYpvyzm9Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762538701; c=relaxed/simple;
-	bh=yVzlCT5Uu1SxfjDUt0JzOKp9XvXdUS1XaZo2iK8crO0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NAYSFcSEMtn8JBpynV7aNupIX9WjFN6d4doGb8z+IcrDNdXuq+M0wW1zIr1LVHvY9UfpVUZaA4o7IvazpLAAcEbgSRe3jQAYy2jHyl/B64j9aP4ssTLNNHF+3Aesc/qsbcH5f8UJAN4PrCT/4FKmMfnnvSzsf+1kLHw0agwGijo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HHRviqZL; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-429cbed2b8fso667238f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:04:58 -0800 (PST)
+	s=arc-20240116; t=1762538781; c=relaxed/simple;
+	bh=bXO08HsRuK2ScRN9CtJfzG/AzZSvuFwB4eE3T97HZ9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kxIkzfbXW06/Y/3CrtMNEM3S5T7bYVT5KpmI3gD0QswdTFiW7qK0jpjcA5WiFUOEeaWw9Tfvh1mVLsvMUo6O8/0SJvpoHdunie17OKGbAjbwPpcnVWyzO+0ZVHUzdDFxRQBHwfZdesO4ViPsuGp2Twi21bHLC/43t3SxDJGI/Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=big0rlkc; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-29470bc80ceso11276425ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:06:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762538697; x=1763143497; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/AqAgTDxm6jquTqnEsjA3Waymb6wOkAp7ZeQjd8rqgw=;
-        b=HHRviqZL94lptzuP4Yb2YG+7cwZ4Ob8ElK/7SKdqqS6MxSf0awbmKhQdNn3iSZlsvE
-         VmiPypB2CzyHj3BfAiFdMXGcId8M8GnuW7mHiYNsgqUhJI6AsW9GDCEYGaw43UHRRKNv
-         W/ppzeAm+VNohJY2ddFeKl6cXvKC8rxKwn8rrMmbN0D4FjGDQCsLZotqdx9EzoGIUafS
-         rUs5h2N55SRNLdUGiihryVv77RAzziu5gKxiQ6Z8vB/NG4tXY1yFDPmWnVIwpTUyy16M
-         us4KACJqnpB2CNSC5trBovBuJfMf13S/3QdG3Fpl9Dmhqqo5A43rUHUN1CbJp7hAQbkU
-         AtiA==
+        d=gmail.com; s=20230601; t=1762538779; x=1763143579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MfwD5o72GvI3Oi7do9Qhg/wh9m8XWbNc1QLnbh3PlwA=;
+        b=big0rlkc7WNLVzD/A4i45Ipxctob4QdzUsE5hU+0C1HISOkGXZPKnOXGu33YzrL7aZ
+         3RQ1rEUAwxKrJu3h0I4ZGVX/aZPdY0AbExEnCkuU1GRWXye0n4kZai7a6IHJYLf5TS3e
+         EaxEfCF/bAJyrWJ7N19P3YrgXuIZQZiqkrAec63Q38M4NNtaeXjRd0t+iMhyyXlc/6rE
+         mtHYWG+tKiP1c/z64djkLI3sf8JYNUpnZhtJr601yD1IMhY4cCw7aXQME87sgLnlVHeU
+         veBVSe6TLjC28YWGGlDX0AKLM7kk06QCC8x0bDLY5tPYAixPUWf5KXqtoqpBKfvPgDR4
+         Lfvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762538697; x=1763143497;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/AqAgTDxm6jquTqnEsjA3Waymb6wOkAp7ZeQjd8rqgw=;
-        b=StzKQH14JUGAO7k0IAZZs1ODwOPETKZeCE/IkF2sNIZKEJ5dGRJDSXEuh1XcCqMAE/
-         yvgmsrO92P2VefLsePaGizSy3kgXXaZ4sgjnPh8ZpsfuyNFUMCsJoSM+H1ltlr2fBZcG
-         3mT1Vd3KcKuKdD7EN3Xmts4WtweNeakzDyafxrS2/RnKfRlFyXtq2MM/C3cGeV3zTxoL
-         U6W09b8Ub8Xtz3XxcfSKSyft5j4UAmw8WTFinqZ6XrHtRbpaxO3h0MCmV2vjVHNKEMqX
-         JT/lMPeCYHMrzNo5M35Cpc1DctgMQg/3VMhpTB6UGK2Dafr3y27/8PYyYtMr2+kQWh6M
-         8TVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNE8/x9vxkD61dmDa5/bqMq0Qw5OoE46uJ0518Kp+U8KnE31M2++3fGW0HDilqrpCWXc0lanYQ8QXVJlU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV7Yh3fVjBBrVh5nj1LzmXlAwbgF/efBlYuC9692XDq1jDsGXo
-	3skyYepmJunVM6kzn8/ukcv+lo57FEjrevbB7cfIltlaIZzDsKb64sHG7YIGmPAa9yaCcOOYwBz
-	D4E4Rilo60sxSaA==
-X-Google-Smtp-Source: AGHT+IFOkVmSQK/jYvTSHAXnkCCnA0joruckYbu4Ldmd5HExfLsxuZZgznGEf8JFTpeS7lG61pD7MYDnH/6ugg==
-X-Received: from wrvs14.prod.google.com ([2002:a5d:4ece:0:b0:425:f04a:4d98])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2408:b0:429:d3b8:7387 with SMTP id ffacd0b85a97d-42aefb4351dmr3543783f8f.42.1762538697024;
- Fri, 07 Nov 2025 10:04:57 -0800 (PST)
-Date: Fri, 07 Nov 2025 18:04:56 +0000
-In-Reply-To: <add94932-290c-4037-b4e6-c3c760240819@amazon.com>
+        d=1e100.net; s=20230601; t=1762538779; x=1763143579;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MfwD5o72GvI3Oi7do9Qhg/wh9m8XWbNc1QLnbh3PlwA=;
+        b=f46jgj8XR9Yqq1QTu1tkImLDV6zqJJqBgXVu54FanEvanBzF1jz7atS8q+fcKgiG5w
+         kT32Gr0c8GOn5CgRQXobowXiU/D/4V5n6HIAIzVA+o0nzADm7Cd3yOKbXQIjUFzKi8zt
+         iJihP/TFH1wgtlidLZnb9ZvYk//00a4KxEv6ZOOtb8y1T+7u5H1vICPRq1gqyntbtRc4
+         TA0wZzfeMGf5DFqzIzGlpnkmMo+UalVsE+bPi8vbD/6RJp4rLybrHW5pvbbEEgD+JCzk
+         3Q+ZCZjT5QQ1HaggPKP5h5I9Ekv2In6QFjLglKXYKFhbOmfo4iZrqqVlH214BqZxawmr
+         6KLA==
+X-Gm-Message-State: AOJu0YziNQGGlvcWZN1YueLPRBjpkGObwyEAbFFEgRqSehB78LOUSvSR
+	r+CHyctaUmDPdJGhD9WSPcHgkBzHHw6dq4uKOnByDd+isJK3JwGS7AKS+VWq+eBo
+X-Gm-Gg: ASbGnct1DsSBVzmi4HOmKeSNYjc+jcqnzTTVEJTIGfEYWf/ACCcc26OD2Pw3j6jiUWG
+	Xm3OLL6/UDnRSzkzz0F4Asc6172s5wvr8W+0Z4VMMVEuLKxhx1MVhW17vkDjNAkHCv4NchdNyWL
+	WHkLSV0z/RlUcymUPUz9EljNhy0iLq1nqe4vtPCiwc4zbbqv3kGkC3w8ul21ZvVYviwnM5Iz0qp
+	Upd9kLdblq1JgDZdqGDFXQ4LAT9PGr7sAeKPqyF0o6Xm80JfnTFwdy3Olwm4VqVfXTXfa4429+D
+	Uy+NCrF/MCe/NEvg4QL19w31TrsJg7e69AeXfDmcku5uXKt2+lh6E70A4/uX9NH7iawLOjHd96k
+	YzmxHd38qNLZPteT17+Mu59JgdLMw1BnwO/mAQs8gt8q31off4k8bp5lWU8tUi8RWByUI6zo3XA
+	qhi8Yttiiwin8TCHszd4NGIBhjuXGgTN1t
+X-Google-Smtp-Source: AGHT+IGYsvRM3j8jIBPNh/tOz/jpy7JkvOUnVH0lWt7NtuZkUURJAGNXeQqSigiGcSls55h1u/VBUA==
+X-Received: by 2002:a17:902:e80e:b0:24b:270e:56d4 with SMTP id d9443c01a7336-297e1d7667fmr4448295ad.4.1762538778577;
+        Fri, 07 Nov 2025 10:06:18 -0800 (PST)
+Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-296509683easm66131215ad.15.2025.11.07.10.06.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 10:06:18 -0800 (PST)
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Subject: [PATCH] LoongArch: Remove __GFP_HIGHMEM masking
+Date: Fri,  7 Nov 2025 10:06:01 -0800
+Message-ID: <20251107180601.86483-1-vishal.moola@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924151101.2225820-1-patrick.roy@campus.lmu.de>
- <DE2L1SAOC55E.E4JY62WJQ2A8@google.com> <add94932-290c-4037-b4e6-c3c760240819@amazon.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DE2NTMZXQ1MT.2TH9VAKM6WP6I@google.com>
-Subject: Re: [PATCH v7 00/12] Direct Map Removal Support for guest_memfd
-From: Brendan Jackman <jackmanb@google.com>
-To: <kalyazin@amazon.com>, Brendan Jackman <jackmanb@google.com>
-Cc: <pbonzini@redhat.com>, <corbet@lwn.net>, <maz@kernel.org>, 
-	<oliver.upton@linux.dev>, <joey.gouly@arm.com>, <suzuki.poulose@arm.com>, 
-	<yuzenghui@huawei.com>, <catalin.marinas@arm.com>, <will@kernel.org>, 
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>, 
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>, 
-	<luto@kernel.org>, <peterz@infradead.org>, <willy@infradead.org>, 
-	<akpm@linux-foundation.org>, <david@redhat.com>, <lorenzo.stoakes@oracle.com>, 
-	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <rppt@kernel.org>, 
-	<surenb@google.com>, <mhocko@suse.com>, <song@kernel.org>, <jolsa@kernel.org>, 
-	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>, 
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>, 
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>, 
-	<haoluo@google.com>, <jgg@ziepe.ca>, <jhubbard@nvidia.com>, 
-	<peterx@redhat.com>, <jannh@google.com>, <pfalcato@suse.de>, 
-	<shuah@kernel.org>, <seanjc@google.com>, <kvm@vger.kernel.org>, 
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
-	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>, 
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>, <bpf@vger.kernel.org>, 
-	<linux-kselftest@vger.kernel.org>, <xmarcalx@amazon.co.uk>, 
-	<kalyazin@amazon.co.uk>, <jackabt@amazon.co.uk>, <derekmn@amazon.co.uk>, 
-	<tabba@google.com>, <ackerleytng@google.com>, 
-	Patrick Roy <patrick.roy@campus.lmu.de>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri Nov 7, 2025 at 5:23 PM UTC, Nikita Kalyazin wrote:
->
->
-> On 07/11/2025 15:54, Brendan Jackman wrote:
->> On Wed Sep 24, 2025 at 3:10 PM UTC, Patrick Roy wrote:
->>> From: Patrick Roy <roypat@amazon.co.uk>
->>>
->>> [ based on kvm/next ]
->>>
->>> Unmapping virtual machine guest memory from the host kernel's direct map is a
->>> successful mitigation against Spectre-style transient execution issues: If the
->>> kernel page tables do not contain entries pointing to guest memory, then any
->>> attempted speculative read through the direct map will necessarily be blocked
->>> by the MMU before any observable microarchitectural side-effects happen. This
->>> means that Spectre-gadgets and similar cannot be used to target virtual machine
->>> memory. Roughly 60% of speculative execution issues fall into this category [1,
->>> Table 1].
->>>
->>> This patch series extends guest_memfd with the ability to remove its memory
->>> from the host kernel's direct map, to be able to attain the above protection
->>> for KVM guests running inside guest_memfd.
->>>
->>> Additionally, a Firecracker branch with support for these VMs can be found on
->>> GitHub [2].
->>>
->>> For more details, please refer to the v5 cover letter [v5]. No
->>> substantial changes in design have taken place since.
->>>
->>> === Changes Since v6 ===
->>>
->>> - Drop patch for passing struct address_space to ->free_folio(), due to
->>>    possible races with freeing of the address_space. (Hugh)
->>> - Stop using PG_uptodate / gmem preparedness tracking to keep track of
->>>    direct map state.  Instead, use the lowest bit of folio->private. (Mike, David)
->>> - Do direct map removal when establishing mapping of gmem folio instead
->>>    of at allocation time, due to impossibility of handling direct map
->>>    removal errors in kvm_gmem_populate(). (Patrick)
->>> - Do TLB flushes after direct map removal, and provide a module
->>>    parameter to opt out from them, and a new patch to export
->>>    flush_tlb_kernel_range() to KVM. (Will)
->>>
->>> [1]: https://download.vusec.net/papers/quarantine_raid23.pdf
->>> [2]: https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
->> 
->> I just got around to trying this out, I checked out this patchset using
->> its base-commit and grabbed the Firecracker branch. Things seem OK until
->> I set the secrets_free flag in the Firecracker config which IIUC makes
->> it set GUEST_MEMFD_FLAG_NO_DIRECT_MAP.
->> 
->> If I set it, I find the guest doesn't show anything on the console.
->> Running it in a VM and attaching GDB suggests that it's entering the
->> guest repeatedly, it doesn't seem like the vCPU thread is stuck or
->> anything. I'm a bit clueless about how to debug that (so far, whenever
->> I've broken KVM, things always exploded very dramatically).
->> 
->> Anyway, if I then kill the firecracker process, the host sometimes
->> crashes, I think this is the most suggestive splat I've seen:
->> 
->> [   99.673420][    T2] BUG: unable to handle page fault for address: ffff888012804000
->> [   99.676216][    T2] #PF: supervisor write access in kernel mode
->> [   99.678381][    T2] #PF: error_code(0x0002) - not-present page
->> [   99.680499][    T2] PGD 2e01067 P4D 2e01067 PUD 2e02067 PMD 12801063 PTE 800fffffed7fb020
->> [   99.683374][    T2] Oops: Oops: 0002 [#1] SMP
->> [   99.685004][    T2] CPU: 0 UID: 0 PID: 2 Comm: kthreadd Not tainted 6.17.0-rc7-00366-g473c46a3cb2a #106 NONE
->> [   99.688514][    T2] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.1 11/11/2019
->> [   99.691547][    T2] RIP: 0010:clear_page_erms+0x7/0x10
->> [   99.693440][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
->> [   99.700188][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
->> [   99.702321][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
->> [   99.705100][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
->> [   99.707861][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
->> [   99.710648][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
->> [   99.713412][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
->> [   99.716191][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
->> [   99.719316][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [   99.721648][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
->> [   99.724421][    T2] Call Trace:
->> [   99.725608][    T2]  <TASK>
->> [   99.726646][    T2]  get_page_from_freelist+0x6fe/0x14b0
->> [   99.728583][    T2]  ? fs_reclaim_acquire+0x43/0xe0
->> [   99.730325][    T2]  ? find_held_lock+0x2b/0x80
->> [   99.731965][    T2]  __alloc_frozen_pages_noprof+0x147/0x2d0
->> [   99.734003][    T2]  __alloc_pages_noprof+0x5/0x50
->> [   99.735766][    T2]  copy_process+0x1b1/0x1b30
->> [   99.737398][    T2]  ? lock_is_held_type+0x89/0x100
->> [   99.739157][    T2]  ? kthreadd+0x25/0x190
->> [   99.740664][    T2]  kernel_clone+0x59/0x390
->> [   99.742213][    T2]  ? kthreadd+0x25/0x190
->> [   99.743728][    T2]  kernel_thread+0x55/0x70
->> [   99.745310][    T2]  ? kthread_complete_and_exit+0x20/0x20
->> [   99.747265][    T2]  kthreadd+0x117/0x190
->> [   99.748748][    T2]  ? kthread_is_per_cpu+0x30/0x30
->> [   99.750509][    T2]  ret_from_fork+0x16b/0x1e0
->> [   99.752193][    T2]  ? kthread_is_per_cpu+0x30/0x30
->> [   99.753992][    T2]  ret_from_fork_asm+0x11/0x20
->> [   99.755717][    T2]  </TASK>
->> [   99.756861][    T2] CR2: ffff888012804000
->> [   99.758353][    T2] ---[ end trace 0000000000000000 ]---
->> [   99.760319][    T2] RIP: 0010:clear_page_erms+0x7/0x10
->> [   99.762209][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
->> [   99.769129][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
->> [   99.771297][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
->> [   99.774126][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
->> [   99.777013][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
->> [   99.779827][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
->> [   99.782641][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
->> [   99.785487][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
->> [   99.788671][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [   99.791012][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
->> [   99.793863][    T2] Kernel panic - not syncing: Fatal exception
->> [   99.796760][    T2] Kernel Offset: disabled
->> [   99.798296][    T2] ---[ end Kernel panic - not syncing: Fatal exception ]---
->> 
->> This makes me suspect the kvm_gmem_folio_restore_direct_map() path isn't
->> working or isn't getting called.
->> 
->> If anyone wants help trying to reproduce this let me know.
->
-> Hi Brendan,
->
-> Thanks for trying to run it!
->
-> Just as a sanity check, the way it is known for us to work is we apply 
-> all patches from [1].  For booted VMs (as opposed to restored from 
-> snapshot), apart from the v6 of the direct map removal series, the only 
-> additional patch is a fix for kvmclock on x86 [2].  Please let me know 
-> if you see the same issue with that patch applied too.
->
-> Nikita
->
-> [1] 
-> https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding/resources/hiding_ci/linux_patches
-> [2] 
-> https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding/resources/hiding_ci/linux_patches/11-kvm-clock
+Remove unnecessary __GFP_HIGHMEM masking, which was introduced with
+commit 382739797f79 ("loongarch: convert various functions to use
+ptdescs"). GFP_KERNEL doesn't contain __GFP_HIGHMEM.
 
-Ah, thanks! Seems I should have checked my inbox before sending my other
-mail. With the kvmclock fix applied to my host kernel, I start setting
-the other crash immediately when the VM boots. If I comment out the
-actual unmapping of memory, it boots (before, it wouldn't boot even with
-that commented out).
+Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+---
+ arch/loongarch/include/asm/pgalloc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-For the other linux_patches, I couldn't apply them on top of this
-series, do you have a branch I can use as a reference?
+diff --git a/arch/loongarch/include/asm/pgalloc.h b/arch/loongarch/include/asm/pgalloc.h
+index 1c63a9d9a6d3..08dcc698ec18 100644
+--- a/arch/loongarch/include/asm/pgalloc.h
++++ b/arch/loongarch/include/asm/pgalloc.h
+@@ -88,7 +88,7 @@ static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long address)
+ static inline pud_t *pud_alloc_one(struct mm_struct *mm, unsigned long address)
+ {
+ 	pud_t *pud;
+-	struct ptdesc *ptdesc = pagetable_alloc(GFP_KERNEL & ~__GFP_HIGHMEM, 0);
++	struct ptdesc *ptdesc = pagetable_alloc(GFP_KERNEL, 0);
+ 
+ 	if (!ptdesc)
+ 		return NULL;
+-- 
+2.51.1
 
-Anyway, the solution I'm hoping to present for your problem gets rid of
-that explicit unmapping code (the allocator will do it for you), so in
-the meantime I have something I can work with.
 
