@@ -1,271 +1,225 @@
-Return-Path: <linux-kernel+bounces-890713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710EAC40BD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 161DBC40B7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:59:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EA37D3503D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:03:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 780E83502FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63D329ACFD;
-	Fri,  7 Nov 2025 16:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071062C375A;
+	Fri,  7 Nov 2025 15:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mZca7uQQ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JS/Kuish"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012021.outbound.protection.outlook.com [40.107.209.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD7D1F8AC5;
-	Fri,  7 Nov 2025 16:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762531399; cv=none; b=srvoePwi5/zOYdmBr+UuGoHvRFIJUqYXsqCcZXlp81eGXHvMj/OAHzVEGFiVtRUI8PXI+Gfk+KxeTDDu3HAb0dBXSUU4wZER6qNKzphQkb2EyR2PuYUdeYFkvY5acHeRx5G3bnrbXJXmh9TicINM7GS+PPrhWavwnR2FVRB1lWM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762531399; c=relaxed/simple;
-	bh=r20tjYRZESwm0Xe8JSfhSGhruuGcTelqhRdKQHovH8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z3mej49sekoAiMWrzpj2cJ8gJp4CgqLnX8QwWIkSbQVUv/YRfm5lF/HK62iIgPBQs173rHlfHITxoXfZytvWNa5v9FPhRvQ0EIlo5XAqB1WSvPE61W0k5A3xGJ41Wplk5jSrSmQYgKlb5iUuBXiEMmQeYjLRqmz2z3+vCZFoqXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mZca7uQQ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7Cf4Lk019513;
-	Fri, 7 Nov 2025 16:03:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=w4A9d23bQNuNhMRhy9flyx2rXxLNd6naylhFbxC/z
-	44=; b=mZca7uQQNnvetu9sjgb8+3TflIhTZYnX2po+WuS3l+S3MWfOcuF9t91tR
-	L2aHiaKYadKlq3lmIJeFZoJpv/CrTlAdvQ1L+/Y5UFjy1g2MwQUBoJSOnAWhWitL
-	1pdajc1jba/95f4ZkM79NKEjLkF6un/om6zGRCdx1W+ocfbumaBd5FbYSvQnHmju
-	92Aap+HnD+yQjZEIMpj7lqVR4rSEr6zDCjjXxQiIQT+xkKCRvQzPnMUQ2cnu/Eao
-	NzCEwOnUTvlte8TlN4cGgrnT6UBnup8WnC8JKlOoPbogJitW80fqCy+gNXTi8RX8
-	Hmy+zYlO29mV62TgsbfRZupSsDYfg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a58mmcg0k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 16:03:10 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A7Fk1FT017159;
-	Fri, 7 Nov 2025 16:03:09 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a58mmcg0h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 16:03:09 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7Ergt4027371;
-	Fri, 7 Nov 2025 16:03:09 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5vwyuqkx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 16:03:09 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A7G35Bh57541114
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Nov 2025 16:03:05 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1706320040;
-	Fri,  7 Nov 2025 16:03:04 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0B2F620043;
-	Fri,  7 Nov 2025 16:03:03 +0000 (GMT)
-Received: from li-26e6d1cc-3485-11b2-a85c-83dbc1845c5e.ibm.com.com (unknown [9.111.68.113])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Nov 2025 16:03:02 +0000 (GMT)
-From: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
-To: Alexander Potapenko <glider@google.com>
-Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Juergen Christ <jchrist@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
-Subject: [PATCH v2] s390/fpu: Fix false-positive kmsan report in fpu_vstl function
-Date: Fri,  7 Nov 2025 16:59:16 +0100
-Message-ID: <20251107155914.1407772-3-aleksei.nikiforov@linux.ibm.com>
-X-Mailer: git-send-email 2.43.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890674A0C;
+	Fri,  7 Nov 2025 15:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762531145; cv=fail; b=fqkx7nU+52+N8Ehev4Ajl6lL3jdcpZCS3+8UTm9eW0+iq+ZyRB5lExvRQXU5o59037tTvmIQGId77YhfVrcB2XRmzKN3cja2SBopWyM1eXy62aAq5gDqeuhI1tMwMyKyJo/nheEvE65KEZ6+tQ2IEpp+jJYmncvE2kbA/NOGcWk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762531145; c=relaxed/simple;
+	bh=wz3mn7qxW9jhCricWE9LE7cCoBgbiX8mj4hjkJK6rhg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ZOui+0xVmZgtJnWTlYkfCj7Rdz0eKXsoqMqaecgYa06Md1vOcPidB0z85fbKeXZnSiamuKchaO2vizo7L9anWtysmlSFj4zigwnCK8URxlz7dq7m9UDCYYcY4Ff3rIMYVs+/xARm6th6+d15w/b/eC7Bn87nYS6YqFJC4qnori0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JS/Kuish; arc=fail smtp.client-ip=40.107.209.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Jj9wKmSmCvnKsgSoRpefGvwETwizO6Ezs3h7R0mQU2VjlMdmvHKd47s/hkGBImoBiJqAjPAp6ZSSJxulbQuQgRvYzjtRcoYk3bKv6y2NSfG75CqCaZR0s2GQfSm4FKhzFxwJl/tbjNIJBtDfw+gnJjqvkmDuX9gBiltcYlHlUsAZ/elTp1aMnLmH49XwDwkcpjHas1SOYPx3APMhuKxAdDFs4eHKZM6jUOVlY+U6aavyjzx2TiAIzxbiXLnAZdNwwnEEHAjYQIKNR2Gt/wdV3nGMcnjOMTIDex7pITMs1jQUY2ezYGt2itlaoybqFI4pThUM3RIUPD6KBRDeuGt3jA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fu9EfWZ1ReSU2tCFeCBXk0tLGB/wCu669cH+NNpPKNQ=;
+ b=RkpBCrFSYvBkYaaAdbRunI4o1aD7etyVkF7PCDbpvdDExFsLDqm1DelyUTMfrIomaT9RLxqiYFQjJfCrM0SGofUEgoZ53u0amCQjtUNgvb21/gf+5mq9NuYxqhmF65+LdNaJKQkfUyNzsxojVZ8dIcDRVGFSLhD4kq0XAClgxzYM6Lys10sfzIGmvnOlOzGMzxRuwYo6Ys6gfOz/7OvyMuQ2gWZIlhSJkhW6OOLoajI+9u+mPwjuUBcy+piz8KAjdGPPDdO8xotxItze47NOCs4ze35SqXlvWTiAGA3BzxdEzszQT70SieeHX1zNw1FpP3xTVzQRi42AtKyADoqHZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fu9EfWZ1ReSU2tCFeCBXk0tLGB/wCu669cH+NNpPKNQ=;
+ b=JS/KuishpjWpSlPnX8zgTn7UGiM+6qd/uU4Mdbmn8NJJ4JDoJ14Pe6fNI+JxOIeAVwNIeXjzf/GwtUgtnkHfUFxej0HZAOkNDIeQB92JQ5XRe3ROIitvBN5ZK5FdrjDoFl1uxUn1HKSQN00Nk0pL3mZf1ocK17AC7By3IMuaXwI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
+ by DM6PR12MB4252.namprd12.prod.outlook.com (2603:10b6:5:211::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Fri, 7 Nov
+ 2025 15:59:00 +0000
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
+ 15:59:00 +0000
+Date: Fri, 7 Nov 2025 16:59:25 +0100
+From: Robert Richter <rrichter@amd.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v4 06/14] cxl/region: Separate region parameter setup and
+ region construction
+Message-ID: <aQ4XXcxRidI3-kjI@rric.localdomain>
+References: <20251103184804.509762-1-rrichter@amd.com>
+ <20251103184804.509762-7-rrichter@amd.com>
+ <d34130ca-83fb-4f9d-b724-007b549f6f34@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d34130ca-83fb-4f9d-b724-007b549f6f34@intel.com>
+X-ClientProxiedBy: FR4P281CA0049.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cc::13) To CYYPR12MB8750.namprd12.prod.outlook.com
+ (2603:10b6:930:be::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 9jqrWA-ia39gvYpirWftQH_iDWl3y8Dy
-X-Proofpoint-GUID: rPSf5ZDD9EV4xZn6VMao3w7nsr3deqo3
-X-Authority-Analysis: v=2.4 cv=SqidKfO0 c=1 sm=1 tr=0 ts=690e183e cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8
- a=0aw50RnvYNmxmIOuCV4A:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwOSBTYWx0ZWRfX/oSvR0FUaEIT
- 3lJoYJ+VTY/Xa3vFCiah4fMxzrrkQOloce+vq2zXj2OQ6eFfLRuCVWxLdrxiQXsXv/7ZZtC94cU
- ZFvQ4gwcOgN7lPJ1jKlwl2bCUHJh8gw56UoadSnSnbypaFIJll7h73svZFjBRfL+Jjxa8FSQGP1
- FVuyjtC4JxIVDo1wet4P/tLdmCFNmciTGwk3ADquAjxswecjnrTsc3XxShiU0tAydCfcHv9hOQK
- Gl+G3PGhzu0WpLns1VUr5WnnUCQgxC4x6biKK7z0skjjJUy14b1DNRh5ZCzolB6GnE9p8l4V2dN
- HVcsX84za0P9jetOhKSvgTbVSIyBEdClEhwcos1Slfl5o90nc3mb7dc8hOhf/Nc4EcWhxQTReCi
- 0ChgnGsxKjIXrE8FfeW19yJMt6AwLg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_04,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 impostorscore=0 adultscore=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010009
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|DM6PR12MB4252:EE_
+X-MS-Office365-Filtering-Correlation-Id: a542b0f7-49b4-4958-f81a-08de1e1690dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FJEKlsXoRdudX0JuqhOBQ2SHFq4r6225cOyVMwDxwf6glJEyPpCdhatb0i2x?=
+ =?us-ascii?Q?C5uTVglELebWj1MO/JfBvoYLEoWBQZca2wTLRLPbgpySZsu/MsZVtOkxon+d?=
+ =?us-ascii?Q?BqemN8lTy1yW9kL20vFsxi5kl33r7RVzHsP4fKYmQ3FAqTnkaerjiEgpM5rn?=
+ =?us-ascii?Q?1aY5LxYTh/opgVniC5X/CP1WE+7zmiB0MkIGQnEL4NegYJMQ5ZdKnCGJatCB?=
+ =?us-ascii?Q?YB9ndOng+XSTAWZMpOE0QKb+6cNMovt1Lg892BLTr3bG+e+ZHNRSWQQTEGeu?=
+ =?us-ascii?Q?4DxA6XIDxPZyLH00isVutt/xl7Ao9+IyAialQK+mljtdGeOo/8KwMuB32QJs?=
+ =?us-ascii?Q?U/l2r3hGp0PqMF5X1Sk6kSRwzwSTms7W4r1R2NfEx9kgDu29GsblBl6PZDEM?=
+ =?us-ascii?Q?zdp8JBHmYPQa/cPtqFW2K1+Dw/YBrebcL3icdwji513ruadSvtq6Blkp2avZ?=
+ =?us-ascii?Q?SOz7OoVfHUQh/XN7pg4ZdoBtMoyKizOn+H/4dW46GxI16UnWZSdM8gZ3ncmd?=
+ =?us-ascii?Q?CAJnziSE/Wz7obnBZR8o77xDdi91R8cDOaCqpYt9OcJFWfPs86cvPVb4n6il?=
+ =?us-ascii?Q?YAJ377fzgCunJ9E29O/Ev5mpHshU4RRR3kIc+pB1qkkirSc+TIhPQhYMzTCo?=
+ =?us-ascii?Q?aeiRD8ZzCsQlRJKmZqek1FKx6cdi/nqd59cfjmE7nTgGnlyJErXefSY3j4Zq?=
+ =?us-ascii?Q?ipwRly3eUDti/7prvMFbPoAxheh8b1n46znS6458yylL/cUbwL0/KBnwUsDZ?=
+ =?us-ascii?Q?rOzNGeCWNEvYAlz5ZWgxYIybPqiSVjy4mD/+lkybdjSQD0Ydqgg/krN4fYq5?=
+ =?us-ascii?Q?jki/r4CyIulp/ZsYO/ZPPFXHYawu+mv162eNY4cYqUJgiUrI89M79bV1ruC9?=
+ =?us-ascii?Q?5d+glVevj3kJDplFia0v8v9tEXj2GO8NgH2mtFcSdZE26/sMi5cqp8rzD1A6?=
+ =?us-ascii?Q?d7zVPOrQqAobNhC/me1J7KJl8FBQ/nKSYZ/gfSpblKRcGJnBUz1h9hvw5PUe?=
+ =?us-ascii?Q?DwJgoMezKp3SGNf1ihw+JJ6I3XOYExD2m/Rof2yGcUdamVKXwnHQiaUY4S92?=
+ =?us-ascii?Q?vOEIOuGlqiXvYiwNUfvfh24ZdBTTPDsCJiSHSooCkdmTO7Il4/1961GDSZmU?=
+ =?us-ascii?Q?6xxCrq2D5Lx1BuGX6IJrGBWMCDHS8sksWgWjothdcaFqMK2k7nRtI+R5fLfZ?=
+ =?us-ascii?Q?7VWe0a6yolZbrOZmmbGCywRansESbKwhfF6jXFa/iXOXn+oXEumf2J41nPIu?=
+ =?us-ascii?Q?7/PUxdHcsDM2ClXFY1jNCTg0soQ5DY+j1DQslVI2FRKqz/TsfrAZxmtqQ3Ef?=
+ =?us-ascii?Q?ViXTZO6UHhYpICniR3x8WJteLyHTtxVIt9PV4cM7MLMV59jdnG1cGgORMqBx?=
+ =?us-ascii?Q?K9UFCJpwCexdvlpXS4G6Uo2UmC8+vwe0OapJEs98DqwbJktBTQ53SBrjE43i?=
+ =?us-ascii?Q?AZDeXd8mGZftaYpbrgSpW6nBgqqNj2aF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KFlS3cHFwVpo2vdsjFG4iHGKBd7EQTDQtifGwKlGU6k00mu/d9lzBiuOY9ZL?=
+ =?us-ascii?Q?nmKQ6ox8z+LYotMUG41FjKSfZo+JMfSWOzaCw0hcopfueGLFGQA9FRQ4rsPo?=
+ =?us-ascii?Q?NODJQlTb0H8ec3+iRna6C3YMkCLQp0aZiJiWJTjwnVfcbN+fhUqyFwTcFug2?=
+ =?us-ascii?Q?0B6/DnpNYarUbYPgz5l/GjhVpKfF4rNKIpZWwJo+V5I3EVvgjJUV791wNBPe?=
+ =?us-ascii?Q?3jQC4p3FyHeBhl5LcG6aviWaLIkpEFKEqyYTF21Np11dyKxklVqXefIN2KHK?=
+ =?us-ascii?Q?xasYeRVfOp2U87RjCTV5N3/pAFB6qnEuVxklSiSoAmIz+noyNgNS91DT5xdD?=
+ =?us-ascii?Q?xwc845fb8ynOnAqkrBNs0X7/V4s6RSX/gi481f82fdqEuRxe2OCOASv92ew4?=
+ =?us-ascii?Q?09NBv7yBZBhaGlLuPXRdmltRi71zJUnIgIMLwIeG+EEpdPpLznWqJ6Y/7ALd?=
+ =?us-ascii?Q?KlrtEM3J12c+KyCCx7pc3roHqhfJpvXLIcQ+WYrZmewYdqbCV+hiVYmqXEjC?=
+ =?us-ascii?Q?0YM/SiQoaPI2tnlEQGW6mf/N5iqrnANDmTZI46JHYi4VQEWKIrBYP5j4LrrA?=
+ =?us-ascii?Q?NZgs4AAEO8hKuDzDWzavzvbp50jDprm/ZzZRTl4PJ4hnnC0di6+la6NH1FP4?=
+ =?us-ascii?Q?ENqjox6E0t9LYxk9+iAiyjZnDxuDpANB2GLNaYL697JZvNtPA5f4Wqq65HyC?=
+ =?us-ascii?Q?T6FU8Q2i5fr3qolPRP9sGUs4DUOSaz7dFYsfQ7d+lkSWRO0+f6UoLvvTAPJ5?=
+ =?us-ascii?Q?gmSt/8rJw9W9kkQ0x+FCi1wD5k+gGObuf6GLv9anLocY+7ur/WwWyAGggtv3?=
+ =?us-ascii?Q?HmFVVqLZDSmtgsFiNuEwHhlzCTfRCQ2HEFcVL9QIqyQQzCPSg/2kHqnq0rgq?=
+ =?us-ascii?Q?DABJiGXo1VAkODWqzgPelY7sqB17Og5ncY60hojPtwmEqA2ttABr2q0PQRPh?=
+ =?us-ascii?Q?ps6mu6XOHRXbhusH1rJzd+cqKFvejI+VmJiWUj/mE4o7IySJfo189fRLnp2h?=
+ =?us-ascii?Q?7gIE0su65CjURCpDqijg40Mj0BPC3U1L4L8ELb2HzOmanOKoZj1VR10TxC76?=
+ =?us-ascii?Q?LrOEvGc9irA0D8nfeSnl33wUmDjL071r0q+tU6Jz5k5KQW8V9yNhHZu1PT8/?=
+ =?us-ascii?Q?F7FMRIixvNRK2hevT2H86fNuxWzyxb0gWadGBVOO5LyM4xkV6otL4iYQpJHz?=
+ =?us-ascii?Q?PT/agbceaBcEVVgolcCAvzuSvoaBfrkTK7b5T49pPPhjszUKZQJ499pFBxhj?=
+ =?us-ascii?Q?i9p+ZmzEepGs/VCA/s/ZAuKs0J/ItMGR1aNgpwk4/aUvOldtex+deit4Rf77?=
+ =?us-ascii?Q?n//HTbkYaN+I4FcjProAps8wvHioUbZy28kVLxbw9M8U10Qk+CiD3oRcgrsn?=
+ =?us-ascii?Q?pqW5KtskjotZtio61rBkC5w7npPdFrDq9yXTFK2yGi7hMJghyhl0tli2C19O?=
+ =?us-ascii?Q?31kH5TUfzCwRGJoXCQMBkDil7ZZxlRU8sYyazpYcDp9wk8jqXJCmft0QPi5q?=
+ =?us-ascii?Q?/YfxHYvzigJyYPr5BSXk4cCX5EuZtmNe8u+CdyMGnB8C8CSFacMCSbdZxTYo?=
+ =?us-ascii?Q?bGpIxwGCcA8JIq1ytotkC6p0JP0ITS8iCEWFI4Nr?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a542b0f7-49b4-4958-f81a-08de1e1690dc
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 15:59:00.4278
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lqScRWDp7YFJNcrjz3iquoUDz4nUdofHpvHjqQ1fw3Qg9HUt+3cWyqyyIWB59I8gGzaTkqivTqwv6TdVucJl+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4252
 
-A false-positive kmsan report is detected when running ping command.
+On 03.11.25 15:05:28, Dave Jiang wrote:
+> 
+> 
+> On 11/3/25 11:47 AM, Robert Richter wrote:
+> > To construct a region, the region parameters such as address range and
+> > interleaving config need to be determined. This is done while
+> > constructing the region by inspecting the endpoint decoder
+> > configuration. The endpoint decoder is passed as a function argument.
+> > 
+> > With address translation the endpoint decoder data is no longer
+> > sufficient to extract the region parameters as some of the information
+> > is obtained using other methods such as using firmware calls.
+> > 
+> > In a first step, separate code to determine the region parameters from
+> > the region construction. Temporarily store all the data to create the
+> > region in the new struct cxl_region_context. Once the region data is
+> > determined and struct cxl_region_context is filled, construct the
+> > region.
+> > 
+> > Patch is a prerequisite to implement address translation. The code
+> > separation helps to later extend it to determine region parameters
+> > using other methods as needed, esp. to support address translation.
+> > 
+> > Reviewed-by: Gregory Price <gourry@gourry.net>
+> > Signed-off-by: Robert Richter <rrichter@amd.com>
+> 
+> Just a small thing below, otherwise
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> 
+> > ---
+> >  drivers/cxl/core/core.h   |  9 +++++++++
+> >  drivers/cxl/core/region.c | 32 +++++++++++++++++++++-----------
+> >  2 files changed, 30 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+> > index 1fb66132b777..2bc37f3aee21 100644
+> > --- a/drivers/cxl/core/core.h
+> > +++ b/drivers/cxl/core/core.h
+> > @@ -19,6 +19,15 @@ enum cxl_detach_mode {
+> >  };
+> >  
+> >  #ifdef CONFIG_CXL_REGION
+> > +
+> > +struct cxl_region_context {
+> > +	struct cxl_endpoint_decoder *cxled;
+> > +	struct cxl_memdev *cxlmd;
+> 
+> cxlmd may not be needed.
+> 
+> struct cxl_memdev *cxlmd = cxled_to_memdev(cxlr_ctx->cxled);
+> 
+> which you used later on in this patch to init the cxlmd member :)
 
-An inline assembly instruction 'vstl' can write varied amount of bytes
-depending on value of 'index' argument. If 'index' > 0, 'vstl' writes
-at least 2 bytes.
+This was on purpose to eliminate an unnecessary frequent call of
+cxled_to_memdev() while holding the context. There is at least a
+3-level pointer chasing to get to cxlmd.
 
-clang generates kmsan write helper call depending on inline assembly
-constraints. Constraints are evaluated compile-time, but value of
-'index' argument is known only at runtime.
+Maybe it's wort to add it to struct cxl_endpoint_decoder.
 
-clang currently generates call to __msan_instrument_asm_store with 1 byte
-as size. Manually call kmsan function to indicate correct amount of bytes
-written and fix false-positive report.
-
-This change fixes following kmsan reports:
-
-[   36.563119] =====================================================
-[   36.563594] BUG: KMSAN: uninit-value in virtqueue_add+0x35c6/0x7c70
-[   36.563852]  virtqueue_add+0x35c6/0x7c70
-[   36.564016]  virtqueue_add_outbuf+0xa0/0xb0
-[   36.564266]  start_xmit+0x288c/0x4a20
-[   36.564460]  dev_hard_start_xmit+0x302/0x900
-[   36.564649]  sch_direct_xmit+0x340/0xea0
-[   36.564894]  __dev_queue_xmit+0x2e94/0x59b0
-[   36.565058]  neigh_resolve_output+0x936/0xb40
-[   36.565278]  __neigh_update+0x2f66/0x3a60
-[   36.565499]  neigh_update+0x52/0x60
-[   36.565683]  arp_process+0x1588/0x2de0
-[   36.565916]  NF_HOOK+0x1da/0x240
-[   36.566087]  arp_rcv+0x3e4/0x6e0
-[   36.566306]  __netif_receive_skb_list_core+0x1374/0x15a0
-[   36.566527]  netif_receive_skb_list_internal+0x1116/0x17d0
-[   36.566710]  napi_complete_done+0x376/0x740
-[   36.566918]  virtnet_poll+0x1bae/0x2910
-[   36.567130]  __napi_poll+0xf4/0x830
-[   36.567294]  net_rx_action+0x97c/0x1ed0
-[   36.567556]  handle_softirqs+0x306/0xe10
-[   36.567731]  irq_exit_rcu+0x14c/0x2e0
-[   36.567910]  do_io_irq+0xd4/0x120
-[   36.568139]  io_int_handler+0xc2/0xe8
-[   36.568299]  arch_cpu_idle+0xb0/0xc0
-[   36.568540]  arch_cpu_idle+0x76/0xc0
-[   36.568726]  default_idle_call+0x40/0x70
-[   36.568953]  do_idle+0x1d6/0x390
-[   36.569486]  cpu_startup_entry+0x9a/0xb0
-[   36.569745]  rest_init+0x1ea/0x290
-[   36.570029]  start_kernel+0x95e/0xb90
-[   36.570348]  startup_continue+0x2e/0x40
-[   36.570703]
-[   36.570798] Uninit was created at:
-[   36.571002]  kmem_cache_alloc_node_noprof+0x9e8/0x10e0
-[   36.571261]  kmalloc_reserve+0x12a/0x470
-[   36.571553]  __alloc_skb+0x310/0x860
-[   36.571844]  __ip_append_data+0x483e/0x6a30
-[   36.572170]  ip_append_data+0x11c/0x1e0
-[   36.572477]  raw_sendmsg+0x1c8c/0x2180
-[   36.572818]  inet_sendmsg+0xe6/0x190
-[   36.573142]  __sys_sendto+0x55e/0x8e0
-[   36.573392]  __s390x_sys_socketcall+0x19ae/0x2ba0
-[   36.573571]  __do_syscall+0x12e/0x240
-[   36.573823]  system_call+0x6e/0x90
-[   36.573976]
-[   36.574017] Byte 35 of 98 is uninitialized
-[   36.574082] Memory access of size 98 starts at 0000000007aa0012
-[   36.574218]
-[   36.574325] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G    B            N  6.17.0-dirty #16 NONE
-[   36.574541] Tainted: [B]=BAD_PAGE, [N]=TEST
-[   36.574617] Hardware name: IBM 3931 A01 703 (KVM/Linux)
-[   36.574755] =====================================================
-
-[   63.532541] =====================================================
-[   63.533639] BUG: KMSAN: uninit-value in virtqueue_add+0x35c6/0x7c70
-[   63.533989]  virtqueue_add+0x35c6/0x7c70
-[   63.534940]  virtqueue_add_outbuf+0xa0/0xb0
-[   63.535861]  start_xmit+0x288c/0x4a20
-[   63.536708]  dev_hard_start_xmit+0x302/0x900
-[   63.537020]  sch_direct_xmit+0x340/0xea0
-[   63.537997]  __dev_queue_xmit+0x2e94/0x59b0
-[   63.538819]  neigh_resolve_output+0x936/0xb40
-[   63.539793]  ip_finish_output2+0x1ee2/0x2200
-[   63.540784]  __ip_finish_output+0x272/0x7a0
-[   63.541765]  ip_finish_output+0x4e/0x5e0
-[   63.542791]  ip_output+0x166/0x410
-[   63.543771]  ip_push_pending_frames+0x1a2/0x470
-[   63.544753]  raw_sendmsg+0x1f06/0x2180
-[   63.545033]  inet_sendmsg+0xe6/0x190
-[   63.546006]  __sys_sendto+0x55e/0x8e0
-[   63.546859]  __s390x_sys_socketcall+0x19ae/0x2ba0
-[   63.547730]  __do_syscall+0x12e/0x240
-[   63.548019]  system_call+0x6e/0x90
-[   63.548989]
-[   63.549779] Uninit was created at:
-[   63.550691]  kmem_cache_alloc_node_noprof+0x9e8/0x10e0
-[   63.550975]  kmalloc_reserve+0x12a/0x470
-[   63.551969]  __alloc_skb+0x310/0x860
-[   63.552949]  __ip_append_data+0x483e/0x6a30
-[   63.553902]  ip_append_data+0x11c/0x1e0
-[   63.554912]  raw_sendmsg+0x1c8c/0x2180
-[   63.556719]  inet_sendmsg+0xe6/0x190
-[   63.557534]  __sys_sendto+0x55e/0x8e0
-[   63.557875]  __s390x_sys_socketcall+0x19ae/0x2ba0
-[   63.558869]  __do_syscall+0x12e/0x240
-[   63.559832]  system_call+0x6e/0x90
-[   63.560780]
-[   63.560972] Byte 35 of 98 is uninitialized
-[   63.561741] Memory access of size 98 starts at 0000000005704312
-[   63.561950]
-[   63.562824] CPU: 3 UID: 0 PID: 192 Comm: ping Tainted: G    B            N  6.17.0-dirty #16 NONE
-[   63.563868] Tainted: [B]=BAD_PAGE, [N]=TEST
-[   63.564751] Hardware name: IBM 3931 A01 703 (KVM/Linux)
-[   63.564986] =====================================================
-
-Fixes: dcd3e1de9d17 ("s390/checksum: provide csum_partial_copy_nocheck()")
-Signed-off-by: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
----
- arch/s390/include/asm/fpu-insn.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/s390/include/asm/fpu-insn.h b/arch/s390/include/asm/fpu-insn.h
-index 135bb89c0a89..8f2dd6e879ff 100644
---- a/arch/s390/include/asm/fpu-insn.h
-+++ b/arch/s390/include/asm/fpu-insn.h
-@@ -12,6 +12,7 @@
- #ifndef __ASSEMBLER__
- 
- #include <linux/instrumented.h>
-+#include <linux/kmsan.h>
- #include <asm/asm-extable.h>
- 
- asm(".include \"asm/fpu-insn-asm.h\"\n");
-@@ -393,6 +394,7 @@ static __always_inline void fpu_vstl(u8 v1, u32 index, const void *vxr)
- 		     : [vxr] "=Q" (*(u8 *)vxr)
- 		     : [index] "d" (index), [v1] "I" (v1)
- 		     : "memory");
-+	kmsan_unpoison_memory(vxr, size);
- }
- 
- #else /* CONFIG_CC_HAS_ASM_AOR_FORMAT_FLAGS */
-@@ -409,6 +411,7 @@ static __always_inline void fpu_vstl(u8 v1, u32 index, const void *vxr)
- 		: [vxr] "=R" (*(u8 *)vxr)
- 		: [index] "d" (index), [v1] "I" (v1)
- 		: "memory", "1");
-+	kmsan_unpoison_memory(vxr, size);
- }
- 
- #endif /* CONFIG_CC_HAS_ASM_AOR_FORMAT_FLAGS */
--- 
-2.43.7
-
+-Robert
 
