@@ -1,152 +1,231 @@
-Return-Path: <linux-kernel+bounces-890471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BAFC4021E
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:34:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06E1C40226
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:34:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E343B540B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6658B42291C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903D32E6CDB;
-	Fri,  7 Nov 2025 13:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5924D2E7BCF;
+	Fri,  7 Nov 2025 13:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bS+A6bFt"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="FTwDlunp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ORo5NbN6"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C67C19CD1D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304B62E62A4;
+	Fri,  7 Nov 2025 13:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762522406; cv=none; b=hUuLwxZURLCcfdL/nS3BER1dDm3WHg7xgMEn77jDFKGMuv7fic62G/v97AqeGWe7VCDg7SCA+SuFTJoUAg9/fvg8itsmVduZvMH6bY5jeDdcOHsDXkyz92cJHoP7bog+lGg9T79gbiCtRiiB7E5+lyEGiLutP7i6l9WyxyisAmw=
+	t=1762522418; cv=none; b=QhaahoZqPPwW0YMY3KR3foaVs+WjmlHZgbq9quN6XIUyOOBHx/7oqelMHxpMY7yUEmkTZTMokLzR9txGFD19RhZsDEOj/2oDuXaG87qEe3Uei+JAtvJX4vrhB1Jt9PpibabGCJgUsdiGl6BxSh3V01bj9sqLWS0l82Ukh0ine+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762522406; c=relaxed/simple;
-	bh=rr6r6L3fmjmJiRBxdLfCOfZv5X6qXlIhniqITlnumoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tgsknJCSFbG1ulA3ZMZZvQTsTcqOZ8cFwPjBsc4bVJDpAl5SMLQVq3qtXNe2kuiNn+oNdf2sVCYOMMN0DIEtUBo8yLW3TdSzt3bMOiHobqRO4yjMLJbZu5Mq869LoVfIj5iJ0gE4MHtpp/B92NMMGTcoa1S2HOLBO0E8jjddxTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bS+A6bFt; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-477563bcaacso5544425e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:33:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762522401; x=1763127201; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SGiLKyBk674zPvRyLzZYpQJmlls8YKxhUjU6CMzNe2E=;
-        b=bS+A6bFtE4c4kQrpGCgqtr5+NqmdBM0Ohepu5ekAJZykMHln5c1z4TNn86++RqnQiZ
-         VymnhqO9IXGV5szqrR1gmvp6gzMLEp1q0eV1hCEHE9p4182xl2CW+kezJ4otdbaoLoUk
-         omhbB2KOtuxMD/RMJUEcdDbZ8ehRGu7UbbhQaHI2S6LA2fnJ+Mdyk0VdtdnVOj1KxQ/z
-         503usc1vxfSnOyazPNbCkabSmp19+ua1sakgbe/jqdEmx5EUilgc5FbPACPSoXgg4aW4
-         omrTsBgSJVjHcBicGqi0KGa5f4LnKGiaoC9sS8a3p9fJPplogV4WJxXwemxktocdeCLk
-         IZMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762522401; x=1763127201;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SGiLKyBk674zPvRyLzZYpQJmlls8YKxhUjU6CMzNe2E=;
-        b=vkTzsTnCK49uOHH/U37xSvUUKfEVlqhBzv5H5VM+MBwU5o5DmlnH8gGPhlwKHm/kS+
-         UI3N4aCfkmS8aHohNk/WvktC08Udtg7kHxFpJ9Y039aFgLtx7I0XZZ9h7+WSyBlW8ATH
-         cuO35VkhuT8hKX1GR05pITen9Ur18npwzvlIu4+Scr3CRiFLd31llAGQRxHbkjArDIng
-         IcFAcnJTzJ8vAFRF7NnNEy3wQqPR/fYnDJoHKKG6YVMVYyzqISMSvU9CLL7a5C0Blbk0
-         kpaxHInBKOa+vMzDqtXybTMw31dBiW6zi82Pz5ZHAjrZrZTe2Hx5FzUZbPlH3f2yQqUz
-         UxHg==
-X-Gm-Message-State: AOJu0YxciDwPxdo0sL2zHKmgp8YLg4nilPov1z+ACuatTkGMGOabO24g
-	uDzd+2sumjAT8WSxsWFx1TKDb7lonrzOCJwDzEl0SIBt9fnePWBg5SM53DRdG57UjCJ9rUuX5eF
-	6rwfJ
-X-Gm-Gg: ASbGncsrgVzdlFAv9Fpq1o+ODkz330cr/ABcHYf27fXSc9a5Oo5j3vWpuPnDjmP7l0H
-	SBcRzPEdMt2Sjo763sWZFf6admMG45f5suMMRjHwG4pTlrDmg+cbJfuMpyehOiZ1XuUD4d/evLK
-	jz8Hs51BOTHggdFBsfoo+2CzJKf4pU37tWG7no2fAaIhILffun6Vkq9zBCeY3iLb0DWR088EfiF
-	htq7pzPXJazDxSp52NNNYBe0UZBAJ5ohhwq4CJSmxa4VZy0VZgBIlgw1lsP5GFBTiiyzftisHjE
-	HxRowSm6EuewuoA05nPFNfkj6djsFoFD29p8CwpO3THRKOQkvy2LIBN6Q4ITjJLIw1KsA84s+WU
-	1zu7IAsliaQjZlfVqQfWA+0G1tAZX2Gy10KDs2p6g4ClDZvxIQQgczNDIrxWADkPzJ9f5euRW7a
-	OefxRel6rewoVdoA5z95weq+RXrhsD2/l7HUA=
-X-Google-Smtp-Source: AGHT+IHqn8l82QI2FvynvEtmKQ88fDIKD344vI+VzALApBnJ82qM3UJ3KcaVbdcfycniAHlcbP5/cg==
-X-Received: by 2002:a05:600c:4fcb:b0:471:9b5:6fd3 with SMTP id 5b1f17b1804b1-4776bc25b36mr24303905e9.0.1762522401117;
-        Fri, 07 Nov 2025 05:33:21 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47767749916sm86260235e9.4.2025.11.07.05.33.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 05:33:19 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Max Gurtovoy <mgurtovoy@nvidia.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>
-Subject: [PATCH] IB/iser: add WQ_PERCPU to alloc_workqueue users
-Date: Fri,  7 Nov 2025 14:33:06 +0100
-Message-ID: <20251107133306.187939-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762522418; c=relaxed/simple;
+	bh=vR1IF9ZdNx9S88huKWq1DbNssn94QpmUI57Qw30wnUU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=F/+monwpedRykG6v6TtLTqsP6P5n7nTYxBaN8gJ9l/dSwLXT8jNis3sXY9bqVRuKqEg2qLONp2zdgWxBBpkA6egqCMzzNlx08gbmJoYbmSGbhLU1Hgslm+A2tACc1jksdEKSnVhInLNL7iwQKDTgdB6c85FqiI0+eSc/r3fQsf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=FTwDlunp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ORo5NbN6; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 31B07EC0217;
+	Fri,  7 Nov 2025 08:33:35 -0500 (EST)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Fri, 07 Nov 2025 08:33:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762522415;
+	 x=1762608815; bh=qoNTBri6BFoATER30Out59sX4XhuNxOT0sEiKlWHhZ0=; b=
+	FTwDlunpfj+SJA80kY3vwi0QtIDIq6L+Is5CGmfWNH8y19dz+eUlaqLjH4ruYTbe
+	gT0s7Hk+m+/GmQhqLUstFXZUNiWilFAq73kVOBrK6t4ifO9/R0mPBghcph17QJy0
+	hAQk28Ut/WoRo6qfDtdpeC2ZIEmy82H6IWOs5Woo2tMlwixQQj1a2L7UNf/8X0c6
+	AZHGPtxfy6FZx4CU0UHYJY9/2b8Apg4KZ7Azxjf0LMlMDlklVLRSyw4EZHoLtFAV
+	TZhkcEJjG6bNW2NxXi5fHMBqmBOrBxTmOoVqwN28fstG4Y0hAm1choDBfN+LIsJ5
+	7sVfpx7QUNL5RN1SMTaA1g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762522415; x=
+	1762608815; bh=qoNTBri6BFoATER30Out59sX4XhuNxOT0sEiKlWHhZ0=; b=O
+	Ro5NbN6H+XulPdb2sFyYcTqSZuypntzCF9ZwxRPtuosbpaBPXAQ4CKehfT8vYnUp
+	vZzbV/jeMPVywZQ9iQ7diea8FZp7vBTBZXVK7OHT32e+b2qO7TCl1gEUvy7K0fiO
+	lZZKSpWYuP+pCyFBFiB+UULLXqKnCAaz3OSuV1A7CKxY3JRAivQRXTdgmuK3jwC0
+	gCYc8RtVtnSFNxs2R7HnMkXpoIMcDOr0soOXXptIttgIikHj6j2jp/XxkqsXvloC
+	1e0NHUKrlZUNfIzyCr6i64EpzgLIwGzjmcibcWT22VDy+YN6AHCtMTOnXveI9kvu
+	0CZZgGHjzoOq88zUhhNDw==
+X-ME-Sender: <xms:LPUNadRqk_rPMn1hC4PXa7X-2lmMEiH19pqmrO2zsLKTwFS9nWWOXg>
+    <xme:LPUNaRnIvVGpXMcYJXJw0ZqScKHRawWPf75el4LHyHruTHS_p_qqItnA_p-icVxV1
+    CDVtnEeLjSi7qYrVGHqb34ctM8MLQ-YiasX2z_BtWRqUePowAqC8SI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeeljeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhope
+    iiudeihedvtdejgeegfedvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrshgrhhhi
+    rhhohieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgrthhhrghnsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgr
+    uggvrggurdhorhhgpdhrtghpthhtohepihesmhgrshhkrhgrhidrmhgvpdhrtghpthhtoh
+    eprhhonhgsohhgohesohhuthhlohhokhdrtghomhdprhgtphhtthhopehlgidvgeesshht
+    uhdrhihnuhdrvgguuhdrtghnpdhrtghpthhtohepfhgrlhgtohhnsehtihhnhihlrggsrd
+    horhhg
+X-ME-Proxy: <xmx:LPUNafhSVId5La2hoscRcYirzK6FithUJUQZaUQGQMEpiGwk78vZQg>
+    <xmx:LPUNaYaj8i5_foyx7RioDe7mwbUfrAlkeugyV4mJE-zZsXLTQ4GEyg>
+    <xmx:LPUNaTiVfTLz2adn1QX1_2WkS5b0HdNuufR2eGK6ZcrNY_k2aXI-mA>
+    <xmx:LPUNaabtXfqp0Kx7yFtlaHs-KvqUZZdo_Q3BIS8KP--KNahFYFmpAA>
+    <xmx:L_UNaX3xt1pHAgxJ5zDXSx9oglQ3DipmYV0h4djnA9p2AEwfMwXUfIkQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C8D5270006B; Fri,  7 Nov 2025 08:33:32 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-ThreadId: A-HrBBL8x6OF
+Date: Fri, 07 Nov 2025 14:33:12 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yuan Tan" <tanyuan@tinylab.org>,
+ "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, linux-kbuild@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ i@maskray.me, "Zhangjin Wu" <falcon@tinylab.org>, ronbogo@outlook.com,
+ z1652074432@gmail.com, lx24@stu.ynu.edu.cn
+Message-Id: <73010511-a804-4cf4-a5c1-1d08e3f324c5@app.fastmail.com>
+In-Reply-To: 
+ <0BF8B2E83B6154B6+f17f32b4-f6ff-4184-917d-4b27fb916eae@tinylab.org>
+References: <30C972B6393DBAC5+cover.1760463245.git.tanyuan@tinylab.org>
+ <33333fdd-2aa2-4ce0-8781-92222829ea12@app.fastmail.com>
+ <0BF8B2E83B6154B6+f17f32b4-f6ff-4184-917d-4b27fb916eae@tinylab.org>
+Subject: Re: [PATCH v2 0/8] dce, riscv: Unused syscall trimming with PUSHSECTION and
+ conditional KEEP()
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistency cannot be addressed without refactoring the API.
+On Tue, Nov 4, 2025, at 03:21, Yuan Tan wrote:
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+>> Sorry for the late reply =E2=80=94 this patchset really wore me out, =
+and I only just
+>> recovered.  Thank you very much for your feedback!
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+Sorry to hear this has been stressful for you. It's an unfortunate
+aspect of the way we work that sometimes=20
 
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
+> On 10/15/2025 12:47 AM, Arnd Bergmann wrote:
+>> On Wed, Oct 15, 2025, at 08:16, Yuan Tan wrote:
+>> Thanks a lot for your work on this. I think it is indeed valuable to
+>> be able to optimize kernels with a smaller subset of system calls for
+>> known workloads, and have as much dead code elimination as possible.
+>>
+>> However, I continue to think that the added scripting with a known
+>> set of syscall names is fundamentally the wrong approach to get to
+>> this list: This adds complexity to the build process in one of
+>> the areas that is already too complicated, and it duplicates what
+>> we can already do with Kconfig for a subset of the system calls.
+>>
+>> I think the way we should configure the set of syscalls instead is
+>> to add more Kconfig symbols guarded by CONFIG_EXPERT that turn
+>> classes of syscalls on or off. You have obviously done the research
+>> to come up with a list of used/unused entry points for one or more
+>> workloads. Can you share those lists?
+>
+> Regarding your suggestion to use Kconfig to control which system calls=
+ are
+> included or excluded, perhaps we could take inspiration from systemd's
+> classification approach. For example, systemd groups syscalls into cat=
+egories
+> like[1]:
+>
+> @aio @basic-io @chown @clock @cpu-emulation @debug @file-system
+>
+> and so on.
 
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+I think many of the categories already naturally align with the
+structure of the kernel source code, so maintaining them naturally comes
+out of the build system.
 
-This change adds a new WQ_PERCPU flag to explicitly request
-alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+More importantly, turning off parts of the kernel on a per-file
+basis tends to work better for eliminating the entire block
+of code because only removing the syscall entry still leaves
+references to functions and global data structures from initcalls
+and exported functions.
 
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
+> However, if we go down this route, we would need to continuously maint=
+ain and
+> update these categories whenever Linux introduces new system calls. I'=
+ m not
+> sure whether that would be an ideal long-term approach.
 
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
+If we can (at least roughly) align the categories between the kernel and=
+ the
+systemd classification, that would at least make it easier to maintain
+the systemd ones.
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/infiniband/ulp/iser/iscsi_iser.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> For reference, here is the list of syscalls required to run Lighttpd.
+>
+> execve set_tid_address mount write brk mmap munmap getuid getgid getpid
+> clock_gettime getcwd fcntl fstat read dup3 socket setsockopt bind list=
+en
+> rt_sigaction rt_sigprocmask newfstatat prlimit64 epoll_create1 epoll_c=
+tl pipe2
+> epoll_pwait accept4 getsockopt recvfrom shutdown writev getdents64 ope=
+nat close
+>
+> We've tested it successfully on QEMU + initramfs, and I can share the
+> deployment script if anyone would like to reproduce the setup.
 
-diff --git a/drivers/infiniband/ulp/iser/iscsi_iser.c b/drivers/infiniband/ulp/iser/iscsi_iser.c
-index 2e3c0516ce8f..dc531fad73de 100644
---- a/drivers/infiniband/ulp/iser/iscsi_iser.c
-+++ b/drivers/infiniband/ulp/iser/iscsi_iser.c
-@@ -1029,7 +1029,7 @@ static int __init iser_init(void)
- 	mutex_init(&ig.connlist_mutex);
- 	INIT_LIST_HEAD(&ig.connlist);
- 
--	release_wq = alloc_workqueue("release workqueue", 0, 0);
-+	release_wq = alloc_workqueue("release workqueue", WQ_PERCPU, 0);
- 	if (!release_wq) {
- 		iser_err("failed to allocate release workqueue\n");
- 		err = -ENOMEM;
--- 
-2.51.1
+Thanks for the list! Is this a workload you are interested in actually
+optimizing for deployment, or just something you used as a simple test
+environment?
 
+I see three types of syscalls in your list above:
+
+1. essential ones that are basically always needed
+2. socket interfaces (already optional)
+3. epoll (already optional)
+
+The first two sets are clearly going to have more syscalls in
+them that are usually used in combination with the others:
+If we provide read, write and writev, we should also provide readv,
+and if we provide socket/bind/listen/recvfrom, we also likely want
+accept/connect/sendto and probably recvmsg/sendmsg.
+
+Starting with your set of syscalls and those closely related
+ones, as well as the set of syscalls that already have a
+Kconfig option, we should be able to find the set of syscalls
+that are unconditionally enabled but could be optional.
+If you have the chance, could you compile that list?
+I might also have a list, but probably not in the next week.
+
+The next step after that I think is to measure the impact
+of turning off those remaining ones in a configuration that
+has the existing symbols (e.g. sysvipc, futex, compat_32bit_time,
+...) disabled already.
+
+Side note: I'm a  bit surprised to see fstat() in the list, since riscv
+should only really support newfstat().
+
+> Also, I noticed that there haven't been any comments so far on the lat=
+er
+> patches introducing the PUSHSECTION macro.=C2=A0 I' m a bit concerned =
+about how
+> people perceive this part.
+
+I don't have a strong opinion on this part.
+
+     Arnd
 
