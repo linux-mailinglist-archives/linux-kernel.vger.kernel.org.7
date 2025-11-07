@@ -1,180 +1,244 @@
-Return-Path: <linux-kernel+bounces-890184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB836C3F6B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:27:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 414B5C3F6CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:28:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F4A3A238C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:26:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 523C13B2A8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB0A2E88A7;
-	Fri,  7 Nov 2025 10:26:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3BF3043D6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AA13043D5;
+	Fri,  7 Nov 2025 10:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D1eEq/LZ"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D23D304BDA
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762511214; cv=none; b=nz1r6Mnj+MzZshtGB5ccUBG8SZpmoRlhy9kMjrMTf+9VWEQZ9e44WT/Y9/CG5ZU8Sbn9AWIxaMhqBWrEzANvJ9AB6UdhknEKBI9ChSNkrWNA4klKJO58ITq/PRuIvtSAt3409MQk/N0OA731tzFSPQnr1QAAwH53rP0zGAVqVW8=
+	t=1762511250; cv=none; b=B8Eaz/nV2L2EXsGfp6EEX8G03iF2UCfaxxzm2s+f21ysRsRPEQuOl2Rh0TF4DSODDG5ORq7Wc3saKkRQ3mML/Sir6FJgP+n2tOiXI8FSJpTUiXMEqAKvoUFv4qbKuvt3WJe+JZOz5E78CodrUE/DYR42blMO0NY5wS9CctytKXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762511214; c=relaxed/simple;
-	bh=VRJiIr8lUE9n27ypcw1Cscd9T/Bzt7XKBtseL1Lr4dw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sn6Vm+Su6jYOTU5x7oRhnS5BnbCc/xQry2Gx20SKP8J732pb+LanxN/mlaeDrOoloy9bElMHrrMzYEKBjNldbPX6dpqzcNuPfycvCkxUHKgDBHdzTVyLwKbBej3JAmEeryrJJ8H3V6s99WGmnV2aicTX44BkW6LvTQ5vUhPG5Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A8DC1515;
-	Fri,  7 Nov 2025 02:26:44 -0800 (PST)
-Received: from [10.57.72.216] (unknown [10.57.72.216])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E1EF3F66E;
-	Fri,  7 Nov 2025 02:26:48 -0800 (PST)
-Message-ID: <4d23e26a-17db-42f8-bbf2-78acbe6925b8@arm.com>
-Date: Fri, 7 Nov 2025 10:26:47 +0000
+	s=arc-20240116; t=1762511250; c=relaxed/simple;
+	bh=dU6O56OMghwZS1aR5LvfSCdFf1Qmv6aFo7OI83fsuug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HNNaPobeauhwISVCzYbQjT3l5IsLjyJ8hm2SodD2IX7pJylGs0ICjcj5UZnTAxwlk47LJahAlYg+lTXGwFkodxtTmW5ysNV3M4nOgolTzYnWmyAlpdHQjvJgHf1aYyFzuLn2hMwWnoS+It69utkUiM+YtEtHVMJp3d/5HlMiyUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D1eEq/LZ; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-880570bdef8so6278976d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:27:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762511247; x=1763116047; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pLhtIptgftMWRvfp8mRlQOiL9wA5G5qSa8Z4beNB3RU=;
+        b=D1eEq/LZcAtvr34DcXGrFwh+SfW7gJYg1bCxxiPskhGA02RPtqnLl1+R44u7NhAQes
+         5x0bPj7INeArCh83PYN9OGlI2pCnJRxsJWeLFJsNeNTd32Mo6ZCu+cgUHGedt7O9gLDZ
+         eUGl8sFDhKhI/4/4+7GLDjHSPA8bg6BjzBgArW68kTpTKQ0i5BQki1bdbVNrOTMQLY+5
+         vYHsC9H6Oq2u2VFwrlzpqwDpfaujqjo6UhuwdRDpUPdPg6/EQNeCHPnJYBG1zZwmBim6
+         JDaBcoDaT7a0L1/yC82G6kzzv35yFrJS8SraaeTOFqTN4RwxU3TbMipGCAImB+hH4Wb1
+         45EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762511247; x=1763116047;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=pLhtIptgftMWRvfp8mRlQOiL9wA5G5qSa8Z4beNB3RU=;
+        b=UPGyKxwZTQO5QmYkEb749i+QlOn5DrIyy1Nia6eutl8W80vJRwbQugx9dK5AJEsnfe
+         b3CYPIlUtnm1nN5yB4T1iCqYuAniIFtxhFlkXVSphP4U5xUaF/9WTdfaZEGscYuCpfSN
+         CG6n4FdPnRhZ/wXT4ABHvfjfK/vBYoXFAgZ//fzHWV5gnR4O1SNsN7Caj0C+8nNWighb
+         tanFdVO7+0DYoKjFuHNzkqokyV+oIU9rUxulH8nwpmX6G97sr2VmUtg6HDs4ypxh5ReV
+         OKIGqgA+/rhQeKk4clhDA0hAczevZh4xA0lWXpl3435gixlreqJhNZFgRLR0A7NiM3on
+         1vYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXNRqR5XuL68FxofCaV09bXG8JnD2SCyCMeoXiAvgja36bIlr7qmnxsyzASCfeBl3/9axenM0ZRARang8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1mPLZiynob3JvRgsZ2zsw5ZoqfshOD/Scgj1RrWZh4nHCtq8j
+	0IGSPNQuxvEUgz4M1z3619n4XCuSdEKNLzCrTZfNzoeueVR3jz9KwxFGw7hn/06rvVlM6HjQ1KW
+	9Cs2enElufDcXH2SBJ6EE9E2DLulQ4SHNCEgY99ml
+X-Gm-Gg: ASbGncuJ4aves9e3l4f1+txOUsDcPVUVQ7ctev8xFmLd/5Gxbhp26zc/wb+NUMKEaOQ
+	nWMNwGgjb8BFgG7a+QtPEbEZcszdxpCuFEt6kDqgL88iUfRSVcWMBAj1OjdFrDi0NHBIx8bPzuZ
+	o35t3iTk2EPaTEZ6tW6XK9d2vP5oWCU67nc27AQQy/Ke7N4mMaqEGdp1c+LZb+HLGw4g7IDcAo8
+	ZVXbDtB72eWOkn0xj10hS58Bch2HK7r/OrTr2w7/JLYIBe315/m418AeAPr7yuqbrKJ9qfWzdE9
+	4PVQJoaqE1Dh31UW2ObwRtqY0w==
+X-Google-Smtp-Source: AGHT+IHGzRF/1cbs/MsDVPOx8UJ49URwz8VUyR081sUbxE8+sqheDOB1N7EBEDuZ+mpR05WsdF19S4wEHS/n0A2MIu0=
+X-Received: by 2002:ad4:5e8c:0:b0:87c:fbf:108a with SMTP id
+ 6a1803df08f44-88167afbb01mr33443336d6.10.1762511246798; Fri, 07 Nov 2025
+ 02:27:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/8] drm/panthor: Implement soft reset via PWR_CONTROL
-To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
-Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-References: <20251027161334.854650-1-karunika.choo@arm.com>
- <20251027161334.854650-6-karunika.choo@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251027161334.854650-6-karunika.choo@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251106160845.1334274-2-aleksei.nikiforov@linux.ibm.com> <20251106160845.1334274-6-aleksei.nikiforov@linux.ibm.com>
+In-Reply-To: <20251106160845.1334274-6-aleksei.nikiforov@linux.ibm.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Fri, 7 Nov 2025 11:26:50 +0100
+X-Gm-Features: AWmQ_bnF17f6A18RySh-hO3pa-QL803fyOZqBKR4ZjbBOIO0pB_5mi0dYohMDnE
+Message-ID: <CAG_fn=WufanV2DAVusDvGviWqc6woNja-H6WAL5LNgAzeo_uKg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] s390/fpu: Fix kmsan in fpu_vstl function
+To: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>, 
+	Juergen Christ <jchrist@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/10/2025 16:13, Karunika Choo wrote:
-> Add helpers to issue reset commands through the PWR_CONTROL interface
-> and wait for reset completion using IRQ signaling. This enables support
-> for RESET_SOFT operations with timeout handling and status verification.
-> 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-
-Reviewed-by: Steven Price <steven.price@arm.com>
-
+On Thu, Nov 6, 2025 at 5:09=E2=80=AFPM Aleksei Nikiforov
+<aleksei.nikiforov@linux.ibm.com> wrote:
+>
+> clang generates call to __msan_instrument_asm_store with 1 byte as size.
+> Manually call kmsan helper to indicate correct amount of bytes written.
+>
+> If function fpu_vstl is called with argument 'index' > 0,
+> it writes at least 2 bytes, but kmsan only marks first byte as written.
+>
+> This change fixes following kmsan reports:
+>
+> [   36.563119] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [   36.563594] BUG: KMSAN: uninit-value in virtqueue_add+0x35c6/0x7c70
+> [   36.563852]  virtqueue_add+0x35c6/0x7c70
+> [   36.564016]  virtqueue_add_outbuf+0xa0/0xb0
+> [   36.564266]  start_xmit+0x288c/0x4a20
+> [   36.564460]  dev_hard_start_xmit+0x302/0x900
+> [   36.564649]  sch_direct_xmit+0x340/0xea0
+> [   36.564894]  __dev_queue_xmit+0x2e94/0x59b0
+> [   36.565058]  neigh_resolve_output+0x936/0xb40
+> [   36.565278]  __neigh_update+0x2f66/0x3a60
+> [   36.565499]  neigh_update+0x52/0x60
+> [   36.565683]  arp_process+0x1588/0x2de0
+> [   36.565916]  NF_HOOK+0x1da/0x240
+> [   36.566087]  arp_rcv+0x3e4/0x6e0
+> [   36.566306]  __netif_receive_skb_list_core+0x1374/0x15a0
+> [   36.566527]  netif_receive_skb_list_internal+0x1116/0x17d0
+> [   36.566710]  napi_complete_done+0x376/0x740
+> [   36.566918]  virtnet_poll+0x1bae/0x2910
+> [   36.567130]  __napi_poll+0xf4/0x830
+> [   36.567294]  net_rx_action+0x97c/0x1ed0
+> [   36.567556]  handle_softirqs+0x306/0xe10
+> [   36.567731]  irq_exit_rcu+0x14c/0x2e0
+> [   36.567910]  do_io_irq+0xd4/0x120
+> [   36.568139]  io_int_handler+0xc2/0xe8
+> [   36.568299]  arch_cpu_idle+0xb0/0xc0
+> [   36.568540]  arch_cpu_idle+0x76/0xc0
+> [   36.568726]  default_idle_call+0x40/0x70
+> [   36.568953]  do_idle+0x1d6/0x390
+> [   36.569486]  cpu_startup_entry+0x9a/0xb0
+> [   36.569745]  rest_init+0x1ea/0x290
+> [   36.570029]  start_kernel+0x95e/0xb90
+> [   36.570348]  startup_continue+0x2e/0x40
+> [   36.570703]
+> [   36.570798] Uninit was created at:
+> [   36.571002]  kmem_cache_alloc_node_noprof+0x9e8/0x10e0
+> [   36.571261]  kmalloc_reserve+0x12a/0x470
+> [   36.571553]  __alloc_skb+0x310/0x860
+> [   36.571844]  __ip_append_data+0x483e/0x6a30
+> [   36.572170]  ip_append_data+0x11c/0x1e0
+> [   36.572477]  raw_sendmsg+0x1c8c/0x2180
+> [   36.572818]  inet_sendmsg+0xe6/0x190
+> [   36.573142]  __sys_sendto+0x55e/0x8e0
+> [   36.573392]  __s390x_sys_socketcall+0x19ae/0x2ba0
+> [   36.573571]  __do_syscall+0x12e/0x240
+> [   36.573823]  system_call+0x6e/0x90
+> [   36.573976]
+> [   36.574017] Byte 35 of 98 is uninitialized
+> [   36.574082] Memory access of size 98 starts at 0000000007aa0012
+> [   36.574218]
+> [   36.574325] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G    B      =
+      N  6.17.0-dirty #16 NONE
+> [   36.574541] Tainted: [B]=3DBAD_PAGE, [N]=3DTEST
+> [   36.574617] Hardware name: IBM 3931 A01 703 (KVM/Linux)
+> [   36.574755] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> [   63.532541] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [   63.533639] BUG: KMSAN: uninit-value in virtqueue_add+0x35c6/0x7c70
+> [   63.533989]  virtqueue_add+0x35c6/0x7c70
+> [   63.534940]  virtqueue_add_outbuf+0xa0/0xb0
+> [   63.535861]  start_xmit+0x288c/0x4a20
+> [   63.536708]  dev_hard_start_xmit+0x302/0x900
+> [   63.537020]  sch_direct_xmit+0x340/0xea0
+> [   63.537997]  __dev_queue_xmit+0x2e94/0x59b0
+> [   63.538819]  neigh_resolve_output+0x936/0xb40
+> [   63.539793]  ip_finish_output2+0x1ee2/0x2200
+> [   63.540784]  __ip_finish_output+0x272/0x7a0
+> [   63.541765]  ip_finish_output+0x4e/0x5e0
+> [   63.542791]  ip_output+0x166/0x410
+> [   63.543771]  ip_push_pending_frames+0x1a2/0x470
+> [   63.544753]  raw_sendmsg+0x1f06/0x2180
+> [   63.545033]  inet_sendmsg+0xe6/0x190
+> [   63.546006]  __sys_sendto+0x55e/0x8e0
+> [   63.546859]  __s390x_sys_socketcall+0x19ae/0x2ba0
+> [   63.547730]  __do_syscall+0x12e/0x240
+> [   63.548019]  system_call+0x6e/0x90
+> [   63.548989]
+> [   63.549779] Uninit was created at:
+> [   63.550691]  kmem_cache_alloc_node_noprof+0x9e8/0x10e0
+> [   63.550975]  kmalloc_reserve+0x12a/0x470
+> [   63.551969]  __alloc_skb+0x310/0x860
+> [   63.552949]  __ip_append_data+0x483e/0x6a30
+> [   63.553902]  ip_append_data+0x11c/0x1e0
+> [   63.554912]  raw_sendmsg+0x1c8c/0x2180
+> [   63.556719]  inet_sendmsg+0xe6/0x190
+> [   63.557534]  __sys_sendto+0x55e/0x8e0
+> [   63.557875]  __s390x_sys_socketcall+0x19ae/0x2ba0
+> [   63.558869]  __do_syscall+0x12e/0x240
+> [   63.559832]  system_call+0x6e/0x90
+> [   63.560780]
+> [   63.560972] Byte 35 of 98 is uninitialized
+> [   63.561741] Memory access of size 98 starts at 0000000005704312
+> [   63.561950]
+> [   63.562824] CPU: 3 UID: 0 PID: 192 Comm: ping Tainted: G    B         =
+   N  6.17.0-dirty #16 NONE
+> [   63.563868] Tainted: [B]=3DBAD_PAGE, [N]=3DTEST
+> [   63.564751] Hardware name: IBM 3931 A01 703 (KVM/Linux)
+> [   63.564986] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Fixes: dcd3e1de9d17 ("s390/checksum: provide csum_partial_copy_nocheck()"=
+)
+> Reviewed-by: Heiko Carstens <hca@linux.ibm.com>
+> Signed-off-by: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
 > ---
-> v2:
->  * Dropped RESET_FAST implementation as it is not currently being used.
->  * Renamed reset_completed to reset_pending to align with underlying
->    logic and fixed the logic of its callers accordingly.
->  * Improved readability of panthor_pwr_reset() and removed inline
->    ternary expressions.
-> ---
->  drivers/gpu/drm/panthor/panthor_pwr.c | 50 +++++++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_pwr.h |  2 ++
->  2 files changed, 52 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_pwr.c b/drivers/gpu/drm/panthor/panthor_pwr.c
-> index cd529660a276..4edb818c7ac4 100644
-> --- a/drivers/gpu/drm/panthor/panthor_pwr.c
-> +++ b/drivers/gpu/drm/panthor/panthor_pwr.c
-> @@ -3,6 +3,7 @@
-> 
->  #include <linux/platform_device.h>
->  #include <linux/interrupt.h>
-> +#include <linux/cleanup.h>
->  #include <linux/iopoll.h>
->  #include <linux/wait.h>
-> 
-> @@ -31,6 +32,8 @@
-> 
->  #define PWR_RETRACT_TIMEOUT_US		(2ULL * USEC_PER_MSEC)
-> 
-> +#define PWR_RESET_TIMEOUT_MS		500
-> +
->  /**
->   * struct panthor_pwr - PWR_CONTROL block management data.
->   */
-> @@ -75,6 +78,43 @@ static void panthor_pwr_write_command(struct panthor_device *ptdev, u32 command,
->  	gpu_write(ptdev, PWR_COMMAND, command);
+>  arch/s390/include/asm/fpu-insn.h | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/s390/include/asm/fpu-insn.h b/arch/s390/include/asm/fpu=
+-insn.h
+> index 135bb89c0a89..151b17e22923 100644
+> --- a/arch/s390/include/asm/fpu-insn.h
+> +++ b/arch/s390/include/asm/fpu-insn.h
+> @@ -393,6 +393,7 @@ static __always_inline void fpu_vstl(u8 v1, u32 index=
+, const void *vxr)
+>                      : [vxr] "=3DQ" (*(u8 *)vxr)
+>                      : [index] "d" (index), [v1] "I" (v1)
+>                      : "memory");
+> +       instrument_write_after(vxr, size);
 >  }
-> 
-> +static bool reset_irq_raised(struct panthor_device *ptdev)
-> +{
-> +	return gpu_read(ptdev, PWR_INT_RAWSTAT) & PWR_IRQ_RESET_COMPLETED;
-> +}
-> +
-> +static bool reset_pending(struct panthor_device *ptdev)
-> +{
-> +	return (ptdev->pwr->pending_reqs & PWR_IRQ_RESET_COMPLETED);
-> +}
-> +
-> +static int panthor_pwr_reset(struct panthor_device *ptdev, u32 reset_cmd)
-> +{
-> +	scoped_guard(spinlock_irqsave, &ptdev->pwr->reqs_lock) {
-> +		if (reset_pending(ptdev)) {
-> +			drm_WARN(&ptdev->base, 1, "Reset already pending");
-> +		} else {
-> +			ptdev->pwr->pending_reqs |= PWR_IRQ_RESET_COMPLETED;
-> +			gpu_write(ptdev, PWR_INT_CLEAR, PWR_IRQ_RESET_COMPLETED);
-> +			panthor_pwr_write_command(ptdev, reset_cmd, 0);
-> +		}
-> +	}
-> +
-> +	if (!wait_event_timeout(ptdev->pwr->reqs_acked, !reset_pending(ptdev),
-> +				msecs_to_jiffies(PWR_RESET_TIMEOUT_MS))) {
-> +		guard(spinlock_irqsave)(&ptdev->pwr->reqs_lock);
-> +
-> +		if (reset_pending(ptdev) && !reset_irq_raised(ptdev)) {
-> +			drm_err(&ptdev->base, "RESET timed out (0x%x)", reset_cmd);
-> +			return -ETIMEDOUT;
-> +		}
-> +
-> +		ptdev->pwr->pending_reqs &= ~PWR_IRQ_RESET_COMPLETED;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static const char *get_domain_name(u8 domain)
->  {
->  	switch (domain) {
-> @@ -428,6 +468,16 @@ int panthor_pwr_init(struct panthor_device *ptdev)
->  	return 0;
+>
+>  #else /* CONFIG_CC_HAS_ASM_AOR_FORMAT_FLAGS */
+> @@ -409,6 +410,7 @@ static __always_inline void fpu_vstl(u8 v1, u32 index=
+, const void *vxr)
+>                 : [vxr] "=3DR" (*(u8 *)vxr)
+>                 : [index] "d" (index), [v1] "I" (v1)
+>                 : "memory", "1");
+> +       instrument_write_after(vxr, size);
 >  }
-> 
-> +int panthor_pwr_reset_soft(struct panthor_device *ptdev)
-> +{
-> +	if (!(gpu_read64(ptdev, PWR_STATUS) & PWR_STATUS_ALLOW_SOFT_RESET)) {
-> +		drm_err(&ptdev->base, "RESET_SOFT not allowed");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return panthor_pwr_reset(ptdev, PWR_COMMAND_RESET_SOFT);
-> +}
-> +
->  void panthor_pwr_l2_power_off(struct panthor_device *ptdev)
->  {
->  	const u64 l2_allow_mask = PWR_STATUS_DOMAIN_ALLOWED(PWR_COMMAND_DOMAIN_L2);
-> diff --git a/drivers/gpu/drm/panthor/panthor_pwr.h b/drivers/gpu/drm/panthor/panthor_pwr.h
-> index 3c834059a860..adf1f6136abc 100644
-> --- a/drivers/gpu/drm/panthor/panthor_pwr.h
-> +++ b/drivers/gpu/drm/panthor/panthor_pwr.h
-> @@ -10,6 +10,8 @@ void panthor_pwr_unplug(struct panthor_device *ptdev);
-> 
->  int panthor_pwr_init(struct panthor_device *ptdev);
-> 
-> +int panthor_pwr_reset_soft(struct panthor_device *ptdev);
-> +
->  void panthor_pwr_l2_power_off(struct panthor_device *ptdev);
-> 
->  int panthor_pwr_l2_power_on(struct panthor_device *ptdev);
-> --
-> 2.49.0
-> 
 
+Wouldn't it be easier to just call kmsan_unpoison_memory() here directly?
 
