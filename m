@@ -1,113 +1,269 @@
-Return-Path: <linux-kernel+bounces-890972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB1E1C417CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:59:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE89C41860
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:09:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BB4A1899907
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:59:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66550188DCAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3244A334691;
-	Fri,  7 Nov 2025 19:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94671302CAC;
+	Fri,  7 Nov 2025 20:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WNOZX5b+"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lmkTtg7m"
+Received: from sonic309-21.consmr.mail.gq1.yahoo.com (sonic309-21.consmr.mail.gq1.yahoo.com [98.137.65.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA992FFF98
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209812DFA48
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762545540; cv=none; b=qUqcXjhcR7dVUKADHG083FK/6NbgO7SoWCVyxLTofacFEUzIZlM0FJ+xB+TnN2uFSoyhwQ9NCxZrPN5iP5nuEvlyNT90kbLYu9yLa6pG/bJefgs3YOK2aGnK4EJPBIWA620djK+/1sXK0h1OXsHqpcbkYVotjjU6LMn2pbl8Oho=
+	t=1762546158; cv=none; b=Yfr2Xw5KmU/tlcdX85vNjbA6xnc1jH7XLGlQrVlzL1fM3+VJtjNdG60FAdXoKa/dLSBphvZz/91CJYgkJHxovNny/l0YPKbkTB1ZgQhcD/IPg0qlR9rZl5WwZb1wu11vdFHhlzBCotozKdTWSjMJZ23HahLmLvKJ439FcEd3HHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762545540; c=relaxed/simple;
-	bh=8140RYwr53yRPEiCsiu7vlVWQb2NelrQ1jo+nFPAA2E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iYdAdxYe87WpQHt3CHev/RZ25X9pqu7muCLDCv5ZmKrv3WHQF7jr39FHkQY6h7oS1h6zWnOn1iWyvoKz06/xcBMyjQMEzKjQpZb1ZWBI8CZ6J1eoRDZQ/ZLslrJne5DOpbYH5FNkW4TkUsekq7zR0+VbmliVXN5ODL4FU2rpzyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WNOZX5b+; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b679450ecb6so839761a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:58:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762545538; x=1763150338; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8140RYwr53yRPEiCsiu7vlVWQb2NelrQ1jo+nFPAA2E=;
-        b=WNOZX5b++zFYE7WyMLG+aMFHX4rG5d5SzBlTp5spg/Co88luABp1es9iO2APyFls9i
-         X9zDjU4Kb5Kcd3RyI7jvphcle6xaRq7cm7wlEhPy9mp1YsEBJz5Jew1XR67DBbzsd9+8
-         hRhEaQiRC62iwG4yIjtkJwKmM2Kdj5uroQE8H67HjbwBG4QqFG1JqoJ0Y99YNWZEpcR/
-         HVqW9rA2O5bhdIDabHshTr9jzcwHBvxIX0/KrXb6mCVUcmBiQpDMcO2RbrJVCoSUvXV0
-         1gJzN9rYd23j2Yw0C8RLpGyXGqOKuppmGPckO1AS9upxs7Hu1dbw9Gbk5YpCdmcdpNjo
-         lWWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762545538; x=1763150338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8140RYwr53yRPEiCsiu7vlVWQb2NelrQ1jo+nFPAA2E=;
-        b=uc2T0twdaeXnHv34wIQjDd+Y1kZP5kloJdHTUhNhOkkYD7LpeGt5gJgHw1tuKwpDAg
-         Sg54OCor92tHf4wr7RhBp3o1/ZdDeUzt7SiPSnkHfgBW9wOVrODS835WdNKiHGUAcaPl
-         4rnifJFpvpx2xEy4CF0qgiGzdJPbcWeuv126+21yaejSnzmPeUk2vFKpJgSjiT2nFTH1
-         zSLt3b92YXQEdkvhVwC/w1Ve1ANSTF6htTss4qQ/Wjp0/nsh6B0PXt5pBLZirld0ospY
-         oV/0DJV0Uyx+dhfnuwwjF80TmjqlvjB2VmG2CezXFe3HlU1oX9lVbG1u3gjOTeYKHXdQ
-         fjKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVp7UOfbwix1aRpgbgpAJqLqTMDqke4c4zH+9BLXaQHBndIaxDREri6fNQUrSA9/as/K2XPPwlu97eEOdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5eziKmzmHggW5mSXndiM0Phnh/tLFIMma/zQlPAepI1RdzwJ+
-	2g2rCG1V05vThFwWWKRCj1ukprzWGsJDywBfa5N4ONMLiaN7plFBL2gInhua8CI5GoS+8zwnE6o
-	DRfx0goqt7Uor9y8jmPruymgg17tgbfY=
-X-Gm-Gg: ASbGncv8Dfcesd1XEQayo6BhXBRnsbYtG3+HrbGVq0j3vYCfdvv3FFcFFmEBR14LbIX
-	WSYMVekkosmPK6e+6vVaWUILQm3yWzvdWvEE1XTyGzV1DSp8aahLZHQedQRv50o9WY50gC53oGW
-	3BGe4IIhTdPEA5p6IdvejbHgYUH0p3FQ2AMtVRqyPzugHunEUIqeEs/6pxS99U4ZqAQZfXSQmgI
-	nLcSISmia/THL5Dj33p9NBYr2IeJNj9swNbahM21zAEWRSvkII4cWpWA9/t
-X-Google-Smtp-Source: AGHT+IEQzK9Tj8rqC0O27SSQFMzZOXdiURq9N1O01zdIrKR+8IYOucTFhRqrfF8+sbNnXWpxn1Yh08RMY3YuTmKawWc=
-X-Received: by 2002:a17:903:244a:b0:295:4d50:aab8 with SMTP id
- d9443c01a7336-297e563cc3amr3896735ad.24.1762545538507; Fri, 07 Nov 2025
- 11:58:58 -0800 (PST)
+	s=arc-20240116; t=1762546158; c=relaxed/simple;
+	bh=UWfx/7BwQNH3j8cPP0S11614a4qK0dCjHdYzShAxzVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NC25/NjeQE1K37z1miSyIYZZJ0GZ9kgTwL05RfhQ8JO0+y98wkutjvwiT1Yv971DpYehZ2TVNe4dUvYx7J2Nv+SzbGf8U/wQz0biLC2GGhapLEnM1r71J04cSDMckimN6wkHzzs52lPInfDfzXx31UDtO3EKZ1ZsiFiOmuqv4Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=lmkTtg7m; arc=none smtp.client-ip=98.137.65.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762546150; bh=vhFGOofW87ZnM1elYSd0ouJbxgcTWuL9R6Zcr8pTcNU=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=lmkTtg7m88gejR3VL968pnVfsZvMNm1Lf/Eght/Jq0bjX0Z98Jm5h/0hnBh29uPWsH2ulH4+W2WDDCcUjvbaox81WUB2qyqVYVehyEoRCiJbAbHpD5xBODio8qg+IYPp25erQNrXmxuxrFeKdm6h1PoEZ/sMkr+Ggi+doaSRQ05k7/yxyudtu/8imWJW0DUIV46q9E3NZYmMtnkwxMCStvNJQVDF+gxqxWZJYJGnU37e28YBulAvvPMwxsv4UFE5EuyekT1c28Vr7fJcbcMm5DPjLQmj4IM3Vo+q9H73bRz1gK9Vg3oMcYtAsnxbA4EsIvWK2R3hdX4BnOGw/5jLsw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762546150; bh=/ChRtLOmwuM3E6p9zCMVRAGOaNuZR8nb2FK/eyJP8tT=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=AA6atr+zjnYWMJvqIiZ+l15o4jsNZbXQXkfXTdKHhFsKRmzP4Jb4aLndJjfgwcS/oIYXY0j4vf8vAX1NLksaglo/f0Broky8Mip0R1a6KX0qrbgGaYfWNA8PWmfCxgYsbJPCSYCoHfkciQimvNtQNso4zgV1UdsfEQT5s7QVwB1hIn3aSw3c8MSP+AGykTk9erYbcR5yABfeLdnEYVDWdaJkRlRd2X6Rbs7NjobFvBFenAAL4e+VdjCc51QGRrJ7CFVQNzrs++l9QvZz4l70cX2xIyQUmqZNPMr7RR/pHYquQHOiuJA7XyhxiTzezvm/vll5VvsDF8pc3xogFdLI0A==
+X-YMail-OSG: vzWaKKEVM1mL_Aq2OC54LQtnn3f4i31BXCsGf8T433MHEkpu.s7yLgI6h0A3QyY
+ 03kJzn0GbZtLfM6AmEgugnzJoIFFRQ.Xtya_eKkglhwuALPdswc59FSypd9MOozUIhW0w4S._eGZ
+ rnPqCprDgJGFUuO6Op4G6mTSjeI.W28QBTBYUvrDXDSEU79btAS5xI3Sk.jgBMlKUXEcntBG8Y3X
+ UjVK8UiaFvf8IxvI58B8o0iuZOwMhh_4f4mKWXDAC0GxCoWW25Wfv5MnAeQeYt.OMa2RwXRlkSCo
+ k.u_owz4KkOLw5VrPZdcc4UD5pffwH9k6Nj1PZzMeQjsUJhig6UjP.1Ut4ZBq3gcPhRhP1k2tIle
+ IoA4poH5PEvnyLDlcmx_WLnJYgP7M8uxgin1I6Kp3VJXXKqUJ1dRRAsGrfUWPe5GwadC5QN9BCs6
+ qT3fO2TozJS8AqOfJQ9xLniarrJD0OrLyGZ9ZIsdTjYPH6wRUtaQVB.AAqWdXDSYrZp8nwts_F1Y
+ fK98BRKa0JPNozGaNiSjeqydGQYkG.sD_RT4Mp8VGusxpZ9hmoP2S8BkloR7mZrxPXEWhmT4BCME
+ 6LOKkhs8GGbDuczY33uKrvFCRxEwjBvqjWCiLAF7yPhFnf6LFl7QmSWRAhbSN_Tomy5x0EEdYj_Y
+ fqK._uNDKACvgtgpZMjdp3OuiQfbdbW7lE5bOpwDOguEAO39ioGs.HZmhONWKr7X4qCotGz6LN0_
+ IF.k5BRG_j0k6x7vWFpxuC.2.FsNlfVh3_alQ2qr1zrafUq8L.J7Y9ZDPfo8PI.R0Vwfmk4UGbBI
+ 0568Wai9KDs2KH4MD1LnyTeu1H2UMxODjHFZkX6psgJXxhiwHFkHUuQMnnOEv7QA9guQfnv8HLZs
+ gW2VXvdwR_nEsKWrRVQrf5LPxiclw1ZjqsBVf_KdUWW4Pg.I8D.Y8d_XvM.hRAGCH609SHXCNZNt
+ kF5CLw6tDL1vzNuUyVtOYET3Ju4N2HX2lsDvaw7Fjd7KzYghlUGkKusGoJb39Z2WoQ5JMx.Wzumo
+ 6sTfkCnQx.sZp0ZboQ9yXV5F7rNz_okANBiwMF9rgx8pXdUF_UPDfN2Xs1Du.gWozfDBEcoHs8TF
+ 135sdpk5Y6jVlyV3r5wJixw65d_K0RbZXelDtRxO3v0.fZ694G6vBqHBseeyUbFqiujBFfQxmzqC
+ t.dSOIvpLgBcfNtKDXv25VIom9vlHQ.UEMomkpTBSs6XBjwLRv.dju.1k.NwF4yZPRViAxY0Yswq
+ VWLiEhxz4NM3WVcRMzjWjkc8qoNvgeN_6HRMBD45E80rApof6oRJvGs9vCVGunPdqA_tjHFU7anU
+ MPpyPR_glvmAGnG9as.lBsD.W9Saki05irEVWOVvuKh3TzcRkYFHx8eYbj3G6ZqIlo44pQpuqqYs
+ g8we7FJKb2maN9SO_JquTxIQpdq__S6jIsx5Sicyet0r2ie1ZH7SdlaDtRF9gZVecAmyyGyMIQ0c
+ iAa8xeYkg8_TrBt22HcUx_Cf1gGeusNKYPSDj_01C56FtQbIeCuZoB4cF7.gbCAL81dbNYCYjTWk
+ yF_KJDkczzQZM5fk2z4I.b01XGlCRAdCyihY931s3jd496yyUsNGtRMKLc8PDQPt0Ds3EajOQ7rY
+ ULsjsVGGXLRXmWRerrjQ5GjeiAMqr80UIxAW1pBtX3ATT0IBoCOHQ7xGNPinyeF8VAwznozuqYbD
+ uSI.DMFp5CzSzpV8WAIKXY.izqm9QahZvdI47CtLlrsUe.k1Y7jt59hS2Qrm.HJfTaMZoGss0idE
+ mrBi7Im8.fsXla1HgvEwVSUErzA0p8wRnag0Qmlu9DpcGirlEHxUjhD6o8YM1DqZCfTa4TK5HL.i
+ uPRRS7E.7OrxeW9UCg9cWHnroIXgP89eQ96yR_JPSe67r_DD40pXqvcnzlNw4V8KycbeEulFFHnY
+ VezlKs3GE8yeWqTfFo__MFSLBHjsASHmbSNj5Mhe4PEazt6NQNIizkvp_.rrO.uLTNFoZZjVmXUI
+ etBHUrDIPyr9CgnNTikX1cjjcpaHidl_48VC5g2UrfK_nF2niSs_GYZL.7o908cBp_rQJYVx.0zK
+ 6tBGi9bWauI7pL3RNf23Q9xbGmf_IEnEHHtgiRGZtLFRvk6JBHO_h6yZFcaGQhkfmQvdQrqzEK1E
+ lDD9XS.eq49_wZzFD_XasD3cZHRGhYXBEz8Lqe8OzkWMo2tZ3EsOCbrJFF3YyjYc_Mcqi4JtNf3Z
+ Ib4uMS.L3ZXq1FL20pXLCmHFd_mGI.gF.idSdCFqWbWEdN6E56FkqKPDvGsi8yR9_7X4y9K46ghA
+ zUWKVF17j3ZQz3Ps-
+X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
+X-Sonic-ID: 4eb599a7-f5c0-4528-ae08-e7fc4dbdd1c9
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Fri, 7 Nov 2025 20:09:10 +0000
+Received: by hermes--production-ir2-5fcfdd8d7f-42rnm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID db3fe26fa3c9abe474c66d44c7cb4962;
+          Fri, 07 Nov 2025 19:59:01 +0000 (UTC)
+Message-ID: <b6f467c5-4a70-46a2-8497-1c351b3bfea9@yahoo.com>
+Date: Fri, 7 Nov 2025 20:58:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107041002.2091584-1-kriish.sharma2006@gmail.com>
- <20251107153733.GA1859178@ziepe.ca> <c9c8b90f-4edb-47da-8ad0-94f9e58d71e0@nvidia.com>
- <20251107191736.GC1859178@ziepe.ca>
-In-Reply-To: <20251107191736.GC1859178@ziepe.ca>
-From: Kriish Sharma <kriish.sharma2006@gmail.com>
-Date: Sat, 8 Nov 2025 01:28:47 +0530
-X-Gm-Features: AWmQ_bk9CAFYBN3_A4DR9N_puVNGatwqzH3T7ZbHwpIBAIwu0HIMFU_j7LV-VQU
-Message-ID: <CAL4kbRO+p0f6cKLONf=qqTU32G2YCEtkgQpu6shX=zBeAa1vFA@mail.gmail.com>
-Subject: Re: [PATCH] RDMA/core: Fix uninitialized gid in ib_nl_process_good_ip_rsep()
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Vlad Dumitrescu <vdumitrescu@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
-	Parav Pandit <parav@nvidia.com>, Edward Srouji <edwards@nvidia.com>, linux-rdma@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] power/swap: add missing params and Return:
+ descriptions to kernel-doc comments
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: lenb@kernel.org, pavel@kernel.org, anna-maria@linutronix.de,
+ frederic@kernel.org, mingo@kernel.org, tglx@linutronix.de,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251106113938.34693-1-adelodunolaoluwa@yahoo.com>
+ <20251106113938.34693-2-adelodunolaoluwa@yahoo.com>
+ <CAJZ5v0gG3C4r-d+v2xGPqcF1Hn927NR7yBA7kLx4t6TjEo0rGA@mail.gmail.com>
+Content-Language: en-US
+From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+In-Reply-To: <CAJZ5v0gG3C4r-d+v2xGPqcF1Hn927NR7yBA7kLx4t6TjEo0rGA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Should I prepare and send a patch that adds the suggested check in
-ib_nl_is_good_ip_resp() as Vlad mentioned?
+On 11/7/25 16:36, Rafael J. Wysocki wrote:
+> On Thu, Nov 6, 2025 at 12:40 PM Sunday Adelodun
+> <adelodunolaoluwa@yahoo.com> wrote:
+>> Kernel-doc checks (scripts/kernel-doc) reported a number of warnings
+>> for missing parameters and `Return:` descriptions in kernel/power/swap.c.
+>> These missing return descriptions make the generated documentation
+>> noisy and break doc-build when -Werror is used.
+>>
+>> Update the kernel-doc comment blocks to add explicit
+>> Return: lines (and a few parameter tags where helpful) for the functions
+>> that were triggering warnings. No functional code changes are made.
+>>
+>> Example warnings that motivated this change:
+>>   - Warning: kernel/power/swap.c:535 No description found for return value
+>>     of 'save_image'
+>>   - Warning: kernel/power/swap.c:687 No description found for return value
+>>    of 'save_compressed_image'
+>>   - Warning: kernel/power/swap.c:941 No description found for return value
+>>     of 'swsusp_write'
+>>
+>> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+> These comments need more changes to become proper kerneldocs and in
+> some cases it is not even necessary because the functions in question
+> are static.
+>
+> If the goal is to avoid warnings, why don't you change them all to
+> non-kerneldoc regular comments?
 
-On Sat, Nov 8, 2025 at 12:47=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
+Thank you very much for the feedback.
+
+For the functions that are not static, could you please suggest the 
+appropriate changes
+
+needed to make their comments proper? I would like to improve them 
+accordingly.
+
+My initial goal was to address the warnings, but if converting them to 
+regular comments
+
+is the preferred approach, I will go ahead and update them that way in v2.
+
+Thanks again for your guidance.
+
+Best,
+Sunday Adelodun
+
 >
-> On Fri, Nov 07, 2025 at 11:11:40AM -0800, Vlad Dumitrescu wrote:
-> > On 11/7/25 07:37, Jason Gunthorpe wrote:
-> > > The fix to whatever this is should be in ib_nl_is_good_ip_resp().
-> >
-> > nla_parse_deprecated returns success if attrs are missing?
-> >
-> > Other callers also check for their expected attrs to be present in tb,
-> > after checking nla_parse_deprecated()'s return code.
->
-> That sounds like the trouble then, the check for tb presence should be
-> added to the ib_nl_is_good_ip_resp..
->
-> Jason
+>> ---
+>>   kernel/power/swap.c | 35 +++++++++++++++++++++++++++++++----
+>>   1 file changed, 31 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+>> index 0beff7eeaaba..3f0df7a26bc3 100644
+>> --- a/kernel/power/swap.c
+>> +++ b/kernel/power/swap.c
+>> @@ -341,6 +341,8 @@ unsigned int swsusp_header_flags;
+>>    *     and get its index (if so)
+>>    *
+>>    *     This is called before saving image
+>> + *
+>> + *     Return: 0 on success, negative error code on failure.
+>>    */
+>>   static int swsusp_swap_check(void)
+>>   {
+>> @@ -367,6 +369,8 @@ static int swsusp_swap_check(void)
+>>    *     @buf:           Address we're writing.
+>>    *     @offset:        Offset of the swap page we're writing to.
+>>    *     @hb:            bio completion batch
+>> + *
+>> + *     Return: 0 on success, negative error code on failure.
+>>    */
+>>
+>>   static int write_page(void *buf, sector_t offset, struct hib_bio_batch *hb)
+>> @@ -528,6 +532,11 @@ static int swap_writer_finish(struct swap_map_handle *handle,
+>>
+>>   /**
+>>    *     save_image - save the suspend image data
+>> + *     @handle: swap map handle for writing the image
+>> + *     @snapshot: snapshot handle to read pages from
+>> + *     @nr_to_write: number of pages to write
+>> + *
+>> + *     Return: 0 on success, negative error on failure
+>>    */
+>>
+>>   static int save_image(struct swap_map_handle *handle,
+>> @@ -676,6 +685,8 @@ static int compress_threadfn(void *data)
+>>    * @handle: Swap map handle to use for saving the image.
+>>    * @snapshot: Image to read data from.
+>>    * @nr_to_write: Number of pages to save.
+>> + *
+>> + * Return: 0 on success, negative error code on failure.
+>>    */
+>>   static int save_compressed_image(struct swap_map_handle *handle,
+>>                                   struct snapshot_handle *snapshot,
+>> @@ -906,8 +917,9 @@ static int save_compressed_image(struct swap_map_handle *handle,
+>>
+>>   /**
+>>    *     enough_swap - Make sure we have enough swap to save the image.
+>> + *     @nr_pages: number of pages we need to save
+>>    *
+>> - *     Returns TRUE or FALSE after checking the total amount of swap
+>> + *     Return: TRUE or FALSE after checking the total amount of swap
+>>    *     space available from the resume partition.
+>>    */
+>>
+>> @@ -930,6 +942,8 @@ static int enough_swap(unsigned int nr_pages)
+>>    *     them synced (in case something goes wrong) but we DO not want to mark
+>>    *     filesystem clean: it is not. (And it does not matter, if we resume
+>>    *     correctly, we'll mark system clean, anyway.)
+>> + *
+>> + *     Return: 0 on success, negative error code on failure.
+>>    */
+>>
+>>   int swsusp_write(unsigned int flags)
+>> @@ -1078,9 +1092,12 @@ static int swap_reader_finish(struct swap_map_handle *handle)
+>>   }
+>>
+>>   /**
+>> - *     load_image - load the image using the swap map handle
+>> - *     @handle and the snapshot handle @snapshot
+>> - *     (assume there are @nr_pages pages to load)
+>> + *     load_image - load the image using the swap map and snapshot handles
+>> + *     @handle: pointer to the swap map used for reading swap pages
+>> + *     @snapshot: pointer to the snapshot handle that tracks image pages
+>> + *     @nr_to_read: number of pages to read from the snapshot
+>> + *
+>> + *     Return: 0 on success, negative error code on failure.
+>>    */
+>>
+>>   static int load_image(struct swap_map_handle *handle,
+>> @@ -1195,6 +1212,8 @@ static int decompress_threadfn(void *data)
+>>    * @handle: Swap map handle to use for loading data.
+>>    * @snapshot: Image to copy uncompressed data into.
+>>    * @nr_to_read: Number of pages to load.
+>> + *
+>> + * Return: 0 on success, negative error code on failure.
+>>    */
+>>   static int load_compressed_image(struct swap_map_handle *handle,
+>>                                   struct snapshot_handle *snapshot,
+>> @@ -1529,6 +1548,8 @@ static int load_compressed_image(struct swap_map_handle *handle,
+>>    *     swsusp_read - read the hibernation image.
+>>    *     @flags_p: flags passed by the "frozen" kernel in the image header should
+>>    *               be written into this memory location
+>> + *
+>> + *     Return: 0 on success, negative error code on failure.
+>>    */
+>>
+>>   int swsusp_read(unsigned int *flags_p)
+>> @@ -1567,6 +1588,10 @@ static void *swsusp_holder;
+>>   /**
+>>    * swsusp_check - Open the resume device and check for the swsusp signature.
+>>    * @exclusive: Open the resume device exclusively.
+>> + *
+>> + * Return:
+>> + *        0 if a valid hibernation image is found,
+>> + *        negative error code on failure.
+>>    */
+>>
+>>   int swsusp_check(bool exclusive)
+>> @@ -1631,6 +1656,8 @@ void swsusp_close(void)
+>>
+>>   /**
+>>    *      swsusp_unmark - Unmark swsusp signature in the resume device
+>> + *
+>> + *      Return: 0 on success, negative error code on failure.
+>>    */
+>>
+>>   #ifdef CONFIG_SUSPEND
+>> --
+>> 2.43.0
+>>
+
 
