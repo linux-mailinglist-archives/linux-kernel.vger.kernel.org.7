@@ -1,256 +1,100 @@
-Return-Path: <linux-kernel+bounces-890524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D6AC40418
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:07:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC458C40421
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:08:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D17DA1888CCE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:07:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 13CEA34E908
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF430325737;
-	Fri,  7 Nov 2025 14:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA7132779A;
+	Fri,  7 Nov 2025 14:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bqzVLpgh"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012052.outbound.protection.outlook.com [52.101.48.52])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XaL90Lj0"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FF731B118
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762524446; cv=fail; b=O3FHgFOPnNc3v2ktbGsHLXyTq2I320csYAASuNuep4SnDgYvEortb3n7HEAYjbD9OG9WshNZw72GHl9o4Bny+HeZTU0FFeppAVVNmd2ikrsmPOyjHL5A5faom9JK9aH5E5945DuOrF/T4/fdnnf62he6ZQtYJR+MT2PD0PL1C0w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762524446; c=relaxed/simple;
-	bh=Ep9aDrA6RSKkd5OZlYu3J8tdwTcsjee15X81WNHPIZM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OAEn64NU3E6ZV7rM/1wd354NF2sjI3IbZeWXuiRRtiKNybRjCPHu6RnU/AVGShQrM12EC24j0+TuDjKWaKuy1FOg4bjRxYsUB154Y0YQv7xj7IKXqQvyc4md3dRN66h7mkvxjUP1W1L9ztmqNLhx6Naitb5rjLZKTgcLs3FskgE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bqzVLpgh; arc=fail smtp.client-ip=52.101.48.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FeI2LO8NtZcDNFQq2B/AXzG6TSAvXuXQN9142nfAYvKscAVznWvrkDg5oPLmf4R4iGFBgSMBK9CB6k2Tr3bf0P6ZHvaw8j8AGvTzgmChsYfCy7m/gb71a4eqF/CQHZd0T3xhMOxNZ6NjWH0LP5MR493+KQ30L+5MbDpkaP1f2zd5r0L5G0rSMnXBdaTS2JlThxR3F1vdA2eY3LeplzqbkEIHfxe+28XWYGYDIFi3WoQIZsPdJgHHXR65Q8S1EB3iIYMnnZzStoO67IPhAVEuTcsJDEpzC+cVPLHh0+GgOIVwYAxIZoNKat2JuJyTEc09d039qOkf+ODYcbIBVPkPaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7tB9Obc7A6oQNJW0/9KpkbjzZL7nOCQejlkJysmJCQk=;
- b=KOHbRdx0Aom3CZlxROk4kCR1Ka2RhcqMSqNsXNNcFwWKv/TfYylW2uGQHrG6rOeoHtGzg//F4z/VAOYc0VbOrwyh/KbXxWK3QSk10lp6kz1PVagPrJGJUzsY/V/rz6LxO9iQrrJ1up/9sSB9zONQvDbYXtyCNPHieV4ALXamQNhVuO2APiXl93z9HBxvnT5ga6S5eaWg8IoXnV7j3TmTiILtKTQkOymnxapU0wv3BHmmNQiVoLHtspRs0VEmGp45/j16HpGA4FQZAfiSVn169Hj0ONiBrB+3cDeo2MNtLzDegulWDDGkyYQ+Jf7i0ZjWKRB2E9tUyYHqsqaHKZKqOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7tB9Obc7A6oQNJW0/9KpkbjzZL7nOCQejlkJysmJCQk=;
- b=bqzVLpgh6Ae1qg47/T88r8PKgPk8lh+XOceSXyK2JV6IvdA87Q9rl/mWVT2gyx4HHcipNvH+Jmz9sL7HeGj3W/KaKKLGcBpor2C1EnBoJEQfr7jPOzajrL/xrXEh2wlFdrrsINuljbXf1QLDzRYiBCNsu0V6qUFnbYl2tmRJ3YY=
-Received: from PH0PR07CA0097.namprd07.prod.outlook.com (2603:10b6:510:4::12)
- by BN7PPFA8145BD40.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6de) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
- 2025 14:07:14 +0000
-Received: from CY4PEPF0000EDD3.namprd03.prod.outlook.com
- (2603:10b6:510:4:cafe::6e) by PH0PR07CA0097.outlook.office365.com
- (2603:10b6:510:4::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.13 via Frontend Transport; Fri,
- 7 Nov 2025 14:07:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- CY4PEPF0000EDD3.mail.protection.outlook.com (10.167.241.199) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 14:07:14 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Fri, 7 Nov
- 2025 06:07:13 -0800
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 7 Nov
- 2025 08:07:13 -0600
-Received: from amd.com (10.180.168.240) by satlexmb07.amd.com (10.181.42.216)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17 via Frontend
- Transport; Fri, 7 Nov 2025 06:07:10 -0800
-Date: Fri, 7 Nov 2025 14:06:59 +0000
-From: Ankit Soni <Ankit.Soni@amd.com>
-To: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-CC: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<suravee.suthikulpanit@amd.com>, <Vasant.Hegde@amd.com>,
-	<Santosh.Shukla@amd.com>
-Subject: Re: [PATCH v4] iommu/amd: Enhance "Completion-wait Time-out" error
- message
-Message-ID: <mmmsb4pp37slzy65ez4z5i7z342zx3vdxbll5axuio2ugdzzbt@i6yurbrb7k2o>
-References: <20251105080342.820-1-dheerajkumar.srivastava@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03105322C8A;
+	Fri,  7 Nov 2025 14:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762524477; cv=none; b=SRrkjhkrrSmXVL6t7kUbohWyY7XPkAd3h/bjDP0HsEDalYGTs0Tpdo3ejmClUmfOp1fCVQdPc9TJ2lj5vUfwTfwVrcMnJbjcK+j+nMIZ1wHy0aK6WXWK6LO3CIcQmn6PPG+7fsWFYNZnkGovoVNyKcgIZVt1COSoZWIK7f9nibI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762524477; c=relaxed/simple;
+	bh=xi1p3UfI6cYReWzHLuKB5wOsq/CZTjbGUDAcn6Mfw/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B4SM8ZrWeLhNHfjv2/Ko+gZYLkOXL5KPTvKfh0NcSMNzz97V2ymXk7MiHRBFGTsY62Z6FYzq8Ntw1cO9VyQRHYHgtwKzlkb4LJbIjDJu+4LR6p8QCaEI84eFDXmxbkOeI/Txj1tIrtd+G1Q2GgKiV7dsRMozxbnqwvQH/0SNTL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XaL90Lj0; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=WunMkou0PFfY6bJoaMJMYMVjxXwdEk+75gvzjYVSq28=; b=XaL90Lj0UmeyzKx5vwcmlnpnya
+	IDudWDWkYWo1FguM7xqIkANCUZz3R6Cn8uGur6HR+Wb9oD+1iaGW+t2YlLLyk5pmDmQ8/zAMcPf/k
+	RbnlqW0Q76TUX2qyC0Tl/jXs2fBWS5HDe7SMFJI9CcY9pVqIFzq9G9DPouTH0m3qHPmM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vHN80-00DEaN-TA; Fri, 07 Nov 2025 15:07:48 +0100
+Date: Fri, 7 Nov 2025 15:07:48 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>
+Subject: Re: [PATCH net v2] net: dsa: b53: bcm531x5: fix cpu rgmii mode
+ interpretation
+Message-ID: <ec456ae4-18ea-4f77-ba9a-a5d35bf1b1fd@lunn.ch>
+References: <20251107083006.44604-1-jonas.gorski@gmail.com>
+ <ce95eb8c-0d40-464d-b729-80e1ea71051c@lunn.ch>
+ <CAOiHx=kt+pMVJ+MCUKC3M6QeMg+gamYsnhBAHkG3b6SGEknOuw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251105080342.820-1-dheerajkumar.srivastava@amd.com>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD3:EE_|BN7PPFA8145BD40:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6ae6a31-4021-40a1-f22b-08de1e06f3dc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7E1O0HedS/CffI44DQqaMbVofen+xdT1y4UF/QcS+7qPuDYrJztgpzPUFHLM?=
- =?us-ascii?Q?uc4bTIgKLHY1U4FIQepRACbtUEOA+bJV/05lyIHs7f7LTL9RGr7pE7VjUvEL?=
- =?us-ascii?Q?OMtAOsaH73TxDJJMDxCDRw+RmjgiLTwCDEzA59vYjOQgvHOk2B5K0zyqOmfI?=
- =?us-ascii?Q?8+3bgtGdNiGFNVi/WyTz3atbnlhyyrUeOtNhFTgYphCTZgQ5H8kvxq685WvN?=
- =?us-ascii?Q?39DGoQNb9QMi48OJlQTpDFUf/8luMox7h24Oe4Ul66vBH/n6kZ+/rfqxdTQ1?=
- =?us-ascii?Q?4bCBnHVc6nK3LE+weKiSdLqytZ1A2TIsx4rmoU8PfajO+RIQ7ApepeycTa07?=
- =?us-ascii?Q?C1tKyngwMErKCoq7qQrXo7HiAIv0Lb/g0cpFEYSc6TV5XhpEaMg5hwwUN+v5?=
- =?us-ascii?Q?HODcRVDAG/i+QTSuHNlM12s3wGdiXJAZZaoX7LdxoWTgQ6+PKDWC9tcelmVY?=
- =?us-ascii?Q?eIu8OMD5VhVJLOFIrX5GDniO5SCux2TilZYXAgwuI1Z5dSIae8y0xZmE2N1v?=
- =?us-ascii?Q?DLqajwHzKNyv3XoPu12np6Lf+ft36iU7SZ3OELAMuF6R+WvIYHQCsZiD71S2?=
- =?us-ascii?Q?7M9oJhVxfsMPinq/oQj3UmGR25osQfqArLsXjGQdJL9tJF8DEP62xNO5n40q?=
- =?us-ascii?Q?qSGT+Sx8cEEnyHMwTPMjPftRu0P47L/iDeKtC1yrE0SNdSO6Yv3JfsEth0qc?=
- =?us-ascii?Q?QGHUm7TJKMoSrXToLtmvuoG1IUrVwqDm6iL2oe+LYGg9KCv+KRSlNoKYSEmz?=
- =?us-ascii?Q?zSDnXvET6iLGPYKQ8HcpT4eM5f0XCLTCs9ASJYza+qAu4m1o6/3z46U3e+UM?=
- =?us-ascii?Q?tf8pFLMj8D+Qnm8gNn8s9eyrUZ74xqW3Z064VhBGnNVVhygXLlJSwxe3mPmT?=
- =?us-ascii?Q?ndK58DTZ1neLjmdAm0e6oEJvVa+qMRPAP+XJIpwvn8FkjA+jgyY1XXiTgSKA?=
- =?us-ascii?Q?SOAKk7OlWZB3qcfjgwiyP28MCbsbPnx9btpokSRRSbyvlTVI5uXONQDLyl6u?=
- =?us-ascii?Q?q6uN2y7AOj67ePrSxuHQ7HaLOJ3uS0UuO+nfjSMK9WQW5FlcKwDK9S4wQVgR?=
- =?us-ascii?Q?TKo6pOK81bs8Dui2bCjsKDjUTNQ5QGUhgaqOqYbQWL1KD3yZERDdOQeFqYOa?=
- =?us-ascii?Q?cStM124CRz9oC5Ywt0G8W+0dz/k8tqxo/p3ZLcq0NAoRURNXcGcyEZXNx+wO?=
- =?us-ascii?Q?ZPJFmJKMRhSIz0nHQHplki1aup0lgh1Og4MzKovdm/Pu/+vIILIkqld3J94d?=
- =?us-ascii?Q?x1xWbHKSemu2cV4qgUrVQaB8R/sENTUn3Xq8nZohCCqDrfMVDCrH5nmw2OtO?=
- =?us-ascii?Q?VDFNZu2vj0FeRu7gVf6ecuxoH/RbOX7I7Vq7ouhBSvAuDwjNCjlBHKF0eUST?=
- =?us-ascii?Q?TKisxv63erJVi1xe3RtiB9PIO2h/1UpVo9Mb/hTyLRb3O93TcKPuctNcXZPH?=
- =?us-ascii?Q?FR0cQkc/vABjeHovykTkb6FotxQ+DNXagsShU4G1/PeYVgThc4PXmKkQEeQW?=
- =?us-ascii?Q?Cki9enZNJjzMPog+ctJfhRXCzEQInUUUL8F9kifeckeu6yiGzZ+QYEzAkK49?=
- =?us-ascii?Q?tFXghtFxFoPyLJbcvcc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 14:07:14.2285
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6ae6a31-4021-40a1-f22b-08de1e06f3dc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD3.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPFA8145BD40
+In-Reply-To: <CAOiHx=kt+pMVJ+MCUKC3M6QeMg+gamYsnhBAHkG3b6SGEknOuw@mail.gmail.com>
 
-Hello Dheeraj,
+> There is allwinner/sun7i-a20-lamobo-r1.dts, which uses "rgmii-txid",
+> which is untouched by this patch. The ethernet interface uses "rgmii".
 
-On Wed, Nov 05, 2025 at 01:33:42PM +0530, Dheeraj Kumar Srivastava wrote:
-> Current IOMMU driver prints "Completion-wait Time-out" error message with
-> insufficient information to further debug the issue.
+Which is odd, but lets leave it alone.
+
+> And there is arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts,
+> where a comment says that it has a BCM53134, but there is no such
+> node. The ethernet node uses "rgmii".
+
+aspeed pretty much always get phy-mode wrong. So i would not worry too
+much about this.
+
+> So one doesn't define one, one uses rgmii-id on the switch / phy side
+> and rgmii on the ethernet mac side, and one only defines the ethernet
+> mac side as rgmii.
+
+That is reasonable. It is a lot less clear what is correct for a
+MAC-MAC connection. For a MAC-PHY connection we do have documentation,
+the preference is that the PHY adds the delays, not the MAC. If the
+switch is playing PHY, then having it add delays is sensible.
+
+> > I would maybe add a dev_warn() here, saying the DT blob is out of date
+> > and needs fixing. And fix all the in kernel .dts files.
 > 
-> Enhancing the error message as following:
-> 1. Log IOMMU PCI device ID in the error message.
-> 2. With "amd_iommu_dump=1" kernel command line option, dump entire
->    command buffer entries including Head and Tail offset.
-> 
-> Dump the entire command buffer only on the first 'Completion-wait Time-out'
-> to avoid dmesg spam.
-> 
-> Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-> ---
-> Changes since v3:
-> -> Dump the entire command buffer only on the first 'Completion-wait Time-out'
->    when amd_iommu_dump=1, instead of dumping it on every occurrence.
-> 
->  drivers/iommu/amd/amd_iommu_types.h |  4 ++++
->  drivers/iommu/amd/iommu.c           | 28 +++++++++++++++++++++++++++-
->  2 files changed, 31 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
-> index 95f63c5f6159..7576814f944d 100644
-> --- a/drivers/iommu/amd/amd_iommu_types.h
-> +++ b/drivers/iommu/amd/amd_iommu_types.h
-> @@ -247,6 +247,10 @@
->  #define CMD_BUFFER_ENTRIES 512
->  #define MMIO_CMD_SIZE_SHIFT 56
->  #define MMIO_CMD_SIZE_512 (0x9ULL << MMIO_CMD_SIZE_SHIFT)
+> Sure I can add a warning.
 
-It's worth adding comment for MASK 4-18.
+Great, thanks.
 
-> +#define MMIO_CMD_HEAD_MASK	GENMASK_ULL(18, 4)
-> +#define MMIO_CMD_BUFFER_HEAD(x) FIELD_GET(MMIO_CMD_HEAD_MASK, (x))
-> +#define MMIO_CMD_TAIL_MASK	GENMASK_ULL(18, 4)
-
-Since HEAD and TAIL masks are same, may be, you can use something like
-MMIO_CMD_HEAD_TAIL_MASK().
-
-> +#define MMIO_CMD_BUFFER_TAIL(x) FIELD_GET(MMIO_CMD_TAIL_MASK, (x))
->  
->  /* constants for event buffer handling */
->  #define EVT_BUFFER_SIZE		8192 /* 512 entries */
-> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-> index eb348c63a8d0..abce078d2323 100644
-> --- a/drivers/iommu/amd/iommu.c
-> +++ b/drivers/iommu/amd/iommu.c
-> @@ -1156,6 +1156,25 @@ irqreturn_t amd_iommu_int_handler(int irq, void *data)
->   *
->   ****************************************************************************/
->  
-> +static void dump_command_buffer(struct amd_iommu *iommu)
-> +{
-> +	struct iommu_cmd *cmd;
-> +	int head, tail, i;
-
-Since readl returns u32, prefer u32 for head/tail to avoid any surprises
-or sign-ext issues.
-and similarly use %u in pr_err() below.
-
-> +
-> +	head = readl(iommu->mmio_base + MMIO_CMD_HEAD_OFFSET);
-> +	tail = readl(iommu->mmio_base + MMIO_CMD_TAIL_OFFSET);
-> +
-> +	pr_err("CMD Buffer head=%d tail=%d\n", (int)(MMIO_CMD_BUFFER_HEAD(head)),
-> +	       (int)(MMIO_CMD_BUFFER_TAIL(tail)));
-> +
-> +	for (i = 0; i < CMD_BUFFER_ENTRIES; i++) {
-> +		cmd = (struct iommu_cmd *)(iommu->cmd_buf + i * sizeof(*cmd));
-> +		pr_err("%3d: %08x %08x %08x %08x\n", i, cmd->data[0], cmd->data[1], cmd->data[2],
-> +		       cmd->data[3]);
-> +	}
-> +}
-> +
-> +
-
-Remove extra line.
-
-Best,
-Ankit
-
->  static int wait_on_sem(struct amd_iommu *iommu, u64 data)
->  {
->  	int i = 0;
-> @@ -1166,7 +1185,14 @@ static int wait_on_sem(struct amd_iommu *iommu, u64 data)
->  	}
->  
->  	if (i == LOOP_TIMEOUT) {
-> -		pr_alert("Completion-Wait loop timed out\n");
-> +
-> +		pr_alert("IOMMU %04x:%02x:%02x.%01x: Completion-Wait loop timed out\n",
-> +			 iommu->pci_seg->id, PCI_BUS_NUM(iommu->devid),
-> +			 PCI_SLOT(iommu->devid), PCI_FUNC(iommu->devid));
-> +
-> +		if (amd_iommu_dump)
-> +			DO_ONCE_LITE(dump_command_buffer, iommu);
-> +
->  		return -EIO;
->  	}
->  
-> -- 
-> 2.25.1
-> 
+	Andrew
 
