@@ -1,183 +1,88 @@
-Return-Path: <linux-kernel+bounces-890278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D523C3FB1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:17:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE889C3FB36
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:18:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD9191891716
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611121891944
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B0B322753;
-	Fri,  7 Nov 2025 11:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="CIxH4+JH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ghCBnvDO"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4D432254E;
+	Fri,  7 Nov 2025 11:18:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833641F5821;
-	Fri,  7 Nov 2025 11:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682542BDC01
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762514259; cv=none; b=i5gJwBuTS72sdWBhfJwpHwfYkFpPJ3QXI6SdaxxM+nsWQd+0pbrSfheJnTj0YIPMGTDxrNo0HOv+2i6IwSFBYfiTF6iXkm/clow1Uom8kGbyhSjugtR/4G1HwkYatmC4WCh4tr09w11ndAX290aAQSG37WwJyfqSOyIFi4Z9DsY=
+	t=1762514284; cv=none; b=hjnE2siEW21S4AhjifQwRzvzCGCKVdnzNpWsbFDL35P38vOHkgLAVDdy7rek2P+K9q23gePZoppCDlXR111SDsrNvC9cSjT7MwrQ+eXsuXAcNsv2dr5M9cv4OoJQOl6/S5hg0VBlmcbU+ctX71JVYaWDebPb31BOJeaplopfTeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762514259; c=relaxed/simple;
-	bh=Y9pUCfcFi4AsEJHJltTCRril7hFnOkYG0tyEo8NBeFg=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=tfCunUB9VUgJ6YTiLHtqWqyvhj/PsxKg7OIjKdAWX51jgsCrlHf7aNijX/Zx+dfafCYhXGD63fIde5dwS3CuMAeiPbROEWxGHUqcgzny/ElILwlQujHHj4nFN1KAW4i7JEbopaiYQvk/oEx53dzZBROrPqhjUfFMWuPe2C+nIH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=CIxH4+JH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ghCBnvDO; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 4F60B1D00149;
-	Fri,  7 Nov 2025 06:17:35 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Fri, 07 Nov 2025 06:17:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1762514255; x=1762600655; bh=BBzJnnctCnq4Fcyhvxggl9CB8DYe4i8BJNv
-	opXA2dBs=; b=CIxH4+JHa2AOTOyFspUql3H/vqlFrzbrSO/NjyqXPiC2sdj8AVB
-	maNeRVlSZAcLLc/VsqivXSGEcf94YBo1Newtl90xemViH4OYbYXJU7vyft23yjkS
-	KSjj4I9tbY7Tpxcpbb4gxrQik45Tm42kRyWos+sQ34GMWHdwpQ5xuzHYWGynvuoF
-	Iq2CZw8PKEaFhP/IHfWXxqPjyQQQdaFRSilliOepB1/F+gSTsTUEIsDc9SsTXyfO
-	4hkVVlj4918R3u0tyDXj0y0GvpRA9duTM8jWsgNkNT6ktlVhVaWb8fZie9nIZkRd
-	+CEP12CdDW/XreIeBlEk/Y/+1Mi5WW86KMQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762514255; x=
-	1762600655; bh=BBzJnnctCnq4Fcyhvxggl9CB8DYe4i8BJNvopXA2dBs=; b=g
-	hCBnvDOJ4EuRX5QTbG9wrnoQXEoGLPEWjdom+5QjeYOXzhQ/Z8WvcaU6tlFtoJm+
-	7jjbgYTroGPrqngoFE147RZsbhrtRJF3yPWlnTsODstodSzyLYX2Oelu3hjKjvia
-	QuEMDAoZIZL32HyzbPHLbpOklMzkwoSeXkTLFS5RL9wYkpjz1Df+YfIhVJTRSIfU
-	bj450jcs/BpLb4WJz1eLDO/pbTzrZVKrN8XazAne5YGNjcQu5dvJjU4XSIrnOJxF
-	cYwcrh2IPkjre2WpuUdM07pfqLTa4Cffrd8/U9SHW/Apcthqnfmcpf9/Fv/ngfh1
-	E6e9YZC0QZhAcRYMC11ZA==
-X-ME-Sender: <xms:TtUNaYs0uvLVFFCyvD_8DfaSdGHQ-37Sf9L55YaURw3jXyY2deyViA>
-    <xme:TtUNaRc_WX-_83TnheJz7KtwST_KrnfE9Qk89OiznRBWE3SKx_1YZ5RrxqTyOpOqq
-    g6RuSzxs3swrh8tLBmJWHZivhNGreWbdAJkSYEVRrmJUGfODQ>
-X-ME-Received: <xmr:TtUNaV_XpQVM1AH9oe-T2sDfB_qirhgiaxNgtGjaAeJfewzRrmM5F2_Ly6RtpX-vck8ayhwAbYqEgb-AKoCCQqXiBjfekVLVispmOjkwvDGb>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeelhedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtjeertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epgeehfeevheehteetudehjeduiefhueehieevvdejkeeufeevkeelieffffduhfevnecu
-    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgrihhlrdhnvghtpdhnsggp
-    rhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgrsghlvg
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhf
-    ohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegtvghlsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehsphgvvggutghrrggtkhgvrheshhhothhmrghilhdrtghomhdprhgt
-    phhtthhopegurghvihgurdhlrghighhhthdrlhhinhhugiesghhmrghilhdrtghomhdprh
-    gtphhtthhopegurghvihgurdhlrghighhhthesrggtuhhlrggsrdgtohhm
-X-ME-Proxy: <xmx:TtUNacTtY4f33CCyCn7XaQghQ8b0lqIHX9-ooYPf8lRWqp4KxxROZw>
-    <xmx:TtUNaWop-ByXFOldZ-xsyF5cp7mdV5n-KujEEwrMGwVOv4HthesJ_w>
-    <xmx:TtUNaZmTI3IkTimhuisxgGiLwx3y-4IWqCg0zBCbzASnqihUygUzjA>
-    <xmx:TtUNafd9TdB4ll859qYjl6MA9tvEmbDVTV89LfuBik2ycadxRkLZUg>
-    <xmx:T9UNaRmvNsoXUjsACfHe8Ip7M8Xg3XEdNZC716U44UxJOZgDT5iuATIz>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Nov 2025 06:17:32 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1762514284; c=relaxed/simple;
+	bh=if0ZDB4OasXDDlWaQnc0bNl+dcouw1erlLPEsSVmJww=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JkbMt/jpN/y5kDdjd8y8XaG+YoJvLj12CmzfO/zcEo01Aw91JukOxZYJw0IM15Ex2Szja7dIsvS21NrX2psElipX/+921/yvEYnqGVs7hF36KnqSTXdJ1F+VmYafoPJfByDqRxZkFUlQ+5+ktDD+ATK/HG0dv55lWFAHKLvRAfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-9488163e81cso51094239f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:18:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762514282; x=1763119082;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pZKsYEZDiFXI8Uay+Fih67P6BNMt755M/06Ft9N1qB8=;
+        b=Wu4Z0pr8NUOgnSn9BV1tm6F35SxNikovpAwcS6JBGAX107Kga6La+GxF7kfdzBK1yO
+         CR7zWcUqDmWDZUZ0yHrGl6tuRwJ+rVzRcs7MDXzFLBuGoTwyAEtKJ7Xa8aVNCZ7qG7fL
+         rsSJGq8mBBcUmMx3DRmJ8zfW9YUheEu7r11ykPrfiVgyoc1N5KOODDL1lIRBadAj58YY
+         CIzZfnWrBCoe/MZsCgnpPGKqNF8MXwhgpq6l9ETxrHqFAHdqOFggL3Qd7YxV7FjC/UKP
+         x0i1MRv04hVNo5qy016QOVnhT16L0sLXsTLWxiHlE2AEA+BpCeOoVrsfhH10TO0KJnEi
+         ZPVg==
+X-Gm-Message-State: AOJu0YwQcNNOqyAzOyYgz9UZYBWVh71XKeoq5k1vYHdCFCzndT7XoqYV
+	5Ne+M/NbAo4z9a0QLO+lCkRCEUKa46L4VDXxKlvCIXx79TyGBOxLuajOtyScmaSVAS1YvxX4N2i
+	kCT+WZpfojMtkHHX/emWrxfqv+pC2k3PW7NkmyPV4HpC2yl//P2fqE5vQSKM=
+X-Google-Smtp-Source: AGHT+IF7NII11Sdz0p6yi3ddySwiiTXZj13rhk3LTfNhP56Ul8LWw3bfJzBZy7OYPyitCINAbjIJYwQHEDqGPvbD+d067ux0AuGa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "David Laight" <david.laight.linux@gmail.com>
-Cc: "Chuck Lever" <cel@kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "David Laight" <David.Laight@ACULAB.COM>,
- "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
- "Linux List Kernel Mailing" <linux-kernel@vger.kernel.org>,
- speedcracker@hotmail.com
-Subject: Re: Compile Error fs/nfsd/nfs4state.o - clamp() low limit slotsize
- greater than high limit total_avail/scale_factor
-In-reply-to: <20251106192210.1b6a3ca0@pumpkin>
-References: <bbba88825d7b2b06031c1b085d76787a2502d70e.camel@kernel.org>,
- <37bc1037-37d8-4168-afc9-da8e2d1dd26b@kernel.org>,
- <20251106192210.1b6a3ca0@pumpkin>
-Date: Fri, 07 Nov 2025 22:17:20 +1100
-Message-id: <176251424056.634289.13464296772500147856@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+X-Received: by 2002:a05:6e02:1fe2:b0:433:2aad:9882 with SMTP id
+ e9e14a558f8ab-4335f45bad5mr34069745ab.23.1762514282604; Fri, 07 Nov 2025
+ 03:18:02 -0800 (PST)
+Date: Fri, 07 Nov 2025 03:18:02 -0800
+In-Reply-To: <c0c9b486-94b6-4130-b281-8c71f158612c@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690dd56a.a70a0220.22f260.0040.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] BUG: corrupted list in dbUpdatePMap
+From: syzbot <syzbot+4d0a0feb49c5138cac46@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	yun.zhou@windriver.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 07 Nov 2025, David Laight wrote:
-> On Thu, 6 Nov 2025 09:33:28 -0500
-> Chuck Lever <cel@kernel.org> wrote:
-> 
-> > FYI
-> > 
-> > https://bugzilla.kernel.org/show_bug.cgi?id=220745
-> 
-> Ugg - that code is horrid.
-> It seems to have got deleted since, but it is:
-> 
-> 	u32 slotsize = slot_bytes(ca);
-> 	u32 num = ca->maxreqs;
-> 	unsigned long avail, total_avail;
-> 	unsigned int scale_factor;
-> 
-> 	spin_lock(&nfsd_drc_lock);
-> 	if (nfsd_drc_max_mem > nfsd_drc_mem_used)
-> 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
-> 	else
-> 		/* We have handed out more space than we chose in
-> 		 * set_max_drc() to allow.  That isn't really a
-> 		 * problem as long as that doesn't make us think we
-> 		 * have lots more due to integer overflow.
-> 		 */
-> 		total_avail = 0;
-> 	avail = min((unsigned long)NFSD_MAX_MEM_PER_SESSION, total_avail);
-> 	/*
-> 	 * Never use more than a fraction of the remaining memory,
-> 	 * unless it's the only way to give this client a slot.
-> 	 * The chosen fraction is either 1/8 or 1/number of threads,
-> 	 * whichever is smaller.  This ensures there are adequate
-> 	 * slots to support multiple clients per thread.
-> 	 * Give the client one slot even if that would require
-> 	 * over-allocation--it is better than failure.
-> 	 */
-> 	scale_factor = max_t(unsigned int, 8, nn->nfsd_serv->sv_nrthreads);
-> 
-> 	avail = clamp_t(unsigned long, avail, slotsize,
-> 			total_avail/scale_factor);
-> 	num = min_t(int, num, avail / slotsize);
-> 	num = max_t(int, num, 1);
-> 
-> Lets rework it a bit...
-> 	if (nfsd_drc_max_mem > nfsd_drc_mem_used) {
-> 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
-> 		avail = min(NFSD_MAX_MEM_PER_SESSION, total_avail);
-> 		avail = clamp(avail, n + sizeof(xxx), total_avail/8)
-> 	} else {
-> 		total_avail = 0;
-> 		avail = 0;
-> 		avail = clamp(0, n + sizeof(xxx), 0);
-> 	}
-> 
-> Neither of those clamp() are sane at all - should be clamp(val, lo, hi)
-> with 'lo <= hi' otherwise the result is dependant on the order of the
-> comparisons.
-> The compiler sees the second one and rightly bleats.
+Hello,
 
-In fact only gcc-9 bleats.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-gcc-7 gcc-10 gcc-13 gcc-15
-all seem to think it is fine.
+failed to apply patch:
+checking file fs/jfs/jfs_metapage.c
+patch: **** malformed patch at line 6: diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
 
-NeilBrown
+
+
+
+Tested on:
+
+commit:         4a0c9b33 Merge tag 'probes-fixes-v6.18-rc4' of git://g..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d0a0feb49c5138cac46
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=153f2a58580000
+
 
