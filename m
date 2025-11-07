@@ -1,138 +1,135 @@
-Return-Path: <linux-kernel+bounces-890824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F5AC410C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:32:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA3D2C410CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:32:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 459A53A5B4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:32:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D17E3AC6AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726D0334C03;
-	Fri,  7 Nov 2025 17:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E021335561;
+	Fri,  7 Nov 2025 17:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wj98Lrzx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UctZZkL5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E846D24677B;
-	Fri,  7 Nov 2025 17:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2098331A79;
+	Fri,  7 Nov 2025 17:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762536722; cv=none; b=PCE0lHU78/0HoTvl9Grq+eRaL5t4c+FxybGyUpE36tI7/gbbuoP9xgpN6ygT7xqHhb2rGlVY9YjwlXnv/7cLCDGhyfkoVqFl7E7JpwCXi+CJyp1E5HnjphgxOEqVPySgqdMJrlaQ54IYwkmzXoOwrGqn3C0itjn42WJVGhxZ24E=
+	t=1762536757; cv=none; b=osgJ7sDjY5K4HHd+SqowX39OXTjsAQuV5DKSGyLJuDCMjlUdsxhgFPhFiyoLm807CKSSQlPZjDSShK4sg0Mfd9LnXk7O5ZwBOz6EcNeGwI1i5pyVWKztfkaFsI6peI6qv3T45rkEVC24axQw0vuqS3dW8Q47ypk+NSOCbC0xCng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762536722; c=relaxed/simple;
-	bh=rtYEbJDdno3leNNOD42LfxWcCzJPfHjqsYFv2+VNSeQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V8fbpcqyACYSLDz1DkpYW3xdXSs64AjpYH8ueMs1fUfnt8G5udAzU9CuoLO6OP8v4VRkylZ1OMx/fMyOmC6+4vPjDxa0vbr17ArgfkG/IrDg0/eWbR+h+0ouwBaka0bH+ZsbLITNHHPl9AasPlnsbgq4BGpwMnMu84q5mnXIa7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wj98Lrzx; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1762536757; c=relaxed/simple;
+	bh=br/yoQcXazpIhba0JM9br+2Xu+ekNSGhpyy+fjDbUQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jnu6utkrpKfKtglZQySYvTrrjsse25X2C1J712qOK5ldmULGS/xLDRMJj2dkbgFlVrDMFwuk4EEYunUfLlJezhtA/6/UZ3raJpUbb3YTrcxfVXAKpGlHkVrhLXk91lZSyvSTq791bzApHrHfqETL/F6Oz4R0GHT6RkV09EMaqCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UctZZkL5; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762536721; x=1794072721;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=rtYEbJDdno3leNNOD42LfxWcCzJPfHjqsYFv2+VNSeQ=;
-  b=Wj98LrzxVmWvoc4abAlIvKfig/PY7EnGQ9tz5cn/lSMkoi3Wv6sB50O8
-   1xV11/LbYXNJXoVd3dCK5YBiVcn24YjsOVgGV7GoW9+v/mIJmyTrk3Gqi
-   elk9TRtEkr3lI+l2MOeX1VFW1ITUApkKgetJYkhByJq4drsk+8rrSF3hM
-   RSJyBaNktR3F2LQqllr+UVhBWV8daUHf3EfzV+xAWyFd2ZK3WXDM1YLUQ
-   ddOJeDFWF/BeqLVlFxuMwu6Uye5L0is0YNnvOl2pUKOlMKg48E0orO/7x
-   u4cbI7jYg4SPM4npPcPjdjr62bkTIIwk9lFeSCaiWBdRO8MThylqGSgf1
-   Q==;
-X-CSE-ConnectionGUID: ffE1YWX0S36EIEZruY7PzA==
-X-CSE-MsgGUID: DAtvHM/HRqugbMThzjuCcg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="76040379"
+  t=1762536756; x=1794072756;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=br/yoQcXazpIhba0JM9br+2Xu+ekNSGhpyy+fjDbUQs=;
+  b=UctZZkL5koKMojkM5bfVDVrOHTThROa/jxDccYX45TiHiq22QvoFrtIu
+   MzKauQ3A0Tr7N4dmYMq6aauDUEJXAcapnywnzNSNb4LjLQkykpuBvXkCQ
+   0FQHY7nKzyhuLmk3A+Mxwdr1C4QQxwiC9KLx7eFh+cf9d55Fdj6IcPzni
+   /fHD35ekTFitl8N1CpVespRvcc2kAUaExs7FCmV6b+nYEBmVc2uXdBUR2
+   6/zrGbfXReWcORw7cpxSSNSTcOywWPeIAx0vVGVq/7y7g33LX/i6kkxU/
+   0WvffRev8Solm01k9OX2F9SMUxoFKqis4VjSoYm05aTozRKM+M/yb1ynU
+   g==;
+X-CSE-ConnectionGUID: LolPIA3qQ6SrEyh14arZtA==
+X-CSE-MsgGUID: puYFi6/cQCOHLqRxIjSOeA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="64729508"
 X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
-   d="scan'208";a="76040379"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 09:32:00 -0800
-X-CSE-ConnectionGUID: /YtKh+hJTDyc/BxXE2xNcQ==
-X-CSE-MsgGUID: eYHGvonEQH2NhvoXBxdoGQ==
+   d="scan'208";a="64729508"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 09:32:35 -0800
+X-CSE-ConnectionGUID: olbkBok6TgOZIIyj+YRicw==
+X-CSE-MsgGUID: fEjkLyDgQ8C+BXPOdvpQGw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
-   d="scan'208";a="187927068"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO tfalcon-desk.attlocal.net) ([10.124.222.91])
-  by fmviesa006.fm.intel.com with ESMTP; 07 Nov 2025 09:31:59 -0800
-From: Thomas Falcon <thomas.falcon@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Falcon <thomas.falcon@intel.com>
-Subject: [PATCH] perf: write bpf_prog (infos|btfs)_cnt to data file
-Date: Fri,  7 Nov 2025 11:31:50 -0600
-Message-ID: <20251107173150.135037-1-thomas.falcon@intel.com>
-X-Mailer: git-send-email 2.43.0
+   d="scan'208";a="192185843"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.117])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 09:32:26 -0800
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id D3FDF11FC72;
+	Fri, 07 Nov 2025 19:32:22 +0200 (EET)
+Date: Fri, 7 Nov 2025 19:32:22 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: michael.riesch@collabora.com
+Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Gerald Loacker <gerald.loacker@wolfvision.net>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Collabora Kernel Team <kernel@collabora.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Alexander Shiyan <eagle.alexander923@gmail.com>,
+	Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Mehdi Djait <mehdi.djait@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bryan O'Donoghue <bod@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v14 00/18] media: rockchip: add a driver for the rockchip
+ camera interface
+Message-ID: <aQ4tJg8r_j4NyKhv@kekkonen.localdomain>
+References: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
 
-With commit f0d0f978f3f58 ("perf header: Don't write empty BPF/BTF
-info"), the write_bpf_( prog_info() | btf() ) functions exit
-without writing anything if env->bpf_prog.(infos| btfs)_cnt is zero.
+Hi Michael,
 
-process_bpf_( prog_info() | btf() ), however, still expect a "count"
-value to exist in the data file. If btf information is empty, for
-example, process_bpf_btf will read garbage or some other data as the
-number of btf nodes in the data file. As a result, the data file will
-not be processed correctly.
+On Fri, Oct 24, 2025 at 02:51:29PM +0200, Michael Riesch via B4 Relay wrote:
+> Habidere,
+> 
+> This series introduces support for the Rockchip Camera Interface (CIF),
+> which is featured in many Rockchip SoCs in different variations.
+> For example, the PX30 Video Input Processor (VIP) is able to receive
+> video data via the Digital Video Port (DVP, a parallel data interface)
+> and transfer it into system memory using a double-buffering mechanism
+> called ping-pong mode.
+> The RK3568 Video Capture (VICAP) unit, on the other hand, features a
+> DVP and a MIPI CSI-2 receiver that can receive video data independently
+> (both using the ping-pong scheme).
+> The different variants may have additional features, such as scaling
+> and/or cropping.
+> Finally, the RK3588 VICAP unit constitutes an essential piece of the
+> camera interface with one DVP, six MIPI CSI-2 receivers, scale/crop
+> units, and a data path multiplexer (to scaler units, to ISP, ...).
 
-Instead, write the count to the data file and exit if it is zero.
+I understand both RK3568 and RK3588 include an ISP. Do you have insight on
+how would this work, should the support for the ISP be added later on?
 
-Fixes: f0d0f978f3f58 ("perf header: Don't write empty BPF/BTF info")
-Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
----
- tools/perf/util/header.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index db2ad19fa50d..54968881481c 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1022,12 +1022,9 @@ static int write_bpf_prog_info(struct feat_fd *ff,
- 
- 	down_read(&env->bpf_progs.lock);
- 
--	if (env->bpf_progs.infos_cnt == 0)
--		goto out;
--
- 	ret = do_write(ff, &env->bpf_progs.infos_cnt,
- 		       sizeof(env->bpf_progs.infos_cnt));
--	if (ret < 0)
-+	if (ret < 0 || env->bpf_progs.infos_cnt == 0)
- 		goto out;
- 
- 	root = &env->bpf_progs.infos;
-@@ -1067,13 +1064,10 @@ static int write_bpf_btf(struct feat_fd *ff,
- 
- 	down_read(&env->bpf_progs.lock);
- 
--	if (env->bpf_progs.btfs_cnt == 0)
--		goto out;
--
- 	ret = do_write(ff, &env->bpf_progs.btfs_cnt,
- 		       sizeof(env->bpf_progs.btfs_cnt));
- 
--	if (ret < 0)
-+	if (ret < 0 || env->bpf_progs.btfs_cnt == 0)
- 		goto out;
- 
- 	root = &env->bpf_progs.btfs;
 -- 
-2.47.3
+Kind regards,
 
+Sakari Ailus
 
