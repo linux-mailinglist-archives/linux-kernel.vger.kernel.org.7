@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-889867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1650CC3EBA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:19:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19CE8C3EBAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:20:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 057A84EAB41
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:19:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 082064E16BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486F7298CDC;
-	Fri,  7 Nov 2025 07:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490CE2DF141;
+	Fri,  7 Nov 2025 07:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUUT/Bxf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BN3he29Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971B91DA60D;
-	Fri,  7 Nov 2025 07:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CDB1DA60D;
+	Fri,  7 Nov 2025 07:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762499957; cv=none; b=NS4LgYvg3Mytm0afOijz2zoPYW8U/KclMnxI7sDv81CNE3MlTf938OUV7VJXsJSKy/1yaBCo8UzCvUdzmiL5tdG9nAApQLKRVcSjBR05JyZIbACXnrrJWjsdO5FMqrPtB8PNXy5ZHz8IOe09NY/FMYSF3SrQDcCsFkkNJcU+14I=
+	t=1762499997; cv=none; b=J8PyGUQC1/VDbViPeAI74BCUhHKsdzzrKCZbEWIuUxBZHX+IhZo74v9flfZeNXwZdiyOR6l1E8SI2+oLEjPgRfuNHhvT2fFTXzFBEW8RzIVmMjlS34U0LTrGFDnQxpkUgRu9sXOim8Aglh14soDI8MO5Thcs2NxIprQYezjQmTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762499957; c=relaxed/simple;
-	bh=eIFiIlQ3eHncTFNnz3oTs17dUSTN1tCkxG2T6Nsp0lE=;
+	s=arc-20240116; t=1762499997; c=relaxed/simple;
+	bh=MZUadLgnrcIzLLSlwBtT4BlpZpL1e9kjawOscJDDXro=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rbRc4yQBh/bbgeOxVFBBdEJAUMy7NRL5mLg88DnEZOWACpMeGhlaxVqCOxF2XMxshNb0TQbGua+i5HDtrajLBTk1QnDJA4m3Asn6Ny2utPdDCWPhTCI8daCDjUJFGtGR383KzcG4t+3rCUBEZGBinhTB8r54lvwJXJPa8G8/+uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUUT/Bxf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04465C4CEF8;
-	Fri,  7 Nov 2025 07:19:14 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=NKQAtVYhgcIareGRC6t0f8gb0A0I4OCwZy4cVV0sXfapUrKJx9GkPRE0fD6tNjCZ8t4G+B5Hau+9MZKPMZBlc3pw1m7q8saYDE8drE0rRYDDQ3A5Sd6mX1GyKErBsvPqglEn6KIdVfc5IEAEwNBOQh+ULjhDVHDm0SAuJ7WM/3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BN3he29Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13DAAC113D0;
+	Fri,  7 Nov 2025 07:19:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762499957;
-	bh=eIFiIlQ3eHncTFNnz3oTs17dUSTN1tCkxG2T6Nsp0lE=;
+	s=k20201202; t=1762499997;
+	bh=MZUadLgnrcIzLLSlwBtT4BlpZpL1e9kjawOscJDDXro=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TUUT/BxfE8COzA3LRM4lwzg4dhOKIjRLLqT9/Whx+x8j3adJbFWpJR5xfEgtiFjA1
-	 V3xXolImPsSvIIoWfjrV+UeiSkRmifl4avB98bJdMMsH3lBMg/Gq+ax2AMpfs/Rstd
-	 mg8Z7vIoTkrwVM1tnNxmhPhAQsqIk8ZgFI71fmQ3csmaCHU/0i5QbshWr9NDoyQZRW
-	 rHXGJNa/eS6GP1xdAdPXeKkdE+gauTYU++S3GP1uRBEyXheGh8KHts0bigsd10RhkL
-	 hnExAuUQxxMkh7YeOiV2kKfJDEZKyX/xtr26RoG2jVK5wVFETEiwOc/1xJhG3RXKoq
-	 D2nEiA2Ey0mdw==
-Message-ID: <69efdb9a-c03a-42f4-a78e-18c8a2b29322@kernel.org>
-Date: Fri, 7 Nov 2025 08:19:13 +0100
+	b=BN3he29Q5vCbeMkOnZTsHHSh+Lb08fGR7USWMTuSHbLKYGUHZ/HSkP+kLtlOopzs3
+	 vuyXlnHy8UBRXv/atyCIukNUFPOnbX51MblcDifBQJK2ZKUFHLITvmCaR6CybbGmWR
+	 v7ijpdVKmtV3f2VbEv+B4QZukvXHtxI3ftVQgcITLsipegPEsHFlZQHQTMVg+PCPg0
+	 CD1qPy2Hv03BIN6IGRNa3ErsLyJaphO7DUoDWWqo9t2cn/l9XgUuYMop5PtF3T5L8J
+	 2MnaOQ+pEwuVFcSY8N18dm4t86L70OXga+UnTkDugJ9tDDDYRJXSThEnkJNLI+P3YF
+	 oEw39qRaK3UBA==
+Message-ID: <d7770d3e-bc35-4539-a927-0387cdec2b2c@kernel.org>
+Date: Fri, 7 Nov 2025 08:19:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] Reset: cix: add support for cix sky1 resets
+Subject: Re: [PATCH 3/3] dts: reset: add support for cix sky1 resets
 To: Gary Yang <gary.yang@cixtech.com>, p.zabel@pengutronix.de,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, cix-kernel-upstream@cixtech.com
 References: <20251107033819.587712-1-gary.yang@cixtech.com>
- <20251107033819.587712-3-gary.yang@cixtech.com>
+ <20251107033819.587712-4-gary.yang@cixtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,16 +101,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251107033819.587712-3-gary.yang@cixtech.com>
+In-Reply-To: <20251107033819.587712-4-gary.yang@cixtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 07/11/2025 04:38, Gary Yang wrote:
-> There are two reset controllers on Cix Sky1 Soc.
+> There are two reset conctrollers on Cix Sky1 Soc.
 > One is located in S0 domain, and the other is located
 > in S5 domain.
 > 
 > Signed-off-by: Gary Yang <gary.yang@cixtech.com>
+> ---
+>  arch/arm64/boot/dts/cix/sky1.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+
 
 Please use subject prefixes matching the subsystem. You can get them for
 example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
@@ -118,43 +122,40 @@ your patch is touching. For bindings, the preferred subjects are
 explained here:
 https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-It is not "Reset:". Mark capitals.
+Please start paying attention to this.
 
-> ---
+> 
+> diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
+> index d21387224e79..fc68734f37c2 100644
+> --- a/arch/arm64/boot/dts/cix/sky1.dtsi
+> +++ b/arch/arm64/boot/dts/cix/sky1.dtsi
+> @@ -348,6 +348,13 @@ i3c1: i3c@4100000 {
+>  			status = "disabled";
+>  		};
+>  
+> +		src_fch: reset-controller@4160000 {
+> +			compatible = "cix,sky1-rst-fch", "syscon";
+> +			reg = <0x0 0x04160000 0x0 0x90>;
+> +			#reset-cells = <1>;
+> +			status = "okay";
+Why?
 
-
-...
-
-> +static struct platform_driver sky1_reset_driver = {
-> +	.probe	= sky1_reset_probe,
-> +	.driver = {
-> +		.name		= KBUILD_MODNAME,
-> +		.of_match_table	= sky1_reset_dt_ids,
-> +	},
-> +};
-> +static int __init reset_sky1_init(void)
-> +{
-> +	return platform_driver_register(&sky1_reset_driver);
-> +}
-> +subsys_initcall(reset_sky1_init);
-
-This should be rather just module_platform_driver. Does not look like
-part of subsystem, but looks like regular driver.
-
+> +		};
 > +
-> +static void __exit reset_sky1_exit(void)
-> +{
-> +	platform_driver_unregister(&sky1_reset_driver);
-> +}
-> +module_exit(reset_sky1_exit);
+>  		iomuxc: pinctrl@4170000 {
+>  			compatible = "cix,sky1-iomuxc";
+>  			reg = <0x0 0x04170000 0x0 0x1000>;
+> @@ -568,6 +575,13 @@ ppi_partition1: interrupt-partition-1 {
+>  			};
+>  		};
+>  
+> +		src: reset-controller@16000000 {
+> +			compatible = "cix,sky1-rst", "syscon";
+> +			reg = <0x0 0x16000000 0x0 0x1000>;
+> +			#reset-cells = <1>;
+> +			status = "okay";
 
-
-
-> +
-> +MODULE_AUTHOR("Jerry Zhu <jerry.zhu@cixtech.com>");
-> +MODULE_DESCRIPTION("Cix Sky1 reset driver");
-> +MODULE_LICENSE("GPL");
-
+No, really, why?
 
 
 Best regards,
