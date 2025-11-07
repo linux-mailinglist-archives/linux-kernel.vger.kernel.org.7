@@ -1,90 +1,135 @@
-Return-Path: <linux-kernel+bounces-890762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33D0C40DDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:26:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00CFC40DB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F20854F7A29
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:22:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 218BD3ACD6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA3E273D81;
-	Fri,  7 Nov 2025 16:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBA127AC57;
+	Fri,  7 Nov 2025 16:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZuT0C31"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="GrSpfDG5"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C640B247287
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C22A26FA50
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762532556; cv=none; b=mBlLeq/OB98GJ6mcqCIu/jnm+lLoZ+yZ8JKuIjIeCzWVg+5eWYjmu10AZtwHEgco2LIRuGmP1wWoz8XJqYN5/Vvp7pTtnEtbSn/0EijubNUR/HHap2DMKTqfzA2WyNQxzLm4f9W3NQzcRRzQQ8giEhqJJ3/S5qGxLiurdfdgBXU=
+	t=1762532442; cv=none; b=adGBb3cJw37enVl/11PlxVL46uyL45jPKAw0XnPb4ggn4hMU2qbPdbvC+2sefVfA8iOlnuAy4xCPho0CBLa9aDEcZG2konICWXmlcSSbqtx+G4DqfahwoM5BSzmg819dIl9jJBmsRLjsxGasWOzmvO/eye6mBsjD041sqi3hFhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762532556; c=relaxed/simple;
-	bh=mN4YUzu8lM3c3oVyGIeWOoW3AKov+Tq1pJETgzitr7U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oxafukI4F3OnyGr0ClaebqWIIQMM8n5j8Y2D9dnLe1EAZZDggQvp1YvnIuVxPXysdcNkqrYYesnzY8nPv78mLLwAaQKnSvIKzAh1u5ornDHzVMTh2Tj2tORJ8INp3eVK+MlWu4fQk8XMsD2ZgpV0BNeLsdaBA91CimU/7NrOaNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZuT0C31; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6561C4CEF5;
-	Fri,  7 Nov 2025 16:22:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762532556;
-	bh=mN4YUzu8lM3c3oVyGIeWOoW3AKov+Tq1pJETgzitr7U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=GZuT0C31+QDQpp0rorfqPSiUK3Bx4b91ve41PHeDgnivD25omRRwmyd6aPRja4ZbQ
-	 /to9fB8phW7MZ4f3A4InHqBCpwBRCQcEqcftAtJHHuMVD1x+48vTPCOsbuVL6TPIKC
-	 5h9Nff8reoEXB0FvomgWz9I9SkReJS+NerutF7xo3cQza+0xJ6uuGdh7QiV6h+A+sH
-	 pkppptHDUAQ87a9aAsW5koS3PVSKvk0l6YbyY94pO/rRG6EpKftLfjwO4n+q6t/BsT
-	 xHOCRmmAh3uFCG1XUSr5OYdWKNZchCMBQXLyLDiSMXiqr8nA+G3veo4sKA+cFX9bK4
-	 T2hLnqEYtfhVg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Takahiro Kuwano <tkuw584924@gmail.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
- <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,  Miquel Raynal
- <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
-  Vignesh Raghavendra <vigneshr@ti.com>,  Marek Vasut
- <marek.vasut+renesas@mailbox.org>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  Takahiro Kuwano
- <Takahiro.Kuwano@infineon.com>
-Subject: Re: [PATCH v2 0/3] mtd: spi-nor: spansion: Add SMPT fixup for S25FS-S
-In-Reply-To: <20251105-s25fs-s-smpt-fixup-v2-0-c0fbd0f05ce7@infineon.com>
-	(Takahiro Kuwano's message of "Wed, 05 Nov 2025 16:47:57 +0900")
-References: <20251105-s25fs-s-smpt-fixup-v2-0-c0fbd0f05ce7@infineon.com>
-Date: Fri, 07 Nov 2025 17:22:33 +0100
-Message-ID: <mafs04ir5bynq.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762532442; c=relaxed/simple;
+	bh=Fqsv7T5UOZsDf8OyIMapY71LUPMEa73mHQs1iYV1MDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kTPMi8yWvnC5w836h+Ac/NlgRYMaErA6jaNqKR39nlTuX0/joS67rjuBpgmVwvt/zSgVKBd+w8vrMuPUpj4hFywDp8erhxmC/j9Czdd5Q2cbRjSH22YlO91v7McZ2CI8NXYpws043a9nAqEoHDp5q3oj436RJyEheT7svAX5ErM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=GrSpfDG5; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so5028735e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:20:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1762532438; x=1763137238; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wDYDeeQ/vWAVkTVZ2tumPs2hnzhDw4b29aU1EHWCyII=;
+        b=GrSpfDG5UEA62RszPCamiXBlJMTzRq/172nlAeJBrWsdesZzjS4yKwDk2uPZl2TAxD
+         kovPJcpe3glAbYlq4vnnS1Xcq4eAfxVVjXer2YHuVUpnQlxdLDhGwrXECH32yG/ug1/R
+         xvqGOpIfPF2NFGtE1jYgxQ+nUvPNthJTXKBCxGZ/rbivATdqQsKWCceJXObblp7IgqTK
+         ucKfiisyTfcihb7quFaxVwbf3Ru0FEUwLkVf+y4DCD9NLNN8d60M/3xra+KJ1JtMnGdb
+         YaTFnPIveiIpNv/+J+PE+soVDp6fM8gNFA8/D6lqyRDWVn2fdZA3jkR6L+CXomvE2QpK
+         IKRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762532438; x=1763137238;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wDYDeeQ/vWAVkTVZ2tumPs2hnzhDw4b29aU1EHWCyII=;
+        b=sXMyvENRh3lKrDRM5PJJ9tM5lucYFmS4n1zGLTMYENzyr7ARYF8AiWeYo3e4gtgUpC
+         PYAXt6od8p7ppi7ohXwA9Ca88ZJgf32tssr+oNMUG923qDc4aAJXNjbgzStAbrvEChES
+         ToiMRDP0+vMBNTZuW0F5C7/FgbB7OWaEfVRxmqpN9MsSYcWnvDxKeSJrqeKVlffNySgo
+         8YuW5N9I9vDuL6AoM045Vdc8e65BUQBIGRLvyCSJNhkhG7bMZ+SBSMFw7dB7Zu4HSoTx
+         E5OBjHB/MoRFktZ3jPuiQ72fg/oPo4AMiid8/ACPGTggZEbTfP77w5iXpLHqNp3KpwdF
+         jFYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVo/HNVurQjiCdFjPMQryoNxsxSUsKGRTwH658K2EVNxTdWq9YpKdv9cYYO5TcWhgPLk7bS9cgG+pmQ3ho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRmlxwnsEare7+aEtrFKZnoY2loXWoUezafT3wjD+nKixgSnjm
+	gWsZHi6RhminNTjC3zEkLRHOuAsK8xkcFwKf6U9yrbZtnsSi0gozzczk3uzaFClwog4=
+X-Gm-Gg: ASbGncvQiH1Wh0ZYuYU7/vFeXRA7ho5PHUXmggOM53eyLIGYtBDo2q2M3IEpj9RAw+y
+	Yh6fqKSaSOFvBUXOADzCBYiqogUA9RGY3jPWCXQ8Gt9OHnZwSSgj13HpG4CXhW1GXbZyWRGOOYW
+	zZYL/+FYx23PKajzgL7TjdOZ7n+lcfNkCvvFYGA3DSiTik8AmgFSa9Il6hv5KWE8P3wrW19vVcN
+	bKaFtaUL2Ip4r3YaPl6F1/pHWHSq3cZrd9JOOG+cUgHvpzwuTy5f2txKehfX2cqxBh7jWJ/ffnv
+	CVRk/p5hoY7uf0+PclaEpdM7QSBUkB2TWyN/Rgdd21bcUXJU6tqNa1NBH6eUo4FcPJ8AlcR7su8
+	borSM5+BRBddHiL46BpEAbsW2PqmAuZdMbx4YE8vvjZqAirFQrSOiOb2SgjMj6/EU0WWSdcSvW4
+	IS5mspkAuSnHNpqwsRiJUTFyQ8ceE2CTAyw7wrDKvmrKCTmRK5hTGkYKIYHbM=
+X-Google-Smtp-Source: AGHT+IFcgdIpQe62FnRg4rVkke0TruBClBrbAABNqXTY7mPIIJ+cQeAzHNDnmh9vCKPrBQJ6NHkN0w==
+X-Received: by 2002:a05:600c:1c8e:b0:475:ddf7:995e with SMTP id 5b1f17b1804b1-4776bca6415mr30487885e9.12.1762532438329;
+        Fri, 07 Nov 2025 08:20:38 -0800 (PST)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477641fdbd8sm48938385e9.5.2025.11.07.08.20.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 08:20:37 -0800 (PST)
+Date: Fri, 7 Nov 2025 16:22:33 +0000
+From: Daniel Thompson <daniel@riscstar.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: maudspierings@gocontroll.com, Lee Jones <lee@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/4] backlight: add max25014atg backlighty
+Message-ID: <aQ4cyVKzgBUfpsj9@aspen.lan>
+References: <20251107-max25014-v5-0-9a6aa57306bf@gocontroll.com>
+ <20251107-max25014-v5-2-9a6aa57306bf@gocontroll.com>
+ <aQ4Vb4eUmSX0Nj6+@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQ4Vb4eUmSX0Nj6+@lizhi-Precision-Tower-5810>
 
-Hi Takahiro,
+On Fri, Nov 07, 2025 at 10:51:11AM -0500, Frank Li wrote:
+> On Fri, Nov 07, 2025 at 01:49:59PM +0100, Maud Spierings via B4 Relay wrote:
+> > From: Maud Spierings <maudspierings@gocontroll.com>
+> >
+> > The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
+> > with integrated boost controller.
+> >
+> > Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 
-On Wed, Nov 05 2025, Takahiro Kuwano wrote:
+<snip>
 
-> Suggest new series as the result of discussion in the thread:
-> https://patchwork.ozlabs.org/project/linux-mtd/patch/20240914220859.128540-1-marek.vasut+renesas@mailbox.org/
+> > +static int max25014_probe(struct i2c_client *cl)
+> > +{
+> > +	struct backlight_device *bl;
+> > +	const struct i2c_device_id *id = i2c_client_get_device_id(cl);
+> > +	struct max25014 *maxim;
+> > +	struct backlight_properties props;
+> > +	int ret;
+> > +	uint32_t initial_brightness = 50;
 >
-> Signed-off-by: Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
+> try keep reverise christmas order
 
-Checkpatch complains on all 3 patches:
+I thought reverse christmas tree order only applied to code where the
+maintainers called it out in Development/process (e.g. netdev and tip).
 
-WARNING: From:/Signed-off-by: email address mismatch: 'From: Takahiro Kuwano <tkuw584924@gmail.com>' != 'Signed-off-by: Takahiro Kuwano <Takahiro.Kuwano@infineon.com>'
 
-Take a look at why your git-send-email didn't add the extra "From:" in the patch?
-
-For this patch series, is it okay if I change the author name to
-Takahiro Kuwano <Takahiro.Kuwano@infineon.com> on all patches?
-
-[...]
-
--- 
-Regards,
-Pratyush Yadav
+Daniel.
 
