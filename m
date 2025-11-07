@@ -1,120 +1,104 @@
-Return-Path: <linux-kernel+bounces-890991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8781C4189F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:11:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7DC2C417F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:03:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A7D93A4C8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:11:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53A5D3B52AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9199833970F;
-	Fri,  7 Nov 2025 20:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FDQC70Md"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E231F2BE632;
+	Fri,  7 Nov 2025 20:03:26 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC0830CD8E;
-	Fri,  7 Nov 2025 20:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C206829A9CD
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762546219; cv=none; b=aOa2Ufe91hDG+rJgsNoxcpjfpU0gqN4+M+mIL22kwRE2HdM/49AxOM8sWzA4kE9ngY8thp/agFN+5lQoA5b5e6GsYOaDagyCdl57wUs90EE0E+wVbRXbL9D7r3JnHZxRqkRIzd/RG2yVf66QFIGLTGSBOWpQKAPXBsOXMVmbCNs=
+	t=1762545806; cv=none; b=SG9b4R3o/5SJrQFtPE/nxdeuQxpY+WEm9QnIy20UjerDnpObglBwJXP1MjKf/fVf2Yxkf3VnlrWplYtdNFNor2zV0v26gaDHMmyanvF9SQ0VHcAwELV1Y23CBq4O5w0R4nPw54qYWTiCuXVI6ODEzBm7fWh5GjnuLziZO5QAP2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762546219; c=relaxed/simple;
-	bh=ud1/96IUeRP+Bx2biumyTkRJpYJUg2NbiGKWfKUmRbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bN15oAMYFkiwUY5XeLuz2Aa0Vi9LpabRB1Jf8XHSRNJaBEHB+hHRU0p+IqW5wtQblMg8r0+Yha2WLOnqM/l4RPfdA4wkHHLj1iFZmfrnTHYqZhIG17UtMCziElZ10YLWmlEhTk3e+MflBIZQfJ69mNWX2gGo0xkv9dDVkWD8zME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FDQC70Md; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762546218; x=1794082218;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ud1/96IUeRP+Bx2biumyTkRJpYJUg2NbiGKWfKUmRbw=;
-  b=FDQC70MdiAagxQ52Q0vXbe4kGgWTovn7312MI7bXM4DdrtEucW8I5elb
-   pCREE2IIaRtad9hk0ZIzj++ZaB3IuBfGvjmgdCoWfbIWGTml4QrMOSLV+
-   pv+B8p8fdWYiVGFNtie6GtOIaU6YNsp+dI6T8cATscxscymga4PTC3MhY
-   cQhyw3/i0K6JwT2sPqbxLiVHyQ3Oei2viu5l7jCcqc17/kFM9/Cszq4yi
-   cOpseQD/tUmXNI2RSOgsxLwqsGoj/GKpJ4zX45nviwo5fKs/tfxPMbHYa
-   HE9Ls2blrweVzwCFWS/oOSjODhz29yJBstOqh7ICjdrO4TlLZeEzgcWyV
-   w==;
-X-CSE-ConnectionGUID: qVz3XKOZQAq1wPFG29QPJg==
-X-CSE-MsgGUID: OgY9CKbhQ3aZd39MTah5Aw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="68348701"
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
-   d="scan'208";a="68348701"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 12:10:18 -0800
-X-CSE-ConnectionGUID: 3jq1ptbVQAa2Kp7bUKTyoQ==
-X-CSE-MsgGUID: Wnku1eHJSLu6IyykDen4gA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
-   d="scan'208";a="188285318"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa008.jf.intel.com with ESMTP; 07 Nov 2025 12:10:15 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id F12BF9B; Fri, 07 Nov 2025 21:10:09 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
-	linux-iio@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	"Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-Subject: [PATCH v2 6/6] iio: position: iqs624-pos: Convert to use PI definition
-Date: Fri,  7 Nov 2025 21:03:04 +0100
-Message-ID: <20251107201005.3156118-7-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251107201005.3156118-1-andriy.shevchenko@linux.intel.com>
-References: <20251107201005.3156118-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1762545806; c=relaxed/simple;
+	bh=Q057139mbSLFqM2gjZ2QezG+lPcNonFvnYn2UZm/59Q=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=soP3jfQSKPGKFiuGpAuKydFiUb8ipMj7FVQYAITX1XL8dmuO46vLnygl3fAB8rl8rQb0gYTJqjkFmigfRkIPgR3IxEUoalfxjk6Msbe8RSun42HSLKtI7+IYJw7rRbz27dESTfGj/038GmaBJe7+LsMxwMor9lfQeV/cugGhmLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id A8D3F2B03EC;
+	Fri,  7 Nov 2025 21:03:21 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id X-nbup-2UNCI; Fri,  7 Nov 2025 21:03:20 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 553D011C057;
+	Fri,  7 Nov 2025 21:03:20 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 51_Gcrbkj5Yv; Fri,  7 Nov 2025 21:03:20 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 2DA3911C056;
+	Fri,  7 Nov 2025 21:03:20 +0100 (CET)
+Date: Fri, 7 Nov 2025 21:03:19 +0100 (CET)
+From: Richard Weinberger <richard@nod.at>
+To: Eddie James <eajames@linux.ibm.com>
+Cc: linux-mtd <linux-mtd@lists.infradead.org>, 
+	chengzhihao1 <chengzhihao1@huawei.com>, 
+	OpenBMC Maillist <openbmc@lists.ozlabs.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, sethjenkins@google.com, 
+	adobriyan <adobriyan@gmail.com>
+Message-ID: <55378147.159026.1762545799936.JavaMail.zimbra@nod.at>
+In-Reply-To: <068ba254-0053-46d5-bff4-74c948d2e8ac@linux.ibm.com>
+References: <068ba254-0053-46d5-bff4-74c948d2e8ac@linux.ibm.com>
+Subject: Re: UBIFS errors since Linux 5.15
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF143 (Linux)/8.8.12_GA_3809)
+Thread-Topic: UBIFS errors since Linux 5.15
+Thread-Index: +EEJ8XwfiheRTquyWgicZAVkYE0nQQ==
 
-Convert to use PI definition instead of open coded value of it.
+Eddie,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/iio/position/iqs624-pos.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Eddie James" <eajames@linux.ibm.com>
+> An: "linux-mtd" <linux-mtd@lists.infradead.org>, "richard" <richard@nod.a=
+t>, "chengzhihao1" <chengzhihao1@huawei.com>,
+> "OpenBMC Maillist" <openbmc@lists.ozlabs.org>, "linux-kernel" <linux-kern=
+el@vger.kernel.org>, sethjenkins@google.com,
+> "adobriyan" <adobriyan@gmail.com>
+> Gesendet: Freitag, 7. November 2025 18:38:54
+> Betreff: UBIFS errors since Linux 5.15
 
-diff --git a/drivers/iio/position/iqs624-pos.c b/drivers/iio/position/iqs624-pos.c
-index 8239239c6ee2..24d7a2591858 100644
---- a/drivers/iio/position/iqs624-pos.c
-+++ b/drivers/iio/position/iqs624-pos.c
-@@ -15,10 +15,11 @@
- #include <linux/notifier.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/units.h>
- 
- #define IQS624_POS_DEG_OUT			0x16
- 
--#define IQS624_POS_SCALE1			(314159 / 180)
-+#define IQS624_POS_SCALE1			(PI / 180000)
- #define IQS624_POS_SCALE2			100000
- 
- struct iqs624_pos_private {
--- 
-2.50.1
+> Hello,
+>=20
+> We are updating some BMC (Aspeed AST2600, ARM32) systems that were on
+> Linux 5.4 but observe consistent UBIFS errors with Linux 5.15 and later.
+> The errors seem to vary; there is a sampling below.
+>=20
+>=20
+> We performed a git bisect and came up with the following commit, which
+> of course is completely unrelated to UBIFS. Reverting it does prevent
+> the issue... Does anyone have any suggestions?
+>=20
+> commit 33fc9e26b7cb39f0d4219c875a2451802249c225
+> Author: Seth Jenkins <sethjenkins@google.com>
+> Date:=C2=A0 =C2=A0Thu Oct 27 11:36:52 2022 -0400
 
+That's indeed strange.
+Are you absolutely sure that this commit triggers the issue?
+E.g. if you revert it on top of 5.15 the issue vanishes and when you
+re-apply it, the issue is back?
+
+Thanks,
+//richard
 
