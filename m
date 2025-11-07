@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-890684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43EC0C40AAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:49:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CF4C40AB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:49:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FA391A456FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775BB427E46
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D276E32AAD6;
-	Fri,  7 Nov 2025 15:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A509832E68E;
+	Fri,  7 Nov 2025 15:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WnLN/78y"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UbHDGiAt"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F8E329E7A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D90F3271E0
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762530569; cv=none; b=Qb2kQPom5TLWts7wAl30ednTUrrY2oVrQQvxjAxnD52WCcQRfHAIM8Elq0EnlweXLcdYRNLFIoyrroXCbT5mQVfYwikmZypdU5/I4/9cfqow5JyjQN91aUWVPfYNucRPI+oQUWEjtxK1bSWWs54uM75koQsglVbXKShubduDyIw=
+	t=1762530570; cv=none; b=NEvmFwKseAgb2qUkdMTzX8t3TVq8lN5ZhaXQ0OPZI5Gdm9nu+nNazID2CemCnbe8AhlfEwDPv+Mf6qRmxkzjlyclEeaAfc6uCW+ygosBaLw1DIw36Gp7IzsN32NWWJCYRPWKEOMBSnilwNFjCtgAkcGY/TwiHxQjZ/QinbxN+RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762530569; c=relaxed/simple;
-	bh=27VE+i4w0x2v9vXfjkwHZYZx7SWxOyXyFMIchgV6VXM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cuc+Qbk30yfIR7hJrNQVV+S5cxkwtUsiFC53qwWxaLUBSgsLk8EQMNxGdsHaCEhJMKRDs368/CrbJwFRG/+BXLHq0ctId4UhJaYz8dcs12AwxTrh0vH1BOr0mgQpamjKo1kmIKCPhmv+PUXDyyn/cbL85UMJ7AKazBSWfGoK4Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WnLN/78y; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1762530570; c=relaxed/simple;
+	bh=7za5Sd2CGbYsFXxwOnGNM8Jslwis+pCwNRd0c2y4a64=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RPvqWVClKqrM3lXZckKeL3klUECuI79lzWbfBAO16o3dQvRVtuJzyAZ7qGK9vDF35Al9U2p/IIKxz7H9ghE+yTfmQtu4ATO+y4UWMovbPS9Tf5NfncO3wLoEmK6T1hycbSnfAR2sw+YmtJx5dEjwUmg6zyKkGjjF7r1q3IsmO8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UbHDGiAt; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4775638d819so5262485e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:49:26 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso536666f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:49:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762530565; x=1763135365; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CieNdBP+iDUkzWsYIh1zY2fr6PrC6rMrfQxyOHiJYwM=;
-        b=WnLN/78yOG2LCA6lR4rsnKSWLX7cUHNK/qLZkFwxHKQ0RsK7yv98gXfGZeI+ymz19i
-         89QwiV3QyFFjnNkgCfrv/S5tyJLfuCCqkq4S/Gx4w6dmKtDaZTjOEk/iLqQYZEfYIV51
-         qUqNpaR4HFVL2wz2g4PiEE1D4FMojwQtQvrwybS3mXGhXBMxmbx3N3Vn2pwNaBD7wTFx
-         yhhcCBiZxeaf2Y8Vf3+zKflTkDqvCmm2E54XlYIgR7xS+eX+GsOJk7tLssDPLQd6bToF
-         s7OorbwNhyhvQiK+85nlRQVCNdRp652uaI+bZhw2ME98gnTLR9HPtlZrOZcakcLShJGT
-         M31Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762530565; x=1763135365;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=suse.com; s=google; t=1762530566; x=1763135366; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CieNdBP+iDUkzWsYIh1zY2fr6PrC6rMrfQxyOHiJYwM=;
-        b=nS3VFSd3KOEjUQJS24hc4PvEMSVx4r33CX5nHj60om25SNoY7aHoJjzoIzW+PunL2i
-         IbhNx6D8utxYhKjh5P9JYXEpzyBuO/1VrfMfInik/JzIHQaCNYTlvAhz4p0+KT335uHE
-         VvPZA6eBfe49xH2rEhJuQPvUYQNV3L78lPeZ3NtJDucb12Y8an8kyX1UgeXzH/ERxTy7
-         a4hHEA/Iu869JNJ7eHonSju6u69yzswZTkg1tXvm+QZVDcSgsAXYbQWmKMIqwcKHi8VH
-         2XuDNRJJD0iMxNWguo0TEtxlVmOldD5S3J2APP5UmfwNrFDw6L3IUbynloZvzVkKq2Db
-         ivHg==
-X-Gm-Message-State: AOJu0YyNERYDeEy8mUuOPs8KTb5xUdpxv38V1xYIWYN5MmfIedhym+Vf
-	Cv9XBUBlgx1eS3ntl7aJ6cGayESG1/M3tNFTBQ15OvDOFopJDqDOLiccsecCGja1iGdwWUAVbmi
-	bc3aB
-X-Gm-Gg: ASbGnct6NS21yrSoVt5agupyBS25q5r7i+vNYdTsllzIHzpZhYE0mEpO35wZr6NzdJf
-	8MLd16ibscubXcn7nXasz2VQdNKZ/c6YS82WiTO2IETB7wSP/PFHmw5Amqs3QZrdZSrF6qxe8ZK
-	pgbN6lClZ7XVzCvte+Pa9c6XfIIhKxSTWLWxpTgs/na1/wxTRDu4GT4fEgNSSLq2Adqj/0w1ra+
-	8MfLqf7avTfr/bfm5AVFel2P0Yt4+D7OgVuoJIsyxELZ4RW/SBAA5mFO3Z/TQ7P33huBHJk6+7u
-	x2AvmVHfbZb2gVWJFmpnp9cFJBThORqwzA+yHbmdM1MN3Y5ydkzYXgfKfaN0kR9SHo1AfUnAXtn
-	fbvJZca4YUHJdCEGnRSt8GS1gpeC/lI7r9EjtLvvcu1JaQdGx24GnFX4oXvft6kJTa5H0nWiNKR
-	hhdJIjguRc3t3mGY1mMXzwCZar/CjdQeOIAoY=
-X-Google-Smtp-Source: AGHT+IHCPrN7eR+D+kU2SwBA7nmLBnku+5xo6MtDpIgXiSpETxbxNcs9TulWIMc7l8A5LJZmRcmwdA==
-X-Received: by 2002:a05:600c:1c9a:b0:45f:2922:2aef with SMTP id 5b1f17b1804b1-4776bcbf80emr41226985e9.28.1762530565117;
-        Fri, 07 Nov 2025 07:49:25 -0800 (PST)
+        bh=qq4MExtB76y0zEBbNqiZC5rZ/xWdqQI6U2spz/c6ZLQ=;
+        b=UbHDGiAtJkQj69S/bC3gBzkOdQEUmivGXqgeY2xgWFwPYJHgWAy4OuEhJoHVeEvbXT
+         25tsgVeYyk1xfHSTyHTvyKGRDUylLjbuwbpgcNYoQN4K51/aivtfC7keCeOV3GmbJvqb
+         GbMmRIHLgoHRJKG8vU2gqw+wc7BhlUiCJaZ+4FZBMMGun15EWCgbAgnMuCExsylO1nmN
+         oKD8ZEj2lJZSfEjF1zJgvS0LRA/qS4Td94Sy+oAZAU3F8LyziG8Mwfdj4IwENosVHXGW
+         UkiLU4ZkH7DNYtUmGl1gyc8gha39CTMf0Y01RYjgNzyMvDnG5gPfe0xor9exJPrCnnzs
+         VQfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762530566; x=1763135366;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qq4MExtB76y0zEBbNqiZC5rZ/xWdqQI6U2spz/c6ZLQ=;
+        b=vf9aAI8Pefa+Q3VDPzGB2roW370mx68ehYUAO2RGqB86/l45cdiKANWviaB2RUepxO
+         0O/yBRv/HCpL4SWeE/1gOUR23cKSBoVRBHqPVuui0O0m4IuM7gqgD8NY1sGR2BEMupI6
+         onfKV6vWvFCjy2kl86tYUzjikATx7AvU1bSRwO4+ARxyfiNmBI4K03427/gZ+grwNzfq
+         jNH0dIjzC0dRTd2l6i+BGXjqid3cBCm/wb5r7tGlAgHvH70CWbiUmwh8jOWPP/G67Eav
+         Sv3AM8eER8OEjh/McUWWbNmFXUjJqY5KRBRnNHOWQCTYltL5oNmkf3VZ2I7aqzpry2Pp
+         BFIQ==
+X-Gm-Message-State: AOJu0Yz52sg6Hq8GjUy8tlkPkNGfaAq4PVa1GDaKY6XJzzl1Y3ZAwScW
+	Q4NRhDZQPz8jr+u6cPlqGdyFjwCW29lKGnOWXPNObSTgEhcKYBL3n5Z4OGZKe30LMq6Vmi3X1pI
+	ofsOP
+X-Gm-Gg: ASbGncunpHct8ubOKu7tG7UzI3Gm/BN5mtHRQAfcgqDfreQMWOtl1AA+n+19AxP6RRB
+	pLzaBr/vTpenWJyFIOdp8qgrpXHSzghkzi2as+NKeb3N9tep0zPF1QG49AgIvYd/eAhY0YupkNJ
+	ZwMNA17FOnkM7zabWVMUFZPFNcraNIb4rR1f9mT1en6q8usPebhVGGLEKYTdithbWKGVtQu9A6Q
+	fFUtgESr7JUO7gZtmz3ffw1F8uU2nH8AAm83Oh+NhbLXZsVBn5yhvoOE9hiyIJppAuoRIaibrkC
+	KaJvuGUUSfEaGBEGqq0mzGkXgi8K6DDa94aRx5msY3DEwlfoD9IkbOgQqlUeWhYO7h/1myBGozj
+	9dlYAtKxTDwCN3RRAt4T1DzTmbFS/9Y9XZzDhcoBA7CdES4N7FCmWQDbbk0TIagblorpIYi5u+Y
+	3V9OGw2sZmf6YtMtEC43crJH2Lyp2CNDe/Z+s=
+X-Google-Smtp-Source: AGHT+IEhUIEI5+F913Bjhs0+Zl1YPWT7epmOweSo2OlY5tR346YUfwrdeSsWD37i1I0Bd1XqYIQHwA==
+X-Received: by 2002:a05:6000:3110:b0:429:f01d:dd83 with SMTP id ffacd0b85a97d-42ae5af3b50mr3391420f8f.62.1762530566060;
+        Fri, 07 Nov 2025 07:49:26 -0800 (PST)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62bf40sm5875338f8f.9.2025.11.07.07.49.24
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62bf40sm5875338f8f.9.2025.11.07.07.49.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 07:49:24 -0800 (PST)
+        Fri, 07 Nov 2025 07:49:25 -0800 (PST)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
 	virtualization@lists.linux.dev
@@ -85,10 +87,12 @@ Cc: Tejun Heo <tj@kernel.org>,
 	Jason Wang <jasowang@redhat.com>,
 	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
 	Eugenio Perez <eperezma@redhat.com>
-Subject: [PATCH 0/2] add WQ_PERCPU to alloc_workqueue() in virtio_balloon and vduse
-Date: Fri,  7 Nov 2025 16:49:15 +0100
-Message-ID: <20251107154917.313090-1-marco.crivellari@suse.com>
+Subject: [PATCH 1/2] virtio_balloon: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 16:49:16 +0100
+Message-ID: <20251107154917.313090-2-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251107154917.313090-1-marco.crivellari@suse.com>
+References: <20251107154917.313090-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,58 +102,56 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
-
-=== Current situation: problems ===
-
-Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
-set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
-
-This leads to different scenarios if a work item is scheduled on an
-isolated CPU where "delay" value is 0 or greater then 0:
-        schedule_delayed_work(, 0);
-
-This will be handled by __queue_work() that will queue the work item on the
-current local (isolated) CPU, while:
-
-        schedule_delayed_work(, 1);
-
-Will move the timer on an housekeeping CPU, and schedule the work there.
-
-Currently if a user enqueue a work item using schedule_delayed_work() the
+Currently if a user enqueues a work item using schedule_delayed_work() the
 used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
 WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
 schedule_work() that is using system_wq and queue_work(), that makes use
 again of WORK_CPU_UNBOUND.
-
 This lack of consistency cannot be addressed without refactoring the API.
 
-=== Recent changes to the WQ API ===
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
-The following, address the recent changes in the Workqueue API:
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
 
-- commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-- commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
 
-The old workqueues will be removed in a future release cycle.
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
-=== Introduced Changes by this series ===
+This change adds a new WQ_PERCPU flag to explicitly request
+alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
 
-1) [P 1-2] WQ_PERCPU added to alloc_workqueue()
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
 
-    This adds a new WQ_PERCPU flag to explicitly request alloc_workqueue()
-    to be per-cpu when WQ_UNBOUND has not been specified.
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
 
-Thanks!
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/virtio/virtio_balloon.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Marco Crivellari (2):
-  virtio_balloon: add WQ_PERCPU to alloc_workqueue users
-  vduse: add WQ_PERCPU to alloc_workqueue users
-
- drivers/vdpa/vdpa_user/vduse_dev.c | 3 ++-
- drivers/virtio/virtio_balloon.c    | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index 1b93d8c64361..74fe59f5a78c 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -983,7 +983,8 @@ static int virtballoon_probe(struct virtio_device *vdev)
+ 			goto out_del_vqs;
+ 		}
+ 		vb->balloon_wq = alloc_workqueue("balloon-wq",
+-					WQ_FREEZABLE | WQ_CPU_INTENSIVE, 0);
++					WQ_FREEZABLE | WQ_CPU_INTENSIVE | WQ_PERCPU,
++					0);
+ 		if (!vb->balloon_wq) {
+ 			err = -ENOMEM;
+ 			goto out_del_vqs;
 -- 
 2.51.1
 
