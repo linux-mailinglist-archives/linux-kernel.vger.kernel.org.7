@@ -1,136 +1,92 @@
-Return-Path: <linux-kernel+bounces-889836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DF5C3EA53
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:46:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF11FC3EA6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:51:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1AFC7347BFC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:46:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A15D3AF674
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25A0299ABF;
-	Fri,  7 Nov 2025 06:46:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54A4303C9D;
+	Fri,  7 Nov 2025 06:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CyVgF5Ss"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED38E20B7ED
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 06:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD262283686;
+	Fri,  7 Nov 2025 06:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762497964; cv=none; b=bDme8vgXcwniV+IJMAymvyiMLOMSaj8GNlamjtVn2KCZHL7oujoJ2gFrzfLD3vigk/nGvQsgBMRLnCbRlWpq8verDB4VY6mlZLMxnDlj2kAQuxGBQXPuiL4Z6l0XQwPnXmQJBzF+baFeq+uf8efdL35sR6LUzSRIqvy+1lzfKkQ=
+	t=1762498301; cv=none; b=iZx7s11F8iSoi+gpxhDyzQljEj4PBIye8Ymdu1krxCTlqsDmmC9pIyPJtdCy+FiLnKuij2MdJAz6FOdQ2M5fdu5BLJMxomstYxtlJBoBvDd1e2jbgMh7twX5gzPbY7y+TzhlCzAAiTaW0p16JULTrRZgg5Ut80lC4shLtHq7WU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762497964; c=relaxed/simple;
-	bh=ZRcH2wZM81xB7xfgzDQBygtQj3uS5zhX61xICgxrFgg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qSF3EY+JFzZD1XZ7uu6+XTCj1M01LUf2RnHj28o7Cjt1da9eLdHR5K4pHNV6avufFfW6byOFRlBuBGduAu9+h/TCqQYobbrOG1sGOK9bX1aUxooXIqWAqIrmXczmPBLd6kgnJBCyqlj4XgRaJoG/QQkZzzI/zHdBH0JstRcO268=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4335b48ad16so5222625ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 22:46:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762497962; x=1763102762;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Ene69KxQbGVwBiIed9Xw4dLUusaWeN1R2moKCOeTP0=;
-        b=UdD6Miv2XFXcsD0pLWwu5yIoe5LLZz2NOoIeHYbF/Zy+OkDu7ne0D70Ty7Wkq2Zd2v
-         rOaUJELa1oxgqkQ2CU8M7nXrKnnxavkLrMZ9PnH9q/Bwd+TEjsorRKXuu4AEg1Oiaill
-         F6uK5/S81PBUTPwxCen0yVGbXQZzN6gnuhCoTOs6l8o4+8EKnUfDejCnhHUMzpoFlfmG
-         KqeX5Blj8RENNqwevib5vBB3O/WclGOq662yaQfGbmyE+cLefuqzz7inEc+FuO1Dyj8Z
-         5Mm6Fk4McL0cUP83T/m31YF6623fh3fA22exo88RkB0y1YmeEEW/IhOOgijvx4kb7L/p
-         0QkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtXtsUBwG+QYgOv0bppFUrNxSAkWrawRHZRQzsnjmgWIOspmVh8qM8BdaSXnc+31rt2TOGVcApYGoCJsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCBwqIPPPZ20doJ90rEbqoS/A9kN3Dq/9nGEn7by2PVbp1X5ob
-	+nCW7m2RDy1TFtmXV1FSHsfJcXZNOkw8Xn7Abro02piJLKbtl3mudNSt+h6DxbkDs+2ZPuB3aF0
-	nm+w+OiYs0JR23nyXuDFO8XokctV3ZudROJ4or0voaViunQXcJ7ANI8oI+Nk=
-X-Google-Smtp-Source: AGHT+IGIRXuAFJjjB+GzUqJCWeaRPwIqICtPhzxQiwdIDYDGEqzEs40vA28xFnbxOatp9+Ej3L936x5VsPc7jNyCl85RqHl+V81j
+	s=arc-20240116; t=1762498301; c=relaxed/simple;
+	bh=peeCq82ZZOgggqXjKFkUgbRvju9wjKbRazAhdQdQL3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=omqgOP+2dcDFNNDWSKbukLxcza50hSvlM5EcicKxxIjNDX+RUngPH8ZnqPGNvbEm6WicPcYK7AmCJ2bf4vicjJQUSEMPKzmeFk2NvL83I6qiUvJxzWn1A/OsmRFs/oY3oyLYW+mGQ6qqjLswW5bl7S2KWsTxQcl5Em6ml9MzAtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CyVgF5Ss; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=SbDfDbqK6zgTHEGdyNX95eBlH9aDlj9Cf/4iy8CArMI=; b=CyVgF5Ssr9u63591TI1j2xdJqh
+	zWWGW/QykS1mDWJPwJFPE+jenQWg28gvVmdXWu42wOgvoVykETX36WjTw3e059uZmYb2wB2K3kNrg
+	VRY7yzTlvi+4t6lGPzN4gf27CPOyD0bhRrztWH9RzTebzlNLBHK3SIbXeLMFiBc5TKaUxry6LJHCB
+	cW2eKcXg0l4wV9ItcwslMWlvXQgrxVGuCqOFTz7nxQyp7wwakHBeDU9Ej0NqhO0phtwh+XjPm6HzG
+	mdutuyvHybe5ph8UQvfYF0vlRyZOYRvVAifb6/6WIQ5MgluWW3ag54eV3b31/T+12rdDF2HaStw7z
+	H+4qqZNg==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vHGJt-0000000Gkk4-2OHy;
+	Fri, 07 Nov 2025 06:51:37 +0000
+Message-ID: <cc5fa7f1-1f3a-4dfc-81c0-fe69b5f4cd4b@infradead.org>
+Date: Thu, 6 Nov 2025 22:51:37 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:98:b0:433:5e33:d427 with SMTP id
- e9e14a558f8ab-4335f3e17c3mr29675255ab.3.1762497962172; Thu, 06 Nov 2025
- 22:46:02 -0800 (PST)
-Date: Thu, 06 Nov 2025 22:46:02 -0800
-In-Reply-To: <e8b78334-cb9f-900b-f05a-23a0d0ee902a@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690d95aa.a70a0220.22f260.001f.GAE@google.com>
-Subject: Re: [syzbot] [tipc?] KMSAN: uninit-value in tipc_rcv (2)
-From: syzbot <syzbot+9a4fbb77c9d4aacd3388@syzkaller.appspotmail.com>
-To: hariconscious@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in tipc_rcv
-
-=====================================================
-BUG: KMSAN: uninit-value in tipc_rcv+0x17fa/0x1ea0 net/tipc/node.c:2132
- tipc_rcv+0x17fa/0x1ea0 net/tipc/node.c:2132
- tipc_l2_rcv_msg+0x213/0x320 net/tipc/bearer.c:668
- __netif_receive_skb_list_ptype net/core/dev.c:6127 [inline]
- __netif_receive_skb_list_core+0x133e/0x16b0 net/core/dev.c:6169
- __netif_receive_skb_list net/core/dev.c:6221 [inline]
- netif_receive_skb_list_internal+0xee7/0x1530 net/core/dev.c:6312
- gro_normal_list include/net/gro.h:524 [inline]
- gro_flush_normal include/net/gro.h:532 [inline]
- napi_complete_done+0x3fb/0x7d0 net/core/dev.c:6681
- napi_complete include/linux/netdevice.h:589 [inline]
- tun_get_user+0x5953/0x6d70 drivers/net/tun.c:1924
- tun_chr_write_iter+0x3e9/0x5c0 drivers/net/tun.c:1999
- do_iter_readv_writev+0x9e1/0xc20 fs/read_write.c:-1
- vfs_writev+0x52a/0x1500 fs/read_write.c:1057
- do_writev+0x1b5/0x580 fs/read_write.c:1103
- __do_sys_writev fs/read_write.c:1171 [inline]
- __se_sys_writev fs/read_write.c:1168 [inline]
- __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
- x64_sys_call+0x24b1/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:21
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4977 [inline]
- slab_alloc_node mm/slub.c:5280 [inline]
- kmem_cache_alloc_node_noprof+0x989/0x16b0 mm/slub.c:5332
- kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:579
- __alloc_skb+0x347/0x7d0 net/core/skbuff.c:670
- napi_alloc_skb+0xc1/0x740 net/core/skbuff.c:812
- napi_get_frags+0xab/0x250 net/core/gro.c:681
- tun_napi_alloc_frags drivers/net/tun.c:1404 [inline]
- tun_get_user+0x1352/0x6d70 drivers/net/tun.c:1784
- tun_chr_write_iter+0x3e9/0x5c0 drivers/net/tun.c:1999
- do_iter_readv_writev+0x9e1/0xc20 fs/read_write.c:-1
- vfs_writev+0x52a/0x1500 fs/read_write.c:1057
- do_writev+0x1b5/0x580 fs/read_write.c:1103
- __do_sys_writev fs/read_write.c:1171 [inline]
- __se_sys_writev fs/read_write.c:1168 [inline]
- __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
- x64_sys_call+0x24b1/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:21
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 6553 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-=====================================================
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build warning after merge of the mm-unstable tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20251107143908.48e3e29e@canb.auug.org.au>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251107143908.48e3e29e@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Tested on:
 
-commit:         4a0c9b33 Merge tag 'probes-fixes-v6.18-rc4' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=123c7012580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2901a6a99b67fbcc
-dashboard link: https://syzkaller.appspot.com/bug?extid=9a4fbb77c9d4aacd3388
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=104a332f980000
+On 11/6/25 7:39 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the mm-unstable tree, today's linux-next build (htmldocs)
+> produced this warning:
+> 
+> WARNING: include/linux/mm_types.h:302 cannot understand function prototype: 'typedef swp_entry_t leaf_entry_t;'
+> 
+> Introduced by commit
+> 
+>   1b8c333c0d1c ("mm-introduce-leaf-entry-type-and-use-to-simplify-leaf-entry-logic-fix")
+> 
+
+Change the kernel-doc comment beginning to:
+
+/**
+ * typedef leaf_entry_t - Describes a page table 'leaf entry'.
+
+-- 
+~Randy
 
 
