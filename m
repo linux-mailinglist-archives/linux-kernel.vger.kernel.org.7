@@ -1,95 +1,87 @@
-Return-Path: <linux-kernel+bounces-889795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C32C3E894
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 06:43:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5678C3E897
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 06:44:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C54464E64E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 05:43:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABA6B4E7165
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 05:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BA9242D72;
-	Fri,  7 Nov 2025 05:43:26 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F1524466C;
+	Fri,  7 Nov 2025 05:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="KbPVKILl"
+Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F3EF50F;
-	Fri,  7 Nov 2025 05:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDECF50F;
+	Fri,  7 Nov 2025 05:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762494205; cv=none; b=SVmh+fIE/AZUhuAje2CxDl5o7ClTnbgHBSrU76wnAwvkrLUWhRNs9Uu39HM9VCVsE3uyku0RIa0lC25JyXde/Yllg1TpQiTZW6oKwkXmUQBRo1buoMOGY8+TrzC2Fs0m1+baWVLKUUaE3BZ7BH4PJyLdSBMDOokQbweenn3aWyM=
+	t=1762494291; cv=none; b=kgPEWQMEkKkpe9xKtkFTJsTfm0YIWH/ozSsNyn/HlrszCyk/9ieEBY+4ZQLM2bAx6LZ47ngXBS8D+6bXQNROiZcsdqZylD4llomWbkoJZXImGGBx8w/Hc3rFLy7t6yetvaurbuLGSBaYSwEmva8GjvboBwJpzHSLv9n0lPiUHBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762494205; c=relaxed/simple;
-	bh=rjcYOEIzpSd5gitYOoZZ4sIdSL+ADsW9OmULB+qwICE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m7eCNXYoaXBSEAyJyS07H2IwgiPUGSi4iHhp1dbHSle3H4G0s4yF/GtRYuT2UohpCsOX2yL31gBIX2cyZIQt6pUqYDpeEkvSUfvAPMgTe7/6cV5mdZK5Se7RKkAYewsHSTfhK3A9jOKys43okFjOmnOR4XVZkfdMAsBYQw8iFHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 2FCBC20083CF;
-	Fri,  7 Nov 2025 06:35:49 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 18CF2469; Fri,  7 Nov 2025 06:35:49 +0100 (CET)
-Date: Fri, 7 Nov 2025 06:35:49 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, Christian Zigotzky <chzigotzky@xenosoft.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	mad skateman <madskateman@gmail.com>,
-	"R . T . Dickinson" <rtd2@xtra.co.nz>,
-	Darren Stevens <darren@stevens-zone.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	luigi burdo <intermediadc@hotmail.com>, Al <al@datazap.net>,
-	Roland <rol7and@gmx.com>, Hongxing Zhu <hongxing.zhu@nxp.com>,
-	hypexed@yahoo.com.au, linuxppc-dev@lists.ozlabs.org,
-	debian-powerpc@lists.debian.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 2/2] PCI/ASPM: Avoid L0s and L1 on Freescale Root Ports
-Message-ID: <aQ2FNfdDPUdA27rS@wunner.de>
-References: <20251106183643.1963801-1-helgaas@kernel.org>
- <20251106183643.1963801-3-helgaas@kernel.org>
+	s=arc-20240116; t=1762494291; c=relaxed/simple;
+	bh=s3x8POj7fp9AJimEEYUdWbjwXZwZfT4W0JGXgP0Uydc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=peIJmlaguYeuxvK4x8w5wwxnXfj12B1I1jtg7XY68X5wTJ9SOzhWJVNVJtq2NQT5dsBG29mxrtPX3+nwnwRDzbAiHbHr6Ul+ewZbilk1kPkPceTTJ2NPeht91P5FJXXsFUxcjbSomm7Q9y1WIslutSVnJ7yMoSw1V7TFOB/SQmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=KbPVKILl; arc=none smtp.client-ip=178.154.239.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net [IPv6:2a02:6b8:c37:8120:0:640:c15b:0])
+	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 8B6CD81AAE;
+	Fri, 07 Nov 2025 08:37:35 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id UbfSYtKL6Ko0-Xdu2k5Oe;
+	Fri, 07 Nov 2025 08:37:34 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1762493854;
+	bh=M6pGHVl4PoEe+gGfxwEyT3ttybUZaq/N2I4HTt6yjAY=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=KbPVKILlAGeHh3dVwlPEHykfubhwYJ73+FRM971+sW+dOqbvLKAa45OsXJbN+o6/C
+	 q3qNdYPrDknChqG989zNAy5jQAISHYDcyAeYH7bCJVoP2hC9zPoaR9gtoHZ2Udzdve
+	 vjr+g+3nnwQxjWCHC7r4IAWuU5jVxQPuz3fqGNgA=
+Authentication-Results: mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Fri, 7 Nov 2025 08:37:27 +0300
+From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
+To: Hang Shu <m18080292938@163.com>
+Cc: ojeda@kernel.org, Hang Shu <hangshu847@gmail.com>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
+ Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+ Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Charalampos
+ Mitrodimas <charmitro@posteo.net>, Borys Tyran
+ <borys.tyran@protonmail.com>, Daniel Sedlak <daniel@sedlak.dev>, Tamir
+ Duberstein <tamird@gmail.com>, Matt Gilbride <mattgilbride@google.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: rbtree: fix cursor method lifetimes to match tree
+ lifetime
+Message-ID: <20251107083727.63c2e524@nimda>
+In-Reply-To: <20251107050700.1086059-1-m18080292938@163.com>
+References: <20251107050700.1086059-1-m18080292938@163.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106183643.1963801-3-helgaas@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 06, 2025 at 12:36:39PM -0600, Bjorn Helgaas wrote:
-> +++ b/drivers/pci/quirks.c
-> @@ -2525,6 +2525,18 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
->   */
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
->  
-> +/*
-> + * Remove ASPM L0s and L1 support from cached copy of Link Capabilities so
-> + * aspm.c won't try to enable them.
-> + */
-> +static void quirk_disable_aspm_l0s_l1_cap(struct pci_dev *dev)
-> +{
-> +	dev->lnkcap &= ~PCI_EXP_LNKCAP_ASPM_L0S;
-> +	dev->lnkcap &= ~PCI_EXP_LNKCAP_ASPM_L1;
-> +	pci_info(dev, "ASPM: L0s L1 removed from Link Capabilities to work around device defect\n");
-> +}
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, 0x0451, quirk_disable_aspm_l0s_l1_cap);
-> +
+On Fri,  7 Nov 2025 05:06:56 +0000
+Hang Shu <m18080292938@163.com> wrote:
 
-Hm, I liked the nice generic pcie_aspm_disable_cap() helper that
-you had in this earlier version:
+> From: Hang Shu <hangshu847@gmail.com>
+> 
 
-https://lore.kernel.org/all/20251105220925.GA1926619@bhelgaas/
+Jfyi, there is no need for adding this.
 
-Thanks,
-
-Lukas
+> The returned keys and values of cursor methods should be bound by
+> the lifetime of the rbtree itself ('a), not the lifetime of the
+> cursor.
+> 
 
