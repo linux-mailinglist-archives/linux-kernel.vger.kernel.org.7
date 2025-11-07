@@ -1,135 +1,85 @@
-Return-Path: <linux-kernel+bounces-890825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA3D2C410CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:32:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502B5C410D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:36:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D17E3AC6AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:32:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3057189625D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E021335561;
-	Fri,  7 Nov 2025 17:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UctZZkL5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF63334C24;
+	Fri,  7 Nov 2025 17:36:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2098331A79;
-	Fri,  7 Nov 2025 17:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E323224AF7
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762536757; cv=none; b=osgJ7sDjY5K4HHd+SqowX39OXTjsAQuV5DKSGyLJuDCMjlUdsxhgFPhFiyoLm807CKSSQlPZjDSShK4sg0Mfd9LnXk7O5ZwBOz6EcNeGwI1i5pyVWKztfkaFsI6peI6qv3T45rkEVC24axQw0vuqS3dW8Q47ypk+NSOCbC0xCng=
+	t=1762536965; cv=none; b=XY4zCJ2NBzjwbJ/1ZB8Ip8IGzoH1ZPHJPbrxBspzMdqPJFBBhIHKV90/bWXeAfD+DDYtnHNfVYjM793AVD8GSyEDAIPp9Wam0VFZf7ek/d23V4Ue2KbhIRoBdswOaogRhNG3/XyPs2iD7pk13E8acW6Y4G7ro1jOuD2d5dWdh/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762536757; c=relaxed/simple;
-	bh=br/yoQcXazpIhba0JM9br+2Xu+ekNSGhpyy+fjDbUQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jnu6utkrpKfKtglZQySYvTrrjsse25X2C1J712qOK5ldmULGS/xLDRMJj2dkbgFlVrDMFwuk4EEYunUfLlJezhtA/6/UZ3raJpUbb3YTrcxfVXAKpGlHkVrhLXk91lZSyvSTq791bzApHrHfqETL/F6Oz4R0GHT6RkV09EMaqCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UctZZkL5; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762536756; x=1794072756;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=br/yoQcXazpIhba0JM9br+2Xu+ekNSGhpyy+fjDbUQs=;
-  b=UctZZkL5koKMojkM5bfVDVrOHTThROa/jxDccYX45TiHiq22QvoFrtIu
-   MzKauQ3A0Tr7N4dmYMq6aauDUEJXAcapnywnzNSNb4LjLQkykpuBvXkCQ
-   0FQHY7nKzyhuLmk3A+Mxwdr1C4QQxwiC9KLx7eFh+cf9d55Fdj6IcPzni
-   /fHD35ekTFitl8N1CpVespRvcc2kAUaExs7FCmV6b+nYEBmVc2uXdBUR2
-   6/zrGbfXReWcORw7cpxSSNSTcOywWPeIAx0vVGVq/7y7g33LX/i6kkxU/
-   0WvffRev8Solm01k9OX2F9SMUxoFKqis4VjSoYm05aTozRKM+M/yb1ynU
-   g==;
-X-CSE-ConnectionGUID: LolPIA3qQ6SrEyh14arZtA==
-X-CSE-MsgGUID: puYFi6/cQCOHLqRxIjSOeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="64729508"
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
-   d="scan'208";a="64729508"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 09:32:35 -0800
-X-CSE-ConnectionGUID: olbkBok6TgOZIIyj+YRicw==
-X-CSE-MsgGUID: fEjkLyDgQ8C+BXPOdvpQGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
-   d="scan'208";a="192185843"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.117])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 09:32:26 -0800
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id D3FDF11FC72;
-	Fri, 07 Nov 2025 19:32:22 +0200 (EET)
-Date: Fri, 7 Nov 2025 19:32:22 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: michael.riesch@collabora.com
-Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Gerald Loacker <gerald.loacker@wolfvision.net>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Collabora Kernel Team <kernel@collabora.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Alexander Shiyan <eagle.alexander923@gmail.com>,
-	Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Mehdi Djait <mehdi.djait@bootlin.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Bryan O'Donoghue <bod@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v14 00/18] media: rockchip: add a driver for the rockchip
- camera interface
-Message-ID: <aQ4tJg8r_j4NyKhv@kekkonen.localdomain>
-References: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
+	s=arc-20240116; t=1762536965; c=relaxed/simple;
+	bh=hhcVNclrRlDWdAyMtcmSMqqrVt/4rtKTFpnXfMnqtjU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=II+g78mNWXqOLs5+9pzkxR7jCwn2hItZEy34vOyz2+/ehOtrGUAnHEkpdYDhtlt36Oejhgy4FhEQvSPFghziDKY1qVdf6gBFQ7GGWCF4NStdqQ5XXDKrqeVQI5E2KZLXK+VLHVA+z2proHooP/wEK/d6koa9GDCD21jTtAYCLus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43330d77c3aso33032635ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:36:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762536962; x=1763141762;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QLosnNpzKxnPjxB45qBPLE2C54FnPBfHn4s/OTYMrZg=;
+        b=n2EjCxM3EbhzmwddhZq1i031Ef+oKAzyMeLxidGUJ/PsFUMm1Xw8SChXLFPOcnf7vr
+         eFvkOO5d7gR+AzjTA7z8ITRWTm9UV86oTZ4d9JwbPKRqTASGJcU5jeQ++FfuTaPQNZ1D
+         mfd6C7hluWE5eeodtmwVkt1vud3ELkCIxEPP0rxr3qs6TcrVRRG1xP3kuTwUYNIW0pwQ
+         EjnB3nM4Iwlj4FVcoCi/9/IgflqOGUabr6UqhGRkArXk9VsQbQyQz7Gd3ZqlD8jAr3qd
+         +//5t6UBffxMnuJywi+4XmRQTM5wlvUcJtrT9r71zrJrR1Zh0HGXL1eJiOiUCPF57ZCD
+         ubUA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6t14b8uxxEU1jD++X9Cw/uBYOsWbiqx29O6PuV15vuivIfOJd99OHef3BAly1qBzGILUk4XAnUhsV3GI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH1f9nifkmw7H7XvakJAzfXyx2EUK1DHO1sJG20Y01gH10CgHl
+	WElwxUNHAMYWIoZtTK8jb2PmdjsbovqSicuKEtxQ7C+7Yjx5zyou0MEYGnViTqcVUYrvjzYZkQt
+	i20d6JYChi4UtWh0MBGeCETYf0QIHwyyLOlxJQk2l7JHC5heAAM0/DJSJnCk=
+X-Google-Smtp-Source: AGHT+IFDqUqSlStkyaedPPL2C3W3wSzVF71mP+wrY217vJHYhzaI0hjbVio1OQHGcx/rf9iS2CXOqzyzLIbhwAl75zd1MnnmKTtF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
+X-Received: by 2002:a92:ca4c:0:b0:433:5736:968f with SMTP id
+ e9e14a558f8ab-43367df3cd3mr4953745ab.13.1762536962654; Fri, 07 Nov 2025
+ 09:36:02 -0800 (PST)
+Date: Fri, 07 Nov 2025 09:36:02 -0800
+In-Reply-To: <CAJ9gUkF9p18DjsCWf6yatsv5jstKbUx_PcqdgKaHk1bs5XxfKA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690e2e02.a70a0220.22f260.0059.GAE@google.com>
+Subject: Re: [syzbot] [scsi?] UBSAN: shift-out-of-bounds in sg_build_indirect
+From: syzbot <syzbot+270f1c719ee7baab9941@syzkaller.appspotmail.com>
+To: kshitijvparanjape@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Michael,
+Hello,
 
-On Fri, Oct 24, 2025 at 02:51:29PM +0200, Michael Riesch via B4 Relay wrote:
-> Habidere,
-> 
-> This series introduces support for the Rockchip Camera Interface (CIF),
-> which is featured in many Rockchip SoCs in different variations.
-> For example, the PX30 Video Input Processor (VIP) is able to receive
-> video data via the Digital Video Port (DVP, a parallel data interface)
-> and transfer it into system memory using a double-buffering mechanism
-> called ping-pong mode.
-> The RK3568 Video Capture (VICAP) unit, on the other hand, features a
-> DVP and a MIPI CSI-2 receiver that can receive video data independently
-> (both using the ping-pong scheme).
-> The different variants may have additional features, such as scaling
-> and/or cropping.
-> Finally, the RK3588 VICAP unit constitutes an essential piece of the
-> camera interface with one DVP, six MIPI CSI-2 receivers, scale/crop
-> units, and a data path multiplexer (to scaler units, to ISP, ...).
+syzbot tried to test the proposed patch but the build/boot failed:
 
-I understand both RK3568 and RK3588 include an ISP. Do you have insight on
-how would this work, should the support for the ISP be added later on?
+././include/linux/compiler_types.h:603:45: error: call to '__compiletime_assert_1195' declared with attribute error: max(((1UL) << 12), size) signedness error
 
--- 
-Kind regards,
 
-Sakari Ailus
+Tested on:
+
+commit:         da32d155 Merge tag 'gpio-fixes-for-v6.18-rc5' of git:/..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=40c8b8384bc47ab0
+dashboard link: https://syzkaller.appspot.com/bug?extid=270f1c719ee7baab9941
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16cd7012580000
+
 
