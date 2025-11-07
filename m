@@ -1,278 +1,192 @@
-Return-Path: <linux-kernel+bounces-889944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B9FC3EE2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:09:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7C9C3EE57
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:12:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E19B4E7B8F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:09:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 689143B2E68
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C03631354D;
-	Fri,  7 Nov 2025 08:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4332E3148C8;
+	Fri,  7 Nov 2025 08:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwREXhVg"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C58NAE8b";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GoeUXU8b"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0F83128AE
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8233313E0D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762502893; cv=none; b=JPrvHegaxzM9z7y4oOs/KzBrZVNTWM0k8MJ3b8Gh0GVyFsdUhpJPidRlZ/G7816d2Ckg+6+ToBBsILUHPgFlB/8Yp/dP7B6d0EQAgSfsz5bbsBuGhx7ifhsNvJjAV/jgs8M0P1ndkry3G6mK7vl9LVrB8TmXXXphyp6bfNZOH8M=
+	t=1762502896; cv=none; b=lu7QG1Ale3Y/nPSsq6PY4RkwlZVl+rHmjTpTRQ3Pa4RxKPPXsR1zLjCuCImF3gtb+eML54wiNqb+mCbC3fzerdFFRQT00p/RQN+5hE4wQaQ1Kl8hKwfGPmiGHTn2Z6lrCJGfOpIpNKUQHSZl1asPynqQlkAfsSzXx/kfD/pq4tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762502893; c=relaxed/simple;
-	bh=tMGAtjDdxCi9/9zWmB6IYJaxSxBHhxBmGXpAr5ob+3M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DMuBy9j4tIsgu1F3EbaRP/yPlB9rA0BG72U7cDq2e9pVdL/pPTDBwMN3iasOu6MJD6FyBkwOCNyp3fN3YXErm3oZTJ8IAB5G02nK/L9sfgUcBqEAJFGfG0iQG3YnmhQN872Q8+JbOqublieGdSVETBjEPFwaOJVe3g18ETKvup4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IwREXhVg; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-640b0639dabso886067a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 00:08:10 -0800 (PST)
+	s=arc-20240116; t=1762502896; c=relaxed/simple;
+	bh=ZxySiNKOJ7Uo6dLCp72RFEbCgvn+qak+fhlT0zBaY/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rd58pOgpTgfTwiUkELljsKO0YEFxv3Pgo9ZXq4ENe3+P8rDmNxMzYzzxOCIP2zgtXJRjYVEWJKICaTj9eUoDgSwf5o+sN3Tg6WQ7974InOSdDNHufFpNuTyHZZLZHWgMa2t1SQCfGCMESeVL4pRGd+YRIx3PWporZbo9MBtafSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C58NAE8b; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GoeUXU8b; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A74E4aP584163
+	for <linux-kernel@vger.kernel.org>; Fri, 7 Nov 2025 08:08:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yVnCGM8cdwol4pZjBWecGHgQ48zUJyNe3I+X4UXo7pA=; b=C58NAE8b9p525Gky
+	G2vFjZSFtFQr3c+PAxlCUvzMVaYoP/PefDeocRMcpiHbs5HD54E7lHnSOvwiVifa
+	K75kEGN+gTBqZTKBJJ41RldeBRpy0E2Jc4BIZz3jslomGfj9kqy5DD+mY4U4CW3W
+	Kyt+rPtSc2GTDYJ2Zg5z+yYVysVU0PG5iePyjsHFssLedj6auI4TurEv6dFT7cQM
+	CqeRe07SU2fG6LXxlMo+sfZBsqnwOSKr6ysAr67GSze/qo86hW/rqOzRPdDpls/+
+	+zqD3GPPt/0gVrWpDXixUbBwPLklm6UP9vJVzEVO8Uc7eCoRZs9nw96xZJ5JmU/e
+	jZy4Pw==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8yktj9fy-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:08:13 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-34029b3dbfeso765954a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 00:08:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762502889; x=1763107689; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=oss.qualcomm.com; s=google; t=1762502893; x=1763107693; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Iuf9P5KPx2jXNqYADTXinaVkfIdFLshS7KxiibOK2ZI=;
-        b=IwREXhVgzD4e62dUNgrcTyCVsFd9yT2LK6WQ751XRwxa2wPwVzKrnXfibOX6e42dkX
-         RHoGY9et4pKcKLwnbXjyL4jcQzE3aVdsBkd59rSQD6hyjlCv9M0wt61N/rLUKUfiZKeQ
-         RjWEzoElWW38nHcrlxRfQxKomMVspRxb/jpH+UNxru3/FYq3vwMfGoBKYT0hYfdn8E3a
-         40fd95Z5/djWpgmZACR/FXncrWbJmGTpCvaJA8k41QlM0TEMTYRIbTEdk641tJIzVaTf
-         VnRjrsr+eo8zf5ZILOGF1Y90EZ8CSSINrxURVdulm8m8RSnMb7pFhl9N9iqWYrP7Qrx1
-         QGNQ==
+        bh=yVnCGM8cdwol4pZjBWecGHgQ48zUJyNe3I+X4UXo7pA=;
+        b=GoeUXU8bgRdGQqU1ENxSI+7jyvWoKR79vRApM5MsedxNyHL/tAQaOvEE2Bb4VHI9Tf
+         ht74fuSWN28Q/nKQfu0mSNT/G9YOWMr/QHtksekWmwPHTttQY7ANgIn5xCeJkmp8cHqu
+         PY7vrNDXPcwYIjLs5G1uGHRwBw0a2ymqDZ9c04RwszO7dpFiDxk32uPJTEnQkB7a0vui
+         V1B/pdFnWql4WhVnOMBPSo0Y3sYO8ko4MU9Dv8XMYvFk768JHqUxouhX3K0mhm6ccDwa
+         +R7MHVVFz/xllTCRTteN0F/THa5a2b0CFG8jtPmvqBzTL558JYPN8uPxuB+5cf1EDtra
+         GHgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762502889; x=1763107689;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Iuf9P5KPx2jXNqYADTXinaVkfIdFLshS7KxiibOK2ZI=;
-        b=RmBZMNe6TPxs6Sw82TPazfcMpv70oHKL6e2a5hntKRlpHXp96VY/0cgvQt8GZoLpuc
-         wseuadVCcVpCARH111rEbtospfWgRP8B0pYLmC0D3mKv1wSil5aurSl2OlhvLvDixdER
-         uKrrgy5+2sdDInFWjzPZuNv6TG8h552dzCi3uoVqWw4cnlkSj4TxnFFD2ypnPSiMlvdk
-         mR+omOJM478XnfdWTiKWdCuWyxSNfXcelxB3QaENqQFjtdC5tEaLnGHu2DwwHFJAQwgL
-         yohJXg2o8iUKBxlN3+Yew06t5ZF8Y3yvDJCMjsr7baNAaiPrg1PHa1Ue9uwhSQy7RBEq
-         BwEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTXv1UW0zkl5p3qVqxzKCNfCvG/sdrX9/cqRyf0Np3DpC+TVXT0l3ASU7cLPshuXZdHIJqJXy4q/teoxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTVlYq/eu9o9FHdaVKJuUd0f32S0/WqPbKojewIn1L9vkwjvb/
-	Vw3tQGYlhgO9AvKaqACRH2D/XLUgJH20X6soEk0fnddfY/1mhhkZK2uF
-X-Gm-Gg: ASbGnctJHHjnatGI7Rye1mVpq17FzIOtkXgtGOlHxck442RgVkvnrW4PqkgHKtMzTPD
-	NEP7EvESWDJjCzlN41GEc+ydAVo6ZrJnYNJtq28k38u/J1fu+gYgL0gWPdXUUJCIgERTBVMHhO5
-	25/MmpiL6xSprviPPOia4qffNmYqSmz+9q3A60j3YLNL0mJw3Rn0yDefProKB8rTA/w67Ng0xSJ
-	znQt9dyCztTY0jxstWtQ00bMG8hKyewOggqDV6LGFHAAqatS4B8tgf/eG+4rd0/r5J8uGJXUaK5
-	LQg5q+/Ebee5QQtFlkDVmiJm9WGY8yFO72d7KFjIrDAAsNK6wu0ZXP9ZdRq5vl6zr1AD6mzB9Bn
-	396pmlwN69WtdnE/GUrMI6VQAgyTL+I1WUzIxHmmDQ4Q1TOobthaK3a+jX9POpsKD5MWie2hJsD
-	YcX+gZlLnCxPR9ESSjRCcw7my/RfFbyZc/hWuNuVbCF2OYgL/LdYbQr5Ms
-X-Google-Smtp-Source: AGHT+IFnFGkrt1uMk6QFxmhpBVkXne7MSZyK27z1FgCbLMCewD/ubpgl1IolJWXSTq/K3tor3E2dtg==
-X-Received: by 2002:a17:907:6090:b0:b6d:7f28:4319 with SMTP id a640c23a62f3a-b72c08dc342mr219131966b.3.1762502888526;
-        Fri, 07 Nov 2025 00:08:08 -0800 (PST)
-Received: from localhost (dslb-002-205-018-238.002.205.pools.vodafone-ip.de. [2.205.18.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf312240sm179779666b.18.2025.11.07.00.08.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 00:08:08 -0800 (PST)
-From: Jonas Gorski <jonas.gorski@gmail.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 8/8] net: dsa: b53: add support for bcm63xx ARL entry format
-Date: Fri,  7 Nov 2025 09:07:49 +0100
-Message-ID: <20251107080749.26936-9-jonas.gorski@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251107080749.26936-1-jonas.gorski@gmail.com>
-References: <20251107080749.26936-1-jonas.gorski@gmail.com>
+        d=1e100.net; s=20230601; t=1762502893; x=1763107693;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yVnCGM8cdwol4pZjBWecGHgQ48zUJyNe3I+X4UXo7pA=;
+        b=hnRJv2a40rof1scrMfdn96WRYMRl98sLaafz/7d9etbTZZEhaqwcq2IFR3SAxamIuv
+         818EoeKFM89rQGfJoUDMvTvwBsM58Jz7Pi2rY+W6VDXgIylXBiMtxI6UtrHGdHRgxBhf
+         KlMxOqgdXLlwOn1S8W4VlApQ/ioIQpfpYNm20DrcDp9IlM4fBdu+EzTbiy+JD0Q5NKpo
+         zQ2LTZPVI/Xz/c+4HyTaO2AqkMAMxMyY7AIE1vOK7Lh9n6mjoqe9vI7KPOsu5w4ok/fO
+         2TTwJwXHu0pFah2AWZ0domnlSsNPif4D9UD2BQaqDxd+NKPnBNOaa9TJ4HSEI5g3mQG9
+         /ovA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcnzUk06b7t7epSNJ/ye4osrL2oPYagS7WXezuxRgRidW7ZY8HxkeugNQdoR8XgX2m+KP4/diuJtSgumY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytwzkMU3DG5OC4gbIOZ+9DU0SFE4x1Xn4VfeuJ8izSLR0xjWEu
+	RzF5TuNpcgLKRhYrgYiP+973ssL9JLAJ4qZQrIwHV99f/oWhiplKEzdOGfQg47jpBfI21PbdZKr
+	lWtXaIha76jNcUm/8kOBR8vUHUZW1sEBkmeA7kbWHdzynmSKKjuExo2Ztf6qU172M3TM=
+X-Gm-Gg: ASbGncussj8KCNHVEwbf8gB0ii/e8ZaYueCnTbLQMzsP8+5sYJ+nwEfY69Ug0livOVm
+	GChIGaU7/RpqO0NvItfoprur/OgrR6nz/vuWiyLB8hwz3c3zjH/ewqmf4kxUMsE55TiXB07Dp59
+	hcUIiVe2bVyJFOggnYxv9Yi9pBnDbCYPCRbm5iHZMEqOljQMYAd+szHrRScAcMYuykK4njtP2gO
+	UXWxTeUBo8fO7WZC3sD8tx/JrbL9z5U2v4DcwJbWeYhOI+zB6h0Yxpb51Ta0W8ll+4P51/SvdTW
+	njG0JSyClUELydCSvozISZASGbk+s2AfZvGV9pJQpMncPy3PH83fDhulqPYO3+DX75c07DbXpoG
+	FUCXISMK2iTuVPug9
+X-Received: by 2002:a17:90b:2f50:b0:341:88c9:aefb with SMTP id 98e67ed59e1d1-3434c4ea126mr2240854a91.5.1762502893230;
+        Fri, 07 Nov 2025 00:08:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH1FwVg6yQU1EcNZvCXM3C9fT1xMu8vEORqyrlogZ+caF7N9+pZ1qv8BXFFp26cya3NewfKAw==
+X-Received: by 2002:a17:90b:2f50:b0:341:88c9:aefb with SMTP id 98e67ed59e1d1-3434c4ea126mr2240800a91.5.1762502892681;
+        Fri, 07 Nov 2025 00:08:12 -0800 (PST)
+Received: from [10.64.68.86] ([114.94.8.21])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c3357bbsm1837440a91.12.2025.11.07.00.08.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Nov 2025 00:08:12 -0800 (PST)
+Message-ID: <ee2ddf1f-0403-414e-a77b-9c20431c50fb@oss.qualcomm.com>
+Date: Fri, 7 Nov 2025 16:08:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 14/14] arm64: dts: qcom: qcs615-ride: Add PSCI
+ SYSTEM_RESET2 types
+To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Moritz Fischer <moritz.fischer@ettus.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andre Draszik
+ <andre.draszik@linaro.org>,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Song Xue <quic_songxue@quicinc.com>
+References: <20251015-arm-psci-system_reset2-vendor-reboots-v16-0-b98aedaa23ee@oss.qualcomm.com>
+ <20251015-arm-psci-system_reset2-vendor-reboots-v16-14-b98aedaa23ee@oss.qualcomm.com>
+From: Xin Liu <xin.liu@oss.qualcomm.com>
+In-Reply-To: <20251015-arm-psci-system_reset2-vendor-reboots-v16-14-b98aedaa23ee@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=bOgb4f+Z c=1 sm=1 tr=0 ts=690da8ee cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=n3IlsZjKbDuTWdq3ZzcA:9 a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: IfPIQRUwQIEmFL4TZnxgEKWWf-BxXTAN
+X-Proofpoint-GUID: IfPIQRUwQIEmFL4TZnxgEKWWf-BxXTAN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDA2NCBTYWx0ZWRfX+qLBwP6zfAIQ
+ gp1Iek95fzjqtAI6tqiHnpFtus00fToI6OXZ0gfp3NDzvXT2nmMs6X3EPme8AJEyShq70FyiuwM
+ 5YOhZQZYYrejD8uFufdf0Qpr3lYUtnVjtR/53bA9vEaMv7kbJwFTlFAatghU2smax74QAQvkavk
+ 0Lowxq5unS4Pc/p9OQEpKQGIil2HNXsE6VKNOmbAKKMzaOAwx+p/XQdeefFzpHNmYdWadVTzCAO
+ 6DJyWbC1KXwnZdP1Mq8ukb5/5VirVzvx0pOFPMntcN0Vvqi5YvxEWmAx/7I0SNOtJ74J70BwoNb
+ PjgdCYQipB2eIN3qcczmlSiE2guB08wSvJAS9UwpLPr83AZ7V8yFXx9rwhmQ8DTtEkvqlab4Xcv
+ zhqwaUYZeW6jTabFbLzxmlDh7DQKJA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_02,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015
+ impostorscore=0 malwarescore=0 phishscore=0 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070064
 
-The ARL registers of BCM63XX embedded switches are somewhat unique. The
-normal ARL table access registers have the same format as BCM5389, but
-the ARL search registers differ:
 
-* SRCH_CTL is at the same offset of BCM5389, but 16 bits wide. It does
-  not have more fields, just needs to be accessed by a 16 bit read.
-* SRCH_RSLT_MACVID and SRCH_RSLT are aligned to 32 bit, and have shifted
-  offsets.
-* SRCH_RSLT has a different format than the normal ARL data entry
-  register.
-* There is only one set of ENTRY_N registers, implying a 1 bin layout.
 
-So add appropriate ops for bcm63xx and let it use it.
+On 10/15/2025 12:38 PM, Shivendra Pratap wrote:
+> From: Song Xue <quic_songxue@quicinc.com>
+> 
+> Add support for SYSTEM_RESET2 vendor-specific resets in
+> qcs615-ride as reboot-modes.  Describe the resets:
+> "bootloader" will cause device to reboot and stop in the
+> bootloader's fastboot mode.  "edl" will cause device to reboot
+> into "emergency download mode", which permits loading images via
+> the Firehose protocol.
+> 
+> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
+> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
 
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
----
- drivers/net/dsa/b53/b53_common.c | 44 +++++++++++++++++++++++++++-----
- drivers/net/dsa/b53/b53_priv.h   | 15 +++++++++++
- drivers/net/dsa/b53/b53_regs.h   |  9 +++++++
- 3 files changed, 61 insertions(+), 7 deletions(-)
+Tested-by: Xin Liu <xin.liu@oss.qualcomm.com> # On qcs615-ride
 
-diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-index 73ea9adb95b7..72c85cd34a4e 100644
---- a/drivers/net/dsa/b53/b53_common.c
-+++ b/drivers/net/dsa/b53/b53_common.c
-@@ -2058,12 +2058,20 @@ static void b53_read_arl_srch_ctl(struct b53_device *dev, u8 *val)
- 
- 	if (is5325(dev) || is5365(dev))
- 		offset = B53_ARL_SRCH_CTL_25;
--	else if (dev->chip_id == BCM5389_DEVICE_ID || is5397_98(dev))
-+	else if (dev->chip_id == BCM5389_DEVICE_ID || is5397_98(dev) ||
-+		 is63xx(dev))
- 		offset = B53_ARL_SRCH_CTL_89;
- 	else
- 		offset = B53_ARL_SRCH_CTL;
- 
--	b53_read8(dev, B53_ARLIO_PAGE, offset, val);
-+	if (is63xx(dev)) {
-+		u16 val16;
-+
-+		b53_read16(dev, B53_ARLIO_PAGE, offset, &val16);
-+		*val = val16 & 0xff;
-+	} else {
-+		b53_read8(dev, B53_ARLIO_PAGE, offset, val);
-+	}
- }
- 
- static void b53_write_arl_srch_ctl(struct b53_device *dev, u8 val)
-@@ -2072,12 +2080,16 @@ static void b53_write_arl_srch_ctl(struct b53_device *dev, u8 val)
- 
- 	if (is5325(dev) || is5365(dev))
- 		offset = B53_ARL_SRCH_CTL_25;
--	else if (dev->chip_id == BCM5389_DEVICE_ID || is5397_98(dev))
-+	else if (dev->chip_id == BCM5389_DEVICE_ID || is5397_98(dev) ||
-+		 is63xx(dev))
- 		offset = B53_ARL_SRCH_CTL_89;
- 	else
- 		offset = B53_ARL_SRCH_CTL;
- 
--	b53_write8(dev, B53_ARLIO_PAGE, offset, val);
-+	if (is63xx(dev))
-+		b53_write16(dev, B53_ARLIO_PAGE, offset, val);
-+	else
-+		b53_write8(dev, B53_ARLIO_PAGE, offset, val);
- }
- 
- static int b53_arl_search_wait(struct b53_device *dev)
-@@ -2131,6 +2143,18 @@ static void b53_arl_search_read_89(struct b53_device *dev, u8 idx,
- 	b53_arl_to_entry_89(ent, mac_vid, fwd_entry);
- }
- 
-+static void b53_arl_search_read_63xx(struct b53_device *dev, u8 idx,
-+				     struct b53_arl_entry *ent)
-+{
-+	u16 fwd_entry;
-+	u64 mac_vid;
-+
-+	b53_read64(dev, B53_ARLIO_PAGE, B53_ARL_SRCH_RSLT_MACVID_63XX,
-+		   &mac_vid);
-+	b53_read16(dev, B53_ARLIO_PAGE, B53_ARL_SRCH_RSLT_63XX, &fwd_entry);
-+	b53_arl_search_to_entry_63xx(ent, mac_vid, fwd_entry);
-+}
-+
- static void b53_arl_search_read_95(struct b53_device *dev, u8 idx,
- 				   struct b53_arl_entry *ent)
- {
-@@ -2730,6 +2754,12 @@ static const struct b53_arl_ops b53_arl_ops_89 = {
- 	.arl_search_read = b53_arl_search_read_89,
- };
- 
-+static const struct b53_arl_ops b53_arl_ops_63xx = {
-+	.arl_read_entry = b53_arl_read_entry_89,
-+	.arl_write_entry = b53_arl_write_entry_89,
-+	.arl_search_read = b53_arl_search_read_63xx,
-+};
-+
- static const struct b53_arl_ops b53_arl_ops_95 = {
- 	.arl_read_entry = b53_arl_read_entry_95,
- 	.arl_write_entry = b53_arl_write_entry_95,
-@@ -2899,14 +2929,14 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.dev_name = "BCM63xx",
- 		.vlans = 4096,
- 		.enabled_ports = 0, /* pdata must provide them */
--		.arl_bins = 4,
--		.arl_buckets = 1024,
-+		.arl_bins = 1,
-+		.arl_buckets = 4096,
- 		.imp_port = 8,
- 		.vta_regs = B53_VTA_REGS_63XX,
- 		.duplex_reg = B53_DUPLEX_STAT_63XX,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK_63XX,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE_63XX,
--		.arl_ops = &b53_arl_ops_95,
-+		.arl_ops = &b53_arl_ops_63xx,
- 	},
- 	{
- 		.chip_id = BCM53010_DEVICE_ID,
-diff --git a/drivers/net/dsa/b53/b53_priv.h b/drivers/net/dsa/b53/b53_priv.h
-index d6d25bb3945b..2bfd0e7c95c9 100644
---- a/drivers/net/dsa/b53/b53_priv.h
-+++ b/drivers/net/dsa/b53/b53_priv.h
-@@ -409,6 +409,21 @@ static inline void b53_arl_from_entry_89(u64 *mac_vid, u32 *fwd_entry,
- 		*fwd_entry |= ARLTBL_AGE_89;
- }
- 
-+static inline void b53_arl_search_to_entry_63xx(struct b53_arl_entry *ent,
-+						u64 mac_vid, u16 fwd_entry)
-+{
-+	memset(ent, 0, sizeof(*ent));
-+	u64_to_ether_addr(mac_vid, ent->mac);
-+	ent->vid = mac_vid >> ARLTBL_VID_S;
-+
-+	ent->port = fwd_entry & ARL_SRST_PORT_ID_MASK_63XX;
-+	ent->port >>= 1;
-+
-+	ent->is_age = !!(fwd_entry & ARL_SRST_AGE_63XX);
-+	ent->is_static = !!(fwd_entry & ARL_SRST_STATIC_63XX);
-+	ent->is_valid = 1;
-+}
-+
- static inline void b53_arl_read_entry(struct b53_device *dev,
- 				      struct b53_arl_entry *ent, u8 idx)
- {
-diff --git a/drivers/net/dsa/b53/b53_regs.h b/drivers/net/dsa/b53/b53_regs.h
-index c303507d3034..69ebbec932f6 100644
---- a/drivers/net/dsa/b53/b53_regs.h
-+++ b/drivers/net/dsa/b53/b53_regs.h
-@@ -368,11 +368,13 @@
- #define B53_ARL_SRCH_ADDR_25		0x22
- #define B53_ARL_SRCH_ADDR_65		0x24
- #define B53_ARL_SRCH_ADDR_89		0x31
-+#define B53_ARL_SRCH_ADDR_63XX		0x32
- #define  ARL_ADDR_MASK			GENMASK(14, 0)
- 
- /* ARL Search MAC/VID Result (64 bit) */
- #define B53_ARL_SRCH_RSTL_0_MACVID	0x60
- #define B53_ARL_SRCH_RSLT_MACVID_89	0x33
-+#define B53_ARL_SRCH_RSLT_MACVID_63XX	0x34
- 
- /* Single register search result on 5325 */
- #define B53_ARL_SRCH_RSTL_0_MACVID_25	0x24
-@@ -388,6 +390,13 @@
- #define B53_ARL_SRCH_RSTL_MACVID(x)	(B53_ARL_SRCH_RSTL_0_MACVID + ((x) * 0x10))
- #define B53_ARL_SRCH_RSTL(x)		(B53_ARL_SRCH_RSTL_0 + ((x) * 0x10))
- 
-+/* 63XX ARL Search Data Result (16 bit) */
-+#define B53_ARL_SRCH_RSLT_63XX		0x3c
-+#define   ARL_SRST_PORT_ID_MASK_63XX	GENMASK(9, 1)
-+#define   ARL_SRST_TC_MASK_63XX		GENMASK(13, 11)
-+#define   ARL_SRST_AGE_63XX		BIT(14)
-+#define   ARL_SRST_STATIC_63XX		BIT(15)
-+
- /*************************************************************************
-  * IEEE 802.1X Registers
-  *************************************************************************/
--- 
-2.43.0
+> ---
+>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 7 +++++++
+>   arch/arm64/boot/dts/qcom/sm6150.dtsi     | 2 +-
+<...>
 
 
