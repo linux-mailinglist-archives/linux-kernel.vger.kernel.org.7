@@ -1,288 +1,141 @@
-Return-Path: <linux-kernel+bounces-890718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C31EC40BE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:04:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B99C40BFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:05:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B60001A455B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D54DF3B4663
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0196226CE3F;
-	Fri,  7 Nov 2025 16:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1461DE8AE;
+	Fri,  7 Nov 2025 16:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="kFSVVlp5"
-Received: from YT5PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11021085.outbound.protection.outlook.com [40.107.192.85])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YV4JZBk7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC7225B69F;
-	Fri,  7 Nov 2025 16:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.192.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762531451; cv=fail; b=PbRwmcQBlz4ZbPRU0hHcNAgc9Ou+oxZmb/YdVHZ7vX1AzLS8FwB4qmw7nclCZKJLUX1c/DEdu3qGT+UeDd8tjS1NjwTpXf+KBtoEm8sCN1G3/tDYIxU5PGPC7RTq9vD4576XI5oamwURyht/o1NwNp4JI8I3CkOKCF9NRQ7wo3U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762531451; c=relaxed/simple;
-	bh=hh0YSFCSeMOu+adq13e/BYwswgSVSKwMarjZHdVXI+U=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=b4kaTKeR3+ZN0pCUTV31JRHrt/9usvo1mMgqW9P9yKyOTQ8FfT662ggziL//1pE0r0fVIITnwtuxFlxj+AS0hrRz9Ewxuehs9haqrg6/pJAuixHnBJ6mbzwTiX2UpU/T1g2Bti3pEg5oPaBnrM+DQJyoIcqUMeCRy3pNKHFHXNo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=kFSVVlp5; arc=fail smtp.client-ip=40.107.192.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j6/VVMHUJnfb2rgUg8diUl/3DV0m7/neuRPzvuuTbg6Sg7vTXn5XD8LDhyiHnubZpHo9c8HFSfXlc4rNpt34dgPdOromGox+GZMjSQsr0N3eQf3eqAIMnAXgzRMVEMoBeVN7O/TAmi2PA2g4Y/WOe4mrq/yZht4sZ4YPNcZi348gqa/VTfZ9IlpKFsnhZ/8Xu3eVW5dRa4ZgtcaaytUTglNwzmiMLw9Org8Z9iGAW2TeBo0q96QbF5CBzg5PQnFKmrXGTUuKukJORxgAkJAG6koI0uHET0JboTWflJ8hPoYnQu08py35S9VkMqrrefAC75u7uoOpui9vIxdcyoIXsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gg9X8dKBypMP8P3NSrFv5w7QvXv16WoG0aoqrDHXtJM=;
- b=aJMNxiJp8Y1eMAI/sySEazQWzGTfXNK54IT/66X99RJU64KWdMLfTMhOxkSf96BYGTmLdQw8JQniwNdkUpPr1/Zpiue1r4UnSl1NR6Ov9uzQhvWDyg58W9wWPFkRmxobuLZYTCB5b27EFTTSfQjCZUWIqlbAQ1cd9BTxUn9tK1A/wmENf7GqDqVGAJkPbDIRq/xxVdNSmgIRMAFQSVLAEdKAwcPtsm3IgRIto2dxh7CNq5mb1iG46v5hk/jMNXK6nBK7Ya8qefVGNxJAameDeMJtyzVAsIZWiebYf1Fdu+0+f0qdwrNey+fUlStHxn06h6OIEZduPbi0Jyg3C9Aq1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gg9X8dKBypMP8P3NSrFv5w7QvXv16WoG0aoqrDHXtJM=;
- b=kFSVVlp56Au6YUXIJD6eJytkEuuYUlB5CxQ/JjHMeY+lb/azot8VVe6+oOCunWtqlXKAdMtKx8ZK/is+JBJ8QdO3Sh3pqKQY+RveGkK5mnmSosArImoLuFUBphg6kSvxt8vbxgXVxcHgYyYMU8Fs6DQrOZxUdQyvJ0W1b9UQdUUbVVrzNSjDqRvX6Eak4Cmaw9rjrik6dU8HX6LORedRT6c7C3w90LCZprfauPXvFe0fFg4axR/2AT6EqrM46hzf9hhlHSJZhJ+ve0AyF2bCztaBvXO1bfn7cfNn+Ip6oVLXXnMCtmaUMsTBN0QWzLeRX140LXG2nmbgIsDvvJUDHQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YQBPR0101MB6555.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:4a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Fri, 7 Nov
- 2025 16:04:04 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9298.012; Fri, 7 Nov 2025
- 16:04:04 +0000
-Message-ID: <81258c9e-1436-4a4f-9343-ef574b8b0de6@efficios.com>
-Date: Fri, 7 Nov 2025 11:04:01 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v7 2/2] mm: Fix OOM killer inaccuracy on large
- many-core systems
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>,
- kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
- Andrew Morton <akpm@linux-foundation.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
- Christoph Lameter <cl@linux.com>, Martin Liu <liumartin@google.com>,
- David Rientjes <rientjes@google.com>, SeongJae Park <sj@kernel.org>,
- Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Sweet Tea Dorminy <sweettea@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <liam.howlett@oracle.com>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, Christian Brauner <brauner@kernel.org>,
- Wei Yang <richard.weiyang@gmail.com>, David Hildenbrand <david@redhat.com>,
- Miaohe Lin <linmiaohe@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Yu Zhao <yuzhao@google.com>, Roman Gushchin <roman.gushchin@linux.dev>,
- Mateusz Guzik <mjguzik@gmail.com>, Matthew Wilcox <willy@infradead.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- christian.koenig@amd.com
-References: <20251031144232.15284-3-mathieu.desnoyers@efficios.com>
- <202511061432.4e534796-lkp@intel.com>
- <6hmgutxgdchs4qz6hprwsecwoygwszn5ywixxrvnereilegcsx@mxroaotaw2me>
- <7732c2eb-e547-47a8-93b3-1d1b4d9c27e8@efficios.com>
- <7b76f0e4-6148-4290-a295-7ceeb1ef2feb@efficios.com>
-Content-Language: en-US
-In-Reply-To: <7b76f0e4-6148-4290-a295-7ceeb1ef2feb@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBP288CA0004.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:c01:6a::17) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0C7256C9E;
+	Fri,  7 Nov 2025 16:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762531523; cv=none; b=KnqeQZ0+Yb/rPGVKE2R6O3AOICVU3iKGV20IAdI0HAWkgHZVmTok0kLOXArYNM1ex7WYul6WGlBKZO2M73rLlEa7NeuZfe+PoT0iapz81GjYDOJwQpPMwz3G5N2+iweqofxhKdHNsk2jcUeSWSsLY5ieMNzqn0QpbIKlIkN0YjU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762531523; c=relaxed/simple;
+	bh=topRWpDa2VOJ+GGH5NHqAfQH+TNox/Nr7BHY8HnDNRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mzhi1JvxmV5YinRQaK73Dp+K+wlPyl7Uh+2PZ5JHaBX/9jL2FClYVWfiedujUdgyHQzj0VUmHATqN4Y4d6qPaFeyqRWoBicyfMAYYtaIv0PbQ7Tyf2pMjfSoEiX2CTe9yrVQ8v4yV2I+KM4tdzT3ErvDayzqv5nwGAgKXCn6Hjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YV4JZBk7; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762531522; x=1794067522;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=topRWpDa2VOJ+GGH5NHqAfQH+TNox/Nr7BHY8HnDNRc=;
+  b=YV4JZBk7x3w1D+oJAGM3Y6h2/VsPrqKB2CtCmEZPN7cVk3hkr3qjf8Je
+   7BnsNO8x4wS2SlXFoxlAUEUk5odaA5+UAB4sOTqacQDLCqfhoHYpsCs29
+   G5oCSmV1R7/8uaM7PCIfv4tmgFHIi8ROkHg08BPpVbe1SEjsF7PHNPc1t
+   pbX8W8lPuSWO1/sKx5ghyK3nRMpyZz5q4mmIW4EGAo+36Nw6MPqg43Q9j
+   A8pzx3SCyrdQAPcCYKe1YmCph9mueIwKvKMYNKZVbXFsW50GTawQUWVMX
+   gcPVPuEMn8rhvTHkBq8M93Gsh0nlu5d+iWXK8KvuUY64hpdjTZMpTxvVp
+   Q==;
+X-CSE-ConnectionGUID: 2JPgyNxLTO6sVcJaqUR5tQ==
+X-CSE-MsgGUID: WGXNiMWISEOMm+E1kmP97Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="68521396"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
+   d="scan'208";a="68521396"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 08:05:20 -0800
+X-CSE-ConnectionGUID: jMkmIaB2SLephsvXgwQZGQ==
+X-CSE-MsgGUID: flmgstb2TOWHDJFjwOGYcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
+   d="scan'208";a="192167392"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO [10.245.245.61]) ([10.245.245.61])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 08:05:17 -0800
+Message-ID: <c4a8bd46-0ee4-4bc3-a572-824cb8a7e524@linux.intel.com>
+Date: Fri, 7 Nov 2025 18:05:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQBPR0101MB6555:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5178c4a2-b118-42c5-1664-08de1e1745e2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aWM5UkFmcWhTekFZTlRNNHgwRDR0WlNUa3A0NjhhcXJyS1JES2NKS0VLeGpw?=
- =?utf-8?B?NWluRWNOUFVoTytieGFSZFRsTytFZjd6YkVUQUo5NU5BcmtVUDE3RHloQkxK?=
- =?utf-8?B?ZXJCSkI0aVRYaFFsTW43QVFINzhpTGJwcXcyNHdlMFZBRDhRM1RxWlp4Vkto?=
- =?utf-8?B?NWNyMUU1bW9kcW1mbGlTb0RWY0xDRWlSMEMzbStmYkpWeWwwWktYNWlrWUxR?=
- =?utf-8?B?MWpQTWdSOFNyNVFLNXdUNERmd0xsaDVRMWloVWF0aXlUM2ljeUVuUU5qSGVl?=
- =?utf-8?B?M1d5M2VjS3dIQXlTak01RFI3NzFCeFdDSGd4NHRRRFYvdUxJQ2VUS3BGVWxE?=
- =?utf-8?B?QlRuaGpTM1FqL3NZUmhHYlA2dzBnRVgrSTQwN0RsWDJhQU80UTRMa0dNQjVI?=
- =?utf-8?B?ZUUyS2hPRWZhWEtUai9ldjk1YXA3VUJvUlVGc2ozUUQrbHZGQzJQaWxmTU9N?=
- =?utf-8?B?YXpQOS9KNVgraUpFSmE3a3RzV2tYeFpTMlZnbFI2Rkk3eG5oZ09TN1F1MHN4?=
- =?utf-8?B?STV4OURHMGsyRzc3VHVWM0pZVU9jb2xpU0ZlSnl3RGRyZ0lFMWdITklQd2pC?=
- =?utf-8?B?blhmYS8waGJhemtsc24xZmd6OFZpcGFNRzcrRU1vYUxiRjFCV3NFOThKSGE0?=
- =?utf-8?B?dmZFRnN2c0hZQVIwNGpoTDlrS3hJeTVMZnp0REpiYnhiZTN3d1h2YjRsY1F3?=
- =?utf-8?B?NmdrZENOd3R0akZKeTVPaWdRTytLYWZsSC9XUXc0ZUE1dGRjWWpzd3JBNW9m?=
- =?utf-8?B?UkNheEZQUm9JcWNDVUNLZEdZTVpJWFFlZTNkQ29JbU80TVZhTFBldEhFamZO?=
- =?utf-8?B?SVducnRWak9iNHpTb01yS0xLWk1ZbWJ0V0c5S3k1dW9WUFJxWGE3enJVeXFG?=
- =?utf-8?B?bzl6VmtMc096V25IWk9TRGlpMXMzU0FOVlloV01mOS9qcXRGRHJTVWt5c3hy?=
- =?utf-8?B?QWpmdnZqQVM5MHZZdTZVSERrMk1KQmo2cnQwdmRzKzIrdWdMc2p6N0NxaGg0?=
- =?utf-8?B?NE04SVJ2dXlFbFk4QjVzTmJlc2xONlk1OXRtTUhBc3JNb205Q2RUb25vUzMx?=
- =?utf-8?B?a2FHSlZLOHBqZ1g2aGFxNkh6MlErZkI1MDFPdzIyTkxoSjhud1dMdDJXbFl2?=
- =?utf-8?B?VmV4UVYrUnU5SC9pMzJneG1ZTlNRNmk0ZStwa3FLU0lXSEw1d2N3d1o5dmdt?=
- =?utf-8?B?TDRKckowRWhJcFg5aHdEb2tFNUNiay9KeUhLLzZMT1JTUUc4NTkyS2xwQVRT?=
- =?utf-8?B?Qy8venovdlFDMmQ5V1IrZzBRMUZVSnBuZUtrWDZVUGtZOGVUU2p1MjkwMXd5?=
- =?utf-8?B?R3N1ekR1NUYvOWlxVWdBbFNSb1k2bTVyVFUvRkQ5cGJHZnpZNkJ6M2IxbW5U?=
- =?utf-8?B?cVlielJtRW1KSi96Nno4eXc5bXZPRWZRRVFsNmY4Vm43bnJVWEppOG1HS2RO?=
- =?utf-8?B?QkJERUgrdFpNTVFUckFFaHg4aTd4Z0FzRzhONlYvdXExTDRoOUptazNlOGpB?=
- =?utf-8?B?RUZQYXZNVEpLZTY4d1JaWGRJSkRmYys5QnMyTW5YT0lld0t4UERFU0dRUXM5?=
- =?utf-8?B?eDNXSHpPZElpRTUwSGhXZGpQYzMwOGw0TWhjbTNIbGpsdUhvVTFXc3A3WGVE?=
- =?utf-8?B?YklEbDNBUmY3U1B3QTlxYmVrbjFMU3g3VlE3VlBUT3hWME1KbUM1am1SZFlw?=
- =?utf-8?B?U2pZU2VKK2lCaTdSajFwb2M2OFdZVUNyMGRNekpDWXF1N0NIOHlkMmhMZHRa?=
- =?utf-8?B?UDZPUU9nSzNFdWNFS3JRZzZnZ3dId2JMUXovblQ3TkF6QTFJM1lhRHFEeVlE?=
- =?utf-8?B?SG84WFdTSjY2N3JnYTlZNzdXY2N3YWFRZ1E5WnVwdy9sbnB6ZjVOaGVIamxi?=
- =?utf-8?B?aEhnRWg4MGluYjBvWHJ5eG5xRnU5dVZubGkwTGEvUHppdkE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WEFXT2x6TmFLOHowcWN0eW8wOEd1V3ozTFA0cUJKdHR3ZXcvdC90ajRlSVl1?=
- =?utf-8?B?QjNZeFlSNG1UM0RUM0J4OXpCNVRCOTZCczhkVVU1cGZ3OUtMeUFraDQ5dDhp?=
- =?utf-8?B?ZHdhQzhVK1BqdXZzd3JOQkh1U1lEeGZuL2ZhbU5WdGRBSHpNS1EwV1pqU3BG?=
- =?utf-8?B?elUyTjNCVlVGd0ZrYWMxTTNIUGQ4dS9oUWUyZlMvYkpjUVVoR1o1aHlkR256?=
- =?utf-8?B?eDVObTdVbkgyQ3RQYk80b3BLUVg4RlBsd0V6bFhtNDNDME5lT1F0bGtBN05l?=
- =?utf-8?B?UmdmbG1HSTZyZWFJaWFPVUlZdVhqSGJpOTZxZzJxNzJqeTgvN3pPWmp2bTFh?=
- =?utf-8?B?R3BjZmlTQUNaL3h2VWx6YkZIYmlUajk0dFdhMDdJMVN6d2IydHI0Y0ljNk92?=
- =?utf-8?B?UjRHbW9XMStJaTdQVllTNUlnR3RheHNvc2RxSk5Kbnhjck5ON0FjcjFqY0Vy?=
- =?utf-8?B?M3BSb3diMnZ5aDczd1dNNHBFS0pGWEJudFBxRXZDYytTc1pydUJvRjhrZGhr?=
- =?utf-8?B?eFVxNzFoaVBwS0ZFZTJvQjJvbXB5d08yMXYwNHBQZlJ0N0kwN0lsczkzVnBt?=
- =?utf-8?B?N01Db1JXVnJOTm8yTnhMSnozdkZpeU41YnNPVS95bzdFTDhhY2RYZGVVdkdB?=
- =?utf-8?B?Q2VlbDZBOFRaaWNpbXVwWVNTTU5RTUZMc1dlQUU3cHZUQktsdjJudG0rMlVX?=
- =?utf-8?B?b2ZPRy9XellKVnZ0cmMvb2tya1NOVk95eTBSendMTmdhNm5FbzRCWWhBQ1NQ?=
- =?utf-8?B?Ylh6bkY5Nk9BUGo1ci83R2ErTU1yNGFIVTJ5SW0zQkl4eWlNR3JqQmw3NnlV?=
- =?utf-8?B?Rk1Fd0pHczZhWTFINFgrVDh2S3l6S0RnYzNXS3JlMzB6MjdFangwSVcvbGRs?=
- =?utf-8?B?YytabE5WZTZOWkRzZXBZeXp1aXlSRWFJR2FaWFpOWHVLWGhEWkZvbCswYkVu?=
- =?utf-8?B?RU5xejR2NG5xQmsrOFRvQkFubURvZG5mdktnNHJTWXJHTEZ5bHpkRU9PZTJH?=
- =?utf-8?B?dTZNc2lJSm9MbER4WER3d1IrRXFuRUZBc1BxUW94OThiL0ppc0Fndk9xTG1L?=
- =?utf-8?B?THNNUkpPYVRxMTZobmt3VjhhbWxkUUtYdkp0eTl5T240UHZ2UmM2L213MXRz?=
- =?utf-8?B?ZHRwb1FvTDIwYjZiUDh0SDNiQ2ViZVBuYTFGb0lvekF2Nzc5Ujhmb0tzSm5q?=
- =?utf-8?B?ZW1jbHRNQjZhd2Q5NkI1bmpIb2NqbjFnOWErU0I2MUNpVDNVTFRoRVlKaS8w?=
- =?utf-8?B?ZVNEMWhoMDgvTTN1T3daa0lpYlQvRDl0ZlFyd1RrZ0NvYWxOcXVDZHBOVjZ1?=
- =?utf-8?B?L2pzcDhUWnVycW1tVXE2TnZxNzJ5OVB0ZlFKUlJ6REJRSW5WeWlSNG9SUWVq?=
- =?utf-8?B?MURXdEJFaDVwOHhJVGM4MTJoL3I4MEM5bmlFRGduUVIvRTFYT1NSMTU3TnBj?=
- =?utf-8?B?bDA0OGx0L2xoRXo0L2VLWlVaS212WkExS2dubG05QUxjKzdmaVU2N1FpOGJw?=
- =?utf-8?B?T1lHeUluVkEyRkN6Q2FJc2hHVmYyZE5DYXEvdGdlbTBVT3VCcW1RVmV1TnNV?=
- =?utf-8?B?cEV1U1ZLOTQwTFlQS0NYeW4yQjd4MVVZRWExZlJOaVphWDM3S0phaEVueWI5?=
- =?utf-8?B?MkhyVE4yaStKNk8vQkZjWXdzZFpLVXNoYVo0S1VnQVFWNFhLSVhYcEFsS0JV?=
- =?utf-8?B?TUNFQ1dqM1NqUnZIUmJocUhlN0g0RU55a09yYWlIdTVCZ2FpOUtnWnlieDRJ?=
- =?utf-8?B?K0xVWGNtVTJ2K2NSRUo0c0luRiswdUcvSGtHc2hPNERrdmN5NVBPdTNOOTZm?=
- =?utf-8?B?RXFzN0hxUlFJR2E2V1VCYUYyeVBqRGxCU0NyUUVDVHNvQUlQUmt3dnRMK2Zz?=
- =?utf-8?B?QXczZTEyZGZ0OHpTSGhnZXZEMzJ4NUdzcUtlUHhOYmZyaFhuRUhtMDBuQkkx?=
- =?utf-8?B?RjJqVm9COVRiK0oxZ0ZwcUR1NU5HTFRGYjBGd0dGK1BLcGdjSFgzdmduYk1P?=
- =?utf-8?B?MUNKeWJvYVdVVlZqYTJvK0RQREJsWkRHdjhIeEhZZEFqQWNFZ1NEdUliREJv?=
- =?utf-8?B?Mnprbi94c1ZjM0NsMzZQdkpDVXBMME9vdW5yWG44cGpvYkFUdHp1dUJLVVN2?=
- =?utf-8?B?eWR2aWZZR0g0amxtWjdKRXo5S013NFR0MTlyTUxCalpVWVcxTmJJN3RwbEw1?=
- =?utf-8?B?aklSWWh5RThJNmRGRS8zSnJrWWs0U0JQcjAzUWlPaHFQWTZxRWY3RkhHWUVM?=
- =?utf-8?Q?YNx3RNp09GXelGdWUS9D5iroCHAtt5UlEJbUfVLX8c=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5178c4a2-b118-42c5-1664-08de1e1745e2
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 16:04:04.0454
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bmfJ5RJT3UY0SFcu6Rait5p1qx602k4/j818EITzgz/K9QsghrbzTnpiCT1y6UHKRdyUnXQ9OyAwDFxgfi8bMf9EawpoPyPMA05QIEPlwk4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB6555
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFT PATCH v3] xhci: sideband: Fix race condition in sideband
+ unregister
+To: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>,
+ Mathias Nyman <mathias.nyman@intel.com>, Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ wesley.cheng@oss.qualcomm.com
+References: <2025102948-trickery-creative-417e@gregkh>
+ <20251029122436.375009-1-mathias.nyman@linux.intel.com>
+ <2025102956-daunting-roping-a987@gregkh>
+ <094a2124-f6c9-4510-b7ec-8df872882a7d@intel.com>
+ <22d15a74-f04f-413a-966f-9581739e4c5a@oss.qualcomm.com>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <22d15a74-f04f-413a-966f-9581739e4c5a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2025-11-07 10:53, Mathieu Desnoyers wrote:
-[...]
+On 11/7/25 08:16, Uttkarsh Aggarwal wrote:
 > 
-> It would make sense to call an explicit percpu counter tree init
-> function from start_kernel() between the call to mm_core_init() and the
-> call to maple_tree_init(). This way it would be initialized right after
-> mm, but given that the hierarchical counter tree is a lib that can be
-> used for other purposes than mm accounting, I think it makes sense
-> to call its init explicitly from start_kernel() rather than bury
-> it within mm_core_init().
-See the following diff. If nobody object, I'll prepare a v8 which
-includes it.
+> 
+> On 10/29/2025 7:22 PM, Mathias Nyman wrote:
+>> On 10/29/25 14:51, Greg KH wrote:
+>>> On Wed, Oct 29, 2025 at 02:24:35PM +0200, Mathias Nyman wrote:
+>>>> Uttkarsh Aggarwal observed a kernel panic during sideband un-register
+>>>> and found it was caused by a race condition between sideband unregister,
+>>>> and creating sideband interrupters.
+>>>> The issue occurrs when thread T1 runs uaudio_disconnect() and released
+>>>> sb->xhci via sideband_unregister, while thread T2 simultaneously accessed
+>>>> the now-NULL sb->xhci in xhci_sideband_create_interrupter() resulting in
+>>>> a crash.
+>>>>
+>>>> Ensure new endpoints or interrupter can't be added to a sidenband after
+>>>> xhci_sideband_unregister() cleared the existing ones, and unlocked the
+>>>> sideband mutex.
+>>>> Reorganize code so that mutex is only taken and released once in
+>>>> xhci_sideband_unregister(), and clear sb->vdev while mutex is taken.
+>>>>
+>>>> Use mutex guards to reduce human unlock errors in code
+>>>>
+>>>> Refuse to add endpoints or interrupter if sb->vdev is not set.
+>>>> sb->vdev is set when sideband is created and registered.
+>>>>
+>>>> Reported-by: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>
+>>>> Closes: https://lore.kernel.org/linux-usb/20251028080043.27760-1- uttkarsh.aggarwal@oss.qualcomm.com
+>>>> Fixes: de66754e9f80 ("xhci: sideband: add initial api to register a secondary interrupter entity")
+>>>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+>>>> ---
+>>>
+>>> Looks good, thanks for respinning this.  I don't know if it fixes the
+>>> issue, but it looks sane :)
+>>>
+>>> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>
+>> Thanks for reviewing this.
+>>
+>> I don't have the hardware to test this myself either
+>>
+>> Thanks
+>> Mathias
+> 
+> Hi Mathias,
+> 
+> I have shared the patch with our OEMs and so far, have not received any reports of issues from them.
+> 
+> Thanks
+> Uttkarsh
+> 
 
-diff --git a/include/linux/percpu_counter_tree.h 
-b/include/linux/percpu_counter_tree.h
-index 8795e782680a..40fcdd6456b6 100644
---- a/include/linux/percpu_counter_tree.h
-+++ b/include/linux/percpu_counter_tree.h
-@@ -41,6 +41,7 @@ int percpu_counter_tree_precise_compare(struct 
-percpu_counter_tree *a, struct pe
-  int percpu_counter_tree_precise_compare_value(struct 
-percpu_counter_tree *counter, int v);
-  void percpu_counter_tree_set(struct percpu_counter_tree *counter, int v);
-  unsigned int percpu_counter_tree_inaccuracy(struct percpu_counter_tree 
-*counter);
-+int percpu_counter_tree_subsystem_init(void);
+Thanks, I'll send it forward
 
-  /* Fast paths */
+-Mathias
 
-@@ -191,6 +192,12 @@ int percpu_counter_tree_approximate_sum(struct 
-percpu_counter_tree *counter)
-  	return percpu_counter_tree_precise_sum(counter);
-  }
-
-+static inline
-+int percpu_counter_tree_subsystem_init(void)
-+{
-+	return 0;
-+}
-+
-  #endif	/* CONFIG_SMP */
-
-  static inline
-diff --git a/init/main.c b/init/main.c
-index 07a3116811c5..204d9f913130 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -104,6 +104,7 @@
-  #include <linux/pidfs.h>
-  #include <linux/ptdump.h>
-  #include <linux/time_namespace.h>
-+#include <linux/percpu_counter_tree.h>
-  #include <net/net_namespace.h>
-
-  #include <asm/io.h>
-@@ -969,6 +970,7 @@ void start_kernel(void)
-  	sort_main_extable();
-  	trap_init();
-  	mm_core_init();
-+	percpu_counter_tree_subsystem_init();
-  	maple_tree_init();
-  	poking_init();
-  	ftrace_init();
-diff --git a/lib/percpu_counter_tree.c b/lib/percpu_counter_tree.c
-index 9577d94251d1..05c3db0ce5b1 100644
---- a/lib/percpu_counter_tree.c
-+++ b/lib/percpu_counter_tree.c
-@@ -379,7 +379,7 @@ static unsigned int __init 
-calculate_inaccuracy_multiplier(void)
-  	return inaccuracy;
-  }
-
--static int __init percpu_counter_startup(void)
-+int __init percpu_counter_tree_subsystem_init(void)
-  {
-
-  	nr_cpus_order = get_count_order(nr_cpu_ids);
-@@ -391,4 +391,3 @@ static int __init percpu_counter_startup(void)
-  	inaccuracy_multiplier = calculate_inaccuracy_multiplier();
-  	return 0;
-  }
--module_init(percpu_counter_startup);
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
 
