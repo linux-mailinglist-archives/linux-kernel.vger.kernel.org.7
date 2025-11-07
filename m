@@ -1,115 +1,142 @@
-Return-Path: <linux-kernel+bounces-890788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7602C40F70
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:59:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87212C40F86
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E07E422CB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:59:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 17C7C34D722
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4284E333740;
-	Fri,  7 Nov 2025 16:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C72E27B34C;
+	Fri,  7 Nov 2025 17:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DT62PiDh"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AiD6Wk42"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DFB33372D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFEB38DEC;
+	Fri,  7 Nov 2025 17:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762534744; cv=none; b=iZ+5e/eUG0ir3JV0Uo8oJEQtMZovHnH7AtsTss9MECaQObPToLj7k2x98eJ06YjsYJRd0ya2tGoUE1/fEZZPoo7dyfB4wROpAI9QmI0lMG64RGG4Fc5kxXcS91ArO4DB3mFKAYQSflKU5njodvdJp61vHhZzAMnO7v55prD/uhk=
+	t=1762534843; cv=none; b=Wm7O4G4rIydJo+bt9kFXG2Qvg86uBB6yptuBLOtADjVcgl3+iuI+jHLAXGYCrhmB/IKbcge05szTbxiSsT2lT7FHY30LqFe4JvRM/PYzfoPappn3qcmjKvtqOndvEAPioj2M6jJrBjVv4VhkhaaQRdoZB3BZ0PCr+hCeHrUhTcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762534744; c=relaxed/simple;
-	bh=cJuEyJBd8vNxec7ils9DOazLPyWiTBMKYf6Z8sfY0UY=;
+	s=arc-20240116; t=1762534843; c=relaxed/simple;
+	bh=CrlVePztH8nTQSA2LjyBVfwXsj1YcNT+in2aDO2QsRw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jjNmbrq1Pd+Yx1zRNRBxzV0rK78PwUWCtPh8j9rjOlBbBzSf7xrP25Vb6j5MNKqJ91PsW7zLlRjJyUHWqMJpGkUsfEYfTakXm0SuL3bC6fRy50t6ZtU8lPzRMKhrRzqWWWAWu98eaA44pUH6vt1mLYlfTM2N7rk1+HPbbUmJ3LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DT62PiDh; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-33be037cf73so948874a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:59:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762534742; x=1763139542; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t4sd5p9K6Q7d7iLpd9Xn8vyRDq9SyY6gsIqiEGANBmA=;
-        b=DT62PiDhor/0JlwSqPbIOUpWd7T3WeVdwYryLsv+gd1/o/WaSI0y8EuuX3i8j4eiJy
-         Qe7oans013JeczyduMoN8WVd3bZTPtgtaiBI0Kki6cAQpZ+1BLrkLvOuB4ltztpZ63oC
-         rTbsJerAIVj/cayccEVgNwvGrGTMhNFcTTd5WTtoLHnC9e5hoz+A5UmTPDtInXmo6FAt
-         cyqY+2AAQOuPsbOrpTWBdDrN8bp6/jl32MfVQpN+Cx4kHU0S5Rdcs6JJmRzLu/MPxzlU
-         auBk9jolBJdvBTPMNU0dWI3ul/AKoRrD/uikzx0nL6FJaQ+Ya7clvbpFoCg5i3GQBCgi
-         phGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762534742; x=1763139542;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t4sd5p9K6Q7d7iLpd9Xn8vyRDq9SyY6gsIqiEGANBmA=;
-        b=uVA+w4iTvHe3SY3LkRbcaEA2vjjue9nu2xJwkjnzj43SNRFq9eYXLApWdLEdqdS6hr
-         Vcx+NzeK96ed4aFb6zLv2n4MnU8r3SCCs0f5oLgCMtxjfZbOSAnbtmh4pgO6XQ82euV3
-         YrN909uC7QbLDIDBoNRgE3G5tKITAPA0bh5/tve4bnihYSzuQaMyCmwvIfLlGAPf6MuM
-         cLeGHA30AcIOBPO5dDInYNjLpoUMXsiMOroND4PWuOaqsyKwj26MbHFoAXN2yk6p9jat
-         0jUHGMYoyvsH5CCKZOwOoocowXI3I5EI6wW4K4KWYZo1AoAMANy76b9CII5eZ5EYqha2
-         zdDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVR9lzCTqDIsgi0BgAnlQG1IYqR7PiL1XDnFmdmDQ+EhDrFtdLoc7je8BQIuEfbfvvG8aE/ZmnQOHwU0Jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHikobbMEWRp3Cb0WDRig29kpfK6AWqWHmUjZXZTdVeiauj6wZ
-	icavWsyQvE6S1MmU/0OZbzXgXiuUs2bz/BVIXDI53IVrwGH8eHXkBoUM
-X-Gm-Gg: ASbGncvDXUELEkVMD915KXBcn0joi9QfsU4ksD6ShV+946z5OPDL54HuIFuZhtVmYg5
-	iSDpB3927Cj3U2VOQmv6k0fOxeScRa8x6gtIsDGVNDm4eQ4Yw15rHiXMarLZMoMo1nLZgDR2hRJ
-	F2Cr/1H8822D5eEe99jUV1w7/u9SKn9bbVgX3J1Wba3K5zt94+wW0odRx1vSwc3NzoAlsVn7yyX
-	deZ0IQrgZ07rTQckigmnVp0iH3FmrbPaiBgbe4ceh2NviEOyMDRyQMj+bVnppqPRUYs+dSmjlXm
-	b/BCaYZX46xtpCCQ2h8zepQISwBmT30jxnrDoLFWh8YXZu2mEYXfUL0EUDyienW8lQBlvxoOuSu
-	664g4C2JmxLduBkYJf7IkCkBP5SyrC3W2y5k8MqYf4mvxVHJRZWUSXfjzzb1xre0UsQt083Sea8
-	CEjBGhfhEAdLiLL/QEEm2epjuNnfkWWQHN
-X-Google-Smtp-Source: AGHT+IHMVwIIf/5HSM26FvAI00bqSm2Te209tly41PcGS5bZmMWGwjGv3U8TNmpLDYqzMgZOpWO5tg==
-X-Received: by 2002:a17:90b:2547:b0:340:ecad:414 with SMTP id 98e67ed59e1d1-3434c575537mr4058720a91.27.1762534742462;
-        Fri, 07 Nov 2025 08:59:02 -0800 (PST)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a67e2f82sm10072766a91.0.2025.11.07.08.59.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 08:59:01 -0800 (PST)
-Date: Fri, 7 Nov 2025 08:58:59 -0800
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Brodsky <kevin.brodsky@arm.com>, Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH Resend] mm: Refine __{pgd,p4d,pud,pmd,pte}_alloc_one_*()
- about HIGHMEM
-Message-ID: <aQ4lU02gPNCO9eXB@fedora>
-References: <20251107095922.3106390-1-chenhuacai@loongson.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tOA6RdDSz0tbsUszzWZOReuZJ//uLeJ5OmuPDooTHYyoUZZfS0VrFtqqWn+Wm+xGq0IPj/vko0CmAEtguf5/B282fmlDp4od7C0/wVB514FFiKfpgUJkF0ml9R12/xR2OQWNKoPqb18Qylwxqe2d0CxMarWFavjKGfnwW6egFik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AiD6Wk42; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B8D2C4CEF8;
+	Fri,  7 Nov 2025 17:00:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762534843;
+	bh=CrlVePztH8nTQSA2LjyBVfwXsj1YcNT+in2aDO2QsRw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AiD6Wk42k76uZNmvKVgFryuD3Bx+Dl2OWXtKLC5yVbkrakTswJZcUdzWQddB5K+5S
+	 oCagByaaoI0j3CEissAL+aXxA1tYPrB//3ZUqMgZ5U1K0Qkxf93PBEoxEXndxe2AyN
+	 Wd6F/oCob/9/SQQba+2FGXFhee3U5X72pfLDrshKKPQ6di8QruJwffxqqffyJJYYo/
+	 z6GA3vQLyDZ1w1GBIOdxxE31NFhNkoxBHAcHzNvE2wAo/19tBx4h2+cTBZdTnV1N+i
+	 JoTUwq64X4PAf56soPTIU+1EEAoD44V3SbPdYh4Rx6VjzWpITyqyz7He1ksSZzTdmS
+	 g0khZd3yWbIXQ==
+Date: Fri, 7 Nov 2025 17:00:37 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	"magnus.damm" <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH 11/14] dt-bindings: spi: renesas,rzv2h-rspi: document
+ RZ/T2H and RZ/N2H
+Message-ID: <20251107-overprice-reselect-c3a742a2d8b3@spud>
+References: <20251105091401.1462985-1-cosmin-gabriel.tanislav.xa@renesas.com>
+ <20251105091401.1462985-12-cosmin-gabriel.tanislav.xa@renesas.com>
+ <20251106-anchovy-font-33e9a3b4efe8@spud>
+ <TYYPR01MB10512F74C2D89BFE757AC7E0C85C2A@TYYPR01MB10512.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8dYth6u/2Yr8gI8Q"
+Content-Disposition: inline
+In-Reply-To: <TYYPR01MB10512F74C2D89BFE757AC7E0C85C2A@TYYPR01MB10512.jpnprd01.prod.outlook.com>
+
+
+--8dYth6u/2Yr8gI8Q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251107095922.3106390-1-chenhuacai@loongson.cn>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 07, 2025 at 05:59:22PM +0800, Huacai Chen wrote:
-> __{pgd,p4d,pud,pmd,pte}_alloc_one_*() always allocate pages with GFP
-> flag GFP_PGTABLE_KERNEL/GFP_PGTABLE_USER. These two macros are defined
-> as follows:
-> 
->  #define GFP_PGTABLE_KERNEL	(GFP_KERNEL | __GFP_ZERO)
->  #define GFP_PGTABLE_USER	(GFP_PGTABLE_KERNEL | __GFP_ACCOUNT)
-> 
-> There is no __GFP_HIGHMEM in them, so we needn't to clear __GFP_HIGHMEM
-> explicitly.
-> 
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
+On Thu, Nov 06, 2025 at 06:02:01PM +0000, Cosmin-Gabriel Tanislav wrote:
+>=20
+>=20
+> > -----Original Message-----
+> > From: Conor Dooley <conor@kernel.org>
+> > Sent: Thursday, November 6, 2025 7:58 PM
+> > To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> > Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>; Mark Brown <broon=
+ie@kernel.org>; Rob Herring
+> > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dool=
+ey <conor+dt@kernel.org>; Geert
+> > Uytterhoeven <geert+renesas@glider.be>; magnus.damm <magnus.damm@gmail.=
+com>; Michael Turquette
+> > <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Philipp Zab=
+el <p.zabel@pengutronix.de>;
+> > linux-spi@vger.kernel.org; linux-renesas-soc@vger.kernel.org; devicetre=
+e@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; linux-clk@vger.kernel.org; Conor Dooley <conor.=
+dooley@microchip.com>
+> > Subject: Re: [PATCH 11/14] dt-bindings: spi: renesas,rzv2h-rspi: docume=
+nt RZ/T2H and RZ/N2H
+> >=20
+> > On Wed, Nov 05, 2025 at 11:13:55AM +0200, Cosmin Tanislav wrote:
+> > > The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have four =
+SPI
+> > > peripherals.
+> > >
+> > > Compared to the previously supported RZ/V2H, these SoCs have a smaller
+> > > FIFO, no resets, and only two clocks: PCLKSPIn and PCLK. PCLKSPIn,
+> > > being the clock from which the SPI transfer clock is generated, is the
+> > > equivalent of the TCLK from V2H.
+> > >
+> > > Document them, and use RZ/T2H as a fallback for RZ/N2H as the SPIs are
+> > > entirely compatible.
+> > >
+> > > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.co=
+m>
+> > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > Why is this a v1 with my ack?
+>=20
+> I forgot to bump the version to V2. I've sent V3 afterwards to amend it.
 
-I'm not really sure what "Refine ... about HIGHMEM" is supposed to mean.
-Might it be clearer to title this something like "Remove unnecessary
-highmem in ..."?
+Ah, I didnt notice that. Thanks.
+
+--8dYth6u/2Yr8gI8Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ4ltQAKCRB4tDGHoIJi
+0p0VAQCHn+nh9KAR8Ekz0Y8X0sS0lpxjC3Wvj8Iie/dDNKAWYwEA4vWuKYtGRFGT
+9WvuIoAJHuKnwtdBfC4q5WumjAlwFg4=
+=fA0E
+-----END PGP SIGNATURE-----
+
+--8dYth6u/2Yr8gI8Q--
 
