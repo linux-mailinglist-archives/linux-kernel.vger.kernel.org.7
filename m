@@ -1,312 +1,224 @@
-Return-Path: <linux-kernel+bounces-891146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D2CC41F38
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 00:28:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83E6C41F41
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 00:31:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B77734EF59C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 23:28:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 353B41895720
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 23:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4656E314A7E;
-	Fri,  7 Nov 2025 23:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E03314A94;
+	Fri,  7 Nov 2025 23:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mVAKHJnT"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uqZF99F1"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011004.outbound.protection.outlook.com [52.101.62.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2913148BE;
-	Fri,  7 Nov 2025 23:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762558094; cv=none; b=lkMuKYk0HkyZPVEbyJ5dr6/9uKJ03gdm2Lw84oDIoxBMsL3qgHSmLRceWcV+MNf1JIk0RfcncxlHeJEB4+9/gydxNN+qBwYO6zuTIUFXg3pMh6bg/oTg1HV+8cPGLRe93z9t6Yj5JWUblT/0GvQueWfz1jOFhUaCiCB93ZqP0DI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762558094; c=relaxed/simple;
-	bh=7puJJp7k1pUN31SftlxdSwkX5r60eraOi6UVLDs0viY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kHdrAhrJrCwCz5OZlQDp3tiWlNL5MUtnFOjEqBZAM/B6KF1i0LDze87aWIRgG2UWTvIQz9pA4PfEEnaI4LQyeVhpRYFr8pLG9UhTvH+fmURQOjSfgtYXJb6/DBADrLaFIGHUflIshR3LAyMkMUWqSf8XEqfR/LDF6RiRf6wCm84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mVAKHJnT; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-95.bb.dnainternet.fi [82.203.161.95])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id E1949C67;
-	Sat,  8 Nov 2025 00:26:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762557972;
-	bh=7puJJp7k1pUN31SftlxdSwkX5r60eraOi6UVLDs0viY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mVAKHJnTiEcxsDrfnz4OXSjxAADFIvxUb5psoFfkB+jals4HV7n8+G2sztMVnQk9F
-	 LsGyaflml20tC0LfmmXGZg/o3bS2yShkroaWw1AvTQ1uIND1hN94Hr3pTbLqbiJohL
-	 DZpoLz4T5BnleqTyCfZaDLt3+EXzJgIEqAjFg+4w=
-Date: Sat, 8 Nov 2025 01:28:02 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Dafna Hirschfeld <dafna@fastmail.com>, Keke Li <keke.li@amlogic.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Dan Scally <dan.scally@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Antoine Bouyer <antoine.bouyer@nxp.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 7/8] media: amlogic-c3: Use v4l2-isp for validation
-Message-ID: <20251107232802.GJ5558@pendragon.ideasonboard.com>
-References: <20251020-extensible-parameters-validation-v8-0-afba4ba7b42d@ideasonboard.com>
- <20251020-extensible-parameters-validation-v8-7-afba4ba7b42d@ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E975221D3F8;
+	Fri,  7 Nov 2025 23:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762558272; cv=fail; b=m4jgVEB2n5m7dxZf8Kra6xVkTBw6P2noetJiFzqSP7PEJPasz2n8miHU7G0RoUr8gmvpZNxsSZXAO6Wsp7shNFTQp4Rt8buP7T+rrWv1mIUe0fkozuXUVJhkR1pQMFSqIeQ2gP9oEk6tKFCpveh6JLOkhrtRYW8kQsGPza4neYY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762558272; c=relaxed/simple;
+	bh=PoFtDLpC2Mk+abPyafZCCjutDWGoHpnCT+/sAD6aiTE=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=sYIyckllNnioe1LW+zXTjOkRUXd3XzWKYgcu2UWvlEN6Vr67aVBR+7wwMZj/VYQibuuUodMTdNfa2wVnxdA7YwWMmHO3SctFKTH4hufMopG/YVaAVibwpxPEG9nS+PVGc4B/rKOIAtpTS1aFRqDpYYC1mnz5W1Pq2wMy3HQHVH0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uqZF99F1; arc=fail smtp.client-ip=52.101.62.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ezOI00IFVBygK96O/j/qUrXfrdgcvBA86oGmy3xqSK3eHXDMyyqAIDp/Zlv+8o5mu1VqqsyI5LjDxPF3rsJwUanH9FRYby78xdckhcWcvrxyUlwuvjuS7u55U3D5MAF6hqebg80gVWG40PGBYk4TNldGaodt9v79lWo1obyTAcs7eWO4j4Y3LjUBZaF1rhXdA9Wxncrr87qbFOr95XMidCG/DkbN9oXNSoM6/l0rOwzKKlw8K8FGPCTbhkaFObUCIg3Y8bWnpGAQVZwuKiFvrV8bPJ/SGUSu+Njr/rCrnXvQWRhpu6GikF4ng0Dtkz3c8XbYh1U41JZ+pAzBkL/96g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PoFtDLpC2Mk+abPyafZCCjutDWGoHpnCT+/sAD6aiTE=;
+ b=gfzgdei/M77u6w7V9IsM2ekaCxrWaeVSqn1kHbG5mdGYn4ek2Ym+HZAF4ir2ZCnP4/rhXXre7o1+Laulz6OMmsgKEsIgb5xsHAiLth12CeedmlwcvqvFIovgMgFG9PZTVluBLXRJcqGosXGfO68VwTgQlxPgeMhso/RTI+X1VMaZ/yCXJhFXGiNsVLQjnhouX7M9hYQ6VBHf5TJia8NrM/CA+YaIfrLlA6hIWFx3PqWAy7nd/5kEDSjXj7xm3KLx6iIUcx+aqxo7Z4r6wUfdrt1TWKT8h84vSvWvE7pFDUv12UW1jiCP4xW/8LZ9zarONEDl300dnm3ZXmKasMy+pw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PoFtDLpC2Mk+abPyafZCCjutDWGoHpnCT+/sAD6aiTE=;
+ b=uqZF99F1ZWlYHNK3Nj8rzQ7RMR5tawPQm8KkRZ+PE8KmwowhkxFVlQUGYPi4/h/qXbK2l3AFphoaA1ql10kUcR39zshhrG02Grmz8xJOpLq1IWMuKp9S3higZ96VUFm7jzlcYzU1mROnkGCq0C6XyaFqaNvllE06oDzUFadiXsZi8+92Kr4ONXM+GttqN9Yn4lYlRfdrDs/MfKMMBvO6tcQz1P7V6xpaOwCkD4pS7AUfx8aDP9LiB7jMyMVb9QMv/N0RGxjuIPfAajieEkzbQGhXjuMTZ5ZFqiIGYGilSlc4LMvElqOUDNsEhFGQQeLcTwKo46g8cIPx7AtTkG8xbw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SA1PR12MB6824.namprd12.prod.outlook.com (2603:10b6:806:25f::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Fri, 7 Nov
+ 2025 23:31:04 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
+ 23:30:58 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 08 Nov 2025 08:30:55 +0900
+Message-Id: <DE2UR8B3NFSN.27WJF1J897R4Z@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Alexandre Courbot" <acourbot@nvidia.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Edwin Peer" <epeer@nvidia.com>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "Danilo
+ Krummrich" <dakr@kernel.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH v3 0/6] gpu: nova-core: remove use of `as` for integer
+ conversions
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251029-nova-as-v3-0-6a30c7333ad9@nvidia.com>
+In-Reply-To: <20251029-nova-as-v3-0-6a30c7333ad9@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0094.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b4::8) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251020-extensible-parameters-validation-v8-7-afba4ba7b42d@ideasonboard.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA1PR12MB6824:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e3ad970-0e38-4de5-1808-08de1e55b464
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|10070799003|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RzNlNHlHZUhyS0NLSTAxelQzTHdDczBJK2RUWmNEampMdytDYzFkZ25oWXQv?=
+ =?utf-8?B?d1FFanZJSEJ0SWpSMzJKRFlSbUhQazJpeG0wQVBUNjUxc3pGQjJ1VFVvc3Iz?=
+ =?utf-8?B?NCtFZTM0aDBmeGFPcHlDSDdXa0txcGNEWUwvSzRiUVVZcVFXSTFHZWVlSVlS?=
+ =?utf-8?B?UDQxUjZ5c284ZFl4UU9QdDRhQ1VTckhLWGRocFRKT2tnMUhHNVZMLzdSdFkx?=
+ =?utf-8?B?VWltWEgrRjF2UTlNcUoyM292LzR0Z2kxQzk5SzdHTXpmeHd0aTZ2TVgxMzEz?=
+ =?utf-8?B?S3IzSFFyZjVSQm92b1RvMi9uOU5kWFh3TTE2MTJlaFRwUnJVSk1uWW9WeTNh?=
+ =?utf-8?B?ckZqUXVYaWowQkJyWTc5cXRDS3lFV2pKTHJMRUE4RDh1ZnRCV1lWQTJCa3pj?=
+ =?utf-8?B?TTJwZlFXYVNJWmtxbTV3Q01nTDhSTVlNRGZUVzRXa29QOG9HbXptaG5PN3NG?=
+ =?utf-8?B?NmUzb0xUenRkV3RXZXQ1NDJHb3ZTbVIrbDM5Q2YrMUdQZ09NcFg1bEVvTm5n?=
+ =?utf-8?B?RldaL0lOelYxWlhQdnJGTlI5VTdBTXRTU3NrSUZJRDJER240eG5YREVyRnQ5?=
+ =?utf-8?B?NEV5cVhCczRMMk01NVZkb2NXOFA0NlF3U2dWMFhpK1M0Ly91YWdzY0xzZEFa?=
+ =?utf-8?B?WWJtZmhMMlBqQlEzR0tESng3aXQ5TW1SN3V0Wmt5M1dzTkdSMUJnU0k3dU55?=
+ =?utf-8?B?ZDJQWTMxNkVZQWFGRDZWUG8rU2pjMnRQNHl4R0RXL0wwZkJiYnFmaG54UytJ?=
+ =?utf-8?B?Y214QVVxTFM3RDlHVllmZUFmWlA3bUpzbHRGSUhpY09KZjhDVG9ISzQyZ1Jn?=
+ =?utf-8?B?K3lIbTNDUkRGcEJvVDk5Y3pOSGZkd3c2RWFKUEFrNDBwNWM0R3RPeXcyZXhs?=
+ =?utf-8?B?bEFIcTRYbWIxN255cHRsckJBaEhzcWVCTTh1eHI3angvYThJWFkvTHNJTWJS?=
+ =?utf-8?B?WHdBVnd4QUtZdVJ6UGFkWnppSTFIUVdnUFJ0LzdqR1lESml6RjdMTUwrcU92?=
+ =?utf-8?B?RENjZmlQNDkxNTVnSlB3cEJiK3dYMHhDT1BKMXF3TUI0VEZTRHR2R0FsSTRu?=
+ =?utf-8?B?Q3UrdnRuUUlIYnRvb0ZIMHZxR1FZbzBNcm1naEI5SlNEMDh6VGQ0SkU5UnQr?=
+ =?utf-8?B?TUVnM2RXbVZRSmZza2VyN3luTzNVMWdlbDBoRXhtS0YzekR2ZlNzanpUOXp2?=
+ =?utf-8?B?TWtWNE5sYldLVTRPb1N3b2xBdDVoNnl2SnozcmpId0dydkE2dkdWVUhiVFNz?=
+ =?utf-8?B?ZFdmRmt5bWJJNURUWjBaRGd2a0NaQkR4eHBsUmJac1ZpUU1ydHVIb2JLalZo?=
+ =?utf-8?B?YVI5bGlJRytWcVNZLzR0ckp4MCtNd3hRRWo1ZWZoNzVPby9MYU1CTGFDbjJF?=
+ =?utf-8?B?SWFEUC9BaW9rb2hPSWFYY1BCYnVEUHdhVEdtL2NnL2VtS1hMQ3NYZzlFNGJE?=
+ =?utf-8?B?M25tbGxOOE53Zyt0ejYxZVpwUE5KbFdvRWNwLzVkSzVxc2NnUXZNTi9La1N0?=
+ =?utf-8?B?L0I3cVo0ME1TbDZscHJ0QTAyMjVGdDQxOGZVdWMwU2FJcVZHWHluMkpiY3pE?=
+ =?utf-8?B?ZFFVRG1yTm1iSjRJYlczMjhXQmJ3eDBpVEhLZyt3M2pjQWtvZkRSRGQ1TTBC?=
+ =?utf-8?B?QXc3Q3RTU2Z4Zmo2c1JaMFJqR2J5MjZVcEZWRFpjYzlQcEMxd1RMcG8weFp2?=
+ =?utf-8?B?a0RjVU1RSXozMHFFTFVPdmRYejRBUDZteWlZVHE0TWQySVNvWllGazZSbXkx?=
+ =?utf-8?B?TkozbE05ZlNjVWRUbTY4dGRoSTMybXRtcUk4M3lQcWRMdXdoVXRvSzFpdEVU?=
+ =?utf-8?B?eUtWNDFrMEpkOXlVcnNwQkY4U09Zc2lLNXdsdnArRFlBaEhsbjNkU3dpODMr?=
+ =?utf-8?B?bUNpU3RWWkdUV1FGUUxYbXJvMUo3S3RWclo2bHljOFV3N3JtUk5aSU5DWis5?=
+ =?utf-8?B?djZpZElLWHpYcEdQb1cvRERWNWJhYWl3WmF5SlBEQkxnc3NsUkpoYzJuSk1j?=
+ =?utf-8?Q?mrABuUglBzAEm/SY51+nwJnSDr/oyQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SExFZTVocVdJa2dLMmNpR281NlNXYWFURkxmaHdtaDNiZzJ1aGpWTVZvbm9s?=
+ =?utf-8?B?dTY3QWo5ZSt6aHczQm5laVRPTktnQktya2dMaFVhZHExbEo1T0RTRCtMMm5r?=
+ =?utf-8?B?QkovOUVNUldrclJaVjBsLzY1N0dCdFlEdjB2RGx5OGJxZWErVnozZkNWZHU5?=
+ =?utf-8?B?UzBJbGJ0elNDRzdjdis4c3YrUzBQNWFtV0FtUXN2dGdESnVFYjA3bjFlN1ND?=
+ =?utf-8?B?REpweG5mU2R3a0lWaGp4NlRlZzB4djZVb0ZhWTBoKzlRaE9kT1ZLQWZ1M2Q5?=
+ =?utf-8?B?SSsyTFlKbElwZ0k2czRpb3JrcXVuMHJnY2RWRUJGUXA1R29xNnB3TlUwdG5j?=
+ =?utf-8?B?YklLWDJGbE12WWZwMVpHZFhLQ1M0OGVvUUEyazZuVnF4NExpK2wrOHNrdmo0?=
+ =?utf-8?B?SDNFUzJYR2x3RnpZbFZRdmRjcjREVnpIN3BBdGwwTWNMeEJBY3IxU0swK01j?=
+ =?utf-8?B?NHRQOE5NeUczZWxaQ09jdDU3L2psbGJBcEJqY2VxWjhjTHhJWERMZGZCWXBh?=
+ =?utf-8?B?QlluaFZ4Tk5KRy82UGtILzJLRDJFcXFsUzRmZWVML3Q0OWhJR01uQXYwU0dw?=
+ =?utf-8?B?UDdlaEdOd25QcjUwWnZsd1VNT21zdmJRZDViZWxjNWxIc3dtUjZBVHBjVldt?=
+ =?utf-8?B?c0JIelZGVjJnZW83WnRYekhDaDdPbitkd1FobVRXSVRuSFQ2NkJkbDFJS0J1?=
+ =?utf-8?B?ekU2YktzVjZvaGNEc0pzMTNSdHpyc2tVZUlZQXZuZkFmc2NmeXRIYzdHbnRU?=
+ =?utf-8?B?UVpHRnlzYWtaOU1iRGhTVmFNdUxja0d4RUZOdStIL2RCYnp4Yjlta25rbUhL?=
+ =?utf-8?B?elo3S0JrVmQwNksyb25LYUExZTFBSDNMdG4yTFlDeFBBQnVDK0lEdno1dGpj?=
+ =?utf-8?B?K2JDeG9JMEtkWDBPaG1sM2pVUWpReFg0MjRVRkRVcUZqUUVSdGhTekwxVEJM?=
+ =?utf-8?B?MFAydFdXd2ptMnJXZXFheGdTdGVLNWMyK0Zna3VQMWFGbjFZTWVldFczYkJ5?=
+ =?utf-8?B?ajBDMllzSXo0T1UzZWxNQUtHZS9nRkh3OCtBNEVsdEltQzc4d1ZVQko5ZW5u?=
+ =?utf-8?B?YSt1S3VjSmJuUzVjbEhzMVZsK0sveTNvQ3g1Ty9EamY5ZmZqZ1VwYVVFZEQz?=
+ =?utf-8?B?V0dCZ2h5YmpnV1JOcXlyOXQ0SWV3alU4enY3K2hxZkdoMGhYSVZOQ2MzSWg5?=
+ =?utf-8?B?TDlxQSs4Y2hLRVE3SmtFdk8vUjhxNHBraGM3VFBjTGZaU0cwNnFCcnBQdmI1?=
+ =?utf-8?B?UnUrVlZLbmh1ZTB1UHVQalMyOGRhMktsK1JwM0dObUI1eGtSdVdNaUhPQmJO?=
+ =?utf-8?B?RERHNlQxT1NDU3ViSmg3YkVlb1pBRGZaak5Wd3lwaDJ4dlp6dXJoODEvNFJ4?=
+ =?utf-8?B?dDZSZHZMSjZOVlpjZytOQW1laTR5bEdCc3NsM0I5MXVWRk9xdHVQbXhlRVZS?=
+ =?utf-8?B?elhobzFzVWdDWEFya21vUUN1Um1PVGZ2aWQ0Z2x2WEczbGl6bXM4dS9nUlc4?=
+ =?utf-8?B?YklpQVd1UUxSMThMQWRIN1VlU2F6WnNLOFpuU29zRnlwbkRaTEtJc1B1SW5v?=
+ =?utf-8?B?ZDE1UDQ2aC9HMmpPeHV5TERXRlpNZTREczFJMEZudWNpSzQ2S2VrSUZ6Zmk3?=
+ =?utf-8?B?ckRZdHFXMTd2YnhYSnhjZ3ozb1d1MWpEbU9OU2Y5U0xIY2tFSUYrRlp2UUYw?=
+ =?utf-8?B?ZmdsTGNncnFoa2ttOTdOdWNBdmRXeTd4akJyV0R2UEYvMkpuWDJleFYxeFRW?=
+ =?utf-8?B?WWo5dW1Xc0dwcU9DTnhQRXVtSFR0TlpydUhSVWQ3N1NTTkpCVzhITW10L0ZL?=
+ =?utf-8?B?NURxSG5rMHdaeW1KWXpkTndRY3RuR0duUnJDdWRhNnEvUEFSYVZrQkpKOXEw?=
+ =?utf-8?B?b2dqWTlmSVA0ZWJOeS9xdkFCMStXc0NUZFgxK2xkZzRIZFRvUFlyZlFrREQr?=
+ =?utf-8?B?bkE1N0ZFb2FzSGdKOW14eHBlTzE2cC83K1dOcngvYzRWWnRONjM1NG1HZUZr?=
+ =?utf-8?B?K1Z3Q0Q0NVMwS3BiSWxrWnBZRnJWZisrN1Y0ODl2L2RTL2ZWak9qNFZmSStu?=
+ =?utf-8?B?L1ZacUdJYmZaWHBqai9wQ2tjZUJBM0NYK2RtdWxoR2tFWGh2akcxR1M2WFFM?=
+ =?utf-8?B?TTB3azcxaU9pdTZBSTBKenZ4ZHF5Uk9rOFVqR3VrK1FvK2kxUHpyWXdjNDVM?=
+ =?utf-8?Q?hTzkmls+EkKdcne4R12+WdQqlYTXMlfPpbHCkvhn5n6u?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e3ad970-0e38-4de5-1808-08de1e55b464
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 23:30:58.2939
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZHNC7YtACLDKidghE7TJH4dBSUGWtz1WQhSntJjCA7WwlOVSe167/6sPyEt8TgPZ0WnMpySri/6PaF4N1CVjwA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6824
 
-Hi Jacopo,
+On Wed Oct 29, 2025 at 8:12 AM JST, Alexandre Courbot wrote:
+> Using the `as` operator for integer conversions is discouraged, as it
+> silently strips data if the destination type is smaller than the source.
+> Many such conversions can be replaced with `from`/`into` or (when
+> justified) `try_from`/`try_into`, but these traits cannot unfortunately
+> cover all conversions satisfyingly.
+>
+> There is for instance the case of converting a `usize` to `u64`, which,
+> in the case of the kernel today, is completely lossless but cannot be
+> done because the Rust standard library does not provide a `From`
+> implementation for conversions that are not future-proof.
+>
+> Still, in the kernel it is very practical to be able to perform such
+> conversions when they are safe to do for the current build target.
+>
+> This patchset tries to eradicate the use of `as` in nova-core, by using
+> existing means and introducing new ones.
+>
+> The first 4 patches use the already-available `From` and `TryFrom` trait
+> where it is possible or advisable.
+>
+> The fifth patch introduces a new module that proposes conversion
+> functions for those that are infallible under the current build target.
+> This is done through a set of const functions, and the `FromSafeCast`
+> and `IntoSafeCast` extension traits which, as their names lightly
+> suggest, offer conversion for those types on which the `as` operator can
+> be used losslessly.
+>
+> This new module is put to use in the sixth patch.
+>
+> The idea was first suggested by Danilo.
+>
+> As Danilo suggested, this could eventually find its place in the kernel
+> crate if the implementation is deemed to be fit, but for now let's
+> review and let it mature in nova-core.
 
-Thank you for the patch.
-
-On Mon, Oct 20, 2025 at 10:24:53AM +0200, Jacopo Mondi wrote:
-> Convert c3-isp-params.c to use the helpers defined in v4l2-isp.h
-> to perform validation of a ISP parameters buffer.
-
-s/a ISP/an ISP/
-
-> 
-> Reviewed-by: Keke Li <keke.li@amlogic.com>
-> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
->  drivers/media/platform/amlogic/c3/isp/Kconfig      |   1 +
->  .../media/platform/amlogic/c3/isp/c3-isp-params.c  | 124 +++++----------------
->  2 files changed, 27 insertions(+), 98 deletions(-)
-> 
-> diff --git a/drivers/media/platform/amlogic/c3/isp/Kconfig b/drivers/media/platform/amlogic/c3/isp/Kconfig
-> index 02c62a50a5e88eac665e27abf163e5d654faed3f..809208cd7e3aa7ca0821cb07366ec73a47edb278 100644
-> --- a/drivers/media/platform/amlogic/c3/isp/Kconfig
-> +++ b/drivers/media/platform/amlogic/c3/isp/Kconfig
-> @@ -10,6 +10,7 @@ config VIDEO_C3_ISP
->  	select VIDEO_V4L2_SUBDEV_API
->  	select VIDEOBUF2_DMA_CONTIG
->  	select VIDEOBUF2_VMALLOC
-> +	select V4L2_ISP
->  	help
->  	  Video4Linux2 driver for Amlogic C3 ISP pipeline.
->  	  The C3 ISP is used for processing raw images and
-> diff --git a/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
-> index c80667dd766210d2b2e1ee60c8254a5814b9d81b..0e031d64de312cfdf0a52a46f70edbaf07563359 100644
-> --- a/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
-> +++ b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
-> @@ -8,6 +8,7 @@
->  #include <linux/pm_runtime.h>
->  
->  #include <media/v4l2-ioctl.h>
-> +#include <media/v4l2-isp.h>
->  #include <media/v4l2-mc.h>
->  #include <media/videobuf2-vmalloc.h>
->  
-> @@ -51,11 +52,6 @@ union c3_isp_params_block {
->  typedef void (*c3_isp_block_handler)(struct c3_isp_device *isp,
->  				     const union c3_isp_params_block *block);
->  
-> -struct c3_isp_params_handler {
-> -	size_t size;
-> -	c3_isp_block_handler handler;
-> -};
-> -
->  #define to_c3_isp_params_buffer(vbuf) \
->  	container_of(vbuf, struct c3_isp_params_buffer, vb)
->  
-> @@ -523,38 +519,41 @@ static void c3_isp_params_cfg_blc(struct c3_isp_device *isp,
->  				   ISP_TOP_BEO_CTRL_BLC_EN);
->  }
->  
-> -static const struct c3_isp_params_handler c3_isp_params_handlers[] = {
-> +static const c3_isp_block_handler c3_isp_params_handlers[] = {
-> +	[C3_ISP_PARAMS_BLOCK_AWB_GAINS] = c3_isp_params_cfg_awb_gains,
-> +	[C3_ISP_PARAMS_BLOCK_AWB_CONFIG] = c3_isp_params_cfg_awb_config,
-> +	[C3_ISP_PARAMS_BLOCK_AE_CONFIG] = c3_isp_params_cfg_ae_config,
-> +	[C3_ISP_PARAMS_BLOCK_AF_CONFIG] = c3_isp_params_cfg_af_config,
-> +	[C3_ISP_PARAMS_BLOCK_PST_GAMMA] = c3_isp_params_cfg_pst_gamma,
-> +	[C3_ISP_PARAMS_BLOCK_CCM] = c3_isp_params_cfg_ccm,
-> +	[C3_ISP_PARAMS_BLOCK_CSC] = c3_isp_params_cfg_csc,
-> +	[C3_ISP_PARAMS_BLOCK_BLC] = c3_isp_params_cfg_blc,
-> +};
-> +
-> +static const struct v4l2_isp_params_block_info c3_isp_params_blocks_info[] = {
->  	[C3_ISP_PARAMS_BLOCK_AWB_GAINS] = {
->  		.size = sizeof(struct c3_isp_params_awb_gains),
-> -		.handler = c3_isp_params_cfg_awb_gains,
->  	},
->  	[C3_ISP_PARAMS_BLOCK_AWB_CONFIG] = {
->  		.size = sizeof(struct c3_isp_params_awb_config),
-> -		.handler = c3_isp_params_cfg_awb_config,
->  	},
->  	[C3_ISP_PARAMS_BLOCK_AE_CONFIG] = {
->  		.size = sizeof(struct c3_isp_params_ae_config),
-> -		.handler = c3_isp_params_cfg_ae_config,
->  	},
->  	[C3_ISP_PARAMS_BLOCK_AF_CONFIG] = {
->  		.size = sizeof(struct c3_isp_params_af_config),
-> -		.handler = c3_isp_params_cfg_af_config,
->  	},
->  	[C3_ISP_PARAMS_BLOCK_PST_GAMMA] = {
->  		.size = sizeof(struct c3_isp_params_pst_gamma),
-> -		.handler = c3_isp_params_cfg_pst_gamma,
->  	},
->  	[C3_ISP_PARAMS_BLOCK_CCM] = {
->  		.size = sizeof(struct c3_isp_params_ccm),
-> -		.handler = c3_isp_params_cfg_ccm,
->  	},
->  	[C3_ISP_PARAMS_BLOCK_CSC] = {
->  		.size = sizeof(struct c3_isp_params_csc),
-> -		.handler = c3_isp_params_cfg_csc,
->  	},
->  	[C3_ISP_PARAMS_BLOCK_BLC] = {
->  		.size = sizeof(struct c3_isp_params_blc),
-> -		.handler = c3_isp_params_cfg_blc,
->  	},
->  };
-
-Same comment as with 6/8.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
->  
-> @@ -568,14 +567,14 @@ static void c3_isp_params_cfg_blocks(struct c3_isp_params *params)
->  
->  	/* Walk the list of parameter blocks and process them */
->  	while (block_offset < config->data_size) {
-> -		const struct c3_isp_params_handler *block_handler;
->  		const union c3_isp_params_block *block;
-> +		c3_isp_block_handler block_handler;
->  
->  		block = (const union c3_isp_params_block *)
->  			 &config->data[block_offset];
->  
-> -		block_handler = &c3_isp_params_handlers[block->header.type];
-> -		block_handler->handler(params->isp, block);
-> +		block_handler = c3_isp_params_handlers[block->header.type];
-> +		block_handler(params->isp, block);
->  
->  		block_offset += block->header.size;
->  	}
-> @@ -771,26 +770,15 @@ static int c3_isp_params_vb2_buf_prepare(struct vb2_buffer *vb)
->  	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
->  	struct c3_isp_params_buffer *buf = to_c3_isp_params_buffer(vbuf);
->  	struct c3_isp_params *params = vb2_get_drv_priv(vb->vb2_queue);
-> -	struct c3_isp_params_cfg *cfg = buf->cfg;
->  	struct c3_isp_params_cfg *usr_cfg = vb2_plane_vaddr(vb, 0);
->  	size_t payload_size = vb2_get_plane_payload(vb, 0);
-> -	size_t header_size = offsetof(struct c3_isp_params_cfg, data);
-> -	size_t block_offset = 0;
-> -	size_t cfg_size;
-> -
-> -	/* Payload size can't be greater than the destination buffer size */
-> -	if (payload_size > params->vfmt.fmt.meta.buffersize) {
-> -		dev_dbg(params->isp->dev,
-> -			"Payload size is too large: %zu\n", payload_size);
-> -		return -EINVAL;
-> -	}
-> +	struct c3_isp_params_cfg *cfg = buf->cfg;
-> +	int ret;
->  
-> -	/* Payload size can't be smaller than the header size */
-> -	if (payload_size < header_size) {
-> -		dev_dbg(params->isp->dev,
-> -			"Payload size is too small: %zu\n", payload_size);
-> -		return -EINVAL;
-> -	}
-> +	ret = v4l2_isp_params_validate_buffer_size(params->isp->dev, vb,
-> +						   params->vfmt.fmt.meta.buffersize);
-> +	if (ret)
-> +		return ret;
->  
->  	/*
->  	 * Use the internal scratch buffer to avoid userspace modifying
-> @@ -798,70 +786,10 @@ static int c3_isp_params_vb2_buf_prepare(struct vb2_buffer *vb)
->  	 */
->  	memcpy(cfg, usr_cfg, payload_size);
->  
-> -	/* Only v0 is supported at the moment */
-> -	if (cfg->version != C3_ISP_PARAMS_BUFFER_V0) {
-> -		dev_dbg(params->isp->dev,
-> -			"Invalid params buffer version: %u\n", cfg->version);
-> -		return -EINVAL;
-> -	}
-> -
-> -	/* Validate the size reported in the parameter buffer header */
-> -	cfg_size = header_size + cfg->data_size;
-> -	if (cfg_size != payload_size) {
-> -		dev_dbg(params->isp->dev,
-> -			"Data size %zu and payload size %zu are different\n",
-> -			cfg_size, payload_size);
-> -		return -EINVAL;
-> -	}
-> -
-> -	/* Walk the list of parameter blocks and validate them */
-> -	cfg_size = cfg->data_size;
-> -	while (cfg_size >= sizeof(struct c3_isp_params_block_header)) {
-> -		const struct c3_isp_params_block_header *block;
-> -		const struct c3_isp_params_handler *handler;
-> -
-> -		block = (struct c3_isp_params_block_header *)
-> -			&cfg->data[block_offset];
-> -
-> -		if (block->type >= ARRAY_SIZE(c3_isp_params_handlers)) {
-> -			dev_dbg(params->isp->dev,
-> -				"Invalid params block type\n");
-> -			return -EINVAL;
-> -		}
-> -
-> -		if (block->size > cfg_size) {
-> -			dev_dbg(params->isp->dev,
-> -				"Block size is greater than cfg size\n");
-> -			return -EINVAL;
-> -		}
-> -
-> -		if ((block->flags & (C3_ISP_PARAMS_BLOCK_FL_ENABLE |
-> -				     C3_ISP_PARAMS_BLOCK_FL_DISABLE)) ==
-> -		    (C3_ISP_PARAMS_BLOCK_FL_ENABLE |
-> -		     C3_ISP_PARAMS_BLOCK_FL_DISABLE)) {
-> -			dev_dbg(params->isp->dev,
-> -				"Invalid parameters block flags\n");
-> -			return -EINVAL;
-> -		}
-> -
-> -		handler = &c3_isp_params_handlers[block->type];
-> -		if (block->size != handler->size) {
-> -			dev_dbg(params->isp->dev,
-> -				"Invalid params block size\n");
-> -			return -EINVAL;
-> -		}
-> -
-> -		block_offset += block->size;
-> -		cfg_size -= block->size;
-> -	}
-> -
-> -	if (cfg_size) {
-> -		dev_dbg(params->isp->dev,
-> -			"Unexpected data after the params buffer end\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	return 0;
-> +	return v4l2_isp_params_validate_buffer(params->isp->dev, vb,
-> +					(struct v4l2_isp_params_buffer *)cfg,
-> +					c3_isp_params_blocks_info,
-> +					ARRAY_SIZE(c3_isp_params_blocks_info));
->  }
->  
->  static int c3_isp_params_vb2_buf_init(struct vb2_buffer *vb)
-
--- 
-Regards,
-
-Laurent Pinchart
+All patches pushed to drm-rust-next, thanks!
 
