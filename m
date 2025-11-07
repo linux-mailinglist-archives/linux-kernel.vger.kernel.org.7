@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-890411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD422C3FFEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:53:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ABA2C40003
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28ECF1886DDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:54:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DAC7189B415
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCC32BDC35;
-	Fri,  7 Nov 2025 12:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795402D248B;
+	Fri,  7 Nov 2025 12:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S68T9SXm"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GBVsjpWT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3F42BDC02
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 12:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675AD288C3D;
+	Fri,  7 Nov 2025 12:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762520014; cv=none; b=SB27Xkt7CLJnG/jx3qJf1wiAT2J+X9+bW/9Y+/B9hFkBvM34H/SAnpBuBWG5745L6BQUOFDiNBseOZz500qpXAIxRWaDNioUvKmHFpkk71Cwioo5EhANRBG4IHETBE6Czqrp5BrmvNcbhsvXk/LKvKqmnDkqIAtpkaSuJhfEa7A=
+	t=1762520057; cv=none; b=kSVh58iGkEzaNNwSOL9Kg4oGBCAp+BBKcUd6fi0gEzT0SwDlUpR2MXzSZJHjip67bWf8L8RudwrpHVCmRbk7JUFcdSRbZzN3I03BA0+sQDH1yLZBa3079/NSaVppMmNyirM5cgDi3qVYFJPBZHa47R8o1w2AznJkQZs4YxB1VUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762520014; c=relaxed/simple;
-	bh=q9zI20imONFJWSU4sMqHKWlXJSXQoDdH1EfvCNGQg/E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iZBveyl9i3unoKhk2fonTUcxS2GOfcFrNxWJLouC1NGZT58aGNnyS7pKRzlMeJAF8BZtw8OGDJNb7FU26qSnhdZ1m5qfxHe3eWuHJvVYK6vsWIT0jVhxYRE9V7ELq+pAWWMV7t023owE/g/UdkZTmgr++ErhVYMCwvc8zuF6rWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S68T9SXm; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-429c7869704so577601f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 04:53:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762520011; x=1763124811; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eDlLuo6EJhgu850xqILbV5yNVdL4jCP+h+T3UXQIKHE=;
-        b=S68T9SXmVY0ln1g/kWggfz5YwBIwm/E3kWiNJ3xffzI4ujRuZTwf41a18I0Kh6mYez
-         VeD0zV/XfUPKRGIUkWwAGvtM4pE+HYl++zu75eExnP/jHDiI2urxsMNXCu3z18D0I3Xx
-         ue5/eVZ8z8cg4Cq2J1HLTjvhEyy3uEekR6iOsVeegLUcmqpYVFUk9I7eRiIbzWLj+MYg
-         eR0NTZrbwV945q7OfDoi2HezQ/yCXaO1/9mwaFKXVqTjUdhuK/THoz66J7pZ9lPDLEGE
-         lToNDMku/Y8DEWGnoj+rtmsHJZHuXio6tSpXOOq+CiM6+lVMwO6hEjt5pGJSX0AKnmQ0
-         TZJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762520011; x=1763124811;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=eDlLuo6EJhgu850xqILbV5yNVdL4jCP+h+T3UXQIKHE=;
-        b=w/+gFdX+H0VxfAM5iTr8ZQcLjbwCKm4eqn8XeTigvl9xAogi/sWtLfFdgKuYEn5eBk
-         lglkntHz8tGkBjknXVXjw5c/KS6i25YX3mTpQ2c6r921vs+fkmKPJ/Adu56ngNJsijMa
-         Egw3tfwHKhlzvcjzpvkcQ7hpUYj2KqMNkPYWfwlxxzzLBvUrvsrp8xZzS3oIh6ae1mxZ
-         s8ho+grYFoiMi2FdSPA0N1cd77po+H1rOhIKVZS6Z/dbUtUJ9Tf1er4NHWkN6ZNg8ks4
-         UrUiRpG2hq+hmO/hhVuQY4khyK0d3igz51x/TQN+L5KC8ifGm2xoyUjCl5vnEzBXepCS
-         F8fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWbujo8nod53ErHyQD3ozwk8tsm7izcjzkHfo5p7HksnCB3qZNe/E0fuOlCb1ExyEDsKpzdRG1q+9Mp/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyAU1BVB7COsBa9MoZ2qkeNuHJHMpMdR9lwF/+ZBJuZx6JQRMI
-	uJLWMvXbdrTa6wWQWXTEwp4dVLIXB++UaNrbJ0JkWZN5s8bLHizBb01+ioeKykO3uqLWviCFyFE
-	AAw3NKLC/Judg2qZIZG35TviBT4HDJsQ=
-X-Gm-Gg: ASbGncvY3FKwTEnkkAN2vHnZ28AoaWbXqHxYxwgnhxGThZrn7SUCHuhpKyNXGnzP5hX
-	JIwNkZu6PINiCDGsZ1oThEla7L+jbkRaXTz5vqxfc/Tq4mTzw4SHmHss0UQKu/dBDT8cm3sVt1i
-	W3iuia8JlBx31wXEUzJtQk6Ywv/S9/CUwTAErv53Zi4/YlF8jBdqDdgDN/PeTMm6uqVjCAUMBp/
-	fAmPWC8xeBix/juOelT7o29i1acH3DBTYgGju+qMJSMEXx5D+uo1RfMrj4s
-X-Google-Smtp-Source: AGHT+IG6yhUODYDBTk6Lrrh+pvVh+60eCzotcas99DYAECkpeF5Yh70dbD/G1MsyWPValtLFpDByjP9p/OlZ21Ke3K4=
-X-Received: by 2002:a05:6000:26cb:b0:426:ee08:8ea9 with SMTP id
- ffacd0b85a97d-42ae5ae8df3mr2412551f8f.44.1762520011307; Fri, 07 Nov 2025
- 04:53:31 -0800 (PST)
+	s=arc-20240116; t=1762520057; c=relaxed/simple;
+	bh=k9EEVswMFqJRut4kEtTYv6JgOZb2c0VDD1VhmxGG4sw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NtZ1glNgoD1exZQ+yHxrKkI3b5xaV/Xx6YheasRpRWay3giaElPXyoK13ROT8UYjsW+7V6Bvh+1SPyzpM1JqSKKm+oxQbQxzaZltSnWfG4JSIbgp3F7Fvy7TBJGQ9i9hbiRpLfj+gwlm9NJOAvYK7AzNBaEGVxA/SeYBrrd6Cfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GBVsjpWT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A7CVKV5584077;
+	Fri, 7 Nov 2025 12:54:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=z5p/PsAfcCWJ8LmVCSFKaFCCjmN+3ZdiDc1
+	RIjcMzEg=; b=GBVsjpWTh4Qcd53QS//ljZwGtyTZNhgAE6pgBmDZa63d3rIBiXd
+	VSkTCKorQ1ZuPWZjcrRFd4Mt757n1zciNTeGZqstwYEfsIE3t3Du2MOSGgyPbcxI
+	wZtdSQSGWZTCJ6cXUGDXqik+oh3ajodMoxcdvrvOp5YC+nToU+c45xC+mMKRaJTX
+	DMuA6cCX6dUvlQHtmmL4C3x5c9P77KwsaGWyFNrz5TMPT6vO0Tfzi9PhqdLR1+ks
+	r9yoATmmAtDq4TfKANp8TFjUzJFQPPiiLRYf5hEUxKqoVCk3Sm+OuubHgw3lL264
+	kYJORgxp+ghn5spZwqv5Akd+0KGhZm+bRjQ==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8yktk3ks-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 12:54:12 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7CsAZx015077;
+	Fri, 7 Nov 2025 12:54:10 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 4a5b9n7hj0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 12:54:10 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A7Cs9DH015068;
+	Fri, 7 Nov 2025 12:54:09 GMT
+Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 5A7Cs9rL015064
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 12:54:09 +0000
+Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
+	id 9E93E22CA9; Fri,  7 Nov 2025 20:54:07 +0800 (CST)
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+To: dmitry.baryshkov@oss.qualcomm.com, marcel@holtmann.org,
+        luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org, stable@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_chejiang@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>
+Subject: [PATCH v2 0/1] Bluetooth: btusb: add new custom firmwares
+Date: Fri,  7 Nov 2025 20:54:04 +0800
+Message-Id: <20251107125405.1632663-1-quic_shuaz@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106200309.1096131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ee6a79ae-4857-44e4-b8e9-29cdd80d828f@lunn.ch> <CA+V-a8vFEHr+3yR7=JAki3YDe==dAUv3m4PrD-nWhVg8hXgJcQ@mail.gmail.com>
- <aQ3mAhaZQa8_99Ah@shell.armlinux.org.uk>
-In-Reply-To: <aQ3mAhaZQa8_99Ah@shell.armlinux.org.uk>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 7 Nov 2025 12:53:04 +0000
-X-Gm-Features: AWmQ_bkc5ZITwYwrhmHJntA_VXUXf0KaiPeDByFVYyJYDlHbx_XXuZrOAdVOFD4
-Message-ID: <CA+V-a8tswHeQfhPweDf=EeJ-pt=tzSHkevvOLdRuvkzyotnnhw@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: phy: mscc: Add support for PHY LEDs on VSC8541
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Vladimir Oltean <vladimir.oltean@nxp.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=bOgb4f+Z c=1 sm=1 tr=0 ts=690debf4 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=kD27Cg0GW0L-Zw9_jswA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: AP_Jpci6ruY239yw0sq2f2ZW-PHuuHfn
+X-Proofpoint-GUID: AP_Jpci6ruY239yw0sq2f2ZW-PHuuHfn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDEwNSBTYWx0ZWRfX4C6V52howYkW
+ vEHpgARcw6d55Uvjpgf1ZzAFlk/iIaf+faRH5irejgmU9sw1tjy8U/DQx4mRVZGXcWeqSNDfKYq
+ 7p7Jmt4lfWoQsroBcMN/+YVaQD6Aav0JOdUnSplmDNSkvRnvQIClvVkytPFGAw3JaZXhel1OC/Z
+ la484ccRl5+8FSgmRxm3gClMhVsr6ctH0LuHVUvf7w0hv1ChDF/d+jhRyWDWHc6xDrGgcmtbxmJ
+ hHzBVEJ7jk6kRSgS5pxReo+GA0/kHJLKek9ZipV8/7Nb9c5SijqpPJ9LEyq2DvrA3nNhVIpgZ3o
+ DGA4rF+E8340//2+AGNShG9TXGp0UVOs8k3ZwAR0WgTfamhr+ziLUvoalLrWFdo37rQ6qBTAIa0
+ tGnrTl8jwxARWR2zEoi+9LrGSookOw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015
+ impostorscore=0 malwarescore=0 phishscore=0 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070105
 
-Hi Russell,
+add new custom firmwares
 
-Thank you for the review.
+Please refer to the link for information about the qcs2066 folder.
 
-On Fri, Nov 7, 2025 at 12:28=E2=80=AFPM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
->
-> On Fri, Nov 07, 2025 at 10:34:32AM +0000, Lad, Prabhakar wrote:
-> > On Thu, Nov 6, 2025 at 8:45=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wro=
-te:
-> > > > +static int vsc85xx_led_cntl_set_lock_unlock(struct phy_device *phy=
-dev,
-> > > > +                                         u8 led_num,
-> > > > +                                         u8 mode, bool lock)
-> > > >  {
-> > > >       int rc;
-> > > >       u16 reg_val;
-> > > >
-> > > > -     mutex_lock(&phydev->lock);
-> > > > +     if (lock)
-> > > > +             mutex_lock(&phydev->lock);
-> > > >       reg_val =3D phy_read(phydev, MSCC_PHY_LED_MODE_SEL);
-> > > >       reg_val &=3D ~LED_MODE_SEL_MASK(led_num);
-> > > >       reg_val |=3D LED_MODE_SEL(led_num, (u16)mode);
-> > > >       rc =3D phy_write(phydev, MSCC_PHY_LED_MODE_SEL, reg_val);
-> > > > -     mutex_unlock(&phydev->lock);
-> > > > +     if (lock)
-> > > > +             mutex_unlock(&phydev->lock);
->
-> If you used the provided helpers rather than open-coding a read-modify-
-> write, then you wouldn't even need this lock. Please use phy_modify().
->
-Ok, I will drop this implementation and also drop the locks from
-vsc85xx_led_cntl_set() and switch to phy_modify.
+a3f9f6dd047a ("Bluetooth: btusb: QCA: Support downloading custom-made firmwares")
 
-Cheers,
-Prabhakar
+Changes for v2
+- Add a more detailed description of the patch.
+- remove CC stable
+- V1 link
+  https://lore.kernel.org/all/20251107021345.2759890-1-quic_shuaz@quicinc.com/
+
+Shuai Zhang (1):
+  Bluetooth: btusb: add new custom firmwares
+
+ drivers/bluetooth/btusb.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+-- 
+2.34.1
+
 
