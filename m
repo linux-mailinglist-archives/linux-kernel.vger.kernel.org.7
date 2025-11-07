@@ -1,131 +1,151 @@
-Return-Path: <linux-kernel+bounces-890691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99CF5C40AE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:52:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87F2C40AE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:53:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406093B94B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:52:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EB421883F2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EB232D0FD;
-	Fri,  7 Nov 2025 15:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D55184540;
+	Fri,  7 Nov 2025 15:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="JprloZHT"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NBXE5J5h"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7372F9DAF;
-	Fri,  7 Nov 2025 15:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C8929A9C9
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762530737; cv=none; b=P7kiSA0jEJ3nMVhcOCZpWUUE/ttIOtVv1jw6L9uv6tG6LPhJoRV5djRrB8APoHHkzkvE1C4wyE5SzfUhU/7D1bDZtoXgRq9xLUaFPK6qunVK8Ko6bBZTlunivkKCamdc+CbgpztBs0MK4BvU+Q3JFo+JnLAyDL/JUqOtQjXgUEA=
+	t=1762530808; cv=none; b=ZVcGSo46wMyUgdawINCKJin1urrNv5lqEwxqz2TGGwEmijZh1mrsI4BDPkBiPiNOh2HzH61IPCNVEjaWBgOFtjCQfeiih0JFRrP1HeJrYzsnAr0SykBk+j4aOada0v2vy2KEHGQ4+LHB0nLXe50a3ImZJdFSitq1umtkmevY4wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762530737; c=relaxed/simple;
-	bh=VfqiXVnXHsweixRlwrrt3c7A8wz6SyMBDBW8vTeLdVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=li98oWPhLrEHzhQpgkqO1K9dZXZjXpFzhx41nNeA3bLJDWqY90OUd8jAeRA/9vFaTdPJIYIxfbFH3vh/aEECTrSmvFVlFxqTyhzQnN+0i7qRBbXr+VAoWVKenUcMimExrZH4N1BR9fLKoVRZBQEScgySbjE1WiDg8vTY7+jLXE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=JprloZHT; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 5A60C1FB9A;
-	Fri,  7 Nov 2025 16:52:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1762530725;
-	bh=c3Vswpijn/fHcEJQO2VeGXkaT5nX/VaBE7KE0Jscnuo=; h=From:To:Subject;
-	b=JprloZHT7cxN62EH9YL28KwyMi9OOie063qzgXzS36wpar25HfqyxOOX+bR3nMlLi
-	 g6K7xSOrvpSaxY0kCOl1mkA+3OaI3bBxmF75qVYIKSbRMKXPZTLXHk5SnfNEgnMMhm
-	 oMKpvibF5zXZqXEaRZwsyRxtveBhFHMJ1ZeRQGCNHoNm6QnRczJd1QB67uWhavVr4x
-	 jr3kRrML1EuSIJ3NE1PCs6cvxQU5+W97VcivX17XzEqfsEuejwlQy3h1T16mo1Or/s
-	 RK5lOTyQ4eg6lxWqljiMOSwSRD9WFy8HV0151pUYcp5gMfhLIf3fOsVi6/ScDUXKng
-	 lvvLxEB8VOjUw==
-Date: Fri, 7 Nov 2025 16:52:01 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ARM: dts: imx: move nand related property under
- nand@0
-Message-ID: <20251107155201.GA119737@francesco-nb>
-References: <20251104-gpmi_dts-v1-0-886865393d0f@nxp.com>
- <20251104-gpmi_dts-v1-3-886865393d0f@nxp.com>
- <20251105115538.GA17091@francesco-nb>
- <aQttQb5GesjUtBw6@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1762530808; c=relaxed/simple;
+	bh=Z/HW6Gd2eaFdwzc3o2Q/3/qDsl9IgmaCSmXGYi3MYJ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qHGrFj3GkIXqvhEIDylExnOYpdkVxReiT5/IEgOFneAJKll2uIze88//DmkysDj6qoWUF3NeEGLkHmERTBLcW/cCJY6RgftIaNX+Mm81+emawGH8k7uEV+NCFc+pgNAe21Mv7j5AAtYDXLuepadiTcWVfC0oo9pNWMDCt27PtuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NBXE5J5h; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-429c19b5de4so711895f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:53:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762530804; x=1763135604; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=17YEM9k7IvljCCDwPTNBWkpc9TMBSZ/b/zjRccaW+FU=;
+        b=NBXE5J5hfHWccO7T+0GV9FjwJoQ/vVSzP9NWz2LeGOerYqpB61Zz04YZGniwOgo7Ci
+         EGxi87SNGyny7zGNUUlJriEcj2235NZXFilgUOSJqb1vPcjslqR++aLeHWj1OFaPQIRP
+         nXBBFWOmrnv/XxMbkprqeFQTGuj/3qRxT6ljlG2cTPwCzIfJXeC9zh8HeHEAtNIboDKg
+         +jDMmm0wUmGNmmIyIUTrF+Ok4V9b3t3giOs2ziNx+3U00jldlcsExydVG8kQLueUW0ME
+         bjLl+NKe8iWjGO82AFsVFoX0Mw9RElO3wqUkIgLvIvyY/oZyDuPjv1c5RurxKqtQpXCA
+         lnkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762530804; x=1763135604;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=17YEM9k7IvljCCDwPTNBWkpc9TMBSZ/b/zjRccaW+FU=;
+        b=gfvN8WqYAuf2bwNviiJztt5oBVREBKfQGjCJDGxv626UJU3Ajd1/4iUPwtsBD3cC4s
+         TPDsDW09NS+e8BRvO8yZW2Hrg4hZ+VY8posj1yuHRcWHD7Tb4Wd+WDi7wRSgTwOI8lC6
+         VVrwWYat+G4UTh8VcDH3lq/Bl9ZrJvzRDLcFrggqRO2aMVU8Y4tNuP6KJ3mNAR1Om+I2
+         sVWhb+yu2hJOPhg6P/c6XvOMCzJC6zl9rqOi9cCjU752rvl/UgrAG+TFemZ3yuQi+yoY
+         F0DORj1QulH1/ASgqdVGDcQoabKlmFYNYcEryRJCv459R2aYBaT98jUY7EiEw+99iMpe
+         KidA==
+X-Gm-Message-State: AOJu0Ywkg1tg/PGjo3HhsyFX7kPwvoPrQ4rqWqav2JTupWs3aPsFUZje
+	mJLmpjndW3KiuHes5nakyWBJvDdUhhtkB15XvZ+dtmRMnodyJPxOT6dtWZ4X5PapyEUWmGXB2kr
+	OLdUF
+X-Gm-Gg: ASbGnct0KksduTByhDU0sFO1xoyZk4qMbQ/+nA0MBLuI+2zBQwU2FNRhdMbLGcwVcgL
+	BXn8Ib1HKLuei6BwVdW4/HeXhVHXSgT6FOBkQDqbYLWtMmp/1fuiKu/SFrSNz5NCFPEiyeJIhXo
+	ttDITqV4NFegrsdJWvMNNI6h/gP+1gFFLomTDxPfCDd4CW6FEaO+eYjJ96wF7rTPBRlouX+LsUQ
+	iMGMlGLbePXcoEKGQ9d+RjYlth7t7UxVQ0il8/G5g4vS6qpm/55YQJ9K3fhv+LWzHvKNBO8DoSu
+	q0Cxhs2w55PwhKa1tLtS3tcBE3+Iv9zHa2QpTMtd9nNd/bx3NKl85adLsK8J5sAejf9Xo62Hz2y
+	Eq8QRqStqpMh5XRnr/FQljOL7AzAOMzoNHUfMXRjbNr4tP+baBFAkzthm5d6peqGpdfO6efpW2l
+	2d7THqaw+/cdiU/VF2La4Dk1UP
+X-Google-Smtp-Source: AGHT+IEokRi0h80eOyFa6VsIO+fcg0fMne03igfDqDKxQ9pp+KJhIGPFNTKOsC+yFoOa5eXicCpnrQ==
+X-Received: by 2002:a05:6000:4026:b0:429:ee71:2ff0 with SMTP id ffacd0b85a97d-42ae5aeff0dmr3333462f8f.53.1762530804428;
+        Fri, 07 Nov 2025 07:53:24 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675cbefsm6256121f8f.27.2025.11.07.07.53.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 07:53:24 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Jack Wang <jinpu.wang@cloud.ionos.com>
+Subject: [PATCH] scsi: pm80xx: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 16:52:57 +0100
+Message-ID: <20251107155257.316728-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQttQb5GesjUtBw6@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Frank,
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
 
-On Wed, Nov 05, 2025 at 10:29:05AM -0500, Frank Li wrote:
-> On Wed, Nov 05, 2025 at 12:55:38PM +0100, Francesco Dolcini wrote:
-> > On Tue, Nov 04, 2025 at 05:27:14PM -0500, Frank Li wrote:
-> > > Add child node nand@0 and move NAND related property under it to align
-> > > modern nand-controller.yaml.
-> > >
-> > > Fix below CHECK_DTBS warnings:
-> > >   arch/arm/boot/dts/nxp/imx/imx6ull-colibri-aster.dtb: nand-controller@1806000 (fsl,imx6q-gpmi-nand): Unevaluated properties are not allowed ('nand-ecc-mode', 'nand-ecc-step-size', 'nand-ecc-strength', 'nand-on-flash-bbt' were unexpected)
-> > >         from schema $id: http://devicetree.org/schemas/mtd/gpmi-nand.yaml#
-> > >
-> > > Since 2019 year, commit
-> > > (212e496935929 dt-bindings: mtd: Add YAML schemas for the generic NAND options)
-> > > NAND related property is preferred located under nand@<n> even though only
-> > > one NAND chip supported.
-> > >
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > >  arch/arm/boot/dts/nxp/imx/imx6-logicpd-som.dtsi           |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx6qdl-icore.dtsi              |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-pfla02.dtsi      |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-phycore-som.dtsi |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx6qdl-skov-cpu.dtsi           |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx6qdl-tx6.dtsi                |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx6ul-geam.dts                 |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx6ul-isiot.dtsi               |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx6ul-phytec-phycore-som.dtsi  |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi               |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx6ull-colibri.dtsi            | 12 ++++++++----
-> > >  arch/arm/boot/dts/nxp/imx/imx6ull-engicam-microgea.dtsi   | 12 ++++++++----
-> > >  arch/arm/boot/dts/nxp/imx/imx6ull-myir-mys-6ulx.dtsi      |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts          |  6 +++++-
-> > >  arch/arm/boot/dts/nxp/imx/imx7-colibri.dtsi               |  8 ++++++--
-> > >  15 files changed, 82 insertions(+), 22 deletions(-)
-> > >
-> >
-> > Was any of these changes tested? Is the driver able to cope with the
-> > binding change?
-> 
-> I have not board to do direct test. This format is used at imx8 platform,
-> which use the same gpmi driver.
-> 
-> This properties are parsed at mtd common part
-> drivers/mtd/nand/raw/nand_base.c
-> 
-> If you have one of above board to test it, it will be appericated.
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
-I did a minimal boot test, on colibri-imx6ull, and the board was booting
-fine, with Linux 6.18.0-rc4 and this patch applied.
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
 
-I am wondering if there is any impact with the bootloader, this DT is
-used as it is also in U-Boot, and there the NAND driver is for sure
-different. Any comment on this? I was not able to test this combination.
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
 
-Francesco
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
+This  adds a new WQ_PERCPU flag to explicitly request to alloc_workqueue()
+to be per-cpu when WQ_UNBOUND has not been specified.
+
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
+
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/scsi/pm8001/pm8001_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/pm8001/pm8001_init.c b/drivers/scsi/pm8001/pm8001_init.c
+index 8ff4b89ff81e..9acca83d6958 100644
+--- a/drivers/scsi/pm8001/pm8001_init.c
++++ b/drivers/scsi/pm8001/pm8001_init.c
+@@ -1534,7 +1534,7 @@ static int __init pm8001_init(void)
+ 	if (pm8001_use_tasklet && !pm8001_use_msix)
+ 		pm8001_use_tasklet = false;
+ 
+-	pm8001_wq = alloc_workqueue("pm80xx", 0, 0);
++	pm8001_wq = alloc_workqueue("pm80xx", WQ_PERCPU, 0);
+ 	if (!pm8001_wq)
+ 		goto err;
+ 
+-- 
+2.51.1
 
 
