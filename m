@@ -1,95 +1,95 @@
-Return-Path: <linux-kernel+bounces-890938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB985C416AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:17:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E5CC416C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D7D3B34A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:17:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 915394F5E03
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2B13009CB;
-	Fri,  7 Nov 2025 19:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CEF24E4BD;
+	Fri,  7 Nov 2025 19:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Ksn7BBLa"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="A+/37SaD"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D06301492
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C2F2E54D3
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762543013; cv=none; b=btaYzFaFmnqc9OJsQ6LVD9x0DLLwssCIS3fxDwjqe1u6iwJ6rz0F1hVS4kR0oUt3secTBA/3dIaY7i1BLKoHKB9l96uzwM51pi0w4MK3yW9tp61ujpRNrr3x10Xo6b6GJk2YftcuU+autQMw5fi4uyNPCilA4g8zwxeTMe08GXY=
+	t=1762543072; cv=none; b=Rqp+CaNU7BEChwwHVQpebWofIAV2SuCiiTnWUGgIC52nkDyzgeCprvIXG1b+sssOiLGWf9CckEGiP6D4warvH20TgId2FWdJEQx4WYNBjNqrgxThjpThKjRGDxNqwq0rEJrf6d51T+0Aqff0iS9XDty3XXwX47EF6xQrupT1dtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762543013; c=relaxed/simple;
-	bh=VOdPNLzT1eZ1NEB09xe83HjehWmI3iXz/M9xFWPtPBQ=;
+	s=arc-20240116; t=1762543072; c=relaxed/simple;
+	bh=kqQePQXMwvwZBckBBeg2xvqfNdu+QHLHTTyd85vE6ko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i6QFDfUjodvYrZevOpJXu6T/grW9r+o+CcauN2Snw5+Ckt5b+kIkBwrheMoOHs2YIr0XQExnqw/UKCkZIoKJjBji1yYpwsO7arPAhB2u6EuVHeQWb042HKb4yeOOCVVLSOMVHfzxmwbKN0G4WeARkqcrM8Tg15clvmFSne8w7Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Ksn7BBLa; arc=none smtp.client-ip=209.85.219.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=F/9zQU3n7CeBBWQQ0UBN8y1RV24ArTdRNy9MCD+e7OY8XFHTC8m95IPY+PQ7/O/bd0tc+MTEucrDJpS9hzgmTgnbEBWdwqN/FBFvAkJIW2uTgjhofiXmv+hFCHZFe++BwyezeG+xtrvYDmJJJKawSmxa2pm2nGm9ahh1v99Z6Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=A+/37SaD; arc=none smtp.client-ip=209.85.160.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-87dfd3cfafbso10416676d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:16:49 -0800 (PST)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4ed83ad277fso6144081cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:17:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1762543008; x=1763147808; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1762543058; x=1763147858; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uecw5GuJ6xKMR/52t0KK0j/pRrv42h6jWvdNot4nYIc=;
-        b=Ksn7BBLaoKIGTzBg892R6V+pwjUJqZcA0k73BXvCKD2YpdtItXOamwKrf55QqoDDIb
-         J/lEvZBmacJTDZGzF8UmCWwf+XX7YlMe3Nks3jle0YiAWAoLycIfjl64TFIPCc8CiJTN
-         IAeNuCqIxOLuWHmXKmvZ40nNmbY0Bjgwe8yyke7GVJHVs/oau4BKQkw+IcxLcZZBGaWz
-         xoVSeq2Xv52A/TRCZiFi+9bm25CuAlFaly2elsQKTk2ku1Ra9yESWvq+NCmYCyoEIFFq
-         dMJky1NXNlEk/0teQ9sRAC0wnGqWANdu2YtozK8aeDRmoZOZ5j1F2avVO01y9kE1rCA+
-         fyag==
+        bh=J7IeMTE39/0sPdj0LGfZb2pj+ljiHr2LudKfvtkV0AQ=;
+        b=A+/37SaD2WdxDy1F/jENqnvvKWKwstpxa7KrPTS5rQIlS28JRLYE1L9F4oGIBIF+Mx
+         GIzpDDjEpEMK/ckZVzMxSUp2xCcHihqncI/BmLu92arn7SILDAzfYIeVf99foPkSRKTQ
+         H4tJ7MNEIKEt6YPMmmG0fzDVxE0zgDVG1lC4GpHBFFPQpwYKC6Mv0Ys3LsZNv2xl0zEb
+         k6uwAUv+QNxEaOOSJ881HJ+Kpy1e7JtqgEjRWgKqDRiwXULTuq1mnZ+3OyzB7BfuAlXO
+         C9aMS4oIs7RojjtQdwWwZyKhJKjw63d0Pjy5N6V+6XkxNosXkT6uUmnqyjgMAlGdAHjQ
+         8Wdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762543008; x=1763147808;
+        d=1e100.net; s=20230601; t=1762543058; x=1763147858;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uecw5GuJ6xKMR/52t0KK0j/pRrv42h6jWvdNot4nYIc=;
-        b=WjsEPLL3OmFVG1RN5ZZAdcpEHYB7q7PT1C0PBddptezOqt888/sJrj5PCL+VyBr+te
-         xtqmshKmZoWc+TKgucO/bLoUZi/AT7wwe6SV6anw5t3/QOmh0m7wC/hAFCQc+U0auvQR
-         wh5aSCNUwTVOQIRUcDUE0Wr/9vjzZDZD4GgXrEXts0cc+2QCZ1UVqsQIP/4kZOTWeBkM
-         i+tqwh3yQHFYAB5jCgGwF/RarnChb5UqNKIU6PvFPh4qpQx2biau1v0olRdmT9MZa2OA
-         LLJICdhFPGPntUht0+4S7stA2ZY63oUWkMc23Vd7WlwSJyNd3zfS7QJ3bxoWIMtZamMG
-         mTRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVu+2iSI3WERq1Lts408xIBtT+6WidyfWvnfcwKj5mZqfWuN2oR6A7+1dADjOcSV39weB4hjglnrfQsClU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuxmMRc0V7hPBJbfrdc4pCaEpFkPI+Xl8UKnFGhxeUWEBPF7kB
-	ccjtWwZxe+ESBdZVCIVE0bdPRAtMsPlPdeUjeWEWkvgZENqTcS9dPufQsNsxs66+2sU=
-X-Gm-Gg: ASbGnctkkQjOQn1bSQd/0cYia2KgqFWnwYZGPGOWLkG1+3QLE3++7hdbSohV5Yv9qO9
-	znSh+qSg7mj30sK/nFIazB5SOWSO5Mfb94yy2GAdmscUk+FBh9mRXdDcCwBkWamHkIj67zs5RTZ
-	ybaP41dYcHPlQROWvfx3Gmv8FFzndA/FMYARFNXMZYJQgN093Uwu9bYsoLFafGToalz9MNMyoly
-	KF9fk6A4dIb7JuFBQ9+OHaEUrVJMlzk7j/LjPcBIuQDL/whrQHEDE+A41eX3FYKHpHnJRKQj2VT
-	AOLWnAcZoSib5C9GUTcT/zKNQ/3NqX1oJY1N0UKj5VDkiC/k8FGoFJMpJPib6NpfNEFcDVxCfTf
-	Jh29og3tfqN7AZolwHwJNqUphrzDj1AoYstHHGYwG1men/LHc84/GHiVHxMGIV8ReRhjeN+MbHT
-	InzA+C2bveliYrdeVvjSNZn0oQEox8j1RJstXLd3gfvrV8Jw==
-X-Google-Smtp-Source: AGHT+IFuKO535u2kiOv/DIfBewHOhom5AEVBkvPZuA5a9xJpNKB2nCPzp+ZUXTed1YvzsoYZhtcP/A==
-X-Received: by 2002:ad4:5c66:0:b0:880:224e:aab1 with SMTP id 6a1803df08f44-8823871af07mr2487486d6.66.1762543007674;
-        Fri, 07 Nov 2025 11:16:47 -0800 (PST)
+        bh=J7IeMTE39/0sPdj0LGfZb2pj+ljiHr2LudKfvtkV0AQ=;
+        b=PhpUgBd9GzU45ijxy/nkoUNc+ssHZcHrUTigZj11hdLN95o/tGN5NhqeHxflmZ67A/
+         Qyc15mUv6X50+iGs6TGi+ANg4T1Nn967rT6Aw56bH+N/nb72Fvo5XyBd2V42NvtxjK71
+         GSz0g7wrDnnIAt+RsqFtpbl/gipEzR2G4CzTMFLiGmapT3L2J/B4tHzKv1BX5DwXrCbn
+         Lq9NSXz7VRKyPZD8KcHU7H5uLUm/UbUwQZ8B046SRuJTu1msxYMYW077KG+a9EN2KbTG
+         96fU+ffJRwLuktaLaUrQxOmwok+PXrNmwzEHKhLrh6Fdth9PM8BIadX7Up15PnMsxPe4
+         KJXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjaKWHmVDLHIjgdIRjb3xAfCYs2VBz3Q3FhcRGruT/4zXwlj49owLonNCoqxQix41quOhQ9uiBrHbYJ+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHzQjEt6ISMk7bbmS+gnQ18znlvRvtvbfivHwQdsOWSZjzG++9
+	WW5hv3FXkADGZ0K/hgX06BELQopDqFws7vhSV/skRBXTebOCV/AIU2HXP7ib4aTAKHU=
+X-Gm-Gg: ASbGncto8noMK8IwbQTattzLlDm7sNYD9d+X0yEQO4h3RC1SHqVZ4CDRO2jvMywMUEO
+	d8jU+Y6tMrZpMXiZjfUlbEMSIlR2yz3IGQs3j+FL4+Di+TPawC3KUn8BNM+bAONIRZRbNyRIcqL
+	eAGXvo3kzxbI9dVqIdvWGcd6C9FkVGxeJ+bSTgknBLbeKgN6EvZVQcl4vrUgQPCYX98ctu51s0N
+	T3I5cRpmn3k+PRnuV27BfCgwRPeb9XpgfttMfqs4XMm8NqzMkxfz8P5GhzF1I632BvvFj9Oxzwz
+	stLUhMshP3FfH0sCwI90j8vjNBOA8DrC4rKxPv+g4sDEuBGMP1bJvSzorbEHa+XaP9OIPRVnAS4
+	oGhMG5WmCE4I2TxH7aA0LNjAWByAp8+HohIKIHZhGZWqAgKsye5XhJzxUBPAdx0xHS+KVsrCr6V
+	/CnLx0gbW7xGvym1Y1GvIFfSuG46idGV6YVjEi1nFdVs/MQw==
+X-Google-Smtp-Source: AGHT+IFnYi9VbOBN0jRzWxp4PFJXSJ0IGLgqXdTaco6sUWpHKooODG97tKga7Flr7a24rBW8jpPYAw==
+X-Received: by 2002:a05:622a:446:b0:4e8:a73c:87d8 with SMTP id d75a77b69052e-4eda4fd4c16mr2409081cf.71.1762543057925;
+        Fri, 07 Nov 2025 11:17:37 -0800 (PST)
 Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8823896a8d9sm593576d6.17.2025.11.07.11.16.47
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2355c206fsm456371985a.5.2025.11.07.11.17.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 11:16:47 -0800 (PST)
+        Fri, 07 Nov 2025 11:17:37 -0800 (PST)
 Received: from jgg by wakko with local (Exim 4.97)
 	(envelope-from <jgg@ziepe.ca>)
-	id 1vHRx0-00000008LqN-30pE;
-	Fri, 07 Nov 2025 15:16:46 -0400
-Date: Fri, 7 Nov 2025 15:16:46 -0400
+	id 1vHRxo-00000008Lr2-49qA;
+	Fri, 07 Nov 2025 15:17:36 -0400
+Date: Fri, 7 Nov 2025 15:17:36 -0400
 From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Ryan Huang <tzukui@google.com>
-Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>, Nicolin Chen <nicolinc@nvidia.com>,
-	Pranjal Shrivastava <praan@google.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Daniel Mentz <danielmentz@google.com>
-Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix error check in
- arm_smmu_alloc_cd_tables
-Message-ID: <20251107191646.GB1859178@ziepe.ca>
-References: <20251107190917.2858684-1-tzukui@google.com>
+To: Vlad Dumitrescu <vdumitrescu@nvidia.com>
+Cc: Kriish Sharma <kriish.sharma2006@gmail.com>,
+	Leon Romanovsky <leon@kernel.org>, Parav Pandit <parav@nvidia.com>,
+	Edward Srouji <edwards@nvidia.com>, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
+Subject: Re: [PATCH] RDMA/core: Fix uninitialized gid in
+ ib_nl_process_good_ip_rsep()
+Message-ID: <20251107191736.GC1859178@ziepe.ca>
+References: <20251107041002.2091584-1-kriish.sharma2006@gmail.com>
+ <20251107153733.GA1859178@ziepe.ca>
+ <c9c8b90f-4edb-47da-8ad0-94f9e58d71e0@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,26 +98,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251107190917.2858684-1-tzukui@google.com>
+In-Reply-To: <c9c8b90f-4edb-47da-8ad0-94f9e58d71e0@nvidia.com>
 
-On Fri, Nov 07, 2025 at 11:09:17AM -0800, Ryan Huang wrote:
-> In arm_smmu_alloc_cd_tables(), the error check following the
-> dma_alloc_coherent() for cd_table->l2.l1tab incorrectly tests
-> cd_table->l2.l2ptrs.
+On Fri, Nov 07, 2025 at 11:11:40AM -0800, Vlad Dumitrescu wrote:
+> On 11/7/25 07:37, Jason Gunthorpe wrote: 
+> > The fix to whatever this is should be in ib_nl_is_good_ip_resp().
 > 
-> This means an allocation failure for l1tab goes undetected, causing
-> the function to return 0 (success) erroneously.
+> nla_parse_deprecated returns success if attrs are missing?
 > 
-> Correct the check to test cd_table->l2.l1tab.
-> 
-> Fixes: e3b1be2e73db ("iommu/arm-smmu-v3: Reorganize struct arm_smmu_ctx_desc_cfg")
-> Signed-off-by: Daniel Mentz <danielmentz@google.com>
-> Signed-off-by: Ryan Huang <tzukui@google.com>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Other callers also check for their expected attrs to be present in tb,
+> after checking nla_parse_deprecated()'s return code.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+That sounds like the trouble then, the check for tb presence should be
+added to the ib_nl_is_good_ip_resp..
 
 Jason
 
