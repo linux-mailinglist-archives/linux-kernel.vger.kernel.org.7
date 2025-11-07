@@ -1,240 +1,137 @@
-Return-Path: <linux-kernel+bounces-890027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBF0C3F181
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:12:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B17FC3F19C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76730188DA21
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:12:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 365154ECE70
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493153191B5;
-	Fri,  7 Nov 2025 09:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5C8316918;
+	Fri,  7 Nov 2025 09:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WmHJDP2l"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMUuKhdl"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C433191AA
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C8F316907
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762506734; cv=none; b=C3zhDmG2QPXCfgpu91BEDdWpApNUi75i8LJln38bSWHnKd1/etRvi5uT2q2CzhUx6FvQAOALrSIFDAi1AWGJK3p7imFd5ldtVkJ4ySEstO1j5wsqGfNgEvfvEVtAprVEUTGSXuBDfWaLAW6dcAaudi/tsvXFU6diFrWpFaGioDM=
+	t=1762506728; cv=none; b=TWp0+dPIYbafi0RMRP85sGtgPY8NqbdeyFJw63BkIN4KXJeE1ifnqLU5e31pVeyPS7pFoZ1ZegtSMzqK+g4rxxJ7mEXuVpiOsSya7P7yYzkltYVZDUgOHQHs68OxElcvf/fbY8P0/mdqYrvYFoUgKpRJb8CJVzYSQJgKmBc9zUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762506734; c=relaxed/simple;
-	bh=TNmjgWT8K07xW+rkVyxtkNOCHhbFvM5lquafFX2QXz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xz2wuHu6Px/FfFBm+BC9we7o1CEm3XsXh4DMtMt2omP00iQV6FRAmUigOISeFcHdyElIaTxiaFIAgg2SsBjdyb3tB3phyXeia4OAlM0CTAZz5mjZdYKE00fbET1NeubRD6vA44vtdtoMDdPoHQMzmlAK1Scq7+HPZ3+ysbnSQaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WmHJDP2l; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7ade456b6abso462524b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:12:12 -0800 (PST)
+	s=arc-20240116; t=1762506728; c=relaxed/simple;
+	bh=n1f++fTTN0ZZCsYTORS918MUIyFdFN5BIHm5HBjy9Wc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=baJBOV1iYqGr2JxhLuZMmGSUR8u3nyalPciGGUR2hB32jhRRsHIbGC8DOS/oapaJzXlO7VTI5r8sQGvv2nrC8G2tCg0tmPQWTODpyxpLvk03aUP3bdEBvaOBoSX773cdOMwDEyHBll864l5DzspwFy3F6JorOlS570yNVjRxXC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMUuKhdl; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-429b9b6ce96so309489f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:12:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762506732; x=1763111532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5b+M3zzopCvof55wzjaKXg+MrS7xrBcOB8Vyij7yJyg=;
-        b=WmHJDP2lxMEULUIBA7G4RBKU/wYPQFGUqdSAMj7+toe51jplE3kfh7bpsWr8QxTuDT
-         j4pXp4xQ3h7A5pQlI4zwdPdGHSGL18esO6wGGI4G7R9rxfBf51E2yy/uYd20m1idk/1f
-         2kFGGgtT379aefDdSPW8LMpQwCOXPOQx4DgqBLKwjPYABv2RBOdu3oY56AyqIRE1ZCcT
-         56UG5cT6ehCFLWFYTcS12bBCNgaCe+gt2kO79thuoI8z3pEnd5g1sMfKmyxrZwQNc+yX
-         nR/YWB+XK0fpYy+D3lgRIr7zvKWnZqQeqeR6m6TGBFY8TWiELxvvozdYu1lTkmEY3nQO
-         uv0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762506732; x=1763111532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=gmail.com; s=20230601; t=1762506725; x=1763111525; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=5b+M3zzopCvof55wzjaKXg+MrS7xrBcOB8Vyij7yJyg=;
-        b=qkN5F1LwJAgp0O+1/p5MvhqkRV26SJP87f42QxIIQnB68gJMMXCFVKNZWn1cicSaPf
-         THgL9/MFdSC0iL69rO3lkDWspRznGWzI4KEqYEMyhJYE9ypEnaW/enknAIKZ2eVuPpFE
-         UHn1By1ewvV6ZFvYbIyS6knBZjQ/9Az4Qckpw4UY6tS4+EdkqoTOMfB7wgGs8ETg0TzF
-         G3JWgafw7/MDdIDLlxId5NgqUixmk90C1WkfOLYFvK7gRMP2l8ZXTi4cN6VRqoEOhGIT
-         CXQFOTP+YWYknh0F/nIsWFdYbEBJwyACBk2uD2aePwB+su3FmTSdW62oZME4fi+1O+Lw
-         QL8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUxp5tzksPA9rOvl7b5SX10wbYbNce0SEsGrinO6HA21yV0cTyL6I2ZjhCrryY1k9mv8qRjm0p51GZNHa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl2SqwStBd41YBhbfubdySSIm7J6xhm7jaOHS4a+WRQCqwBD48
-	gstSOhBdkWbc4SrLH8DKGzW5hrYf3+qLwEJ0T8Wb1BPQ+4iXbLsPGgQfEDOIXcT6/a4D8q/Q3q1
-	9JiXMDKPPpAm6aMyCBs81KqPb5Ujqfi9OKRXPkjVG
-X-Gm-Gg: ASbGnctL3p4BPQc+Xk9SxndTEM/slqyGlHF8Je/lNjoJaPWoEXu/K3xoonQ0EL9/cp9
-	i93wNRhih8csFiLCU49TsJIdxDxDgJIW9X0VKvCpzL1QB7aYpgOYTU7K8kI4OcUGkAxqwb7o9bd
-	at3eqZeQEtnspniGrYiCfra/B6kyN7aWyVInl88APDaF+H1yiDI4sUbob9EvtrYZlpeMrUF5/RD
-	Bv2LkPwPBWpfOYpBxO0nmF/UZmRauI0KNgae5N34/LkJTQMnuu+Yu1mPWuc98KRfTwQbaw=
-X-Google-Smtp-Source: AGHT+IHWENirlvcfA41rvumMc/AZyRmx9tfkjQkwROpRjDKeutH5HgnBVz2Cj4Uw9rrJPEek8xG2BFZODl9IVdlK3Gc=
-X-Received: by 2002:a17:903:388b:b0:28e:ccd7:dd61 with SMTP id
- d9443c01a7336-297c04a11e6mr33698895ad.57.1762506731353; Fri, 07 Nov 2025
- 01:12:11 -0800 (PST)
+        bh=vfu6hWVOdhakKToS/FAXRGWAJMpHX+j6Qi6pqG2zebo=;
+        b=WMUuKhdlsy0PkqDsktR9psNthmPQ9JXeuKWJdqVcWCzClx+p7FVvJM5XD7osQlSZ0j
+         aZlDtlx/IB7GKzZniJ/epN5dc8QNa/oe4q2WgoTaWOmWXH5dkk7aNsfeFZ9Bxj9WyQaq
+         z0RKNQk+VILLSD1f7kmxss05INZ2/0lPY90oq0JN8WM3jqmHAG4JuiQZ+2xec4kqboz1
+         ACKjNvvR3wPK5C37Dk+yNZk3aVCKAC96DvZsfUXF7xwigyUoA+1c1R8eFuXo2RQHU1qr
+         Q/tjtiwiYX/XhQoyqHatxaHKXqBjjb5wLg+EJqE5xPUjycAKTs3P1Z5giI/4gUNMlc7I
+         67rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762506725; x=1763111525;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vfu6hWVOdhakKToS/FAXRGWAJMpHX+j6Qi6pqG2zebo=;
+        b=UkLtwBS4pgnB+NNupc3dcAFND5EthfSX8ZpNL5MVPwkKEmKHiu/n1fMCqtV518U4FA
+         nTXBrICGpQd1CnzMUhSV9CG/9VmPH3Nekbdwdu81WBpigtQE3VpY+xEj606F3fWxwPgA
+         wucprW9tVz6AEkQ5P7YtS2j+LD+twzxGjpA9nGZRT2K0EBTAHYFAek3vCqBPr+Q+KYqP
+         hvMWRlNbWf7AywAkXnuk8HNn9TScZKekAruRFGdrVRqN//9snYmna4osTfh3V4OuKNKa
+         4NdF45imFY5kuWwPFpT1S96UNRxvHN5lZgGQtiN0Nse2VURWHtYsf0UsjBc7jGbL/cw9
+         bJAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXoeTvt+R+aUTZsjiDu62TObNsZ7JFqQUD3o2mb3FlYgwxipS2BKVuvJose0cThG+gNrp6ML2qwcppoyT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxfy8RZ2UYGJWwLcApdng+gXS+TZFuL0Qm5p/sD3UfrhdsC3C9s
+	vuwQRb0VCkVZY/k49VGB6ZQefPbl1iJ25h2BASYjXe1lM5u41lncfkzA
+X-Gm-Gg: ASbGncsV8FijK7kna69HmRgXcufThIyktyWjhyASG6MATRD4utkpIMb+t3IdIUWaIRX
+	/NzXEqQjXgm+UENOupjJlrcbOtLSDXElKPT0bbPDbin/eQKM2eL3C3PTUFbiBUyo8BgRcsP3fG4
+	Cemq0odYOYOuxjEq4krYKTpjq9q7l3387iipqPjCc4tPfSIWrb63MtFY5xcMRQd5c1vxB4bPmQq
+	NUdS9H62FEWNvpJykHSbWHhfDJQjQLatovFk++oQ6NIWOjQd8hPiRkNSk7wV881dYCkYFSmkOkJ
+	R8+5KbKYA3XIt35FIv/mU5Xa8cZ/i41YFr4T9TQrURDg/i5/5/RteBZkD8kL/A7b0xCWBfVSDHR
+	b9Y1BRjryIICTtkQK6lgzKydJINKTXf8G2W4YvqVVDdJFmQ4tehpX7uEhFRqyRP+epOuTd00qPA
+	7I+d2y/UqnC1NsfNScYq0DzWt5vhqZhFF7H4pPvtQWVENuHvaQLg==
+X-Google-Smtp-Source: AGHT+IEEP0U5dTddGyGuUJGvkU9GrhTnDh8Aic0GqAcQP/ISEpYqab5xsiyolY/2271V8nj7hJgVHQ==
+X-Received: by 2002:a05:6000:26d0:b0:3e7:6418:247b with SMTP id ffacd0b85a97d-42ae58b2cc0mr1921056f8f.10.1762506724699;
+        Fri, 07 Nov 2025 01:12:04 -0800 (PST)
+Received: from [192.168.3.141] (p4ff1feb5.dip0.t-ipconnect.de. [79.241.254.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675c9fdsm4089150f8f.28.2025.11.07.01.12.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Nov 2025 01:12:04 -0800 (PST)
+Message-ID: <0e616478-96d4-41e9-b6c1-fa641c36fba3@gmail.com>
+Date: Fri, 7 Nov 2025 10:12:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017233459.2409975-1-royluo@google.com> <20251017233459.2409975-3-royluo@google.com>
- <20251030011659.bmgdry3wwf4kgjwv@synopsys.com> <CA+zupgxPYXCqew1548uwGx7=9u0b5oCwaXfP7F=FmqMR7a5bDw@mail.gmail.com>
- <20251104020713.orax7rk6qhko5p4m@synopsys.com> <CA+zupgy4qO9X=R7KqEru5kr7tYhgdw=9Z70sLNKj5DTS_J7KZw@mail.gmail.com>
- <20251106003830.v22dnomurtqmqc2y@synopsys.com> <CA+zupgzNRG3vAukQe89bTJ_EaC2A=o+_pY6QoVOdRfXu8BJOAg@mail.gmail.com>
- <20251106234839.kezpk2okjhkajqp3@synopsys.com>
-In-Reply-To: <20251106234839.kezpk2okjhkajqp3@synopsys.com>
-From: Roy Luo <royluo@google.com>
-Date: Fri, 7 Nov 2025 17:11:34 +0800
-X-Gm-Features: AWmQ_blqfpqntmKv9_TI2d4T2dFjIvyvpvXv_YU9eXLSRtz2Ua5X5nKU0YFMoFo
-Message-ID: <CA+zupgzxjEXJaVJLj=O1MirV6Y-o5uSWPQyQ26kjXO=gfv+W0g@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: madvise(MADV_COLLAPSE) fails with EINVAL on dirty file-backed
+ text pages
+To: "Garg, Shivank" <shivankg@amd.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Vlastimil Babka <vbabka@suse.cz>,
+ Jann Horn <jannh@google.com>, zokeefe@google.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com>
+ <8bc796e2-f652-4c12-a347-7b778ae7f899@arm.com>
+ <ozkb6mcxuymlz7tm4vcnqf266gd4ruiik2zal2koo5ffprgxfk@35godtyix2cf>
+ <43a8c8a6-388b-4c73-9a62-ee57dfb9ba5a@lucifer.local>
+ <77a54f63-f5da-42a2-b24d-5c8a0f41d1e6@gmail.com>
+ <0b84865c-5b23-4be6-9902-af9d5e63c182@amd.com>
+From: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>
+Content-Language: en-US
+In-Reply-To: <0b84865c-5b23-4be6-9902-af9d5e63c182@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 7, 2025 at 7:48=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@synopsys.=
-com> wrote:
->
-> On Thu, Nov 06, 2025, Roy Luo wrote:
-> > On Thu, Nov 6, 2025 at 8:38=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@synop=
-sys.com> wrote:
-> > >
-> > > On Tue, Nov 04, 2025, Roy Luo wrote:
-> > > > On Tue, Nov 4, 2025 at 10:07=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@=
-synopsys.com> wrote:
-> > > > >
-> > > > > On Fri, Oct 31, 2025, Roy Luo wrote:
-> > > > > > On Wed, Oct 29, 2025 at 6:35=E2=80=AFPM Thinh Nguyen <Thinh.Ngu=
-yen@synopsys.com> wrote:
-> > > > >
-> > > > > In dwc3_google_suspend(), looks like is_hibernation is set after =
-you
-> > > > > enable pme irq, probably very unlikely, but can the interrupt be
-> > > > > asserted then? If so, will there be another interrupt asserted?
-> > > > > Otherwise the current logic may think it was spurious interrupt a=
- miss
-> > > > > an event.
-> > > >
-> > > > The pme interrupt can only be asserted after controller is in
-> > > > hibernation, that is, after the usb psw dom is turned off and
-> > > > the dwc3_google_usb_psw_pd_notifier() callback is
-> > > > completed. So no, the interrupt won't fire before is_hibernation
-> > > > is set.
-> > >
-> > > Thanks for the confirmation.
-> > >
-> > >
-> > > <snip>
-> > >
-> > >
-> > > > > > >
-> > > > > > > I'm still trying to wrap my head around how usb_top_pd, usb_p=
-sw_pd, and
-> > > > > > > the google->dev are working together in the glue here, partic=
-ularly why
-> > > > > > > usb_top_pd is needed. It seems usb_top_pd shouldn't be handle=
-d by this
-> > > > > > > glued? Do you do anything except setting wakeup-capable?
-> > > > > > >
-> > > > > > > BR,
-> > > > > > > Thinh
-> > > > > >
-> > > > > > To provide more context, the underlying usb power domain has 3 =
-power
-> > > > > > states: Full Power, Power Gated, Off. The usb_top_pd and usb_ps=
-w_pd
-> > > > > > are the logical power domains to represent the 3 power states.
-> > > > > > - Full Power:     usb_psw_pd ON,   usb_top_p ON.
-> > > > > > - Power Gated: usb_psw_pd OFF, usb_top_p ON.
-> > > > > > - Off:                 usb_psw_pd OFF, usb_top_p OFF.
-> > > > > >
-> > > > > > To enter hibernation, the usb power domain must enter Power Gat=
-ed
-> > > > > > state. To achieve this, this glue driver holds a handle to usb_=
-top_pd
-> > > > > > and would cast a vote to keep it ON when attempting to enter
-> > > > > > hibernation. In addition, the usb_psw_pd runtime PM is directly=
- tied
-> > > > > > to google->dev so that usb_psw_pd would be OFF when google->dev
-> > > > > > suspends. Together, the usb power domain would reach Power Gate=
-d
-> > > > > > state when device suspends.
-> > > > > >
-> > > > > > I hope this information helps.
-> > > > > >
-> > > > >
-> > > > > Yes. This is very helpful.
-> > > > >
-> > > > > So, while the glue driver is bound, usb_top_pd is always ON? Even=
- when
-> > > > > xhci driver is not bound or when in device mode?
-> > > >
-> > > > Since usb_top_pd is the parent power domain of usb_psw_pd, and
-> > > > usb_psw_pd RPM is directly tied to glue device, usb_top_pd would
-> > > > be ON when glue device is active (because usb_psw_pd is ON)
-> > > > and would be OFF when glue device suspends in non-hibernation
-> > > > scenarios (because usb_psw_pd is OFF). In hibernation scenario,
-> > > > a vote is casted for usb_top_pd to keep it on even when the
-> > > > glue device is suspended and usb_psw_pd is OFF.
-> > > >
-> > > > To your question, usb_top_pd is not always ON because it would be
-> > > > turned off when the glue device suspends in non-hibernation scenari=
-o.
-> > > > When in device mode and provided dwc3 dev is active, usb_top_pd
-> > > > would be ON because its child usb_psw_pd is ON.
-> > > >
-> > >
-> > > Thanks for the clarification and bearing with my questions.
-> > >
-> > > If there's no device connected, do you role-switch back to default mo=
-de?
-> > > Often I see that the role-switch is defaulted to peripheral and switc=
-h
-> > > to default mode if there's no connection.
-> >
-> > Yes, the default mode would be peripheral and it would switch
-> > to peripheral mode if there's no connection.
-> >
-> > >
-> > > I want to check the case where the device may wakeup by connection bu=
-t
-> > > cannot because it is not in host mode. Do you have a separate
-> > > TCPC/connector that can wakeup the system on attachment?
-> >
-> > Yes, there's a separate TCPC/connector to trigger a role
-> > switch when there's an incoming connection.
-> >
->
-> This addressed my concerns. My other comments are minor nits.
->
-> You can include this on your next submission:
->
-> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
->
-> Thanks,
-> Thinh
 
-Thinh,
+> 
+> 5. Yes, I'm calling madvise(MADV_COLLAPSE) on the text portion of the executable, using the address
+>     range obtained from /proc/self/maps. IIUC, this should benefit applications by reducing ITLB pressure.
+> 
+> I agree with the suggestions to either Return EAGAIN instead of EINVAL or At minimum, document the
+> EINVAL return for dirty pages. I'm happy to work on a patch.
 
-Thanks for the review, appreciate it!
-I'd like to give you a heads up on a change I'm going to make
-in the next version. Per Krzysztof's suggestion in [1], I'm making
-a register region that's shared between the controller and the
-PHY a syscon node. The impact to this patch is that mmio
-space "host_cfg" and "usbint_cfg" would be accessed through
-syscon API instead, but there won't be any functional change.
+Of course, we could detect that we are in MADV_COLLAPSE and simply writeback ourselves. After all,
+user space asked for a collapse, and it's not khugepaged that will simple revisit it later.
 
-[1] https://lore.kernel.org/linux-phy/89733ddf-8af3-42d0-b6e5-20b7a4ef588c@=
-kernel.org/
+I did something similar in
 
-Regards,
-Roy Luo
+commit ab73b29efd36f8916c6cc9954e912c4723c9a1b0
+Author: David Hildenbrand <david@redhat.com>
+Date:   Fri May 16 14:39:46 2025 +0200
+
+     s390/uv: Improve splitting of large folios that cannot be split while dirty
+     
+     Currently, starting a PV VM on an iomap-based filesystem with large
+     folio support, such as XFS, will not work. We'll be stuck in
+     unpack_one()->gmap_make_secure(), because we can't seem to make progress
+     splitting the large folio.
+
+Where I effectively use filemap_write_and_wait_range().
+
+It could be used early to writeback the whole range to collapse once, possibly.
 
