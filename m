@@ -1,222 +1,256 @@
-Return-Path: <linux-kernel+bounces-890523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31DADC4040F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:06:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D6AC40418
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:07:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AEA254F1216
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D17DA1888CCE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABFB322C8A;
-	Fri,  7 Nov 2025 14:05:30 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF430325737;
+	Fri,  7 Nov 2025 14:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bqzVLpgh"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012052.outbound.protection.outlook.com [52.101.48.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2A1320A03
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762524330; cv=none; b=mVCawqlEEx3ffKYaQ2zpMT6NyZU9giqL0rpisKgv2X5wXNCGOhIM68dNzi50upphppTV0uFM02oFnbRZZbWlzmS5My+LNRNtqznfw9CcXFaEgpd8R9dgR4SDc+A5xUaiovkvpaETxbjMdKlZGwC/RJ4Gc3a10pIBLhly60W4THs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762524330; c=relaxed/simple;
-	bh=+eg5rgqvvqQRDh9bSJOkOyHmd669+LeORpwf4MYrJ+Y=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tFva5H8jDzTGgfUx/tLZLlvV6QSESlNyHRjAFAKStSw+Tf+km35fm5en/w7LB1B1QwnJgcYnylvuAbSBdfFZbOd6z92GPPFV9fmN9xtgkJdB7ut33xWu7WNXo7XHEu+61oe/qrmecB6oAd8a8xWlHjuc6lQzsJtzCh+Hp5dSkLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-43328dcdac1so21405905ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:05:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762524327; x=1763129127;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MYkT91vt2XPJFVUyQz2u0UsSW8PzePp2mrpqmJb+mT8=;
-        b=OaDdXfKivF+v0NJEpNIvkqIFOZrDn+SZ7sVE6SXD/stdN/pJCF5P7kVKu9rtiFarWA
-         2opBvmlKOiUjRYa83r8BtpcEHKkK9xNsmMQoNqSClTXZc+8KOy4bJ1U5EecN/DQxKNMN
-         dKtQqIEkFI+sqLMCwuT4KZQRrDiG8S7gfKv+giqcfzPPd/Ayo5jCqDyazq63nWKx7RFG
-         wdYBZtDHtnHenzl0AHDtED+fw9LvCy9PGa8dQC3uFQmOJgIkJsqvt0EhxjYYh9iGh+kJ
-         xPEuZICF34D5SijpYpl1X4SDlZSHDeFa6KatAiyZ460ofoPJkSR7oZ9+X912I90bZba9
-         uPLg==
-X-Gm-Message-State: AOJu0Yw81sfnTnflCNgtg+l1pyhK3tK/Z7MKwz1Lao3F0q293t7bMsOG
-	A8fMl06/hJ64coG49Zt0exxM7K6mDSnRS1BWq3CM+W77DdjVReXeGW4E5d6zhw7f5r+fnZ3Wa9x
-	OYQFqm++vKEVfYCdxS+ph0rmFOYwPPW6Nai9kQhTNYGrD4kmXdkwmJIFHlO72ZA==
-X-Google-Smtp-Source: AGHT+IE/A+Ffp/YzI+RN0H9GaXsH5Nlu8qvIPAVIJbrhc4qF+x+rqqfp1HSDE8Xj7cA4PMjesyU75tlo80aAhovdlFzLFYZ5aUEm
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FF731B118
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762524446; cv=fail; b=O3FHgFOPnNc3v2ktbGsHLXyTq2I320csYAASuNuep4SnDgYvEortb3n7HEAYjbD9OG9WshNZw72GHl9o4Bny+HeZTU0FFeppAVVNmd2ikrsmPOyjHL5A5faom9JK9aH5E5945DuOrF/T4/fdnnf62he6ZQtYJR+MT2PD0PL1C0w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762524446; c=relaxed/simple;
+	bh=Ep9aDrA6RSKkd5OZlYu3J8tdwTcsjee15X81WNHPIZM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OAEn64NU3E6ZV7rM/1wd354NF2sjI3IbZeWXuiRRtiKNybRjCPHu6RnU/AVGShQrM12EC24j0+TuDjKWaKuy1FOg4bjRxYsUB154Y0YQv7xj7IKXqQvyc4md3dRN66h7mkvxjUP1W1L9ztmqNLhx6Naitb5rjLZKTgcLs3FskgE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bqzVLpgh; arc=fail smtp.client-ip=52.101.48.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FeI2LO8NtZcDNFQq2B/AXzG6TSAvXuXQN9142nfAYvKscAVznWvrkDg5oPLmf4R4iGFBgSMBK9CB6k2Tr3bf0P6ZHvaw8j8AGvTzgmChsYfCy7m/gb71a4eqF/CQHZd0T3xhMOxNZ6NjWH0LP5MR493+KQ30L+5MbDpkaP1f2zd5r0L5G0rSMnXBdaTS2JlThxR3F1vdA2eY3LeplzqbkEIHfxe+28XWYGYDIFi3WoQIZsPdJgHHXR65Q8S1EB3iIYMnnZzStoO67IPhAVEuTcsJDEpzC+cVPLHh0+GgOIVwYAxIZoNKat2JuJyTEc09d039qOkf+ODYcbIBVPkPaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7tB9Obc7A6oQNJW0/9KpkbjzZL7nOCQejlkJysmJCQk=;
+ b=KOHbRdx0Aom3CZlxROk4kCR1Ka2RhcqMSqNsXNNcFwWKv/TfYylW2uGQHrG6rOeoHtGzg//F4z/VAOYc0VbOrwyh/KbXxWK3QSk10lp6kz1PVagPrJGJUzsY/V/rz6LxO9iQrrJ1up/9sSB9zONQvDbYXtyCNPHieV4ALXamQNhVuO2APiXl93z9HBxvnT5ga6S5eaWg8IoXnV7j3TmTiILtKTQkOymnxapU0wv3BHmmNQiVoLHtspRs0VEmGp45/j16HpGA4FQZAfiSVn169Hj0ONiBrB+3cDeo2MNtLzDegulWDDGkyYQ+Jf7i0ZjWKRB2E9tUyYHqsqaHKZKqOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7tB9Obc7A6oQNJW0/9KpkbjzZL7nOCQejlkJysmJCQk=;
+ b=bqzVLpgh6Ae1qg47/T88r8PKgPk8lh+XOceSXyK2JV6IvdA87Q9rl/mWVT2gyx4HHcipNvH+Jmz9sL7HeGj3W/KaKKLGcBpor2C1EnBoJEQfr7jPOzajrL/xrXEh2wlFdrrsINuljbXf1QLDzRYiBCNsu0V6qUFnbYl2tmRJ3YY=
+Received: from PH0PR07CA0097.namprd07.prod.outlook.com (2603:10b6:510:4::12)
+ by BN7PPFA8145BD40.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6de) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
+ 2025 14:07:14 +0000
+Received: from CY4PEPF0000EDD3.namprd03.prod.outlook.com
+ (2603:10b6:510:4:cafe::6e) by PH0PR07CA0097.outlook.office365.com
+ (2603:10b6:510:4::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.13 via Frontend Transport; Fri,
+ 7 Nov 2025 14:07:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ CY4PEPF0000EDD3.mail.protection.outlook.com (10.167.241.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 14:07:14 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Fri, 7 Nov
+ 2025 06:07:13 -0800
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 7 Nov
+ 2025 08:07:13 -0600
+Received: from amd.com (10.180.168.240) by satlexmb07.amd.com (10.181.42.216)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17 via Frontend
+ Transport; Fri, 7 Nov 2025 06:07:10 -0800
+Date: Fri, 7 Nov 2025 14:06:59 +0000
+From: Ankit Soni <Ankit.Soni@amd.com>
+To: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+CC: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<suravee.suthikulpanit@amd.com>, <Vasant.Hegde@amd.com>,
+	<Santosh.Shukla@amd.com>
+Subject: Re: [PATCH v4] iommu/amd: Enhance "Completion-wait Time-out" error
+ message
+Message-ID: <mmmsb4pp37slzy65ez4z5i7z342zx3vdxbll5axuio2ugdzzbt@i6yurbrb7k2o>
+References: <20251105080342.820-1-dheerajkumar.srivastava@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdaf:0:b0:433:4fb4:edc9 with SMTP id
- e9e14a558f8ab-4335f3f9656mr50244275ab.11.1762524327513; Fri, 07 Nov 2025
- 06:05:27 -0800 (PST)
-Date: Fri, 07 Nov 2025 06:05:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690dfca7.a70a0220.22f260.004d.GAE@google.com>
-Subject: [syzbot] [lsm?] WARNING in put_cred_rcu
-From: syzbot <syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	luto@kernel.org, peterz@infradead.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251105080342.820-1-dheerajkumar.srivastava@amd.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD3:EE_|BN7PPFA8145BD40:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6ae6a31-4021-40a1-f22b-08de1e06f3dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7E1O0HedS/CffI44DQqaMbVofen+xdT1y4UF/QcS+7qPuDYrJztgpzPUFHLM?=
+ =?us-ascii?Q?uc4bTIgKLHY1U4FIQepRACbtUEOA+bJV/05lyIHs7f7LTL9RGr7pE7VjUvEL?=
+ =?us-ascii?Q?OMtAOsaH73TxDJJMDxCDRw+RmjgiLTwCDEzA59vYjOQgvHOk2B5K0zyqOmfI?=
+ =?us-ascii?Q?8+3bgtGdNiGFNVi/WyTz3atbnlhyyrUeOtNhFTgYphCTZgQ5H8kvxq685WvN?=
+ =?us-ascii?Q?39DGoQNb9QMi48OJlQTpDFUf/8luMox7h24Oe4Ul66vBH/n6kZ+/rfqxdTQ1?=
+ =?us-ascii?Q?4bCBnHVc6nK3LE+weKiSdLqytZ1A2TIsx4rmoU8PfajO+RIQ7ApepeycTa07?=
+ =?us-ascii?Q?C1tKyngwMErKCoq7qQrXo7HiAIv0Lb/g0cpFEYSc6TV5XhpEaMg5hwwUN+v5?=
+ =?us-ascii?Q?HODcRVDAG/i+QTSuHNlM12s3wGdiXJAZZaoX7LdxoWTgQ6+PKDWC9tcelmVY?=
+ =?us-ascii?Q?eIu8OMD5VhVJLOFIrX5GDniO5SCux2TilZYXAgwuI1Z5dSIae8y0xZmE2N1v?=
+ =?us-ascii?Q?DLqajwHzKNyv3XoPu12np6Lf+ft36iU7SZ3OELAMuF6R+WvIYHQCsZiD71S2?=
+ =?us-ascii?Q?7M9oJhVxfsMPinq/oQj3UmGR25osQfqArLsXjGQdJL9tJF8DEP62xNO5n40q?=
+ =?us-ascii?Q?qSGT+Sx8cEEnyHMwTPMjPftRu0P47L/iDeKtC1yrE0SNdSO6Yv3JfsEth0qc?=
+ =?us-ascii?Q?QGHUm7TJKMoSrXToLtmvuoG1IUrVwqDm6iL2oe+LYGg9KCv+KRSlNoKYSEmz?=
+ =?us-ascii?Q?zSDnXvET6iLGPYKQ8HcpT4eM5f0XCLTCs9ASJYza+qAu4m1o6/3z46U3e+UM?=
+ =?us-ascii?Q?tf8pFLMj8D+Qnm8gNn8s9eyrUZ74xqW3Z064VhBGnNVVhygXLlJSwxe3mPmT?=
+ =?us-ascii?Q?ndK58DTZ1neLjmdAm0e6oEJvVa+qMRPAP+XJIpwvn8FkjA+jgyY1XXiTgSKA?=
+ =?us-ascii?Q?SOAKk7OlWZB3qcfjgwiyP28MCbsbPnx9btpokSRRSbyvlTVI5uXONQDLyl6u?=
+ =?us-ascii?Q?q6uN2y7AOj67ePrSxuHQ7HaLOJ3uS0UuO+nfjSMK9WQW5FlcKwDK9S4wQVgR?=
+ =?us-ascii?Q?TKo6pOK81bs8Dui2bCjsKDjUTNQ5QGUhgaqOqYbQWL1KD3yZERDdOQeFqYOa?=
+ =?us-ascii?Q?cStM124CRz9oC5Ywt0G8W+0dz/k8tqxo/p3ZLcq0NAoRURNXcGcyEZXNx+wO?=
+ =?us-ascii?Q?ZPJFmJKMRhSIz0nHQHplki1aup0lgh1Og4MzKovdm/Pu/+vIILIkqld3J94d?=
+ =?us-ascii?Q?x1xWbHKSemu2cV4qgUrVQaB8R/sENTUn3Xq8nZohCCqDrfMVDCrH5nmw2OtO?=
+ =?us-ascii?Q?VDFNZu2vj0FeRu7gVf6ecuxoH/RbOX7I7Vq7ouhBSvAuDwjNCjlBHKF0eUST?=
+ =?us-ascii?Q?TKisxv63erJVi1xe3RtiB9PIO2h/1UpVo9Mb/hTyLRb3O93TcKPuctNcXZPH?=
+ =?us-ascii?Q?FR0cQkc/vABjeHovykTkb6FotxQ+DNXagsShU4G1/PeYVgThc4PXmKkQEeQW?=
+ =?us-ascii?Q?Cki9enZNJjzMPog+ctJfhRXCzEQInUUUL8F9kifeckeu6yiGzZ+QYEzAkK49?=
+ =?us-ascii?Q?tFXghtFxFoPyLJbcvcc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 14:07:14.2285
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6ae6a31-4021-40a1-f22b-08de1e06f3dc
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EDD3.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPFA8145BD40
 
-Hello,
+Hello Dheeraj,
 
-syzbot found the following issue on:
+On Wed, Nov 05, 2025 at 01:33:42PM +0530, Dheeraj Kumar Srivastava wrote:
+> Current IOMMU driver prints "Completion-wait Time-out" error message with
+> insufficient information to further debug the issue.
+> 
+> Enhancing the error message as following:
+> 1. Log IOMMU PCI device ID in the error message.
+> 2. With "amd_iommu_dump=1" kernel command line option, dump entire
+>    command buffer entries including Head and Tail offset.
+> 
+> Dump the entire command buffer only on the first 'Completion-wait Time-out'
+> to avoid dmesg spam.
+> 
+> Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+> ---
+> Changes since v3:
+> -> Dump the entire command buffer only on the first 'Completion-wait Time-out'
+>    when amd_iommu_dump=1, instead of dumping it on every occurrence.
+> 
+>  drivers/iommu/amd/amd_iommu_types.h |  4 ++++
+>  drivers/iommu/amd/iommu.c           | 28 +++++++++++++++++++++++++++-
+>  2 files changed, 31 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
+> index 95f63c5f6159..7576814f944d 100644
+> --- a/drivers/iommu/amd/amd_iommu_types.h
+> +++ b/drivers/iommu/amd/amd_iommu_types.h
+> @@ -247,6 +247,10 @@
+>  #define CMD_BUFFER_ENTRIES 512
+>  #define MMIO_CMD_SIZE_SHIFT 56
+>  #define MMIO_CMD_SIZE_512 (0x9ULL << MMIO_CMD_SIZE_SHIFT)
 
-HEAD commit:    17490bd0527f Add linux-next specific files for 20251104
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16c09bcd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9995c0d2611ab121
-dashboard link: https://syzkaller.appspot.com/bug?extid=553c4078ab14e3cf3358
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1500a532580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12e0a114580000
+It's worth adding comment for MASK 4-18.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a4d318147846/disk-17490bd0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/86641a470170/vmlinux-17490bd0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/35c008a540c8/bzImage-17490bd0.xz
+> +#define MMIO_CMD_HEAD_MASK	GENMASK_ULL(18, 4)
+> +#define MMIO_CMD_BUFFER_HEAD(x) FIELD_GET(MMIO_CMD_HEAD_MASK, (x))
+> +#define MMIO_CMD_TAIL_MASK	GENMASK_ULL(18, 4)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com
+Since HEAD and TAIL masks are same, may be, you can use something like
+MMIO_CMD_HEAD_TAIL_MASK().
 
-------------[ cut here ]------------
-WARNING: ./include/linux/ns_common.h:255 at __ns_ref_put include/linux/ns_common.h:255 [inline], CPU#0: syz.1.27/6120
-WARNING: ./include/linux/ns_common.h:255 at put_user_ns include/linux/user_namespace.h:189 [inline], CPU#0: syz.1.27/6120
-WARNING: ./include/linux/ns_common.h:255 at put_cred_rcu+0x2c5/0x340 kernel/cred.c:61, CPU#0: syz.1.27/6120
-Modules linked in:
-CPU: 0 UID: 0 PID: 6120 Comm: syz.1.27 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__ns_ref_put include/linux/ns_common.h:255 [inline]
-RIP: 0010:put_user_ns include/linux/user_namespace.h:189 [inline]
-RIP: 0010:put_cred_rcu+0x2c5/0x340 kernel/cred.c:61
-Code: 5c 41 5d 41 5e 41 5f 5d e9 b8 41 8d 00 e8 03 77 32 00 4c 89 e7 be 03 00 00 00 e8 d6 19 07 03 e9 b8 fe ff ff e8 ec 76 32 00 90 <0f> 0b 90 eb 9f e8 e1 76 32 00 4c 89 ff be 03 00 00 00 e8 b4 19 07
-RSP: 0018:ffffc90000007ba8 EFLAGS: 00010246
-RAX: ffffffff818ee5a4 RBX: ffff88801c3762a0 RCX: ffff888027350000
-RDX: 0000000000000100 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: 0000000000000004 R08: ffff888073d31eab R09: 1ffff1100e7a63d5
-R10: dffffc0000000000 R11: ffffed100e7a63d6 R12: dffffc0000000000
-R13: ffff88801c376200 R14: ffff888073d31d18 R15: ffff888073d31ea8
-FS:  00007fcce9f9d6c0(0000) GS:ffff888125a92000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005555684fe808 CR3: 000000007ee2c000 CR4: 00000000003526f0
-Call Trace:
- <IRQ>
- rcu_do_batch kernel/rcu/tree.c:2605 [inline]
- rcu_core+0xcab/0x1770 kernel/rcu/tree.c:2861
- handle_softirqs+0x286/0x870 kernel/softirq.c:626
- __do_softirq kernel/softirq.c:660 [inline]
- invoke_softirq kernel/softirq.c:496 [inline]
- __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:727
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:743
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1052
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
-RIP: 0010:lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5872
-Code: 00 00 00 00 9c 8f 44 24 30 f7 44 24 30 00 02 00 00 0f 85 cd 00 00 00 f7 44 24 08 00 02 00 00 74 01 fb 65 48 8b 05 bb 94 1a 11 <48> 3b 44 24 58 0f 85 f2 00 00 00 48 83 c4 60 5b 41 5c 41 5d 41 5e
-RSP: 0018:ffffc90002ec5f58 EFLAGS: 00000206
-RAX: c3b7b02cbda44300 RBX: 0000000000000000 RCX: c3b7b02cbda44300
-RDX: 0000000000000000 RSI: ffffffff8dc69c71 RDI: ffffffff8be0fc60
-RBP: ffffffff817420d5 R08: 0000000000000000 R09: ffffffff817420d5
-R10: ffffc90002ec6118 R11: ffffffff81ad6a10 R12: 0000000000000002
-R13: ffffffff8e33b520 R14: 0000000000000000 R15: 0000000000000246
- rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- rcu_read_lock include/linux/rcupdate.h:867 [inline]
- class_rcu_constructor include/linux/rcupdate.h:1195 [inline]
- unwind_next_frame+0xc2/0x2390 arch/x86/kernel/unwind_orc.c:479
- arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
- save_stack+0xf5/0x1f0 mm/page_owner.c:165
- __set_page_owner+0x8d/0x4c0 mm/page_owner.c:341
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x2365/0x2440 mm/page_alloc.c:3920
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5214
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2479
- folio_alloc_mpol_noprof+0x39/0x70 mm/mempolicy.c:2498
- shmem_alloc_folio mm/shmem.c:1900 [inline]
- shmem_alloc_and_add_folio+0x423/0xf40 mm/shmem.c:1942
- shmem_get_folio_gfp+0x59d/0x1660 mm/shmem.c:2565
- shmem_get_folio mm/shmem.c:2671 [inline]
- shmem_write_begin+0xf7/0x2b0 mm/shmem.c:3320
- generic_perform_write+0x2c5/0x900 mm/filemap.c:4313
- shmem_file_write_iter+0xf8/0x120 mm/shmem.c:3495
- __kernel_write_iter+0x428/0x910 fs/read_write.c:619
- dump_emit_page fs/coredump.c:1298 [inline]
- dump_user_range+0x8a0/0xc90 fs/coredump.c:1372
- elf_core_dump+0x3369/0x3960 fs/binfmt_elf.c:2111
- coredump_write+0x116c/0x1900 fs/coredump.c:1049
- vfs_coredump+0x1db5/0x2a60 fs/coredump.c:1170
- get_signal+0x1108/0x1340 kernel/signal.c:3019
- arch_do_signal_or_restart+0xa0/0x790 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:40 [inline]
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- irqentry_exit_to_user_mode+0x7e/0x170 kernel/entry/common.c:73
- exc_page_fault+0xab/0x100 arch/x86/mm/fault.c:1535
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
-RIP: 0033:0x7fcce918f6d1
-Code: 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 48 3d 01 f0 ff ff 73 01 <c3> 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f
-RSP: 002b:0000000000000010 EFLAGS: 00010217
-RAX: 0000000000000000 RBX: 00007fcce93e5fa0 RCX: 00007fcce918f6c9
-RDX: 0000000000000000 RSI: 0000000000000010 RDI: 498144ee5f62e049
-RBP: 00007fcce9211f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-R13: 00007fcce93e6038 R14: 00007fcce93e5fa0 R15: 00007ffd4dc9bfc8
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	00 00                	add    %al,(%rax)
-   4:	9c                   	pushf
-   5:	8f 44 24 30          	pop    0x30(%rsp)
-   9:	f7 44 24 30 00 02 00 	testl  $0x200,0x30(%rsp)
-  10:	00
-  11:	0f 85 cd 00 00 00    	jne    0xe4
-  17:	f7 44 24 08 00 02 00 	testl  $0x200,0x8(%rsp)
-  1e:	00
-  1f:	74 01                	je     0x22
-  21:	fb                   	sti
-  22:	65 48 8b 05 bb 94 1a 	mov    %gs:0x111a94bb(%rip),%rax        # 0x111a94e5
-  29:	11
-* 2a:	48 3b 44 24 58       	cmp    0x58(%rsp),%rax <-- trapping instruction
-  2f:	0f 85 f2 00 00 00    	jne    0x127
-  35:	48 83 c4 60          	add    $0x60,%rsp
-  39:	5b                   	pop    %rbx
-  3a:	41 5c                	pop    %r12
-  3c:	41 5d                	pop    %r13
-  3e:	41 5e                	pop    %r14
+> +#define MMIO_CMD_BUFFER_TAIL(x) FIELD_GET(MMIO_CMD_TAIL_MASK, (x))
+>  
+>  /* constants for event buffer handling */
+>  #define EVT_BUFFER_SIZE		8192 /* 512 entries */
+> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+> index eb348c63a8d0..abce078d2323 100644
+> --- a/drivers/iommu/amd/iommu.c
+> +++ b/drivers/iommu/amd/iommu.c
+> @@ -1156,6 +1156,25 @@ irqreturn_t amd_iommu_int_handler(int irq, void *data)
+>   *
+>   ****************************************************************************/
+>  
+> +static void dump_command_buffer(struct amd_iommu *iommu)
+> +{
+> +	struct iommu_cmd *cmd;
+> +	int head, tail, i;
 
+Since readl returns u32, prefer u32 for head/tail to avoid any surprises
+or sign-ext issues.
+and similarly use %u in pr_err() below.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> +
+> +	head = readl(iommu->mmio_base + MMIO_CMD_HEAD_OFFSET);
+> +	tail = readl(iommu->mmio_base + MMIO_CMD_TAIL_OFFSET);
+> +
+> +	pr_err("CMD Buffer head=%d tail=%d\n", (int)(MMIO_CMD_BUFFER_HEAD(head)),
+> +	       (int)(MMIO_CMD_BUFFER_TAIL(tail)));
+> +
+> +	for (i = 0; i < CMD_BUFFER_ENTRIES; i++) {
+> +		cmd = (struct iommu_cmd *)(iommu->cmd_buf + i * sizeof(*cmd));
+> +		pr_err("%3d: %08x %08x %08x %08x\n", i, cmd->data[0], cmd->data[1], cmd->data[2],
+> +		       cmd->data[3]);
+> +	}
+> +}
+> +
+> +
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Remove extra line.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best,
+Ankit
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>  static int wait_on_sem(struct amd_iommu *iommu, u64 data)
+>  {
+>  	int i = 0;
+> @@ -1166,7 +1185,14 @@ static int wait_on_sem(struct amd_iommu *iommu, u64 data)
+>  	}
+>  
+>  	if (i == LOOP_TIMEOUT) {
+> -		pr_alert("Completion-Wait loop timed out\n");
+> +
+> +		pr_alert("IOMMU %04x:%02x:%02x.%01x: Completion-Wait loop timed out\n",
+> +			 iommu->pci_seg->id, PCI_BUS_NUM(iommu->devid),
+> +			 PCI_SLOT(iommu->devid), PCI_FUNC(iommu->devid));
+> +
+> +		if (amd_iommu_dump)
+> +			DO_ONCE_LITE(dump_command_buffer, iommu);
+> +
+>  		return -EIO;
+>  	}
+>  
+> -- 
+> 2.25.1
+> 
 
