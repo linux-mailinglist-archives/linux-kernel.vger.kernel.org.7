@@ -1,216 +1,132 @@
-Return-Path: <linux-kernel+bounces-890700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A5DC40B19
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:55:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC66BC40B1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96F494F37E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:55:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B70418824F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC56F32F741;
-	Fri,  7 Nov 2025 15:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB18623506F;
+	Fri,  7 Nov 2025 15:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wcv9rb6T"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="QDhG0AYy"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B271732ED45
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696D132E73D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762530876; cv=none; b=FBZjol5yFHJDkkAcQCC91VoHK7BChaJoPsKGSk6jXveP8Wju9HcYmKYTa7IisTIvsKnyg3DWgG+BSNUoAZ42SoSK2Jl9R+tBySipOObo6Vei+BQfgEMVH+DnUHhwHAzgmwPopTK7aWfhTy0FSRYP/kj1oOGX/hP5VeQTWQSidOc=
+	t=1762530902; cv=none; b=SmE3FgMXezkVYoXeBeghTby57qJ03zvQC4a6OagW/s67B/LIWuSv8AOWa+Wvn58zjiZhHhxenNyv7uoI4uQC1O1tW/C8o9AtfLf2kl4/Vq3PdJI0JMgjyeb1TnThaEdYb0LcdVJ/EOne3dbmjGmWqq7JIySVreM3Qpnyh6KA5HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762530876; c=relaxed/simple;
-	bh=EGnBT7eq4xDsLWoMBKHX6mL+kag/LZD0AS27uXDXkfo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mQcoMf1garLuBO0YuT9FWnAdXdKHlyUt1KEPLinOEdIA6inH8RjbGyNZhNoEE3sLtGkcDYpTk8W1vMrNL4zU0JV8qYfNcwc0OhjQOUKleOzkGQZXGM3mSE6exzPdSX8GZal7xM+fBctk4CQqV2bwZy05KKEohAeeuWP/bOZyvv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wcv9rb6T; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4721b4f3afbso5154955e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:54:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762530873; x=1763135673; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k6QqLCiZ3bKYilApTrBVoLgHK6pPaQj/ENLeWCSsRM0=;
-        b=wcv9rb6TSzfzBFLWqmLSaJH42J/xQ4AcXQjsJeJmPZ0+fBvDwOz4cg+ls6IUKzZuLm
-         3MCHUUjO9lMwtvsbwE11cIrQqRuhRWV8k1nTJRnN6lYn130rabjqPnqLgnGMQfGu35AE
-         iWWCRZkDp1q5iD2cFoyXAGkBVaT7kYl7URfXOEyyC4lSCqkiIXbos+EvnRyAXDxkOb2u
-         YuftwD8m3y8bGRE5ybGDioDINhMzYNoso6/qD+98XyAryyUxRTr918wsBji8/feYSaXW
-         YpTYjVKBLK0KxQ6Hbq38TB3uxEEcmttQjPejwVsHmvfOVryb1/dNSNp7DdnvadVlLc4L
-         +qdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762530873; x=1763135673;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k6QqLCiZ3bKYilApTrBVoLgHK6pPaQj/ENLeWCSsRM0=;
-        b=JwoPWJpZbyBUEA832aJmrhj3iqccaqxgJ/IVlLddpMpsJpnnu/bc2fXdcrnFwCapq6
-         TnM+BI0qf5ufWajaMPTlhPuVLV+TRF+k38iMnzlN8bgiOQUSkcqVq9jRswRjT0zK2M98
-         554gBLKkPWlxPmKAR3no8eUYHsb57yGuu5fHUJ9p/dWKU+Q07B5NYiovTgUKu44E7/6L
-         wFHOsBbTqm9DdbpPTfXl0+J0oKDMwvRZqc3l2z2b5KjeT/+xt7wGW6eBRdxkwZwq+/sU
-         huWiOJAoW5Xo9D+bWUAME/0UYSENHacK9OBgc0+EIMV5PgXl1PKNW/ZPntcPNaZPkRdT
-         wZhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoSKrsQ5oS742cSFYoFLdMVpAZnr+qb89PTgm+b5zQygv7k6rXLnEyZrL7d/7e+EK8kMX9lcqgigG2GUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcsLmANkYJhyTnEsgQBKDHEQpZwaMD+nQKLVuqPID+ZVUlE2D9
-	Wzch8YIS51aNuMfIvlRoQiWWDOQXQV3F2dDfo8nDSeAWycRe4rM5loBohuvj9XxHOireMmq3aZS
-	+uU5SagUQPIFxLA==
-X-Google-Smtp-Source: AGHT+IF10pfYz/aX86VOtk1/4ToFDHxeKDSFR7QzVJHGBwU7n9WXznaipUt0c+mOTXVDyymnjKnmVDeDshscaw==
-X-Received: from wmbjd18.prod.google.com ([2002:a05:600c:68d2:b0:477:554c:6842])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4e88:b0:471:14af:c715 with SMTP id 5b1f17b1804b1-4776bc9f963mr29299435e9.3.1762530872213;
- Fri, 07 Nov 2025 07:54:32 -0800 (PST)
-Date: Fri, 07 Nov 2025 15:54:31 +0000
-In-Reply-To: <20250924151101.2225820-1-patrick.roy@campus.lmu.de>
+	s=arc-20240116; t=1762530902; c=relaxed/simple;
+	bh=D9oq68VrORbAYW4+VlHxCsq/enrwgz5myr/oEzlR8GU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X/0VjV5Gf+C7C8efZzAoxJKUtK705ySOy+fHCwmk9X90FJVooyt5pXQLzlXLIAFQpvnklUoBAMbhQ9DGQVgIqsBGXJoa1/Kr5iZQZnA9H61USsdacfTrr2f6JO1EsBHcKqNuRkD6QR1wWa3HgLh0AXhg7HMOt1uxFI+N3mijIug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=QDhG0AYy; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1762530890;
+	bh=x5wU+8XhNn87+1HQLINKbrKQAzx0N1ebWVPXX+dgJtI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=QDhG0AYyG2bmrQHoIwHUfAUBtq+2lI9a8i4+jGXTnoIDZh0Gc0oePgIdAlnQ1uGb6
+	 FXupU1QWpFRz/gCM7XqtY7uhKuM39ep0Ar0dTbU+3PLXUU+QitfDxIAboPVxtWDIr8
+	 mjzcL6oE2qn3ayAEFVAbt/fbY6rRgdFhM8Zr3zQo=
+X-QQ-mid: zesmtpip3t1762530885td6bbd925
+X-QQ-Originating-IP: AVnxMsCEYCH+Te+U4txA0lr7Lg9JiGfupg08FrYRM88=
+Received: from = ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 07 Nov 2025 23:54:44 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14462180775243901098
+EX-QQ-RecipientCnt: 16
+Date: Fri, 7 Nov 2025 23:54:43 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Xuyang Dong <dongxuyang@eswincomputing.com>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, bmasney@redhat.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: Re: [PATCH v7 0/2] Add driver support for ESWIN eic700 SoC
+ clock controller
+Message-ID: <AF4FD688167B825E+aQ4WQ7qbYqtHbSKl@troy-wujie14pro-arch>
+References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
+ <1abb85b.c11.19a582bcbbc.Coremail.dongxuyang@eswincomputing.com>
+ <039a3a41-c60f-4296-afd9-2bf3467574ca@kernel.org>
+ <6d2d7ddb.cbd.19a5cf92465.Coremail.dongxuyang@eswincomputing.com>
+ <1618037D174FDF5F+aQ2hU1J9oLEKCq25@kernel.org>
+ <5a9911a3.d09.19a5d8d32cd.Coremail.dongxuyang@eswincomputing.com>
+ <6C7E97902D2C1367+aQ3EYikxWNtINfyj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924151101.2225820-1-patrick.roy@campus.lmu.de>
-X-Mailer: aerc 0.21.0
-Message-ID: <DE2L1SAOC55E.E4JY62WJQ2A8@google.com>
-Subject: Re: [PATCH v7 00/12] Direct Map Removal Support for guest_memfd
-From: Brendan Jackman <jackmanb@google.com>
-To: Patrick Roy <patrick.roy@campus.lmu.de>
-Cc: Patrick Roy <roypat@amazon.co.uk>, <pbonzini@redhat.com>, <corbet@lwn.net>, 
-	<maz@kernel.org>, <oliver.upton@linux.dev>, <joey.gouly@arm.com>, 
-	<suzuki.poulose@arm.com>, <yuzenghui@huawei.com>, <catalin.marinas@arm.com>, 
-	<will@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>, 
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>, 
-	<luto@kernel.org>, <peterz@infradead.org>, <willy@infradead.org>, 
-	<akpm@linux-foundation.org>, <david@redhat.com>, <lorenzo.stoakes@oracle.com>, 
-	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <rppt@kernel.org>, 
-	<surenb@google.com>, <mhocko@suse.com>, <song@kernel.org>, <jolsa@kernel.org>, 
-	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>, 
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>, 
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>, 
-	<haoluo@google.com>, <jgg@ziepe.ca>, <jhubbard@nvidia.com>, 
-	<peterx@redhat.com>, <jannh@google.com>, <pfalcato@suse.de>, 
-	<shuah@kernel.org>, <seanjc@google.com>, <kvm@vger.kernel.org>, 
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
-	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>, 
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>, <bpf@vger.kernel.org>, 
-	<linux-kselftest@vger.kernel.org>, <xmarcalx@amazon.co.uk>, 
-	<kalyazin@amazon.co.uk>, <jackabt@amazon.co.uk>, <derekmn@amazon.co.uk>, 
-	<tabba@google.com>, <ackerleytng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6C7E97902D2C1367+aQ3EYikxWNtINfyj@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: NwBLjZV1DHf5Z/E9sfbRdiJNwQVJv0GL/oIX4OKaT3mObSJ20pl9Xi1P
+	rBNfPYz9vP+qxO2XFSXZwz84v6sV5UUrN/zUK+uHfK9joog5uIZ3ongbRrALZfwk3AmcfYC
+	5emfK9XdrlTGaSqcXWd9q7DANwUupqsvBIhFvYeICCuJNNNWZq7ZoLMOz3EB+jswljd0BnQ
+	XrgNs+RU0soOq+kXDy7MCJLhDuCoBqsd+QOsfddBihUUmOCJTnM8cUkCAtm9m1HrLk8x4ZJ
+	HAYoq5+aJmQ6d0uvipY1T3/X7cFuqShuQjvFNyVWMVBKSFQkncNQO5qShULFRl6YWUHIyV3
+	eOK6gWHm1P9xp1ljOpC3ILsqI4Ty7+Y3gsmIJfcioozDoWAnxXAFkUpv8Lis6RPn/EMzBq7
+	UcgdENz5Cmy8J64/pXBy0ZhKgtN3hAG4B6qSjBTsC7O+EOM835cdmIaVu/i58M9SQ3LGyYG
+	sZEwwtQHOMp9y1rL6nNzLY3PQNuFUAE+/MOiP9o0Nos2KJ1nf5Q8Yo3hSuGJaCKIBupeFvw
+	qHLVvExu6ie1ei4rfXVhxglWr3oghElLXbZk+Xtv6gFTgqx4H8PDf6EbaQGcyf6qfWx06Gq
+	QzXmP4bg33ug3SnjeODrpeXIb1qLkMf6gFSJMLhmJCfST/sUxeT/9crdOGNBu03D1owTxmr
+	OKttheFsGBMiiVdEBYTnNQjmVcpYEsL7rAMyUv47NIJIt/Y6bthW3/u+lrDRLq6hEul91Hz
+	64c4XmL52F5u9C6xcpNI/e1cPhY3dM6zli6Kgm/wwRzNBVWjI8SIlKTZbRchqnfrbNyZkAb
+	o2o34CmyLvuCI1XeMHuCEMq0tMmPhSif2e5h4U65Emq2UY4rJxxLSrdbVxtHyCcn3jKbTO5
+	XYQKSzWsE81/8Wi28eSMYztkW0ULcvvLqRIKKqftMMzz+TPaHlrx7P8cmglzvpnnPfrt3gu
+	Z/PGsMLGN1HkZkvqohbVj+DMKvJ2FDCxcddIvmEqf5Cjz/gGTOZcqDVjVDTxpBu8bBs7Y3X
+	c6QTWucKOwrRlafUzBaHNapwgiqaQ6UdXRJZnkYx8bnJOTah8joHagrLAhw0022rObYMO9G
+	0EYNdzPa3c08iwdSEslvBl9H++4nu0csDuFAyfo4WkxlMiTGT0WJkXNSSEvPItzPQ==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-On Wed Sep 24, 2025 at 3:10 PM UTC, Patrick Roy wrote:
-> From: Patrick Roy <roypat@amazon.co.uk>
->
-> [ based on kvm/next ]
->
-> Unmapping virtual machine guest memory from the host kernel's direct map is a
-> successful mitigation against Spectre-style transient execution issues: If the
-> kernel page tables do not contain entries pointing to guest memory, then any
-> attempted speculative read through the direct map will necessarily be blocked
-> by the MMU before any observable microarchitectural side-effects happen. This
-> means that Spectre-gadgets and similar cannot be used to target virtual machine
-> memory. Roughly 60% of speculative execution issues fall into this category [1,
-> Table 1].
->
-> This patch series extends guest_memfd with the ability to remove its memory
-> from the host kernel's direct map, to be able to attain the above protection
-> for KVM guests running inside guest_memfd.
->
-> Additionally, a Firecracker branch with support for these VMs can be found on
-> GitHub [2].
->
-> For more details, please refer to the v5 cover letter [v5]. No
-> substantial changes in design have taken place since.
->
-> === Changes Since v6 ===
->
-> - Drop patch for passing struct address_space to ->free_folio(), due to
->   possible races with freeing of the address_space. (Hugh)
-> - Stop using PG_uptodate / gmem preparedness tracking to keep track of
->   direct map state.  Instead, use the lowest bit of folio->private. (Mike, David)
-> - Do direct map removal when establishing mapping of gmem folio instead
->   of at allocation time, due to impossibility of handling direct map
->   removal errors in kvm_gmem_populate(). (Patrick)
-> - Do TLB flushes after direct map removal, and provide a module
->   parameter to opt out from them, and a new patch to export
->   flush_tlb_kernel_range() to KVM. (Will)
->
-> [1]: https://download.vusec.net/papers/quarantine_raid23.pdf
-> [2]: https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
-
-I just got around to trying this out, I checked out this patchset using
-its base-commit and grabbed the Firecracker branch. Things seem OK until
-I set the secrets_free flag in the Firecracker config which IIUC makes
-it set GUEST_MEMFD_FLAG_NO_DIRECT_MAP.
-
-If I set it, I find the guest doesn't show anything on the console.
-Running it in a VM and attaching GDB suggests that it's entering the
-guest repeatedly, it doesn't seem like the vCPU thread is stuck or
-anything. I'm a bit clueless about how to debug that (so far, whenever
-I've broken KVM, things always exploded very dramatically).
- 
-Anyway, if I then kill the firecracker process, the host sometimes
-crashes, I think this is the most suggestive splat I've seen:
-
-[   99.673420][    T2] BUG: unable to handle page fault for address: ffff888012804000
-[   99.676216][    T2] #PF: supervisor write access in kernel mode
-[   99.678381][    T2] #PF: error_code(0x0002) - not-present page
-[   99.680499][    T2] PGD 2e01067 P4D 2e01067 PUD 2e02067 PMD 12801063 PTE 800fffffed7fb020
-[   99.683374][    T2] Oops: Oops: 0002 [#1] SMP
-[   99.685004][    T2] CPU: 0 UID: 0 PID: 2 Comm: kthreadd Not tainted 6.17.0-rc7-00366-g473c46a3cb2a #106 NONE 
-[   99.688514][    T2] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.1 11/11/2019
-[   99.691547][    T2] RIP: 0010:clear_page_erms+0x7/0x10
-[   99.693440][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
-[   99.700188][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
-[   99.702321][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
-[   99.705100][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
-[   99.707861][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
-[   99.710648][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
-[   99.713412][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
-[   99.716191][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
-[   99.719316][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   99.721648][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
-[   99.724421][    T2] Call Trace:
-[   99.725608][    T2]  <TASK>
-[   99.726646][    T2]  get_page_from_freelist+0x6fe/0x14b0
-[   99.728583][    T2]  ? fs_reclaim_acquire+0x43/0xe0
-[   99.730325][    T2]  ? find_held_lock+0x2b/0x80
-[   99.731965][    T2]  __alloc_frozen_pages_noprof+0x147/0x2d0
-[   99.734003][    T2]  __alloc_pages_noprof+0x5/0x50
-[   99.735766][    T2]  copy_process+0x1b1/0x1b30
-[   99.737398][    T2]  ? lock_is_held_type+0x89/0x100
-[   99.739157][    T2]  ? kthreadd+0x25/0x190
-[   99.740664][    T2]  kernel_clone+0x59/0x390
-[   99.742213][    T2]  ? kthreadd+0x25/0x190
-[   99.743728][    T2]  kernel_thread+0x55/0x70
-[   99.745310][    T2]  ? kthread_complete_and_exit+0x20/0x20
-[   99.747265][    T2]  kthreadd+0x117/0x190
-[   99.748748][    T2]  ? kthread_is_per_cpu+0x30/0x30
-[   99.750509][    T2]  ret_from_fork+0x16b/0x1e0
-[   99.752193][    T2]  ? kthread_is_per_cpu+0x30/0x30
-[   99.753992][    T2]  ret_from_fork_asm+0x11/0x20
-[   99.755717][    T2]  </TASK>
-[   99.756861][    T2] CR2: ffff888012804000
-[   99.758353][    T2] ---[ end trace 0000000000000000 ]---
-[   99.760319][    T2] RIP: 0010:clear_page_erms+0x7/0x10
-[   99.762209][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
-[   99.769129][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
-[   99.771297][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
-[   99.774126][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
-[   99.777013][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
-[   99.779827][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
-[   99.782641][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
-[   99.785487][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
-[   99.788671][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   99.791012][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
-[   99.793863][    T2] Kernel panic - not syncing: Fatal exception
-[   99.796760][    T2] Kernel Offset: disabled
-[   99.798296][    T2] ---[ end Kernel panic - not syncing: Fatal exception ]---
-
-This makes me suspect the kvm_gmem_folio_restore_direct_map() path isn't
-working or isn't getting called.
-
-If anyone wants help trying to reproduce this let me know.
+On Fri, Nov 07, 2025 at 06:05:22PM +0800, Troy Mitchell wrote:
+> On Fri, Nov 07, 2025 at 05:02:06PM +0800, Xuyang Dong wrote:
+> > > > > > 
+> > > > > >   Gentle ping. Looking forward to your reply. Thank you very much!
+> > > > > 
+> > > > > Please do not top post.
+> > > > > 
+> > > > > You did not add any maintainers of these drivers, so I would not put it
+> > > > > high on our priority list. 
+> > > Do you have any plans to become a maintainer? If so, this patch might get
+> > > reviewed with higher priority. I think that's what Krzysztof meant.
+> > > 
+> > >                               - Troy
+> > 
+> > Hello Troy,
+> > 
+> > Yes, I plan to become the maintainer for this driver. I will add my 
+> > maintainer information to the MAINTAINERS file in the next patch series. 
+> > Would that be acceptable?
+> I think yes.
+> 
+> And if you send next version, please dont't send to this email:
+                                       ^^^^ no "don't" here..
+> troy.mitchell@linux.dev instead of linux.spacemit.com.
+> 
+> Thanks.
+> 
+>                               - Troy
+> > 
+> > Regards,
+> > Xuyang Dong
 
