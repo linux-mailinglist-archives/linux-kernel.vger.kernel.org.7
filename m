@@ -1,52 +1,81 @@
-Return-Path: <linux-kernel+bounces-890192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A955FC3F731
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:30:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B5CC3F782
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:32:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 073353B4AF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:30:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8ED3B5D4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9DD305940;
-	Fri,  7 Nov 2025 10:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A5B3195EA;
+	Fri,  7 Nov 2025 10:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="aF213VrY"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Qt7tHnHO"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA5B305E09;
-	Fri,  7 Nov 2025 10:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC0B3168EB
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762511395; cv=none; b=ho8JK0+/uhJnOjNyXqn92ojrHJ7Jm7byiPDnzdZVfFX+2e7bI2nZ9moaU3ONx2rILD0jE/ySVG+eAJild1zSnN9c8fmj3yBYB7voC2EAzP9y9J72/lvk81aukeH0VocExtydytzkwYS1XkrM0vpJdz74I4oVGRwEgM3DIgSiAzE=
+	t=1762511410; cv=none; b=DS+y18LeOqrJQTcK/EpHsjlvcp3OkfYV37p1+yCzlERE69MWmINfJRhuevQzpyTcoapH15v8eRyxI3vTqDM41SufJXpH3dSiEAWRkuHhYOUIguVUXv2J3GSaAWN6Z/oDj3u8DnW7GnnghI/ZwAdgsjJnQMMOZ1JO1Ad3GbNZ5CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762511395; c=relaxed/simple;
-	bh=PSrSWiIVbpn6czV4JmjiWTzr+3TkryO0Cfx8dgQT/XY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I5YIlQPMYyFS1LtLUrHlsC/zFbklkML5RGheOb4BMDC/J02fubEI1JSRvgiY/t9GrxetMXGpWnabXs2SYe9KGzy8OH6tfeSO/1X6zQadn3SW9cgKD5ZK1Vlkx8gUZvNcN41D3UuEgkIarWPYeIynAyKIDnClk+aQ3GLTolzwqbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=pass smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=aF213VrY; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EBB2944292;
-	Fri,  7 Nov 2025 10:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1762511391;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BmMJrFZ2dloB0VnzDAR4oKmr7EZY45/bU42OgpgHP8U=;
-	b=aF213VrYZkaoeI7ntvYcD4qfJdxve7h8TfI/ZQPBx8nKe6RMTzyJDL7YNjzYERDBSI9hM2
-	89bAY58o3CKalW6GEyH3bvjkuYPEP8nY9ZNuA4P14gs6XX2NboXsiyMHB/ajxFh9I30oy2
-	qPtOq0H0jPJ/MZmvSE77FX72bQSy7ft09NnOYVfErakBaX1orsOjtxhHFIlvp15Yi+yqID
-	hh/ZoF45KAayWtgQ1zQyqIBmeliHmd1ryxNavIilp39PVrYM2+CnJdLkliF+NwxnPSUOHG
-	OHG+XJC0N3J0Bcad1SEeVJ0NavHbHNAY18sCnuqgBDhlRK7mCW792VqY9kjhtw==
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Date: Fri, 07 Nov 2025 11:29:44 +0100
-Subject: [PATCH v2 2/2] m68k: coldfire: Add RNG support for MCF54418
+	s=arc-20240116; t=1762511410; c=relaxed/simple;
+	bh=ZivlGpi+T1c5DUoMpOPkmITE34pLl/IzVvSOHSJ88dQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qy2ZilNb59bhsUpZ//qwPntxhHdoToNogz/DvRsU+6hot6E6UvjI96jsucCgE2RmAhNEa6N9EZuJHf3gpXDpqjYhHa/CufwSOG1/45wVC/gLt4RgmbUUMacs9x0z8OSi6Lm61wx+ciweWltRyxJ0vFr6XWcvqIfcX16zxe5POkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Qt7tHnHO; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4710022571cso5688995e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:30:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762511404; x=1763116204; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6lK1bWhoDlOt3D7+OTYGFbwlQlHjc0qM/7Y1vcvdtOY=;
+        b=Qt7tHnHOKYwWve8/Mc1P7q4DPt9m7/6AZPIFKwJY9nAT3XgMKT7RmaaF0dgG2I70Hk
+         cR5nykVZES05Wxue5bJN323q45/YpS2O/XDwnGmz8GE7YqfkLwbtW6m08NnPQt3+Uno4
+         HCKCCPovzurdENzUDLogDPGI9kr4OXpXl5b2jAbybpkGL3mqG97e5aYLGnFCxhlsg0sL
+         K2dvyGn0AJ3W0MXjbi8zAgMUTSho/5iWVLI1r42ZSeT7ZV/Juw9B19Ih42N/nuvHS0If
+         owDhkm9VgYIAp0vnNDnrc0dMbZjKZTrmwBVl8gRFN6pumy5WDu6wZidrgv7s+ICW2REg
+         ZZgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762511404; x=1763116204;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6lK1bWhoDlOt3D7+OTYGFbwlQlHjc0qM/7Y1vcvdtOY=;
+        b=WxUIyweN4mv61Hp/eaykaTHtKiYLTMAvPkxpOBCnDZJrF2nNwcOdEh1H/gJ7Ovf+Ml
+         92WnEDCmFcTTBEupw8l0Qupr363o9JVEgQweU3ExFG2MVvF7+7aBcjfldI/0dW0IMgEn
+         fmKOES7O6nD+4FtHVlciPGc3jTfUVPy2wlqt1ic6gNQ/QgPRMxqhvWT8fwiU1bV1yNmw
+         8LPnibIrI2RMj0fVR7Pks+z9iR8l2jyxtn0bTpu39bpGS6b5b8cKbaVUPdYRmx3L92Bz
+         WyLggrl/fKkQ37FrYFwdd/hzglyl+PovZgCRU6j5jrKmmtyulKD5ypf7F+Ndy0EYVpSo
+         97ig==
+X-Forwarded-Encrypted: i=1; AJvYcCVmOE4pUUJ/gYbCPBTDUTjAyFx6upPNqEH4bIhJiLELgVnGq6VdPCyDcBnwzSEd+iWnQci/6hf32xp2VbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxaCXGcvI0p8jZ2Okm83ttvcKz0orvOk6STtaZPtaaHNQk0LpA
+	MZ2NoWM3l0/kwVc5bv5PAiMeb797Xj2D6lIsJZ1Q+oitlnwXpeTGLppvBXuijF5x19o=
+X-Gm-Gg: ASbGncuX0B8dkuXh9FK/YXBViH4gwiXXaam1j5oxJJbpuRErBq06j9T6cQsqPY2Fc/4
+	YC/72xTm99v4Fj+Oi6hVH0dURLHsYrqXfogVjOgCXYuWvNtoXvyqQ9mPVuHxgS9enP7PlhFEF2Q
+	s0+kOkHz+mzy2vsjptbDo7bnaINDP8ItrlIYOzkjVO9P8MAN2UAL4g3A8ku+LbySD0XaE6cp4VH
+	tNWj/1bQcRG07IqMKMms79Z08dmvEW8ld2Xh63KMsP15lzd9UWfUjQZRR9vdf50drEpVMNEpLUv
+	61CRvh46eNPsMwNGCO8PfuucZG+EEVt9p/dm0KmHaTHwDmMQQ9zSxcE0NWSOnrqjoh7KPzRtQI/
+	MvC3QEymbkJnMPUv9/JtYYwFQNXQPyDC4kymHRoHzrpROQthEgzW0ankoAxRr7GjkywO5rZNXBO
+	Uc9cH7H/L9+L74Jg==
+X-Google-Smtp-Source: AGHT+IGLasgznDpysA1VVPTGU5y82R7RrVgkRw3m6DuFOG2T0Xrl7Qi/ZwJh7t3lCXtqhciZW19mKg==
+X-Received: by 2002:a05:600c:1384:b0:471:14b1:da13 with SMTP id 5b1f17b1804b1-4776bc93e89mr17460965e9.14.1762511404248;
+        Fri, 07 Nov 2025 02:30:04 -0800 (PST)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:fb6d:2ee:af61:f551])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac67920fcsm4414864f8f.39.2025.11.07.02.30.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 02:30:03 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v5 0/8] net: stmmac: qcom-ethqos: add support for SCMI
+ power domains
+Date: Fri, 07 Nov 2025 11:29:50 +0100
+Message-Id: <20251107-qcom-sa8255p-emac-v5-0-01d3e3aaf388@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,189 +84,162 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251107-b4-m5441x-add-rng-support-v2-2-f91d685832b9@yoseli.org>
-References: <20251107-b4-m5441x-add-rng-support-v2-0-f91d685832b9@yoseli.org>
-In-Reply-To: <20251107-b4-m5441x-add-rng-support-v2-0-f91d685832b9@yoseli.org>
-To: Greg Ungerer <gerg@linux-m68k.org>, 
- Geert Uytterhoeven <geert@linux-m68k.org>, 
- Olivia Mackall <olivia@selenic.com>, 
- Herbert Xu <herbert@gondor.apana.org.au>, Shawn Guo <shawnguo@kernel.org>, 
+X-B4-Tracking: v=1; b=H4sIAB7KDWkC/23PSwrCMBCA4auUrI1M3q0r7yEu0pi2AdvURIJSe
+ nfTCorY5T8w3zATijY4G9GhmFCwyUXnhxxiVyDT6aG12F1yIwpUgAKOb8b3OOqSCjFi22uDSy6
+ BMqGNIBTlvTHYxj1W83TO3bl49+G5nkhkmb61isCGlggGzKhWlWmIlbI8Xt2gg9/70KKFS+xDE
+ KBqi2CZUEJJVVeUga7/CP4lyOZPiWeiUVJKgFIZq3+IeZ5fGplk2DkBAAA=
+X-Change-ID: 20250704-qcom-sa8255p-emac-8460235ac512
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+ Jose Abreu <joabreu@synopsys.com>, Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Matthew Gerlach <matthew.gerlach@altera.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Keguang Zhang <keguang.zhang@gmail.com>, Shawn Guo <shawnguo@kernel.org>, 
  Sascha Hauer <s.hauer@pengutronix.de>, 
  Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
- linux-crypto@vger.kernel.org, imx@lists.linux.dev, 
+ Fabio Estevam <festevam@gmail.com>, Jan Petrous <jan.petrous@oss.nxp.com>, 
+ s32@nxp.com, Romain Gantois <romain.gantois@bootlin.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Heiko Stuebner <heiko@sntech.de>, Chen Wang <unicorn_wang@outlook.com>, 
+ Inochi Amaoto <inochiama@gmail.com>, Emil Renner Berthing <kernel@esmil.dk>, 
+ Minda Chen <minda.chen@starfivetech.com>, Drew Fustini <fustini@kernel.org>, 
+ Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+ Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
+ Shuang Liang <liangshuang@eswincomputing.com>, 
+ Zhi Li <lizhi2@eswincomputing.com>, 
+ Shangjuan Wei <weishangjuan@eswincomputing.com>, 
+ "G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>, 
+ Clark Wang <xiaoning.wang@nxp.com>, Linux Team <linux-imx@nxp.com>, 
+ Frank Li <Frank.Li@nxp.com>, David Wu <david.wu@rock-chips.com>, 
+ Samin Guo <samin.guo@starfivetech.com>, 
+ Christophe Roullier <christophe.roullier@foss.st.com>, 
+ Swathi K S <swathi.ks@samsung.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
  linux-arm-kernel@lists.infradead.org, 
- Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+ Drew Fustini <dfustini@tenstorrent.com>, linux-sunxi@lists.linux.dev, 
+ linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org, 
+ imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, sophgo@lists.linux.dev, 
+ linux-riscv@lists.infradead.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762511384; l=5529;
- i=jeanmichel.hautbois@yoseli.org; s=20240925; h=from:subject:message-id;
- bh=PSrSWiIVbpn6czV4JmjiWTzr+3TkryO0Cfx8dgQT/XY=;
- b=EUGS7OCZpt1eCI5kkVQK7/hSxyPZTuOtSCCY8VQLiT6XtgYTF117WBjImk+M0Eq9+8h1vy5jQ
- djb/Z7vDqjKBY/IyELs3wLWOxX4d0Bm5RlRHb3mk9cKjwsc2LtYrw4P
-X-Developer-Key: i=jeanmichel.hautbois@yoseli.org; a=ed25519;
- pk=MsMTVmoV69wLIlSkHlFoACIMVNQFyvJzvsJSQsn/kq4=
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeelgeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomheplfgvrghnqdfoihgthhgvlhcujfgruhhtsghoihhsuceojhgvrghnmhhitghhvghlrdhhrghuthgsohhisheshihoshgvlhhirdhorhhgqeenucggtffrrghtthgvrhhnpeffjefhtdelhffhheevheeutefghfefteeluedvudfhgeegteeitddtuefhhfelteenucfkphepvdgrtddumegvtdgrmeduieelmeejudegtdemkegtrgdtmedukegtjeemhegvfhgtmegtsghfvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemudeileemjedugedtmeektggrtdemudektgejmeehvghftgemtggsfhdvpdhhvghlohephihoshgvlhhiqdihohgtthhordihohhsvghlihdrohhrghdpmhgrihhlfhhrohhmpehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrghdpnhgspghrtghpthhtohepudegpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqtghrhihpthhosehvghgvrhdrk
- hgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrghdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhopehgvghrgheslhhinhhugidqmheikehkrdhorhhg
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4165;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=ZivlGpi+T1c5DUoMpOPkmITE34pLl/IzVvSOHSJ88dQ=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBpDcojt3k/2PQCBq6F4SnzHXqKBXG0p9VyMcZAB
+ IR/euEb67iJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaQ3KIwAKCRARpy6gFHHX
+ cq4aEADTN+ZUS9OBISS21hcbWDotjjlsSXxfMzNstpmanMhTAjTDqTozFbZykCw0Vf274vKfVTb
+ 3g3WrNgP5cYiyZLsDLBQrRu6Ymi7HMPV/05dLA/ZwUDNCnI1z7BZ88PIdxY5BkCZVJ3GKChFHtc
+ /MO9zH6RfTWIudWrMD7Lfd9ZY6jZIvDoq773GGAi6RNBmUIuMwrmFa6KoiNx9FQ0NswFVmDySZh
+ JXxm6zVaFTbIkl9oXrLqI2XJ/gVgWH0/Z84+6CyYJJfsal7i8ARil61hGY321B8LC7SosFR+j7j
+ B++DT5/YtpyqEq7RWzvA9k+oYt2zfujGqApAhNHp98SeFy5vw7tmBvrmtAU5n+KbCm9f3NTe1i2
+ fknVSt8R40eV+g1TckJWN/2/vn4TyZd0s9D7Xa8ovqOBTJDAbL9f+suLfjhBL3R5AIF1jlWhh64
+ mk81XGCxt6IW5TnYAMUXhE+G4unUmH8c2hdj/NqoR1owhNhOADjIgBosXOV3YrxLMKT0gL57ydA
+ hvbBFUSxE6/hrs7QM6W8VUkwoGv2QB0OI8zxJo6s2F2ZMuoMMLhGpkgud1m20fPaPHx4HQTSZR5
+ +NT8ZRc9bQyTREbDWHw9J0JKcCeAP3mxkCDn1v3X1p7YmUtI4pBF/WjLgOT6OM9riUztf9yMJFV
+ h4+xLNJvvsQjMdw==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Add platform device support for the MCF54418 RNGB hardware with clock
-enabled at platform initialization.
+Add support for the firmware-managed variant of the DesignWare MAC on
+the sa8255p platform. This series contains new DT bindings and driver
+changes required to support the MAC in the STMMAC driver.
 
-The imx-rngc driver now uses devm_clk_get_optional() to support both
-Coldfire (always-on clock) and i.MX platforms (managed clock).
+It also reorganizes the ethqos code quite a bit to make the introduction
+of power domains into the driver a bit easier on the eye.
 
-Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+The DTS changes will go in separately.
+
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- arch/m68k/coldfire/device.c       | 28 ++++++++++++++++++++++++++++
- arch/m68k/coldfire/m5441x.c       |  2 +-
- arch/m68k/include/asm/m5441xsim.h |  9 +++++++++
- drivers/char/hw_random/Kconfig    |  3 ++-
- drivers/char/hw_random/imx-rngc.c |  9 ++++++++-
- 5 files changed, 48 insertions(+), 3 deletions(-)
+Changes in v5:
+- Name the DT binding document after the new compatbile
+- Add missing space
+- Make the power-domains limits stricter
+- Link to v4: https://lore.kernel.org/r/20251104-qcom-sa8255p-emac-v4-0-f76660087cea@linaro.org
 
-diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
-index 20adba27a687029ef53249bad71b342d563d612b..4183929b0b501459da25d1b4cde7d77f19c3dc16 100644
---- a/arch/m68k/coldfire/device.c
-+++ b/arch/m68k/coldfire/device.c
-@@ -622,6 +622,31 @@ static struct platform_device mcf_flexcan0 = {
- };
- #endif /* MCFFLEXCAN_SIZE */
- 
-+#ifdef MCF_RNG_BASE
-+/*
-+ * Random Number Generator (RNG) - only on MCF54418
-+ */
-+static const struct resource mcf_rng_resource[] = {
-+	{
-+		.start = MCF_RNG_BASE,
-+		.end   = MCF_RNG_BASE + MCF_RNG_SIZE - 1,
-+		.flags = IORESOURCE_MEM,
-+	},
-+	{
-+		.start = MCF_IRQ_RNG,
-+		.end   = MCF_IRQ_RNG,
-+		.flags = IORESOURCE_IRQ,
-+	},
-+};
-+
-+static struct platform_device mcf_rng = {
-+	.name           = "imx-rngc",
-+	.id             = -1,
-+	.num_resources  = ARRAY_SIZE(mcf_rng_resource),
-+	.resource       = mcf_rng_resource,
-+};
-+#endif /* MCF_RNG_BASE */
-+
- static struct platform_device *mcf_devices[] __initdata = {
- 	&mcf_uart,
- #ifdef MCFFEC_BASE0
-@@ -660,6 +685,9 @@ static struct platform_device *mcf_devices[] __initdata = {
- #ifdef MCFFLEXCAN_SIZE
- 	&mcf_flexcan0,
- #endif
-+#ifdef MCF_RNG_BASE
-+	&mcf_rng,
-+#endif
- };
- 
- /*
-diff --git a/arch/m68k/coldfire/m5441x.c b/arch/m68k/coldfire/m5441x.c
-index 7a25cfc7ac07570ff15da3c55d080a717cf93a06..ab5b006372379294db3b522820de88137bfb7e78 100644
---- a/arch/m68k/coldfire/m5441x.c
-+++ b/arch/m68k/coldfire/m5441x.c
-@@ -158,6 +158,7 @@ static struct clk * const enable_clks[] __initconst = {
- 	&__clk_0_33, /* pit.1 */
- 	&__clk_0_37, /* eport */
- 	&__clk_0_48, /* pll */
-+	&__clk_0_49, /* rng */
- 	&__clk_0_51, /* esdhc */
- 
- 	&__clk_1_36, /* CCM/reset module/Power management */
-@@ -179,7 +180,6 @@ static struct clk * const disable_clks[] __initconst = {
- 	&__clk_0_44, /* usb otg */
- 	&__clk_0_45, /* usb host */
- 	&__clk_0_47, /* ssi.0 */
--	&__clk_0_49, /* rng */
- 	&__clk_0_50, /* ssi.1 */
- 	&__clk_0_53, /* enet-fec */
- 	&__clk_0_54, /* enet-fec */
-diff --git a/arch/m68k/include/asm/m5441xsim.h b/arch/m68k/include/asm/m5441xsim.h
-index f48cf63bd7822fd53c33788128f984585c0c421a..dd64cdfcad3e810254c6854b9de5b6bbeb67b950 100644
---- a/arch/m68k/include/asm/m5441xsim.h
-+++ b/arch/m68k/include/asm/m5441xsim.h
-@@ -198,6 +198,15 @@
- #define MCFRTC_SIZE		(0xfc0a8840 - 0xfc0a8000)
- #define MCF_IRQ_RTC		(MCFINT2_VECBASE + MCFINT2_RTC)
- 
-+/*
-+ *  Random Number Generator (RNG) Module.
-+ *  Note: Only present in MCF54418, not in MCF54410/54415/54417
-+ */
-+#define MCF_RNG_BASE		0xfc0c4000
-+#define MCF_RNG_SIZE		0x1c
-+#define MCFINT2_RNG		28
-+#define MCF_IRQ_RNG		(MCFINT2_VECBASE + MCFINT2_RNG)
-+
- /*
-  *  GPIO Module.
-  */
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 492a2a61a65be8bd9e46b0a70f3e43703973512e..e046eabaac2d9053a5a4a98c6e3733bb19258e54 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -270,12 +270,13 @@ config HW_RANDOM_MXC_RNGA
- config HW_RANDOM_IMX_RNGC
- 	tristate "Freescale i.MX RNGC Random Number Generator"
- 	depends on HAS_IOMEM
--	depends on SOC_IMX25 || SOC_IMX6SL || SOC_IMX6SLL || SOC_IMX6UL || COMPILE_TEST
-+	depends on SOC_IMX25 || SOC_IMX6SL || SOC_IMX6SLL || SOC_IMX6UL || M5441x || COMPILE_TEST
- 	default HW_RANDOM
- 	help
- 	  This driver provides kernel-side support for the Random Number
- 	  Generator Version C hardware found on some Freescale i.MX
- 	  processors. Version B is also supported by this driver.
-+	  Also supports RNGB on Freescale MCF54418 (Coldfire V4e).
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called imx-rngc.
-diff --git a/drivers/char/hw_random/imx-rngc.c b/drivers/char/hw_random/imx-rngc.c
-index 241664a9b5d9ac7244f15cbe5d5302ca3787ebea..44f20a05de0a425cb6ff7b2a347b111750ac3702 100644
---- a/drivers/char/hw_random/imx-rngc.c
-+++ b/drivers/char/hw_random/imx-rngc.c
-@@ -259,7 +259,7 @@ static int __init imx_rngc_probe(struct platform_device *pdev)
- 	if (IS_ERR(rngc->base))
- 		return PTR_ERR(rngc->base);
- 
--	rngc->clk = devm_clk_get(&pdev->dev, NULL);
-+	rngc->clk = devm_clk_get_optional(&pdev->dev, NULL);
- 	if (IS_ERR(rngc->clk))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(rngc->clk), "Cannot get rng_clk\n");
- 
-@@ -353,12 +353,19 @@ static const struct of_device_id imx_rngc_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, imx_rngc_dt_ids);
- 
-+static const struct platform_device_id imx_rngc_devtype[] = {
-+	{ .name = "imx-rngc" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(platform, imx_rngc_devtype);
-+
- static struct platform_driver imx_rngc_driver = {
- 	.driver = {
- 		.name = KBUILD_MODNAME,
- 		.pm = pm_ptr(&imx_rngc_pm_ops),
- 		.of_match_table = imx_rngc_dt_ids,
- 	},
-+	.id_table = imx_rngc_devtype,
- };
- 
- module_platform_driver_probe(imx_rngc_driver, imx_rngc_probe);
+Changes in v4:
+- Remove the phys property from the SCMI bindings
+- Mark the power-domain-names property as required
+- Set maxItems for power-domains to 1 for all existing bindings to
+  maintain the current requirements after modifying the value in the
+  top-level document
+- Link to v3: https://lore.kernel.org/r/20251027-qcom-sa8255p-emac-v3-0-75767b9230ab@linaro.org
 
+Changes in v3:
+- Drop 'power' and 'perf' prefixes from power domain names
+- Rebase on top of Russell's changes to dwmac
+- Rebase on top of even more changes from Russell that are not yet
+  in next (E1vB6ld-0000000BIPy-2Qi4@rmk-PC.armlinux.org.uk)
+- Link to v2: https://lore.kernel.org/all/20251008-qcom-sa8255p-emac-v2-0-92bc29309fce@linaro.org/
+
+Changes in v2:
+- Fix the power-domains property in DT bindings
+- Rework the DT bindings example
+- Drop the DTS patch, it will go upstream separately
+- Link to v1: https://lore.kernel.org/r/20250910-qcom-sa8255p-emac-v1-0-32a79cf1e668@linaro.org
+
+---
+Bartosz Golaszewski (8):
+      dt-bindings: net: qcom: document the ethqos device for SCMI-based systems
+      net: stmmac: qcom-ethqos: use generic device properties
+      net: stmmac: qcom-ethqos: improve typing in devres callback
+      net: stmmac: qcom-ethqos: wrap emac driver data in additional structure
+      net: stmmac: qcom-ethqos: split power management fields into a separate structure
+      net: stmmac: qcom-ethqos: split power management context into a separate struct
+      net: stmmac: qcom-ethqos: define a callback for setting the serdes speed
+      net: stmmac: qcom-ethqos: add support for sa8255p
+
+ .../bindings/net/allwinner,sun7i-a20-gmac.yaml     |   3 +
+ .../bindings/net/altr,socfpga-stmmac.yaml          |   3 +
+ .../bindings/net/amlogic,meson-dwmac.yaml          |   3 +
+ .../devicetree/bindings/net/eswin,eic7700-eth.yaml |   3 +
+ .../devicetree/bindings/net/intel,dwmac-plat.yaml  |   3 +
+ .../bindings/net/loongson,ls1b-gmac.yaml           |   3 +
+ .../bindings/net/loongson,ls1c-emac.yaml           |   3 +
+ .../devicetree/bindings/net/nxp,dwmac-imx.yaml     |   3 +
+ .../devicetree/bindings/net/nxp,lpc1850-dwmac.yaml |   3 +
+ .../devicetree/bindings/net/nxp,s32-dwmac.yaml     |   3 +
+ .../devicetree/bindings/net/qcom,ethqos.yaml       |   3 +
+ .../bindings/net/qcom,sa8255p-ethqos.yaml          |  98 ++++++
+ .../devicetree/bindings/net/renesas,rzn1-gmac.yaml |   3 +
+ .../bindings/net/renesas,rzv2h-gbeth.yaml          |   3 +
+ .../devicetree/bindings/net/rockchip-dwmac.yaml    |   3 +
+ .../devicetree/bindings/net/snps,dwmac.yaml        |   5 +-
+ .../bindings/net/sophgo,cv1800b-dwmac.yaml         |   3 +
+ .../bindings/net/sophgo,sg2044-dwmac.yaml          |   3 +
+ .../bindings/net/starfive,jh7110-dwmac.yaml        |   3 +
+ .../devicetree/bindings/net/stm32-dwmac.yaml       |   3 +
+ .../devicetree/bindings/net/tesla,fsd-ethqos.yaml  |   3 +
+ .../devicetree/bindings/net/thead,th1520-gmac.yaml |   3 +
+ .../bindings/net/toshiba,visconti-dwmac.yaml       |   3 +
+ MAINTAINERS                                        |   1 +
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |   2 +-
+ .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    | 342 +++++++++++++++++----
+ 26 files changed, 448 insertions(+), 63 deletions(-)
+---
+base-commit: 9c0826a5d9aa4d52206dd89976858457a2a8a7ed
+change-id: 20250704-qcom-sa8255p-emac-8460235ac512
+
+Best regards,
 -- 
-2.39.5
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
