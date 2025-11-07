@@ -1,147 +1,149 @@
-Return-Path: <linux-kernel+bounces-890406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC35C3FFCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:50:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD1FDC3FFD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:51:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EBB9189A1C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:51:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 273224EFBC2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0D22D46A1;
-	Fri,  7 Nov 2025 12:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F1C29E10F;
+	Fri,  7 Nov 2025 12:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+RZYTI+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qChaefVE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nQuoyt1G"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC5C274FE8;
-	Fri,  7 Nov 2025 12:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDAE28507B;
+	Fri,  7 Nov 2025 12:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762519813; cv=none; b=U+9mfzLSoWowSlsUrrjbqjtwWzKusTU9WjFHF1iauEQancodszeUuggHuW1PBdA5XcaU5ikQ3FfIJXJ9Pr5K7jI09n+805kcWJwjvhqb25rBij1esZmbZ+8snb6iwNJ7M1fKYZjCZQNsc+FlbzoeDkurxfvSBE1xNV/MJadYb6k=
+	t=1762519830; cv=none; b=oN4L26h4jKqNQ9WA48M5Oq/VCt0aOLIdV5rPTzWNGjcBzmnietr71SF9uGrX5PlTLLmPFZvg91+aXMOoP/RPWDCVg2tuitPWYFD/rOWzB4IIfIfLCcWYpH7Ad9zgbPQbvK9vJ4pe4Gv5hvfgGxhZQaFzoyA0SH+gLmPchjE+Ztk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762519813; c=relaxed/simple;
-	bh=R+P9YC83++uFXox8Cc6IFwB64s3H9EKY1X6A/lJabnM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sy3FPgin8hrvLkI8a60FiFtvjWcpRR9gF13d+WYlTyuGAKlogzysAT1TV7iLY/NBJZS3BsLlpv8LcoMDFTnsdZvfYrwc2HotYGW0tr+8PkV4ZTIHKwmJZqjvwPvWfeDyNAHS2C5fEkOGedS/+zCY3mt+ZgR56EnDML1yanlmebY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+RZYTI+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E5680C2BCB2;
-	Fri,  7 Nov 2025 12:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762519812;
-	bh=R+P9YC83++uFXox8Cc6IFwB64s3H9EKY1X6A/lJabnM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=S+RZYTI+RdLo+1vo4VOX/6usH4H9TBYy4y4J35sfh6mpn5k4FGfrZAx5ZQM2Ku/cz
-	 Ukj5CNpnnm5vPnWcdEvkc9fn4mMl+CETMERGCKYwmsd+zinXz3SeuC8rFB6Gkd9ZBj
-	 dsOLxAmk3RMURZUL8wPVqpIOLgctyJ2runFexbTZh2HWpsMUvuiMJN7ro8K4Qlxgjb
-	 m+jaSEklLhPqX8DWgVLIw6HyKc8vyp5agwn/Wh6JdqmPkzi6/obARZxZEPYC2DLcrv
-	 LXvuNAxrtK6vHRGqzojZMGu9ucINrIewhRGdDvB9bPDCRQ8RWwHmb/FVDsnS8RdXdr
-	 dRFrO+NSU3DFQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF816CCF9E3;
-	Fri,  7 Nov 2025 12:50:12 +0000 (UTC)
-From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Date: Fri, 07 Nov 2025 13:50:01 +0100
-Subject: [PATCH v5 4/4] arm64: dts: freescale:
- moduline-display-av123z7m-n17: add backlight
+	s=arc-20240116; t=1762519830; c=relaxed/simple;
+	bh=pAGwvfl0H7mdN4CM0rfF4FNsJkd5mKjss2RM62GObLA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=HWUOIeJQ+JGCsVnQ6SL8va+BLYS8/Wj2VqDBnFOn09NLMCdphZCyT2d577P1OfReiwTGGlhmV5xR+1scO30wYQXg0lq/jWjAaXthVT7BYEFGPFmewo71UZA3m+6TjZAyegpao9RLkUTnU+m2or5INxc/BJgWadIk+6zLPsvLvww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qChaefVE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nQuoyt1G; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4E452EC02A9;
+	Fri,  7 Nov 2025 07:50:27 -0500 (EST)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Fri, 07 Nov 2025 07:50:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762519827;
+	 x=1762606227; bh=3C46CBmXvkNh/lNjT5LsxgIlwhV7BbbpfhRABJ49noQ=; b=
+	qChaefVEsgOZdf6lVF15n4ab38MYqDzr1mqd/5XHKwbiMkHaV5Dpmq9lC6UY3nvH
+	NLLARRlbmvHW9qvCr5nkfH2PW/80SVSWwScra/KDzw++XDKmOT29+VjlGRyMvFlL
+	O2J0jgHOUHpWHpUD2Zsxi9m6yURAuJGKcE7tFkSHLIPRjuHb7JjQ3S5O5OpOZHWZ
+	rhlMnpHKan2SVqGuYZBOSEpNsVqtdD3GYqeXAeh2XXXX1XPQnkZSV7zRxPZCFbRe
+	kOf7OnxwwSvLD8Jtztvr83sjMCdAmxmEpaigTovocm8YROIPRKSO6ZFP4IyIJ4V6
+	dNbfXrjQqpEwBuZUe2p9xg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762519827; x=
+	1762606227; bh=3C46CBmXvkNh/lNjT5LsxgIlwhV7BbbpfhRABJ49noQ=; b=n
+	Quoyt1GkFfWLYSqEEnibICGaxv4GhAWsUOcAfICcb+O6WBR/Rlkdfxz6OdjmAfdB
+	+LX3ULKcF+9kpM4K/OBBoEPadUP6+BkG4nktOdyeElK5gNvA9M/Xh0RjlaQW8ZkX
+	BTZ4xfJsqKxvwLt+HTDiFYApHblC5GL+CCAkFUXtQH0u+lpj+g/I0uk+Seipos5P
+	WePnZlT6j3JCKl6+64pc12MltjukZ4KKBY04u5DN+fiNyckiRZouyYQf+U9LJ8We
+	DFC51um+oBHVlYWVj1Ob/fRXZgBjhYAxo/HQfpA1Gpa7IBxxYRkVc2IJRFFMf+LO
+	GxIpaiwqrpos5Yz2WSKbg==
+X-ME-Sender: <xms:EusNaXe9cGgx0dI-PeJ5w3StTzQ9h72ZQBBez2U254nuiMPPCA1eVg>
+    <xme:EusNaYBpfHkPJWs8qd_EnBU66ZZftLJQviuvpfzUM8CC1xpKlEycwVu-LGnVwH980
+    C6p8jhEg0RIu-L8JoeqJmOZRJd0nOQW_1jSIl_T94WPXQ5fYw2r3As>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeeljeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehkvghvihhnrdgsrhhoughskhihsegrrhhmrdgtohhmpdhrtghpth
+    htohepihhofihorhhkvghrtdesghhmrghilhdrtghomhdprhgtphhtthhopehvihhshhgr
+    lhdrmhhoohhlrgesghhmrghilhdrtghomhdprhgtphhtthhopegthhgvnhhhuhgrtggrih
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhhiugeskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheprg
+    hkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlrghn
+    tggvrdihrghngheslhhinhhugidruggvvhdprhgtphhtthhopegthhgvnhhhuhgrtggrih
+    eslhhoohhnghhsohhnrdgtnh
+X-ME-Proxy: <xmx:EusNabR-hy4dOJ6b7ZA8_OFZ906Sv72CGyDtu6rj06WnoCapJDAqAA>
+    <xmx:EusNaZf2IH8cXFinuUPh-BfmQ8e6WYQh-EMZSzWReoRJff04oWaKnA>
+    <xmx:EusNaUuLtn1Ywbkws_-PhRTvfwWOoFFn5Kdzpe5Vu10hRHz0PJV0-A>
+    <xmx:EusNaVKkyJhqbpZVHw5r5dtgmXjTIEYS4wun2GGp7vf5IzK2kWW1Zw>
+    <xmx:E-sNaWadqPTvujXbbeGKAQETVX3PdlND9csF6KeOmKufF6lgMZO8MUNA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 572CF70006B; Fri,  7 Nov 2025 07:50:26 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-ThreadId: AvUhhSuyoH3V
+Date: Fri, 07 Nov 2025 13:50:06 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Lance Yang" <ioworker0@gmail.com>, "Huacai Chen" <chenhuacai@loongson.cn>
+Cc: "Andrew Morton" <akpm@linux-foundation.org>,
+ "Huacai Chen" <chenhuacai@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Kevin Brodsky" <kevin.brodsky@arm.com>,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, david@kernel.org,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, vishal.moola@gmail.com,
+ "Lance Yang" <lance.yang@linux.dev>
+Message-Id: <f0efca40-aa3b-41ba-a8e4-c9595c19778e@app.fastmail.com>
+In-Reply-To: <20251107114455.59111-1-ioworker0@gmail.com>
+References: <20251107095922.3106390-1-chenhuacai@loongson.cn>
+ <20251107114455.59111-1-ioworker0@gmail.com>
+Subject: Re: [PATCH Resend] mm: Refine __{pgd,p4d,pud,pmd,pte}_alloc_one_*() about
+ HIGHMEM
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251107-max25014-v5-4-9a6aa57306bf@gocontroll.com>
-References: <20251107-max25014-v5-0-9a6aa57306bf@gocontroll.com>
-In-Reply-To: <20251107-max25014-v5-0-9a6aa57306bf@gocontroll.com>
-To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
- Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fbdev@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, 
- Maud Spierings <maudspierings@gocontroll.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762519811; l=1603;
- i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=W3+O65MLK+QQ45G6UQnntYqpahuzB8Ny+hes04KZ2tw=;
- b=ezpjtjsv6GgTUKTj7VIN8Ol7x+BVdwyWUUs+AXJaY5Qg3P1dzkwOkW9zWLzP2vTxhen37C8V2
- EGi+m0I9ldbD7r5Bw0/dGwM/b7StU0TVUcAQqEYBAqeDlohud8dP0sb
-X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
- pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
-X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
- with auth_id=341
-X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
-Reply-To: maudspierings@gocontroll.com
 
-From: Maud Spierings <maudspierings@gocontroll.com>
+On Fri, Nov 7, 2025, at 12:44, Lance Yang wrote:
+> From: Lance Yang <lance.yang@linux.dev>
+> On Fri,  7 Nov 2025 17:59:22 +0800, Huacai Chen wrote:
+>> 
+>>   */
+>>  static inline pte_t *__pte_alloc_one_kernel_noprof(struct mm_struct *mm)
+>>  {
+>> -	struct ptdesc *ptdesc = pagetable_alloc_noprof(GFP_PGTABLE_KERNEL &
+>> -			~__GFP_HIGHMEM, 0);
+>> +	struct ptdesc *ptdesc = pagetable_alloc_noprof(GFP_PGTABLE_KERNEL, 0);
+>
+> I looked into the history and it seems you are right. This defensive pattern
+> was likely introduced by Vishal Moola in commit c787ae5[1].
 
-Add the missing backlight.
+Right, so not even so long ago, so we need to make sure we agree
+on a direction and don't send opposite patches in the name of
+cleanups.
 
-Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
----
- ...x8p-ml81-moduline-display-106-av123z7m-n17.dtso | 25 +++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+> After this cleanup, would it make sense to add a BUILD_BUG_ON() somewhere
+> to check that __GFP_HIGHMEM is not present in GFP_PGTABLE_KERNEL and
+> GFP_PGTABLE_USER? This would prevent any future regression ;)
+>
+> Just a thought ...
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dtso b/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dtso
-index 3eb665ce9d5d..786a04ef40c8 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dtso
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dtso
-@@ -16,6 +16,7 @@
- 
- 	panel {
- 		compatible = "boe,av123z7m-n17";
-+		backlight = <&backlight>;
- 		enable-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
- 		pinctrl-0 = <&pinctrl_panel>;
- 		pinctrl-names = "default";
-@@ -91,10 +92,32 @@ lvds1_out: endpoint {
- 		};
- 	};
- 
--	/* max25014 @ 0x6f */
-+	backlight: backlight@6f {
-+		compatible = "maxim,max25014";
-+		reg = <0x6f>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		enable-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_backlight>;
-+		maxim,iset = <7>;
-+
-+		led@0 {
-+			reg = <0>;
-+			led-sources = <0 1 2 3>;
-+			default-brightness = <50>;
-+		};
-+	};
- };
- 
- &iomuxc {
-+	pinctrl_backlight: backlightgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO04__GPIO1_IO04
-+				(MX8MP_PULL_UP | MX8MP_PULL_ENABLE)
-+		>;
-+	};
-+
- 	pinctrl_lvds_bridge: lvdsbridgegrp {
- 		fsl,pins = <
- 			MX8MP_IOMUXC_SAI1_TXD2__GPIO4_IO14
+I think we can go either way here, but I'd tend towards not
+adding more checks but instead removing any mention of __GFP_HIGHMEM
+that we can show is either pointless or can be avoided, with
+the goal of having only a small number of actual highmem
+allocations remaining in places we do care about (normal
+page cache, zram, possibly huge pages).
 
--- 
-2.51.2
-
-
+      Arnd
 
