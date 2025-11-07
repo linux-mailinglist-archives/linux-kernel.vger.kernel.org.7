@@ -1,167 +1,135 @@
-Return-Path: <linux-kernel+bounces-889743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D82C3E619
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:41:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56FE7C3E607
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:40:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2ECD34EAB5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:40:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E036F3AEDBF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7C82E7BDE;
-	Fri,  7 Nov 2025 03:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9DF2FD1AA;
+	Fri,  7 Nov 2025 03:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PlkDKbrD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FV8kDSNJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5941016132F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 03:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D9116132F;
+	Fri,  7 Nov 2025 03:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762486812; cv=none; b=fSHNzmwUdRKMQdGq1+UMGyK69DL7yxE7akUyhmkOVKPOR5O2WT1vi0OK771KjKkX9uYblZTlff5CIPbW9XXGLh2F8i6jtuqK7WZEWK6T3ZuHiFo0sInYH0tQHkiUxz4biz/u37iJAAuNKMZ+3I0wFf/v93HineQdOtv7DGo+Hn0=
+	t=1762486776; cv=none; b=geUeLGco1+5bp0fyyW2V27KdrUmxhcXDf0rNNilcJDQftXYJmJw4T5/XgJA6ScnUQ9QThiiGu3meMlLs9jWDZLwPXLfYNZOw/XjaeghgdVNh7rAMgRsWMAGPZRIZMMgaLQlnjcrKAbFqbsT0KLlkkEhD+0ehtewsqId5X2wGUGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762486812; c=relaxed/simple;
-	bh=VVQPqWHJT+IhU/quSD4PubuPAGzXLdwZDO/jSKslTeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=o6Ge9ssS9A7FFsAV3v4KiXHQsY28uI+J0z/ELbobMh7ID9vW9F6LsSqXuj8SMzNcWlP3Knu1fYNByBeexyXMvz9NnLqDsNopSYJthedho57NPREXlX5Ba9+00/9UWW1DlIzK5N5ajpVVMX+W9NxLUtUu1qwD3pjp6GWZvFtze5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PlkDKbrD; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762486810; x=1794022810;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=VVQPqWHJT+IhU/quSD4PubuPAGzXLdwZDO/jSKslTeY=;
-  b=PlkDKbrDS6KDPiG/DOoMP1YqxxuXjQh8/y5g9KUfIuHZKx+s34UHmlBz
-   8rQ1plQktmNAi6jhRJuw9ybDTTofTLWy2S19tMSj6c+9r4Eg/EVjv9Lbw
-   J6qgGA9APWdIdtSgDA0GqWQWIsUVscxXn8DJUIcycYXZPfsYwbr1nEKL4
-   /k5MYyrlh5Jr6TOJRpqVTBMQ0fQJkGHkIcG+Us9Vx7PWkSc93USKr5ZJq
-   +aKIR3gD6WE2S9zin4lXTtBDoFfSD1DzlGpRma5xuDQRlUQYSRWDWC6BS
-   xFtgTEO/nXuU7mAI2l+E900+/G3BgijLzcHuIXr2uA0Rs2GT6RxXutt6G
-   g==;
-X-CSE-ConnectionGUID: YdzdG/j9Rdav73lOm+zaqA==
-X-CSE-MsgGUID: AWjwpoJ7QJud+i/4hYEQrA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="75326467"
-X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
-   d="scan'208";a="75326467"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 19:40:10 -0800
-X-CSE-ConnectionGUID: m8rqnDgBTHWGdQ0LO9AhhQ==
-X-CSE-MsgGUID: 5GweQyUQRbSlecnd8D2Zbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
-   d="scan'208";a="218592385"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 06 Nov 2025 19:40:08 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vHDKX-000Ufa-2u;
-	Fri, 07 Nov 2025 03:40:05 +0000
-Date: Fri, 7 Nov 2025 11:39:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Markus Stockhausen <markus.stockhausen@gmx.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: drivers/mtd/nand/ecc-realtek.c:443:undefined reference to
- `dma_free_pages'
-Message-ID: <202511071114.8WeW2GZK-lkp@intel.com>
+	s=arc-20240116; t=1762486776; c=relaxed/simple;
+	bh=xO6SZ8W3duCMgy43HEugQiR1wgwsIBxsWN8LzyypCZo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d6UmPZpvDGT7QyOXPC48uM10Uot7LHhlbE/kqWDyTOzBhOvsw85c0bR/ampyi3mj59Zz80YKkdOChjiRn3dwL6NsJ2aA2oY6DDZ/3D67m57wMwCft1tdKQur0W/6nYioMhYda520VgBzlm99dXi9CTKqRY5SdNS2IxDOSNNmcas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FV8kDSNJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A719Fwn1711846;
+	Fri, 7 Nov 2025 03:39:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=8ejvBjvXbEdbICTXy4dbsxl1zlj9upML2HE
+	3tiydGOY=; b=FV8kDSNJxzo40pijYir+lsGm7FPOaBqRlQqzmL3kaEjKfl2RwwB
+	+rilbufAlDMFgbD8dR9AGTJc+29KTyXqEWJTlOSKImkX6L5F5Vh/IdAe2d874Cpf
+	pvLogI/EmsIIecfrQBlxTMJjSFmmC6j0fsLlF+UXvxtKaj+LooSD+J1SXkjl0yji
+	m10+gWOC5xgAduo/XDn7Dd7+8/rNqN8owF2dPfCdg1zy6B4Gm78ZBzae8RJf1cLg
+	ibqO3hTdQWgAJTJHy/hFdxrhpy+svRBQab7BLYuR4lcdNWmgW97tbhlsFmgfGaXa
+	2d+ZigaBU3ZR6aLZ2Ch9s2BmcX85bfEvS+w==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a96ue0cn6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 03:39:30 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A73dS9S030334;
+	Fri, 7 Nov 2025 03:39:28 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 4a5b9n4nvr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 03:39:28 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A73dRNc030220;
+	Fri, 7 Nov 2025 03:39:27 GMT
+Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 5A73dRFq030061
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 03:39:27 +0000
+Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
+	id 62683231FB; Fri,  7 Nov 2025 11:39:26 +0800 (CST)
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        quic_chejiang@quicinc.com, quic_jiaymao@quicinc.com,
+        quic_chezhou@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>
+Subject: [PATCH v3 0/2] Fix SSR unable to wake up bug
+Date: Fri,  7 Nov 2025 11:39:22 +0800
+Message-Id: <20251107033924.3707495-1-quic_shuaz@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=fYKgCkQF c=1 sm=1 tr=0 ts=690d69f2 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=nga8D478eWHIXYdf7xwA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: DJvmUacozVLYGDGAHbj37ypeSwnJOPeW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDAyNiBTYWx0ZWRfXxh5tj15KdQCp
+ PNFZ+WTxOUilNKGVs4O413JZPiYI/nT+wpXe4GF96s+NdON0IsH28QOLbDOJootey6yQhCbjFUH
+ AozAX/urCm/z+qAWfU4VT/WZw1tl6dCI57aTzxRyUz5t8Ufk0QavGLxoYlbISuGO/jC62uEdRHJ
+ SVd3yalPLeB1z0INg+3PY9nYv4CbqgAJHGvqrqaK9/1N4MrOoX0+B4gz9AUZqNeqUbYKdmsBtXD
+ 5+QTOt1v7dp2CnLwNpX1dZ6HpI82GnJNNJqU1FPoPewegPNVeKYMfrgZSIBX0bczU4wU5qH/Q9U
+ XFc7FXhWPEMPS/G6Dn3+o0EYdtGqW83RP9Khtnhn+TFRg2jHxVrU67+m88YycBRhR2phJixsRWg
+ kABvwgbOhGe2eAYBzMqRyR8/E9SHjQ==
+X-Proofpoint-GUID: DJvmUacozVLYGDGAHbj37ypeSwnJOPeW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_05,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 priorityscore=1501 malwarescore=0 spamscore=0
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070026
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   4a0c9b3391999818e2c5b93719699b255be1f682
-commit: 3148d0e5b1c5733d69ec51b70c8280e46488750a mtd: nand: realtek-ecc: Add Realtek external ECC engine support
-date:   6 weeks ago
-config: sh-randconfig-r121-20251107 (https://download.01.org/0day-ci/archive/20251107/202511071114.8WeW2GZK-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251107/202511071114.8WeW2GZK-lkp@intel.com/reproduce)
+This patch series fixes delayed hw_error handling during SSR.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511071114.8WeW2GZK-lkp@intel.com/
+Patch 1 adds a wakeup to ensure hw_error is processed promptly after coredump collection.
+Patch 2 corrects the timeout unit from jiffies to ms.
 
-All errors (new ones prefixed by >>):
+Changes v3:
+- patch2 add Fixes tag
+- Link to v2
+  https://lore.kernel.org/all/20251106140103.1406081-1-quic_shuaz@quicinc.com/
 
-   sh4-linux-ld: drivers/mtd/nand/ecc-realtek.o: in function `rtl_ecc_remove':
->> drivers/mtd/nand/ecc-realtek.c:443:(.text+0x1f8): undefined reference to `dma_free_pages'
-   sh4-linux-ld: drivers/mtd/nand/ecc-realtek.o: in function `rtl_ecc_probe':
->> drivers/mtd/nand/ecc-realtek.c:434:(.text+0x2e8): undefined reference to `dma_alloc_pages'
-   sh4-linux-ld: drivers/media/i2c/tc358746.o: in function `tc358746_probe':
-   drivers/media/i2c/tc358746.c:1585:(.text+0x15cc): undefined reference to `devm_clk_hw_register'
-   sh4-linux-ld: drivers/media/i2c/tc358746.c:1610:(.text+0x163c): undefined reference to `devm_of_clk_add_hw_provider'
-   sh4-linux-ld: drivers/media/i2c/tc358746.c:1610:(.text+0x1640): undefined reference to `of_clk_hw_simple_get'
+Changes v2:
+- Split timeout conversion into a separate patch.
+- Clarified commit messages and added test case description.
+- Link to v1
+  https://lore.kernel.org/all/20251104112601.2670019-1-quic_shuaz@quicinc.com/
 
+Shuai Zhang (2):
+  Bluetooth: qca: Fix delayed hw_error handling due to missing wakeup
+    during SSR
+  Bluetooth: hci_qca: Convert timeout from jiffies to ms
 
-vim +443 drivers/mtd/nand/ecc-realtek.c
-
-   389	
-   390	static int rtl_ecc_probe(struct platform_device *pdev)
-   391	{
-   392		struct device *dev = &pdev->dev;
-   393		struct rtl_ecc_engine *rtlc;
-   394		void __iomem *base;
-   395		int ret;
-   396	
-   397		rtlc = devm_kzalloc(dev, sizeof(*rtlc), GFP_KERNEL);
-   398		if (!rtlc)
-   399			return -ENOMEM;
-   400	
-   401		base = devm_platform_ioremap_resource(pdev, 0);
-   402		if (IS_ERR(base))
-   403			return PTR_ERR(base);
-   404	
-   405		ret = devm_mutex_init(dev, &rtlc->lock);
-   406		if (ret)
-   407			return ret;
-   408	
-   409		rtlc->regmap = devm_regmap_init_mmio(dev, base, &rtl_ecc_regmap_config);
-   410		if (IS_ERR(rtlc->regmap))
-   411			return PTR_ERR(rtlc->regmap);
-   412	
-   413		/*
-   414		 * Focus on simplicity and use a preallocated DMA buffer for data exchange with the
-   415		 * engine. For now make it a noncoherent memory model as invalidating/flushing caches
-   416		 * is faster than reading/writing uncached memory on the known architectures.
-   417		 */
-   418	
-   419		rtlc->buf = dma_alloc_noncoherent(dev, RTL_ECC_DMA_SIZE, &rtlc->buf_dma,
-   420						  DMA_BIDIRECTIONAL, GFP_KERNEL);
-   421		if (IS_ERR(rtlc->buf))
-   422			return PTR_ERR(rtlc->buf);
-   423	
-   424		rtlc->dev = dev;
-   425		rtlc->engine.dev = dev;
-   426		rtlc->engine.ops = &rtl_ecc_engine_ops;
-   427		rtlc->engine.integration = NAND_ECC_ENGINE_INTEGRATION_EXTERNAL;
-   428	
-   429		nand_ecc_register_on_host_hw_engine(&rtlc->engine);
-   430	
-   431		platform_set_drvdata(pdev, rtlc);
-   432	
-   433		return 0;
- > 434	}
-   435	
-   436	static void rtl_ecc_remove(struct platform_device *pdev)
-   437	{
-   438		struct rtl_ecc_engine *rtlc = platform_get_drvdata(pdev);
-   439	
-   440		nand_ecc_unregister_on_host_hw_engine(&rtlc->engine);
-   441		dma_free_noncoherent(rtlc->dev, RTL_ECC_DMA_SIZE, rtlc->buf, rtlc->buf_dma,
-   442				     DMA_BIDIRECTIONAL);
- > 443	}
-   444	
+ drivers/bluetooth/hci_qca.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
