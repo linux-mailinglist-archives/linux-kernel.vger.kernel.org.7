@@ -1,98 +1,76 @@
-Return-Path: <linux-kernel+bounces-890857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F20C41308
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:02:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758B0C4130B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:02:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E1D3A5667
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:02:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2473F1886C54
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB31B3396E6;
-	Fri,  7 Nov 2025 18:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZTC95pI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EA8333421;
+	Fri,  7 Nov 2025 18:02:36 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0393C338920;
-	Fri,  7 Nov 2025 18:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76588326D50
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762538521; cv=none; b=Xuy79W8tWpRKPLPorr3ylkbFkbzbVY5YhHj8FfuTpL5mnKcEiUQXH2aV5/4l2KB4e1336qse8Mb83PTzg3MXwLG576+6ZlOwfvTcAs8Sbj/LLB4IsZmHFy3kUNo+xL30G1gJkie/QA9FEcvRxU7epgru8k+UhE+VZZu8yPnVks8=
+	t=1762538556; cv=none; b=nw+EYF643/Vnjf8ugCyhsX3GAtFIrGGEyYkyYaLHXycRokkeKFY6UMnCLZVhcm26CR4lZo27BXIlny1D6MfCwoVPHnx5QNpHEX7i6iWb1/yJFXYgOeNgyaQVS3/AU+5J1fg/oawsZK36wmGZBMOEt5zFQYo3H1kumrVYXLcvKqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762538521; c=relaxed/simple;
-	bh=YkRmQIYkcTprlgy67p/k7ehs0uFagTPL+8qBO3Jnixw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=be16aADsgvgGiIq5daJ0ZzvBHQRf6agiIEgevVU8XX6UY/m+jZUE6ZreYa9PUN0IZAav0AzkBMxc36KHc3gV3JcRFDVKARDyqmYjRxZsKh06H6M6uXJ9IulnaacTC776UwkoTc/fQfk934rEXNhGQcb6SKYJRngVc1MTU94Dopg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZTC95pI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B8E5C16AAE;
-	Fri,  7 Nov 2025 18:01:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762538520;
-	bh=YkRmQIYkcTprlgy67p/k7ehs0uFagTPL+8qBO3Jnixw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lZTC95pIJhDjFKpoNrpd2RebkiH3ND0VrNDzjymooGUxxMX8zyVaoEWGMNbH80kIJ
-	 Tqnu0MN9bqGpG8vI0GXO4owhvBU2Poz7i2YAfnD0dCak4lOWte94w8NFB8cNPB6Xvp
-	 pbp5vodn7e+B+x/04zoNsYQwIUbHHs9B9QtPjECKpins4wWUgvsC5cWtP9H0STJRHd
-	 xbE6TpVRHlbLiG49DCk48b+WPLtXL+Hw+1P2emiQP+5bI3cGxrqyKn77seXnuUb/Bt
-	 L6Y6hFnXvtUKrjLqaD97mSNCOlnqPlCxs8OGDdaazTcNoN3WvLqyOWQDFN9d9fj9jO
-	 zt+SHjMyLE4rQ==
-Date: Fri, 7 Nov 2025 18:01:56 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Lakshay Piplani <lakshay.piplani@nxp.com>
-Cc: alexandre.belloni@bootlin.com, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	pankit.garg@nxp.com, vikash.bansal@nxp.com, priyanka.jain@nxp.com,
-	shashank.rebbapragada@nxp.com
-Subject: Re: [PATCH v5 1/2] dt-bindings: rtc: Add pcf85053 support
-Message-ID: <20251107-pediatric-disarray-606e4ed1f0f6@spud>
-References: <20251107132618.2246407-1-lakshay.piplani@nxp.com>
+	s=arc-20240116; t=1762538556; c=relaxed/simple;
+	bh=xCTrRG7bySCeTm+7Tvph5RGd90vHmi+5IH53SjcnTXo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lF678dThUSNsX644Ko1ZHq/UkxnbNKqKbF8QDfhU6sxkLuDzXfyGdxYw0p03YpNpVoAKezSRFySb5KjngOnJKy4Ot1ORlxNfj8bgycX2AIw0tZdqLliCquGNNW0DcaMzvOmWiWUprKk6b79Y/cYuBByhs90L4VNJ8O4xyQq+WmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4330bc0373bso8553795ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:02:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762538553; x=1763143353;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xCTrRG7bySCeTm+7Tvph5RGd90vHmi+5IH53SjcnTXo=;
+        b=pjoSRYFwrMOMSYQEOvIAovkDZgVCsR+F4WhwJuEIweD0Y9NzBkEfUyJGiM4nedFZdi
+         lKxQ26CskSE83+yXOPlBC/VojLLUTwLgmMeTLf5B02OPBp+z/td/IH/5u26R82Mm7l6r
+         ccFkTEoQjcAB/wrlUdmKlgtUKb9wYuBOORVkRFZ2fnqCALlQflQ5IR1jC8mT+Q5yWuNR
+         lhUcFBIX3q3SvBdjIew023LjslcGgdFV6qcpff508ODTEGVFxoTtqKofb8jlnmzvlDVi
+         at87QGhytU6THbA04TyWEBuTrsgTpThUk/4mjzJ0YSvDo9Z13TuJ+djsAXsvezKYEs7n
+         UXuw==
+X-Gm-Message-State: AOJu0YwlT/z1RkZ+L3//hbsb2DYEDcqk1Gml0aICIJTsAQDUylAChtQk
+	SzBC/57Betd1OdZ4W5miP2i4nFtcPiIgfv7M2xS5lSpwMu1wFBgXn+yQt8JzbI9VwKk1Bq6wWwH
+	cunUEc+JjICKDXrZTEACs/Ri/xaC0vcC24uRLCFEoYOui6hbSyBIubjbsnSc=
+X-Google-Smtp-Source: AGHT+IE5YJjIcPuwtpuCfmKePMdG1ZkWHWtvzWQQaWuGaU/qL4XtXd5we6rzHdaELspbGDBxPv3T7sGTVYTYxGq8OkmV3OUd1/jZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BD6S94VbneSRHgST"
-Content-Disposition: inline
-In-Reply-To: <20251107132618.2246407-1-lakshay.piplani@nxp.com>
+X-Received: by 2002:a05:6e02:3c88:b0:433:377:ab8 with SMTP id
+ e9e14a558f8ab-43367e46d69mr4613835ab.23.1762538553638; Fri, 07 Nov 2025
+ 10:02:33 -0800 (PST)
+Date: Fri, 07 Nov 2025 10:02:33 -0800
+In-Reply-To: <67afa060.050a0220.21dd3.0052.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690e3439.a70a0220.22f260.005a.GAE@google.com>
+Subject: Forwarded: Add validation for scatter_elem_sz
+From: syzbot <syzbot+270f1c719ee7baab9941@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
---BD6S94VbneSRHgST
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+***
 
-On Fri, Nov 07, 2025 at 06:56:17PM +0530, Lakshay Piplani wrote:
-> +  nxp,write-access:
-> +    type: boolean
-> +    description: |
-> +      Request the driver to claim write ownership at probe time by setting
-> +      CTRL.TWO=1. This property is only valid when nxp,interface="primary".
-> +      The driver will not modify any other CTRL bits (HF/DM/etc.) and will not
-> +      clear any status/interrupt flags at probe.
+Subject: Add validation for scatter_elem_sz
+Author: kshitijvparanjape@gmail.com
 
-I'm sorry for not noticing this before, can you please remove the
-commentary about linux driver specific stuff from here? Probably needs
-to be something like "Indicates that write ownership of the RTC can be
-should be claimed by setting CTRL.TWO. This property is only valid when
-acting as the primary interface (nxp,interface = "primary")" or
-something along those lines.
-
---BD6S94VbneSRHgST
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ40EwAKCRB4tDGHoIJi
-0i8wAQDIikffREGZeQeAj0d/sZ+0WN4ou57bbo7efjcuc9eP3QEAszEjP1LQ5L4Y
-1qoHuWUmjSagI126w/dnUIVsMsLkrQQ=
-=THb7
------END PGP SIGNATURE-----
-
---BD6S94VbneSRHgST--
+#syz test
 
