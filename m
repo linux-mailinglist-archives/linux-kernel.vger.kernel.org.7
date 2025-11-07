@@ -1,149 +1,121 @@
-Return-Path: <linux-kernel+bounces-889851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF1BC3EAFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:04:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1894EC3EB08
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:04:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACF043A34D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:04:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A86C4E99D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F13306D26;
-	Fri,  7 Nov 2025 07:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888573054EE;
+	Fri,  7 Nov 2025 07:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9+0K/kb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b="Gz/gXOQg"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4A418E1F;
-	Fri,  7 Nov 2025 07:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902BF306494
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762499077; cv=none; b=EUeSfpSw9eJS11HUwTT8+oM2pO6Ls+zFD9OPVZmtsD0X086o+2qhsVc6WRpnPuHT99IQvl0ka7aJPQ35rpt/CJaKO+Kdwy8rFcO+MzJ36e6BjzkVMHAp0B8qnh90ZQwj6JneywZT5IO7j3BT2m7+gTb46eIfxFEcgeWHZuGcwQg=
+	t=1762499084; cv=none; b=RHpMXU49lVc2fm80WKVFgYTzZZgCV12lqEhcY+yJjokAX9QyKN951Cv2WAX+KD0mNDSUvdYv3Q8jrBoN+MmiNdYp8t+/yWxyfMnhjtz27Kra5hn4tCvIXhEvdB2GQScb6H9k3xT/tUr3q/2JLzKfie9cpw+WFcyhlxCyxlaipR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762499077; c=relaxed/simple;
-	bh=ZzdjrBBlMeSOGWdtx4G4ccZROK+5jV3t7rncDsjjWtE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JXoPQx/4Rdh2ESJ0PvpgSuzuZxWp+LU9IpNls6a9QipiweT2ofwRSHJdcUh3gwRbzmwa8wPG2exy1rYsVX9b4OprRHvOiqDY5Ch2vRpwHll+AZv47aKibWtnRO4Q1cvK/fsHj2V9ODRfpfUzsJzoeAuFbeGK8+wVYQWdzzgIAL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9+0K/kb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 972DAC19421;
-	Fri,  7 Nov 2025 07:04:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762499076;
-	bh=ZzdjrBBlMeSOGWdtx4G4ccZROK+5jV3t7rncDsjjWtE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=q9+0K/kb3FFLYCDxlaZZTX2SnCgV7hnlANsa9go5j+9i2MaTV1CScM8NtiKi2u1PK
-	 jfF0khxhNaSmFz+oiX+jxXtoTMO1U/p5Zkw7bdbdtuXxVbCfYF6Mkg9OERGNCM/jVd
-	 so+2YaHzwplUxbsdpitEjRAixTXa0zbNzulMmDyRYmcQ8GhZXQKlFX+KOm5Ltx5z9O
-	 vmRSz4jUn/XcWTome9+m1hU1Y2elgzwSqEEaOK7cpyqWO2COFIx0ELlLuV16yFVKdm
-	 1H0rqXZ8UWF6xL1MzBKN54M6Dj0TkmI2Vu0o1QH/NYytpxMxUx3cPKVF8e279FjGJI
-	 gnFctuhjVOIbw==
-Message-ID: <fef8569d-0172-48a6-b2cb-0e9023589ced@kernel.org>
-Date: Fri, 7 Nov 2025 08:04:31 +0100
+	s=arc-20240116; t=1762499084; c=relaxed/simple;
+	bh=XtzOsbt2hl6xTu2IJUUbKD60Sc3xgdEK+LN2FPoMKUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FycfPmBanhdv1WfxSqPyFbkZKd0hPhPO/QmsuGEN7k67r54bJ4jDxpIVAyPgnBZ7yD+4qbw9SyKxCMEcwxNTJcFnP5R2rfm4doOBV7uAQqE6RtQT4VEbY+0tCci1OnTwU9/n6BjEFZ8z1aKG5kFmcBw2H4JNtddUHWScq2Rm/Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca; spf=none smtp.mailfrom=draconx.ca; dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b=Gz/gXOQg; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=draconx.ca
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b109c6b9fcso3405001cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:04:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=draconx-ca.20230601.gappssmtp.com; s=20230601; t=1762499082; x=1763103882; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MYnIiKrQX8aCtjj//tDqMdxlWqP5fq15qVk6nPAkZoo=;
+        b=Gz/gXOQgt+dwzIv+KSlNZ9YmsY0aUnJP6LxVbCZDaMfQiel5yb5nr8msIa3TLRFSJu
+         tUQf9T/cXxxnYt9ro9XlGu0YYPoRbxA06W4rs+yDQKtKKVCW3j85YFgi71yb6kp31kme
+         YuxDqNQbxjsPhRULRC4ScjuIHf2kErzsMZw5wSJor4n5G9hI2XkXtd8Iuc/Vn3YQyvGK
+         4llkusVoAhduhwehwrqPBTdt2KI1U68YFh5TAXMu8toCiU8k37dWPufJG6k3oYIB4sjf
+         DP+bfZBlz5cPwwZcJ4c8Zx5vGyuWehxR80ZgKaKwvYJlibs08StXOUUWfjgJcx5DgMJR
+         E6aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762499082; x=1763103882;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MYnIiKrQX8aCtjj//tDqMdxlWqP5fq15qVk6nPAkZoo=;
+        b=HkpGPgmWBw84d4H1LdErXLy2+S2bKSIC+cKoACoLY4ygpzJKxZOgKJQxqFWxN6fP+C
+         6su3miJYfFbxrzAJgSm2SNbVRFyQPGHzdh+kpox2jBxs437evTe5x2bMGPA3CY+dIdCv
+         65+44nh7H9K5Xhc8/yUX6fhHgwnbjDeeKjJw01fRm8ebl3AffOfk5MA0z2kCIvj3aovS
+         h19g/NsVCkHPyW8RQGqf9Y6DUn9thAdJWgnrRPG9Aug1kq9Ec2SryEbAzWpSuDoGEJuc
+         LxVXTQss5G2cmE0dLVq+3ZJSGgOzeXsFaQKBCrjhpGY5gDVmzgQ4opUctyI/29I+2bh/
+         IbAQ==
+X-Gm-Message-State: AOJu0YxIyZGSBk9jqaGAnchF0QbVLphDv92FjmyIBhg+Qmq19PZaNClj
+	T1KyfFkMwaDYtmAh+wdKtzQGltWeSlx5554ki2vFtV8RSMIZ77YIbSEA19ZkkEI57J7/dPG56aG
+	YDw7udU8=
+X-Gm-Gg: ASbGncuwsAJ5BYQy9wOLW1TfB/dVTM17e7hjIc7cyRGJ9S0ZGWKtNLIzSuC2qqmKbat
+	r66R9kxP5NaDe3zTq7qlIPR75zy7lWjOdHH9X4VHgH2GEkWyYxnu3rsRPMKrPEwfzTJATyF1vDl
+	nKUZR6Wtt32QHQe6bk3LOn1Bc1hIZYcFgyfCdRJ9yb/tgGS3hz91HaK8XJK0ZJuUpVQNSNNMHpk
+	wvJUe23GCsgNIdCFXIzYn4wnmhG+SHA0ui/mCZ89ClN/RMf+53/VY0ASFrYK9V5KerzN1aKUDst
+	Ii/3xfVr2jSdwWt/fR7V1RWgTu8W8EVglnBz5mnj8QJh6SO2GOXVWwOTLb5MIGWo3IuLxmNc9JV
+	vC5x+UAAWU8hDRcgyc7GpgBlfGo4RyLk9Bqp2o9h0SU+W7bx7W7jEyBfcABBqCbDVHnSaARm+Pn
+	M5lGNrTeSo4uRlpfwPZeThijJ0KhgdAw==
+X-Google-Smtp-Source: AGHT+IFwNzL1muZtb0IN53C7CPHVqzEIYh0SCwcsQzMl/w3PfdY3Ho9ZrT9AzNk7OQH5c7wzQoWICA==
+X-Received: by 2002:a05:622a:111:b0:4eb:9c80:f6a0 with SMTP id d75a77b69052e-4ed94a4b3bfmr30924711cf.52.1762499082271;
+        Thu, 06 Nov 2025 23:04:42 -0800 (PST)
+Received: from localhost (ip-24-156-181-135.user.start.ca. [24.156.181.135])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-88082a3ac4fsm34529256d6.57.2025.11.06.23.04.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 23:04:42 -0800 (PST)
+Date: Fri, 7 Nov 2025 02:04:40 -0500
+From: Nick Bowler <nbowler@draconx.ca>
+To: linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
+	linux-mips@vger.kernel.org
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, stable@vger.kernel.org
+Subject: PROBLEM: boot hang on Indy R4400SC (regression)
+Message-ID: <g3scb7mfjbsohdszieqkappslj6m7qu3ou766nckt2remg3ide@izgvehzcdbsu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/2] Add driver support for ESWIN eic700 SoC clock
- controller
-To: Xuyang Dong <dongxuyang@eswincomputing.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- bmasney@redhat.com, troy.mitchell@linux.spacemit.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
- <1abb85b.c11.19a582bcbbc.Coremail.dongxuyang@eswincomputing.com>
- <039a3a41-c60f-4296-afd9-2bf3467574ca@kernel.org>
- <6d2d7ddb.cbd.19a5cf92465.Coremail.dongxuyang@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <6d2d7ddb.cbd.19a5cf92465.Coremail.dongxuyang@eswincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 07/11/2025 07:20, Xuyang Dong wrote:
->>>
->>>   Gentle ping. Looking forward to your reply. Thank you very much!
->>
->> Please do not top post.
->>
->> You did not add any maintainers of these drivers, so I would not put it
->> high on our priority list.  Ask yourself - why would community
->> maintainer like to take unmaintained driver? So the community maintainer
->> would maintain, right? To add him more work? If that is the case, isn't
->> better not to take the driver? You see where I am getting at?
->>
->> Also, I don't see any involvement in reviews from eswin. The only
->> reviews here where from DT maintainers, Troy and Brian (I hope I did not
->> miss anyone), so again - you just put all the effort on us and then ping
->> us...
->>
-> 
-> Hello Krzysztof Brian Troy,
-> 
-> Would you kindly review the updated v7 patches at your earliest convenience?
-> 
-> Thanks to Krzysztof for your reply.
-> 
-> These patches have already undergone review within our internal team. 
-> The reason for adding eswin maintainers to the mailing list is to ensure 
-> that these colleagues can promptly receive community feedback and stay 
-> informed of the discussions.
+Hi,
 
-Please really, really think through my first paragraph. It seems you did
-not get the point, but understanding the point is essential for all your
-future (and this) upstreaming efforts.
+After a recent 6.1.y stable kernel update, my Indy (mips64 R4400SC) now
+just stops booting early, just before when I would normally see the
+kernel messages about mounting the root filesystem.
 
-Best regards,
-Krzysztof
+There are no further messages of any kind, and the boot process does not
+appear to ever complete.  However, the kernel is not fully crashed, as
+it does respond to sysrq commands from the keyboard (and I do get output
+on the console from these).
+
+I bisected to the following:
+  
+    794b679a28bb59a4533ae39a7cf945b9d5bbe336 is the first bad commit
+    commit 794b679a28bb59a4533ae39a7cf945b9d5bbe336
+    Author: Jiaxun Yang <jiaxun.yang@flygoat.com>
+    Date:   Sat Jun 7 13:43:56 2025 +0100
+    
+        MIPS: mm: tlb-r4k: Uniquify TLB entries on init
+    
+        commit 35ad7e181541aa5757f9f316768d3e64403ec843 upstream.
+
+This reverts cleanly on top of 6.1.158 and the resulting kernel boots
+normally.  I then reproduced this failure on 6.18-rc4.  Reverting
+35ad7e181541 on top of 6.18-rc4 also results in a normal boot.
+
+Let me know if you need any more info!
+
+Thanks,
+  Nick
 
