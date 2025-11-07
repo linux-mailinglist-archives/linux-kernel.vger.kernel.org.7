@@ -1,405 +1,308 @@
-Return-Path: <linux-kernel+bounces-890500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF20C40328
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:53:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C885CC4032C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:53:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C597C421CEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:52:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 82F614F12D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1DA31B10E;
-	Fri,  7 Nov 2025 13:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30661319875;
+	Fri,  7 Nov 2025 13:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DZNvXY9Y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XJP9ZOW+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DZNvXY9Y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XJP9ZOW+"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R+TqKBDb";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="K6tWOqaB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E6E3168FD
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1BB22423A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762523532; cv=none; b=J4jRD17OOongI35z6wtJstm95w7/0/5YTnTIX+ThoVlFFdTFHtJRjgstGVXu+d8uHFGhcvzFXIjFstZkL3YojBNeaNBg4btghY989RTMegFFj/rG03KMSOnjNBIuvbC4kyu9lHJTiKikJOWjma8065ejfsmHJtVwu+b9DzczWk4=
+	t=1762523525; cv=none; b=hoIzOI8qivfJlvPHbfcdztqcTXIYy6EOnsYAoN4U/vL8C3Uw14f2tNePoqlF85q3pro3ipL3i3VYtcTQCLud6eIi5tHazMEXMlrERllcRDgSa3Sdlu54E1utT2U9ABq9BRXPT6W76o+fCYCnahRLok3L6cYheyMgw4zaL8YDO0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762523532; c=relaxed/simple;
-	bh=VlcyFpyyN8/dJ59tQZJAyvizdyQCo7jTGGmdC2FCilQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Eh8itZNpDE7G9f1YIISrkkJDFSXA9TEgx3YTJs38K7Pw737h1Y0PAgQbAvRMjxu/PNSv8tk8GukWRSZ7TkM4fWE63pdW50UBXIvN7ehO+TwEXRva3JbY38bCnYmtJcDZPq8yX86R237qa8PQIb2IOyYoZPJYfn7oxiXuEHJyQSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DZNvXY9Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XJP9ZOW+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DZNvXY9Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XJP9ZOW+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BF08A1F461;
-	Fri,  7 Nov 2025 13:51:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762523506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lbjp9eBdivzL6P8LhBfaJka806WwCcsNNUIAdQf/UyI=;
-	b=DZNvXY9Y5Cevgwr5I91ouI7W/s/MxZbXP47IXlE4UjiYOYdRSlRE1YWxmZagun2nQqh7IR
-	Szu4FwLkhjMCz+IjYVZPQskmg7DTl9BN01feerW2us4n6UlLWRnQKnxgIaDhs91AZHGQcj
-	xqWgOCjPJfqVc2VGPrQQ+qd+kFS8eQc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762523506;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lbjp9eBdivzL6P8LhBfaJka806WwCcsNNUIAdQf/UyI=;
-	b=XJP9ZOW+umo9kwWSM++dRKu32L8N+xdF/kBMG28busVSzwXF+bFkYhd5BPtNlqnjqDG8w4
-	Cr/QFzMCa3zh6GBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762523506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lbjp9eBdivzL6P8LhBfaJka806WwCcsNNUIAdQf/UyI=;
-	b=DZNvXY9Y5Cevgwr5I91ouI7W/s/MxZbXP47IXlE4UjiYOYdRSlRE1YWxmZagun2nQqh7IR
-	Szu4FwLkhjMCz+IjYVZPQskmg7DTl9BN01feerW2us4n6UlLWRnQKnxgIaDhs91AZHGQcj
-	xqWgOCjPJfqVc2VGPrQQ+qd+kFS8eQc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762523506;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lbjp9eBdivzL6P8LhBfaJka806WwCcsNNUIAdQf/UyI=;
-	b=XJP9ZOW+umo9kwWSM++dRKu32L8N+xdF/kBMG28busVSzwXF+bFkYhd5BPtNlqnjqDG8w4
-	Cr/QFzMCa3zh6GBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ABD0913C01;
-	Fri,  7 Nov 2025 13:51:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2G+nKXL5DWlFCwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 07 Nov 2025 13:51:46 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Fri, 07 Nov 2025 14:51:26 +0100
-Subject: [PATCH 4/4] slab: use struct freelist_counters as parameters in
- relevant functions
+	s=arc-20240116; t=1762523525; c=relaxed/simple;
+	bh=vsK0p/F1FtsnUIlMlYy3b6sdTy0h09GjLOEkWzgm6so=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dmdhbrz5L2gpqbR/LOrZ0PdxUojcNXJPAOQojn6hbcXmy3xGz1NrQlP8LiZVTO9jYWH7y6SPAee9aBQ2F/Dio8lcZ1QpHvruAbD8b3Tac3CUlLZo85YTwrSasyXaV6KXWMXlrabRsvi1aBJiPIeNu0bkJ2hxM7O+WJQ4fMZFO8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R+TqKBDb; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=K6tWOqaB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A77MKtS629503
+	for <linux-kernel@vger.kernel.org>; Fri, 7 Nov 2025 13:52:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=MCwp2yKgRDbiKLKvcUZpR1sV
+	O2SWRlEpJ9zJU9FUvCo=; b=R+TqKBDbKj/6rKVtAZQdBLGkTnvPLUZCeuR4Ggg3
+	b+NbL6AD8iBsfw+3bAXkk7G26U8aRHcPOKNRiMGMF/PsE94FWGIb5cLurF87uu+e
+	5cWZmulbGSucLrwNCbojlL+f/BUrN7o+PXXL4WU/9/OL5XyUCJMUswYv3Ez2SvK4
+	1D2ok9jRm9yvcCgDArgTOR/UMKQSH2WpJ7W8PTcilCSKiHCH0tgoPut8uCY7cBge
+	JM99atXVBiAvuJKFBJkcjz5Bm3YceCs3Q1LZ0EoIdVGlLsjLjp/RYRBHbEyUqUv7
+	9gIcxOsgSeAOARG2hOp0/+NiBOV47p/GcM2sqlSrb9nDog==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a92232sc2-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 13:52:00 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2904e9e0ef9so19085815ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:52:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762523519; x=1763128319; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MCwp2yKgRDbiKLKvcUZpR1sVO2SWRlEpJ9zJU9FUvCo=;
+        b=K6tWOqaBsnwpMIf6z1JBNgOTeyNQeG9RsmfEzKY+mO0cLJZmEDE8TDg1eitJhV4ups
+         EeB/xPwLVq+GaqlFlAbPwkoDSt7obvQYXeYisctrUcww+3cO6B52G4VUw2vidggvLNY1
+         aUmABg1OJ1puhMM+bP67qPsrtH1bWl0q5W+OKfhoVXbUBpiXzLquwQOSrBq7RgYC4g21
+         6IvKg5jn6wXEBmwmZ8XbNV28yiUpQ1l1v/22Z3jYJLjasaMGj69DJNvbTnHzpBKJEzEF
+         eOB0sAOswWk1In8EOvXZv9EXUxrQQtjyZulVeWL4KHqWsDEENXZag6H3DgKe2i1kh6ZU
+         lfLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762523519; x=1763128319;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MCwp2yKgRDbiKLKvcUZpR1sVO2SWRlEpJ9zJU9FUvCo=;
+        b=ugQ9SBTZ+mWucOmrybYGjGumH7Adi7g3bWdySiedlOxf8l5A2WFETsy4/9BRpYBFxq
+         O7uUBIr1STlJBi1RTE7/firtbFeB5Eqcp1FA6Sw/WxVa9fYAFKkJDmYTH6yQqIgEXo7d
+         3E0KgRy19Vb20eZMUsxVBFNjCj7/naER5kVWhZMxSn6Er06SMMUWlpNxKOtC/gGIE7cx
+         nUQRunDOYcS5wqBnTXZxBmgscX3pWcOMzumiqd6aAGt6vLBv9lbGV4AMb4xGGP/lxWYS
+         O5vyLcB4XnQEEhTAwk+4nG5MPYu6WoDDtZo4VkvTjBvim00D8mWtfB3t5GEiPo2N5phM
+         sqUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuelJ4oLFVUfhfAlnVt/EJ5JCCI8OKImNyVhd+7tNF1xyZbodQLM+b/Hy/nLo+bmp/eHj00UcKD2GaHQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMIe9qV7GLWQYcWdiDnBoiTCjU2L54fLHbdLJWoYACrcSkoXx9
+	QaPD33NOGEfQgW8h3P5fs7fbputUCOt741PCGH/7pZ6QdVXStDcQXT3FUtkyNds0yy/Nzg1DiSJ
+	TwfM5tetmzvyMfoDNnBOjhUFAjd49kpZzGBbpUfIqrbzH7gaH6tZO+C9HCHPPCswhUg==
+X-Gm-Gg: ASbGncv1wMYCpJrhz2dvRi9UD0IXW4hPFpr4XSrZrNXbXIWyDPBQgy+a5twVn82v2Jj
+	1jAYKB2Xoo8JaiyDHZfRLncTxGVQFtVSPsbbIhJY7ONSYBf+rMHtzZQ7PCk3ODjqOLk1wbkP7qk
+	bwiOiH4qqd2RBYgbJv/2OGY6T4AR0aSNBd/7EbxCzcOWZb2ZzZ/3/HXW9RmifyxdzVEKhT7MDiJ
+	AXId1X3zOhMuUM8LxqSO3QSiekyujN+TMPUHnn40I9AXqyScdYGOYd0t+6ydKadHz+2QhePiSoG
+	rTIu3hEZHRx1xLfimIMd2vjcw8lL5dwTQieVQ9wHiDSAdRqJA2897vCVG4K8Z73oiFpepA3XpbR
+	2JRDfa4jMk1sg7fMQiZ7O5wzn
+X-Received: by 2002:a17:902:db07:b0:295:39d9:8971 with SMTP id d9443c01a7336-297c03a6069mr56742435ad.1.1762523519066;
+        Fri, 07 Nov 2025 05:51:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH3HJZJpW76pJqwIeIsZ2hbm5brwn6HSUBfJ7QroBwBmNe0D+4y6WwifSEuJ1CUZ2VLMgu18w==
+X-Received: by 2002:a17:902:db07:b0:295:39d9:8971 with SMTP id d9443c01a7336-297c03a6069mr56741865ad.1.1762523518491;
+        Fri, 07 Nov 2025 05:51:58 -0800 (PST)
+Received: from hu-nlaad-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651cc6595sm61506885ad.98.2025.11.07.05.51.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 05:51:57 -0800 (PST)
+Date: Fri, 7 Nov 2025 19:21:51 +0530
+From: Nilesh Laad <nilesh.laad@oss.qualcomm.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        venkata.valluru@oss.qualcomm.com, jessica.zhang@oss.qualcomm.com,
+        Yi Zhang <zhanyi@qti.qualcomm.com>
+Subject: Re: [PATCH] drm/bridge: add support for lontium lt9211c bridge
+Message-ID: <aQ35d3ehnW6Pi+BT@hu-nlaad-hyd.qualcomm.com>
+References: <20250911-lt9211c-bridge-support-v1-1-c221202cbcd5@oss.qualcomm.com>
+ <n3hycqdiupxhfuswrhckwel5q2qc2a354t5dueoaa3x2bviuza@xgqkkhfmr5o4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251107-slab-fms-cleanup-v1-4-650b1491ac9e@suse.cz>
-References: <20251107-slab-fms-cleanup-v1-0-650b1491ac9e@suse.cz>
-In-Reply-To: <20251107-slab-fms-cleanup-v1-0-650b1491ac9e@suse.cz>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
- linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
-X-Mailer: b4 0.14.3
-X-Spam-Level: 
-X-Spamd-Result: default: False [-8.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -8.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <n3hycqdiupxhfuswrhckwel5q2qc2a354t5dueoaa3x2bviuza@xgqkkhfmr5o4>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDExNCBTYWx0ZWRfX0k9u67dXK7K/
+ 8X4fsTF4HRg+49DpVvR4126IfVXVIeGmcgbZI+NV533vlEmhgt5ibs4/QylQ0DFJjaos4i/0UmR
+ Ja4Lu/b6095w49Uk0gkf0vzJobPAwk2Sex1AiAcs8RBTTH5OFEgf4JQR/tKVIAIyOYGsjNcJ+m8
+ GNbK1OMJqYwhebb/feSv9lS4++lY6QUNPFCu70o57B3y7b8YOaqOo+PNBQETIs8FNg9LGPx2Vo/
+ pYKwK/IBh7YFRkwWi8MmCOEHDHQB4dRekUSNx4M5hq1zLda2e+OpT4rQPAmILCpkGOiJbyaXlEq
+ 5Ooh0qxjTh00qM2OCDrvDdE69FQGmrVvnooa36AS/0mvSsvl4waFYAA9MxmiUvIRD/2WbcXNUZH
+ gd8RXgmZhvk1vfaKEEfoFkAQKqk5bA==
+X-Authority-Analysis: v=2.4 cv=Csmys34D c=1 sm=1 tr=0 ts=690df980 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=h0J1ii3O1rLK1nQplmoA:9 a=CjuIK1q_8ugA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-GUID: kMi0iCsHnDatEwohc-TYslPj8Vwu3OsT
+X-Proofpoint-ORIG-GUID: kMi0iCsHnDatEwohc-TYslPj8Vwu3OsT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 clxscore=1015 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070114
 
-In functions such as [__]slab_update_freelist() and
-__slab_update_freelist_fast/slow() we pass old and new freelist and
-counters as 4 separate parameters. The underlying
-__update_freelist_fast() then constructs struct freelist_counters
-variables for passing the full freelist+counter combinations to cmpxchg
-double.
-
-In most cases we actually start with struct freelist_counters variables,
-but then pass the individual fields, only to construct new struct
-freelist_counters variables. While it's all inlined and thus should be
-efficient, we can simplify this code.
-
-Thus replace the 4 parameters for individual fields with two
-freelist_aba_t pointers wherever applicable. __update_freelist_fast()
-can then pass them directly to try_cmpxchg_freelist().
-
-The code is also more obvious as the pattern becomes unified such that
-we set up "old" and "new" struct freelist_counters variables upfront as
-we fully need them to be, and simply call [__]slab_update_freelist() on
-them.  Previously some of the "new" values would be hidden as one of the
-many parameters and thus make it harder to figure out what the code
-does.
-
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/slub.c | 126 ++++++++++++++++++++++++++------------------------------------
- 1 file changed, 52 insertions(+), 74 deletions(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index a55e0af26ec7..ddd71f4937fa 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -759,34 +759,29 @@ static __always_inline void slab_unlock(struct slab *slab)
- }
- 
- static inline bool
--__update_freelist_fast(struct slab *slab,
--		      void *freelist_old, unsigned long counters_old,
--		      void *freelist_new, unsigned long counters_new)
-+__update_freelist_fast(struct slab *slab, struct freelist_counters *old,
-+		       struct freelist_counters *new)
- {
- #ifdef system_has_freelist_aba
--	struct freelist_counters old = { .freelist = freelist_old, .counters = counters_old };
--	struct freelist_counters new = { .freelist = freelist_new, .counters = counters_new };
--
- 	return try_cmpxchg_freelist(&slab->freelist_counters,
--				    &old.freelist_counters,
--				    new.freelist_counters);
-+				    &old->freelist_counters,
-+				    new->freelist_counters);
- #else
- 	return false;
- #endif
- }
- 
- static inline bool
--__update_freelist_slow(struct slab *slab,
--		      void *freelist_old, unsigned long counters_old,
--		      void *freelist_new, unsigned long counters_new)
-+__update_freelist_slow(struct slab *slab, struct freelist_counters *old,
-+		       struct freelist_counters *new)
- {
- 	bool ret = false;
- 
- 	slab_lock(slab);
--	if (slab->freelist == freelist_old &&
--	    slab->counters == counters_old) {
--		slab->freelist = freelist_new;
--		slab->counters = counters_new;
-+	if (slab->freelist == old->freelist &&
-+	    slab->counters == old->counters) {
-+		slab->freelist = new->freelist;
-+		slab->counters = new->counters;
- 		ret = true;
- 	}
- 	slab_unlock(slab);
-@@ -802,22 +797,18 @@ __update_freelist_slow(struct slab *slab,
-  * interrupt the operation.
-  */
- static inline bool __slab_update_freelist(struct kmem_cache *s, struct slab *slab,
--		void *freelist_old, unsigned long counters_old,
--		void *freelist_new, unsigned long counters_new,
--		const char *n)
-+		struct freelist_counters *old, struct freelist_counters *new, const char *n)
- {
- 	bool ret;
- 
- 	if (USE_LOCKLESS_FAST_PATH())
- 		lockdep_assert_irqs_disabled();
- 
--	if (s->flags & __CMPXCHG_DOUBLE) {
--		ret = __update_freelist_fast(slab, freelist_old, counters_old,
--				            freelist_new, counters_new);
--	} else {
--		ret = __update_freelist_slow(slab, freelist_old, counters_old,
--				            freelist_new, counters_new);
--	}
-+	if (s->flags & __CMPXCHG_DOUBLE)
-+		ret = __update_freelist_fast(slab, old, new);
-+	else
-+		ret = __update_freelist_slow(slab, old, new);
-+
- 	if (likely(ret))
- 		return true;
- 
-@@ -832,21 +823,17 @@ static inline bool __slab_update_freelist(struct kmem_cache *s, struct slab *sla
- }
- 
- static inline bool slab_update_freelist(struct kmem_cache *s, struct slab *slab,
--		void *freelist_old, unsigned long counters_old,
--		void *freelist_new, unsigned long counters_new,
--		const char *n)
-+		struct freelist_counters *old, struct freelist_counters *new, const char *n)
- {
- 	bool ret;
- 
- 	if (s->flags & __CMPXCHG_DOUBLE) {
--		ret = __update_freelist_fast(slab, freelist_old, counters_old,
--				            freelist_new, counters_new);
-+		ret = __update_freelist_fast(slab, old, new);
- 	} else {
- 		unsigned long flags;
- 
- 		local_irq_save(flags);
--		ret = __update_freelist_slow(slab, freelist_old, counters_old,
--				            freelist_new, counters_new);
-+		ret = __update_freelist_slow(slab, old, new);
- 		local_irq_restore(flags);
- 	}
- 	if (likely(ret))
-@@ -3774,10 +3761,7 @@ static void deactivate_slab(struct kmem_cache *s, struct slab *slab,
- 		} else {
- 			new.freelist = old.freelist;
- 		}
--	} while (!slab_update_freelist(s, slab,
--		old.freelist, old.counters,
--		new.freelist, new.counters,
--		"unfreezing slab"));
-+	} while (!slab_update_freelist(s, slab, &old, &new, "unfreezing slab"));
- 
- 	/*
- 	 * Stage three: Manipulate the slab list based on the updated state.
-@@ -4389,27 +4373,24 @@ __update_cpu_freelist_fast(struct kmem_cache *s,
-  */
- static inline void *get_freelist(struct kmem_cache *s, struct slab *slab)
- {
--	struct freelist_counters new;
--	unsigned long counters;
--	void *freelist;
-+	struct freelist_counters old, new;
- 
- 	lockdep_assert_held(this_cpu_ptr(&s->cpu_slab->lock));
- 
- 	do {
--		freelist = slab->freelist;
--		counters = slab->counters;
-+		old.freelist = slab->freelist;
-+		old.counters = slab->counters;
- 
--		new.counters = counters;
-+		new.freelist = NULL;
-+		new.counters = old.counters;
- 
--		new.inuse = slab->objects;
--		new.frozen = freelist != NULL;
-+		new.inuse = old.objects;
-+		new.frozen = old.freelist != NULL;
- 
--	} while (!__slab_update_freelist(s, slab,
--		freelist, counters,
--		NULL, new.counters,
--		"get_freelist"));
- 
--	return freelist;
-+	} while (!__slab_update_freelist(s, slab, &old, &new, "get_freelist"));
-+
-+	return old.freelist;
- }
- 
- /*
-@@ -4417,26 +4398,22 @@ static inline void *get_freelist(struct kmem_cache *s, struct slab *slab)
-  */
- static inline void *freeze_slab(struct kmem_cache *s, struct slab *slab)
- {
--	struct freelist_counters new;
--	unsigned long counters;
--	void *freelist;
-+	struct freelist_counters old, new;
- 
- 	do {
--		freelist = slab->freelist;
--		counters = slab->counters;
-+		old.freelist = slab->freelist;
-+		old.counters = slab->counters;
- 
--		new.counters = counters;
-+		new.freelist = NULL;
-+		new.counters = old.counters;
- 		VM_BUG_ON(new.frozen);
- 
--		new.inuse = slab->objects;
-+		new.inuse = old.objects;
- 		new.frozen = 1;
- 
--	} while (!slab_update_freelist(s, slab,
--		freelist, counters,
--		NULL, new.counters,
--		"freeze_slab"));
-+	} while (!slab_update_freelist(s, slab, &old, &new, "freeze_slab"));
- 
--	return freelist;
-+	return old.freelist;
- }
- 
- /*
-@@ -5864,10 +5841,8 @@ static void __slab_free(struct kmem_cache *s, struct slab *slab,
- 			unsigned long addr)
- 
- {
--	void *old_head;
- 	bool was_frozen, was_full;
--	struct freelist_counters new;
--	unsigned long counters;
-+	struct freelist_counters old, new;
- 	struct kmem_cache_node *n = NULL;
- 	unsigned long flags;
- 	bool on_node_partial;
-@@ -5891,13 +5866,19 @@ static void __slab_free(struct kmem_cache *s, struct slab *slab,
- 			spin_unlock_irqrestore(&n->list_lock, flags);
- 			n = NULL;
- 		}
--		old_head = slab->freelist;
--		counters = slab->counters;
--		set_freepointer(s, tail, old_head);
--		new.counters = counters;
--		was_frozen = !!new.frozen;
--		was_full = (old_head == NULL);
-+
-+		old.freelist = slab->freelist;
-+		old.counters = slab->counters;
-+
-+		was_full = (old.freelist == NULL);
-+		was_frozen = old.frozen;
-+
-+		set_freepointer(s, tail, old.freelist);
-+
-+		new.freelist = head;
-+		new.counters = old.counters;
- 		new.inuse -= cnt;
-+
- 		/*
- 		 * Might need to be taken off (due to becoming empty) or added
- 		 * to (due to not being full anymore) the partial list.
-@@ -5926,10 +5907,7 @@ static void __slab_free(struct kmem_cache *s, struct slab *slab,
- 			}
- 		}
- 
--	} while (!slab_update_freelist(s, slab,
--		old_head, counters,
--		head, new.counters,
--		"__slab_free"));
-+	} while (!slab_update_freelist(s, slab, &old, &new, "__slab_free"));
- 
- 	if (likely(!n)) {
- 
-
--- 
-2.51.1
-
+On Mon, Sep 15, 2025 at 04:19:57AM +0300, Dmitry Baryshkov wrote:
+> On Thu, Sep 11, 2025 at 08:25:27PM +0530, Nilesh Laad wrote:
+> > From: Yi Zhang <zhanyi@qti.qualcomm.com>
+> > 
+> > LT9211c is a Single/Dual-Link DSI/LVDS or Single DPI input to
+> > Single-link/Dual-Link DSI/LVDS or Single DPI output bridge chip.
+> > Add support for DSI to LVDS bridge configuration.
+> > 
+> > Signed-off-by: Yi Zhang <zhanyi@qti.qualcomm.com>
+> > Signed-off-by: Nilesh Laad <nilesh.laad@oss.qualcomm.com>
+> 
+> Please send the driver together with the bindings, in one series.
+Addressed in https://lore.kernel.org/lkml/20251107-add-lt9211c-bridge-v2-0-b0616e23407c@oss.qualcomm.com/
+> 
+> The driver looks pretty similar to the existing LT9211 driver. Please
+> explain why you can't extend that one.
+LT9211 and LT9211C differ completely in register programming sequences.
+Even lontium mentioned that register configuration are different for lt9211 and lt9211c.
+Nearly every function would require duplicated logic with if (chip_type) branching,
+as register sequence are completely different.
+Having both sequences in single file is not looking good, hence want to merge as separate driver.
+> 
+> > ---
+> >  drivers/gpu/drm/bridge/Kconfig           |   13 +
+> >  drivers/gpu/drm/bridge/Makefile          |    1 +
+> >  drivers/gpu/drm/bridge/lontium-lt9211c.c | 1105 ++++++++++++++++++++++++++++++
+> >  3 files changed, 1119 insertions(+)
+> > 
+> > +	const struct reg_sequence lt9211c_tx_ssc_seq[] = {
+> > +		{ 0x8234, 0x00 },
+> > +		{ 0x856e, 0x10 },
+> > +		{ 0x8181, 0x15 },
+> > +		{ 0x871e, 0x00 },
+> > +		{ 0x8717, 0x02 },
+> > +		{ 0x8718, 0x04 },
+> > +		{ 0x8719, 0xd4 },
+> > +		{ 0x871A, 0x00 },
+> > +		{ 0x871B, 0x12 },
+> > +		{ 0x871C, 0x00 },
+> > +		{ 0x871D, 0x24 },
+> > +		{ 0x871F, 0x1c },
+> 
+> lowercase the hex, please.
+> 
+> > +		{ 0x8720, 0x00 },
+> > +		{ 0x8721, 0x00 },
+> > +		{ 0x871e, 0x02 },
+> > +	};
+> > +
+> 
+> [...]
+> 
+> > +
+> > +static void lt9211c_atomic_enable(struct drm_bridge *bridge,
+> > +				struct drm_atomic_state *state)
+> > +{
+> > +	struct lt9211c *ctx = bridge_to_lt9211c(bridge);
+> > +	const struct drm_bridge_state *bridge_state;
+> > +	const struct drm_crtc_state *crtc_state;
+> > +	struct drm_connector *connector;
+> > +	struct drm_crtc *crtc;
+> > +	u32 bus_flags;
+> > +	int ret;
+> > +
+> > +	ret = regulator_enable(ctx->vccio);
+> > +	if (ret) {
+> > +		dev_err(ctx->dev, "Failed to enable vccio: %d\n", ret);
+> > +		return;
+> > +	}
+> > +
+> > +	/* Deassert reset */
+> > +	gpiod_set_value(ctx->reset_gpio, 1);
+> > +	usleep_range(20000, 21000);	/* Very long post-reset delay. */
+> > +
+> > +	/* Get the LVDS format from the bridge state. */
+> > +	bridge_state = drm_atomic_get_new_bridge_state(state, bridge);
+> > +	bus_flags = bridge_state->output_bus_cfg.flags;
+> > +	ctx->de = !!(bus_flags & DRM_BUS_FLAG_DE_HIGH);
+> > +
+> > +	switch (bridge_state->output_bus_cfg.format) {
+> > +	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG:
+> > +		ctx->bpp24 = false;
+> > +		ctx->jeida = true;
+> > +		break;
+> > +	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
+> > +		ctx->bpp24 = true;
+> > +		ctx->jeida = true;
+> > +		break;
+> > +	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
+> > +		ctx->bpp24 = true;
+> > +		ctx->jeida = false;
+> > +		break;
+> > +	default:
+> > +		/*
+> > +		 * Some bridges still don't set the correct
+> > +		 * LVDS bus format, use SPWG24 default
+> > +		 * format until those are fixed.
+> > +		 */
+> > +		ctx->bpp24 = true;
+> > +		ctx->jeida = false;
+> > +		dev_warn(ctx->dev,
+> > +			 "Unsupported LVDS bus format 0x%04x\n",
+> > +			 bridge_state->output_bus_cfg.format);
+> > +		break;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Retrieve the CRTC adjusted mode. This requires a little dance to go
+> > +	 * from the bridge to the encoder, to the connector and to the CRTC.
+> > +	 */
+> > +	connector = drm_atomic_get_new_connector_for_encoder(state,
+> > +							     bridge->encoder);
+> > +	crtc = drm_atomic_get_new_connector_state(state, connector)->crtc;
+> > +	crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
+> > +	drm_mode_copy(&ctx->mode, &crtc_state->adjusted_mode);
+> > +
+> > +	dev_dbg(ctx->dev, "width=%d,height=%d,clock=%d\n",
+> > +			ctx->mode.hdisplay,
+> > +			ctx->mode.vdisplay,
+> > +			ctx->mode.clock);
+> > +
+> > +	ret = lt9211c_read_chipid(ctx);
+> > +	if (ret)
+> > +		return;
+> > +
+> > +	/* Lt9211c must enable after mipi clock enable */
+> > +	queue_delayed_work(ctx->wq, &ctx->lt9211c_dw,
+> > +		msecs_to_jiffies(100));
+> 
+> At this point MIPI clock should be enabled.
+> 
+Yes, MIPI clock is enabled here but a delay is required for lt9211c to
+detect the mipi signals. Added queue_delayed_work() to defer execution
+without blocking main thread.
+> > +
+> > +	dev_dbg(ctx->dev, "LT9211 enabled.\n");
+> > +}
+> > +
+> 
+> [...]
+> 
+> > +
+> > +MODULE_DESCRIPTION("Lontium LT9211C DSI/LVDS/DPI bridge driver");
+> > +MODULE_LICENSE("GPL");
+> 
+> Missing MODULE_AUTHOR
+> 
+> > 
+> > ---
+> > base-commit: f50b969bafafb2810a07f376387350c4c0d72a21
+> > change-id: 20250911-lt9211c-bridge-support-9209f7cc7697
+> > prerequisite-message-id: <20250910-add-lt9211c-bridge-v1-1-4f23740fe101@oss.qualcomm.com>
+> > prerequisite-patch-id: 79524a1aaba6b39f49603db725539cf11176820b
+> > 
+> > Best regards,
+> > --  
+> > Nilesh Laad <nilesh.laad@oss.qualcomm.com>
+> > 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
