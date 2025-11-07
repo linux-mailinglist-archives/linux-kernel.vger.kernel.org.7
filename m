@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-890233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E08C3F917
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:48:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BE8C3F968
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:53:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2313A5643
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:48:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 13C5C4EA489
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B366C31A05B;
-	Fri,  7 Nov 2025 10:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ZdeRC8fY"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E45226ED51;
-	Fri,  7 Nov 2025 10:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B0B3081B5;
+	Fri,  7 Nov 2025 10:53:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346A02609D0;
+	Fri,  7 Nov 2025 10:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762512496; cv=none; b=YJXndxThl8d3UGolUn32OliB7cep7/00EsPE2HLvOYf0pP8HoOT8pygMgWvzj32TediDSamVm4uLMngGtdCXwhccE+6rrQ2OcixfQz73mdX0Y7fXDmw3Fz+2b7eGR7PeCJ/x1htAHs7wLE7hq6Wgpf7GT5RawoRJ5bU9ipVXUrY=
+	t=1762512821; cv=none; b=ZnOVaXWcF3weotjvb5xmQMOLQW2YkHd972VV4QBR1NSe60XrWfmTmK+gEx2udpj1TVW3on3zoCVSWHs+B6xj3Bkp1DAI/oONb0kaRP0/jqxWl+/oA38PY0XAdW14UTk64iK/ERCHzf0nKcQOylglC4Eqqr7M3Tcusk7tYC/V2PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762512496; c=relaxed/simple;
-	bh=RIICj4penxJBPxqBLKJ+4qUchgJuxa5RrSSLr9xnkn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fNTo9rD0n+aZzmuWX2/6NMQxf1L+D2q0Apka3ZERZc7R9l0fVtyq5eQ2olgmuyvASw7t4u6zUxIW+/IksMaFU35pXD2SV37URNcLzpcN94GWUzBEUYP+Ro4/n6sChEZU9BQPZqNvHvpqZlJhCBrNjUt16cdpV38LkGzMjvWXQ+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ZdeRC8fY; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1762512494; x=1794048494;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RIICj4penxJBPxqBLKJ+4qUchgJuxa5RrSSLr9xnkn8=;
-  b=ZdeRC8fYq8JC28j+QuVWBZeyIWtYLkcjhPIYQBrAZ53Bih8xaVailqUA
-   u1zpAYHn3L7s8W4GawUgW/E49nmJCmRhyzQKc68X5/fVMMBqIgPQSLsiI
-   4TEz+WZiS4Wph3HB5PgNPTT3WqZrbQXALnS4vCSOOfmGrLhh3Sleg4gJO
-   0KVmEM4Oc+H/TsPqEj30g2O1vXBTpRYJLix5v0Snc36PuI6cAd43gVEdC
-   yB89zW4dkmNBqV4Sonk2mXNWXLHRPTNRWqa5u4irhJxrRrpi/ZbdEVdSB
-   RgrfiILVJpPh3RFJ61Ijp6OHghzfdVHgMTZ/gqdlCHG8GrcQMgod1K8Q/
-   Q==;
-X-CSE-ConnectionGUID: fJZAe2bYTL273syaeJeQIg==
-X-CSE-MsgGUID: rkdU9O4ORaqK6SACPKG9Kg==
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="49326352"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 03:48:13 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
- chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Fri, 7 Nov 2025 03:47:52 -0700
-Received: from [10.205.167.104] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Fri, 7 Nov 2025 03:47:50 -0700
-Message-ID: <427e0f16-0055-47d8-981e-7bc91ad71bfc@microchip.com>
-Date: Fri, 7 Nov 2025 10:52:23 +0000
+	s=arc-20240116; t=1762512821; c=relaxed/simple;
+	bh=7S0v8C7HaNdoKjB2EHEdHUbn37mqS+AXGOrkda5uF2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eyX1O3sUK6dIQIphLvAxXSNkrxJmG4f+WsZQn96NFYiphPcK60V3YWg/hdp8uFew30LXPHrn31fu5UQqoLzQbpxY4q67k/lZZ/hYcgM8aAMrQsT04hx44HuJv1SdpaOAC3RiV5d75LzZCFTlsWtk4QtzcDvG6e7iy/PjEY0PxpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84B101516;
+	Fri,  7 Nov 2025 02:53:30 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9CEE33F63F;
+	Fri,  7 Nov 2025 02:53:33 -0800 (PST)
+Message-ID: <1b8875ab-39ee-4a9c-9f99-0a8f6b80a2ca@arm.com>
+Date: Fri, 7 Nov 2025 10:53:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,49 +41,293 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] spi: add support for microchip "soft" spi
- controller
-To: Conor Dooley <conor@kernel.org>, Mark Brown <broonie@kernel.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	<linux-riscv@lists.infradead.org>, <linux-spi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Conor Dooley
-	<conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>,
-	Valentina Fernandez Alanis <valentina.fernandezalanis@microchip.com>, "Cyril
- Jean" <cyril.jean@microchip.com>
-References: <20251105152823.730422-1-prajna.rajendrakumar@microchip.com>
- <20251105152823.730422-4-prajna.rajendrakumar@microchip.com>
- <aQt41uGfmbs7Qa7x@finisterre.sirena.org.uk>
- <20251106-cable-generic-819b798c7068@spud>
+Subject: Re: [PATCH v3 26/29] arm_mpam: Use long MBWU counters if supported
+To: Peter Newman <peternewman@google.com>
+Cc: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, dfustini@baylibre.com,
+ amitsinght@marvell.com, David Hildenbrand <david@redhat.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+ Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-27-james.morse@arm.com>
+ <CALPaoCjJXHD+HgFizzvNEvBorbUcJLTngLb7UJy-uMdybhCfrg@mail.gmail.com>
+ <9e2f912d-2a2e-49ed-b0ab-4286fe94e145@arm.com>
+ <CALPaoCg7ZeQOgkeaPQ6ERKtaJqQ_n3xQUrK=qxi01CnuTjL4PA@mail.gmail.com>
+From: Ben Horgan <ben.horgan@arm.com>
 Content-Language: en-US
-From: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
-In-Reply-To: <20251106-cable-generic-819b798c7068@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <CALPaoCg7ZeQOgkeaPQ6ERKtaJqQ_n3xQUrK=qxi01CnuTjL4PA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 06/11/2025 17:50, Conor Dooley wrote:
-> On Wed, Nov 05, 2025 at 04:18:30PM +0000, Mark Brown wrote:
->> On Wed, Nov 05, 2025 at 03:28:23PM +0000, Prajna Rajendra Kumar wrote:
+Hi Peter,
+
+On 11/7/25 10:30, Peter Newman wrote:
+> Hi Ben
+> 
+> On Thu, Nov 6, 2025 at 5:41 PM Ben Horgan <ben.horgan@arm.com> wrote:
 >>
->>>   drivers/spi/Kconfig              |   9 +
->>>   drivers/spi/Makefile             |   1 +
->>>   drivers/spi/spi-microchip-core.c | 442 +++++++++++++++++++++++++++++++
->>>   3 files changed, 452 insertions(+)
->>> +config SPI_MICROCHIP_CORE
->>> +	tristate "Microchip FPGA SPI controllers"
->>> +	depends on SPI_MASTER
->> Reusing the same filename and config symbol is almost certainly going to
->> create issues and confusion for people upgrading their kernel or doing
->> backports.  Perhaps CoreSPI instead?
-> The qspi driver (which is shared between SoC and FPGA IP) uses
-> SPI_MICROCHIP_CORE_QSPI, so probably SPI_MICROCHIP_CORE_SPI should be
-> used here. Prajna?
+>> Hi Peter,
+>>
+>> On 11/6/25 16:15, Peter Newman wrote:
+>>> Hi Ben (and James),
+>>>
+>>> On Fri, Oct 17, 2025 at 8:59 PM James Morse <james.morse@arm.com> wrote:
+>>>>
+>>>> From: Rohit Mathew <rohit.mathew@arm.com>
+>>>>
+>>>> Now that the larger counter sizes are probed, make use of them.
+>>>>
+>>>> Callers of mpam_msmon_read() may not know (or care!) about the different
+>>>> counter sizes. Allow them to specify mpam_feat_msmon_mbwu and have the
+>>>> driver pick the counter to use.
+>>>>
+>>>> Only 32bit accesses to the MSC are required to be supported by the
+>>>> spec, but these registers are 64bits. The lower half may overflow
+>>>> into the higher half between two 32bit reads. To avoid this, use
+>>>> a helper that reads the top half multiple times to check for overflow.
+>>>>
+>>>> Signed-off-by: Rohit Mathew <rohit.mathew@arm.com>
+>>>> [morse: merged multiple patches from Rohit, added explicit counter selection ]
+>>>> Signed-off-by: James Morse <james.morse@arm.com>
+>>>> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+>>>> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+>>>> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+>>>> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+>>>> ---
+>>>> Changes since v2:
+>>>>  * Removed mpam_feat_msmon_mbwu as a top-level bit for explicit 31bit counter
+>>>>    selection.
+>>>>  * Allow callers of mpam_msmon_read() to specify mpam_feat_msmon_mbwu and have
+>>>>    the driver pick a supported counter size.
+>>>>  * Rephrased commit message.
+>>>>
+>>>> Changes since v1:
+>>>>  * Only clear OFLOW_STATUS_L on MBWU counters.
+>>>>
+>>>> Changes since RFC:
+>>>>  * Commit message wrangling.
+>>>>  * Refer to 31 bit counters as opposed to 32 bit (registers).
+>>>> ---
+>>>>  drivers/resctrl/mpam_devices.c | 134 ++++++++++++++++++++++++++++-----
+>>>>  1 file changed, 116 insertions(+), 18 deletions(-)
+>>>>
+>>>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+>>>> index f4d07234ce10..c207a6d2832c 100644
+>>>> --- a/drivers/resctrl/mpam_devices.c
+>>>> +++ b/drivers/resctrl/mpam_devices.c
+>>>> @@ -897,6 +897,48 @@ struct mon_read {
+>>>>         int                             err;
+>>>>  };
+>>>>
+>>>> +static bool mpam_ris_has_mbwu_long_counter(struct mpam_msc_ris *ris)
+>>>> +{
+>>>> +       return (mpam_has_feature(mpam_feat_msmon_mbwu_63counter, &ris->props) ||
+>>>> +               mpam_has_feature(mpam_feat_msmon_mbwu_44counter, &ris->props));
+>>>> +}
+>>>> +
+>>>> +static u64 mpam_msc_read_mbwu_l(struct mpam_msc *msc)
+>>>> +{
+>>>> +       int retry = 3;
+>>>> +       u32 mbwu_l_low;
+>>>> +       u64 mbwu_l_high1, mbwu_l_high2;
+>>>> +
+>>>> +       mpam_mon_sel_lock_held(msc);
+>>>> +
+>>>> +       WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage_sz);
+>>>> +       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
+>>>> +
+>>>> +       mbwu_l_high2 = __mpam_read_reg(msc, MSMON_MBWU_L + 4);
+>>>> +       do {
+>>>> +               mbwu_l_high1 = mbwu_l_high2;
+>>>> +               mbwu_l_low = __mpam_read_reg(msc, MSMON_MBWU_L);
+>>>> +               mbwu_l_high2 = __mpam_read_reg(msc, MSMON_MBWU_L + 4);
+>>>> +
+>>>> +               retry--;
+>>>> +       } while (mbwu_l_high1 != mbwu_l_high2 && retry > 0);
+>>>> +
+>>>> +       if (mbwu_l_high1 == mbwu_l_high2)
+>>>> +               return (mbwu_l_high1 << 32) | mbwu_l_low;
+>>>> +       return MSMON___NRDY_L;
+>>>> +}
+>>>> +
+>>>> +static void mpam_msc_zero_mbwu_l(struct mpam_msc *msc)
+>>>> +{
+>>>> +       mpam_mon_sel_lock_held(msc);
+>>>> +
+>>>> +       WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage_sz);
+>>>> +       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
+>>>> +
+>>>> +       __mpam_write_reg(msc, MSMON_MBWU_L, 0);
+>>>> +       __mpam_write_reg(msc, MSMON_MBWU_L + 4, 0);
+>>>> +}
+>>>> +
+>>>>  static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+>>>>                                    u32 *flt_val)
+>>>>  {
+>>>> @@ -924,7 +966,9 @@ static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+>>>>                                                ctx->csu_exclude_clean);
+>>>>
+>>>>                 break;
+>>>> -       case mpam_feat_msmon_mbwu:
+>>>> +       case mpam_feat_msmon_mbwu_31counter:
+>>>> +       case mpam_feat_msmon_mbwu_44counter:
+>>>> +       case mpam_feat_msmon_mbwu_63counter:
+>>>>                 *ctl_val |= MSMON_CFG_MBWU_CTL_TYPE_MBWU;
+>>>>
+>>>>                 if (mpam_has_feature(mpam_feat_msmon_mbwu_rwbw, &m->ris->props))
+>>>> @@ -946,7 +990,9 @@ static void read_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+>>>>                 *ctl_val = mpam_read_monsel_reg(msc, CFG_CSU_CTL);
+>>>>                 *flt_val = mpam_read_monsel_reg(msc, CFG_CSU_FLT);
+>>>>                 return;
+>>>> -       case mpam_feat_msmon_mbwu:
+>>>> +       case mpam_feat_msmon_mbwu_31counter:
+>>>> +       case mpam_feat_msmon_mbwu_44counter:
+>>>> +       case mpam_feat_msmon_mbwu_63counter:
+>>>>                 *ctl_val = mpam_read_monsel_reg(msc, CFG_MBWU_CTL);
+>>>>                 *flt_val = mpam_read_monsel_reg(msc, CFG_MBWU_FLT);
+>>>>                 return;
+>>>> @@ -959,6 +1005,9 @@ static void read_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+>>>>  static void clean_msmon_ctl_val(u32 *cur_ctl)
+>>>>  {
+>>>>         *cur_ctl &= ~MSMON_CFG_x_CTL_OFLOW_STATUS;
+>>>> +
+>>>> +       if (FIELD_GET(MSMON_CFG_x_CTL_TYPE, *cur_ctl) == MSMON_CFG_MBWU_CTL_TYPE_MBWU)
+>>>> +               *cur_ctl &= ~MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L;
+>>>>  }
+>>>>
+>>>>  static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
+>>>> @@ -978,10 +1027,15 @@ static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
+>>>>                 mpam_write_monsel_reg(msc, CSU, 0);
+>>>>                 mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
+>>>>                 break;
+>>>> -       case mpam_feat_msmon_mbwu:
+>>>> +       case mpam_feat_msmon_mbwu_44counter:
+>>>> +       case mpam_feat_msmon_mbwu_63counter:
+>>>> +               mpam_msc_zero_mbwu_l(m->ris->vmsc->msc);
+>>>> +               fallthrough;
+>>>> +       case mpam_feat_msmon_mbwu_31counter:
+>>>>                 mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
+>>>>                 mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
+>>>>                 mpam_write_monsel_reg(msc, MBWU, 0);
+>>>
+>>> The fallthrough above seems to be problematic, assuming the MBWU=0
+>>> being last for 31-bit was intentional. For long counters, this is
+>>> zeroing the counter before updating the filter/control registers, but
+>>> then clearing the 32-bit version of the counter. This fails to clear
+>>> the NRDY bit on the long counter, which isn't cleared by software
+>>> anywhere else.
+>>>
+>>> From section 10.3.2 from the MPAM spec shared:
+>>>
+>>>  "On a counting monitor, the NRDY bit remains set until it is reset by
+>>> software writing it as 0 in the monitor register, or automatically
+>>> after the monitor is captured in the capture register by a capture
+>>> event"
+>>>
+>>> If I update the 63-bit case to call
+>>> mpam_msc_zero_mbwu_l(m->ris->vmsc->msc) after updating the
+>>> control/filter registers (in addition to the other items I pointed in
+>>> my last reply), I'm able to read MBWU counts from my hardware through
+>>> mbm_total_bytes.
+>>>
+>>> Thanks,
+>>> -Peter
+>>
+>> Thanks for the testing and flagging the problem. We should do the
+>> configuration in the same order for all the monitors.
+>>
+>> I'll change the case to:
+>>
+>>         case mpam_feat_msmon_mbwu_31counter:
+>>         case mpam_feat_msmon_mbwu_44counter:
+>>         case mpam_feat_msmon_mbwu_63counter:
+>>                 mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
+>>                 mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
+>>
+>>                 if (m->type == mpam_feat_msmon_mbwu_31counter)
+>>                         mpam_write_monsel_reg(msc, MBWU, 0);
+>>                 else
+>>                         mpam_msc_zero_mbwu_l(m->ris->vmsc->msc);
+>>
+>>                 mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
+>>                 break;
+> 
+> I tried this out but wasn't able to read the counters. I needed to
+> move the MBWU[_L] write to the end. Writing the registers directly on
+> the hardware I'm testing with, I confirmed that just flipping
+> MBWU_CTL.EN sets NRDY:
+> 
+> MBWU_L=0x880
+> MBWU_CTL=0x828
+> 
+>  / # mmio_read32 $((msc + MBWU_CTL))
+> 0x80030042
+>  / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
+> 0x03ecb2c0
+> 0x00000000
+>  / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
+> 0x03f70580
+> 0x00000000
+> 
+> Clear MBWU_CTL.EN:
+> 
+>  / # mmio_write32 $((msc + MBWU_CTL)) 0x00030042
+>  / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
+> 0x05004680
+> 0x80000000
+>  / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
+> 0x05004680
+> 0x80000000
+> 
+> Clear NRDY and reenable MBWU_CTL.EN:
+> 
+>  / # mmio_write32 $((msc + MBWU_L)) 0; mmio_write32 $((msc + MBWU_L + 4)) 0
+>  / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
+> 0x00000000
+> 0x00000000
+>  / # mmio_write32 $((msc + MBWU_CTL)) 0x80030042
+>  / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
+> 0x001dee80
+> 0x80000000
+> 
+> In fact, re-writing the same value back into MBWU_CTL.EN also sets NRDY:
+> 
+>  / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
+> 0x00253e00
+> 0x00000000
+>  / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
+> 0x00b1a6c0
+> 0x00000000
+>  / # mmio_write32 $((msc + MBWU_CTL)) 0x80030042
+>  / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
+> 0x018d1d40
+> 0x80000000
+> 
+> Thanks,
+> -Peter
 
-Hi Mark, Conor,
 
-Thanks for the feedback. I’ll update the filename and config symbol to 
-use SPI_MICROCHIP_CORE_SPI in the next version.
+Thank you very much for the quick testing and diagnosis. It does seeem
+reasonable that the .EN flip would be considered a configuration change
+and so indeed the writing NRDY (and the value) should happend after for
+counting monitors (mbwu). I'll make this change now.
 
-Best regards,
-Prajna
+Thanks,
+
+Ben
 
 
