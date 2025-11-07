@@ -1,147 +1,290 @@
-Return-Path: <linux-kernel+bounces-889641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42841C3E1FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:25:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F555C3E415
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:33:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCBAE3AD28A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:25:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BBC3ABCB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55C62F60D1;
-	Fri,  7 Nov 2025 01:25:43 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0727E2E8B7D;
+	Fri,  7 Nov 2025 02:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="KUVjRVOL"
+Received: from mail-m32103.qiye.163.com (mail-m32103.qiye.163.com [220.197.32.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347372D3A77;
-	Fri,  7 Nov 2025 01:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FE618DB1E;
+	Fri,  7 Nov 2025 02:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762478743; cv=none; b=fzoz1L9UBk3IanOmxFnL2k5G7ONdsoADC09qJTaKEyc/xAjEym10n+eJ64oEHHHlRq3yhwEP4FP0DW/KzMekXCMHwcsEzEtevzu9xl1fld7quJRGatFnCDJNCgRy1X+Uq4wjs9WrctSCmUEc6QTT+LHWP1vyGXYghn2Nx6kCLP4=
+	t=1762482780; cv=none; b=Hj54vdGi5wawitVat+RRjbhOeF868riwTRDvNkEeeIab3M2wjCdIrcR7npFQCb8LU40jWS0JBx22Pwl+JYAecoCEzXHWN+LMHMv84AKfVX6RXNn2DrBe+q0ezbBcbO50uhe7Y9KN6WTWIenkgPhznlDg7xo7oG9li46mW6cLJPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762478743; c=relaxed/simple;
-	bh=l+HkW8boKXXIbvN9jqeLG3k3Gf7ksT07ZL9Tg4hUtyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jiv8jbkxeBtZwF1iseltb2Jw3kti7farGq718DcUdDQfITCTlv1bR7cZmlIlcJRajsLf/MnqdmQAlbX8v3ZxH/67jyH3twd3YyHavccQKd8a5WtHDo1imIFvTvorLQ9Ukm7vuNaUY3z0v563LbbmKRhrUxLjY0dzSLxpS1dkk+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 5C2D487C3A;
-	Fri,  7 Nov 2025 01:16:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 535202000F;
-	Fri,  7 Nov 2025 01:16:46 +0000 (UTC)
-Date: Thu, 6 Nov 2025 20:16:44 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Sebastian Andrzej
- Siewior <bigeasy@linutronix.de>, bpf@vger.kernel.org, frederic@kernel.org
-Subject: Re: [PATCH v2 10/16] tracing: Guard __DECLARE_TRACE() use of
- __DO_TRACE_CALL() with SRCU-fast
-Message-ID: <20251106201644.3eef6a4a@batman.local.home>
-In-Reply-To: <46365769-2b3a-4da1-a926-1b3e489d434a@paulmck-laptop>
-References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
-	<20251105203216.2701005-10-paulmck@kernel.org>
-	<20251106110230.08e877ff@batman.local.home>
-	<522b01cf-0cb6-4766-9102-2d08a3983d8a@paulmck-laptop>
-	<20251106121005.76087677@gandalf.local.home>
-	<eb59555d-f3e8-47c9-b519-a7b628e68885@paulmck-laptop>
-	<20251106190314.5a43cc10@gandalf.local.home>
-	<46365769-2b3a-4da1-a926-1b3e489d434a@paulmck-laptop>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762482780; c=relaxed/simple;
+	bh=qWQbvMy77XilPsQrE7gN1Ua+FIJfYMUXtDOAbYbq9U0=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=axE7U38coLfS2rYtBtSOHkxLeb6URtrS9zaPa3nD3zV7AHrEHOhXztPiDIkQrWvfmezwE53vZkrFMzA5w9ml3AkEmlf25ZIkMxukujL9rfGkk3Dr/rN5yUWOOJFt86krwIa8HXSdRF6vVjxcZlI+uB4Ex36BFsdELgRmX8uU4ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=KUVjRVOL; arc=none smtp.client-ip=220.197.32.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.129] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 28b3cfc71;
+	Fri, 7 Nov 2025 09:17:12 +0800 (GMT+08:00)
+Message-ID: <944388a9-1f5d-41e4-8270-ac1fb6cf73e1@rock-chips.com>
+Date: Fri, 7 Nov 2025 09:17:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 535202000F
-X-Stat-Signature: ujusm8xsq5jngca3san18n6facuf7mr7
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18J1tqfJ/0WoJd3jGL9TNSLJ6HHk3PrGPk=
-X-HE-Tag: 1762478206-621186
-X-HE-Meta: U2FsdGVkX195KBIqfQ3B8KODLF1oxlJRib/7IceoXWErrBQMnYcdQn8apKV3ByQ7rgJwWG77VJz0PBudH/QbiZYvogdwtJx7QjKJnsS4rvzUZlFVcrAZ3Enr3Nik8saTDhNiEgflpxoe8mvH7hBLEv0uxwiZJR4cLIvVQ/9QgWAH//sN8PuLun8ErOwWFV5AjYANzLhKZcxKiHWiEy3+L7yYgWOfetuu2OZYheQUwlHyknJMl2UfHhN6CgQAGjFDVNK+IgVqtOSoVAdGO6mo6FOQa3VHz9RzKvV9e45hAulDTmDJRfXp6L97/MPcLTjX2i3XSJ8WGtpoSzxzyimneqCEfwejvTcCHycjaJZ80sVQo737aosBJXtowhFr6/9nUrwTh8+zWBeDvGIdOT+Y8Q==
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com, Christian Zigotzky <chzigotzky@xenosoft.de>,
+ Manivannan Sadhasivam <mani@kernel.org>, mad skateman
+ <madskateman@gmail.com>, "R . T . Dickinson" <rtd2@xtra.co.nz>,
+ Darren Stevens <darren@stevens-zone.net>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Lukas Wunner <lukas@wunner.de>, luigi burdo <intermediadc@hotmail.com>,
+ Al <al@datazap.net>, Roland <rol7and@gmx.com>,
+ Hongxing Zhu <hongxing.zhu@nxp.com>, hypexed@yahoo.com.au,
+ linuxppc-dev@lists.ozlabs.org, debian-powerpc@lists.debian.org,
+ linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 1/2] PCI/ASPM: Cache Link Capabilities so quirks can
+ override them
+To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
+References: <20251106183643.1963801-1-helgaas@kernel.org>
+ <20251106183643.1963801-2-helgaas@kernel.org>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <20251106183643.1963801-2-helgaas@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a5be3937d09cckunm278ad679f3d099
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRlPSlZNQkxCSR1CSRpITE5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=KUVjRVOLWb2Zc2k0OqE57rreRSmBqvPrNCKecdqaFO1iTsECLdy+wcEDUNh0/g+L+6rD48qRlqZP5E4/NulV8GR/0iU04Vy06CMLfSFp20Vw/MlvxQ3WvnV3uBzXeb860jIeY1fVQxMq0HedO9hTORC9gw/KOZz6OFG415smeI4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=8A8ep8E7n+X0a0DoZXauywoLgJblhWU8FJQL9oudYFA=;
+	h=date:mime-version:subject:message-id:from;
 
-On Thu, 6 Nov 2025 17:04:33 -0800
-"Paul E. McKenney" <paulmck@kernel.org> wrote:
-> > 
-> > It gets a bit more confusing. We see "migrate disabled" (the last number)
-> > except when preemption is enabled.  
+在 2025/11/07 星期五 2:36, Bjorn Helgaas 写道:
+> From: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> Huh.  Would something like "...11" indicate that both preemption and
-> migration are disabled?
-
-Preemption was disabled when coming in.
-
+> Cache the PCIe Link Capabilities register in struct pci_dev so quirks can
+> remove features to avoid hardware defects.  The idea is:
 > 
-> >                                    That's because in your code, we only do
-> > the migrate dance when preemption is disabled:
-> >   
-> > > +			if (IS_ENABLED(CONFIG_PREEMPT_RT) && preemptible()) {	\  
+>    - set_pcie_port_type() reads PCIe Link Capabilities and caches it in
+>      dev->lnkcap
 > 
-> You lost me on this one.  Wouldn't the "preemptible()" condition in that
-> "if" statement mean that migration is disabled only when preemption
-> is *enabled*?
+>    - HEADER quirks can update the cached dev->lnkcap to remove advertised
+>      features that don't work correctly
 > 
-> What am I missing here?
-
-So preemption is disabled when the event was hit. That would make
-"preemptible()" false, and we will then up the preempt_count again and
-not disable migration.
-
-The code that records the preempt count expects the tracing code to
-increment the preempt_count, so it decrements it by one. Thus it records;
-
-  ...1.
-
-As migrate disable wasn't set.
-
+>    - pcie_aspm_cap_init() relies on dev->lnkcap and ignores any features not
+>      advertised there
 > 
-> > > +				guard(srcu_fast_notrace)(&tracepoint_srcu);	\
-> > > +				guard(migrate)();				\
-> > > +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
-> > > +			} else {						\
-> > > +				guard(preempt_notrace)();			\
-> > > +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
-> > > +			}  
-> > 
-> > And that will make accounting in the trace event callback much more
-> > difficult, when it's sometimes disabling migration and sometimes disabling
-> > preemption. It must do one or the other. It can't be conditional like that.
-> > 
-> > With my update below, it goes back to normal:
-> > 
-> >             bash-1040    [004] d..2.    49.339890: lock_release: 000000001d24683a tasklist_lock
-> >             bash-1040    [004] d..2.    49.339890: irq_enable: caller=_raw_write_unlock_irq+0x28/0x50 parent=0x0
-> >             bash-1040    [004] ...1.    49.339891: lock_release: 00000000246b21a5 rcu_read_lock
-> >             bash-1040    [004] .....    49.339891: lock_acquire: 0000000084e3738a read &mm->mmap_lock
-> >             bash-1040    [004] .....    49.339892: lock_release: 0000000084e3738a &mm->mmap_lock
-> >             bash-1040    [004] .....    49.339892: lock_acquire: 00000000f5b22878 read rcu_read_lock_trace
-> >             bash-1040    [004] .....    49.339892: lock_acquire: 0000000084e3738a read &mm->mmap_lock
-> >             bash-1040    [004] .....    49.339893: lock_release: 0000000084e3738a &mm->mmap_lock
-> >             bash-1040    [004] .....    49.339893: sys_exit: NR 109 = 0
-> >             bash-1040    [004] .....    49.339893: lock_acquire: 0000000084e3738a read &mm->mmap_lock
-> >             bash-1040    [004] .....    49.339894: lock_release: 0000000084e3738a &mm->mmap_lock
-> >             bash-1040    [004] .....    49.339894: sys_setpgid -> 0x0
-> >             bash-1040    [004] .....    49.339895: lock_release: 00000000f5b22878 rcu_read_lock_trace
-> >             bash-1040    [004] d....    49.339895: irq_disable: caller=do_syscall_64+0x37a/0x9a0 parent=0x0
-> >             bash-1040    [004] d....    49.339895: irq_enable: caller=do_syscall_64+0x167/0x9a0 parent=0x0
-> >             bash-1040    [004] d....    49.339897: irq_disable: caller=irqentry_enter+0x57/0x60 parent=0x0
-> > 
-> > I did some minor testing of this patch both with and without PREEMPT_RT
-> > enabled. This replaces this current patch. Feel free to use it.  
+
+Quick test with a NVMe shows it works.
+
+Before this patch,  lspci -vvv dumps:
+
+  LnkCap: Port #0, Speed 16GT/s, Width x4, ASPM L1, Exit Latency L1 <64us
+          ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
+  LnkCtl: ASPM L1 Enabled; RCB 64 bytes, LnkDisable- CommClk+
+
+
+Capabilities: [21c v1] L1 PM Substates
+          L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ 
+L1_PM_Substates+
+                    PortCommonModeRestoreTime=10us PortTPowerOnTime=10us
+          L1SubCtl1: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
+                     T_CommonMode=0us LTR1.2_Threshold=26016ns
+
+After this patch + a local quirk patch like your patch 2, it shows:
+
+  LnkCap: Port #0, Speed 16GT/s, Width x4, ASPM L1, Exit Latency L1 <64us
+          ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
+  LnkCtl: ASPM Disabled; RCB 64 bytes, LnkDisable- CommClk-
+
+Capabilities: [21c v1] L1 PM Substates
+           L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ 
+L1_PM_Substates+
+                     PortCommonModeRestoreTime=10us PortTPowerOnTime=10us
+           L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
+                      T_CommonMode=0us LTR1.2_Threshold=0ns
+
+
+
+One things I noticed is CommClk in LnkCtl is changed. Per the spec,
+
+"A value of 0b indicates that this component and the component at the
+opposite end of this Link are operating with asynchronous reference
+clock.
+
+Components utilize this Common Clock Configuration information to report
+the correct L0s and L1 Exit Latencies. After changing the value in this
+bit in both components on a Link, software must trigger the Link to
+retrain by writing a 1b to the Retrain Link bit of the Downstream Port."
+
+Obviously my NVMe and RC are operating with common reference clk. So
+CommClk- looks wrong to me. And should we also perform Retrain Link if
+we really wants to change it?
+
+
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>   drivers/pci/pcie/aspm.c | 42 ++++++++++++++++++++---------------------
+>   drivers/pci/probe.c     |  5 ++---
+>   include/linux/pci.h     |  1 +
+>   3 files changed, 24 insertions(+), 24 deletions(-)
 > 
-> OK, I will add it with your SoB and give it a spin.  Thank you!
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 7cc8281e7011..07536891f1f6 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -391,15 +391,13 @@ static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
+>   static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>   {
+>   	int capable = 1, enabled = 1;
+> -	u32 reg32;
+>   	u16 reg16;
+>   	struct pci_dev *child;
+>   	struct pci_bus *linkbus = link->pdev->subordinate;
+>   
+>   	/* All functions should have the same cap and state, take the worst */
+>   	list_for_each_entry(child, &linkbus->devices, bus_list) {
+> -		pcie_capability_read_dword(child, PCI_EXP_LNKCAP, &reg32);
+> -		if (!(reg32 & PCI_EXP_LNKCAP_CLKPM)) {
+> +		if (!(child->lnkcap & PCI_EXP_LNKCAP_CLKPM)) {
+>   			capable = 0;
+>   			enabled = 0;
+>   			break;
+> @@ -581,7 +579,7 @@ static void encode_l12_threshold(u32 threshold_us, u32 *scale, u32 *value)
+>   
+>   static void pcie_aspm_check_latency(struct pci_dev *endpoint)
+>   {
+> -	u32 latency, encoding, lnkcap_up, lnkcap_dw;
+> +	u32 latency, encoding;
+>   	u32 l1_switch_latency = 0, latency_up_l0s;
+>   	u32 latency_up_l1, latency_dw_l0s, latency_dw_l1;
+>   	u32 acceptable_l0s, acceptable_l1;
+> @@ -606,14 +604,10 @@ static void pcie_aspm_check_latency(struct pci_dev *endpoint)
+>   		struct pci_dev *dev = pci_function_0(link->pdev->subordinate);
+>   
+>   		/* Read direction exit latencies */
+> -		pcie_capability_read_dword(link->pdev, PCI_EXP_LNKCAP,
+> -					   &lnkcap_up);
+> -		pcie_capability_read_dword(dev, PCI_EXP_LNKCAP,
+> -					   &lnkcap_dw);
+> -		latency_up_l0s = calc_l0s_latency(lnkcap_up);
+> -		latency_up_l1 = calc_l1_latency(lnkcap_up);
+> -		latency_dw_l0s = calc_l0s_latency(lnkcap_dw);
+> -		latency_dw_l1 = calc_l1_latency(lnkcap_dw);
+> +		latency_up_l0s = calc_l0s_latency(link->pdev->lnkcap);
+> +		latency_up_l1 = calc_l1_latency(link->pdev->lnkcap);
+> +		latency_dw_l0s = calc_l0s_latency(dev->lnkcap);
+> +		latency_dw_l1 = calc_l1_latency(dev->lnkcap);
+>   
+>   		/* Check upstream direction L0s latency */
+>   		if ((link->aspm_capable & PCIE_LINK_STATE_L0S_UP) &&
+> @@ -830,7 +824,7 @@ static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
+>   static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+>   {
+>   	struct pci_dev *child = link->downstream, *parent = link->pdev;
+> -	u32 parent_lnkcap, child_lnkcap;
+> +	u32 lnkcap;
+>   	u16 parent_lnkctl, child_lnkctl;
+>   	struct pci_bus *linkbus = parent->subordinate;
+>   
+> @@ -845,9 +839,7 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+>   	 * If ASPM not supported, don't mess with the clocks and link,
+>   	 * bail out now.
+>   	 */
+> -	pcie_capability_read_dword(parent, PCI_EXP_LNKCAP, &parent_lnkcap);
+> -	pcie_capability_read_dword(child, PCI_EXP_LNKCAP, &child_lnkcap);
+> -	if (!(parent_lnkcap & child_lnkcap & PCI_EXP_LNKCAP_ASPMS))
+> +	if (!(parent->lnkcap & child->lnkcap & PCI_EXP_LNKCAP_ASPMS))
+>   		return;
+>   
+>   	/* Configure common clock before checking latencies */
+> @@ -857,10 +849,18 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+>   	 * Re-read upstream/downstream components' register state after
+>   	 * clock configuration.  L0s & L1 exit latencies in the otherwise
+>   	 * read-only Link Capabilities may change depending on common clock
+> -	 * configuration (PCIe r5.0, sec 7.5.3.6).
+> +	 * configuration (PCIe r5.0, sec 7.5.3.6).  Update only the exit
+> +	 * latencies in the cached dev->lnkcap because quirks may have
+> +	 * removed broken features advertised by the device.
+>   	 */
+> -	pcie_capability_read_dword(parent, PCI_EXP_LNKCAP, &parent_lnkcap);
+> -	pcie_capability_read_dword(child, PCI_EXP_LNKCAP, &child_lnkcap);
+> +	pcie_capability_read_dword(parent, PCI_EXP_LNKCAP, &lnkcap);
+> +	parent->lnkcap &= ~(PCI_EXP_LNKCAP_L0SEL | PCI_EXP_LNKCAP_L1EL);
+> +	parent->lnkcap |= lnkcap & (PCI_EXP_LNKCAP_L0SEL | PCI_EXP_LNKCAP_L1EL);
+> +
+> +	pcie_capability_read_dword(child, PCI_EXP_LNKCAP, &lnkcap);
+> +	child->lnkcap &= ~(PCI_EXP_LNKCAP_L0SEL | PCI_EXP_LNKCAP_L1EL);
+> +	child->lnkcap |= lnkcap & (PCI_EXP_LNKCAP_L0SEL | PCI_EXP_LNKCAP_L1EL);
+> +
+>   	pcie_capability_read_word(parent, PCI_EXP_LNKCTL, &parent_lnkctl);
+>   	pcie_capability_read_word(child, PCI_EXP_LNKCTL, &child_lnkctl);
+>   
+> @@ -880,7 +880,7 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+>   	 * given link unless components on both sides of the link each
+>   	 * support L0s.
+>   	 */
+> -	if (parent_lnkcap & child_lnkcap & PCI_EXP_LNKCAP_ASPM_L0S)
+> +	if (parent->lnkcap & child->lnkcap & PCI_EXP_LNKCAP_ASPM_L0S)
+>   		link->aspm_support |= PCIE_LINK_STATE_L0S;
+>   
+>   	if (child_lnkctl & PCI_EXP_LNKCTL_ASPM_L0S)
+> @@ -889,7 +889,7 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+>   		link->aspm_enabled |= PCIE_LINK_STATE_L0S_DW;
+>   
+>   	/* Setup L1 state */
+> -	if (parent_lnkcap & child_lnkcap & PCI_EXP_LNKCAP_ASPM_L1)
+> +	if (parent->lnkcap & child->lnkcap & PCI_EXP_LNKCAP_ASPM_L1)
+>   		link->aspm_support |= PCIE_LINK_STATE_L1;
+>   
+>   	if (parent_lnkctl & child_lnkctl & PCI_EXP_LNKCTL_ASPM_L1)
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index c83e75a0ec12..db4635b1ec47 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -1640,7 +1640,6 @@ void set_pcie_port_type(struct pci_dev *pdev)
+>   {
+>   	int pos;
+>   	u16 reg16;
+> -	u32 reg32;
+>   	int type;
+>   	struct pci_dev *parent;
+>   
+> @@ -1659,8 +1658,8 @@ void set_pcie_port_type(struct pci_dev *pdev)
+>   	pci_read_config_dword(pdev, pos + PCI_EXP_DEVCAP, &pdev->devcap);
+>   	pdev->pcie_mpss = FIELD_GET(PCI_EXP_DEVCAP_PAYLOAD, pdev->devcap);
+>   
+> -	pcie_capability_read_dword(pdev, PCI_EXP_LNKCAP, &reg32);
+> -	if (reg32 & PCI_EXP_LNKCAP_DLLLARC)
+> +	pcie_capability_read_dword(pdev, PCI_EXP_LNKCAP, &pdev->lnkcap);
+> +	if (pdev->lnkcap & PCI_EXP_LNKCAP_DLLLARC)
+>   		pdev->link_active_reporting = 1;
+>   
+>   	parent = pci_upstream_bridge(pdev);
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index d1fdf81fbe1e..ec4133ae9cae 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -361,6 +361,7 @@ struct pci_dev {
+>   	struct pci_dev  *rcec;          /* Associated RCEC device */
+>   #endif
+>   	u32		devcap;		/* PCIe Device Capabilities */
+> +	u32		lnkcap;		/* PCIe Link Capabilities */
+>   	u16		rebar_cap;	/* Resizable BAR capability offset */
+>   	u8		pcie_cap;	/* PCIe capability offset */
+>   	u8		msi_cap;	/* MSI capability offset */
 
-Signed-off-by: Steve Rostedt (Google) <rostedt@goodmis.org>
-
-Cheers,
-
--- Steve
 
