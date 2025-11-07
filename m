@@ -1,101 +1,39 @@
-Return-Path: <linux-kernel+bounces-890237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B92C3F953
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:50:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05391C3F959
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 783C64E5044
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:50:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9E4E4EF0F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F00D31A810;
-	Fri,  7 Nov 2025 10:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B1EYSsnG";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LErrStSJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD68209F5A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B6031B110;
+	Fri,  7 Nov 2025 10:50:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3404C31AF34
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762512641; cv=none; b=GZgA32VoZibpYXu1FDPyhVFRBFBVhNlEwt2djMrdsBoisLMRGqHmpufhF0xQfnf9W4OAyJpOZ5/7gMoAnlqtWx9zXOX/SYgJanlsDvj5JxHF4nfoqhPyCfyRppC43W/cUNHgDN8WqBb/PkigubhkPTgyNY0tq381sYS+0ZsnMGU=
+	t=1762512646; cv=none; b=URQAGJiYmtHOiGXMJHH1bcYanlbuwLH5IUsOT7cfTXucKCLbCcQtYT5+5BHQztwzUlh9KT9C+DmqZWMRmEDuRSK4Apz2Lfa+3KE+ArljB6Vmz3VTpsipo+tVXB2EL286AxxOo/54NwVaFZR+my8bB1vYezk2nPbIjRv/+00hi1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762512641; c=relaxed/simple;
-	bh=H38bo1o8KZgtlMyhOjvzTVZdaXQkA/mCrkUJu/FTaCQ=;
+	s=arc-20240116; t=1762512646; c=relaxed/simple;
+	bh=+/m04TnDfPvyNyXnqPa/HmB4QubNr+ajwU51r3FHblU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rpebp/Az8nLhYIqB+83l/TiS2vQbywojshr9AUOv1eSlF6dkX/2Awv1LzdLEdlJDiGGQHdDSdqqzU9kO2vF8yJ7MW7FjI4wmrn1THO9no15WDOdK7P/uUbUU8wu3GVdmzY0SLWb7Ls0e/F0E+7X3hhGPi88xJYVMgAaY6GFkmd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B1EYSsnG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LErrStSJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A79EJP81709810
-	for <linux-kernel@vger.kernel.org>; Fri, 7 Nov 2025 10:50:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	K+LRkelT4LAUbuxVybXtmeX0JCfHUQudQjQlnzvpOmA=; b=B1EYSsnG47lGPxvn
-	zAiOxrAmz/Wz/9UGbFmZFaJUsrfmtRJdHGCRNLO8nK188PAywHZCZ/Czv8tlM8ve
-	CGTbIUMThDuTRN2SNFnJdG0FxRGnW+6oQLaE1SUNcHDxkH1p3qM+XKbF6+ZvwhuC
-	2xSpWB1caS7pSkxWxhHPfYew/g/o0fF2xf0FwgXZJ9fl/vku5K0YWUR2Bzn1GvAJ
-	SLreBdufu7mVgG3gE+Go0RhRFhZFyzFhMp9WBxMVB5AfBt5uh9btC4+Yx9NldHxh
-	YgAVAW7chm0tTXTd4tmqkRL7pByvT7vcNlH8wK7Ctms8y6dh9igwU/62YLoua5H6
-	vkifZg==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a96ue1jbk-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:50:38 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-87ff7511178so1398996d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:50:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762512638; x=1763117438; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K+LRkelT4LAUbuxVybXtmeX0JCfHUQudQjQlnzvpOmA=;
-        b=LErrStSJdEkYoWE281QcbKE6B0ryO0iCFykA5UQ5uzeRckQpRGbx88lDuuBlBGnxE9
-         41xOLBgsZ3NxWp6GOjqpFKmRLz7nHnZjui2zUerQULoyIz2TRy53Bw6FDHZrCKyN7DgU
-         a8GPK7UBS5Bw93msfBVfMWu6m84TgEf9Ti0B8F5hYMGnWgTeDz0BdGJUCwwZ0uwKkg9L
-         y2cY2PjaY5gi6ozb4rzE0cuUl2t1d4U9kAUfKeHgLUNdWWlwiS2eh/YpY/MnQGtaX0tI
-         MgvHLNH7/GE7OKEFPlfzJWtp8OiVxG0qQZjR3UnXIU/mU3frZeLp4pExPRpTVs8Vg4Yr
-         8WnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762512638; x=1763117438;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K+LRkelT4LAUbuxVybXtmeX0JCfHUQudQjQlnzvpOmA=;
-        b=sbDEAROcC7IzagY9GCDTYyQfcvGXDJVdm3uUvOBmFcP+KRvsIlgD1IFsz6rAo5PNgr
-         fr/N4c9ctwbnbVw/c6FahODlbAWDgHogBh8LtB4QBZxo02h3Zt7fIUfRWhOul/7Kfukh
-         HKgCxOpqhHhNbBEkLeVfOo5IL01at1QAzB8fyH2z7i/0Ow1XSGFrGb0zoCdB3xDGLk/M
-         FWeEa/uzMEvIps0ltybBuXYw797WkyVCHUZ9Ca8GZoMno7WlsRHYliS3nXhcKCp40oaA
-         7bGQvPD5yTLB2VFWlbPirjiWCtkagQ1AbzwVek5swH3KBGRmH2/kKgAMYlE3Vd6e6FBi
-         POJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhedvpg1n70fr6iACREZ7FkmRPj3Tj+qy+io4vORidQGg9LCyTVVhRKDFUXVzupMbqLcZ/zx7Cx/3GWe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxucbI0s8h7z61pi7HoZ3UIr7OmI8Hw2nOvb7fzajrNfnS3mqg1
-	0fM1yu8hxgil8+gqjpXWfhiu7VLdSJO8qWwD1dOn7CtLGfQr4YOl+Kfadr5VCmnvOmuN2swqowf
-	WWufvDaustSdkmxAzWYCxB/bG2W+CNelO5rs1Wo3/EWh2sEdWtk3997nNbDJKwmdOTpI=
-X-Gm-Gg: ASbGncvAWl+dXFRNaIDwqMeuD7a74gS3JvIAXZc4vs1/GIktiEkImU98SZge7g+8jvZ
-	NqI4ij+w6DP5yXBX2YXl0HEIXJHEg+I9l2vjBu/ZdgF/DgOBI3bJNNWo+EzlxmnuPDA/LQJy3oE
-	DN6dGM8L3KFX07vryfcrVrKHDtO0xG4bcu3UoYAaB30wKriGK7yah8BsvlpN3abhWUyTibeUe2+
-	Y+ipQ5hOum+efQC6ekVYy5A4se28TTc7IKvhu1NIQO4LqVjdsYRtbu6j+UvwlJqeOCtRmIa3awA
-	RQ08Q9ZiqvLY76LsORgn+XCxC5UPVanfBDSS4cvzn2M7d5msgh/a7DK9ookiDElOW4wLe6NwR0o
-	SOxc3NyNzQdIz64cGKueSF6ETve3lt4049Mx++TMeeizyhPBcRYiR/tfB
-X-Received: by 2002:a05:622a:411:b0:4ec:ed46:9268 with SMTP id d75a77b69052e-4ed94a41994mr19484701cf.13.1762512637970;
-        Fri, 07 Nov 2025 02:50:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IECQ+rghHeVgkMsgvUMsj4lxwZEJlBOwE/naarHWq7nH8xBHgoJZQqQzG8SkQO4ghE/Xbce/w==
-X-Received: by 2002:a05:622a:411:b0:4ec:ed46:9268 with SMTP id d75a77b69052e-4ed94a41994mr19484181cf.13.1762512637527;
-        Fri, 07 Nov 2025 02:50:37 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbcaeaasm219104466b.1.2025.11.07.02.50.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 02:50:36 -0800 (PST)
-Message-ID: <9805b902-95bb-4b18-b65f-f6efdfb6807a@oss.qualcomm.com>
-Date: Fri, 7 Nov 2025 11:50:29 +0100
+	 In-Reply-To:Content-Type; b=V5/7aQ4bkSWb8Nc3MPLhjJY0u7VA/sPcZTUOdJFyNwLB4JxqA+irty16ijFwXos8BFEe5B4kgB1gDF3ASWymcFZGusS1MNk7+oi0AMFikyO2JeOgwd50g9FOTdfeI0fqf1LG+kbH4HKitSvCLTpy0iQMBBH9BjKm3k8IDhJG7ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF91E1516;
+	Fri,  7 Nov 2025 02:50:35 -0800 (PST)
+Received: from [10.57.72.216] (unknown [10.57.72.216])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 664863F66E;
+	Fri,  7 Nov 2025 02:50:41 -0800 (PST)
+Message-ID: <90dd78f8-6128-42bf-9c52-6ea8b600203a@arm.com>
+Date: Fri, 7 Nov 2025 10:50:39 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,125 +41,217 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/8] net: stmmac: qcom-ethqos: improve typing in devres
- callback
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
- <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Jose Abreu <joabreu@synopsys.com>, Chen-Yu Tsai <wens@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthew Gerlach <matthew.gerlach@altera.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com,
-        Romain Gantois <romain.gantois@bootlin.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Heiko Stuebner <heiko@sntech.de>, Chen Wang <unicorn_wang@outlook.com>,
-        Inochi Amaoto <inochiama@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Minda Chen <minda.chen@starfivetech.com>,
-        Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Fu Wei <wefu@redhat.com>,
-        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Shuang Liang <liangshuang@eswincomputing.com>,
-        Zhi Li <lizhi2@eswincomputing.com>,
-        Shangjuan Wei <weishangjuan@eswincomputing.com>,
-        "G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>,
-        Clark Wang <xiaoning.wang@nxp.com>, Linux Team <linux-imx@nxp.com>,
-        Frank Li <Frank.Li@nxp.com>, David Wu <david.wu@rock-chips.com>,
-        Samin Guo <samin.guo@starfivetech.com>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Swathi K S <swathi.ks@samsung.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Drew Fustini
- <dfustini@tenstorrent.com>, linux-sunxi@lists.linux.dev,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, sophgo@lists.linux.dev,
-        linux-riscv@lists.infradead.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20251107-qcom-sa8255p-emac-v5-0-01d3e3aaf388@linaro.org>
- <20251107-qcom-sa8255p-emac-v5-3-01d3e3aaf388@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251107-qcom-sa8255p-emac-v5-3-01d3e3aaf388@linaro.org>
+Subject: Re: [PATCH v3 6/8] drm/panthor: Support GLB_REQ.STATE field for
+ Mali-G1 GPUs
+To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
+Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+References: <20251027161334.854650-1-karunika.choo@arm.com>
+ <20251027161334.854650-7-karunika.choo@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251027161334.854650-7-karunika.choo@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=fYKgCkQF c=1 sm=1 tr=0 ts=690dcefe cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=Xr3OHDAqYAD4YnyFvXYA:9
- a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: WFmgG70hGtwt1dXM8R7STtTWwCd-XZIL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDA4NyBTYWx0ZWRfXy+U6czVidVJX
- 6iKPqD5+nYNjCcsi8tYx3XadjbDtBhXc8aiweiDkoNb7Fu97t5N0S+z7sPy6SHnPYlCYz3syEiF
- gAZlZzSxVE4tBs/zDIt1/oPCruPSeYjwWLzBC1YnEPOg9dGG2gYC4nHju8mUFHQCownmrVcw6eU
- 3733cw3RHsGhmIgOmLrvy5wsVF+k1vlBRQxhpdSJHBbjrDSl+nTD16WnIbV+2gzI8yS/71Qkgni
- sS1KETtQevChlnyBSyUqIm8cL26TyuzLucqI78adT68wlpWQJ37jcibuH9cZnZNoDNupAEd0zd7
- VCpLNdMQbFBh+dJbJino9Jz3yUxuajPtlVFoqdEaHqrESkIKwfKmA7vHFK6nwehvBKpPAMRlin3
- g5XSOktsWPSjzZIEWxDw7OwhAmeDnQ==
-X-Proofpoint-GUID: WFmgG70hGtwt1dXM8R7STtTWwCd-XZIL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 priorityscore=1501 malwarescore=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 clxscore=1015 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070087
 
-On 11/7/25 11:29 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 27/10/2025 16:13, Karunika Choo wrote:
+> Add support for the GLB_REQ.STATE field introduced in CSF v4.1+, which
+> replaces the HALT bit to provide finer control over the MCU state. This
+> change implements basic handling for transitioning the MCU between
+> ACTIVE and HALT states on Mali-G1 GPUs.
 > 
-> It's bad practice to just directly pass void pointers to functions which
-> expect concrete types. Make it more clear what type ethqos_clks_config()
-> expects.
+> The update introduces new helpers to issue the state change requests,
+> poll for MCU halt completion, and restore the MCU to an active state
+> after halting.
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+
+Reviewed-by: Steven Price <steven.price@arm.com>
+
 > ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> v3:
+>  * Fixed missed CSF_IFACE_VERSION check with pathor_fw_has_glb_state().
+> v2:
+>  * Reduced MCU_HALT_TIMEOUT_US to 1 second.
+>  * Wrap the CSG_IFACE_VERSION checks for v4.1.0 with
+>    panthor_fw_has_glb_state().
+>  * Removed use of undefined panthor_fw_csf_version() MACRO.
+> ---
+>  drivers/gpu/drm/panthor/panthor_fw.c | 89 +++++++++++++++++++++++-----
+>  drivers/gpu/drm/panthor/panthor_fw.h |  7 +++
+>  2 files changed, 80 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-> index 8578a2df8cf0d1d8808bcf7e7b57c93eb14c87db..8493131ca32f5c6ca7e1654da0bbf4ffa1eefa4e 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-> @@ -726,7 +726,9 @@ static int ethqos_clks_config(void *priv, bool enabled)
->  
->  static void ethqos_clks_disable(void *data)
->  {
-> -	ethqos_clks_config(data, false);
-> +	struct qcom_ethqos *ethqos = data;
+> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+> index e6c39c70d348..fb1f69ef76fb 100644
+> --- a/drivers/gpu/drm/panthor/panthor_fw.c
+> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
+> @@ -33,6 +33,7 @@
+>  #define PROGRESS_TIMEOUT_SCALE_SHIFT		10
+>  #define IDLE_HYSTERESIS_US			800
+>  #define PWROFF_HYSTERESIS_US			10000
+> +#define MCU_HALT_TIMEOUT_US			(1ULL * USEC_PER_SEC)
+> 
+>  /**
+>   * struct panthor_fw_binary_hdr - Firmware binary header.
+> @@ -317,6 +318,13 @@ panthor_fw_get_cs_iface(struct panthor_device *ptdev, u32 csg_slot, u32 cs_slot)
+>  	return &ptdev->fw->iface.streams[csg_slot][cs_slot];
+>  }
+> 
+> +static bool panthor_fw_has_glb_state(struct panthor_device *ptdev)
+> +{
+> +	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
 > +
-> +	ethqos_clks_config(ethqos, false);
+> +	return glb_iface->control->version >= CSF_IFACE_VERSION(4, 1, 0);
+> +}
+> +
+>  /**
+>   * panthor_fw_conv_timeout() - Convert a timeout into a cycle-count
+>   * @ptdev: Device.
+> @@ -996,6 +1004,9 @@ static void panthor_fw_init_global_iface(struct panthor_device *ptdev)
+>  					 GLB_IDLE_EN |
+>  					 GLB_IDLE;
+> 
+> +	if (panthor_fw_has_glb_state(ptdev))
+> +		glb_iface->input->ack_irq_mask |= GLB_STATE_MASK;
+> +
+>  	panthor_fw_update_reqs(glb_iface, req, GLB_IDLE_EN, GLB_IDLE_EN);
+>  	panthor_fw_toggle_reqs(glb_iface, req, ack,
+>  			       GLB_CFG_ALLOC_EN |
+> @@ -1069,6 +1080,54 @@ static void panthor_fw_stop(struct panthor_device *ptdev)
+>  		drm_err(&ptdev->base, "Failed to stop MCU");
+>  }
+> 
+> +static bool panthor_fw_mcu_halted(struct panthor_device *ptdev)
+> +{
+> +	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
+> +	bool halted;
+> +
+> +	halted = gpu_read(ptdev, MCU_STATUS) == MCU_STATUS_HALT;
+> +
+> +	if (panthor_fw_has_glb_state(ptdev))
+> +		halted &= (GLB_STATE_GET(glb_iface->output->ack) == GLB_STATE_HALT);
+> +
+> +	return halted;
+> +}
+> +
+> +static void panthor_fw_halt_mcu(struct panthor_device *ptdev)
+> +{
+> +	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
+> +
+> +	if (panthor_fw_has_glb_state(ptdev))
+> +		panthor_fw_update_reqs(glb_iface, req, GLB_STATE(GLB_STATE_HALT), GLB_STATE_MASK);
+> +	else
+> +		panthor_fw_update_reqs(glb_iface, req, GLB_HALT, GLB_HALT);
+> +
+> +	gpu_write(ptdev, CSF_DOORBELL(CSF_GLB_DOORBELL_ID), 1);
+> +}
+> +
+> +static bool panthor_fw_wait_mcu_halted(struct panthor_device *ptdev)
+> +{
+> +	bool halted = false;
+> +
+> +	if (read_poll_timeout_atomic(panthor_fw_mcu_halted, halted, halted, 10,
+> +				     MCU_HALT_TIMEOUT_US, 0, ptdev)) {
+> +		drm_warn(&ptdev->base, "Timed out waiting for MCU to halt");
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static void panthor_fw_mcu_set_active(struct panthor_device *ptdev)
+> +{
+> +	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
+> +
+> +	if (panthor_fw_has_glb_state(ptdev))
+> +		panthor_fw_update_reqs(glb_iface, req, GLB_STATE(GLB_STATE_ACTIVE), GLB_STATE_MASK);
+> +	else
+> +		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
+> +}
+> +
+>  /**
+>   * panthor_fw_pre_reset() - Call before a reset.
+>   * @ptdev: Device.
+> @@ -1085,19 +1144,13 @@ void panthor_fw_pre_reset(struct panthor_device *ptdev, bool on_hang)
+>  	ptdev->reset.fast = false;
+> 
+>  	if (!on_hang) {
+> -		struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
+> -		u32 status;
+> -
+> -		panthor_fw_update_reqs(glb_iface, req, GLB_HALT, GLB_HALT);
+> -		gpu_write(ptdev, CSF_DOORBELL(CSF_GLB_DOORBELL_ID), 1);
+> -		if (!gpu_read_poll_timeout(ptdev, MCU_STATUS, status,
+> -					   status == MCU_STATUS_HALT, 10,
+> -					   100000)) {
+> -			ptdev->reset.fast = true;
+> -		} else {
+> +		panthor_fw_halt_mcu(ptdev);
+> +		if (!panthor_fw_wait_mcu_halted(ptdev))
+>  			drm_warn(&ptdev->base, "Failed to cleanly suspend MCU");
+> -		}
+> +		else
+> +			ptdev->reset.fast = true;
+>  	}
+> +	panthor_fw_stop(ptdev);
+> 
+>  	panthor_job_irq_suspend(&ptdev->fw->irq);
+>  }
+> @@ -1125,14 +1178,14 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
+>  		 */
+>  		panthor_reload_fw_sections(ptdev, true);
+>  	} else {
+> -		/* The FW detects 0 -> 1 transitions. Make sure we reset
+> -		 * the HALT bit before the FW is rebooted.
+> +		/*
+> +		 * If the FW was previously successfully halted in the pre-reset
+> +		 * operation, we need to transition it to active again before
+> +		 * the FW is rebooted.
+>  		 * This is not needed on a slow reset because FW sections are
+>  		 * re-initialized.
+>  		 */
+> -		struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
+> -
+> -		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
+> +		panthor_fw_mcu_set_active(ptdev);
+>  	}
+> 
+>  	ret = panthor_fw_start(ptdev);
+> @@ -1170,6 +1223,10 @@ void panthor_fw_unplug(struct panthor_device *ptdev)
+>  		if (ptdev->fw->irq.irq)
+>  			panthor_job_irq_suspend(&ptdev->fw->irq);
+> 
+> +		panthor_fw_halt_mcu(ptdev);
+> +		if (!panthor_fw_wait_mcu_halted(ptdev))
+> +			drm_warn(&ptdev->base, "Failed to halt MCU on unplug");
+> +
+>  		panthor_fw_stop(ptdev);
+>  	}
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_fw.h b/drivers/gpu/drm/panthor/panthor_fw.h
+> index 6598d96c6d2a..a19ed48b2d0b 100644
+> --- a/drivers/gpu/drm/panthor/panthor_fw.h
+> +++ b/drivers/gpu/drm/panthor/panthor_fw.h
+> @@ -214,6 +214,13 @@ struct panthor_fw_global_input_iface {
+>  #define GLB_FWCFG_UPDATE			BIT(9)
+>  #define GLB_IDLE_EN				BIT(10)
+>  #define GLB_SLEEP				BIT(12)
+> +#define GLB_STATE_MASK				GENMASK(14, 12)
+> +#define   GLB_STATE_ACTIVE			0
+> +#define   GLB_STATE_HALT			1
+> +#define   GLB_STATE_SLEEP			2
+> +#define   GLB_STATE_SUSPEND			3
+> +#define   GLB_STATE(x)				(((x) << 12) & GLB_STATE_MASK)
+> +#define   GLB_STATE_GET(x)			(((x) & GLB_STATE_MASK) >> 12)
+>  #define GLB_INACTIVE_COMPUTE			BIT(20)
+>  #define GLB_INACTIVE_FRAGMENT			BIT(21)
+>  #define GLB_INACTIVE_TILER			BIT(22)
+> --
+> 2.49.0
+> 
 
-ethqos_clks_config() takes a voidptr too
-
-Konrad
 
