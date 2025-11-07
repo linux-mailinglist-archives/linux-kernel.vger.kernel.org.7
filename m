@@ -1,371 +1,250 @@
-Return-Path: <linux-kernel+bounces-890203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCFEFC3F89C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:42:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E320C3F809
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:37:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EED4188F663
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:43:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0205E188E24C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1107731DD98;
-	Fri,  7 Nov 2025 10:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290A131A7F9;
+	Fri,  7 Nov 2025 10:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wgebvh8i"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sk+vMQ39"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BD93191A4
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6F52E6CC0;
+	Fri,  7 Nov 2025 10:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762511419; cv=none; b=uBEyXvlItiH8XYt+aZJV74Yv7Z8RXLOQMQC6YS5CopBhloFmHbSA7Nr4V5t3Uzb3iPkBMcWjMCIULt7IwA1wD5O5gEltNVNLTGnTYnXjc7dKfdHzyo8HEnb1RajPEfFq8fmGZut38btxoqXdjT7HDAA3rp9k7tjrs7HF49k4IP4=
+	t=1762511415; cv=none; b=HJA+oMfjuvFlpDmAHTSGc9n6ss2v4vUdezBdhMCPFcfE4LsQpXG8EojDvGM0XD5v/NA48Zyq1phKNeUz6saXfuHm7SzsAeC2KXu9pRB4ODmS1u6RLpV09t1eqRvHWlrkRkXca1dH8IT7gQvb/wHvD4S/N2d+8xrQykNWOVnjwhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762511419; c=relaxed/simple;
-	bh=obmvNhNSljc4hcgnWD69M7W8r+dV980c55d+Sxx1WKs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pFVu06OUML6Sk8RCDMiqubbCU+JLgy/ShEspvhtikBFQq9zYGxQV1Jvjs927ICJEEW+0u7xphB0LUyj/hFTQWE6ybHr746rQ837r3grfx1kKUXAcIPi3bnGPYOgMJ1g9ZKOoak8vZP3xjDrDkp7AgWWOWGYf+ccyHfWwoxjchMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wgebvh8i; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b7277324204so97106366b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:30:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762511412; x=1763116212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=No6GwKzJfCCDDPKQIQxrIKzPon7QFA7coiXs9eLOLXY=;
-        b=Wgebvh8iEKlC9rklGbL8DSlL/vsOvw84O8Vh7s0nMLaUR4veRrDo7wRSeyhH279iQb
-         wehVlgnA0oTJMWI0sR8Rae++uqt3GLQmpKjTBTki1zyLUqchXH8P0aCyR7apllK4yE+D
-         JHso1OI4jC48dW4i2YiFNHZc8g2mLF35NMIgHN94Lv8BaBk/ZqjCg9InBP7z5GkUAmNf
-         +Rldzx11A2EV9SIqIa4m1TenUBtfPmA5D3McpBTVuKllN/C5k6Wf9kZWpxKZfU3/wrf/
-         buy35TheeDaA56+qfN/qlb39jndSA8OGy8/Goi8aON4eHYfHAdfBnxDlDve7PYjZjwfE
-         JNmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762511412; x=1763116212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=No6GwKzJfCCDDPKQIQxrIKzPon7QFA7coiXs9eLOLXY=;
-        b=QZGiE0yfhFSkZNPmv14GNkzOTo4KopJPXkwY/H2qOfq957DwlVZu8fUOUil1GulRdu
-         t0AfC2FpBm9GLEol5n3MsbCIK1G4fIKR8LIiKyNmebEB/Bd70gJ+HP4hqzvD64ABh48Q
-         Ch2XKVhdIe+xuwaXJVun8V/2aGS4n8/C/7Cv5GkyxUFujbV8Uc5NSu1IkeD4XJwhxy77
-         ITsRNIuOnSsm3Q1b7LlIhv1/jF/s9zqislZUYDRddfunWXxZ0W15kCHhcb2D58Q1Bbxo
-         pDrTV80pdru4bbjAUmmUoDYPH+8S/1MPFs3lBGp+O5JkeeDRe0U1t+65QI39Wkn8mtkg
-         ni9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVF2YPjJRfxp48bMeIeyr8oSQCKz8OzWwZFU+HjgXQoiXiqTOsIGY7SJTDZlXBD4vn/6gD/e+d2vqWGUcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2mlRXFgFkM02XBUuHAEAeekoAA9ob0hPxv+5IX/I1KsesK5BJ
-	Shyk5LYsVk+hsLC+aI2nzlZB2Rc0jaRI2V2CC9GqmE7B6crS/exYglQhFMEeughx0qhSTdMtEZm
-	XIharygVxHghonvca5+NkYodEP3Yccae9BZ81Ql3J
-X-Gm-Gg: ASbGncuV4cPml/9taudOKObkcssePSmqaKIUCKwqmyAA/rgCZ4jH4FFkbwvOTXVQtn5
-	taBTvi/MuIslEoHjWpUVJQTjf23KfSHp1PqrC/YKcF9IP3SOghDLZ24pVDuGQM9Gi/gIhKJsY6L
-	4T21hbsyp2sgXVgy/XmdqO1Qs/5ssFQTgR39NN1616cl1uZOHw3XxLDfI759BdhX0OvR04YlFDP
-	AH/d7qdTbKKyLyd9qOhdmx4sz7p12X2RjFznNHFdvSf40t1SJSKIQv22dzev23m85+GB0r/0gYp
-	KUqjhWmS4zGcYANdX+iEEF08VQ==
-X-Google-Smtp-Source: AGHT+IG30tRXexX+8frHnHjuclcK9+qrxNelFybJrdVL6a5BhtuhdUQJ6TpMRhSTiHHcagf2YAhFzsm/Fo0hqvK7D9E=
-X-Received: by 2002:a17:907:60cc:b0:b72:5f93:2959 with SMTP id
- a640c23a62f3a-b72c0ad3420mr268316166b.17.1762511411448; Fri, 07 Nov 2025
- 02:30:11 -0800 (PST)
+	s=arc-20240116; t=1762511415; c=relaxed/simple;
+	bh=aN9XZgVOMPqduB1OEWWocLuGAQbGHagyZvfGA/RInNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DKdoAd6o6TbrdsYkaIQzmJAogr8NMeRGFQ3hmPuJ7xKs7eWq4nHLiXHlsK0g67/4GG/L9lrvAnt+k2c9pMRh3PKmjp3y27uMN94tp9yZOSqpi4k0G0rgbjcZV8+5/E6hMbAjmAuGWU8dk9IGpOpTOjqulrHLoE2ca3ttKI88FIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sk+vMQ39; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3D31C2BCB0;
+	Fri,  7 Nov 2025 10:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762511414;
+	bh=aN9XZgVOMPqduB1OEWWocLuGAQbGHagyZvfGA/RInNI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Sk+vMQ39DlD6Y/mhAE2Is9XvTNJ2eELY5zSNyYZ6YqdOuGLUCYy/HA91QZFhRqa2R
+	 rfqn33lqnl2Y6Rsp+SjTdzDP0czjLza9ZWyk3XexSbW+5RPZ2ARMP4Moj+SfVJZV1J
+	 Qr84BCwtCAxJIH4PljSZXs9C/DbJ0MMLhfCmYc3et7IkVBta9RVaHOjSEad4NwVGBr
+	 FpktY0GH9YoN8Fa8Niajs7kz/mes5PDU5naSJn1Yzx2D4kik50lDIM+G/IqX4T0czn
+	 qHgxCnJlJpeRuwf54oRUH7z2GYIoxVaQ0bTEQCyEIvxzT/GPXjVaQ+S9wrT4aMAx0s
+	 vNvZKAw93CalQ==
+Date: Fri, 7 Nov 2025 07:30:09 -0300
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Akira Yokosawa <akiyks@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula
+ <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH v3 0/8] Collect documentation-related tools under
+ /tools/docs
+Message-ID: <20251107073009.3a9af633@sal.lan>
+In-Reply-To: <affa20b2-b3f4-443c-ad42-735b13d34c5e@infradead.org>
+References: <20251024200834.20644-1-corbet@lwn.net>
+	<d3f4c7ee-6351-4c6f-ae93-f423245c4c9e@gmail.com>
+	<20251026073405.0672c9dd@sal.lan>
+	<affa20b2-b3f4-443c-ad42-735b13d34c5e@infradead.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017185645.26604-1-james.morse@arm.com> <20251017185645.26604-27-james.morse@arm.com>
- <CALPaoCjJXHD+HgFizzvNEvBorbUcJLTngLb7UJy-uMdybhCfrg@mail.gmail.com> <9e2f912d-2a2e-49ed-b0ab-4286fe94e145@arm.com>
-In-Reply-To: <9e2f912d-2a2e-49ed-b0ab-4286fe94e145@arm.com>
-From: Peter Newman <peternewman@google.com>
-Date: Fri, 7 Nov 2025 11:30:00 +0100
-X-Gm-Features: AWmQ_bmT_xoyb-k1HQ7hjOxxQERbHJYcErtYbLBLJOgCOM__r3wTvrdClo_rpzo
-Message-ID: <CALPaoCg7ZeQOgkeaPQ6ERKtaJqQ_n3xQUrK=qxi01CnuTjL4PA@mail.gmail.com>
-Subject: Re: [PATCH v3 26/29] arm_mpam: Use long MBWU counters if supported
-To: Ben Horgan <ben.horgan@arm.com>
-Cc: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, 
-	D Scott Phillips OS <scott@os.amperecomputing.com>, carl@os.amperecomputing.com, 
-	lcherian@marvell.com, bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com, 
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>, 
-	Xin Hao <xhao@linux.alibaba.com>, dfustini@baylibre.com, amitsinght@marvell.com, 
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, 
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com, baisheng.gao@unisoc.com, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring <robh@kernel.org>, 
-	Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>, Gavin Shan <gshan@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Ben
+Em Sun, 26 Oct 2025 14:53:32 -0700
+Randy Dunlap <rdunlap@infradead.org> escreveu:
 
-On Thu, Nov 6, 2025 at 5:41=E2=80=AFPM Ben Horgan <ben.horgan@arm.com> wrot=
-e:
->
-> Hi Peter,
->
-> On 11/6/25 16:15, Peter Newman wrote:
-> > Hi Ben (and James),
-> >
-> > On Fri, Oct 17, 2025 at 8:59=E2=80=AFPM James Morse <james.morse@arm.co=
-m> wrote:
+> Hi,
+> 
+> On 10/26/25 3:34 AM, Mauro Carvalho Chehab wrote:
+> > Em Sun, 26 Oct 2025 00:14:23 +0900
+> > Akira Yokosawa <akiyks@gmail.com> escreveu:
+> >   
+> >> On Fri, 24 Oct 2025 14:08:21 -0600, Jonathan Corbet wrote:  
+> >>> Our documentation-related tools are spread out over various directories;
+> >>> several are buried in the scripts/ dumping ground.  That makes them harder
+> >>> to discover and harder to maintain.
+> >>>
+> >>> Recent work has started accumulating our documentation-related tools in
+> >>> /tools/docs.  This series completes that task, moving the rest of our
+> >>> various utilities there, hopefully fixing up all of the relevant references
+> >>> in the process.
+> >>>
+> >>> At the end, rather than move the old, Perl kernel-doc, I simply removed it.
+> >>>
+> >>> The big elephant lurking in this small room is the home for Python modules;
+> >>> I left them under scripts/lib, but that is an even less appropriate place
+> >>> than it was before.  I would propose either tools/python or lib/python;
+> >>> thoughts on that matter welcome.
+> >>>
+> >>> Changes in v3:
+> >>>   - Now with more caffeine! Properly based on docs-next.    
 > >>
-> >> From: Rohit Mathew <rohit.mathew@arm.com>
+> >> :-) :-)
 > >>
-> >> Now that the larger counter sizes are probed, make use of them.
+> >> WRT the build error from test robot, it looks to me like we need these
+> >> final touches:
 > >>
-> >> Callers of mpam_msmon_read() may not know (or care!) about the differe=
-nt
-> >> counter sizes. Allow them to specify mpam_feat_msmon_mbwu and have the
-> >> driver pick the counter to use.
+> >> diff --git a/Documentation/conf.py b/Documentation/conf.py
+> >> index 8e3df5db858e..fbd8e3ae23ea 100644
+> >> --- a/Documentation/conf.py
+> >> +++ b/Documentation/conf.py
+> >> @@ -582,7 +582,7 @@ pdf_documents = [
+> >>  # kernel-doc extension configuration for running Sphinx directly (e.g. by Read
+> >>  # the Docs). In a normal build, these are supplied from the Makefile via command
+> >>  # line arguments.
+> >> -kerneldoc_bin = "../tools/docs/kernel-doc.py"
+> >> +kerneldoc_bin = "../tools/docs/kernel-doc"
+> >>  kerneldoc_srctree = ".."
+> >>  
+> >>  def setup(app):
+> >> diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
+> >> index 2586b4d4e494..3c815b40026b 100644
+> >> --- a/Documentation/sphinx/kerneldoc.py
+> >> +++ b/Documentation/sphinx/kerneldoc.py
+> >> @@ -289,13 +289,8 @@ def setup_kfiles(app):
+> >>  
+> >>      kerneldoc_bin = app.env.config.kerneldoc_bin
+> >>  
+> >> -    if kerneldoc_bin and kerneldoc_bin.endswith("kernel-doc.py"):
+> >> -        print("Using Python kernel-doc")
+> >> -        out_style = RestFormat()
+> >> -        kfiles = KernelFiles(out_style=out_style, logger=logger)
+> >> -    else:
+> >> -        print(f"Using {kerneldoc_bin}")
+> >> -
+> >> +    out_style = RestFormat()
+> >> +    kfiles = KernelFiles(out_style=out_style, logger=logger)  
+> > 
+> > Patch is incomplete, as it doesn't drop the logic which forks
+> > kernel-doc script run, but see below.
+> >   
+> >>  def setup(app):
+> >>      app.add_config_value('kerneldoc_bin', None, 'env')
+> >> diff --git a/Makefile b/Makefile
+> >> index d6ff0af5cca6..33b1db1cc0cf 100644
+> >> --- a/Makefile
+> >> +++ b/Makefile
+> >> @@ -460,7 +460,7 @@ HOSTPKG_CONFIG	= pkg-config
+> >>  
+> >>  # the KERNELDOC macro needs to be exported, as scripts/Makefile.build
+> >>  # has a logic to call it
+> >> -KERNELDOC       = $(srctree)/tools/docs/kernel-doc.py
+> >> +KERNELDOC       = $(srctree)/tools/docs/kernel-doc
+> >>  export KERNELDOC
+> >>  
+> >>  KBUILD_USERHOSTCFLAGS := -Wall -Wmissing-prototypes -Wstrict-prototypes \
 > >>
-> >> Only 32bit accesses to the MSC are required to be supported by the
-> >> spec, but these registers are 64bits. The lower half may overflow
-> >> into the higher half between two 32bit reads. To avoid this, use
-> >> a helper that reads the top half multiple times to check for overflow.
+> >> -----------------------------------------------------------------
 > >>
-> >> Signed-off-by: Rohit Mathew <rohit.mathew@arm.com>
-> >> [morse: merged multiple patches from Rohit, added explicit counter sel=
-ection ]
-> >> Signed-off-by: James Morse <james.morse@arm.com>
-> >> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-> >> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> >> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-> >> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-> >> ---
-> >> Changes since v2:
-> >>  * Removed mpam_feat_msmon_mbwu as a top-level bit for explicit 31bit =
-counter
-> >>    selection.
-> >>  * Allow callers of mpam_msmon_read() to specify mpam_feat_msmon_mbwu =
-and have
-> >>    the driver pick a supported counter size.
-> >>  * Rephrased commit message.
+> >> The change in Documentation/sphinx/kerneldoc.py is needed because
 > >>
-> >> Changes since v1:
-> >>  * Only clear OFLOW_STATUS_L on MBWU counters.
+> >>     kerneldoc_bin == ".../kernel-doc.py"
 > >>
-> >> Changes since RFC:
-> >>  * Commit message wrangling.
-> >>  * Refer to 31 bit counters as opposed to 32 bit (registers).
-> >> ---
-> >>  drivers/resctrl/mpam_devices.c | 134 ++++++++++++++++++++++++++++----=
--
-> >>  1 file changed, 116 insertions(+), 18 deletions(-)
+> >> indicated loading it as python lib into the extension, while
 > >>
-> >> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_dev=
-ices.c
-> >> index f4d07234ce10..c207a6d2832c 100644
-> >> --- a/drivers/resctrl/mpam_devices.c
-> >> +++ b/drivers/resctrl/mpam_devices.c
-> >> @@ -897,6 +897,48 @@ struct mon_read {
-> >>         int                             err;
-> >>  };
+> >>     kerneldoc_bin == ".../kernel-doc"
 > >>
-> >> +static bool mpam_ris_has_mbwu_long_counter(struct mpam_msc_ris *ris)
-> >> +{
-> >> +       return (mpam_has_feature(mpam_feat_msmon_mbwu_63counter, &ris-=
->props) ||
-> >> +               mpam_has_feature(mpam_feat_msmon_mbwu_44counter, &ris-=
->props));
-> >> +}
-> >> +
-> >> +static u64 mpam_msc_read_mbwu_l(struct mpam_msc *msc)
-> >> +{
-> >> +       int retry =3D 3;
-> >> +       u32 mbwu_l_low;
-> >> +       u64 mbwu_l_high1, mbwu_l_high2;
-> >> +
-> >> +       mpam_mon_sel_lock_held(msc);
-> >> +
-> >> +       WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage=
-_sz);
-> >> +       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->acces=
-sibility));
-> >> +
-> >> +       mbwu_l_high2 =3D __mpam_read_reg(msc, MSMON_MBWU_L + 4);
-> >> +       do {
-> >> +               mbwu_l_high1 =3D mbwu_l_high2;
-> >> +               mbwu_l_low =3D __mpam_read_reg(msc, MSMON_MBWU_L);
-> >> +               mbwu_l_high2 =3D __mpam_read_reg(msc, MSMON_MBWU_L + 4=
-);
-> >> +
-> >> +               retry--;
-> >> +       } while (mbwu_l_high1 !=3D mbwu_l_high2 && retry > 0);
-> >> +
-> >> +       if (mbwu_l_high1 =3D=3D mbwu_l_high2)
-> >> +               return (mbwu_l_high1 << 32) | mbwu_l_low;
-> >> +       return MSMON___NRDY_L;
-> >> +}
-> >> +
-> >> +static void mpam_msc_zero_mbwu_l(struct mpam_msc *msc)
-> >> +{
-> >> +       mpam_mon_sel_lock_held(msc);
-> >> +
-> >> +       WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage=
-_sz);
-> >> +       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->acces=
-sibility));
-> >> +
-> >> +       __mpam_write_reg(msc, MSMON_MBWU_L, 0);
-> >> +       __mpam_write_reg(msc, MSMON_MBWU_L + 4, 0);
-> >> +}
-> >> +
-> >>  static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
-> >>                                    u32 *flt_val)
-> >>  {
-> >> @@ -924,7 +966,9 @@ static void gen_msmon_ctl_flt_vals(struct mon_read=
- *m, u32 *ctl_val,
-> >>                                                ctx->csu_exclude_clean)=
-;
+> >> indicated invoking it as a script.
 > >>
-> >>                 break;
-> >> -       case mpam_feat_msmon_mbwu:
-> >> +       case mpam_feat_msmon_mbwu_31counter:
-> >> +       case mpam_feat_msmon_mbwu_44counter:
-> >> +       case mpam_feat_msmon_mbwu_63counter:
-> >>                 *ctl_val |=3D MSMON_CFG_MBWU_CTL_TYPE_MBWU;
+> >> Now that we don't have kernel-doc.py, loading python lib looks to me
+> >> as a natural choice.
 > >>
-> >>                 if (mpam_has_feature(mpam_feat_msmon_mbwu_rwbw, &m->ri=
-s->props))
-> >> @@ -946,7 +990,9 @@ static void read_msmon_ctl_flt_vals(struct mon_rea=
-d *m, u32 *ctl_val,
-> >>                 *ctl_val =3D mpam_read_monsel_reg(msc, CFG_CSU_CTL);
-> >>                 *flt_val =3D mpam_read_monsel_reg(msc, CFG_CSU_FLT);
-> >>                 return;
-> >> -       case mpam_feat_msmon_mbwu:
-> >> +       case mpam_feat_msmon_mbwu_31counter:
-> >> +       case mpam_feat_msmon_mbwu_44counter:
-> >> +       case mpam_feat_msmon_mbwu_63counter:
-> >>                 *ctl_val =3D mpam_read_monsel_reg(msc, CFG_MBWU_CTL);
-> >>                 *flt_val =3D mpam_read_monsel_reg(msc, CFG_MBWU_FLT);
-> >>                 return;
-> >> @@ -959,6 +1005,9 @@ static void read_msmon_ctl_flt_vals(struct mon_re=
-ad *m, u32 *ctl_val,
-> >>  static void clean_msmon_ctl_val(u32 *cur_ctl)
-> >>  {
-> >>         *cur_ctl &=3D ~MSMON_CFG_x_CTL_OFLOW_STATUS;
-> >> +
-> >> +       if (FIELD_GET(MSMON_CFG_x_CTL_TYPE, *cur_ctl) =3D=3D MSMON_CFG=
-_MBWU_CTL_TYPE_MBWU)
-> >> +               *cur_ctl &=3D ~MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L;
-> >>  }
-> >>
-> >>  static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
-> >> @@ -978,10 +1027,15 @@ static void write_msmon_ctl_flt_vals(struct mon=
-_read *m, u32 ctl_val,
-> >>                 mpam_write_monsel_reg(msc, CSU, 0);
-> >>                 mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val | MSMO=
-N_CFG_x_CTL_EN);
-> >>                 break;
-> >> -       case mpam_feat_msmon_mbwu:
-> >> +       case mpam_feat_msmon_mbwu_44counter:
-> >> +       case mpam_feat_msmon_mbwu_63counter:
-> >> +               mpam_msc_zero_mbwu_l(m->ris->vmsc->msc);
-> >> +               fallthrough;
-> >> +       case mpam_feat_msmon_mbwu_31counter:
-> >>                 mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
-> >>                 mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
-> >>                 mpam_write_monsel_reg(msc, MBWU, 0);
-> >
-> > The fallthrough above seems to be problematic, assuming the MBWU=3D0
-> > being last for 31-bit was intentional. For long counters, this is
-> > zeroing the counter before updating the filter/control registers, but
-> > then clearing the 32-bit version of the counter. This fails to clear
-> > the NRDY bit on the long counter, which isn't cleared by software
-> > anywhere else.
-> >
-> > From section 10.3.2 from the MPAM spec shared:
-> >
-> >  "On a counting monitor, the NRDY bit remains set until it is reset by
-> > software writing it as 0 in the monitor register, or automatically
-> > after the monitor is captured in the capture register by a capture
-> > event"
-> >
-> > If I update the 63-bit case to call
-> > mpam_msc_zero_mbwu_l(m->ris->vmsc->msc) after updating the
-> > control/filter registers (in addition to the other items I pointed in
-> > my last reply), I'm able to read MBWU counts from my hardware through
-> > mbm_total_bytes.
-> >
-> > Thanks,
-> > -Peter
->
-> Thanks for the testing and flagging the problem. We should do the
-> configuration in the same order for all the monitors.
->
-> I'll change the case to:
->
->         case mpam_feat_msmon_mbwu_31counter:
->         case mpam_feat_msmon_mbwu_44counter:
->         case mpam_feat_msmon_mbwu_63counter:
->                 mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
->                 mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
->
->                 if (m->type =3D=3D mpam_feat_msmon_mbwu_31counter)
->                         mpam_write_monsel_reg(msc, MBWU, 0);
->                 else
->                         mpam_msc_zero_mbwu_l(m->ris->vmsc->msc);
->
->                 mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val | MSMON_=
-CFG_x_CTL_EN);
->                 break;
+> >> Mauro, what do you think?  
+> > 
+> > Good point. I'm not sure about this. Yeah, on normal cases, we
+> > just want to run kernel-doc classes, instead of actually
+> > executing its binary. Yet, for debugging purposes, it might
+> > still be interesting to run it as separate processes.
+> > 
+> > See, right now, if KERNELDOC is not used, it will use imported
+> > Python classes, running them directly without creating processes.
+> > So, it won't actually call ".../kernel-doc". On such case, in
+> > practice, it will actually ignore KERNELDOC when building docs.
+> > 
+> > Now, (after this series), if one runs:
+> > 
+> > 	KERNELDOC=tools/docs/kernel-doc make htmldocs
+> > 
+> > it will run kernel-doc script as a process. This might be useful
+> > for debugging purposes.
+> > 
+> > Also, please notice that KERNELDOC is used on several files:
+> > 
+> > 	$ git grep -l KERNELDOC
+> > 	Makefile
+> > 	drivers/gpu/drm/Makefile
+> > 	drivers/gpu/drm/i915/Makefile
+> > 	include/drm/Makefile
+> > 	scripts/Makefile.build
+> > 	tools/docs/sphinx-build-wrapper
+> > 
+> > IMHO, we have some alternatives here:
+> > 
+> > 1. completely drop support for KERNELDOC variable.
+> >    On such case, we need to drop from the script:
+> > 
+> > 	- kerneldoc_bin
+> > 	- run_cmd() function
+> > 	- remove KERNELDOC from Makefiles and sphinx-build-wrapper  
+> 
+> No, please don't drop that feature.
+> 
+> I'm confused by the terminology. What does "bin" or "kerneldoc_bin"
+> mean here?  Is there some kernel-doc binary?
 
-I tried this out but wasn't able to read the counters. I needed to
-move the MBWU[_L] write to the end. Writing the registers directly on
-the hardware I'm testing with, I confirmed that just flipping
-MBWU_CTL.EN sets NRDY:
+kerneldoc_bin is the name of a variable at the Python script.
+It points to KERNELDOC env.
 
-MBWU_L=3D0x880
-MBWU_CTL=3D0x828
-
- / # mmio_read32 $((msc + MBWU_CTL))
-0x80030042
- / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
-0x03ecb2c0
-0x00000000
- / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
-0x03f70580
-0x00000000
-
-Clear MBWU_CTL.EN:
-
- / # mmio_write32 $((msc + MBWU_CTL)) 0x00030042
- / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
-0x05004680
-0x80000000
- / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
-0x05004680
-0x80000000
-
-Clear NRDY and reenable MBWU_CTL.EN:
-
- / # mmio_write32 $((msc + MBWU_L)) 0; mmio_write32 $((msc + MBWU_L + 4)) 0
- / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
-0x00000000
-0x00000000
- / # mmio_write32 $((msc + MBWU_CTL)) 0x80030042
- / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
-0x001dee80
-0x80000000
-
-In fact, re-writing the same value back into MBWU_CTL.EN also sets NRDY:
-
- / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
-0x00253e00
-0x00000000
- / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
-0x00b1a6c0
-0x00000000
- / # mmio_write32 $((msc + MBWU_CTL)) 0x80030042
- / # mmio_read32 $((msc + MBWU_L)); mmio_read32 $((msc + MBWU_L + 4))
-0x018d1d40
-0x80000000
-
-Thanks,
--Peter
+> 
+> > 2. keep it as is, which would help debugging (and eventually
+> >    would allow testing two different implementations of kernel-doc
+> >    without needing to bisect);
+> > 
+> > 3. change the core of the logic to be something like:
+> > 
+> > 	# kerneldoc_bin = env.config.kerneldoc_bin
+> > 	kerneldoc_bin = os.environ.get("KERNELDOC")
+> > 
+> > 	if not kerneldoc_bin:
+> > 	   out_style = RestFormat()
+> > 	   kfiles = KernelFiles(out_style=out_style, logger=logger)
+> > 	else:
+> > 	    print(f"Generating C documentation by running {kerneldoc_bin} binary")
+> > 
+> >    this would still allow using KERNELDOC to point to a binary
+> >    that will handle C files executed as a separate process.
+> > 
+> >    Please notice that the current code does:
+> > 
+> > 	kerneldoc_bin = env.config.kerneldoc_bin
+> > 
+> >    This requires an extra logic at the wrapper tool, as this needs
+> >    to be passed via -D command line option to sphinx-build. That's
+> >    the reason why several Makefiles also use KERNELDOC env var.
+> > 
+> >    If we're willing to adopt this solution, I would simplify
+> >    the wrapper and the makefiles to not touching KERNELDOC var
+> >    anymore.
+> > 
+> > For (2) and (3), I would document KERNELDOC somewhere.
+> > 
+> > My personal preference would be (3), but I don't have strong
+> > feelings.  
+> 
+> 
+> Thanks.
 
