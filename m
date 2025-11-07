@@ -1,77 +1,132 @@
-Return-Path: <linux-kernel+bounces-890569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD33C405BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:29:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D65C405D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:30:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF2614F2126
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:28:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2C304F36DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B4E32AAC6;
-	Fri,  7 Nov 2025 14:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC09329369;
+	Fri,  7 Nov 2025 14:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GaP1BGy3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OWMSQuwV"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F87E283FC8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36512283FC8
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762525634; cv=none; b=LWkiiy6BZZa8p7nx72RqjJf9tJYNmxx9/PKnsPcTYno4cTIb5+kWAk4qz3ywNVQMqrRpeS2WmXMF5FO19XwYcnKwjRaNJ0zB0bFVMlFQkVNcS8D63vx67eJQvOGkrouQE8t9aIyWGDF3GncQlOJhRPdBr8O23opAmPaWWRAHr/4=
+	t=1762525685; cv=none; b=hgr8pXx88F0gnZtnoIkUVNh5XwRseE/YrocX3n6Cnbk0AIawKa+St0nh1wmyeUgQ4oOdHehHb646QX4oHKzFNMYwzlV6a7FB/hzxABe5MbaqSH0sMCLyY2aKQAomEeNJUpg/ueG/l7F66LsgkyGtZ6XObT7s6Gb8am1JlsjjOXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762525634; c=relaxed/simple;
-	bh=Pzo7tfIaHjLpftx/B0TKs+rcupOkEug4Caccn3F0lig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jlhz1M+bd9tZB6tG6OPp4MoYYhtCjRvSh5R8Q0ujhgMxw5U7cD9gLlpAHmxb/CSHM8e/QLXxb5XgI1PVDZZMeCN9Nd6iqtYczQpOn+vSZy8H/I2nkUJwMKjBkIkSGzHK5FgMU7DxdxbZ6bHINztY3GpFL38I1k65nNhFX8kRJjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GaP1BGy3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 912E6C4CEF8;
-	Fri,  7 Nov 2025 14:27:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762525633;
-	bh=Pzo7tfIaHjLpftx/B0TKs+rcupOkEug4Caccn3F0lig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GaP1BGy3T71n9873EJJSuRsl/8HamSIhcGxLlMEM0oxVZB7oBHT+ZDHodCwwmy5QN
-	 DCxldO4nQ9daC9l32//xRryV5Nk1BoS8ftLL7s/8CYGyMD7T5xChQPWZV06n5SuIGI
-	 NtozWcoRwGAnRWWDPRDzKbrxW1d3P8rewz7tokQpyHWyuB8S7A1frE4cuiQUMNB3tw
-	 fq3um2ZF0ht/mFb7uYoIvUuz2vP2X2pvXYxKPqAX7mlT8146hQ2DuPIKuVUPtLX48K
-	 2zw6KcbsQMXXrEs2uOJwvqU8f8tUaww59+KVzFKuzpUcdr4Rm1elTFkSGdMlpY6GMu
-	 7m87AYHK0nynw==
-Date: Fri, 7 Nov 2025 14:27:09 +0000
-From: Will Deacon <will@kernel.org>
-To: Dawei Li <dawei.li@linux.dev>
-Cc: catalin.marinas@arm.com, mark.rutland@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	set_pte_at@outlook.com
-Subject: Re: [PATCH] arm64: Remove assertion on CONFIG_VMAP_STACK
-Message-ID: <aQ4BvRzFWP7rKLqi@willie-the-truck>
-References: <20251103152345.175463-1-dawei.li@linux.dev>
+	s=arc-20240116; t=1762525685; c=relaxed/simple;
+	bh=c+a6fPEtLMuOmlT4Kig9zRhF7kBqXmve9JJNWy5lrU4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HTUOP2YkBlSboZ1Yq2lPNK+A0eu3+Nehyqa7LBIGqT3PGFdt0gb2iHVlWAfffNo/Cw1hdqDnbXhLAkKMQXaYYZi0Plj8y4b9imVf+8NQrRhKdP2fWURc0J5tl5JzYvBd7EsfS1sqaMaZkqdcACcP5+k5PI1mZqu3Pis2Dl9DFAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OWMSQuwV; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7a271fc7e6bso128508b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:28:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762525683; x=1763130483; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kcr2kLbrccmHXR0DwVI5+Z3TJTG76QtAID5voxoGTP0=;
+        b=OWMSQuwVnPL1YiflKuxCyyt24sxFurBqqPtzalKv+SZmQmO5Zaqbnbi+W4LLlFZbkb
+         7VarpyO/y0n7T7ufr5Wp/2djGTCzxIeJ08W/2oXF0eLM2Lom9Vs1Tqopn/PrC5ZURS03
+         JjdLk0QM1LgpMJO0B/7J18KE/TVsg6d9ytDrb3GWB1iuAIcAvQc9D9IPCPD/O7rYRPLp
+         SVgkiaO9ATL0p1tnyMl+XJLBdc6Gna4fTMVJKNbCPLATWN0KGcgWdRWga18TZO4qH7CU
+         jwzMljQtC08s8Sgl74Lqa7EaFFEfeXeJwuZaOVhECmOCp6eXxfMooseR8a+J0eA2Raiv
+         BHiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762525683; x=1763130483;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Kcr2kLbrccmHXR0DwVI5+Z3TJTG76QtAID5voxoGTP0=;
+        b=Nc7/62LikYQwNAY3yfM3zbDAJ7MOrcqxQp24VVw7cXVKli+xWt7Y4KFLUinaIKvAp7
+         yI4DMUbYKJaATfklqOfuhVuffcqCR6PnSbHpbPI9+2phA9CrinEErpHJhwC+RD2whcLG
+         gFoXEea+93ekfu+O4L08fHwp55fFUiSV82GcEkB/Lyw7hR/AXAMwquimNSC7y2rAOY+z
+         0CUnJZeIuVp0jUgxYugTvHUmHDtOiss8tZPxej4704igDOzHaB9NPnHZXuChuLf12ikV
+         X/fGT6kzgHfozhCCznnKPQSO54yxGDLGO1fH1q3PU/XkMQhOg2bQcZ1K8qOGZoD+6YMr
+         R7fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHeqVV5LSFU429xMsR3Ir+WTYfUu442a0LzDl/QEtmZPv7/uGo1NycHiNWpoHfF2lI3ut+1q+ZyT0kDdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7jvBol1hPirK+oWiZgaihXJUnM5mvlafVOsB8YzyZ4dWKzxj4
+	9TmWeqbLCxZ9rlhNrTFBTvYGWlE4M35ETfUgfsySirueomM3w903ShEyGuiSZlffeFSX1fvx7Ja
+	MmqKoP2eJ03hXkTPXXMvJXhJTKjj34X4=
+X-Gm-Gg: ASbGnctwlMFSQq9IRCb6IB5+3MYD0r3PpqDzf+DuEIzYSjXE019JnsDbvNkQESdel6C
+	lw4NZmK+y4tVmhU6CVGiklAfWJYAIKvAuJXGmym6WgDU3egHtBap2+GXDKlyTUy1S+0LQ1fZq2J
+	CMS8L4YUdJYXpHD2KPNBPBIbVEQUx4oM5RIW9YUN89+AbQ5TORAqEC+DBJp8uUw4YQkvN77svhI
+	66QIJQQaoqnZQ2VMiY2ArU9kUs9To7ckasXKzq3/qUtOR1rokbZexz/WQ0+
+X-Google-Smtp-Source: AGHT+IHJ5X/g1j6lP0qjmOU4fOvCAdiC/VauUcbEb9ArOxo0iWsIHd4S90gC3AXBySoCa7I9XEUlm2stEllCzQdtg9A=
+X-Received: by 2002:a17:902:f547:b0:297:d825:bf22 with SMTP id
+ d9443c01a7336-297d825c0a6mr5657375ad.5.1762525683404; Fri, 07 Nov 2025
+ 06:28:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103152345.175463-1-dawei.li@linux.dev>
+References: <20251107125508.235449-2-phasta@kernel.org>
+In-Reply-To: <20251107125508.235449-2-phasta@kernel.org>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 7 Nov 2025 09:27:52 -0500
+X-Gm-Features: AWmQ_bnq3Wjs0A3GFqnWs08XLNXM4-zvBTMXOBrzQDPdNRTyq7GOqJeUCRwyZMQ
+Message-ID: <CADnq5_OU_bxHctMD5KjMfzsW4gaq8kC7fsO8TdgJr9kzLOCh5A@mail.gmail.com>
+Subject: Re: [PATCH] drm/sched: Don't crash kernel on wrong params
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 11:23:45PM +0800, Dawei Li wrote:
-> CONFIG_VMAP_STACK is selected by arm64 arch unconditionly since commit
-> ef6861b8e6dd ("arm64: Mandate VMAP_STACK").
-> 
-> Remove the redundant assertion and headers.
-> 
-> Signed-off-by: Dawei Li <dawei.li@linux.dev>
+On Fri, Nov 7, 2025 at 8:01=E2=80=AFAM Philipp Stanner <phasta@kernel.org> =
+wrote:
+>
+> drm_sched_job_arm() just panics the kernel with BUG_ON() in case of an
+> entity being NULL. While drm_sched_job_arm() crashing or not effectively
+> arming jobs is certainly a huge issue that needs to be noticed,
+> completely shooting down the kernel reduces the probability of reaching
+> and debugging a system to 0.
+>
+> Moreover, the checkpatch script by now strongly discourages all new uses
+> of BUG_ON() for this reason.
+>
+> Replace the BUG_ON() in drm_sched_job_arm() with a WARN_ON().
+>
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+
 > ---
->  arch/arm64/include/asm/vmap_stack.h | 4 ----
->  arch/arm64/kernel/sdei.c            | 4 ----
->  2 files changed, 8 deletions(-)
-
-Acked-by: Will Deacon <will@kernel.org>
-
-Will
+>  drivers/gpu/drm/scheduler/sched_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
+eduler/sched_main.c
+> index 1d4f1b822e7b..3bf4ae0ca4bc 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -857,7 +857,7 @@ void drm_sched_job_arm(struct drm_sched_job *job)
+>         struct drm_gpu_scheduler *sched;
+>         struct drm_sched_entity *entity =3D job->entity;
+>
+> -       BUG_ON(!entity);
+> +       WARN_ON(!entity);
+>         drm_sched_entity_select_rq(entity);
+>         sched =3D entity->rq->sched;
+>
+> --
+> 2.49.0
+>
 
