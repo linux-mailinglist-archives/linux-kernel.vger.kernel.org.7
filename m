@@ -1,162 +1,121 @@
-Return-Path: <linux-kernel+bounces-889949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D441EC3EE63
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:13:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85194C3EE7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:14:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F40188A493
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:13:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 318044EAB4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380CB30F954;
-	Fri,  7 Nov 2025 08:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F296630FC20;
+	Fri,  7 Nov 2025 08:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dngFe2FR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="WCrHPElf"
+Received: from fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.57.120.243])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA0630F800;
-	Fri,  7 Nov 2025 08:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA1830F938
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.57.120.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762503173; cv=none; b=UxIfe1QuEX5wf8tmHupMESHdaBm/FJTKOoa6mWtgPBs8nUolJMM+Ffe5MJkjFsqsMQtDSkKxuh267UBQCWpmQBQRh0KDMm+zNkq4hBsYOldoSsvjuZS844iyIYePHVX1vdBs8TzsDjz8mSS+XB7h/rhhfuqhWMyAI7iqbYt1bJE=
+	t=1762503218; cv=none; b=iNJ4PRSE+NSmfktc2PPI93sWgKAXCgjIRyTNbFkqk3QEBXniuFeKC6hjR705B4NFFPB2aGYK3PntwosDiA/YXEBJwMh4z6bxQod2QSuIWLJFUMBMt9/YGuBUSVd+gFnDiZuqYTPKZ5AWhW2Zd7xQpbRpi7CTI+eEXXCopDQi+nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762503173; c=relaxed/simple;
-	bh=gpB2pksqQcCsWIgeYcsBWDi254NTVCDcfQ5q7A+JQjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aL2e/MS7FBEiVTb0R5wAl6B0uQWZc3YHH06u8nlpUfmUG6e4aBrl0s1WsOYZdY5gb99iT41Gw+cRIAhLLjLZh8HLc+WOpr86ZRAPQRedS2x7PaWk61Pt3Sp5XxbUEHniYmuDo0j48/2ZakBZ2GgR1vpW28bSEU70ykcmbxYQ3ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dngFe2FR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4C1C4CEF8;
-	Fri,  7 Nov 2025 08:12:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762503173;
-	bh=gpB2pksqQcCsWIgeYcsBWDi254NTVCDcfQ5q7A+JQjQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dngFe2FR+ZX4IxhIQZd1iStT8b2rHYAnrlsxH1MyYT30FJnPwIcSpcfMK6NliTyKb
-	 gzpA58py+hTwGobUPyGY3dumvKl6EOAaBAyDkrbsttLGrKwHSYnJcu/3eVx9H2lOnM
-	 NexmtxjDmWXNK7HyPQM3XEdCNYsectopQCN7rb23fdzUxql5WHuchpNg5p9KOAM3Cn
-	 1DN9aFYOJddMKxnsOjIZkQeQOp5bgJq1JR0gvxCgU1dfiAVjsj7kXJFeY5rCR1EvuR
-	 G07OrZnscfxx34A3dBoUVLdB0WCKelmz+1kdwjtDlTSmOh9hx5EMwjvHhNLkLiHOO/
-	 sOSKGSKBrIo7g==
-Message-ID: <ab520621-b11d-4763-a7b7-fe7dfafdca6c@kernel.org>
-Date: Fri, 7 Nov 2025 09:12:48 +0100
+	s=arc-20240116; t=1762503218; c=relaxed/simple;
+	bh=4drWl5oVKFuHl+xuGskNxzBylciVz8x2T3SKUA2S0FE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=INlWIWavQkXobVltUFjDN0C9/kE4dLMH421aNVDJ2V/GsMKrBCgTYJLtG6Dyv7GSbOrYE299w1teUYqBLkanYgYkkf+O0GumNXwOD19ztu0Rfjj8ByG3mmM5eRTRuBvBqOKYADhZEC/BrPrSaQ6oM6KhJSKZn5kAZBwqldhsfGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=WCrHPElf; arc=none smtp.client-ip=52.57.120.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1762503216; x=1794039216;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=6t2bOWhqRFGRHDboXfRasxJuQqR5SKfxvlginqnwOjY=;
+  b=WCrHPElfccFih/Fum/tCuo4mnsP7MZLfkZqVOVeUhYK27ak1oep6vXtT
+   dEOqcVo9LN1yF37CazmH3RV9bsa/cBcwLjCBFvyByZ5Mf1/DEsq3KSE6x
+   690xDhRiyUxCMex/7r83ZQGjswriAkNllukow15uVYUjsE3u3pM2zUJ+D
+   h9Vu3LjTInCC2X1pWYQpHDei66pOA4u5Bd2mPiSqA/hYNWgxDetJE6B6R
+   X9ODfcennc4NkRK+xsdBsGHpsd1RakxS70AJfCJBmdYLfpvjiaXGIsqQ7
+   yBYdX/loRDYZ5LQ6iGHP/4aZC2etZ4tnluFngv8jIz3PxY9obUskaPQLt
+   w==;
+X-CSE-ConnectionGUID: f6dI5ghBR+asn7PzWqp2kg==
+X-CSE-MsgGUID: jh4Yrn5OT0SwgNQA4jDeYA==
+X-IronPort-AV: E=Sophos;i="6.19,286,1754956800"; 
+   d="scan'208";a="4714418"
+Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
+  by internal-fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 08:13:18 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:11665]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.18.231:2525] with esmtp (Farcaster)
+ id a18729ee-b55f-4e0f-9a07-b1edd40c21df; Fri, 7 Nov 2025 08:13:18 +0000 (UTC)
+X-Farcaster-Flow-ID: a18729ee-b55f-4e0f-9a07-b1edd40c21df
+Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Fri, 7 Nov 2025 08:13:17 +0000
+Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.223) by
+ EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Fri, 7 Nov 2025 08:13:10 +0000
+From: Fernand Sieber <sieberf@amazon.com>
+To: kernel test robot <lkp@intel.com>, <mingo@redhat.com>,
+	<peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<vschneid@redhat.com>
+CC: <oe-kbuild-all@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<dwmw@amazon.co.uk>, <jschoenh@amazon.de>, <liuyuxua@amazon.com>
+Subject: Re: [PATCH] sched: Proxy yields to donor tasks
+Date: Fri, 7 Nov 2025 10:12:53 +0200
+Message-ID: <20251107081254.110947-1-sieberf@amazon.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <202511071431.9PLsHNo5-lkp@intel.com>
+References: <20251106104022.195157-1-sieberf@amazon.com> <202511071431.9PLsHNo5-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] dt-bindings: clock: airoha: Document support for
- AN7583 clock
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251106195935.1767696-1-ansuelsmth@gmail.com>
- <20251106195935.1767696-5-ansuelsmth@gmail.com>
- <20251107-fancy-premium-lynx-dc9bbd@kuoka>
- <690da391.5d0a0220.33eed5.80b7@mx.google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <690da391.5d0a0220.33eed5.80b7@mx.google.com>
-Content-Type: text/plain; charset=UTF-8
+X-ClientProxiedBy: EX19D031UWC001.ant.amazon.com (10.13.139.241) To
+ EX19D003EUB001.ant.amazon.com (10.252.51.97)
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 
-On 07/11/2025 08:45, Christian Marangi wrote:
-> On Fri, Nov 07, 2025 at 08:42:15AM +0100, Krzysztof Kozlowski wrote:
->> On Thu, Nov 06, 2025 at 08:59:31PM +0100, Christian Marangi wrote:
->>> Document support for Airoha AN7583 clock based on the EN7523
->>> clock schema.
->>>
->>> Add additional binding for additional clock and reset lines.
->>>
->>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
->>> ---
->>>  .../bindings/clock/airoha,en7523-scu.yaml     |  5 +-
->>>  include/dt-bindings/clock/en7523-clk.h        |  3 +
->>>  .../dt-bindings/reset/airoha,an7583-reset.h   | 62 +++++++++++++++++++
->>>  3 files changed, 69 insertions(+), 1 deletion(-)
->>>  create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
->>> index fe2c5c1baf43..2d53b96356c5 100644
->>> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
->>> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
->>> @@ -30,6 +30,7 @@ properties:
->>>    compatible:
->>>      items:
->>>        - enum:
->>> +          - airoha,an7583-scu
->>
->> That's random order. Keep it sorted.
->>
->> Best regards,
->> Krzysztof
->>
-> 
-> Hi Krzysztof,
-> 
-> I was also not cetrain on the correct order.
+On Thu, Nov 07, 2025 at 02:31:16PM +0800, kernel test robot wrote:
+> sparse warnings: (new ones prefixed by >>)
+>
+>>> kernel/sched/rt.c:529:55: sparse: warning: incorrect type in initializer (different address spaces)
+>>> kernel/sched/rt.c:976:39: sparse: warning: incorrect type in initializer (different address spaces)
 
-Why? The rule was expressed on mailing list many, many times and only
-Sunxi or maybe one more SoC does it differently.
+Thank you for the report.
 
-> 
-> We have En7523 and en7581 and then An7583.
-> 
-> So should I put it at last following the number order or the
-> alphabetical order?
-All such lists or enumerations are ordered alphanumerically.
+The warnings occur because my patch changes scheduler yield functions from
+accessing rq->curr to rq->donor, both of which have identical __rcu annotations.
+These are pre-existing annotation issues in the scheduler code, which has been
+directly accessing RCU-annotated pointers without proper dereferencing, relying
+on runqueue lock protection instead.
 
-Best regards,
-Krzysztof
+If we do want to address these sparse warnings, I can make modifications like:
+
+-               curr = rq->donor;
++               curr = rcu_dereference_protected(rq->donor, lockdep_is_held(&rq->__lock));
+
+This would have zero runtime overhead while satisfying sparse's RCU checking.
+
+Peter, let me know if these warnings should be addressed.
+
+Thanks,
+Fernand
+
+
+
+Amazon Development Centre (South Africa) (Proprietary) Limited
+29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
+Registration Number: 2004 / 034463 / 07
+
 
