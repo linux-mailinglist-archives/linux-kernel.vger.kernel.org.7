@@ -1,119 +1,150 @@
-Return-Path: <linux-kernel+bounces-890294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4ED3C3FBB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:26:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6D8C3FBB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:27:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF5CC18806FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:26:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72B3A4F1FDD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1D2322A21;
-	Fri,  7 Nov 2025 11:26:26 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C4232142A;
+	Fri,  7 Nov 2025 11:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eJCT3YMF"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D40320CD5;
-	Fri,  7 Nov 2025 11:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8151D320CD5
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762514786; cv=none; b=b6l22yx6ACmMAs7MO5gEBKAiSotn58OMEPHfSjHyOAlcjPQpH4gUIhQQAa4moc9ZjOkV6JqDOJwUdWju+Izb3jxN+JJrJMwtWtu6GsR4Nc5Afv0ZNm7Io3XsiuPU+/fNKtAngEi2zeQWryIjAHftKDzxcMceeWs5LNtVGE44ORg=
+	t=1762514793; cv=none; b=DT3E7BzDoX16JnZGzE6Ra5VvKVpKvarHoSznMYIxOQC9eTesO41ry137eEXEos7hrmTsBQfkauwGC57+osEQ4g091h5YTOm88X4r88J7W03XbRvgUD/xRNzHNoaVXBZGfLS46du5aKAF8TsXcPx7EVIwjzHWLuyW6WEP++kCMJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762514786; c=relaxed/simple;
-	bh=FGIF3AoxOcgxBzxbbyfwHFNHYIATq7p/8YSXNS1LfD4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HLfWH5/M6eyqWeSUCR+Bmp6lg4zi1ESQblunXXf55L4AwPWzKalirQSldopq62DqnWSDiCfkGyuhXvf0Q+fgzd/0NrnqnH6e46lJnm+K0OezPegQW8ut9EFrzveXqPDwqByuGBjBoFYgVW42XhybyZNYJhh31oI9sKnBAamVOjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d2xZp4wr4zHnHB0;
-	Fri,  7 Nov 2025 19:26:10 +0800 (CST)
-Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
-	by mail.maildlp.com (Postfix) with ESMTPS id C878C1401DC;
-	Fri,  7 Nov 2025 19:26:19 +0800 (CST)
-Received: from [10.123.122.223] (10.123.122.223) by
- mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 7 Nov 2025 14:26:19 +0300
-Message-ID: <1d2b1281-3ac5-4bf0-88d9-6b88e5d42d66@huawei.com>
-Date: Fri, 7 Nov 2025 14:26:18 +0300
+	s=arc-20240116; t=1762514793; c=relaxed/simple;
+	bh=/OpycBwrnjTyiLJWX+i+miH2FcuBg3WefuVfu4hP+us=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i9HXDAeNNFQAL1lIrGlVRELC7X/j7jRslOwrrBIWuqgvQzYuqcQzds32L/emO3uOHP18jVdkBl0Y9W1C3joswNvbX4MlqMM5s/oWcyu4iwB1JZD5Vkr+JhnvfapxbB+rQ64qZh6UL6VAznkk3GlWJElqgNA8uBJgoI40oImUBuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eJCT3YMF; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-477632d9326so4909445e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:26:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762514789; x=1763119589; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0p3O/pb//AizrafRTQJzp8sI+qoHtI4GgWcrf/805qw=;
+        b=eJCT3YMF86Dbprn/Dg8du4WI41dgSYuR4g+AeNKHNpVRWSVYxytOiSxcEmqls5tkhF
+         8rq7lefE1apBKHWqm2WwYAJPbqdFsI+QmBy+HynUDWvAeb5YO6Z8PFB7v+yo5xw2Ww4Y
+         ZopbmEfHXiXNIEJgFg363AZq6owLWXWcfHMsdJ6XhLmmdegL67cY9atf39KH5e6yzC0e
+         LMKZlb/D0tmhSkV4WxXQaQcW4QDqVYkt325pHRVm1LtQsS5+iORp7A5Q/VATRfQi26uV
+         II3Dsr0IvtvYZbbPiyHSJOhpBgD+TmDvTLeRw/7d+n1QMpcjOsqI2btsu2u5jiRJ6YCg
+         mzQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762514789; x=1763119589;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0p3O/pb//AizrafRTQJzp8sI+qoHtI4GgWcrf/805qw=;
+        b=FpgRPRxHSwgX9yE3byiRqiI6HNTtgCD9kFTiIvsIGIam0iWOsQHLTN0RUFkq32goMI
+         xjbxkzH/AK1j03jlnFpxtNxy0LcjCrMNIVpgX7AGJDx/FRknsgBiRZAKi1mQ6h0XMvaV
+         ltJyrzaSE2rw2Zmf2N+xDRr4pez8yJqK/1EdFWrO+5/sFLWl4PGjRwZuKCVLvUTC4Ql5
+         /iGVZTmGl37+7iLY2/leI9oCLiS7VNiPy85h5u12GwUJuhyPycqb/3spFNdBpVIIrtcM
+         QW3migcU7w++Xf0+jYCF574Dkl0n7gMpA7QekieieapcxdDW/QsfxNCMTCFcGClb7bda
+         yPUQ==
+X-Gm-Message-State: AOJu0YzUrAHulsSX3akf81bwjaSxUZ+71+Gxz+4G53hVGx/uCZzsbdIG
+	WD0RvTmtMYmAZvn7eg21LEuAoY/+E5dG2UgRa8qFNFKPqjjyAKH0R/AVhyJaWJF2HSz++VUsMIr
+	G1vEf
+X-Gm-Gg: ASbGncs446R1x2/3YFVNw8l2a8q77naYAJuAdQuJ81LhnqOok6Tc2GgQPjSiJFyx0sK
+	3pP0G0fXQQmsK7neUfTnVt0EEbjkdudtrqUf2eSQumyjAIpfv/tfRfAYb5bJ8B14SgUZ3aR8Noe
+	4j/SOLEQv0ZFSC61uWwZom1xD2appxP9Fg5owD6e6aUx8O90F8GQ13TibdS0xB+PdFgwQ3Rx4W6
+	6NERspDN/Za+v0Vyn9Z2UrvYC4PzyAkXUibFSdDt9ObAPle+BYaU3lf8Fbpu75JKBKPvzrxKAzH
+	/pF461v2Gwq6JP1tO7X/pMHm5DacIvQVnopRHWxAKwKmP7HQ7E85g5NqPvW+7ssn2hAOfyhPb0o
+	NIZtgpmKimG3SbHvjFUbvnP5rPefQ4xtvf3NUQjQOevnIi4biTt6KniNP5LeqQdgdCSJHRaYH8C
+	qduCrCcFuToxHtYHSRzoTohbZB
+X-Google-Smtp-Source: AGHT+IEs6H1o4PIWCzP+J6CSQfhB0IMTx9LNmlS6M6nO+FXFt2zOgnGCd1yGQIa3PRWvCM0ki458xg==
+X-Received: by 2002:a05:600c:524a:b0:477:63b5:7148 with SMTP id 5b1f17b1804b1-4776bc89fc5mr24519725e9.6.1762514789555;
+        Fri, 07 Nov 2025 03:26:29 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce20ee3sm157433875e9.9.2025.11.07.03.26.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 03:26:29 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux1394-devel@lists.sourceforge.net
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Subject: [PATCH] firewire: core: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 12:26:19 +0100
+Message-ID: <20251107112620.146996-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 06/14] ipvlan: Support GSO for port -> ipvlan
-To: Eric Dumazet <edumazet@google.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<andrey.bokhanko@huawei.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>
-References: <20251105161450.1730216-1-skorodumov.dmitry@huawei.com>
- <20251105161450.1730216-7-skorodumov.dmitry@huawei.com>
- <CANn89i+iq3PVz6_maSeGJT4DxcYfP8sN0_v=DTkin+AMhV-BNA@mail.gmail.com>
- <dfad18c7-0721-486a-bd6e-75107bb54920@huawei.com>
- <bd0da59d-153f-4930-851a-68117dbcc2de@huawei.com>
- <CANn89iKioXqA3vdKdpL9iZYVU0qOPGCKxYiStc=WNWQ3+ARP_w@mail.gmail.com>
-Content-Language: en-US
-From: Dmitry Skorodumov <skorodumov.dmitry@huawei.com>
-In-Reply-To: <CANn89iKioXqA3vdKdpL9iZYVU0qOPGCKxYiStc=WNWQ3+ARP_w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: mscpeml100003.china.huawei.com (10.199.174.67) To
- mscpeml500004.china.huawei.com (7.188.26.250)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
->> I see that currently there is no any tests for this ipvlan module (may be I missed something).. Do you have any ideas about tests? I'm a bit  confused at the moment: designing tests from scratch - this might be a bit tricky.
->>
->> Or it is enough just describe test-cases I checked manually (in some of the patches of the series)?
-> I have some hard time to figure out why you are changing ipvlan, with
-> some features that seem quite unrelated.
-Sorry! I had to sent a more descriptive cover letter with CC to all maintainers
-> ipvlan is heavily used by Google, I am quite reluctant to see a huge
-> chunk of changes that I do not understand, without spending hours on
-> it.
->
-> The MAC-NAT keyword seems more related to a bridge.
->
-I tried to make all the new functionality to not affect any existing code. The only place that changes behavior - is "[patch 2] Send mcasts out directly in ipvlan_xmit_mode_l2". May be I should spend some time and invent a way to not change behavior at all. All other places should be under "if (ipvlan_is_macnat(port))".
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
 
-Now I'd also want to implement some tests, and try to ensure, that existing functionality continues work well. I hope that after review and tests, there will be no bugs.
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
-> The MAC-NAT keyword seems more related to a bridge.
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
 
-At start of work on this feature, I saw options: 1) Modify IPVLan 2) Modify net/bridge 3) clone IPVLan to new module and extend it
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
 
-But net/bridge is already overbloated, and I believe it is better not touch it. And IPVlan already has all the required infrastructure functions. Actually, all new functionality - is about 600 lines of diff (patches 1 and 4). The IPVLan is essentially "bridge" in its functionality.. extending it to learn IPs and do mac-nat - is easy. All other diffs - are just improvements (like improve handling IP conflicts, refactor validator/address events handling)
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
-And... i saw a lot of people are already using IPVLan to bridge to WiFi - though with a lot of limitations and troubles.
+This change adds a new WQ_PERCPU flag to explicitly request alloc_workqueue()
+to be per-cpu when WQ_UNBOUND has not been specified.
 
-Here is a bit rewritten documentation (AI also suggests server-case scenarios, but I'm skeptical about it):
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
 
-+4.4 L2_MACNAT mode:
-+-------------------
-+
-+This mode extends the L2 mode and is primarily designed for desktop virtual
-+machines that need to bridge to wireless interfaces. In standard L2 mode,
-+you must configure IP addresses on slave interfaces to enable frame
-+multiplexing between slaves and the master.
-+
-+In L2_MACNAT mode, IPVLAN automatically learns IPv4/IPv6 and MAC addresses
-+from outgoing packets. For transmitted packets, the source MAC address
-+is replaced with the MAC address of the main interface. Received packets
-+are routed to the interface that previously used the destination address,
-+and the destination MAC is replaced with the learned MAC address.
-+
-+This enables slave interfaces to automatically obtain IP addresses
-+via DHCP and IPv6 autoconfiguration.
-+
-+Additionally, dev_add_pack() is configured on the master interface to capture
-+outgoing frames and multiplex them to slave interfaces when necessary.
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
 
-Dmitry
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/firewire/core-transaction.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/firewire/core-transaction.c b/drivers/firewire/core-transaction.c
+index c65f491c54d0..c15dbe882cbe 100644
+--- a/drivers/firewire/core-transaction.c
++++ b/drivers/firewire/core-transaction.c
+@@ -1437,7 +1437,8 @@ static int __init fw_core_init(void)
+ {
+ 	int ret;
+ 
+-	fw_workqueue = alloc_workqueue("firewire", WQ_MEM_RECLAIM, 0);
++	fw_workqueue = alloc_workqueue("firewire", WQ_MEM_RECLAIM | WQ_PERCPU,
++				       0);
+ 	if (!fw_workqueue)
+ 		return -ENOMEM;
+ 
+-- 
+2.51.1
 
 
