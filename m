@@ -1,198 +1,156 @@
-Return-Path: <linux-kernel+bounces-890940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F129C416B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A83C416D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 218623B7339
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AC753BAA9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F711A9F96;
-	Fri,  7 Nov 2025 19:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB14F2FB62C;
+	Fri,  7 Nov 2025 19:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PcAsSnxx"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iwB9wdMk"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0602FE58E
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36E6292B44;
+	Fri,  7 Nov 2025 19:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762543091; cv=none; b=gloqjUZw3vvcygU6lFTZhQ4Jd1zKAxnq1LdKpjGtD+UFyTsqabVkzBTiVGTKXyMvE/6Yc0kc2M1gWpSbbe5647xxmhKu0PfogWlg41Zy89IMUXuOgtA/5BzBloPvu6Yf5H5zO9DhV41iiBtKLsLNQYbI0CsjKShwqtzutLK1qvI=
+	t=1762543194; cv=none; b=FC5nCg4ErKz3eUfXaxbpFTHKIxQ+XMIt+sTFWLivO2GnPk6OOxS47wPphLtF2121TiJEgI98AZCT4bSJGHPd8Di0F7QahuemX7SOIQl4xRUNA7p0lqxR4ygIB+j3FdeiJ2latyeXa5z3t1o2MOPGbOwst/VrtuCYk0dG6Ddhp1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762543091; c=relaxed/simple;
-	bh=HMX+nokK9V+QGgu5vvY3CGRBUupf3RY/CVnmsPQBGss=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j685c8d089K/VbccMS0oO4BJ1Jc7H+5cFWmjErnkcr1opHegnUva6cbjZ7WyKJcCVeaM564qEiRMcL+UzdxeOg11ak9+7bjlTYGvG1cFXyFG5VaqbfjfobufqCegIog/d+h9NfA/J9DDHejB+QIA52dxWGD9WPjESpuwbjqqQMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PcAsSnxx; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-471b80b994bso12138405e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:18:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762543079; x=1763147879; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BoyRAxBYJ97KZHdMcvP1wI7gdZM18PW/SDBquVzm/CM=;
-        b=PcAsSnxxk/vQ8EKi7S/zlpRriabJ6LStD3JjS9iMC1hHhA7ft4Ly8XN1F4KNak3nE2
-         Azx3zPSFn9dNxBWGFc8Q0PGil+tYqmpuTWwYxIYcIv2G7YxmW3RVzo4tPDRmdwHnyFth
-         ynrZ6laqoBE+okxBPB7YOgcbfSg224RvjW7uKp1kV2mq83jDvblTIbsCss7FkO/MeMHS
-         RCPwKZblpC2N9yZs2vcU7+2qCYut6DMlTJQqMyeCk8kWoR0SyuT4q2Zn0GDbTmVagkQk
-         BwFyCwwfWNcoAPNAbbVmaiVFIQmtAWK22/WHTHEAf0VvjzSO9AE7OeanDvGjh94licgb
-         Tr7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762543079; x=1763147879;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BoyRAxBYJ97KZHdMcvP1wI7gdZM18PW/SDBquVzm/CM=;
-        b=sZwxrBfVfkpEB4Nl65hQRhVHzzPc+6vWW+wwIx3Xyfc/QBRPMWV9ggJLM5iyboDd+u
-         hHAqsIBsX1wPrctvzYoKlP/1mX8XroDylLZkoae7gIkqvPgsnOqMH7HiTUuuHLZkaYXd
-         Bh8MWmfXpSI10yjRn6Mc/n6PUvnaEWLQqoBeCcaafETxE/RLEUTs9T1axLE40tVHc2U8
-         oHKGF60jOsvpJt/hCkfehKfYloQ3ESajqO0Zo2CqgQ+MJ0N1BN/HAEKIqb3zDIwkgpmH
-         aqAB+vKODJ1eddGn0dlTs0aD4NHAYCaNwkuaOQiwZt5IkRTOMHt28Jz04KW7JXLR5qK6
-         RNRg==
-X-Gm-Message-State: AOJu0YyXqJzzWlDUbcbMsOSPJfoELI32HouR/Jw0c1FxPemPtP1oVzbc
-	CxNA6GgsXQh2CxWLk6d2kKDSr/WN/skbL4SON+JgGVvngYdDHS213pQ0
-X-Gm-Gg: ASbGncuHIy3IRHqP962pXV4w1/QppGeAyjG40/vvPlHFvh+a3UmCZTIELfQPqhqNk10
-	y3Hn8NUxHAawFbAPukImEhpePuDyBOx1Za4uzlE3ELnnFkUOOM06qJsBlj5Ux0a+Dq6zfEy5i4T
-	8/PYVz+n0aEZ5N+nxA9Z0AgzpQQ1DG3xc4FgrDR/E1v1urFt7LFCJkA/6McPDCRzzzZ1uTO3Q+Z
-	rVtLeSTK6nbb9jj1EmMIU5Co8C2JtMBlXY1VGZdngCxSwRSmiEVUvXTId7Cw73/+imZdglh6QQa
-	zfESm52qLKyrEWWfd6dgL3OBzrhqcS0SrUBD+ng65mzotvtrLZ0I3XDNfa0XQGX5RnrhSq6Agqc
-	AAf3hSpBLdcAWy/VcGhHMDvMyV/Ivt/41rSpnTMabSss8iMg2plqVVt8KvyQXqQtk9IGUK2JAn9
-	62uIgAe/hI8s8KZR+fVTPc7+qwnMHSp8BeEcYdAUg2YBXgA+fz/BBp
-X-Google-Smtp-Source: AGHT+IGwWldiHMKs6o3o24t2zUapUEv2nDiVIW1qgftMpp+s7M3k154xFpb/vMUGopieuIUWMdpZmw==
-X-Received: by 2002:a05:600c:45c7:b0:477:55b6:cdd6 with SMTP id 5b1f17b1804b1-4777322f0a4mr1228445e9.10.1762543078570;
-        Fri, 07 Nov 2025 11:17:58 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62b23csm6811350f8f.10.2025.11.07.11.17.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 11:17:58 -0800 (PST)
-Date: Fri, 7 Nov 2025 19:17:53 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Cooper
- <andrew.cooper3@citrix.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, Russell
- King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- x86@kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, Palmer
- Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, Heiko
- Carstens <hca@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- linux-s390@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>, Nicolas
- Palix <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V5 07/12] uaccess: Provide scoped user access regions
-Message-ID: <20251107191753.7433d2dc@pumpkin>
-In-Reply-To: <20251027083745.546420421@linutronix.de>
-References: <20251027083700.573016505@linutronix.de>
-	<20251027083745.546420421@linutronix.de>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1762543194; c=relaxed/simple;
+	bh=oLgM015OM6CB7TstOOmFItZLsdG8/LLCc/TNDBwFG6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EOZevz1otXPsE66dGCPBEJ1+wvqC1aFzUm9zLywC2CvMEGhJjjDyRGYpIQ4CwIY9WVvvvzCZjCAlwtRMGc9P+0oCjMuJX/PFd+u435X5lEs3aaCKYjD8t/2izd4qvG+6u4djuRzC518mmk4T/HN/oNPWd1qa00qejom6frArhPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iwB9wdMk; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7FMvtd018950;
+	Fri, 7 Nov 2025 19:19:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=lYTk4Q
+	KdhbLy2+aNu5zpAguuzePfls8unBeR/cJArbk=; b=iwB9wdMk9hTxVeHtkUr5ZA
+	cLnZ41L2VPDblbPE/dD3cqNca9AUz2Re0air3MQOsWUzuDa9/pjsq+5HUYmF0+7N
+	E/eOGXlxxlOAh6+PilbmGoN+Z6wYI060lyTi5r1+bD2svJoTrspDxwc1d+N5vMGH
+	wToIEfFklRwF713ChKOD1WPQKos4uLBmd2pAMxDO689m3PeegbwoVW1JpNXhNUqD
+	CCjvrta016nsHQaWRE1upj501r7iqkTv7Joz4kQZpCGwfF/0YJ+dhcDsxDIL4RPD
+	YZPBv51lZcUIOCPJdfsDlpMw0o83dRk5MeSo6ooRfCC41cSqlKIVc+hZV0qZnJfQ
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a57mrngjs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 19:19:27 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7GHfkX021463;
+	Fri, 7 Nov 2025 19:19:25 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5xrk49ns-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 19:19:25 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A7JJBaY18547454
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Nov 2025 19:19:11 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D778858060;
+	Fri,  7 Nov 2025 19:19:24 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EDF0D5805F;
+	Fri,  7 Nov 2025 19:19:23 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  7 Nov 2025 19:19:23 +0000 (GMT)
+Message-ID: <3bb08a53-0387-41a7-98bd-31054edf48cd@linux.ibm.com>
+Date: Fri, 7 Nov 2025 14:19:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: Module signing and post-quantum crypto public key algorithms
+To: David Howells <dhowells@redhat.com>
+Cc: Simo Sorce <simo@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Ignat Korchagin <ignat@cloudflare.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Stephan Mueller <smueller@chronox.de>, torvalds@linux-foundation.org,
+        Paul Moore <paul@paul-moore.com>, Lukas Wunner <lukas@wunner.de>,
+        Clemens Lang <cllang@redhat.com>, David Bohannon <dbohanno@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <53e81761-47e1-400e-933d-0a53018c9cab@linux.ibm.com>
+ <501216.1749826470@warthog.procyon.org.uk>
+ <CALrw=nGkM9V12y7dB8y84UHKnroregUwiLBrtn5Xyf3k4pREsg@mail.gmail.com>
+ <de070353cc7ef2cd6ad68f899f3244917030c39b.camel@redhat.com>
+ <3081793dc1d846dccef07984520fc544f709ca84.camel@HansenPartnership.com>
+ <7ad6d5f61d6cd602241966476252599800c6a304.camel@redhat.com>
+ <69775877d04b8ee9f072adfd2c595187997e59fb.camel@HansenPartnership.com>
+ <3d650cc9ff07462e5c55cc3d9c0da72a3f2c5df2.camel@redhat.com>
+ <61528.1762509829@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <61528.1762509829@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: LyNIrI7VH9IiLAXu7TEEMMMI12NyfKyF
+X-Authority-Analysis: v=2.4 cv=MKhtWcZl c=1 sm=1 tr=0 ts=690e463f cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=NEAV23lmAAAA:8 a=VnNF1IyMAAAA:8 a=UqG-1mT3ekDs38WSfRMA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: LyNIrI7VH9IiLAXu7TEEMMMI12NyfKyF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwMSBTYWx0ZWRfX21XGpXMFmoYG
+ MhxAhCgXJnE8FGuNgzAPbERaTsmc2jpgLhBmlVq7yszuf+xaw2RSQc57yCV6dompEOMLxjaeBbI
+ Pln95yeGvq1FrTG/glkCWUS4WTLJNMtdvtFe3mkLlyF5x4Z1/5+zs51UYm8G76LCjlt3P80hA8c
+ Alxn79cK285N2jIyVAbR/HQpf8Yh0FIZbuAubbL1DtgWe72kFUt640HcACuBBusaH+BvYxl11pU
+ OEX6adxi+0QRPQrOINZQhVnQe+R4pZt3sDEH8gBUlV48IUsCySAuLsaACToLeaVHrJFiSTA0d7B
+ Deu1qxobgxNhZymH6nq4AuIEIFQKA0BWBgDUECjzQHfZuBLWqQ/+HBKJzCBOB0mlGPP+PF49K47
+ 8CqgdRueEFH9Nb42u/TH09EfMqn4fQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_05,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0 clxscore=1011
+ lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010001
 
-On Mon, 27 Oct 2025 09:43:55 +0100 (CET)
-Thomas Gleixner <tglx@linutronix.de> wrote:
 
-> User space access regions are tedious and require similar code patterns all
-> over the place:
-...
-> There have been issues with using the wrong user_*_access_end() variant in
-> the error path and other typical Copy&Pasta problems, e.g. using the wrong
-> fault label in the user accessor which ends up using the wrong accesss end
-> variant. 
+
+On 11/7/25 5:03 AM, David Howells wrote:
+> Stefan Berger <stefanb@linux.ibm.com> wrote:
 > 
-> These patterns beg for scopes with automatic cleanup. The resulting outcome
-> is:
->     	scoped_user_read_access(from, Efault)
-> 		unsafe_get_user(val, from, Efault);
-> 	return 0;
->   Efault:
-> 	return -EFAULT;
+>> On 6/16/25 1:27 PM, Simo Sorce wrote:
+>>> Of course we can decide to hedge *all bets* and move to a composed
+>>> signature (both a classic and a PQ one), in which case I would suggest
+>>> looking into signatures that use ML-DSA-87 + Ed448 or ML-DSA-87 + P-521
+>>> ,ideally disjoint, with a kernel policy that can decide which (or both)
+>>> needs to be valid/checked so that the policy can be changed quickly via
+>>> configuration if any of the signature is broken.
+>>
+>> FYI: based on this implementation of ML-DSA-44/65/87
+>>
+>> https://github.com/IBM/mlca/tree/main/qsc/crystals
 > 
-> The scope guarantees the proper cleanup for the access mode is invoked both
-> in the success and the failure (fault) path.
+> The problem with that is that the Apache-2 licence is incompatible with GPLv2.
+> Now, it might be possible to persuade IBM to dual-license their code.
+
+Correct. It was supposed to become GPLv2 + Apache 2.
+
 > 
-...
-
-The code doesn't work if the 'from' (above) is 'const foo __user *from'.
-Due to assigning away constness.
-
-The changes below fix the build, I suspect the code is then correct.
-
-...
-> +/* Define RW variant so the below _mode macro expansion works */
-> +#define masked_user_rw_access_begin(u)	masked_user_access_begin(u)
-> +#define user_rw_access_begin(u, s)	user_access_begin(u, s)
-> +#define user_rw_access_end()		user_access_end()
-> +
-> +/* Scoped user access */
-> +#define USER_ACCESS_GUARD(_mode)				\
-
-#define USER_ACCESS_GUARD(_mode, void)
-(but change all the void below to a different name...)
-
-> +static __always_inline void __user *				\
-> +class_user_##_mode##_begin(void __user *ptr)			\
-> +{								\
-> +	return ptr;						\
-> +}								\
-> +								\
-> +static __always_inline void					\
-> +class_user_##_mode##_end(void __user *ptr)			\
-> +{								\
-> +	user_##_mode##_access_end();				\
-> +}								\
-> +								\
-> +DEFINE_CLASS(user_ ##_mode## _access, void __user *,		\
-> +	     class_user_##_mode##_end(_T),			\
-> +	     class_user_##_mode##_begin(ptr), void __user *ptr)	\
-> +								\
-> +static __always_inline class_user_##_mode##_access_t		\
-> +class_user_##_mode##_access_ptr(void __user *scope)		\
-> +{								\
-> +	return scope;						\
-> +}
-> +
-> +USER_ACCESS_GUARD(read)
-> +USER_ACCESS_GUARD(write)
-> +USER_ACCESS_GUARD(rw)
-
-USER_ACCESS_GUARD(read, const void)
-USER_ACCESS_GUARD(write, void)
-USER_ACCESS_GUARD(rw, void)
-
-> +#undef USER_ACCESS_GUARD
-...
-> +#define __scoped_user_access(mode, uptr, size, elbl)					\
-> +for (bool done = false; !done; done = true)						\
-> +	for (void __user *_tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl); \
-
-	for (typeof(uptr) _tmpptr = ...
-
-> +	     !done; done = true)							\
-> +		for (CLASS(user_##mode##_access, scope)(_tmpptr); !done; done = true)	\
-> +			/* Force modified pointer usage within the scope */		\
-> +			for (const typeof(uptr) uptr = _tmpptr; !done; done = true)
-> +
-
-	David
+> David
+> 
+> 
 
 
