@@ -1,153 +1,168 @@
-Return-Path: <linux-kernel+bounces-890646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C597C408F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:16:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E4EC408FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:18:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9F8F1884B69
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:17:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 274F834BF44
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D4E2F6573;
-	Fri,  7 Nov 2025 15:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB382367BA;
+	Fri,  7 Nov 2025 15:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L4wF4tBe"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b="PcSP1zNi"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1C7220F38
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C5A1F03D2
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762528590; cv=none; b=XAnp5F9OnSAPpMUQEgOkj92HbNo2TcXpgs/6hfyl75KPWzhCLdv4Wj1f0eDjMXeEd+38dH3ZmL/9axt+fY7U7EZYm69+z8QetDwTvLdv4JFKpWnwp39Qr7n24bchfxA3m4scQD0mlFUoXHWhtCtTR4Txd6ei92ZgeSZhCDM0Q9s=
+	t=1762528694; cv=none; b=fC938H5tS7xjUubWZMM+AOAzugSN7UYb8iClW5xrBTJ+sYnQkZ8clhGQgXjKi2a4TFhLzngmNiPUYKYBiku0kDsdUJwRCq6YiQfnDAX6nnCJ9DTzfTwtYZXKDayi8YHGcHQSwIUGn5dTEzT905yz0v1UjPxKbVjeB+mlMEUCvpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762528590; c=relaxed/simple;
-	bh=Q/6vxRricWDrRCUSl44BgJKITMGcBpXQaAm9tnUqR/Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=psM/fB2VRA9QLEpCTxO+EzNcWcaAWVLnj6P/ggOkfDgMcH0S13G30zPkPQ5MfCAZvde+yMTtmxTEnBFx78LrYh5eTOeowWAELqTwkQh13/8y6Wz4xKafTz5sGFlM7Lk1hWth/TGfj+f3PkBICAHCwinrBJ1bhfqF5VvKS3RHf24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L4wF4tBe; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-426fc536b5dso547857f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:16:27 -0800 (PST)
+	s=arc-20240116; t=1762528694; c=relaxed/simple;
+	bh=0ysQMU23AHHGh/shB0aT3HiVcLw0t9yG0upRYI2PiGQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TpBYqsF8k9iAySgsJEWkM7rnEutHbuj3jtT8okm6fGsg5xghpjE31HcBcm8IsHSEiwtCtwOv0JQ8cF/Uobb/sRDRgo+VY8DjoQO5azS/eCYK8npLDKWUa/WkReV+0iqAbAkaib+7zevNO+SDxErE2lbkn086mE3PrFAxatE3Rjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=pass smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b=PcSP1zNi; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ursulin.net
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47117f92e32so7231445e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:18:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762528586; x=1763133386; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fcwFTq1/DogLswamjpDbcdEqXnwm4REhdjASNxEdBs8=;
-        b=L4wF4tBesny1Tg31eUJYUEIjM2pDo6xT1Z9kmDx89CIRaHLFozx4wm3k4+UVLRjgcs
-         SBNMwIhj1753vcP8COqkkE169oVf/CeilpfhOLYHbuwD7AMI0BQdEWaML77jU9EfplbT
-         zcy9IAUBcma+VILQ1yZOv01xA/lNJxPevB7DyatiZQtnY5x70BFE7MGtEJspkW2JfY2s
-         DCevp2JDSvIgpKLAsPByhjMN+InLYPujWt0eDHzREnX8C9wUKhvmUGoMw0PRj9qHt97V
-         xg/zChqqriNqIp5B1QcyJpxICwUBAF0JqBxA6S53adcRr/+jBkmNBVssJiyAErZ8QbZ5
-         Gu9Q==
+        d=ursulin.net; s=google; t=1762528691; x=1763133491; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=d9dTI72UNi4STgQlM1dTHrD8kffrsq2tlv/hqqGXE+g=;
+        b=PcSP1zNim1kPU5ipSlge/1awDvY9aRkCAOJjFP5zOgLOt8ZR2rJorxCQElEiXanDQN
+         M+7x49F3KpaTAHi26Aqfvi8NLrJPsYQkXdxlulV4SPGCfudcCtAhoqBdQQoKVg9ByjHY
+         68BuZVU3S/PX46lAP/cifrMBF7sHWPvXLKVDBPXj2RBMMX8yWPcqv1fhRhOJpOHyVNW8
+         yZg6ioAvvW52EuiL1qtR0SlbnL72a6hrkiQi3lbxiu5mjKGxmF20pSY40r5lr3Gmhq/t
+         0vZ/LU77h6TOdmpaSDnav57ENN2MSaCcxvqUZ6vcadJKmuFVzJbt6nNcJnE7yvQbeUc8
+         /nvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762528586; x=1763133386;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fcwFTq1/DogLswamjpDbcdEqXnwm4REhdjASNxEdBs8=;
-        b=YFdH39+CBdR6qJIxGzNRR7mCAD55c5ny+hwFukHaWrtPsdGfG0bH5P8Zjl071Oa0RZ
-         HqJ5tfstmzjsIrv90oQLsYQacFQblafDePZaWCY43vt3tW89hUZFCh0oC4rPmo2yBJ2s
-         1H+E04xFt5qm3WoyXkBD82Ht9uk9z5oSAdqYGhYFtCI+NNQp7VcKCZOxSRe1ItuVHn3B
-         JSWiJhDdqA0KpNg62YmaieC3q5pcv444eaOvCIOmF5A0m9Xymre/xXdEpznnO6Op+qhj
-         HJUyM/KIijUS7LD3tl4OdIFYkC+X+XYUCoY5+FyqkWnZujNbIHRB0H34jIKDldxtFPut
-         z5GQ==
-X-Gm-Message-State: AOJu0YzwzLUR+xR5t5XoY9rZUgGvaG1vQZ8cJYEnNOqnlFAz+u7pcOLi
-	M21jfvPCgeIBhZtD9AxHXVallXXHv5GysOOdUu6RKLhtFWOjUVIUNYyFAMvq+asSqcfVMWxulWP
-	GH/XO6/U=
-X-Gm-Gg: ASbGncuY3J+PquKe1cac1A4ejIcXNTI7MZvr0zpY+aklON/y/7ce3aYmvallqWEYbia
-	UUSWrn2VmVdmWqxYAswWcQiS5XUOyfbA/eUIRSX2lr5GSXdAhyF6jK3oOyFDyNFf1NTLE22iUOu
-	J6SQN3rvTJiRwHzh79oiqoiKW3dj4fTlR5b4kK+lJj/97hrxcByVQHvnB65p3WTHWia+U6kixzR
-	+E9m1IMfZhzQF2ra9t4u1utlTOl3UD1GTSVOafOf/O4g5A13psDSBDBZauH1dfpFcBqNi84xIcc
-	YguzR7y42hpH1NjqyNirNPc2pbq0VXyKtGRn9kAXA0poobjT38QFfqlOlfqcIbBRpLxvJ7/Y9td
-	8smVTwMk2AjdhY/GJvFibdgR3gO/VJan1c2Y4KdtoK57nX7OSRnNa5sh4oqb/gi3UNba/WGK/jP
-	YQ3M1jfG7x3QsJMzcR+4Srt+vH
-X-Google-Smtp-Source: AGHT+IEb71e1N6JfIEUJiI9T+djX0T6M9NFuyXbFtIKtj2yXnBFzlQmVzBKFWvRjsc8GOuNvVFya4w==
-X-Received: by 2002:a5d:5847:0:b0:429:bc56:cd37 with SMTP id ffacd0b85a97d-42adc68956bmr2219409f8f.6.1762528585653;
-        Fri, 07 Nov 2025 07:16:25 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac6794f6esm6688333f8f.41.2025.11.07.07.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 07:16:25 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-scsi@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Nilesh Javali <njavali@marvell.com>,
-	Manish Rangankar <mrangankar@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH] scsi: qedi: add WQ_PERCPU to alloc_workqueue users
-Date: Fri,  7 Nov 2025 16:16:18 +0100
-Message-ID: <20251107151618.281250-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+        d=1e100.net; s=20230601; t=1762528691; x=1763133491;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d9dTI72UNi4STgQlM1dTHrD8kffrsq2tlv/hqqGXE+g=;
+        b=DQ+HzFFOcpmiu3opOPCSMY5n2iCuX0dSrmuRpvJtvKHJ7Yf/ZotYjcU2bu8ajYsNmn
+         DUEriABUa/3L3FhQBBDvIeqntqQQYDWGbXuRM8HxHSowJIvtDLbSu0GcA45p6Ly+V+4h
+         zj9xdj/yirDiF7V90SNh+506fhGGaeo5uPEfZ2vBZt6fKU+twUCw43oc7b6FwWZWSWk/
+         qI08zmykZ1IBMz1NCZfmwF9/lOd2DGiA43HzYs7ETuL0vsN23xLbk4gG5o7s4M518EW2
+         oYX4/3ZxD9aC1VnZdqjZpgi8qpaXJUqNb8D920NbZglgf6ynHWGtE1kdX0gtvyQir9iF
+         K1IA==
+X-Forwarded-Encrypted: i=1; AJvYcCV13MTxPEJC4b/PXR0ucu6O69mdNvCvz1Hn4BOboU6ITn3tvS8ZgGap4UGHV24s/5yuxS34ZLVquqNw+jY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNXJDrp0XkKaF0gQfKaBtGcHTB33w7fpYcD4zzq/zCIWCCkNtG
+	SzS4zTINMlu/NE+B+1IqZVtMVaHcXCDXP37UcARkqWpDAqflyxV1I1OV52NRysdyB+g=
+X-Gm-Gg: ASbGncu8I0qdb6Vn997WIuRLmPeKLEwknCOV7ddbVDgCbyJGkZcqfFPJSn2Lv6tzNI0
+	aNM2m8As890neh/Q/zsYn0O5Gp3vg1Jg+BfI/TsA7YqKZ/Uh1CADNS//JGIEIFY4fe+suOeeYqH
+	WfS9jCrI6JM2xNx7LDNfmtNR1UXcYETlQ7itZNK4IHMR0pZfLAlkmh2MrhnGJEt4lD/ipgaFIhZ
+	/FAbe5xoXtcIbenI+fVUdVtrQbGVwVqRa2zwlCtZLrDZ59ryoGZUQFQdz7gdYJUnq8eZq/lzuJH
+	/QejhyiuGSqqM7nyDekPo4l6rrDKUfD/Q7QgKNa3VgATv+34+5oHLJW+sI8aFguY6HbwJJzBLOq
+	IY2BeDp9eHGePmiABNmKrqqngZks/amTy3Fusj84v2YN7GGyvQpxYtGM2nGOhkITR7bG4X76q37
+	c1BWpvPTdVeHjskYfK
+X-Google-Smtp-Source: AGHT+IG4EIX5fyema2IYjt2l3Vyqv0iu4sditV/Gh2C/YUsbpK5YmKbRpuXDfxNtaO5SVbSj16Xs3w==
+X-Received: by 2002:a05:600c:3114:b0:471:9da:5232 with SMTP id 5b1f17b1804b1-4776bcbbb2dmr30521885e9.15.1762528689958;
+        Fri, 07 Nov 2025 07:18:09 -0800 (PST)
+Received: from [192.168.0.101] ([90.240.106.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bcd521fsm66664195e9.6.2025.11.07.07.18.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Nov 2025 07:18:09 -0800 (PST)
+Message-ID: <f39d38c8-8a07-4a63-a09f-3319b5ebb5f6@ursulin.net>
+Date: Fri, 7 Nov 2025 15:18:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/sched: Don't crash kernel on wrong params
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+To: Philipp Stanner <phasta@kernel.org>,
+ Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251107125508.235449-2-phasta@kernel.org>
+ <c4a10ad7-22c0-412c-a456-d2dd0f049ac9@ursulin.net>
+Content-Language: en-GB
+In-Reply-To: <c4a10ad7-22c0-412c-a456-d2dd0f049ac9@ursulin.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistency cannot be addressed without refactoring the API.
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+On 07/11/2025 14:42, Tvrtko Ursulin wrote:
+> 
+> On 07/11/2025 12:55, Philipp Stanner wrote:
+>> drm_sched_job_arm() just panics the kernel with BUG_ON() in case of an
+>> entity being NULL. While drm_sched_job_arm() crashing or not effectively
+>> arming jobs is certainly a huge issue that needs to be noticed,
+>> completely shooting down the kernel reduces the probability of reaching
+>> and debugging a system to 0.
+>>
+>> Moreover, the checkpatch script by now strongly discourages all new uses
+>> of BUG_ON() for this reason.
+>>
+>> Replace the BUG_ON() in drm_sched_job_arm() with a WARN_ON().
+>>
+>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+>> ---
+>>   drivers/gpu/drm/scheduler/sched_main.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/ 
+>> scheduler/sched_main.c
+>> index 1d4f1b822e7b..3bf4ae0ca4bc 100644
+>> --- a/drivers/gpu/drm/scheduler/sched_main.c
+>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+>> @@ -857,7 +857,7 @@ void drm_sched_job_arm(struct drm_sched_job *job)
+>>       struct drm_gpu_scheduler *sched;
+>>       struct drm_sched_entity *entity = job->entity;
+>> -    BUG_ON(!entity);
+>> +    WARN_ON(!entity);
+>>       drm_sched_entity_select_rq(entity);
+> 
+> void drm_sched_entity_select_rq(struct drm_sched_entity *entity)
+> {
+>      struct dma_fence *fence;
+>      struct drm_gpu_scheduler *sched;
+>      struct drm_sched_rq *rq;
+> 
+>      /* single possible engine and already selected */
+>      if (!entity->sched_list)
+> 
+> Still the same end result.
+> 
+> I believe best practice is to simply not have BUG_ON's followed by null 
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+Sorry I meant WARN_ONs. If we think there is scope for bad things to 
+happen after letting the execution proceed then I would add an early 
+return to the WARN_ON (_ONCE?). That probably means to push job as well.
 
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
+Regards,
 
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+Tvrtko
 
-This change adds a new WQ_PERCPU flag to explicitly request
-alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
-
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
-
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/scsi/qedi/qedi_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-index b168bb2178e9..56685ee22fdf 100644
---- a/drivers/scsi/qedi/qedi_main.c
-+++ b/drivers/scsi/qedi/qedi_main.c
-@@ -2768,7 +2768,7 @@ static int __qedi_probe(struct pci_dev *pdev, int mode)
- 		}
- 
- 		qedi->offload_thread = alloc_workqueue("qedi_ofld%d",
--						       WQ_MEM_RECLAIM,
-+						       WQ_MEM_RECLAIM | WQ_PERCPU,
- 						       1, qedi->shost->host_no);
- 		if (!qedi->offload_thread) {
- 			QEDI_ERR(&qedi->dbg_ctx,
--- 
-2.51.1
+> pointer dereferences since they add no value. Ie. it should just be 
+> removed and not replaced.
+> 
+> Regards,
+> 
+> Tvrtko
+> 
+> Regards,
+> 
+> Tvrtko
+> 
+>>       sched = entity->rq->sched;
+> 
 
 
