@@ -1,114 +1,183 @@
-Return-Path: <linux-kernel+bounces-891493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3427C42C4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:54:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD1BC42C61
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 13:00:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 718073AD33B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE3F53B2D8F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 12:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6332E040E;
-	Sat,  8 Nov 2025 11:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF30C2FC03C;
+	Sat,  8 Nov 2025 11:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/BMyzUu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8EzCDoc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6B92DAFD6
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 11:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA0B134AB;
+	Sat,  8 Nov 2025 11:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762602881; cv=none; b=qQzuOqdvuOHuu0VJRqZvaEyyer1t9vJO+Z+04OfYBYhBmj/Rfug2IZEofFhOUp2k67MkDycc8IZVO3GyeiALUnoEENLVF0Un0MHH+zB7pqHGeYhSgKdRJidAd0JalDB52rdSf+cgV9CWRzj6iEGEfOrIv4ta0vFHCGHjABwDTTE=
+	t=1762603193; cv=none; b=ptMdD3OEONSVHNV3RtG2AURsJZl13gCNxnh6a1sh72NV4tq4n9ikcRHpVs5O6fXcZAiYlnksvV1R61xTsnufLEUAZwbdZTvL296Y4YMGnmKyhZAR3iwZsWCvaX+DSOe9+QgwA2hpYpjIpMVQYKAzm2Whyaa+4Wqvz67JeGSc0SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762602881; c=relaxed/simple;
-	bh=JjmBnOELtYL2Z+Ms8Gl+U+Kgb9+9vO49fpmGW17yLhY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mk6cbpa1jpFbb0dj25qzydGhaoBJRdDptZUbtAAiMp7rlOzyyfa4/uNUzyvzHYXseZPUO/lOQI6zbQb5LOh3x+nOT5dkVykpEC5k9rN5yDvE6wgJtrPoVbji3IKaDK97YT7kZzCgNofI7zpJnXdkda5bupUkvInexfl+Dv4A0KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/BMyzUu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F0FBC116C6
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 11:54:41 +0000 (UTC)
+	s=arc-20240116; t=1762603193; c=relaxed/simple;
+	bh=zifuSYbrSRqU3MWoa3DZjrPt60rFa2uX47b60iGOZM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YNY9bEwihIJnXjnc7K4vu6z8U0vb1VS//KAFNotKlG5/AO3ZUVu3ElK7zY7KHdbRNVHQD/keG5lARDda7Bb4TjTYIRdLIsK8r1C4oiphHJ290hP3mwBydv5PIxHXBFtnZ9Q9Rwnc8YSIGIdgnyQxn3y5NW7YdNVU2CWLKMseGiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8EzCDoc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 622BCC4CEF7;
+	Sat,  8 Nov 2025 11:59:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762602881;
-	bh=JjmBnOELtYL2Z+Ms8Gl+U+Kgb9+9vO49fpmGW17yLhY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=f/BMyzUuLaPNNqL7OBffPO1on/itoPTd27U51krMmrstpD8eyowLSJ+QmhArJHTho
-	 TnMcIUrj9yI7fqVuc2tXFLnNgo8wC+tpYP13ap2sJVHZaGGdYvChZ+zi/WyRc7kDVX
-	 n6vkbkUhRl7gCchpkVQoiNWhKR4CvFDTccLJ0XDPAX96n6kkUc35ta41U9tJpFIzb1
-	 uHvvrCjWtrpAh3F+HcGEv+VEo34Z7wZjQ8EKTDCgQbKcpBrhArTnQKY71EhEz+ywuM
-	 SLzp9mSXmBLeIQxoCHs7/zNtEMYlGEmk/Yto8KZTQbk/saI1AOYZ0PozZeno2j2A5B
-	 1oga+DsOWgj+w==
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so297773066b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 03:54:41 -0800 (PST)
-X-Gm-Message-State: AOJu0Yz1eVvm0rg7v2aa9c1bwhx6jeoH//aDcPCaaQgI/vKn9E5ZBBgx
-	iRYOITEfHKmuRRY/8MnDBfudol2NTI5+w7A5ph8H9/mioW06FvawsMefBx1mviJ5U9Xyjx4g7W+
-	qC3RflcJhN+7+TCdKCId/uRrCTHDfVXs=
-X-Google-Smtp-Source: AGHT+IHqBYT+axB9BZiN2sqZeeRbAIRm5Jznc2Lzyd1nIVtQAooGjUjXpKVeEoEBYy1D8Y2EU6h2crd5Lp0qkuxnMZo=
-X-Received: by 2002:a17:907:c13:b0:b71:ee24:8a41 with SMTP id
- a640c23a62f3a-b72e061a8edmr197739366b.55.1762602880135; Sat, 08 Nov 2025
- 03:54:40 -0800 (PST)
+	s=k20201202; t=1762603193;
+	bh=zifuSYbrSRqU3MWoa3DZjrPt60rFa2uX47b60iGOZM8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E8EzCDocbhseVA2outwAgOHzNxe8UAYJ5JYW1/7Z3vm0/Q/MWiSe2ugYCP2JZYX/7
+	 zSdITqWi0PqAd82WHax/FBD95+NrtgCzLpKk09yUiPXfZ/GlVCDRL0g34/MsS0mSys
+	 psr/1Y+GfxZM5zir+xTV0RX1K2r62VtqNBDcjkZ6kXneAVQwVne2gCut+ASPywpgMP
+	 +2JVAF3mO0q2ksPQyQOmWvx8H4qtBiDc0GMh3xou9VA13cNgfbp8+B1aZfb1dWms/j
+	 wgUdVgFeiYeSRQ44kc8zltwmnDUrh5XTe/dPCnyenSUQZ8KYlSey0XkUW9B2zuGMQW
+	 Kc1qD5d1oCIFQ==
+Date: Sat, 8 Nov 2025 12:59:50 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Abraham I <kishon@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: qcom: Enforce check for PHY,
+ PERST# properties
+Message-ID: <20251108-toad-of-hypothetical-opportunity-ebfa74@kuoka>
+References: <20251106-pci-binding-v2-0-bebe9345fc4b@oss.qualcomm.com>
+ <20251106-pci-binding-v2-1-bebe9345fc4b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107180601.86483-1-vishal.moola@gmail.com>
-In-Reply-To: <20251107180601.86483-1-vishal.moola@gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 8 Nov 2025 19:54:38 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H58u2xXYG0X3giazizpuBqT-0qdGojbBsmwD2U1Z7D_vQ@mail.gmail.com>
-X-Gm-Features: AWmQ_blKLKtaUFkaK1b4OmOoYr8cN9MHEprk0cMi9STYqXx46onfrqx2NUZin-Y
-Message-ID: <CAAhV-H58u2xXYG0X3giazizpuBqT-0qdGojbBsmwD2U1Z7D_vQ@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: Remove __GFP_HIGHMEM masking
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc: linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251106-pci-binding-v2-1-bebe9345fc4b@oss.qualcomm.com>
 
-Hi, Vishal,
+On Thu, Nov 06, 2025 at 04:57:16PM +0530, Manivannan Sadhasivam wrote:
+> Currently, the binding supports specifying the required PHY, PERST#
+> properties in two ways:
+> 
+> 1. Controller node (deprecated)
+> 	- phys
+> 	- perst-gpios
+> 
+> 2. Root Port node
+> 	- phys
+> 	- reset-gpios
+> 
+> But there is no check to make sure that the both variants are not mixed.
+> For instance, if the Controller node specifies 'phys', 'reset-gpios',
 
-On Sat, Nov 8, 2025 at 2:06=E2=80=AFAM Vishal Moola (Oracle)
-<vishal.moola@gmail.com> wrote:
->
-> Remove unnecessary __GFP_HIGHMEM masking, which was introduced with
-> commit 382739797f79 ("loongarch: convert various functions to use
-> ptdescs"). GFP_KERNEL doesn't contain __GFP_HIGHMEM.
-I have planned to submit a similar patch after [1] is merged, but
-anyway, thank you for your contribution.
+Schema already does not allow it, unless I missed which schema defines
+reset-gpios in controller node.
 
-[1] https://lore.kernel.org/linux-mm/CAAhV-H5C_Af72a5QcJs25qUMsJqO26=3D8oNv=
-vLrJ7z+xHZh8oKQ@mail.gmail.com/T/#t
+> or if the Root Port node specifies 'phys', 'perst-gpios', then the driver
+> will fail as reported. Hence, enforce the check in the binding to catch
+> these issues.
 
-Huacai
+I do not see such check.
 
->
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> 
+> It is also possible that DTs could have 'phys' property in Controller node
+> and 'reset-gpios' properties in the Root Port node. It will also be a
+> problem, but it is not possible to catch these cross-node issues in the
+> binding.
+
+... so this commit changes nothing?
+
+The commit actually does change, but something completely different than
+you write here, so entire commit msg is describing entirely different
+cast. What you achieve here is to require perst-gpios, if controller
+node defined phys. Unfortunately your commit msg does not explain why
+perst-gpios are now required...
+
+> 
+> Reported-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Closes: https://lore.kernel.org/linux-pci/8f2e0631-6c59-4298-b36e-060708970ced@oss.qualcomm.com
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+That's too many tags. Either someone reported you bug or someone
+suggested you to do something, not both (and proposing solution is not
+suggesting a commit since you already knew you need to make the commit
+because of bug...)
+
+
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 > ---
->  arch/loongarch/include/asm/pgalloc.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/include/asm/pgalloc.h b/arch/loongarch/includ=
-e/asm/pgalloc.h
-> index 1c63a9d9a6d3..08dcc698ec18 100644
-> --- a/arch/loongarch/include/asm/pgalloc.h
-> +++ b/arch/loongarch/include/asm/pgalloc.h
-> @@ -88,7 +88,7 @@ static inline pmd_t *pmd_alloc_one(struct mm_struct *mm=
-, unsigned long address)
->  static inline pud_t *pud_alloc_one(struct mm_struct *mm, unsigned long a=
-ddress)
->  {
->         pud_t *pud;
-> -       struct ptdesc *ptdesc =3D pagetable_alloc(GFP_KERNEL & ~__GFP_HIG=
-HMEM, 0);
-> +       struct ptdesc *ptdesc =3D pagetable_alloc(GFP_KERNEL, 0);
->
->         if (!ptdesc)
->                 return NULL;
-> --
-> 2.51.1
->
->
+>  .../devicetree/bindings/pci/qcom,pcie-common.yaml        | 16 ++++++++++++++++
+>  .../devicetree/bindings/pci/qcom,pcie-sc8180x.yaml       |  3 +++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
+> index ab2509ec1c4b40ac91a93033d1bab1b12c39362f..d56c0dc2ae4d3944294ca50cab708915c9f60ea8 100644
+> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
+> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
+> @@ -111,6 +111,14 @@ patternProperties:
+>        phys:
+>          maxItems: 1
+>  
+> +    oneOf:
+> +      - required:
+> +          - phys
+> +          - reset-gpios
+> +      - properties:
+> +          phys: false
+> +          reset-gpios: false
+> +
+>      unevaluatedProperties: false
+>  
+>  required:
+> @@ -129,6 +137,14 @@ anyOf:
+>    - required:
+>        - msi-map
+>  
+> +oneOf:
+> +  - required:
+> +      - phys
+> +      - perst-gpios
+> +  - properties:
+> +      phys: false
+> +      perst-gpios: false
+> +
+>  allOf:
+>    - $ref: /schemas/pci/pci-host-bridge.yaml#
+>  
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sc8180x.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sc8180x.yaml
+> index 34a4d7b2c8459aeb615736f54c1971014adb205f..17abc7f7b7e9d71777380ddbfe90288e6187a827 100644
+> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-sc8180x.yaml
+> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sc8180x.yaml
+> @@ -77,6 +77,7 @@ unevaluatedProperties: false
+>  examples:
+>    - |
+>      #include <dt-bindings/clock/qcom,gcc-sc8180x.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+>      #include <dt-bindings/interconnect/qcom,sc8180x.h>
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+> @@ -164,5 +165,7 @@ examples:
+>  
+>              resets = <&gcc GCC_PCIE_0_BCR>;
+>              reset-names = "pci";
+> +
+> +            perst-gpios = <&tlmm 175 GPIO_ACTIVE_LOW>;
+>          };
+>      };
+> 
+> -- 
+> 2.48.1
+> 
 
