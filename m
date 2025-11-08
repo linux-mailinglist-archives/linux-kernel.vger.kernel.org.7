@@ -1,121 +1,130 @@
-Return-Path: <linux-kernel+bounces-891506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3B9C42CF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 13:37:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3013C42CD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 13:33:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF8EA3B1F60
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 12:37:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 667A93B1D70
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 12:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B869B258ED4;
-	Sat,  8 Nov 2025 12:37:34 +0000 (UTC)
-Received: from cygnus.enyo.de (cygnus.enyo.de [79.140.189.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921C721D3F4;
+	Sat,  8 Nov 2025 12:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b="ciAphf8u"
+Received: from mta1.formilux.org (mta1.formilux.org [51.159.59.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84601B81D3;
-	Sat,  8 Nov 2025 12:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.140.189.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD232B9B9;
+	Sat,  8 Nov 2025 12:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.59.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762605454; cv=none; b=maNFrF+U8tRdcDRtNv6O/gKFQAKa148pLzbufhIDFFw7fC3deboDL5hBLAcgAJfUGakaO447pz2+CmP628hHrvNa5JCCu8+JmwRr2AEhUQnDzvKjgSipAhnbjb/eNnm2fM+Xy6MAtgtgIsKRk618sSGsfO1+I2pZQfLP/EXqnW8=
+	t=1762605209; cv=none; b=rGQW8fWQsgD5Br2jNpVUSZq/+BB8p66EMqbrSBNXqE4t6TfR0BXM358zm7qo8JybAGyS+UHIs8EDOwl4B3EjRd/YGZDRjcKjFcKs+Jstf1cZXIgdG/aHoZ8YBKj9xyhOh6lrZDZJj7gD0liMxt3HqNoNS443/uUxk1e1RWsIo8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762605454; c=relaxed/simple;
-	bh=NiZXhsu8l9stZGCY12NJjHjUXDrbcQ4AP91b+KknZEw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KqktVLJII6r7982be6j8VL0UAynWN//64sXiT+20s2KJS+2AlV6NEbmtFglS4eEz1XUGWM+LfFWvJu9LA2KwK7CRtCqjQjdtI2tjuraCLNgK/S8PywU9UWrRg9ZiJEkcdpfZ1EEuA2eVIkfF7uZrIPKF7tuL/pWqUO4cCfVXhsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de; spf=pass smtp.mailfrom=deneb.enyo.de; arc=none smtp.client-ip=79.140.189.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deneb.enyo.de
-Received: from [172.17.203.2] (port=55061 helo=deneb.enyo.de)
-	by albireo.enyo.de ([172.17.140.2]) with esmtps (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	id 1vHi5C-00000005xuU-2FLj;
-	Sat, 08 Nov 2025 12:30:18 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.98.2)
-	(envelope-from <fw@deneb.enyo.de>)
-	id 1vHi5C-00000000B4X-1Zfa;
-	Sat, 08 Nov 2025 13:30:18 +0100
-From: Florian Weimer <fw@deneb.enyo.de>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Florian Weimer <fweimer@redhat.com>,  Matthew Wilcox
- <willy@infradead.org>,  Hans Holmberg <hans.holmberg@wdc.com>,
-  linux-xfs@vger.kernel.org,  Carlos Maiolino <cem@kernel.org>,  Dave
- Chinner <david@fromorbit.com>,  "Darrick J . Wong" <djwong@kernel.org>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  libc-alpha@sourceware.org
-Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
-In-Reply-To: <20251106170501.GA25601@lst.de> (Christoph Hellwig's message of
-	"Thu, 6 Nov 2025 18:05:01 +0100")
-References: <20251106133530.12927-1-hans.holmberg@wdc.com>
-	<lhuikfngtlv.fsf@oldenburg.str.redhat.com>
-	<20251106135212.GA10477@lst.de>
-	<aQyz1j7nqXPKTYPT@casper.infradead.org>
-	<lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
-	<20251106170501.GA25601@lst.de>
-Date: Sat, 08 Nov 2025 13:30:18 +0100
-Message-ID: <878qgg4sh1.fsf@mid.deneb.enyo.de>
+	s=arc-20240116; t=1762605209; c=relaxed/simple;
+	bh=Rf9GJLGm/E16pRMnrmp+CBN32IvBJ0hD79MnJ1t7U5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CG+vr5jcItlLbm4InUDv14D3tFiIcxQrVM6IGVfKGrKQJw/em0efANZt066mjmyXJ0kJ1W8xnWu4mrI1FhsL0QDBZEpy8E+dK8Zd5k0Dr7vMSDiRAYUi7TW6Tyu81CiYiD5ruOvFK/7NdoQJTVU0FKpOf9IE38H/orrTywmC8NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b=ciAphf8u; arc=none smtp.client-ip=51.159.59.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1wt.eu; s=mail;
+	t=1762605198; bh=i1/L4seNKaCr4KLY1JyXJE9sVlBA0J4FPORuvVZULoA=;
+	h=From:Message-ID:From;
+	b=ciAphf8uk6z691+PIsZBjpFLprn75paLigOmUQPACgNfJWYsDNoXPznUQa6/Va44g
+	 D23FLScTsx3ilyw50bgHr+ltSjrGG+hRQFiuzKW1DByNrubkeC3kLCpBUGq1SbHHSU
+	 KgVlAi7d1k29l5avy8AX43zmVUjXufC2W8h6gHoI=
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by mta1.formilux.org (Postfix) with ESMTP id 96FADC094F;
+	Sat, 08 Nov 2025 13:33:18 +0100 (CET)
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 5A8CXIdF006902;
+	Sat, 8 Nov 2025 13:33:18 +0100
+Date: Sat, 8 Nov 2025 13:33:18 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] tools/nolibc: add support for fchdir()
+Message-ID: <20251108123318.GA6898@1wt.eu>
+References: <20251107-nolibc-fchdir-v1-1-4a1ab8141f68@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251107-nolibc-fchdir-v1-1-4a1ab8141f68@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-* Christoph Hellwig:
+Hi Thomas,
 
-> On Thu, Nov 06, 2025 at 05:31:28PM +0100, Florian Weimer wrote:
->> It's been a few years, I think, and maybe we should drop the allocation
->> logic from posix_fallocate in glibc?  Assuming that it's implemented
->> everywhere it makes sense?
->
-> I really think it should go away.  If it turns out we find cases where
-> it was useful we can try to implement a zeroing fallocate in the kernel
-> for the file system where people want it.  gfs2 for example currently
-> has such an implementation, and we could have somewhat generic library
-> version of it.
+On Fri, Nov 07, 2025 at 03:13:38PM +0100, Thomas Weiﬂschuh wrote:
+> Add support for the file descriptor based variant of chdir().
+> 
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> ---
+>  tools/include/nolibc/sys.h                   | 13 +++++++++++++
+>  tools/testing/selftests/nolibc/nolibc-test.c |  2 ++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
+> index c5564f57deec88b8aa70291fcf6f9ca4dbc1d03f..a4b0fdb9b641230174f5e62d62762f59af81a00e 100644
+> --- a/tools/include/nolibc/sys.h
+> +++ b/tools/include/nolibc/sys.h
+> @@ -118,6 +118,7 @@ void *sbrk(intptr_t inc)
+>  
+>  /*
+>   * int chdir(const char *path);
+> + * int fchdir(int fildes);
+>   */
+>  
+>  static __attribute__((unused))
+> @@ -132,6 +133,18 @@ int chdir(const char *path)
+>  	return __sysret(sys_chdir(path));
+>  }
+>  
+> +static __attribute__((unused))
+> +int sys_fchdir(int fildes)
+> +{
+> +	return my_syscall1(__NR_fchdir, fildes);
+> +}
+> +
+> +static __attribute__((unused))
+> +int fchdir(int fildes)
+> +{
+> +	return __sysret(sys_fchdir(fildes));
+> +}
+> +
+>  
+>  /*
+>   * int chmod(const char *path, mode_t mode);
+> diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
+> index 29de21595fc95341c2aa975375a8d471cb3933fc..5927a84466cc0ede3b99611e134a8c6b8ab91e72 100644
+> --- a/tools/testing/selftests/nolibc/nolibc-test.c
+> +++ b/tools/testing/selftests/nolibc/nolibc-test.c
+> @@ -1343,6 +1343,8 @@ int run_syscall(int min, int max)
+>  		CASE_TEST(dup3_0);            tmp = dup3(0, 100, 0);  EXPECT_SYSNE(1, tmp, -1); close(tmp); break;
+>  		CASE_TEST(dup3_m1);           tmp = dup3(-1, 100, 0); EXPECT_SYSER(1, tmp, -1, EBADF); if (tmp != -1) close(tmp); break;
+>  		CASE_TEST(execve_root);       EXPECT_SYSER(1, execve("/", (char*[]){ [0] = "/", [1] = NULL }, NULL), -1, EACCES); break;
+> +		CASE_TEST(fchdir_stdin);      EXPECT_SYSER(1, fchdir(STDIN_FILENO), -1, ENOTDIR); break;
+> +		CASE_TEST(fchdir_badfd);      EXPECT_SYSER(1, fchdir(-1), -1, EBADF); break;
+>  		CASE_TEST(file_stream);       EXPECT_SYSZR(1, test_file_stream()); break;
+>  		CASE_TEST(fork);              EXPECT_SYSZR(1, test_fork(FORK_STANDARD)); break;
+>  		CASE_TEST(getdents64_root);   EXPECT_SYSNE(1, test_getdents64("/"), -1); break;
+> 
+> ---
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> change-id: 20251107-nolibc-fchdir-2645c298a538
 
-Sorry, I remember now where this got stuck the last time.
+Looks good to me!
 
-This program:
-
-#include <fcntl.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/mman.h>
-
-int
-main(void)
-{
-  FILE *fp = tmpfile();
-  if (fp == NULL)
-    abort();
-  int fd = fileno(fp);
-  posix_fallocate(fd, 0, 1);
-  char *p = mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-  *p = 1;
-}
-
-should not crash even if the file system does not support fallocate.
-I hope we can agree on that.  I expect avoiding SIGBUS errors because
-of insufficient file size is a common use case for posix_fallocate.
-This use is not really an optimization, it's required to get mmap
-working properly.
-
-If we can get an fallocate mode that we can use as a fallback to
-increase the file size with a zero flag argument, we can definitely
-use that in posix_fallocate (replacing the fallback path on kernels
-that support it).  All local file systems should be able to implement
-that (but perhaps not efficiently).  Basically, what we need here is a
-non-destructive ftruncate.
-
-Maybe add two flags, one for the ftruncate replacement, and one that
-instructs the file system that the range will be used with mmap soon?
-I expect this could be useful information to the file system.  We
-wouldn't use it in posix_fallocate, but applications calling fallocate
-directly might.
-
-Christoph, is this something you could help with?
+Acked-by: Willy Tarreau <w@1wt.eu>
+Willy
 
