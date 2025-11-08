@@ -1,174 +1,322 @@
-Return-Path: <linux-kernel+bounces-891718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D477C43521
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 23:13:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D0FC4352A
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 23:16:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB7994E3150
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 22:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A66F53A9F69
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 22:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE882877D7;
-	Sat,  8 Nov 2025 22:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5727284884;
+	Sat,  8 Nov 2025 22:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="GgvaFjo7"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="fWeMhNeb"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EF13D6F;
-	Sat,  8 Nov 2025 22:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762640013; cv=pass; b=Gwlx3Jl+hZH2WyKctdruUzx3wMkHuFNswrHBhFjivVWtQ8Y10hcIr/9lG6bCHSfaIHfzKR3O1rhkHCPMGm3GXsu66W3c0Q3lEeS8Fblb8IQr7owlSNvmQVMzUpGkvlFGz3tn4V82hOsCzhQnnpQkvurwNzoqWu2eDpMEonQNbso=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762640013; c=relaxed/simple;
-	bh=/EnJRHX3Zqz6axFfo+FDPZ1n1cGF7U6KIPo/wJJDz6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bl0tAbQRk2rZTPtjq9xPlj98WHaL+UkilN8hwbV/896LEI4VnrWBgq5+Qrcu3eynwvqIcAmLGHLeWrv36wWhsc9NRLLW1p8DPRSVq/y4caDVXWZQsXOt9bFxTjLn5Bli+KsdYMoqKbroBUdefp89klg2qeoGVbmWJub5K7zY7TI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=GgvaFjo7; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1762639989; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cHKQixeSbiQYgFr/nIMungXoozpc+I+XHBYAKYLIOMCBZoPMuiZ9juvWVCCIfB2Q/4tDXJ7Gzfwk6r7KVnxNZJ9qTtSiFHH2sYUbgoMesswY18rneR+me7pX011K+SopAoRMsd6CItg/WFC6tEBlyJNxmlCBX5m+7hvnrYyvwVI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762639989; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VMIv9AGq780AijX5IiGXZgy94EnHSeQu6sTSzhiMxek=; 
-	b=CoRS3XCRJtH5n/+F/hNiC4IUbAVjxoO9cRZG+aD8QfvIMk9gSRfOpcsSUPvFHzVbvTEz53jtm+pXYeZgjwgKyWWdwBFWZZqAdPEYA7NG0peepJ7HeHrJBE2H07Pwv+XPXWi9HiUVCENSXWOCTiRwEKhuoYx4Gz++AO13RSCHMH8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762639989;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=VMIv9AGq780AijX5IiGXZgy94EnHSeQu6sTSzhiMxek=;
-	b=GgvaFjo7eVdA72Ou0P0SfF46EBvPLHLMhqhIPO5oG++ndoVBg4X+fymn97HzeZ5o
-	0OdtbgGC3fILokPh6Lh3y7261vKyjmiTvp5vPHPszkGqgodAM6Dm+xtw2TugzX1NVg1
-	vwizaabpSi0/U9lZ9vR8VJEZbTF5zDgE2DHJq6UY=
-Received: by mx.zohomail.com with SMTPS id 1762639987433151.93053330001715;
-	Sat, 8 Nov 2025 14:13:07 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id 7A8E61801B3; Sat, 08 Nov 2025 23:12:54 +0100 (CET)
-Date: Sat, 8 Nov 2025 23:12:54 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Geraldo Nascimento <geraldogabriel@gmail.com>, 
-	Ye Zhang <ye.zhang@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Johan Jonker <jbx6244@gmail.com>, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: rockchip: align bindings to PCIe spec
-Message-ID: <sbulnlwz3vxyk3yw2c2tcsdvyu57cdvyixkpeq2okh4vn6yyod@4o4kltfb5u6n>
-References: <4b5ffcccfef2a61838aa563521672a171acb27b2.1762321976.git.geraldogabriel@gmail.com>
- <ba120577-42da-424d-8102-9d085c1494c8@rock-chips.com>
- <aQsIXcQzeYop6a0B@geday>
- <67b605b0-7046-448a-bc9b-d3ac56333809@rock-chips.com>
- <aQ1c7ZDycxiOIy8Y@geday>
- <d9e257bd-806c-48b4-bb22-f1342e9fc15a@rock-chips.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D3634D38B;
+	Sat,  8 Nov 2025 22:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762640186; cv=none; b=b30wJlbdOKcYhY9vLKDvLy9g9gu6nU0rTH64scRLDOq4ovP7EbLtSLLcolHZb+k87i2X/EA5IBHvj9id1GXIGbaT2tOgXnODn7bvrxx4jaywaF22TmPhYZvI/8I+WiB1KsqANpElysSxwPcYzKeqwB9YEnVxtH8UoPR+AAFal+o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762640186; c=relaxed/simple;
+	bh=pBhyieeDjchlJ+mOjFaTeT3Y/QitnXECs185al56b+I=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=cJ4udU1yiWR/CrVNO1XDqIhia70t4/xe6EmyzE6bhtkdBNwG80o3/WpXRQLd+FNqpe4B8LJHnN49/ZcqfjheY6x7AcpMuyNW9UmqNQZqSkMqdRcIzNUGjrK85Exhz4jdimb2jhvAm+2quVGggRB3z3QgqSHHN3PxZRAqFstT4sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=fWeMhNeb; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5A8MEjxP2478531
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sat, 8 Nov 2025 14:14:46 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5A8MEjxP2478531
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762640093;
+	bh=B/Cs56oiwOfYFf5C+E+O3dVcT+FEPLCVGwSgjVsb61Y=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=fWeMhNebCueBIgpwwJ9HzqbFTchAPIdo17J2WvEY7kkjBFr98Hd14BZVU/elSj4e9
+	 sYvaiqrxvUl4BY8IpX0uQCmYyYRGpwEYM4AMpxmeO6jowam81zKx+Iou/8ibo+BM+1
+	 ywYMqpzqqzlsIya940Jmlzx8lzG2S8DMVB5+RfgE7pFBtdtphXJ6gZJo7OenPNVKFJ
+	 UQgPH5eVKjpuy1XcgvLHNRCiWtDhbQz2AI+JZNS/Lv07T437bJJ0VfM8ndXOQVc3ZX
+	 UAUehct6G47TvwmWI2P9q6uIb6MiC/veNOSx+dHqmpfeKU8Yq/RQ/QTtFSTKBOHhQF
+	 vb74cw9jAoTUA==
+Date: Sat, 08 Nov 2025 14:14:44 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Xie Yuanbin <qq570070308@gmail.com>, david@redhat.com, tglx@linutronix.de,
+        segher@kernel.crashing.org, riel@surriel.com, peterz@infradead.org,
+        linux@armlinux.org.uk, mathieu.desnoyers@efficios.com,
+        paulmck@kernel.org, pjw@kernel.org, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, alex@ghiti.fr, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, davem@davemloft.net, andreas@gaisler.com,
+        luto@kernel.org, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, acme@kernel.org, namhyung@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        james.clark@linaro.org, anna-maria@linutronix.de, frederic@kernel.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, vschneid@redhat.com, nathan@kernel.org,
+        nick.desaulniers+lkml@gmail.com, morbo@google.com,
+        justinstitt@google.com, qq570070308@gmail.com, thuth@redhat.com,
+        brauner@kernel.org, arnd@arndb.de, jlayton@kernel.org,
+        aalbersh@redhat.com, akpm@linux-foundation.org, david@kernel.org,
+        lorenzo.stoakes@oracle.com, max.kellermann@ionos.com,
+        ryan.roberts@arm.com, nysal@linux.ibm.com, urezki@gmail.com
+CC: x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, llvm@lists.linux.dev,
+        will@kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_3/4=5D_Provide_the_alwa?=
+ =?US-ASCII?Q?ys_inline_version_of_some_functions?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20251108172346.263590-4-qq570070308@gmail.com>
+References: <20251108172346.263590-1-qq570070308@gmail.com> <20251108172346.263590-4-qq570070308@gmail.com>
+Message-ID: <04CA2D22-4DE2-4DE1-A2BC-AACE666F5F93@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="npjyxqdavydus2a6"
-Content-Disposition: inline
-In-Reply-To: <d9e257bd-806c-48b4-bb22-f1342e9fc15a@rock-chips.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.5.1/262.598.13
-X-ZohoMailClient: External
-
-
---npjyxqdavydus2a6
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] arm64: dts: rockchip: align bindings to PCIe spec
-MIME-Version: 1.0
 
-Hi,
-
-On Fri, Nov 07, 2025 at 11:01:04AM +0800, Shawn Lin wrote:
-> + Ye Zhang
+On November 8, 2025 9:23:45 AM PST, Xie Yuanbin <qq570070308@gmail=2Ecom> w=
+rote:
+>On critical hot code paths, inline functions can optimize performance=2E
+>However, for current compilers, there is no way to request them to inline
+>at a specific calling point of a function=2E
+>
+>Add a always inline version to some functions, so that they can be chosen
+>when called in hot paths=2E
+>
+>Signed-off-by: Xie Yuanbin <qq570070308@gmail=2Ecom>
+>Cc: Thomas Gleixner <tglx@linutronix=2Ede>
+>Cc: Rik van Riel <riel@surriel=2Ecom>
+>Cc: Segher Boessenkool <segher@kernel=2Ecrashing=2Eorg>
+>Cc: David Hildenbrand <david@redhat=2Ecom>
+>Cc: Peter Zijlstra <peterz@infradead=2Eorg>
+>---
+> arch/arm/include/asm/mmu_context=2Eh      | 12 +++++++-
+> arch/s390/include/asm/mmu_context=2Eh     | 12 +++++++-
+> arch/sparc/include/asm/mmu_context_64=2Eh | 12 +++++++-
+> kernel/sched/core=2Ec                     | 38 ++++++++++++++++++++++---
+> 4 files changed, 67 insertions(+), 7 deletions(-)
+>
+>diff --git a/arch/arm/include/asm/mmu_context=2Eh b/arch/arm/include/asm/=
+mmu_context=2Eh
+>index db2cb06aa8cf=2E=2Ee77b271570c1 100644
+>--- a/arch/arm/include/asm/mmu_context=2Eh
+>+++ b/arch/arm/include/asm/mmu_context=2Eh
+>@@ -80,7 +80,12 @@ static inline void check_and_switch_context(struct mm_=
+struct *mm,
+> #ifndef MODULE
+> #define finish_arch_post_lock_switch \
+> 	finish_arch_post_lock_switch
+>-static inline void finish_arch_post_lock_switch(void)
+>+/*
+>+ * finish_arch_post_lock_switch_ainline - the always inline version of
+>+ * finish_arch_post_lock_switch, used for performance sensitive paths=2E
+>+ * If unsure, use finish_arch_post_lock_switch instead=2E
+>+ */
+>+static __always_inline void finish_arch_post_lock_switch_ainline(void)
+> {
+> 	struct mm_struct *mm =3D current->mm;
 >=20
-> =E5=9C=A8 2025/11/07 =E6=98=9F=E6=9C=9F=E4=BA=94 10:43, Geraldo Nasciment=
-o =E5=86=99=E9=81=93:
-> > On Wed, Nov 05, 2025 at 04:56:36PM +0800, Shawn Lin wrote:
-> > > =E5=9C=A8 2025/11/05 =E6=98=9F=E6=9C=9F=E4=B8=89 16:18, Geraldo Nasci=
-mento =E5=86=99=E9=81=93:
-> > > > Hi Shawn, glad to hear from you.
-> > > >=20
-> > > > Perhaps the following change is better? It resolves the issue
-> > > > without the added complication of open drain. After you questioned
-> > > > if open drain is actually part of the spec, I remembered that
-> > > > GPIO_OPEN_DRAIN is actually (GPIO_SINGLE_ENDED | GPIO_LINE_OPEN_DRA=
-IN)
-> > > > so I decided to test with just GPIO_SINGLE_ENDED and it works.
-> >=20
-> > Shawn,
-> >=20
-> > I quote from the PCIe Mini Card Electromechanical Specification Rev 1.2
-> >=20
-> > "3.4.1. Logic Signal Requirements
-> >=20
-> > The 3.3V card logic levels for single-ended digital signals (WAKE#,
-> > CLKREQ#, PERST#, and W_DISABLE#) are given in Table 3-7. [...]"
-> >=20
-> > So while you are correct that PERST# is most definitely not Open Drain,
-> > there's evidence on the spec that defines this signal as Single-Ended.
-> >=20
+>@@ -99,6 +104,11 @@ static inline void finish_arch_post_lock_switch(void)
+> 		preempt_enable_no_resched();
+> 	}
+> }
+>+
+>+static inline void finish_arch_post_lock_switch(void)
+>+{
+>+	finish_arch_post_lock_switch_ainline();
+>+}
+> #endif /* !MODULE */
 >=20
-> This's true. But I couldn't find any user in dts using either
-> GPIO_SINGLE_ENDED or GPIO_OPEN_DRAIN for PCIe PERST#. I'm curious
-> how these two flags affect actual behavior of chips. Ye, could you
-> please help check it?
+> #endif	/* CONFIG_MMU */
+>diff --git a/arch/s390/include/asm/mmu_context=2Eh b/arch/s390/include/as=
+m/mmu_context=2Eh
+>index d9b8501bc93d=2E=2E577062834906 100644
+>--- a/arch/s390/include/asm/mmu_context=2Eh
+>+++ b/arch/s390/include/asm/mmu_context=2Eh
+>@@ -97,7 +97,12 @@ static inline void switch_mm(struct mm_struct *prev, s=
+truct mm_struct *next,
+> }
+>=20
+> #define finish_arch_post_lock_switch finish_arch_post_lock_switch
+>-static inline void finish_arch_post_lock_switch(void)
+>+/*
+>+ * finish_arch_post_lock_switch_ainline - the always inline version of
+>+ * finish_arch_post_lock_switch, used for performance sensitive paths=2E
+>+ * If unsure, use finish_arch_post_lock_switch instead=2E
+>+ */
+>+static __always_inline void finish_arch_post_lock_switch_ainline(void)
+> {
+> 	struct task_struct *tsk =3D current;
+> 	struct mm_struct *mm =3D tsk->mm;
+>@@ -120,6 +125,11 @@ static inline void finish_arch_post_lock_switch(void=
+)
+> 	local_irq_restore(flags);
+> }
+>=20
+>+static inline void finish_arch_post_lock_switch(void)
+>+{
+>+	finish_arch_post_lock_switch_ainline();
+>+}
+>+
+> #define activate_mm activate_mm
+> static inline void activate_mm(struct mm_struct *prev,
+>                                struct mm_struct *next)
+>diff --git a/arch/sparc/include/asm/mmu_context_64=2Eh b/arch/sparc/inclu=
+de/asm/mmu_context_64=2Eh
+>index 78bbacc14d2d=2E=2Eca7019080574 100644
+>--- a/arch/sparc/include/asm/mmu_context_64=2Eh
+>+++ b/arch/sparc/include/asm/mmu_context_64=2Eh
+>@@ -160,7 +160,12 @@ static inline void arch_start_context_switch(struct =
+task_struct *prev)
+> }
+>=20
+> #define finish_arch_post_lock_switch	finish_arch_post_lock_switch
+>-static inline void finish_arch_post_lock_switch(void)
+>+/*
+>+ * finish_arch_post_lock_switch_ainline - the always inline version of
+>+ * finish_arch_post_lock_switch, used for performance sensitive paths=2E
+>+ * If unsure, use finish_arch_post_lock_switch instead=2E
+>+ */
+>+static __always_inline void finish_arch_post_lock_switch_ainline(void)
+> {
+> 	/* Restore the state of MCDPER register for the new process
+> 	 * just switched to=2E
+>@@ -185,6 +190,11 @@ static inline void finish_arch_post_lock_switch(void=
+)
+> 	}
+> }
+>=20
+>+static inline void finish_arch_post_lock_switch(void)
+>+{
+>+	finish_arch_post_lock_switch_ainline();
+>+}
+>+
+> #define mm_untag_mask mm_untag_mask
+> static inline unsigned long mm_untag_mask(struct mm_struct *mm)
+> {
+>diff --git a/kernel/sched/core=2Ec b/kernel/sched/core=2Ec
+>index 0e50ef3d819a=2E=2Ec50e672e22c4 100644
+>--- a/kernel/sched/core=2Ec
+>+++ b/kernel/sched/core=2Ec
+>@@ -4884,7 +4884,13 @@ static inline void finish_task(struct task_struct =
+*prev)
+> 	smp_store_release(&prev->on_cpu, 0);
+> }
+>=20
+>-static void do_balance_callbacks(struct rq *rq, struct balance_callback =
+*head)
+>+/*
+>+ * do_balance_callbacks_ainline - the always inline version of
+>+ * do_balance_callbacks, used for performance sensitive paths=2E
+>+ * If unsure, use do_balance_callbacks instead=2E
+>+ */
+>+static __always_inline void do_balance_callbacks_ainline(struct rq *rq,
+>+		struct balance_callback *head)
+> {
+> 	void (*func)(struct rq *rq);
+> 	struct balance_callback *next;
+>@@ -4901,6 +4907,11 @@ static void do_balance_callbacks(struct rq *rq, st=
+ruct balance_callback *head)
+> 	}
+> }
+>=20
+>+static void do_balance_callbacks(struct rq *rq, struct balance_callback =
+*head)
+>+{
+>+	do_balance_callbacks_ainline(rq, head);
+>+}
+>+
+> static void balance_push(struct rq *rq);
+>=20
+> /*
+>@@ -4949,11 +4960,21 @@ struct balance_callback *splice_balance_callbacks=
+(struct rq *rq)
+> 	return __splice_balance_callbacks(rq, true);
+> }
+>=20
+>-static void __balance_callbacks(struct rq *rq)
+>+/*
+>+ * __balance_callbacks_ainline - the always inline version of
+>+ * __balance_callbacks, used for performance sensitive paths=2E
+>+ * If unsure, use __balance_callbacks instead=2E
+>+ */
+>+static __always_inline void __balance_callbacks_ainline(struct rq *rq)
+> {
+> 	do_balance_callbacks(rq, __splice_balance_callbacks(rq, false));
+> }
+>=20
+>+static void __balance_callbacks(struct rq *rq)
+>+{
+>+	__balance_callbacks_ainline(rq);
+>+}
+>+
+> void balance_callbacks(struct rq *rq, struct balance_callback *head)
+> {
+> 	unsigned long flags;
+>@@ -5003,7 +5024,8 @@ static inline void finish_lock_switch(struct rq *rq=
+)
+> #endif
+>=20
+> #ifndef finish_arch_post_lock_switch
+>-# define finish_arch_post_lock_switch()	do { } while (0)
+>+# define finish_arch_post_lock_switch()		do { } while (0)
+>+# define finish_arch_post_lock_switch_ainline()	do { } while (0)
+> #endif
+>=20
+> static inline void kmap_local_sched_out(void)
+>@@ -5050,6 +5072,9 @@ prepare_task_switch(struct rq *rq, struct task_stru=
+ct *prev,
+>=20
+> /**
+>  * finish_task_switch - clean up after a task-switch
+>+ * finish_task_switch_ainline - the always inline version of this func
+>+ * used for performance sensitive paths
+>+ *
+>  * @prev: the thread we just switched away from=2E
+>  *
+>  * finish_task_switch must be called after the context switch, paired
+>@@ -5067,7 +5092,7 @@ prepare_task_switch(struct rq *rq, struct task_stru=
+ct *prev,
+>  * past=2E 'prev =3D=3D current' is still correct but we need to recalcu=
+late this_rq
+>  * because prev may have moved to another CPU=2E
+>  */
+>-static struct rq *finish_task_switch(struct task_struct *prev)
+>+static __always_inline struct rq *finish_task_switch_ainline(struct task=
+_struct *prev)
+> 	__releases(rq->lock)
+> {
+> 	struct rq *rq =3D this_rq();
+>@@ -5159,6 +5184,11 @@ static struct rq *finish_task_switch(struct task_s=
+truct *prev)
+> 	return rq;
+> }
+>=20
+>+static struct rq *finish_task_switch(struct task_struct *prev)
+>+{
+>+	return finish_task_switch_ainline(prev);
+>+}
+>+
+> /**
+>  * schedule_tail - first thing a freshly forked thread must call=2E
+>  * @prev: the thread we just switched away from=2E
 
-FWIW I assume single-ended in the spec means it's not differential
-like all the highspeed signals on the PCIe connection. This says
-nothing about open-drain, open-source or push-pull being used. The
-kernel on the other hand has a very specific understanding of
-GPIO_SINGLE_ENDED:
-
-	if (flags & OF_GPIO_SINGLE_ENDED) {
-		if (flags & OF_GPIO_OPEN_DRAIN)
-			lflags |=3D GPIO_OPEN_DRAIN;
-		else
-			lflags |=3D GPIO_OPEN_SOURCE;
-	}
-
-I.e. it is the same as configuring open-source ;)
-
-Greetings,
-
--- Sebastian
-
---npjyxqdavydus2a6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmkPwGIACgkQ2O7X88g7
-+pph/w/9EGXoEnn09vOlQ9Hk9Y4BurUJ0BtpcYyw58obAh4TBxpw6qpl2pEmL+ZA
-7R2h2AlQm3O5wuHTtOwRaiTJsRSIBNOFebqwSZO7lY3OpuOTknFfhUKR98tcuAlQ
-DJD0nQMupT6x3GJ0GzKyI1kn6jbV98BhQsqXnoL5Digupn89Z5XvaCHTsUG9quRn
-fy1iZlLtgTvpTHOHXoAZkPn0RWznH3hLTlELwwkhEayvdCAGP5m0igUMbO8WWryY
-J6358C7Q88GcSffavbmhJYmBsqCoadgN4A2hPwQEgmuIBgwlrgkefaP2dZG0qD5v
-GpTSYGiWdLw/bDEW87lq4sav9F+lOPiYJJ+MvhdjZWpLWMuVOJbJpGw/kTrZRTTN
-TfElFYQ+7ZWnJUhkCTlebraB8SzjwDA7nc2zIDMXeijIH9++NzAP2XzU48yqllsG
-gTlLKhi1Vva7XcPhwEHof6X2IJvUZGp4fwJF7VhI8j+uD90Sb30ZFD/665vrIfZb
-vUnY3qTY8Ypo2ITcF//tyeHV8xz5N9kWar8CWYpZcuHxl8/ea7PZYh0L1eDLHQxs
-vEOBqezfUI49QVEawDqFFXNflM63IoWyHFb7/VJ7r95O0WJvm9DmyfIWgBhGesXs
-hYHvk73EY+0JKzpK+rx/Jn88tD5LOlAG/b4AvYtrTIVIacxtDIk=
-=5sqv
------END PGP SIGNATURE-----
-
---npjyxqdavydus2a6--
+There is, in fact: you have to have an always_inline version, and wrap it =
+in a noinline version=2E
 
