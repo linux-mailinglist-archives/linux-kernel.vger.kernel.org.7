@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-891551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE1DC42E84
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 15:48:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07001C42E8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 15:48:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC8A3AD266
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 14:47:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66CFE4E2A98
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 14:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF3220010A;
-	Sat,  8 Nov 2025 14:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24364204F8B;
+	Sat,  8 Nov 2025 14:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7dvfHhK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4MMhFNg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149CB1482F2;
-	Sat,  8 Nov 2025 14:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAF11482F2;
+	Sat,  8 Nov 2025 14:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762613243; cv=none; b=Ka6NOSSFSdnj9uogj23aYJnsocd7L8bjsvwVuBKGCGifV0bCj1SeCKLP16WbP9wNzjaEkxtXC4CjM39wgOrZkin0g+h5+pFMBcFwK3m5SplCxoaGmhmIGvJKzFp2c8Wud/wHmFaR3CrRzrHQEFoGdcsUa9QsXn6oJ8BcFsMz+KE=
+	t=1762613306; cv=none; b=anPAjDys8pMm/LEbRhzUCE9A0ZLr3JSZOEdRkvgLYmuOS5tmqejOlkhzrgzzQZHkGPCryUb1AYVsNZztK1OC4vPGADDRQTNLZMvNiiRB9W1Ezumf4E/OqK3iEJj1V0ea8qRo0SoVj0RrFr58+0BoCYrEpWtUJeCL88odTI0AtDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762613243; c=relaxed/simple;
-	bh=seiWAXWA40Itm0WaQziqNpXmGAyxL/tF/QM25Q9yPaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DkWl5GoDkXbo8pKQYZdlfhuIwY3ubplL6tTH5B6YmhniP9uLmhAjoZDyYJmT2OfB6NTQ9yV4YzMauEGPWwnSbkFys0gCL5wVzE9qVf4AkDbYQadJGjjxLISrjZL9NEvu2ZhYJ66EKfCdwhkhrh7CI6qNeo/Xh4fHlfq+CQr4ExY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W7dvfHhK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE16C4CEFB;
-	Sat,  8 Nov 2025 14:47:17 +0000 (UTC)
+	s=arc-20240116; t=1762613306; c=relaxed/simple;
+	bh=Oo6g0GMqZZTxcLBaU6ktO2ZbYIHNWh6xms/osvI8ZXk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Wz1nGLqnrORvhwFVcJd6EpjertgQ+nWm4Ghg4aXVAN3zrrco+XfvCZ2p4UjKRV5s0FLw4qP67nSHiqJCqoQRUhNZSsEG2p48gTFm3038i4J7bkV/34C6PCEjxUNiCEndFpyAbbguaz8Hss8I4IYrR/amhbQC1+Sjqmt0b66hFf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4MMhFNg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B07CC116C6;
+	Sat,  8 Nov 2025 14:48:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762613242;
-	bh=seiWAXWA40Itm0WaQziqNpXmGAyxL/tF/QM25Q9yPaE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W7dvfHhKNsU2mj3j+TrfjRX13sG7PZgOKWXoqyHVzmFjOfSxG4gU7KsPOiXMfgXV+
-	 AJH5lZFoupvkTfXhrp8dRruIYrtm5ZQ3xSpMJIQeQRR0+N6wzC7t9VpsJ1ZFusIW2v
-	 cW+tm6YfbFbWIFHr9bMWroKU/WgzeYm18BkDEdk6oiAst/kT7D76HvAgPK7iFPa18d
-	 x3OquFQ3LvWgGKiJOuSD1fxykDRiXNVK5wJw+8Lf9cAiXJzPFWoyO1P243A91bXLuy
-	 +6xYwJVXNo92+1XTdLO3u+2bQnZ2Lg7P2lzrdJ7eb9pWs4S96T535g3thIXSOzJpvx
-	 zJpp/RItwSa/A==
-Message-ID: <287444fa-120c-42b4-9919-2f05ab1a2ab7@kernel.org>
-Date: Sat, 8 Nov 2025 15:47:16 +0100
+	s=k20201202; t=1762613305;
+	bh=Oo6g0GMqZZTxcLBaU6ktO2ZbYIHNWh6xms/osvI8ZXk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=p4MMhFNgIiEyu6JE5Sc+kBWEcofVF4L9uJDCtmLTbYMG+XZf/cxIwjGxpAnOpJCsP
+	 EB7vV4c1DKZL1kQJrxFX9GRiyCsO/w0QP/cUEmADttS+uOUEpVDziA64e0XrKxe1GL
+	 7ex1Q/pVH7TO7Gl15DeWbkfqOqcB+efTWhzxksys/R1bFufrXuhgq4EEx1MrdzdrmV
+	 jtzipSeOA5BSkFmP1O1Neud1d4jrjDqbQAs+DivvbSRh0ZzlhLxgcV6xvID/LWhGUo
+	 H507ZFLIxGZ9eBNUQYhws8KI/+07kQoWebBf4wUkHYs4BxSM37fFErYg2LJ9B8710y
+	 Aya/LGR/5d4MA==
+Message-ID: <8ae5d81d-4869-4c39-9561-cb0f87da70fd@kernel.org>
+Date: Sat, 8 Nov 2025 15:48:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,6 +50,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/3] riscv: soc: re-organized allwinner menu
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: revy <gaohan@iscas.ac.cn>
 Cc: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
  Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
@@ -66,7 +67,7 @@ References: <cover.1762588494.git.gaohan@iscas.ac.cn>
  <d17a3a01e2b1297538c419b51953f9613426ba42.1762588494.git.gaohan@iscas.ac.cn>
  <e98a1e59-f3ff-4e9f-a180-79aea9943236@kernel.org>
  <43109A90-8447-4006-8E29-2D2C0866758F@iscas.ac.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <287444fa-120c-42b4-9919-2f05ab1a2ab7@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -111,63 +112,68 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <43109A90-8447-4006-8E29-2D2C0866758F@iscas.ac.cn>
+In-Reply-To: <287444fa-120c-42b4-9919-2f05ab1a2ab7@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/11/2025 14:59, revy wrote:
-> 
-> 
-> 
->> -----Original Messages-----
->> From: "Krzysztof Kozlowski" <krzk@kernel.org>
->> Sent Time: 2025-11-08 19:29:07 (Saturday)
->> To: gaohan@iscas.ac.cn, "Paul Walmsley" <pjw@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>, "Yixun Lan" <dlan@gentoo.org>, "Drew Fustini" <fustini@kernel.org>, "Geert Uytterhoeven" <geert+renesas@glider.be>, "Guodong Xu" <guodong@riscstar.com>, "Haylen Chu" <heylenay@4d2.org>, "Joel Stanley" <joel@jms.id.au>
->> Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, "Han Gao" <rabenda.cn@gmail.com>
->> Subject: Re: [PATCH 1/3] riscv: soc: re-organized allwinner menu
->>
->> On 08/11/2025 09:20, gaohan@iscas.ac.cn wrote:
->>> From: Han Gao <gaohan@iscas.ac.cn>
->>>
->>> Allwinner currently offers d1(s)/v821/v861/v881 on RISC-V,
->>> using different IPs.
->>>
->>> d1(s): Xuantie C906
->>> v821: Andes A27 + XuanTie E907
->>> v861/v881: XuanTie C907
->>>
->>> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
->>> ---
->>> arch/riscv/Kconfig.socs | 22 +++++++++++++++++-----
->>> 1 file changed, 17 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
->>> index 848e7149e443..7cba5d6ec4c3 100644
->>> --- a/arch/riscv/Kconfig.socs
->>> +++ b/arch/riscv/Kconfig.socs
->>> @@ -54,14 +54,26 @@ config SOC_STARFIVE
->>> 	help
->>> 	  This enables support for StarFive SoC platform hardware.
->>>
->>> -config ARCH_SUNXI
->>> -	bool "Allwinner sun20i SoCs"
->>> +menuconfig ARCH_SUNXI
->>> +	bool "Allwinner RISC-V SoCs"
->>> +
->>> +if ARCH_SUNXI
->>> +
->>> +config ARCH_SUNXI_XUANTIE
+On 08/11/2025 15:47, Krzysztof Kozlowski wrote:
+> On 08/11/2025 14:59, revy wrote:
 >>
 >>
->> You should not get multiple ARCHs. ARCH is only one. There is also not
->> much rationale in commit msg for that.
+>>
+>>> -----Original Messages-----
+>>> From: "Krzysztof Kozlowski" <krzk@kernel.org>
+>>> Sent Time: 2025-11-08 19:29:07 (Saturday)
+>>> To: gaohan@iscas.ac.cn, "Paul Walmsley" <pjw@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>, "Yixun Lan" <dlan@gentoo.org>, "Drew Fustini" <fustini@kernel.org>, "Geert Uytterhoeven" <geert+renesas@glider.be>, "Guodong Xu" <guodong@riscstar.com>, "Haylen Chu" <heylenay@4d2.org>, "Joel Stanley" <joel@jms.id.au>
+>>> Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, "Han Gao" <rabenda.cn@gmail.com>
+>>> Subject: Re: [PATCH 1/3] riscv: soc: re-organized allwinner menu
+>>>
+>>> On 08/11/2025 09:20, gaohan@iscas.ac.cn wrote:
+>>>> From: Han Gao <gaohan@iscas.ac.cn>
+>>>>
+>>>> Allwinner currently offers d1(s)/v821/v861/v881 on RISC-V,
+>>>> using different IPs.
+>>>>
+>>>> d1(s): Xuantie C906
+>>>> v821: Andes A27 + XuanTie E907
+>>>> v861/v881: XuanTie C907
+>>>>
+>>>> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+>>>> ---
+>>>> arch/riscv/Kconfig.socs | 22 +++++++++++++++++-----
+>>>> 1 file changed, 17 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+>>>> index 848e7149e443..7cba5d6ec4c3 100644
+>>>> --- a/arch/riscv/Kconfig.socs
+>>>> +++ b/arch/riscv/Kconfig.socs
+>>>> @@ -54,14 +54,26 @@ config SOC_STARFIVE
+>>>> 	help
+>>>> 	  This enables support for StarFive SoC platform hardware.
+>>>>
+>>>> -config ARCH_SUNXI
+>>>> -	bool "Allwinner sun20i SoCs"
+>>>> +menuconfig ARCH_SUNXI
+>>>> +	bool "Allwinner RISC-V SoCs"
+>>>> +
+>>>> +if ARCH_SUNXI
+>>>> +
+>>>> +config ARCH_SUNXI_XUANTIE
+>>>
+>>>
+>>> You should not get multiple ARCHs. ARCH is only one. There is also not
+>>> much rationale in commit msg for that.
+>>
+>> The main goal is to avoid choosing multiple IP addresses for erreta. 
+>> If using Andes IPs, I don't want to choose XuanTIe (T-Head) ERRETA.
 > 
-> The main goal is to avoid choosing multiple IP addresses for erreta. 
-> If using Andes IPs, I don't want to choose XuanTIe (T-Head) ERRETA.
+> Not explained in commit msg but anyway not a good argument. It is some
+> sort of micro optimization and you completely miss the point we target
+> multiarch kernels.
 
-Not explained in commit msg but anyway not a good argument. It is some
-sort of micro optimization and you completely miss the point we target
-multiarch kernels.
+Heh, and I actually did not forbid or discourage choosing erratas per
+your soc. I said you only get one top level ARCH. Look at all arm64
+platforms. How many ARCHs are there per one vendor?
 
 Best regards,
 Krzysztof
