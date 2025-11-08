@@ -1,229 +1,177 @@
-Return-Path: <linux-kernel+bounces-891256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA948C42449
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 02:56:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D1FC42452
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 02:58:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4E88434D751
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 01:56:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B28EF1892E1E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 01:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0822BE7A6;
-	Sat,  8 Nov 2025 01:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C19E2BEFFD;
+	Sat,  8 Nov 2025 01:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l50O1fUM"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012043.outbound.protection.outlook.com [40.107.200.43])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SiK1mj9Z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AE980604;
-	Sat,  8 Nov 2025 01:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762566955; cv=fail; b=le32zBF4N6cd+azjlAiytsLpIAr0GRFxI2NWedTtFxGVrDXT/vl/3iLwPwq3kyNMcnk2ED5vFMjwimmQkJIv/aA+Ca2aceOpy6rLrbG2DpPMJ+TPie3w2UtMLeoadhXviWBvby7Cg1fnxtTem4TbOnZjjFMzaruYMFLVUTdhlJk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762566955; c=relaxed/simple;
-	bh=/zH7BhDtcVEYYB/Z7Jmg45UypprTyty08aFjZJ7rlw8=;
-	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
-	 In-Reply-To:MIME-Version; b=TAi8WPH086zG3lGXH448mR6tdY3KhkFWHonwTtAzbEo6TF0WDP7otOpG2F557bcZIIxT01OeHelodvJ26h627y6tGcgIR7IsSH3dyrDIfycDH0iDdHSuL9OcE00ZGRAV66R22jfkH1k6i1ZhWoQd30iGTluNqeqnOCL62I6yMsA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l50O1fUM; arc=fail smtp.client-ip=40.107.200.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e1Rj/f4K19u1yCFnfTo1S6PNRvekp+3qm/UoKERXrQUbKTrGbPTp3bo5nMUNqzpbpBw2Ez2YAjee6f4br2gFo95NEeeRm6VYruaoCwn30t1kaODTs9QSilT5yCW4bfj+pUKyA6d1OUhlHwVYC+BSPp6dG1RbOsZW5eRrk1gSzMJNLKqorXAvHLV0glKVZL0z2tOLYh8Wx9WaZ8kBG4oDPPnJ0hBGjDSQ6K0jAxvtG4oVrZRey+fNZAaQmzn1Yjs3pHXbL3ZdjctJPARLRywtxLbDhjD9ibHYtArpO8FXyVI3N8APVpHYOZcpGbz8l5eZJMOBkhWHuZCyj21R2fWgcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gmhlud1BBaDpDzibAO7YIs0UnDGejBjV+lE3Oz48T1g=;
- b=Y29WwSqL6iTuEYQHvBVNjLhuHSigANmOzSjJ5XiAW9kPfbo2A7KcoHut/3L0/1ce36LD35llYfzEdwNzw7arvO+B0r23b1Ye2M1fEX+jI/Q7Z9RIMBxfW1NFP7NhGAepv5ez9qAion6J+z8dwKmfAnVain8cBJNWh2sbyeU5g1WJNsHeVkHHzp7/gLZVqCTN/dMevffAOh6IaRgmwGQzwHzf53EFyBgFVTdesDWwH/F5rZFqOEoSMJlMl55wnmVdfofm/hbI0beVlPdUloEj+UBAdNTAKUyZreJmCj/aNoI4o4v1BFnwxqXnLZkwwriqt+onf1wU3154LYiWuK02Pw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gmhlud1BBaDpDzibAO7YIs0UnDGejBjV+lE3Oz48T1g=;
- b=l50O1fUMGPYuB2jeE0lFpgOm84YnD9Q4D2xPAOEVe0BZYDSmR8Gi3MDJZkpNzNmvm8i71uhEqOwR3Q4UuiY1fQXRFh1l13N56R0phCWz+D8Gqa59rVEp3AjE3Q2JvoCEeu53WEXCE0XvyODwr6L/3OaVN7QpHHs6rFM99st7E8rEllAV7plX+o3uSusIiTbufOs8Hf04CnxpmRxuncPur8CApKoKl7r1g0LRrLVpFTsXtzAgnMEewPG15wuVeIR2E0eTY6BiabYkofdUFENPYlcu7tTu8w9yg1nGjcBnfTm5ll4e3qpjaiFd9f70KHGHSq1EkxSHH2ug/2QoIljXYA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by LV8PR12MB9334.namprd12.prod.outlook.com (2603:10b6:408:20b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Sat, 8 Nov
- 2025 01:55:50 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9298.012; Sat, 8 Nov 2025
- 01:55:47 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 08 Nov 2025 10:55:43 +0900
-Message-Id: <DE2XU3M6FQLH.1SOIZBPALTHMN@nvidia.com>
-To: "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Danilo Krummrich" <dakr@kernel.org>
-Cc: "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi"
- <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Edwin Peer"
- <epeer@nvidia.com>, "Zhi Wang" <zhiw@nvidia.com>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Bjorn Helgaas"
- <bhelgaas@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, <nouveau@lists.freedesktop.org>,
- <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
- "Nouveau" <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH v3 2/2] gpu: nova-core: add boot42 support for next-gen
- GPUs
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251029030332.514358-1-jhubbard@nvidia.com>
- <20251029030332.514358-3-jhubbard@nvidia.com>
- <DDUV3MZ58O0T.229A7N13MM1HN@nvidia.com>
- <64018a2d-1c0c-4851-95d5-989f041d220d@nvidia.com>
- <DDXV1SHI0R3A.2A1HQNM843OR0@nvidia.com>
- <b8a8c217-954b-4ffa-bce3-9424134518c8@nvidia.com>
-In-Reply-To: <b8a8c217-954b-4ffa-bce3-9424134518c8@nvidia.com>
-X-ClientProxiedBy: TYCP301CA0037.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:380::9) To MN2PR12MB3997.namprd12.prod.outlook.com
- (2603:10b6:208:161::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5671329B799;
+	Sat,  8 Nov 2025 01:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762567082; cv=none; b=nntltJYlijUDhBsRrrbecZZk8pxomA7wQKATdpo9blS15hU4kkYPY7etMq6bLOXDNHV1FK3MErZ7fZD2qCE1jv2s+BWLaoew6EBi3UO9Wb0ZRYRgm0/fsFXlF4wELyy9oWbcWCDll6nBBRZZHCnXFflOSdLLPe98PpI392jpg9Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762567082; c=relaxed/simple;
+	bh=CEDFMxYfpWpKEeZvHuIY1GU1d5cVnE9BuUKvjY0Shbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mzt+awDyCWrdcHMRhKjeP8PfxiRoVg8KrP2kaQWBhT1v5GHyCdbpSiTTAN/Kd77/LVz60cFUUUR5rB6RsLFrr/PDXvpjsffvIrwaHQaCIT1llOYUjHmZjd4OmeUinon/D/wMPbWuNyFrDSUWZnevEg6ZthajDOi5B8j6ogwuumM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SiK1mj9Z; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762567080; x=1794103080;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CEDFMxYfpWpKEeZvHuIY1GU1d5cVnE9BuUKvjY0Shbg=;
+  b=SiK1mj9ZhG9zauQQAv7tyEEB9No7AATIlSOB+SVGx8PSlcKfN+tTt8tD
+   8uktKW1oWiXidugO6ooB5Yxf3sUBan3paquQ/gIWkIOfSKQ72ZtDZ94Ev
+   d8m/V2HftiRm5lkQWxkfsQIwABslEd1/0NLzQYHq43Z3ZaiRqwvV8duqs
+   KJ/3us+yOJT5F9XHaTPqD24GikdvPy1s+zo7kLKfaZohZEU70suDAU0hm
+   AWtiEgjeJ9xVC4FBbRE0DrxeRM6jJje68xZcIyUH0jtJhAT2HWtnUAxMo
+   pqbg6y68WidzYUdGy1yjKEyROLwv4oA+fFY4GzGdaRujoK9ZAgHKajCvC
+   Q==;
+X-CSE-ConnectionGUID: hsfmDTSzSlKMgEpAfNjO2Q==
+X-CSE-MsgGUID: h+G2So0TRKmRmN/Oi9i3Qg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="67327065"
+X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
+   d="scan'208";a="67327065"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 17:58:00 -0800
+X-CSE-ConnectionGUID: fhd5po3kQQqI3uYkg2qquQ==
+X-CSE-MsgGUID: P0egOIl5Q4SssJqGD/40Yw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
+   d="scan'208";a="192290071"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 07 Nov 2025 17:57:54 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vHYDA-0000bT-0D;
+	Sat, 08 Nov 2025 01:57:52 +0000
+Date: Sat, 8 Nov 2025 09:57:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nilesh Laad <nilesh.laad@oss.qualcomm.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>
+Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nilesh Laad <nilesh.laad@oss.qualcomm.com>,
+	venkata.valluru@oss.qualcomm.com, jessica.zhang@oss.qualcomm.com,
+	Yi Zhang <zhanyi@qti.qualcomm.com>,
+	Gopi Botlagunta <venkata.botlagunta@oss.qualcomm.com>
+Subject: Re: [PATCH v2 2/2] drm/bridge: add support for lontium lt9211c bridge
+Message-ID: <202511080928.8r4OmyWW-lkp@intel.com>
+References: <20251107-add-lt9211c-bridge-v2-2-b0616e23407c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|LV8PR12MB9334:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33833f42-ed45-42eb-e5c8-08de1e69ef2c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|10070799003|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OVZLOElRU0I4R3oybUdLZGlNaEViRUZ1OE4rb3phNENmNFR6NnA1cHMvUk9E?=
- =?utf-8?B?UW0xODBlZDFhRWZZMXo5amN0S2FjUzRYNkEzSkFPYTFoZU5BbjBkS3JVRjVJ?=
- =?utf-8?B?QnhRN1NabTJ4QUFjbFVlWlZrWElObXlCSmZNejRESGN6dnVGd2RzNmlzUWNO?=
- =?utf-8?B?eGpWak9aZ1pJbTFWWGdyYTFxTXVBTThrdXp3SjkwdFlKL3RZZmZjU3I3K1lw?=
- =?utf-8?B?YTJVU2dwM3VzZ2JxT3k4eDlqREdzemtJQktKNVFvUGs5SS8zaVZ0N0RvekJ5?=
- =?utf-8?B?K2xCOWRYRHl6Rk1kRWZoZTlnSWNhQUVuVTlIWHpXdXdQY2YvRWsyTDh4Umhu?=
- =?utf-8?B?OU5WU1hNcEQ5UnFQdmQ5OUdZQUcramtkTVl6SC9GMXd1TzFmYUhLcVRjd3I4?=
- =?utf-8?B?MHUzTjR2Wm8zeXlyeW5MUmZVU08yVnJNbHh1cXBvWXFFQ1ZSQ0V2MmZTMzN4?=
- =?utf-8?B?VDlycHE2c09YMWw2NnFCUTg2cksyL2tpejlld0hWZ2tobnRaQ0NnSnR5UFUw?=
- =?utf-8?B?bk0vNXJkMVJneUswL2Z2bGQxTjU3c3FmdHE2bzhnWE1KVkw0V25wUk9YSU1o?=
- =?utf-8?B?VS9XalpnYjhwNEcvSk9ocll5NmQxd2F4c1ZxWWo2WVNsWmpmZ3VCaE5qRzVv?=
- =?utf-8?B?cnhZdUtCRk5qLy9lOUpMUFY0Z0t0T1ZueSt0SEV2RCt5UUlBblArdmFNTGlv?=
- =?utf-8?B?eldLMVQ5dUFFY2t4dmxmdVhRRFdxVndUUFljbFNHa2ZhQkZIeGM5eTE1QU5T?=
- =?utf-8?B?UFhvUHRUaUNIOE5hRjdsOWJoYVlWaFd3Vk5VVlVPVVJVME15WkRsaXpFTTFR?=
- =?utf-8?B?Y256eW9rOSsxODhPR2NlTWhjNUd2T05scm0waWc1Nk8xS1RucW1QNkFCL3pm?=
- =?utf-8?B?dGtabjFDREVNMG5wMkMwNXFCclNFZWY4SCtmZExFaEpBNjhuTUZtRURPaUNl?=
- =?utf-8?B?SXk5UXNFRGZXMXBLQ0RmMlcyZ1FML1R6Z2xnc3dqVXBPZGJ0QndOZmRCd3ox?=
- =?utf-8?B?U3pCTUt5eHc5QXZPVGVlMzE1RGRCZG54VlJ2eG9DMGw3TGVXL0crdlJjM1Jx?=
- =?utf-8?B?Vy9SL0c5Yk5HMjcrY0ZUL01KRWVmdHQ5MzZMUTlJRCtPczRFTVVlOEpraUZk?=
- =?utf-8?B?Q3ZseHpVNk1GK3Z4T2s5Qm1DRkFsdUZoOVE2dHBnY1dmQ0pWMU8ybHRxd1Vs?=
- =?utf-8?B?YS9GY0xoMHNrbnpWaHd4WGt3ck9tRHdESFdrbTNENUpjRnNsOWRWMmdWcm85?=
- =?utf-8?B?Vk1ZOVlMcEtkeUJRLzEwc01OeEc3ZnU5bGZRd014cEZzMW5MVGkvSzVXai9T?=
- =?utf-8?B?Yy9WV05xZ2NLQVlFQ1NjWXUyamloSzVKZjBHWlRJM2M0M0JKNTdzT3pMSUxT?=
- =?utf-8?B?VDFFVWFoanp1TnpVRjUzU2daeThZK0ZEK0pzazcrK0JHS1h3T1Q3VjJjcGxL?=
- =?utf-8?B?ZWRzZ3FLT0xJRVNXbVVVblhFVnpXdTV1NTNuTk5jemNnSFI1YXNuSXJITGFa?=
- =?utf-8?B?YWI4L1dXZElrK2JQa0FKcmVYaVRuWms3YXBOV0xsR3dYR282a3lEY2dlaTRK?=
- =?utf-8?B?U1o0OXhNY3lBRVR1Y051NXVmUFREWHZjS0V6VDdpSjNYNGNUK3FFaW9jNDNx?=
- =?utf-8?B?Vks0aVFKZG83OGRRRVdYaXNhNUJoMVVsejFiNXg5VDhRUFZ1eHBGc2lxTE5a?=
- =?utf-8?B?ZW9lanZKVVBwUWxYUTdnOVJIZjNEdVdwV0ZvU2krRWxwaXJGN3JCVXZnN0Jt?=
- =?utf-8?B?N0hnM2lEWGt2NXJueDhIakY4LzRvRG1tUHF0WkNaS0ptcHlJcXVCdXRtL1ZN?=
- =?utf-8?B?RmNZaUhjOTYxa2syY0p5cmtpQVBwajNDd3licHlLTjdlUW9zT0Y0Wmg0YVdV?=
- =?utf-8?B?QzVPRkFhV2ZGVnc5bStoYUFQQ2pIaHppaEx0QjcyN0tzSHlYZlpwV0JaMkEy?=
- =?utf-8?Q?qaLfO1x9ytUkbABR5RTjf3ZsGgwVTwsT?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(10070799003)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Zkp2bWpHcGRMeGpwSXhSRGhlZmRCS2l4QnhoeVRCY0UyaXZGZ2JMMEpIR1FG?=
- =?utf-8?B?YnRGVE03bzcvRzBjYm90eXlRTC9pNHdvaEhDM1pOSUJGQXBqdVRXN1p0bEtR?=
- =?utf-8?B?dU9TL1NrdG95U3N2bGdrT1NFWG50b1RIUzJNZitZa2RLN3g3eG1SdGRHQ0ZO?=
- =?utf-8?B?bHRwdTNvbVZEZEVkZ0kxQmVlbllGRW5uWEI3YjZOcDhBRnlsc3NJWDN3TDF4?=
- =?utf-8?B?bk5wMXBjbnY0WUdrZnh1M1pqWTZ3d0NGSjlLbFJ2N0pHNEdtazBoaEo4WVYw?=
- =?utf-8?B?S2pydGVZNnBCUTNWdjI1dGZNMlgzWkNvK1F4R1ZxV3N0cXFzd0VuSE0wbnpk?=
- =?utf-8?B?SHlYUWcxdXR1WkIwaCt4RG0yMFZ1NnBCb0toeU0rSDhHSFBIbEUwUEF0TStC?=
- =?utf-8?B?OGZIUWJweC91amJEMEI0eityT0VqVEQ0TzN0RmcvNzF2QTQ0dUc5NzBEMzMr?=
- =?utf-8?B?cmhRVmNHRGp4a2VHSUhlRFpZdWQwdEJPTFlXdFlla3hpa1FoYU9BSkF6d2NM?=
- =?utf-8?B?MVY2LzFreVlPZHdkWHNMSndGYlYxcUEwWFpwTkZwWi9McDNEVDZHZHhjZDcy?=
- =?utf-8?B?T3Ric0wzdXprK244M3hEMk9zVlYxUFd1MlNacVRHZGtzemFNZjBYRVNXQ0o3?=
- =?utf-8?B?L1Rzb3paNFp3aWRVTzYrMXd4b2QyVTdhSE9FYkZkOUJsNWwxeTFBY1FWUnE5?=
- =?utf-8?B?L3dCckFsbHRRWlJsSmZXNDNMNE5wWnNiVG40QWR6TWU2NFpGMy85U0V3d0lH?=
- =?utf-8?B?TlNuMlN4UUZVWTI1VVNaV1BuNmJBbFh6aU9jRXNaU0JuRncxUk5Ybk5JUjlJ?=
- =?utf-8?B?RXhSRDdPRi9WcFJ2WmlRMWN6cFBLUmRYdUEvNERNZjhUUldLVUF5aFZYSHpr?=
- =?utf-8?B?cVBiVDBVNGd5aDZ5eDQ3cytnWm5iUm9HeUQrRDFIZm5aejg1SkJDcmc1SCtm?=
- =?utf-8?B?THB0akZDczlxbmQ5U3k1UC9TNDJaRTlqMGY2cHBUUkNpdU9adWVGV0EwTTBL?=
- =?utf-8?B?VDhWSGNrQWpTVXhEOHFNemdXRFM5Q0c5cURraDJoWmVXY0ErbDNPZVoyVkcw?=
- =?utf-8?B?M3JjcE92QmppdlZ0alp3aUFGb3FUQnpXZWFGZlBXVEdHNkRQc00yRDhlTWVa?=
- =?utf-8?B?dGFjVlEvTTV3bzN3ZTVBQlR2Q0J2cUo2UFczVFBaMmhGMXA0cTdvWWhhcitn?=
- =?utf-8?B?R1AzYnMvOS9uZkwxMW16RXJCcUZDemE0bzFTeitZWnZZRmhmb0pjdjAvTmRF?=
- =?utf-8?B?QWVkTjhQbjd6S3NrK2xTN1FrUVZhQWtLWjY2NmJFeFpzSWRodXI0b1JUUFkv?=
- =?utf-8?B?QkZjdHArRlNuMjlISkczRlNtSmNoR2ttd1hxcTRGNFllNkZJd2VWU3U1Q040?=
- =?utf-8?B?STN5WUFGc0RwQmJFaWhXcVQ1SGhMYzdhOU5CSVZqYjhka1dvZkRkNFlQN1Y3?=
- =?utf-8?B?Y1BBVGduYVpNZVRhTDhHbFNYWlpOOG05Qm9KZXhhUmxlY283akQ5L2lMOUFU?=
- =?utf-8?B?bTM0cElhQ1k4ODNObXNwTEN0TEl4NkhuOEhEbzJJdXN5RVF1MWtKbCsrTkpx?=
- =?utf-8?B?aVZCSEw4L2pMMkI3YXJRZFRkcVdXaVZlRHlIRW1iYXdGU29jUlN2Nm84aEo2?=
- =?utf-8?B?Z0NjRnRiWWpzdzZPWkZUOGRZb1FEY0dWSnhWZmhJM0dlSjMxNkRFMUhjM25k?=
- =?utf-8?B?UDBoWTZVYUFUQk15MElJdjk3eWp5clQ1dHk5bkRUV0kycG85RkJGS2xUMmo2?=
- =?utf-8?B?Yy93ZlJwZVdnM3hLRHJCMkdQK2ZrbHFFdGFjTnk0bExXOG5pdDJTVDliZXoy?=
- =?utf-8?B?d3pjTjkzaFQ1UVFlU2I0cVNOdG91MmhGZ1ZrVHEybDdCSC90R1BCNkMwWnhw?=
- =?utf-8?B?b3ZIdGw2Y250QkxHMXFhUC9YMGpMSVoxNWxRZjZ2OHNaMGdEWlpmQy9FTUdj?=
- =?utf-8?B?TmtIWko2eExJVHliWGhOdDRDUHBFNTJHVTJSd0pxR0doZC9ublBDUVRmWVMv?=
- =?utf-8?B?SDU0RXQyaHk4S1NOSThzUW9Zci9yMU9TNlEzdHpTdG16c3lmL2lMWFB3ZSt4?=
- =?utf-8?B?SWJKZjhBWTVtVXhJTWpSQkhZeHFtZEN0UTF3UUVxMGlXbmRWblFZSWJPUi9J?=
- =?utf-8?B?RUxlZ3NOVnFZcS9OeXB3akF5cU5FUXJZNmxkWHc5d2FaU3lvNHBkei9yVXNp?=
- =?utf-8?Q?w60srhfEbL+NiCow3Gpo+Zi85vB9R0sJ0Z3AnoJnIUfo?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33833f42-ed45-42eb-e5c8-08de1e69ef2c
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3997.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 01:55:47.4937
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /p0UFnfrgyqX3ogdtUZUFB+wkp7kli4i3o22EI2vIgK/KlenNbq/u6/ZMoCTyNOPVgfmi83tx/lyJB+ipdhh7Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9334
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107-add-lt9211c-bridge-v2-2-b0616e23407c@oss.qualcomm.com>
 
-On Sun Nov 2, 2025 at 12:33 PM JST, John Hubbard wrote:
-> On 11/1/25 7:41 PM, Alexandre Courbot wrote:
->> On Sun Nov 2, 2025 at 9:34 AM JST, John Hubbard wrote:
->>> On 10/29/25 7:05 AM, Alexandre Courbot wrote:
-> ...
->
->> We can always add doccomments in the macro, as in the patch below. These
->> will be displayed by LSP when one highlights or tries to use one of
->> these constants.
->>=20
->> If you think that's adequate, I will send a patch.
->>=20
->> --- a/drivers/gpu/nova-core/bitfield.rs
->> +++ b/drivers/gpu/nova-core/bitfield.rs
->> @@ -249,7 +249,10 @@ impl $name {
->>               { $process:expr } $prim_type:tt $to_type:ty =3D> $res_type=
-:ty $(, $comment:literal)?;
->>       ) =3D> {
->>           ::kernel::macros::paste!(
->> +        /// Inclusive range of the bits covered by this field.
->>           const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8>=
- =3D $lo..=3D$hi;
->
-> Will that let people know that they'll see something like
-> IMPLEMENTATION_RANGE() for a corresponding .implementation field?
->
-> I'm hoping we can somehow create clear and plain documentation for
-> the various functions that the macro generates.
+Hi Nilesh,
 
-I did try to generate better documentation for these using the `#doc`
-directive, actually posted the patch by mistake so I might as well link
-to it:
+kernel test robot noticed the following build errors:
 
-https://lore.kernel.org/rust-for-linux/20251108-gsp_boot-v8-16-70b762eedd50=
-@nvidia.com/
+[auto build test ERROR on f50b969bafafb2810a07f376387350c4c0d72a21]
 
-Unfortunately, the final documentation does not appear with
-rust-analyzer/LSP, which drastically limits its usefulness. :/
+url:    https://github.com/intel-lab-lkp/linux/commits/Nilesh-Laad/dt-bindings-bridge-lt9211c-Add-bindings/20251107-210546
+base:   f50b969bafafb2810a07f376387350c4c0d72a21
+patch link:    https://lore.kernel.org/r/20251107-add-lt9211c-bridge-v2-2-b0616e23407c%40oss.qualcomm.com
+patch subject: [PATCH v2 2/2] drm/bridge: add support for lontium lt9211c bridge
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20251108/202511080928.8r4OmyWW-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251108/202511080928.8r4OmyWW-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511080928.8r4OmyWW-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/gpu/drm/bridge/lontium-lt9211c.c: In function 'lt9211c_configure_rx':
+>> drivers/gpu/drm/bridge/lontium-lt9211c.c:207:55: warning: suggest parentheses around arithmetic in operand of '|' [-Wparentheses]
+     207 |         ret = regmap_write(ctx->regmap, 0x8180, (pval & 0xfc | 0x03));
+         |                                                  ~~~~~^~~~~~
+   drivers/gpu/drm/bridge/lontium-lt9211c.c:227:55: warning: suggest parentheses around arithmetic in operand of '|' [-Wparentheses]
+     227 |         ret = regmap_write(ctx->regmap, 0x8530, (pval & 0xf8 | 0x11));
+         |                                                  ~~~~~^~~~~~
+   drivers/gpu/drm/bridge/lontium-lt9211c.c: In function 'lt9211c_autodetect_rx':
+>> drivers/gpu/drm/bridge/lontium-lt9211c.c:253:12: warning: unused variable 'bc' [-Wunused-variable]
+     253 |         u8 bc[3];
+         |            ^~
+   drivers/gpu/drm/bridge/lontium-lt9211c.c: In function 'lt9211c_configure_tx':
+   drivers/gpu/drm/bridge/lontium-lt9211c.c:619:55: warning: suggest parentheses around arithmetic in operand of '|' [-Wparentheses]
+     619 |         ret = regmap_write(ctx->regmap, 0x8530, (pval & 0x3f | 0x40));
+         |                                                  ~~~~~^~~~~~
+   drivers/gpu/drm/bridge/lontium-lt9211c.c: At top level:
+>> drivers/gpu/drm/bridge/lontium-lt9211c.c:918:35: error: initialization of 'int (*)(struct drm_bridge *, struct drm_encoder *, enum drm_bridge_attach_flags)' from incompatible pointer type 'int (*)(struct drm_bridge *, enum drm_bridge_attach_flags)' [-Wincompatible-pointer-types]
+     918 |         .attach                 = lt9211c_attach,
+         |                                   ^~~~~~~~~~~~~~
+   drivers/gpu/drm/bridge/lontium-lt9211c.c:918:35: note: (near initialization for 'lt9211c_funcs.attach')
+   drivers/gpu/drm/bridge/lontium-lt9211c.c:99:12: note: 'lt9211c_attach' declared here
+      99 | static int lt9211c_attach(struct drm_bridge *bridge,
+         |            ^~~~~~~~~~~~~~
+>> drivers/gpu/drm/bridge/lontium-lt9211c.c:920:35: error: initialization of 'void (*)(struct drm_bridge *, struct drm_atomic_state *)' from incompatible pointer type 'void (*)(struct drm_bridge *, struct drm_bridge_state *)' [-Wincompatible-pointer-types]
+     920 |         .atomic_enable          = lt9211c_atomic_enable,
+         |                                   ^~~~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/bridge/lontium-lt9211c.c:920:35: note: (near initialization for 'lt9211c_funcs.atomic_enable')
+   drivers/gpu/drm/bridge/lontium-lt9211c.c:777:13: note: 'lt9211c_atomic_enable' declared here
+     777 | static void lt9211c_atomic_enable(struct drm_bridge *bridge,
+         |             ^~~~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/bridge/lontium-lt9211c.c:921:35: error: initialization of 'void (*)(struct drm_bridge *, struct drm_atomic_state *)' from incompatible pointer type 'void (*)(struct drm_bridge *, struct drm_bridge_state *)' [-Wincompatible-pointer-types]
+     921 |         .atomic_disable         = lt9211c_atomic_disable,
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/bridge/lontium-lt9211c.c:921:35: note: (near initialization for 'lt9211c_funcs.atomic_disable')
+   drivers/gpu/drm/bridge/lontium-lt9211c.c:857:13: note: 'lt9211c_atomic_disable' declared here
+     857 | static void lt9211c_atomic_disable(struct drm_bridge *bridge,
+         |             ^~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +918 drivers/gpu/drm/bridge/lontium-lt9211c.c
+
+   916	
+   917	static const struct drm_bridge_funcs lt9211c_funcs = {
+ > 918		.attach			= lt9211c_attach,
+   919		.mode_valid		= lt9211c_mode_valid,
+ > 920		.atomic_enable		= lt9211c_atomic_enable,
+   921		.atomic_disable		= lt9211c_atomic_disable,
+   922		.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+   923		.atomic_destroy_state	= drm_atomic_helper_bridge_destroy_state,
+   924		.atomic_get_input_bus_fmts = lt9211c_atomic_get_input_bus_fmts,
+   925		.atomic_reset		= drm_atomic_helper_bridge_reset,
+   926	};
+   927	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
