@@ -1,98 +1,84 @@
-Return-Path: <linux-kernel+bounces-891357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CBCEC42862
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 07:33:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4B3C42865
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 07:39:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67FE188DB0B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 06:33:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C018188DCC9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 06:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8A02DECB2;
-	Sat,  8 Nov 2025 06:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37102DF709;
+	Sat,  8 Nov 2025 06:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uzq6smUi"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="OWvWzgPg"
+Received: from r3-18.sinamail.sina.com.cn (r3-18.sinamail.sina.com.cn [202.108.3.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA852DECA1
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 06:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9860A253B58
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 06:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762583595; cv=none; b=f9QW2mDRXeMdUkFZ+i82xM8Wx7JAbnsMayRvX255gPq013de+FO52v/lr41LFcAi7NGPPVQ8Quf5cXtPG7UMYgUPMLXY5jdDrhELCIRqm2HEbkYe8UyvntKD4VtG8hi+WnUBCRhjgeq7eY4NLyxPMypKoyWnq5SBNs6h2wtdA5M=
+	t=1762583937; cv=none; b=cR2AxgZzoqUzJQts99YzhGAD7iw9NVhMarPAElfc70O64qKAlGA7cmALFvjHgeB6+q+55iEnVKXALsE3sEWlmNgYuskJMb23/7CgpWoEsoFccARLhwyN3u/bTsmnbFVyk0jD+1VS/dHvUPGzsDrLG/7T5Y1pFXvB17CpScowp1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762583595; c=relaxed/simple;
-	bh=dbfhdtCKn+6nvZ6eJ1H7Lwiq1Z6gbhIUoQCHaumcd70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u4zA8GSYg9QXwf3P+5Ypmliyy5oE/CDMql+lMsndpsM+GySkEqeHTdvSBQwpX3wqsrO6sS91tkuDcGK/+HkeejlWX1WkufCyZs2JWx6Q8liJyFiWo51fn4+IRyrO1P6t8RxEs98cB6Wz0mLIxRaEZtE0pOIqoqkU02X/VjQhK4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uzq6smUi; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 7 Nov 2025 22:32:52 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762583579;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J/7T3JLvqIy8G97oSkwZiUgQ/us13qwXbaI51bbYH88=;
-	b=uzq6smUiUaadIABNL4WAH3kQ9/NWi6rV98ylBfMFIppw4E+N8btmKbgAwhGrszMoJj9rnz
-	CB2k+MOmm4mSUBVKeFZssHPocjdfCursoyR/iyfIffk6nTiCSrZTDcFQJPhgzISSZpcb6J
-	ZQS4G8+TUhTtakAd1HkSQXaXtPTzs0Y=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Qi Zheng <qi.zheng@linux.dev>, hannes@cmpxchg.org, hughd@google.com, 
-	mhocko@suse.com, roman.gushchin@linux.dev, muchun.song@linux.dev, 
-	david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com, 
-	imran.f.khan@oracle.com, kamalesh.babulal@oracle.com, axelrasmussen@google.com, 
-	yuanchu@google.com, weixugc@google.com, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	Muchun Song <songmuchun@bytedance.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
-Message-ID: <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
-References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
- <97ea4728568459f501ddcab6c378c29064630bb9.1761658310.git.zhengqi.arch@bytedance.com>
- <aQ1_f_6KPRZknUGS@harry>
- <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
- <aQ3yLER4C4jY70BH@harry>
+	s=arc-20240116; t=1762583937; c=relaxed/simple;
+	bh=zF6NFIPhancgZwzI+bXc5KtjO3KI9qIp1pmV/zh2+AU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HAIXwqGvl95ikE+Ljpr4PRmvGzTejfxmsRoAKmzcc8ohtcc9Uh0LPpfny8qNPNSAJaPUA2/oxZd8u+dlnHMR1DkSezlZqbFyrt1Gpd4H527hEYCvDnmKeYB7iWKfxh1nR9Zj2qFn3upBxvuJZ+WujZRtSuBntSu7TlP/9Uwr5Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=OWvWzgPg; arc=none smtp.client-ip=202.108.3.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1762583932;
+	bh=Hhl6lRv0tgLFZwJJkwrly+HsRbncDvU6qYbvV6Re+Xw=;
+	h=From:Subject:Date:Message-ID;
+	b=OWvWzgPgT8RenOizOLLeMIyEtQOHC4wY0Dun5DjKNEg3VUgBPK7k9cZ8AIc3ll6m9
+	 LM5Tus8eRbW6QjQwxOAX3PYYc4b73pJflTeUd5TpZCzP7jpFUSZHwx0mchHdWouAPo
+	 XW2aA5n3oI4sXI5JBjDDz5wHTsp8cFGZszOGbqlg=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.57.85])
+	by sina.com (10.54.253.32) with ESMTP
+	id 690EE571000056FC; Sat, 8 Nov 2025 14:38:43 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1975514456628
+X-SMAIL-UIID: 8F3D1C4BDE524BE8B6F4EEB69C07B80E-20251108-143843-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [lsm?] WARNING in put_cred_rcu
+Date: Sat,  8 Nov 2025 14:38:30 +0800
+Message-ID: <20251108063831.8984-1-hdanton@sina.com>
+In-Reply-To: <690dfca7.a70a0220.22f260.004d.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQ3yLER4C4jY70BH@harry>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 07, 2025 at 10:20:57PM +0900, Harry Yoo wrote:
+> Date: Fri, 07 Nov 2025 06:05:27 -0800
+> Hello,
 > 
-> Although it's mentioned in the locking documentation, I'm afraid that
-> local_lock is not the right interface to use here. Preemption will be
-> disabled anyway (on both PREEMPT_RT and !PREEMPT_RT) when the stats are
-> updated (in __mod_node_page_state()).
+> syzbot found the following issue on:
 > 
-> Here we just want to disable IRQ only on !PREEMPT_RT (to update
-> the stats safely).
+> HEAD commit:    17490bd0527f Add linux-next specific files for 20251104
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16c09bcd980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9995c0d2611ab121
+> dashboard link: https://syzkaller.appspot.com/bug?extid=553c4078ab14e3cf3358
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1500a532580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12e0a114580000
 
-I don't think there is a need to disable IRQs. There are three stats
-update functions called in that hunk.
-
-1) __mod_lruvec_state
-2) __count_vm_events
-3) count_memcg_events
-
-count_memcg_events() can be called with IRQs. __count_vm_events can be
-replaced with count_vm_events. For __mod_lruvec_state, the
-__mod_node_page_state() inside needs preemption disabled.
-
-Easy way would be to just disable/enable preemption instead of IRQs.
-Otherwise go a bit more fine-grained approach i.e. replace
-__count_vm_events with count_vm_events and just disable preemption
-across __mod_node_page_state().
+#syz test https://github.com/brauner/linux.git namespace-6.19.fixes
 
