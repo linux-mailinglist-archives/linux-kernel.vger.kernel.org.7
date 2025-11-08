@@ -1,184 +1,144 @@
-Return-Path: <linux-kernel+bounces-891544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D58C42E39
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 15:24:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F1FC42E3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 15:27:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 24DA74E5BEC
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 14:24:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B3354E3EF0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 14:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6921F4188;
-	Sat,  8 Nov 2025 14:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16811F8BD6;
+	Sat,  8 Nov 2025 14:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QZ74cWAz"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012049.outbound.protection.outlook.com [52.101.48.49])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B0+TdeiG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A39E14A8E;
-	Sat,  8 Nov 2025 14:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762611845; cv=fail; b=CJ7bZn8mwbv13OZJHYtrmAZmocO2LYGNQ58Xz0e0QmlEiaPXa4Gqs5SKAsPEmlqo6OhKW086GtKvWCubfn95Sc15G15HvlGLtcuiqCHd3C5sgXDUtYLfzy87mzCkXayP5BXCxkQT9g1jjvkzkxIQRRKYK+TKNaq0E2b0uBgMIt4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762611845; c=relaxed/simple;
-	bh=6/c5tl3zkfVfQfdpwJkWKRfqdEBqTducFQU8f5keih4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZNsLwlzPfZ4J3tgGATtxtJ5uMqKiYleg1uDnccS8kCZOge2jd00/QiGI423cHYO4Of3oG7fES7R/SK1Ut2U1cxeR4Jg5go3gAdfO9TXROznbbgdK17EaXU4Z6H876UslrhAm+kv2m33cCfO/hikcT3E8TwglsdehVY+ZhBbRuxA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QZ74cWAz; arc=fail smtp.client-ip=52.101.48.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lffbNaq3emi1fELbdoEgjDYraU8xb7Mix0Ou4MTj+sqNfOv0Oa6DKSh7y9mB7Iux3D9wq5XZve4NwfsJdUg9WAxWYYqkTEq0D0XdoIex2RZmMy8naowYvmsdH3Sr/9XwJLroROuqAgG0dnvNCI745xlKeSDLhscHeRNYk/si4jFFwkrY41QngRECQgqOCg9MMyGYBoqhWeIgmGVwWy4CNJSWTbbSNejtbJsxlWgLnwK/MbIcDzflLhSxRrfY5bTEaMMrdHHlxkdSsOQiFfEdAlJiXXSjxpHjwQtEAZLWtK+TXP18l0NfwpNijGoL/qvlLX2AIoJ4zO5HmRnhFNqL2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VleNa4wSVod11xLvTiRfZuVhqyGxVx7VUD8PuFtmbw8=;
- b=oOajSWdLSldoqVcdtm54AoBl2NrbmLJqyV75PPli2O3Ot1h/279JTx4GsLKMhmtlPoP6xjFDnGSTXwTlgiUg5vF8g1eQ0clu5QFhdnAuIqUu3NWfGGB+lXmkOhAhmYb+9Ijuf/DK91BtLPNliw/0/ayuUNtQ6s+O0mPzKX1aH5T4gtK4OM/xaP5xHvzME0Eq+T/cuhvTxaEGofdiGRAt/JzXjqdYZ8mfAmII1WcKE9DRsxXLAkXV5NGJptYgtkPatrKr70z29fC78pzdTVsYr9FulrWfBSffT4EbmC7gUMd78a3wOf0Jz8sW0821w44d4WIxx+zRG0MGQF5kG17aeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=linaro.org smtp.mailfrom=ti.com; dmarc=pass
- (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VleNa4wSVod11xLvTiRfZuVhqyGxVx7VUD8PuFtmbw8=;
- b=QZ74cWAzpvrXFePzERS3cjIlsHOA/RvQA8Y/y0/hfrfhL8/3EwhJpiuSUUJXtH0NACoIshY0yWMLD3SEUG+y4Lfv6Rx8tSpCNIi8ln0H2j0/abEi9U8L8y4ATVVR9Q7e7Xa4JRNEUTj6lHdaPi/yIKjdBSkYMp2pwa1K0Ij241U=
-Received: from BYAPR07CA0068.namprd07.prod.outlook.com (2603:10b6:a03:60::45)
- by CO1PR10MB4531.namprd10.prod.outlook.com (2603:10b6:303:6c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Sat, 8 Nov
- 2025 14:23:59 +0000
-Received: from CO1PEPF000075EF.namprd03.prod.outlook.com
- (2603:10b6:a03:60:cafe::1c) by BYAPR07CA0068.outlook.office365.com
- (2603:10b6:a03:60::45) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.13 via Frontend Transport; Sat,
- 8 Nov 2025 14:23:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- CO1PEPF000075EF.mail.protection.outlook.com (10.167.249.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Sat, 8 Nov 2025 14:23:58 +0000
-Received: from DFLE210.ent.ti.com (10.64.6.68) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sat, 8 Nov
- 2025 08:23:57 -0600
-Received: from DFLE215.ent.ti.com (10.64.6.73) by DFLE210.ent.ti.com
- (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sat, 8 Nov
- 2025 08:23:56 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE215.ent.ti.com
- (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Sat, 8 Nov 2025 08:23:56 -0600
-Received: from lelvem-mr05.itg.ti.com ([10.250.165.138])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A8ENn8M547304;
-	Sat, 8 Nov 2025 08:23:50 -0600
-From: Baojun Xu <baojun.xu@ti.com>
-To: <tiwai@suse.de>
-CC: <robh+dt@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-	<lgirdwood@gmail.com>, <perex@perex.cz>, <shenghao-ding@ti.com>,
-	<navada@ti.com>, <13916275206@139.com>, <v-hampiholi@ti.com>, <v-po@ti.com>,
-	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<liam.r.girdwood@intel.com>, <yung-chuan.liao@linux.intel.com>,
-	<baojun.xu@ti.com>, <broonie@kernel.org>, <antheas.dk@gmail.com>,
-	<stuart.a.hayhurst@gmail.com>, <dan.carpenter@linaro.org>
-Subject: [PATCH v1] ALSA: hda/tas2781: Add new quirk for HP new projects
-Date: Sat, 8 Nov 2025 22:23:25 +0800
-Message-ID: <20251108142325.2563-1-baojun.xu@ti.com>
-X-Mailer: git-send-email 2.43.0.windows.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D05139D0A;
+	Sat,  8 Nov 2025 14:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762612019; cv=none; b=AYXVKRXrV+8lNuWG13jRtKWVSY/QaQtSmYQwFV7euqhWBjdySNU1gkx6x8yDoQGZJ6whbDKl5Q7mazfkOGz01iISVp+utYFaFs85i07ntQg0WTtR5qk+WVifeVfmg5GQNK8OyW0fzalwLOC/8BWIs32UC/KG6sOShuG2QyPo1ic=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762612019; c=relaxed/simple;
+	bh=0YxSL5+7NseLxnvsvTrq6Zwh0C/1b6cl2/khiOr+Z/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ltunYUUazJfnh1usZMzjXW4PSjS4ORqVYmDvNbO60PeKR2xT9ZHzFxsZuR5E+xEzMrASghcMmmI1N25GDTVDEXb2DwD0qf0SFdBS0kFy9Jw96GA9P36Wd1AyOi/vDtQIYzI7jlPxfwVBcARd7aQVXGc9ndnXLGJUGdam2X6pUH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B0+TdeiG; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762612017; x=1794148017;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0YxSL5+7NseLxnvsvTrq6Zwh0C/1b6cl2/khiOr+Z/c=;
+  b=B0+TdeiG3UJgumCZZdsmyWhVTgosPct77vaavOdVixPZbCnQurVwtegG
+   HCElI1lpXkjcuJG1G7daRzONirpElxlj2UVU+louNkVFf6QopcoYnffm3
+   e1X4+AmZbJ3T/H3PZl3XVkUih14v8pGZnXI3ODf3rRj47E0Gpx652OpMV
+   DGE7WChsYexfso5Cn4nTrMS6PEZI1e7affNiElwZ6y3hWuuMDeTe3eNCd
+   KfkjfrtP9daUO5WvjaOmUJsFI68K/fbqNzm3uS4GSOzR3KvZSuNatM3c9
+   Ok9rBZSDr0oF92YgcWXxfNjxrmhzNQhpWhdj/jtiaFHtHBEjgbX5macCU
+   w==;
+X-CSE-ConnectionGUID: fd+U5KN5RSiTn8VVwU34cw==
+X-CSE-MsgGUID: hRnruZjWSv+iHieukPYmUQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="63746490"
+X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; 
+   d="scan'208";a="63746490"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2025 06:26:56 -0800
+X-CSE-ConnectionGUID: BdO23U+BSjSAaM734T6Rjg==
+X-CSE-MsgGUID: W2BYNPonREWyRqsjpo77bw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; 
+   d="scan'208";a="218941642"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 08 Nov 2025 06:26:53 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vHjtx-0000wR-2V;
+	Sat, 08 Nov 2025 14:26:49 +0000
+Date: Sat, 8 Nov 2025 22:26:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Praveen K Paladugu <prapal@linux.microsoft.com>, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	arnd@arndb.de
+Cc: oe-kbuild-all@lists.linux.dev, anbelski@linux.microsoft.com,
+	prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
+	nunodasneves@linux.microsoft.com, skinsburskii@linux.microsoft.com,
+	mhklinux@outlook.com
+Subject: Re: [PATCH v4 3/3] hyperv: Cleanly shutdown root partition with MSHV
+Message-ID: <202511082249.JoKyyEEZ-lkp@intel.com>
+References: <20251107221700.45957-4-prapal@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075EF:EE_|CO1PR10MB4531:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad115628-6961-4889-7bff-08de1ed274b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZdRkr+NtgofIH+if8Jj6f8634I57oA12Y+BTl927zh3NzKxOP/Qc1KhBqNCl?=
- =?us-ascii?Q?YLS+u2WxaxYSdnB9vf49l2wNNogMpQIrg1ryOsbqBzbOO0UvKHh82oNEo+iJ?=
- =?us-ascii?Q?XSeHq5l8n0JcQ9Goa9mSl0fGQe1DYbsmYi3TyocKPD/CYdc7VlpjZgYk1RgX?=
- =?us-ascii?Q?FAkQr9mDC1ggONURspn7ZgR9VfKqRYbqAtIjAyNy6UwxySn6gC+1NQcYMJ1M?=
- =?us-ascii?Q?SGAhGgxqBMQm2s5xEQ+VMMtOhCFK+lMAPKLB7Ha6lqlOhq0MfFLhtJLyax79?=
- =?us-ascii?Q?p1LvInK8EEL+JXGvi8AD4Q0QUsXNm2kFCFDCZd4rvlb4wPUIYkmeObUvX0zc?=
- =?us-ascii?Q?uXb5wKr6Mf1ECHX8GEYn6eSNsjpVGRPrBTYN7XAs2IhDneXB4k6Hn0FRGSr7?=
- =?us-ascii?Q?z/438LeeB03EGHGnyIuN/MzBpJ/gTxTpMTrE4p8KwBR24CFcLNESp3Rcda8b?=
- =?us-ascii?Q?NitZXDENKPqY+guJYFD1Kf10REAkF6s7lf6mFghopUB69j2ClkbhkENYwFQR?=
- =?us-ascii?Q?PsG+J64QCQckVfjX+eSkqJophn2jlYBVeYFVxS6VqjYP8Kx/Vkb3UTnZHsbL?=
- =?us-ascii?Q?SyO7wAXA3G5itSqbFUa1LwLMEuUNp4TFiApFRt0FwELI1XVDCCmrR4sOegZ6?=
- =?us-ascii?Q?H0V9PJi165BlOnrDF7IaZPo1n+mLVVXhmmaCcErpjobPlEmqlum/FCD6HLnX?=
- =?us-ascii?Q?0NSoHydPemVeJXqbpHhRcPY/ZtUdPQD1LgkgfvEJrL25HITipOeZOh6GSCDU?=
- =?us-ascii?Q?WSU7V+2GQsJliesRVTv9LRqPiSrUvsv6aokPewJBb4M992o9Yy9hmmHhzfLG?=
- =?us-ascii?Q?svunqYh5DSV1WvFE8MLOLiAmQZmK866GnuPzjk6kC9vkBtCptjNJe5Psb4PC?=
- =?us-ascii?Q?DjVFE7ff5nCnzYsktWPHiHfteRT5pDEC0TL2xaBkuWWDgiYUp0EgucTXjg7e?=
- =?us-ascii?Q?+D4bfRmDAyU0+64M77np2JZ7oEHrSlG+HRx0T7+IkH93Qml4Fj0V6zWF/aTr?=
- =?us-ascii?Q?b5LJW6PXrr3qBneNZzrK2NT5g9CMLoHutgPWq4tQ1NOU8SGzJ8dGeQgCgqi/?=
- =?us-ascii?Q?Zbx61fLlnCqe6SJKZ9WlkG4PiPh8bjR1r1fSkRikB8dHKC7CWWFr5+FcWcjR?=
- =?us-ascii?Q?VGw11oIfXQAK7U66LkL2YDEhwN7HXg4d/tsp4F5DiiFdjgJUn/v5+zmbKKV8?=
- =?us-ascii?Q?CH0P4LZflU9BHvGyImos1Mr9afQdtCwIcHcjJYi+28OWX8Fiyyi90ktXQt2v?=
- =?us-ascii?Q?V9DBhj13tf8vjaXIlnzabF13NlWUdWcXd7JALhnE8BSSQwkU+fVRdTyfmipY?=
- =?us-ascii?Q?5n8demM37JSvno42fsFlWewG9/CEtVpynwdQqrKCFppr8rC05aIWng1wfi6c?=
- =?us-ascii?Q?/ntre+poODY/4Xwd4rw2TnNgxXmIT4+eezCE3fkEQ+Qn8sdrDT3GbUNc5Ahu?=
- =?us-ascii?Q?RLPeZ0oKKrQcb6pMHB97pd8Dnemico8qDvf0Ue3rddnTs0cOylNEedbolUzO?=
- =?us-ascii?Q?IeeSM3CyHQnVhY1oQnZSARXqypxIrKFRYN2/WcdRX1y4uuCaP31RMeFibEqL?=
- =?us-ascii?Q?NlMf/fIltjC67phdFRA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 14:23:58.2056
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad115628-6961-4889-7bff-08de1ed274b4
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000075EF.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4531
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107221700.45957-4-prapal@linux.microsoft.com>
 
-Add new vendor_id and subsystem_id in quirk for HP new projects.
+Hi Praveen,
 
-Signed-off-by: Baojun Xu <baojun.xu@ti.com>
----
- sound/hda/codecs/realtek/alc269.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+kernel test robot noticed the following build warnings:
 
-diff --git a/sound/hda/codecs/realtek/alc269.c b/sound/hda/codecs/realtek/alc269.c
-index 4aec5067c59d..a9698bf26887 100644
---- a/sound/hda/codecs/realtek/alc269.c
-+++ b/sound/hda/codecs/realtek/alc269.c
-@@ -6694,6 +6694,15 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x103c, 0x8e60, "HP Trekker ", ALC287_FIXUP_CS35L41_I2C_2),
- 	SND_PCI_QUIRK(0x103c, 0x8e61, "HP Trekker ", ALC287_FIXUP_CS35L41_I2C_2),
- 	SND_PCI_QUIRK(0x103c, 0x8e62, "HP Trekker ", ALC287_FIXUP_CS35L41_I2C_2),
-+	SND_PCI_QUIRK(0x103c, 0x8ed5, "HP Merino13X", ALC245_FIXUP_TAS2781_SPI_2),
-+	SND_PCI_QUIRK(0x103c, 0x8ed6, "HP Merino13", ALC245_FIXUP_TAS2781_SPI_2),
-+	SND_PCI_QUIRK(0x103c, 0x8ed7, "HP Merino14", ALC245_FIXUP_TAS2781_SPI_2),
-+	SND_PCI_QUIRK(0x103c, 0x8ed8, "HP Merino16", ALC245_FIXUP_TAS2781_SPI_2),
-+	SND_PCI_QUIRK(0x103c, 0x8ed9, "HP Merino14W", ALC245_FIXUP_TAS2781_SPI_2),
-+	SND_PCI_QUIRK(0x103c, 0x8eda, "HP Merino16W", ALC245_FIXUP_TAS2781_SPI_2),
-+	SND_PCI_QUIRK(0x103c, 0x8f40, "HP Lampas14", ALC287_FIXUP_TAS2781_I2C),
-+	SND_PCI_QUIRK(0x103c, 0x8f41, "HP Lampas16", ALC287_FIXUP_TAS2781_I2C),
-+	SND_PCI_QUIRK(0x103c, 0x8f42, "HP LampasW14", ALC287_FIXUP_TAS2781_I2C),
- 	SND_PCI_QUIRK(0x1043, 0x1032, "ASUS VivoBook X513EA", ALC256_FIXUP_ASUS_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1043, 0x1034, "ASUS GU605C", ALC285_FIXUP_ASUS_GU605_SPI_SPEAKER2_TO_DAC1),
- 	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
+[auto build test WARNING on next-20251107]
+[cannot apply to tip/x86/core linus/master v6.18-rc4 v6.18-rc3 v6.18-rc2 v6.18-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Praveen-K-Paladugu/hyperv-Add-definitions-for-MSHV-sleep-state-configuration/20251108-061825
+base:   next-20251107
+patch link:    https://lore.kernel.org/r/20251107221700.45957-4-prapal%40linux.microsoft.com
+patch subject: [PATCH v4 3/3] hyperv: Cleanly shutdown root partition with MSHV
+config: x86_64-randconfig-122-20251108 (https://download.01.org/0day-ci/archive/20251108/202511082249.JoKyyEEZ-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251108/202511082249.JoKyyEEZ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511082249.JoKyyEEZ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/hv/mshv_common.c:227:6: warning: variable 'status' set but not used [-Wunused-but-set-variable]
+     227 |         u64 status;
+         |             ^
+   1 warning generated.
+
+
+vim +/status +227 drivers/hv/mshv_common.c
+
+   220	
+   221	/*
+   222	 * Power off the machine by entering S5 sleep state via Hyper-V hypercall.
+   223	 * This call does not return if successful.
+   224	 */
+   225	void hv_machine_power_off(void)
+   226	{
+ > 227		u64 status;
+   228		unsigned long flags;
+   229		struct hv_input_enter_sleep_state *in;
+   230	
+   231		local_irq_save(flags);
+   232		in = *this_cpu_ptr(hyperv_pcpu_input_arg);
+   233		in->sleep_state = HV_SLEEP_STATE_S5;
+   234	
+   235		status = hv_do_hypercall(HVCALL_ENTER_SLEEP_STATE, in, NULL);
+   236		local_irq_restore(flags);
+   237	
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
