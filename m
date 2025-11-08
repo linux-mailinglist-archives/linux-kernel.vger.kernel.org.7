@@ -1,117 +1,141 @@
-Return-Path: <linux-kernel+bounces-891214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FD6C42298
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:48:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8542AC4229B
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:48:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983AA1897193
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:48:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08E7018871E3
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3BF284880;
-	Sat,  8 Nov 2025 00:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9035227B4F9;
+	Sat,  8 Nov 2025 00:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zOJ7E3h5"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="HOr39PH/"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4697523AB9D;
-	Sat,  8 Nov 2025 00:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B0A26E165
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 00:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762562849; cv=none; b=JXPful7+K9ImMWN/ff+j4p5CiqwIlgoCL56Dq0XCRmwolHGL/rZAd/nRRR7QJy4DgyqEbRuEt2dmJg3228EMbY64JbbWGRzf5CzYM/lQRntAL528X1V/VTvDqxsR0MCaS6xWDhGv9EkoUUdBux13tjz5amUMWjKWaoy3KgtBwtI=
+	t=1762562878; cv=none; b=kagcKrcDZLPR6lC897tIiTtiwPN01Gdy53iG/7q1RQFn61SNrqMCEo1lqq8/G3tH9idggexjNocgaLuMLd+mWnuRBUHNM0Mk5bXHLJ1Ov/6kyFMAz7z1uBLf6c+pN3WShCvpHYgFUAr3/TW1teeotcHqu9iS8hPrJSEnwfAxM5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762562849; c=relaxed/simple;
-	bh=59C/XuMe5Ge8/qSzc4ZMGAKYZDM7lDOXBBVpw2eaPSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qUNzyJCDj7dw1fwIzeItrGYGVIaQbC77S3v+V6oBSt3QqdFdMICQW1DASO8ASVigYHlssLtF4bOS+sPKyZshhEgLG3J41+egmSthiSljAxMvPc/iX3hSPQUQK488CSmgnyjBSRhXK67HI24KVC62zQA1OM/4Nw4ouRqUOIajVnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zOJ7E3h5; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=YhkT2ytpSMxixxpMPcBDjR5/ns0X9Sii3powHA75mKY=; b=zOJ7E3h5zUdzZHI132+HBGHClb
-	PPaRBgBE/Ik30NrEGow4L3XeW1/3qAzCHpbgs3zxgqQHf3eRmJ3PZCZQSNAq9s0Gdu/aKjosNbGjE
-	26fiJoO9u703uM0OdVej41p72Of87TW6J0SAT2PREFsA+8w9dPKJXdStJ++7UhHko425ISJHcxwXO
-	yuwLx+NNqepoMpwC1jLyEdJO2mixNatanIFB9KZyN3zXYSVsN9Q27gjZYfAYGNo/zocoKwWYx1VpM
-	w4/Kux8t24mf4rPWRqr5AWWowbphy5y4G2Zw3bgeKouO/DPHJeUCriJvp5ecK7rnzw9Clg9a6g8Yj
-	ANUHMzKA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vHX70-00000001n0i-2IMc;
-	Sat, 08 Nov 2025 00:47:26 +0000
-Message-ID: <7d03b0d2-8dd8-4cda-8a0d-7a065029e6f5@infradead.org>
-Date: Fri, 7 Nov 2025 16:47:25 -0800
+	s=arc-20240116; t=1762562878; c=relaxed/simple;
+	bh=/hmyZSHeuXe883AY8RZleUWbPkiy6fF/KxVQz8mwSfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eyzqJQi90UP4sttKhx3DQ/YGYYI8BjAcoTHOErKryN0WXhOCV6Brz9XKNPf7rsn6/WrB8QN1vOvBVFCGehI71+DHW3qrMos6/Gid65lelR4xd8heHSpUX9RmHF/ugWS4KT0c5Eb8JID/MESUFGc1M3m9wYTqbx5v8TAMSiz6pKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=HOr39PH/; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8b21fc25ae1so130773485a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 16:47:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1762562876; x=1763167676; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pfSbx8L4nPanVGMRr479mHYfADbovNNtvZzV7lTcOv8=;
+        b=HOr39PH/ycfa+WIhEcpwn8iiDgeyZUOmSeNi0s9oWfdxQxA8CYL54Hi39lu2+SbkmB
+         r5/AT+fLZBjAk/7G4OuFlDsV0gGaaiNDlHI2LdtYxoTp8R1ETFPw12pi/n6JS2im0tl+
+         ARdkQ2B5TbNNrxxWZqHOWw77OyWCPkqJYLOHfnP4+YwC2q++l9aEzfNHGC03ojkxOmaQ
+         eFeiu6n0tYLpJC4nezMyAiLcW++id4gwVrOPQydR3/Ri8+Wvi2EPvuBRmPWIbjEOXCGa
+         cctjh+vU80Lf66C4HnQPUIlweINwcQj1M//gvRAkQddNHpjBWfUzwQf2j+tygJG3vGcC
+         jk0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762562876; x=1763167676;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pfSbx8L4nPanVGMRr479mHYfADbovNNtvZzV7lTcOv8=;
+        b=fsoEPyOOcpxdaXxXvQqS3sAhjkANhfy15lVl4TjuTr0vR6myaZwtOZzSvnGAGPDVLH
+         guIBh2hANvGcSkgfNCQE3ImpthiEYZuEqvFfRBygC1OmtNuHPAkrhgxqNkWSp00KFh9y
+         a76TY8hoRYvtLaD3M1ngJLrviOasdDiqaurfGzwVnKAoxu1+nhjS645EySkstE2ekhVL
+         I/akWVx4QvcYHAv6WWd0ojFLbpruTNVqu7D3tmMYuh27MACcXo4oOjUGddHh5Cyd4r2K
+         Nq24mq70wgdy5ortphFtbsnc/YQ8MMOc/cnUgdBqil80Zb6Iz8Q4yix6A4aTiY+/R2aO
+         m/Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXFNm09G0Zq365ECSQG5hcA/2Y44j2q1VBZJqUnpQcZJZt31jhHcNrpWeXuJcH7KYZifSM3KzJ0EllWtg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqpj/IcmIb8p9yXV7tpilaL+CRaY9IDB6PuAZOeJ2Bh2m94Vxf
+	9GykwvodKz0Swfm4yfWwobvgYw713ySsfw8+E0b0sHGFn1UAVA7fA62rxRzYHvkah2U=
+X-Gm-Gg: ASbGnctGFO7Hf7VH0SL2ZCPSWCT5bVz+OEm2DCKHbogPUql77KZViJyAjQ0cufQc6qK
+	D3ESbMj6Avk/mIyjupvZlRKQQ2GWPJnfIcUMcxJf82hcSaacW7eshpyMBb7fjCAfSrVOeMVvL6k
+	3XiYsne9ilpObAZiJEEsguf9J7LGm81HZYQQVrVRcE7WmWVWSsNJNAJNxK/dli1ISeAu/P6SX2k
+	v7vGoN+ZpIZkmuy3XZ3aaYWfsVZUnvGZ18w2JqbW2gvYBa+cepDoMh0baVTnIPyTSxT8XMkvIvv
+	EBbwHRUOIDMLYUVZU7z5n8HHsGtQPVuOceCMcou+zptHoGa8JOwxVwR96NOnEGeTT62kF3RyFjf
+	89obW60U5H4w0fFJJNzIA4Xg2xvYD975ZTgoFuCcr6Ry2WYl9poysi6VUO7AIG7MXgeqRPQ7mH8
+	e2FGFSotyttwclp+AZdF4CY5QKeddOubHGS3db1e2+zl/lqNXKXtuhahFl
+X-Google-Smtp-Source: AGHT+IGDHhTWDSUeTerMAq7I/MD+3vriezautMa1TSo1oodrv/Bub4/+qoCC1k7wUOs9qzstWCl4pQ==
+X-Received: by 2002:a05:620a:1a85:b0:8ab:5912:45c with SMTP id af79cd13be357-8b257f3d84dmr149741985a.47.1762562875697;
+        Fri, 07 Nov 2025 16:47:55 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2357dbebasm525663585a.31.2025.11.07.16.47.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 16:47:54 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vHX7S-00000008NOZ-0EnE;
+	Fri, 07 Nov 2025 20:47:54 -0400
+Date: Fri, 7 Nov 2025 20:47:54 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: "Winiarski, Michal" <michal.winiarski@intel.com>,
+	Alex Williamson <alex@shazbot.org>,
+	"De Marchi, Lucas" <lucas.demarchi@intel.com>,
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	"Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <skolothumtho@nvidia.com>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"Brost, Matthew" <matthew.brost@intel.com>,
+	"Wajdeczko, Michal" <Michal.Wajdeczko@intel.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	"Laguna, Lukasz" <lukasz.laguna@intel.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	"Cabiddu, Giovanni" <giovanni.cabiddu@intel.com>,
+	Brett Creeley <brett.creeley@amd.com>
+Subject: Re: [PATCH v4 28/28] vfio/xe: Add device specific vfio_pci driver
+ variant for Intel graphics
+Message-ID: <20251108004754.GD1859178@ziepe.ca>
+References: <20251105151027.540712-1-michal.winiarski@intel.com>
+ <20251105151027.540712-29-michal.winiarski@intel.com>
+ <BN9PR11MB52766F70E2D8FD19C154CE958CC2A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <7dtl5qum4mfgjosj2mkfqu5u5tu7p2roi2et3env4lhrccmiqi@asemffaeeflr>
+ <BN9PR11MB52768763573DF22AB978C8228CC3A@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] x86/apic: Update kernel-doc to avoid warnings
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-References: <20251106101416.1924707-1-andriy.shevchenko@linux.intel.com>
- <20251106101416.1924707-3-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251106101416.1924707-3-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB52768763573DF22AB978C8228CC3A@BN9PR11MB5276.namprd11.prod.outlook.com>
 
-
-
-On 11/6/25 2:12 AM, Andy Shevchenko wrote:
-> Validator is not happy about some of the kernel-doc descriptions:
+On Fri, Nov 07, 2025 at 03:10:33AM +0000, Tian, Kevin wrote:
+> > To me, it looks like something generic, that will have impact on any
+> > device specific driver variant.
+> > What am I missing?
+> > 
+> > I wonder if drivers that don't implement the deferred reset trick were
+> > ever executed with lockdep enabled.
+> > 
 > 
-> Warning: arch/x86/kernel/apic/apic.c:245 No description found for return value of 'lapic_get_maxlvt'
-> Warning: arch/x86/kernel/apic/apic.c:2145 function parameter 'error_code' not described in 'spurious_interrupt'
+> @Jason, @Yishai, @Shameer, @Giovanni, @Brett:
 > 
-> Update them accordingly.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Sounds it's a right thing to pull back the deferred reset trick into
+> every driver. anything overlooked?
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+It does seem like we should probably do something in the core code to
+help this and remove the duplication.
 
-Thanks.
+I guess it makes sense the read/write lock would become entangled too.
 
-> ---
->  arch/x86/kernel/apic/apic.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-> index 680d305589a3..4675d1a07fc9 100644
-> --- a/arch/x86/kernel/apic/apic.c
-> +++ b/arch/x86/kernel/apic/apic.c
-> @@ -241,6 +241,8 @@ u64 native_apic_icr_read(void)
->  
->  /**
->   * lapic_get_maxlvt - get the maximum number of local vector table entries
-> + *
-> + * Return: the maximum number of local vector table entries
->   */
->  int lapic_get_maxlvt(void)
->  {
-> @@ -2136,7 +2138,7 @@ static noinline void handle_spurious_interrupt(u8 vector)
->  /**
->   * spurious_interrupt - Catch all for interrupts raised on unused vectors
->   * @regs:	Pointer to pt_regs on stack
-> - * @vector:	The vector number
-> + * @error_code:	The vector number
->   *
->   * This is invoked from ASM entry code to catch all interrupts which
->   * trigger on an entry which is routed to the common_spurious idtentry
-
--- 
-~Randy
+Jason
 
