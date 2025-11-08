@@ -1,143 +1,130 @@
-Return-Path: <linux-kernel+bounces-891740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CEC4C435BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 23:53:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB699C435CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 23:59:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36C7D3B04BB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 22:53:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA99188B964
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 22:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9EE24E4B4;
-	Sat,  8 Nov 2025 22:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="cwH3ec3I"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77862248886;
+	Sat,  8 Nov 2025 22:59:08 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9540F1917CD
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 22:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DFE18E1F
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 22:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762642401; cv=none; b=GQsESFUEL3vPB98AQDPZ1K7CZlHICqix82Lm660Rl52B0Dow4FMR3Zn11gL75B7MlF2j1Nm2QCyrZ2dwDpRLXPrInkQHbFduKEwoyKR88QZ2j2qJTknX+8nKcMyhfqKB5E/RfLxFxcuUFueC3Ch5KWWdXBFZ//jdyojdyHYcDLA=
+	t=1762642748; cv=none; b=RUPU6xwxLVVPLDyBgJ9iKrQ7jGayLKJiKweTNWZselwEqaWit5qYf43KWPR18cHCIXd3+vFTFd1hGdU3EWt6LR0C8OB/Kl7n/BtPX9RxGG8q8M/XMUcfptrfqN/DdMJLK6xD1P4w8mcjqtTvUCGjrPATXQe415YAkcNFLysD4dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762642401; c=relaxed/simple;
-	bh=cYjb2iVHarMvaoPkzkdkwuhVCkis7i+WP7D2iZOrHFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iNbTYYv9gsnUGx7Ih023JcDZYs94DwgnzypJstgl5epY+bJjr2u3wcyH7j3q+Qv/Wvz1wRNH4rCUF6PjrkB6QAElrO+6wl/kUAU2VVCjKPcnAp/RM+RB7bVljAMf8XwLZd5/eMqR8ztBKg5KYxVW/kHqQveQ/rJEe/9GOfNLGFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=cwH3ec3I; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b9ab6cdf64bso721320a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 14:53:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1762642399; x=1763247199; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=woeNf9SnFDKMh9COMO6hWAKnDrWNbFGLLR+aeDPR/i8=;
-        b=cwH3ec3I0DPWU4NpsN1WhhhEzCAzZwVZoG84W9Pyh8rXCv99O4Xk86QrgIsLEW86M0
-         m8vZELuDNL7NdRSBwsXL1JF6aL1gZdie4RuP0Oau0X524f0XiwgLs5unPxJnablDy4y5
-         zygSOR+PVRgAKcgb4plaFRZ7MVqhf2Qxt8JDDF2s534Ijg6TnzrZKuchzhMh8HfPz1Ji
-         zMTWzBUabExVjEMs0t7ai/34oQNcCVaDit2gbjEEccbCfj0d8uDka7hD2UVdFKkJYSTD
-         Hk/eq30EJceks1zueLS7eNK+/pXXVE+0BNP3WjrbI9tCk6OHKEhwLK11HzgFejzXHwwU
-         TUjw==
+	s=arc-20240116; t=1762642748; c=relaxed/simple;
+	bh=FsKiw1P9B7UnMPLZqRZkjt9gyx01uTg4TKsCCdCA6GI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gKhNLUU3CTGIYk4DB/FT0hI+9arclfgsrywjIO4iUy1xx8vB7nU0Y+sf/t/C9JmxtPFPHBVxrCjAZnaFpvpE8AJ2nipAXQMKARW5Jr43UNfqjSka8jnOA6WFIHQxUQy79bs+52+NC0O7OrViMLUfVs9/2wrVVkQVG+ZMzG2+aNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-948610ae935so152301339f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 14:59:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762642399; x=1763247199;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=woeNf9SnFDKMh9COMO6hWAKnDrWNbFGLLR+aeDPR/i8=;
-        b=gW/CW+31I+MmdYjTiQxRZsRjPNxoE4edwYCiMiq1vPPUD31ZIyOaslaAa4RcyjMqa0
-         si9Qd3WpmGS62/J3Z/njxgOPf6YnhOT9WxNASh/El4dkJ5PHS9uGjnA1ZY5vKb0mATZg
-         ZkFhmasACDp0m9qscqxVfEF5Hc8qDQa9tHj/uNi8y5NLjHc2Gfkx/g/r8AyTAoA+nMTS
-         OrNyjOWvntkcQJTXCCbkjx2uomjWvE2GPNZoMSoV3wePCGv6rXNSzVcc20JK+G34MZ5P
-         gKFuXEzOLD0iL3hp5jfFTjgFZ4hz+Qg3bYOqoGdxG/pY6ssQn894SW5dB9iVLZpEKDKc
-         Ko2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUMbYH2Aoddr06cAwQMi6SbTLnnHWXo9Xtb39sSk+c41RgTzvHaRUHSXg9MmSqsBFy3i7+romRpC4SSEY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsjeLiViWrrvvJPq3PexB9ds43jMIL/PQocwXsjcDO3Vu3dnJ5
-	0PmOYVFuUBgYwT+wXbYVirdP3T08YR1lAjP27iEh/LioOvLK1qZmg5VC9TiBdl3DFef1sCrVCJ8
-	X1s/zmSAMgoziHxUOS3KQNci52+3/u0k=
-X-Gm-Gg: ASbGncsttqlfCXm7nujZe+XdFGg1PmkNdL0D2c58Hsj4mH2yQgnW/N441dqhbJQCyPh
-	jQgneEhsRWN3auQYO2BFSKfREKZjlum1S22RE1YJ35F/RHYyN5Kom72EaDsRAeC48NbtPN13en5
-	iQY2BYAnGPO3LNGzNVEbxmKd3IsZKdA2gQGxNWR9M3dvaYj4UkgIG7VdhbC2HylvsH1rNdbfxi0
-	owpZVfqV55ApSBNo0RkKRw5P8wB8JJAcKd4zNLCxSp0yQg2A9+YnAjiGEU8HBHrxlcBWA3BOAyb
-	VNwnPgUe344VT2MPOhOjDrnf1Tqe
-X-Google-Smtp-Source: AGHT+IG+/PJGnDmxUNMI7+aZcN60vo2SoWlora4RSCXqNkbJIUjbFrzUdNRAqKB5MSZuajIzoZgImhzbTKgTAYjlkVM=
-X-Received: by 2002:a17:903:37cf:b0:295:134:9ae5 with SMTP id
- d9443c01a7336-297e1e61caamr46129275ad.24.1762642398835; Sat, 08 Nov 2025
- 14:53:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762642742; x=1763247542;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Q6RGTfP37+XoemsYNAa43r9yphIgY2XCSrARXAD8IY=;
+        b=aWagLRHoVyVv/Z1r5kLyZzF6vGTYov5d7X0xSDJu/MmEKxanEtizW9woCBz6m4t2eI
+         meEe2xxnt+6C+THE2FewVlWdtTMu+YI2xuqY2R3txfXfqc8t3qn9D/KNZwcCSVF39O4w
+         GsDa4VKUzzmlUuQUWzFOReqi7Q1EbJB3K0Tcv2wfNVf5BRDaFyB/TYgKTiLC68Gd+LxR
+         LM+nIeJGRZEvOxOW7QHAjVpRBcpoGIgNSgfKk99LGvYmCzZXmmHb12C8gexLFDAmgjTl
+         aXrvFqtAnXakThh2IhMYdtKhAH8l06Bz/vLmtPcG5K4MilNL8E3UnK70lJNMLYDoItaG
+         feRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgF37UjDl7rKjb7G4OUQabmm/U10HAL7/iKKCGHeLJYBszU3cW7FeYw3zrIZ/1rQP+fMotfC5epWZQ69k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhVpjju+qSfIFg4HCHsAnVdlnA89gm884bZh4nRhMX0+O+4BeU
+	N7LaYhqYf5mWRpqQK0IrVXKF1Gw5cXJ0ywrUnp7lbFKDKEO8eQ519HKNBHhB6HhgoNrOb27UL9y
+	FUmnlQaY7kv1K7mMXScsPFNazjjsgDB1djXIQBA1zi1a/wIPUV6Zs+RjcaB0=
+X-Google-Smtp-Source: AGHT+IFwU5vONS4ZrT3DMl8Gj3nlYJNaScCmR03ghxo2oz5bhvduoy9iw+/mi1myljro7ZPWq4gk5JEgNghehAkWOTOZLkqDO7Cy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027-b4-s4-vdec-upstream-v1-0-620401813b5d@amlogic.com> <20251027-b4-s4-vdec-upstream-v1-3-620401813b5d@amlogic.com>
-In-Reply-To: <20251027-b4-s4-vdec-upstream-v1-3-620401813b5d@amlogic.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sat, 8 Nov 2025 23:53:07 +0100
-X-Gm-Features: AWmQ_bni7l89RyP8uXpthsz3XoYRD2BT1Es7uRWB0DG1y_IRoUhPm173lpNSDGc
-Message-ID: <CAFBinCBy7vPq0oX0PQ=yC5E3Mx3sv6qdVHsMh-NQQzAkbDuvRQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] decoder: Add V4L2 stateless H.264 decoder driver
-To: zhentao.guo@amlogic.com
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+X-Received: by 2002:a05:6e02:216d:b0:431:d864:366a with SMTP id
+ e9e14a558f8ab-43367dda177mr57978315ab.2.1762642742573; Sat, 08 Nov 2025
+ 14:59:02 -0800 (PST)
+Date: Sat, 08 Nov 2025 14:59:02 -0800
+In-Reply-To: <CAHc6FU7F7SQs-qq6vwaB+xTCcBPs3Hn53JPEL7w=-W6X8PSCcg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690fcb36.a70a0220.22f260.008e.GAE@google.com>
+Subject: Re: [syzbot] [gfs2?] memory leak in gfs2_trans_begin (2)
+From: syzbot <syzbot+63ba84f14f62e61a5fd0@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
 Hello,
 
-thank you for your work on this!
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel BUG in do_xmote
 
-On Mon, Oct 27, 2025 at 6:42=E2=80=AFAM Zhentao Guo via B4 Relay
-<devnull+zhentao.guo.amlogic.com@kernel.org> wrote:
-[...]
-+/**
-+ * enum aml_power_type_e - Type of decoder power.
-+ */
-+enum aml_power_type_e {
-+       AML_PM_PD =3D 0,
-+};
-Are there any other power types that you are already aware of - or is
-this added "just in case" an additional type is needed in future?
+gfs2: fsid=syz:syz.0:  H: s:EX f:nW e:0 p:7821 [syz.6.189] gfs2_iomap_begin_write fs/gfs2/bmap.c:1040 [inline]
+gfs2: fsid=syz:syz.0:  H: s:EX f:nW e:0 p:7821 [syz.6.189] gfs2_iomap_begin+0x3e6/0x8a0 fs/gfs2/bmap.c:1133
+gfs2: fsid=syz:syz.0:  R: n:8336 f:80000000 b:70/70 i:7 q:0 r:0 e:7055
+------------[ cut here ]------------
+kernel BUG at fs/gfs2/glock.c:674!
+Oops: invalid opcode: 0000 [#1] SMP PTI
+CPU: 0 UID: 0 PID: 7389 Comm: kworker/0:2H Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Workqueue: gfs2-glock/syz:syz glock_work_func
+RIP: 0010:do_xmote+0x33d/0x360 fs/gfs2/glock.c:674
+Code: 03 00 e9 cf fd ff ff e8 c1 85 09 ff 83 43 24 01 e9 53 ff ff ff e8 b3 85 09 ff ba 01 00 00 00 48 89 de 31 ff e8 f4 c9 ff ff 90 <0f> 0b e8 9c 85 09 ff ba 01 00 00 00 48 89 de 31 ff e8 dd c9 ff ff
+RSP: 0018:ffffc9000a073d88 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff88812e8a7728 RCX: ffffffff825ac696
+RDX: ffff888102c61180 RSI: ffffffff8257e401 RDI: ffff88812d388afc
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 205d393833375420 R12: ffff8881087d0000
+R13: 0000000000000001 R14: ffffffff857d0580 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff8881b25c4000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000c1b000 CR3: 0000000119f7c000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ run_queue+0x21a/0x310 fs/gfs2/glock.c:793
+ glock_work_func+0xac/0x280 fs/gfs2/glock.c:1002
+ process_one_work+0x26b/0x620 kernel/workqueue.c:3263
+ process_scheduled_works kernel/workqueue.c:3346 [inline]
+ worker_thread+0x2c4/0x4f0 kernel/workqueue.c:3427
+ kthread+0x15b/0x310 kernel/kthread.c:463
+ ret_from_fork+0x210/0x240 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:do_xmote+0x33d/0x360 fs/gfs2/glock.c:674
+Code: 03 00 e9 cf fd ff ff e8 c1 85 09 ff 83 43 24 01 e9 53 ff ff ff e8 b3 85 09 ff ba 01 00 00 00 48 89 de 31 ff e8 f4 c9 ff ff 90 <0f> 0b e8 9c 85 09 ff ba 01 00 00 00 48 89 de 31 ff e8 dd c9 ff ff
+RSP: 0018:ffffc9000a073d88 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff88812e8a7728 RCX: ffffffff825ac696
+RDX: ffff888102c61180 RSI: ffffffff8257e401 RDI: ffff88812d388afc
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 205d393833375420 R12: ffff8881087d0000
+R13: 0000000000000001 R14: ffffffff857d0580 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff8881b25c4000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000c1b000 CR3: 0000000119f7c000 CR4: 00000000003526f0
 
-> +/**
-> + * struct gate_switch_node - clock node definition
-> + * @clk: Pointer to clk instance.
-> + * @name: Clock name used.
-> + * @mutex: Mutex lock for multi decoder instance.
-> + * @ref_count: Curr clk instance ref count.
-> + */
-> +struct gate_switch_node {
-> +       struct clk *clk;
-> +       const char *name;
-> +       struct mutex mutex;
-> +       int ref_count;
-> +};
-Generally I'm not sure if the whole struct is needed as I think the
-common clock framework has everything we need.
-There's struct clk_bulk_data which allows mapping clocks from
-device-tree to an array in the code.
 
-drivers/staging/media/starfive/camss/stf-camss.h for defines an enum
-(stf_clk) to access each of the clocks by it's index in the array.
-You even seem to have an enum (clk_type_e) which you could use to
-simplify the code.
+Tested on:
 
-My understanding is that one can call clk_prepare_enable() and
-clk_disable_unprepare() as often as you'd like and these functions
-will do the ref-counting internally.
-So I think the ref_count is not explicitly needed, as that's managed
-by the common clock framework.
+commit:         17448d78 gfs2: Clean up SDF_JOURNAL_LIVE flag handling
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git withdraw
+console output: https://syzkaller.appspot.com/x/log.txt?x=12da8b42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cb128cd5cb439809
+dashboard link: https://syzkaller.appspot.com/bug?extid=63ba84f14f62e61a5fd0
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-
-Best regards,
-Martin
+Note: no patches were applied.
 
