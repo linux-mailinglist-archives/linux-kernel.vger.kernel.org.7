@@ -1,86 +1,177 @@
-Return-Path: <linux-kernel+bounces-891350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19593C427E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 06:55:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF52C4281A
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 07:13:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C5D04E4D40
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 05:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAE9E3AEE0A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 06:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4492D3220;
-	Sat,  8 Nov 2025 05:55:10 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E7628851C
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 05:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDF92DF126;
+	Sat,  8 Nov 2025 06:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="B+D3byKt"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6822C0270;
+	Sat,  8 Nov 2025 06:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762581309; cv=none; b=YKFrNbUO+D3u8JKF98gASjqlCxNrDNTaOn8PnaZbtcVEqDroCbWRbyAuRt+zK7g1iIhudlJky5s3azw9T1bH/I1IUnZJeRk6MCut+JiP5JLJjHp9pDYC4B/3eU/3rS1AIOp1h0ua/C37fYGNWH/6bOlNnwwb8s2Io2Ky8f4vVjs=
+	t=1762582386; cv=none; b=h1pusQwfaQxnPeg6yU3BqrThk4NwPltas9Shxy60ruowit28ttmw02GAZer2DX6aHj4SYN6RT7Ay32QppMdQarTBfFmUP9UohsBwSLIqmHM9IjQdULOolIb7ltCUJ4DciUgXu2FYv8MpFmDC4+9a7EjRsX60UtHHWw2RXcYVY5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762581309; c=relaxed/simple;
-	bh=sAcJxeAGzbJ3YUbx3XcNgWbvMCTHnxdNS6YqewEGwgo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QKPFFNoizhzWqYAV4kmGt2Mh+NgUEWf1lpXPS1O5FBymNl3VwrXRPn+NeINvLK5ovWhUZEEeaFlf+i8IW+dtTkPVSaVYCOY/CEfQcPsQJy0zu+pfnQVNb9VLIqQE38xr3zYAHXMDWKsIqke2G6H2xshSBWai6Ann4/ZoJv+q/F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-93e8839f138so130686039f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 21:55:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762581304; x=1763186104;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ajbG+QUBroA7ub4kooOnfBGano7D1Eb6FduUZ+aJG2o=;
-        b=Klg2cBmjJtiVswn1ODFUYOtx3ZqhZr97R0nO3MBCsGMRkxri9zPQTt/Hclf/VW2R6Z
-         dkz/ww1jovDQLlW4ZMglM94OjDhC5PluM7PJr5hNYpCyiPx07H3n/PicmjyPju4UVepR
-         b29NRwwR2l+yH0XW2bnK5+UVfY5Ljp7hM9XJbuZDGR8Ekh1qDzq6Sk4f8vpypfDDPyud
-         5W7Wr5wh+X9OLZDMjC575QGXfBjJ3UDhyJahWEdEPbJB1ThgQhVMOThiN+ySoMgdut54
-         M+mi7n/gf89HMuiJZRVPwG5bzTb+KmzAc+YK0xsUcnnEnT7EcPtnt71VoQgn3bA3r9gY
-         rtGA==
-X-Gm-Message-State: AOJu0YyLWmRUkuCNpKV/9q4LaiFNjohxw0K414Hya7/jQTWzBnVUyFp+
-	46YBYQKTVhMwpYIOZ8p7c/fpPEZLF/lEctIdu1veXTEQOswNcyAY92gGRZjSPBdC8cw6zl0dypL
-	O8kveg5UvKEdSGoyxjsj3OpS6uzrY3DnAkMZx5UInnhfWGBC/xTK5oXXglX8=
-X-Google-Smtp-Source: AGHT+IErjeWcw4f1uPvf2VK+rGDADAuYlBq9x9auAh53DiBb+iP50IHDmXi3N3/ureeJ/0vfJtLEPVFbNsP/yDlbAyg0GaWMd4G7
+	s=arc-20240116; t=1762582386; c=relaxed/simple;
+	bh=DgH5GUT7j3a/+liLaMLDQ+ppgc87s/ERzvidbBqi8Oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkikl/JRoX4zln4YTg/f/wrUrA+yGv5EE4xNA2rco9ct1p3/Ep5t5+ccuLWMtRTY0rjfC0TZpHDgxaxIbymlkTKFPAEjnUy3Pv5GTMV9SHITJvc/mS4ym28yzZzas4icQjD63IrTsk21HMoVa6qVLROFf7rJ/2/TH8os8YoZzn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=B+D3byKt; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id A419014C2D3;
+	Sat,  8 Nov 2025 07:12:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1762582373;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LTM5LkyL3mfB0IbHJeS1oRharyj4iNDNdaZ7y5irjmg=;
+	b=B+D3byKtJ5aLyRiu2rooP0B2TJlyh9NnWKaBHKY3oGl5WrI9R/ZTOokRqfrmQkRjA4d6PF
+	hVA+2jtaIxDHKJVm19YOlIu00RJFzbMjiJ2IJMY5v8SjTtfCjEZWBxEPfRtzuPasj++KiY
+	8Sahe5eVbfmwmhQeo5uzL3Rp7AKK7Nzr7m3ipU5qmaiTEStLej1x9iBcfVqKnY9WidAi8X
+	rwVB6qqUGBZMEcUSkoPWBbqf240gmgWcLbAb7B4RNHuho0O1rPy72OuweBfiXGGrgaJqO1
+	amO1aDXHVrMyRWIApKs7c+o9NFvUODZZvMkcXugNCGdZ2S65dzPgh2BACKmoHA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 26a2c8b4;
+	Sat, 8 Nov 2025 06:12:25 +0000 (UTC)
+Date: Sat, 8 Nov 2025 15:12:10 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	David Sterba <dsterba@suse.com>,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+	Chris Mason <clm@fb.com>, Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>, Jan Harkes <jaharkes@cs.cmu.edu>,
+	coda@cs.cmu.edu, Tyler Hicks <code@tyhicks.com>,
+	Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	Yuezhang Mo <yuezhang.mo@sony.com>, Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yangtao Li <frank.li@vivo.com>, Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@redhat.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Dave Kleikamp <shaggy@kernel.org>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Bob Copeland <me@bobcopeland.com>,
+	Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	Hans de Goede <hansg@kernel.org>, Carlos Maiolino <cem@kernel.org>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	NeilBrown <neilb@ownmail.net>, linux-kernel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu,
+	ecryptfs@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	gfs2@lists.linux.dev, linux-um@lists.infradead.org,
+	linux-mm@kvack.org, linux-mtd@lists.infradead.org,
+	jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+	linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
+	ocfs2-devel@lists.linux.dev,
+	linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org, linux-xfs@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2] vfs: remove the excl argument from the ->create()
+ inode_operation
+Message-ID: <aQ7fOmknHIxcxuha@codewreck.org>
+References: <20251107-create-excl-v2-1-f678165d7f3f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1946:b0:433:51eb:7f49 with SMTP id
- e9e14a558f8ab-43367e38d24mr23598965ab.19.1762581304398; Fri, 07 Nov 2025
- 21:55:04 -0800 (PST)
-Date: Fri, 07 Nov 2025 21:55:04 -0800
-In-Reply-To: <aQ7WfQOMTIDiPBin@rpthibeault-XPS-13-9305>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690edb38.a70a0220.22f260.0074.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] KASAN: slab-out-of-bounds Read in ext4_search_dir
-From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, rpthibeault@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251107-create-excl-v2-1-f678165d7f3f@kernel.org>
 
-Hello,
+Jeff Layton wrote on Fri, Nov 07, 2025 at 10:05:03AM -0500:
+> With two exceptions, ->create() methods provided by filesystems ignore
+> the "excl" flag.  Those exception are NFS and GFS2 which both also
+> provide ->atomic_open.
+> 
+> Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
+> the "excl" argument to the ->create() inode_operation is always set to
+> true in vfs_create(). The ->create() call in lookup_open() sets it
+> according to the O_EXCL open flag, but is never called if the filesystem
+> provides ->atomic_open().
+> 
+> The excl flag is therefore always either ignored or true.  Remove it,
+> and change NFS and GFS2 to act as if it were always true.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Good cleanup, just one whitespace nitpick below but:
+Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
 
-Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Tested-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
 
-Tested on:
+> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+> index 4f13b01e42eb5e2ad9d60cbbce7e47d09ad831e6..7a55e491e0c87a0d18909bd181754d6d68318059 100644
+> --- a/Documentation/filesystems/vfs.rst
+> +++ b/Documentation/filesystems/vfs.rst
+> @@ -505,7 +505,10 @@ otherwise noted.
+>  	if you want to support regular files.  The dentry you get should
+>  	not have an inode (i.e. it should be a negative dentry).  Here
+>  	you will probably call d_instantiate() with the dentry and the
+> -	newly created inode
+> +        newly created inode. This operation should always provide O_EXCL
 
-commit:         e811c33b Merge tag 'drm-fixes-2025-11-08' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1388b812580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=486aa0235ebabcac
-dashboard link: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13dd3bcd980000
+This and the block below change halfway from tab (old text) to spaces
+(your patch)
 
-Note: testing is done by a robot and is best-effort only.
+Looks like the file has a few space-indented sections though so it won't
+be the first if that goes in as is, the html-rendering doesn't seem to
+care :)
+
+Cheers,
+-- 
+Dominique Martinet | Asmadeus
 
