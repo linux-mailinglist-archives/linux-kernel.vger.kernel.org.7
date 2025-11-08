@@ -1,254 +1,191 @@
-Return-Path: <linux-kernel+bounces-891216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6421C422AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:49:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15684C422AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:51:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D502E5600FD
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:48:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C9793A727D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA22286D4B;
-	Sat,  8 Nov 2025 00:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7BB285C88;
+	Sat,  8 Nov 2025 00:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gswunZeU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k/CA1cAE"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013068.outbound.protection.outlook.com [40.107.201.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A8D2627F9;
-	Sat,  8 Nov 2025 00:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762562915; cv=none; b=eFFYcXG4ciEOfuB6Q9nWCoDGXDoHxPy2QlqOoQnZPmQtW3nENYwLY8MFF/Lwf1cmvDBEHV3D2Zp/JpOHiKM6PCkzlMYBjmacSyHfoyFofrABz/E27PY23ndyr3i5aB9U0JKxpnhPqYF8mfS3BIY2LKl1FFJrtkoduTxVv85CTFY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762562915; c=relaxed/simple;
-	bh=lhCi1JXBZrowYMZNCBd1DSzIM50iVkagNImXrUhUvYU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=D3ycj4iY6WbTcf23W1c+2L6O/JiB4BQ+bKhQGtrqQ9tj3X0E2ukOHdDO+Dd+xcABhtIwpPH4IopdGXksVcgGeJUOONJYJ8/6k7+viKxx9k4WexlfTEL+AmeaQpuxc9dssyQQTo3O949h9Gd4Zz17RKgqum0vf++eQni6GpXNf1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gswunZeU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2A51C4CEF7;
-	Sat,  8 Nov 2025 00:48:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762562914;
-	bh=lhCi1JXBZrowYMZNCBd1DSzIM50iVkagNImXrUhUvYU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=gswunZeU6p3iEknl+EC2reiaR22VtehXJDZ+aZ2pa5OT0UZ7XCqJkhucRE8txzjzX
-	 Px+5k77qJmO4GCQ0fKkUYntLysjz5r3XvmdpeMEzGChXw2sDsQvBYpkY+6U0JmDFaa
-	 p/ucgJqPe60IJMYkPKLl0TgpKRdcgY+mD21AHHORwXR2JNfZBlHKQIjuK+OvdWamQ1
-	 mhcUJnKbI9Ig6KHiJ29qqP5FAat/EdPILj7Rl4XmdXQ4bzqVQ+gwRlXdhS3figxlxL
-	 1HoZPj/hN1vy8HUn+QmMc/426Ji6RmvDZxUk1eBNneiKzT0UPhPrELR/v+tK+cEteO
-	 ANi3NOiMTDF7Q==
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 25301F4007E;
-	Fri,  7 Nov 2025 19:48:33 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-01.internal (MEProxy); Fri, 07 Nov 2025 19:48:33 -0500
-X-ME-Sender: <xms:YJMOaTVRL4AKewLf-d6j2vDCNLKevTX_epZDh_3gHPY3eXX735sNAg>
-    <xme:YJMOaWYFhsVU1tzPSJophTADFm1ERok1QC44ZgQphIT0tXOVG2awzCdG-Ol5SMTrJ
-    MMukEzkwxpAI7jApMYd6NO1woBQ7d6FDPuhqFDsL7GR92umff3FwU8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduleduudegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehnugih
-    ucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqnecuggftrf
-    grthhtvghrnhepjeejvddvtdehffdtgfejjeefgefgjeeggfeuteeiuedvtefgfffhvdej
-    iefguedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghnugihodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduudeiudekheei
-    fedvqddvieefudeiiedtkedqlhhuthhopeepkhgvrhhnvghlrdhorhhgsehlihhnuhigrd
-    hluhhtohdruhhspdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepugifmhifsegrmhgrii
-    honhdrtghordhukhdprhgtphhtthhopegrnhgurhgvfidrtghoohhpvghrfeestghithhr
-    ihigrdgtohhmpdhrtghpthhtohepshgvrghnjhgtsehgohhoghhlvgdrtghomhdprhgtph
-    htthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehrughu
-    nhhlrghpsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepuggrvhgvrdhhrghnsh
-    gvnhesihhnthgvlhdrtghomhdprhgtphhtthhopehrihgtkhdrphdrvggughgvtghomhgs
-    vgesihhnthgvlhdrtghomhdprhgtphhtthhopehsohhhihhlrdhmvghhthgrsehinhhtvg
-    hlrdgtohhm
-X-ME-Proxy: <xmx:YZMOaTqX01a8plPFu1dH9pAQWaJWejvvr-lQogf_dSI2Un2vQztvFQ>
-    <xmx:YZMOaVLXZH_we85t1eBghbI5ZLK7gVm7_WEZkI9YkEPbhbHf63f0cw>
-    <xmx:YZMOaWRwn_zzuw5T8aX0xSwd_CY_J1hvJyZ_SY4e63rHVLULU4WZ0A>
-    <xmx:YZMOaU-8vXL3goRPTdhCxi1i1J4F-LtdJMQ9kouGLnK5LQ-dK1eOgw>
-    <xmx:YZMOad8IemqdaLz5xausC_sXwBU5fQ8HhabxH1ClBCNK_LxeFeZvxQgQ>
-Feedback-ID: ieff94742:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id DDF3F700054; Fri,  7 Nov 2025 19:48:32 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E0A2727ED
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 00:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762563068; cv=fail; b=Yv8pKK1nyRmxW6JT0oCj2hE7OIwyVq5Ob1DnFx+TMCVoC/HKBTjXinyApLS4wE1feXerUbB1f82xOO4aUEMEaLZsnun418WbccVT16bhFYc8m/ke04W6o85vJYoqSbCgiE2piL63cBRZS0QrvNvZLXVKX2JO5Tm1tRVXPKblGwA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762563068; c=relaxed/simple;
+	bh=NBY0Kv8+EdaJMBAwxVL9cGtIibCbW+tCiv41KW6tcm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eeD0C2f5/Vicc9geh5jEsKwj/7dVDH/ybxyePvklx423AfHeH9HDrqhAPUliWPUpn2YzM+huqHMpb0dK74hqcmHsqnJcvNkEY1O7G+hi37hDYycLfiapS6t8MwsI3hmAyObN8ERJjIADNN2a0/i0MsiLCHtYkmnl263Bdj7Z9AQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k/CA1cAE; arc=fail smtp.client-ip=40.107.201.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KFF9LySgQHZPPpz1oCbovzkTGz1HlIKVgrQSJbAAhkotV2mr2oZjG67OIFArxKtI3RpWggfPTDcIi2x0UoQs1IxXgM2oUqjJ8uyfUhTgrh5nZPE4HhrLIEomyYsBDZoEHcvnuKDV3FpC96hNwWHhnw5H1oOHPIHe/Q+bzKmYchY1JWMkRSdkFl8blk4k68RPEToq0me0OZRuPvM+etz+gE8tAVKKk9PF6snS408wN5iX8r4kd9xty190eq3wKHzOI0bMcJJFY+QKd8sIjPmWUU7j2VLT8xTWQKO3m1PSc4gJ+Kg5cwBVHL26IqCvyf8fvLg5GcNvP1t40+Jn8Tn7CA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yN3nHjEs7JnMi1jXwgEXtKPFwqpYqkSTY3HIKkGExHo=;
+ b=aJjNim78fafPwxeXqya9HV57Au+XK+A5rmMybDAVsa1+5Rn/MwPaaKAzTbSCZiefQy0jbFJ9UAY8vVsD5sciM8cz0MKncj+2889/NamVx3JEfv/LOMH+9lcw80lL4UEBgNA/R/obcMBPu+3zo09thMIDz5VO6qhsdR+4VPrhyCvGL8jGvm6dnJrNyjDjXNI4918gyngVBKPHgQxf9m70szmB3ROomWRSSfLWIwAIeNzQ/Ych4wuyS6KI7kJQcPCNHxpO/Eo9lY9WStYEeLXLafy9CCp9us0NGgN3byivp2WQtsp/FlgZH5l/EY40LlZ0A+kGhe8lSRg464Aa7xIkTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yN3nHjEs7JnMi1jXwgEXtKPFwqpYqkSTY3HIKkGExHo=;
+ b=k/CA1cAEeWaqucDGZPuHLTkPaBZ67nJu9g7UnAAqGJvw1mGoapEGvJv7hLT3PJaR5YUTlrEbbpSoqMywFQTCP5N4BORCuSC/2Ume73o1bbgRBoUyExCj5RfwiFnd9PRXxfSL13ilmIjesGdP6j5hNwqJKdb5Nxv6RJB8EUlWDSnvUCDdTGIkRz9PY1PAKIU4coKSRI7DcOrUIoiv4BbmZFroAEWt7q1J4LAJGgLX55GLz+optIXO6iYoK56SDABiJ45klzss+JFi5oGh/pfDe762hm59WaYnt5Na9taZJaX/2uzsm5+6q6R9R68vwhEgs3rWvCt1fgVz6Yd17vC70A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN1SPR01MB0019.namprd12.prod.outlook.com (2603:10b6:802:23::32)
+ by SJ0PR12MB6733.namprd12.prod.outlook.com (2603:10b6:a03:477::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.9; Sat, 8 Nov
+ 2025 00:50:59 +0000
+Received: from SN1SPR01MB0019.namprd12.prod.outlook.com
+ ([fe80::8d14:5845:8725:4978]) by SN1SPR01MB0019.namprd12.prod.outlook.com
+ ([fe80::8d14:5845:8725:4978%7]) with mapi id 15.20.9298.012; Sat, 8 Nov 2025
+ 00:50:59 +0000
+Date: Fri, 7 Nov 2025 20:50:57 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, jean-philippe@linaro.org, robin.murphy@arm.com,
+	joro@8bytes.org, balbirs@nvidia.com, miko.lenczewski@arm.com,
+	peterz@infradead.org, kevin.tian@intel.com, praan@google.com,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 6/7] iommu/arm-smmu-v3: Add arm_smmu_invs based
+ arm_smmu_domain_inv_range()
+Message-ID: <20251108005057.GE1932966@nvidia.com>
+References: <cover.1761590851.git.nicolinc@nvidia.com>
+ <5f229859b5d252b703be8f1229d73903a566e8d8.1761590851.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f229859b5d252b703be8f1229d73903a566e8d8.1761590851.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BL1PR13CA0413.namprd13.prod.outlook.com
+ (2603:10b6:208:2c2::28) To SN1SPR01MB0019.namprd12.prod.outlook.com
+ (2603:10b6:802:23::32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 07 Nov 2025 16:48:05 -0800
-From: "Andy Lutomirski" <luto@kernel.org>
-To: "Ard Biesheuvel" <ardb@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc: "Dave Hansen" <dave.hansen@intel.com>,
- "Sohil Mehta" <sohil.mehta@intel.com>,
- "the arch/x86 maintainers" <x86@kernel.org>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>, "Jonathan Corbet" <corbet@lwn.net>,
- "H. Peter Anvin" <hpa@zytor.com>, "Josh Poimboeuf" <jpoimboe@kernel.org>,
- "Kirill A . Shutemov" <kas@kernel.org>, "Xin Li" <xin@zytor.com>,
- "David Woodhouse" <dwmw@amazon.co.uk>,
- "Sean Christopherson" <seanjc@google.com>,
- "Rick P Edgecombe" <rick.p.edgecombe@intel.com>,
- "Vegard Nossum" <vegard.nossum@oracle.com>,
- "Andrew Cooper" <andrew.cooper3@citrix.com>,
- "Randy Dunlap" <rdunlap@infradead.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Kees Cook" <kees@kernel.org>, "Tony Luck" <tony.luck@intel.com>,
- "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
- linux-doc@vger.kernel.org,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-efi@vger.kernel.org
-Message-Id: <99143293-1715-4c40-b937-3e7472e26732@app.fastmail.com>
-In-Reply-To: 
- <CAMj1kXFWCwEENyS=JM5mAON6ebfTwwJh-mRDYCY5NA+5UGzZJg@mail.gmail.com>
-References: <20251029210310.1155449-1-sohil.mehta@intel.com>
- <20251029210310.1155449-6-sohil.mehta@intel.com>
- <3e9c4fdd-88a8-4597-9405-d865fb837d95@intel.com>
- <cac58a25-eda6-4738-966f-a4e42818aa6c@app.fastmail.com>
- <6dec8398-3f7c-44db-a30d-33593af0217f@intel.com>
- <efd6ec82-5576-41f1-a244-2f80d72e93e4@intel.com>
- <ee2fce64-91ce-4b78-b2f9-33364ea0c52f@intel.com>
- <20251107090406.GU3245006@noisy.programming.kicks-ass.net>
- <CAMj1kXFQaGaz37MNKXXjhUKy_mP-5teCDj80-hjUPHw4x+TKrA@mail.gmail.com>
- <20251107094008.GA1618871@noisy.programming.kicks-ass.net>
- <CAMj1kXFWCwEENyS=JM5mAON6ebfTwwJh-mRDYCY5NA+5UGzZJg@mail.gmail.com>
-Subject: Re: [PATCH v11 5/9] x86/efi: Disable LASS while mapping the EFI runtime
- services
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1SPR01MB0019:EE_|SJ0PR12MB6733:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21e65748-0e93-4808-acaa-08de1e60e1cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|3613699012;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Cg4+Awkyt/oS3yuFKmNzykuDuq/JU9Cd6nTMsdlRGsiF9Q27al/BHVMGfxG6?=
+ =?us-ascii?Q?xhuSYcnOCyK3hU32pAsbbL2rAgLHOsS2XkSa2Z9io8I38jGKiJ8wh5THVIFb?=
+ =?us-ascii?Q?XZigOCOEwZJg6lRr1nmAsZgiUVwZMREr8Nnkt0WjjeHEI1qYUpxGw+WP8hsq?=
+ =?us-ascii?Q?1CJjH0WgOXPFzLpdjodjl3GFL1FueWmBNGwuoiNfMwx2AvKU3zrupjHCCDTE?=
+ =?us-ascii?Q?VSYlLedpfLgz7B62fqvVRdBNGzL5nYAAUV4OSSmryGsH9S9uyjFZA6Vq5bUY?=
+ =?us-ascii?Q?9XkyhW/ak+T9rbaznx1lN1cMDB6t/u6esopIQDBZzt1v3FVxuCOEOjBbSMAl?=
+ =?us-ascii?Q?d3zsqw7vRxsjNpX+x6erRznregUn3V6PIOMjrUsAZloZkr3vZDKJhkmFZE+v?=
+ =?us-ascii?Q?pB5jvxDhedRRMdFzTYQJEp4/Ipqc/kmGQokCUIfxH4OBRMjT8IQXDm6jjdHh?=
+ =?us-ascii?Q?r9TWLTJXeM5JCN5Ik8iW+J9QuKgevcDQQNJha1lUXknpAMjQ2sLrJ6fTK1Im?=
+ =?us-ascii?Q?Em9YRnzO+VpKumpWxjEqb3/2VGU9LDgCPXS0Yrmg85yLHS71V+d7fZUHht96?=
+ =?us-ascii?Q?M14eAmiO+syPOXDF4IZAWVvwVtnQdBeabiMR55bbtKbR18RDJnCfT+TvpzE3?=
+ =?us-ascii?Q?YVufG0esJBLuv7hdlfDvWxIGXOzHhnbHQXvSA6q/UHF6xLLmOYHW2OLcY1GD?=
+ =?us-ascii?Q?haByqffypLJhW9LFl6m47gnYXJd9j0HtomzJ6zcwkdNg6C89Timq8AafqQto?=
+ =?us-ascii?Q?k4z0jhR11r5AFIrkfhgJc2pjMC0K4c/CqAGuj+1HcizPYVsF3ayQIn+3fVs1?=
+ =?us-ascii?Q?1aoG4iL+eZmMRYfoBn2UPnE12p39vyYBywWdg3TGn2SnSRJwvjW4+Mfojy12?=
+ =?us-ascii?Q?v2pDkA1jWEF8+3Ow2Lj3GQ+HrA2wr353D8MtBuHle5rta3zTyVvRkdBiJaeJ?=
+ =?us-ascii?Q?n5MNoFT9zizqWq/MuA4ulreUkjfwxyZSN9Z/7ISkMUCj2hPUNLQlLyyJWEB4?=
+ =?us-ascii?Q?qri9aIffkB3bgmidPCVT7yjayLFI0HAqcgQhBVugXeqIZt/rm+qy4tM3kK5M?=
+ =?us-ascii?Q?zOYKzFg73TjrPqbr0a2s0tywCb4yEO18NqVlZhJh8ghpYKNin6JF8CqFpVIT?=
+ =?us-ascii?Q?uQyoqAoaG4k/djCcYOBHKinuVZJQ/UzdjmMAZsH9gED+5Qy3S74L0IYob/wh?=
+ =?us-ascii?Q?tG7E/1G1Zl4Et0Y122aafLXpvtLwL+9ZP/l2prF/VThINJ628O4dYtEZWvnR?=
+ =?us-ascii?Q?gojMaQnK7eR1oTav1z6zKfstaKu0hr5pDyCXQmBxFucpBMy4THGPv0StbO0A?=
+ =?us-ascii?Q?rMaTSs76XhKziowfCdM4khcpWo7HSOVn1ZLOm0yy3XdDtvwd03YISiBwQTx1?=
+ =?us-ascii?Q?wwgmN+QIe+yxknJskjs6EIN2p5nVXGkQO3pHBLTOsMMAZZfXXv1hXFUK/T0p?=
+ =?us-ascii?Q?M2yMmaI7dRPOPB2+lU1ZVLFHm/6JGDeTUshGL5YppvHTL0/QorXaf3fFPeVK?=
+ =?us-ascii?Q?mxlLTw23NaugNRO2kY8hFVz5x4Um+xz65RbF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN1SPR01MB0019.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(3613699012);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?uKnxeY9zDrJIPzu11qyMoo6ZesEVlqH6Z9QDRjlbG9Z7TethRAjyGFaB5hSQ?=
+ =?us-ascii?Q?5iQCjmsmULAREdYKO1bGLRK2pKcuh8Equ+VXmL51WJM/jmS3vkfQnTWm/aQ+?=
+ =?us-ascii?Q?+HOMbBu1mufoLJ4UL5Bv+VB/r3EFwrVZ60AOgEByuPWVReWMU7n29Cm3/oq/?=
+ =?us-ascii?Q?X7n+a7I1xVqfrxhhrUs53XsRn2mgaSPzVxsKaYzW9mluDCSwsYjt9tUPEL5g?=
+ =?us-ascii?Q?V0lNH0juYXxNoPL+TL63uIrw5gF38JUJyaogk+JlX3oTV4C/+w9DpOAbru3K?=
+ =?us-ascii?Q?9L3xgjnocPq39J7qAVzIVSsRCQLA6UetJp8gcBbgdwNkvvYxFb4xiyy9E7h5?=
+ =?us-ascii?Q?BnxGkjRKD42Y6k0YZEiOW9yrveGX2KTsR4dVUmBrDk+0c4dobmg+EP0Ut0W8?=
+ =?us-ascii?Q?0BQNDwAZ9nNTUVntQQNJykvmXo69hWRWoLlxrVcplj7H4jCBwxP2joKBe/Av?=
+ =?us-ascii?Q?fwp64C1+slRdneLg1v8BnrPaL9WFrtDn1v3o4cwiEZzDAgEIjL+ojpCWyy9R?=
+ =?us-ascii?Q?mM2CmQbcHTD0Jl/qpxxIz0JBEb+8U5LyxDjsb0NGSEmqswnKPl3t1eSkmFpQ?=
+ =?us-ascii?Q?JX70zog4Chd4ixmQfASxPn8Das+AuQvmAjo9aHYCPoOnv+g39VD/iHI02+RC?=
+ =?us-ascii?Q?wfMgE/a7KsL98tpw5ta0/6PeGk0J6iSv88P+VumJvqQ/0vT44ozW1l6ng1Bx?=
+ =?us-ascii?Q?+O0qX1p5Fz6LREq4z18jPuSy0jdUgPopiPSR21oQ0pltPSxko/CU2bctgIFG?=
+ =?us-ascii?Q?RS4ZpQ1usEfzZZCxgSUzbd+Y9zfb06dwkZr6y/RRKz6hEQroGB62NeSzyxIw?=
+ =?us-ascii?Q?m9TNV9tMuFjd5xj/BMgdKjboPibugTEgblUtnJ28veUnSG/jO/8JXPY0QMTq?=
+ =?us-ascii?Q?rnH6MbAtJabnUEJFGCyLHT06Kt43NHecJ4lZjJpkoMULLljkpMPK8R1e+6lD?=
+ =?us-ascii?Q?ht96q1j/N+UyqoRmULEb5oFsSJbl+WUe3XGXSeYIcEuhXxFmq9vpc4XI0cY2?=
+ =?us-ascii?Q?Sk7bs1WGi0UkJvbtqKijb065WZKTjskVvxM7ceDB7d1idB7OkORQ1u3+l7/v?=
+ =?us-ascii?Q?3YRibogVKlydKSOzqinckN1zlliZgE3aXmsb2ossZKh1PR8c29PFJMaWKiKc?=
+ =?us-ascii?Q?lYBqh8ieCVKt1dcJWiOn5GLkK3TkypI6Vly2ACAOp6OhFGtorfr+5EpdFk+v?=
+ =?us-ascii?Q?xF8s9lLRaDb1fIeZEv3plBh7M34xm3Sfvih2NsdpWmU7wD5a/gnDT5L+Ckzc?=
+ =?us-ascii?Q?Ez8fHRFkgEE3JREAlortEHX94897hHI0EdF1DIXAS7WmFZyBtJmYCIpCqmtr?=
+ =?us-ascii?Q?MdrD3hksyKItayszcRHc7gOAr9wo+kN07ACQjHotowlQzPGqlbZRmlz/1V5B?=
+ =?us-ascii?Q?avpyZMjJQ31BUF1mqk1scdgnTb1n4y5GReao2inx+j3mhRVKlOeXErYoZlhs?=
+ =?us-ascii?Q?8SgnHZ4Yj8Mxv8Fon91tiYpv62mja4/qlQA695DmTWDGMucBw+8KWMaU7XL1?=
+ =?us-ascii?Q?BMgFxSRv493s0WaKSBIVpaAyYu2uOFg1jYwVH32k61cW5u31wcY3wnDjLtJ/?=
+ =?us-ascii?Q?bwgnqU3cmo226Dw1Zlg=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21e65748-0e93-4808-acaa-08de1e60e1cd
+X-MS-Exchange-CrossTenant-AuthSource: SN1SPR01MB0019.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 00:50:59.3883
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nCJfVrK+WTX/YXBsjsWN31doqZfVpUZTl0xOYnT3yLcg90c0YQeJn/pnLOK5INZB
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6733
 
+On Mon, Oct 27, 2025 at 11:54:20AM -0700, Nicolin Chen wrote:
+> Each smmu_domain now has an arm_smmu_invs that specifies the invalidation
+> steps to perform after any change the IOPTEs. This includes supports for
+> basic ASID/VMID, the special case for nesting, and ATC invalidations.
+> 
+> Introduce a new arm_smmu_domain_inv helper iterating smmu_domain->invs to
+> convert the invalidation array to commands. Any invalidation request with
+> no size specified means an entire flush over a range based one.
+> 
+> Take advantage of the sorted array to compatible batch operations together
+> to the same SMMU. For instance, ATC invaliations for multiple SIDs can be
+> pushed as a batch.
+> 
+> ATC invalidations must be completed before the driver disables ATS. Or the
+> device is permitted to ignore any racing invalidation that would cause an
+> SMMU timeout. The sequencing is done with a rwlock where holding the write
+> side of the rwlock means that there are no outstanding ATC invalidations.
+> If ATS is not used the rwlock is ignored, similar to the existing code.
+> 
+> Co-developed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h |   9 +
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 225 ++++++++++++++++++--
+>  2 files changed, 221 insertions(+), 13 deletions(-)
 
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-On Fri, Nov 7, 2025, at 2:09 AM, Ard Biesheuvel wrote:
-> On Fri, 7 Nov 2025 at 10:40, Peter Zijlstra <peterz@infradead.org> wro=
-te:
->>
->> On Fri, Nov 07, 2025 at 10:22:30AM +0100, Ard Biesheuvel wrote:
->>
->> > > But that's just the thing EFI is *NOT* trusted! We're basically
->> > > disabling all security features (not listed above are CET and CFI=
-) to
->> > > run this random garbage we have no control over.
->> > >
->> > > How about we just flat out refuse EFI runtime services? What are =
-they
->> > > actually needed for? Why are we bending over backwards and subver=
-ting
->> > > our security for this stuff?
->> >
->> > On x86, it is mostly the EFI variable services that user space has
->> > come to rely on, not only for setting the boot path (which typically
->> > happens only once at installation time, when the path to GRUB is set
->> > as the first boot option). Unfortunately, the systemd folks have ta=
-ken
->> > a liking to this feature too, and have started storing things in
->> > there.
->>
->> *groan*, so booting with noefi (I just went and found that option) wi=
-ll
->> cause a modern Linux system to fail booting?
->>
->
-> As long as you install with EFI enabled, the impact of efi=3Dnoruntime
-> should be limited, given that x86 does not rely on EFI runtime
-> services for the RTC or for reboot/poweroff. But you will lose access
-> to the EFI variable store. (Not sure what 'noefi' does in comparison,
-> but keeping EFI enabled at boot time for things like secure/measured
-> boot and storage encryption will probably result in a net positive
-> impact on security/hardening as long as you avoid calling into the
-> firmware after boot)
->
->
->> > There is also PRM, which is much worse, as it permits devices in the
->> > ACPI namespace to call firmware routines that are mapped privileged=
- in
->> > the OS address space in the same way. I objected to this at the tim=
-e,
->> > and asked for a facility where we could at least mark such code as
->> > unprivileged (and run it as such) but this was ignored, as Intel and
->> > MS had already sealed the deal and put this into production. This is
->> > much worse than typical EFI routines, as the PRM code is ODM/OEM co=
-de
->> > rather than something that comes from the upstream EFI implementati=
-on.
->> > It is basically a dumping ground for code that used to run in SMM
->> > because it was too ugly to run anywhere else. </rant>
->>
->> What the actual fuck!! And we support this garbage? Without
->> pr_err(FW_BUG ) notification?
->>
->> How can one find such devices? I need to check my machine.
->>
->
-> Unless you have a PRMT table in the list of ACPI tables, your system
-> shouldn't be affected by this.
->
->> > It would be nice if we could
->> >
->> > a) Get rid of SetVirtualAddressMap(), which is another insane hack
->> > that should never have been supported on 64-bit systems. On arm64, =
-we
->> > no longer call it unless there is a specific need for it (some Ampe=
-re
->> > Altra systems with buggy firmware will crash otherwise). On x86,
->> > though, it might be tricky because there so much buggy firmware.
->> > Perhaps we should phase it out by checking for the UEFI version, so
->> > that future systems will avoid it. This would mean, however, that E=
-FI
->> > code remains in the low user address space, which may not be what y=
-ou
->> > want (unless we do c) perhaps?)
->> >
->> > b) Run EFI runtime calls in a sandbox VM - there was a PoC implemen=
-ted
->> > for arm64 a couple of years ago, but it was very intrusive and the =
-ARM
->> > intern in question went on to do more satisyfing work.
->> >
->> > c) Unmap the kernel KPTI style while the runtime calls are in
->> > progress? This should be rather straight-forward, although it might
->> > not help a lot as the code in question still runs privileged.
->>
->> At the very least I think we should start printing scary messages abo=
-ut
->> disabling security to run untrusted code. This is all quite insane :/
->
-> I agree in principle. However, calling it 'untrusted' is a bit
-> misleading here, given that you already rely on the same body of code
-> to boot your computer to begin with. I.e., if you suspect that the
-> code in question is conspiring against you, not calling it at runtime
-> to manipulate EFI variables is not going to help with that.
->
-> But from a robustness point of view, I agree - running vendor code at
-> the OS's privilege level at runtime that was only tested with Windows
-> is not great for stability, and it would be nice if we could leverage
-> the principle of least privilege and only permit it to access the
-> things that it actually needs to perform the task that we've asked it
-> to. This is why I asked for the ability to mark PRM services as
-> unprivileged, given that they typically only run some code and perhaps
-> poke some memory (either RAM or MMIO registers) that the OS never
-> accesses directly.
->
-> Question is though whether on x86, sandboxing is feasible: can VMs
-> call into SMM? Because that is where 95% of the EFI variable services
-> logic resides - the code running directly under the OS does very
-> little other than marshalling the arguments and passing them on.
-
-Last time I looked at the calls into SMM (which was quite a while ago), =
-they were fairly recognizable sequences that would nicely cause VM exits=
-.  So the VM would exit and we would invoke SMM on its behalf.
-
-But it=E2=80=99s very very very common for VMX/SVM to be unavailable.
-
-Has anyone tried running EFI at CPL3?
-
-P.S. Forget about relying on AC to make EFI work. I doubt we can trust E=
-FI to leave AC set.
+Jason
 
