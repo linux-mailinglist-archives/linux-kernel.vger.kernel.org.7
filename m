@@ -1,504 +1,257 @@
-Return-Path: <linux-kernel+bounces-891627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2AEC431F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 18:29:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB582C431B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 18:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF3D04EA69E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 17:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FB80188D71C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 17:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9562F25B687;
-	Sat,  8 Nov 2025 17:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B30E24EF8C;
+	Sat,  8 Nov 2025 17:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNACkMuA"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eK2Ed4Je"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010001.outbound.protection.outlook.com [52.101.46.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CB125B2FE
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 17:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762622830; cv=none; b=j1JTnXgDs31sEyyk7keVUeE973y922ohWly+aQ93nRBKE/A+O/N9iydWIuftGtABF21RK6GuxjaAM2I1kDe27GxZ8MkOU2ofUwPXVWDgW2A7Nm47rBBRk5Q8CYie9REUr6ps67v8WK+amqLwJbSbKp87clh11nOyzxEtscQVums=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762622830; c=relaxed/simple;
-	bh=ji12vfJaJnPixmTdZzLZe3/51Z/QGvSCAgUOwgH5sy0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S/eu6WSEKm1nWi9uh+/sDHQ++obiVttKWSqyIvSObvJ760y34+4P8EoT1VVbI38tZu6N735wg2/iyXwZaqW8c+9TaPcjgPtkID6z0DU+GE0oStcZM9bl9UkRYPQ2ywmn0MCgFRk+BrKtIqq/MVystu6V3AdWo7sO4T8nWZqFfZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNACkMuA; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-297e264528aso6882075ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 09:27:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762622828; x=1763227628; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ifgJwqhkz81AiW/M580r37kIiR/Zt38Daw4xBcO/V58=;
-        b=eNACkMuAfqE/8hjKP4taD8X/YC9P8uE09LE+ykSQcr3UAIGYVF3OTHLuY10M560Pes
-         cpVxFem9PS080zs8cs8fIe3HK2yoJ+Sy3zyFuJ+UkA/+MZ6C1MOaG4LW/LXi79qpvdUi
-         1cE34LZmw5CVT7x3Yh70cjZw3U7FrwqVJUzvIL3YfBYalabsr4CLkPSk/PcHl03T01OO
-         Yap0UEZS22ulaN3xaqFdlPRS+xPtGZuQR54IKx4G2BeTnW6+oefdjU4eIiOjIg361AQK
-         4NbsC3Z76t9Srck9uOzhdGadw5fCIPsj/mrGEC9JLkT0sZzXV+jZeeAOjhZnh/bWstJb
-         MvpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762622828; x=1763227628;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ifgJwqhkz81AiW/M580r37kIiR/Zt38Daw4xBcO/V58=;
-        b=WztXwmdbuSu26zp4f00GChbNdbS9rbLz7UfZe/8ogBkodwOnbLI/UbTXC+4KTqNCsQ
-         wf5wVyywkkZFWfVuvo0XFmJGZhIrnnHUj3uiWgaEgdcOqpwq1ENSgnonL43MD0K7n3ut
-         7tVLxgVL0lkxscqfyJxx1FYzT0W19SoxfRlTUWQai30WuZBF0+OQkrT17Y6xcJV3qns1
-         hfOO9R0ajtnfu/QGDQmHrXa7uTeHmYM1e5BCrE7T8a+NbnuxD8q2dLS662yePkHs2/uQ
-         89qqPhXjE5gtAYCY4GNX670gLxHjX/ybXs/meHXi48QIYYEzzmNmKcx8VtBkjLLLkhsm
-         yeQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjFmEKrx5PHg0UZgp3DtjOoJortNlGKaG28ahSzNn4LA3DUodrfK02Z6vBTNJuTL8FmJed9f7FoGAVgYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8nKnbktgGfSGIZxhHf+THJ0uX335n7ctK9jl4jjwm6GPNr9yg
-	1Vr4vIkeG5IVFbLfDJBd7Q0Qius/Y210u11XDia0leO/kLahpsHycrcE
-X-Gm-Gg: ASbGnctjoaBAvCiXhp18CZsuOaP8T/6qw3K2V/rVE/7d0fNuGJ+CsFpGFL7zweayPAV
-	TbRWGKIpep+Jxvd5S6NRLp1wFwI2HX6+XHmtxbQpaizNH1TW0+4l4biJwoeFVvdhbbPzECaZs/9
-	zcWUuJtK9aiu0GzbgB4IeVbULkdMYekwmCpM362hfYy9Wj7S4DDbE66nBrkMPI0nHbh3k7Wk+X0
-	YD71kTEtYxvU1TUR3TiSJl7sibQ26O6WAd6nR5IyYgH7P3Bwute1eKfCcobDpCjhvnRKvS9/7YI
-	17i47KkDI7iMWvCrmZEpCi9eDNlFj0A2S7WFc2Y1p4QykB97816uUqM0rp683f3PtDCKi9nWqCG
-	4DEOWxA9iMO9qceromF5cREVPw/0wbvZfJa+51jJu9fwIDeTPiBOr+Ie2IO6kcx33tP20vP6Uru
-	rPbrv2NbdXt17jxh4ZhPmdSQKR1DZ4MbxOqpk=
-X-Google-Smtp-Source: AGHT+IG2XNPxrCil9As1GPMbFbfiTLeZrJq06uWpTB8/dDMRqGxGXKnu96wXs+iZFmt1AddBNZ4izQ==
-X-Received: by 2002:a17:902:cf42:b0:295:8da4:6404 with SMTP id d9443c01a7336-297e56f9154mr40667245ad.40.1762622827520;
-        Sat, 08 Nov 2025 09:27:07 -0800 (PST)
-Received: from DESKTOP-8TIG9K0.localdomain ([119.28.20.50])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3436c3d7dddsm2769122a91.7.2025.11.08.09.26.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 09:27:07 -0800 (PST)
-From: Xie Yuanbin <qq570070308@gmail.com>
-To: david@redhat.com,
-	tglx@linutronix.de,
-	segher@kernel.crashing.org,
-	riel@surriel.com,
-	peterz@infradead.org,
-	linux@armlinux.org.uk,
-	mathieu.desnoyers@efficios.com,
-	paulmck@kernel.org,
-	pjw@kernel.org,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	hca@linux.ibm.com,
-	gor@linux.ibm.com,
-	agordeev@linux.ibm.com,
-	borntraeger@linux.ibm.com,
-	svens@linux.ibm.com,
-	davem@davemloft.net,
-	andreas@gaisler.com,
-	luto@kernel.org,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	james.clark@linaro.org,
-	anna-maria@linutronix.de,
-	frederic@kernel.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	morbo@google.com,
-	justinstitt@google.com,
-	qq570070308@gmail.com,
-	thuth@redhat.com,
-	brauner@kernel.org,
-	arnd@arndb.de,
-	jlayton@kernel.org,
-	aalbersh@redhat.com,
-	akpm@linux-foundation.org,
-	david@kernel.org,
-	lorenzo.stoakes@oracle.com,
-	max.kellermann@ionos.com,
-	ryan.roberts@arm.com,
-	nysal@linux.ibm.com,
-	urezki@gmail.com
-Cc: x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	llvm@lists.linux.dev,
-	will@kernel.org
-Subject: [PATCH v2 4/4] Make finish_task_switch and its subfuncs inline in context switching
-Date: Sun,  9 Nov 2025 01:23:46 +0800
-Message-ID: <20251108172346.263590-5-qq570070308@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251108172346.263590-1-qq570070308@gmail.com>
-References: <20251108172346.263590-1-qq570070308@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FF42472A4
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 17:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762622753; cv=fail; b=L85g9SdQXeod7VTtO87O4poyG5YhHJtgnlzlsDvC9M1TNlJI2IG2Yacyt45UmbwCxO97dQcq3No4Yu6aMlGVZBCCNCaQFjmZvUoUg7A72/l3QuHNKravsdSbz9RMCYeZY6q+4+IijdNBYgJK9NQp8TbJLMiVX9vi+OXGTrXyYIw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762622753; c=relaxed/simple;
+	bh=Rf/vJ3ZIKHkB/cDh4NOOyLPiIE2XZTl2fY7bpRQNgt4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=k5HZBALx0T79Ec2fhkg4wpVknCbgnRH0nvt8a3std20+6gjjbQBgzvPVsLJJ5yn9M2RTpvbUNS0q2Lz/tR6mINBJL0nhiPbEEjI0s0xAq/W+YJJ/meptw3+Bvx3KU6Fw4125fQLjyvVTd4NOYRe/JMpck1oiaycLidJ/hd52zdY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eK2Ed4Je; arc=fail smtp.client-ip=52.101.46.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c7czVqsD7qL9G1N4vYB66f2FPCk/QrgjgLLTYi37TSGc7fulwV9zXeYh3vj9Jks8bbsrkdyPnW0IWWNQyVkmreBBeqy/Smuc5nU9lJSR5CsG/OraWD5ZOadJgi4ig5exdAGmRMpxTtGXZfDG0fpP6RH5FhsFRwGmrXHXhLLMtuKS/5Ds4qEcKE1eb74jSZIL9TLhUxAa92Nc3oXJQFUTbm6nSHnCHnKB83S0G3atm+hbzHhjSD5SVoVZ1cnQxmDXCKeyPrEtK8tDXYPGh4EEmpo4o57FlBRDlQMrQHScGPOPoGRjgdLgWuL02KGNh3cjpEjx2UU6SDgPuzMgKAwD8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7RONyRmgnXm1apyzG+NkARlQdZcHNnnFZBnSb0C17iU=;
+ b=U/6hI+59nUeHruTrqMs3TSVWVMjf+qEf+rra9aniYcQjl2G4Z/oHsxGvlMEF9tIDjYdL8+ladL9Tr8c0n7FoQ9k42AObUWNijRJsN3JVRnH6pMjAEKTX9GqwcYC21vHYbVuJ7RDO5PwTqkWCG4HWC6U6dGd2OYh+31xEZAZbqD8zql/7viLhwuJgcQs15EValkrPK6sr5CGvn/8O/XavBYYe81cC6fuVnY0x8hzmR1P9NAmWuNZF8zXl5cuyYD1sC2EJ2raAkaGJmWOzuxDLn9Bt9ulq3u2uYyE7KC8wHOhFm+xBO33oSYZB0HfoDSMW/skvWaD7t+8Z8vyH0tl5Pg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7RONyRmgnXm1apyzG+NkARlQdZcHNnnFZBnSb0C17iU=;
+ b=eK2Ed4JelpLo0AkN6pzVkRdPnSQuhSqpGRRYZfYRW8vl8jGyfdBDzDeH0zs5S+IMudlB1SrYk6hP0rw6TUyKOlM22CISsszpZleNzNvPzm+kfjW1+x4c1mbrFhMC5tCaTP7YMBaIY0G2A/l6RGxvAmrNHJDS1Y6EVrM4C8C+jgE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ SJ0PR12MB6992.namprd12.prod.outlook.com (2603:10b6:a03:483::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Sat, 8 Nov
+ 2025 17:25:47 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%7]) with mapi id 15.20.9298.012; Sat, 8 Nov 2025
+ 17:25:47 +0000
+Message-ID: <94e36cb5-0f30-47fd-8f8d-b2babdb40aed@amd.com>
+Date: Sat, 8 Nov 2025 22:54:54 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/16] iommu/amd: Make amd_iommu_pdom_id_alloc()
+ non-static
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, jgg@nvidia.com,
+ nicolinc@nvidia.com
+Cc: linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
+ joro@8bytes.org, kevin.tian@intel.com, jsnitsel@redhat.com,
+ iommu@lists.linux.dev, santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
+ jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
+ wnliu@google.com, gptran@google.com, kpsingh@google.com,
+ joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
+References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
+ <20251021014324.5837-3-suravee.suthikulpanit@amd.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <20251021014324.5837-3-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0PR01CA0109.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:11d::8) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|SJ0PR12MB6992:EE_
+X-MS-Office365-Filtering-Correlation-Id: 01ae7292-baf7-459b-e603-08de1eebda9c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cmhxNlI2TUhkU3lrMitBVXFsMFk3TXVQZm10MW5jQ3lDMFNhR25RWXFxbEc4?=
+ =?utf-8?B?WGVsRWsyek9ISU1PU3cyRkZJc1h5YTZJcGtLelNDc1ZWNmMxZjI5VkhMc0p2?=
+ =?utf-8?B?ZVJzMkJOcGhTNzZyY1VWTnByVnNZVVJ6MEZlejNHbEhxTnpjaWZWRWlXeS9I?=
+ =?utf-8?B?MjlFTUxzTjR5SVRCNUZGa0thbjdGa2czRUVxZ1QyOG11dGNwbjRVV21sMmc5?=
+ =?utf-8?B?VS9rclpycmdXNEFpUUlZYi95VUV2RzNJd05hYUpDQkw5akkvWGdDazU2bnZT?=
+ =?utf-8?B?L2FlSjY5ejF5aUFqbzFSYXFlRXdyN3RJd2RGemVSQXlueERHc2NXb2x0ckZz?=
+ =?utf-8?B?SzZLNk00VC9UWVFIbTh5TXVPdmJ4NHF5MnFwTFMrdGY1RkxrQVZiNW96YitO?=
+ =?utf-8?B?bkE5d1p4aG5sMDh5WTd6N0lYdjBYOEtZM1Z5ckQ5TUtzanNQNjVTUGU0MnZ1?=
+ =?utf-8?B?cmpaT3c0ZHVQZEtJalFHKzdsbnJWTG8yOXAra0w0NFZoOUhucXNJWHVnTDdh?=
+ =?utf-8?B?NkdRRHZReEY1dUdqRHEzQ2VzR2tjRytIVnpnZDFSQ1U4NVZZNlFGcHBIK3gy?=
+ =?utf-8?B?cEJkYVJyaEptUi9FVW94eTI0bnYwZVZ2Nm9QM2JtMVhwSFVNbkpDSVJ4di9y?=
+ =?utf-8?B?bmllY0t6NXpYUW4vVVQ5NThLZ1grTVMxN3lYcnhUV0Yzc09ZdCtqdjk1MUsx?=
+ =?utf-8?B?ZTdTOTZ2WjRYTWxNM2MweWlpUzlpU1JZVnBJRDUveEtjVVhVSWpzM2xPR0Jp?=
+ =?utf-8?B?T2c4WkM3ZUk2Q0FidEZwTE1NVUkvenBNNXJMYmxEbHBjdnNpNG82NmJLK0xh?=
+ =?utf-8?B?OEJlSml2SUlQSUVuYnluOFVFcWZYLzBBNVNPVGhiWmJNWTZ5aWxZRStQOFFC?=
+ =?utf-8?B?NEgrUVR5MFpWU1o4NTRDNlp5c0Z3VFZ5b2VKYmhHRGtmazNjUjBqNmtWNk9x?=
+ =?utf-8?B?UE1HcDg4K0JGL0c4bmVuandQb1hqYnV1eGpGMlJrcllyQkpDamM5NkVWSXlE?=
+ =?utf-8?B?d3kxTGdPQkZ0N05wcjN1QVdTYk5nampybDZSblBIUUE1WXFtdjFYK05oL3Jq?=
+ =?utf-8?B?aEgxRmI2SDdJdVRRaVB4UHNiTC9ITnVGaVo5Vnk3QkhwM1A5TGk2eUt2dllL?=
+ =?utf-8?B?a1RtV0E3Sy9nMmxWV2ttZEJTOVBCcEJ3VHExYW9xZGtGMVlzdUhSaVRzZXdZ?=
+ =?utf-8?B?ZnMrVVMwdzZEcFdxQW1tWXNwN2RacEcvbDdSK2RYbTRZWGRPdlE3REZhSk8x?=
+ =?utf-8?B?ai8rclJLM1ZQaGE3SnBmUFZUUGtBdmNSQThOdnhQSnJsZWVvYnhrMEEzblVt?=
+ =?utf-8?B?Q2dpTmI4dm0wUm5SS0N1eGhIb3BLT2FkYVgzQlJETyt3RVJ0T1NRZERVaVM4?=
+ =?utf-8?B?OHpUMVFoS1FQRWNwZGF2cGJaLy9sTXU2YmticXpCTUM0TTJ6K2NpbzBpYi9v?=
+ =?utf-8?B?MDZPdHByL3hXbVppWXBKaFR6QmthQUNob1V3VkZjTUcydk9aMVo5TFhXaWpE?=
+ =?utf-8?B?Q1E4R3hndEtIbHpvSU01TnRyTWVKcE44MDVoeHljMllqMDdGdSt4L2tRWVI5?=
+ =?utf-8?B?WGhGdGJBMGVJeDAyL0hkWUx3ZFpPdktZVnk5aFJVUTl5TGxVKzF3YjFsdnFG?=
+ =?utf-8?B?cnVJL05JdDE5dFl2Nm9KckZjc09vMkNib0FUTzliWlJuZkErOXlabTROcG5n?=
+ =?utf-8?B?OVJJcUhlYTZkckJDQUJ0Y3R0N2ZXczFmTTQzR1hxQkkya1pkc2gvT013NHpO?=
+ =?utf-8?B?V2s2dm50WkhLYlV3R1RPZ25QR1lUNTMwL0NTOTdpTTB2b2lhcm9kbmtDV1hx?=
+ =?utf-8?B?N1R5UU56YXZUZlZoUHJHaE9rK3pkZVJ0eTJTS3orMDJnU2lsV1Fya1dNdHNO?=
+ =?utf-8?B?WlgvS0dseW1ac3JmWHFxTE5KOGkrQ0VDeGFNd3VpMEZXZlYzWGxDWWdCWko0?=
+ =?utf-8?Q?1AVY3tGS6jd2pUCvjFKdF2RUmdp952MY?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NkgzRFJqRUsrRDdqRkovejBUa0c1QXIwMVpqSUM0eGZ0cXVleFppOVg2SWtQ?=
+ =?utf-8?B?b0s3ZDJSM0dzVC9RTjFYZFZPOFR5NzRYYndwQ1hvR09FeWd3bkhxRVBwQ2R0?=
+ =?utf-8?B?aWlHdkhyei80bE1sM3FHQnZYSmFMSnhsNzBDbFoyZ29XdVJxTnl5L25tQS82?=
+ =?utf-8?B?TmdwcEd4bUlqdEJ0RFlIbnFVMUJVckxnRFo5eVZHTjhpS3h1R2hqQWpxUlov?=
+ =?utf-8?B?blltekRDVEV4dXI1Uk85Q2c2THZvR0gvRXlCdkFOeFljbzJlOXVEUTlOaWZE?=
+ =?utf-8?B?SUhsQU85MmFGNnFRYjY0OHVTZVlVRUp3UDVGeEtpV0MralRXNUtjVHhZYzdX?=
+ =?utf-8?B?a1J6aFdUZ0JCRXIvazlOMmpXS2pBT0RZazZUenVpaU5NNzBNRXZYRXBETGxF?=
+ =?utf-8?B?a3RTVWo0V0VJZHJaT3NMSW4ycVVsaVdHYnBzRXBNWExyVnZOT1g2UllJU3VB?=
+ =?utf-8?B?UE9LR0hhZG9YYjRlZmZjVE1ud0tEOXhOZmJHM2NhOWZacFRyWGVidVd6cVhB?=
+ =?utf-8?B?VXFsZFF5VlY3eWVhSFV6UXhqK0l6NmRuYjhMMXhoQng5RWZNWEZsczlYWWVI?=
+ =?utf-8?B?MWV4ZDBDblcwOW8wcE5jQ2ptN0lhVGZqSTJaN3M3bnRJcUlVZVMreVlUTkU1?=
+ =?utf-8?B?K1F3azhxUmUwL2tIQUxxNm5abFF5dTZ3RWJRdDJzQjROVkJyVTlSR2E2RVg5?=
+ =?utf-8?B?WG9UTWR0d2x2WHJQanRsNmZOSDluTm1sdmRzRXFFTnk4KzRLaiswZzlBYSs0?=
+ =?utf-8?B?K0c4YThuMnlJMkRCd05IRE44YjZQdGtNbnVKWkxjRVdUYmVZTjdEeWlOMU13?=
+ =?utf-8?B?ZG5JR041cExZTjlVY2lzTG4wb211a29XTFZHcnlGR0I2K3dZcVljUlBqTGs5?=
+ =?utf-8?B?dnJESzMxQkpQM0plbWdLR1V4YlhXQXBHdFpOT0IzYU53d09rZStCRlI0V0ZO?=
+ =?utf-8?B?b3prdk9ERTArMlVEMXlJMHJDREx5QWlHNUxhTUt4b1FTMFl2UjFkcEVhcDJ0?=
+ =?utf-8?B?UXA5Qy84dlM3SWlXQUlMZ2NaVDhLOXduNU1hRXZ0MkJtOUhmaGFIbDRmQkpU?=
+ =?utf-8?B?akxSK29wYWJZT2JWci80MHlPeUtzY0hZVDA5WXNwU2JESktXUmlWVk4rK0lY?=
+ =?utf-8?B?dHl1NCtDajdYNnJGNzFiRWR2Wm9XVmR3WnZEbDJwalBoR0Y3OG03UkZLVENo?=
+ =?utf-8?B?Z0xPM2dKUG85MS90alN0cUM5NmJKRHdyeFVXcktYZDdSZTJhbmh6NHVFb094?=
+ =?utf-8?B?cGd6ckdpSWxQN2hhbW5UcGNRR2lkSmZJV2Q3V01IaG9VVFpVL2x6MjgyMU9B?=
+ =?utf-8?B?NTZReFNaaDE0L0hZYmRzNjZCTTk2Y2pqNjM3cFB3TmRHMW5Sa1lVS0dKWWl4?=
+ =?utf-8?B?RSs5S3hKeG9tWkFRdlc1aTJqUXNOYVVaYU51UFE5M3RkbW1jYUcxQVUySExl?=
+ =?utf-8?B?UmxWOXlxV1JCdmFjTFg2QXByTXFVM3llWWVCQy9McFNOQnFibVZkbExrU0dn?=
+ =?utf-8?B?QUdHbVpIS2cvcmF3WUpIQStjNEJIUnRhNkUvUVltYVZhclVPRUVDbnZ5bEFD?=
+ =?utf-8?B?UzdPZ25OM2hxTm9EMnhwbzdZclRIMzg2WlVBempGakx1am95cUZGQWdLbExL?=
+ =?utf-8?B?dHVhYUt2K0QxR1FWV1JSa283citDc0E5Um5uWHp3WW1aQklRUmpuNHMvYzE3?=
+ =?utf-8?B?NWN4bUwvRy81M291RXJWLy9LVzdqUlhQRVJ2NG1vWFY0Yk5PWHY3c2pUdWlz?=
+ =?utf-8?B?dXZYcWhWOHAxaERlQU51M3Z2cTh5Vk9RSnFXMExvZGlPUUNlR3NhRGkzRHNR?=
+ =?utf-8?B?YTgyWDFnNkpKdnVGUVROYnNQbGlxK2lXeDVZUytVVUlnajBvdTFBRjNoVENS?=
+ =?utf-8?B?ellRZGF0bWN4akJHVDFNNG94ZnVKNTh1WGl6UFZ5VnVhMTBWUFlSWFZ4eW5R?=
+ =?utf-8?B?bXdzcHIyWTVrczVGS3Y2ZTB0cnRnamVSaWcwM0g1ekhGYU13QjdkMFJTaFlJ?=
+ =?utf-8?B?VzhGWTEvU3c4Um95OFRKeitUa1BlWDQ5OWhZd3Npai83VTltZXZ2dCtsT0p1?=
+ =?utf-8?B?dk92YTJxNjduSjAwcGl3QlRSRVYzRDF0WkhLZEZBRWppQWYxZ1IwSEx1NHAw?=
+ =?utf-8?Q?0wKSTeNyF2XqcQzV8k7o+GmYm?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01ae7292-baf7-459b-e603-08de1eebda9c
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 17:25:47.0943
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eZjlF+81e69Xv0KfHUNgHGhA7GfZosFQi+NAy0VNvqTkTmPwHDSt1tHKiFOSsxeaGiIJTUdhcBEYsr4hZI9P0A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6992
 
-`finish_task_switch` is a hot path in context switching, and due to
-possible mitigations inside switch_mm, performance here is greatly
-affected by function calls and branch jumps. Make it inline to optimize
-the performance.
 
-After `finish_task_switch` is changed to an inline function, the number of
-calls to the subfunctions (called by `finish_task_switch`) increases in
-this translation unit due to the inline expansion of `finish_task_switch`.
-Due to compiler optimization strategies, these functions may transition
-from inline functions to non inline functions, which can actually lead to
-performance degradation.
 
-Make the subfunctions of finish_task_stwitch inline to prevent
-degradation.
+On 10/21/2025 7:13 AM, Suravee Suthikulpanit wrote:
+> This will be reused in a new iommufd.c file for nested translation.
 
-Time spent on calling finish_task_switch (rdtsc):
- | compiler && appended cmdline | without patch   | with patch    |
- | gcc + NA                     | 13.93 - 13.94   | 12.39 - 12.44 |
- | gcc + "spectre_v2_user=on"   | 24.69 - 24.85   | 13.68 - 13.73 |
- | clang + NA                   | 13.89 - 13.90   | 12.70 - 12.73 |
- | clang + "spectre_v2_user=on" | 29.00 - 29.02   | 18.88 - 18.97 |
+s/iommufd.c/nested.c/ -OR- something like "it will be used in nested translation
+support".
 
-Signed-off-by: Xie Yuanbin <qq570070308@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
----
- arch/riscv/include/asm/sync_core.h |  2 +-
- arch/x86/include/asm/sync_core.h   |  2 +-
- include/linux/perf_event.h         |  2 +-
- include/linux/sched/mm.h           | 10 +++++-----
- include/linux/tick.h               |  4 ++--
- include/linux/vtime.h              |  8 ++++----
- kernel/sched/core.c                | 18 +++++++++---------
- kernel/sched/sched.h               | 20 ++++++++++----------
- 8 files changed, 33 insertions(+), 33 deletions(-)
+Ditto for next few patches.
 
-diff --git a/arch/riscv/include/asm/sync_core.h b/arch/riscv/include/asm/sync_core.h
-index 9153016da8f1..2fe6b7fe6b12 100644
---- a/arch/riscv/include/asm/sync_core.h
-+++ b/arch/riscv/include/asm/sync_core.h
-@@ -6,7 +6,7 @@
-  * RISC-V implements return to user-space through an xRET instruction,
-  * which is not core serializing.
-  */
--static inline void sync_core_before_usermode(void)
-+static __always_inline void sync_core_before_usermode(void)
- {
- 	asm volatile ("fence.i" ::: "memory");
- }
-diff --git a/arch/x86/include/asm/sync_core.h b/arch/x86/include/asm/sync_core.h
-index 96bda43538ee..4b55fa353bb5 100644
---- a/arch/x86/include/asm/sync_core.h
-+++ b/arch/x86/include/asm/sync_core.h
-@@ -93,7 +93,7 @@ static __always_inline void sync_core(void)
-  * to user-mode. x86 implements return to user-space through sysexit,
-  * sysrel, and sysretq, which are not core serializing.
-  */
--static inline void sync_core_before_usermode(void)
-+static __always_inline void sync_core_before_usermode(void)
- {
- 	/* With PTI, we unconditionally serialize before running user code. */
- 	if (static_cpu_has(X86_FEATURE_PTI))
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 9870d768db4c..d9de20c20f38 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1624,7 +1624,7 @@ static inline void perf_event_task_migrate(struct task_struct *task)
- 		task->sched_migrated = 1;
- }
- 
--static inline void perf_event_task_sched_in(struct task_struct *prev,
-+static __always_inline void perf_event_task_sched_in(struct task_struct *prev,
- 					    struct task_struct *task)
- {
- 	if (static_branch_unlikely(&perf_sched_events))
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 0e1d73955fa5..e7787a6e7d22 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -44,7 +44,7 @@ static inline void smp_mb__after_mmgrab(void)
- 
- extern void __mmdrop(struct mm_struct *mm);
- 
--static inline void mmdrop(struct mm_struct *mm)
-+static __always_inline void mmdrop(struct mm_struct *mm)
- {
- 	/*
- 	 * The implicit full barrier implied by atomic_dec_and_test() is
-@@ -71,14 +71,14 @@ static inline void __mmdrop_delayed(struct rcu_head *rhp)
-  * Invoked from finish_task_switch(). Delegates the heavy lifting on RT
-  * kernels via RCU.
-  */
--static inline void mmdrop_sched(struct mm_struct *mm)
-+static __always_inline void mmdrop_sched(struct mm_struct *mm)
- {
- 	/* Provides a full memory barrier. See mmdrop() */
- 	if (atomic_dec_and_test(&mm->mm_count))
- 		call_rcu(&mm->delayed_drop, __mmdrop_delayed);
- }
- #else
--static inline void mmdrop_sched(struct mm_struct *mm)
-+static __always_inline void mmdrop_sched(struct mm_struct *mm)
- {
- 	mmdrop(mm);
- }
-@@ -104,7 +104,7 @@ static inline void mmdrop_lazy_tlb(struct mm_struct *mm)
- 	}
- }
- 
--static inline void mmdrop_lazy_tlb_sched(struct mm_struct *mm)
-+static __always_inline void mmdrop_lazy_tlb_sched(struct mm_struct *mm)
- {
- 	if (IS_ENABLED(CONFIG_MMU_LAZY_TLB_REFCOUNT))
- 		mmdrop_sched(mm);
-@@ -531,7 +531,7 @@ enum {
- #include <asm/membarrier.h>
- #endif
- 
--static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
-+static __always_inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
- {
- 	/*
- 	 * The atomic_read() below prevents CSE. The following should
-diff --git a/include/linux/tick.h b/include/linux/tick.h
-index ac76ae9fa36d..fce16aa10ba2 100644
---- a/include/linux/tick.h
-+++ b/include/linux/tick.h
-@@ -175,7 +175,7 @@ extern cpumask_var_t tick_nohz_full_mask;
- #ifdef CONFIG_NO_HZ_FULL
- extern bool tick_nohz_full_running;
- 
--static inline bool tick_nohz_full_enabled(void)
-+static __always_inline bool tick_nohz_full_enabled(void)
- {
- 	if (!context_tracking_enabled())
- 		return false;
-@@ -299,7 +299,7 @@ static inline void __tick_nohz_task_switch(void) { }
- static inline void tick_nohz_full_setup(cpumask_var_t cpumask) { }
- #endif
- 
--static inline void tick_nohz_task_switch(void)
-+static __always_inline void tick_nohz_task_switch(void)
- {
- 	if (tick_nohz_full_enabled())
- 		__tick_nohz_task_switch();
-diff --git a/include/linux/vtime.h b/include/linux/vtime.h
-index 29dd5b91dd7d..428464bb81b3 100644
---- a/include/linux/vtime.h
-+++ b/include/linux/vtime.h
-@@ -67,24 +67,24 @@ static __always_inline void vtime_account_guest_exit(void)
-  * For now vtime state is tied to context tracking. We might want to decouple
-  * those later if necessary.
-  */
--static inline bool vtime_accounting_enabled(void)
-+static __always_inline bool vtime_accounting_enabled(void)
- {
- 	return context_tracking_enabled();
- }
- 
--static inline bool vtime_accounting_enabled_cpu(int cpu)
-+static __always_inline bool vtime_accounting_enabled_cpu(int cpu)
- {
- 	return context_tracking_enabled_cpu(cpu);
- }
- 
--static inline bool vtime_accounting_enabled_this_cpu(void)
-+static __always_inline bool vtime_accounting_enabled_this_cpu(void)
- {
- 	return context_tracking_enabled_this_cpu();
- }
- 
- extern void vtime_task_switch_generic(struct task_struct *prev);
- 
--static inline void vtime_task_switch(struct task_struct *prev)
-+static __always_inline void vtime_task_switch(struct task_struct *prev)
- {
- 	if (vtime_accounting_enabled_this_cpu())
- 		vtime_task_switch_generic(prev);
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index c50e672e22c4..cba8b93ed37b 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4868,7 +4868,7 @@ static inline void prepare_task(struct task_struct *next)
- 	WRITE_ONCE(next->on_cpu, 1);
- }
- 
--static inline void finish_task(struct task_struct *prev)
-+static __always_inline void finish_task(struct task_struct *prev)
- {
- 	/*
- 	 * This must be the very last reference to @prev from this CPU. After
-@@ -4930,7 +4930,7 @@ struct balance_callback balance_push_callback = {
- 	.func = balance_push,
- };
- 
--static inline struct balance_callback *
-+static __always_inline struct balance_callback *
- __splice_balance_callbacks(struct rq *rq, bool split)
- {
- 	struct balance_callback *head = rq->balance_callback;
-@@ -4967,12 +4967,12 @@ struct balance_callback *splice_balance_callbacks(struct rq *rq)
-  */
- static __always_inline void __balance_callbacks_ainline(struct rq *rq)
- {
--	do_balance_callbacks(rq, __splice_balance_callbacks(rq, false));
-+	do_balance_callbacks_ainline(rq, __splice_balance_callbacks(rq, false));
- }
- 
- static void __balance_callbacks(struct rq *rq)
- {
--	__balance_callbacks_ainline(rq);
-+	do_balance_callbacks(rq, __splice_balance_callbacks(rq, false));
- }
- 
- void balance_callbacks(struct rq *rq, struct balance_callback *head)
-@@ -5003,7 +5003,7 @@ prepare_lock_switch(struct rq *rq, struct task_struct *next, struct rq_flags *rf
- #endif
- }
- 
--static inline void finish_lock_switch(struct rq *rq)
-+static __always_inline void finish_lock_switch(struct rq *rq)
- {
- 	/*
- 	 * If we are tracking spinlock dependencies then we have to
-@@ -5011,7 +5011,7 @@ static inline void finish_lock_switch(struct rq *rq)
- 	 * prev into current:
- 	 */
- 	spin_acquire(&__rq_lockp(rq)->dep_map, 0, 0, _THIS_IP_);
--	__balance_callbacks(rq);
-+	__balance_callbacks_ainline(rq);
- 	raw_spin_rq_unlock_irq(rq);
- }
- 
-@@ -5036,7 +5036,7 @@ static inline void kmap_local_sched_out(void)
- #endif
- }
- 
--static inline void kmap_local_sched_in(void)
-+static __always_inline void kmap_local_sched_in(void)
- {
- #ifdef CONFIG_KMAP_LOCAL
- 	if (unlikely(current->kmap_ctrl.idx))
-@@ -5134,7 +5134,7 @@ static __always_inline struct rq *finish_task_switch_ainline(struct task_struct
- 	finish_task(prev);
- 	tick_nohz_task_switch();
- 	finish_lock_switch(rq);
--	finish_arch_post_lock_switch();
-+	finish_arch_post_lock_switch_ainline();
- 	kcov_finish_switch(current);
- 	/*
- 	 * kmap_local_sched_out() is invoked with rq::lock held and
-@@ -5289,7 +5289,7 @@ context_switch(struct rq *rq, struct task_struct *prev,
- 	switch_to(prev, next, prev);
- 	barrier();
- 
--	return finish_task_switch(prev);
-+	return finish_task_switch_ainline(prev);
- }
- 
- /*
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 7d305ec10374..ec301a91cb43 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1374,12 +1374,12 @@ static inline struct cpumask *sched_group_span(struct sched_group *sg);
- 
- DECLARE_STATIC_KEY_FALSE(__sched_core_enabled);
- 
--static inline bool sched_core_enabled(struct rq *rq)
-+static __always_inline bool sched_core_enabled(struct rq *rq)
- {
- 	return static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
- }
- 
--static inline bool sched_core_disabled(void)
-+static __always_inline bool sched_core_disabled(void)
- {
- 	return !static_branch_unlikely(&__sched_core_enabled);
- }
-@@ -1388,7 +1388,7 @@ static inline bool sched_core_disabled(void)
-  * Be careful with this function; not for general use. The return value isn't
-  * stable unless you actually hold a relevant rq->__lock.
-  */
--static inline raw_spinlock_t *rq_lockp(struct rq *rq)
-+static __always_inline raw_spinlock_t *rq_lockp(struct rq *rq)
- {
- 	if (sched_core_enabled(rq))
- 		return &rq->core->__lock;
-@@ -1396,7 +1396,7 @@ static inline raw_spinlock_t *rq_lockp(struct rq *rq)
- 	return &rq->__lock;
- }
- 
--static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
-+static __always_inline raw_spinlock_t *__rq_lockp(struct rq *rq)
- {
- 	if (rq->core_enabled)
- 		return &rq->core->__lock;
-@@ -1487,12 +1487,12 @@ static inline bool sched_core_disabled(void)
- 	return true;
- }
- 
--static inline raw_spinlock_t *rq_lockp(struct rq *rq)
-+static __always_inline raw_spinlock_t *rq_lockp(struct rq *rq)
- {
- 	return &rq->__lock;
- }
- 
--static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
-+static __always_inline raw_spinlock_t *__rq_lockp(struct rq *rq)
- {
- 	return &rq->__lock;
- }
-@@ -1542,23 +1542,23 @@ static inline void lockdep_assert_rq_held(struct rq *rq)
- extern void raw_spin_rq_lock_nested(struct rq *rq, int subclass);
- extern bool raw_spin_rq_trylock(struct rq *rq);
- 
--static inline void raw_spin_rq_lock(struct rq *rq)
-+static __always_inline void raw_spin_rq_lock(struct rq *rq)
- {
- 	raw_spin_rq_lock_nested(rq, 0);
- }
- 
--static inline void raw_spin_rq_unlock(struct rq *rq)
-+static __always_inline void raw_spin_rq_unlock(struct rq *rq)
- {
- 	raw_spin_unlock(rq_lockp(rq));
- }
- 
--static inline void raw_spin_rq_lock_irq(struct rq *rq)
-+static __always_inline void raw_spin_rq_lock_irq(struct rq *rq)
- {
- 	local_irq_disable();
- 	raw_spin_rq_lock(rq);
- }
- 
--static inline void raw_spin_rq_unlock_irq(struct rq *rq)
-+static __always_inline void raw_spin_rq_unlock_irq(struct rq *rq)
- {
- 	raw_spin_rq_unlock(rq);
- 	local_irq_enable();
--- 
-2.51.0
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+
+Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
+
+-Vasant
+
+> ---
+>  drivers/iommu/amd/amd_iommu.h | 1 +
+>  drivers/iommu/amd/iommu.c     | 8 ++++----
+>  2 files changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iommu/amd/amd_iommu.h b/drivers/iommu/amd/amd_iommu.h
+> index 9b4b589a54b5..6ea549816a1f 100644
+> --- a/drivers/iommu/amd/amd_iommu.h
+> +++ b/drivers/iommu/amd/amd_iommu.h
+> @@ -26,6 +26,7 @@ void amd_iommu_set_rlookup_table(struct amd_iommu *iommu, u16 devid);
+>  void iommu_feature_enable(struct amd_iommu *iommu, u8 bit);
+>  void *__init iommu_alloc_4k_pages(struct amd_iommu *iommu,
+>  				  gfp_t gfp, size_t size);
+> +int amd_iommu_pdom_id_alloc(void);
+>  
+>  #ifdef CONFIG_AMD_IOMMU_DEBUGFS
+>  void amd_iommu_debugfs_setup(void);
+> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+> index a9b17d31a969..78b3e5485006 100644
+> --- a/drivers/iommu/amd/iommu.c
+> +++ b/drivers/iommu/amd/iommu.c
+> @@ -1818,7 +1818,7 @@ int amd_iommu_complete_ppr(struct device *dev, u32 pasid, int status, int tag)
+>   *
+>   ****************************************************************************/
+>  
+> -static int pdom_id_alloc(void)
+> +int amd_iommu_pdom_id_alloc(void)
+>  {
+>  	return ida_alloc_range(&pdom_ids, 1, MAX_DOMAIN_ID - 1, GFP_ATOMIC);
+>  }
+> @@ -1906,7 +1906,7 @@ static int setup_gcr3_table(struct gcr3_tbl_info *gcr3_info,
+>  		return -EBUSY;
+>  
+>  	/* Allocate per device domain ID */
+> -	domid = pdom_id_alloc();
+> +	domid = amd_iommu_pdom_id_alloc();
+>  	if (domid <= 0)
+>  		return -ENOSPC;
+>  	gcr3_info->domid = domid;
+> @@ -2489,7 +2489,7 @@ struct protection_domain *protection_domain_alloc(void)
+>  	if (!domain)
+>  		return NULL;
+>  
+> -	domid = pdom_id_alloc();
+> +	domid = amd_iommu_pdom_id_alloc();
+>  	if (domid <= 0) {
+>  		kfree(domain);
+>  		return NULL;
+> @@ -2681,7 +2681,7 @@ void amd_iommu_init_identity_domain(void)
+>  	domain->ops = &identity_domain_ops;
+>  	domain->owner = &amd_iommu_ops;
+>  
+> -	identity_domain.id = pdom_id_alloc();
+> +	identity_domain.id = amd_iommu_pdom_id_alloc();
+>  
+>  	protection_domain_init(&identity_domain);
+>  }
 
 
