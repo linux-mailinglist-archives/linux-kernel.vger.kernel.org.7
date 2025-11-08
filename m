@@ -1,232 +1,86 @@
-Return-Path: <linux-kernel+bounces-891581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB97FC42FCF
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 17:20:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68078C42FC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 17:19:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 669A04E5BEC
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 16:20:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 14CA33492FD
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 16:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E5E22A4DA;
-	Sat,  8 Nov 2025 16:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="SQrdexUk"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78614215055;
+	Sat,  8 Nov 2025 16:19:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B060222562;
-	Sat,  8 Nov 2025 16:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FE41DF980
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 16:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762618812; cv=none; b=aJPNUlcJrU+wmeMdWaTvWGkYyv8f/EtS6syh7ZDl7CBzLtJQhPr1BDPlomYR2AFg2vyUDyREmk3Q53GjIIgiN66bxQggSmbPk1Ai5lHAeIGKfRJ7VvOLomtPGkTr/1xFoQloa/NdoNQtjxxt5hLrFdSYutAbrMC9l8SDPKu4oRY=
+	t=1762618745; cv=none; b=BNAjGE4R/qd1k8T8NOvMLupm7Lkk3W3FPfAxJHZt5/w2znfUgY59QRfFvDjwwg9pWwqCdbdrdUSqQIB1LxRJKyoqU2t52ybCknZbqU0r9ZvoecUuSy9osT3Kv0poXbzwMwTHwnNVcrJ8q9/RFbnCZ58i82/GwA2p+TOv1zaArDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762618812; c=relaxed/simple;
-	bh=IfQPIWym0KcYl4PrJwG7dFVcoXRd2GnV2Jse4Zj+a6w=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=TqBroWbVSXM9svvHyRfZ2A6lALQGsWINqS3HUDNT1yUtTpSWon61GEx0Y8GNEeIhz4iNOHsLKETfCh/WuN8Hb3LV2ZIDKjJUvYVgqpTbdbVemacGwAPErFHuTlzlKZ8pOsdertMCvFzd48is5UDMeHd6fJ5X4J3ZOJ3ARwIv6IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=SQrdexUk; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5A8GInPF2337389
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sat, 8 Nov 2025 08:18:49 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5A8GInPF2337389
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762618732;
-	bh=IfQPIWym0KcYl4PrJwG7dFVcoXRd2GnV2Jse4Zj+a6w=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=SQrdexUk3Uvp8/NtRrkfFFBaj3c4imtzw8TG1x0d9IBeEM8f4iuSRBnQPHGUuzMAp
-	 ZCeylQqTiJQUdrDeZCSfquep9jpH78EjVmNlvh9UQRcm1/4ttKo442mGZpLvhSuYXy
-	 0u/bd2/ktKgWQLkN6zY3+qpbPKgQfeA+7s4QGmiXn1uYrrMcYOxveqtMRD48eeqUGe
-	 GB9H+NBGpGBItdZwV14jrcRkg+S34eWpA8wJDhAhgFC+frk157Yv0WHDCf+4iIpXD7
-	 urRRXEI0OxYHjJT0qrxi+q/bEro6fbb6S1XoJfzKoEU9s+gQXq2t/zNcaWKHtwKM/I
-	 X61HoP9/zYkCw==
-Date: Sat, 08 Nov 2025 08:18:48 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-CC: Dave Hansen <dave.hansen@intel.com>, Sohil Mehta <sohil.mehta@intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        "Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Sean Christopherson <seanjc@google.com>,
-        Rick P Edgecombe <rick.p.edgecombe@intel.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v11_5/9=5D_x86/efi=3A_Disable_LAS?=
- =?US-ASCII?Q?S_while_mapping_the_EFI_runtime_services?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <99143293-1715-4c40-b937-3e7472e26732@app.fastmail.com>
-References: <20251029210310.1155449-1-sohil.mehta@intel.com> <20251029210310.1155449-6-sohil.mehta@intel.com> <3e9c4fdd-88a8-4597-9405-d865fb837d95@intel.com> <cac58a25-eda6-4738-966f-a4e42818aa6c@app.fastmail.com> <6dec8398-3f7c-44db-a30d-33593af0217f@intel.com> <efd6ec82-5576-41f1-a244-2f80d72e93e4@intel.com> <ee2fce64-91ce-4b78-b2f9-33364ea0c52f@intel.com> <20251107090406.GU3245006@noisy.programming.kicks-ass.net> <CAMj1kXFQaGaz37MNKXXjhUKy_mP-5teCDj80-hjUPHw4x+TKrA@mail.gmail.com> <20251107094008.GA1618871@noisy.programming.kicks-ass.net> <CAMj1kXFWCwEENyS=JM5mAON6ebfTwwJh-mRDYCY5NA+5UGzZJg@mail.gmail.com> <99143293-1715-4c40-b937-3e7472e26732@app.fastmail.com>
-Message-ID: <7B2C410E-E4A3-4998-8C83-BE7D5838AC12@zytor.com>
+	s=arc-20240116; t=1762618745; c=relaxed/simple;
+	bh=8OUIpEXXbsf2/NHOM3VplIj3n9AgbtyjGDwuHKGszGI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pQ4bpAjRr9c1wWsLgf1IiYOBLvUMGEJkTQgG9F7hAV0kYml5HxJ8S86my6MXYv/6OMVH2sExKNTP5ER08pABJJX01hcPC/Le9F85+aZSQORiCni4EERP08dgbcHEisyRdsVPYhxnVhvFoXFKFyxsorgx895tIRLB9amNnlnw7Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-433316b78f4so18538055ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 08:19:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762618743; x=1763223543;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S6CnMY2R0/nwgxF3GeEFQ6/eyGrzFvoaMzoUmypXJTk=;
+        b=DKzl07MLfDKG5GmoTaVjukcOa49r46y6hXgwRUtPB+G1VYmG4lI2kzIBjJSnjV+Ys2
+         7yETXRkE0iAkRNrcd9X/rZ1glJDqU9sWhYFpNwiE+WamTWSfA29YXpHvCxFUNU7n2kgr
+         9smrXJ0yKdXK4VG+FLqrtiGOBNDCzklUuail/Ecr1VUyPZRv9MTfLsxA0pmrE61U1Kwe
+         PHS5fHpwECBnM512kguwilmRmzOmYM+DDMDDiRoov2R2jGwFE8zKPQQjjWXSsPii19SV
+         Bk+8C4DJFdxuP6t/mDWUHq45+DZItOF0yHW3LKVtmmKQVQ/RoghoXYDMZbns1BS2iXFx
+         07Jw==
+X-Gm-Message-State: AOJu0Yw6G1KTk5brzIAU4wJj0jMrEdoK1GuJgAIrGSq4ElizohUwGL7+
+	NynRdkyOP0bGsicmXdhjwQR509T2EmUaq5Tx4hHhUZyjoQHgNBni8+5w7w1cqxVYfPEWz/L5Ph1
+	WrvLOWZcq3EO2HKIzpoJJNJINEueAPthqhPu7WW8RL7UwDRM5mNvNUKo3Lws=
+X-Google-Smtp-Source: AGHT+IGvOVxdjLyqgNx80HfZ8/WCSOxrjp4l27e6f1uOpXNdKavblFU9AZgf4ahRJWELoN6rRnbRdAmIEi8qz3mq3PH7njURRuN4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a92:c266:0:b0:430:a550:3003 with SMTP id
+ e9e14a558f8ab-43367debff9mr45150065ab.14.1762618742915; Sat, 08 Nov 2025
+ 08:19:02 -0800 (PST)
+Date: Sat, 08 Nov 2025 08:19:02 -0800
+In-Reply-To: <CAHjv_avmxaoUvH17xdu+JTw42Dmc70h+xooj1JxsKjQ8Fh3GrA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690f6d76.a70a0220.22f260.0086.GAE@google.com>
+Subject: Re: [syzbot] [net?] kernel BUG in ipgre_header (3)
+From: syzbot <syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	zlatistiv@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On November 7, 2025 4:48:05 PM PST, Andy Lutomirski <luto@kernel=2Eorg> wro=
-te:
->
->
->On Fri, Nov 7, 2025, at 2:09 AM, Ard Biesheuvel wrote:
->> On Fri, 7 Nov 2025 at 10:40, Peter Zijlstra <peterz@infradead=2Eorg> wr=
-ote:
->>>
->>> On Fri, Nov 07, 2025 at 10:22:30AM +0100, Ard Biesheuvel wrote:
->>>
->>> > > But that's just the thing EFI is *NOT* trusted! We're basically
->>> > > disabling all security features (not listed above are CET and CFI)=
- to
->>> > > run this random garbage we have no control over=2E
->>> > >
->>> > > How about we just flat out refuse EFI runtime services? What are t=
-hey
->>> > > actually needed for? Why are we bending over backwards and subvert=
-ing
->>> > > our security for this stuff?
->>> >
->>> > On x86, it is mostly the EFI variable services that user space has
->>> > come to rely on, not only for setting the boot path (which typically
->>> > happens only once at installation time, when the path to GRUB is set
->>> > as the first boot option)=2E Unfortunately, the systemd folks have t=
-aken
->>> > a liking to this feature too, and have started storing things in
->>> > there=2E
->>>
->>> *groan*, so booting with noefi (I just went and found that option) wil=
-l
->>> cause a modern Linux system to fail booting?
->>>
->>
->> As long as you install with EFI enabled, the impact of efi=3Dnoruntime
->> should be limited, given that x86 does not rely on EFI runtime
->> services for the RTC or for reboot/poweroff=2E But you will lose access
->> to the EFI variable store=2E (Not sure what 'noefi' does in comparison,
->> but keeping EFI enabled at boot time for things like secure/measured
->> boot and storage encryption will probably result in a net positive
->> impact on security/hardening as long as you avoid calling into the
->> firmware after boot)
->>
->>
->>> > There is also PRM, which is much worse, as it permits devices in the
->>> > ACPI namespace to call firmware routines that are mapped privileged =
-in
->>> > the OS address space in the same way=2E I objected to this at the ti=
-me,
->>> > and asked for a facility where we could at least mark such code as
->>> > unprivileged (and run it as such) but this was ignored, as Intel and
->>> > MS had already sealed the deal and put this into production=2E This =
-is
->>> > much worse than typical EFI routines, as the PRM code is ODM/OEM cod=
-e
->>> > rather than something that comes from the upstream EFI implementatio=
-n=2E
->>> > It is basically a dumping ground for code that used to run in SMM
->>> > because it was too ugly to run anywhere else=2E </rant>
->>>
->>> What the actual fuck!! And we support this garbage? Without
->>> pr_err(FW_BUG ) notification?
->>>
->>> How can one find such devices? I need to check my machine=2E
->>>
->>
->> Unless you have a PRMT table in the list of ACPI tables, your system
->> shouldn't be affected by this=2E
->>
->>> > It would be nice if we could
->>> >
->>> > a) Get rid of SetVirtualAddressMap(), which is another insane hack
->>> > that should never have been supported on 64-bit systems=2E On arm64,=
- we
->>> > no longer call it unless there is a specific need for it (some Amper=
-e
->>> > Altra systems with buggy firmware will crash otherwise)=2E On x86,
->>> > though, it might be tricky because there so much buggy firmware=2E
->>> > Perhaps we should phase it out by checking for the UEFI version, so
->>> > that future systems will avoid it=2E This would mean, however, that =
-EFI
->>> > code remains in the low user address space, which may not be what yo=
-u
->>> > want (unless we do c) perhaps?)
->>> >
->>> > b) Run EFI runtime calls in a sandbox VM - there was a PoC implement=
-ed
->>> > for arm64 a couple of years ago, but it was very intrusive and the A=
-RM
->>> > intern in question went on to do more satisyfing work=2E
->>> >
->>> > c) Unmap the kernel KPTI style while the runtime calls are in
->>> > progress? This should be rather straight-forward, although it might
->>> > not help a lot as the code in question still runs privileged=2E
->>>
->>> At the very least I think we should start printing scary messages abou=
-t
->>> disabling security to run untrusted code=2E This is all quite insane :=
-/
->>
->> I agree in principle=2E However, calling it 'untrusted' is a bit
->> misleading here, given that you already rely on the same body of code
->> to boot your computer to begin with=2E I=2Ee=2E, if you suspect that th=
-e
->> code in question is conspiring against you, not calling it at runtime
->> to manipulate EFI variables is not going to help with that=2E
->>
->> But from a robustness point of view, I agree - running vendor code at
->> the OS's privilege level at runtime that was only tested with Windows
->> is not great for stability, and it would be nice if we could leverage
->> the principle of least privilege and only permit it to access the
->> things that it actually needs to perform the task that we've asked it
->> to=2E This is why I asked for the ability to mark PRM services as
->> unprivileged, given that they typically only run some code and perhaps
->> poke some memory (either RAM or MMIO registers) that the OS never
->> accesses directly=2E
->>
->> Question is though whether on x86, sandboxing is feasible: can VMs
->> call into SMM? Because that is where 95% of the EFI variable services
->> logic resides - the code running directly under the OS does very
->> little other than marshalling the arguments and passing them on=2E
->
->Last time I looked at the calls into SMM (which was quite a while ago), t=
-hey were fairly recognizable sequences that would nicely cause VM exits=2E =
- So the VM would exit and we would invoke SMM on its behalf=2E
->
->But it=E2=80=99s very very very common for VMX/SVM to be unavailable=2E
->
->Has anyone tried running EFI at CPL3?
->
->P=2ES=2E Forget about relying on AC to make EFI work=2E I doubt we can tr=
-ust EFI to leave AC set=2E
->
+Hello,
 
-Yeah, AC is way too volatile=2E=20
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-This thread veered off topic, though=2E The point wasn't that EFI runtime =
-calls weren't crap, but that LASS, SMEP, and SMAP add no value during the E=
-FI runtime call *because we explicitly unmap user space anyway* (efi_mm) so=
- there are no user space mappings to worry about, so disabling them during =
-the execution of the EFI runtime call makes no difference at all =E2=80=94 =
-*as long as* the CR4 manipulation is done strictly inside the efi_mm switch=
-=2E
+Reported-by: syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com
+Tested-by: syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         e811c33b Merge tag 'drm-fixes-2025-11-08' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16a790b4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=486aa0235ebabcac
+dashboard link: https://syzkaller.appspot.com/bug?extid=a2a3b519de727b0f7903
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=110a0412580000
+
+Note: testing is done by a robot and is best-effort only.
 
