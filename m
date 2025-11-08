@@ -1,177 +1,108 @@
-Return-Path: <linux-kernel+bounces-891513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12D7C42D30
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:10:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D65D3C42D23
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:07:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 51E423496BF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:10:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96D574E4D43
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E131019F115;
-	Sat,  8 Nov 2025 13:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F60F195FE8;
+	Sat,  8 Nov 2025 13:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dV9AIGO5"
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7D+tM5k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C005F34D3A9;
-	Sat,  8 Nov 2025 13:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41BE34D3A9;
+	Sat,  8 Nov 2025 13:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762607399; cv=none; b=QBvwxbJL7bDSoVzcJitOYqbtcwRRjPBgb4ZgWy0cO+IptdOl9s2NRld9m1xptmy/W1FYa2Fjpdr4mpEIK6qEYfQ5snWhJJFj+yBEuvdM+GIYEi9dehSIwQTCE6ZkPbUJ4Hlt3rtS9nHCxhfJBzYR1XjXtmLFOIN/vONr65f8ezQ=
+	t=1762607271; cv=none; b=uujAV4pFV5nmTPYyqI3zLyPMJkl4g3FyBDMm9xGZ9/k5riJO5JFei87r04MS7PudtPV0XQmRc16tlOAa5xNrmBSxQf5XMwU+VYNrBPP3y21DXBa6Ck9TPkgor0aCgYL79kS0xwI3V/j5VYSYe04i8nWd25eFl/GzhXjqLzPNIxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762607399; c=relaxed/simple;
-	bh=eDlMDq1XI0QJzQ19YXeN2G+kTl1DYm/+RWUFzDzitbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nOkq/2rRoSy/ow5LqaTl+IGZn6R12PSzGVwEh9N220Lir0GvJ/ZOXYjyJ2Fh6BkQ7o1V0DKrGAi1zHWPZEI5Y968eCaE0XP4NABhjN41DSwtLRHPAHncT6U03Xv4U7MMEcXSrXuHIbHW4HU6mmw1yLtbRQ5YeFCMICDaUhbP6aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dV9AIGO5; arc=none smtp.client-ip=80.12.242.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id HiYOvhfDuznX9HiYOvZaHP; Sat, 08 Nov 2025 14:00:33 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1762606833;
-	bh=aRGRFm8nQr5WAaRrinpk9KWjIa54yU+4iQS0RwjiVHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=dV9AIGO5VvC+elQurmqsLtlcfKPFa9KJWs8T1UvJRBZI65JlxwrheFUYsvpgm+6ts
-	 1hHHejsRTLicDpc+yCdmFZ4BG0PM6zrEZT4MCL5zjANBryR2NUeCcGQ/v/zFbq2kTQ
-	 nSnB/51xKINEALpZ9sHEvOJatXQlMyqLoKMI/2TH63GNAW83WRTEA8sDY+JgTZGcEu
-	 uX14hXVl/IMt+Umpij8cvguLgma1IcTPbhUSU+K2m9/BdkGXzP8fP3lSjDd08ImQTQ
-	 Aoa3r8nYM23m/XdHeVqP3R05IsLFaV2dKJYIo0kQ0bxShUNL9CY5nBc03QDNgEJkuw
-	 wX6SPDTFC2dyQ==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 08 Nov 2025 14:00:33 +0100
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <120b2f62-25e6-4ea3-9907-230080c61f70@wanadoo.fr>
-Date: Sat, 8 Nov 2025 14:00:26 +0100
+	s=arc-20240116; t=1762607271; c=relaxed/simple;
+	bh=i7HXPTYeK+e+Jl5vz+u8MqxdLo1lCA/B25zaKUgWUkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EH7GbVMa7n6FAlqs9FAvGBQfs9GNwQf5g/qQQZts3B38BMdozkDnSGFT1zPTIpy4btR8OUyqiZiSbXLCLmfKpU1SyH7mQIEK4HKwoSPfW32HLYihWhBNo1flsdhu3TX9Aw1Uc+cfE61K3npx2dj0a+TPHUGQ8p1FeYBtX4Ii4bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7D+tM5k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E95EC4CEF7;
+	Sat,  8 Nov 2025 13:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762607271;
+	bh=i7HXPTYeK+e+Jl5vz+u8MqxdLo1lCA/B25zaKUgWUkY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B7D+tM5kRH+NjazgLU1QcpEGK3MSiun+xEIGRss4cHMEJkPH+dAAG9aWL0+Ni/kzp
+	 tdgB8qNQ/5v8GCWh/yvzGxkmtXcLRIZPeEurA0js5LUFoZR/s/5Ql1kIfFWoAFIXVa
+	 7xLE/8CefNRlBnOVhFRWSP5mkIpzN3q4JwW7x6qPwc216NOTGhKbv1gs9U492MMFl+
+	 UCXxdzRBNa+58S/xIxPrtUkKQK8lKxoE467ijgeeYg/uJItdpy0C+EzqiY7umw00zf
+	 L7lketTeGJhxeWsBRGZjEYkqlMumv2nPYEWkrMiQTtzV98m6hmshhuMkN38ko+wC/O
+	 jEl8eGclEP93w==
+Date: Sat, 8 Nov 2025 13:07:45 +0000
+From: Will Deacon <will@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 15/16] srcu: Optimize SRCU-fast-updown for arm64
+Message-ID: <aQ9AoauJKLYeYvrn@willie-the-truck>
+References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
+ <20251105203216.2701005-15-paulmck@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/7] PCI: spacemit: Add SpacemiT PCIe host driver
-To: Alex Elder <elder@riscstar.com>, lpieralisi@kernel.org,
- kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com
-Cc: dlan@gentoo.org, aurelien@aurel32.net, johannes@erdfelt.com,
- p.zabel@pengutronix.de, christian.bruel@foss.st.com,
- thippeswamy.havalige@amd.com, krishna.chundru@oss.qualcomm.com,
- mayank.rana@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
- shradha.t@samsung.com, inochiama@gmail.com, guodong@riscstar.com,
- linux-pci@vger.kernel.org, spacemit@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251107191557.1827677-1-elder@riscstar.com>
- <20251107191557.1827677-6-elder@riscstar.com>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <20251107191557.1827677-6-elder@riscstar.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105203216.2701005-15-paulmck@kernel.org>
 
-Le 07/11/2025 à 20:15, Alex Elder a écrit :
-> Introduce a driver for the PCIe host controller found in the SpacemiT
-> K1 SoC.  The hardware is derived from the Synopsys DesignWare PCIe IP.
-> The driver supports three PCIe ports that operate at PCIe gen2 transfer
-> rates (5 GT/sec).  The first port uses a combo PHY, which may be
-> configured for use for USB 3 instead.
+Hi Paul,
+
+On Wed, Nov 05, 2025 at 12:32:15PM -0800, Paul E. McKenney wrote:
+> Some arm64 platforms have slow per-CPU atomic operations, for example,
+> the Neoverse V2.  This commit therefore moves SRCU-fast from per-CPU
+> atomic operations to interrupt-disabled non-read-modify-write-atomic
+> atomic_read()/atomic_set() operations.  This works because
+> SRCU-fast-updown is not invoked from read-side primitives, which
+> means that if srcu_read_unlock_fast() NMI handlers.  This means that
+> srcu_read_lock_fast_updown() and srcu_read_unlock_fast_updown() can
+> exclude themselves and each other
 > 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
+> This reduces the overhead of calls to srcu_read_lock_fast_updown() and
+> srcu_read_unlock_fast_updown() from about 100ns to about 12ns on an ARM
+> Neoverse V2.  Although this is not excellent compared to about 2ns on x86,
+> it sure beats 100ns.
+> 
+> This command was used to measure the overhead:
+> 
+> tools/testing/selftests/rcutorture/bin/kvm.sh --torture refscale --allcpus --duration 5 --configs NOPREEMPT --kconfig "CONFIG_NR_CPUS=64 CONFIG_TASKS_TRACE_RCU=y" --bootargs "refscale.loops=100000 refscale.guest_os_delay=5 refscale.nreaders=64 refscale.holdoff=30 torture.disable_onoff_at_boot refscale.scale_type=srcu-fast-updown refscale.verbose_batched=8 torture.verbose_sleep_frequency=8 torture.verbose_sleep_duration=8 refscale.nruns=100" --trust-make
+> 
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: <linux-arm-kernel@lists.infradead.org>
+> Cc: <bpf@vger.kernel.org>
 > ---
+>  include/linux/srcutree.h | 51 +++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 48 insertions(+), 3 deletions(-)
 
-...
+I've queued the per-cpu tweak from Catalin in the arm64 fixes tree [1]
+for 6.18, so please can you drop this SRCU commit from your tree?
 
-> +static int k1_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct k1_pcie *k1;
-> +	int ret;
-> +
-> +	k1 = devm_kzalloc(dev, sizeof(*k1), GFP_KERNEL);
-> +	if (!k1)
-> +		return -ENOMEM;
-> +
-> +	k1->pmu = syscon_regmap_lookup_by_phandle_args(dev_of_node(dev),
-> +						       SYSCON_APMU, 1,
-> +						       &k1->pmu_off);
-> +	if (IS_ERR(k1->pmu))
-> +		return dev_err_probe(dev, PTR_ERR(k1->pmu),
-> +				     "failed to lookup PMU registers\n");
-> +
-> +	k1->link = devm_platform_ioremap_resource_byname(pdev, "link");
-> +	if (!k1->link)
+Cheers,
 
-if (IS_ERR(k1->link)) ?
+Will
 
-> +		return dev_err_probe(dev, -ENOMEM,
-> +				     "failed to map \"link\" registers\n");
-
-Message with -ENOMEM are ignored, so a direct return -ENOMEM is less 
-verbose and will bhave the same. See [1].
-
-But in this case, I think it should be PTR_ERR(k1->link).
-
-[1]: 
-https://elixir.bootlin.com/linux/v6.18-rc2/source/drivers/base/core.c#L5015
-
-> +
-> +	k1->pci.dev = dev;
-> +	k1->pci.ops = &k1_pcie_ops;
-> +	dw_pcie_cap_set(&k1->pci, REQ_RES);
-> +
-> +	k1->pci.pp.ops = &k1_pcie_host_ops;
-> +
-> +	/* Hold the PHY in reset until we start the link */
-> +	regmap_set_bits(k1->pmu, k1->pmu_off + PCIE_CLK_RESET_CONTROL,
-> +			APP_HOLD_PHY_RST);
-> +
-> +	ret = devm_regulator_get_enable(dev, "vpcie3v3");
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "failed to get \"vpcie3v3\" supply\n");
-> +
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_no_callbacks(dev);
-> +	devm_pm_runtime_enable(dev);
-> +
-> +	platform_set_drvdata(pdev, k1);
-> +
-> +	ret = k1_pcie_parse_port(k1);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to parse root port\n");
-> +
-> +	ret = dw_pcie_host_init(&k1->pci.pp);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to initialize host\n");
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static const struct of_device_id k1_pcie_of_match_table[] = {
-> +	{ .compatible = "spacemit,k1-pcie", },
-> +	{ },
-
-Unneeded trainling comma after a terminator.
-
-> +};
-> +
-> +static struct platform_driver k1_pcie_driver = {
-> +	.probe	= k1_pcie_probe,
-> +	.remove	= k1_pcie_remove,
-> +	.driver = {
-> +		.name			= "spacemit-k1-pcie",
-> +		.of_match_table		= k1_pcie_of_match_table,
-> +		.probe_type		= PROBE_PREFER_ASYNCHRONOUS,
-> +	},
-> +};
-> +module_platform_driver(k1_pcie_driver);
-
+[1] https://git.kernel.org/arm64/c/535fdfc5a228
 
