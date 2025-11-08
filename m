@@ -1,118 +1,109 @@
-Return-Path: <linux-kernel+bounces-891347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C8FC427E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 06:45:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FFAC427E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 06:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 98B7534AC65
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 05:45:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D8E64E5480
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 05:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38BD28D8F4;
-	Sat,  8 Nov 2025 05:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331EC2C0F97;
+	Sat,  8 Nov 2025 05:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rK0RiR/x"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ft2LWwSR"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE0A883F
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 05:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21EF25394A
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 05:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762580724; cv=none; b=U/P3qMGZpfdNKedQvCxry08YRkwgFXQwZ598N0wmSUHUOuLEUiHcqn4YvJxQAR+NxpOBOAGWNssmgoze56VQxfSWqOXNNDmHLqbo8JpcsBcIZKUyULxQ9X/lbxAv1vPxZFYqccLbHhaMT9tgaYpdnxdYy1SGXnTJ+gGK40fg9E4=
+	t=1762581109; cv=none; b=Awad7N+pT00v60nbBPoaAjd3ugSHMbn1HtJOONd9M/GBshCHyI0+91tEQEXMH794l488+cjx34Gfkb9FA71Ul2mo/bJtFDs4DFMzk44Esz1tsc0LKzztPkeZhCcn1Ax+vg+dfUfFVjv92cTPrgukS3A8G6LCkJqWyn8QeqmNg6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762580724; c=relaxed/simple;
-	bh=NVCTghZi5JjlEiSEJdbRNG52gFdsPmQjdyeqQdQogLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sGWyUeMoL0NyQhkyaI63QjbeH+aM6vJEtfCWFCZZU8XFo0GbxsXhJ5bA+AYC1VbzOSDt6WfqNt9RdIqjPBRJYzhrjL5FDIaK8h6v1wWRnlmKk3L/KwNOEGn7QVMBrZpynxVZNZ5kKr3ndiqSOaS4ceqX/YCR6mAEo9SzQUyG3R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rK0RiR/x; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 7 Nov 2025 21:45:04 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762580709;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9qwM369YFl+OLlR0vHxeHaLayeXRWU8S1aUt7oEr33o=;
-	b=rK0RiR/xnW4uKGxUrWKA2zRLH1gbP10S7SpXJdr/OVXyGy6ziKfstyeaK9hyE7YFNcmALP
-	TuHPNUbimbr7zsvineElD9m7kHKYtYNgh7PRcklXJo12snSmGsargyOwaG+vzUlJTiS6EF
-	Qi4aL9bOqvocIHBFhhyIRqDetfzcL+k=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] mm: memcg: dump memcg protection info on oom or alloc
- failures
-Message-ID: <tawekrqql6efopwac3zrqgrszueampnadqp7s3g7wfvohsiqbt@22ai2cryardu>
-References: <20251107234041.3632644-1-shakeel.butt@linux.dev>
- <20251108022639.73734-1-sj@kernel.org>
+	s=arc-20240116; t=1762581109; c=relaxed/simple;
+	bh=XVJel/GC65JasbnZWN+s1dEMdQaYBj8pYLjdWWABm8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jQ2iu1AOegL3m1lVDWbRlb+53N5TzanCQ6cuBP9bX1LdjIvQOuwVccGHw8awDkhKmI1PvG9oRIm35NUT+PV94BSlcT1zyzK/3X0dIUySAhm1hpsIiD7Y6BeWYNKmclL6ZUqyoLB0TO7C41TE7sfqAjW9mM8N4Qdi7m3TFVB5tH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ft2LWwSR; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b5b823b4f3dso202242266b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 21:51:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762581106; x=1763185906; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=XVJel/GC65JasbnZWN+s1dEMdQaYBj8pYLjdWWABm8c=;
+        b=ft2LWwSRgBBmNdoxzcVW4o0wDoZYgxI9UMaqUHQctakWI9ZoqyJMHS+/olFuNaE6m7
+         N8OiakQ4BUU20Bq2AKsTC2Tc46rpBBE11JlsCVL19vVUgSNoM+imaBwIw/JMDdMqEugs
+         yvm5mTznfcwUk7UgMH8L6dNKNDjlsOhHBGsPIaces46csuwe1QTunsP1SeGg9fIEriXU
+         ed62pd9azxanYd0E6VH1aq2lFucyC/2fZrKRB29sEPCusgg98m1YUkY5J5ePF7Pm4KX0
+         tEWnGP6gu4iaAiuF3o1gxluxMQFKHpPKdXa6ULPZpHYNjDd6J4qwc3INB3fseZCUe9Ss
+         ADIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762581106; x=1763185906;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XVJel/GC65JasbnZWN+s1dEMdQaYBj8pYLjdWWABm8c=;
+        b=CsFC79dVDyKCCxM3wefkSEDX3Q/6IjeTTYkj1q3TOpNEpzek7nSxgyvuZlQZEUJHw7
+         wxDvmm796aFVuIpw3CkAZvEd7fTDLZkAObKWeXo4NIZ/aSL2np2D/+Pc869oiMlAv76L
+         gFuInFgn3pP21868xGL+lZ4Y1lEEQ19tdLCbM6SbxSEUrj49AbatYJnyoCZbHi1kaLzr
+         jHEyhgp9niw/4DtfjY2urGe/i6KwmYUTAd4l9xC5zNM3eiFupG6z4Exi1aLOUI8MX5XM
+         +duLhpk5WUucdA1oNiI/KdJZ8kqcSrslS6Q7Y44SBRaMjgP5EUxd8mpSKCBvFK80fPkr
+         47zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjU+oeLLQXuewE4kXnKD0piMZsN9SjRVOhI1EvET9/hWNYj8+8mzn8aXcLHDlMn8cg99F1C6VFUfssCuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHbyMXA/6zEim/tgyQrwh+gcIIGi84LbHFpPpSYP/dIvylRjIa
+	EcSSPQYXYWpSGuKWHZHZ2or48736SY0mPm0bXfwALz9rlPPt92b3xoW38tHrKw==
+X-Gm-Gg: ASbGnct87+QBsIR+SvblViGOHcgP4BII2pyNNrZu0eSEGiUJSynA/zoOwu68HPa+VpU
+	w4I76tuiOZEB76vvSddGAuHTtwmRlmlSH+UhX2Q0gmxH66lt2IlG77IEVsa/hla0BggLLjOq3fn
+	EOWGM8o/r0MOZCQy9GSOo9HSF3p1tenJK3w7CrTqlZvCD+m8OT3/Ct9367ukG7z7D/UvHvSybhe
+	rCQFALp97Zr0UoFdUYYatZQxFzM4ePEkj6/oDCEuq6rl01ZxakDP4bx4mV32wDDamsvxvJq9PQb
+	PkRe3MbgTrSq+t679HkoVwBBY4U3CnzZ/H0jXvbveM9hpF/i4sVqIg1QhRON6fgRfQUOPNQVCyd
+	6mJx7KCdZySBVnkvpB+pR3fEftYLJAUenMfztW68WIcR8PTG0l+5PQUxbqIY4zQo/Fj6DMCdwX7
+	9OEbN68WLf
+X-Google-Smtp-Source: AGHT+IH0Ma11e2l4b67D8Lr8TSDtfmbxdRsj2ctAmcUFYCbTXdZai9gzxybp4oIqw5DFwNoACkqzyw==
+X-Received: by 2002:a17:907:7e8c:b0:b72:58b6:b276 with SMTP id a640c23a62f3a-b72e061a90cmr161041366b.54.1762581106194;
+        Fri, 07 Nov 2025 21:51:46 -0800 (PST)
+Received: from [192.168.0.101] ([95.90.185.18])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbca75bsm443256166b.14.2025.11.07.21.51.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Nov 2025 21:51:45 -0800 (PST)
+Message-ID: <f367735d-e480-4eb1-a2a9-c6d311661fdd@gmail.com>
+Date: Sat, 8 Nov 2025 06:51:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251108022639.73734-1-sj@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] staging: rtl8723bs: Rename camel case enumeration
+To: Bryant Boatright <bryant.boatright@proton.me>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <cover.1762576396.git.bryant.boatright@proton.me>
+ <38533b30dbcb39f370fd778ee2a6838ca7b962a1.1762576396.git.bryant.boatright@proton.me>
+Content-Language: en-US
+From: Michael Straube <straube.linux@gmail.com>
+In-Reply-To: <38533b30dbcb39f370fd778ee2a6838ca7b962a1.1762576396.git.bryant.boatright@proton.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 07, 2025 at 06:26:38PM -0800, SeongJae Park wrote:
-> On Fri,  7 Nov 2025 15:40:41 -0800 Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> 
-> > Currently kernel dumps memory state on oom and allocation failures. One
-> > of the question usually raised on those dumps is why the kernel has not
-> > reclaimed the reclaimable memory instead of triggering oom. One
-> > potential reason is the usage of memory protection provided by memcg.
-> > So, let's also dump the memory protected by the memcg in such reports to
-> > ease the debugging.
-> > 
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > ---
-> [...]
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index c34029e92bab..623446821b00 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -5636,3 +5636,16 @@ bool mem_cgroup_node_allowed(struct mem_cgroup *memcg, int nid)
-> >  {
-> >  	return memcg ? cpuset_node_allowed(memcg->css.cgroup, nid) : true;
-> >  }
-> > +
-> > +void mem_cgroup_show_protected_memory(struct mem_cgroup *memcg)
-> > +{
-> > +	if (mem_cgroup_disabled() || !cgroup_subsys_on_dfl(memory_cgrp_subsys))
-> > +		return;
-> > +
-> > +	if (!memcg)
-> > +		memcg = root_mem_cgroup;
-> > +
-> > +	pr_warn("Memory cgroup min protection %lukB -- low protection %lukB",
-> > +		K(atomic_long_read(&memcg->memory.children_min_usage)*PAGE_SIZE),
-> > +		K(atomic_long_read(&memcg->memory.children_low_usage)*PAGE_SIZE));
-> > +}
-> 
-> I didn't expect this function is showing the information by calling pr_warn().
-> To me, "show" feels like something for file operations, like memory_min_show().
-> 
-> What about s/show/dump/ on the name?  It makes it more consistent with the
-> subject of this patch, and other similar functions like dump_page() ?
-> 
-> No strong opinion.  The current name is also ok for me, but I'm just curious your thought.
-> 
+Hi Bryant,
 
-I just took the inspiration from show_mem(). Initially I was trying to
-put these pr_warn in show_mem() but noticed that it was called from more
-places than I intend to print this info, so decided to have a separate
-function.
+Am 08.11.25 um 05:54 schrieb Bryant Boatright:
+> -enum ParseRes { ParseOK = 0, ParseUnknown = 1, ParseFailed = -1 };
+> +enum parse_res { parse_ok = 0, parse_unknown = 1, parse_failed = -1 };
 
-Thanks for taking a look.
+The constants in enums are usually named all upper case.
+PARSE_OK, PARSE_UNKNOWN, PARSE_FAILED
+
+Best regards,
+Michael
 
