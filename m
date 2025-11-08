@@ -1,77 +1,79 @@
-Return-Path: <linux-kernel+bounces-891747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE8EC43608
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 00:13:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D309C4360E
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 00:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F05B4E23DF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 23:13:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D86F4E2452
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 23:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054B427FD76;
-	Sat,  8 Nov 2025 23:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DCD28727A;
+	Sat,  8 Nov 2025 23:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="YrwdFD6/"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="hgcVt39f"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC9E1DF72C
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 23:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDE127F4E7
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 23:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762643599; cv=none; b=cEiwBSI8bEMOPTFLpd+ed/wogyDBLRL67AozcQxWMeWq+1KO8pvxA4Q1e1+xf7h6GRbueEIiE5tVuZTSLhyJqf/os2DGi8evIrVGatdgTnxFAMJwU9+biM1p3IoMbCKUaCRiNJoMF1o4udmMDDdWU4xcByqekclmBDY/mmBTdN4=
+	t=1762643602; cv=none; b=pVF4U73mK+lxwTPtpuNg3kNv9jXqz00d53u7xKYXXrSdHC4mfeX4JF9pw1Q7Z/xgdKyxQclrSDuhLYX2G/437rbPY30lHkYNY/m6qzVRHKz1VNmJR7GUcycny1FryhM+w7Wfx6/w3JEv9fBcEVKcH5rwCKSOuKqU/S2Etpd6J10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762643599; c=relaxed/simple;
-	bh=mktvsbnCgQB7SIyVywpazCEAaoTh++8TaCODy4U/W4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k4JHNem3LIKlEArmHB+71/+RYdbKyT/auQ3701N14tYfgyFy5RNSpj2Oo9dDbB3yfxJ14h2g4tw0XzEgMhRgF0G0M7T8f4HHyu0lYnW2cjcC8OR5jyLUn6l/QrT/LpjlvrMx8aeSmG5GEbjJxz2F1CngmIae/JeuA4+CILq4xn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=YrwdFD6/; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1762643602; c=relaxed/simple;
+	bh=t6OdCqHs88/HVmaNTXkOdzH+CqRafKqsTXZ8TPidQC0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kf/tsicEA5G1+dGDRdGnbcHPlPwPZ1TE7UdvtNKtfPx72RN/OUm5ZKQf0Tw2Dp7auHWvMJBA+wyqxXL1snRbzwbqTgevE5nSql3gKtxEg2QOHhTEajc2G7PjX3pkoUnEIqQj+GzqyVBJVq8CM5hLmZ1GAACxzexJ1U+38xxamDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=hgcVt39f; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640f4b6836bso3383975a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 15:13:16 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so2875342a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 15:13:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1762643595; x=1763248395; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ibTL9LFMoaISY8GQE81Db1c/RUt2bsWCzKF7aX8X54Q=;
-        b=YrwdFD6/qKHTg4gnVS1bpz7IsDR2iJ2lhqOMz4GhWMirYMRGLmYDrgkseXccCHCndF
-         d/CSpsm8kOoNwhHXOPuS0CgpmIbjPARKJ0ZDFu3F8Ggb5c0UI6oOPBj18iDT7zk9berG
-         q2VUdk6lw9EuxSUEtWdCGM4Q7bLyoGsXCSLiDsmJhUcM5iOpltkK5fgAPvKpUi/BAFvo
-         0HVaMvBq+4SkrEID1hE6tlmSNwgXJK7X3V1zVxK/NWOkEcyGgcJX10Fyg05yqHKqrXHm
-         ZbLiHZjOKwT1Ezg5gHl+po5ARXT1SoCW1+jGrSgIExNOBQqqUXncIuqrhVUXXBGOP4M+
-         MAOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762643595; x=1763248395;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=googlemail.com; s=20230601; t=1762643598; x=1763248398; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ibTL9LFMoaISY8GQE81Db1c/RUt2bsWCzKF7aX8X54Q=;
-        b=XHWDOYtv8c1miWt3t1K/25yaq4aACUcELQpykm6fcB+FNziXq1mLi6F6wYDb86mVNE
-         9b87q7nQJU6i8ZcOKXDtzd1CWgDkNDSao9qKnlTLIEFkJ4cRnBcGxPm1OiHLbxNTWo0O
-         GItIv0rzSJGXHmRfXqWC8HHmQ6PiX7o7Nhfk2DHI4S66GlTDSCijbpCx9gfZGOCMw+IA
-         9cNukwdq8Qa23mLK01SB9AgCKMlzhxDejmD78/HOp3JInqGwTVDE41NfBlLzZT9Nox1+
-         qzhD0j3T9e+nG7u4wCRc6GJwwrOGhGanLlbES7jVzcl6JZX1mYcUvgTAj7TGPV4L7NrW
-         wLYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrKPryVaTpVFVHmif1hU7foquBo1U4o8RWvnis6W7F9aI7NQfuMbgtdOAxA2PAaC5ZoCmQjZsNH+HN76U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpyHDe2Xxq2r9WJra06gsYEmoBNUU+HRblZPs6EkEG54pYd1t7
-	2Fw6VqXrOFmimqNW0aFyk60Qv/WvvyWr28naVJxd06GUUmIHlc0fyEEDuK4fbw==
-X-Gm-Gg: ASbGncuWAoibg+B0reRKsX1GfdUBGxmzyZltVJN8Kl3DT+HeqMxfnmEOKjfOWlQWZu/
-	CPUmYp49k7U6eYG+RkP6aKAIhuSkYuylreDMU22Ez0ADE7Ec1vXdwZ7h1UBUwuPm9GGqpIRsa0/
-	+wb5n6FADN4xesOmhr8lM+8QR6eFsZZWSAq71HHBknHa87FpK9X6usmRbnAsDEljWz1OVOgq7HJ
-	PLHqL2IeWJaZxZjIvFP8VSFFTOFbyQCuBBWrpSglrdaRDJ26/MbxGs5RAh9p2erjom9WfUId3eG
-	I/IeBFPyzqOuFvS8QHIo+HnvJlFrZZlORueQWkBO5SjekAJbdnRZX6YdMmQbTeO0RyqncwtmLyo
-	cTaxUkHtpCHuOl+s4aw5Byy+wai/CSYsWTTel+D0zlwowWu9UuBZJ0F8G9CioG9Mk/PBod0RfJ+
-	Zpn5nYE1rtavFDLnR/uaTjl1+iMvFlVrAmM4sDxUZCeC3srV7xZNyoXrgEapTEKsIdb5Q+wXCpp
-	yv2Db56a+A57iYzUl60yLVhWzummYX4lUCO3GmmfmI=
-X-Google-Smtp-Source: AGHT+IHojjSOYkU74h70pOz5Juc0qTwy5Qm9aBj39UgCLbnQKLDh8bnfGClMfrPjx5Lm9oFsJdZQ9g==
-X-Received: by 2002:a05:6402:40d1:b0:640:bc0b:887d with SMTP id 4fb4d7f45d1cf-6415dc03146mr2946757a12.2.1762643594925;
-        Sat, 08 Nov 2025 15:13:14 -0800 (PST)
+        bh=kWMhP1DF9JlU6IACRYH5DYXfm0imCEwHF1aCiJZS7sI=;
+        b=hgcVt39fNnm4ipVGwdrcl0eqtxmzN+COewm/Q5N8T7gvT+8UfyWRtac+KxAtsCXWoP
+         kiSV319Ei6r9PRrPK4U0oSQgQr4HILtYcblBCmmsVdu7jUwC4xg5W8qeMpU6En88W+Cn
+         2eAB5BwzuCLxyK5Oj/Jb9OKFs2WAiLjzxCgBcNlVpwfcoG7FOgemLRvEd60StpmE227F
+         u7icVGIY6WxFXRJenTBhWyZXrvpLiw2TNcYRI5obFMfP6yQ08ZRQVipZisfCW7HG6m9L
+         QW0f4mgHBJM6itE7WeMP4nnyP7jMgKlL5R64b7pTfi+nbdoW86qVroNmWl7oYd35NIDs
+         inIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762643598; x=1763248398;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kWMhP1DF9JlU6IACRYH5DYXfm0imCEwHF1aCiJZS7sI=;
+        b=ATFmqAwue6xxBByCtiVkFJ5KyxcmaVL4GQBQA7uDoENKcQV8n4hZeAaUcSgIcx9V24
+         GMF0ZbxMoGYEVLFMEe7kMrlXs6prCpIHAykhivgq9hQEa5HzZzjcTPCqQyuq8sHH/s94
+         Dku+v4C/WU3Q9ZHlqGLwYLaWJVZ4ljD6ecf5MNlR7KsUIkTgtRCQcpT8maSHQOAT0yke
+         YcAM5oxKuwNo1gveyQoDvbyrTN1oKlsvGekDtVSgRunKhTLURCN/TyPyNb1WJ5yiKWkJ
+         bP71exE4U7pmdNGZk7Gkpe/vvCsf5jAs6mG9jecqW3uRVAHzvNeng/pFwhk3OzGvT1Jl
+         lhSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9tliXoeEK5ptS4epBZkeQ6s/9GLAnNJgwAQW3tuEIAAP2Pd4nHk2VMlJc7X7ho/uLOrEmL3QiebzuA+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOuQwwYyK6ue5dSs8OtyNnDNt2u9eLnLyQqW8rBTTTVvnUKZQv
+	hdiiZO7aA7mxFBEITShkuV4DWKPaSj3nN7ouV4PKJGeVJam1J8DomcKqa8OocA==
+X-Gm-Gg: ASbGncsCRz3UW4yDyLZT+qzI+PvQNxExlshmvnSfJT6WDX2xVqlRSdth8P8vcbsd8iL
+	zg3Zu+t4843DzwCcUsRR9h5taqv+DYTunIW6r9VN+D/fpo9OrviqtRQ0YkkzRnsI2jGzXLYzRfo
+	/aSeJOVOXFUmpixAnHGODPC0Re3TlcvaCpWBc3Y+ZadqEN4vXHfEVF9zHCgm7/g7+YqNPzULf4M
+	8USx8n+7SCLDtiEqCaDD/fjlH/FmiMmFRVC9Y8HYZLNCwDBcTT+FozrmcfEsOIgBtHNvfB1Zb7A
+	aZ3x6yI6vi8tZtwNiOXjM4O7D3LznbXn2dd0y4RwbXNxa4Uy3hpRuawc1MfiM98YJ0AOLftK6ZJ
+	1197P3hbTZRTsh78yz8K9u20Vw4KPUI5OgYpZ3oYbNw3cinm8VZAGvA6t8V12e1nQjUHgoUlIcC
+	3jbOXDsOik7J2r6ZwJVIJWzr78BnvFtNhGecLKnUCOM3sFlmt9sIp786DeBDiDkJiY7i7MvfQ1K
+	lB2+L1NwVrJNSnG13+Nqxkso/2fBS4m1Lkpf/A3X70=
+X-Google-Smtp-Source: AGHT+IFGoyUr3fFUDtjdAJDaQ9diGHZMiMCjyMWKaOhYx4Nyqo8YNV94OzI3uycOIQUa86kK/iszdg==
+X-Received: by 2002:a05:6402:354b:b0:640:9b11:5d65 with SMTP id 4fb4d7f45d1cf-6415e822920mr2630715a12.24.1762643597799;
+        Sat, 08 Nov 2025 15:13:17 -0800 (PST)
 Received: from blackbox (dynamic-2a02-3100-a9b3-6600-1e86-0bff-fe2f-57b7.310.pool.telefonica.de. [2a02:3100:a9b3:6600:1e86:bff:fe2f:57b7])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-6411f814164sm7642807a12.13.2025.11.08.15.13.13
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-6411f814164sm7642807a12.13.2025.11.08.15.13.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 15:13:13 -0800 (PST)
+        Sat, 08 Nov 2025 15:13:16 -0800 (PST)
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To: linux-amlogic@lists.infradead.org,
 	linux-mmc@vger.kernel.org
@@ -79,10 +81,12 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	ulf.hansson@linaro.org,
 	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v1 0/7] mmc: meson-mx-sdio: Various driver improvements
-Date: Sun,  9 Nov 2025 00:12:46 +0100
-Message-ID: <20251108231253.1641927-1-martin.blumenstingl@googlemail.com>
+Subject: [PATCH v1 1/7] mmc: meson-mx-sdio: Switch to regmap for register access
+Date: Sun,  9 Nov 2025 00:12:47 +0100
+Message-ID: <20251108231253.1641927-2-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251108231253.1641927-1-martin.blumenstingl@googlemail.com>
+References: <20251108231253.1641927-1-martin.blumenstingl@googlemail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,35 +95,314 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series contains patches to improve / simplify the code of the
-meson-mx-sdio driver by:
-- using regmap for simplifying register access (patch 1)
-- switching to modern clock functions/helpers (patches 2, 3) and
-  make the clock code not interfere when switching to
-  devm_mmc_alloc_host() (patch 3)
-- making use of the devm_mmc_alloc_host (patch 4)
-- using modern dev_err_probe() for better error handling (patch 5)
-- indentation fix (patch 6)
-- ignoring disabled mmc-slot device-tree nodes to allow describing
-  all slots in device-tree, even though the driver only uses the
-  first enabled slot (patch 7)
+Switch the driver over to use regmap to access the registers. This makes
+it consistent with the other Amlogic MMC drivers. No functional changes
+intended.
 
-
-Binbin Zhou (1):
-  mmc: meson-mx-sdio: Use devm_mmc_alloc_host() helper
-
-Martin Blumenstingl (6):
-  mmc: meson-mx-sdio: Switch to regmap for register access
-  mmc: meson-mx-sdio: Use devm_clk_get_enabled()
-  mmc: meson-mx-sdio: Refactor internal clock initialization
-  mmc: meson-mx-sdio: Use dev_err_probe() where appropriate
-  mmc: meson-mx-sdio: Fix indentation in meson_mx_mmc_irq_thread()
-  mmc: meson-mx-sdio: Ignore disabled "mmc-slot" child-nodes
-
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
  drivers/mmc/host/Kconfig         |   1 +
- drivers/mmc/host/meson-mx-sdio.c | 339 +++++++++++++++----------------
- 2 files changed, 170 insertions(+), 170 deletions(-)
+ drivers/mmc/host/meson-mx-sdio.c | 125 ++++++++++++++++---------------
+ 2 files changed, 64 insertions(+), 62 deletions(-)
 
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 2c963cb6724b..027ef2540913 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -504,6 +504,7 @@ config MMC_MESON_MX_SDIO
+ 	depends on ARCH_MESON || COMPILE_TEST
+ 	depends on COMMON_CLK
+ 	depends on OF_ADDRESS
++	select REGMAP_MMIO
+ 	help
+ 	  This selects support for the SD/MMC Host Controller on
+ 	  Amlogic Meson6, Meson8 and Meson8b SoCs.
+diff --git a/drivers/mmc/host/meson-mx-sdio.c b/drivers/mmc/host/meson-mx-sdio.c
+index 8a49c32fd3f9..2448f21bd683 100644
+--- a/drivers/mmc/host/meson-mx-sdio.c
++++ b/drivers/mmc/host/meson-mx-sdio.c
+@@ -19,6 +19,7 @@
+ #include <linux/ioport.h>
+ #include <linux/platform_device.h>
+ #include <linux/of_platform.h>
++#include <linux/regmap.h>
+ #include <linux/timer.h>
+ #include <linux/types.h>
+ 
+@@ -108,7 +109,7 @@ struct meson_mx_mmc_host {
+ 	struct clk_fixed_factor		fixed_factor;
+ 	struct clk			*fixed_factor_clk;
+ 
+-	void __iomem			*base;
++	struct regmap			*regmap;
+ 	int				irq;
+ 	spinlock_t			irq_lock;
+ 
+@@ -122,22 +123,10 @@ struct meson_mx_mmc_host {
+ 	int				error;
+ };
+ 
+-static void meson_mx_mmc_mask_bits(struct mmc_host *mmc, char reg, u32 mask,
+-				   u32 val)
+-{
+-	struct meson_mx_mmc_host *host = mmc_priv(mmc);
+-	u32 regval;
+-
+-	regval = readl(host->base + reg);
+-	regval &= ~mask;
+-	regval |= (val & mask);
+-
+-	writel(regval, host->base + reg);
+-}
+-
+ static void meson_mx_mmc_soft_reset(struct meson_mx_mmc_host *host)
+ {
+-	writel(MESON_MX_SDIO_IRQC_SOFT_RESET, host->base + MESON_MX_SDIO_IRQC);
++	regmap_write(host->regmap, MESON_MX_SDIO_IRQC,
++		     MESON_MX_SDIO_IRQC_SOFT_RESET);
+ 	udelay(2);
+ }
+ 
+@@ -158,7 +147,7 @@ static void meson_mx_mmc_start_cmd(struct mmc_host *mmc,
+ 	struct meson_mx_mmc_host *host = mmc_priv(mmc);
+ 	unsigned int pack_size;
+ 	unsigned long irqflags, timeout;
+-	u32 mult, send = 0, ext = 0;
++	u32 send = 0, ext = 0;
+ 
+ 	host->cmd = cmd;
+ 
+@@ -215,25 +204,22 @@ static void meson_mx_mmc_start_cmd(struct mmc_host *mmc,
+ 
+ 	spin_lock_irqsave(&host->irq_lock, irqflags);
+ 
+-	mult = readl(host->base + MESON_MX_SDIO_MULT);
+-	mult &= ~MESON_MX_SDIO_MULT_PORT_SEL_MASK;
+-	mult |= FIELD_PREP(MESON_MX_SDIO_MULT_PORT_SEL_MASK, host->slot_id);
+-	mult |= BIT(31);
+-	writel(mult, host->base + MESON_MX_SDIO_MULT);
++	regmap_update_bits(host->regmap, MESON_MX_SDIO_MULT,
++			   MESON_MX_SDIO_MULT_PORT_SEL_MASK | BIT(31),
++			   FIELD_PREP(MESON_MX_SDIO_MULT_PORT_SEL_MASK,
++				      host->slot_id) | BIT(31));
+ 
+ 	/* enable the CMD done interrupt */
+-	meson_mx_mmc_mask_bits(mmc, MESON_MX_SDIO_IRQC,
+-			       MESON_MX_SDIO_IRQC_ARC_CMD_INT_EN,
+-			       MESON_MX_SDIO_IRQC_ARC_CMD_INT_EN);
++	regmap_set_bits(host->regmap, MESON_MX_SDIO_IRQC,
++			MESON_MX_SDIO_IRQC_ARC_CMD_INT_EN);
+ 
+ 	/* clear pending interrupts */
+-	meson_mx_mmc_mask_bits(mmc, MESON_MX_SDIO_IRQS,
+-			       MESON_MX_SDIO_IRQS_CMD_INT,
+-			       MESON_MX_SDIO_IRQS_CMD_INT);
++	regmap_set_bits(host->regmap, MESON_MX_SDIO_IRQS,
++			MESON_MX_SDIO_IRQS_CMD_INT);
+ 
+-	writel(cmd->arg, host->base + MESON_MX_SDIO_ARGU);
+-	writel(ext, host->base + MESON_MX_SDIO_EXT);
+-	writel(send, host->base + MESON_MX_SDIO_SEND);
++	regmap_write(host->regmap, MESON_MX_SDIO_ARGU, cmd->arg);
++	regmap_write(host->regmap, MESON_MX_SDIO_EXT, ext);
++	regmap_write(host->regmap, MESON_MX_SDIO_SEND, send);
+ 
+ 	spin_unlock_irqrestore(&host->irq_lock, irqflags);
+ 
+@@ -263,14 +249,13 @@ static void meson_mx_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 
+ 	switch (ios->bus_width) {
+ 	case MMC_BUS_WIDTH_1:
+-		meson_mx_mmc_mask_bits(mmc, MESON_MX_SDIO_CONF,
+-				       MESON_MX_SDIO_CONF_BUS_WIDTH, 0);
++		regmap_clear_bits(host->regmap, MESON_MX_SDIO_CONF,
++				  MESON_MX_SDIO_CONF_BUS_WIDTH);
+ 		break;
+ 
+ 	case MMC_BUS_WIDTH_4:
+-		meson_mx_mmc_mask_bits(mmc, MESON_MX_SDIO_CONF,
+-				       MESON_MX_SDIO_CONF_BUS_WIDTH,
+-				       MESON_MX_SDIO_CONF_BUS_WIDTH);
++		regmap_set_bits(host->regmap, MESON_MX_SDIO_CONF,
++				MESON_MX_SDIO_CONF_BUS_WIDTH);
+ 		break;
+ 
+ 	case MMC_BUS_WIDTH_8:
+@@ -351,8 +336,8 @@ static void meson_mx_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 	host->mrq = mrq;
+ 
+ 	if (mrq->data)
+-		writel(sg_dma_address(mrq->data->sg),
+-		       host->base + MESON_MX_SDIO_ADDR);
++		regmap_write(host->regmap, MESON_MX_SDIO_ADDR,
++			     sg_dma_address(mrq->data->sg));
+ 
+ 	if (mrq->sbc)
+ 		meson_mx_mmc_start_cmd(mmc, mrq->sbc);
+@@ -364,24 +349,26 @@ static void meson_mx_mmc_read_response(struct mmc_host *mmc,
+ 				       struct mmc_command *cmd)
+ {
+ 	struct meson_mx_mmc_host *host = mmc_priv(mmc);
+-	u32 mult;
+-	int i, resp[4];
++	unsigned int i, resp[4];
+ 
+-	mult = readl(host->base + MESON_MX_SDIO_MULT);
+-	mult |= MESON_MX_SDIO_MULT_WR_RD_OUT_INDEX;
+-	mult &= ~MESON_MX_SDIO_MULT_RESP_READ_INDEX_MASK;
+-	mult |= FIELD_PREP(MESON_MX_SDIO_MULT_RESP_READ_INDEX_MASK, 0);
+-	writel(mult, host->base + MESON_MX_SDIO_MULT);
++	regmap_update_bits(host->regmap, MESON_MX_SDIO_MULT,
++			   MESON_MX_SDIO_MULT_WR_RD_OUT_INDEX |
++			   MESON_MX_SDIO_MULT_RESP_READ_INDEX_MASK,
++			   MESON_MX_SDIO_MULT_WR_RD_OUT_INDEX |
++			   FIELD_PREP(MESON_MX_SDIO_MULT_RESP_READ_INDEX_MASK,
++				      0));
+ 
+ 	if (cmd->flags & MMC_RSP_136) {
+ 		for (i = 0; i <= 3; i++)
+-			resp[3 - i] = readl(host->base + MESON_MX_SDIO_ARGU);
++			regmap_read(host->regmap, MESON_MX_SDIO_ARGU,
++				    &resp[3 - i]);
++
+ 		cmd->resp[0] = (resp[0] << 8) | ((resp[1] >> 24) & 0xff);
+ 		cmd->resp[1] = (resp[1] << 8) | ((resp[2] >> 24) & 0xff);
+ 		cmd->resp[2] = (resp[2] << 8) | ((resp[3] >> 24) & 0xff);
+ 		cmd->resp[3] = (resp[3] << 8);
+ 	} else if (cmd->flags & MMC_RSP_PRESENT) {
+-		cmd->resp[0] = readl(host->base + MESON_MX_SDIO_ARGU);
++		regmap_read(host->regmap, MESON_MX_SDIO_ARGU, &cmd->resp[0]);
+ 	}
+ }
+ 
+@@ -422,8 +409,8 @@ static irqreturn_t meson_mx_mmc_irq(int irq, void *data)
+ 
+ 	spin_lock(&host->irq_lock);
+ 
+-	irqs = readl(host->base + MESON_MX_SDIO_IRQS);
+-	send = readl(host->base + MESON_MX_SDIO_SEND);
++	regmap_read(host->regmap, MESON_MX_SDIO_IRQS, &irqs);
++	regmap_read(host->regmap, MESON_MX_SDIO_SEND, &send);
+ 
+ 	if (irqs & MESON_MX_SDIO_IRQS_CMD_INT)
+ 		ret = meson_mx_mmc_process_cmd_irq(host, irqs, send);
+@@ -431,7 +418,7 @@ static irqreturn_t meson_mx_mmc_irq(int irq, void *data)
+ 		ret = IRQ_HANDLED;
+ 
+ 	/* finally ACK all pending interrupts */
+-	writel(irqs, host->base + MESON_MX_SDIO_IRQS);
++	regmap_write(host->regmap, MESON_MX_SDIO_IRQS, irqs);
+ 
+ 	spin_unlock(&host->irq_lock);
+ 
+@@ -470,14 +457,13 @@ static void meson_mx_mmc_timeout(struct timer_list *t)
+ 	struct meson_mx_mmc_host *host = timer_container_of(host, t,
+ 							    cmd_timeout);
+ 	unsigned long irqflags;
+-	u32 irqc;
++	u32 irqs, argu;
+ 
+ 	spin_lock_irqsave(&host->irq_lock, irqflags);
+ 
+ 	/* disable the CMD interrupt */
+-	irqc = readl(host->base + MESON_MX_SDIO_IRQC);
+-	irqc &= ~MESON_MX_SDIO_IRQC_ARC_CMD_INT_EN;
+-	writel(irqc, host->base + MESON_MX_SDIO_IRQC);
++	regmap_clear_bits(host->regmap, MESON_MX_SDIO_IRQC,
++			  MESON_MX_SDIO_IRQC_ARC_CMD_INT_EN);
+ 
+ 	spin_unlock_irqrestore(&host->irq_lock, irqflags);
+ 
+@@ -488,10 +474,12 @@ static void meson_mx_mmc_timeout(struct timer_list *t)
+ 	if (!host->cmd)
+ 		return;
+ 
++	regmap_read(host->regmap, MESON_MX_SDIO_IRQS, &irqs);
++	regmap_read(host->regmap, MESON_MX_SDIO_ARGU, &argu);
++
+ 	dev_dbg(mmc_dev(host->mmc),
+ 		"Timeout on CMD%u (IRQS = 0x%08x, ARGU = 0x%08x)\n",
+-		host->cmd->opcode, readl(host->base + MESON_MX_SDIO_IRQS),
+-		readl(host->base + MESON_MX_SDIO_ARGU));
++		host->cmd->opcode, irqs, argu);
+ 
+ 	host->cmd->error = -ETIMEDOUT;
+ 
+@@ -578,7 +566,8 @@ static int meson_mx_mmc_add_host(struct meson_mx_mmc_host *host)
+ 	return 0;
+ }
+ 
+-static int meson_mx_mmc_register_clks(struct meson_mx_mmc_host *host)
++static int meson_mx_mmc_register_clks(struct meson_mx_mmc_host *host,
++				      void __iomem *base)
+ {
+ 	struct clk_init_data init;
+ 	const char *clk_div_parent, *clk_fixed_factor_parent;
+@@ -613,7 +602,7 @@ static int meson_mx_mmc_register_clks(struct meson_mx_mmc_host *host)
+ 	init.flags = CLK_SET_RATE_PARENT;
+ 	init.parent_names = &clk_div_parent;
+ 	init.num_parents = 1;
+-	host->cfg_div.reg = host->base + MESON_MX_SDIO_CONF;
++	host->cfg_div.reg = base + MESON_MX_SDIO_CONF;
+ 	host->cfg_div.shift = MESON_MX_SDIO_CONF_CMD_CLK_DIV_SHIFT;
+ 	host->cfg_div.width = MESON_MX_SDIO_CONF_CMD_CLK_DIV_WIDTH;
+ 	host->cfg_div.hw.init = &init;
+@@ -629,12 +618,23 @@ static int meson_mx_mmc_register_clks(struct meson_mx_mmc_host *host)
+ 
+ static int meson_mx_mmc_probe(struct platform_device *pdev)
+ {
++	const struct regmap_config meson_mx_sdio_regmap_config = {
++		.reg_bits = 8,
++		.val_bits = 32,
++		.reg_stride = 4,
++		.max_register = MESON_MX_SDIO_EXT,
++	};
+ 	struct platform_device *slot_pdev;
+ 	struct mmc_host *mmc;
+ 	struct meson_mx_mmc_host *host;
++	void __iomem *base;
+ 	int ret, irq;
+ 	u32 conf;
+ 
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
+ 	slot_pdev = meson_mx_mmc_slot_pdev(&pdev->dev);
+ 	if (!slot_pdev)
+ 		return -ENODEV;
+@@ -656,9 +656,10 @@ static int meson_mx_mmc_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, host);
+ 
+-	host->base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(host->base)) {
+-		ret = PTR_ERR(host->base);
++	host->regmap = devm_regmap_init_mmio(&pdev->dev, base,
++					     &meson_mx_sdio_regmap_config);
++	if (IS_ERR(host->regmap)) {
++		ret = PTR_ERR(host->regmap);
+ 		goto error_free_mmc;
+ 	}
+ 
+@@ -687,7 +688,7 @@ static int meson_mx_mmc_probe(struct platform_device *pdev)
+ 		goto error_free_mmc;
+ 	}
+ 
+-	ret = meson_mx_mmc_register_clks(host);
++	ret = meson_mx_mmc_register_clks(host, base);
+ 	if (ret)
+ 		goto error_free_mmc;
+ 
+@@ -708,7 +709,7 @@ static int meson_mx_mmc_probe(struct platform_device *pdev)
+ 	conf |= FIELD_PREP(MESON_MX_SDIO_CONF_M_ENDIAN_MASK, 0x3);
+ 	conf |= FIELD_PREP(MESON_MX_SDIO_CONF_WRITE_NWR_MASK, 0x2);
+ 	conf |= FIELD_PREP(MESON_MX_SDIO_CONF_WRITE_CRC_OK_STATUS_MASK, 0x2);
+-	writel(conf, host->base + MESON_MX_SDIO_CONF);
++	regmap_write(host->regmap, MESON_MX_SDIO_CONF, conf);
+ 
+ 	meson_mx_mmc_soft_reset(host);
+ 
 -- 
 2.51.2
 
