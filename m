@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-891623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADABC431C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 18:26:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B2AEC431F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 18:29:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C84E4348E51
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 17:26:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF3D04EA69E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 17:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2A1257459;
-	Sat,  8 Nov 2025 17:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9562F25B687;
+	Sat,  8 Nov 2025 17:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dD5AG0ac"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNACkMuA"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE7D25179A
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 17:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CB125B2FE
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 17:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762622794; cv=none; b=YoIeh1IRTy/YRdrIsMj4DtOE6N5ESF4pggWnCjx4G45cdEn6+VhpD47T7/KKr+tWBXjhZgjX8rVApeS/EsV01lkUmUqeo8MHUt9rWIgNsMh2opv5PoX0gREYHm3+p6iPWVPDt9BjwkmBMJV30legrckxw65mNYYtdf1VNdZ8Z64=
+	t=1762622830; cv=none; b=j1JTnXgDs31sEyyk7keVUeE973y922ohWly+aQ93nRBKE/A+O/N9iydWIuftGtABF21RK6GuxjaAM2I1kDe27GxZ8MkOU2ofUwPXVWDgW2A7Nm47rBBRk5Q8CYie9REUr6ps67v8WK+amqLwJbSbKp87clh11nOyzxEtscQVums=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762622794; c=relaxed/simple;
-	bh=hnlpC3YLWJGM+XP4XQR8YQD5f3S6V9XJPPnRLSiogsI=;
+	s=arc-20240116; t=1762622830; c=relaxed/simple;
+	bh=ji12vfJaJnPixmTdZzLZe3/51Z/QGvSCAgUOwgH5sy0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VIsgujusVeCei6YSLO/7cnqZz3yzfEO/XzbRJWn1x0jFPPs3EYRwy0lGeZHTeZVMGm9hdLvugYOMWaXUqoO7Bvv/UVp4fo/o7qf00D81YjILSyBah9dWH9qsCFYIzzzdJZWjkCaxwGjLWhXSOTVRZ/lXDZPVMOQFuKWK6AdOQk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dD5AG0ac; arc=none smtp.client-ip=209.85.216.45
+	 MIME-Version; b=S/eu6WSEKm1nWi9uh+/sDHQ++obiVttKWSqyIvSObvJ760y34+4P8EoT1VVbI38tZu6N735wg2/iyXwZaqW8c+9TaPcjgPtkID6z0DU+GE0oStcZM9bl9UkRYPQ2ywmn0MCgFRk+BrKtIqq/MVystu6V3AdWo7sO4T8nWZqFfZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNACkMuA; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3437af844afso235618a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 09:26:32 -0800 (PST)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-297e264528aso6882075ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 09:27:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762622792; x=1763227592; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762622828; x=1763227628; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oKX/131TEur+U1ws0a+nOk/0nOWDLcKaeuLKOvTYpSE=;
-        b=dD5AG0acQDWO9l+KHBAzXj7O/mhROeBTi+xr3cOkfI4mXm+SfkN0f2WRmkY5DBH9fC
-         /JbM1KIFv/7A/XSymeCs7n1BQGbRsU0H02e/Wh65bFj3ifshU1k16RHJJg7sYCx3y4rO
-         VolDqpqCkAOX91mTgS4dFGfytoX4hOodkY94pG/qU6XyOPRjAlpS25MZllOnWkqjxCxG
-         URJKWVh1259jMI1NuB66oBZL5hbOMq1cfFS93c6xcpUUvDmAk1UwQ3DQwe2k4CIbC8vE
-         NAxytdPSUXu4lCB70k89B1hJbRtwvH1JoPxDY1Av1JGd44OJyjayhbCUwXxZRM1XJlDw
-         CAoA==
+        bh=ifgJwqhkz81AiW/M580r37kIiR/Zt38Daw4xBcO/V58=;
+        b=eNACkMuAfqE/8hjKP4taD8X/YC9P8uE09LE+ykSQcr3UAIGYVF3OTHLuY10M560Pes
+         cpVxFem9PS080zs8cs8fIe3HK2yoJ+Sy3zyFuJ+UkA/+MZ6C1MOaG4LW/LXi79qpvdUi
+         1cE34LZmw5CVT7x3Yh70cjZw3U7FrwqVJUzvIL3YfBYalabsr4CLkPSk/PcHl03T01OO
+         Yap0UEZS22ulaN3xaqFdlPRS+xPtGZuQR54IKx4G2BeTnW6+oefdjU4eIiOjIg361AQK
+         4NbsC3Z76t9Srck9uOzhdGadw5fCIPsj/mrGEC9JLkT0sZzXV+jZeeAOjhZnh/bWstJb
+         MvpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762622792; x=1763227592;
+        d=1e100.net; s=20230601; t=1762622828; x=1763227628;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=oKX/131TEur+U1ws0a+nOk/0nOWDLcKaeuLKOvTYpSE=;
-        b=HlPEGPqS7gAAJxxbh9f/z81prFY8i5zmjMFIh9ikB9hVewc9Mn4y47nIFgVeaxLPJ4
-         CshBBjw8GT2rqki8tuqqMJjRkM3zVgozX0WdvBOqeDINVMMJvCkTlvzIQcxYmXDEsftT
-         ddMLQqwOHyW3G6TvpDeexPU1IgrzdLYQnHKC69vSpw7kcc+HKprCkgl5NB/ZG4c0+zxt
-         p6hVSw0tAoFM3OmJ9Gg4xOQAT77IR9vprIwbpWCDwoC6bjtiwo+jOdvphOEBPv8JfgcH
-         bTHzIvlI0/f/MneYyRWSzq/lUmHmr7WegOWdFdzgvfAzonc7w0ZHPUYNWlB9MeouA00J
-         N8Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCWbGne7sgwMo7EhEbbtWZlM2ibJacHGk10Xi13QVe8J8IHtjnZj4bXc/8qKwrsX34Ty1ib0UBYrMdx/IsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDXcSTslChAL9hi/mKUc6DdEiPOgGtxZB2RMPZW+t5AmPNXedV
-	AR33MtO7xmG1gsB6J54NSkLMaBIDNz7X5vmCmU8A0UdVXOh4RJgVxktF
-X-Gm-Gg: ASbGncs35VihoP/0/EtTgfgc1lM38GD27WOV0gKMs6kCyiNaYyEXg/82PK4RZil72TM
-	u6ZOJ8ikPHYyQ0892ja42hrPL3moYJxPPhYESW+1Ibw43LrUo6+0k73DU+1CNLBO/yr/c+X7l52
-	slinZXhLdSA3mvkz5TKukjhBqGV9vZHoqM2ig+Ln6p7495tuYemFMmkm1gjKCjIALuJWO1I5VwE
-	UAs5leAC5PVz/+RyY++LOhTfBwo1cvrtNvefZRm1wGEwa0+saWM0hegOce+c0qKBNERXcLuuI+5
-	2jpUN1f6VQtpuU0hsrGW13DYdw6wCKJKRMoV2CipJoegJxkhsM7zkukml/5pwSRfpEZVJwXgNCz
-	RChVmpF9J1GZd+YkvySy8jBUsLLONKNxfbhU3Y9rzkzPpJqUTVS9GpSqtzg/C5fC/ODJNq0ht8K
-	2ViWzE4yNI38miF+QcUoLmcoGrclT4taoy7Xw=
-X-Google-Smtp-Source: AGHT+IH4teb6TaYW1xg4uJQv+WZcVr1MVnIhG1sOWOWypgVOcL81T9P773N1D5H9ZmD3rsY52c3wxQ==
-X-Received: by 2002:a17:90b:37d0:b0:32e:3829:a71c with SMTP id 98e67ed59e1d1-3436cb9ed9emr4303314a91.16.1762622791726;
-        Sat, 08 Nov 2025 09:26:31 -0800 (PST)
+        bh=ifgJwqhkz81AiW/M580r37kIiR/Zt38Daw4xBcO/V58=;
+        b=WztXwmdbuSu26zp4f00GChbNdbS9rbLz7UfZe/8ogBkodwOnbLI/UbTXC+4KTqNCsQ
+         wf5wVyywkkZFWfVuvo0XFmJGZhIrnnHUj3uiWgaEgdcOqpwq1ENSgnonL43MD0K7n3ut
+         7tVLxgVL0lkxscqfyJxx1FYzT0W19SoxfRlTUWQai30WuZBF0+OQkrT17Y6xcJV3qns1
+         hfOO9R0ajtnfu/QGDQmHrXa7uTeHmYM1e5BCrE7T8a+NbnuxD8q2dLS662yePkHs2/uQ
+         89qqPhXjE5gtAYCY4GNX670gLxHjX/ybXs/meHXi48QIYYEzzmNmKcx8VtBkjLLLkhsm
+         yeQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjFmEKrx5PHg0UZgp3DtjOoJortNlGKaG28ahSzNn4LA3DUodrfK02Z6vBTNJuTL8FmJed9f7FoGAVgYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8nKnbktgGfSGIZxhHf+THJ0uX335n7ctK9jl4jjwm6GPNr9yg
+	1Vr4vIkeG5IVFbLfDJBd7Q0Qius/Y210u11XDia0leO/kLahpsHycrcE
+X-Gm-Gg: ASbGnctjoaBAvCiXhp18CZsuOaP8T/6qw3K2V/rVE/7d0fNuGJ+CsFpGFL7zweayPAV
+	TbRWGKIpep+Jxvd5S6NRLp1wFwI2HX6+XHmtxbQpaizNH1TW0+4l4biJwoeFVvdhbbPzECaZs/9
+	zcWUuJtK9aiu0GzbgB4IeVbULkdMYekwmCpM362hfYy9Wj7S4DDbE66nBrkMPI0nHbh3k7Wk+X0
+	YD71kTEtYxvU1TUR3TiSJl7sibQ26O6WAd6nR5IyYgH7P3Bwute1eKfCcobDpCjhvnRKvS9/7YI
+	17i47KkDI7iMWvCrmZEpCi9eDNlFj0A2S7WFc2Y1p4QykB97816uUqM0rp683f3PtDCKi9nWqCG
+	4DEOWxA9iMO9qceromF5cREVPw/0wbvZfJa+51jJu9fwIDeTPiBOr+Ie2IO6kcx33tP20vP6Uru
+	rPbrv2NbdXt17jxh4ZhPmdSQKR1DZ4MbxOqpk=
+X-Google-Smtp-Source: AGHT+IG2XNPxrCil9As1GPMbFbfiTLeZrJq06uWpTB8/dDMRqGxGXKnu96wXs+iZFmt1AddBNZ4izQ==
+X-Received: by 2002:a17:902:cf42:b0:295:8da4:6404 with SMTP id d9443c01a7336-297e56f9154mr40667245ad.40.1762622827520;
+        Sat, 08 Nov 2025 09:27:07 -0800 (PST)
 Received: from DESKTOP-8TIG9K0.localdomain ([119.28.20.50])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3436c3d7dddsm2769122a91.7.2025.11.08.09.26.02
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3436c3d7dddsm2769122a91.7.2025.11.08.09.26.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 09:26:31 -0800 (PST)
+        Sat, 08 Nov 2025 09:27:07 -0800 (PST)
 From: Xie Yuanbin <qq570070308@gmail.com>
 To: david@redhat.com,
 	tglx@linutronix.de,
@@ -141,9 +141,9 @@ Cc: x86@kernel.org,
 	linux-perf-users@vger.kernel.org,
 	llvm@lists.linux.dev,
 	will@kernel.org
-Subject: [PATCH v2 3/4] Provide the always inline version of some functions
-Date: Sun,  9 Nov 2025 01:23:45 +0800
-Message-ID: <20251108172346.263590-4-qq570070308@gmail.com>
+Subject: [PATCH v2 4/4] Make finish_task_switch and its subfuncs inline in context switching
+Date: Sun,  9 Nov 2025 01:23:46 +0800
+Message-ID: <20251108172346.263590-5-qq570070308@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251108172346.263590-1-qq570070308@gmail.com>
 References: <20251108172346.263590-1-qq570070308@gmail.com>
@@ -155,12 +155,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On critical hot code paths, inline functions can optimize performance.
-However, for current compilers, there is no way to request them to inline
-at a specific calling point of a function.
+`finish_task_switch` is a hot path in context switching, and due to
+possible mitigations inside switch_mm, performance here is greatly
+affected by function calls and branch jumps. Make it inline to optimize
+the performance.
 
-Add a always inline version to some functions, so that they can be chosen
-when called in hot paths.
+After `finish_task_switch` is changed to an inline function, the number of
+calls to the subfunctions (called by `finish_task_switch`) increases in
+this translation unit due to the inline expansion of `finish_task_switch`.
+Due to compiler optimization strategies, these functions may transition
+from inline functions to non inline functions, which can actually lead to
+performance degradation.
+
+Make the subfunctions of finish_task_stwitch inline to prevent
+degradation.
+
+Time spent on calling finish_task_switch (rdtsc):
+ | compiler && appended cmdline | without patch   | with patch    |
+ | gcc + NA                     | 13.93 - 13.94   | 12.39 - 12.44 |
+ | gcc + "spectre_v2_user=on"   | 24.69 - 24.85   | 13.68 - 13.73 |
+ | clang + NA                   | 13.89 - 13.90   | 12.70 - 12.73 |
+ | clang + "spectre_v2_user=on" | 29.00 - 29.02   | 18.88 - 18.97 |
 
 Signed-off-by: Xie Yuanbin <qq570070308@gmail.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -169,197 +184,320 @@ Cc: Segher Boessenkool <segher@kernel.crashing.org>
 Cc: David Hildenbrand <david@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- arch/arm/include/asm/mmu_context.h      | 12 +++++++-
- arch/s390/include/asm/mmu_context.h     | 12 +++++++-
- arch/sparc/include/asm/mmu_context_64.h | 12 +++++++-
- kernel/sched/core.c                     | 38 ++++++++++++++++++++++---
- 4 files changed, 67 insertions(+), 7 deletions(-)
+ arch/riscv/include/asm/sync_core.h |  2 +-
+ arch/x86/include/asm/sync_core.h   |  2 +-
+ include/linux/perf_event.h         |  2 +-
+ include/linux/sched/mm.h           | 10 +++++-----
+ include/linux/tick.h               |  4 ++--
+ include/linux/vtime.h              |  8 ++++----
+ kernel/sched/core.c                | 18 +++++++++---------
+ kernel/sched/sched.h               | 20 ++++++++++----------
+ 8 files changed, 33 insertions(+), 33 deletions(-)
 
-diff --git a/arch/arm/include/asm/mmu_context.h b/arch/arm/include/asm/mmu_context.h
-index db2cb06aa8cf..e77b271570c1 100644
---- a/arch/arm/include/asm/mmu_context.h
-+++ b/arch/arm/include/asm/mmu_context.h
-@@ -80,7 +80,12 @@ static inline void check_and_switch_context(struct mm_struct *mm,
- #ifndef MODULE
- #define finish_arch_post_lock_switch \
- 	finish_arch_post_lock_switch
--static inline void finish_arch_post_lock_switch(void)
-+/*
-+ * finish_arch_post_lock_switch_ainline - the always inline version of
-+ * finish_arch_post_lock_switch, used for performance sensitive paths.
-+ * If unsure, use finish_arch_post_lock_switch instead.
-+ */
-+static __always_inline void finish_arch_post_lock_switch_ainline(void)
+diff --git a/arch/riscv/include/asm/sync_core.h b/arch/riscv/include/asm/sync_core.h
+index 9153016da8f1..2fe6b7fe6b12 100644
+--- a/arch/riscv/include/asm/sync_core.h
++++ b/arch/riscv/include/asm/sync_core.h
+@@ -6,7 +6,7 @@
+  * RISC-V implements return to user-space through an xRET instruction,
+  * which is not core serializing.
+  */
+-static inline void sync_core_before_usermode(void)
++static __always_inline void sync_core_before_usermode(void)
  {
- 	struct mm_struct *mm = current->mm;
- 
-@@ -99,6 +104,11 @@ static inline void finish_arch_post_lock_switch(void)
- 		preempt_enable_no_resched();
- 	}
+ 	asm volatile ("fence.i" ::: "memory");
  }
-+
-+static inline void finish_arch_post_lock_switch(void)
-+{
-+	finish_arch_post_lock_switch_ainline();
-+}
- #endif /* !MODULE */
- 
- #endif	/* CONFIG_MMU */
-diff --git a/arch/s390/include/asm/mmu_context.h b/arch/s390/include/asm/mmu_context.h
-index d9b8501bc93d..577062834906 100644
---- a/arch/s390/include/asm/mmu_context.h
-+++ b/arch/s390/include/asm/mmu_context.h
-@@ -97,7 +97,12 @@ static inline void switch_mm(struct mm_struct *prev, struct mm_struct *next,
- }
- 
- #define finish_arch_post_lock_switch finish_arch_post_lock_switch
--static inline void finish_arch_post_lock_switch(void)
-+/*
-+ * finish_arch_post_lock_switch_ainline - the always inline version of
-+ * finish_arch_post_lock_switch, used for performance sensitive paths.
-+ * If unsure, use finish_arch_post_lock_switch instead.
-+ */
-+static __always_inline void finish_arch_post_lock_switch_ainline(void)
+diff --git a/arch/x86/include/asm/sync_core.h b/arch/x86/include/asm/sync_core.h
+index 96bda43538ee..4b55fa353bb5 100644
+--- a/arch/x86/include/asm/sync_core.h
++++ b/arch/x86/include/asm/sync_core.h
+@@ -93,7 +93,7 @@ static __always_inline void sync_core(void)
+  * to user-mode. x86 implements return to user-space through sysexit,
+  * sysrel, and sysretq, which are not core serializing.
+  */
+-static inline void sync_core_before_usermode(void)
++static __always_inline void sync_core_before_usermode(void)
  {
- 	struct task_struct *tsk = current;
- 	struct mm_struct *mm = tsk->mm;
-@@ -120,6 +125,11 @@ static inline void finish_arch_post_lock_switch(void)
- 	local_irq_restore(flags);
+ 	/* With PTI, we unconditionally serialize before running user code. */
+ 	if (static_cpu_has(X86_FEATURE_PTI))
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 9870d768db4c..d9de20c20f38 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1624,7 +1624,7 @@ static inline void perf_event_task_migrate(struct task_struct *task)
+ 		task->sched_migrated = 1;
  }
  
-+static inline void finish_arch_post_lock_switch(void)
-+{
-+	finish_arch_post_lock_switch_ainline();
-+}
-+
- #define activate_mm activate_mm
- static inline void activate_mm(struct mm_struct *prev,
-                                struct mm_struct *next)
-diff --git a/arch/sparc/include/asm/mmu_context_64.h b/arch/sparc/include/asm/mmu_context_64.h
-index 78bbacc14d2d..ca7019080574 100644
---- a/arch/sparc/include/asm/mmu_context_64.h
-+++ b/arch/sparc/include/asm/mmu_context_64.h
-@@ -160,7 +160,12 @@ static inline void arch_start_context_switch(struct task_struct *prev)
- }
- 
- #define finish_arch_post_lock_switch	finish_arch_post_lock_switch
--static inline void finish_arch_post_lock_switch(void)
-+/*
-+ * finish_arch_post_lock_switch_ainline - the always inline version of
-+ * finish_arch_post_lock_switch, used for performance sensitive paths.
-+ * If unsure, use finish_arch_post_lock_switch instead.
-+ */
-+static __always_inline void finish_arch_post_lock_switch_ainline(void)
+-static inline void perf_event_task_sched_in(struct task_struct *prev,
++static __always_inline void perf_event_task_sched_in(struct task_struct *prev,
+ 					    struct task_struct *task)
  {
- 	/* Restore the state of MCDPER register for the new process
- 	 * just switched to.
-@@ -185,6 +190,11 @@ static inline void finish_arch_post_lock_switch(void)
+ 	if (static_branch_unlikely(&perf_sched_events))
+diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+index 0e1d73955fa5..e7787a6e7d22 100644
+--- a/include/linux/sched/mm.h
++++ b/include/linux/sched/mm.h
+@@ -44,7 +44,7 @@ static inline void smp_mb__after_mmgrab(void)
+ 
+ extern void __mmdrop(struct mm_struct *mm);
+ 
+-static inline void mmdrop(struct mm_struct *mm)
++static __always_inline void mmdrop(struct mm_struct *mm)
+ {
+ 	/*
+ 	 * The implicit full barrier implied by atomic_dec_and_test() is
+@@ -71,14 +71,14 @@ static inline void __mmdrop_delayed(struct rcu_head *rhp)
+  * Invoked from finish_task_switch(). Delegates the heavy lifting on RT
+  * kernels via RCU.
+  */
+-static inline void mmdrop_sched(struct mm_struct *mm)
++static __always_inline void mmdrop_sched(struct mm_struct *mm)
+ {
+ 	/* Provides a full memory barrier. See mmdrop() */
+ 	if (atomic_dec_and_test(&mm->mm_count))
+ 		call_rcu(&mm->delayed_drop, __mmdrop_delayed);
+ }
+ #else
+-static inline void mmdrop_sched(struct mm_struct *mm)
++static __always_inline void mmdrop_sched(struct mm_struct *mm)
+ {
+ 	mmdrop(mm);
+ }
+@@ -104,7 +104,7 @@ static inline void mmdrop_lazy_tlb(struct mm_struct *mm)
  	}
  }
  
-+static inline void finish_arch_post_lock_switch(void)
-+{
-+	finish_arch_post_lock_switch_ainline();
-+}
-+
- #define mm_untag_mask mm_untag_mask
- static inline unsigned long mm_untag_mask(struct mm_struct *mm)
+-static inline void mmdrop_lazy_tlb_sched(struct mm_struct *mm)
++static __always_inline void mmdrop_lazy_tlb_sched(struct mm_struct *mm)
  {
+ 	if (IS_ENABLED(CONFIG_MMU_LAZY_TLB_REFCOUNT))
+ 		mmdrop_sched(mm);
+@@ -531,7 +531,7 @@ enum {
+ #include <asm/membarrier.h>
+ #endif
+ 
+-static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
++static __always_inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
+ {
+ 	/*
+ 	 * The atomic_read() below prevents CSE. The following should
+diff --git a/include/linux/tick.h b/include/linux/tick.h
+index ac76ae9fa36d..fce16aa10ba2 100644
+--- a/include/linux/tick.h
++++ b/include/linux/tick.h
+@@ -175,7 +175,7 @@ extern cpumask_var_t tick_nohz_full_mask;
+ #ifdef CONFIG_NO_HZ_FULL
+ extern bool tick_nohz_full_running;
+ 
+-static inline bool tick_nohz_full_enabled(void)
++static __always_inline bool tick_nohz_full_enabled(void)
+ {
+ 	if (!context_tracking_enabled())
+ 		return false;
+@@ -299,7 +299,7 @@ static inline void __tick_nohz_task_switch(void) { }
+ static inline void tick_nohz_full_setup(cpumask_var_t cpumask) { }
+ #endif
+ 
+-static inline void tick_nohz_task_switch(void)
++static __always_inline void tick_nohz_task_switch(void)
+ {
+ 	if (tick_nohz_full_enabled())
+ 		__tick_nohz_task_switch();
+diff --git a/include/linux/vtime.h b/include/linux/vtime.h
+index 29dd5b91dd7d..428464bb81b3 100644
+--- a/include/linux/vtime.h
++++ b/include/linux/vtime.h
+@@ -67,24 +67,24 @@ static __always_inline void vtime_account_guest_exit(void)
+  * For now vtime state is tied to context tracking. We might want to decouple
+  * those later if necessary.
+  */
+-static inline bool vtime_accounting_enabled(void)
++static __always_inline bool vtime_accounting_enabled(void)
+ {
+ 	return context_tracking_enabled();
+ }
+ 
+-static inline bool vtime_accounting_enabled_cpu(int cpu)
++static __always_inline bool vtime_accounting_enabled_cpu(int cpu)
+ {
+ 	return context_tracking_enabled_cpu(cpu);
+ }
+ 
+-static inline bool vtime_accounting_enabled_this_cpu(void)
++static __always_inline bool vtime_accounting_enabled_this_cpu(void)
+ {
+ 	return context_tracking_enabled_this_cpu();
+ }
+ 
+ extern void vtime_task_switch_generic(struct task_struct *prev);
+ 
+-static inline void vtime_task_switch(struct task_struct *prev)
++static __always_inline void vtime_task_switch(struct task_struct *prev)
+ {
+ 	if (vtime_accounting_enabled_this_cpu())
+ 		vtime_task_switch_generic(prev);
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 0e50ef3d819a..c50e672e22c4 100644
+index c50e672e22c4..cba8b93ed37b 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -4884,7 +4884,13 @@ static inline void finish_task(struct task_struct *prev)
- 	smp_store_release(&prev->on_cpu, 0);
+@@ -4868,7 +4868,7 @@ static inline void prepare_task(struct task_struct *next)
+ 	WRITE_ONCE(next->on_cpu, 1);
  }
  
--static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
-+/*
-+ * do_balance_callbacks_ainline - the always inline version of
-+ * do_balance_callbacks, used for performance sensitive paths.
-+ * If unsure, use do_balance_callbacks instead.
-+ */
-+static __always_inline void do_balance_callbacks_ainline(struct rq *rq,
-+		struct balance_callback *head)
+-static inline void finish_task(struct task_struct *prev)
++static __always_inline void finish_task(struct task_struct *prev)
  {
- 	void (*func)(struct rq *rq);
- 	struct balance_callback *next;
-@@ -4901,6 +4907,11 @@ static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
- 	}
+ 	/*
+ 	 * This must be the very last reference to @prev from this CPU. After
+@@ -4930,7 +4930,7 @@ struct balance_callback balance_push_callback = {
+ 	.func = balance_push,
+ };
+ 
+-static inline struct balance_callback *
++static __always_inline struct balance_callback *
+ __splice_balance_callbacks(struct rq *rq, bool split)
+ {
+ 	struct balance_callback *head = rq->balance_callback;
+@@ -4967,12 +4967,12 @@ struct balance_callback *splice_balance_callbacks(struct rq *rq)
+  */
+ static __always_inline void __balance_callbacks_ainline(struct rq *rq)
+ {
+-	do_balance_callbacks(rq, __splice_balance_callbacks(rq, false));
++	do_balance_callbacks_ainline(rq, __splice_balance_callbacks(rq, false));
  }
  
-+static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
-+{
-+	do_balance_callbacks_ainline(rq, head);
-+}
-+
- static void balance_push(struct rq *rq);
+ static void __balance_callbacks(struct rq *rq)
+ {
+-	__balance_callbacks_ainline(rq);
++	do_balance_callbacks(rq, __splice_balance_callbacks(rq, false));
+ }
+ 
+ void balance_callbacks(struct rq *rq, struct balance_callback *head)
+@@ -5003,7 +5003,7 @@ prepare_lock_switch(struct rq *rq, struct task_struct *next, struct rq_flags *rf
+ #endif
+ }
+ 
+-static inline void finish_lock_switch(struct rq *rq)
++static __always_inline void finish_lock_switch(struct rq *rq)
+ {
+ 	/*
+ 	 * If we are tracking spinlock dependencies then we have to
+@@ -5011,7 +5011,7 @@ static inline void finish_lock_switch(struct rq *rq)
+ 	 * prev into current:
+ 	 */
+ 	spin_acquire(&__rq_lockp(rq)->dep_map, 0, 0, _THIS_IP_);
+-	__balance_callbacks(rq);
++	__balance_callbacks_ainline(rq);
+ 	raw_spin_rq_unlock_irq(rq);
+ }
+ 
+@@ -5036,7 +5036,7 @@ static inline void kmap_local_sched_out(void)
+ #endif
+ }
+ 
+-static inline void kmap_local_sched_in(void)
++static __always_inline void kmap_local_sched_in(void)
+ {
+ #ifdef CONFIG_KMAP_LOCAL
+ 	if (unlikely(current->kmap_ctrl.idx))
+@@ -5134,7 +5134,7 @@ static __always_inline struct rq *finish_task_switch_ainline(struct task_struct
+ 	finish_task(prev);
+ 	tick_nohz_task_switch();
+ 	finish_lock_switch(rq);
+-	finish_arch_post_lock_switch();
++	finish_arch_post_lock_switch_ainline();
+ 	kcov_finish_switch(current);
+ 	/*
+ 	 * kmap_local_sched_out() is invoked with rq::lock held and
+@@ -5289,7 +5289,7 @@ context_switch(struct rq *rq, struct task_struct *prev,
+ 	switch_to(prev, next, prev);
+ 	barrier();
+ 
+-	return finish_task_switch(prev);
++	return finish_task_switch_ainline(prev);
+ }
  
  /*
-@@ -4949,11 +4960,21 @@ struct balance_callback *splice_balance_callbacks(struct rq *rq)
- 	return __splice_balance_callbacks(rq, true);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 7d305ec10374..ec301a91cb43 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1374,12 +1374,12 @@ static inline struct cpumask *sched_group_span(struct sched_group *sg);
+ 
+ DECLARE_STATIC_KEY_FALSE(__sched_core_enabled);
+ 
+-static inline bool sched_core_enabled(struct rq *rq)
++static __always_inline bool sched_core_enabled(struct rq *rq)
+ {
+ 	return static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
  }
  
--static void __balance_callbacks(struct rq *rq)
-+/*
-+ * __balance_callbacks_ainline - the always inline version of
-+ * __balance_callbacks, used for performance sensitive paths.
-+ * If unsure, use __balance_callbacks instead.
-+ */
-+static __always_inline void __balance_callbacks_ainline(struct rq *rq)
+-static inline bool sched_core_disabled(void)
++static __always_inline bool sched_core_disabled(void)
  {
- 	do_balance_callbacks(rq, __splice_balance_callbacks(rq, false));
+ 	return !static_branch_unlikely(&__sched_core_enabled);
  }
- 
-+static void __balance_callbacks(struct rq *rq)
-+{
-+	__balance_callbacks_ainline(rq);
-+}
-+
- void balance_callbacks(struct rq *rq, struct balance_callback *head)
- {
- 	unsigned long flags;
-@@ -5003,7 +5024,8 @@ static inline void finish_lock_switch(struct rq *rq)
- #endif
- 
- #ifndef finish_arch_post_lock_switch
--# define finish_arch_post_lock_switch()	do { } while (0)
-+# define finish_arch_post_lock_switch()		do { } while (0)
-+# define finish_arch_post_lock_switch_ainline()	do { } while (0)
- #endif
- 
- static inline void kmap_local_sched_out(void)
-@@ -5050,6 +5072,9 @@ prepare_task_switch(struct rq *rq, struct task_struct *prev,
- 
- /**
-  * finish_task_switch - clean up after a task-switch
-+ * finish_task_switch_ainline - the always inline version of this func
-+ * used for performance sensitive paths
-+ *
-  * @prev: the thread we just switched away from.
-  *
-  * finish_task_switch must be called after the context switch, paired
-@@ -5067,7 +5092,7 @@ prepare_task_switch(struct rq *rq, struct task_struct *prev,
-  * past. 'prev == current' is still correct but we need to recalculate this_rq
-  * because prev may have moved to another CPU.
+@@ -1388,7 +1388,7 @@ static inline bool sched_core_disabled(void)
+  * Be careful with this function; not for general use. The return value isn't
+  * stable unless you actually hold a relevant rq->__lock.
   */
--static struct rq *finish_task_switch(struct task_struct *prev)
-+static __always_inline struct rq *finish_task_switch_ainline(struct task_struct *prev)
- 	__releases(rq->lock)
+-static inline raw_spinlock_t *rq_lockp(struct rq *rq)
++static __always_inline raw_spinlock_t *rq_lockp(struct rq *rq)
  {
- 	struct rq *rq = this_rq();
-@@ -5159,6 +5184,11 @@ static struct rq *finish_task_switch(struct task_struct *prev)
- 	return rq;
+ 	if (sched_core_enabled(rq))
+ 		return &rq->core->__lock;
+@@ -1396,7 +1396,7 @@ static inline raw_spinlock_t *rq_lockp(struct rq *rq)
+ 	return &rq->__lock;
  }
  
-+static struct rq *finish_task_switch(struct task_struct *prev)
-+{
-+	return finish_task_switch_ainline(prev);
-+}
-+
- /**
-  * schedule_tail - first thing a freshly forked thread must call.
-  * @prev: the thread we just switched away from.
+-static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
++static __always_inline raw_spinlock_t *__rq_lockp(struct rq *rq)
+ {
+ 	if (rq->core_enabled)
+ 		return &rq->core->__lock;
+@@ -1487,12 +1487,12 @@ static inline bool sched_core_disabled(void)
+ 	return true;
+ }
+ 
+-static inline raw_spinlock_t *rq_lockp(struct rq *rq)
++static __always_inline raw_spinlock_t *rq_lockp(struct rq *rq)
+ {
+ 	return &rq->__lock;
+ }
+ 
+-static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
++static __always_inline raw_spinlock_t *__rq_lockp(struct rq *rq)
+ {
+ 	return &rq->__lock;
+ }
+@@ -1542,23 +1542,23 @@ static inline void lockdep_assert_rq_held(struct rq *rq)
+ extern void raw_spin_rq_lock_nested(struct rq *rq, int subclass);
+ extern bool raw_spin_rq_trylock(struct rq *rq);
+ 
+-static inline void raw_spin_rq_lock(struct rq *rq)
++static __always_inline void raw_spin_rq_lock(struct rq *rq)
+ {
+ 	raw_spin_rq_lock_nested(rq, 0);
+ }
+ 
+-static inline void raw_spin_rq_unlock(struct rq *rq)
++static __always_inline void raw_spin_rq_unlock(struct rq *rq)
+ {
+ 	raw_spin_unlock(rq_lockp(rq));
+ }
+ 
+-static inline void raw_spin_rq_lock_irq(struct rq *rq)
++static __always_inline void raw_spin_rq_lock_irq(struct rq *rq)
+ {
+ 	local_irq_disable();
+ 	raw_spin_rq_lock(rq);
+ }
+ 
+-static inline void raw_spin_rq_unlock_irq(struct rq *rq)
++static __always_inline void raw_spin_rq_unlock_irq(struct rq *rq)
+ {
+ 	raw_spin_rq_unlock(rq);
+ 	local_irq_enable();
 -- 
 2.51.0
 
