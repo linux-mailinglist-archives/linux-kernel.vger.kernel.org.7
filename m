@@ -1,124 +1,212 @@
-Return-Path: <linux-kernel+bounces-891266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53735C42494
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 03:24:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A03BC424A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 03:26:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F48B3B1074
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 02:24:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFD764F5B94
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 02:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504FF2C3745;
-	Sat,  8 Nov 2025 02:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZa6YgVO"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2B02C21E1
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 02:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E315B2BEFE4;
+	Sat,  8 Nov 2025 02:25:18 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70B329B8E1;
+	Sat,  8 Nov 2025 02:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762568662; cv=none; b=rJROxssDjMh7FdXJCB8wds6Y7K45wFMvvZG6EInC4zIJgrBlbu9lqu+5ScI8koUKG3SIMpSylrTD6RWiufqC8XiWV6BP+VISK7vpU9v+RwAjBGg8tVXVJ9oV1Zbd3cIITGrSGSuO9rcpBYU5XOLfO6KBsWfwN8tJCI1H4OClsIQ=
+	t=1762568718; cv=none; b=DwcvMuodTdbybpLCYXb+tVkuTr1U8Own1lP7/cojwMq+L3ZvCst8B/WsQY+ksIwCDLXSMMCcZKtaPHNnKpyWFPxKfm/3v30DUg3bcwDeruubkpIF124ivrGovH+d5pF1DfxgCMWAMJPr1Pa5p2aP1NdcWJBjSSZm+FkT1fEUZ5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762568662; c=relaxed/simple;
-	bh=d9SrSYWM65FvANtjCRZH20jaMwWMEvqOX3ASx9KKEhE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=snLDDxuo10JAFp2hKUq6Nih2dA2P3E9sMoF0x6FixCzFKGhckVksy2GA98e9tr5gvoHY7zlsxM5R+XkpkJCxVcF8svU/QL+VFduwXznSfMdWeFTt6q3h4LzsqMV7VDsjWLECjKLEkFbI8GFKnt7d3ZLzA4/lDYJ7POJgS9fF0Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZa6YgVO; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-87a092251eeso15816596d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 18:24:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762568660; x=1763173460; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NY2LbgvIY/fMzsfOBXS1nVDAgZLdeObOtoX1Ris2Kn0=;
-        b=AZa6YgVO852B6/IOxIe4qiCntkNK3F5a4iFfjCJaVA8/topGuWMcpj/Y0H/QHYQaCu
-         WOlzcaXRdjEzo2in++ZsttFVHIpyWyb7zbhXj94px15mvP1mJRX469a7v1kWPPFg8a8R
-         Us/LBupsN66c/ZyG+wFLseONt3nXNh2FLDXTJvqDB7KalVzB3rS68z/VSO0bSqVj+oV5
-         a8DUWFlDqtZ8K6PPKCep7W+rNMzKONH/98Qy8dPNQuS3j4mTeHB7U2JfxCGWKdg2zjCn
-         mVgSFGhqKnrOMbYnICTyFHC1rohsm2xC07d8GBmGawJ9BThwsTdln89lvvGbeCQ0tvrh
-         YOig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762568660; x=1763173460;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NY2LbgvIY/fMzsfOBXS1nVDAgZLdeObOtoX1Ris2Kn0=;
-        b=qa/qyNzwMhOHmRRJGc9KEiyjbxCO4p7/n8Klm+0u4KvhljStG5xfvxBG80qeJu1+2x
-         InhpjjbGb4LOM9HbrTLsc8mAoBk1WNzRyUKV0UMhXPPLO4o8EJ5bCRuUczPKh3ugVIna
-         8/bJ/+mSaNQU2WmfgP7XKmhAEzp+oHu4aShpNGhLLM1RbN9pjaU6LHRCx98W7d7As3HH
-         OAC3x1Zjy658lvfugd5MbXUdD7+hK5l1lS86cd3kVgj6xO+3QEVPQwHeXeTZuD76Kcdk
-         R+NH6jTpr+qcE6LzTLLMnVtlepeU8PyIc66aXE8u+TbikJV40VNPQTEzT4QV6uoKKPbP
-         Exww==
-X-Forwarded-Encrypted: i=1; AJvYcCUU7oIB4BaRoxfecAteT6hnfBgLFfjewXUtLerKiDR1hokmweOIMjq5hSyxkjv06pmmzRpViaOn1YfSpVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLPIAgDJcvbp0ZbW2SfR+VUPBbVmBTZqfWH8ZpwT/OtZImSs21
-	geSRiZ81nNLW01f+SiUEp0qwV/PKXyL4Dgjg86inuWzqGKnuU1aWqKMAlZpxcw==
-X-Gm-Gg: ASbGncv+icSHnDPjVVT2g1IOD82dx064zbLdR4qTl9cQAdGjBuT3qAlnsvAIAUa2NGx
-	iVJFMidzZwl0RZ9hyA9ajb/f92llKB3/m6/nxtuSx8xs95+BMKvAbRWy91Y+9YEojev3kUa9UlE
-	jF4yvJ35Z4Z6di/O3i6TOlbp4vNacDGKYcwfzU5qQOXNvRhnZlyntP9DY1+aoHGrcu56ir9rAyy
-	g5mZ4TbUQB2w4iEzM6DUNfso2MAQvLSUM4Eo6RBv9SC4O3ogpctXV7IlSoKf8uU0DI+JjGvilcN
-	wAjMzWx6F8SnIDGYkCdOncwTi2W7ZePyF3CXjh9jD1dJjNgjZmdi0a+67YfnnXXDUBa3AJLf9Ng
-	xhOXsI+TfvN5f17pwBq0weocb0fUw3Qs1kcWGeVUSCN7zNic=
-X-Google-Smtp-Source: AGHT+IFg9wz6lhJl8Q0/MXiDVkvZKRCFkQJ5hkPlMaUqnbTVBXvIucOF1fAknSssoiuUZ/XVQ1oB7g==
-X-Received: by 2002:a05:6214:2aad:b0:880:580f:27c8 with SMTP id 6a1803df08f44-8822f4d3cbemr47329436d6.6.1762568659947;
-        Fri, 07 Nov 2025 18:24:19 -0800 (PST)
-Received: from ryzen ([2601:644:8000:8e26::ea0])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88238928af8sm7493646d6.6.2025.11.07.18.24.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 18:24:19 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: dri-devel@vger.kernel.org
-Cc: Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org (open list:AMD DISPLAY CORE),
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/amd/display:: fix designated initializer error
-Date: Fri,  7 Nov 2025 18:24:01 -0800
-Message-ID: <20251108022401.270909-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1762568718; c=relaxed/simple;
+	bh=IbQzBuHgPKJgX8xgAJOM4Osw65EhhRg43Vwus9DHxHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jPJzlJIG2Nl7/M5X9LYCB4QmfJGUknty8p7Z2rd/fhp3Y14Gg2wEwu7qKKPaocg+7J2ipxRSHcIk0O58oROf6tgecuW9/SOTaRhecmTDdpilA6IhWyklDwObLwBIgzY0QgbaE4k2YCQ8vAgSTRGR6HDhod1NRw2RcEmgYTGVC3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c2dff70000001609-94-690eaa002d8e
+Date: Sat, 8 Nov 2025 11:24:58 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+	davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
+	sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org,
+	tariqt@nvidia.com, mbloch@nvidia.com, andrew+netdev@lunn.ch,
+	edumazet@google.com, pabeni@redhat.com, akpm@linux-foundation.org,
+	david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, horms@kernel.org,
+	jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
+	ilias.apalodimas@linaro.org, willy@infradead.org,
+	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+	almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
+	bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+	sfr@canb.auug.org.au, dw@davidwei.uk, ap420073@gmail.com,
+	dtatulea@nvidia.com
+Subject: Re: [RFC mm v5 1/2] page_pool: check nmdesc->pp to see its usage as
+ page pool for net_iov not page-backed
+Message-ID: <20251108022458.GA65163@system.software.com>
+References: <20251103075108.26437-1-byungchul@sk.com>
+ <20251103075108.26437-2-byungchul@sk.com>
+ <20251106173320.2f8e683a@kernel.org>
+ <20251107015902.GA3021@system.software.com>
+ <20251106180810.6b06f71a@kernel.org>
+ <20251107044708.GA54407@system.software.com>
+ <20251107174129.62a3f39c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107174129.62a3f39c@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTH99zn9rmXjuptB9vjS2JS3ZYQxWk0OSbTYEzMo9HExMwPM8us
+	cpUboGCBWlzMyiRzI4IvgCmlmyVGwIoB2403i1HAIqgZwUhuJy/KqsYpLwElQI3I1Rj99sv/
+	nPz+58MRsalLt1BUrNmyzWpJMxM9rx+OrVjxiW+e8k37IyN4amsIXJxyQNWDRh1M1zzhwOOr
+	R/Bi+r4Asy0hBBPtHQSetY0jOFcxicHzTz4PL2tnMDQ1P0Hwv+sSgUehIQEu+rfDYOVjHoLH
+	GjAMnbhJoDA/iqFlekSAXxqr58QBpwDd9UU6KJk5j6HB+UCAu80eAgM1szp43FrIQ6f7Ag9j
+	pe0YBouSIOT9HCZvPUfQXtvAweTxPwjcK2vm4O+WewIU93gJ/Jc/iKCnbYiH0le/ESjPK0IQ
+	nZpTjpx8oYPyGwNCUiLLU1XC2p6PYvbXhTDHel2neKZe7eJYk7tfYF5/DgtUJ7ACtQczv+93
+	wvzjpwXW1xsk7KYryrOmh+tYU+MExwqPjpAd8d/rv02W0xS7bFu5YY8+RS0Ok8zLCxyhrlni
+	RIPGAhQjUmkNHe/8k7zn4jt5uACJIi8to56OTC0m0tdUVaexxnFzcX6gjC9AehFLYwJ1qQM6
+	bfCZlE3HRp1vlwwS0N7yCU5jkxTgaOTM/He5kXaWRXiNsZRA1ddPOa0LS4to1WtRi2OkVfTs
+	04igcby0lF6r7+C0LirNitQ7NYze3bmAXq9W+ZNIcn+kdX+kdX/QehH2IZNitadblLQ1iSm5
+	VsWRuC8j3Y/mPqzyyKvdjWi8e2crkkRkjjXsiRoUk85iz8pNb0VUxOY4w1prrGIyJFtyD8u2
+	jB9tOWlyVitaJPLmLwyrJw8lm6QDlmw5VZYzZdv7KSfGLHSiEv3wrvqVfW6/cSbnyukfpuoc
+	rkhGXVVl8Tq7ca+SFO35efH8oCt1WzjhbumzcuX+dx2JYWFb0qFrwsbwesPZ3Smpd4KB/q11
+	q1egfztHCzcs/8rx0LKk+9e1tw/39x3tWpaxP8ri4tGmbPvSzQdDO0s+3VJxcN+VI1v0keBP
+	vkvzvjTzWSmWVQnYlmV5A8tDvuVdAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHec97ds5xtXacpkclotmFJCsr6ym7fQg6XYwwKgoqVx7aIV2y
+	TdEomCVYI+1iF52TtMjUFqNZ3tII71pSGtrp5kwt6YJZmjS1liuivv34Pc///3x5GKyyyQIZ
+	UWcU9DpNrJqSk/ItESdC3UVTxIUvzIvBardRcPN7EtzoLpeBy9ZPgLW4FMGw6yUN7uoGBEN1
+	jRR8rP2K4Fr+CAbr41QSvtlHMVRU9iP4kHWLgrcNPTTcdESCs+AdCVVpZRh6zjRRkJ46hqHa
+	NUDD8fLCieISEw21uc0yeFKaIYMLo9cxlJm6aXhaaaWgy+aWwbuadBKaLUUkDF6sw+DMWAsN
+	eX4w8vATgjp7GQEjp3Mp6MiuJOBudQcNme15FPSmOhG01/aQcHH8JAU5KRkIxr5PVA6cHZZB
+	Tn0XvXYBnyJJFF/76TPm7xQ9J/jOrHMkL91vIfgKy2uaz3Mk8CWFIbxZase8o/gUxTu+nqf5
+	V51VFN+UNUbyFW+W8xXlQwSffmKA2uq3W74yRogVEwX9gtXRcq2U+ZyKvx2Q1NDipkzI6W1G
+	XgzHLuEyW1OwGTEMyc7krI3xHk2xczhJcmEP+07o1JJs0ozkDGYHaS5L6pJ5Bj6skRv8bPq9
+	pGCB68wZIjysYksIru+S8o/35pqz+0gPYzaEk36+Jzy3MBvE3fjJeLQXG8Zded9He3gqG8w9
+	KG0kziKF5b+05b+05V86D+Fi5CvqEuM0Ymz4fMMhbbJOTJp/4HCcA038UMGx8XPlaPjp+hrE
+	Mkg9WRE9phBVMk2iITmuBnEMVvsqwnWTRZUiRpN8RNAf3qdPiBUMNSiIIdX+io07hWgVe1Bj
+	FA4JQryg/zslGK9AE1JueVZvvh+1efouu/GH0tm8rHdT+p5VbflDMZmLcsMjZ1zeu43rFpZq
+	t0fOC9iQ4I8r868GiQWhgdNcxdlL9+/Y/GOFXfko48LotEnO9tm2j/eUew50+PfWRR1xPzCm
+	TfnimqXS9q+LUY6Py7dag49GMMe9H67p9Rl8c1nRtiZg7s5WNWnQasJCsN6g+QV0ynHqPwMA
+	AA==
+X-CFilter-Loop: Reflected
 
-{} instead of {0} avoids the error with W=1
+On Fri, Nov 07, 2025 at 05:41:29PM -0800, Jakub Kicinski wrote:
+> On Fri, 7 Nov 2025 13:47:08 +0900 Byungchul Park wrote:
+> > The offset of page_type in struct page cannot be used in struct net_iov
+> > for the same purpose, since the offset in struct net_iov is for storing
+> > (struct net_iov_area *)owner.
+> 
+> owner does not have to be at a fixed offset. Can we not move owner
+> to _pp_mapping_pad ? Or reorder it with type, enum net_iov_type
+> only has 2 values we can smoosh it with page_type easily.
 
-error: positional initialization of field in ‘struct’ declared
-with ‘designated_init’ attribute [-Werror=designated-init]
+I'm still confused.  I think you probably understand what this work is
+for.  (I've explained several times with related links.)  Or am I
+missing something from your questions?
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/gpu/drm/amd/display/dc/dce/dce_stream_encoder.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I've answered your question directly since you asked, but the point is
+that, struct net_iov will no longer overlay on struct page.
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_stream_encoder.c b/drivers/gpu/drm/amd/display/dc/dce/dce_stream_encoder.c
-index f8996ee2856b..574618d5d4a4 100644
---- a/drivers/gpu/drm/amd/display/dc/dce/dce_stream_encoder.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dce_stream_encoder.c
-@@ -1568,7 +1568,7 @@ void dce110_stream_encoder_construct(
- 	enc110->se_mask = se_mask;
- }
+Instead, struct netmem_desc will be responsible for keeping the pp
+fields while struct page will lay down the resonsibility, once the pp
+fields will be removed from struct page like:
+
+<before> (the current form is:)
+
+   struct page {
+ 	memdesc_flags_t flags;
+ 	union {
+ 		...
+ 		struct {
+ 			unsigned long pp_magic;
+ 			struct page_pool *pp;
+ 			unsigned long _pp_mapping_pad;
+ 			unsigned long dma_addr;
+ 			atomic_long_t pp_ref_count;
+ 		};
+ 		...
+ 	};
+ 	unsigned int page_type;
+ 	...
+   };
  
--static const struct stream_encoder_funcs dce110_an_str_enc_funcs = {0};
-+static const struct stream_encoder_funcs dce110_an_str_enc_funcs = {};
- 
- void dce110_analog_stream_encoder_construct(
- 	struct dce110_stream_encoder *enc110,
--- 
-2.51.2
+   struct net_iov {
+ 	union {
+ 		struct netmem_desc desc;
+ 		struct
+ 		{
+ 			unsigned long _flags;
+ 			unsigned long pp_magic;
+ 			struct page_pool *pp;
+ 			unsigned long _pp_mapping_pad;
+ 			unsigned long dma_addr;
+ 			atomic_long_t pp_ref_count;
+ 		};
+ 	};
+ 	struct net_iov_area *owner;
+ 	enum net_iov_type type;
+   };
 
+<after> (the final form should be, just around the corner:)
+
+   struct page {
+ 	memdesc_flags_t flags;
+ 	union {
+ 		...
+		/* pp fields are gone. */
+ 		...
+ 	};
+ 	unsigned int page_type;
+ 	...
+   };
+ 
+   struct net_iov {
+ 	struct netmem_desc desc;
+ 	struct net_iov_area *owner;
+ 	enum net_iov_type type;
+   };
+
+After that, struct page and struct net_iov(or struct netmem_desc) will
+not share any fields with each other, probably they will be connected
+e.i. through some ways between struct page and netmem_desc tho.
+
+	Byungchul
+ 
+> > Yeah, you can tell 'why don't we add the field, page_type, to struct
+> > net_iov (or struct netmem_desc)' so as to be like:
+> >
+> >   struct net_iov {
+> >       union {
+> >               struct netmem_desc desc;
+> >               struct
+> >               {
+> >                       unsigned long _flags;
+> >                       unsigned long pp_magic;
+> >                       struct page_pool *pp;
+> >                       unsigned long _pp_mapping_pad;
+> >                       unsigned long dma_addr;
+> >                       atomic_long_t pp_ref_count;
+> > +                     unsigned int page_type; // add this field newly
+> >               };
+> >       };
+> >       struct net_iov_area *owner; // the same offet of page_type
+> >       enum net_iov_type type;
+> >   };
+> >
+> > I think we can make it anyway but it makes less sense to add page_type
+> > to struct net_iov, only for PGTY_netpp.
+> >
+> > It'd be better to use netmem_desc->pp for that purpose, IMO.
 
