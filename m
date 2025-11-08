@@ -1,122 +1,145 @@
-Return-Path: <linux-kernel+bounces-891444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DFF0C42AD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:50:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E566C42AE5
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 11:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BEDE4E2A9D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6BFD3AFD58
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 10:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8256726A1AB;
-	Sat,  8 Nov 2025 09:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4DB2868B5;
+	Sat,  8 Nov 2025 10:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nVlWxY5Q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ki6Po93p"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D267134AB;
-	Sat,  8 Nov 2025 09:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6968D2C08CA
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 10:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762595438; cv=none; b=npo0S8kCGAMUJvdsmMAQmlYiOnyO1dg61ubILzRgwF1RSGZX7Mm6SQ0Rmid0dX+ttSc8WvLvEeTD8AW+8yX24kYqfD+HDgJOODOYbadsosl32sNvvJ6b9zfvFtSwMGYGO5f7w7YyV7H7jA0saGh6NrTPxN65AwiLVDo5VJhzqNA=
+	t=1762596010; cv=none; b=REGO0E8dUjWTSaxHU4AaJDFuI7ViN4hpRufVdvY6pZu8zRSrK9T2YVbZT8r90sLlRiFDctiaRN8cmD/tZ40QlWeHh57WNvLFjpfgFr2IyATVO/cnU6TxGXIagWqfUg4S1TpTGttTsU28hv3GytLOmNqjAVk7DtwccsZFuRBBZyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762595438; c=relaxed/simple;
-	bh=VYp6JlktlNtSBhhVtta20m+Ma5lCPncZPlU8aCP3RDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPkDgqelv/AK4RsSnSC5qviH6T7BJ6qwaPvYZNj+dZPZkum1+2urRGp9Gn6r3vA0s+lGXOzL+JH9sLoj97gAeac69FlATzji4KGEuH+pSc1CtDtA3SoSBl9dWd+08kDlDt7AotB6jh6qWlYLoKi1oD4RA9OlmoF3T8gHRSXPt/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nVlWxY5Q; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762595438; x=1794131438;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VYp6JlktlNtSBhhVtta20m+Ma5lCPncZPlU8aCP3RDw=;
-  b=nVlWxY5QhscQzoaYWQE1Mw4QGO09F0/7IBcbXc3Kq+alE8OYdzRBhv7J
-   rhjEpvmtD67cCvR9bApj2nhcdkbF/WogfXzPxZ6fX/Hv/QvpBEFRw1xpn
-   gg5Os1ET4fD6OLZpXkTLq+fagZprfh4wcgQhgVqVvAoCW1kojNhqQ7a0h
-   D6JVz4PTXOP5BcV8qGBnACYyRr8CH/7/MMnflmNoZ2N8nsaDw0x9RUR04
-   dkHH1xKmizPbA6OepDHVidTVYJNOtxT7DmnwBvfomtPs60vujeq7Q6+QY
-   mTLv6JhMK3dSka3wM1MNj2buTesNPdzvmM6sScDOy41xnVXTzZy0h5kF/
-   A==;
-X-CSE-ConnectionGUID: 4mcIaIReT0Sujoqi3O75VQ==
-X-CSE-MsgGUID: YQL4UxceTseJYDtPBwVyVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="64429181"
-X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; 
-   d="scan'208";a="64429181"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2025 01:50:37 -0800
-X-CSE-ConnectionGUID: uzSkh+E1QHW4nIWcYnNOAA==
-X-CSE-MsgGUID: yfE0iGB0TnO6fUV87FWs0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; 
-   d="scan'208";a="193274361"
-Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 08 Nov 2025 01:50:33 -0800
-Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vHfaZ-0000sZ-0W;
-	Sat, 08 Nov 2025 09:50:31 +0000
-Date: Sat, 8 Nov 2025 17:49:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hrishabh Rajput via B4 Relay <devnull+hrishabh.rajput.oss.qualcomm.com@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
-Subject: Re: [PATCH v5 1/2] firmware: qcom: scm: Register gunyah watchdog
- device
-Message-ID: <202511081706.0sVDjTBC-lkp@intel.com>
-References: <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
+	s=arc-20240116; t=1762596010; c=relaxed/simple;
+	bh=Auc0X9Uhro11+Rp/Gqlv4V4jLrVrIxiGCG5AoxRW0Fs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fkvMROJVu/XejGFGXHckMBg1t4zoqG0g5js9pgWKdZiH+fB31E2dAgcnS5F2bZJsCvB55bzA+qqfriW4cMV5rPzI4Lh8q4FJowzDt1lY59KGqwxhgXq/MwdWqIrHvWsdFLlXJffAI0uVkeaKpfgmvlEUoKZ9GOaTyKjp3sWQR6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ki6Po93p; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47775fb6c56so2428685e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 02:00:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1762596004; x=1763200804; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HfKm+sCMoLv848O0IaBXkyVHVooRGLLewfD9ZUo50nE=;
+        b=Ki6Po93pFp1HgBALIZkpkYYRL2GonCZUU6T8H35sg+soapI4a55aa9JnPerH43vjBX
+         PD4shcBjc9XZkSvQm/DwxHwvIfvOk7Fg8cSwQkMJ3Y7C7Prt58k7dnN10w+gI4HnTCKR
+         YcGO8OgBWK23Q5lSR3aH+kLka+03k9hcdrEn9jZHR0qRA5qweBJR1hegX0svRHL+PUwf
+         saLKVtKDgg2nMajBbwmPsTLA82AGzYBhB3SBhRMHSDZ5qicJ1WcBIxSBv6gPdt+ZG/9+
+         WY1O1VsFa6DWsZjgVU5y7PNX5Aa28WPmpAraaq9lcwW9tM7ZPCoX+zPY9+edc6U9YNH3
+         eU9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762596004; x=1763200804;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HfKm+sCMoLv848O0IaBXkyVHVooRGLLewfD9ZUo50nE=;
+        b=q9hw9UYYCDjr95xoYBVgGuWjzq0cjYk9u82vbI5STfQ80oNNgTcKpydDOn0KuJubkh
+         xoiCvHRt71vDlCuG/CFSJwA0kWPjNlj1RPKElgThRBGk+X+Nq6nCjF9hH8QXyEQu4L0/
+         pSCJ72RpuYsfBrTahe4EJKntSkS24EanCLVEYAj+2Ot2WumSK/qscgBmGceTeAnuDod1
+         aZXJWQPLJ4Oa1TFJvp4LFY7Xz913DMxQaKZcs7VAezMQyOPuOKr3t0oY9GqM0U2yYetG
+         skDR4M76+jeKkKGR2p9IwkDE8fkfgFc2VSLcgxvaqoMONuL7n23CtJ/qlYgbwFa0QRU7
+         HnNg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9HAkXoimCfM6CqvN6tOadnDzlIfk6UZ2wbOP3lj2+vvQUxjJuFaT6hhkP+UOp9sGTjSHBO7SsoA4XPLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSz4LnJ7kJs2h0UC3qk8GAwx+KgrC5dKGy8vvNC1prAEHfQu4L
+	x4AkMJnvsSGE7VQpw/mk5chS+21VrPEQFCC/nj6QLYl4vNRH7wLEO4emTXp+QAd5lEk=
+X-Gm-Gg: ASbGnctvJOnK2NFuYrrKYdfZjfb7NAItuQuptyERlNOYWQn199LNGQHZh3JFK03KmMg
+	QLL+E5/L8Ws1FcIMz/Ez/kmj7NS21H+sAP2shPu5LN8huUKj71gy8NiqFalQbJpGI1gViZnzYrr
+	W1dlgrLDS0GwT4OV1kb9bjdMAuUuz1A7ArxCgHoaSPmokxBNzbHcQ3+XVCL3Fsivt2MslH/0hNl
+	ea418EzPsyMCDZizORiZypgFKRDFHGaW36n44mGqyb9Eq1Dz7Nmq5b/dWDizutjOAvE2Zl/fkwM
+	DUC7+YunY8+ApxOjeXc/FDZL0PFKqSZXJtcSDqc9O9fVY5Fg2Fzok5wOAsOYCTsZqa/rh+w00HS
+	5rQiW5PqtBxa6C2VpMVkW0jkZhLkqYlF0tGISKna4IVaYk79kQ1fqRP3o0tqUMcljSG3YlgWVSE
+	wNMQwVWgZd6ZVU//Jkpp4=
+X-Google-Smtp-Source: AGHT+IEa5HkAwCtUWAqywoBTOY3tVN9yf0jwTmnq2Cg9AjaVrXNzNWnrvkGMw6skKp8s7Y/nZrMCtg==
+X-Received: by 2002:a05:600c:5253:b0:477:19bc:1fe2 with SMTP id 5b1f17b1804b1-47773228b73mr15623725e9.6.1762596004492;
+        Sat, 08 Nov 2025 02:00:04 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.134])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce2cde0sm213265715e9.15.2025.11.08.02.00.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Nov 2025 02:00:04 -0800 (PST)
+Message-ID: <2aaf169a-3dab-4ddc-a095-396619983406@tuxon.dev>
+Date: Sat, 8 Nov 2025 12:00:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] clk: at91: sam9x7: Use kmalloc_array() instead of
+ kmalloc()
+To: Sidharth Seela <sidharthseela@gmail.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, varshini.rajendran@microchip.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com
+References: <20250924145552.55058-1-sidharthseela@gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <20250924145552.55058-1-sidharthseela@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Hrishabh,
+Hi, Sidharth,
 
-kernel test robot noticed the following build errors:
+On 9/24/25 17:55, Sidharth Seela wrote:
+> Replace kmalloc with kmalloc array in clk/at91/sam9x7.c. Refactor to new
+> API, for cases with dynamic size calculations inside kmalloc().
+> 
+> Resend is to correct previously sent patches mailing address.
+> 
+> Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+> ---
+> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+> index ffab32b047a0..0c0a746a183d 100644
+> --- a/drivers/clk/at91/sam9x7.c
+> +++ b/drivers/clk/at91/sam9x7.c
+> @@ -748,9 +748,9 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+>  	if (!sam9x7_pmc)
+>  		return;
+>  
+> -	clk_mux_buffer = kmalloc(sizeof(void *) *
+> -				 (ARRAY_SIZE(sam9x7_gck)),
+> -				 GFP_KERNEL);
+> +	clk_mux_buffer = kmalloc_array(ARRAY_SIZE(sam9x7_gck),
+> +					sizeof(void *),
 
-[auto build test ERROR on 6146a0f1dfae5d37442a9ddcba012add260bceb0]
+sizeof(*clk_mux_buffer)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hrishabh-Rajput-via-B4-Relay/firmware-qcom-scm-Register-gunyah-watchdog-device/20251108-015559
-base:   6146a0f1dfae5d37442a9ddcba012add260bceb0
-patch link:    https://lore.kernel.org/r/20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17%40oss.qualcomm.com
-patch subject: [PATCH v5 1/2] firmware: qcom: scm: Register gunyah watchdog device
-config: powerpc-randconfig-001-20251108 (https://download.01.org/0day-ci/archive/20251108/202511081706.0sVDjTBC-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251108/202511081706.0sVDjTBC-lkp@intel.com/reproduce)
+Also, this line should be aligned on the above "(". Please run checkpatch.pl.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511081706.0sVDjTBC-lkp@intel.com/
+Could you please update the other at91 clock drivers?
 
-All errors (new ones prefixed by >>):
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst
 
-   powerpc-linux-ld: powerpc-linux-ld: DWARF error: could not find abbrev number 44
-   drivers/firmware/qcom/qcom_scm.o: in function `qcom_scm_probe':
->> qcom_scm.c:(.text+0x349c): undefined reference to `arm_smccc_hypervisor_has_uuid'
+> +					GFP_KERNEL);
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+This like could fit on the above one.
+
+Thank you,
+Claudiu
+
+>  	if (!clk_mux_buffer)
+>  		goto err_free;
+>  
+
 
