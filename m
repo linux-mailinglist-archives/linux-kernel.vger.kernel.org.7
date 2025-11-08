@@ -1,154 +1,140 @@
-Return-Path: <linux-kernel+bounces-891239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6418C42398
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 02:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F75CC4239E
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 02:12:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3D2E4E7B94
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 01:11:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E97664E2684
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 01:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CD729E11A;
-	Sat,  8 Nov 2025 01:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621FA29DB65;
+	Sat,  8 Nov 2025 01:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="jFT+GXF0"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I5rSzadg"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A4C23EA9E
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 01:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED42280CC9
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 01:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762564307; cv=none; b=gC2+jqlSe6x0+ng6kMnjJzxX/MLzWFCqJQc7pUovqbpNA92HLIBBh+q4Mk24Pc1AAyn/Fx8Az7on+jOwjBt8ZsZ7iNBHp83MP/mc2/BbAbLJ01bgSnsMFhG7pe8bm/HGWG3SZDHrwiyy4tEuvPdety0/nYJmzyI08kjnxoLVp98=
+	t=1762564327; cv=none; b=bi7A66Q4NxZ5zEvgSFPdxJ9kZuj+cgXTOFyl8bCA0CzLxASGDJ6Ap3XCye2tXo1TFNzmFGLXy0ap2Z6G8uupAnAxCTTTbPOdWfzanPhxsZWNRVYLxC4n550B3gH5iPZD1fNhyu04XFwiGjdXJCcnCN0+80jfcgTJDeQx8vIAkYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762564307; c=relaxed/simple;
-	bh=fzToj5dDPDmAgKJ79e6bVD2SIFNhDcqaLH7py0Vyc8g=;
+	s=arc-20240116; t=1762564327; c=relaxed/simple;
+	bh=5KqDn4pqwaFP67oJfEASAYElCFOwmnkW8Ys2b3kSXm8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RVg1gxiyfea5OHY/dTx8d6RmPZoT77q7MEE0iugfnWs5KjN/PR/hZxOdoMvO/QFih6mGLqYnLAax+UfRTZ4XPlgq2GUIlCge29gYxNQJWzrsIsAmVfA9/bzGjhj/xz+TiCRULtOpUWcn8o7tyOTYrzWqJZIEM7y1HWPVnDfvCCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=jFT+GXF0; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-89ed2ee35bbso175679385a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 17:11:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1762564304; x=1763169104; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cf4zf8TV/EOP/YsPQoWXgFR8ZzXqCqkCmbhECODLpcg=;
-        b=jFT+GXF0CpdtJrydLYTd4j+TkbbofbBb0L3gHvvgKP1z3bWdaUNh7b3WZovYGfAQGA
-         bO9daBysl285+ZAKw4xkCWzdHMdUGTmTaV/NFpcc/0RAC3u4wM6b269/E+reffQaBpvj
-         D94vFN7ukwinB40M8/XNqX7tmcjMA6/X/CU6MEi8A6qLZxUsVRmf71r5gYvNIgjIoYpm
-         Z5JYm1q0aEIvWRNNLySAVb7h13oHYL7we3+Fr6oe3KUFYqRTixlla6Rp4qDkoKuAu9nI
-         Fpj1VCwIIMm778IBgKW3n3nBRzTfmADe9KOxafKX4k7FJia5UiTBqryCVD2KDtDpw4/o
-         ifJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762564304; x=1763169104;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cf4zf8TV/EOP/YsPQoWXgFR8ZzXqCqkCmbhECODLpcg=;
-        b=Zzvt2vECrmpWtyg4SA2ryPNLZR1kzReEEQk0W/nYdr6GU5YhOi1n5opYC/+SG3OM/O
-         YnYPILk9GXmQWHrI2bQAyHHEh06xxj1TwAZHl14xubcGIB25vwiWkRjFCNkq/6jbMk6m
-         bD19EUBRELWce0b9AJ9dkSC1aNcgdS0YOmiNoyunJibJuc1mL6B9X9W/y81amrDhBCy+
-         5eKtnUbJqGB2j6d1f4BBi7UmVxXxoPqc7uvAq4vLrZWC3XSyAXglfCIhlzcSYXR/XNvh
-         LpTfRrtJMm3jT4/gJzfJ09YX/0fh79lB/liPPvAiMpB7ej0cgBg59qExmA4qwTPWKn7O
-         KWUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrhwliPIq5/De6ahpB+NzSD4wzIrp2i9wJX9n20N1vrAp6XVWcKd9kx/vmSQm8MhwFPiSa1au8oqIs7wQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTzt53vlwlrtacXQF5jZgJv/lMiX4KIP7hVej8Cjetry4ZcUz2
-	0rJ5WVMysKFlquonj0SjIUTtRamFoCaMBKvuF2SXptuQoLgE6PEODyQrii9zZt2+kYI=
-X-Gm-Gg: ASbGncsDy5uqKT3mtb5/9krkzP1fAGPK/WxZJGkTaKk1GORg34ZeH3ol5P7HpMghivH
-	shwVO58CaZYlEtnpNF6hkKYZ5GWwNIvpTZrfB+ictTgmstaAAj+7TNVqutyAuCydSa6RvGWbXSK
-	7BufwPcsmDd33iny3kGSQfG+FX1gZ4PrlWH/jfeM4Yszl2/5Il1RXUFxhvBxqpvhzFh6PWBqf/a
-	mlXT7300quqozzCvtNarPodYUHGhJkJG/urzMoOicemUNEnhmNMWAq2gvsHQe0/5CD+DjO+sDiC
-	RYAq/w5hAp+O4rAbQpo+FWcuCb/ZiQo0l0mJFc6kgaDcgxGeEmVbqY12rAPD1jlsDPvbsf9s9WS
-	G8VdBf/ATQ4EjVeFOKXU/gg2hW8YkLq5U9vJZuiOaF9MSGlL6fppdiQbgCwd5SNfjtLlNl1njWf
-	eLkH7ALEfabbf+TrQLN/M1tEXz8PYO2fJG6IAIkr0eZVykHG59Kte+vfIt
-X-Google-Smtp-Source: AGHT+IHgQm4crSoFbOP6aPyQmLcW59espnioyKWZw+sam6UcNVlWlMqDlHJNn7lZhEfcTWvrH5yFgA==
-X-Received: by 2002:a05:620a:209b:b0:8b2:2719:ed33 with SMTP id af79cd13be357-8b257f3c71amr135197285a.46.1762564304210;
-        Fri, 07 Nov 2025 17:11:44 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2355e615bsm530534085a.19.2025.11.07.17.11.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 17:11:43 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vHXUV-00000008NdU-17Dq;
-	Fri, 07 Nov 2025 21:11:43 -0400
-Date: Fri, 7 Nov 2025 21:11:43 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: "Winiarski, Michal" <michal.winiarski@intel.com>,
-	Alex Williamson <alex@shazbot.org>,
-	"De Marchi, Lucas" <lucas.demarchi@intel.com>,
-	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	"Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <skolothumtho@nvidia.com>,
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"Brost, Matthew" <matthew.brost@intel.com>,
-	"Wajdeczko, Michal" <Michal.Wajdeczko@intel.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	"Laguna, Lukasz" <lukasz.laguna@intel.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	"Cabiddu, Giovanni" <giovanni.cabiddu@intel.com>,
-	Brett Creeley <brett.creeley@amd.com>
-Subject: Re: [PATCH v4 28/28] vfio/xe: Add device specific vfio_pci driver
- variant for Intel graphics
-Message-ID: <20251108011143.GE1859178@ziepe.ca>
-References: <20251105151027.540712-1-michal.winiarski@intel.com>
- <20251105151027.540712-29-michal.winiarski@intel.com>
- <BN9PR11MB52766F70E2D8FD19C154CE958CC2A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <7dtl5qum4mfgjosj2mkfqu5u5tu7p2roi2et3env4lhrccmiqi@asemffaeeflr>
- <BN9PR11MB52768763573DF22AB978C8228CC3A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20251108004754.GD1859178@ziepe.ca>
- <BN9PR11MB52768BF0A4E6FA1B234E33108CC0A@BN9PR11MB5276.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G1ycj8IdhAwnp2KQkoPK9MYtILYcvjD0R291Kxdh/XSYllERtIo6kiOXMpSzFX6kaYhKLleodMfN0MQN86SH3bRCBIiVAVqqw6v6rwkZJw2TRiN0hK3siEWA6ST6TyDRdRmgg1RlBInakiJIuDV3o1pU+LBYt6I0n/MPYXGV27c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I5rSzadg; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 7 Nov 2025 17:11:58 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762564323;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CZbaHET7zK1X93cUl1eWP2E4xGTD3LFygd8aVoi2Wrw=;
+	b=I5rSzadgX52p8BgtcjjBQ1EnC0y/Iix4dKzL789+/HBp1XeHGhz7OPqARZUbg4/LwgeTaQ
+	FTtFXHqsnUeZJRTbcJ2FlbVPupoPbHqRNZE4kljiXWx637jsItRXEcaKDJ8hMEil0zxa8e
+	6nsY1JEVd0UfcjFkyISfEz/K9ppS+lo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, 
+	Michal Hocko <mhocko@kernel.org>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/vmscan: skip increasing kswapd_failures when
+ reclaim was boosted
+Message-ID: <e5bdgvhyr6ainrwyfybt6szu23ucnsvlgn4pv2xdzikr4p3ka4@hyyhkudfcorw>
+References: <20251024022711.382238-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <BN9PR11MB52768BF0A4E6FA1B234E33108CC0A@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251024022711.382238-1-jiayuan.chen@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Nov 08, 2025 at 01:05:55AM +0000, Tian, Kevin wrote:
-> > From: Jason Gunthorpe <jgg@ziepe.ca>
-> > Sent: Saturday, November 8, 2025 8:48 AM
-> > 
-> > On Fri, Nov 07, 2025 at 03:10:33AM +0000, Tian, Kevin wrote:
-> > > > To me, it looks like something generic, that will have impact on any
-> > > > device specific driver variant.
-> > > > What am I missing?
-> > > >
-> > > > I wonder if drivers that don't implement the deferred reset trick were
-> > > > ever executed with lockdep enabled.
-> > > >
-> > >
-> > > @Jason, @Yishai, @Shameer, @Giovanni, @Brett:
-> > >
-> > > Sounds it's a right thing to pull back the deferred reset trick into
-> > > every driver. anything overlooked?
-> > 
-> > It does seem like we should probably do something in the core code to
-> > help this and remove the duplication.
+On Fri, Oct 24, 2025 at 10:27:11AM +0800, Jiayuan Chen wrote:
+> We encountered a scenario where direct memory reclaim was triggered,
+> leading to increased system latency:
 > 
-> from backport p.o.v. it might be easier to first fix each driver 
-> independently then remove the duplication in upstream? 
+> 1. The memory.low values set on host pods are actually quite large, some
+>    pods are set to 10GB, others to 20GB, etc.
+> 2. Since most pods have memory protection configured, each time kswapd is
+>    woken up, if a pod's memory usage hasn't exceeded its own memory.low,
+>    its memory won't be reclaimed.
 
-If it hasn't bothered anyone yet I wouldn't stress about backporting..
+Can you share the numa configuration of your system? How many nodes are
+there?
 
-Maybe those drivers do work for some unknown reason?
+> 3. When applications start up, rapidly consume memory, or experience
+>    network traffic bursts, the kernel reaches steal_suitable_fallback(),
+>    which sets watermark_boost and subsequently wakes kswapd.
+> 4. In the core logic of kswapd thread (balance_pgdat()), when reclaim is
+>    triggered by watermark_boost, the maximum priority is 10. Higher
+>    priority values mean less aggressive LRU scanning, which can result in
+>    no pages being reclaimed during a single scan cycle:
+> 
+> if (nr_boost_reclaim && sc.priority == DEF_PRIORITY - 2)
+>     raise_priority = false;
 
-Plus it is *really* hard to actually hit this deadlock..
+Am I understanding this correctly that watermark boost increase the
+chances of this issue but it can still happen?
 
-Jason
+> 
+> 5. This eventually causes pgdat->kswapd_failures to continuously
+>    accumulate, exceeding MAX_RECLAIM_RETRIES, and consequently kswapd stops
+>    working. At this point, the system's available memory is still
+>    significantly above the high watermark — it's inappropriate for kswapd
+>    to stop under these conditions.
+> 
+> The final observable issue is that a brief period of rapid memory
+> allocation causes kswapd to stop running, ultimately triggering direct
+> reclaim and making the applications unresponsive.
+> 
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> 
+> ---
+> v1 -> v2: Do not modify memory.low handling
+> https://lore.kernel.org/linux-mm/20251014081850.65379-1-jiayuan.chen@linux.dev/
+> ---
+>  mm/vmscan.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 92f4ca99b73c..fa8663781086 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -7128,7 +7128,12 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int highest_zoneidx)
+>  		goto restart;
+>  	}
+>  
+> -	if (!sc.nr_reclaimed)
+> +	/*
+> +	 * If the reclaim was boosted, we might still be far from the
+> +	 * watermark_high at this point. We need to avoid increasing the
+> +	 * failure count to prevent the kswapd thread from stopping.
+> +	 */
+> +	if (!sc.nr_reclaimed && !boosted)
+>  		atomic_inc(&pgdat->kswapd_failures);
+
+In general I think not incrementing the failure for boosted kswapd
+iteration is right. If this issue (high protection causing kswap
+failures) happen on non-boosted case, I am not sure what should be right
+behavior i.e. allocators doing direct reclaim potentially below low
+protection or allowing kswapd to reclaim below low. For min, it is very
+clear that direct reclaimer has to reclaim as they may have to trigger
+oom-kill. For low protection, I am not sure.
+
 
