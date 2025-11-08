@@ -1,211 +1,87 @@
-Return-Path: <linux-kernel+bounces-891371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C027C428D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 08:36:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D58FC428D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 08:34:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59C7A3B12DC
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 07:36:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CBC23AD6DE
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 07:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F34299ABF;
-	Sat,  8 Nov 2025 07:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AJII9qae"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F85326CE3F;
+	Sat,  8 Nov 2025 07:34:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E6D4A0C
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 07:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E814A0C
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 07:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762587374; cv=none; b=CydtPbdWkMxCZXRgqIiUbKpdnRBqatirvrX2q3d+rojvX1RW/Ulhvge8Iz2147pN8cPXzr0FL4kdS/hX6gLsTQgWAKXiPU4X+0vOy0sFtcC8sdu8HEezTK1MTzQ5YvgusOncqKBy0jTvVC1YV9f5RtiLUJ9YSH9ljm6OwTELbmE=
+	t=1762587244; cv=none; b=QiLvVCOzTnTujFPUbLB4vnTa3Juijw3V7LDaEi4uKJrpiyNTDh/YtGk43jIIj75wD8a0X1O0k60ScEZQMmWMG6XccstkyFJWD12WKIHSEQ9qc5HYRusknGQW2fWLzAM4w6fVft+coxvBdh8WPKvFpz0Lc/aNxKS3XbQhIGImNxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762587374; c=relaxed/simple;
-	bh=D3ZOdcIuVYh5fR8rD7oiMW05m6SL+qVcyJoRslN/TSQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ooZweL2Tl5FTziwXQRKpBa89atDBi2BAmLRt6ETTLMSSGsarXzQTIkzGIFYoIDxau0w8HZ4qb868VAyXsLKp+BGe4cW//G4q56dMEDwuQh81loA1K6NtU2q+nGKWox+G2h8MYvJQfNqwh9Mldit9mSS1+7avZXyWT2xeLjGBHlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AJII9qae; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1762587361; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=w5hRbEmCZAr8rZpKUXLSHNatmnQ6+I1kl4hbNoJwVz4=;
-	b=AJII9qaes+KwuQhee25gsrcVGqrWAVGPp3ztu/xFoWPYPdsPQESTND9C3e7EAdt8VBMr3fKHwLDs2czw3TgiRUAcXxQFZEM0D3oN4V2drU0PX/njcsFdBghm1ynQA/JAAXa9Pbu1QxZ2prBczHCtdKoT/C1Yn9M2wzAS16gEdhA=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0Wrv9onH_1762586422 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 08 Nov 2025 15:20:23 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
- <will@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,  Ryan
- Roberts <ryan.roberts@arm.com>,  Barry Song <baohua@kernel.org>,  Lorenzo
- Stoakes <lorenzo.stoakes@oracle.com>,  Vlastimil Babka <vbabka@suse.cz>,
-  Zi Yan <ziy@nvidia.com>,  Baolin Wang <baolin.wang@linux.alibaba.com>,
-  Yang Shi <yang@os.amperecomputing.com>,  "Christoph Lameter (Ampere)"
- <cl@gentwo.org>,  Dev Jain <dev.jain@arm.com>,  Anshuman Khandual
- <anshuman.khandual@arm.com>,  Kefeng Wang <wangkefeng.wang@huawei.com>,
-  Kevin Brodsky <kevin.brodsky@arm.com>,  Yin Fengwei
- <fengwei_yin@linux.alibaba.com>,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org
-Subject: Re: [PATCH -v4 2/2] arm64, tlbflush: don't TLBI broadcast if page
- reused in write fault
-In-Reply-To: <2b9fa85b-54ff-415c-9163-461e28b6d660@gmail.com> (David
-	Hildenbrand's message of "Thu, 6 Nov 2025 10:47:10 +0100")
-References: <20251104095516.7912-1-ying.huang@linux.alibaba.com>
-	<20251104095516.7912-3-ying.huang@linux.alibaba.com>
-	<2b9fa85b-54ff-415c-9163-461e28b6d660@gmail.com>
-Date: Sat, 08 Nov 2025 15:20:21 +0800
-Message-ID: <87qzu97zyi.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762587244; c=relaxed/simple;
+	bh=/4SLitgfABOJ/ikCf5/gJToOxuGDOdxfDZkCi3jI7wY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tlvr8k6+W7V8XmTT8kzxcypx/6VzPUw+snPE+d74a/KnNrVgj0hVYKuPEubas5rei+HRxDxwF0gGcNikrFeqHBYsE5nH4cSj4EWUXg2rSOYC6BD+RAJDbSd7P9NgItxGJ5cKqkVMgi55wEWeCWsjbwnYNcErnY4OsFaRMcMcPNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43373c85296so376795ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 23:34:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762587242; x=1763192042;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=laVef2Mh3RcsXkV1dluoh8f4+51jG5K/EpjaW6ir13g=;
+        b=I5Q4J1IsAYhkHOJFSJuBq7qlDgKNMp9XhT2oq6ulCe60vDzbQS7uKzn6xL4yGgaUYi
+         G+fUcGLVC0wxnBD0a9H789y4ItnkIHaAZmgNU/0Au0PvQm7mD3KIw1sWbsJAxODfSrbL
+         3ANI4/aUrjHaXL2xrZAsxlS07e95RNmumZpnhPBgFFj3qCCzDBdTbEGGehNVeSIuSY5+
+         fS2e+zYJ6SRAWLGTi/vRiHz7T187EPmwgkOpjSDp2Up6BiucoPkSLEpxV7/WmuFGmpOK
+         DW1Ldmv2Gyss/+QqFdzVYNiDpzn31QHYZlUnnlD0d/FEbPnEqRGhYDZoxYIXB7AZLIpu
+         iXHA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9ovNAWkQYaTitJiRIaml8ac5SZdkrycPRXlDObEhdZdznuy7NHEQbvRvsODHWKf7UQG/zwq57IVgJmTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvUyPkeiJD7npWz6mET3CHpMjcKNqJkSRAkXa3VlHYczjzCj/O
+	eelmOO54DLhfkExP3VGpxsxPfnIDDyVX7vtBcMdDAgNGUGTvMFc09szuOYWGUb5OfSdWs9I59+/
+	fNnawjkR4yojOgp6QX4RcXJcpyytt7j/xCnGCs6JSX0/5ysD4ACEFV5Rwm10=
+X-Google-Smtp-Source: AGHT+IEoCw6K7YA9lbq2o2DnhkBdN9zwQ9XXBLqaYuftD5gjurl1q3PUYFcKOmBldeHa722UxsCupdbBl/Gs85Jz9Y9DoEWdD/3K
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+X-Received: by 2002:a05:6e02:2413:b0:433:2660:6856 with SMTP id
+ e9e14a558f8ab-43367e6a4b8mr26267755ab.31.1762587242502; Fri, 07 Nov 2025
+ 23:34:02 -0800 (PST)
+Date: Fri, 07 Nov 2025 23:34:02 -0800
+In-Reply-To: <tencent_AAB95DC599174FA90DA725958DDE1219DD07@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690ef26a.a70a0220.22f260.0076.GAE@google.com>
+Subject: Re: [syzbot] [gfs2?] memory leak in gfs2_trans_begin (2)
+From: syzbot <syzbot+63ba84f14f62e61a5fd0@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, David,
+Hello,
 
-"David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com> writes:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> On 04.11.25 10:55, Huang Ying wrote:
->> A multi-thread customer workload with large memory footprint uses
->> fork()/exec() to run some external programs every tens seconds.  When
->> running the workload on an arm64 server machine, it's observed that
->> quite some CPU cycles are spent in the TLB flushing functions.  While
->> running the workload on the x86_64 server machine, it's not.  This
->> causes the performance on arm64 to be much worse than that on x86_64.
->> During the workload running, after fork()/exec() write-protects all
->> pages in the parent process, memory writing in the parent process
->> will cause a write protection fault.  Then the page fault handler
->> will make the PTE/PDE writable if the page can be reused, which is
->> almost always true in the workload.  On arm64, to avoid the write
->> protection fault on other CPUs, the page fault handler flushes the TLB
->> globally with TLBI broadcast after changing the PTE/PDE.  However, this
->> isn't always necessary.  Firstly, it's safe to leave some stale
->> read-only TLB entries as long as they will be flushed finally.
->> Secondly, it's quite possible that the original read-only PTE/PDEs
->> aren't cached in remote TLB at all if the memory footprint is large.
->> In fact, on x86_64, the page fault handler doesn't flush the remote
->> TLB in this situation, which benefits the performance a lot.
->> To improve the performance on arm64, make the write protection fault
->> handler flush the TLB locally instead of globally via TLBI broadcast
->> after making the PTE/PDE writable.  If there are stale read-only TLB
->> entries in the remote CPUs, the page fault handler on these CPUs will
->> regard the page fault as spurious and flush the stale TLB entries.
->> To test the patchset, make the usemem.c from
->> vm-scalability (https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git).
->> support calling fork()/exec() periodically.  To mimic the behavior of
->> the customer workload, run usemem with 4 threads, access 100GB memory,
->> and call fork()/exec() every 40 seconds.  Test results show that with
->> the patchset the score of usemem improves ~40.6%.  The cycles% of TLB
->> flush functions reduces from ~50.5% to ~0.3% in perf profile.
->> 
->
-> All makes sense to me.
->
-> Some smaller comments below.
+Reported-by: syzbot+63ba84f14f62e61a5fd0@syzkaller.appspotmail.com
+Tested-by: syzbot+63ba84f14f62e61a5fd0@syzkaller.appspotmail.com
 
-Thanks!
+Tested on:
 
-> [...]
->
->> +
->> +static inline void local_flush_tlb_page_nonotify(
->> +	struct vm_area_struct *vma, unsigned long uaddr)
->
-> NIT: "struct vm_area_struct *vma" fits onto the previous line.
+commit:         e811c33b Merge tag 'drm-fixes-2025-11-08' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14e60b42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cb128cd5cb439809
+dashboard link: https://syzkaller.appspot.com/bug?extid=63ba84f14f62e61a5fd0
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1549117c580000
 
-Sure.
-
->> +{
->> +	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
->> +	dsb(nsh);
->> +}
->> +
->> +static inline void local_flush_tlb_page(struct vm_area_struct *vma,
->> +					unsigned long uaddr)
->> +{
->> +	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
->> +	mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, uaddr & PAGE_MASK,
->> +						(uaddr & PAGE_MASK) + PAGE_SIZE);
->> +	dsb(nsh);
->> +}
->> +
->>   static inline void __flush_tlb_page_nosync(struct mm_struct *mm,
->>   					   unsigned long uaddr)
->>   {
->> @@ -472,6 +512,22 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
->>   	dsb(ish);
->>   }
->>   +static inline void local_flush_tlb_contpte(struct vm_area_struct
->> *vma,
->> +					   unsigned long addr)
->> +{
->> +	unsigned long asid;
->> +
->> +	addr = round_down(addr, CONT_PTE_SIZE);
->> +
->> +	dsb(nshst);
->> +	asid = ASID(vma->vm_mm);
->> +	__flush_tlb_range_op(vale1, addr, CONT_PTES, PAGE_SIZE, asid,
->> +			     3, true, lpa2_is_enabled());
->> +	mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, addr,
->> +						    addr + CONT_PTE_SIZE);
->> +	dsb(nsh);
->> +}
->> +
->>   static inline void flush_tlb_range(struct vm_area_struct *vma,
->>   				   unsigned long start, unsigned long end)
->>   {
->> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
->> index c0557945939c..589bcf878938 100644
->> --- a/arch/arm64/mm/contpte.c
->> +++ b/arch/arm64/mm/contpte.c
->> @@ -622,8 +622,7 @@ int contpte_ptep_set_access_flags(struct vm_area_struct *vma,
->>   			__ptep_set_access_flags(vma, addr, ptep, entry, 0);
->>     		if (dirty)
->> -			__flush_tlb_range(vma, start_addr, addr,
->> -							PAGE_SIZE, true, 3);
->> +			local_flush_tlb_contpte(vma, start_addr);
->
-> In this case, we now flush a bigger range than we used to, no?
->
-> Probably I am missing something (should this change be explained in
-> more detail in the cover letter), but I'm wondering why this contpte
-> handling wasn't required before on this level.
-
-As Ryan explained in his replay email.  The flush range doesn't change
-here.  We just replace global TLB flush with local TLB flush.
-
->>   	} else {
->>   		__contpte_try_unfold(vma->vm_mm, addr, ptep, orig_pte);
->>   		__ptep_set_access_flags(vma, addr, ptep, entry, dirty);
->> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
->> index d816ff44faff..22f54f5afe3f 100644
->> --- a/arch/arm64/mm/fault.c
->> +++ b/arch/arm64/mm/fault.c
->> @@ -235,7 +235,7 @@ int __ptep_set_access_flags(struct vm_area_struct *vma,
->>     	/* Invalidate a stale read-only entry */
->
-> I would expand this comment to also explain how remote TLBs are
-> handled very briefly -> flush_tlb_fix_spurious_fault().
-
-Sure.
-
->>   	if (dirty)
->> -		flush_tlb_page(vma, address);
->> +		local_flush_tlb_page(vma, address);
->>   	return 1;
->>   }
->>   
-
----
-Best Regards,
-Huang, Ying
+Note: testing is done by a robot and is best-effort only.
 
