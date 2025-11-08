@@ -1,96 +1,118 @@
-Return-Path: <linux-kernel+bounces-891716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CBD9C43504
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 22:56:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B75C43518
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 23:07:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C2AA4E21FF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 21:56:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C3C3188947B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 22:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D05B283FFC;
-	Sat,  8 Nov 2025 21:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC4A284686;
+	Sat,  8 Nov 2025 22:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OU4HVJNb"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Z8IP5v0O";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="7tTrNyAO"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232CA276020
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 21:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735F123B616;
+	Sat,  8 Nov 2025 22:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762638983; cv=none; b=JjAqHOJo5J+yVumrycqIEAd/4eFonLQczPvqATFAFwTFHEX/Dz2nArBucfCuQl9SC0vsuXAIxnfgOugr9eBJ1YbAkxNwIhkoTJk1Rl9zMOVHvJ1WQs9x9Z515pRO69HVcgbp2TTRSUxS8H5sHu3FBJMeALsYZeeTgAIpp6Q6+WY=
+	t=1762639611; cv=none; b=XDTOfLdoUmVxS0qx3LvGqgIXNv86R8dWNtUEg4ZnqZhS8Dhq2DCmiC54cImDAFyxm5nAShAqTmxXdvIgJcm6ryFiqWXFcFxnX5C4DbjosRs8AW0F6yD7rPwAT/uKGrUCVCAY1ANjtoULlaLPW38Hg76/0tnkI127OsOYSQOu/9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762638983; c=relaxed/simple;
-	bh=Fz0kmxQLkKW9u4Y1HMxy/RBQ1f08/NVunjhHzCJOGl0=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQa2gBQJ2JLirh69GC4bn6rt9COaRLlIg48ffyw92oN5EVKYUyLo4cxBatBxynlZjVUi7Dn9eTzqUQ7cLsXN2SdlWhAX/Of2fvsW/vhxSLktFP/YrSV6bCWKwNdyesDbqBDQnoRqvg2WEtbzxfiRHqfcBzgr05aeHiW4ZjDIN9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OU4HVJNb; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id A0B114E415D5;
-	Sat,  8 Nov 2025 21:56:12 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 58B1D60710;
-	Sat,  8 Nov 2025 21:56:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2D0F511853068;
-	Sat,  8 Nov 2025 22:56:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762638971;
-	h=from:subject:date:message-id:to:mime-version:content-type:in-reply-to:
-	 references; bh=5AxV9zAfwzxXLQuYV4SQntDLgupugMLE1UNs9cxOI+o=;
-	b=OU4HVJNbfjro2tym801hMPJgd3rXAsv44NyResegH3DkZjcHSK4a0XrNbZ1tqE13y082a+
-	fzvlIKQ+JXOcdoyANXlS6ktYJ339sN/dNhrmYfjcspWutuA8ss30zaKxMWZjuSgNYpd8BL
-	8H1Z8VL59cCA7tR2iq2FsXY72rQ1kj3LSW47ugy/fJk977f9RI8oswMg9Q8ZDMb75YE8+o
-	F8ruPori6PCtW35rWhvyrrkODFYCgpS6Datmo1uxCUGfRmhLLKimuCmSUHDD5prye0mW6e
-	hsrvrPPY8LxXXgbo2EmcWmvkJSwHluxZrYHXTCOCMirh7e9Pph2+iKh3OWVAdg==
-Date: Sat, 8 Nov 2025 22:56:08 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Frank.Li@nxp.com, wsa+renesas@sang-engineering.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, dinguyen@kernel.org,
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, adrianhoyin.ng@altera.com
-Subject: Re: (subset) [PATCH v5 0/3] i3c: dw: Add Altera Agilex5 runtime PM
- disable quirk
-Message-ID: <176263895276.673133.964686520497034769.b4-ty@bootlin.com>
-References: <cover.1762237922.git.adrianhoyin.ng@altera.com>
+	s=arc-20240116; t=1762639611; c=relaxed/simple;
+	bh=/ofQbxb+amF8hA0q0+/tC5F4n8m2nCJBW2xuireyQ5o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MobUjCT83Nk0GGlKPW6ERh0p3keVY/pAqe13jsOJXwstwF+VjVn0H04UYvuNYaJrQqWZEi5nN/pWIFo8sz+EfBcEA56X3LbziyFR3+Nn3TkXpgiaPXrKrbXLRxYj6jP371bOKTFyDjK6BcJapsDMPkQl9+XuUAeDd9DzhQeVbmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Z8IP5v0O; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=7tTrNyAO; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1762639583; bh=9eeMje1PTx/sNTR1MiULRj5
+	s3httCogbc90TIndk8XI=; b=Z8IP5v0OLbDIO5qSHFWnFuhw06Pk5gMpKfF97x6BYbNbhhpmIw
+	AVo4KeuM0GwNXemmtFxOlL+GN5yK3F15piVRkPC1TQwG9+L0UCaiwyCQseGob0dWp7NGgPo+9cP
+	mwbzbvPdIWlIRyQiPs/AhMDdk/UxzkG3XwL035xcGOUEH0oswtWFPxkKqYYhWnw1aRhpD68/iHT
+	wLTJ7KJkuBHeppp9FtXjJDRTRXqaliFbg+JFbFXdC3LIh8pTO7dfGxqwFvACIfqylhv6bB0iyz8
+	3GdD0of7NJRtpMaIC/CNpYVZ2dM/adWz3dEDRz0cEJQbPz2smgpdv74fh+fitxMwKOw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1762639583; bh=9eeMje1PTx/sNTR1MiULRj5
+	s3httCogbc90TIndk8XI=; b=7tTrNyAO9IPXExS0+0gqCXsdBWJpr2bAzHOrJp6fEUv68KABDP
+	b5A/6XRcdayOEJrA6WhgvqszbxheoJf9F+AQ==;
+From: Jens Reidel <adrian@mainlining.org>
+Date: Sat, 08 Nov 2025 23:05:55 +0100
+Subject: [PATCH] mips: Use generic endianness macros instead of
+ MIPS-specific ones
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1762237922.git.adrianhoyin.ng@altera.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251108-mips-bpf-fix-v1-1-0467c3ee2613@mainlining.org>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x2MQQqAIBAAvxJ7bsG1Ausr0SFtrT1kohCB9Pek4
+ wzMFMichDNMTYHEt2S5QgVqG3DHGnZG2SqDVnogUgZPiRlt9OjlQbORp966flQd1CQmrvrfzcv
+ 7fo4GTT1eAAAA
+X-Change-ID: 20251108-mips-bpf-fix-8d1f14bc4903
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, llvm@lists.linux.dev, 
+ Jens Reidel <adrian@mainlining.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1392; i=adrian@mainlining.org;
+ h=from:subject:message-id; bh=/ofQbxb+amF8hA0q0+/tC5F4n8m2nCJBW2xuireyQ5o=;
+ b=owGbwMvMwCWmfPDpV6GDysyMp9WSGDL5993f/exSibjCZo4pS7N+3lRyP7iXI5Fhs6fWoaUPt
+ pntjuZ16ihlYRDjYpAVU2Spv5FgctX626H5+TarYeawMoEMYeDiFICJhAUz/FO+nXA7smPlhn17
+ 5FynufSU/X8iNc2xff3RderBGZe2P5Fm+Kft3dvxSGf1g66L8gxltb4+RVknrB8dDrx+P8T6yCI
+ xBW4A
+X-Developer-Key: i=adrian@mainlining.org; a=openpgp;
+ fpr=7FD86034D53BF6C29F6F3CAB23C1E5F512C12303
 
-On Tue, 04 Nov 2025 15:29:05 +0800, adrianhoyin.ng@altera.com wrote:
-> From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
-> 
-> This patchset adds support for an Altera SoCFPGA-specific quirk
-> in the Synopsys DesignWare I3C master driver.
-> 
-> While running the I3C compliance test suite on the Altera Agilex5 SoCFPGA,
-> the I3C bus was observed to hang when a slave device issued an IBI after
-> the Dynamic Address Assignment (DAA) process completed.
-> 
-> [...]
+Compiling bpf_skel for mips currently fails because clang --target=bpf
+is invoked and the source files include byteorder.h, which uses the
+MIPS-specific macros to determine the endianness, rather than the generic
+__LITTLE_ENDIAN__ / __BIG_ENDIAN__. Fix this by using the generic
+macros, which are also defined when targeting bpf. This is already done
+similarly for powerpc.
 
-Applied, thanks!
+Signed-off-by: Jens Reidel <adrian@mainlining.org>
+---
+ arch/mips/include/uapi/asm/byteorder.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-[1/3] dt-bindings: i3c: snps: Add Altera SoCFPGA compatible
-      https://git.kernel.org/abelloni/c/8d1d2c408cc0
-[3/3] i3c: dw: Disable runtime PM on Agilex5 to avoid bus hang on IBI
-      https://git.kernel.org/abelloni/c/fba0e56ee752
+diff --git a/arch/mips/include/uapi/asm/byteorder.h b/arch/mips/include/uapi/asm/byteorder.h
+index b4edc85f9c30c09aafbc189ec820e6e2f7cbe0d8..5e3c3baa24994a9f3637bf2b63ea7c3577cae541 100644
+--- a/arch/mips/include/uapi/asm/byteorder.h
++++ b/arch/mips/include/uapi/asm/byteorder.h
+@@ -9,12 +9,10 @@
+ #ifndef _ASM_BYTEORDER_H
+ #define _ASM_BYTEORDER_H
+ 
+-#if defined(__MIPSEB__)
+-#include <linux/byteorder/big_endian.h>
+-#elif defined(__MIPSEL__)
++#ifdef __LITTLE_ENDIAN__
+ #include <linux/byteorder/little_endian.h>
+ #else
+-# error "MIPS, but neither __MIPSEB__, nor __MIPSEL__???"
++#include <linux/byteorder/big_endian.h>
+ #endif
+ 
+ #endif /* _ASM_BYTEORDER_H */
+
+---
+base-commit: 9c0826a5d9aa4d52206dd89976858457a2a8a7ed
+change-id: 20251108-mips-bpf-fix-8d1f14bc4903
 
 Best regards,
-
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Jens Reidel <adrian@mainlining.org>
+
 
