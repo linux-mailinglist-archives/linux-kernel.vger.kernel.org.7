@@ -1,100 +1,135 @@
-Return-Path: <linux-kernel+bounces-891286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA6BC42574
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 04:02:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A151C42577
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 04:02:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 072464203E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 03:01:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06B1F188E318
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 03:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499022D63E8;
-	Sat,  8 Nov 2025 03:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC524157480;
+	Sat,  8 Nov 2025 03:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4P3ihaQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OqvzXnEv"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9065B258EF5;
-	Sat,  8 Nov 2025 03:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5382561D1
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 03:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762570861; cv=none; b=klOrTddYxQPR2DejFl5Ic4xp715sA/xofn+/B1InPSlWjqvUhYkH8aKmVHg7USuLx8xpx4ZjG37MrIKj8ySUgFo4iBX2HERewfdlJH8EL8H/iIAVZkA4AKZyBo6mxv1qhxtCicyAO9P0cSTOazHkZp8Wx+2kMkOoWH3Edo180ms=
+	t=1762570902; cv=none; b=C1Gg3MgzuXY8LYF0B3pZdYgN4QAGp6Yw/kKNZvKzBClOyfi7/NxWnOJ3uTM6fpdpcpB9cMJwy+hW6xZ7bfVYQnMXgljfd+gg0oMR/0O1cmX6LmT+1q9xGTkszzMMkXyOd3I4nSSB97DbZFA2dsoMCFaYe8GQeKftZ1MXhfz/6u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762570861; c=relaxed/simple;
-	bh=vxdNXH57C9w1M2OkY45LeSU26Hq2p55YcG6tRkp4xnE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=as0+ycmyP6YXMjKo2hg1BCbA53MrQJV4aDGtUXzkxAPszbbStJvJ2c11ye3Pt6C/3d8zbiQw+MnSUgFh1LoYvHDpfEWr6L7okR8nu2TI31KRtteEnzKUgnxmu8clgUMiZBGhfN50OdaRNRxazuCpt+L2vmds28UReXag9hEJ/D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4P3ihaQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C807C4CEF7;
-	Sat,  8 Nov 2025 03:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762570861;
-	bh=vxdNXH57C9w1M2OkY45LeSU26Hq2p55YcG6tRkp4xnE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=p4P3ihaQXJUMgOCRFLDWAyJcvj3QUnTJnxqzp3HIxBmuLN36TTL/5SikPA55efjIz
-	 1EGo8JheZWnikuyHlJ3DVZQR7e73trMacpiYHbObkDj27MuIgk4IuYI4JSkEMhToYc
-	 +NzfeelgaBahZFm9gaAJYdk/xUZKNQVDLDxtsxM1R06siF//KicRPgobGYAEVQZ8hF
-	 RI8DfoeCGUlTx6UV+ohdtGRIuZ8RZduAtrdCNz61jUKkSsweU+BHTDhCJqIW+9GAic
-	 ISBj2r6lHNyA5xoCes2GlUjf+F/Uzyf11hssMdyKnSAYj7Y5fcp1fgx0bcuJTE7DI9
-	 feHi/AanyfNYA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C7E3A40FCA;
-	Sat,  8 Nov 2025 03:00:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1762570902; c=relaxed/simple;
+	bh=Y9YV3f8Hzry+Ze97F/cP+/xbypI1KDyCVKpqIvt9p8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGNe99sI/+i2zYYuXqtJ70VJ3Wo22MeAeIpzQ1SxI+/K8n7PmssvQLtZtUaIJHhUq6Ynb17+q/zKr2ULDc9XeqEf8N8YOsOwKgOngGQnWTAs7SbOAWNO5bGGsynagDovokI9ZeWnTIYHocN8bPY8hIqfL2t+euno8jZhubR1Rkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OqvzXnEv; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so235040766b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 19:01:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762570899; x=1763175699; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IvQMGIBRXMAfRMIt2kKWb8Pd94P2qwTUjsmasBUxq4U=;
+        b=OqvzXnEv/XhxHmFBcR1ZgdHs7bn8FQ5YaZxR9JHfFjyEalXa+PztZRYnpBlWol6T1a
+         iPtyDoT1hfx0gKNJZQfU5X91OFEj27uhQbNL6ifXdIwZuYzSpkouweXU5O3Wm/ngn1wI
+         qfQS+yAbrU5xnYzm8bYDYoThZmFG5oFhIpQM+y+ZzmppzZK1BZUBXK52fAqM4QyjRLrZ
+         K6tHCMXcKPET8xrjS5whbhh1WridPW5weg0FySMWCw/VTL3kpazSSGiiaRW7ZjBusVBy
+         Bva9dSc1kNmSGMxXOWULtg/owMftQ9hTOyYITPwOpNEeuKXcbZxfXMXDSMB6bIpIUkiC
+         lnUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762570899; x=1763175699;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvQMGIBRXMAfRMIt2kKWb8Pd94P2qwTUjsmasBUxq4U=;
+        b=rroGss+ligJ83O2MWASazaGFk9v/i5j9geHu9K9S+jbBvfwLN+7rU2t5/VEZjiYYFB
+         w2fp+QgkkHVEFmxFbY6Wcr6oXqAE9Aoi2v9lbS8k7HRlLh5rcxHELOq+mi3V2h2BTxaH
+         dA+/izAaQSzGUmCBCkWhV8LXNZejgusSARlgEqJAS66ckDUy5h7koRhpEUc5IGGM60KO
+         gqZm9ChkzLWeKGvSdKQZ5TrtCna+vjjIox7YBQHwfNqAyWi3AhV33seozcVDRy0gMVMf
+         dCRiurtXA+QIMvzcQLWUGML2xScooaEZsUxObocTZvRM3fXYLElijDG0/RA9uFSjWF8B
+         BoVQ==
+X-Gm-Message-State: AOJu0Yw2/mF57AOrGilvjaxnGLLCRUjvUaJTxRLEhRKv9T1IT3F37Q5V
+	WdqMk/1E9pLPK0qaYFBnnOMNHEb9UE/0wHkemIitcQSvr33d3wG6bM9n
+X-Gm-Gg: ASbGncuBczAB8t1Y6rKhlaSa5bIdaUGTABDEtZWtqDx/1K377bYOJIFil0ZAMHaYWlm
+	eKl9I3rW+C3fGQSB2WAyNa49mdfvwTQM/ceHsyQar3v1FAEqGgS/TwUnL65jfviKANvoR5ziG15
+	CCylU3uVCC4om23nwwhknUD46WsY8dMlcHSQrZQWtfhT/Or2Tx+oL6EeRhg/h/AF+4XBKzFGu58
+	aGHJLXzCZJfno7Hbrwyz7SuEyzfg0DAdrARPi4tT2zig3j5hNHlc9fycSVTio+u/YABYLFaQHmK
+	+ZaWthgS2SdxZUi6jzzhpPmTLq30g3Tvcj7FTF6QnruKKYsC+pwg7DxtjANfOH6tL3z7wpXFuIV
+	pWmLg7evYH+6EWDvlLvn2eFGBwuzL0DbLf4vMvlhzUDhT/DKmziGPORjTY1B0CXyFSRHkA4Sy1J
+	8=
+X-Google-Smtp-Source: AGHT+IFpe9qLqPYcxu/67GnD+yfSvSPuX6hzgETXb3TcPECOp4WGRyEJjWKfcLIhMsnwyzl+jMrZig==
+X-Received: by 2002:a17:906:7313:b0:b72:b8e4:3aea with SMTP id a640c23a62f3a-b72e02b35cbmr147921966b.10.1762570898658;
+        Fri, 07 Nov 2025 19:01:38 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf312e25sm397398366b.20.2025.11.07.19.01.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Nov 2025 19:01:38 -0800 (PST)
+Date: Sat, 8 Nov 2025 03:01:37 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Nico Pache <npache@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, david@redhat.com,
+	ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net,
+	rostedt@goodmis.org, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
+	baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+	wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+	sunnanyong@huawei.com, vishal.moola@gmail.com,
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+	kas@kernel.org, aarcange@redhat.com, raquini@redhat.com,
+	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
+	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
+	cl@gentwo.org, jglisse@google.com, surenb@google.com,
+	zokeefe@google.com, hannes@cmpxchg.org, rientjes@google.com,
+	mhocko@suse.com, rdunlap@infradead.org, hughd@google.com,
+	richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz,
+	rppt@kernel.org, jannh@google.com, pfalcato@suse.de
+Subject: Re: [PATCH v12 mm-new 05/15] khugepaged: generalize
+ __collapse_huge_page_* for mTHP support
+Message-ID: <20251108030137.mud7xxwg5fxdgm6k@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20251022183717.70829-1-npache@redhat.com>
+ <20251022183717.70829-6-npache@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3] net: mana: Fix incorrect speed reported by
- debugfs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176257083299.1232193.3554184058724318559.git-patchwork-notify@kernel.org>
-Date: Sat, 08 Nov 2025 03:00:32 +0000
-References: <1762369468-32570-1-git-send-email-ernis@linux.microsoft.com>
-In-Reply-To: <1762369468-32570-1-git-send-email-ernis@linux.microsoft.com>
-To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- shradhagupta@linux.microsoft.com, ssengar@linux.microsoft.com,
- dipayanroy@linux.microsoft.com, shirazsaleem@microsoft.com,
- kotaranov@microsoft.com, longli@microsoft.com, linux-hyperv@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022183717.70829-6-npache@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-Hello:
+On Wed, Oct 22, 2025 at 12:37:07PM -0600, Nico Pache wrote:
+>generalize the order of the __collapse_huge_page_* functions
+>to support future mTHP collapse.
+>
+>mTHP collapse will not honor the khugepaged_max_ptes_shared or
+>khugepaged_max_ptes_swap parameters, and will fail if it encounters a
+>shared or swapped entry.
+>
+>No functional changes in this patch.
+>
+>Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>Acked-by: David Hildenbrand <david@redhat.com>
+>Co-developed-by: Dev Jain <dev.jain@arm.com>
+>Signed-off-by: Dev Jain <dev.jain@arm.com>
+>Signed-off-by: Nico Pache <npache@redhat.com>
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-On Wed,  5 Nov 2025 11:04:28 -0800 you wrote:
-> Once the netshaper is created for MANA, the current bandwidth
-> is reported in debugfs like this:
-> 
-> $ sudo ./tools/net/ynl/pyynl/cli.py \
->   --spec Documentation/netlink/specs/net_shaper.yaml \
->   --do set \
->   --json '{"ifindex":'3',
->            "handle":{ "scope": "netdev", "id":'1' },
->            "bw-max": 200000000 }'
-> None
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v3] net: mana: Fix incorrect speed reported by debugfs
-    https://git.kernel.org/netdev/net-next/c/140039580efa
-
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Wei Yang
+Help you, Help me
 
