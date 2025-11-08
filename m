@@ -1,145 +1,122 @@
-Return-Path: <linux-kernel+bounces-891443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13B1C42ACD
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:46:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DFF0C42AD9
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:50:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3560334B009
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:46:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BEDE4E2A9D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C31238DE1;
-	Sat,  8 Nov 2025 09:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8256726A1AB;
+	Sat,  8 Nov 2025 09:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNEdJQQl"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nVlWxY5Q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4584718C31
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 09:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D267134AB;
+	Sat,  8 Nov 2025 09:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762595207; cv=none; b=PczfQQvjRVo6r+nsNzYYDn0j1sotMCrAYzRZioQcyoSD+z2HWF0dKeXX6ItXaKgeX43dGI504NWs4vLso2/I6J/a8F5EEUr+6kj6HWoTpc2j39FFAd7cDI5Z0UCweb74T1EGXMoc2vNskZZcUX+I7rZOVCEB9Ia8TlsBT+RhsH0=
+	t=1762595438; cv=none; b=npo0S8kCGAMUJvdsmMAQmlYiOnyO1dg61ubILzRgwF1RSGZX7Mm6SQ0Rmid0dX+ttSc8WvLvEeTD8AW+8yX24kYqfD+HDgJOODOYbadsosl32sNvvJ6b9zfvFtSwMGYGO5f7w7YyV7H7jA0saGh6NrTPxN65AwiLVDo5VJhzqNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762595207; c=relaxed/simple;
-	bh=aOwq143RKroQJvO/hjzbNHkwe922fvcvmxRe5cHZbKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LBPO+vu9yl6/JlxeCGRda9K315J1yv7IlXWtoU1flv/JpeadR2CulNopUvGYNG4IE8qexfvhm35Baebxn6Iz5fABswqX+Q3j0ZsSMrg1uAssShCUsJl1SH2LfKV2x79uFse+sjU7M4XrRg6kRfXfhgrqP47kjSFQMHLx5Ds9z48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNEdJQQl; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b70bee93dc4so207076766b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 01:46:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762595203; x=1763200003; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lSUW/WjMhCO0Veyp/5U9fPi2v4UQHFyEZLh62h16fCE=;
-        b=lNEdJQQlYXO4Y3CJB92e2DG8RmRejewBi1Ohywpxq0G6I/c5zz2us8KlP1h1+I7CJS
-         XiqVGoIjuVdys3is7s87rSeRTFwSGEKNDnhu/RtuM81KjKOFQBYD+CwutsgqINDJ4hGW
-         S6qkywraRYGsTA+ngc/kCYSHJjMR4wLd6vClew4IVNyPd1rU7lWYxbxM7sdZMv1Ht0+7
-         XbrBGH8ZH3cYsyT62diAFu/4DQQ67YpIt7utqBRFZxxXiXMY/gqsTh7fqBjDUMOO4YuC
-         W1QGhxmznKV/hTw1wkejFqJedU0DXedEft+FIf+gKfK/piB70pl46YLi/IdWMPjKFda7
-         Crbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762595203; x=1763200003;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lSUW/WjMhCO0Veyp/5U9fPi2v4UQHFyEZLh62h16fCE=;
-        b=TOcsH2Yj3kZVKXylxJVJy1L/J2YyAkQaz24Rs6aNHoEQCTtYFUMCqcZxQr5D+d7kqa
-         z/ItFfzX3vSgXLMaZaHQXUS90kWn9s52Cbk/VYKIdWEyJ9kY3wr+YL/nMJIanU0ncLc6
-         F8vD2HWQX6m5DsAxvEN1iHOPnHEn/f5JIWI/680cxx83Ynt7lezLaf2N8eiX0Om9pAhZ
-         DSS+V+DfTCn4NF2Q7JD1Nr1JBzQ+C5OfANMqcGUIz9nCMvlLcG03HwNe5Zm0Y5cq8d6g
-         4ZwHuIBhejd+TYO78S2SRIUlr6Kl0QgfDYuyRxvrl2HkGHEgfV0AYxatnzROTXC/nm4f
-         eoVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVJx8+Vl78ktdF1/SNaXys9Hxuc1KhqGNG5AcRKfFWwdr04eJ5srGNk81IMkv+cv1VZug8S3UnCjiv84Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgqEuWeJLJ4Dm0P7iMQvJ6YFsJkmIIHvCDi+98f7sTptvdaDVC
-	Y2y/h5Ru4xnOaCz6hkwykXjI6azx7osWlqr84Z7Wvthka5pa6o9WuMGG
-X-Gm-Gg: ASbGncsNvYUtyhMuFCB0sztenpuBUT0r3RZ1j3RV2c2V8Y4zNRVM7+FNpVlv6UveuG2
-	D5eN8y18kD03YtrW/SNamXGUgWNH/jBIL4wm5Q+IgzuXrM/jFoaIwi9T3CkkBOl9Y7ofx4c0kbU
-	MsllaX7YvBlJcFbqTDpoYmZneBL7JVbRRM8MyStbwtpXEfZt6uvmz6IFS2aI5NLSEZsv7mksb/T
-	O/6E7RtOYufgQBVtKZi1J1QqQ4jd9z24yZvs3VAzSPSOt6kTxkkuAFr7LjUaO/CdxQP5RAoqP3q
-	/SPLmeZviQYJqPflH61nVHsSoSmZzUN0rxNMav9NCaMK2cvZ6Y0M4w0C0df65czMQZEiIJeWoWZ
-	0nSG1JIdkIzUdEjvuZhO++yzIgaRzkoxbr143aC9zMJIeYt3nGJdlHfxSREn+eNvVLAS2HEYzvr
-	Ecg0s64BL4W1PEhIN8WIZMDA==
-X-Google-Smtp-Source: AGHT+IEF4CkxscNYi/C2XNylHCh280mub3VhXy2YsQtWnD+IOuCk3xiDthoT6Cd2QfMZg0xUKQ0czw==
-X-Received: by 2002:a17:906:6a27:b0:b45:60ad:daf9 with SMTP id a640c23a62f3a-b72e028a602mr227544366b.3.1762595203327;
-        Sat, 08 Nov 2025 01:46:43 -0800 (PST)
-Received: from jernej-laptop.localnet ([188.159.248.16])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72d7996c4csm291514066b.5.2025.11.08.01.46.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 01:46:42 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>, Han Gao <gaohan@iscas.ac.cn>,
- Yixun Lan <dlan@gentoo.org>, Drew Fustini <fustini@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Guodong Xu <guodong@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
- Joel Stanley <joel@jms.id.au>, gaohan@iscas.ac.cn
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, Han Gao <rabenda.cn@gmail.com>
-Subject: Re: [PATCH 0/3] riscv: soc: re-organized allwinner
-Date: Sat, 08 Nov 2025 10:46:41 +0100
-Message-ID: <4692596.LvFx2qVVIh@jernej-laptop>
-In-Reply-To: <cover.1762588494.git.gaohan@iscas.ac.cn>
-References: <cover.1762588494.git.gaohan@iscas.ac.cn>
+	s=arc-20240116; t=1762595438; c=relaxed/simple;
+	bh=VYp6JlktlNtSBhhVtta20m+Ma5lCPncZPlU8aCP3RDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IPkDgqelv/AK4RsSnSC5qviH6T7BJ6qwaPvYZNj+dZPZkum1+2urRGp9Gn6r3vA0s+lGXOzL+JH9sLoj97gAeac69FlATzji4KGEuH+pSc1CtDtA3SoSBl9dWd+08kDlDt7AotB6jh6qWlYLoKi1oD4RA9OlmoF3T8gHRSXPt/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nVlWxY5Q; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762595438; x=1794131438;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VYp6JlktlNtSBhhVtta20m+Ma5lCPncZPlU8aCP3RDw=;
+  b=nVlWxY5QhscQzoaYWQE1Mw4QGO09F0/7IBcbXc3Kq+alE8OYdzRBhv7J
+   rhjEpvmtD67cCvR9bApj2nhcdkbF/WogfXzPxZ6fX/Hv/QvpBEFRw1xpn
+   gg5Os1ET4fD6OLZpXkTLq+fagZprfh4wcgQhgVqVvAoCW1kojNhqQ7a0h
+   D6JVz4PTXOP5BcV8qGBnACYyRr8CH/7/MMnflmNoZ2N8nsaDw0x9RUR04
+   dkHH1xKmizPbA6OepDHVidTVYJNOtxT7DmnwBvfomtPs60vujeq7Q6+QY
+   mTLv6JhMK3dSka3wM1MNj2buTesNPdzvmM6sScDOy41xnVXTzZy0h5kF/
+   A==;
+X-CSE-ConnectionGUID: 4mcIaIReT0Sujoqi3O75VQ==
+X-CSE-MsgGUID: YQL4UxceTseJYDtPBwVyVA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="64429181"
+X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; 
+   d="scan'208";a="64429181"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2025 01:50:37 -0800
+X-CSE-ConnectionGUID: uzSkh+E1QHW4nIWcYnNOAA==
+X-CSE-MsgGUID: yfE0iGB0TnO6fUV87FWs0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; 
+   d="scan'208";a="193274361"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 08 Nov 2025 01:50:33 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vHfaZ-0000sZ-0W;
+	Sat, 08 Nov 2025 09:50:31 +0000
+Date: Sat, 8 Nov 2025 17:49:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hrishabh Rajput via B4 Relay <devnull+hrishabh.rajput.oss.qualcomm.com@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+Subject: Re: [PATCH v5 1/2] firmware: qcom: scm: Register gunyah watchdog
+ device
+Message-ID: <202511081706.0sVDjTBC-lkp@intel.com>
+References: <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
 
-Hi,
+Hi Hrishabh,
 
-Dne sobota, 8. november 2025 ob 09:20:22 Srednjeevropski standardni =C4=8Da=
-s je gaohan@iscas.ac.cn napisal(a):
-> From: Han Gao <gaohan@iscas.ac.cn>
->=20
-> Allwinner currently offers d1(s)/v821/v861/v881 on RISC-V,
-> using different IPs.
->=20
-> d1(s): Xuantie C906
-> v821: Andes A27 + XuanTie E907
-> v861/v881: XuanTie C907
->=20
-> Han Gao (3):
->   riscv: soc: re-organized allwinner menu
->   riscv: soc: allwinner: d1: use the ARCH_SUNXI_XUANTIE
->   riscv: defconfig: enable SUNXI_XUANTIE and SUNXI_ANDES
+kernel test robot noticed the following build errors:
 
-This series is incomplete. It introduces ARCH_SUNXI_ANDES symbol but it is
-never used.
+[auto build test ERROR on 6146a0f1dfae5d37442a9ddcba012add260bceb0]
 
-Additionally, patches are not organized properly. First, you should introdu=
-ce
-reorganization and only then introduce new features. Also, not a single
-patch should break existing functionality for bisectability reasons. First
-patch breaks compilation of DT files while second restores that. This must
-not happen.
+url:    https://github.com/intel-lab-lkp/linux/commits/Hrishabh-Rajput-via-B4-Relay/firmware-qcom-scm-Register-gunyah-watchdog-device/20251108-015559
+base:   6146a0f1dfae5d37442a9ddcba012add260bceb0
+patch link:    https://lore.kernel.org/r/20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17%40oss.qualcomm.com
+patch subject: [PATCH v5 1/2] firmware: qcom: scm: Register gunyah watchdog device
+config: powerpc-randconfig-001-20251108 (https://download.01.org/0day-ci/archive/20251108/202511081706.0sVDjTBC-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251108/202511081706.0sVDjTBC-lkp@intel.com/reproduce)
 
-Best regards,
-Jernej
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511081706.0sVDjTBC-lkp@intel.com/
 
->=20
->  arch/riscv/Kconfig.socs                | 22 +++++++++++++++++-----
->  arch/riscv/boot/dts/allwinner/Makefile | 20 ++++++++++----------
->  arch/riscv/configs/defconfig           |  2 ++
->  3 files changed, 29 insertions(+), 15 deletions(-)
->=20
->=20
+All errors (new ones prefixed by >>):
 
+   powerpc-linux-ld: powerpc-linux-ld: DWARF error: could not find abbrev number 44
+   drivers/firmware/qcom/qcom_scm.o: in function `qcom_scm_probe':
+>> qcom_scm.c:(.text+0x349c): undefined reference to `arm_smccc_hypervisor_has_uuid'
 
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
