@@ -1,137 +1,231 @@
-Return-Path: <linux-kernel+bounces-891293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C75C425C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 04:23:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCCEC425CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 04:23:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 175C94E2CA6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 03:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B50188C6A1
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 03:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2B42D29A9;
-	Sat,  8 Nov 2025 03:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671CB2D0C78;
+	Sat,  8 Nov 2025 03:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="WYG3dmFb"
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="crj/lZcs";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="i8vEI0C2"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57B9253956;
-	Sat,  8 Nov 2025 03:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DA1253956
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 03:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762572185; cv=none; b=ioDx3WaRq5WveBuifKjyIKY+JGpd6M4yi5Hqh6XSyfEhNIVoTpbxWxPkfXo2GxwDAn3qtTOXKSqqWIFEK/d5NQ7st11D0x9jp9oJIfmaFw8GsTFvmZbBWWr9uGBxQs45GtsvLmjS2nM3ylnPjWSeEs/N4mtt/K9mEpawzwLs6KY=
+	t=1762572223; cv=none; b=Ei+vn0jP01LaLlEyefwl9B/eeCj7F2/MTQF612TjMUJyF32Y+SKdK2F9c4bArcjuyqqieIBhBDc+ZKLgyB43Rfi106ke5+HnNEIQQiEr9V4uYHf52vHhbfFZZLC5+CPOakJZnoIqZQ8pBJ2YpnShUzQ2Bz670jtYlDMfFhrD998=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762572185; c=relaxed/simple;
-	bh=3db6kDgcp6ZBaCWoMiT07aEdoBIn2fyq56Cj1ZzUUFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=htOrC64EhXw9vZNFVO5V4ujZZnZ+jgzFK87Ob8P09wrDd483LWE8Xcoynhc9NAGsSKH+TRPXmmSLe417TzT8l8GrBfXHyvYi/3ZLzNsBtqILitNi9ssyRHYsf4r34FRdqh0ENOAsmuj8OfOsPNAL8pm6eJQMslxcJJ/JCTuElco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=WYG3dmFb; arc=none smtp.client-ip=113.46.200.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=qZpdxuNaZJ5yTrvmKWL9bmcWjXTZFnV3j45z8dY7gZo=;
-	b=WYG3dmFbG8rzR/MN5MvXPHAcQZowG4JneABCdOdvePd0iFkkb4zAHegLxioAyhiAdD703l7Jn
-	mxY8fVF2zjY3X8SV23ant75X/iLdJT9pAOguu6oKemTSKGqugFwfSPYtFRQj4tCq7m9CX2wxHTB
-	XSugBg9Q17r3T1oGSAMVO1U=
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d3Lmz0SyfzpStp;
-	Sat,  8 Nov 2025 11:21:23 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 83D16180B69;
-	Sat,  8 Nov 2025 11:22:58 +0800 (CST)
-Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 8 Nov
- 2025 11:22:57 +0800
-Message-ID: <e564bcc0-c4ea-466c-b6a9-5bce5406c475@huawei.com>
-Date: Sat, 8 Nov 2025 11:22:56 +0800
+	s=arc-20240116; t=1762572223; c=relaxed/simple;
+	bh=Gdnp6jYIXA7d23ypy6BccSCLfEp5aevtpcimBZd6xFk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PrvmST2Pg4/6eB+TEJGOQBxkZAFd1EZ8s03LxGs4nzmoz/hQPxg5XQR0fYY9lgE0xgNXfOBBvqp8jiv/fRir5mp1UjjUn83qr/NwH6Zia4dntcJgfUiSVq0eB+6b34dO7WDac/yBo+TShqqRR5yUCsppnTXnC2BMgbgK2cz0MGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=crj/lZcs; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=i8vEI0C2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A82A3RF557554
+	for <linux-kernel@vger.kernel.org>; Sat, 8 Nov 2025 03:23:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=UQD+AnbpjLp+8MO+oABz15
+	H+UXUQBW4nkQHQuBpZOGg=; b=crj/lZcsGVYal3MHooyTUyOEgfEaEWcJibZsX3
+	C6Ixfk6tXPk8B0cob9sEgpTatFyUgGoPTRBxO2iHDyLjqArwfYDZDczjTUDYkY54
+	ja2ya9/K4/WhlrQTFrx1A1SrB79h7dEeTkqDpZprcEOWKmJ9yr9zx5gIy/ixklOG
+	1ZwDZ3uzRK898UADGhaab9DE2A3MFOTdxhnWVyzxmtqBCl6KuhKZJ13AI0oq9wG6
+	BPWp7WT8Ak1/m3UA32XonZGiRzrw1twFdcfzZ+vXEQzgrV+1evQnnTZ5JC0itIqJ
+	AHZFdlV5HXyJmKpjzc300/+YV2UL+38v4pJJ1tHbVcCXyeAA==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a9vtr035a-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 03:23:41 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-29598910dd2so31554665ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 19:23:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762572220; x=1763177020; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UQD+AnbpjLp+8MO+oABz15H+UXUQBW4nkQHQuBpZOGg=;
+        b=i8vEI0C2cdmbvcJidALaYNLmTVt/75EzafcKWlzH9Z71e+mU8e0mWhGR+F/t1iB+QD
+         VfTQhPSeZ2OPPAZg5BpSPAGnt25yJ2IfNoelmb+Vi7RQn3pejV+kwVphbe4Ztf/PywUe
+         8+In/y9x/9ZzTGssem/DONoQxZbf1uyO2TJjhzCjMrHZGUdYTPBuMgw3gwCM5lpHFFaJ
+         Er4e2C1C/MFwcveCIKK17eeptH35BxEQHR8zpF248JuJj60tI9Tt0pdF6A1rGfm+I9P0
+         RC0nxtaHA4QCsDuXZPFFQyTPc2rgsgbV8pV1HdDMeYRnSRpIN1/MviX3RdEk15ShvmB0
+         4EPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762572220; x=1763177020;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UQD+AnbpjLp+8MO+oABz15H+UXUQBW4nkQHQuBpZOGg=;
+        b=sXlCqyUpL/BozOsiku9P2sjO6/jlpQBehKveWps9s2Tk/zn99MhwvtDGy4FXG3FsX1
+         a5/VuiCnl8WPntBrveuuTZ7WlurR95/Xf9LhPeKui8uBtm1bK02LGkNctxP4/lIa3ULP
+         9OKGnP3fduIwe2C4lQ+OlbTgp5MY5/8RV8fjNXM/NYeqAVNFDxl7YoC8HV102p/mB3Rs
+         RbkwOw/ha5tYKOQlt22fw3vVH6CNyIzVDNlOYvM1bbzKpsZ6xvxbGJYh5QRr8GEqnebo
+         ZWgLXjnXcSF/BFtEcZtbhwIqziGG3Sl1yaI1Z5pYkXroOiPolelySwRxa4tdlvbdxiou
+         /9uA==
+X-Gm-Message-State: AOJu0YzDXtsXKpNhyWLoGU2tvlu3qTdNrbNx4i+Z4TDHOAWJPBzdYYU8
+	t1q2zDBrdn/bReW6UQNE1x4JW81KvzO5SSZkzwZSz63QOsYTwiENaTlbc6hBxKfsSiGgmjr7NK2
+	ulb+dQQZr8N6nQEjavgcHbC+LyVpYhGX5lNRaf22pDLu6rgpYOBmMdLNeRocIlY7QvTM=
+X-Gm-Gg: ASbGncsvWeUz1Ud1GjCtkjfB/9c2PguKfymLQfH9B5jT9kTge3dLyjwvs3r0osaA8Rt
+	VZJqAWrChG1ig1X++5gUmYm4AfbRFM0kN/Y6XcxBoSE0aWbkX/rghqCU+VLi6Gjf3N8xxE1TTn9
+	p1GSxGTQHBjDhDZF20r6XuomiDOxFJt1CNKWagAcSHkq84xUe38Ldp13hLjEK2XY5Ie9gUmYIlg
+	aBjgkwhR/CCNqIGh5Dt3QGim8R8Ei03WthvTMrfL/VLHJn6bC2bchDeJRLa+lK7VPeAFudsw4Lj
+	lwjtO050ZdzLhp3mypno+g8jSSExDwo+8O06uJCAnij7kx0Io1Ras8317BEk67rYIPis3gKhgCb
+	Ncxrw053AMdrXDuJCIF66V0vgMAbaI10=
+X-Received: by 2002:a17:902:ecc6:b0:295:f1f:65f with SMTP id d9443c01a7336-297e56b8528mr17465075ad.31.1762572220359;
+        Fri, 07 Nov 2025 19:23:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH8USEyiNCEiXp2OT9EbZJesOy/WV8hNF2yLgYyzUYE/6Zy5ACi2czutGoJg718PBBbBxmkYw==
+X-Received: by 2002:a17:902:ecc6:b0:295:f1f:65f with SMTP id d9443c01a7336-297e56b8528mr17464705ad.31.1762572219838;
+        Fri, 07 Nov 2025 19:23:39 -0800 (PST)
+Received: from [192.168.0.104] ([106.219.179.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-297d83c941esm19942445ad.44.2025.11.07.19.23.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 19:23:39 -0800 (PST)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Subject: [PATCH v2 0/4] PCI: Add initial support for handling PCIe M.2
+ connectors in devicetree
+Date: Sat, 08 Nov 2025 08:53:18 +0530
+Message-Id: <20251108-pci-m2-v2-0-e8bc4d7bf42d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ext4: clear i_state_flags when alloc inode
-Content-Language: en-GB
-To: Haibo Chen <haibo.chen@nxp.com>
-CC: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
-	Zhang Yi <yi.zhang@huawei.com>, Jan Kara <jack@suse.cz>,
-	<linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<imx@lists.linux.dev>
-References: <20251104-ext4-v1-1-73691a0800f9@nxp.com>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20251104-ext4-v1-1-73691a0800f9@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+X-B4-Tracking: v=1; b=H4sIAKa3DmkC/zXMQQrCMBCF4auUWZuSSUwtrryHdJHWiR0wTU00K
+ KV3Nxa6GfiHx7dAosiU4FwtEClz4jCVUIcKhtFOdxJ8Kw1KKoMotZgHFl6JU6N1o7FvnLVQxnM
+ kx58NunalR06vEL+bm/H/3QmzExmFFO2xNw4dkqH2ElKqn2/7GIL3dTnQrev6AzKJJKejAAAA
+X-Change-ID: 20251103-pci-m2-7633631b6faa
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        linux-pm@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3581;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=Gdnp6jYIXA7d23ypy6BccSCLfEp5aevtpcimBZd6xFk=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBpDrexLthZW1QbVwJ+5bGWI3fkrcZNliIDoJvKd
+ gUglQuBXF2JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaQ63sQAKCRBVnxHm/pHO
+ 9d9QB/9FD3dsNu0uaPnLM0yo7EQwcEweLwyFi/H0JtF4U7Isg2qKBsDzXaybv0pAM/xxclG4Svm
+ 7xP3Yy8/GxiBj0a6cqq3lOsAVqp0Rj5V6ZcVqLrT5j7+42doHx94jNfe2fkpv1eWfixAV6yMYQb
+ 3XtTkboarpDsg0xc30ucNgzDxVl9b2FYwQ7l4aP+HUWse5t1TxRn+1fzvCB4g7QUShFIA0WVpwk
+ YyG59vG9twBP+N/nuzTSt5Vf1I9iwRJec3DHMNPgT9QM+5HbKbChohzFuSgSKNzEFfsgowud8VN
+ XIEaQkMknmT/QPYHykAKaZkC9C6A0LaFipVcUPaYg6S933AH
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Proofpoint-GUID: cl9f_iYiqZ8qhTH6j76quTn-UAn_nRwv
+X-Proofpoint-ORIG-GUID: cl9f_iYiqZ8qhTH6j76quTn-UAn_nRwv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyNyBTYWx0ZWRfX7WihYk4QPxzX
+ h1PVWcVzi7KkOHZzKXG9c6RZ+EYbtj8F4x47SNm/CdEejDk/J3e5/O0UOBmNeNdGYl80K07KToI
+ ZXOLVr0d0YN7geCIyR+ynum2vl1ZrLct9hxiWw/rs9ytOuGWxEK/84359DXgVi1hqKGzt4dhgOB
+ 0Jy6r+b/tn4BaIgSc+/27pHazIgiryslgYeQpiu44K+Out632i2r4ftdelmQ5iFGAM/baydXCl/
+ MWTVeLjjixnT20OadXnZsVBAI+/pLDFnbHG3SDCGVGgWnax6Da1n8MSF0zOwCmFYHdlkFHGoBmF
+ 9nwYQ3uaug9pZQlkC+qPp2+IVqnsKega5hA9P8JSiFEVcuGGBlRooeaD7GaDAiI5dB9na+HDe2d
+ Juv59/u/8K9cQiIPhQ1EWZFRPaWpEA==
+X-Authority-Analysis: v=2.4 cv=Vtouwu2n c=1 sm=1 tr=0 ts=690eb7bd cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=qronr9GGDLuyXDLutoyxMA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8
+ a=3P-LAdjlN1q_Sw6-dOgA:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+ a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-08_01,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0 suspectscore=0
+ impostorscore=0 clxscore=1015 priorityscore=1501 adultscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511080027
 
-On 2025-11-04 16:12, Haibo Chen wrote:
-> i_state_flags used on 32-bit archs, need to clear this flag when
-> alloc inode.
-> Find this issue when umount ext4, sometimes track the inode as orphan
-> accidently, cause ext4 mesg dump.
->
-> Fixes: acf943e9768e ("ext4: fix checks for orphan inodes")
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+Hi,
 
-Looks good. Feel free to add:
+This series is an initial attempt to support the PCIe M.2 connectors in the
+kernel and devicetree binding. The PCIe M.2 connectors as defined in the PCI
+Express M.2 Specification are widely used in Notebooks/Tablet form factors (even
+in PCs). On the ACPI platforms, power to these connectors are mostly handled by
+the firmware/BIOS and the kernel never bothered to directly power manage them as
+like other PCIe connectors. But on the devicetree platforms, the kernel needs to
+power manage these connectors with the help of the devicetree description. But
+so far, there is no proper representation of the M.2 connectors in devicetree
+binding. This forced the developers to fake the M.2 connectors as PMU nodes [1]
+and fixed regulators in devicetree.
 
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
+So to properly support the M.2 connectors in devicetree platforms, this series
+introduces the devicetree binding for Mechanical Key M connector as an example
+and also the corresponding pwrseq driver and PCI changes in kernel to driver the
+connector.
 
-> ---
->  fs/ext4/ialloc.c | 1 -
->  fs/ext4/inode.c  | 1 -
->  fs/ext4/super.c  | 1 +
->  3 files changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-> index ba4fd9aba1c14de56b89ebbeb4597f7becf947ff..b20a1bf866abedf3a768ee8a147f108ea09ecb01 100644
-> --- a/fs/ext4/ialloc.c
-> +++ b/fs/ext4/ialloc.c
-> @@ -1293,7 +1293,6 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
->  		ei->i_csum_seed = ext4_chksum(csum, (__u8 *)&gen, sizeof(gen));
->  	}
->  
-> -	ext4_clear_state_flags(ei); /* Only relevant on 32-bit archs */
->  	ext4_set_inode_state(inode, EXT4_STATE_NEW);
->  
->  	ei->i_extra_isize = sbi->s_want_extra_isize;
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index a163c087137314c541ec10c011488c5392fb7011..bf6786d373ff57c32d5a84cfd73ea8a33cb68b16 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -5285,7 +5285,6 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
->  	ei->i_projid = make_kprojid(&init_user_ns, i_projid);
->  	set_nlink(inode, le16_to_cpu(raw_inode->i_links_count));
->  
-> -	ext4_clear_state_flags(ei);	/* Only relevant on 32-bit archs */
->  	ei->i_inline_off = 0;
->  	ei->i_dir_start_lookup = 0;
->  	ei->i_dtime = le32_to_cpu(raw_inode->i_dtime);
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 33e7c08c9529c357d291f40269863398753dc650..3dcc9410c09a55d5dce2dbff388a97bf4f133818 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1396,6 +1396,7 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
->  
->  	inode_set_iversion(&ei->vfs_inode, 1);
->  	ei->i_flags = 0;
-> +	ext4_clear_state_flags(ei);	/* Only relevant on 32-bit archs */
->  	spin_lock_init(&ei->i_raw_lock);
->  	ei->i_prealloc_node = RB_ROOT;
->  	atomic_set(&ei->i_prealloc_active, 0);
->
-> ---
-> base-commit: 9823120909776bbca58a3c55ef1f27d49283c1f3
-> change-id: 20251104-ext4-3f9647dcedd0
->
-> Best regards,
+The Mechanical Key M connector is used to connect SSDs to the host machine over
+PCIe/SATA interfaces. Due to the hardware constraints, this series only adds
+support for driving the PCIe interface of the connector in the kernel.
 
+Also, the optional interfaces supported by the Key M connectors are not
+supported in the driver and left for the future enhancements.
+
+Future work
+===========
+
+I'm planning to submit the follow-up series to add support for the Mechanical
+Key A connector for connecting the WiFI/BT cards, once some initial review
+happens on this series.
+
+Testing
+=======
+
+This series, together with the devicetree changes [2] [3] were tested on the
+Qualcomm X1e based Lenovo Thinkpad T14s Laptop which has the NVMe SSD connected
+over PCIe.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts?h=v6.18-rc4&id=d09ab685a8f51ba412d37305ea62628a01cbea57
+[2] https://github.com/Mani-Sadhasivam/linux/commit/8f1d17c01a0d607a36e19c6d9f7fc877226ba315
+[3] https://github.com/Mani-Sadhasivam/linux/commit/0b1f14a18db2a04046ad6af40e94984166c78fbc
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+---
+Changes in v2:
+- Incorporated comments from Bartosz and Frank for pwrseq and dt-binding
+  patches, especially adding the pwrseq match() code.
+- Link to v1: https://lore.kernel.org/r/20251105-pci-m2-v1-0-84b5f1f1e5e8@oss.qualcomm.com
+
+---
+Manivannan Sadhasivam (4):
+      dt-bindings: connector: Add PCIe M.2 Mechanical Key M connector
+      PCI/pwrctrl: Add support for handling PCIe M.2 connectors
+      PCI/pwrctrl: Create pwrctrl device if the graph port is found
+      power: sequencing: Add the Power Sequencing driver for the PCIe M.2 connectors
+
+ .../bindings/connector/pcie-m2-m-connector.yaml    | 122 +++++++++++++++
+ MAINTAINERS                                        |   7 +
+ drivers/pci/probe.c                                |   3 +-
+ drivers/pci/pwrctrl/Kconfig                        |   1 +
+ drivers/pci/pwrctrl/slot.c                         |  35 ++++-
+ drivers/power/sequencing/Kconfig                   |   8 +
+ drivers/power/sequencing/Makefile                  |   1 +
+ drivers/power/sequencing/pwrseq-pcie-m2.c          | 163 +++++++++++++++++++++
+ 8 files changed, 334 insertions(+), 6 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251103-pci-m2-7633631b6faa
+
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 
 
