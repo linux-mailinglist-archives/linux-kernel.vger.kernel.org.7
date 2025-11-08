@@ -1,140 +1,193 @@
-Return-Path: <linux-kernel+bounces-891240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F75CC4239E
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 02:12:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8D1C423BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 02:19:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E97664E2684
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 01:12:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105EA188B5E5
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 01:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621FA29DB65;
-	Sat,  8 Nov 2025 01:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18E32638BF;
+	Sat,  8 Nov 2025 01:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I5rSzadg"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UEwT8CNP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED42280CC9
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 01:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1891A9FBD;
+	Sat,  8 Nov 2025 01:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762564327; cv=none; b=bi7A66Q4NxZ5zEvgSFPdxJ9kZuj+cgXTOFyl8bCA0CzLxASGDJ6Ap3XCye2tXo1TFNzmFGLXy0ap2Z6G8uupAnAxCTTTbPOdWfzanPhxsZWNRVYLxC4n550B3gH5iPZD1fNhyu04XFwiGjdXJCcnCN0+80jfcgTJDeQx8vIAkYM=
+	t=1762564778; cv=none; b=HptWcZH+gu7H0y3vmXSJmJzoWG2DmaBgK4meN8m/QuD72geuGLUpz7qv0HH/s1GuRK481AZyjv9jrP3gWMqY0acJ5OIvxfVWMgYsgVXmbEZR7VEZT2CjsHH/kD01VAm0dx6bg+gqw5Qr0XrbOZcxfdM3pWo66tGdTuwmyEZIUTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762564327; c=relaxed/simple;
-	bh=5KqDn4pqwaFP67oJfEASAYElCFOwmnkW8Ys2b3kSXm8=;
+	s=arc-20240116; t=1762564778; c=relaxed/simple;
+	bh=6LwQWMQZIwOVuvJvbaUG+uSWupdTacys+le/kOEXWKQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1ycj8IdhAwnp2KQkoPK9MYtILYcvjD0R291Kxdh/XSYllERtIo6kiOXMpSzFX6kaYhKLleodMfN0MQN86SH3bRCBIiVAVqqw6v6rwkZJw2TRiN0hK3siEWA6ST6TyDRdRmgg1RlBInakiJIuDV3o1pU+LBYt6I0n/MPYXGV27c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I5rSzadg; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 7 Nov 2025 17:11:58 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762564323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CZbaHET7zK1X93cUl1eWP2E4xGTD3LFygd8aVoi2Wrw=;
-	b=I5rSzadgX52p8BgtcjjBQ1EnC0y/Iix4dKzL789+/HBp1XeHGhz7OPqARZUbg4/LwgeTaQ
-	FTtFXHqsnUeZJRTbcJ2FlbVPupoPbHqRNZE4kljiXWx637jsItRXEcaKDJ8hMEil0zxa8e
-	6nsY1JEVd0UfcjFkyISfEz/K9ppS+lo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, 
-	Michal Hocko <mhocko@kernel.org>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/vmscan: skip increasing kswapd_failures when
- reclaim was boosted
-Message-ID: <e5bdgvhyr6ainrwyfybt6szu23ucnsvlgn4pv2xdzikr4p3ka4@hyyhkudfcorw>
-References: <20251024022711.382238-1-jiayuan.chen@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pJmp/Y7fysvC/UepOf1AX9loXjGen7tkMUt7ehnm2+BNvDupZM2regfIQ521Ogmn4tyldbYHXoJKNZJEpz6P1CT77f1WbRsC8ZfC/9QPZ41u5zs7fNU4H344bNYy2Tf5N9QdB7THgHd2glUYXLhRpRi1mMCFKNY+RofpdDLI0v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UEwT8CNP; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762564776; x=1794100776;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6LwQWMQZIwOVuvJvbaUG+uSWupdTacys+le/kOEXWKQ=;
+  b=UEwT8CNP43YlXXlpaVxTUarhH77/MTH9I0ZOGTDHkyRSIrR8o2M1lNwv
+   vkEQLS3DXrycR26rvdYNbN7/RGiL/gsfFq4UqbqMWIduFCd4zNzJdnACq
+   gYgPXveYu9v7Wl5vpvtUSJusu+59HHd7W2kk5+ll52/PDolJa6EztfmIS
+   WvI82TtEvLLYYhjkAPZFvbu8ZFlGMljiDJQcyaQ5kd+izs79/7WX9OLwC
+   +noImj973PJFW/2azTkuD54y0B2gMvGXbUxwbJm2MTLp4aFs1OyLNgAPV
+   M7PHwoo3s6rFNjK/g/7IHlTuaN2M7jnK4uw+VeFg9isvmYTQ0aRa464ok
+   w==;
+X-CSE-ConnectionGUID: W95oxQEIQEClBmsLLFVuAA==
+X-CSE-MsgGUID: AjdlQJRcQsWH3SQv2jaa3A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="64753542"
+X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
+   d="scan'208";a="64753542"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 17:16:54 -0800
+X-CSE-ConnectionGUID: qjG+nvmtSKmIHJh9Y3cBpQ==
+X-CSE-MsgGUID: NoUEZRdtQD2Taho7s98w1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
+   d="scan'208";a="218836106"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 07 Nov 2025 17:16:51 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vHXZQ-0000ZN-1a;
+	Sat, 08 Nov 2025 01:16:48 +0000
+Date: Sat, 8 Nov 2025 09:15:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ranganath V N <vnranganath.20@gmail.com>, davem@davemloft.net,
+	edumazet@google.com, horms@kernel.org, jhs@mojatatu.com,
+	jiri@resnulli.us, kuba@kernel.org, pabeni@redhat.com,
+	xiyou.wangcong@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev, vnranganath.20@gmail.com,
+	david.hunter.linux@gmail.com, khalid@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
+Subject: Re: [PATCH v3 2/2] net: sched: act_ife: initialize struct tc_ife to
+ fix KMSAN kernel-infoleak
+Message-ID: <202511080954.ZMCEd0sG-lkp@intel.com>
+References: <20251106195635.2438-3-vnranganath.20@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251024022711.382238-1-jiayuan.chen@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20251106195635.2438-3-vnranganath.20@gmail.com>
 
-On Fri, Oct 24, 2025 at 10:27:11AM +0800, Jiayuan Chen wrote:
-> We encountered a scenario where direct memory reclaim was triggered,
-> leading to increased system latency:
-> 
-> 1. The memory.low values set on host pods are actually quite large, some
->    pods are set to 10GB, others to 20GB, etc.
-> 2. Since most pods have memory protection configured, each time kswapd is
->    woken up, if a pod's memory usage hasn't exceeded its own memory.low,
->    its memory won't be reclaimed.
+Hi Ranganath,
 
-Can you share the numa configuration of your system? How many nodes are
-there?
+kernel test robot noticed the following build errors:
 
-> 3. When applications start up, rapidly consume memory, or experience
->    network traffic bursts, the kernel reaches steal_suitable_fallback(),
->    which sets watermark_boost and subsequently wakes kswapd.
-> 4. In the core logic of kswapd thread (balance_pgdat()), when reclaim is
->    triggered by watermark_boost, the maximum priority is 10. Higher
->    priority values mean less aggressive LRU scanning, which can result in
->    no pages being reclaimed during a single scan cycle:
-> 
-> if (nr_boost_reclaim && sc.priority == DEF_PRIORITY - 2)
->     raise_priority = false;
+[auto build test ERROR on net-next/main]
+[also build test ERROR on net/main linus/master v6.18-rc4 next-20251107]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Am I understanding this correctly that watermark boost increase the
-chances of this issue but it can still happen?
+url:    https://github.com/intel-lab-lkp/linux/commits/Ranganath-V-N/net-sched-act_connmark-initialize-struct-tc_ife-to-fix-kernel-leak/20251107-035911
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20251106195635.2438-3-vnranganath.20%40gmail.com
+patch subject: [PATCH v3 2/2] net: sched: act_ife: initialize struct tc_ife to fix KMSAN kernel-infoleak
+config: s390-randconfig-r073-20251108 (https://download.01.org/0day-ci/archive/20251108/202511080954.ZMCEd0sG-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d78e0ded5215824a63ac04fb87effd9eacf875eb)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251108/202511080954.ZMCEd0sG-lkp@intel.com/reproduce)
 
-> 
-> 5. This eventually causes pgdat->kswapd_failures to continuously
->    accumulate, exceeding MAX_RECLAIM_RETRIES, and consequently kswapd stops
->    working. At this point, the system's available memory is still
->    significantly above the high watermark — it's inappropriate for kswapd
->    to stop under these conditions.
-> 
-> The final observable issue is that a brief period of rapid memory
-> allocation causes kswapd to stop running, ultimately triggering direct
-> reclaim and making the applications unresponsive.
-> 
-> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> 
-> ---
-> v1 -> v2: Do not modify memory.low handling
-> https://lore.kernel.org/linux-mm/20251014081850.65379-1-jiayuan.chen@linux.dev/
-> ---
->  mm/vmscan.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 92f4ca99b73c..fa8663781086 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -7128,7 +7128,12 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int highest_zoneidx)
->  		goto restart;
->  	}
->  
-> -	if (!sc.nr_reclaimed)
-> +	/*
-> +	 * If the reclaim was boosted, we might still be far from the
-> +	 * watermark_high at this point. We need to avoid increasing the
-> +	 * failure count to prevent the kswapd thread from stopping.
-> +	 */
-> +	if (!sc.nr_reclaimed && !boosted)
->  		atomic_inc(&pgdat->kswapd_failures);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511080954.ZMCEd0sG-lkp@intel.com/
 
-In general I think not incrementing the failure for boosted kswapd
-iteration is right. If this issue (high protection causing kswap
-failures) happen on non-boosted case, I am not sure what should be right
-behavior i.e. allocators doing direct reclaim potentially below low
-protection or allowing kswapd to reclaim below low. For min, it is very
-clear that direct reclaimer has to reclaim as they may have to trigger
-oom-kill. For low protection, I am not sure.
+All errors (new ones prefixed by >>):
 
+>> net/sched/act_ife.c:652:2: error: call to undeclared library function 'index' with type 'char *(const char *, int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     652 |         index = ife->tcf_index;
+         |         ^
+   net/sched/act_ife.c:652:2: note: include the header <strings.h> or explicitly provide a declaration for 'index'
+>> net/sched/act_ife.c:652:8: error: non-object type 'char *(const char *, int)' is not assignable
+     652 |         index = ife->tcf_index;
+         |         ~~~~~ ^
+>> net/sched/act_ife.c:653:2: error: use of undeclared identifier 'refcnt'
+     653 |         refcnt = refcount_read(&ife->tcf_refcnt) - ref;
+         |         ^~~~~~
+>> net/sched/act_ife.c:654:2: error: use of undeclared identifier 'bindcnt'
+     654 |         bindcnt = atomic_read(&ife->tcf_bindcnt) - bind;
+         |         ^~~~~~~
+   4 errors generated.
+
+
+vim +652 net/sched/act_ife.c
+
+   640	
+   641	static int tcf_ife_dump(struct sk_buff *skb, struct tc_action *a, int bind,
+   642				int ref)
+   643	{
+   644		unsigned char *b = skb_tail_pointer(skb);
+   645		struct tcf_ife_info *ife = to_ife(a);
+   646		struct tcf_ife_params *p;
+   647		struct tc_ife opt;
+   648		struct tcf_t t;
+   649	
+   650		memset(&opt, 0, sizeof(opt));
+   651	
+ > 652		index = ife->tcf_index;
+ > 653		refcnt = refcount_read(&ife->tcf_refcnt) - ref;
+ > 654		bindcnt = atomic_read(&ife->tcf_bindcnt) - bind;
+   655	
+   656		spin_lock_bh(&ife->tcf_lock);
+   657		opt.action = ife->tcf_action;
+   658		p = rcu_dereference_protected(ife->params,
+   659					      lockdep_is_held(&ife->tcf_lock));
+   660		opt.flags = p->flags;
+   661	
+   662		if (nla_put(skb, TCA_IFE_PARMS, sizeof(opt), &opt))
+   663			goto nla_put_failure;
+   664	
+   665		tcf_tm_dump(&t, &ife->tcf_tm);
+   666		if (nla_put_64bit(skb, TCA_IFE_TM, sizeof(t), &t, TCA_IFE_PAD))
+   667			goto nla_put_failure;
+   668	
+   669		if (!is_zero_ether_addr(p->eth_dst)) {
+   670			if (nla_put(skb, TCA_IFE_DMAC, ETH_ALEN, p->eth_dst))
+   671				goto nla_put_failure;
+   672		}
+   673	
+   674		if (!is_zero_ether_addr(p->eth_src)) {
+   675			if (nla_put(skb, TCA_IFE_SMAC, ETH_ALEN, p->eth_src))
+   676				goto nla_put_failure;
+   677		}
+   678	
+   679		if (nla_put(skb, TCA_IFE_TYPE, 2, &p->eth_type))
+   680			goto nla_put_failure;
+   681	
+   682		if (dump_metalist(skb, ife)) {
+   683			/*ignore failure to dump metalist */
+   684			pr_info("Failed to dump metalist\n");
+   685		}
+   686	
+   687		spin_unlock_bh(&ife->tcf_lock);
+   688		return skb->len;
+   689	
+   690	nla_put_failure:
+   691		spin_unlock_bh(&ife->tcf_lock);
+   692		nlmsg_trim(skb, b);
+   693		return -1;
+   694	}
+   695	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
