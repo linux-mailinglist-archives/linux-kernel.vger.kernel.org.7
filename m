@@ -1,220 +1,145 @@
-Return-Path: <linux-kernel+bounces-891418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9C5C429EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:02:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA3DC42A55
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:24:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110831882893
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:02:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C973F4E611B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEA82EC555;
-	Sat,  8 Nov 2025 09:01:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297502EBB8D;
+	Sat,  8 Nov 2025 09:24:40 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C512DF3D1
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 09:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200272737F8;
+	Sat,  8 Nov 2025 09:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762592484; cv=none; b=hVbd562OH4Pa4SzWYb/AcvpPvQUvOu54ZjRjKtWYZyPw/rvnrfF4CkNO7WRHtnc2BiNcDXBlAIoQmnn4xzfywdx4OYN2ch+lijkhyLl2A0MhI6IOXK4lIgKrEWYRsujeVBqhja4mweOoiQi7Y3viFsFNZYvyM1Mcxc9p/U4Kmk0=
+	t=1762593879; cv=none; b=pq9RGAU81JwjmQRJ5mUpuCRzh3Jsquhyg+z0wjfrrVmf+TD+/kJ/AfKdo3Qjet8GlLikvALWMZMFGTw0gS2Sio66EEufJ+5yM4LYrLOJt/GPFwHte/d03kdj337K3j3WbOOL5J2HJ8gBcklb95hM7JXhbGSY+xECKfi5Q2jI9Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762592484; c=relaxed/simple;
-	bh=ISveydnAGqHXLegHAkh7CeD6kEHV3cPFgoiC794xNh8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=USqZBUDw/N2FGGXY1j2OKRhc7KFMoSYXA/tXhJEj9ETKJAwnq0aLPV47Pxl2O/6H3Qd6KIduZgpQnFJ/OnUl+AQUaQDs44zgXbxPlpxYexkSvMgN5LBVw8spkvXY2aOI0bAzNZ98G60QOJuGpu46VKjixuSOFZnzU0JOgRR7xFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vHeos-0004we-Oe; Sat, 08 Nov 2025 10:01:14 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vHeos-007fMJ-1Q;
-	Sat, 08 Nov 2025 10:01:14 +0100
-Received: from hardanger.blackshift.org (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id BBB5549A89E;
-	Sat, 08 Nov 2025 09:01:13 +0000 (UTC)
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Sat, 08 Nov 2025 10:01:03 +0100
-Subject: [PATCH can 3/3] can: gs_usb: gs_usb_receive_bulk_callback(): check
- actual_length before accessing data
+	s=arc-20240116; t=1762593879; c=relaxed/simple;
+	bh=+LS6ZrGO7B6vLyR4/fHLFcG30wc9EjVsZTbQqzeQlp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l4J119H19axrywjAZyVYy57zSnkp3tl/mEzKwLYbBOOoCsn8TZxuytVu8pV0LbhFpLVpV/z8prtrOVvlTNbXMkuQh1/dawiPeTZj0aegDFLC3QK33WV+OXpseBL1adlbh1lHNDbRg+dmVyt55sKFRVjUiDZ2xT492zr3XMR6Mq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d3VPS3q9gzKHMbr;
+	Sat,  8 Nov 2025 17:05:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EA27C1A07BB;
+	Sat,  8 Nov 2025 17:05:11 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP4 (Coremail) with SMTP id gCh0CgAnUF3GBw9pgLIYAA--.42082S2;
+	Sat, 08 Nov 2025 17:05:11 +0800 (CST)
+Message-ID: <e0c0f8b7-112f-40d7-b211-89065e9003b2@huaweicloud.com>
+Date: Sat, 8 Nov 2025 17:05:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/31] cpuset: Update HK_TYPE_DOMAIN cpumask from cpuset
+To: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Danilo Krummrich
+ <dakr@kernel.org>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Gabriele Monaco <gmonaco@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>,
+ Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
+ <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+ Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Phil Auld <pauld@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Simon Horman <horms@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>,
+ Will Deacon <will@kernel.org>, cgroups@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+ linux-mm@kvack.org, linux-pci@vger.kernel.org, netdev@vger.kernel.org
+References: <20251105210348.35256-1-frederic@kernel.org>
+ <20251105210348.35256-14-frederic@kernel.org>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20251105210348.35256-14-frederic@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251108-gs_usb-fix-usb-callbacks-v1-3-8a2534a7ea05@pengutronix.de>
-References: <20251108-gs_usb-fix-usb-callbacks-v1-0-8a2534a7ea05@pengutronix.de>
-In-Reply-To: <20251108-gs_usb-fix-usb-callbacks-v1-0-8a2534a7ea05@pengutronix.de>
-To: Vincent Mailhol <mailhol@kernel.org>, 
- Maximilian Schneider <max@schneidersoft.net>, 
- Wolfgang Grandegger <wg@grandegger.com>
-Cc: kernel@pengutronix.de, linux-can@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
-X-Mailer: b4 0.15-dev-509f5
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4422; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=ISveydnAGqHXLegHAkh7CeD6kEHV3cPFgoiC794xNh8=;
- b=owEBbQGS/pANAwAKAQx0Zd/5kJGcAcsmYgBpDwbVLGDGqr9V0Eqb2S/9HvthfmGZE/9pa0TSn
- KPTMiz2rGGJATMEAAEKAB0WIQSf+wzYr2eoX/wVbPMMdGXf+ZCRnAUCaQ8G1QAKCRAMdGXf+ZCR
- nORnB/4k+jvB/xk12G2tYFI3x7bYBLm1V3NEEg8+7v/R18dw8JMXt/laazet4pBjVYTMRxkQyPH
- hoTNo7jZIKR53j41tpKUZOGotdZRYOqlXwNTzvpsXBvwwEwWj5W51470Mo/v6+LdIke1PCXi9vl
- 3Tv95s+tcNWmnhqy36FhfGLGs53WCjLN61NTOdp5v6ZPDMNkoF3Om+Mh6/uJVWYv7leOWezBRqM
- JLwyuvh8WQ297dCGcqNCXAaQvA4byNx/VfN3de3LI7fs+tCedB4szmWFfrSsaUq626hmsMN0xXE
- EqrPsEBg+YwrqU0ypVwblqNNo7k+qJkAvrQjxSZ0j+YkdHIP
-X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
- fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-CM-TRANSID:gCh0CgAnUF3GBw9pgLIYAA--.42082S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrWUCF4fXF43Gr1UAF4kCrg_yoWDuFc_Wr
+	15WF4Uuw15JFyqgw1Yy34qga1fJa17t39aqa48try5W3Z5JF43Jrs3A345Ca13Xa4xJF1a
+	934kK393ZrnFqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbxkYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	EksDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-The URB received in gs_usb_receive_bulk_callback() contains a struct
-gs_host_frame. The length of the data after the header depends on the
-gs_host_frame hf::flags and the active device features (e.g. time
-stamping).
 
-Introduce a new function gs_usb_get_minimum_length() and check that we have
-at least received the required amount of data before accessing it. Only
-copy the data to that skb that has actually been received.
 
-Fixes: d08e973a77d1 ("can: gs_usb: Added support for the GS_USB CAN devices")
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
- drivers/net/can/usb/gs_usb.c | 65 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 60 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/can/usb/gs_usb.c b/drivers/net/can/usb/gs_usb.c
-index 51f8d694104d..8524d423b029 100644
---- a/drivers/net/can/usb/gs_usb.c
-+++ b/drivers/net/can/usb/gs_usb.c
-@@ -261,6 +261,11 @@ struct canfd_quirk {
- 	u8 quirk;
- } __packed;
- 
-+/* struct gs_host_frame::echo_id == GS_HOST_FRAME_ECHO_ID_RX indicates
-+ * a regular RX'ed CAN frame
-+ */
-+#define GS_HOST_FRAME_ECHO_ID_RX 0xffffffff
-+
- struct gs_host_frame {
- 	struct_group(header,
- 		u32 echo_id;
-@@ -570,6 +575,43 @@ gs_usb_get_echo_skb(struct gs_can *dev, struct sk_buff *skb,
- 	return len;
- }
- 
-+static unsigned int
-+gs_usb_get_minimum_length(const struct gs_can *dev, const struct gs_host_frame *hf,
-+			  unsigned int *data_length_p)
-+{
-+	unsigned int minimum_length, data_length;
-+
-+	/* TX echo only uses the header */
-+	if (hf->echo_id != GS_HOST_FRAME_ECHO_ID_RX) {
-+		*data_length_p = 0;
-+		return sizeof(hf->header);
-+	}
-+
-+	if (hf->flags & GS_CAN_FLAG_FD) {
-+		data_length = can_fd_dlc2len(hf->can_dlc);
-+
-+		if (dev->feature & GS_CAN_FEATURE_HW_TIMESTAMP)
-+			/* timestamp follows data field of max size */
-+			minimum_length = struct_size(hf, canfd_ts, 1);
-+		else
-+			minimum_length = sizeof(hf->header) + data_length;
-+	} else {
-+		if (hf->can_id & cpu_to_le32(CAN_RTR_FLAG))
-+			data_length = 0;
-+		else
-+			data_length = can_cc_dlc2len(hf->can_dlc);
-+
-+		if (dev->feature & GS_CAN_FEATURE_HW_TIMESTAMP)
-+			/* timestamp follows data field of max size */
-+			minimum_length = struct_size(hf, classic_can_ts, 1);
-+		else
-+			minimum_length = sizeof(hf->header) + data_length;
-+	}
-+
-+	*data_length_p = data_length;
-+	return minimum_length;
-+}
-+
- static void gs_usb_receive_bulk_callback(struct urb *urb)
- {
- 	struct gs_usb *parent = urb->context;
-@@ -578,7 +620,7 @@ static void gs_usb_receive_bulk_callback(struct urb *urb)
- 	int rc;
- 	struct net_device_stats *stats;
- 	struct gs_host_frame *hf = urb->transfer_buffer;
--	unsigned int minimum_length;
-+	unsigned int minimum_length, data_length;
- 	struct gs_tx_context *txc;
- 	struct can_frame *cf;
- 	struct canfd_frame *cfd;
-@@ -621,20 +663,33 @@ static void gs_usb_receive_bulk_callback(struct urb *urb)
- 	if (!netif_running(netdev))
- 		goto resubmit_urb;
- 
--	if (hf->echo_id == -1) { /* normal rx */
-+	minimum_length = gs_usb_get_minimum_length(dev, hf, &data_length);
-+	if (urb->actual_length < minimum_length) {
-+		stats->rx_errors++;
-+		stats->rx_length_errors++;
-+
-+		if (net_ratelimit())
-+			netdev_err(netdev,
-+				   "short read (actual_length=%u, minimum_length=%u)\n",
-+				   urb->actual_length, minimum_length);
-+
-+		goto resubmit_urb;
-+	}
-+
-+	if (hf->echo_id == GS_HOST_FRAME_ECHO_ID_RX) { /* normal rx */
- 		if (hf->flags & GS_CAN_FLAG_FD) {
- 			skb = alloc_canfd_skb(netdev, &cfd);
- 			if (!skb)
- 				return;
- 
- 			cfd->can_id = le32_to_cpu(hf->can_id);
--			cfd->len = can_fd_dlc2len(hf->can_dlc);
-+			cfd->len = data_length;
- 			if (hf->flags & GS_CAN_FLAG_BRS)
- 				cfd->flags |= CANFD_BRS;
- 			if (hf->flags & GS_CAN_FLAG_ESI)
- 				cfd->flags |= CANFD_ESI;
- 
--			memcpy(cfd->data, hf->canfd->data, cfd->len);
-+			memcpy(cfd->data, hf->canfd->data, data_length);
- 		} else {
- 			skb = alloc_can_skb(netdev, &cf);
- 			if (!skb)
-@@ -643,7 +698,7 @@ static void gs_usb_receive_bulk_callback(struct urb *urb)
- 			cf->can_id = le32_to_cpu(hf->can_id);
- 			can_frame_set_cc_len(cf, hf->can_dlc, dev->can.ctrlmode);
- 
--			memcpy(cf->data, hf->classic_can->data, 8);
-+			memcpy(cf->data, hf->classic_can->data, data_length);
- 
- 			/* ERROR frames tell us information about the controller */
- 			if (le32_to_cpu(hf->can_id) & CAN_ERR_FLAG)
+> +int housekeeping_update(struct cpumask *mask, enum hk_type type)
+> +{
+> +	struct cpumask *trial, *old = NULL;
+> +
+> +	if (type != HK_TYPE_DOMAIN)
+> +		return -ENOTSUPP;
+> +
+> +	trial = kmalloc(cpumask_size(), GFP_KERNEL);
+> +	if (!trial)
+> +		return -ENOMEM;
+> +
+> +	cpumask_andnot(trial, housekeeping_cpumask(HK_TYPE_DOMAIN_BOOT), mask);
+
+Since there's no comment for the 'mask' parameter, would it be better to name it 'isol_mask'? This
+would make it clearer that this is the isolation mask input and what is doing here.
+
+> +	if (!cpumask_intersects(trial, cpu_online_mask)) {
+> +		kfree(trial);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!housekeeping.flags)
+> +		static_branch_enable(&housekeeping_overridden);
+> +
+> +	if (housekeeping.flags & BIT(type))
+> +		old = housekeeping_cpumask_dereference(type);
+> +	else
+> +		WRITE_ONCE(housekeeping.flags, housekeeping.flags | BIT(type));
+> +	rcu_assign_pointer(housekeeping.cpumasks[type], trial);
+> +
+> +	synchronize_rcu();
+> +
+> +	kfree(old);
+> +
+> +	return 0;
+> +}
+> +
+
 
 -- 
-2.51.0
+Best regards,
+Ridong
 
 
