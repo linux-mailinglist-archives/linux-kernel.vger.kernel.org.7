@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-891663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560D5C43307
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 19:14:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A4BC43331
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 19:16:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C68D188DAB8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 18:14:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044BB3AF4AB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 18:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C6826E16A;
-	Sat,  8 Nov 2025 18:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352F7255E43;
+	Sat,  8 Nov 2025 18:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="DiUZmm/U"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWSuzOqw"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DFD26D4F9
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 18:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF43770FE
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 18:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762625652; cv=none; b=W6op+cX0nYlsz2XFDejPtYMdhYkPJyWgMqL+70XE/WAIUpt5LGvgkuzqiT/tDPio91crCm8+aWKVcQvpfPMCcLqBy02wAc/7UPPFZCRfHVKBTWBGaD6jRJxmdgacHyagXjNcyDMWfUOu/SjOlrwcMBmS7fyvd+jEkLUOT236v+4=
+	t=1762625772; cv=none; b=DOUCcdF0IAFOPICk9hXqmgmutsRPoVkWaHft1nmR6eM1LkQW37xXQZzwBPc10xvGCwVs+6IDw1b1AJ2jv1xikbBilQJk7FUoPAkPrc74oFDrNbAV4cFldnTg/ZvRRaxiUqOc62t3HPTuKEHXmqfE4rBrRnASOM2COxrZxYJhb9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762625652; c=relaxed/simple;
-	bh=HXLYSWisfIRg/IZEGEaCxFtj3HbKG4twWmdqzwXU56M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V8qN9Kf56KTmA9sv87WdcS0mzMhR6KZAd+gdVKMgGNB8GM686MkFFRzrskjIl0ozvnDYPI8HASNo8CYhrYpVSGPYGkX4M68H8t1QH1Z/jOxJpB3ywmiipInLKU4Wmo+NcGPFvGbzHgc1lGtbgeZkYHCMlmyOCrLH8glrJGHlLR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=DiUZmm/U; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640a3317b89so2797264a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 10:14:10 -0800 (PST)
+	s=arc-20240116; t=1762625772; c=relaxed/simple;
+	bh=ZPjUommKJztOBHxthEBJJTdyLZRsZCkBgHvr26AmOpQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=lr/nuwV/DZjLHXRO2Qtnd+eoOJH+HO8B4nEJ7DC/P7yWJepo+Eyeu4F6RifraGObf3LScpciX4+xZIH1Ggj1Gn0xpJKzPSFG2C6qCasxEFUV/NO/M743WiQQymyav6V5hotU1Ut1sPJdbTaeH1daXxKE+DX7R6rtvZUlhDu+Cn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWSuzOqw; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-882475d8851so254536d6.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 10:16:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1762625649; x=1763230449; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Q3WFXvp3nzw/xfIhFbqypMckNDbnX8ReX564Qc9Enc=;
-        b=DiUZmm/URky2uJk4p6TqUg8JYsDKX68Wlio8SnlETKTdQV5P6kVnCYCc5A1HmG67YR
-         dPiUYtngGF/IDwNQ6NwhgqBwOhXOYiaqO0uCQRfn5M9IdfoUIQgMTGvaEoveSIqz7QY2
-         7JROIPuVD9XX7mItmn63f88nMjTaf1tXoJuePaR7CmGpQ6mwLCqjzLU/W9/Klsi/YsGj
-         0sBDeVGvKiGmqv9QLtp4wZzCmvM7MyBbxeWg5rNa5xbvaQa9G1U9iS6rRQzHT/b7rIlz
-         uI8UILJXP1NAibLw5jSnbQaDKk9FyHv4szQaMnO9f7DSzJ3E70mlx2/ZpeaPs90EEHi+
-         o19Q==
+        d=gmail.com; s=20230601; t=1762625768; x=1763230568; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YpuhHnfYFh1OuHtBlzws854zn4cGJNw7nQ8ETfR9Qm0=;
+        b=GWSuzOqwPE6UOysr5mvSmCbyswU+rS6V+E0gxmI1HcGsVqPz5918Z3tfY7Zlk/nyyC
+         4EDmKYa4w6pg6QL4OTPg6hQpBvyGrup7N1eaVM4C59YlkX2F3P2I5mmX1QyfCiUl6o7U
+         z9Q2ZJxO4uj3q4W6NvVFBWEdzutfqlb86ClDFgBntq3ZGFwffXJNA0J1FNHFIPvdHoUU
+         aJ9oinGf8ffhCp+Xsi9aiFqyeMvZNcenszGrCzQ3315ovYZHDsvG9Tt7daAGij7/CyxK
+         iKu7jiVuY2YkLLRNPbxysGKbGMkCOOgIzMEb5TDVMl0KPORpA0UDWGh3sz+f+Lry2ruC
+         70Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762625649; x=1763230449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2Q3WFXvp3nzw/xfIhFbqypMckNDbnX8ReX564Qc9Enc=;
-        b=VlkYFhhGl86v9Pm1P5VQa4Wa12WYetROPzDgG003Xofx5LK7tM9fT8XxWQEZiwR5xq
-         gqPM5AyPxatB6Reqh/MGwnSgr01YMIIT4HNlAbDXzeXt2VQci9sJ0bIgYxD+cEp3js/a
-         zffCE8L0i3SNNNFcwKtExiM6GjFSCLjlaZ4jVCt0QECFDiMBnl1R0GYJB44k8ZdKeowT
-         h9NgczG3/NSNA5IHtMVjh5QyOAhCMXZ9TOSH1Eu+Y3Ik7xcAE8IkLQCvjSD4+Czz62l4
-         rNqpICP3MPeTbNDWLtnQi+F2ZnPCFURKIavctaF6DbBgGopoRgKBo+UPYjIF0MfcPhVi
-         ZvQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKBwiv0vpjizFNKhQ3hlRuSG//tr8REMXdpjgMjoKckKxIm4kYosaznf5xZKFUyQ8E3ROuKE8WBWnFI3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx49GjcGVEIBFHLfAxFse75yYDfuSOudH+Ks1agPTt+pOpGRybr
-	TO+ljpBJUtDbCYmlkxSgs2AeyuwKhAaiZA33b86HxZat8bO0GKhaP5kYqBOM+PzEDg2pV2SJuKj
-	ur3CdqFDfMFgY9KlTIYrtylWF4cIdnehw2zkPvjqrjw==
-X-Gm-Gg: ASbGnctL2/GWdAo/DBIGE/Bqxn43OUZM6Z1TATzGXL9mjVaEck3BcVe1OBHjyxhzNAA
-	6nFS5ZMN8jHEn5gCsYfZYhX7t5z1CTHUZHbaXcnBfax2KPFXTsRE/8aWvF50cVyjSGV2QLr/f5y
-	1TtYKK7KljfEDK9nBe6cNuNZ88xt5jXXYF6FDWKy8Sn2no8Q350cTONaudud6YEq2isI2+ysXjs
-	lBqz+nvJOoqF0+AqdldSDe+/k7i4hNsLTITAS90rtMaikjTxJGxbhkPyBZ2g3otAH4uNu6xRGvj
-	f+DpwyBPI8TVVbzL6c1dqRNdZgeQ
-X-Google-Smtp-Source: AGHT+IGnxIvGVB3DoG73/LoR1IZOJvd+jikoooj0blQZKowrXDzv2ZHuSFpnulnp2McWHadhftCSnlvUuIh9AczGGLk=
-X-Received: by 2002:a05:6402:280e:b0:63e:405d:579c with SMTP id
- 4fb4d7f45d1cf-6415e83f02fmr2267675a12.29.1762625649247; Sat, 08 Nov 2025
- 10:14:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762625768; x=1763230568;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YpuhHnfYFh1OuHtBlzws854zn4cGJNw7nQ8ETfR9Qm0=;
+        b=wNL3BSjI2uECUNdPGKCf9KYj1bt8xaBtWLdWjaGsuSZshEe7tgLUPzbNVdoeYu0ODz
+         YgUTGTWgN7BnSpY7BhzutLKOE1z7dbHP5rptKXPaGycWWJBT2/bQJKlsBeg7QdpD0RZC
+         uBYOc1VRhWRyqsztjxksvmyGis0rF38ZUzUCCdD7TK+UguRUzOB9ge4+iBlcfKPsRiTU
+         fxIcJw/CeSo5X40BpP1WdCexCcparJM1laLPOo1rh4pQWSfEuDx6wRFJqqi8crywk1U3
+         MqZW4KqX33s/AFRihfo0b27wmiEDqQhIu4wU6ahwnm5nNB/B3HEW3Xsv/jcaKpeooJuV
+         1W0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXhlKYwoVUvQBXT+GWrKfB596xqi+am6Yr/Zn/OtO+C1/XKdqf0hJQupS/sxVkZUpn+8ET2WUk9tvcMu8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCYKL0cVpxnc3LNq04UycO4+ta9h3p6+cUsaSxnHvRj0p9UlUw
+	lobr0aMNDwH5/UwcrUyVTIa9UuyhbHum/p3IDOVyw2XaHK13/nROZ2qSY4pAN5ZbpxzlShdOvrg
+	cjb02o+RyeMmKV/e/Fn3Oqk9DsbuDk7U=
+X-Gm-Gg: ASbGnct+LJ0ZsVSjkOhdL1dfKho+BXKgx7zzaC721Wj7rYDsmMPlM4R3fJpZghprXZG
+	VUJ0AQle184PhbeBT1uZkVKm7x4hWUIZpVwrfSIZ5jT4fV7Ij1WyjNiCgWXve7W7KrzaDwL/ga6
+	1vJ3n6YyXdzJvZAbbit7IclKmJynS2GIq7cc/xg4H6zW1AIbWFl8iIY3suEsVv8T6XrH9npPwmR
+	Rci3+GLWxNhUSMButF6ZEf+4WOvoUtoOuWoZEpTQOnfbofzPiMQY1JgyzjgDEOwKH8dVcTHVQ/x
+	l2wFpZCJBa75a27l+RqR85wHJ+PTqZa5gLc5ESbQ0ZHArEG9QZK8X6W+gygJvgYhh72ZHug/LuN
+	Zih5gDNBCa+Yh+cMl57Efl45BYRQx4L937VvrnbuVwRzXWfrY3j3RETIr1rnvHGjLjemghJNUz7
+	0AbCzLA1jPSA==
+X-Google-Smtp-Source: AGHT+IGLP0vr9cIpKSHIEVh6wrvBWb8spM4WCyR4eNF9QEi5QisAGLNnyJVPq9/v7x8n7gYND2116ms7uTu+TimR9ko=
+X-Received: by 2002:a05:6214:124f:b0:880:5813:1551 with SMTP id
+ 6a1803df08f44-8823861233bmr45789156d6.30.1762625768425; Sat, 08 Nov 2025
+ 10:16:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com> <20251107143310.8b03e72c8f9998ff4c02a0d0@linux-foundation.org>
-In-Reply-To: <20251107143310.8b03e72c8f9998ff4c02a0d0@linux-foundation.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sat, 8 Nov 2025 13:13:32 -0500
-X-Gm-Features: AWmQ_bn1c7HhzSfiUpQMj3X6qTh8tFK5YjykAbxye45PZog-6bB9QqhpzjoyA_I
-Message-ID: <CA+CK2bCakoNEHk-fgjpnHpo5jtBoXvnzdeJHQOOBBFM8yo-4zQ@mail.gmail.com>
-Subject: Re: [PATCH v5 00/22] Live Update Orchestrator
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, rppt@kernel.org, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, tj@kernel.org, 
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev, 
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com, 
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org, 
-	dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org, 
-	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
-	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 8 Nov 2025 12:15:57 -0600
+X-Gm-Features: AWmQ_bnbraTGx_UJWPW4eq7AIIrgXBSBIEm2hU6QEBHRT6GLGfANddX7Us_1WdE
+Message-ID: <CAH2r5ms=O10HuH9SvW59h=J50dmLUsqYTKoD8jqAvcn16aergw@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 7, 2025 at 5:33=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
-.org> wrote:
->
-> On Fri,  7 Nov 2025 16:02:58 -0500 Pasha Tatashin <pasha.tatashin@soleen.=
-com> wrote:
->
-> > This series introduces the Live Update Orchestrator, a kernel subsystem
-> > designed to facilitate live kernel updates using a kexec-based reboot.
->
-> I added this to mm.git's mm-nonmm-stable branch for some linux-next
-> exposure.  The usual Cc's were suppressed because there would have been
-> so many of them.
+Please pull the following changes since commit
+6146a0f1dfae5d37442a9ddcba012add260bceb0:
 
-Thank you!
+  Linux 6.18-rc4 (2025-11-02 11:28:02 -0800)
 
-Pasha
+are available in the Git repository at:
+
+  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.18rc4-SMB-client-fixes
+
+for you to fetch changes up to 4012abe8a78fbb8869634130024266eaef7081fe:
+
+  smb: client: validate change notify buffer before copy (2025-11-07
+10:15:43 -0600)
+
+----------------------------------------------------------------
+Three smb client fixes
+- Fix change notify packet validation check
+- Refcount fix (e.g. rename error paths)
+- Fix potential UAF due to missing locks on directory lease refcount
+----------------------------------------------------------------
+Henrique Carvalho (1):
+      smb: client: fix potential UAF in smb2_close_cached_fid()
+
+Joshua Rogers (1):
+      smb: client: validate change notify buffer before copy
+
+Shuhao Fu (1):
+      smb: client: fix refcount leak in smb2_set_path_attr
+
+ fs/smb/client/cached_dir.c | 16 +++++++++-------
+ fs/smb/client/smb2inode.c  |  2 ++
+ fs/smb/client/smb2pdu.c    |  7 +++++--
+ 3 files changed, 16 insertions(+), 9 deletions(-)
+
+-- 
+Thanks,
+
+Steve
 
