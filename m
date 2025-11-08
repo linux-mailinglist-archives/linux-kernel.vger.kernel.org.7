@@ -1,249 +1,125 @@
-Return-Path: <linux-kernel+bounces-891517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1F4C42D4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:32:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E4FC42D62
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1E774E57A4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:32:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69D523B084D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB3E28E5;
-	Sat,  8 Nov 2025 13:32:31 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17C621257A;
+	Sat,  8 Nov 2025 13:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Q5AhuKM2"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EF334D3A9
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 13:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2451A9FB4
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 13:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762608750; cv=none; b=diBmb5nSupewb8ZYeZpTCTvDeqepSmgOA9873UsGwzasuhHlO8tnIZlFXO39a+FLylrRlAGtW0hdylFe90zNf+8moiJS8WFTn+Ch0SBGRyDUns+RQaLZ5MWYtAOiDy4aSkJoXW/6py/t/oCd1kZ5rpqzgiiwgBANsBCtSTOMyKE=
+	t=1762609216; cv=none; b=b2PhWUSvOVCPKvX4n5JwxHAIKVNQ1QZWve4jy51j6xKEh9iP1cfnpEe0t0dTlB1l0RtYSRXjUcSoVV4dYhxuuxV95Yx+IpNwwvoWmzCISRvZZJDpIPzL3cAxaMnjdeoPP6SXcbbxENaOblCbvdHkUVgvv0GNfWDmsKgx6HxRzKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762608750; c=relaxed/simple;
-	bh=tvyPpx2oKJCgMZ0OCvlfNSNK2yNzIZpotW4gFJ2ZgAA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kKU7ko/EQzelp0HIy+frqMsNV7qB3gjE6FB2MXb9NPBat8O9/V8enC8SEKPzYIT+wlwLtIbmUPd+T13mJXA2ahFaQmL3jZO4YB03i4bUyF6phGXG5ySEzQGLd+TnsyZXli7d9dAu24Ht5Mk26vsknKhaig1zMtqU4Ag27TdBjZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-937e5f9ea74so189436639f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 05:32:28 -0800 (PST)
+	s=arc-20240116; t=1762609216; c=relaxed/simple;
+	bh=VzJqVHLJEJbg4leZ+HEE6brhUMsbrS0i7/IHP2c6zkg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZuQ4uCMI5dJdZVUS6LmMdLPm2w8HvTmEqFh9pFlwY08RxG/x3WoNbI9ez3gP4gW+ZvfOn+DBpiVcRhyDp+8PIUxiZ9PTHL+ehO9F/olukgkbdwjoUfJDYqZ2nnYMFOwNbDTX5Eql9n7OIykMRlqj+7lOUJYKHncv5pZ26Nsp2sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Q5AhuKM2; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4ed7a7ddc27so15547011cf.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 05:40:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762609212; x=1763214012; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ghd/ld/RtrgWoEpUX7jRCKlUQzzc8Yiprpw7/fUO0CA=;
+        b=Q5AhuKM2N+j0jMPkruY8hrgaLIp3L2nN3tunwkgW5SH5+0+MooyUid6L/y31nxMMnC
+         DnzXsIGsdrcG6B9+rJJcfRVuw7AgoT7eEqkpKFWY0+viAqPhfxs/gRKUGm/OeHmuSkuI
+         boqNId4Ko7eVsaM9L22Ht1dVjkeUkTLl3pVzBgoYBxZEm5rOoLtfa1HFd74cqRCiBG56
+         81L+4eOiKb0XBpIKZN7PsThOAFYmp6GzIfmuZOLaIjcQU5w6tMvzfzIYfVkh5h4AA6wi
+         vYZhkgL/R/j3mL4kGXdas2pwVth5YUU+1K8sCEfkJhB6bp/4ymlfGHVZlGHzqlvNZ4Mh
+         tuGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762608748; x=1763213548;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hrV43ErWe+VCsj3PED4WP6R1zksVrZQcOrd5/ODDNBY=;
-        b=E0C4KEIwCGIPx2cQITt7FcKdG0t8UrfN6D+nPs9wWr3I/caWy1MzPs47uOwfkdxfq9
-         SOb+nQh1eg7Mtrgc3gLMlqCYQA2NbVqNc5F0rQ5Ew7yiZk0o4dCVZdnMCmlz1X39wMU6
-         Gn1N+9kaux1FgSRoBGEUeiG5ZBo9O0WFrUuB6QwU/rRHdRc9tqlDoglCEu3jKQEv3Zve
-         t2F9Yx+t2YTjA/w/o49YZ+7rdquaH6DSCNrWqt7BuYSrmBt5KXqnxLIva5nFWYWb1MK7
-         vsIoDhHkkw000KqhwqoeN1XwITGjlYPOI7AErr3zWLYyNubSFrwTg1/Op36Cve12Sc+K
-         LI8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWCXcQ29rKCviWjGQv9FYOIBj1jVpBaFQNQ9z9crksUCJ4B1WMK65cdD/S4oJo7wlvbZOxVGhpS91Gmh0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLtFEe7QIcSm9GTgS9e36HW5tXZoFEGmthT2CGPaTgBdqFqi1a
-	o4BHH1JhUuQE/y7brRm6lBBfpAZZXhaKth/aVqkWk03grZYSPwfsverUzu+9g7pq8EMXPscTeF5
-	KtapQMMHwetPUtdYdV+weVKPeEz2uChjotefb463KkPe89ecmFnvutV4d7+0=
-X-Google-Smtp-Source: AGHT+IFb7G/aUo9IE5T/xFX1bwdFxBnGo66gqhmbGtcL2NZyA5TwvSnqsfDL6uv1af+6Sfc2/0Pnd97OgqL+feEqGu8y5oEPyo4z
+        d=1e100.net; s=20230601; t=1762609212; x=1763214012;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Ghd/ld/RtrgWoEpUX7jRCKlUQzzc8Yiprpw7/fUO0CA=;
+        b=jHnZb2WXzx0teP+l8FFsieoVgwtrgltmmMNoS27SzQ9OXtK4YTeX2h7pFsy25lPmpp
+         DbCq3Gmyh7gmIxxN3f0qPl/Y65JtATDuwnEkB8m/QtBlNbhM17U5jgPfthddhzlm8tjQ
+         UMIDTi5MgFsJUarqBNAGcUxbsfX7jD5Pb6w9o2OKnVSaLgjN27Kh6hk4/rqb05NGaT7u
+         4ggPUrZLq83Tw8T3CBE4WijWEqRe+lckr+Ck+srbGalaf0D1y37bDpxc+A+tFhSDsdo9
+         vjiU0uI+408K8mdahtaW1NDE3E9A4UowERpp0LiEK2tlhIc4C3KcucAOLMxAMDG7MPar
+         /KDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWTD8zPbM9JghaWUvDo0ZINSYX1FaPaCXc38cd04GiNu1+vdEzq0lWbak2smxcisISyYxMHNAVGDM1zzU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBYR+sPeS0TeJQks2pmCm147VGVWYZ1uJZzqZDi4Jg+cNUlwmQ
+	9mYkh54r1q3UbwecpZ/4172IwHKWItQrvEPhr2o/QaG4V4OvakCwWpu0SDJnRfSH8NCTYzDJqoL
+	OtGlt
+X-Gm-Gg: ASbGncun1sNhHJ1PrcULl/HistRzSdfoZjN07tk9lI1ky8QS/0Szpa5BPMWnCw+uJu7
+	QqmcOOwLZQPlA59rpjDP/QSC2nqYue2SuUGw5+0ph27kk7r3AwjhAS6CB9g5DWGAo3v6HrzQsRT
+	NeNqJwxsifIaMFP3WUJZFgJyxvp1wy91V9YYMuoWN1UyUJJMM4eSlc6D4GqZdFJDRC96KSxF/ma
+	SHt3GA5a3E0SmBr3A919bTsMvuJ4bjD2/2/1GuQr5srfEMCu21U/O5OJbB0m3KBdlxOmj1ieHhF
+	ao4ZcFamqKjsu1vbSkx/a78MKS/RQqgL56iMje2zPOb295HFA1IwOOaij00jjewM4G/r8C/9qWp
+	Kyya4e7jNSsG623g8pAoNq4P1iu9ei40JLdCHtzfAnrHhZRWyWb0VnSz6iL9Vb16m9qIUdAzN6A
+	p9kLsPVzNhmgqyTAZx
+X-Google-Smtp-Source: AGHT+IE7901mPN3l2lR6QHNGxnfEp8vN/UEu7mW6GuPxHqTF7pE1OXBkRGjJDXweFnxWIemAIHzkWQ==
+X-Received: by 2002:a05:622a:88:b0:4ec:ef09:6b74 with SMTP id d75a77b69052e-4eda4fb0d24mr36342341cf.60.1762609211781;
+        Sat, 08 Nov 2025 05:40:11 -0800 (PST)
+Received: from [127.0.0.1] ([216.235.231.34])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88238b290eesm14808676d6.34.2025.11.08.05.40.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 05:40:10 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: josef@toxicpanda.com, xiubli@redhat.com, 
+ Zheng Qixing <zhengqixing@huaweicloud.com>
+Cc: linux-block@vger.kernel.org, nbd@other.debian.org, 
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
+ houtao1@huawei.com, linan122@h-partners.com, zhengqixing@huawei.com
+In-Reply-To: <20251108070202.1816004-1-zhengqixing@huaweicloud.com>
+References: <20251108070202.1816004-1-zhengqixing@huaweicloud.com>
+Subject: Re: [PATCH] nbd: defer config put in recv_work
+Message-Id: <176260921037.52069.3327906711798432611.b4-ty@kernel.dk>
+Date: Sat, 08 Nov 2025 06:40:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ce85:0:b0:433:68ab:e2a with SMTP id
- e9e14a558f8ab-43368ab0ee1mr25840965ab.23.1762608747790; Sat, 08 Nov 2025
- 05:32:27 -0800 (PST)
-Date: Sat, 08 Nov 2025 05:32:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690f466b.a70a0220.22f260.0081.GAE@google.com>
-Subject: [syzbot] [ext4?] possible deadlock in ext4_xattr_get (2)
-From: syzbot <syzbot+5b61c1d24f8022b26f7d@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    8bb886cb8f3a Merge tag 'edac_urgent_for_v6.18_rc5' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ea2532580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b61c1d24f8022b26f7d
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/addfade563b0/disk-8bb886cb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1254c89ad16b/vmlinux-8bb886cb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3123c5319b7e/bzImage-8bb886cb.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5b61c1d24f8022b26f7d@syzkaller.appspotmail.com
-
-ext4 filesystem being mounted at /86/bus supports timestamps until 2038-01-19 (0x7fffffff)
-======================================================
-WARNING: possible circular locking dependency detected
-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.5.1778/13399 is trying to acquire lock:
-ffff888047d9ba28 (&ei->xattr_sem){++++}-{4:4}, at: ext4_xattr_get+0x10a/0x6a0 fs/ext4/xattr.c:708
-
-but task is already holding lock:
-ffff88807a168b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_writepages_down_write fs/ext4/ext4.h:1808 [inline]
-ffff88807a168b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_ext_migrate+0x2f3/0x1010 fs/ext4/migrate.c:438
-
-which lock already depends on the new lock.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
 
-the existing dependency chain (in reverse order) is:
+On Sat, 08 Nov 2025 15:02:02 +0800, Zheng Qixing wrote:
+> There is one uaf issue in recv_work when running NBD_CLEAR_SOCK and
+> NBD_CMD_RECONFIGURE:
+>   nbd_genl_connect     // conf_ref=2 (connect and recv_work A)
+>   nbd_open	       // conf_ref=3
+>   recv_work A done     // conf_ref=2
+>   NBD_CLEAR_SOCK       // conf_ref=1
+>   nbd_genl_reconfigure // conf_ref=2 (trigger recv_work B)
+>   close nbd	       // conf_ref=1
+>   recv_work B
+>     config_put         // conf_ref=0
+>     atomic_dec(&config->recv_threads); -> UAF
+> 
+> [...]
 
--> #1 (&sbi->s_writepages_rwsem){++++}-{0:0}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       percpu_down_read_internal+0x48/0x1c0 include/linux/percpu-rwsem.h:53
-       percpu_down_read include/linux/percpu-rwsem.h:77 [inline]
-       ext4_writepages_down_read fs/ext4/ext4.h:1796 [inline]
-       ext4_writepages+0x1cc/0x350 fs/ext4/inode.c:3024
-       do_writepages+0x32e/0x550 mm/page-writeback.c:2604
-       __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1719
-       writeback_single_inode+0x1f9/0x6a0 fs/fs-writeback.c:1840
-       write_inode_now+0x160/0x1d0 fs/fs-writeback.c:2903
-       iput_final fs/inode.c:1901 [inline]
-       iput+0x830/0xc50 fs/inode.c:1966
-       ext4_xattr_block_set+0x1fce/0x2ac0 fs/ext4/xattr.c:2199
-       ext4_xattr_move_to_block fs/ext4/xattr.c:2664 [inline]
-       ext4_xattr_make_inode_space fs/ext4/xattr.c:2739 [inline]
-       ext4_expand_extra_isize_ea+0x12da/0x1ea0 fs/ext4/xattr.c:2827
-       __ext4_expand_extra_isize+0x30d/0x400 fs/ext4/inode.c:6364
-       ext4_try_to_expand_extra_isize fs/ext4/inode.c:6407 [inline]
-       __ext4_mark_inode_dirty+0x46c/0x700 fs/ext4/inode.c:6485
-       ext4_evict_inode+0x80d/0xee0 fs/ext4/inode.c:254
-       evict+0x504/0x9c0 fs/inode.c:810
-       ext4_orphan_cleanup+0xc20/0x1460 fs/ext4/orphan.c:470
-       __ext4_fill_super fs/ext4/super.c:5617 [inline]
-       ext4_fill_super+0x5920/0x61e0 fs/ext4/super.c:5736
-       get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
-       vfs_get_tree+0x92/0x2b0 fs/super.c:1751
-       fc_mount fs/namespace.c:1208 [inline]
-       do_new_mount_fc fs/namespace.c:3651 [inline]
-       do_new_mount+0x302/0xa10 fs/namespace.c:3727
-       do_mount fs/namespace.c:4050 [inline]
-       __do_sys_mount fs/namespace.c:4238 [inline]
-       __se_sys_mount+0x313/0x410 fs/namespace.c:4215
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Applied, thanks!
 
--> #0 (&ei->xattr_sem){++++}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3165 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       down_read+0x46/0x2e0 kernel/locking/rwsem.c:1537
-       ext4_xattr_get+0x10a/0x6a0 fs/ext4/xattr.c:708
-       ext4_get_acl+0x84/0x930 fs/ext4/acl.c:165
-       __get_acl+0x279/0x400 fs/posix_acl.c:159
-       get_inode_acl fs/posix_acl.c:184 [inline]
-       posix_acl_create+0x131/0x440 fs/posix_acl.c:646
-       ext4_init_acl+0xb3/0x320 fs/ext4/acl.c:284
-       __ext4_new_inode+0x3218/0x3cb0 fs/ext4/ialloc.c:1321
-       ext4_ext_migrate+0x69f/0x1010 fs/ext4/migrate.c:456
-       __ext4_ioctl fs/ext4/ioctl.c:1694 [inline]
-       ext4_ioctl+0x204b/0x48e0 fs/ext4/ioctl.c:1923
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:597 [inline]
-       __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[1/1] nbd: defer config put in recv_work
+      commit: 9517b82d8d422d426a988b213fdd45c6b417b86d
 
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&sbi->s_writepages_rwsem);
-                               lock(&ei->xattr_sem);
-                               lock(&sbi->s_writepages_rwsem);
-  rlock(&ei->xattr_sem);
-
- *** DEADLOCK ***
-
-3 locks held by syz.5.1778/13399:
- #0: ffff88807a16a420 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write_file+0x60/0x200 fs/namespace.c:552
- #1: ffff888047d9c6d0 (&sb->s_type->i_mutex_key#9){++++}-{4:4}, at: inode_lock include/linux/fs.h:980 [inline]
- #1: ffff888047d9c6d0 (&sb->s_type->i_mutex_key#9){++++}-{4:4}, at: __ext4_ioctl fs/ext4/ioctl.c:1693 [inline]
- #1: ffff888047d9c6d0 (&sb->s_type->i_mutex_key#9){++++}-{4:4}, at: ext4_ioctl+0x2043/0x48e0 fs/ext4/ioctl.c:1923
- #2: ffff88807a168b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_writepages_down_write fs/ext4/ext4.h:1808 [inline]
- #2: ffff88807a168b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_ext_migrate+0x2f3/0x1010 fs/ext4/migrate.c:438
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 13399 Comm: syz.5.1778 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
- check_prev_add kernel/locking/lockdep.c:3165 [inline]
- check_prevs_add kernel/locking/lockdep.c:3284 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- down_read+0x46/0x2e0 kernel/locking/rwsem.c:1537
- ext4_xattr_get+0x10a/0x6a0 fs/ext4/xattr.c:708
- ext4_get_acl+0x84/0x930 fs/ext4/acl.c:165
- __get_acl+0x279/0x400 fs/posix_acl.c:159
- get_inode_acl fs/posix_acl.c:184 [inline]
- posix_acl_create+0x131/0x440 fs/posix_acl.c:646
- ext4_init_acl+0xb3/0x320 fs/ext4/acl.c:284
- __ext4_new_inode+0x3218/0x3cb0 fs/ext4/ialloc.c:1321
- ext4_ext_migrate+0x69f/0x1010 fs/ext4/migrate.c:456
- __ext4_ioctl fs/ext4/ioctl.c:1694 [inline]
- ext4_ioctl+0x204b/0x48e0 fs/ext4/ioctl.c:1923
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f33aa18f6c9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f33ab026038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f33aa3e5fa0 RCX: 00007f33aa18f6c9
-RDX: 0000000000000000 RSI: 0000000000006609 RDI: 0000000000000006
-RBP: 00007f33aa211f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f33aa3e6038 R14: 00007f33aa3e5fa0 R15: 00007ffcf65b20e8
- </TASK>
-EXT4-fs error (device loop5): ext4_lookup:1787: inode #12: comm syz.5.1778: iget: bad i_size value: 2533274857506816
-EXT4-fs error (device loop5): ext4_lookup:1787: inode #12: comm syz.5.1778: iget: bad i_size value: 2533274857506816
+Best regards,
+-- 
+Jens Axboe
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
