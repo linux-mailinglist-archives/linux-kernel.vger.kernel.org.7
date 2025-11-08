@@ -1,191 +1,143 @@
-Return-Path: <linux-kernel+bounces-891584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F0DC42FFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 17:32:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45E9C4300B
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 17:37:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E913F3ABAA0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 16:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 400213A59D9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 16:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324F2233D9C;
-	Sat,  8 Nov 2025 16:32:51 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B74238178;
+	Sat,  8 Nov 2025 16:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UogX/wtW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA7F3A8F7;
-	Sat,  8 Nov 2025 16:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E7F3A8F7;
+	Sat,  8 Nov 2025 16:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762619570; cv=none; b=dTe8NT8cqT3I4UPbTEd0POdK2ASi6BWDM3SQziCEW253rmW6VPaX4M9ZpNW/sFbHIuQ5nYrF7a4v1uyWZqqxHBZyFF57+t9rQtH3vA8qE3o75ZgV7CuuJPmxQFjuveHiEWJAUSshE9SbQTCTjNcvzSZfuVwsQQflPCdrG7MbhOE=
+	t=1762619822; cv=none; b=WBM/MP1NdMdMHmI88+OOm8kcwUqgE7bvBmiY0OTyiSceaq2/jLAYLlshswuCyTOleNF0Y/E/i7fi2FYGSqScfjirNXWJBEks7qw/grXTEgoJWEGNQzap4PrZQUOidWXJPDeJSJrwJFHQUzltzFYhpBjX4jtjIYFB6Lr7upeI9RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762619570; c=relaxed/simple;
-	bh=uzRTbst0kgv2bSm318LSyNPj0nXrY4uFkeWkM/v6XeU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=WRwB13R98w+Lm2KGRVROJzxWu9ZF9KVhEzrF4jM3YQg8F4eh7UuopTX150GWVSkluH5kDkn32+X3nB+eTPXWlsyRbAr4h0dydeihDfwclFlzHhsFp4i+GlFhkRTH/f2NuccIqekIFMWIYzMkAkKneiH3yRByEn8CJCjf8eLHHRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from smtpclient.apple (unknown [180.172.111.150])
-	by APP-01 (Coremail) with SMTP id qwCowAAnvs2PcA9pK68BAA--.352S2;
-	Sun, 09 Nov 2025 00:32:16 +0800 (CST)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1762619822; c=relaxed/simple;
+	bh=LVT/aIc2AON71l19ykVx0Fj5Bo0LsiK+P1KP4yuRAkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pJ2QJm5Osjs6gv6p0XZ+MkY/RHtSOHxWXqWxw7q2OFKbHB0/1J1QgylMhU7wb4LAI7+gtpCmXzvFyZfkyrX+K2tS4TCho3QjpZsGtEarYD2fPQj2G8VFJt56OIo7/HQ+IVwhUM8WF7tAHPSY9ws45FY5xhnm2gApCvlHkTDy4N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UogX/wtW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 334C7C16AAE;
+	Sat,  8 Nov 2025 16:36:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762619820;
+	bh=LVT/aIc2AON71l19ykVx0Fj5Bo0LsiK+P1KP4yuRAkc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UogX/wtWXGveHNi5Em0vXRdgXw47JbmHjtRNDT1sbxetQOrviyCtRRnWBqFBMbyh/
+	 DjfLPBul3iwbBViop268FCO1X1Sh345YbI0xD7QH4rTBGwV82ApQ0uo2HcEKGi91i5
+	 T4ixlSoOkS0aVHfEw9wTUDzdVlg0EaYv2veGEEN1nqtVnvmtluIvThF2BBVEE1TaM1
+	 QGbzZOo1waADecLNENgmjqFwpPd9DYb2PyR5hYc8tAaA0JxPFDiCnP6fgXIQXFkjRT
+	 SD1Ls0Pi+qbphltPr0kHJO6ywttC7sqMeeAlEglbSC0OZ+gpunSTmLV6lib5M45Qo0
+	 nbhdv69juwlqQ==
+Date: Sat, 8 Nov 2025 16:36:55 +0000
+From: Simon Horman <horms@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Ally Heev <allyheev@gmail.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [Intel-wired-lan] [PATCH v3] net: ethernet: fix uninitialized
+ pointers with free attribute
+Message-ID: <aQ9xp9pchMwml30P@horms.kernel.org>
+References: <20251106-aheev-uninitialized-free-attr-net-ethernet-v3-1-ef2220f4f476@gmail.com>
+ <575bfdb1-8fc4-4147-8af7-33c40e619b66@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
-Subject: Re: [PATCH 1/3] riscv: soc: re-organized allwinner menu
-From: Han Gao <gaohan@iscas.ac.cn>
-In-Reply-To: <20251108-hurler-clammy-0df5e778c04c@spud>
-Date: Sun, 9 Nov 2025 00:32:01 +0800
-Cc: Han Gao <gaohan@iscas.ac.cn>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>,
- Rob Herring <robh@kernel.org>,
- krzk+dt@kernel.org,
- conor+dt@kernel.org,
- Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Yixun Lan <dlan@gentoo.org>,
- Drew Fustini <fustini@kernel.org>,
- geert+renesas@glider.be,
- Guodong Xu <guodong@riscstar.com>,
- Haylen Chu <heylenay@4d2.org>,
- Joel Stanley <joel@jms.id.au>,
- linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev,
- Han Gao <rabenda.cn@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <90B0751B-CEF0-4E73-B3B2-F20D5D055AC3@iscas.ac.cn>
-References: <cover.1762588494.git.gaohan@iscas.ac.cn>
- <d17a3a01e2b1297538c419b51953f9613426ba42.1762588494.git.gaohan@iscas.ac.cn>
- <e98a1e59-f3ff-4e9f-a180-79aea9943236@kernel.org>
- <43109A90-8447-4006-8E29-2D2C0866758F@iscas.ac.cn>
- <287444fa-120c-42b4-9919-2f05ab1a2ab7@kernel.org>
- <8ae5d81d-4869-4c39-9561-cb0f87da70fd@kernel.org>
- <20251108-hurler-clammy-0df5e778c04c@spud>
-To: Conor Dooley <conor@kernel.org>
-X-Mailer: Apple Mail (2.3864.100.1.1.5)
-X-CM-TRANSID:qwCowAAnvs2PcA9pK68BAA--.352S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFW5GFy3uw1xXr1xXF1UWrg_yoW5KF1fpr
-	4xCFsIka15ZryfKanrKr1UuFW5tw1kJr15Wr1DJ3y8Z34qvr4UXr1qqr4xWFyqqr1UWw42
-	vryDuF1293y5AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjTRRD7VDUUUU
-X-CM-SenderInfo: xjdrxt3q6l2u1dvotugofq/1tbiBg0ADGkPW4-QngAAs7
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <575bfdb1-8fc4-4147-8af7-33c40e619b66@intel.com>
 
+On Thu, Nov 06, 2025 at 03:07:26PM +0100, Alexander Lobakin wrote:
+> From: Ally Heev <allyheev@gmail.com>
+> Date: Thu, 06 Nov 2025 17:25:48 +0530
+> 
+> > Uninitialized pointers with `__free` attribute can cause undefined
+> > behavior as the memory assigned randomly to the pointer is freed
+> > automatically when the pointer goes out of scope.
+> > 
+> > It is better to initialize and assign pointers with `__free`
+> > attribute in one statement to ensure proper scope-based cleanup.
+> > 
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
+> > Signed-off-by: Ally Heev <allyheev@gmail.com>
+> > ---
+> > Changes in v3:
+> > - fixed style issues
+> > - Link to v2: https://lore.kernel.org/r/20251106-aheev-uninitialized-free-attr-net-ethernet-v2-1-048da0c5d6b6@gmail.com
+> > 
+> > Changes in v2:
+> > - fixed non-pointer initialization to NULL
+> > - NOTE: drop v1
+> > - Link to v1: https://lore.kernel.org/r/20251105-aheev-uninitialized-free-attr-net-ethernet-v1-1-f6ea84bbd750@gmail.com
+> > ---
+> >  drivers/net/ethernet/intel/ice/ice_flow.c       | 5 +++--
+> >  drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 5 +++--
+> >  2 files changed, 6 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/intel/ice/ice_flow.c b/drivers/net/ethernet/intel/ice/ice_flow.c
+> > index 6d5c939dc8a515c252cd2b77d155b69fa264ee92..3590dacf3ee57879b3809d715e40bb290e40c4aa 100644
+> > --- a/drivers/net/ethernet/intel/ice/ice_flow.c
+> > +++ b/drivers/net/ethernet/intel/ice/ice_flow.c
+> > @@ -1573,12 +1573,13 @@ ice_flow_set_parser_prof(struct ice_hw *hw, u16 dest_vsi, u16 fdir_vsi,
+> >  			 struct ice_parser_profile *prof, enum ice_block blk)
+> >  {
+> >  	u64 id = find_first_bit(prof->ptypes, ICE_FLOW_PTYPE_MAX);
+> > -	struct ice_flow_prof_params *params __free(kfree);
+> >  	u8 fv_words = hw->blk[blk].es.fvw;
+> >  	int status;
+> >  	int i, idx;
+> >  
+> > -	params = kzalloc(sizeof(*params), GFP_KERNEL);
+> > +	struct ice_flow_prof_params *params __free(kfree) =
+> > +		kzalloc(sizeof(*params), GFP_KERNEL);
+> 
+> Please don't do it that way. It's not C++ with RAII and
+> declare-where-you-use.
+> Just leave the variable declarations where they are, but initialize them
+> with `= NULL`.
+> 
+> Variable declarations must be in one block and sorted from the longest
+> to the shortest.
+> 
+> But most important, I'm not even sure how you could trigger an
+> "undefined behaviour" here. Both here and below the variable tagged with
+> `__free` is initialized right after the declaration block, before any
+> return. So how to trigger an UB here?
 
+FWIIW, I'd prefer if we sidestepped this discussion entirely
+by not using __free [1] in this driver.
 
-> On Nov 9, 2025, at 00:23, Conor Dooley <conor@kernel.org> wrote:
->=20
-> On Sat, Nov 08, 2025 at 03:48:18PM +0100, Krzysztof Kozlowski wrote:
->> On 08/11/2025 15:47, Krzysztof Kozlowski wrote:
->>> On 08/11/2025 14:59, revy wrote:
->>>>=20
->>>>=20
->>>>=20
->>>>> -----Original Messages-----
->>>>> From: "Krzysztof Kozlowski" <krzk@kernel.org>
->>>>> Sent Time: 2025-11-08 19:29:07 (Saturday)
->>>>> To: gaohan@iscas.ac.cn, "Paul Walmsley" <pjw@kernel.org>, "Palmer =
-Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, =
-"Alexandre Ghiti" <alex@ghiti.fr>, "Rob Herring" <robh@kernel.org>, =
-"Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" =
-<conor+dt@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>, "Jernej Skrabec" =
-<jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>, =
-"Yixun Lan" <dlan@gentoo.org>, "Drew Fustini" <fustini@kernel.org>, =
-"Geert Uytterhoeven" <geert+renesas@glider.be>, "Guodong Xu" =
-<guodong@riscstar.com>, "Haylen Chu" <heylenay@4d2.org>, "Joel Stanley" =
-<joel@jms.id.au>
->>>>> Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, =
-devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =
-linux-sunxi@lists.linux.dev, "Han Gao" <rabenda.cn@gmail.com>
->>>>> Subject: Re: [PATCH 1/3] riscv: soc: re-organized allwinner menu
->>>>>=20
->>>>> On 08/11/2025 09:20, gaohan@iscas.ac.cn wrote:
->>>>>> From: Han Gao <gaohan@iscas.ac.cn>
->>>>>>=20
->>>>>> Allwinner currently offers d1(s)/v821/v861/v881 on RISC-V,
->>>>>> using different IPs.
->>>>>>=20
->>>>>> d1(s): Xuantie C906
->>>>>> v821: Andes A27 + XuanTie E907
->>>>>> v861/v881: XuanTie C907
->>>>>>=20
->>>>>> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
->>>>>> ---
->>>>>> arch/riscv/Kconfig.socs | 22 +++++++++++++++++-----
->>>>>> 1 file changed, 17 insertions(+), 5 deletions(-)
->>>>>>=20
->>>>>> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
->>>>>> index 848e7149e443..7cba5d6ec4c3 100644
->>>>>> --- a/arch/riscv/Kconfig.socs
->>>>>> +++ b/arch/riscv/Kconfig.socs
->>>>>> @@ -54,14 +54,26 @@ config SOC_STARFIVE
->>>>>> help
->>>>>>   This enables support for StarFive SoC platform hardware.
->>>>>>=20
->>>>>> -config ARCH_SUNXI
->>>>>> - bool "Allwinner sun20i SoCs"
->>>>>> +menuconfig ARCH_SUNXI
->>>>>> + bool "Allwinner RISC-V SoCs"
->>>>>> +
->>>>>> +if ARCH_SUNXI
->>>>>> +
->>>>>> +config ARCH_SUNXI_XUANTIE
->>>>>=20
->>>>>=20
->>>>> You should not get multiple ARCHs. ARCH is only one. There is also =
-not
->>>>> much rationale in commit msg for that.
->>>>=20
->>>> The main goal is to avoid choosing multiple IP addresses for =
-erreta.=20
->>>> If using Andes IPs, I don't want to choose XuanTIe (T-Head) ERRETA.
->>>=20
->>> Not explained in commit msg but anyway not a good argument. It is =
-some
->>> sort of micro optimization and you completely miss the point we =
-target
->>> multiarch kernels.
->>=20
->> Heh, and I actually did not forbid or discourage choosing erratas per
->> your soc. I said you only get one top level ARCH. Look at all arm64
->> platforms. How many ARCHs are there per one vendor?
->=20
->=20
-> Yeah, it only allows you to enable the errata, it doesn't force any of
-> them to "y". Some will get enabled by default when ARCH_SUNXI is
-> enabled, but if someone is only targeting on device they can just turn
-> them off... I'm pretty inclined to just NAK this unless there's some
-> actual value.
+It seems to me that for both functions updated by this
+patch that can easily be achieved using an idiomatic
+goto label to free on error.
 
+[1] https://docs.kernel.org/process/maintainer-netdev.html#using-device-managed-and-cleanup-h-constructs
 
-I understand. I'm going to abandon this patch and plan to resubmit a =
-patch=20
-that only modifies the description from sun20i to allwinnner.
-
+...
 
