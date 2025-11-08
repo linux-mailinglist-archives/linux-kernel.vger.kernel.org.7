@@ -1,144 +1,201 @@
-Return-Path: <linux-kernel+bounces-891478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28198C42BE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:29:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B048FC42BEC
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:31:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3C3188E054
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:30:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EABBD188E00E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BD02C0F7B;
-	Sat,  8 Nov 2025 11:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8424258EDE;
+	Sat,  8 Nov 2025 11:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SeR07P86"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrLwPfcJ"
+Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9C02741B5;
-	Sat,  8 Nov 2025 11:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F36C1E1DE5
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 11:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762601383; cv=none; b=i7/tmrMagyOM7AinrVw8wAsSbz2SlO4OWdZ2Hb3CpCJ0w6zBksuetNHTgqZTugVeUS+QpG0SmWx4CPS2mkZ9Fy7tkCgpHgwqXXTpHSV0lzfwqGNaYcMJAFA7tnqbBR94KPoqbu0DrDbRwineEIW3BqGlMXt73lSz+U6nL9e/aKw=
+	t=1762601477; cv=none; b=UpO1bBGbKQerrEX1Zi71d4eZDAoXkzw2uIIqiriO/koj3DOKqa3GoLWMbmIzQrFoXZHaLKkpUqTMttrFGTBdpmfrvtWbJnz0Pgh+zHGCtR/MRxULp7b4RpqZiB2IMY3ODfbjnQcVoAu2nr33thnVQFEV6Z5EKmp+j9DNDhWNrJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762601383; c=relaxed/simple;
-	bh=xRQdJudR4YOfT1QYPaRJEv5pzd5rtXgXsGj9Rzaefpc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CtwB4UNpn2+3mHtazU20SwE3XIKFxALBpNqs3Eylnhk60KylNzKpVjYQZJ7TBHRP+ZZjpH66zeFufO+eC3cdykncZDDI8k5xH835druk5sorIeAML6K3c2JZPbDwrWhV7ks4yoaoeYdQIiedFEHOlZJeBBsZI4Ayr1HcsnZ0Q+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SeR07P86; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13F46C116C6;
-	Sat,  8 Nov 2025 11:29:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762601383;
-	bh=xRQdJudR4YOfT1QYPaRJEv5pzd5rtXgXsGj9Rzaefpc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SeR07P86Gk3SxuWm/Cs04R+AwI5EVBYK4jeEf2suKpeiLuDRPS/TANPL1kEme0cZD
-	 +qhUl/f6j3Llgjpq5ZKRG6JA4XUIMF3MhF1pZMLIPk64ubT9WTuBseHR2g5D8HiTIp
-	 Mx5KJweQEaAhEUCawdodZMIROzVcpBgEcMNF7m1ww/5ZBgwzij4ZBpoMMKMYfHAayS
-	 uNJJwEa3VJwYNCbYLcPpt4F0UkpwzJmx6yLRjFJi4JJtc7a2u6AisC43IQlqriOspe
-	 P47jg35zy4hOX4YFDiKWdBG1ddzFp3eDzS6CApU46uUL4kkS/SNzplQEqW7zHz55Rj
-	 B8lfnGsT3nkrQ==
-Message-ID: <3f2ca0bc-de7b-47f1-b5a6-da6b1ba31def@kernel.org>
-Date: Sat, 8 Nov 2025 12:29:35 +0100
+	s=arc-20240116; t=1762601477; c=relaxed/simple;
+	bh=BVqZOiuHq1xKbjFJroWD/ayEpS2V8z6nVjtDvArFpCQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FotIrYNF/pnJBAxZ9uYkTZtX4SlmN2krj+n2sJJ/ULMbGoMG1mfD+kjeAz8a/5FeQDZNdbkeLfXnTi6Q5aIXnWJpgdxgwkAr9ctOarCpITAhSEzjy1xap/3xCGahH5Wsh3usPfNn3tmpdzvIANUvTCAI8I7fkI+fWpAKAAzvAjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JrLwPfcJ; arc=none smtp.client-ip=74.125.224.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-640d790d444so166868d50.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 03:31:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762601474; x=1763206274; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kul+ldlZcfc/to5UiPCGqycfdspo1AsYJb25duvzMaE=;
+        b=JrLwPfcJh+ktBerU25Y8g0AAECzCh4wv3xEpisk+2BUvXGb28DqwLkK0rJz6DfciX1
+         SQI2wE4XSgsnqk+NdHGk66VHMn3XrIM14/e1G0a2XVOvkLRn5MoUHLnPI3f2ZN9/wfTm
+         WHH54s6+DhQ3Hs8p+gIi8WooUDmvlGghgo6S5qfbNkGjOpfkOxcaWQD3jdihxGivdwkk
+         8rJPSo4X3s7BwosiiNSbKNxBtqbI5OD4jG93rIRxSa9QQhvT6O7QExVAuqIA6wh4E5Un
+         GFKXHTGma6YlW+SxmAFg/e5oensWA3Ln/SpPqv6c5Df08Q1LWEj72h9YZuhiWTjyNxYI
+         Lj2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762601474; x=1763206274;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kul+ldlZcfc/to5UiPCGqycfdspo1AsYJb25duvzMaE=;
+        b=Dd94KwwpJPZDrbllXDXbv4TJuAjJ2rG8hfSxmnCRxx0E8PvwM2e0O6/ZgnCgFP+/wN
+         lY6k+9D9Nd6CGpD3zTvJMeIkZQDT5c8npLgNmpS7U64dutqJX7CcsngtbH6Ql8Aq/+x1
+         V0ocoOavj5cOCNYdphzLT3aD4za9uKvVq8tr7tMZ4dBYInOAfe5X6eU+TTmPzOGmoZYr
+         hlyrT85MLcz/jEPS9ZXLrA4c34yN5gpj4cnAruGu3CtUFVXcsHHIBuVtpAc2FvEYF/9v
+         C2H2otaRXbgRgPAgh+7zTYtQwpf3azS0lbkDQP86w+3z/POmO1gCS5P18h1sej7JOMNX
+         UOzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXT6JSberZLqcpEtYdtqCpoNHtMT53hnd2e5GML/VA8NtvrTVJlxwnFNAABy5GCb1r4BzKeVjJTLijD8b8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxarXupShyycYWKg3SF+5V+HpMrXZ99tIK4nnhIDTt1GZo2SivR
+	mjMF5Ocoi/I4Ho87Ig8rYjhQbfcZO9hbTB+8E0AiKeBPGlCr6in6/jUxNA9r9atJu0trCpuLuG1
+	ns8znAq8flCPleeOGnxGScxub06xQEsA=
+X-Gm-Gg: ASbGncvKHjZaOz4vPjCHS38JdkYuOq4QObREC3+dSsbd739esPWg/eYpcAS6LIvdp82
+	kV0buTASNIVvBVHQEx6bIS9EbS1nUHfCO7FGonRhGtOhQLLPihX+jKXUHRCPGhir1O6XgkXuUVN
+	GrnB/wByHe1223ujuh/I366vL3T7ye69ae9XRyQOw+2vqLZgjL2phI0tnUciLc/yRI0tBJodV6c
+	5jE2yzu2vrun4cA3a04uquD2XsRosEcvSXS7zCeI6H53bl2Pm7Yv3CNpI3N5IS8JIk3yg==
+X-Google-Smtp-Source: AGHT+IEPK3nR0sMFaFS7BVTaqHw85Bdn4UsHG71bXQaV4089JTCQ2FMUL36I5F+8NGGUYJOBhMwzB+DnUk0UOWj7D6o=
+X-Received: by 2002:a05:690c:26ca:b0:786:a39e:e836 with SMTP id
+ 00721157ae682-787d545e8eamr14846547b3.60.1762601474112; Sat, 08 Nov 2025
+ 03:31:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] riscv: defconfig: enable SUNXI_XUANTIE and
- SUNXI_ANDES
-To: gaohan@iscas.ac.cn, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Yixun Lan <dlan@gentoo.org>,
- Drew Fustini <fustini@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Guodong Xu <guodong@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
- Joel Stanley <joel@jms.id.au>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, Han Gao <rabenda.cn@gmail.com>
-References: <cover.1762588494.git.gaohan@iscas.ac.cn>
- <bc141425b71f0cfc8f3ef0a3c6d08104fde1281f.1762588494.git.gaohan@iscas.ac.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <bc141425b71f0cfc8f3ef0a3c6d08104fde1281f.1762588494.git.gaohan@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251107083006.44604-1-jonas.gorski@gmail.com>
+ <ce95eb8c-0d40-464d-b729-80e1ea71051c@lunn.ch> <CAOiHx=kt+pMVJ+MCUKC3M6QeMg+gamYsnhBAHkG3b6SGEknOuw@mail.gmail.com>
+ <ec456ae4-18ea-4f77-ba9a-a5d35bf1b1fd@lunn.ch> <20251107144515.ybwcfyppzashtc5c@skbuf>
+ <aQ4RR4OQI9f2bBOG@shell.armlinux.org.uk>
+In-Reply-To: <aQ4RR4OQI9f2bBOG@shell.armlinux.org.uk>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Sat, 8 Nov 2025 12:31:02 +0100
+X-Gm-Features: AWmQ_bnqz5T9iPGsG_Fj5OGHtnPj0EPUXcQY2h_Hcli3mW3aM4IFpy_1DrOQDgI
+Message-ID: <CAOiHx=mBPUg-a=_PgdrOD25A=Gz8gEkG9Z+JkNkCv8u1zoLpVw@mail.gmail.com>
+Subject: Re: [PATCH net v2] net: dsa: b53: bcm531x5: fix cpu rgmii mode interpretation
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	=?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/11/2025 09:20, gaohan@iscas.ac.cn wrote:
-> From: Han Gao <gaohan@iscas.ac.cn>
-> 
-> These options need to be enabled to prepare for v821/v861/v881.
-> 
-> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
-> ---
->  arch/riscv/configs/defconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-> index fc2725cbca18..ed0ac65babdc 100644
-> --- a/arch/riscv/configs/defconfig
-> +++ b/arch/riscv/configs/defconfig
-> @@ -29,6 +29,8 @@ CONFIG_ARCH_SOPHGO=y
->  CONFIG_ARCH_SPACEMIT=y
->  CONFIG_SOC_STARFIVE=y
->  CONFIG_ARCH_SUNXI=y
-> +CONFIG_ARCH_SUNXI_XUANTIE=y
-> +CONFIG_ARCH_SUNXI_ANDES=y
+On Fri, Nov 7, 2025 at 4:33=E2=80=AFPM Russell King (Oracle)
+<linux@armlinux.org.uk> wrote:
+>
+> On Fri, Nov 07, 2025 at 04:45:15PM +0200, Vladimir Oltean wrote:
+> > On Fri, Nov 07, 2025 at 03:07:48PM +0100, Andrew Lunn wrote:
+> > > > There is allwinner/sun7i-a20-lamobo-r1.dts, which uses "rgmii-txid"=
+,
+> > > > which is untouched by this patch. The ethernet interface uses "rgmi=
+i".
+> > >
+> > > Which is odd, but lets leave it alone.
+> > >
+> > > > And there is arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dt=
+s,
+> > > > where a comment says that it has a BCM53134, but there is no such
+> > > > node. The ethernet node uses "rgmii".
+> > >
+> > > aspeed pretty much always get phy-mode wrong. So i would not worry to=
+o
+> > > much about this.
+> > >
+> > > > So one doesn't define one, one uses rgmii-id on the switch / phy si=
+de
+> > > > and rgmii on the ethernet mac side, and one only defines the ethern=
+et
+> > > > mac side as rgmii.
+> > >
+> > > That is reasonable. It is a lot less clear what is correct for a
+> > > MAC-MAC connection. For a MAC-PHY connection we do have documentation=
+,
+> > > the preference is that the PHY adds the delays, not the MAC. If the
+> > > switch is playing PHY, then having it add delays is sensible.
+> > >
+> > > > > I would maybe add a dev_warn() here, saying the DT blob is out of=
+ date
+> > > > > and needs fixing. And fix all the in kernel .dts files.
+> > > >
+> > > > Sure I can add a warning.
+> > >
+> > > Great, thanks.
+> > >
+> > >     Andrew
+> >
+> > +Russell
+>
+> As this is discussing the applicability of RGMII delays for DSA
+> switches, I've long held out that the situation is a mess, and
+> diverges from what we decide to do for MACs - so I'd prefer not
+> to get involved in this, except to say...
+>
+> > Since there is no 'correct' way to apply RGMII delays on a MAC accordin=
+g
+> > to phy-mode, my advice, if possible, would be to leave sleeping dogs li=
+e
+> > and fix broken setups by adding the explicit device tree properties in
+> > the MAC, and adding driver support for parsing these.
+>
+> Indeed - let's not break existing working setups. If there is a
+> problem with them, then that's the time to start thinking about
+> changing them.
 
-No. One ARCH. You do not need more.
+I completely understand the reluctance to change anything, and I'm
+trying my best to not break anything:
+
+The only mode used by in-tree device trees is "rgmii-txid". This
+already behaved as it would for a PHY, and I did not change the
+behavior.
+As you probably know "rgmii" is often wrongly used, and the old
+behavior was to enable delays in both directions in this case. I did
+not change the behavior here either.
+
+So for the known cases, and the suspected "wrong" usages, I did not
+change anything, so these will continue working as expected.
+
+My interpretation here so far was/is, and what I'm trying to follow here is=
+:
+
+if this is the CPU port that is connected to a different MAC (that is
+controlled by the host), then on that port the switch is the "PHY", so
+it is responsible for the delays according to phy-mode, as the other
+MAC is supposed to not enable any (and doesn't know that there is a
+DSA switch on the other side, unless it also is a DSA switch).
+
+In any other case, don't apply any delays, because here the switch is
+the MAC, and the other side is a PHY (or "PHY") and therefore
+responsible for any delays that are needed.
+
+Having an external b53 switch connected via its CPU port to an
+internal b53 switch is a common setup on BCM63XX, so here b53 must
+enable delays on one side, and currently it does not enable them on
+either side.
+
+Currently, the only way to configure this is by using the definitely
+wrong "rgmii" phy-mode. Anyone writing a new board will just use it,
+because it works, and we can't prevent it. I want to give the option
+of using the less wrong "rgmii-id" value, which at least (in my
+interpretation) matches the spirit of phy-mode.
+
+Would it ease your concerns if I guard enabling delays with
+dsa_port_is_cpu())? To make clear that we don't enable delays on any
+user/dsa ports, and only the one that goes in the direction of the
+kernel/host (the "root" of the DSA tree).
 
 Best regards,
-Krzysztof
+Jonas
 
