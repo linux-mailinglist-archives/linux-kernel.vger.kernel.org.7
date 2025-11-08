@@ -1,131 +1,163 @@
-Return-Path: <linux-kernel+bounces-891333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1038DC4274C
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 05:56:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2541C42752
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 05:56:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B1A7D34D1B0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 04:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B17773AE781
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 04:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D999286D6D;
-	Sat,  8 Nov 2025 04:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="GglcTsJO"
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BE2275B0F
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 04:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DF8286426;
+	Sat,  8 Nov 2025 04:56:43 +0000 (UTC)
+Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C52513D891;
+	Sat,  8 Nov 2025 04:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762577759; cv=none; b=c+S2YtqaNLoyO3hJN1Z+1Lv9FBmu0rNjkN3KfJ5NFOftlrkYNkWfaF9fsDtbJSbAM+hxorEnjAFSb8Q1KAKxl44f3iqXUdJJVgIynrDj/6eIWBpIjalhDVQUnk7aXKX8WmEEGYhMbIzcDfQzZq/V9NAvFuyr94Sw94ECX2qqILE=
+	t=1762577802; cv=none; b=fIDDitCZBCMyotq4HiIkyFnLonEIobIXNHxtF7nnYqKjNS3xQn6wBAgLYNAJ2elH5730RO8UMHErQ8euqSKDXe1IorBuWwCH526UM4ziFKvi3UVcApDv5FjM78y5diHNX27xYN3848H75c8mTuuE9mI+gS/U9EwzLpGsZrHdgU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762577759; c=relaxed/simple;
-	bh=HNKgZs982aUoYG41Pd5y8bl0nJPL7EkSqK77HiqBXZY=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fo9xpoy4qj/IjLt1Jn+30a6n8oX/BkRfpN5Wno2qFLBcxqsXko4pWsGvCiwYYz9QGRs9tZwYYBCVw4VEG4CU5rtVm2aFxl1Tgs5xLakhHaEMQ7+9Omu9JKFUKVgdGIRCm4qTPqU7ftIlItuscBu1xpCBQarYMs7m6Ckv4DG8TNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=GglcTsJO; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1762577755; x=1762836955;
-	bh=HNKgZs982aUoYG41Pd5y8bl0nJPL7EkSqK77HiqBXZY=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=GglcTsJO1AMcfyAViMDmpwqMbM6M+bgLlJRfG7X/iMAZHINZGidXPGkL/sRna7x4T
-	 7P9Gc8xp5mEBd/Tw2+JxKoc9HgaYpNxj+4H44mhiU/FUJgPiTtLVhX+PSbUhHAsytw
-	 s1Y9lL1byCVndSieFAu7mYn3SmfT5NrNCjA9A1YlU+hue1DWLQxL690V1xw5Rr6mSD
-	 Ey074ocS8twdrWPimudTQXwyXDgTQyYPbX2pIwl90vXWHSEWNX5HMAOSQcdO98J7V9
-	 p8wtLocloWbq8vGIJTQDtrxvAHMMYnM9Ngo9HiDtHD2XF/4d9cvuV4+GWBBfRD8Fqf
-	 9Ku6HvfZd6zkQ==
-Date: Sat, 08 Nov 2025 04:55:48 +0000
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-From: Bryant Boatright <bryant.boatright@proton.me>
-Subject: [PATCH 3/3] staging: rtl8723bs: Rename camel case variable
-Message-ID: <f913d0da35ddcb33dfea7b9eff855563986943a0.1762576396.git.bryant.boatright@proton.me>
-In-Reply-To: <cover.1762576396.git.bryant.boatright@proton.me>
-References: <cover.1762576396.git.bryant.boatright@proton.me>
-Feedback-ID: 74848953:user:proton
-X-Pm-Message-ID: 6469ea01894a3a9566027dd113dde2bfa67cc9cb
+	s=arc-20240116; t=1762577802; c=relaxed/simple;
+	bh=OVHuxDXTwefmHYv/OAP1V/VIP0pS9usVVc7y98xkcDc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iRA8mFibzS/nlGUWNYQxuzK8U4X5RalUS5VPTGGHE7unQBULgMsrc/E5WkHLQmW0CCSquC8Wef3SxGghU6zHKRaugmgwoEIyjMYI7CzvLgE0QKeQZ4YJSGh2Dek0JKiLeZqbL6eaT5Zaao+jNB+1AVWDxJhocxz5dUTE42WwcKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=206.189.79.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from zju.edu.cn (unknown [218.12.19.144])
+	by mtasvr (Coremail) with SMTP id _____wBnt7BzzQ5pTFx0Aw--.5560S3;
+	Sat, 08 Nov 2025 12:56:20 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [218.12.19.144])
+	by mail-app4 (Coremail) with SMTP id zi_KCgD3239rzQ5ptYoeAw--.34379S2;
+	Sat, 08 Nov 2025 12:56:18 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	dmitry.torokhov@gmail.com,
+	kuba@kernel.org,
+	alexander.deucher@amd.com,
+	pali@kernel.org,
+	hverkuil+cisco@kernel.org,
+	akpm@linux-foundation.org,
+	andriy.shevchenko@linux.intel.com,
+	tglx@linutronix.de,
+	mingo@kernel.org,
+	Jonathan.Cameron@huawei.com,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH] Input: psmouse - fix use-after-free bugs due to rescheduled delayed works
+Date: Sat,  8 Nov 2025 12:56:09 +0800
+Message-Id: <20251108045609.26338-1-duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zi_KCgD3239rzQ5ptYoeAw--.34379S2
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwcDAWkOS38CbQA9sH
+X-CM-DELIVERINFO: =?B?v4doPgXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
+	CR17dXL8s6MdNu/Tde0MMWLRQUvNHVNTd05oiz5MCe7bzlkSqSPrKjWjRpM3YLcvFi01GR
+	SGOvXSiWQ3/bg34b5fNXujbJihEPcjzCPZg/PhJIUq60caeTQNCcZNzcQkALWg==
+X-Coremail-Antispam: 1Uk129KBj93XoWxAFyftrWDWw15Aw45WF1UXFc_yoW5urWrpF
+	W5Xry5KrWkJw4Ut3yDJF4UZFySkwnFvry3Gr1kW343trn8GryYvr1ktFyFgFy8KryrAF47
+	Zw4DZwsxZF4kCagCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Kb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7xvr2IYc2Ij64
+	vIr40E4x8a64kEw24lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I
+	3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxV
+	WUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAF
+	wI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcI
+	k0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j
+	6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7xwIDUUUU
 
-Adhere to Linux kernel coding style.
+The flush_workqueue() in psmouse_disconnect() only blocks and waits for
+work items that were already queued to the workqueue prior to its
+invocation. Any work items submitted after flush_workqueue() is called
+are not included in the set of tasks that the flush operation awaits.
+This means that after flush_workqueue() has finished executing, the
+resync_work and dev3_register_work could be rescheduled again, resulting
+in the following two use-after-free scenarios:
 
-Reported by checkpatch:
+1. The psmouse structure is deallocated in psmouse_disconnect(), while
+resync_work remains active and attempts to dereference the already
+freed psmouse in psmouse_resync().
 
-CHECK: Avoid CamelCase: <rateLen>
+CPU 0                   | CPU 1
+psmouse_disconnect()    | psmouse_receive_byte()
+                        |   if(psmouse->state == ...)
+  psmouse_set_state()   |
+  flush_workqueue()     |
+                        |   psmouse_queue_work() //reschedule
+  kfree(psmouse); //FREE|
+                        | psmouse_resync()
+                        |   psmouse = container_of(); //USE
+                        |   psmouse-> //USE
 
-Signed-off-by: Bryant Boatright <bryant.boatright@proton.me>
+2. The alps_data structure is deallocated in alps_disconnect(), while
+dev3_register_work remains active and attempts to dereference the
+already freed alps_data inside alps_register_bare_ps2_mouse().
+
+CPU 0                   | CPU 1
+psmouse_disconnect()    | alps_process_byte()
+  flush_workqueue()     |   alps_report_bare_ps2_packet()
+                        |   psmouse_queue_work() //reschedule
+  alps_disconnect()     |
+                        | alps_register_bare_ps2_mouse()
+    kfree(priv); //FREE |
+                        |   priv = container_of(); //USE
+                        |   priv-> //USE
+
+Replace flush_workqueue() with disable_delayed_work_sync(), and also
+add disable_delayed_work_sync() in alps_disconnect(). This ensures
+that both resync_work and dev3_register_work are properly canceled
+and prevented from being rescheduled before the psmouse and alps_data
+structures are deallocated.
+
+These bugs are identified by static analysis.
+
+Fixes: f0d5c6f419d3 ("Input: psmouse - attempt to re-synchronize mouse every 5 seconds")
+Fixes: 04aae283ba6a ("Input: ALPS - do not mix trackstick and external PS/2 mouse data")
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
 ---
- drivers/staging/rtl8723bs/core/rtw_ieee80211.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/input/mouse/alps.c         | 1 +
+ drivers/input/mouse/psmouse-base.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/stagi=
-ng/rtl8723bs/core/rtw_ieee80211.c
-index d0bb09177bdf..6098425ed038 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-@@ -285,7 +285,7 @@ uint rtw_get_rateset_len(u8 *rateset)
- int rtw_generate_ie(struct registry_priv *pregistrypriv)
- {
- =09u8 wireless_mode;
--=09int=09sz =3D 0, rateLen;
-+=09int=09sz =3D 0, rate_len;
- =09struct wlan_bssid_ex *pdev_network =3D &pregistrypriv->dev_network;
- =09u8 *ie =3D pdev_network->ies;
-=20
-@@ -320,13 +320,13 @@ int rtw_generate_ie(struct registry_priv *pregistrypr=
-iv)
-=20
- =09rtw_set_supported_rate(pdev_network->supported_rates, wireless_mode);
-=20
--=09rateLen =3D rtw_get_rateset_len(pdev_network->supported_rates);
-+=09rate_len =3D rtw_get_rateset_len(pdev_network->supported_rates);
-=20
--=09if (rateLen > 8) {
-+=09if (rate_len > 8) {
- =09=09ie =3D rtw_set_ie(ie, WLAN_EID_SUPP_RATES, 8, pdev_network->supporte=
-d_rates, &sz);
--=09=09/* ie =3D rtw_set_ie(ie, WLAN_EID_EXT_SUPP_RATES, (rateLen - 8), (pd=
-ev_network->supported_rates + 8), &sz); */
-+=09=09/* ie =3D rtw_set_ie(ie, WLAN_EID_EXT_SUPP_RATES, (rate_len - 8), (p=
-dev_network->supported_rates + 8), &sz); */
- =09} else {
--=09=09ie =3D rtw_set_ie(ie, WLAN_EID_SUPP_RATES, rateLen, pdev_network->su=
-pported_rates, &sz);
-+=09=09ie =3D rtw_set_ie(ie, WLAN_EID_SUPP_RATES, rate_len, pdev_network->s=
-upported_rates, &sz);
- =09}
-=20
- =09/* DS parameter set */
-@@ -336,8 +336,8 @@ int rtw_generate_ie(struct registry_priv *pregistrypriv=
-)
-=20
- =09ie =3D rtw_set_ie(ie, WLAN_EID_IBSS_PARAMS, 2, (u8 *)&(pdev_network->co=
-nfiguration.atim_window), &sz);
-=20
--=09if (rateLen > 8)
--=09=09ie =3D rtw_set_ie(ie, WLAN_EID_EXT_SUPP_RATES, (rateLen - 8), (pdev_=
-network->supported_rates + 8), &sz);
-+=09if (rate_len > 8)
-+=09=09ie =3D rtw_set_ie(ie, WLAN_EID_EXT_SUPP_RATES, (rate_len - 8), (pdev=
-_network->supported_rates + 8), &sz);
-=20
- =09/* HT Cap. */
- =09if ((pregistrypriv->wireless_mode & WIRELESS_11_24N) &&
---=20
-2.43.0
-
+diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
+index d0cb9fb9482..df8953a5196 100644
+--- a/drivers/input/mouse/alps.c
++++ b/drivers/input/mouse/alps.c
+@@ -2975,6 +2975,7 @@ static void alps_disconnect(struct psmouse *psmouse)
+ 
+ 	psmouse_reset(psmouse);
+ 	timer_shutdown_sync(&priv->timer);
++	disable_delayed_work_sync(&priv->dev3_register_work);
+ 	if (priv->dev2)
+ 		input_unregister_device(priv->dev2);
+ 	if (!IS_ERR_OR_NULL(priv->dev3))
+diff --git a/drivers/input/mouse/psmouse-base.c b/drivers/input/mouse/psmouse-base.c
+index 77ea7da3b1c..eb41c553e80 100644
+--- a/drivers/input/mouse/psmouse-base.c
++++ b/drivers/input/mouse/psmouse-base.c
+@@ -1484,7 +1484,7 @@ static void psmouse_disconnect(struct serio *serio)
+ 
+ 	/* make sure we don't have a resync in progress */
+ 	mutex_unlock(&psmouse_mutex);
+-	flush_workqueue(kpsmoused_wq);
++	disable_delayed_work_sync(&psmouse->resync_work);
+ 	mutex_lock(&psmouse_mutex);
+ 
+ 	if (serio->parent && serio->id.type == SERIO_PS_PSTHRU) {
+-- 
+2.34.1
 
 
