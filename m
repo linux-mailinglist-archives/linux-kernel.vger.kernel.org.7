@@ -1,157 +1,234 @@
-Return-Path: <linux-kernel+bounces-891634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19FCAC431FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 18:30:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60579C4320B
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 18:31:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA0C634924D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 17:30:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 080314E8F52
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 17:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9E1241673;
-	Sat,  8 Nov 2025 17:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6440D26A0D0;
+	Sat,  8 Nov 2025 17:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xz7PhYlN"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KijV1yuW"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012044.outbound.protection.outlook.com [52.101.53.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069E7267B9B
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 17:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762623013; cv=none; b=it4t/nTjDwf4hi5RBdkS0a2jbPRh7+OqqmUBxmSG0GfRCBemtKAItpBwslY0Synzmbc8WCcFL9yQbFNFUAo1qfGzS9PuEoq3VEMHDFTcwElCdpqbEyCUoCVl40wgJualkzNnq7QCXd/l+ySO+lmrNWsh/PbkrSU6hjqMXglvwDs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762623013; c=relaxed/simple;
-	bh=mqvOz/c5PMEmaEMrlMTr9mIFRYBwkDh40KxWBaUTkP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F22BiPHq9qzllkbP/YhgPOhAPOwVxCHUDxN2vWM7xh8Nny/Bb1fqie+YDqpQN5ah9rXFYJ70H2P74E+ihKKg4bmWMXdjYCQ5Hlmj+ejiMs6R7J6tg8EcezukkvZJjXbjxlFiRl8oxejt8rga3NXHtEfnrbtPii25IOBo8JCfMg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xz7PhYlN; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-29555415c5fso22058965ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 09:30:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762623010; x=1763227810; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ksh9yCu4UesSZktaqp077/wo5kGK4/tiGrzTuoLqT7M=;
-        b=Xz7PhYlN7QTrZUnk7vH9yXuvdg9pHlnstZrtSYCJ4rBT6tpcyp3w01cJ/sPGTP5nwS
-         2mYMqN6cRkR1XTdbATmjJ5bRrcRPIVZtAHX4tfrXYVtmRiX9xSWj0gYvaQasTc7dfCw1
-         g4mmHseOONvyXw+6NJ9ofaiTrvFPoaSG4RnPQqGrmslUEcFB6Ojgz34engdIkjWdgLVo
-         UduqA2rm6968FfzKoeExcrYtoQKVakkccjkE3V8//OfNw7iv66nZ8Iipk0yGy0CJZQmC
-         9XvLvKVRdH9n/93wifslMqka4cGgKRrTvrJINn+r9jMPhJsPlyE6ga51lGyt5aVHWmu/
-         zhrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762623010; x=1763227810;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ksh9yCu4UesSZktaqp077/wo5kGK4/tiGrzTuoLqT7M=;
-        b=LGhBKPdxow6YO/fQzXd3wwmPinN/B8KLcNP9TdrE3/n/qctZD+ukc4Unq2q0SqLYOS
-         v4bOFzBR1kvc60TH2oJIq9lewbqv03YOT9uRDVTS1jfSsYJvFZGHV/AhkeSxTlxtJjXG
-         GfURox8krZ8oEO0rFRDQdVKTV2mbVUvKZNfJsBP5me2dqLphc0waowCIV0GdlY+RtrAr
-         0Zq3JxOq0mYYvG1HmAMcd2zvMs7UKp1R3oVjSXUh0RE7c02WUIs6n8vJ1TKawLZXNj0r
-         mvOOfHvPmIfUjhXS9PBLlE7Wq/U0Lx+iby28zANwQNX3YXkVZHmvQbrBxpdI4XWXjzr9
-         1UoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXc2yVTCqz43tVwkMAV5i+Nn/PVdeAR8SA8cJ0sxN3/1uDNODRKwCyPU438wGHiPT8uajacEQmUEiNnd+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNvutKqwVyhNAXpUJcUzUFf7GnU9+ge+Wt8vD5NzrVfOd5+nkW
-	9scO46Wx+YmlVOlLrLKUjF/ELXzLDxiJBqnzo9SgJYTfWE+hTsHSypeZ
-X-Gm-Gg: ASbGncvxj7M7jirIG3mDHNghpIc28Y2A/FDy0HioR+2RpPEpMNVKGOEohiZMhK8JiX3
-	1wgCRtpzF/RbpsZfFjfA8hDmyxZnJXK/gXF97l3SH6c1QCndj2Om8EETES6loalpLiK5C7phrDh
-	iaNojmr7KglfxSXtZGaUJB4ZTNfUurc/LCuBdZ/CQXkSYTQN99f9LgB2pKp1DfWqK8Ss7Tk9yJD
-	LxHwD6WVeH5uheIYMk9++nm7AowPAyTpUxNnMdQKW/XPnPXb0rHmODRTmINDsGZHJ4mRm9WQiCZ
-	BwtG+6OX9A426Z7QY5PS+6jfZ1FmTAN0IkbU5+C+RtszRhAq1757X0zWirGRv4xeFBM0B4rqfSg
-	9ETtPdzari27KBVH2h3qPT4jQtnuiCvvROmLSkM+9iIGAf5bjkIAWFDSUEbuVhvCH1/8d5jgbh+
-	fMdn0wUlkGMERo4nyhrbg=
-X-Google-Smtp-Source: AGHT+IFLUU/VWag8EJzSY/0xYAOHUmVtlabS8D9NAS2JD/HU1e2hrzCK0vE/MQxp1herrE49UHd/uA==
-X-Received: by 2002:a17:902:e848:b0:296:3f23:b939 with SMTP id d9443c01a7336-297e56ce0b1mr51308795ad.42.1762623010252;
-        Sat, 08 Nov 2025 09:30:10 -0800 (PST)
-Received: from fedora ([103.120.31.122])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5c72esm93914635ad.33.2025.11.08.09.30.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 09:30:09 -0800 (PST)
-Date: Sat, 8 Nov 2025 22:59:59 +0530
-From: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Jason Xing <kernelxing@tencent.com>, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] selftest: net: fix variable sized type not at the end of
- struct warnings
-Message-ID: <aQ9-F34aW__rlMuD@fedora>
-References: <20251027050856.30270-1-ankitkhushwaha.linux@gmail.com>
- <aQD8AOZduY4Fit3k@horms.kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40E71EEA5D
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 17:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762623052; cv=fail; b=WChuY6UAyYZO5fwLQlOHDH4xShljr20MFvt/5Gm1bS+23T3Y2evdY8C45OYMBMHJ6nY3JmBSNlDN+DHzgt4MTQxX2DN8ulpsvtEf1GQTrGBtkIO/Zc84M/chbbv7nBgrRGXRItW23OSFNTWi6bM4DH1r30mo7VG8pKPs/tp0cjs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762623052; c=relaxed/simple;
+	bh=J3bW3UCAV22B7lUTf44uX+z3n2x6j0/7H74Ph4CzD2Y=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XoU0zX2yNu+RPXY9QqpQ8BubIeXoRYc03eARILuJfko5Rvlkbbc9hmY/r/omIDVLqgOY6F94ss+A7EH/vzDU+69JDXZQkTvlQ587kg5RkyTL5gtl8briP3kkq28qD75MDxcX3s61JyXarCSlYWVvaNKM6KtvIDUTT4rv+zLAa2M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KijV1yuW; arc=fail smtp.client-ip=52.101.53.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H4gK1Rj98mpViYgG16a7M1xLSzRMlQDhklk4q04jwMvnaaI0ZmpmztUwlo5GsYNn3nIt0TzXuNf9U/dSULXEbnHiZkJSe8CiiK8FD0uq7tthlm5lar+U5DvQa77TcjRq8wKJJx6NJXrLJWbrL/U4YosLuW0UyQD21CFGmgTH/6ZJpidXsKwn/aTpgdB/76Xte9p6pTsn+vTepT+d8Yd+iSZIpOs2UNO9CgjV63Tlh6Hh+Hddsr2WC5aCvlZepiDZMv7hjK/+WCQrwidFrFEAExRzMeyiPNnRbAb8lYAORzu9mvGISUjnHFi1e0CpNecGlROlGGBjOW63VgUL11s5iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/UwX2ZEe+CQA4aA1DVBVvkGayl5CFsLIc5/v+ZoTAao=;
+ b=D6+WdMKFHp8lu0aHRKh/GsYqNu/8xFJPReXYnQoByp2gu7iAg/6sd1Y9I4r/q4L7MUFAqhQwdRkuoHLK3/Amyv6M/wr07IzBkia28Si6/MoMbeqanExZONlTbKciOD7UWW6yWSGmtFvFnGFlKz7yuAhignpmbnLApbKuZ7QO0MfzVDwVfKZLjZKlm1e6LGhi7hIRQ+2k+ZZSa2WbPYV80db1a1J9URK/6JxHqEBL3ZC/o0ne6eeEphlr8yzbdMV9nW43xTxgz8NbFzakdA9YjoCRPltWb033bUw87znUx9k2SGXKd5uZ4a9ImKDNkKjIpWGYzVy6dXB+Lfr34GvWzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/UwX2ZEe+CQA4aA1DVBVvkGayl5CFsLIc5/v+ZoTAao=;
+ b=KijV1yuWwjMREgvphPjlFneFmlJ1I7N43jtWmXEpnjMfpSb97uM92KTLzWcSWwbaMj0XgWL3s/ydYao/YYZVFjQxGTanr9CdEFEUpori3DTN5raxoy0+CNGdx+alENhijZImIJqRBrnsmTcnzIoMqluiLuq6vonBOmsJLbAyQnc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ SJ0PR12MB6992.namprd12.prod.outlook.com (2603:10b6:a03:483::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Sat, 8 Nov
+ 2025 17:30:47 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%7]) with mapi id 15.20.9298.012; Sat, 8 Nov 2025
+ 17:30:47 +0000
+Message-ID: <33deb969-160c-48ca-890d-2b64cc0408f9@amd.com>
+Date: Sat, 8 Nov 2025 23:00:36 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/16] iommufd: Introduce data struct for AMD nested
+ domain allocation
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, jgg@nvidia.com,
+ nicolinc@nvidia.com
+Cc: linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
+ joro@8bytes.org, kevin.tian@intel.com, jsnitsel@redhat.com,
+ iommu@lists.linux.dev, santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
+ jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
+ wnliu@google.com, gptran@google.com, kpsingh@google.com,
+ joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
+References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
+ <20251021014324.5837-9-suravee.suthikulpanit@amd.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <20251021014324.5837-9-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BMXP287CA0023.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:b00:2c::36) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQD8AOZduY4Fit3k@horms.kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|SJ0PR12MB6992:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1126f36e-2b4f-4b21-eaf2-08de1eec8d78
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q2h4dzhRbzlCRkNkeVArcElVSU54QjBkNWIrRTNKdmM3ZnE0Qk9QeGNYNlFn?=
+ =?utf-8?B?d1ZaUXpwRG9XT1ZSbXByK3AxSmhBZCtEaURmSnNPZWJRV2REVXRheEp0eVpH?=
+ =?utf-8?B?NW5EaFIrQ2VnUktZVTNVNzBEWm9kU2M4MEJtOVBXOFdVYUc5N0o1WWFVMEZx?=
+ =?utf-8?B?YVpRQStta3Z5R3dseHR4cjJsMVZaQ0pYeWVRR015TnNxc0pQeVpucTVVeThp?=
+ =?utf-8?B?YmVFY1RsMEloTGRTYWNRT3VKTTBxejRnR21JQzZTQWFmZlgrRW5TcUlxTEYv?=
+ =?utf-8?B?R3RsbmRkZXpGb1Z4NTY4azZia3NQZ1N2QUg3YmVSbUhxbnN5eXBKaE9VSk8r?=
+ =?utf-8?B?NHV6Y3dCNGgyY2NrSVpEb2dPVGY1S1UzRW5IR21ycjZ5VUJ0ODNnRkFsS3hh?=
+ =?utf-8?B?eVBWeXdsZkRLODVuRjdYdXBzQ1lDOTNUL3Q2UUU0T0NMZnpwNmpNdzVhc3Np?=
+ =?utf-8?B?WHpEMk80MitTUFJML042ZkZKNDdGUHRwcnR6TTFJWHRTZ3dWMXpqMXJZZTY2?=
+ =?utf-8?B?SEdKNkJLWUNwVmRnY1FiSjR3T1VoTG0yQXZwV2lIODZkVHhjbmpuZjV1V0FV?=
+ =?utf-8?B?TkNwaFMzamZsZVdENld3d0VXRkxTUDNhdlZua1poaW1HMEViSTF0UFlhRGRS?=
+ =?utf-8?B?WE9YbWVmVEdKK1RTaXk3RHYzWVdlYUlYYVNLY256RXYrYWV6cVRxQ1FkajFv?=
+ =?utf-8?B?Y09vWWxodmY2dFBkME1reXYrNE11eG5ZZEQrcjFUOG02cmNmcGNxUUFNTmd5?=
+ =?utf-8?B?UmVJZVF4VG9hNE5GQ1drelhKMHNpUHNnaG40S21hSk16VjZxUVB4bkJxWTRU?=
+ =?utf-8?B?TVZrd2ZuRlpRdjVKd1FrK0l5bHVHSjg3WGJxUDVVSFJOdXAzdlpiVG9FZWRG?=
+ =?utf-8?B?NWtadVVRMGNFaklqVWovekVoS0JpRzZuclpBbWhsZU9PaTZ4TUZzcU9jT1Jn?=
+ =?utf-8?B?QVZTQVc1SFFjSERyMmVhYW9oMTI0NEpGaHRNTWJmMlQ5VVgybFFaZSs0YVRs?=
+ =?utf-8?B?d2FteUQ3Q0hDVUNzV0tTWCtEVlVsQ3pBUWxyYTlsd0E1NkZnUGJzRGN3MmpD?=
+ =?utf-8?B?MTAzVmRrRElUT25iK1psYnJ0bFl2ZXBTYzZpWE5FNXFZVnBlZzBid1RxVWtp?=
+ =?utf-8?B?S0tFLzgwdVpvZnBScDlhN1MzemNiZ0Y5Q3ZBbVQxdlUxRGJSRzdIaVJ6RFkz?=
+ =?utf-8?B?NHEyeG1HejYvU1hmVUdiWWVYS3NLeURnOS9VOG5GZ1RRalR4SDdXRXJ1YnZ0?=
+ =?utf-8?B?TnB2SjRFTU5zcVNHTUdYbkN1WVhZbW5MbDFqUkVpUXczcnhpR3dWWno5RmRB?=
+ =?utf-8?B?endqR0hmSzRxdGhUL0RvSDc5cHNkVzBFWmQzR1ZZUUxkTGRKYkE2d1lRN1pD?=
+ =?utf-8?B?WlhpaUZ6eHg4Q3ZISmQ2c3lDeHpleHhoMW03ditFLzZXK3NkdTFzaG40U09y?=
+ =?utf-8?B?T2s4NFZnOEMzR21sRVIxTHFoRHJIQi9VcGdIUVZ0dng4d3BpNW9jaXhTZm1W?=
+ =?utf-8?B?d1VTaG9tTTh1c3NwWjVmUXVrSjFza0xBUmhZUDJrc09kWmRTcDNhdWk0YjJU?=
+ =?utf-8?B?Z0VYQXcwdlNMTDdKZ0k3Ni80UjlQQmZOQnFiODdzMVA3RU1VVHZmZklHcVps?=
+ =?utf-8?B?dkF0MW1Fa25LSmkzNU01elRWY2szbytiaEFtaFBXaW1rQWxyTk1vSFVMdVhl?=
+ =?utf-8?B?Uyttb3JkbEVDVkpQV282c2J4QXMwaVJVUzFmZUUwYTNlS0RqSDFkTU51NDZ4?=
+ =?utf-8?B?eEh5Y2pwRDZhUHNrbnE1ZDBVdTZxUUtVYXVEY01XWmVab29UNGYwUHNTa0Nh?=
+ =?utf-8?B?Qm1hTUY1ZmpWN2ZZQ283dDYvck5DeURlWWE2M0ErcitLU2t3ZHRFUkNlajRy?=
+ =?utf-8?B?WUZLUnNxei9ZQlBNZ0J5UFdzbVJzNWYwNm9VdVBBejd4U21uZDFvd0dNeTUr?=
+ =?utf-8?Q?eSRAjWuM/MU+xAI+HXOPDwVTolILnPt/?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QjBGNytFM0N0eG1JSGduQkRhTXdybUYvcjUvcGNzRElqUWhOd0k4Vlc1MEwx?=
+ =?utf-8?B?TFpLemZuK3BXblNNMjZuK1V1K0RHQ3FTcUN3VXR0U2cvSW92TXNoWnU1RTlJ?=
+ =?utf-8?B?RGIvR2MxbW43V20rLzd0TE9YSzgxd3FXd1loMkdDc1k4eWpUYy9OemMxQW1j?=
+ =?utf-8?B?MENZa2p6TWt5SWcxb294VU8yZUFiN215aHlXV0xoczBDZ3VXTGNwckhjd0Iv?=
+ =?utf-8?B?TVQ0MCtwVHU1dlVYb1BBVWRhY2RWUjUrSEh4eXdpNGlsdVpORTM2QzhaVjNu?=
+ =?utf-8?B?cUlJQ0M4ejIxV2wxbm9jWUdKemlFQUVLOUtwYUpuTk5BTm4zcnBQQnJvblJy?=
+ =?utf-8?B?c0dtRUt1RlRlNnFhQytyb1dOcy9Hc3lwZ2xIaGZ3RzNHUXBOdGNXdUFPbDY5?=
+ =?utf-8?B?SFFtb1Z1Z3ZjQUx2ZHVxVHMySXVzdnVPdEU0WG5OVG80eW85SHFMS3NOem9y?=
+ =?utf-8?B?RVh4UnhBa1RtSGJwZmxCS240WkYwRzBnc1psbHhZbnJGMy9HWXoxUVNTYyts?=
+ =?utf-8?B?eGVVU1gxSXd5QVJiOW1nc2NOYXBKRGZkdnhWSUcyckVFS0Y3aFdidjFNMGlT?=
+ =?utf-8?B?RVdGYVFQRU1TcGRPc3FrS3U2c1l6Z25XTE1CM2NvdTNScHYwbjFUaEpoM09P?=
+ =?utf-8?B?YVp5bU9WdWhteUtUWllUY3VkZ3VEa0liL1hCOGpYSzNCck5oeDIvMThURFJN?=
+ =?utf-8?B?NCs0emw2emhQWWlLWFdjRFVvRjVqaUFxQXNlN0hSTE9aZjFKUytwbHNaSEh1?=
+ =?utf-8?B?OHZMamVaKzgzQVk1WmJRQmNxT3JGcmgzbHNQT2NXT2xqVk96ZXdsS01RdU1s?=
+ =?utf-8?B?NDhvY1lmTmhPaHZnTmpUa01BekE2bjNEZ0JnQm1UbElXUlRLUzM2R1JkZTFo?=
+ =?utf-8?B?azZJWXk0Nm9yUS9Sek83WFlZM3lIRjBzbSt5cncwZU9WL3BQWURhcjdqcGhG?=
+ =?utf-8?B?N0RiMUl3VkJwNmwzSWhnUUtycDVZa05tVVQxa0pEMUlqNUlZekxBSENJU2py?=
+ =?utf-8?B?Rm43bCtpU1RYd2prMCtnTHNMdFdqdjhKUXM4dVU1TWVnRTNFeVl6eDFBaHh3?=
+ =?utf-8?B?UitEWWl4MHdieEFKQ0NYZE5xWVY0b3MxMmZVbE9FbzNGWWJLT2xsZDN6ZkhT?=
+ =?utf-8?B?WTJsd1ZRM0RDNlN1YUY0OFJkUW5PeUtNMVY2aWdPVTRmdk01Yi9qUmRLTG9E?=
+ =?utf-8?B?Z3pvdUtIQXpheWMwUUFDTkVqaWt1YytMTjZJQjhBSmZVZzlRbVM2YUpiRlJr?=
+ =?utf-8?B?eVNJaXhTZVcyMU9uaE5ITGVRWEYraTBCbWlxS3Z1Z3ZIeEdyUDMwV25tVWhP?=
+ =?utf-8?B?Q3Y0MS95UWhrOWZOMklNUVg3UWoyZ1pGUXA1TkRUUUxzbEQvajh6S25NM1Bx?=
+ =?utf-8?B?Qkg5OXBZOWh0dm1IWkpjektsMEFMWElVeE94MC9GNzdWRmUrOU1YanhGbElU?=
+ =?utf-8?B?R2hSVzNoSUZNZmpCTDdZWEM5aUkvTWNsdGg0R0c3MGFrdjk0RUtRTFRZVWhv?=
+ =?utf-8?B?V2l2dEQvcmZmSmVKdFZpd1NFR3JWUWRpZGs5UngvbWRXT3VGblJkZFdJcHZi?=
+ =?utf-8?B?eGZGc05ZMit6dlVXNlB0cWhNa2xPZHVFRi9jQmE4dHIzVExmendGT1RyOURY?=
+ =?utf-8?B?dGlyK2VtVUYzUzdvS2JMOHk5R0RCaUhpRWRlalV6ZkFJTFlPc0JPK2FYWXBy?=
+ =?utf-8?B?VlFNekxtaXlGc3YvMk10ZU1OQXdyY09iR0JKZi9wQktnWEJKak8vMVE1Z3pw?=
+ =?utf-8?B?Qk1mK0s0cDBSY3dGcm5qVEd4VGU3ZmlCalIxRHlvUEdSYnZZVFllZDhvd1FI?=
+ =?utf-8?B?d1NtVmNRUDV6TWRoZnROQk1tcUVDMkNyWHozV0xGMjdYMU1nSEZsNUNYazgz?=
+ =?utf-8?B?dzA4THZlLzNjM0MycG9IU0RHVGlhNGNMa1JzVUV6SllaN3lUZWNlSVRDVWhy?=
+ =?utf-8?B?NHFjalVlWEZEVzhZOGc5SXZxSG94aHRQYUJmdDh1N0lSUS91SUd0b0wvZ2lu?=
+ =?utf-8?B?d1l6azZDSU9uTjhOOGlJTXVpZkh2Q2RPTW5hS1c2OGZVZit6bGp2SmxXSzBF?=
+ =?utf-8?B?RmVZWlJ5c3RXUXZPeGM3M1pReGU2clFGR2psQ1F2Y0lYTitlMWRLL25UY1Fp?=
+ =?utf-8?Q?nzJcFQyC++drPcQeTNEeX0O7i?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1126f36e-2b4f-4b21-eaf2-08de1eec8d78
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 17:30:47.1206
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5GDDnKDkJfrYbd+XP+lII3iKZisAaOaUPxDNw9k8YrtS1n/aSucKU8+csPYqVICuJ4g18R3KYk67bpPZJXcVBA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6992
 
-On Tue, Oct 28, 2025 at 05:23:12PM +0000, Simon Horman wrote:
-> On Mon, Oct 27, 2025 at 10:38:56AM +0530, Ankit Khushwaha wrote:
-> > Some network selftests defined variable-sized types defined at the end of
-> > struct causing -Wgnu-variable-sized-type-not-at-end warning.
-> > 
-> > warning:
-> > timestamping.c:285:18: warning: field 'cm' with variable sized type 
-> > 'struct cmsghdr' not at the end of a struct or class is a GNU 
-> > extension [-Wgnu-variable-sized-type-not-at-end]
-> >   285 |                 struct cmsghdr cm;
-> >       |                                ^
-> > 
-> > ipsec.c:835:5: warning: field 'u' with variable sized type 'union 
-> > (unnamed union at ipsec.c:831:3)' not at the end of a struct or class 
-> > is a GNU extension [-Wgnu-variable-sized-type-not-at-end]
-> >   835 |                 } u;
-> >       |                   ^
-> > 
-> > This patch move these field at the end of struct to fix these warnings.
-> > 
-> > Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+
+
+On 10/21/2025 7:13 AM, Suravee Suthikulpanit wrote:
+> Introduce IOMMU_HWPT_DATA_AMD_GUEST data type for IOMMU guest page table,
+> which is used for stage-1 in nested translation. The data structure
+> contains information necessary for setting up the AMD HW-vIOMMU support.
 > 
-> Hi Ankit,
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+
+Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
+
+-Vasant
+
+
+
+> ---
+>  include/uapi/linux/iommufd.h | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
-> I don't believe this change is correct.
-> 
-> I think that the intention of the code is the char arrays (buf and control)
-> provide the buffer space for the variable-length trailing field
-> of the preceding structure. Where we basically have a header followed
-> by data. But your patch would place the before the header.
->
-Hi Simon,
-So if buf and control providing the buffer space, then i think it is
-better to suppress `-Wgnu-variable-sized-type-not-at-end` warning 
-within this block of code.
+> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
+> index efb52709c0a2..d111ee1dc572 100644
+> --- a/include/uapi/linux/iommufd.h
+> +++ b/include/uapi/linux/iommufd.h
+> @@ -455,16 +455,27 @@ struct iommu_hwpt_arm_smmuv3 {
+>  	__aligned_le64 ste[2];
+>  };
+>  
+> +/**
+> + * struct iommu_hwpt_amd_guest - AMD IOMMU guest I/O page table data
+> + *				 (IOMMU_HWPT_DATA_AMD_GUEST)
+> + * @dte: Guest Device Table Entry (DTE)
+> + */
+> +struct iommu_hwpt_amd_guest {
+> +	__aligned_u64 dte[4];
+> +};
+> +
+>  /**
+>   * enum iommu_hwpt_data_type - IOMMU HWPT Data Type
+>   * @IOMMU_HWPT_DATA_NONE: no data
+>   * @IOMMU_HWPT_DATA_VTD_S1: Intel VT-d stage-1 page table
+>   * @IOMMU_HWPT_DATA_ARM_SMMUV3: ARM SMMUv3 Context Descriptor Table
+> + * @IOMMU_HWPT_DATA_AMD_GUEST: AMD IOMMU guest page table
+>   */
+>  enum iommu_hwpt_data_type {
+>  	IOMMU_HWPT_DATA_NONE = 0,
+>  	IOMMU_HWPT_DATA_VTD_S1 = 1,
+>  	IOMMU_HWPT_DATA_ARM_SMMUV3 = 2,
+> +	IOMMU_HWPT_DATA_AMD_GUEST = 3,
+>  };
+>  
+>  /**
 
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wgnu-variable-sized-type-not-at-end"
-
-	struct {
-		union {
-			struct xfrm_algo        alg;
-			struct xfrm_algo_aead   aead;
-			struct xfrm_algo_auth   auth;
-		} u;
-		char buf[XFRM_ALGO_KEY_BUF_SIZE];
-	} alg = {};
-
-	#pragma GCC diagnostic pop
-
-I think this would be fine.
-
-Thanks
--- Ankit
 
