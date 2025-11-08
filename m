@@ -1,92 +1,171 @@
-Return-Path: <linux-kernel+bounces-891587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915FDC43014
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 17:47:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45206C43020
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 17:53:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C37D188AB02
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 16:47:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D46B74E3519
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 16:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225B521C163;
-	Sat,  8 Nov 2025 16:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD9D22F74E;
+	Sat,  8 Nov 2025 16:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gxvyVDo1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="A/N5y4PY"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E3E1A262D;
-	Sat,  8 Nov 2025 16:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6A0158874;
+	Sat,  8 Nov 2025 16:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762620446; cv=none; b=dJ/8NbAln96p1ky9avyHr1eQVy+8kS0xXbVPmOlyzbxngIti6ZK/6nUy8jZXt8zoOpGK/OGiFL5VU0/O85H8v/bZJEBWVUNQ533hX23hXJzw+AXVqOJTo62jOiWsmT7xQk99HgltBUKT8XoMlKV5RHvLMsSp99RE7fJYaKzsuwI=
+	t=1762620773; cv=none; b=Zh01wtKyxlJ5VS5Ggy/x/rBYvVHT2ILRgirQpg+4DdhBF6K1cWyVtK1SH1pyT38IuhRM8exJO8qKG0w29nei/0jZL45Piil8Pul+MRrAZUS1wP3+u/Kr9ntSI41tZr880VtdO0xWdkby/v7YvpMM6M4B1bjTCAHbjK1jT1aCbkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762620446; c=relaxed/simple;
-	bh=U9xaDAQiKEtdqRiUxXf+jkJqFleNQgrXm3B00EJk9jY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=adWQtUHJ4+I0uQJf51w30wOP/4qrVmaGR5uwOoQT33c+T6it6y34kTdXGeqd7kQhmy74FNn03ZaI5d6HdhigkwUBP3ITt2RumhY/vfHk7EtBs7RVtrYV+NUJ7n/yFSHLvpKRWpJ3OtmWHuFphFBBUwJ1hVEgHxMqGXUFMJAW1YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gxvyVDo1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA43C4CEFB;
-	Sat,  8 Nov 2025 16:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1762620445;
-	bh=U9xaDAQiKEtdqRiUxXf+jkJqFleNQgrXm3B00EJk9jY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gxvyVDo1dmbhZXPx7hxq+/HrVPkk7Kc5qQrB7x5mYVjMdlCaBOhfDZX1m+3xeKOui
-	 VzOyGeRM63eKiCjGHPv1/m5t7RFtp8kmoSUAUcH7s7WqHPDaUhswdYh84gc/3XbLXW
-	 IOva6olKK51Jq+1xZ8A5E/zabqEax8ie1v879nQk=
-Date: Sat, 8 Nov 2025 08:47:24 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, Huacai Chen
- <chenhuacai@loongson.cn>, Arnd Bergmann <arnd@arndb.de>, Kevin Brodsky
- <kevin.brodsky@arm.com>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
- linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH Resend] mm: Refine __{pgd,p4d,pud,pmd,pte}_alloc_one_*()
- about HIGHMEM
-Message-Id: <20251108084724.3e389b6597294900347b0476@linux-foundation.org>
-In-Reply-To: <CAAhV-H5C_Af72a5QcJs25qUMsJqO26=8oNvvLrJ7z+xHZh8oKQ@mail.gmail.com>
-References: <20251107095922.3106390-1-chenhuacai@loongson.cn>
-	<aQ4lU02gPNCO9eXB@fedora>
-	<CAAhV-H5C_Af72a5QcJs25qUMsJqO26=8oNvvLrJ7z+xHZh8oKQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762620773; c=relaxed/simple;
+	bh=ONTa+cHS9I/e+sqfzot1zE/bRY0nqRHXeJIm7rj1qSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fuRgqwibCUD/pUoXfzxBOstUBVdbsQmwnU2fk+3xKjttRKvvt1xXF18idFAjSvpoB2LdTKw1APDNj3BNypbfslhirsh/JJu4mEkUZSh+N7ftegOLaAnYReW52q6DfFtnSUMA2xnX5qm7CVy+613SF+imB8urfIv5UDu37bbeBFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=A/N5y4PY; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=2pOc/mV98yYfx/itftIN+rSXJdRkRrRhjmWi04usANg=; b=A/N5y4PYErNcOGS55WXfq5Ajsx
+	KQngsaLMh1cvty9+1VzdScBf9EyEbIR+o8Z5JwAbfO1+YiHanli9sCAsShFRkj+MBD76LJFGU9bY8
+	mKt5SlYXm55bVVQ8N4rl3cRuMnKvP9o+5la/4AUGLgeIRqxVSIpauGL1pdZLu9bO4ON05Kr59J3o9
+	pySYo7zXOzivyhYZtErX+PQrKYJmoNYN69QWTO7iVMRycmIepERWamZn6kDc5WbukPw28ptxR6CmB
+	zQrlWhcHC6/0cJTSlYfCdxvm+jTolCOibtvq66R1Tim608x5XPfzxVA8ZY5SAf+y9z6zbb0DKlSEL
+	8f24ghGQ==;
+Date: Sat, 8 Nov 2025 17:52:44 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: regulator: Add Fitipower FP9931/JD9930
+Message-ID: <20251108175244.0b51fac6@kemnade.info>
+In-Reply-To: <aa330123-e6d9-44ce-b030-b266cba1df9c@kernel.org>
+References: <20251107-fp9931-submit-v1-0-aa7b79d9abb6@kemnade.info>
+	<20251107-fp9931-submit-v1-2-aa7b79d9abb6@kemnade.info>
+	<20251108-vagabond-lyrical-hawk-ad3490@kuoka>
+	<20251108152114.53422ea6@kemnade.info>
+	<aa330123-e6d9-44ce-b030-b266cba1df9c@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, 8 Nov 2025 16:34:20 +0800 Huacai Chen <chenhuacai@kernel.org> wrote:
+On Sat, 8 Nov 2025 15:46:01 +0100
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> Hi, Vishal,
+> >>> +  fiti,tdly:    
+> >>
+> >> No, look at datasheet. What values are there? ms.
+> >>  
+> > Hmm, no to what? I do not understand your comment.  
 > 
-> On Sat, Nov 8, 2025 at 12:59 AM Vishal Moola (Oracle)
-> <vishal.moola@gmail.com> wrote:
-> >
-> > On Fri, Nov 07, 2025 at 05:59:22PM +0800, Huacai Chen wrote:
-> > > __{pgd,p4d,pud,pmd,pte}_alloc_one_*() always allocate pages with GFP
-> > > flag GFP_PGTABLE_KERNEL/GFP_PGTABLE_USER. These two macros are defined
-> > > as follows:
-> > >
-> > >  #define GFP_PGTABLE_KERNEL   (GFP_KERNEL | __GFP_ZERO)
-> > >  #define GFP_PGTABLE_USER     (GFP_PGTABLE_KERNEL | __GFP_ACCOUNT)
-> > >
-> > > There is no __GFP_HIGHMEM in them, so we needn't to clear __GFP_HIGHMEM
-> > > explicitly.
-> > >
-> > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > > ---
-> >
-> > I'm not really sure what "Refine ... about HIGHMEM" is supposed to mean.
-> > Might it be clearer to title this something like "Remove unnecessary
-> > highmem in ..."?
-> Yes, that is better, but Andrew has picked this patch, should I resend
-> a new version?
+> Please use proper units for the field expressed in the property name
+> suffix and possible values (enum).
+> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
+> 
+> You also need default.
+> 
+> > So I guess a bit what might be options to discuss here:
+> > - put raw value for the bitfield here (what is currently done).
+> > - put the ms values here (then I would expect a suffix in the property name)
+> >   We have the mapping 0ms - 0, 1ms - 1, 2ms - 2, 4ms - 3, so it is
+> >   not identical.  
+> I don't know what has to be identical. You want here 0, 1, 2 or 4 ms.
+> BTW, if you speak about driver complexity, getting register value out of
+> above is absolutely trivial, so not a suitable argument.
 
-Please just send along a v2 in the usual fashion.
+Ok, no problem with doing that trivial conversion in the driver.
+
+Playing around with dt-binding-check and add enums (and the -ms in a
+second step):
+  fitipower,tdlys:
+    $ref: /schemas/types.yaml#/definitions/uint32-array
+    description:
+      Power up soft start delay settings tDLY1-4 bitfields in the
+      POWERON_DELAY register
+    default: <0 0 0 0>
+    items:
+      - enum:
+          - 0
+          - 1
+          - 2
+          - 4
+      - enum:
+          - 0
+          - 1
+          - 2
+          - 4
+      - enum:
+          - 0
+          - 1
+          - 2
+          - 4
+      - enum:
+          - 0
+          - 1
+          - 2
+          - 4
+
+
+dt-binding-check accepts this, including the example. But if I change it to -ms
+as you requested, I get
+
+/home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: 'anyOf' conditional failed, one must be fixed:
+	'maxItems' is a required property
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'$ref' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'default' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'items' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	Additional properties are not allowed ('$ref', 'default' were unexpected)
+		hint: Arrays must be described with a combination of minItems/maxItems/items
+	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+	'<0 0 0 0>' is not of type 'integer'
+	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+/home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: '$ref' should not be valid under {'const': '$ref'}
+	hint: Standard unit suffix properties don't need a type $ref
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+/home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: 'anyOf' conditional failed, one must be fixed:
+	'maxItems' is a required property
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'$ref' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'default' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'items' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	Additional properties are not allowed ('$ref', 'default' were unexpected)
+		hint: Arrays must be described with a combination of minItems/maxItems/items
+	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+	'<0 0 0 0>' is not of type 'integer'
+	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+/home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: '$ref' should not be valid under {'const': '$ref'}
+	hint: Standard unit suffix properties don't need a type $ref
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+
+Leaving out the type $ref does not improve things much.
+What is going on here?
+
+Regards,
+Andreas
 
