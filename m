@@ -1,152 +1,107 @@
-Return-Path: <linux-kernel+bounces-891540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55647C42E24
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 15:19:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8997C42E27
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 15:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 312E44E7A4D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 14:19:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7CCFC349A89
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 14:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509021DFE12;
-	Sat,  8 Nov 2025 14:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175A61CAA7D;
+	Sat,  8 Nov 2025 14:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="XQwaLR2t"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtI3UR5x"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AB719005E
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 14:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0019B2AEF5
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 14:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762611538; cv=none; b=kik3kxtF+O6mpDDPj1MIf2s8dXFGrHu6BzoPNq/qGe+U6kGfY3fVk9PEY60SJCn3bXIZ2n6RgiVLZ0TS3H7BR7EmS9eiiFTT6RR+i+5d68NlRqlrO2FyiEvvjlqK0OhYmbr82913sPSOrIcP7j3gouZvrKiDlTxdYdLbPR9pDmA=
+	t=1762611662; cv=none; b=aIWGRQe3jilWtYZJhp2KiId2X1GSY1m7inaRZoiVK5ZWoZcFVqrHO0QvyDtibFRUnJCoI/8AsoSFRfTzpTByk6lPNISUlRS+2E3C+feFZM2aMxUxt1TwXWPPlzdcORgcWBRvzIBV5yA2CPwMDoxg5rJOPBykBy6OmOaoU3O2gVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762611538; c=relaxed/simple;
-	bh=ZAWBzX0a54WgVpMoNdpAYLQpNuDibi0QFmX+nolbDCI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gft/HKUKDpCZuBbgCmzdGEc5WGCFHVJApi3yyJUIOFbJch/k+nP4MzIo9uF645b8WK9mZgrIQAJ2152nzrrNOiAOdC6pJDBgQx/VU+JCly2BQG483Y1DGOCukSqOMjDXBsUQR51ifi1nF2WoVF7GYhPI3+PEsBMc+rx7mDW09bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=XQwaLR2t; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-294fb21b068so19193115ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 06:18:56 -0800 (PST)
+	s=arc-20240116; t=1762611662; c=relaxed/simple;
+	bh=ij1cTFyqZO7H3BNSWjRfp1q6pmZJMvuhnqWTP5Gmryg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eyoXhnWUijl9M5fYyDgcF13CmzjbT3CX9Tiz4cOXflj7pOOQatSJLflEZH8JXzR9UM4SIW3u0QBB6it9IfSA/ntHWwQHqn9kYN4Swe2FiizpBWGWVKcP3vGDkjLPRPdHmTSJTnV5iVRWPGBZiIeXC0rbKsRDqzNk3VSCMoy7eIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jtI3UR5x; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-57bd482dfd2so1458179e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 06:21:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vjti.ac.in; s=google; t=1762611535; x=1763216335; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+tbABRM++smOTjrYwL9jZfiTdA+E+dTcCgbmNoRiaFk=;
-        b=XQwaLR2ttw0M8ua5piQ8WtDLfYcdvTZle47NGDMPMfO3cEC+43YklzJZ5nDHSX9tiV
-         fpeWZXYu4IrNbRITV6z99r3KFUnl7W0pemw8yat7qJ/hOhxflYAQw1BtVkuDIHKw6TQ9
-         RNXTSmcjItd87oZ3jUzAraJfaTnGqhBM/uQno=
+        d=gmail.com; s=20230601; t=1762611659; x=1763216459; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IBNT01GDprpC+Qi0MaA9qnbmV4enoYxkVD224kY3WTQ=;
+        b=jtI3UR5xgdFqDzD9lUnOr9kIl1vRTX9RQTzNQ2CQySMt+SESCZ5R13jx8T3wsK9YKr
+         /3vs0/+MOnLTy3M0Vhbpv6fksVlJvIZ2hmME9xB5F0VVrhnn35onbZL6l0fq5x915+5t
+         Gx3Dia8Dlz+mB6WEo9e127Ox72U86YjVfa4OzFikdi9fohF9IDOl1w3601rXm7PGUj9O
+         eQEkKqsAol0tqnEzC6ZC6IQPOoS6dlSrueJDvwX/QT8wt2CNFBo6FRzv7ACYEj5jLm4R
+         N/Uht4ETrwtRIwIwoGV/EhTHMAH5oGoi+m12XzDmNYqMn8e5frWyiJrWFaeuU8wu7ZUi
+         5rvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762611535; x=1763216335;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+tbABRM++smOTjrYwL9jZfiTdA+E+dTcCgbmNoRiaFk=;
-        b=qOdon9sGUK+qv5M7QBZru5hL8QJ0eoU35ZfmGOubNqWWiwMDZjyLuaOQwUybfFmThM
-         qvXp3JmEtRUi7Saf1kNPtOND2rxPI+hZ8/wIVMEjHy8/vaDEj4WW8Ux/LcLuv/nGkj8E
-         gklJmm9PP6tYGbhf7GwMy59hkK39ivQGTZaLRqi6+9QdX9kB7ac+jlKN1GgUFGnpUmot
-         r8mXXHxkEsm7wecucRpoyA7PDLhdYym/M5qa7iUtdZGtiuwZrmIq1J5J992VK/w04F3j
-         SWwzc8He6meqf6ACKCjsSOUUZjXpZHnkEEKkcz/lYv4xDfVErGodCD76vxn5V5OEqqiW
-         hcZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNQs60kRSuSawxkTW0AjSx1MW3QDLVzknVUC7/P3u0StcWoa5WWpbHK2GydnvEkLsVXTOQFiA/1yfephA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqBljikrX4haLVYftYJiUVsJZtW40GgXaY+aNC+fAA+F+sc8Sm
-	TNO1oIcvP8h2WdJu92EcgRQ1/8dAcDovlEoMmqdgiRUI3QzzG+2mlgPHCE6O7QcTxVg=
-X-Gm-Gg: ASbGncuJM90LmYC+xySNiJNoVas2tVzmZsL2xWR5bWZbdHXWFsdHn4fiXGiABRJtSOC
-	JpP5DM2KoQToVBPqRrpESkdEFk53F8hCZH9B43828vmIt/NcjjkCpvoexOc39pltonDnm/xTmm3
-	3QtKTpNZ9XU23ATWgMeYaSp/fmKj0U+hVR3tCwsF2rqL59q16iQ6NuWf8v21YzO62+Mf0QLEPeS
-	do3cp9RSKi5KdDcowtuw13SbbKZ9BUz46ldizyztMLA57uYJKUeIhDiI+YmjmcQkSNIncvYLBj5
-	nVBlzd7147ZGQnwU8K0IFe0EgPt2Y1vYLqbxuti3d40tcYiz+qKEiWBxKe8NsjYVA+pXwuNya2E
-	OFPkyxeuLYZcc4JC86l5v4vGx9jR3qt57yoR7Xo5YpJ5HWO4QGiLlmn+x3TaMS1IDkmuH+PLw75
-	DWMYTsf0NoTnGHjpU7EIyojsCEP1lr4clEzOIk30bP+KTO
-X-Google-Smtp-Source: AGHT+IFCeb0OWUAtDUt6hRwnA2ps8eQb2CSjpBUF+IDZHNXFG8VCogkyWXts3NiibrXsnC+yerYFLw==
-X-Received: by 2002:a17:902:da4b:b0:295:557e:7465 with SMTP id d9443c01a7336-297e540a394mr32978555ad.11.1762611535569;
-        Sat, 08 Nov 2025 06:18:55 -0800 (PST)
-Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([2405:201:31:d016:940a:b59:9e93:d45a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650e5a33bsm91980345ad.47.2025.11.08.06.18.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 06:18:54 -0800 (PST)
-From: ssrane_b23@ee.vjti.ac.in
-X-Google-Original-From: ssranevjti@gmail.com
-To: shaggy@kernel.org
-Cc: jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	dsterba@suse.com,
-	david@redhat.com,
-	shivankg@amd.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
-	syzbot+e87be72c9a6fe69996f5@syzkaller.appspotmail.com
-Subject: [PATCH v3] jfs: Initialize synclist in metapage allocation
-Date: Sat,  8 Nov 2025 19:48:34 +0530
-Message-Id: <20251108141834.46428-2-ssranevjti@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251108141834.46428-1-ssranevjti@gmail.com>
-References: <20251108141834.46428-1-ssranevjti@gmail.com>
+        d=1e100.net; s=20230601; t=1762611659; x=1763216459;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IBNT01GDprpC+Qi0MaA9qnbmV4enoYxkVD224kY3WTQ=;
+        b=SZ7oSRfsKFC942VkCMqEPca5VxdnJQoPy41hdaa4CsJpQJAE4kHMIssi1SZv/Z71TU
+         4y3wEm8JPFpHmrj1Xx6FhFAnGNrPNp17Qvnuw2FZ+CjLgBMXff5TtqHyNgxJYPcGzTWk
+         rqh7izRyHMVU5QeZ1O+hvYQzXIEOu4/R9rL+2F5EfiLTuwT4m2/k91EvfEI5Cf4F1iw9
+         jZIfLcEfD03ccvNAkepWu7frF2HMvn1EhBlRgIwpBLa25foWU16vi77f65QURAajziyT
+         mTGYkuNmgLTYhwtpgVP1CtoKCdR77f1jx5Pvi+CC4PY5yMChm+K/WRcZx+bdYJyGOACg
+         mihQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVokx88DnBkNFPQTnD24GxiboMvdS07ZqJ2R2APRSJqfME6jbEiucMgTYimQZ/VdTdX2qpEwePFH4dcS34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV4LmU3xCKnZGrOq4DWiwYtdaAgcHZu5+ncr7Hk4vQaQ0gXoIx
+	UQNVsoAPm14Mf8p/NhOLnkMjvuxktbKKRHTdhZ/t+bE8AymH+TgUEJYb
+X-Gm-Gg: ASbGncuu2LtYS0kFoJYuO9sd+zc1mpelz8Bv4+4p8mJ+DX9eCuxbitES350ZxBP51wu
+	GtMr7tEbVFkxuCLbOS1ZDFe/DNgJaJOGTV89pJI0MxtgxtAIQUIPvG6h/8t43QnSh8xLuv88I8r
+	ngFQjTfUb27MOJjsIiVAws3x3VrsEuldp6+E8Q5FN/avhT8nuRVzk/kxCqb0OLF29z06uy+b3MS
+	tu1usY5YPbdkP/8S+FzSgHEtZPWjrmQroPsjwG34pHgjLwgp/9UcZURvx+xxPfV+MB3NemHrKS/
+	MRB7LpokM5ZUHuYUMioJHYVPgH+uJxFFDf+qcCQGG1OpZHbyshM/rl8RFzaWPIVqBDuwUyePu7l
+	ZdrlCvoL5n1UBfw382jOolJ+Us9CVXXQbqVmN9J6nLHE5pM3zSBYEvtMhsf+Lf6+cbWcWcWeZf4
+	SyC2zlarCv58ozDS6y/Np8ct0Yf+uv9+CyH2k=
+X-Google-Smtp-Source: AGHT+IGoGdgHNMOSPUHByNnptn2TL0lkoETjbMxJoanNwJoIHOZACq/hw0H4JSSe8EX3c/O5QzR0WA==
+X-Received: by 2002:a05:6512:39ce:b0:594:2a0f:916f with SMTP id 2adb3069b0e04-5945f1db54bmr639319e87.43.1762611658855;
+        Sat, 08 Nov 2025 06:20:58 -0800 (PST)
+Received: from [192.168.1.89] (c-85-228-54-30.bbcust.telenor.se. [85.228.54.30])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a590d44sm2196799e87.91.2025.11.08.06.20.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Nov 2025 06:20:58 -0800 (PST)
+Message-ID: <6b1743d4-cd9b-13ca-af00-f62c7f54cd82@outbound.gmail.com>
+Date: Sat, 8 Nov 2025 15:20:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+From: Eli Billauer <eli.billauer@gmail.com>
+Subject: Re: [PATCH v2] char: xillybus: add WQ_UNBOUND to alloc_workqueue
+ users
+To: Marco Crivellari <marco.crivellari@suse.com>, linux-kernel@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Michal Hocko <mhocko@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20251107163755.356187-1-marco.crivellari@suse.com>
+Content-Language: en-US
+In-Reply-To: <20251107163755.356187-1-marco.crivellari@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+That's fine with me.
 
-The synclist field in struct metapage was not being initialized during
-allocation in alloc_metapage(), leading to list corruption when the
-metapage is later added to a transaction's sync list.
+Thanks,
+    Eli
 
-When diUpdatePMap() calls list_add(&mp->synclist, &tblk->synclist), if
-the synclist field contains stale data from a previous allocation (such
-as LIST_POISON values from a freed list node), the list debugging code
-detects the corruption and triggers a stack segment fault.
-
-This issue is intermittent because it only manifests when recycled
-memory happens to contain poison values in the synclist field. The bug
-was discovered by syzbot, which creates specific filesystem patterns
-that reliably trigger this uninitialized memory usage.
-
-Initialize the synclist field with INIT_LIST_HEAD() in alloc_metapage()
-to ensure it's in a valid state before being used in list operations.
-This is consistent with how the wait queue is initialized in the same
-function.
-
-Reported-by: syzbot+e87be72c9a6fe69996f5@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=e87be72c9a6fe69996f5
-Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-
----
-Tested:
- - Tested locally with syzbot reproducer, no errors observed
-Changelog:
-- Correct bug link
-- Corrected patch format
-
- fs/jfs/jfs_metapage.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 871cf4fb3636..77c512a0a42b 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -269,6 +269,7 @@ static inline struct metapage *alloc_metapage(gfp_t gfp_mask)
- 		mp->data = NULL;
- 		mp->clsn = 0;
- 		mp->log = NULL;
-+		INIT_LIST_HEAD(&mp->synclist);
- 		init_waitqueue_head(&mp->wait);
- 	}
- 	return mp;
--- 
-2.34.1
-
+Acked-by: Eli Billauer <eli.billauer@gmail.com>
 
