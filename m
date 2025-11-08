@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-891476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B01BC42BD5
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:26:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56739C42BDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:29:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 168193B23C7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:26:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14D213B23FB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9240B2D1F6B;
-	Sat,  8 Nov 2025 11:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824AC2BE7A6;
+	Sat,  8 Nov 2025 11:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T699YqCb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bC1KNeew"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ED020DD52;
-	Sat,  8 Nov 2025 11:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65B6155CB3;
+	Sat,  8 Nov 2025 11:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762601195; cv=none; b=Av32yVgekQ2RU9HaCQF0ECh2wRmSUuySyNJp7QUNheYDC/z9yBhZurG5X8j4YnzaZgcKV1hqG3L9iiIJWrWSY9/qzW466wp09VkO34WJJ2Ycn0XmMsSYobTtPgHFb2XRr1FXoK478voC1smosgksOYNo1yujZfJJYTxlWC4HpiI=
+	t=1762601354; cv=none; b=I+z6ayckliubamwtjXhbVLLDlVlkPg/OyqB5A1543Sjo2vBkBNjx6xAeDvb3n2a25+UTQ6qy3OOxnw88EueYBGfJ4iBdXoR+wSdXEX30FWIXLBKSjdmbNcSsfUVNUXLiG5fEtDE84fDI+dObV/uQIJ9rIjV0OVy5yDqbUNN9v0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762601195; c=relaxed/simple;
-	bh=HU6FgD0DJ/ymU2+QSIP44dKgS7zHuvPe6UBvGgmatA8=;
+	s=arc-20240116; t=1762601354; c=relaxed/simple;
+	bh=vjeiEnAUZJfUFBgQYurxvhjSdDEvzlB44+vT/IR595I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cSWMY/5PIaeh1npxFA36sSaEd34sDehaFpbLveN83MYsHSsTSFiG7zet3f9HgYSunnaWWtzCVP2ZDZ5w3q2XTiXeO8UaI1ElrzUBHS/LEAJaec6lNE52ZCyaMp4Qtv04sSV+fMbeW2wYTGd/h1A6uZbrb8GWkXOq/Uw+uHGlHK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T699YqCb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3495FC4CEF7;
-	Sat,  8 Nov 2025 11:26:31 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=r0FsKpSu8tVASdY5AgcFnrFOHP1UWm4UHmjz7P8CxKmD7TAteDJtLqVN94Pjx4HFpXEMTzzqA1TXcoycK5x/0UpB/nPv/iQwpm+5ICurvBkG44blZScUAbls5JSi2PCML8CBFzDA359ymMjQusPS4FY9Gy9FkjNkPFqoa8DePvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bC1KNeew; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1481C116C6;
+	Sat,  8 Nov 2025 11:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762601195;
-	bh=HU6FgD0DJ/ymU2+QSIP44dKgS7zHuvPe6UBvGgmatA8=;
+	s=k20201202; t=1762601354;
+	bh=vjeiEnAUZJfUFBgQYurxvhjSdDEvzlB44+vT/IR595I=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T699YqCbPe0RiYQcZV3eqEkceP6Mf+H3aJ5nH97oHxQ9Yh9OvPXbK16cOwtRu66Tt
-	 x3nG9Xhh+EadKohkzk4sSKjeRC36gpFMtbMfWNjb1HZEjYM9glKgNtSaKG6qds2nap
-	 1HdVndjrzlpxGH4kJwhdhI754Fy2QgaMlZJsxI+6G1PmoOBjJ+PI0ELMTS53VLdwLF
-	 2ATgcPgUWnb6g1JveXheEnpjmkd298dcYj6Zsy+HrbY86rUO+D02alaTVtp6TDeJQ/
-	 r7/K+J1E/yIhKtMMLrc1XPVd/mVesIWU3PwgcH7Ccus8wE1pI5upVilvc3MVzQg2IE
-	 E6HpwlY0OM52Q==
-Message-ID: <dedf91bd-f182-4bf1-a351-6e1c29e90010@kernel.org>
-Date: Sat, 8 Nov 2025 12:26:29 +0100
+	b=bC1KNeew6BfMuEPXc8tgSNyIL90oXwT4gwvJ4R/qJTzs6TDNaEh2g8Bn6CtcuLxTx
+	 aj9senqAMVXw3SkdetbhDpbIdim/EbMk9eqqIvJvBGJAXdBRFTtnL/yThmayIYuRoD
+	 SJRdzpb6ucFl5oPOE/k94XHRsq0rr46SrCuDMn8y3hj2CaVTvy+uNx9P12uwh8gDUt
+	 VyahIpBX/ItZGcsNfEg0NmbVqBb1o37d0hckeHj4XZf4Xxl8H3ipf1iGpbFB14K9d8
+	 xsnJNNyMUxsGq6bnjeP4oXCMJzCbg/kqL5ryN+s1smZ7uHCGFEse//x1iB6am0kx8g
+	 1rfA8FloYjFUw==
+Message-ID: <e98a1e59-f3ff-4e9f-a180-79aea9943236@kernel.org>
+Date: Sat, 8 Nov 2025 12:29:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,27 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/12] dt-bindings: panel: Add Samsung SOFEF00 DDIC with
- panel
-To: Casey Connolly <casey.connolly@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, David Heidelberg <david@ixit.cz>
-Cc: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org
-References: <20251104-sofef00-rebuild-v1-0-dfcfa17eb176@ixit.cz>
- <20251104-sofef00-rebuild-v1-1-dfcfa17eb176@ixit.cz>
- <20251106-enlightened-centipede-of-tempering-3cfa50@kuoka>
- <be1b6e34-40ab-4587-8dbe-84e08bf83dcb@linaro.org>
- <108b8631-6d92-4b2f-a59d-3c9e0c607e5d@kernel.org>
- <db9ea6f8-810e-4143-9e09-84536145999a@linaro.org>
+Subject: Re: [PATCH 1/3] riscv: soc: re-organized allwinner menu
+To: gaohan@iscas.ac.cn, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Yixun Lan <dlan@gentoo.org>,
+ Drew Fustini <fustini@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Guodong Xu <guodong@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
+ Joel Stanley <joel@jms.id.au>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, Han Gao <rabenda.cn@gmail.com>
+References: <cover.1762588494.git.gaohan@iscas.ac.cn>
+ <d17a3a01e2b1297538c419b51953f9613426ba42.1762588494.git.gaohan@iscas.ac.cn>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -115,55 +111,45 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <db9ea6f8-810e-4143-9e09-84536145999a@linaro.org>
+In-Reply-To: <d17a3a01e2b1297538c419b51953f9613426ba42.1762588494.git.gaohan@iscas.ac.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/11/2025 14:10, Casey Connolly wrote:
+On 08/11/2025 09:20, gaohan@iscas.ac.cn wrote:
+> From: Han Gao <gaohan@iscas.ac.cn>
 > 
+> Allwinner currently offers d1(s)/v821/v861/v881 on RISC-V,
+> using different IPs.
 > 
-> On 11/7/25 12:27, Krzysztof Kozlowski wrote:
->> On 07/11/2025 12:23, Neil Armstrong wrote:
->>> On 11/6/25 09:48, Krzysztof Kozlowski wrote:
->>>> On Tue, Nov 04, 2025 at 11:16:09PM +0100, David Heidelberg wrote:
->>>>> Basic description for S6E3FC2X01 DDIC with attached panels
->>>>>
->>>>>    - Samsung AMS601NT22 6.01 inch, 1080x2160 pixels, 18:9 ratio
->>>>>    - Samsung AMS628NW01 6.28 inch, 1080x2280 pixels, 19:9 ratio
->>>>>
->>>>> This panel has three supplies, while panel-simple-dsi is limited to one.
->>>>> There is no user of this compatible, nor the compatible make sense.
->>>>
->>>> There are. git grep samsung,sofef00, gives me two users.
->>>
->>> Hmm, on -next I only see a single one:
->>>
->>> $ grep samsung,sofef00 arch/*/boot/dts/ -R
->>> arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts:  compatible = "samsung,sofef00";
->>>
->>
->> These are the users:
->>
->> arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts
->> drivers/gpu/drm/panel/panel-samsung-sofef00.c
->>
->>>>
->>>>> Remove it from simple DSI panel definitions.
->>>
->>> Can't you mark is deprecated at first ?
->>
->> Not sure what would be the benefit here. There is no negative ABI impact
->> here.
+> d1(s): Xuantie C906
+> v821: Andes A27 + XuanTie E907
+> v861/v881: XuanTie C907
 > 
-> If we want to acknowledge the potential scenario where someone is 
-> booting a newer kernel with an older DT then we should keep the old 
-> compatible in the driver right? And marking it deprecated in bindings 
-> would make sense.
+> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+> ---
+>  arch/riscv/Kconfig.socs | 22 +++++++++++++++++-----
+>  1 file changed, 17 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> index 848e7149e443..7cba5d6ec4c3 100644
+> --- a/arch/riscv/Kconfig.socs
+> +++ b/arch/riscv/Kconfig.socs
+> @@ -54,14 +54,26 @@ config SOC_STARFIVE
+>  	help
+>  	  This enables support for StarFive SoC platform hardware.
+>  
+> -config ARCH_SUNXI
+> -	bool "Allwinner sun20i SoCs"
+> +menuconfig ARCH_SUNXI
+> +	bool "Allwinner RISC-V SoCs"
+> +
+> +if ARCH_SUNXI
+> +
+> +config ARCH_SUNXI_XUANTIE
 
 
-We are not talking about removing compatible from the driver. If by any
-chance we do, it is not explained here in this commit msg and would be
-obviously a no-go.
+You should not get multiple ARCHs. ARCH is only one. There is also not
+much rationale in commit msg for that.
 
 Best regards,
 Krzysztof
