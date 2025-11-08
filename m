@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-891292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77216C425BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 04:22:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C75C425C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 04:23:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579E43A4296
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 03:22:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 175C94E2CA6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 03:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7852D3EC7;
-	Sat,  8 Nov 2025 03:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2B42D29A9;
+	Sat,  8 Nov 2025 03:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+SBLtMy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="WYG3dmFb"
+Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5496825DD1E;
-	Sat,  8 Nov 2025 03:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57B9253956;
+	Sat,  8 Nov 2025 03:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762572114; cv=none; b=sAsGO5tkfdo5dB1P2JEe2HBRCCql5I9aafFeNzA8nhHQB3e0l0MByT7AicU5azaoRtV1D7uuHUrwGR+HliiIOExjRypx7hfq0lI2q0iNZAaKj0N7lGD0wUe9DGtet5YXKUlh3UNP9jmr2PI++YB+31xTDoJkuhDCFCjnRRRUnrw=
+	t=1762572185; cv=none; b=ioDx3WaRq5WveBuifKjyIKY+JGpd6M4yi5Hqh6XSyfEhNIVoTpbxWxPkfXo2GxwDAn3qtTOXKSqqWIFEK/d5NQ7st11D0x9jp9oJIfmaFw8GsTFvmZbBWWr9uGBxQs45GtsvLmjS2nM3ylnPjWSeEs/N4mtt/K9mEpawzwLs6KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762572114; c=relaxed/simple;
-	bh=Trogj8VamHHp9plhkDe9guXWe6JH2JI/+sIFCkZ0L9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=otT8B4dcB0LEtOFayFKU+H/xzrmV8pDO+ZPJEARxyjISwXiZQ6uCOv+ofuGu1yDgAn/nhSI2deYjuAS29hlxlDitp47/vkh34iW/80EuOD5nCGpEpZouVfM/DQR38oXqEWZRXU7CjwsMbxkFFXTpXD253P6GVI0UwdUAXLO/E+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+SBLtMy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21339C4CEF5;
-	Sat,  8 Nov 2025 03:21:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762572114;
-	bh=Trogj8VamHHp9plhkDe9guXWe6JH2JI/+sIFCkZ0L9U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e+SBLtMyyFoz+yvZCgpojZHM28OaeqVsPa4JiKI1IKoMc6Vxv0OPgn3p0A9vOx2tZ
-	 qJnQGe2I4ViO3qdC5F8f4jpO5njpHOnTQuqTjyZZxbeyIt3WzUeJ/7Uu2NuKWrCAq9
-	 aVN307fp1cnsaF9Fcza+7yjrMrX7etz2IXcbVt5+srG9hX79+SXP/0aHStEybHxbOE
-	 rYCUHUZherovMknSiBYPJFEP8Bg23kraGugR+c/CfQ9wo9Ato/ibbtG2bOmwW6Cb5q
-	 EjySuZljMKb750xbok4b0zZFGgzugo7zwEzQIkTtDR3NO1zkbhdf3wsnP/OkJkx1/s
-	 cOVEAQWyTjDIg==
-Date: Sat, 8 Nov 2025 08:51:43 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH 1/4] dt-bindings: connector: Add PCIe M.2 Mechanical Key
- M connector
-Message-ID: <g6me3bgstp7pooylyiexv3u3gg7c6v4bbxuukjsqw6avd77ki3@usokcdmyl7i6>
-References: <20251105-pci-m2-v1-0-84b5f1f1e5e8@oss.qualcomm.com>
- <20251105-pci-m2-v1-1-84b5f1f1e5e8@oss.qualcomm.com>
- <20251106-legibly-resupply-1d3cef545229@spud>
+	s=arc-20240116; t=1762572185; c=relaxed/simple;
+	bh=3db6kDgcp6ZBaCWoMiT07aEdoBIn2fyq56Cj1ZzUUFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=htOrC64EhXw9vZNFVO5V4ujZZnZ+jgzFK87Ob8P09wrDd483LWE8Xcoynhc9NAGsSKH+TRPXmmSLe417TzT8l8GrBfXHyvYi/3ZLzNsBtqILitNi9ssyRHYsf4r34FRdqh0ENOAsmuj8OfOsPNAL8pm6eJQMslxcJJ/JCTuElco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=WYG3dmFb; arc=none smtp.client-ip=113.46.200.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=qZpdxuNaZJ5yTrvmKWL9bmcWjXTZFnV3j45z8dY7gZo=;
+	b=WYG3dmFbG8rzR/MN5MvXPHAcQZowG4JneABCdOdvePd0iFkkb4zAHegLxioAyhiAdD703l7Jn
+	mxY8fVF2zjY3X8SV23ant75X/iLdJT9pAOguu6oKemTSKGqugFwfSPYtFRQj4tCq7m9CX2wxHTB
+	XSugBg9Q17r3T1oGSAMVO1U=
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d3Lmz0SyfzpStp;
+	Sat,  8 Nov 2025 11:21:23 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 83D16180B69;
+	Sat,  8 Nov 2025 11:22:58 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 8 Nov
+ 2025 11:22:57 +0800
+Message-ID: <e564bcc0-c4ea-466c-b6a9-5bce5406c475@huawei.com>
+Date: Sat, 8 Nov 2025 11:22:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251106-legibly-resupply-1d3cef545229@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: clear i_state_flags when alloc inode
+Content-Language: en-GB
+To: Haibo Chen <haibo.chen@nxp.com>
+CC: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+	Zhang Yi <yi.zhang@huawei.com>, Jan Kara <jack@suse.cz>,
+	<linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<imx@lists.linux.dev>
+References: <20251104-ext4-v1-1-73691a0800f9@nxp.com>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20251104-ext4-v1-1-73691a0800f9@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On Thu, Nov 06, 2025 at 05:57:17PM +0000, Conor Dooley wrote:
-> On Wed, Nov 05, 2025 at 02:45:49PM +0530, Manivannan Sadhasivam wrote:
-> > Add the devicetree binding for PCIe M.2 Mechanical Key M connector. This
-> > connector provides interfaces like PCIe and SATA to attach the Solid State
-> > Drives (SSDs) to the host machine along with additional interfaces like
-> > USB, and SMB for debugging and supplementary features. At any point of
-> > time, the connector can only support either PCIe or SATA as the primary
-> > host interface.
-> > 
-> > The connector provides a primary power supply of 3.3v, along with an
-> > optional 1.8v VIO supply for the Adapter I/O buffer circuitry operating at
-> > 1.8v sideband signaling.
-> > 
-> > The connector also supplies optional signals in the form of GPIOs for fine
-> > grained power management.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> >  .../bindings/connector/pcie-m2-m-connector.yaml    | 121 +++++++++++++++++++++
-> >  1 file changed, 121 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..2db23e60fdaefabde6f208e4ae0c9dded3a513f6
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> > @@ -0,0 +1,121 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/connector/pcie-m2-m-connector.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: PCIe M.2 Mechanical Key M Connector
-> > +
-> > +maintainers:
-> > +  - Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > +
-> > +description:
-> > +  A PCIe M.2 M connector node represents a physical PCIe M.2 Mechanical Key M
-> > +  connector. The Mechanical Key M connectors are used to connect SSDs to the
-> > +  host system over PCIe/SATA interfaces. These connectors also offer optional
-> > +  interfaces like USB, SMB.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: pcie-m2-m-connector
-> 
-> Is this something generated from a standard that's going to be
-> practically identical everywhere, or just some qcom thing?
+On 2025-11-04 16:12, Haibo Chen wrote:
+> i_state_flags used on 32-bit archs, need to clear this flag when
+> alloc inode.
+> Find this issue when umount ext4, sometimes track the inode as orphan
+> accidently, cause ext4 mesg dump.
+>
+> Fixes: acf943e9768e ("ext4: fix checks for orphan inodes")
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
 
-This is as per the PCI Express M.2 Specification, nothing Qcom specific.
+Looks good. Feel free to add:
 
-- Mani
+Reviewed-by: Baokun Li <libaokun1@huawei.com>
 
--- 
-மணிவண்ணன் சதாசிவம்
+> ---
+>  fs/ext4/ialloc.c | 1 -
+>  fs/ext4/inode.c  | 1 -
+>  fs/ext4/super.c  | 1 +
+>  3 files changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+> index ba4fd9aba1c14de56b89ebbeb4597f7becf947ff..b20a1bf866abedf3a768ee8a147f108ea09ecb01 100644
+> --- a/fs/ext4/ialloc.c
+> +++ b/fs/ext4/ialloc.c
+> @@ -1293,7 +1293,6 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
+>  		ei->i_csum_seed = ext4_chksum(csum, (__u8 *)&gen, sizeof(gen));
+>  	}
+>  
+> -	ext4_clear_state_flags(ei); /* Only relevant on 32-bit archs */
+>  	ext4_set_inode_state(inode, EXT4_STATE_NEW);
+>  
+>  	ei->i_extra_isize = sbi->s_want_extra_isize;
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index a163c087137314c541ec10c011488c5392fb7011..bf6786d373ff57c32d5a84cfd73ea8a33cb68b16 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5285,7 +5285,6 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+>  	ei->i_projid = make_kprojid(&init_user_ns, i_projid);
+>  	set_nlink(inode, le16_to_cpu(raw_inode->i_links_count));
+>  
+> -	ext4_clear_state_flags(ei);	/* Only relevant on 32-bit archs */
+>  	ei->i_inline_off = 0;
+>  	ei->i_dir_start_lookup = 0;
+>  	ei->i_dtime = le32_to_cpu(raw_inode->i_dtime);
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 33e7c08c9529c357d291f40269863398753dc650..3dcc9410c09a55d5dce2dbff388a97bf4f133818 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -1396,6 +1396,7 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
+>  
+>  	inode_set_iversion(&ei->vfs_inode, 1);
+>  	ei->i_flags = 0;
+> +	ext4_clear_state_flags(ei);	/* Only relevant on 32-bit archs */
+>  	spin_lock_init(&ei->i_raw_lock);
+>  	ei->i_prealloc_node = RB_ROOT;
+>  	atomic_set(&ei->i_prealloc_active, 0);
+>
+> ---
+> base-commit: 9823120909776bbca58a3c55ef1f27d49283c1f3
+> change-id: 20251104-ext4-3f9647dcedd0
+>
+> Best regards,
+
+
 
