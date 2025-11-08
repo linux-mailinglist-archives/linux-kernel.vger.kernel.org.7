@@ -1,60 +1,56 @@
-Return-Path: <linux-kernel+bounces-891514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD5CC42D35
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:12:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A376CC42D3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:19:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D323ACFE4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406F83AED86
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE351A4F3C;
-	Sat,  8 Nov 2025 13:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793D91B983F;
+	Sat,  8 Nov 2025 13:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TpGI1R2q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XM+atdce"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9D51891AB
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 13:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52C534D3BC
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 13:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762607544; cv=none; b=Frfk8TwB0X1OwZfQgUFl7aU+E6rw16TX66OSoIR4PeQu4NYFuxDCPEwvnJ1T3Dso0uzSj5ap7LzRMqHqd3Om1hnpNGilqRw8mdqfgA7ZnDKVe+MsBGn8/cNkWMU5/BfnGzgKfDggOYfT3S8xrsIKR4YUcgQRmIh/WFRu8XXWfwQ=
+	t=1762607989; cv=none; b=Q71HuGWHe2N7USQQHLMwsjTh1gbU3xJGyIMKyg5f1BqoNvEU61b+MG+r5JYZF9KLuPAonyb0IXsrJbBPBBxads4gEnm7cwL6Ny/n+Pnzxe8ktYc3CxvJwXF/Inz7t/E4PdUnQaXalLFBS8TTPIkYZ9H3ewwltFFKm+HByH1G7/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762607544; c=relaxed/simple;
-	bh=PXJiQY4ILAQ5DLy4e0aKa19QrLr+vIBtDAgOMtJG6Wk=;
+	s=arc-20240116; t=1762607989; c=relaxed/simple;
+	bh=bRWXV5qbG2/QcLXbEaYSXCrIde9aHS0caKKlLFie6t4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nOCSe0uhWaNtyp89oB0M2z5nMr7XBLWElt8+SIVXlfFBWhHKpUT/zB6ork16OV++kRZHrzqBVIuTasL3Ihp6pK55rrOFIhpQKCD0cYuhI+pO9lz7jmQBmGFOoEw2qnbgIYm49EoR6cjMz7nvv+J21i7gcm5CTMTIqWZMjwR8Bjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TpGI1R2q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE35CC116C6;
-	Sat,  8 Nov 2025 13:12:21 +0000 (UTC)
+	 Content-Disposition; b=Pm0cCa/cN9+FARLtv2CUc5l5yHgTaFARuqBbvjIY9xh1DI/7vd37aYmqI0YyMrgfteHDfYoAi2yYiPiCuR6c+UmOHKV+TgTqYZqT1gsnOXBDVP0RZjArwD6aMJ2nA4+pukiktvbZvpDc3CJmqX0QNw0mlsaE3Hm/FwQ5lOJZFEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XM+atdce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3663FC4CEF7;
+	Sat,  8 Nov 2025 13:19:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762607544;
-	bh=PXJiQY4ILAQ5DLy4e0aKa19QrLr+vIBtDAgOMtJG6Wk=;
+	s=k20201202; t=1762607989;
+	bh=bRWXV5qbG2/QcLXbEaYSXCrIde9aHS0caKKlLFie6t4=;
 	h=Date:From:To:Cc:Subject:From;
-	b=TpGI1R2qeiH5rzzNGRp/ga0OQkyG6VsdtfuLJYeBGoVB6Sutt6iICFyZ7F+ntHMqj
-	 glUYRIbRRGU3x0c0pZiBFmbcSs5WJZtMbfA23TmW4wLzm/uUAQoYCEIYFRaVUPGgtM
-	 JQPTFEcRtUGfg5uI/Orkgpx0XmgOTPPUpa+yt4h9RD/UqnZfrfkF9lqWAZA61ySAXI
-	 e1WfzaOJE5b+/HT1mubxAP678X0VVHuhuuj8DhsdjxPx2CINr3eiuldP7GZ321m8cb
-	 jvEKUrEXUQexIVlCy4r7V6dZciB93Zr6dbroCXb89u6qEcUCvzHX6kzXHq7o30DqbN
-	 HHs6J8q24OPWg==
-Date: Sat, 8 Nov 2025 14:12:17 +0100
+	b=XM+atdceLWO7fGKMCtpCXmsxxrRg8zcS+NIQeSlo5cMbyXDuiydztBVMf+rjMfMKd
+	 h0bVmbVit88nyHtNMEQyzjfS7J0tMAUuw39BN6oqxp48LKbsrzDyrT0uFjDL7ULGoJ
+	 MIeZkx+D+RAzkLPtpNbP8AQzmNpKn82XPPUF11jjqybHi4O2VEQGCb5tsGdNT2QktI
+	 VkwZmxfQEiFZgn1khsoEeZRvFn3kF0pKxdtRgO7qaVX4Ts4qwpPE8BSryStegbwWc/
+	 /guXyDxguewTL5NU2VKmzU3LshBovGKFUqyKRQS4Iv2whHU6RUp22AQfhT7FQMLlJT
+	 vUduH3A79mnsQ==
+Date: Sat, 8 Nov 2025 14:19:42 +0100
 From: Ingo Molnar <mingo@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [GIT PULL] scheduler fix
-Message-ID: <aQ9BsTHEl9jdRtUm@gmail.com>
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [GIT PULL] x86 fixes
+Message-ID: <aQ9DblCt0YOn09Bd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,69 +62,39 @@ Content-Disposition: inline
 
 Linus,
 
-Please pull the latest sched/urgent Git tree from:
+Please pull the latest x86/urgent Git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-2025-11-08
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2025-11-08
 
-   # HEAD: 956dfda6a70885f18c0f8236a461aa2bc4f556ad sched/fair: Prevent cfs_rq from being unthrottled with zero runtime_remaining
+   # HEAD: d23550efc6800841b4d1639784afaebdea946ae0 x86/microcode/AMD: Add more known models to entry sign checking
 
-Fix a group-throttling bug in the fair scheduler.
+Miscellaneous fixes:
+
+ - Fix AMD PCI root device caching regression that triggers
+   on certain firmware variants
+
+ - Fix the zen5_rdseed_microcode[] array to be NULL-terminated
+
+ - Add more AMD models to microcode signature checking
 
  Thanks,
 
 	Ingo
 
 ------------------>
-Aaron Lu (1):
-      sched/fair: Prevent cfs_rq from being unthrottled with zero runtime_remaining
+Mario Limonciello (1):
+      x86/CPU/AMD: Add missing terminator for zen5_rdseed_microcode
+
+Mario Limonciello (AMD) (1):
+      x86/microcode/AMD: Add more known models to entry sign checking
+
+Yazen Ghannam (1):
+      x86/amd_node: Fix AMD root device caching
 
 
- kernel/sched/core.c |  2 +-
- kernel/sched/fair.c | 15 ++++++---------
- 2 files changed, 7 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index f1ebf67b48e2..f754a60de848 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -9606,7 +9606,7 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
- 
- 		guard(rq_lock_irq)(rq);
- 		cfs_rq->runtime_enabled = runtime_enabled;
--		cfs_rq->runtime_remaining = 0;
-+		cfs_rq->runtime_remaining = 1;
- 
- 		if (cfs_rq->throttled)
- 			unthrottle_cfs_rq(cfs_rq);
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 25970dbbb279..5b752324270b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6024,20 +6024,17 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 	struct sched_entity *se = cfs_rq->tg->se[cpu_of(rq)];
- 
- 	/*
--	 * It's possible we are called with !runtime_remaining due to things
--	 * like user changed quota setting(see tg_set_cfs_bandwidth()) or async
--	 * unthrottled us with a positive runtime_remaining but other still
--	 * running entities consumed those runtime before we reached here.
-+	 * It's possible we are called with runtime_remaining < 0 due to things
-+	 * like async unthrottled us with a positive runtime_remaining but other
-+	 * still running entities consumed those runtime before we reached here.
- 	 *
--	 * Anyway, we can't unthrottle this cfs_rq without any runtime remaining
--	 * because any enqueue in tg_unthrottle_up() will immediately trigger a
--	 * throttle, which is not supposed to happen on unthrottle path.
-+	 * We can't unthrottle this cfs_rq without any runtime remaining because
-+	 * any enqueue in tg_unthrottle_up() will immediately trigger a throttle,
-+	 * which is not supposed to happen on unthrottle path.
- 	 */
- 	if (cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0)
- 		return;
- 
--	se = cfs_rq->tg->se[cpu_of(rq)];
--
- 	cfs_rq->throttled = 0;
- 
- 	update_rq_clock(rq);
+ arch/x86/include/asm/amd/node.h     |   1 -
+ arch/x86/kernel/amd_node.c          | 150 ++++++++++++------------------------
+ arch/x86/kernel/cpu/amd.c           |   1 +
+ arch/x86/kernel/cpu/microcode/amd.c |   2 +
+ 4 files changed, 54 insertions(+), 100 deletions(-)
 
