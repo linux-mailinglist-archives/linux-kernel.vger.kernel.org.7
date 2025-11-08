@@ -1,266 +1,215 @@
-Return-Path: <linux-kernel+bounces-891473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654F0C42BA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:08:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E6A6C42BB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:09:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C78503463D1
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:08:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01CBC4E5D97
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C3D30100F;
-	Sat,  8 Nov 2025 11:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C575F30101A;
+	Sat,  8 Nov 2025 11:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wGUfeN3o"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012052.outbound.protection.outlook.com [40.107.200.52])
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="cDWq5EZN"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC7E21ABC1;
-	Sat,  8 Nov 2025 11:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762600132; cv=fail; b=bfeoZJuYtiSJzxOS4TxHCGTRdv8MwSvSzoKlQGjA82j+mnqIMIpriI0JbYSAw2UwFrhe9kOf3fhiug4yVAVGFDVjCd6GtuSE5PRH1WrZnzOmzO3LpnOZKviTv0DIEOvsjEEpVg213MEBAmZQg5UO1bBEp3Ix0C4CD2lhUzFyRGc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762600132; c=relaxed/simple;
-	bh=zZDc1ZOBWonslGaqYPUzo2wRL+5cz6LKhrZC6YFG7jI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tM1bI9+UYbwdXWW1e6XaASIM2+8VgzbDDxiUFb08qu+wufSEGrNQES4Jh6TTMFMDcQ1ebNNmdcq0xhqXRJF9Uo+mrZAW9QhkyRWOaGS9CWc/I1WEgHzB5ABfdakhPRE3lWQV0PbwdDwca7v6avVDAdX6RG9ez5rZrYy9pntem9E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wGUfeN3o; arc=fail smtp.client-ip=40.107.200.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rPH3OGNvtBH7pXZvHvwSFESvATVcazRUPtih8dp55H8ETu2VF2QcJ6WKn9eevyb/+9wEM8UA5sn/8zWYhZ7yDOpD+0CaJT4zOJxujs+qMCj32JBUZWZXvDnVjaX+RlP4IjSFNPaTDsW3q3Sj/8cvqhUJSEYNo6/C5FdIDhqohewPHttcXNFg51DcydSm0upv87FKFdgzs+orK3FS/sqvl8WYfIybMVF+Bw2X4JpBDerAVSfYw45bgK1xutCm2MBwrkW79oHmVoL6rwLU2M1JCEhD2g5mKhzFQ0Uo1jLeYP5zVJ/d2Px2dHmr4SM2kqyEXPNvIVIqge5i6p+aqU3emQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ib4QUkl485ytfnL1PRX2696HuAy8YWPA2zJKN+PSvWk=;
- b=J1oGb+4DpPsGQazHrJpAICuPlEQyS4x0NKihbpG/25knEfyPhNzeq10KqBa77O9OVnmq5tVgWarR9yu4eHGybw1xH3kUAoYOeTFvtm03Y+0idZA37GH5KAx6zz/9jbhRbkSnvGzbtCY5qLQP7u+LSZbpEy6EUWvHKDGVSnanTH22+BYSA730V8K+ssm7sa0HGn5D9L8v2/fE8132rq/8AgPFqvl/tpNM7BaX4kOrH/GSuQtkU0qSiZ5FIW2fNaNbPlwnNyUgihJ+n7MEMTC6kBHNZMOsH1BxTjwt8aw+Wbue0ns8ZEfJ1JUBdbEDvCT91Ti96qgPk9hn6JTv1PAQIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=google.com smtp.mailfrom=ti.com; dmarc=pass
- (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ib4QUkl485ytfnL1PRX2696HuAy8YWPA2zJKN+PSvWk=;
- b=wGUfeN3oVa0EwBJwGCUP3EBb13HQWpEXJXzbnl/rzu6I4Dj1A+KSnaAkDgyZKXcqem1J6nnBvYBXAP/0NI8DfVciZhjLCzn4YEqwa1KiKN5pIVs4G1w7g5ix3jdyUigbnyUwIRQcTH8EBHgY5uwm+mKkU38cdAbF3CjWRYD/PL4=
-Received: from MW4PR03CA0157.namprd03.prod.outlook.com (2603:10b6:303:8d::12)
- by DS7PR10MB7347.namprd10.prod.outlook.com (2603:10b6:8:eb::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Sat, 8 Nov
- 2025 11:08:45 +0000
-Received: from SJ1PEPF000026C9.namprd04.prod.outlook.com
- (2603:10b6:303:8d:cafe::73) by MW4PR03CA0157.outlook.office365.com
- (2603:10b6:303:8d::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.12 via Frontend Transport; Sat,
- 8 Nov 2025 11:08:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- SJ1PEPF000026C9.mail.protection.outlook.com (10.167.244.106) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Sat, 8 Nov 2025 11:08:44 +0000
-Received: from DFLE201.ent.ti.com (10.64.6.59) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sat, 8 Nov
- 2025 05:08:40 -0600
-Received: from DFLE210.ent.ti.com (10.64.6.68) by DFLE201.ent.ti.com
- (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sat, 8 Nov
- 2025 05:08:40 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE210.ent.ti.com
- (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Sat, 8 Nov 2025 05:08:40 -0600
-Received: from lelvem-mr05.itg.ti.com ([10.250.165.138])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A8B8OGf356676;
-	Sat, 8 Nov 2025 05:08:33 -0600
-From: Baojun Xu <baojun.xu@ti.com>
-To: <broonie@kernel.org>, <tiwai@suse.de>
-CC: <andriy.shevchenko@linux.intel.com>, <13916275206@139.com>,
-	<shenghao-ding@ti.com>, <baojun.xu@ti.com>, <linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-	<k-yi@ti.com>, <henry.lo@ti.com>, <robinchen@ti.com>, <jesse-ji@ti.com>,
-	<will-wang@ti.com>, <jim.shil@goertek.com>, <toastcheng@google.com>,
-	<chinkaiting@google.com>
-Subject: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add TAS2568/5806M/5806MD/5830 support
-Date: Sat, 8 Nov 2025 19:07:59 +0800
-Message-ID: <20251108110759.2409-2-baojun.xu@ti.com>
-X-Mailer: git-send-email 2.43.0.windows.1
-In-Reply-To: <20251108110759.2409-1-baojun.xu@ti.com>
-References: <20251108110759.2409-1-baojun.xu@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78743002C2;
+	Sat,  8 Nov 2025 11:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762600142; cv=none; b=LqMQ7BbMzFeaYudoOSSnbXsqfssPE6KiXWQG81vz0w3xwmnjlobQY/no+oviePI3w0TAEU6mJ9uf1ArFhqZ1vS8e9d4LAhGrgbbW4hyasuPpbZCcMwjJKU3NuWCzeDagpzaKJcp6hGQH62XpjVaEo7jadqAoMC6Kty+CDeBbC/4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762600142; c=relaxed/simple;
+	bh=7haCvCWUOfsjYGqaHIzuphWqNU06gFWPaAWkAIWCbSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VBk1WKIB0jMrkutsZFOsqEbcscnrhVxBSCmE3IN4s9rinsVKyI+RSSo9N9BHX9vcRaJKVWJxhOlS0Yb8BttZw8DikGS76DcY4aqw/FZsMS7aGJomddJSd25WtIc+/6ePH8rxUCEczynpuhQCs/BG/PDi3bVRM7OOsZoZ9UO27iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=cDWq5EZN; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=to2ffKjQT3P3MwBgednnfOCK140+zX9tIALsoHeMAbU=; b=cDWq5EZN2304uIsRG15seKn7jc
+	8c4eO24JcZwAXyXW8HjrkgnDBqCvoME1flCK/uvSskYOXrEk9WEFizKXgzPI4ZxGLWnTSzkCFtVh+
+	ha6+874xT6F7dbERZeye47Yy70N4dvhaVxzgF2PZNJYDBIhVPIlwPnHMV0UZ7tJ81wQl40RcFPv1B
+	hJTknGJ/gAh9jFtRJsEhuGUUzoBbAQgVK94mtxGTqdbppsLSEC1E0a1lJmogvdKF+tlGy93qTAUuD
+	yiUGyNCul62N3ePUAKm3omphE9n1bC4HBS7Sjgyeq/p/VYCPmIecnDKelrKw/XDjXj/PzftruGgIM
+	DzZ0Os9g==;
+Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1vHgnx-0000000DxOH-1KAZ;
+	Sat, 08 Nov 2025 12:08:25 +0100
+Date: Sat, 8 Nov 2025 12:08:24 +0100
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Alex Elder <elder@riscstar.com>
+Cc: dlan@gentoo.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+	bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, ziyao@disroot.org, johannes@erdfelt.com,
+	mayank.rana@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
+	shradha.t@samsung.com, inochiama@gmail.com, pjw@kernel.org,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	p.zabel@pengutronix.de, christian.bruel@foss.st.com,
+	thippeswamy.havalige@amd.com, krishna.chundru@oss.qualcomm.com,
+	guodong@riscstar.com, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/7] Introduce SpacemiT K1 PCIe phy and host controller
+Message-ID: <aQ8kqIljwGZfkF8M@aurel32.net>
+Mail-Followup-To: Alex Elder <elder@riscstar.com>, dlan@gentoo.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	vkoul@kernel.org, kishon@kernel.org, bhelgaas@google.com,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	ziyao@disroot.org, johannes@erdfelt.com,
+	mayank.rana@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
+	shradha.t@samsung.com, inochiama@gmail.com, pjw@kernel.org,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	p.zabel@pengutronix.de, christian.bruel@foss.st.com,
+	thippeswamy.havalige@amd.com, krishna.chundru@oss.qualcomm.com,
+	guodong@riscstar.com, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+References: <20251107191557.1827677-1-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C9:EE_|DS7PR10MB7347:EE_
-X-MS-Office365-Filtering-Correlation-Id: f95d0a27-6e7a-49bf-18db-08de1eb72eb0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BwzbubKANNhnDtMq6pC1PZ+lRtTzqtldDrOvlpsQbmfNdiTRohEsQqegymBV?=
- =?us-ascii?Q?/bN4wGz/lJxuttwxeRtxslugA3udpW9nKh86a0srTAsoZjzptnJYl3CiqNmZ?=
- =?us-ascii?Q?grVdKdOlqtDg1INztcyVpaXsZL74QFAxQqEfuGEPqpalScCVzi9eRCUR18oX?=
- =?us-ascii?Q?/SfG87vg/9p+bpNnLcg6LRGWncXs71KWyHscLo8Ckkr94lO52M1DdQUbYgMa?=
- =?us-ascii?Q?TKchZZiBhUFXdr1LzYATlhgKCS7I47n1pDsLfCdfj4v3lH3xFFCi4ztnbkTV?=
- =?us-ascii?Q?OFllwkb8PLzKdhDt5a2r59KE72MPBzKcRzktc5L3jVlRZLsstoQyR6UVh5uL?=
- =?us-ascii?Q?GmBK2iB/uCSa9sYT6/Y2pJAuh7R7Muy4t5XXsQp1s7XRex23R47+aclGRboY?=
- =?us-ascii?Q?Pa+dGlAsj1vA2HKosHcqobSiillUnF2JnXDMWZuW+t8JaBE97M7ca2NeAe3g?=
- =?us-ascii?Q?IZLd/SNjUIlKD86U0buEiQ/rdf7A/JDyFkI//TObAMCQdBLmp9m61v1vN9yV?=
- =?us-ascii?Q?IvSo37KhJM8ToGb5YGEg1H83IAOh6K6AFwHdJQ/vfE5fT1vJl9Ee7CVpEgH7?=
- =?us-ascii?Q?+OWzqTtmK/UcrEIuIrvl66Jqa1yCO5e3Nk5j+uQWE7MtDwUVkly+y0e0GWOe?=
- =?us-ascii?Q?/QWjZ4g3yCWO9RGdk9aRLeurvrshYJ0M5YVF/oU0808u3j7dEN+174DFjTem?=
- =?us-ascii?Q?RKzxTilJnELxoTjVVZPzuSGVUDxc+bO10Fkd1gIRKt7F1oaiXdqHGTkQrnEY?=
- =?us-ascii?Q?d7Zk+eloxl0t26u47DYabeTiaVMykrodNAllp4BsAhjZR8Yf2WT9bw3+cTvx?=
- =?us-ascii?Q?LuADWNo6vFxxuqnwtOavGYVOb9zftG5R1a0tgRguGa2A1sgBT9ETrr3csqFY?=
- =?us-ascii?Q?AZ1vy7Td2dBFe5ZDjclrxCMuQm325NeuZPdbpJsx0KM/2F/sGI3WLKagSC5p?=
- =?us-ascii?Q?tnkU5sZBBCF5McSscp6qN0pVV+7q48xJUU96CMmcPPb9F2is5mBe5zD9XoAx?=
- =?us-ascii?Q?sXoQDPA1ZWZEFOPHg9QuCLFsCrfefxvCxNqNTKAprAtg5s9lXfDcAVRGEsQj?=
- =?us-ascii?Q?ToBvpLtsrnvgDOXn+uwJin2LVQ152MeAvizz5PnA+TJrQ6mCQLKrj2pZeqIM?=
- =?us-ascii?Q?2n6701rwCxZD+njJ7QlANk4oZYe/ejtgIhG/Ez9pEoio9SsbnWkMP2cEHLlU?=
- =?us-ascii?Q?/1y41RHM3ImVkcu6STIBqXThJXe0mbiX1Hwd6vOYKibeZ98fQGy/YG3qzjpl?=
- =?us-ascii?Q?VMaS5q4DlsQtLNj88YWI+LN1x+fvxxfXwUCkXCDmtMLZNF/lNvzEvh+76t7S?=
- =?us-ascii?Q?ybF6+wqgmtIgUQqzQnF2pBUoJSz7xpLMJl86CxX3fabDvVozaHBgj/Cvvb5f?=
- =?us-ascii?Q?OXUVQIZncxUw/BoopbV3ryYt01q4fHLJY68f7kGjPi4fl4TTUJvvP34E7jpR?=
- =?us-ascii?Q?05l4chVlngnxEXqQp4eA/kF0pwzhNV2YdUDCbhbMc0agYe9gzC3AvIzEByjQ?=
- =?us-ascii?Q?l5WYhKf/KL9DgAIu/trwMfRpSmjDs4E8ecXVxJS81zhSiymZ959RCalt6HaI?=
- =?us-ascii?Q?j5WIRd65MUish7NINHs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 11:08:44.3326
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f95d0a27-6e7a-49bf-18db-08de1eb72eb0
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000026C9.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7347
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107191557.1827677-1-elder@riscstar.com>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-TAS5806M, TAS5806MD and TAS5830 is in same family with TAS58XX.
-TAS2568 is in family with TAS257X.
+Hi Alex,
 
-Signed-off-by: Baojun Xu <baojun.xu@ti.com>
----
- .../devicetree/bindings/sound/ti,tas2781.yaml | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Thanks for this new version.
 
-diff --git a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-index f0bb5faf55c8..918f1ebdfb7e 100644
---- a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-+++ b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-@@ -35,11 +35,14 @@ description: |
-     https://www.ti.com/lit/gpn/tas2563
-     https://www.ti.com/lit/gpn/tas2572
-     https://www.ti.com/lit/gpn/tas2781
-+    https://www.ti.com/lit/gpn/tas5806m
-+    https://www.ti.com/lit/gpn/tas5806md
-     https://www.ti.com/lit/gpn/tas5815
-     https://www.ti.com/lit/gpn/tas5822m
-     https://www.ti.com/lit/gpn/tas5825m
-     https://www.ti.com/lit/gpn/tas5827
-     https://www.ti.com/lit/gpn/tas5828m
-+    https://www.ti.com/lit/gpn/tas5830
- 
- properties:
-   compatible:
-@@ -58,6 +61,9 @@ properties:
-       ti,tas2563: 6.1-W Boosted Class-D Audio Amplifier With Integrated
-       DSP and IV Sense, 16/20/24/32bit stereo I2S or multichannel TDM.
- 
-+      ti,tas2568: 5.3-W Digital Input Smart Amp with I/V Sense and Integrated
-+      10.75-V Class-H Boost
-+
-       ti,tas2570: 5.8-W Digital Input smart amp with I/V sense and integrated
-       11-V Class-H Boost
- 
-@@ -72,6 +78,14 @@ properties:
-       Audio Amplifier with 96-Khz Extended Processing and Low Idle Power
-       Dissipation.
- 
-+      ti,tas5806m: 23-W, Inductor-Less, Digital Input, Stereo, Closed-Loop
-+      Class-D Audio Amplifier with Enhanced Processing and Low Power
-+      Dissipation.
-+
-+      ti,tas5806md: 23-W, Inductor-Less, Digital Input, Stereo, Closed-Loop
-+      Class-D Audio Amplifier with Enhanced Processing and DirectPath(TM)
-+      HP Driver
-+
-       ti,tas5815: 30-W, Digital Input, Stereo, Closed-loop Class-D Audio
-       Amplifier with 96 kHz Enhanced Processing
- 
-@@ -86,6 +100,9 @@ properties:
- 
-       ti,tas5828: 50-W Stereo, Digital Input, High Efficiency Closed-Loop
-       Class-D Amplifier with Hybrid-Pro Algorithm
-+
-+      ti,tas5830: 65-W Stereo, Digital Input, High Efficiency Closed-Loop
-+      Class-D Amplifier with Class-H Algorithm
-     oneOf:
-       - items:
-           - enum:
-@@ -94,14 +111,18 @@ properties:
-               - ti,tas2120
-               - ti,tas2320
-               - ti,tas2563
-+              - ti,tas2568
-               - ti,tas2570
-               - ti,tas2572
-               - ti,tas5802
-+              - ti,tas5806m
-+              - ti,tas5806md
-               - ti,tas5815
-               - ti,tas5822
-               - ti,tas5825
-               - ti,tas5827
-               - ti,tas5828
-+              - ti,tas5830
-           - const: ti,tas2781
-       - enum:
-           - ti,tas2781
-@@ -137,6 +158,7 @@ allOf:
-               - ti,tas2118
-               - ti,tas2120
-               - ti,tas2320
-+              - ti,tas2568
-     then:
-       properties:
-         reg:
-@@ -217,6 +239,8 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - ti,tas5806m
-+              - ti,tas5806md
-               - ti,tas5822
-     then:
-       properties:
-@@ -233,6 +257,7 @@ allOf:
-             enum:
-               - ti,tas5827
-               - ti,tas5828
-+              - ti,tas5830
-     then:
-       properties:
-         reg:
+On 2025-11-07 13:15, Alex Elder wrote:
+> This series introduces a PHY driver and a PCIe driver to support PCIe
+> on the SpacemiT K1 SoC.  The PCIe implementation is derived from a
+> Synopsys DesignWare PCIe IP.  The PHY driver supports one combination
+> PCIe/USB PHY as well as two PCIe-only PHYs.  The combo PHY port uses
+> one PCIe lane, and the other two ports each have two lanes.  All PCIe
+> ports operate at 5 GT/second.
+> 
+> The PCIe PHYs must be configured using a value that can only be
+> determined using the combo PHY, operating in PCIe mode.  To allow
+> that PHY to be used for USB, the needed calibration step is performed
+> by the PHY driver automatically at probe time.  Once this step is done,
+> the PHY can be used for either PCIe or USB.
+> 
+> This initial version of the driver supports 32 MSIs, and does not
+> support PCI INTx interrupts.  The hardware does not support MSI-X.
+> 
+> Version 5 of this series incorporates suggestions made during the
+> review of version 4.  Specific highlights are detailed below.
+> 
+> Note:
+> Aurelien Jarno and Johannes Erdfelt have reported seeing ASPM errors
+> accessing NVMe drives when using earlier versions of this series.
+> The Kconfig files they used were very different from the RISC-V
+> default configuration.
+> 
+> Aurelien has since reported the errors do not occur when using
+> defconfig.  Johannes has not reported back about this.
+
+Unfortunately, while it is true with v4, this is not the case with v5 
+anymore :(
+
+Fundamentally in the generic designware driver, post_init (which is used 
+to disable L1 support on the controller side) is called after starting 
+the link. The comparison of the capabilities is done in 
+pcie_aspm_cap_init when the link is up, which happens a tiny bit after 
+starting it.
+
+In practice with v4, the link is started, ASPM L1 is disabled and the 
+link becomes up. With v5, the move of the code getting and enabling the 
+regulator changed the timing, and ASPM L1 is now disabled on the 
+controller 2-3 ms after the link is up, which is too late.
+
+I have added a call to pci_info to display the moment where ASPM is 
+disabled. This is without the regulator change:
+
+[    0.386730] spacemit-k1-pcie ca400000.pcie: host bridge /soc/pcie-bus/pcie@ca400000 ranges:
+[    0.386970] spacemit-k1-pcie ca800000.pcie: host bridge /soc/pcie-bus/pcie@ca800000 ranges:
+[    0.387017] spacemit-k1-pcie ca800000.pcie:       IO 0x00b7002000..0x00b7101fff -> 0x0000000000
+[    0.387047] spacemit-k1-pcie ca800000.pcie:      MEM 0x00a0000000..0x00afffffff -> 0x00a0000000
+[    0.387062] spacemit-k1-pcie ca800000.pcie:      MEM 0x00b0000000..0x00b6ffffff -> 0x00b0000000
+[    0.400109] spacemit-k1-pcie ca400000.pcie:       IO 0x009f002000..0x009f101fff -> 0x0000000000
+[    0.490101] spacemit-k1-pcie ca800000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 4G
+[    0.494195] spacemit-k1-pcie ca400000.pcie:      MEM 0x0090000000..0x009effffff -> 0x0090000000
+[    0.850344] spacemit-k1-pcie ca400000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 4G
+[    0.950133] spacemit-k1-pcie ca400000.pcie: PCIe Gen.1 x2 link up
+[    1.129988] spacemit-k1-pcie ca400000.pcie: PCI host bridge to bus 0000:00
+[    1.335482] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    1.340946] pci_bus 0000:00: root bus resource [io  0x100000-0x1fffff] (bus address [0x0000-0xfffff])
+[    1.350181] pci_bus 0000:00: root bus resource [mem 0x90000000-0x9effffff]
+[    1.358734] pci_bus 0000:00: resource 4 [io  0x100000-0x1fffff]
+[    1.362033] pci_bus 0000:00: resource 5 [mem 0x90000000-0x9effffff]
+[    1.368289] spacemit-k1-pcie ca400000.pcie: pcie_aspm_override_default_link_state
+[    1.375967] pci 0000:00:00.0: [1e5d:3003] type 01 class 0x060400 PCIe Root Port
+[    1.383043] pci 0000:00:00.0: BAR 0 [mem 0x00000000-0x000fffff]
+[    1.388927] pci 0000:00:00.0: BAR 1 [mem 0x00000000-0x000fffff]
+[    1.394826] pci 0000:00:00.0: PCI bridge to [bus 01-ff]
+[    1.400061] pci 0000:00:00.0:   bridge window [io  0x100000-0x100fff]
+[    1.406460] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+[    1.413245] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+[    1.421012] pci 0000:00:00.0: supports D1
+[    1.424948] pci 0000:00:00.0: PME# supported from D0 D1 D3hot D3cold
+[    1.432718] pci 0000:01:00.0: [1987:5015] type 00 class 0x010802 PCIe Endpoint
+[    1.438698] pci 0000:01:00.0: BAR 0 [mem 0x00000000-0x00003fff 64bit]
+[    1.445426] pci 0000:01:00.0: 4.000 Gb/s available PCIe bandwidth, limited by 2.5 GT/s PCIe x2 link at 0000:00:00.0 (capable of 31.504 Gb/s with 8.0 GT/s PCIe x4 link)
+[    1.464897] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
+
+And this is with the regulator change:
+
+[    0.410796] spacemit-k1-pcie ca400000.pcie: host bridge /soc/pcie-bus/pcie@ca400000 ranges:
+[    0.410836] spacemit-k1-pcie ca800000.pcie: host bridge /soc/pcie-bus/pcie@ca800000 ranges:
+[    0.410889] spacemit-k1-pcie ca800000.pcie:       IO 0x00b7002000..0x00b7101fff -> 0x0000000000
+[    0.410917] spacemit-k1-pcie ca800000.pcie:      MEM 0x00a0000000..0x00afffffff -> 0x00a0000000
+[    0.410932] spacemit-k1-pcie ca800000.pcie:      MEM 0x00b0000000..0x00b6ffffff -> 0x00b0000000
+[    0.424651] spacemit-k1-pcie ca400000.pcie:       IO 0x009f002000..0x009f101fff -> 0x0000000000
+[    0.436446] spacemit-k1-pcie ca400000.pcie:      MEM 0x0090000000..0x009effffff -> 0x0090000000
+[    0.513897] spacemit-k1-pcie ca800000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 4G
+[    0.559595] spacemit-k1-pcie ca400000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 4G
+[    0.839412] spacemit-k1-pcie ca400000.pcie: PCIe Gen.1 x2 link up
+[    0.847078] spacemit-k1-pcie ca400000.pcie: PCI host bridge to bus 0000:00
+[    0.857600] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    0.868702] pci_bus 0000:00: root bus resource [io  0x100000-0x1fffff] (bus address [0x0000-0xfffff])
+[    1.146409] pci_bus 0000:00: root bus resource [mem 0x90000000-0x9effffff]
+[    1.373742] pci 0000:00:00.0: [1e5d:3003] type 01 class 0x060400 PCIe Root Port
+[    1.380963] pci 0000:00:00.0: BAR 0 [mem 0x00000000-0x000fffff]
+[    1.386883] pci 0000:00:00.0: BAR 1 [mem 0x00000000-0x000fffff]
+[    1.392808] pci 0000:00:00.0: PCI bridge to [bus 01-ff]
+[    1.395394] pci 0000:00:00.0:   bridge window [io  0x100000-0x100fff]
+[    1.401811] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+[    1.408583] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+[    1.416354] pci 0000:00:00.0: supports D1
+[    1.420294] pci 0000:00:00.0: PME# supported from D0 D1 D3hot D3cold
+[    1.428220] pci 0000:01:00.0: [1987:5015] type 00 class 0x010802 PCIe Endpoint
+[    1.434034] pci 0000:01:00.0: BAR 0 [mem 0x00000000-0x00003fff 64bit]
+[    1.440772] pci 0000:01:00.0: 4.000 Gb/s available PCIe bandwidth, limited by 2.5 GT/s PCIe x2 link at 0000:00:00.0 (capable of 31.504 Gb/s with 8.0 GT/s PCIe x4 link)
+[    1.463390] pci 0000:01:00.0: pcie_aspm_override_default_link_state
+[    1.467000] pci 0000:01:00.0: ASPM: default states L1
+[    1.472093] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
+
+Note how the line pcie_aspm_override_default_link_state arrives too 
+late.
+
+Regards
+Aurelien
+
 -- 
-2.25.1
-
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
 
