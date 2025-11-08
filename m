@@ -1,211 +1,135 @@
-Return-Path: <linux-kernel+bounces-891698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA9DC4345B
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 21:01:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F529C43460
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 21:02:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13EFA188DAB7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 20:01:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C48B44E16CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 20:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C13723C4E9;
-	Sat,  8 Nov 2025 20:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54018244660;
+	Sat,  8 Nov 2025 20:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OB5msYz4";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="N+17/Ylx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b="uXCbx/Ve"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C1C1FDA
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 20:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1716A22422A
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 20:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762632057; cv=none; b=SUT5OAJbeSB7tyDwmUhF0JNejEAI+05TlhUWR6rlDyOJ2ItgcsfDmTVrvM9Kw7xdK3mwLgQFNcmqZVOi8psz2vbbVRIIQl1NBqM8FeEOAsut1O0SZWbaFNW0a/Vwt7D7d5PVCCv0PrJHN+Tz6yYP8sFS9irgOlojUNokB+7RuP4=
+	t=1762632142; cv=none; b=MgKXTjqrar1GKrMW62ByJM9g6dN2EYq9BPTwT/FMUeBZJek+nbRb70Mz/1/vxZFUkRaa9DLw+Vx+Bn4HjpICLN0sbquPo9+miwLws/A1EIn+3H+HO+kM5X7eH3CO+SLpYELph9o9nkNfe4012Yr4NEtFhjIgCrnU4wYj6BcQes0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762632057; c=relaxed/simple;
-	bh=iwfcLfOtghbM9DC+PCDtTd3U3hVhPKz8QzyeDC8NeK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DnHuJiAsVxnIPq6BQEQT4o4mwOGVTE7RKGdfyg1t0cghsMRcaFIT9TMLlfn802j3Qmsw3RYpZmOPEPFLm49ZATbcct2ZRWwJXGOtoXzUK7xKLnM7Ur1rkj9K6AV1XsH/4ju5kGOZSfcV4VbqcihXN/cBlyw4hYnvKBf48qhO4pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OB5msYz4; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=N+17/Ylx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762632053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vzuz0iSweWV07TK0XrRN6GhbSFKG/GySOsZ2Z667jzg=;
-	b=OB5msYz4z5D1baNHfObsnD9haNYWbUYEjE3YwLuA5mEThbbbygYlRtxV9CHlm04gCRCaJK
-	8W94Nm95S5H7SoHpBejEsmmWhuRxVzzebS7Lzyfew6d+tw4shhbS1o7wwDfNVrHj5jZtGT
-	wLYEJp9BMA/bWVzcrukryReGoAkWk8o=
-Received: from mail-yx1-f69.google.com (mail-yx1-f69.google.com
- [74.125.224.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-265-RVQ3LeWFOKemISLFYz3jkA-1; Sat, 08 Nov 2025 15:00:48 -0500
-X-MC-Unique: RVQ3LeWFOKemISLFYz3jkA-1
-X-Mimecast-MFC-AGG-ID: RVQ3LeWFOKemISLFYz3jkA_1762632047
-Received: by mail-yx1-f69.google.com with SMTP id 956f58d0204a3-63e35e48a1aso2552434d50.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 12:00:48 -0800 (PST)
+	s=arc-20240116; t=1762632142; c=relaxed/simple;
+	bh=vEZrLeBeJ7h1ipH89PqPi/zSNBxuNbQgKGCtCvuVOvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MWjwKYnM+7IqPizLZHzLvUrHBSj7u8Ba+mrCoXbom2mJyeZZD2L5MNmmgu72wQHhwMpJ1YoQpl7vqaQdQBcOX7d91qrf+2dXo7x8vtzcvV0R13LRAj11VdWdcybVn6Lt9xARJUpaygwZ2i5OOOZ5F22BUYpEbAOClYraXuGLSXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca; spf=none smtp.mailfrom=draconx.ca; dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b=uXCbx/Ve; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=draconx.ca
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8b2148ca40eso273720085a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 12:02:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762632047; x=1763236847; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vzuz0iSweWV07TK0XrRN6GhbSFKG/GySOsZ2Z667jzg=;
-        b=N+17/Ylx98sU4ah12gWpp3HCsj64SDS1KFGOeSrGdDVMTV/A+LpjvOo90uXJiLtx5s
-         VMl1xcHD7HLBYPTGlS6CRgO2RpmWNr+3aVjIRG2lvD+iroC0mn04e6dumt+yVHZFwS8c
-         59rGxA88qZOwr1jTDmrRZX4WYULawTnFPX+6vd+1t3HI86lTbBrVG1Sw+zjo3GAi4/jc
-         6FyLL3Fk4qKMScJWD8nInQHsIui06nJJYN8JkzhavInBiCMvGw6INcIam4YWgcqU2WcK
-         OjFnb/RsXActzXwrhxZHvndm0symdqNF45hQpNm+n8+W38RduI4N7bhSpFQ1mi7VQMf/
-         53bA==
+        d=draconx-ca.20230601.gappssmtp.com; s=20230601; t=1762632140; x=1763236940; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=afLIDtjU2jTYgwYOZlnNOt8tUMpTLcQFNlRa10jsVq4=;
+        b=uXCbx/Ve2EP0neuZFLhGWMy7dXysEzjXrFPt9Cfj2/6+/JfLqnyirWi5b5PuhpFSP8
+         txe5vj8WXnF4+p8ytuMPVWFJ4EPZiVxjNZoW7FKnA7rs3L5fntgkK/JBAK+s9TMGREes
+         zsmyoT+OJC99bEsm8ArDdqfWNOb8ZsDqphUMDJsSc/27OTJRmXAzKUuaIaR6LCg0hPpa
+         ECFUwdASC9W9yFA1Q8bqaAv1KJMHSus6yMUC9axWzxNBcTJ0OukccjH+elO7M0I05Fh7
+         GRUqJkwfl2a/xfbD6Bpbu9R5wOh27yVuxG25Eypz809YlhWNLCLX1by7+KLTS9XoiPSp
+         b+IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762632047; x=1763236847;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Vzuz0iSweWV07TK0XrRN6GhbSFKG/GySOsZ2Z667jzg=;
-        b=KuB/93CzekF5sgL8eptZZovs+zdhj1v4wv+RHNjxtD/f/5dMV2Eah5xIvKMWDeHqFD
-         0PxClmUfT5x3c43YtY3rARJxuyZvtbqc9szr7lu57PjSH+tbyQz8DQkQc5RB5wAtpj52
-         5v1oKDbm3lF7EDA2AX0ovn4/xQN11zuDyGN2+M5HPOyxKr0nj7EqdwYYHO6idkEEbX/i
-         9Jk1MtW0iGF3Ypx5f+c5P86ApMtGokhX9kafQYWRaG/FsTk1zhaNfQLYAEhM7rh3oc0B
-         FJBeWxyCsE9RGkiuGdYb9vY7SYTFoSrkbDMvZPqxizNUeo0aVS0lSOv+iHJHRv1dOe4R
-         +0Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5DuIrVZwylWBLmt+Mpv/MOtZTCZggQWJpsx2wpT001zvJ+DlO2fwAlucbNdPcXbo6nZ54nZ0WR7Osogs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdsxzXMDale7C1U+DLr6VwUWkJ6Dk15XEkfEE7KwstX/AeawmQ
-	Sh5PKFWlVM2e2LuvWTXK+ypdsEYlWVCfROb1Z8N6gnuI8XFdHnY1RzHCDNh7JdHYjgFXHZc47iA
-	yp+L/mwndxsOyXnAH4WlY4ekJnVsJ+dWZ2E75UJn6GblKcM3tA44o1XmVMMVE7JFh9Y0gifW91g
-	3LicY+K6l4ns+sjkAaB8dQEJc4BQhCRJhKN1YklYl+
-X-Gm-Gg: ASbGnctE3q7tGFpLoE64ntTgnSshSh9+DWLi4M2b00iE8uVjXQilVvSA/uGkjinn/XN
-	yk/4r+Dozis4quk2kzXSWXXebdV4P8w757uJPaqe/9taqMcVDMNdO5w6T07eRZF+6sUWcKpJJ60
-	+iL7ZXc+InvJbsxCtxuMNY6MTfeahVuuySRYTHuqIPoiEIPbmsqmVBpg==
-X-Received: by 2002:a05:690e:2504:20b0:63f:ac1c:a375 with SMTP id 956f58d0204a3-640d4555979mr2313637d50.25.1762632047561;
-        Sat, 08 Nov 2025 12:00:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGSl+/IrDM1uqujfQ1tjlfbIwCNMT3s9OQgLH06kPlb0kAkNv2LeOZz+5jqoQhoqi1RXtRyDtIc+3ETlTDrhEk=
-X-Received: by 2002:a05:690e:2504:20b0:63f:ac1c:a375 with SMTP id
- 956f58d0204a3-640d4555979mr2313610d50.25.1762632047093; Sat, 08 Nov 2025
- 12:00:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762632140; x=1763236940;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=afLIDtjU2jTYgwYOZlnNOt8tUMpTLcQFNlRa10jsVq4=;
+        b=lZLG7KnxJQYFArga8LtzYXtM58l04jwiFOWxoK8GFJx2pTU0c8p0W4na27ryRNwnOW
+         +ctNsAJDokUVbVEnIDdUVVTfLtW0ex0aYmfYC9X+zJaXAvHWtzKhh/2sHaJSnXf1PBti
+         eus4S5QkuZSrO2VHYdTyqyOC7iBBjCB3fSJTMTEIDCOpD5RId1gLbrPEzOEZeeDBnLlP
+         255JM8A9tYxeizSh7b7F3t22hASCcBSnA1pzRUBYyrlQYRwbb5LlPC6Cr0pZCNiNrSYS
+         0MNSLQ5fayYG1JyCHE8ehpF9sNoidbh8ChY9ZpJ5vEpw8N2O3IJWMvze7IwzTpbw/R63
+         La2w==
+X-Gm-Message-State: AOJu0Yx2TtGIyUXaqabbZvtWErdX3LvX8ccnQksdgnBIM96+m4CfhJkN
+	22OGDe3homs/2TJliyCKp0NgLyCEqe1AuLSoAC03NTz9sDYNpAWdgt+UHfK0A5usWshWyyPKElj
+	KlBc4
+X-Gm-Gg: ASbGncvTKfEdXplrq1Jj8gX/nWOmmRPTSTX0+KwixXASgrHAOFV8B7jZH9DHgOsydpF
+	bScBMCCMQE8aQuChWIskybH1zgjpbN9gNOTeaf8MPWHmUKyE5ToQWXJR21aL2OytDqHl2b6D5ro
+	N+Z330o1644br6gjJgpPSJgTh1HrGicSWPUS7bJLCOgG91UTUF871WKbUbqUE2h158h7jdIyloa
+	VVRmEDxLep0r7QYkWypAnD5xzMdFwOfVZen/UK+BKWlcFxO1Xmai9ev4rGQuzg9dTkcaFawrgQg
+	IFgHHtcX4P60kfbTCnOcdSEVw5+7Hf91lBFMasseICtqXTxM37NdQ8gP+Lozzito41PXmstEktq
+	p9+2TtCdQXZy8N3DrVHzOodNAbhsaaIFVre0LgWTOOtGkKlg47eATiJ+ObE3cdgnFYsEXkS1F/h
+	Oj39/l9AC8w3atFnavdbcEiaSsy77qxA==
+X-Google-Smtp-Source: AGHT+IEP6njqvP7OJ8++MLrTcCjSZ1Kt6Z5ev6k1eTY7/VIni/FZ+4NbLV9Nf5JbGDhmp9iwi4d50A==
+X-Received: by 2002:a05:620a:701b:b0:8a2:319d:27c3 with SMTP id af79cd13be357-8b257f683a0mr386978485a.73.1762632140037;
+        Sat, 08 Nov 2025 12:02:20 -0800 (PST)
+Received: from localhost (ip-24-156-181-135.user.start.ca. [24.156.181.135])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-8b2355e9a35sm659818685a.20.2025.11.08.12.02.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 12:02:18 -0800 (PST)
+Date: Sat, 8 Nov 2025 15:02:17 -0500
+From: Nick Bowler <nbowler@draconx.ca>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: PROBLEM: boot hang on Indy R4400SC (regression)
+Message-ID: <j5uutbx2oi2ccudo54o4hgxfmwfchwmd2ktig6xjgkqa7ho2pj@xb4luighppnc>
+References: <g3scb7mfjbsohdszieqkappslj6m7qu3ou766nckt2remg3ide@izgvehzcdbsu>
+ <e4ed75c7-b108-437f-b44b-69a9b340c085@app.fastmail.com>
+ <ea6p4efuwbrlqjiwkgjcd7ofj7aahfnnvnkooo2il36ggzrlcj@n6mcofpb2jep>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <690da013.a70a0220.22f260.0025.GAE@google.com> <tencent_522CB56DC89514EA26EF8ACCAC784A6F540A@qq.com>
-In-Reply-To: <tencent_522CB56DC89514EA26EF8ACCAC784A6F540A@qq.com>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Sat, 8 Nov 2025 21:00:36 +0100
-X-Gm-Features: AWmQ_blhcl_epfqlOQgyduWglj8EMc0vOT14tfe4JakxuJMK4J4sXVnwFDlUlaA
-Message-ID: <CAHc6FU5E2UNyhLuwJVdv3xnHEcM_Si2oX06S+5mz_3uz3-QqnA@mail.gmail.com>
-Subject: Re: [PATCH] gfs2: Fix memory leak in gfs2_trans_begin
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+63ba84f14f62e61a5fd0@syzkaller.appspotmail.com, 
-	gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea6p4efuwbrlqjiwkgjcd7ofj7aahfnnvnkooo2il36ggzrlcj@n6mcofpb2jep>
 
-Hello,
+On Fri, Nov 07, 2025 at 03:12:31PM -0500, Nick Bowler wrote:
+> On Fri, Nov 07, 2025 at 07:29:25PM +0000, Jiaxun Yang wrote:
+> > Unfortunately my Indy won't go over ARCS prom so I'm not in a position
+> > to debug this on my side. I have inspected the code again and I can't
+> > see anything preventing it to work on R4000 family.
+> 
+> I'll try adding some extra prints to at least figure out where it is
+> actually hanging.
 
-On Sat, Nov 8, 2025 at 10:13=E2=80=AFAM Edward Adam Davis <eadavis@qq.com> =
-wrote:
-> According to log [1], a "bad magic number" was found when checking the
-> metatype, which caused gfs2 withdraw.
->
-> The root cause of the problem is: log flush treats non-delayed withdraw
-> as withdraw, resulting in no one reclaiming the memory of transaction.
-> See the call stack below for details.
->
->         CPU1                                    CPU2
->         =3D=3D=3D=3D                                    =3D=3D=3D=3D
-> gfs2_meta_buffer()
-> gfs2_metatype_check()
-> gfs2_metatype_check_i()
-> gfs2_metatype_check_ii()                gfs2_log_flush()
-> gfs2_withdraw()                         tr =3D sdp->sd_log_tr
-> signal_our_withdraw()                   sdp->sd_log_tr =3D NULL
-> gfs2_ail_drain()                        goto out_withdraw
-> spin_unlock(&sdp->sd_ail_lock)          trans_drain()
->                                         spin_lock(&sdp->sd_ail_lock)
->                                         list_add(&tr->tr_list, &sdp->sd_a=
-il1_list)
->                                         tr =3D NULL
->                                         goto out_end
->
+I did not have much success with adding prints, but looking more closely
+at the console output it seems that what is ultimately failing is the
+SCSI bus enumeration which does not complete unless I revert commit
+35ad7e181541.
 
-this bug report is against upstream commit c2c2ccfd4ba7, which
-precedes the withdraw rework on gfs2's for-next branch. With those
-patches, the race you are describing is no longer possible because
-do_withdraw() now uses sdp->sd_log_flush_lock and the SDF_JOURNAL_LIVE
-flag to synchronize with gfs2_log_flush().
+So I presume that is why I also don't see the messages about mounting
+the root filesystem (I suppose it is just waiting for a disk).
 
-I don't know why Bob chose to push the transaction onto the ail1 list
-instead of freeing it in gfs2_log_flush(); that's something to clean
-up. I've pushed an untested patch doing that to for-later.
+I see the drivers printing the usual info about each device, but not
+everything.  Specifically, the lines that are missing are all of these
+ones that would normally be printed:
 
-Related commits:
-58e08e8d83ab ("gfs2: fix trans slab error when withdraw occurs inside
-log_flush")
-f5456b5d67cf ("gfs2: Clean up revokes on normal withdraws")
+    sda: sda1 sda2 sda9 sda11
+   sd 0:0:1:0: [sda] Attached SCSI disk
+
+    sdb: sdb1 sdb9 sdb11
+   sd 0:0:2:0: [sdb] Attached SCSI disk
+
+   sr 0:0:5:0: Attached scsi CD-ROM sr0
+
+Other than that everything else seems alive.  Several other drivers
+go through their initialization during the time the SCSI stuff is not
+completing.  The 'random: crng init done' message is printed after a
+while too.
+
+I tried enabling CONFIG_SOFTLOCKUP_DETECTOR and CONFIG_WQ_WATCHDOG to
+get some more information out but these options do not seem to do
+anything in this scenario, nothing is printed even after ~10 minutes.
 
 Thanks,
-Andreas
-
-> The original text suggests adding a delayed withdraw check to handle
-> transaction cases to avoid similar memory leaks.
->
-> syzbot reported:
-> [1]
-> gfs2: fsid=3Dsyz:syz.0: fatal: invalid metadata block - bh =3D 9381 (bad =
-magic number), function =3D gfs2_meta_buffer, file =3D fs/gfs2/meta_io.c, l=
-ine =3D 499
->
-> [2]
-> BUG: memory leak
-> unreferenced object 0xffff888126cf1000 (size 144):
->   backtrace (crc f56b339f):
->     gfs2_trans_begin+0x29/0xa0 fs/gfs2/trans.c:115
->     alloc_dinode fs/gfs2/inode.c:418 [inline]
->     gfs2_create_inode+0xca0/0x1890 fs/gfs2/inode.c:807
->
->
-> Fixes: f5456b5d67cf ("gfs2: Clean up revokes on normal withdraws")
-> Reported-by: syzbot+63ba84f14f62e61a5fd0@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D63ba84f14f62e61a5fd0
-> Tested-by: syzbot+63ba84f14f62e61a5fd0@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  fs/gfs2/log.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/gfs2/log.c b/fs/gfs2/log.c
-> index 115c4ac457e9..7bba7951dbdb 100644
-> --- a/fs/gfs2/log.c
-> +++ b/fs/gfs2/log.c
-> @@ -1169,11 +1169,13 @@ void gfs2_log_flush(struct gfs2_sbd *sdp, struct =
-gfs2_glock *gl, u32 flags)
->          * never queued onto any of the ail lists. Here we add it to
->          * ail1 just so that ail_drain() will find and free it.
->          */
-> -       spin_lock(&sdp->sd_ail_lock);
-> -       if (tr && list_empty(&tr->tr_list))
-> -               list_add(&tr->tr_list, &sdp->sd_ail1_list);
-> -       spin_unlock(&sdp->sd_ail_lock);
-> -       tr =3D NULL;
-> +       if (gfs2_withdrawing(sdp)) {
-> +               spin_lock(&sdp->sd_ail_lock);
-> +               if (tr && list_empty(&tr->tr_list))
-> +                       list_add(&tr->tr_list, &sdp->sd_ail1_list);
-> +               spin_unlock(&sdp->sd_ail_lock);
-> +               tr =3D NULL;
-> +       }
->         goto out_end;
->  }
->
-> --
-> 2.43.0
->
-
+  Nick
 
