@@ -1,101 +1,100 @@
-Return-Path: <linux-kernel+bounces-891320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09AAC426E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 05:29:54 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF7EC426EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 05:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5B93BBAEF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 04:29:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 894F334AC0A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 04:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7ED217648;
-	Sat,  8 Nov 2025 04:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B48D283C87;
+	Sat,  8 Nov 2025 04:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oVZeidxv";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fwnxejIu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BFK/RhjY";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="kwN//YEL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968B7283FC8
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 04:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5275C236A70
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 04:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762576186; cv=none; b=b2KK6VwwnHUioKwC26CfyicyvMQOja+3oqM0nSOW3/rOsemTYNrnhPnUfx1kUZ+G5xLVXfyXCcon6qR86HJGHNSfd6V83YO3SCAx9FGb69SLKCkIGoXQQ04Io78c9FLibXXpAJx9SBu0LYAt0pCWR0CjTzvOUznYh8NAp+94A0Q=
+	t=1762576308; cv=none; b=VYgMCyQgpzzTp07kAwNu04R6Tycra8r/Qs9hG9DKWI3qNC4GdEC8lHGycV3XHnf3bl7IgRQQrxyDMyXVpXxlwE351OadDci2fuwSA3rc3i1DFYfsu22owy/KdkJw0M7qbR/37+j4B8EOsGsMBYAmlJU1J/SnFUAAMx2U0RGfofE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762576186; c=relaxed/simple;
-	bh=GrqF3Btt70TYVVkeKpPrI2n8V5I1xfOAi37SrsDWidA=;
+	s=arc-20240116; t=1762576308; c=relaxed/simple;
+	bh=Q/AN2q4B+8KYquEvvEbpRI1ceQuCQ64SKRyzXK6Kxhs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K7BnCd+HzQc972QOYhv3In6GF9/mb3jcrelqSP8SvxXxjqmhWle3i+hC9o3tI+S7KMBAX9PvPTeBEYWvFEwx7hkbVB62CEAMLOjMzF9WQ5ObVBFjxYGP6o1+uY5+/0sXLMY7pqlcryqfC7jNEML1p1cA25T6HAzvQ0CCoBYFEVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oVZeidxv; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fwnxejIu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A84Jm9O817174
-	for <linux-kernel@vger.kernel.org>; Sat, 8 Nov 2025 04:29:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MHKiEPMGJiDkpwGtmXYIoaq5aBgKnZRJk5urWtbVNhw=; b=oVZeidxvkX6GIxcg
-	m88qoILeDD7B7WnGaTqh7W7Yu1ORb+kSCztbMeohV7AEUAJv87ilq98C7OmwgEQe
-	fIEWUBMYrFw5jRiJXfDItJViZlIp9RXSFSwY1gjXpbWg/RCzDQ1Y0tpd9h3Z/Io5
-	T3bT50euW5q79nQSdEqdEa0oqIQvIpyYg2jfXfv6hyna60qUbS6m43wI1w/QxfMC
-	NyzKVlVSAaoYWvlnbjRTl1eHEMbOCIMKZQmywKrvNL/a2ZMGoaORhhLnICrJaRMg
-	esUJHDn2OrtHj2XNIKTSCa2Ciey6GZz0bwr33eP2tu6+zCD/1J10V5p8TGzodckv
-	1FTgJw==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a9xr4r0h0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 04:29:43 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b6cdfb42466so339453a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 20:29:43 -0800 (PST)
+	 In-Reply-To:Content-Type; b=iRrU5U3eI3PD6TDMRE7xfppJyWich8EtsS0T7lATI1muS9stJpjWMoPgCA7rlcRErsik3LtUr064bFvzjlhjB0Bez3l1FAxCaoCY9MJed7rxzJ6XxKsYncRVNCiLLPUWJ0+bYwH9olW2OT4714B4cCz6xqAS+pj03ZUYuWwntzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BFK/RhjY; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=kwN//YEL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762576305;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gf3dtK9whnvoieMQrk7xUOMK4ZkLioSOkS+mxb2q8k8=;
+	b=BFK/RhjYE4Mfs/uB9b8NxKmCdFG6Ll4tYKxqSyXXcGBdzp1JIZBYt9nc5j/OX9N3dKhUL+
+	2C0HUslAUVnyZ6lbkoSDWDjyJkEQG1IlSGNzHw+WqAsdsdnqf5nL0Ll3SvGRABKcxq7EHe
+	VfzZy1X5LUUGT9yH5O7RXS+fKhVZHrk=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-637-qxGcxRrDOHqADwhkgDX2vQ-1; Fri, 07 Nov 2025 23:31:44 -0500
+X-MC-Unique: qxGcxRrDOHqADwhkgDX2vQ-1
+X-Mimecast-MFC-AGG-ID: qxGcxRrDOHqADwhkgDX2vQ_1762576303
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2956a694b47so18841255ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 20:31:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762576183; x=1763180983; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1762576303; x=1763181103; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MHKiEPMGJiDkpwGtmXYIoaq5aBgKnZRJk5urWtbVNhw=;
-        b=fwnxejIuJJS2GIgB2ZrdGhP9iDU/hHjho/wjwyrTOEUxoCsj669ZRPt3qeV/ARAs8t
-         o2af3471qKpRrYvvj/iJNVo+J66DA8GjgxplHq6RRFCTL/d3NixDiGkBr+1CVc4tJihf
-         9Ap9mmFpyE7g7+g0f2CRJp+01iXVIy6gZRHgF92v2Rq+UGdbiBxu+P5dL5Ch8aIv64+u
-         1QS1RKmsnza9GC9NyKjhosxXH9O8LeoMZRcDyB3kCYzb/yv2jqst4jeSVmkwZVn9Vmeg
-         E06qFkXoE264qAu5MDhAHxuut3GBW3HFwZK60IUslONaG7kOUlwOlq8BXT1Vxo1fPL7z
-         RzRw==
+        bh=Gf3dtK9whnvoieMQrk7xUOMK4ZkLioSOkS+mxb2q8k8=;
+        b=kwN//YELf14PWedULYyHKMhjdDjuV60cGc0C06Gy8soXEKO6OpWqlbqU66+65eyjym
+         JIUCKDf4iaJZYzOyTv2w4noCWnNDk3O7sn6YLzgAiK2v3vG7x30/zncj19+JD0WAh0T6
+         2+IsfOReuU3gD3OiPVIvPHUKLSt0H7gn7R5VQYQHbwvRepOPhkMP474fkxji4uGbTm57
+         DT6tMvQMck0puF+zLboBqnXOaTsHQiOSvOv7s8mt1tYK4eq04oEfjyh6nE/79ieAM5lZ
+         PGtG2nLshjm4kIGODvLR1ncdsrB5wZitS9IfIIN9D04A+BoqoNPbDq/ukpapOQImq0+D
+         LCyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762576183; x=1763180983;
+        d=1e100.net; s=20230601; t=1762576303; x=1763181103;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MHKiEPMGJiDkpwGtmXYIoaq5aBgKnZRJk5urWtbVNhw=;
-        b=GulW+oP9LarJxq/FHHU1vSuDV4rb2QKaH7HNDHluRlOOXKMXD7txjfvqyNylxY74x1
-         /v5odQmP6py61EUk6oL3oWAOHezx7TZ3hmql3bW3z7IoiZvroLa3XDZ7IYC2/5CYzb1o
-         FZkNJWv4cCurGldLf3ibAd7WZXtMG3Nleemm8B8kLt0XJQkeIeNNzGgXV0a+we62q7Go
-         99bRXCf+I4zvbPa1yLrS6PX171cNz4ikNvrQXSNocVJ2ZirQO3JxSCOxGRcqf2UsNR7P
-         mccT8NkUDoiq6cCV/5nHPv9D1JFo7JB/JYKDCp6RCODqk2XPo9O6Vhp4CTpgcUo5W9+j
-         zupw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgdXqI2Fx/8hiBulU3P7xV7KV0K09QwfUlyxAvi3yQE9QO/lWQoo7pyw9oqH2zX+1cx9/S6HP1sMBQ2OA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzou6rvnJZzdK54KHS0gTZwk4aX4daUuY0KgSlsN2m7zD/feHdk
-	REmJF/MqFxkLVgAAMNkIsYmpcY5BRdVCnIPC+QJSmWyNaBJKDGImBQOXoZ2YZ9x3HSGt7pdiKzn
-	GCmTxDxuEgdtorCbBHFxLLsqDHpGrMMXhu+0h+Cw47kIC7frWJQZ3FkeuIo4ASYB9LZg=
-X-Gm-Gg: ASbGncs5TJn7QYPok+vWnCmS1v9GSIZ2B5hy2/6CwTiHrIMvnw1McGeajvRpznWVqQv
-	6I9/xKXS3LOn/TeBTLslYLZ2fCaxOGWeTEhbazzs897aIUyc/LIZlNrlAhdrgLrwPCiRPcWDlLg
-	b7W/s4Xs2cYcalr4ylpZREG2YpoezdfotM38lzE2foJ/cfv4oZEU42GklpRrh74jFJNJgh0egE1
-	W5IpdQuYZBCqUyhdYlVDaSMFKJ0FV8OeznrO0GqcDuv6uwBrGr7GR8a7YeCxrnYpG4hhkyfo7ev
-	bZ1JPDqvNsdIYqcdV+WIIhb06bG7RAcJfuRDSpxRxoDGyBpHCU6WVzwoP+0mpsvrulpRPqsgRQm
-	HVLCKmZZIL0mG471OvWg/Z4abvNeJUKD19uIpQm9o83qmVRyDHVYfxM3C2wWmog==
-X-Received: by 2002:a17:903:230f:b0:295:70b1:edd6 with SMTP id d9443c01a7336-297e5643e76mr8706695ad.3.1762576182869;
-        Fri, 07 Nov 2025 20:29:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF3sfbuDhDXySXPAVcfmEF/y2AIuNMy7+QjiPXwwDd2S9+fLZylcYi6yhb2l9ZzI+uh+oI6JQ==
-X-Received: by 2002:a17:903:230f:b0:295:70b1:edd6 with SMTP id d9443c01a7336-297e5643e76mr8706485ad.3.1762576182355;
-        Fri, 07 Nov 2025 20:29:42 -0800 (PST)
-Received: from [10.110.21.199] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c73382sm75330285ad.69.2025.11.07.20.29.36
+        bh=Gf3dtK9whnvoieMQrk7xUOMK4ZkLioSOkS+mxb2q8k8=;
+        b=FeIwI6YOv4ZZ+ZYPgLjXuVbWNsx03CEoWf7YwtuBLeXLwbZ4QLiVvOadE2DbETo+J+
+         Trf0Qjex0RX1vdMYEI35jxQaUG+5xyQRmYFMS+o/iq/MVNqj8xBJ+N0DcmazHIs4y0qh
+         88EFTkuJJRnQwaAmX+EX9cg/1N8s1Gs2pvCqNDilIszcdOFNlDk0q+QWIc0dIOuV9/RC
+         doTaYPrBC9spFpysS/mGE+RkjNdgtLHuihjvvICvJ6F36vwgo+lpf7eTrn9OPNoAvs3I
+         iNgMhv9jLzAksvUKrk9R3bni4736MFqWMId+ltNXMbZjf+pu5j9W4bVs8iSA/pJqczlu
+         Nk1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW/zqN3/6U9qChJwiwNexOdwujPk3W+a6Inc8NIZUIh+LHkQ31Wkbt8UIrDFrxMgWhI4IpSWuPfyrf/vLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwyI267K1YnWpy9yYVSPkIm9Y5PHfQT7vyfsvTy8JLBCAAylD9
+	ATUTJMR9G3zv4YetrdZXbm/WLtzGedGD3ldCEHVp2mSWVFVOKFiBGMoU5UETiko8aYid1PkYB+n
+	4YNPIoAt5aZEJD5DrUjSoL3+OtmyDN5LshZfjp1Zu0Nz5mnsTXYBfWXEGJhso+wOzyQ==
+X-Gm-Gg: ASbGncukt+KACBmXlwA3Ohmp/jpI6d0SlPmFp/6LnGGFTw1wgVYlKZd4MEEMELqup2y
+	gFSJDxEUSF2Zm01GmM1y1mXYxQ9WHaxMQMIyMSDdL8GuJ3UwqSZpcbNDOSwzRakof9EE/wXWfRX
+	cVVbTcbgGzlWO27FEev2VeSUj3+V8pQJsgjNHnI0qiWKa2mJkP2q96Fi/V2fCl4kP5xjKV91XNB
+	ATN7vrWf+kPaSvrS9hM2bjANkvNGYA82AxpD5+wzjQfMFW/4r/Qmaj3q1K5UmxZK2/k7cLe8UZQ
+	grYoDJL2y4MnX5oWsS+1qQDR2R8z0gF/vm3NXrSQvn8D1Lj59lp0bgPSDAAauSEyKSys7JDakZH
+	ghaTFDpa7CDrRIIUBqmIGgDXqzuh+FMhpm5I2LBw=
+X-Received: by 2002:a17:903:40c9:b0:295:56da:62a4 with SMTP id d9443c01a7336-297e56caea4mr15886865ad.45.1762576302820;
+        Fri, 07 Nov 2025 20:31:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHQTitOB0enfK3OsnV3JV6rJIse5pQU20FSNU11DFWBQoFKK5PuvCsMDdw2vNkdjw8y8BgN8Q==
+X-Received: by 2002:a17:903:40c9:b0:295:56da:62a4 with SMTP id d9443c01a7336-297e56caea4mr15886445ad.45.1762576302385;
+        Fri, 07 Nov 2025 20:31:42 -0800 (PST)
+Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651cd0ee9sm76355185ad.112.2025.11.07.20.31.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 20:29:42 -0800 (PST)
-Message-ID: <47a16514-9cc1-46c9-b0d8-029c5bc44638@oss.qualcomm.com>
-Date: Fri, 7 Nov 2025 20:29:34 -0800
+        Fri, 07 Nov 2025 20:31:41 -0800 (PST)
+Message-ID: <11f80800-2e0b-4f41-a022-a88ad9792da8@redhat.com>
+Date: Sat, 8 Nov 2025 14:31:28 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,138 +102,221 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/5] media: uapi: videodev2: Add support for AV1
- stateful decoder
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Hans Verkuil <hverkuil+cisco@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-References: <20251103-av1d_stateful_v3-v4-0-33cc1eaa83f2@oss.qualcomm.com>
- <20251103-av1d_stateful_v3-v4-1-33cc1eaa83f2@oss.qualcomm.com>
- <6198674a-2af0-4906-9ffe-bc10e68eb5c5@kernel.org>
- <19cdb1996557824554789dccc805014b0fa2deda.camel@collabora.com>
+Subject: Re: [PATCH 01/33] ACPI / PPTT: Add a helper to fill a cpumask from a
+ processor container
+To: Ben Horgan <ben.horgan@arm.com>, james.morse@arm.com
+Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
+ baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
+ carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
+ dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
+ fenghuay@nvidia.com, gregkh@linuxfoundation.org, guohanjun@huawei.com,
+ jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
+ lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
+ rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
+ scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
+ tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
+ Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-2-ben.horgan@arm.com>
 Content-Language: en-US
-From: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
-In-Reply-To: <19cdb1996557824554789dccc805014b0fa2deda.camel@collabora.com>
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20251107123450.664001-2-ben.horgan@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: CjLMLyWq1STG8ntCZmqyCz6SdbDYtGSq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAzMyBTYWx0ZWRfX8zTkwJDzLWNz
- 7GLGiLyqnRKryo6whLl3ndGe4N3erOWE2xx7HJbfxLBZ1LUiFwS4X7XggnIPVnUw0sfQXwIyyHU
- 8IbBBE8kpV9Vvt6ZlylV4tjRYvPOUGl1KhQUfKQo5PtD9qyH2aSvFulnOasmhQ5Xg6X8v+X3uSK
- Sjuld6xx4W6FAYnFZmu7KILxlAhOOHYGQ4+orZNCGlIy4r6lrT/sxvCKlS3O77KjIpNJIK5nmxY
- CYbYtmyFiXRz0Zx77kR1AKmz/qS2bTkPZlmFbxhocHqaWdtR51fFU1WWez6YlXXSTcN9bTPuOCv
- xeKzpyCrtq+ZKp2KTPDRNVftjNkTmM6GYnR3ons3fTBtd0q0CjIc+kVgJmHULEw4v2bQdRqXfvu
- r4wMRvWuSA+dhsviROJKsZNrUlR5jQ==
-X-Authority-Analysis: v=2.4 cv=AuvjHe9P c=1 sm=1 tr=0 ts=690ec737 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=apL-334RAAAA:8 a=KKAkSRfTAAAA:8
- a=QX4gbG5DAAAA:8 a=EUspDBNiAAAA:8 a=OyDfNFrtaf6QVTBVua8A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22 a=eWIHaOtA_ULHaMmHwLHW:22
- a=cvBusfyB2V15izCimMoJ:22 a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-ORIG-GUID: CjLMLyWq1STG8ntCZmqyCz6SdbDYtGSq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-08_01,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 adultscore=0 impostorscore=0 bulkscore=0
- suspectscore=0 spamscore=0 phishscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511080033
+Content-Transfer-Encoding: 7bit
+
+Hi Ben,
+
+On 11/7/25 10:34 PM, Ben Horgan wrote:
+> From: James Morse <james.morse@arm.com>
+> 
+> The ACPI MPAM table uses the UID of a processor container specified in
+> the PPTT to indicate the subset of CPUs and cache topology that can
+> access each MPAM System Component (MSC).
+> 
+> This information is not directly useful to the kernel. The equivalent
+> cpumask is needed instead.
+> 
+> Add a helper to find the processor container by its id, then walk
+> the possible CPUs to fill a cpumask with the CPUs that have this
+> processor container as a parent.
+> 
+> CC: Dave Martin <dave.martin@arm.com>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Tested-by: Peter Newman <peternewman@google.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+> ---
+> Changes since v3:
+> Refer to processor hierarchy in comments (Jonathan)
+> Fix indent (Jonathan)
+> ---
+>   drivers/acpi/pptt.c  | 85 ++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/acpi.h |  3 ++
+>   2 files changed, 88 insertions(+)
+> 
+
+Two nitpicks below...
+
+> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> index 54676e3d82dd..69917cc6bd2f 100644
+> --- a/drivers/acpi/pptt.c
+> +++ b/drivers/acpi/pptt.c
+> @@ -817,3 +817,88 @@ int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
+>   	return find_acpi_cpu_topology_tag(cpu, PPTT_ABORT_PACKAGE,
+>   					  ACPI_PPTT_ACPI_IDENTICAL);
+>   }
+> +
+> +/**
+> + * acpi_pptt_get_child_cpus() - Find all the CPUs below a PPTT
+> + * processor hierarchy node
+> + *
+> + * @table_hdr:		A reference to the PPTT table
+> + * @parent_node:	A pointer to the processor hierarchy node in the
+> + *			table_hdr
+> + * @cpus:		A cpumask to fill with the CPUs below @parent_node
+> + *
+> + * Walks up the PPTT from every possible CPU to find if the provided
+> + * @parent_node is a parent of this CPU.
+> + */
+> +static void acpi_pptt_get_child_cpus(struct acpi_table_header *table_hdr,
+> +				     struct acpi_pptt_processor *parent_node,
+> +				     cpumask_t *cpus)
+> +{
+> +	struct acpi_pptt_processor *cpu_node;
+> +	u32 acpi_id;
+> +	int cpu;
+> +
+> +	cpumask_clear(cpus);
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		acpi_id = get_acpi_id_for_cpu(cpu);
+> +		cpu_node = acpi_find_processor_node(table_hdr, acpi_id);
+> +
+> +		while (cpu_node) {
+> +			if (cpu_node == parent_node) {
+> +				cpumask_set_cpu(cpu, cpus);
+> +				break;
+> +			}
+> +			cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
+> +		}
+> +	}
+> +}
+> +
+> +/**
+> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs in a
+> + *                                       processor container
+> + * @acpi_cpu_id:	The UID of the processor container
+> + * @cpus:		The resulting CPU mask
+> + *
+> + * Find the specified Processor Container, and fill @cpus with all the cpus
+> + * below it.
+> + *
+> + * Not all 'Processor Hierarchy' entries in the PPTT are either a CPU
+> + * or a Processor Container, they may exist purely to describe a
+> + * Private resource. CPUs have to be leaves, so a Processor Container
+> + * is a non-leaf that has the 'ACPI Processor ID valid' flag set.
+> + */
+> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
+> +{
+> +	struct acpi_table_header *table_hdr;
+> +	struct acpi_subtable_header *entry;
+> +	unsigned long table_end;
+> +	u32 proc_sz;
+> +
+> +	cpumask_clear(cpus);
+> +
+> +	table_hdr = acpi_get_pptt();
+> +	if (!table_hdr)
+> +		return;
+> +
+> +	table_end = (unsigned long)table_hdr + table_hdr->length;
+> +	entry = ACPI_ADD_PTR(struct acpi_subtable_header, table_hdr,
+> +			     sizeof(struct acpi_table_pptt));
+> +	proc_sz = sizeof(struct acpi_pptt_processor);
+> +	while ((unsigned long)entry + proc_sz <= table_end) {
+> +
+
+Unnecessary blank line here.
+
+> +		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR) {
+> +			struct acpi_pptt_processor *cpu_node;
+> +
+> +			cpu_node = (struct acpi_pptt_processor *)entry;
+> +			if (cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID &&
+> +			    !acpi_pptt_leaf_node(table_hdr, cpu_node) &&
+> +			    cpu_node->acpi_processor_id == acpi_cpu_id) {
+> +				acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
+> +				break;
+> +			}
+> +		}
+> +		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
+> +				     entry->length);
+
+Need we to check if @cpu_node does crosses the boundary (@table_end), as what's
+doing in acpi_find_processor_node()? Actually, the similar hunk of code from
+the function can be reused here.
+
+static struct acpi_pptt_processor *acpi_find_processor_node(struct acpi_table_header *table_hdr,
+                                                             u32 acpi_cpu_id)
+{
+		:
+	while ((unsigned long)entry + proc_sz <= table_end) {
+                 cpu_node = (struct acpi_pptt_processor *)entry;
+
+                 if (entry->length == 0) {
+                         pr_warn("Invalid zero length subtable\n");
+                         break;
+                 }
+
+                 /* entry->length may not equal proc_sz, revalidate the processor structure length */
+                 if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
+                     acpi_cpu_id == cpu_node->acpi_processor_id &&
+                     (unsigned long)entry + entry->length <= table_end &&
+                     entry->length == proc_sz + cpu_node->number_of_priv_resources * sizeof(u32) &&
+                      acpi_pptt_leaf_node(table_hdr, cpu_node)) {
+                         return (struct acpi_pptt_processor *)entry;
+                 }
+
+                 entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
+                                      entry->length);
+	}
+
+		:
+}
 
 
-On 11/7/2025 5:41 AM, Nicolas Dufresne wrote:
-> Le vendredi 07 novembre 2025 à 10:25 +0100, Hans Verkuil a écrit :
->> On 03/11/2025 14:24, Deepa Guthyappa Madivalara wrote:
->>> Introduce a new pixel format, V4L2_PIX_FMT_AV1, to the
->>> Video4Linux2(V4L2) API. This format is intended for AV1
->>> bitstreams in stateful decoding/encoding workflows.
->>> The fourcc code 'AV10' is used to distinguish
->>> this format from the existing V4L2_PIX_FMT_AV1_FRAME,
->>> which is used for stateless AV1 decoder implementation.
->>>
->>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
->>> Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
->>> ---
->>>   Documentation/userspace-api/media/v4l/pixfmt-compressed.rst | 8 ++++++++
->>>   include/uapi/linux/videodev2.h                              | 1 +
->>>   2 files changed, 9 insertions(+)
->>>
->>> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
->>> index c7efb0465db6480fe35be8557728c196e0e530f4..0c70410ffd4d58e0719d3cf13ad336c97b454ae9 100644
->>> --- a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
->>> +++ b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
->>> @@ -275,6 +275,14 @@ Compressed Formats
->>>           of macroblocks to decode a full corresponding frame to the matching
->>>           capture buffer.
->>>   
->>> +    * .. _V4L2-PIX-FMT-AV1:
->>> +
->>> +      - ``V4L2_PIX_FMT_AV1``
->>> +      - 'AV01'
->>> +      - AV1 compressed video frame. This format is adapted for implementing AV1
->>> +        pipeline. The decoder implements stateful video decoder and expects one
->>> +        Temporal Unit per buffer from OBU-stream or AnnexB.
->> OK, but the next patch says:
->>
->> 		case V4L2_PIX_FMT_AV1:		descr = "AV1 OBU stream"; break;
->>
->> And Nicolas said here:
-> Hmm, good catch, we had quite a bit of back and forth actually on the subject.
-> The discussion went toward that this is OBU Stream format, but it is conceivable
-> to enable Annex B support in the future using a control. That mandates that OBU
-> stream must always be supported for that format.
+> +	}
+> +}
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 5ff5d99f6ead..4752ebd48132 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -1541,6 +1541,7 @@ int find_acpi_cpu_topology(unsigned int cpu, int level);
+>   int find_acpi_cpu_topology_cluster(unsigned int cpu);
+>   int find_acpi_cpu_topology_package(unsigned int cpu);
+>   int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
+> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
+>   #else
+>   static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
+>   {
+> @@ -1562,6 +1563,8 @@ static inline int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
+>   {
+>   	return -EINVAL;
+>   }
+> +static inline void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id,
+> +						     cpumask_t *cpus) { }
+>   #endif
+>   
+>   void acpi_arch_init(void);
 
-Thanks for the comments. I had a similar understanding as Nicolas.
-To keep things clear updated v4 to just have OBU Stream.
 Thanks,
-Deepa
+Gavin
 
-> I'd drop the "or AnnexB". Then I'd try and harmonize how we write OBU stream, I
-> prefer without the -.
->
->> https://lore.kernel.org/linux-media/544147436308901fba85d6de48380c0c1eea7c67.camel@ndufresne.ca/
->>
->> "Perhaps "AV1 OBU stream", so its clear its no Annex B ?"
->>
->> So if this is just for OBU streams and not Annex B, then the description is wrong.
->>
->> Since I'm no AV1 expert and have no idea what the difference between OBU and Annex B streams is,
->> I can only comment on what looks like an inconsistency.
-> Annex B is very unlike H.264 annex b. Its adds a wrapper around time units,
-> making it faster to walk through displayable frames when you have the ability to
-> skip bytes. I've only ever seen it in tests vectors so far. My impression is
-> that we'll never have a hardware that requires that.
->
-> Nicolas
->
->> Regards,
->>
->> 	Hans
->>
->>> +        The encoder generates one Temporal Unit per buffer.
->>>   .. raw:: latex
->>>   
->>>       \normalsize
->>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->>> index becd08fdbddb857f8f2bf205d2164dc6e20e80b2..cf0b71bbe0f9d397e1e6c88433a0fc3ba11fb947 100644
->>> --- a/include/uapi/linux/videodev2.h
->>> +++ b/include/uapi/linux/videodev2.h
->>> @@ -775,6 +775,7 @@ struct v4l2_pix_format {
->>>   #define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264 parsed slices */
->>>   #define V4L2_PIX_FMT_HEVC_SLICE v4l2_fourcc('S', '2', '6', '5') /* HEVC parsed slices */
->>>   #define V4L2_PIX_FMT_AV1_FRAME v4l2_fourcc('A', 'V', '1', 'F') /* AV1 parsed frame */
->>> +#define V4L2_PIX_FMT_AV1      v4l2_fourcc('A', 'V', '0', '1') /* AV1 */
->>>   #define V4L2_PIX_FMT_SPK      v4l2_fourcc('S', 'P', 'K', '0') /* Sorenson Spark */
->>>   #define V4L2_PIX_FMT_RV30     v4l2_fourcc('R', 'V', '3', '0') /* RealVideo 8 */
->>>   #define V4L2_PIX_FMT_RV40     v4l2_fourcc('R', 'V', '4', '0') /* RealVideo 9 & 10 */
->>>
 
