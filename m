@@ -1,218 +1,177 @@
-Return-Path: <linux-kernel+bounces-891270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80DDC424BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 03:29:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A57D2C424C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 03:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F6884E47FA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 02:29:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB3234E1A78
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 02:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9412C026B;
-	Sat,  8 Nov 2025 02:29:16 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4265A28B4FE;
-	Sat,  8 Nov 2025 02:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC812BFC60;
+	Sat,  8 Nov 2025 02:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YV/VIDfG"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA8F1FECD4
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 02:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762568955; cv=none; b=X5iKgoeEWhhW6T1923VPhjypNl8wIetoXorEi66fC8i/C9YM5UtNK30xL/yLj0CzlaKcODoOOcJFYTqVBN3BgKejfMLTc8tAdixZv8iJNqRmBSNX6JlIVHXEbQCJUkGYu0qhjoCbwPucRD75ZzS1w0SxSdlSQaubA90DLmKUwyU=
+	t=1762568988; cv=none; b=ovsiItbhsC+D22JFokAfdvBvdDHEc4qp4BYysXgDle0+GgOtgfX04KDJbmpyaznHUd6cZwdP0JCyUZJ+eXUYYRlmVy29WZymF1ABSysfb2zzcxCSFFwLU1UwVgLaTaqYaqZnGBli4OcgUHP/ZVTcDa35tgGBU60Cxa/7SVJEq/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762568955; c=relaxed/simple;
-	bh=d3cd2e2zOzGJ/JCo/adSfw76IOVpiFTn13cAcJlWmEs=;
+	s=arc-20240116; t=1762568988; c=relaxed/simple;
+	bh=XVurSsv1aIwvZ4BJpc+wPo/EabBysHlT0g93N6AY5rY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X/+0m0hYA9BoppiPNR7v4qaDgwfkPt04s6qkxhoAU330gPihmKSTWybGxqn9b1rIkxwRPJoS1SjmcscOIlkuGdjRyb76/YHVTkm4x4K1vhEkF7B70V6zlb0I1WnCJRmZrGvQwm1UI63/WviShtvl/nzjx/hP2YXn4zO3mzFrK/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c45ff70000001609-cc-690eaaf5facf
-Date: Sat, 8 Nov 2025 11:29:04 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
-	davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
-	sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org,
-	tariqt@nvidia.com, mbloch@nvidia.com, andrew+netdev@lunn.ch,
-	edumazet@google.com, pabeni@redhat.com, akpm@linux-foundation.org,
-	david@redhat.com, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, horms@kernel.org,
-	jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
-	ilias.apalodimas@linaro.org, willy@infradead.org,
-	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
-	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
-	almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
-	bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
-	sfr@canb.auug.org.au, dw@davidwei.uk, ap420073@gmail.com,
-	dtatulea@nvidia.com
-Subject: Re: [RFC mm v5 1/2] page_pool: check nmdesc->pp to see its usage as
- page pool for net_iov not page-backed
-Message-ID: <20251108022904.GA1450@system.software.com>
-References: <20251103075108.26437-1-byungchul@sk.com>
- <20251103075108.26437-2-byungchul@sk.com>
- <20251106173320.2f8e683a@kernel.org>
- <20251107015902.GA3021@system.software.com>
- <20251106180810.6b06f71a@kernel.org>
- <20251107044708.GA54407@system.software.com>
- <20251107174129.62a3f39c@kernel.org>
- <20251108022458.GA65163@system.software.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9yqGQbcuUNSPzLyRDMOjft7I0/r6+HTZxeIcoX7xNvwZ6IV9ZdowoX8ZAwO9CKlIh7015gHKNauV0htt2LMA8Q7bUkVFG+FAUSAKqgjAk5ykC7+0XVdO2DXnR6PolBji45ic+31tDiE5juTkMQ/2ZJBEAXiR64D07T7ElOmKeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YV/VIDfG; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 8 Nov 2025 02:29:28 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762568973;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5tgR3etyK3VdmVwBi3kc59mcat7vAR0R4Hvxt/4DwrE=;
+	b=YV/VIDfGtwwKhsAg+0iuP2XXzFU2DaPsupSgDCSGpok+e8YajCdPtT+6s1veFJ2oRsQUUK
+	P+fCCSBJl/kM837Q/fqunxQiMiGpa9Gwu5+igtzla2vJf1LxG/zhrAo9/M9sGx38mR2ROB
+	CqMran3urSy543eIvcyQlDA7lAHz4TU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/11] KVM: nSVM: Add missing consistency check for
+ event_inj
+Message-ID: <pw3at4bjmtxa2xdwheqn5a33ahpudqhl2urnbrsuqn7yaa5l5m@5yddcnjwevnd>
+References: <20251104195949.3528411-1-yosry.ahmed@linux.dev>
+ <20251104195949.3528411-4-yosry.ahmed@linux.dev>
+ <aQub_AbP6l6BJlB2@google.com>
+ <heahqrdiujkusb42hir3qbejwnc6svspt3owwtat345myquny4@5ebkzc6mt2y3>
+ <aQv3Ml60dVpQ-fvz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251108022458.GA65163@system.software.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sb0wTdxjH/d39enc0dDkLyM8/mbOamKCCMyw+JmPRVztMTMwW4zJeyIVe
-	pArVFGRgQnK4mjEczG0QSikGYrSloMSilDaiUhChxlgBzRkQFJVuU6EBV4U6WQsx890n3+/z
-	fPK8eDhae1u1ijMYCyWTUczTMWqsfhXftCXs/MSw9ZmDBltbKwMtb4vB/rhTBXOtQQpszg4E
-	r+dGWFjo6kMw23uLgRc9MwjONoWjC3fNGP5pm6fB4w0i+NtygYHnfRMstLj2wPj5SQxXf3LT
-	MPFrPwOV5ggNXXNTLJzodETF7TILgY4qFVTPn6PBLT9mYchrY2CsdUEFk75KDAPWZgyhml4a
-	xqt2Ql/jCgjffomgt81NQfiXBgbu13kpuNJ1n4U/BhsZeGoeRzDYM4Gh5l05A/VlVQgib6PK
-	qdOvVVB/c4zdmSqUKQoj9LycpoXLzQ8p4YHlNywo1/yU4LE+YoVG1zGh3ZEiVCiDtOBy/swI
-	rpnfWWH0wVVG6LdEsOB5skPwdM5SQuWPU8zepO/VX+qlPEORZEr7KludO2TTHz21pri6qoyS
-	kT2hAsVxhE8nwx4P9YFH/T4mxpjfQLrknkVm+I1EUeboGCdGc3N7Ha5Aao7mQyyxKGOqWJHA
-	F5LQtLw4pOG3k+nue4tDWn6CItfuBKmlYjkZqHuGY0zzKUR5/1c056K8mtjfc7E4jt9BZocf
-	oRgn8evJjY5bVMxD+D85Io9Y8NKlK0m3Q8GnEW/9SGv9SGv9X9uIaCfSGoxF+aIhLz01t8Ro
-	KE7NOZLvQtEXO1/6LqsTzQS+9SGeQ7p4TXZEY9CqxKKCknwfIhytS9R8YYw3aDV6seS4ZDpy
-	wHQsTyrwodUc1iVrtoV/0Gv5g2KhdFiSjkqmDy3Fxa2SUXmtsUG94emk3dtw5jtv7Vp8cd0y
-	dDgjPfgmIJ1MDmatGEAPt8mfDTVBWmg0y71vCDtzvqn0Z0Tk44fuWYwBc+mdzF2zFdf1AW9o
-	937byCVxOFFs3pTWrx1pmPYnafh6de3a8jPu5My0hTUO92Zk9Z/aZV6esvfT/H9Xlp79WocL
-	csXPU2hTgfgflLVW+l4DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUiTcRzH+z+3s8XTtHrQDlpFIHTS8ZMifBH1EBW96AB7kQ/5kA/pkk1F
-	O2DWKFt5dMFcCyZhzrklTNPNUmpT08wOzVqkrjS1C5U2ralUmxH57sP3evVlcIWdjGEkVYao
-	VgmpSkpGyPZuObdqzDpHWvu0eyWYKm0UVPzMhrL3ThKCtiEMTNYaBIHgOxp+1zcj8Dc+puCr
-	5zuC2yXjOJie6wgYq5zAwVU3hOCLwU7BQHMfDRWOPeC7M0jAgwu1OPQVtlCQr5vEoT44TMNZ
-	pyU0XKWlwXOrlYQXNQUkXJ8oxaFW+56GzjoTBb223yQMuvMJaDWWEzB6oxEHX0ECNJvnw3jb
-	NwSNlbUYjF++RUFXcR0G9+q7aLjWYaagX+dD0OHpI+DGVB4FN3MLEEz+DE0OFwVIuNnUSyes
-	4XO9Xor3fBvB+erytxj/2nCF4L0NTzDeZeyhebMjk6+yxPF6bwfOO6wXKd7x/SrNd79+QPEt
-	hkmCd32I511OP8bnnxum9s1PlG1NFlOlLFG9ZluSLKXTlJx+aWH29YJcTIvKovQoguHYDVz3
-	EzcVZoJdztVrPdNMsSs5rzeIhzk6pOuqigk9kjE4O0pzBm8vGTai2AxudEQ7HZKzm7mRRy+n
-	Qwq2D+Ma2oewv8ZcrrX4IxFmnI3jvL8+h3QmxLFc2S8mLEew8Zz/VQ8K8zx2Gfew5jFWhOTG
-	GW3jjLbxf9uMcCuKllRZaYKUunG15nhKjkrKXn30RJoDhU5058zUFScKdO50I5ZBytnypEm5
-	pCCFLE1OmhtxDK6Mlm9UzZYU8mQh56SoPnFEnZkqatwoliGUC+S7DolJCvaYkCEeF8V0Uf3P
-	xZiIGC26u3uxb3uU+tPeZ4m+FsUPMnJWQ6m1+oD+uceh3b+j48se5tQZC1Z4+LTQdD5xoqhd
-	78y8bB+oQFDVX9S0uF0Rqdu2Itjfg4wLZE93JyxZtOnsCNIzNnNXep5tvf/g0pLAQLnksLRl
-	oEfpbaWG2yahxG5XqOSDS+6/6Y11BZSEJkVYF4erNcIfMczgx0ADAAA=
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aQv3Ml60dVpQ-fvz@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Nov 08, 2025 at 11:24:58AM +0900, Byungchul Park wrote:
-> On Fri, Nov 07, 2025 at 05:41:29PM -0800, Jakub Kicinski wrote:
-> > On Fri, 7 Nov 2025 13:47:08 +0900 Byungchul Park wrote:
-> > > The offset of page_type in struct page cannot be used in struct net_iov
-> > > for the same purpose, since the offset in struct net_iov is for storing
-> > > (struct net_iov_area *)owner.
+On Wed, Nov 05, 2025 at 05:17:38PM -0800, Sean Christopherson wrote:
+> On Wed, Nov 05, 2025, Yosry Ahmed wrote:
+> > On Wed, Nov 05, 2025 at 10:48:28AM -0800, Sean Christopherson wrote:
+> > > On Tue, Nov 04, 2025, Yosry Ahmed wrote:
+> > > > According to the APM Volume #2, 15.20 (24593—Rev. 3.42—March 2024):
+> > > > 
+> > > >   VMRUN exits with VMEXIT_INVALID error code if either:
+> > > >   • Reserved values of TYPE have been specified, or
+> > > >   • TYPE = 3 (exception) has been specified with a vector that does not
+> > > >     correspond to an exception (this includes vector 2, which is an NMI,
+> > > >     not an exception).
+> > > > 
+> > > > Add the missing consistency checks to KVM. For the second point, inject
+> > > > VMEXIT_INVALID if the vector is anything but the vectors defined by the
+> > > > APM for exceptions. Reserved vectors are also considered invalid, which
+> > > > matches the HW behavior.
+> > > 
+> > > Ugh.  Strictly speaking, that means KVM needs to match the capabilities of the
+> > > virtual CPU.  E.g. if the virtual CPU predates SEV-ES, then #VC should be reserved
+> > > from the guest's perspective.
+> > > 
+> > > > Vector 9 (i.e. #CSO) is considered invalid because it is reserved on modern
+> > > > CPUs, and according to LLMs no CPUs exist supporting SVM and producing #CSOs.
+> > > > 
+> > > > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > > > ---
+> > > >  arch/x86/include/asm/svm.h |  5 +++++
+> > > >  arch/x86/kvm/svm/nested.c  | 33 +++++++++++++++++++++++++++++++++
+> > > >  2 files changed, 38 insertions(+)
+> > > > 
+> > > > diff --git a/arch/x86/include/asm/svm.h b/arch/x86/include/asm/svm.h
+> > > > index e69b6d0dedcf0..3a9441a8954f3 100644
+> > > > --- a/arch/x86/include/asm/svm.h
+> > > > +++ b/arch/x86/include/asm/svm.h
+> > > > @@ -633,6 +633,11 @@ static inline void __unused_size_checks(void)
+> > > >  #define SVM_EVTINJ_VALID (1 << 31)
+> > > >  #define SVM_EVTINJ_VALID_ERR (1 << 11)
+> > > >  
+> > > > +/* Only valid exceptions (and not NMIs) are allowed for SVM_EVTINJ_TYPE_EXEPT */
+> > > > +#define SVM_EVNTINJ_INVALID_EXEPTS (NMI_VECTOR | BIT_ULL(9) | BIT_ULL(15) | \
+> > > > +				    BIT_ULL(20) | GENMASK_ULL(27, 22) | \
+> > > > +				    BIT_ULL(31))
+> > > 
+> > > As above, hardcoding this won't work.  E.g. if a VM is migrated from a CPU where
+> > > vector X is reserved to a CPU where vector X is valid, then the VM will observe
+> > > a change in behavior. 
+> > > 
+> > > Even if we're ok being overly permissive today (e.g. by taking an erratum), this
+> > > will create problems in the future when one of the reserved vectors is defined,
+> > > at which point we'll end up changing guest-visible behavior (and will have to
+> > > take another erratum, or maybe define the erratum to be that KVM straight up
+> > > doesn't enforce this correctly?)
+> > > 
+> > > And if we do throw in the towel and don't try to enforce this, we'll still want
+> > > a safeguard against this becoming stale, e.g. when KVM adds support for new
+> > > feature XYZ that comes with a new vector.
+> > > 
+> > > Off the cuff, the best idea I have is to define the positive set of vectors
+> > > somewhere common with a static assert, and then invert that.  E.g. maybe something
+> > > shared with kvm_trace_sym_exc()?
 > > 
-> > owner does not have to be at a fixed offset. Can we not move owner
-> > to _pp_mapping_pad ? Or reorder it with type, enum net_iov_type
-> > only has 2 values we can smoosh it with page_type easily.
+> > Do you mean define the positive set of vectors dynamically based on the
+> > vCPU caps? Like a helper returning a dynamic bitmask instead of
+> > SVM_EVNTINJ_INVALID_EXEPTS?
 > 
-> I'm still confused.  I think you probably understand what this work is
-> for.  (I've explained several times with related links.)  Or am I
-         ^
-Please don't mind.  It's not a blame.
+> Ya, that would be option #1, though I'm not entirely sure it's a good option.
+> The validity of vectors aren't architecturally tied to the existince of any
+> particular feature, at least not explicitly.  For the "newer" vectors, i.e. the
+> ones that we can treat as conditionally valid, it's pretty obvious which features
+> they "belong" to, but even then I hesitate to draw connections, e.g. on the off
+> chance that some weird hypervisor checks Family/Model/Stepping or something.
+> 
+> > If we'll reuse that for kvm_trace_sym_exc() it will need more work, but
+> > I don't see why we need a dynamic list for kvm_trace_sym_exc().
+> 
+> Sorry, this is for option #2.  Hardcode the set of vectors that KVM allows (to
+> prevent L1 from throwing pure garbage at hardware), but otherwise defer to the
+> CPU to enforce the reserved vectors.
+> 
+> Hrm, but option #2 just delays the inevitable, e.g. we'll be stuck once again
+> when KVM supports some new vector, in which case we'll have to change guest
+> visible behavior _again_, or bite the bullet and do option #1.
+> 
+> So I guess do option #1 straight away and hope nothing breaks?  Maybe hardcode
+> everything as supported except #CP (SHSTK) and #VC (SEV-ES)?
 
-	Byungchul
+Ack, will do something like:
 
-> missing something from your questions?
+#define ALWAYS_VALID_EVTINJ_EXEPTS (DE_VECTOR | DB_VECTOR | BP_VECTOR | \
+                                    OF_VECTOR | BR_VECTOR | UD_VECTOR | \
+                                    NM_VECTOR | DF_VECTOR | TS_VECTOR | \
+                                    NP_VECTOR | SS_VECTOR | GP_VECTOR | \
+                                    PF_VECTOR | MF_VECTOR | AC_VECTOR | \
+                                    MC_VECTOR | XM_VECTOR | VE_VECTOR | \
+                                    HV_VECTOR | SX_VECTOR)
+
+static bool nested_svm_event_inj_valid_exept(struct kvm_vcpu *vcpu, u8 vector)
+{
+        return ((1 << vector) & ALWAYS_VALID_EVTINJ_EXEPTS) ||
+                (vector == CP_VECTOR && guest_cpu_cap_has(X86_FEATURE_SHSTK)) ||
+                (vector == VC_VECTOR && guest_cpu_cap_has(X86_FEATURE_SEV_ES));
+}
+
+I will rebase this on top of the LBRV fixes I just sent out and include
+this change and send a v2 early next week.
+
 > 
-> I've answered your question directly since you asked, but the point is
-> that, struct net_iov will no longer overlay on struct page.
-> 
-> Instead, struct netmem_desc will be responsible for keeping the pp
-> fields while struct page will lay down the resonsibility, once the pp
-> fields will be removed from struct page like:
-> 
-> <before> (the current form is:)
-> 
->    struct page {
->  	memdesc_flags_t flags;
->  	union {
->  		...
->  		struct {
->  			unsigned long pp_magic;
->  			struct page_pool *pp;
->  			unsigned long _pp_mapping_pad;
->  			unsigned long dma_addr;
->  			atomic_long_t pp_ref_count;
->  		};
->  		...
->  	};
->  	unsigned int page_type;
->  	...
->    };
->  
->    struct net_iov {
->  	union {
->  		struct netmem_desc desc;
->  		struct
->  		{
->  			unsigned long _flags;
->  			unsigned long pp_magic;
->  			struct page_pool *pp;
->  			unsigned long _pp_mapping_pad;
->  			unsigned long dma_addr;
->  			atomic_long_t pp_ref_count;
->  		};
->  	};
->  	struct net_iov_area *owner;
->  	enum net_iov_type type;
->    };
-> 
-> <after> (the final form should be, just around the corner:)
-> 
->    struct page {
->  	memdesc_flags_t flags;
->  	union {
->  		...
-> 		/* pp fields are gone. */
->  		...
->  	};
->  	unsigned int page_type;
->  	...
->    };
->  
->    struct net_iov {
->  	struct netmem_desc desc;
->  	struct net_iov_area *owner;
->  	enum net_iov_type type;
->    };
-> 
-> After that, struct page and struct net_iov(or struct netmem_desc) will
-> not share any fields with each other, probably they will be connected
-> e.i. through some ways between struct page and netmem_desc tho.
-> 
-> 	Byungchul
->  
-> > > Yeah, you can tell 'why don't we add the field, page_type, to struct
-> > > net_iov (or struct netmem_desc)' so as to be like:
-> > >
-> > >   struct net_iov {
-> > >       union {
-> > >               struct netmem_desc desc;
-> > >               struct
-> > >               {
-> > >                       unsigned long _flags;
-> > >                       unsigned long pp_magic;
-> > >                       struct page_pool *pp;
-> > >                       unsigned long _pp_mapping_pad;
-> > >                       unsigned long dma_addr;
-> > >                       atomic_long_t pp_ref_count;
-> > > +                     unsigned int page_type; // add this field newly
-> > >               };
-> > >       };
-> > >       struct net_iov_area *owner; // the same offet of page_type
-> > >       enum net_iov_type type;
-> > >   };
-> > >
-> > > I think we can make it anyway but it makes less sense to add page_type
-> > > to struct net_iov, only for PGTY_netpp.
-> > >
-> > > It'd be better to use netmem_desc->pp for that purpose, IMO.
+> > So my best guess is that I didn't really understand your suggestion :)
 
