@@ -1,161 +1,91 @@
-Return-Path: <linux-kernel+bounces-891206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCDBC42259
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:44:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C286C4225C
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:46:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 207CA34DE18
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:44:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 439F04EEB54
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D8F28469C;
-	Sat,  8 Nov 2025 00:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE72284663;
+	Sat,  8 Nov 2025 00:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QM7035nR"
-Received: from mail-il1-f228.google.com (mail-il1-f228.google.com [209.85.166.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j+PEvx3q"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58B42727FC
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 00:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA7618DB26;
+	Sat,  8 Nov 2025 00:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762562634; cv=none; b=IS0DXzKR0n5dlTcd49r1pN7z+BFoW3B2y+LLvE4lDPyboD1+j+89Rb9Q+jGtlf9QuDSYUV8EkdEBlfpIn8ajmoQaiGQUVDuxbnEzTczD2WDS4WG0gcPOdKN5cSr8gi/GYBatnNzzcGVKrvD5uwKMnFkOLDezuH4vmu0udn7mIBA=
+	t=1762562755; cv=none; b=iNZ05PyhwaahPXw9rbr1X7FPAsmWmaBNgv5c98VHO3mciSy2WGk4QGA77nQXNt/6SdS/xExElyXpayXcdd5nooHDUitd7vBKhpMp4pZOlRme6+pFwXc6WMF1x529M4w3eZSyrZmt4yebR38feQ0fa2p3RyTUNCDqvY6SWDqRSho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762562634; c=relaxed/simple;
-	bh=vAeJct9AMkGPgfmMi3kykGsZlO5pFFP0fK3T3Fizb44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jF7CXZetXj7RYdCgt7GEVLzBqVewlgeaCn3LDbV9Kp1yFgng3edOLyt++3vFSAj5OMjoAPCBaYGSgYh74T9tmiVBmN+pdkJHy3ItvmTJU6kXpo/0H/MsREOPuT8/aMRGJmoXPhRKCG9NeICnmR84LmKEfFKSXgEmblqU/IB3Aw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QM7035nR; arc=none smtp.client-ip=209.85.166.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-il1-f228.google.com with SMTP id e9e14a558f8ab-431d65ad973so5393795ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 16:43:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762562632; x=1763167432;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=t5mnLb18c1kWkhzhd3oWKLRctbwgm3hHIsiANySVejY=;
-        b=kXV+O1Yv614nZOXxaRb3S6YIs7QlT/F/EYzCNYXogEpIYNVEEoXCY+hbRLohoyr7QE
-         13DDL4gtOJSEmq3e7NYM0HTTRqW5esH2sOOYgb7l7mbZtrs1dcmYPsOmR9wOdEz0DPV/
-         0GcXWMf+4ExKnv47kaIOXkOywX/cFCrpWKBQPXE9NfNuh1cwRPCEvgIVpNd0RGfrlg/T
-         iHIiUGV3V7EZRuOJb/36nfNR381ApxVeLXVXCUqTMnUIs1uD38LwItxyp0rhxq2uaG+O
-         InR/TQ2C7zfdnP72Aq3vfeia+eZ8RFbG/+PM3ZVqD2Pf7UJO5lAA4iPjjPmQ9SK8LqI2
-         5Q9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW8PjeG9yV+tGT9FBkX7RpQq5Flmdve/xPQ3heEZPaLzEGprONsBRxtASaY2vQroFlmLpakM7DhhdqTdr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydoEyHun/hCHNELus9cV9vWeVoR6ZryS0fOlRQWU9TkVlSCVE4
-	zpDTosJJKFNFUV16FZsxOwf7A2doiZ+54Pkm+cXu4IErysOnW6jtA8qgSm3fT/OKColDWT1JEA8
-	t4QowVOgDxQIVZ+K+qGbIMWLmzJ+G0JRRFQtKOAzrbLP1NMuw413J9RAW/ApBKoX7MvMSScbgJ8
-	mStmqBVBPe/cPjt4VZzk7H4US9xSK/6pcN4UTHRE5N4iWCGCWY8wypS6Rw25qwPs0Q0iEkEKbP8
-	e0+YifgFN7TAN7GvhIyJWJG
-X-Gm-Gg: ASbGncvZuxqw2q/pMmhVjqYOAKAY2uj8bL5+HNCZ8GoHw3zdL/uM2tfPgHx/HCH3n3O
-	Yoz5U/0qTnEGFIY8OV6cXnh35vgZBRIPzla+CPRGRZHj1uD5z/2lOM2+bWswKG+N4MdIb9HWsgc
-	cCAqXkEqZYIFI117qMLfFcFa9ue4skMqbP/gTq6C7nlScefqOu3SfQ8CjbQ1vALlWtI5Mz5g6X+
-	Mk3Aeu4mku96po5VvxklNiHiRC7vYs2CIqo1Mc+yqlkad7nggke5HQNzROaxcxFl/Ote+NdE08T
-	Y7V9Ui8hkDfzO4RoPgDQM/uBIIdSubMraqKeYPxnhVdGJHVoeHLOkDtG/DURK/4jsa4L9WkHmnn
-	D76RPs2r7RvHFjJ0oy6RNMLHYNKcnYk+xbPKG1tka7a/50Fp1gvyiQCv3WcCA32KRu2Qu5Gb6X4
-	3kHEn3+UCrKxXnh5GSUrseSC/Ja0uqSkNjVGEGFEd3xg==
-X-Google-Smtp-Source: AGHT+IHmd0ww0oIVOhRkscfR2YJaB3Zc2KkVY5w43f/XKMJ1TX8GL1D/LX6N/VA/34bv6r3ovpK8mx+ngtUK
-X-Received: by 2002:a05:6e02:18ca:b0:433:332b:946d with SMTP id e9e14a558f8ab-43367dd0353mr21660225ab.2.1762562631886;
-        Fri, 07 Nov 2025 16:43:51 -0800 (PST)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-116.dlp.protect.broadcom.com. [144.49.247.116])
-        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-4334f4b46basm5577375ab.19.2025.11.07.16.43.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Nov 2025 16:43:51 -0800 (PST)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7c2811b18e8so2367264a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 16:43:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1762562630; x=1763167430; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=t5mnLb18c1kWkhzhd3oWKLRctbwgm3hHIsiANySVejY=;
-        b=QM7035nR6UFRBShbiiBn/+6AItlKs3tQ+A8O7Tky/mC5AaLKG1TSoZff/yQawZp8LQ
-         ccBky6b5zMR56q5l/u7m8na3VJtuhMxBoN0yhhbH1HsFQxZDKXj55uOIlTkUAc3TFVNR
-         AJSOU5Xy+rud5g8uAJUE+Ny6R26p+du2jZ7CU=
-X-Forwarded-Encrypted: i=1; AJvYcCVX0eZXYXmssvf402c/Yraw3w2YxEwx2TleuybAWeGwDush90mbRIJgWjIb9M+ogVKYU4pWX360GHY+wJ8=@vger.kernel.org
-X-Received: by 2002:a05:6808:180e:b0:450:13d3:fccc with SMTP id 5614622812f47-4502a321df8mr714087b6e.12.1762562630672;
-        Fri, 07 Nov 2025 16:43:50 -0800 (PST)
-X-Received: by 2002:a05:6808:180e:b0:450:13d3:fccc with SMTP id 5614622812f47-4502a321df8mr714072b6e.12.1762562630290;
-        Fri, 07 Nov 2025 16:43:50 -0800 (PST)
-Received: from [172.16.2.19] (syn-076-080-012-046.biz.spectrum.com. [76.80.12.46])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4500280856fsm3034390b6e.24.2025.11.07.16.43.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 16:43:49 -0800 (PST)
-Message-ID: <893ab5d1-cf71-4bf0-b855-ca2123d98e7f@broadcom.com>
-Date: Fri, 7 Nov 2025 16:43:48 -0800
+	s=arc-20240116; t=1762562755; c=relaxed/simple;
+	bh=Hsqc59LHEZr6vRsViG4HA9mssxxXrUhOeveBVu79iD8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZOF7dAZtM3qrMe5nQSdu04tUu4FraimyYGplJ59e0GV2KgaCdhSjMse5yW+EnN0EbaAZwL5OZcrFE+4O0JDs0iRqNkwCY3twNVcNdSCtoJMEEA0yuNcyTmdu3YC1vLHlMs4/ZfBkvCnU7MRToExwHMT3fmNWDhe3am3m5/Iepag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j+PEvx3q; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762562749;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=y8OjT80dzDQbAAfR+kGSDqcO/L4H9alEphnOquJBA7c=;
+	b=j+PEvx3qhym64yqATfF6VPTA3eEK37PtUUhLoE6akGSIJ9DhUXMXkinkNqb3Qsn83uTnzo
+	4fI60aDvBZJJFugWq6BkbqGWnOVBNPSff+sz0ECHF/lP3Uu0r6TPTtkzpXj9xec6V3fLhp
+	1iE7pxfRAsyXJz26c2NNbKgiD0S0pog=
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Jim Mattson <jmattson@google.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Subject: [PATCH 0/6] KVM: SVM: LBR virtualization fixes
+Date: Sat,  8 Nov 2025 00:45:18 +0000
+Message-ID: <20251108004524.1600006-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 6/8] net: dsa: b53: move ARL entry functions into
- ops struct
-To: Jonas Gorski <jonas.gorski@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251107080749.26936-1-jonas.gorski@gmail.com>
- <20251107080749.26936-7-jonas.gorski@gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20251107080749.26936-7-jonas.gorski@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+This series fixes multiple problems with LBR virtualization, including a
+fun problem that leads to L1 reading the host's LBR MSRs. It also
+considerably simplifies the code.
 
+The series has a selftest in the end that verifies that save/restore
+work correctly. I will send a couple of new kvm-unit-tests separately
+that exercise the bugs fixed by patches 2 & 3.
 
-On 11/7/2025 12:07 AM, Jonas Gorski wrote:
-> Now that the differences in ARL entry formats are neatly contained into
-> functions per chip family, wrap them into an ops struct and add wrapper
-> functions to access them.
-> 
-> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+Yosry Ahmed (6):
+  KVM: SVM: Mark VMCB_LBR dirty when MSR_IA32_DEBUGCTLMSR is updated
+  KVM: nSVM: Always recalculate LBR MSR intercepts in svm_update_lbrv()
+  KVM: nSVM: Fix and simplify LBR virtualization handling with nested
+  KVM: SVM: Switch svm_copy_lbrs() to a macro
+  KVM: SVM: Add missing save/restore handling of LBR MSRs
+  KVM: selftests: Add a test for LBR save/restore (ft. nested)
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+ arch/x86/kvm/svm/nested.c                     |  31 ++--
+ arch/x86/kvm/svm/svm.c                        |  98 ++++++-----
+ arch/x86/kvm/svm/svm.h                        |  10 +-
+ arch/x86/kvm/x86.c                            |   3 +
+ tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+ .../selftests/kvm/include/x86/processor.h     |   5 +
+ .../selftests/kvm/x86/svm_lbr_nested_state.c  | 155 ++++++++++++++++++
+ 7 files changed, 236 insertions(+), 67 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/x86/svm_lbr_nested_state.c
+
 -- 
-Florian
+2.51.2.1041.gc1ab5b90ca-goog
 
 
