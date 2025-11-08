@@ -1,145 +1,161 @@
-Return-Path: <linux-kernel+bounces-891523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C29BC42D84
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:59:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8633AC42D8D
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 15:00:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 81A224E183C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481D7188D93B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 14:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BB41E008B;
-	Sat,  8 Nov 2025 13:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="GaMsnbtz"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDF41E1E1C;
+	Sat,  8 Nov 2025 14:00:14 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4016554652
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 13:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43AA1DE4F1;
+	Sat,  8 Nov 2025 14:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762610338; cv=none; b=iXgrconEPThHHK2JEUoQ1amZuvR//Lwm8sOOzkSWv5EQKOuTTry58miT7scDz8R6CRe488EhmqdCg/Coo6eXDlMrwkpkWwUmXEbezQMT6bG2Qvq/rhfZ/taS2VoKXqjJB2dVRFUO/LVCHmyf7BcKnPlu8sUzIBmTAjtj1fFbIKs=
+	t=1762610413; cv=none; b=olRLHdC3g9DJGgC9SfKLV9MCArVCAQSiURtl18qO41k5Z+uWx+9OlYqtbw6ugKMOzYmM6+TljPy2mxCucx4/twAXEvMKWCax55KSYxZY1EIlM4G1oPP3A7PO/N7M2qGdwT5RIrApwqkSP/sQJ60exgco1O6S9BYBt2iLcIHs7tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762610338; c=relaxed/simple;
-	bh=R9U9FFPYFfs1lf4z9IJfnV89cTwqAR88nq9i7ZjM2ao=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PUM1wU5hVZq1S36juhWS8cG0sBW9Nzl3O/gVLDF07aEJSHEhcOz9JGZhci72746FnggNB9uqgG7UyN7Unt/Hd8sbO5fnwydd2+abO1TsMOuPPsNSjKzGZFkfzyxmeUX78KAEz3gzUcr+B+Dq/1DNQnJpiK3szD7jcppL896kTxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=GaMsnbtz; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7aad4823079so1478485b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 05:58:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vjti.ac.in; s=google; t=1762610334; x=1763215134; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=c6n3EPsz961nven+j6SJxgAVgFz9niflHZuv3YbeEgs=;
-        b=GaMsnbtzQB6uTSej9w1hXM8YNbsfzq9NlDzyNw5EiD5VmGI5nsiXbaDZmCCOUpBcTe
-         wf8YVCRbvTsF1tTqDcD1Oa7B4CRghIsWgocDsTSPZPffdvU1SVkmRh/uOtpZ6EBpBvuc
-         psGtz+gQysxYQN45EYCqP66UaJuW+1m6UJF80=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762610334; x=1763215134;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c6n3EPsz961nven+j6SJxgAVgFz9niflHZuv3YbeEgs=;
-        b=UEEhYdPU3IZ/blmpkjCTB8nulY5OY2SWmlzRZHPmd9IPzbVGHpfFmfGdnGarYLkbga
-         1WZSRZJhJm0lwSrPwfNrT2ifncERej3zPP+6k27BTvNQVdEL5mSaDJl/SOaizIMP70sV
-         YZVVCTb+Iuee6SipMqTSxezTVY8UgaQAL4tHUU2xR8J8AaK8+6QOOvNDZBcFoVgc9D6U
-         7Q2Z6L0+kd80hC/XJyQFb896aFQUNw2p67PNN7bveUHtOLQtfMj1J3sEghdJruhdywpI
-         RPj2Sz5MS6fD+l1QRXCsbHRQUBG0rOBFNos/FMYig/Ds/BM71z8IomLCEzBGW+FDq1Dp
-         LWZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVJwCsbgHoyWHM3XfG3fBblACA0zWCLlXDx6iMGP85vdp03r9JXc8tKpvc9OAsbxtsEg28rPLELQwuSmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgE3rYl60s1IFoSF70Bh6sCt0AwQemOlrls4RynQEycMGbDraY
-	+mDAbd1QANOaSF1Gs0MJ73jnXf3MnkbWYG7F4p6Kr9m4XppwT5wrO4fbdu8EbbJqIdw=
-X-Gm-Gg: ASbGnctfooOABZaOmIKmu56f9L1V5TDP75Shy9/xisBmIYVMKrDTr8q0zVdOQYhui9o
-	jrIXFN0+ArjeSvjNLzGkuhqVDHEFGh/i5g3BLzc+PX7yLuj/dqgXuRjyFh5tKiXTDdGlZlCUS+Z
-	ye5iAHyrp6SKaGzXt1BLD79hoNN6ZFb80Jf1VhTX407fQsJXvSz0RYFqDsA+JTQFfG2u0LduYW6
-	gwjeJV0boXhnEGya54aMLeB5f/l+5r97bvEPb3mmXVtiy24YeYTY7paD+Gq3nx6k1Hv3OFbJE/U
-	oid3INMfvmQeBRVCT4p2YaEyF4JS9XaeSDVXq7sC8/wikavjXHrXiVgNYSGIgRonS8XDJmZnT2l
-	7iUHUe2dbooYgIq+k0BvGCFlb+65ow3BHhh/aAiNsz+sfsAS+b1YltDmdQrniS09TWiSCPvl8xl
-	WARFat42sZtG4NPvrd2gwP2Ksaxf/ogcQFKEONBQRcFtlq
-X-Google-Smtp-Source: AGHT+IFQqVguGIqedsjEz0k0Lw5GFUnn9lv1d5S1ooXU8a4FS9klL3ycJRWkb/ndyRRz6jrg5EhccQ==
-X-Received: by 2002:a05:6a21:3391:b0:2ea:41f1:d54a with SMTP id adf61e73a8af0-353a3d61343mr3226851637.55.1762610334543;
-        Sat, 08 Nov 2025 05:58:54 -0800 (PST)
-Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([2405:201:31:d016:940a:b59:9e93:d45a])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8f8c83d52sm7985853a12.3.2025.11.08.05.58.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 05:58:54 -0800 (PST)
-From: ssrane_b23@ee.vjti.ac.in
-X-Google-Original-From: ssranevjti@gmail.com
-To: shaggy@kernel.org
-Cc: jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	dsterba@suse.com,
-	david@redhat.com,
-	shivankg@amd.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
-	syzbot+e87be72c9a6fe69996f5@syzkaller.appspotmail.com
-Subject: [PATCH] jfs: Initialize synclist in metapage allocation
-Date: Sat,  8 Nov 2025 19:28:41 +0530
-Message-Id: <20251108135841.42281-1-ssranevjti@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762610413; c=relaxed/simple;
+	bh=7yBypT11WbeW2bxMeuPHburV16FzltRiYKmtQ3dew9U=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=dzZgpTS1JSY7UDhXMHtioWz9bXAVolSlhepPS5yRNxicR6wjtxrGVwaRM+EzcaH9fDRd3sdRHg9Bq1SRbrHy8W9/Wi+iiidiRYKzKxQa68YqOnXdAZePGmtFdSEq6mGE1FSro36osMX58Q7yQcCvj31c5LFH5vK1LdKxA+4Aq3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from smtpclient.apple (unknown [180.172.111.150])
+	by APP-05 (Coremail) with SMTP id zQCowAA3pPK0TA9pT6IJAg--.54671S2;
+	Sat, 08 Nov 2025 21:59:17 +0800 (CST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
+Subject: Re: Re: [PATCH 1/3] riscv: soc: re-organized allwinner menu
+From: revy <gaohan@iscas.ac.cn>
+X-Priority: 3
+In-Reply-To: <e98a1e59-f3ff-4e9f-a180-79aea9943236@kernel.org>
+Date: Sat, 8 Nov 2025 21:59:06 +0800
+Cc: Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>,
+ Rob Herring <robh@kernel.org>,
+ krzk+dt@kernel.org,
+ conor+dt@kernel.org,
+ Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Yixun Lan <dlan@gentoo.org>,
+ Drew Fustini <fustini@kernel.org>,
+ geert+renesas@glider.be,
+ Guodong Xu <guodong@riscstar.com>,
+ Haylen Chu <heylenay@4d2.org>,
+ Joel Stanley <joel@jms.id.au>,
+ linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev,
+ Han Gao <rabenda.cn@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <43109A90-8447-4006-8E29-2D2C0866758F@iscas.ac.cn>
+References: <cover.1762588494.git.gaohan@iscas.ac.cn>
+ <d17a3a01e2b1297538c419b51953f9613426ba42.1762588494.git.gaohan@iscas.ac.cn>
+ <e98a1e59-f3ff-4e9f-a180-79aea9943236@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: Apple Mail (2.3864.100.1.1.5)
+X-CM-TRANSID:zQCowAA3pPK0TA9pT6IJAg--.54671S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF13uFWkGr1UXFWDWw1fXrb_yoW8Kw15pF
+	4fCFsI9FW5XryIganFgryj9FW5ta93Gw43WryDJ34rZ34jv3yUWr90qr4xWF1DXryDWa17
+	Jr95uF1a93y5AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvCb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkI
+	wI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7IU0uc_3UUUUU==
+X-CM-SenderInfo: xjdrxt3q6l2u1dvotugofq/1tbiCQ8ADGkPJyrqCQAAsC
 
-From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
 
-The synclist field in struct metapage was not being initialized during
-allocation in alloc_metapage(), leading to list corruption when the
-metapage is later added to a transaction's sync list.
 
-When diUpdatePMap() calls list_add(&mp->synclist, &tblk->synclist), if
-the synclist field contains stale data from a previous allocation (such
-as LIST_POISON values from a freed list node), the list debugging code
-detects the corruption and triggers a stack segment fault.
 
-This issue is intermittent because it only manifests when recycled
-memory happens to contain poison values in the synclist field. The bug
-was discovered by syzbot, which creates specific filesystem patterns
-that reliably trigger this uninitialized memory usage.
+> -----Original Messages-----
+> From: "Krzysztof Kozlowski" <krzk@kernel.org>
+> Sent Time: 2025-11-08 19:29:07 (Saturday)
+> To: gaohan@iscas.ac.cn, "Paul Walmsley" <pjw@kernel.org>, "Palmer =
+Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, =
+"Alexandre Ghiti" <alex@ghiti.fr>, "Rob Herring" <robh@kernel.org>, =
+"Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" =
+<conor+dt@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>, "Jernej Skrabec" =
+<jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>, =
+"Yixun Lan" <dlan@gentoo.org>, "Drew Fustini" <fustini@kernel.org>, =
+"Geert Uytterhoeven" <geert+renesas@glider.be>, "Guodong Xu" =
+<guodong@riscstar.com>, "Haylen Chu" <heylenay@4d2.org>, "Joel Stanley" =
+<joel@jms.id.au>
+> Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, =
+devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =
+linux-sunxi@lists.linux.dev, "Han Gao" <rabenda.cn@gmail.com>
+> Subject: Re: [PATCH 1/3] riscv: soc: re-organized allwinner menu
+>=20
+> On 08/11/2025 09:20, gaohan@iscas.ac.cn wrote:
+>> From: Han Gao <gaohan@iscas.ac.cn>
+>>=20
+>> Allwinner currently offers d1(s)/v821/v861/v881 on RISC-V,
+>> using different IPs.
+>>=20
+>> d1(s): Xuantie C906
+>> v821: Andes A27 + XuanTie E907
+>> v861/v881: XuanTie C907
+>>=20
+>> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+>> ---
+>> arch/riscv/Kconfig.socs | 22 +++++++++++++++++-----
+>> 1 file changed, 17 insertions(+), 5 deletions(-)
+>>=20
+>> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+>> index 848e7149e443..7cba5d6ec4c3 100644
+>> --- a/arch/riscv/Kconfig.socs
+>> +++ b/arch/riscv/Kconfig.socs
+>> @@ -54,14 +54,26 @@ config SOC_STARFIVE
+>> 	help
+>> 	  This enables support for StarFive SoC platform hardware.
+>>=20
+>> -config ARCH_SUNXI
+>> -	bool "Allwinner sun20i SoCs"
+>> +menuconfig ARCH_SUNXI
+>> +	bool "Allwinner RISC-V SoCs"
+>> +
+>> +if ARCH_SUNXI
+>> +
+>> +config ARCH_SUNXI_XUANTIE
+>=20
+>=20
+> You should not get multiple ARCHs. ARCH is only one. There is also not
+> much rationale in commit msg for that.
 
-Initialize the synclist field with INIT_LIST_HEAD() in alloc_metapage()
-to ensure it's in a valid state before being used in list operations.
-This is consistent with how the wait queue is initialized in the same
-function.
+The main goal is to avoid choosing multiple IP addresses for erreta.=20
+If using Andes IPs, I don't want to choose XuanTIe (T-Head) ERRETA.
 
-Reported-by: syzbot+e87be72c9a6fe69996f5@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=e87be72c9a6fe69996f5
-Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+For example, v821 uses Andes ax27, but it used to select ERRATA_THEAD.
 
----
-Tested:
- - Tested locally with syzbot reproducer, no errors observed
-
- fs/jfs/jfs_metapage.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 871cf4fb3636..77c512a0a42b 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -269,6 +269,7 @@ static inline struct metapage *alloc_metapage(gfp_t gfp_mask)
- 		mp->data = NULL;
- 		mp->clsn = 0;
- 		mp->log = NULL;
-+		INIT_LIST_HEAD(&mp->synclist);
- 		init_waitqueue_head(&mp->wait);
- 	}
- 	return mp;
--- 
-2.34.1
+>=20
+> Best regards,
+> Krzysztof
 
 
