@@ -1,108 +1,124 @@
-Return-Path: <linux-kernel+bounces-891670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF73C43377
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 19:37:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE18C4337F
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 19:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3C063AB0FD
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 18:37:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DAFC54E2B71
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 18:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EBB281356;
-	Sat,  8 Nov 2025 18:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE70281341;
+	Sat,  8 Nov 2025 18:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="u/TU0L1S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1hLQWo9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E58224AFA;
-	Sat,  8 Nov 2025 18:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27204236454;
+	Sat,  8 Nov 2025 18:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762627018; cv=none; b=QZKD9Wvf/yy7u2MZy9aXTpDkxI5Ayc9RdRbQ2MKr4BN5AYeMR3a5QP6Zrj7Be3WrIL6DS4adVv6HlaRgAMBHjBzeZpVivyV6poaCswd4yedwtWUDICnM02jFDLxIfVhzHo1Ywbe9SkDD6SuRf4f+5IszpUMatGAMKbrdE9FnBPU=
+	t=1762627114; cv=none; b=RK0Lq6wTTyT9GEfCKN+dLt26hYX3BJQrVObX+eFqBvDuzZnEn5tgJuxEFvVF+BmU9mLU0D7gSvBdkac0jivEanVCYE6/x4knqFC4AiW9uQKoi8I3ySn2sN+NdlzLNu7LIdit0MLrPUpBnfZaLT15588kyDBD1CAtRInZlDtQO8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762627018; c=relaxed/simple;
-	bh=oc4FD2p7G8kSBSZo9gfGH4up/tQYQo2yArK0ExY2vhY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ckKR3wMYZwRSh2OzMPrHSA0+HeYk5+im8C/L/qERnNCg37PefB8+ZaWVB8i3RZl4lY4vGhXrPj2ZzBJA7+gmXQqzAxTofGuGPh+uDoZckqEIxZhG0wOfDNYfiA+ARsutyVd44atTL+G0IB4bBEk2z0lNNg3vk7KNZ1vN5MH+4l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=u/TU0L1S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1045C4CEFB;
-	Sat,  8 Nov 2025 18:36:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1762627017;
-	bh=oc4FD2p7G8kSBSZo9gfGH4up/tQYQo2yArK0ExY2vhY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=u/TU0L1SolBld/Qum5lsMKpZbK303fBFh+JGMRdIeDfMOvxbOvd+sj7Fet4RquTqo
-	 cr0T/Q6PmBtaHDm/a/2DhALFhxViIEeD3BFEO87SZoNwY5zk2o5w/WMRME4x92bMaD
-	 UalR+stCBKRCmBJBbBCrq0f0nnaqV6uMag1h8qeI=
-Date: Sat, 8 Nov 2025 10:36:55 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
- rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
- rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
- kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
- masahiroy@kernel.org, tj@kernel.org, yoann.congal@smile.fr,
- mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
- axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
- vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com,
- david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org,
- anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
- linux@weissschuh.net, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org,
- cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com,
- Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
- aleksander.lobakin@intel.com, ira.weiny@intel.com,
- andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
- bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
- stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
- brauner@kernel.org, linux-api@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, ajayachandra@nvidia.com,
- jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com,
- hughd@google.com, skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v5 00/22] Live Update Orchestrator
-Message-Id: <20251108103655.1c89f05222ba06e24ddc3cc3@linux-foundation.org>
-In-Reply-To: <CA+CK2bCakoNEHk-fgjpnHpo5jtBoXvnzdeJHQOOBBFM8yo-4zQ@mail.gmail.com>
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
-	<20251107143310.8b03e72c8f9998ff4c02a0d0@linux-foundation.org>
-	<CA+CK2bCakoNEHk-fgjpnHpo5jtBoXvnzdeJHQOOBBFM8yo-4zQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762627114; c=relaxed/simple;
+	bh=t3e7SIt0+zXbhtJv1BbHHXc8fxypkZN0DeRPDQUHafQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bQwCMEoc0hvljknV+Rlc9htyelKvwoa6RsK6SOVpPMaVA4aAh2eZTA9wigkK5vn/BtQHCuUTnV2t3lePzjrsyFr5CHWOkMMC6taUuy95ixAWnhQhh6r69UGPUgj40MPCFRL90HTTY7hLrzghhbRdUeHvv65sdb4ZCb5VuJ+neq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1hLQWo9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B3C8C4CEFB;
+	Sat,  8 Nov 2025 18:38:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762627113;
+	bh=t3e7SIt0+zXbhtJv1BbHHXc8fxypkZN0DeRPDQUHafQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=S1hLQWo9OpsM4h7Qvv7OGWHH/FvfTZBcdvZr6BCrJPEev3bx53NZ65gLGVIGqNjSi
+	 hDnVtVxMfF1Av8f+rtEAN6Z79VooIY90Ft+7PPVKdSBnV61CK1YGWzklvYbyT5y+Vn
+	 c54iF3Y8y/Ie4mwws0ErfyzZUd0AOxGmI69tt+zAlCt8gmZWoTPR+hmi7honkrvSRP
+	 Nn3WA/0re9nAo7gtq2rxyJhoz8kOKMNkU4dpoT1UlszQ/GHPsJwO0sUn8taG/Ww7Qp
+	 30Gy2iVZBPmr66zawuEKwoVACvjvgqU2Ta9CAM3qTzxUQGNGJaH5YbzVbAqqYWmAS3
+	 qlx2fckgUhBzw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 5BD38CE0BB3; Sat,  8 Nov 2025 10:38:32 -0800 (PST)
+Date: Sat, 8 Nov 2025 10:38:32 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
+	frederic@kernel.org
+Subject: Re: [PATCH v2 15/16] srcu: Optimize SRCU-fast-updown for arm64
+Message-ID: <d53a5852-f84a-4dae-9bf4-312751880452@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
+ <20251105203216.2701005-15-paulmck@kernel.org>
+ <aQ9AoauJKLYeYvrn@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQ9AoauJKLYeYvrn@willie-the-truck>
 
-On Sat, 8 Nov 2025 13:13:32 -0500 Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
-
-> On Fri, Nov 7, 2025 at 5:33 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Fri,  7 Nov 2025 16:02:58 -0500 Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
-> >
-> > > This series introduces the Live Update Orchestrator, a kernel subsystem
-> > > designed to facilitate live kernel updates using a kexec-based reboot.
-> >
-> > I added this to mm.git's mm-nonmm-stable branch for some linux-next
-> > exposure.  The usual Cc's were suppressed because there would have been
-> > so many of them.
+On Sat, Nov 08, 2025 at 01:07:45PM +0000, Will Deacon wrote:
+> Hi Paul,
 > 
-> Thank you!
+> On Wed, Nov 05, 2025 at 12:32:15PM -0800, Paul E. McKenney wrote:
+> > Some arm64 platforms have slow per-CPU atomic operations, for example,
+> > the Neoverse V2.  This commit therefore moves SRCU-fast from per-CPU
+> > atomic operations to interrupt-disabled non-read-modify-write-atomic
+> > atomic_read()/atomic_set() operations.  This works because
+> > SRCU-fast-updown is not invoked from read-side primitives, which
+> > means that if srcu_read_unlock_fast() NMI handlers.  This means that
+> > srcu_read_lock_fast_updown() and srcu_read_unlock_fast_updown() can
+> > exclude themselves and each other
+> > 
+> > This reduces the overhead of calls to srcu_read_lock_fast_updown() and
+> > srcu_read_unlock_fast_updown() from about 100ns to about 12ns on an ARM
+> > Neoverse V2.  Although this is not excellent compared to about 2ns on x86,
+> > it sure beats 100ns.
+> > 
+> > This command was used to measure the overhead:
+> > 
+> > tools/testing/selftests/rcutorture/bin/kvm.sh --torture refscale --allcpus --duration 5 --configs NOPREEMPT --kconfig "CONFIG_NR_CPUS=64 CONFIG_TASKS_TRACE_RCU=y" --bootargs "refscale.loops=100000 refscale.guest_os_delay=5 refscale.nreaders=64 refscale.holdoff=30 torture.disable_onoff_at_boot refscale.scale_type=srcu-fast-updown refscale.verbose_batched=8 torture.verbose_sleep_frequency=8 torture.verbose_sleep_duration=8 refscale.nruns=100" --trust-make
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > Cc: <linux-arm-kernel@lists.infradead.org>
+> > Cc: <bpf@vger.kernel.org>
+> > ---
+> >  include/linux/srcutree.h | 51 +++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 48 insertions(+), 3 deletions(-)
 > 
+> I've queued the per-cpu tweak from Catalin in the arm64 fixes tree [1]
+> for 6.18, so please can you drop this SRCU commit from your tree?
 
-No prob.
+Very good!  Adding Frederic on CC since he is doing the pull request
+for the upcoming merge window.
 
-It's unfortunate that one has to take unexpected steps (disable
-CONFIG_DEFERRED_STRUCT_PAGE_INIT) just to compile test this.
+But if this doesn't show up in -rc1, we reserve the right to put it
+back in.
 
-It's a general thing.  I'm increasingly unhappy about how poor
-allmodconfig coverage is, so I'm starting to maintain a custom .config
-to give improved coverage.
+Sorry, couldn't resist!   ;-)
+
+							Thanx, Paul
+
+> Cheers,
+> 
+> Will
+> 
+> [1] https://git.kernel.org/arm64/c/535fdfc5a228
 
