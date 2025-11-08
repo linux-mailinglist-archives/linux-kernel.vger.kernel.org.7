@@ -1,260 +1,125 @@
-Return-Path: <linux-kernel+bounces-891304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EFDC4264F
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 05:01:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F77C42682
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 05:16:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 100FD188D198
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 04:02:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8A83BA801
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 04:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95E51A9FBD;
-	Sat,  8 Nov 2025 04:01:29 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FFB1DE8AE;
+	Sat,  8 Nov 2025 04:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F01qHcOo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A6234D39E
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 04:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D493F213E89;
+	Sat,  8 Nov 2025 04:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762574489; cv=none; b=b18aOZx1hrAiGDkQwObEUTE0gSFsUNNhuVRAEIQp3Ql2oc5OTFr+fcmfi+0Ey6zozvIi/80usn3OssM3dIMORvuxWC8riNj0t/nMNR7xeFcJq2NW6FejEGLVdG5bUOISbNsVJL+oMWlBfdbvfD/eC1kKi2vuOiII+o+OJaHP64g=
+	t=1762575374; cv=none; b=dOP1FZlC/+0McgQcfoEMzLfg82aRZeUh8HiYLGGwGlteYAbk7uh9NMeQSvtx8g6rOk9e1shLS4sFN2avMIQmEvNi1SiQdSKRIeIlhg+3EFb8dg8pC3MupecYE3bZZfbKwL1T/bfmXYAhBms2pFziLpQTg26/sMjOPBPizpcnaeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762574489; c=relaxed/simple;
-	bh=679CCx0Mjyk8sR0Ed/UiMndqrqMGUzmqQI0hQU3W1K8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WZ0Sa/MMCVTCQvQxRvsJAsQasPzOJN3dY5aqvI0YvEDXanXOGWzGioCPkZe5AoqqMpV2rsDizkUC5T55aH9bpTaubsA6/9nSLzU7LnrgAztEarrzbbnUUYUeIYrNapsNxWZTPpy8opktKkvsMLbZu6EGqWU8GdIo+jkm+YNtapc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-948610ae935so119046539f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 20:01:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762574486; x=1763179286;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2ZayVuwne5RPjgu24eL/vYWkKondkC7H5ToXJVWPy0k=;
-        b=l8jUQs8ZfJ+GreOivj3AbN8fuqFz8Ij8x7WaJShApNVy/WtYlbXT3mbGFBgyOGxtZD
-         egakMDgbHbQ3DuOz6wBEuX0Cj0A7HekjhfmFFmnBWCs3TERZcXLT0RtfGgE3gcE7A3MU
-         LM7BCtRXb8/9j97llCqWSXcXWVj+xeYaso/UdCQRbGsIx8OhPDWD7EztkrJMcZl1OJ1U
-         Ujz6b7us9TrpZHzXQs4K0Jp00hZupsajaB4REAEcv82LK9YWfju9NUzvJjKU/nqbh+3f
-         HTz521rLjGN1z2RU254cNyvYyyW6Ya3xD0b/LmriKhqjV8BHUIIyxnPA7BqmXtYUwy2K
-         Kpkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQCNs0gmiNPwQcfAnqmCYSQqlt0mA/mN6j0JOd0ytGcudUSxjmFJKXAqeMtO8OUFd7WewbmOGbvbrcjoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVNGZlXG+loy5g8HqLngH4Nn4rv6GlJJc/YzuRd9HHFsvTaeC4
-	qT9Sl2qq9huiFt5gl+RZnUNKFnuYGrXYdzfHjaHIixmdDJXnC0ce3IWhvtoFi53SteHb7yaCDm8
-	JkRUDeM8yR5M8chtQet19OBroun701XCOg/iKkDIU8Fn5NJUhEKz4yzo8zO8=
-X-Google-Smtp-Source: AGHT+IFu9xP1zhSNlyygRKbceParQpjsVyZQ73lPbVX6pNfjMz2g0BFnN8SiU2TArtPnjOS5YrNN41Nt/3nLMaJLiN9GG25DCMPG
+	s=arc-20240116; t=1762575374; c=relaxed/simple;
+	bh=ibDCRmOwG1IVBD7kY3t3GP9ad89w/MYSwp2rwzL/tz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lGJu7sd+r088tHkd0HA++tWXahBXxUKiAhlaJh2hZl1+kGmjg5m5N8Sip8N7OeYZIgsXjYw+WsYLVxV2HSS50uc5GMrwyP0SL1abBvcmPlBDsC1dJXQDH6iPTfiYSD/rekgfDXghP9xWBAJuZAmUcuzf7gylUpBckl5wMMidQAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F01qHcOo; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762575373; x=1794111373;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ibDCRmOwG1IVBD7kY3t3GP9ad89w/MYSwp2rwzL/tz4=;
+  b=F01qHcOohtgwMvaj+t/EvQC7AIIk5oICoUkJJDA9WgYolHJF6XZc1TiY
+   5Qk8dfCMqWPa6yPasKQ4TtYkWfJZl7EYcWwm2unTT+bt09wQQ0T1oY7sH
+   rByfJ2qCy3ZVqNAM2mX9yiDvt0/2LBfkfWA/QyRsRtU2fG/TjrvolanZk
+   0/V/JFB6/Q3g/SbQVivb3PG6h4GWX8c9Ua+uCynFxZ6MOwIsm3pA8ahE4
+   Hn68vZKRIapI98I6YS9EHAS9xsZB5qeC37D+M/L1IMPMTFNq/RLlcQnTC
+   fJy12j+gQ4bBiE3JRXfyTshL8QV8JDA0zCLNjzjE8wgjmhKywNbVy5gbs
+   w==;
+X-CSE-ConnectionGUID: 4gZpf0FBQUeGisIVCpQhPw==
+X-CSE-MsgGUID: xZvHAdtVQHCadkiaYNgxYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="64638348"
+X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
+   d="scan'208";a="64638348"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 20:16:12 -0800
+X-CSE-ConnectionGUID: o5CHm+RNTrO21N6oKEKwDg==
+X-CSE-MsgGUID: Mb7l+uO2T3m1KfIFOpCWPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
+   d="scan'208";a="225462129"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa001.jf.intel.com with ESMTP; 07 Nov 2025 20:16:11 -0800
+Date: Sat, 8 Nov 2025 12:01:55 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-fpga@vger.kernel.org, Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] fpga: stratix10-soc: add COMPILE_TEST support
+Message-ID: <aQ7As9KVG+5Dn5FB@yilunxu-OptiPlex-7050>
+References: <20251106185938.6419-1-rosenp@gmail.com>
+ <20251106185938.6419-3-rosenp@gmail.com>
+ <aQ2csK4TtTOFmyLj@yilunxu-OptiPlex-7050>
+ <CAKxU2N8QHoQxb0ddUtMTtK6psL4gPPGSTwTf5X=7py22GXxkrw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b4d:b0:433:2920:a0fe with SMTP id
- e9e14a558f8ab-43367d29a62mr26460295ab.0.1762574486517; Fri, 07 Nov 2025
- 20:01:26 -0800 (PST)
-Date: Fri, 07 Nov 2025 20:01:26 -0800
-In-Reply-To: <68dea1d7.050a0220.25d7ab.07bc.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690ec096.a70a0220.22f260.0070.GAE@google.com>
-Subject: Re: [syzbot] [block?] general protection fault in rtlock_slowlock_locked
-From: syzbot <syzbot+08df3e4c9b304b37cb04@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, axboe@kernel.dk, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKxU2N8QHoQxb0ddUtMTtK6psL4gPPGSTwTf5X=7py22GXxkrw@mail.gmail.com>
 
-syzbot has found a reproducer for the following issue on:
+On Fri, Nov 07, 2025 at 11:28:03AM -0800, Rosen Penev wrote:
+> On Thu, Nov 6, 2025 at 11:30 PM Xu Yilun <yilun.xu@linux.intel.com> wrote:
+> >
+> > On Thu, Nov 06, 2025 at 10:59:38AM -0800, Rosen Penev wrote:
+> > > Allow the buildbots to find compilation issues.
+> > >
+> > > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > > ---
+> > >  drivers/fpga/Kconfig | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> > > index 311313f3b282..f2e2776acdd5 100644
+> > > --- a/drivers/fpga/Kconfig
+> > > +++ b/drivers/fpga/Kconfig
+> > > @@ -60,7 +60,7 @@ config FPGA_MGR_ZYNQ_FPGA
+> > >
+> > >  config FPGA_MGR_STRATIX10_SOC
+> > >       tristate "Intel Stratix10 SoC FPGA Manager"
+> > > -     depends on (ARCH_INTEL_SOCFPGA && INTEL_STRATIX10_SERVICE)
+> > > +     depends on (ARCH_INTEL_SOCFPGA && INTEL_STRATIX10_SERVICE) || COMPILE_TEST
+> >
+> > I don't think it works without INTEL_STRATIX10_SERVICE, maybe:
+> >
+> >         depends on ARCH_INTEL_SOCFPGA || COMPILE_TEST
+> >         depends on INTEL_STRATIX10_SERVICE
+> >
+> > But INTEL_STRATIX10_SERVICE depends on HAVE_ARM_SMCCC, and they all
+> > require arch configurations...
+> Yeah I don't think INTEL_STRATIX10_SERVICE is needed for COMPILE_TEST.
 
-HEAD commit:    da32d155f4a8 Merge tag 'gpio-fixes-for-v6.18-rc5' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=118faa58580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
-dashboard link: https://syzkaller.appspot.com/bug?extid=08df3e4c9b304b37cb04
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103d4412580000
+Have you actually passed compilation without INTEL_STRATIX10_SERVICE?
+I can't image how it works without stratix10_svc_xx kAPI definitions.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/811f765ca0a8/disk-da32d155.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1f6516907c8f/vmlinux-da32d155.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/45682ff9dc9c/bzImage-da32d155.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/cb5a9fd06f24/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=13312a92580000)
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/d496dd2d1446/mount_6.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=1516117c580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+08df3e4c9b304b37cb04@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
-BUG: KASAN: slab-use-after-free in _raw_spin_lock_irq+0xa2/0xf0 kernel/locking/spinlock.c:170
-Read of size 1 at addr ffff888030dcba68 by task ksoftirqd/1/30
-
-CPU: 1 UID: 0 PID: 30 Comm: ksoftirqd/1 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- __kasan_check_byte+0x2a/0x40 mm/kasan/common.c:580
- kasan_check_byte include/linux/kasan.h:401 [inline]
- lock_acquire+0x8d/0x360 kernel/locking/lockdep.c:5842
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0xa2/0xf0 kernel/locking/spinlock.c:170
- rtlock_slowlock_locked+0x3821/0x4010 kernel/locking/rtmutex.c:1871
- rtlock_slowlock kernel/locking/rtmutex.c:1895 [inline]
- rtlock_lock kernel/locking/spinlock_rt.c:43 [inline]
- __rt_spin_lock kernel/locking/spinlock_rt.c:49 [inline]
- rt_spin_lock+0x158/0x3e0 kernel/locking/spinlock_rt.c:57
- spin_lock include/linux/spinlock_rt.h:44 [inline]
- __wake_up_common_lock+0x2f/0x1e0 kernel/sched/wait.c:124
- blk_update_request+0x57e/0xe60 block/blk-mq.c:998
- blk_mq_end_request+0x3e/0x70 block/blk-mq.c:1160
- blk_complete_reqs block/blk-mq.c:1235 [inline]
- blk_done_softirq+0x10a/0x160 block/blk-mq.c:1240
- handle_softirqs+0x22f/0x710 kernel/softirq.c:622
- run_ksoftirqd+0xac/0x210 kernel/softirq.c:1063
- smpboot_thread_fn+0x542/0xa60 kernel/smpboot.c:160
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-Allocated by task 7682:
- kasan_save_stack mm/kasan/common.c:56 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:77
- poison_kmalloc_redzone mm/kasan/common.c:400 [inline]
- __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:417
- kasan_kmalloc include/linux/kasan.h:262 [inline]
- __kmalloc_cache_noprof+0x1ef/0x6c0 mm/slub.c:5767
- kmalloc_noprof include/linux/slab.h:957 [inline]
- lbmLogInit fs/jfs/jfs_logmgr.c:1821 [inline]
- lmLogInit+0x3db/0x19e0 fs/jfs/jfs_logmgr.c:1269
- open_inline_log fs/jfs/jfs_logmgr.c:1175 [inline]
- lmLogOpen+0x4e1/0xfa0 fs/jfs/jfs_logmgr.c:1069
- jfs_mount_rw+0xe9/0x670 fs/jfs/jfs_mount.c:257
- jfs_fill_super+0x754/0xd80 fs/jfs/super.c:532
- get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
- vfs_get_tree+0x92/0x2b0 fs/super.c:1751
- fc_mount fs/namespace.c:1208 [inline]
- do_new_mount_fc fs/namespace.c:3651 [inline]
- do_new_mount+0x302/0xa10 fs/namespace.c:3727
- do_mount fs/namespace.c:4050 [inline]
- __do_sys_mount fs/namespace.c:4238 [inline]
- __se_sys_mount+0x313/0x410 fs/namespace.c:4215
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 5925:
- kasan_save_stack mm/kasan/common.c:56 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:77
- __kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:587
- kasan_save_free_info mm/kasan/kasan.h:406 [inline]
- poison_slab_object mm/kasan/common.c:252 [inline]
- __kasan_slab_free+0x5c/0x80 mm/kasan/common.c:284
- kasan_slab_free include/linux/kasan.h:234 [inline]
- slab_free_hook mm/slub.c:2539 [inline]
- slab_free mm/slub.c:6634 [inline]
- kfree+0x197/0x950 mm/slub.c:6841
- lbmLogShutdown fs/jfs/jfs_logmgr.c:1864 [inline]
- lmLogShutdown+0x441/0x830 fs/jfs/jfs_logmgr.c:1683
- lmLogClose+0x28a/0x520 fs/jfs/jfs_logmgr.c:1459
- jfs_umount+0x2ef/0x3c0 fs/jfs/jfs_umount.c:114
- jfs_put_super+0x8c/0x190 fs/jfs/super.c:194
- generic_shutdown_super+0x135/0x2c0 fs/super.c:642
- kill_block_super+0x44/0x90 fs/super.c:1722
- deactivate_locked_super+0xbc/0x130 fs/super.c:473
- cleanup_mnt+0x425/0x4c0 fs/namespace.c:1327
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888030dcba00
- which belongs to the cache kmalloc-256 of size 256
-The buggy address is located 104 bytes inside of
- freed 256-byte region [ffff888030dcba00, ffff888030dcbb00)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x30dca
-head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-ksm flags: 0x80000000000040(head|node=0|zone=1)
-page_type: f5(slab)
-raw: 0080000000000040 ffff88813ff26b40 ffffea000157d380 dead000000000003
-raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 0080000000000040 ffff88813ff26b40 ffffea000157d380 dead000000000003
-head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 0080000000000001 ffffea0000c37281 00000000ffffffff 00000000ffffffff
-head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000002
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5919, tgid 5919 (syz-executor), ts 100669428717, free_ts 100657311754
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1850
- prep_new_page mm/page_alloc.c:1858 [inline]
- get_page_from_freelist+0x28c0/0x2960 mm/page_alloc.c:3884
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5183
- alloc_pages_mpol+0xd1/0x380 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:3055 [inline]
- allocate_slab+0x96/0x350 mm/slub.c:3228
- new_slab mm/slub.c:3282 [inline]
- ___slab_alloc+0xb10/0x1400 mm/slub.c:4651
- __slab_alloc+0xc6/0x1f0 mm/slub.c:4774
- __slab_alloc_node mm/slub.c:4850 [inline]
- slab_alloc_node mm/slub.c:5272 [inline]
- __do_kmalloc_node mm/slub.c:5645 [inline]
- __kmalloc_noprof+0x14b/0x7d0 mm/slub.c:5658
- kmalloc_noprof include/linux/slab.h:961 [inline]
- kmalloc_array_noprof include/linux/slab.h:1003 [inline]
- security_inode_init_security+0x107/0x3f0 security/security.c:1868
- __ext4_new_inode+0x3314/0x3cb0 fs/ext4/ialloc.c:1325
- ext4_mkdir+0x3cb/0xc50 fs/ext4/namei.c:3007
- vfs_mkdir+0x306/0x510 fs/namei.c:4453
- do_mkdirat+0x247/0x590 fs/namei.c:4486
- __do_sys_mkdir fs/namei.c:4508 [inline]
- __se_sys_mkdir fs/namei.c:4506 [inline]
- __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4506
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 20 tgid 20 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1394 [inline]
- __free_frozen_pages+0xfb6/0x1140 mm/page_alloc.c:2906
- mm_free_pgd kernel/fork.c:541 [inline]
- __mmdrop+0xb5/0x4f0 kernel/fork.c:683
- rcu_do_batch kernel/rcu/tree.c:2605 [inline]
- rcu_core kernel/rcu/tree.c:2861 [inline]
- rcu_cpu_kthread+0xbf6/0x1b50 kernel/rcu/tree.c:2949
- smpboot_thread_fn+0x542/0xa60 kernel/smpboot.c:160
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Memory state around the buggy address:
- ffff888030dcb900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888030dcb980: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888030dcba00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                          ^
- ffff888030dcba80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888030dcbb00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> >
+> > >       help
+> > >         FPGA manager driver support for the Intel Stratix10 SoC.
+> > >
+> > > --
+> > > 2.51.2
+> > >
+> > >
 
