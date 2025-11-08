@@ -1,99 +1,91 @@
-Return-Path: <linux-kernel+bounces-891180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE7BC42165
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:02:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 036C8C42171
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:05:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5223A53FC
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0DB41898360
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AC656B81;
-	Sat,  8 Nov 2025 00:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90668BA34;
+	Sat,  8 Nov 2025 00:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ls2OpTMQ"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="bnxQLLsD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2569D45948
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 00:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9918A55;
+	Sat,  8 Nov 2025 00:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762560137; cv=none; b=ey0qXCAteSTfsbQNKNLtcNU6WNrT3NV0SLho+lJYHeAIftugAmsyqJV5FEQR0WocH/XYXA5J5/9m/t1kZB1P1dcvF+Q12Sl5iJuUyP0tUg31MPgm8k1zaI7Ube1caz4iDVLKjqlZqyBN9FDZN7qWvlHwDArJi1MLtqvR1rszdVc=
+	t=1762560305; cv=none; b=CHmAwOkK8wxJNUIYoSTCViSZFIhaJOUqcFDbC6JtnR2GIHecEXN9jn3Z2oOKGdyhXWLFbL+OZOz8eX76PNbpUUyXGnnExzRaJc9nKXUPZCzvyd7blV5jkIuk3fZjsGVCIhnCNgv0DxWp1LM8oL6lb9ITnH+1Z4UPmb499S2oNKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762560137; c=relaxed/simple;
-	bh=EAgqa3Zs+r/5nRl5WqFpnGeVUN787jXodc/S2ylw0Lc=;
+	s=arc-20240116; t=1762560305; c=relaxed/simple;
+	bh=Tqh33xIA4mgDa2BptdErXA8zNQ+Bw7zeLAuOimDde5Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tnAKPd+kEbRB2sXLStIQS82+GSKBraVlBVMh7Hvfgu9gZT5DLSve4BVD0AxFOQX4tqxkydO6aMeB29tTkPMNZoXdHQdyequcZZgwQY71YtPJrs65rU/B3tXbZeaYI0Sm9Jcov4kHyFKi7b8HRXWHLYfq9pYDv3jedSPBeD7yW6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ls2OpTMQ; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 7 Nov 2025 16:01:58 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762560132;
+	 Content-Type:Content-Disposition:In-Reply-To; b=eFnvjxx6Z1tTGnSCL+EjCd9nZvuGV88YYLhCuG6zbzJ7017PPmW20zdARJOQCkr5VBnxEv5iP40BoCrRakAMmdqZK1KbdVgufnNwLwImJ/mcYgJyGYRoyIRnRaWiRQ+83IDWKhEP251eUqMc8k7wi0Gh58ziPEZIzYd0Xoj9+0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=bnxQLLsD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDFC2C116C6;
+	Sat,  8 Nov 2025 00:05:02 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="bnxQLLsD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1762560301;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PSP6l7mhg1u2uTbJjzva7r/QaQVEvYhyFI/ReZFQzdY=;
-	b=ls2OpTMQSmOeDEfv8P4qyc8/YddPVMSn5fEKHSQCgSObawmV/H8+XLEyEdCwJ1VJ5+m8vP
-	naNPEZNyKI71TjB5uf8JxOoTxnEzrV2YCeIg66r4rLFRe9aV/97y0MaYCrcsGSP0MbwPdQ
-	2MxL91Ttu8ZaaQfhu6/omx3S+tOqz40=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
-	lkp@intel.com, Andrew Morton <akpm@linux-foundation.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
-	Christoph Lameter <cl@linux.com>, Martin Liu <liumartin@google.com>, 
-	David Rientjes <rientjes@google.com>, SeongJae Park <sj@kernel.org>, Michal Hocko <mhocko@suse.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Sweet Tea Dorminy <sweettea@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <liam.howlett@oracle.com>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	Wei Yang <richard.weiyang@gmail.com>, David Hildenbrand <david@redhat.com>, 
-	Miaohe Lin <linmiaohe@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>, Yu Zhao <yuzhao@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, christian.koenig@amd.com
-Subject: Re: [RFC PATCH v7 2/2] mm: Fix OOM killer inaccuracy on large
- many-core systems
-Message-ID: <ahtgrrgn4uwqjumr2blnnhyykow77weu3iuk2wqiimjhq4yset@5o3wls37n5pp>
-References: <20251031144232.15284-3-mathieu.desnoyers@efficios.com>
- <202511061432.4e534796-lkp@intel.com>
- <6hmgutxgdchs4qz6hprwsecwoygwszn5ywixxrvnereilegcsx@mxroaotaw2me>
- <7732c2eb-e547-47a8-93b3-1d1b4d9c27e8@efficios.com>
- <7b76f0e4-6148-4290-a295-7ceeb1ef2feb@efficios.com>
- <81258c9e-1436-4a4f-9343-ef574b8b0de6@efficios.com>
+	bh=j317frlHa+Qx5iwhsewyfIq0wiwLQtpXQJB2BERP3GE=;
+	b=bnxQLLsDNXzJcp27d6vn6WbaTpnp4mJTCJQnkxyMCWTRMwDUMaEbWAbEZBJKeaR63Y60o4
+	vso/1xejKtJMsUxye+W6brvjTz13PNV1PnFYrPOP8rBSQiZiIvDHjAhJf+nzNuwbxGFMok
+	E++oXwA/NfcTlqtjhiSsW0aTB7KFiVs=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b485aa65 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Sat, 8 Nov 2025 00:05:01 +0000 (UTC)
+Date: Sat, 8 Nov 2025 01:04:57 +0100
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Thiago Macieira <thiago.macieira@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, Christopher Snowhill <chris@kode54.net>,
+	Gregory Price <gourry@gourry.net>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, peterz@infradead.org,
+	mario.limonciello@amd.com, riel@surriel.com, yazen.ghannam@amd.com,
+	me@mixaill.net, kai.huang@intel.com, sandipan.das@amd.com,
+	darwi@linutronix.de, stable@vger.kernel.org
+Subject: Re: [PATCH v2] x86/amd: Disable RDSEED on AMD Zen5 because of an
+ error.
+Message-ID: <aQ6JKYcnNVRM2Fwk@zx2c4.com>
+References: <aPT9vUT7Hcrkh6_l@zx2c4.com>
+ <2790505.9o76ZdvQCi@tjmaciei-mobl5>
+ <aQ57ofElS-N0gEco@zx2c4.com>
+ <27717271.1r3eYUQgxm@tjmaciei-mobl5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <81258c9e-1436-4a4f-9343-ef574b8b0de6@efficios.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <27717271.1r3eYUQgxm@tjmaciei-mobl5>
 
-On Fri, Nov 07, 2025 at 11:04:01AM -0500, Mathieu Desnoyers wrote:
-> On 2025-11-07 10:53, Mathieu Desnoyers wrote:
-> [...]
-> > 
-> > It would make sense to call an explicit percpu counter tree init
-> > function from start_kernel() between the call to mm_core_init() and the
-> > call to maple_tree_init(). This way it would be initialized right after
-> > mm, but given that the hierarchical counter tree is a lib that can be
-> > used for other purposes than mm accounting, I think it makes sense
-> > to call its init explicitly from start_kernel() rather than bury
-> > it within mm_core_init().
-> See the following diff. If nobody object, I'll prepare a v8 which
-> includes it.
+On Fri, Nov 07, 2025 at 03:11:51PM -0800, Thiago Macieira wrote:
+> On Friday, 7 November 2025 15:07:13 Pacific Standard Time Jason A. Donenfeld 
+> wrote:
+> > Oh. "Entropy source draining" is not a real thing. There used to be
+> > bizarre behavior related to /dev/random (not urandom), but this has been
+> > gone for ages. And even the non-getrandom Linux fallback code uses
+> > /dev/urandom before /dev/random. So not even on old kernels is this an
+> > issue. You can keep generating random numbers forever without worrying
+> > about running out of juice or irritating other processes.
+> 
+> Thank you. This probably seals the deal. I'll prepare a patch removing the 
+> direct use of the hardware instructions in the coming days.
 
-This seems reasonable to me, I see v8 is already posted. I will take a
-deeper look.
+Cool. I've got an account on the Qt Gerrit (I think, anyway; it's been
+some years), in case it's useful to CC me.
 
+Jason
 
