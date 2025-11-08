@@ -1,156 +1,217 @@
-Return-Path: <linux-kernel+bounces-891194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB698C4220B
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:27:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0625C4220E
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:27:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43A263A598C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:27:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D560F3A9FF2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D782620FAB2;
-	Sat,  8 Nov 2025 00:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E4C212557;
+	Sat,  8 Nov 2025 00:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="auW3HRp7"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2DXupsK"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C804620102B
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 00:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E84020A5E5
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 00:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762561631; cv=none; b=qCuJJFkK5P+nvIoIBakV97RfFXmTAWfMhEmr0HP5s2Yu6/yWLkrFDkSdL5IgUhC9xVjptorQrGWhNnDXhtyvNCNb5AMAHGFYj/iOSV8wbYgiunRzt+YCkSR4lgcEB7r0hVIQkFoXZwN6SQHBvgt7NMxnPlff0+GC+4gawzL41pI=
+	t=1762561648; cv=none; b=q4rQcrTSCIPQGGY6yJpdVSH9xXKgGWqBiZFmtyZ60BMa3x0kS0VOvASNQXVIydfEVuWa04+79IHoCgCPUCJcfq4R22FfcTul5QhPmeVPawJVaK/rr2IszmDgHVoYtRhuVGBYBKoXTfacIgIvdgJstRBs+G8ZcGN/0wIIlDRrJKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762561631; c=relaxed/simple;
-	bh=pgHR7IWBR/a09RYbkgIU5CRVwV7NDCYpieLHFaAKZvg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SnyDRr+5zdnkbsv5oNggZs4dLEOQ9KlpAkf3+FTP22M2aLaIyLwlYm7bN4cCKLuQAKIfQPVhlM41FwjY/koRB5a9rZvsNr0QEFu8ETiCAVEZyfeJofteFqw2Kdnhu/+8sDPI5EAJbdyKKTi5vooBRry9tMnEBtWdQm9cpk8fWo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=auW3HRp7; arc=none smtp.client-ip=209.85.216.54
+	s=arc-20240116; t=1762561648; c=relaxed/simple;
+	bh=7kj/nTh8c5FimDk+/Kx8m+ZVMa2y1+ZHOJWDbwOrbyQ=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+Botz+nxTCtbu8tFN4uzfMTEBBjFWycxvwEA4qUnkSpMfMR/dMAHJ5IKkEeaT4K0iTHo0sOkJMp/ghJiYDfRiX/LHBi1OHgKCflr1JkGpPcDrGuKgn2Qqz4vULj4Oqxejfm5pzIjwnZ3p8ft6qg41UfLBSQ5BNaHoCUgF3+hyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2DXupsK; arc=none smtp.client-ip=209.85.215.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3408c9a8147so1030142a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 16:27:09 -0800 (PST)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b9f1d0126e6so832015a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 16:27:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762561629; x=1763166429; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kG5miPSuw5Rs6CB8PWEc2IqA42ar44NKQD4I2/IIqWk=;
-        b=auW3HRp7cku/teb+fno69S4M1Nj7gUgoTZLXeI9mkcYN+9P/U9lUob16wGbIYzYU9v
-         QG1whj17Ds0khf9htiqUNsAtpxAuNSDQfQFOWhfIaKDc5RpZQdsv7av2BblOR9NADXHK
-         caLWRbUMSDa2VtlssnVB9NP/HUiC77+iJgBskjuz7eP3u4BQO96rjt94GMLJaorNi3OX
-         uf18WkGNa0TRWxv0YlVJcAKLUeLyO2+6/ovi9VyvjyDAd8xtJoA0oKor4fKE//gA+47z
-         QAfNBpd7T7loucyuniUKOYL+/YwqEvMguUauIvSA8SJwvopse+oNAMm8eu70s/JEVLEO
-         Ps1w==
+        d=gmail.com; s=20230601; t=1762561646; x=1763166446; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=oITIVQgMr73mFnSfBGd/HefCrTD9E8UlLjNjhfP/oZE=;
+        b=I2DXupsKEkWM/EAfCuP2z/x8aDcWMonPKyBaNz1U6jzPtF1d8Vuk57xiLclLT2/hxd
+         QRXQ+vRbbwNHa0z48DtueZBEwpg9qSaHZ+pHT5u2oSjNJ9C6BHcjyhdDB1BKKP3k3Sgt
+         Rdcv7+5oteN3eQ3COuYV3Reu54Hm0qRycrYHC1OmAVfTYTT5ZWFKPvr4EY0bNatXUVW+
+         qNrmUeY75V+oAmqpoC/mEz9dsOO2sqsdLKmcgHv08FlHUSZOJ66n9PBff3bjD6EjTDwY
+         2Ye9QQl0U1UmGYNOmgPGpHUgrdoUgG60xCNVTT+5kJWBZ4t8VaLybYSMGhKBlfV3M69J
+         evPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762561629; x=1763166429;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kG5miPSuw5Rs6CB8PWEc2IqA42ar44NKQD4I2/IIqWk=;
-        b=LDQb67CtfBwJf3HzmKgR+JqPLG7miPa96QmqR8f+sZ0u/B+xkJHD8PK27ROs3WsytM
-         ZZMtpzvWFPzoXRVnlklUnVYXqPnrpdMtR1c5K/S7F+CTmJ6tmpFmEb/0QjlDFQMeByxO
-         39u2VU6Yz/gw5lNk1nMmv4MrCjkyAAHORUzWprP2y56E9qTCRPgVT50zcXMEWV4AbhnG
-         hkoEnN0k9syfRJ5joTfsjSNSMGM6c9yiPImdnE6WS3OInkdmjZ1I6NcjN/zgoGZ4Ri+F
-         ItdeZqbQJ49dd/j0TyOe8Vw5+zTkEp3Dv+yLW6m5OKY/j/BmsX84lLua4i/obL8RYC28
-         KRuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMZt/0qH/lJ1nz5z7ojKOx78GFKJfVi5ONF5o+lJqJIP2vPeDZpHQOQdEqIOZ2MXUsU7HuPAho1qgMlK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+YS87x0GRz5K67c+mKv8fcaR9bhrWYTmBgioPlYnDntwFZgeV
-	iw3UaVmo4F+JFG1YUqW5kJCUMKJAmUhjSIAEbDwKqfw0kgQM9EGp+Rj1
-X-Gm-Gg: ASbGncstXzUzGb9M9OZkiYhD1bK/OKRNhpE79NLK4TcKdhEhwJaENA0M07rCELjrkgn
-	wi1WOu57b/p2mHXJF6pnPPVfYnFkvxpSb30uPxc0pYZ95PzgrDfmkVHXn3zkYb6qOdDPxMqOQRl
-	JHxwuUxG5di3Zp32S0Z/WEGLAZvePWwLgHu9BNGeUMnRu+ynrSO6uRHy/DoEyx7FCltgieOzySH
-	azG1iNBZYeVSQFzli4BPEz2PaaFe2E8AVsv+349krcRdyKLAr0aFVNEDyDUpaQQYh1mnPmoyf+o
-	+FZWnzd41vfrdjFyOpWYbqTQ3YSRSiroS+LYHHRSsY3pyMSjhRK4HmMA+5SxOlDHUvVuJVdIaFZ
-	MudMH5GWXaKe7+db5u212ss3Re25vOAKUHcXDtiI61aMrB6AeeueugE2RnaJsofAGxDmXb5oWKy
-	eV5iEE9RupaX+X8+YpyCCIt6y0
-X-Google-Smtp-Source: AGHT+IFYh6Icg0EsDUkk0iv9+UX1uahfIBAE45SWjta9kQQGahHqJkoX07VOkXJhC6aD8UWJ+UueaA==
-X-Received: by 2002:a17:90b:3a92:b0:340:5b6a:5ba9 with SMTP id 98e67ed59e1d1-34353674a9amr4628492a91.11.1762561628964;
-        Fri, 07 Nov 2025 16:27:08 -0800 (PST)
-Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:1876:baf8:5e3a:d95b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a68ce9e9sm10243237a91.9.2025.11.07.16.27.05
+        d=1e100.net; s=20230601; t=1762561646; x=1763166446;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oITIVQgMr73mFnSfBGd/HefCrTD9E8UlLjNjhfP/oZE=;
+        b=qfMEjandgavAo6L/sCYcayFUWa6Mx2HDR24/UvlpSQ/L2XbiTynVlnaYzSuHDsQSQ6
+         8g2aNIYOMLbxBImf7/KDYo7YEVl2k0EL66wlvSMM/tNSfK6yr80A8PJ1d4gx5UtRtQGB
+         eDXJFckVKnJ8O7dyVw43WwnQMG/w0DBkR5QKPOqeI461wSqeiN0agzQWfJ5thGOV7Pet
+         h07zBgJ72g6vpmIjqA3mplpcV9u6Gq+HJNDI0xJJVK6wW9rTRfypBPykY9+GGdH+KAMY
+         s76wKZc8Gnk2Mfxi6AC4d+CP9T5JUZkTGS7XvYPUjZtOOR/IQKmCEGzGZ/GrYQrGV61X
+         BZlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVF9gVPYvQp+cVn+gFDyyLUV2b8Lf7V+9wWriTNeXwaPDjuzCHehUcGY3hjgINB+i8ydnQ9xGpTmr7FJv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRSR3HMua08PvolU667U/LaC5x2/UpsjCRZNHP/sSPD8zJRpsa
+	ETuXzTYrGZL0u1nl5ewC6XDcVfQaCvOOiGGIT3qCYPYB1o59GFgmcBEO
+X-Gm-Gg: ASbGncteIVTuYpGjHo5S2kUsE+4X82H4MVoQsi8Tkmfbcen16hM+Ee6SvjxKe23C9/0
+	7/IhnZeQQLPT/l9bKo0NsjXhoRG93pLvxygnWKAX9RnSJ6r2zC0JBzWqRWNfI21QX5vW57LVVc1
+	WLvRpdmBizHDuhkWAD5E/jAbrbsCpkbJj3PZYqszlepQYODpYyqArlFWybR3An4cbpS9aEnqfjH
+	1LUuFN7I/UoQm6y4oOEgQAfL4uPhcyb4YzpIZIkPrqOPyZ46TRnlNhaZZyBZwYDqG/iyo+tu+zB
+	QEJSu+0DHbujx+X4upCQdiQRHUBedQGJjVRDhJX3G3abXErp7M7vtiSVusywUuShEq83x8VRj5x
+	9J897tZXyT220QZRI0AyG1lZXo/FYnpfucch1fMxu7VwdqUuM1GughdI6DNTro7Rr4tt8V1SAps
+	OhiyxULVDgkFvzY5w=
+X-Google-Smtp-Source: AGHT+IGBkvZLAhvDKdrvXHQG3c3w7IqpLjYOFlvAQCWtRpkM1DWxhdW7r8G7DO/y1DZ2Fmaan/pCUg==
+X-Received: by 2002:a17:902:cf0b:b0:290:ad7a:bb50 with SMTP id d9443c01a7336-297c96a5cd5mr39554295ad.27.1762561645531;
+        Fri, 07 Nov 2025 16:27:25 -0800 (PST)
+Received: from Cyndaquil. ([174.127.224.194])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bad33c80393sm2734157a12.4.2025.11.07.16.27.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 16:27:08 -0800 (PST)
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Deepanshu Kartikey <kartikey406@gmail.com>,
-	syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
-Subject: [PATCH] fs/nsfs: skip dropping active refs on initial namespaces
-Date: Sat,  8 Nov 2025 05:56:58 +0530
-Message-ID: <20251108002658.44272-1-kartikey406@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Fri, 07 Nov 2025 16:27:25 -0800 (PST)
+Message-ID: <690e8e6d.050a0220.b06fd.d2ec@mx.google.com>
+X-Google-Original-Message-ID: <aQ6Oay2rcmaQLDup@Cyndaquil.>
+Date: Fri, 7 Nov 2025 16:27:23 -0800
+From: Mitchell Levy <levymitchell0@gmail.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Benno Lossin <lossin@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Tyler Hicks <code@tyhicks.com>,
+	Allen Pais <apais@linux.microsoft.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v4 2/9] rust: cpumask: Add getters for globally defined
+ cpumasks
+References: <20251105-rust-percpu-v4-0-984b1470adcb@gmail.com>
+ <20251105-rust-percpu-v4-2-984b1470adcb@gmail.com>
+ <aQ1DAn7Djc19CgGF@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQ1DAn7Djc19CgGF@yury>
 
-Initial namespaces are statically allocated and exist for the entire
-lifetime of the system. They should not participate in active
-reference counting.
+On Thu, Nov 06, 2025 at 07:53:22PM -0500, Yury Norov wrote:
+> On Wed, Nov 05, 2025 at 03:01:14PM -0800, Mitchell Levy wrote:
+> > Add getters for the global cpumasks documented in
+> > `include/linux/cpumask.h`, specifically:
+> > - cpu_possible_mask
+> > - cpu_online_mask
+> > - cpu_enabled_mask
+> > - cpu_present_mask
+> > - cpu_active_mask
+> > 
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > Suggested-by: Yury Norov <yury.norov@gmail.com>
+> > Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
+> > ---
+> >  rust/kernel/cpumask.rs | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 46 insertions(+)
+> > 
+> > diff --git a/rust/kernel/cpumask.rs b/rust/kernel/cpumask.rs
+> > index b7401848f59e..a6a130092fcb 100644
+> > --- a/rust/kernel/cpumask.rs
+> > +++ b/rust/kernel/cpumask.rs
+> > @@ -77,6 +77,52 @@ pub unsafe fn as_ref<'a>(ptr: *const bindings::cpumask) -> &'a Self {
+> >          unsafe { &*ptr.cast() }
+> >      }
+> >  
+> > +    /// Get a CPU mask representing possible CPUs; has bit `cpu` set iff cpu is populatable
+> > +    #[inline]
+> > +    pub fn possible_cpus() -> &'static Self {
+> > +        // SAFETY: `__cpu_possible_mask` is a valid global provided by the kernel that lives
+> > +        // forever.
+> > +        unsafe { Cpumask::as_ref(&raw const bindings::__cpu_possible_mask) }
+> > +    }
+> 
+> Not sure about this '&raw const' syntax, but I want to make sure that
+> all this getters provide non-modifiable references. To modify any of
+> those masks, one has to call a dedicated helper like set_cpu_possible().
 
-When setns() is called with a file descriptor pointing to an initial
-namespace, nsproxy_ns_active_put() was dropping active references on
-them, causing the active count to hit zero and trigger a warning.
+For `id: T`, the syntax `&raw const id` produces a `*const T` pointing
+at `id` (the analogous syntax `&raw mut id` produces a `*mut T`).
 
-Fix by checking is_initial_namespace() before dropping the active
-reference in nsproxy_ns_active_put().
+All getters here provide const references (`&'static Self` as opposed to
+`&'static mut Self`) which will cause the compiler to prevent usage of
+any `Cpumask` methods with a `&mut self` reciever (i.e., methods that
+change the `Cpumask`).
 
-Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=0b2e79f91ff6579bfa5b
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/nsfs.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+> Can you maybe explicitly mention it in the comments?
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index ba6c8975c82e..ffe31c66d1d8 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -19,6 +19,7 @@
- #include <linux/exportfs.h>
- #include <linux/nstree.h>
- #include <net/net_namespace.h>
-+#include <linux/ns_common.h>
- 
- #include "mount.h"
- #include "internal.h"
-@@ -698,12 +699,20 @@ void nsproxy_ns_active_get(struct nsproxy *ns)
- 
- void nsproxy_ns_active_put(struct nsproxy *ns)
- {
--	ns_ref_active_put(ns->mnt_ns);
--	ns_ref_active_put(ns->uts_ns);
--	ns_ref_active_put(ns->ipc_ns);
--	ns_ref_active_put(ns->pid_ns_for_children);
--	ns_ref_active_put(ns->cgroup_ns);
--	ns_ref_active_put(ns->net_ns);
--	ns_ref_active_put(ns->time_ns);
--	ns_ref_active_put(ns->time_ns_for_children);
-+	if (ns->mnt_ns && !is_initial_namespace(&ns->mnt_ns->ns))
-+		ns_ref_active_put(ns->mnt_ns);
-+	if (ns->uts_ns && !is_initial_namespace(&ns->uts_ns->ns))
-+		ns_ref_active_put(ns->uts_ns);
-+	if (ns->ipc_ns && !is_initial_namespace(&ns->ipc_ns->ns))
-+		ns_ref_active_put(ns->ipc_ns);
-+	if (ns->pid_ns_for_children && !is_initial_namespace(&ns->pid_ns_for_children->ns))
-+		ns_ref_active_put(ns->pid_ns_for_children);
-+	if (ns->cgroup_ns && !is_initial_namespace(&ns->cgroup_ns->ns))
-+		ns_ref_active_put(ns->cgroup_ns);
-+	if (ns->net_ns && !is_initial_namespace(&ns->net_ns->ns))
-+		ns_ref_active_put(ns->net_ns);
-+	if (ns->time_ns && !is_initial_namespace(&ns->time_ns->ns))
-+		ns_ref_active_put(ns->time_ns);
-+	if (ns->time_ns_for_children && !is_initial_namespace(&ns->time_ns_for_children->ns))
-+		ns_ref_active_put(ns->time_ns_for_children);
- }
--- 
-2.43.0
+The compiler will prevent using these values to change the underlying
+`__cpu_possible_mask` etc, so mentioning that these return values can't
+be used for that purpose seems redundant to me.
 
+It is possible someone could get the pointer out via `Cpumask::as_raw`,
+and then do something bad with that pointer, but this isn't any
+different than someone doing something bad with
+`bindings::__cpu_possible_mask`.
+
+Thanks,
+Mitchell
+
+> With that,
+> 
+> Acked-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> 
+> > +    /// Get a CPU mask representing online CPUs; has bit `cpu` set iff cpu available to the
+> > +    /// scheduler
+> > +    #[inline]
+> > +    pub fn online_cpus() -> &'static Self {
+> > +        // SAFETY: `__cpu_online_mask` is a valid global provided by the kernel that lives forever.
+> > +        // Since we wrap the returned pointer in an `Opaque`, it's ok that `__cpu_online_mask`
+> > +        // may change its value.
+> > +        unsafe { Cpumask::as_ref(&raw const bindings::__cpu_online_mask) }
+> > +    }
+> > +
+> > +    /// Get a CPU mask representing enabled CPUs; has bit `cpu` set iff cpu can be brought online
+> > +    #[inline]
+> > +    pub fn enabled_cpus() -> &'static Self {
+> > +        // SAFETY: `__cpu_enabled_mask` is a valid global provided by the kernel that lives forever.
+> > +        // Since we wrap the returned pointer in an `Opaque`, it's ok that `__cpu_enabled_mask`
+> > +        // may change its value.
+> > +        unsafe { Cpumask::as_ref(&raw const bindings::__cpu_enabled_mask) }
+> > +    }
+> > +
+> > +    /// Get a CPU mask representing present CPUs; has bit `cpu` set iff cpu is populated
+> > +    #[inline]
+> > +    pub fn present_cpus() -> &'static Self {
+> > +        // SAFETY: `__cpu_present_mask` is a valid global provided by the kernel that lives
+> > +        // forever. Since we wrap the returned pointer in an `Opaque`, it's ok that
+> > +        // `__cpu_present_mask` may change its value.
+> > +        unsafe { Cpumask::as_ref(&raw const bindings::__cpu_present_mask) }
+> > +    }
+> > +
+> > +    /// Get a CPU mask representing active CPUs; has bit `cpu` set iff cpu is available to
+> > +    /// migration.
+> > +    #[inline]
+> > +    pub fn active_cpus() -> &'static Self {
+> > +        // SAFETY: `__cpu_active_mask` is a valid global provided by the kernel that lives forever.
+> > +        // Since we wrap the returned pointer in an `Opaque`, it's ok that `__cpu_active_mask`
+> > +        // may change its value.
+> > +        unsafe { Cpumask::as_ref(&raw const bindings::__cpu_active_mask) }
+> > +    }
+> > +
+> >      /// Obtain the raw `struct cpumask` pointer.
+> >      pub fn as_raw(&self) -> *mut bindings::cpumask {
+> >          let this: *const Self = self;
+> > 
+> > -- 
+> > 2.34.1
 
