@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-891741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB699C435CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 23:59:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14093C435D5
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 00:01:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA99188B964
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 22:59:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988C6188CD75
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 23:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77862248886;
-	Sat,  8 Nov 2025 22:59:08 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF5A2848A8;
+	Sat,  8 Nov 2025 23:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="NEv/GsMb"
+Received: from mail-ej1-f98.google.com (mail-ej1-f98.google.com [209.85.218.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DFE18E1F
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 22:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3C3C133
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 23:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762642748; cv=none; b=RUPU6xwxLVVPLDyBgJ9iKrQ7jGayLKJiKweTNWZselwEqaWit5qYf43KWPR18cHCIXd3+vFTFd1hGdU3EWt6LR0C8OB/Kl7n/BtPX9RxGG8q8M/XMUcfptrfqN/DdMJLK6xD1P4w8mcjqtTvUCGjrPATXQe415YAkcNFLysD4dw=
+	t=1762642872; cv=none; b=hejIRHhVrIVgSru8uX0Xjm6BW9TMP2klA/66t/0v4UMKCD9DLE13LqywRor4JUdxA0gWvFNuOJASmG4UjOckB6j5Aeb79MbNUG5GVN/W1qy3pPHi0BXTXjWcWIq9iyygtMqAUErZjdZ16jAPUuCzUN9L/e7zTUjUxvW+CQmXkxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762642748; c=relaxed/simple;
-	bh=FsKiw1P9B7UnMPLZqRZkjt9gyx01uTg4TKsCCdCA6GI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gKhNLUU3CTGIYk4DB/FT0hI+9arclfgsrywjIO4iUy1xx8vB7nU0Y+sf/t/C9JmxtPFPHBVxrCjAZnaFpvpE8AJ2nipAXQMKARW5Jr43UNfqjSka8jnOA6WFIHQxUQy79bs+52+NC0O7OrViMLUfVs9/2wrVVkQVG+ZMzG2+aNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-948610ae935so152301339f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 14:59:03 -0800 (PST)
+	s=arc-20240116; t=1762642872; c=relaxed/simple;
+	bh=ELCrrGtrdySxwwWAm//4H4Qes1u+2MVrTViH+GLXMhQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JSFLWKwuJUyYaUD2JV7RANlmD5SvbM+aWgoteUZ7+to8NXdjzQuBak9gnJ6FFm9vf1CT6bVxlkGcVdWhxftH6ujzYXhRcPPlAym9bxjT5CPZRbHIKR0iURrq7J9kyd+3PTpAvDkRor7wSft/2ULh3c8RAhVEiAaXh8/VMdbrwaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=NEv/GsMb; arc=none smtp.client-ip=209.85.218.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-ej1-f98.google.com with SMTP id a640c23a62f3a-b70b40e0321so37536566b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 15:01:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1762642868; x=1763247668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JRDSAPEErao6vhdU+yX/E1lGKcHqsrIexk2wWTATv1Y=;
+        b=NEv/GsMbOH4omCoq6q9baqxkEiEHHAQuyokbP65SqbtrXn7BG6VatEAzJe3nRPja28
+         PnbKChUoYOxs+kBPpsanN4KhO81p1brmUk9k0NlPXN1FG4DzaNU0z5z5mXb0c1N4FGH/
+         +f+tk1wroM7HYlRIOGfRUbzeg1nnm1zFBk/sSiH14b0aesOZtZxPffks9tpgCLmwx7Ky
+         Nm/kMtvi7QfaEDcwmuPJjev3Hil3VQGwSQtVffaKqwUbiWjnl8Qt1W91lmwfW80isHbU
+         nv94DJGEJ+av/xqU5jISdsRzTjuz8Qz7ar+kq2GOlnIDqJgZJ9PMSsx9zJNUOBVBOVSx
+         0d4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762642742; x=1763247542;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Q6RGTfP37+XoemsYNAa43r9yphIgY2XCSrARXAD8IY=;
-        b=aWagLRHoVyVv/Z1r5kLyZzF6vGTYov5d7X0xSDJu/MmEKxanEtizW9woCBz6m4t2eI
-         meEe2xxnt+6C+THE2FewVlWdtTMu+YI2xuqY2R3txfXfqc8t3qn9D/KNZwcCSVF39O4w
-         GsDa4VKUzzmlUuQUWzFOReqi7Q1EbJB3K0Tcv2wfNVf5BRDaFyB/TYgKTiLC68Gd+LxR
-         LM+nIeJGRZEvOxOW7QHAjVpRBcpoGIgNSgfKk99LGvYmCzZXmmHb12C8gexLFDAmgjTl
-         aXrvFqtAnXakThh2IhMYdtKhAH8l06Bz/vLmtPcG5K4MilNL8E3UnK70lJNMLYDoItaG
-         feRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgF37UjDl7rKjb7G4OUQabmm/U10HAL7/iKKCGHeLJYBszU3cW7FeYw3zrIZ/1rQP+fMotfC5epWZQ69k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhVpjju+qSfIFg4HCHsAnVdlnA89gm884bZh4nRhMX0+O+4BeU
-	N7LaYhqYf5mWRpqQK0IrVXKF1Gw5cXJ0ywrUnp7lbFKDKEO8eQ519HKNBHhB6HhgoNrOb27UL9y
-	FUmnlQaY7kv1K7mMXScsPFNazjjsgDB1djXIQBA1zi1a/wIPUV6Zs+RjcaB0=
-X-Google-Smtp-Source: AGHT+IFwU5vONS4ZrT3DMl8Gj3nlYJNaScCmR03ghxo2oz5bhvduoy9iw+/mi1myljro7ZPWq4gk5JEgNghehAkWOTOZLkqDO7Cy
+        d=1e100.net; s=20230601; t=1762642868; x=1763247668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JRDSAPEErao6vhdU+yX/E1lGKcHqsrIexk2wWTATv1Y=;
+        b=Hlf4Vu7ZRAWStEpH2bgZMElSEapP/L532pGzc0RKZAcqMZAMEobiZNQkiv9KZTOdJW
+         jLqCEqsoAqtyJgIpE4s6eu1ZrSBHQW4mE88eu6xcPxf3uQqWQgF47FD+NZyva9TtcR89
+         S93qbDcjbl7pAghQ2UlL3fSa5Nb29/AWTjpQcvIJ81iH4TamXRuUzu6npXR8JZUnbXW0
+         hoW/ppsYDvTewni/78I4cjjBCz7xaETXmU8DFsJNxcoj4AJAB/O3H7tJnX3oB6/mgLef
+         PNLpo37TPQyNcv7+2Z1GFAQff2uW8MIu8d8NDZ0e19DoaLu1me/e5pebPPdqE3rAIqia
+         lAXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwqRPaGdbLjITMCzKb5XWi+7bdUNZysxMmKwM+ZABfsxNKipG9xUUn3syLmNkPLC6ycfga2pldyjjyiWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz40bSNcSu3O7zEvTKFGtiJH+DBNQNWl5xruhUIQBbxIuqWqgIO
+	xqsliXloU32cxRGSHf4lTiDR7m8aVW2hK7sa2lPMbQNObUQIJusI1KSCEHADAje+AmtmnsUvU5H
+	sCNV6c+W3/qO9a7IQARN6oypGDzbLSE2nMAwPMkNLT9611C6AAZbd
+X-Gm-Gg: ASbGncs2whKQnn/MFO+aAO/2749LJPymJ6+BkvxrxhbgC6F8rMixOWqInjYIIIVKZ9o
+	aUN9h4wwA31AbryaRx8S3dKBtEkrovlPir6hDymUKCl23rMiCMLMeeeqvVwBZMvzbrUXRANkhfM
+	RK4lM9aPwI+uE9J19DPM0/Ys1SpRz7dIS4jrZF8TIs/iz4DMf2/nAwpjllf3lreI8iPdP63nRjX
+	Mhwl8luW9eKoP4CSSvaAbH/Lo0igR1bmVezQNCUc3V2sKpQtg7+wTgxj3Ij/kBBUIPkDrR+qSVz
+	bgGYAnmS/qE/zHfhnXOMoWedbzkIKKy2Nk7Cvl+yXjw6BlOkrBKjinGTLF5zgovLWk7OPgUSkgH
+	jA37JmehzWHg1I8QE
+X-Google-Smtp-Source: AGHT+IEMd+m9WWXrqh8XFpPvM49jh9lbnX3DzcemwYGT2EGH+S6yj+AppF1rpNbc9Ne+H7XQyIDKrQOXg45e
+X-Received: by 2002:a17:907:6d0b:b0:b72:dcdb:1320 with SMTP id a640c23a62f3a-b72e05a3090mr211515866b.8.1762642868337;
+        Sat, 08 Nov 2025 15:01:08 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id a640c23a62f3a-b72bf93b18esm102059266b.94.2025.11.08.15.01.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 15:01:08 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id E6DB234039D;
+	Sat,  8 Nov 2025 16:01:06 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id E0A76E41BD7; Sat,  8 Nov 2025 16:01:06 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Christoph Hellwig <hch@lst.de>
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>
+Subject: [PATCH 0/2] use blk_rq_nr_phys_segments() instead of iterating bvecs
+Date: Sat,  8 Nov 2025 16:00:59 -0700
+Message-ID: <20251108230101.4187106-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216d:b0:431:d864:366a with SMTP id
- e9e14a558f8ab-43367dda177mr57978315ab.2.1762642742573; Sat, 08 Nov 2025
- 14:59:02 -0800 (PST)
-Date: Sat, 08 Nov 2025 14:59:02 -0800
-In-Reply-To: <CAHc6FU7F7SQs-qq6vwaB+xTCcBPs3Hn53JPEL7w=-W6X8PSCcg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690fcb36.a70a0220.22f260.008e.GAE@google.com>
-Subject: Re: [syzbot] [gfs2?] memory leak in gfs2_trans_begin (2)
-From: syzbot <syzbot+63ba84f14f62e61a5fd0@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Minor simplification to loop and zloop to get the number of segments
+from the request directly instead of iterating over all its bvecs.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in do_xmote
+Caleb Sander Mateos (2):
+  loop: use blk_rq_nr_phys_segments() instead of iterating bvecs
+  zloop: use blk_rq_nr_phys_segments() instead of iterating bvecs
 
-gfs2: fsid=syz:syz.0:  H: s:EX f:nW e:0 p:7821 [syz.6.189] gfs2_iomap_begin_write fs/gfs2/bmap.c:1040 [inline]
-gfs2: fsid=syz:syz.0:  H: s:EX f:nW e:0 p:7821 [syz.6.189] gfs2_iomap_begin+0x3e6/0x8a0 fs/gfs2/bmap.c:1133
-gfs2: fsid=syz:syz.0:  R: n:8336 f:80000000 b:70/70 i:7 q:0 r:0 e:7055
-------------[ cut here ]------------
-kernel BUG at fs/gfs2/glock.c:674!
-Oops: invalid opcode: 0000 [#1] SMP PTI
-CPU: 0 UID: 0 PID: 7389 Comm: kworker/0:2H Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: gfs2-glock/syz:syz glock_work_func
-RIP: 0010:do_xmote+0x33d/0x360 fs/gfs2/glock.c:674
-Code: 03 00 e9 cf fd ff ff e8 c1 85 09 ff 83 43 24 01 e9 53 ff ff ff e8 b3 85 09 ff ba 01 00 00 00 48 89 de 31 ff e8 f4 c9 ff ff 90 <0f> 0b e8 9c 85 09 ff ba 01 00 00 00 48 89 de 31 ff e8 dd c9 ff ff
-RSP: 0018:ffffc9000a073d88 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff88812e8a7728 RCX: ffffffff825ac696
-RDX: ffff888102c61180 RSI: ffffffff8257e401 RDI: ffff88812d388afc
-RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 205d393833375420 R12: ffff8881087d0000
-R13: 0000000000000001 R14: ffffffff857d0580 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8881b25c4000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000c1b000 CR3: 0000000119f7c000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- run_queue+0x21a/0x310 fs/gfs2/glock.c:793
- glock_work_func+0xac/0x280 fs/gfs2/glock.c:1002
- process_one_work+0x26b/0x620 kernel/workqueue.c:3263
- process_scheduled_works kernel/workqueue.c:3346 [inline]
- worker_thread+0x2c4/0x4f0 kernel/workqueue.c:3427
- kthread+0x15b/0x310 kernel/kthread.c:463
- ret_from_fork+0x210/0x240 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:do_xmote+0x33d/0x360 fs/gfs2/glock.c:674
-Code: 03 00 e9 cf fd ff ff e8 c1 85 09 ff 83 43 24 01 e9 53 ff ff ff e8 b3 85 09 ff ba 01 00 00 00 48 89 de 31 ff e8 f4 c9 ff ff 90 <0f> 0b e8 9c 85 09 ff ba 01 00 00 00 48 89 de 31 ff e8 dd c9 ff ff
-RSP: 0018:ffffc9000a073d88 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff88812e8a7728 RCX: ffffffff825ac696
-RDX: ffff888102c61180 RSI: ffffffff8257e401 RDI: ffff88812d388afc
-RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 205d393833375420 R12: ffff8881087d0000
-R13: 0000000000000001 R14: ffffffff857d0580 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8881b25c4000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000c1b000 CR3: 0000000119f7c000 CR4: 00000000003526f0
+ drivers/block/loop.c  | 5 +----
+ drivers/block/zloop.c | 5 +----
+ 2 files changed, 2 insertions(+), 8 deletions(-)
 
+-- 
+2.45.2
 
-Tested on:
-
-commit:         17448d78 gfs2: Clean up SDF_JOURNAL_LIVE flag handling
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git withdraw
-console output: https://syzkaller.appspot.com/x/log.txt?x=12da8b42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cb128cd5cb439809
-dashboard link: https://syzkaller.appspot.com/bug?extid=63ba84f14f62e61a5fd0
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
 
