@@ -1,133 +1,145 @@
-Return-Path: <linux-kernel+bounces-891442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563ADC42AC7
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:46:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B13B1C42ACD
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C1C8134A4ED
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:46:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3560334B009
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA77820E011;
-	Sat,  8 Nov 2025 09:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C31238DE1;
+	Sat,  8 Nov 2025 09:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="AErEj0Wb"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNEdJQQl"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EBD208D0
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 09:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4584718C31
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 09:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762595196; cv=none; b=EkQTT4xHDGE04hEli6Zpd0XsGfWv7RIB+0fEfmAqVrGTtvE1SM6HEtuUyCz08RaNz1xgB5DRz3B4PQ/vb5PPmYGdZbtSuoBdCfYHEol1r5MM/SQpE41rpPrmkTkWI9rSCJw2gtPlx1qZEiwie0Y5LpT9mB+Nz1A3to4w0r91E8c=
+	t=1762595207; cv=none; b=PczfQQvjRVo6r+nsNzYYDn0j1sotMCrAYzRZioQcyoSD+z2HWF0dKeXX6ItXaKgeX43dGI504NWs4vLso2/I6J/a8F5EEUr+6kj6HWoTpc2j39FFAd7cDI5Z0UCweb74T1EGXMoc2vNskZZcUX+I7rZOVCEB9Ia8TlsBT+RhsH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762595196; c=relaxed/simple;
-	bh=7muQtF/Ps3f3Prt0anv07LxtYlAabYY8Z1NqAek/RGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l+RMA4BBbFxmkFkcHI8UF6NB3mNf1G20VuOLi0aTWGQ11sRMqoDb7dyI3ofVTLzdVlBV2xEB9htNQNZbhXqos5CoHmcgh5TkuE4QspamGdqLJcEr5GiqotaVe0Fos6zOzEfeFIiB0kyzo3WeM5h7TLUPjPUbc5dbj11KXt6P4Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=AErEj0Wb; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477632b0621so10262665e9.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 01:46:33 -0800 (PST)
+	s=arc-20240116; t=1762595207; c=relaxed/simple;
+	bh=aOwq143RKroQJvO/hjzbNHkwe922fvcvmxRe5cHZbKk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LBPO+vu9yl6/JlxeCGRda9K315J1yv7IlXWtoU1flv/JpeadR2CulNopUvGYNG4IE8qexfvhm35Baebxn6Iz5fABswqX+Q3j0ZsSMrg1uAssShCUsJl1SH2LfKV2x79uFse+sjU7M4XrRg6kRfXfhgrqP47kjSFQMHLx5Ds9z48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNEdJQQl; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b70bee93dc4so207076766b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 01:46:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762595192; x=1763199992; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o5fKnhw/NCqAOhc6+zKFOhAFJG9FM08SQ0463gUm+Tk=;
-        b=AErEj0Wbc0pFtu3+TMWpG0X6eqni9AMHPrx58kdzH/MseeCjuYhvxwjrUyDxYF+Nkh
-         8/xeCG9xVhkxnoFDvHY0PqW098z/LwiKynQBLXD636fpa2RgyJXxTCNXPwR0rATpm2oP
-         2HJB3H3JS2878yHaYWKB84p8cKeqXcZEvB//WOR3GAUFe/irBTZCJow75OTtvPEcg+5l
-         nh941DZqph2qZK+RXyWaM1NmEG85DRp8GIsNDJGffoGO/EoFDgiGpOXRmrwosa46zhYK
-         4EZJ2HBS+1/m6s34Cdn4Rt1hua8dTnahlfstdR8gwj1z47kFGMIDCYQd4MOQbPsLLbtV
-         1Tcg==
+        d=gmail.com; s=20230601; t=1762595203; x=1763200003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lSUW/WjMhCO0Veyp/5U9fPi2v4UQHFyEZLh62h16fCE=;
+        b=lNEdJQQlYXO4Y3CJB92e2DG8RmRejewBi1Ohywpxq0G6I/c5zz2us8KlP1h1+I7CJS
+         XiqVGoIjuVdys3is7s87rSeRTFwSGEKNDnhu/RtuM81KjKOFQBYD+CwutsgqINDJ4hGW
+         S6qkywraRYGsTA+ngc/kCYSHJjMR4wLd6vClew4IVNyPd1rU7lWYxbxM7sdZMv1Ht0+7
+         XbrBGH8ZH3cYsyT62diAFu/4DQQ67YpIt7utqBRFZxxXiXMY/gqsTh7fqBjDUMOO4YuC
+         W1QGhxmznKV/hTw1wkejFqJedU0DXedEft+FIf+gKfK/piB70pl46YLi/IdWMPjKFda7
+         Crbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762595192; x=1763199992;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o5fKnhw/NCqAOhc6+zKFOhAFJG9FM08SQ0463gUm+Tk=;
-        b=tJ6rQUrOkfuJcB0WgYLNPgtAtmM3dqM3atXPr1wJSjzBN/20otLM0gtGA0V6sj4JnR
-         CvJjvP/NhraoyRYZPcXrfQbdAE+GxftFqydBOIGrwaeHqh/EFU8EZu93Svw8/gKHAQOC
-         S8zrczPudJyk3T9doPgxbkizOv89esYfz5jgvGMRnauC2E0JA0UyTc6nR8Eyl4Prfj1N
-         3nRnkxTTSWpty/boFjPk8rr9DvrbYF9wMfIEXLw6iCprIzYpH7yN0/z4s8aujyCWXqqg
-         hp9yNUNM3/jV1UCy81oAT34G7HYyYp969SAMwJlAJobdmMWI0RoMbfUPr3IyD8aEfZWU
-         te3A==
-X-Forwarded-Encrypted: i=1; AJvYcCU/wbX2vNf8dq2EvNOOLjfjFOK0QEzR+Ez4mceRNfRFE3yEQPYfw/pb/M9V7tQ/08O86F7vvJJ3P/uN34s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0wXvUVdkX1ILE6R8g+VJrSCiRhYOtZWctxUzsKRuFyy9qU7VA
-	ZFWC09kfA9o5ayCz6TLGNcHTwFE0ttXkd3tYp4v/x9hEYFiGdctrpDzZMJbwiFE0ixk=
-X-Gm-Gg: ASbGncuwseb7QH9IMBTttiUtWbS+z4jjlFlVhK5sPO7YFaNHp2oslM2GeaJdbmXAm1n
-	VHqbze7IxUNcSso4hylWsKSnv2fT66T26KNHKvycOxLlho0E2OcbJUn9PKNe8+g/k/47Jqm8ei+
-	5vSnV3ROIC3+ARZ9JHrL6GjCCPc5oM0ZYqG635ESkcfiZQ6YOjF5Dqpe7swYhRljo3s33PWYB30
-	BZlbdEqRoEHU+1wVDcE/OSrJ9AregRdij38RNH5YoBskQcNWEJmsVEfu9RKdFHaYoZ/WJOM8fCL
-	LCTfBRToLJ36D9fNJgnok0NRgVcpZ/kCfApRGie4GTcbtWUmkWnEsEWjiYOxeJGtoCmFUQCgxLm
-	wmMdTNSy7uT7NT6jaAhGxGCBP8HouFZ4NOBsO/w9J12F3Nfej39A9ojqqvcgdtqlWqKm+qDZpr1
-	gwSXJriUkZ
-X-Google-Smtp-Source: AGHT+IEH/jRPr1v2VuWmGt7YU/kqwBRVt0nus66tigdVpePgNGEa74ypym8+2ImhYiYRq6hQphHHnA==
-X-Received: by 2002:a05:600c:474d:b0:46f:b42e:e39e with SMTP id 5b1f17b1804b1-47773298044mr12511755e9.39.1762595192311;
-        Sat, 08 Nov 2025 01:46:32 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce211d8sm221049125e9.11.2025.11.08.01.46.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Nov 2025 01:46:31 -0800 (PST)
-Message-ID: <04a2ca3f-c63b-42fa-b4a0-8cdf29887c88@tuxon.dev>
-Date: Sat, 8 Nov 2025 11:46:30 +0200
+        d=1e100.net; s=20230601; t=1762595203; x=1763200003;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=lSUW/WjMhCO0Veyp/5U9fPi2v4UQHFyEZLh62h16fCE=;
+        b=TOcsH2Yj3kZVKXylxJVJy1L/J2YyAkQaz24Rs6aNHoEQCTtYFUMCqcZxQr5D+d7kqa
+         z/ItFfzX3vSgXLMaZaHQXUS90kWn9s52Cbk/VYKIdWEyJ9kY3wr+YL/nMJIanU0ncLc6
+         F8vD2HWQX6m5DsAxvEN1iHOPnHEn/f5JIWI/680cxx83Ynt7lezLaf2N8eiX0Om9pAhZ
+         DSS+V+DfTCn4NF2Q7JD1Nr1JBzQ+C5OfANMqcGUIz9nCMvlLcG03HwNe5Zm0Y5cq8d6g
+         4ZwHuIBhejd+TYO78S2SRIUlr6Kl0QgfDYuyRxvrl2HkGHEgfV0AYxatnzROTXC/nm4f
+         eoVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVJx8+Vl78ktdF1/SNaXys9Hxuc1KhqGNG5AcRKfFWwdr04eJ5srGNk81IMkv+cv1VZug8S3UnCjiv84Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgqEuWeJLJ4Dm0P7iMQvJ6YFsJkmIIHvCDi+98f7sTptvdaDVC
+	Y2y/h5Ru4xnOaCz6hkwykXjI6azx7osWlqr84Z7Wvthka5pa6o9WuMGG
+X-Gm-Gg: ASbGncsNvYUtyhMuFCB0sztenpuBUT0r3RZ1j3RV2c2V8Y4zNRVM7+FNpVlv6UveuG2
+	D5eN8y18kD03YtrW/SNamXGUgWNH/jBIL4wm5Q+IgzuXrM/jFoaIwi9T3CkkBOl9Y7ofx4c0kbU
+	MsllaX7YvBlJcFbqTDpoYmZneBL7JVbRRM8MyStbwtpXEfZt6uvmz6IFS2aI5NLSEZsv7mksb/T
+	O/6E7RtOYufgQBVtKZi1J1QqQ4jd9z24yZvs3VAzSPSOt6kTxkkuAFr7LjUaO/CdxQP5RAoqP3q
+	/SPLmeZviQYJqPflH61nVHsSoSmZzUN0rxNMav9NCaMK2cvZ6Y0M4w0C0df65czMQZEiIJeWoWZ
+	0nSG1JIdkIzUdEjvuZhO++yzIgaRzkoxbr143aC9zMJIeYt3nGJdlHfxSREn+eNvVLAS2HEYzvr
+	Ecg0s64BL4W1PEhIN8WIZMDA==
+X-Google-Smtp-Source: AGHT+IEF4CkxscNYi/C2XNylHCh280mub3VhXy2YsQtWnD+IOuCk3xiDthoT6Cd2QfMZg0xUKQ0czw==
+X-Received: by 2002:a17:906:6a27:b0:b45:60ad:daf9 with SMTP id a640c23a62f3a-b72e028a602mr227544366b.3.1762595203327;
+        Sat, 08 Nov 2025 01:46:43 -0800 (PST)
+Received: from jernej-laptop.localnet ([188.159.248.16])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72d7996c4csm291514066b.5.2025.11.08.01.46.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 01:46:42 -0800 (PST)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>, Han Gao <gaohan@iscas.ac.cn>,
+ Yixun Lan <dlan@gentoo.org>, Drew Fustini <fustini@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Guodong Xu <guodong@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
+ Joel Stanley <joel@jms.id.au>, gaohan@iscas.ac.cn
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, Han Gao <rabenda.cn@gmail.com>
+Subject: Re: [PATCH 0/3] riscv: soc: re-organized allwinner
+Date: Sat, 08 Nov 2025 10:46:41 +0100
+Message-ID: <4692596.LvFx2qVVIh@jernej-laptop>
+In-Reply-To: <cover.1762588494.git.gaohan@iscas.ac.cn>
+References: <cover.1762588494.git.gaohan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] rtc: renesas-rtca3: Add support for multiple reset
- lines
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>,
- claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, p.zabel@pengutronix.de
-Cc: linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251107210706.45044-1-ovidiu.panait.rb@renesas.com>
- <20251107210706.45044-3-ovidiu.panait.rb@renesas.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20251107210706.45044-3-ovidiu.panait.rb@renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+
+Hi,
+
+Dne sobota, 8. november 2025 ob 09:20:22 Srednjeevropski standardni =C4=8Da=
+s je gaohan@iscas.ac.cn napisal(a):
+> From: Han Gao <gaohan@iscas.ac.cn>
+>=20
+> Allwinner currently offers d1(s)/v821/v861/v881 on RISC-V,
+> using different IPs.
+>=20
+> d1(s): Xuantie C906
+> v821: Andes A27 + XuanTie E907
+> v861/v881: XuanTie C907
+>=20
+> Han Gao (3):
+>   riscv: soc: re-organized allwinner menu
+>   riscv: soc: allwinner: d1: use the ARCH_SUNXI_XUANTIE
+>   riscv: defconfig: enable SUNXI_XUANTIE and SUNXI_ANDES
+
+This series is incomplete. It introduces ARCH_SUNXI_ANDES symbol but it is
+never used.
+
+Additionally, patches are not organized properly. First, you should introdu=
+ce
+reorganization and only then introduce new features. Also, not a single
+patch should break existing functionality for bisectability reasons. First
+patch breaks compilation of DT files while second restores that. This must
+not happen.
+
+Best regards,
+Jernej
+
+>=20
+>  arch/riscv/Kconfig.socs                | 22 +++++++++++++++++-----
+>  arch/riscv/boot/dts/allwinner/Makefile | 20 ++++++++++----------
+>  arch/riscv/configs/defconfig           |  2 ++
+>  3 files changed, 29 insertions(+), 15 deletions(-)
+>=20
+>=20
 
 
 
-On 11/7/25 23:07, Ovidiu Panait wrote:
-> Switch from devm_reset_control_get_shared() to
-> devm_reset_control_array_get_shared() when retrieving resets.
-> 
-> The RZ/V2H SoC requires two resets for the RTC block instead of one,
-> so this will allow to handle multiple resets without additional changes.
-> 
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-> ---
->  drivers/rtc/rtc-renesas-rtca3.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
-> index ab816bdf0d77..3524053269ef 100644
-> --- a/drivers/rtc/rtc-renesas-rtca3.c
-> +++ b/drivers/rtc/rtc-renesas-rtca3.c
-> @@ -726,7 +726,7 @@ static int rtca3_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> -	priv->rstc = devm_reset_control_get_shared(dev, NULL);
-> +	priv->rstc = devm_reset_control_array_get_shared(dev);
->  	if (IS_ERR(priv->rstc))
->  		return PTR_ERR(priv->rstc);
->  
 
 
