@@ -1,145 +1,102 @@
-Return-Path: <linux-kernel+bounces-891428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA3DC42A55
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:24:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4874FC429F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C973F4E611B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:24:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ABAFA346A79
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297502EBB8D;
-	Sat,  8 Nov 2025 09:24:40 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB174265CCD;
+	Sat,  8 Nov 2025 09:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOuRN77A"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200272737F8;
-	Sat,  8 Nov 2025 09:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72A1288C22
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 09:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762593879; cv=none; b=pq9RGAU81JwjmQRJ5mUpuCRzh3Jsquhyg+z0wjfrrVmf+TD+/kJ/AfKdo3Qjet8GlLikvALWMZMFGTw0gS2Sio66EEufJ+5yM4LYrLOJt/GPFwHte/d03kdj337K3j3WbOOL5J2HJ8gBcklb95hM7JXhbGSY+xECKfi5Q2jI9Vg=
+	t=1762592794; cv=none; b=iQRHlyBSd4SpBnD2loj+0cxkUQgmJ1fsr64b91YGOsQxjXPw6CdcNGyLlkJm8gBlT8f20W+6VKcynE1dZTur/yzJAAmVB7EkSd55Lu7JdZfwTz3AgwKa3yQk4f5uKpr+zSxRaC0Rw1HgQX3KVDoGl97qDCNXl6ovomuk5HW0mWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762593879; c=relaxed/simple;
-	bh=+LS6ZrGO7B6vLyR4/fHLFcG30wc9EjVsZTbQqzeQlp0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l4J119H19axrywjAZyVYy57zSnkp3tl/mEzKwLYbBOOoCsn8TZxuytVu8pV0LbhFpLVpV/z8prtrOVvlTNbXMkuQh1/dawiPeTZj0aegDFLC3QK33WV+OXpseBL1adlbh1lHNDbRg+dmVyt55sKFRVjUiDZ2xT492zr3XMR6Mq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d3VPS3q9gzKHMbr;
-	Sat,  8 Nov 2025 17:05:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id EA27C1A07BB;
-	Sat,  8 Nov 2025 17:05:11 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP4 (Coremail) with SMTP id gCh0CgAnUF3GBw9pgLIYAA--.42082S2;
-	Sat, 08 Nov 2025 17:05:11 +0800 (CST)
-Message-ID: <e0c0f8b7-112f-40d7-b211-89065e9003b2@huaweicloud.com>
-Date: Sat, 8 Nov 2025 17:05:10 +0800
+	s=arc-20240116; t=1762592794; c=relaxed/simple;
+	bh=5e8JsJPkRnjnvxJLk5/07pwvaKu5ka9GvEOU3uc20xI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z5MlJCgMrkOHUnP0AqYBvUEX5Cx/M3kvica2dyydceXRU9pYuOxHGKZezx2vhVFn+dvRpT4H4YqhXtBp8Dg9pbb5rNyDEvTi8VV3CotooBzGmnscWbM00NUhdg5uVZ0VtJZOY8rEUiuJRGxU5QjjCSgQZvNNNc0IZV8ChHN/9zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOuRN77A; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-4336f492d75so1212775ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 01:06:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762592791; x=1763197591; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5e8JsJPkRnjnvxJLk5/07pwvaKu5ka9GvEOU3uc20xI=;
+        b=MOuRN77ALP3vkpIGiEI8BYOkA8e116P3xzbmphGYAclPMscZkAAs8bml2zETj+yQWA
+         +qZs6CEStvuRQWZWFdin13ve4jUoGN4jqILmtqyZN9sH6+BcdlFAefwoQCCDoIRM20II
+         EXVAYEH6lg3RWAxA0Ip4F6O2RtgJFz2OzZqnH4as7QrM7aTFYI5y29nFzECWj6W1Pzkf
+         u41qXXVZe318kqhMOKZGs4DVZOUEbdmcP2wHUEwFQ643ura5F26L5jwmeEC5Mz7ZP9Ps
+         BO6fMpVTCDqIEOqpDDr+ROB3TQHE7dj2A0Gd1igsjsqEgWr+U3IYJuxc4gqzd+iAxJgd
+         VqVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762592791; x=1763197591;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5e8JsJPkRnjnvxJLk5/07pwvaKu5ka9GvEOU3uc20xI=;
+        b=rcklAchYkwNgcH96e6NudfUJdsHAOQO2tlt07XWkaOIhp2DK+2QX69MjH0Z/dlESNb
+         ZS/XsGIawPBT5ojzO6VDqvkPqFqaoFyoU5v0QeO54ppHG7zYoQPSgLBLyk1MC+haiRSm
+         DII5xb/riuSMfRJzenCmYsovwXu2MyDUUKKk2TBYhWMVt7Td0Rb/3GPg11XiKrtb8TYt
+         sCIj+eSHKCnALpWWkgZZpZscILzzooMXdi4/2pNoIJfW/vRXn54Ac77V2mMoun1Tivgq
+         m1l2I5fHqpSG97zLVIxCv2mwC4+0dQHQUI2u+XMMwShAjrxan3GGzfz01JGwLj3SjykB
+         nV4w==
+X-Forwarded-Encrypted: i=1; AJvYcCX6LchJhhvUrkJvjkWfrHi/S1MVOIKBb+819wsv0vY9IWK1Kic5f3Qt3Bo3nlnSjNsj+lYlE3/1CmsE4UM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQaok0KjlzkaJLt+acKZ18f5hpcHJzeb6m1nW3E/6dGDftOhEo
+	FkGpHYYMQkSqauDnMQfSvjv/u3VlYcx2rnOXclmwVlaep7UBUtAHUMfpuImmftPh95+KUP19A/6
+	XtexGruLZu3w9xjAJ5c9s0NWBScT5Ug4=
+X-Gm-Gg: ASbGncud0bILt7h28RsurhKILWaL+kpC76hHpC2I04E6Ox4f2wQ2FQ8pgV5zdmvl3S5
+	7wL1Z/ybiIvav+IK0hSrosgMghcFjAbb0QE6SpVjSNJYN+Nn26NzNzn1VlxwWySH8vM/5dHqvzo
+	pjuBYAfweILAdlHZ5kMFt05lwBVKCa+1FsYMwXYKzP0/HeHPBVe2Nnouk2g2RhIHV+FCk4iar37
+	wyE+ryp6kIpatVKWruI24pfTZ7W8mqVkmfoGXQfZb4/vsgFtSUOl6tvLQfuEaE2tejtisq9TcII
+	K4vuzxKoFmJj3qdAa5FdipG2cHJf
+X-Google-Smtp-Source: AGHT+IGja1wjt5XLwCuQKBiJ++JM60DADavzjqt2nrtNRbHFr8AZSVSL3xnG8tTvwMdnenutWkIfTjAH31OO4EHeBxw=
+X-Received: by 2002:a05:6e02:2383:b0:433:3664:b19b with SMTP id
+ e9e14a558f8ab-43367e46460mr32976015ab.15.1762592790848; Sat, 08 Nov 2025
+ 01:06:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/31] cpuset: Update HK_TYPE_DOMAIN cpumask from cpuset
-To: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Danilo Krummrich
- <dakr@kernel.org>, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
- <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
- Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Phil Auld <pauld@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Simon Horman <horms@kernel.org>,
- Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>,
- Will Deacon <will@kernel.org>, cgroups@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
- linux-mm@kvack.org, linux-pci@vger.kernel.org, netdev@vger.kernel.org
-References: <20251105210348.35256-1-frederic@kernel.org>
- <20251105210348.35256-14-frederic@kernel.org>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20251105210348.35256-14-frederic@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAnUF3GBw9pgLIYAA--.42082S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWUCF4fXF43Gr1UAF4kCrg_yoWDuFc_Wr
-	15WF4Uuw15JFyqgw1Yy34qga1fJa17t39aqa48try5W3Z5JF43Jrs3A345Ca13Xa4xJF1a
-	934kK393ZrnFqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbxkYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
-	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	EksDUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+References: <CAB95QARfqSUNJCCgyPcTPu0-hk10e-sOVVMrnpKd6OdV_PHrGA@mail.gmail.com>
+ <20251026211334.GA1659905@ax162> <CAB95QASG1pZJT7HyqxM90_FExhSVjoHmPqYHeQWXnrAzCNErmA@mail.gmail.com>
+ <CAB95QARmr9b-jVdgDLpA4Qq=3WN7CYS46YEH4Ok4gpSdZHpq5A@mail.gmail.com>
+ <20251028174541.GA1548965@ax162> <CAB95QARtzDWensRzui3d-7+jhymcFBOBi78ev9LMy=ZFJMDCTA@mail.gmail.com>
+ <20251031220732.GA2254630@ax162> <CAMj1kXF2kKyEOc6KSBfbdUMf5m4o=DLZXk4++C3q-utA_9g4DA@mail.gmail.com>
+ <CAB95QARrcOc6h9=YTzLKkNE0dEaivtiLfK0kEQ1jNp+v1w4yzA@mail.gmail.com>
+ <CAMj1kXG_kPx5=3Qbn6ZTpKqOYh-mehwrH+d6Bw8QEPqvhZy1nw@mail.gmail.com> <CAB95QAS__YYYBLc3KFjBUg_QqC3AOB0y6kvhSqZFR9fx7BDKvg@mail.gmail.com>
+In-Reply-To: <CAB95QAS__YYYBLc3KFjBUg_QqC3AOB0y6kvhSqZFR9fx7BDKvg@mail.gmail.com>
+From: Eugene Shalygin <eugene.shalygin@gmail.com>
+Date: Sat, 8 Nov 2025 10:06:20 +0100
+X-Gm-Features: AWmQ_bkRNHFJNtYSzgQ7yhp3JFrMg-7yCHs86SlmqgR8aqtR-dYbtIubCKtnEXw
+Message-ID: <CAB95QAQyzYTrnGrkrcwXJ7Za37v7VsvwsmUezb1Z4VsF_RdLMQ@mail.gmail.com>
+Subject: Re: Can't boot kernel 6.17.4+ via rEFInd
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+I've got no response from the rEFInd author yet, but another user
+reported (https://bugzilla.kernel.org/show_bug.cgi?id=220731) a very
+similar problem with GRUB and ZSTD compression.
 
-
-
-> +int housekeeping_update(struct cpumask *mask, enum hk_type type)
-> +{
-> +	struct cpumask *trial, *old = NULL;
-> +
-> +	if (type != HK_TYPE_DOMAIN)
-> +		return -ENOTSUPP;
-> +
-> +	trial = kmalloc(cpumask_size(), GFP_KERNEL);
-> +	if (!trial)
-> +		return -ENOMEM;
-> +
-> +	cpumask_andnot(trial, housekeeping_cpumask(HK_TYPE_DOMAIN_BOOT), mask);
-
-Since there's no comment for the 'mask' parameter, would it be better to name it 'isol_mask'? This
-would make it clearer that this is the isolation mask input and what is doing here.
-
-> +	if (!cpumask_intersects(trial, cpu_online_mask)) {
-> +		kfree(trial);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!housekeeping.flags)
-> +		static_branch_enable(&housekeeping_overridden);
-> +
-> +	if (housekeeping.flags & BIT(type))
-> +		old = housekeeping_cpumask_dereference(type);
-> +	else
-> +		WRITE_ONCE(housekeeping.flags, housekeeping.flags | BIT(type));
-> +	rcu_assign_pointer(housekeeping.cpumasks[type], trial);
-> +
-> +	synchronize_rcu();
-> +
-> +	kfree(old);
-> +
-> +	return 0;
-> +}
-> +
-
-
--- 
-Best regards,
-Ridong
-
+Cheers,
+Eugene
 
