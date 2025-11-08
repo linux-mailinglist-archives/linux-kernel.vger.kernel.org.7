@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-891682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6F8C433E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 20:43:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F085DC433F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 20:43:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E67854E3157
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 19:43:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B88F73B3C4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 19:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682DE28642B;
-	Sat,  8 Nov 2025 19:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEA0285CA2;
+	Sat,  8 Nov 2025 19:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OG/RK3gi"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USl2IoFd"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD4C28C5B1
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 19:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4900296BC9
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 19:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762630953; cv=none; b=IMRtwgGlB+Q8ibmLuHzat00flGakQT+lKJWo4patjV1Xap6hWlrp/6oz+wEZTQYPJAMtpIRnaWDfG+svmSo+fo2a2T9Lk6k/PAlR3cHaDgZLJWVILxHYX+aUocPjgr8Wcd/eeJ+uZfOIXdN92mpHjCYfL93tU4cpQw/VgWLoW5k=
+	t=1762630960; cv=none; b=vF8CBbZkPIoCi6Qrb6CtUpCPGxYNtUvjWrZ0WhtE11rQ7IYnkgWmwksA+lGQfkK+slXkN0nr0qJCMW5zetxp+nDml1jVaWu8JriyIATzvVtTo2yVDKyW5NUdcFDYn73F7swfG4VESMaNhxwBr/3KgpMpSqwjSyOP3p/sWEObrzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762630953; c=relaxed/simple;
-	bh=6M9dbLxONjUxBoLDP2RqBwNW90OBNkAA0tpnRglr6DQ=;
+	s=arc-20240116; t=1762630960; c=relaxed/simple;
+	bh=SszDBRaNUcfYH1qxIpllXW9iu+7P8g2nMtcZjbjjKzE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tqoRe0EY8xl4wzYgFaqaeAVc2NCYBywyn6NB2hmC672PNwyT3/WpXUI6OBwI9PQfRfVB87iHROodH3W5XhU4VE+k2+Uq9WgzGGvQqIgBiNKO5yAAYlAEUONySvFkB7L0mz8z7ATirp1qZ8yUpVzVwYg+MHvrkstSj5M7s7xG2Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OG/RK3gi; arc=none smtp.client-ip=209.85.208.172
+	 MIME-Version; b=g4e3PoVZFqIKwDDczGvQWIWeNbZxIrxL+t0wZVspXwm1Ryp5jqCY3X5BhEpZ5Amf3DqLWYU049UtV9BKz359VX6ALh4YRICxOeewbEjcz4gcdeHuKlF8/VLr//61JJntlUGJGte5lq/SZIER5225riA/md59GypX2wsLVACbwr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=USl2IoFd; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-37a3340391cso17513341fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 11:42:31 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-37775ed97daso14758701fa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 11:42:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762630950; x=1763235750; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762630954; x=1763235754; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J2IQTBuXBoLRQZMsUEB0GbuKpDZXigWMmDpUz8gyE1g=;
-        b=OG/RK3giQINbAX1PH1yW022rwXk1SebbL6cnKfff44FGVQK+osDSDcalDyA4RAIdSM
-         2yD1zpee5CAlFrWYH7YuG13kpZcpW6Kk4uJtkOzCZ0Zcn4+k8CSZGPCrMQxAkr1tvWF5
-         L07KHpHx2JK/AjWYdoCv9+RPNvbY+g2knycCiv/Kh+LRg2smltKTWJl3kKJQTa0yF5rS
-         KHRSA8kcUlLgAqWV9RB3516yC2NWrjnR/Dlr6J6J4ZxIunHmmV3PpLZwE/Nvgw7SAe3C
-         3my97CEo/5QvwbuEvOIrJ/rZgKn0C4YkudDqEqCdkZAbE14wKycRzxu5soo4M2QqmAEW
-         YaKw==
+        bh=ltV9lBgfXlitcw6NuoPhmSgpPYayy6Pa4t7Popjv7fk=;
+        b=USl2IoFdPVfsQ/HvaHZgx6lHDr51d7Fwg4MF4AoLu/h0hxxKnp4Fo/+D7dGS3zyQ5v
+         yh1Mm7Tnj63hTlntmvErcrLaFHmU82JkMbipB8OP27gwq7EuV8qJcJkBDKJAkzYMlulP
+         9+/vpBVsRGu31cTIaWrmvw6TOfOOdbbSrJsNxzuBf+MFxmUeF/gmhQMqIBfqVRPwevFD
+         O5nzmtg0OT/WyeWDIGESBAVIN3eJaanYInn5Vm5fsEcAeZXDL+tQBhiZ6YEUZsB3uZu0
+         FvbA5ySGIdKpmpoIPbPnIF4Zp6kcj2VlbNblnGM9XtPrSVrIKc2no1mcrfkcPLGLxqDn
+         3oeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762630950; x=1763235750;
+        d=1e100.net; s=20230601; t=1762630954; x=1763235754;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=J2IQTBuXBoLRQZMsUEB0GbuKpDZXigWMmDpUz8gyE1g=;
-        b=h1ALhDOX+hrxjEKwqwS/uUwJ/yYuDipgsK703rGUH40Jtg1m8teZggk4vff+Tb6n89
-         Bj/220W0j9HXg3OHi9RFE0cqAzIFVvAo25EqtUqQhrgObBA86LGE588zMH8q1g15fNp7
-         21rdbMkyc3N//gConPYoQQaiahFS0yk9j/Ozb7auC7YlyFJO3ybtZxEqc3CADQi30beq
-         AXPSP09nVtYjIScs+BBVZ1edQUvxWBbOGWeW90OQJQIvZts/PyZg/toLG0CVyP/0DUK0
-         tFIS1QWHBJ0gJkQioHSoVRy1KjBLk0V6RXCkLa7sjNyU2oMi30e/Uw6kL0/Xs1pJpTSm
-         mohA==
-X-Forwarded-Encrypted: i=1; AJvYcCWA1o86+vwgwd9FGDdexxj+b9+gc+qgzJm87MOc/IJnfKct+OP61CWzeRrwcUjzyzQMj/1y1M53CasXqsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwolLxt5QPcmuOUMZ8wQur8BRXPPmA1OL4kwaJ+/UOF50VUiQzf
-	fgmP1JiUrdpL5VHscdqFpDBvEhKEWdRUug0lpjobsJ+n6rHGmRE7q4B1
-X-Gm-Gg: ASbGncseeWUghRlettZnhK19JjAm22s1o2T7eMGZBbDdOjFvXs4D3aG+JtS37WpVNGI
-	r3cDq3o1SLQia5olXJJVZbSLd5ESA5MOiUwA2Dq2swibdcR4vMvWgjtuA6Smzz87ixrnIRPYoER
-	1Ptb08JVmcfX9cEW4RMwfS5NKrJsyZjgDIq0/ReF6bVQxnBcdR6tghGPQXWtFrkYvnn85oY4F9W
-	9IsZk+cex/P5emmxvr411TL3/ff4mavPufTb2W0gfygePX/EI4tP2TU3s+xnozfRDZsCoUSmlgR
-	2IdDTwIz60B1RUSHRBm4cUXSmJo2vlYU9WlCj1Y+T/U9ktJywndJ+FH0+Zvn1ggUTnLC8Rbhe6f
-	Y5PSwb8j5VzXQiQwkTXJZzDw1tBrCkultSxtwHM4wONNxszWAK6ao2HUHRxR/0STqKGPXctYezf
-	h9sI1LgCFz4R+B
-X-Google-Smtp-Source: AGHT+IFf6dK7lptakI4133tJJcZvJ7D5ljXgoiEFcd+YznP8qQqw2s3Ui5u0H2YIH/FT8lwi1hx0Gw==
-X-Received: by 2002:a2e:8a96:0:b0:37a:2dca:cfb6 with SMTP id 38308e7fff4ca-37a7b1bede2mr8423251fa.21.1762630950197;
-        Sat, 08 Nov 2025 11:42:30 -0800 (PST)
+        bh=ltV9lBgfXlitcw6NuoPhmSgpPYayy6Pa4t7Popjv7fk=;
+        b=Z18pY+fZbPnRNV5CCPppx5tY5O9yT2EJdozO7RKKpJApw0QoXv6BfgKJEAtWJSdRld
+         LrVOYBdOsSr8mNrZCq5sew0YRoql/9b2dJeS9aSIy1pIXrt7F2IBZu1RWVSiE828Coir
+         LkS7bTzw6fgzviZWG3kAwqnHA16UTcxC68lNTA/WZjYHJvSd65VkvG5xl8g7A8BCf1E4
+         2kCaKWiOxq6PHkuzj1q8FZTXR/MnhOQIeSpyFmpOUD94yHR8YQvtGlpG6/T8EUN5WurJ
+         HkZdRHo+fHuLUb/q9FE9Lb4wAm0eHQ7hSLKsV2MQW3XOeVF4ScOokHzniecS5scvO9JM
+         RttA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFqXgBMDEM2TxSNCv0+adozQttIb+g7o6qVe5vSKTwHhI1UqhW/0Ty6DLdi7OT0LdsvBpQ3AG2gi18gtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmIlNbXcBLM3874DinrghjWFFhOVoxfVtOviJEFbg8kdXa5p5G
+	v5AgR3uZE3Q1Ev0w478rovDchbDCfkXq7OFLALtohR+cYzuyQXTxlUjO
+X-Gm-Gg: ASbGnctL7nwBOXsGiB27xfbcLbKBIlvubD6HohbziFfg2iHhfX7oOBkFumh9iYf0Lyc
+	UOJ8UrpKDIpjT6ogAel9UFgE83sVNVOc2dMker3vn5qYk6JTZYnIQH+/rFxb+vaBoz9z2QB7sin
+	L1XcgvQu8bMVEt7gaqEE0ATHdJLzsMDkYFk37sZf68TbPF5vyvsESZ1OfCZYMs2nK1jOxO4CRcJ
+	YnHPWYs2vfo/shsDchlyZDYPv3jaEVSoNhsgqu1/hVQ7ix/knlohLQ7ZWlNDyn0KNtyHUDlbX3Y
+	ZoVAJHgcNCKpFgWmfWisEERXtccOXcSxfNeLeYaSHRY9JyAtSDBmw4UOOJMIBxCVjrBP7iP0nOP
+	0cK3CdHhzBnjSuOWMck1jKh+j3hgsWEZKntMMtShdzk25yZI+VOuFrETGYyDB3mSGtXw=
+X-Google-Smtp-Source: AGHT+IEnp2oCa8v72xcKOc9ex+oyKcuP8x4+4rtHE2r1uNJigvtF1xOkKOxOtbzS+RRziZBzol+Trg==
+X-Received: by 2002:a2e:9cc5:0:b0:377:c556:68b7 with SMTP id 38308e7fff4ca-37a7b282782mr7624071fa.17.1762630954001;
+        Sat, 08 Nov 2025 11:42:34 -0800 (PST)
 Received: from curiosity ([5.188.167.4])
-        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-37a5f0edac3sm22115421fa.38.2025.11.08.11.42.26
+        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-37a5f0edac3sm22115421fa.38.2025.11.08.11.42.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 11:42:28 -0800 (PST)
+        Sat, 08 Nov 2025 11:42:32 -0800 (PST)
 From: Sergey Matyukevich <geomatsi@gmail.com>
 To: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
@@ -91,9 +90,9 @@ Cc: Paul Walmsley <pjw@kernel.org>,
 	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
 	Heiko Stuebner <heiko@sntech.de>,
 	Sergey Matyukevich <geomatsi@gmail.com>
-Subject: [PATCH v4 4/9] riscv: vector: init vector context with proper vlenb
-Date: Sat,  8 Nov 2025 22:41:43 +0300
-Message-ID: <20251108194207.1257866-5-geomatsi@gmail.com>
+Subject: [PATCH v4 5/9] riscv: csr: define vtype registers elements
+Date: Sat,  8 Nov 2025 22:41:44 +0300
+Message-ID: <20251108194207.1257866-6-geomatsi@gmail.com>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251108194207.1257866-1-geomatsi@gmail.com>
 References: <20251108194207.1257866-1-geomatsi@gmail.com>
@@ -105,72 +104,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The vstate in thread_struct is zeroed when the vector context is
-initialized. That includes read-only register vlenb, which holds
-the vector register length in bytes. This zeroed state persists
-until mstatus.VS becomes 'dirty' and a context switch saves the
-actual hardware values.
-
-This can expose the zero vlenb value to the user-space in early
-debug scenarios, e.g. when ptrace attaches to a traced process
-early, before any vector instruction except the first one was
-executed.
-
-Fix this by specifying proper vlenb on vector context init.
+Define masks and shifts for vtype csr according to the RVV spec 1.0.
 
 Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
 ---
- arch/riscv/kernel/vector.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/riscv/include/asm/csr.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
-index 901e67adf576..34048c4c26dc 100644
---- a/arch/riscv/kernel/vector.c
-+++ b/arch/riscv/kernel/vector.c
-@@ -109,8 +109,8 @@ bool insn_is_vector(u32 insn_buf)
- 	return false;
- }
+diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+index 4a37a98398ad..4f55dcf86627 100644
+--- a/arch/riscv/include/asm/csr.h
++++ b/arch/riscv/include/asm/csr.h
+@@ -444,6 +444,17 @@
+ #define CSR_VTYPE		0xc21
+ #define CSR_VLENB		0xc22
  
--static int riscv_v_thread_zalloc(struct kmem_cache *cache,
--				 struct __riscv_v_ext_state *ctx)
-+static int riscv_v_thread_ctx_alloc(struct kmem_cache *cache,
-+				    struct __riscv_v_ext_state *ctx)
- {
- 	void *datap;
- 
-@@ -120,13 +120,15 @@ static int riscv_v_thread_zalloc(struct kmem_cache *cache,
- 
- 	ctx->datap = datap;
- 	memset(ctx, 0, offsetof(struct __riscv_v_ext_state, datap));
-+	ctx->vlenb = riscv_v_vsize / 32;
++#define VTYPE_VLMUL		_AC(7, UL)
++#define VTYPE_VLMUL_FRAC	_AC(4, UL)
++#define VTYPE_VSEW_SHIFT	3
++#define VTYPE_VSEW		(_AC(7, UL) << VTYPE_VSEW_SHIFT)
++#define VTYPE_VTA_SHIFT		6
++#define VTYPE_VTA		(_AC(1, UL) << VTYPE_VTA_SHIFT)
++#define VTYPE_VMA_SHIFT		7
++#define VTYPE_VMA		(_AC(1, UL) << VTYPE_VMA_SHIFT)
++#define VTYPE_VILL_SHIFT	(__riscv_xlen - 1)
++#define VTYPE_VILL		(_AC(1, UL) << VTYPE_VILL_SHIFT)
 +
- 	return 0;
- }
- 
- void riscv_v_thread_alloc(struct task_struct *tsk)
- {
- #ifdef CONFIG_RISCV_ISA_V_PREEMPTIVE
--	riscv_v_thread_zalloc(riscv_v_kernel_cachep, &tsk->thread.kernel_vstate);
-+	riscv_v_thread_ctx_alloc(riscv_v_kernel_cachep, &tsk->thread.kernel_vstate);
- #endif
- }
- 
-@@ -212,12 +214,14 @@ bool riscv_v_first_use_handler(struct pt_regs *regs)
- 	 * context where VS has been off. So, try to allocate the user's V
- 	 * context and resume execution.
- 	 */
--	if (riscv_v_thread_zalloc(riscv_v_user_cachep, &current->thread.vstate)) {
-+	if (riscv_v_thread_ctx_alloc(riscv_v_user_cachep, &current->thread.vstate)) {
- 		force_sig(SIGBUS);
- 		return true;
- 	}
-+
- 	riscv_v_vstate_on(regs);
- 	riscv_v_vstate_set_restore(current, regs);
-+
- 	return true;
- }
- 
+ /* Scalar Crypto Extension - Entropy */
+ #define CSR_SEED		0x015
+ #define SEED_OPST_MASK		_AC(0xC0000000, UL)
 -- 
 2.51.0
 
