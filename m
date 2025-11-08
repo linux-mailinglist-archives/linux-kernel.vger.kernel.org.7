@@ -1,87 +1,123 @@
-Return-Path: <linux-kernel+bounces-891191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BAEC421E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:18:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2828AC421ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:20:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A21531894228
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:18:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4582420AB5
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41EF1DF742;
-	Sat,  8 Nov 2025 00:18:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C585D34D38F;
+	Sat,  8 Nov 2025 00:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jIvmnpH5"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DDB74BE1
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 00:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF0B749C;
+	Sat,  8 Nov 2025 00:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762561085; cv=none; b=eFWvjwG4fyDD2hpUm5YeQYNVHTlsyPpaDSLoZKbXkzSKungh/nUljekw9cAsh9ICEDHgps21+XHFUeZNZ5dqdvSOW9JBaXwqd7NoyzXspcINdSA4RqYD0Ji4tlmeK0u+1rooldUYrsL2jX2pH/H77dURclXyv9pI/jyMCHALBy4=
+	t=1762561194; cv=none; b=tz8kuBw2l5hqZFmAKxtsbgjPrPzHz+bVFoWXlfRdia3VnLqdCVyocoWt2RtXG2zxSMKF7iXZXlG7g6zdOH+70Oz9Ff8vXDvc/5pd433HUI8EJXn/Urk+vQQkHDgFtbXO2UauZGpoTYjpTrRMQumTlAe9rDOI2ZUgv/mZVas62J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762561085; c=relaxed/simple;
-	bh=ykdrF3raP3G3QSjDTkzVdVAK1Krk9b+nrl56xuCbTNg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OfrTCRX0FUqPuHkk0KWSOymUmqxrE1fwvexsc/wfJesigpiWWVHHZoHpQBPlK129xhaGeZ8XS0EqWj0wuD8q4KUfGx/lTHh0hgrrroVbv/OkWMzRGhJuo+SzZ1GEkx2f81iEekFeaN9UqNB/Mxu1D318EC8Wpzb6weqnb9bBLhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-9486920a552so384645839f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 16:18:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762561083; x=1763165883;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0HEPYAzLGKgN367tFqqHSC+aw990xB7Zc+iqxWnRAq0=;
-        b=brWcc7HgLUlMxCF2eYNHHO8dWI3LX8ST7Efv0xgzwiGDEpCDzAcrjUY+ZtALZEjcFH
-         5TX5AOxFNe9zn1lzuNgEyiG2m9LIWepskcGfMSDCViqMzH/eg9khIOo04gOStGOb1Ymu
-         UkvknFMkzlsCg2oEaW2WvgPUsFgjQTLajn9XEjoiMJlUQTrDPUAxjuu375jYHvL2Uaa6
-         ocd3/Arbqvvkx0NJo1+Mw3ODqAwNgGsaIMG41RcGh3RXgzg+ODSxaYaXLSlyxr92r3Rn
-         /lKR8q6rhRJl+CzFpoZEewIdQ0XP4z+ely2slZtXgO9Bj/hjB/cs+7Xcy/+/FYkSZvxy
-         PTTw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4q4Fb2nDBbUOeM8QfKlGz0xbZbpC8v+DQ3+kwVYv+C3o/XEUATPpdVCNRGfvRR4OBDnfgd4kBfhmwah8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQAQGyE3dw75OjOm3ziOJy2nHTNQWJA5hzN7nVJR5QM0cMx1Fc
-	L7tOSTXc9iyQKwvN2UoQTvkgBayyrrZL8g5MJP5KWAITYVXra0JybayTN2BF3fmIw5tkW+YoJGl
-	lFI46VEJTdHdfDD+drOsXO7wEj8VUAyD5zyGDgxAzPURtjORFB8Yrbn+4kuE=
-X-Google-Smtp-Source: AGHT+IHhPdOZCpqtix2JhPBg6nXzyuHzWwroLZuXTlecW0H4Wz0nUwlffrKRVWnTWkNG9c6h7KT/NFC92siXVftWRfloKzgl6hiD
+	s=arc-20240116; t=1762561194; c=relaxed/simple;
+	bh=XgJLKtNjkVJsQfZ71ITg8fCOF/3ehIqbxHwquqIIEIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DiOtGQce8ubHEouRA1iUVr+8S6+xG+M/WOb5xzzNVpgQfSqFAz7D/N6aTSQpFd89qysKvha6fTAqEFg7JgPNOJgrYDDfIrrw6LmnU/cpXKPKJ/GHd6hT0NBZO4M488TsN5FkIBl6blqMS50Ep/E5AwXNR8quWy4nIWrSvhGVTZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jIvmnpH5; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=zeMR2YavB+3/5YeBgJN8gTKdNLaP+0wt7Aw1q8B1wGM=; b=jIvmnpH5VbUSLxLHYcQkr8xMUc
+	wE4knEnG91KgrKAp/Mw2LHSWcCcJs19s0H7/g78GandkZ4SxEJ6+CUZG/SfI2mDlvB/G7vuwKhey4
+	ItulBD/W+WNf205AZ+2Zjl38RtuoE1939HTC2FkURTTloDzeyGFc+TxHIpkIHZTZHmxDJ456cQHXn
+	U2N4GcXA1j5g/IGhmqNgxWnE1yQ5KxbdZ0eLsfpOAg4+iXIs2803y/yysuqx9zXNHoJbEeBDlUR76
+	mjU+Z9WpWxHfre8EsEKDL6XXAaOZMo7mv/6/xR+VHORu73kRqmqQuxWFj1FZfTvbeJgpCrSyMulEa
+	hZ4t3x2A==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vHWgI-00000001i1B-27wB;
+	Sat, 08 Nov 2025 00:19:50 +0000
+Message-ID: <a304ad66-6ab5-44ba-8454-23cd01f7854f@infradead.org>
+Date: Fri, 7 Nov 2025 16:19:49 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4c:0:b0:433:5736:968f with SMTP id
- e9e14a558f8ab-43367df3cd3mr22846745ab.13.1762561083264; Fri, 07 Nov 2025
- 16:18:03 -0800 (PST)
-Date: Fri, 07 Nov 2025 16:18:03 -0800
-In-Reply-To: <CAL4kbRNoDiDtyhD4qBRWLqj6JoBxRWm6KdQca6DUYAfvNTvPuw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690e8c3b.a70a0220.22f260.006d.GAE@google.com>
-Subject: Re: [syzbot] [rdma?] KMSAN: uninit-value in ib_nl_handle_ip_res_resp
-From: syzbot <syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com>
-To: kriish.sharma2006@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommupt: Actually correct
+ pt_test_sw_bit_{acquire_release}() parameter description
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux IOMMU <iommu@lists.linux.dev>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>, Lu Baolu <baolu.lu@linux.intel.com>
+References: <20251107233316.7256-2-bagasdotme@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251107233316.7256-2-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-by: syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
-Tested-by: syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
+On 11/7/25 3:33 PM, Bagas Sanjaya wrote:
+> In review comment for v1 of genpt documentation fixes [1], Randy
+> suggested that pt_test_sw_bit_acquire() parameters description
+> should be written using "to read". Commit e4dfaf25df1210 ("iommupt:
+> Describe @bitnr parameter"), however, misunderstood the review by
+> instead using "to read" on @bitnr parameter on both
+> pt_test_sw_bit_acquire() and pt_test_sw_bit_release().
+> 
+> Actually correct the description.
+> 
+> [1]: https://lore.kernel.org/linux-doc/9dba0eb7-6f32-41b7-b70b-12379364585f@infradead.org/
+> 
+> Fixes: e4dfaf25df1210 ("iommupt: Describe @bitnr parameter")
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Tested on:
+Looks good. Thanks.
 
-commit:         e811c33b Merge tag 'drm-fixes-2025-11-08' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ca2a92580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cbf50e713aaa5cb0
-dashboard link: https://syzkaller.appspot.com/bug?extid=938fcd548c303fe33c1a
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1214117c580000
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 
-Note: testing is done by a robot and is best-effort only.
+> ---
+>  drivers/iommu/generic_pt/pt_common.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/generic_pt/pt_common.h b/drivers/iommu/generic_pt/pt_common.h
+> index 3b4e371089140a..e1123d35c90765 100644
+> --- a/drivers/iommu/generic_pt/pt_common.h
+> +++ b/drivers/iommu/generic_pt/pt_common.h
+> @@ -353,7 +353,7 @@ static inline unsigned int pt_max_sw_bit(struct pt_common *common);
+>  
+>  /**
+>   * pt_test_sw_bit_acquire() - Read a software bit in an item
+> - * @pts: Entry to set
+> + * @pts: Entry to read
+>   * @bitnr: Bit to read
+>   *
+>   * Software bits are ignored by HW and can be used for any purpose by the
+> @@ -365,7 +365,7 @@ static inline bool pt_test_sw_bit_acquire(struct pt_state *pts,
+>  /**
+>   * pt_set_sw_bit_release() - Set a software bit in an item
+>   * @pts: Entry to set
+> - * @bitnr: Bit to read
+> + * @bitnr: Bit to set
+>   *
+>   * Software bits are ignored by HW and can be used for any purpose by the
+>   * software. This does a set bit and release operation.
+> 
+> base-commit: 91920a9d87f5192c56ba5bf3e133aeb3576b705d
+
+-- 
+~Randy
 
