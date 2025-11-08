@@ -1,139 +1,89 @@
-Return-Path: <linux-kernel+bounces-891461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0C0C42B55
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 11:28:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EB0C42B5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 11:30:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45FA188BB45
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 10:28:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22D3D4E5775
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 10:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314A12FCC16;
-	Sat,  8 Nov 2025 10:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A7A2FE59C;
+	Sat,  8 Nov 2025 10:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dCOJkNNa"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="G5covuO3"
+Received: from sg-1-30.ptr.blmpb.com (sg-1-30.ptr.blmpb.com [118.26.132.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100761F461A
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 10:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D652FD7CF
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 10:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762597704; cv=none; b=OJeDI5lsNd99PSCz7WFQI8sd3lv+81mI0cBIYACuUZXajjMTDlwv2McIuUAIOrFPOfgSbYgJliIV3/KQuJVGYzwedeM5U5WtmsklJq5ZiIH/s8HPPC+B9cvAuSZdnYQHQyZHaG+fGD/thzWmWhBYfOXuF7huc3YSyJUiDUuN3sw=
+	t=1762597823; cv=none; b=Qmonnr5U1f7RYJYJAUQTHWaJX2kae3UEabSW67eWQbTV8eR7HuUy3aQLqMWV4uC9KeNsDhyb3hJL628HDF41/DNDbiOd9Xvoad28HRu5UP9W4S1O5HqODCU7Pbp4Vi2i9lXtP5BeleNKxrgAKDgBqsBBgc4yl7Cx9/vcZD4mtfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762597704; c=relaxed/simple;
-	bh=12f7GILPUkXCDP8tGHXH7ltT0vBUKfdqmW/twThO/0I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HpYJNKkmkZ3F3LLtinkHPv2R9sn0iul4arsrNYfBD931rHY8lAhyO1zOdydwPAPey/St3kSia7YoJXGvi2odiRyCYpyUqb+VsIIqjTVNJrD6WTWZBMH/i5vX+YTsYP9NHv60LdM13nxA9xNVSnOrkfnwFAEMht+npObbIOV8gIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dCOJkNNa; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-94895f6b144so25241939f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 02:28:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762597702; x=1763202502; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+TuTLhzgnX5Pfkj0imA6DgDfaCJeQjdc19ou/wTAVkI=;
-        b=dCOJkNNaj6msls4EFNBb389OxjvTww4cPtQaxayJYmZ10mxKsnqCa4CUIXDwDYOxji
-         bP/3CcaggZ+ONtWlh3xO4O9iSW47cXbP3T0wBdeRZIg5/DO0XYVcO+FfGNKEITmVZV0U
-         77am3M4fFIlvQEqtrzNI8gHiYjAW20us+OZL+4LHrglT6wmyN9DTvYldvpSoc9PQHM2Q
-         uw+Fz5n1a+ZMrsqkblGbSj4nc2bwOruSqj9NP6nMElJ8SqTAb7qRDI8+fFcbKjFAy3On
-         6XxYYO2nci8iaWqximzh6r+4Vd/sCX37qCwreYsAeDhspqhbfLL4B+SWySxNlvcgT7Bj
-         Ja8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762597702; x=1763202502;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+TuTLhzgnX5Pfkj0imA6DgDfaCJeQjdc19ou/wTAVkI=;
-        b=GWqW/t+z98O0tUZjINmfFqP/22Z3tEzAbEjOXepCKRD5yq8d2GCcqHzF02E1X1c3CJ
-         BsOLy2XRW9CsK/nJTDKfPEnBf324D4MZYPvfisZei+ZXoRyvXK5ViLucLDGb1bf08wIL
-         GcpqQyiiVYJ8NjqJ7dgdAro3MeqVtJ7t9BuaCtp6TzS2PCZzppy416aMJkibtLkMLnh+
-         D5ZcMgXtUMt0XukNoBxqOfJtbFT3Oi/VCBjB86u27H0jJjSkf2wfRRjcuZ/BuLZHRyG4
-         TkyoIi8dw9lsPRgbVdmVnQzqmQhwx+0ZQn1Qz4RWnSWtZZYT8XuTd+k3WIIb6IxcvuQr
-         fW0A==
-X-Forwarded-Encrypted: i=1; AJvYcCX8hzpJQrU1ynMO93FAnjJk5T27pnf/3MKqQGALPH3X7eNnst13ziLghLWCscOskZ645/8T5PzXxAqqOGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGFjBLMTAIcQZgvR/zEpM+V84xCw/BrVLmdM1E39NjfwpWcixV
-	on9ZMg7NK9Y07UA/7rbG7+jEMQ7u0GXnnc/qsIXt/EfMscCUBz/qMntG
-X-Gm-Gg: ASbGncvBGsifMTESUMRuhZyRXB8J7IS8SHbpAdRlI34Qhfrp6RsXdL3eFbfYgciHiRG
-	U5/BTt/f+grXbvni+k4QzlQgkGdt4F7PDkjciXWJeP4awBwfjkVNRwDmkJQglvVBI2fDsgmcTo4
-	gE1B14083wdrErXy6Yu3A0z2vJxZ7zuUliqySFZiGDGZ1G+RDPrSmtrpgBWa2V7nAS/0yyI9eiN
-	Pw5de8nteX8pNhU5kJa4w88ftb7WkNYMJGnD11d6ra9YV3EWAxCztAGDIFsrzKzUpsxjuWsbvD/
-	fcYt2ytyxlri57uMRwbl9XhOlaueJxxU0V8qNXM9S5yTc1r8j3++NKC7Lm6vqokzUcelzAcdnm2
-	QeGyGMWG5Big28uutl7Bf2DSSMBS/S8dmDph8wG6I5Rk+X9NsE0uPAV9OVcbfhq27P+L8kgZ5Mx
-	mJsV1BECyj02uyHQ==
-X-Google-Smtp-Source: AGHT+IHJQ2fl+UoiHF4mPlmvFSjl+F0j04tbYDfTx7zB3y716ahbTwMpXNlaun5Mwk6isZ1YqsGJpA==
-X-Received: by 2002:a05:6602:1609:b0:945:a16a:c7f8 with SMTP id ca18e2360f4ac-94895f98e51mr294678839f.6.1762597702060;
-        Sat, 08 Nov 2025 02:28:22 -0800 (PST)
-Received: from p15.. ([2600:1007:b0b8:8420:9895:3669:27c4:c1d6])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b74698d5bdsm2954694173.61.2025.11.08.02.28.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 02:28:21 -0800 (PST)
-From: George Kelly <george.kelly1097@gmail.com>
-To: Tony Lindgren <tony@atomide.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	George Kelly <george.kelly1097@gmail.com>
-Subject: [PATCH] ARM: dts: ti/omap: fix incorrect compatible string in internal eeprom node
-Date: Sat,  8 Nov 2025 05:27:41 -0500
-Message-ID: <20251108102741.47628-1-george.kelly1097@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762597823; c=relaxed/simple;
+	bh=XvcFtdoPb11B7Q86cSe2ZgwI6rrljqo++OkFc5iBdbI=;
+	h=Mime-Version:In-Reply-To:To:Message-Id:From:Subject:Date:
+	 Content-Type:References:Cc; b=HvpwgaCqWNvgX2q71oX1F4h6rfuMy7VUYUVZuD9kU70/83cdTBI5CIYmEMo7DSTpTY5AVN/khJoulne0LRxrA8FxNhMqCmhp5Qvq22ix1Yltr1Or53A+bclt+j2k5tglKpvSshiRu9T7v48M34kjRiLW5X9seTCSHZAFRrkYvtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=G5covuO3; arc=none smtp.client-ip=118.26.132.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1762597808;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=2CsV9iJgg1nuLYx+777LaO3NI+RBFzwp7DebOYVSqJo=;
+ b=G5covuO3crpX5dFEw4ObJ2tlWAD9KhYpjDQEYn/zfS0FmFpW/QRQHRjuuo8qKk8giV22zs
+ 6ealfwZ+vEhOJSp+7ZiFL86h0EzjO8QbmTjequ7wT+CuqvV1xTjv1SwpjeeRbbWbniMDZ1
+ YCWDZJIhHBdyAsAgOMy09TyhSUaIz9fSAfSABAqYIi/4Pzs+o+Di5gwLsoxmmIeo4gvrKe
+ Ee+bqbPjLytZnjRIwZc2+98238SgLVkQmm9N9v6UqUlolgHgULsFMQ67ZNq0tLzgoMueZo
+ eYlAmbuxHSh2LkKlfQClXsL9/HNksm6Xvagma+KZwAaNWKYHjugIYU5V44DYWQ==
+Reply-To: yukuai@fnnas.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+In-Reply-To: <20251106115935.2148714-8-linan666@huaweicloud.com>
+To: <linan666@huaweicloud.com>, <song@kernel.org>, <neil@brown.name>, 
+	<namhyung@gmail.com>
+Message-Id: <9c1867c7-167b-4ce0-a7cb-053bf641a125@fnnas.com>
+Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Sat, 08 Nov 2025 18:30:05 +0800
+From: "Yu Kuai" <yukuai@fnnas.com>
+Subject: Re: [PATCH v2 07/11] md: factor out sync completion update into helper
+Date: Sat, 8 Nov 2025 18:30:04 +0800
+Content-Type: text/plain; charset=UTF-8
+References: <20251106115935.2148714-1-linan666@huaweicloud.com> <20251106115935.2148714-8-linan666@huaweicloud.com>
+Cc: <linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	<xni@redhat.com>, <k@mgml.me>, <yangerkun@huawei.com>, 
+	<yi.zhang@huawei.com>, <yukuai@fnnas.com>
+User-Agent: Mozilla Thunderbird
+Content-Transfer-Encoding: quoted-printable
+X-Lms-Return-Path: <lba+2690f1bae+e9cbf9+vger.kernel.org+yukuai@fnnas.com>
+X-Original-From: Yu Kuai <yukuai@fnnas.com>
 
-While the Beaglebone capes have the Atmel AT24C256 chip (256kbit or 32kB),
-the internal Beaglebone eeprom chip (i2c bus 0, addr 0x50), is an AT24C32
-(32kbit or 4kB). Yet the device tree lists AT24C256 as the compatible chip
-prior to this patch. You can confirm this by running
-`sudo hexdump -C /sys/bus/nvmem/devices/0-00500/nvmem`. You can see the
-factory data is repeated every 0x1000 addresses (every 4096 bytes or 32768
-bits). This is because the read command wraps around to reading 0x0000 when
-a user requests address 0x1000.
+=E5=9C=A8 2025/11/6 19:59, linan666@huaweicloud.com =E5=86=99=E9=81=93:
 
-This is not a huge issue for reading, but it is for writing to the EEPROM
-for two reasons:
+> Repeatedly reading 'mddev->recovery' flags in md_do_sync() may introduce
+> potential risk if this flag is modified during sync, leading to incorrect
+> offset updates. Therefore, replace direct 'mddev->recovery' checks with
+> 'action'.
+>
+> Move sync completion update logic into helper md_finish_sync(), which
+> improves readability and maintainability.
+>
+> The reshape completion update remains safe as it only updated after
+> successful reshape when MD_RECOVERY_INTR is not set and 'curr_resync'
+> equals 'max_sectors'.
+>
+> Signed-off-by: Li Nan<linan122@huawei.com>
+> ---
+>   drivers/md/md.c | 82 ++++++++++++++++++++++++++++---------------------
+>   1 file changed, 47 insertions(+), 35 deletions(-)
 
-1) If a user writes to addresses 0x1000 - 0x104e, they'll accidentally
-overwrite the factory data stored at 0x0000 - 0x104e. This also is an issue
-for writing to 0x2000 - 0x204e, and so on.
-2) AT24C256 has 64-byte pages, but AT24C32 only has 32 byte pages. Thus, if
-you attempt to write more than 32 bytes, bytes 32-64 will wrap around. This
-causes your data in the actual EEPROM chip's bytes 0-32 to be overwritten by
-the data in your request's bytes 32-64, while the EEPROM chip's bytes 32-64
-remain 0xFF (unwritten). Lastly, the Beaglebone Black's user manual does
-correctly mention that the internal EEPROM is 4kB (while capes are 32kB or
-256kbit). It's just this bit of code that does not match.
-
-Signed-off-by: George Kelly <george.kelly1097@gmail.com>
----
- arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi b/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi
-index ad1e60a9b6fde..73a571c135f81 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi
-+++ b/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi
-@@ -217,7 +217,7 @@ tps: pmic@24 {
- 	};
-
- 	baseboard_eeprom: eeprom@50 {
--		compatible = "atmel,24c256";
-+		compatible = "atmel,24c32";
- 		reg = <0x50>;
- 		vcc-supply = <&ldo4_reg>;
-
---
-2.43.0
-
+LGTM
+Reviewed-by: Yu Kuai <yukuai@fnnas.com>
 
