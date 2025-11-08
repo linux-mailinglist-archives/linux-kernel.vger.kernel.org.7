@@ -1,153 +1,234 @@
-Return-Path: <linux-kernel+bounces-891430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67606C42A64
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:34:01 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E68E3C42A69
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:36:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF6564E452E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:33:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C503834993E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E3E2E22BD;
-	Sat,  8 Nov 2025 09:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B2E2EA749;
+	Sat,  8 Nov 2025 09:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5AmjzQc"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qmChAzpA"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9099C1D61B7
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 09:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE67235360;
+	Sat,  8 Nov 2025 09:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762594435; cv=none; b=NNeD0/uk6UOxRMmgSKAkYC+ujL8duLkNkMtvCGvYnwidLApKVxc5IXSg7p53fJ9f9jJZotIGZKYEYdz3s27qLMbKqaBG/iMnJ2xgXOXvbyeEgT/9yxhCPmPp2OQqF6Y/Jd7r3MSwkthmHdqoFHVcFtKD46T+9pMsuYUmIKoDjZw=
+	t=1762594605; cv=none; b=B9v6ephMtLdJO2fKxxei9O2Jr3jMeigyBL8aL6l0gXUUC5SZc4wBALx+RxIBncBxtGni2DmHq+dQXsBPIDfgo6YeIFR2ku6v+m6V4cpoxiG4mBXvKOmM5nhEKzjdcBuKEAr8JTliJlUU0OR+5DSA2MomZfeV69XpD71c6GSkIqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762594435; c=relaxed/simple;
-	bh=/Yh0dc4iImsJEJ2MRXkTnS/IDGLaDFRBsXksKigswSc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RtETxhZjWknBxq2ETcR9ApfasAVzN1wBWLVeRqMmUK9wzLEkQVc3n05Ksn6gjMWMTG1WrbtCpL8mcRos58BwyXBfbnhY1VK3S2usjwkpBZ4+xDUFtbg/cho4Cijih9AoD73SClNqnwMDt/Ngfmzu06uaTRVD8xCE/9bJOO5Wdl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J5AmjzQc; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4711b95226dso14164455e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 01:33:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762594432; x=1763199232; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QiApigOOG8LHPEXfDKXbVktrWsjTUfreGKJRz4Nc8lA=;
-        b=J5AmjzQcMElJ5E7w6yEBEY2mTIEScDHEs3PUNRREqREfjfSMWtsmrN7SZRVTuTnRVN
-         GYUFWwr/LkimVeGJuKWKubkezwb6pms+8+MYBNmex/lSDfM0U/e9cxmwbbFMTbDSMMqg
-         f3Rfkmo5vYy7jbw0iEAC/jAvDGXm24ITk5slI/azCcg+vQWcElVZusPRzYZyUeh24uon
-         lhqwWPNgNXg53MfcKiclk7X9Qt1bbBgRTHgVbONPwP4B6SLqqN2tibPlAaMTYqeiBKnR
-         L49hUAxl7v++MvSP+0ak6KWj74outAN3Fz5utyM3NeTV7UxAf2Er2St9KHxmdwFxDNHn
-         IPfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762594432; x=1763199232;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QiApigOOG8LHPEXfDKXbVktrWsjTUfreGKJRz4Nc8lA=;
-        b=fkB07NLc6fxq3XWqu4QG6s9e+X7VmgOEYbuBiX+9PRNpQ1SoEZzpjR91M1tcxukOgR
-         16JijdeGDC/MaiwmouGLrrE2ewxuGCmEAPqdYuSy+XZ6RtVS+r184uVbBR0aPK7wU4e0
-         1QBsvCyRtKsWdkgMujf9frGVt1tiATFDjbl6YIB/42P7xWgRmtaOBOUN59Vnf0G9T89G
-         77gSxd+fKwuVy+nIjd7BngfkzHrXJGVYCYME0pKB9rZK1BdIuUdwKuvUqWcWEQ4AKaHR
-         ASavL9H/bEfHApLDEsBkCZPT/9RWTGXtF9LWDLVoSPmWQRVbQuDlSvbgZ+F9dG4e3rQl
-         BAGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdPgQIzljomqO9x6nD4c7HSjXpBdkO9N5dNQ0TyxuCt3LakfalzQukPwhpgU5t7qjU8eh6z5P61nKFSgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRG6kJRPHKYok2EITda9cpOZ4r2pBS+SeKk+dC3X1B/yMsTnye
-	2OviD2+RMFtKqt1B9djoi1ojtXcNjqHrJuLEsryqxUYdpeEnVXqWMrk5
-X-Gm-Gg: ASbGncv1OtaugaPN/Iinn1Qbni77nl3ICGtLS0US5pOY3ZVn6tp5+Qt4hBXUzSmhPrK
-	TgADusEiQh+J+E09Uk9SSqhRrNKqEmdAZ0nMxlIvXbW1O0DMz/5tQ7O6lq0MSdjadPMHci79Vip
-	7qKsdsYOZ6TVPAHBbVA71z6uO/q2s0LyiH13AjlBvVOsUZkfR6C+ragbF0hu7UDAGV5D4bxjnI9
-	XPslGbVsoyTgQZiSyJSEi2rnqk+P0Of8mER/4IdaMaTmRG1l4C0HQNK5HYr6gfoe4GI8nPVhDKM
-	z9+YfIFVX7ua4Vbm3ZUhnDBMRiv00tBzEDA/gx9qgXgAzvyEu7CnXoLLYUhNiEFL3VazJUb68mh
-	ktMC0KgElRMbf3FF7IeN3LdgHhVAbCJ9+a40qTOEXkOpKNGqRAvin+VQB3oQy8MTKVtF0+8t8es
-	uFcAHrYsgiAn+t+00ZNwc9EmlNLNYY+mS9UJrUMPsj8tnzhquGVDgWFDWGS6ssRtP+XNOSraLBw
-	NxNajft
-X-Google-Smtp-Source: AGHT+IEd4XyN6o1k4yt4rMN5pB+/mSHIFBxKb+L3mgiOpSENoQYSE80ZfJu9ZJL1EDqCKgK7GtsnaQ==
-X-Received: by 2002:a05:6000:2681:b0:429:cacf:1064 with SMTP id ffacd0b85a97d-42b2dc877f3mr1621212f8f.29.1762594431704;
-        Sat, 08 Nov 2025 01:33:51 -0800 (PST)
-Received: from dell (229.red-88-1-12.dynamicip.rima-tde.net. [88.1.12.229])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac67920fcsm10435119f8f.39.2025.11.08.01.33.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 01:33:51 -0800 (PST)
-From: Javier Garcia <rampxxxx@gmail.com>
-To: deller@gmx.de
-Cc: linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	Javier Garcia <rampxxxx@gmail.com>
-Subject: [PATCH v3] fbdev: vga16fb: Request memory region.
-Date: Sat,  8 Nov 2025 10:33:48 +0100
-Message-ID: <20251108093348.2842180-1-rampxxxx@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <f9998d60-e532-48ae-8e03-d867cc0ec847@gmx.de>
-References: <f9998d60-e532-48ae-8e03-d867cc0ec847@gmx.de>
+	s=arc-20240116; t=1762594605; c=relaxed/simple;
+	bh=BhhSYA/yQZfYitLuF4IY7WD/v9JWZaXGBTVLojARsv0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tEeS5gzlENIgDrjiPvGzaLmUN9XXbkWOn2z7yOFXd64CQro5Uv0paRQFrCQ6/nKq6JMYMv8HgBjiwmqzJ9BviG4Q0558/7w5rhfsvo57dymuAcG/y8oBryYDVAD/ewvfhiOGk4trd4rLxAac+SL7PGLhibcTgqZyAQBJ1o4VNLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qmChAzpA; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.0.172] (mob-5-90-142-135.net.vodafone.it [5.90.142.135])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 33A98DD9;
+	Sat,  8 Nov 2025 10:34:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1762594484;
+	bh=BhhSYA/yQZfYitLuF4IY7WD/v9JWZaXGBTVLojARsv0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=qmChAzpA1D9im/tXnzs+pwgybmBljME+K0Cr3qpeur/RS3clH3QBFZknzLiDxyyJw
+	 ufKt5n7PBSVUR9doHlwPxtRvct4ceQBJgsjL5WpYK92kIi3ZSQ68gN9Yc9MDGW0/3J
+	 ZE8tXPhsub7EZYWgsw3eyBAR3Z1WXK98SaooILv0=
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: [PATCH v9 0/8] media: Introduce V4L2 generic ISP support
+Date: Sat, 08 Nov 2025 10:36:21 +0100
+Message-Id: <20251108-extensible-parameters-validation-v9-0-6a7e22aa57d0@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABUPD2kC/43Qz2oDIRAG8FcJnmvx76o59T1KDzqOjZDsBl2Wl
+ JB3rwm02UOXevwG5vcNcyUVS8ZK9rsrKbjkmqexBfeyI3Dw4yfSHFsmggnNDOMULzOONYcj0rM
+ v/oQzlkoXf8zRz22ZgpU8maQBWCCNORdM+fKoeP9o+ZDrPJWvR+PC79Mf3P6PL5wy6hIIAw6Ms
+ PCWI/o6jWHyJb7CdCL3jkWsXM46XNFcg2AdtwhKyQ1XPl3LXYcr7/dGYMxKZYNkG65auaLnXtV
+ cyRJq7xwEnjZc/XQd1x2ubi4OMTilBuvT1h+GX5czZjrcobk6Ge6iS9Kh3nDNyuWqwzXNHQZhA
+ 0YN3tkN167crv/a5voUvAreBCXiH+7tdvsG+TbCcT8DAAA=
+X-Change-ID: 20250701-extensible-parameters-validation-c831f7f5cc0b
+To: Dafna Hirschfeld <dafna@fastmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Antoine Bouyer <antoine.bouyer@nxp.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Michael Riesch <michael.riesch@collabora.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6558;
+ i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
+ bh=BhhSYA/yQZfYitLuF4IY7WD/v9JWZaXGBTVLojARsv0=;
+ b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBpDw8lZork7+wch0LJyMIkMt584D14/Y9QKj2ai
+ gExnKh1pSyJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaQ8PJQAKCRByNAaPFqFW
+ PA/aEADBfoMyvkoo9ErdWAMc+RKsrgooN5iAOIJjpAe15exE4BXXWvUq1qnSz5RmYmoSYTcqGTK
+ yjoqWeDGnQ0tRxlhLcqJrYqB5V0baX7WOWcsf4hmRR2leC8taO4RerDmxFE7PQEwmVIiadao4Iv
+ fsWncThhrpOt8OYVQPNBsynCvFuetIdUSyOLSfI8AE2Aos5czJ3nE7LdVJRx2cZivC/7ECkzP2h
+ 52NA9IApiLvcCrI0JMvarTQuv+9NKO8xJpx/t4pked46uMy8mfnrc19KCh9PIozWTUaIHFcK1AV
+ bct8Pj8/w/c0s8VZLwOxbNTyjoZILsR8o6jCCiXGvXOFoChHlgri146tdzDlyrYF40GatvwDOqu
+ JReAk1A023rqCLfzxvhZiWyg/Y2uPZxiJaF9e6jVIZdkoakqyjU/8TRr2DcdpgvA+EIESpULKk7
+ LYTi9cNDlaULrwvVVCEVfjdQJIEnROLmw2DBrJfOHTyPj/EbIit+05HV3izSGyaWYAH32EXAWAP
+ 9BprTFDJUpGvamJl5g8A1HKRBiEu1B4dUZopypGeqOAJKsqRoltnp3mVpC2OWFsZLD3pk9u/Jeb
+ SYFnbONeVeYuEHWkES5MrJ4onUxI4kmtkiV1/z9WBDlI2AkYjm1AvI1GZna0DghPnh7uXpIw+HT
+ bPayhmhf1V2SE8g==
+X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
+ fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-This patch reserve and release VGA memory region.
+Extensible parameters meta formats have been introduced in the Linux
+kernel v6.12 initially to support different revision of the RkISP1 ISP
+implemented in different SoC. In order to avoid breaking userspace
+everytime an ISP configuration block is added or modified in the uAPI
+these new formats, which are versionated and extensible by their
+definition have been introduced.
 
-This align with Documentation/drm/todo.rst
-"Request memory regions in all fbdev drivers"
+See for reference:
+e9d05e9d5db1 ("media: uapi: rkisp1-config: Add extensible params format")
+6c53a7b68c5d ("media: rkisp1: Implement extensible params support")
 
-I've tested with 32bits kernel and qemu.
+The Amlogic C3 ISP driver followed shortly, introducing an extensible
+format for the ISP configuration:
 
-Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
+6d406187ebc0 ("media: uapi: Add stats info and parameters buffer for C3 ISP")
+
+with a very similar, if not identical, implementation of the routines to
+validate and handle the ISP configuration in the ISP driver in the
+c3-isp-params.c file.
+
+fb2e135208f3 ("media: platform: Add C3 ISP driver")
+
+With the recent upstreaming attempt of the Mali C55 ISP driver from Dan,
+a third user of extensible parameters is going to be itroduced in the
+kernel, duplicating again in the driver the procedure for validating and
+handling the ISP configuration blocks
+
+https://patchwork.linuxtv.org/project/linux-media/patch/20250624-c55-v10-15-54f3d4196990@ideasonboard.com/
+
+To avoid duplicating again the validation routines and common types
+definition, this series introduces v4l2-isp.c/.h for the kAPI
+and v4l2-isp.h for the uAPI and re-organize the RkISP1
+and Amlogic C3 drivers to use the common types and the helper validation
+routines.
+
+The v4l2-isp abstraction will be augmented to support statistcs as well.
+
+If the here proposed approach is accepted, I propose to rebase the Mali
+C55 driver on top of this series, to use the new common types and
+helpers.
+
+Tested on Mali C55 and RkISP1 with camshark
+
+Thanks
+  j
+
+Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 ---
-v1 -> v3:
-      * Add space after comma.
-      * v2 https://lore.kernel.org/lkml/20251028191615.2765711-1-rampxxxx@gmail.com/
-v1 -> v2:
-      * Add release in vga16fb_remove , thanks Helge Deller.
-      * v1 https://lore.kernel.org/lkml/20251016171845.1397153-1-rampxxxx@gmail.com/
- drivers/video/fbdev/vga16fb.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Changes in v9:
+- Modify the RkISP1 and C3 params drivers to enumerate their block info
+  with macros (and static_assert they're of the correct size)
+- Modify documentation according to Laurent's suggestion
+- Link to v8: https://lore.kernel.org/r/20251020-extensible-parameters-validation-v8-0-afba4ba7b42d@ideasonboard.com
 
-diff --git a/drivers/video/fbdev/vga16fb.c b/drivers/video/fbdev/vga16fb.c
-index eedab14c7d51..3b4c50d98ba6 100644
---- a/drivers/video/fbdev/vga16fb.c
-+++ b/drivers/video/fbdev/vga16fb.c
-@@ -1319,6 +1319,11 @@ static int vga16fb_probe(struct platform_device *dev)
- 	if (ret)
- 		return ret;
- 
-+	if (!request_mem_region(vga16fb_fix.smem_start, vga16fb_fix.smem_len,
-+				"vga16b")) {
-+		dev_err(&dev->dev, "vga16b: cannot reserve video memory at 0x%lx\n",
-+		       vga16fb_fix.smem_start);
-+	}
- 	printk(KERN_DEBUG "vga16fb: initializing\n");
- 	info = framebuffer_alloc(sizeof(struct vga16fb_par), &dev->dev);
- 
-@@ -1398,6 +1403,8 @@ static int vga16fb_probe(struct platform_device *dev)
-  err_ioremap:
- 	framebuffer_release(info);
-  err_fb_alloc:
-+	release_mem_region(vga16fb_fix.smem_start,
-+		    vga16fb_fix.smem_len);
- 	return ret;
- }
- 
-@@ -1407,6 +1414,8 @@ static void vga16fb_remove(struct platform_device *dev)
- 
- 	if (info)
- 		unregister_framebuffer(info);
-+	release_mem_region(vga16fb_fix.smem_start,
-+		    vga16fb_fix.smem_len);
- }
- 
- static const struct platform_device_id vga16fb_driver_id_table[] = {
+Changes in v8:
+- Address Michael comments and reword documentation
+- Use the correct "metadata capture" for stats and "metadata output" for
+  parameters. I mixed up the two in the previous revisions.
+- Link to v7: https://lore.kernel.org/r/20251014-extensible-parameters-validation-v7-0-6628bed5ca98@ideasonboard.com
+
+Changes in v7:
+- Moved version to the v4l2-isp uAPI
+- Moved version check to the v4l2-isp.c helpers
+- Link to v6: https://lore.kernel.org/r/20251007-extensible-parameters-validation-v6-0-5f719d9f39e5@ideasonboard.com
+
+Changes in v6:
+- Rename all symbols to v4l2_isp
+- Changed the interface of the two buffer validation functions
+- Reworked the rkisp1 and c3 porting accordingly
+- Updated documentation
+- I have moved v4l2_params_buffer_size() from uAPI because it was
+  convenient for linux but not required in userspace
+- Link to v5: https://lore.kernel.org/r/20250915-extensible-parameters-validation-v5-0-e6db94468af3@ideasonboard.com
+
+Changes in v5:
+- Move everything to v4l2-isp prefix except from format documentation
+  which still is about 'extensible-parameters' (to be paired in future
+  with extensbile-stats)
+- Simplify documentation and move it part to the driver-api
+  Documentation
+- Remove 'group' and 'features' from the generic handlers definition and
+  adjust rkisp1 accordingly
+- Link to v4: https://lore.kernel.org/r/20250820-extensible-parameters-validation-v4-0-30fe5a99cb1f@ideasonboard.com
+
+Changes in v4:
+- Fix the definition of V4L2_PARAMS_FL_PLATFORM_FLAGS
+- Add __counted_by() attribute to the data[] flexible-array member of
+  v4l2_params_buffer
+- Minor style change
+- Link to v3: https://lore.kernel.org/r/20250819-extensible-parameters-validation-v3-0-9dc008348b30@ideasonboard.com
+
+Changes in v3:
+- Rebased on latest media-committers/next
+- Take in Dan's suggestion in block size validation
+- Documentation minor spelling fixes
+- Link to v2: https://lore.kernel.org/r/20250710-extensible-parameters-validation-v2-0-7ec8918ec443@ideasonboard.com
+
+Changes in v2:
+- Make v4l2_params_buffer directly usable
+- Centralize ENABLE/DISABLE flags definition and validation
+- Take in Dan's v4l2_params_buffer_size()
+- Allow blocks to only contain the header if they're going to be
+  disabled
+- Documentation fixes as reported by Nicolas
+- Link to v1: https://lore.kernel.org/r/20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com
+
+---
+Jacopo Mondi (8):
+      media: uapi: Introduce V4L2 generic ISP types
+      media: uapi: Convert RkISP1 to V4L2 extensible params
+      media: uapi: Convert Amlogic C3 to V4L2 extensible params
+      media: Documentation: uapi: Add V4L2 ISP documentation
+      media: v4l2-core: Introduce v4l2-isp.c
+      media: rkisp1: Use v4l2-isp for validation
+      media: amlogic-c3: Use v4l2-isp for validation
+      media: Documentation: kapi: Add v4l2 generic ISP support
+
+ Documentation/driver-api/media/v4l2-core.rst       |   1 +
+ Documentation/driver-api/media/v4l2-isp.rst        |  49 ++++++
+ .../userspace-api/media/v4l/meta-formats.rst       |   1 +
+ Documentation/userspace-api/media/v4l/v4l2-isp.rst |  67 +++++++++
+ MAINTAINERS                                        |  10 ++
+ drivers/media/platform/amlogic/c3/isp/Kconfig      |   1 +
+ .../media/platform/amlogic/c3/isp/c3-isp-params.c  | 165 ++++++---------------
+ drivers/media/platform/rockchip/rkisp1/Kconfig     |   1 +
+ .../media/platform/rockchip/rkisp1/rkisp1-params.c | 150 ++++++-------------
+ drivers/media/v4l2-core/Kconfig                    |   4 +
+ drivers/media/v4l2-core/Makefile                   |   1 +
+ drivers/media/v4l2-core/v4l2-isp.c                 | 128 ++++++++++++++++
+ include/media/v4l2-isp.h                           |  91 ++++++++++++
+ include/uapi/linux/media/amlogic/c3-isp-config.h   |  92 +++---------
+ include/uapi/linux/media/v4l2-isp.h                | 102 +++++++++++++
+ include/uapi/linux/rkisp1-config.h                 | 107 +++----------
+ 16 files changed, 590 insertions(+), 380 deletions(-)
+---
+base-commit: b4fbb13db86adb0bae1d7f968b61ea8dc9635e33
+change-id: 20250701-extensible-parameters-validation-c831f7f5cc0b
+
+Best regards,
 -- 
-2.50.1
+Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
 
