@@ -1,149 +1,232 @@
-Return-Path: <linux-kernel+bounces-891579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45A4C42FC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 17:18:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB97FC42FCF
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 17:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 808781889F3D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 16:19:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 669A04E5BEC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 16:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912E2217722;
-	Sat,  8 Nov 2025 16:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E5E22A4DA;
+	Sat,  8 Nov 2025 16:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpn239pY"
-Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="SQrdexUk"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1FD194098
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 16:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B060222562;
+	Sat,  8 Nov 2025 16:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762618726; cv=none; b=QcpG2Y9gb7UKgkZiuycJhN69IdYaOuIwMckviyUKEx5zr27srQEo8WhkWhqPYkQbtiTEfzK8MwbtizmQVZW8fap+59h/GX25+oBHV2C+4tJBUI+gyKHh2WvKZrEdQVnNusZWyvS4T+PqofQgRWtAkLaBKlw0ZMVPCn2JbaPnTYU=
+	t=1762618812; cv=none; b=aJPNUlcJrU+wmeMdWaTvWGkYyv8f/EtS6syh7ZDl7CBzLtJQhPr1BDPlomYR2AFg2vyUDyREmk3Q53GjIIgiN66bxQggSmbPk1Ai5lHAeIGKfRJ7VvOLomtPGkTr/1xFoQloa/NdoNQtjxxt5hLrFdSYutAbrMC9l8SDPKu4oRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762618726; c=relaxed/simple;
-	bh=kHu9xb/m8OnJFaZlkDBT3bgLQ5H4ttZWM1JNTx18jJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iZYM922AgqhVWMG/6cW6EitHzwZmhGf6s+eXWiH4A5+NN8V6tFHdi33lA2ZQ5oPc0xrO510Uw51jyvSVuTOWOKi3JmEbSAJAYnFv/+QPWGSDplmxr2JotuVzExIH8BhJuGFc3x4anQUpPrsuAcBrqcaGgs7LlhWsSYWsOZ35YJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpn239pY; arc=none smtp.client-ip=209.85.216.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-340bcc92c7dso1653997a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 08:18:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762618725; x=1763223525; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9vBksDJnztjGyjVxw8Yb9adtDqx05xzbEcYJxzPS4MU=;
-        b=fpn239pYXOa9vag6ACQ8g8FLe5tAmuZtIDOLUE447d91G2vzz4ds/40s6eS6jI6Mvv
-         U5pmIySrIXbaa0qNffFWigx2i5QjDddUNLUtsKGUXAa6rxBGUZ3Mm+kJ2x8IGFVWJ0Ho
-         yWlxmhcJwvPf8PfHdWSsDlY1DOoTTQsL1kp0FM0UZRiSw4khDwlMNp/GLpFoKIZ3h4sl
-         HHgr1WcJeBCjB2AYHB5r3xGTUsxp4yxhW9qOw/YQKSIQdGfDb9aurJtk842zd5pRJYj4
-         Un87CRh/NVmhMPjOFVt66hx/WR/SSoh5cTYBwAkL69lHUBsZa+zKauyZEg8meBYwp5aB
-         XByw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762618725; x=1763223525;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9vBksDJnztjGyjVxw8Yb9adtDqx05xzbEcYJxzPS4MU=;
-        b=ZkwH2PhGw+SCfFPuww5vmW69bqrCVysU8SkW6YTVA3jPjseUsTPaE0w8HAVyBj4hSI
-         L1C9JmV2ng/1NNFPqU2sYQpuZEwGdaEOpBLCYakK501vNq38HX1N/GfiINfqjxn4XbI1
-         0wTpg8QfoXjdJoV4SW+Nhp1mOVOJGfdZlfIkmwFgKCgsmd94Muu9JwLd2EkhX21bb5Wr
-         gRZOYrXqq3mrybUHskfpMt6jUMKm8uNkkH+LgNvCE+Jg02dpV3imIZowdC2tuByzQoR3
-         RvqV9uzy5YiE1vglkcosHvV+zrgXCdjniOY8fh6iSSBW9TVDxBX70mI/JplDOVGF041Z
-         +d8g==
-X-Gm-Message-State: AOJu0YwgOFTqXiBw1Odvs5bRpWGYG1mYafSrbFttDH9pDhKCbHbWIhMb
-	9ERczEaVoeIFbvBa5h6XtOgbS2eD4qBRkyUbhnOz6fFBDhXkiFOX2b5U
-X-Gm-Gg: ASbGnctn//YqSqbm66HllKhxT91dVaki1ulSUye0tvgUUuEG01Ylxu8OsOrFtYohteX
-	WwcVjZbR4rkPh01a0rOgPKefcBLdwnyQDn6RYvxV8hb4LUK2Mk/UGQjJRNTA/XUW/6zPldZ6vgL
-	X+8Ry9naBB7+u2o/fx9Ie4pihFWZUohyDhp4KgfkQHIqFY8jRpJMsp9EoSm3NVcnON2cpe/qwoW
-	rAuQs6gb7xgyVwHYtl7cmZWfoGliRz8tilZuzVJbW5wwuXi3LnZ6MQVEr9+pq8NCcaR8zWJrUQa
-	TGV7cOYLISZXmyBR4VkGcbWMGykK4hBqg7h6tUoqkUFaAvUOENqsOa7An3rNgcCbj4qaEiDYl3Q
-	GweLEvL+uFNaf5pMvgpEBYH39ajBR3YPUhQVugRwXVFPJ2mD59hVQWBE9CMHBOC5Fz0ZM/SEZ6z
-	t74oI93Ed2VVF70LHcRJDM2i841TRlOT2mK36jXIY1
-X-Google-Smtp-Source: AGHT+IGLxQf5Mvke/vM2EkF6/583Zl67fDA8/F7qScezPJe1ESf4y4dMVf2DpQ3IkfNkW8uyBNV79g==
-X-Received: by 2002:a17:90b:2f50:b0:340:b501:7b83 with SMTP id 98e67ed59e1d1-3436aca72a6mr3619510a91.10.1762618724753;
-        Sat, 08 Nov 2025 08:18:44 -0800 (PST)
-Received: from fedora ([103.120.31.122])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3435e25e508sm4310773a91.13.2025.11.08.08.18.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 08:18:44 -0800 (PST)
-From: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-Subject: [PATCH v2] selftest/mm: fix pointer comparison in mremap_test
-Date: Sat,  8 Nov 2025 21:48:29 +0530
-Message-ID: <20251108161829.25105-1-ankitkhushwaha.linux@gmail.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762618812; c=relaxed/simple;
+	bh=IfQPIWym0KcYl4PrJwG7dFVcoXRd2GnV2Jse4Zj+a6w=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=TqBroWbVSXM9svvHyRfZ2A6lALQGsWINqS3HUDNT1yUtTpSWon61GEx0Y8GNEeIhz4iNOHsLKETfCh/WuN8Hb3LV2ZIDKjJUvYVgqpTbdbVemacGwAPErFHuTlzlKZ8pOsdertMCvFzd48is5UDMeHd6fJ5X4J3ZOJ3ARwIv6IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=SQrdexUk; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5A8GInPF2337389
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sat, 8 Nov 2025 08:18:49 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5A8GInPF2337389
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762618732;
+	bh=IfQPIWym0KcYl4PrJwG7dFVcoXRd2GnV2Jse4Zj+a6w=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=SQrdexUk3Uvp8/NtRrkfFFBaj3c4imtzw8TG1x0d9IBeEM8f4iuSRBnQPHGUuzMAp
+	 ZCeylQqTiJQUdrDeZCSfquep9jpH78EjVmNlvh9UQRcm1/4ttKo442mGZpLvhSuYXy
+	 0u/bd2/ktKgWQLkN6zY3+qpbPKgQfeA+7s4QGmiXn1uYrrMcYOxveqtMRD48eeqUGe
+	 GB9H+NBGpGBItdZwV14jrcRkg+S34eWpA8wJDhAhgFC+frk157Yv0WHDCf+4iIpXD7
+	 urRRXEI0OxYHjJT0qrxi+q/bEro6fbb6S1XoJfzKoEU9s+gQXq2t/zNcaWKHtwKM/I
+	 X61HoP9/zYkCw==
+Date: Sat, 08 Nov 2025 08:18:48 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+CC: Dave Hansen <dave.hansen@intel.com>, Sohil Mehta <sohil.mehta@intel.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        "Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Sean Christopherson <seanjc@google.com>,
+        Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v11_5/9=5D_x86/efi=3A_Disable_LAS?=
+ =?US-ASCII?Q?S_while_mapping_the_EFI_runtime_services?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <99143293-1715-4c40-b937-3e7472e26732@app.fastmail.com>
+References: <20251029210310.1155449-1-sohil.mehta@intel.com> <20251029210310.1155449-6-sohil.mehta@intel.com> <3e9c4fdd-88a8-4597-9405-d865fb837d95@intel.com> <cac58a25-eda6-4738-966f-a4e42818aa6c@app.fastmail.com> <6dec8398-3f7c-44db-a30d-33593af0217f@intel.com> <efd6ec82-5576-41f1-a244-2f80d72e93e4@intel.com> <ee2fce64-91ce-4b78-b2f9-33364ea0c52f@intel.com> <20251107090406.GU3245006@noisy.programming.kicks-ass.net> <CAMj1kXFQaGaz37MNKXXjhUKy_mP-5teCDj80-hjUPHw4x+TKrA@mail.gmail.com> <20251107094008.GA1618871@noisy.programming.kicks-ass.net> <CAMj1kXFWCwEENyS=JM5mAON6ebfTwwJh-mRDYCY5NA+5UGzZJg@mail.gmail.com> <99143293-1715-4c40-b937-3e7472e26732@app.fastmail.com>
+Message-ID: <7B2C410E-E4A3-4998-8C83-BE7D5838AC12@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Pointer arthemitic with 'void * addr' and 'ulong dest_alignment'
-triggers following warning:
+On November 7, 2025 4:48:05 PM PST, Andy Lutomirski <luto@kernel=2Eorg> wro=
+te:
+>
+>
+>On Fri, Nov 7, 2025, at 2:09 AM, Ard Biesheuvel wrote:
+>> On Fri, 7 Nov 2025 at 10:40, Peter Zijlstra <peterz@infradead=2Eorg> wr=
+ote:
+>>>
+>>> On Fri, Nov 07, 2025 at 10:22:30AM +0100, Ard Biesheuvel wrote:
+>>>
+>>> > > But that's just the thing EFI is *NOT* trusted! We're basically
+>>> > > disabling all security features (not listed above are CET and CFI)=
+ to
+>>> > > run this random garbage we have no control over=2E
+>>> > >
+>>> > > How about we just flat out refuse EFI runtime services? What are t=
+hey
+>>> > > actually needed for? Why are we bending over backwards and subvert=
+ing
+>>> > > our security for this stuff?
+>>> >
+>>> > On x86, it is mostly the EFI variable services that user space has
+>>> > come to rely on, not only for setting the boot path (which typically
+>>> > happens only once at installation time, when the path to GRUB is set
+>>> > as the first boot option)=2E Unfortunately, the systemd folks have t=
+aken
+>>> > a liking to this feature too, and have started storing things in
+>>> > there=2E
+>>>
+>>> *groan*, so booting with noefi (I just went and found that option) wil=
+l
+>>> cause a modern Linux system to fail booting?
+>>>
+>>
+>> As long as you install with EFI enabled, the impact of efi=3Dnoruntime
+>> should be limited, given that x86 does not rely on EFI runtime
+>> services for the RTC or for reboot/poweroff=2E But you will lose access
+>> to the EFI variable store=2E (Not sure what 'noefi' does in comparison,
+>> but keeping EFI enabled at boot time for things like secure/measured
+>> boot and storage encryption will probably result in a net positive
+>> impact on security/hardening as long as you avoid calling into the
+>> firmware after boot)
+>>
+>>
+>>> > There is also PRM, which is much worse, as it permits devices in the
+>>> > ACPI namespace to call firmware routines that are mapped privileged =
+in
+>>> > the OS address space in the same way=2E I objected to this at the ti=
+me,
+>>> > and asked for a facility where we could at least mark such code as
+>>> > unprivileged (and run it as such) but this was ignored, as Intel and
+>>> > MS had already sealed the deal and put this into production=2E This =
+is
+>>> > much worse than typical EFI routines, as the PRM code is ODM/OEM cod=
+e
+>>> > rather than something that comes from the upstream EFI implementatio=
+n=2E
+>>> > It is basically a dumping ground for code that used to run in SMM
+>>> > because it was too ugly to run anywhere else=2E </rant>
+>>>
+>>> What the actual fuck!! And we support this garbage? Without
+>>> pr_err(FW_BUG ) notification?
+>>>
+>>> How can one find such devices? I need to check my machine=2E
+>>>
+>>
+>> Unless you have a PRMT table in the list of ACPI tables, your system
+>> shouldn't be affected by this=2E
+>>
+>>> > It would be nice if we could
+>>> >
+>>> > a) Get rid of SetVirtualAddressMap(), which is another insane hack
+>>> > that should never have been supported on 64-bit systems=2E On arm64,=
+ we
+>>> > no longer call it unless there is a specific need for it (some Amper=
+e
+>>> > Altra systems with buggy firmware will crash otherwise)=2E On x86,
+>>> > though, it might be tricky because there so much buggy firmware=2E
+>>> > Perhaps we should phase it out by checking for the UEFI version, so
+>>> > that future systems will avoid it=2E This would mean, however, that =
+EFI
+>>> > code remains in the low user address space, which may not be what yo=
+u
+>>> > want (unless we do c) perhaps?)
+>>> >
+>>> > b) Run EFI runtime calls in a sandbox VM - there was a PoC implement=
+ed
+>>> > for arm64 a couple of years ago, but it was very intrusive and the A=
+RM
+>>> > intern in question went on to do more satisyfing work=2E
+>>> >
+>>> > c) Unmap the kernel KPTI style while the runtime calls are in
+>>> > progress? This should be rather straight-forward, although it might
+>>> > not help a lot as the code in question still runs privileged=2E
+>>>
+>>> At the very least I think we should start printing scary messages abou=
+t
+>>> disabling security to run untrusted code=2E This is all quite insane :=
+/
+>>
+>> I agree in principle=2E However, calling it 'untrusted' is a bit
+>> misleading here, given that you already rely on the same body of code
+>> to boot your computer to begin with=2E I=2Ee=2E, if you suspect that th=
+e
+>> code in question is conspiring against you, not calling it at runtime
+>> to manipulate EFI variables is not going to help with that=2E
+>>
+>> But from a robustness point of view, I agree - running vendor code at
+>> the OS's privilege level at runtime that was only tested with Windows
+>> is not great for stability, and it would be nice if we could leverage
+>> the principle of least privilege and only permit it to access the
+>> things that it actually needs to perform the task that we've asked it
+>> to=2E This is why I asked for the ability to mark PRM services as
+>> unprivileged, given that they typically only run some code and perhaps
+>> poke some memory (either RAM or MMIO registers) that the OS never
+>> accesses directly=2E
+>>
+>> Question is though whether on x86, sandboxing is feasible: can VMs
+>> call into SMM? Because that is where 95% of the EFI variable services
+>> logic resides - the code running directly under the OS does very
+>> little other than marshalling the arguments and passing them on=2E
+>
+>Last time I looked at the calls into SMM (which was quite a while ago), t=
+hey were fairly recognizable sequences that would nicely cause VM exits=2E =
+ So the VM would exit and we would invoke SMM on its behalf=2E
+>
+>But it=E2=80=99s very very very common for VMX/SVM to be unavailable=2E
+>
+>Has anyone tried running EFI at CPL3?
+>
+>P=2ES=2E Forget about relying on AC to make EFI work=2E I doubt we can tr=
+ust EFI to leave AC set=2E
+>
 
-mremap_test.c:1035:31: warning: pointer comparison always evaluates to
-false [-Wtautological-compare]
- 1035 |                 if (addr + c.dest_alignment < addr) {
-      |                                             ^
+Yeah, AC is way too volatile=2E=20
 
-this warning is raised from clang version 20.1.8 (Fedora 20.1.8-4.fc42).
-
-use 'void *tmp_addr' to do the pointer arthemitic.
-
-Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
----
-Changelog:
-v2:
-- use 'void *tmp_addr' for pointer arthemitic instead of typecasting
-'addr' to 'unsigned long long' as suggested by Andrew.
-
-v1: https://lore.kernel.org/linux-kselftest/20251106104917.39890-1-ankitkhushwaha.linux@gmail.com/
----
- tools/testing/selftests/mm/mremap_test.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/mm/mremap_test.c b/tools/testing/selftests/mm/mremap_test.c
-index a95c0663a011..308576437228 100644
---- a/tools/testing/selftests/mm/mremap_test.c
-+++ b/tools/testing/selftests/mm/mremap_test.c
-@@ -994,7 +994,7 @@ static void mremap_move_multi_invalid_vmas(FILE *maps_fp, unsigned long page_siz
- static long long remap_region(struct config c, unsigned int threshold_mb,
- 			      char *rand_addr)
- {
--	void *addr, *src_addr, *dest_addr, *dest_preamble_addr = NULL;
-+	void *addr, *tmp_addr, *src_addr, *dest_addr, *dest_preamble_addr = NULL;
- 	unsigned long long t, d;
- 	struct timespec t_start = {0, 0}, t_end = {0, 0};
- 	long long  start_ns, end_ns, align_mask, ret, offset;
-@@ -1032,7 +1032,8 @@ static long long remap_region(struct config c, unsigned int threshold_mb,
- 	/* Don't destroy existing mappings unless expected to overlap */
- 	while (!is_remap_region_valid(addr, c.region_size) && !c.overlapping) {
- 		/* Check for unsigned overflow */
--		if (addr + c.dest_alignment < addr) {
-+		tmp_addr = addr + c.dest_alignment;
-+		if (tmp_addr < addr) {
- 			ksft_print_msg("Couldn't find a valid region to remap to\n");
- 			ret = -1;
- 			goto clean_up_src;
---
-2.51.1
+This thread veered off topic, though=2E The point wasn't that EFI runtime =
+calls weren't crap, but that LASS, SMEP, and SMAP add no value during the E=
+FI runtime call *because we explicitly unmap user space anyway* (efi_mm) so=
+ there are no user space mappings to worry about, so disabling them during =
+the execution of the EFI runtime call makes no difference at all =E2=80=94 =
+*as long as* the CR4 manipulation is done strictly inside the efi_mm switch=
+=2E
 
 
