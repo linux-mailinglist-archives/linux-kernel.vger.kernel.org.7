@@ -1,78 +1,103 @@
-Return-Path: <linux-kernel+bounces-891666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBE7C43349
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 19:22:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4C6C43358
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 19:25:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E7584E6E1A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 18:22:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7560B188D6D6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 18:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1104C277CA4;
-	Sat,  8 Nov 2025 18:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DD6278E63;
+	Sat,  8 Nov 2025 18:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gD4eV2VF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiyPjzsw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0F9199D8;
-	Sat,  8 Nov 2025 18:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A860F537E9;
+	Sat,  8 Nov 2025 18:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762626156; cv=none; b=bC8EQloIWt1XT831N63YveEfbT0zg3IrOJC8/jWKbVvocI2tOVMkOJuPfwi6YFVqu8qgnXgOD4riGwR9cfJbxtTjCC5EjVXxSlVzeqCvq9Wi8zTBEjbfEQXPtmR4/xNm7EE9MmyhSDVH5wJFo6AwREEzl3dXQN4X+NSkm66mVE0=
+	t=1762626341; cv=none; b=aWYgeJ2Hkv3R2lefEtt6laaS/CkwfNod+ltNZ2njLhlHFwCXHTeblc5qus0AM/IAb4mw/B2BCxigC8JXipHx+X9pEVr387dyKILNAa9RIkWto+2ZJPTb21JsYKhOysLLhCd4GQksMz8b3dVT7LHe6Y+C+8fjDZENX6b4dSFu6mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762626156; c=relaxed/simple;
-	bh=WWJP7mnE8OBwKwnq2yGacQLELzPqbbjpSGRZKxXttfY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=W75h1RcNvf9Td32RawTZbeoHzgu5xzDSktOeAF+hCJsMNHpP2kftKcP0Z6MkHKFnkoIn4BO4HMIWusDZnXs62eWLViHEfTrS6Qiy8BR9SU8VJGHWUesEpDBbA4J7J+/ouc/PcASw8WkULyh6kN0M6pOsJ8kEV92RCq1520N6I6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gD4eV2VF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 390ACC4CEF5;
-	Sat,  8 Nov 2025 18:22:36 +0000 (UTC)
+	s=arc-20240116; t=1762626341; c=relaxed/simple;
+	bh=AQ3vq22EgJ9RmtiwWkrCuLBW1hgGRP0sSp5l1gWdu00=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=bSmZTcZ/MvolBilD2MzWft/LTXmSo6Ye4B1bzJQkxUOfZ3kc6njwt0d6Fms+JQlSxRCF7lUSrcWZNbecl3i4biIp8hl6KKjkWDG4hUdzd8c2lBwHJ+/WcmCRRX5Lggx5gC6zzRWFj0BFS6zf4/cl17/nR8JV8fMHRcDj1TqNJaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uiyPjzsw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00179C4AF09;
+	Sat,  8 Nov 2025 18:25:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762626156;
-	bh=WWJP7mnE8OBwKwnq2yGacQLELzPqbbjpSGRZKxXttfY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=gD4eV2VFOWe0SuYhlf0v8AF/TmqeD3eE1dn2IGVDkJlBlFB41YT2dENCGft08Y8+t
-	 0XjcqKO4NUFago7ldsLCa7xQhHJMM0E2QfS/73jVAvg+LvuAqzis4GaQaxCybaYkLw
-	 ve9moRI0O/lUVkAwvVqOGQoYwKPXD67ZHBaaN54yCGUVLx7CjSwOQgSRVvBW4IxJKH
-	 T1ZGNh8G67xr3c+MDOIcEeNScMchIEEsDin97bc98QYRf9FEEZ10mD9vNa5UkyQoOw
-	 JbuHwv00Y6gcC6gYDjELIbxwSUbpw63SAzMYKn5uG1i4Y2kptoky3TQ+PJmwUEnhDR
-	 ofnljHTwVK7jA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 341AC3A40FD7;
-	Sat,  8 Nov 2025 18:22:09 +0000 (UTC)
-Subject: Re: [GIT PULL] smb3 client fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5ms=O10HuH9SvW59h=J50dmLUsqYTKoD8jqAvcn16aergw@mail.gmail.com>
-References: <CAH2r5ms=O10HuH9SvW59h=J50dmLUsqYTKoD8jqAvcn16aergw@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5ms=O10HuH9SvW59h=J50dmLUsqYTKoD8jqAvcn16aergw@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/v6.18rc4-SMB-client-fixes
-X-PR-Tracked-Commit-Id: 4012abe8a78fbb8869634130024266eaef7081fe
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7bb4d6512545a792a6cd8d6c8be5718920b9b11a
-Message-Id: <176262612781.1378508.12713937216519114972.pr-tracker-bot@kernel.org>
-Date: Sat, 08 Nov 2025 18:22:07 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+	s=k20201202; t=1762626341;
+	bh=AQ3vq22EgJ9RmtiwWkrCuLBW1hgGRP0sSp5l1gWdu00=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=uiyPjzswVXfhJqZBfuP6BTVhAu7P9LkcNPYSV+5whyak8NTZDeSjndbj0/NA9QmgT
+	 4mZ6d3VfQiEGxrGMz6q9gL3d5BPbrFDSrKeHfUoadAsVdDVIFJzElxXpP6NqGW8mhN
+	 /VegctvPFSw98SRUzc+32cBT9JOITzl7qWGt/772E/xFGKEu9uuLGzF9XwgK5t8knM
+	 Iq7APigR2u6Bd4BFUlxXsdgD1xixBGWsvnOKoeh2EQf8dAKvQIi/GrraipW0xwmWnJ
+	 dIvpnSy5WbRvghGVmRg3/YbTP44yqLyZIhXHq4952YK6PD1IsaNSwbXKE9hG7Dhwmz
+	 5fHKymbF6sTSQ==
+Date: Sat, 08 Nov 2025 12:25:39 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, jic23@kernel.org, conor+dt@kernel.org
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+In-Reply-To: <20251108174357.3748-2-antoniu.miclaus@analog.com>
+References: <20251108174357.3748-1-antoniu.miclaus@analog.com>
+ <20251108174357.3748-2-antoniu.miclaus@analog.com>
+Message-Id: <176262633947.152286.18407779482145817795.robh@kernel.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: iio: amplifiers: add adl8113
 
-The pull request you sent on Sat, 8 Nov 2025 12:15:57 -0600:
 
-> git://git.samba.org/sfrench/cifs-2.6.git tags/v6.18rc4-SMB-client-fixes
+On Sat, 08 Nov 2025 17:43:52 +0000, Antoniu Miclaus wrote:
+> Add devicetree bindings for adl8113.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> 
+> Changes in v2:
+> - Enhance External Bypass A mode description: clarify signal routing from RFIN to OUT_A and from IN_A to RFOUT
+> - Enhance External Bypass B mode description: clarify signal routing from RFIN to OUT_B and from IN_B to RFOUT
+> - Remove adi,initial-mode property and its description, enum values, and example usage
+> - Simplify device tree example by removing adi,initial-mode = <0> parameter
+>  .../bindings/iio/amplifiers/adi,adl8113.yaml  | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/amplifiers/adi,adl8113.yaml
+> 
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7bb4d6512545a792a6cd8d6c8be5718920b9b11a
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thank you!
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/iio/amplifiers/adi,adl8113.yaml:43:1: [warning] too many blank lines (2 > 1) (empty-lines)
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251108174357.3748-2-antoniu.miclaus@analog.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
