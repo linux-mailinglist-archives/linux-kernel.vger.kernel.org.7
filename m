@@ -1,109 +1,87 @@
-Return-Path: <linux-kernel+bounces-891190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DE4C421D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:17:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BAEC421E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:18:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0D5F4E706C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:17:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A21531894228
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB271DE3AD;
-	Sat,  8 Nov 2025 00:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="Yj/AoLrZ"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41EF1DF742;
+	Sat,  8 Nov 2025 00:18:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3FB1F0E39;
-	Sat,  8 Nov 2025 00:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DDB74BE1
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 00:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762561061; cv=none; b=qOgz94Bx2l2PpJY2DNPYfqmKjMrDQCe2SZIfiGQXCk7ayUz5LAXDJ+OxxdTDiozpBE8PX8Vr5Vv/bGOirC4AO924GkCsEl8dMLT+Z+gBOt9Gk2ZEpGza6xkxWOK2ci7Bv/5gD5zQ16RVo2WP+k1K/5OKx8cXpuV5kloWtHUgf50=
+	t=1762561085; cv=none; b=eFWvjwG4fyDD2hpUm5YeQYNVHTlsyPpaDSLoZKbXkzSKungh/nUljekw9cAsh9ICEDHgps21+XHFUeZNZ5dqdvSOW9JBaXwqd7NoyzXspcINdSA4RqYD0Ji4tlmeK0u+1rooldUYrsL2jX2pH/H77dURclXyv9pI/jyMCHALBy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762561061; c=relaxed/simple;
-	bh=cOFnQpzbmnlNKwCD027Hqdl4TX4TDOH2KAi09s5PQOA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hFfMxv9rwzS08RgUC3pVLPakzKc9BLQcgvYBIAmoS9iEt2jWtCzec1gk3DQFpX+MoIMjt7DW6u/WDs1P5w6VD3kHQfe1DQIXNXqeZyhQ2uTRwqGMUbIJFcZ3MdT+VougRzIhju++aEsY0BnnncLB6HtV0IKkt+p3+TmvZrZB2Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=Yj/AoLrZ; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A7JWw1x3328834;
-	Fri, 7 Nov 2025 16:17:30 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=04lQ66OQSTW7KPrTxeDr
-	YLPIC17xLpY60aD3jRkw9W0=; b=Yj/AoLrZFpQFf/YlyR9YOg0AUOAICmvFNIPR
-	/qo3mZeExlvtVDXYJSr637lSEJa5cLdAT7mtnsIpa6eHdvR1hljTZfxC1Ftb2RM3
-	LD5IEfcvVO76HUfsGoX5XsmmUbmayZLjeBM41K1MI0Pg2hH76rBon7iuvkUy2GFA
-	/gaVts0GgcJVCIuP+rNrT/Gig6unkfcOuKEG5Md8x2+X1EEQKsgdmew5kl+z2RbJ
-	6mdoHwriPErODNTCLqUuYXDUjV93XLwDxnaiVdCzJy8j035QnzT37vLMnw8IXE8t
-	JdWfiHlcMvz5meg3sfKGL4z6hEsUAs3h8v+cdNLfdwggFqK96A==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4a9q19a297-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 07 Nov 2025 16:17:30 -0800 (PST)
-Received: from devgpu015.cco6.facebook.com (2620:10d:c0a8:1c::1b) by
- mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Sat, 8 Nov 2025 00:17:29 +0000
-Date: Fri, 7 Nov 2025 16:17:24 -0800
-From: Alex Mastro <amastro@fb.com>
-To: David Matlack <dmatlack@google.com>
-CC: Alex Williamson <alex.williamson@redhat.com>,
-        Alex Williamson
-	<alex@shazbot.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] vfio: selftests: Skip vfio_dma_map_limit_test if mapping
- returns -EINVAL
-Message-ID: <aQ6MFM1NX8WsDIdX@devgpu015.cco6.facebook.com>
-References: <20251107222058.2009244-1-dmatlack@google.com>
+	s=arc-20240116; t=1762561085; c=relaxed/simple;
+	bh=ykdrF3raP3G3QSjDTkzVdVAK1Krk9b+nrl56xuCbTNg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OfrTCRX0FUqPuHkk0KWSOymUmqxrE1fwvexsc/wfJesigpiWWVHHZoHpQBPlK129xhaGeZ8XS0EqWj0wuD8q4KUfGx/lTHh0hgrrroVbv/OkWMzRGhJuo+SzZ1GEkx2f81iEekFeaN9UqNB/Mxu1D318EC8Wpzb6weqnb9bBLhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-9486920a552so384645839f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 16:18:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762561083; x=1763165883;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0HEPYAzLGKgN367tFqqHSC+aw990xB7Zc+iqxWnRAq0=;
+        b=brWcc7HgLUlMxCF2eYNHHO8dWI3LX8ST7Efv0xgzwiGDEpCDzAcrjUY+ZtALZEjcFH
+         5TX5AOxFNe9zn1lzuNgEyiG2m9LIWepskcGfMSDCViqMzH/eg9khIOo04gOStGOb1Ymu
+         UkvknFMkzlsCg2oEaW2WvgPUsFgjQTLajn9XEjoiMJlUQTrDPUAxjuu375jYHvL2Uaa6
+         ocd3/Arbqvvkx0NJo1+Mw3ODqAwNgGsaIMG41RcGh3RXgzg+ODSxaYaXLSlyxr92r3Rn
+         /lKR8q6rhRJl+CzFpoZEewIdQ0XP4z+ely2slZtXgO9Bj/hjB/cs+7Xcy/+/FYkSZvxy
+         PTTw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4q4Fb2nDBbUOeM8QfKlGz0xbZbpC8v+DQ3+kwVYv+C3o/XEUATPpdVCNRGfvRR4OBDnfgd4kBfhmwah8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQAQGyE3dw75OjOm3ziOJy2nHTNQWJA5hzN7nVJR5QM0cMx1Fc
+	L7tOSTXc9iyQKwvN2UoQTvkgBayyrrZL8g5MJP5KWAITYVXra0JybayTN2BF3fmIw5tkW+YoJGl
+	lFI46VEJTdHdfDD+drOsXO7wEj8VUAyD5zyGDgxAzPURtjORFB8Yrbn+4kuE=
+X-Google-Smtp-Source: AGHT+IHhPdOZCpqtix2JhPBg6nXzyuHzWwroLZuXTlecW0H4Wz0nUwlffrKRVWnTWkNG9c6h7KT/NFC92siXVftWRfloKzgl6hiD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251107222058.2009244-1-dmatlack@google.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAwMCBTYWx0ZWRfX0R3eTkDsbf8E
- Hh1rDatP+bMw26lwDAaX0wSWzDZMOerXWJk1COKXDIumL6zonRVB7/fQtSGkW/lvb8+pL/epVZY
- 9d2L5rq0JbEL6/WBrc7R0K4wV8N7fR6GvuyOY+GbuHIqTRCAzynpVBC2kGIEZQQFiaK3LCJKJkK
- sPRD85w0xHSO97iVw/E6BPnndgOjQ+JLgO0lV4UYeqE66XFqyMkGn/nC+WUFcyG4L0ixB93hmMm
- kko7nlDd84OrocTr6QSECyX82Epw3XlENeF08+csgv+zasQg29YZbJpxseUPk82bnA1for0t1Iy
- iE64UBoj0C3Z7HHWrCTfGwZs7LMP1S9kUd5f7OTiElUT38XSJQWNHNuG57ynIJWExVh4+PbgKR7
- iPAnuNi+V8dqXvVJTF0X2Dmln7HvtQ==
-X-Proofpoint-ORIG-GUID: 8OcJDP2JTcaQV6mpcfWh6m8O0BnEjvOR
-X-Proofpoint-GUID: 8OcJDP2JTcaQV6mpcfWh6m8O0BnEjvOR
-X-Authority-Analysis: v=2.4 cv=PsqergM3 c=1 sm=1 tr=0 ts=690e8c1a cx=c_pps
- a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=1XWaLZrsAAAA:8 a=FOH2dFAWAAAA:8 a=iNw_I6W4xmaHXfvtA-cA:9 a=CjuIK1q_8ugA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_07,2025-11-06_01,2025-10-01_01
+X-Received: by 2002:a92:ca4c:0:b0:433:5736:968f with SMTP id
+ e9e14a558f8ab-43367df3cd3mr22846745ab.13.1762561083264; Fri, 07 Nov 2025
+ 16:18:03 -0800 (PST)
+Date: Fri, 07 Nov 2025 16:18:03 -0800
+In-Reply-To: <CAL4kbRNoDiDtyhD4qBRWLqj6JoBxRWm6KdQca6DUYAfvNTvPuw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690e8c3b.a70a0220.22f260.006d.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] KMSAN: uninit-value in ib_nl_handle_ip_res_resp
+From: syzbot <syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com>
+To: kriish.sharma2006@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 07, 2025 at 10:20:58PM +0000, David Matlack wrote:
-> Skip vfio_dma_map_limit_test.{unmap_range,unmap_all} (instead of
-> failing) on systems that do not support mapping in the page-sized region
-> at the top of the u64 address space. Use -EINVAL as the signal for
-> detecting systems with this limitation, as that is what both VFIO Type1
-> and iommufd return.
-> 
-> A more robust solution that could be considered in the future would be
-> to explicitly check the range of supported IOVA regions and key off
-> that, instead of inferring from -EINVAL.
-> 
-> Fixes: de8d1f2fd5a5 ("vfio: selftests: add end of address space DMA map/unmap tests")
-> Signed-off-by: David Matlack <dmatlack@google.com>
+Hello,
 
-Makes sense -- thanks David. Agree about keying this off
-VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE longer term.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reviewed-by: Alex Mastro <amastro@fb.com>
+Reported-by: syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
+Tested-by: syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         e811c33b Merge tag 'drm-fixes-2025-11-08' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11ca2a92580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cbf50e713aaa5cb0
+dashboard link: https://syzkaller.appspot.com/bug?extid=938fcd548c303fe33c1a
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1214117c580000
+
+Note: testing is done by a robot and is best-effort only.
 
