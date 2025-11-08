@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-891441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC88DC42ABB
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:42:23 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563ADC42AC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:46:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6ABB54E36D0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:42:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C1C8134A4ED
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB7C2EA14E;
-	Sat,  8 Nov 2025 09:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA77820E011;
+	Sat,  8 Nov 2025 09:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="awipZKPz"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="AErEj0Wb"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7D0286412
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 09:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EBD208D0
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 09:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762594936; cv=none; b=Ah5T/T11J6ujvopQ9RS7v+kj8FLy2xXqaCPgAlG4EIsgn4fOgTq/irBq65Gz6WAoSP4ePAomftNYBTSkH7k4eyshfbZa7RRTdZLsuCV2KOBrzbrlZUM6gW6F9l9fTZ/F1ag62m85QlHIh1zAI50Wzy/Hw+mZkftQrrD4R1uAE3o=
+	t=1762595196; cv=none; b=EkQTT4xHDGE04hEli6Zpd0XsGfWv7RIB+0fEfmAqVrGTtvE1SM6HEtuUyCz08RaNz1xgB5DRz3B4PQ/vb5PPmYGdZbtSuoBdCfYHEol1r5MM/SQpE41rpPrmkTkWI9rSCJw2gtPlx1qZEiwie0Y5LpT9mB+Nz1A3to4w0r91E8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762594936; c=relaxed/simple;
-	bh=pUwHRDTnZUaY2JTMTyu2pTtjojEHM3ZDzJwHFa7V86E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NbN7m9VA0ZyZJ1HH00DYujAcsaHYQX7s+nfzJdnZEmCfWHtqaj7+DdJrM/XnEnI6PVLcv1BuZjpjfkmPScCOvWYRzrNS9Oo1lWsPzcnivTHPqOvxk6fwA7x9F0HtThpVstxcGNZOs5JwANpqo9BDJ27u/yYz2WwtqWLM4Idhhx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=awipZKPz; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1762595196; c=relaxed/simple;
+	bh=7muQtF/Ps3f3Prt0anv07LxtYlAabYY8Z1NqAek/RGI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l+RMA4BBbFxmkFkcHI8UF6NB3mNf1G20VuOLi0aTWGQ11sRMqoDb7dyI3ofVTLzdVlBV2xEB9htNQNZbhXqos5CoHmcgh5TkuE4QspamGdqLJcEr5GiqotaVe0Fos6zOzEfeFIiB0kyzo3WeM5h7TLUPjPUbc5dbj11KXt6P4Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=AErEj0Wb; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47118259fd8so10356455e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 01:42:13 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477632b0621so10262665e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 01:46:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762594932; x=1763199732; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1762595192; x=1763199992; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=a9YmxWtXYqkzVIIum7XUTZUx/6VEWdJTe6WXroNegUE=;
-        b=awipZKPz55XQR5l0SdgcCOXPVWkZHUkUPolhsu0IuZfeOcia7lM/KsqxJETjmPCubO
-         FX2R2Q9//vOSdb9W3jAVG7mYifIiqfIOa/SblRd8Y3eTyEEDKJua/kshFzvjt8JU7rIY
-         ZSMXWJhrQus8XA6rXp/MQ86w48P4m9oGAfLuxVYvxV36kBgoojxqhq9bPXMkei9J4eTo
-         lfag1f+7+bcfA7hnDcBfQbTsz5IfPZUlsUQBFIRoyinkZTlPpkWIMrI/Qwl9s0GwENet
-         vIQlJNfRzxDxcVgarLznoGwJsPndhky0Bqthx0q/WZA1NUK2X87JE1Uet0E0akVUzgAw
-         jgKw==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o5fKnhw/NCqAOhc6+zKFOhAFJG9FM08SQ0463gUm+Tk=;
+        b=AErEj0Wbc0pFtu3+TMWpG0X6eqni9AMHPrx58kdzH/MseeCjuYhvxwjrUyDxYF+Nkh
+         8/xeCG9xVhkxnoFDvHY0PqW098z/LwiKynQBLXD636fpa2RgyJXxTCNXPwR0rATpm2oP
+         2HJB3H3JS2878yHaYWKB84p8cKeqXcZEvB//WOR3GAUFe/irBTZCJow75OTtvPEcg+5l
+         nh941DZqph2qZK+RXyWaM1NmEG85DRp8GIsNDJGffoGO/EoFDgiGpOXRmrwosa46zhYK
+         4EZJ2HBS+1/m6s34Cdn4Rt1hua8dTnahlfstdR8gwj1z47kFGMIDCYQd4MOQbPsLLbtV
+         1Tcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762594932; x=1763199732;
+        d=1e100.net; s=20230601; t=1762595192; x=1763199992;
         h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a9YmxWtXYqkzVIIum7XUTZUx/6VEWdJTe6WXroNegUE=;
-        b=GMk7XJ2g2unwuRIuFIh8raxp8z4yJmoKtHqAb+QwnQ0Vnf9rCqu/xrxctH/2ffhxRm
-         Cgz7v6DlO2Vf3O3xETdTZxMx3isBFS7EYbyxSQnqeIfN6sEBVAgkq2bFmW6SF9JmmUmk
-         aG9VdcOETzRi3QGTyTuwh1V2nhvKql6FQV/pjJTEcntlugiUXk5HllkNaVhy8866qr5M
-         +USPEVGebKvwn5fd8OzCz1jCVUL8vfRKAaOwJCih9R6cTuQWL7lKOHtdJBC9Q7Ngs+9r
-         nZF2sRJhcgIS+R5yLgtTJHbcSx2tTHU4JaLIrHJzZCwAY+NnIdVRL11jRniFIlbfrjBV
-         BPOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtiYXMOD/NFq89T9be1uLTy8ELX/bX2Pr2yxJVnKetX5x2sBtlLXjyjIV2PazDU4UUZIuu4oj5zrWE63M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylr7KUY6KIDyGIwP4nq5/2m3rzOQXj4zmSDvBeHPE37BALmKug
-	LanKxkDOFKkmWp1Y+3bz6rK1F4ut0BEt+0Lc5kZqEKhGdrXbo9aIQ2lAFf8SS57IlCA=
-X-Gm-Gg: ASbGncvRtNfQ/kpnR66a/XN4efdXVUVrZ4UODfZz1HIxpFr/7eJUHEdZ6PmbSuniEOh
-	G6QVntsE8UZT8EcowAtk0YbZQAvJSTG7cjyCeZ2MVc2zl8HO6lLAMoPl+kbVyHv3omNaUMl113c
-	BpLbz+yKg7RzdXZfkPPN4nb72hoaC+CgnBGCFc0zOK7Qg1iINm5scLyx73725xXEFhUUJaQc5CC
-	VPnuLunGpeQujYvDizjRPwb3aI4zF2XJ11624FDryNLPK1D/exLHSGuq/EhGpFXii5h8OeAn2hI
-	2Cq9Ig0D34KjyQAlteUPPdscH/KKhpslv6UKRC3sw5BfI9XO5IAzNyK0u01hDBvp1FZSDyFRbl5
-	GSBWRGRBcj0WqtOoxXCh+4rO+vfV+6YD8gr8V6j1C6b3Eur3BPvNo4Hof2dYNlKwg7OfeITlLla
-	pJV+U5/kPnIM5ugyRaJ68=
-X-Google-Smtp-Source: AGHT+IH3BtLqTQUB+SHQHAtRZHshnkzra2M/BuhwjfAVOXR0jPqldKeFSnSP5TDfhaeqsZUfxrXZjg==
-X-Received: by 2002:a05:600c:1f10:b0:475:de81:563a with SMTP id 5b1f17b1804b1-4777328fc3emr14493545e9.33.1762594931960;
-        Sat, 08 Nov 2025 01:42:11 -0800 (PST)
+        bh=o5fKnhw/NCqAOhc6+zKFOhAFJG9FM08SQ0463gUm+Tk=;
+        b=tJ6rQUrOkfuJcB0WgYLNPgtAtmM3dqM3atXPr1wJSjzBN/20otLM0gtGA0V6sj4JnR
+         CvJjvP/NhraoyRYZPcXrfQbdAE+GxftFqydBOIGrwaeHqh/EFU8EZu93Svw8/gKHAQOC
+         S8zrczPudJyk3T9doPgxbkizOv89esYfz5jgvGMRnauC2E0JA0UyTc6nR8Eyl4Prfj1N
+         3nRnkxTTSWpty/boFjPk8rr9DvrbYF9wMfIEXLw6iCprIzYpH7yN0/z4s8aujyCWXqqg
+         hp9yNUNM3/jV1UCy81oAT34G7HYyYp969SAMwJlAJobdmMWI0RoMbfUPr3IyD8aEfZWU
+         te3A==
+X-Forwarded-Encrypted: i=1; AJvYcCU/wbX2vNf8dq2EvNOOLjfjFOK0QEzR+Ez4mceRNfRFE3yEQPYfw/pb/M9V7tQ/08O86F7vvJJ3P/uN34s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0wXvUVdkX1ILE6R8g+VJrSCiRhYOtZWctxUzsKRuFyy9qU7VA
+	ZFWC09kfA9o5ayCz6TLGNcHTwFE0ttXkd3tYp4v/x9hEYFiGdctrpDzZMJbwiFE0ixk=
+X-Gm-Gg: ASbGncuwseb7QH9IMBTttiUtWbS+z4jjlFlVhK5sPO7YFaNHp2oslM2GeaJdbmXAm1n
+	VHqbze7IxUNcSso4hylWsKSnv2fT66T26KNHKvycOxLlho0E2OcbJUn9PKNe8+g/k/47Jqm8ei+
+	5vSnV3ROIC3+ARZ9JHrL6GjCCPc5oM0ZYqG635ESkcfiZQ6YOjF5Dqpe7swYhRljo3s33PWYB30
+	BZlbdEqRoEHU+1wVDcE/OSrJ9AregRdij38RNH5YoBskQcNWEJmsVEfu9RKdFHaYoZ/WJOM8fCL
+	LCTfBRToLJ36D9fNJgnok0NRgVcpZ/kCfApRGie4GTcbtWUmkWnEsEWjiYOxeJGtoCmFUQCgxLm
+	wmMdTNSy7uT7NT6jaAhGxGCBP8HouFZ4NOBsO/w9J12F3Nfej39A9ojqqvcgdtqlWqKm+qDZpr1
+	gwSXJriUkZ
+X-Google-Smtp-Source: AGHT+IEH/jRPr1v2VuWmGt7YU/kqwBRVt0nus66tigdVpePgNGEa74ypym8+2ImhYiYRq6hQphHHnA==
+X-Received: by 2002:a05:600c:474d:b0:46f:b42e:e39e with SMTP id 5b1f17b1804b1-47773298044mr12511755e9.39.1762595192311;
+        Sat, 08 Nov 2025 01:46:32 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bcfd2e5sm93911435e9.13.2025.11.08.01.42.10
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce211d8sm221049125e9.11.2025.11.08.01.46.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Nov 2025 01:42:11 -0800 (PST)
-Message-ID: <8bdaf52f-0e4d-4455-a33e-d2151154589a@tuxon.dev>
-Date: Sat, 8 Nov 2025 11:42:10 +0200
+        Sat, 08 Nov 2025 01:46:31 -0800 (PST)
+Message-ID: <04a2ca3f-c63b-42fa-b4a0-8cdf29887c88@tuxon.dev>
+Date: Sat, 8 Nov 2025 11:46:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,27 +83,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: at91: at91_dt_defconfig: set MMC_SPI to module
-To: Manikandan Muralidharan <manikandan.m@microchip.com>,
- linux@armlinux.org.uk, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, ardb@kernel.org, martin.petersen@oracle.com,
- mihai.sain@microchip.com, ebiggers@google.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250923094552.430595-1-manikandan.m@microchip.com>
+Subject: Re: [PATCH v4 2/4] rtc: renesas-rtca3: Add support for multiple reset
+ lines
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>,
+ claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, p.zabel@pengutronix.de
+Cc: linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251107210706.45044-1-ovidiu.panait.rb@renesas.com>
+ <20251107210706.45044-3-ovidiu.panait.rb@renesas.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-In-Reply-To: <20250923094552.430595-1-manikandan.m@microchip.com>
+In-Reply-To: <20251107210706.45044-3-ovidiu.panait.rb@renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 9/23/25 12:45, Manikandan Muralidharan wrote:
-> Change CONFIG_MMC_SPI from built-in to module in the
-> at91_dt_defconfig. This allows the MMC over SPI driver to
-> be loaded only when needed for WILC subsystem.
+On 11/7/25 23:07, Ovidiu Panait wrote:
+> Switch from devm_reset_control_get_shared() to
+> devm_reset_control_array_get_shared() when retrieving resets.
 > 
-> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+> The RZ/V2H SoC requires two resets for the RTC block instead of one,
+> so this will allow to handle multiple resets without additional changes.
+> 
+> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 
-Applied to at91-defconfig, thanks!
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+> ---
+>  drivers/rtc/rtc-renesas-rtca3.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
+> index ab816bdf0d77..3524053269ef 100644
+> --- a/drivers/rtc/rtc-renesas-rtca3.c
+> +++ b/drivers/rtc/rtc-renesas-rtca3.c
+> @@ -726,7 +726,7 @@ static int rtca3_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	priv->rstc = devm_reset_control_get_shared(dev, NULL);
+> +	priv->rstc = devm_reset_control_array_get_shared(dev);
+>  	if (IS_ERR(priv->rstc))
+>  		return PTR_ERR(priv->rstc);
+>  
+
 
