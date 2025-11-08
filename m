@@ -1,163 +1,212 @@
-Return-Path: <linux-kernel+bounces-891334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2541C42752
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 05:56:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28B7C4275B
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 05:59:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B17773AE781
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 04:56:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 601D7188DF8B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 05:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DF8286426;
-	Sat,  8 Nov 2025 04:56:43 +0000 (UTC)
-Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C52513D891;
-	Sat,  8 Nov 2025 04:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231FE2D6400;
+	Sat,  8 Nov 2025 04:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AobGWqrp"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EE32877D7
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 04:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762577802; cv=none; b=fIDDitCZBCMyotq4HiIkyFnLonEIobIXNHxtF7nnYqKjNS3xQn6wBAgLYNAJ2elH5730RO8UMHErQ8euqSKDXe1IorBuWwCH526UM4ziFKvi3UVcApDv5FjM78y5diHNX27xYN3848H75c8mTuuE9mI+gS/U9EwzLpGsZrHdgU4=
+	t=1762577973; cv=none; b=knbPk6kmn0OynoYvzViT3p+Q6QWfiYB+KlBQZ3iK4XE+Lrs25arxozuYlS0qTmYLi1nF7Hg0CE091z71syPdbr9Py6FcQ0ZX7LcrViLsGA1FqjJgZTnrM6l2zsMTeNHssquffNgsuwriKaRLdUX7m8x0xN6gi6l8xzrwWLIYO0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762577802; c=relaxed/simple;
-	bh=OVHuxDXTwefmHYv/OAP1V/VIP0pS9usVVc7y98xkcDc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iRA8mFibzS/nlGUWNYQxuzK8U4X5RalUS5VPTGGHE7unQBULgMsrc/E5WkHLQmW0CCSquC8Wef3SxGghU6zHKRaugmgwoEIyjMYI7CzvLgE0QKeQZ4YJSGh2Dek0JKiLeZqbL6eaT5Zaao+jNB+1AVWDxJhocxz5dUTE42WwcKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=206.189.79.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [218.12.19.144])
-	by mtasvr (Coremail) with SMTP id _____wBnt7BzzQ5pTFx0Aw--.5560S3;
-	Sat, 08 Nov 2025 12:56:20 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [218.12.19.144])
-	by mail-app4 (Coremail) with SMTP id zi_KCgD3239rzQ5ptYoeAw--.34379S2;
-	Sat, 08 Nov 2025 12:56:18 +0800 (CST)
-From: Duoming Zhou <duoming@zju.edu.cn>
-To: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	dmitry.torokhov@gmail.com,
-	kuba@kernel.org,
-	alexander.deucher@amd.com,
-	pali@kernel.org,
-	hverkuil+cisco@kernel.org,
-	akpm@linux-foundation.org,
-	andriy.shevchenko@linux.intel.com,
-	tglx@linutronix.de,
-	mingo@kernel.org,
-	Jonathan.Cameron@huawei.com,
-	Duoming Zhou <duoming@zju.edu.cn>
-Subject: [PATCH] Input: psmouse - fix use-after-free bugs due to rescheduled delayed works
-Date: Sat,  8 Nov 2025 12:56:09 +0800
-Message-Id: <20251108045609.26338-1-duoming@zju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762577973; c=relaxed/simple;
+	bh=ZqqdSWiwpjOezakq7wJoS7DxeQN0DZ/YihDSKS+z2DI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=isIkiUmesXmGw+YmVTUQTTfedRzkpk7Y8wFOU+d+Oc78thQdXn2BVKWmRos2qHRuZ/ttAfU45hV6MTbPmhHgcJkbdyKpglJOyHZuVUXo8giJWlPdIRYDEEPD6ewdTChCD/PG6Ip1Fe5e98D9qisdZKEDUsDFTMpNLonBYqVhz1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AobGWqrp; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2951a817541so16499275ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 20:59:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762577971; x=1763182771; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rUrthg7LTa8MSiT55+OVFlTeSXmJjUd5aal+Gc9S7xY=;
+        b=AobGWqrpHXjGsBEivICDiTHL2kfu5KJe86vdsAqQfXCQU7Vc3hI3YkYR21/xsj3O/G
+         wZcV9qnFGUmNQ5PTw9qSYOk+Z/KL+Up4jN8clARxKziTAV1x1liL7Zw/1rYFOA5eSCfN
+         yZuUGuEW2yPpfTgsZ7YAMk6dCGg0c8i9EQ7El0vbi1KcZMtx0tbJF26OZbuBE14kGm0m
+         b6jv9PXDS++kETP/XwarQ0FgX3NwHKhwsIrHd6jLfBowVG+O/YGpUpZ9xwJqdQsnVXMs
+         Bpxrx0RKB27aKmVWHtG595sRKQXJ7RaPPlVfGKutm2ixuF9Gpc23fPZ2oEBZYReMuDw3
+         bTNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762577971; x=1763182771;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=rUrthg7LTa8MSiT55+OVFlTeSXmJjUd5aal+Gc9S7xY=;
+        b=GWyrVp7YGSv3YZobshRhIEb8HQMdwpa+AM7sCPuWR/NBn6+ujAoeK5UJew4o8s9bhV
+         ktQvZ/laILyZOb538GszPE/N5uDcWJTK+PIfv51o+GIlaBhHqqJzTM9QCngxihIaqCaL
+         h9yQtlvXeATvXB78Gm/Hn9LvAeJeYSXjAX/+YfXZh3vrJOVrhoUo8iPQuqr75VwrXSdK
+         /1PuHs5fuQULkkR4Nr/2KdlYAMJdMd3JUCgi3VfVEXHt3o74NrXvKeDFlIpkdX22RECb
+         8XsWUsZ6QSpptmSSLtQWeGybV5RCsvKN+KaNRVlnJ94avd+D0NgCbfYkRWVY2Ew8sy81
+         fWNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEwNFFJL1pOIXbq4gELya8ULObHnIVv0aBbuNq25rX2eIoeS8anBk15fPiAO5ljsFXDN98ZkBnIYj4TkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuE70lV3lUPivCGZszQDuc7UtqY8fyBbKJMXBO1a5/MAh4KzV1
+	EOFi2DMIzeBm6tgnK0v89nnLYZ/uLfCN+kNITOzadAtG0lv0p9mse5K3850IWMPMs0mLzqTbGrU
+	DJTIkj8LsBt8qC91Y9ErrjgbddGfrZRqexgB2FLZm
+X-Gm-Gg: ASbGnct+yLhDbZUpVeJa+7b6Jr1iNmJvty5lex5Okt8KBDbK2Pjqs9nhfLgd29HGXVt
+	R+Jozyn0V4ZbR8YHrzdCEmP8ww+87evGJQ2VqFY9HxFo27v348oqqW8uR7Ye9tC1FQiBTXEgrDB
+	ZPztQiZseFOuk0G2QpBwxltFN+SgmeInzJ+b9pbY8ChahCUS+eczGaa3IwIH3F+AwKCEkQph0L/
+	V1Z3b6vM9db4qIPXR1bspz3bXa/1hiKAe2DH9Yleqfus83JnHLcM2rpW4fT1yYhZl7kLvKMzW+F
+	BIh33pSEOBhiyqvS8mrVP66ED/Rp
+X-Google-Smtp-Source: AGHT+IHF0KwKtclECib2P1zX8IcCdtJo1VZExPfZQ8JDWvscy5b7/GgckQOBWwL2UbdMZJS5FufxLrBidfyLfng0Iyk=
+X-Received: by 2002:a17:903:19e3:b0:297:c889:ba37 with SMTP id
+ d9443c01a7336-297e56ce112mr20555365ad.41.1762577970811; Fri, 07 Nov 2025
+ 20:59:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zi_KCgD3239rzQ5ptYoeAw--.34379S2
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwcDAWkOS38CbQA9sH
-X-CM-DELIVERINFO: =?B?v4doPgXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR17dXL8s6MdNu/Tde0MMWLRQUvNHVNTd05oiz5MCe7bzlkSqSPrKjWjRpM3YLcvFi01GR
-	SGOvXSiWQ3/bg34b5fNXujbJihEPcjzCPZg/PhJIUq60caeTQNCcZNzcQkALWg==
-X-Coremail-Antispam: 1Uk129KBj93XoWxAFyftrWDWw15Aw45WF1UXFc_yoW5urWrpF
-	W5Xry5KrWkJw4Ut3yDJF4UZFySkwnFvry3Gr1kW343trn8GryYvr1ktFyFgFy8KryrAF47
-	Zw4DZwsxZF4kCagCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Kb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7xvr2IYc2Ij64
-	vIr40E4x8a64kEw24lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I
-	3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxV
-	WUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAF
-	wI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcI
-	k0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j
-	6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7xwIDUUUU
+References: <20251104225915.2040080-1-thostet@google.com> <20251108044822.GA3262936@ax162>
+In-Reply-To: <20251108044822.GA3262936@ax162>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Fri, 7 Nov 2025 20:59:19 -0800
+X-Gm-Features: AWmQ_blixJTeuI6gtkf3uXiCfIVKcT-SsFypFauJC4TJRl_ZNrVEjysdEmuUMzA
+Message-ID: <CAAVpQUCoNB6RqXpCbxxZ3z9Fk6XgSZHh+mB77DUdJWMQT16VDQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] ptp: Return -EINVAL on ptp_clock_register if
+ required ops are NULL
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Tim Hostetler <thostet@google.com>, netdev@vger.kernel.org, richardcochran@gmail.com, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>, linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The flush_workqueue() in psmouse_disconnect() only blocks and waits for
-work items that were already queued to the workqueue prior to its
-invocation. Any work items submitted after flush_workqueue() is called
-are not included in the set of tasks that the flush operation awaits.
-This means that after flush_workqueue() has finished executing, the
-resync_work and dev3_register_work could be rescheduled again, resulting
-in the following two use-after-free scenarios:
+On Fri, Nov 7, 2025 at 8:48=E2=80=AFPM Nathan Chancellor <nathan@kernel.org=
+> wrote:
+>
+> On Tue, Nov 04, 2025 at 02:59:15PM -0800, Tim Hostetler wrote:
+> > ptp_clock should never be registered unless it stubs one of gettimex64(=
+)
+> > or gettime64() and settime64(). WARN_ON_ONCE and error out if either se=
+t
+> > of function pointers is null.
+> >
+> > For consistency, n_alarm validation is also folded into the
+> > WARN_ON_ONCE.
+> >
+> > Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
+> > Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
+> > Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
+> > Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> > Signed-off-by: Tim Hostetler <thostet@google.com>
+> > ---
+> > Changes in v2:
+> >   * Switch to net-next tree (Jakub Kicinski, Vadim Fedorenko)
+> >   * Fold in n_alarm check into WARN_ON_ONCE (Jakub Kicinski)
+> > ---
+> >  drivers/ptp/ptp_clock.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+> > index ef020599b771..b0e167c0b3eb 100644
+> > --- a/drivers/ptp/ptp_clock.c
+> > +++ b/drivers/ptp/ptp_clock.c
+> > @@ -322,7 +322,9 @@ struct ptp_clock *ptp_clock_register(struct ptp_clo=
+ck_info *info,
+> >       char debugfsname[16];
+> >       size_t size;
+> >
+> > -     if (info->n_alarm > PTP_MAX_ALARMS)
+> > +     if (WARN_ON_ONCE(info->n_alarm > PTP_MAX_ALARMS ||
+> > +                      (!info->gettimex64 && !info->gettime64) ||
+> > +                      !info->settime64))
+> >               return ERR_PTR(-EINVAL);
+> >
+> >       /* Initialize a clock structure. */
+> > --
+> > 2.51.2.1026.g39e6a42477-goog
+> >
+>
+> I am seeing this warning trigger on my machines that use the iwlwifi
+> driver, presumably because .settime64 is not assigned a value in
+> iwl_mvm_ptp_init().
+>
+>   [  +0.000003] WARNING: drivers/ptp/ptp_clock.c:325 at ptp_clock_registe=
+r+0x103/0x780 [ptp], CPU#0: NetworkManager/483
+>   [  +0.000010] Modules linked in: ...
+>   [  +0.000036] CPU: 0 UID: 0 PID: 483 Comm: NetworkManager Not tainted 6=
+.18.0-rc4-debug-next-20251107-07207-g9c0826a5d9aa #1 PREEMPT(full)  84ece34=
+56f9361105a10b63b41a3c832c71ec446
+>   [  +0.000003] Hardware name: AZW MINI S/MINI S, BIOS ADLNV106 05/12/202=
+4
+>   [  +0.000002] RIP: 0010:ptp_clock_register+0x103/0x780 [ptp]
+>   [  +0.000003] Code: c7 60 22 f2 c0 41 89 c5 e8 8a 5d 2f d0 45 85 ed 74 =
+4e 49 63 ed 48 89 df e8 da 94 6a cf eb 14 48 83 7f 78 00 0f 85 66 ff ff ff =
+<0f> 0b 48 c7 c5 ea ff ff ff 48 8b 84 24 80 00 00 00 65 48 2b 05 3c
+>   [  +0.000001] RSP: 0018:ffffcc5b04adb290 EFLAGS: 00010246
+>   [  +0.000002] RAX: 0000000000000000 RBX: ffff8934d76b2068 RCX: ffff8934=
+d76b4900
+>   [  +0.000001] RDX: 0000000000200000 RSI: ffff8934c1ebb0c8 RDI: ffff8934=
+d76b4810
+>   [  +0.000001] RBP: ffff8934d76b4810 R08: ffffffff8ff70160 R09: 00000000=
+00000001
+>   [  +0.000001] R10: ffff8934d62fd1c0 R11: 0000000000000000 R12: 00000000=
+0ea00000
+>   [  +0.000001] R13: 0000000000000002 R14: ffff8934c1ebb0c8 R15: ffff8934=
+d7708a10
+>   [  +0.000001] FS:  00007fac016312c0(0000) GS:ffff89389cd6b000(0000) knl=
+GS:0000000000000000
+>   [  +0.000001] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>   [  +0.000001] CR2: 00007f7f93e50f30 CR3: 0000000119666002 CR4: 00000000=
+00f72ef0
+>   [  +0.000001] PKRU: 55555554
+>   [  +0.000001] Call Trace:
+>   [  +0.000002]  <TASK>
+>   [  +0.000002]  ? iwl_trans_send_cmd+0x3e/0xb0 [iwlwifi 72c0d1371c0a5e88=
+07f47a9d18b5f8082f51cdd9]
+>   [  +0.000022]  ? iwl_mvm_send_cmd+0x16/0x40 [iwlmvm b29beaee96a9c574b7e=
+4367316ad1fb89a4d5bfc]
+>   [  +0.000019]  ? iwl_mvm_config_scan+0x145/0x1b0 [iwlmvm b29beaee96a9c5=
+74b7e4367316ad1fb89a4d5bfc]
+>   [  +0.000017]  iwl_mvm_ptp_init+0xe1/0x150 [iwlmvm b29beaee96a9c574b7e4=
+367316ad1fb89a4d5bfc]
+>   [  +0.000014]  iwl_mvm_up+0x8e9/0xa10 [iwlmvm b29beaee96a9c574b7e436731=
+6ad1fb89a4d5bfc]
+>   [  +0.000012]  ? kmalloc_reserve+0x64/0x100
+>   [  +0.000003]  ? kmalloc_reserve+0x64/0x100
+>   [  +0.000001]  __iwl_mvm_mac_start+0x78/0x2b0 [iwlmvm b29beaee96a9c574b=
+7e4367316ad1fb89a4d5bfc]
+>   [  +0.000012]  iwl_mvm_mac_start+0x47/0xf0 [iwlmvm b29beaee96a9c574b7e4=
+367316ad1fb89a4d5bfc]
+>   [  +0.000010]  drv_start+0x48/0x110 [mac80211 5dddabcc52998b16707609bbc=
+ccb5a7bd69e6ccc]
+>
+> Seems like iwl_mld_ptp_init() would also be affected by this?
 
-1. The psmouse structure is deallocated in psmouse_disconnect(), while
-resync_work remains active and attempts to dereference the already
-freed psmouse in psmouse_resync().
+Right, I guess this was not found so far just because syzbot
+does not fuzz wifi drivers.
 
-CPU 0                   | CPU 1
-psmouse_disconnect()    | psmouse_receive_byte()
-                        |   if(psmouse->state == ...)
-  psmouse_set_state()   |
-  flush_workqueue()     |
-                        |   psmouse_queue_work() //reschedule
-  kfree(psmouse); //FREE|
-                        | psmouse_resync()
-                        |   psmouse = container_of(); //USE
-                        |   psmouse-> //USE
 
-2. The alps_data structure is deallocated in alps_disconnect(), while
-dev3_register_work remains active and attempts to dereference the
-already freed alps_data inside alps_register_bare_ps2_mouse().
+> I did not
+> see how many other drivers are potentially impacted by this.
 
-CPU 0                   | CPU 1
-psmouse_disconnect()    | alps_process_byte()
-  flush_workqueue()     |   alps_report_bare_ps2_packet()
-                        |   psmouse_queue_work() //reschedule
-  alps_disconnect()     |
-                        | alps_register_bare_ps2_mouse()
-    kfree(priv); //FREE |
-                        |   priv = container_of(); //USE
-                        |   priv-> //USE
+FWIW, I skimmed the code with this when syzbot reported the
+issue and didn't find buggy drivers except for gve,
 
-Replace flush_workqueue() with disable_delayed_work_sync(), and also
-add disable_delayed_work_sync() in alps_disconnect(). This ensures
-that both resync_work and dev3_register_work are properly canceled
-and prevented from being rescheduled before the psmouse and alps_data
-structures are deallocated.
+$ grep -rn --include=3D"*.c" --include=3D"*.h" -E "ptp_clock_info.*?=3D {" =
+-A 30
 
-These bugs are identified by static analysis.
-
-Fixes: f0d5c6f419d3 ("Input: psmouse - attempt to re-synchronize mouse every 5 seconds")
-Fixes: 04aae283ba6a ("Input: ALPS - do not mix trackstick and external PS/2 mouse data")
-Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
----
- drivers/input/mouse/alps.c         | 1 +
- drivers/input/mouse/psmouse-base.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
-index d0cb9fb9482..df8953a5196 100644
---- a/drivers/input/mouse/alps.c
-+++ b/drivers/input/mouse/alps.c
-@@ -2975,6 +2975,7 @@ static void alps_disconnect(struct psmouse *psmouse)
- 
- 	psmouse_reset(psmouse);
- 	timer_shutdown_sync(&priv->timer);
-+	disable_delayed_work_sync(&priv->dev3_register_work);
- 	if (priv->dev2)
- 		input_unregister_device(priv->dev2);
- 	if (!IS_ERR_OR_NULL(priv->dev3))
-diff --git a/drivers/input/mouse/psmouse-base.c b/drivers/input/mouse/psmouse-base.c
-index 77ea7da3b1c..eb41c553e80 100644
---- a/drivers/input/mouse/psmouse-base.c
-+++ b/drivers/input/mouse/psmouse-base.c
-@@ -1484,7 +1484,7 @@ static void psmouse_disconnect(struct serio *serio)
- 
- 	/* make sure we don't have a resync in progress */
- 	mutex_unlock(&psmouse_mutex);
--	flush_workqueue(kpsmoused_wq);
-+	disable_delayed_work_sync(&psmouse->resync_work);
- 	mutex_lock(&psmouse_mutex);
- 
- 	if (serio->parent && serio->id.type == SERIO_PS_PSTHRU) {
--- 
-2.34.1
-
+, and yes, this does not catch drivers that set func ptrs
+dynamically, but I believe such drivers are a minority.
 
