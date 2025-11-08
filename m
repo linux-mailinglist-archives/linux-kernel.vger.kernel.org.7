@@ -1,172 +1,122 @@
-Return-Path: <linux-kernel+bounces-891491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFF6C42C43
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:48:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3EC8C42C49
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5FEB4E3B3A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:48:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCC874E5A9B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C2F1D5CC7;
-	Sat,  8 Nov 2025 11:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nw5WzWb0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D942D9782;
+	Sat,  8 Nov 2025 11:54:23 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534A71D95A3
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 11:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA9B1FC8;
+	Sat,  8 Nov 2025 11:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762602516; cv=none; b=clZqolbOCBg8H6CHNbA7mn0DOUaGhCSTm9ISJc79SeYTH3+CmGGjKcD4LeCVt75nFAnVvtjkgJkSj9LQfaguSW9cKG/odBb7hnnXrSqww3PVYdfSNJtrS6qL3QznhdUOZiaRCnsh+jrkQEEZOhmoADzvPo/RLbFy8hT4oSFbf68=
+	t=1762602863; cv=none; b=jxMGkzGOWPXm6H3bIUHPeMoKggf4XBA/YyncIVOxrXigvTv82wJKCRmdCJ5+vg38+4dNoYLVGNvGRgJrU1pvXczUlBdFNz7+iw8o96hCOsC7FHjFCLyJq0s4A0LXLfPuGeNlHayTjSzUJ6KyjO8p9I9Ksgfu9dUDzR5w9nwsY2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762602516; c=relaxed/simple;
-	bh=HEwjnCb7mPWNGlgkOGSaF9j4GZo2L78ZrbzbN3lFzV8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XaFXiSwcZJzfYTAg+v3TOXkF0p6UmiRyxjxgJuOVfaisCgoUJqjJ17jfiOULdxYLJ6Mfv7nRHY9jXunrMA1EPj56q5UPeFZdh45uMt6Gk2ywUO8DwyqXu/vsKENOT3Av+wDQiG3CuokBk0l4WTEHQ+HaCKUslLMC6o+cbgEtqis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nw5WzWb0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F378DC4CEFB
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 11:48:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762602516;
-	bh=HEwjnCb7mPWNGlgkOGSaF9j4GZo2L78ZrbzbN3lFzV8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nw5WzWb0o4Sgeop9lhRFvHXu+Apwnpy+K0iRk2+Ud5eu6ZJ88SyNvlKFnsnRgBKcW
-	 70ZWD0ccZ5JXkCmI1x2SEQqRZZEJwadVA7bHGjA8Df0vQz4zpfrbylDoulLgsmSiQ5
-	 SoDi6RMb6MqW8q2usdJBk8LGgZzsJ4jnoLcwcE8mEuI+8fESKZyOfLYp2+7jp2bSS7
-	 sEp7L9GbitxfdLGDbX5Cdc9TjktxVwssGeopkqsSmC1X0v8hDdjTmgNYKGJ7dhy97r
-	 YCm//EoSqacMTNpXU/Xygy1RQOsdD+iUt6FNPyty0Fi93e2WUI79bXg4FHYk1KBe+h
-	 tOkYod/sq7ECg==
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7c284d4867eso475593a34.3
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 03:48:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVB8Y/h0ZClE3GgAP+sO8SuDfIII4OcFd3FhPeYE8CLeiMmYhq8xthaJgXHfQijnKpIAYbujpRq+yAz2fQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5V8GvRik5uoMTIw9aBhHSXotb4samiYmLhIfHnx3DgOz9+FXt
-	b9ElbyFMcR40Uh1oRIZW5OnIvB/kmiZrKSRWHWchPfJmzBQ+Jo4FfBXm+Yo4VVr87HMHkEhXX4G
-	hDGzEtWHjZpe8NMU/ASYkxLZHBIZk8QY=
-X-Google-Smtp-Source: AGHT+IEATu6J1yUk0vKUeco1gZt1faILYR/teQcgig6QXlxFQ4drh+62nwnVW447JHlujCAGUMmakoLsM+27Tq3mwMw=
-X-Received: by 2002:a05:6808:4f21:b0:44d:a885:8a02 with SMTP id
- 5614622812f47-4502a3ba7f9mr1465648b6e.47.1762602515259; Sat, 08 Nov 2025
- 03:48:35 -0800 (PST)
+	s=arc-20240116; t=1762602863; c=relaxed/simple;
+	bh=ndNmxdkh04ykLZ7E1ZNLgfUkU5xu9a8BkyVL5p81t3k=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=GvHv4uv1yAJfUPfYtAbiVjdDXxYZGPMLfVh4gU8cxa7HjVU0Wik8plzZovChXJEcDE8B2tLqHYN59VhJj1AnfqyDaehb0ifs+gsc8I4HUMsaDhZ6BE/HPqsLif1/DIKHFqJ6+CI39H97DiDJfn1HNrRuntmDk6L4KISco0m/HkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-05 (Coremail) with SMTP id zQCowAD3YvFLLw9pipgGAg--.40529S2;
+	Sat, 08 Nov 2025 19:53:53 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: akpm@linux-foundation.org,
+	jgg@ziepe.ca,
+	leon@kernel.org,
+	jhubbard@nvidia.com,
+	mpenttil@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] mm/hmm/test: Fix error handling in dmirror_device_init
+Date: Sat,  8 Nov 2025 19:53:46 +0800
+Message-Id: <20251108115346.6368-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:zQCowAD3YvFLLw9pipgGAg--.40529S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF17Jr1ktw4rXryfJFW5Jrb_yoW8Xw1fpF
+	1UJas0kryUGrn3Gr18Zr48Ww1UKr9Yywn5Aw1UG34IgrW3XryYqry8Gw4Fqw1FkrWkJF15
+	XFWaq3Z5AF1UAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9m14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_Gw4l42xK82IYc2Ij64vIr41l4I
+	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+	1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JU6GQhUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <12779486.O9o76ZdvQC@rafael.j.wysocki> <f1194b6840459447f36e5d387320ef295aa8166d.camel@linux.intel.com>
- <CAJZ5v0hgjZdRTbDnTz7frt5+Grrt0Dft_TJgW0-t92XupCbzXw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hgjZdRTbDnTz7frt5+Grrt0Dft_TJgW0-t92XupCbzXw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sat, 8 Nov 2025 12:48:22 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0i9DkZR=ZnJ-+VDm-2wk-ab2X=RM69uiSTgwuhGnf8zVg@mail.gmail.com>
-X-Gm-Features: AWmQ_bkMH2wr1QSTBVk-nzXRjpFzF3E52H-9PPIfuVuY0eIz-Q5apLox5j7SZ6M
-Message-ID: <CAJZ5v0i9DkZR=ZnJ-+VDm-2wk-ab2X=RM69uiSTgwuhGnf8zVg@mail.gmail.com>
-Subject: Re: [PATCH v2] cpuidle: Add sanity check for exit latency and target residency
-To: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 8, 2025 at 12:02=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Sat, Nov 8, 2025 at 9:49=E2=80=AFAM Artem Bityutskiy
-> <artem.bityutskiy@linux.intel.com> wrote:
-> >
-> > On Fri, 2025-11-07 at 20:07 +0100, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > Make __cpuidle_driver_init() fail if the exit latency of one of the
-> > > driver's idle states is less than its exit latency which would break
-> > > cpuidle assumptions.
-> > >
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > LGTM
-> >
-> > Reviewed-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-> >
-> >
-> > By the way, I have a more paranoid validation patch, which validates
-> > latency and also more. Sure I can rebase it later on top of this
-> > patch.
->
-> That should be rather straightforward.
->
-> > I did not have time to polish it yet, but sharing just in case there is
-> > a quick feedback.
-> >
-> > From: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-> > Subject: [PATCH] cpuidle: Add idle states validation
-> >
-> > Validate the idle states table provided by the underlying idle driver. =
-For
-> > example, validate that deeper idle states have greater latency and targ=
-et
-> > residency compared to shallower states.
-> >
-> > Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-> > ---
-> >  drivers/cpuidle/driver.c | 58 ++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 56 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/cpuidle/driver.c b/drivers/cpuidle/driver.c
-> > index 9bbfa594c4425..6bcedad534dd9 100644
-> > --- a/drivers/cpuidle/driver.c
-> > +++ b/drivers/cpuidle/driver.c
-> > @@ -20,6 +20,10 @@
-> >
-> >  #include "cpuidle.h"
-> >
-> > +/* Maximum allowed latency and target residency values */
-> > +#define MAX_LATENCY 50000 /* 50 milliseconds */
-> > +#define MAX_RESIDENCY 1000000 /* 1 second */
-> > +
-> >  DEFINE_SPINLOCK(cpuidle_driver_lock);
-> >
-> >  #ifdef CONFIG_CPU_IDLE_MULTIPLE_DRIVERS
-> > @@ -148,11 +152,46 @@ static void cpuidle_setup_broadcast_timer(void *a=
-rg)
-> >                 tick_broadcast_disable();
-> >  }
-> >
-> > +/**
-> > + * validate_state - Validate an idle state.
-> > + * @state: The C-state to validate.
-> > + * @prev_state: The previous idle state or NULL.
-> > + *
-> > + * Return: 0 if the idle state is valid or -EINVAL otherwise.
-> > + */
-> > +static int validate_state(struct cpuidle_state *s, struct cpuidle_stat=
-e *prev_s)
-> > +{
-> > +       if (s->exit_latency =3D=3D 0)
-> > +               return -EINVAL;
->
-> The change above will break the polling state AFAICS.
->
-> > +
-> > +       if (s->exit_latency > MAX_LATENCY)
-> > +               return -EINVAL;
-> > +
-> > +       if (s->target_residency > MAX_RESIDENCY)
-> > +               return -EINVAL;
-> > +
-> > +       if (s->target_residency < s->exit_latency)
-> > +               return -EINVAL;
-> > +
-> > +       if (!prev_s)
-> > +               return 0;
-> > +
-> > +       if (s->exit_latency <=3D prev_s->exit_latency)
-> > +               return -EINVAL;
->
-> Well, is this really necessary?  Nothing depends on this ordering AFAICS.
+dmirror_device_init() calls device_initialize() which sets the device
+reference count to 1, but fails to call put_device() when error occurs
+after dev_set_name() or cdev_device_add() failures. This results in
+memory leaks of struct device objects. Additionally,
+dmirror_device_remove() lacks the final put_device() call to properly
+release the device reference.
 
-Yes, it is, there are assumptions in the governors regarding this.
-Sorry for the noise.
+Found by code review.
+
+Cc: stable@vger.kernel.org
+Fixes: 6a760f58c792 ("mm/hmm/test: use char dev with struct device to get device node")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ lib/test_hmm.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+index 83e3d8208a54..5159fc36eea6 100644
+--- a/lib/test_hmm.c
++++ b/lib/test_hmm.c
+@@ -1458,20 +1458,25 @@ static int dmirror_device_init(struct dmirror_device *mdevice, int id)
+ 
+ 	ret = dev_set_name(&mdevice->device, "hmm_dmirror%u", id);
+ 	if (ret)
+-		return ret;
++		goto put_device;
+ 
+ 	ret = cdev_device_add(&mdevice->cdevice, &mdevice->device);
+ 	if (ret)
+-		return ret;
++		goto put_device;
+ 
+ 	/* Build a list of free ZONE_DEVICE struct pages */
+ 	return dmirror_allocate_chunk(mdevice, NULL);
++
++put_device:
++	put_device(&mdevice->device);
++	return ret;
+ }
+ 
+ static void dmirror_device_remove(struct dmirror_device *mdevice)
+ {
+ 	dmirror_device_remove_chunks(mdevice);
+ 	cdev_device_del(&mdevice->cdevice, &mdevice->device);
++	put_device(&mdevice->device);
+ }
+ 
+ static int __init hmm_dmirror_init(void)
+-- 
+2.17.1
+
 
