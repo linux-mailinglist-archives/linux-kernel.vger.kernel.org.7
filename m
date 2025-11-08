@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-891273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F438C424D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 03:31:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4672C424EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 03:34:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C183BBE61
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 02:31:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 761F04E22B4
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 02:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADF1283FCD;
-	Sat,  8 Nov 2025 02:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC31228312D;
+	Sat,  8 Nov 2025 02:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZkXb17V"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3DrIOfS"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236EE74BE1
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 02:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6990A231A21
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 02:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762569073; cv=none; b=rsWLOpYfpKO1ZLUBjZsgQotZvXvfIChV9Ds+UrQk8EJpLGfw1SjDiOs1MFh3oxkJvf06HO4f/kpGY4B4zDUq3iZsKeVRNPRgtJJSn/5XLXRXlT4fkTpS+CLXJTaG0+/NF9+tT1R8MpFWnV88f2xRTaNX7/5zJi4OH8NLG2kgIEs=
+	t=1762569278; cv=none; b=m6OH54re7QCoIB8l2FFgbdA2fnMQtag5D2swwYX7eTBx3qf3WZ1vX3mjho/Pz9YcJRg7fQEpwZSiBZqWf5P65hofZrF75ziaX7CxJ6jq4dsax1l+hWXKWRW7V8URRYRkUg5xvnbnQD/hX2qYZVa8MYTbyvfYjpVleGALOLP2Sgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762569073; c=relaxed/simple;
-	bh=hEsds1aJcMa/MFnGEl+oWU8IGfV52JAmFi/ogcjALRA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WJCFrEpyIhnmc7ohSKK78nFRoKGjwiCoBgB8luXZ408/9NmcfN1AsCkPfOUQd03iEaZRIZyXb2jwYGERAXUAX63Rgb72ZzKDbxBu3wXk5VyEfd/8ovTqZ1TIAQhE4WoIV88nLgXOGkSlYDlZlDBosPBeQrfxRWnP7fd7/GCi9wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZkXb17V; arc=none smtp.client-ip=209.85.216.41
+	s=arc-20240116; t=1762569278; c=relaxed/simple;
+	bh=Z5X50pyR0wS4lIYsN0HttoXOv4LWl0AVzhpUed4BCes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f/57fx9wAZ4sNOWfBwlyG9n3XrZLdsVqJXrXBxq7G18bNAjH4w5z0VP1hG5QYzFmzRSTiAEttcKSFo7s7G3va3ZvLrlY1QzbGm6WP6c7TmZqkwyvTqSXBuRIOCFlNIgjz+c4aw92C0aU+aLdrVFWjzeUOkgwgwWctu7+k3upBaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U3DrIOfS; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-343610f3990so153746a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 18:31:11 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b71397df721so153355366b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 18:34:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762569071; x=1763173871; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762569275; x=1763174075; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4Ywt5KnXkAWuPtF4O67B6+CrKeKvSZlIbIOBaVjdLrc=;
-        b=TZkXb17VDXSi/hdNX1nnsUIBUikCDSDYabE2oBnc3ou2BnHl91qhrr8ryuMls+eW4+
-         iBXg+fLjOHRcvN1gpg3FLTPwA+TPMNItQ5PAdWwL6eO/+P80WsaqPG5lW0A/6WkRSK6i
-         G0uqVqIw0XwaQyN+EFtNoxWqKoEq2gH6qLe/3FqLdOVnIU2YOKl9HUQ4qvaE3EYaoNvg
-         BJUKoX6qqzMmXobdQdas2gzy6c/RVHzxcq5XErBAC1g3FACKOP14RVuGsm23EvyndIyz
-         d6LBl2nTzq/foUEHxJLTbB6OLk2HIPjAbMBL7I6bc9mns0h52vgFl8rCnvytZPYOcoji
-         X3+A==
+        bh=o5potOoY7oJuZDgAPEu8n/B2FvMnFZR/4eU+wIwynFI=;
+        b=U3DrIOfSq41Jo3yYoAQLR69+/6srBs7EQUBw3cFjNj0P+rGMxtjqXzGgxMJehgsBRp
+         j+ZdYANEkArSXZNYKh5miE5FSr1n6yDWFYMjLMI+0FXvRygkV1jhMw2SmzZ1NmL6W6al
+         Mw6m0eg8s+mmHZOv3rktMgjlYqLPc+yxeJQh/bWwb1VUDpgVx01UQn6x9MzZ7xUmCfGH
+         ILAJlVboKdtBmlfLnZhFXbq2qfWXl749HFiPtCvOZUjR3Nh8ug8iWQthDAoExZQ29sPz
+         WzsYAGzE99rqQROMErzV22Douo7fDgasIfjtTlbsOGU61teRnXsSyoBp+TLYPGP3akAK
+         hZIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762569071; x=1763173871;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4Ywt5KnXkAWuPtF4O67B6+CrKeKvSZlIbIOBaVjdLrc=;
-        b=ZpXHt+I1CKdIyjJ8N4TkztVFk27bpjMvGjwhoXKg5uhWipKNJmtRSzd6PArIxK4Etp
-         yxTLaHsFzdJMJ7MrYpsQuK5O3Ue0R7IJ7DfMt+wRn9dACDngZpS7j4AxaiWdGNSZ5afx
-         JEPZcB+yFp5osdZxFMMNeMz2D7RKDW66Iaq54trKgef39lpxl//9vmUUSw2Q+3Ocn5Xu
-         njA1I74hyHPV5QqzHqHZpKIwL7a4GG7Cc5D3mtN3+8dj/nRn1/m7d3zU33il6JcNuMgq
-         5bxjlbqJYa6nGHdHRQ2vFLw1Y6tMF99ddT5V0eiM0JH9G6V7QGyDXXBPf3/F/MECkGGR
-         ncjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjAm6trFRN1B38KlY52cjNJPCulbOGYWamZRArTuw1Spj1QzxD5fc6GuXhHuq1PuHXwXEw/XitCyrqF6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfM2N8iSFw8RomxHycmVymJmLGJKZtwpO37ugdn1Jpr3AHHk6Q
-	pJv93B9zDmApNO11F5OcqsVDYb2hf68TBsVCTlyxDcTJPVnMXvuWShOY9BnvEuBAVmpyx6Qyr1D
-	EFGhDja/rjZhvm50rA5jFBHsxAMQjEtw=
-X-Gm-Gg: ASbGncvkG7e012Bl8qjnSh1DSuCuN2p3KnKL8EW7w05bsRxogGsNZ9QgsXx5D8dVcAQ
-	kOHjnQ4ZttiOymbcdpPq7/AorEZz4fpetRXSv/vjxorxLzmpE5aBLQ/ydHC6lJ40GL9vGSrnrBJ
-	fNPvJpKxtNidrZxemOV9L0Sir7zW+1wijvPWL3RPWH4Hcvync5jgl0P6r6I5smyN7nQlh7cVFHk
-	mc8D5W3R07mL60/kcGbibWYnrTNhpCH9SWdaBSSwInsYjj2HEelLd7DuyRougoFh9FSB7WnU60V
-	6sL/VB2q8fIWkJXyGxIJd24lIbsiEuQSHKciR863KX+kuv504M+C/YX7GJ7+/jG54zHsWnK4ePh
-	qW18=
-X-Google-Smtp-Source: AGHT+IEPt/zum4mIPzur6pOWm9ugmaOB4ZnZwdF37jH/QJbMUq5i1HmGSC61s/z25m7jSEylTziMZI9njr8XmEb4iEk=
-X-Received: by 2002:a17:903:ace:b0:297:e67f:cd5 with SMTP id
- d9443c01a7336-297e67f0dc3mr6100935ad.7.1762569071389; Fri, 07 Nov 2025
- 18:31:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762569275; x=1763174075;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o5potOoY7oJuZDgAPEu8n/B2FvMnFZR/4eU+wIwynFI=;
+        b=MuSVAHP7ZEXOXyPmMLrVxyFVB5BR79QXiNpkDDWWn1lBwit4Yvfbr35wsY2KyMKIKy
+         EhE2sDhkowmZmtJnA5FX8MHw9+cseOmKrP53FO1Dfbebcm4v2hJlKSm+VduRbpAGzX1p
+         WUaVvlmxlOPHUETrxRmZ6cL9Eyqm69sf+0/emQt8SXZz7Qcj0y7J+s3tlGBS7bddqohC
+         gAU855+e4rPHx9oebCHxIW/8ZTwnzHyMmr1x7X+ZN7KtuYsl0rFnk4bzDY25GBjbXBVa
+         F7QjPEogdIoa0jaIz8RKBPZIemTWJVuBLZG+v3B41Hb6+PrvwLZhF2FEwYl8DX6HedMK
+         ytfw==
+X-Gm-Message-State: AOJu0YzDWUyxvtQ6Z9SZp27rfl1wXE/8J/E9yEIS6gQ2/ofT1G9hOOiN
+	vPqloT1QR+bbfkjHt+gL7+Rdsh9LRPJ8kQWAdpAfBymm8ZJALy829G4t
+X-Gm-Gg: ASbGncsSiJa2GFyqgssAIEaMIu0Culg5ijlmp1I2Ow0jSLlgtjXWvS/56r9x4q9cafp
+	/BBVtG18vmfyjtwSCoOUB7K9J9Hx0uABkS/pwIZhqjQo4F9gWQYaBnzDgtLdnP8JpgEcYZqH/rg
+	xVYZEDgOJnBjMg/LjYz0yXpilvjzuvEBsU1p0MyH1eyjhsWtcDjF8RWRBwra+aiOpiQK7KbruPb
+	GJKJU0jpKQLG6FU8qyL5DfSsdilRbhZ6M6KNOINoqhK4kK8m9tJngRgBhEGT6SS5JaflBPxcoPi
+	rVXScjQSYq1TtLH2wyryQTcOA0NF9bBJk4C0fTHWDug+DjcrWmltHNctHBjt8iaU86TB16o8H1u
+	jG32ENdaWUK8YT4jTOalWpnRtmvvFw85dRA1GnbRHfPdX0xKtIXBmqafl6A3g9pGNHk1ueURTdq
+	ybNLMpCmp9qg==
+X-Google-Smtp-Source: AGHT+IF8sH5AJD5BmsEI+wfEUF+AscOx+lX9t+VpBog4E5GD0fnsTzO8XVh1qgisOXry5AIp9gqKVg==
+X-Received: by 2002:a17:906:ee87:b0:b6d:4fe5:ead0 with SMTP id a640c23a62f3a-b72e028a487mr148451766b.10.1762569274625;
+        Fri, 07 Nov 2025 18:34:34 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbd1ecfsm391337166b.10.2025.11.07.18.34.32
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Nov 2025 18:34:33 -0800 (PST)
+Date: Sat, 8 Nov 2025 02:34:32 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Nico Pache <npache@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, david@redhat.com,
+	ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net,
+	rostedt@goodmis.org, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
+	baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+	wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+	sunnanyong@huawei.com, vishal.moola@gmail.com,
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+	kas@kernel.org, aarcange@redhat.com, raquini@redhat.com,
+	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
+	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
+	cl@gentwo.org, jglisse@google.com, surenb@google.com,
+	zokeefe@google.com, hannes@cmpxchg.org, rientjes@google.com,
+	mhocko@suse.com, rdunlap@infradead.org, hughd@google.com,
+	richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz,
+	rppt@kernel.org, jannh@google.com, pfalcato@suse.de
+Subject: Re: [PATCH v12 mm-new 04/15] khugepaged: generalize
+ alloc_charge_folio()
+Message-ID: <20251108023432.yqw7u7wnh5x3xvgh@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20251022183717.70829-1-npache@redhat.com>
+ <20251022183717.70829-5-npache@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251108014246.689509-1-ojeda@kernel.org>
-In-Reply-To: <20251108014246.689509-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 8 Nov 2025 03:30:57 +0100
-X-Gm-Features: AWmQ_bntWx41R6dVeerjev8Ne9qVeKQ30TdFKSebUZNEnjznMYZ4D9bO5nuNd7o
-Message-ID: <CANiq72nKC5r24VHAp9oUPR1HVPqT+=0ab9N0w6GqTF-kJOeiSw@mail.gmail.com>
-Subject: Re: [PATCH] rust: kbuild: skip gendwarfksyms in `bindings.o` for Rust
- >= 1.91.0
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
-	Haiyue Wang <haiyuewa@163.com>, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022183717.70829-5-npache@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Sat, Nov 8, 2025 at 2:44=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wrot=
-e:
+On Wed, Oct 22, 2025 at 12:37:06PM -0600, Nico Pache wrote:
+>From: Dev Jain <dev.jain@arm.com>
 >
-> note that `CLIPPY=3D1` does not reproduce it
+>Pass order to alloc_charge_folio() and update mTHP statistics.
+>
+>Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>Acked-by: David Hildenbrand <david@redhat.com>
+>Co-developed-by: Nico Pache <npache@redhat.com>
+>Signed-off-by: Nico Pache <npache@redhat.com>
+>Signed-off-by: Dev Jain <dev.jain@arm.com>
 
-And obviously this means we have to special case this one too...
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-    $(obj)/bindings.o: private skip_gendwarfksyms :=3D $(if $(call
-rustc-min-version,109100),$(if $(KBUILD_CLIPPY),,1))
-
-There may be other cases that disable the optimization or similar,
-plus we may have other small crates in the future that could also
-suffer from this, so it may be best to simply force to generate the
-DWARF with a dummy symbol from that crate for the time being as the
-fix:
-
-    #[expect(unused)]
-    static DUMMY_SYMBOL_FOR_DWARF_DEBUGINFO_GENERATION_FOR_GENDWARFKSYMS:
-() =3D ();
-
-With `#[no_mangle]` may be more reliable and it also gives an actual
-exported symbol.
-
-And then later do something in the `cmd` command itself or teaching
-`genkallksyms` to auto-skip in cases like this.
-
-What do you think?
-
-Cheers,
-Miguel
+-- 
+Wei Yang
+Help you, Help me
 
