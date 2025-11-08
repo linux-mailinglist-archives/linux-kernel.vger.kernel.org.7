@@ -1,109 +1,110 @@
-Return-Path: <linux-kernel+bounces-891277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D544AC42503
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 03:38:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA3EBC424FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 03:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3769F4EA537
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 02:37:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF59A4EA1C2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 02:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FA82BE7CD;
-	Sat,  8 Nov 2025 02:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544B92BFC8F;
+	Sat,  8 Nov 2025 02:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4Pz1O8f"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1eDVBuy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6AB28641E
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 02:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912AC28507B;
+	Sat,  8 Nov 2025 02:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762569447; cv=none; b=WyQjcIoObvZ24OZMxU3ogOKsXdLjElKBI6hSDRrX2pcSUDcWwjiLSRA56Gxf2VJJwt2jsjQZcQCub7bhthK0bfhg4BPOXOLun9uke0rua8OdNXMi2pDoXt7pSrFf5FZuRh5NM1c5uDe12ctHuRiKXJN74WTiXw4K613+qillbx8=
+	t=1762569435; cv=none; b=qpmS0flzEsJqquTpYozqwHFLCZxIcv4b5VKl7adu2eHLJJml9nQHGLjyxp3kUv9/kLE7FEt4xxaqywybyb7M1mnzs20uwv+lPqb243tjv7qmKfNYtdErxcQ1c7icFKku+b/EnNjkenc/UVPingKCAQb4E4sJDiAC6WFL2l055Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762569447; c=relaxed/simple;
-	bh=pZs543aQJXGBiZv1p3fT4nEMYNcLibbhNgR3xp64diA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZafAlbImp7ggpCGHZeZHUdNnGBHzaKNMd+5MOM6MMg+TWwnY2cIR6+4BZGXPONFeOx1MOVshC3njm7G6n3/wOda1pdoBr26DfnQvFafpVVkJ9fx6KovOK/j/S0WYIlI9t7yHTz0goFqmvQ2dcTdd1BjAfIezSIuryItfo5+rblM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4Pz1O8f; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-297ec8a6418so78695ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 18:37:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762569445; x=1763174245; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pZs543aQJXGBiZv1p3fT4nEMYNcLibbhNgR3xp64diA=;
-        b=D4Pz1O8fBgxVfdLn0kGOEPXb0Nmg76AgpJ/stxFpJ6/vKMwRMy+tyE6VHmRef8yl5a
-         J8sC7qAT32BKsKL2K+sbGtrDuSBnfDyI+7SfLKNmzGRO1uevSAXTYuv26lKUoFrw8U+Y
-         B2iSh3SbPRyQIzoTfh5Aufl4OIfIF+RhjQYQT4e6cxaOWLx++qhEZNySZlLeQCZLhZTr
-         JlJy7lOhCEQfh97v3Fv6CRy8JV/mXtkpggFW37TBz99luVoUGN6om9GQHH+RO930XbnQ
-         R1Qp/PmzrTRGrjz9+oDbKhBd0qSgwkzT7MHKilazuxuiRpEcpB6Nti0nr3KLk1Y+q/5D
-         o6vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762569445; x=1763174245;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pZs543aQJXGBiZv1p3fT4nEMYNcLibbhNgR3xp64diA=;
-        b=QRGinU2PnMmRouJjSj1hlf0p2eyehzdteiJqKpmgPhROtNG1SOO6F6pLlHporYvAr+
-         eA51u3orbqTJCOY/XlvRXvYlm0RUAGRkX/uvRse+OpliwWmut91HZ7/U1iip4MaqiO/e
-         uhI9ypEqziNg16wEx7ZtTL4O+ANCpTTJfzRDYYkwHfDwNqfuM/KJOBDPIOkrR4qoalBB
-         hOYqlFIchhgyYFxBDQbyzGWSdIyKrRrcVeGM9hwSwnvDQCewBn2WHq06ryQeT4Wu+YFv
-         NqzK4Gjmwveq7q2IfRsGqp5BqrMgVtfWklN1cUWRVB7djnxHJmsuk9HCv1gHGNyoyE8Y
-         rtQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAA031AXsrJzpUJ5cKulcrwYg9ghHELhE0VnbMCCydqXn3K5lfB829gDxLa5p6cqMP7YKvQUcWSuEaYsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXfaICuSfmgiKAWjGacQACJ40tJTSO5ArnpuSW3u/nOcr3Fplk
-	+YmvKv71N4W96j6A9OMOOd/huS6tAue1UBZ7gN4HxOhPxqw0ZpdRBi7gFjpGagbzd5LCYV6PIwh
-	3PRdSb36P1T8GEz32L+kxtWDAEzCaM0Q=
-X-Gm-Gg: ASbGncvo34FykJ6aDWUzyI8MjO47ZhCs5YBWCNJ3EHJ37UQRQodqS6skg926IZnG4u5
-	5ZFKR1CyZ3/QUgS1i9++w3Lbsjd7aH77C260SIWPF5KKz/bFPXk90/XcAnWAJB1CdSJqfdljsu/
-	iPf8SZZoBsuRDFOu7FbVPa4LW4JJs+2KSYBSx0aDwijpZeNe5t2Vy8o2o+saqnA01JjOzytU9X1
-	Kw43g3AXHF3wn5gA0D4elsQoqlo3x2gvkBpTeIT5kpiiazTPN0i4648fn9AeRpGI3ySy2SohdW+
-	MhvVOvygb6225T7UhQIX9LHb18UuwDJXLafEJiUQMw9BcJo/rt+hKkmycSj4oZq8qe43dkAmD/1
-	OcnOIze6VHQaScA==
-X-Google-Smtp-Source: AGHT+IEovvjVicfDdGQT2CYmrDOWKJSfWNjNZjATvixUw1CuI60OG2r2rmWY0cQTlJoWG3OL54m2HoMu3xt+gxb8f9U=
-X-Received: by 2002:a17:902:c409:b0:295:3262:c695 with SMTP id
- d9443c01a7336-297e5646bd4mr8325045ad.3.1762569445056; Fri, 07 Nov 2025
- 18:37:25 -0800 (PST)
+	s=arc-20240116; t=1762569435; c=relaxed/simple;
+	bh=Ou3u7Vf6165AwGz1NI7XrAGwfnZWVMEdqoH1Q7dBYYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QqWJrqHeFSKRg5Yri/c5atqp+OF9UBbyryTzwyQh2GTPaFQnzUAG3MhXGjeeJJrb1i0sv67N/5OWKrLtNsISMZUvW0d4Strtb+olz8UHJGqmv289FhkL1+ZYtdu2NdB6aWsbyt6r/HMT/zZYtyWDplTn/vpsZrvuYsnD4y+3A2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1eDVBuy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07224C19422;
+	Sat,  8 Nov 2025 02:37:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762569435;
+	bh=Ou3u7Vf6165AwGz1NI7XrAGwfnZWVMEdqoH1Q7dBYYk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u1eDVBuyluzoT6wpUlZ1bNsISDdrnxrud/MWHNRrWneUQUSr0tLuPmnvHaGQ4xM4N
+	 //QJVSvXi9HicgXpdx9lhmTzGfyQd1bxAmnkwgqJd4+HcNQjvlaqLETmjHzDwMocZG
+	 8VBtwlLx06pOqPlDEr20kSSpYKH6ZdUF4BnNlcvHfDy2+SaerJT4o0RKUNtzkA3de2
+	 RDvboLOVpWoce0ylhnS/eztY27WUcAML5hVi3DM2XGkcgXhW2UE1gkvicQXHNY4GoN
+	 dXUHNw5MJNUrRv6j79+MScwp6ZAzr0iGyf4P1L4ym85uTBntzQGq+IZTRkJHrnBc40
+	 AZ06qf8B8xzzA==
+Date: Fri, 7 Nov 2025 18:37:12 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
+ sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
+ mbloch@nvidia.com, andrew+netdev@lunn.ch, edumazet@google.com,
+ pabeni@redhat.com, akpm@linux-foundation.org, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
+ ilias.apalodimas@linaro.org, willy@infradead.org, brauner@kernel.org,
+ kas@kernel.org, yuzhao@google.com, usamaarif642@gmail.com,
+ baolin.wang@linux.alibaba.com, almasrymina@google.com, toke@redhat.com,
+ asml.silence@gmail.com, bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+ sfr@canb.auug.org.au, dw@davidwei.uk, ap420073@gmail.com,
+ dtatulea@nvidia.com
+Subject: Re: [RFC mm v5 1/2] page_pool: check nmdesc->pp to see its usage as
+ page pool for net_iov not page-backed
+Message-ID: <20251107183712.36228f2a@kernel.org>
+In-Reply-To: <20251108022458.GA65163@system.software.com>
+References: <20251103075108.26437-1-byungchul@sk.com>
+	<20251103075108.26437-2-byungchul@sk.com>
+	<20251106173320.2f8e683a@kernel.org>
+	<20251107015902.GA3021@system.software.com>
+	<20251106180810.6b06f71a@kernel.org>
+	<20251107044708.GA54407@system.software.com>
+	<20251107174129.62a3f39c@kernel.org>
+	<20251108022458.GA65163@system.software.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251108014246.689509-1-ojeda@kernel.org> <CANiq72nKC5r24VHAp9oUPR1HVPqT+=0ab9N0w6GqTF-kJOeiSw@mail.gmail.com>
-In-Reply-To: <CANiq72nKC5r24VHAp9oUPR1HVPqT+=0ab9N0w6GqTF-kJOeiSw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 8 Nov 2025 03:37:12 +0100
-X-Gm-Features: AWmQ_bkkl97L4KdKe3MLMAG94NJvyqaB6LbDFgvfVIDBf_nqC8JcMtGIqLcDcT4
-Message-ID: <CANiq72kWWe_w-0088SiGvKFrh49P9wRcPxQvkSoU=SOpSrHbKQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: kbuild: skip gendwarfksyms in `bindings.o` for Rust
- >= 1.91.0
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
-	Haiyue Wang <haiyuewa@163.com>, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 8, 2025 at 3:30=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> With `#[no_mangle]` may be more reliable and it also gives an actual
-> exported symbol.
+On Sat, 8 Nov 2025 11:24:58 +0900 Byungchul Park wrote:
+> On Fri, Nov 07, 2025 at 05:41:29PM -0800, Jakub Kicinski wrote:
+> > On Fri, 7 Nov 2025 13:47:08 +0900 Byungchul Park wrote:  
+> > > The offset of page_type in struct page cannot be used in struct net_iov
+> > > for the same purpose, since the offset in struct net_iov is for storing
+> > > (struct net_iov_area *)owner.  
+> > 
+> > owner does not have to be at a fixed offset. Can we not move owner
+> > to _pp_mapping_pad ? Or reorder it with type, enum net_iov_type
+> > only has 2 values we can smoosh it with page_type easily.  
+> 
+> I'm still confused.  I think you probably understand what this work is
+> for.  (I've explained several times with related links.)  Or am I
+> missing something from your questions?
+> 
+> I've answered your question directly since you asked, but the point is
+> that, struct net_iov will no longer overlay on struct page.
+> 
+> Instead, struct netmem_desc will be responsible for keeping the pp
+> fields while struct page will lay down the resonsibility, once the pp
+> fields will be removed from struct page like:
 
-Or `#[used]` to keep it mangled since we don't care.
-
-Cheers,
-Miguel
+I understand the end goal. I don't understand why patch 1 is a step 
+in that direction, and you seem incapable of explaining it. So please
+either follow my suggestion on how to proceed with patch 2 without
+patch 1 in current form. Or come back when have the full conversion
+ready.
 
