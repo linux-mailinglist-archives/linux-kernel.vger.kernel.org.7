@@ -1,89 +1,123 @@
-Return-Path: <linux-kernel+bounces-891489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3797C42C37
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:46:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BEC5C42C3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:48:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 778794E6C3C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:46:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 26B3934A5F8
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CB7301005;
-	Sat,  8 Nov 2025 11:46:20 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81FB1D95A3;
+	Sat,  8 Nov 2025 11:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9VmHVR7"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB212FF17D
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 11:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9556E1D5CC7
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 11:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762602373; cv=none; b=G8VtD4mkr1bJlB7OgjbV6/6cnnZHVWmcQnNul3ZkNyPVUjKmFJglQJeEImJRhgsihRuufRIQuZaLEzd4EeMRhbP4qBGY1xqvb19iG0RFZcriM8aTVCKMc7HTHTK3/Ys3SXxwpePFW4mk4ZRHyS1eREsBABSXsgyCh+l/OFVgEx0=
+	t=1762602499; cv=none; b=WXWPPgsVZ/bHmBI4f+hEh8E4Z/jN7a3qtJps09h/oQ9wLEbWBiVmbNPoX1uSg2QdgNZDZdQn6bdVC2Y705ku+zRI+i8gaXgjJyqQ5EOTzWBLX9/YcBt5ZneD0wP2Dng56N4yn+Oa1aj1HMtRR2fo+12L8Anwz9pKgzJNjW+lIGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762602373; c=relaxed/simple;
-	bh=89T+4qHUQTIhG/SFKMt6Ii4GDc1WK8TCsdeL307uyVU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rsmkcVMw51+gjgDmvci2jAu8uOjFYazP0/t4o1ejXU0WkQ/iYJ7uigtciRTEqDNKPTUyyFrh/YgpqIbY3O1uodHqg1iTMVi8X2UQdXwaldVnj/OFgUu/IHxVtE44eU2Up89u90qHxPapRD+2QpmDTa/TO2r/kWWPi8Tr6N6+xFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e7b0584c9so144013639f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 03:46:05 -0800 (PST)
+	s=arc-20240116; t=1762602499; c=relaxed/simple;
+	bh=5cdTnkkVED9/2W3bxFBK7nQFcUSBpM8zbejc4QhIme4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NiN42S9h1boel8tqFUiJQB6gQqSRf7MlNUMd2mOdDTl7v5Q9D9Jyjw3SkFhIjSZpQXUexd9+y+ugOw4oqWgo5o3ZTPN7IRvlCnh8Vf50t+E8rC7DabCugfh0Bd6g5YxJPK8drTvrGCS/6v8bPE+Wc6c2ZNl0iU75hTRQk8xXzjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D9VmHVR7; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47774d3536dso2277205e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 03:48:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762602496; x=1763207296; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TWQxduQP/C2sgZ0tZge6y0YoRp0qJh93EXdH14IqjbM=;
+        b=D9VmHVR7/4RGo1PqM68bkpT3d+lBJegKTUNIEpOGPf8AyAYKlziy1hfkrR3TE2Cu9i
+         l1zf6PoHhtUGKPbhELbJ7A30QeK6ZV9u0RnFGNnlSLnCodNhiFxuFooW7AAqIhmueKTQ
+         HVxQ0phI0z/n5zPVGw9HN9XHZzxal6GrhugvV9bl1u3yb2mIEqpabFdZb44fLfh9Rr8/
+         OhIMqGsw3J+01TWsTw1R32Sr/90xy3P2ULRm3oma5gDLAPpfjljDvj7+zp1lPouwqx5G
+         BgBj8Vb8M2hBVCWqYPASlr7Hpmdh854PdFVutxSJ51whJPAhI93dbzzmDCtcOQXsfO9Z
+         y4sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762602364; x=1763207164;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sT3nWmWtpfLwoiQ/LXrBCnymc6GSizFbMsCyBhkjSMo=;
-        b=FL+2iV7pkRiGIRBndWQ6+W692HgzF9ih8cbEi143YWC5yVNPRGH3vyWn2SV2UgYPjL
-         bY8EfJPv00+CmYAz6fm2XooIAexSEwKjPMaAwEUm4Ed2yfesV8ghmE1JJg3cMwDvkohK
-         NcP4Fgjey9ayve+uFI3dRY2AKYBSfozfitwUaIIHY/bTA6pqmpJQIRIJkrpYQ8rmZs49
-         yPzCf7qP9th+kgAHP/Tg1jjYHN+1MAx68QIWaxo/hu5AkQ6rLGLLn/sNtU4q/EzolH15
-         FgC81W7Y2VJRWkZ4mXlULM3hk5FsR9i1tydKKbOeDYfQFJGtbSLC14fLOs7d0Jf4EfmV
-         eLPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7ac5o53fNU43YzMU6sF8ZOK2Ki6ONshuKkDKQgAbgc5TA26LXqwxwbOJ/LAaxxLb2fMIyYxC95yaur00=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxic/PmahzvgBZvxZiGGRoS1DsG20t9q2qenk4TK6zInLSwreZ
-	MjRbUF1hwzgtaZqEgvGRGMXIBtM2uVafrVc3QpEprrEwG/l+OvOb6lo8jZpoJuahSUHSX/ShjZE
-	AjMvAC5M5HViuX3TpkQh5Dj7Rq07wzc1SLA3t8CfZjsqourgC9VxK7HogH9o=
-X-Google-Smtp-Source: AGHT+IF0lzmC3C5XiHZSRivjPA0W6wBCehFT2N8SafVZfF0emtOTtW0CiDs6zRdErfomW1D917I2L6HKV6ZJHX+cmO1ZDnUEfj2i
+        d=1e100.net; s=20230601; t=1762602496; x=1763207296;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=TWQxduQP/C2sgZ0tZge6y0YoRp0qJh93EXdH14IqjbM=;
+        b=cN4HiuUEufutPwtvwf/nv1Ly+5w4QXf4K83MBaCNSbm0OfbPFITWa/+TLOx7ofXwY/
+         HuMnB4KhLhaXoAE5mub6LIbdOwnds5R8tiCJ9dWO4sxgovI+h+/KFdtnDWHo25NUCymA
+         zDWDE/LxI4Vqon+DzDEDnadbpb1Y8+ivOaGxG4DmM0MO6XszDDCGxkSLju3xD+h0ls4q
+         C1VjEvLRkmJv9x3dhePRmuB29yhwj486NiyxvyK4IEgVgadiQP8+au3y0m7V6ikHTxNT
+         G4O2hnOTLAb0oMMiX3/LO2La4+fz6FjXnLOE/kF1qXPaZtDwc/OprqkVFvIEvpRFpASu
+         EYHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuO5Wt+NWEGwQUacQ9Y86WAZK7Ch1oC/2TkOFzdcZ71X6h06Qtf6GmNIzpDXDeQEInUhD3xViiSKGz4eg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYwynS2QjMaL4ny4IzLemhIDCzxabyLO80hxAGaXgKNS3pY26M
+	ohhcUMCTMsN80zT8BKj8MGngiw5Mrz7CyVQsVECw4Pd3bhDfJ2M4dUti
+X-Gm-Gg: ASbGncsvX32WclQ+e5w5YtPyPeqf7PeH2jtn1oe73/NhKyiXS3ti5Vhdkre5fnlDq6I
+	+opVT521k0OsbkwJ9ihIDEmF/F+U2YZ2fjoq1RVxgsciSVlbPFZwCLPJEpcqap1J9Wg33BJWijm
+	z6XYJnosWvwbqlyBgiMNrYYvSQJtTEZzx9y26n4vxzPHf2RQBJJ8LI15ni+6+9LBhaajGS00A/L
+	Qn/OVd3Ya1bFudiUlxyYK82L1lqxbVNj4rElzTrnmCPc8njD3S/jt3jOHHQ7sILSCFfN5SvLBq0
+	W36rtHd5Ypk65KGQtx7pEwKnw6YqyR9tf1hSzRBPMT2MinX42JoEIIPhtsj2vkyOVpqrzrcfbN1
+	fXhMfu3hrPh0etylYpCNVEYcg+V11yK5tZUcsEVVGS9Ymm+T6w0aYvpCfrDLYaHQ07Ve1zd7rHE
+	VMc0D5SqJzgehrZxVZS2LYpNfhenfVLa/BarnsUOenJ87JI2ce
+X-Google-Smtp-Source: AGHT+IHgxO1mIr8DQpSXmsqzg3ZZ+VysGIJ7PpFEGvZJqatwD9Nv+m3blSWxKLvi/w/mZvDvXnK+2g==
+X-Received: by 2002:a05:600c:6b06:b0:477:14ba:28da with SMTP id 5b1f17b1804b1-4776dc5daa2mr33610405e9.5.1762602495708;
+        Sat, 08 Nov 2025 03:48:15 -0800 (PST)
+Received: from cachyos-x8664 (202.red-80-28-106.staticip.rima-tde.net. [80.28.106.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bcd521fsm123410945e9.6.2025.11.08.03.48.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 03:48:15 -0800 (PST)
+From: Marcos Vega <marcosmola2@gmail.com>
+To: ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Marcos Vega <marcosmola2@gmail.com>
+Subject: [PATCH v4] platform/x86: hp-wmi: Moved Omen MAX 16-ah0xx board name
+Date: Sat,  8 Nov 2025 12:47:41 +0100
+Message-ID: <20251108114739.9255-3-marcosmola2@gmail.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <63905a5b-1dc5-e0d1-6c8d-e590c7e7c7f5@linux.intel.com>
+References: <63905a5b-1dc5-e0d1-6c8d-e590c7e7c7f5@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc7:b0:433:74cb:e13 with SMTP id
- e9e14a558f8ab-43374cb13d4mr7183385ab.32.1762602364207; Sat, 08 Nov 2025
- 03:46:04 -0800 (PST)
-Date: Sat, 08 Nov 2025 03:46:04 -0800
-In-Reply-To: <CAKYAXd-ycMzZ+o2wDMk4tdE8msafQ1syedsC-n19i=0Bba-x4Q@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690f2d7c.a70a0220.22f260.007d.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] WARNING in __rt_mutex_slowlock_locked (2)
-From: syzbot <syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Fixed placement of board 8D41 so its categorized adequately in victus_s_thermal_profile_boards.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Marcos Vega <marcosmola2@gmail.com>
+---
+Thank you for all the tips on proper kernel writing, I'll try to do it properly and learn for my next patch.
 
-Reported-by: syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com
-Tested-by: syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com
+v4:
+- Added trailing comma
 
-Tested on:
 
-commit:         e811c33b Merge tag 'drm-fixes-2025-11-08' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=134eb812580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
-dashboard link: https://syzkaller.appspot.com/bug?extid=5216036fc59c43d1ee02
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1258d084580000
+ drivers/platform/x86/hp/hp-wmi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Note: testing is done by a robot and is best-effort only.
+diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
+index e10c75d91f24..ad9d9f97960f 100644
+--- a/drivers/platform/x86/hp/hp-wmi.c
++++ b/drivers/platform/x86/hp/hp-wmi.c
+@@ -96,6 +96,7 @@ static const char * const victus_thermal_profile_boards[] = {
+ static const char * const victus_s_thermal_profile_boards[] = {
+ 	"8BBE", "8BD4", "8BD5",
+ 	"8C78", "8C99", "8C9C",
++	"8D41",
+ };
+ 
+ enum hp_wmi_radio {
+-- 
+2.51.2
+
 
