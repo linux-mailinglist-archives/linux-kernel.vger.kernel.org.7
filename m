@@ -1,95 +1,240 @@
-Return-Path: <linux-kernel+bounces-891246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FB1C423D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 02:30:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A53C423E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 02:36:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E6904E4102
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 01:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12F621896E6B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 01:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B41A1D63F7;
-	Sat,  8 Nov 2025 01:30:33 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A4C28935A;
+	Sat,  8 Nov 2025 01:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sJPtxveR"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA17A2E63C;
-	Sat,  8 Nov 2025 01:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92321D799D
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 01:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762565433; cv=none; b=c4t46oIOlQpD/Cj0Oy/8TlB9Yqt+OY0v6AuhS1MPo5Kf8SMxbfBQGTrhSUrwFKkbIVuWTEe3Ng6LZBJABn8xsJY2gH8+1yKO1gok+6n7f/ePdiVqTU39hc29pSSVYgED33zkzawqVrCn3sU7FW3T3njKPHlIjiOYymEPRiXbNjM=
+	t=1762565766; cv=none; b=FLW/evchLPHseeIu/3q5rB6v2BXHZnVuYIQNgpDhdOPj0FZ9GmFHE+YduQDM27dspEgE9ZbAEk7ddfh3rSI/3CIC7NHh1AhksN48EOXgnjnjvF6aIHn9fEYFwHqIHBO4gdGzb/o/UJm5lACTjAiggpgPSCxRj5oeB0zCU89kkRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762565433; c=relaxed/simple;
-	bh=aKkUT4Q8mS/5aBgMAAFiY20Lm/MC5KBt5eQW0Zxv2Uc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GNcHwROQWBMK1pvbgruHOhFkEb3wQBC4sJcw2MkaHWhka+QUzneiLqjsRDP2xk+L4WS30z0L8K6WzkwMw7R5lJVgXcyb7wiuP2ePlYBaOfB/+2/RQg64WviMCjJMk1dKHjPfMxWvN3toUe4kjT6JPapV9T7KqQ8bmB8dMaptLvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from ofsar (unknown [116.232.48.119])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 38CCD340EBA;
-	Sat, 08 Nov 2025 01:29:58 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Paul Walmsley <pjw@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Yixun Lan <dlan@gentoo.org>,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v4 0/2] riscv: dts: spacemit: add initial support for MusePi Pro
-Date: Sat,  8 Nov 2025 09:29:45 +0800
-Message-ID: <176243100596.329363.7295947572215829421.b4-ty@gentoo.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251023-k1-musepi-pro-dts-v4-0-01836303e10f@linux.spacemit.com>
-References: <20251023-k1-musepi-pro-dts-v4-0-01836303e10f@linux.spacemit.com>
+	s=arc-20240116; t=1762565766; c=relaxed/simple;
+	bh=fuyWxbBhFRzVlhEb1d7Ax5pvnMcMxgWPJBvojd6LEcA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sgyoV7pr2jlADGGSH05AiWwUV4YqfxFrDviZe5BJC+qyto9o71Dtfj5URZ4aSC1MPDj3Sea9Or8dFSwKSKzHDwblMmYu3TWlfJnH9zW8xcIl+O7LAAmDUMVvVueetcRb6du9MzNHjoAAW4vVZymcu5Q6XUZdHH8hdtaZ+PKj6Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sJPtxveR; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-297e1cf9aedso8656455ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 17:36:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762565764; x=1763170564; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u0gSVyaHm/RFZz43PnqJfIa7tkp5FemZN1Pt+86XgAQ=;
+        b=sJPtxveRIB/QtPb0+MW2+77KSTfQUZUg+Rz8TGpAsS3InNOb6UyckDYdkeAND5v9UE
+         e4qh2z5RX+KJR79kRJI2Ta/kJHtbSIGvx8bNXo3DScXvsxUPTY76EB15vQKIGT/36wsj
+         wtfxymlk5xogJiqEy6dfFrkgu2OwHFZJndy4BNSyTHoknitUGkzX2unH2PoiIfBAcTMX
+         tNaqrzRhpEh3JkvpM1MJHWar5I6DPODxr+O64ZoibPcMVwtInUojr4HDJ2sGOvYd6tC7
+         7ggdY1qi31hxqyLnKRmnVePF2VP152grAXA/JmhmA4eZIvqWXT7KQ3jt02nFiHq/BPZW
+         a2aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762565764; x=1763170564;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u0gSVyaHm/RFZz43PnqJfIa7tkp5FemZN1Pt+86XgAQ=;
+        b=iK24iaKl959Be5dYtntaetbveC0gWjw5xVeG1wnJ9nQHD9ngf2A6UR+4oGjpvYWWLl
+         FpFsKnn6RyizMJP2FvRoh/WxYBk3fN4Xu9/zTFSGuoBCfpk375tHQX2UB+R5ylhyCubm
+         PM04oIm4DGG3WUAGzLZffNwYBGYzXeuC7jxj2oTlCZ3uSWrI7ks4ardW2TprOyNMVxGK
+         DrkeQE53f6FNuSyi53WZOuvsW1gQfZU1GxVteOYthcS6uunLZF6BkfHJZIUo6DUVNYKN
+         vVmcK+iVs+r4jzl8LgXabM8DPIpVwUCwhLiEQDBcdlC5ZSARh2B9AO3oSP8kNCtNukkt
+         8kQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpH3tmROFDFDIpM+C2Ubp83G6kFTStX3E4nEaIyAgllfmDfARv4wXDIYtq3XRYKPkmgfqpZt1tX5kVuzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWB9wMGP0dJqvYDolJYxwWeBG3BcD+FFY0eHpzyuW4K54AwrBS
+	G8mMrnATeAznGchW3gNk1XO1ieQrXXhxXSZ4PFTGsUl3JSV6ySbqfnMlSU0b84ULRyzJi+0oQD0
+	DXg1Jig==
+X-Google-Smtp-Source: AGHT+IHpztq6CsL06buHflHDop5NaQ1I+bKM6en+6ybPVhUoSJG/Csnx0VRAnVSCj9mVmv1MaDNZn1NHdwg=
+X-Received: from pgac20.prod.google.com ([2002:a05:6a02:2954:b0:bac:6acd:8180])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:b715:b0:295:8db9:305f
+ with SMTP id d9443c01a7336-297e56be263mr8254205ad.34.1762565764001; Fri, 07
+ Nov 2025 17:36:04 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri,  7 Nov 2025 17:36:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251108013601.902918-1-seanjc@google.com>
+Subject: [PATCH] KVM: x86: Allocate/free user_return_msrs at kvm.ko
+ (un)loading time
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chao Gao <chao.gao@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
+From: Chao Gao <chao.gao@intel.com>
 
-On Thu, 23 Oct 2025 15:28:28 +0800, Troy Mitchell wrote:
-> This patchset adds initial device tree support for the MusePi Pro board.
-> 
-> Muse Pi Pro [1] is a single-board computer integrating a high-performance
-> RISC-V 8-core processor, storage, I/O and expansion capabilities into
-> a credit card-sized 1.8-inch board.
-> 
-> Link:
-> https://developer.spacemit.com/documentation?token=YJtdwnvvViPVcmkoPDpcvwfVnrh&type=pdf
-> [1]
-> 
-> [...]
+Move user_return_msrs allocation/free from vendor modules (kvm-intel.ko and
+kvm-amd.ko) (un)loading time to kvm.ko's to make it less risky to access
+user_return_msrs in kvm.ko. Tying the lifetime of user_return_msrs to
+vendor modules makes every access to user_return_msrs prone to
+use-after-free issues as vendor modules may be unloaded at any time.
 
-Applied, thanks!
+Opportunistically turn the per-CPU variable into full structs, as there's
+no practical difference between statically allocating the memory and
+allocating it unconditionally during module_init().
 
-[1/2] dt-bindings: riscv: spacemit: add MusePi Pro board
-      https://github.com/spacemit-com/linux/commit/2cc22890635ded33856e2761b780688f54a49393
-[2/2] riscv: dts: spacemit: add MusePi Pro board device tree
-      https://github.com/spacemit-com/linux/commit/0ee59934662dfb89b43a8392e64ac4880c2fca88
+Zero out kvm_nr_uret_msrs on vendor module exit to further minimize the
+chances of consuming stale data, and WARN on vendor module load if KVM
+thinks there are existing user-return MSRs.
 
-Best regards,
+Note!  The user-return MSRs also need to be "destroyed" if
+ops->hardware_setup() fails, as both SVM and VMX expect common KVM to
+clean up (because common code, not vendor code, is responsible for
+kvm_nr_uret_msrs).
+
+Signed-off-by: Chao Gao <chao.gao@intel.com>
+Co-developed-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/x86.c | 46 ++++++++++++++++------------------------------
+ 1 file changed, 16 insertions(+), 30 deletions(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 9c2e28028c2b..24dba35f3217 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -212,7 +212,7 @@ struct kvm_user_return_msrs {
+ u32 __read_mostly kvm_nr_uret_msrs;
+ EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_nr_uret_msrs);
+ static u32 __read_mostly kvm_uret_msrs_list[KVM_MAX_NR_USER_RETURN_MSRS];
+-static struct kvm_user_return_msrs __percpu *user_return_msrs;
++static DEFINE_PER_CPU(struct kvm_user_return_msrs, user_return_msrs);
+ 
+ #define KVM_SUPPORTED_XCR0     (XFEATURE_MASK_FP | XFEATURE_MASK_SSE \
+ 				| XFEATURE_MASK_YMM | XFEATURE_MASK_BNDREGS \
+@@ -575,25 +575,14 @@ static inline void kvm_async_pf_hash_reset(struct kvm_vcpu *vcpu)
+ 		vcpu->arch.apf.gfns[i] = ~0;
+ }
+ 
+-static int kvm_init_user_return_msrs(void)
++static void kvm_destroy_user_return_msrs(void)
+ {
+-	user_return_msrs = alloc_percpu(struct kvm_user_return_msrs);
+-	if (!user_return_msrs) {
+-		pr_err("failed to allocate percpu user_return_msrs\n");
+-		return -ENOMEM;
+-	}
++	int cpu;
++
++	for_each_possible_cpu(cpu)
++		WARN_ON_ONCE(per_cpu(user_return_msrs, cpu).registered);
++
+ 	kvm_nr_uret_msrs = 0;
+-	return 0;
+-}
+-
+-static void kvm_free_user_return_msrs(void)
+-{
+-	int cpu;
+-
+-	for_each_possible_cpu(cpu)
+-		WARN_ON_ONCE(per_cpu_ptr(user_return_msrs, cpu)->registered);
+-
+-	free_percpu(user_return_msrs);
+ }
+ 
+ static void kvm_on_user_return(struct user_return_notifier *urn)
+@@ -656,7 +645,7 @@ EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_find_user_return_msr);
+ 
+ static void kvm_user_return_msr_cpu_online(void)
+ {
+-	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
++	struct kvm_user_return_msrs *msrs = this_cpu_ptr(&user_return_msrs);
+ 	u64 value;
+ 	int i;
+ 
+@@ -678,7 +667,7 @@ static void kvm_user_return_register_notifier(struct kvm_user_return_msrs *msrs)
+ 
+ int kvm_set_user_return_msr(unsigned slot, u64 value, u64 mask)
+ {
+-	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
++	struct kvm_user_return_msrs *msrs = this_cpu_ptr(&user_return_msrs);
+ 	int err;
+ 
+ 	value = (value & mask) | (msrs->values[slot].host & ~mask);
+@@ -696,13 +685,13 @@ EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_set_user_return_msr);
+ 
+ u64 kvm_get_user_return_msr(unsigned int slot)
+ {
+-	return this_cpu_ptr(user_return_msrs)->values[slot].curr;
++	return this_cpu_ptr(&user_return_msrs)->values[slot].curr;
+ }
+ EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_get_user_return_msr);
+ 
+ static void drop_user_return_notifiers(void)
+ {
+-	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
++	struct kvm_user_return_msrs *msrs = this_cpu_ptr(&user_return_msrs);
+ 
+ 	if (msrs->registered)
+ 		kvm_on_user_return(&msrs->urn);
+@@ -10077,13 +10066,9 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+ 		return -ENOMEM;
+ 	}
+ 
+-	r = kvm_init_user_return_msrs();
+-	if (r)
+-		goto out_free_x86_emulator_cache;
+-
+ 	r = kvm_mmu_vendor_module_init();
+ 	if (r)
+-		goto out_free_percpu;
++		goto out_free_x86_emulator_cache;
+ 
+ 	kvm_caps.supported_vm_types = BIT(KVM_X86_DEFAULT_VM);
+ 	kvm_caps.supported_mce_cap = MCG_CTL_P | MCG_SER_P;
+@@ -10108,6 +10093,8 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+ 	if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES))
+ 		rdmsrq(MSR_IA32_ARCH_CAPABILITIES, kvm_host.arch_capabilities);
+ 
++	WARN_ON_ONCE(kvm_nr_uret_msrs);
++
+ 	r = ops->hardware_setup();
+ 	if (r != 0)
+ 		goto out_mmu_exit;
+@@ -10180,9 +10167,8 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+ 	kvm_x86_ops.enable_virtualization_cpu = NULL;
+ 	kvm_x86_call(hardware_unsetup)();
+ out_mmu_exit:
++	kvm_destroy_user_return_msrs();
+ 	kvm_mmu_vendor_module_exit();
+-out_free_percpu:
+-	kvm_free_user_return_msrs();
+ out_free_x86_emulator_cache:
+ 	kmem_cache_destroy(x86_emulator_cache);
+ 	return r;
+@@ -10210,8 +10196,8 @@ void kvm_x86_vendor_exit(void)
+ 	cancel_work_sync(&pvclock_gtod_work);
+ #endif
+ 	kvm_x86_call(hardware_unsetup)();
++	kvm_destroy_user_return_msrs();
+ 	kvm_mmu_vendor_module_exit();
+-	kvm_free_user_return_msrs();
+ 	kmem_cache_destroy(x86_emulator_cache);
+ #ifdef CONFIG_KVM_XEN
+ 	static_key_deferred_flush(&kvm_xen_enabled);
+
+base-commit: 9052f4f6c539ea1fb7b282a34e6bb33154ce0b63
 -- 
-Yixun Lan
+2.51.2.1041.gc1ab5b90ca-goog
 
 
