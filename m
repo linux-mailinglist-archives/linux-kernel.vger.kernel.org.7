@@ -1,95 +1,54 @@
-Return-Path: <linux-kernel+bounces-891505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C155C42CEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 13:36:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C670EC42D07
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 13:40:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4F41734A87C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 12:36:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DF19188DC2A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 12:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969E4257AD1;
-	Sat,  8 Nov 2025 12:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SbZfQk2p"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F4B25A630
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 12:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6711F257821;
+	Sat,  8 Nov 2025 12:40:41 +0000 (UTC)
+Received: from zg8tmty1ljiyny4xntuumtyw.icoremail.net (zg8tmty1ljiyny4xntuumtyw.icoremail.net [165.227.155.160])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03AA17BA6;
+	Sat,  8 Nov 2025 12:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.227.155.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762605381; cv=none; b=FWFk/qBh0Yg5U9jZ0KPyTIJtsDfjDXuvnoZjLiMR+V1hSFfUe6+K7z7D6yRQ3c6/jveMkrtHzlu9Xpkb0lnr0+7cxKdRKvmH8vJmbdspRdJt3VzQU29wJDOCvh0qzh8WbKqxD0+jtFPXlL8AubV2COX842blLjs0bEWCtPga54s=
+	t=1762605641; cv=none; b=nX2AYpiE4AUZJombWDVSd5fTlFjEq2B0GCJS/i9wVcwzmdoGI1hZGZhC0NeV2thW3UOq1Yacb3fqfpfMIRvLEo7pwkSMrv3orGpkRO67P6OJq6SwHALdk1unYpQCpSjbFPrEFXjV8133qnU/mAT8ng8bgonGFn8kPndPZuCA7Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762605381; c=relaxed/simple;
-	bh=uRVHkf74PN+NsgRpPhLx88tlLbm6OItPRVdDekAJNfg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WbFLVXCwBaFG2B6AN/CmgrfEhaG6TskJW2uVq0b95uzfpD5wGD2Wvd5hhCZcWBolJbol+C18hStzsUP0EqEai07Ej9aw1qZ3RtIqePix5G3l9TPyW3vjrP1cIltwUw0sL7Z8vYD7WDTwJ6dGwOA2T6+QcZ2m1xUfCDs54F/NVdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SbZfQk2p; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297cf964774so1748805ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 04:36:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762605378; x=1763210178; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kb8819sRG4CMNnKbcxDJ79PlxuoIzXm9ZoWrsp3orTM=;
-        b=SbZfQk2pS/PzjUrbA9LceOfFNNiwGZDO1+ZftxUBKKIigRfxtITCbQjrXobUAO78vj
-         XPGhYREsChQoWpuSCejJa3n+PhWkXF1kpIDbn5mB25xct4cBcl9dAfeWxCC2eKpbL2Ue
-         xyt3gGbaCLYA+6okZ8tQw+KQD+Anm9ts+Osvq5DmoSOTz/xiPr8tnsS9cpGcW4HAA8HM
-         sPK4lBckeVNoB5Ghp/9vV8sZaa2N96HRxpapjCAnIWe4KiLWsp8q/6RlGtllrafXwyRf
-         fApRQquKHVRb36aVyydfMxRxUzhVi5fEfyTtGDR+sqvIZe/mDHaQfypZzBY/V+P9Qxwa
-         9Raw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762605378; x=1763210178;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Kb8819sRG4CMNnKbcxDJ79PlxuoIzXm9ZoWrsp3orTM=;
-        b=pHbvH6DB3iVBo73vbTSeYgHuez7kdlnQiU7pej0biAW4ob403cgvRmXy6HbKjayUN/
-         NrzXqWx+IGlurL3JcWn4+I7Bof6s7SnZ6Q92+ReQ3RtrbV401Z1YpyIZEGfUcFMuxg/Q
-         X/g9a4lfLbeXbBi2a0R0Y7jib/IGotYALMciBprPEKqAj/tApAaCHKvk9Js/zw8JJHvh
-         TiHKdIXGX4Zgzh50sB4pcGUoGAzh9DbCa024Rg9CH7eNxsf5YI3VafiVDzavbXYoji9D
-         vBY57nAeMlN6D9SOeXJ0j4cY1xbyk8vu0bGUi+YS0QyPeG5/s4GdVgnMyiQ+x46WYDzX
-         7FpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8juYPEEPefiR1nxTXCWw254IbCJ873q5GSYsQVv+Ix1oHnz3lamnaCytw22KBJw3dM2Gu+nEzw3jiXps=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/EIQOtJPNrSyGzEzY5tbnBYwbmeWwU43TGfuKaDObWih6Ojtn
-	+kWrCPBN7YmEgdLQtEzNu8FV8PSej29IwCXehs2si/lIw9pR99m0X6GaiDHgT0a+a1g=
-X-Gm-Gg: ASbGncs3LjCIxPGW9rDGI84bmYj65jwZBnM6Vj5zs7vx54Mwp0dBYqSvrJPtSTXA2kw
-	AazkV8D8EgmAfaoMUVYxd9CDoPjwzXrnDLgLVphfLr5icQz4AHIA4mnFfEw4jRDEbhPoVlm7ajo
-	2bSZV6NGCuhLWjfBbZz2QRHj/+lHdLwxm9E/V9aH1iBhDumUpuRzLB9aQsx1GMBJTDDJfjwAG1M
-	Pbkvgk16dH464tzLc9ifpmtrWL+UST1U4tkaI/oyNH7NCWEWD7yYJYbj7hvfpAv3lXq4lCL2Ayg
-	H8+b0dV7rsSkx0Pb137RsXa6XaUHddg+y435zIFKD6gTMBUoonY5qA5mtu/1BUsjrUbXfOEyyP+
-	+SHQqxrlpOY3rndcjeKAWEaLuU53Wc5yHmkrrSjqICcDtkUVdVMNSwUvJ4/LNaOAQmEVecSHdwk
-	qGMj7QBQdEUgmxxtaF7xsJz4NoLfRwY9S/RcwYVB4EQ4EL+3d9khkkkQRg3s7f0CM8y8BKUJs3q
-	QieP/OGyHk=
-X-Google-Smtp-Source: AGHT+IHbxRfdUT4HVX6GH+hFiYMSSiTWIZoTQpxma32JqxsfSwUnqkfo6IFizDS0NzlaG/f8uasiNg==
-X-Received: by 2002:a17:902:e847:b0:296:549c:a1e with SMTP id d9443c01a7336-297e5649f22mr15677755ad.3.1762605378467;
-        Sat, 08 Nov 2025 04:36:18 -0800 (PST)
-Received: from poi.localdomain (KD118158218050.ppp-bb.dion.ne.jp. [118.158.218.50])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba901959a47sm7648305a12.28.2025.11.08.04.36.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 04:36:18 -0800 (PST)
-From: Qianchang Zhao <pioooooooooip@gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>
-Cc: gregkh@linuxfoundation.org,
-	linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	security@kernel.org,
-	Zhitong Liu <liuzhitong1993@gmail.com>,
-	Qianchang Zhao <pioooooooooip@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] ksmbd: vfs: fix truncate lock-range check for shrink/grow and avoid size==0 underflow
-Date: Sat,  8 Nov 2025 21:36:09 +0900
-Message-Id: <20251108123609.382365-1-pioooooooooip@gmail.com>
+	s=arc-20240116; t=1762605641; c=relaxed/simple;
+	bh=UJyf2c9itj+3wTVrRyyU4Rrap69UeR2cIkNhyd3t/yc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=glSfHeGK6ir0cwC/+P4M9RDdcwI/is1rkiqfHRGV5Up4IE5LgWZLK7c0Fq4JZe3uCIZU+9rPlufLhskXpqVTe9KGi7qVfHOt0xqj9/RAdVUJ4qZ44fhBQyp3091+A7TZDI9cRbZEhv2juaGtHzkkVosxNKiAl+928vRiHjbEPeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=165.227.155.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from zju.edu.cn (unknown [218.12.19.144])
+	by mtasvr (Coremail) with SMTP id _____wA3h7AuOg9puF92Aw--.36516S3;
+	Sat, 08 Nov 2025 20:40:15 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [218.12.19.144])
+	by mail-app3 (Coremail) with SMTP id zS_KCgCXmm0oOg9pT2gFBA--.8637S2;
+	Sat, 08 Nov 2025 20:40:13 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	dmitry.torokhov@gmail.com,
+	kuba@kernel.org,
+	alexander.deucher@amd.com,
+	pali@kernel.org,
+	hverkuil+cisco@kernel.org,
+	akpm@linux-foundation.org,
+	andriy.shevchenko@linux.intel.com,
+	tglx@linutronix.de,
+	mingo@kernel.org,
+	Jonathan.Cameron@huawei.com,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH 0/2] Input: alps/psmouse: Fix UAF bugs and improve workqueue synchronization
+Date: Sat,  8 Nov 2025 20:40:03 +0800
+Message-Id: <cover.1762604516.git.duoming@zju.edu.cn>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2025110803-retrace-unnatural-127f@gregkh>
-References: <2025110803-retrace-unnatural-127f@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,72 +56,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zS_KCgCXmm0oOg9pT2gFBA--.8637S2
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwEEAWkOS38IiQAcsJ
+X-CM-DELIVERINFO: =?B?WvS4LAXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
+	CR19gUWg51OTK/19Jr+UF/FUxf8szjJzbpdnFV7SDfFD2jLqDRoAX6i8wAOm9LApB0Tvsr
+	LzoIPSHD6BgCJK/90564eUQdYk7E7xu/5wSiWafEbsQogZ6gd+oVb3CMSZzrqw==
+X-Coremail-Antispam: 1Uk129KBj9xXoWrZw4xJw1DZw4DXF4kKFykJFc_yoWDGFg_ua
+	y8uryvgw40vwnI934UCr43urWxt3Z8XFWkCr4rKa4qqryUJr9rXFWku392vr18Xr48tFnr
+	G3ZIg34fArnIgosvyTuYvTs0mTUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbTAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7xvr2IYc2Ij64
+	vIr40E4x8a64kEw24lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I
+	3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxV
+	WUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAF
+	wI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcI
+	k0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j
+	6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7xwIDUUUU
 
-ksmbd_vfs_truncate() uses check_lock_range() with arguments that are
-incorrect for shrink, and can underflow when size==0:
+This patch series addresses use-after-free bugs in the ALPS
+touchpad driver and enhances workqueue handling efficiency
+in the psmouse subsystem.
 
-- For shrink, the code passed [inode->i_size, size-1], which is reversed.
-- When size==0, "size-1" underflows to -1, so the range becomes
-  [old_size, -1], effectively skipping the intended [0, old_size-1].
+The first patch fixes a critical use-after-free race condition
+in the ALPS driver where dev3_register_work could be scheduled
+after the alps_data structure was already freed. This was caused
+by insufficient synchronization during device disconnection,
+where flush_workqueue() couldn't prevent subsequent work item
+submissions.
 
-Fix by:
-- Rejecting negative size with -EINVAL.
-- For shrink (size < old): check [size, old-1].
-- For grow   (size > old): check [old, size-1].
-- Skip lock check when size == old.
-- Keep the return value on conflict as -EAGAIN (no noisy pr_err()).
+The second patch optimizes the psmouse disconnect path by replacing
+flush_workqueue() with disable_delayed_work_sync() for better
+efficiency and robustness.
 
-This avoids the size==0 underflow and uses the correct range order,
-preserving byte-range lock semantics.
+Duoming Zhou (2):
+  Input: alps - fix use-after-free bugs caused by dev3_register_work
+  Input: psmouse - Replace flush_workqueue() with
+    disable_delayed_work_sync()
 
-Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
-Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
----
- fs/smb/server/vfs.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ drivers/input/mouse/alps.c         | 1 +
+ drivers/input/mouse/psmouse-base.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index 891ed2dc2..e7843ec9b 100644
---- a/fs/smb/server/vfs.c
-+++ b/fs/smb/server/vfs.c
-@@ -825,17 +825,27 @@ int ksmbd_vfs_truncate(struct ksmbd_work *work,
- 	if (!work->tcon->posix_extensions) {
- 		struct inode *inode = file_inode(filp);
- 
--		if (size < inode->i_size) {
--			err = check_lock_range(filp, size,
--					       inode->i_size - 1, WRITE);
--		} else {
--			err = check_lock_range(filp, inode->i_size,
--					       size - 1, WRITE);
-+		loff_t old = i_size_read(inode);
-+		loff_t start = 0, end = -1;
-+		bool need_check = false;
-+
-+		if (size < 0)
-+			return -EINVAL;
-+
-+		if (size < old) {
-+			start = size;
-+			end   = old - 1;
-+			need_check = true;
-+		} else if (size > old) {
-+			start = old;
-+			end   = size - 1;
-+			need_check = true;
- 		}
- 
--		if (err) {
--			pr_err("failed due to lock\n");
--			return -EAGAIN;
-+		if (need_check) {
-+			err = check_lock_range(filp, start, end, WRITE);
-+			if (err)
-+				return -EAGAIN;
- 		}
- 	}
 -- 
 2.34.1
 
