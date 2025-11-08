@@ -1,111 +1,84 @@
-Return-Path: <linux-kernel+bounces-891497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA4FC42C82
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 13:08:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6C9C42C91
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 13:09:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ABBA3AEEE4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 12:08:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C3094E5592
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 12:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B7D2E7186;
-	Sat,  8 Nov 2025 12:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1982FFFB6;
+	Sat,  8 Nov 2025 12:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IbZqLFLJ"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F23qxnQc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0EB1D5CC7
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 12:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E006258EDE;
+	Sat,  8 Nov 2025 12:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762603709; cv=none; b=jzMuarQU5SAJVo8TjHadqGp5tPk0MYqzlIcsXSqvA+TZE8RO9Zj/aaA+YJjLZ4r+py+eW+HaAeoMYBQsdPXNvmcn744cl5qEi4QEKyw1sPOC6mbm9fWED3TQFmdLO05RKKf5IwxCYofzTMPPeCoao7LjWFPSG/3suw4/+e4d6Fk=
+	t=1762603759; cv=none; b=mUdmu+dFm3jSKwTbjTRwjPso0SlqsChkvt3dIYy+8tzSMVwDUfBKuhtD3btDq6PGaRsJ128Vo2aoZ3ElAAaO8lSC7NTja6+aa+1+i8PNIbSH0aOXwj48Dcob+JW48cBVRexMMeE1VCIpgrlZIlDfTRaXP0xj3wgUCWlk6cIHKqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762603709; c=relaxed/simple;
-	bh=UeAuYzp5w/kNpO2Y1lfqmjD+AzszZK30e4xHApd0hnw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tVIua4qOWOVIhkdHdUOS+eq7MSP7z9C4sBIbqKYrP8xWufJiz4sH3eZ4mYy+TnmwE+RgY6+lxry4V3ttXX0nF+0Zo2oEcdtrPF3yOaRa1z+pHHNNk27avJEWze5TbtXox6111HHa1fX5+ohKrJIohkKwP7Y2rg+cU0iNVsBPYzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IbZqLFLJ; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762603705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iNDhGraN2FxVWRX/u8N3yNNBJFy+JEcFlHyTlUoRMYM=;
-	b=IbZqLFLJTEcf18ziOrKOLp2f38virq4Y5Te/y2vBm7fmLx+BfN04R1RPXPPivPXKKnzU5H
-	FMrgIcatDY2+7JNwAQYN32r9Pw7pSLWeBynxkg6pRMe/p2Ck+cEwLZZsXqgBoG1EPngkX4
-	BC//RJmpEjUdKZpeCX145RHDu5qD5wA=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Nick Terrell <terrelln@fb.com>,
-	David Sterba <dsterba@suse.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] crypto: zstd - Annotate struct zstd_ctx with __counted_by
-Date: Sat,  8 Nov 2025 13:07:40 +0100
-Message-ID: <20251108120740.149799-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1762603759; c=relaxed/simple;
+	bh=l/wR/w2JeNcCn+Q/4CiTEWMUzEWNSmOqLkW7J+H1bT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osrbKbzNWh505exfWV+tnFFKE04FK0k9v38fD/Fzk3+ueF7Xp6C0KtCyKRx6Bu0QWPT0lMm9v8faWJFpyfcTcLuM6DbYl6Ix0zYELFd4LccYNtJXw0Av94QKPfjpzZJ37jqeUdg61oRaijz0Y+GcqS99C/OrmE3bQrwKfgTFXR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F23qxnQc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 309ABC4CEF7;
+	Sat,  8 Nov 2025 12:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762603758;
+	bh=l/wR/w2JeNcCn+Q/4CiTEWMUzEWNSmOqLkW7J+H1bT8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F23qxnQcAVA1jVlpxV6Pq37CsMqrIvX7tlOstRiin/g/axLJkhQwuI548w4SJtW4q
+	 0MBRPa5o5Yposib3JkJzmbyb2z2EBVmz6n28CxlbFMEyB4xLIr3fNHPnN/qkWP504+
+	 vRSZdg2yeyWW2zSYcldiOPBG5EbEf2gcCEkrYyF5aIH015+VRGMV+GSx7FbkDVGh76
+	 ZeXwJLkqxCRfKfybbpgXmMqKxXJu0DtLT6Z8r/EkKWkIjwUf49qYW6hdcLc2H0an9w
+	 +zhwkadFPc65FHSqdm0ULpFBJ3052Sryii0zjrBoi1hNCYUvqui1t6DSbTckR4ksq5
+	 QmsnxohfX+9sw==
+Date: Sat, 8 Nov 2025 13:09:16 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: interconnect: qcom,sm6350-rpmh: Add
+ clocks for QoS
+Message-ID: <20251108-evasive-illegal-mayfly-fd8675@kuoka>
+References: <20251107-sm6350-icc-qos-v1-0-8275e5fc3f61@fairphone.com>
+ <20251107-sm6350-icc-qos-v1-1-8275e5fc3f61@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251107-sm6350-icc-qos-v1-1-8275e5fc3f61@fairphone.com>
 
-Add the __counted_by() compiler attribute to the flexible array member
-'wksp' to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+On Fri, Nov 07, 2025 at 05:08:47PM +0100, Luca Weiss wrote:
+> Add the clocks for some interconnects to the bindings that are required
+> to set up the QoS correctly. Update one of the examples to aggre2_noc to
+> have an example with clocks.
+> 
+> Also while we're at it, remove #interconnect-cells: true as that's
+> already provided from qcom,rpmh-common.yaml.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  .../bindings/interconnect/qcom,sm6350-rpmh.yaml    | 65 ++++++++++++++++++----
+>  1 file changed, 54 insertions(+), 11 deletions(-)
 
-Use struct_size(), which provides additional compile-time checks for
-structures with flexible array members (e.g., __must_be_array()), for
-the allocation size for a new 'zstd_ctx' while we're at it.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- crypto/zstd.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/crypto/zstd.c b/crypto/zstd.c
-index ac318d333b68..ace7a82ea45a 100644
---- a/crypto/zstd.c
-+++ b/crypto/zstd.c
-@@ -10,6 +10,7 @@
- #include <linux/mm.h>
- #include <linux/module.h>
- #include <linux/net.h>
-+#include <linux/overflow.h>
- #include <linux/vmalloc.h>
- #include <linux/zstd.h>
- #include <crypto/internal/acompress.h>
-@@ -25,7 +26,7 @@ struct zstd_ctx {
- 	zstd_dctx *dctx;
- 	size_t wksp_size;
- 	zstd_parameters params;
--	u8 wksp[] __aligned(8);
-+	u8 wksp[] __aligned(8) __counted_by(wksp_size);
- };
- 
- static DEFINE_MUTEX(zstd_stream_lock);
-@@ -44,7 +45,7 @@ static void *zstd_alloc_stream(void)
- 	if (!wksp_size)
- 		return ERR_PTR(-EINVAL);
- 
--	ctx = kvmalloc(sizeof(*ctx) + wksp_size, GFP_KERNEL);
-+	ctx = kvmalloc(struct_size(ctx, wksp, wksp_size), GFP_KERNEL);
- 	if (!ctx)
- 		return ERR_PTR(-ENOMEM);
- 
--- 
-2.51.1
+Best regards,
+Krzysztof
 
 
