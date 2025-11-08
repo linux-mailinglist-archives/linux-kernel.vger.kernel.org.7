@@ -1,308 +1,206 @@
-Return-Path: <linux-kernel+bounces-891624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B6EC431DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 18:28:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A80C431CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 18:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C4734EC292
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 17:27:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318C93A4FA9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 17:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C983258EF6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE95253F12;
 	Sat,  8 Nov 2025 17:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="J0yOTouM"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013059.outbound.protection.outlook.com [40.93.201.59])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EA51gMXP";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Hcffhh3/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962FF24886F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018572561D1
 	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 17:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762622813; cv=fail; b=F+GsrA12pNILVOU1DVmZLvF/qe8vBCm7dq5WIGmvENIP48QwIK0vCAk+h1ihCPSbuo6oD88bSRnYkooIhdFjEs32nuSq2jD326XhAg6Qdn8ELX27mIq+Tu9k8rmSSNW6ciAch3SKSZaRvP0RHS30tW2jRLm7ceaY0QUcbltxjb0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762622813; cv=none; b=aSWexF7esfSjtBxhSwp+YFlIu9PQ11CsRMV2x89lhjBTvBsU4m3EHf01qDooI7MVWAhOPbXi6Jyd11tAlJT6BXR3h1EcKsr+UQNRJmvwbl70jUCXr7Vaemsuoho1vDKtVJXKoXB5bQK8krdzKGwiM4YlMm0vhz5nZHeT+Bxl8TQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762622813; c=relaxed/simple;
-	bh=/2noZc922M/LtRHXUsiuJsY8jtVOoT53WFSxWCvYM5g=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=SWyuuW1+N0sq2XD1dtPgU9Tgnh52T9fTS1Vr3A3/RsY6seQUfzL3edTcPC2Imd/Ox6FLouPvHmIaeFptifB8wygcFrA6eyo51JTsTtjH0FeafpDY4jnv/cwofMWWcYDnu+Z8I9AWPptBjBEmUrqf98I9fEN1gi45TsBNXPhTfo4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=J0yOTouM; arc=fail smtp.client-ip=40.93.201.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xFu+SKfkwiWJZemUwtfhGO64XppURdAQa0MMotiuIbh3g4sAZlEQ4qBLVCgUaBpaf5vkRwiE2Qc+YLt+9uK7N15TmYOAnpEORUUgTmDsUTwXO+qJ4lsGDPKnIIIGJ6UxlywkkP7JOpC5iDKvsMebqpDz0I5xG61tWr8yMMPOmximsuzzKxpwE5Kpv4XmWFZKOBW4wYqh/aSWBysCysp8Mdo50xvmQ2egCttXVe5j2XkocntKg5xG5t94uOavKoKjtcxBvOpHupgu8f19ktln6doOmUoFmDw6Go1SJjqCDgL6mU+Rn+XdN/sw3EzOpSWZtP7MsC/7Tqpm1CpI4fCC6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wiNpzCiYISvRZFrAbx3s7ozW6GgsfxHkUN40F14pCxQ=;
- b=AGDEE+85UpKyp17JAieRUZh1RlCJRrtSbfF2uM/oRCLdepyt9rLkAR6hEmxmEN9b/t8gL9JA/PiAXYddlUgrMtxBevGmKO5sEifJoUGwZkBIppOKtIJM5RbhfFgat+TXNv6/NGHt64hBKQhxH1/9JnHH9DpLtKlqPQa+TNFlbLGuFxcvzOwNX3wZqUKVJixGRZKdEcdfjVYBzo+I/UGcIU73e2jKv7G5PhaTm9cg7tqItNHwv3PP7ZwMTaf5C6VOKerUcKyrokbJ2acMNB3wCdvJQl3UOV1pNT2v/mcB1jxgVoi7MKfv2nRqCyGVYOQ1TR15cdBLKmCQ5n011X4MUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wiNpzCiYISvRZFrAbx3s7ozW6GgsfxHkUN40F14pCxQ=;
- b=J0yOTouM0thpExBJfJaQwt1aAW6cRHY32uxSl/UoShjNPquQJWVCg2ZXYPFildK/ZpypOOxbZKTUb2HnvZgm8zJZ9QBI63O45q5UaGKIYgGjRDO7lBeYtcu7Oc0NfZQl4I2QzlHdjVr7ZlZrrPUzqFggr/9MxgADIaofwyMMugk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- SJ0PR12MB6992.namprd12.prod.outlook.com (2603:10b6:a03:483::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Sat, 8 Nov
- 2025 17:26:49 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%7]) with mapi id 15.20.9298.012; Sat, 8 Nov 2025
- 17:26:49 +0000
-Message-ID: <62ba61a5-d172-400e-beb5-e593297129ef@amd.com>
-Date: Sat, 8 Nov 2025 22:56:38 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 15/16] iommu/amd: Refactor logic to program the host
- page table in DTE
-To: Jason Gunthorpe <jgg@nvidia.com>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: nicolinc@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
- will@kernel.org, joro@8bytes.org, kevin.tian@intel.com, jsnitsel@redhat.com,
- iommu@lists.linux.dev, santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
- jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
- wnliu@google.com, gptran@google.com, kpsingh@google.com,
- joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
-References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
- <20251021014324.5837-16-suravee.suthikulpanit@amd.com>
- <20251023130833.GF262900@nvidia.com>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <20251023130833.GF262900@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA5PR01CA0035.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:178::11) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	bh=Hvpw+pRntckNWq+r2W3D6IoCt2L6QAauNS44X9epUro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rt7fmH+nyZ9vv6gpg569o4uSb5rQdQhgpM/zXC7x4rQdEGatFHPQ7yX6DXLX0QF6/AaKZQRcFH35WF9TII1ld+aean9CYzh5kqT6DEbE7+4AQWQHqi7IsvZ+2fv/+mTsizB1bJ8uuHhuKtwwMXLv9Kljtx7qyYdTyg5QBCnmmGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EA51gMXP; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Hcffhh3/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A88Pr1v1247216
+	for <linux-kernel@vger.kernel.org>; Sat, 8 Nov 2025 17:26:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=2umMsr4S5HW5lXJ3fQAZdAbM
+	0Mw1K+JPW/3AzeFNEq0=; b=EA51gMXPovcwpq9qK8cYNwZLshlbBjwspo/7m3Ll
+	uANgeVw/VlXUqn2ydVieNhIqD7MKH7kI1EHrIt8conl34UFFZtkZfWC8vmE46ekt
+	uWz8HfcPwz4ys3sb/oRKIrtL4yi8IdAskRLQl/KI6pTQDHeByOrwfa5GIKK8rVQE
+	tikjktwBN65v194ZI1r2oilp3Yi9TrLg9NQGa/hJJMpnsf6SnQ6L/TeB29H+TNSv
+	Sdm0EEr3LoYPQkm1BoNqnWTGEmJnPwNygNtSpTzMOkIxiDbWC/l/a54ImqV6q1A1
+	lHz8xKisS79LScPkMYf/DEitkDmcE6qURChTdHJhjTUUyA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a9y56rvtu-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 17:26:50 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4eda627f784so9783851cf.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 09:26:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762622809; x=1763227609; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2umMsr4S5HW5lXJ3fQAZdAbM0Mw1K+JPW/3AzeFNEq0=;
+        b=Hcffhh3/QkRYaaiZJUckhbclbt6olvYA68YEo6T8I/LJ5WDcbtdw4pOzNckKPm9OUI
+         bzJ/cRYHu92L6iW0P/kb/nm3bR/hP4vmhhUwjehGKHC5wSmAtADMy3Wl8LtQEd2qqd97
+         Zux2v9c4XUdMY876JpEjtaO5XpAHS7+N0fyJ1QY0lDqPv60FfFQa/ODDyNoLEn5hQ9Zd
+         tmznVBWhxRoDxI+Eh04eLhM6nkV0Orr2Ve5hnSXo8zhQrRjZi2qjsEFcIbX9en0K0Ux3
+         qLK11j95HUOqI73nuBEoasQQ/MaIrC8KsrWKtj5saRoKo6DcvBKqsupc55x64ojDpFgo
+         O3Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762622809; x=1763227609;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2umMsr4S5HW5lXJ3fQAZdAbM0Mw1K+JPW/3AzeFNEq0=;
+        b=E2AeX8OohaeTwO/HgQ6RwExUGIFfJ8b34V+/vIQZmBt+xk5JqUS08b22wjvH4ij5DM
+         4wYKIcc17FRCJE4E5+zFH3XvOLUxTiQNTmZKEXe5ZQgWn6QoWa0bzxzG1/k3Du7vBDUy
+         PXqtXjDQFsw9jrX1VpRcJ/GHpROkeajQ54XYRjs4up5atNpkutbxUXPXmws02x+/7gzx
+         LS4HHT5Vi8Uj54Vcr4AKzaa9rVzNLi/wajlgpwvJtmjOztApwRhwX6SQLPzHhXhRYzOK
+         tN6VvNyp2N20YXTif1EtKfudROB0y7mEylQUj+g/N17NeEbAphrQcW/Iz0iQmtyiBa5a
+         gPow==
+X-Forwarded-Encrypted: i=1; AJvYcCV2fKgNV4iQDnRGrEPN+EAVZQv+j/t7JVe9HdGj42Kbpk2TmCnYo9APrQNnX3qHalmqzww/qXE6K21xBos=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvw0Z44VSo4I9h05/+WnGL/Dh+1GZyj6tvUrFXKlRSoqEbOFhI
+	Zl+e3MjKaDlo6vSoeT4eAogVz9tGlcx5zEuxwG3RW//UX29PHpn19RZGmaj6hYfjQNKpFhJQZeo
+	lz4kyFd9MpcVUGP+GtqpggYsI+tZ0UFUATrUzcwsXNgIoSLR33ZLk9rjPA3XXX8HrJzM=
+X-Gm-Gg: ASbGncvGOCjaEA64fg5YkxeYQYvQMcvkY1oZpbYwME30eYqLi6yZLDo2FzRaHbIQAYi
+	MRLJMCYOa7Z6j8X7wLjqOX8ewhl7iF1JRDHU38d5drg2UhMvQtXAxtZ03UOIcOX7lLBDLZn2wr7
+	zs0fTT8XV9S4zqyKoQ9oWgSk+UapUeTyjjoXBI+n2bLJy9ZumdSyQm7hrnXBeVUtvEL+Cpyhw2T
+	bsosQbu4BjaGUaatqrtt5IPGTaDEspjoI5iWVFRkUnPTDKBLr79A5I92pzQlrWdom01kFjOsJrZ
+	aSD1gRbUQQIOauraYV6seBvKgeWD3Ww3Xwt4apPqUJr0jtjMpuH2ocS3uyVb5UuQ1WJrqfGsNWS
+	1f/eIo2lVKGPNp1BrBR+AV5QL+3YG8udyz0dVjkGtvr0NYwYfejZzFl+iZ1EiUu7LrFp5AhtQCc
+	wVTfRujsu3RLHX
+X-Received: by 2002:a05:622a:198e:b0:4ec:f2e9:493e with SMTP id d75a77b69052e-4ed998115a0mr78969141cf.34.1762622809641;
+        Sat, 08 Nov 2025 09:26:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFwezJQcmvFQWoTFXSG44miuWH+tCs9KRjF2cifamxToL082Jokif4YFw4V81sX3jhDzcu6dw==
+X-Received: by 2002:a05:622a:198e:b0:4ec:f2e9:493e with SMTP id d75a77b69052e-4ed998115a0mr78968951cf.34.1762622809169;
+        Sat, 08 Nov 2025 09:26:49 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a024f09sm2345136e87.41.2025.11.08.09.26.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 09:26:48 -0800 (PST)
+Date: Sat, 8 Nov 2025 19:26:46 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: hrishabh.rajput@oss.qualcomm.com
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v5 1/2] firmware: qcom: scm: Register gunyah watchdog
+ device
+Message-ID: <hbxtbaoavlsw7pbmg3cfkbyx4nacjfiikckhqgpvlggbh6hu5b@jyporqecfzni>
+References: <20251107-gunyah_watchdog-v5-0-4c6e3fb6eb17@oss.qualcomm.com>
+ <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|SJ0PR12MB6992:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6598eddb-68dc-4123-8826-08de1eebffbb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VmtsSXROeXdJOElQTDZoUE05cDhoR1ltRGFMYnNoM0ZQQ3VZNklJMThreUJz?=
- =?utf-8?B?TDZ4RlczYzNJY2cxS2VadG9xckh5LzhKMTh4bnNmZ09jQUdRSlYyNXM0NXU2?=
- =?utf-8?B?RFc0VnlZeW9NN3FidjRzbTd5VnVGb2V6YU00WHRIMGFUWG1zL016Y2RvK1Rm?=
- =?utf-8?B?cEMrNjRHN2ZhalBybXh0MjFzbTNaQnJVNy9WdFo0SWpseHB0eExXUjJkUjJi?=
- =?utf-8?B?djdLcHQxSnpTOXpwSzI0U1Z5YXR5ekJTeHRVSVIxOTZzVmxkZXdsQmNOeDNm?=
- =?utf-8?B?WHVrZXhYZTFucXZ6VHJ4Y0l3S3ZTTG5qSW90em1OUmNVS0tDOERuQk9LeGN6?=
- =?utf-8?B?QWVkSVNiR3l2WE91bERYMWM0RWRkYUpDUk5jdTQ4c3UrTnZFeVo3NnBCMUY2?=
- =?utf-8?B?Z2NuT25tQnp5MUIzclVtRXlTeDdSaWlOQzFmYlhXUHpzWXNyODYvNGx1MDJT?=
- =?utf-8?B?MFpxM0JObFN3b3l1M3JVNWdrWmFLSjBEdEhmT2tpYUVOVXRWL1dEMk1qTVBW?=
- =?utf-8?B?QnZ5cTMwOUNNdmxaT0xTN3FZZGtOT1ZsRnRDZ3VCRlhKT2hIYmd3RUR1RkF6?=
- =?utf-8?B?dHdCR0xjQ2VKcGN6VVhSTFU3dytRK3BJdGQvUnhiWjdKUHZOWE92dEF0ajBE?=
- =?utf-8?B?YnFxTTZRbmVGdE5TMldBVDVyaUxmVnE0UjhTV096cnRjYXVhUHpscUo4cDJY?=
- =?utf-8?B?eWlyNHNhTzNTVmtoRVFESWFwZjBZREh2bnN2ZDVPM1JLdTNWY2htS2wxRGJX?=
- =?utf-8?B?aDNxQWlWMHJWMUI0YmdwZ3UzcWdGTCs4YW9BK0l1cVVSMm9HY2pEa1NwV1F6?=
- =?utf-8?B?RmdlU29wbWloTHpUcVkyTFhMYWtabXdNMEt4anRxS2UzYmc5Q3N0S1ZXejRW?=
- =?utf-8?B?bGJWMko0NzNXblhhdDRZdUs5WXNuTTMrWE5rNC9QVnQwRW1XM2Nub1VwMjg5?=
- =?utf-8?B?M2YxWU80NFh5eFpCTCt3R1VFOEoweGNiSEFlQXZyRmlUOEJaVVh1RGVJaldM?=
- =?utf-8?B?K3M4dEJaSUN4dG9COWJ5SnFXdlM3L2RlYm5wOC95QXRDRHYzMFQvN0RsYkwv?=
- =?utf-8?B?NEJ6bEpnUCtadzFPSjY1SVpzYUkzU0xBSVJsY2FBUU5HYmoyc0FMeHNvZXhJ?=
- =?utf-8?B?Tk0vdlRacWZvYWd5S0ZTL1lLZXJqZCtHeVNkYW52bmV6TnpMS2ZCQ1JuQ3A0?=
- =?utf-8?B?UTk0azBqaFJNL2I4eUJwbGtudHRNTzlHRS9xVUF0M2kxNDhmL0N1cFRsTGxV?=
- =?utf-8?B?OUNCNG1PeE9wY2ozTGoxTlE2UmZUbDNLcWlhdmZoTWsvV3prZGQxYmlXdkgw?=
- =?utf-8?B?TWtJd2NhOW0rTmgxYWdtN2ZyTy9sVFpVY3A1MGxsR09VclM4WjhpeSt6K2xN?=
- =?utf-8?B?eVlQNi9aZmROUTR1ZjVZdVYvMzVBdmhiRlIwMjVzQWRLSVoxT2RLWHhONzc1?=
- =?utf-8?B?RDQwWmdRRTRIcGdsVkpWVXluc2t1VXF6RmJ0VzRHUmxXd1ZUTFY0bk1PUHc2?=
- =?utf-8?B?UnNCeWFqajVyWEx4WmZyU1JRVnpYR2IxdzVLRFhMMittWDhSN2lrZnBnNzIy?=
- =?utf-8?B?UU4zVXBpYlpkczl0R3JWWlFocE4zTllteStGVFFlK0NXTE1XMTBjYXNPT28y?=
- =?utf-8?B?WFBLTWtuKzNFS3ZNb2ZwOEZtZ3NycnI2QzdoSkxEQk9hSk04ejNCTmc4UnhC?=
- =?utf-8?B?TUN3Yzg4Kzl0NFRGREcyd1BReTduQmZQeldCVUsyclZLaFRhbjgwc0lFb29y?=
- =?utf-8?B?WDI5QnkvNTNERFZBa1RXZ1c2N1lIS09ld0VqOUJhTTdkT0FNZkhEK2RYMGx2?=
- =?utf-8?B?dU1pL2srVU9FVHZVWkNMQWM1TlpRd0RmZjFVV3ZrZlphZ0pSZnhsR2dFYmNw?=
- =?utf-8?B?cUhPa1RiWDVRMFJObjA1dXdiWktMcTZPaHBmZVU2d0VnZGFzSzNyckRoYUxG?=
- =?utf-8?Q?8A6gKocWOgh/2gURmLNba9wSHPMNP0lK?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QURmUE5mNmZwbUtSL0t1ZzR2dkNYemVTOWNvcFRuZFl4d1h1c1RvT0ZDZnli?=
- =?utf-8?B?cTRkYTZSY2RmY0IvcHBCbktzMEVwaVBXdG5KTkRUV2tkMldZVWErMW5qYjFD?=
- =?utf-8?B?MVFEeitUZWg4bFpOYXN4VHVCRDR2SnhQQzJRbGpsQTRzMEpkTzVTb3RzcFZ3?=
- =?utf-8?B?RmRqNEg3bnRwd1VncHJ4U3FNNVdaTkZWNG9KYVhvMVExQmlBemo3MlZ2YnM1?=
- =?utf-8?B?QVR0WVFBQzQ4bmljMmlJSkV4Y0tQOUcxZHdKRGxWcFJpenIyTXBuVnk3eFJN?=
- =?utf-8?B?UEl3UUZXdDJIMk9DVnNJMGNpV056TkNJVDF1dm9sWFhhcTR0cVlSM21Bb014?=
- =?utf-8?B?RW1wZm5uU0thSmZZREVGcUlvWGJlNC9YcC9TRHRUVHRCeEtNb1dxQTdTZG4r?=
- =?utf-8?B?M2xvYkVVdFBuOHNyN1pEcWxpaEppR0tzT1Q3NVMydHJnRlUyNU96amJBWVVi?=
- =?utf-8?B?MjlYaklna3REei8wQi9aWWRGd1krRnkwMzdpR040WHpOZkJjTWRmTit4UEwr?=
- =?utf-8?B?V2w1dUtFa0lWVjJEbmxJakpWK3UzNjlPc08rcTgxOG5hRVFVMzlCSzUzVUJZ?=
- =?utf-8?B?RXVHVWhrdjJNMHMyaHF0d0Q3UlVBKzlrSXVucWhXSFdIZ2RNWHpoTUdIdUlN?=
- =?utf-8?B?OVZmeUVkY0xWdEdCZys2MjF0NWJGek9ia1IyZC9tUHdFWENQOWlGSlVvVkp4?=
- =?utf-8?B?SWE3OFRXamcxbWl2V1VDV3JCcU0xRnlCNXJJaTJVT1VDci9iNXVWTms0bFF6?=
- =?utf-8?B?TDM1T2ZMQktPT1FLeEF0cUpuTTIwNHBhWk0wdkdIWGM4REh4S3h2Ull0RWtS?=
- =?utf-8?B?SndtMlByTFJOWlkwV2F1eE9yV3Z3aFljTDBtSU1xQ2kycnpFZWRSOUc5VUpN?=
- =?utf-8?B?WEJoUEdNeEZaY0hvTDRNOWpxQ3JLQlkrV1JzWEhVeXltZWFmcnhvOXRpL0h0?=
- =?utf-8?B?cDVvOVV1UkRIRFFSb3hJS3JUMVAraEh1eE8wRmZ2ZGNRci9CRVFvZkpEWWJo?=
- =?utf-8?B?R3VNQ3FwaTZuYjJOVGc5MGViQVBYK0dQaEpWbURCMGdwYWQ3SGVITDIxRWIx?=
- =?utf-8?B?RkpaZnVCQnBBTGFnTkU3dHByM0pXcmRQNDM5THhCeWlYdzZWVGdiWll4b25v?=
- =?utf-8?B?WUtSY3BPK0pVK3R2QXVWbCsrRm0yZzlZRGUvbWtodlhpWlhWMFNJUVdGTzJO?=
- =?utf-8?B?QjFlVnlNM0F6M2ZxekhHRmxQUVVCTGw3SFNORHc1eE9HNHlJa1dTNHRpUEJO?=
- =?utf-8?B?OXFIYVBlRzZ2dHl5alVDbkJWUEk2TUs3d2FkWVE3TW85OXdmY3FCQ1l1MlNB?=
- =?utf-8?B?RnhLQkI4TVRFZW12M3B4WGV3YUFickZKQVVaV2dMS0pEdG01azlYdFdZbTlw?=
- =?utf-8?B?RENqa05iYjhnTWliOTRWL0JtWnNBV1FIWjRPa1Z0UFNEbWFxMG83dDdVcXBS?=
- =?utf-8?B?NGY5OENYSUxJMHV1dHdlbTU5YkR1bGFVMzNWNDZjcWo0VUMyNHZqV3VDeTFT?=
- =?utf-8?B?eUV4Y2tFNkNMTmNzY2o5WmRBLytMaWVPMWdUa0xNcG4yL2ViMk16VXVaZ1BT?=
- =?utf-8?B?MnF5NmlhRTNuT3dpSVZtMTFiMnZnUWhqcGhQMzFqeVZIaVNYbVFTWWY4U0h5?=
- =?utf-8?B?U1BTZFdUc2x0WUZ0ZlJYL2VPU0JUMWllOEU0SkcvREZ0Ymg1R3VKMlBJanEv?=
- =?utf-8?B?MytvV0xlczJRQ0ZvM1dmRzdhYnN6SlhvN3FQMjNDV29wZ01JSGJxdmN1ZVho?=
- =?utf-8?B?cVdvMUU5Sk42cDYrbFVsTmhOOXQ4VVYwSmNTSlBFd1VtMFpqQW1qN3NDS1R5?=
- =?utf-8?B?MnZwTG9iajJwQ2dJdnZPYjJOQTRhVTVNRWFvS0pvMVpZTnBnR2ovQjg0OVZO?=
- =?utf-8?B?THZEVmtib1JCeENvY3hUWk1qb2s1VGdjZlhmWE15VGsyWFZ6Y2dDaVo1MXdw?=
- =?utf-8?B?elYzZ3RKcE94Y1d1R08wSlIwSlRXNUo3dlVmZXBFc3VIU25IRW5wZWtzbnZu?=
- =?utf-8?B?MXVMSlE2TVgrbkZ1OGgwaDV0Y3JwMjNlaXlDOFNqNEdieTQ4TDZBVVlVVXBq?=
- =?utf-8?B?aERpSDgwTDJ4ekN3TnV0WmcwWkRzbnhOMHQ5bkgzc1IvOFJnTnM1OEFpVTlm?=
- =?utf-8?Q?eoh5sYGpGJbJwIlv9vEgDGfDq?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6598eddb-68dc-4123-8826-08de1eebffbb
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 17:26:49.1401
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3GnULhgCZ7/5AwDGbDDuVuIFBQ6qNtJbss0xhadY1OgR+WM755q7Aucc61ArCQB9lXgzbaeQmaR2dBlePjdOuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6992
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
+X-Proofpoint-GUID: sI087KbcB69GWx5hF3p2xrDRwtdbksjF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDE0MSBTYWx0ZWRfX4Wo2YKm11RYS
+ hz+pO96L+gUJZilcEYFCFJNlLrhHbpaYSfdkhIMlRPtMt9gWEqYZqEkqoZT+S3ZBjOxp9jxXbaP
+ 690A2U8XfkzQ75f+mupfOgDZ8USjBD7ZXPFT91f0aSFrtpXiF6jWa8Fc6ZUHWOGh0NW/JdqDkVf
+ 37g7ekMiAvlrnWS7Q/EKwu3nOQ5nzFcapQMMwWDRLGwpzVZL5cvR9VT+VhehhPOoGtZUWom7P6W
+ Fe6O91HGMogFUKviUueAgWXWG8U11vh5gcIOgEdlMumztJtoEOBe3YLousyeSaNe58n4YAOoCQa
+ 2dYBpMcTd1MqfjIM246MGwMdkcAEzLWWTnYHRtSdpjX/7NtgnWUXsEjfPOr9RrHKpdFZq/ee/zL
+ NIEkwa+wVLZ3YBy53hTIQl7LClFRwA==
+X-Authority-Analysis: v=2.4 cv=V8xwEOni c=1 sm=1 tr=0 ts=690f7d5b cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=YueeOpoQ0xcX2KNfXj8A:9 a=NqO74GWdXPXpGKcKHaDJD/ajO6k=:19
+ a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-ORIG-GUID: sI087KbcB69GWx5hF3p2xrDRwtdbksjF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-08_04,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 malwarescore=0 impostorscore=0 spamscore=0
+ phishscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511080141
 
-Jason,
+On Fri, Nov 07, 2025 at 05:53:08PM +0000, Hrishabh Rajput via B4 Relay wrote:
+> From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+> 
+> To restrict Gunyah watchdog initialization to Qualcomm platforms running
+> under the Gunyah Hypervisor, register the watchdog device in the QCOM
+> SCM driver.
+> 
+> When Gunyah is not present or Gunyah emulates MMIO-based watchdog, we
+> expect Qualcomm watchdog or ARM SBSA watchdog device to be present in
+> the devicetree. First, we make sure we're running under the Gunyah
+> Hypervisor. Then we move to check if any of the above mentioned
+> watchdog device nodes are present, if not then we proceed to register
+> the SMC-based Gunyah watchdog device.
+> 
+> Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+> ---
+>  drivers/firmware/qcom/qcom_scm.c | 51 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index e777b7cb9b12..71b79c0229da 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -2182,6 +2182,54 @@ int qcom_scm_qtee_callback_response(phys_addr_t buf, size_t buf_size,
+>  }
+>  EXPORT_SYMBOL(qcom_scm_qtee_callback_response);
+>  
+> +static void qcom_scm_gunyah_wdt_free(void *data)
+> +{
+> +	struct platform_device *gunyah_wdt_dev = data;
+> +
+> +	platform_device_unregister(gunyah_wdt_dev);
+> +}
+> +
+> +static void qcom_scm_gunyah_wdt_init(struct qcom_scm *scm)
+> +{
+> +	struct platform_device *gunyah_wdt_dev;
+> +	struct device_node *np;
+> +	bool of_wdt_available;
+> +	int i;
+> +	uuid_t gunyah_uuid = UUID_INIT(0xc1d58fcd, 0xa453, 0x5fdb, 0x92, 0x65,
 
+static const?
 
-On 10/23/2025 6:38 PM, Jason Gunthorpe wrote:
-> On Tue, Oct 21, 2025 at 01:43:23AM +0000, Suravee Suthikulpanit wrote:
->> @@ -2088,37 +2104,28 @@ static void set_dte_entry(struct amd_iommu *iommu,
->>  	else
->>  		domid = domain->id;
->>  
->>  	/*
->>  	 * When SNP is enabled, we can only support TV=1 with non-zero domain ID.
->>  	 * This is prevented by the SNP-enable and IOMMU_DOMAIN_IDENTITY check in
->>  	 * do_iommu_domain_alloc().
->>  	 */
->>  	WARN_ON(amd_iommu_snp_en && (domid == 0));
->>  
->> +	amd_iommu_make_clear_dte(dev_data, &new);
->>  
->> +	old_domid = READ_ONCE(dte->data[1]) & DTE_DOMID_MASK;
-> 
-> This old_domid stuff doesn't make any sense. I think the commit that
-> added it is bonkers: 36b7200f67df ("iommu/amd: Flush old domains in kdump kernel")
-> 
-> The problem is that the dom ids that are present in the re-used DTE
-> table have to be reserved from the domain id alloctor at boot.
-> > If the kdump kernel tries to create new DTEs it MUST NOT re-use any
-> IDs that are actively being using in DTEs already or you get data
-> corruption. Randomly flushing IDs is just getting lucky..
+> +				       0xce, 0x36, 0x67, 0x3d, 0x5f, 0x14);
+> +	static const char * const of_wdt_compatible[] = {
+> +		"qcom,kpss-wdt",
+> +		"arm,sbsa-gwdt",
+> +	};
+> +
+> +	/* Bail out if we are not running under Gunyah */
+> +	if (!arm_smccc_hypervisor_has_uuid(&gunyah_uuid))
+> +		return;
 
-Good catch. Thanks!
+This rquires 'select HAVE_ARM_SMCCC_DISCOVERY'
 
-Looks like commit 38e5f33ee359 ("iommu/amd: Reuse device table for kdump") broke
-domain ID reservation in kdump path :-( We will fix it.
+> +
 
-
-> 
-> Not for this series, but something to think about.
-> 
->> +	if (gcr3_info && gcr3_info->gcr3_tbl)
->> +		set_dte_gcr3_table(dev_data, &new);
->> +	else if (domain->iop.mode != PAGE_MODE_NONE)
->> +		amd_iommu_set_dte_v1(dev_data, domain, &new);
->>  
->> +	/* Note: The IR, IW, TV, DOMID are needed for both v1 and gcr3 table */
->> +	new.data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_TV;
->> +	new.data[1] |= FIELD_PREP(DTE_DOMID_MASK, domid);
->>  
->> +	if (dev_data->ats_enabled)
->> +		new.data[1] |= DTE_FLAG_IOTLB;
-> 
-> These three should be merged into the two functions so they stand
-> alone. These sets have to be made in the next patch, doesn't make
-> sense to open code them in callers.
-> 
-> Like this, it is simple and readable. It directly answers the question
-> 'what bits are set when the driver creates this kind of DTE'
-> 
-> static void set_dte_gcr3_table(struct amd_iommu *iommu,
-> 			       struct iommu_dev_data *dev_data,
-> 			       struct dev_table_entry *target)
-> {
-> 	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
-> 	u64 gcr3 = iommu_virt_to_phys(gcr3_info->gcr3_tbl);
-> 
-> 	target->data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_TV |
-> 			   DTE_FLAG_GV | FIELD_PREP(DTE_GLX, gcr3_info->glx) |
-> 			   FIELD_PREP(DTE_GCR3_14_12, gcr3 >> 12) |
-> 			   (dev_data->ats_enabled ? DTE_FLAG_IOTLB : 0) |
-> 			   (pdom_is_v2_pgtbl_mode(dev_data->domain) ?
-> 				    target->data[0] |= DTE_FLAG_GIOV :
-> 				    0);
-> 
-> 	target->data[1] |= FIELD_PREP(DTE_GCR3_30_15, gcr3 >> 15) |
-> 			   FIELD_PREP(DTE_GCR3_51_31, gcr3 >> 31) |
-> 			   FIELD_PREP(DTE_DOMID_MASK, dev_data->gcr3_info.domid);
-> 
-> 	/* Guest page table can only support 4 and 5 levels  */
-> 	if (amd_iommu_gpt_level == PAGE_MODE_5_LEVEL)
-> 		target->data[2] |= FIELD_PREP(DTE_GPT_LEVEL_MASK, GUEST_PGTABLE_5_LEVEL);
-> 	else
-> 		target->data[2] |= FIELD_PREP(DTE_GPT_LEVEL_MASK, GUEST_PGTABLE_4_LEVEL);
-> }
-> 
-> void amd_iommu_set_dte_v1(struct iommu_dev_data *dev_data,
-> 			  struct protection_domain *domain,
-> 			  struct dev_table_entry *new)
-> {
-> 	u64 htrp = iommu_virt_to_phys(domain->iop.root);
-> 
-> 	new->data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_TV |
-> 			FIELD_PREP(DTE_MODE_MASK, domain->iop.mode) |
-> 			FIELD_PREP(DTE_HOST_TRP, htrp >> 12) |
-> 			(dev_data->ats_enabled ? DTE_FLAG_IOTLB : 0) |
-> 			(domain->dirty_tracking ? DTE_FLAG_HAD : 0);
-> 	new.data[1] |= FIELD_PREP(DTE_DOMID_MASK, domain->id);
-> }
-> 
-> (It is nice to sort the fields by the spec order, I didn't do that)
-> 
-> Looks like an identity one is needed too:
-> 
-> void set_dte_identity(struct dev_table_entry *new)
-> {
-> 	new->data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_TV |
-> 			(dev_data->ats_enabled ? DTE_FLAG_IOTLB : 0);
-> }
-> 
-> Then the whole function is pretty much just:
-> 
-> 	amd_iommu_make_clear_dte(dev_data, &new);
-> 	if (gcr3_info && gcr3_info->gcr3_tbl)
-> 		set_dte_gcr3_table(dev_data, &new);
-> 	else if (domain->domain.type == IOMMU_DOMAIN_IDENTITY)
-> 		set_dte_identity(&new)
-> 	else if (domain->domain.type == IOMMU_DOMAIN_PAGING && io.mode == V1)
-> 		amd_iommu_set_dte_v1(dev_data, domain, &new);
-> 	else
-> 		WARN_ON(true);
-> 
-> ?
-> 
-> (though how does IDENTITY on a device with a PASID installed work?)
-
-Probably set_dte_identity() should call  set_dte_gcr3_table () and update
-relevant fields.
-
--Vasant
-
+-- 
+With best wishes
+Dmitry
 
