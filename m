@@ -1,179 +1,170 @@
-Return-Path: <linux-kernel+bounces-891221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDBC5C422C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 02:03:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3547C424E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 03:33:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBF4D3A8D91
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 01:03:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B6D3AF94B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 02:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6455229993F;
-	Sat,  8 Nov 2025 01:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C1B26CE2D;
+	Sat,  8 Nov 2025 02:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GOxAR2aU"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012026.outbound.protection.outlook.com [52.101.53.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jLxYjy29"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260C72820D1
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 01:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762563797; cv=fail; b=eJiFTlhpzGxd5YqDsIrZ1gxobM1FLPNO1mg0D9gICf2d9nA09cNt4oldFiUpJnq1uJOVY2EnV0v06m+v8RPb/ntdFvdoLusxL1puFT8Pstyg3JGKVOBBIuLJkxIbY3ZcYA7RxaItEH8xbfnQ5r77zYa1soWUefe1ZkJdD1LXMMw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762563797; c=relaxed/simple;
-	bh=MGxliOZ+gcnsxxOOqdGxyTMCZTYydl3b09S4r/qJLsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UC6G3auykpR5C8Bjx4UdxPNRj7FJfTrDpiKquvh0+/afVAGLVttvBYBxyhr9k6G0JcZ9XmSf2lSbEbXvNRuz7UK8z6aMAQ9SdQ3f/rvy3HpEHYcHY/LbrUPEer7OrseUEXZ1XqwN104Nl58J+JzKVEMxMEAQ0IX9smfI8bz4Lfk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GOxAR2aU; arc=fail smtp.client-ip=52.101.53.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VUipVi+Q8cF/2pAd8ODDCfiq8eeC4rUNZDgpIvLcQpitlO0W6krO236aRwLue9Rc+a3d9CUhPXhB/w+igFBULRClhlg2Gb/HlpUBrxl3xxpeixG477hZf2PvjXve1f262vhLH+NDuvaxmxBvvRzZktm4hIJautYM3tKrQ3738j3lA8LFxQgs0OK+EJQl8X9hYog+xHMLrBefrHsQs8t4nZQnp6WKsykppi33y6jSnMPDBT9Y0N7qhSavkD7GmslCNEoP6N0nS7g2Ko1RgHBxjIuAA/DpMM34stzeAW8v9kXw/DNbrLIqq++QnBdoFdwnSTpUtn8CzEOSEAkGunWF0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lIS2x+bq9pcj+olZkiChg0mQEFPttPsMnDQ25KIuYgE=;
- b=xZC/1S9l7ZCASO4jqObWGJ80k8VCzXI7UlqR5keGlyLnMjxk6T9XIqWvd7Iu9ODehQzXFKLei7k7YT2zLSfJUD3LQfVovYRUn2fShsOGut/4mrF/Wk2P3hgcIN0WwGjtg5KOFvxsVmz1csk7R+oENS0o6Eu82PUHDJesJOoGPaNBEW86TIgqVli8cCOr6VwSGpkaoeNLVklrWUJ1u/4+cAKK2tBUWfTYipNcZti7Wjz3lec0gLE1OwklRjNFGpG1BMphhuo0Ry4ip/H8nqMm4hpPy4PClMOKq5U5YbBGO8PspRBu7gj2dL4sLfSXRuwFkBq1CzwmFnEfYjTqTf4mhg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lIS2x+bq9pcj+olZkiChg0mQEFPttPsMnDQ25KIuYgE=;
- b=GOxAR2aUqG9Xmfa3i+01xDp+iH9qsbcfhGIbsa53knGAxbamTuZv6gqGYzfufu7rCCPLAPNujvHKMpXFamS4r2LJAtUFZB9W4jNdqTymMg3OGEGbKi1y6KUu+ie1/J4pqFATUPHew9XFBgWb+11KBxZIKLcNt1HnXtvqwDas5GDRUn88CRmX63YpMt4yTHCbn7rObsw4snQso/9oExIKjEf2h8F2DhM9PHcxMJd993EaHm403V7e04bxJM8c/aRSdn/+QxqR7XLkEGanOxY8KYwh2TmIt7LRVmRx+YLE2UeWJ9Uw1caMRoCiJKPHYqeDir0evrcsHMxT4wT2m6PQ8Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by SJ0PR12MB8167.namprd12.prod.outlook.com (2603:10b6:a03:4e6::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Sat, 8 Nov
- 2025 01:03:12 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9298.010; Sat, 8 Nov 2025
- 01:03:12 +0000
-Date: Fri, 7 Nov 2025 21:03:11 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, jean-philippe@linaro.org, robin.murphy@arm.com,
-	joro@8bytes.org, balbirs@nvidia.com, miko.lenczewski@arm.com,
-	peterz@infradead.org, kevin.tian@intel.com, praan@google.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 7/7] iommu/arm-smmu-v3: Perform per-domain
- invalidations using arm_smmu_invs
-Message-ID: <20251108010311.GG1932966@nvidia.com>
-References: <cover.1761590851.git.nicolinc@nvidia.com>
- <c81eb55d201db245e17e28854efe49feb61e69d7.1761590851.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c81eb55d201db245e17e28854efe49feb61e69d7.1761590851.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: MN0P223CA0010.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:208:52b::16) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CC010957
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 02:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762569220; cv=none; b=p9OPgY5xfCT9Mg/n0KpylrTlTGSDpJRS0yNYF/l9jUinbXEqTHCq5aaK7zIHdbRqeei+2rBL18ehyRnlgo4g2UfE1b4PWhoW6SHyHe83XRj57t3iGFvvJtrxjR5L+FCXFH0ghrkkZIRc6HIsuYL09AkQvJS8ryHd2pilZwtD9Xo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762569220; c=relaxed/simple;
+	bh=Nhs+F1/Ux3/GUaROEHf188icqClLbb94b/l3GRvYQMo=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=lIP90l7Na8Y2GIsABwG2xGDh0LZFt0Fjhe6NCVfaoCLwk9uVpRgIg2KFebE6I5abPo+gPd7ulMV5uSO8FSvrWyTlNmHmKN4YqFeC3U9ARWXouQ8UptlOLesDyNQya56PKSEQhoWt3vNzU6KmqbrYiSf3woCrYenByiIz89ptKZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jLxYjy29; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7810289cd4bso1349813b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 18:33:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762569218; x=1763174018; darn=vger.kernel.org;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8bKq5Kbap+TGIzkU08hwTVasn8Atv2TAiFfbpOuCLu4=;
+        b=jLxYjy29ijrB6Qeejutw9pWLNQ0sAShg4X+P9fdCcPoWSNvKSQyt9ba1e/tJKryNJy
+         59wVDD7SMeVNgpdDpI7Ve5L3yj3Kjt1SmoTLMziNfLw/0i2UtmCUBukJ8U3z2gFMVjvx
+         C1U+yhSw7SEuNrtnx/WdX89bojM8pokn834lejq1hXP5MG+4nbpm9oCmAeP+oatFsQ6l
+         bdO+JA2PRxvEc6fmC0P4aM/uzR5bo+yZTnl7VF8I2uuk0tVj1P/PX8CDXmVgbB+euE9f
+         J0MRd0jiTh4zerKJoC++jwEd4eikd3bcuMmczUp9E4sbvMbItS2qW3iScbjc/VZbGrGx
+         L58g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762569218; x=1763174018;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8bKq5Kbap+TGIzkU08hwTVasn8Atv2TAiFfbpOuCLu4=;
+        b=RREroW1diq8dinzz6TlsyVpR1V7W0EcknWZZDP2dyvf43Hu3Por0x2P3Z0pF5cmCZ5
+         zgKflxDzYybRDrOukVO2dlSLnmQJouYbdKWR5eWvVT0p1xOqlq6J6p/dEoV+O4XTr2Ws
+         3dFvw5/JCWg5Oq76p9LDWuV+ox4rOdpaIvUvMHanZF6HtJrywoL1jyNwi3wysdSoLrSu
+         tYY4LpXzh6tnzKC4KPEHwYWaYhEq5/8ZkxsUnW529di2n3FhLN+/88LVm71dBCNaZwsD
+         Sbe45vitelgBdr/wV7Prlyc4faosZzDKuhVIPr+xlEdFOvjGZxJ3QRM2T1kDEMsPMz6H
+         Mlsg==
+X-Gm-Message-State: AOJu0Yy9L1ku1B5W4iqT27ThkWvI3rcMBEScgtBGp4w172DobZPL6aE2
+	Rt1LMxCiJkmYIaKZ8SDoqie4bsJqm5QJNFo27mpMO/iAF1BNyMoYlrGC
+X-Gm-Gg: ASbGncsKaRfBBGZBXKIWERMZnjgLCFGhNESJSZ7u1wHdQrLDuMcgNwgdBIO2lRmJXnZ
+	kHDzXTm3lgmKWKOJiScItFPG0K/Wvnk1X6tSJmHjhCOTL7EAEjBKCS3VCqVOVmzSyv21kesOhzi
+	flI9gSprPveXNrLzoEmFTWozktQ4dBjWnI6MbbzQydOwYnAJ0uft6ruDN/m+ZtuEThCz1M2+lMR
+	ARv1hQsGoYXK9a1TGKstuK1z80C+3iBT4shh1sDKPAoB9AVD3feGt5+IV/5irOjHi2jlvZmm0Nt
+	84OuSJfeAxvZtrffQQGzb2tmppRgfHh04xbBCrd2SyiOg7XTbD4PpDmpWvSgSegOw/quKc2L74c
+	3gdBmHURdFgFsWMd6BPeKu6PvDNGaAmzb4ALy4t96dQrQWb5dtDSWjAsHkbCrvMBgDiOmx1i9b6
+	hwgsKb
+X-Google-Smtp-Source: AGHT+IH/Pe7wf3Ci181tpT0LHXQVq+Kf1iV5vunI2sKT5fx4KiiLBfIeJu3hgL/jAYkDOG6ZWRYxGw==
+X-Received: by 2002:a05:6a20:12c5:b0:33f:9581:5d2f with SMTP id adf61e73a8af0-3539f99e63emr1740681637.3.1762569218334;
+        Fri, 07 Nov 2025 18:33:38 -0800 (PST)
+Received: from dw-tp ([171.76.85.117])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8f8d7eedcsm6587378a12.2.2025.11.07.18.33.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 18:33:37 -0800 (PST)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Andreas Larsson <andreas@gaisler.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand <david@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, 
+	Juergen Gross <jgross@suse.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, 
+	Nicholas Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>, 
+	Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, x86@kernel.org, 
+	Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Subject: Re: [PATCH v4 01/12] powerpc/64s: Do not re-activate batched TLB flush
+In-Reply-To: <b3e4a92f-5b51-4eee-bfb8-c454add0f0d2@arm.com>
+Date: Sat, 08 Nov 2025 06:05:17 +0530
+Message-ID: <87cy5t4b0a.ritesh.list@gmail.com>
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com> <20251029100909.3381140-2-kevin.brodsky@arm.com> <87qzud42n1.ritesh.list@gmail.com> <b3e4a92f-5b51-4eee-bfb8-c454add0f0d2@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|SJ0PR12MB8167:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad72d49c-4c66-4bd9-8ff9-08de1e629741
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZOs0BdTmoeG4+ICl+PIZ1XH2EVdYkKtOCx+yWV/onMdsrJUtsuKWDSaPK1EE?=
- =?us-ascii?Q?lPUZLmP+zGKIvgN23OocBACUfhvNUqIXfqyVGQo4dNUWmTVizqSlCvZ1TtI9?=
- =?us-ascii?Q?9nL3S1WcHW2jgbKdERHNyZp6Ahvc+xjOIGhMerQZ07K7tck4X+ZbnWM6MCQo?=
- =?us-ascii?Q?oCU0jgYoKg1Yp0vH6FmZQZrCm12/n0l7r8QhUaExBhIw/Db9IPI1whAe3Hal?=
- =?us-ascii?Q?GZByUG42PcGzPrf5Zsz2d2N47XFNkt6N7otvx1bvl7YdiPGtEgFbQU6Ub+74?=
- =?us-ascii?Q?Y6D3olv9qOBrw1Y4Bo2MgeWBk+kYVp0g4R45K30+X7jNqUg/lX01ryOD3NNj?=
- =?us-ascii?Q?7YZywLZBrBlqQeb3/EfHioJXj/CimKWrUNXKoF5puwonBectxu+P7xIlgItR?=
- =?us-ascii?Q?3XIqhAIrQJasfjVCfzviQ4qeHEnWfhpEwnsUxu4v2g2jxZ696eZ+FNyPnLoV?=
- =?us-ascii?Q?PsiBaZRQ2jFGZSPvjpLZb6zSAaDpWYxVQY7bEsPQgqS4G3KTPr0xMcwaQMhM?=
- =?us-ascii?Q?L5y0tvPbbxVu3ju2Y7sBGiP4S0VlGNXbuzBfUBadsY2fOKr7neOT05tWid0i?=
- =?us-ascii?Q?hQU00j8BP0JQanw01XRGaPLGdb95GgmI0MP9h6NObTZbeGcYFIaVCLEjCN8p?=
- =?us-ascii?Q?QqEhr4MMk3DX5MBcaa6cQlEoHSBFbQ1K5ePnMe6s+lQ3sJZWLfu49/6iHTAQ?=
- =?us-ascii?Q?oveS9ziZrwrX1lCbffr/7DfxcdFZU4ZwdfpiMWQd/50qVYpTvZNSfnZYP68u?=
- =?us-ascii?Q?B1/FtHAdiYfpwofBSMhfluBsrBRs7jBtsEShRrFXMigCLcFpDh9Nev+sGRHw?=
- =?us-ascii?Q?nK2oybl9hEvX1RaiaJ24fV0hVzOTZZzwytOTYb3ousP6h0fKHEzBaXxICkLc?=
- =?us-ascii?Q?x2HEnQhTQ2jd4U7P4ITdLCor8iC1eB5L2r8u+IaQlkcYKwkAQOUiEgiStUVU?=
- =?us-ascii?Q?kes1Y7swZsAoFwXyHB86+2aR+R9YTn6F0ReaTemqzp/VHghJey/dzinB0vVH?=
- =?us-ascii?Q?0RglNoloOWTexbTgSsMBprCfCZrtsn28h8n5TTtBTd+2NMfdkSH1eCO7RPsA?=
- =?us-ascii?Q?Jt6/Rr9n4Ggm0yczfXbArPnYPwrTWPe1gYRQwL9CwNhQS7H/B/OXJuR3GM0N?=
- =?us-ascii?Q?Lohge1UNfvgxDzm9PxP8d+7j0NdFU7GF9drwNJWKV31xPqyrBBVyyF+U65Tn?=
- =?us-ascii?Q?nYSG0D9e3qP4WbRZufH4ivDcgBliLV9d4WyEH3lI6SIjkuJq81Og3YWmZc3w?=
- =?us-ascii?Q?bkr3XtBMEPExIRYQUQ8xLZqRbJnKvMop/19fU1FYoI7XQSVNGFO1Pi1nUhKM?=
- =?us-ascii?Q?nrDKmzKGnvFobFk79PzqumeLathFuzVOxgXaMRjmMPIhio6vtSRuI8uWQVTh?=
- =?us-ascii?Q?SIK9ccqYhqjaGB/e2BpRZXnC/zubJ2k2IH2tW2VwqSnpbnf702VXAlQfzKSW?=
- =?us-ascii?Q?uHt91svu6jNAZifVv09vp2Go+pGgWBgl?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DdgDjYC3qqZy4igLUadrP3ZvScD5VRa6bP0piBZzM5tHcCMnlSi09D1dfIxx?=
- =?us-ascii?Q?Bisz2imUoBwRCIVHLSCVfTbrmGyY64SBtP/lSpClH5U4uzwQfR6/7sGwxn68?=
- =?us-ascii?Q?BIm4ByMoozRpKJmcJ/8vfjwSEw/KEbqr/X7CfUDdKYxVJUsshYQGPQNHDnzG?=
- =?us-ascii?Q?5+onLFlAAYQ8ABRNM1g4RqSdherVo0WY9T1d0yKkDxtallSJejA/+KeXG6mf?=
- =?us-ascii?Q?VPWijx3qdIExCfAOggOSjlFJFmUjRUDwIl9w4xseP0B2m2eeY0poZdpJt5ik?=
- =?us-ascii?Q?FOHGkhscUjAyfaEmC/In/yC2zQNt8GXmUh1t9CBjwbTry9bJg4wWy6iNcTgF?=
- =?us-ascii?Q?V5lsCxvo4U54mO4Ujxq9k+bJZybYcVrzZ89BUaINoCqt27d2qujI+NwX8Kyd?=
- =?us-ascii?Q?Ksgze284Ub7ymO2tm2tOj5IEDjYEGW9yeQclSVJRrdBcLEHHGLFAZzBCZeks?=
- =?us-ascii?Q?KMBHDiUgHGZbe0Z/1Ex4sjPtzi4Mtjs/vUbPm8rRTEhteRUZXeKGnANJtHsC?=
- =?us-ascii?Q?7Cw6HRVIr1rN5fbgLFfikAaa+pGRnU0XUcCG7u2UvGAiV2OZI2qzdkGilfXV?=
- =?us-ascii?Q?+T1hllhqqKj9NGLL8l98kJopVr+7NnmsM1C2HfdkbRRiKRB7HTF2PVDkyxue?=
- =?us-ascii?Q?bDIF4DhKcIDnrJ1TLZDitu9LzucJg/kMz7TgHMrHJ4vNCUWprjF0uHhuxXFM?=
- =?us-ascii?Q?DrW/aftaSnJ9ntJpzXLsORaNEKBkOhlb5K/xMIe9oVIIV228xHOqrlucxW7p?=
- =?us-ascii?Q?E1L+xtCr2T8DvB9JqSCNMaymjIvooWc5KjQpfNztebwruEq0bHXe2ED0JCoy?=
- =?us-ascii?Q?Q9kbGxOiqwibAlNUDxWbwg0zSxwRpXeGoGcU4P99Grz+gz+BPwB0vWAcpOkN?=
- =?us-ascii?Q?nuuHf8LUMYUhsSRCNJeaUhoN5YEae34z7AxMP2bS0lgoVELaDSRZ5pRYDLg4?=
- =?us-ascii?Q?pUll1aWD22t3OXZtbjce0vMFqn960NdF4tUEUfkGE851mk3LE4Ub/C0AWIjg?=
- =?us-ascii?Q?bT2Xy3WyrkTWdUBxTvXH+2JCXRIrh0Qjz9sh+ACPyszsBTOPTHmJyAsK1Ml3?=
- =?us-ascii?Q?sj2AlShKsUAaAULAuxn36N+uzqz4jhdiDLU2coPey8YrHbV1OQqs2p2/nDXb?=
- =?us-ascii?Q?tUMM0oPDoOiP/Q6JeDTkceG6u4u3XYfVOU7uqLqTHYHKIG4132+JxHCYhnXr?=
- =?us-ascii?Q?TKrExqNBqnzrsifcvjWtZ0ln7I+zPDfXYFpWQYSPx7Y4p0qdbZglMX6jhFhC?=
- =?us-ascii?Q?v0WGexX8vz6AOuSSsDH5skrsvMmzOHbtUg9MFVN7c5vLukbiesu3a2+mBLq6?=
- =?us-ascii?Q?gt/ElR81lul8gWBmF88u82jywkpvJKUhSwMeAx0ojUttowriZtbUJ+46qMZL?=
- =?us-ascii?Q?3W0zTGhaHiHgOJLyu7lkYnnsxXIF6DTDSSwybZHd8577J+RrmIjQTLAEZBp9?=
- =?us-ascii?Q?FF9JIGKkyz++KHUpy1xkxaI8qnQi4rdA/GVsg3KaJ2HV1H3dKmu/OF7BE7W+?=
- =?us-ascii?Q?V+YOE/APS+WoDxJ+93694DrvPm3Emq4qDeNb6g0JTdwYjMbB1jxNBIPJ63GS?=
- =?us-ascii?Q?d/nLcO2O57VcQNoLTkM=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad72d49c-4c66-4bd9-8ff9-08de1e629741
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 01:03:12.7650
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vUFqe9d2+tMkVtI7SZh730623layjyQ8etA6AL4d1Ya1kt2+GGK1sNpzbdjIhxV2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8167
+Content-Type: text/plain
 
-On Mon, Oct 27, 2025 at 11:54:21AM -0700, Nicolin Chen wrote:
-> Replace the old invalidation functions with arm_smmu_domain_inv_range() in
-> all the existing invalidation routines. And deprecate the old functions.
-> 
-> The new arm_smmu_domain_inv_range() handles the CMDQ_MAX_TLBI_OPS as well,
-> so drop it in the SVA function.
-> 
-> Since arm_smmu_cmdq_batch_add_range() has only one caller now, and it must
-> be given a valid size, add a WARN_ON_ONCE to catch any missed case.
-> 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |   7 -
->  .../iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c   |  29 +--
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 165 +-----------------
->  3 files changed, 11 insertions(+), 190 deletions(-)
+Kevin Brodsky <kevin.brodsky@arm.com> writes:
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> On 05/11/2025 02:46, Ritesh Harjani (IBM) wrote:
+>> Kevin Brodsky <kevin.brodsky@arm.com> writes:
+>>
+>>> From: Alexander Gordeev <agordeev@linux.ibm.com>
+>>>
+>>> Since commit b9ef323ea168 ("powerpc/64s: Disable preemption in hash
+>>> lazy mmu mode") a task can not be preempted while in lazy MMU mode.
+>>> Therefore, the batch re-activation code is never called, so remove it.
+>>>
+>>> Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
+>>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+>>> ---
+>>>  arch/powerpc/include/asm/thread_info.h |  2 --
+>>>  arch/powerpc/kernel/process.c          | 25 -------------------------
+>>>  2 files changed, 27 deletions(-)
+>>>
+>> Since the commit referenced in above disables the preemption in
+>> arch_enter_lazy_mmu(), so the expectation is that we will never be
+>> context switched while in lazy_mmu, hence the code changes in
+>> switch_to() around __flush_tlb_pending() should ideally never be called.
+>
+> Correct, that's the idea.
+>
+>> With this analysis - the patch looks good to me. I will give this entire
+>> patch series a try on Power HW with Hash mmu too (which uses lazy mmu and
+>> let you know the results of that)!
+>
+> That'd be very appreciated, thanks a lot!
+>
 
-Jason
+I did give this patch series a run on Power10 with Hash MMU. I ran the
+following stress-ng tests and didn't observe any issues (kernel warnings) so far.
+
+stress-ng --all 0 -t 60s --perf -v --verify \
+--tlb-shootdown 0 \
+--fault 0 \
+--userfaultfd 0 \
+--fork 0 \
+--exec 0 \
+--memfd 0 \
+--numa 0 \
+--pkey 0 \
+--remap 0 \
+--vm 0 \
+--rmap 0 \
+-x swap,pagemove
+(Note not all options shown here will work with --verify)
+
+Let me know what else I can run for validation?
+Do you know of any specific tests for validation of lazy mmu feature?
+
+>> For this patch please feel free to add:
+>> Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>>
+>>
+>> CC: Venkat who also runs CI on linux Power HW for upstream testing :)
+>
+> Ack, will Cc you both in the next version.
+
+Sure. Thanks!
+
+-ritesh
 
