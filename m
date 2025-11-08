@@ -1,92 +1,87 @@
-Return-Path: <linux-kernel+bounces-891754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4B0C43635
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 00:14:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE6EC43675
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 00:29:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7630188EB9B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 23:15:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9460C34859D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 23:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1688529D27E;
-	Sat,  8 Nov 2025 23:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735EC280339;
+	Sat,  8 Nov 2025 23:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="hRDC9uU1"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yjp9AbX/"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A404629D270
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 23:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDD2F9D9
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 23:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762643616; cv=none; b=EBNwXeXsgnXJvNOML0iShmNLXNDdAc2y5l+vPj0ptqcwG1BBGFR0i1YghJvCllpokcvvmbr+y0oGmUUEsBNiPstK253h9gaQ/jwkYX7BJ0b1TfWgbgrWWTu3Mq++qeU0nAOZ41Dh3IbNncgDRxy4UtvfWcg8g5x5NTI/CcHm/+A=
+	t=1762644577; cv=none; b=BA0AVL8VeiXMX7VO7SUivBnoZ36rrZ+9k11tSUcKq4w+MLHt4ecuUTGGjPCHLvm1hrnQkJDNkOCdcHnEnZAkzUiG/cYP++pcdrfPSsDU/BJ8gXf0LPBTOX3ATm1GlveZpg00Rv2V+0ydQc2vktcDI646StqR7ROqe8qgPY/1zcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762643616; c=relaxed/simple;
-	bh=2sKf1rUf7Yyibfx/hY6iRlou4EFmIhXP3XoaRsvqQGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QHtRum/Aq5bF/7/AKc8vr3I+CLrWOe65rrL5KJkZ6NSQqNgZWJETEIA2TlocUprnmg97/TWgWvKsEjoj0F36B69U8e3m95enRzJcmZ5herPZTN3NSXai4gi8Ee3owFF259TpqKTGYRtmzdpWpxySYp+TbZTbQvfJqRfhm0SNVKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=hRDC9uU1; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64180bd67b7so23668a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 15:13:34 -0800 (PST)
+	s=arc-20240116; t=1762644577; c=relaxed/simple;
+	bh=21mtCk5MLTqJk5Vk7WL++rUmBifOhOrSNXOsrCLLARI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j0A+/QNc7QJansFaMiL88U6oCL6NpvHvgLmdqfujHn+3+/jX8NU7jKs6ZO1w0lp5DYG/2TMbNa70Tea+GMfqK5Kf8wnxrblZwL+JJF1mRIsFyxZawmWrRDVaCumoDIMhX3odUK1tw9hQe7afWiCNg97CGu0o0mA09YVgYEgoowY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yjp9AbX/; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2955623e6faso16684805ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 15:29:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1762643613; x=1763248413; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jp3aBA3u4fWo7xiq7xdD0SMcDBXI+jskP2t4r2Vw08s=;
-        b=hRDC9uU13Y+ZrcO4icz5roJCxCUEROE98mBcIdH//AQTN7CaWGWRcm+zC7TpCEs7U6
-         uLKhhvclo14cf0I81Euo5QNfcG7Kh6Lgwe2UczskyKxsNuUqlyQuqWzAJJgQ+Rfx/fTN
-         5frLrGIzt4n8Gk9M+6ycTlbZwmqbZ43Wlus2RKrfOCPIXOS9RBhOgEHY1XuQMrTHi6iz
-         it+uLUsoALIs+yVBOyInDfAPmjP6LstpavisR6MsP8Dk3ZVGo618SO6s/xSsSd3O7LgJ
-         Lm8tBuMMWjuxTZfW9Rxcm3UkUlyjYWUR3qfHhYHgeaoxDePQ8Uh5FqdVkryu3gSo/ZDR
-         v5CA==
+        d=gmail.com; s=20230601; t=1762644576; x=1763249376; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7AtxL+sdLqNDqRlc0q9YHgiZob1S+z096c2UzyI/8yI=;
+        b=Yjp9AbX/cPvYSTXOI1/+CYMAmr/Zr3zBQtd7SrxW7Yk22B9FV2agz0ZmP3PbnLzP6k
+         24C/ObC7bYmeENkIu1lV41/4SC+pHsybYw3s1zRcr9FaArz+eLapewRvIzAiZOZvNgAo
+         canzXEs3a/thE3ZFjmWoF8A10uTcxqOWlIhUShpZMnbc5VN9bNf+hb5syMZ8Kh4TzcCk
+         hPhpPRxB/7d9HT7BdSB72Vw/obUt/QwXaBFcejw3tLJrhyiVnY8U5bIqeAbM6wOnb8ni
+         bJtYP4lOPD6EFPR+yyyL8LwYwsy0GBbLXhF8WhGuclMSHSUdLtKKr5IVVNPItwRZZepA
+         SnPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762643613; x=1763248413;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jp3aBA3u4fWo7xiq7xdD0SMcDBXI+jskP2t4r2Vw08s=;
-        b=nUihaf/lO/yuUPEDuk2/Xm1HC3ViPn/9GQIfapz7IIeBjuSE4ZT1rroSrJ3+g+oBtK
-         VVOyUGd5w1smtEdfGoSKprArGG5vPbsxSap/yLGMjMehPYNi9p1Pqf1Jp5HEfwklKr2P
-         Xadj7yMkPZ3F3E9p34PMsHmXAQrbxuLao37dZdiq7cSvopsC8yazObpeOYr3Qvsvr745
-         B14z8ayXx3YCcgkQewDXeGVJwlwpX8UeBagaamxncwS4DjGd5RboFvjnq477VRFI9NAC
-         JwLd3vjzTmF1S9luvTuN7NqOCYaXxWACT0SVPR/U6Wl410a+JZVm54A46zQcp/YXWfiK
-         Davg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUYLc7rkyCGAg/149oHX/lXuT7YIDzR+X8B6LdvrhYZRChTe9wIEkiVU0GUftIT4fatc4hctttI7CrFaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaGLChIkjXj/QAG9XIkBo+K7nDx9+gnzM+t0Q7+YSWe8ILLXiL
-	bmfxqkr9cThDkHENC2sDBAHb1ZEtPSYb9VOtYRG5DsUfyBiqirVFzRD0
-X-Gm-Gg: ASbGncsdt5eKVESGREFjFBAJAW+b5UYvOobgldwfncE2bgf8AM4NiVW8mTzSB/X+/he
-	tbNp7aAIcFzse3ejlHYNAMjoW+Q+fVkjxLk4Owu3HkZID5Ata51A0GlnuEoKqgUmbORrZQ5VSyf
-	Ibf97i6m6RYRHIudbqvidGKnVdVTC3sZHgvxl8Iw5oxscjTAdox4M2Pzl3uGBuyNpSWBG9mUbjo
-	c8/1rD6wFj9U45WS05w569ylUL9TGIC2XBH7Jflqj0vuqrN/ZkzHzG0ENmZoHImxo/gmgF/xCSF
-	+IkS4Fr3uwxe/IxuQVTWVyK0q+SN9oDY4Rshwd6pvYPxJ4Mw5xe181kgVmCTJb1cbExCUjWXJzm
-	OX7bA/0el9V59aOPcSCy5HCvRAVJZuWg9+qJtFLrxbjZRwgkOMfPRkkOGske9buLPOc7oRDGwUo
-	QbNttjI3rg4UM0rKJAu4fvVvKIOiflQ9b41stHcTP/qWP6leWeaL34vSu2Pi0EbGIRljj+Lb6SG
-	cyASz5Kp+yBWQUAR2zTneULf/6/X/I1
-X-Google-Smtp-Source: AGHT+IGemsR0OuxveqoCLuvT35vA4jAjT0f4VTJglt6MI1GNIHLfcz8g6Jk7qZLukmNg7JdbfDQkvg==
-X-Received: by 2002:a05:6402:4415:b0:634:6d87:1d28 with SMTP id 4fb4d7f45d1cf-6415e856c10mr2612380a12.35.1762643612939;
-        Sat, 08 Nov 2025 15:13:32 -0800 (PST)
-Received: from blackbox (dynamic-2a02-3100-a9b3-6600-1e86-0bff-fe2f-57b7.310.pool.telefonica.de. [2a02:3100:a9b3:6600:1e86:bff:fe2f:57b7])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-6411f814164sm7642807a12.13.2025.11.08.15.13.31
+        d=1e100.net; s=20230601; t=1762644576; x=1763249376;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7AtxL+sdLqNDqRlc0q9YHgiZob1S+z096c2UzyI/8yI=;
+        b=nyKnkmpExEIfQO1J9Ecqch3aCHx120uJ01TCVlgN13Csg+RVA04rOrxZ3YCSHLmERg
+         m91QkDEge07YDife06G+YVQriOhG+M6IyN79uwxRkhUgg9MveU3HhokYeYxMh3s7ZDiY
+         Aqlc31zpBvX2dd+fu7KxQFBc6mhAwU+5nBe6UuqNk8OVeUWyZGoW06ut7+oe1Qwq4nKI
+         yeRGot+bPHC8uJBFIE/z8lcQkmuPduqiuHaG0o0Q1GZlyx5pcVywbvwOKVDfyoaS/W+2
+         CK2+MPWZPN1K9iPIAYGSaGY08ALpULkcP7Sa5IbAHNjaKGPeEtAadDVG+C5l2Hl+/ure
+         C5Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQgrrvF/MtkNQsA2uLYVj44CIkN3dBGi5ra9vpjwRaTT4NlYaUhGd+Vefjw4QrCCCDMqM4npNMbbI0ZPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs2ZvGWIRCORQ4xofvJIwBdXvws5CCQM9PWI0vT9b8VrBj/sB8
+	pbiPBkjq7BwxU+JNGW2v1vctwHaX0fRM0TIL4dI+ibHachDq9dvWLSdp
+X-Gm-Gg: ASbGncugkcBpmb+1E2sHMfVU6UiyDsnzqbux6ocVUp8X+WmBeSTUB9cEZv2bv9M+tej
+	48E4BgUXwBGWnbPD+vV4OX94ZSKgb2tT0FBYLnv2aSbHrSkY4MTImVkrrBXfXEGn9Lh6mfXTXTz
+	BHjKQhxjL+7qJ/UINrHsTLZw8qDwItWwBEB6tabQzCHKZg12l92M4zluvm/ZR78ZUYJSf79L4eF
+	o6XOdksAvDeSyly1p0C/27aj8wg5OCubq342pLiTbeLXgCqm7j+b0RAfynkaIq48WKnF2ytISbh
+	ebqC60nGH3e2k2Zm579fKHkctNOU+XPVcyHXQ5YeTOGrJK2BXf74syz08ZTbMR3JZxXSXttdkmK
+	+JVl8hbLdXTKf49dj/Hh6D4QJ4pKo5wEn7Cp76Fu94Lk1d1jiBaFyI4yPNbHxddZlXctNJ4wFqD
+	kD
+X-Google-Smtp-Source: AGHT+IEDcM2eeYZrQhyJQFVSP/ovcKlDegZbalJIsOjkkItxAwtRs5DfDKXi/gUt0yeOJaU1EzIfbQ==
+X-Received: by 2002:a17:902:ea10:b0:264:70e9:dcb1 with SMTP id d9443c01a7336-297e56e13aemr43918735ad.56.1762644575506;
+        Sat, 08 Nov 2025 15:29:35 -0800 (PST)
+Received: from fedora ([172.59.161.218])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5ee4dsm99576265ad.45.2025.11.08.15.29.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 15:13:31 -0800 (PST)
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-amlogic@lists.infradead.org,
-	linux-mmc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Sat, 08 Nov 2025 15:29:35 -0800 (PST)
+From: Alex Tran <alex.t.tran@gmail.com>
+To: Pavel Machek <pavel@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	ulf.hansson@linaro.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v1 7/7] mmc: meson-mx-sdio: Ignore disabled "mmc-slot" child-nodes
-Date: Sun,  9 Nov 2025 00:12:53 +0100
-Message-ID: <20251108231253.1641927-8-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251108231253.1641927-1-martin.blumenstingl@googlemail.com>
-References: <20251108231253.1641927-1-martin.blumenstingl@googlemail.com>
+	Alex Tran <alex.t.tran@gmail.com>
+Subject: [PATCH v1 1/2] media: i2c: et8ek8: et8ek8_driver: add support for crc configuration via device tree
+Date: Sat,  8 Nov 2025 15:29:23 -0800
+Message-ID: <20251108232923.2067131-1-alex.t.tran@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,79 +90,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The meson-mx-sdio (and mmc core) only support one MMC/SD/SDIO slot
-(device) per host. Thus having multiple mmc-slot nodes (one for the up
-to three supported slots with one device each on the meson-mx-sdio
-hardware) can be problematic.
+Retrieve the configuration for CRC from the device tree instead
+using the hard coded USE_CRC directive. If there is an issue
+retrieving the endpoint node or the CRC property then the default
+of 1 is used and the driver does not fail to maintain backward
+compatibility.
 
-Allow specifying all slots (with their respective device) connected to
-the meson-mx-sdio hardware in device-tree, while making sure that only
-the enabled one(s) are actually considered by the driver.
-
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
 ---
- drivers/mmc/host/meson-mx-sdio.c | 37 ++++++++++++++++++--------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
+ drivers/media/i2c/et8ek8/et8ek8_driver.c | 49 +++++++++++++++++++-----
+ 1 file changed, 39 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mmc/host/meson-mx-sdio.c b/drivers/mmc/host/meson-mx-sdio.c
-index e8b63dc45dd8..5921e2cb2180 100644
---- a/drivers/mmc/host/meson-mx-sdio.c
-+++ b/drivers/mmc/host/meson-mx-sdio.c
-@@ -493,23 +493,30 @@ static struct mmc_host_ops meson_mx_mmc_ops = {
+diff --git a/drivers/media/i2c/et8ek8/et8ek8_driver.c b/drivers/media/i2c/et8ek8/et8ek8_driver.c
+index 2cb7b7187..4ef92359c 100644
+--- a/drivers/media/i2c/et8ek8/et8ek8_driver.c
++++ b/drivers/media/i2c/et8ek8/et8ek8_driver.c
+@@ -29,6 +29,7 @@
+ #include <media/media-entity.h>
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-device.h>
++#include <media/v4l2-fwnode.h>
+ #include <media/v4l2-subdev.h>
  
- static struct platform_device *meson_mx_mmc_slot_pdev(struct device *parent)
- {
--	struct device_node *slot_node;
--	struct platform_device *pdev;
-+	struct platform_device *pdev = NULL;
-+
-+	for_each_available_child_of_node_scoped(parent->of_node, slot_node) {
-+		if (!of_device_is_compatible(slot_node, "mmc-slot"))
-+			continue;
-+
-+		/*
-+		 * TODO: the MMC core framework currently does not support
-+		 * controllers with multiple slots properly. So we only
-+		 * register the first slot for now.
-+		 */
-+		if (pdev) {
-+			dev_warn(parent,
-+				 "more than one 'mmc-slot' compatible child found - using the first one and ignoring all subsequent ones\n");
-+			break;
-+		}
+ #include "et8ek8_reg.h"
+@@ -45,6 +46,7 @@ struct et8ek8_sensor {
+ 	struct regulator *vana;
+ 	struct clk *ext_clk;
+ 	u32 xclk_freq;
++	u32 use_crc;
  
--	/*
--	 * TODO: the MMC core framework currently does not support
--	 * controllers with multiple slots properly. So we only register
--	 * the first slot for now
--	 */
--	slot_node = of_get_compatible_child(parent->of_node, "mmc-slot");
--	if (!slot_node) {
--		dev_warn(parent, "no 'mmc-slot' sub-node found\n");
--		return ERR_PTR(-ENOENT);
-+		pdev = of_platform_device_create(slot_node, NULL, parent);
-+		if (!pdev)
-+			dev_err(parent,
-+				"Failed to create platform device for mmc-slot node '%pOF'\n",
-+				slot_node);
- 	}
+ 	u16 version;
  
--	pdev = of_platform_device_create(slot_node, NULL, parent);
--	of_node_put(slot_node);
+@@ -130,8 +132,6 @@ static struct et8ek8_gain {
+ 
+ #define ET8EK8_I2C_DELAY	3	/* msec delay b/w accesses */
+ 
+-#define USE_CRC			1
 -
- 	return pdev;
+ /*
+  * Register access helpers
+  *
+@@ -844,20 +844,16 @@ static int et8ek8_power_on(struct et8ek8_sensor *sensor)
+ 	if (rval)
+ 		goto out;
+ 
+-#ifdef USE_CRC
+ 	rval = et8ek8_i2c_read_reg(client, ET8EK8_REG_8BIT, 0x1263, &val);
+ 	if (rval)
+ 		goto out;
+-#if USE_CRC /* TODO get crc setting from DT */
+-	val |= BIT(4);
+-#else
+-	val &= ~BIT(4);
+-#endif
++	if (sensor->use_crc)
++		val |= BIT(4);
++	else
++		val &= ~BIT(4);
+ 	rval = et8ek8_i2c_write_reg(client, ET8EK8_REG_8BIT, 0x1263, val);
+ 	if (rval)
+ 		goto out;
+-#endif
+-
+ out:
+ 	if (rval)
+ 		et8ek8_power_off(sensor);
+@@ -1396,6 +1392,34 @@ static int __maybe_unused et8ek8_resume(struct device *dev)
+ 	return __et8ek8_set_power(sensor, true);
  }
  
-@@ -642,8 +649,6 @@ static int meson_mx_mmc_probe(struct platform_device *pdev)
- 	slot_pdev = meson_mx_mmc_slot_pdev(&pdev->dev);
- 	if (!slot_pdev)
- 		return -ENODEV;
--	else if (IS_ERR(slot_pdev))
--		return PTR_ERR(slot_pdev);
++static int et8ek8_parse_fwnode(struct device *dev, struct et8ek8_sensor *sensor)
++{
++	struct v4l2_fwnode_endpoint bus_cfg = {
++		.bus_type = V4L2_MBUS_CCP2,
++	};
++	struct fwnode_handle *ep;
++	int ret;
++
++	ep = fwnode_graph_get_endpoint_by_id(dev_fwnode(dev), 0, 0,
++					     FWNODE_GRAPH_ENDPOINT_NEXT);
++	if (!ep) {
++		dev_warn(dev, "could not get endpoint node\n");
++		return -EINVAL;
++	}
++
++	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
++	if (ret) {
++		dev_warn(dev, "parsing endpoint node failed\n");
++		goto done;
++	}
++
++	fwnode_property_read_u32(ep, "crc", &sensor->use_crc);
++done:
++	v4l2_fwnode_endpoint_free(&bus_cfg);
++	fwnode_handle_put(ep);
++	return ret;
++}
++
+ static int et8ek8_probe(struct i2c_client *client)
+ {
+ 	struct et8ek8_sensor *sensor;
+@@ -1406,6 +1430,11 @@ static int et8ek8_probe(struct i2c_client *client)
+ 	if (!sensor)
+ 		return -ENOMEM;
  
- 	mmc = devm_mmc_alloc_host(&slot_pdev->dev, sizeof(*host));
- 	if (!mmc) {
++	sensor->use_crc = 1;
++	ret = et8ek8_parse_fwnode(dev, sensor);
++	if (ret)
++		dev_warn(dev, "parsing endpoint failed\n");
++
+ 	sensor->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+ 	if (IS_ERR(sensor->reset)) {
+ 		dev_dbg(&client->dev, "could not request reset gpio\n");
 -- 
-2.51.2
+2.51.0
 
 
