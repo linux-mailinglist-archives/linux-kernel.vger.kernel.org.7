@@ -1,95 +1,87 @@
-Return-Path: <linux-kernel+bounces-891450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A744BC42B06
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 11:09:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98D5C42B09
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 11:11:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84F284E7CC7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 10:09:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E6373B0F2A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 10:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162EC26CE0F;
-	Sat,  8 Nov 2025 10:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8274A27F171;
+	Sat,  8 Nov 2025 10:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="TU68NA/W"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="inNNDoO1"
+Received: from sg-1-13.ptr.blmpb.com (sg-1-13.ptr.blmpb.com [118.26.132.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D111259CAF
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 10:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFFD221DAD
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 10:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762596536; cv=none; b=JqFOX4Oy/MisPzgaT3Bdtc9Lj7n14uDAhYSrF4f9kwh/pWRYrA8xq2DI2gurFud5N0IZFiDubtYAE69A8mdw/z9LaWKtUbTMCoI939kbqW0n9K1R0iNF02zy1MiVAfAVSgaJvA/4HFmzgWOlyja2oNsIQOydvujTzwE7YiewXik=
+	t=1762596674; cv=none; b=bS+5yUUWhC2dji3YxC+2rsS7M4h8KkQG1h6C466JkjReWMwkS/ADiCNVSef3r54rJKjpmxOkP69UZH3cqx9s/vbJG8i9WtTabpp18n26siKxPl9PaDW38FhznE35bXKoPkAx2jZ+0s0Loma/lqnv3NzxSqqaoofgIpgsgfE6uiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762596536; c=relaxed/simple;
-	bh=lwrdlSMDo6I4dhMwHxhXV+07A+bfnpnTprdZw5wGY0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ova4qXB0NqVSIi8shRWkB4Nm+6kgN4g8m6DmOniZob3PfP6ITxp/pghsCCuOe/QlVxFcSgVg5zdg1Onn4qz96K/ldpMwxjVO9T1McfHM3ZLlYdRHppo3HRl/oIDhFcoZtadYa+6oh6+q4kdYz042LH8tQeBfQkEAjbONFcxg2cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=TU68NA/W; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1762596526;
-	bh=lwrdlSMDo6I4dhMwHxhXV+07A+bfnpnTprdZw5wGY0o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TU68NA/W87GcyBA43glIu4XLeA1Qce9mDMNUhhOQ8g+SG/CsOXqR+OKuT1oV9TkZl
-	 eSwlZte2+cl6ZFBSwT4g2Raf9G7ySXxGDr43OjI4L4RynMyfu/9LXqc/PH+y0L/hcx
-	 VcINbGcyRlfrmgk0eupQM1U0znTWL2dU2GD6y4fQ=
-Date: Sat, 8 Nov 2025 11:08:46 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] LoongArch: ptrace: Use UAPI types in UAPI header
-Message-ID: <952efc87-2e1a-45b3-9ccb-e7f5120aba0d@t-8ch.de>
-References: <20251029-loongarch-uapi-ptrace-types-v1-1-5c84855a348d@weissschuh.net>
- <CAAhV-H4oDtOUB_CecFE2sPE-JSQNNWvFRmY8=ZdDOCdD8kdo7g@mail.gmail.com>
- <4f8402e5-2bfa-4ee3-9123-fac887ed866d@t-8ch.de>
- <CAAhV-H4c8_GdnCdHfX_bVQ+rrGRtNua1r2MR0n5rXgXfgte0Sw@mail.gmail.com>
+	s=arc-20240116; t=1762596674; c=relaxed/simple;
+	bh=UTMz9mZ8CrbmD3tm8n1OmiyowE5CZV81u5Xc34gm1Dg=;
+	h=Date:Mime-Version:Content-Type:In-Reply-To:References:To:Cc:From:
+	 Subject:Message-Id; b=PNpIFzhHVfm4ixPunjQS81K+13lFtGqaLm9c30sNZ7kLYpM0Hnq/+YlfNMuVe6VkpSoDPJIE7MA9A33onSsdc+ETSX1UaTXAn6ZRgm49TD2I3F1KNISD8cfmO8HFx2GBSDdSC5CN081QG0/TNOnAOVN/eaUlvrOPxrAhZ0QHxJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=fail smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=inNNDoO1; arc=none smtp.client-ip=118.26.132.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1762596667;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=As9vZLyUp565x8WqzAr/AY+rZQ4qn+Bn5PmSh9094bs=;
+ b=inNNDoO1smvq5el0LoG1EUH1sZ7GLIdc0NENwM+jbP1AtMwFzgaLgj21+TGF3XrpYv2fnk
+ mQqSbpq9ea7HwQcZcqdic0Oji58PCbaIP9Z8lzNxdIkyNls6yZxqiIVQYf9GQrl/EpBlqx
+ 9h8xw37zFOaSWm/PPom2I4pwt2pNT+LfsrKtFAGCDfZQU8dXfLX/HHs6ZOcRKcio/Ii0Ef
+ XO3cOXXjj4LPFjuVrLoJ4AS00YiyVuFHPr94h0FpevVxoYfbo5Tye9NFxorbF5AWv4m4MG
+ Wt1jHA3oWR8NJDHk2/3nWb2nkyHqs9VcLeeuNGOLq+hoK5ZjCdXnS5lTKZdCPg==
+Date: Sat, 8 Nov 2025 18:11:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H4c8_GdnCdHfX_bVQ+rrGRtNua1r2MR0n5rXgXfgte0Sw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Lms-Return-Path: <lba+2690f1739+32d6b5+vger.kernel.org+yukuai@fnnas.com>
+Content-Type: text/plain; charset=UTF-8
+Reply-To: yukuai@fnnas.com
+X-Original-From: Yu Kuai <yukuai@fnnas.com>
+User-Agent: Mozilla Thunderbird
+In-Reply-To: <20251106115935.2148714-5-linan666@huaweicloud.com>
+References: <20251106115935.2148714-1-linan666@huaweicloud.com> <20251106115935.2148714-5-linan666@huaweicloud.com>
+To: <linan666@huaweicloud.com>, <song@kernel.org>, <neil@brown.name>, 
+	<namhyung@gmail.com>
+Cc: <linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	<xni@redhat.com>, <k@mgml.me>, <yangerkun@huawei.com>, 
+	<yi.zhang@huawei.com>, <yukuai@fnnas.com>
+From: "Yu Kuai" <yukuai@fnnas.com>
+Subject: Re: [PATCH v2 04/11] md/raid1,raid10: support narrow_write_error when badblocks is disabled
+Message-Id: <a66d22ae-8fe7-4af6-99c8-fb052c7affed@fnnas.com>
+Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Sat, 08 Nov 2025 18:11:04 +0800
 
-On 2025-11-03 17:38:49+0800, Huacai Chen wrote:
-> On Mon, Nov 3, 2025 at 5:27 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > On 2025-11-03 17:12:58+0800, Huacai Chen wrote:
-> > > On Wed, Oct 29, 2025 at 11:20 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > > >
-> > > > The kernel UAPI headers already contain fixed-width integer types,
-> > > > there is no need to rely on libc types. There may not be a libc
-> > > > available or it may not provide <stdint.h>, like for example on nolibc.
-> > > >
-> > > > This also aligns the header with the rest of the LoongArch UAPI headers.
-> >
-> > > Thank you for your patch, but could you please tell me some history
-> > > and user guide about the three styles: u64, __u64 and unint64_t?
-> >
-> > uint64_t -> userspace type, should not be used within the kernel
-> >             can technically be used in UAPI it will be somewhat
-> >             nonstandard and introduce a dependency on libc with no
-> >             upsides.
-> But a simple grep shows there are many uses of uint64_t in the kernel
-> code, are they all wrong?
+=E5=9C=A8 2025/11/6 19:59, linan666@huaweicloud.com =E5=86=99=E9=81=93:
 
-Yes, they are wrong. See also the explanation from Arnd.
+> When badblocks.shift < 0 (badblocks disabled), narrow_write_error()
+> return false, preventing write error handling. Since narrow_write_error()
+> only splits IO into smaller sizes and re-submits, it can work with
+> badblocks disabled.
+>
+> Adjust to use the logical block size for block_sectors when badblocks is
+> disabled, allowing narrow_write_error() to function in this case.
+>
+> Suggested-by: Kenta Akagi<k@mgml.me>
+> Signed-off-by: Li Nan<linan122@huawei.com>
+> ---
+>   drivers/md/raid1.c  | 8 ++++----
+>   drivers/md/raid10.c | 8 ++++----
+>   2 files changed, 8 insertions(+), 8 deletions(-)
 
-> > u64      -> kernel-internal type, used for regular kernel code
-> >             defined in include/linux/types.h
-> >
-> > __u64    -> UAPI type usable from both kernel and userspace code
-> >             defined in include/uapi/linux/types.
-> >
-> > As a note: When applying the patch I want to clarify the commit message
-> > a bit, as nolibc indeed has a stdint.h header. The real breakage comes
-> > from a validation step we perform which does not add the libc include
-> > directory to the include path.
+LGTM
+Reviewed-by: Yu Kuai <yukuai@fnnas.com>
 
