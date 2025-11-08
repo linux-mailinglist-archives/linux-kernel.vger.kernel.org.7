@@ -1,130 +1,120 @@
-Return-Path: <linux-kernel+bounces-891502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3013C42CD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 13:33:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D283AC42CE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 13:34:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 667A93B1D70
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 12:33:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 989B24E032E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 12:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921C721D3F4;
-	Sat,  8 Nov 2025 12:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DD5258ED4;
+	Sat,  8 Nov 2025 12:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b="ciAphf8u"
-Received: from mta1.formilux.org (mta1.formilux.org [51.159.59.229])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U8Be14cR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD232B9B9;
-	Sat,  8 Nov 2025 12:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.59.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459071C84C6;
+	Sat,  8 Nov 2025 12:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762605209; cv=none; b=rGQW8fWQsgD5Br2jNpVUSZq/+BB8p66EMqbrSBNXqE4t6TfR0BXM358zm7qo8JybAGyS+UHIs8EDOwl4B3EjRd/YGZDRjcKjFcKs+Jstf1cZXIgdG/aHoZ8YBKj9xyhOh6lrZDZJj7gD0liMxt3HqNoNS443/uUxk1e1RWsIo8A=
+	t=1762605231; cv=none; b=ETf1EbPMpFrUyh6utHslRn9cCWjUvlGycRFlqa4EN7ySfe71UGYpcTqfUFSxxRGZr+oxyMvUI6pKHXO08QPsnocP/ljg2hqMQ4b/dw1KHyNylQuDgW2Qv6QyXxuuUcKxCQAypUyOyweQ5Y1lTQV4p3y3GTAJyRQ5/IMYjfrFT7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762605209; c=relaxed/simple;
-	bh=Rf9GJLGm/E16pRMnrmp+CBN32IvBJ0hD79MnJ1t7U5k=;
+	s=arc-20240116; t=1762605231; c=relaxed/simple;
+	bh=k8FeKKKyTWxMCzlO2ToUpsOqrl/hY0TIWxgnSQEIoUA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CG+vr5jcItlLbm4InUDv14D3tFiIcxQrVM6IGVfKGrKQJw/em0efANZt066mjmyXJ0kJ1W8xnWu4mrI1FhsL0QDBZEpy8E+dK8Zd5k0Dr7vMSDiRAYUi7TW6Tyu81CiYiD5ruOvFK/7NdoQJTVU0FKpOf9IE38H/orrTywmC8NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b=ciAphf8u; arc=none smtp.client-ip=51.159.59.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1wt.eu; s=mail;
-	t=1762605198; bh=i1/L4seNKaCr4KLY1JyXJE9sVlBA0J4FPORuvVZULoA=;
-	h=From:Message-ID:From;
-	b=ciAphf8uk6z691+PIsZBjpFLprn75paLigOmUQPACgNfJWYsDNoXPznUQa6/Va44g
-	 D23FLScTsx3ilyw50bgHr+ltSjrGG+hRQFiuzKW1DByNrubkeC3kLCpBUGq1SbHHSU
-	 KgVlAi7d1k29l5avy8AX43zmVUjXufC2W8h6gHoI=
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by mta1.formilux.org (Postfix) with ESMTP id 96FADC094F;
-	Sat, 08 Nov 2025 13:33:18 +0100 (CET)
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 5A8CXIdF006902;
-	Sat, 8 Nov 2025 13:33:18 +0100
-Date: Sat, 8 Nov 2025 13:33:18 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] tools/nolibc: add support for fchdir()
-Message-ID: <20251108123318.GA6898@1wt.eu>
-References: <20251107-nolibc-fchdir-v1-1-4a1ab8141f68@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0QC1YwE9+TmKBeWyNgZww+VD9PdLnysGs+C1FrVh/RxyeC3t1sIRNG+wi1TRv2k7wGUrrKHFn+rjGlN5AbJFkHOrHFq/MN0+FA9g6FikhSuYYvVY3siFKHJi7mzQHU6oMdY2MFfRkp3yMHMCVUbmKtMTinbn8fc9ID6SLh9wV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U8Be14cR; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762605229; x=1794141229;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=k8FeKKKyTWxMCzlO2ToUpsOqrl/hY0TIWxgnSQEIoUA=;
+  b=U8Be14cRlylqC+9Fd5k8sQ38K3+ya0OQ1CzH1sM9k160h0gWZwj9AWxu
+   DYxDRUlwGA1OkHN+/MCJm+ETvlYrbxi1eLFr+pbrSr5FPCbD7lLnECLxV
+   g9bMFOTmMQVVIHToy7Qa6AVgoXkqWzkA9rSxx93PWGE2SRzIYuBBpOaE/
+   aEMIpnpKLarEUQoFqscbT/TQ48wEQcj0aiXbPnNnQA2brm5PdjrRrVXuo
+   xT5mK+lnRi5zu7gpaIJwUKjxSzSVa4ZePddjC0FZ6eappLiq0jaugqOqJ
+   sZMnArpHE1oHptJLtcbXDjFr798PkIY999rejGTtYRjGOCB1BUvHa1qYG
+   w==;
+X-CSE-ConnectionGUID: xeWt/3L7SZyqIJb6m/coVA==
+X-CSE-MsgGUID: XTjx8tIrSmixhbfqnr0NyQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="63942052"
+X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; 
+   d="scan'208";a="63942052"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2025 04:33:49 -0800
+X-CSE-ConnectionGUID: jE6zrHbmR/qUn7ucISj+GA==
+X-CSE-MsgGUID: P18hk1rQSByQeXvnGLKhcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; 
+   d="scan'208";a="187575201"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 08 Nov 2025 04:33:45 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vHi8U-0000v5-1l;
+	Sat, 08 Nov 2025 12:33:42 +0000
+Date: Sat, 8 Nov 2025 20:33:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hrishabh Rajput via B4 Relay <devnull+hrishabh.rajput.oss.qualcomm.com@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+Subject: Re: [PATCH v5 1/2] firmware: qcom: scm: Register gunyah watchdog
+ device
+Message-ID: <202511082023.F71T0M1w-lkp@intel.com>
+References: <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251107-nolibc-fchdir-v1-1-4a1ab8141f68@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
 
-Hi Thomas,
+Hi Hrishabh,
 
-On Fri, Nov 07, 2025 at 03:13:38PM +0100, Thomas Weiﬂschuh wrote:
-> Add support for the file descriptor based variant of chdir().
-> 
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> ---
->  tools/include/nolibc/sys.h                   | 13 +++++++++++++
->  tools/testing/selftests/nolibc/nolibc-test.c |  2 ++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
-> index c5564f57deec88b8aa70291fcf6f9ca4dbc1d03f..a4b0fdb9b641230174f5e62d62762f59af81a00e 100644
-> --- a/tools/include/nolibc/sys.h
-> +++ b/tools/include/nolibc/sys.h
-> @@ -118,6 +118,7 @@ void *sbrk(intptr_t inc)
->  
->  /*
->   * int chdir(const char *path);
-> + * int fchdir(int fildes);
->   */
->  
->  static __attribute__((unused))
-> @@ -132,6 +133,18 @@ int chdir(const char *path)
->  	return __sysret(sys_chdir(path));
->  }
->  
-> +static __attribute__((unused))
-> +int sys_fchdir(int fildes)
-> +{
-> +	return my_syscall1(__NR_fchdir, fildes);
-> +}
-> +
-> +static __attribute__((unused))
-> +int fchdir(int fildes)
-> +{
-> +	return __sysret(sys_fchdir(fildes));
-> +}
-> +
->  
->  /*
->   * int chmod(const char *path, mode_t mode);
-> diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-> index 29de21595fc95341c2aa975375a8d471cb3933fc..5927a84466cc0ede3b99611e134a8c6b8ab91e72 100644
-> --- a/tools/testing/selftests/nolibc/nolibc-test.c
-> +++ b/tools/testing/selftests/nolibc/nolibc-test.c
-> @@ -1343,6 +1343,8 @@ int run_syscall(int min, int max)
->  		CASE_TEST(dup3_0);            tmp = dup3(0, 100, 0);  EXPECT_SYSNE(1, tmp, -1); close(tmp); break;
->  		CASE_TEST(dup3_m1);           tmp = dup3(-1, 100, 0); EXPECT_SYSER(1, tmp, -1, EBADF); if (tmp != -1) close(tmp); break;
->  		CASE_TEST(execve_root);       EXPECT_SYSER(1, execve("/", (char*[]){ [0] = "/", [1] = NULL }, NULL), -1, EACCES); break;
-> +		CASE_TEST(fchdir_stdin);      EXPECT_SYSER(1, fchdir(STDIN_FILENO), -1, ENOTDIR); break;
-> +		CASE_TEST(fchdir_badfd);      EXPECT_SYSER(1, fchdir(-1), -1, EBADF); break;
->  		CASE_TEST(file_stream);       EXPECT_SYSZR(1, test_file_stream()); break;
->  		CASE_TEST(fork);              EXPECT_SYSZR(1, test_fork(FORK_STANDARD)); break;
->  		CASE_TEST(getdents64_root);   EXPECT_SYSNE(1, test_getdents64("/"), -1); break;
-> 
-> ---
-> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> change-id: 20251107-nolibc-fchdir-2645c298a538
+kernel test robot noticed the following build errors:
 
-Looks good to me!
+[auto build test ERROR on 6146a0f1dfae5d37442a9ddcba012add260bceb0]
 
-Acked-by: Willy Tarreau <w@1wt.eu>
-Willy
+url:    https://github.com/intel-lab-lkp/linux/commits/Hrishabh-Rajput-via-B4-Relay/firmware-qcom-scm-Register-gunyah-watchdog-device/20251108-015559
+base:   6146a0f1dfae5d37442a9ddcba012add260bceb0
+patch link:    https://lore.kernel.org/r/20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17%40oss.qualcomm.com
+patch subject: [PATCH v5 1/2] firmware: qcom: scm: Register gunyah watchdog device
+config: riscv-randconfig-r063-20251108 (https://download.01.org/0day-ci/archive/20251108/202511082023.F71T0M1w-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251108/202511082023.F71T0M1w-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511082023.F71T0M1w-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "arm_smccc_hypervisor_has_uuid" [drivers/firmware/qcom/qcom-scm.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
