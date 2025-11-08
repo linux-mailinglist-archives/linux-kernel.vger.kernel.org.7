@@ -1,191 +1,128 @@
-Return-Path: <linux-kernel+bounces-891559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F5CC42EED
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 16:49:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD7BC42EF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 16:58:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BA0E4E12DC
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 15:49:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDBF43B06E9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 15:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4064021FF55;
-	Sat,  8 Nov 2025 15:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC28228C99;
+	Sat,  8 Nov 2025 15:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwCt5SIp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPhw8UE+"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1E018C2C;
-	Sat,  8 Nov 2025 15:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77897225409
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 15:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762616976; cv=none; b=XfqMqCeZTHzQTDys4AsYtm4lDhmHExgfBc10HWtRDqKQUoAEjzG4avQhQ7Dl8/67+2aYocN/opw2L+Zze0rKJ4egeuzF+jjnkGgBnLZ8tqgmfDD5GYkKIyBO4kp4inAyybJP/jBZ2rcqRXSwYVXLZDYzpsKH7+yAKH0/T6EVJUU=
+	t=1762617447; cv=none; b=LjrxipVzBTa2KewF+iOQXR/IftNyiXiu1KDIefQlkLXVfqVcvj6YzbmnESxJg+p4E1I44+veRNdt+fFebvRzNKiDZCdSLI6Fztj4Ytu1JIAcS67/vFYerkXMhxp/AG0mtGJp3MUuj1atgHMkx1eku9v0NFjZUwIcaVoQiGAchAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762616976; c=relaxed/simple;
-	bh=JGBD1WdpR8se7blVNwDS5FftBsn8t1gjcXcszTpasAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MPTdDmYu1P8/hwALTRcKUuux+C4y9xkaUqq0kcjhIXtA1xinsLPR1aKuWN05vaaYWi4FVC6yUe9BszSWSYE1P8wA//FR0/l22QNzIVAcY1gJPGvW92E0oUOBhAPKQfxnPP+1R3f/p7r9yXpzQjBhjOv5SHcRV1nZvrR3cE5X+Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwCt5SIp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E170C4AF0B;
-	Sat,  8 Nov 2025 15:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762616976;
-	bh=JGBD1WdpR8se7blVNwDS5FftBsn8t1gjcXcszTpasAY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OwCt5SIpd4Er9Bc0PQNRfhsPYi9ze7G64zt//RkuKncDUjAy9IOhBxi7EEl0yFc2R
-	 1UDzbCMx7s5Z9NJPKEYpdKpY0SVXHkfxkmrg5PSuY70U952B5LTTNe3EntEKBnAIK3
-	 vyF76WDtlDcRFQ6g9fu5aOX83IfUYKlc5uDjwXqy6443IxTmE4f/acuqgWRf4qHjPo
-	 mqUEhYCUZf4RdZyAawEoWtpLKZ21vT63hEAkdBp0O0Jh8zRVJZJteu/U5DtccXEN40
-	 bfvBmecnsRUlV46CrRN/bIV0l2ipoYQM0U2PZDeSM5I3FBR1pEH+ZbSH8iIu0XprG1
-	 l6weoFL+5bkLA==
-Message-ID: <cf9573c2-5fb7-4417-8ff0-eef4172621fb@kernel.org>
-Date: Sat, 8 Nov 2025 10:49:34 -0500
+	s=arc-20240116; t=1762617447; c=relaxed/simple;
+	bh=1B6qJxhbK00jLGFc+/1YeYK+A12GIKfCTEsHFV4BWFE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MZSgmLctyo2tR9BbEDmFqhgT+z7KFF+5rEUWa/zDEP/YCA6fTG4o/2so/Sk/doBTvVGzCyHxbTUTiCUDge5edsR25bZNuDarNxucGRO+726iLoUJV0Bn5GfISswSS9yZO9HD9ZoGamVeT2KlwkWBm/Bzfr2iGVQh1wXBnFA2/b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NPhw8UE+; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b9a5f4435adso141865a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 07:57:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762617446; x=1763222246; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UF04VjpCgrtM4AACwnQlzOMrdSH/wb0uO//xFFcApf4=;
+        b=NPhw8UE+uGSqouH7donjkwGs8XsLpQPCFsj2zK/upWEoCA2ckn30uTNztMiwWsFhwJ
+         RUi2UQud8H7gjTorRjPKJk3d+uzhHRMvAauypLHQl7EaUI+tUKLZWSgnVfT/uta4R0/+
+         x6Rx/HLFB6O1QQfqF1rjozka19gFNDSTcYp1WO7iGAg0WvjLPRZfFvuGv8bSxHzJBgON
+         qXLHdGuLUb1CTUuCjirhLE1U+JrmKYfEF0WmdHyc3uqrfT1fna+Q7v63lktBZUM7MV1Z
+         ZvrFhOiMY6IwvPKDRPE62N9WzDhQfBVMobAD6rRpo9bgWB+KW0INgiU19HnPEdMhWXvQ
+         uHTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762617446; x=1763222246;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UF04VjpCgrtM4AACwnQlzOMrdSH/wb0uO//xFFcApf4=;
+        b=E1waIIL3icrOlKR6Y1Ns1NhdnDilwbnLr/pqeip7Aeiy+rM4WK5KDusymZE8/zYDxs
+         +irJqBhp5HXdyuHrzpmCmmNMa3bKJZJLuSwAv1E8pcskRh0qrvakrd5r5SFyj/10FKbK
+         14VfopDDjpiizu3PRhp+RAQFLh4dqYaNf+roef+x/t4I1/olt95JnCdVcUs9FZ41Voj0
+         +zVXtq9N0zcjw2evQPGqkgmG8wXPhFpeLbV/s+W+hjMr/zuDhe3ec8SndXKzPMQ0pbr0
+         iCYegwpOvawlb9HEgoANHqXRlurjRGecqQeyG+/lPdkgYBYemN3xzfYXVyrgH2Ea6R9T
+         tjoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1gzAegNz3aFbaPOZt7wiHywGoNexJ7MUCYmbIsO6hFFwY5HKMgS+wcCcorJQkTVVlGsztMBlLo679vcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4pAfEJAcQiiaNs2v6D3IoeR/T9W86kcXsqdzkeEe2p2CqKqnR
+	KQF7VFSbVIGzHm9kR/1fM6JyldQok2hUwV9nzzzKB7P6nnmb5Folj+rjIQvWycCZk4s=
+X-Gm-Gg: ASbGnctEbMltvmVWa3GDb9D2EJdmHtyCex4g/whEjSRTSK7Is/2XZD0YvX7hozlCRco
+	P4peWkbqMWeaLJppTXOvj9GlZPEseFPTCmCnqmyx6qh9XK2oJfYl4sR9UKwXmEo8jBs322A/oRj
+	iKXPZsQ1vtJX85nM8aHJmINr8zy11CPXz5ZYRf25ERJPbR6HeWxx2dqa9PRGcVM8V/g3HUIa4b9
+	Rnn2g/7iHs4wlpxkVg8G+IuEjepSYYM5imX4HOPnDSNSctrs0qBBCLXXObztJ4mGAueVjQ3GJlo
+	LNMKHNo9jZKkfoahVv7GQ+kxqT9dlyBWaMtTUfkm/BN3m8/y6oNd51Lqet3moEw0LTxYFz/KkIs
+	uGsqMVoc8VwzUZtLHTEb8YVqmd9hJ1m25TmtElFH1EfQm2nR3MJNkYYvXaKhSGH72/UOl5SRDJK
+	rkUQDbTIYBbWi4i1lXPqMRp84fpVpyXGn8R/ygyLHihAqPZlKRGg8aRcatbvDpF1bCUPYa2bTt
+X-Google-Smtp-Source: AGHT+IH9LyA7/tnKICrBnlW9MvtAHS+5SqO+iVA2GT69gP6cJzXTVGRPCBtL5DJXPhM6hg6KNiVtoA==
+X-Received: by 2002:a05:6a20:4305:b0:2e3:a914:aabe with SMTP id adf61e73a8af0-353a026aa2fmr1974504637.2.1762617445630;
+        Sat, 08 Nov 2025 07:57:25 -0800 (PST)
+Received: from poi.localdomain (KD118158218050.ppp-bb.dion.ne.jp. [118.158.218.50])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba901c39ea7sm8200832a12.29.2025.11.08.07.57.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 07:57:24 -0800 (PST)
+From: Qianchang Zhao <pioooooooooip@gmail.com>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>
+Cc: gregkh@linuxfoundation.org,
+	linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	security@kernel.org,
+	Zhitong Liu <liuzhitong1993@gmail.com>,
+	Qianchang Zhao <pioooooooooip@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] ksmbd: vfs: skip lock-range check on equal size to avoid size==0 underflow
+Date: Sun,  9 Nov 2025 00:57:12 +0900
+Message-Id: <20251108155712.384021-1-pioooooooooip@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CAKYAXd-R8NGDzQ-GTM67QbCxwJTCMGNhxKBo1a0sm0XBDqftLw@mail.gmail.com>
+References: <CAKYAXd-R8NGDzQ-GTM67QbCxwJTCMGNhxKBo1a0sm0XBDqftLw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Compile Error fs/nfsd/nfs4state.o - clamp() low limit slotsize
- greater than high limit total_avail/scale_factor
-To: NeilBrown <neil@brown.name>, David Laight <david.laight.linux@gmail.com>
-Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Laight <David.Laight@ACULAB.COM>,
- Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
- Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
- speedcracker@hotmail.com
-References: <bbba88825d7b2b06031c1b085d76787a2502d70e.camel@kernel.org>
- <37bc1037-37d8-4168-afc9-da8e2d1dd26b@kernel.org>
- <20251106192210.1b6a3ca0@pumpkin>
- <176251424056.634289.13464296772500147856@noble.neil.brown.name>
- <20251107114324.33fd69f3@pumpkin>
- <176255578949.634289.10177595719141795960@noble.neil.brown.name>
-Content-Language: en-US
-From: Chuck Lever <cel@kernel.org>
-Organization: kernel.org
-In-Reply-To: <176255578949.634289.10177595719141795960@noble.neil.brown.name>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/7/25 5:49 PM, NeilBrown wrote:
-> On Fri, 07 Nov 2025, David Laight wrote:
->> On Fri, 07 Nov 2025 22:17:20 +1100
->> NeilBrown <neilb@ownmail.net> wrote:
->>
->>> On Fri, 07 Nov 2025, David Laight wrote:
->>>> On Thu, 6 Nov 2025 09:33:28 -0500
->>>> Chuck Lever <cel@kernel.org> wrote:
->>>>   
->>>>> FYI
->>>>>
->>>>> https://bugzilla.kernel.org/show_bug.cgi?id=220745  
->>>>
->>>> Ugg - that code is horrid.
->>>> It seems to have got deleted since, but it is:
->>>>
->>>> 	u32 slotsize = slot_bytes(ca);
->>>> 	u32 num = ca->maxreqs;
->>>> 	unsigned long avail, total_avail;
->>>> 	unsigned int scale_factor;
->>>>
->>>> 	spin_lock(&nfsd_drc_lock);
->>>> 	if (nfsd_drc_max_mem > nfsd_drc_mem_used)
->>>> 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
->>>> 	else
->>>> 		/* We have handed out more space than we chose in
->>>> 		 * set_max_drc() to allow.  That isn't really a
->>>> 		 * problem as long as that doesn't make us think we
->>>> 		 * have lots more due to integer overflow.
->>>> 		 */
->>>> 		total_avail = 0;
->>>> 	avail = min((unsigned long)NFSD_MAX_MEM_PER_SESSION, total_avail);
->>>> 	/*
->>>> 	 * Never use more than a fraction of the remaining memory,
->>>> 	 * unless it's the only way to give this client a slot.
->>>> 	 * The chosen fraction is either 1/8 or 1/number of threads,
->>>> 	 * whichever is smaller.  This ensures there are adequate
->>>> 	 * slots to support multiple clients per thread.
->>>> 	 * Give the client one slot even if that would require
->>>> 	 * over-allocation--it is better than failure.
->>>> 	 */
->>>> 	scale_factor = max_t(unsigned int, 8, nn->nfsd_serv->sv_nrthreads);
->>>>
->>>> 	avail = clamp_t(unsigned long, avail, slotsize,
->>>> 			total_avail/scale_factor);
->>>> 	num = min_t(int, num, avail / slotsize);
->>>> 	num = max_t(int, num, 1);
->>>>
->>>> Lets rework it a bit...
->>>> 	if (nfsd_drc_max_mem > nfsd_drc_mem_used) {
->>>> 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
->>>> 		avail = min(NFSD_MAX_MEM_PER_SESSION, total_avail);
->>>> 		avail = clamp(avail, n + sizeof(xxx), total_avail/8)
->>>> 	} else {
->>>> 		total_avail = 0;
->>>> 		avail = 0;
->>>> 		avail = clamp(0, n + sizeof(xxx), 0);
->>>> 	}
->>>>
->>>> Neither of those clamp() are sane at all - should be clamp(val, lo, hi)
->>>> with 'lo <= hi' otherwise the result is dependant on the order of the
->>>> comparisons.
->>>> The compiler sees the second one and rightly bleats.  
->>>
->>> In fact only gcc-9 bleats.
->>
->> That is probably why it didn't get picked up earlier.
->>
->>> gcc-7 gcc-10 gcc-13 gcc-15
->>> all seem to think it is fine.
->>
->> Which, of course, it isn't...
-> 
-> I've now had a proper look at your analysis of the code - thanks.
-> 
-> I agree that the code is unclear (at best) and that if it were still
-> upstream I would want to fix it.  However is does function correctly.
-> 
-> As you say, when min > max, the result of clamp(val, min, max) depends
-> on the order of comparison, and we know what the order of comparison is
-> because we can look at the code for clamp().
-> 
-> Currently it is 
-> 
-> 	((val) >= (hi) ? (hi) : ((val) <= (lo) ? (lo) : (val)))
-> 
-> which will use max when max is below val and min.
-> Previously it was 
-> 	min((typeof(val))max(val, lo), hi)
-> which also will use max when it is below val and min
-> 
-> Before that it was 
-> #define clamp_t(type, val, min, max) ({                \
->        type __val = (val);                     \
->        type __min = (min);                     \
->        type __max = (max);                     \
->        __val = __val < __min ? __min: __val;   \
->        __val > __max ? __max: __val; })
-> 
-> which also uses max when that is less that val and min.
-> 
-> So I think the nfsd code has always worked correctly.  That is not
-> sufficient for mainline - there we want it to also be robust and
-> maintainable. But for stable kernels it should be sufficient.
-> Adding a patch to "stable" kernels which causes working code to fail to
-> compile does not seem, to me, to be in the spirit of "stability".
-> (Have the "clamp" checking in mainline, finding problems there,
-> and backporting the fixes to stable seems to me to be the best way
-> to use these checking improvements to improve "stable").
+When size equals the current i_size (including 0), the code used to call
+check_lock_range(filp, i_size, size - 1, WRITE), which computes `size - 1`
+and can underflow for size==0. Skip the equal case.
 
-I agree with Neil. The LTS code was building and working rather
-universally until recently. The less risky approach is to leave this
-code unchanged and seek another remedy for the OP.
+Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
+Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
+---
+ fs/smb/server/vfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index 891ed2dc2..d068b78a3 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -828,7 +828,7 @@ int ksmbd_vfs_truncate(struct ksmbd_work *work,
+ 		if (size < inode->i_size) {
+ 			err = check_lock_range(filp, size,
+ 					       inode->i_size - 1, WRITE);
+-		} else {
++		} else if (size > inode->i_size) {
+ 			err = check_lock_range(filp, inode->i_size,
+ 					       size - 1, WRITE);
+ 		}
 -- 
-Chuck Lever
+2.34.1
+
 
