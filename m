@@ -1,174 +1,122 @@
-Return-Path: <linux-kernel+bounces-891582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12068C42FDE
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 17:24:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E35C43017
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 17:50:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2898F4E6194
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 16:24:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7E53188B78F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 16:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E828228CB0;
-	Sat,  8 Nov 2025 16:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0w+fyRX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7846F78F4F;
-	Sat,  8 Nov 2025 16:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E166921CC51;
+	Sat,  8 Nov 2025 16:50:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB87E3A8F7
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 16:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762619041; cv=none; b=cHPlQRKYh4w0uTTRrWZR46Jg41tLXPuiG+yJ31NHRsasDYK2GtQeEmqFcBySF3R4Ut8LqnroS2TI0N4T1XGhbZxUGD6cTNFdEk8GublLIsrYq8Z27S1mlf3wp7Dgbqb1MqnRnjKelNmyU//7AH9oXVb90Q22IvEMiXBd6/nEWCM=
+	t=1762620637; cv=none; b=bIYZOjqQrG4Of5U3wscKukrqB1l2tY6vjkWYgNVVS1V8Ej6EdIpj509X/bhFRrIs2+QS45XaPSOUo7jZWh3YrpTFDfbHVairGg+f5yVdD//0fWA2swzVxPn+AkD/rR8xrJaU4jKy9GiEcpbNiA0e2NJd8lxF9Wes2KK23FbeRiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762619041; c=relaxed/simple;
-	bh=8xqsPy/8pD1oeGp2VPuCIqEvJBg7qqACdyqs52xqN6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KavWRZg8o15X2uv0PklqkXTwbFffSGJtJeHSkNNTKcHZDUGrhgKwWl3wi7zAaPY3nIl/UDKE0vjMu5vJ51w2YNcuuVsO+5fmMIsh+tdt1VtOTce1EjJzn3kVK4nxNjFAEywLvyUIUSPQ/QcybZJHBHItqHtQecs5//ck1HEgFzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0w+fyRX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D3B3C4CEFB;
-	Sat,  8 Nov 2025 16:23:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762619041;
-	bh=8xqsPy/8pD1oeGp2VPuCIqEvJBg7qqACdyqs52xqN6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R0w+fyRXmNsZ8ePbH/yGTTzgTjPNUbhxtUeFJ++0E7FJCnAMxC7ry9r6Gs7j9F3SJ
-	 y5gStanuy804lxMfhMnpMV6aKJQk/M/JEzbC3SR0arexAXsELjpb42+xkDUFY6oncf
-	 LcEtfTs520zxEJ4zYty6e/HphgJ0RurYMWAfTJoGGHeJ9JtswdgDcfifJUhxroMfak
-	 apT4Z9g9V3u3cpfrtp6bGCDbeakyKwaJXkx6Ycij4DR9MB1eLba7+103VM0A1eJo5h
-	 7SDotm1e+kUqBZYfD8axcmds/B3mn6HPX5/5nlEd1tV4Dq2DPB6Id8b8Dho/vq8oLY
-	 HPh1bYIoyST3w==
-Date: Sat, 8 Nov 2025 16:23:54 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: revy <gaohan@iscas.ac.cn>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Rob Herring <robh@kernel.org>, krzk+dt@kernel.org,
-	conor+dt@kernel.org, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, Yixun Lan <dlan@gentoo.org>,
-	Drew Fustini <fustini@kernel.org>, geert+renesas@glider.be,
-	Guodong Xu <guodong@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
-	Joel Stanley <joel@jms.id.au>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	Han Gao <rabenda.cn@gmail.com>
-Subject: Re: [PATCH 1/3] riscv: soc: re-organized allwinner menu
-Message-ID: <20251108-hurler-clammy-0df5e778c04c@spud>
-References: <cover.1762588494.git.gaohan@iscas.ac.cn>
- <d17a3a01e2b1297538c419b51953f9613426ba42.1762588494.git.gaohan@iscas.ac.cn>
- <e98a1e59-f3ff-4e9f-a180-79aea9943236@kernel.org>
- <43109A90-8447-4006-8E29-2D2C0866758F@iscas.ac.cn>
- <287444fa-120c-42b4-9919-2f05ab1a2ab7@kernel.org>
- <8ae5d81d-4869-4c39-9561-cb0f87da70fd@kernel.org>
+	s=arc-20240116; t=1762620637; c=relaxed/simple;
+	bh=ixSLPz11f32aUa01GlhA0xfDMDF+v9lVYylrYr2Ff50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jnLH/s6TC0LYtOw2q7qcxDHZlKP25qg3xSHjX8RoPJ8wlZfRX/6GcCeKOJyIqjAciJA8xfYovl34V0ZkUxx8zdjlJ1298wzWXA1/berUvP6u4p32hDLUdIaxvO+xILJQXWKfwk1/0rS1w0zOZMRmtL1iGd9v3mKaIPbSliiX/kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4d3h870ppPz9sS7;
+	Sat,  8 Nov 2025 17:24:07 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id UlV_46oyIpsG; Sat,  8 Nov 2025 17:24:07 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4d3h86700pz9sRy;
+	Sat,  8 Nov 2025 17:24:06 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D075E8B765;
+	Sat,  8 Nov 2025 17:24:06 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 3zU9wu4pd2yf; Sat,  8 Nov 2025 17:24:06 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 65B3C8B764;
+	Sat,  8 Nov 2025 17:24:06 +0100 (CET)
+Message-ID: <ad87d404-3d93-4c7e-908a-d9f47daca4b0@csgroup.eu>
+Date: Sat, 8 Nov 2025 17:24:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zDi7HsMP+xaYfO8R"
-Content-Disposition: inline
-In-Reply-To: <8ae5d81d-4869-4c39-9561-cb0f87da70fd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] eeprom: at25: convert to spi-mem API
+To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: "hui.wang@canonical.com" <hui.wang@canonical.com>,
+ "mwalle@kernel.org" <mwalle@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "florent.trinh-thai@cs-soprasteria.com"
+ <florent.trinh-thai@cs-soprasteria.com>, "arnd@arndb.de" <arnd@arndb.de>
+References: <20250702222823.864803-1-alexander.sverdlin@siemens.com>
+ <638496dd-ec60-4e53-bad7-eb657f67d580@csgroup.eu>
+ <2025110513-manliness-repayment-d005@gregkh>
+ <db80adb8b8006fbdeee77a386feabb81537d27e6.camel@siemens.com>
+ <e0037dc532f3aecb101c78e7d91b66430b15d541.camel@siemens.com>
+ <eb0cd539-9d76-489a-b5f4-ecef2a6d32dd@csgroup.eu>
+ <a88e1546-1530-4326-b0ee-dc4e50d0343f@csgroup.eu>
+ <cd174dbaa3171f92e083d5dca89732aa64e32f15.camel@siemens.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <cd174dbaa3171f92e083d5dca89732aa64e32f15.camel@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---zDi7HsMP+xaYfO8R
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 08, 2025 at 03:48:18PM +0100, Krzysztof Kozlowski wrote:
-> On 08/11/2025 15:47, Krzysztof Kozlowski wrote:
-> > On 08/11/2025 14:59, revy wrote:
-> >>
-> >>
-> >>
-> >>> -----Original Messages-----
-> >>> From: "Krzysztof Kozlowski" <krzk@kernel.org>
-> >>> Sent Time: 2025-11-08 19:29:07 (Saturday)
-> >>> To: gaohan@iscas.ac.cn, "Paul Walmsley" <pjw@kernel.org>, "Palmer Dab=
-belt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre=
- Ghiti" <alex@ghiti.fr>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlow=
-ski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Chen-Yu T=
-sai" <wens@csie.org>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Samuel =
-Holland" <samuel@sholland.org>, "Yixun Lan" <dlan@gentoo.org>, "Drew Fustin=
-i" <fustini@kernel.org>, "Geert Uytterhoeven" <geert+renesas@glider.be>, "G=
-uodong Xu" <guodong@riscstar.com>, "Haylen Chu" <heylenay@4d2.org>, "Joel S=
-tanley" <joel@jms.id.au>
-> >>> Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, de=
-vicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi=
-@lists.linux.dev, "Han Gao" <rabenda.cn@gmail.com>
-> >>> Subject: Re: [PATCH 1/3] riscv: soc: re-organized allwinner menu
-> >>>
-> >>> On 08/11/2025 09:20, gaohan@iscas.ac.cn wrote:
-> >>>> From: Han Gao <gaohan@iscas.ac.cn>
-> >>>>
-> >>>> Allwinner currently offers d1(s)/v821/v861/v881 on RISC-V,
-> >>>> using different IPs.
-> >>>>
-> >>>> d1(s): Xuantie C906
-> >>>> v821: Andes A27 + XuanTie E907
-> >>>> v861/v881: XuanTie C907
-> >>>>
-> >>>> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
-> >>>> ---
-> >>>> arch/riscv/Kconfig.socs | 22 +++++++++++++++++-----
-> >>>> 1 file changed, 17 insertions(+), 5 deletions(-)
-> >>>>
-> >>>> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-> >>>> index 848e7149e443..7cba5d6ec4c3 100644
-> >>>> --- a/arch/riscv/Kconfig.socs
-> >>>> +++ b/arch/riscv/Kconfig.socs
-> >>>> @@ -54,14 +54,26 @@ config SOC_STARFIVE
-> >>>> 	help
-> >>>> 	  This enables support for StarFive SoC platform hardware.
-> >>>>
-> >>>> -config ARCH_SUNXI
-> >>>> -	bool "Allwinner sun20i SoCs"
-> >>>> +menuconfig ARCH_SUNXI
-> >>>> +	bool "Allwinner RISC-V SoCs"
-> >>>> +
-> >>>> +if ARCH_SUNXI
-> >>>> +
-> >>>> +config ARCH_SUNXI_XUANTIE
-> >>>
-> >>>
-> >>> You should not get multiple ARCHs. ARCH is only one. There is also not
-> >>> much rationale in commit msg for that.
-> >>
-> >> The main goal is to avoid choosing multiple IP addresses for erreta.=
-=20
-> >> If using Andes IPs, I don't want to choose XuanTIe (T-Head) ERRETA.
-> >=20
-> > Not explained in commit msg but anyway not a good argument. It is some
-> > sort of micro optimization and you completely miss the point we target
-> > multiarch kernels.
->=20
-> Heh, and I actually did not forbid or discourage choosing erratas per
-> your soc. I said you only get one top level ARCH. Look at all arm64
-> platforms. How many ARCHs are there per one vendor?
+Le 08/11/2025 à 12:41, Sverdlin, Alexander a écrit :
+> Hi Christophe,
+> 
+> On Sat, 2025-11-08 at 12:14 +0100, Christophe Leroy wrote:
+>>> Now I'm trying to understand why the problem surfaced with commit
+>>> 8ad6249c51d0 ("eeprom: at25: convert to spi-mem API")
+>>>
+>>
+>> The reason why it was not a problem before was that the transfer was
+>> done into of->prealloc_buf (fs/kernfs/file.c) which is a kmalloc() with
+>> size (PAGE_SIZE + 1).
+>>
+>> Following the rework of at25 it now goes into the bounce buffer which is
+>> allocated with the exact size of the transfer.
+>>
+>> Why do we need an intermediate bounce buffer now, why can't
+>> of->prealloc_buf be used directly as before ?
+> 
+> userspace access is only one part of the story, the other is NVMEM
+> kernel-internal API, like nvmem_cell_read*() and I suppose there is
+> no requirement for a destination buffer to be DMA-able.
+> 
 
+As far as I can see nvmem_cell_read*() allocates a kmalloc() bounce 
+buffer already:
 
-Yeah, it only allows you to enable the errata, it doesn't force any of
-them to "y". Some will get enabled by default when ARCH_SUNXI is
-enabled, but if someone is only targeting on device they can just turn
-them off... I'm pretty inclined to just NAK this unless there's some
-actual value.
+	buf = kzalloc(max_t(size_t, entry->raw_len, entry->bytes), GFP_KERNEL);
+	if (!buf)
+		return ERR_PTR(-ENOMEM);
 
---zDi7HsMP+xaYfO8R
-Content-Type: application/pgp-signature; name="signature.asc"
+	rc = __nvmem_cell_read(nvmem, cell->entry, buf, len, cell->id, 
+cell->index);
+	if (rc) {
+		kfree(buf);
+		return ERR_PTR(rc);
+	}
 
------BEGIN PGP SIGNATURE-----
+	return buf;
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ9ukwAKCRB4tDGHoIJi
-0qJsAP9PB5Qfwou9FktzjX1XPDGtvQx5CGiUMGnYmlQQvt7gAwD/YQjrczBDtE6G
-yftMBPxa/2JWp4I00u3RUCiy5yPmrwc=
-=Vu6g
------END PGP SIGNATURE-----
-
---zDi7HsMP+xaYfO8R--
+Christophe
 
