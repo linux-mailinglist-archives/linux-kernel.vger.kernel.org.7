@@ -1,114 +1,191 @@
-Return-Path: <linux-kernel+bounces-891558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592EFC42ED4
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 16:22:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F5CC42EED
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 16:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9403A495A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 15:22:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BA0E4E12DC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 15:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0461021FF55;
-	Sat,  8 Nov 2025 15:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4064021FF55;
+	Sat,  8 Nov 2025 15:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fVYRLvrk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwCt5SIp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E0921C163
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 15:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1E018C2C;
+	Sat,  8 Nov 2025 15:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762615330; cv=none; b=J9b7wa3NsJvMr4bUCH6DXHYGwub4CEhr2mgLxGErJ8xXNOGg6FWD9MDoe8Gcel3tKIaDnccwIKQISfRqs6njyrhR7ynU8Ns2Qt2nOgLIOGr8qb5hVuRuXM6gr4HstcosRuUOP8Ci4oMFdQeGRQfktm/cHArjuoucEbUu2WOqSjo=
+	t=1762616976; cv=none; b=XfqMqCeZTHzQTDys4AsYtm4lDhmHExgfBc10HWtRDqKQUoAEjzG4avQhQ7Dl8/67+2aYocN/opw2L+Zze0rKJ4egeuzF+jjnkGgBnLZ8tqgmfDD5GYkKIyBO4kp4inAyybJP/jBZ2rcqRXSwYVXLZDYzpsKH7+yAKH0/T6EVJUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762615330; c=relaxed/simple;
-	bh=nUjyE+vPcB/gqP7oAjwrTWwYu4OBgdqNLOfDFHbQGDE=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Uqaf62m+YySgxKYBKNvpkQ2Bl4Rb0FyLXFZDsSfXFtKchEFdWMvJ27CPTjQOzv63Zb2BoETHj8/PYHt6Zci6GxoJac2rZb45S8ChJk9d7jiLcJF0JFTeV+QhnVcSIum2p/O2Hazo0cCRgf3CQiKX0aemKxU4OteZCdIxo0wJc80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fVYRLvrk; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762615328; x=1794151328;
-  h=date:from:to:cc:subject:message-id;
-  bh=nUjyE+vPcB/gqP7oAjwrTWwYu4OBgdqNLOfDFHbQGDE=;
-  b=fVYRLvrkHhMn1K+cQ2un5ldbVHRSsL4rQedOVLCUEA6dN2nT0lZ8qZ+k
-   LCB/jRVAW6HlmNmWLFVboXjpY2dAJmI/uaPev4HeD7HM6exECXKpehl7D
-   Efz1MkxXefS61GtvzvKh9qAabbph2EnWybTbZ9SYfS1x0nfboR10bQWjQ
-   Me8x6PTOfxD2ha5oal8hpA4xMzTH5eLIba2gOFuQ1XQXNxdfQTyDL66uV
-   qs5/I0pG5MqZQdQ6u08hj78FSx52HnhKnCxxYkkN50f6xKYInCn1Qebf9
-   8HavnQqVgmqk3PScU7Fu3h0qg/1vASOCBXW8UHewXL46UqYeRWznQgf7q
-   Q==;
-X-CSE-ConnectionGUID: rA0p5hjzThqB+my8xZ44LA==
-X-CSE-MsgGUID: v5DIDTBcQ5uVUAgkMyYlmw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11607"; a="76088567"
-X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; 
-   d="scan'208";a="76088567"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2025 07:22:07 -0800
-X-CSE-ConnectionGUID: di/15KOWRReISjfADfhr/A==
-X-CSE-MsgGUID: V8IgM9K/Q3ms9CAcsNUJqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; 
-   d="scan'208";a="188462607"
-Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 08 Nov 2025 07:22:07 -0800
-Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vHklP-00016v-2f;
-	Sat, 08 Nov 2025 15:22:03 +0000
-Date: Sat, 08 Nov 2025 23:21:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- d23550efc6800841b4d1639784afaebdea946ae0
-Message-ID: <202511082341.S7kfCZFB-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1762616976; c=relaxed/simple;
+	bh=JGBD1WdpR8se7blVNwDS5FftBsn8t1gjcXcszTpasAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MPTdDmYu1P8/hwALTRcKUuux+C4y9xkaUqq0kcjhIXtA1xinsLPR1aKuWN05vaaYWi4FVC6yUe9BszSWSYE1P8wA//FR0/l22QNzIVAcY1gJPGvW92E0oUOBhAPKQfxnPP+1R3f/p7r9yXpzQjBhjOv5SHcRV1nZvrR3cE5X+Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwCt5SIp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E170C4AF0B;
+	Sat,  8 Nov 2025 15:49:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762616976;
+	bh=JGBD1WdpR8se7blVNwDS5FftBsn8t1gjcXcszTpasAY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OwCt5SIpd4Er9Bc0PQNRfhsPYi9ze7G64zt//RkuKncDUjAy9IOhBxi7EEl0yFc2R
+	 1UDzbCMx7s5Z9NJPKEYpdKpY0SVXHkfxkmrg5PSuY70U952B5LTTNe3EntEKBnAIK3
+	 vyF76WDtlDcRFQ6g9fu5aOX83IfUYKlc5uDjwXqy6443IxTmE4f/acuqgWRf4qHjPo
+	 mqUEhYCUZf4RdZyAawEoWtpLKZ21vT63hEAkdBp0O0Jh8zRVJZJteu/U5DtccXEN40
+	 bfvBmecnsRUlV46CrRN/bIV0l2ipoYQM0U2PZDeSM5I3FBR1pEH+ZbSH8iIu0XprG1
+	 l6weoFL+5bkLA==
+Message-ID: <cf9573c2-5fb7-4417-8ff0-eef4172621fb@kernel.org>
+Date: Sat, 8 Nov 2025 10:49:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Compile Error fs/nfsd/nfs4state.o - clamp() low limit slotsize
+ greater than high limit total_avail/scale_factor
+To: NeilBrown <neil@brown.name>, David Laight <david.laight.linux@gmail.com>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Laight <David.Laight@ACULAB.COM>,
+ Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+ Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+ speedcracker@hotmail.com
+References: <bbba88825d7b2b06031c1b085d76787a2502d70e.camel@kernel.org>
+ <37bc1037-37d8-4168-afc9-da8e2d1dd26b@kernel.org>
+ <20251106192210.1b6a3ca0@pumpkin>
+ <176251424056.634289.13464296772500147856@noble.neil.brown.name>
+ <20251107114324.33fd69f3@pumpkin>
+ <176255578949.634289.10177595719141795960@noble.neil.brown.name>
+Content-Language: en-US
+From: Chuck Lever <cel@kernel.org>
+Organization: kernel.org
+In-Reply-To: <176255578949.634289.10177595719141795960@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: d23550efc6800841b4d1639784afaebdea946ae0  x86/microcode/AMD: Add more known models to entry sign checking
+On 11/7/25 5:49 PM, NeilBrown wrote:
+> On Fri, 07 Nov 2025, David Laight wrote:
+>> On Fri, 07 Nov 2025 22:17:20 +1100
+>> NeilBrown <neilb@ownmail.net> wrote:
+>>
+>>> On Fri, 07 Nov 2025, David Laight wrote:
+>>>> On Thu, 6 Nov 2025 09:33:28 -0500
+>>>> Chuck Lever <cel@kernel.org> wrote:
+>>>>   
+>>>>> FYI
+>>>>>
+>>>>> https://bugzilla.kernel.org/show_bug.cgi?id=220745  
+>>>>
+>>>> Ugg - that code is horrid.
+>>>> It seems to have got deleted since, but it is:
+>>>>
+>>>> 	u32 slotsize = slot_bytes(ca);
+>>>> 	u32 num = ca->maxreqs;
+>>>> 	unsigned long avail, total_avail;
+>>>> 	unsigned int scale_factor;
+>>>>
+>>>> 	spin_lock(&nfsd_drc_lock);
+>>>> 	if (nfsd_drc_max_mem > nfsd_drc_mem_used)
+>>>> 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
+>>>> 	else
+>>>> 		/* We have handed out more space than we chose in
+>>>> 		 * set_max_drc() to allow.  That isn't really a
+>>>> 		 * problem as long as that doesn't make us think we
+>>>> 		 * have lots more due to integer overflow.
+>>>> 		 */
+>>>> 		total_avail = 0;
+>>>> 	avail = min((unsigned long)NFSD_MAX_MEM_PER_SESSION, total_avail);
+>>>> 	/*
+>>>> 	 * Never use more than a fraction of the remaining memory,
+>>>> 	 * unless it's the only way to give this client a slot.
+>>>> 	 * The chosen fraction is either 1/8 or 1/number of threads,
+>>>> 	 * whichever is smaller.  This ensures there are adequate
+>>>> 	 * slots to support multiple clients per thread.
+>>>> 	 * Give the client one slot even if that would require
+>>>> 	 * over-allocation--it is better than failure.
+>>>> 	 */
+>>>> 	scale_factor = max_t(unsigned int, 8, nn->nfsd_serv->sv_nrthreads);
+>>>>
+>>>> 	avail = clamp_t(unsigned long, avail, slotsize,
+>>>> 			total_avail/scale_factor);
+>>>> 	num = min_t(int, num, avail / slotsize);
+>>>> 	num = max_t(int, num, 1);
+>>>>
+>>>> Lets rework it a bit...
+>>>> 	if (nfsd_drc_max_mem > nfsd_drc_mem_used) {
+>>>> 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
+>>>> 		avail = min(NFSD_MAX_MEM_PER_SESSION, total_avail);
+>>>> 		avail = clamp(avail, n + sizeof(xxx), total_avail/8)
+>>>> 	} else {
+>>>> 		total_avail = 0;
+>>>> 		avail = 0;
+>>>> 		avail = clamp(0, n + sizeof(xxx), 0);
+>>>> 	}
+>>>>
+>>>> Neither of those clamp() are sane at all - should be clamp(val, lo, hi)
+>>>> with 'lo <= hi' otherwise the result is dependant on the order of the
+>>>> comparisons.
+>>>> The compiler sees the second one and rightly bleats.  
+>>>
+>>> In fact only gcc-9 bleats.
+>>
+>> That is probably why it didn't get picked up earlier.
+>>
+>>> gcc-7 gcc-10 gcc-13 gcc-15
+>>> all seem to think it is fine.
+>>
+>> Which, of course, it isn't...
+> 
+> I've now had a proper look at your analysis of the code - thanks.
+> 
+> I agree that the code is unclear (at best) and that if it were still
+> upstream I would want to fix it.  However is does function correctly.
+> 
+> As you say, when min > max, the result of clamp(val, min, max) depends
+> on the order of comparison, and we know what the order of comparison is
+> because we can look at the code for clamp().
+> 
+> Currently it is 
+> 
+> 	((val) >= (hi) ? (hi) : ((val) <= (lo) ? (lo) : (val)))
+> 
+> which will use max when max is below val and min.
+> Previously it was 
+> 	min((typeof(val))max(val, lo), hi)
+> which also will use max when it is below val and min
+> 
+> Before that it was 
+> #define clamp_t(type, val, min, max) ({                \
+>        type __val = (val);                     \
+>        type __min = (min);                     \
+>        type __max = (max);                     \
+>        __val = __val < __min ? __min: __val;   \
+>        __val > __max ? __max: __val; })
+> 
+> which also uses max when that is less that val and min.
+> 
+> So I think the nfsd code has always worked correctly.  That is not
+> sufficient for mainline - there we want it to also be robust and
+> maintainable. But for stable kernels it should be sufficient.
+> Adding a patch to "stable" kernels which causes working code to fail to
+> compile does not seem, to me, to be in the spirit of "stability".
+> (Have the "clamp" checking in mainline, finding problems there,
+> and backporting the fixes to stable seems to me to be the best way
+> to use these checking improvements to improve "stable").
 
-elapsed time: 1642m
+I agree with Neil. The LTS code was building and working rather
+universally until recently. The less risky approach is to leave this
+code unchanged and seek another remedy for the OP.
 
-configs tested: 22
-configs skipped: 136
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-i386                          allnoconfig    gcc-14
-i386    buildonly-randconfig-001-20251108    gcc-14
-i386    buildonly-randconfig-002-20251108    gcc-14
-i386    buildonly-randconfig-003-20251108    gcc-14
-i386    buildonly-randconfig-004-20251108    gcc-14
-i386    buildonly-randconfig-005-20251108    clang-20
-i386    buildonly-randconfig-006-20251108    gcc-14
-i386              randconfig-011-20251108    gcc-14
-x86_64                        allnoconfig    clang-20
-x86_64  buildonly-randconfig-001-20251108    gcc-14
-x86_64  buildonly-randconfig-002-20251108    gcc-12
-x86_64  buildonly-randconfig-003-20251108    clang-20
-x86_64  buildonly-randconfig-004-20251108    gcc-14
-x86_64  buildonly-randconfig-005-20251108    gcc-14
-x86_64  buildonly-randconfig-006-20251108    gcc-14
-x86_64                          defconfig    gcc-14
-x86_64            randconfig-071-20251108    gcc-14
-x86_64            randconfig-072-20251108    clang-20
-x86_64            randconfig-073-20251108    clang-20
-x86_64            randconfig-074-20251108    clang-20
-x86_64            randconfig-075-20251108    gcc-12
-x86_64            randconfig-076-20251108    gcc-14
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-- 
+Chuck Lever
 
