@@ -1,88 +1,341 @@
-Return-Path: <linux-kernel+bounces-891408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30851C42988
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 09:36:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0450CC429B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 09:44:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7FD6188B032
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 08:36:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1321B348A44
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 08:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060402E8E0C;
-	Sat,  8 Nov 2025 08:36:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70CB2EA473;
+	Sat,  8 Nov 2025 08:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="jdvq+Ua5"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA2428980E
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 08:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6042E8B61;
+	Sat,  8 Nov 2025 08:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762590965; cv=none; b=gPBY3HTPRGr5AYqCaHoNJy26OAl9/4LtxrotsqoHvo272GH/mkFfiYH2fxEn1yRXyx32jDf9qHozjNkvXb0tQcf85OdWL3T3PN1khMpAAswesSzLiWT5s7d6rUbZ2u4qbNhSfyFddUq+i/3QGAwXgqIUc4YgOXqsdH+dV3ZYXPQ=
+	t=1762591433; cv=none; b=L6HlWeCUJmDVT6wKlUgbqrtggk4dRki3qIFpAonpNeTnY+kyry+ksUtJG4NToUAKOVyjwkuRYlLaIKxqXWc+vGYopqeZbktT0SS75YmuvYAIdpiGiIb9mhI1cczCJCpiGeS/Dd75wVJSeHi4z0abz+wbJqaJvjTYnuO4UC3DHR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762590965; c=relaxed/simple;
-	bh=2lFkvML8NpYHKITe8/6n30B9LFLUYjCZNzJ2UJERqMs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mWb0apiGfpZ1w1yEaNBSH0X2dG4LaN7TqyAQoW+xhEZREJZjPcFVh82KJirqx0ZzVRivVN9BXaYAfH/cdaAZJ1ZNyUc3A4ts+4VpdZ5Mh7jH41iUMn38hHXII9MlQmWX6AyoXT+CUfX/iaK1pnEY5COc3xARMSMpNvZNeUHQ1QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-9486c2da7f6so146843339f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 00:36:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762590962; x=1763195762;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=szqNooYML2fVTifbbPVcVVeKU5EKq+5MA4/QhARf/Gc=;
-        b=YA2f963KgpBBqWWNwztB9Zbsi8JLUnPqAHZLUuDWv/156xK23kPhCbjDlm5ThzgRlq
-         vicnzPwbwny3vuojD56xNrtPoNm/DS/1GX4Ss1Hef38j2oerBB2G9XVOa+5mSCwsGJuv
-         6hmsX2/XsaZtv65SKnB1VLbSB2RDOPh2BLn2z3P7wdEjRgjysm3sg1nWThpAgjvPnDZh
-         M/MZ6m3+6RjlCEp6JTXgb7HamD24D+UqdRqpGqqv4F+mzduIl0Mg59MW28U455LLf+PV
-         SBpAeEiMq/0DY/TlJEKAoMEHTlOFYIz5SX4RvD/gOPXRGq+mrDNYLTe7xKvZoIvLOV8C
-         XnGQ==
-X-Gm-Message-State: AOJu0Yw4H3q/DQY5Ow07XVq2XCSkEC2k/FT5yRIWWjl0O+ArGcypWhIE
-	XecuKg6ijdAEFM6MSH56tpx87tyZ1FDr47zdiUtAZXXT4X9d/bkTjpdvuNR5Vrssghhz+R1nESN
-	TTpNxakCAuWNjH2zkKPZSsPzmHxwyHOOwib+2CH40zg/7O2qMVhRsynVhawE=
-X-Google-Smtp-Source: AGHT+IGsN54bqht7xSDLUSlwQf3VbaeH9leyyycd8wkd0D6K90ce/lCgFp1JsDR+DvGT0uUblASIytcF2QpOZfX+N35CC+cH18vi
+	s=arc-20240116; t=1762591433; c=relaxed/simple;
+	bh=5o1jmw1ugnnlqthUeXKypat9tshdvTcJmP6bGzLfukw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oQOqThkpLq+onl1Q0n61GdRTsWtfhW7tewp1TZZm9Rc7n8Adhn8EjOgo8oOKjUclWg33HwKKaaIFmk3mCCYkj08OBiGQp7SeZQPcS8x6x7l0A5xHYXWlZmhkeiy7qjSJaiNUSUt85dP4qbxbsauXhHE+XBdmk2mBzCYTxw5DPaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=pass smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=jdvq+Ua5; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7685F43DB2;
+	Sat,  8 Nov 2025 08:43:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1762591421;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1BcSff+w7XN9iYMNztCvj5o73XF0ex3886lxRpX6opI=;
+	b=jdvq+Ua5v3P0+4sjeVU2QwvTQcdchBd48JjlGqw12TMjMJs/FNc+iWt3lAsKvW5LKRwfg2
+	fDE07lD46EAayqriwKSAxbVBS5aVYShSOyga8wwCFLYdIf/gADx+xwZo057hwWSSypBBLV
+	iuYi3aWbCm7ErYz5bNVNqDuhJy4MVm7xoKU0jQoAGM3tC+d11xReLI4JTLnXVBwo2oteBt
+	ND4N0OK70MUHg88zHzGw3sL9eRYS9wU+TRzH4K4dvt8Yh+qjVVdd6IfxiRL9GLhEnJoFYv
+	WhgOhjwTAm7YJA7+ZW/Ei9vUPb4K5TvesitIPnRfyeilXL8PMsGHXMqccbVEww==
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Greg Ungerer <gerg@linux-m68k.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, linux-m68k@lists.linux-m68k.org,
+ linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject:
+ Re: [PATCH v2 1/2] m68k: coldfire: Mark platform device resource arrays as
+ const
+Date: Sat, 08 Nov 2025 09:43:25 +0100
+Message-ID: <12775316.O9o76ZdvQC@jeanmichel-ms7b89>
+In-Reply-To: <aQ4YELHOH/38d2aL@lizhi-Precision-Tower-5810>
+References:
+ <20251107-b4-m5441x-add-rng-support-v2-0-f91d685832b9@yoseli.org>
+ <20251107-b4-m5441x-add-rng-support-v2-1-f91d685832b9@yoseli.org>
+ <aQ4YELHOH/38d2aL@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1644:b0:945:ae17:9ae4 with SMTP id
- ca18e2360f4ac-94895f835d5mr325869439f.1.1762590962421; Sat, 08 Nov 2025
- 00:36:02 -0800 (PST)
-Date: Sat, 08 Nov 2025 00:36:02 -0800
-In-Reply-To: <e7ea1bff-0b4e-4490-b5a7-e8e366944842@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690f00f2.a70a0220.22f260.007a.GAE@google.com>
-Subject: Re: [syzbot] [jfs?] general protection fault in txCommit (2)
-From: syzbot <syzbot+9489c9f9f3d437221ea2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	yun.zhou@windriver.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduledvtdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtqhertddttdejnecuhfhrohhmpeflvggrnhdqofhitghhvghlucfjrghuthgsohhishcuoehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrgheqnecuggftrfgrthhtvghrnhepffevhfduvdeludeugfdtleduuedvhfeuvdevgfeiieefieevteektdettdeifeetnecukfhppedvrgdtudemvgdtrgemudeileemjedugedtmedvrgegtdemfhefrggrmeejudejvgemudefsgdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmeduieelmeejudegtdemvdgrgedtmehffegrrgemjedujegvmedufegsvddphhgvlhhopehjvggrnhhmihgthhgvlhdqmhhsjegskeelrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrghdpnhgspghrtghpthhtohepudegpdhrtghpthhtohephfhrrghnkhdrlhhisehngihprdgtohhmpdhrtghpthhtohepghgvrhhgsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehgvggvrhhtsehlihhnu
+ higqdhmieekkhdrohhrghdprhgtphhtthhopeholhhivhhirgesshgvlhgvnhhitgdrtghomhdprhgtphhtthhopehhvghrsggvrhhtsehgohhnughorhdrrghprghnrgdrohhrghdrrghupdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-Hello,
+Hi Frank,
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Le vendredi 7 novembre 2025, 17:02:24 heure normale d=E2=80=99Europe centra=
+le Frank Li=20
+a =C3=A9crit :
+> On Fri, Nov 07, 2025 at 11:29:43AM +0100, Jean-Michel Hautbois wrote:
+> > Add 'const' qualifier to all static resource arrays in device.c.
+> > These arrays are never modified at runtime, they are only read by
+> > platform device registration functions.
+> >=20
+> > Suggested-by: Frank Li <Frank.Li@nxp.com>
+> > Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+>=20
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-failed to apply patch:
-checking file fs/jfs/jfs_txnmgr.c
-Hunk #1 FAILED at 1073.
-1 out of 1 hunk FAILED
+Thanks. It must be noted though that it generates warnings when building:
+
+  CC      arch/m68k/coldfire/device.o
+arch/m68k/coldfire/device.c:141:35: warning: initialization discards =E2=80=
+=98const=E2=80=99=20
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  141 |         .resource               =3D mcf_fec0_resources,
+      |                                   ^~~~~~~~~~~~~~~~~~
+arch/m68k/coldfire/device.c:178:35: warning: initialization discards =E2=80=
+=98const=E2=80=99=20
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  178 |         .resource               =3D mcf_fec1_resources,
+      |                                   ^~~~~~~~~~~~~~~~~~
+arch/m68k/coldfire/device.c:360:35: warning: initialization discards =E2=80=
+=98const=E2=80=99=20
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  360 |         .resource               =3D mcf_i2c0_resources,
+      |                                   ^~~~~~~~~~~~~~~~~~
+arch/m68k/coldfire/device.c:381:35: warning: initialization discards =E2=80=
+=98const=E2=80=99=20
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  381 |         .resource               =3D mcf_i2c1_resources,
+      |                                   ^~~~~~~~~~~~~~~~~~
+arch/m68k/coldfire/device.c:405:35: warning: initialization discards =E2=80=
+=98const=E2=80=99=20
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  405 |         .resource               =3D mcf_i2c2_resources,
+      |                                   ^~~~~~~~~~~~~~~~~~
+arch/m68k/coldfire/device.c:429:35: warning: initialization discards =E2=80=
+=98const=E2=80=99=20
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  429 |         .resource               =3D mcf_i2c3_resources,
+      |                                   ^~~~~~~~~~~~~~~~~~
+arch/m68k/coldfire/device.c:453:35: warning: initialization discards =E2=80=
+=98const=E2=80=99=20
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  453 |         .resource               =3D mcf_i2c4_resources,
+      |                                   ^~~~~~~~~~~~~~~~~~
+arch/m68k/coldfire/device.c:477:35: warning: initialization discards =E2=80=
+=98const=E2=80=99=20
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  477 |         .resource               =3D mcf_i2c5_resources,
+      |                                   ^~~~~~~~~~~~~~~~~~
+arch/m68k/coldfire/device.c:548:35: warning: initialization discards =E2=80=
+=98const=E2=80=99=20
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  548 |         .resource               =3D mcf_edma_resources,
+      |                                   ^~~~~~~~~~~~~~~~~~
+arch/m68k/coldfire/device.c:579:35: warning: initialization discards =E2=80=
+=98const=E2=80=99=20
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  579 |         .resource               =3D mcf_esdhc_resources,
+      |                                   ^~~~~~~~~~~~~~~~~~~
+arch/m68k/coldfire/device.c:620:21: warning: initialization discards =E2=80=
+=98const=E2=80=99=20
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  620 |         .resource =3D mcf5441x_flexcan0_resource,
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+
+JM
+
+>=20
+> > ---
+> >=20
+> >  arch/m68k/coldfire/device.c | 24 ++++++++++++------------
+> >  1 file changed, 12 insertions(+), 12 deletions(-)
+> >=20
+> > diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
+> > index
+> > b6958ec2a220cf91a78a14fc7fa18749451412f7..20adba27a687029ef53249bad71b3=
+42
+> > d563d612b 100644 --- a/arch/m68k/coldfire/device.c
+> > +++ b/arch/m68k/coldfire/device.c
+> > @@ -111,7 +111,7 @@ static struct fec_platform_data fec_pdata =3D {
+> >=20
+> >   *	block. It is Freescale's own hardware block. Some ColdFires
+> >   *	have 2 of these.
+> >   */
+> >=20
+> > -static struct resource mcf_fec0_resources[] =3D {
+> > +static const struct resource mcf_fec0_resources[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start		=3D MCFFEC_BASE0,
+> >  		.end		=3D MCFFEC_BASE0 + MCFFEC_SIZE0 -=20
+1,
+> >=20
+> > @@ -148,7 +148,7 @@ static struct platform_device mcf_fec0 =3D {
+> >=20
+> >  #endif /* MCFFEC_BASE0 */
+> > =20
+> >  #ifdef MCFFEC_BASE1
+> >=20
+> > -static struct resource mcf_fec1_resources[] =3D {
+> > +static const struct resource mcf_fec1_resources[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start		=3D MCFFEC_BASE1,
+> >  		.end		=3D MCFFEC_BASE1 + MCFFEC_SIZE1 -=20
+1,
+> >=20
+> > @@ -189,7 +189,7 @@ static struct platform_device mcf_fec1 =3D {
+> >=20
+> >   *	The ColdFire QSPI module is an SPI protocol hardware block used
+> >   *	on a number of different ColdFire CPUs.
+> >   */
+> >=20
+> > -static struct resource mcf_qspi_resources[] =3D {
+> > +static const struct resource mcf_qspi_resources[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start		=3D MCFQSPI_BASE,
+> >  		.end		=3D MCFQSPI_BASE + MCFQSPI_SIZE -=20
+1,
+> >=20
+> > @@ -340,7 +340,7 @@ static struct platform_device mcf_qspi =3D {
+> >=20
+> >  #endif /* IS_ENABLED(CONFIG_SPI_COLDFIRE_QSPI) */
+> > =20
+> >  #if IS_ENABLED(CONFIG_I2C_IMX)
+> >=20
+> > -static struct resource mcf_i2c0_resources[] =3D {
+> > +static const struct resource mcf_i2c0_resources[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start          =3D MCFI2C_BASE0,
+> >  		.end            =3D MCFI2C_BASE0 + MCFI2C_SIZE0 - 1,
+> >=20
+> > @@ -361,7 +361,7 @@ static struct platform_device mcf_i2c0 =3D {
+> >=20
+> >  };
+> >  #ifdef MCFI2C_BASE1
+> >=20
+> > -static struct resource mcf_i2c1_resources[] =3D {
+> > +static const struct resource mcf_i2c1_resources[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start          =3D MCFI2C_BASE1,
+> >  		.end            =3D MCFI2C_BASE1 + MCFI2C_SIZE1 - 1,
+> >=20
+> > @@ -385,7 +385,7 @@ static struct platform_device mcf_i2c1 =3D {
+> >=20
+> >  #ifdef MCFI2C_BASE2
+> >=20
+> > -static struct resource mcf_i2c2_resources[] =3D {
+> > +static const struct resource mcf_i2c2_resources[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start          =3D MCFI2C_BASE2,
+> >  		.end            =3D MCFI2C_BASE2 + MCFI2C_SIZE2 - 1,
+> >=20
+> > @@ -409,7 +409,7 @@ static struct platform_device mcf_i2c2 =3D {
+> >=20
+> >  #ifdef MCFI2C_BASE3
+> >=20
+> > -static struct resource mcf_i2c3_resources[] =3D {
+> > +static const struct resource mcf_i2c3_resources[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start          =3D MCFI2C_BASE3,
+> >  		.end            =3D MCFI2C_BASE3 + MCFI2C_SIZE3 - 1,
+> >=20
+> > @@ -433,7 +433,7 @@ static struct platform_device mcf_i2c3 =3D {
+> >=20
+> >  #ifdef MCFI2C_BASE4
+> >=20
+> > -static struct resource mcf_i2c4_resources[] =3D {
+> > +static const struct resource mcf_i2c4_resources[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start          =3D MCFI2C_BASE4,
+> >  		.end            =3D MCFI2C_BASE4 + MCFI2C_SIZE4 - 1,
+> >=20
+> > @@ -457,7 +457,7 @@ static struct platform_device mcf_i2c4 =3D {
+> >=20
+> >  #ifdef MCFI2C_BASE5
+> >=20
+> > -static struct resource mcf_i2c5_resources[] =3D {
+> > +static const struct resource mcf_i2c5_resources[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start          =3D MCFI2C_BASE5,
+> >  		.end            =3D MCFI2C_BASE5 + MCFI2C_SIZE5 - 1,
+> >=20
+> > @@ -507,7 +507,7 @@ static struct mcf_edma_platform_data mcf_edma_data =
+=3D {
+> >=20
+> >  	.slavecnt		=3D ARRAY_SIZE(mcf_edma_map),
+> > =20
+> >  };
+> >=20
+> > -static struct resource mcf_edma_resources[] =3D {
+> > +static const struct resource mcf_edma_resources[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start		=3D MCFEDMA_BASE,
+> >  		.end		=3D MCFEDMA_BASE + MCFEDMA_SIZE -=20
+1,
+> >=20
+> > @@ -560,7 +560,7 @@ static struct mcf_esdhc_platform_data mcf_esdhc_dat=
+a =3D
+> > {>=20
+> >  	.cd_type =3D ESDHC_CD_NONE,
+> > =20
+> >  };
+> >=20
+> > -static struct resource mcf_esdhc_resources[] =3D {
+> > +static const struct resource mcf_esdhc_resources[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start =3D MCFSDHC_BASE,
+> >  		.end =3D MCFSDHC_BASE + MCFSDHC_SIZE - 1,
+> >=20
+> > @@ -590,7 +590,7 @@ static struct flexcan_platform_data
+> > mcf5441x_flexcan_info =3D {>=20
+> >  	.clock_frequency =3D 120000000,
+> > =20
+> >  };
+> >=20
+> > -static struct resource mcf5441x_flexcan0_resource[] =3D {
+> > +static const struct resource mcf5441x_flexcan0_resource[] =3D {
+> >=20
+> >  	{
+> >  =09
+> >  		.start =3D MCFFLEXCAN_BASE0,
+> >  		.end =3D MCFFLEXCAN_BASE0 + MCFFLEXCAN_SIZE,
+> >=20
+> > --
+> > 2.39.5
 
 
 
-Tested on:
-
-commit:         e811c33b Merge tag 'drm-fixes-2025-11-08' of https://g..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
-dashboard link: https://syzkaller.appspot.com/bug?extid=9489c9f9f3d437221ea2
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=177f4412580000
 
 
