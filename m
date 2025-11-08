@@ -1,64 +1,57 @@
-Return-Path: <linux-kernel+bounces-891365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0049AC428A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 07:49:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62859C428D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 08:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91ACF188EA94
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 06:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF9DC188B325
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 07:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDA12D8376;
-	Sat,  8 Nov 2025 06:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="Db0gfLFq"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E542E0405;
+	Sat,  8 Nov 2025 07:29:45 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B37B1E0DD9;
-	Sat,  8 Nov 2025 06:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552B429E101;
+	Sat,  8 Nov 2025 07:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762584577; cv=none; b=St2G4rykDsZg3Is0he5yTgNcLdSR7kNqnNcVZSADQ3b+VefR23Yr+61kYCXPGiKTNn5IJ77g/+GVukDnIJsWpTmGwcpaTxIB29PJ8FFTIk/5e1Nr5F/FW72f6RmBYloFMYg0RYbX+PPh73dkZkROavuRPwOHCPzHn+68WYrVFPA=
+	t=1762586985; cv=none; b=SUNUmBkaygs5AyhU9aPNIcb1qxxhPWkRQecTGuV/oraGqGUaXfSNR9/nIRFO47UjIims4xNH4BZfXavE1xAvW+YWcNIB1Ui6gtVRyMNyQOrR8JLUhvdx93A5G8Km8+eOCpUWlIab8WKiBQUJnZ6ZtrCMlxo42dS4b0Qm+vUiieo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762584577; c=relaxed/simple;
-	bh=jz8ukvvRAvzQRhhP+ZXJiypbNhd/W6QF6sgHCvmDJDM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cvOvrnnfLdaAcO1/BwK7u3CaPOzL3gzG3igrIqPpb4ViqNi5RW/WfAwjuED0cB3V5TqanvQsUpBPlm4dTMR4p4aD3Rmp7lTM2suSK4mlXIIw9uhn1uuTqoDWYcs9AJSCLc2c/sACRUFi07pNXBzllxc2ZQeo0yo/TjqfwW3bSxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=Db0gfLFq; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id DB71BA0BB0;
-	Sat,  8 Nov 2025 07:49:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=VkwoXrZtvkP6dlh6Xfbrq9DIW4exw4OKLGybIVjF7UQ=; b=
-	Db0gfLFqzvN9qyPD+2gFYU9vS92WCJxyT9EZ1TUDquDzLCeP716eRrdesv+18WBk
-	HCx/jtGilndH6ap3ujHw59EAcW63Fss+S44F7tgJeuoA+YAdcQNcEFU8KMVAO6RB
-	y+uh+u5zHxpYLHUMqDXRLp5pWJayjSNzqcR6xeJ2xz5KPtkge1kn3x3/AJ9Q171j
-	vGJUfSScnSoTROygbBiSC2kZh45rOFJwfhxeE4aiGFsmXxgRr1S129xtxzZ/69M0
-	Zeg+dpvKYEbBd2f7imZyvD5ZO1coOHAUV6vLQbYc2LDtXgzose6Rf83tQXe3bJE3
-	WCnMW1cEWIY7bgm9NUvmBDTbGE5GAX5fQsHmYlIopixs5DXXXUmDkH9C90NaSlKp
-	BidDtLUuGQrS8LyfRmxfNvkwlisfumhnOZES9DBiYxTgcxh/YfWYAp1S7wQot5vo
-	W3EleRBSMAK/KLCKhW42HMdJCfRex1YzP5wYLx5inqR0KdjU8ZBWYq7wUoVppOg1
-	KoJIzX5YTO5+wKz3AK5HIZFcF9iigF4tnllpC4NEhTWZWwsjgyn6sediTzyA43nb
-	v/FoeR2CPsyIngom9+JK6dU+XYENwxscuQhbHCIaqvFVj/XjqK5+Oqb4lY3O0i2e
-	uPlHhjGzSTQHTOTKkK2roiWiAtSxahmdeY7Qzdf/+t8=
-From: Buday Csaba <buday.csaba@prolan.hu>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, David Bauer
-	<mail@david-bauer.net>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Buday Csaba <buday.csaba@prolan.hu>
-Subject: [PATCH net] net: mdio: fix resource leak in mdiobus_register_device()
-Date: Sat, 8 Nov 2025 07:49:22 +0100
-Message-ID: <4b419377f8dd7d2f63f919d0f74a336c734f8fff.1762584481.git.buday.csaba@prolan.hu>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1762586985; c=relaxed/simple;
+	bh=O7Yty916Wh68Ys9yXUn+AXcqVMFUhuwXCy24NKL+swc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YRmSxrXZpgSULgy7V9nXGR/pCorfN3R6CXL9eV91mk4eAPsF+P9fOqpx611eFSLjLdkwyeElt/VK+dE/je7VC1BwyEkfEpExkjoB6rFd6Qwgz3jl5+cq5I21k7tawJMM9l1iB9f4/gY1lCEZcEpVKNfuHTNhEkg6CCF8+ebKwIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d3Rs360r4zYQtxy;
+	Sat,  8 Nov 2025 15:10:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 283AE1A018D;
+	Sat,  8 Nov 2025 15:10:37 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.87.129])
+	by APP2 (Coremail) with SMTP id Syh0CgAHZXvp7A5pbSoQAA--.5961S4;
+	Sat, 08 Nov 2025 15:10:34 +0800 (CST)
+From: Zheng Qixing <zhengqixing@huaweicloud.com>
+To: josef@toxicpanda.com,
+	axboe@kernel.dk,
+	xiubli@redhat.com
+Cc: linux-block@vger.kernel.org,
+	nbd@other.debian.org,
+	linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	houtao1@huawei.com,
+	linan122@h-partners.com,
+	zhengqixing@huawei.com
+Subject: [PATCH] nbd: defer config put in recv_work
+Date: Sat,  8 Nov 2025 15:02:02 +0800
+Message-Id: <20251108070202.1816004-1-zhengqixing@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,46 +59,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1762584564;VERSION=8002;MC=2900412154;ID=182673;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2998FD515F667364
+X-CM-TRANSID:Syh0CgAHZXvp7A5pbSoQAA--.5961S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFykJw43Jw18tFyUAr1xuFg_yoW5CFWDpF
+	WS9F4DKF48Wrn5CF4kX34UW34DGasFgr9rW3yxA34YyrWfA3yIyrsrK3WftF1UXr1kJ3yU
+	ZrWrGa42ka15GFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7
+	CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
+	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4
+	IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x02
+	62kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s
+	026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_
+	Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20x
+	vEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UEZXOUUUUU=
+X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
 
-Fix a possible leak in mdiobus_register_device() when both a
-reset-gpio and a reset-controller are present.
-Clean up the already claimed reset-gpio, when the registration of
-the reset-controller fails, so when an error code is returned, the
-device retains its state before the registration attempt.
+From: Zheng Qixing <zhengqixing@huawei.com>
 
-Link: https://lore.kernel.org/all/20251106144603.39053c81@kernel.org/
-Fixes: 71dd6c0dff51 ("net: phy: add support for reset-controller")
-Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
+There is one uaf issue in recv_work when running NBD_CLEAR_SOCK and
+NBD_CMD_RECONFIGURE:
+  nbd_genl_connect     // conf_ref=2 (connect and recv_work A)
+  nbd_open	       // conf_ref=3
+  recv_work A done     // conf_ref=2
+  NBD_CLEAR_SOCK       // conf_ref=1
+  nbd_genl_reconfigure // conf_ref=2 (trigger recv_work B)
+  close nbd	       // conf_ref=1
+  recv_work B
+    config_put         // conf_ref=0
+    atomic_dec(&config->recv_threads); -> UAF
+
+Or only running NBD_CLEAR_SOCK:
+  nbd_genl_connect   // conf_ref=2
+  nbd_open 	     // conf_ref=3
+  NBD_CLEAR_SOCK     // conf_ref=2
+  close nbd
+    nbd_release
+      config_put     // conf_ref=1
+  recv_work
+    config_put 	     // conf_ref=0
+    atomic_dec(&config->recv_threads); -> UAF
+
+Commit 87aac3a80af5 ("nbd: call nbd_config_put() before notifying the
+waiter") moved nbd_config_put() to run before waking up the waiter in
+recv_work, in order to ensure that nbd_start_device_ioctl() would not
+be woken up while nbd->task_recv was still uncleared.
+
+However, in nbd_start_device_ioctl(), after being woken up it explicitly
+calls flush_workqueue() to make sure all current works are finished.
+Therefore, there is no need to move the config put ahead of the wakeup.
+
+Move nbd_config_put() to the end of recv_work, so that the reference is
+held for the whole lifetime of the worker thread. This makes sure the
+config cannot be freed while recv_work is still running, even if clear
++ reconfigure interleave.
+
+In addition, we don't need to worry about recv_work dropping the last
+nbd_put (which causes deadlock):
+
+path A (netlink with NBD_CFLAG_DESTROY_ON_DISCONNECT):
+  connect  // nbd_refs=1 (trigger recv_work)
+  open nbd // nbd_refs=2
+  NBD_CLEAR_SOCK
+  close nbd
+    nbd_release
+      nbd_disconnect_and_put
+        flush_workqueue // recv_work done
+      nbd_config_put
+        nbd_put // nbd_refs=1
+      nbd_put // nbd_refs=0
+        queue_work
+
+path B (netlink without NBD_CFLAG_DESTROY_ON_DISCONNECT):
+  connect  // nbd_refs=2 (trigger recv_work)
+  open nbd // nbd_refs=3
+  NBD_CLEAR_SOCK // conf_refs=2
+  close nbd
+    nbd_release
+      nbd_config_put // conf_refs=1
+      nbd_put // nbd_refs=2
+  recv_work done // conf_refs=0, nbd_refs=1
+  rmmod // nbd_refs=0
+
+Reported-by: syzbot+56fbf4c7ddf65e95c7cc@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/6907edce.a70a0220.37351b.0014.GAE@google.com/T/
+Fixes: 87aac3a80af5 ("nbd: make the config put is called before the notifying the waiter")
+Depends-on: e2daec488c57 ("nbd: Fix hungtask when nbd_config_put")
+Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
 ---
- drivers/net/phy/mdio_bus.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/block/nbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-index cad6ed3aa10b..4354241137d5 100644
---- a/drivers/net/phy/mdio_bus.c
-+++ b/drivers/net/phy/mdio_bus.c
-@@ -73,8 +73,11 @@ int mdiobus_register_device(struct mdio_device *mdiodev)
- 			return err;
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index a853c65ac65d..215fc18115b7 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -1024,9 +1024,9 @@ static void recv_work(struct work_struct *work)
+ 	nbd_mark_nsock_dead(nbd, nsock, 1);
+ 	mutex_unlock(&nsock->tx_lock);
  
- 		err = mdiobus_register_reset(mdiodev);
--		if (err)
-+		if (err) {
-+			gpiod_put(mdiodev->reset_gpio);
-+			mdiodev->reset_gpio = NULL;
- 			return err;
-+		}
+-	nbd_config_put(nbd);
+ 	atomic_dec(&config->recv_threads);
+ 	wake_up(&config->recv_wq);
++	nbd_config_put(nbd);
+ 	kfree(args);
+ }
  
- 		/* Assert the reset signal */
- 		mdio_device_reset(mdiodev, 1);
-
-base-commit: 96a9178a29a6b84bb632ebeb4e84cf61191c73d5
 -- 
-2.39.5
-
+2.39.2
 
 
