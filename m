@@ -1,209 +1,165 @@
-Return-Path: <linux-kernel+bounces-891549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97529C42E73
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 15:46:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2FBC42E7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 15:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265B33AFA70
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 14:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7886D3A261A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 14:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA591AB6F1;
-	Sat,  8 Nov 2025 14:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359FC1DE3AD;
+	Sat,  8 Nov 2025 14:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RA70Cds9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMWuNTvh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D014A07;
-	Sat,  8 Nov 2025 14:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848CE45C0B
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 14:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762613168; cv=none; b=KIqxNeHa+Hi0lLqaOHwot1/slKoKV2VEDLAkfshoVd+Syad1w3gbJ0Fxhfebna6r7sEeAiQjgDmG9bhqDIHtB7haOgnTicik57rvCMqdJuGbSvCAwC5o9Cdzk0TzGFHY+aB7+dF5Dih98IxErmA66LBowGcDmFtrf45cBwQxQ/U=
+	t=1762613215; cv=none; b=SAACRsYa0k2XhRPS2xDyH1DdKkhryYRyrvGC3PVA4xwboDcwj7nCTnULza2HXUj4cKhpz3ID0WpLEuaRGa4pMwgx+GlT4CPqBXK7DYJIcPcguuVldDBN7RKEI613cQm//3wIycvYIRN3KXZY7AF/XnrBIhW28mJuFabXjpEf3BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762613168; c=relaxed/simple;
-	bh=4xr81XznMx3JxZ2PiBSb4F7WXSBRzdh4HzfJfDT1/sM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B1BHkhnd3GgZsTnAFsSx55N8ovvSNBuGSZFbB1RXxtuGD2n6hTirHHai8sO6YYjBLW1nvaUpxGeNq2H1ieD0sFgpauUaa77TB8N6UdH9wgauzm0DuhI7oRVbgzfqR/be2WkQxEnjkDLgm7y8lB5aT0fjJwRS45gKXKrsKwuMfE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RA70Cds9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0831AC116D0;
-	Sat,  8 Nov 2025 14:46:03 +0000 (UTC)
+	s=arc-20240116; t=1762613215; c=relaxed/simple;
+	bh=e2abTaKak9F+D5hLa1oLX38oqMySV0hVV+m1Bs6VuBc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nqdH3goWu9AyBcS7SgSbI1N8v85E6YePzwV8fLbUB1rUAAQSp/kWNF1asiRN+kfCvm/I7s08orAt0t3YELDxrDg0c8pAbQgbk3eA6JzbeBsATDrHIycVsFWEOglRp4TNwmo+mdzgjBTqbRvoHHvKaLyldX+LY4YhoAoIw/IJLN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMWuNTvh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D0E1C2BC9E
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 14:46:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762613166;
-	bh=4xr81XznMx3JxZ2PiBSb4F7WXSBRzdh4HzfJfDT1/sM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RA70Cds9k9kY/4VsrrHOMAD7mgqWhN36Dnw86ZcSEVBMRvLKPVE34vuiO7/RXfvxg
-	 ttmAEYGw89v/BY4VWUnClgJHHMFDC7ekDP3ET03RIXjKfqtzGp8KbKGfl78OqXe6qY
-	 6SA8hJImkXv9gkB42PT/r6abGa1doZ1xFvYdanBaTeE7RXjAEIUhoOlk8fymgFZzjS
-	 PVl2IDWWGCHzpJNKFxSMlvCrQrNZluc/QSrLWkRFDmt509wdhy975gQkY+ME00L8sa
-	 ALFsaLxATvB9wcyFXfBaA9s9UIpoMkWQkjthwLUdQSDP86pIIxjQ3rRa3A3iJyFkER
-	 UtVgN9zDj1PjQ==
-Message-ID: <aa330123-e6d9-44ce-b030-b266cba1df9c@kernel.org>
-Date: Sat, 8 Nov 2025 15:46:01 +0100
+	s=k20201202; t=1762613215;
+	bh=e2abTaKak9F+D5hLa1oLX38oqMySV0hVV+m1Bs6VuBc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rMWuNTvhEcCPzmWAzLiwjaQWpXx6EGxLV5cbQcNn7jer8YfLPPw0ERXYt9S3o+gfd
+	 Vs9vuvFsoM0aUYRiSufefzVD2MqSY2axfpRNTpZDDM2tfc3v6ZKy8kigvANeZe0tkx
+	 noSUxu4nEpUDSNq5BFjK0Uht4DMBfbm3ADS0apoJay6YXyoNTRGR8rRS5AP7YT3/vF
+	 UPwVzT3xXqg6TAdTl3RQJazhR8NIGhP8h0KGLIbMT8VeuFkT7n3bREqN7LaJrfFUDE
+	 +sug5kOafit4xSsBCjm/d/3wB8h5RzlkD0OdOW4ms595h7XO1YBtEVteOlzrcERV36
+	 lbhCsDhtwySoQ==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b727f330dd2so275320966b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 06:46:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXHXcTA/9O2MeMeidmYilDtHCFcmyBW8wMYtE0dqXOGhXd1vVuLGo4PhYm/BHbVNKLFohhARLPPH4gBn2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzfsx8SYlva+ic3T2jMc16IbsSVKOLZ4e9Vjoc1QO9Ps+egvcD
+	BljKBeN3Ehk4LQuNzd1vwPl7R5I4Zta/N3bfKDHC9DvG7QGO1aaImiE8KGS1SnSGCVU8ev6/WbU
+	7vYe5W5zbnGUL+FAQ09ViqIpcX6urXVc=
+X-Google-Smtp-Source: AGHT+IH0dFf89SxucnZydwoYn4g7JrmAqU6/5oiBizREO74gTJC6q1vpLcwG8D+usHbmPALvTnbCFvvmDk7Ofs1/8As=
+X-Received: by 2002:a17:907:3f07:b0:b46:8bad:6972 with SMTP id
+ a640c23a62f3a-b72e04e3526mr293962166b.38.1762613213586; Sat, 08 Nov 2025
+ 06:46:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: regulator: Add Fitipower FP9931/JD9930
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-References: <20251107-fp9931-submit-v1-0-aa7b79d9abb6@kemnade.info>
- <20251107-fp9931-submit-v1-2-aa7b79d9abb6@kemnade.info>
- <20251108-vagabond-lyrical-hawk-ad3490@kuoka>
- <20251108152114.53422ea6@kemnade.info>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251108152114.53422ea6@kemnade.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <2025110803-retrace-unnatural-127f@gregkh> <20251108123609.382365-1-pioooooooooip@gmail.com>
+In-Reply-To: <20251108123609.382365-1-pioooooooooip@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Sat, 8 Nov 2025 23:46:41 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-R8NGDzQ-GTM67QbCxwJTCMGNhxKBo1a0sm0XBDqftLw@mail.gmail.com>
+X-Gm-Features: AWmQ_bnmtDghD3kQ5OPzrzlSyqe9j2p8NZ_MyeNDM_lVWl-_pIMCdtirQviKJII
+Message-ID: <CAKYAXd-R8NGDzQ-GTM67QbCxwJTCMGNhxKBo1a0sm0XBDqftLw@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: vfs: fix truncate lock-range check for shrink/grow
+ and avoid size==0 underflow
+To: Qianchang Zhao <pioooooooooip@gmail.com>
+Cc: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Zhitong Liu <liuzhitong1993@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/11/2025 15:21, Andreas Kemnade wrote:
-> On Sat, 8 Nov 2025 13:17:31 +0100
-> Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> 
->> On Fri, Nov 07, 2025 at 09:06:45PM +0100, Andreas Kemnade wrote:
->>> +properties:
->>> +  compatible:
->>> +    oneOf:
->>> +      - const: fiti,fp9931
->>> +
->>> +      - items:
->>> +          - const: fiti,jd9930
->>> +          - const: fiti,fp9931
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  '#thermal-sensor-cells':  
->>
->> Why is this a thermal zone sensor? Aren't you mixing temperature
->> reading with soc? For temperature reading you can use hwmon, for
->> example.
->>
-> well, I just took the SY7636A as reference. Is there any document describing
-> the terme "thermal zone sensor". I would define a thermal zone as an area
-> with things influencing each other thermically. These things are
-> sensors, heat sources and sinks. Well, the panel typically does not produce
-> much heat.
-> But I do not insist on having that property here. As far as I understand,
-> the hwmon uses this property as an indication to also create a thermal zone
-> sensor.
+On Sat, Nov 8, 2025 at 9:36=E2=80=AFPM Qianchang Zhao <pioooooooooip@gmail.=
+com> wrote:
+>
+> ksmbd_vfs_truncate() uses check_lock_range() with arguments that are
+> incorrect for shrink, and can underflow when size=3D=3D0:
+>
+> - For shrink, the code passed [inode->i_size, size-1], which is reversed.
+> - When size=3D=3D0, "size-1" underflows to -1, so the range becomes
+>   [old_size, -1], effectively skipping the intended [0, old_size-1].
+>
+> Fix by:
+> - Rejecting negative size with -EINVAL.
+> - For shrink (size < old): check [size, old-1].
+> - For grow   (size > old): check [old, size-1].
+> - Skip lock check when size =3D=3D old.
+> - Keep the return value on conflict as -EAGAIN (no noisy pr_err()).
+>
+> This avoids the size=3D=3D0 underflow and uses the correct range order,
+> preserving byte-range lock semantics.
+>
+> Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
+> Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
+> ---
+>  fs/smb/server/vfs.c | 28 +++++++++++++++++++---------
+>  1 file changed, 19 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+> index 891ed2dc2..e7843ec9b 100644
+> --- a/fs/smb/server/vfs.c
+> +++ b/fs/smb/server/vfs.c
+> @@ -825,17 +825,27 @@ int ksmbd_vfs_truncate(struct ksmbd_work *work,
+>         if (!work->tcon->posix_extensions) {
+>                 struct inode *inode =3D file_inode(filp);
+>
+> -               if (size < inode->i_size) {
+> -                       err =3D check_lock_range(filp, size,
+> -                                              inode->i_size - 1, WRITE);
+> -               } else {
+> -                       err =3D check_lock_range(filp, inode->i_size,
+> -                                              size - 1, WRITE);
+> +               loff_t old =3D i_size_read(inode);
+> +               loff_t start =3D 0, end =3D -1;
+> +               bool need_check =3D false;
+> +
+> +               if (size < 0)
+> +                       return -EINVAL;
+There is no case where size variable is negative.
 
-That's Linux detail, but anyway you don't need it. This device does not
-look like a part of thermal zones.
+> +
+> +               if (size < old) {
+> +                       start =3D size;
+> +                       end   =3D old - 1;
+> +                       need_check =3D true;
+> +               } else if (size > old) {
+> +                       start =3D old;
+> +                       end   =3D size - 1;
+> +                       need_check =3D true;
+>                 }
+>
+> -               if (err) {
+> -                       pr_err("failed due to lock\n");
+> -                       return -EAGAIN;
+> +               if (need_check) {
+> +                       err =3D check_lock_range(filp, start, end, WRITE)=
+;
+> +                       if (err)
+> +                               return -EAGAIN;
+>                 }
+>         }
+Can't you just change it like this?
 
-> 
->>> +    const: 0
->>> +
->>> +  enable-gpios:
->>> +    maxItems: 1
->>> +
->>> +  pg-gpios:
->>> +    maxItems: 1
->>> +
->>> +  ts-en-gpios:  
->>
->> It's called EN_TS, so en-ts-gpios.
->>
-> ok
->>
->>> +    maxItems: 1
->>> +
->>> +  xon-gpios:  
->>
->> That's powerdown-gpios, see gpio-consumer-common.
->>
-> looking a bit around: powerdown-gpios e.g. in the MCP4801
-> describe an *input*, which should be connected to an output of the SoC. 
-> Looking at the datasheet, I see "XON Open Drain N-MOS On-Resistance" so it is
-> an *output* (same as for PG). So it is something different then the
-> powerdown-gpios in e.g. the MCP4801.
-> So it is a signal coming from the JD9930 after EN goes low in the power down
-> sequence.
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index 891ed2dc2b73..f96f27c60301 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -828,7 +828,7 @@ int ksmbd_vfs_truncate(struct ksmbd_work *work,
+                if (size < inode->i_size) {
+                        err =3D check_lock_range(filp, size,
+                                               inode->i_size - 1, WRITE);
+-               } else {
++               } else if (size > inode->i_size) {
+                        err =3D check_lock_range(filp, inode->i_size,
+                                               size - 1, WRITE);
+                }
 
-OK, I just briefly skimmed through datasheet.
-
-> 
->>> +    maxItems: 1
->>> +
->>> +  vin-supply:
->>> +    description:
->>> +      Supply for the whole chip. Some vendor kernels and devicetrees
->>> +      declare this as a non-existing GPIO named "pwrall".
->>> +
->>> +  fiti,tdly:  
->>
->> No, look at datasheet. What values are there? ms.
->>
-> Hmm, no to what? I do not understand your comment.
-
-Please use proper units for the field expressed in the property name
-suffix and possible values (enum).
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
-
-You also need default.
-
-> So I guess a bit what might be options to discuss here:
-> - put raw value for the bitfield here (what is currently done).
-> - put the ms values here (then I would expect a suffix in the property name)
->   We have the mapping 0ms - 0, 1ms - 1, 2ms - 2, 4ms - 3, so it is
->   not identical.
-I don't know what has to be identical. You want here 0, 1, 2 or 4 ms.
-BTW, if you speak about driver complexity, getting register value out of
-above is absolutely trivial, so not a suitable argument.
-
-Best regards,
-Krzysztof
+Thanks.
+> --
+> 2.34.1
+>
 
