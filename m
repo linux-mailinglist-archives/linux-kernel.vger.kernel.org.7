@@ -1,148 +1,134 @@
-Return-Path: <linux-kernel+bounces-891521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6559FC42D6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:44:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A248C42D7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:48:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F26C534894D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:44:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CB8C3B2324
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284B11DED57;
-	Sat,  8 Nov 2025 13:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C941A9FB4;
+	Sat,  8 Nov 2025 13:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ftv/matx"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I1cpfLKH"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72ED6D1A7
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 13:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014291A23AC
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 13:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762609476; cv=none; b=N7XQJ2ZgnxdurfkKQZC3TP969Ehk5WI1z4xdedsr5FKjKl3BvC7ZaAP5px5QtxUPdK2NptYO/YyLsn6xawPLUVT/yVotzSnVz6pDVrDBKvFZ04dEv3BIQFTvXF3+qQnGUvxxt+pOclDdhJXvkXoBn0xLkO0v70LOfOq4yfmuqyc=
+	t=1762609687; cv=none; b=P0GMTAmGOuJxF3KglscBXO8/MPNtwrCyFW2B3bRj4Yq9OFaV6gP8t0LFMHtxzN1mITbS/584X1y2GecvP60sVlE8Zn6mQtRE68t72ZQa3SWlgZf8le13bk4MCO9JS6xHwOF1Qd0wikYxJCxElYlIQll+BiRwOyR+t/tBWgHf9SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762609476; c=relaxed/simple;
-	bh=FtCvi8AIrARWMNDczj1sLrGTJlSAggLQnxBGZTevvzE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XrlQkSWeBMyAGzSd0yF+vOQxUIyA9IVRkAyc3M82fQtrxhga3smt6E0AntT8Jlcat5App5uRkhDzQdWzcpSY0wE1KhMNH6UciAGgOkZQ9/v0+qB/+3glbvJPklwx7iLR2eBR3oZSfj2YNG+T3e9AVRLvSO+TJCCw6dshhWjBZFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ftv/matx; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b5a8184144dso214996966b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 05:44:34 -0800 (PST)
+	s=arc-20240116; t=1762609687; c=relaxed/simple;
+	bh=gpkOgQREkGfFyXdfZjUNhEXJXx0pJOMzthb8JAxDkkI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QkWg8fz4rfn3V5t2ZQtx7Cfko5EfQcBxEEkJpkSiQ2LDeMr65Ghy0eTM6BETtbmGWHtu2M/dvzmVS6bWYWoehcpMq6OQw3fomD94UG3aunr9gIUvgcR9brD/3tpr9hm2ce2sCb0afyMOYd95yQdwVcouOaX5rlvUwdaGBV6fdDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I1cpfLKH; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b72db05e50fso203367966b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 05:48:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1762609473; x=1763214273; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ab0dNgePo+ve9gQ9R7d2FYgAaNZrPU8kUu+qmhjPbGo=;
-        b=ftv/matxuIrMcGOxQ5Z9ddv0n5BrJ4+2aQs6jRGt8fgxxo+KqevBR7xP92YuyrAfce
-         C4M+14pXM+Xsde96MxN7ZQUqv8B3TriIZ2NYxv+88IBCtNr+ltinOgGLX93fEAQS5axz
-         MKZQqu7TUSUzXTt4rE06EeXswWxHHTcQ4NTYBvqBqDE5Q60gVEgWYB3qZf4dy4KjyLtJ
-         ygQMt6uQifD72wQs6jkFI8byd9AQZc7zlR48XVHB2xFrhexd1cu96jZzsOhke4+sAa+N
-         F6CnU7weiTVN1epDDCAiXfl7fSaQUk+8AdNlM2hcjLcrrRZp8NpLPgq5whfgNR0qZGu7
-         JmzQ==
+        d=linaro.org; s=google; t=1762609684; x=1763214484; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gpkOgQREkGfFyXdfZjUNhEXJXx0pJOMzthb8JAxDkkI=;
+        b=I1cpfLKHP3n2H9I+dmfH2mk3W5X6Cvp93Ea8cY7gpCsacEWv4095ZU+ZT57CRAQCnI
+         wBgNdRxVu2Q5nbZ1lWQzlAbRYvsFmzl8xEmwsSnU1aBiE8osfP5xTRqS7JZw84bGNAAN
+         CNojY6UxqYIintgQY3xC5FmfvKBcvGu2nIpmYOCwqA5GPvK/BnHVSVpu2AQApJELQLm+
+         eJ0h/9dJQ/SnbZKk4rLJLywRkxyQJ7/EV4GIgs9kt2vcWNxV8eBKEbZXK19XGRkGYFd0
+         sngcOjFTHGc4BaC44nLcg+oHdBtovmngThsnn3khqSpzn3vBRrrRVUBy/1n+/b4p2D98
+         qmPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762609473; x=1763214273;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ab0dNgePo+ve9gQ9R7d2FYgAaNZrPU8kUu+qmhjPbGo=;
-        b=jxL20/rz2myN6pZiJXjUw0ZaQ3F8a6T6BBsFXskxj4+jfws4zsrw+vbPlWWeJfm5bm
-         Zik58UZY7zupGdqr1sd9wbz0FCXSBYqqzr3kb9DmbNYtwG6uGrfZLqgUE3f8jOs4vdc7
-         i/Cp46PQ2D9w/k4SXOrXs8ARzmeFAHggD+GiPzasdmFOn9ORdV9OHeYNPJ9+oQfiT/Un
-         vTB+Wx6aOevq0jKsVykYhaIQPxkZGm4eJ/3pS6/e5xgsVeQUyekalUWMQBIl7jMigZmp
-         5Vq1RF9uktN+FJJmVJ4LOPGSfTItHpIeKWSABIc2oLs0VC+U9BR1vpQt4geLRX2zt0rT
-         yDjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWu+RbxZiHHkU1WAvGk7vuyJlQVAoSmBEu6DVZJN7HvS8RH7h6/O2E4ZmCdBBzNYfDMzGznX1S6Qs4iXus=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+fWs3is48eig54DM9xfJ4EarYMPf2NzV7f5YA5dT9+3JpuC8l
-	EIMfNYxHrkCfcDAvzmn2qXVnY+FQDvTWBY+Y5w1pZzvx4Ntn9Zrn0cT2
-X-Gm-Gg: ASbGnct5S3RhkD7z6CUy5Www5uroasM0auHJNnuAanJqQLXF5k36QqgFKyWB52rS7tk
-	KheAjWJ2+QCiDAzD6BerR+iWzo928N33N5H/RU7sXqD+neE7NCJ7O36fqu+VBP1LAjkzz7128z7
-	T6O5FafttdchxJz9FBpvIt6XvJdkWavtn8kvNhWXvkuhgNJW9SMuLvJR8qLS5k8GguhIG+LKi4S
-	cox2TLlDUTC/FszZlb139UO6K5fj2GgLxc0YlsHViDnrDUCEOQ5XaMjeREXPoBtUVv6KPeiIvyi
-	F94tEfTIjQx3RuLkjmJWDqrApCKRFvSRyIJk0rDvZl2TRrdwtv5cG5TAEDvIbQ9aa9BOVng1pEv
-	R/agsY/h+cXGAtwPFCHheLGjM86208uG0GiylXu+a50ajtjqbQaUu7Cq6FY4QfMFHT7Lx/2AWBl
-	B94ooLprr/gAjEBAjro6o+AahG/uGzKHKT3W+GJq5D7iU1eeaPCmtOAESE2j3DaZxqteg7dQCp5
-	Y3hMvS3hLGYy57BwTWsMF0cZ8pxMW9LU/5DlRFstM1p3QPtagIo
-X-Google-Smtp-Source: AGHT+IE3t5XHoEClnas6c0fwEVjyNk2axByTaO1rMD+gsebxQxdsSRmYQhKPt6+QjmiTNvXr08iIdQ==
-X-Received: by 2002:a17:907:6e8f:b0:b6f:9da9:4b46 with SMTP id a640c23a62f3a-b72e056cc6dmr230845266b.43.1762609472959;
-        Sat, 08 Nov 2025 05:44:32 -0800 (PST)
-Received: from blackbox (dynamic-2a02-3100-ae88-0800-1e86-0bff-fe2f-57b7.310.pool.telefonica.de. [2a02:3100:ae88:800:1e86:bff:fe2f:57b7])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b72bf97e54asm531374566b.34.2025.11.08.05.44.30
+        d=1e100.net; s=20230601; t=1762609684; x=1763214484;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gpkOgQREkGfFyXdfZjUNhEXJXx0pJOMzthb8JAxDkkI=;
+        b=UA+3bV9Gj6OOkY4dNtsdVTgbQhMCRzRlejeSyBhsXz2sDHh+XJmW3SnRK3wl2oixR9
+         DaR7xwhUDTRmRydsdCZktcKS4FHUDPbVmjKJLlc/Y2uCqpe+jtihePJ0m8HWAuEgMvYT
+         mp+lV7bZt9lBEn/tSIyfMUrhpt6Mu5cx1o0lS8bjtoEigmBtK1KiUnE1JNDB7AHa9x83
+         FlQhtvkU6liAVHfsBIUxBgRg82zkUhwt2w7DNTEl28rNZhHHJ+3Sw+r2dPBK+4J9zVkk
+         kRlrJk/PqX5F83j2IrFtF4GI9OF78Q4h42FMIuyGZHjfZyi6DM8R+XcRRVlOVBswOkMB
+         cs2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWzItSe0wqv3Hm6o+WcrxKnuIR8MgAFZKvEfIwlDP2Sti9IgGEu8emyqid2JukxiDtgeUZnuYg9VxAWI48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwAO94gYuq8qe372bHZQfqD7IoWNUFF/ISk3cmmmO88uyuJr+j
+	TuvI9U0KYk30IWcjGV7bYQs0G1sPxOAr6813bpKryjXF2g1lH0ijkAg2OGgPgMgvIIE=
+X-Gm-Gg: ASbGncsGBI2lAYD0nU41UaiOxmZ6iT1jzEmynlKqsI+cS+fJ557NEkWxsNPh/d6ap0P
+	1YKLQ6BP3EJsrQAEBTLRCvo/dCrccLwNlsTBNHSaWVP3e4sxzWOr5MZdMXMEstWg4dj/b04aTRk
+	w50zqHD/yCC96Oy6aQTmo6duwpUqJQMK0J1ZOVHEqwCmKaREBWr+2B1TkMi9OAhwRZOOJzzOlhc
+	W7+z9rRAk69bHyxyJkNXauM47cWfJUl1XLMNgicL5JZIyh68/+iMsS0mUvsqzbvWhl9K8GksM7w
+	rKnL9VVfmxvPVVv8OUOZQnOkl4eCw5ENBsjoRXy5fpwyaWeIUsZZruvJm+uCYi9c+t0Mh+gU8zS
+	rXkjfP7zfKjppaQV0pxoygzNommYdjdSYNZY0xZjznsWWSJjrtpbk7GdLreQoKACru04lqgOQIU
+	e9mI3Z4T+Diug=
+X-Google-Smtp-Source: AGHT+IFBX/o+kgDdCkIA2bNZvHnORYARWl0wDAKEM8n2ULi1LZxfY2oyiaBV3uC93IjX5zqlQAABOg==
+X-Received: by 2002:a17:907:2d2c:b0:b04:274a:fc87 with SMTP id a640c23a62f3a-b72e02ca22amr246594766b.4.1762609683650;
+        Sat, 08 Nov 2025 05:48:03 -0800 (PST)
+Received: from [10.41.228.128] ([77.241.232.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9be2eesm537562466b.63.2025.11.08.05.48.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 05:44:31 -0800 (PST)
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-amlogic@lists.infradead.org,
-	dri-devel@lists.freedesktop.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	neil.armstrong@linaro.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	tobetter@gmail.com,
-	christianshewitt@gmail.com,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH RFC v1] drm/meson: venc: add support for HDMI DMT modes up to 3840x2160
-Date: Sat,  8 Nov 2025 14:42:36 +0100
-Message-ID: <20251108134236.1299630-1-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.51.2
+        Sat, 08 Nov 2025 05:48:03 -0800 (PST)
+Message-ID: <74eda972e038b901b237f2d54f82866b31c5a3c7.camel@linaro.org>
+Subject: Re: [PATCH v3 05/20] dt-bindings: mfd: samsung,s2mpg10: Link
+ s2mpg10-pmic to its regulators
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,  Lee Jones <lee@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Peter Griffin	 <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, 	kernel-team@android.com,
+ linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org
+Date: Sat, 08 Nov 2025 13:48:02 +0000
+In-Reply-To: <20251104-elegant-imposing-boa-6279ca@kuoka>
+References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
+	 <20251103-s2mpg1x-regulators-v3-5-b8b96b79e058@linaro.org>
+	 <20251104-elegant-imposing-boa-6279ca@kuoka>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Commit 5d0bfe448481 ("drm/meson: Add HDMI 1.4 4k modes") added support
-for HDMI 1.4 4k modes, which is what TVs need. For computer monitors
-the code is using the DMT code-path, which ends up in
-meson_venc_hdmi_supported_mode(), which does not allow the 4k modes yet.
+Thanks Krzysztof for your review!
 
-The datasheet for all supported SoCs mentions "4Kx2K@60". It's not
-clear whether "4K" here means 3840 or 4096 pixels.
+On Tue, 2025-11-04 at 09:28 +0100, Krzysztof Kozlowski wrote:
+> On Mon, Nov 03, 2025 at 07:14:44PM +0000, Andr=C3=A9 Draszik wrote:
+> > =C2=A0required:
+> > =C2=A0=C2=A0 - compatible
+> > =C2=A0=C2=A0 - interrupts
+> > =C2=A0=C2=A0 - regulators
+> > =C2=A0
+> > =C2=A0additionalProperties: false
+> > +
+> > +allOf:
+> > +=C2=A0 - if:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 con=
+st: samsung,s2mpg10-pmic
+> > +=C2=A0=C2=A0=C2=A0 then:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
+>=20
+> This is not correct now. You do not have other variants here and ref
+> should be directly in top level "regulators" part of schema.
 
-Allow resolutions up to 3840x2160 pixels (including middle steps, such
-as WQHD at 2560x1440 pixels) so they can be used with computer monitors
-(using the DMT code-path in the driver).
+The commit message explains why, and with your comment on patch 6 I have ch=
+anged
+this now as you suggest.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
-I'm sending this as RFC as I'm hoping to get some comments on the
-"4Kx2K@60" note from the datasheets.
-
-I have tested it myself on a GXL Le Potato board using a computer
-monitor at 2560x1440 pixels.
-
-This is the spiritual successor of a patch titled "drm/meson: add
-support for 2560x1440 resolution output" from [0]
-
-[0] https://lore.kernel.org/linux-amlogic/20250927130239.825060-1-christianshewitt@gmail.com/
-
-
- drivers/gpu/drm/meson/meson_venc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
-index 3bf0d6e4fc30..4abd0c09b442 100644
---- a/drivers/gpu/drm/meson/meson_venc.c
-+++ b/drivers/gpu/drm/meson/meson_venc.c
-@@ -868,10 +868,10 @@ meson_venc_hdmi_supported_mode(const struct drm_display_mode *mode)
- 			    DRM_MODE_FLAG_PVSYNC | DRM_MODE_FLAG_NVSYNC))
- 		return MODE_BAD;
- 
--	if (mode->hdisplay < 400 || mode->hdisplay > 1920)
-+	if (mode->hdisplay < 400 || mode->hdisplay > 3840)
- 		return MODE_BAD_HVALUE;
- 
--	if (mode->vdisplay < 480 || mode->vdisplay > 1920)
-+	if (mode->vdisplay < 480 || mode->vdisplay > 2160)
- 		return MODE_BAD_VVALUE;
- 
- 	return MODE_OK;
--- 
-2.51.2
-
+Thank you,
+Andre
 
