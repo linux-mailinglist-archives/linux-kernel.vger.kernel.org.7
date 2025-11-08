@@ -1,128 +1,178 @@
-Return-Path: <linux-kernel+bounces-891677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7630C433BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 20:30:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C32C5C433CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 20:42:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 477C94E28B0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 19:30:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B2A24E1298
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 19:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F56D27B50F;
-	Sat,  8 Nov 2025 19:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E9128000F;
+	Sat,  8 Nov 2025 19:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mary.zone header.i=@mary.zone header.b="MplrY2sw"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m78ub/XP"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF5F33E7
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 19:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB6B25B69F
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 19:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762630224; cv=none; b=FpFmj9PpwRjIwQ/CzKRNLBYaOKB5TnHM9l61Iq0GCL4MA+ApSS2U7mdzsQ8h7O5USJs9fBYNu3I5uYO1xNx0LQq7nqSjM2YyS8Cf/buGB2dWBKVxoq/vnR1yTeb0W+QTV55EOXpfivL3/AVPf/sWFgB4WhIcHKrpJg4j+GX4zKU=
+	t=1762630938; cv=none; b=KlfXi74hPxO1vvpJNE8G14BxfjLO02PARqG08gvEh7fFCpAuH9JHkF0yv6n3bFZBBAqS1cwXCLMgcmXAVRjXUJy8qnApTIFfaVPYtxIreZjKbJ7SDw2B0Cmfj3uUyczkIOOzJEYd8j8g3OGtrry95G/GeEpDA3uAun9RfAsK2pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762630224; c=relaxed/simple;
-	bh=KyRJZiWrQiGWx3CFD7wgOdd2jyZ0NCxb1AABBCZa0vs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dpgV7KFnl+UCaWaPTS9pmaq3ZJvJjHHabRujDfsLyzHd+MMG7/kTJ2l7ra5SgGcpQQS6A/EAtQDceNMr128nCJ1x070kIRjZkEhQJUidoinFI8YErebI8xF2cECoK198N8gcl0rQFUCuTT/TiN9juyST4bcu/rJwfJsZl7HWqAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mary.zone; spf=none smtp.mailfrom=mary.zone; dkim=pass (2048-bit key) header.d=mary.zone header.i=@mary.zone header.b=MplrY2sw; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mary.zone
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mary.zone
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-781014f4e12so16639287b3.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 11:30:20 -0800 (PST)
+	s=arc-20240116; t=1762630938; c=relaxed/simple;
+	bh=X8ZNMlar1Ow1eWShjc511gIpn78CLUhuBDckR+OLvWw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fa9b5nL6i1h1ZQpdnjuVvP+Y4GAH9yPgGf9FDMU7Bk/zV6lxfCkXbvTChhiKWMMmXkc6BXBb8Xwnb+dVR8Bg0Bc7WHmm6sNr1mJ3V/GJLRXX5koWl6v/Y5QY1LcfH2iZmH5C4b8FalnJXnnX6rAvV28pfm+RFWLrozaCf+TGpQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m78ub/XP; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-376466f1280so23605261fa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 11:42:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mary.zone; s=google; t=1762630220; x=1763235020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KyRJZiWrQiGWx3CFD7wgOdd2jyZ0NCxb1AABBCZa0vs=;
-        b=MplrY2swZcqtvXFvuCJksnpsKGziVaMgdzqvWF7NpfWc6YwkzVPJslBHQgoKpQFrYg
-         KWvv8CpMIxjFyPCBjeHHQvYWinPpKefp+a8V1Rz/ZMZmgB/w/v/ka+KCDQBqF49yIe9B
-         W2qa1lBhxb+whaOs+gQEshoV4ROiJqQbswJUgmcMSK7rqU/TeXAPZHMmwb3RCdZwg2QQ
-         11tieFlb/2CtLjFyfZg0C2ev33cJkVyP6fbPblpX8ddGInUP6Gg+XjFl2tx9MPoQtYsC
-         Nmm2V86Cv0WU6Al7SgxhkshyAl4rCNM3tR5vHaroL+PN8UlUozv3voA5kiRUhiEEDS4J
-         33lA==
+        d=gmail.com; s=20230601; t=1762630935; x=1763235735; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=13aFuuc1GQr46fPnxHYB7JQQ32jMQnvYNiL//B4303c=;
+        b=m78ub/XPYARFiCn1X41kMWCyirwXam48zSHEEhpkCYS2pEjXzk1KGrPIQfIZ6+Sy6+
+         OwUgLhw8b0puzPaZk1AOZJKMEmZ6hWDof9yREOiaqiQ/jAprOvBEDYtaIUIpPAQ2REgR
+         Bm2kZ55dyrg/w66BUvIrbqwyB/8L54nOzdW5yvYKFITgielw0JftKukmd7gY5CPhuhc4
+         HjWvIfjTtZUFInIJ1cxBzAJNqJT5n4Evl9oYAodOBRS8pBNaUBWVtFA0DXf1yIsHVB3r
+         DmCsR5QrsMLu4YOIzXT6Hof4biz25iWoPaNO0340paVEXG1kSu/CaPbFwsw/xwpKSUW6
+         TIeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762630220; x=1763235020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=KyRJZiWrQiGWx3CFD7wgOdd2jyZ0NCxb1AABBCZa0vs=;
-        b=k0AQeombWKgPyS0+t31lVANHC8/SXPzQ8aklaIPo/+zLEIsEWBgJu5nxNyR0nzanui
-         7sNGF+fdrjjcp94eawedilXfRavl7u524lLsCmvdikS4iFhZLEtmwjykkprTTK7OIilH
-         usmjUE/1TfaZrz3ngxUI34YUhvMMP/Q3+JFwXLLWIqTp1jWSpRT8hBbClDYkd6fpVKgZ
-         +NoaPwzJ857rujV4KrrWTXdEZCmvB9W6tAgEH79q2T5XVYVB6TDNVffprU9ol4IySe7w
-         uvF1rypYGvPf8Ol3O7UI0figcTdqjzLhTnLVFKLZ+WiXiznOmtrN5z+LgFM/8Gj9CPpC
-         vg6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWLQsvDjNb5YtxadYLW2p49YlFj5DViRYgw6Ili+SK2HIJl8M1molhdw2BwIacjJt+e1dJ3fezO2WBZRU8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3Xe3HO7eSEUrKmaVZ1yS5C5BX6uOaSlOVkKwKjm+Uen4FGxrp
-	L5lWR719w55i+h2uO+44Z0NXI1JfASpgTn8U1O3w3pLqXL9N/c2WjL2PwDLz/iKtL4pj0GwTuYo
-	tswpKOoITPwHStiH9TX2CjSEaLV3TecGKr9QSVCjFUA==
-X-Gm-Gg: ASbGnctYS0PH6vrUDqVgEDPfUGGtYYHpt5J1RYJsok5Lf2I4c4B5s8vXcylXbFrMGPu
-	w1uNlsjZYyUWWeruqaGrfSOGApECcbtowfWO7Tdf+qO6ooRJZknyJNBS8GS1R4o4zcuQmcPFH4z
-	SWGRfb2IsPpeFr3SXmpBq6AcoH/16HPeYx8SjXCE4NaxANyjFbpfJ//x8VUPOJslIJI+/hRx8Pw
-	UUK+BzkRLjhRcN16SjpY8AZGw396FlODa69jzvMVr6DCY3exJtn5JE54e9nnED5qqIjq2JGZ0EJ
-	/wH8zjsk8sO+9rz9gqgxk/KWwwU=
-X-Google-Smtp-Source: AGHT+IGIYT+SUHEWS8jwXTJD4hh40k1duU3pvKoIO6/tM9I7kWkKHb17WkBAF0kaIdPn4lajaFC8l3EQAoBHjvEIEk4=
-X-Received: by 2002:a05:690c:a4c1:10b0:785:fd34:a355 with SMTP id
- 00721157ae682-787d53fccf1mr27702217b3.40.1762630219745; Sat, 08 Nov 2025
- 11:30:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762630935; x=1763235735;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=13aFuuc1GQr46fPnxHYB7JQQ32jMQnvYNiL//B4303c=;
+        b=U3fFI69wdlDlF1AyO5qdRw1m72hgsm+FmiBRFcd95+dbsLGzB4fId5ELnY/0yABfEP
+         9w1WqtOXxE12u+XkA3StvCQQ9spxKIrs2zBNO/tvRnjtAYqBlKrNt7E/mfC3rE8rURFM
+         Uy8dfq1c9hZKIqiYg2Yx59QM3mXI+9Msb4cYBoIJbQjnCg3oIboXJYQ68l3Z9HczD4Jh
+         8+apSIgK910TOgQb/YfptgM0VMLq6pHekzS7SHaBesjH+mZtsl9ucHMJbQjdZsIhXlfT
+         T0Te7l727YO5RhldXCsfLWoJoDNNv3L0SHJcr6e3Sl95/ympDF93FZ2W9YpjM5yK5stc
+         9IMA==
+X-Forwarded-Encrypted: i=1; AJvYcCULx5oAdP+Fo7pgHn0Hrb9bDYw/dblxXaCyaPmmrvtoqhcIlLQ5crzw16khKjJCwMUAcFsKYoFwfUvwIKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgmztPgNqugPDLkNnab3JePIlQ06Hfli4TFqnu7quZHI2/4ayZ
+	nBFSFhnAc5UhGSd8g/F7ruu5p4LrZXw/qDred2eVU7DYj268qs2F4tKO
+X-Gm-Gg: ASbGncv37vHjfeIG5m8fLqkDT/Rx2AePAtXJ0lIqn1zin+lJls7FbEdjrx6dFPlhlAe
+	eBiomgBkOgIrF7GPOCCD9mb1O/ChOlY0LFO0exT9k3nZIw3IjIAS4abOpuODMshZeStceGpwq//
+	hKml+U/xdDSl2qE0LqDqfpk55knMdjFps+Ul19fXIes9fAKxV5C9uN/K0mCDff658oLH1yQ1HYT
+	IYKKdEVEcWJ25dOVWFiWD1Fnn9q1WgTo6VwsOZL6xEm70cqWV2z6iZVIXIrEqyhugCOVYxnvl2s
+	eMSK24czNTxi7QsVogAbqbf7iIRK4HqjZRlkdMTy7Y5tWJPFsbBUTBNBldF/Tqh7WvGwVh1jE0E
+	n40do+4SDbIHgLKAkMFX1bgE5TRddifdgRY4fyYZVolI2OfFo+1Jc9UHLgf777LvkAFWe2MF4GF
+	epPg==
+X-Google-Smtp-Source: AGHT+IFnDCuSBk7jK+h8KqudoG4bWkSSmVwNgOJURKDwKCfuB23jHIyPUYE9uyHMOVa5uRsybmgG3Q==
+X-Received: by 2002:a2e:b535:0:b0:37a:2f61:5f30 with SMTP id 38308e7fff4ca-37a7b30bad5mr6315371fa.35.1762630934396;
+        Sat, 08 Nov 2025 11:42:14 -0800 (PST)
+Received: from curiosity ([5.188.167.4])
+        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-37a5f0edac3sm22115421fa.38.2025.11.08.11.42.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 11:42:12 -0800 (PST)
+From: Sergey Matyukevich <geomatsi@gmail.com>
+To: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Thomas Huth <thuth@redhat.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Andy Chiu <andybnac@gmail.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sergey Matyukevich <geomatsi@gmail.com>
+Subject: [PATCH v4 0/9] riscv: vector: misc ptrace fixes for debug use-cases
+Date: Sat,  8 Nov 2025 22:41:39 +0300
+Message-ID: <20251108194207.1257866-1-geomatsi@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031104924.10631-1-mohamedahmedegypt2001@gmail.com>
- <20251031104924.10631-3-mohamedahmedegypt2001@gmail.com> <0bffd718-3659-4add-90fc-fb0e098f2897@nvidia.com>
- <CAA+WOBtmbPHigscFQCFgDo=9WSM6V-JMXGCO7orP=01XOqTPHQ@mail.gmail.com> <4d07932e-8b53-4ee3-8d08-6f49d433f005@kernel.org>
-In-Reply-To: <4d07932e-8b53-4ee3-8d08-6f49d433f005@kernel.org>
-From: Mary Guillemard <mary@mary.zone>
-Date: Sat, 8 Nov 2025 20:30:09 +0100
-X-Gm-Features: AWmQ_bmUShDzVgDbCjXaRk8KzGqVzibLvo1soC_Ryl9pqm71yycsphufLLwaE8g
-Message-ID: <CAPv6GL3+Fs-7DCHGgk-rBpJjNHBLYvubbcBK-0U_Ew93_ka3Og@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] drm/nouveau/uvmm: Allow larger pages
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>, James Jones <jajones@nvidia.com>, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Faith Ekstrand <faith.ekstrand@collabora.com>, Lyude Paul <lyude@redhat.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+This patch series suggests fixes for several corner cases in the RISC-V
+vector ptrace implementation:
 
-On Wed, Nov 5, 2025 at 11:50=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On 11/4/25 12:53 AM, Mohamed Ahmed wrote:
-> > Thanks a lot for the shout out! Looking more at things, the logic here
-> > is actually redundant. It was originally copied over directly from the
-> > bo allocation code to stay on the safer side (basically the idea back
-> > then was to make both the bo and vmm sides match exactly). We aren't
-> > at risk of having an aligned address that is in the wrong memory type
-> > because the bo allocation code (nouveau_bo.c:321) forces anything that
-> > has the GART flag to have a page size of 4K. Anything getting a page
-> > size higher than that is exclusively VRAM only. Additionally,
-> > currently things marked VRAM only don't get evicted to host memory
-> > except under high memory pressure and in that case, the context is
-> > paused until the objects in question are paged back in, so we also
-> > don't have to worry about memory placement there.
-> >
-> > The memory placement check in the vmm code could be removed but I am
-> > leaning more towards leaving it as is just to stay on the safer side.
->
-> If it is not necessary, please remove it. We should not carry dead code.
->
+- init vector context with proper vlenb, to avoid reading zero vlenb
+  by an early attached debugger
 
-For correctness, this code path needs to refuse incompatible domains
-to decide the appropriate page size.
-As such those checks should remain.
+- follow gdbserver expectations and return ENODATA instead of EINVAL
+  if vector extension is supported but not yet activated for the
+  traced process
 
-Regards,
-Mary
+- validate input vector csr registers in ptrace, to maintain an accurate
+  view of the tracee's vector context across multiple halt/resume
+  debug cycles
+
+For detailed description see the appropriate commit messages. A new test
+suite v_ptrace is added into the tools/testing/selftests/riscv/vector
+to verify some of the vector ptrace functionality and corner cases.
+
+Previous versions:
+- v3: https://lore.kernel.org/linux-riscv/20251025210655.43099-1-geomatsi@gmail.com/T/#u
+- v2: https://lore.kernel.org/linux-riscv/20250821173957.563472-1-geomatsi@gmail.com/T/#u
+- v1: https://lore.kernel.org/linux-riscv/20251007115840.2320557-1-geomatsi@gmail.com/T/#u
+
+Changes in v4:
+The form 'vsetvli x0, x0, ...' can only be used if VLMAX remains
+unchanged, see spec 6.2. This condition was not met by the initial
+values in the selftests w.r.t. the initial zeroed context. QEMU accepted
+such values, but actual hardware (c908, BananaPi CanMV Zero board) did
+not, setting vill. So fix the selftests after testing on hardware:
+- replace 'vsetvli x0, x0, ...' by 'vsetvli rd, x0, ...' 
+- fixed instruction returns VLMAX, so use it in checks as well
+- replace fixed vlenb == 16 in the syscall test
+
+Changes in v3:
+Address the review comments by Andy Chiu and rework the approach:
+- drop forced vector context save entirely
+- perform strict validation of vector csr regs in ptrace
+
+Changes in v2:
+- add thread_info flag to allow to force vector context save
+- force vector context save after vector ptrace to ensure valid vector
+  context in the next ptrace operations
+- force vector context save on the first context switch after vector
+  context init to get proper vlenb
+
+---
+
+Ilya Mamay (1):
+  riscv: ptrace: return ENODATA for inactive vector extension
+
+Sergey Matyukevich (8):
+  selftests: riscv: test ptrace vector interface
+  selftests: riscv: verify initial vector state with ptrace
+  riscv: vector: init vector context with proper vlenb
+  riscv: csr: define vtype registers elements
+  riscv: ptrace: validate input vector csr registers
+  selftests: riscv: verify ptrace rejects invalid vector csr inputs
+  selftests: riscv: verify ptrace accepts valid vector csr values
+  selftests: riscv: verify syscalls discard vector context
+
+ arch/riscv/include/asm/csr.h                  |  11 +
+ arch/riscv/kernel/ptrace.c                    |  72 +-
+ arch/riscv/kernel/vector.c                    |  12 +-
+ .../testing/selftests/riscv/vector/.gitignore |   1 +
+ tools/testing/selftests/riscv/vector/Makefile |   5 +-
+ .../testing/selftests/riscv/vector/v_ptrace.c | 754 ++++++++++++++++++
+ 6 files changed, 847 insertions(+), 8 deletions(-)
+ create mode 100644 tools/testing/selftests/riscv/vector/v_ptrace.c
+
+
+base-commit: e811c33b1f137be26a20444b79db8cbc1fca1c89
+-- 
+2.51.0
+
 
