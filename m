@@ -1,138 +1,148 @@
-Return-Path: <linux-kernel+bounces-891538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31CAEC42E1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 15:13:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43746C42E21
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 15:18:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4BF188F666
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 14:13:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06BB74E3D2F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 14:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05E7204C36;
-	Sat,  8 Nov 2025 14:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B0D1D61A3;
+	Sat,  8 Nov 2025 14:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nathanrossi.com header.i=@nathanrossi.com header.b="S+WZFxIp"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="C5rulVxe"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A47F29CEB
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 14:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E3F14F112
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 14:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762611194; cv=none; b=dkqXyubOGJmYFnvgNsXgFZoOA6MPSGlEdUu/Gy+ikeP//vB53mIBeOs7ZR07j1EjvAFG/goDPeuQs1XR6qf1jy9/z7tJjNreNMpujfVRty74DOoy6HYpeyXwaAaklVwd9OgBQg8pNFcvx/Phg0bGQ8L7QSSASUSuwqkE0wqdQVU=
+	t=1762611527; cv=none; b=LQZxc8J3kwW9VGOKM4Z93YBG9kVa5W6TXouZ/hqaJe3FYcMOgWCpe7ZCj1hBsXSx2An8YViIl57FemMHoLY26kd8H4WZJ1eTMiJJ3E4vGw80641T3OpLQU83mZQKgcxoFLSRz0c0ZQnTzPQ/0TyeJPdaX8X/Y+VWQmKM+gwm05Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762611194; c=relaxed/simple;
-	bh=wZNNbZV1e8ssMYWThHII56kh9E/cv0pc38q5OAO3aOw=;
-	h=Date:Message-Id:From:To:Cc:Subject:Content-Type:MIME-Version; b=MG4qlFY/bV114JtGL9chKbgYK9VsMS1aiepp1xMtuSrKJRYPeAV6RhcJMDK/az1eqUq2iSrpIHj7rs9MRaqGwcuGmhk9GSw0WecbiUsxP8TageLK0KNak+lvFmIKMEIBS1m44w20OS1ZE54GDDEEHdnaKt1c+y4e+xVcMj8eQso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nathanrossi.com; spf=pass smtp.mailfrom=nathanrossi.com; dkim=pass (2048-bit key) header.d=nathanrossi.com header.i=@nathanrossi.com header.b=S+WZFxIp; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nathanrossi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nathanrossi.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-794e300e20dso1100626b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 06:13:12 -0800 (PST)
+	s=arc-20240116; t=1762611527; c=relaxed/simple;
+	bh=ZAWBzX0a54WgVpMoNdpAYLQpNuDibi0QFmX+nolbDCI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OWlyLQZKB7G3SrioMWYO/6BIZdisRjpdToUydAyiuJdvwADPPl2fAErLnaxd0KGZIlrxe0kIQiWlWmUUYPrCBey3F71+v1JbCJR/NOQhH2QuyGZKs+2c/o5Ep+ADrW9Imgqh6G6Y+3ftaWNV0vONI5l2a/Jto/ghSl5BMYjcmQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=C5rulVxe; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b9ef786babcso1097385a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 06:18:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nathanrossi.com; s=google; t=1762611192; x=1763215992; darn=vger.kernel.org;
-        h=mime-version:content-transfer-encoding:subject:cc:to:from
-         :message-id:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AiXbpzd3bIjWXSPGISfM4gyeG5qjOlx+rSwjrBCzc6o=;
-        b=S+WZFxIpxHZdk4Fzuycim0xx5YyTUVmgrANev2BFEsqUM8IbiNhzaPbsdAsO2n299s
-         kAfC9NnhwGY4rP27AUS/xpH3RYeFVcdvj0t/zz6h4mfjK44H9T3NtWnXurtjzabnCLPz
-         kMX514tP7MBWAHCHfvjOCesUcTS+Z6MEUL1iQRD1c4Eu1q6xHzaYjUMBJWqsFEAQ/Vsf
-         1u6o3RITYsYd9fy2/YzlhEFwntVTZZPuadW5pS//D2qbvQv1P8mjlz1GDgQJi0FpWzuy
-         AajhAgLSVgP9Am/eiATL8Cclpc5CpoVdj05P+82CIIYmgf+5+XMF2zlOzDktgucfyLUB
-         AiRw==
+        d=vjti.ac.in; s=google; t=1762611525; x=1763216325; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+tbABRM++smOTjrYwL9jZfiTdA+E+dTcCgbmNoRiaFk=;
+        b=C5rulVxe5AifvFinuQS1mE9uIr0dKMIEGLvMKa2xfPzolO5vRZVBflcH1mMH1FhbBz
+         poguA1t9xQctiAXunlXyW28OnktrocOTdfqNbSOd5HATCXjBAXVkrKeY1qdaRRz2rwD2
+         qMQZ+iSXsKpT/teZWAwUBltlEFYdoFAGFugF4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762611192; x=1763215992;
-        h=mime-version:content-transfer-encoding:subject:cc:to:from
-         :message-id:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1762611525; x=1763216325;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AiXbpzd3bIjWXSPGISfM4gyeG5qjOlx+rSwjrBCzc6o=;
-        b=ml2eKryarJsMZ6v0YW3ucITl5TZotE9rPqkyIsNjzT5L/0mK3Xm44zNuZbGFtGxyy2
-         Os7te4PVZ1/vRSZTIxeDQESMcyLDnScDg2N7616dpZNQO9PlOrWKOFmtR3/xeUkONbYl
-         PH/mr8EMLJjPraGfBuJsFIaoaafMi80wsZldjDSWvTHsbMr+p0enqmi1KZFtceX8lYXr
-         gYA+Y9bDEs9WEUoDEcCDg+Wt/vDI1HLgNPiQwCjLYLHmqEmws4zQTUbytWeKW63bnAoA
-         /E+L1eCckssly8Ai4eyZgs1YI+nFW4pd1dJFHVTde8fwLH/+JSbX3kCdIF02ucFZI+mE
-         d6hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXri2HGRT3OIKgNFT8MhPrOG1Nb884VoDmJbVLHDCLS0aNrhV6xocsElQdWx7ERE218Z6DkqHiXip4arbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRiYlzHnnNnGedqZVAuUbUiOZ3XuqeDMcqhSYyFWSRydnvqL5t
-	OYn3cHI0WfzstE7Coal2AjXLt9+3JvViPyQKqbjcAMU3fcdvqIxLcoLU23z5gJVABw==
-X-Gm-Gg: ASbGncszrEqRp9+SK1mRKRGXhoVa+W0hGUMnYsFZVOzgW7gaj3e079Z2Gh0cZ/gTjvQ
-	uYD6vO12ogHONsZLgPKdtfQiOcDeu5hpjxlBcRLGOh4Q6l3f/rJWPN/66BCAuxvX3jIhDgUgOds
-	sHIUrJ7jTeNlWboJwgA/qAQBPWkC3PSu24lU3teNwqx6KI/ETtDF/KCNuwtdK7/JDgl5VZx7V2X
-	79NA1s4txhtnVoM8DZVpajdsKGTW9PU9RbxjUYWeLIPiLSCHtvtwNIcPuNxkNxGTHPFFxsYXRku
-	HZYwWG95lr6an5Mp8hAwkxVADFXu0DeuRyh1m6T5gRnq0gC9eBjPeki14ypVpWvA9cXzsxg8KPy
-	29dqlciv6F0CY2jc32TLROqMGUNj9QMFa5JESbtQzlbaTYNgxto2IQEut6xtOGyfNQuM6mlOi2q
-	w1p4iT4lmHQI1waLJQM9KKk9s9sZMr1b6SmFFtEQBi5bpLO3WqtQ==
-X-Google-Smtp-Source: AGHT+IFYoVKN7RXzMH2xZdzQ2rIpGtAnIJTVwkAnY47V2DgRk614nU5oM9Y7Z1tcV+omkfnlHtPGcg==
-X-Received: by 2002:a17:902:f707:b0:295:6850:a38d with SMTP id d9443c01a7336-297c95b383emr61436335ad.19.1762611191644;
-        Sat, 08 Nov 2025 06:13:11 -0800 (PST)
-Received: from [127.0.1.1] (117-20-68-151.751444.bne.nbn.aussiebb.net. [117.20.68.151])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-29651cc1907sm90616035ad.99.2025.11.08.06.13.09
+        bh=+tbABRM++smOTjrYwL9jZfiTdA+E+dTcCgbmNoRiaFk=;
+        b=rnZ4af9N3CI4pfzikfmFfkj+9xorWT5PfBj3Gt5OyttuGLemuBKdiK/K3ShtpX+TLA
+         AUZGEAIfzIIzkaGLCJji8YCRGlztKCHU9PU6LIiIcvDuwlX+1iUNFxiMNJ6/2Oe3yFDw
+         7ydOtO0A6GFNn60PskHrDVcb6/yvNSwujyc1ZRAyyrHqhtvDO8OaEEElcYcjL2SZLCJY
+         yhTcbOd8fdtC3cKNAzm9f+v2yD0RoufDP1dvKMc9G2tHqa5OnxCAcwSmlWstDrrXi87x
+         oDOXuGetedjUth7Aguyo5B4HkgFP204G6A0+6XDjM0iiNkfqq6jsIU/bqZdcDgJnSnUM
+         Ke+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXZyj16nW0S9ohDkJ5l8z08JprRMuMkuQ5mnGQj1ZrWdWax4ObvQ47aKCi3L4hdf/9Nw4WQQsaM8y86kis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbDXiTAZ/bSwZtypjBYyStX7gLrnn9dtowhnG9t6jiWBPtJjyi
+	/eTZoxL/YI0PNafm/TePjyKZ/LGHdSz4YyGIPB3JgzSb20YCwndTDimwbq+axxxpY9M=
+X-Gm-Gg: ASbGncvSMIuGo3IF/X518G/MfAcocJo/YrpEnCK19DqNREabBK2fxvQSL79PUg0qrjM
+	QdGFZXSRQdKQs8PJSNPtwddHiRp6LLWfBysBSOgygJh2U+l7out72yPY/un3zKbYgufQ6NyrhbM
+	ad4f4bLoZBJvr7vk2CRrYpYKuPhjgmMxuEiPTLrF/uJgl1dzmvVsRSR5Nr/0qkVQMfP2JmQN8PA
+	UiGOnz4fEEL2iu5ATZh3gaj/MC45dOaAgtkgf3jTa2Jvp6OPDtWDCBXb+5RK8kuyP0hUSWLU8T5
+	PCjaislLaA6dwee4dtqan9ZoxfVuMdzK8308MM55zq0/3bq8FStbbl+o8qKAKf02pHh3OK6758A
+	rbU8GyVcB1fnZLivHPIbpaHaND+xPSyxd3WTuviiGebXiovmPClXDER4nCwg6hfl8dWUDMQBaW/
+	9sKvvJQ9zAPEThrjWfHPsVR2pcOgkMPCq3yiN5mNqO6GAO
+X-Google-Smtp-Source: AGHT+IEZ9euzPCxHgG3701HKH2i39ZGTwwKtLTdHZiIOFoUF2Dx5qGD68ES419evk39qlMiE3JxWkw==
+X-Received: by 2002:a17:903:240f:b0:297:e6aa:c499 with SMTP id d9443c01a7336-297e6aacda6mr28652735ad.58.1762611524506;
+        Sat, 08 Nov 2025 06:18:44 -0800 (PST)
+Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([2405:201:31:d016:940a:b59:9e93:d45a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650e5a33bsm91980345ad.47.2025.11.08.06.18.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 06:13:11 -0800 (PST)
-Date: Sat, 08 Nov 2025 14:13:00 +0000
-Message-Id: <20251108141300.3402380-1-nathan@nathanrossi.com>
-From: Nathan Rossi <nathan@nathanrossi.com>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: Nathan Rossi <nathan@nathanrossi.com>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Filipe =?utf-8?q?La=C3=ADns?= <lains@riseup.net>
-Subject:
- [PATCH] HID: logitech-dj: Add support for G Pro X Superlight 2 receiver
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Sat, 08 Nov 2025 06:18:43 -0800 (PST)
+From: ssrane_b23@ee.vjti.ac.in
+X-Google-Original-From: ssranevjti@gmail.com
+To: shaggy@kernel.org
+Cc: jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	dsterba@suse.com,
+	david@redhat.com,
+	shivankg@amd.com,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
+	syzbot+e87be72c9a6fe69996f5@syzkaller.appspotmail.com
+Subject: [PATCH v3] jfs: Initialize synclist in metapage allocation
+Date: Sat,  8 Nov 2025 19:48:33 +0530
+Message-Id: <20251108141834.46428-1-ssranevjti@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The Logitech G Pro X Superlight 2 has a lightspeed receiver with a
-product id of 0xc54d, this receiver behaves like the receiver used in
-the original Logitech G Pro X Superlight (id 0xc547) including the 13
-byte mouse reports.
+From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
 
-This change adds a definition for this receiver id, and a mapping for
-the recvr_type_gaming_hidpp_ls_1_3 type. With this change in place the
-receiver now reports the battery status of the connected mouse over
-wireless as well as exposing the HID interface needed for userspace to
-perform additional configuration with libratbag/Piper.
+The synclist field in struct metapage was not being initialized during
+allocation in alloc_metapage(), leading to list corruption when the
+metapage is later added to a transaction's sync list.
 
-Signed-off-by: Nathan Rossi <nathan@nathanrossi.com>
+When diUpdatePMap() calls list_add(&mp->synclist, &tblk->synclist), if
+the synclist field contains stale data from a previous allocation (such
+as LIST_POISON values from a freed list node), the list debugging code
+detects the corruption and triggers a stack segment fault.
+
+This issue is intermittent because it only manifests when recycled
+memory happens to contain poison values in the synclist field. The bug
+was discovered by syzbot, which creates specific filesystem patterns
+that reliably trigger this uninitialized memory usage.
+
+Initialize the synclist field with INIT_LIST_HEAD() in alloc_metapage()
+to ensure it's in a valid state before being used in list operations.
+This is consistent with how the wait queue is initialized in the same
+function.
+
+Reported-by: syzbot+e87be72c9a6fe69996f5@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e87be72c9a6fe69996f5
+Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+
 ---
- drivers/hid/hid-ids.h         | 1 +
- drivers/hid/hid-logitech-dj.c | 4 ++++
- 2 files changed, 5 insertions(+)
+Tested:
+ - Tested locally with syzbot reproducer, no errors observed
+Changelog:
+- Correct bug link
+- Corrected patch format
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index aa3ceef3016e..e06f5088202b 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -917,6 +917,7 @@
- #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_1	0xc53f
- #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_2	0xc543
- #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_3	0xc547
-+#define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_4	0xc54d
- #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_POWERPLAY	0xc53a
- #define USB_DEVICE_ID_LOGITECH_BOLT_RECEIVER	0xc548
- #define USB_DEVICE_ID_SPACETRAVELLER	0xc623
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index d66f4807311a..d39a4c1073ad 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -2091,6 +2091,10 @@ static const struct hid_device_id logi_dj_receivers[] = {
- 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
- 		USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_3),
- 	 .driver_data = recvr_type_gaming_hidpp_ls_1_3},
-+	{ /* Logitech lightspeed receiver (0xc54d) */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
-+		USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_4),
-+	 .driver_data = recvr_type_gaming_hidpp_ls_1_3},
- 
- 	{ /* Logitech 27 MHz HID++ 1.0 receiver (0xc513) */
- 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_MX3000_RECEIVER),
----
-2.51.0
+ fs/jfs/jfs_metapage.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
+index 871cf4fb3636..77c512a0a42b 100644
+--- a/fs/jfs/jfs_metapage.c
++++ b/fs/jfs/jfs_metapage.c
+@@ -269,6 +269,7 @@ static inline struct metapage *alloc_metapage(gfp_t gfp_mask)
+ 		mp->data = NULL;
+ 		mp->clsn = 0;
+ 		mp->log = NULL;
++		INIT_LIST_HEAD(&mp->synclist);
+ 		init_waitqueue_head(&mp->wait);
+ 	}
+ 	return mp;
+-- 
+2.34.1
+
 
