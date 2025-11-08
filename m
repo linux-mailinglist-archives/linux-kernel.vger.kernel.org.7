@@ -1,134 +1,145 @@
-Return-Path: <linux-kernel+bounces-891522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A248C42D7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:48:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C29BC42D84
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:59:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CB8C3B2324
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:48:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 81A224E183C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C941A9FB4;
-	Sat,  8 Nov 2025 13:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BB41E008B;
+	Sat,  8 Nov 2025 13:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I1cpfLKH"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="GaMsnbtz"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014291A23AC
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 13:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4016554652
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 13:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762609687; cv=none; b=P0GMTAmGOuJxF3KglscBXO8/MPNtwrCyFW2B3bRj4Yq9OFaV6gP8t0LFMHtxzN1mITbS/584X1y2GecvP60sVlE8Zn6mQtRE68t72ZQa3SWlgZf8le13bk4MCO9JS6xHwOF1Qd0wikYxJCxElYlIQll+BiRwOyR+t/tBWgHf9SQ=
+	t=1762610338; cv=none; b=iXgrconEPThHHK2JEUoQ1amZuvR//Lwm8sOOzkSWv5EQKOuTTry58miT7scDz8R6CRe488EhmqdCg/Coo6eXDlMrwkpkWwUmXEbezQMT6bG2Qvq/rhfZ/taS2VoKXqjJB2dVRFUO/LVCHmyf7BcKnPlu8sUzIBmTAjtj1fFbIKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762609687; c=relaxed/simple;
-	bh=gpkOgQREkGfFyXdfZjUNhEXJXx0pJOMzthb8JAxDkkI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QkWg8fz4rfn3V5t2ZQtx7Cfko5EfQcBxEEkJpkSiQ2LDeMr65Ghy0eTM6BETtbmGWHtu2M/dvzmVS6bWYWoehcpMq6OQw3fomD94UG3aunr9gIUvgcR9brD/3tpr9hm2ce2sCb0afyMOYd95yQdwVcouOaX5rlvUwdaGBV6fdDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I1cpfLKH; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b72db05e50fso203367966b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 05:48:05 -0800 (PST)
+	s=arc-20240116; t=1762610338; c=relaxed/simple;
+	bh=R9U9FFPYFfs1lf4z9IJfnV89cTwqAR88nq9i7ZjM2ao=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PUM1wU5hVZq1S36juhWS8cG0sBW9Nzl3O/gVLDF07aEJSHEhcOz9JGZhci72746FnggNB9uqgG7UyN7Unt/Hd8sbO5fnwydd2+abO1TsMOuPPsNSjKzGZFkfzyxmeUX78KAEz3gzUcr+B+Dq/1DNQnJpiK3szD7jcppL896kTxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=GaMsnbtz; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7aad4823079so1478485b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 05:58:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762609684; x=1763214484; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gpkOgQREkGfFyXdfZjUNhEXJXx0pJOMzthb8JAxDkkI=;
-        b=I1cpfLKHP3n2H9I+dmfH2mk3W5X6Cvp93Ea8cY7gpCsacEWv4095ZU+ZT57CRAQCnI
-         wBgNdRxVu2Q5nbZ1lWQzlAbRYvsFmzl8xEmwsSnU1aBiE8osfP5xTRqS7JZw84bGNAAN
-         CNojY6UxqYIintgQY3xC5FmfvKBcvGu2nIpmYOCwqA5GPvK/BnHVSVpu2AQApJELQLm+
-         eJ0h/9dJQ/SnbZKk4rLJLywRkxyQJ7/EV4GIgs9kt2vcWNxV8eBKEbZXK19XGRkGYFd0
-         sngcOjFTHGc4BaC44nLcg+oHdBtovmngThsnn3khqSpzn3vBRrrRVUBy/1n+/b4p2D98
-         qmPw==
+        d=vjti.ac.in; s=google; t=1762610334; x=1763215134; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c6n3EPsz961nven+j6SJxgAVgFz9niflHZuv3YbeEgs=;
+        b=GaMsnbtzQB6uTSej9w1hXM8YNbsfzq9NlDzyNw5EiD5VmGI5nsiXbaDZmCCOUpBcTe
+         wf8YVCRbvTsF1tTqDcD1Oa7B4CRghIsWgocDsTSPZPffdvU1SVkmRh/uOtpZ6EBpBvuc
+         psGtz+gQysxYQN45EYCqP66UaJuW+1m6UJF80=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762609684; x=1763214484;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gpkOgQREkGfFyXdfZjUNhEXJXx0pJOMzthb8JAxDkkI=;
-        b=UA+3bV9Gj6OOkY4dNtsdVTgbQhMCRzRlejeSyBhsXz2sDHh+XJmW3SnRK3wl2oixR9
-         DaR7xwhUDTRmRydsdCZktcKS4FHUDPbVmjKJLlc/Y2uCqpe+jtihePJ0m8HWAuEgMvYT
-         mp+lV7bZt9lBEn/tSIyfMUrhpt6Mu5cx1o0lS8bjtoEigmBtK1KiUnE1JNDB7AHa9x83
-         FlQhtvkU6liAVHfsBIUxBgRg82zkUhwt2w7DNTEl28rNZhHHJ+3Sw+r2dPBK+4J9zVkk
-         kRlrJk/PqX5F83j2IrFtF4GI9OF78Q4h42FMIuyGZHjfZyi6DM8R+XcRRVlOVBswOkMB
-         cs2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWzItSe0wqv3Hm6o+WcrxKnuIR8MgAFZKvEfIwlDP2Sti9IgGEu8emyqid2JukxiDtgeUZnuYg9VxAWI48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwAO94gYuq8qe372bHZQfqD7IoWNUFF/ISk3cmmmO88uyuJr+j
-	TuvI9U0KYk30IWcjGV7bYQs0G1sPxOAr6813bpKryjXF2g1lH0ijkAg2OGgPgMgvIIE=
-X-Gm-Gg: ASbGncsGBI2lAYD0nU41UaiOxmZ6iT1jzEmynlKqsI+cS+fJ557NEkWxsNPh/d6ap0P
-	1YKLQ6BP3EJsrQAEBTLRCvo/dCrccLwNlsTBNHSaWVP3e4sxzWOr5MZdMXMEstWg4dj/b04aTRk
-	w50zqHD/yCC96Oy6aQTmo6duwpUqJQMK0J1ZOVHEqwCmKaREBWr+2B1TkMi9OAhwRZOOJzzOlhc
-	W7+z9rRAk69bHyxyJkNXauM47cWfJUl1XLMNgicL5JZIyh68/+iMsS0mUvsqzbvWhl9K8GksM7w
-	rKnL9VVfmxvPVVv8OUOZQnOkl4eCw5ENBsjoRXy5fpwyaWeIUsZZruvJm+uCYi9c+t0Mh+gU8zS
-	rXkjfP7zfKjppaQV0pxoygzNommYdjdSYNZY0xZjznsWWSJjrtpbk7GdLreQoKACru04lqgOQIU
-	e9mI3Z4T+Diug=
-X-Google-Smtp-Source: AGHT+IFBX/o+kgDdCkIA2bNZvHnORYARWl0wDAKEM8n2ULi1LZxfY2oyiaBV3uC93IjX5zqlQAABOg==
-X-Received: by 2002:a17:907:2d2c:b0:b04:274a:fc87 with SMTP id a640c23a62f3a-b72e02ca22amr246594766b.4.1762609683650;
-        Sat, 08 Nov 2025 05:48:03 -0800 (PST)
-Received: from [10.41.228.128] ([77.241.232.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9be2eesm537562466b.63.2025.11.08.05.48.02
+        d=1e100.net; s=20230601; t=1762610334; x=1763215134;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c6n3EPsz961nven+j6SJxgAVgFz9niflHZuv3YbeEgs=;
+        b=UEEhYdPU3IZ/blmpkjCTB8nulY5OY2SWmlzRZHPmd9IPzbVGHpfFmfGdnGarYLkbga
+         1WZSRZJhJm0lwSrPwfNrT2ifncERej3zPP+6k27BTvNQVdEL5mSaDJl/SOaizIMP70sV
+         YZVVCTb+Iuee6SipMqTSxezTVY8UgaQAL4tHUU2xR8J8AaK8+6QOOvNDZBcFoVgc9D6U
+         7Q2Z6L0+kd80hC/XJyQFb896aFQUNw2p67PNN7bveUHtOLQtfMj1J3sEghdJruhdywpI
+         RPj2Sz5MS6fD+l1QRXCsbHRQUBG0rOBFNos/FMYig/Ds/BM71z8IomLCEzBGW+FDq1Dp
+         LWZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVJwCsbgHoyWHM3XfG3fBblACA0zWCLlXDx6iMGP85vdp03r9JXc8tKpvc9OAsbxtsEg28rPLELQwuSmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgE3rYl60s1IFoSF70Bh6sCt0AwQemOlrls4RynQEycMGbDraY
+	+mDAbd1QANOaSF1Gs0MJ73jnXf3MnkbWYG7F4p6Kr9m4XppwT5wrO4fbdu8EbbJqIdw=
+X-Gm-Gg: ASbGnctfooOABZaOmIKmu56f9L1V5TDP75Shy9/xisBmIYVMKrDTr8q0zVdOQYhui9o
+	jrIXFN0+ArjeSvjNLzGkuhqVDHEFGh/i5g3BLzc+PX7yLuj/dqgXuRjyFh5tKiXTDdGlZlCUS+Z
+	ye5iAHyrp6SKaGzXt1BLD79hoNN6ZFb80Jf1VhTX407fQsJXvSz0RYFqDsA+JTQFfG2u0LduYW6
+	gwjeJV0boXhnEGya54aMLeB5f/l+5r97bvEPb3mmXVtiy24YeYTY7paD+Gq3nx6k1Hv3OFbJE/U
+	oid3INMfvmQeBRVCT4p2YaEyF4JS9XaeSDVXq7sC8/wikavjXHrXiVgNYSGIgRonS8XDJmZnT2l
+	7iUHUe2dbooYgIq+k0BvGCFlb+65ow3BHhh/aAiNsz+sfsAS+b1YltDmdQrniS09TWiSCPvl8xl
+	WARFat42sZtG4NPvrd2gwP2Ksaxf/ogcQFKEONBQRcFtlq
+X-Google-Smtp-Source: AGHT+IFQqVguGIqedsjEz0k0Lw5GFUnn9lv1d5S1ooXU8a4FS9klL3ycJRWkb/ndyRRz6jrg5EhccQ==
+X-Received: by 2002:a05:6a21:3391:b0:2ea:41f1:d54a with SMTP id adf61e73a8af0-353a3d61343mr3226851637.55.1762610334543;
+        Sat, 08 Nov 2025 05:58:54 -0800 (PST)
+Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([2405:201:31:d016:940a:b59:9e93:d45a])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8f8c83d52sm7985853a12.3.2025.11.08.05.58.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 05:48:03 -0800 (PST)
-Message-ID: <74eda972e038b901b237f2d54f82866b31c5a3c7.camel@linaro.org>
-Subject: Re: [PATCH v3 05/20] dt-bindings: mfd: samsung,s2mpg10: Link
- s2mpg10-pmic to its regulators
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,  Lee Jones <lee@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Peter Griffin	 <peter.griffin@linaro.org>,
- Will McVicker <willmcvicker@google.com>, 	kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org
-Date: Sat, 08 Nov 2025 13:48:02 +0000
-In-Reply-To: <20251104-elegant-imposing-boa-6279ca@kuoka>
-References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
-	 <20251103-s2mpg1x-regulators-v3-5-b8b96b79e058@linaro.org>
-	 <20251104-elegant-imposing-boa-6279ca@kuoka>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+        Sat, 08 Nov 2025 05:58:54 -0800 (PST)
+From: ssrane_b23@ee.vjti.ac.in
+X-Google-Original-From: ssranevjti@gmail.com
+To: shaggy@kernel.org
+Cc: jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	dsterba@suse.com,
+	david@redhat.com,
+	shivankg@amd.com,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
+	syzbot+e87be72c9a6fe69996f5@syzkaller.appspotmail.com
+Subject: [PATCH] jfs: Initialize synclist in metapage allocation
+Date: Sat,  8 Nov 2025 19:28:41 +0530
+Message-Id: <20251108135841.42281-1-ssranevjti@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thanks Krzysztof for your review!
+From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
 
-On Tue, 2025-11-04 at 09:28 +0100, Krzysztof Kozlowski wrote:
-> On Mon, Nov 03, 2025 at 07:14:44PM +0000, Andr=C3=A9 Draszik wrote:
-> > =C2=A0required:
-> > =C2=A0=C2=A0 - compatible
-> > =C2=A0=C2=A0 - interrupts
-> > =C2=A0=C2=A0 - regulators
-> > =C2=A0
-> > =C2=A0additionalProperties: false
-> > +
-> > +allOf:
-> > +=C2=A0 - if:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 con=
-st: samsung,s2mpg10-pmic
-> > +=C2=A0=C2=A0=C2=A0 then:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
->=20
-> This is not correct now. You do not have other variants here and ref
-> should be directly in top level "regulators" part of schema.
+The synclist field in struct metapage was not being initialized during
+allocation in alloc_metapage(), leading to list corruption when the
+metapage is later added to a transaction's sync list.
 
-The commit message explains why, and with your comment on patch 6 I have ch=
-anged
-this now as you suggest.
+When diUpdatePMap() calls list_add(&mp->synclist, &tblk->synclist), if
+the synclist field contains stale data from a previous allocation (such
+as LIST_POISON values from a freed list node), the list debugging code
+detects the corruption and triggers a stack segment fault.
 
-Thank you,
-Andre
+This issue is intermittent because it only manifests when recycled
+memory happens to contain poison values in the synclist field. The bug
+was discovered by syzbot, which creates specific filesystem patterns
+that reliably trigger this uninitialized memory usage.
+
+Initialize the synclist field with INIT_LIST_HEAD() in alloc_metapage()
+to ensure it's in a valid state before being used in list operations.
+This is consistent with how the wait queue is initialized in the same
+function.
+
+Reported-by: syzbot+e87be72c9a6fe69996f5@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e87be72c9a6fe69996f5
+Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+
+---
+Tested:
+ - Tested locally with syzbot reproducer, no errors observed
+
+ fs/jfs/jfs_metapage.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
+index 871cf4fb3636..77c512a0a42b 100644
+--- a/fs/jfs/jfs_metapage.c
++++ b/fs/jfs/jfs_metapage.c
+@@ -269,6 +269,7 @@ static inline struct metapage *alloc_metapage(gfp_t gfp_mask)
+ 		mp->data = NULL;
+ 		mp->clsn = 0;
+ 		mp->log = NULL;
++		INIT_LIST_HEAD(&mp->synclist);
+ 		init_waitqueue_head(&mp->wait);
+ 	}
+ 	return mp;
+-- 
+2.34.1
+
 
