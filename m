@@ -1,132 +1,112 @@
-Return-Path: <linux-kernel+bounces-891250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72ADDC42419
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 02:42:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87CDC4242B
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 02:44:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A3093A827F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 01:42:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C8A24E5A12
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 01:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35482289824;
-	Sat,  8 Nov 2025 01:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598472BEFFA;
+	Sat,  8 Nov 2025 01:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LfiJ9ISX"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkyjnUVc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD426288C3D
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 01:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9069D1F4606;
+	Sat,  8 Nov 2025 01:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762566146; cv=none; b=U7wVi43k0jMHR7TOUkPI0yULay2n64Wuxq6B3+sOAYskCZt+pb7wqWAdoJEs+ew1mobexLSEKJ8KyG4oC5YFFkoMKD/QgWkOxVbdbNo+Pf45VZL4RrJwaDq5PF3VSJeb43QwHJN9hS+BUEfOeFhUVUYAKa8AlWvo8RDbyeO4GsU=
+	t=1762566282; cv=none; b=XkMwyUAp8WmquKXcX0SCcfrm8MNZHDUp7kyhhjmjXFlgUNkpFDJIT4AAvzGErtBo0mtvYjKcQ2rh4HhDjOnW8PBq1ndBYLJa+DB7GepWGYrocjkd0EGOmmUgFWtpI4fa4pYwfSueJKK2JeGRl0hBtZaE7T5WvshxIJJ91hawm+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762566146; c=relaxed/simple;
-	bh=2BoJwDhWmDPG4AVqZIXWOTh2l/C5ji/bwn5DT8jGj5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f11dLqqPSJugDlujEW7E1nf4lnefFIDypnAj7SjJ98PNTlfn6a0Q8jxxpBNCt+sAoURlAzggWoWQx9DEpJfRP1eaB5IbxDTwwNdYPZGHNVS1eYLEgLfG4SVLQ9hg9AV6UiLO36MYQjwQMp4+cQ2c//vIF+/uBVNr6ljFJOM6BUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LfiJ9ISX; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b626a4cd9d6so210895766b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 17:42:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762566143; x=1763170943; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=txzBDkuu6HQXRdAmWeqGcCpUJ0ARUbkkBrAd0TRurdY=;
-        b=LfiJ9ISXQelqWzBVj4ny7A9nTjIbcSg2MeaNw9335bzIYQvQnHaiyWiCz6RNmdwLxK
-         pS9CcCNnUkn3CslqMhTBLHZsAHyhgHr0QpNtqiHSHZYxF7V1y8IJ/vq6zOFC+kyER/QC
-         jjtvTzynnrWDLdrmkYp/znrm5jTYp8W1iDpePrMKDjVi8jrA3ORN0ks0PtVEBgz8qELJ
-         P9uyc/NHMiEhlsXnRSzYWIVr1T/6gdNac/IU0r5EoV2foVU3w+ikCb8XHhaqEZ5cGDbw
-         +TWB7odawleaF8uJ0zmeXUSd99DtpGwVIYEsIh4c3iDLkPh3XQkxs1s4DWn0YVgu7V5q
-         35Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762566143; x=1763170943;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=txzBDkuu6HQXRdAmWeqGcCpUJ0ARUbkkBrAd0TRurdY=;
-        b=g2ZdDVCVOAYQODBbyr3T6FVZsl80121g03fVMiLdc6bPDGnR8TLMYZoBHWVzq59q3X
-         p6K/9/PpBz+G8I5iw3rDnyblxHsJJta4HNZZv+Kdqkf/NzWMsXS9geqj3byDUAtAMFam
-         LqjxRaDFCEMcntLrj5U0HuL3q8oTPFXvgjwQWrds3FtB+gHhin7U1XrbiFkjfUr1nFER
-         5q0KbO2aEAAMfmgIbCwqr4BvWbJrwBt1EiK2QnqhZRAQuSzthlnI262PV855xnlGTg3O
-         xr77GoIyCEqpBtNviaUtb4KLpE5JdigzUS0hjHz8mEYOliXQD1u2EvdKBeVlzjc4+2Xi
-         KFTA==
-X-Gm-Message-State: AOJu0Yxs0YTMtfreDUE77LT/XDUqjXgpINcszsU4rpM4tEzr4g7kE9gw
-	wKA713TtgPASCiv2onysGF+sTUhxCOz11+6yT825T/eZW7VZ1XroZ7af
-X-Gm-Gg: ASbGncuJFjPb1CSD6kiGO3I9Jgg6wC38xFLc0rOUgOkDZEEqjXElIsFAJo6k9V3cQ8Z
-	Vc4RS5nDyw191zQ9dPW4GkrV2i4ZDCH8+wBdmGIGRYOHnLr9PzPTIxqtaMOhn8dgraJw/GTJv4n
-	DbEmzMr8blBJGQFFP9Ew+COG6QHd+EHtfRA1zmuySUIum5ukHlEVKkA9U4xVV6FoOJgrsS0GB7y
-	f6xXgH2QJyg/885WBujcvRgSpqvdU125KrXCITcNyIaDNGFKVfp1p3P8R4MAeiljRYRZeHiC+V1
-	qPd2Yv+asAS1KbGxcXOzCPugj7D5UES5l7NpyL7ubIHuesTncKxR2ZMtV7gtztoOuR7bwKcJcLN
-	3EiUt/38qsP5v5QOMquAvnuuqIUIW7IgGz+F6LTvxPTycopBOIXSMcnytbECcMavxNFlz9ecB31
-	ckMRkotu5LJw==
-X-Google-Smtp-Source: AGHT+IE6lrXy8Q8tj4IT56byqhqDOcFo2Ljy91kXlQBEAHGBuKzDKR+fUlhhjwifft9Xb8qZcgHL3A==
-X-Received: by 2002:a17:906:6a19:b0:b72:9d56:ab52 with SMTP id a640c23a62f3a-b72e02d20c7mr117552366b.8.1762566143114;
-        Fri, 07 Nov 2025 17:42:23 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d0ffsm406996266b.46.2025.11.07.17.42.21
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Nov 2025 17:42:21 -0800 (PST)
-Date: Sat, 8 Nov 2025 01:42:20 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Nico Pache <npache@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, david@redhat.com,
-	ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net,
-	rostedt@goodmis.org, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
-	baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
-	wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
-	sunnanyong@huawei.com, vishal.moola@gmail.com,
-	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
-	kas@kernel.org, aarcange@redhat.com, raquini@redhat.com,
-	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
-	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
-	cl@gentwo.org, jglisse@google.com, surenb@google.com,
-	zokeefe@google.com, hannes@cmpxchg.org, rientjes@google.com,
-	mhocko@suse.com, rdunlap@infradead.org, hughd@google.com,
-	richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz,
-	rppt@kernel.org, jannh@google.com, pfalcato@suse.de
-Subject: Re: [PATCH v12 mm-new 01/15] khugepaged: rename hpage_collapse_* to
- collapse_*
-Message-ID: <20251108014220.wpstoj3kqxxnes26@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251022183717.70829-1-npache@redhat.com>
- <20251022183717.70829-2-npache@redhat.com>
+	s=arc-20240116; t=1762566282; c=relaxed/simple;
+	bh=N6ZB0vPQ1iUXN/13423AnZI0AB5ZUFBO5Cwhw8Dsz4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TZbGMWh1yA/9t83Uwofttb8g3bHQhYPs+NXHYwjrtLz4xYnvlLq2jLPEQH8Myxt8DxLh7t6l99ZUHR/Nc2d9HWbtTh7omEkhatWClgGKK4qY9bDygAeUQ9i+HMig/wrag8jNcUb7iV4FKrN7nj12mLi0VpM21BagSh7I0gfSlyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkyjnUVc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1710AC4CEF8;
+	Sat,  8 Nov 2025 01:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762566282;
+	bh=N6ZB0vPQ1iUXN/13423AnZI0AB5ZUFBO5Cwhw8Dsz4k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tkyjnUVcKQlCGb8EEDRFCHn6BPMZHz7JAPIBksj0RVj5080zzB1I/cSDzfGE/M5yz
+	 4F+W2pRv4brpN/wzB11aPJ2Kwnazy3uw9y77h4qb3p8BTQpe12Az9nwADqQ4fbxX/p
+	 iiSC2/gUqHwqazLj6dJ388qYmaj6qecWtIivQIcUye21CkJJEGnpYJaboo6MmR4htR
+	 Lc7G/YbABbY6nGJO/DfJ8AVY5Ak5thD+bmlLRheHKMh/7+Xql/RlncKveOwKypecuK
+	 XWkreliPgGGZyMN9t2tHWelxHPO+IjrNjPo1rI8JdChoMvrXMdmjxO64OmJyE81pmM
+	 simSCfI12XlXA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Sami Tolvanen <samitolvanen@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	stable@vger.kernel.org,
+	Haiyue Wang <haiyuewa@163.com>
+Subject: [PATCH] rust: kbuild: skip gendwarfksyms in `bindings.o` for Rust >= 1.91.0
+Date: Sat,  8 Nov 2025 02:42:46 +0100
+Message-ID: <20251108014246.689509-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022183717.70829-2-npache@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 12:37:03PM -0600, Nico Pache wrote:
->The hpage_collapse functions describe functions used by madvise_collapse
->and khugepaged. remove the unnecessary hpage prefix to shorten the
->function name.
->
->Reviewed-by: Lance Yang <lance.yang@linux.dev>
->Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
->Reviewed-by: Zi Yan <ziy@nvidia.com>
->Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->Acked-by: David Hildenbrand <david@redhat.com>
->Signed-off-by: Nico Pache <npache@redhat.com>
+Starting with Rust 1.91.0 (released 2025-10-30), in upstream commit
+ab91a63d403b ("Ignore intrinsic calls in cross-crate-inlining cost model")
+[1][2], `bindings.o` stops containing DWARF debug information because the
+`Default` implementations contained `write_bytes()` calls which are now
+ignored in that cost model (note that `CLIPPY=1` does not reproduce it).
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+This means `gendwarfksyms` complains:
 
+      RUSTC L rust/bindings.o
+    error: gendwarfksyms: process_module: dwarf_get_units failed: no debugging information?
+
+For the moment, conditionally skip `gendwarfksyms` for Rust >= 1.91.0.
+
+Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned in older LTSs).
+Reported-by: Haiyue Wang <haiyuewa@163.com>
+Closes: https://lore.kernel.org/rust-for-linux/b8c1c73d-bf8b-4bf2-beb1-84ffdcd60547@163.com/
+Link: https://github.com/rust-lang/rust/commit/ab91a63d403b0105cacd72809cd292a72984ed99 [1]
+Link: https://github.com/rust-lang/rust/pull/145910 [2]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ rust/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/rust/Makefile b/rust/Makefile
+index 3e545c1a0ff4..269bf7cf5b97 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -543,6 +543,7 @@ $(obj)/ffi.o: private skip_gendwarfksyms = 1
+ $(obj)/ffi.o: $(src)/ffi.rs $(obj)/compiler_builtins.o FORCE
+ 	+$(call if_changed_rule,rustc_library)
+ 
++$(obj)/bindings.o: private skip_gendwarfksyms := $(if $(call rustc-min-version,109100),1)
+ $(obj)/bindings.o: private rustc_target_flags = --extern ffi --extern pin_init
+ $(obj)/bindings.o: $(src)/bindings/lib.rs \
+     $(obj)/ffi.o \
+
+base-commit: dc77806cf3b4788d328fddf245e86c5b529f31a2
 -- 
-Wei Yang
-Help you, Help me
+2.51.2
+
 
