@@ -1,269 +1,117 @@
-Return-Path: <linux-kernel+bounces-891213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59EE5C42289
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:47:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FD6C42298
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 01:48:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 734924F3E88
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:47:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983AA1897193
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 00:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D412D4B77;
-	Sat,  8 Nov 2025 00:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3BF284880;
+	Sat,  8 Nov 2025 00:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EC3GXKc0"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zOJ7E3h5"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2742D2390;
-	Sat,  8 Nov 2025 00:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4697523AB9D;
+	Sat,  8 Nov 2025 00:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762562767; cv=none; b=g1id5kRLElYj+ooAXQfxwOtNRJiA7xRxHQjP7Biy8EiLjvmzIGGpuSkbs3sUGFbMhgAqcS3ZbdglzkxByg455w/2dlYLJhPwSICdxsjl/T/PGqpcPAa33G1I3mn/KXxtQQJ5h6TKaKPjvl3GeJvc7YoTxW0tZ+cumsPPrubjpvA=
+	t=1762562849; cv=none; b=JXPful7+K9ImMWN/ff+j4p5CiqwIlgoCL56Dq0XCRmwolHGL/rZAd/nRRR7QJy4DgyqEbRuEt2dmJg3228EMbY64JbbWGRzf5CzYM/lQRntAL528X1V/VTvDqxsR0MCaS6xWDhGv9EkoUUdBux13tjz5amUMWjKWaoy3KgtBwtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762562767; c=relaxed/simple;
-	bh=xLkyk4AAk1tD5E/VGsWEZsoK4aysRr0fOWyfwvnKtik=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JyrMouxAaC5EWJz3j62yuUq9xp3+9L9h7RJTQgdaCp3gXBcXBK5qnbFs113sGorHnK8y2jx4Bms0SKTll5xALm72TUZVVF7H4aCD0kB2gIGU3RvXfmgGvX8CX2Z2jIbEmY+znwBTR20ANsG9+5k8jvJRFj/zVo26YlDsAQNV3QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EC3GXKc0; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762562761;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=itMlBIbN1PqufgHbzCymjjQHzxqWc8TraVJJMw770PU=;
-	b=EC3GXKc0kSpmRQahhu8sHrkiAdxntlqTpvgkPlCsXu0zHApvXgIYWvYfVK3ePu2Tf2jHR7
-	ggJBocQtSi+9/Tvy+mMmeuwS/Ra77TdIEJoVT6NOQ36+hJwe/Ma0g8iPbAqp7zRSiFFbkV
-	LwAgVEA8IjC9fsm2iyI7vQRb1vi9KOs=
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Jim Mattson <jmattson@google.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH 6/6] KVM: selftests: Add a test for LBR save/restore (ft. nested)
-Date: Sat,  8 Nov 2025 00:45:24 +0000
-Message-ID: <20251108004524.1600006-7-yosry.ahmed@linux.dev>
-In-Reply-To: <20251108004524.1600006-1-yosry.ahmed@linux.dev>
-References: <20251108004524.1600006-1-yosry.ahmed@linux.dev>
+	s=arc-20240116; t=1762562849; c=relaxed/simple;
+	bh=59C/XuMe5Ge8/qSzc4ZMGAKYZDM7lDOXBBVpw2eaPSc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qUNzyJCDj7dw1fwIzeItrGYGVIaQbC77S3v+V6oBSt3QqdFdMICQW1DASO8ASVigYHlssLtF4bOS+sPKyZshhEgLG3J41+egmSthiSljAxMvPc/iX3hSPQUQK488CSmgnyjBSRhXK67HI24KVC62zQA1OM/4Nw4ouRqUOIajVnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zOJ7E3h5; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=YhkT2ytpSMxixxpMPcBDjR5/ns0X9Sii3powHA75mKY=; b=zOJ7E3h5zUdzZHI132+HBGHClb
+	PPaRBgBE/Ik30NrEGow4L3XeW1/3qAzCHpbgs3zxgqQHf3eRmJ3PZCZQSNAq9s0Gdu/aKjosNbGjE
+	26fiJoO9u703uM0OdVej41p72Of87TW6J0SAT2PREFsA+8w9dPKJXdStJ++7UhHko425ISJHcxwXO
+	yuwLx+NNqepoMpwC1jLyEdJO2mixNatanIFB9KZyN3zXYSVsN9Q27gjZYfAYGNo/zocoKwWYx1VpM
+	w4/Kux8t24mf4rPWRqr5AWWowbphy5y4G2Zw3bgeKouO/DPHJeUCriJvp5ecK7rnzw9Clg9a6g8Yj
+	ANUHMzKA==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vHX70-00000001n0i-2IMc;
+	Sat, 08 Nov 2025 00:47:26 +0000
+Message-ID: <7d03b0d2-8dd8-4cda-8a0d-7a065029e6f5@infradead.org>
+Date: Fri, 7 Nov 2025 16:47:25 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] x86/apic: Update kernel-doc to avoid warnings
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+References: <20251106101416.1924707-1-andriy.shevchenko@linux.intel.com>
+ <20251106101416.1924707-3-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251106101416.1924707-3-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add a selftest exercising save/restore with usage of LBRs in both L1 and
-L2, and making sure all LBRs remain intact.
 
-Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
----
- tools/testing/selftests/kvm/Makefile.kvm      |   1 +
- .../selftests/kvm/include/x86/processor.h     |   5 +
- .../selftests/kvm/x86/svm_lbr_nested_state.c  | 155 ++++++++++++++++++
- 3 files changed, 161 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/x86/svm_lbr_nested_state.c
 
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index 148d427ff24be..9a19554ffd3c1 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -105,6 +105,7 @@ TEST_GEN_PROGS_x86 += x86/svm_vmcall_test
- TEST_GEN_PROGS_x86 += x86/svm_int_ctl_test
- TEST_GEN_PROGS_x86 += x86/svm_nested_shutdown_test
- TEST_GEN_PROGS_x86 += x86/svm_nested_soft_inject_test
-+TEST_GEN_PROGS_x86 += x86/svm_lbr_nested_state
- TEST_GEN_PROGS_x86 += x86/tsc_scaling_sync
- TEST_GEN_PROGS_x86 += x86/sync_regs_test
- TEST_GEN_PROGS_x86 += x86/ucna_injection_test
-diff --git a/tools/testing/selftests/kvm/include/x86/processor.h b/tools/testing/selftests/kvm/include/x86/processor.h
-index 51cd84b9ca664..aee4b83c47b19 100644
---- a/tools/testing/selftests/kvm/include/x86/processor.h
-+++ b/tools/testing/selftests/kvm/include/x86/processor.h
-@@ -1367,6 +1367,11 @@ static inline bool kvm_is_ignore_msrs(void)
- 	return get_kvm_param_bool("ignore_msrs");
- }
- 
-+static inline bool kvm_is_lbrv_enabled(void)
-+{
-+	return !!get_kvm_amd_param_integer("lbrv");
-+}
-+
- uint64_t *__vm_get_page_table_entry(struct kvm_vm *vm, uint64_t vaddr,
- 				    int *level);
- uint64_t *vm_get_page_table_entry(struct kvm_vm *vm, uint64_t vaddr);
-diff --git a/tools/testing/selftests/kvm/x86/svm_lbr_nested_state.c b/tools/testing/selftests/kvm/x86/svm_lbr_nested_state.c
-new file mode 100644
-index 0000000000000..a343279546fd8
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86/svm_lbr_nested_state.c
-@@ -0,0 +1,155 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * svm_lbr_nested_state
-+ *
-+ * Test that LBRs are maintained correctly in both L1 and L2 during
-+ * save/restore.
-+ *
-+ * Copyright (C) 2025, Google, Inc.
-+ */
-+
-+#include "test_util.h"
-+#include "kvm_util.h"
-+#include "processor.h"
-+#include "svm_util.h"
-+
-+
-+#define L2_GUEST_STACK_SIZE 64
-+
-+#define DO_BRANCH() asm volatile("jmp 1f\n 1: nop")
-+
-+struct lbr_branch {
-+	u64 from, to;
-+};
-+
-+volatile struct lbr_branch l2_branch;
-+
-+#define RECORD_BRANCH(b, s)						\
-+({									\
-+	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);			\
-+	DO_BRANCH();							\
-+	(b)->from = rdmsr(MSR_IA32_LASTBRANCHFROMIP);			\
-+	(b)->to = rdmsr(MSR_IA32_LASTBRANCHTOIP);			\
-+	/* Disabe LBR right after to avoid overriding the IPs */	\
-+	wrmsr(MSR_IA32_DEBUGCTLMSR, 0);					\
-+									\
-+	GUEST_ASSERT_NE((b)->from, 0);					\
-+	GUEST_ASSERT_NE((b)->to, 0);					\
-+	GUEST_PRINTF("%s: (0x%lx, 0x%lx)\n", (s), (b)->from, (b)->to);	\
-+})									\
-+
-+#define CHECK_BRANCH_MSRS(b)						\
-+({									\
-+	GUEST_ASSERT_EQ((b)->from, rdmsr(MSR_IA32_LASTBRANCHFROMIP));	\
-+	GUEST_ASSERT_EQ((b)->to, rdmsr(MSR_IA32_LASTBRANCHTOIP));	\
-+})
-+
-+#define CHECK_BRANCH_VMCB(b, vmcb)					\
-+({									\
-+	GUEST_ASSERT_EQ((b)->from, vmcb->save.br_from);			\
-+	GUEST_ASSERT_EQ((b)->to, vmcb->save.br_to);			\
-+})									\
-+
-+static void l2_guest_code(struct svm_test_data *svm)
-+{
-+	/* Record a branch, trigger save/restore, and make sure LBRs are intact */
-+	RECORD_BRANCH(&l2_branch, "L2 branch");
-+	GUEST_SYNC(true);
-+	CHECK_BRANCH_MSRS(&l2_branch);
-+	vmmcall();
-+}
-+
-+static void l1_guest_code(struct svm_test_data *svm, bool nested_lbrv)
-+{
-+	unsigned long l2_guest_stack[L2_GUEST_STACK_SIZE];
-+	struct vmcb *vmcb = svm->vmcb;
-+	struct lbr_branch l1_branch;
-+
-+	/* Record a branch, trigger save/restore, and make sure LBRs are intact */
-+	RECORD_BRANCH(&l1_branch, "L1 branch");
-+	GUEST_SYNC(true);
-+	CHECK_BRANCH_MSRS(&l1_branch);
-+
-+	/* Run L2, which will also do the same */
-+	generic_svm_setup(svm, l2_guest_code,
-+			  &l2_guest_stack[L2_GUEST_STACK_SIZE]);
-+
-+	if (nested_lbrv)
-+		vmcb->control.virt_ext = LBR_CTL_ENABLE_MASK;
-+	else
-+		vmcb->control.virt_ext &= ~LBR_CTL_ENABLE_MASK;
-+
-+	run_guest(vmcb, svm->vmcb_gpa);
-+	GUEST_ASSERT(svm->vmcb->control.exit_code == SVM_EXIT_VMMCALL);
-+
-+	/* Trigger save/restore one more time before checking, just for kicks */
-+	GUEST_SYNC(true);
-+
-+	/*
-+	 * If LBR_CTL_ENABLE is set, L1 and L2 should have separate LBR MSRs, so
-+	 * expect L1's LBRs to remain intact and L2 LBRs to be in the VMCB.
-+	 * Otherwise, the MSRs are shared between L1 & L2 so expect L2's LBRs.
-+	 */
-+	if (nested_lbrv) {
-+		CHECK_BRANCH_MSRS(&l1_branch);
-+		CHECK_BRANCH_VMCB(&l2_branch, vmcb);
-+	} else {
-+		CHECK_BRANCH_MSRS(&l2_branch);
-+	}
-+	GUEST_DONE();
-+}
-+
-+void test_lbrv_nested_state(bool nested_lbrv)
-+{
-+	struct kvm_x86_state *state = NULL;
-+	struct kvm_vcpu *vcpu;
-+	vm_vaddr_t svm_gva;
-+	struct kvm_vm *vm;
-+	struct ucall uc;
-+
-+	pr_info("Testing with nested LBRV %s\n", nested_lbrv ? "enabled" : "disabled");
-+
-+	vm = vm_create_with_one_vcpu(&vcpu, l1_guest_code);
-+	vcpu_alloc_svm(vm, &svm_gva);
-+	vcpu_args_set(vcpu, 2, svm_gva, nested_lbrv);
-+
-+	for (;;) {
-+		vcpu_run(vcpu);
-+		TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_IO);
-+		switch (get_ucall(vcpu, &uc)) {
-+		case UCALL_SYNC:
-+			/* Save the vCPU state and restore it in a new VM on sync */
-+			pr_info("Guest triggered save/restore.\n");
-+			state = vcpu_save_state(vcpu);
-+			kvm_vm_release(vm);
-+			vcpu = vm_recreate_with_one_vcpu(vm);
-+			vcpu_load_state(vcpu, state);
-+			break;
-+		case UCALL_ABORT:
-+			REPORT_GUEST_ASSERT(uc);
-+			/* NOT REACHED */
-+		case UCALL_DONE:
-+			goto done;
-+		case UCALL_PRINTF:
-+			pr_info("%s", uc.buffer);
-+			break;
-+		default:
-+			TEST_FAIL("Unknown ucall %lu", uc.cmd);
-+		}
-+	}
-+done:
-+	if (state)
-+		kvm_x86_state_cleanup(state);
-+	kvm_vm_free(vm);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_SVM));
-+	TEST_REQUIRE(kvm_is_lbrv_enabled());
-+
-+	test_lbrv_nested_state(/*nested_lbrv=*/false);
-+	test_lbrv_nested_state(/*nested_lbrv=*/true);
-+
-+	return 0;
-+}
+On 11/6/25 2:12 AM, Andy Shevchenko wrote:
+> Validator is not happy about some of the kernel-doc descriptions:
+> 
+> Warning: arch/x86/kernel/apic/apic.c:245 No description found for return value of 'lapic_get_maxlvt'
+> Warning: arch/x86/kernel/apic/apic.c:2145 function parameter 'error_code' not described in 'spurious_interrupt'
+> 
+> Update them accordingly.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> ---
+>  arch/x86/kernel/apic/apic.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+> index 680d305589a3..4675d1a07fc9 100644
+> --- a/arch/x86/kernel/apic/apic.c
+> +++ b/arch/x86/kernel/apic/apic.c
+> @@ -241,6 +241,8 @@ u64 native_apic_icr_read(void)
+>  
+>  /**
+>   * lapic_get_maxlvt - get the maximum number of local vector table entries
+> + *
+> + * Return: the maximum number of local vector table entries
+>   */
+>  int lapic_get_maxlvt(void)
+>  {
+> @@ -2136,7 +2138,7 @@ static noinline void handle_spurious_interrupt(u8 vector)
+>  /**
+>   * spurious_interrupt - Catch all for interrupts raised on unused vectors
+>   * @regs:	Pointer to pt_regs on stack
+> - * @vector:	The vector number
+> + * @error_code:	The vector number
+>   *
+>   * This is invoked from ASM entry code to catch all interrupts which
+>   * trigger on an entry which is routed to the common_spurious idtentry
+
 -- 
-2.51.2.1041.gc1ab5b90ca-goog
-
+~Randy
 
