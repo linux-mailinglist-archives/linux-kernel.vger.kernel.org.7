@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-891283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7BDC42550
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 04:00:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB53C42565
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 04:01:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D9A14E53B0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 03:00:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD11B4E7BBA
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 03:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B550D2BE02A;
-	Sat,  8 Nov 2025 03:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFF82D2390;
+	Sat,  8 Nov 2025 03:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZT0FYEl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q+t5yeXH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1706D748F;
-	Sat,  8 Nov 2025 03:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C532157480;
+	Sat,  8 Nov 2025 03:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762570835; cv=none; b=ez+2iBHJahSV28XGhuyQB1AC0jkaJ864/1E/Z5eNuSf5t8CtEzokz4w+mSGKkJd0FLM0xXT2ghz88zGAIkBD+4U/6L3mLk4zXcvisFSQSQweaUfHFbRModwbO8uRqNUP/0VEnET1JjuMgZtbfLbodjmlOmI4gqUKmVkgJIS94hY=
+	t=1762570857; cv=none; b=jN6LQcqAR/SUwZJ2ZTIN9bnqxOa9m+xMPRCCxdfapLx6s4XinAU9edL6LoRjz1r/FmfEa7pVUkyAlvSJByF+T5ddWWLn8JiQiP+YQjSh/X1+S459PFa1ImxH/tApPk5VP6+kfG5k/yzAOYe+JXA5xwsAqxAVkSLU1y0IJGdbujU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762570835; c=relaxed/simple;
-	bh=Vy1J3SyqFWlVAbP05a62I5YuDOrB6SkejVaOSzy3d98=;
+	s=arc-20240116; t=1762570857; c=relaxed/simple;
+	bh=CUXQiIM5wXxbV4Y3PP9of7ywamF06vsv9AbLzFNpXZY=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=CPDUddtL9N603V8zwmoA50qpSxUEqDo57uUqrZcWBXcp2Pju10cSdYtJk9MJRXN7lpsEBIf3aCm/J14FJ+LRHbrN0ntrGSOFtEZxdg6S9ltKYDQZZmbBhdX2M1ZeHJPY5f9vRshDU3cCTS50Yc63jshgC+M9nyeCiK1E1EVXbvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZT0FYEl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4588C19421;
-	Sat,  8 Nov 2025 03:00:34 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=kpXTnRTwBr3LioNwX7N5moVTH6GbO2vzcO9gLWNRYhpgZuQGJ2ms8Xzq41wFdca2qfgx2nur5YRItKX62CW58h8dlAqisBkUD70iAk93trtHFDGbsSaEuHooMMsiFSr0fPyQZKb0QNQbMq/7Mo1GTsRgsTxA/B4lG+TeyOiITsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q+t5yeXH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE13DC116C6;
+	Sat,  8 Nov 2025 03:00:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762570834;
-	bh=Vy1J3SyqFWlVAbP05a62I5YuDOrB6SkejVaOSzy3d98=;
+	s=k20201202; t=1762570856;
+	bh=CUXQiIM5wXxbV4Y3PP9of7ywamF06vsv9AbLzFNpXZY=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=XZT0FYElu90WYbbDSDLHzO9cbv4q5shUgjxmKjjKxTVM5+mIcqErRxRruQJNdVvL7
-	 xSQ3vTiR6eJ450D1K7D+0ReR3Wrwl4jo1QTrC7tgzYRsd+yIL4fHEB4VLC88/fzUt3
-	 48ZF9LtSUEPqX5uOisLh2v/94cIR4OWP1kMb/YG/dGiq6BgIizcIErnUBgMJyS47nN
-	 GdjuQhYIjuQx19B2drWR+1KFQt8Sid8nYNPl4zXExJmj53pEHt5kCNhcsMId3qGL6B
-	 +k7jL1KnjsvdXfkPvw6MMcGhYZ2vtXolgy0ZJU8rjsvf099B1HLReSqMDPfoo9/Rju
-	 f+gJzCD68VteA==
+	b=Q+t5yeXHh9ZFkRGnsYsKzuunEzoaDfF/gYs+y0hR9ifSjd1W6Xgq+nYrXNY5Tjebq
+	 Bmj2+GzsrvjwPLyC6hJqjQPKTaosJyMyXyj+ncKJnTaNNgap220evghIoJ082ore7r
+	 gwsNsQgAT3gB02fJKJjUVbhLgHt+fqSpUHJrcoH1P6LvBew25QVoENeo6sZlJhwjTr
+	 omlKmE2ZOCBZs7e5xFA9n4Ov5/QZLYkVEbbaRlmQVNoIapyo7wJEqenryjzqmW+OqH
+	 E7I7LXxxEBOL1XPS/xDR1RKF0WzXEV0OCmY2+v983KulMpGxTWK7+utukgXQynwhB3
+	 ElmTYwE/2yFIQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E4A3A40FCA;
-	Sat,  8 Nov 2025 03:00:08 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D223A40FCA;
+	Sat,  8 Nov 2025 03:00:30 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: fec: correct rx_bytes statistic for the case
- SHIFT16
- is set
+Subject: Re: [PATCH net-next v3 0/5] psp: track stats from core and provide a
+ driver stats api
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <176257080700.1232193.7245500159998786642.git-patchwork-notify@kernel.org>
-Date: Sat, 08 Nov 2025 03:00:07 +0000
-References: <20251106021421.2096585-1-wei.fang@nxp.com>
-In-Reply-To: <20251106021421.2096585-1-wei.fang@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: shenwei.wang@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- eric@nelint.com, imx@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <176257082873.1232193.12448797261264120149.git-patchwork-notify@kernel.org>
+Date: Sat, 08 Nov 2025 03:00:28 +0000
+References: <20251106002608.1578518-1-daniel.zahka@gmail.com>
+In-Reply-To: <20251106002608.1578518-1-daniel.zahka@gmail.com>
+To: Daniel Zahka <daniel.zahka@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, donald.hunter@gmail.com,
+ andrew+netdev@lunn.ch, shuah@kernel.org, borisp@nvidia.com,
+ saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu,  6 Nov 2025 10:14:21 +0800 you wrote:
-> Two additional bytes in front of each frame received into the RX FIFO if
-> SHIFT16 is set, so we need to subtract the extra two bytes from pkt_len
-> to correct the statistic of rx_bytes.
+On Wed,  5 Nov 2025 16:26:01 -0800 you wrote:
+> This series introduces stats counters for psp. Device key rotations,
+> and so called 'stale-events' are common to all drivers and are tracked
+> by the core.
 > 
-> Fixes: 3ac72b7b63d5 ("net: fec: align IP header in hardware")
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> A driver facing api is provided for reporting stats required by the
+> "Implementation Requirements" section of the PSP Architecture
+> Specification. Drivers must implement these stats.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] net: fec: correct rx_bytes statistic for the case SHIFT16 is set
-    https://git.kernel.org/netdev/net/c/ad17e7e92a7c
+  - [net-next,v3,1/5] psp: report basic stats from the core
+    https://git.kernel.org/netdev/net-next/c/dae4a92399fa
+  - [net-next,v3,2/5] selftests: drv-net: psp: add assertions on core-tracked psp dev stats
+    https://git.kernel.org/netdev/net-next/c/2098cec32865
+  - [net-next,v3,3/5] psp: add stats from psp spec to driver facing api
+    https://git.kernel.org/netdev/net-next/c/f05d26198cf2
+  - [net-next,v3,4/5] net/mlx5e: Add PSP stats support for Rx/Tx flows
+    https://git.kernel.org/netdev/net-next/c/b1346219e535
+  - [net-next,v3,5/5] netdevsim: implement psp device stats
+    https://git.kernel.org/netdev/net-next/c/178f0763c5f3
 
 You are awesome, thank you!
 -- 
