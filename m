@@ -1,124 +1,86 @@
-Return-Path: <linux-kernel+bounces-891664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A4BC43331
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 19:16:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F34C43337
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 19:16:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044BB3AF4AB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 18:16:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9CAF64E851A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 18:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352F7255E43;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EF526F467;
 	Sat,  8 Nov 2025 18:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWSuzOqw"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF43770FE
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 18:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE744317D
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 18:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762625772; cv=none; b=DOUCcdF0IAFOPICk9hXqmgmutsRPoVkWaHft1nmR6eM1LkQW37xXQZzwBPc10xvGCwVs+6IDw1b1AJ2jv1xikbBilQJk7FUoPAkPrc74oFDrNbAV4cFldnTg/ZvRRaxiUqOc62t3HPTuKEHXmqfE4rBrRnASOM2COxrZxYJhb9w=
+	t=1762625773; cv=none; b=qXhVoiIY2ErRk5w3UYTiCK75+dFjpI9zpqq0xG6EBAsnrsVqEO4kK5WK9zs3zE67OaXTZKywxgbpGHeAymD9cKAMoB+bULYw/wfppxxfYKH7hoerFwE+LHldBfJ2yAB6k2EwCyC49QvPqBUxqbJ1+UIP+YIefsvJc29sk0DlVbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762625772; c=relaxed/simple;
-	bh=ZPjUommKJztOBHxthEBJJTdyLZRsZCkBgHvr26AmOpQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=lr/nuwV/DZjLHXRO2Qtnd+eoOJH+HO8B4nEJ7DC/P7yWJepo+Eyeu4F6RifraGObf3LScpciX4+xZIH1Ggj1Gn0xpJKzPSFG2C6qCasxEFUV/NO/M743WiQQymyav6V5hotU1Ut1sPJdbTaeH1daXxKE+DX7R6rtvZUlhDu+Cn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWSuzOqw; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-882475d8851so254536d6.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 10:16:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762625768; x=1763230568; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YpuhHnfYFh1OuHtBlzws854zn4cGJNw7nQ8ETfR9Qm0=;
-        b=GWSuzOqwPE6UOysr5mvSmCbyswU+rS6V+E0gxmI1HcGsVqPz5918Z3tfY7Zlk/nyyC
-         4EDmKYa4w6pg6QL4OTPg6hQpBvyGrup7N1eaVM4C59YlkX2F3P2I5mmX1QyfCiUl6o7U
-         z9Q2ZJxO4uj3q4W6NvVFBWEdzutfqlb86ClDFgBntq3ZGFwffXJNA0J1FNHFIPvdHoUU
-         aJ9oinGf8ffhCp+Xsi9aiFqyeMvZNcenszGrCzQ3315ovYZHDsvG9Tt7daAGij7/CyxK
-         iKu7jiVuY2YkLLRNPbxysGKbGMkCOOgIzMEb5TDVMl0KPORpA0UDWGh3sz+f+Lry2ruC
-         70Hg==
+	s=arc-20240116; t=1762625773; c=relaxed/simple;
+	bh=LGZdQF6OwXW8rqmk7YSNdkrepXa0p9aAmiJyI2Znu9Y=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qTkNUGvSIcf1HJ3yIQgBUU/a3GqiQXtfli5OnxId/g+Ck3EIfxQJfhPNaAkm8YtdwOv+yXAgxiZZCQh1Qm54QCqKXysmFabBLyLkbqO6nmdXTCXmGScpPPmwGsfZ1f2zx0f7VcL3l68w5C1tpNpswBGFTL4mNJ1XCP2EVWCMQ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-94880a46eaeso562675839f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 10:16:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762625768; x=1763230568;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
+        d=1e100.net; s=20230601; t=1762625763; x=1763230563;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YpuhHnfYFh1OuHtBlzws854zn4cGJNw7nQ8ETfR9Qm0=;
-        b=wNL3BSjI2uECUNdPGKCf9KYj1bt8xaBtWLdWjaGsuSZshEe7tgLUPzbNVdoeYu0ODz
-         YgUTGTWgN7BnSpY7BhzutLKOE1z7dbHP5rptKXPaGycWWJBT2/bQJKlsBeg7QdpD0RZC
-         uBYOc1VRhWRyqsztjxksvmyGis0rF38ZUzUCCdD7TK+UguRUzOB9ge4+iBlcfKPsRiTU
-         fxIcJw/CeSo5X40BpP1WdCexCcparJM1laLPOo1rh4pQWSfEuDx6wRFJqqi8crywk1U3
-         MqZW4KqX33s/AFRihfo0b27wmiEDqQhIu4wU6ahwnm5nNB/B3HEW3Xsv/jcaKpeooJuV
-         1W0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXhlKYwoVUvQBXT+GWrKfB596xqi+am6Yr/Zn/OtO+C1/XKdqf0hJQupS/sxVkZUpn+8ET2WUk9tvcMu8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCYKL0cVpxnc3LNq04UycO4+ta9h3p6+cUsaSxnHvRj0p9UlUw
-	lobr0aMNDwH5/UwcrUyVTIa9UuyhbHum/p3IDOVyw2XaHK13/nROZ2qSY4pAN5ZbpxzlShdOvrg
-	cjb02o+RyeMmKV/e/Fn3Oqk9DsbuDk7U=
-X-Gm-Gg: ASbGnct+LJ0ZsVSjkOhdL1dfKho+BXKgx7zzaC721Wj7rYDsmMPlM4R3fJpZghprXZG
-	VUJ0AQle184PhbeBT1uZkVKm7x4hWUIZpVwrfSIZ5jT4fV7Ij1WyjNiCgWXve7W7KrzaDwL/ga6
-	1vJ3n6YyXdzJvZAbbit7IclKmJynS2GIq7cc/xg4H6zW1AIbWFl8iIY3suEsVv8T6XrH9npPwmR
-	Rci3+GLWxNhUSMButF6ZEf+4WOvoUtoOuWoZEpTQOnfbofzPiMQY1JgyzjgDEOwKH8dVcTHVQ/x
-	l2wFpZCJBa75a27l+RqR85wHJ+PTqZa5gLc5ESbQ0ZHArEG9QZK8X6W+gygJvgYhh72ZHug/LuN
-	Zih5gDNBCa+Yh+cMl57Efl45BYRQx4L937VvrnbuVwRzXWfrY3j3RETIr1rnvHGjLjemghJNUz7
-	0AbCzLA1jPSA==
-X-Google-Smtp-Source: AGHT+IGLP0vr9cIpKSHIEVh6wrvBWb8spM4WCyR4eNF9QEi5QisAGLNnyJVPq9/v7x8n7gYND2116ms7uTu+TimR9ko=
-X-Received: by 2002:a05:6214:124f:b0:880:5813:1551 with SMTP id
- 6a1803df08f44-8823861233bmr45789156d6.30.1762625768425; Sat, 08 Nov 2025
- 10:16:08 -0800 (PST)
+        bh=Esg6ee1UutUsWaExCFrXMPWt5bhcLtPu4tsvCCrPPmI=;
+        b=PdkeoCmKg1Fi+NWrti9x8RKk0173bdQfrEIG2P49e05hAb1ncITxsPQoT2oCOk9lQS
+         e8Q338yt0/+3keiG/nLalL4pp3vYJt1+OnLP4ETQUpRjR+5RNll77T8LUGVTcTrklMi+
+         pjAJ5iMCmoC80nna+SdGnFMzdJKZjCcgKhUHd9UpihL+MXIoKIdCT//Be8faOYNeFxfa
+         MJbr2qjbF/O7VI5FHqHXCQrADbCuECiuyd6xHtXHFw/HzzpxjrrntnUq8G307l//TPbB
+         +NezkCq2qBhXtHk4BIgWfTkYsK62MAanHxu38D4JWN2OzOYkuGjUcY4JmfXv7UIM8ecB
+         sVUg==
+X-Gm-Message-State: AOJu0YwQ3XEDqgPYX9izXyxbnp32MbjwsBX74CvmCwVoU2SNhvhlStvK
+	O8AxVDCo7ifoIs1wU1Geepb+FxJEw5Yoz0CrHIh5J4BMhiHBwhnBkiUQZgf2B/ijvD88e1Pb4lj
+	+0fAS0LQ2ZHjY2r+Z6w0bCGISyZQdWLfIuDsVV1DvHEol9jRMATRsURpLxQg=
+X-Google-Smtp-Source: AGHT+IFdy527tpTKpEUXUc+/bYvcGWXH20FB0GkWKMwTC0nLwOS/vfi98nCBvijT3b5jSDq6sdJymdDsbn1Y1xIvoT+WFEXqaqcI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 8 Nov 2025 12:15:57 -0600
-X-Gm-Features: AWmQ_bnbraTGx_UJWPW4eq7AIIrgXBSBIEm2hU6QEBHRT6GLGfANddX7Us_1WdE
-Message-ID: <CAH2r5ms=O10HuH9SvW59h=J50dmLUsqYTKoD8jqAvcn16aergw@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:16cf:b0:433:79a7:8158 with SMTP id
+ e9e14a558f8ab-43379a7844bmr3796105ab.27.1762625763622; Sat, 08 Nov 2025
+ 10:16:03 -0800 (PST)
+Date: Sat, 08 Nov 2025 10:16:03 -0800
+In-Reply-To: <aQ-D6qQkBA6XUgyD@rpthibeault-XPS-13-9305>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690f88e3.a70a0220.22f260.008a.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] KASAN: slab-out-of-bounds Read in ext4_search_dir
+From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, rpthibeault@gmail.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Please pull the following changes since commit
-6146a0f1dfae5d37442a9ddcba012add260bceb0:
+Hello,
 
-  Linux 6.18-rc4 (2025-11-02 11:28:02 -0800)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-are available in the Git repository at:
+Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+Tested-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.18rc4-SMB-client-fixes
+Tested on:
 
-for you to fetch changes up to 4012abe8a78fbb8869634130024266eaef7081fe:
+commit:         0d7bee10 Merge tag 'x86-urgent-2025-11-08' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1791c412580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=486aa0235ebabcac
+dashboard link: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1721c412580000
 
-  smb: client: validate change notify buffer before copy (2025-11-07
-10:15:43 -0600)
-
-----------------------------------------------------------------
-Three smb client fixes
-- Fix change notify packet validation check
-- Refcount fix (e.g. rename error paths)
-- Fix potential UAF due to missing locks on directory lease refcount
-----------------------------------------------------------------
-Henrique Carvalho (1):
-      smb: client: fix potential UAF in smb2_close_cached_fid()
-
-Joshua Rogers (1):
-      smb: client: validate change notify buffer before copy
-
-Shuhao Fu (1):
-      smb: client: fix refcount leak in smb2_set_path_attr
-
- fs/smb/client/cached_dir.c | 16 +++++++++-------
- fs/smb/client/smb2inode.c  |  2 ++
- fs/smb/client/smb2pdu.c    |  7 +++++--
- 3 files changed, 16 insertions(+), 9 deletions(-)
-
--- 
-Thanks,
-
-Steve
+Note: testing is done by a robot and is best-effort only.
 
