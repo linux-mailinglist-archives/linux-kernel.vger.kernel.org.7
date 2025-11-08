@@ -1,122 +1,114 @@
-Return-Path: <linux-kernel+bounces-891492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EC8C42C49
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:54:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3427C42C4C
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:54:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCC874E5A9B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:54:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 718073AD33B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D942D9782;
-	Sat,  8 Nov 2025 11:54:23 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6332E040E;
+	Sat,  8 Nov 2025 11:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/BMyzUu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA9B1FC8;
-	Sat,  8 Nov 2025 11:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6B92DAFD6
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 11:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762602863; cv=none; b=jxMGkzGOWPXm6H3bIUHPeMoKggf4XBA/YyncIVOxrXigvTv82wJKCRmdCJ5+vg38+4dNoYLVGNvGRgJrU1pvXczUlBdFNz7+iw8o96hCOsC7FHjFCLyJq0s4A0LXLfPuGeNlHayTjSzUJ6KyjO8p9I9Ksgfu9dUDzR5w9nwsY2A=
+	t=1762602881; cv=none; b=qQzuOqdvuOHuu0VJRqZvaEyyer1t9vJO+Z+04OfYBYhBmj/Rfug2IZEofFhOUp2k67MkDycc8IZVO3GyeiALUnoEENLVF0Un0MHH+zB7pqHGeYhSgKdRJidAd0JalDB52rdSf+cgV9CWRzj6iEGEfOrIv4ta0vFHCGHjABwDTTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762602863; c=relaxed/simple;
-	bh=ndNmxdkh04ykLZ7E1ZNLgfUkU5xu9a8BkyVL5p81t3k=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=GvHv4uv1yAJfUPfYtAbiVjdDXxYZGPMLfVh4gU8cxa7HjVU0Wik8plzZovChXJEcDE8B2tLqHYN59VhJj1AnfqyDaehb0ifs+gsc8I4HUMsaDhZ6BE/HPqsLif1/DIKHFqJ6+CI39H97DiDJfn1HNrRuntmDk6L4KISco0m/HkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-05 (Coremail) with SMTP id zQCowAD3YvFLLw9pipgGAg--.40529S2;
-	Sat, 08 Nov 2025 19:53:53 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: akpm@linux-foundation.org,
-	jgg@ziepe.ca,
-	leon@kernel.org,
-	jhubbard@nvidia.com,
-	mpenttil@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] mm/hmm/test: Fix error handling in dmirror_device_init
-Date: Sat,  8 Nov 2025 19:53:46 +0800
-Message-Id: <20251108115346.6368-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:zQCowAD3YvFLLw9pipgGAg--.40529S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF17Jr1ktw4rXryfJFW5Jrb_yoW8Xw1fpF
-	1UJas0kryUGrn3Gr18Zr48Ww1UKr9Yywn5Aw1UG34IgrW3XryYqry8Gw4Fqw1FkrWkJF15
-	XFWaq3Z5AF1UAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9m14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_Gw4l42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JU6GQhUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1762602881; c=relaxed/simple;
+	bh=JjmBnOELtYL2Z+Ms8Gl+U+Kgb9+9vO49fpmGW17yLhY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mk6cbpa1jpFbb0dj25qzydGhaoBJRdDptZUbtAAiMp7rlOzyyfa4/uNUzyvzHYXseZPUO/lOQI6zbQb5LOh3x+nOT5dkVykpEC5k9rN5yDvE6wgJtrPoVbji3IKaDK97YT7kZzCgNofI7zpJnXdkda5bupUkvInexfl+Dv4A0KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/BMyzUu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F0FBC116C6
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 11:54:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762602881;
+	bh=JjmBnOELtYL2Z+Ms8Gl+U+Kgb9+9vO49fpmGW17yLhY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=f/BMyzUuLaPNNqL7OBffPO1on/itoPTd27U51krMmrstpD8eyowLSJ+QmhArJHTho
+	 TnMcIUrj9yI7fqVuc2tXFLnNgo8wC+tpYP13ap2sJVHZaGGdYvChZ+zi/WyRc7kDVX
+	 n6vkbkUhRl7gCchpkVQoiNWhKR4CvFDTccLJ0XDPAX96n6kkUc35ta41U9tJpFIzb1
+	 uHvvrCjWtrpAh3F+HcGEv+VEo34Z7wZjQ8EKTDCgQbKcpBrhArTnQKY71EhEz+ywuM
+	 SLzp9mSXmBLeIQxoCHs7/zNtEMYlGEmk/Yto8KZTQbk/saI1AOYZ0PozZeno2j2A5B
+	 1oga+DsOWgj+w==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so297773066b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 03:54:41 -0800 (PST)
+X-Gm-Message-State: AOJu0Yz1eVvm0rg7v2aa9c1bwhx6jeoH//aDcPCaaQgI/vKn9E5ZBBgx
+	iRYOITEfHKmuRRY/8MnDBfudol2NTI5+w7A5ph8H9/mioW06FvawsMefBx1mviJ5U9Xyjx4g7W+
+	qC3RflcJhN+7+TCdKCId/uRrCTHDfVXs=
+X-Google-Smtp-Source: AGHT+IHqBYT+axB9BZiN2sqZeeRbAIRm5Jznc2Lzyd1nIVtQAooGjUjXpKVeEoEBYy1D8Y2EU6h2crd5Lp0qkuxnMZo=
+X-Received: by 2002:a17:907:c13:b0:b71:ee24:8a41 with SMTP id
+ a640c23a62f3a-b72e061a8edmr197739366b.55.1762602880135; Sat, 08 Nov 2025
+ 03:54:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20251107180601.86483-1-vishal.moola@gmail.com>
+In-Reply-To: <20251107180601.86483-1-vishal.moola@gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 8 Nov 2025 19:54:38 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H58u2xXYG0X3giazizpuBqT-0qdGojbBsmwD2U1Z7D_vQ@mail.gmail.com>
+X-Gm-Features: AWmQ_blKLKtaUFkaK1b4OmOoYr8cN9MHEprk0cMi9STYqXx46onfrqx2NUZin-Y
+Message-ID: <CAAhV-H58u2xXYG0X3giazizpuBqT-0qdGojbBsmwD2U1Z7D_vQ@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: Remove __GFP_HIGHMEM masking
+To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc: linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-dmirror_device_init() calls device_initialize() which sets the device
-reference count to 1, but fails to call put_device() when error occurs
-after dev_set_name() or cdev_device_add() failures. This results in
-memory leaks of struct device objects. Additionally,
-dmirror_device_remove() lacks the final put_device() call to properly
-release the device reference.
+Hi, Vishal,
 
-Found by code review.
+On Sat, Nov 8, 2025 at 2:06=E2=80=AFAM Vishal Moola (Oracle)
+<vishal.moola@gmail.com> wrote:
+>
+> Remove unnecessary __GFP_HIGHMEM masking, which was introduced with
+> commit 382739797f79 ("loongarch: convert various functions to use
+> ptdescs"). GFP_KERNEL doesn't contain __GFP_HIGHMEM.
+I have planned to submit a similar patch after [1] is merged, but
+anyway, thank you for your contribution.
 
-Cc: stable@vger.kernel.org
-Fixes: 6a760f58c792 ("mm/hmm/test: use char dev with struct device to get device node")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- lib/test_hmm.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+[1] https://lore.kernel.org/linux-mm/CAAhV-H5C_Af72a5QcJs25qUMsJqO26=3D8oNv=
+vLrJ7z+xHZh8oKQ@mail.gmail.com/T/#t
 
-diff --git a/lib/test_hmm.c b/lib/test_hmm.c
-index 83e3d8208a54..5159fc36eea6 100644
---- a/lib/test_hmm.c
-+++ b/lib/test_hmm.c
-@@ -1458,20 +1458,25 @@ static int dmirror_device_init(struct dmirror_device *mdevice, int id)
- 
- 	ret = dev_set_name(&mdevice->device, "hmm_dmirror%u", id);
- 	if (ret)
--		return ret;
-+		goto put_device;
- 
- 	ret = cdev_device_add(&mdevice->cdevice, &mdevice->device);
- 	if (ret)
--		return ret;
-+		goto put_device;
- 
- 	/* Build a list of free ZONE_DEVICE struct pages */
- 	return dmirror_allocate_chunk(mdevice, NULL);
-+
-+put_device:
-+	put_device(&mdevice->device);
-+	return ret;
- }
- 
- static void dmirror_device_remove(struct dmirror_device *mdevice)
- {
- 	dmirror_device_remove_chunks(mdevice);
- 	cdev_device_del(&mdevice->cdevice, &mdevice->device);
-+	put_device(&mdevice->device);
- }
- 
- static int __init hmm_dmirror_init(void)
--- 
-2.17.1
+Huacai
 
+>
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> ---
+>  arch/loongarch/include/asm/pgalloc.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/include/asm/pgalloc.h b/arch/loongarch/includ=
+e/asm/pgalloc.h
+> index 1c63a9d9a6d3..08dcc698ec18 100644
+> --- a/arch/loongarch/include/asm/pgalloc.h
+> +++ b/arch/loongarch/include/asm/pgalloc.h
+> @@ -88,7 +88,7 @@ static inline pmd_t *pmd_alloc_one(struct mm_struct *mm=
+, unsigned long address)
+>  static inline pud_t *pud_alloc_one(struct mm_struct *mm, unsigned long a=
+ddress)
+>  {
+>         pud_t *pud;
+> -       struct ptdesc *ptdesc =3D pagetable_alloc(GFP_KERNEL & ~__GFP_HIG=
+HMEM, 0);
+> +       struct ptdesc *ptdesc =3D pagetable_alloc(GFP_KERNEL, 0);
+>
+>         if (!ptdesc)
+>                 return NULL;
+> --
+> 2.51.1
+>
+>
 
