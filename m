@@ -1,84 +1,85 @@
-Return-Path: <linux-kernel+bounces-891472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6297AC42BA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:08:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654F0C42BA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 12:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40AE04E1D55
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:08:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C78503463D1
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 11:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F143009EA;
-	Sat,  8 Nov 2025 11:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C3D30100F;
+	Sat,  8 Nov 2025 11:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ItA0zn8p"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010000.outbound.protection.outlook.com [52.101.61.0])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wGUfeN3o"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012052.outbound.protection.outlook.com [40.107.200.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC7521ABC1;
-	Sat,  8 Nov 2025 11:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC7E21ABC1;
+	Sat,  8 Nov 2025 11:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762600120; cv=fail; b=oVweHMXvghbWt1o6jD13+ZwbRLaCauM4ag2UVbqzBV3Vnn+MoFSXKuXpoTomrbjIpCjWwsacjaf6VskiHdXT4KkcMVnYMNg/+/99T36ENKk4LAxIY8noBDHEvv8TI4LmrHNIMdeqoL/i96fQV+vDrxzwUwyfpg/RG56jBEgx428=
+	t=1762600132; cv=fail; b=bfeoZJuYtiSJzxOS4TxHCGTRdv8MwSvSzoKlQGjA82j+mnqIMIpriI0JbYSAw2UwFrhe9kOf3fhiug4yVAVGFDVjCd6GtuSE5PRH1WrZnzOmzO3LpnOZKviTv0DIEOvsjEEpVg213MEBAmZQg5UO1bBEp3Ix0C4CD2lhUzFyRGc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762600120; c=relaxed/simple;
-	bh=kx7DX+9g8L7Fbh8Ep0JA9CExHxpJgIU0P5pZTvtVSEI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PIdUzE+GdzufU+v0eWNYjzO0YWY1p+AMz/3mYRlwI1VTCdYxB8yjlC0HwE6y4//eBr1+0UclpLQkqqBKr+csbB1qxeIHT3CEor5p7DhApTGdzMsJZNfbEGueRVTpbJHKsqy1WtxXRe6DaQjeS+qmwby/Fyw8uI3QuvvQUEaaDMg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ItA0zn8p; arc=fail smtp.client-ip=52.101.61.0
+	s=arc-20240116; t=1762600132; c=relaxed/simple;
+	bh=zZDc1ZOBWonslGaqYPUzo2wRL+5cz6LKhrZC6YFG7jI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tM1bI9+UYbwdXWW1e6XaASIM2+8VgzbDDxiUFb08qu+wufSEGrNQES4Jh6TTMFMDcQ1ebNNmdcq0xhqXRJF9Uo+mrZAW9QhkyRWOaGS9CWc/I1WEgHzB5ABfdakhPRE3lWQV0PbwdDwca7v6avVDAdX6RG9ez5rZrYy9pntem9E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wGUfeN3o; arc=fail smtp.client-ip=40.107.200.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dcltEBsFV+d+RfnfcNvLXLubQMFA8mNVUe5L59KPe//R5VVesQ8AYJh8AcmVi9KI8GS+/Uw09qmmNxgrYmI7MxmnCcFVhTZXqqz25zKUoSk9eTQnysStsFQGUHyLTrer6UOPs+Foho8xzoK1vmbNQs31M4Z+YvTM7LMPgid1ktOqD/XAysY9zIeTKbuSV8uc3pmlP3qKQH5fW0Yq7Dw/hhlsovax0fNPeiYBewM6fCbaMiNijMP8oa0iFoGic5zJy7Fr+l600aimNw2rDDELhoViltE3iHlkisMuA5azDanZwnlmtwoGjwWitOjYhcaSuYhNYgVIIb1HNAKcLyF6Tg==
+ b=rPH3OGNvtBH7pXZvHvwSFESvATVcazRUPtih8dp55H8ETu2VF2QcJ6WKn9eevyb/+9wEM8UA5sn/8zWYhZ7yDOpD+0CaJT4zOJxujs+qMCj32JBUZWZXvDnVjaX+RlP4IjSFNPaTDsW3q3Sj/8cvqhUJSEYNo6/C5FdIDhqohewPHttcXNFg51DcydSm0upv87FKFdgzs+orK3FS/sqvl8WYfIybMVF+Bw2X4JpBDerAVSfYw45bgK1xutCm2MBwrkW79oHmVoL6rwLU2M1JCEhD2g5mKhzFQ0Uo1jLeYP5zVJ/d2Px2dHmr4SM2kqyEXPNvIVIqge5i6p+aqU3emQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e2aZPtH1GC0scDj8mJ++yLwfLSaqQFvnt8gmYqukmeo=;
- b=Q3LgzG7rRHCqIejALPxTQ+Q3fxUUSgqNEa2Eue8ap+ca05+qTw+twX1r7+Nlt5posO5PiEDSiqFSdVDE1MmJI5nMpA0XK2sxQ9W4+0bzjx4QzL17d1mLugbvkCcKOAD4+CRG4JsiAn0x/HZwgilMBPCmJYSCJuV/FZ4VkaBF3yPflpJnYZiyHBmev6RNxW8jsDO+JGJ6im7odXF7DV61FVhengh3y0UkmjSdMZ83m6id2Hz8WuurvScg5wxVVeGHBvgGh4uH5/ByNf0kvrZ/6MI/3fKitzqgDoG6661BeJj41wiYiULX9IxR2ISbngo69+5RsHjNBCErxbTdYSWdOA==
+ bh=ib4QUkl485ytfnL1PRX2696HuAy8YWPA2zJKN+PSvWk=;
+ b=J1oGb+4DpPsGQazHrJpAICuPlEQyS4x0NKihbpG/25knEfyPhNzeq10KqBa77O9OVnmq5tVgWarR9yu4eHGybw1xH3kUAoYOeTFvtm03Y+0idZA37GH5KAx6zz/9jbhRbkSnvGzbtCY5qLQP7u+LSZbpEy6EUWvHKDGVSnanTH22+BYSA730V8K+ssm7sa0HGn5D9L8v2/fE8132rq/8AgPFqvl/tpNM7BaX4kOrH/GSuQtkU0qSiZ5FIW2fNaNbPlwnNyUgihJ+n7MEMTC6kBHNZMOsH1BxTjwt8aw+Wbue0ns8ZEfJ1JUBdbEDvCT91Ti96qgPk9hn6JTv1PAQIA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.195) smtp.rcpttodomain=google.com smtp.mailfrom=ti.com; dmarc=pass
+ 198.47.21.194) smtp.rcpttodomain=google.com smtp.mailfrom=ti.com; dmarc=pass
  (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
  (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e2aZPtH1GC0scDj8mJ++yLwfLSaqQFvnt8gmYqukmeo=;
- b=ItA0zn8pHsYiuh044ZqmWBpJPshMque7kzC6TjCBp2DyZUXIZgYQG8Fml+7yzoqjGvAGMbnVs7NVZYBu3l/FKx/k8fQtoxuZmWs0DPX/FZT0l39ll5fIAKaHAtNOfVrhBvFPAqBqEBzyRG0qSRkqURhKKXP8Sh8Qf6MfEa3fvL8=
-Received: from DS7PR03CA0269.namprd03.prod.outlook.com (2603:10b6:5:3b3::34)
- by IA1PR10MB7359.namprd10.prod.outlook.com (2603:10b6:208:3fc::13) with
+ bh=ib4QUkl485ytfnL1PRX2696HuAy8YWPA2zJKN+PSvWk=;
+ b=wGUfeN3oVa0EwBJwGCUP3EBb13HQWpEXJXzbnl/rzu6I4Dj1A+KSnaAkDgyZKXcqem1J6nnBvYBXAP/0NI8DfVciZhjLCzn4YEqwa1KiKN5pIVs4G1w7g5ix3jdyUigbnyUwIRQcTH8EBHgY5uwm+mKkU38cdAbF3CjWRYD/PL4=
+Received: from MW4PR03CA0157.namprd03.prod.outlook.com (2603:10b6:303:8d::12)
+ by DS7PR10MB7347.namprd10.prod.outlook.com (2603:10b6:8:eb::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Sat, 8 Nov
- 2025 11:08:35 +0000
-Received: from DS3PEPF0000C37F.namprd04.prod.outlook.com
- (2603:10b6:5:3b3:cafe::c2) by DS7PR03CA0269.outlook.office365.com
- (2603:10b6:5:3b3::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Sat, 8
- Nov 2025 11:08:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Sat, 8 Nov
+ 2025 11:08:45 +0000
+Received: from SJ1PEPF000026C9.namprd04.prod.outlook.com
+ (2603:10b6:303:8d:cafe::73) by MW4PR03CA0157.outlook.office365.com
+ (2603:10b6:303:8d::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.12 via Frontend Transport; Sat,
+ 8 Nov 2025 11:08:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
  smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
  action=none header.from=ti.com;
 Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
-Received: from lewvzet201.ext.ti.com (198.47.23.195) by
- DS3PEPF0000C37F.mail.protection.outlook.com (10.167.23.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Sat, 8 Nov 2025 11:08:34 +0000
-Received: from DLEE208.ent.ti.com (157.170.170.97) by lewvzet201.ext.ti.com
- (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ SJ1PEPF000026C9.mail.protection.outlook.com (10.167.244.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Sat, 8 Nov 2025 11:08:44 +0000
+Received: from DFLE201.ent.ti.com (10.64.6.59) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sat, 8 Nov
- 2025 05:08:32 -0600
-Received: from DLEE204.ent.ti.com (157.170.170.84) by DLEE208.ent.ti.com
- (157.170.170.97) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 05:08:40 -0600
+Received: from DFLE210.ent.ti.com (10.64.6.68) by DFLE201.ent.ti.com
+ (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sat, 8 Nov
- 2025 05:08:32 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE204.ent.ti.com
- (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 05:08:40 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE210.ent.ti.com
+ (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Sat, 8 Nov 2025 05:08:32 -0600
+ Transport; Sat, 8 Nov 2025 05:08:40 -0600
 Received: from lelvem-mr05.itg.ti.com ([10.250.165.138])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A8B8OGe356676;
-	Sat, 8 Nov 2025 05:08:24 -0600
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A8B8OGf356676;
+	Sat, 8 Nov 2025 05:08:33 -0600
 From: Baojun Xu <baojun.xu@ti.com>
 To: <broonie@kernel.org>, <tiwai@suse.de>
 CC: <andriy.shevchenko@linux.intel.com>, <13916275206@139.com>,
@@ -88,10 +89,12 @@ CC: <andriy.shevchenko@linux.intel.com>, <13916275206@139.com>,
 	<k-yi@ti.com>, <henry.lo@ti.com>, <robinchen@ti.com>, <jesse-ji@ti.com>,
 	<will-wang@ti.com>, <jim.shil@goertek.com>, <toastcheng@google.com>,
 	<chinkaiting@google.com>
-Subject: [PATCH v1 1/2] ASoC: tas2781: Add tas2568/5806m/5806md/5830 support
-Date: Sat, 8 Nov 2025 19:07:58 +0800
-Message-ID: <20251108110759.2409-1-baojun.xu@ti.com>
+Subject: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add TAS2568/5806M/5806MD/5830 support
+Date: Sat, 8 Nov 2025 19:07:59 +0800
+Message-ID: <20251108110759.2409-2-baojun.xu@ti.com>
 X-Mailer: git-send-email 2.43.0.windows.1
+In-Reply-To: <20251108110759.2409-1-baojun.xu@ti.com>
+References: <20251108110759.2409-1-baojun.xu@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,209 +106,160 @@ Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37F:EE_|IA1PR10MB7359:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1860f4c-febb-462f-108b-08de1eb728e3
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C9:EE_|DS7PR10MB7347:EE_
+X-MS-Office365-Filtering-Correlation-Id: f95d0a27-6e7a-49bf-18db-08de1eb72eb0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|7416014|1800799024;
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0yN5Bu4nQKssCQAUG5kcfaEX9I07btDqIS+WTHjdBaQFSbvmO+VPXrnqQEKy?=
- =?us-ascii?Q?yTPGidBiZMZ4OKkEJ35nCUdEAwS1EwFcTn4uuAyMu7U/cMkT/LWAdckIugE6?=
- =?us-ascii?Q?GE/uJDM5UVxiAIFA36yscLfX6rSU5rBaftFvQSdQDATY6moec1ITTxMuBfBB?=
- =?us-ascii?Q?GoMLfetbYf+z/mpyfwBY1MMSbmNXS1lqpVIuM+RGd/Rt/Bdf6M46gX/g5Gwd?=
- =?us-ascii?Q?IFYd1ZtmMDZw29QhvQbbe1RzWogrw6ZypdIBMF3YaZD4VrTXVRsXbPqx0SLm?=
- =?us-ascii?Q?GBadvpizHBWD2Mtxncmz+fM+BYBz/db5yOv3tlBuQAH9Bz47KDiyH1Q6sJrZ?=
- =?us-ascii?Q?u6GtkNt9zYR2CEQtqjXk6evzGMwH4dNK1/cfd8lCb6xKQtkkRuZ4POGVJzBf?=
- =?us-ascii?Q?EUMjGBM3B6VJYQfDrmZPuK4GwvXIA5dLTFekNBC/A1TMhtj23H7iDIoGHLzY?=
- =?us-ascii?Q?apqU4ilIApNACvboM76QUkDJInzN8CTvOihD4nu0z3sx7CscNh+GCpphoMoK?=
- =?us-ascii?Q?TfGJ4ZogzcchSNdmBtWEbtEvoW6560KwcfCpk4yFILyPVEjFgeqqbkmqaJvP?=
- =?us-ascii?Q?fCDRobk/RHq0dBJBXcVH5fklthi/UKHNyKok+EisBimLWeCaukJcD2d/Jf8Q?=
- =?us-ascii?Q?bTN0YMTOjwzRLCLCui0iOO6SMQmyCQCHAsLdgy8Q2EM2O0sIzWdTsO2aWHwg?=
- =?us-ascii?Q?+rBy+mKBFeDhgXJvb/h0cRXvkzoY92uyDRw4mzPMudRMc9NjVzMoAMcltY4D?=
- =?us-ascii?Q?L/cR9hq5pGd7gB30Dc+A+MvPmTUH79J1/yD4eOCpCrg1d1Vz8e2hxKki/V4y?=
- =?us-ascii?Q?66by6pJ6GLXkD0M0CNEfMr3WHISInHi91mVZDDCwZSX8C0BYt/5nnOjT+P2g?=
- =?us-ascii?Q?EaeJ1i4YEaNoC298F0aPOzaehBiq1keTC7EU+6dZOpxqGmjqqThPLlvIlMrf?=
- =?us-ascii?Q?CqSTOL08zrDvYUcZetzUSyrq5UsU1B/JhOR/CLiGKvHivaRAvX9WFtQT7wDO?=
- =?us-ascii?Q?eQuJEDWjlvSA+MDv3orddXnOeOjw6xLAF5B/AEII+uQomHTRKmtpUv1Vo+Mq?=
- =?us-ascii?Q?qZNp3hYI3nRHNdpqNKM1K9tZknkobqcTRIrtYcPhJQW7IBsF8qwzK91cyJIp?=
- =?us-ascii?Q?aDabzM4z4QFZIRxMjYDq5GA8OrwVCThYZcoGOn5t7Z0XULPVB7VVfwADt/Xx?=
- =?us-ascii?Q?9zQ1KQC5a08iR/57bIWwOuWCc5gMz8iIPc4dZUtcSXkPsL2Upz20KLq2vOLs?=
- =?us-ascii?Q?ZxPSIQF6NJYeMtY+2BPRtmS964XjW3h/fHrSWfbO1n++P3RwbMuozImS+57/?=
- =?us-ascii?Q?4Y7lkh9seu1ohhZc4S5jrLosnLRW6vtCxb52eP96DWein7gY0wDk9CrC+SNM?=
- =?us-ascii?Q?LomL+khpDeTwFt4q55yoTZFhvhfAmMzQQ4K60R0G/rt0GOyuJRKG8G/DRgGr?=
- =?us-ascii?Q?dv2B3teD+bEnc1X1rd4oPjhM8V30L5qTHZ7IhY4/3wF/fCJvHAwBya51rfnf?=
- =?us-ascii?Q?Ng+pe4kfZmJEkHvFFzNqGfhEbM+iW4MLE6kVv8QjTsJ6HtdWEOXksKZRra4L?=
- =?us-ascii?Q?/eIyY6Feozz1yWDOzd0=3D?=
+	=?us-ascii?Q?BwzbubKANNhnDtMq6pC1PZ+lRtTzqtldDrOvlpsQbmfNdiTRohEsQqegymBV?=
+ =?us-ascii?Q?/bN4wGz/lJxuttwxeRtxslugA3udpW9nKh86a0srTAsoZjzptnJYl3CiqNmZ?=
+ =?us-ascii?Q?grVdKdOlqtDg1INztcyVpaXsZL74QFAxQqEfuGEPqpalScCVzi9eRCUR18oX?=
+ =?us-ascii?Q?/SfG87vg/9p+bpNnLcg6LRGWncXs71KWyHscLo8Ckkr94lO52M1DdQUbYgMa?=
+ =?us-ascii?Q?TKchZZiBhUFXdr1LzYATlhgKCS7I47n1pDsLfCdfj4v3lH3xFFCi4ztnbkTV?=
+ =?us-ascii?Q?OFllwkb8PLzKdhDt5a2r59KE72MPBzKcRzktc5L3jVlRZLsstoQyR6UVh5uL?=
+ =?us-ascii?Q?GmBK2iB/uCSa9sYT6/Y2pJAuh7R7Muy4t5XXsQp1s7XRex23R47+aclGRboY?=
+ =?us-ascii?Q?Pa+dGlAsj1vA2HKosHcqobSiillUnF2JnXDMWZuW+t8JaBE97M7ca2NeAe3g?=
+ =?us-ascii?Q?IZLd/SNjUIlKD86U0buEiQ/rdf7A/JDyFkI//TObAMCQdBLmp9m61v1vN9yV?=
+ =?us-ascii?Q?IvSo37KhJM8ToGb5YGEg1H83IAOh6K6AFwHdJQ/vfE5fT1vJl9Ee7CVpEgH7?=
+ =?us-ascii?Q?+OWzqTtmK/UcrEIuIrvl66Jqa1yCO5e3Nk5j+uQWE7MtDwUVkly+y0e0GWOe?=
+ =?us-ascii?Q?/QWjZ4g3yCWO9RGdk9aRLeurvrshYJ0M5YVF/oU0808u3j7dEN+174DFjTem?=
+ =?us-ascii?Q?RKzxTilJnELxoTjVVZPzuSGVUDxc+bO10Fkd1gIRKt7F1oaiXdqHGTkQrnEY?=
+ =?us-ascii?Q?d7Zk+eloxl0t26u47DYabeTiaVMykrodNAllp4BsAhjZR8Yf2WT9bw3+cTvx?=
+ =?us-ascii?Q?LuADWNo6vFxxuqnwtOavGYVOb9zftG5R1a0tgRguGa2A1sgBT9ETrr3csqFY?=
+ =?us-ascii?Q?AZ1vy7Td2dBFe5ZDjclrxCMuQm325NeuZPdbpJsx0KM/2F/sGI3WLKagSC5p?=
+ =?us-ascii?Q?tnkU5sZBBCF5McSscp6qN0pVV+7q48xJUU96CMmcPPb9F2is5mBe5zD9XoAx?=
+ =?us-ascii?Q?sXoQDPA1ZWZEFOPHg9QuCLFsCrfefxvCxNqNTKAprAtg5s9lXfDcAVRGEsQj?=
+ =?us-ascii?Q?ToBvpLtsrnvgDOXn+uwJin2LVQ152MeAvizz5PnA+TJrQ6mCQLKrj2pZeqIM?=
+ =?us-ascii?Q?2n6701rwCxZD+njJ7QlANk4oZYe/ejtgIhG/Ez9pEoio9SsbnWkMP2cEHLlU?=
+ =?us-ascii?Q?/1y41RHM3ImVkcu6STIBqXThJXe0mbiX1Hwd6vOYKibeZ98fQGy/YG3qzjpl?=
+ =?us-ascii?Q?VMaS5q4DlsQtLNj88YWI+LN1x+fvxxfXwUCkXCDmtMLZNF/lNvzEvh+76t7S?=
+ =?us-ascii?Q?ybF6+wqgmtIgUQqzQnF2pBUoJSz7xpLMJl86CxX3fabDvVozaHBgj/Cvvb5f?=
+ =?us-ascii?Q?OXUVQIZncxUw/BoopbV3ryYt01q4fHLJY68f7kGjPi4fl4TTUJvvP34E7jpR?=
+ =?us-ascii?Q?05l4chVlngnxEXqQp4eA/kF0pwzhNV2YdUDCbhbMc0agYe9gzC3AvIzEByjQ?=
+ =?us-ascii?Q?l5WYhKf/KL9DgAIu/trwMfRpSmjDs4E8ecXVxJS81zhSiymZ959RCalt6HaI?=
+ =?us-ascii?Q?j5WIRd65MUish7NINHs=3D?=
 X-Forefront-Antispam-Report:
-	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(7416014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 11:08:34.6368
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 11:08:44.3326
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1860f4c-febb-462f-108b-08de1eb728e3
+X-MS-Exchange-CrossTenant-Network-Message-Id: f95d0a27-6e7a-49bf-18db-08de1eb72eb0
 X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF0000C37F.namprd04.prod.outlook.com
+	SJ1PEPF000026C9.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7359
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7347
 
-TAS5806M, TAS5806MD, TAS5830 has on-chip DSP without current/voltage
-feedback, and in same family with TAS58XX.
+TAS5806M, TAS5806MD and TAS5830 is in same family with TAS58XX.
 TAS2568 is in family with TAS257X.
 
 Signed-off-by: Baojun Xu <baojun.xu@ti.com>
 ---
- include/sound/tas2781.h        |  4 ++++
- sound/soc/codecs/tas2781-i2c.c | 24 +++++++++++++++++++++---
- 2 files changed, 25 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/sound/ti,tas2781.yaml | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
-index c3b4c43dd2bf..879eb16cbc1f 100644
---- a/include/sound/tas2781.h
-+++ b/include/sound/tas2781.h
-@@ -117,15 +117,19 @@ enum audio_device {
- 	TAS2120,
- 	TAS2320,
- 	TAS2563,
-+	TAS2568,
- 	TAS2570,
- 	TAS2572,
- 	TAS2781,
- 	TAS5802,
-+	TAS5806M,
-+	TAS5806MD,
- 	TAS5815,
- 	TAS5822,
- 	TAS5825,
- 	TAS5827,
- 	TAS5828,
-+	TAS5830,
- 	TAS_OTHERS,
- };
+diff --git a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
+index f0bb5faf55c8..918f1ebdfb7e 100644
+--- a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
++++ b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
+@@ -35,11 +35,14 @@ description: |
+     https://www.ti.com/lit/gpn/tas2563
+     https://www.ti.com/lit/gpn/tas2572
+     https://www.ti.com/lit/gpn/tas2781
++    https://www.ti.com/lit/gpn/tas5806m
++    https://www.ti.com/lit/gpn/tas5806md
+     https://www.ti.com/lit/gpn/tas5815
+     https://www.ti.com/lit/gpn/tas5822m
+     https://www.ti.com/lit/gpn/tas5825m
+     https://www.ti.com/lit/gpn/tas5827
+     https://www.ti.com/lit/gpn/tas5828m
++    https://www.ti.com/lit/gpn/tas5830
  
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index 7bd98ff5a250..e8d9db401086 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -105,15 +105,19 @@ static const struct i2c_device_id tasdevice_id[] = {
- 	{ "tas2120", TAS2120 },
- 	{ "tas2320", TAS2320 },
- 	{ "tas2563", TAS2563 },
-+	{ "tas2568", TAS2568 },
- 	{ "tas2570", TAS2570 },
- 	{ "tas2572", TAS2572 },
- 	{ "tas2781", TAS2781 },
- 	{ "tas5802", TAS5802 },
-+	{ "tas5806m", TAS5806M },
-+	{ "tas5806md", TAS5806MD },
- 	{ "tas5815", TAS5815 },
- 	{ "tas5822", TAS5822 },
- 	{ "tas5825", TAS5825 },
- 	{ "tas5827", TAS5827 },
- 	{ "tas5828", TAS5828 },
-+	{ "tas5830", TAS5830 },
- 	{}
- };
- MODULE_DEVICE_TABLE(i2c, tasdevice_id);
-@@ -125,15 +129,19 @@ static const struct of_device_id tasdevice_of_match[] = {
- 	{ .compatible = "ti,tas2120" },
- 	{ .compatible = "ti,tas2320" },
- 	{ .compatible = "ti,tas2563" },
-+	{ .compatible = "ti,tas2568" },
- 	{ .compatible = "ti,tas2570" },
- 	{ .compatible = "ti,tas2572" },
- 	{ .compatible = "ti,tas2781" },
- 	{ .compatible = "ti,tas5802" },
-+	{ .compatible = "ti,tas5806m" },
-+	{ .compatible = "ti,tas5806md" },
- 	{ .compatible = "ti,tas5815" },
- 	{ .compatible = "ti,tas5822" },
- 	{ .compatible = "ti,tas5825" },
- 	{ .compatible = "ti,tas5827" },
- 	{ .compatible = "ti,tas5828" },
-+	{ .compatible = "ti,tas5830" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, tasdevice_of_match);
-@@ -1643,6 +1651,7 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 	case TAS2118:
- 	case TAS2120:
- 	case TAS2320:
-+	case TAS2568:
- 	case TAS2570:
- 	case TAS2572:
- 		goto out;
-@@ -1670,9 +1679,7 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 	}
- 	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
+ properties:
+   compatible:
+@@ -58,6 +61,9 @@ properties:
+       ti,tas2563: 6.1-W Boosted Class-D Audio Amplifier With Integrated
+       DSP and IV Sense, 16/20/24/32bit stereo I2S or multichannel TDM.
  
--	/* There is no calibration required for
--	 * TAS5802/TAS5815/TAS5822/TAS5825/TAS5827/TAS5828.
--	 */
-+	/* There is no calibration required for TAS58XX. */
- 	if (tas_priv->chip_id < TAS5802) {
- 		ret = tasdevice_create_cali_ctrls(tas_priv);
- 		if (ret) {
-@@ -1728,11 +1735,14 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 		case TAS2563:
- 		case TAS2781:
- 		case TAS5802:
-+		case TAS5806M:
-+		case TAS5806MD:
- 		case TAS5815:
- 		case TAS5822:
- 		case TAS5825:
- 		case TAS5827:
- 		case TAS5828:
-+		case TAS5830:
- 			/* If DSP FW fail, DSP kcontrol won't be created. */
- 			tasdevice_dsp_remove(tas_priv);
- 		}
-@@ -1883,6 +1893,7 @@ static int tasdevice_codec_probe(struct snd_soc_component *codec)
- 	case TAS2118:
- 	case TAS2120:
- 	case TAS2320:
-+	case TAS2568:
- 	case TAS2570:
- 	case TAS2572:
- 		p = (struct snd_kcontrol_new *)tas2x20_snd_controls;
-@@ -1894,11 +1905,14 @@ static int tasdevice_codec_probe(struct snd_soc_component *codec)
- 		size = ARRAY_SIZE(tas2781_snd_controls);
- 		break;
- 	case TAS5802:
-+	case TAS5806M:
-+	case TAS5806MD:
- 	case TAS5815:
- 	case TAS5822:
- 	case TAS5825:
- 	case TAS5827:
- 	case TAS5828:
-+	case TAS5830:
- 		p = (struct snd_kcontrol_new *)tas5825_snd_controls;
- 		size = ARRAY_SIZE(tas5825_snd_controls);
- 		break;
-@@ -2072,15 +2086,19 @@ static const struct acpi_device_id tasdevice_acpi_match[] = {
- 	{ "TXNW2120", TAS2120 },
- 	{ "TXNW2320", TAS2320 },
- 	{ "TXNW2563", TAS2563 },
-+	{ "TXNW2568", TAS2568 },
- 	{ "TXNW2570", TAS2570 },
- 	{ "TXNW2572", TAS2572 },
- 	{ "TXNW2781", TAS2781 },
- 	{ "TXNW5802", TAS5802 },
-+	{ "TXNW806M", TAS5806M },
-+	{ "TXNW806D", TAS5806MD },
- 	{ "TXNW5815", TAS5815 },
- 	{ "TXNW5822", TAS5822 },
- 	{ "TXNW5825", TAS5825 },
- 	{ "TXNW5827", TAS5827 },
- 	{ "TXNW5828", TAS5828 },
-+	{ "TXNW5830", TAS5830 },
- 	{},
- };
++      ti,tas2568: 5.3-W Digital Input Smart Amp with I/V Sense and Integrated
++      10.75-V Class-H Boost
++
+       ti,tas2570: 5.8-W Digital Input smart amp with I/V sense and integrated
+       11-V Class-H Boost
  
+@@ -72,6 +78,14 @@ properties:
+       Audio Amplifier with 96-Khz Extended Processing and Low Idle Power
+       Dissipation.
+ 
++      ti,tas5806m: 23-W, Inductor-Less, Digital Input, Stereo, Closed-Loop
++      Class-D Audio Amplifier with Enhanced Processing and Low Power
++      Dissipation.
++
++      ti,tas5806md: 23-W, Inductor-Less, Digital Input, Stereo, Closed-Loop
++      Class-D Audio Amplifier with Enhanced Processing and DirectPath(TM)
++      HP Driver
++
+       ti,tas5815: 30-W, Digital Input, Stereo, Closed-loop Class-D Audio
+       Amplifier with 96 kHz Enhanced Processing
+ 
+@@ -86,6 +100,9 @@ properties:
+ 
+       ti,tas5828: 50-W Stereo, Digital Input, High Efficiency Closed-Loop
+       Class-D Amplifier with Hybrid-Pro Algorithm
++
++      ti,tas5830: 65-W Stereo, Digital Input, High Efficiency Closed-Loop
++      Class-D Amplifier with Class-H Algorithm
+     oneOf:
+       - items:
+           - enum:
+@@ -94,14 +111,18 @@ properties:
+               - ti,tas2120
+               - ti,tas2320
+               - ti,tas2563
++              - ti,tas2568
+               - ti,tas2570
+               - ti,tas2572
+               - ti,tas5802
++              - ti,tas5806m
++              - ti,tas5806md
+               - ti,tas5815
+               - ti,tas5822
+               - ti,tas5825
+               - ti,tas5827
+               - ti,tas5828
++              - ti,tas5830
+           - const: ti,tas2781
+       - enum:
+           - ti,tas2781
+@@ -137,6 +158,7 @@ allOf:
+               - ti,tas2118
+               - ti,tas2120
+               - ti,tas2320
++              - ti,tas2568
+     then:
+       properties:
+         reg:
+@@ -217,6 +239,8 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - ti,tas5806m
++              - ti,tas5806md
+               - ti,tas5822
+     then:
+       properties:
+@@ -233,6 +257,7 @@ allOf:
+             enum:
+               - ti,tas5827
+               - ti,tas5828
++              - ti,tas5830
+     then:
+       properties:
+         reg:
 -- 
 2.25.1
 
