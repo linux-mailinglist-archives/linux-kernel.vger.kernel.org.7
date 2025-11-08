@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-891512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 583D5C42D26
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:08:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD5CC42D35
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 14:12:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 91F253493ED
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D323ACFE4
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 13:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DF5199E94;
-	Sat,  8 Nov 2025 13:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE351A4F3C;
+	Sat,  8 Nov 2025 13:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cf6BGuuW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TpGI1R2q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30DA19005E
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 13:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9D51891AB
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 13:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762607291; cv=none; b=Ss6iyXOpLzmnI+j8nfWZcvm6QciMYIxBYGbEv2c09LJkLm8mcT5yR1qOY8lNEedi72mfqjZo+0VEGqA02OXCOLh3JN3DXDrIr/cgcxIUrio+s2nUKadIvlTPwPtRjloxzqQd4vXSJ5MlD6ZdOElVTZ0LotOWmk/iP5TcjhP/jJ4=
+	t=1762607544; cv=none; b=Frfk8TwB0X1OwZfQgUFl7aU+E6rw16TX66OSoIR4PeQu4NYFuxDCPEwvnJ1T3Dso0uzSj5ap7LzRMqHqd3Om1hnpNGilqRw8mdqfgA7ZnDKVe+MsBGn8/cNkWMU5/BfnGzgKfDggOYfT3S8xrsIKR4YUcgQRmIh/WFRu8XXWfwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762607291; c=relaxed/simple;
-	bh=OQni4Y657hkwe/ivscLuJNRMjj9kfBkHaqK7Whu40Zs=;
+	s=arc-20240116; t=1762607544; c=relaxed/simple;
+	bh=PXJiQY4ILAQ5DLy4e0aKa19QrLr+vIBtDAgOMtJG6Wk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rl2hhrQwtU7XP0GhPTu+YOR0BhgOMj1JR5kO8sXR5hlGXBMadkyWfh8k7e6aTHyrFTHvsy4X51SW10Cjdgehvioyth5Lxnsd7k8Cx26GwwBQUjRDbKCMWFiAuHFL9h+asQo5CzX14Sg+k1RotHYf4JpMAbRO/qjGnBKwuWtGtxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cf6BGuuW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03824C116C6;
-	Sat,  8 Nov 2025 13:08:07 +0000 (UTC)
+	 Content-Disposition; b=nOCSe0uhWaNtyp89oB0M2z5nMr7XBLWElt8+SIVXlfFBWhHKpUT/zB6ork16OV++kRZHrzqBVIuTasL3Ihp6pK55rrOFIhpQKCD0cYuhI+pO9lz7jmQBmGFOoEw2qnbgIYm49EoR6cjMz7nvv+J21i7gcm5CTMTIqWZMjwR8Bjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TpGI1R2q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE35CC116C6;
+	Sat,  8 Nov 2025 13:12:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762607290;
-	bh=OQni4Y657hkwe/ivscLuJNRMjj9kfBkHaqK7Whu40Zs=;
+	s=k20201202; t=1762607544;
+	bh=PXJiQY4ILAQ5DLy4e0aKa19QrLr+vIBtDAgOMtJG6Wk=;
 	h=Date:From:To:Cc:Subject:From;
-	b=Cf6BGuuWpZVM7Sr/7oRDoJAo5AcYgUBA6G53T4/U5okkpy1mgd7LEu3rtOTyzJmsg
-	 ohnxdjHuT3ssp3YG8vRGLC6RxwqdVJxKsTeUdqPDcDRBxM839HT9R7LZBdIR7nzou3
-	 C3U+qJZpkTZF/3YeKkbyU7SGyz5eyrh4OF4EUEzrIj8VJlIZcYIB2ha6YqNbTmGq5n
-	 Eyrx8E752ktJA+33QSBZZ9cprQrdlgnBGNzdZbN4Vnf3pVzWkowV5cWn7vRhFr4yZg
-	 9CaxORydrFefvAPG+3w9Rlksh768EQhPTTPoBKqbCEgfH+VACx7ueHHVsLN4bAS4W5
-	 zZ1XpuJ/+tk8g==
-Date: Sat, 8 Nov 2025 14:07:58 +0100
+	b=TpGI1R2qeiH5rzzNGRp/ga0OQkyG6VsdtfuLJYeBGoVB6Sutt6iICFyZ7F+ntHMqj
+	 glUYRIbRRGU3x0c0pZiBFmbcSs5WJZtMbfA23TmW4wLzm/uUAQoYCEIYFRaVUPGgtM
+	 JQPTFEcRtUGfg5uI/Orkgpx0XmgOTPPUpa+yt4h9RD/UqnZfrfkF9lqWAZA61ySAXI
+	 e1WfzaOJE5b+/HT1mubxAP678X0VVHuhuuj8DhsdjxPx2CINr3eiuldP7GZ321m8cb
+	 jvEKUrEXUQexIVlCy4r7V6dZciB93Zr6dbroCXb89u6qEcUCvzHX6kzXHq7o30DqbN
+	 HHs6J8q24OPWg==
+Date: Sat, 8 Nov 2025 14:12:17 +0100
 From: Ingo Molnar <mingo@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>
-Subject: [GIT PULL] perf events fix
-Message-ID: <aQ9ArnO-84XJlCVB@gmail.com>
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [GIT PULL] scheduler fix
+Message-ID: <aQ9BsTHEl9jdRtUm@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,93 +66,69 @@ Content-Disposition: inline
 
 Linus,
 
-Please pull the latest perf/urgent Git tree from:
+Please pull the latest sched/urgent Git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-2025-11-08
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-2025-11-08
 
-   # HEAD: eb3182ef0405ff2f6668fd3e5ff9883f60ce8801 perf/core: Fix system hang caused by cpu-clock usage
+   # HEAD: 956dfda6a70885f18c0f8236a461aa2bc4f556ad sched/fair: Prevent cfs_rq from being unthrottled with zero runtime_remaining
 
-Fix a system hang caused by cpu-clock events.
+Fix a group-throttling bug in the fair scheduler.
 
  Thanks,
 
 	Ingo
 
 ------------------>
-Dapeng Mi (1):
-      perf/core: Fix system hang caused by cpu-clock usage
+Aaron Lu (1):
+      sched/fair: Prevent cfs_rq from being unthrottled with zero runtime_remaining
 
 
- kernel/events/core.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ kernel/sched/core.c |  2 +-
+ kernel/sched/fair.c | 15 ++++++---------
+ 2 files changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 177e57c1a362..1fd347da9026 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -11773,7 +11773,8 @@ static enum hrtimer_restart perf_swevent_hrtimer(struct hrtimer *hrtimer)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index f1ebf67b48e2..f754a60de848 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -9606,7 +9606,7 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
  
- 	event = container_of(hrtimer, struct perf_event, hw.hrtimer);
+ 		guard(rq_lock_irq)(rq);
+ 		cfs_rq->runtime_enabled = runtime_enabled;
+-		cfs_rq->runtime_remaining = 0;
++		cfs_rq->runtime_remaining = 1;
  
--	if (event->state != PERF_EVENT_STATE_ACTIVE)
-+	if (event->state != PERF_EVENT_STATE_ACTIVE ||
-+	    event->hw.state & PERF_HES_STOPPED)
- 		return HRTIMER_NORESTART;
- 
- 	event->pmu->read(event);
-@@ -11819,15 +11820,20 @@ static void perf_swevent_cancel_hrtimer(struct perf_event *event)
- 	struct hw_perf_event *hwc = &event->hw;
+ 		if (cfs_rq->throttled)
+ 			unthrottle_cfs_rq(cfs_rq);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 25970dbbb279..5b752324270b 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6024,20 +6024,17 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	struct sched_entity *se = cfs_rq->tg->se[cpu_of(rq)];
  
  	/*
--	 * The throttle can be triggered in the hrtimer handler.
--	 * The HRTIMER_NORESTART should be used to stop the timer,
--	 * rather than hrtimer_cancel(). See perf_swevent_hrtimer()
-+	 * Careful: this function can be triggered in the hrtimer handler,
-+	 * for cpu-clock events, so hrtimer_cancel() would cause a
-+	 * deadlock.
-+	 *
-+	 * So use hrtimer_try_to_cancel() to try to stop the hrtimer,
-+	 * and the cpu-clock handler also sets the PERF_HES_STOPPED flag,
-+	 * which guarantees that perf_swevent_hrtimer() will stop the
-+	 * hrtimer once it sees the PERF_HES_STOPPED flag.
+-	 * It's possible we are called with !runtime_remaining due to things
+-	 * like user changed quota setting(see tg_set_cfs_bandwidth()) or async
+-	 * unthrottled us with a positive runtime_remaining but other still
+-	 * running entities consumed those runtime before we reached here.
++	 * It's possible we are called with runtime_remaining < 0 due to things
++	 * like async unthrottled us with a positive runtime_remaining but other
++	 * still running entities consumed those runtime before we reached here.
+ 	 *
+-	 * Anyway, we can't unthrottle this cfs_rq without any runtime remaining
+-	 * because any enqueue in tg_unthrottle_up() will immediately trigger a
+-	 * throttle, which is not supposed to happen on unthrottle path.
++	 * We can't unthrottle this cfs_rq without any runtime remaining because
++	 * any enqueue in tg_unthrottle_up() will immediately trigger a throttle,
++	 * which is not supposed to happen on unthrottle path.
  	 */
- 	if (is_sampling_event(event) && (hwc->interrupts != MAX_INTERRUPTS)) {
- 		ktime_t remaining = hrtimer_get_remaining(&hwc->hrtimer);
- 		local64_set(&hwc->period_left, ktime_to_ns(remaining));
+ 	if (cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0)
+ 		return;
  
--		hrtimer_cancel(&hwc->hrtimer);
-+		hrtimer_try_to_cancel(&hwc->hrtimer);
- 	}
- }
+-	se = cfs_rq->tg->se[cpu_of(rq)];
+-
+ 	cfs_rq->throttled = 0;
  
-@@ -11871,12 +11877,14 @@ static void cpu_clock_event_update(struct perf_event *event)
- 
- static void cpu_clock_event_start(struct perf_event *event, int flags)
- {
-+	event->hw.state = 0;
- 	local64_set(&event->hw.prev_count, local_clock());
- 	perf_swevent_start_hrtimer(event);
- }
- 
- static void cpu_clock_event_stop(struct perf_event *event, int flags)
- {
-+	event->hw.state = PERF_HES_STOPPED;
- 	perf_swevent_cancel_hrtimer(event);
- 	if (flags & PERF_EF_UPDATE)
- 		cpu_clock_event_update(event);
-@@ -11950,12 +11958,14 @@ static void task_clock_event_update(struct perf_event *event, u64 now)
- 
- static void task_clock_event_start(struct perf_event *event, int flags)
- {
-+	event->hw.state = 0;
- 	local64_set(&event->hw.prev_count, event->ctx->time);
- 	perf_swevent_start_hrtimer(event);
- }
- 
- static void task_clock_event_stop(struct perf_event *event, int flags)
- {
-+	event->hw.state = PERF_HES_STOPPED;
- 	perf_swevent_cancel_hrtimer(event);
- 	if (flags & PERF_EF_UPDATE)
- 		task_clock_event_update(event, event->ctx->time);
+ 	update_rq_clock(rq);
 
