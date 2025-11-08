@@ -1,229 +1,139 @@
-Return-Path: <linux-kernel+bounces-891638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 995C8C4321D
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 18:40:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806DBC4322F
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 18:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BD38234921F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 17:40:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAED3B09DC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 17:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C061D26738D;
-	Sat,  8 Nov 2025 17:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EC226D4F9;
+	Sat,  8 Nov 2025 17:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YUzThxpN"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010043.outbound.protection.outlook.com [40.93.198.43])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="kKYpcsWT"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7049CB67A
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 17:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762623605; cv=fail; b=RtuX09ydF6tReGcZ3h2fZfa20rzOlpNQ+QcXm6mqzidCB+Zbe6i7Xn4Hhojw2zELkZAP+OIELgc3nXboQqfAzGH3VU/EFFJseve/kkCnpthTnRfmv1xwBY/6Qfwon1jNhbFOh5kXAShkN9F7BgjmtO4JLDZTq5i+AGunX+AKAj0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762623605; c=relaxed/simple;
-	bh=Dsky/xp9Kqx+Xxly/Ys5i9Oll/e5qwCIyLyg9sfyV64=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QGQHN6WWqrTpV0wEtUKtgMk7Hw7gF33e/pwhwWbGdwLIZyyKN2gQPVVtVvZULU1QRbzZ9WOrSNpCT+OM67B/pStnPcCdtvz+Lmgj3gCi2D7fm9euZIuWiEMsEirlqeH0JqnCEJOi95b0hiaQONczn2fhDayjJNubFOCYPPZFsEs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YUzThxpN; arc=fail smtp.client-ip=40.93.198.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LnK+YoSF+AqfHJp6iqX/1AvswPqZxuzUvPYYhJbtY/zzOlcz+a5M6WF4hIdLOyPBIMMA+bWx1xBcLYeDxhIw6Ea0BQdbfwGN4cxbLR1KeJv1FF9UAOIaiEaBFJJCkZnGBUe0KDBJRG1BkzMuXTt6jac35m0JcU40cI5t46/D4o2v+fDX4b35SZMykR2hHV7uTrm/ajJyUa/7lnrbQ8fYOKXhXcKCecQt1LFIsH5Dpj31KZ028XESm0giuBUHAxZ7ZXZOBxWp0C3qLfOPYyoIi8HLxCap5hGLFWfpy35gMwcv8UNmYxJoIQYPVE0usEexOIhiXWxwfg9ZRfsklUhR7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tbhSgv3bO6CxQJuBP1YX5PtxGEpQJ1FG9tEmET+iFUs=;
- b=gvjuhoj/rVqMb9qIUrjnHTonTCY6ylM6X85reTsNNQ+GjvYC0qdy0w+COfBqPZBZuI9ICj1Iao0ZTjHbjjGu0sduakfZAfRUzck96gcgt0lbGZjMkE43amsW6Msau3zkF95sn5Fo52KwlI6fRt1Yjd4lBFR0Qhqo3YyLCJnF51v6Ys9qq6ruaNWNQncxH5cSJ3CXFXHIatnNDkmdflSbe2PkuF7e98tVGd+l/Y27nwZGTSmRWc4AHVYqjEg3x1PVLBMDgenPH1T3wWBW2UD8jxaTnxX/ugjnj4urch3wzFmvQTk+HjjtX/3eXtXXykOGEcUq1GqAnhg5pMNffspPUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tbhSgv3bO6CxQJuBP1YX5PtxGEpQJ1FG9tEmET+iFUs=;
- b=YUzThxpNZ6IjPfKp6ZjWv/Q76m6svDURT1hSaqi+KgY8erV0gc5HfMpSY3JlJpUeq+xqIgoPkBwbGzonckUunioQelImlEErsrxM5iDgCFU2CysZbG/Edb8h509a1M8MG6mkI9tKbg4Bg3DJo4Y9idIZ9qhPiHKCvxx0v3kKqLM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- DM4PR12MB8475.namprd12.prod.outlook.com (2603:10b6:8:190::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.15; Sat, 8 Nov 2025 17:40:01 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%7]) with mapi id 15.20.9298.012; Sat, 8 Nov 2025
- 17:40:01 +0000
-Message-ID: <99cb0f7a-0d21-4071-844d-893b230b7038@amd.com>
-Date: Sat, 8 Nov 2025 23:09:51 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/16] iommu/amd: Always enable GCR3TRPMode when
- supported.
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, jgg@nvidia.com,
- nicolinc@nvidia.com
-Cc: linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
- joro@8bytes.org, kevin.tian@intel.com, jsnitsel@redhat.com,
- iommu@lists.linux.dev, santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
- jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
- wnliu@google.com, gptran@google.com, kpsingh@google.com,
- joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
-References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
- <20251021014324.5837-10-suravee.suthikulpanit@amd.com>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <20251021014324.5837-10-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BMXP287CA0018.INDP287.PROD.OUTLOOK.COM
- (2603:1096:b00:2c::34) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840541448E0;
+	Sat,  8 Nov 2025 17:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762623786; cv=none; b=m4Zm41ZE7TWE2jeN4YBYgIQP1vjGn7zFjbIxknDaZcNjW8J5nPWpkWaGoHSm+HVm79M/+4ky/CuWgvNesfOGLJNL6TFGYMjiJNpQnW/rxmIaeSD/HvZdmm1weIIZ0RanYwO9/CAErNL0PJIL30xp/1QYkD801P+j7w/6zzQMUn8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762623786; c=relaxed/simple;
+	bh=hb7zQpliD7lIQ+rQmjC/FHvYdoMnJ1jrTB6R9cIuky4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YRxOV7sYGGv1VutCi6Ztl2q3W++vzK+YBEnJPw66xfpvPPfl423TPRUJDgbjxGhheTqpWiXY+LdlFyRAk6xAdAnlVPciISrYHu8vwvgYGdfY0ICCrYfwYk1Jw3elFTOmXSfDYt5eAatZux+EKbD896d8Xqq+qTqAnpjij7wvvq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=kKYpcsWT; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A8CMdLQ3114133;
+	Sat, 8 Nov 2025 12:42:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=48NWMNTjw/btD9iGtRYjnI8SD9a
+	wxYVduSmKN5jIfRQ=; b=kKYpcsWT9bj6VjSCAWpTxFVu3yRoH8MrrfdsEYp57ij
+	E8oGkF7YFiRaFJt6M2QWEuaI11eVNX9ZleinF2VGwUNA3Z2L88W5Z44khTL6W22G
+	PcP/Na3NAvfxr9q03wTeT9vPsMNJQQomWcxjytpByPWEut7CdoMIJvFpJueA2e21
+	lXYde0iEfgGuqG4TLTqvxEJk8QLCuuWEq/yTl2PwbhwIzXo3JoRKlwA03W4a3noj
+	PEXRGKz3hJvPJrNbGZ+5BDbJtFuagUpZBZXC8brBMspoRfXCmNoiys49T/J8lLb4
+	kCdqYeBSpvePpnXNB1aAVfhAqSF8H2VwpWpZn9563tQ==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 4a9xtx29k3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 08 Nov 2025 12:42:48 -0500 (EST)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 5A8Hgl6x010175
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 8 Nov 2025 12:42:47 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Sat, 8 Nov
+ 2025 12:42:47 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Sat, 8 Nov 2025 12:42:47 -0500
+Received: from Ubuntu.ad.analog.com ([10.32.15.145])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 5A8HgarD028532;
+	Sat, 8 Nov 2025 12:42:38 -0500
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski
+	<brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH v2 0/2] gpio: Add support for ADG1712 quad SPST switch
+Date: Sat, 8 Nov 2025 17:40:27 +0000
+Message-ID: <20251108174055.3665-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|DM4PR12MB8475:EE_
-X-MS-Office365-Filtering-Correlation-Id: 504aff47-d633-4792-6de5-08de1eedd7a1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U1grT3pJKzZwQlg3azE0MmVYWkVNY1NmYmZFZGtwTFcvajAxNlNoZFhrbUh1?=
- =?utf-8?B?TVNNTjlvNVlTSmE0ZkVWd2RrQ1J2b3U3Q1ZBY3BVeU1jTFQyNWJrRVZyb2lw?=
- =?utf-8?B?blh2b2JrY0Z4TmNKSEt4YXI4K2FTbnllM1ZkdzhvUnNZdXlneVVsN1FTek1r?=
- =?utf-8?B?RnB1SFFtZXRRZWY0UGRvVGNhN0xXRDQwN21PcVJ3bzhQZkxYVjdsQ1lPL2dQ?=
- =?utf-8?B?dlpEUFhFK1J6Y2UxUjNyNTNuRHROMW1rem91VVR2aW1sNjhKVFZzUitqMFU5?=
- =?utf-8?B?SjQzb0pLYUIxVFp0bTZhTDVmeHpCNFVieE94NEtZWFBtYnJHc0xUdko5RkRR?=
- =?utf-8?B?djlTR2VrbWlpT21rcmN0aStUQTVtRU9HbmEybjI0MERibE01SkJVL3Q5elRM?=
- =?utf-8?B?TEFPTzNDRG8vQktlb1czUCs0cWphUzY4OEJJV1RsZHhGbzh2dlY4Q2VCamNF?=
- =?utf-8?B?SkhjU0ZSekZUcUVTeC9yNEV6QTJJeDU5MUR3NldoRTIrU0NIbVkyWWJHZW9x?=
- =?utf-8?B?eVkrM29hT0tyRE1HZVRCc3UzSUtuN3NlWEI5MWp5K1ZXM3BXMUpEcElmbDI4?=
- =?utf-8?B?dkNzNFhia3RxZm4xMWc2SG0zdjlMd010VU5TVkdBUGxtMTQvQ1dmeElybGNX?=
- =?utf-8?B?VkpDK1hPQWxGbWhDUmN5VFphaDYrSGdKd3cwdHdjOVRmdUFMaS81T3VLNVQ5?=
- =?utf-8?B?V3JjYkNRcnhsQ21sNHVhRUlIenZnSElJTENLemNmQ1J2c2dpSGx2bFMvRm5Z?=
- =?utf-8?B?aERsY3ZrbWZnRm0yUFNXQzNvUFZtd2NLdFZRVllZYmJma1VtZi9GRzd2Mm1N?=
- =?utf-8?B?L2dlSW0vTUd0eUdaeGxHckZLS2xCNVFWaUs4S2dmZXR4aE9kcUd0b1pBUUI0?=
- =?utf-8?B?NkVXdnk4S2RadkxodC9DSzRDV2Z3N1VFa3lNYTZxbXVKVHM4a1hVQVQxRmpz?=
- =?utf-8?B?cUhoSllhWG5VczViVGNEZzg4eHpEczV2b2tpcFBFMmYxZ2dGZ0FNTDY2Tldy?=
- =?utf-8?B?NnkyQ1Z1U1hPVXYwcldLK3FsK2JkMGFhMlRwT3ZiM2tlRHBqaEFzRllCNUs4?=
- =?utf-8?B?VWNaOVVHbW9hcGZZTDE3cDFzb0FFM1o0ZVZURmNZbCsyaGR1UmVGbzJSWlpw?=
- =?utf-8?B?MWNMV1pFZStkcEhoQS9MVWZtekd4ejVhbDJ3RTU5KzNoTmlUcmlGYUFLWldN?=
- =?utf-8?B?Y2tHOFluZzhRcjNyYlJpNVlaRzBPMjlSK29zOUgrd2xkbDdEbzRUbXFmZ1Q3?=
- =?utf-8?B?ZHROM2c3Ujk5RVNIQVJQZVpTUSs5V3VpZ0t1ZzZqMmdUOUhpRGJFN1M0cnZS?=
- =?utf-8?B?L2ZVTFpNRjZ3VitlTk41Q2dqWVdpaVFmYmVQOExPNGRTZTByU3U3VWtYNnov?=
- =?utf-8?B?YzR4QXVkK1FpQU54R3k0VXFXcVppUmMxc1JMUWVuMmlmcHE5ZFdqV0Rza2hr?=
- =?utf-8?B?L3RoWWJRblJmcDFlSzdYd3JvSlZQR1o3ZzhsdVpzZHFhMlZ6cVlMdk41WEpw?=
- =?utf-8?B?dEljVmN1NER0YTltdlEzbTQvYytYUmFFUXJhZGhsdFB4ZWhDbE5oeGZDMjBD?=
- =?utf-8?B?S2xJYkwvRjMxTUZxRmRkbm5JeDc1VktDeHd5WGl2QVpOU25Qcjd6d3RySi9Z?=
- =?utf-8?B?b1IrcEVZdFNFQ1FLVFhQMlFQRUg0Y0ZMWmpDTC9XeEE0a1gyb2l2aGNYSDNt?=
- =?utf-8?B?VHNzcjNEQnpqbFlXU2kzRXJMV0dOa2QyTDZWRVQxemZJSHJGOG1ZamVOMW9V?=
- =?utf-8?B?aWVGMGVJdGNZRTBvVHdRVklNREtZOFlMTWx3VEpkV09ybHpuNmYxd2t5bjVZ?=
- =?utf-8?B?RWRXUmwxR2tlMzZ2dXNLcGtueFpKd3VqSTBxNXg2R2lFWFJ1UE5zZUJtU012?=
- =?utf-8?B?d3REczdHNUQvZjhHS09uYVhQS1NycFB6ekJkajhJb0NCREE5bTQwZlZOUDZO?=
- =?utf-8?Q?SRBQf6SgAwq9KkgYym0b2Fn5k/s53YrV?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QlhhMS9aMnZUNllrWEVWQWRjdSsrQk43Rk5NZE9WM20xekhJSjRscWJIU0ZZ?=
- =?utf-8?B?a3QwcTFsS2NjSkQ3bGNqZS9PNVNLTlBTdFBaOWRLUW5ocW1QNFRMLytpZFZi?=
- =?utf-8?B?UENuQi9JNlFJRnVNaHZiUzhUOWlqY3hqdEZwYzVFTVI2eGNGNXZGSEN5a2RS?=
- =?utf-8?B?L2pCUFYxa0VmYS9pYTVOWnJGZ3BvUVZ2VnZaN3MzTDFEZ0kyU1RJUkczNzZO?=
- =?utf-8?B?NEt4S2pvVDdPaktzNlk0Y0tUUEN6b1BSd2d6eXZVVURQL29ZcmlCSTBVZzEz?=
- =?utf-8?B?THdBb3ZGWHZtdWpOU3FwTGkvcXVzWnVsT1FwOEw2bjNDdWVrV0dISTVUV29Y?=
- =?utf-8?B?ZFFkTmZpSU4yTVlqUy9XdDBPeWV5c1RLS2tNdVhqSlJsb3pnRWQ5MkdacUlt?=
- =?utf-8?B?MCsrZldLLzZQM251ald5eklobWlvWThnYmdaZjdYRzlyMmFvLzVCcndrVXh0?=
- =?utf-8?B?T3lySE9pblpGVlZxVjA4VExaOUM3LzlFSTd2YXdlUDBBZ08vUyt0YXN4NzA3?=
- =?utf-8?B?UG8rY3NUbm1HenA0Y3pDZkFYWnIyV1hwWTZ2bklpMzBHM3ZSLzNNNGx5cVMr?=
- =?utf-8?B?UWJpbnU3U2ozTDdvamI0NFpxZEh3L25sb3A2S2orckN4WTdCbzYxaFc1dFpZ?=
- =?utf-8?B?RS83bmtrRGJsNytqNXQ0NGUvTXQwOUF0VUJwaVd5SWhhb0hMSHIvL1pjbDZC?=
- =?utf-8?B?Y2t6bXYwdGFQcTB3OFV1alFaVnovWjhmbEFMVHF3VDhFei9ESmRwd2NRajlu?=
- =?utf-8?B?UXltZDdMdzZkUHBOeTc4ZUZVUDJvbndGU3RyQjlFN1pQQU50aGY0N3dNZWFT?=
- =?utf-8?B?dGUzM1hvSStqVE9ZYklBd0J1aUtDWUxXTm1aTHhTNHpUYWRQRE1MVkpUd3VT?=
- =?utf-8?B?LzFxVmZWL1F1aWl1dDNranptcFlYVGMzNjZiQzJySG85QVh6Mk5HSmVURS9h?=
- =?utf-8?B?Y1B0M2oxN1VSSlVwdGFodE9rcjBuQ3BGbldDVDlxTUJNbEI1SzlleW50TDN3?=
- =?utf-8?B?bFhneFpGalB6VXNHbXBlbm11WUtzSUlrVENndzZSQ3ZEVTNkZUVneXNUNjJk?=
- =?utf-8?B?Q25KSGVheVZlckJuU1lhaWNIYlZ0b3plS2xrOUpRaVdxOFJxK01sWDNGRzhi?=
- =?utf-8?B?L1VUaEtkL0Q5emV3Rk9RWE1pSGFPdjBZdTFsamsxanY1QUg1SFZLT3Z5bTZq?=
- =?utf-8?B?ZGZZS002T3oxem4rNjNZOC9oRUh3SHhGUGZyamhqVXNKMmZ6dFozQmNtczlY?=
- =?utf-8?B?RkVQbmVERGFTNVl1bDBUUnFEVDFSYk5wZVRuR2N0MWJRSi9vY2VlMGQxWjZq?=
- =?utf-8?B?RWIwOGFCY2t2bTZhWlV2aGN5WW9PWHBrWEgvaUN4YWQ2YUVsZ0MvMmQ2S21F?=
- =?utf-8?B?N2krSWt4eTY5YWlzRWlQbS9MUHVESjlEWS9salUzczNBaFJuK09GdzlXTG5p?=
- =?utf-8?B?MllJL05tYzNnbm5tczRENTc0YlQ5VGxvSGFlWGhyK0dEVDlDV2tCdFBzbTFE?=
- =?utf-8?B?dWR6SkZPOUxyN05Vb2F3VUpYTG9zODFPM0twNUFrODAyMmxETzR2NXpJWlN6?=
- =?utf-8?B?SHU5REoxbXVtcG5vSVJ5VDY2UUhhb2xnNUVpUnJqak43Q1ZXdllVWVVEMXgr?=
- =?utf-8?B?UnR5RlBYM2ZrMUZjbk9oOE1aM0tNNHNaY0dyRFcvZXRqbDZETENpVFlUakhR?=
- =?utf-8?B?QnA2Z2hveXZFUkVPVmNrNjR1UXNBMXlneEtNL1B2bDFXYjU5Um1COUF3QmNC?=
- =?utf-8?B?YWY3S2h2VzNRRUVBTGVDejRoL2NaR2VjK2JLUmxyanIyeEpaZC9VdXNiZWNW?=
- =?utf-8?B?UWsvaC9VYW0zczhXSythclg1RGhKa2lJci9vWTJDekhzRmwxZTV3OG5UcmxK?=
- =?utf-8?B?MjUrRCs4ejVsRXNiWEpyc3ZuaG5YMHk3WTZUYlVna2gxV2NQd2o5Rll0RWly?=
- =?utf-8?B?ZUYxR0ZrSTNBS2s2ZGdkQktucVhkUXZpR0lVNjBlbXdrY0ZiRXFKVFlqUHBE?=
- =?utf-8?B?cDdWVDZoTFVsYVVRbzR0Y3BGNlpaVGtaZ2tiaSs0QmJHQzRIclFyZUl4bG5q?=
- =?utf-8?B?SklFeTkxWjRGcUhkd1lla2VEWXUvTnI1UGdCbk5WVUlPVCs1MHM1MmJoL1Q4?=
- =?utf-8?Q?e8Lonc0aKgyDM/b6OG2O8Vqo2?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 504aff47-d633-4792-6de5-08de1eedd7a1
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 17:40:01.0676
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +7dcA6Zxz5fhlNbdJB4gpSBkpWgssUH2/8DnwdzmMXSSNoETO+2/9ZWSnsyUnpZLiwdMH7cWhb3wyuKwzRQktg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8475
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: _R43hDgVr2M0I3M7zUwhtxJyLRuI7KlW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDE0MiBTYWx0ZWRfX7ByLCZTZX3gM
+ U+7tEO1jU7YNaT/b4Xc1NyFsWy2cbxd7+jOUva0nndSfvxQeLow8J36m5Z6P+rcnweVNfdPvDWa
+ gB6HxBJFMz3t6bhiOZhNR5cqsZJoGwDcTwSszI50eBOx85rCT49PIp2cILDT2rDpjM0yV6ZlGZX
+ 1mTcQXbENgIyZrjAkVc3Fc9muwIla3X8696B8WDmn/oZCryDL2/jWM7D89M+jx3toF0SQ/TFcfV
+ 9M2n/ZrOv8k+ZgVOdZ2b55yNkJW2dWwlKXNrIugTXuiaDgHuppNS5xrEzEUWk8pZJQGaFg7hsVv
+ iqLSCnRfbCWI/15oZ/IFpQXzgfVaJkXs+vSjBeZlfopHCX4QLHHqRuE1I13Kg7/uZ6binVw/y1G
+ u2jNrlsZqZT4HWx7zfrdX/UlHU6tTg==
+X-Authority-Analysis: v=2.4 cv=Ao/jHe9P c=1 sm=1 tr=0 ts=690f8118 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=p9Z7yoRph7NKER1LKQcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: _R43hDgVr2M0I3M7zUwhtxJyLRuI7KlW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-08_05,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 phishscore=0
+ lowpriorityscore=0 adultscore=0 bulkscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511080142
 
+This patch series adds support for the Analog Devices ADG1712 quad
+single-pole/single-throw (SPST) switch GPIO driver.
 
+The ADG1712 contains four independent SPST switches and operates with a
+low-voltage single supply range from +1.08V to +5.5V or a low-voltage
+dual supply range from ±1.08V to ±2.75V. Each switch is controlled by
+a dedicated GPIO input pin.
 
-On 10/21/2025 7:13 AM, Suravee Suthikulpanit wrote:
-> The GCR3TRPMode feature allows the DTE[GCR3TRP] field to be configured
-> with GPA (instead of SPA). This simplifies the implementation, and is
-> a pre-requisite for nested translation support.
-> 
-> Therefore, always enable this feature if available.
-> 
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-> ---
->  drivers/iommu/amd/amd_iommu_types.h | 1 +
->  drivers/iommu/amd/init.c            | 3 +++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
-> index 556f1df32d53..9226edd8af69 100644
-> --- a/drivers/iommu/amd/amd_iommu_types.h
-> +++ b/drivers/iommu/amd/amd_iommu_types.h
-> @@ -185,6 +185,7 @@
->  #define CONTROL_EPH_EN		45
->  #define CONTROL_XT_EN		50
->  #define CONTROL_INTCAPXT_EN	51
-> +#define CONTROL_GCR3TRPMODE	58
->  #define CONTROL_IRTCACHEDIS	59
->  #define CONTROL_SNPAVIC_EN	61
->  
-> diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
-> index f2991c11867c..c45a4bd89569 100644
-> --- a/drivers/iommu/amd/init.c
-> +++ b/drivers/iommu/amd/init.c
-> @@ -1122,6 +1122,9 @@ static void iommu_enable_gt(struct amd_iommu *iommu)
->  		return;
->  
->  	iommu_feature_enable(iommu, CONTROL_GT_EN);
-> +
-> +	if (check_feature2(FEATURE_GCR3TRPMODE))
-> +		iommu_feature_enable(iommu, CONTROL_GCR3TRPMODE);
+The driver provides a GPIO controller interface where each GPIO line
+controls one of the four independent analog switches on the ADG1712.
+This allows software to dynamically control signal routing through
+the analog switches.
 
-This works for now as iommu_snp_enable() enable is getting called later.
-But how about moving it to iommu_init_flags() ? Also we should probably add a
-comment here.
+Patch 1 adds the device tree bindings documentation.
+Patch 2 adds the GPIO driver implementation.
 
+Antoniu Miclaus (2):
+  dt-bindings: gpio: adg1712: add adg1712 support
+  gpio: adg1712: add driver support
 
-Not for this series, but may be we should rename FEATURE -> FEATURE2 so that its
-clear that these are coming from EFR2 register.
+ .../devicetree/bindings/gpio/adi,adg1712.yaml |  65 ++++++++++
+ drivers/gpio/Kconfig                          |   9 ++
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-adg1712.c                   | 119 ++++++++++++++++++
+ 4 files changed, 194 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/adi,adg1712.yaml
+ create mode 100644 drivers/gpio/gpio-adg1712.c
 
--Vasant
+-- 
+2.43.0
 
 
