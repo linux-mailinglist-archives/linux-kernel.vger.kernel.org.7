@@ -1,90 +1,86 @@
-Return-Path: <linux-kernel+bounces-891349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39AB9C427E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 06:53:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19593C427E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 06:55:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7F603B87EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 05:53:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C5D04E4D40
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 05:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D685B29A33E;
-	Sat,  8 Nov 2025 05:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-tao.eu header.i=@bit-tao.eu header.b="Ch/3sgGG"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4492D3220;
+	Sat,  8 Nov 2025 05:55:10 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBE525394A
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 05:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E7628851C
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 05:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762581211; cv=none; b=GgZma4jTGFViBlrwv3W3peWYATNr73Q6uJvQ9YubWsrODiW23mGZKd5c3xXZm2fcqN+dD85S1yHImQc8J3t3ckuv8WI55cyzi0K/3stVr57Y6LaXhoJKG5plNp+bIYR/YoFv9jzh1yWb1MFdnlqsREOKWfNAXemt30uitTQ4its=
+	t=1762581309; cv=none; b=YKFrNbUO+D3u8JKF98gASjqlCxNrDNTaOn8PnaZbtcVEqDroCbWRbyAuRt+zK7g1iIhudlJky5s3azw9T1bH/I1IUnZJeRk6MCut+JiP5JLJjHp9pDYC4B/3eU/3rS1AIOp1h0ua/C37fYGNWH/6bOlNnwwb8s2Io2Ky8f4vVjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762581211; c=relaxed/simple;
-	bh=aDflVe/FNizSBYwUXFj7nH2PRgug7tLKr2FWCaJzzLI=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=j7G1LafkFDfBjqVQwMPNZxxtYxc/QXEj/AuO/t00D6+o9YIJq1cBLhIacvwjCXUUoGPswJaZ3UoVwEB+uGs4SoVd/+tFAqR70wqJY1mmeXV97DdoF0aWf1DNFpFRRdxz6Z7sQR50RpWgg1iAOI32XWsREjjsrCo6iF5cpfgcDew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-tao.eu; spf=pass smtp.mailfrom=bit-tao.eu; dkim=pass (2048-bit key) header.d=bit-tao.eu header.i=@bit-tao.eu header.b=Ch/3sgGG; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-tao.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-tao.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-tao.eu;
-	s=ds202510; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
-	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
-	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FXNWsT0c3Tg4AZEIxVfhVzeLwktCjnlzcMmRF6/xNLw=; b=Ch/3sgGG/1FyQHOI1PtTacXuAq
-	wDgQxUXVaMzVlvbxbpviS1x/j5X5r83n7UWhI7zbCOAtyJtAhD7NN6+HTjvOHkqN+d6MZAVJGI0rX
-	13GteKvhMshjS/p6J5ukk1GedNt7GqbzNgmGzMnERhenZ/s/jwFS1lHxU+glUkK3B6tuGWQv3n6Mm
-	aOdmvyKPR0Tdr2jPrM4tTV783KJoDhU2Hi/QyknU7OU4uV9LLrA1qx890le5svPP6O3Yo8ufRILM7
-	7OolvhVi1eJg/pVDtcy4h8cB1icJAXT6dhUyepXYyOFQbVRgxj+xpjvc7Lh/0YzkRy3R6r9YEyNAy
-	PXGzgnXA==;
-Received: from smtp
-	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	id 1vHbt4-003HAO-8H
-	for linux-kernel@vger.kernel.org;
-	Sat, 08 Nov 2025 06:53:22 +0100
-Message-ID: <0c6337fc-21f2-431f-a55e-34cf5c010468@bit-tao.eu>
-Date: Sat, 8 Nov 2025 06:53:21 +0100
+	s=arc-20240116; t=1762581309; c=relaxed/simple;
+	bh=sAcJxeAGzbJ3YUbx3XcNgWbvMCTHnxdNS6YqewEGwgo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QKPFFNoizhzWqYAV4kmGt2Mh+NgUEWf1lpXPS1O5FBymNl3VwrXRPn+NeINvLK5ovWhUZEEeaFlf+i8IW+dtTkPVSaVYCOY/CEfQcPsQJy0zu+pfnQVNb9VLIqQE38xr3zYAHXMDWKsIqke2G6H2xshSBWai6Ann4/ZoJv+q/F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-93e8839f138so130686039f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 21:55:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762581304; x=1763186104;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ajbG+QUBroA7ub4kooOnfBGano7D1Eb6FduUZ+aJG2o=;
+        b=Klg2cBmjJtiVswn1ODFUYOtx3ZqhZr97R0nO3MBCsGMRkxri9zPQTt/Hclf/VW2R6Z
+         dkz/ww1jovDQLlW4ZMglM94OjDhC5PluM7PJr5hNYpCyiPx07H3n/PicmjyPju4UVepR
+         b29NRwwR2l+yH0XW2bnK5+UVfY5Ljp7hM9XJbuZDGR8Ekh1qDzq6Sk4f8vpypfDDPyud
+         5W7Wr5wh+X9OLZDMjC575QGXfBjJ3UDhyJahWEdEPbJB1ThgQhVMOThiN+ySoMgdut54
+         M+mi7n/gf89HMuiJZRVPwG5bzTb+KmzAc+YK0xsUcnnEnT7EcPtnt71VoQgn3bA3r9gY
+         rtGA==
+X-Gm-Message-State: AOJu0YyLWmRUkuCNpKV/9q4LaiFNjohxw0K414Hya7/jQTWzBnVUyFp+
+	46YBYQKTVhMwpYIOZ8p7c/fpPEZLF/lEctIdu1veXTEQOswNcyAY92gGRZjSPBdC8cw6zl0dypL
+	O8kveg5UvKEdSGoyxjsj3OpS6uzrY3DnAkMZx5UInnhfWGBC/xTK5oXXglX8=
+X-Google-Smtp-Source: AGHT+IErjeWcw4f1uPvf2VK+rGDADAuYlBq9x9auAh53DiBb+iP50IHDmXi3N3/ureeJ/0vfJtLEPVFbNsP/yDlbAyg0GaWMd4G7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <bishop@bit-tao.eu>
-Subject: Autist (Ja) (Was Fair Pay Philosophy, Unification in Bitstreams
- System, Low JItter)
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1946:b0:433:51eb:7f49 with SMTP id
+ e9e14a558f8ab-43367e38d24mr23598965ab.19.1762581304398; Fri, 07 Nov 2025
+ 21:55:04 -0800 (PST)
+Date: Fri, 07 Nov 2025 21:55:04 -0800
+In-Reply-To: <aQ7WfQOMTIDiPBin@rpthibeault-XPS-13-9305>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690edb38.a70a0220.22f260.0074.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] KASAN: slab-out-of-bounds Read in ext4_search_dir
+From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, rpthibeault@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Rust seems to be a rewrite of C for Ja. C in the first place, really was 
-Isa, as the Unix-engineers who named it, was promoting Isa with this.
+Hello,
 
-And it seems good. Isa is a version without the cross.
-Isa slots may be about this too. It really is the best.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Are you aware that if you rewrite Nerd (Torvalds people) for Ja, it will 
-be Autist, said a mental illness?
+Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+Tested-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
 
-With regards to C/Rust/Isa It does look similar doesn't it.
+Tested on:
 
-If you do not want to be treated as mentally ill you should not do this.
+commit:         e811c33b Merge tag 'drm-fixes-2025-11-08' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1388b812580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=486aa0235ebabcac
+dashboard link: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13dd3bcd980000
 
-Linus - "Everyone is crazy in here".
-
-He excempts monotheists here, Bit Bros, as is the monotheistic 
-perspective of the time.
-
-Light,
-Ywe Cærlyn
-Bishop,
-Bit Bros.
-https://bit-tao.eu/
+Note: testing is done by a robot and is best-effort only.
 
