@@ -1,102 +1,107 @@
-Return-Path: <linux-kernel+bounces-891419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4874FC429F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:06:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 727DCC429FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 10:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ABAFA346A79
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:06:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3CD874E3134
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 09:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB174265CCD;
-	Sat,  8 Nov 2025 09:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD012DF3D1;
+	Sat,  8 Nov 2025 09:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOuRN77A"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="vYnMheWx"
+Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72A1288C22
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Nov 2025 09:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C201D61B7;
+	Sat,  8 Nov 2025 09:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762592794; cv=none; b=iQRHlyBSd4SpBnD2loj+0cxkUQgmJ1fsr64b91YGOsQxjXPw6CdcNGyLlkJm8gBlT8f20W+6VKcynE1dZTur/yzJAAmVB7EkSd55Lu7JdZfwTz3AgwKa3yQk4f5uKpr+zSxRaC0Rw1HgQX3KVDoGl97qDCNXl6ovomuk5HW0mWQ=
+	t=1762592868; cv=none; b=q2jR29DsfL+a9jSKCrWAVKCFTVXfieEuFQvJs2m8mcbA6nF9R7kbqmhEf+vgxH6MqSwZ30P5d88HvNW6dHhtgw/EQI51N5SCAn0oUVAFqJ+50dsprS7Pnw8Mh/h/0kRa5KSaa468kzwM2NJofvVH2OQAXBp15HN1oeHxqlSaxWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762592794; c=relaxed/simple;
-	bh=5e8JsJPkRnjnvxJLk5/07pwvaKu5ka9GvEOU3uc20xI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z5MlJCgMrkOHUnP0AqYBvUEX5Cx/M3kvica2dyydceXRU9pYuOxHGKZezx2vhVFn+dvRpT4H4YqhXtBp8Dg9pbb5rNyDEvTi8VV3CotooBzGmnscWbM00NUhdg5uVZ0VtJZOY8rEUiuJRGxU5QjjCSgQZvNNNc0IZV8ChHN/9zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOuRN77A; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-4336f492d75so1212775ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 01:06:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762592791; x=1763197591; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5e8JsJPkRnjnvxJLk5/07pwvaKu5ka9GvEOU3uc20xI=;
-        b=MOuRN77ALP3vkpIGiEI8BYOkA8e116P3xzbmphGYAclPMscZkAAs8bml2zETj+yQWA
-         +qZs6CEStvuRQWZWFdin13ve4jUoGN4jqILmtqyZN9sH6+BcdlFAefwoQCCDoIRM20II
-         EXVAYEH6lg3RWAxA0Ip4F6O2RtgJFz2OzZqnH4as7QrM7aTFYI5y29nFzECWj6W1Pzkf
-         u41qXXVZe318kqhMOKZGs4DVZOUEbdmcP2wHUEwFQ643ura5F26L5jwmeEC5Mz7ZP9Ps
-         BO6fMpVTCDqIEOqpDDr+ROB3TQHE7dj2A0Gd1igsjsqEgWr+U3IYJuxc4gqzd+iAxJgd
-         VqVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762592791; x=1763197591;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5e8JsJPkRnjnvxJLk5/07pwvaKu5ka9GvEOU3uc20xI=;
-        b=rcklAchYkwNgcH96e6NudfUJdsHAOQO2tlt07XWkaOIhp2DK+2QX69MjH0Z/dlESNb
-         ZS/XsGIawPBT5ojzO6VDqvkPqFqaoFyoU5v0QeO54ppHG7zYoQPSgLBLyk1MC+haiRSm
-         DII5xb/riuSMfRJzenCmYsovwXu2MyDUUKKk2TBYhWMVt7Td0Rb/3GPg11XiKrtb8TYt
-         sCIj+eSHKCnALpWWkgZZpZscILzzooMXdi4/2pNoIJfW/vRXn54Ac77V2mMoun1Tivgq
-         m1l2I5fHqpSG97zLVIxCv2mwC4+0dQHQUI2u+XMMwShAjrxan3GGzfz01JGwLj3SjykB
-         nV4w==
-X-Forwarded-Encrypted: i=1; AJvYcCX6LchJhhvUrkJvjkWfrHi/S1MVOIKBb+819wsv0vY9IWK1Kic5f3Qt3Bo3nlnSjNsj+lYlE3/1CmsE4UM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQaok0KjlzkaJLt+acKZ18f5hpcHJzeb6m1nW3E/6dGDftOhEo
-	FkGpHYYMQkSqauDnMQfSvjv/u3VlYcx2rnOXclmwVlaep7UBUtAHUMfpuImmftPh95+KUP19A/6
-	XtexGruLZu3w9xjAJ5c9s0NWBScT5Ug4=
-X-Gm-Gg: ASbGncud0bILt7h28RsurhKILWaL+kpC76hHpC2I04E6Ox4f2wQ2FQ8pgV5zdmvl3S5
-	7wL1Z/ybiIvav+IK0hSrosgMghcFjAbb0QE6SpVjSNJYN+Nn26NzNzn1VlxwWySH8vM/5dHqvzo
-	pjuBYAfweILAdlHZ5kMFt05lwBVKCa+1FsYMwXYKzP0/HeHPBVe2Nnouk2g2RhIHV+FCk4iar37
-	wyE+ryp6kIpatVKWruI24pfTZ7W8mqVkmfoGXQfZb4/vsgFtSUOl6tvLQfuEaE2tejtisq9TcII
-	K4vuzxKoFmJj3qdAa5FdipG2cHJf
-X-Google-Smtp-Source: AGHT+IGja1wjt5XLwCuQKBiJ++JM60DADavzjqt2nrtNRbHFr8AZSVSL3xnG8tTvwMdnenutWkIfTjAH31OO4EHeBxw=
-X-Received: by 2002:a05:6e02:2383:b0:433:3664:b19b with SMTP id
- e9e14a558f8ab-43367e46460mr32976015ab.15.1762592790848; Sat, 08 Nov 2025
- 01:06:30 -0800 (PST)
+	s=arc-20240116; t=1762592868; c=relaxed/simple;
+	bh=yGnBbrMMINnmH9GttPyMTSVm2IgfOZLXzrUAP9sQ24w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YKshNayLrQ/eqWfDHuLYX1QzoLzByKhgONwOsgIjc9L19+W5BJAaPweO4385aKJkkD103CL/5FAXWXzGWzUYmwq5PorviMQNMZK3ZLKqgpH4dsmc8UpE7OM7imJ1PpEj9GslacpRy2RXV7FjYUE8VsIKB10Hru3H3vcL9GVJfDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=vYnMheWx; arc=none smtp.client-ip=134.0.28.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
+	by mxout4.routing.net (Postfix) with ESMTP id 61B22100823;
+	Sat,  8 Nov 2025 09:07:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=routing; t=1762592856;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1CyknkAme4elZV84/7MK05eFN3kQAntRvNuaIK/zCqc=;
+	b=vYnMheWxSMz8itfJI9sBWPH1o2+/WDByDnUay0zuG7rM5ziF+ocP284TttKHXLGhCUTqYl
+	tXeI2VMgOWgAT61e7yLUa9fecAiCa8ufoPzVqdCVW66jgJA8Q45bVlmp8K41rNANbiz9Jr
+	LnaiMtpPdTzQl+b4t1pu6ghhuuQJN1Q=
+Received: from frank-u24.. (fttx-pool-217.61.148.22.bambit.de [217.61.148.22])
+	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 331521226CD;
+	Sat,  8 Nov 2025 09:07:36 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Sam Shih <sam.shih@mediatek.com>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Daniel Golle <daniel@makrotopia.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] clk: mediatek: mt7988-infracfg: fix USB port0 function for U2 only
+Date: Sat,  8 Nov 2025 10:07:25 +0100
+Message-ID: <20251108090726.7787-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAB95QARfqSUNJCCgyPcTPu0-hk10e-sOVVMrnpKd6OdV_PHrGA@mail.gmail.com>
- <20251026211334.GA1659905@ax162> <CAB95QASG1pZJT7HyqxM90_FExhSVjoHmPqYHeQWXnrAzCNErmA@mail.gmail.com>
- <CAB95QARmr9b-jVdgDLpA4Qq=3WN7CYS46YEH4Ok4gpSdZHpq5A@mail.gmail.com>
- <20251028174541.GA1548965@ax162> <CAB95QARtzDWensRzui3d-7+jhymcFBOBi78ev9LMy=ZFJMDCTA@mail.gmail.com>
- <20251031220732.GA2254630@ax162> <CAMj1kXF2kKyEOc6KSBfbdUMf5m4o=DLZXk4++C3q-utA_9g4DA@mail.gmail.com>
- <CAB95QARrcOc6h9=YTzLKkNE0dEaivtiLfK0kEQ1jNp+v1w4yzA@mail.gmail.com>
- <CAMj1kXG_kPx5=3Qbn6ZTpKqOYh-mehwrH+d6Bw8QEPqvhZy1nw@mail.gmail.com> <CAB95QAS__YYYBLc3KFjBUg_QqC3AOB0y6kvhSqZFR9fx7BDKvg@mail.gmail.com>
-In-Reply-To: <CAB95QAS__YYYBLc3KFjBUg_QqC3AOB0y6kvhSqZFR9fx7BDKvg@mail.gmail.com>
-From: Eugene Shalygin <eugene.shalygin@gmail.com>
-Date: Sat, 8 Nov 2025 10:06:20 +0100
-X-Gm-Features: AWmQ_bkRNHFJNtYSzgQ7yhp3JFrMg-7yCHs86SlmqgR8aqtR-dYbtIubCKtnEXw
-Message-ID: <CAB95QAQyzYTrnGrkrcwXJ7Za37v7VsvwsmUezb1Z4VsF_RdLMQ@mail.gmail.com>
-Subject: Re: Can't boot kernel 6.17.4+ via rEFInd
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-I've got no response from the rEFInd author yet, but another user
-reported (https://bugzilla.kernel.org/show_bug.cgi?id=220731) a very
-similar problem with GRUB and ZSTD compression.
+From: Sam Shih <sam.shih@mediatek.com>
 
-Cheers,
-Eugene
+Fix the functionality of USB port0 U2 when U2 is enabled without U3.
+This change addresses the issue where port0 U3 is shared with PCIE2,
+ensuring that the port0 U2 function operates correctly without U3 support.
+
+Additionally, add support to enable the U2 function instead of disabling
+the entire USB port0 in the configuration for the 4 PCIe case. This
+change ensures that U2 functionality is properly activated.
+
+Fixes: 4b4719437d85 ("clk: mediatek: add drivers for MT7988 SoC")
+Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+ drivers/clk/mediatek/clk-mt7988-infracfg.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+index ef8267319d91..da4ad365e30f 100644
+--- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
++++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+@@ -229,8 +229,9 @@ static const struct mtk_gate infra_clks[] = {
+ 			  CLK_IS_CRITICAL),
+ 	GATE_INFRA3_FLAGS(CLK_INFRA_USB_FRMCNT_CK_P1, "infra_usb_frmcnt_ck_p1", "usb_frmcnt_p1_sel",
+ 			  9, CLK_IS_CRITICAL),
+-	GATE_INFRA3(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10),
+-	GATE_INFRA3(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11),
++	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10, CLK_IS_CRITICAL),
++	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11,
++			  CLK_IS_CRITICAL),
+ 	GATE_INFRA3(CLK_INFRA_USB_UTMI, "infra_usb_utmi", "top_xtal", 12),
+ 	GATE_INFRA3(CLK_INFRA_USB_UTMI_CK_P1, "infra_usb_utmi_ck_p1", "top_xtal", 13),
+ 	GATE_INFRA3(CLK_INFRA_USB_XHCI, "infra_usb_xhci", "usb_xhci_sel", 14),
+-- 
+2.43.0
+
 
