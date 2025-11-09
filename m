@@ -1,197 +1,282 @@
-Return-Path: <linux-kernel+bounces-891837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CF1C43A02
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 08:59:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44069C43A0E
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 08:59:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 82AE84E3BFC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 07:59:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06713AE205
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 07:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E6823BCF0;
-	Sun,  9 Nov 2025 07:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE70273D8D;
+	Sun,  9 Nov 2025 07:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="rSFUbmmn"
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XtLCSsMw";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="IPjIembO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FE41BCA1C
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 07:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAA226E6E5
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 07:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762675152; cv=none; b=Jkshvys2kO5P9EC/2x5r8SgD+P3WTZZ77nM4y+U9LZ5/gpKDu9AdsF/79sO7IW1koB6ZonaFqSbwSZreEd+9mH9GembuBnjvxRB+Q9ZirA6t+DZrItk6D4uGBt/VYt5PYyLmKC3QumhjuFhi9iYadPNUHDOsXk3eHTHYV36nYZ4=
+	t=1762675169; cv=none; b=FWqW48iNSbpIKTEBUbZbDkJwKdii81691MwOhZumvL6fCEC2+C+31yIvsdji6uhws5aUGEicNtSMu64Km4zCQUKe+8OeC8pYGmYi8a3QkBUWK4g8od0NHMi6+dlXjrzuxY5k3gngFCCFf2nkR6Zn++rxSIPiJFWpI3dngTrXFo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762675152; c=relaxed/simple;
-	bh=ZNapXBY9qt+ndP5FzKewAowxIdsJhPRerbol68lvQSs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KZZYEotaRVeiuTTPMX3AoP6B0jdxF1FhPjedsI7RJzKyy1OYJRnC4fmQFpJxtGY0GBRnCYfy6YewGJirG8KpldtzSq3McnSYveCxk4T8QUmhCf8Px5AIARi9ldoWJ7/HlRnxIpS65iL41rw0PAyqPvto/er5kaUU9RoB6E5D+gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=rSFUbmmn; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A97tQVj3258752;
-	Sat, 8 Nov 2025 23:58:22 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:message-id:mime-version:subject:to; s=PPS06212021; bh=Iq2Z7I+Jl
-	B6c6uQ0YmR9PkKlSRV5E8tj8llQhJfbAio=; b=rSFUbmmn+9E3OwsQH7eHgc09W
-	L9SNmosvXHahKuU4+X5p1C6yAYRo6ibBj0F2CPbXIF5o5iO/81EpCoF2oJyrheNh
-	UbHc+gO7KfTmOQCQyymzuR3xYJQfrIUMXKhCn6g5zuV81THWh1lKR8cGVuXTdGn8
-	QHW0K55VV0taUnV0QscMbz3Y26FN4XxiGxvofKPLpvTg+xZmz/WLeHou1pQD3T4x
-	LtCX6L7ZEaGn2+gpa9msfL4cNmjl7mgF7UoaCSXNCWTsJC7+Q4kK/rqPSDmYrFfT
-	jaUlOt1hKRWpmb3MJCzuX+Ht7gTmBDihJGFpn96J0HqX5Mo456Ef3nTMaxFjw==
-Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4aa2130ngj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 08 Nov 2025 23:58:22 -0800 (PST)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Sat, 8 Nov 2025 23:58:21 -0800
-Received: from pek-lpd-ccm3.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Sat, 8 Nov 2025 23:58:19 -0800
-From: Yun Zhou <yun.zhou@windriver.com>
-To: <shaggy@kernel.org>, <akpm@linux-foundation.org>, <david@redhat.com>,
-        <byungchul@sk.com>, <gregkh@linuxfoundation.org>,
-        <yun.zhou@windriver.com>, <shivankg@amd.com>,
-        <ssrane_b23@ee.vjti.ac.in>
-CC: <jfs-discussion@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] jfs: fix corrupted list in dbUpdatePMap
-Date: Sun, 9 Nov 2025 15:58:18 +0800
-Message-ID: <20251109075818.229971-1-yun.zhou@windriver.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762675169; c=relaxed/simple;
+	bh=gEg9Evdib2QUkp9EbKFgp9vG4ut2yLvMGS+fUMrt/vg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YmJPcgAex2z2uo94JEqAJanlG4wUB+mXQ7xKLM2gSCRwpsZYVxGaT6oRw85mQMuC03fhKAoHqm8ZMDEXkzzKDW4sgQgnAywX2ONoGissb8kAiGj+BkGl7IB89nyG7OwkzJRWq2eb3jLkR7F9Quu7yFYgGruPtVfasZIWlxHzUiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XtLCSsMw; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=IPjIembO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762675167;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RmddV565FqBe/uzADNdZiOCFmNopt521U7nuIq6Mvsw=;
+	b=XtLCSsMwobFk/KFkDdhsichSOVuvJP84PH9Jd5TIRlvBPEzV++FlTOYZQVbRhsFvCwIOxJ
+	hdoQg8DFbEKBIJRGDBs0y3Uf54A4GsH86Ge/F5wHcnYtDkaOpe6X98ZHyML1rAdVb1uJY2
+	+ijZlCNRdQMI2nsVQMWfcVpjA0xwJbc=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-638-qbJTo-OQO_qp6mSDAoU9Ag-1; Sun, 09 Nov 2025 02:59:23 -0500
+X-MC-Unique: qbJTo-OQO_qp6mSDAoU9Ag-1
+X-Mimecast-MFC-AGG-ID: qbJTo-OQO_qp6mSDAoU9Ag_1762675162
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-6409f6d6800so2648038a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 23:59:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762675162; x=1763279962; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=RmddV565FqBe/uzADNdZiOCFmNopt521U7nuIq6Mvsw=;
+        b=IPjIembOsuayobfM6O4c4hfFJ2bgvs2qrImWb9rJUvUpQsDYzY4f3RmSH1UARYOje7
+         +L+bjGH9Qyn+oYQ5al/0SRVn4Kb+cxeoa9rPoTAwVG4ql5XR6vqTUevbezW63iisdAxK
+         YyBTADyOf8j5wbPyNiviJSnHXb8ttrs2sA7LNWBwUJUeBjPW0AQUEQmry63c7G3ctnDi
+         DqujsgU5SFULQ2zviOzRc+Bqxr+NV61z6g0NyOKOT37ZlHEHdrZvWjbxKKoRam9gYN/I
+         1s2+2TNGiTaZ7tTmkDwuO59e3pHNrUHO95j45JsE63aspHE8xRneGAyz4zApXM+7HyJh
+         Z/6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762675162; x=1763279962;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmddV565FqBe/uzADNdZiOCFmNopt521U7nuIq6Mvsw=;
+        b=phjAtReRTcrZRLFgvnPXApeS7jNvl2zEKbyf2jzhPBplZWCFm0N5TNS0PqOyHsNnPz
+         Prg5GE3Cy+W+VfbRmwNIqrM4iFlNSST8SbLcW1PcXu/Hth4mDmYv7z1EhVVU7+AB00AR
+         kY2nISXsVb/pMSx/zi9euC7zO6gl6MwPA5xdvFzad1Xc4oQR4/orgjtCQtVfJDclagnk
+         MhOygdKcFKb8beOyVBO3I0roGAeCqLMx3MsnBf+OXM86ZycC+toTBUqWZqXvgikh+Uq/
+         6Lrie/ufSeqlK+v97pFSxi0dwJZMgwd2ww7trtWXUep0w4PE4wo/RuZ61z485jONQ0+S
+         ntMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBPALGC5sv5aBPdEI+JjWGxG+O53D9OmE/RMxUIkcFX2lPuGUvl7Ly5pnyNQP4G+i94ZY4f9wIP22XiCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAEVND32qIO4mr5+A+4Lf61cQ+O/dwFtYTIzjCmR198wu/xJvH
+	/E7R2RBPH1voGnr1CI0GnOMhNNMfiL0w5t5HF+mSJijlT5qMVwiGVn4Sh1kVW3fOz7MlxvxoOvh
+	Sd8kETbzA9X9NKmGuSKqReKmzrz1WpIEwlS/1QzDfmrU638A21Fqu12V3cuTsJ/EwQg==
+X-Gm-Gg: ASbGnctsMGHHP1/jomVcAHCOzgFNPo+pL+H4zKa0uOqqMjqzvVFAuBl0EcEcy0e01Ax
+	kXo6+6rofPgagYA+dO8/ibO19dH4txjJamgruS+qMoqenGdb+3TXRc54D+Jqgz1AJrxRYYgq92I
+	hj/uQ3q/zNgnQGSl6l3p+Ss6RuUZLKyLe09dN9RIX2aUooD0PrrQ5lSi0BEHc8kSDAijN5NDmkK
+	UOq/Q6uhv8d+icW8xdoiFlm+v+Vy/Gh1mKacCVLhnVfv/h9bJU0HA90Rg+vazXOYyJQn039nZ5Q
+	t5znhGNenmCjFBUT+2tHScTBYGmkZsMta0DlgbrVu1lQ7WWHmAoChEiIJ4+9tea4CpEYwUFxxAc
+	PAXR8cQ3wVm21tB0CtKBL578dmFLNxl6eMdcri63nUqR+CkWm+2gs9LWJ7nifuT7PJmt5vBWiUS
+	avDu+t
+X-Received: by 2002:a05:6402:218c:10b0:63b:efa7:b0a9 with SMTP id 4fb4d7f45d1cf-6415e5ceac3mr2570844a12.9.1762675162461;
+        Sat, 08 Nov 2025 23:59:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGUHRye6REsOjWn3j1IXsXu+KLjVA8ih3DiUGggpCYdJYwjpciyC2WCKRZC5Qe+r98AYX8OWQ==
+X-Received: by 2002:a05:6402:218c:10b0:63b:efa7:b0a9 with SMTP id 4fb4d7f45d1cf-6415e5ceac3mr2570834a12.9.1762675162026;
+        Sat, 08 Nov 2025 23:59:22 -0800 (PST)
+Received: from [192.168.10.48] ([151.95.110.222])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-6417b28a73esm1229837a12.35.2025.11.08.23.59.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Nov 2025 23:59:21 -0800 (PST)
+Message-ID: <be2a7126-2abc-4333-b067-75dd16634f13@redhat.com>
+Date: Sun, 9 Nov 2025 08:59:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA5MDA2OCBTYWx0ZWRfX3C4cyAfBczWV
- kN6ZVuySyd0k56NdOp+xB8KThSjW+/wzb9coSW1LgDt3dvieLrvJ0kpvfJoOG4S78YwiZGd4724
- 4wTiICG1wLBxhdoa9LFBGflT9jzHUBJHnjxoz/37fYxM5gGEYuUycT7VeY9UdoWu5O7cbtRSgLM
- Hdv76usQdMhpyG+nGD1b4WbHRCQVoqUnQow0M7wuWG/PuaZvocMZ1b2wRqThI7Y0OiD1oGsZ4cq
- +x6DL3fSUYe4dowhQwSGtrkZE6yRXl9yp9/v31ODtjlDJAOgMR6utA6kZ9UOEDzSxGAho2My0ln
- M8q1RPheEBSlUlWjLWP/T3xym0J9xb9d6cKpn62tBm+ZJbeH0dDnxGlIBdR+buKKCuI5UmON6Be
- vZGHIuRTadP1SoPu64cEiINfG4g5Sw==
-X-Proofpoint-ORIG-GUID: mBkFQC0Y8PBPGK3CgghUQhRwWMJyXOTh
-X-Authority-Analysis: v=2.4 cv=XPA9iAhE c=1 sm=1 tr=0 ts=6910499e cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8
- a=t7CeM3EgAAAA:8 a=HWOROlQ_xHIrUlYk3fIA:9 a=DcSpbTIhAlouE1Uv7lRv:22
- a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22 a=poXaRoVlC6wW9_mwW8W4:22
- a=cPQSjfK2_nFv0Q5t_7PE:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
-X-Proofpoint-GUID: mBkFQC0Y8PBPGK3CgghUQhRwWMJyXOTh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-09_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1011 malwarescore=0 adultscore=0 bulkscore=0
- phishscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511090068
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] KVM: SVM: Switch svm_copy_lbrs() to a macro
+To: Yosry Ahmed <yosry.ahmed@linux.dev>,
+ Sean Christopherson <seanjc@google.com>
+Cc: Jim Mattson <jmattson@google.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251108004524.1600006-1-yosry.ahmed@linux.dev>
+ <20251108004524.1600006-5-yosry.ahmed@linux.dev>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
+ KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
+ m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
+ tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
+ dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
+ JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
+ sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
+ OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
+ GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
+ Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
+ usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
+ xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
+ JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
+ dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
+ b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
+In-Reply-To: <20251108004524.1600006-5-yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch resolves the "list_add corruption. next is NULL" Oops
-reported by syzkaller in dbUpdatePMap(). The root cause is uninitialized
-synclist nodes in struct metapage and struct TxBlock, plus improper list
-node removal using list_del() (which leaves nodes in an invalid state).
+On 11/8/25 01:45, Yosry Ahmed wrote:
+> In preparation for using svm_copy_lbrs() with 'struct vmcb_save_area'
+> without a containing 'struct vmcb', and later even 'struct
+> vmcb_save_area_cached', make it a macro. Pull the call to
+> vmcb_mark_dirty() out to the callers.
 
-This fixes the following Oops reported by syzkaller.
+The changes to use `struct vmcb_save_area_cached' are not included in 
+this series, so they are irrelevant.
 
-list_add corruption. next is NULL.
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:28!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 122 Comm: jfsCommit Not tainted syzkaller #0
-PREEMPT_{RT,(full)}
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 10/02/2025
-RIP: 0010:__list_add_valid_or_report+0xc3/0x130 lib/list_debug.c:27
-Code: 4c 89 f2 48 89 d9 e8 0c 88 a4 fc 90 0f 0b 48 c7 c7 20 de 3d 8b e8
-fd 87 a4 fc 90 0f 0b 48 c7 c7 c0 de 3d 8b e8 ee 87 a4 fc 90 <0f> 0b 48
-89 df e8 13 c3 7d fd 42 80 7c 2d 00 00 74 08 4c 89 e7 e8
-RSP: 0018:ffffc9000395fa20 EFLAGS: 00010246
-RAX: 0000000000000022 RBX: 0000000000000000 RCX: 270c5dfadb559700
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00000000000f0000 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffff5200072bee9 R12: 0000000000000000
-R13: dffffc0000000000 R14: 0000000000000004 R15: 1ffff92000632266
-FS:  0000000000000000(0000) GS:ffff888126ef9000(0000)
-knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000056341fdb86c0 CR3: 0000000040a18000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __list_add_valid include/linux/list.h:96 [inline]
- __list_add include/linux/list.h:158 [inline]
- list_add include/linux/list.h:177 [inline]
- dbUpdatePMap+0x7e4/0xeb0 fs/jfs/jfs_dmap.c:577
- txAllocPMap+0x57d/0x6b0 fs/jfs/jfs_txnmgr.c:2426
- txUpdateMap+0x81e/0x9c0 fs/jfs/jfs_txnmgr.c:2364
- txLazyCommit fs/jfs/jfs_txnmgr.c:2665 [inline]
- jfs_lazycommit+0x3f1/0xa10 fs/jfs/jfs_txnmgr.c:2734
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
+Since I've applied patches 1-3, which fix the worst bugs, there are two 
+ways to handle the rest:
 
-Reported-by: syzbot+4d0a0feb49c5138cac46@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=4d0a0feb49c5138cac46
-Tested-by: syzbot+4d0a0feb49c5138cac46@syzkaller.appspotmail.com
-Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
----
- fs/jfs/jfs_metapage.c | 3 ++-
- fs/jfs/jfs_txnmgr.c   | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+* keep the function instead of the macro, while making it take a struct 
+vmcb_save_area (and therefore pulling vmcb_mark_dirty() to the callers 
+and fixing the bug you mention below).
 
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 871cf4fb3636..0d6c40e7e551 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -270,6 +270,7 @@ static inline struct metapage *alloc_metapage(gfp_t gfp_mask)
- 		mp->clsn = 0;
- 		mp->log = NULL;
- 		init_waitqueue_head(&mp->wait);
-+		INIT_LIST_HEAD(&mp->synclist);
- 	}
- 	return mp;
- }
-@@ -379,7 +380,7 @@ static void remove_from_logsync(struct metapage *mp)
- 		mp->lsn = 0;
- 		mp->clsn = 0;
- 		log->count--;
--		list_del(&mp->synclist);
-+		list_del_init(&mp->synclist);
- 	}
- 	LOGSYNC_UNLOCK(log, flags);
- }
-diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
-index 7840a03e5bcb..a5a5bc0a266d 100644
---- a/fs/jfs/jfs_txnmgr.c
-+++ b/fs/jfs/jfs_txnmgr.c
-@@ -275,6 +275,7 @@ int txInit(void)
- 	for (k = 0; k < nTxBlock; k++) {
- 		init_waitqueue_head(&TxBlock[k].gcwait);
- 		init_waitqueue_head(&TxBlock[k].waitor);
-+		INIT_LIST_HEAD(&TxBlock[k].synclist);
- 	}
- 
- 	for (k = 1; k < nTxBlock - 1; k++) {
-@@ -974,7 +975,7 @@ static void txUnlock(struct tblock * tblk)
- 	if (tblk->lsn) {
- 		LOGSYNC_LOCK(log, flags);
- 		log->count--;
--		list_del(&tblk->synclist);
-+		list_del_init(&tblk->synclist);
- 		LOGSYNC_UNLOCK(log, flags);
- 	}
- }
--- 
-2.34.1
+* you resubmit with the changes to use struct vmcb_save_area_cached, so 
+that the commit message makes more sense.
+
+Thanks,
+
+Paolo
+
+> Macros are generally not preferred compared to functions, mainly due to
+> type-safety. However, in this case it seems like having a simple macro
+> copying a few fields is better than copy-pasting the same 5 lines of
+> code in different places.
+> 
+> On the bright side, pulling vmcb_mark_dirty() calls to the callers makes
+> it clear that in one case, vmcb_mark_dirty() was being called on VMCB12.
+> It is not architecturally defined for the CPU to clear arbitrary clean
+> bits, and it is not needed, so drop that one call.
+
+> Technically fixes the non-architectural behavior of setting the dirty
+> bit on VMCB12.
+> 
+> Fixes: d20c796ca370 ("KVM: x86: nSVM: implement nested LBR virtualization")
+> Cc: stable@vger.kernel.org
+> 
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> ---
+>   arch/x86/kvm/svm/nested.c | 16 ++++++++++------
+>   arch/x86/kvm/svm/svm.c    | 11 -----------
+>   arch/x86/kvm/svm/svm.h    | 10 +++++++++-
+>   3 files changed, 19 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+> index c81005b245222..e7861392f2fcd 100644
+> --- a/arch/x86/kvm/svm/nested.c
+> +++ b/arch/x86/kvm/svm/nested.c
+> @@ -676,10 +676,12 @@ static void nested_vmcb02_prepare_save(struct vcpu_svm *svm, struct vmcb *vmcb12
+>   		 * Reserved bits of DEBUGCTL are ignored.  Be consistent with
+>   		 * svm_set_msr's definition of reserved bits.
+>   		 */
+> -		svm_copy_lbrs(vmcb02, vmcb12);
+> +		svm_copy_lbrs(&vmcb02->save, &vmcb12->save);
+> +		vmcb_mark_dirty(vmcb02, VMCB_LBR);
+>   		vmcb02->save.dbgctl &= ~DEBUGCTL_RESERVED_BITS;
+>   	} else {
+> -		svm_copy_lbrs(vmcb02, vmcb01);
+> +		svm_copy_lbrs(&vmcb02->save, &vmcb01->save);
+> +		vmcb_mark_dirty(vmcb02, VMCB_LBR);
+>   	}
+>   	svm_update_lbrv(&svm->vcpu);
+>   }
+> @@ -1186,10 +1188,12 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
+>   		kvm_make_request(KVM_REQ_EVENT, &svm->vcpu);
+>   
+>   	if (unlikely(guest_cpu_cap_has(vcpu, X86_FEATURE_LBRV) &&
+> -		     (svm->nested.ctl.virt_ext & LBR_CTL_ENABLE_MASK)))
+> -		svm_copy_lbrs(vmcb12, vmcb02);
+> -	else
+> -		svm_copy_lbrs(vmcb01, vmcb02);
+> +		     (svm->nested.ctl.virt_ext & LBR_CTL_ENABLE_MASK))) {
+> +		svm_copy_lbrs(&vmcb12->save, &vmcb02->save);
+> +	} else {
+> +		svm_copy_lbrs(&vmcb01->save, &vmcb02->save);
+> +		vmcb_mark_dirty(vmcb01, VMCB_LBR);
+> +	}
+>   
+>   	svm_update_lbrv(vcpu);
+>   
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index fc42bcdbb5200..9eb112f0e61f0 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -795,17 +795,6 @@ static void svm_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
+>   	 */
+>   }
+>   
+> -void svm_copy_lbrs(struct vmcb *to_vmcb, struct vmcb *from_vmcb)
+> -{
+> -	to_vmcb->save.dbgctl		= from_vmcb->save.dbgctl;
+> -	to_vmcb->save.br_from		= from_vmcb->save.br_from;
+> -	to_vmcb->save.br_to		= from_vmcb->save.br_to;
+> -	to_vmcb->save.last_excp_from	= from_vmcb->save.last_excp_from;
+> -	to_vmcb->save.last_excp_to	= from_vmcb->save.last_excp_to;
+> -
+> -	vmcb_mark_dirty(to_vmcb, VMCB_LBR);
+> -}
+> -
+>   static void __svm_enable_lbrv(struct kvm_vcpu *vcpu)
+>   {
+>   	to_svm(vcpu)->vmcb->control.virt_ext |= LBR_CTL_ENABLE_MASK;
+> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> index c2acaa49ee1c5..e510c8183bd87 100644
+> --- a/arch/x86/kvm/svm/svm.h
+> +++ b/arch/x86/kvm/svm/svm.h
+> @@ -687,8 +687,16 @@ static inline void *svm_vcpu_alloc_msrpm(void)
+>   	return svm_alloc_permissions_map(MSRPM_SIZE, GFP_KERNEL_ACCOUNT);
+>   }
+>   
+> +#define svm_copy_lbrs(to, from)					\
+> +({								\
+> +	(to)->dbgctl		= (from)->dbgctl;		\
+> +	(to)->br_from		= (from)->br_from;		\
+> +	(to)->br_to		= (from)->br_to;		\
+> +	(to)->last_excp_from	= (from)->last_excp_from;	\
+> +	(to)->last_excp_to	= (from)->last_excp_to;		\
+> +})
+> +
+>   void svm_vcpu_free_msrpm(void *msrpm);
+> -void svm_copy_lbrs(struct vmcb *to_vmcb, struct vmcb *from_vmcb);
+>   void svm_enable_lbrv(struct kvm_vcpu *vcpu);
+>   void svm_update_lbrv(struct kvm_vcpu *vcpu);
+>   
+Since
 
 
