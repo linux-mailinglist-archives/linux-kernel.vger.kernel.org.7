@@ -1,175 +1,137 @@
-Return-Path: <linux-kernel+bounces-891807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481A3C438AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 06:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C1FC438B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 06:05:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EED18188C7B4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 05:02:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A6DE188C81E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 05:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451AD1F4C96;
-	Sun,  9 Nov 2025 05:02:29 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9204D2135AD;
+	Sun,  9 Nov 2025 05:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CjKFxYr8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37564149C41
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 05:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0B919CD1D;
+	Sun,  9 Nov 2025 05:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762664548; cv=none; b=iVkg/P1qtlUl+OGXWDJya9cSjqXitypGKshVlg1noxUmhaRoQ7N/P9sqmMjwLEztNbH8hcgdXM+qXLGAfzPRkMybUVY9tem8/GO0/Ltg1bTJ2+LNMUF+fEiXwa0iHUWMu8NZXjK+gfdGQP4/BCV791FIPGMNqqG1zeEanaH2/z0=
+	t=1762664744; cv=none; b=prvo6TlpPr4W6v6yPVBji6E6HoAsjqhf0VeSpN8YccAOZmZzWCvEaH61IaXd6n4pWhDXIzBhIyem/zKuOPb4ureTsE5hqfzJI6+9g8G6Y302/qphszDkpQ8AhRNQd9dXhcJ+0kW7GmftxyH+U9pJzOSJOLoPEWPA4AYnEcR/b+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762664548; c=relaxed/simple;
-	bh=zp2+xhIjF9L50xQ1pEkXO59r4m/nKhdozZDpXHxHt7A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KwcLhzA6ohd4QnwT4EhajFoBDIX6v4nHXbA2pIN772YPrG6/GbcQ+L57UKBxa/sM6QhmXLH8B6eGwOL+QHJZmaJEzW4PTQ5/CS9nObk79Jz/38kn11a5k3n+6mgh9xRJOJFGd2UTJ65XsdJXZNbrZAzCk3VqiUJ0Bu83XHZroRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-4337b5c3388so6687255ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 21:02:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762664546; x=1763269346;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GBOMKh52uFHDxhD4EmVlsejoiNxQk2wdkXVLGnX0t8o=;
-        b=I2FpiiR7WAjuh5u0TQGtmpJ7cbwsUwzX0e2mW5pq65nyYKS2Wv1Oc8a80QekN+rxlF
-         TQI4/V8gPcBnMBlYm1+Kb97dcQdriRe95wKrJCoqcpM3yfr2yTPnFm2mMi+l86gffSvg
-         irJckhURqyxpdpMRIIys23Nztycz3xKBPsBJlWFyDe6OE+st+flM3c2zqNuCvcPQl4rG
-         RtYWvWi104U24rpH3tmexv7+ydONs8V3aRY4Ki31572A2B8fSpBooFxO2PTJtY+C49gr
-         H2O+4Vo64CmzROZU5JAG6kg1mafcxZw4ufnjDJIXfWqDanj3tDgqTUk62N7aknebEDtv
-         dKOQ==
-X-Gm-Message-State: AOJu0Yxfp95pAQ1tr4K6ImT9BIjyOGSa+qBNToZGJc9C/eR4lPTM+yiF
-	NFd6hZ6q6wMDnPbYn7CLWrFUYIHTDqxAj1fZwSAHoRr7RPAQD9pdTGE/2q1djJzRBvBBUaBsa//
-	3w8FihM3epFCD1DPe53oShMmdB3XvpjX58FDeIrSp9I3VyL72LcJ0LE7QJmI=
-X-Google-Smtp-Source: AGHT+IEDQ5nNS8j7hxQxPO+sx8g4SYnNd0N8VDeCa7+gC9socGYW5kQ4c6jrrtLQWiBcsJj9Z69aHsN47y1aEE6oydP4SlqiPSD9
+	s=arc-20240116; t=1762664744; c=relaxed/simple;
+	bh=ZV9BoH74mReBv49JBFNCwYi5BkQK+mmMZsBxMTs1p+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aNWVcY0zyHtL+rPZF2bb8rj3tT3h2bP9O4iuRLB3yNOOP5PNQkBAsk9IrjCC7L44Y6J7lAEr7y2l7DZkO6uWX2WXhzH1EQc6I+ZqNNMlbOeCFuRhKZJStIwwdHkK2ePpssL7LB9docDusSxI/YW/w8UxTc0kHT/006x5z9qGlP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CjKFxYr8; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762664742; x=1794200742;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZV9BoH74mReBv49JBFNCwYi5BkQK+mmMZsBxMTs1p+g=;
+  b=CjKFxYr8CB9g7/qr/4FmWGeLYJf3CSRgpkSkViytriuIBEM6iJpkc3Fh
+   6TnXZMMMzpdwnIH6YDHm9wgY1iN234jJbXNGD3R+KgYS9l0tEL+0zx7UV
+   TwiyLRJ0tnYGCL6sfg49Ugt0Re03julelS2np7I9+PHCsrvPwv3cnzLb+
+   3T0fTVSn2/5VCueVH/DB/geKNdYtFl0MehEEdlhHXgy49HimRW/HAejwn
+   8Kw0h9/qSMRV/r6NGH0VgspImyleklvXNwkeEh2lDvKfu67mg0Cftw2U1
+   kbvTPSbB5WULQm0NZM4KEoe1S0xMSzzo9umqbh4dzs9RsJ5wBu/gSNowx
+   w==;
+X-CSE-ConnectionGUID: gjR34JmwSDmLfCNiWITxig==
+X-CSE-MsgGUID: K7+2hzOKRTambZFZYnmT1g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11607"; a="75050062"
+X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
+   d="scan'208";a="75050062"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2025 21:05:42 -0800
+X-CSE-ConnectionGUID: tfmRiFbtTsmEFp5uVbgV2Q==
+X-CSE-MsgGUID: 5e89+h57RXiGDU9wxyxXYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
+   d="scan'208";a="193572600"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 08 Nov 2025 21:05:40 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vHxcP-0001mp-1I;
+	Sun, 09 Nov 2025 05:05:37 +0000
+Date: Sun, 9 Nov 2025 13:05:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: ccc194101@163.com, stern@rowland.harvard.edu,
+	gregkh@linuxfoundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+	linux-kernel@vger.kernel.org,
+	Chen Changcheng <chenchangcheng@kylinos.cn>
+Subject: Re: [PATCH] usb: usb-storage: No additional quirks need to be added
+ to the ECD819-SU3 optical drive.
+Message-ID: <202511091255.ohMJwQcj-lkp@intel.com>
+References: <20251107061046.32339-1-ccc194101@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2581:b0:433:7a7c:e29f with SMTP id
- e9e14a558f8ab-4337a7d0856mr11562535ab.21.1762664546358; Sat, 08 Nov 2025
- 21:02:26 -0800 (PST)
-Date: Sat, 08 Nov 2025 21:02:26 -0800
-In-Reply-To: <68eb4077.050a0220.ac43.0005.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69102062.a70a0220.22f260.009b.GAE@google.com>
-Subject: Forwarded: [PATCH] fs: fix inode reference leak in chown_common
- delegation retry path
-From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107061046.32339-1-ccc194101@163.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi,
 
-***
+kernel test robot noticed the following build errors:
 
-Subject: [PATCH] fs: fix inode reference leak in chown_common delegation retry path
-Author: kartikey406@gmail.com
+[auto build test ERROR on 284922f4c563aa3a8558a00f2a05722133237fe8]
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+url:    https://github.com/intel-lab-lkp/linux/commits/ccc194101-163-com/usb-usb-storage-No-additional-quirks-need-to-be-added-to-the-ECD819-SU3-optical-drive/20251107-141330
+base:   284922f4c563aa3a8558a00f2a05722133237fe8
+patch link:    https://lore.kernel.org/r/20251107061046.32339-1-ccc194101%40163.com
+patch subject: [PATCH] usb: usb-storage: No additional quirks need to be added to the ECD819-SU3 optical drive.
+config: loongarch-randconfig-001-20251109 (https://download.01.org/0day-ci/archive/20251109/202511091255.ohMJwQcj-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project b9ea93cd5c37fb6d606502fd01208dd48330549d)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511091255.ohMJwQcj-lkp@intel.com/reproduce)
 
-The chown_common() function can trigger a use-after-free when retrying
-after breaking a file delegation. The issue occurs because break_deleg_wait()
-calls iput() on the delegated inode, potentially freeing it if this was the
-last reference. However, chown_common() continues to use the stale inode
-pointer on retry, leading to operations on a freed or reused inode.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511091255.ohMJwQcj-lkp@intel.com/
 
-This manifests as a rwsem warning:
-  DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) &&
-                       !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE))
-  owner = 0x0
+All errors (new ones prefixed by >>):
 
-The warning occurs because the inode's rwsem is in an invalid state after
-the inode has been freed or reused by another thread.
+   In file included from drivers/usb/storage/uas.c:931:
+>> drivers/usb/storage/unusual_uas.h:100:1: error: incompatible pointer to integer conversion initializing 'kernel_ulong_t' (aka 'unsigned long') with an expression of type 'void *' [-Wint-conversion]
+     100 | UNUSUAL_DEV(0x13fd, 0x3940, 0x0310, 0x0310,
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     101 |                 "Initio Corporation",
+         |                 ~~~~~~~~~~~~~~~~~~~~~
+     102 |                 "external DVD burner ECD819-SU3",
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     103 |                 USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     104 |                 NULL),
+         |                 ~~~~~
+   drivers/usb/storage/uas.c:928:17: note: expanded from macro 'UNUSUAL_DEV'
+     928 |         .driver_info = (flags) }
+         |                        ^~~~~~~
+   1 error generated.
 
-The bug is particularly reproducible on GFS2 filesystem where delegations
-are more common due to its clustered nature, and can be triggered by
-concurrent fchownat() calls on the same file.
 
-Fix this by:
-1. Re-fetching the inode pointer from path->dentry->d_inode on each
-   iteration at the retry_deleg label
-2. Holding an explicit reference with ihold() at the start of each iteration
-3. Releasing the reference with iput() on all exit paths, including before
-   the retry
+vim +100 drivers/usb/storage/unusual_uas.h
 
-This ensures the inode remains valid throughout the delegation break and
-retry sequence, preventing use-after-free.
+ > 100	UNUSUAL_DEV(0x13fd, 0x3940, 0x0310, 0x0310,
+   101			"Initio Corporation",
+   102			"external DVD burner ECD819-SU3",
+   103			USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+   104			NULL),
+   105	
 
-Reported-by: syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=04c2672c56fbb9401640
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/open.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
-
-diff --git a/fs/open.c b/fs/open.c
-index 3d64372ecc67..a564f05c0c91 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -755,7 +755,7 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- {
- 	struct mnt_idmap *idmap;
- 	struct user_namespace *fs_userns;
--	struct inode *inode = path->dentry->d_inode;
-+	struct inode *inode;
- 	struct inode *delegated_inode = NULL;
- 	int error;
- 	struct iattr newattrs;
-@@ -766,19 +766,27 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 	gid = make_kgid(current_user_ns(), group);
- 
- 	idmap = mnt_idmap(path->mnt);
--	fs_userns = i_user_ns(inode);
- 
- retry_deleg:
-+	inode = path->dentry->d_inode;
-+	ihold(inode);
-+	fs_userns = i_user_ns(inode);
- 	newattrs.ia_vfsuid = INVALID_VFSUID;
- 	newattrs.ia_vfsgid = INVALID_VFSGID;
- 	newattrs.ia_valid =  ATTR_CTIME;
--	if ((user != (uid_t)-1) && !setattr_vfsuid(&newattrs, uid))
-+	if ((user != (uid_t)-1) && !setattr_vfsuid(&newattrs, uid)) {
-+		iput(inode);
- 		return -EINVAL;
--	if ((group != (gid_t)-1) && !setattr_vfsgid(&newattrs, gid))
-+	}
-+	if ((group != (gid_t)-1) && !setattr_vfsgid(&newattrs, gid)) {
-+		iput(inode);
- 		return -EINVAL;
-+	}
- 	error = inode_lock_killable(inode);
--	if (error)
-+	if (error) {
-+		iput(inode);
- 		return error;
-+	}
- 	if (!S_ISDIR(inode->i_mode))
- 		newattrs.ia_valid |= ATTR_KILL_SUID | ATTR_KILL_PRIV |
- 				     setattr_should_drop_sgid(idmap, inode);
-@@ -793,9 +801,12 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 	inode_unlock(inode);
- 	if (delegated_inode) {
- 		error = break_deleg_wait(&delegated_inode);
--		if (!error)
-+		if (!error) {
-+			iput(inode);
- 			goto retry_deleg;
-+		}
- 	}
-+	iput(inode);
- 	return error;
- }
- 
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
