@@ -1,281 +1,217 @@
-Return-Path: <linux-kernel+bounces-892144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64E6C4470D
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 22:12:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2018C4479F
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 22:18:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 248584E35DE
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 21:12:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 186E64E7E0F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 21:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910FE2620FC;
-	Sun,  9 Nov 2025 21:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7826826E6F7;
+	Sun,  9 Nov 2025 21:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="iQpw8Sg0"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fOQyAIom";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="iQmaMnr7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E591537E9;
-	Sun,  9 Nov 2025 21:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC57926ACB
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 21:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762722755; cv=none; b=ZF9NV/cUIBa+YINUjSX5KRh3d0kXh7I/1XD5TaoT5PNK45suXaWldoNbdtdpMLvOVKn5YyYTYQ0TnfuPBfWfgVqS/irC06Q/01IPjEPsisDPJS8FyOUP5kobUcGIh6Spw/o/1KTnufVlGypU01VPM5blOKMCkWst5tiDQ4DNZys=
+	t=1762723003; cv=none; b=lP/41WaDIBUU8kKlcpM1ztyDBl4rKZa7Q4qy4OQPgW/XWAocqUme0jh6Jw4rHflIWmvOpiRdt5QshxGM2XP0t91BNCWNGXcYGtLe50WzLjT6QeZKFFCyurM+qlcDTYQoulF5pD/mAQJ8Ww1cOyCHr5GG2t+2UMKtgb5jNnb1HlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762722755; c=relaxed/simple;
-	bh=n0RLN6sZCgLfMIbZ3gKcNgN3Enym6QBgeGbHnp5iD5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IdaBjnbuRViTLzh2ILRWcFW0z95WPcjhaOvTT2MWxyf6/vNPGAgt7hzJZYaQPUz8hSvkyuzEimTqm3McGDO/c7v1/PTDlsWfUpjwFB98gxcnj32pEa1PrHK9zN6GfF6MitFdY55gk2vSH1TV2jjOKZr/G3r9ulsG70/qZP7xTrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=iQpw8Sg0; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=VdB9AxYT6F4feb9njK2Q9Wfb29In+2yyrhF+dKbwVI8=; b=iQpw8Sg0WROi/XYKtwYpi+6SoO
-	ba8ZIeo+9TA7jgw6KkGcNQe2S2WhHSp16eTEEKDMhx1p+5GkKMYWiEu9keNmZUi7uUID9tdKeWjkU
-	Ls6nOjsSrzheNZABBI0rXwrpohh54Yv6+UHmmnxEKJePd5DzHxcTaj8ngyLbRg0Yqgl/6WRsqaSRL
-	OUqvNALCtGjwBwPDgndNuy/wzvaCKSlLBgPd87/rUKb4G00HEkNbo0RwgRezvYzqplcAgiqzZUiPx
-	zNtpQSPs5hmyClWOFuxwlxRBHF3qVa2KVUl0mLeRUsBzRF8ZMBfsla4uSnWDlsAvSEkt9NAOKb7i+
-	E41XYfiw==;
-Date: Sun, 9 Nov 2025 22:12:12 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: regulator: Add Fitipower FP9931/JD9930
-Message-ID: <20251109221212.182d7862@kemnade.info>
-In-Reply-To: <aa54cf7c-cabd-490b-9bdd-a7a077ced35c@kernel.org>
-References: <20251107-fp9931-submit-v1-0-aa7b79d9abb6@kemnade.info>
-	<20251107-fp9931-submit-v1-2-aa7b79d9abb6@kemnade.info>
-	<20251108-vagabond-lyrical-hawk-ad3490@kuoka>
-	<20251108152114.53422ea6@kemnade.info>
-	<aa330123-e6d9-44ce-b030-b266cba1df9c@kernel.org>
-	<20251108175244.0b51fac6@kemnade.info>
-	<aa54cf7c-cabd-490b-9bdd-a7a077ced35c@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1762723003; c=relaxed/simple;
+	bh=YKRFzAQU2yviHCep6w9J7Yc9MhUTG3/YbYdXnwDQk1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=byokL/9KBl8Od/U5FTfc4PWhxwFtnE7AR1tJ9gpuhr68igyblKuHwHs2VNIyW9kaHvO8cwFxHtUOyhH28AS92TXDAV0ts8PD4FTrSzit2LAwCDLm0WvogEBQfe8b/Jl4juVeMy2jq02H972tUmddvXltMm+BR5QgmenWUFhilLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fOQyAIom; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=iQmaMnr7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A9FtrKC1001655
+	for <linux-kernel@vger.kernel.org>; Sun, 9 Nov 2025 21:16:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=y9+qULSDBdRkc52X/nmwRInE
+	9RrGB/j6DPLmA8vUbxc=; b=fOQyAIom3Rs8eKzkvAyIAobupLsvhG2DgBKYl5jj
+	z0gj/WYngV3/dgTvFnFIlPiOFsjUzRn40M1lMNg75vO2nkFuA7S2wBEkqCYEJtXq
+	nF02lSodMkyGMIYbpG9OLMJIfmOjYDQPz/AWeYd2kldA/0FzvYr48uE5cVm5sKJa
+	tZCTsHs16Q+wq8CzEEeyHADXRLlsAVxghNPWiwbyJO4CUH96+zZ0j7tlLDpaQqf/
+	1NJrB3VW2c1YNNcRp6quF1Iu7X8o04vft2nLIS9Fp55B8hoICKzSNWRkq6w/BAx4
+	wWQcVnVYwNkxtovA9q6k3u3ovphesBW/XT4xn14PQQPaKw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a9xu2tp6x-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 21:16:40 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ed6ff3de05so80520261cf.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 13:16:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762722999; x=1763327799; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=y9+qULSDBdRkc52X/nmwRInE9RrGB/j6DPLmA8vUbxc=;
+        b=iQmaMnr7SI7Hcc92iAMFbfUYr7aXYpt30bH/c7ub0AX5URpvmxsBh8WuHH4eFxx+sH
+         XW0AJRQkFtHh4ljt47mHyps8hCA7ryRvY8T3HefjW+UDJ/BEairxUNSMpAC3FCP7trmg
+         oHw8CbRPjDN63ihPN0+TH189ykdXwBsONDqYVFHIFIUTkZg6TsS2+SCgm6qI1ktEl8dY
+         Z9/DUncX71TKtUjNEtudIKba/1RaQVM6xsDjBBQGT2msbvLnH1cnouirHmHhWFoSW/sE
+         3UPVG5X86ibTlhy8syb0aGof2SArC9KWhHlgZtI+gEnR+KoB9KyvGge5J41irLXP/5Jh
+         DmwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762722999; x=1763327799;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y9+qULSDBdRkc52X/nmwRInE9RrGB/j6DPLmA8vUbxc=;
+        b=d1mhpjwvejBziYmEflTEGV/EZmmX9xUdlneFZW4w+BPtw1cJK/OYBHj3YTRUi8fDKI
+         k5VYjl8xA1h1a5Nff6qXeMI5EJDRvUdjYqcQRmbnmqmyhwbvRKVB1pLMwDNG/J5JaJ14
+         fUnTu2BXxWO5g5K7HZ1eO7JkZ1v9oIxS8MsrOyu0FCImPZm8vG3kfRG5JW33yVtw+LIV
+         uFKFmZQJ8yOcHRmEQBGBlE5KJPd6Y9E+y0SjtP3Y6AK+dKNQk5zOeHW9X0eq6JCPmCbI
+         F6YgmkNeKrnfmJNNQmmDrf8whW+Xnc65zU4XLJrNwKf7PBrn4Y/UYx3SoD1K0o2ZO7vM
+         uoeA==
+X-Forwarded-Encrypted: i=1; AJvYcCULXvyEzuG5VpqYFBBsEE5D4U83K//1FJ/77b028X3dbCExEOlKCgBAYX9PkmUlM0hAFiQnpz77IHZN858=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXQe8rAV5aYMJbL5RpMA8R3bHNgLCmgqj+H6f62um/oZifiGwP
+	fr0JG4Azv+xemmur816rgYG4PlkZuUYx8KROcvLAno0iYrBRKz2vCYWgbsdfmgt+OdWH3f1/w4F
+	nu0dqUmEKx0YBtjlNgphecWI74XJVNdZOFICFF8kfUfXY7WpMyI41OB3w8tr0c1qYD0thY+kqcQ
+	8=
+X-Gm-Gg: ASbGncsEZ3TYy5jApgDRZW+Jd6uOUXu0LlCwJt8s6ylFoXR6MDa1awhQ4vVvEDL9iKe
+	9u3fnUjZozZFBgnnHiWj2zPEadswcMXgZ1OvLi0ZOuv+TYI2s+1MUQnAXvmzmQ9ExnLPRLRc6xo
+	BsQ9lzJSFaVTu3z2rzmqSDEbqjNUR6neykZ8On/w0x13f4UP07nCWRgAP/DcHsWbSFAXlSjUOaa
+	CtZm2ICbTSqgsN+YeMXAIQzgA6YDL2mO9BfbJT2SBkTXwa3BXAEEBGxB0xIxoX5v/VX4GWoe8Dt
+	m48qfb5QgWGJlWTQ0r3E9DHe9AnDptrsALkl9r6C0XecW4qQMZhsM+p4ZZaIk5ebYZD/Oj9Noh2
+	qbSob/o+JczIj+D+ju01j5ATWmKqQM1mF+Zp3VWU7EQrvYw20sS2AK1YaQPfAawQvPqQdizX/go
+	Qg682Jrh8rcjvM
+X-Received: by 2002:a05:622a:201:b0:4ed:b55b:674d with SMTP id d75a77b69052e-4edb55b6a65mr26511461cf.59.1762722999263;
+        Sun, 09 Nov 2025 13:16:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEH8BiFfw+ts2f53C6zCXeNgfkClVAFT63zGR6OYEJ0OIG9wp5dnSJCliqhgGeg5aYM484U5w==
+X-Received: by 2002:a05:622a:201:b0:4ed:b55b:674d with SMTP id d75a77b69052e-4edb55b6a65mr26511301cf.59.1762722998839;
+        Sun, 09 Nov 2025 13:16:38 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a01a029sm3324582e87.35.2025.11.09.13.16.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 13:16:36 -0800 (PST)
+Date: Sun, 9 Nov 2025 23:16:34 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+Cc: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@kernel.org>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Val Packett <val@packett.cool>
+Subject: Re: [PATCH v3] media: iris: Refine internal buffer reconfiguration
+ logic for resolution change
+Message-ID: <2uvinljz3gevbusjrz3bzi3nicelv3t6a64gliv4mdv6cbllvp@fz3qbyukypho>
+References: <20251105-iris-seek-fix-v3-1-279debaba37a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105-iris-seek-fix-v3-1-279debaba37a@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=dMWrWeZb c=1 sm=1 tr=0 ts=691104b8 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=e5mUnYsNAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=K7FOPutcZWfKzoRN3qAA:9
+ a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22 a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-GUID: EdFKXSVBs6ZxBS-EdID6rFSeweSBdE2A
+X-Proofpoint-ORIG-GUID: EdFKXSVBs6ZxBS-EdID6rFSeweSBdE2A
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA5MDE5MCBTYWx0ZWRfXwtIab94bEPef
+ bD9SWENCY/yrZWxLSWhwxHXUH+In6uiD7npjaF7cMQr9ZUo6nHBqp9ISy49ottTN9igdMu0ph3b
+ FenXYxwdxRBox5wvn2BIyfpTWLxjE/kdOf24ZLEk3Jx5X1DvVNBd6ZkqGLKeu76QKb7sLqoHKJ0
+ W3IlZEnsbXsl/lBR9XsnE205snyWcjDHCYpFajbm0lsPKD2MSZCWy1xHiqK7E71OKBKJq+Jfj1k
+ 4dgeGSV9oBkmZnxQjNWT811L9GucvOKI3x5srXhREgts3h8dvCMAp3FZqM3vfxZqj4bBMcF60yI
+ 0+hKU0MXqaE9RMbwI2Bb/488zy8EqcQVaA8fBl2mSSvERZXTDG0qp4Cmg0WeRIRQ31IYUaOgW7Y
+ OOGOhT9eZuLIcycvj013zSQLoDmzeA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-09_09,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 clxscore=1015 impostorscore=0 malwarescore=0 adultscore=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 phishscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511090190
 
-On Sun, 9 Nov 2025 18:13:11 +0100
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
-
-> On 08/11/2025 17:52, Andreas Kemnade wrote:
-> > On Sat, 8 Nov 2025 15:46:01 +0100
-> > Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >   
-> >>>>> +  fiti,tdly:      
-> >>>>
-> >>>> No, look at datasheet. What values are there? ms.
-> >>>>    
-> >>> Hmm, no to what? I do not understand your comment.    
-> >>
-> >> Please use proper units for the field expressed in the property name
-> >> suffix and possible values (enum).
-> >> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
-> >>
-> >> You also need default.
-> >>  
-> >>> So I guess a bit what might be options to discuss here:
-> >>> - put raw value for the bitfield here (what is currently done).
-> >>> - put the ms values here (then I would expect a suffix in the property name)
-> >>>   We have the mapping 0ms - 0, 1ms - 1, 2ms - 2, 4ms - 3, so it is
-> >>>   not identical.    
-> >> I don't know what has to be identical. You want here 0, 1, 2 or 4 ms.
-> >> BTW, if you speak about driver complexity, getting register value out of
-> >> above is absolutely trivial, so not a suitable argument.  
-> > 
-> > Ok, no problem with doing that trivial conversion in the driver.
-> > 
-> > Playing around with dt-binding-check and add enums (and the -ms in a
-> > second step):
-> >   fitipower,tdlys:
-> >     $ref: /schemas/types.yaml#/definitions/uint32-array
-> >     description:
-> >       Power up soft start delay settings tDLY1-4 bitfields in the
-> >       POWERON_DELAY register
-> >     default: <0 0 0 0>
-> >     items:
-> >       - enum:
-> >           - 0
-> >           - 1
-> >           - 2
-> >           - 4
-> >       - enum:
-> >           - 0
-> >           - 1
-> >           - 2
-> >           - 4
-> >       - enum:
-> >           - 0
-> >           - 1
-> >           - 2
-> >           - 4
-> >       - enum:
-> >           - 0
-> >           - 1
-> >           - 2
-> >           - 4
-> > 
-> > 
-> > dt-binding-check accepts this, including the example. But if I change it to -ms
-> > as you requested, I get
-> > 
-> > /home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: 'anyOf' conditional failed, one must be fixed:
-> > 	'maxItems' is a required property
-> > 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> > 	'$ref' is not one of ['maxItems', 'description', 'deprecated']
-> > 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> > 	'default' is not one of ['maxItems', 'description', 'deprecated']
-> > 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> > 	'items' is not one of ['maxItems', 'description', 'deprecated']
-> > 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> > 	Additional properties are not allowed ('$ref', 'default' were unexpected)
-> > 		hint: Arrays must be described with a combination of minItems/maxItems/items
-> > 	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-> > 	'<0 0 0 0>' is not of type 'integer'
-> > 	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-> > 	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-> > /home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: '$ref' should not be valid under {'const': '$ref'}
-> > 	hint: Standard unit suffix properties don't need a type $ref
-> > 	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-> > /home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: 'anyOf' conditional failed, one must be fixed:
-> > 	'maxItems' is a required property
-> > 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> > 	'$ref' is not one of ['maxItems', 'description', 'deprecated']
-> > 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> > 	'default' is not one of ['maxItems', 'description', 'deprecated']
-> > 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> > 	'items' is not one of ['maxItems', 'description', 'deprecated']
-> > 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> > 	Additional properties are not allowed ('$ref', 'default' were unexpected)
-> > 		hint: Arrays must be described with a combination of minItems/maxItems/items
-> > 	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-> > 	'<0 0 0 0>' is not of type 'integer'
-> > 	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-> > 	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-> > /home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: '$ref' should not be valid under {'const': '$ref'}
-> > 	hint: Standard unit suffix properties don't need a type $ref
-> > 	from schema $id: http://devicetree.org/meta-schemas/core.yaml#  
+On Wed, Nov 05, 2025 at 11:17:37AM +0530, Dikshita Agarwal wrote:
+> Improve the condition used to determine when input internal buffers need
+> to be reconfigured during streamon on the capture port. Previously, the
+> check relied on the INPUT_PAUSE sub-state, which was also being set
+> during seek operations. This led to input buffers being queued multiple
+> times to the firmware, causing session errors due to duplicate buffer
+> submissions.
 > 
-> You must drop ref. That's the entire point of common unit suffix.
+> This change introduces a more accurate check using the FIRST_IPSC and
+> DRC sub-states to ensure that input buffer reconfiguration is triggered
+> only during resolution change scenarios, such as streamoff/on on the
+> capture port. This avoids duplicate buffer queuing during seek
+> operations.
 > 
-I tried without it:
+> Fixes: c1f8b2cc72ec ("media: iris: handle streamoff/on from client in dynamic resolution change")
+> Cc: stable@vger.kernel.org
+> Reported-by: Val Packett <val@packett.cool>
+> Closes: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4700
+> Signed-off-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+> ---
+> Changes in v3:
+> - Fixed the compilation issue
+> - Added stable@vger.kernel.org in Cc
+> - Link to v2: https://lore.kernel.org/r/20251104-iris-seek-fix-v2-1-c9dace39b43d@oss.qualcomm.com
+> 
+> Changes in v2:
+> - Removed spurious space and addressed other comments (Nicolas)
+> - Remove the unnecessary initializations (Self) 
+> - Link to v1: https://lore.kernel.org/r/20251103-iris-seek-fix-v1-1-6db5f5e17722@oss.qualcomm.com
+> ---
+>  drivers/media/platform/qcom/iris/iris_common.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_common.c b/drivers/media/platform/qcom/iris/iris_common.c
+> index 9fc663bdaf3fc989fe1273b4d4280a87f68de85d..7f1c7fe144f707accc2e3da65ce37cd6d9dfeaff 100644
+> --- a/drivers/media/platform/qcom/iris/iris_common.c
+> +++ b/drivers/media/platform/qcom/iris/iris_common.c
+> @@ -91,12 +91,14 @@ int iris_process_streamon_input(struct iris_inst *inst)
+>  int iris_process_streamon_output(struct iris_inst *inst)
+>  {
+>  	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
+> -	bool drain_active = false, drc_active = false;
+>  	enum iris_inst_sub_state clear_sub_state = 0;
+> +	bool drain_active, drc_active, first_ipsc;
+>  	int ret = 0;
+>  
+>  	iris_scale_power(inst);
+>  
+> +	first_ipsc = inst->sub_state & IRIS_INST_SUB_FIRST_IPSC;
+> +
+>  	drain_active = inst->sub_state & IRIS_INST_SUB_DRAIN &&
+>  		inst->sub_state & IRIS_INST_SUB_DRAIN_LAST;
+>  
+> @@ -108,7 +110,8 @@ int iris_process_streamon_output(struct iris_inst *inst)
+>  	else if (drain_active)
+>  		clear_sub_state = IRIS_INST_SUB_DRAIN | IRIS_INST_SUB_DRAIN_LAST;
+>  
+> -	if (inst->domain == DECODER && inst->sub_state & IRIS_INST_SUB_INPUT_PAUSE) {
+> +	/* Input internal buffer reconfiguration required in case of resolution change */
+> +	if (first_ipsc || drc_active) {
+>  		ret = iris_alloc_and_queue_input_int_bufs(inst);
+>  		if (ret)
+>  			return ret;
 
-  fitipower,tdly-ms:
-    description:
-      Power up soft start delay settings tDLY1-4 bitfields in the
-      POWERON_DELAY register
-    default: <0 0 0 0>
-    items:
-      - enum:
-          - 0
-          - 1
-          - 2
-          - 4
-      - enum:
-          - 0
-          - 1
-          - 2
-          - 4
-      - enum:
-          - 0
-          - 1
-          - 2
-          - 4
-      - enum:
-          - 0
-          - 1
-          - 2
-          - 4
+I will repeat my (unanswered) question from v2:
 
+After this line comes manual writing of STAGE and PIPE. Could you please
+point out where is the driver updating the resolution in the firmware?
+And if it does, why do we need to write STAGE and PIPE again?
 
-Errors:
-
-  CHKDT   ./Documentation/devicetree/bindings
-/home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: 'anyOf' conditional failed, one must be fixed:
-	'maxItems' is a required property
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'default' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'items' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	Additional properties are not allowed ('default' was unexpected)
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'<0 0 0 0>' is not of type 'integer'
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-/home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: 'anyOf' conditional failed, one must be fixed:
-	'maxItems' is a required property
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'default' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'items' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	Additional properties are not allowed ('default' was unexpected)
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'<0 0 0 0>' is not of type 'integer'
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-
-maxItems is required according to error message, so trying with...
-
-  SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-  CHKDT   ./Documentation/devicetree/bindings
-/home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: {'description': 'Power up soft start delay settings tDLY1-4 bitfields in the POWERON_DELAY register', 'default': '<0 0 0 0>', 'maxItems': 4, 'items': [{'enum': [0, 1, 2, 4]}, {'enum': [0, 1, 2, 4]}, {'enum': [0, 1, 2, 4]}, {'enum': [0, 1, 2, 4]}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: 'anyOf' conditional failed, one must be fixed:
-	'default' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'items' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	Additional properties are not allowed ('default' was unexpected)
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'<0 0 0 0>' is not of type 'integer'
-	1 was expected
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-/home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: 'anyOf' conditional failed, one must be fixed:
-	'default' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'items' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	Additional properties are not allowed ('default' was unexpected)
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'<0 0 0 0>' is not of type 'integer'
-	1 was expected
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-
-
-BTW: before you ask: dt-schema is version 2025.8
-
-removing items and default removes all problems. 
-So working: 
-  - fitipower,tdly without -ms suffix
-  - fitipower,tdly-ms without default and items but maxItems.
-
-
-Regards,
-Andreas
+-- 
+With best wishes
+Dmitry
 
