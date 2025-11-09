@@ -1,226 +1,134 @@
-Return-Path: <linux-kernel+bounces-891889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F7CC43BC0
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 11:33:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CA3CC43C1B
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 11:44:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDAF13AEDB2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 10:33:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 254783B0E52
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 10:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE97428980F;
-	Sun,  9 Nov 2025 10:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E142D5C6C;
+	Sun,  9 Nov 2025 10:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="iSaoZMF/"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WAH/6l27"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68433212550
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 10:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AA11DE8AD
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 10:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762684395; cv=none; b=KrysrPNR/NuL/23WpyaP+XwqmUSes6WJoQbbgEuTxLJ487RHSR4wyMWd9FT8V5Hj/bt+m0/rmCfC7lC/qgXASpxaWi8XMeDtZIpKM5NERRs8pNvxVlQ0bHShnfHccpOk4eZxGVvTO0ZqKVwsYHHgxa8XtzT9y9I3nVnJWobACJY=
+	t=1762685078; cv=none; b=IkgR6zmUOjDsTawDQp7U2KjAviDoOiDngA2bzfyynW9mZc5gDxR9hdBH6IQbiQLX4n46rXyzhzl9/oOxncrbYpojp2HujrMwZQs0ZVei61WrGaLCj4tIpllz1BHSLzxK6umiATRtubFrzttMyuJbfKGpGcKeHxUuCcncUpSoP7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762684395; c=relaxed/simple;
-	bh=KEqMyCWzY5wSGQBRrPkXPqVGQVd3zoLBHI2WJ3uvoUs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HEyS/+pe1X7vCo5Yl4i2Fs0lT17VhZhXHOycCaU3FLudjLGyR8KjG1hKxHfScgeG2IgdX7X86vj41yd9byj59hphTmI4oqcuCDMC5tsnXE4fMKIsh6Z/p4YqDDhPSwhIVkslka31Be9Q5RlOQqrt2dqqk0/RFcPfAgBXGzA0IuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=iSaoZMF/; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-782e93932ffso1699386b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 02:33:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1762684391; x=1763289191; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s40qMMXHZ20h7j4C00hYRSxJ09zSuRC/DjL234FCgys=;
-        b=iSaoZMF/jaX3CrMpbTgxWwonjG7rGlvFyTj3zmrafENTnVXu2JsdK0Hx3CLIQRfhr7
-         VRV4SusXffy1GHyT2wLZmQmCp8C3KedxU9EpKlLns9vfSF/YrHxPuZTPxomUjuykUkKE
-         wiyKdwjXsgLDHGawbeNDEh0uuBDrFW8tNxy2+55imFdlY4L3uoa3JaCi6jlwTlr3N4wm
-         ddRwbmKLkGduZ4j/395gCfEFIDld6Cn4eILSxvBsubpz3LRpCcpMTSleid6Rl+/goDZd
-         aw8/4bbZK2roX6Qq9UcotPQpmaQYA1abdGXjTn1CBmcCYLwQHyLl6Hyym79/HH9L0Y4G
-         4HJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762684391; x=1763289191;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s40qMMXHZ20h7j4C00hYRSxJ09zSuRC/DjL234FCgys=;
-        b=fxS1zklLoTbTQJ0EVpBhoIaajilb+eVIz0VSF5GnI1YQHNvRwWXfafEvlWSJgoMVXL
-         C53zlruckwXs3W9xn+WpsqcL+ZHJQFE98nnTOpg0Jw+VE66nTa9fdXrRGQIJLApziR8b
-         k++ukIdiHXSJCguBDolmUEra58pmt+NcTzIaYbD8aYtNwk+oHRgQAo+H2Fz3n8fCGP9S
-         Q3GlKFMP9ukvURRq7tp76kPy5V1PQ/nUnGrb6FZwXQfpOAcBvcakn6hMRhJfj0hxx/MX
-         gHlFocOqhCDhUaEjEJNf1xs29eAvPyO7xsV1IMED0IpKGxkhGVc2v79dzGD5Q0PSLArj
-         WCrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVmLiPN0bYH2W1vmfY2PSjMbLp5ieWDoHw3ap1YKlr+nqBx1n7QFlJt/WCrG96uky9PgVBRDhI2z6ALdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoo5hXR2DCgJCOrf0tMsNt5HImt48i/3/9CEyRxvrIc9vHTxnl
-	MVjNVGRLrhd+Y1muG2ca1wBgCz3hQRfr7IsFFdNdggfmWtlz/S2sDrkF916xnwyTM90=
-X-Gm-Gg: ASbGnctz7ICpnRfWs8POPYDaCJ6OQSxxCBN6HgHGnjMnh/C0WuvQQbRYPwquXQ8Kmcu
-	IInXO5orGrv8zTDqGZdNA+uquI5qZSwQ6lmqnBk+rgHqO7/iDn6KfY4JiMxgKGFy/ccCUNg8Wxl
-	YU9mHR7bbERqbp8qHqZrY3X+d4+2KDX//ho2wNhmkG6RSoMV37F2WrKaZw6r2XcHSox1Igiqep9
-	lgQrlsEJ8h+0o3+xOHjrh3lDmklfYvutWQMv3/bmtDziompH2xNyA90L0MOsO32B6A0x7mWC20D
-	ogJzp3B+YJ60EQhMUDjd1UU/+z4pcBTflwaI4bWTYr9Tf8EvQyMvZV3PJt8zEelFCau+DVA6ICG
-	f8bmFRL9Io+z2HRKt1IgjloUqB0Nql15juUhfDUz6Dv8Y3U7pDcBHyTotW1V1YlC+jXTtlf9Hn7
-	lxTz6psySiqJsIdKcZn0agZu7/DjwOm0QkE56JIKe8WA==
-X-Google-Smtp-Source: AGHT+IHgP5DCzHvE6SO4N1lFVjDv8DtU6WnU3jJ+cYRcK8WstcVTQd3mvnU0hua09p7ZKtgr1B4r3Q==
-X-Received: by 2002:a05:6a21:e097:b0:33e:561b:fb22 with SMTP id adf61e73a8af0-353a405e5f5mr6660241637.50.1762684391533;
-        Sun, 09 Nov 2025 02:33:11 -0800 (PST)
-Received: from T179DVVMRY.bytedance.net ([2001:c10:ff04:0:1000:0:1:5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17b0c4sm8332943b3a.48.2025.11.09.02.33.05
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 09 Nov 2025 02:33:11 -0800 (PST)
-From: Liangyan <liangyan.peng@bytedance.com>
-To: peterz@infradead.org,
-	mingo@redhat.com
-Cc: acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	james.clark@linaro.org,
-	bigeasy@linutronix.de,
-	zengxianjun@bytedance.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Liangyan <liangyan.peng@bytedance.com>
-Subject: [PATCH] perf/core: Fix pending work re-queued in __perf_event_overflow
-Date: Sun,  9 Nov 2025 18:32:53 +0800
-Message-Id: <20251109103253.57081-1-liangyan.peng@bytedance.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-145)
+	s=arc-20240116; t=1762685078; c=relaxed/simple;
+	bh=44MHQPu5x73Mpyie/3cjmT1gjLe/2NVED6ahHMZiY0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FSdZrXlyR5kWvvIWxIY4iiTcfw3mmPXF/nFrd5Tx3VTpHxl+Mhe3SzOjI7b4xbrkxhRzMj0MvOY9Yuo3wL4QdtQX5SSLOZiUhl++g1OLSsaIaIC63owp+EZTCkvqW6uJPkxMgsvMHttgZtAzV/ONhvT516aYDLrdrMHCnz3mk4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WAH/6l27; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762685077; x=1794221077;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=44MHQPu5x73Mpyie/3cjmT1gjLe/2NVED6ahHMZiY0E=;
+  b=WAH/6l27ObCgxgHqHs5ap7BbA+m96vgYrVTN1e6MHysagx6B4Z+d5+J4
+   RsLiEpuc8Gz6kT+EGHVwTRJ8sQOvM/8s9UQc3Ih3Yj7JB8iJQuS9P154j
+   Pszjl4O8RjsRJMX0QXfkXjPR+TaV/BiFFaNAOFVLm1OX0Qnr4IZcHus/U
+   ktIZrmfZ4RtUunT1z8cpuXcUtdvRueJwGlbK/CLyhxlOWIwcVd6fjnWuX
+   SrKzOTriHLabTa/lsIM3AjXkkHSZVVG7rf55VU9oEWYKDrK/TWBfBTYfF
+   jfOdejRb15N+0CWwwFN9sf0zCh8Bs3mdtQ+ofT4jDxKAb06jmEvit9x8Y
+   Q==;
+X-CSE-ConnectionGUID: hM98x+WoRj2c+vO4bzhr6A==
+X-CSE-MsgGUID: uRPu5RNuTN6GXhegnJWZ9A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11607"; a="63972908"
+X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
+   d="scan'208";a="63972908"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 02:44:37 -0800
+X-CSE-ConnectionGUID: CE3LIVPBR7e/xN0LEEcy/g==
+X-CSE-MsgGUID: I0kkBDkwT5qwGH5mPL0TUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
+   d="scan'208";a="192547074"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 09 Nov 2025 02:44:34 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vI2uN-0001w7-0B;
+	Sun, 09 Nov 2025 10:44:31 +0000
+Date: Sun, 9 Nov 2025 18:43:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alejandro Colomar <alx@kernel.org>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Alejandro Colomar <alx@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Christopher Bazley <chris.bazley.wg14@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Alexander Potapenko <glider@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH v2 1/4] array_size.h: Add ARRAY_END()
+Message-ID: <202511091804.XUQA4dOK-lkp@intel.com>
+References: <35255c1ceb54518779a45351dcd79a3c1910818a.1762637046.git.alx@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35255c1ceb54518779a45351dcd79a3c1910818a.1762637046.git.alx@kernel.org>
 
-We got warning below during perf test.
-[  467.100914] [      T1] WARNING: CPU: 0 PID: 1 at kernel/events/core.c:5147 put_pmu_ctx+0x2ef/0x3c0
-[  467.107702] [      T1] CPU: 0 UID: 0 PID: 1 Comm: systemd Kdump: loaded Tainted: G            E       6.18.0-rc4-dirty #114 PREEMPT(voluntary)
-[  467.109835] [      T1] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1
-[  467.111027] [      T1] RIP: 0010:put_pmu_ctx+0x2ef/0x3c0
-[  467.122081] [      T1] Call Trace:
-[  467.122463] [      T1]  <TASK>
-[  467.124822] [      T1]  __free_event+0x337/0xa50
-[  467.125306] [      T1]  perf_pending_task+0x10f/0x3b0
-[  467.125824] [      T1]  task_work_run+0x140/0x210
-[  467.127413] [      T1]  exit_to_user_mode_loop+0x10e/0x130
-[  467.127965] [      T1]  do_syscall_64+0x26d/0x2e0
-[  467.128453] [      T1]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  467.129025] [      T1] RIP: 0033:0x7f01d22349ca
-[  467.135157] [      T1]  </TASK>
+Hi Alejandro,
 
-A race condition occurs between task context and IRQ context when
-handling sigtrap tracepoint event overflows:
+kernel test robot noticed the following build warnings:
 
-1. In task context, an event is overflowed and its pending work is
-   queued to task->task_works
-2. Before pending_work is set, the same event overflows in IRQ context
-3. Both contexts queue the same perf pending work to task->task_works
+[auto build test WARNING on 6146a0f1dfae5d37442a9ddcba012add260bceb0]
 
-This double queuing causes:
-- task_work_run() enters infinite loop calling perf_pending_task()
-- Potential warnings and use-after-free when event is freed in
-perf_pending_task()
+url:    https://github.com/intel-lab-lkp/linux/commits/Alejandro-Colomar/array_size-h-Add-ARRAY_END/20251109-062234
+base:   6146a0f1dfae5d37442a9ddcba012add260bceb0
+patch link:    https://lore.kernel.org/r/35255c1ceb54518779a45351dcd79a3c1910818a.1762637046.git.alx%40kernel.org
+patch subject: [PATCH v2 1/4] array_size.h: Add ARRAY_END()
+config: alpha-defconfig (https://download.01.org/0day-ci/archive/20251109/202511091804.XUQA4dOK-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511091804.XUQA4dOK-lkp@intel.com/reproduce)
 
-Fix the race by disabling interrupts during queuing of perf pending work.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511091804.XUQA4dOK-lkp@intel.com/
 
-The calltrace of re-queuing pending work is something like below.
-[  466.979877] [      C0] CPU: 0 UID: 0 PID: 1 Comm: systemd Kdump: loaded Tainted: G            E       6.18.0-rc4-dirty #114 PREEMPT(voluntary)
-[  466.979889] [      C0] Tainted: [E]=UNSIGNED_MODULE
-[  466.979892] [      C0] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1
-[  466.979897] [      C0] Call Trace:
-[  466.979909] [      C0]  <IRQ>
-[  466.979913] [      C0]  dump_stack_lvl+0x88/0xb0
-[  466.979924] [      C0]  __perf_event_overflow+0xb4f/0xcb0
-[  466.979972] [      C0]  perf_swevent_event+0x230/0x340
-[  466.979980] [      C0]  perf_tp_event+0x412/0x910
-[  466.980355] [      C0]  perf_trace_run_bpf_submit+0x103/0x190
-[  466.980363] [      C0]  perf_trace_kmem_cache_alloc+0x156/0x1b0
-[  466.980374] [      C0]  kmem_cache_alloc_noprof+0x214/0x600
-[  466.980383] [      C0]  __alloc_object+0x2f/0x2d0
-[  466.980392] [      C0]  __create_object+0x22/0x90
-[  466.980402] [      C0]  kmem_cache_alloc_node_noprof+0x39d/0x620
-[  466.980419] [      C0]  kmalloc_reserve+0x167/0x280
-[  466.980428] [      C0]  __alloc_skb+0x12e/0x330
-[  466.980466] [      C0]  napi_alloc_skb+0x147/0x270
-[  466.980473] [      C0]  page_to_skb+0x171/0xaa0 [virtio_net]
-[  466.980498] [      C0]  receive_buf+0x7c9/0x3ae0 [virtio_net]
-[  466.980637] [      C0]  virtnet_poll+0xb98/0x3160 [virtio_net]
-[  466.980749] [      C0]  __napi_poll+0xb0/0x5c0
-[  466.980756] [      C0]  net_rx_action+0x416/0xbb0
-[  466.980809] [      C0]  handle_softirqs+0x186/0x5d0
-[  466.980818] [      C0]  __irq_exit_rcu+0x13f/0x180
-[  466.980826] [      C0]  common_interrupt+0x7a/0xa0
-[  466.980834] [      C0]  </IRQ>
-[  466.980836] [      C0]  <TASK>
-[  466.980839] [      C0]  asm_common_interrupt+0x22/0x40
-[  466.980846] [      C0] RIP: 0010:delay_tsc+0x3a/0xa0
-[  466.980854] [      C0] Code: 44 8b 05 ad 59 90 02 0f 01 f9 66 90 48 c1 e2 20 48 89 d7 48 09 c7 eb 21 65 ff 0d 91 59 90 02 74 57 f3 90 65 ff 05 86 59 90 02 <65> 8b 35 83 59 90 02 41 39 f0 75 28 41 89 f0 0f 01 f9 66 90 48 c1
-[  466.980862] [      C0] RSP: 0018:ff110001009477e0 EFLAGS: 00000283
-[  466.980869] [      C0] RAX: 000000fea17a6aa9 RBX: ff11000100a8c500 RCX: 0000000000000000
-[  466.980874] [      C0] RDX: 000000000026df92 RSI: 0000000000000000 RDI: 000000fea1538b17
-[  466.980878] [      C0] RBP: ff11001b3a03bb20 R08: 0000000000000000 R09: 0000000000af7a2e
-[  466.980883] [      C0] R10: ff1100010093cc87 R11: 000000006a14397b R12: 1fe2200020128f03
-[  466.980887] [      C0] R13: ff11000100a8c64c R14: ff11000100a8c600 R15: ff11000100a8c82c
-[  466.980894] [      C0]  __perf_event_overflow+0x783/0xcb0
-[  466.980937] [      C0]  perf_swevent_event+0x230/0x340
-[  466.980944] [      C0]  perf_tp_event+0x412/0x910
-[  466.981200] [      C0]  perf_trace_run_bpf_submit+0x103/0x190
-[  466.981212] [      C0]  perf_trace_kmem_cache_alloc+0x156/0x1b0
-[  466.981223] [      C0]  kmem_cache_alloc_noprof+0x214/0x600
-[  466.981232] [      C0]  __alloc_object+0x2f/0x2d0
-[  466.981241] [      C0]  __create_object+0x22/0x90
-[  466.981251] [      C0]  __kmalloc_cache_noprof+0x405/0x640
-[  466.981283] [      C0]  kmem_cache_free+0x18a/0x630
-[  466.981300] [      C0]  __fput+0x5c4/0xa70
-[  466.981310] [      C0]  fput_close_sync+0xf2/0x1f0
-[  466.981336] [      C0]  __x64_sys_close+0x88/0xf0
-[  466.981344] [      C0]  do_syscall_64+0x60/0x2e0
-[  466.981351] [      C0]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  466.981357] [      C0] RIP: 0033:0x7f01d22349ca
-[  466.981399] [      C0]  </TASK>
+All warnings (new ones prefixed by >>):
 
-Fixes: c5d93d23a260 ("perf: Enqueue SIGTRAP always via task_work.")
-Reported-by: Xianjun Zeng <zengxianjun@bytedance.com>
-Signed-off-by: Liangyan <liangyan.peng@bytedance.com>
----
- kernel/events/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+>> drivers/block/floppy.c:4805:9: warning: 'ARRAY_END' redefined
+    4805 | #define ARRAY_END(X) (&((X)[ARRAY_SIZE(X)]))
+         |         ^~~~~~~~~
+   In file included from include/linux/string.h:6,
+                    from include/linux/bitmap.h:13,
+                    from include/linux/nodemask.h:91,
+                    from include/linux/numa.h:6,
+                    from include/linux/async.h:13,
+                    from drivers/block/floppy.c:166:
+   include/linux/array_size.h:17:9: note: this is the location of the previous definition
+      17 | #define ARRAY_END(a)  (a + ARRAY_SIZE(a))
+         |         ^~~~~~~~~
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index cae921f4d137..6c35a129f185 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -10427,12 +10427,14 @@ static int __perf_event_overflow(struct perf_event *event,
- 		bool valid_sample = sample_is_allowed(event, regs);
- 		unsigned int pending_id = 1;
- 		enum task_work_notify_mode notify_mode;
-+		unsigned long flags;
- 
- 		if (regs)
- 			pending_id = hash32_ptr((void *)instruction_pointer(regs)) ?: 1;
- 
- 		notify_mode = in_nmi() ? TWA_NMI_CURRENT : TWA_RESUME;
- 
-+		local_irq_save(flags);
- 		if (!event->pending_work &&
- 		    !task_work_add(current, &event->pending_task, notify_mode)) {
- 			event->pending_work = pending_id;
-@@ -10458,6 +10460,7 @@ static int __perf_event_overflow(struct perf_event *event,
- 			 */
- 			WARN_ON_ONCE(event->pending_work != pending_id);
- 		}
-+		local_irq_restore(flags);
- 	}
- 
- 	READ_ONCE(event->overflow_handler)(event, data, regs);
+
+vim +/ARRAY_END +4805 drivers/block/floppy.c
+
+5a74db06cc8d36 Philippe De Muyter 2009-02-18  4804  
+5a74db06cc8d36 Philippe De Muyter 2009-02-18 @4805  #define ARRAY_END(X) (&((X)[ARRAY_SIZE(X)]))
+5a74db06cc8d36 Philippe De Muyter 2009-02-18  4806  
+
 -- 
-2.39.3 (Apple Git-145)
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
