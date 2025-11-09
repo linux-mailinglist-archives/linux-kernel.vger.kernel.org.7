@@ -1,184 +1,286 @@
-Return-Path: <linux-kernel+bounces-891934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA499C43D8F
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:30:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E18AC43D9B
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:32:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87ACF4E4BC5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:30:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 942F64E33EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736D62DE200;
-	Sun,  9 Nov 2025 12:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF632ECD06;
+	Sun,  9 Nov 2025 12:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNEr1lj2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6tkKY49"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C398E4A1E;
-	Sun,  9 Nov 2025 12:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774CC2459EA;
+	Sun,  9 Nov 2025 12:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762691447; cv=none; b=UFFN8KSs3Yaw7AbkllCTFnKCLvWxvWNid4Dj85dMOnt0i98wlawwirazCsJTq6LQngCimycBhfgD0OsSMh2jrRDhFWR6Yo0C+Od3XQh1IV5IPJy8APOcU3jlnuKHvv1bKgrFv+7aZe96dEB0to+vQuF4DyQIHkdA0fw86xJr1Ao=
+	t=1762691522; cv=none; b=BR9BTNxkO+Rv8Uu6YMcnAbSB+SHXdjF2F5KHG9u/rkMAEyURQVsT9X/UGyszXi23gDSJ17zmrLXrkG366YaSHaq7xPJshscG8zUEvkA7g0/kAjxD+UFFUd8wGn4cFdEO/vaSiOrLaVawI0VV5c46KsBZ1lzxnJyMEPr9ea6XNZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762691447; c=relaxed/simple;
-	bh=uaAzoyaBailq2b/m0o0Kpjlu+Dde1wzPbhrBuIBEfDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHu0ZUwC2InpHu/T1DL8Qvlb8cqaR7T9RlfRx1RL3M9WqfHPJVI+Cv+et+HH5W421NX8pZVWFigapfkLTkzeEw8U3kPii8oWs+aI+SpNBTK/EQpbnMfvqBb5eRS1WehwhV9g508OxWsZDVN4jbYClLSeqwfzufMJPhDNL5vS9jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNEr1lj2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 776D7C19424;
-	Sun,  9 Nov 2025 12:30:44 +0000 (UTC)
+	s=arc-20240116; t=1762691522; c=relaxed/simple;
+	bh=LGYTQwUkxBt0o3+LvefP3AgSY4sePqqHapsIYEqlCeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UaKyIrhL7DBcIP7NBjpDl35v9mZ2Mr2kC16zFmSsJgdya4ohM78wBME2uGOLXNC4qdVSlcPVJoRAv1Uda7J2S3+MjcXKdhFn9eUf2Iim+XLO4rExGq99z8PHPXjFIE6QGSmZM4SqcUn9SVkDgQ7JSg7m/rOinncAvwODfDIRO/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6tkKY49; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E899C4CEF8;
+	Sun,  9 Nov 2025 12:31:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762691447;
-	bh=uaAzoyaBailq2b/m0o0Kpjlu+Dde1wzPbhrBuIBEfDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FNEr1lj2oRM9QL/mU9SWQIDdmge4KwfbwhjMVBEhst+fkf+a+ZUTpmY7ziG4zbWk8
-	 o1BhVcs9yexQfaHgyOfke3dsodcmL3Wpe2mtQJap8VdLTePPm+NjV8PKzxHzCeL2Ra
-	 dwgHOwrgJHw4qF92ZXTq1pLuxLIZ8ZNbohqP+hIhVACo4VH4xxHSddZeQW0GIZuzF2
-	 9Z/vfA8VFioDp2BnhxijTAIGfxikPpTmcsZLVBDzNBixQo07yjWprRR3CnRuIMbfEE
-	 lGE0jbdSNVReiHoKq3WObsEZkO7HdM7zIewhXozXzrmhsG/brWoDlZqT0VHVop8kW2
-	 x6xPHNNnE/JOQ==
-Date: Sun, 9 Nov 2025 13:30:42 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH v2 1/4] array_size.h: Add ARRAY_END()
-Message-ID: <hianmnv3t7xz4mf5oaicei4q7vqudrnkhmexzkoxags3gvyj2n@qvebtox3uvyn>
-References: <35255c1ceb54518779a45351dcd79a3c1910818a.1762637046.git.alx@kernel.org>
- <202511091804.XUQA4dOK-lkp@intel.com>
+	s=k20201202; t=1762691522;
+	bh=LGYTQwUkxBt0o3+LvefP3AgSY4sePqqHapsIYEqlCeY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I6tkKY49wEmejIHJanVAPCGscv0SznQrStzJWzGXtM/MoGWmHg6UVTTLkWJybZ+Lh
+	 4UMm5gGx0I9XSQACiITsQ9qryP+EArrVwQ2Hb1f1g6F1GcQVpQLa9OEIaBI1lhVMex
+	 hn2ZwrsUYrHnG3yk/s79Hlug4tSxh/7uK6qVOv9sa/5dHE9I8wFOXPfWel6OiUTeLf
+	 29OSW64+0xwA2mWRrjYmYIWpsgVJS18ajVZJ/mGF7vV9AxtbnJty+qCktnxWMNOi0X
+	 a4Jwk1jBcT7ggA2MiHvGkX22fAhQxp+wknU5gXoQVMt22wh5KY6NrccPXfYo43ZghL
+	 EFRCI8UKkm74A==
+Date: Sun, 9 Nov 2025 12:31:53 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jorge Marques <gastmaier@gmail.com>
+Cc: Jorge Marques <jorge.marques@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, David
+ Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/7] docs: iio: New docs for ad4062 driver
+Message-ID: <20251109123153.65cea85a@jic23-huawei>
+In-Reply-To: <6zxwgpdz6zz3owrr5h277otv4b3gbbc47amgatkyatjdv2ruqv@kgsekg6utqqc>
+References: <20251013-staging-ad4062-v1-0-0f8ce7fef50c@analog.com>
+	<20251013-staging-ad4062-v1-2-0f8ce7fef50c@analog.com>
+	<20251018162113.002d92f7@jic23-huawei>
+	<skcjf6tdo7bktdx4g2bm42gkzd5vdtckxsxzgu7s6dwmiwfdpw@hxhol4g4adcs>
+	<20251102123727.0aa4c031@jic23-huawei>
+	<6zxwgpdz6zz3owrr5h277otv4b3gbbc47amgatkyatjdv2ruqv@kgsekg6utqqc>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nm4vwnmvmi2ifa5n"
-Content-Disposition: inline
-In-Reply-To: <202511091804.XUQA4dOK-lkp@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
---nm4vwnmvmi2ifa5n
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH v2 1/4] array_size.h: Add ARRAY_END()
-Message-ID: <hianmnv3t7xz4mf5oaicei4q7vqudrnkhmexzkoxags3gvyj2n@qvebtox3uvyn>
-References: <35255c1ceb54518779a45351dcd79a3c1910818a.1762637046.git.alx@kernel.org>
- <202511091804.XUQA4dOK-lkp@intel.com>
-MIME-Version: 1.0
-In-Reply-To: <202511091804.XUQA4dOK-lkp@intel.com>
+> > > > > +Supported devices
+> > > > > +=================
+> > > > > +
+> > > > > +The following chips are supported by this driver:
+> > > > > +
+> > > > > +* `AD4060 <https://www.analog.com/AD4060>`_
+> > > > > +* `AD4062 <https://www.analog.com/AD4062>`_
+> > > > > +
+> > > > > +Wiring modes
+> > > > > +============
+> > > > > +
+> > > > > +The ADC is interfaced through an I3C bus, and contains two programmable GPIOs.    
+> > > > This raises a question on whether it makes sense for the binding to support providing
+> > > > gpios from the start (as alternative to interrupts).  Seems like the two pins
+> > > > are completely interchangeable so one might well be 'left' for use by some other
+> > > > device that needs a gpio pin.
+> > > > 
+> > > > I don't mind that much if we want to leave the binding support for that for later
+> > > > but in the ideal case we'd have it from the start (even if the driver doesn't
+> > > > support it until we have a user).    
+> > > 
+> > > Yep, they are almost interchangeable except GP0 cannot be DEV_DRY (device is
+> > > ready to accept serial interface communications). The question is how to
+> > > represent that in the devicetree.
+> > > 
+> > > I am ok with adding `gpio-controller` as an optional property. If
+> > > present, and if the gp0/1 is not taken by the interrupt-names property,
+> > > it fallback to expose as a gpo0 (they cannot be set as gpi).
+> > > 
+> > > For the other roles, based on
+> > > https://elixir.bootlin.com/linux/v6.18-rc3/source/Documentation/devicetree/bindings/hwmon/adi,ltc4282.yaml#L109
+> > > We would have
+> > > 
+> > >   adi,gp0-mode = "dev-en";
+> > >   adi,gp1-mode = "rdy";
+> > > 
+> > > Some examples:
+> > > 
+> > >   // gp0: threshold-either (default), gp1: data ready (default)
+> > >   adc@0,2ee007c0000 {
+> > >       reg = <0x0 0x2ee 0x7c0000>;
+> > >       vdd-supply = <&vdd>;
+> > >       vio-supply = <&vio>;
+> > >       ref-supply = <&ref>;
+> > > 
+> > >       interrupt-parent = <&gpio>;
+> > >       interrupts = <0 0 IRQ_TYPE_EDGE_RISING>,
+> > >                    <0 1 IRQ_TYPE_EDGE_FALLING>;
+> > >       interrupt-names = "gp0", "gp1";
+> > >   };
+> > > 
+> > >   // gp0: user GPO, gp1: data ready
+> > >   adc@0,2ee007c0000 {
+> > >       reg = <0x0 0x2ee 0x7c0000>;
+> > >       vdd-supply = <&vdd>;
+> > >       vio-supply = <&vio>;
+> > >       ref-supply = <&ref>;
+> > > 
+> > >       gpio-controller;
+> > > 
+> > >       interrupt-parent = <&gpio>;
+> > >       interrupts = <0 1 IRQ_TYPE_EDGE_FALLING>;
+> > >       interrupt-names = "gp1";
+> > >   };
+> > > 
+> > >   // gp0: threshold crossed high value, g1: unused
+> > >   adc@0,2ee007c0000 {
+> > >       reg = <0x0 0x2ee 0x7c0000>;
+> > >       vdd-supply = <&vdd>;
+> > >       vio-supply = <&vio>;
+> > >       ref-supply = <&ref>;
+> > > 
+> > >       interrupt-parent = <&gpio>;
+> > >       interrupts = <0 0 IRQ_TYPE_EDGE_FALLING>;
+> > >       interrupt-names = "gp0";
+> > > 
+> > >       adi,gp0-mode = "thresh-high"
+> > >   };
+> > > 
+> > > 
+> > > And the driver constraints the valid configurations.  
+> >   
+> 
+> Hi Jonathan,
+> 
+> A comment on the gpio modes and sampling frequency.
+> Ack on `raw * _scale`.
+> 
+> > More or less looks good  We have other drivers effectively doing this.
+> > Whether we actively handle the final case or not in driver probably doesn't matter.
+> > Wtihout the gpio-controller specified nothing can use the gpios anyway so
+> > if we support them they simply won't get used.
+> > 
+> > I'm not sure on the gpi0-mode though.  Why is that useful? That feels like
+> > a choice the driver should make dependent on what is available to it.
+> > So if we've specified it is in interrupt, only the modes that might be
+> > an interrupt are available to the driver.
+> > 
+> > The only case I can see being useful is dev_en as that's a specifically timed
+> > control signal for the analog front end.
+> > 
+> > So a specific flag for that probably makes sense - I'm not sure if we'd
+> > ever have an AFE where it would make sense to drive it from a hardware
+> > signal on the ADC like this one AND from a gpio, so I don't think we need
+> > to support binding this as a gpio in that case.
+> >   
+> 
+> So, by default gp0 is set threshold-either, and gp1 data ready.
+> The `adi,gp*-mode` would be useful to invert for example, have gp0 as
+> data ready and gp1 as threshold-either.
+> 
+> On the threshold, there are 3 different crossings:
+> * either: the reading crosses either the upper or lower boundary.
+> * max: crosses the upper boundary.
+> * min: crosses the lower boundary.
+> 
+> To not make the `adi,gp*-mode` attribute necessary I can:
+> * make the driver set either, max, min roles based on the
+>   values written to the IIO attributes, e.g. writing -1 for
+>   IIO_EV_INFO_HYSTERESIS, or a max/min value high/low enough?
 
-Hi,
+This confuses me a little. Which direction do the thresholds apply in?
+Looks from the datasheet like these are standard in that
+crossing the min threshold triggers the interrupt when the value
+goes below that threshold (and hysteresis means the detector doesn't
+reset until the value goes above min + hysteresis)
+So for that it's a falling threshold with normal hysteresis.
 
-On Sun, Nov 09, 2025 at 06:43:46PM +0800, kernel test robot wrote:
-> Hi Alejandro,
->=20
-> kernel test robot noticed the following build warnings:
->=20
-> [auto build test WARNING on 6146a0f1dfae5d37442a9ddcba012add260bceb0]
->=20
-> url:    https://github.com/intel-lab-lkp/linux/commits/Alejandro-Colomar/=
-array_size-h-Add-ARRAY_END/20251109-062234
-> base:   6146a0f1dfae5d37442a9ddcba012add260bceb0
-> patch link:    https://lore.kernel.org/r/35255c1ceb54518779a45351dcd79a3c=
-1910818a.1762637046.git.alx%40kernel.org
-> patch subject: [PATCH v2 1/4] array_size.h: Add ARRAY_END()
-> config: alpha-defconfig (https://download.01.org/0day-ci/archive/20251109=
-/202511091804.XUQA4dOK-lkp@intel.com/config)
-> compiler: alpha-linux-gcc (GCC) 15.1.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20251109/202511091804.XUQA4dOK-lkp@intel.com/reproduce)
->=20
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202511091804.XUQA4dOK-lkp=
-@intel.com/
->=20
-> All warnings (new ones prefixed by >>):
->=20
-> >> drivers/block/floppy.c:4805:9: warning: 'ARRAY_END' redefined
->     4805 | #define ARRAY_END(X) (&((X)[ARRAY_SIZE(X)]))
->          |         ^~~~~~~~~
-
-Hmmm, nice!  There's already an ARRAY_END() there.  I'll remove that
-definition.
-
-BTW, this reminds me that I forgot to parenthesize 'a' in my
-implementation.  Do you have any preference on the implementation?
-I could use either of
-
-	(&((a)[ARRAY_SIZE(a)]))
-
-	((a) + ARRAY_SIZE(a))
+For the max on it will be a rising threshold with hysteresis applying below
+that. The ABI docs describe this directional use of hysteresis.
+Either case seems to correspond to both other interrupts enabled at the
+same time.  Helpfully it's the or of the control bits so easy to support
+as no obvious coupling between them.  They seem to have separate status
+bits as well.
 
 
-Have a lovely day!
-Alex
+> * dev_en use case is to shutdown/turn-on an AFE, amplifiers,
+>   but I wouldn't support in this series.
 
->    In file included from include/linux/string.h:6,
->                     from include/linux/bitmap.h:13,
->                     from include/linux/nodemask.h:91,
->                     from include/linux/numa.h:6,
->                     from include/linux/async.h:13,
->                     from drivers/block/floppy.c:166:
->    include/linux/array_size.h:17:9: note: this is the location of the pre=
-vious definition
->       17 | #define ARRAY_END(a)  (a + ARRAY_SIZE(a))
->          |         ^~~~~~~~~
->=20
->=20
-> vim +/ARRAY_END +4805 drivers/block/floppy.c
->=20
-> 5a74db06cc8d36 Philippe De Muyter 2009-02-18  4804 =20
-> 5a74db06cc8d36 Philippe De Muyter 2009-02-18 @4805  #define ARRAY_END(X) =
-(&((X)[ARRAY_SIZE(X)]))
-> 5a74db06cc8d36 Philippe De Muyter 2009-02-18  4806 =20
->=20
-> --=20
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+Often that can be tied to runtime PM, but I agree that is better
+left for a future series.
 
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
+> 
+> So, I believe the solution for the dt-binding is add the optional
+> `gpio-controller`, and if set, expose the unused (not in the
+> interrupts-names) as GPOutput. And not support inversion gp0<->gp1 of
+> the mode, the specific threshold crossing (max, min, either), nor the
+> dev_en use case.
+> 
+> This then doesn't change the series much, just appends a commit adding
+> the gpio-controller support.
+Agreed.
 
---nm4vwnmvmi2ifa5n
-Content-Type: application/pgp-signature; name="signature.asc"
+...
 
------BEGIN PGP SIGNATURE-----
+> 
+> > >   
+> > > > > +       ``ref-supply``.
+> > > > > +
+> > > > > +Also contain the following device attributes:
+> > > > > +
+> > > > > +.. list-table:: Device attributes
+> > > > > +   :header-rows: 1
+> > > > > +
+> > > > > +   * - Attribute
+> > > > > +     - Description
+> > > > > +   * - ``samling_frequency``    
+> > > > 
+> > > > Check these.. sampling_frequency.
+> > > >     
+> > > > > +     - Sets the sets the device internal sample rate, used in the burst
+> > > > > +       averaging mode.    
+> > > > 
+> > > > It's not use otherwise?  That's unusual ABI.  I'd expect it to give
+> > > > the right value at least when burst mode isn't used. Or is burst mode
+> > > > the only way we do buffered capture?
+> > > >     
+> > > 
+> > > It is not used otherwise, the device internal sample rate is used only
+> > > to evenly distribute readings used in the burst averaging mode.
+> > > There is no sampling trigger to evenly space the adc conversion reading,  
+> > 
+> > In event of no internal trigger, sampling_frequency is normally
+> > 1/duration of a single scan (or sample if a per channel attribute).
+> > 
+> >   
+> 
+> The duration of a single scan (duration between the convert-start high
+> edge until RDY falling edge), would be ((n_avg - 1) / fosc + tconv)
+> (datasheet fig.56, p.31) , where fosc is the internal timer frequency
+> directly exposed in this series. I can make the driver use this formula,
+> just setting it will be less straight forward, since currently a clear
+> enum of the values the register supports is returned by the
+> sampling_frequency_available attribute. Instead, it will scale based on
+> the number of samples per burst (averaging ratio/n_avg). tconv is typ
+> 270ns and max 320ns.
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmkQiXEACgkQ64mZXMKQ
-wqmWEBAArRv4KqHros/WN5GykK1OkUTtJHY9EMVRNzdOYuVwLFmlCcXNgJCNmkZB
-OQiOvD+vb05Dz54F3QM5IEQ9b7Ucd9PnaoPFGX74T27mBkVQCQHKctCxlV4jDsTr
-hc9Mlsa6P825DWNGIOUenVXZnedXYdJ6QZQBakMGmGNTmM59MO7EsOyGGAsKuSNc
-g2fWS7dmuu9UsGqLChOFuIPzyYOG+zDyx/ZsqL4KuJQdmwtsqT5hS/F7MlRYCzR7
-ZL0psqotrkw+J6J10eGbnG5eD1hhryhzM220njMAa2+5dHkcmlDgaGPlFVDGu36e
-k32S7FDy+8ekl4bHDcWF+u3HZdQZrznMYEGI9XERB8lRy2HHKUa84/2rEHYcKMZN
-/01JlnfJDdwMTXK5UPesC8JnRKxS5WgINcbwx25pjVe4DB5Llyd0ZfeMJ2A3oO6s
-mNAUdAEuxQDXp5gOGt6cNp8fHJ0WRjc8/hLKRMKzdG79A99uQyhtPJIblJ+ncY97
-OrYNpmLr7nqlaNUn0Q1gc68R7eJ+0CfVwPARBd/avVt4fIbhddCV01/2wOaDakOK
-ejvhJgpaDWnQiI/PczyH/APqN6jQ9zYQtN/3Gdo8gYjATsNQlur3xHlX3CEJ1TPM
-/6+l/fQNKftr8OB61bbZWt34ZY6RqkIosS6aTy09EQNRN5opeRM=
-=smMe
------END PGP SIGNATURE-----
+Agreed this can get a bit fiddly :( 
 
---nm4vwnmvmi2ifa5n--
+There are also some slightly nasty race conditions around updating
+available attributes.  We had a solution for that a while back but
+I'm not sure what happened to it and the complexity only really applies
+when using in kernel consumers for those values rather than sysfs where
+we can apply a driver local lock.
+
+That n_avg seems to be oversampling - hence indeed we have to deal
+with the affect of that on the sampling frequency (it's documented
+in the ABI as sampling frequency is for the total time for oversampling
+to deliver data).
+
+Jonathan
+
 
