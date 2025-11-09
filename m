@@ -1,123 +1,90 @@
-Return-Path: <linux-kernel+bounces-891776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FF5C43706
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 02:20:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3697AC43715
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 02:33:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D63DF188B389
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 01:21:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 00EC34E2099
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 01:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4691A238C;
-	Sun,  9 Nov 2025 01:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE09519F115;
+	Sun,  9 Nov 2025 01:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="Q8UFLoT5"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tseue9iF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACCFDF59;
-	Sun,  9 Nov 2025 01:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52480AD51
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 01:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762651237; cv=none; b=jyfEbFFxYna6f1TFc8/Fg54Nh3qPtS+qq8jyjqZyYRxd7e9E87EIeW4MApwCwfqxc6YqJTcctnNNZcT4CBv5fbRs+bKmxFEWr0CfWvJ6mfEOPHkbz2DiFVg+CL23DymcD9r7xJyJKov3EOUD/8Ie0v0Pv++KZeSPNfFDhJMEbGc=
+	t=1762651972; cv=none; b=WGNPJMGaERDpbL/X9+QL0aDyDpdKrCL9pYbkyUBg0axCKldQYlDlO2Zi64Nj0La4WPuWP3wvd+zchbJHWIgIsAVo1BJ0w4Tr9NoQQ366w+H314LTK6JRmeRvkQf8RbD4SCV5/TXgtBs9FCu6KRocYUL0C3TxREsEi0YlcgPLRnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762651237; c=relaxed/simple;
-	bh=yl709K2/EBaiSPbcl7V+o9B/u6yVKPr1BkggrDZSyhY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iecCPPpaOXaAi9CDbodbT7n2CAAieTEzWfGulf1NKNu+Zk9wa/mDSK5AUePVi9zaNP9MDSn7fqfvJM1NG3xovl6/tBFskKyBgOBaMiVsoW1d6OKE9a0GHqkW/laLcON7HAt3DpgQsIj/fk1jlG0/sLQbqGSnxPgg04l4ZKyaPCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=Q8UFLoT5; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A8MPlr54180894;
-	Sat, 8 Nov 2025 17:20:29 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=4WQMv/utZqIebRrgDmAQ
-	C4G7cEEZTYQHPc1QJPVNWUc=; b=Q8UFLoT5eAk+tvwdXkdGapgJkuH9cSxHpyvl
-	85Nz1p4gHbeJyM1BPDsXvdXs5fyIYmfnDszNWYTdPfkphzeLtrTJn/xT6Yjfm/gL
-	wQIxLBpwPY4CWx/IVhCMHjs2annlFva4iDKJS38OWS+UW7xpYf1amjhPPtkSjKGd
-	POaIEFCoc3J2ro6gkb26LEDaxr3rkJJTWpF0xwj0qK8NNy4S2GejmJylexWr5uJu
-	+/jzhbsXni25CWDTOqmmxcausgscmxDoTA5DXxE/XMilJg+HMyq8SW8AZi/r+pQu
-	XAMSdV1JZh3R4PeKi4PG1ZmzYvU074xvI+bqTzTQQyGRWOJ6iA==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4aa2s34mq7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 08 Nov 2025 17:20:28 -0800 (PST)
-Received: from devgpu015.cco6.facebook.com (2620:10d:c0a8:1b::2d) by
- mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Sun, 9 Nov 2025 01:20:14 +0000
-Date: Sat, 8 Nov 2025 17:20:10 -0800
-From: Alex Mastro <amastro@fb.com>
-To: Alex Williamson <alex@shazbot.org>
-CC: David Matlack <dmatlack@google.com>,
-        Alex Williamson
-	<alex.williamson@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] vfio: selftests: Skip vfio_dma_map_limit_test if mapping
- returns -EINVAL
-Message-ID: <aQ/sShi4MWr6+f5l@devgpu015.cco6.facebook.com>
-References: <20251107222058.2009244-1-dmatlack@google.com>
- <aQ6MFM1NX8WsDIdX@devgpu015.cco6.facebook.com>
- <aQ+l5IRtFaE24v0g@devgpu015.cco6.facebook.com>
- <20251108143710.318702ec.alex@shazbot.org>
+	s=arc-20240116; t=1762651972; c=relaxed/simple;
+	bh=JLDqV8ezX7r/6cFHYwMMco/iyixfBO8kA6xRqCIgak0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EMx7ofNQTd6VxH+HdjrBOEXWhCJG/bqsqMw3VQzyOkM4sKGQzyLX4kGG4iH1RFCpi1QhA51JiYqReRFeIw931yx5uRfsx+SKd2iVRsjfiYRty/klZH6icDySwBi+r5ZcxmyLqujntG0BsjMWbs88HzUSudxttQ+HgBka2mJ9gfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tseue9iF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3D58C4CEFB
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 01:32:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762651970;
+	bh=JLDqV8ezX7r/6cFHYwMMco/iyixfBO8kA6xRqCIgak0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Tseue9iF/XsTqddA/n2eiYdGOL9xB5VwvXusYMlOOCeD9l9GjP4zzS8/BPalTFG0e
+	 BAg7zKhf5g5qK7V+bgY8DqfZsJNKsfk8pYmtfGUZszQJFzOMpAkNH8VmC4m6k+W0mg
+	 hhk94oI3NK6bVMyY+oZFMjucSWZzFlmrDS1genhoaMG2ApWDqR4gk0V9SMB3ed5QuS
+	 BYwttlBm7DPZ0f6UhKJ4ecNFwyMOZBK0pHFZm2CbpucecMOMq4jVfW3JllLUSGReOU
+	 LH//cABc57A0GkSNuy98bgT16Uq9a7cu9CCAuDIQk6Omf3PSd8kYUdbzTR6qBIkbtn
+	 /ZhtFoU22JTqg==
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b7291af7190so290418466b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 17:32:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXzQJDiQfDtSW+/5zy3EmwTpHsOWSGkF1EM5DT1TFxLQi1pePuQgwyDKH72JwmskaAyqhk4wbft//lkJK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJFl2piCVa0AWJBxta3C/HVvVqXqHjw4meQfFo0JVPIHlAcD42
+	Ia40NUpano6KYT56doHxq9A4EARDEnyZvKovg559ZivUVR1QQZZ/MEHKOr3yIKBR2R8+CeSb6uC
+	5c75v0/3gxXLtfcJYp1L006UjYGkQLuM=
+X-Google-Smtp-Source: AGHT+IFwE0YurAS9EBuOH/BTK/I2Z5iOVtiNvSMR5NXl4i1e/jRjGd1XBWjtYC10l/5GnGiHdMouahIIkUWnSFvo2LU=
+X-Received: by 2002:a17:907:7246:b0:b72:5e29:5084 with SMTP id
+ a640c23a62f3a-b72e02729dfmr390481166b.4.1762651969360; Sat, 08 Nov 2025
+ 17:32:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251108143710.318702ec.alex@shazbot.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA5MDAwOSBTYWx0ZWRfX52BcyYTlebrR
- dxM21h/hDXhD6D16mZo+NZ9GitbxB+GKabhAejP7JNHTs3p/sFye+k/+qC7VSzjKakLOD97idUw
- jirJopCuamR1ja7k3Gk8KMc+4vRjDWR53zKj0oME5lgWjbaOAm1gRrncGOfJroqvr7gD+04w5Hg
- h8te6Uej+RaOhpZOJeIIt5xv44rluPshqG3UCZLHlIy+gyxKmXkswZeRBYbAT6hfAgoObxbKLEY
- RBx/GUMG/hV++Rlr2ROShzifsgjW4O/XioF6NbAWv+J+y1qPzp+755TXf9brXDI026RH5YR4E/O
- jBuTJK7mhdpXkkZ2pDhYv3Fat6RfRHJQdjnlbOk0/PnNzO2lMhLmjdhxdZo+o0VyIQtGDQFZDUo
- lKui4E2yrguDQRj6Ha2nygy0KYyryw==
-X-Authority-Analysis: v=2.4 cv=LoCfC3dc c=1 sm=1 tr=0 ts=690fec5c cx=c_pps
- a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=r1p2_3pzAAAA:8 a=FOH2dFAWAAAA:8 a=KLQ7IMvFttoUVMJHvGgA:9
- a=CjuIK1q_8ugA:10 a=r_pkcD-q9-ctt7trBg_g:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: i3kzQWJ9M9xbcUPXOqI5FU_vG3PvuBZz
-X-Proofpoint-GUID: i3kzQWJ9M9xbcUPXOqI5FU_vG3PvuBZz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-09_01,2025-11-06_01,2025-10-01_01
+References: <CAKYAXd-R8NGDzQ-GTM67QbCxwJTCMGNhxKBo1a0sm0XBDqftLw@mail.gmail.com>
+ <20251108155712.384021-1-pioooooooooip@gmail.com>
+In-Reply-To: <20251108155712.384021-1-pioooooooooip@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Sun, 9 Nov 2025 10:32:37 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-SSBbW+FhC7mHYEh1JLFRVNyNOLiogbj=Nt1eszxf2vw@mail.gmail.com>
+X-Gm-Features: AWmQ_bnHIIwGraT7R8ro6xvCocGSJ1L8DonF5ZezAsU__d-y2HYgoO6DXOrC-NQ
+Message-ID: <CAKYAXd-SSBbW+FhC7mHYEh1JLFRVNyNOLiogbj=Nt1eszxf2vw@mail.gmail.com>
+Subject: Re: [PATCH v2] ksmbd: vfs: skip lock-range check on equal size to
+ avoid size==0 underflow
+To: Qianchang Zhao <pioooooooooip@gmail.com>
+Cc: Steve French <smfrench@gmail.com>, gregkh@linuxfoundation.org, 
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, security@kernel.org, 
+	Zhitong Liu <liuzhitong1993@gmail.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 08, 2025 at 02:37:10PM -0700, Alex Williamson wrote:
-> On Sat, 8 Nov 2025 12:19:48 -0800
-> Alex Mastro <amastro@fb.com> wrote:
-> > Here's my attempt at adding some machinery to query iova ranges, with
-> > normalization to iommufd's struct. I kept the vfio capability chain stuff
-> > relatively generic so we can use it for other things in the future if needed.
-> 
-> Seems we were both hacking on this, I hadn't seen you posted this
-> before sending:
-> 
-> https://lore.kernel.org/kvm/20251108212954.26477-1-alex@shazbot.org/T/#u
-> 
-> Maybe we can combine the best merits of each.  Thanks,
-
-Yes! I have been thinking along the following lines
-- Your idea to change the end of address space test to allocate at the end of
-  the supported range is better and more general than my idea of skipping the
-  test if ~(iova_t)0 is out of bounds. We should do that.
-- Introducing the concept iova allocator makes sense.
-- I think it's worthwhile to keep common test concepts like vfio_pci_device
-  less opinionated/stateful so as not to close the door on certain categories of
-  testing in the future. For example, if we ever wanted to test IOVA range
-  contraction after binding additional devices to an IOAS or vfio container.
-- What do you think about making the concept of an IOVA allocator something
-  standalone for which tests that need it can create one? I think it would
-  compose pretty cleanly on top of my vfio_pci_iova_ranges().
-
-Alex
+On Sun, Nov 9, 2025 at 12:57=E2=80=AFAM Qianchang Zhao <pioooooooooip@gmail=
+.com> wrote:
+>
+> When size equals the current i_size (including 0), the code used to call
+> check_lock_range(filp, i_size, size - 1, WRITE), which computes `size - 1=
+`
+> and can underflow for size=3D=3D0. Skip the equal case.
+>
+> Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
+> Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
+Applied it to #ksmbd-for-next-next.
+Thanks!
 
