@@ -1,110 +1,226 @@
-Return-Path: <linux-kernel+bounces-892036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73F2C44288
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:38:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 769A8C44294
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:41:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 990284E2EB5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:38:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CF3F3AEE9D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA88303C9C;
-	Sun,  9 Nov 2025 16:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876E8303CA1;
+	Sun,  9 Nov 2025 16:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNgRTevb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="A6C2Pfgy"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613691FAC42;
-	Sun,  9 Nov 2025 16:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E39C883F
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 16:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762706326; cv=none; b=C+1KlKycPJYpb9rAqIS3xmNPlWwf2BbNFNNQN6VU70XRkuciu7m1wYBVlza82XDWIGK7yZSJ3fO8S7N/oFuFoIZtvolXUM9Lbq8DnRgSh9xKTlUvk96pyDICaqqwZEe6FTkjToi+YFI86ADsZvB4DMJiF3sf+LmBhfE89vuKQ90=
+	t=1762706498; cv=none; b=vB3UFonRoGRBetMoZWtOKf6CxKUwnN5c0ZqSujzouvoo7w5l4CoKJEJxJErv8CfD1APQhoELSigUxpAtMx1kPZGyrnkmNlmBWj6hcCcSdXLlEGl8NhmbVPDjrOUQHjlHbIC0fh0vWq7Fh0TKzGy8KEFwv+XrLdOoyy6lE9JVtqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762706326; c=relaxed/simple;
-	bh=tyUFY2EVCKcCKGylmHqPrCF4+Regt0Z1xbdOg2MeKdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HVjWedI5svUc7nRuHNg8Kyko1eU7Sx4Iakx5OoPF0Dg+U1/t+mlWp1PZXu9leOPpZ9GWWAeBRuMYf4ZbHJKO9nFyjnvfuqnzBarjK9wAC6RxhlP8O9N2f6Gv/DVVwAIvp0P0qbThlmQiOJXIwx+7ivYP1USrkFP+F+W5WlLr7n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNgRTevb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBD15C4CEF7;
-	Sun,  9 Nov 2025 16:38:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762706325;
-	bh=tyUFY2EVCKcCKGylmHqPrCF4+Regt0Z1xbdOg2MeKdA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nNgRTevbyQn1SM/yHdbbKUOALQlamILo5IBnDJLl6QKMPiqf/+qLJ+0UGcOr2cVRX
-	 RB2ynW5psFNYszlXuxEv2MyT40C+LF0irdT3G/Wg+gCx+omekS5ahGuFm3YwlSlKOf
-	 Dl8Pf5m+v3Qs4lCTESzn+JmtVTEMG3Sajg5yRi3vsb+Kwba7Wqw7Ml/vwt+WaqjBFk
-	 9yajWV4RxeR92P4pp1GJOj4G+ow5ML4BAx3LrPXHV6V8lM/fNZFROJiGDafatEgy4h
-	 pdV/L1ZxcA4tRawWuCZ0mLp3G2OfrnM2T2X4lmw/wetbqTMhgt4YoyIBg5Sd57/7pC
-	 CCl/keBUksy9A==
-Date: Sun, 9 Nov 2025 16:38:40 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: Antoni Pokusinski <apokusinski01@gmail.com>, dlechner@baylibre.com,
- nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] iio: mpl3115: use get_unaligned_be24 to retrieve
- pressure data
-Message-ID: <20251109163840.64144586@jic23-huawei>
-In-Reply-To: <aQ1MfTu24hhk-dKP@debian-BULLSEYE-live-builder-AMD64>
-References: <20251105095615.4310-1-apokusinski01@gmail.com>
-	<20251105095615.4310-2-apokusinski01@gmail.com>
-	<aQ1MfTu24hhk-dKP@debian-BULLSEYE-live-builder-AMD64>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762706498; c=relaxed/simple;
+	bh=uN1XIf9j3EMdH2lDUthVXiX8XqR1YNOhqPiJJ1Yexdo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WsKwu9vW4Nl2vqYLZUbJkGLp/FuZ2a8DUzKiI9HIedxNMIvgDejiKFNM9LmWTE0ff1bLgk+p/ajAnjR6ri87lfWDNo6GTHfidttauIYqBtCuLhOaapjQWDigd/H4taq1q4fz92pKAKCoqtRNbxHXdY3LzngWYoit9hm86PN1L5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=A6C2Pfgy; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3437af8444cso566334a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 08:41:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1762706495; x=1763311295; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jJYfd/k6hiGWNoGkFEOkKPXVXi0TBL8CCpdV4UfaIUU=;
+        b=A6C2PfgykPfFKQ9+UpyaSqsXn2Y9jbP023k5b8qnJnqJ8W7U2orStq3jQRwSYz/rfG
+         yUomKKbZyHv5qg3bQOHlIKV4yuCx91V75ciPKblYhGhOLPaRjpV0+EueVGrGXwTAsExN
+         zQZzSxoP13xISSzfOUWFJOK1whE+/ECdmj7uVLxrYdBi4rRsMDZyaNQOE4edCpqwBsYF
+         RnMDZx6SOx93t/SK7143kbsGzJhR7P22d5qQasAzqtr2IUalbK2rmTAZ/lgWonRrKwox
+         fccbTIahQ7rkE8JG8p0vosZjKNGdGBCEJVdAYomSw80dVmVwGsxxeasI1qn/DWGuQY+9
+         txow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762706495; x=1763311295;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=jJYfd/k6hiGWNoGkFEOkKPXVXi0TBL8CCpdV4UfaIUU=;
+        b=EnLER4g4uRrUfAZ6ahuJOaiwMNYkBx3ZOqFD6EVjOJFwKqaxbUE+Wgoxoa4xsLdfKb
+         oaglLPeANtjAtNBWFFebipbQwCP0jYybME9/TMIKPh3dd78Y2n1s8AstwCVMvtDOcwcJ
+         L7g6i96J7TiIYPgZ38egDpzz3p4rw6sBrBVjEZcJMk+mdY/q7UBZnwECJMXYeKBgXDIy
+         +2uRHLu/aiP3BUeKgHQXKs+d0KfjUbWZKj6LA7OaCPgvNNEkNmv8PmcTOz7rRaNMr/aC
+         pkjP9rGjltEG3mpIEXkNRBkIAIJCGakSoHe2kOu0E1bfcUw9T4HnptcOvl5NX35PX6TI
+         092w==
+X-Forwarded-Encrypted: i=1; AJvYcCU8WfWJFT6rliAqmsb2WO0G0FpF+3ILzkl/3mh53Xgbu+DrIAhv9Ak56HJZS/TIxvnCJrqwXnAiLrL1dKM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXyYCZPWVvtllWI/DHNkmxvT8TmHzvq7yLXVgaFjECzSg1BS44
+	2n9kVdjoKPTrh/IreUVwGxmmdFfqWLJiCilDWG23CkFfSo6NEHKLiDEvOIGb3ShgfOA=
+X-Gm-Gg: ASbGncs9v0F2KeQqzTC/M6IbIe1dc61sl0veuQbyrsSWLnsObptQImU9hsHy4cwlPHZ
+	b36pkzIVSAjFFCzTW05i2gzkuuDuKyfKQUkaFAb6+/XieH7fMhLqELDeNO/9tt4OFyNZM+Mx4Kt
+	hYc6aWXM92pKzg3oQPxgDARxaR+VgPnsVsVFEqrfAqeU1wCLknpyH+9MaqzsOwAvxWV2+BygmLl
+	X6Wl23duPnWqnwBmw2bWyLw3NfliuAMLB8GOFHzYoeBEvrah7p5l4DtZGQIf5hDlom1D3wkiRz2
+	dR+uF7n2NJI0JgaDomxJf1AVPhUujQAjKeUhYlLf4W8CxTSLMc1nVzXfxrRVQcpa5M9j1ur6OW4
+	u9rvhMseM1RP8TeYW26sE3snaYvxrVVGwVzecBneQUFIHYBde20YJ73WN4fmoIFsFAwjFVijnvC
+	MGsH4M4is1ky606McfJIIdYBZahQlsfI9FFP3mOhtp2ZSUtsKJgg==
+X-Google-Smtp-Source: AGHT+IET/mGXD2ni7sWPyMN0C+P9SHk0+rmZ5fsof+JSnk24k+RKu+IfUR44fFUSHoQx02HLNj/hkQ==
+X-Received: by 2002:a17:90b:57c4:b0:343:6af9:ad30 with SMTP id 98e67ed59e1d1-3436cd0e005mr6107745a91.34.1762706495237;
+        Sun, 09 Nov 2025 08:41:35 -0800 (PST)
+Received: from T179DVVMRY.bytedance.net ([139.177.225.238])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343727dcf3dsm4503347a91.19.2025.11.09.08.41.29
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 09 Nov 2025 08:41:34 -0800 (PST)
+From: Liangyan <liangyan.peng@bytedance.com>
+To: peterz@infradead.org,
+	mingo@redhat.com
+Cc: acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	james.clark@linaro.org,
+	bigeasy@linutronix.de,
+	zengxianjun@bytedance.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Liangyan <liangyan.peng@bytedance.com>
+Subject: [PATCH v2] perf/core: Fix pending work re-queued in __perf_event_overflow
+Date: Mon, 10 Nov 2025 00:41:22 +0800
+Message-Id: <20251109164122.80138-1-liangyan.peng@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-145)
+In-Reply-To: <20251109103253.57081-1-liangyan.peng@bytedance.com>
+References: <20251109103253.57081-1-liangyan.peng@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 6 Nov 2025 22:33:49 -0300
-Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
+We got warning below during perf test.
+[  467.100914] [      T1] WARNING: CPU: 0 PID: 1 at kernel/events/core.c:5147 put_pmu_ctx+0x2ef/0x3c0
+[  467.107702] [      T1] CPU: 0 UID: 0 PID: 1 Comm: systemd Kdump: loaded Tainted: G            E       6.18.0-rc4-dirty #114 PREEMPT(voluntary)
+[  467.109835] [      T1] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1
+[  467.111027] [      T1] RIP: 0010:put_pmu_ctx+0x2ef/0x3c0
+[  467.122081] [      T1] Call Trace:
+[  467.122463] [      T1]  <TASK>
+[  467.124822] [      T1]  __free_event+0x337/0xa50
+[  467.125306] [      T1]  perf_pending_task+0x10f/0x3b0
+[  467.125824] [      T1]  task_work_run+0x140/0x210
+[  467.127413] [      T1]  exit_to_user_mode_loop+0x10e/0x130
+[  467.127965] [      T1]  do_syscall_64+0x26d/0x2e0
+[  467.128453] [      T1]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  467.129025] [      T1] RIP: 0033:0x7f01d22349ca
+[  467.135157] [      T1]  </TASK>
 
-> On 11/05, Antoni Pokusinski wrote:
-> > The pressure measurement result is arranged as 20-bit unsigned value
-> > residing in three 8-bit registers. Hence, it can be retrieved using
-> > get_unaligned_be24 and by applying 4-bit shift.
-> > 
-> > Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
-> > ---
-> >  drivers/iio/pressure/mpl3115.c | 7 ++++---
-> >  1 file changed, 4 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c  
-> ...
-> >  
-> > -		*val = be32_to_cpu(tmp) >> chan->scan_type.shift;
-> > +		*val = get_unaligned_be24(tmp) >> 4;  
-> hmm, now the number of bits shifted is dissociated from the channel characteristics.
-> We can do
-> 		*val = get_unaligned_be24(tmp) >> (24 - chan->scan_type.realbits);
-This encodes that the field is always aligned to the maximum bit. Whilst it might
-be true, there is nothing inherent that says it must be.
+A race condition occurs between task context and IRQ context when
+handling sigtrap tracepoint event overflows:
 
-I'm not sure why we aren't using chan->scan_type.shift though.
+1. In task context, an event is overflowed and its pending work is
+   queued to task->task_works
+2. Before pending_work is set, the same event overflows in IRQ context
+3. Both contexts queue the same perf pending work to task->task_works
 
-> or maybe
-> 		*val = get_unaligned_be24(tmp) >> (sizeof(tmp) - chan->scan_type.realbits);
+This double queuing causes:
+- task_work_run() enters infinite loop calling perf_pending_task()
+- Potential warnings and use-after-free when event is freed in
+perf_pending_task()
 
-That one needs a BYTES_TO_BITS factor too.
+Fix the race by disabling interrupts during queuing of perf pending work.
 
-> but it starts becoming too long IMO. Even longer if `tmp` gets a more meaningful
-> name. Ah well, any of the three forms should work the same at the end of day so
-> no strong opinion.
-> 
-> Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> 
-> >  		return IIO_VAL_INT;
-> >  	}
-> >  	case IIO_TEMP: { /* in 0.0625 celsius / LSB */
-> > -- 
-> > 2.25.1
-> >   
+The calltrace of re-queuing pending work is something like below.
+[  466.979877] [      C0] CPU: 0 UID: 0 PID: 1 Comm: systemd Kdump: loaded Tainted: G            E       6.18.0-rc4-dirty #114 PREEMPT(voluntary)
+[  466.979889] [      C0] Tainted: [E]=UNSIGNED_MODULE
+[  466.979892] [      C0] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1
+[  466.979897] [      C0] Call Trace:
+[  466.979909] [      C0]  <IRQ>
+[  466.979913] [      C0]  dump_stack_lvl+0x88/0xb0
+[  466.979924] [      C0]  __perf_event_overflow+0xb4f/0xcb0
+[  466.979972] [      C0]  perf_swevent_event+0x230/0x340
+[  466.979980] [      C0]  perf_tp_event+0x412/0x910
+[  466.980355] [      C0]  perf_trace_run_bpf_submit+0x103/0x190
+[  466.980363] [      C0]  perf_trace_kmem_cache_alloc+0x156/0x1b0
+[  466.980374] [      C0]  kmem_cache_alloc_noprof+0x214/0x600
+[  466.980383] [      C0]  __alloc_object+0x2f/0x2d0
+[  466.980392] [      C0]  __create_object+0x22/0x90
+[  466.980402] [      C0]  kmem_cache_alloc_node_noprof+0x39d/0x620
+[  466.980419] [      C0]  kmalloc_reserve+0x167/0x280
+[  466.980428] [      C0]  __alloc_skb+0x12e/0x330
+[  466.980466] [      C0]  napi_alloc_skb+0x147/0x270
+[  466.980473] [      C0]  page_to_skb+0x171/0xaa0 [virtio_net]
+[  466.980498] [      C0]  receive_buf+0x7c9/0x3ae0 [virtio_net]
+[  466.980637] [      C0]  virtnet_poll+0xb98/0x3160 [virtio_net]
+[  466.980749] [      C0]  __napi_poll+0xb0/0x5c0
+[  466.980756] [      C0]  net_rx_action+0x416/0xbb0
+[  466.980809] [      C0]  handle_softirqs+0x186/0x5d0
+[  466.980818] [      C0]  __irq_exit_rcu+0x13f/0x180
+[  466.980826] [      C0]  common_interrupt+0x7a/0xa0
+[  466.980834] [      C0]  </IRQ>
+[  466.980836] [      C0]  <TASK>
+[  466.980839] [      C0]  asm_common_interrupt+0x22/0x40
+[  466.980846] [      C0] RIP: 0010:delay_tsc+0x3a/0xa0
+[  466.980854] [      C0] Code: 44 8b 05 ad 59 90 02 0f 01 f9 66 90 48 c1 e2 20 48 89 d7 48 09 c7 eb 21 65 ff 0d 91 59 90 02 74 57 f3 90 65 ff 05 86 59 90 02 <65> 8b 35 83 59 90 02 41 39 f0 75 28 41 89 f0 0f 01 f9 66 90 48 c1
+[  466.980862] [      C0] RSP: 0018:ff110001009477e0 EFLAGS: 00000283
+[  466.980869] [      C0] RAX: 000000fea17a6aa9 RBX: ff11000100a8c500 RCX: 0000000000000000
+[  466.980874] [      C0] RDX: 000000000026df92 RSI: 0000000000000000 RDI: 000000fea1538b17
+[  466.980878] [      C0] RBP: ff11001b3a03bb20 R08: 0000000000000000 R09: 0000000000af7a2e
+[  466.980883] [      C0] R10: ff1100010093cc87 R11: 000000006a14397b R12: 1fe2200020128f03
+[  466.980887] [      C0] R13: ff11000100a8c64c R14: ff11000100a8c600 R15: ff11000100a8c82c
+[  466.980894] [      C0]  __perf_event_overflow+0x783/0xcb0
+[  466.980937] [      C0]  perf_swevent_event+0x230/0x340
+[  466.980944] [      C0]  perf_tp_event+0x412/0x910
+[  466.981200] [      C0]  perf_trace_run_bpf_submit+0x103/0x190
+[  466.981212] [      C0]  perf_trace_kmem_cache_alloc+0x156/0x1b0
+[  466.981223] [      C0]  kmem_cache_alloc_noprof+0x214/0x600
+[  466.981232] [      C0]  __alloc_object+0x2f/0x2d0
+[  466.981241] [      C0]  __create_object+0x22/0x90
+[  466.981251] [      C0]  __kmalloc_cache_noprof+0x405/0x640
+[  466.981283] [      C0]  kmem_cache_free+0x18a/0x630
+[  466.981300] [      C0]  __fput+0x5c4/0xa70
+[  466.981310] [      C0]  fput_close_sync+0xf2/0x1f0
+[  466.981336] [      C0]  __x64_sys_close+0x88/0xf0
+[  466.981344] [      C0]  do_syscall_64+0x60/0x2e0
+[  466.981351] [      C0]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  466.981357] [      C0] RIP: 0033:0x7f01d22349ca
+[  466.981399] [      C0]  </TASK>
+
+Fixes: c5d93d23a260 ("perf: Enqueue SIGTRAP always via task_work.")
+Reported-by: Xianjun Zeng <zengxianjun@bytedance.com>
+Signed-off-by: Liangyan <liangyan.peng@bytedance.com>
+---
+v2: Use guard(irqsave) suggested by Peter.
+---
+ kernel/events/core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index cae921f4d137..7c63e5fdd334 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -10433,6 +10433,16 @@ static int __perf_event_overflow(struct perf_event *event,
+ 
+ 		notify_mode = in_nmi() ? TWA_NMI_CURRENT : TWA_RESUME;
+ 
++		/*
++		 * Task context queues the work via task_work_add() but has not yet
++		 * set event->pending_work when the same event overflows in
++		 * IRQ context. The IRQ path, seeing !event->pending_work,
++		 * queues the work again.
++		 * The double queuing causes corruption in task->task_works.
++		 * Prevent this by disabling interrupts around the critical section.
++		 */
++		guard(irqsave)();
++
+ 		if (!event->pending_work &&
+ 		    !task_work_add(current, &event->pending_task, notify_mode)) {
+ 			event->pending_work = pending_id;
+-- 
+2.39.3 (Apple Git-145)
 
 
