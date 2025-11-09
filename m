@@ -1,162 +1,142 @@
-Return-Path: <linux-kernel+bounces-892029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12AD6C44235
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:18:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15264C44246
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9D044E5613
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7AE63AC5BF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1F4301021;
-	Sun,  9 Nov 2025 16:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123572FFFA8;
+	Sun,  9 Nov 2025 16:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjFVkM5d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ngj2Ejw7"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9005C96;
-	Sun,  9 Nov 2025 16:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE325C96
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 16:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762705098; cv=none; b=khODiVjiUng32vlr8d1yRow8lvxBa9Rd+Ac7iXW4LZelFZQZNhZwtqnBcn4tzI41RlmuVPe7x3YL0T9Ouehjb3RApt76XIFYKD7Bm9JQo6TIpmGO/3bEdiDzos4DRvSFKrrbaC6K3cKqa0nQ4zEhGmcTrPOX8BFYTp9CSFk5kH4=
+	t=1762705262; cv=none; b=Rkc2Q141hOb0dyX1YMgvncrWt6jwkA/RcYfvDjbrPx+cEz3aznfua4HqPZS4lqIYNFtumNrfxQD4Yec+LjqkuALstDwkCzpXMGhpw+FmiGY35n4x41Jk2GIfc+ej6HE6xBhbl2bDQC7OasjjMpE8BOEp3xm5Dlx7jiwZ4GzA1J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762705098; c=relaxed/simple;
-	bh=NI6YboA8JS5E8R5DZqhB6Ej/6kcnfJbcc0r0CkZyfok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DpiAb5Bq3unxJhzIXtXrPDPaobQrBCllw6v/PDcv7+vis1PoYuF9JV7nJNSZxCSyoZycd+32EqGP9+cxTGeBBRczSJUMono1DBxW5U5URfKf4oYh4bqJ4I7DcgYW1giPgay/do8fl3eynqnPWsOSv8hV6Y/Dmi+q/sF3OR6D0XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjFVkM5d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC341C19424;
-	Sun,  9 Nov 2025 16:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762705096;
-	bh=NI6YboA8JS5E8R5DZqhB6Ej/6kcnfJbcc0r0CkZyfok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TjFVkM5dwPQ1+LU6/Gyv8cRk6zvs9gBLYbsCUO2a6AMcJp23CYQ38gZc6kZGZlyRV
-	 Z75IZLYokWkXIUgtvvrhCKo70x5gaCb7UEMZtpkOEGqToB8tKI7VWd+/2BS1lbpar1
-	 7wqC5epNF9G4fe+70Z6Jpatfo0fjAmQHtT2gySWQ2eF+aKRpAbFw91RfEYUQYRepiw
-	 wsO0FxDoYrkCJPCOgAYn7ag3USyEwBdw5JjwWxOpNiW8YOweAJMyKTRRHtM7FZk+iI
-	 gSkO/G03UuJsU1W4YtqGNlvhdI0M0WN1q8qIJbIIhuiZN6aT9HGF5GvMDHc9E9CT2q
-	 lkqVeGDsap4Uw==
-Date: Sun, 9 Nov 2025 21:48:02 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: connector: Add PCIe M.2 Mechanical
- Key M connector
-Message-ID: <qrgaulegz2tb7yzklyl7rpkgbf6ysx44bxtyn6n3tcyq4an4e5@bzngutkvfno3>
-References: <20251108-pci-m2-v2-0-e8bc4d7bf42d@oss.qualcomm.com>
- <20251108-pci-m2-v2-1-e8bc4d7bf42d@oss.qualcomm.com>
- <gmwg46c3za5z2ev34mms44gpq3sq7sb4jaozbdn5cejwbejbpo@wwr2j7dkjov4>
+	s=arc-20240116; t=1762705262; c=relaxed/simple;
+	bh=61SWKbDLUNFzcXWQyijnqWFYpcX2iL5D9pAYMB12oZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T3N2aOyThs+NvNxA3i7GHLwzs1I18H7JNSuallkq0pxmPAKPXSGbm9/kR5oYxTLngY2uoZfynlJO5fprwDw8puN4JgTwZVAw/LCJZxlwMO0LrsKzqJIlSOsBWxXSPGaT5LIkna9u47VogEvbGSuA3gAMYzkoywtWO9xzpG6VygA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ngj2Ejw7; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-471191ac79dso23567495e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 08:20:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762705258; x=1763310058; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Y2ECQ1gAQhDNX2WMo5upuv1WUggBbkFJqtOU8k2avU=;
+        b=ngj2Ejw7ckLHM7qB2Xzrg0lvq3/qgiCfFPM7R/Q665ANQmppBl/KRfcUFmRykmplfY
+         lcFrxNBiG8TxwIIU2vPQIX5Bm3tuzYumFumh/hnQNXqToqCDzfFTdL1I7uzzPEvQ4eq5
+         mXWp9va1nU0sp2apFW1LucuBGPYNfizvD4/kQ6c2lHniIEFC1wiKG8JIPa8Pl/eePPCJ
+         PG5CwZtFG2A6cWm2vc46JqOq6wkbdeqOoHPi5KSEsoroUTGJMBTAFGul+72DlPDqK5D2
+         9Z3x8JqpEb8ReTaNMQMH7baB6+F3XAnSR9hZUOfPLk8soD0jWRUUCy7NiZjL8fkx01We
+         L1KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762705258; x=1763310058;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=8Y2ECQ1gAQhDNX2WMo5upuv1WUggBbkFJqtOU8k2avU=;
+        b=uA0gSE+7rRmq/8HGbyzhEgU9CCnMgJt1uRWw7/5nFcd9OlgyXo00beHbzivLU2qWAJ
+         I+kc3/nmxz1wMkT5Gx0qQWFy6sG5aAN0T9ei4m5ITp6F/V9KiVudtiQDTNJvS/A20dE4
+         0fvgtVAO8SRf6G9p4rMW7hkV/dilVht6TyPVGFkEHrBRD4sY2R/+wJIbye2oD1fc3xaG
+         Fan8fCgH+3nfoDtPKUd75VCkgOux4OCJqIGCp6NEGYrvlDzHJ20iwWeHYrD1ngqsJsOm
+         rsG7q+o3d/p4XJ0Xe/I3ZJt9SLzMoVOGvIYnL18Lm2t1Qfxwb9YYrAsBHpEmgDJWuxzy
+         ak8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWBc0rpQb70NLlGXvb7U5vKKGj5C620YlYHq7nN4NWr6pkIDyIF6GVP3OcqQJrYqQg6a9IV81C6ASOoMCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXGnesQbRhlBBNL/Bx2NfXI4MlHKuxYfY+LQro6Trqyv6KmEwi
+	hYk/1ZdYHR2eP8k2O2LR4IXHGGyWcfJmOfQvUvdak/KnpBqzJHGaB4wpaN9vFA==
+X-Gm-Gg: ASbGnct4BaU+IPinPOiX2i0osnI6/7vjRGBWCxXUQWQB/ROEvctQkmFpJHkCjGYO26T
+	ka/jQWnJRicMUzAb0/aPaBZEAZl2hyvzBgOLWtEExJfNrrgrEJVNp74n2Kc1EOIBhX1bP8SjM4R
+	2slplwALVxl0raf0wR9I+Us1edQ2WJjlcckzsjJEIsUDR9+BCbKQiaFwp1VKuxvh3GQtQA/bNbg
+	JPNJbWkJfSzh53WTEakl3XWfr1MR7Kbb3Yl/Rh2fYfGyzYY6Kfoej6Q93vMn1TI8zmtkXDPZnJi
+	d4pahFa8FqSLPUNNPTd7m5oRvftvX7XsGGjXG1n+S/AJQ5X89jaTC1TrhNl103tJtqNBEGYILga
+	VibpNY0TluZOjkrgciyKRVOllmK+SrojzjNGd5a9uCxKd5VoH1itAe127IGd5vFZMu/DSuNdGsu
+	07F0t82HraSSmaBXRskc9XSxaf4Ey4Cz6gwLcbOJ8b0z0lKxf+NgBU
+X-Google-Smtp-Source: AGHT+IGIPJqsN7cEhcBe8dl15MdKMc0+HwUnHsPraYVKhItR5w069Qkh0LAYQtghv70SK26uqI7O7A==
+X-Received: by 2002:a7b:ce86:0:b0:477:7975:30f2 with SMTP id 5b1f17b1804b1-47779753580mr13461475e9.10.1762705257901;
+        Sun, 09 Nov 2025 08:20:57 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47764195940sm91218035e9.14.2025.11.09.08.20.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 08:20:57 -0800 (PST)
+Date: Sun, 9 Nov 2025 16:20:56 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Huisong Li
+ <lihuisong@huawei.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] w1: therm: Use clamp_t to simplify int_to_short helper
+Message-ID: <20251109162056.0a9cbd52@pumpkin>
+In-Reply-To: <20251109130000.406691-1-thorsten.blum@linux.dev>
+References: <20251109130000.406691-1-thorsten.blum@linux.dev>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <gmwg46c3za5z2ev34mms44gpq3sq7sb4jaozbdn5cejwbejbpo@wwr2j7dkjov4>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 08, 2025 at 08:10:54PM +0200, Dmitry Baryshkov wrote:
-> On Sat, Nov 08, 2025 at 08:53:19AM +0530, Manivannan Sadhasivam wrote:
-> > Add the devicetree binding for PCIe M.2 Mechanical Key M connector defined
-> > in the PCI Express M.2 Specification, r4.0, sec 5.3. This connector
-> > provides interfaces like PCIe and SATA to attach the Solid State Drives
-> > (SSDs) to the host machine along with additional interfaces like USB, and
-> > SMB for debugging and supplementary features. At any point of time, the
-> > connector can only support either PCIe or SATA as the primary host
-> > interface.
-> > 
-> > The connector provides a primary power supply of 3.3v, along with an
-> > optional 1.8v VIO supply for the Adapter I/O buffer circuitry operating at
-> > 1.8v sideband signaling.
-> > 
-> > The connector also supplies optional signals in the form of GPIOs for fine
-> > grained power management.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> >  .../bindings/connector/pcie-m2-m-connector.yaml    | 122 +++++++++++++++++++++
-> >  1 file changed, 122 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..be0a3b43e8fd2a2a3b76cad4808ddde79dceaa21
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> > @@ -0,0 +1,122 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/connector/pcie-m2-m-connector.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: PCIe M.2 Mechanical Key M Connector
-> > +
-> > +maintainers:
-> > +  - Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > +
-> > +description:
-> > +  A PCIe M.2 M connector node represents a physical PCIe M.2 Mechanical Key M
-> > +  connector. The Mechanical Key M connectors are used to connect SSDs to the
-> > +  host system over PCIe/SATA interfaces. These connectors also offer optional
-> > +  interfaces like USB, SMB.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: pcie-m2-m-connector
+On Sun,  9 Nov 2025 13:59:55 +0100
+Thorsten Blum <thorsten.blum@linux.dev> wrote:
+
+> Use clamp_t() instead of manually casting the return value.
 > 
-> Is a generic compatible enough here? Compare this to the USB connectors,
-> which, in case of an independent USB-B connector controlled/ing GPIOs,
-> gets additional gpio-usb-b-connector?
+> Replace sprintf() with sysfs_emit() to improve sysfs show functions
+> while we're at it.
 > 
-
-I can't comment on it as I've not seen such usecases as of now. But I do think
-that this generic compatible should satisfy most of the design requirements. If
-necessity arises, a custom compatible could be introduced with this generic one
-as a fallback.
-
-> > +
-> > +  vpcie3v3-supply:
-> > +    description: A phandle to the regulator for 3.3v supply.
-> > +
-> > +  vio1v8-supply:
-> > +    description: A phandle to the regulator for VIO 1.8v supply.
-> > +
-> > +  ports:
-> > +    $ref: /schemas/graph.yaml#/properties/ports
-> > +    description: OF graph bindings modeling the interfaces exposed on the
-> > +      connector. Since a single connector can have multiple interfaces, every
-> > +      interface has an assigned OF graph port number as described below.
-> > +
-> > +    properties:
-> > +      port@0:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: PCIe/SATA interface
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  drivers/w1/slaves/w1_therm.c | 19 +++++++++----------
+>  1 file changed, 9 insertions(+), 10 deletions(-)
 > 
-> Should it be defined as having two endpoints: one for PCIe, one for
-> SATA?
-> 
+> diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
+> index 9ccedb3264fb..cf686e6ba3d5 100644
+> --- a/drivers/w1/slaves/w1_therm.c
+> +++ b/drivers/w1/slaves/w1_therm.c
+> @@ -961,9 +961,8 @@ static inline int temperature_from_RAM(struct w1_slave *sl, u8 rom[9])
+>   */
+>  static inline s8 int_to_short(int i)
+>  {
+> -	/* Prepare to cast to short by eliminating out of range values */
+> -	i = clamp(i, MIN_TEMP, MAX_TEMP);
+> -	return (s8) i;
+> +	/* Cast to short by eliminating out of range values */
+                   ^^^^^ no shorts here...
+> +	return clamp_t(s8, i, MIN_TEMP, MAX_TEMP);
 
-I'm not sure. From the dtschema of the connector node:
+That is just plain broken.
+clamp_t() really shouldn't have been allowed to exist.
+That is a typical example of how it gets misused.
+(min_t() and max_t() get misused the same way.)
 
-"If a single port is connected to more than one remote device, an 'endpoint'
-child node must be provided for each link"
+Think what happens when i is 256.
+The code should just be:
 
-Here, a single port is atmost connected to only one endpoint and that endpoint
-could PCIe/SATA. So IMO, defining two endpoint nodes doesn't fit here.
+	return clamp(i, MIN_TEMP, MAX_TEMP);
 
-- Mani
+No casts anywhere.
+I'm not even sure the return type (s8) makes any sense.
+It is quite likely that the code will be better if it is 'int'.
+The fact that the domain in inside -128..127 doesn't mean that
+the correct type for a variable isn't 'int'.
 
--- 
-மணிவண்ணன் சதாசிவம்
+	David
+
+>  }
 
