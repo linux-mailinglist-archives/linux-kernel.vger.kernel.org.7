@@ -1,431 +1,187 @@
-Return-Path: <linux-kernel+bounces-891945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F62C43E19
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:50:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B91C43E04
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3F5B188999C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:51:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1BC2F346989
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0602F12CD;
-	Sun,  9 Nov 2025 12:50:05 +0000 (UTC)
-Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525E32ECD06;
+	Sun,  9 Nov 2025 12:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mM+BddcS"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A122EDD52
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215362ED15D
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762692604; cv=none; b=lSYSZvRRT3tRqvI/7/NPeMmwlWia821+wI5SqlXZSOWcxatp8jgT4bFHLEnsA2lsTe/ypIatRRMTLggmD4jm+eccJVZj5zwKVRe19yZ2MwwDeResqmOJNas++SvYmZ8CEWCtCOMgrOB6PdFl4h5ZXMioFx589syuDETICDT+Ap4=
+	t=1762692601; cv=none; b=QTo/QneLeXCS7g1EToMStUKkUEBniweD1+1eD3hFHG/vTS20Av2rzV7A9IZYcErxnN4u2X6u0zWu84PuaXcukTB32D4DEcLNCZzFGTyqekJgWLg0e2bwXb2LdIeJM0TrJYFcobLe69LAFLa7YKiNe9gWDpCN1bqd8P6DCMtz+ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762692604; c=relaxed/simple;
-	bh=kEu6HkKA1nWBlQwm/t0WIr9dtjCOGxLNgdKPTSoF8KA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FssVDZxNIABYSvQ7WPRhRPdMiPXTWwn2D69wRbcsEs4VMm3hFbwsdzYuYsOy4B3+qbX/QDT9jFxgS2/3K4/bGtZBdaqmnDW44EZOPz17XUf+XUoVyDez9PU7CQmYJV3nKTtaWXkmn1ap19T8YHcZzBaAbz591MCezb1uBy2ugsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330.lge.net) (10.177.112.156)
-	by 156.147.51.103 with ESMTP; 9 Nov 2025 21:49:53 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-From: Youngjun Park <youngjun.park@lge.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chrisl@kernel.org,
-	kasong@tencent.com,
-	hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	shikemeng@huaweicloud.com,
-	nphamcs@gmail.com,
-	bhe@redhat.com,
-	baohua@kernel.org,
-	youngjun.park@lge.com,
-	gunho.lee@lge.com,
-	taejoon.song@lge.com
-Subject: [PATCH 3/3] mm/swap: integrate swap tier infrastructure into swap subsystem
-Date: Sun,  9 Nov 2025 21:49:47 +0900
-Message-Id: <20251109124947.1101520-4-youngjun.park@lge.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251109124947.1101520-1-youngjun.park@lge.com>
-References: <20251109124947.1101520-1-youngjun.park@lge.com>
+	s=arc-20240116; t=1762692601; c=relaxed/simple;
+	bh=RWsh0MNVHHOeT+2llJsTwxoFnM5p6UnPIPtoFkDeVgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pUoI75KG9g2c1cZR0idEsWQ1hQohCqIjZ9Vlve7UZO8ABMhe5kExQJ4Gd6wXL2bq0So7kevMWcDMpv7w8M3fceGki2ueb0DyXQqA1/qgad5G96JX0RoUk6aNJ17LRwGk3QioquNQg/MwxhJUYiqYrS6SS13Vf6UKwPQVUYRhYPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mM+BddcS; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6409e985505so3443546a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:49:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762692597; x=1763297397; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b3uCPMdMXg41Vg12Apli3BT+126wRXMTBjult076Xbo=;
+        b=mM+BddcSrPO4Ff3Lxyd4Awuwj0dTiUnDLqiFoUqaFWTzSBZCtkQg9W5WOo/cSrzDlE
+         io8ZKsjLtfXqvlHfZuY90IYMn6nNmcjv/cWT8ErAW4fmkqFVMmRSZ+y5itJUU3Jle2t4
+         PCmdXXjRIyC1RoCe9eWSuoFTayWUadJY5rrjSoh5tMLLj6wd6I1vYk4FDleM6J6MrVBL
+         w0qhAmEGukwif5uqjcnzAJigPcpXK68zz1V6Xxb5T6yLdJ1N22kUlXfudmgOquipi8Yw
+         2fd2Ipsr37h2tvI0IuoGWOdMrhJUri4N2TvG3bzrg1g4v5PQzBVvN5BS6asHi2BEj6RD
+         UEjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762692597; x=1763297397;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b3uCPMdMXg41Vg12Apli3BT+126wRXMTBjult076Xbo=;
+        b=qB14TtOtl8CkTXWnMlo0oKs5ImyKGGMQuYcgRyNVI6bkPNAJXLuTj7aqcZkj3/4iKx
+         EsRePEGXGzoChd9fbnGdWN7FtLxz9ndRToJeo24Lui8+0k0gy+QA2QJIhN1urq5FJGKJ
+         PajX+e/d17JkPkHtDgUbedNZVTKkL3XiuHmA0g59/jz5dBClyPNA5DSbgt3WvV5PHU4n
+         25AiNXkcS1O1lRO0IQOTrRhOFtmdQ1VduBOzwl5a/tTd0LObCHnhabqoLGiLKAhmX58a
+         tjsLR1e01oGu5sbGJEmNipJHwJY9deGZ9a7+W4zMq45yJ0rI9o/aOp45XA6MtJtsQkOf
+         2tOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyT006ZVO/AbDywb+84niXI6frnnFwnFpppY56AyCwDl7jm/6rN6dmNg2a14MyOGYDVvV5t84b+PznKVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU7Je2db0MIAuhKMX/0j7QXpzmhn3gMlMIPZ6sRfiy8w9GHnEi
+	LQgdafKCPnVmKlPmgWBOJbDt1laV094f3vPQg78mM3gGm/saEm6F6xbPvTc6kl7azVE=
+X-Gm-Gg: ASbGncs5YRPWsE4LZUTOJbrK07cosGDMW3FeWrai3hdFP5D7r/CCn6Z9+GNW3oR+cUU
+	M3mO2kK/AFR67slFs6lC0cZIbt/Nse2B5PDjvhc7TufcTHx50bMn/RAkXSrNkX6uyp80hQKsN0R
+	j5lFnbkSv1ap1x4rozBx9a+raXVsP9gBfi+BnchXRXUeDSF4wM8oXwc2WhdgYh7Zf9vBr0pBTv9
+	lmGgIXhcsdKIzk4zyoPqe3R0d0C2CwauprVi5WN2bjq+VDYaJ6lgbb6WQnYYesi7cePq1HoiUYZ
+	Jq87DksAyAdm3PPnF8K+F8L2WwO0GngyUBaGpdZ9ddZTZ+d8vc+RF6VdraumREIOHwqFYhdcS9E
+	EVvHe6aT9dgAVO4tH7cBIFv8ZspguzQNLokhSJLtEJsBC1wyM+oGOSefu1avSj/YuguXNGRo/Bl
+	PtjJYRCAWHY303QeS6MumbUY0bddEo+shGTD4FDicAUM3dCtB0hIla3S35UI3wGQ9mj2xsiirJL
+	6opjrhmY793uR558r7Gb6svpSgMRYs6ZCIA1H0zI2JlZnBOPRfN1gnd76AYkqDPWZYrmnvW4+/o
+X-Google-Smtp-Source: AGHT+IHq3tipKWAq6loGNwoQe1tMCrBPSrk3SZF+kU2pkM50gqp5iIGyhpBDk7dlni6/awXeEtBrLA==
+X-Received: by 2002:a05:6402:1474:b0:640:9b74:b448 with SMTP id 4fb4d7f45d1cf-6415e813d04mr3914452a12.30.1762692597394;
+        Sun, 09 Nov 2025 04:49:57 -0800 (PST)
+Received: from ?IPV6:2001:1c00:3b8a:ea00:4729:b0ef:dcc4:b0b6? (2001-1c00-3b8a-ea00-4729-b0ef-dcc4-b0b6.cable.dynamic.v6.ziggo.nl. [2001:1c00:3b8a:ea00:4729:b0ef:dcc4:b0b6])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6418b54a888sm611277a12.32.2025.11.09.04.49.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Nov 2025 04:49:56 -0800 (PST)
+Message-ID: <0390ae7b-8f56-4ed3-a3f9-616e7c74adbd@linaro.org>
+Date: Sun, 9 Nov 2025 13:49:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/8] media: camss: Add support for C-PHY configuration
+ on Qualcomm platforms
+To: david@ixit.cz, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Luca Weiss <luca.weiss@fairphone.com>, Petr Hodina <phodina@protonmail.com>,
+ "Dr. Git" <drgitx@gmail.com>
+Cc: Joel Selvaraj <foss@joelselvaraj.com>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>
+References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
+Content-Language: en-US, en-GB
+From: Casey Connolly <casey.connolly@linaro.org>
+In-Reply-To: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Integrate the swap tier infrastructure into the existing swap subsystem
-to enable selective swap device usage based on tier configuration.
+Hi David,
 
-Signed-off-by: Youngjun Park <youngjun.park@lge.com>
----
- mm/memcontrol.c | 69 ++++++++++++++++++++++++++++++++++++
- mm/page_io.c    | 21 ++++++++++-
- mm/swap_state.c | 93 +++++++++++++++++++++++++++++++++++++++++++++++++
- mm/swapfile.c   | 15 ++++++--
- 4 files changed, 194 insertions(+), 4 deletions(-)
+On 11/9/25 10:39, David Heidelberg via B4 Relay wrote:
+> # Short summary
+> 
+> This patch series extends the Qualcomm CAMSS (Camera Subsystem),
+> including CSID and CSIPHY components, to support C-PHY mode configuration.
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index bfc986da3289..33c7cc069754 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -68,6 +68,7 @@
- #include <net/ip.h>
- #include "slab.h"
- #include "memcontrol-v1.h"
-+#include "swap_tier.h"
- 
- #include <linux/uaccess.h>
- 
-@@ -3730,6 +3731,7 @@ static void mem_cgroup_free(struct mem_cgroup *memcg)
- {
- 	lru_gen_exit_memcg(memcg);
- 	memcg_wb_domain_exit(memcg);
-+	swap_tiers_put_mask(memcg);
- 	__mem_cgroup_free(memcg);
- }
- 
-@@ -3842,6 +3844,11 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
- 		page_counter_init(&memcg->kmem, &parent->kmem, false);
- 		page_counter_init(&memcg->tcpmem, &parent->tcpmem, false);
- #endif
-+#ifdef CONFIG_SWAP_TIER
-+		memcg->tiers_mask = 0;
-+		memcg->tiers_onoff = 0;
-+#endif
-+
- 	} else {
- 		init_memcg_stats();
- 		init_memcg_events();
-@@ -3850,6 +3857,10 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
- #ifdef CONFIG_MEMCG_V1
- 		page_counter_init(&memcg->kmem, NULL, false);
- 		page_counter_init(&memcg->tcpmem, NULL, false);
-+#endif
-+#ifdef CONFIG_SWAP_TIER
-+		memcg->tiers_mask = DEFAULT_FULL_MASK;
-+		memcg->tiers_onoff = DEFAULT_ON_MASK;
- #endif
- 		root_mem_cgroup = memcg;
- 		return &memcg->css;
-@@ -5390,6 +5401,56 @@ static int swap_events_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
-+#ifdef CONFIG_SWAP_TIER
-+static int swap_tier_show(struct seq_file *m, void *v)
-+{
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
-+
-+	swap_tiers_show_memcg(m, memcg);
-+	return 0;
-+}
-+
-+static ssize_t swap_tier_write(struct kernfs_open_file *of,
-+				char *buf, size_t nbytes, loff_t off)
-+{
-+	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
-+	struct tiers_desc desc[MAX_SWAPTIER] = {};
-+	char *pos = buf, *token;
-+	int nr = 0;
-+	int ret;
-+
-+	while ((token = strsep(&pos, " \t\n")) != NULL) {
-+		if (!*token)
-+			continue;
-+
-+		if (nr >= MAX_SWAPTIER)
-+			return -E2BIG;
-+
-+		if (token[0] != '+' && token[0] != '-')
-+			return -EINVAL;
-+
-+		desc[nr].ops = (token[0] == '+') ? TIER_ON_MASK : TIER_OFF_MASK;
-+
-+		if (strlen(token) <= 1) {
-+			strscpy(desc[nr].name, DEFAULT_TIER_NAME);
-+			nr++;
-+			continue;
-+		}
-+
-+		if (strscpy(desc[nr].name, token + 1, MAX_TIERNAME) < 0)
-+			return -EINVAL;
-+
-+		nr++;
-+	}
-+
-+	ret = swap_tiers_get_mask(desc, nr, memcg);
-+	if (ret)
-+		return ret;
-+
-+	return nbytes;
-+}
-+#endif
-+
- static struct cftype swap_files[] = {
- 	{
- 		.name = "swap.current",
-@@ -5422,6 +5483,14 @@ static struct cftype swap_files[] = {
- 		.file_offset = offsetof(struct mem_cgroup, swap_events_file),
- 		.seq_show = swap_events_show,
- 	},
-+#ifdef CONFIG_SWAP_TIER
-+	{
-+		.name = "swap.tiers",
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+		.seq_show = swap_tier_show,
-+		.write = swap_tier_write,
-+	},
-+#endif
- 	{ }	/* terminate */
- };
- 
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 3c342db77ce3..2b3b1154a169 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -26,6 +26,7 @@
- #include <linux/delayacct.h>
- #include <linux/zswap.h>
- #include "swap.h"
-+#include "swap_tier.h"
- 
- static void __end_swap_bio_write(struct bio *bio)
- {
-@@ -233,6 +234,24 @@ static void swap_zeromap_folio_clear(struct folio *folio)
- 	}
- }
- 
-+#if defined(CONFIG_SWAP_TIER) && defined(CONFIG_ZSWAP)
-+static bool folio_swap_tier_zswap_test_off(struct folio *folio)
-+{
-+	struct mem_cgroup *memcg;
-+
-+	memcg = folio_memcg(folio);
-+	if (memcg)
-+		return swap_tier_test_off(memcg->tiers_mask,
-+			TIER_MASK(SWAP_TIER_ZSWAP, TIER_ON_MASK));
-+
-+	return false;
-+}
-+#else
-+static bool folio_swap_tier_zswap_test_off(struct folio *folio)
-+{
-+	return false;
-+}
-+#endif
- /*
-  * We may have stale swap cache pages in memory: notice
-  * them here and get rid of the unnecessary final write.
-@@ -272,7 +291,7 @@ int swap_writeout(struct folio *folio, struct swap_iocb **swap_plug)
- 	 */
- 	swap_zeromap_folio_clear(folio);
- 
--	if (zswap_store(folio)) {
-+	if (folio_swap_tier_zswap_test_off(folio) || zswap_store(folio)) {
- 		count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
- 		goto out_unlock;
- 	}
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 3f85a1c4cfd9..2e5f65ff2479 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -25,6 +25,7 @@
- #include "internal.h"
- #include "swap_table.h"
- #include "swap.h"
-+#include "swap_tier.h"
- 
- /*
-  * swapper_space is a fiction, retained to simplify the path through
-@@ -836,8 +837,100 @@ static ssize_t vma_ra_enabled_store(struct kobject *kobj,
- }
- static struct kobj_attribute vma_ra_enabled_attr = __ATTR_RW(vma_ra_enabled);
- 
-+#ifdef CONFIG_SWAP_TIER
-+static ssize_t tiers_show(struct kobject *kobj,
-+				     struct kobj_attribute *attr, char *buf)
-+{
-+	return swap_tiers_show_sysfs(buf);
-+}
-+
-+static ssize_t tiers_store(struct kobject *kobj,
-+				struct kobj_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	struct tiers_desc desc[MAX_SWAPTIER] = {};
-+	int nr = 0;
-+	char *data, *p, *token;
-+	int ret = 0;
-+	bool is_add = true;
-+
-+	if (!count)
-+		return -EINVAL;
-+
-+	data = kmemdup_nul(buf, count, GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	p = data;
-+
-+	if (*p == '+')
-+		p++;
-+	else if (*p == '-') {
-+		is_add = false;
-+		p++;
-+	} else
-+		return -EINVAL;
-+
-+	while ((token = strsep(&p, ", \t\n")) != NULL) {
-+		if (!*token)
-+			continue;
-+
-+		if (nr >= MAX_SWAPTIER) {
-+			ret = -E2BIG;
-+			goto out;
-+		}
-+
-+		if (is_add) {
-+			char *name, *prio_str;
-+			int prio;
-+
-+			name = strsep(&token, ":");
-+			prio_str = token;
-+
-+			if (!name || !prio_str || !*name || !*prio_str) {
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+
-+			if (strscpy(desc[nr].name, name, MAX_TIERNAME) < 0) {
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+
-+			if (kstrtoint(prio_str, 10, &prio)) {
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+
-+			desc[nr].prio_st = prio;
-+		} else {
-+			if (strscpy(desc[nr].name, token, MAX_TIERNAME) < 0) {
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+			desc[nr].prio_st = 0;
-+		}
-+		nr++;
-+	}
-+
-+	if (is_add)
-+		ret = swap_tiers_add(desc, nr);
-+	else
-+		ret = swap_tiers_remove(desc, nr);
-+
-+out:
-+	kfree(data);
-+	return ret ? ret : count;
-+}
-+
-+static struct kobj_attribute tier_attr = __ATTR_RW(tiers);
-+#endif
-+
- static struct attribute *swap_attrs[] = {
- 	&vma_ra_enabled_attr.attr,
-+#ifdef CONFIG_SWAP_TIER
-+	&tier_attr.attr,
-+#endif
- 	NULL,
- };
- 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index a5c90e419ff3..8715a2d94140 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -49,6 +49,7 @@
- #include "swap_table.h"
- #include "internal.h"
- #include "swap.h"
-+#include "swap_tier.h"
- 
- static bool swap_count_continued(struct swap_info_struct *, pgoff_t,
- 				 unsigned char);
-@@ -1296,7 +1297,8 @@ static bool get_swap_device_info(struct swap_info_struct *si)
- 
- /* Rotate the device and switch to a new cluster */
- static void swap_alloc_entry(swp_entry_t *entry,
--			    int order)
-+			    int order,
-+			    int mask)
- {
- 	unsigned long offset;
- 	struct swap_info_struct *si, *next;
-@@ -1304,6 +1306,8 @@ static void swap_alloc_entry(swp_entry_t *entry,
- 	spin_lock(&swap_avail_lock);
- start_over:
- 	plist_for_each_entry_safe(si, next, &swap_avail_head, avail_list) {
-+		if (swap_tiers_test_off(si->tier_idx, mask))
-+			continue;
- 		/* Rotate the device and switch to a new cluster */
- 		plist_requeue(&si->avail_list, &swap_avail_head);
- 		spin_unlock(&swap_avail_lock);
-@@ -1376,6 +1380,7 @@ int folio_alloc_swap(struct folio *folio)
- {
- 	unsigned int order = folio_order(folio);
- 	unsigned int size = 1 << order;
-+	int mask;
- 	swp_entry_t entry = {};
- 
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
-@@ -1400,8 +1405,8 @@ int folio_alloc_swap(struct folio *folio)
- 	}
- 
- again:
--	swap_alloc_entry(&entry, order);
--
-+	mask = swap_tiers_collect_compare_mask(folio_memcg(folio));
-+	swap_alloc_entry(&entry, order, mask);
- 	if (unlikely(!order && !entry.val)) {
- 		if (swap_sync_discard())
- 			goto again;
-@@ -2673,6 +2678,8 @@ static void _enable_swap_info(struct swap_info_struct *si)
- 
- 	/* Add back to available list */
- 	add_to_avail_list(si, true);
-+
-+	swap_tiers_assign(si);
- }
- 
- static void enable_swap_info(struct swap_info_struct *si, int prio,
-@@ -2840,6 +2847,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
- 	spin_lock(&swap_lock);
- 	spin_lock(&p->lock);
- 	drain_mmlist();
-+	swap_tiers_release(p);
- 
- 	swap_file = p->swap_file;
- 	p->swap_file = NULL;
-@@ -4004,6 +4012,7 @@ static int __init swapfile_init(void)
- 		swap_migration_ad_supported = true;
- #endif	/* CONFIG_MIGRATION */
- 
-+	swap_tiers_init();
- 	return 0;
- }
- subsys_initcall(swapfile_init);
--- 
-2.34.1
+Awesome to see this actually working after so much time and prior effort!
+> 
+> # Background and motivation
+> 
+> Modern smartphone cameras increasingly rely on MIPI C-PHY rather than D-PHY,
+> thanks to its higher data throughput and signal efficiency. As a result,
+> many OEMs adopt C-PHY interfaces for main (rear) cameras on Qualcomm-based
+> devices.
+> 
+> Until now, mainline Linux lacked C-PHY configuration support for Qualcomm
+> chipsets, preventing bring-up of primary camera sensors on several
+> Snapdragon platforms. This series closes that gap.
+
+I think it's worth being clearer here that this is only tested on 
+SDM845, and will only work on sdm845 anyway because of the lane 
+configuration.
+
+Additionally, with Luca's explicit D-phy check removed, other platforms 
+won't error out if someone tries to use c-phy without adding the lane 
+configuration (and whatever other configuration might also be needed), 
+so it might be worth adding a proper check for that.
+> 
+>   - Introduces C-PHY configuration support for the CAMSS driver stack,
+>     covering both CSID and CSIPHY blocks.
+>   - Successfully enables C-PHY operation on the Snapdragon 845 platform.
+>   - Tested on OnePlus 6 and 6T phones running mainline Linux,
+>     using the Sony IMX519 main camera sensor.
+>   - The new configuration allows other chipsets versionsto enable C-PHY by
+>     simply adding corresponding sensor driver support and csiphy
+>     initialization data, following the example set for sdm845.
+> 
+> With this patch series, mainline Linux gains working C-PHY support for
+> Snapdragon 845, paving the way for improved main camera functionality
+> across many Qualcomm-based devices. The groundwork also simplifies
+> future enablement efforts for additional SoCs and sensors.
+
+woohoo!
+
+Kind regards,
+Casey (she/they)
+
+> 
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+> Casey Connolly (1):
+>        media: qcom: camss: csiphy-3ph: Add Gen2 v1.1 MIPI CSI-2 CPHY init
+> 
+> David Heidelberg (6):
+>        media: qcom: camss: csiphy: Introduce C-PHY
+>        media: qcom: camss: csiphy-3ph: Use odd bits for configuring C-PHY lanes
+>        media: qcom: camss: Prepare CSID for C-PHY support
+>        media: qcom: camss: csiphy-3ph: Use sdm845 C-PHY configuration sequence
+>        media: qcom: camss: Account for C-PHY when calculating link frequency
+>        media: qcom: camss: Remove D-PHY-only endpoint restriction
+> 
+> Petr Hodina (1):
+>        media: qcom: camss: Initialize lanes after lane configuration is available
+> 
+>   .../media/platform/qcom/camss/camss-csid-gen2.c    |   1 +
+>   drivers/media/platform/qcom/camss/camss-csid.c     |   3 +-
+>   drivers/media/platform/qcom/camss/camss-csid.h     |   1 +
+>   .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     | 165 ++++++++++++++++-----
+>   drivers/media/platform/qcom/camss/camss-csiphy.c   |   6 +-
+>   drivers/media/platform/qcom/camss/camss-csiphy.h   |   2 +
+>   drivers/media/platform/qcom/camss/camss.c          |  24 ++-
+>   drivers/media/platform/qcom/camss/camss.h          |   2 +-
+>   8 files changed, 146 insertions(+), 58 deletions(-)
+> ---
+> base-commit: 9c0826a5d9aa4d52206dd89976858457a2a8a7ed
+> change-id: 20251109-qcom-cphy-bb8cbda1c644
+> 
+> Best regards,
 
 
