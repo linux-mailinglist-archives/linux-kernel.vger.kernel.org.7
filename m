@@ -1,87 +1,52 @@
-Return-Path: <linux-kernel+bounces-891949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E386C43E37
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0840EC43E41
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:00:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9E2B4E5A4F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:53:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 682F84E4975
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67192F3601;
-	Sun,  9 Nov 2025 12:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823162F39B4;
+	Sun,  9 Nov 2025 13:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMgoG7sp"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rfV0/aVQ"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870D32EBDDC
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6C6C133
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 13:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762692785; cv=none; b=XtqxxgRg0n88H1QPHc3hXfXBhd3Bi3WWH9Z4CVoydc01lv+85do8FAF7zs+fZet5rcRayH5pA13PMB1yTThx5aR+y4VBY/lJYgw6IhMEoh9i89Z7/tL8B22nfQog2lZYvYm8mDzshjwWDsStANxhEkoAAYulzG/mSOwMkOGNc1k=
+	t=1762693216; cv=none; b=YvqEJQ1RjSFl1RS6uXb/6lh/3p3Bq/oE1/k2wW9GL6ZaLWDp59Dc5o7aspsRfKMHwYsprAQzx6ceXWQ5mlnn8hBKsdqnnR8TDbJG8euKxlgxE9ax6pWQFfgpSN/4PMPDWfIrUwZvHvwfWTy0UqHbyQjSQWmRA0s6cn9QxqIKDas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762692785; c=relaxed/simple;
-	bh=Wd53Qgttz8/HlKQBRCBgJT+eS7yPLn9ZSZ4MOrmxLtQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pT6PIdEkq+TGC0YFQVtZj3b1dAKrQtXrweDRwRjteyieYinj4qG22ibIiAznCs+kdWRs6Xh3ARnJmwHzPT+A2BZAmWmMSRJox+mapCJ+m3knOa10+wfkPMYxbbI0G298Q/0a7aPUC8I66naOf7w0z7OIz1DVFZPZ24jQ+YQM5ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMgoG7sp; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b728a43e410so468745866b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:53:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762692781; x=1763297581; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F6A/B+9h+I98s/YXTKbkuHwVutCPQptulwBnbhPRTRk=;
-        b=QMgoG7sp7ZCgC1uoTQbOTDfQXJW3FoJY7fIqH3Ow0bZFopTbmsTkmxYCYbhbWElZSp
-         Y+TqozfYDBGmo/Ob/johX266OJbtDLJndN+PFmGylivH8t48lsJbh09DmGpNZObMv6Yt
-         k4P+jv7R3FxTNYdiMmWpwArzcrfYsYyZUpFzM8DDOK6XsEUZCrLRmd4LSgBijtfe33sG
-         6P0QBUgDXweJBQJN8PhT4W4oPUC5Gs8MRQVLzZDaut0BedjwPtiqinwoQ/y58zSr/T+3
-         tbMPn+ml83xGMwUbRqOH+Ur5mCwlTZUwwpYiozgL9XPrejql7e7Zw1Xy+w7owxtel4nf
-         zDLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762692781; x=1763297581;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F6A/B+9h+I98s/YXTKbkuHwVutCPQptulwBnbhPRTRk=;
-        b=Ww7tJ72+b4T1Rx6rRC9gwuNic5oc4xyOqwnO0omRV5KMLvuy82MgPfW2xp7oqYk2XJ
-         G1l/wEhFozbQY+IP3yog2Hj96mNPX79kBpVbOPQNTivyEObIy3+4mMT4Csm+mUSwpN3l
-         LGB4YI2TTwi1R7v6aobOGoplRG20nvPSE8tS0Za4cK4CrRZBODumoo7CO+Srmm77nKaH
-         fHOptjg13NXJnADUPHyAGJxtGSYh+t5zfGc8AE4vGKzXHB3jtn/PqLxweNH0cfMv0N/W
-         AJHx1dsCoKk4WOcKxjnn4+kEYfQsEyMaFOfStlA4Q6GRVkXhNP5QH0yikzcj+1Zt/h30
-         vZTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWi/mS+tJbApXsmJYmbWMldJ+eFt73VQaVMcR47hJR8i0xW09300Is6LYJE/3hPtqlC4S458Mr4ECE33Ko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvNC86Os6sYaS5rocgZRRKom5IqvIkSvFyXpQVhnu6hIHQhVXc
-	Q57ZiE4GjxNfWblJozy07nLmMDYmkA91jGXv6f/F3/ijVH56YNuoOV70
-X-Gm-Gg: ASbGncsqC0sA+ulJfBHKrn64Z0nAH7+wPoAB8O/2Kf8jHGmEJtW5XKhvhHm9qmHO1Nx
-	B8XlgD/8FRAGF1ydbMaVVh8g4LqelIbYIwnmP97YpDXqK959ib8GSaSS7vp5MCz0VwfzD7/7psH
-	UQksFD1hKI5M7wamchDmcQ8dm/8kcbIz8WGSa45eQuFBdQ8iFnCyx1jIslxhXtR2/9FCFLOu8P1
-	d1g6OcPT7xbnR7J08YmJ7v6xrI4B9VASygHAESk7li8Rsx/IsXy1MBKyto4MiUKs40mG1S5yIto
-	khdGKXOyH56wapEAuzrf7YVzgkC/Z64YX8E5g4cgOG0FRjWlpywPhrggURPiCgqYDHJNDNRGCSh
-	7gyr3z/eGA4ArVJpMxq2khkyemNVzJQS5TWWOnukpWGsrOmUhjhVrK0WDbIJBF+x9NoMr4gWp78
-	21ymyhJFsIE7O/J0cQ5tM+iMKNPdZkiQblsyUNwAb8JakuRSlMBq/neCr05uo=
-X-Google-Smtp-Source: AGHT+IET1KPf2B7oL/QwV+UKZAET/LutOZL+3WDxwucKxa22W1E/RosCqKFp+QL/ZmCkc+0H1lrDlA==
-X-Received: by 2002:a17:907:944a:b0:b6d:4f1d:8c9b with SMTP id a640c23a62f3a-b72e047b413mr384785566b.28.1762692780735;
-        Sun, 09 Nov 2025 04:53:00 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d3c0sm822225766b.36.2025.11.09.04.52.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 04:52:59 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: touch predicts in do_dentry_open()
-Date: Sun,  9 Nov 2025 13:52:54 +0100
-Message-ID: <20251109125254.1288882-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762693216; c=relaxed/simple;
+	bh=E9WRGnkno3lDzIRl+uICSC0YZ0B7rxBaWeMBisyPAm4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sOCF1vSg0oBKQRfkHO1yCoIFCroytb7yODS12UKpZXnDr6z1mqgwZZvkXyIMdGNNCAe0aMpMjtnZzI9wcS3V7Jlgz5MxcxXG6HhR171tzLD6UnhzI55QadzcIFFbIQmX2lRPQwQbES6pidRhccN3xhZLWWwWHFZryrESStqw6RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rfV0/aVQ; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762693211;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=i+I3Jeh1sNuH7+V8R1j5hA1zsKwyPco0WKcK+vaAXJ4=;
+	b=rfV0/aVQQL/aWap3s5046F9YlN4cBAPCd0BIGDe9eNEwRGU9iHZIwQ+4fpOSAXoBlY/GDj
+	gidJ9Sksl+Abm0oPX2Ajk0yu98Ubz8TmnlTSBOq4u6g4J8VGy4eUGTiXQ0qiBZ3+u080ZA
+	lcoiIKQ5WRJ524lxyvCP7PVkqb0DwfM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Huisong Li <lihuisong@huawei.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] w1: therm: Use clamp_t to simplify int_to_short helper
+Date: Sun,  9 Nov 2025 13:59:55 +0100
+Message-ID: <20251109130000.406691-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,42 +54,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Helps out some of the asm, the routine is still a mess.
+Use clamp_t() instead of manually casting the return value.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Replace sprintf() with sysfs_emit() to improve sysfs show functions
+while we're at it.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- fs/open.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/w1/slaves/w1_therm.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/fs/open.c b/fs/open.c
-index 1d73a17192da..2a2cf9007900 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -937,7 +937,7 @@ static int do_dentry_open(struct file *f,
+diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
+index 9ccedb3264fb..cf686e6ba3d5 100644
+--- a/drivers/w1/slaves/w1_therm.c
++++ b/drivers/w1/slaves/w1_therm.c
+@@ -961,9 +961,8 @@ static inline int temperature_from_RAM(struct w1_slave *sl, u8 rom[9])
+  */
+ static inline s8 int_to_short(int i)
+ {
+-	/* Prepare to cast to short by eliminating out of range values */
+-	i = clamp(i, MIN_TEMP, MAX_TEMP);
+-	return (s8) i;
++	/* Cast to short by eliminating out of range values */
++	return clamp_t(s8, i, MIN_TEMP, MAX_TEMP);
+ }
+ 
+ /* Interface Functions */
+@@ -1702,7 +1701,7 @@ static ssize_t temperature_show(struct device *device,
+ 		return 0;
  	}
  
- 	error = security_file_open(f);
--	if (error)
-+	if (unlikely(error))
- 		goto cleanup_all;
+-	return sprintf(buf, "%d\n", temperature_from_RAM(sl, info.rom));
++	return sysfs_emit(buf, "%d\n", temperature_from_RAM(sl, info.rom));
+ }
  
- 	/*
-@@ -947,11 +947,11 @@ static int do_dentry_open(struct file *f,
- 	 * pseudo file, this call will not change the mode.
- 	 */
- 	error = fsnotify_open_perm_and_set_mode(f);
--	if (error)
-+	if (unlikely(error))
- 		goto cleanup_all;
+ static ssize_t ext_power_show(struct device *device,
+@@ -1724,7 +1723,7 @@ static ssize_t ext_power_show(struct device *device,
+ 			"%s: Power_mode may be corrupted. err=%d\n",
+ 			__func__, SLAVE_POWERMODE(sl));
+ 	}
+-	return sprintf(buf, "%d\n", SLAVE_POWERMODE(sl));
++	return sysfs_emit(buf, "%d\n", SLAVE_POWERMODE(sl));
+ }
  
- 	error = break_lease(file_inode(f), f->f_flags);
--	if (error)
-+	if (unlikely(error))
- 		goto cleanup_all;
+ static ssize_t resolution_show(struct device *device,
+@@ -1746,7 +1745,7 @@ static ssize_t resolution_show(struct device *device,
+ 			__func__, SLAVE_RESOLUTION(sl));
+ 	}
  
- 	/* normally all 3 are set; ->open() can clear them if needed */
+-	return sprintf(buf, "%d\n", SLAVE_RESOLUTION(sl));
++	return sysfs_emit(buf, "%d\n", SLAVE_RESOLUTION(sl));
+ }
+ 
+ static ssize_t resolution_store(struct device *device,
+@@ -1827,7 +1826,7 @@ static ssize_t alarms_show(struct device *device,
+ 			__func__, ret);
+ 	}
+ 
+-	return sprintf(buf, "%hd %hd\n", tl, th);
++	return sysfs_emit(buf, "%hd %hd\n", tl, th);
+ }
+ 
+ static ssize_t alarms_store(struct device *device,
+@@ -1969,7 +1968,7 @@ static ssize_t therm_bulk_read_show(struct device *device,
+ 		}
+ 	}
+ show_result:
+-	return sprintf(buf, "%d\n", ret);
++	return sysfs_emit(buf, "%d\n", ret);
+ }
+ 
+ static ssize_t conv_time_show(struct device *device,
+@@ -1982,7 +1981,7 @@ static ssize_t conv_time_show(struct device *device,
+ 			"%s: Device is not supported by the driver\n", __func__);
+ 		return 0;  /* No device family */
+ 	}
+-	return sprintf(buf, "%d\n", conversion_time(sl));
++	return sysfs_emit(buf, "%d\n", conversion_time(sl));
+ }
+ 
+ static ssize_t conv_time_store(struct device *device,
+@@ -2024,7 +2023,7 @@ static ssize_t features_show(struct device *device,
+ 			 "%s: Device not supported by the driver\n", __func__);
+ 		return 0;  /* No device family */
+ 	}
+-	return sprintf(buf, "%u\n", SLAVE_FEATURES(sl));
++	return sysfs_emit(buf, "%u\n", SLAVE_FEATURES(sl));
+ }
+ 
+ static ssize_t features_store(struct device *device,
 -- 
-2.48.1
+2.51.1
 
 
