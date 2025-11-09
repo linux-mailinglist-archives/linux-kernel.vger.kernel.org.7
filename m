@@ -1,94 +1,83 @@
-Return-Path: <linux-kernel+bounces-892005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDF4C44118
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 15:57:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59399C4411B
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 15:57:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C3AC188C71F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 14:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20F06188C67C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 14:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8582F6927;
-	Sun,  9 Nov 2025 14:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B252FE568;
+	Sun,  9 Nov 2025 14:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="DxZJL26u"
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ate3ywjE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693942DE70C;
-	Sun,  9 Nov 2025 14:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C2E2FDC54;
+	Sun,  9 Nov 2025 14:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762700226; cv=none; b=bqdSxr9PWUhDwpFDLvXxT9WlKNlOCmhIy5xz968u7hHQ9MX8PiC4XQUMn/IhhfEeINO5nm78E+zc0Qx5woctbwUakOHel7vCsnOqDSBIsxsLInNmKVa6Q32b5AxwtzhBBVIHuzQgmslkWV0ZL6HMFHBhsz8JNjFgN8X/V/4yMxA=
+	t=1762700228; cv=none; b=UZdIf1ytBQQJCYrWJ5OievelGIWOkuY1C+hPAFbijGgqtIFuggHXibSLAbH3pKc62tntm6o6tdWo1YNOdrOLXt95qBPOZmKdKMcuksQD0tLy8IDbxr8bbJdvzFv0bL/szJ1/vwU90lRATKnMa7MYk7Wp3iqHrtB/+9yLOhr1OhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762700226; c=relaxed/simple;
-	bh=m4XFGKFTDrqGxPfpMveNvzc7LGZutlSuep9QA58X1PQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZFnt5XRWB1pzfrdXs/ZuDdw9kyklNnGihRFmtwdb8jMQvDMxSagqnCIWPBMSxT2HO6X1AzMIDehL9NbgHIeiJnO2L+t0esHaVS3+iOxa97V+wRVwpSXL8VvI+LluYf4Otd7Fo+oPA1TWaOrAXJMD57yHxMwYnmj6W4VjvztKARo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=DxZJL26u; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [221.228.238.82])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 28ea96242;
-	Sun, 9 Nov 2025 22:56:52 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: kristen.c.accardi@intel.com
-Cc: vinicius.gomes@intel.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn,
-	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH] crypto: iaa - Fix incorrect return value in save_iaa_wq()
-Date: Sun,  9 Nov 2025 14:56:48 +0000
-Message-Id: <20251109145648.3678596-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762700228; c=relaxed/simple;
+	bh=nprdIRXZrqbmOui3PZEs7WLXmXjMO/Ll0+bxtT3szk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iNriZuMKPRh2Sap7Y1lSCLc+pHngsjBqf+YAvZv9kyJAg1hRAJErtQpA0IrDh0IA3lL8E0PnIjqSePCiD/6D09g5EpbZ8Gs918BMT3+Y/x50enPHCx62U1i33nvQZRcZkWGVSPei3NWvObj7PcrQ8KlCi1sA0yXquk3Rze2FnbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ate3ywjE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEA98C19421;
+	Sun,  9 Nov 2025 14:57:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762700228;
+	bh=nprdIRXZrqbmOui3PZEs7WLXmXjMO/Ll0+bxtT3szk4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ate3ywjEpmn5rCCKzT+4uoPFLOWNqdcbGsIoE7lshvzVjV2e7aRodNQgdMxv6a1TX
+	 pErBAzROb2niLHjP8u9uP61IVr6VbdYq9PeXn+RpSetQ1+XHI1Zkf32yOpZ7c5Vwq5
+	 7rL7ipQeaEh9qU33dRnDAvgosiglVbMteayOiAXPcJTHAknzFWLAfLAgufPaqFiQmv
+	 ZTYmzcWljdWQ4DmNAK2mNR8vSc2Tez1u9/zlHj0g6/lGF2jUNpKcDZGdX9cvNVbeLG
+	 UzjrioXHEGR3PAnwsD92EHuQfVsodW6XQQGFlOHI3khUrZLe5VSfflDKMldrbVnSV9
+	 96wDTf1+czQ+A==
+Date: Sun, 9 Nov 2025 14:57:02 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, lanzano.alex@gmail.com,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ ~lkcamp/patches@lists.sr.ht, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: imu: bmi270: fix dev_err_probe error msg
+Message-ID: <20251109145702.510c6276@jic23-huawei>
+In-Reply-To: <aQhf15IWlTMfETpf@smile.fi.intel.com>
+References: <20251102223539.11837-1-rodrigo.gobbi.7@gmail.com>
+	<aQhf15IWlTMfETpf@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a691eb6cd03a1kunm1909047a9f17dc
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHh9MVkxMHk9OS0xKT0geT1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJSUpVSUlDVUlIQ1VDSVlXWRYaDxIVHRRZQVlLVUtVS1VLWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=DxZJL26uSGz+LvKxIh380zmk686Y7XAVGOmPi2t7CLnAMeWsXUel4dqhm0JUN+kLUD3BkkKD3h1ddf83MOnM/VEf/XQnU56jOo1onV4wL5WpoAoY64as1k1e8ltiNWqTzig6Q0TmRXE8II9UaEGqGCkBNwQBpVNtQdWMuqNGgXA=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=NYEg8jeFNgjtfLM1mSioLcSsaf0LlHh9g3RjFmqChaw=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The save_iaa_wq() function unconditionally returns 0, even when an error
-is encountered. This prevents the error code from being propagated to the
-caller.
+On Mon, 3 Nov 2025 09:55:03 +0200
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-Fix this by returning the 'ret' variable, which holds the actual status
-of the operations within the function.
+> On Sun, Nov 02, 2025 at 07:30:18PM -0300, Rodrigo Gobbi wrote:
+> > The bmi270 can be connected to I2C or a SPI interface. If it is a SPI,
+> > during probe, if devm_regmap_init() fails, it should print the "spi"
+> > term rather "i2c".  
+> 
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> 
+Applied to the togreg branch of iio.git. I'm not in a particular
+rush to get an error message fix in so this can wait for the next
+merge window.
 
-Fixes: ea7a5cbb43696 ("crypto: iaa - Add Intel IAA Compression Accelerator crypto driver core")
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
----
- drivers/crypto/intel/iaa/iaa_crypto_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/crypto/intel/iaa/iaa_crypto_main.c b/drivers/crypto/intel/iaa/iaa_crypto_main.c
-index 23f585219fb4..d0058757b000 100644
---- a/drivers/crypto/intel/iaa/iaa_crypto_main.c
-+++ b/drivers/crypto/intel/iaa/iaa_crypto_main.c
-@@ -805,7 +805,7 @@ static int save_iaa_wq(struct idxd_wq *wq)
- 	if (!cpus_per_iaa)
- 		cpus_per_iaa = 1;
- out:
--	return 0;
-+	return ret;
- }
- 
- static void remove_iaa_wq(struct idxd_wq *wq)
--- 
-2.34.1
+Jonathan
 
 
