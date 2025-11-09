@@ -1,118 +1,136 @@
-Return-Path: <linux-kernel+bounces-892219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95368C44A53
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 00:41:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E90C44A5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 00:50:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DAE83AFDB3
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 23:41:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68AF83AFFB6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 23:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704882701CF;
-	Sun,  9 Nov 2025 23:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18177274B34;
+	Sun,  9 Nov 2025 23:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EauEK2GZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVRhzD+M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B9217BA6;
-	Sun,  9 Nov 2025 23:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CEC264612;
+	Sun,  9 Nov 2025 23:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762731688; cv=none; b=dJozMea/Af4QRqCFEUlG8hr9VrAWWMW0w1WZdtt1UDqXgHtg/BAPqP7h5FzcER7eObEVqtZak8bqc0qNWOGrk0wS2ah3wWNg961oTw/lX3OArMiIoDxBGYnQ7Bu/YRBQqlgPb7/lsPchmj/8daDXgiwd/UaavyoTdZLkmKzlU3Q=
+	t=1762732197; cv=none; b=HQO3xpR9xB0AUTKv/NG8NxlND4QmVxo33rK5Gz/b2+rxumPGXZc94KCaZ+JQKXH9OlWNbYlsbh4xmRzu9fJDUVpvn0/dacSXU8ozXKEAqG9Gxdl485QtgvwFO+x98oiSce6aCm6HRO+YbS8N46rjLEf6tcm9R/4+Vs0Nusdun50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762731688; c=relaxed/simple;
-	bh=0wF84APrxubzArteAOWnoZ0P/v9FkuqpylIB7ZFP/gM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tckWwjjWkOrVMbhFZRKKHjdwt/CbIzksPTsLNPcsXp/bHYlARAC9KeMbzjB58ywbtnXO+7gRVfSFSvM8jmG5uLxmMJ3AkcHeaBMie+vdpAayUtqMGGvaJH3cnYt1pY7AkoKR7ZDSMD+ppxw54CVvJdiRmr2uAessyA8TnE2MPLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EauEK2GZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D747BC2BC86;
-	Sun,  9 Nov 2025 23:41:26 +0000 (UTC)
+	s=arc-20240116; t=1762732197; c=relaxed/simple;
+	bh=GGXE4CX6TLqH68fC6EBiO7twAZjKaaOW8LAfS8ijyYM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=on8ZKNqs3eS74KET2PSV7YjAHdrSHG5UaHE4Aw+0Y4cE6TTvHJaWP8bHUJFJBdt7W5YMvl77T6hDtj6HwKr+LcyyQ3eTemJrSITGaIEqkq8TmbDngc+rOioZQ6mG51RCbdjsMSoOm6/P01vYm4LM+YhsKrm9LCfCVEouCB/7HHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVRhzD+M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00FAC4CEF8;
+	Sun,  9 Nov 2025 23:49:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762731688;
-	bh=0wF84APrxubzArteAOWnoZ0P/v9FkuqpylIB7ZFP/gM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EauEK2GZKicKuk0+c3vNLnyrfRPHeRzCQnjMTsGKWWZWYLywOLEp1BQVchjNZNT/j
-	 hP2eIodwHX59ppm+H5RkOhwH98Tjgw0M69H94/g+EPnaGN8dU03Y5rUiCbvYv8R5wW
-	 MaxttRNS8hG4MemwDFs7hHGmrgfYThVDHLsjBlGQOIyiqfaV3B4rbQiJL4PeC3NK8g
-	 7tvMP0GaOUF5eUZrZU4kGgs8MSm6s9s5S6L+otComXMSrr2qDjmNIUuHnQH3Mi5Gy6
-	 kgf7htwMVsOsO1MCR+Gp1SCam4UeHiLST+f1hv9O4Orgr/H7TwACGlzhNpoE7SasCs
-	 QeFIioxvC0fYQ==
-Date: Sun, 9 Nov 2025 16:41:24 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Nicolas Schier <nsc@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: install-extmod-build: Properly fix CC expansion
- when ccache is used
-Message-ID: <20251109234124.GC2977577@ax162>
-References: <20251110-kbuild-install-extmod-build-fix-cc-expand-third-try-v1-1-5c0ddb1c67a8@linaro.org>
+	s=k20201202; t=1762732197;
+	bh=GGXE4CX6TLqH68fC6EBiO7twAZjKaaOW8LAfS8ijyYM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NVRhzD+MoJJn94RWzZhNEXYLomm4+Tz1zOklh9oOfPbYIc2pDiYrNdCj6fLLUxQA2
+	 nyaOE9XlGqtoXUxS13EZeQj2FI2cxPm1eeOD30NujWA9biF/27nVW2h6zpYVaRG6bd
+	 MSZgBRGMjpq0Z40fEx4ZZCAWFt5TLxGc4e845aLCjNqxrqJzw1/Oa9IoIe/QndAMX6
+	 u6YvJoJDW71TcTnuYc4kahTVdEkw5aFx+/qQ4v6KZaJ5lMJfe3RbQAkZdzjLeeB5fF
+	 qWIb65ZilWxgqp1ds4rTP757JqserJjjMLGbsVlgwShC39VHT9W/9rmhmDP+TH0/og
+	 wH7Rrfrr7lTFQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-arm-kernel@lists.infradead.org,
+	x86@kernel.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/9] POLYVAL library
+Date: Sun,  9 Nov 2025 15:47:15 -0800
+Message-ID: <20251109234726.638437-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110-kbuild-install-extmod-build-fix-cc-expand-third-try-v1-1-5c0ddb1c67a8@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 10, 2025 at 12:26:31AM +0200, Abel Vesa wrote:
-> Currently, when cross-compiling and ccache is used, the expanding of CC
-> turns out to be without any quotes, leading to the following error:
-> 
-> make[4]: *** No rule to make target 'aarch64-linux-gnu-gcc'.  Stop.
-> make[3]: *** [Makefile:2164: run-command] Error 2
-> 
-> And it makes sense, because after expansion it ends up like this:
-> 
-> make run-command KBUILD_RUN_COMMAND=+$(MAKE) \
-> HOSTCC=ccache aarch64-linux-gnu-gcc VPATH= srcroot=. $(build)= ...
+This series is targeting libcrypto-next.  It can also be retrieved from:
 
-Yup, good old shell quoting... :(
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git polyval-lib-v1
 
-> So add another set of double quotes, this time escaped, to make sure the
-> aarch64-linux-gnu-gcc isn't expanded to something that looks like an
-> entirely separate target.
-> 
-> Fixes: 140332b6ed72 ("kbuild: fix linux-headers package build when $(CC) cannot link userspace")
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  scripts/package/install-extmod-build | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
-> index 054fdf45cc37a8717444b8094daf3e1150a8ccf5..6cce5c41552d520bf069487352fd26417b0b3899 100755
-> --- a/scripts/package/install-extmod-build
-> +++ b/scripts/package/install-extmod-build
-> @@ -63,7 +63,7 @@ if [ "${CC}" != "${HOSTCC}" ]; then
->  	# Clear VPATH and srcroot because the source files reside in the output
->  	# directory.
->  	# shellcheck disable=SC2016 # $(MAKE) and $(build) will be expanded by Make
-> -	"${MAKE}" run-command KBUILD_RUN_COMMAND='+$(MAKE) HOSTCC='"${CC}"' VPATH= srcroot=. $(build)='"$(realpath --relative-to=. "${destdir}")"/scripts
-> +	"${MAKE}" run-command KBUILD_RUN_COMMAND='+$(MAKE) HOSTCC='\""${CC}"\"' VPATH= srcroot=. $(build)='"$(realpath --relative-to=. "${destdir}")"/scripts
+This series migrates the POLYVAL code to lib/crypto/.  It turns out that
+just like Poly1305, the library is a much better fit for it.
 
-Can we avoid the need for escaping the " by just moving it to the other
-side of the '?
+This series also replaces the generic implementation of POLYVAL with a
+much better one.
 
-  "${MAKE}" run-command KBUILD_RUN_COMMAND='+$(MAKE) HOSTCC="'"${CC}"'" VPATH= srcroot=. $(build)='"$(realpath --relative-to=. "${destdir}")"/scripts
+Notably, this series improves the performance of HCTR2, since it
+eliminates unnecessary overhead that was being incurred by accessing
+POLYVAL via the crypto_shash API.  I see a 45% increase in throughput
+with 64-byte messages, 53% with 128-byte, or 6% with 4096-byte.
 
-This whole command is really hard to read but I don't really see an
-obvious way to simplify it.
+It also eliminates the need to explicitly enable the optimized POLYVAL
+code, as it's now enabled automatically when HCTR2 support is enabled.
 
->  
->  	rm -f "${destdir}/scripts/Kbuild"
->  fi
-> 
-> ---
-> base-commit: 9c0826a5d9aa4d52206dd89976858457a2a8a7ed
-> change-id: 20251109-kbuild-install-extmod-build-fix-cc-expand-third-try-2cb1540cadbf
-> 
-> Best regards,
-> -- 
-> Abel Vesa <abel.vesa@linaro.org>
-> 
+Eric Biggers (9):
+  crypto: polyval - Rename conflicting functions
+  lib/crypto: polyval: Add POLYVAL library
+  lib/crypto: tests: Add KUnit tests for POLYVAL
+  lib/crypto: arm64/polyval: Migrate optimized code into library
+  lib/crypto: x86/polyval: Migrate optimized code into library
+  crypto: hctr2 - Convert to use POLYVAL library
+  crypto: polyval - Remove the polyval crypto_shash
+  crypto: testmgr - Remove polyval tests
+  fscrypt: Drop obsolete recommendation to enable optimized POLYVAL
+
+ Documentation/filesystems/fscrypt.rst         |   2 -
+ arch/arm64/crypto/Kconfig                     |  10 -
+ arch/arm64/crypto/Makefile                    |   3 -
+ arch/arm64/crypto/polyval-ce-glue.c           | 158 ---------
+ arch/x86/crypto/Kconfig                       |  10 -
+ arch/x86/crypto/Makefile                      |   3 -
+ arch/x86/crypto/polyval-clmulni_glue.c        | 180 ----------
+ crypto/Kconfig                                |  12 +-
+ crypto/Makefile                               |   1 -
+ crypto/hctr2.c                                | 226 ++++---------
+ crypto/polyval-generic.c                      | 205 ------------
+ crypto/tcrypt.c                               |   4 -
+ crypto/testmgr.c                              |   9 +-
+ crypto/testmgr.h                              | 171 ----------
+ include/crypto/polyval.h                      | 182 ++++++++++-
+ lib/crypto/Kconfig                            |  12 +
+ lib/crypto/Makefile                           |  10 +
+ .../crypto/arm64}/polyval-ce-core.S           |  38 +--
+ lib/crypto/arm64/polyval.h                    |  82 +++++
+ lib/crypto/polyval.c                          | 307 ++++++++++++++++++
+ lib/crypto/tests/Kconfig                      |   9 +
+ lib/crypto/tests/Makefile                     |   1 +
+ lib/crypto/tests/polyval-testvecs.h           | 186 +++++++++++
+ lib/crypto/tests/polyval_kunit.c              | 223 +++++++++++++
+ .../crypto/x86/polyval-pclmul-avx.S           |  40 ++-
+ lib/crypto/x86/polyval.h                      |  83 +++++
+ scripts/crypto/gen-hash-testvecs.py           |  47 ++-
+ 27 files changed, 1240 insertions(+), 974 deletions(-)
+ delete mode 100644 arch/arm64/crypto/polyval-ce-glue.c
+ delete mode 100644 arch/x86/crypto/polyval-clmulni_glue.c
+ delete mode 100644 crypto/polyval-generic.c
+ rename {arch/arm64/crypto => lib/crypto/arm64}/polyval-ce-core.S (92%)
+ create mode 100644 lib/crypto/arm64/polyval.h
+ create mode 100644 lib/crypto/polyval.c
+ create mode 100644 lib/crypto/tests/polyval-testvecs.h
+ create mode 100644 lib/crypto/tests/polyval_kunit.c
+ rename arch/x86/crypto/polyval-clmulni_asm.S => lib/crypto/x86/polyval-pclmul-avx.S (91%)
+ create mode 100644 lib/crypto/x86/polyval.h
+
+
+base-commit: ce59a87d1cbd3fa075aba73efde946e61d5ef089
+-- 
+2.51.2
+
 
