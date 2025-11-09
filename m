@@ -1,208 +1,187 @@
-Return-Path: <linux-kernel+bounces-892079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F37C444CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 19:06:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83336C444CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 19:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686043A91A2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 18:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 422C43A0791
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 18:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793CC221DB9;
-	Sun,  9 Nov 2025 18:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7CF221554;
+	Sun,  9 Nov 2025 18:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKFSODqk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0GBkoTL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2561FF7C8;
-	Sun,  9 Nov 2025 18:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941A721885A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 18:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762711567; cv=none; b=YUtDDIVPXmVjpvf29aGBai7m7xqTG7MRLtpNhzXuGyCcsPfn/PFlN/1i9C8mF8l/BBERQL+m37B8y6kq4VL3JfLYIgYaOb5PN6KeRpxYDsuZBQZtjzIuo5pjoT5xhf+ORR45V30/Z2VdbYXRHZ+qmwfA1Gzw4ghiQ4SX+n8okTg=
+	t=1762711614; cv=none; b=BSeq8xFKnaKvEfatkzwTcrzPHksAl805mZzdipXO6IeWgzFXV9z0wzNTtC3noAt3Cppt49ab/yfxuXv1GhvluEHvP1KuC8fEmXSln3ItYH74rqxbofMkfMP7htUcgNukiHkGDeuB+tRBXsZIVj9t0gQ+EJA6+Yda9sPmXNWWXOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762711567; c=relaxed/simple;
-	bh=Rv5rj91RamEanT2fugz7Olj75634AA1cClCMNmzZM78=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HwlOrWmwSaJwm134nuEP7nLZaext2ep9qPSd0BV27oiiGC0DRdMdfqn6xW0xC85XGqSnX/pdktysVHDRfSRRwozBUitEVuSzFkGgCGreVbnSI9F2uG8q2bORKPJv+gRaXhL+Dg8Ah2c6ke+pdLmCJHYAZM6Dz7ytVJ4Tc0N9Czk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKFSODqk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1A6A3C4CEFB;
-	Sun,  9 Nov 2025 18:06:05 +0000 (UTC)
+	s=arc-20240116; t=1762711614; c=relaxed/simple;
+	bh=Jyr7Advpmrp/1CXXyDKOLNg7W6MBf8xRQAccFc4INxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bWQy8uvlrm7f2BUnHZdMGj8yuR4mzO25RPxK6TZYqXCLg1nXxGh4Fs2A6ZwEACgmkHeJrXD2lSXqF5T76bPZg/vhixNGVDVendARYAnerta2S7/P8nESyOBu7tWBgfG/GGWuB7NX7FYCVAnqeQtC3BDo18whs5wo2CkVKl9Zhf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0GBkoTL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5552CC116B1;
+	Sun,  9 Nov 2025 18:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762711565;
-	bh=Rv5rj91RamEanT2fugz7Olj75634AA1cClCMNmzZM78=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=CKFSODqkHQ7lajblVBiiunadMTS7FxkMrl1FUVEvYMWbPrVewMnYvqw8Faz3HSOHO
-	 wYK0mqHj+P2DdQ3JWU7IW/l/lQv80/cz4hMzJDLxS4C5PeWLUnY0mEKaq1a7+sIXVn
-	 EjGCP/7Y/yBMCHwbqMyCahOB+JqzGM62GNRR1Upx/hRUyHPFUxZhPCtGyNavZ9A22A
-	 gh56UNc9kT501DhHTzC6x5HwA137NrxgsCmANUK2SpLPWKfvhF9zmOUWHuVkJd/6OB
-	 TjT1USFaxAkDaiX2NXDcq/tHsexW4Zh3Z3pN5fD87c1sBohbGazNj0magcn8QZ/8MJ
-	 NqJVH4OMboX3g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 098F4CCF9F8;
-	Sun,  9 Nov 2025 18:06:05 +0000 (UTC)
-From: Kairui Song via B4 Relay <devnull+kasong.tencent.com@kernel.org>
-Date: Mon, 10 Nov 2025 02:06:03 +0800
-Subject: [PATCH] Revert "mm, swap: avoid redundant swap device pinning"
+	s=k20201202; t=1762711614;
+	bh=Jyr7Advpmrp/1CXXyDKOLNg7W6MBf8xRQAccFc4INxk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a0GBkoTLiucisSat+h25ppOAFgAegqvUxdUtTs5Nk0rTPhy15MOS68GznbscGK5rT
+	 mi+aEJadB1f7qTq2pjsoXaVgesLIKFdlr2NIExfvOYDCKvc6NJoEqWsLGSCX2Lmjh+
+	 2NGQdojgnMGUR2BwCwr41SVkshdRCei2h2KnBeCeRxOHaiz6Vwc0gYJf0KVSkfTXAb
+	 2kB7ylipQrRAkYtOFFB+btd7ShBG04R1Reyfh0LAYf1spO2NzfJGh0mrgWSLAB23bs
+	 Nffz7yGvfL0urnkkTwWVO4tF0BOf+ZQ6frVykZAY3iWTzxzawWAXnogLuQSdq3qWPd
+	 WVwVE6jVwwHtA==
+Date: Sun, 9 Nov 2025 19:06:49 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc: Alejandro Colomar <alx@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Christopher Bazley <chris.bazley.wg14@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v3 0/4] Add ARRAY_END(), and use it to fix off-by-one bugs
+Message-ID: <cover.1762711279.git.alx@kernel.org>
+X-Mailer: git-send-email 2.51.0
+References: <cover.1758806023.git.alx@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-revert-78524b05f1a3-v1-1-88313f2b9b20@tencent.com>
-X-B4-Tracking: v=1; b=H4sIAArYEGkC/x2MQQqAIBAAvxJ7TnAtSftKdNBaay8WGhGEf086D
- szMC5kSU4axeSHRzZmPWAHbBpbdxY0Er5VBSaURpRVVonSJwWjVe6kDuk7I3qGy2lMwDmp5Jgr
- 8/NdpLuUDy1WRSmUAAAA=
-X-Change-ID: 20251109-revert-78524b05f1a3-04a1295bef8a
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
- Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>, 
- Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
- Chris Li <chrisl@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
- Yosry Ahmed <yosry.ahmed@linux.dev>, 
- Chengming Zhou <chengming.zhou@linux.dev>, 
- Youngjun Park <youngjun.park@lge.com>, Kairui Song <ryncsn@gmail.com>, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Kairui Song <kasong@tencent.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762711563; l=4133;
- i=kasong@tencent.com; s=kasong-sign-tencent; h=from:subject:message-id;
- bh=alE+X02rbk4jwNfT7auzmxmmmbItfQDo8i+kaNeAHjY=;
- b=y+ozs+sm7ni2QmqCYkgxfgsn49ITpx52INQ0Dq+5Kq9kcCBk7gA/JGdd6qZOmhRbyTjalAn2s
- R3zWuGKIM3zBS6pl2r1pQbcyZsst8HOxUqBN0/qrRpv0I1JrjRU40Ny
-X-Developer-Key: i=kasong@tencent.com; a=ed25519;
- pk=kCdoBuwrYph+KrkJnrr7Sm1pwwhGDdZKcKrqiK8Y1mI=
-X-Endpoint-Received: by B4 Relay for kasong@tencent.com/kasong-sign-tencent
- with auth_id=562
-X-Original-From: Kairui Song <kasong@tencent.com>
-Reply-To: kasong@tencent.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cover.1758806023.git.alx@kernel.org>
 
-From: Kairui Song <kasong@tencent.com>
+ARRAY_END() is a macro to calculate a pointer to one past the last
+element of an array argument.  This is a very common pointer, which is
+used to iterate over all elements of an array:
 
-This reverts commit 78524b05f1a3e16a5d00cc9c6259c41a9d6003ce.
+        for (T *p = a; p < ARRAY_END(a); p++)
+                ...
 
-While reviewing recent leaf entry changes, I noticed that commit
-78524b05f1a3 ("mm, swap: avoid redundant swap device pinning") isn't
-correct. It's true that most all callers of __read_swap_cache_async are
-already holding a swap entry reference, so the repeated swap device
-pinning isn't needed on the same swap device, but it is possible that
-VMA readahead (swap_vma_readahead()) may encounter swap entries from a
-different swap device when there are multiple swap devices, and call
-__read_swap_cache_async without holding a reference to that swap device.
+Of course, this pointer should never be dereferenced.  A pointer one
+past the last element of an array should not be dereferenced; it's
+perfectly fine to hold such a pointer --and a good thing to do--, but
+the only thing it should be used for is comparing it with other pointers
+derived from the same array.
 
-So it is possible to cause a UAF if swapoff of device A raced with
-swapin on device B, and VMA readahead tries to read swap entries from
-device A. It's not easy to trigger but in theory possible to cause real
-issues. And besides, that commit made swap more vulnerable to issues
-like corrupted page tables.
+Due to how special these pointers are, it would be good to use
+consistent naming.  It's common to name such a pointer 'end' --in fact,
+we have many such cases in the kernel--.  C++ even standardized this
+name with std::end().  Let's try naming such pointers 'end', and try
+also avoid using 'end' for pointers that are not the result of
+ARRAY_END().
 
-Just revert it. __read_swap_cache_async isn't that sensitive to
-performance after all, as it's mostly used for SSD/HDD swap devices with
-readahead. SYNCHRONOUS_IO devices may fallback onto it for swap count >
-1 entries, but very soon we will have a new helper and routine for
-such devices, so they will never touch this helper or have redundant
-swap device reference overhead.
+It has been incorrectly suggested that these pointers are dangerous, and
+that they should never be used, suggesting to use something like
 
-Fixes: 78524b05f1a3 ("mm, swap: avoid redundant swap device pinning")
-Signed-off-by: Kairui Song <kasong@tencent.com>
----
- mm/swap_state.c | 14 ++++++--------
- mm/zswap.c      |  8 +-------
- 2 files changed, 7 insertions(+), 15 deletions(-)
+	#define ARRAY_LAST(a)  ((a) + ARRAY_SIZE(a) - 1)
 
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 3f85a1c4cfd9..0c25675de977 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -406,13 +406,17 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 		struct mempolicy *mpol, pgoff_t ilx, bool *new_page_allocated,
- 		bool skip_if_exists)
- {
--	struct swap_info_struct *si = __swap_entry_to_info(entry);
-+	struct swap_info_struct *si;
- 	struct folio *folio;
- 	struct folio *new_folio = NULL;
- 	struct folio *result = NULL;
- 	void *shadow = NULL;
- 
- 	*new_page_allocated = false;
-+	si = get_swap_device(entry);
-+	if (!si)
-+		return NULL;
-+
- 	for (;;) {
- 		int err;
- 
-@@ -499,6 +503,7 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 	put_swap_folio(new_folio, entry);
- 	folio_unlock(new_folio);
- put_and_return:
-+	put_swap_device(si);
- 	if (!(*new_page_allocated) && new_folio)
- 		folio_put(new_folio);
- 	return result;
-@@ -518,16 +523,11 @@ struct folio *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 		struct vm_area_struct *vma, unsigned long addr,
- 		struct swap_iocb **plug)
- {
--	struct swap_info_struct *si;
- 	bool page_allocated;
- 	struct mempolicy *mpol;
- 	pgoff_t ilx;
- 	struct folio *folio;
- 
--	si = get_swap_device(entry);
--	if (!si)
--		return NULL;
--
- 	mpol = get_vma_policy(vma, addr, 0, &ilx);
- 	folio = __read_swap_cache_async(entry, gfp_mask, mpol, ilx,
- 					&page_allocated, false);
-@@ -535,8 +535,6 @@ struct folio *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 
- 	if (page_allocated)
- 		swap_read_folio(folio, plug);
--
--	put_swap_device(si);
- 	return folio;
- }
- 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 5d0f8b13a958..aefe71fd160c 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -1005,18 +1005,12 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
- 	struct folio *folio;
- 	struct mempolicy *mpol;
- 	bool folio_was_allocated;
--	struct swap_info_struct *si;
- 	int ret = 0;
- 
- 	/* try to allocate swap cache folio */
--	si = get_swap_device(swpentry);
--	if (!si)
--		return -EEXIST;
--
- 	mpol = get_task_policy(current);
- 	folio = __read_swap_cache_async(swpentry, GFP_KERNEL, mpol,
--			NO_INTERLEAVE_INDEX, &folio_was_allocated, true);
--	put_swap_device(si);
-+				NO_INTERLEAVE_INDEX, &folio_was_allocated, true);
- 	if (!folio)
- 		return -ENOMEM;
- 
+	for (T *p = a; p <= ARRAY_LAST(a); p++)
+		...
+
+This is bogus, as it doesn't scale down to arrays of 0 elements.  In the
+case of an array of 0 elements, ARRAY_LAST() would underflow the
+pointer, which not only it can't be dereferenced, it can't even be held.
+That would be a footgun.  Such arrays don't exist per the C standard;
+however, GCC supports them as an extension (with partial support,
+though; GCC has a few bugs which need to be fixed).
+
+This patch set fixes a few places where it was intended to use the array
+end (that is, one past the last element), but accidentally a pointer to
+the last element was used instead, thus wasting one byte.
+
+It also replaces other places where the array end was correctly
+calculated with ARRAY_SIZE(), by using the simpler ARRAY_END().
+
+Also, there was one drivers/ file that already defined this macro.  We
+remove that definition, to not conflict with this one.
 
 ---
-base-commit: 02dafa01ec9a00c3758c1c6478d82fe601f5f1ba
-change-id: 20251109-revert-78524b05f1a3-04a1295bef8a
 
-Best regards,
+Hi!
+
+Changes in v3:
+
+-  Fix commit message.
+-  Remove old definition from "drivers/block/floppy.c".
+   [Reported-by: kernel test robot <lkp@intel.com>]
+-  Use definition of ARRAY_END() with array notation.  There's work in
+   the C committee to make array notation slightly safer than pointer
+   arithmetic.
+
+
+Have a lovely night!
+Alex
+
+
+Alejandro Colomar (4):
+  array_size.h: Add ARRAY_END()
+  mm: Fix benign off-by-one bugs
+  kernel: Fix off-by-one benign bugs
+  mm: Use ARRAY_END() instead of open-coding it
+
+ drivers/block/floppy.c     | 2 --
+ include/linux/array_size.h | 6 ++++++
+ kernel/kcsan/kcsan_test.c  | 4 ++--
+ mm/kfence/kfence_test.c    | 4 ++--
+ mm/kmemleak.c              | 2 +-
+ mm/kmsan/kmsan_test.c      | 2 +-
+ mm/memcontrol-v1.c         | 4 ++--
+ 7 files changed, 14 insertions(+), 10 deletions(-)
+
+Range-diff against v2:
+1:  35255c1ceb54 ! 1:  2cb4ddff93b3 array_size.h: Add ARRAY_END()
+    @@ Commit message
+         the array argument.  This pointer is useful for iterating over the
+         elements of an array:
+     
+    -            for (T *p = a, p < ENDOF(a); p++)
+    +            for (T *p = a, p < ARRAY_END(a); p++)
+                         ...
+     
+         Cc: Kees Cook <kees@kernel.org>
+    @@ Commit message
+         Signed-off-by: Alejandro Colomar <alx@kernel.org>
+         Message-ID: <37b1088dbd01a21d2f9d460aa510726119b3bcb0.1752193588.git.alx@kernel.org>
+     
+    + ## drivers/block/floppy.c ##
+    +@@ drivers/block/floppy.c: static void floppy_release_allocated_regions(int fdc, const struct io_region *p)
+    + 	}
+    + }
+    + 
+    +-#define ARRAY_END(X) (&((X)[ARRAY_SIZE(X)]))
+    +-
+    + static int floppy_request_regions(int fdc)
+    + {
+    + 	const struct io_region *p;
+    +
+      ## include/linux/array_size.h ##
+     @@
+       */
+    @@ include/linux/array_size.h
+     + * ARRAY_END - get a pointer to one past the last element in array @a
+     + * @a: array
+     + */
+    -+#define ARRAY_END(a)  (a + ARRAY_SIZE(a))
+    ++#define ARRAY_END(a)  (&(a)[ARRAY_SIZE(a)])
+     +
+      #endif  /* _LINUX_ARRAY_SIZE_H */
+2:  acd8bcbb05d3 = 2:  831155f02bec mm: Fix benign off-by-one bugs
+3:  781cce547eb2 = 3:  d8128f0c8b9f kernel: Fix off-by-one benign bugs
+4:  094878542457 = 4:  9646a1d194a5 mm: Use ARRAY_END() instead of open-coding it
 -- 
-Kairui Song <kasong@tencent.com>
-
+2.51.0
 
 
