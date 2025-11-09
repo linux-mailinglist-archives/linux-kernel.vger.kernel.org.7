@@ -1,176 +1,159 @@
-Return-Path: <linux-kernel+bounces-892085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 262EEC444EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 19:30:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCD0C444EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 19:31:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077613B03CA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 18:30:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32E8C188B35A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 18:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F7122AE45;
-	Sun,  9 Nov 2025 18:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9A62264A8;
+	Sun,  9 Nov 2025 18:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lplzJktL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZPz0GAg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591191F4174;
-	Sun,  9 Nov 2025 18:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA71221277;
+	Sun,  9 Nov 2025 18:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762712999; cv=none; b=ppphssfqQPsS/tb215T459yRk0AXOPo5f9jtNB/PYnDX5Kr+/wYdV4tNWd4ygX3LJlTIrpsnLgpijgXsvF3TNmySY3Vp/tseg9jOnjid5LXwbmfP2MwDLMsS+Ex9sCZXfaKX/sy9g/PjvlzlgyJNYnYfCHDge2TvhuNQxdiBYeg=
+	t=1762713074; cv=none; b=ljehC0ppwkQxSjWIH6umUbIBeq6E4CEvIo/5R5jfm/+68PBzQq3F290VHZqEXaaySd1UHgRpvgPsfI+VBGG53LGVEwJwr+Upj+W3GOrNpKZelWHRefab6Uv2ZYILlxpX3tasY0tIogkPXuf0ZtvPKcJVXL1wgEv5q/8EI1TQv70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762712999; c=relaxed/simple;
-	bh=mHR/ho0o0u86I8iOcC4+T6OlKLMAwI9YRhfp+RQtWAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bzkxvq6NoDOoOdyQKM2st3fvnQM9To1I5/0AMNMUHjgxzfiV76kglcrTASNbIZeoC5pLSbtd7z5iyQSJsibY+x6zgvi4W3Hszz2unLMjog7kpI0z02Ae5+5iw0eun3d+/g/6Hi0Iotv9eOo3X1Bhq31+ylrPodmt+x8wcSx5eK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lplzJktL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BEB3C4CEFB;
-	Sun,  9 Nov 2025 18:29:57 +0000 (UTC)
+	s=arc-20240116; t=1762713074; c=relaxed/simple;
+	bh=GqtedJimEP7PAGlv0VwFUidfJyuGVX0qisSQ7yNmtEs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XFlo2U34CSe85b+NbFTZO0X96mPOx7uDI+HbAsj3KzCBPUTmMLrkGKZJfPXU1RzOPu6K5tAa4DaS+S+fC5Q5mLCJd67Xmx3IT07WdnJ94OIIjbHtijhcNzB63mg5UBWRy0THHgyYPgb2QP5rC1rKZJvR0aXhEPe+/cy8v5v79ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZPz0GAg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED92C4CEF8;
+	Sun,  9 Nov 2025 18:31:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762712999;
-	bh=mHR/ho0o0u86I8iOcC4+T6OlKLMAwI9YRhfp+RQtWAE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lplzJktLl3LH4ONQH5sTX/jp4B8Z+fFdmrZ9DoWqp2YXCvagQOJgRK/JtJ4qCvOs9
-	 51xoMPIz0tOWFsf+r35ElfkBC1jRqM6mEvCiQMiFaIK5nPV7qMq6doYgwzg3NvcNTX
-	 fz5WYCy83kxdqi1saHPriwgjljGKd6B/8Gp7nt3cF5D6MjS65kaMXCgBAdo9IEORqe
-	 o+2mgr5dFpwlqavKzh4dKy+VM08HHMt0yhtcoonJJoQbb9liVQDg1skNclugWhSgqA
-	 0gSmI3BaLJ5Jb7FLgIdIw1+/qJiwviAD8hJHbTN27o3KZIlnpL1n4RJmdEiMXGVCxV
-	 adGjNt01NH+yQ==
-Message-ID: <cac46c65-4510-4988-8ba2-507540363ad4@kernel.org>
-Date: Sun, 9 Nov 2025 19:29:55 +0100
+	s=k20201202; t=1762713073;
+	bh=GqtedJimEP7PAGlv0VwFUidfJyuGVX0qisSQ7yNmtEs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QZPz0GAg8NFiJ8RmqG6OPzNUVIo51OwsaisrWywtCDAJOIpXSp0OqCYaY66hiF41G
+	 iCBt283n6Q39JW0JC+CMBM7QUdKxPW/tzm1GhqvVKtx8IwvrGCg9xGJ7j2+X4shkc7
+	 xndCyBOeWZxCFpidwDGFVOw+aLV4EsbPQbaCc6GNz/wNVZ2NRAD+HXvkJ0dYoxBIpK
+	 xncQFmk8myHtgAgPlGVXwGE8GewhsbKrF4cLCjWNgYQNCVKxPvXJrBALvknQPPli6N
+	 JuxOYtC22QtX783HLu4FsMhc/tO7E/HazoHGFhLqeknypvFrDZ6KcPBxvJ/1hXyWe9
+	 MHzA8+RwBCnmA==
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>,
+	Andrea Righi <andrea.righi@linux.dev>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Emil Tsalapatis <etsal@meta.com>,
+	sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHSET sched_ext/for-6.19] sched_ext: Improve bypass mode scalability
+Date: Sun,  9 Nov 2025 08:30:59 -1000
+Message-ID: <20251109183112.2412147-1-tj@kernel.org>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] w1: therm: Fix off-by-one buffer overflow in
- alarms_store
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- David Laight <david.laight.linux@gmail.com>,
- Huisong Li <lihuisong@huawei.com>, Akira Shimahara <akira215corp@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251030155614.447905-1-thorsten.blum@linux.dev>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251030155614.447905-1-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 30/10/2025 16:56, Thorsten Blum wrote:
-> -	/* Convert 2nd entry to int */
-> -	ret = kstrtoint (token, 10, &temp);
-> -	if (ret) {
-> -		dev_info(device,
-> -			"%s: error parsing args %d\n", __func__, ret);
-> -		goto free_m;
-> +	p = endp + 1;
-> +	temp = simple_strtol(p, &endp, 10);
-> +	if (temp < INT_MIN || temp > INT_MAX || p == endp) {
-> +		dev_info(device, "%s: error parsing args %d\n",
-> +			 __func__, -EINVAL);
-> +		goto err;
->  	}
-> +	/* Cast to short to eliminate out of range values */
-> +	th = int_to_short((int)temp);
->  
-> -	/* Prepare to cast to short by eliminating out of range values */
-> -	th = int_to_short(temp);
-> -
-> -	/* Reorder if required th and tl */
-> +	/* Reorder if required */
->  	if (tl > th)
->  		swap(tl, th);
->  
-> @@ -1897,35 +1870,30 @@ static ssize_t alarms_store(struct device *device,
->  	 * (th : byte 2 - tl: byte 3)
->  	 */
->  	ret = read_scratchpad(sl, &info);
-> -	if (!ret) {
-> -		new_config_register[0] = th;	/* Byte 2 */
-> -		new_config_register[1] = tl;	/* Byte 3 */
-> -		new_config_register[2] = info.rom[4];/* Byte 4 */
-> -	} else {
-> -		dev_info(device,
-> -			"%s: error reading from the slave device %d\n",
-> -			__func__, ret);
-> -		goto free_m;
-> +	if (ret) {
-> +		dev_info(device, "%s: error reading from the slave device %d\n",
-> +			 __func__, ret);
-> +		goto err;
->  	}
-> +	new_config_register[0] = th;		/* Byte 2 */
-> +	new_config_register[1] = tl;		/* Byte 3 */
-> +	new_config_register[2] = info.rom[4];	/* Byte 4 */
+Hello,
 
-How is this change related?
+This patchset improves bypass mode scalability on large systems with many
+runnable tasks.
 
->  
->  	/* Write data in the device RAM */
->  	if (!SLAVE_SPECIFIC_FUNC(sl)) {
-> -		dev_info(device,
-> -			"%s: Device not supported by the driver %d\n",
-> -			__func__, -ENODEV);
-> -		goto free_m;
-> +		dev_info(device, "%s: Device not supported by the driver %d\n",
-> +			 __func__, -ENODEV);
+Problem 1: Per-node DSQ contention with affinitized tasks
 
-Do not introduce other formatting changes. This patch is already
-difficult to read.
+When bypass mode is triggered, tasks are routed through fallback dispatch
+queues. Originally, bypass used a single global DSQ, but this didn't scale on
+NUMA machines and could lead to livelocks. It was changed to use per-node
+global DSQs with a breather mechanism that injects delays during bypass mode
+switching to reduce lock contention. This resolved the cross-node issues and
+has worked well for most cases.
 
-> +		goto err;
->  	}
+However, Dan Schatzberg found that per-node global DSQs can still livelock in
+a different scenario: On systems with many CPUs and many threads pinned to
+different small subsets of CPUs, each CPU often has to scan through many
+tasks it cannot run to find the one task it can run. With high CPU counts,
+this scanning overhead causes severe DSQ lock contention that can live-lock
+the system, preventing bypass mode activation from completing at all.
 
-Best regards,
-Krzysztof
+The patchset addresses this by switching to per-CPU bypass DSQs to eliminate
+the shared DSQ contention. However, per-CPU DSQs alone aren't enough - CPUs
+can still get stuck in long iteration loops during dispatch and move
+operations. The existing breather mechanism helps with lock contention but
+doesn't help when CPUs are trapped in these loops. The patchset replaces the
+breather with immediate exits from dispatch and move operations when
+aborting. Since these operations only run during scheduler abort, there's no
+need to maintain normal operation semantics, making immediate exit both
+simpler and more effective.
+
+As an additional safety net, the patchset hooks up the hardlockup detector.
+The contention can be so severe that hardlockup can be the first sign of
+trouble. For example, running scx_simple (which uses a single global DSQ)
+with many affinitized tasks causes all CPUs to contend on the DSQ lock while
+doing long scans, triggering hardlockup before other warnings appear.
+
+Problem 2: Task concentration with per-CPU DSQs
+
+The switch to per-CPU DSQs introduces a new failure mode. If the BPF
+scheduler severely skews task placement before triggering bypass in a highly
+over-saturated system, most tasks can end up concentrated on a few CPUs.
+Those CPUs then accumulate queues that are too long to drain in a reasonable
+time, leading to RCU stalls and hung tasks.
+
+This is addressed by implementing a simple timer-based load balancer that
+redistributes tasks across CPUs within each NUMA node.
+
+The patchset also uses shorter time slices in bypass mode for faster forward
+progress.
+
+The patchset has been tested on a 192 CPU dual socket AMD EPYC machine with
+~20k runnable tasks:
+
+- For problem 1 (contention): 20k runnable threads in 20 cgroups affinitized
+  to different CPU subsets running scx_simple. This creates the worst-case
+  contention scenario where every CPU must scan through many incompatible
+  tasks. The system can now reliably survive and kick out the scheduler.
+
+- For problem 2 (concentration): scx_cpu0 (included in this series) queues
+  all tasks to CPU0, creating worst-case task concentration. Without these
+  changes, disabling the scheduler leads to RCU stalls and hung tasks. With
+  these changes, disable completes in about a second.
+
+This patchset contains the following 13 patches:
+
+ 0001-sched_ext-Don-t-set-ddsp_dsq_id-during-select_cpu-in.patch
+ 0002-sched_ext-Make-slice-values-tunable-and-use-shorter-.patch
+ 0003-sched_ext-Refactor-do_enqueue_task-local-and-global-.patch
+ 0004-sched_ext-Use-per-CPU-DSQs-instead-of-per-node-globa.patch
+ 0005-sched_ext-Simplify-breather-mechanism-with-scx_abort.patch
+ 0006-sched_ext-Exit-dispatch-and-move-operations-immediat.patch
+ 0007-sched_ext-Make-scx_exit-and-scx_vexit-return-bool.patch
+ 0008-sched_ext-Refactor-lockup-handlers-into-handle_locku.patch
+ 0009-sched_ext-Make-handle_lockup-propagate-scx_verror-re.patch
+ 0010-sched_ext-Hook-up-hardlockup-detector.patch
+ 0011-sched_ext-Add-scx_cpu0-example-scheduler.patch
+ 0012-sched_ext-Factor-out-scx_dsq_list_node-cursor-initia.patch
+ 0013-sched_ext-Implement-load-balancer-for-bypass-mode.patch
+
+Based on sched_ext/for-6.19 (5a629ecbcdff).
+
+Git tree: git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-bypass-scalability
+
+ include/linux/sched/ext.h        |  20 ++
+ include/trace/events/sched_ext.h |  39 +++
+ kernel/sched/ext.c               | 505 +++++++++++++++++++++++++++++----------
+ kernel/sched/ext_internal.h      |   6 +
+ kernel/sched/sched.h             |   1 +
+ kernel/watchdog.c                |   9 +
+ tools/sched_ext/Makefile         |   2 +-
+ tools/sched_ext/scx_cpu0.bpf.c   |  84 +++++++
+ tools/sched_ext/scx_cpu0.c       | 106 ++++++++
+ 9 files changed, 642 insertions(+), 130 deletions(-)
+
+--
+tejun
 
