@@ -1,114 +1,154 @@
-Return-Path: <linux-kernel+bounces-891915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDF8C43CE6
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:52:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C22C43CEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:53:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D633A6F5B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:52:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 309934E5186
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703F22DE1E6;
-	Sun,  9 Nov 2025 11:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966982DECC5;
+	Sun,  9 Nov 2025 11:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PgWp5Gwh"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ikgj9kXs"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E0128031D;
-	Sun,  9 Nov 2025 11:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446B32DE6F5
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762689118; cv=none; b=cEVPZn8RpPgj6VqZq4HEePhZWQvuLJbgNmI+G2MHFMj7Sld85RBbUGtw6BLcsUYueCefWzCQCjohcfeNpa07066hUn2XulE+MYklvDfa2WeeDQ9CpG2raRcgJDrhotpo26ZyWXugxbg+73FV/sviAmCHEocHaG8dXQN3Wv4FTXc=
+	t=1762689185; cv=none; b=DeiRBv5VfcRqOoQ0nKFMD3eqj3mC+JXS+7v8cLq4T+JghIRXHkf2mfyMIyXUCFrtIVGiy4SJAVHEVfIx1WKGSQhBue+3OklfSDIRm43H1pKIm21Raj3kAKzRBnLO/AkHr6onxGYp3FPFM6MSIAL2iYlbQL6EsioDOJl3cAhFXjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762689118; c=relaxed/simple;
-	bh=GwX7wATpjr480wc0HrGspcx3uSzhsELZXlRALMshYOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PvKs5sEvDlReALwchxJMnp3Dxf8I2PmQTjBIfQbiFb0FeCwuhSwUEDapiaDSr+bHUN2+JGkTAybYrSLXgF+W12b3vlxU8lyyJj9z/8IwgQoQNkE4+4smDJnakP6JKWyqJANvJMIpeWmxwdITMSlFJL2MNZiWPMvRvVpLLsYyq+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PgWp5Gwh; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IrXO1X7s/FvF2yB8F6me169g9f36OJ6/LkVLYuvSSMo=; b=PgWp5Gwhf5GnRl3/BOaXaulpFA
-	OXkZATs/SHRJQTUoZeROFDYov/No5gfPjlH8G2v8EEGgNilZ6QOHu9mAznoS8GJd6E3h4C7PFhTMn
-	1ts50mxrAxcR+4Zn3jL7H7G4pNv/Otc5+OqQcBg4f19QnZnCctSTOM7VgRfZbhMg222rVxVk80vf6
-	60Dk0k2rG/ywx0Tr+hAvzNJI1tXZMqvtksaTzMWp4+eJYnTy/OD6hZOFWuQyhm7hGFYbFM//7huaP
-	ckkFEHallmLK9nH/GdN8okr5MMAkYhnYBrp7+gLK6QCUY6ybbSfqMzeJN3hKuhUJOJl57eTUNsOEO
-	/hOSDBwA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vI35t-000000090QN-08Wu;
-	Sun, 09 Nov 2025 10:56:25 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 968E9300230; Sun, 09 Nov 2025 12:51:52 +0100 (CET)
-Date: Sun, 9 Nov 2025 12:51:52 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Xie Yuanbin <qq570070308@gmail.com>, david@redhat.com,
-	tglx@linutronix.de, segher@kernel.crashing.org, riel@surriel.com,
-	linux@armlinux.org.uk, mathieu.desnoyers@efficios.com,
-	paulmck@kernel.org, pjw@kernel.org, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, alex@ghiti.fr, hca@linux.ibm.com,
-	gor@linux.ibm.com, agordeev@linux.ibm.com,
-	borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net,
-	andreas@gaisler.com, luto@kernel.org, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com, james.clark@linaro.org,
-	anna-maria@linutronix.de, frederic@kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com, morbo@google.com,
-	justinstitt@google.com, thuth@redhat.com, brauner@kernel.org,
-	arnd@arndb.de, jlayton@kernel.org, aalbersh@redhat.com,
-	akpm@linux-foundation.org, david@kernel.org,
-	lorenzo.stoakes@oracle.com, max.kellermann@ionos.com,
-	ryan.roberts@arm.com, nysal@linux.ibm.com, urezki@gmail.com,
-	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev,
-	will@kernel.org
-Subject: Re: [PATCH v2 3/4] Provide the always inline version of some
- functions
-Message-ID: <20251109115152.GD2545891@noisy.programming.kicks-ass.net>
-References: <20251108172346.263590-1-qq570070308@gmail.com>
- <20251108172346.263590-4-qq570070308@gmail.com>
- <04CA2D22-4DE2-4DE1-A2BC-AACE666F5F93@zytor.com>
+	s=arc-20240116; t=1762689185; c=relaxed/simple;
+	bh=YDk5MRIGuW1x2NadRPuVP+NinleU3/BZNen7SBV7Ix4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YqlB62fslRIaQPhXNtFdL3V/KMqScj0bIpOxmQePSix9ITROVpCcV0XvWjvrB+y47NpsO+Uil6Yt91d4ZGg4WBM0NDHpfNVBAwQnmenMQU+2G0kk618GS7pAhDp5dHJA7xCkDOMocfpgzlk6ImAl78owoSx/Mw/P6BxcRw4QQF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ikgj9kXs; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-477632d9326so16352185e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 03:53:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762689182; x=1763293982; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oi5/iqZfrxw/CP5GK2yW/mE7gxZjVbgvC6f7zP3R/B4=;
+        b=ikgj9kXsZCo1EnYwrXQKyv0gtvl5RKyFBl4BDa5Bib6P/g2AMclfr18KdgpckCQUvH
+         yCPzbtLbvK16KDM57+XRepaPcu0XDDfJMzZDAhSoQBKX2AAt6FgXX0HmTai7XSYIe8q+
+         2WcvpIToaNOGZHzjzj9LZ8EFUEC0o1Py0V8vTMTVIPNCsde1FE51BrS3nXg8VYHw3Yij
+         dh4E3eJFyxJYRwfPtZcQ+rNImI6/GhRDg5/fxYN4YAzVxhfHfm9Rcarxasda9rizv13P
+         phoT5j2tO9xTNJN1KXzH0ROkirkI1tsvVIq/siv2LcodWheZcARM+C6geVPdOTXE+1qj
+         yOkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762689182; x=1763293982;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oi5/iqZfrxw/CP5GK2yW/mE7gxZjVbgvC6f7zP3R/B4=;
+        b=NgSfHu5vQS/h7xndj7spXwH8i+VnWlG5rMN78iAHtEgBTosALveHf01vUYiR6HDHsC
+         +33wcv5Mv5KGwMpue0OyKZnCvHNGUEwHEFGmrCZO6G3xhXKMtPqJf9rzQYvXsOQFEMRJ
+         NN/0WKf3GDhf2oEJ9JjoUhQmpkUHO++fAN0dQmw7qLres8SURFWnxaMhd+N6J3/gBMts
+         oL27V3p5aEeTMTJ8gdlcfWM0kQYSnu6f2hB9Uref7Y6vUdM9kBgP1IcfNehMlNTqUedr
+         aVVIn9jtIIIaWnhlvNR13GsqgDwHJz8HqC3wPhQDzljWwIf8WYRH32oGYPHOrO4YjFyC
+         PULw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1hMavjGebJtShsZkb2Tzf6lCnbbf6dNsTIULwMSW7JA3QQDvc3YyFId4ogVte/ZYqAxsBp1IIA4wht8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybRuiNkFaT3xAd0VbLxyHmCHgngpXtQPG6DljMZrAm98ch8YYQ
+	3mXG4w7a2hq1b8UvcC20kldDNmRxRrl8WD1//CV34T3NcPs6F51gmNSUohFyyg==
+X-Gm-Gg: ASbGncsPZgsEhMFDtAbiqM06nUzf7iUDHy8Wnus4nI8DT/C/7IXVuuSCeLoA9r4dD7u
+	P0lsA27D7Jf87sQTh2sx5wkr6vtUDJ2zA89rkq84n0O3o6HnrkdpEvrBSomvMAHXhXWXnSH7F1s
+	MIxKrm48za/8gBCIpo7HUfZXPl+hsXuY3LP5hgQhW1wdkxvQC9SPUUCeib6RqS5RaHp5n8T/4lA
+	Y+wJbzNPS/sh4fhz95WqT0N8Dz5/9PA2APxOyTd4mPljy5oeB6vY10otmrdjW7ERJdpj9eGSkgH
+	zIXbWTY69a7PDTaKicfSpj3W8V021ZD9sqTovYYZp6jq6Po/v+Az1cUnLmt65Ggn4EwUPEsOKBy
+	6mK7od5Ej/B4E7cj4u9vfb+o3dAJ/2IOOsQvFnynruXRUiiYgvJ7arqsVOurA9CDHooyNWnN95b
+	MShu49LTKfDXoxqZxWJBLTH/j2SDXOR6a8Pe64g2F1
+X-Google-Smtp-Source: AGHT+IF0OdPl7P7zek6LN5EpjrwqGOR8oHSE9cecr6daRpyCulT9z+cFJeMMKofyvzMK78abF/CwMw==
+X-Received: by 2002:a05:600c:4f4c:b0:477:7a87:48d1 with SMTP id 5b1f17b1804b1-4777a874db1mr13826495e9.30.1762689181321;
+        Sun, 09 Nov 2025 03:53:01 -0800 (PST)
+Received: from Ansuel-XPS24 (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4776bcfd021sm185197325e9.11.2025.11.09.03.52.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 03:53:00 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] mtd: mtdpart: ignore error -ENOENT from parsers on subpartitions
+Date: Sun,  9 Nov 2025 12:52:44 +0100
+Message-ID: <20251109115247.15448-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <04CA2D22-4DE2-4DE1-A2BC-AACE666F5F93@zytor.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 08, 2025 at 02:14:44PM -0800, H. Peter Anvin wrote:
+Commit 5c2f7727d437 ("mtd: mtdpart: check for subpartitions parsing
+result") introduced some kind of regression with parser on subpartitions
+where if a parser emits an error then the entire parsing process from the
+upper parser fails and partitions are deleted.
 
-> >+static struct rq *finish_task_switch(struct task_struct *prev)
-> >+{
-> >+	return finish_task_switch_ainline(prev);
-> >+}
-> >+
-> > /**
-> >  * schedule_tail - first thing a freshly forked thread must call.
-> >  * @prev: the thread we just switched away from.
-> 
-> There is, in fact: you have to have an always_inline version, and wrap it in a noinline version.
+Not checking for error in subpartitions was originally intended as
+special parser can emit error also in the case of the partition not
+correctly init (for example a wiped partition) or special case where the
+partition should be skipped due to some ENV variables externally
+provided (from bootloader for example)
 
-Yes, but all of this is particularly retarded, there are exactly _2_
-callers of this function. Keeping an out-of-line copy for one while
-inlineing the other makes 0 sense.
+One example case is the TRX partition where, in the context of a wiped
+partition, returns a -ENOENT as the trx_magic is not found in the
+expected TRX header (as the partition is wiped)
 
-Also, the amount of crap he needs to mark __always_inline doesn't make
-much sense to me, is he building with -Os or something?
+To better handle this and still keep some kind of error tracking (for
+example to catch -ENOMEM errors or -EINVAL errors), permit parser on
+subpartition to emit -ENOENT error, print a debug log and skip them
+accordingly.
+
+This results in giving better tracking of the status of the parser
+(instead of returning just 0, dropping any kind of signal that there is
+something wrong with the parser) and to some degree restore the original
+logic of the subpartitions parse.
+
+(worth to notice that some special partition might have all the special
+header present for the parser and declare 0 partition in it, this is why
+it would be wrong to simply return 0 in the case of a special partition
+that is NOT init for the scanning parser)
+
+Cc: stable@vger.kernel.org
+Fixes: 5c2f7727d437 ("mtd: mtdpart: check for subpartitions parsing result")
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/mtd/mtdpart.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
+index 994e8c51e674..2876501a7814 100644
+--- a/drivers/mtd/mtdpart.c
++++ b/drivers/mtd/mtdpart.c
+@@ -425,9 +425,12 @@ int add_mtd_partitions(struct mtd_info *parent,
+ 
+ 		mtd_add_partition_attrs(child);
+ 
+-		/* Look for subpartitions */
++		/* Look for subpartitions (skip if no maching parser found) */
+ 		ret = parse_mtd_partitions(child, parts[i].types, NULL);
+-		if (ret < 0) {
++		if (ret < 0 && ret == -ENOENT) {
++			pr_debug("Skip parsing subpartitions: %d\n", ret);
++			continue;
++		} else if (ret < 0) {
+ 			pr_err("Failed to parse subpartitions: %d\n", ret);
+ 			goto err_del_partitions;
+ 		}
+-- 
+2.51.0
+
 
