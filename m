@@ -1,163 +1,126 @@
-Return-Path: <linux-kernel+bounces-892172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECF2C44895
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 22:59:58 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5366DC448B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 23:11:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0910F188B51C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 22:00:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A0926345B54
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 22:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F7A26ED28;
-	Sun,  9 Nov 2025 21:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AB522652D;
+	Sun,  9 Nov 2025 22:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gOQ4A1a/";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MglZBJ2a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="smjvEHbZ"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93347219A8D
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 21:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571CF2E63C
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 22:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762725592; cv=none; b=mlSXuwgvpEmMgMrd7iocqboavpMTJn0+uILLzNdiB/quKvoIUX67I4wYDQft2jf7cBCRV0dsFkuEtBv3pzD9giAocT/MWhG+KyNceGQXY1Lh4RIo3zzcDM3qSF455WGhUyERrt1xlpJP1NMmod2G+wZ6Qkxgy4YqbrJtwagCACM=
+	t=1762726285; cv=none; b=S2PkN6REzCrKsGjYLaVSjRby4uRI9HJwEKIZxi+MyoCkclOk9zoxLx1fc+8NMzgBDIMbT0m2gGCxw3XWri8SOrWWAHezW7ZWEi4ppUM+eWWXtBERUsGcYWW61Myum49gBh8ht3gDK+IPuM7b0+zMJfxYjVUxGGG/dLcWS4WmI1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762725592; c=relaxed/simple;
-	bh=IU3Eeybi/pAl8nQm4Ma+Clpr7lyLy/AS2VPSGSRA6Tk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pMRNaiiqX0NbtfMY5KEr1GVL0VaaePbqduy55zFQH8ktF833oBuqUKu/TMsS0JmB7ssyu7fwbF2WsLn/B+din4hh/rOp13r1VHWVULNNLzxMiXKWs3WyUDkN4HGps9Lql90w1SD9iUPStGbt45QKJ0rQfR2OA81/d6TxJjJztGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gOQ4A1a/; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MglZBJ2a; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762725589;
+	s=arc-20240116; t=1762726285; c=relaxed/simple;
+	bh=DCviYoqzljPkjaLFg9opUlqzkMvLMcY7wYMpbLrXsPI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=V2SyYhbh9BOfGjsS1GFOnKK6gtKx9oYrxEl9t5ed1TewPQdD+V6Gyc4uyH7DKBPzOHgOEB4iyX1DXoxrstpLw62l4mAJjM8FquTwE10d67d4lgVoij5FyWKtyOPhbzQXPlC5yrJ6G/eXoDxcgYzOdlh6dlnZiv4nOSTBFrQtK+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=smjvEHbZ; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762726269;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Vrkp13U75D5ocju9TrltPfjNVc3UEKucGVy+HHM/EeY=;
-	b=gOQ4A1a/UAuGOK5LcwsV/NZYUX4ILfNNRnLZFnCSFGk98XcVWIW5iPRnt8DaYGpqj/9Tvi
-	X6N15TEIbC22Kkdnr+ik4NcKqaGfsHvMwm5Ii/WucvYsxJ5zqgkBerDJRUEAdnEn9JkL+r
-	ALO0tgNZlmzdkCEmiIk6jKXndu0ZJX8=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-512-O1xYdq7lPiOPwYprIF8W-A-1; Sun, 09 Nov 2025 16:59:48 -0500
-X-MC-Unique: O1xYdq7lPiOPwYprIF8W-A-1
-X-Mimecast-MFC-AGG-ID: O1xYdq7lPiOPwYprIF8W-A_1762725587
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-340d3b1baafso4401439a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 13:59:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762725587; x=1763330387; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vrkp13U75D5ocju9TrltPfjNVc3UEKucGVy+HHM/EeY=;
-        b=MglZBJ2aOxaDK6Oyfpd/BMUZz1n7fd345BUxyNBXOrHTYXDkxQCULW2b3CLUrcS/mJ
-         G81pMDYRrly2/87ucqloIyiX1iM6ZQvUMGBltSyWdSDMNgtssB6rPiZq84Zbcvcn7WpY
-         iUeJSWm0EWbRgKcGoAxMU5VeAJB5J3hRUq6OGH1oqBbCVmjBGwFtRYqdLGB/7X51IN4U
-         D5rEsbBYPvnJ4zS4s06mo5rvCtyWJ2U5+E28carkujVJrTAvEq8btCaPQx7uiDzksBUh
-         Kc/slDUaQScCSj5AiPLJBhqVU9qp1LZ121h0jzJgUvpDLsAuXIP8TrQVEeNDhqSL/vPz
-         qAAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762725587; x=1763330387;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Vrkp13U75D5ocju9TrltPfjNVc3UEKucGVy+HHM/EeY=;
-        b=JGz3v/QikpnWu/T/kLrko95knd2ZuE5uPE32oOuKPxN0f/vrHD3BiYuR7X6pjxlRNW
-         2wbahf16l6ZysMwDEIC5zePUdmHHCFuoj8VFHA2Oa3ONgX1BDMmlx5npSvXGAVM+qjry
-         +nBFCK+rNz8mocqRt/IvWfPbvfOECmymsEfSAJjZ5bjb3t+fvBN7met2uuQun+oZQxy5
-         5AhcdV2NdA8ah6n+mMXjeDAeqWPBobWnilKbCsmUBMIJUmSIuCQXW4ArzN27qBwdjFHZ
-         cd1Js3f5kDEBwkkLeI9JRJLdwtoxDynpu8epU0Qf5qV7z3KhLL2dJlu1TTZ8AKkHsiP6
-         tSZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTDlqKWyjm3ulZ3Nb/kUnaSTrR7RCJ8h/6CKgZ8JcvNNSzxQpbr3Des0rwisZmQQL4VOpUIZKZOYGie0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWPOd9NjqdHnNfMMLPklQSuGPfV/vjA9vqOmZwda7n+Ec+Ze/2
-	m7G7jMtCjV14Oq/oLXOMr+xv+g5r9nri6Fq54IDd37y68kow0f4+wu79lhj9h4WgBZFMVOCRp50
-	25ZNaDYMdOuXmF7n/6oFc3oQlhGcPvc9XbQP5NiHpH+HIb656RIJ24smetcKaAekRCQ==
-X-Gm-Gg: ASbGncvurSNZ6cVUZQQKnCTMQv5p9r2C/jpVHzIPOiqluJW5wP2j6+zTR28TxMLfm+r
-	KECcTL+WU9pyooVIrvR5JuWvxKoBXOvbGSZY9oa6m3EYY/bvWu8QvQbcPREH8h8GERqCfpVuyto
-	78IVWqZQ/JePAMUeMXJFKWPZZes3BgRnj5PkhUhDiZuiLaOd9Fih33TjFkwjkWMUQEOBk7UAljc
-	ZKhXLlqbBURxbcB6BPhuB15fdCc8AySf5XgUag4oOLz2BlCbw4gYl9TdAvsNLJhep99l7sDl7eH
-	qC42A9coGqVFRuKuCv7pglDvGt9TRkpOM6/k6fjl2LYZCQ+uKwymos8q79uQ4BVAwx6axyt/2qF
-	KDbSWJk9Td9UiovRXndhR7G9j1SIi79cfCGhg9IA=
-X-Received: by 2002:a17:90a:ec84:b0:340:b86b:39c7 with SMTP id 98e67ed59e1d1-3436cb91cdbmr8688583a91.11.1762725587160;
-        Sun, 09 Nov 2025 13:59:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE3A3I4/3RLhYe1QQYreru6FNEuBJIm7pFjvEZOnSNhvwUxUwbVCr6B7zDVjGaDu7x0cbLDOA==
-X-Received: by 2002:a17:90a:ec84:b0:340:b86b:39c7 with SMTP id 98e67ed59e1d1-3436cb91cdbmr8688543a91.11.1762725586835;
-        Sun, 09 Nov 2025 13:59:46 -0800 (PST)
-Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a699d6dfsm15532033a91.16.2025.11.09.13.59.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Nov 2025 13:59:46 -0800 (PST)
-Message-ID: <f7b7ffd7-8674-4368-aee4-4376d127b0da@redhat.com>
-Date: Mon, 10 Nov 2025 07:59:33 +1000
+	bh=n+eKEhLyPOzSVOi4eq+sEhgJ4Ueema8tYGNPf1rbujg=;
+	b=smjvEHbZjbNsnSakFfIAGORZLo7X14TJFkLx4spx1Y06jrHkNwB2PFVphl/qqPDkObWGm1
+	9g7whvJ/88+SUAl6yLkCzpVPmvcny2kS5FiJa81xX1e00NkjCz1A9jRmz2wJAAlp9zNTrQ
+	HWo4QVIYsXSKQIyv/WldVoXNt/GYgB4=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 17/33] arm_mpam: Merge supported features during
- mpam_enable() into mpam_class
-To: Ben Horgan <ben.horgan@arm.com>, james.morse@arm.com
-Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, guohanjun@huawei.com,
- jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-18-ben.horgan@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20251107123450.664001-18-ben.horgan@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3] w1: therm: Fix off-by-one buffer overflow in
+ alarms_store
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <cac46c65-4510-4988-8ba2-507540363ad4@kernel.org>
+Date: Sun, 9 Nov 2025 23:11:02 +0100
+Cc: David Laight <david.laight.linux@gmail.com>,
+ Huisong Li <lihuisong@huawei.com>,
+ Akira Shimahara <akira215corp@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ stable@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
+Message-Id: <9DA6251C-C725-46F2-899A-5CF2BE39982E@linux.dev>
+References: <20251030155614.447905-1-thorsten.blum@linux.dev>
+ <cac46c65-4510-4988-8ba2-507540363ad4@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 11/7/25 10:34 PM, Ben Horgan wrote:
-> From: James Morse <james.morse@arm.com>
+On 9. Nov 2025, at 19:29, Krzysztof Kozlowski wrote:
+> On 30/10/2025 16:56, Thorsten Blum wrote:
+>> -	/* Convert 2nd entry to int */
+>> -	ret = kstrtoint (token, 10, &temp);
+>> -	if (ret) {
+>> -		dev_info(device,
+>> -			"%s: error parsing args %d\n", __func__, ret);
+>> -		goto free_m;
+>> +	p = endp + 1;
+>> +	temp = simple_strtol(p, &endp, 10);
+>> +	if (temp < INT_MIN || temp > INT_MAX || p == endp) {
+>> +		dev_info(device, "%s: error parsing args %d\n",
+>> +			 __func__, -EINVAL);
+>> +		goto err;
+>> 	}
+>> +	/* Cast to short to eliminate out of range values */
+>> +	th = int_to_short((int)temp);
+>> 
+>> -	/* Prepare to cast to short by eliminating out of range values */
+>> -	th = int_to_short(temp);
+>> -
+>> -	/* Reorder if required th and tl */
+>> +	/* Reorder if required */
+>> 	if (tl > th)
+>> 		swap(tl, th);
+>> 
+>> @@ -1897,35 +1870,30 @@ static ssize_t alarms_store(struct device *device,
+>> 	 * (th : byte 2 - tl: byte 3)
+>> 	 */
+>> 	ret = read_scratchpad(sl, &info);
+>> -	if (!ret) {
+>> -		new_config_register[0] = th;	/* Byte 2 */
+>> -		new_config_register[1] = tl;	/* Byte 3 */
+>> -		new_config_register[2] = info.rom[4];/* Byte 4 */
+>> -	} else {
+>> -		dev_info(device,
+>> -			"%s: error reading from the slave device %d\n",
+>> -			__func__, ret);
+>> -		goto free_m;
+>> +	if (ret) {
+>> +		dev_info(device, "%s: error reading from the slave device %d\n",
+>> +			 __func__, ret);
+>> +		goto err;
+>> 	}
+>> +	new_config_register[0] = th;		/* Byte 2 */
+>> +	new_config_register[1] = tl;		/* Byte 3 */
+>> +	new_config_register[2] = info.rom[4];	/* Byte 4 *
 > 
-> To make a decision about whether to expose an mpam class as
-> a resctrl resource we need to know its overall supported
-> features and properties.
-> 
-> Once we've probed all the resources, we can walk the tree
-> and produce overall values by merging the bitmaps. This
-> eliminates features that are only supported by some MSC
-> that make up a component or class.
-> 
-> If bitmap properties are mismatched within a component we
-> cannot support the mismatched feature.
-> 
-> Care has to be taken as vMSC may hold mismatched RIS.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-> Tested-by: Peter Newman <peternewman@google.com>
-> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
-> ---
->   drivers/resctrl/mpam_devices.c  | 214 ++++++++++++++++++++++++++++++++
->   drivers/resctrl/mpam_internal.h |   3 +
->   2 files changed, 217 insertions(+)
-> 
+> How is this change related?
 
-Reviewed-by: Gavin Shan <gshan@redhat.com>
+Not related, but I thought when I'm already rewriting 80% of the
+function, I might as well just improve the indentation/formatting.
 
+Thanks,
+Thorsten
 
 
