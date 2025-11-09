@@ -1,140 +1,184 @@
-Return-Path: <linux-kernel+bounces-891933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6198FC43D84
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:29:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA499C43D8F
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:30:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120033A970A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:29:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87ACF4E4BC5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FF22EC09B;
-	Sun,  9 Nov 2025 12:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736D62DE200;
+	Sun,  9 Nov 2025 12:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4XHjkXy"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNEr1lj2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7682E7BDE
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C398E4A1E;
+	Sun,  9 Nov 2025 12:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762691347; cv=none; b=kVC8eWIThN2bWcOZjfaaKHUjPyxrAoexuiSZcFdpSMFXcqHsanoMctGSdG9C0t0ZLsiqGgbcJI6j/7zOoVCCu2q8QzaJpYB5zIlFh110GuSEmqLsO85UnxM6GeIg5LY/B9GMlfuVTAyy2vJLe7NO6ykted1tUDsBA9kPqkG8/P8=
+	t=1762691447; cv=none; b=UFFN8KSs3Yaw7AbkllCTFnKCLvWxvWNid4Dj85dMOnt0i98wlawwirazCsJTq6LQngCimycBhfgD0OsSMh2jrRDhFWR6Yo0C+Od3XQh1IV5IPJy8APOcU3jlnuKHvv1bKgrFv+7aZe96dEB0to+vQuF4DyQIHkdA0fw86xJr1Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762691347; c=relaxed/simple;
-	bh=+Fj8UCA6PFYAVUdnQDCZ7U9phZKfSbyakTHFESM1D7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gZJjubG3BlFLUVIuzM5G84nhOqibouIQYt0kkD7seNzQJ7FrP+dliaWsVvTYnL4GaQqgLa5BtWUu5riiTup1Uor3JZCq3wle2lVpATwEU8T2tfyDkc4gp0q9oT1oX33Uwx+qVo5X9SWrUFrEtv7N85Kx1nA6CRclLwaOUKwuK1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K4XHjkXy; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7ad1cd0db3bso1536192b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:29:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762691345; x=1763296145; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1Sfh23gMPuSgFh9wP8m+RA7LgOjNZR3fljD+XVnQlZc=;
-        b=K4XHjkXyWwOD1LN3ttrU8mst/IAcGQcqk2M9yWKv7e64+MzXp8wpEXrcMDoAwTqUnb
-         ZiL//Etns/PYZb7FkedKuwlCAlRp37sFby0uLvMW0ZYkzL019tAUWAlURcaG99c+TZZ3
-         X7YdOxvxy6qZfavELowgl64T9VUBJrowrbs1jAmE8vl8EA5i0aP5Vty21a4ivZn3JvUO
-         4Mey0Y3jBNM51ACA/AUhPc1J0wetkLw5ZqmuwzHiGGJuVOxJsr/LCmO/pNiJB9f587bz
-         +WH31G/7h45teVibVEq7/GNhhd/qSYcsuQD003aKE/+7wznOTIx6w4bFV1EgsJHcfT96
-         w+0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762691345; x=1763296145;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1Sfh23gMPuSgFh9wP8m+RA7LgOjNZR3fljD+XVnQlZc=;
-        b=H2+18/o0YVgGj+IHfV65h4J5nTJFUuHh18eOTfFwdxddHOvVekC+52nYfCvZsEeOdv
-         U7vvCk7H2YOGqNJqsuzrCif/cBv3+jA4C+cyzP3VJOYlq5ZoMOEZ07HDLOed2davi7LI
-         xumFM0zHGsf6HeT5tP/znT8LOFr5Mrzg9iZWBdLadY7tuvXJc/5zD/jLZkRDyM1XSVS2
-         +nH4Og3CrR0NdMzzvP1/Fpc3w5HMY6G/4DRoJSH6sYbaZ6CbTdazk8pA3DlmK9EI0Coz
-         vIljPor9moQ8oZqLMZ1Cb9KospDjey0MMjA1oCFj+P76TTgiyDc4A2lz9kq2yuepUc8u
-         Tzyw==
-X-Gm-Message-State: AOJu0YyfdJks2U8FEObSIV1NHmbw3k1YoBCocicmKKQIJEsW6u5xSnnD
-	GuPU4euKhQnZaP3InePIfwJVDBfoIFRJ6yOn5xyaOqjiP/g2WHX6gw+FE65Fs8EuiN8=
-X-Gm-Gg: ASbGnctVbxBhjLPTHd+gVabavhaaLKDe+e6fvElQXh/SnaJuh++cBTeLBqIAKTbJ/5j
-	Q2mTdtuKClO48qCX53WNVT7qRpeWgK/p9PPsDT7Y7g23wZj6Z2IRvllB90ERGVBsIPu7osZKPtB
-	MV6/ynsKY3w8yUQ2rzX6y1DDg3mdDMsvi0fD0pHoGOxmw3uFYk87uq2oPkufu4AScBuN6JHgg0t
-	OfN5WypF18g3N6kJtKIY5OedRPDf2CTzVrY/Tux3UIfMh+mLGs3vSYW8eIipLUhrCD7ctFb5mLx
-	HTshd6p4+ervG+iroIS6puNbrMyeYUVhZLb28E9NiW/Yn6dp1oERYqtbDNeMj5kY1uugfqcTE1l
-	YlyTHgzQuwIG/4J3bSuBwbMWyXq3gMtV8eEaJExl3FCJbNAOrCfpf/dFylbr2u2nx558/j6EdNm
-	aq3h364UVRZyjurQ9n6w==
-X-Google-Smtp-Source: AGHT+IEkKiASBAM/v8nmSr1bnyXvE15oiC0TbeFeqMLmzAA0Ln0KLA0nGZWhrWf0I/1B3xOi0IZyGw==
-X-Received: by 2002:a05:6a20:734f:b0:2cc:acef:95ee with SMTP id adf61e73a8af0-353a428d5fcmr5965129637.52.1762691344990;
-        Sun, 09 Nov 2025 04:29:04 -0800 (PST)
-Received: from [192.168.1.50] ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8ffd3f6easm10211085a12.21.2025.11.09.04.29.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Nov 2025 04:29:04 -0800 (PST)
-Message-ID: <e5e3a542-ee07-4fe5-a6d5-2bc5b2fa873f@gmail.com>
-Date: Sun, 9 Nov 2025 19:29:00 +0700
+	s=arc-20240116; t=1762691447; c=relaxed/simple;
+	bh=uaAzoyaBailq2b/m0o0Kpjlu+Dde1wzPbhrBuIBEfDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHu0ZUwC2InpHu/T1DL8Qvlb8cqaR7T9RlfRx1RL3M9WqfHPJVI+Cv+et+HH5W421NX8pZVWFigapfkLTkzeEw8U3kPii8oWs+aI+SpNBTK/EQpbnMfvqBb5eRS1WehwhV9g508OxWsZDVN4jbYClLSeqwfzufMJPhDNL5vS9jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNEr1lj2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 776D7C19424;
+	Sun,  9 Nov 2025 12:30:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762691447;
+	bh=uaAzoyaBailq2b/m0o0Kpjlu+Dde1wzPbhrBuIBEfDc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FNEr1lj2oRM9QL/mU9SWQIDdmge4KwfbwhjMVBEhst+fkf+a+ZUTpmY7ziG4zbWk8
+	 o1BhVcs9yexQfaHgyOfke3dsodcmL3Wpe2mtQJap8VdLTePPm+NjV8PKzxHzCeL2Ra
+	 dwgHOwrgJHw4qF92ZXTq1pLuxLIZ8ZNbohqP+hIhVACo4VH4xxHSddZeQW0GIZuzF2
+	 9Z/vfA8VFioDp2BnhxijTAIGfxikPpTmcsZLVBDzNBixQo07yjWprRR3CnRuIMbfEE
+	 lGE0jbdSNVReiHoKq3WObsEZkO7HdM7zIewhXozXzrmhsG/brWoDlZqT0VHVop8kW2
+	 x6xPHNNnE/JOQ==
+Date: Sun, 9 Nov 2025 13:30:42 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Alexander Potapenko <glider@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH v2 1/4] array_size.h: Add ARRAY_END()
+Message-ID: <hianmnv3t7xz4mf5oaicei4q7vqudrnkhmexzkoxags3gvyj2n@qvebtox3uvyn>
+References: <35255c1ceb54518779a45351dcd79a3c1910818a.1762637046.git.alx@kernel.org>
+ <202511091804.XUQA4dOK-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: tpm: tpm-security: Demote "Null Primary
- Key Certification in Userspace" section
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Integrity <linux-integrity@vger.kernel.org>,
- Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
- Jonathan Corbet <corbet@lwn.net>
-References: <20251104131312.23791-1-bagasdotme@gmail.com>
- <aRAdiUB9otJk5i9U@kernel.org>
-Content-Language: en-US
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <aRAdiUB9otJk5i9U@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nm4vwnmvmi2ifa5n"
+Content-Disposition: inline
+In-Reply-To: <202511091804.XUQA4dOK-lkp@intel.com>
 
-On 11/9/25 11:50, Jarkko Sakkinen wrote:
-> On Tue, Nov 04, 2025 at 08:13:12PM +0700, Bagas Sanjaya wrote:
->> The last section heading in TPM security docs is formatted as title
->> heading instead. As such, it shows up as TPM toctree entry. Demote it
->> to section heading as appropriate.
->>
->> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
->> ---
->>   Documentation/security/tpm/tpm-security.rst | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/security/tpm/tpm-security.rst b/Documentation/security/tpm/tpm-security.rst
->> index 4f633f2510336b..bf73bbe66db2fa 100644
->> --- a/Documentation/security/tpm/tpm-security.rst
->> +++ b/Documentation/security/tpm/tpm-security.rst
->> @@ -153,7 +153,7 @@ protect key sealing and parameter decryption to protect key unsealing
->>   and random number generation.
->>   
->>   Null Primary Key Certification in Userspace
->> -===========================================
->> +-------------------------------------------
->>   
->>   Every TPM comes shipped with a couple of X.509 certificates for the
->>   primary endorsement key.  This document assumes that the Elliptic
->>
->> base-commit: 27600b51fbc8b9a4eba18c8d88d7edb146605f3f
->> -- 
->> An old man doll... just what I always wanted! - Clara
->>
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> 
-> Should I pick this?
-> 
 
-Of course!
+--nm4vwnmvmi2ifa5n
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Alexander Potapenko <glider@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH v2 1/4] array_size.h: Add ARRAY_END()
+Message-ID: <hianmnv3t7xz4mf5oaicei4q7vqudrnkhmexzkoxags3gvyj2n@qvebtox3uvyn>
+References: <35255c1ceb54518779a45351dcd79a3c1910818a.1762637046.git.alx@kernel.org>
+ <202511091804.XUQA4dOK-lkp@intel.com>
+MIME-Version: 1.0
+In-Reply-To: <202511091804.XUQA4dOK-lkp@intel.com>
 
--- 
-An old man doll... just what I always wanted! - Clara
+Hi,
+
+On Sun, Nov 09, 2025 at 06:43:46PM +0800, kernel test robot wrote:
+> Hi Alejandro,
+>=20
+> kernel test robot noticed the following build warnings:
+>=20
+> [auto build test WARNING on 6146a0f1dfae5d37442a9ddcba012add260bceb0]
+>=20
+> url:    https://github.com/intel-lab-lkp/linux/commits/Alejandro-Colomar/=
+array_size-h-Add-ARRAY_END/20251109-062234
+> base:   6146a0f1dfae5d37442a9ddcba012add260bceb0
+> patch link:    https://lore.kernel.org/r/35255c1ceb54518779a45351dcd79a3c=
+1910818a.1762637046.git.alx%40kernel.org
+> patch subject: [PATCH v2 1/4] array_size.h: Add ARRAY_END()
+> config: alpha-defconfig (https://download.01.org/0day-ci/archive/20251109=
+/202511091804.XUQA4dOK-lkp@intel.com/config)
+> compiler: alpha-linux-gcc (GCC) 15.1.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20251109/202511091804.XUQA4dOK-lkp@intel.com/reproduce)
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202511091804.XUQA4dOK-lkp=
+@intel.com/
+>=20
+> All warnings (new ones prefixed by >>):
+>=20
+> >> drivers/block/floppy.c:4805:9: warning: 'ARRAY_END' redefined
+>     4805 | #define ARRAY_END(X) (&((X)[ARRAY_SIZE(X)]))
+>          |         ^~~~~~~~~
+
+Hmmm, nice!  There's already an ARRAY_END() there.  I'll remove that
+definition.
+
+BTW, this reminds me that I forgot to parenthesize 'a' in my
+implementation.  Do you have any preference on the implementation?
+I could use either of
+
+	(&((a)[ARRAY_SIZE(a)]))
+
+	((a) + ARRAY_SIZE(a))
+
+
+Have a lovely day!
+Alex
+
+>    In file included from include/linux/string.h:6,
+>                     from include/linux/bitmap.h:13,
+>                     from include/linux/nodemask.h:91,
+>                     from include/linux/numa.h:6,
+>                     from include/linux/async.h:13,
+>                     from drivers/block/floppy.c:166:
+>    include/linux/array_size.h:17:9: note: this is the location of the pre=
+vious definition
+>       17 | #define ARRAY_END(a)  (a + ARRAY_SIZE(a))
+>          |         ^~~~~~~~~
+>=20
+>=20
+> vim +/ARRAY_END +4805 drivers/block/floppy.c
+>=20
+> 5a74db06cc8d36 Philippe De Muyter 2009-02-18  4804 =20
+> 5a74db06cc8d36 Philippe De Muyter 2009-02-18 @4805  #define ARRAY_END(X) =
+(&((X)[ARRAY_SIZE(X)]))
+> 5a74db06cc8d36 Philippe De Muyter 2009-02-18  4806 =20
+>=20
+> --=20
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--nm4vwnmvmi2ifa5n
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmkQiXEACgkQ64mZXMKQ
+wqmWEBAArRv4KqHros/WN5GykK1OkUTtJHY9EMVRNzdOYuVwLFmlCcXNgJCNmkZB
+OQiOvD+vb05Dz54F3QM5IEQ9b7Ucd9PnaoPFGX74T27mBkVQCQHKctCxlV4jDsTr
+hc9Mlsa6P825DWNGIOUenVXZnedXYdJ6QZQBakMGmGNTmM59MO7EsOyGGAsKuSNc
+g2fWS7dmuu9UsGqLChOFuIPzyYOG+zDyx/ZsqL4KuJQdmwtsqT5hS/F7MlRYCzR7
+ZL0psqotrkw+J6J10eGbnG5eD1hhryhzM220njMAa2+5dHkcmlDgaGPlFVDGu36e
+k32S7FDy+8ekl4bHDcWF+u3HZdQZrznMYEGI9XERB8lRy2HHKUa84/2rEHYcKMZN
+/01JlnfJDdwMTXK5UPesC8JnRKxS5WgINcbwx25pjVe4DB5Llyd0ZfeMJ2A3oO6s
+mNAUdAEuxQDXp5gOGt6cNp8fHJ0WRjc8/hLKRMKzdG79A99uQyhtPJIblJ+ncY97
+OrYNpmLr7nqlaNUn0Q1gc68R7eJ+0CfVwPARBd/avVt4fIbhddCV01/2wOaDakOK
+ejvhJgpaDWnQiI/PczyH/APqN6jQ9zYQtN/3Gdo8gYjATsNQlur3xHlX3CEJ1TPM
+/6+l/fQNKftr8OB61bbZWt34ZY6RqkIosS6aTy09EQNRN5opeRM=
+=smMe
+-----END PGP SIGNATURE-----
+
+--nm4vwnmvmi2ifa5n--
 
