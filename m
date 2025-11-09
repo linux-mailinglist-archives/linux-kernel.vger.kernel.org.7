@@ -1,160 +1,122 @@
-Return-Path: <linux-kernel+bounces-891820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E303C43939
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 07:34:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D83C43999
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 07:54:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58AC4188BF26
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 06:34:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D6863347259
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 06:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C929023C38C;
-	Sun,  9 Nov 2025 06:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E194621D3C9;
+	Sun,  9 Nov 2025 06:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="M6OAyfNy"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4DJE34b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EF11EA84;
-	Sun,  9 Nov 2025 06:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413B12E40E;
+	Sun,  9 Nov 2025 06:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762670064; cv=none; b=PVuobsClAcyii5EZTqLAwo22aZi/JIk583YMt3duKTv2KfCbfjt/9zqx0yEvEiAyKJarREdoOd86/kz7jIbg+yEnrvo6GKRquSAHq2rVgxgBZwxw6x09pq3cubSr71TtmRLbO3EY09C4sFZJafK3mPxWdKvyrdK9dO6ifDrO7oc=
+	t=1762671261; cv=none; b=OyH7ZktJ/8p8WS0rbP3n+91zaw0C8m/kxeWelgpAZbZ0kupNUwMsMELxVfrNKDftV+oZiY0MNNr7eyhnLjY6g3t2Vu2ngvtaK9UkikArfkl63gD8uWUQpsQwcnuiiQ/r65wPWalGatzldOB5SdI1MaFMd9eVPEr7qIYleLts0Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762670064; c=relaxed/simple;
-	bh=PvLsezPb55Ku64wwVWq1Pwq9FCTfXjF/4zx64GEYf30=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V1gujD6Cvf37F/PfnhZYmasHeaB2NgOpvTUZ9KoErUcehTcK0DxxSb+NVdE8ayRZuzhk13ZaIObDdGlzeZWeDp/uHxooJ58Yg6AJaucPjGhfZkswch8v/j3FgavUIBp0dWmVb0kPlOZxGboHv6wp0yB5KlshOwYDa52/S261rq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=M6OAyfNy; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762670056;
-	bh=iTxpyLfLeTpVAiZsSYEVK0JzDkKFtKFM58lXr4a5DFU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=M6OAyfNyK0XtXvtDHZ0rH7o5FQ4blauGEklg4lMFPSNUynFbk2tVKt2EaGZ9uvvLi
-	 kxq4VLPNtz3O66CH2LAX0QNv+BYtQJ08x+oBDf990NotO6J38s5Zoo/hiETeykuP6W
-	 Q7TuYVT764ZhTyRKfhY73N4TqtiNYxLKS98/uwqL6gkG9ZMLfWP51V83K7f64NIzwZ
-	 9gWK2lPB/a9BGMTrIPOeHhAHYVN8iIJJuYU1sTikL6LkqJC9cDIjjsiJnkVuF/eiSt
-	 SQhJGB/c83b7FcgLyH9B0FCmE7ILM6Prs8suj05zjrCeNyHyF82QT0MEgadDEX3WFL
-	 V60MFu5+lK2Jw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d43133WDmz4wCy;
-	Sun, 09 Nov 2025 17:34:15 +1100 (AEDT)
-Date: Sun, 9 Nov 2025 17:34:13 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>, Ilpo =?UTF-8?B?SsOkcnZpbmVu?=
- <ilpo.jarvinen@linux.intel.com>, Alex Davis <alex47794@gmail.com>, Stephen
- Rothwell <sfr@canb.auug.org.au>, Borislav Petkov <bp@alien8.de>, Andy
- Shevchenko <andriy.shevchenko@linux.intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, John Ogness <john.ogness@linutronix.de>,
- linux-serial <linux-serial@vger.kernel.org>
-Subject: Re: [Regression] depmod fails on kernel 6.17.1 rc1
-Message-ID: <20251109173413.10c9aa0a@canb.auug.org.au>
-In-Reply-To: <2025110956-swaddling-chapter-5932@gregkh>
-References: <CADiockCvM6v+d+UoFZpJSMoLAdpy99_h-hJdzUsdfaWGn3W7-g@mail.gmail.com>
-	<20251106160235.GBaQzGm8W2Gt_VMy-s@fat_crate.local>
-	<aQzJveMYT6O3EHeK@smile.fi.intel.com>
-	<20251106162436.GFaQzLxBW-_50ndwtr@fat_crate.local>
-	<3fe70726-80d6-a84a-4101-446fd8b49209@linux.intel.com>
-	<ddfbc4bf-658f-3eda-5b4f-f111ecd932f5@linux.intel.com>
-	<82e2ce7f-bd08-4b53-b232-3dd8cb1a0726@kernel.org>
-	<20251109105203.622ebe9e@pine.rothwell.emu.id.au>
-	<2025110956-swaddling-chapter-5932@gregkh>
+	s=arc-20240116; t=1762671261; c=relaxed/simple;
+	bh=3JS1OgZ14RhHt06MEdgrfvg3N/fs6BGb/Kur+DRi2oE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pM8j7HYWt5I/NR7nl5iSb3pd700f4bWKz2y/jnulrzTCtLy1uIHll9g2pSVV4ekgBzpuYA80/6qBAqerEMzndo8e1JtpKfmHtzIgh3FF1xSXPgZkjSiHGvYrQrEY5Vfk4ojkvf3ILpVgLgayWFEkmcqV+pgcwAOnHCRm/F21Q7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4DJE34b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 835B6C16AAE;
+	Sun,  9 Nov 2025 06:54:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762671260;
+	bh=3JS1OgZ14RhHt06MEdgrfvg3N/fs6BGb/Kur+DRi2oE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g4DJE34bZXgLmGCl+bPOHU3/pMacEfW6fXeyFOj4KAAaKC8vgSxqmhz+nCX5IoYly
+	 /q2t44l39jqUTuoxLwsvscAUEzf46VSW+s4sloJSKvEq4sXjoSVDyP2c0IlrEbS7DZ
+	 NYyv0G5d11oSBi4aWzo2zt/Y6RJNASmKFpX3FofOhaoM9OdaMpQB6Xj4LgIgNsog65
+	 VYms1n0QIYM83TSiIdy0LQSgaBugIOmbuNFmiJW/9psFhVjbnZwOTrCrqqzjzBZfCX
+	 tmyXuwTYZiGPZ3IM++NLq6+haE6uqZmXREDw41mogiaVbRQD5rw8YfKV/k0Hzoz0kL
+	 RVSa5hJth48Wg==
+Date: Sun, 9 Nov 2025 08:54:12 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Nathan Chancellor <nathan@kernel.org>
+Cc: "David Hildenbrand (Red Hat)" <david@kernel.org>,
+	Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftest/mm: fix pointer comparison in mremap_test
+Message-ID: <aRA6lEQmmrvmj2DX@kernel.org>
+References: <20251106104917.39890-1-ankitkhushwaha.linux@gmail.com>
+ <fc051006-5cb2-49e1-bb27-7839837439cd@kernel.org>
+ <aQyOZ6eYng-IjxS_@fedora>
+ <6e07949b-d86f-46d8-a68c-9717cfb26084@kernel.org>
+ <20251107160855.58891ac6df6854a3b608185f@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ERe9ELmpjLeeLV7K/w=rF49";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107160855.58891ac6df6854a3b608185f@linux-foundation.org>
 
---Sig_/ERe9ELmpjLeeLV7K/w=rF49
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+(added Nathan for clang advice)
 
-Hi Greg,
+On Fri, Nov 07, 2025 at 04:08:55PM -0800, Andrew Morton wrote:
+> On Fri, 7 Nov 2025 10:27:27 +0100 "David Hildenbrand (Red Hat)" <david@kernel.org> wrote:
+> 
+> > On 06.11.25 13:02, Ankit Khushwaha wrote:
+> > > On Thu, Nov 06, 2025 at 12:18:57PM +0100, David Hildenbrand (Red Hat) wrote:
+> > >> On 06.11.25 11:49, Ankit Khushwaha wrote:
+> > >>> Pointer arthemitic with 'void * addr' and 'unsigned long long dest_alignment'
+> > >>> triggers following warning:
+> > >>>
+> > >>> mremap_test.c:1035:31: warning: pointer comparison always evaluates to
+> > >>> false [-Wtautological-compare]
+> > >>>    1035 |                 if (addr + c.dest_alignment < addr) {
+> > >>>         |                                             ^
+> > >>>
+> > >>> typecasting 'addr' to 'unsigned long long' to fix pointer comparison.
+> > >>
+> > >> With which compiler are you seeing this?
+> > > 
+> > > Hi David,
+> > > 
+> > > clang version 20.1.8 (Fedora 20.1.8-4.fc42) raised this warning.
+> > > 
+> > > To reproduce:
+> > > 	make -C tools/testing/selftests/mm CC=clang
+> > 
+> > Thanks, and thanks to Lorenzo for the details.
+> > 
+> > Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
+> 
+> I must say, applying this would be an unhappy life event.
+> 
+> 	if (void* + ulong < void*)
+> 
+> makes perfect sense in a world which permits void* arithmetic (ie,
+> ours).  So what the heck is clang doing??
+> 
+> If we do
+> 
+> 	void *addr2 = addr + c.dest_alignment;
+> 	if (addr2 < addr)
+> 		...
+> 
+> then which statement warns, and why?
 
-On Sun, 9 Nov 2025 09:49:29 +0900 Greg Kroah-Hartman <gregkh@linuxfoundatio=
-n.org> wrote:
->
-> On Sun, Nov 09, 2025 at 10:52:03AM +1100, Stephen Rothwell wrote:
-> >=20
-> > On Fri, 7 Nov 2025 07:20:26 +0100 Jiri Slaby <jirislaby@kernel.org> wro=
-te: =20
-> > >
-> > > On 06. 11. 25, 19:00, Ilpo J=C3=A4rvinen wrote: =20
-> > > > This seems to resolve the build issue for me:
-> > > >=20
-> > > > --
-> > > > From: =3D?UTF-8?q?Ilpo=3D20J=3DC3=3DA4rvinen?=3D <ilpo.jarvinen@lin=
-ux.intel.com>
-> > > > Subject: [PATCH 1/1] serial: 8250: Fix 8250_rsa symbol loop
-> > > >=20
-> > > > make allmodconfig build fails due to dependency loop:
-> > > >=20
-> > > >    depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
-> > > >    depmod: ERROR: Found 2 modules in dependency cycles!
-> > > >=20
-> > > > Break dependency loop by moving 8250_rsa.o into 8250_base and by
-> > > > passing univ8250_port_base_ops to univ8250_rsa_support() that can m=
-ake
-> > > > a local copy of it.
-> > > >=20
-> > > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > Reported-by: Alex Davis <alex47794@gmail.com>
-> > > > Fixes: b20d6576cdb3 ("serial: 8250: export RSA functions")
-> > > > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>  =
- =20
-> > >=20
-> > > LGTM, thanks for the fix.
-> > >=20
-> > > Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
-> > >=20
-> > > If the reporters could give it a shot and mark this by Tested-by, it =
-would be great... =20
-> >=20
-> > I have not seen this for quite some time ... I assumed it had been
-> > fixed. =20
->=20
-> I too thought this was fixed a while ago, what changed to cause this to
-> happen now?  Anyone have a .config to reproduce this, 'allmodconfig' on
-> x86 works for me.
-
-Actually, I think the current report is for v6.17.1-rc1, so maybe
-something got missed in a stable backport?  My original report was for
-next-20250728 (July 28).  The only response I got was on October 1,
-but I am pretty sure it was fixed well before then.
-
-Also, you probably only get the error when you do a "make
-modules_install" after the allmodconfig build (at least that is where I
-got it).
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ERe9ELmpjLeeLV7K/w=rF49
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkQNeUACgkQAVBC80lX
-0GwmQAf/fM0Bs9Nfx/z6nbUfIRZh8/1JVIQNV2aTeD1nt7G9YH6EjT2jvAQJTEpe
-B5WbwQG80WyO/PHh+7PjVfH8Y/xHJU0d0dbrtsMszYxTBQYuD9zLpxx09Iiz0MaT
-bHlI1N0rJ893GJYEeuq5SzwibY8pUcxiCT4H5rsWRq7LNuHDwNzpiNBiHnFh48Ay
-DoyenNiVlX3JkCFcc+Ah4ea5HRUPVyb06+3eoyXaME66pgpHhJ05TWXiUUi4QzDe
-ubnkMJp8TyDqD1WIgksONjX3NG56UgxETgjjEkdMJeXwAtpEnXjm5NyHLIk+UmHJ
-KC5P964Z6NAdSbrylNjVJ2nTTaipUw==
-=TzBH
------END PGP SIGNATURE-----
-
---Sig_/ERe9ELmpjLeeLV7K/w=rF49--
+-- 
+Sincerely yours,
+Mike.
 
