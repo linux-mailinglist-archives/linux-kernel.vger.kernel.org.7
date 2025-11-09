@@ -1,58 +1,92 @@
-Return-Path: <linux-kernel+bounces-892057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07102C4436A
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:08:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA24C44370
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:09:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C216D1882236
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:09:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6096418829BC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D906F305044;
-	Sun,  9 Nov 2025 17:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878ED30505E;
+	Sun,  9 Nov 2025 17:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uk8IVwQh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FHEAtoyd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3202F2FF147;
-	Sun,  9 Nov 2025 17:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF4F30499A;
+	Sun,  9 Nov 2025 17:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762708125; cv=none; b=CGRD8YWDfssZup8bcYJulqLH/LXBdJ8KQraDi9qFn9pmursJbmsa316yv/iGWOjbr1Y4+5BSblWoGo6zMRdEkdSt9KwsNTqgWpjxav50WYbNeiW3wx284sxPTWmdxZXdHC06WUEvvRbI4cy2Nr/4mU8UjaLC59rgUbv8GqLGSt0=
+	t=1762708169; cv=none; b=uA5TfXQOxcrIxOC672QwOfPxW3NTGkJf8mHvHEry8XJ2tId4VCcpc+zgA0tnaerGSEBP+U3YSpOUS3m3bXez43Gv0o5yfDLqhRlqolN4mdnYQOr2o3hTwgCyz4uvUYBaIbWWK+wOkI/A337kxXxX1/pDQTFvImOIKYvhSg2BQ20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762708125; c=relaxed/simple;
-	bh=ET1zFUZTZRnzMVHdUq9/iGHDQDRbTzMHvG3AIriBGSo=;
+	s=arc-20240116; t=1762708169; c=relaxed/simple;
+	bh=ifyQCECAtBcQxgR5E0pL//6P+IXt1bCDRYzHSxJKPtk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cN+xG58aRJS7Ukz6zTqI9FiQPQXqrO6X0zTPniciKseDal6Le+b6lGRqsCaeqFD0AQMYDmwNFh6iQXua24TIpK8KZOQRFhXa2WTMTyXh8ioiHRjA6PGiSxAwP73w4o7MSXC+FD5kSkeK1pGBZeMKVqmxs/pK7RBFMuv+fZag4Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uk8IVwQh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D15C116B1;
-	Sun,  9 Nov 2025 17:08:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762708124;
-	bh=ET1zFUZTZRnzMVHdUq9/iGHDQDRbTzMHvG3AIriBGSo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uk8IVwQh0VOPTSgkhsyAP5awGCF7kD/7XLwTBhztlDI9xfMCkrbomuammpNj/p6j+
-	 VfrdLjqdb7/12MJZTe1VimPRdieQWsTAKhtpvCexwmMeEI45iV9koopEAs34CKn23h
-	 TKW4eT7ycao3l8mqbOUtTkgdtHKHzmKZFW/i/EXuwLthKDEC3fhsJsEh/hUbQ6EGuQ
-	 em7oHrSIjMMStOPtDz/nYXdSCnrCvziFb+kHgde3htv/Hj9gQ9l85I1EO2jRy1wpom
-	 W0Js1ZlsSdzfWOZzPEJxTvBz+t/k34hd96dZd8S8UBThehLlz/Ixjb0dhwISY+tcPF
-	 3IxUxSnYjCxnQ==
-Date: Sun, 9 Nov 2025 18:08:42 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Junjie Cao <caojunjie650@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: leds: backlight: Add Awinic AW99706
- backlight
-Message-ID: <20251109-righteous-dove-from-saturn-9b9bb3@kuoka>
-References: <20251109032240.3422503-1-caojunjie650@gmail.com>
- <20251109032240.3422503-2-caojunjie650@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y7xNFgmRPzZ7maCsyVQRkQd9QJ89B2yTz80k1aXuN0SsJFSJKk+UNBDWkDvE01SmLUHHxthQfbIvCJP3ZLpHnRQJZjYaDFoxJ0p7OVCaRcP77tQz+vxVYG8k6GAyKj7Vf8yIAUzbFP9/wqUTGv9WhW39QYVj/0+ivLgJHYAH6R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FHEAtoyd; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762708168; x=1794244168;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ifyQCECAtBcQxgR5E0pL//6P+IXt1bCDRYzHSxJKPtk=;
+  b=FHEAtoyduAx6F1X+/yWxwweWKEMEi4TEVtbbiQI5pk/9VHvjH4yL8gv7
+   rwOAleNQFE0lw9wcq0QU5nKRaAVRzCbC4sLjuazSqKMXrqDB976hjc5CW
+   /dy8jYCCo+6LBJ+JvN6tpvvhxRsbNqJt00ezo9xshqD7wqIFBrnqwj94i
+   mkJNaWsx3iHC4Nx7ijeTvjz7gmHSHXXNkEJ7wwoSXtTTCOC/shBrsjlXJ
+   5Pj9g5GguEEu4CAixS2pKLlDneJAF7wV7e8742l+CexRCLoi78yIwyLUw
+   tEg+Z31wajslv2IglddUDKXbAtKmHInasqH0HFXAw1PfEgzusXrMpBVqx
+   A==;
+X-CSE-ConnectionGUID: xXY5ekOjSdWDac1B/Akvig==
+X-CSE-MsgGUID: R9sYzihvQEiufqqTIhVNRQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="76228425"
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="76228425"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 09:09:27 -0800
+X-CSE-ConnectionGUID: Fd17s4YwRPaADzaVcPLRjg==
+X-CSE-MsgGUID: sw7bb81sQ7+538g9Rlqp5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="188327592"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.185])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 09:09:23 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vI8um-000000074ls-1h2F;
+	Sun, 09 Nov 2025 19:09:20 +0200
+Date: Sun, 9 Nov 2025 19:09:20 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"chrome-platform@lists.linux.dev" <chrome-platform@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+Subject: Re: [PATCH v2 2/6] units: Add =?utf-8?Q?32?=
+ =?utf-8?Q?-_and_64-bit_signed_values_of_=CF=80?=
+Message-ID: <aRDKwFkjOSfypJVW@smile.fi.intel.com>
+References: <20251107201005.3156118-1-andriy.shevchenko@linux.intel.com>
+ <20251107201005.3156118-3-andriy.shevchenko@linux.intel.com>
+ <fb4aafc1-dbfb-4533-b368-5d26e24acdf1@baylibre.com>
+ <CAHp75VexvdYyjt1GkbfqOotkFpLeb=io6outJ5dpRqBv2qPNng@mail.gmail.com>
+ <20251109170032.2763ae5b@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,21 +95,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251109032240.3422503-2-caojunjie650@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251109170032.2763ae5b@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Sun, Nov 09, 2025 at 11:22:39AM +0800, Junjie Cao wrote:
-> Add Awinic AW99706 backlight binding documentation.
+On Sun, Nov 09, 2025 at 05:00:32PM +0000, Jonathan Cameron wrote:
+> On Sat, 8 Nov 2025 21:02:54 +0200
+> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > пʼятниця, 7 листопада 2025 р. David Lechner <dlechner@baylibre.com> пише:
+> > > On 11/7/25 2:03 PM, Andy Shevchenko wrote:  
+> > > > There are a few drivers that want to have these values, and
+> > > > one more known to come soon. Let's define the values for them.
+
+...
+
+> > > > +/* Value of π * 10⁸ (fits s32 or signed int) */
+> > > > +#define PI   314159265  
+> > >
+> > > It isn't clear to me at all in the other patches that e.g.
+> > > DIV_ROUND_UP(PI, 1000) would be π ✕ 10⁴ (rounded to nearest
+> > > integer, of course).
+> > >
+> > > Calling these PI_E8 and PI_E18 or PI_x10_8 and PI_x10_18
+> > > would help to clear that up.  
+> > 
+> > This will be an awful and ugly name(s). I fully disagree on such a
+> > proposal. The power is chosen to fit the type with maximum precision, no
+> > need to explain this in the name.
+> With no indicate of the multiplier we have to check it every time wwe
+> use it which isn't ideal either.
 > 
-> Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
-> ---
-> Changes in v3:
-> - breaking a long line (Krzysztof)
-> - rename backlight node (Krzysztof)
-> - Link to v2: https://lore.kernel.org/linux-leds/20251103110648.878325-2-caojunjie650@gmail.com
+> So I agree with David that we have to indicate this somewhere. Maybe hold the
+> multiplier in a separate define
+> #define PI_MUL
+> #define PI_MUL_LL
+> 
+> Then compute the divisions by (PI_MUL) / KILO or something along those lines?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I see, we have a disagreement here, because I don't like to uglify the pure PI
+definition. So, please abandon this series then.
 
-Best regards,
-Krzysztof
+> > > > +/* Value of π * 10¹⁸ (fits s64 or signed long long) */
+> > > > +#define PI_LL        3141592653589793238LL
+
+Note, this constant is used a lot in the tests (3+ modules), so if you go with
+your version, take this into account.
+
+> > > >  /* Hz based multipliers */
+> > > >  #define NANOHZ_PER_HZ                1000000000UL
+> > > >  #define MICROHZ_PER_HZ               1000000UL  
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
