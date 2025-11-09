@@ -1,499 +1,375 @@
-Return-Path: <linux-kernel+bounces-891903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88AFC43C95
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:17:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D7FC43C98
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:17:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D45B4E7378
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:16:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 724EE4E36C5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0774274FC1;
-	Sun,  9 Nov 2025 11:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dOb1Acyj";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="APeD3YWS"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABE952F88;
+	Sun,  9 Nov 2025 11:17:33 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC952DC76A
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762687005; cv=fail; b=q2lM6o5IoWpQN/6Yx9qPsvUVsVE/MLQKGbgo1EVNHEaGfd+4d15D3dXjFyJevyWwnTbnr3tDaGZ0L/JKpWhfdDy+gDzvJjdvLXU579D4wM8z/MdoTNZfFJHKKitR80j8ZfzSB+UdBGdHqdzRRyq4LuJTuDJeSNTBSrdXQCZbEcs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762687005; c=relaxed/simple;
-	bh=Ikp7AuquG3cZFeZvpF5HIA0Kib3ZcN0pVJBjGgk21/w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PtcuZKTOdbgp/JbMr03TM4uf8cy1eqH+MzfIbh/uGLdTYPiouz/1qjw2X61ot3DkUG3QHMSqVt2Xur79o1cwOMzKwdLOTD0KWHVvkyHTHACKSNcfFdqQetW7f/7NY/tte8AEW6q/ImI8pIAtlP8QwFQN9hzXCFL0VJ0Mm01IGFw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dOb1Acyj; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=APeD3YWS; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9B02Vg022883;
-	Sun, 9 Nov 2025 11:16:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=5/1uDiVMCHo5gUj0IjNrrQ9S1x+HUJUrTLxagpQs0w8=; b=
-	dOb1AcyjFDIUX9yrYQrZA2TwQucakwA4hCpUKgRXWtPViElV3MN3KYiswhA34KoH
-	IkTYJ2fdosD9jABpwbllfQnnZczdr3LwTnIBfbGXx1jENItUTnkbgnI7OFQJZVCD
-	s9E5ewOAD8XX1H4LwqGqHWGCxlIsis6sURUeoqBR0+YHNxf0su0sh25wDnRg53Kh
-	NEdtrGgDoX6ZxmSKgDlYepI25HlGe2XjvOSF/7lnWn6G6WuuhT60HRg7bybgC6ZR
-	QLRd3zXVAtFC51qKnBBHB04aXnHloscDXzVxk3VqRhicgbHivTWunSmguW918gsG
-	5CHt1duYkBkmAbHdKY3mbQ==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4aaspt808v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 09 Nov 2025 11:16:23 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9AacEX012715;
-	Sun, 9 Nov 2025 11:16:21 GMT
-Received: from sa9pr02cu001.outbound.protection.outlook.com (mail-southcentralusazon11013034.outbound.protection.outlook.com [40.93.196.34])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vaap69p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 09 Nov 2025 11:16:21 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ncbNbQLAaQqh1wrSFthHvy8wd5TAqa6i/tN9POjgMaob8tRELqCd0rT6aXGde24pSy9Mutpzq+9lIcSmBrgn03C3u5R7UADvlnkg8UWH4NnqV5V3+AcIXUp3h3KXHnEDHp7/GJzTR0e0PJ2P/GFTO+URt6NQUw1zyWWdtSmi+4piQrolUhSLzE4PG7aHJAmLiMmKt6ExJs/18QmHYCO/18mMYcMP9OKUD4b8uIuXXy2JLzD2Z0W+AOKi4yYDd857D3W/kVemRBRBQ+zCisf/iw42UeKpc8EACQc5gubDYofClZp2/h7Yir/88yfm1LPE3N8Ur9P7Xy0ttgwcCAk0Lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5/1uDiVMCHo5gUj0IjNrrQ9S1x+HUJUrTLxagpQs0w8=;
- b=nmQrTFqaq3QoJffVSWt/jL9wS+2aS47Rxbqz7iZfrIUT63+NdqLRKoKiyn3ClQJwnh/vZa1ks6ZdBSFBl2ygmPL4upROuT5Yi8p+tYlicp7S6QaJ+uUcjT85hePfO9Kj6JO+Xh/9yxekCMERp/mKLCdhmD0bsvROZwZzH7ZPiZgYmY5ivZ8OFzCniMZONi0OUY6UGuzJAk2JIVksie9X7FXdB/m9E4UDwP3Zj05LXW1y4aOGgvcr96goj9rigJEK6zf4lQklumY/1gLwZYjH9FPrlShJ49Y6WzVxbrJdfYQ3jpcaWCSik2j3mse/H/9xH6rk899dPcTpZUxrFhtPAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5/1uDiVMCHo5gUj0IjNrrQ9S1x+HUJUrTLxagpQs0w8=;
- b=APeD3YWScAFmHSn8UAC2Fz8rpAu8rbWmMvGwHllSqQTd6tfEdfofti8KK0OUZUL8JgAfvPtSusF15l5Gq6GH8ZTGNIIhDtIQeRKVuRDhHTF1movyPOy/noYRN4hVPY9lK/6YBJxh7t6QLy2rIOegEtrs+Cd8+Ix0gskst9zNRy0=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS7PR10MB5197.namprd10.prod.outlook.com (2603:10b6:5:3ab::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Sun, 9 Nov
- 2025 11:16:18 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9298.010; Sun, 9 Nov 2025
- 11:16:18 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Jann Horn <jannh@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mm/madvise: allow guard page install/remove under VMA lock
-Date: Sun,  9 Nov 2025 11:16:07 +0000
-Message-ID: <d246c206e2df45cf15ccfeb33124809dafbe1eba.1762686301.git.lorenzo.stoakes@oracle.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1762686301.git.lorenzo.stoakes@oracle.com>
-References: <cover.1762686301.git.lorenzo.stoakes@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0035.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:151::22) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6E81A840A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762687052; cv=none; b=LQrCKM7bCUI+YP5Dg0nOmxAEOpEeJvQZq9XiRT7qbOL92irDOWqCAWwdSHeT5sF8d7+l6u4AYBsyVEPuK2laMwIBG9W6fNRhgsOnSDLvm+jeny5O9EzqqqVxGI5oTWQM/dlkLRHRG4b8rjf68uLAaOhTgWjQjx56YdB/FIsTlQw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762687052; c=relaxed/simple;
+	bh=bvtiiBkxU0LA/V3BYi3rHSyFc0Clea0LEfvnBJPOJs8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gx7/eNNuGOWboMNyq5MXpoSxpLgUuTG1xNGt9GwsV4RzaVxNvCfVB5IYahb15IRDTHpU6oZoxaZIyXmDGptQHuPzPr2SgmFcpHiFx3t8Uc3oE5EXgF18dYKraqnz5wfJUP7swtRFlqB0+QZhj1KKaRtNWUnnkcS8XSOY6xlymBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-433795a17c1so25342745ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 03:17:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762687049; x=1763291849;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=haQMTyPIsifKChp8FfRY1dcpm+l01Ss3eACgO8b/HSs=;
+        b=E5nZNJsmSQ+xVfc7xJ/tHhiu0vwG9iHfLD34fYAGMTdixKpHXpWfk77/nYnFxKirgO
+         AfM4jM3ReWQpUGjzZzrfsG61fSIxLWzQfpX/k2SEHcX2IhuYf8A1xnuRmyQY8i6M/cY9
+         MlwT6+I73l/wZDw3DC6QYwmMGEjQw3zSn9n2EcTxthEg8gl94xLrz7W5oSaWbomahhon
+         Nx9p1a+UToMBrhWXO5NVL7bgmmH3PAQA1KMdtXwDrdRoQuFG9CtzetgQxXjhhKwBaxmU
+         i+MoHHlSCkbAyBnAoBBHRueo3MRrjlmWmK25uDTKKe/nHMQ++1WHLvPFIYd6ML+74REs
+         Ue1g==
+X-Forwarded-Encrypted: i=1; AJvYcCV+vh/K8XndT6ayB0e2NrQiCrR8bL/qDduRHWHasb80nR7u1K3+7Ui6Cx7xm2k55lcq6197nWRjIQSDPWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi7u49haXjI7UDEW2PHnHJD+pV0VY8eSGsyL5WM4mNRe0Ap7L2
+	9Ey4MNR8EWQukctztPudNSrq3kWzfjlq8kinNTgoqRygIs8Nn0i/jM20q+9a+U+YhWwSnlLP2qm
+	87GhsbdJKxy3FKyKzAaHQiGzVDP7+c8QZtc+8Kjmunr6a0/TUaDyb/UdbRq4=
+X-Google-Smtp-Source: AGHT+IFyZGQavHB8D3zHcu0vw4WOGpyxjxm9N3HsSnlhZEXThikpRwEwXFR39KdPAr1r9Bv9UTWXh9/hrT2At18W+IwyxaInoQxT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS7PR10MB5197:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f058af3-1698-4159-339b-08de1f8167cb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?R1zJHumE29kGRiWRejW3csp8oVN1a+BmsQ856+OAUN3gNkzuzbzpdq9Tx4yf?=
- =?us-ascii?Q?N9K38ftIb7YpeNZjlizB6AYl60j4B8Ir2y4sVtu7fY0iyiTiwOehz2lua/DY?=
- =?us-ascii?Q?aE61K2J76ikBtfuNshg/OjCjMZqdfimeC1VTY6omiJS9lkKbiT9dh/OQQpT9?=
- =?us-ascii?Q?J+cr83dzKYlSQ04JqAp8ec2YJtuWqvJkRllp63YRQxALmpAybavYqKoE3rgV?=
- =?us-ascii?Q?5z7EddO0sj8Ov2INXIwdSaMJB8djRptQrYrkb1n++hfPzO55O5ZWxU//UES3?=
- =?us-ascii?Q?jm+zD3277uoAfwJRMl2EtvAyZcahnOe2ZsgWMZpLeyD+z5Khg1/X9xDigXpm?=
- =?us-ascii?Q?w+FtJpyFOYTwVjQijUNBblFoI6MuE/qAD877fBD06VgMSoass/Fst8OTXGUn?=
- =?us-ascii?Q?gckCP73lWpqcyBWqOHRcOL7yGinhsiaqECqh8nsQf+tQfSxS43iB8oP9/Oxj?=
- =?us-ascii?Q?Js3Ugi1189KbWqJijwd5abvqAGBHKUwYJSHogEgYwgt/djJdRqRbHuj3pjjz?=
- =?us-ascii?Q?1Lo+thLGd0j6pq0LbgcPbAfueb67d03JuFpmW/o5fWZ7yV5VIQXraS0hgJRe?=
- =?us-ascii?Q?Hei6NbS0lBx434wGGUNeHW5fR5jSXcZTkKiyCEKuNEBwV0Wrq4dFRv8NnTRy?=
- =?us-ascii?Q?v2haNF4c5wuW3hJQJbtNMAKez4VDPit0zXCMYDERKfnf/u+u8Z05K+B3s3/3?=
- =?us-ascii?Q?JT//A9DUOeSeV9LkxQ4VSnot3B1kAC7l4FPhn6I9T0aDCjyf1gJizZI4hH5S?=
- =?us-ascii?Q?n33KvxUeb9XE/ei7UxT+jDuSZzlVSXTMnQhX/C8YAks5u3d4WwNtMII/zmr3?=
- =?us-ascii?Q?PKJgGd3/gg7kPuwzfAuFjEz57odcIuAk+o4+rhGrrnEvEerCWn8lmZGUQETx?=
- =?us-ascii?Q?eLClHh37XANxpMIoThGA2avY24kEX3gOF8og328ptBTLF3bI2QL/KSqfRfEI?=
- =?us-ascii?Q?qgoUVdi3mgj8bp7ipbATUdPv9Bl7+8SkCMSzHXoY3BUS/2vd03b/rVhR9faL?=
- =?us-ascii?Q?ThkbztSthrvFZgtmojoI4PC7t339BpG3qBm7fNuTtIrPNt8L0rtg5FhumcVK?=
- =?us-ascii?Q?bbxCK4e97wsqbPJczcvP1WEhvGg5taeyzLECfmrJt69Rs17heoAvOdocibyx?=
- =?us-ascii?Q?tbZ98ovZ6PqU91ApEiL+GVQZRzjszmiqJIhU11qg9JLkjPr3pqMYoQjNIOvD?=
- =?us-ascii?Q?jNZHPgJblUk8HZ5kv/I2JZvxF944+MliulIZkVzX4PVoCGLqR/6tnyMOFsj+?=
- =?us-ascii?Q?yPsl7BKvwPi9IvbU3RgolKCevEzCzOmIagqfpYl17wjH11lPoIAegc9ZY8uI?=
- =?us-ascii?Q?6LAq1TFD+fjvYjt60/ThwH99LbtCmMwkKaQrqkXRZNSAAJXgc3MPZ7nsOaID?=
- =?us-ascii?Q?QsjLOVd1y3yP280JBYrkZjjuI6NE6d/8q4Abtu6nZGXpt1FBOH6LQFq7miz3?=
- =?us-ascii?Q?kPhxX8vrXI+L2CeNmZg3QvSFArLyTFVN?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ewppgwDwHloswvMGkxe9AEw1/O5Yys+nKaNsn6DTxX9uC5NkXi3oBkQHnbcv?=
- =?us-ascii?Q?BDI8bV2i2rSkfM//SARSEVh4jQpSGtut1HTQYtJBQE0LodEb6MgdE+yq3cdx?=
- =?us-ascii?Q?DgB9OP23VmOW0kxQ6I1IrSNYT9YxM3ycQE1WtME0W9FdIIcaiazX+U7jwiPB?=
- =?us-ascii?Q?eYC6qhsGtuZtP2aJDh9jMtCKPfKb66pxZt9FflMtGPSSb1iJ6Lw0UcxIKsQg?=
- =?us-ascii?Q?1q5Yk2+eBVL51f0xPtnfAwzYlEmT/+9GihZLXFIbNilKca7yodO4Lyg3Hn41?=
- =?us-ascii?Q?/I+Wcsbs9MXs6UjY+G9lIIfs8ngFoRC+M4UH+BOuGZvEtmqIISDYgoDB37c1?=
- =?us-ascii?Q?SpOTXGTTy9AlVnXVEL49wcL0w43ul7ZGWMiiE0m7OfsholEHB7JtnI/OZQDs?=
- =?us-ascii?Q?/Oz5QcUoaAd8x2ICCh59PiTyCt6GIAteXd+Sv1z9n1+n/7afadwnVM6Px7x4?=
- =?us-ascii?Q?cBPm5y/BAQ2oT8Qkme4AoPy53udu6LxCmQYrGwddwBzcDDsI0kk6g15Rulmr?=
- =?us-ascii?Q?E4MartnwzEJyoqqtS6a48V2TZTqW3xN+G0q8b4PGLzt0WDzVi4tPY6SM+N2p?=
- =?us-ascii?Q?Op7+crqSIvpVMqRIj1SOgre+u7zEwrSvdsMivmt5Z0k2j2t8gtGadTPYSSQ0?=
- =?us-ascii?Q?SAzJeT2RbfkHdzHetVubmyXqPBsnXXLiXvgdJsK2pXTILnp0A4J9QWWkgz4F?=
- =?us-ascii?Q?/0nhVY/1ntoFA0t8gclbC7uOQDfS+B7vDZEQx1VjWLYPLpHi8Inw26+Mbfqg?=
- =?us-ascii?Q?NlL8vxXkGtt+cZyWyix3Q59zgqXJMmpB1ZvRhJYed7hjZLqEGeS7YR37gHVl?=
- =?us-ascii?Q?iGPA8CUt6MEec2ypahBCpKFhEdzK7guHa9tBrqLqL4PXSgOY6fqlB+Sf+2FI?=
- =?us-ascii?Q?8hhs/n2DEqQHI36iVMyqJLe8UgA7fxASvK1wFbxNihAHf0t9X2e43wN6bUex?=
- =?us-ascii?Q?a8RiNRlFsod+ZXlQ58gooTW7dFi4rjVi0AN+WwQ5DeNnq6foZrDrHCrpGfe9?=
- =?us-ascii?Q?BDdP1+TuxfnSeanr59+hYrwPtKyF3nSRibqT+SoX7Is+In6jGz8jaI8bDnI7?=
- =?us-ascii?Q?bhwaedFihK+UNCr9JpWlrUx3O/EITE/J5pvYZ+Y6HlL+g3wnGhN7lNO9GUqf?=
- =?us-ascii?Q?i8FhWec6o9zvmkmLCrG/3b4OiX5EUgJyyHQHrqkpZsM4ga5pNqwxN7xJ1ZPj?=
- =?us-ascii?Q?zdI63HF4UIwJqu8f125+6UKFE/i+rMRfcNU3eNigMFUypW47iF/y+ibErs7R?=
- =?us-ascii?Q?8VXqi/0Ydx6UsLfD2kQ3P5p/brDmPuIi5atselsIxV+FM2ensiULQSWQyvMV?=
- =?us-ascii?Q?KX2IgvEqm/U3mLR0aPVVtHbOM+QADtILftRr3Vw6lI+psrhoygFhPm+u7tym?=
- =?us-ascii?Q?xd6/gAapQ8aeLSvfDZjlJipEp7JeqWu0Coz45gY9P4DK+rtNfK8w5ifCTZUc?=
- =?us-ascii?Q?dutgQrIsLzco/fKIsc7mX0AVRmVqYF9MpjDcMKKgKUo7v2yeiKxQHNDqQosi?=
- =?us-ascii?Q?ZAnNjpPDnLK+3lCAPuZxmBKbcxXHLsevMBvAvj6mtS6en7uR95LYw13h9YlG?=
- =?us-ascii?Q?AXE8bdyTlP53/GNs8rmZekT2uGuiVkC5NFpbeTqZvplCijNOFp7mz/haozn9?=
- =?us-ascii?Q?pg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Vliyk/Uz6I0qBaZyUMUkj57BJp7Bk6RItlvKBkq1dLz/HGxRbkAOo32idYY/Iz6CqGZRyB2TSu759Tj/9UbB6YvFHkFg/w4mMg1uM+b1gxFo9iNaGmwbiExlIaH/mJc4M8DNyCe8m6Dxe9b0qgAGKo8UCkRccrAdaPIxkCD1IkA0x1qGacR/pZJhuuzi42I6pWfTQKZ8GbjcYLVrxCaBAmBSmOINDEfJgY9YfCOrtBT/pmkQ681xE3LIncbJbYgYHyK6fn8IL4+VH8k3PnJKLWJ+MrC/exp8nN3yJDxZXvG/JlYodLl9o5Y9NOkhtrPoksO7nHpFKs2JfPoLSm/2FnNST+t2SlE3hk9bsre2+xGWbujHi8VDlSMc7BqxcyEnbeVHBJSFgLbBKg8sUKqkTeMm2UYJ4Fh1qG9GTEso4/Ly/GpPc9FMkHMmGdnHl+meoGX2tIc4ichn4j8ohV+8ngeONlpgGrD2oiYogGqwa0eq7GgC+bUbNnhNLEs56fR7BXlW/vTXLh3+OqT7OTMfh70AIQ7Vho9dyxc64zfrvcCN35MlyhDDokLVLxSkD65w1E+cI9gEhPgukIn1cnYvQG9JLLfwcnZJ1D2iMmEN5ZY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f058af3-1698-4159-339b-08de1f8167cb
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2025 11:16:18.7357
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KDQx8Wfk2Y65YXAks8ZVabl8fXEPcc4A5TO7VrUmm4+yAjgYPq4oXnXJGYWpjd+LIbJiO3rRMcmXjdR8BZGBjlW1qdXRLW2o925CCeoRUVg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5197
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-09_05,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 spamscore=0
- phishscore=0 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511090099
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA5MDA5NyBTYWx0ZWRfX3XKO+xOAARvK
- IH1qHrcndYJ+tK08/wmSLxi4JNKsSgJsBbh+/PncNb0Qbq+CMa+qohhkUzqdH/gcWcD7eJGWDGE
- EWSPC0ssQEwDJuutHU2dvIOLq9O69l2f1f9h4Qa6BkR0gMTK33Br3dyqTS4a3V0vmblEGGflQeY
- +6KIGlek/9Q8uhEIHcMN65r+evr1OZ1/cPqX6hMB8tbRPICjexpGgBD2vfN8sJ2vOUYI6qyDzEf
- i8s4qtI8DEoYuPebwml6NC3Yxw0edZbcu5C4/vRmXPHXQxsxqN6rpAtXKVA2yrPOWoltpz9MVAG
- 9q3bDJbfSKmRWBnVO2+PQPl/UHtVz3H9WXs9rC+EqzoTvDMvg1OFc6xUp5J+piSAZm+4Hqi4UaC
- iSI10EK66GB/BAHtWiuMsrweS23flNHNUMsAeDNCyTrYqLVAm7c=
-X-Proofpoint-ORIG-GUID: ZW1TbjWfMlxklxYm_C4aWW0038eAnqJd
-X-Authority-Analysis: v=2.4 cv=FpIIPmrq c=1 sm=1 tr=0 ts=69107807 b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=6UeiqGixMTsA:10
- a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=Wu5hNObr_TVTc6B2G3wA:9 cc=ntf awl=host:12096
-X-Proofpoint-GUID: ZW1TbjWfMlxklxYm_C4aWW0038eAnqJd
+X-Received: by 2002:a05:6e02:198a:b0:433:7885:60f6 with SMTP id
+ e9e14a558f8ab-43378856437mr33768445ab.17.1762687049404; Sun, 09 Nov 2025
+ 03:17:29 -0800 (PST)
+Date: Sun, 09 Nov 2025 03:17:29 -0800
+In-Reply-To: <6703a6a8.050a0220.49194.0500.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69107849.a70a0220.22f260.00ac.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_write_info
+From: syzbot <syzbot+94932b9f2c4c6a9e8fee@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-We only need to keep the page table stable so we can perform this operation
-under the VMA lock. PTE installation is stabilised via the PTE lock.
+syzbot has found a reproducer for the following issue on:
 
-One caveat is that, if we prepare vma->anon_vma we must hold the mmap read
-lock. We can account for this by adapting the VMA locking logic to
-explicitly check for this case and prevent a VMA lock from being acquired
-should it be the case.
+HEAD commit:    e424ed997df8 Merge remote-tracking branch 'will/for-next/p..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=13831412580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b8b659f0cab27b22
+dashboard link: https://syzkaller.appspot.com/bug?extid=94932b9f2c4c6a9e8fee
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13d58412580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14501a58580000
 
-This check is safe, as while we might be raced on anon_vma installation,
-this would simply make the check conservative, there's no way for us to see
-an anon_vma and then for it to be cleared, as doing so requires the
-mmap/VMA write lock.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ada05b916921/disk-e424ed99.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/674414e6bfd1/vmlinux-e424ed99.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/67ca98bd56a6/Image-e424ed99.gz.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/485cd50bae2f/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=12792412580000)
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/f916e0691d68/mount_2.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=158a517c580000)
 
-We abstract the VMA lock validity logic to is_vma_lock_valid() for this
-purpose, and add prepares_anon_vma() to abstract the anon_vma logic.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+94932b9f2c4c6a9e8fee@syzkaller.appspotmail.com
 
-In order to do this we need to have a way of installing page tables
-explicitly for an identified VMA, so we export walk_page_range_vma() in an
-unsafe variant - walk_page_range_vma_unsafe() and use this should the VMA
-read lock be taken.
+(syz.0.52,6850,1):ocfs2_mknod:317 ERROR: status = -5
+(syz.0.52,6850,1):ocfs2_mknod:505 ERROR: status = -5
+(syz.0.52,6850,1):ocfs2_create:678 ERROR: status = -5
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.0.52/6850 is trying to acquire lock:
+ffff0000c8ae4610 (sb_internal#2){.+.+}-{0:0}, at: ocfs2_write_info+0x114/0x324 fs/ocfs2/quota_global.c:997
 
-We additionally update the comments in madvise_guard_install() to more
-accurately reflect the cases in which the logic may be reattempted,
-specifically THP huge pages being present.
+but task is already holding lock:
+ffff0000ddce5be0 (&ocfs2_quota_ip_alloc_sem_key){++++}-{4:4}, at: ocfs2_lock_global_qf+0x1a8/0x22c fs/ocfs2/quota_global.c:314
 
-Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #6 (&ocfs2_quota_ip_alloc_sem_key){++++}-{4:4}:
+       down_write+0x50/0xc0 kernel/locking/rwsem.c:1590
+       ocfs2_lock_global_qf+0x1a8/0x22c fs/ocfs2/quota_global.c:314
+       ocfs2_acquire_dquot+0x258/0xa10 fs/ocfs2/quota_global.c:828
+       dqget+0x654/0xccc fs/quota/dquot.c:980
+       __dquot_initialize+0x2d4/0xa80 fs/quota/dquot.c:1508
+       dquot_initialize+0x24/0x34 fs/quota/dquot.c:1570
+       ocfs2_get_init_inode+0x134/0x1a8 fs/ocfs2/namei.c:205
+       ocfs2_mknod+0x734/0x1cf0 fs/ocfs2/namei.c:313
+       ocfs2_create+0x190/0x474 fs/ocfs2/namei.c:676
+       lookup_open fs/namei.c:3796 [inline]
+       open_last_lookups fs/namei.c:3895 [inline]
+       path_openat+0x12d8/0x2c40 fs/namei.c:4131
+       do_filp_open+0x18c/0x36c fs/namei.c:4161
+       do_sys_openat2+0x11c/0x1b4 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __arm64_sys_openat+0x120/0x158 fs/open.c:1463
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #5 (&ocfs2_sysfile_lock_key[USER_QUOTA_SYSTEM_INODE]){+.+.}-{4:4}:
+       down_write+0x50/0xc0 kernel/locking/rwsem.c:1590
+       inode_lock include/linux/fs.h:980 [inline]
+       ocfs2_lock_global_qf+0x18c/0x22c fs/ocfs2/quota_global.c:313
+       ocfs2_acquire_dquot+0x258/0xa10 fs/ocfs2/quota_global.c:828
+       dqget+0x654/0xccc fs/quota/dquot.c:980
+       __dquot_initialize+0x2d4/0xa80 fs/quota/dquot.c:1508
+       dquot_initialize+0x24/0x34 fs/quota/dquot.c:1570
+       ocfs2_get_init_inode+0x134/0x1a8 fs/ocfs2/namei.c:205
+       ocfs2_mknod+0x734/0x1cf0 fs/ocfs2/namei.c:313
+       ocfs2_create+0x190/0x474 fs/ocfs2/namei.c:676
+       lookup_open fs/namei.c:3796 [inline]
+       open_last_lookups fs/namei.c:3895 [inline]
+       path_openat+0x12d8/0x2c40 fs/namei.c:4131
+       do_filp_open+0x18c/0x36c fs/namei.c:4161
+       do_sys_openat2+0x11c/0x1b4 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __arm64_sys_openat+0x120/0x158 fs/open.c:1463
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #4 (&dquot->dq_lock){+.+.}-{4:4}:
+       __mutex_lock_common+0x1d0/0x2678 kernel/locking/mutex.c:598
+       __mutex_lock kernel/locking/mutex.c:760 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:812
+       wait_on_dquot fs/quota/dquot.c:357 [inline]
+       dqget+0x5e4/0xccc fs/quota/dquot.c:975
+       __dquot_initialize+0x2d4/0xa80 fs/quota/dquot.c:1508
+       dquot_initialize+0x24/0x34 fs/quota/dquot.c:1570
+       __ext4_new_inode+0x618/0x3190 fs/ext4/ialloc.c:994
+       ext4_xattr_inode_create fs/ext4/xattr.c:1483 [inline]
+       ext4_xattr_inode_lookup_create+0x830/0x176c fs/ext4/xattr.c:1593
+       ext4_xattr_block_set+0x1bc/0x24bc fs/ext4/xattr.c:1913
+       ext4_xattr_set_handle+0xde8/0x1260 fs/ext4/xattr.c:2452
+       ext4_xattr_set+0x1e4/0x2b8 fs/ext4/xattr.c:2554
+       ext4_xattr_trusted_set+0x4c/0x64 fs/ext4/xattr_trusted.c:38
+       __vfs_setxattr+0x3d8/0x400 fs/xattr.c:200
+       __vfs_setxattr_noperm+0x120/0x5c4 fs/xattr.c:234
+       __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
+       vfs_setxattr+0x158/0x2ac fs/xattr.c:321
+       do_setxattr fs/xattr.c:636 [inline]
+       filename_setxattr+0x20c/0x4f8 fs/xattr.c:665
+       path_setxattrat+0x2e8/0x320 fs/xattr.c:713
+       __do_sys_setxattr fs/xattr.c:747 [inline]
+       __se_sys_setxattr fs/xattr.c:743 [inline]
+       __arm64_sys_setxattr+0xc0/0xdc fs/xattr.c:743
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #3 (&ei->xattr_sem){++++}-{4:4}:
+       down_write+0x50/0xc0 kernel/locking/rwsem.c:1590
+       ext4_write_lock_xattr fs/ext4/xattr.h:157 [inline]
+       ext4_xattr_set_handle+0x11c/0x1260 fs/ext4/xattr.c:2367
+       ext4_initxattrs+0xa4/0x11c fs/ext4/xattr_security.c:44
+       security_inode_init_security+0x6dc/0x7f4 security/security.c:1891
+       ext4_init_security+0x44/0x58 fs/ext4/xattr_security.c:58
+       __ext4_new_inode+0x27f4/0x3190 fs/ext4/ialloc.c:1325
+       ext4_create+0x1f8/0x3fc fs/ext4/namei.c:2822
+       lookup_open fs/namei.c:3796 [inline]
+       open_last_lookups fs/namei.c:3895 [inline]
+       path_openat+0x12d8/0x2c40 fs/namei.c:4131
+       do_filp_open+0x18c/0x36c fs/namei.c:4161
+       do_sys_openat2+0x11c/0x1b4 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __arm64_sys_openat+0x120/0x158 fs/open.c:1463
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #2 (jbd2_handle){++++}-{0:0}:
+       start_this_handle+0xe74/0x10dc fs/jbd2/transaction.c:444
+       jbd2__journal_start+0x288/0x51c fs/jbd2/transaction.c:501
+       jbd2_journal_start+0x3c/0x4c fs/jbd2/transaction.c:540
+       ocfs2_start_trans+0x368/0x6b0 fs/ocfs2/journal.c:374
+       ocfs2_modify_bh+0xe4/0x43c fs/ocfs2/quota_local.c:101
+       ocfs2_local_read_info+0x104c/0x1364 fs/ocfs2/quota_local.c:767
+       dquot_load_quota_sb+0x6bc/0xa90 fs/quota/dquot.c:2462
+       dquot_load_quota_inode+0x274/0x4e4 fs/quota/dquot.c:2499
+       ocfs2_enable_quotas+0x17c/0x3b4 fs/ocfs2/super.c:930
+       ocfs2_fill_super+0x4004/0x532c fs/ocfs2/super.c:1140
+       get_tree_bdev_flags+0x360/0x414 fs/super.c:1691
+       get_tree_bdev+0x2c/0x3c fs/super.c:1714
+       ocfs2_get_tree+0x28/0x38 fs/ocfs2/super.c:1184
+       vfs_get_tree+0x90/0x28c fs/super.c:1751
+       fc_mount fs/namespace.c:1208 [inline]
+       do_new_mount_fc fs/namespace.c:3651 [inline]
+       do_new_mount+0x284/0x944 fs/namespace.c:3727
+       path_mount+0x5b4/0xdfc fs/namespace.c:4037
+       do_mount fs/namespace.c:4050 [inline]
+       __do_sys_mount fs/namespace.c:4238 [inline]
+       __se_sys_mount fs/namespace.c:4215 [inline]
+       __arm64_sys_mount+0x3e8/0x468 fs/namespace.c:4215
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #1 (&journal->j_trans_barrier){.+.+}-{4:4}:
+       down_read+0x58/0x2f8 kernel/locking/rwsem.c:1537
+       ocfs2_start_trans+0x35c/0x6b0 fs/ocfs2/journal.c:372
+       ocfs2_modify_bh+0xe4/0x43c fs/ocfs2/quota_local.c:101
+       ocfs2_local_read_info+0x104c/0x1364 fs/ocfs2/quota_local.c:767
+       dquot_load_quota_sb+0x6bc/0xa90 fs/quota/dquot.c:2462
+       dquot_load_quota_inode+0x274/0x4e4 fs/quota/dquot.c:2499
+       ocfs2_enable_quotas+0x17c/0x3b4 fs/ocfs2/super.c:930
+       ocfs2_fill_super+0x4004/0x532c fs/ocfs2/super.c:1140
+       get_tree_bdev_flags+0x360/0x414 fs/super.c:1691
+       get_tree_bdev+0x2c/0x3c fs/super.c:1714
+       ocfs2_get_tree+0x28/0x38 fs/ocfs2/super.c:1184
+       vfs_get_tree+0x90/0x28c fs/super.c:1751
+       fc_mount fs/namespace.c:1208 [inline]
+       do_new_mount_fc fs/namespace.c:3651 [inline]
+       do_new_mount+0x284/0x944 fs/namespace.c:3727
+       path_mount+0x5b4/0xdfc fs/namespace.c:4037
+       do_mount fs/namespace.c:4050 [inline]
+       __do_sys_mount fs/namespace.c:4238 [inline]
+       __se_sys_mount fs/namespace.c:4215 [inline]
+       __arm64_sys_mount+0x3e8/0x468 fs/namespace.c:4215
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #0 (sb_internal#2){.+.+}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain kernel/locking/lockdep.c:3908 [inline]
+       __lock_acquire+0x1774/0x30a4 kernel/locking/lockdep.c:5237
+       lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5868
+       percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
+       percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+       __sb_start_write include/linux/fs.h:1916 [inline]
+       sb_start_intwrite include/linux/fs.h:2099 [inline]
+       ocfs2_start_trans+0x1f4/0x6b0 fs/ocfs2/journal.c:370
+       ocfs2_write_info+0x114/0x324 fs/ocfs2/quota_global.c:997
+       dquot_set_dqinfo+0x370/0x5d4 fs/quota/dquot.c:2900
+       quota_setinfo+0x2c4/0x2cc fs/quota/quota.c:174
+       do_quotactl+0x59c/0x738 fs/quota/quota.c:796
+       __do_sys_quotactl fs/quota/quota.c:961 [inline]
+       __se_sys_quotactl fs/quota/quota.c:917 [inline]
+       __arm64_sys_quotactl+0x298/0xb34 fs/quota/quota.c:917
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+other info that might help us debug this:
+
+Chain exists of:
+  sb_internal#2 --> &ocfs2_sysfile_lock_key[USER_QUOTA_SYSTEM_INODE] --> &ocfs2_quota_ip_alloc_sem_key
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ocfs2_quota_ip_alloc_sem_key);
+                               lock(&ocfs2_sysfile_lock_key[USER_QUOTA_SYSTEM_INODE]);
+                               lock(&ocfs2_quota_ip_alloc_sem_key);
+  rlock(sb_internal#2);
+
+ *** DEADLOCK ***
+
+3 locks held by syz.0.52/6850:
+ #0: ffff0000c8ae40e0 (&type->s_umount_key#54){.+.+}-{4:4}, at: __super_lock fs/super.c:59 [inline]
+ #0: ffff0000c8ae40e0 (&type->s_umount_key#54){.+.+}-{4:4}, at: super_lock+0x240/0x32c fs/super.c:121
+ #1: ffff0000ddce5f40 (&ocfs2_sysfile_lock_key[USER_QUOTA_SYSTEM_INODE]){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:980 [inline]
+ #1: ffff0000ddce5f40 (&ocfs2_sysfile_lock_key[USER_QUOTA_SYSTEM_INODE]){+.+.}-{4:4}, at: ocfs2_lock_global_qf+0x18c/0x22c fs/ocfs2/quota_global.c:313
+ #2: ffff0000ddce5be0 (&ocfs2_quota_ip_alloc_sem_key){++++}-{4:4}, at: ocfs2_lock_global_qf+0x1a8/0x22c fs/ocfs2/quota_global.c:314
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6850 Comm: syz.0.52 Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/03/2025
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
+ __dump_stack+0x30/0x40 lib/dump_stack.c:94
+ dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
+ dump_stack+0x1c/0x28 lib/dump_stack.c:129
+ print_circular_bug+0x324/0x32c kernel/locking/lockdep.c:2043
+ check_noncircular+0x154/0x174 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain kernel/locking/lockdep.c:3908 [inline]
+ __lock_acquire+0x1774/0x30a4 kernel/locking/lockdep.c:5237
+ lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5868
+ percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
+ percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+ __sb_start_write include/linux/fs.h:1916 [inline]
+ sb_start_intwrite include/linux/fs.h:2099 [inline]
+ ocfs2_start_trans+0x1f4/0x6b0 fs/ocfs2/journal.c:370
+ ocfs2_write_info+0x114/0x324 fs/ocfs2/quota_global.c:997
+ dquot_set_dqinfo+0x370/0x5d4 fs/quota/dquot.c:2900
+ quota_setinfo+0x2c4/0x2cc fs/quota/quota.c:174
+ do_quotactl+0x59c/0x738 fs/quota/quota.c:796
+ __do_sys_quotactl fs/quota/quota.c:961 [inline]
+ __se_sys_quotactl fs/quota/quota.c:917 [inline]
+ __arm64_sys_quotactl+0x298/0xb34 fs/quota/quota.c:917
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+
 ---
- mm/internal.h |   3 ++
- mm/madvise.c  | 110 ++++++++++++++++++++++++++++++++++++--------------
- mm/pagewalk.c |  17 +++++---
- 3 files changed, 94 insertions(+), 36 deletions(-)
-
-diff --git a/mm/internal.h b/mm/internal.h
-index 479234b39394..3702fe4a4bac 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1655,6 +1655,9 @@ static inline void accept_page(struct page *page)
- int walk_page_range_mm_unsafe(struct mm_struct *mm, unsigned long start,
- 		unsigned long end, const struct mm_walk_ops *ops,
- 		void *private);
-+int walk_page_range_vma_unsafe(struct vm_area_struct *vma, unsigned long start,
-+		unsigned long end, const struct mm_walk_ops *ops,
-+		void *private);
- int walk_page_range_debug(struct mm_struct *mm, unsigned long start,
- 			  unsigned long end, const struct mm_walk_ops *ops,
- 			  pgd_t *pgd, void *private);
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 7b938ff44be2..ca369f22d28f 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -1120,18 +1120,17 @@ static int guard_install_set_pte(unsigned long addr, unsigned long next,
- 	return 0;
- }
-
--static const struct mm_walk_ops guard_install_walk_ops = {
--	.pud_entry		= guard_install_pud_entry,
--	.pmd_entry		= guard_install_pmd_entry,
--	.pte_entry		= guard_install_pte_entry,
--	.install_pte		= guard_install_set_pte,
--	.walk_lock		= PGWALK_RDLOCK,
--};
--
- static long madvise_guard_install(struct madvise_behavior *madv_behavior)
- {
- 	struct vm_area_struct *vma = madv_behavior->vma;
- 	struct madvise_behavior_range *range = &madv_behavior->range;
-+	struct mm_walk_ops walk_ops = {
-+		.pud_entry	= guard_install_pud_entry,
-+		.pmd_entry	= guard_install_pmd_entry,
-+		.pte_entry	= guard_install_pte_entry,
-+		.install_pte	= guard_install_set_pte,
-+		.walk_lock	= get_walk_lock(madv_behavior->lock_mode),
-+	};
- 	long err;
- 	int i;
-
-@@ -1148,8 +1147,14 @@ static long madvise_guard_install(struct madvise_behavior *madv_behavior)
- 	/*
- 	 * If anonymous and we are establishing page tables the VMA ought to
- 	 * have an anon_vma associated with it.
-+	 *
-+	 * We will hold an mmap read lock if this is necessary, this is checked
-+	 * as part of the VMA lock logic.
- 	 */
- 	if (vma_is_anonymous(vma)) {
-+		VM_WARN_ON_ONCE(!vma->anon_vma &&
-+				madv_behavior->lock_mode != MADVISE_MMAP_READ_LOCK);
-+
- 		err = anon_vma_prepare(vma);
- 		if (err)
- 			return err;
-@@ -1157,12 +1162,14 @@ static long madvise_guard_install(struct madvise_behavior *madv_behavior)
-
- 	/*
- 	 * Optimistically try to install the guard marker pages first. If any
--	 * non-guard pages are encountered, give up and zap the range before
--	 * trying again.
-+	 * non-guard pages or THP huge pages are encountered, give up and zap
-+	 * the range before trying again.
- 	 *
- 	 * We try a few times before giving up and releasing back to userland to
--	 * loop around, releasing locks in the process to avoid contention. This
--	 * would only happen if there was a great many racing page faults.
-+	 * loop around, releasing locks in the process to avoid contention.
-+	 *
-+	 * This would only happen due to races with e.g. page faults or
-+	 * khugepaged.
- 	 *
- 	 * In most cases we should simply install the guard markers immediately
- 	 * with no zap or looping.
-@@ -1171,8 +1178,13 @@ static long madvise_guard_install(struct madvise_behavior *madv_behavior)
- 		unsigned long nr_pages = 0;
-
- 		/* Returns < 0 on error, == 0 if success, > 0 if zap needed. */
--		err = walk_page_range_mm_unsafe(vma->vm_mm, range->start,
--				range->end, &guard_install_walk_ops, &nr_pages);
-+		if (madv_behavior->lock_mode == MADVISE_VMA_READ_LOCK)
-+			err = walk_page_range_vma_unsafe(madv_behavior->vma,
-+					range->start, range->end, &walk_ops,
-+					&nr_pages);
-+		else
-+			err = walk_page_range_mm_unsafe(vma->vm_mm, range->start,
-+					range->end, &walk_ops, &nr_pages);
- 		if (err < 0)
- 			return err;
-
-@@ -1193,8 +1205,7 @@ static long madvise_guard_install(struct madvise_behavior *madv_behavior)
- 	}
-
- 	/*
--	 * We were unable to install the guard pages due to being raced by page
--	 * faults. This should not happen ordinarily. We return to userspace and
-+	 * We were unable to install the guard pages, return to userspace and
- 	 * immediately retry, relieving lock contention.
- 	 */
- 	return restart_syscall();
-@@ -1238,17 +1249,16 @@ static int guard_remove_pte_entry(pte_t *pte, unsigned long addr,
- 	return 0;
- }
-
--static const struct mm_walk_ops guard_remove_walk_ops = {
--	.pud_entry		= guard_remove_pud_entry,
--	.pmd_entry		= guard_remove_pmd_entry,
--	.pte_entry		= guard_remove_pte_entry,
--	.walk_lock		= PGWALK_RDLOCK,
--};
--
- static long madvise_guard_remove(struct madvise_behavior *madv_behavior)
- {
- 	struct vm_area_struct *vma = madv_behavior->vma;
- 	struct madvise_behavior_range *range = &madv_behavior->range;
-+	struct mm_walk_ops wallk_ops = {
-+		.pud_entry = guard_remove_pud_entry,
-+		.pmd_entry = guard_remove_pmd_entry,
-+		.pte_entry = guard_remove_pte_entry,
-+		.walk_lock = get_walk_lock(madv_behavior->lock_mode),
-+	};
-
- 	/*
- 	 * We're ok with removing guards in mlock()'d ranges, as this is a
-@@ -1258,7 +1268,7 @@ static long madvise_guard_remove(struct madvise_behavior *madv_behavior)
- 		return -EINVAL;
-
- 	return walk_page_range_vma(vma, range->start, range->end,
--			       &guard_remove_walk_ops, NULL);
-+				   &wallk_ops, NULL);
- }
-
- #ifdef CONFIG_64BIT
-@@ -1571,6 +1581,47 @@ static bool process_madvise_remote_valid(int behavior)
- 	}
- }
-
-+/* Does this operation invoke anon_vma_prepare()? */
-+static bool prepares_anon_vma(int behavior)
-+{
-+	switch (behavior) {
-+	case MADV_GUARD_INSTALL:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+/*
-+ * We have acquired a VMA read lock, is the VMA valid to be madvise'd under VMA
-+ * read lock only now we have a VMA to examine?
-+ */
-+static bool is_vma_lock_valid(struct vm_area_struct *vma,
-+		struct madvise_behavior *madv_behavior)
-+{
-+	/* Must span only a single VMA.*/
-+	if (madv_behavior->range.end > vma->vm_end)
-+		return false;
-+	/* Remote processes unsupported. */
-+	if (current->mm != vma->vm_mm)
-+		return false;
-+	/* Userfaultfd unsupported. */
-+	if (userfaultfd_armed(vma))
-+		return false;
-+	/*
-+	 * anon_vma_prepare() explicitly requires an mmap lock for
-+	 * serialisation, so we cannot use a VMA lock in this case.
-+	 *
-+	 * Note we might race with anon_vma being set, however this makes this
-+	 * check overly paranoid which is safe.
-+	 */
-+	if (vma_is_anonymous(vma) &&
-+	    prepares_anon_vma(madv_behavior->behavior) && !vma->anon_vma)
-+		return false;
-+
-+	return true;
-+}
-+
- /*
-  * Try to acquire a VMA read lock if possible.
-  *
-@@ -1592,15 +1643,12 @@ static bool try_vma_read_lock(struct madvise_behavior *madv_behavior)
- 	vma = lock_vma_under_rcu(mm, madv_behavior->range.start);
- 	if (!vma)
- 		goto take_mmap_read_lock;
--	/*
--	 * Must span only a single VMA; uffd and remote processes are
--	 * unsupported.
--	 */
--	if (madv_behavior->range.end > vma->vm_end || current->mm != mm ||
--	    userfaultfd_armed(vma)) {
-+
-+	if (!is_vma_lock_valid(vma, madv_behavior)) {
- 		vma_end_read(vma);
- 		goto take_mmap_read_lock;
- 	}
-+
- 	madv_behavior->vma = vma;
- 	return true;
-
-@@ -1713,9 +1761,9 @@ static enum madvise_lock_mode get_lock_mode(struct madvise_behavior *madv_behavi
- 	case MADV_POPULATE_READ:
- 	case MADV_POPULATE_WRITE:
- 	case MADV_COLLAPSE:
-+		return MADVISE_MMAP_READ_LOCK;
- 	case MADV_GUARD_INSTALL:
- 	case MADV_GUARD_REMOVE:
--		return MADVISE_MMAP_READ_LOCK;
- 	case MADV_DONTNEED:
- 	case MADV_DONTNEED_LOCKED:
- 	case MADV_FREE:
-diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-index 6b6ec602a916..977b06acbe89 100644
---- a/mm/pagewalk.c
-+++ b/mm/pagewalk.c
-@@ -694,9 +694,8 @@ int walk_page_range_debug(struct mm_struct *mm, unsigned long start,
- 	return walk_pgd_range(start, end, &walk);
- }
-
--int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
--			unsigned long end, const struct mm_walk_ops *ops,
--			void *private)
-+int walk_page_range_vma_unsafe(struct vm_area_struct *vma, unsigned long start,
-+		unsigned long end, const struct mm_walk_ops *ops, void *private)
- {
- 	struct mm_walk walk = {
- 		.ops		= ops,
-@@ -709,14 +708,22 @@ int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
- 		return -EINVAL;
- 	if (start < vma->vm_start || end > vma->vm_end)
- 		return -EINVAL;
--	if (!check_ops_valid(ops))
--		return -EINVAL;
-
- 	process_mm_walk_lock(walk.mm, ops->walk_lock);
- 	process_vma_walk_lock(vma, ops->walk_lock);
- 	return __walk_page_range(start, end, &walk);
- }
-
-+int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
-+			unsigned long end, const struct mm_walk_ops *ops,
-+			void *private)
-+{
-+	if (!check_ops_valid(ops))
-+		return -EINVAL;
-+
-+	return walk_page_range_vma_unsafe(vma, start, end, ops, private);
-+}
-+
- int walk_page_vma(struct vm_area_struct *vma, const struct mm_walk_ops *ops,
- 		void *private)
- {
---
-2.51.0
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
