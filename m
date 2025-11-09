@@ -1,132 +1,138 @@
-Return-Path: <linux-kernel+bounces-892165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A823C44847
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 22:41:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9BAC44862
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 22:45:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15903188AECD
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 21:41:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EFB144E4A7C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 21:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4F428468D;
-	Sun,  9 Nov 2025 21:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A922C255E43;
+	Sun,  9 Nov 2025 21:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEefhM+w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3kK4ZBw"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728BB24469E;
-	Sun,  9 Nov 2025 21:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814BF1EEA49
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 21:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762724352; cv=none; b=HoSx0SLDeHsWgkg0RJ20SsNcQotSCMStM3OBnh5oFrJ+Q6b47TTWvKJ0kfIY0Ul3N/L8694RLhyYZ6wQBqtFH6abr657/WuR6i1sGsxMhhBfbNEk1r30xCBiEUlbPZZUn3J3UCNOYECGrvurb7+QMdnGX4gDLHUNB/BkNDfXNoc=
+	t=1762724727; cv=none; b=i0jJ31ovJge1WgZLVqTMWLDf69dNKEEOgTFFj7iT29LqCBOIpSuAQ8mLEadL98NlKNfuu5DQvHKhKLhmrqhPR82ycWjCBZvQ9igHt8oHHWXUkI2YC9c0iQ/kvLnLsi1wQPPEBozq+GsBCW9WSJUagk5yq1fLKUftpaGZ74j7Y00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762724352; c=relaxed/simple;
-	bh=kVgnVQO18a916rVySKF1mV8rRyJyvwESYEk0lLLgQaY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iv0JD+PS9YFaSNFCUBs3XhH2Ad5bq0rLnV/qbM/qik4JMVu5KYJv2GLGOgIp0fNZWdYf/CAcGdbOklqvjthgMUXRATiiPENGVYMajejQ8yzAl/GhbZyfKnZOvXwGuYyI/GIeUeEhxtZJCFcv4QYZQZUzZGnwZ0Roj2zS+aAbs7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEefhM+w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BECEAC19423;
-	Sun,  9 Nov 2025 21:39:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762724352;
-	bh=kVgnVQO18a916rVySKF1mV8rRyJyvwESYEk0lLLgQaY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WEefhM+wvXEy1rWWzumJC5RPb0gVAJSBqN7mRuhwxH8PvDdhBWgEqFwZStqMEMNF2
-	 taGAZqeHs/RbkUh58PsASM2X92CWWgOBU29vC8wHuFqIVesO2YFSWtrDJ1g4pA9BWX
-	 Ndwi6/JkinnfIsIFh+LYcbKrXszHMCzdV2Yb05W4D7wHhWEECCbELc8MHuaZoC9pbN
-	 yG55Zlnv+nUJuyCyEbr40jdhms4NDQ30g/7UyhzZFAbnhtSqT3Rsd63NwqT37D79PD
-	 J/AamRW5kFyj6MEW2UI68kpWObmACabj4HDf6WuqwSzA8XYRRMRJKoZqXpL+hqbqTG
-	 JKvmi+4MlwgMg==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Sun, 09 Nov 2025 23:37:57 +0200
-Subject: [PATCH net-next v2 7/7] net: ethernet: ti: am65-cpsw: Fix clearing
- of irq_disabled flag in rx_poll
+	s=arc-20240116; t=1762724727; c=relaxed/simple;
+	bh=BOO+Je3XVBfibXUXhjtM+aF6u3UgCUzTUQdElwKy0ck=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g//Sr1Og+CRX2U5H/pM4li5l/G7XYA6yKWDJ6/lGVKgMydMx7ts965w3RZQQ8dCEsVOcJsDuOGPfOXBu6iSS6Yy/740pHo4WCXK7BmpyHArbLlsIEUX8iqcO32Wql2HSDyR4VhNlb9iLmlERtdp/30cN8fVXpMAW6lgm/BOAGI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P3kK4ZBw; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4edb7c8232aso7551381cf.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 13:45:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762724724; x=1763329524; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2UkvAHMxncU2Y5mr7DiOlJe0jQHZALyUcA7OKmpGVgc=;
+        b=P3kK4ZBwtsyL909uN4Ybtf7WyotzDUyQlgu0yUCoJv+0dHwFmKABe5Cer/64+gYbbg
+         TOA9uM/8ktG493691rtLZ6v7XKnGnpAl4IJtPyTUZ2843NOywHr8PAOFlQp+oU1j8nnI
+         JKaAXwkkIEJLlou35/Z1sYEdYDMA+XIvRF9H3AWRNb/UcjqNTELlWenzN9TWUrNz9ZCX
+         tEj+UIejSVw7VmNri4qAVn7dO0UroonPsf2Ytw9FUldp6ZUIkwrIEVqePE59Mz86VFKI
+         2d61kTN5bTxC43BiIARGe52PO6JdJ8mOupMhOV6JIwgkI82xoIgWYA7wFPW4+bmMkLFl
+         Ffaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762724724; x=1763329524;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2UkvAHMxncU2Y5mr7DiOlJe0jQHZALyUcA7OKmpGVgc=;
+        b=l4UmTicMFN5dsAw5r7+NWh5UhMaqk1MF/HKjPXqspP/yTCioEDUeo4fngUhOXZ+k7G
+         1ZBK7jKxdFch5l6J6lppQQKRU7x56Lb5p+mn4JuH6N1ngy+g7MJWIiA2YQcgT2JLt702
+         6RJOMz0eneuYumg1i56cveV22MnbGHbJ4C+T+1Vw3Z3Ccqw2SgcTM8+xD8oxBeFS6JtE
+         GLFlOcbDY81AvxOIPbg44hJq19IRjsHzqyz9PaTSBF8zdeD1K5Wndzz5HNCLfbdbjUO4
+         RzaUr0bzkT5gFCfhOuaeaNrV/DTkD2w3/eXAx1dgRhihGJG0CRU8vAw7pj09vG64AItQ
+         7KSw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8mdf/gb2M0t8MW3wjawmnqXAOwGy/pH5TuYoHX+xORyAaG9oQvSXpw0oUpLb/+oweZVpuWBnC5Ermrkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCLFn0eqsmHnwkCwWdhFHDWWiQjmwJJDKFZU486H4TShpIJ8zG
+	vza8WAedEmYiBZNYWwwvOQ89qhns5VUMJZ2bJ/mUIyymko/GU3r+0oZO
+X-Gm-Gg: ASbGnctEhWhrAU2p4n4Ez90DuHfFchU26XvdXci9NfppTnT/n+ylptL63xQcoCIFMgU
+	4004ZJD5P+ObbMPOI0ulcPMFiBWp44uXupg3dtQqicxwsVu7MnFDtuRr1Ye9NNxxevRrkMeNL5F
+	gqIC900K+Ui88VkPsphMqLqe/QfWnVhzZZpza7/Otfzqhu3p85Luxda+/XpXEec3o1KLktGTqQ9
+	f7FDeLGVjio766hWgSo6cmE9XvJh4fwz/z7WoFHD+FZC+swe62fPQmmSgCJ+/0UAaXFGfkQRnpF
+	HXtYghs7OSz8pFraHqNZyEfXVX084jFZPZV9MABLzBkvV9JAFN1Ek/Xx4db1cA+LNtMbaFubjAs
+	VPt32qI6Z7vBwyc6w9f80quHnerqeHjEAzkmLUYnytzLI29EkxTqKZ228dtGlmpEHg/uwqviY4V
+	eDVZyUiY3JjcWvuZ5cYA==
+X-Google-Smtp-Source: AGHT+IEO6aQCuJCW62+UaVaTjY+QCSjAHhvbQVmQh7V/364o7l0RIj5zQd8SK9Ou2X+RfANIrJ+c9Q==
+X-Received: by 2002:a05:622a:198f:b0:4ed:bbca:fded with SMTP id d75a77b69052e-4edbbcb0857mr21223051cf.17.1762724724459;
+        Sun, 09 Nov 2025 13:45:24 -0800 (PST)
+Received: from rogerio-laptop.home ([142.188.15.215])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eda578532csm34422821cf.19.2025.11.09.13.45.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 13:45:24 -0800 (PST)
+From: Rogerio Pimentel <rpimentel.silva@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de
+Cc: kernel@pengutronix.de,
+	festevam@gmail.com,
+	alexander.stein@ew.tq-group.com,
+	dario.binacchi@amarulasolutions.com,
+	marex@denx.de,
+	Markus.Niebel@tq-group.com,
+	y.moog@phytec.de,
+	joao.goncalves@toradex.com,
+	frieder.schrempf@kontron.de,
+	josua@solid-run.com,
+	francesco.dolcini@toradex.com,
+	primoz.fiser@norik.com,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rogerio Pimentel <rpimentel.silva@gmail.com>
+Subject: [PATCH v4 1/2] dt-bindings: arm: fsl: Add i.MX8MP FRDM board
+Date: Sun,  9 Nov 2025 16:45:14 -0500
+Message-Id: <20251109214515.121742-1-rpimentel.silva@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251109-am65-cpsw-xdp-zc-v2-7-858f60a09d12@kernel.org>
-References: <20251109-am65-cpsw-xdp-zc-v2-0-858f60a09d12@kernel.org>
-In-Reply-To: <20251109-am65-cpsw-xdp-zc-v2-0-858f60a09d12@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Jesper Dangaard Brouer <hawk@kernel.org>, 
- John Fastabend <john.fastabend@gmail.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Stanislav Fomichev <sdf@fomichev.me>, Simon Horman <horms@kernel.org>
-Cc: srk@ti.com, Meghana Malladi <m-malladi@ti.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linaro-mm-sig@lists.linaro.org, Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1531; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=kVgnVQO18a916rVySKF1mV8rRyJyvwESYEk0lLLgQaY=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBpEQnaoZQaCDOcP2jKXsqaIb7Y4IAM39JiwAlpR
- whm4N5Vn1iJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCaREJ2gAKCRDSWmvTvnYw
- k+n2D/4n3QLBvZL+Ug6lzBiQ3yEIJ54RMQhXfWtoHhcZT+Wor3emaGkM+iZ3o3j+ObQhNfLnaH9
- nqj5dWuuKVXWirrXjeIcgudnU6FcaO1DUY8SH6+H3jAtspFAI0Ne/eaRWCMNtEgdWw+tjR6Hki5
- K/HF/m38zK2UzGqBPhSr/wFUiT7E94Xgvn30dEZEYJ2GMF0F9bDmsQLWkP12bD0U9M0Tkku8r3w
- YZbH/h+iY986+tLVcgL9bV72urrYlAFGtzfkoUzGwTD0CN0Gk8qsiDwPEfwAb/wpJMR1NsOhDiX
- RCa3Errmmt2VRD/ViOAbkobEfNRFsSGke6jrDeQ7VOeNJn6kIzrBtCDWZISg1orpImNpZLht1qF
- mBW2x+s/+/nJLMMTyZA1eo72nRW0gu+ugSQ0JIwcuvdTFPn67sV+LRwgJusoBUUyeUbhdquF/Y5
- EGMIRdGhkkVp+y4wSeZhmrWjyThAbUPh/ECj7mqphqLz4Ecd+osPOwtHjeQfZnJ+rXLSb+PAjqw
- 7+J6wPI83RIPktGVBgGr7kLkPqmSSRCTgs6NEEwDMp9x//wKe+AN1+X/PS48nmxQF2kYsJCzZsO
- NxWZ3LNtNVHwlyhZR7SEvxnM1T77zq0r9uYfJmHk1iqhaaOaUBNk+HA4ER1KeBvte0Fc7iehK80
- Dnd1EZKdXkopKeg==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+Content-Transfer-Encoding: 8bit
 
-In am65_cpsw_nuss_rx_poll() there is a possibility that irq_disabled flag
-is cleared but the IRQ is not enabled.
+Add device tree compatible string for the i.MX8MP FRDM board.
 
-This patch fixes by that by clearing irq_disabled flag right when enabling
-the irq.
-
-Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
+Signed-off-by: Rogerio Pimentel <rpimentel.silva@gmail.com>
 ---
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 9d1048eea7e4734873676026906e07babf0345f5..c0f891a91d7471364bd4c8b7d82da9967f1753b8 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -1778,15 +1778,13 @@ static int am65_cpsw_nuss_rx_poll(struct napi_struct *napi_rx, int budget)
- 	dev_dbg(common->dev, "%s num_rx:%d %d\n", __func__, num_rx, budget);
- 
- 	if (num_rx < budget && napi_complete_done(napi_rx, num_rx)) {
--		if (flow->irq_disabled) {
-+		if (unlikely(flow->rx_pace_timeout)) {
-+			hrtimer_start(&flow->rx_hrtimer,
-+				      ns_to_ktime(flow->rx_pace_timeout),
-+				      HRTIMER_MODE_REL_PINNED);
-+		} else if (flow->irq_disabled) {
- 			flow->irq_disabled = false;
--			if (unlikely(flow->rx_pace_timeout)) {
--				hrtimer_start(&flow->rx_hrtimer,
--					      ns_to_ktime(flow->rx_pace_timeout),
--					      HRTIMER_MODE_REL_PINNED);
--			} else {
--				enable_irq(flow->irq);
--			}
-+			enable_irq(flow->irq);
- 		}
- 	}
- 
+No changes in v4
 
+No changes in v3
+
+No changes in v2
+
+ Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 21b7168d61f5..f46cf6d1f502 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -1099,6 +1099,7 @@ properties:
+               - emcraft,imx8mp-navqp      # i.MX8MP Emcraft Systems NavQ+ Kit
+               - fsl,imx8mp-evk            # i.MX8MP EVK Board
+               - fsl,imx8mp-evk-revb4      # i.MX8MP EVK Rev B4 Board
++              - fsl,imx8mp-frdm           # i.MX8MP Freedom Board
+               - gateworks,imx8mp-gw71xx-2x # i.MX8MP Gateworks Board
+               - gateworks,imx8mp-gw72xx-2x # i.MX8MP Gateworks Board
+               - gateworks,imx8mp-gw73xx-2x # i.MX8MP Gateworks Board
 -- 
-2.34.1
+2.25.1
 
 
