@@ -1,130 +1,129 @@
-Return-Path: <linux-kernel+bounces-891782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE30C43741
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 03:32:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133ECC4374A
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 03:32:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83AAB3B044B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 02:32:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B2845347FCC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 02:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BF51DE8AD;
-	Sun,  9 Nov 2025 02:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="b0I93vTv"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E667138F9C
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 02:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97CF1D8DE1;
+	Sun,  9 Nov 2025 02:32:47 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261A11A23B6;
+	Sun,  9 Nov 2025 02:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762655553; cv=none; b=i8NA659GnYXl6qEwHZlohRxTAiaKCKB3drbpLAxb26jbKNJMcIF9tHTnO/AGGVExS7x2ZI4T/E9F9Bgw0yF2wqjESFfDawu+TPn67zcdnyOt8ff5EySDrvotTJD7neNeeF9g2MgtzLMEFKEF32sKMQEofywsoO+rij1hrIQpeek=
+	t=1762655567; cv=none; b=Q7J68AfjJxXOXNSPBCo/GuhcWjBvHqcO6lKv+HPYqOA5OsDYTtW4h6w/Cs2b1ornJirrEwwpX0aBsXd1c+UvGQqsaqbGDqm9b7RevczToQgUOu7rH2P1L/EYzmgOuXsmmwea3wxGEJjoOF7jKpRZsAPgxwaX39HKUeX8I07AAhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762655553; c=relaxed/simple;
-	bh=8wnVlEDqMdtcwfKI+Tx4kOKYiIjjZzPcvCAbnijyJz0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U8JgjfUAcbcpgN7qfq/7/dBjl6s0bX0YwsjeA/UNb8Lk+vEk4GqxMYA6bOJVPDnAxLgRS4Cy7Y9yKg+ByHZy9GHfueWvswh2UiRqnJbNuNxMLOBUimzgCsiWZ7pw1jRXkJEVVwEoyNmmeLRIS1HseRaSAyVV06JaWu3FxvdQKRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=b0I93vTv; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-64080ccf749so3044984a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 18:32:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1762655550; x=1763260350; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=v3sUd4yemanGWTyJ8Beqz7xtQVHp5hlUsPWyPSJXOUQ=;
-        b=b0I93vTv/1CuhJD5S9t5VkO3h82xRN8BBhw5WUK8w76QXPFlkbgft6ZQR0PLu/Aqa5
-         5gLIyxnZuICXZU2aJeuALxwBjPKEy7PU7hqcasm1LaJfnudYo9gopK00XDh24b6NC83k
-         dcOlrLF25ySQoUknCtiI7fVaw0GDH7vRoYU2pXWw3cezIaAhahKeE5UywCH1aLqT/x1H
-         enZuZLBusJR/gHzgxfr+1bnuYD9jk7v4/acUR1WwdBcESAhfc7nu52n+fXSXZXH9THqI
-         3CIRn7vQSn59yCRx1e7RYlpwQvGbl20RChs97VbMYvycR78jPeNeP4+S37aI1BEcMcQc
-         3eJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762655550; x=1763260350;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v3sUd4yemanGWTyJ8Beqz7xtQVHp5hlUsPWyPSJXOUQ=;
-        b=kDcM08HNo78Vc/oWFzgqzZ374XHD1nhz4++Ceol2J92GAjuVpn/Ooh244hFRwrPs7X
-         sxVQ/qf01mUcfkEGDC5ZEhnkZLF1pOyyrSfyqnw2tYFhrttcRhc4w5373o5OajbZjie7
-         Z8x5IKFK5c93SPJFRjD3Fu6MMqu6ZCRbu0JCU1Lqb20C20fMzjM0QyaIT33tpB+YRWSz
-         6Ok+tKI4Kp1yM6bOG8N9Onk8VwpFH4dc5CBPHEUN4g9hchMClKcNR/Qv0OZau922cCwx
-         yBqBi9slVhxlC+YvIvhrfJc4jSkubbRH4c7kueala6giq5hDDh/eWk31NhSviDl80tiy
-         ZBvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmZRLSuxLvCWeek46nlticVqdW1J9OO9u05qKW2RwxBEqHhnyPLtK3HHHx9VitFv2Huvf4UtmWIuHgxuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztqkIt2t7GiiqNd8QQAdfJF8gcAjap9mpFvY+t+dBSEYf1tvt6
-	aKQZzwj0QiptZQYGZDdpY8sHK357uQeAqNW4DX37mC9tCGW0HCVRSz0Xgt1vNU5McReSNRiE40u
-	X9T/xO3Fx/fMuUV4FqvuaEI7afoXFVwQQaojbPhShgQ==
-X-Gm-Gg: ASbGncvIPc9Rn/fHZ4MpPqivps7d2B3t5UHKs2nJ4DibJVfmNlAMSlNyNQfRaNqAIuq
-	QSyM4wlXHq2q0puZsBRd6Te4eroQEPPBBbbk7N9r0lVe8BGAUcm7e+Xv6a2FWyaabgV1QeSn5Qi
-	Vz2G8V59PDiwYhZrMw59psAP3d1DFykJSf8G9V5tuOwE17yJku9le2M6Mh11mgdKCiNKGh9j/6o
-	JDIYtCgaOUGfK4wrH9Fv+pVmWk1B3SF4fQoDqHXeIpCPuoN+nLyvCkt5w==
-X-Google-Smtp-Source: AGHT+IGkPxaoskiODxv8UFWCdDvkCCatOQpLUt4UqpyBbWyWH0iYYiRs5ogfnHqSYP0nAMnRxIXTeT8EwyG6LMTSdO4=
-X-Received: by 2002:a05:6402:270f:b0:640:b7f1:1cc8 with SMTP id
- 4fb4d7f45d1cf-6415e822f52mr2906725a12.18.1762655550218; Sat, 08 Nov 2025
- 18:32:30 -0800 (PST)
+	s=arc-20240116; t=1762655567; c=relaxed/simple;
+	bh=yP0wUqwDv+VrvJrRl4MeGRT5eX9vSWFZy6msvm4MXXE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BaHtlX6n558eU2qvVgrMhYsiPPF0mbhxJyMx+ZbD8bd4t2CrFY3ec78nRj/jjwAr3aVTsGvgflepNPOrfLwgyABjvTS52ZA+1UlkYc8VgOW2va0wsrbV6Nh5yaQnrw7jQ0YqXqDWluAWHuD5pjsT3Ko4XawXTZ5BWix7GcO+cJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.45])
+	by gateway (Coremail) with SMTP id _____8Dx_tJK_Q9p7NcgAA--.6063S3;
+	Sun, 09 Nov 2025 10:32:42 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.45])
+	by front1 (Coremail) with SMTP id qMiowJAxleQ4_Q9pqzAsAQ--.2346S2;
+	Sun, 09 Nov 2025 10:32:41 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] LoongArch: Consolidate early_ioremap()/ioremap_prot()
+Date: Sun,  9 Nov 2025 10:32:14 +0800
+Message-ID: <20251109023214.355231-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
- <20251107143310.8b03e72c8f9998ff4c02a0d0@linux-foundation.org>
- <CA+CK2bCakoNEHk-fgjpnHpo5jtBoXvnzdeJHQOOBBFM8yo-4zQ@mail.gmail.com> <20251108103655.1c89f05222ba06e24ddc3cc3@linux-foundation.org>
-In-Reply-To: <20251108103655.1c89f05222ba06e24ddc3cc3@linux-foundation.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sat, 8 Nov 2025 21:31:54 -0500
-X-Gm-Features: AWmQ_bkVcbxT0gV7fpmnxd0SCIbpS_2m6TSXTf-t_TBkr04sjlFMoWl4do6gJ2w
-Message-ID: <CA+CK2bAcQZM76dO2pHP0M1wAUeq6m7kKijSxoWDv7fvyreMJ1g@mail.gmail.com>
-Subject: Re: [PATCH v5 00/22] Live Update Orchestrator
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, rppt@kernel.org, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, tj@kernel.org, 
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev, 
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com, 
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org, 
-	dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org, 
-	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
-	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxleQ4_Q9pqzAsAQ--.2346S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7AFy5tFyrur1kAr1rJFyUXFc_yoW8ury8pF
+	92kr1kJFs8Kr1xGFykJFy7Wr1UtFnrKFWIqFW2kF9xu3Wjvr18ZrWkCr90vFyUXa95KFWr
+	XrZ3Wa43CF4UJagCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
+	AKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
+	6r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
+	CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF
+	0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
+	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
+	KfnxnUUI43ZEXa7IU8EeHDUUUUU==
 
-> No prob.
->
-> It's unfortunate that one has to take unexpected steps (disable
-> CONFIG_DEFERRED_STRUCT_PAGE_INIT) just to compile test this.
->
-> It's a general thing.  I'm increasingly unhappy about how poor
-> allmodconfig coverage is, so I'm starting to maintain a custom .config
-> to give improved coverage.
+1. Use phys_addr_t instead of u64, which can work for both 32/64 bits.
+2. Check whether the input physical address is above TO_PHYS_MASK (and
+   return NULL if yes) for the DMW version.
 
-That's an interesting point. The depends on !DEFERRED_STRUCT_PAGE_INIT
-reduces build and potentially other automatic test coverage for
-LUO/KHO.
+Note: In theory early_ioremap() also need the TO_PHYS_MASK checking, but
+the UEFI BIOS pass some DMW virtual addresses.
 
-We should prioritize relaxing this constraint. There are a few
-possible short- and long-term solutions, which I will discuss with
-Mike and Pratyush at our next sync.
+Cc: stable@vger.kernel.org
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ arch/loongarch/include/asm/io.h | 5 ++++-
+ arch/loongarch/mm/ioremap.c     | 2 +-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-Thanks,
-Pasha
+diff --git a/arch/loongarch/include/asm/io.h b/arch/loongarch/include/asm/io.h
+index eaff72b38dc8..0130185e0349 100644
+--- a/arch/loongarch/include/asm/io.h
++++ b/arch/loongarch/include/asm/io.h
+@@ -14,7 +14,7 @@
+ #include <asm/pgtable-bits.h>
+ #include <asm/string.h>
+ 
+-extern void __init __iomem *early_ioremap(u64 phys_addr, unsigned long size);
++extern void __init __iomem *early_ioremap(phys_addr_t phys_addr, unsigned long size);
+ extern void __init early_iounmap(void __iomem *addr, unsigned long size);
+ 
+ #define early_memremap early_ioremap
+@@ -25,6 +25,9 @@ extern void __init early_iounmap(void __iomem *addr, unsigned long size);
+ static inline void __iomem *ioremap_prot(phys_addr_t offset, unsigned long size,
+ 					 pgprot_t prot)
+ {
++	if (offset > TO_PHYS_MASK)
++		return NULL;
++
+ 	switch (pgprot_val(prot) & _CACHE_MASK) {
+ 	case _CACHE_CC:
+ 		return (void __iomem *)(unsigned long)(CACHE_BASE + offset);
+diff --git a/arch/loongarch/mm/ioremap.c b/arch/loongarch/mm/ioremap.c
+index df949a3d0f34..27c336959fe8 100644
+--- a/arch/loongarch/mm/ioremap.c
++++ b/arch/loongarch/mm/ioremap.c
+@@ -6,7 +6,7 @@
+ #include <asm/io.h>
+ #include <asm-generic/early_ioremap.h>
+ 
+-void __init __iomem *early_ioremap(u64 phys_addr, unsigned long size)
++void __init __iomem *early_ioremap(phys_addr_t phys_addr, unsigned long size)
+ {
+ 	return ((void __iomem *)TO_CACHE(phys_addr));
+ }
+-- 
+2.47.3
+
 
