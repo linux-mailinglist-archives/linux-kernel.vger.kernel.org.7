@@ -1,222 +1,149 @@
-Return-Path: <linux-kernel+bounces-892059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2E9C44382
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:13:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E51FC4438E
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43FD53B1EE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DB403B35AB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DA430505B;
-	Sun,  9 Nov 2025 17:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD773054E5;
+	Sun,  9 Nov 2025 17:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iq1LCW6C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f1cW/NQD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7F92765FF;
-	Sun,  9 Nov 2025 17:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F8B304BAB
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 17:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762708396; cv=none; b=nI+8yp5VcVows+idUn+pI1+KqKcMyI859jOOxcTXqkfOaZe/mzMO2aVn/SoVFTwrmks/YFgeT5eZlaNX4nwHKf4c9mhNOPolcgnxfn2S7U7Ktxu9ajl91abOQ5rvMQMhta+8TwOt27QaWv33hpcPlz7+Pca19buYRlNeJ/MPWrU=
+	t=1762708479; cv=none; b=IyaYfg8Fm3bqjYxpAJ+Hauwgc1o7iahJ4VZyYDEbmcnLILyFT1rYtEqZn0qwU84NpROI2VKgog6wa6rROrQ3TqHPYZVdQDztv6uccXnmf27tZLiDSBRpPKXuaAwW+JKizoWtRXSYFQi8uslBGIxJ57g1DpxAA3xlVInfsM24E/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762708396; c=relaxed/simple;
-	bh=REetAnCMz4hM/dnpMporPXycc4SyOGrdg5Ru1+D0tdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D+RWMmwkqIN+vON29tMEk8mipmmKaROe5suyCpADkD1RRv9AlWd+6UWx5goyyOpqTY/bpwZGSrc3iE9nJjs20uWjUR4kXJsFWuPjqSm/0uYIdz4YOW/LGttKlJ5hM9WxLVXFR4juPA6y0BuqafkQSpio3XVvIaSBl9oipVlGWXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iq1LCW6C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB15C16AAE;
-	Sun,  9 Nov 2025 17:13:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762708396;
-	bh=REetAnCMz4hM/dnpMporPXycc4SyOGrdg5Ru1+D0tdU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iq1LCW6CzCt3zKlOOKSsHl/LO099SXcnLkr87LoMqZUVgUE9lkI9VgoHB0KjdZNnr
-	 NlXPj5GmPwAqlLxo+vPAMrBSqGtyAwjieiXdTmgT5NrfLUoyqei6iRaNYXhWEfx7ev
-	 1qXF95ngNZP82RKoHQHS7082/1VaK1lyzcrT19MhDNSAxaQ2T6LOpG1aeTM7O1TQUc
-	 GrYSLSgxkUWx9HV+cZyte98NPv+Bn77+OUVYWzZ+7awwrWfwtpWT8gU9/D16Zoy1fC
-	 0wu11x82oYna6aCU274ndPz/Ersp8lLOpIaxPkOHEXSqe70KEzW28Q4fNRuoyY3dTI
-	 zCSiwGBWmobRw==
-Message-ID: <aa54cf7c-cabd-490b-9bdd-a7a077ced35c@kernel.org>
-Date: Sun, 9 Nov 2025 18:13:11 +0100
+	s=arc-20240116; t=1762708479; c=relaxed/simple;
+	bh=X8iXuBDLNyavzveN+u0clYIy8dEtP8NarhPdel67RD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C+NAN8bIK3OLaosU9IzJHvzJqUBqdezPvxsKmgdzJBWSxXWoRkgZCYnXqjyp8ENQMdvBKnS2SznoBTTNquOlpgQmUIWYRe46tdNR7q2TKIxIrNFMlRYbDxFO3sswSh8cYY1p/tsRDTvpDLdZQqyyEynT0qHk68+lDLjuTTyM3eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f1cW/NQD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762708476;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F5HpPOlX4A+IDC0iS/hUD8BvRwzAlkYdd4UARWjCrtI=;
+	b=f1cW/NQDBmRdN/qrgRggEyi7y18tcbIg6op28Ff6fGsRBRkdkVzAbvhLWfUH0AOD0z6wWC
+	YcR8tOVWWlQWDv50CrYaUH1bt4Bd5TURHxnax856S7wpIXh5cDSumKhBU++kBubDj5sr8K
+	TLp6NDnUogw+S/doYK+pZHzBDwGBDZM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-346-P45cLDM0P8SsWBX1eHJ3Qw-1; Sun,
+ 09 Nov 2025 12:14:33 -0500
+X-MC-Unique: P45cLDM0P8SsWBX1eHJ3Qw-1
+X-Mimecast-MFC-AGG-ID: P45cLDM0P8SsWBX1eHJ3Qw_1762708468
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1EA1F195608D;
+	Sun,  9 Nov 2025 17:14:27 +0000 (UTC)
+Received: from fedora (unknown [10.44.32.53])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6443730001B9;
+	Sun,  9 Nov 2025 17:14:06 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun,  9 Nov 2025 18:14:26 +0100 (CET)
+Date: Sun, 9 Nov 2025 18:14:04 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dmitry Levin <ldv@strace.io>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: [RFC PATCH 0/3] mt-exec: fix deadlock with ptrace_attach()
+Message-ID: <aRDL3HOB21pMVMWC@redhat.com>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: regulator: Add Fitipower FP9931/JD9930
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-References: <20251107-fp9931-submit-v1-0-aa7b79d9abb6@kemnade.info>
- <20251107-fp9931-submit-v1-2-aa7b79d9abb6@kemnade.info>
- <20251108-vagabond-lyrical-hawk-ad3490@kuoka>
- <20251108152114.53422ea6@kemnade.info>
- <aa330123-e6d9-44ce-b030-b266cba1df9c@kernel.org>
- <20251108175244.0b51fac6@kemnade.info>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251108175244.0b51fac6@kemnade.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 08/11/2025 17:52, Andreas Kemnade wrote:
-> On Sat, 8 Nov 2025 15:46:01 +0100
-> Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> 
->>>>> +  fiti,tdly:    
->>>>
->>>> No, look at datasheet. What values are there? ms.
->>>>  
->>> Hmm, no to what? I do not understand your comment.  
->>
->> Please use proper units for the field expressed in the property name
->> suffix and possible values (enum).
->> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
->>
->> You also need default.
->>
->>> So I guess a bit what might be options to discuss here:
->>> - put raw value for the bitfield here (what is currently done).
->>> - put the ms values here (then I would expect a suffix in the property name)
->>>   We have the mapping 0ms - 0, 1ms - 1, 2ms - 2, 4ms - 3, so it is
->>>   not identical.  
->> I don't know what has to be identical. You want here 0, 1, 2 or 4 ms.
->> BTW, if you speak about driver complexity, getting register value out of
->> above is absolutely trivial, so not a suitable argument.
-> 
-> Ok, no problem with doing that trivial conversion in the driver.
-> 
-> Playing around with dt-binding-check and add enums (and the -ms in a
-> second step):
->   fitipower,tdlys:
->     $ref: /schemas/types.yaml#/definitions/uint32-array
->     description:
->       Power up soft start delay settings tDLY1-4 bitfields in the
->       POWERON_DELAY register
->     default: <0 0 0 0>
->     items:
->       - enum:
->           - 0
->           - 1
->           - 2
->           - 4
->       - enum:
->           - 0
->           - 1
->           - 2
->           - 4
->       - enum:
->           - 0
->           - 1
->           - 2
->           - 4
->       - enum:
->           - 0
->           - 1
->           - 2
->           - 4
-> 
-> 
-> dt-binding-check accepts this, including the example. But if I change it to -ms
-> as you requested, I get
-> 
-> /home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: 'anyOf' conditional failed, one must be fixed:
-> 	'maxItems' is a required property
-> 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> 	'$ref' is not one of ['maxItems', 'description', 'deprecated']
-> 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> 	'default' is not one of ['maxItems', 'description', 'deprecated']
-> 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> 	'items' is not one of ['maxItems', 'description', 'deprecated']
-> 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> 	Additional properties are not allowed ('$ref', 'default' were unexpected)
-> 		hint: Arrays must be described with a combination of minItems/maxItems/items
-> 	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-> 	'<0 0 0 0>' is not of type 'integer'
-> 	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-> 	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-> /home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: '$ref' should not be valid under {'const': '$ref'}
-> 	hint: Standard unit suffix properties don't need a type $ref
-> 	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-> /home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: 'anyOf' conditional failed, one must be fixed:
-> 	'maxItems' is a required property
-> 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> 	'$ref' is not one of ['maxItems', 'description', 'deprecated']
-> 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> 	'default' is not one of ['maxItems', 'description', 'deprecated']
-> 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> 	'items' is not one of ['maxItems', 'description', 'deprecated']
-> 		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-> 	Additional properties are not allowed ('$ref', 'default' were unexpected)
-> 		hint: Arrays must be described with a combination of minItems/maxItems/items
-> 	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-> 	'<0 0 0 0>' is not of type 'integer'
-> 	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-> 	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-> /home/andi/old-home/andi/kobo/kernel/Documentation/devicetree/bindings/regulator/fitipower,fp9931.yaml: properties:fitipower,tdly-ms: '$ref' should not be valid under {'const': '$ref'}
-> 	hint: Standard unit suffix properties don't need a type $ref
-> 	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+Not for inclusion yet. 2/2 is untested, incomplete, possibly buggy.
 
-You must drop ref. That's the entire point of common unit suffix.
+But could you review at least the intent? Do you see any problem with
+this approach?
 
-> 
-> Leaving out the type $ref does not improve things much.
-> What is going on here?
-Please paste the error from correct code, not above.
+This problem is very, very old. It seems that nobody can suggest a
+simple/clean fix...
 
+Oleg.
+---
 
-Best regards,
-Krzysztof
+ fs/binfmt_elf.c         |   4 +-
+ fs/binfmt_elf_fdpic.c   |   4 +-
+ fs/binfmt_flat.c        |   4 +-
+ fs/exec.c               | 142 +++++++++++++++++++++++-------------------------
+ include/linux/binfmts.h |   2 +-
+ kernel/exit.c           |   9 +--
+ kernel/signal.c         |   6 +-
+ 7 files changed, 87 insertions(+), 84 deletions(-)
+
 
