@@ -1,220 +1,340 @@
-Return-Path: <linux-kernel+bounces-892016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9707C44186
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 16:48:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314A3C4418F
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 16:53:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B9864E2916
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 15:48:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B83524E35A2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 15:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628BB2FFDDB;
-	Sun,  9 Nov 2025 15:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0F72FFF82;
+	Sun,  9 Nov 2025 15:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m/WDc6+6"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjXh/WZw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D0F1ACEDE;
-	Sun,  9 Nov 2025 15:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F279D1F7569;
+	Sun,  9 Nov 2025 15:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762703317; cv=none; b=Zjj7kC7/TN+96cPdcbATXMZKfC6lXPZA3kapStSfdgBqZlk+Fe0NsBUwL2stz/8DZ9sP2xdCN/NSlbJJo1KeXD5KfGVecTZfMFsc2iHpEyfuTCzbz78JL+zPyx1HyOXVKJgzZ60d9LmlRLMCoMTkvCVPebRyqL4vdhyPh/UPrqk=
+	t=1762703600; cv=none; b=n4vjVA9ydQkyQ+L92Ws4NGuQxFb2ZeqY+QBFEXPy6SDFlyIaM9EaGROvRbSLFhD+yIzNnYHHKYcd0MK9kny25fh3OdOMpwiYo6dwTH+LZYEdYmSKcDoB29h+W/KzuysLiga10h+Ip8n9jy/DQNm4kmTDPXCakq3pprpl/HARvd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762703317; c=relaxed/simple;
-	bh=ofI0MhvTfEk58ryGBbMza+D+MAOY61wnhQ4VuePQ77k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBc9AI0yjG+QVfhYRSSxIloabuyKEyM9jiZV1Sqt5iy5hLXadyK8EVROVrRLI91QstEznD97ygHGHAuuy+icDhPdgjMyRQmd4vghvwYKrkgzwKg0+SuU2hI6uoMAV7ySCXkXEyE7DA88JU8C5kUqBMb+lfQmKjwNBwZ4xyY1UJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m/WDc6+6; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 7FC547A018B;
-	Sun,  9 Nov 2025 10:48:34 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Sun, 09 Nov 2025 10:48:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762703314; x=1762789714; bh=b+2LS7UCVaJe+CkDjanB6mvOORphIKM3fSv
-	R3+Jtl7g=; b=m/WDc6+6Ro7dPcZjTxoWToWtcC6+jCfGm1WCf9pfjxwUwr/FSIW
-	ewwYpj/+b0hfTkrVWKFGDUQ8aBRGxecM6+NQi78orICQUU15IPH88PlejFxUdI3Z
-	JP5VYWWsp5nBsS7PZMQDmslWBdNyKsXjdnmZ9cOfYE0ROTzXOw0mebxoOJbcx2f/
-	sIhS2rGUSiK29B5fj08os3kzX6c0ScV34HZbd6mB5NYiktwJtRfrbb+HlijGg4/D
-	LWv5WRoWIDlLPYLngj+pmmpq94Ve6/GSBQ1IBNLQRsH6yHOcF8KBS+2ObU3P3QPQ
-	9gBd9M+9PAz7y3vXZJRqKnsr/J5Jk++g5ig==
-X-ME-Sender: <xms:0bcQae_e3WGflVVSw6wgF5b1q0udnz4V_7AKQ5buBPLugluMIE6bFQ>
-    <xme:0bcQaUsdGaGvojj7H7zqQuQBP5-bKF8iWwRNsg4-82zPRHj7tKznBrSV5R_D5nV0h
-    q7belR1u3gS9F7wY-gJSb7Cf_Agl83B8uhWdUGS4Qt5FO2EgM0>
-X-ME-Received: <xmr:0bcQae1D58Z-DS5yoeqjt1Q4enrN0_5bJRULSrIEHFJ5qZpWNsbMBj2u>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduleehkedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcuufgt
-    hhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepvddufeevkeehueegfedtvdevfefgudeifeduieefgfelkeehgeelgeejjeeggefh
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepihguoh
-    hstghhsehiughoshgthhdrohhrghdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopehnrghshhhuihhlihgrnhhgsehgmhgrihhlrdgtohhmpd
-    hrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehs
-    thgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvghmse
-    gurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepughsrghhvghrnheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hg
-X-ME-Proxy: <xmx:0bcQaZTqbF4U0xtsNyb9PrPJ1IwbYMZCo1HUi7nxocyXI9YgH9SIJw>
-    <xmx:0bcQaSebCzE5oqautVHpqLaRTT2tNMMzqCMXkAkZxdbU9rqV2TmXiA>
-    <xmx:0bcQaaefwouKTn0pshTixXGInNlIUboMHgJj1iNuQ-umZZw2FeHfhQ>
-    <xmx:0bcQac1HkFTIWwqANPmjJoWVL1geH0zMorSL3tc605Bz5VP88GdRKw>
-    <xmx:0rcQafXc5DBJSQeGw6k_b44OBj9tTKc4FQ2KrPDvb50a4o_kWilFK3eY>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 9 Nov 2025 10:48:33 -0500 (EST)
-Date: Sun, 9 Nov 2025 17:48:31 +0200
-From: Ido Schimmel <idosch@idosch.org>
-To: chuang <nashuiliang@gmail.com>
-Cc: Eric Dumazet <edumazet@google.com>, stable@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	Networking <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] ipv4: route: Prevent rt_bind_exception() from
- rebinding stale fnhe
-Message-ID: <aRC3zxmpOXXDqSX2@shredder>
-References: <CACueBy7yNo4jq4HbiLXn0ez14w8CUTtTpPHmpSB-Ou6jhhNypA@mail.gmail.com>
- <CANn89iL9e9TZoOZ8KG66ea37bo=WztPqRPk8A9i0Ntx2KidYBw@mail.gmail.com>
- <aQtubP3V6tUOaEl5@shredder>
- <CACueBy6LKYmusLjQPnQGCoSZQLEVAo5_X47B-gaH-2dSx6xDuw@mail.gmail.com>
- <CACueBy4EAuBoHDQPVSg_wdUYXYxQzToRx4Y+TSgcBwxEcODt_w@mail.gmail.com>
+	s=arc-20240116; t=1762703600; c=relaxed/simple;
+	bh=vGm7piNNumvfH+d3L5yt/YJWBCXJfExiMhY1zi82YOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YDeh10zQbISD5Sal7C+4uJbr8+Ds8oXigvacu0M3SYPnHkEyr/nxVDtnW3+lbY2XKRLLiPE1rzaIHtqRSgyXSnCr4X56//g+u3japNtoXGwIyA1b0XxlLSkBN2rInlyntdQY6fOwBch1+zAPzuTnXHU9QVp5Pd0lJ8cTc4J/lY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjXh/WZw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BDAC19422;
+	Sun,  9 Nov 2025 15:53:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762703599;
+	bh=vGm7piNNumvfH+d3L5yt/YJWBCXJfExiMhY1zi82YOU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RjXh/WZwlyQdf4vOwkk8FbnxyG/SaDMXcwPh64eneNAS2ItkdouCqZbk8i/Eaaru0
+	 ndnB5aAxncPTPtxcpsXLGwG5CyGSnaUfv6Hm3+SvmoUw/hpu3X311rGQGaRBnCA3NA
+	 5gnDLxMdSjiTEnAGINUcAGz4UAY6GG76m19lsMzYrSJT4AcBV4xMUVsty6LSLt8IUt
+	 lOD4YN9Ddit8b/JKQZI2HPp5t+chTun5XAT1Xeb7UyUIpU1BUMeatI/y0lj6Z9TwUy
+	 IQTaq95s3cHmuSNLPLoiSNjQLP2kOumwdw3GoJrsiG3TK0W7aWPKypMAs4XyCo8TcK
+	 UGAK7sEsP3cMg==
+Date: Sun, 9 Nov 2025 15:53:12 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Ariana Lazar <ariana.lazar@microchip.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] iio: dac: adding support for Microchip
+ MCP47FEB02
+Message-ID: <20251109155312.499d5eb5@jic23-huawei>
+In-Reply-To: <20251103-mcp47feb02-v2-2-8c37741bd97a@microchip.com>
+References: <20251103-mcp47feb02-v2-0-8c37741bd97a@microchip.com>
+	<20251103-mcp47feb02-v2-2-8c37741bd97a@microchip.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACueBy4EAuBoHDQPVSg_wdUYXYxQzToRx4Y+TSgcBwxEcODt_w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 07, 2025 at 05:53:51PM +0800, chuang wrote:
-> Thanks for reviewing the patch. I'm providing the detailed analysis
-> and debugging traces below to confirm the root cause and exact
-> location of the reference count leak.
-> 
-> 1. Environment and Symptom
-> 
-> The issue was consistently reproduced when routing TCP traffic through
-> a Software IP Tunnel interface (sit0). The traffic flow  is:
-> 
->   APP -> sit0 (IP tunnel) -> outside
-> 
-> This leads to a reference count leak that prevents the device from
-> being freed during unregistration, resulting in the kernel log
-> warning:
-> 
->   unregister_netdevice: waiting for sit0 to become free. Usage count = N
-> 
-> 2. Enable refcnt_tracer
-> 
-> Live-crash analysis identified a stale dst entry retaining a reference
-> to sit0. With CONFIG_NET_DEV_REFCNT_TRACKER enabled, the allocation
-> stack for the leaked reference was identified:
-> 
-> [1279559.416854] leaked reference.
-> [1279559.416955]  dst_init+0x48/0x100
-> [1279559.416965]  dst_alloc+0x66/0xd0
-> [1279559.416966]  rt_dst_alloc+0x3c/0xd0
-> [1279559.416974]  ip_route_output_key_hash_rcu+0x1d7/0x940
-> [1279559.416978]  ip_route_output_key_hash+0x6d/0xa0
-> [1279559.416979]  ip_route_output_flow+0x1f/0x70
-> [1279559.416980]  __ip_queue_xmit+0x415/0x480
-> [1279559.416984]  ip_queue_xmit+0x15/0x20
-> [1279559.416986]  __tcp_transmit_skb+0xad4/0xc50
-> 
-> 3. Pinpointing the Unmatched dst_hold()
-> 
-> To pinpoint the specific reference not released, we added tracepoints
-> to all dst_hold/put functions and used eBPF to record the full
-> lifecycle. The tracing identified a hold operation with the following
-> call stack:
-> 
-> do_trace_dst_entry_inc+0x45
-> rt_set_nexthop.constprop.0+0x376      /* <<<<<<<<<<<<<<<<<<<< HERE */
-> __mkroute_output+0x2B7
-> ip_route_output_key_hash_rcu+0xBD
-> ip_route_output_key_hash+0x6D
-> ip_route_output_flow+0x1F
-> inet_sk_rebuild_header+0x19C
-> __tcp_retransmit_skb+0x7E
-> tcp_retransmit_skb+0x19
-> tcp_retransmit_timer+0x3DF
-> 
-> The address rt_set_nexthop.constprop.0+0x376 corresponds to the
-> dst_hold() call inside rt_bind_exception().
-> 
-> 4. Root Cause Analysis
-> 
-> The sit driver's packet transmission path calls: sit_tunnel_xmit() ->
-> ... -> update_or_create_fnhe(), which lead to fnhe_remove_oldest()
-> being called to delete entries exceeding the
-> FNHE_RECLAIM_DEPTH+random.
-> 
-> The race window is between fnhe_remove_oldest() selecting fnheX for
-> deletion and the subsequent kfree_rcu(). During this time, the
-> concurrent path's __mkroute_output() -> find_exception() can fetch the
-> soon-to-be-deleted fnheX, and rt_bind_exception() then binds it with a
-> new dst using a dst_hold(). When the original fnheX is freed via RCU,
-> the dst reference remains permanently leaked.
-> 
-> 5. Fix Validation with eBPF
-> 
-> The patch mitigates this by zeroing fnhe_daddr before the
-> RCU-protected deletion steps. This prevents rt_bind_exception() from
-> attempting to reuse the entry.
-> The fix was validated by probing the rt_bind_exception path (which in
-> my environment is optimized to rt_set_nexthop.constprop.0) to catch
-> any zeroed but active FNHEs being processed:
-> 
-> bpftrace -e 'kprobe:rt_set_nexthop.constprop.0
-> {
->     $rt = (struct rtable *)arg0;
->     $fnhe = (struct fib_nh_exception *)arg3;
->     $fi = (struct flowi *)arg4;
-> 
->     /* Check for an FNHE that is marked for deletion (daddr == 0)
->      * but is still visible/valid (fnhe_expires != 0 and not expired).
->      */
->     if ($fi != 0 && $fnhe != 0 && $fnhe->fnhe_daddr == 0 &&
-> $fnhe->fnhe_expires != 0 && $fnhe->fnhe_expires >= jiffies) {
->         printf("rt: %llx, dev: %s, will leak before this patch\n",
-> $rt, $rt->dst.dev->name);
->     }
-> }'
+On Mon, 3 Nov 2025 17:50:30 +0200
+Ariana Lazar <ariana.lazar@microchip.com> wrote:
 
-Thanks for the details. I was able to reproduce the issue with [1] and I
-can confirm that it does not reproduce with your fix.
+> This is the iio driver for Microchip MCP47F(E/V)B(0/1/2)1,
+> MCP47F(E/V)B(0/1/2)2, MCP47F(E/V)B(0/1/2)4 and MCP47F(E/V)B(0/1/2)8 series
+> of buffered voltage output Digital-to-Analog Converters with nonvolatile =
+or
+> volatile memory and an I2C Interface.
+>=20
+> The families support up to 8 output channels.
+>=20
+> The devices can be 8-bit, 10-bit and 12-bit.
+>=20
+> Signed-off-by: Ariana Lazar <ariana.lazar@microchip.com>
 
-Are you going to submit v2?
+A few minor things. Some of which probably overlap with Andy's comments.
 
-[1]
-#!/bin/bash
+Jonathan
 
-ip netns add ns1
-ip -n ns1 link set dev lo up
-ip -n ns1 address add 192.0.2.1/32 dev lo
-ip -n ns1 link add name dummy1 up type dummy
-ip -n ns1 route add 192.0.2.2/32 dev dummy1
-ip -n ns1 link add name gretap1 up arp off type gretap local 192.0.2.1 remote 192.0.2.2
-ip -n ns1 route add 198.51.0.0/16 dev gretap1
-taskset -c 0 ip netns exec ns1 mausezahn gretap1 -A 198.51.100.1 -B 198.51.0.0/16 -t udp -p 1000 -c 0 -q &
-taskset -c 2 ip netns exec ns1 mausezahn gretap1 -A 198.51.100.1 -B 198.51.0.0/16 -t udp -p 1000 -c 0 -q &
-sleep 10
-ip netns pids ns1 | xargs kill
-ip netns del ns1
+> diff --git a/drivers/iio/dac/mcp47feb02.c b/drivers/iio/dac/mcp47feb02.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..69f5ebbc89aed8ce229cd0c6a=
+37ca58f8a822d46
+> --- /dev/null
+> +++ b/drivers/iio/dac/mcp47feb02.c
+
+
+
+> +static int mcp47feb02_suspend(struct device *dev)
+> +{
+> +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
+> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
+> +	int ret, ch;
+> +	u8 pd_mode;
+> +
+> +	guard(mutex)(&data->lock);
+> +
+> +	for_each_set_bit(ch, &data->active_channels_mask, data->phys_channels) {
+> +		data->chdata[ch].powerdown =3D true;
+> +		pd_mode =3D data->chdata[ch].powerdown_mode + 1;
+> +		regmap_update_bits(data->regmap, MCP47FEB02_POWER_DOWN_REG_ADDR,
+> +				   DAC_CTRL_MASK(ch), DAC_CTRL_VAL(ch, pd_mode));
+
+ret =3D=20
+
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret =3D regmap_write(data->regmap, ch << 3, data->chdata[ch].dac_data);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+
+
+> +static void mcp47feb02_init_scale(struct mcp47feb02_data *data, enum mcp=
+47feb02_scale scale,
+> +				  int vref_mv, int scale_avail[])
+> +{
+> +	int value_micro, value_int;
+> +	s64 tmp;
+> +
+> +	tmp =3D (s64)vref_mv * 1000000LL >> data->info->resolution;
+
+MICRO or similar appropriate and avoids need to count zeros.
+
+> +	value_int =3D div_s64_rem(tmp, 1000000LL, &value_micro);
+> +	scale_avail[scale * 2] =3D value_int;
+> +	scale_avail[scale * 2 + 1] =3D value_micro;
+> +}
+
+> +
+> +static void mcp47feb02_get_scale_avail(struct mcp47feb02_data *data, int=
+ *val, int *val2,
+> +				       enum mcp47feb02_scale scale, int ch)
+
+I'm not really following why this is get_scale_avail.  Just seems to be get=
+ting
+the scale from the index.  The function name should probably be less
+about 'how' than 'what' it is doing.
+
+> +{
+> +	if (data->phys_channels >=3D 4 && (ch % 2)) {
+> +		*val =3D data->scale_1[scale * 2];
+> +		*val2 =3D data->scale_1[scale * 2 + 1];
+> +	} else {
+> +		*val =3D data->scale[scale * 2];
+> +		*val2 =3D data->scale[scale * 2 + 1];
+> +	}
+> +}
+
+
+> +
+> +static int mcp47feb02_read_label(struct iio_dev *indio_dev,
+> +				 struct iio_chan_spec const *ch, char *label)
+> +{
+> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
+> +
+> +	return sysfs_emit(label, "%s\n", data->labels[ch->address]);
+> +
+> +	return 0;
+
+I'm a bit surprised the compiler isn't moaning about unreachable code.
+
+> +}
+
+> +
+> +static int mcp47feb02_init_ctrl_regs(struct mcp47feb02_data *data)
+> +{
+> +	int ret, i, vref_ch, gain_ch, pd_ch, pd_tmp;
+> +	struct device *dev =3D &data->client->dev;
+> +
+> +	ret =3D regmap_read(data->regmap, MCP47FEB02_VREF_REG_ADDR, &vref_ch);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D regmap_read(data->regmap, MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR, =
+&gain_ch);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D regmap_read(data->regmap, MCP47FEB02_POWER_DOWN_REG_ADDR, &pd_c=
+h);
+> +	if (ret)
+> +		return ret;
+> +
+> +	gain_ch =3D gain_ch >> 8;
+
+Is this extracting a field from a register? Probably better as a mask defin=
+ition and
+FIELD_GET()
+
+> +	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
+> +		data->chdata[i].ref_mode =3D (vref_ch >> (2 * i)) & SET_DAC_CTRL_MASK;
+> +		data->chdata[i].use_2x_gain =3D (gain_ch >> i)  & SET_GAIN_BIT;
+> +
+> +		/*
+> +		 * Inform the user that the current voltage reference read from volati=
+le
+> +		 * register of the chip is different from the one from device tree.
+> +		 * You can't have an external voltage reference connected to the pin a=
+nd
+> +		 * select the internal BandGap, because the VREF pin is either an inpu=
+t or
+> +		 * an output. When the DAC=E2=80=99s voltage reference is configured a=
+s the VREF pin,
+> +		 * the pin is an input. When the DAC=E2=80=99s voltage reference is co=
+nfigured as the
+> +		 * internal band gap, the pin is an output.
+> +		 */
+> +		if (data->chdata[i].ref_mode =3D=3D MCP47FEB02_INTERNAL_BAND_GAP) {
+> +			if (data->phys_channels >=3D 4 && (i % 2)) {
+> +				if (data->use_vref1)
+> +					dev_info(dev, "cannot use Vref1 and internal BandGap");
+> +			} else {
+> +				if (data->use_vref)
+> +					dev_info(dev, "cannot use Vref and internal BandGap");
+> +			}
+> +		}
+> +
+> +		pd_tmp =3D (pd_ch >> (2 * i)) & SET_DAC_CTRL_MASK;
+> +		data->chdata[i].powerdown_mode =3D pd_tmp ? (pd_tmp - 1) : pd_tmp;
+> +		data->chdata[i].powerdown =3D !!(data->chdata[i].powerdown_mode);
+> +	}
+> +
+> +	return 0;
+> +}
+
+> +
+> +static int mcp47feb02_probe(struct i2c_client *client)
+> +{
+> +	const struct i2c_device_id *id =3D i2c_client_get_device_id(client);
+> +	const struct mcp47feb02_features *info;
+> +	struct device *dev =3D &client->dev;
+> +	struct mcp47feb02_data *data;
+> +	struct iio_dev *indio_dev;
+> +	int vref1_mv =3D 0;
+> +	int vref_mv =3D 0;
+> +	int vdd_mv =3D 0;
+> +	int ret;
+> +
+> +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*data));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	data =3D iio_priv(indio_dev);
+> +	data->client =3D client;
+> +	info =3D i2c_get_match_data(client);
+> +	if (!info)
+> +		return -EINVAL;
+> +
+> +	data->info =3D info;
+> +
+> +	if (info->have_eeprom) {
+> +		data->regmap =3D devm_regmap_init_i2c(client, &mcp47feb02_regmap_confi=
+g);
+> +		indio_dev->info =3D &mcp47feb02_info;
+> +	} else {
+> +		data->regmap =3D devm_regmap_init_i2c(client, &mcp47fvb02_regmap_confi=
+g);
+> +		indio_dev->info =3D &mcp47fvb02_info;
+> +	}
+> +
+> +	if (IS_ERR(data->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(data->regmap), "Error initializing i=
+2c regmap\n");
+> +
+> +	indio_dev->name =3D id->name;
+
+This is fragile because it ultimately looks up in one type of
+firmware matching structure when we might have probed from another and
+hence relies on names matching precisely across those structures.
+Best to avoid that. Just embed the name string in your info structure inste=
+ad.
+
+> +
+> +	ret =3D mcp47feb02_parse_fw(indio_dev, info);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Error parsing devicetree data\n");
+Error parsing firmware data.  As it should be, your code is firmware type i=
+ndependent
+so error messages should not suggest it is device tree only.
+
+
+> +
+> +	ret =3D devm_mutex_init(dev, &data->lock);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret =3D devm_regulator_get_enable_read_voltage(dev, "vdd");
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	vdd_mv =3D ret / 1000;
+> +
+> +	ret =3D devm_regulator_get_enable_read_voltage(dev, "vref");
+> +	if (ret > 0) {
+> +		vref_mv =3D ret / 1000;
+> +		data->use_vref =3D true;
+> +	} else {
+> +		dev_info(dev, "Vref is unavailable, internal band gap can be used inst=
+ead\n");
+
+Feels too noisy.  dev_dbg() appropriate I think.
+
+> +	}
+> +
+> +	if (info->have_ext_vref1) {
+> +		ret =3D devm_regulator_get_enable_read_voltage(dev, "vref1");
+> +		if (ret > 0) {
+> +			vref1_mv =3D ret / 1000;
+> +			data->use_vref1 =3D true;
+> +		} else {
+> +			dev_info(dev,
+> +				 "Vref1 is unavailable, internal band gap can be used instead\n");
+
+Likewise, dev_dbg().
+
+> +		}
+> +	}
+> +
+> +	ret =3D mcp47feb02_init_ctrl_regs(data);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Error initialising vref register\n");
+> +
+> +	ret =3D mcp47feb02_init_ch_scales(data, vdd_mv, vref_mv, vref1_mv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_iio_device_register(dev, indio_dev);
+> +}
 
