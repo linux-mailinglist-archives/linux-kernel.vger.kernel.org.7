@@ -1,145 +1,204 @@
-Return-Path: <linux-kernel+bounces-891796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA2BC4384D
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 05:05:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1122CC4385A
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 05:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 646833AFE42
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 04:05:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B302188C3B9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 04:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285602144CF;
-	Sun,  9 Nov 2025 04:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90C82116E0;
+	Sun,  9 Nov 2025 04:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+xddn9q"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdSjJse/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E9E1E9B3F
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 04:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D0614A8B;
+	Sun,  9 Nov 2025 04:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762661094; cv=none; b=AHfSVMC/RlIpDc2iYLh+zlo9MRhN755gvjrI4+/AsGE+Zla5yexSpQXN7zljKAPx+hEmWyHk65mN8geLMq57XC49m4U+wUF3lr1CPd4SbpNAHMlmZs0neJ+IaoYBdtPvRh/nUtM5aXmMXYmXeFKEwVrrwHyBLVgQ0EYYV43qfXk=
+	t=1762662863; cv=none; b=RGSQtL0iZz4UXhIyC1LFM/HkQMdDbqIJI/rA6/e6xcpn9WdlE+k3lEM2VULkOTxmcg776WxSjjW4grrwSDF5DXiF561vMCBCoiwNhN8d9StX2DByPq/BOnltObxjG+9Zg+SIf+vWu1gfROAVBs9X8Y5q1RD1yTwRaHWr0K+Or3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762661094; c=relaxed/simple;
-	bh=vy7e0Uz1+HoY2uFB4YSEuZK75o24i9fXUAPPGgAPgzg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ovc+lcs7oXPQPnM56xI/9fNfJXsvg4VHipvuMt69IrU6dywtpQnFRQlciCelN5aVQGzGMrbl0o7iD/D58UbYYFCnuWMYfoXXcbSbHsQH70RTsFT7jl1AcSukdkI8v4kkp6ieBFICPhxW4L6v9iFMB/OnoysRYdnfAt1rFyk+p7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+xddn9q; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b62e7221351so1654372a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 20:04:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762661092; x=1763265892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hv9xrZ2yv0nmyGUfiS3/1XZ0Dl71alHT6BglkhqZupw=;
-        b=R+xddn9qEX31BHz7cYv01PqV8p25v0QuFsKYxA0C/IQm1XwW7VYxjTb7UlZbTDq3OJ
-         jQfTPnjxez/77WZHDQa5r1B1qNsKIOGCwWDevipLCgh17SJ7hYkDK3LtMgjMx+Nv4dPm
-         1dXPGRRe2GD+ttMo6PaOcurqjk4tWG6F5sma5iYgFoWTRKf4/mu9WP3mH9YqUCyaJ3ch
-         CuxcuUldhHqzd74+mzyODlhoXrm4q3OjvabdigHJj87ILWZckp5/9Vx3CEjSffef2324
-         LOAY80tC8ICiyC0GxI3gxlOuBq4VdaFAppeLmKC6gmOMqNGO31DUOF+cPzk8jJ4JqJvq
-         Cu4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762661092; x=1763265892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Hv9xrZ2yv0nmyGUfiS3/1XZ0Dl71alHT6BglkhqZupw=;
-        b=Rsa8pELkbWhkUA7lPwogl4CnnaqqiV/9/YeeVMYDOSBr9FiLmtxXYQhLiprjgs8K8w
-         V146RI3DEJM6cBz6KXVUgcePd8tzVrEFdNLaxlpwWJT/lEFC1K2pAkudd+ODNqkJpcl+
-         8dkdTzciBVVfD1F6Ru1PiTFtHJthC2P1qBFguDkiaj8qFOY7tVaTBiOiwZQ1s6GRk2bl
-         bM96DzbqBG0eez9rsvhIwo0KenKszVWYbB410ZbS7uz0QZyfvw3wzc5FLALI3BM5IkuX
-         BqOULjdZvm60fToRTEAM5S7GS2jFfiIIZhWzC1VqRI7Mq0VllFboYho9D2X6a0dbGz7E
-         kxGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUO7hNiCnSUSGYC3DSsArjAAAI+Ba+uOa04vgYi+gGhuGux6JZkLapOv4AAZV0kPJPpYQPG5aOeKJSomhg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyavzsGfOwYrdkrR1ZlVc0RY7KZUQktJ/Wtp3x+pLfSnuvyFLHW
-	z0RU3oC4Ov3V1I+uVeV7OuG52shvz3QOmk32/C6142n/YK7aGawcxtYkZTNfYUY35tp6vlJQ6bp
-	otTmwosJ5CVdeYixmQtRZce5FxFoS3eI=
-X-Gm-Gg: ASbGnct8VG0RKrFBW5foUYvYuYRboACtrmsOFRqTT5lLiccR6f82Z2YT41l5uroRFeO
-	c3jIiX2soHG5PYYivVpl1wkcyg0277Vu1H6zK2UnlnfkhTymGDP+6Pa7R8Rsd9xFVLiyIpt5X6F
-	emCRhcx3nSELYhjHbLbANNJRobF9FONIcTFZvVmeHroA4mWunizFOQSXkeqBJ76AC52M44Hv/ZE
-	Ji2dLHMZGLPm78pcZzpWY5Q8HKP7jzaAhGZhZeNft8Ve/Ld24elB0+3cm+lVHzTQdXG0UYJs1zu
-	T4s08nn/jWKmbF4zJYpCTA5SmumaraHmTO5/jqNI6Hpf4uAvsGqrl4HU
-X-Google-Smtp-Source: AGHT+IEcGZVVTcMhYTPoqkW+BIztOhsUvcA0pcYzLEUPTNs1B9rap7L/jCYqurq1olrU2M+Ac1pBzPS7A+rk7X+tkU4=
-X-Received: by 2002:a17:902:ec8d:b0:295:586d:677f with SMTP id
- d9443c01a7336-297e540d259mr55218165ad.10.1762661092036; Sat, 08 Nov 2025
- 20:04:52 -0800 (PST)
+	s=arc-20240116; t=1762662863; c=relaxed/simple;
+	bh=FXXxgoummDwhyYR58k65rGbJTrBhBAdvr0rMHBjFdA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nhtR8BFwf2lucQEiRiQyspl1yW587WAafBoK8wahjGJtWufQPEb4B7udnlUBh4u3bCWi03FpH0qa9MdyP+3b7MQezWi3fcYUGhv8QTXynPqAH3sh7UYWhnvwN+rqK9+q+jmR5rhi3QouZjei3EitKXTq1l09rg/IHKbDDLY8Hmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdSjJse/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF23C19422;
+	Sun,  9 Nov 2025 04:34:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762662862;
+	bh=FXXxgoummDwhyYR58k65rGbJTrBhBAdvr0rMHBjFdA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pdSjJse/gh+OHFVmd0OtDxp7gR+qslgJ7/qPNukQWsL3eV40V5i1XSbsFT3A2L+g7
+	 8SfGkuybqM/UFxW75PwMudpBpGIfy5hdbLG0MlmJnaOlef2jQP8/QEdwC9JsLl2ChS
+	 bR7InYMYKfahu9z4E/kkYi94cjqCh90gLGTruUkjrO7UxymsdkCqSo/zIwjRwcdfhD
+	 nmot8Ofypw7RyDbp7MZjHO/sF/U3HjiyGGdKa8rhz7o0izHkd+dgAqzWHJZQ/38Ljk
+	 m8yW9RmpGrKJCqmQyX5NVCGYDdRR+SlLbHE8ea5eQJbRUFD+HyEFmnXHbw46vXU0Qm
+	 ghBg2GaEO8Ing==
+Date: Sun, 9 Nov 2025 06:34:18 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	zohar@linux.ibm.com
+Subject: Re: [PATCH v3 4/4] tpm: Allow for exclusive TPM access when using
+ /dev/tpm<n>
+Message-ID: <aRAZyrug_ZxZ2idK@kernel.org>
+References: <cover.1760958898.git.noodles@meta.com>
+ <61049f236fe1eaf72402895cea6892b52ce7e279.1760958898.git.noodles@meta.com>
+ <cec499d5130f37a7887d39b44efd8538dd361fe3.camel@huaweicloud.com>
+ <aP_KT0GiQSzt1ClO@kernel.org>
+ <aQj2wZrnV7vgoAcq@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107074145.2340-1-gautham.shenoy@amd.com> <CAJZ5v0jS_uNRz=3ZQQLsChf2V3UUvhf6BZ+MBL0WMv+rcW4H6w@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jS_uNRz=3ZQQLsChf2V3UUvhf6BZ+MBL0WMv+rcW4H6w@mail.gmail.com>
-From: Chris Harris <chris.harris79@gmail.com>
-Date: Sat, 8 Nov 2025 20:04:40 -0800
-X-Gm-Features: AWmQ_bl5lUahx-ddHLXQbQC5JBoYj958vCD7_rQlbtTof8rtQnJKJu5Jt7SEWN4
-Message-ID: <CAM+eXpe1inRG9Rbb7y=tGOWrKrQ0nnXut09MEtXwwV35Zc-tCw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] CPPC/amd-pstate: Fixes to limit actions to online CPUs
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Len Brown <lenb@kernel.org>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Yunhui Cui <cuiyunhui@bytedance.com>, 
-	Jeremy Linton <jeremy.linton@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Ionela Voinescu <ionela.voinescu@arm.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQj2wZrnV7vgoAcq@earth.li>
 
-Hi, I've tested all five v2 patches and have observed no issues in the
-use case the bug report was based upon.  I continue to successfully
-receive the desired amd-pstate scaling driver when 'nosmt=3Dforce' and
-'amd_pstate=3Dpassive' are set.  I've not tested other cases/scenarios
-for which the additional hardening/patches may have been intended.
+On Mon, Nov 03, 2025 at 06:38:57PM +0000, Jonathan McDowell wrote:
+> On Mon, Oct 27, 2025 at 09:38:55PM +0200, Jarkko Sakkinen wrote:
+> > On Mon, Oct 20, 2025 at 01:53:30PM +0200, Roberto Sassu wrote:
+> > > On Mon, 2025-10-20 at 12:31 +0100, Jonathan McDowell wrote:
+> > > > From: Jonathan McDowell <noodles@meta.com>
+> > > >
+> > > > There are situations where userspace might reasonably desire exclusive
+> > > > access to the TPM, or the kernel's internal context saving + flushing
+> > > > may cause issues, for example when performing firmware upgrades. Extend
+> > > > the locking already used for avoiding concurrent userspace access to
+> > > > prevent internal users of the TPM when /dev/tpm<n> is in use.
+> > > >
+> > > > The few internal users who already hold the open_lock are changed to use
+> > > > tpm_internal_(try_get|put)_ops, with the old tpm_(try_get|put)_ops
+> > > > functions changing to obtain read access to the open_lock.  We return
+> > > > -EBUSY when another user has exclusive access, rather than adding waits.
+> > > >
+> > > > Signed-off-by: Jonathan McDowell <noodles@meta.com>
+> > > > ---
+> > > > v2: Switch to _locked instead of _internal_ for function names.
+> > > > v3: Move to end of patch series.
+> > > >
+> > > >  drivers/char/tpm/tpm-chip.c       | 53 +++++++++++++++++++++++++------
+> > > >  drivers/char/tpm/tpm-dev-common.c |  8 ++---
+> > > >  drivers/char/tpm/tpm.h            |  2 ++
+> > > >  drivers/char/tpm/tpm2-space.c     |  5 ++-
+> > > >  4 files changed, 52 insertions(+), 16 deletions(-)
+> > > >
+> > > > diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> > > > index ba906966721a..687f6d8cd601 100644
+> > > > --- a/drivers/char/tpm/tpm-chip.c
+> > > > +++ b/drivers/char/tpm/tpm-chip.c
+> > > > @@ -144,7 +144,7 @@ void tpm_chip_stop(struct tpm_chip *chip)
+> > > >  EXPORT_SYMBOL_GPL(tpm_chip_stop);
+> > > >
+> > > >  /**
+> > > > - * tpm_try_get_ops() - Get a ref to the tpm_chip
+> > > > + * tpm_try_get_ops_locked() - Get a ref to the tpm_chip
+> > > >   * @chip: Chip to ref
+> > > >   *
+> > > >   * The caller must already have some kind of locking to ensure that chip is
+> > > > @@ -154,7 +154,7 @@ EXPORT_SYMBOL_GPL(tpm_chip_stop);
+> > > >   *
+> > > >   * Returns -ERRNO if the chip could not be got.
+> > > >   */
+> > > > -int tpm_try_get_ops(struct tpm_chip *chip)
+> > > > +int tpm_try_get_ops_locked(struct tpm_chip *chip)
+> > > >  {
+> > > >  	int rc = -EIO;
+> > > >
+> > > > @@ -185,22 +185,57 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+> > > >  	put_device(&chip->dev);
+> > > >  	return rc;
+> > > >  }
+> > > > -EXPORT_SYMBOL_GPL(tpm_try_get_ops);
+> > > >
+> > > >  /**
+> > > > - * tpm_put_ops() - Release a ref to the tpm_chip
+> > > > + * tpm_put_ops_locked() - Release a ref to the tpm_chip
+> > > >   * @chip: Chip to put
+> > > >   *
+> > > > - * This is the opposite pair to tpm_try_get_ops(). After this returns chip may
+> > > > - * be kfree'd.
+> > > > + * This is the opposite pair to tpm_try_get_ops_locked(). After this returns
+> > > > + * chip may be kfree'd.
+> > > >   */
+> > > > -void tpm_put_ops(struct tpm_chip *chip)
+> > > > +void tpm_put_ops_locked(struct tpm_chip *chip)
+> > > >  {
+> > > >  	tpm_chip_stop(chip);
+> > > >  	mutex_unlock(&chip->tpm_mutex);
+> > > >  	up_read(&chip->ops_sem);
+> > > >  	put_device(&chip->dev);
+> > > >  }
+> > > > +
+> > > > +/**
+> > > > + * tpm_try_get_ops() - Get a ref to the tpm_chip
+> > > > + * @chip: Chip to ref
+> > > > + *
+> > > > + * The caller must already have some kind of locking to ensure that chip is
+> > > > + * valid. This function will attempt to get the open_lock for the chip,
+> > > > + * ensuring no other user is expecting exclusive access, before locking the
+> > > > + * chip so that the ops member can be accessed safely. The locking prevents
+> > > > + * tpm_chip_unregister from completing, so it should not be held for long
+> > > > + * periods.
+> > > > + *
+> > > > + * Returns -ERRNO if the chip could not be got.
+> > > > + */
+> > > > +int tpm_try_get_ops(struct tpm_chip *chip)
+> > > > +{
+> > > > +	if (!down_read_trylock(&chip->open_lock))
+> > > > +		return -EBUSY;
+> > > 
+> > > Hi Jonathan
+> > > 
+> > > do I understand it correctly, that a process might open the TPM with
+> > > O_EXCL, and this will prevent IMA from extending a PCR until that
+> > > process closes the file descriptor?
+> > > 
+> > > If yes, this might be a concern, and I think an additional API to
+> > > prevent such behavior would be needed (for example when IMA is active,
+> > > i.e. there is a measurement policy loaded).
+> > 
+> > Also this would be a problem with hwrng.
+> > 
+> > This probably needs to be refined somehow. I don't have a solution at
+> > hand but "invariant" is that in-kernel caller should override user space
+> > exclusion, even when O_EXCL is used.
+> 
+> Kernel access is exactly what caused the issue for me, in particular the HW
+> RNG access during a firmware upgrade. My patch to be able to disable the HW
+> RNG at runtime has landed in -next, which helps a lot, but it really would
+> be nice to be able to say "Hands off, I'm busy with this", which is what led
+> to this patch set.
 
-Thank you again for the rapid efforts that went into this solution.
+If there is a situation when kernel needs to be excluded from itself,
+then there should really be a kernel uapi to implement that use case.
 
-Chris Harris
+I'd rather have e.g. ioctl (perhaps just picking one possible tool for
+the job) for firmware upgrade than allow user space to arbitarily lock
+TPM access.
 
-On Fri, Nov 7, 2025 at 9:41=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> Hi,
->
-> On Fri, Nov 7, 2025 at 8:42=E2=80=AFAM Gautham R. Shenoy <gautham.shenoy@=
-amd.com> wrote:
-> >
-> > Hello,
-> >
-> > This is the v2 of the patchset to restrict certain actions to only
-> > online CPUs instead of present CPUs.
-> >
-> > The v1 of this patchset can be found here:
-> > https://lore.kernel.org/lkml/20251105143851.4251-1-gautham.shenoy@amd.c=
-om/
-> >
-> > Changes between v1 --> v2:
-> >
-> >  * Picked up the Reviewed-by tags from Mario for the first four
-> >    patches
-> >
-> >  * Picked up the Tested-by tags from Chris for the first two patches
-> >
-> >  * Added a fifth patch to fix calling of cppc_set_auto_sel() for only
-> >    online CPUs in the amd-pstate driver code (Mario)
-> >
-> >
-> > Gautham R. Shenoy (5):
-> >   ACPI: CPPC: Detect preferred core availability on online CPUs
-> >   ACPI: CPPC: Check _CPC validity for only the online CPUs
-> >   ACPI: CPPC: Perform fast check switch only for online CPUs
-> >   ACPI: CPPC: Limit perf ctrs in PCC check only to online CPUs
->
-> The above 4 patches applied as 6.18-rc material.
->
-> >   cpufreq/amd-pstate: Call cppc_set_auto_sel() only for online CPUs
->
-> And I'm leaving this one to Mario.
->
-> Thanks!
+> 
+> To James' query about the fact the upgrade process should be properly
+> handled, I think the issue is probably that the HMAC context saving around
+> HW RNG access hit errors that were not gracefully handled, and we marked the
+> TPM as disabled in tpm2_load_null, causing failure mid-upgrade.
+> 
+> J.
+> 
+> -- 
+> What have you got in your pocket?
+
+BR, Jarkko
 
