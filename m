@@ -1,195 +1,146 @@
-Return-Path: <linux-kernel+bounces-891938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB8F5C43DCB
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:36:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19E6C43DD8
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:41:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E75188C0AF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:36:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1CC3AC31B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DFE2ECD39;
-	Sun,  9 Nov 2025 12:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8732ECD32;
+	Sun,  9 Nov 2025 12:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="CwmWzn64"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hujg0fN2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A843F2EC547
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2730E2E975A;
+	Sun,  9 Nov 2025 12:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762691782; cv=none; b=fhvM2Kx6ty99fG1ucHOBQ6oXWMmHnXYT1IEhe68n3j/pKo+TUa+rWSnpL9QMVtQ7IiCrEj9FwyO/N5q/mo8p+mF1v6S8XABzsjRkoCyeNcksRS4E/DJGEWgXmMpB5A+mpoU2JXFGWIkx3+GrzTmv3DZ055YPVgrA2Fic5iAxgFo=
+	t=1762692092; cv=none; b=YtW4n9QQ8pSobrA5+z5QBcmdMX0I/c9TCgrPz8owoIsqUS18EBr1f8HobIiPtRetTzww4EBz6h6EuDLpm/zT3u69xzkVIGL+KBWANaK6g0xHA0kfA9/GuBY3lHjDqoV4pDc7CxzKjR7DFrZnPgnEYlgq0cGUCLR8YboqTKiHx5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762691782; c=relaxed/simple;
-	bh=0U+Xecz6Fprk4dFBomPdZ52Cm4H0r6qZsfE5vgiz9io=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tki8wheSfUFLrBWZXOwi77dJFayL2VQvQ0Nf5z1Rfmdz06P3hR/8N1v5c1/ZVmKWl1UPlmzPt2SQBNDuhbWY8Lj3mcFMPmy2CIyJEVoGh57vrGJdDIzv7DR7M7kN8qSWPOXNu1qZMBAEfhlcpW7zZbVBp/ZPrnIGdRFrliHLlx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=CwmWzn64; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3414de5b27eso1704528a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:36:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1762691780; x=1763296580; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KJmBqFwSZPTgeDdxxWga7QZHqD9dNuDtkCKsKlOxCRA=;
-        b=CwmWzn64xu6rrzwg0+7loMOilGb4rKuLRpuGdxCfxC4/Pq4PgNE7cjZ6xa6+Uq/MGk
-         nbAT1eW4OlMtfBgw+FwbwqVy8DQ3wi20ii/by1ARkvNKyxPO3jVatFV2lIXlEchyTAfn
-         6IQ4FG02B6BQaPdEgErQLX7DpMuMxGHoqnLUVYcca2LYFcRf/i+R+cJDzC6lwbZWvt6z
-         zupquU7kEH9xcGYn438HppIwOCZuo0/iXge0cNC9gNDgngBntB2ZaMlDcBpUuHmrvtxl
-         h+1nur/i0KSS6PoRjgw4euPENUAWbdXlxjgnXxzvJJwgmrSj5FsDIFC8GBEITLH+udRw
-         WBwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762691780; x=1763296580;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KJmBqFwSZPTgeDdxxWga7QZHqD9dNuDtkCKsKlOxCRA=;
-        b=O7ySHbKOaMhGLN7qGj6JdGgGJ1EOi+xUBLsoM5ZAgHwtmBlHZkUhvvCmyK2pGeDa7X
-         6EcKnDzVRk9vcj++LH2JiYJBhRxOC4K0jodVBJ7H5DQQZ39JeA1XS8mhSrH52v4Ev0En
-         ULMVnSyuIYGbKwfsCaupVAxfHOJbj9x3WukH5dl5IlxoOo5xIE87bkTBSZhRSdDHvHhG
-         nsBeiOBiHG6jxYQ+UqqRfHKT5NI1YXzt4lvRgYfElDlqnvkOKp5e8u8eu1NbILzEuBww
-         BaxaLSJ8GcsgnpdrCBs3f4cTsUr/UFvW3UR+OmNwvAY6Agkvk7npD1ST7shb2BQsPG3T
-         9nnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqaDjBkgz3GG5wUNmjVQkSpdiW+tjEkZjGHPCTUoIbvzsjj0CzQsOOnMaGzsw6rj85CGja37NW4siY+bo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2EMy787CBUp3sxEIfxhjeSdttfaWoXTl5910mL+9ACSzZqxuH
-	M1dHvJXk1g6lTKz5mt/7O1QCeYCgCTpiMUXcoQCNYvE6zYuVS+NYHrc9Jz64BhrtYgM=
-X-Gm-Gg: ASbGncvKUxijWoS6rgmQaz5eGQJtMjgzYv951K1NJYeEMpNif/1bEukmcEyuejBDAGR
-	ALmGG9tDuP0Xy7JMbVtIHlL+47/REtHkEgFJxmyPG6pIiMJBhaAuBaQUU+97tDMKIl9EwUe8O8z
-	jRsuj3bp20m7AtBbPzRlq2DIMbL7fGoBNKi11Ir9PfXLUSUEAGDUf4dV/NOA/iyBmN6oCUBMiNr
-	9+0E4HEMUa8cLt5Xgzn2D0bku04SVN5pXpULAGv8FMF7R+Y1Erx0/GddrgHwU3emohaZ1xNVwRq
-	9ZzcJMP1agmpwActkCfiL5ycKoWJBS4XkcKnlASH7mFuX1SvAdJVDsFTIFL6dgL8RcO15Jb4YEu
-	ZYOC9WINQYwjI4KbtUyHBgPXLAuDwZKXq0a8E3dtfSVZ8LeaIHGItV2dbPXaUjUruIvc58owi8U
-	CHrGVVr9XnX7R/EorTaTKCiDo8QzfkI8A=
-X-Google-Smtp-Source: AGHT+IFJcX4kraEUbC8VOW05T7p2FeSFYukhwLNqfkAsi9st8xXB4csrxqTW846Kb3/6J4WQhJ7aog==
-X-Received: by 2002:a17:90a:da8b:b0:33b:dec9:d9aa with SMTP id 98e67ed59e1d1-3436cbb171cmr5487179a91.25.1762691779910;
-        Sun, 09 Nov 2025 04:36:19 -0800 (PST)
-Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:519d:1960:dc93:9d0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c337b20sm7781832a91.13.2025.11.09.04.36.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 04:36:18 -0800 (PST)
-Date: Sun, 9 Nov 2025 20:36:12 +0800
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>, ebiggers@kernel.org,
-	tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
-	idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
-	sagi@grimberg.me, home7438072@gmail.com,
-	linux-nvme@lists.infradead.org, linux-fscrypt@vger.kernel.org,
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
- users
-Message-ID: <aRCKvJnJxmaDYKvI@wu-Pro-E500-G6-WS720T>
-References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
- <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
- <aQiC4zrtXobieAUm@black.igk.intel.com>
- <aQiM7OWWM0dXTT0J@google.com>
- <20251104090326.2040fa75@pumpkin>
- <aQnMCVYFNpdsd-mm@smile.fi.intel.com>
- <20251105094827.10e67b2d@pumpkin>
- <aQtbmWLqtFXvT8Bc@smile.fi.intel.com>
- <20251105143820.11558ca8@pumpkin>
+	s=arc-20240116; t=1762692092; c=relaxed/simple;
+	bh=D2fO6b+7RL/6aN1x3OLkpblQOqizg946JOHiToqSI74=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dniZS3fgcH28qZQv3G2vJaN0p80F3N+MoHaQNci6RMZI2UKzvqoY9C0LrrQw+mRR2bP1C6k7aU1rtZJe58p3xu6wnmItoOuySl954UBWW4HSIfLtxB19mQpy4rSSVA5so8WxTr5VNbQR3t1eGNNd75ELml5EareoOEHjpVodV8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hujg0fN2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC7DC19421;
+	Sun,  9 Nov 2025 12:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762692091;
+	bh=D2fO6b+7RL/6aN1x3OLkpblQOqizg946JOHiToqSI74=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Hujg0fN2+wBri0RREM3ucP+P8THVVeg3BCQcyEbRCRvCYSjbgNQutSnD7IXEV+ZxW
+	 JCGcFBMQFWZTIbPkeSiO0eSXYaSaC9mHT3/kIDWxp9BANxF4hHfCrj9MX3qwVSD3tq
+	 lR/RhZyD5IMnKKBeouwO0nzHhNC3oXhOA2x/rNk7ObogG2tuYh4Z/95pPTvvUIDGJW
+	 /PWDlAwhUPdAZxFaBxzDvYR8Vm1VnAwqM0BrPiyfk1tN2hxE2jcN3d1VeUx8jpYg5U
+	 cflBwc2xQCbiGsQL1gPAcmcM1SrKE5AyLzWdlu6j7s5cOEsawAuIIF8NNCqXtp7BgZ
+	 KRDvhjHdgvyHg==
+Date: Sun, 9 Nov 2025 12:41:25 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jagath Jog J
+ <jagathjog1996@gmail.com>
+Subject: Re: [PATCH 3/6] iio: accel: bma220: add tap detection
+Message-ID: <20251109124125.2ab0d432@jic23-huawei>
+In-Reply-To: <aQ09qTYr0gqlb0If@lipo.home.arpa>
+References: <20251014-bma220_events-v1-0-153424d7ea08@subdimension.ro>
+	<20251014-bma220_events-v1-3-153424d7ea08@subdimension.ro>
+	<20251018181632.76851d4e@jic23-huawei>
+	<aQW9OnJSrOzn_Sws@lipo.home.arpa>
+	<20251102122053.49ee2632@jic23-huawei>
+	<aQ09qTYr0gqlb0If@lipo.home.arpa>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251105143820.11558ca8@pumpkin>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 05, 2025 at 02:38:20PM +0000, David Laight wrote:
-> On Wed, 5 Nov 2025 16:13:45 +0200
-> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-> 
-> > On Wed, Nov 05, 2025 at 09:48:27AM +0000, David Laight wrote:
-> > > On Tue, 4 Nov 2025 11:48:57 +0200
-> > > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:  
-> > > > On Tue, Nov 04, 2025 at 09:03:26AM +0000, David Laight wrote:  
-> > > > > On Mon, 3 Nov 2025 19:07:24 +0800
-> > > > > Kuan-Wei Chiu <visitorckw@gmail.com> wrote:    
-> > > > > > On Mon, Nov 03, 2025 at 11:24:35AM +0100, Andy Shevchenko wrote:    
-> > 
-> ...
-> > > How about this one?  
-> > 
-> > Better than previous one(s) but quite cryptic to understand. Will need a
-> > comment explaining the logic behind, if we go this way.
-> 
-> My first version (of this version) had all three character ranges in the define:
-> so:
-> #define INIT_1(v, ch_62, ch_63) \
-> 	[ v ] = (v) >= '0' && (v) <= '9' ? (v) - '0' \
-> 		: (v) >= 'A' && (v) <= 'Z' ? (v) - 'A' + 10 \
-> 		: (v) >= 'a' && (v) <= 'z' ? (v) - 'a' + 36 \
-> 		: (v) == ch_62 ? 62 : (v) == ch_63 ? 63 : -1
-> Perhaps less cryptic - even if the .i line will be rather longer.
-> It could be replicated for all 256 bytes, but I think the range
-> initialisers are reasonable for the non-printable ranges.
-> 
-> I did wonder if the encode and decode lookup tables count be interleaved
-> and both initialisers generated from the same #define.
-> But I can't think of a way of generating 'x' and "X" from a #define parameter.
-> (I don't think "X"[0] is constant enough...)
-> 
-> 	David
->
+On Fri, 7 Nov 2025 02:30:33 +0200
+Petre Rodan <petre.rodan@subdimension.ro> wrote:
 
-Thanks for your reply!
-We’ll adopt the approach you suggested in the next version.
-
-Best regards,
-Guan-Chun
-
-> > 
-> > > #define INIT_1(v, ch_lo, ch_hi, off, ch_62, ch_63) \
-> > > 	[ v ] = ((v) >= ch_lo && (v) <= ch_hi) ? (v) - ch_lo + off \
-> > > 		: (v) == ch_62 ? 62 : (v) == ch_63 ? 63 : -1
-> > > #define INIT_2(v, ...) INIT_1(v, __VA_ARGS__), INIT_1((v) + 1, __VA_ARGS__)
-> > > #define INIT_4(v, ...) INIT_2(v, __VA_ARGS__), INIT_2((v) + 2, __VA_ARGS__)
-> > > #define INIT_8(v, ...) INIT_4(v, __VA_ARGS__), INIT_4((v) + 4, __VA_ARGS__)
-> > > #define INIT_16(v, ...) INIT_8(v, __VA_ARGS__), INIT_8((v) + 8, __VA_ARGS__)
-> > > #define INIT_32(v, ...) INIT_16(v, __VA_ARGS__), INIT_16((v) + 16, __VA_ARGS__)
+> On Sun, Nov 02, 2025 at 12:20:53PM +0000, Jonathan Cameron wrote:
+> > On Sat, 1 Nov 2025 09:56:42 +0200
+> > Petre Rodan <petre.rodan@subdimension.ro> wrote:
+> >   
+> > > Hello Jonathan,
 > > > 
-> > > #define BASE64_REV_INIT(ch_62, ch_63) { \
-> > > 	[ 0 ... 0x1f ] = -1, \
-> > > 	INIT_32(0x20, '0', '9', 0, ch_62, ch_63), \
-> > > 	INIT_32(0x40, 'A', 'Z', 10, ch_62, ch_63), \
-> > > 	INIT_32(0x60, 'a', 'z', 26, ch_62, ch_63), \
-> > > 	[ 0x80 ... 0xff ] = -1 }
+> > > thank you for the review.
 > > > 
-> > > which gets the pre-processor to do all the work.
-> > > ch_62 and ch_63 can be any printable characters.
+> > > On Sat, Oct 18, 2025 at 06:16:32PM +0100, Jonathan Cameron wrote:  
+> > > > > +			ret = regmap_read(data->regmap, BMA220_REG_CONF3, &reg_val);
+> > > > > +			if (ret)
+> > > > > +				return ret;
+> > > > > +			*val = FIELD_GET(BMA220_TT_DUR_MSK, reg_val);    
+> > > > 
+> > > > This needs to be in second if you are using duration. Is the register really in seconds?    
 > > > 
-> > > Note that the #define names are all in a .c file - so don't need any
-> > > kind of namespace protection.  
+> > > this IC has a very small number of bits that configure
+> > > duration/hysteresis/threshold levels. it's between 2 and 6 for each
+> > > of them. in the case of high and low G events the duration is not
+> > > even directly defined as a time interval, but as a count of samples
+> > > that are over a threshold value.  
 > > 
-> > > They can also all be #undef after the initialiser.  
-> > 
-> > Yes, that's too.
-> > 
-> > > > Moreover this table is basically a dup of the strings in the first array.
-> > > > Which already makes an unnecessary duplication.  
-> > > 
-> > > That is what the self tests are for.
-> > >   
-> > > > That's why I prefer to
-> > > > see a script (one source of data) to generate the header or something like
-> > > > this to have the tables and strings robust against typos.  
-> > > 
-> > > We have to differ on that one.
-> > > Especially in cases (like this) where generating that data is reasonably trivial.
-> > >   
-> > > > The above is simply an unreadable mess.  
-> > 
+> > The ABI is in seconds, so you have to deal with scaling wrt to the sampling
+> > frequency at the time.  I know it can be a pain to do, but consistent userspace
+> > is the aim and so we need to match the ABI.  
 > 
+> on this bma220 chip, when someone modifies the cut off frequency of the
+> filter then the ic automatically adjusts the sampling rate. and this 
+> sample rate is not exposed on any of the registers.
+> since duration parameters are defined as a count of samples 
+> and the sample rate looks to be unknown I don't see how I could
+> adapt to an API that is based on a unit of seconds.
+
+Does the datasheet document that relationship? Table 4 on the datasheet I looked
+at to seems to give settling time but I think is only relevant to low power
+modes that might not apply here.
+
+Would be very odd if there is no way to establish the sampling frequency from
+the settings configured.
+
+> 
+> > > I was hoping that simply passing along a unitless value between 0 and
+> > > parameter_max would be enough to customize all the event parameters.
+> > > this does mean that the driver makes the assumption that the user is
+> > > familiar with the device datasheet and knows the number of bits every
+> > > parameter has been allocated. should the driver provide a conversion
+> > > table for tt_duration just like for _scale_table and
+> > > _lpf_3dB_freq_Hz_table?  
+> > 
+> > Exactly.  
+> 
+> I was thinking today of a more analog-feeling API, one in which a variable that can take values linearly between min and max can be set to a percentage of it's scale. think of stereo systems - most of us don't want to set a precise amount of decibels of attenuation when operating the volume knob, we just want to set it lower or higher until a condition matches. in this API the primary unit of measurement would not be dBs but notches or ticks - calculated based on min, max and the native resolution of the control (how many bits are allocated for it in the ic's memory map). this has also the benefit of translating nicely when the control is rendered as a widget in a GUI. think about a 0 to 11 volume knob.
+> is there anything like this already implemented? is there any merit to this idea?
+
+ABI is fixed the day it is defined and I'm not keen to have what sounds like
+a duplicate ABI.  We also need to if even vaguely possible have consistency across sensors.
+If you do it on basis of range set, and one sensor oddly provides twice the range
+of another, then a 5 on one is a 10 on that other.
+
+Hence the only things where we can do this sort of percentage thing are where
+the thing being controlled is a unit less ratio and hence a percentage type
+control is the only possible units.
+
+Thanks,
+
+Jonathan
+
+
+> 
+>  I will shelve the event part of this driver for another time, just got some Honeywell pressure sensors that need a new driver.
+> 
+> best regards,
+> peter
+
 
