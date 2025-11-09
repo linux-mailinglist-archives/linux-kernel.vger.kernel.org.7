@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-892083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889B9C444D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 19:07:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFBCC444D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 19:07:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EFAA4E74BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 18:07:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77FB23B01DC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 18:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6400C22D793;
-	Sun,  9 Nov 2025 18:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F105230264;
+	Sun,  9 Nov 2025 18:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m75WjUhq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfFWJIcM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CFB2264C0
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 18:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ECA21CFF6
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 18:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762711629; cv=none; b=IRwNHAfDBrYsmWwmq2YDhmaCAH0/96bxMEqBfLy+kFXLOBI3zMHxxFDr/4ExgRSjPbOjJFGlr53QYe4Qg6Pt+a55PW9uoXH98T+eYLfrJvcwYsffGoWDibLiSJlgumeoCFpbdQsDusUcoClrMTlma/IQ53qvFaMOhOrj8bk62Tc=
+	t=1762711634; cv=none; b=h2GtxVarXHVsJ8NAk1H4b+eqlgqIreCIoorjN+UQoR3ZIJchv72qYZH3GNkpFayGH0E8ofgPqEEWScfScEP0XtVn/rzWLoE6iJ9nOa1sQRSYdrXeVmGcy3Xomov7CQ6D5dxudA3ZWwxnrNyv+g5J4fygtE9HVyyWslHQI9h6oyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762711629; c=relaxed/simple;
-	bh=59w6p5OIO0ukVj/H6iWXGVoWsjSUgZ8nYZ9Xx2PeP8w=;
+	s=arc-20240116; t=1762711634; c=relaxed/simple;
+	bh=kaO5/IVrebOzmYLwKVSEsBGlfzzeuU+iOQME8bN/Vgw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JWOkQHKj5zPd/fF6Kcwtxqy7p7ThsYAQk59Pxj+eR1at9ywC+Q4zWNikGCEvw9JDjUjYePc96H2F57Z2i/VLzuagxuVWcexP5x7Y1GuAQqYqQUiPpH+jk1NDbUHYnNfvU73aJhGXIs7xyhouwQ5BBjsyYNFC37oUYV1nIcrUptc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m75WjUhq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4887CC4CEF8;
-	Sun,  9 Nov 2025 18:07:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PEHUZUu8Pfs+DIBJcNciLFgkdjgcx2tfDLtzTwPgsG9tMUNn5dHZY/vYCbo82MWRRq1oxIrzfP6mR1OzkEGfcoRnSEbKiZLpeJsK5TuPNZRws3vSvPhv//374f48sEqner4Bbyo3bE7uJEKdFiDegiKrIyHdAIPfYuM/bylsgOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lfFWJIcM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B83C4CEF8;
+	Sun,  9 Nov 2025 18:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762711629;
-	bh=59w6p5OIO0ukVj/H6iWXGVoWsjSUgZ8nYZ9Xx2PeP8w=;
+	s=k20201202; t=1762711634;
+	bh=kaO5/IVrebOzmYLwKVSEsBGlfzzeuU+iOQME8bN/Vgw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m75WjUhql6v/TjVEVnpOWQ1J/FB300lERpRYAirZ1FL9l76CpCRBfww1t2a35snQD
-	 tJHog/nimE0l2EWB/xf3G7qrVi9oDltBkClxF+5wivdARDiJS82n+dVL+gBKvKd8BR
-	 v/8JUuiy6YMgm4mnDcTl44gppUgZ/Wyo5IFO+cH2sa9UGBl+NBzQtaPOFGfayVhBD+
-	 867kDhk1O0Gc6+aNChoD4zHmiq4wxs2CHEGKY/HJnXV/ww0wv+WJhTpq7pcJlFswDD
-	 AecDB2oiiUD1yMcLmdGjs44qVENg+pvI5a2EtLzvTW+1c+3RwlEOqTma9hq9YQhjBj
-	 MpMRGrTMqp8EQ==
-Date: Sun, 9 Nov 2025 19:07:04 +0100
+	b=lfFWJIcMlKISISBM1E6H9raA2HPW4eVb8izpDAHamiPCRjD9yz+rZZO+Q2fJ3fIXx
+	 l1CrIWkSYtNrr/srw+vokFdC8aiM6GL5aGBKc6F8r4V5qMYs0AxX9bTPuHWRPhh6n2
+	 y0NWPsbo9B6lxCCQd8dhvtmkirgpH0ZDyIFEMIxcynaGsxqLqL5fsUYr6cfgTCtjvw
+	 Zx3Q+0RBAImo8DEEGO2wRWn+jYk8COlkpo7xghPZVTF2XugmThkdlwkZZM2bYJrJDa
+	 VtbMFW7txrWkaU9GSXR6/PG4XJG+RJx3GkyPJ7c9xO8tp1noYhZAKeu4H1Q3GQ2+W+
+	 13LM5qdxHEEhw==
+Date: Sun, 9 Nov 2025 19:07:09 +0100
 From: Alejandro Colomar <alx@kernel.org>
 To: linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Cc: Alejandro Colomar <alx@kernel.org>, Kees Cook <kees@kernel.org>, 
@@ -49,8 +49,8 @@ Cc: Alejandro Colomar <alx@kernel.org>, Kees Cook <kees@kernel.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
 	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>, 
 	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v3 3/4] kernel: Fix off-by-one benign bugs
-Message-ID: <d8128f0c8b9fcf5be9684eeee650c24ede242b8e.1762711279.git.alx@kernel.org>
+Subject: [PATCH v3 4/4] mm: Use ARRAY_END() instead of open-coding it
+Message-ID: <9646a1d194a5d2f310d4272f9c240453e68c2147.1762711279.git.alx@kernel.org>
 X-Mailer: git-send-email 2.51.0
 References: <cover.1758806023.git.alx@kernel.org>
  <cover.1762711279.git.alx@kernel.org>
@@ -64,53 +64,49 @@ Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 In-Reply-To: <cover.1762711279.git.alx@kernel.org>
 
-We were wasting a byte due to an off-by-one bug.  s[c]nprintf()
-doesn't write more than $2 bytes including the null byte, so trying to
-pass 'size-1' there is wasting one byte.
-
-This is essentially the same as the previous commit, in a different
-file.
-
-Cc: Marco Elver <elver@google.com>
 Cc: Kees Cook <kees@kernel.org>
-Cc: Christopher Bazley <chris.bazley.wg14@gmail.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Marco Elver <elver@google.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Alejandro Colomar <alx@kernel.org>
 ---
- kernel/kcsan/kcsan_test.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mm/kmemleak.c      | 2 +-
+ mm/memcontrol-v1.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/kcsan/kcsan_test.c b/kernel/kcsan/kcsan_test.c
-index 219d22857c98..8ef8167be745 100644
---- a/kernel/kcsan/kcsan_test.c
-+++ b/kernel/kcsan/kcsan_test.c
-@@ -176,7 +176,7 @@ static bool __report_matches(const struct expect_report *r)
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 1ac56ceb29b6..fe33f2edfe07 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -510,7 +510,7 @@ static void mem_pool_free(struct kmemleak_object *object)
+ {
+ 	unsigned long flags;
  
- 	/* Title */
- 	cur = expect[0];
--	end = &expect[0][sizeof(expect[0]) - 1];
-+	end = ARRAY_END(expect[0]);
- 	cur += scnprintf(cur, end - cur, "BUG: KCSAN: %s in ",
- 			 is_assert ? "assert: race" : "data-race");
- 	if (r->access[1].fn) {
-@@ -200,7 +200,7 @@ static bool __report_matches(const struct expect_report *r)
+-	if (object < mem_pool || object >= mem_pool + ARRAY_SIZE(mem_pool)) {
++	if (object < mem_pool || object >= ARRAY_END(mem_pool)) {
+ 		kmem_cache_free(object_cache, object);
+ 		return;
+ 	}
+diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+index 6eed14bff742..b2f37bd939fa 100644
+--- a/mm/memcontrol-v1.c
++++ b/mm/memcontrol-v1.c
+@@ -1794,7 +1794,7 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
  
- 	/* Access 1 */
- 	cur = expect[1];
--	end = &expect[1][sizeof(expect[1]) - 1];
-+	end = ARRAY_END(expect[1]);
- 	if (!r->access[1].fn)
- 		cur += scnprintf(cur, end - cur, "race at unknown origin, with ");
+ 	mem_cgroup_flush_stats(memcg);
  
+-	for (stat = stats; stat < stats + ARRAY_SIZE(stats); stat++) {
++	for (stat = stats; stat < ARRAY_END(stats); stat++) {
+ 		seq_printf(m, "%s=%lu", stat->name,
+ 			   mem_cgroup_nr_lru_pages(memcg, stat->lru_mask,
+ 						   false));
+@@ -1805,7 +1805,7 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
+ 		seq_putc(m, '\n');
+ 	}
+ 
+-	for (stat = stats; stat < stats + ARRAY_SIZE(stats); stat++) {
++	for (stat = stats; stat < ARRAY_END(stats); stat++) {
+ 
+ 		seq_printf(m, "hierarchical_%s=%lu", stat->name,
+ 			   mem_cgroup_nr_lru_pages(memcg, stat->lru_mask,
 -- 
 2.51.0
 
