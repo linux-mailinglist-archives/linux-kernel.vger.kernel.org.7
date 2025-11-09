@@ -1,340 +1,152 @@
-Return-Path: <linux-kernel+bounces-892017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 314A3C4418F
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 16:53:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1533C441A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 16:54:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B83524E35A2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 15:53:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6043D3B1E55
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 15:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0F72FFF82;
-	Sun,  9 Nov 2025 15:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58832FF672;
+	Sun,  9 Nov 2025 15:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjXh/WZw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GEkRfktT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F279D1F7569;
-	Sun,  9 Nov 2025 15:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DBA20013A;
+	Sun,  9 Nov 2025 15:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762703600; cv=none; b=n4vjVA9ydQkyQ+L92Ws4NGuQxFb2ZeqY+QBFEXPy6SDFlyIaM9EaGROvRbSLFhD+yIzNnYHHKYcd0MK9kny25fh3OdOMpwiYo6dwTH+LZYEdYmSKcDoB29h+W/KzuysLiga10h+Ip8n9jy/DQNm4kmTDPXCakq3pprpl/HARvd0=
+	t=1762703677; cv=none; b=bNHkMhH/6XiMe6Vh6PaB/s/T+njZQ2HKP9C7Y61dBFfaZjofCC8H6eeltyyo378/77z2XC+ug7YMzDj6OcJuFRsuB9F0484ZGqXraUTeiUMhnpXNxhxXAHk2yCjB0MmvEqIUvMuPPh8j63yQ4Ek/8J/yXpf6YtD4wnvNExaS8UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762703600; c=relaxed/simple;
-	bh=vGm7piNNumvfH+d3L5yt/YJWBCXJfExiMhY1zi82YOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YDeh10zQbISD5Sal7C+4uJbr8+Ds8oXigvacu0M3SYPnHkEyr/nxVDtnW3+lbY2XKRLLiPE1rzaIHtqRSgyXSnCr4X56//g+u3japNtoXGwIyA1b0XxlLSkBN2rInlyntdQY6fOwBch1+zAPzuTnXHU9QVp5Pd0lJ8cTc4J/lY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjXh/WZw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BDAC19422;
-	Sun,  9 Nov 2025 15:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762703599;
-	bh=vGm7piNNumvfH+d3L5yt/YJWBCXJfExiMhY1zi82YOU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RjXh/WZwlyQdf4vOwkk8FbnxyG/SaDMXcwPh64eneNAS2ItkdouCqZbk8i/Eaaru0
-	 ndnB5aAxncPTPtxcpsXLGwG5CyGSnaUfv6Hm3+SvmoUw/hpu3X311rGQGaRBnCA3NA
-	 5gnDLxMdSjiTEnAGINUcAGz4UAY6GG76m19lsMzYrSJT4AcBV4xMUVsty6LSLt8IUt
-	 lOD4YN9Ddit8b/JKQZI2HPp5t+chTun5XAT1Xeb7UyUIpU1BUMeatI/y0lj6Z9TwUy
-	 IQTaq95s3cHmuSNLPLoiSNjQLP2kOumwdw3GoJrsiG3TK0W7aWPKypMAs4XyCo8TcK
-	 UGAK7sEsP3cMg==
-Date: Sun, 9 Nov 2025 15:53:12 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ariana Lazar <ariana.lazar@microchip.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] iio: dac: adding support for Microchip
- MCP47FEB02
-Message-ID: <20251109155312.499d5eb5@jic23-huawei>
-In-Reply-To: <20251103-mcp47feb02-v2-2-8c37741bd97a@microchip.com>
-References: <20251103-mcp47feb02-v2-0-8c37741bd97a@microchip.com>
-	<20251103-mcp47feb02-v2-2-8c37741bd97a@microchip.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762703677; c=relaxed/simple;
+	bh=0kQKKadoXIQakRrU82+4pVBIswZA9kLK7Pa9hlHe0B4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sanoPXHDNkDn7L8Q2iKH28hbElSnHoJ7Su2Hv/QiXcPWgsd63DgFCe1NKE0cVttj2dsVR9W7ectFIcLvVCh3CKh8te0hIg0Zg/XHagYNpmTW4pvh+2WA/CCVRDZ0TCZExtrzbsclACXNPu4kHoa+bUcc4O5BWUOdNuXr0PtsFLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GEkRfktT; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762703675; x=1794239675;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0kQKKadoXIQakRrU82+4pVBIswZA9kLK7Pa9hlHe0B4=;
+  b=GEkRfktTqVy7Rg+kLM20gxXqlGrYlWFJu6eqPseowsRGpDuPxPhEAwVh
+   EKDnCSFI4LX8YGnyDLxN5JP0QPOqM9tC8cBhhPKbTj3uOgdWsokIeVyFy
+   8W+DA+qQyRC4pKfveJttR09+QrmyDs1tO1soKFuqWni1OA5y7uG7ZaQfB
+   i4WM6Cu7bBoRYzl+IWylT/go8x0ofI1e+2PQrHWs7Nb5fIINQhARKxdLu
+   2BEdB1NJMrRs/SbkN3oUl6DRfL2fgu3m+V7PsigSQF+bU8ABx7ivwXB8h
+   oDnNot+xsuQJPGxt8XREmVq8ClqE4NaE8DHRuaJqa3Q+AL8v52j1/piU1
+   A==;
+X-CSE-ConnectionGUID: 1iPVTC7EQFy6n705VhDtyw==
+X-CSE-MsgGUID: XYuQoc+8QwOx0YeW+1XfFg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="82399461"
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="82399461"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 07:54:34 -0800
+X-CSE-ConnectionGUID: Thd2zKyxQRSgSE6N5LgMbw==
+X-CSE-MsgGUID: fDahApYoQLC9vIPs5oZ9zA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="219209198"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.185])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 07:54:33 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vI7kM-000000073eg-1BEZ;
+	Sun, 09 Nov 2025 17:54:30 +0200
+Date: Sun, 9 Nov 2025 17:54:30 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v1 1/1] kernel-doc: Issue warnings that were silently
+ discarded
+Message-ID: <aRC5NjhOmuGIpdPA@smile.fi.intel.com>
+References: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
+ <87sees73i5.fsf@trenco.lwn.net>
+ <90db7fc0-5ce5-4ed4-ac33-18910c37d3d7@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90db7fc0-5ce5-4ed4-ac33-18910c37d3d7@infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, 3 Nov 2025 17:50:30 +0200
-Ariana Lazar <ariana.lazar@microchip.com> wrote:
+On Sat, Nov 08, 2025 at 04:03:15PM -0800, Randy Dunlap wrote:
+> On 11/5/25 10:12 AM, Jonathan Corbet wrote:
+> > [Heads up to Stephen: this change will add a bunch of warnings that had
+> > been dropped before.]
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+> > 
+> >> When kernel-doc parses the sections for the documentation some errors
+> >> may occur. In many cases the warning is simply stored to the current
+> >> "entry" object. However, in the most of such cases this object gets
+> >> discarded and there is no way for the output engine to even know about
+> >> that. To avoid that, check if the "entry" is going to be discarded and
+> >> if there warnings have been collected, issue them to the current logger
+> >> as is and then flush the "entry". This fixes the problem that original
+> >> Perl implementation doesn't have.
+> > 
+> > I would really like to redo how some of that logging is done, but that
+> > is an exercise for another day.  For now, I have applied this one,
+> > thanks.
+> 
+> I think that this patch is causing a (large) problem.
+> 
+> With this patch:
+> $ make mandocs &>mandocs.out
+> 
+> Without this patch:
+> $ make mandocs &>mandocsnoas.out
+> 
+> $ wc mandocs.out mandocsnoas.out
+>   29544  267393 3229456 mandocs.out
+>   10052   95948 1208101 mandocsnoas.out
+> 
+> so it appears that this patch causes lots of extra output.
+> Some of that may be what the patch was trying to do, but
+> with this patch, "mandocs.out" above has lots of duplicated
+> Warning: lines.
+> 
+> $ sort mandocs.out | uniq > mandocsuq.out
+> $ wc mandocsuq.out
+>   18012  167689 1994145 mandocsuq.out
+> 
+> $ grep -c "^Warning:"  mandocs.out mandocsnoas.out  mandocsuq.out 
+> mandocs.out:25273
+> mandocsnoas.out:10022
+> mandocsuq.out:15252
 
-> This is the iio driver for Microchip MCP47F(E/V)B(0/1/2)1,
-> MCP47F(E/V)B(0/1/2)2, MCP47F(E/V)B(0/1/2)4 and MCP47F(E/V)B(0/1/2)8 series
-> of buffered voltage output Digital-to-Analog Converters with nonvolatile =
-or
-> volatile memory and an I2C Interface.
->=20
-> The families support up to 8 output channels.
->=20
-> The devices can be 8-bit, 10-bit and 12-bit.
->=20
-> Signed-off-by: Ariana Lazar <ariana.lazar@microchip.com>
+Yes, that's what Mauro explained, that we may have the dups.
 
-A few minor things. Some of which probably overlap with Andy's comments.
+> In mandocs.out above (29544 lines), this line:
+> Warning: ../sound/soc/sprd/sprd-mcdt.h:48 struct member 'dma_chan' not described in 'sprd_mcdt_chan'
+> 
+> is found at lines 7 and 29122.
+> 
+> So maybe the logging output needs to be repaired sooner
+> than later.
 
-Jonathan
+Right! But I'm not familiar with this, so I can help only with testing,
+and not with real fix development.
 
-> diff --git a/drivers/iio/dac/mcp47feb02.c b/drivers/iio/dac/mcp47feb02.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..69f5ebbc89aed8ce229cd0c6a=
-37ca58f8a822d46
-> --- /dev/null
-> +++ b/drivers/iio/dac/mcp47feb02.c
-
-
-
-> +static int mcp47feb02_suspend(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
-> +	int ret, ch;
-> +	u8 pd_mode;
-> +
-> +	guard(mutex)(&data->lock);
-> +
-> +	for_each_set_bit(ch, &data->active_channels_mask, data->phys_channels) {
-> +		data->chdata[ch].powerdown =3D true;
-> +		pd_mode =3D data->chdata[ch].powerdown_mode + 1;
-> +		regmap_update_bits(data->regmap, MCP47FEB02_POWER_DOWN_REG_ADDR,
-> +				   DAC_CTRL_MASK(ch), DAC_CTRL_VAL(ch, pd_mode));
-
-ret =3D=20
-
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret =3D regmap_write(data->regmap, ch << 3, data->chdata[ch].dac_data);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-
-
-> +static void mcp47feb02_init_scale(struct mcp47feb02_data *data, enum mcp=
-47feb02_scale scale,
-> +				  int vref_mv, int scale_avail[])
-> +{
-> +	int value_micro, value_int;
-> +	s64 tmp;
-> +
-> +	tmp =3D (s64)vref_mv * 1000000LL >> data->info->resolution;
-
-MICRO or similar appropriate and avoids need to count zeros.
-
-> +	value_int =3D div_s64_rem(tmp, 1000000LL, &value_micro);
-> +	scale_avail[scale * 2] =3D value_int;
-> +	scale_avail[scale * 2 + 1] =3D value_micro;
-> +}
-
-> +
-> +static void mcp47feb02_get_scale_avail(struct mcp47feb02_data *data, int=
- *val, int *val2,
-> +				       enum mcp47feb02_scale scale, int ch)
-
-I'm not really following why this is get_scale_avail.  Just seems to be get=
-ting
-the scale from the index.  The function name should probably be less
-about 'how' than 'what' it is doing.
-
-> +{
-> +	if (data->phys_channels >=3D 4 && (ch % 2)) {
-> +		*val =3D data->scale_1[scale * 2];
-> +		*val2 =3D data->scale_1[scale * 2 + 1];
-> +	} else {
-> +		*val =3D data->scale[scale * 2];
-> +		*val2 =3D data->scale[scale * 2 + 1];
-> +	}
-> +}
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-> +
-> +static int mcp47feb02_read_label(struct iio_dev *indio_dev,
-> +				 struct iio_chan_spec const *ch, char *label)
-> +{
-> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
-> +
-> +	return sysfs_emit(label, "%s\n", data->labels[ch->address]);
-> +
-> +	return 0;
-
-I'm a bit surprised the compiler isn't moaning about unreachable code.
-
-> +}
-
-> +
-> +static int mcp47feb02_init_ctrl_regs(struct mcp47feb02_data *data)
-> +{
-> +	int ret, i, vref_ch, gain_ch, pd_ch, pd_tmp;
-> +	struct device *dev =3D &data->client->dev;
-> +
-> +	ret =3D regmap_read(data->regmap, MCP47FEB02_VREF_REG_ADDR, &vref_ch);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D regmap_read(data->regmap, MCP47FEB02_GAIN_BIT_STATUS_REG_ADDR, =
-&gain_ch);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D regmap_read(data->regmap, MCP47FEB02_POWER_DOWN_REG_ADDR, &pd_c=
-h);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gain_ch =3D gain_ch >> 8;
-
-Is this extracting a field from a register? Probably better as a mask defin=
-ition and
-FIELD_GET()
-
-> +	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
-> +		data->chdata[i].ref_mode =3D (vref_ch >> (2 * i)) & SET_DAC_CTRL_MASK;
-> +		data->chdata[i].use_2x_gain =3D (gain_ch >> i)  & SET_GAIN_BIT;
-> +
-> +		/*
-> +		 * Inform the user that the current voltage reference read from volati=
-le
-> +		 * register of the chip is different from the one from device tree.
-> +		 * You can't have an external voltage reference connected to the pin a=
-nd
-> +		 * select the internal BandGap, because the VREF pin is either an inpu=
-t or
-> +		 * an output. When the DAC=E2=80=99s voltage reference is configured a=
-s the VREF pin,
-> +		 * the pin is an input. When the DAC=E2=80=99s voltage reference is co=
-nfigured as the
-> +		 * internal band gap, the pin is an output.
-> +		 */
-> +		if (data->chdata[i].ref_mode =3D=3D MCP47FEB02_INTERNAL_BAND_GAP) {
-> +			if (data->phys_channels >=3D 4 && (i % 2)) {
-> +				if (data->use_vref1)
-> +					dev_info(dev, "cannot use Vref1 and internal BandGap");
-> +			} else {
-> +				if (data->use_vref)
-> +					dev_info(dev, "cannot use Vref and internal BandGap");
-> +			}
-> +		}
-> +
-> +		pd_tmp =3D (pd_ch >> (2 * i)) & SET_DAC_CTRL_MASK;
-> +		data->chdata[i].powerdown_mode =3D pd_tmp ? (pd_tmp - 1) : pd_tmp;
-> +		data->chdata[i].powerdown =3D !!(data->chdata[i].powerdown_mode);
-> +	}
-> +
-> +	return 0;
-> +}
-
-> +
-> +static int mcp47feb02_probe(struct i2c_client *client)
-> +{
-> +	const struct i2c_device_id *id =3D i2c_client_get_device_id(client);
-> +	const struct mcp47feb02_features *info;
-> +	struct device *dev =3D &client->dev;
-> +	struct mcp47feb02_data *data;
-> +	struct iio_dev *indio_dev;
-> +	int vref1_mv =3D 0;
-> +	int vref_mv =3D 0;
-> +	int vdd_mv =3D 0;
-> +	int ret;
-> +
-> +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	data =3D iio_priv(indio_dev);
-> +	data->client =3D client;
-> +	info =3D i2c_get_match_data(client);
-> +	if (!info)
-> +		return -EINVAL;
-> +
-> +	data->info =3D info;
-> +
-> +	if (info->have_eeprom) {
-> +		data->regmap =3D devm_regmap_init_i2c(client, &mcp47feb02_regmap_confi=
-g);
-> +		indio_dev->info =3D &mcp47feb02_info;
-> +	} else {
-> +		data->regmap =3D devm_regmap_init_i2c(client, &mcp47fvb02_regmap_confi=
-g);
-> +		indio_dev->info =3D &mcp47fvb02_info;
-> +	}
-> +
-> +	if (IS_ERR(data->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(data->regmap), "Error initializing i=
-2c regmap\n");
-> +
-> +	indio_dev->name =3D id->name;
-
-This is fragile because it ultimately looks up in one type of
-firmware matching structure when we might have probed from another and
-hence relies on names matching precisely across those structures.
-Best to avoid that. Just embed the name string in your info structure inste=
-ad.
-
-> +
-> +	ret =3D mcp47feb02_parse_fw(indio_dev, info);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Error parsing devicetree data\n");
-Error parsing firmware data.  As it should be, your code is firmware type i=
-ndependent
-so error messages should not suggest it is device tree only.
-
-
-> +
-> +	ret =3D devm_mutex_init(dev, &data->lock);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret =3D devm_regulator_get_enable_read_voltage(dev, "vdd");
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	vdd_mv =3D ret / 1000;
-> +
-> +	ret =3D devm_regulator_get_enable_read_voltage(dev, "vref");
-> +	if (ret > 0) {
-> +		vref_mv =3D ret / 1000;
-> +		data->use_vref =3D true;
-> +	} else {
-> +		dev_info(dev, "Vref is unavailable, internal band gap can be used inst=
-ead\n");
-
-Feels too noisy.  dev_dbg() appropriate I think.
-
-> +	}
-> +
-> +	if (info->have_ext_vref1) {
-> +		ret =3D devm_regulator_get_enable_read_voltage(dev, "vref1");
-> +		if (ret > 0) {
-> +			vref1_mv =3D ret / 1000;
-> +			data->use_vref1 =3D true;
-> +		} else {
-> +			dev_info(dev,
-> +				 "Vref1 is unavailable, internal band gap can be used instead\n");
-
-Likewise, dev_dbg().
-
-> +		}
-> +	}
-> +
-> +	ret =3D mcp47feb02_init_ctrl_regs(data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Error initialising vref register\n");
-> +
-> +	ret =3D mcp47feb02_init_ch_scales(data, vdd_mv, vref_mv, vref1_mv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_iio_device_register(dev, indio_dev);
-> +}
 
