@@ -1,149 +1,95 @@
-Return-Path: <linux-kernel+bounces-892060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E51FC4438E
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:14:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 875B1C44397
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:15:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DB403B35AB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878063B37EC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD773054E5;
-	Sun,  9 Nov 2025 17:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E152B3054C4;
+	Sun,  9 Nov 2025 17:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f1cW/NQD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bys4K04C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F8B304BAB
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 17:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A542765FF;
+	Sun,  9 Nov 2025 17:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762708479; cv=none; b=IyaYfg8Fm3bqjYxpAJ+Hauwgc1o7iahJ4VZyYDEbmcnLILyFT1rYtEqZn0qwU84NpROI2VKgog6wa6rROrQ3TqHPYZVdQDztv6uccXnmf27tZLiDSBRpPKXuaAwW+JKizoWtRXSYFQi8uslBGIxJ57g1DpxAA3xlVInfsM24E/I=
+	t=1762708493; cv=none; b=sdmu+5RtFrcTI7l34jQzJ5tEh4MCuHNA4Fq04ouKfJ70/w5XNkwFfcY91NS9rjCYKKhKKNfLPhqNKNMuwfDXlFQImOIhU5ISABbu2m4LlVNe8i+PdDOcgo59V2rqoBdJvtk7dAaVBMWErpwxrmdcaHrrjBKjpiqg8lsjxOJ6zVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762708479; c=relaxed/simple;
-	bh=X8iXuBDLNyavzveN+u0clYIy8dEtP8NarhPdel67RD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+NAN8bIK3OLaosU9IzJHvzJqUBqdezPvxsKmgdzJBWSxXWoRkgZCYnXqjyp8ENQMdvBKnS2SznoBTTNquOlpgQmUIWYRe46tdNR7q2TKIxIrNFMlRYbDxFO3sswSh8cYY1p/tsRDTvpDLdZQqyyEynT0qHk68+lDLjuTTyM3eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f1cW/NQD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762708476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F5HpPOlX4A+IDC0iS/hUD8BvRwzAlkYdd4UARWjCrtI=;
-	b=f1cW/NQDBmRdN/qrgRggEyi7y18tcbIg6op28Ff6fGsRBRkdkVzAbvhLWfUH0AOD0z6wWC
-	YcR8tOVWWlQWDv50CrYaUH1bt4Bd5TURHxnax856S7wpIXh5cDSumKhBU++kBubDj5sr8K
-	TLp6NDnUogw+S/doYK+pZHzBDwGBDZM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-346-P45cLDM0P8SsWBX1eHJ3Qw-1; Sun,
- 09 Nov 2025 12:14:33 -0500
-X-MC-Unique: P45cLDM0P8SsWBX1eHJ3Qw-1
-X-Mimecast-MFC-AGG-ID: P45cLDM0P8SsWBX1eHJ3Qw_1762708468
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1EA1F195608D;
-	Sun,  9 Nov 2025 17:14:27 +0000 (UTC)
-Received: from fedora (unknown [10.44.32.53])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6443730001B9;
-	Sun,  9 Nov 2025 17:14:06 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  9 Nov 2025 18:14:26 +0100 (CET)
-Date: Sun, 9 Nov 2025 18:14:04 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dmitry Levin <ldv@strace.io>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: [RFC PATCH 0/3] mt-exec: fix deadlock with ptrace_attach()
-Message-ID: <aRDL3HOB21pMVMWC@redhat.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1762708493; c=relaxed/simple;
+	bh=CSCIaZN7/P/wHRAqhtJfxVcJKevgiJvzZ1FjoMQY9ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rKfVyEnX9zG4K74EcJf5eOCIFC8P0eRWmp2U7UeAoDwC0h0rd5dh0E02g2aipGYQfu2wrr9UsA6hm1vwetDxb8rR0l3gU80SsWBZ4Ni9N5kxtl8hZ62sDlW16N/gxmnpDkPKp4tGJWq4oP1dZR87ZT/cUAb67bXsKAOwO2cDdgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bys4K04C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D583AC19422;
+	Sun,  9 Nov 2025 17:14:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762708492;
+	bh=CSCIaZN7/P/wHRAqhtJfxVcJKevgiJvzZ1FjoMQY9ko=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Bys4K04CgEbZ4MuKYMz7PGNO5UvQ9awSuRSznxPeahXdYXM96+btw1NXBPQ+G6Yn/
+	 um2GEJqZwws9IOFYsVS5PRaeHWLB0rHUgfit2vwPvQZNxV0onqlWg+B1uc+C798hj8
+	 UL6P9kyHrec/5vChaxaZhFw2F9OMk8X1SwT+KvLltUB6NVmBCsg5ZWF6SF+TPWry4W
+	 n/PPU8ZrTqskgU1tAyD03/CRG+zLC2RLUJLFxXjzuiNmH31czRqlqq4UT7+rsPmSgC
+	 J2iIsWwf2IaSFJEzy0eCXl7KL+yAZ01Z2nudEioFH04jwIOd8PgvEDjul2DY6cZb4M
+	 KgMYwOdbzTWaA==
+Date: Sun, 9 Nov 2025 17:14:22 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Luca Weiss" <luca.weiss@fairphone.com>
+Cc: "David Lechner" <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, "Andy Shevchenko" <andy@kernel.org>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: Documentation of iio_read_channel_processed return value
+Message-ID: <20251109171422.0463d885@jic23-huawei>
+In-Reply-To: <DE3I8OHQQD0F.2VTQS2PET9MI0@fairphone.com>
+References: <DE3I8OHQQD0F.2VTQS2PET9MI0@fairphone.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Not for inclusion yet. 2/2 is untested, incomplete, possibly buggy.
+On Sat, 08 Nov 2025 18:55:08 +0100
+"Luca Weiss" <luca.weiss@fairphone.com> wrote:
 
-But could you review at least the intent? Do you see any problem with
-this approach?
+> Hi all,
+> 
+> I've noticed that the docstring in include/linux/iio/consumer.h for
+> iio_read_channel_processed (and likely some other functions in there) is
+> wrong because it's saying "Returns an error code or 0." while often it's
+> returning e.g. IIO_VAL_INT. In some code paths it's actually returning 0
+> but it seems in standard cases it's not.
+Hmm. Looks like we have a bug in handling the path that ends up in iio_multiple_value()
 
-This problem is very, very old. It seems that nobody can suggest a
-simple/clean fix...
+I think we just want to change iio_read_channel_processed_scale() to check
+that the return value of iio_mutliple_value() < 0 and return ret if so, otherwise
+return 0
 
-Oleg.
----
+So to me smells like a bug and the documentation is correct.
 
- fs/binfmt_elf.c         |   4 +-
- fs/binfmt_elf_fdpic.c   |   4 +-
- fs/binfmt_flat.c        |   4 +-
- fs/exec.c               | 142 +++++++++++++++++++++++-------------------------
- include/linux/binfmts.h |   2 +-
- kernel/exit.c           |   9 +--
- kernel/signal.c         |   6 +-
- 7 files changed, 87 insertions(+), 84 deletions(-)
+Good catch, perhaps spin a patch like the above?  This is made more complex
+because a few drivers seem to assume IIO_INT_VAL such as iio/afe/iio-rescale.c so
+we will need to fix those up as well.
+
+J
+
+> 
+> Could the docstring please be updated so this is clear to users of this
+> function? I don't understand IIO well enough to confidently propose
+> changes there myself.
+> 
+> Thanks and kind regards
+> Luca
 
 
