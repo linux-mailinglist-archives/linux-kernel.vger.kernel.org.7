@@ -1,187 +1,281 @@
-Return-Path: <linux-kernel+bounces-891879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E587C43B5B
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 10:49:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BACC43B6D
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 10:54:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 197C918864C8
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 09:50:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CCA8188817A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 09:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82852D94BA;
-	Sun,  9 Nov 2025 09:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7762D4816;
+	Sun,  9 Nov 2025 09:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="LD8rSKll"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEUBGIWK"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE880267729;
-	Sun,  9 Nov 2025 09:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5A613C3F2
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 09:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762681788; cv=none; b=qVLSE2M5PfofiR9sT7ntOwRKBzZY5+TpmQOc9yIVm1QBMkMB6aCq4VWmhnTYqEO9busHon/1Ek6VHFwxDnGwGooJeD9z8mhDXt3UzKdEDXRXmDQviF+l8e5rITuzwcXGnRKexf9aPJeb6yEkU1700nmKOrW792ecpsluktZ5hOY=
+	t=1762682066; cv=none; b=px6qzLXhh0TFSVjC92Vdm24kW76E6sEwhq/Fo4unSuR/mFeecLPrt3CJkpPS4VxIV7i0yFraOUiaCAv1V17Vq+/FdbfLbeVHKhDbOfaCV82vfH0JDNzV5RCrVyj9cf78Z7qqNq5itabj72hxkyMXDD46yCqrsssBRldNNnod9io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762681788; c=relaxed/simple;
-	bh=E4JXquXVbascHNXQUhYTERU+iJwhJt6oQ4PCVofKrCI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HXkTF8Z+2cbRoinoMZihz1po/z7griSr9XtXHx1MIXudu6bWkZS4aUXDmTXd4Zke4908LU6s+UJntJGwPcMrU/PUlhaVZ0J3NYuTVMI5CGUHS2Qm6DMbRR6X+hAhbV33lLAXvdsdTtagAyquX0dE0rzQre1AakQukJG4GL2MQeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=LD8rSKll; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 002EF5340EFE;
-	Sun, 09 Nov 2025 10:49:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1762681777;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ZUxPTMvJDRydlSdxz5KqJTvqznFnI2NbIJUuYl/y6YE=;
-	b=LD8rSKlllL4vOxzAxbf32dk+NfNqnb8Ibw74yHrvZ1/HrSC4kVoKkSiCGl5F3ctPObJ0D+
-	f0X+saNSm9hs4CFpJnG/R8cO+u1DtgeyLRR1fGEKH7N1Kl0wiCJjv5lVmneKzilqrTGqGK
-	2zv/GXKHev2HVUwWpgseSUoGVz3gs9A=
-Message-ID: <801451a0-679d-42db-850e-88fe7af9625b@ixit.cz>
-Date: Sun, 9 Nov 2025 10:49:36 +0100
+	s=arc-20240116; t=1762682066; c=relaxed/simple;
+	bh=RgoZ0Fk4zJLGfI2ojrl3UMeiwuZKAGycVmYMTGzuki8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LgPeB1J18t9FFAaXZhZwpTcAbxzgix9wJ5YT2lF2z0BJgZhPc4ZXdL8TYNCj6VUhoUo9CuQzKHiTQUU6TytklRbc1ead24VnARJACd2C1gBTH/QFMjCcgzxN/c3pE+9TzeTYPkS8CksBRbVZx4If8koI6TktkcH4ClQC5jlc8i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WEUBGIWK; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-340ad724ea4so267318a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 01:54:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762682064; x=1763286864; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2mJACnQxh4sD/p1rN5JTzDZGkA2szKxHiA+o6hUrw0=;
+        b=WEUBGIWKn8zjiI2FT4nmGFnDAv1GtR8DnyQcBymXWurETqCNJ9Q6JB2g52sNyhDGGr
+         S78PLGzNf/01yT/GX7oL2UKdmWdaJbAJu7L/pfO8CIeVTHRSb/ruOJeWTGbWEBmt1x8q
+         HFd3QylXKpGUN3uaGjJskXqjvu8JgVaDz0kP3PNXiG+S6481+LRTnI9tgBrl/+rntjYD
+         YvuiSkr1tsP3ze8p619J2Qh+xINJNEtMWJTidwwEFBg6Bx/joRvmv3Ahii+GDcyTR87L
+         p3oxErHV3+YiBwXScAT4hIuBfRTbGJ3MKnHE8gbYTNlIWRiUuT0iHwAwl2+2FYvuanVb
+         KibQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762682064; x=1763286864;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W2mJACnQxh4sD/p1rN5JTzDZGkA2szKxHiA+o6hUrw0=;
+        b=FuS5Z+88Hs/sRBug21a8wL6EHQs7JZvGb7mvYeZRcAk/o7aSbV297JpXDHE61jnFTx
+         CGfwfGzT8woTKeG7qdlrzGi/oICGLhkalI+ELQTNqlGBK3pi583myqL1DRk9EwwcFehK
+         IPoXJgLY96jn5ApKGANGwVsarZq+BnozQTpZO82BcpDnuwUPenMdEDo/Ww6JKzeGw2IP
+         2aPdkZMLGyLiuZIQVewKFoEEMvGdpgQigcS8W0wtRQmSHoggM3qP2hgF7W3pLfRV6Iqn
+         IOul9z5t903/odKsAf/Xv2zyyLHRCkr5wQf5JyCFsBhBug8O60Wc9Ep6MDOYXJphkT3M
+         qe1g==
+X-Forwarded-Encrypted: i=1; AJvYcCV3XEmLGiASG40mBsY6NGOHCCmu9bskqpztLoumc3VRzEExCRNupySiL74mU4a8RYgF04+gFfNB6c1xUUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxW0kiRZtk/tYXVUSEUQE5qElZEbMdQ6occqPBwkWU7rdVYN2N
+	q2wlknAse0uouDesT5LTH//eBUzfvJ7ESZGo/jpVkU0gZZgfSth65Hkv
+X-Gm-Gg: ASbGncvyfk+/r1QK4bDBYFAjV+POA9mxXZCUE7z7fwGInNSRyPs29cynIHbGAjY+0l5
+	pYd+9DoVP8YJR6Z2odBMNAqzjrbEZdgDedWcS+5G7Jn1ulvTLf6FxIcV4T2PQgL5h1oO2GGJ39L
+	6Bb8n2B5siEOlB4kUAUVJdEGxDXcp+1E2zyHrN8D5ju1uhbgdYYu5kTd9869DjJYWqgkJIBOafs
+	UBDAxuTXNHyPp/sNvsab9O5joPbarizVL1Mwdus1JCynyMTkKM9Bqf0RHfD+vDq7XsP6O9+SHtf
+	jmCixrYvzkcuna/Qkt4t8OMX8rCwrXd1h9Hr5cd8kGtiBT5WeBgqoiQlty7mCeNBEqAPQNnLQK3
+	YgLhhQys1oCM8n/6VnYarulR6q8Oo5QMSr2AqHd6+RKRjLdUEjPidgUk7tlaZYXrPaot4ER4Gy/
+	BDsQjxEz0lSbRrqaz4td++UduhPlZM
+X-Google-Smtp-Source: AGHT+IGb0U3tFr9TL8bOD50VtKU25lK/Pj6KKmtdQ7daasGpBhl7uujoLGSXyt/2ZeJKF5VCSgi1Gw==
+X-Received: by 2002:a17:902:d4c8:b0:297:fe30:3b94 with SMTP id d9443c01a7336-297fe304a7fmr17440385ad.9.1762682064333;
+        Sun, 09 Nov 2025 01:54:24 -0800 (PST)
+Received: from elitemini.flets-east.jp ([2400:4050:d860:9700:75bf:9e2e:8ac9:3001])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c70381sm109013265ad.66.2025.11.09.01.54.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 01:54:24 -0800 (PST)
+From: Masaharu Noguchi <nogunix@gmail.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Cc: corbet@lwn.net,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akiyks@gmail.com,
+	nogunix@gmail.com
+Subject: [PATCH v2] Documentation: f2fs: wrap tables in literal code blocks
+Date: Sun,  9 Nov 2025 18:54:16 +0900
+Message-ID: <20251109095416.2428351-1-nogunix@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/8] media: qcom: camss: csiphy-3ph: Use odd bits for
- configuring C-PHY lanes
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Luca Weiss <luca.weiss@fairphone.com>, Petr Hodina <phodina@protonmail.com>,
- Casey Connolly <casey.connolly@linaro.org>, "Dr. Git" <drgitx@gmail.com>
-Cc: Joel Selvaraj <foss@joelselvaraj.com>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org
-References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
- <20251109-qcom-cphy-v1-3-165f7e79b0e1@ixit.cz>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <20251109-qcom-cphy-v1-3-165f7e79b0e1@ixit.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/11/2025 10:39, David Heidelberg via B4 Relay wrote:
-> From: David Heidelberg <david@ixit.cz>
-> 
-> So far, only D-PHY mode was supported, which uses even bits when enabling
-> or masking lanes. For C-PHY configuration, the hardware instead requires
-> using the odd bits.
-> 
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
->   .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     | 25 ++++++++++++++++------
->   1 file changed, 18 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> index f28c32d1a4ec5..348b8cd18327e 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> @@ -1054,10 +1054,17 @@ static u8 csiphy_get_lane_mask(struct csiphy_lanes_cfg *lane_cfg)
->   	u8 lane_mask;
->   	int i;
->   
-> -	lane_mask = CSIPHY_3PH_CMN_CSI_COMMON_CTRL5_CLK_ENABLE;
-> +	if (lane_cfg->cphy) {
-> +		lane_mask = 0;
->   
-> -	for (i = 0; i < lane_cfg->num_data; i++)
-> -		lane_mask |= 1 << lane_cfg->data[i].pos;
-> +		for (i = 0; i < lane_cfg->num_data; i++)
-> +			lane_mask |= (1 << lane_cfg->data[i].pos) + 1;
-> +	} else {
-> +		lane_mask = CSIPHY_3PH_CMN_CSI_COMMON_CTRL5_CLK_ENABLE;
-> +
-> +		for (i = 0; i < lane_cfg->num_data; i++)
-> +			lane_mask |= 1 << lane_cfg->data[i].pos;
-> +	}
->   
->   	return lane_mask;
->   }
-> @@ -1096,10 +1103,14 @@ static void csiphy_lanes_enable(struct csiphy_device *csiphy,
->   
->   	settle_cnt = csiphy_settle_cnt_calc(link_freq, csiphy->timer_clk_rate);
->   
-> -	val = CSIPHY_3PH_CMN_CSI_COMMON_CTRL5_CLK_ENABLE;
-> -	for (i = 0; i < c->num_data; i++)
-> -		val |= BIT(c->data[i].pos * 2);
-> -
-> +	if (c->cphy) {
+Sphinx LaTeX builder fails with the following error when it tries to
+turn the ASCII tables in f2fs.rst into nested longtables:
 
-Imagine val is initialized here:
-    		val = 0;
+  Markup is unsupported in LaTeX:
+  filesystems/f2fs:: longtable does not support nesting a table.
 
-is already fixed in next version.
+Wrap the tables in literal code blocks so that Sphinx renders them as
+verbatim text instead. This prevents the LaTeX builder from attempting
+unsupported table nesting and fixes the pdfdocs build.
 
-> +		for (i = 0; i < c->num_data; i++)
-> +			val |= BIT((c->data[i].pos * 2) + 1);
-> +	} else {
-> +		val = CSIPHY_3PH_CMN_CSI_COMMON_CTRL5_CLK_ENABLE;
-> +		for (i = 0; i < c->num_data; i++)
-> +			val |= BIT(c->data[i].pos * 2);
-> +	}
->   	writel_relaxed(val, csiphy->base +
->   		       CSIPHY_3PH_CMN_CSI_COMMON_CTRLn(regs->offset, 5));
->   
-> 
+Akira Yokosawa pointed out that the in-development Sphinx 8.3 latex
+builder already handles these nested tables. I still want to fix the
+current documentation because Sphinx 8.3 is not released yet, and the
+LaTeX build on the stable 8.2.x series (which also requires
+"docutils<0.22" for now) remains broken without this change.
 
+Link: https://lore.kernel.org/lkml/20251011172415.114599-1-nogunix@gmail.com/
+Changes in v2:
+ - wrap the compression level table in a literal block and add the
+   missing blank lines so docutils no longer warns about malformed
+   tables
+ - consistently use ``.. code-block:: none`` for the other ASCII tables
+   that previously triggered the LaTeX error
+
+Signed-off-by: Masaharu Noguchi <nogunix@gmail.com>
+---
+ Documentation/filesystems/f2fs.rst | 115 +++++++++++++++--------------
+ 1 file changed, 61 insertions(+), 54 deletions(-)
+
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index a8d02fe5be83..07b8e752476d 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -188,34 +188,36 @@ fault_type=%d		 Support configuring fault injection type, should be
+ 			 enabled with fault_injection option, fault type value
+ 			 is shown below, it supports single or combined type.
+ 
+-			 ===========================      ==========
+-			 Type_Name                        Type_Value
+-			 ===========================      ==========
+-			 FAULT_KMALLOC                    0x00000001
+-			 FAULT_KVMALLOC                   0x00000002
+-			 FAULT_PAGE_ALLOC                 0x00000004
+-			 FAULT_PAGE_GET                   0x00000008
+-			 FAULT_ALLOC_BIO                  0x00000010 (obsolete)
+-			 FAULT_ALLOC_NID                  0x00000020
+-			 FAULT_ORPHAN                     0x00000040
+-			 FAULT_BLOCK                      0x00000080
+-			 FAULT_DIR_DEPTH                  0x00000100
+-			 FAULT_EVICT_INODE                0x00000200
+-			 FAULT_TRUNCATE                   0x00000400
+-			 FAULT_READ_IO                    0x00000800
+-			 FAULT_CHECKPOINT                 0x00001000
+-			 FAULT_DISCARD                    0x00002000
+-			 FAULT_WRITE_IO                   0x00004000
+-			 FAULT_SLAB_ALLOC                 0x00008000
+-			 FAULT_DQUOT_INIT                 0x00010000
+-			 FAULT_LOCK_OP                    0x00020000
+-			 FAULT_BLKADDR_VALIDITY           0x00040000
+-			 FAULT_BLKADDR_CONSISTENCE        0x00080000
+-			 FAULT_NO_SEGMENT                 0x00100000
+-			 FAULT_INCONSISTENT_FOOTER        0x00200000
+-			 FAULT_TIMEOUT                    0x00400000 (1000ms)
+-			 FAULT_VMALLOC                    0x00800000
+-			 ===========================      ==========
++			 .. code-block:: none
++
++			     ===========================      ==========
++			     Type_Name                        Type_Value
++			     ===========================      ==========
++			     FAULT_KMALLOC                    0x00000001
++			     FAULT_KVMALLOC                   0x00000002
++			     FAULT_PAGE_ALLOC                 0x00000004
++			     FAULT_PAGE_GET                   0x00000008
++			     FAULT_ALLOC_BIO                  0x00000010 (obsolete)
++			     FAULT_ALLOC_NID                  0x00000020
++			     FAULT_ORPHAN                     0x00000040
++			     FAULT_BLOCK                      0x00000080
++			     FAULT_DIR_DEPTH                  0x00000100
++			     FAULT_EVICT_INODE                0x00000200
++			     FAULT_TRUNCATE                   0x00000400
++			     FAULT_READ_IO                    0x00000800
++			     FAULT_CHECKPOINT                 0x00001000
++			     FAULT_DISCARD                    0x00002000
++			     FAULT_WRITE_IO                   0x00004000
++			     FAULT_SLAB_ALLOC                 0x00008000
++			     FAULT_DQUOT_INIT                 0x00010000
++			     FAULT_LOCK_OP                    0x00020000
++			     FAULT_BLKADDR_VALIDITY           0x00040000
++			     FAULT_BLKADDR_CONSISTENCE        0x00080000
++			     FAULT_NO_SEGMENT                 0x00100000
++			     FAULT_INCONSISTENT_FOOTER        0x00200000
++			     FAULT_TIMEOUT                    0x00400000 (1000ms)
++			     FAULT_VMALLOC                    0x00800000
++			     ===========================      ==========
+ mode=%s			 Control block allocation mode which supports "adaptive"
+ 			 and "lfs". In "lfs" mode, there should be no random
+ 			 writes towards main area.
+@@ -296,14 +298,15 @@ nocheckpoint_merge	 Disable checkpoint merge feature.
+ compress_algorithm=%s	 Control compress algorithm, currently f2fs supports "lzo",
+ 			 "lz4", "zstd" and "lzo-rle" algorithm.
+ compress_algorithm=%s:%d Control compress algorithm and its compress level, now, only
+-			 "lz4" and "zstd" support compress level config.
+-
+-                         =========      ===========
+-			 algorithm	level range
+-                         =========      ===========
+-			 lz4		3 - 16
+-			 zstd		1 - 22
+-                         =========      ===========
++			 "lz4" and "zstd" support compress level config::
++
++				 =========      ===========
++				 algorithm	level range
++				 =========      ===========
++				 lz4		3 - 16
++				 zstd		1 - 22
++				 =========      ===========
++
+ compress_log_size=%u	 Support configuring compress cluster size. The size will
+ 			 be 4KB * (1 << %u). The default and minimum sizes are 16KB.
+ compress_extension=%s	 Support adding specified extension, so that f2fs can enable
+@@ -368,38 +371,42 @@ errors=%s		 Specify f2fs behavior on critical errors. This supports modes:
+ 			 the partition in read-only mode. By default it uses "continue"
+ 			 mode.
+ 
+-			 ====================== =============== =============== ========
+-			 mode			continue	remount-ro	panic
+-			 ====================== =============== =============== ========
+-			 access ops		normal		normal		N/A
+-			 syscall errors		-EIO		-EROFS		N/A
+-			 mount option		rw		ro		N/A
+-			 pending dir write	keep		keep		N/A
+-			 pending non-dir write	drop		keep		N/A
+-			 pending node write	drop		keep		N/A
+-			 pending meta write	keep		keep		N/A
+-			 ====================== =============== =============== ========
++			 .. code-block:: none
++
++			     ====================== =============== =============== ========
++			     mode			continue	remount-ro	panic
++			     ====================== =============== =============== ========
++			     access ops		normal		normal		N/A
++			     syscall errors		-EIO		-EROFS		N/A
++			     mount option		rw		ro		N/A
++			     pending dir write	keep		keep		N/A
++			     pending non-dir write	drop		keep		N/A
++			     pending node write	drop		keep		N/A
++			     pending meta write	keep		keep		N/A
++			     ====================== =============== =============== ========
+ nat_bits		 Enable nat_bits feature to enhance full/empty nat blocks access,
+ 			 by default it's disabled.
+ lookup_mode=%s		 Control the directory lookup behavior for casefolded
+ 			 directories. This option has no effect on directories
+ 			 that do not have the casefold feature enabled.
+ 
+-			 ================== ========================================
+-			 Value		    Description
+-			 ================== ========================================
+-			 perf		    (Default) Enforces a hash-only lookup.
++			 .. code-block:: none
++
++			     ================== ========================================
++			     Value		    Description
++			     ================== ========================================
++			     perf		    (Default) Enforces a hash-only lookup.
+ 					    The linear search fallback is always
+ 					    disabled, ignoring the on-disk flag.
+-			 compat		    Enables the linear search fallback for
++			     compat		    Enables the linear search fallback for
+ 					    compatibility with directory entries
+ 					    created by older kernel that used a
+ 					    different case-folding algorithm.
+ 					    This mode ignores the on-disk flag.
+-			 auto		    F2FS determines the mode based on the
++			     auto		    F2FS determines the mode based on the
+ 					    on-disk `SB_ENC_NO_COMPAT_FALLBACK_FL`
+ 					    flag.
+-			 ================== ========================================
++			     ================== ========================================
+ ======================== ============================================================
+ 
+ Debugfs Entries
 -- 
-David Heidelberg
+2.51.1
 
 
