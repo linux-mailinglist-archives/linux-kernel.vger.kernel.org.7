@@ -1,113 +1,123 @@
-Return-Path: <linux-kernel+bounces-891775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190BDC436FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 02:14:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22FF5C43706
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 02:20:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9C903B02C1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 01:14:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D63DF188B389
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 01:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8150119F137;
-	Sun,  9 Nov 2025 01:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4691A238C;
+	Sun,  9 Nov 2025 01:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dzX/M/oI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="Q8UFLoT5"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BEC1925BC;
-	Sun,  9 Nov 2025 01:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACCFDF59;
+	Sun,  9 Nov 2025 01:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762650854; cv=none; b=LKY8/aCIfLHvdWjPGJ1XkdeFQL9Ml9MNj1IFMRFX6jn19n4SmdiBYjr5H0AvhP4DT93xG1TiHQ0SaTkCGDHxoOIAr7jb5gtYLe4fRFtqgr3ThZvYFHc2nzq4EcZEg+t5ynDexMhMbS3kEQnK0xDmmNp2IEYAXf9Fx1qupqSf/QY=
+	t=1762651237; cv=none; b=jyfEbFFxYna6f1TFc8/Fg54Nh3qPtS+qq8jyjqZyYRxd7e9E87EIeW4MApwCwfqxc6YqJTcctnNNZcT4CBv5fbRs+bKmxFEWr0CfWvJ6mfEOPHkbz2DiFVg+CL23DymcD9r7xJyJKov3EOUD/8Ie0v0Pv++KZeSPNfFDhJMEbGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762650854; c=relaxed/simple;
-	bh=TbNj6GYPbm6qdt0QlpsEYV6u2D3QDP7IcXUOH4BFRlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGtUb6LmbJa4CUt0ZCiUPYjlAH/uj3eKyWe0frrVD0DMXTdh01ohzkLmxS5nPyH8XvwrwCN2n8XKONmEObFoA7oJFGvnz/8A90Iypnqx2uIcUz4dWU/FJ2/PtBLQJUWkvnsBk/ESDCj71ibYlxRgebGEXMHBRV9AF3yz2gPTGvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dzX/M/oI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C5D8C113D0;
-	Sun,  9 Nov 2025 01:14:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1762650854;
-	bh=TbNj6GYPbm6qdt0QlpsEYV6u2D3QDP7IcXUOH4BFRlw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dzX/M/oI+gyDXlFTzG7OjQShMrlV8bzeCj7PrSUjAAh/u5+EkAfJndLrL7bQFBe/O
-	 eTa9/fYfUnWQcKbRPu0Ja2z6YsUfjMSSNEYjnkLkzkg0LVhdNL9lNtsBfgg9oa0iIY
-	 PylPfiWBHbz6u60rNX/hoh/5rf15NnoVa37oc/As=
-Date: Sun, 9 Nov 2025 09:49:29 +0900
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Stephen Rothwell <sfr@rothwell.id.au>
-Cc: Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Alex Davis <alex47794@gmail.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Borislav Petkov <bp@alien8.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	linux-serial <linux-serial@vger.kernel.org>
-Subject: Re: [Regression] depmod fails on kernel 6.17.1 rc1
-Message-ID: <2025110956-swaddling-chapter-5932@gregkh>
-References: <CADiockCvM6v+d+UoFZpJSMoLAdpy99_h-hJdzUsdfaWGn3W7-g@mail.gmail.com>
- <20251106160235.GBaQzGm8W2Gt_VMy-s@fat_crate.local>
- <aQzJveMYT6O3EHeK@smile.fi.intel.com>
- <20251106162436.GFaQzLxBW-_50ndwtr@fat_crate.local>
- <3fe70726-80d6-a84a-4101-446fd8b49209@linux.intel.com>
- <ddfbc4bf-658f-3eda-5b4f-f111ecd932f5@linux.intel.com>
- <82e2ce7f-bd08-4b53-b232-3dd8cb1a0726@kernel.org>
- <20251109105203.622ebe9e@pine.rothwell.emu.id.au>
+	s=arc-20240116; t=1762651237; c=relaxed/simple;
+	bh=yl709K2/EBaiSPbcl7V+o9B/u6yVKPr1BkggrDZSyhY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iecCPPpaOXaAi9CDbodbT7n2CAAieTEzWfGulf1NKNu+Zk9wa/mDSK5AUePVi9zaNP9MDSn7fqfvJM1NG3xovl6/tBFskKyBgOBaMiVsoW1d6OKE9a0GHqkW/laLcON7HAt3DpgQsIj/fk1jlG0/sLQbqGSnxPgg04l4ZKyaPCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=Q8UFLoT5; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A8MPlr54180894;
+	Sat, 8 Nov 2025 17:20:29 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=4WQMv/utZqIebRrgDmAQ
+	C4G7cEEZTYQHPc1QJPVNWUc=; b=Q8UFLoT5eAk+tvwdXkdGapgJkuH9cSxHpyvl
+	85Nz1p4gHbeJyM1BPDsXvdXs5fyIYmfnDszNWYTdPfkphzeLtrTJn/xT6Yjfm/gL
+	wQIxLBpwPY4CWx/IVhCMHjs2annlFva4iDKJS38OWS+UW7xpYf1amjhPPtkSjKGd
+	POaIEFCoc3J2ro6gkb26LEDaxr3rkJJTWpF0xwj0qK8NNy4S2GejmJylexWr5uJu
+	+/jzhbsXni25CWDTOqmmxcausgscmxDoTA5DXxE/XMilJg+HMyq8SW8AZi/r+pQu
+	XAMSdV1JZh3R4PeKi4PG1ZmzYvU074xvI+bqTzTQQyGRWOJ6iA==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4aa2s34mq7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sat, 08 Nov 2025 17:20:28 -0800 (PST)
+Received: from devgpu015.cco6.facebook.com (2620:10d:c0a8:1b::2d) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Sun, 9 Nov 2025 01:20:14 +0000
+Date: Sat, 8 Nov 2025 17:20:10 -0800
+From: Alex Mastro <amastro@fb.com>
+To: Alex Williamson <alex@shazbot.org>
+CC: David Matlack <dmatlack@google.com>,
+        Alex Williamson
+	<alex.williamson@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] vfio: selftests: Skip vfio_dma_map_limit_test if mapping
+ returns -EINVAL
+Message-ID: <aQ/sShi4MWr6+f5l@devgpu015.cco6.facebook.com>
+References: <20251107222058.2009244-1-dmatlack@google.com>
+ <aQ6MFM1NX8WsDIdX@devgpu015.cco6.facebook.com>
+ <aQ+l5IRtFaE24v0g@devgpu015.cco6.facebook.com>
+ <20251108143710.318702ec.alex@shazbot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251109105203.622ebe9e@pine.rothwell.emu.id.au>
+In-Reply-To: <20251108143710.318702ec.alex@shazbot.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA5MDAwOSBTYWx0ZWRfX52BcyYTlebrR
+ dxM21h/hDXhD6D16mZo+NZ9GitbxB+GKabhAejP7JNHTs3p/sFye+k/+qC7VSzjKakLOD97idUw
+ jirJopCuamR1ja7k3Gk8KMc+4vRjDWR53zKj0oME5lgWjbaOAm1gRrncGOfJroqvr7gD+04w5Hg
+ h8te6Uej+RaOhpZOJeIIt5xv44rluPshqG3UCZLHlIy+gyxKmXkswZeRBYbAT6hfAgoObxbKLEY
+ RBx/GUMG/hV++Rlr2ROShzifsgjW4O/XioF6NbAWv+J+y1qPzp+755TXf9brXDI026RH5YR4E/O
+ jBuTJK7mhdpXkkZ2pDhYv3Fat6RfRHJQdjnlbOk0/PnNzO2lMhLmjdhxdZo+o0VyIQtGDQFZDUo
+ lKui4E2yrguDQRj6Ha2nygy0KYyryw==
+X-Authority-Analysis: v=2.4 cv=LoCfC3dc c=1 sm=1 tr=0 ts=690fec5c cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=r1p2_3pzAAAA:8 a=FOH2dFAWAAAA:8 a=KLQ7IMvFttoUVMJHvGgA:9
+ a=CjuIK1q_8ugA:10 a=r_pkcD-q9-ctt7trBg_g:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: i3kzQWJ9M9xbcUPXOqI5FU_vG3PvuBZz
+X-Proofpoint-GUID: i3kzQWJ9M9xbcUPXOqI5FU_vG3PvuBZz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-09_01,2025-11-06_01,2025-10-01_01
 
-On Sun, Nov 09, 2025 at 10:52:03AM +1100, Stephen Rothwell wrote:
-> Hi Jiri,
+On Sat, Nov 08, 2025 at 02:37:10PM -0700, Alex Williamson wrote:
+> On Sat, 8 Nov 2025 12:19:48 -0800
+> Alex Mastro <amastro@fb.com> wrote:
+> > Here's my attempt at adding some machinery to query iova ranges, with
+> > normalization to iommufd's struct. I kept the vfio capability chain stuff
+> > relatively generic so we can use it for other things in the future if needed.
 > 
-> On Fri, 7 Nov 2025 07:20:26 +0100 Jiri Slaby <jirislaby@kernel.org> wrote:
-> >
-> > On 06. 11. 25, 19:00, Ilpo Järvinen wrote:
-> > > This seems to resolve the build issue for me:
-> > > 
-> > > --
-> > > From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-> > > Subject: [PATCH 1/1] serial: 8250: Fix 8250_rsa symbol loop
-> > > 
-> > > make allmodconfig build fails due to dependency loop:
-> > > 
-> > >    depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
-> > >    depmod: ERROR: Found 2 modules in dependency cycles!
-> > > 
-> > > Break dependency loop by moving 8250_rsa.o into 8250_base and by
-> > > passing univ8250_port_base_ops to univ8250_rsa_support() that can make
-> > > a local copy of it.
-> > > 
-> > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Reported-by: Alex Davis <alex47794@gmail.com>
-> > > Fixes: b20d6576cdb3 ("serial: 8250: export RSA functions")
-> > > Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>  
-> > 
-> > LGTM, thanks for the fix.
-> > 
-> > Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
-> > 
-> > If the reporters could give it a shot and mark this by Tested-by, it would be great...
+> Seems we were both hacking on this, I hadn't seen you posted this
+> before sending:
 > 
-> I have not seen this for quite some time ... I assumed it had been
-> fixed.
+> https://lore.kernel.org/kvm/20251108212954.26477-1-alex@shazbot.org/T/#u
+> 
+> Maybe we can combine the best merits of each.  Thanks,
 
-I too thought this was fixed a while ago, what changed to cause this to
-happen now?  Anyone have a .config to reproduce this, 'allmodconfig' on
-x86 works for me.
+Yes! I have been thinking along the following lines
+- Your idea to change the end of address space test to allocate at the end of
+  the supported range is better and more general than my idea of skipping the
+  test if ~(iova_t)0 is out of bounds. We should do that.
+- Introducing the concept iova allocator makes sense.
+- I think it's worthwhile to keep common test concepts like vfio_pci_device
+  less opinionated/stateful so as not to close the door on certain categories of
+  testing in the future. For example, if we ever wanted to test IOVA range
+  contraction after binding additional devices to an IOAS or vfio container.
+- What do you think about making the concept of an IOVA allocator something
+  standalone for which tests that need it can create one? I think it would
+  compose pretty cleanly on top of my vfio_pci_iova_ranges().
 
-greg k-h
+Alex
 
