@@ -1,140 +1,162 @@
-Return-Path: <linux-kernel+bounces-892028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6CEC44215
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:14:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12AD6C44235
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:18:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E24243B3099
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:13:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9D044E5613
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29797301006;
-	Sun,  9 Nov 2025 16:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1F4301021;
+	Sun,  9 Nov 2025 16:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQ/fnqaZ"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjFVkM5d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0E63002D5
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 16:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9005C96;
+	Sun,  9 Nov 2025 16:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762704828; cv=none; b=RIybk7QTpPttNPpEVzcMg9gYQNlA4tpbWGIv/uieCChKRPjEjNOaCaDIwEzBBrlcTl+wvk2hVFo2GC9Or9kerwGkjfEf248pWGkyvrlGSh9NZ+/geEMErisWFTwbrzvX7x8KWbE0C4shqRYlNh2XRqmk/6MONYKME10HD8nNmsU=
+	t=1762705098; cv=none; b=khODiVjiUng32vlr8d1yRow8lvxBa9Rd+Ac7iXW4LZelFZQZNhZwtqnBcn4tzI41RlmuVPe7x3YL0T9Ouehjb3RApt76XIFYKD7Bm9JQo6TIpmGO/3bEdiDzos4DRvSFKrrbaC6K3cKqa0nQ4zEhGmcTrPOX8BFYTp9CSFk5kH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762704828; c=relaxed/simple;
-	bh=+4+bYhDhJXiL726cnMpcrCI1T81x+W6JPXOARnAf2wY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mo1c0+MbmcFSRW5HzHV2nrM5SK5/fVluWVwEu+04OPRyx7hHKSsPd3qu/992esgTlsYGFzUx9tYKw8mXkTjD9yCTxD6BuXNNHiPZisxsBB+OH7E7tc4GIE4gGvk2/T1VhEAcnqRhxr9UAslPiK0MwD3YGAVJcCoKrH3iwQdk764=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IQ/fnqaZ; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so11010585e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 08:13:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762704825; x=1763309625; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+02kLjHGU/Uou2Bb4YXv+quy1V5TVS2wJ3k/zt0/eGY=;
-        b=IQ/fnqaZrXjAgxg8YXo4/2kH5Xx7XSY7gyEQkZu1XJqxSOpQQWtEuKM/dq35NJy/cu
-         OHnFTpezgZmMNxxEwhiX7gJ7d9bTvuBKL0C2D3Xbzk7KqFvK22fAX4cAYe0J2pMZ6yzu
-         UJcUUYkIsndYFexRX8N3EJJKkggiYZHpwJQgKKr7MyNLz/aDZHCxdFHsdTl0XKbwVygt
-         3rua42/Gc9fXu2VHYFaD4puwFttcizDzEVGp2YO+cuDoWBArLXf2UVRBNLmR38Rbni7d
-         sZCbAhx7/TG+pLHDtaOkBtd6N6sA1mugz/xTX3HINjMV6jFxRKijDWqW5NSvAYpuQRfv
-         +gpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762704825; x=1763309625;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+02kLjHGU/Uou2Bb4YXv+quy1V5TVS2wJ3k/zt0/eGY=;
-        b=a62+rP+jjdWqNiVOcgdWWqs7W/67Bger1XbpgkTLRoq4LPbwoRY79Ji7JPVdsRBxzp
-         Iv+6Yz82ZGiREb4lJcmy3YWS7fLNLef068i6SKD1la+FRCUVVzCjogpKvgJwTD3Td54e
-         nkWwE3hInFzVptBjE0g56Nw3n8azpFIkQhJPlkiR93DS6D6GWyeYVtF42ewSoqxe+8M4
-         JSsus6THkXkvA5RXEhaqBPNtPed9m+H1TR4a6HnxFI83eXHvBoLjVoEik4+Se2IU3uyh
-         gSPy0D1iA3IAQl/1ihZ43nZuAT+l/5lss7sa5WFM71AmwHM5Nh4ogXef0c4+qQT9us/h
-         YTGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1IsREq/KRjoICPkinW2pwPvLINXvgrthbwdOLLTczaMydluv631QU+B5txTVi8muGM/2HTAr3sBCMFls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwArNyuI4+pBpeIelH9/qlKMTbUSy7tFSTq+Brp/hvGppneqJCP
-	GRGLHwQYSl91VZIRJgSfANIOZfE+4AcA36v1uEKKX7wOn1faBQh6fmzj
-X-Gm-Gg: ASbGncs3gvuDiPTKTgwlWPZV4/UNyyEriA0Iuy1RUzaXW8LzJllRuMLcru9NiLz0uWh
-	ysxSAgIrRByBjatW8gnTupbA0CvaomVvv1P4HeVBX2uJVc3Qu15Inojaw1fXBkrsXEyNWYN4cbP
-	8fCvkwdJ0sEpbH92nEd7uoXjo/dwx4tiktNFta9zg2UzQ6n9qBwM1z8XsxvKAzly5EPDiAOVPyI
-	XJgS8mExpomwO04FhewrIzgNQ6P4OK8y6YwvYfSRoHxcq+oJ7IdnLptj1AGzEEFZsDawn1P6xwa
-	SagecSWg3FTzhvWv7+5r9KYASshPoGJkmN5F+ExetaIZFWI8YVKJpB8s5a0pMPVMLM+hDMCkANz
-	0zjQkIUU7JXdY413gqr/1CYzlLl/Qv49yokpWA/R18VFAJAweNwgbFM5TV4NJWaQMl9iAwO+zF0
-	XOFgIEiyILpRSEN0DBGQs+ta20NpPCbxJOLs97p7t0qA==
-X-Google-Smtp-Source: AGHT+IHmTHsdU2+Rz4LNGoC3vyXFsyNFTJexIZWocPy0zzCcRp/UzmZAoOUkQHxXn9FhsXI+vpUzwQ==
-X-Received: by 2002:a05:600c:4583:b0:477:19b7:d3c0 with SMTP id 5b1f17b1804b1-4777322d955mr43906385e9.2.1762704824735;
-        Sun, 09 Nov 2025 08:13:44 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e73247sm88933425e9.7.2025.11.09.08.13.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 08:13:44 -0800 (PST)
-Date: Sun, 9 Nov 2025 16:13:42 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Masaharu Noguchi <nogunix@gmail.com>
-Cc: jesperjuhl76@gmail.com, Jeff Layton <jlayton@kernel.org>, Chuck Lever
- <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] uapi: fcntl: guard AT_RENAME_* aliases
-Message-ID: <20251109161342.497e7e7e@pumpkin>
-In-Reply-To: <20251109071304.2415982-2-nogunix@gmail.com>
-References: <CAHaCkme7C8LDpWVX8TnDQQ+feWeQy_SA3HYfpyyPNFee_+Z2EA@mail.gmail.com>
-	<20251109071304.2415982-1-nogunix@gmail.com>
-	<20251109071304.2415982-2-nogunix@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1762705098; c=relaxed/simple;
+	bh=NI6YboA8JS5E8R5DZqhB6Ej/6kcnfJbcc0r0CkZyfok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DpiAb5Bq3unxJhzIXtXrPDPaobQrBCllw6v/PDcv7+vis1PoYuF9JV7nJNSZxCSyoZycd+32EqGP9+cxTGeBBRczSJUMono1DBxW5U5URfKf4oYh4bqJ4I7DcgYW1giPgay/do8fl3eynqnPWsOSv8hV6Y/Dmi+q/sF3OR6D0XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjFVkM5d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC341C19424;
+	Sun,  9 Nov 2025 16:18:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762705096;
+	bh=NI6YboA8JS5E8R5DZqhB6Ej/6kcnfJbcc0r0CkZyfok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TjFVkM5dwPQ1+LU6/Gyv8cRk6zvs9gBLYbsCUO2a6AMcJp23CYQ38gZc6kZGZlyRV
+	 Z75IZLYokWkXIUgtvvrhCKo70x5gaCb7UEMZtpkOEGqToB8tKI7VWd+/2BS1lbpar1
+	 7wqC5epNF9G4fe+70Z6Jpatfo0fjAmQHtT2gySWQ2eF+aKRpAbFw91RfEYUQYRepiw
+	 wsO0FxDoYrkCJPCOgAYn7ag3USyEwBdw5JjwWxOpNiW8YOweAJMyKTRRHtM7FZk+iI
+	 gSkO/G03UuJsU1W4YtqGNlvhdI0M0WN1q8qIJbIIhuiZN6aT9HGF5GvMDHc9E9CT2q
+	 lkqVeGDsap4Uw==
+Date: Sun, 9 Nov 2025 21:48:02 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Stephan Gerhold <stephan.gerhold@linaro.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: connector: Add PCIe M.2 Mechanical
+ Key M connector
+Message-ID: <qrgaulegz2tb7yzklyl7rpkgbf6ysx44bxtyn6n3tcyq4an4e5@bzngutkvfno3>
+References: <20251108-pci-m2-v2-0-e8bc4d7bf42d@oss.qualcomm.com>
+ <20251108-pci-m2-v2-1-e8bc4d7bf42d@oss.qualcomm.com>
+ <gmwg46c3za5z2ev34mms44gpq3sq7sb4jaozbdn5cejwbejbpo@wwr2j7dkjov4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <gmwg46c3za5z2ev34mms44gpq3sq7sb4jaozbdn5cejwbejbpo@wwr2j7dkjov4>
 
-On Sun,  9 Nov 2025 16:13:03 +0900
-Masaharu Noguchi <nogunix@gmail.com> wrote:
-
-> Signed-off-by: Masaharu Noguchi <nogunix@gmail.com>
-> ---
->  include/uapi/linux/fcntl.h | 6 ++++++
->  1 file changed, 6 insertions(+)
+On Sat, Nov 08, 2025 at 08:10:54PM +0200, Dmitry Baryshkov wrote:
+> On Sat, Nov 08, 2025 at 08:53:19AM +0530, Manivannan Sadhasivam wrote:
+> > Add the devicetree binding for PCIe M.2 Mechanical Key M connector defined
+> > in the PCI Express M.2 Specification, r4.0, sec 5.3. This connector
+> > provides interfaces like PCIe and SATA to attach the Solid State Drives
+> > (SSDs) to the host machine along with additional interfaces like USB, and
+> > SMB for debugging and supplementary features. At any point of time, the
+> > connector can only support either PCIe or SATA as the primary host
+> > interface.
+> > 
+> > The connector provides a primary power supply of 3.3v, along with an
+> > optional 1.8v VIO supply for the Adapter I/O buffer circuitry operating at
+> > 1.8v sideband signaling.
+> > 
+> > The connector also supplies optional signals in the form of GPIOs for fine
+> > grained power management.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > ---
+> >  .../bindings/connector/pcie-m2-m-connector.yaml    | 122 +++++++++++++++++++++
+> >  1 file changed, 122 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..be0a3b43e8fd2a2a3b76cad4808ddde79dceaa21
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
+> > @@ -0,0 +1,122 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/connector/pcie-m2-m-connector.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: PCIe M.2 Mechanical Key M Connector
+> > +
+> > +maintainers:
+> > +  - Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > +
+> > +description:
+> > +  A PCIe M.2 M connector node represents a physical PCIe M.2 Mechanical Key M
+> > +  connector. The Mechanical Key M connectors are used to connect SSDs to the
+> > +  host system over PCIe/SATA interfaces. These connectors also offer optional
+> > +  interfaces like USB, SMB.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: pcie-m2-m-connector
 > 
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 3741ea1b73d8..e3026381fbe7 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -157,9 +157,15 @@
->   */
->  
->  /* Flags for renameat2(2) (must match legacy RENAME_* flags). */
-> +#ifndef AT_RENAME_NOREPLACE
->  #define AT_RENAME_NOREPLACE	0x0001
-> +#endif
-> +#ifndef AT_RENAME_EXCHANGE
->  #define AT_RENAME_EXCHANGE	0x0002
-> +#endif
-> +#ifndef AT_RENAME_WHITEOUT
->  #define AT_RENAME_WHITEOUT	0x0004
-> +#endif
+> Is a generic compatible enough here? Compare this to the USB connectors,
+> which, in case of an independent USB-B connector controlled/ing GPIOs,
+> gets additional gpio-usb-b-connector?
+> 
 
-That looks like the start of an 'accident waiting to happen'.
-Either #undef the constants so that code is guaranteed to get the 'uapi' values,
-or do explicit checks, eg:
+I can't comment on it as I've not seen such usecases as of now. But I do think
+that this generic compatible should satisfy most of the design requirements. If
+necessity arises, a custom compatible could be introduced with this generic one
+as a fallback.
 
-/* stdio.h may have defined AT_RENAME_NOREPLACE */
-#if !defined(AT_RENAME_NOREPLACE) || AT_RENAME_NOREPLACE != 0x0001
-#define AT_RENAME_NOREPLACE 0x0001
-#endif
+> > +
+> > +  vpcie3v3-supply:
+> > +    description: A phandle to the regulator for 3.3v supply.
+> > +
+> > +  vio1v8-supply:
+> > +    description: A phandle to the regulator for VIO 1.8v supply.
+> > +
+> > +  ports:
+> > +    $ref: /schemas/graph.yaml#/properties/ports
+> > +    description: OF graph bindings modeling the interfaces exposed on the
+> > +      connector. Since a single connector can have multiple interfaces, every
+> > +      interface has an assigned OF graph port number as described below.
+> > +
+> > +    properties:
+> > +      port@0:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description: PCIe/SATA interface
+> 
+> Should it be defined as having two endpoints: one for PCIe, one for
+> SATA?
+> 
 
-	David
+I'm not sure. From the dtschema of the connector node:
 
+"If a single port is connected to more than one remote device, an 'endpoint'
+child node must be provided for each link"
 
->  
->  /* Flag for faccessat(2). */
->  #define AT_EACCESS		0x200	/* Test access permitted for
+Here, a single port is atmost connected to only one endpoint and that endpoint
+could PCIe/SATA. So IMO, defining two endpoint nodes doesn't fit here.
 
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
