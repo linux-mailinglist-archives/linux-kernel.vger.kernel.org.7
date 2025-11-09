@@ -1,146 +1,135 @@
-Return-Path: <linux-kernel+bounces-892044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66005C442EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:58:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 496B5C442FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E673B0D6B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8ED188B06A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B65B3043BC;
-	Sun,  9 Nov 2025 16:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3443C303A05;
+	Sun,  9 Nov 2025 17:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqbObaft"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EIgjYpcz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9BF2E92DA;
-	Sun,  9 Nov 2025 16:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856B734D3A9;
+	Sun,  9 Nov 2025 17:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762707496; cv=none; b=INkrUhso5+jMT+x9Ghf3N3cKRZLd3fDi38nUKQf8hkEU8kt914kIpYrJ7oP0DzlSuX+cCBX5IxA5SYXGMj8W0Yr8quXpgpfa5Nx7jhbOpaAmUwpSUUhgVX8dGAd/skM4ScO5iJ4JcTZ2YBvUn2FUC13mR+MZ7DOEq+/czTqq0oY=
+	t=1762707640; cv=none; b=PCDk0dg7t0+9bQfzZGb5Zh9JGpKBNcj9cp1U7inU9Moltx1b94847FJ8RXfu1dGsVJCeBYaqoe6/rasX/8QoT0eL0PoH07s4/lHZu8HoFTGztlVaFH592JEyg+HDwG5pUYC9TbHUjlgY/525Qqa4+oXl2YKgsmCEl7OX9on+Xvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762707496; c=relaxed/simple;
-	bh=b6sosotwC/oHOg9LGRqzgR279GDoawxDZ0ekAKfx+70=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=fRRvLvSJYfOuOy5zOj0dtWHFqaSQXZ2Q0nmrest63V/Bg9QTkPNiXyYcrtZa1KJOqlqC4o3EYAsJaYqDJghfXV94P813Zsc9GnZhPG+XHu5N/HTDGsabIsVRaKtjoUEkch/rroW1PtXyk8Q9sZ4YWTK/1ZK5Mz43CywtWXDGFpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqbObaft; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E941C16AAE;
-	Sun,  9 Nov 2025 16:58:15 +0000 (UTC)
+	s=arc-20240116; t=1762707640; c=relaxed/simple;
+	bh=/YTzYEC+/7A1yssydEpBLvFuXa5TokqzNj5SqgQkNMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oIv5S8/2dbDNdhLBbw8HqTwQ5CGgrs7jWfNcyvQn0pjwb+JNB3QN7IaYkI30h+7asa2EchUyADDh2j1AckswVU0/580xuhWeeUBU6fUGMRKAD6x3GACkMSc4FSceKeAbxrftTVr8jhlly5EcwMaP1Tc1ZJFLIoNeX4JxIC4iRH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EIgjYpcz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B82FC4CEF7;
+	Sun,  9 Nov 2025 17:00:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762707496;
-	bh=b6sosotwC/oHOg9LGRqzgR279GDoawxDZ0ekAKfx+70=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=WqbObaftT+4n7+zzfmiM089HqwM54MVsjMUJ9epZseSqw6gZ/3qZt6ZwNS7AnFeuY
-	 qyGsV/LWhoXphn7GYJLya36fi6jk9hMZHdnqC+sbgKDUrAZ0vB2Lh/R3PCfJPGjdWY
-	 ypWt31DJK2jZ7TbPx0TDFRZJG+1IzsCxF2qN+05fszTFOzmWgyEUCwwO1aoKYhDsfv
-	 mAweHAp8Xh5KBuSGJchTwXLkfmkcRlgxEOeKpXu8LAS+CuIUadMcX6b5ykA/uk0MfC
-	 DCil7ySHUq+IydX+H8zwQb6Ht8GCnB0+aAGNrrboznizVTPugym50ntrYUrHW6prJy
-	 AiBkqIJ1tb03A==
-Content-Type: multipart/mixed; boundary="===============0591375349055705727=="
+	s=k20201202; t=1762707640;
+	bh=/YTzYEC+/7A1yssydEpBLvFuXa5TokqzNj5SqgQkNMo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EIgjYpczUOJ/qkpiyiaObxa/4HwzMUGSj/DKg/EDJY1bXoIX3RaGcEIACjwzpLhDU
+	 OO+QHIEIaLofhMLq2t4CS3ec98r6oyFiOEjSIC3z1KAThmfRyJLWcDNre7NGFWCGVA
+	 e1NJ2Y3/C+HueHWreW0A6XfygPU76invrZXlXEc7OO1oMicZsLP14Z94fxKDyo/nLU
+	 hkYFboDAHp32P2w3BaLCM4MOi2C3vpMQF9+t783kIgTnSC52fong2/QUEF15oKLWQ0
+	 9yyUDa9OvYsw0py629P+lAxAAwfF8WfnVAnFZ6Hnycns9D1oW85mremLgPymNpVtTc
+	 sW0bzB5r9W43w==
+Date: Sun, 9 Nov 2025 17:00:32 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Hans Verkuil
+ <hverkuil+cisco@kernel.org>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "chrome-platform@lists.linux.dev"
+ <chrome-platform@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-media@vger.kernel.org"
+ <linux-media@vger.kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Benson Leung <bleung@chromium.org>,
+ Guenter Roeck <groeck@chromium.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+Subject: Re: [PATCH v2 2/6] units: Add 32- and 64-bit signed values of
+ =?UTF-8?B?z4A=?=
+Message-ID: <20251109170032.2763ae5b@jic23-huawei>
+In-Reply-To: <CAHp75VexvdYyjt1GkbfqOotkFpLeb=io6outJ5dpRqBv2qPNng@mail.gmail.com>
+References: <20251107201005.3156118-1-andriy.shevchenko@linux.intel.com>
+	<20251107201005.3156118-3-andriy.shevchenko@linux.intel.com>
+	<fb4aafc1-dbfb-4533-b368-5d26e24acdf1@baylibre.com>
+	<CAHp75VexvdYyjt1GkbfqOotkFpLeb=io6outJ5dpRqBv2qPNng@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <886b17f3dd9f9836dd87b9249a01e737088fe52174b8d513ad6350c6bb19ff87@mail.kernel.org>
-In-Reply-To: <20251109163559.4102849-2-chen.dylane@linux.dev>
-References: <20251109163559.4102849-2-chen.dylane@linux.dev>
-Subject: Re: [PATCH bpf-next v5 1/3] perf: Refactor get_perf_callchain
-From: bot+bpf-ci@kernel.org
-To: chen.dylane@linux.dev,peterz@infradead.org,mingo@redhat.com,acme@kernel.org,namhyung@kernel.org,mark.rutland@arm.com,alexander.shishkin@linux.intel.com,jolsa@kernel.org,irogers@google.com,adrian.hunter@intel.com,kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org,linux-kernel@vger.kernel.org,bpf@vger.kernel.org,chen.dylane@linux.dev,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Sun,  9 Nov 2025 16:58:15 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
---===============0591375349055705727==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+On Sat, 8 Nov 2025 21:02:54 +0200
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index fd1d91017..edd3058e4 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -67,6 +67,7 @@ struct perf_callchain_entry_ctx {
->  	u32				nr;
->  	short				contexts;
->  	bool				contexts_maxed;
-> +	bool				add_mark;
->  };
+> =D0=BF=CA=BC=D1=8F=D1=82=D0=BD=D0=B8=D1=86=D1=8F, 7 =D0=BB=D0=B8=D1=81=D1=
+=82=D0=BE=D0=BF=D0=B0=D0=B4=D0=B0 2025=E2=80=AF=D1=80. David Lechner <dlech=
+ner@baylibre.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>=20
+> > On 11/7/25 2:03 PM, Andy Shevchenko wrote: =20
+> > > There are a few drivers that want to have these values, and
+> > > one more known to come soon. Let's define the values for them.
+> > > =20
+>=20
+>=20
+>=20
+>=20
+>=20
+> > > @@ -21,6 +21,12 @@
+> > >  #define PICO 1000000000000ULL
+> > >  #define FEMTO        1000000000000000ULL
+> > >
+> > > +/* Value of =CF=80 * 10=E2=81=B8 (fits s32 or signed int) */
+> > > +#define PI   314159265 =20
+> >
+> > It isn't clear to me at all in the other patches that e.g.
+> > DIV_ROUND_UP(PI, 1000) would be =CF=80 =E2=9C=95 10=E2=81=B4 (rounded t=
+o nearest
+> > integer, of course).
+> >
+> > Calling these PI_E8 and PI_E18 or PI_x10_8 and PI_x10_18
+> > would help to clear that up. =20
+>=20
+>=20
+>=20
+> This will be an awful and ugly name(s). I fully disagree on such a
+> proposal. The power is chosen to fit the type with maximum precision, no
+> need to explain this in the name.
+With no indicate of the multiplier we have to check it every time wwe
+use it which isn't ideal either.
 
-[ ... ]
+So I agree with David that we have to indicate this somewhere. Maybe hold t=
+he
+multiplier in a separate define
+#define PI_MUL
+#define PI_MUL_LL
 
-> diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-> index 808c0d7a3..fb1f26be2 100644
-> --- a/kernel/events/callchain.c
-> +++ b/kernel/events/callchain.c
+Then compute the divisions by (PI_MUL) / KILO or something along those line=
+s?
+>=20
+> > =20
+> > > +
+> > > +/* Value of =CF=80 * 10=C2=B9=E2=81=B8 (fits s64 or signed long long=
+) */
+> > > +#define PI_LL        3141592653589793238LL
+> > > +
+> > >  /* Hz based multipliers */
+> > >  #define NANOHZ_PER_HZ                1000000000UL
+> > >  #define MICROHZ_PER_HZ               1000000UL =20
+> >
+> > =20
 
-[ ... ]
-
-> +void __get_perf_callchain_user(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs)
-> +{
-> +	int start_entry_idx;
-> +
-> +	if (!user_mode(regs)) {
-> +		if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
-> +			return;
-> +		regs = task_pt_regs(current);
-> +	}
-> +
-> +	if (ctx->add_mark)
-> +		perf_callchain_store_context(ctx, PERF_CONTEXT_USER);
-> +
-> +	start_entry_idx = ctx->nr;
-                          ^^^^^^^^
-> +	perf_callchain_user(ctx, regs);
-> +	fixup_uretprobe_trampoline_entries(ctx->entry, start_entry_idx);
-> +}
-
-Can this break uprobe trampoline fixups? The original code used
-entry->nr for start_entry_idx, but the refactored version uses ctx->nr.
-
-These two counters track different things:
-- entry->nr counts ALL entries (incremented by both
-  perf_callchain_store_context() and perf_callchain_store())
-- ctx->nr only counts regular callchain entries (incremented only by
-  perf_callchain_store(), not by perf_callchain_store_context())
-
-When add_mark is true, perf_callchain_store_context() increments
-entry->nr but not ctx->nr, causing them to become out of sync.
-
-For example, if kernel callchain collection runs first with add_mark
-set:
-
-  Initial: ctx->nr = entry->nr = 0
-
-  In __get_perf_callchain_kernel():
-    perf_callchain_store_context() stores PERF_CONTEXT_KERNEL marker
-      -> entry->nr becomes 1, ctx->nr still 0
-    perf_callchain_kernel() stores N kernel frames
-      -> entry->nr becomes 1+N, ctx->nr becomes N
-
-  In __get_perf_callchain_user():
-    perf_callchain_store_context() stores PERF_CONTEXT_USER marker
-      -> entry->nr becomes 2+N, ctx->nr still N
-    start_entry_idx = ctx->nr assigns N (should be 2+N)
-    fixup_uretprobe_trampoline_entries() scans from wrong index
-
-This causes fixup_uretprobe_trampoline_entries() to scan kernel
-callchain entries instead of user callchain entries, missing the
-uretprobe trampolines that need to be fixed up.
-
-Should this use ctx->entry->nr instead of ctx->nr?
-
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19211481431
-
---===============0591375349055705727==--
 
