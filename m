@@ -1,145 +1,126 @@
-Return-Path: <linux-kernel+bounces-892069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D212C44488
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:32:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB26C44455
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:25:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF923ABA75
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:31:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CF1B3A8F93
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823433093CA;
-	Sun,  9 Nov 2025 17:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B7B30AACE;
+	Sun,  9 Nov 2025 17:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="tlf32Vm4"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6sor9YK"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A573090D2
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 17:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8FE30AABC
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 17:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762708975; cv=none; b=suq/Wcp+/dcCxc/rGZ4DFgONlvfc5fpoGqXinfjED1eHJwQ1zL0MJf+TYeE+n9ETColiV2oyxHAheI+jA8WJhUX971bbAO+iGfU3d/+SA7YWhSrHE8OeRKkQWiPXfAoiwPFpQxPEn/mU3M3Bgdf1aCaG9GwM0sJ0CZnN8kTFvlU=
+	t=1762709126; cv=none; b=rpAicxnys/ReIKqqdAO+JGr6gUlFFwDCo2jUNZv17hPSc45iBFYNMImKyxSTXxOoWJTGZINFEs46Ee4f8gYBkJyLUNfY1SN7sV/i7ZihmPqFD/Pm1SZl4IohmHBGM6xfX1P8QgKjBHcA+T9/4VewG5CasNoCUgW9YwDcX6qAA+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762708975; c=relaxed/simple;
-	bh=8xrRb4Ja7YDYCikqkpnM1+9xLkErGoSE0Ilyg3K603U=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=cJlyVXm5QLNN6k3Y7SD9cPc/2PXk3hxRuILiihKoXVu23fclMKT4Hg2SPqaCK5Ei4WInq8OVa/uGqoosXQREqvVUwvoPCVK/sfEzzKo6cGH47a9WC2MR6XChGYnG5npM2hIfhzZZWwPGJ1KQdnqcISWagMf/dq7JhCRxwpOK5uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=tlf32Vm4; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6408f9cb1dcso3919469a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 09:22:53 -0800 (PST)
+	s=arc-20240116; t=1762709126; c=relaxed/simple;
+	bh=IhIkuSuF17GlsVUwGV7Fi75Nge9iJGGX57xSFdaaG2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oeeHq0jOGYWp21yxYWUyvabFlAk3vlXobfPXJrRsrtOZEYdvGUCPC9/ooPNOiLtR0se14xCueLpK72XugNI02fVZhjjGW8pfDtBEY/yp4XeZxR/Pk/q9jOLJX/ECu0CiHVF1jFe2il/sXTPaD+KwI1SpJU1ks7de8lZES8R9rRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6sor9YK; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640f627d01dso4124415a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 09:25:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1762708972; x=1763313772; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a7u5viM8iOHpulamZW8Yl5pjwnfS/F/QVQpeIUIajsE=;
-        b=tlf32Vm4NVrasKbkE996+Mj6XQVE03iUa6BZr/4GVFSrrOzf3ZgZdS0WAMnZw++XHF
-         wPAmk7eAJNPJSm8b9OfBtOjhyVHnYWFl+Q78i/d/WyVjXGOcMz8PNpar9PYBq6dP0+aa
-         el5n5PPNIQpi4CSO92ADIdilnEVstRU2D/PH8dmGQYeVO/PVWP/yVAjg+U3kAlyB2wqR
-         xHHRnazDTd7x3VviVzdyGH1a/mQw6NJ/xm6RJ70TGzKyYI+EdfBPb3G9VRzTLgfcVfLo
-         7GKfazWZWyc/lEa0gNbGh6VeOLO/TB9YDYIo2I/UxD1zTGmnqCtIJrJHkJFF5pB2+Nll
-         2/Yg==
+        d=gmail.com; s=20230601; t=1762709123; x=1763313923; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G5uUj7ITcpZj2TsML5T8Cl6HHMpcKN3nQGf9uTJBYnM=;
+        b=m6sor9YK4QBFH07aM2PIDtspRSlSz7wyBNb0DkRk4NToI42oKGufWJGXbS4laM24ac
+         BCKZ2OvoQBqMe6DMcy350twzMBt18tQHP96DUXB/4ZyblgTnGLMq+9yfwDbtveuI71r0
+         t9Ccf2V70RCeUJnjRRR/Kn4fUtVsWfYSKAQRWiSTFo/7p140qn9hi37bxlE9egZU5k5b
+         VpgMP+4cdldBEKE4RKKOcLKtW20XCAMmIoW0sJDb5yn1T9pHESbYA/8XlQwdCycSidy+
+         yUqfP1ziGfjSZoU3XxOFGrsePITc3s/WENWWLbR6bPJaEinkOQQFXwkF0wzjIYceO4ga
+         7YJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762708972; x=1763313772;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a7u5viM8iOHpulamZW8Yl5pjwnfS/F/QVQpeIUIajsE=;
-        b=A9QN5O8Z5JwKZHupBqgK3xabPSx+OOlZKNYA1jLoHtQ9JpnAsE6KzRLRMuZrh7CjhG
-         eqIUFZJJbz+Yd+0rWZDELdvkd1gfq4vPP9K3AggMzw4g1MK4CppvSvqssd1Bp1ZRuEag
-         //Wq7bias1QCE11E3CZzasRhZ1sFX9DhMk8QlH6JaNPx/4XIg6MFcpahliiLoVeEDYff
-         Y0RzwPgt/3pP0NJ6QYH/HTq+MzQmhNxmUvo2brsBF2GLwLRo+p64X+fceJddd2cfZccy
-         7ZTOhz26y21z8essf+0PNTrRjr8i1qmfSIthRYf83ySTTIorPPcbokJQdJuyM9fPde8n
-         2/EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuQQDsF8b6GtW0DezLRvLTKBbjrmH9Qfi9uN8KKPA3cNnHP+nboPONgs7FNLB2vLgTp/ZfJgBFye8J/mU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/WcBOI0FvWA7fEkrzdRz4vFsRlcox/qZZ9ltuFQ4qxHB41pPK
-	Tb826KsplRf7x3AFGD/S1C8fxMNuKHFMvE9hBNR2THhdaynbtuttpSXDn8xn0y4HaEc=
-X-Gm-Gg: ASbGncvGPrzzd78mhNIE880JZf7iEa41+Hhf4o0kfM5wN0BY1j/w0Gk1kUJ5qOArryQ
-	MyorfeV7SZVNpLLbqOAKijKnzf1HkD1jXlXsnyPp6UsFW9yDi6Ha3bAzMtXk95YBYw0w6vwn0AH
-	ZZRRggOk152eqd8WrgWjU0X6m1JguqeycRmtMzHOXlGITI2s9ixe7ulTAwP4hw3j5iunR5VGrQ8
-	YZKOkp+XZeVS8OB89aFGAu7dCvx7Z7UrfMntDEapn46Y/NwBswRIrNaRpPjXLSi3f2bfLFG9PBT
-	33xe4I83AfeVBIbo1s6DC5OfKNaoAvJMHClARPdL2W2rg7C5qk657DMHtdWjF6vNw7oYldsbMyj
-	4x0iCeDrkUCr/ukd9oT8DH7fthkQhUdZhh44eruVUEIXKjeoXewHeoePs1KdD8puL7/7cV+AYKZ
-	nZCUnsjcPl1rPrfOloqoUJmmA5ySlRDOiU440xJHag9XQCzwbNJyIboawF6AugCIuUOKPSEmwFZ
-	RqoDHI0XT8j4aUQw1cM351GS6QAYp821u4=
-X-Google-Smtp-Source: AGHT+IHiNx88guNnogcxy/ePccl6T4u99WrAa4tO6dTyzZ7pWo9gTArz9LqZTlbTuW3AfvNrVuFznA==
-X-Received: by 2002:a05:6402:3546:b0:640:f974:7629 with SMTP id 4fb4d7f45d1cf-6415dc205e6mr4941873a12.15.1762708971341;
-        Sun, 09 Nov 2025 09:22:51 -0800 (PST)
-Received: from localhost (2001-1c00-3b8a-ea00-c4de-d39d-05f4-c77a.cable.dynamic.v6.ziggo.nl. [2001:1c00:3b8a:ea00:c4de:d39d:5f4:c77a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6415d91f486sm4786157a12.22.2025.11.09.09.22.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Nov 2025 09:22:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762709123; x=1763313923;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G5uUj7ITcpZj2TsML5T8Cl6HHMpcKN3nQGf9uTJBYnM=;
+        b=qCARJ1Hry4o9M2KteR9X1I64HtAyNH4B7P/9YGe0w3xVfKA/j4r71y34NZaa6taZ6K
+         N/zI5kSxKyHXT02KfyinpJeHWucNFbxTCeAZb4jq1bPjhBOa8EcssnTN5O0hAVERN1K4
+         iKmeTGemlOWXX4FQ7Wvh/l+uaKwwO7mnksSaMHXS2QCYc/OnGHqz3vj3G6J2LOoKB4mG
+         wuplLFASyETbPuxirnD7P/5jW0YDQnyfoC3fl5ik71csTCeSRLbuhC7qKDVqPpjEfME1
+         MiHenVcnnFuptc7XLaLew7lZDPNjL7ae4CHzYAaNHAJXq6oOwoJvwHXdnP7P0OnQFyqu
+         uK/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVY92MihswhqhaEIRxRxtM0ClCfZXBncHOv5jsDobr861aLwmqi/98swZCcZ9l+5rLpni3ccXOb+k7SJ5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/Y64oubErhadLOzbVVh9edcj3DKWGhYASAi1/xvEYh6spVTfN
+	XjHER44xaaVUDmP0owQaJ30Lw8WRZuwaF5dbDXfawE8WHDl/HasHaOfM8q/P/A==
+X-Gm-Gg: ASbGncuOCN/tqR4RMXriai1ac9hYVrH3ZykgXFQw/fFhfiDHtJjvn6xQizFddrLQR3p
+	Nn6HgEQUWAqAlch2RFILDxdXNaLq2s/Kok7m99fOZBYfDVmnlZbzn9gCTagLZ/ztO2CbNuHKk8e
+	f0kUv+JPGmpgPzofHwwoIuC5f8Si567wOqkN5PblK4SSrGAJEqH2vHeUraN4fSa6rOjOOw11lYy
+	ImXtXuHWksED7xCCT2AfgeYmxgu0qw8tdIsJ5BQ0TOrm8LSpUk8jXqcBul0uk0BIq0kB+FPdW8q
+	z3Hyci+8soWQMwVzeIPbIpQY5+S2Mf3m+kIslB6b1GAGEhfvEKkHzZ4XldYxYSIuUdE0vuZCC7Y
+	/Ow1a6xmynTUPqO12TV1k/In8rVuMc03axPH3w59iD9Du88YCLZDjajnXF6U5/+m6cSP3jveNJD
+	Sht8uUqWBilxMS2oqjPHp4MY08SYRu9mCQG2lpLZqbh3Z873Ecdiq/Dm0bvo4=
+X-Google-Smtp-Source: AGHT+IFWNwV3C/IaXRRnwobzv1o9PKYxfESAALRMns5L92IjMXOjd9WqLoAGQ9NI9ORRXtNCpzRCWA==
+X-Received: by 2002:a05:6402:354b:b0:640:ea4b:6a87 with SMTP id 4fb4d7f45d1cf-6415e8134a5mr3660037a12.30.1762709123200;
+        Sun, 09 Nov 2025 09:25:23 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f813bedsm9257748a12.10.2025.11.09.09.25.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 09:25:22 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org,
+	jlayton@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH 1/2] filelock: use a consume fence in locks_inode_context()
+Date: Sun,  9 Nov 2025 18:25:15 +0100
+Message-ID: <20251109172516.1317329-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 09 Nov 2025 18:22:50 +0100
-Message-Id: <DE4C6HV76V5M.1I1NJB2JCK1LN@fairphone.com>
-Cc: "Joel Selvaraj" <foss@joelselvaraj.com>, <linux-media@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <phone-devel@vger.kernel.org>
-Subject: Re: [PATCH RFC 8/8] media: qcom: camss: Remove D-PHY-only endpoint
- restriction
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: <david@ixit.cz>, "Robert Foss" <rfoss@kernel.org>, "Todor Tomov"
- <todor.too@gmail.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
- "Vladimir Zapolskiy" <vladimir.zapolskiy@linaro.org>, "Mauro Carvalho
- Chehab" <mchehab@kernel.org>, "Luca Weiss" <luca.weiss@fairphone.com>,
- "Petr Hodina" <phodina@protonmail.com>, "Casey Connolly"
- <casey.connolly@linaro.org>, "Dr. Git" <drgitx@gmail.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
- <20251109-qcom-cphy-v1-8-165f7e79b0e1@ixit.cz>
-In-Reply-To: <20251109-qcom-cphy-v1-8-165f7e79b0e1@ixit.cz>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun Nov 9, 2025 at 10:39 AM CET, David Heidelberg via B4 Relay wrote:
-> From: David Heidelberg <david@ixit.cz>
->
-> C-PHY mode is now supported, so the endpoint bus-type restriction to
-> D-PHY can be removed.
->
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
->  drivers/media/platform/qcom/camss/camss.c | 9 ---------
->  1 file changed, 9 deletions(-)
->
-> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/pl=
-atform/qcom/camss/camss.c
-> index 248aa6b21b5ad..1408e8a03f0bd 100644
-> --- a/drivers/media/platform/qcom/camss/camss.c
-> +++ b/drivers/media/platform/qcom/camss/camss.c
-> @@ -4044,15 +4044,6 @@ static int camss_of_parse_endpoint_node(struct dev=
-ice *dev,
->  	if (ret)
->  		return ret;
-> =20
-> -	/*
-> -	 * Most SoCs support both D-PHY and C-PHY standards, but currently only
-> -	 * D-PHY is supported in the driver.
-> -	 */
-> -	if (vep.bus_type !=3D V4L2_MBUS_CSI2_DPHY) {
+Matches the idiom of storing a pointer with a release fence and safely
+getting the content with a consume fence after.
 
-How about just adding && !=3D V4L2_MBUS_CSI2_CPHY to it? Good to check in
-any case imo.
+Eliminates an actual fence on some archs.
 
-Regards
-Luca
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-> -		dev_err(dev, "Unsupported bus type %d\n", vep.bus_type);
-> -		return -EINVAL;
-> -	}
-> -
->  	csd->interface.csiphy_id =3D vep.base.port;
-> =20
->  	mipi_csi2 =3D &vep.bus.mipi_csi2;
+this is tiny prep for the actual change later
+
+ include/linux/filelock.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+index c2ce8ba05d06..37e1b33bd267 100644
+--- a/include/linux/filelock.h
++++ b/include/linux/filelock.h
+@@ -232,7 +232,10 @@ bool locks_owner_has_blockers(struct file_lock_context *flctx,
+ static inline struct file_lock_context *
+ locks_inode_context(const struct inode *inode)
+ {
+-	return smp_load_acquire(&inode->i_flctx);
++	/*
++	 * Paired with the fence in locks_get_lock_context().
++	 */
++	return READ_ONCE(inode->i_flctx);
+ }
+ 
+ #else /* !CONFIG_FILE_LOCKING */
+-- 
+2.48.1
 
 
