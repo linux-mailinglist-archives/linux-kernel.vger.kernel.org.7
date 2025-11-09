@@ -1,120 +1,204 @@
-Return-Path: <linux-kernel+bounces-891813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C083EC43902
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 07:08:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD37C439B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 08:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E6DB4E28D9
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 06:08:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34CC84E30AB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 07:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E73421ABC1;
-	Sun,  9 Nov 2025 06:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48197245014;
+	Sun,  9 Nov 2025 07:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CK7TK6ie"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e2sPnDco";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MEmCpwKH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F341494C3
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 06:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983AE4C6D
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 07:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762668491; cv=none; b=VSaISP5KDHAqRMrw5KJBi68xAdnWInkDTqCMGW78UIKgLa6zPzxSNv9lx64J2f8bo4DzxuczKB0eE0WOphq01nU5Ves/Mn76jQPpQlW/Ko5Q9dyiW8fB9/7ho9Enr6vWbFpAsx2t/BXl3duSZTJ31dpiPkJcaUSltbYa0eSw7OM=
+	t=1762672295; cv=none; b=OqQh1L5FRczE6tjTBcvQRVZC3bH8J3jQjzko8gIKcclbPduW2UdEh7sR4pDk7L77w/ow4CKi+cPiIhGp86P9xgoZyXVmfsZVGtJyL0KdVFfiboh93pKagA84beA9tmQjaCp+mgWdlDjCcap0Sys43463DG5k4v+8AKy3PDoCfi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762668491; c=relaxed/simple;
-	bh=ZUPe8DA5eBEM0OM6UFFD2uba+Vu1eUEBps3LlQE0kTU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Nx1SmDUHYSbZbv5SauzhmKJcakCPvF5ySS+RSHIkXxedO5hkYkJAihM2iVJMuyAWJbLdik336VtobJV8Q9WAVxP1kinYTpDEMaFZwVXULTg0jUIJaHueMIK4/fMDhUc2W7c9tVJGHkZ4K1lK7TWUqGaBsPqmaaDL0QNLx/0Fj/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CK7TK6ie; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-297e982506fso9274125ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 22:08:10 -0800 (PST)
+	s=arc-20240116; t=1762672295; c=relaxed/simple;
+	bh=kleNJia2ZTeXUE4bhGdB2ccT09E5r2iOyKfFmRXgabs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FrxL1t+ZdlH/gMVVuLQB0TlNzGGlwGZzmvo/xA/cyq5LaIr+uvaTUDLanZCRGw7lC7orA4iG7YBfxTBJnW4ZYw7LGCaL/PYABTuZh1qX9KbGZ+sXDB7Cg9VSPYnaQbl5TiABwLZn/BNrHGZ6wPXzhdtLwP9/H1N7TJe5D02shDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e2sPnDco; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MEmCpwKH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762672292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V+85GBZrlaHqL20i3KHw/1cHlp67Sb2lFeW9i8R8xCw=;
+	b=e2sPnDcoDeAOFzzbM03597JormQ8ztCA2nv9d+SYooFt2acM9i51J+rQWgYiwVScMRBr2t
+	+NqkQ3bYERGQryJsl8wRzqM1q2D9dRRa9W2xlbsm1MYBD+qA/vA1gZlOYWIE93Zin8TkrA
+	3Q2t3fBGiviZV9Dkz986WxqTUJ14JEQ=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-567-KWTqpDxWO_WXnJw976e_Ew-1; Sun, 09 Nov 2025 02:11:31 -0500
+X-MC-Unique: KWTqpDxWO_WXnJw976e_Ew-1
+X-Mimecast-MFC-AGG-ID: KWTqpDxWO_WXnJw976e_Ew_1762672290
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-47754c0796cso18131515e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 23:11:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762668490; x=1763273290; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G69bVr1VjY3rXYJFWqH2x9QAFvW62OSXLU6HasiAsNs=;
-        b=CK7TK6ieLE/BungZzmtIg10Kl7JHfD97GIAnZXc6U1a1d2s2Bso9SbRpJMAorldvmM
-         Vwq/9r2uACDsAvYYXRbeF/JKpZMSiLill01nkpj9qMzs/6KLmmXl2bB9CWS8us/AKMfg
-         Wr7Xf9VKZJk3+tFfOVklMp3oSr9Gvph/4lPNGa4r9o7oYibYa4sbeDP7XrFFZGvw8ZQ0
-         TZjZd1cSuRrWUfyIaI86S6J013Zg4Qu/+YS8Ocs7j+Rko05RH0snlW30Wrghm4Q0rtAw
-         b86audjXEBLuzbwGCO08YWmzVT08btKjQmEnFoPCUPPejq9jzWml34WUsEjKkYjDeB08
-         Kquw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762668490; x=1763273290;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1762672290; x=1763277090; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G69bVr1VjY3rXYJFWqH2x9QAFvW62OSXLU6HasiAsNs=;
-        b=fI+3yRebwU5f8k++OPbuUHkndqIYcrvSRH07qPdJS2Xiu/tYcyvIgxzqEchafTbDBG
-         EILuW0CWeCSpHUbeGQI2eyu3XOGW5pcOZsfDNenXqydBGhQWzFdAKXfxlf71/RPKJ4Yy
-         DZVIjxU58sIk7u/S0LXo+jOXncekHUuW5G+j8AsiFpfToTJzE9gO200TkCaFUc/gRC28
-         wiqn40iovTdfypZGG3o4jvcGE62f8h7NrUnpfxukPsVnCwnJdyz3xAERWNXEWl1HCFG1
-         T6aGyoyBwNoFiHu6qNmOmkJovPFG+4e53bGSkHQh8Ket6LW4BHflf1Q7REHG76MgOyn3
-         sklA==
-X-Forwarded-Encrypted: i=1; AJvYcCXO6NA5x6+dHWYIo6kHP2xVUqGhZPuLLECqye87+onzqdT1OqfhH9xqBA2mlqOK9aXufviP6LY48ZiDi+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSXRi1klvlh0n6ExCXcyviX37uY2ruzjtpIcUUitsAEP9BC/aO
-	eTSRQVm+Rfnio8PRqSwgb7jZg8WCgKTq4BFgyQ0AHlp8rWmMKCS/2Z05
-X-Gm-Gg: ASbGncvTNfTtk846T/Ch+zq43Lg3mYYLnyNI/GIuINuncjo5u/ctdBfNm3NXO2d4B8G
-	su4hHQCTEHTMO6Xp6bC9Toee68qNzTyVpea8nAY/apAJQV7FDOeFytp1uhFTvVaJOIqUW+XlCJ0
-	gs+gRzz4IUKkWYrns+hqZvzJMrR25BYQBg4SGlZBf5JL//D2m4Z0+Rwys3nBfRs4sRbrENs2vlI
-	P/smIFbQnz8uGK/rXuVmQ2jKDxZbJib2Y3SoGOSJEddo1hv7TVdAAM8yXcenE2MVyKGTzfV7+Hx
-	mZyEU/Ct9TtvAcTz1445YsoAW9ycFwiQWakHgUAitgYfoy6JfolBuUJEKzrQm+6VsbH0LGHZZlq
-	VBrEoo96RQMY9Et3plpEkj9pVKEC1wRQw4weFNfTuXPGgR7xzx5W4wkcjedBfmhpkWctYVKHHWk
-	xb0zEv2qo=
-X-Google-Smtp-Source: AGHT+IFHp7CcRk8EuGvVXBMAKV14iJdboR7Qx/894f3C5vZTBB1ISPfpE7T83gPsFbY8zHpntT65lA==
-X-Received: by 2002:a17:902:ce10:b0:295:57f6:76b with SMTP id d9443c01a7336-297e53e7b0bmr65195835ad.7.1762668489563;
-        Sat, 08 Nov 2025 22:08:09 -0800 (PST)
-Received: from LilGuy ([2409:40c2:1042:913d:b798:80c3:5bd2:24ee])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-ba8ffe36bafsm9722322a12.23.2025.11.08.22.08.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 22:08:09 -0800 (PST)
-From: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org (open list:MEMORY MANAGEMENT),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-Subject: [RFC] Guidance on contributing to the MM subsystem and finding tasks
-Date: Sun,  9 Nov 2025 11:37:38 +0000
-Message-ID: <20251109113741.102337-1-swarajgaikwad1925@gmail.com>
-X-Mailer: git-send-email 2.51.2
+        bh=V+85GBZrlaHqL20i3KHw/1cHlp67Sb2lFeW9i8R8xCw=;
+        b=MEmCpwKHN0SZqKMPbXnJAfJ2uAeSn3Xt7wli2Dei0RlHcGq38rVhoOk8eZQY0KV8Fg
+         pelio/WQ5c2XzxUDQkz7IuwQHceMU79dkDaPjevMNILS07TAddVIFGeks1GSZEBuQ9A4
+         9TLYpONFlZS2ozz2XNQb5Y8Un1nJC3Zb3qEljg36KIA5bTgC+fD/5yekDUCNL2JfK9FP
+         XWOxcekTYMRoYXR6MgSGx0IhXbD9S0SAMA343jDMuCc35tbTzza9gIcxIrbtS6Mw+LBF
+         PklKusXbiOTOtH24lruBhV+xOPXJIukr9FFngd0jbHT5oy2HC3bSf/GEdJpNdInXUjYT
+         tTPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762672290; x=1763277090;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=V+85GBZrlaHqL20i3KHw/1cHlp67Sb2lFeW9i8R8xCw=;
+        b=GTYBlSau0LEEKC/m8vAbNkiXevi/9grDIzkTdN882T+nJXhfah2hu7UwZgLyV/0mac
+         UeKMzt7gHErliHi5Fl/vWKvsJItxMeL8gKXsFdOJEYu7L3/Y3fo7MlV5fBwzrOzcPbjq
+         UYYmsbL2tGvfug9tfXJNJoGo96n5tay9u95QvRGMRRVuPMGMog4QBEBF5fFJEi4RX9up
+         VDpceiKBiEAO7I/bjKmCeafUV/d8u+Gm5xY19EoUDHGBJvj3stKngzj05MxqOE6FXhno
+         8nwwxsRUQbK+YZNr0wJA931PqkxmVbES2lrlKzYonXbsyBuoNPdY6dYZlo7OESO3FHsS
+         7TCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUziTiqgOhV8yxhQv2A1N8qdY1YaYiLC5+q0Mg2K/qlwY/ERtlsZ5Tob5zYwUqjeEh8wLFStJGuDYVngHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwildFzsYBGEJmOwUgKOm8vm2YXl8ucZtRDO7oMACfreMKS6d/E
+	0sf7BoIaC+7LIoK+6lFHUhYX+Pnje+hnZEK1/PI/SLfc2TX2w+pK4BR07zrbgkxxBeGH+0tB5Sf
+	zRZqNLGv2g7L0gwF6KNZS2V9zdaffZNld+oCH3A0+yF+qE/TIGVGUvGC3C/919qXwyZcxWvgUF+
+	P0F69PUNCfuSI6drYgYyDO9JOnoJwvXjmjij7mWXAI
+X-Gm-Gg: ASbGncu1WvO5XsVtzmZ3Y+urPJ5AWWRhv1BgxnqXcw0dFyidC/9NAi1U/fr93/LVZBx
+	nspqQVNaJFOZo7X6KyTh6i/PVLOhbqgO9zevsdUfqvmWX+W7pgAJ6Uh6ZtadWcLGJnLVHEIYLS1
+	dtlyGkZw5377hpC/SIdu0FuNFOpnFr/ENpRMaJoH/K8ykAcNvACoYd1RefO9p7AuXNVY+FWkTJE
+	8J9A5IHoTlQ93mCKxnbjmOs9K7QhhH4MvVdwy04ai5PGcIuWBAzrtLdQ6nh
+X-Received: by 2002:a05:600c:1914:b0:477:7b30:a6fd with SMTP id 5b1f17b1804b1-4777b30a840mr1842415e9.38.1762672289802;
+        Sat, 08 Nov 2025 23:11:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEUFy4A1I/UPZ2nCm19XoNW1F5K3uGFA9JHRDZe/xv09ho4lieokZsvPaPy5utqacw8PSloKPY5EuSkJ/fvkvo=
+X-Received: by 2002:a05:600c:1914:b0:477:7b30:a6fd with SMTP id
+ 5b1f17b1804b1-4777b30a840mr1842195e9.38.1762672289330; Sat, 08 Nov 2025
+ 23:11:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251107223807.860845-1-seanjc@google.com>
+In-Reply-To: <20251107223807.860845-1-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Sun, 9 Nov 2025 08:11:17 +0100
+X-Gm-Features: AWmQ_bm_eiQTIYBQ-UlzSUD1gfohxPiaw1pLYc8l92GaGGAHuetyCO9czoSArXo
+Message-ID: <CABgObfZD_twm6hgP6BuHt39pK0M6nShVFFszA8SaT8c1h-2N+A@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM: x86 fixes and a guest_memd fix for 6.18
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-I’ve been following the MM subsystem for a while and have submitted a few
-small patches (mostly cleanups and basic fixes).I’d really like to become
-more involved and contribute to meaningful memory management work, but I’m
-having some trouble figuring out how to identify useful areas to work on.
+On Fri, Nov 7, 2025 at 11:38=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> Please pull a variety of fixes that fall into one of three categories:
+>
+>  - Recent-ish TDX-induced bugs (VM death on SEAMCALL/TDCALL, and my
+>    paperbag GVA_IS_VALID goof).
+>
+>  - Long-standing issues that were exposed and/or are made releavnt by
+>    6.18 (guest_memfd UAF race, GALog unregister and ir_list_lock from AVI=
+C).
+>
+>  - Bugs introduce in 6.18 (splat when emulating INIT for CET XSTATE).
 
-I have also looked at some TODOs in the mm/ code and submitted a patch for
-one of them. I’ve tried looking into syzbot reports as well, but often by
-the time I finish understanding the issue, someone else has already sent a
-fix. I’d still like to learn from such debugging efforts, but it would be
-great to find areas where I can make steady progress and contribute patches
-that are actually helpful.
+Pulled, thanks.
 
-Could someone please share some guidance or suggestions on:
-  - How to find open problems or areas that need help in MM?
-  - Any advice for someone trying to move from small fixes toward more
-    substantial contributions?
-  - And if possible, could you suggest a few small or medium tasks that are
-    suitable for new contributors to the MM subsystem, the kind of things that
-    would be genuinely helpful and likely to be accepted?
+Paolo
 
-I’d really appreciate any pointers or direction.
-Thanks for your time and for maintaining this amazing subsystem.
+> The following changes since commit 4361f5aa8bfcecbab3fc8db987482b9e08115a=
+6a:
+>
+>   Merge tag 'kvm-x86-fixes-6.18-rc2' of https://github.com/kvm-x86/linux =
+into HEAD (2025-10-18 10:25:43 +0200)
+>
+> are available in the Git repository at:
+>
+>   https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.18-rc5
+>
+> for you to fetch changes up to d0164c161923ac303bd843e04ebe95cfd03c6e19:
+>
+>   KVM: VMX: Fix check for valid GVA on an EPT violation (2025-11-06 06:06=
+:18 -0800)
+>
+> ----------------------------------------------------------------
+> KVM x86 fixes for 6.18:
+>
+>  - Inject #UD if the guest attempts to execute SEAMCALL or TDCALL as KVM
+>    doesn't support virtualization the instructions, but the instructions
+>    are gated only by VMXON, i.e. will VM-Exit instead of taking a #UD and
+>    thus result in KVM exiting to userspace with an emulation error.
+>
+>  - Unload the "FPU" when emulating INIT of XSTATE features if and only if
+>    the FPU is actually loaded, instead of trying to predict when KVM will
+>    emulate an INIT (CET support missed the MP_STATE path).  Add sanity
+>    checks to detect and harden against similar bugs in the future.
+>
+>  - Unregister KVM's GALog notifier (for AVIC) when kvm-amd.ko is unloaded=
+.
+>
+>  - Use a raw spinlock for svm->ir_list_lock as the lock is taken during
+>    schedule(), and "normal" spinlocks are sleepable locks when PREEMPT_RT=
+=3Dy.
+>
+>  - Remove guest_memfd bindings on memslot deletion when a gmem file is dy=
+ing
+>    to fix a use-after-free race found by syzkaller.
+>
+>  - Fix a goof in the EPT Violation handler where KVM checks the wrong
+>    variable when determining if the reported GVA is valid.
+>
+> ----------------------------------------------------------------
+> Chao Gao (1):
+>       KVM: x86: Call out MSR_IA32_S_CET is not handled by XSAVES
+>
+> Maxim Levitsky (1):
+>       KVM: SVM: switch to raw spinlock for svm->ir_list_lock
+>
+> Sean Christopherson (7):
+>       KVM: VMX: Inject #UD if guest tries to execute SEAMCALL or TDCALL
+>       KVM: x86: Unload "FPU" state on INIT if and only if its currently i=
+n-use
+>       KVM: x86: Harden KVM against imbalanced load/put of guest FPU state
+>       KVM: SVM: Initialize per-CPU svm_data at the end of hardware setup
+>       KVM: SVM: Unregister KVM's GALog notifier on kvm-amd.ko exit
+>       KVM: SVM: Make avic_ga_log_notifier() local to avic.c
+>       KVM: guest_memfd: Remove bindings on memslot deletion when gmem is =
+dying
+>
+> Sukrit Bhatnagar (1):
+>       KVM: VMX: Fix check for valid GVA on an EPT violation
+>
+>  arch/x86/include/uapi/asm/vmx.h |  1 +
+>  arch/x86/kvm/svm/avic.c         | 24 +++++++++++++--------
+>  arch/x86/kvm/svm/svm.c          | 15 +++++++------
+>  arch/x86/kvm/svm/svm.h          |  4 ++--
+>  arch/x86/kvm/vmx/common.h       |  2 +-
+>  arch/x86/kvm/vmx/nested.c       |  8 +++++++
+>  arch/x86/kvm/vmx/vmx.c          |  8 +++++++
+>  arch/x86/kvm/x86.c              | 48 +++++++++++++++++++++++++----------=
+------
+>  virt/kvm/guest_memfd.c          | 47 ++++++++++++++++++++++++++++-------=
+-----
+>  9 files changed, 106 insertions(+), 51 deletions(-)
+>
 
-Best regards,
-Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-
-Signed-off-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
 
