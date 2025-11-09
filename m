@@ -1,189 +1,197 @@
-Return-Path: <linux-kernel+bounces-891836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72C2C439FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 08:57:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CF1C43A02
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 08:59:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 982954E314F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 07:57:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 82AE84E3BFC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 07:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F499246BA8;
-	Sun,  9 Nov 2025 07:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E6823BCF0;
+	Sun,  9 Nov 2025 07:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fvvWyaFm";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="HO8dLVd9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="rSFUbmmn"
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104FA21423C
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 07:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FE41BCA1C
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 07:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762675048; cv=none; b=lhzBTxuam15mOrqtUMMF2b60o4opwwbBHWEfRAglACkGtMPxnH6J0N0Wy8h6fnF0QQZmPcwT3ZDwxXBglqys3lACm+bVupaJQHPw0xuPwPNj1bauCuke4BFB3gOKTm/Eh5dbQW2JbuCfrH8e5Nm/gtdNI59d8XhtRqQoPvcXUfA=
+	t=1762675152; cv=none; b=Jkshvys2kO5P9EC/2x5r8SgD+P3WTZZ77nM4y+U9LZ5/gpKDu9AdsF/79sO7IW1koB6ZonaFqSbwSZreEd+9mH9GembuBnjvxRB+Q9ZirA6t+DZrItk6D4uGBt/VYt5PYyLmKC3QumhjuFhi9iYadPNUHDOsXk3eHTHYV36nYZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762675048; c=relaxed/simple;
-	bh=aMVY8ydjIK+gBsyjP/Qdj9zuQ38V6U+yFDnq3j8ElaI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s2MwypaPnKKgr6lmprMeSw4eEN4AnBiGb26m+lCJirPwkWMC8XLNhvTEoZIPCS0L+k4fPituuC5uEMeAawh15KCvYit7b7DSsetcC8eCQKJ/uFh2gGXoVEKz5jq5Y15Yx2d1JR+Ayr5rmH2VSftuCubo37PrYfKm13Yf0GDdoEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fvvWyaFm; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=HO8dLVd9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762675046;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ggXgIZ4Av8adM96XYVeUSve/XM/3H02+HEMRjGXlR6Q=;
-	b=fvvWyaFmBGdVEyJqGqASTEoLN6ClBMYLASyQrArnSkMesYCJKq4b+66oqqkcztlb3+QQmo
-	QpmAAbJbIbUMHKKhMm1sbByTnIop4vMreSWrS+CmgODxi4JX6ewaN6JoTTVD+nWmyOMzVv
-	UnFKGX45pW6VHySjZfMQXKSXFWFbVi0=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-260-cOtJFzw4MwGhjRFsbrT8cQ-1; Sun, 09 Nov 2025 02:57:24 -0500
-X-MC-Unique: cOtJFzw4MwGhjRFsbrT8cQ-1
-X-Mimecast-MFC-AGG-ID: cOtJFzw4MwGhjRFsbrT8cQ_1762675043
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b72ad85ee9aso263994866b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 23:57:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762675043; x=1763279843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ggXgIZ4Av8adM96XYVeUSve/XM/3H02+HEMRjGXlR6Q=;
-        b=HO8dLVd9haqhjt74i0I2pcpLjd5r3nvssE/a1eO9x5oL+7YKTy/fbh54pu9iJzA+aZ
-         O4hR1TMzy2owVN0E6CFL7QpnQJvhmveA6BkCd+PfjXhy9cWevpJfjsmdiUxJUUIj/eMv
-         rjOBS2PukrdJpvj+APS3T4a+Sz/EeIF1QgExvirJvklqmT9gnwesFyo226wEL0qVo6QO
-         LdJKvX5F70mGjVkCiX7EAG6c8iOTP2zB2erzS9SJcyQjhg0z4xy02gD6+HlNpR/W1/Kz
-         4sGb5Jv2sCV7qZPNU9qdpPLpVe7ASVTjDq5Po8W6SCahdjQUAyX52jv9x3D5P+89a86G
-         6MHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762675043; x=1763279843;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ggXgIZ4Av8adM96XYVeUSve/XM/3H02+HEMRjGXlR6Q=;
-        b=gAbLbJofXAp6Q4LP1KgAiMHhIVbJ0m25CIgJ4gstYbBPWWFiR1hLqa8ewv5jln9QvM
-         eUrwpHKvZHnAjiByN/i7LCRDYp/AsEdS1dx+3UT0BEIVY+dP4wFUNQCUldJoozvXvIbY
-         2FwReN69VaPZVe5j2Hn/qSg9wJj1rxyGTEAB8+ydzQX+aLnCyQ/Bhk77vLMhmISozYqp
-         rUQq+57N55O8CtIxsaAmUA1e5Bg+FOxnKA6OfIfqlNoJoN0BAbXGsPw6QkXHh1JumVXG
-         IEoHbpsTfosr2CqINHpQB/DnfCe50gEhfr8xqUvsWIYzH2rYYuC+yjULqHyCbSpa92QP
-         nUwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCEcNS/rZC9cKe6BifIQa56OMFszwIjjwtzihgy8XLgHCUmch6o57T7B5ii9oDS8nTy4TE5x0oDj9D+94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcgvQoyEQ8bt0venZe3aNMhY+Zefuw4vtYeO16vixHNsONcWuW
-	iE15MQ7QpkNZB4SAN7YWS5ri+6CalDTOxxOJmImLY7esOxWul1bMFrzejhVyV7JX5BPnnm3G+79
-	5hVulYfldCknOKPp5g0gUt0OQrbaEHuCnoRg+mTWnGtBoZ9NjO+H9t8HGpZk9oytR7w==
-X-Gm-Gg: ASbGnctlEVXDZJFGVgl1NyDAGLsNS1xQ3dXvKQLy8K6/idpZ1dnjPDIiZDlav+g4O20
-	8kgrT269CEaKNA6ybiGGyF1oi0F0qap6z6lKw+S0TcsEzwALFkgwJ4LQ4H6B+5ammuBtDARDYa+
-	S7jC3docgqZDLGWszzLnxIVdFGef0JNJHkmuGfmRIUB/gbH4NXN95bAjpUC9J2G3k1ql6slQ/c8
-	5F4nmc/Ljf1g9IxgHosEKcTygqF4x9vYhYjwz48ZnUiymFY+pYes4j3I431uOWsFLDeVX9yh55y
-	XvveVIsk85OH3TYCV2d3/gRVfrHv01syc1o3vkfXd/Si17tT24/XcmbDka7UvnprhBcxF2MZGlg
-	EOBt6hfXWl2moEFDy16iOZlDQupbPDCx+TpWuqYuLdlkqaX6/KFRjXeI7dgHjK6LwkeF6yD1oPe
-	6u4nAw
-X-Received: by 2002:a17:907:60c8:b0:b4c:137d:89bb with SMTP id a640c23a62f3a-b72e037ab1amr450223966b.29.1762675043259;
-        Sat, 08 Nov 2025 23:57:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEY/mAo+2HtrMHSZJM1dBAA4+rvfrevI858WJSml1/nFkNtAp06GLC7ns/SqzWwTfuAzgf5VQ==
-X-Received: by 2002:a17:907:60c8:b0:b4c:137d:89bb with SMTP id a640c23a62f3a-b72e037ab1amr450222766b.29.1762675042852;
-        Sat, 08 Nov 2025 23:57:22 -0800 (PST)
-Received: from [192.168.10.48] ([151.95.110.222])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b72fcde0779sm93426566b.40.2025.11.08.23.57.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Nov 2025 23:57:22 -0800 (PST)
-Message-ID: <35d28432-349c-4157-8c9e-7d4a9d8bd50f@redhat.com>
-Date: Sun, 9 Nov 2025 08:57:20 +0100
+	s=arc-20240116; t=1762675152; c=relaxed/simple;
+	bh=ZNapXBY9qt+ndP5FzKewAowxIdsJhPRerbol68lvQSs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KZZYEotaRVeiuTTPMX3AoP6B0jdxF1FhPjedsI7RJzKyy1OYJRnC4fmQFpJxtGY0GBRnCYfy6YewGJirG8KpldtzSq3McnSYveCxk4T8QUmhCf8Px5AIARi9ldoWJ7/HlRnxIpS65iL41rw0PAyqPvto/er5kaUU9RoB6E5D+gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=rSFUbmmn; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A97tQVj3258752;
+	Sat, 8 Nov 2025 23:58:22 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:message-id:mime-version:subject:to; s=PPS06212021; bh=Iq2Z7I+Jl
+	B6c6uQ0YmR9PkKlSRV5E8tj8llQhJfbAio=; b=rSFUbmmn+9E3OwsQH7eHgc09W
+	L9SNmosvXHahKuU4+X5p1C6yAYRo6ibBj0F2CPbXIF5o5iO/81EpCoF2oJyrheNh
+	UbHc+gO7KfTmOQCQyymzuR3xYJQfrIUMXKhCn6g5zuV81THWh1lKR8cGVuXTdGn8
+	QHW0K55VV0taUnV0QscMbz3Y26FN4XxiGxvofKPLpvTg+xZmz/WLeHou1pQD3T4x
+	LtCX6L7ZEaGn2+gpa9msfL4cNmjl7mgF7UoaCSXNCWTsJC7+Q4kK/rqPSDmYrFfT
+	jaUlOt1hKRWpmb3MJCzuX+Ht7gTmBDihJGFpn96J0HqX5Mo456Ef3nTMaxFjw==
+Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4aa2130ngj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sat, 08 Nov 2025 23:58:22 -0800 (PST)
+Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
+ ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.61; Sat, 8 Nov 2025 23:58:21 -0800
+Received: from pek-lpd-ccm3.wrs.com (10.11.232.110) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
+ 15.1.2507.61 via Frontend Transport; Sat, 8 Nov 2025 23:58:19 -0800
+From: Yun Zhou <yun.zhou@windriver.com>
+To: <shaggy@kernel.org>, <akpm@linux-foundation.org>, <david@redhat.com>,
+        <byungchul@sk.com>, <gregkh@linuxfoundation.org>,
+        <yun.zhou@windriver.com>, <shivankg@amd.com>,
+        <ssrane_b23@ee.vjti.ac.in>
+CC: <jfs-discussion@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] jfs: fix corrupted list in dbUpdatePMap
+Date: Sun, 9 Nov 2025 15:58:18 +0800
+Message-ID: <20251109075818.229971-1-yun.zhou@windriver.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] KVM: SVM: LBR virtualization fixes
-To: Yosry Ahmed <yosry.ahmed@linux.dev>,
- Sean Christopherson <seanjc@google.com>
-Cc: Jim Mattson <jmattson@google.com>, Maxim Levitsky <mlevitsk@redhat.com>,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251108004524.1600006-1-yosry.ahmed@linux.dev>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20251108004524.1600006-1-yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA5MDA2OCBTYWx0ZWRfX3C4cyAfBczWV
+ kN6ZVuySyd0k56NdOp+xB8KThSjW+/wzb9coSW1LgDt3dvieLrvJ0kpvfJoOG4S78YwiZGd4724
+ 4wTiICG1wLBxhdoa9LFBGflT9jzHUBJHnjxoz/37fYxM5gGEYuUycT7VeY9UdoWu5O7cbtRSgLM
+ Hdv76usQdMhpyG+nGD1b4WbHRCQVoqUnQow0M7wuWG/PuaZvocMZ1b2wRqThI7Y0OiD1oGsZ4cq
+ +x6DL3fSUYe4dowhQwSGtrkZE6yRXl9yp9/v31ODtjlDJAOgMR6utA6kZ9UOEDzSxGAho2My0ln
+ M8q1RPheEBSlUlWjLWP/T3xym0J9xb9d6cKpn62tBm+ZJbeH0dDnxGlIBdR+buKKCuI5UmON6Be
+ vZGHIuRTadP1SoPu64cEiINfG4g5Sw==
+X-Proofpoint-ORIG-GUID: mBkFQC0Y8PBPGK3CgghUQhRwWMJyXOTh
+X-Authority-Analysis: v=2.4 cv=XPA9iAhE c=1 sm=1 tr=0 ts=6910499e cx=c_pps
+ a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8
+ a=t7CeM3EgAAAA:8 a=HWOROlQ_xHIrUlYk3fIA:9 a=DcSpbTIhAlouE1Uv7lRv:22
+ a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22 a=poXaRoVlC6wW9_mwW8W4:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
+X-Proofpoint-GUID: mBkFQC0Y8PBPGK3CgghUQhRwWMJyXOTh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-09_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1011 malwarescore=0 adultscore=0 bulkscore=0
+ phishscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511090068
 
-On 11/8/25 01:45, Yosry Ahmed wrote:
-> This series fixes multiple problems with LBR virtualization, including a
-> fun problem that leads to L1 reading the host's LBR MSRs. It also
-> considerably simplifies the code.
-> 
-> The series has a selftest in the end that verifies that save/restore
-> work correctly. I will send a couple of new kvm-unit-tests separately
-> that exercise the bugs fixed by patches 2 & 3.
+This patch resolves the "list_add corruption. next is NULL" Oops
+reported by syzkaller in dbUpdatePMap(). The root cause is uninitialized
+synclist nodes in struct metapage and struct TxBlock, plus improper list
+node removal using list_del() (which leaves nodes in an invalid state).
 
-Thanks, I've applied patches 1-3 for now.
+This fixes the following Oops reported by syzkaller.
 
-Save/restore has been broken for 17 years so it can wait the next 
-release anyway. :)
+list_add corruption. next is NULL.
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:28!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 122 Comm: jfsCommit Not tainted syzkaller #0
+PREEMPT_{RT,(full)}
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 10/02/2025
+RIP: 0010:__list_add_valid_or_report+0xc3/0x130 lib/list_debug.c:27
+Code: 4c 89 f2 48 89 d9 e8 0c 88 a4 fc 90 0f 0b 48 c7 c7 20 de 3d 8b e8
+fd 87 a4 fc 90 0f 0b 48 c7 c7 c0 de 3d 8b e8 ee 87 a4 fc 90 <0f> 0b 48
+89 df e8 13 c3 7d fd 42 80 7c 2d 00 00 74 08 4c 89 e7 e8
+RSP: 0018:ffffc9000395fa20 EFLAGS: 00010246
+RAX: 0000000000000022 RBX: 0000000000000000 RCX: 270c5dfadb559700
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00000000000f0000 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: fffff5200072bee9 R12: 0000000000000000
+R13: dffffc0000000000 R14: 0000000000000004 R15: 1ffff92000632266
+FS:  0000000000000000(0000) GS:ffff888126ef9000(0000)
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056341fdb86c0 CR3: 0000000040a18000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __list_add_valid include/linux/list.h:96 [inline]
+ __list_add include/linux/list.h:158 [inline]
+ list_add include/linux/list.h:177 [inline]
+ dbUpdatePMap+0x7e4/0xeb0 fs/jfs/jfs_dmap.c:577
+ txAllocPMap+0x57d/0x6b0 fs/jfs/jfs_txnmgr.c:2426
+ txUpdateMap+0x81e/0x9c0 fs/jfs/jfs_txnmgr.c:2364
+ txLazyCommit fs/jfs/jfs_txnmgr.c:2665 [inline]
+ jfs_lazycommit+0x3f1/0xa10 fs/jfs/jfs_txnmgr.c:2734
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
 
-Paolo
+Reported-by: syzbot+4d0a0feb49c5138cac46@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=4d0a0feb49c5138cac46
+Tested-by: syzbot+4d0a0feb49c5138cac46@syzkaller.appspotmail.com
+Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
+---
+ fs/jfs/jfs_metapage.c | 3 ++-
+ fs/jfs/jfs_txnmgr.c   | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-> 
-> Yosry Ahmed (6):
->    KVM: SVM: Mark VMCB_LBR dirty when MSR_IA32_DEBUGCTLMSR is updated
->    KVM: nSVM: Always recalculate LBR MSR intercepts in svm_update_lbrv()
->    KVM: nSVM: Fix and simplify LBR virtualization handling with nested
->    KVM: SVM: Switch svm_copy_lbrs() to a macro
->    KVM: SVM: Add missing save/restore handling of LBR MSRs
->    KVM: selftests: Add a test for LBR save/restore (ft. nested)
-> 
->   arch/x86/kvm/svm/nested.c                     |  31 ++--
->   arch/x86/kvm/svm/svm.c                        |  98 ++++++-----
->   arch/x86/kvm/svm/svm.h                        |  10 +-
->   arch/x86/kvm/x86.c                            |   3 +
->   tools/testing/selftests/kvm/Makefile.kvm      |   1 +
->   .../selftests/kvm/include/x86/processor.h     |   5 +
->   .../selftests/kvm/x86/svm_lbr_nested_state.c  | 155 ++++++++++++++++++
->   7 files changed, 236 insertions(+), 67 deletions(-)
->   create mode 100644 tools/testing/selftests/kvm/x86/svm_lbr_nested_state.c
-> 
+diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
+index 871cf4fb3636..0d6c40e7e551 100644
+--- a/fs/jfs/jfs_metapage.c
++++ b/fs/jfs/jfs_metapage.c
+@@ -270,6 +270,7 @@ static inline struct metapage *alloc_metapage(gfp_t gfp_mask)
+ 		mp->clsn = 0;
+ 		mp->log = NULL;
+ 		init_waitqueue_head(&mp->wait);
++		INIT_LIST_HEAD(&mp->synclist);
+ 	}
+ 	return mp;
+ }
+@@ -379,7 +380,7 @@ static void remove_from_logsync(struct metapage *mp)
+ 		mp->lsn = 0;
+ 		mp->clsn = 0;
+ 		log->count--;
+-		list_del(&mp->synclist);
++		list_del_init(&mp->synclist);
+ 	}
+ 	LOGSYNC_UNLOCK(log, flags);
+ }
+diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
+index 7840a03e5bcb..a5a5bc0a266d 100644
+--- a/fs/jfs/jfs_txnmgr.c
++++ b/fs/jfs/jfs_txnmgr.c
+@@ -275,6 +275,7 @@ int txInit(void)
+ 	for (k = 0; k < nTxBlock; k++) {
+ 		init_waitqueue_head(&TxBlock[k].gcwait);
+ 		init_waitqueue_head(&TxBlock[k].waitor);
++		INIT_LIST_HEAD(&TxBlock[k].synclist);
+ 	}
+ 
+ 	for (k = 1; k < nTxBlock - 1; k++) {
+@@ -974,7 +975,7 @@ static void txUnlock(struct tblock * tblk)
+ 	if (tblk->lsn) {
+ 		LOGSYNC_LOCK(log, flags);
+ 		log->count--;
+-		list_del(&tblk->synclist);
++		list_del_init(&tblk->synclist);
+ 		LOGSYNC_UNLOCK(log, flags);
+ 	}
+ }
+-- 
+2.34.1
 
 
