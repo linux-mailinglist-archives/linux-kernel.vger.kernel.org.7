@@ -1,100 +1,184 @@
-Return-Path: <linux-kernel+bounces-891841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC5FFC43A2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 09:24:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A823C43A3F
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 09:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 232243B1ADA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 08:24:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB6134E1B6C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 08:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559FB275AF5;
-	Sun,  9 Nov 2025 08:24:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635232C1780;
+	Sun,  9 Nov 2025 08:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6L5ZS5w"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618641D6193
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 08:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D712C11E7
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 08:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762676644; cv=none; b=fPnP37QFPB289yPn00QdW4T4pp6U2VGOQtQi3tF1tUcd4AYLpc9YkkJ1rNkH2FOQDiFB/SXHYwFWynw2toim3+gh0/vHfiMND5+KW+86Ag2ybj67grULzzwtAGhs+bb2RLxckOZ+YK48tM7S7OXrJE3mR+yHlS7cgTiYANd8jqk=
+	t=1762677451; cv=none; b=m3zt8cFq4D//737KKU6gxc1/HyOD/xUauJ2dz70iaHXJXjnyLLv5plSByT/FECFQ6CgggVYK475+AdLyVLPeFeYmckPbq46btHxMfw0tV0rw6MLsarxhFllW093XPxP8n+IuxUcmAcnfa5JimZOiotgerz3+ELsDDIIgJ8bSFQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762676644; c=relaxed/simple;
-	bh=/wa1QJzC1lG4pLKjSXBlRzkDHnFybIm8qOXkdf+F1xo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jOg2mL186jvkTGC4Exzxhv4Ce3SffzcvFiFekzdN44uHO5o6l2cSf8rVUrHMWqUBiHAkPtDxhX/g3j6emvEMFZvwTCH26FddAHQrkzMxCVCAS6q181hUItbd8ZIUmdxmN6+1bFSL4cqD/aRWpDLBhoVVvWI+lNHlofA3YEQ0+QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-925332ba890so665504739f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 00:24:03 -0800 (PST)
+	s=arc-20240116; t=1762677451; c=relaxed/simple;
+	bh=42SlGVlCpQ/P26E4xhlQely8LBdZ+0nU5CjNjqqzYWc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=meOiXp63KP3zWJGNguKf0NhSeU7DWQe6/13QM6WUWnjebjsxuW1CFD1zf4KMt8rjn63TiHveTqOhcIpEg2RB5mYzEXVPOmy/gdPp7O08w3iQHn/nMQ2EEG3YernaBhz+fzEKWJVHqHFUgWG8CbfaP1laUF3XKyHqqETUN0Tb9SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i6L5ZS5w; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7ae4656d6e4so2508034b3a.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 00:37:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762677450; x=1763282250; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+pai05e1hPAGzD+JDMKw8YIk3y/PWAM8SYYHTXpXZd4=;
+        b=i6L5ZS5wX3TP1lo4pJiQqavQ0J6Xi/tg+ELg9wkcDMuChHgRyOUN4kaOpnyr1kwX/I
+         +pbXsq1+RXa0A+uvLz8caUlYCB9SNtC2LW2DgVzExF700Ik4+nWNi1JSJkc2XRvXtW74
+         2kesxCKFiddEFxlRPpCaeMJT6A+Q7i1h7jpSK2PuB7t/s379Dlx6JVtrRqNL++Lns2N4
+         PJO2trjnMadwXdRZZmsKdqPEHFK4eDUxqTb+N/r/LPHS/ytf43Tivo2hCG6fdfDeI4i9
+         4ndLovetXtz1THWVYTFDS2yQRNQKQ2lWhPzc68U0ORx7oxKqlWqQxNldTTgSUYS8co8R
+         yCQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762676642; x=1763281442;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mL3FxTXejtzhr5abhLD58XcrwrPM61KGMnvXhlFjr4E=;
-        b=eSpkohhi81u96lk5cy9Y6Cll6p6TfwsybNh2LN+QUsFrwN9eleE0n0aKvt1JHD3j0B
-         /265T4Hk2OWKPmFIJS3TlgpoBBu0LIn4eqm5zvgmnrT1pjmIbq4Kt6fqHrxwS1qoSxz5
-         EW4s8ttJ44jQV2hy7ZUDpKOqmxB7x4MZyym3i9BgvY2bR5pIMvLmdA499tXjW/7Mo93X
-         orAy/MFtEqJBZDXQXycBd9Lg5bD9xvelJLiFsHLHxQn77C6LeiiAJErjGV9wB3p2VXBU
-         fMGDaSbkLGmdZc6AY0h9Sgk6epCcRNazImOXULq7SrySMht7tg0iW4BrOLTM1M0uuNdh
-         WGOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXScGXw4nhev0mGGflJkuZ700vetXDc+qvMkniK4jzpf2pzgLILmMik+XfErCNyJS0tOQap9YK6kTPel1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynd2sJ+VBLNrdflqBH40XpdfluOtTGuEvDQD5otIQSc/RYgqvX
-	hQ73FZ/SlV8OgLUMC+lvjP0ZkmiCfJKkca5fLhgw8g+Vye9AUOEb09tp8v5pKi1FzAZyHjvgiB3
-	IyRXUfCNvNWFdT4Xfd26a5KN/Gl6+JKPBCoCvKvVQAxm8GYO6Gtr2flW+96s=
-X-Google-Smtp-Source: AGHT+IHOqUl2FIWzqMdoU47l5Gxi7c0kUdVzP4da94Ci7TzBLeLq0JKA4Ol0t1W4WTRGmKRyGXfPx3vt9pTfOQ1/fi74ObEhuKjW
+        d=1e100.net; s=20230601; t=1762677450; x=1763282250;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+pai05e1hPAGzD+JDMKw8YIk3y/PWAM8SYYHTXpXZd4=;
+        b=SSu7rki3o04JQZBQ9YDtibeDNtWN6s1IW6Ia9mamO6sbPEcdCxWdwStKNCldlGRXyB
+         bfrwGX6L3rRtrZiYgGiCVOREleuwWXweSowT0x3B/5J6Cf5wIMNTSKr84Wzr9Poh+HXI
+         vtPPto/EBTZfnJ3DoSmQ/b/uybnN7o/aUUM0pFqyfdAO1qyLu4L5o9AXIyL/eezlP1PI
+         9NP+heJL5syR3PvSgw/EDKAfduIwpiyPfq4wnz9NIDS5Z5+DKykPIqmp3NxzyOW9+GmK
+         KPqp0zsoR0KmfwS73QLF9ZU7QgafYawO/t/LA2G3i6dJGuJ0WM7p4VsbH38BGVU1RXew
+         w3xQ==
+X-Gm-Message-State: AOJu0YzlYtiJ5qMH5f7sLarLgLag3cC75kySZrcLrtuLLk+imH5/XBg5
+	0RVL8YL/dw6gelgtg7/1v3YEBvlAsAirTbQED25ybHndP2iy8c5T7qmm
+X-Gm-Gg: ASbGnctvNwCD1tj6RVpYUBGM31KvSIO7TpQSQCEnUYw4sKqBP6PehQ++fw1PIYjNm5O
+	ehPi02XGfEL5j1WAYAD49fzHySemN9cnfMo0nByDwJX07Wb9VYlxY6X3D/nlDIKWkExQtBeRJgK
+	HWRTBGqcnYgG8dtVqD70+9EItwoOrtIFLBFk82k2eUpN/IivZWva701E9ZyHDVsYTj8ZMblW5gm
+	FftgIp1va8fwyU/sIHzLjGufB7cdyMa+mMVSjNw7ircPqwVnjCwgavZwSGVPDt8eMt3bpcNqGiw
+	kUHyTXnyLhWgsRqG+6TM5afrG9rzXfBX6k2ItXQOGyWsbZx4cAibb9OoUgP5aqTn/9aswRwi6hP
+	6KEba0K0NgMORLyhFa+vZDNUky76fHeQB7N9r3jP+cIhCw3gjnfEOhMlL8c3Yx2tI0/e3Vdb+YL
+	peqC3o6woWF5H1VPuogNIETitH
+X-Google-Smtp-Source: AGHT+IFKEu4tYw0M4y2gVr7qt+7rNApZrwM+nFaRqD3qTEIP52a3V5zmhTK07hKkia27YNGZFVwKBA==
+X-Received: by 2002:a05:6a20:3d82:b0:342:3b8a:f33e with SMTP id adf61e73a8af0-353a1ae221bmr6350944637.39.1762677449580;
+        Sun, 09 Nov 2025 00:37:29 -0800 (PST)
+Received: from DESKTOP-8TIG9K0.localdomain ([119.28.20.50])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8f9ed21f6sm9934944a12.13.2025.11.09.00.37.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 00:37:29 -0800 (PST)
+From: Xie Yuanbin <qq570070308@gmail.com>
+To: nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com,
+	qq570070308@gmail.com,
+	masahiroy@kernel.org,
+	jack@suse.cz,
+	akpm@linux-foundation.org,
+	maninder1.s@samsung.com
+Cc: linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	will@kernel.org
+Subject: [PATCH] Fix redundant judgment in WARN_ONCE with clang
+Date: Sun,  9 Nov 2025 16:37:15 +0800
+Message-ID: <20251109083715.24495-1-qq570070308@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2388:b0:433:7728:b17e with SMTP id
- e9e14a558f8ab-4337728b3damr42151785ab.17.1762676642611; Sun, 09 Nov 2025
- 00:24:02 -0800 (PST)
-Date: Sun, 09 Nov 2025 00:24:02 -0800
-In-Reply-To: <690bfb9e.050a0220.2e3c35.0013.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69104fa2.a70a0220.22f260.00a5.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_put
-From: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
-To: Liam.Howlett@Oracle.com, Liam.Howlett@oracle.com, 
-	akpm@linux-foundation.org, bpf@vger.kernel.org, brauner@kernel.org, 
-	bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com, jack@suse.cz, 
-	jsavitz@redhat.com, juri.lelli@redhat.com, kartikey406@gmail.com, 
-	kees@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
-	mingo@redhat.com, mjguzik@gmail.com, oleg@redhat.com, paul@paul-moore.com, 
-	peterz@infradead.org, rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, 
-	surenb@google.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
-	vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+For c code:
+```c
+extern int xx;
+void test(void)
+{
+	if (WARN_ONCE(xx, "x"))
+		__asm__ volatile ("nop":::);
+}
+```
 
-commit 3a18f809184bc5a1cfad7cde5b8b026e2ff61587
-Author: Christian Brauner <brauner@kernel.org>
-Date:   Wed Oct 29 12:20:24 2025 +0000
+Clang will generate the following assembly code:
+```assemble
+test:
+	movl	xx(%rip), %eax // Assume xx == 0 (likely case)
+	testl	%eax, %eax // judge once
+	je	.LBB0_3    // jump to .LBB0_3
+	testb	$1, test.__already_done(%rip)
+	je	.LBB0_2
+.LBB0_3:
+	testl	%eax, %eax // judge again
+	je	.LBB0_5    // jump to .LBB0_5
+.LBB0_4:
+	nop
+.LBB0_5:
+	retq
+	// omit
+```
 
-    ns: add active reference count
+In the above code, `xx == 0` should be a likely case, but in this case,
+xx has been judged twice.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11a350b4580000
-start commit:   9c0826a5d9aa Add linux-next specific files for 20251107
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=13a350b4580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a350b4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f2ebeee52bf052b8
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b2e79f91ff6579bfa5b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1639d084580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1625aa92580000
+Test info:
+1. kernel source:
+linux-next
+commit 9c0826a5d9aa4d52206d ("Add linux-next specific files for 20251107")
+2. compiler:
+clang: Debian clang version 21.1.4 (8) with
+Debian LLD 21.1.4 (compatible with GNU linkers)
+3. config:
+base on default x86_64_defconfig, and setting:
+CONFIG_MITIGATION_RETHUNK=n
+CONFIG_STACKPROTECTOR=n
 
-Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
-Fixes: 3a18f809184b ("ns: add active reference count")
+Add unlikely to __ret_cond to help the compiler optimize correctly.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Signed-off-by: Xie Yuanbin <qq570070308@gmail.com>
+---
+ include/linux/once_lite.h | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/include/linux/once_lite.h b/include/linux/once_lite.h
+index 27de7bc32a06..194c5ebbfbc4 100644
+--- a/include/linux/once_lite.h
++++ b/include/linux/once_lite.h
+@@ -10,17 +10,17 @@
+ #define DO_ONCE_LITE(func, ...)						\
+ 	DO_ONCE_LITE_IF(true, func, ##__VA_ARGS__)
+ 
+-#define __ONCE_LITE_IF(condition)					\
+-	({								\
+-		static bool __section(".data..once") __already_done;	\
+-		bool __ret_cond = !!(condition);			\
+-		bool __ret_once = false;				\
+-									\
+-		if (unlikely(__ret_cond && !__already_done)) {		\
+-			__already_done = true;				\
+-			__ret_once = true;				\
+-		}							\
+-		unlikely(__ret_once);					\
++#define __ONCE_LITE_IF(condition)						\
++	({									\
++		static bool __section(".data..once") __already_done;		\
++		bool __ret_cond = !!(condition);				\
++		bool __ret_once = false;					\
++										\
++		if (unlikely(__ret_cond) && unlikely(!__already_done)) {	\
++			__already_done = true;					\
++			__ret_once = true;					\
++		}								\
++		unlikely(__ret_once);						\
+ 	})
+ 
+ #define DO_ONCE_LITE_IF(condition, func, ...)				\
+-- 
+2.51.0
+
 
