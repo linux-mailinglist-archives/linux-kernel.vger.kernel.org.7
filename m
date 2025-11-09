@@ -1,145 +1,260 @@
-Return-Path: <linux-kernel+bounces-891941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33AD4C43DEC
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:43:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA1EC43DFB
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:49:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8CC72347355
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:43:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA8E94E2537
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7992ECEAE;
-	Sun,  9 Nov 2025 12:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E932EDD64;
+	Sun,  9 Nov 2025 12:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RGw7p8hN"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LzHOoyiv"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6882EBDF0
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424C32EC0BF
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762692227; cv=none; b=LZaSFx6uqoe2ATEHpFqZ0dCdzaWubTwQmccdb2+ExVZvUxF5fKqan7kaxLYLq+gcdEGXUZ2KGCDvPXPN5FtljaPNQKdoo+U1ocOtre2Pg9s0Y7/Hvl7hO/O6wB3baENt0CdLvMOAn2X2YyOlZpAbGroVdfUtpVI/vM9LRXJlTVU=
+	t=1762692583; cv=none; b=EUeHi5CnNqXPZzXLQReRtZueigjw3lRUh1s9JFVdJoIul4SifMIjigmK9591vLSGJfsmCfhMNO/nMCrJ04QR9Nj8Fa9pEJlDnlE+1Jmn5yeQuPkUjROWyIMgsJ9m0Va5Of6dI4WjxBV2fSBnfEn/A9IZK6AN++wi8aljB3ZwTpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762692227; c=relaxed/simple;
-	bh=BS5KrCiw8PRT9pORU3Re/5WSroIZAKASnJGIlF3es7o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oMBNMzr3cOfLwmUWihL/hnuSCAvS1q3mczHawnVe/V5a/7TDuA++9eqHeEKbPeoCwlYk3UtZMYZrgWTjaToWoxugi6CoPFdD3YKg767j2ZezkG42e4VdA6QZ3YPJ4SEazjrYpeQH7iTynDxxKKMWRc78VSGgV6U/UmSnhB9PmQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RGw7p8hN; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso4416130a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:43:44 -0800 (PST)
+	s=arc-20240116; t=1762692583; c=relaxed/simple;
+	bh=JF2q7sTKzYiIVusFfVQ6qlbWbep+D+t1c3S+sk6voF0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YwkygMmZuxiPmUMtj5HxJuz9OdYusO0YRVDjQY8C4ei6hSJeMMHpR71CbYolu6IfrJ19oeBiHbpeiMlxRkq4SSZ3X6YElPVdqpPyuNp+ssxcUjPjA4xc+oMk2RPPT59BnY9oUvHvhUHt3PSvyjkYGtsf6zWBtUjLBRxmqyisFK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LzHOoyiv; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b727f330dd2so364584566b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:49:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762692223; x=1763297023; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GWErFsO2tEX/BOEFeY/JUuqvBv8pyRA62qDCMk8OHC0=;
-        b=RGw7p8hNtL1ayOFEGVZTU4WouxNqK8yu2MEPSf5gx2EU7tVz01TOOgDt0KklgcbsWW
-         mt9pfTmAXtzl8xEXjW7hV9P0SUiDz9nUaj4+ywh0YFutzB1TCTANBBXKi3v9kMnoSsba
-         ljY56Sm/xgNKoeqOVnm/mqw7zLoJpZhvXIxbbX2Soxl4pQebys9n232zR58dzp+2VxXk
-         7u/598z3jDO8PCP9uBd+BZwAQvLO3QmHq3XQ4Jw+8eDynnuO2hWrsEWZV9+grYQUOHka
-         4wsCgKbtr1b6Q6+yrj1jxXtKzEA2XM4EXUqK6mkXl+nBdzkeNElVuGBtMb9udl1I2FBK
-         n//g==
+        d=gmail.com; s=20230601; t=1762692580; x=1763297380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hDZ3xafdhT/YtTTUoql25uDvUJxupIOBYIVvt5riwwA=;
+        b=LzHOoyivCN7TqrVfs1SH/3010EEQXneCel/Ht1s9wzDAO1cnvcIyTpK2UdcYVNApqa
+         q25lILxkcWkPxpQr/dhAlLS5LlLEDblcQEBnC26OboyeBzstSHW25/RLcHe39JF8PsPU
+         BI2tSJVuK4x6m6eU1+nkp8exx+tMYQ2cwRCQqxiz3JIKBsDD2h6RGoIL7EUKcRVU+i2y
+         1joXruWP0YGD91Fh2DVL1q3udqu5o9lwfk01Pf1+viEW5zkhdhhEPtZTtOKsQgJ4tEqa
+         +svApird7KA/5RKFOLNEI3g7UJuVHUbZKvxEPjKuqTyF9ob0qHQteX2Wx+cP7ecPlX2x
+         qm1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762692223; x=1763297023;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GWErFsO2tEX/BOEFeY/JUuqvBv8pyRA62qDCMk8OHC0=;
-        b=TYcIvDkLgwvkk09o85Y7RkfnpTARlmIrhZI9BWybpFvkzyTbmYv4nv9ozkIE7fB9xe
-         tqrsv4Gk+4Z0eWKbtIaAaG6C2l7DvdBWcEK23CQ/etSayYt/2dTzVobhWKDesPfBwhUA
-         F870EKOsxYaLkUYw2EpYTtWkKBRsjAav1dGqJrLG0cEqmpLniGy8bNY2aFbDoGb7j3/1
-         gxaS/XCba8oooArL7Pru+ILoED4AvEi29QQDCwFfanHpbzwI3nztDLX1egIioU4D8yXJ
-         E1WTWUOPooC9C/KpOj8x33W9MIPix8A1MD37h2hhlNzKHuUaa65QgH2k3yD+w0ysJIr3
-         da0w==
-X-Forwarded-Encrypted: i=1; AJvYcCW2D2O00oqCpWREVx76JqnJWu3Bp8ycvZUp0bQDILHanRnmmg8E6JjpJ4l/u1Z01AcZZ1aM+ZCb3wi+c3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYokeg1P47uOon02i8P8WzMup8aZWKZLH8LMlguxF5HekNjs0D
-	AyCNgN28Aoqp2eEYamWPnHJBBUn7jRtwtliC6HFnqelXOJKP55Yr8H7FfEoKoWjxKsw=
-X-Gm-Gg: ASbGncuPYghnBnOnIVS8LN53L1yFzGMG20LnxZrE7dFIgX7qwROqjHQWsbToCoWpelV
-	rVWHSyYAan+JOdpYDSA/nVwrHBqErb3keB8A3+QKNFUNpncIkfXU/pmWN2poXAb8QTsCtSNRf5X
-	EDTlN46CW+R0Z6Dj++St0J1+vfaclQ67jUlyNCeNcyBjXd0axRAOaztDRSRQcfIQHH7dWakHVhS
-	d3Mih0DZGcU4AivcIPhRm4YJwReYfI1VkD7wOfIxVY0ShLoay8i8NUIcCMkBXN7/vfKjIpHEn7K
-	IDPm5oyrJXqiHDJYiWg9v1/dLJbDCAPydfFONH8mHs29OrSnOmzn2tDkeH7k1bzTHyF4CnxbMwZ
-	QyHUpcSh0VfZMSK4LQROcCp5a6OHmIqBV7Jjyx5Sr1W9ryEP0KY/RU5pFH9UpF73y5BU9gRGIhS
-	kXVo0sUiOmluW13O2WtcSUDuDi+fod8UAqOqwHrIKXTGuNxmtRewdaOCOWGUHHuQpLvSniudqP5
-	IjtsaplHtSzG+SSwWULMiNNVzKYxI/gT8M8/almPu8hD6KeqWK6ALhxyNG78naee1UebHGBwRgI
-	VPYwiPaNryw=
-X-Google-Smtp-Source: AGHT+IEmKraCtXyz5pwfItQXmoPTPeRlR1wlc8EhkGzafL7gDnpHwT7RooYHeCo6KYAU03Bhf73/iA==
-X-Received: by 2002:a05:6402:3042:20b0:640:c918:e3b with SMTP id 4fb4d7f45d1cf-6415e80b1d2mr3448160a12.26.1762692222982;
-        Sun, 09 Nov 2025 04:43:42 -0800 (PST)
-Received: from ?IPV6:2001:1c00:3b8a:ea00:4729:b0ef:dcc4:b0b6? (2001-1c00-3b8a-ea00-4729-b0ef-dcc4-b0b6.cable.dynamic.v6.ziggo.nl. [2001:1c00:3b8a:ea00:4729:b0ef:dcc4:b0b6])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f86e9d7sm8852874a12.36.2025.11.09.04.43.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Nov 2025 04:43:42 -0800 (PST)
-Message-ID: <a13b5b89-ee13-4fe6-b57c-5e4ea724522f@linaro.org>
-Date: Sun, 9 Nov 2025 13:43:40 +0100
+        d=1e100.net; s=20230601; t=1762692580; x=1763297380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=hDZ3xafdhT/YtTTUoql25uDvUJxupIOBYIVvt5riwwA=;
+        b=NRrUFZjX+bbpOm4yKlitNo+bKQpqiEFpQj8ebchlMi8LC5OXmJYxPHVqS9Y6i8fu2n
+         sFH1gmm0qwf7fHcxfdf4AQ170YKrxy4u5pY7KTqF0IcxQ7MTrqX6BMXvxOXnjddR+9fK
+         PeduQT0KJa6nnWOeVh15P/pko9TqeYo84fsiYaw5zpDUiGaTzRJbydNJHZLuVKcKAo+a
+         o/u20xGr27jdI+7Af9LChL/BjczyukGNM1YgjPG5dctsvCm1LQIEokrV3ywQreUpZBzA
+         /eo1iqbtDcOYw0viVa3aJhWMBb8SmxeK13heN1LGYnnZGevdl5QOv2nQ8r6LIfF8SxRh
+         LHHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPKRmFNhwaYgM9eTQ4MuZg0O//W5ZzSOX6CCZayY9oGGPySOy7cgA60i3OQQ87Qn/HTm71/5iqK9xCVGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLD3/q4KTnRTDrZpLSi8qDRzdIchDBvZY3OCAgCdqmTXJQHpAu
+	w4ngrp9NMI6PiZvipVZRPHg7GQQoCYZkrRYXnJy85x/X6+htwC9cgFeWP00kK/pdc8OuL3Ht8oH
+	RYkO8RLMKyb83Y8KFKpK68zKj2H7tVCo=
+X-Gm-Gg: ASbGncswayLIeQpuWqftN1oqy7zbK0MP/YFyUvk+4DSW0V6o+z3/y0e14iYDmiUzGmN
+	DiVMvykisAJMT9si+PpnFoqn8NeywdjPYNBJ5yDyLE/q4WV8hadigB7WhRV3fmvWYDNsExmbGxS
+	VMnVw0Fg3bWSDc5hEh5yUSGutTXBfPnSjsXVKNlebA1khuKUVwtlAr2cWY+6nOHpmT6QckUrbnw
+	V2AuJDWuDAaT4QMMJybRCSUOUwH7hhTCIdduNxCgY4law6Xb0muVMtbN7oJ
+X-Google-Smtp-Source: AGHT+IHNVHcrPcoXcfMQAdrM6mfxVNIvqirPfSk4ZwLH/WJQN1X+/EwZuiwM1z9Tvembh+GaQUpS/PpKFfhnQ7ESKbE=
+X-Received: by 2002:a17:907:869f:b0:b33:a2ef:c7 with SMTP id
+ a640c23a62f3a-b72e058a781mr441932566b.55.1762692579280; Sun, 09 Nov 2025
+ 04:49:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 8/8] media: qcom: camss: Remove D-PHY-only endpoint
- restriction
-To: david@ixit.cz, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Luca Weiss <luca.weiss@fairphone.com>, Petr Hodina <phodina@protonmail.com>,
- "Dr. Git" <drgitx@gmail.com>
-Cc: Joel Selvaraj <foss@joelselvaraj.com>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org
-References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
- <20251109-qcom-cphy-v1-8-165f7e79b0e1@ixit.cz>
-Content-Language: en-US, en-GB
-From: Casey Connolly <casey.connolly@linaro.org>
-In-Reply-To: <20251109-qcom-cphy-v1-8-165f7e79b0e1@ixit.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1762621567.git.lorenzo.stoakes@oracle.com> <75c2e8fa38de383757a49bcc3f5c081be1e27a40.1762621568.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <75c2e8fa38de383757a49bcc3f5c081be1e27a40.1762621568.git.lorenzo.stoakes@oracle.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Sun, 9 Nov 2025 20:49:02 +0800
+X-Gm-Features: AWmQ_bm7gm65mOXTd2rtxZ-2sSA2POMXyYBKPT6giX8icbqtDuQMmyxTTsU5nEc
+Message-ID: <CAMgjq7AP383YfU3L5ZxJ9U3x-vRPnEkEUtmnPdXD29HiNC8OrA@mail.gmail.com>
+Subject: Re: [PATCH v2 04/16] mm: eliminate is_swap_pte() when
+ softleaf_from_pte() suffices
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, 
+	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, 
+	damon@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 11/9/25 10:39, David Heidelberg via B4 Relay wrote:
-> From: David Heidelberg <david@ixit.cz>
-> 
-> C-PHY mode is now supported, so the endpoint bus-type restriction to
-> D-PHY can be removed.
-> 
-> Signed-off-by: David Heidelberg <david@ixit.cz>
+On Sun, Nov 9, 2025 at 2:16=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> In cases where we can simply utilise the fact that softleaf_from_pte()
+> treats present entries as if they were none entries and thus eliminate
+> spurious uses of is_swap_pte(), do so.
+>
+> No functional change intended.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
->   drivers/media/platform/qcom/camss/camss.c | 9 ---------
->   1 file changed, 9 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-> index 248aa6b21b5ad..1408e8a03f0bd 100644
-> --- a/drivers/media/platform/qcom/camss/camss.c
-> +++ b/drivers/media/platform/qcom/camss/camss.c
-> @@ -4044,15 +4044,6 @@ static int camss_of_parse_endpoint_node(struct device *dev,
->   	if (ret)
->   		return ret;
->   
-> -	/*
-> -	 * Most SoCs support both D-PHY and C-PHY standards, but currently only
-> -	 * D-PHY is supported in the driver.
-> -	 */
-> -	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY) {
-> -		dev_err(dev, "Unsupported bus type %d\n", vep.bus_type);
-> -		return -EINVAL;
-> -	}
+>  mm/internal.h   |  7 +++----
+>  mm/madvise.c    |  8 +++-----
+>  mm/swap_state.c | 12 ++++++------
+>  mm/swapfile.c   |  9 ++++-----
+>  4 files changed, 16 insertions(+), 20 deletions(-)
+>
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 9465129367a4..f0c7461bb02c 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -15,7 +15,7 @@
+>  #include <linux/pagewalk.h>
+>  #include <linux/rmap.h>
+>  #include <linux/swap.h>
+> -#include <linux/swapops.h>
+> +#include <linux/leafops.h>
+>  #include <linux/swap_cgroup.h>
+>  #include <linux/tracepoint-defs.h>
+>
+> @@ -380,13 +380,12 @@ static inline int swap_pte_batch(pte_t *start_ptep,=
+ int max_nr, pte_t pte)
+>  {
+>         pte_t expected_pte =3D pte_next_swp_offset(pte);
+>         const pte_t *end_ptep =3D start_ptep + max_nr;
+> -       swp_entry_t entry =3D pte_to_swp_entry(pte);
+> +       const softleaf_t entry =3D softleaf_from_pte(pte);
+>         pte_t *ptep =3D start_ptep + 1;
+>         unsigned short cgroup_id;
+>
+>         VM_WARN_ON(max_nr < 1);
+> -       VM_WARN_ON(!is_swap_pte(pte));
+> -       VM_WARN_ON(non_swap_entry(entry));
+> +       VM_WARN_ON(!softleaf_is_swap(entry));
+>
+>         cgroup_id =3D lookup_swap_cgroup_id(entry);
+>         while (ptep < end_ptep) {
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 2d5ad3cb37bb..58d82495b6c6 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -195,7 +195,7 @@ static int swapin_walk_pmd_entry(pmd_t *pmd, unsigned=
+ long start,
+>
+>         for (addr =3D start; addr < end; addr +=3D PAGE_SIZE) {
+>                 pte_t pte;
+> -               swp_entry_t entry;
+> +               softleaf_t entry;
+>                 struct folio *folio;
+>
+>                 if (!ptep++) {
+> @@ -205,10 +205,8 @@ static int swapin_walk_pmd_entry(pmd_t *pmd, unsigne=
+d long start,
+>                 }
+>
+>                 pte =3D ptep_get(ptep);
+> -               if (!is_swap_pte(pte))
+> -                       continue;
+> -               entry =3D pte_to_swp_entry(pte);
+> -               if (unlikely(non_swap_entry(entry)))
+> +               entry =3D softleaf_from_pte(pte);
+> +               if (unlikely(!softleaf_is_swap(entry)))
+>                         continue;
+>
+>                 pte_unmap_unlock(ptep, ptl);
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index d20d238109f9..8881a79f200c 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -12,7 +12,7 @@
+>  #include <linux/kernel_stat.h>
+>  #include <linux/mempolicy.h>
+>  #include <linux/swap.h>
+> -#include <linux/swapops.h>
+> +#include <linux/leafops.h>
+>  #include <linux/init.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/pagevec.h>
+> @@ -732,7 +732,6 @@ static struct folio *swap_vma_readahead(swp_entry_t t=
+arg_entry, gfp_t gfp_mask,
+>         pte_t *pte =3D NULL, pentry;
+>         int win;
+>         unsigned long start, end, addr;
+> -       swp_entry_t entry;
+>         pgoff_t ilx;
+>         bool page_allocated;
+>
+> @@ -744,16 +743,17 @@ static struct folio *swap_vma_readahead(swp_entry_t=
+ targ_entry, gfp_t gfp_mask,
+>
+>         blk_start_plug(&plug);
+>         for (addr =3D start; addr < end; ilx++, addr +=3D PAGE_SIZE) {
+> +               softleaf_t entry;
+> +
+>                 if (!pte++) {
+>                         pte =3D pte_offset_map(vmf->pmd, addr);
+>                         if (!pte)
+>                                 break;
+>                 }
+>                 pentry =3D ptep_get_lockless(pte);
+> -               if (!is_swap_pte(pentry))
+> -                       continue;
+> -               entry =3D pte_to_swp_entry(pentry);
+> -               if (unlikely(non_swap_entry(entry)))
+> +               entry =3D softleaf_from_pte(pentry);
+> +
+> +               if (!softleaf_is_swap(entry))
 
-Might be better to just expand the check to include C-phy, since there 
-are other bus types that are also unsupported.> -
->   	csd->interface.csiphy_id = vep.base.port;
->   
->   	mipi_csi2 = &vep.bus.mipi_csi2;
-> 
+Hi Lorenzo,
 
+This part isn't right, is_swap_pte excludes present PTE and non PTE,
+but softleaf_from_pte returns a invalid swap entry from a non PTE.
+
+This may lead to a kernel panic as the invalid swap value will be
+0x3ffffffffffff on x86_64 (pte_to_swp_entry(0)), the offset value will
+cause out of border access.
+
+We might need something like this on top of patch 2:
+
+diff --git a/include/linux/leafops.h b/include/linux/leafops.h
+index 1376589d94b0..49de62f96835 100644
+--- a/include/linux/leafops.h
++++ b/include/linux/leafops.h
+@@ -54,7 +54,7 @@ static inline softleaf_t softleaf_mk_none(void)
+  */
+ static inline softleaf_t softleaf_from_pte(pte_t pte)
+ {
+-       if (pte_present(pte))
++       if (pte_present(pte) || pte_none(pte))
+                return softleaf_mk_none();
+
+        /* Temporary until swp_entry_t eliminated. */
 
