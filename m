@@ -1,280 +1,129 @@
-Return-Path: <linux-kernel+bounces-891825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD8BC439B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 08:12:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29047C439BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 08:13:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C56E84E4953
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 07:12:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBED7188B42A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 07:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607742690D1;
-	Sun,  9 Nov 2025 07:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96B226C3BD;
+	Sun,  9 Nov 2025 07:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVKWhFcm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOX6qwnR"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699CE24A05D
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 07:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AC41EB1AA
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 07:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762672316; cv=none; b=m0EFdISPGYsKZlwGCp9gDxrHBbLG7s0uHaYZakhcpToVCW+PUpyXOpbdkS1VVokfGFib1dyFk3NP4udneVApc2Ny87MeoqmP1HnK1Ey85otwU6Bxl+FmbRB8KUE42ZAmRlSdM3nszmr5uaK2muP0IjFns161tJKQ+096dAJtd/c=
+	t=1762672397; cv=none; b=bblQobjLRqR3d1d50Sbz246DaaU0hagnY6gE1lrlg8HxAuWp+fzpQFUFMb4y1rWl6TN/Q5BKzlfluS3QHAX/kUA0sUZWNTpjLcjsJNeqSflYlxYHhi/A/EkSCdGutDkxNM3vgBGjH4feE/qhEh2LOo6NJRIZbnSsEMNWZdNhxPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762672316; c=relaxed/simple;
-	bh=fz6YEmNbySw049IgPi0sWFOajARsPNxOfb00HrLa7F8=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uwltEva02oui2YO1dFG2BdmhPCDuj2rro68hI/bRCtL1AmBiHX3WOEtSgBlcOwpnNBXmPjEvGS3fgLGQEf0vtXno3NSaxje+NOtByN2ssOgG/bkpv1qbw6Q3Wt+CFw1coV7y+j9JmaD8naC0rugxLID4QMngN1TSi0U+CGgGDEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVKWhFcm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67D66C4CEF8;
-	Sun,  9 Nov 2025 07:11:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762672316;
-	bh=fz6YEmNbySw049IgPi0sWFOajARsPNxOfb00HrLa7F8=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=VVKWhFcmmgsl0CgGP3/akeP+0Deoi+k93/1z4vFV2wLPYduROhSgadLQkVRPas+ct
-	 bXGtRL2xpjdwXydNiHc4niRWU3TVWR1KVz9Sk5iIXyx5yrFTu1d04HgF7JEHWJSAs+
-	 zZe49jXIXS+EHNDOJFKdv27ji6NG0rMhyuLEKouXGZCNafwjes6GENkhi1UbW5CIB1
-	 DUVR32kpzIqm6aG2/azj7wGzkR1hP39Obw+X4edU0YSRM0EZxYBlclJNh6ztFzEUJG
-	 E0gdub8CEQJVy/junBGUitqhCWn0BrVwHk5Sx4K78HKJm95/a7Htmn+t2cjjGQh+a5
-	 sMVUNSCPeCT4A==
-Date: Sun, 9 Nov 2025 09:11:45 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	"David Hildenbrand (Red Hat)" <david@kernel.org>,
-	Peter Xu <peterx@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Muchun Song <muchun.song@linux.dev>,
-	Nikita Kalyazin <kalyazin@amazon.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Houghton <jthoughton@google.com>,
-	Hugh Dickins <hughd@google.com>, Michal Hocko <mhocko@suse.com>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>, conduct@kernel.org
-Subject: Re: [PATCH v4 0/4] mm/userfaultfd: modulize memory types
-Message-ID: <aRA-se6hJPzHD3mA@kernel.org>
-References: <nnxhd7zxjza6m4w4lr5qyev2krbkp4yfcgcwq6nkaqrqt6bzpb@iklep2xxp5gv>
- <aQO3Zko6Qrk7O96u@x1.local>
- <aQPCwFZqNd_ZlZ0S@x1.local>
- <d0b037a6-11b9-483b-aa67-b2a8984e56e0@lucifer.local>
- <aQPU-tyo_w68cnKK@x1.local>
- <7768bbb5-f060-45f7-b584-95bd73c47146@kernel.org>
- <aQkUwbx7Z4q1qcSB@x1.local>
- <5f128cbf-7210-42d9-aca1-0a5ed20928c2@kernel.org>
- <aQmplrpNjvCVjWb_@kernel.org>
- <mnjrtg62qh2rd353mbudryvs3neukt26xtovyddm5uosxurmfi@lldnrp7a3666>
+	s=arc-20240116; t=1762672397; c=relaxed/simple;
+	bh=kCkl0IgEuB+qK0ucQM7ByvS2mgClHBC+newUobFrM2A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=j/1NYLwqj9PEhRXVoi5qSZSB5lMCkU2MFEhIy2NJduUFFPstY2mPILxUxfkAmKX5CiDdpyJlt0BhmmhkC8S9fx5cHQjl8xL1vFhaEPuu3U0siEoTGd0c9M0sVPn8hu6oNlICR9Z/goD/Aic5I+MvKzzLOmc8nOkmAZbCWjD6wo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mOX6qwnR; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-295395ceda3so2713525ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 23:13:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762672395; x=1763277195; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xwusb2qyqwUfitZumVkZ/28VAioj7VL64C6xxAS8wL4=;
+        b=mOX6qwnRHIZNmd/1YGRYE223nLT+gkppueRfKG8E6I2WZC9NbRzjRP5EwjynwSWwl9
+         dxROBwOCw//AEkIDeqseh7l5QeOz584aOte/uMGb7IUkjZb+Cat1EZ3Lp0c9n2EKqmLD
+         oYfLeHXbOcAGAPRjEZhjH2ZCv99HRVtRVRYunuFGR2ziTOUvhd8DZ6v5urXB1co42MSg
+         JC2cBHwurNDpI5dOKzdoHEXGTDVP8Bf3eOELL1E0Q1/U7qUUTACTVDm8NzJajoRxBD1Z
+         KnwG2Hay8cCY+eHe5AvxN1KsfThrjfYBqlEl1wHCNG/N2O1Zp//BD/OI7ptJfAxCCxla
+         ++lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762672395; x=1763277195;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xwusb2qyqwUfitZumVkZ/28VAioj7VL64C6xxAS8wL4=;
+        b=Xej5JH1CwkOT6ZgrNxZeKzLEu0iCurhTEuwZHua8tBOjAqcXnynNnGL0AHkU5P2Pqy
+         D7gexMArszUomJaeCaIrK1mwLnXLJH3s0BCmuHnXtx2x/R+2WuY+iUSEc343eQuOYlJT
+         0zWSTF5sGTUTTYdTZiRHsA6sQJenEEYe4PU8LgS563V3CygMWHSkuoGgo3B4/CMg0DCf
+         QvmGDepbW45rY+2SY6t4BBighl5jfLTE3p4Y4UQ1q0Xj7hdJEj/34uha6sRyHqdYB/Zs
+         88Xzjzqb0DPMveJ3ijIwIhwKmE2BSoh00c0alVW9YT41GCvhmSjwM/PiWo+Jl5jHgeC0
+         jU0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXUFT3IJZ1e5Ok6IH4y0T0SgEzwvX7MWdn5UINxm+IGMN+ygXinFAYsvzdnVGHSuCaQGfP2VMBb7rBzwys=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6d4j6sKC4dC8YXSqJLB+nPvPdMQCfwC8bEF1qNz8tyTht381E
+	bgQHFqla9/yyWKBRC7H0RVgkjzcxDV3CF9SJ18QGF7jJ7xXRujftewpJ
+X-Gm-Gg: ASbGncujQpxuunPCvtxGqXKXaDJ9Rjjs+CVKUeUG3QKDBN2V7xB/3tQPbisK5GLvBLG
+	vNyGh1arBMT4BUWPedzDbiSPHGks+4T4FvwpWuYUMLcwQNdXt4hzIIo1hgrNSqw/OxYihZHmVax
+	FTY3WY4YhOP2UZfbYcGyYE5zq4e/laAxprpA4ewF1EpzV6nQmhaxN0do93E9IhnTv0VjhqvCP6P
+	lkgkYS2Mmu8Fn0YjgiM0bQ8XRv9gabT/AH+sK3C7pDdAHpNtFPIOsi+WfWpHSIVRXa4iF4HMdgj
+	NiKdq64mISzips8M0pqf1qNW1Qh+9dVPTV3JkCYD+i9lNpAvyF3wWV7KroOEgoGrOMPkTKn2o5l
+	0oO9p+/2KCXldt/rD7ZxOGJkDZJfJoT1M+jGWe8WZZ7ARskQbAjv9pGK1zrIyktW1J6g3Oc/2Er
+	oLnWvhHhr5gTvY6ZZUXg==
+X-Google-Smtp-Source: AGHT+IEy6utceTlq2dzE6jroNbB4zuXSzLqvToAaWYV/ORbFpst6LvtRaKQzKsVJDmFFSf2dbDX5rA==
+X-Received: by 2002:a17:902:e742:b0:297:f50a:d12a with SMTP id d9443c01a7336-297f50ad245mr18826875ad.8.1762672395171;
+        Sat, 08 Nov 2025 23:13:15 -0800 (PST)
+Received: from elitemini.flets-east.jp ([2400:4050:d860:9700:75bf:9e2e:8ac9:3001])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-297d6859a92sm57287495ad.88.2025.11.08.23.13.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 23:13:14 -0800 (PST)
+From: Masaharu Noguchi <nogunix@gmail.com>
+To: jesperjuhl76@gmail.com,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>
+Cc: Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Masaharu Noguchi <nogunix@gmail.com>
+Subject: [PATCH 0/2] fix AT_RENAME_* redefinitions with glibc < 2.43
+Date: Sun,  9 Nov 2025 16:13:02 +0900
+Message-ID: <20251109071304.2415982-1-nogunix@gmail.com>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <CAHaCkme7C8LDpWVX8TnDQQ+feWeQy_SA3HYfpyyPNFee_+Z2EA@mail.gmail.com>
+References: <CAHaCkme7C8LDpWVX8TnDQQ+feWeQy_SA3HYfpyyPNFee_+Z2EA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mnjrtg62qh2rd353mbudryvs3neukt26xtovyddm5uosxurmfi@lldnrp7a3666>
+Content-Transfer-Encoding: 8bit
 
-Hi Liam,
+LKML reports show that `allyesconfig` currently fails with glibc 2.42
+because both `<stdio.h>` and `<linux/fcntl.h>` define the AT_RENAME_*
+macros.  A follow-up pointed to glibc commit `1166170d9586 ("libio:
+Define AT_RENAME_* with the same tokens as Linux")`, which will first
+appear in glibc 2.43.  Until that release lands in common distributions,
+upstream kernels still build against glibc versions that redeclare the
+macros and fail under `-Werror`.
 
-On Thu, Nov 06, 2025 at 11:32:46AM -0500, Liam R. Howlett wrote:
-> * Mike Rapoport <rppt@kernel.org> [251104 02:22]:
-> > On Mon, Nov 03, 2025 at 10:27:05PM +0100, David Hildenbrand (Red Hat) wrote:
-> > > 
-> > > And maybe that's the main problem here: Liam talks about general uffd
-> > > cleanups while you are focused on supporting guest_memfd minor mode "as
-> > > simple as possible" (as you write below).
-> > 
-> > Hijacking for the technical part for a moment ;-)
-> > 
-> > It seems that "as simple as possible" can even avoid data members in struct
-> > vm_uffd_ops, e.g something along these lines:
-> 
-> I like this because it removes the flag.
-> 
-> If we don't want to return the folio, we could modify the
-> mfill_atomic_pte_continue() to __mfill_atomic_pte_continue() which takes
-> a function pointer and have the callers pass a different get_folio() by
-> memory type.  Each memory type (anon, shmem, and guest_memfd) would have
-> a small stub that would be set in the vm_ops.
+This series is a small, revertable workaround so developers on Fedora 43
+(glibc 2.42) and other distributions with glibc < 2.43 can keep building
+the samples.  The
+first patch only emits the AT_RENAME_* aliases when libc does not do so
+already, and the second patch undefines any libc-provided macros before
+including `<linux/fcntl.h>` in the VFS sample.  Once glibc 2.43+ is
+ubiquitous (or if we decide to remove the aliases entirely), these
+changes can be dropped.
 
-I'm not sure I follow you here.
-What do you mean by "don't want to return the folio"? 
+Link: https://lore.kernel.org/all/CAHaCkme7C8LDpWVX8TnDQQ+feWeQy_SA3HYfpyyPNFee_+Z2EA@mail.gmail.com/ # LKML report
+Link: https://lore.kernel.org/all/20251013012423.GA331@ax162/ # follow-up
+Link: https://sourceware.org/git/?p=glibc.git;a=commit;h=1166170d95863e5a6f8121a5ca9d97713f524f49 # glibc fix
 
-Isn't ->minor_get_folio() is already a different get_folio() by memory
-type?
+Masaharu Noguchi (2):
+  uapi: fcntl: guard AT_RENAME_* aliases
+  samples: vfs: avoid libc AT_RENAME_* redefinitions
 
-> It also looks similar to vma_get_uffd_ops() in 1fa9377e57eb1
-> ("mm/userfaultfd: Introduce userfaultfd ops and use it for destination
-> validation") [1].  But I always returned a uffd ops, which passes all
-> uffd testing.  When would your NULL uffd ops be hit?  That is, when
-> would uffd_ops not be set and not be anon?
-
-The patch is a prototype. Quite possibly you are right and there's no need
-to return NULL there.
- 
-> [1].  https://git.infradead.org/?p=users/jedix/linux-maple.git;a=blobdiff;f=mm/userfaultfd.c;h=e2570e72242e5a350508f785119c5dee4d8176c1;hp=e8341a45e7e8d239c64f460afeb5b2b8b29ed853;hb=1fa9377e57eb16d7fa579ea7f8eb832164d209ac;hpb=2166e91882eb195677717ac2f8fbfc58171196ce
-> 
-> Thanks,
-> Liam
-> 
-> > 
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index d16b33bacc32..840986780cb5 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -605,6 +605,8 @@ struct vm_fault {
-> >  					 */
-> >  };
-> >  
-> > +struct vm_uffd_ops;
-> > +
-> >  /*
-> >   * These are the virtual MM functions - opening of an area, closing and
-> >   * unmapping it (needed to keep files on disk up-to-date etc), pointer
-> > @@ -690,6 +692,9 @@ struct vm_operations_struct {
-> >  	struct page *(*find_normal_page)(struct vm_area_struct *vma,
-> >  					 unsigned long addr);
-> >  #endif /* CONFIG_FIND_NORMAL_PAGE */
-> > +#ifdef CONFIG_USERFAULTFD
-> > +	const struct vm_uffd_ops *uffd_ops;
-> > +#endif
-> >  };
-> >  
-> >  #ifdef CONFIG_NUMA_BALANCING
-> > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-> > index c0e716aec26a..aac7ac616636 100644
-> > --- a/include/linux/userfaultfd_k.h
-> > +++ b/include/linux/userfaultfd_k.h
-> > @@ -111,6 +111,11 @@ static inline uffd_flags_t uffd_flags_set_mode(uffd_flags_t flags, enum mfill_at
-> >  /* Flags controlling behavior. These behavior changes are mode-independent. */
-> >  #define MFILL_ATOMIC_WP MFILL_ATOMIC_FLAG(0)
-> >  
-> > +struct vm_uffd_ops {
-> > +	int (*minor_get_folio)(struct inode *inode, pgoff_t pgoff,
-> > +			       struct folio **folio);
-> > +};
-> > +
-> >  extern int mfill_atomic_install_pte(pmd_t *dst_pmd,
-> >  				    struct vm_area_struct *dst_vma,
-> >  				    unsigned long dst_addr, struct page *page,
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index b9081b817d28..b4318ad3bdf9 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -3260,6 +3260,17 @@ int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
-> >  	shmem_inode_unacct_blocks(inode, 1);
-> >  	return ret;
-> >  }
-> > +
-> > +static int shmem_uffd_minor_get_folio(struct inode *inode, pgoff_t pgoff,
-> > +				      struct folio **folio)
-> > +{
-> > +	return shmem_get_folio(inode, pgoff, 0, folio, SGP_NOALLOC);
-> > +}
-> > +
-> > +static const struct vm_uffd_ops shmem_uffd_ops = {
-> > +	.minor_get_folio = shmem_uffd_minor_get_folio,
-> > +};
-> > +
-> >  #endif /* CONFIG_USERFAULTFD */
-> >  
-> >  #ifdef CONFIG_TMPFS
-> > @@ -5292,6 +5303,9 @@ static const struct vm_operations_struct shmem_vm_ops = {
-> >  	.set_policy     = shmem_set_policy,
-> >  	.get_policy     = shmem_get_policy,
-> >  #endif
-> > +#ifdef CONFIG_USERFAULTFD
-> > +	.uffd_ops	= &shmem_uffd_ops,
-> > +#endif
-> >  };
-> >  
-> >  static const struct vm_operations_struct shmem_anon_vm_ops = {
-> > @@ -5301,6 +5315,9 @@ static const struct vm_operations_struct shmem_anon_vm_ops = {
-> >  	.set_policy     = shmem_set_policy,
-> >  	.get_policy     = shmem_get_policy,
-> >  #endif
-> > +#ifdef CONFIG_USERFAULTFD
-> > +	.uffd_ops	= &shmem_uffd_ops,
-> > +#endif
-> >  };
-> >  
-> >  int shmem_init_fs_context(struct fs_context *fc)
-> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > index af61b95c89e4..6b30a8f39f4d 100644
-> > --- a/mm/userfaultfd.c
-> > +++ b/mm/userfaultfd.c
-> > @@ -20,6 +20,20 @@
-> >  #include "internal.h"
-> >  #include "swap.h"
-> >  
-> > +static const struct vm_uffd_ops anon_uffd_ops = {
-> > +};
-> > +
-> > +static inline const struct vm_uffd_ops *vma_get_uffd_ops(struct vm_area_struct *vma)
-> > +{
-> > +	if (vma->vm_ops && vma->vm_ops->uffd_ops)
-> > +		return vma->vm_ops->uffd_ops;
-> > +
-> > +	if (vma_is_anonymous(vma))
-> > +		return &anon_uffd_ops;
-> > +
-> > +	return NULL;
-> > +}
-> > +
-> >  static __always_inline
-> >  bool validate_dst_vma(struct vm_area_struct *dst_vma, unsigned long dst_end)
-> >  {
-> > @@ -382,13 +396,14 @@ static int mfill_atomic_pte_continue(pmd_t *dst_pmd,
-> >  				     unsigned long dst_addr,
-> >  				     uffd_flags_t flags)
-> >  {
-> > +	const struct vm_uffd_ops *uffd_ops = vma_get_uffd_ops(dst_vma);
-> >  	struct inode *inode = file_inode(dst_vma->vm_file);
-> >  	pgoff_t pgoff = linear_page_index(dst_vma, dst_addr);
-> >  	struct folio *folio;
-> >  	struct page *page;
-> >  	int ret;
-> >  
-> > -	ret = shmem_get_folio(inode, pgoff, 0, &folio, SGP_NOALLOC);
-> > +	ret = uffd_ops->minor_get_folio(inode, pgoff, &folio);
-> >  	/* Our caller expects us to return -EFAULT if we failed to find folio */
-> >  	if (ret == -ENOENT)
-> >  		ret = -EFAULT;
-> > @@ -707,6 +722,7 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
-> >  	unsigned long src_addr, dst_addr;
-> >  	long copied;
-> >  	struct folio *folio;
-> > +	const struct vm_uffd_ops *uffd_ops;
-> >  
-> >  	/*
-> >  	 * Sanitize the command parameters:
-> > @@ -766,10 +782,11 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
-> >  		return  mfill_atomic_hugetlb(ctx, dst_vma, dst_start,
-> >  					     src_start, len, flags);
-> >  
-> > -	if (!vma_is_anonymous(dst_vma) && !vma_is_shmem(dst_vma))
-> > +	uffd_ops = vma_get_uffd_ops(dst_vma);
-> > +	if (!uffd_ops)
-> >  		goto out_unlock;
-> > -	if (!vma_is_shmem(dst_vma) &&
-> > -	    uffd_flags_mode_is(flags, MFILL_ATOMIC_CONTINUE))
-> > +	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_CONTINUE) &&
-> > +	    !uffd_ops->minor_get_folio)
-> >  		goto out_unlock;
-> >  
-> >  	while (src_addr < src_start + len) {
-> >  
-> > -- 
-> > Sincerely yours,
-> > Mike.
+ include/uapi/linux/fcntl.h | 6 ++++++
+ samples/vfs/test-statx.c   | 9 +++++++++
+ 2 files changed, 15 insertions(+)
 
 -- 
-Sincerely yours,
-Mike.
+2.51.1
 
