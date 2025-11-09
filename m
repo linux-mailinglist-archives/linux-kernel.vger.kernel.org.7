@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-891834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E0FC439F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 08:53:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E38C439F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 08:55:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07EC23B2561
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 07:53:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF966188ACD4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 07:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7F8263F5F;
-	Sun,  9 Nov 2025 07:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B0E263F38;
+	Sun,  9 Nov 2025 07:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amHhB4Cu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTdLRagO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BB01DF994;
-	Sun,  9 Nov 2025 07:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26E41DF994;
+	Sun,  9 Nov 2025 07:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762674815; cv=none; b=mTJ0JqfFYaLs37QBkDmzUpH92qNoSD6LyYk5s1sZJzYqGpwjp/tR+d/6fEgIQr/+1Kjp6tBLqWKn2jZ6WO67zk5c4oanISUtXIpBAG6RB8fMeJ8bFNg8xn2/Vjd2zqKPTSh/JrVeWmpgsmdgDW7or57bLi4DDcKaEJVeYpswcVw=
+	t=1762674912; cv=none; b=Qb3UnvBqj9olNL+Eospju0ilmxpVQmPvlJXTbcyBp1tLhVgN2NOwQP5TwW+XBy4j/20RmxBeDsevHSSsmtVfcA0TBQ4dkiVa4fbL1xjrihC7G8VEmTh/KSS6xpy3lZwzZEbNpYr7HNLVtQejk4ra11/jCWlwDBB+sgFI/N5A280=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762674815; c=relaxed/simple;
-	bh=8/s0g3/HR6w0jvIa3DYIzWrYnWPBXTPU6zLnENISR1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K6HbtisYE0P7kezlZRh9zsOWtynkP8fId3GAYQL4rUfj3CmirEEq3FI/IcpwHLpt3LOeOZpcdeqIOYd1uvoTMhTt1uQdIz0lV6CzdBVtnkiaHiI5/05e+n/DgcD3lFX45MWQ+Wk2PUdpFU9iT27IBz6O9aTSH+8n2/HNKCAkGqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amHhB4Cu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6352C116B1;
-	Sun,  9 Nov 2025 07:53:34 +0000 (UTC)
+	s=arc-20240116; t=1762674912; c=relaxed/simple;
+	bh=+aqPrF5RRo6fKG0GxKClt1tG25K7ddKVbhbzUrwL+8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uFzk2MJ2hWiJFELWe80+H+XGWFvVErKQTGuQhC722nfngtBNOv3nuFYMI7joHeWaSCEXSGLMXt4s08ZpiNP7H1oXRBcQpt8fb5SdjQ1BeDmVBrkAOzDKakHcN6EILEIirUk4lgEo2uoCAkwQAwdTCBdIFZeB5ih85U8Hzv7a9RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTdLRagO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9073FC4CEF7;
+	Sun,  9 Nov 2025 07:55:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762674815;
-	bh=8/s0g3/HR6w0jvIa3DYIzWrYnWPBXTPU6zLnENISR1M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=amHhB4CueYIvHhewZqF9CMedmqR3/FLxgK0n679eJcYLyjy2og1DU2Fa9if1ZPpuX
-	 m1aaw+NDQ42PBEWcq63tL2dnznVOe6eTA9cIiHo1llS83SFZFj1RV0QTKfZHCT+2a6
-	 s1K7AJ4reeDOe1pGDDA03wZgJIzX89AlNpMIcFUeuOTZpcC0DerXKkNLudGZq9FRSn
-	 XwMTHB/msWU8j31CpqLF6Yl2NwXmbBub3f0vZlyTFwBfgp53P7sMI6y+TFHHnCDFFL
-	 BnubK15RAgs99bag6IIDB928jxCOx4KEyymw/iH4Gil7wSZlV/T6HUARYBEjvQXbny
-	 txVbjFFjQX8Tw==
-Date: Sun, 9 Nov 2025 09:53:31 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 0/2] block: Enable proper MMIO memory handling for P2P
- DMA
-Message-ID: <20251109075331.GA376289@unreal>
-References: <20251027-block-with-mmio-v3-0-ac3370e1f7b7@nvidia.com>
+	s=k20201202; t=1762674912;
+	bh=+aqPrF5RRo6fKG0GxKClt1tG25K7ddKVbhbzUrwL+8g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=uTdLRagOoD73ZnVM1JQXh9qVE2SSiHJ+JWWJLv7Lt1d6uKLW9L3QrcdbnELLzdZvt
+	 XwtSdvzm4QCiZ/aencLftGVejzRo+9b5v1YAXPUGYymo1a7BWTolTjn2hp5hZZeheD
+	 iOVSOdPT26nFwsAL5aERHuAV65uvvCabiTRpJV7KdEtnYZQcVszy8jWG2VbV7Vbq5G
+	 DrDSXenhMSBa3hVSYZKGvGIRh71GVTU1l/FfJFuEz5sq7zbVYA7HT7ojFVtP7yt9Yv
+	 nkafcs9KpxNiBvJfK4aUjeJViNjvU0Vf1IqGJi9nTk9xondCC+ljjK/99oCPU789XN
+	 FV7toMnAWoDhg==
+Date: Sun, 9 Nov 2025 08:55:08 +0100
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.18-rc5
+Message-ID: <aRBI3ERoaz18MvCQ@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uZrIFUsCEfi5T4cb"
+Content-Disposition: inline
+
+
+--uZrIFUsCEfi5T4cb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251027-block-with-mmio-v3-0-ac3370e1f7b7@nvidia.com>
 
-On Mon, Oct 27, 2025 at 09:30:19AM +0200, Leon Romanovsky wrote:
+The following changes since commit 6146a0f1dfae5d37442a9ddcba012add260bceb0:
 
-<...>
+  Linux 6.18-rc4 (2025-11-02 11:28:02 -0800)
 
-> ----------------------------------------------------------------------
-> 
-> This patch series improves block layer and NVMe driver support for MMIO
-> memory regions, particularly for peer-to-peer (P2P) DMA transfers that
-> go through the host bridge.
-> 
-> The series addresses a critical gap where P2P transfers through the host
-> bridge (PCI_P2PDMA_MAP_THRU_HOST_BRIDGE) were not properly marked as
-> MMIO memory, leading to potential issues with:
-> 
-> - Inappropriate CPU cache synchronization operations on MMIO regions
-> - Incorrect DMA mapping/unmapping that doesn't respect MMIO semantics  
-> - Missing IOMMU configuration for MMIO memory handling
-> 
-> This work is extracted from the larger DMA physical API improvement
-> series [1] and focuses specifically on block layer and NVMe requirements
-> for MMIO memory support.
-> 
-> Thanks
-> 
-> [1] https://lore.kernel.org/all/cover.1757423202.git.leonro@nvidia.com/
-> 
-> Leon Romanovsky (2):
->       nvme-pci: migrate to dma_map_phys instead of map_page
->       block-dma: properly take MMIO path
+are available in the Git repository at:
 
-Hi,
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.18-rc5
 
-Kind reminder.
+for you to fetch changes up to 6a0dddc53f6f04281b27254a7d940fb9bb2d5a3b:
 
-Thanks
+  i2c: muxes: pca954x: Fix broken reset-gpio usage (2025-11-03 18:04:15 +0100)
+
+----------------------------------------------------------------
+i2c-for-6.18-rc5
+
+Two reverts merged into one commit to handle a regression caused by a
+wrong cleanup because the underlying implications were unclear.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      i2c: muxes: pca954x: Fix broken reset-gpio usage
+
+ drivers/i2c/muxes/i2c-mux-pca954x.c | 50 +++++++++++++++++--------------------
+ 1 file changed, 23 insertions(+), 27 deletions(-)
+
+--uZrIFUsCEfi5T4cb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmkQSNwACgkQFA3kzBSg
+KbYAfA//egDABNFcR4mbGefynlV4RIP80rPeNNTsWneRPu5zmMM61e4/Xx4ZBIj6
+d+xiPShtRQvO79Q0SBPoR8Gefv9PCm9b8aMGnwfVTdzXN6N3MDr6n/pHmbnCUjRb
+M1TPm8CKBIq75eZy06R5FUiL6F3hTXCKB4cGT6dMFsdtbESiBN9rutzF96sjinZw
+ESKfcQN5dIaNZrwlMOBZ4jVjWlAfW5j3wXTmpN0dQ1xKjFV7do9+Jh/ejzpnbm2L
+RqAO8nSoWvUVKg5tX5Bm5l9T3zlXX36vWob+3Exf7OIJHAdy0XkoKejBE5AIrV9a
+gBhUFn9SZWKO0Xm5BW4LU2rSbVFCS6mP9QOzt7Y6la3vOc6ZWNcEE2W4GyVqRjga
+oW4RQf8QUeSkElnZhKxXMO5oxBUafWYXxoWV/DD29wh5pCee26FYUjt+hVkF9BE8
+bEkLfYFdsu3T0BY50h+m+32LLU3C9Ra+o9vC5CSdi0r/TzdqLTku1O2ds+nENLyN
+TT3j0RlN4QAvMeiMBjERYcNcWb7u3aqGqWzbiH7xWxKezxdbLVbvln3OaiT2LAzE
+fG7etsUo5+vqY0DuCPyyCN3Pxmpg15FlZiZ9RWiL0k1kjLLws/9Zpit1qKEYERmP
+kdGfut5j66eSLSrJu1qsZXduDcr7mdLrTOrWBdgTNZIgBIR5yoY=
+=Ld7u
+-----END PGP SIGNATURE-----
+
+--uZrIFUsCEfi5T4cb--
 
