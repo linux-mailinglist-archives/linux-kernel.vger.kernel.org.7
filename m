@@ -1,130 +1,226 @@
-Return-Path: <linux-kernel+bounces-891887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746A1C43BAC
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 11:25:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F7CC43BC0
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 11:33:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E5DA4E4AD1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 10:25:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDAF13AEDB2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 10:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E77E2D9EE8;
-	Sun,  9 Nov 2025 10:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE97428980F;
+	Sun,  9 Nov 2025 10:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTAzi+ON"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="iSaoZMF/"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7972D5C6C
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 10:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68433212550
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 10:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762683918; cv=none; b=IPw8+fCNxKfTB+YyBTOJUZ92Ctc/kxYkcCBTSMe2CAbBDYFFmtje4mFyVZqT6Ht96LKSC9vL+U6iQCy8XTbxxZuqp87CMHt0AKAoT+Cq4rTlp01FFTkGi/pEMjFXaNW+9yC9ugFKCPiOyIFASDiJk+uCughWwtgZ1Kfg2g9Q3n4=
+	t=1762684395; cv=none; b=KrysrPNR/NuL/23WpyaP+XwqmUSes6WJoQbbgEuTxLJ487RHSR4wyMWd9FT8V5Hj/bt+m0/rmCfC7lC/qgXASpxaWi8XMeDtZIpKM5NERRs8pNvxVlQ0bHShnfHccpOk4eZxGVvTO0ZqKVwsYHHgxa8XtzT9y9I3nVnJWobACJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762683918; c=relaxed/simple;
-	bh=aTj+xi1dNvcUs59gPpu5k/cwPtbqdjHMItUzYc4T4H8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O7HXmTZG/0oERaf9SybGo+NSRR9AV7cpafozoUcAzPfY6xNoPmzEEZFbSfMPJAtB2MWcADZ4SC3QEryCdKG/PzARKuQskUPfIqTYf2uw9cNFAPfw9tkyj1Bp8WKPMChESSs9rwr5CdXc/FI6FUORSBWZdf0QzuA/xIInsZhr8HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTAzi+ON; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-340ad724ea4so270905a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 02:25:16 -0800 (PST)
+	s=arc-20240116; t=1762684395; c=relaxed/simple;
+	bh=KEqMyCWzY5wSGQBRrPkXPqVGQVd3zoLBHI2WJ3uvoUs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HEyS/+pe1X7vCo5Yl4i2Fs0lT17VhZhXHOycCaU3FLudjLGyR8KjG1hKxHfScgeG2IgdX7X86vj41yd9byj59hphTmI4oqcuCDMC5tsnXE4fMKIsh6Z/p4YqDDhPSwhIVkslka31Be9Q5RlOQqrt2dqqk0/RFcPfAgBXGzA0IuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=iSaoZMF/; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-782e93932ffso1699386b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 02:33:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762683916; x=1763288716; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TY4/B0HvJE+qTQFqM/P/T84yDE9f54fdQMk2u26RaLo=;
-        b=PTAzi+ONCWCLiiSb+RXZBrDtoEeA4zpt+ZloHAn2PXMpf/iDBkNbEi9vhSCs1l2Uwh
-         27f2qwohI9FGUwSZdzuGepkmAwljd5qGp3SKmXyXdG4/kv2F0kXy6u/M/RlAFHi7Ol/I
-         JNXa0nRQHPawfdoyLvnR+3dn/gm993WiyTgCDHFz1TDTRHc0BBmWZiA4xOoJwz8VKV5f
-         h3kmAD5L67Bmp8GTyezcTW4Dr9sSK7Grok65NwpC6fAfTODNBvewFWFwC8yXu26nergb
-         MabqGxOlAuykwGZ+wwxA88JBsPNuuTEWp7D1hMCaXgVCDDW4tBfof7U9oSve5x7ocMDb
-         UcYA==
+        d=bytedance.com; s=google; t=1762684391; x=1763289191; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s40qMMXHZ20h7j4C00hYRSxJ09zSuRC/DjL234FCgys=;
+        b=iSaoZMF/jaX3CrMpbTgxWwonjG7rGlvFyTj3zmrafENTnVXu2JsdK0Hx3CLIQRfhr7
+         VRV4SusXffy1GHyT2wLZmQmCp8C3KedxU9EpKlLns9vfSF/YrHxPuZTPxomUjuykUkKE
+         wiyKdwjXsgLDHGawbeNDEh0uuBDrFW8tNxy2+55imFdlY4L3uoa3JaCi6jlwTlr3N4wm
+         ddRwbmKLkGduZ4j/395gCfEFIDld6Cn4eILSxvBsubpz3LRpCcpMTSleid6Rl+/goDZd
+         aw8/4bbZK2roX6Qq9UcotPQpmaQYA1abdGXjTn1CBmcCYLwQHyLl6Hyym79/HH9L0Y4G
+         4HJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762683916; x=1763288716;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TY4/B0HvJE+qTQFqM/P/T84yDE9f54fdQMk2u26RaLo=;
-        b=NlA2uFNGIIYJHd2jHJgIW++62WFiVze9JvI6NV0Pu6oc/LoK55ZuUfQSe3/XtD1WT8
-         t5RpwCYjKFeIEOc7pCkjGG34sYJL5KkErn+Y7em5unKNQniK3/R+IPDvaJ5YzDljkbMc
-         BWzqYJjFPnwDhZ7A4RyK17m4WKzi9tB5EVGRQ7vDcfNWep4PR88URsD58FBHihvc9qKF
-         46Q1JWI3qVmGaDmL19VokYTQOXE3IajpUSEIXk49Kq1yDoKVc1P+rXqOzNcDNPI4XSD7
-         YS7AlJ8DVkW2X2nossfgVCbcEsX3fRobHe5lIn78MURmdk0Y3ajFmBW65noQHXDGhWlR
-         gf8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWT3nGNycrBzzAeo2llu0N2eRogkXNYNNszpXS+aB6oSPMQ4t3BrEWqyAYLKg5eQizrOKUgQ2rek5tH+k0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzevveUqZXJJG/JszZgkzN6f2+N1kDCVt5pBfj9q4ebro03Yh3
-	e70LscPhCcMJ9011CqbjoZW6GDh+pV2t6AwiRKP9wXNC196IHDgNFouayE8iViK+gLxjXpFhTA/
-	8PPSH75mhWxCENbNzqi0G9lKfzrH/NDM=
-X-Gm-Gg: ASbGnctTfT85fy68kxqmmdjXdTYiV62+eM2M3sz+EcMVIGFLJ0fgXfmxoxAsxTahokq
-	h4W+UVryfHYlFGn1LyYCvBC6DYJkG7wmaic3ddgYv6Jhos45SPfdYutoxLhPVuHXgKLUmFxtac8
-	whf3wTLTK1g8ZS4IrXoG73jyzHFX0ibXIpyhLOHzpDxlj7YH/5gQO53+pvKjpfJz1Qu9a/de8N4
-	e/ZqAZrndZcAF1HqGVsOz8hS1ArzWJN2ZqXZ0woG+uWIfTt+W5BPK+wr2w+IGFmNbZFv0Gzfj3l
-	MQPMspzgrddmjlT5ReiJsaEyf2I3Jt4ZoXLrf+EGVnsymSVtfj+a67sNBETdcWD6AXPi2lTWzxt
-	wcjLCPDvaj4c+hg==
-X-Google-Smtp-Source: AGHT+IGQaikK6vNNCjPVJeuplJDKBJe3N+BOuc4E9oBGcfkuiKRHIvOyik2Rqu1v9UYf81SQNtrIpb/0+IN8q6el/3k=
-X-Received: by 2002:a17:902:d4c8:b0:297:fe30:3b94 with SMTP id
- d9443c01a7336-297fe304a7fmr17893915ad.9.1762683915716; Sun, 09 Nov 2025
- 02:25:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762684391; x=1763289191;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s40qMMXHZ20h7j4C00hYRSxJ09zSuRC/DjL234FCgys=;
+        b=fxS1zklLoTbTQJ0EVpBhoIaajilb+eVIz0VSF5GnI1YQHNvRwWXfafEvlWSJgoMVXL
+         C53zlruckwXs3W9xn+WpsqcL+ZHJQFE98nnTOpg0Jw+VE66nTa9fdXrRGQIJLApziR8b
+         k++ukIdiHXSJCguBDolmUEra58pmt+NcTzIaYbD8aYtNwk+oHRgQAo+H2Fz3n8fCGP9S
+         Q3GlKFMP9ukvURRq7tp76kPy5V1PQ/nUnGrb6FZwXQfpOAcBvcakn6hMRhJfj0hxx/MX
+         gHlFocOqhCDhUaEjEJNf1xs29eAvPyO7xsV1IMED0IpKGxkhGVc2v79dzGD5Q0PSLArj
+         WCrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVmLiPN0bYH2W1vmfY2PSjMbLp5ieWDoHw3ap1YKlr+nqBx1n7QFlJt/WCrG96uky9PgVBRDhI2z6ALdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywoo5hXR2DCgJCOrf0tMsNt5HImt48i/3/9CEyRxvrIc9vHTxnl
+	MVjNVGRLrhd+Y1muG2ca1wBgCz3hQRfr7IsFFdNdggfmWtlz/S2sDrkF916xnwyTM90=
+X-Gm-Gg: ASbGnctz7ICpnRfWs8POPYDaCJ6OQSxxCBN6HgHGnjMnh/C0WuvQQbRYPwquXQ8Kmcu
+	IInXO5orGrv8zTDqGZdNA+uquI5qZSwQ6lmqnBk+rgHqO7/iDn6KfY4JiMxgKGFy/ccCUNg8Wxl
+	YU9mHR7bbERqbp8qHqZrY3X+d4+2KDX//ho2wNhmkG6RSoMV37F2WrKaZw6r2XcHSox1Igiqep9
+	lgQrlsEJ8h+0o3+xOHjrh3lDmklfYvutWQMv3/bmtDziompH2xNyA90L0MOsO32B6A0x7mWC20D
+	ogJzp3B+YJ60EQhMUDjd1UU/+z4pcBTflwaI4bWTYr9Tf8EvQyMvZV3PJt8zEelFCau+DVA6ICG
+	f8bmFRL9Io+z2HRKt1IgjloUqB0Nql15juUhfDUz6Dv8Y3U7pDcBHyTotW1V1YlC+jXTtlf9Hn7
+	lxTz6psySiqJsIdKcZn0agZu7/DjwOm0QkE56JIKe8WA==
+X-Google-Smtp-Source: AGHT+IHgP5DCzHvE6SO4N1lFVjDv8DtU6WnU3jJ+cYRcK8WstcVTQd3mvnU0hua09p7ZKtgr1B4r3Q==
+X-Received: by 2002:a05:6a21:e097:b0:33e:561b:fb22 with SMTP id adf61e73a8af0-353a405e5f5mr6660241637.50.1762684391533;
+        Sun, 09 Nov 2025 02:33:11 -0800 (PST)
+Received: from T179DVVMRY.bytedance.net ([2001:c10:ff04:0:1000:0:1:5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17b0c4sm8332943b3a.48.2025.11.09.02.33.05
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 09 Nov 2025 02:33:11 -0800 (PST)
+From: Liangyan <liangyan.peng@bytedance.com>
+To: peterz@infradead.org,
+	mingo@redhat.com
+Cc: acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	james.clark@linaro.org,
+	bigeasy@linutronix.de,
+	zengxianjun@bytedance.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Liangyan <liangyan.peng@bytedance.com>
+Subject: [PATCH] perf/core: Fix pending work re-queued in __perf_event_overflow
+Date: Sun,  9 Nov 2025 18:32:53 +0800
+Message-Id: <20251109103253.57081-1-liangyan.peng@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-145)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027200547.1038967-1-markus.probst@posteo.de>
- <DDVLMBC40199.2BVFYHDGQP4Q4@kernel.org> <cf50c6db2106a900f2b9b3e11e477617d8cbb04a.camel@posteo.de>
- <CANiq72nhhji-cz2T2Cg9y5AwUwcc9q1Hd=-6J=6TafaxcHZHeA@mail.gmail.com> <d0f1effa5352959191ea8525963e84a832026dee.camel@posteo.de>
-In-Reply-To: <d0f1effa5352959191ea8525963e84a832026dee.camel@posteo.de>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 9 Nov 2025 11:25:03 +0100
-X-Gm-Features: AWmQ_blh3zXPBDBa2xOppsa0rLUtvjo_85ItJVX54L8bAP5DoouwDP0v002pXaE
-Message-ID: <CANiq72mmb7oH_3bj8_EwMA8RGg6M9TjWj+ebbaEQV-RxLx1iBw@mail.gmail.com>
-Subject: Re: [PATCH v7 0/2] rust: leds: add led classdev abstractions
-To: Markus Probst <markus.probst@posteo.de>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Leon Romanovsky <leon@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 8, 2025 at 3:49=E2=80=AFPM Markus Probst <markus.probst@posteo.=
-de> wrote:
->
-> Could you please clarify if there would be other responsibilities to it
-> than code reviews and adapting the code to breaking changes from the
-> LED Subsystem (I assume I will be notified in that event).
+We got warning below during perf test.
+[  467.100914] [      T1] WARNING: CPU: 0 PID: 1 at kernel/events/core.c:5147 put_pmu_ctx+0x2ef/0x3c0
+[  467.107702] [      T1] CPU: 0 UID: 0 PID: 1 Comm: systemd Kdump: loaded Tainted: G            E       6.18.0-rc4-dirty #114 PREEMPT(voluntary)
+[  467.109835] [      T1] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1
+[  467.111027] [      T1] RIP: 0010:put_pmu_ctx+0x2ef/0x3c0
+[  467.122081] [      T1] Call Trace:
+[  467.122463] [      T1]  <TASK>
+[  467.124822] [      T1]  __free_event+0x337/0xa50
+[  467.125306] [      T1]  perf_pending_task+0x10f/0x3b0
+[  467.125824] [      T1]  task_work_run+0x140/0x210
+[  467.127413] [      T1]  exit_to_user_mode_loop+0x10e/0x130
+[  467.127965] [      T1]  do_syscall_64+0x26d/0x2e0
+[  467.128453] [      T1]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  467.129025] [      T1] RIP: 0033:0x7f01d22349ca
+[  467.135157] [      T1]  </TASK>
 
-It depends on the case, e.g. if the LED maintainers prefer that you
-manage your own tree and send PRs to them.
+A race condition occurs between task context and IRQ context when
+handling sigtrap tracepoint event overflows:
 
-But, generally speaking, a kernel maintainer takes care of a few more
-things, e.g. triaging bugs, fixing issues, tracking patches, deciding
-which releases a patch should go into (backporting), etc. Some details
-at:
+1. In task context, an event is overflowed and its pending work is
+   queued to task->task_works
+2. Before pending_work is set, the same event overflows in IRQ context
+3. Both contexts queue the same perf pending work to task->task_works
 
-    https://docs.kernel.org/maintainer/feature-and-driver-maintainers.html#=
-responsibilities
+This double queuing causes:
+- task_work_run() enters infinite loop calling perf_pending_task()
+- Potential warnings and use-after-free when event is freed in
+perf_pending_task()
 
-This is not meant to discourage you, of course -- being a kernel
-maintainer is a fairly unique experience. Now, how much it is wildly
-varies depending on what code it is, e.g. how many changes go through
-the C side, how many users/callers you have etc.
+Fix the race by disabling interrupts during queuing of perf pending work.
 
-I hope that helps!
+The calltrace of re-queuing pending work is something like below.
+[  466.979877] [      C0] CPU: 0 UID: 0 PID: 1 Comm: systemd Kdump: loaded Tainted: G            E       6.18.0-rc4-dirty #114 PREEMPT(voluntary)
+[  466.979889] [      C0] Tainted: [E]=UNSIGNED_MODULE
+[  466.979892] [      C0] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1
+[  466.979897] [      C0] Call Trace:
+[  466.979909] [      C0]  <IRQ>
+[  466.979913] [      C0]  dump_stack_lvl+0x88/0xb0
+[  466.979924] [      C0]  __perf_event_overflow+0xb4f/0xcb0
+[  466.979972] [      C0]  perf_swevent_event+0x230/0x340
+[  466.979980] [      C0]  perf_tp_event+0x412/0x910
+[  466.980355] [      C0]  perf_trace_run_bpf_submit+0x103/0x190
+[  466.980363] [      C0]  perf_trace_kmem_cache_alloc+0x156/0x1b0
+[  466.980374] [      C0]  kmem_cache_alloc_noprof+0x214/0x600
+[  466.980383] [      C0]  __alloc_object+0x2f/0x2d0
+[  466.980392] [      C0]  __create_object+0x22/0x90
+[  466.980402] [      C0]  kmem_cache_alloc_node_noprof+0x39d/0x620
+[  466.980419] [      C0]  kmalloc_reserve+0x167/0x280
+[  466.980428] [      C0]  __alloc_skb+0x12e/0x330
+[  466.980466] [      C0]  napi_alloc_skb+0x147/0x270
+[  466.980473] [      C0]  page_to_skb+0x171/0xaa0 [virtio_net]
+[  466.980498] [      C0]  receive_buf+0x7c9/0x3ae0 [virtio_net]
+[  466.980637] [      C0]  virtnet_poll+0xb98/0x3160 [virtio_net]
+[  466.980749] [      C0]  __napi_poll+0xb0/0x5c0
+[  466.980756] [      C0]  net_rx_action+0x416/0xbb0
+[  466.980809] [      C0]  handle_softirqs+0x186/0x5d0
+[  466.980818] [      C0]  __irq_exit_rcu+0x13f/0x180
+[  466.980826] [      C0]  common_interrupt+0x7a/0xa0
+[  466.980834] [      C0]  </IRQ>
+[  466.980836] [      C0]  <TASK>
+[  466.980839] [      C0]  asm_common_interrupt+0x22/0x40
+[  466.980846] [      C0] RIP: 0010:delay_tsc+0x3a/0xa0
+[  466.980854] [      C0] Code: 44 8b 05 ad 59 90 02 0f 01 f9 66 90 48 c1 e2 20 48 89 d7 48 09 c7 eb 21 65 ff 0d 91 59 90 02 74 57 f3 90 65 ff 05 86 59 90 02 <65> 8b 35 83 59 90 02 41 39 f0 75 28 41 89 f0 0f 01 f9 66 90 48 c1
+[  466.980862] [      C0] RSP: 0018:ff110001009477e0 EFLAGS: 00000283
+[  466.980869] [      C0] RAX: 000000fea17a6aa9 RBX: ff11000100a8c500 RCX: 0000000000000000
+[  466.980874] [      C0] RDX: 000000000026df92 RSI: 0000000000000000 RDI: 000000fea1538b17
+[  466.980878] [      C0] RBP: ff11001b3a03bb20 R08: 0000000000000000 R09: 0000000000af7a2e
+[  466.980883] [      C0] R10: ff1100010093cc87 R11: 000000006a14397b R12: 1fe2200020128f03
+[  466.980887] [      C0] R13: ff11000100a8c64c R14: ff11000100a8c600 R15: ff11000100a8c82c
+[  466.980894] [      C0]  __perf_event_overflow+0x783/0xcb0
+[  466.980937] [      C0]  perf_swevent_event+0x230/0x340
+[  466.980944] [      C0]  perf_tp_event+0x412/0x910
+[  466.981200] [      C0]  perf_trace_run_bpf_submit+0x103/0x190
+[  466.981212] [      C0]  perf_trace_kmem_cache_alloc+0x156/0x1b0
+[  466.981223] [      C0]  kmem_cache_alloc_noprof+0x214/0x600
+[  466.981232] [      C0]  __alloc_object+0x2f/0x2d0
+[  466.981241] [      C0]  __create_object+0x22/0x90
+[  466.981251] [      C0]  __kmalloc_cache_noprof+0x405/0x640
+[  466.981283] [      C0]  kmem_cache_free+0x18a/0x630
+[  466.981300] [      C0]  __fput+0x5c4/0xa70
+[  466.981310] [      C0]  fput_close_sync+0xf2/0x1f0
+[  466.981336] [      C0]  __x64_sys_close+0x88/0xf0
+[  466.981344] [      C0]  do_syscall_64+0x60/0x2e0
+[  466.981351] [      C0]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  466.981357] [      C0] RIP: 0033:0x7f01d22349ca
+[  466.981399] [      C0]  </TASK>
 
-Cheers,
-Miguel
+Fixes: c5d93d23a260 ("perf: Enqueue SIGTRAP always via task_work.")
+Reported-by: Xianjun Zeng <zengxianjun@bytedance.com>
+Signed-off-by: Liangyan <liangyan.peng@bytedance.com>
+---
+ kernel/events/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index cae921f4d137..6c35a129f185 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -10427,12 +10427,14 @@ static int __perf_event_overflow(struct perf_event *event,
+ 		bool valid_sample = sample_is_allowed(event, regs);
+ 		unsigned int pending_id = 1;
+ 		enum task_work_notify_mode notify_mode;
++		unsigned long flags;
+ 
+ 		if (regs)
+ 			pending_id = hash32_ptr((void *)instruction_pointer(regs)) ?: 1;
+ 
+ 		notify_mode = in_nmi() ? TWA_NMI_CURRENT : TWA_RESUME;
+ 
++		local_irq_save(flags);
+ 		if (!event->pending_work &&
+ 		    !task_work_add(current, &event->pending_task, notify_mode)) {
+ 			event->pending_work = pending_id;
+@@ -10458,6 +10460,7 @@ static int __perf_event_overflow(struct perf_event *event,
+ 			 */
+ 			WARN_ON_ONCE(event->pending_work != pending_id);
+ 		}
++		local_irq_restore(flags);
+ 	}
+ 
+ 	READ_ONCE(event->overflow_handler)(event, data, regs);
+-- 
+2.39.3 (Apple Git-145)
+
 
