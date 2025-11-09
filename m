@@ -1,118 +1,122 @@
-Return-Path: <linux-kernel+bounces-892021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04DDC441B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:00:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C6CFC441BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:02:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C15E4E6808
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:00:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6AEC24E45C3
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDE82F83A7;
-	Sun,  9 Nov 2025 16:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146D12FE079;
+	Sun,  9 Nov 2025 16:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pUF3qlqZ"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g7EvVQM0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54A1A55
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 16:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F351CEAC2;
+	Sun,  9 Nov 2025 16:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762704042; cv=none; b=WnYvGizKzCMRsLy41JTWt0faKk9NWE8HxJYG5806V0GBDOanWyx6j0Km7oMlMCmkTx35cKvJNzS7+zFJXMV0+DfKRvUbLLaP1yeSb2AuVuD0VOYz0zE4RBjZJ4IQ7msW8PBJ6Ndv//1TuO83Ct6KDdfiwhGW4IbjyKoGv3bQPJA=
+	t=1762704151; cv=none; b=Xbqfkm0oIK6z+pF4VvJnR+d80LHu32bGnqVVBIhoVNQVOBncFaWKuK3l2ynLPl/ycoJfF+T1t2oM4rflEVzI4eKmdArIXN7DK/u1YmKEur9SCFZLlFEyYfdFxZyu9KrL8Dnx6EiGvtI9Z9Gn1PKPCXFAlmtcSizqvn2XF1OLnXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762704042; c=relaxed/simple;
-	bh=lZvV70kTqsZQewiAUaldYTCOHiC89W73BB0Zkoo7nrA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=q1UbppIFqsAigpEPW+ScnHVytxurlTeRfRBXxG74kuJARaN8bdBG8IVoRzyJzOtZ8MSZqqg5xH1UFtWDAunYt5Pzh+oj62k7StT1vFO50lxN+c0tBe25EG25Fo/Ms6k5gNfcG1t2+RdvpW9sJsPHkqTDHjqLZariMLlJ/OOKNMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pUF3qlqZ; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7a4c4eeeef2so4342285b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 08:00:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762704040; x=1763308840; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=i2OzXeKNneGABFNBhjLRDYq8qC6GSQyDKseWAtysGpU=;
-        b=pUF3qlqZk+bQRwiQTVO54Ss0sM+lu+19vHzk29ygkEMIBp5mAo+sdoMMlYrc9+Kk5y
-         fDCQn867V9kDbXU7swUZMC8SEFrHCJVDgb7RpnWD6I392wcZAWpV8HvnvfNKjiR/PFKD
-         bUrDRd/LdjQNu76JCjXwQbRSwowxSiMclH1vozkRnDe8L8ZTWWI433u9gcyRh0lkW2J6
-         dItcBR0zwj+J5+p4wjeW6Jb6hMZhrajCz02/PGrt5nUO6pGnlehcUPlyHhEGE6NZpGum
-         UpLVpad8pgGbxYA5SYm1TP/it0isJ9czU1Dk2SNWbdw7cCP0GZaL7faWKhCN+IpYSAfY
-         hQyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762704040; x=1763308840;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i2OzXeKNneGABFNBhjLRDYq8qC6GSQyDKseWAtysGpU=;
-        b=X1jOvsnjDD/B8AatGjHxkhnA5rw//f1tlqfNArMQgZNrCSD9h5Pv6Qi5WXOc/hajqz
-         No3GHudyi1Mqtup5qCwbEGCeb0LDwIIUdPaO6/VWzgh6B0omxT5xbXO8XvCsFhVoL4Oq
-         eSTjEqe9DTuHbaMFbID23lDmRwt3D1sd0lfYM5lDWjpyKN1CyynSTIC8UiNNS22d/Zei
-         EEZDc/+cgwlVuJjg1xRW3wTShITte6cKGL+Z3foxqbkx0jlAgEod0NHhVZeprqwrBQgX
-         inSHpzQ/FRKsn/86e+84tMXVp1qbbBIDZprXftSGg9PXRI0xqFimVPl3fQN+0DUGgzSA
-         GxEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnPQBht1r2VRuQB96JZqMi4BB7L/kCAQsPe9muPwTEirODXzUvtVLoeu7/byA6lhelQPcPVVV2ezdVe6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs2UhrKK2K36Lkw0gSNhgzli2vwVPfsrmrfeKI1Q6hlUqjSaNK
-	f7Y/R6hwS7Yx7XA39XUKkC0Fn0MkMseOTosP0gH9apzoqyL9XTQWvivaUJGd5VgPJNonnCGE+ce
-	sab5dbHaTEEE92w==
-X-Google-Smtp-Source: AGHT+IGwLWlMLyiX2l3NxY80lDvLEsez9GNj+dl7otW1z0CVKx1+M4K+OZc+6FIM3t44/6n6jbMNUetsoYmnPQ==
-X-Received: from dlbeg37.prod.google.com ([2002:a05:7022:fa5:b0:119:49ca:6b93])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:6a2c:b0:2be:81e3:1124 with SMTP id adf61e73a8af0-3539f99f2b0mr7810074637.2.1762704040038;
- Sun, 09 Nov 2025 08:00:40 -0800 (PST)
-Date: Sun,  9 Nov 2025 16:00:35 +0000
+	s=arc-20240116; t=1762704151; c=relaxed/simple;
+	bh=akRYaQ8oQc0GEO6lBbgLh4RrTlk2tsQwvjYanGUrRCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=noIkZ4yEWq3625Ns3wEtJ+NTM6mugTlSSQMIpJqT2DmD5uaboN5FUpLkpQ2icC9Cvm/XY7KmH272r5FtU3y7t0J7WAmCpkq1KjQnUNMGZI2rCdzFGkXbw08MihucpQ6N7rmJBLZYn/x4/y6oEwpa8/1MrI7OhUQjsbaucqLS7Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g7EvVQM0; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762704150; x=1794240150;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=akRYaQ8oQc0GEO6lBbgLh4RrTlk2tsQwvjYanGUrRCs=;
+  b=g7EvVQM0Li8ySqCj2p8sJgGVTXQdscZnTCaOT52lx7rTmOYZjZ8w1YaC
+   eB0bW4SO8RIjF+BuLjH1rUb0zwp5ej5ebSmjhMcfqeA7cKJwCuxri0VCP
+   F8gH/ZBvbfqxQRYtZ3qL6ouI3KucqeYrZ+BOVeCopO8Xwz2Ku06622m16
+   vUaM1cMGvdUA0BxsJ0ofYBtls0GgLc+Cm8tMSxOHSlCc2EezTOn+boCnl
+   dS2k13wkRt16KVlSgzZPY18gHbUFmh1d9znEm7a/ugxXMk0o+7Le6x5xH
+   AWQdfQwFk+P1WQzSDO5LGa4+Iqj83wfq+YTWw0H7ydUX/nX+OrDx7WfuO
+   w==;
+X-CSE-ConnectionGUID: T646Ahs7TpKU10Ubl7eY6g==
+X-CSE-MsgGUID: j2Rl+PPcRzuG1iinCEEZvQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="75882990"
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="75882990"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 08:02:29 -0800
+X-CSE-ConnectionGUID: 1qK6HE27TmeR+1ZnoGsazQ==
+X-CSE-MsgGUID: OTZj4hbkSaKJBg3C2D/s/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="225734364"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.185])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 08:02:27 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vI7s0-000000073nB-31kB;
+	Sun, 09 Nov 2025 18:02:24 +0200
+Date: Sun, 9 Nov 2025 18:02:24 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Antoni Pokusinski <apokusinski01@gmail.com>, jic23@kernel.org,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] iio: mpl3115: add threshold events support
+Message-ID: <aRC7EPHXEtcwkGak@smile.fi.intel.com>
+References: <20251105095615.4310-1-apokusinski01@gmail.com>
+ <20251105095615.4310-3-apokusinski01@gmail.com>
+ <aQ1Rdcbi3e8lzOvM@debian-BULLSEYE-live-builder-AMD64>
+ <20251107220106.ihk6e46paxmyfqgg@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
+ <aQ-UfmTkRX75BOfg@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251109160036.643864-1-cmllamas@google.com>
-Subject: [PATCH] checkpatch: ignore removed lines in comment detection
-From: Carlos Llamas <cmllamas@google.com>
-To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
-	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Carlos Llamas <cmllamas@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQ-UfmTkRX75BOfg@debian-BULLSEYE-live-builder-AMD64>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The comment detection logic in ctx_locate_comment() can be confused by
-removed lines in a patch. When a removed line is encountered, any
-previously detected comments are ignored.
+On Sat, Nov 08, 2025 at 04:05:34PM -0300, Marcelo Schmitt wrote:
 
-For example, in the following change checkpatch fails to detect the
-existing comment and reports: "WARNING: data_race without comment".
+...
 
-         /* explanation */
- -       if (data_race(priv->init))
- +       if (data_race(priv->init) && bytes)
-                 break;
+> > > > +		if (val < 0 || val > U16_MAX)
+> > > Alternatively, could use in_range() for the check.
+> > > 
+> > > > +			return -EINVAL;
 
-Fix this by explicitly ignoring any removed lines when looking at the
-context. This ensures that comments are correctly associated to the
-added lines.
+,,,
 
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- scripts/checkpatch.pl | 1 +
- 1 file changed, 1 insertion(+)
+> > > > +		if (val < S8_MIN || val > S8_MAX)
+> > > this could also use in_range().
+> > > 
+> > > If you opt for the macro,
+> > > #include <linux/minmax.h>
+> > >
+> > I see that the in_range() macro operates only on unsigned values, so
+> > placing it here would be wrong I guess. In order to keep the style
+> > consistenc in this function, I'd keep both checks as "val < x || val > y"
+> > 
+> Ah, good point. Okay, no objection. 
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 92669904eecc..c4432f88c58f 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -1990,6 +1990,7 @@ sub ctx_locate_comment {
- 	for (my $linenr = $first_line; $linenr < $end_line; $linenr++) {
- 		my $line = $rawlines[$linenr - 1];
- 		#warn "           $line\n";
-+		next if ($line =~ m@^-@); # skip removed lines
- 		if ($linenr == $first_line and $line =~ m@^.\s*\*@) {
- 			$in_comment = 1;
- 		}
+
+Actually we need something like in_the_range() or so which takes the min/max pair instead of start-end. And make it work for any signdness.
+
+> > > > +			return -EINVAL;
+
 -- 
-2.51.2.1041.gc1ab5b90ca-goog
+With Best Regards,
+Andy Shevchenko
+
 
 
