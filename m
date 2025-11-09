@@ -1,103 +1,152 @@
-Return-Path: <linux-kernel+bounces-892066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E179C44461
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:26:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01805C4448B
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:32:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE341888CB7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:27:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D3E54E7223
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B939B307AC4;
-	Sun,  9 Nov 2025 17:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D46306B18;
+	Sun,  9 Nov 2025 17:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXG8AE28"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMg8OIHE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BB3306B01;
-	Sun,  9 Nov 2025 17:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FCE305E3A;
+	Sun,  9 Nov 2025 17:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762708732; cv=none; b=Iws77et4eIqxF/LZfBJS4ixsXum8JV39ZMbzyINdN2HB5pPn4d9vCwnYq/6vwmVVxfuDfJeJe9HW/mqZ4FkrtHG4RKNAUupgmkMSej94QJkXyaEYOvjAWT9mXPr8SPOOaePHrh6eQJzIDmU/aoq/cf7hzqisukwdMPv42+JZ0X4=
+	t=1762708958; cv=none; b=lq8fBSR3uITXAsuCGIJGQnefgNgLiahzyGEN1y3FOUFrggY9/P0hwmHQj2AJ0zCSl44JaQzJBiWNSIrTQhYdA5Di6RKZ1j8qROZFyJkrDCBg08MEpJoH04UEg2cCKpkze4NRDDrACaPm/ZfGxsqL5YGvgXPaHqNeGNZKB8yAAlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762708732; c=relaxed/simple;
-	bh=nkg22z2ppe49/uZ19yN89Sdc29GKykFNpzXJ4F3iA/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e2HNlHjDOZ4b8+ABLZA2dMebKuGRT1xpfPA/lSjVr+8yRhqU9iX68RxlJHChW5pJdrKkEXVz5EvcbK/QDBFe6laL+xRoH2zpS03oDOCRkdGCQCLeun0QbhXzRnoKDEPh28ZE0a/MkNiC71jXKVrmxw858qIOv2Gpquf1awnIenE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXG8AE28; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24ECDC116B1;
-	Sun,  9 Nov 2025 17:18:49 +0000 (UTC)
+	s=arc-20240116; t=1762708958; c=relaxed/simple;
+	bh=A5s0fFD+mU9Sqbg0aCjZQdmRQywvhDPbuhdhAqZW0M8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eOuOrbKZWDDmlsbWSVUP9tJu4KHq1sRdFvktR8vFRCqKXf52vR17/Np95RViC2pHjoYJ43x/ryvOjalfGNxEh3pTGaiPPT1MCQ8/ll47QtRDXx11oGZ6dVhMmsQwsYDxpxHAInYueKEY6XJ2PQ4C2mRoOANybkhxAxEL/mma7+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMg8OIHE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03EE4C19422;
+	Sun,  9 Nov 2025 17:22:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762708730;
-	bh=nkg22z2ppe49/uZ19yN89Sdc29GKykFNpzXJ4F3iA/M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eXG8AE28GKIpIYZIwueusJtwfyOJlBocHS+VPXjIcCGWTX93woRqN4kaFecAg5WJT
-	 n3weM/e9nncrJeWTPI+yymUok3KRorbpaBBJAIapsehImnSrtJNg2bJA5yIjtuc9N1
-	 9/QzCOlJtvzcJYpqdEyAhet5UPq2U1AlbXh3WT+FggxSHRAxjSFlrXEi6g3kuYdhQ2
-	 JYyFe6Ow8y0D8ZIx6SiG+1EEFyGFpG9LtNFsWsx1KsYu7JDgXjRnETSrqEmekoBdpr
-	 NTyzvwzcm7xjrswvbN771zsOQf1/rKMrKptKD5NKIpPMLv4QGMCgkUEFYE166wbxai
-	 k2kOF+eC8QE8Q==
-Date: Sun, 9 Nov 2025 18:18:48 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alex Tran <alex.t.tran@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Hans Verkuil <hverkuil+cisco@kernel.org>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] dt-bindings: media: i2c: et8ek8: document missing
- crc as optional property
-Message-ID: <20251109-hospitable-poised-scorpion-bdf833@kuoka>
-References: <20251108233200.2068334-1-alex.t.tran@gmail.com>
+	s=k20201202; t=1762708958;
+	bh=A5s0fFD+mU9Sqbg0aCjZQdmRQywvhDPbuhdhAqZW0M8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nMg8OIHETRfRJCqRrZM7s3ady71xhe51nE75ZWQrOFvzgUH/yaUvNclveAa1wFTlc
+	 iv+0A577qnkCjH9N0OVOuGK9OGGyteBUYG2VApiBQSN/2VDxek0sI5rjZ2OTWz/deA
+	 U551xsJvzhm27drDNsSERlw3FhrCNtzTB2ljMZudj9Klisg956gwKYwXKiiyCcnzqn
+	 Cqn4pZd1zXnAMX90h0WCTJMjGUSGzy/5xcv/Cf0BHcu00xXe0f9ZGaQM26PxwkDpQH
+	 cJZm3Q5IHu4EOdZbaGg0eVOq0FhGT+NDApHNsxljG32NKLsKoAsAVMbbtXJmRBkBGU
+	 1qygTj7+NcX/Q==
+Date: Sun, 9 Nov 2025 17:22:13 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] iio: amplifiers: adl8113: add driver support
+Message-ID: <20251109172213.69d35297@jic23-huawei>
+In-Reply-To: <20251108174357.3748-3-antoniu.miclaus@analog.com>
+References: <20251108174357.3748-1-antoniu.miclaus@analog.com>
+	<20251108174357.3748-3-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251108233200.2068334-1-alex.t.tran@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 08, 2025 at 03:32:00PM -0800, Alex Tran wrote:
-> Add the optional crc property to the endpoint node for the et8ek8 sensor.
-> This property enables CRC checksums for the sensor bus and was added to
-> match the new driver support for reading it from the device tree.
+On Sat, 8 Nov 2025 17:43:53 +0000
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-We do not add bindings because you want this in the driver. Please
-describe the hardware.
-
+> Add support for adl8113 10MHz to 12GHz Low Noise Amplifier with
+> 10MHz to 14GHz bypass switches.
 > 
-> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Hi Antoniu
 
-Your patchser has broken threading. There is no patch #1.
+I think we need to come up with an innovative solution for the "mode".
+I'm not sure what it is yet though so very much looking for some discussion.
 
-> ---
->  .../devicetree/bindings/media/i2c/toshiba,et8ek8.txt        | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/toshiba,et8ek8.txt b/Documentation/devicetree/bindings/media/i2c/toshiba,et8ek8.txt
-> index 8d8e40c56..5fd30f59b 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/toshiba,et8ek8.txt
-> +++ b/Documentation/devicetree/bindings/media/i2c/toshiba,et8ek8.txt
-> @@ -30,6 +30,12 @@ Endpoint node mandatory properties
->  - remote-endpoint: A phandle to the bus receiver's endpoint node.
->  
->  
-> +Endpoint node optional properties
-> +---------------------------------
+thanks,
+
+Jonathan
+
+> diff --git a/drivers/iio/amplifiers/adl8113.c b/drivers/iio/amplifiers/adl8113.c
+> new file mode 100644
+> index 000000000000..8c234f0a1b6a
+> --- /dev/null
+> +++ b/drivers/iio/amplifiers/adl8113.c
+> @@ -0,0 +1,213 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * ADL8113 Low Noise Amplifier with integrated bypass switches
+> + *
+> + * Copyright 2025 Analog Devices Inc.
+> + */
 > +
-> +- crc: Enable CRC checksums.
+> +#include <linux/array_size.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/sysfs.h>
 
-Looks like SW property, so not really suitable for bindings.
+Not sure if this file is being used.  It is rare to see it needed in a modern drive.
 
-Also, no changes to TXT bindings are accepted, so first this would have
-to be converted to DT schema.
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/slab.h>
+> +#include <linux/sysfs.h>
 
-Best regards,
-Krzysztof
+> +
+> +static int adl8113_read_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan,
+> +			    int *val, int *val2, long mask)
+> +{
+> +	struct adl8113_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_HARDWAREGAIN:
+> +		switch (st->current_mode) {
+> +		case ADL8113_INTERNAL_AMPLIFIER:
+> +			*val = 14;
+> +			*val2 = 0;
+> +			ret = IIO_VAL_INT_PLUS_MICRO_DB;
+return ...
+
+> +			break;
+> +		case ADL8113_INTERNAL_BYPASS:
+> +			*val = 0;
+> +			*val2 = 0;
+gain of bypass = 1.0 rather than 0.0 which is open circuit gain.
+
+> +			ret = IIO_VAL_INT_PLUS_MICRO_DB;
+return IIO_VAL_INT...
+
+> +			break;
+> +		case ADL8113_EXTERNAL_BYPASS_A:
+> +		case ADL8113_EXTERNAL_BYPASS_B:
+> +		default:
+> +			ret = -EINVAL;
+return -EINVAL;
+
+Early returns save a line of code here and I general think make
+for much more readable code.
+
+> +		}
+> +		return ret;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
 
 
