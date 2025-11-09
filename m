@@ -1,142 +1,89 @@
-Return-Path: <linux-kernel+bounces-892141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EAEFC446D8
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 21:35:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2435C446FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 21:44:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E255A4E3589
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 20:35:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF2354E298A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 20:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469CF2673AA;
-	Sun,  9 Nov 2025 20:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b7nyoVY1"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94620223DFF;
-	Sun,  9 Nov 2025 20:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A7326B0B3;
+	Sun,  9 Nov 2025 20:43:57 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FCF1FDA;
+	Sun,  9 Nov 2025 20:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762720501; cv=none; b=nkRer9bQ4bbXhB7TbWHwvcrUZU0N/t2c+ZD3HwXVqMqkOvfVXjL3oZ1OSohv8lkJ4SNRBsyubq2B+C3fuRLC4r0M4L5YM1JWinHFX70ea9jBodx9qQA2se4gn+kIwkltY2gKSnOBP11wmGktAQ0EYQcdMHLRx1svYUik4sH8rFE=
+	t=1762721036; cv=none; b=fJcgIcrKWtTF2nHnbMr+Y+jTQEJF7eqGLqQ0om+U5yqe5f1+V3QXTTCvcYLhKdwXN3cbHzNw+ZS/p/iftzQnYw7BgeefeRKWSW1wuuEXnuWDDZeNUPzJ7mKh7PSt1ZSk3vRH86gGRxa4NM6lX1OrZKLYcvVF61zTv/IAPHo1dzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762720501; c=relaxed/simple;
-	bh=YhbkijbCIuFlE6JMviZoSxb6GHLt2GDOMb+2CwPXqq0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nelLQ4odA1f2OnPqfJy/W/Z+t4JTG0p0sbWDTsTtF0YKdI6t7cwltnbEYIT/JpI+yPfZH4cM2ZzkIg6CimJu6MpP3tjs29jakUbiOUV4DxPwlUhq0pYoQpOvE7FqYVwPou/K1FNXL4wFOEjcFUbXdGzCnQvlLLd4tl4JEu8Km40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b7nyoVY1; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=ShTQjuBHiYNK8qnH7Zt1aDx2xEWODN4ScD7inlcGEAs=; b=b7nyoVY1ANNKduI/bmDYUgIG61
-	RtWfFSO3Pr2YWQ1Jv6l2sIOT0FpqdtvkcZggLlmZGOUC/OSiyp0h7vMCgLxbnxM3sTXN3/gn2Au6j
-	nH/Lg8RU/iHrfSLWsj41GbrLhf2dYTWiPZ60yQlVQ2u7kUVYRtoCakD9uqw5ZYqAaCXCjTD6eoAuV
-	OFxgIdyWgXn7JMW7oTk/4pWt9u7nBhbQdhEyQmCODRx6TtcVvJ80niMuIBalQMpjMIrEYFWMlXJUW
-	P8KZSvHN661ZVcw2p1w2HplkYXvn14Z48aSIQWrOyb6Ag6q5s0NpFNcTrWtiJ7FhDYN3TSPfO+kea
-	FXkC0JDg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIC7i-00000004MxA-3VSQ;
-	Sun, 09 Nov 2025 20:34:54 +0000
-Message-ID: <a61cafaf-7e09-496b-b940-bc287dfb8b08@infradead.org>
-Date: Sun, 9 Nov 2025 12:34:53 -0800
+	s=arc-20240116; t=1762721036; c=relaxed/simple;
+	bh=rKwOVfN6qIycYLMqowDkjIl0qamT7Mcp5kLtx86YsP8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nl1fQ/nws0w2k5pefwcm7ZVlA9ia89fSeAzXAz3tDVQ0xDjn6QWJ6Xy2QAS3KJEDnAY5FITGXsVZ4y95J+PtDPf8MWtUR2ZH2KoUWiugnEsasyDmqXtvz7MfExihRpJekxMOiDuSVKJhRKDZ8zYHqj9OYo9AFWxe2GcQmIxgNHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 8FA8192009C; Sun,  9 Nov 2025 21:43:52 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 82C5892009B;
+	Sun,  9 Nov 2025 20:43:52 +0000 (GMT)
+Date: Sun, 9 Nov 2025 20:43:52 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: "H. Peter Anvin" <hpa@zytor.com>
+cc: linux-serial@vger.kernel.org, linux-api@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+In-Reply-To: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com>
+Message-ID: <alpine.DEB.2.21.2511090454370.25436@angie.orcam.me.uk>
+References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] kernel-doc: Issue warnings that were silently
- discarded
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
- <87sees73i5.fsf@trenco.lwn.net>
- <90db7fc0-5ce5-4ed4-ac33-18910c37d3d7@infradead.org>
- <aRC5NjhOmuGIpdPA@smile.fi.intel.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aRC5NjhOmuGIpdPA@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
+On Thu, 6 Nov 2025, H. Peter Anvin wrote:
 
+> It seems to me that this may very well be a problem beyond ttys, in which case
+> a new open flag to request to a driver that the configuration and (observable)
+> state of the underlying hardware device -- whatever it may be -- should not be
+> disturbed by calling open(). This is of course already the case for many
+> devices, not to mention block and non-devices, in which case this flag is a
+> don't care.
 
-On 11/9/25 7:54 AM, Andy Shevchenko wrote:
-> On Sat, Nov 08, 2025 at 04:03:15PM -0800, Randy Dunlap wrote:
->> On 11/5/25 10:12 AM, Jonathan Corbet wrote:
->>> [Heads up to Stephen: this change will add a bunch of warnings that had
->>> been dropped before.]
->>> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
->>>
->>>> When kernel-doc parses the sections for the documentation some errors
->>>> may occur. In many cases the warning is simply stored to the current
->>>> "entry" object. However, in the most of such cases this object gets
->>>> discarded and there is no way for the output engine to even know about
->>>> that. To avoid that, check if the "entry" is going to be discarded and
->>>> if there warnings have been collected, issue them to the current logger
->>>> as is and then flush the "entry". This fixes the problem that original
->>>> Perl implementation doesn't have.
->>>
->>> I would really like to redo how some of that logging is done, but that
->>> is an exercise for another day.  For now, I have applied this one,
->>> thanks.
->>
->> I think that this patch is causing a (large) problem.
->>
->> With this patch:
->> $ make mandocs &>mandocs.out
->>
->> Without this patch:
->> $ make mandocs &>mandocsnoas.out
->>
->> $ wc mandocs.out mandocsnoas.out
->>   29544  267393 3229456 mandocs.out
->>   10052   95948 1208101 mandocsnoas.out
->>
->> so it appears that this patch causes lots of extra output.
->> Some of that may be what the patch was trying to do, but
->> with this patch, "mandocs.out" above has lots of duplicated
->> Warning: lines.
->>
->> $ sort mandocs.out | uniq > mandocsuq.out
->> $ wc mandocsuq.out
->>   18012  167689 1994145 mandocsuq.out
->>
->> $ grep -c "^Warning:"  mandocs.out mandocsnoas.out  mandocsuq.out 
->> mandocs.out:25273
->> mandocsnoas.out:10022
->> mandocsuq.out:15252
-> 
-> Yes, that's what Mauro explained, that we may have the dups.
+ FWIW I find using an open flag the most natural way to solve this problem 
+and I disagree with a view that a 50+ year old standard has to prevent us 
+from handling new use cases found as the world has changed.  We do need to 
+comply with the standard for the devices that use it, but I think a flag 
+to opt out is a perfectly sane approach.
 
-OK, I remember something about that...
+ Yes, some hardware has limitations and may have to conclude we can't do 
+anything about it.  Just as, say, we can't choose an arbitrary baud rate 
+with the dz.c driver, because the hardware handled has a 4-bit selector 
+for a set of predefined rates (to stay remotely on topic).  That does not 
+prevent us from handling more flexible hardware in a way that makes full 
+use of its features.
 
->> In mandocs.out above (29544 lines), this line:
->> Warning: ../sound/soc/sprd/sprd-mcdt.h:48 struct member 'dma_chan' not described in 'sprd_mcdt_chan'
->>
->> is found at lines 7 and 29122.
->>
->> So maybe the logging output needs to be repaired sooner
->> than later.
-> 
-> Right! But I'm not familiar with this, so I can help only with testing,
-> and not with real fix development.
+> The best name I came up with was O_NRESETDEV, but it's not something I'm
+> particularly attached to.
 
-Same for me.
+ I'd suggest a generic name such as O_RAW for an agnostic way to express a 
+request not to fiddle with the device in any way regardless of its kind, 
+i.e. for possible reuse with anything.
 
-Thanks.
--- 
-~Randy
+> If the opinion is that this *doesn't* have a scope beyond ttys, then perhaps
+> abusing the O_DIRECT flag for this purpose would be an alternative.
 
+ It seems like a hack to me, but if carefully evaluated we could reuse the 
+bit encoding.  Either way I'd encourage defining a new meaningful name for 
+the new application of the flag, such as one proposed above.
+
+  Maciej
 
