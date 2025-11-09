@@ -1,134 +1,246 @@
-Return-Path: <linux-kernel+bounces-891779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E18C43728
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 03:18:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837FFC43731
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 03:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FE7188A6DC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 02:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FC97188ACED
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 02:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949F61C84DE;
-	Sun,  9 Nov 2025 02:18:43 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421BE33E7;
-	Sun,  9 Nov 2025 02:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229E81D5146;
+	Sun,  9 Nov 2025 02:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="qrbLdV0f"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD18F513;
+	Sun,  9 Nov 2025 02:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762654723; cv=none; b=ZVe1iWld1/zYEVVAIyareKbx5wbUCw7iWe7xn+WuDvszoXFeSSe0pWkqpg/aoK+00rJQqxOonB6E8HSUcVKQ5gLje6QlvXosvyyIWNnXtI0JrdJ+T/ncDc/ySV1/r3s0NcxpGyYkNpCsBupA7z1B5RYxkJ8npPQhPzyFTRO8vgo=
+	t=1762655133; cv=none; b=h4gnwAJOvohFDFL64FGt1apXy19z6x0l24c1IgCmZJmrlLuQmzlChI048AMW39YWngvhy2VnoqUN/4MfNhKyF/gyMrnnleqgQqyJhZxnat8LogRYrVZAXOCB0a49jPpLt0IACBcrOvnzd3SIyib8/whZmmbiVDuZIh7PHLMVuGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762654723; c=relaxed/simple;
-	bh=YXne9CGsS3sZ43i27BTisLoANgIP5WrJgw/qYkxKOrw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yx5FhcM2paV530yD431y6NMcaTC3Rpx6lV1m9Zyxsh42QlWVC/XqxviMufpuB5yKJTlZgp0J2qU890ZONsIoPvhXeDaBX4yrSv7kZ5+MjfJTpsRfPILNETYuL0TW6tlCUoJOnd9bOpXsj7R1mScwB60UDU0aPwGyOas8NmFdnjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.45])
-	by gateway (Coremail) with SMTP id _____8CxrtP2+Q9phdcgAA--.1106S3;
-	Sun, 09 Nov 2025 10:18:30 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.45])
-	by front1 (Coremail) with SMTP id qMiowJBx38Py+Q9p8C0sAQ--.3584S2;
-	Sun, 09 Nov 2025 10:18:29 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Vishal Moola <vishal.moola@gmail.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH V2] mm: Remove unnecessary __GFP_HIGHMEM in __p*d_alloc_one_*()
-Date: Sun,  9 Nov 2025 10:18:17 +0800
-Message-ID: <20251109021817.346181-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1762655133; c=relaxed/simple;
+	bh=Rgo5nak4X6I02glekQA0GQfyQg99yzHmwoA3HpCUfZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CZk6fStXcJckU2abdIXzRab4eQFMWh0ryymjt/9slWo4U8EEefCrtxpjvUC20EjxHB7Tgx7kju8AYWaxgx+yd+Zdl0OeOGH6GLtm6rIdJJvVzuoz3bd+Pp+DMxx5ghYW21novdX/nT1DRBVOppP8RWwzdnsqcOO5pHvQzZ7J/1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=qrbLdV0f reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9484:eba1:36e2:da77:817] ([IPv6:2601:646:8081:9484:eba1:36e2:da77:817])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5A92PQm02588294
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sat, 8 Nov 2025 18:25:26 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5A92PQm02588294
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762655126;
+	bh=OKmldBxuLNu+sCfjVlaEM1Dh5sKcH/ESV3pdB89A6gY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qrbLdV0fDE7La/B43Xa2XIygqBhTNC4LNMdPpTar7Yo1Xm89tzNOpmMGGqmEN+2/6
+	 JcLU/rjIPvCPTzeK22NWazyrbu7cKydU2yV159auDzEb+hyRVREVWoNjcw64o7sOUs
+	 d/90QLUNtrS25fOG1jFJ2v9hFJKKXFPnOyqJP4LNXsipINzX6jrpUwWZHoo6D1vskv
+	 OF2KwIYxsnAn4e1xM1ycI09IyuK9uNczX8yv065sb3pCPT/ilIVvtkIKylqZFvmBQN
+	 IA334CGtSq4IjRHxwvpzrzWtlB1vHWS3CAKvplI6AUA6F/yr7MN3Crxuvbh9L/Uf9L
+	 lsQTvyJ8eJ+cA==
+Message-ID: <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com>
+Date: Sat, 8 Nov 2025 18:25:20 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBx38Py+Q9p8C0sAQ--.3584S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7uw1fGryUXF4rKr1xAr43urX_yoW8Cry8pF
-	s7C3y8X398GFyfWa10yan7Cr17tw45GFW2yF42gFy5Z3W3tw1xGFyDtrW7ZFZrZFZ5ZFW5
-	Wrsxta9xAF1avrcCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcbAwUUUUU
+User-Agent: Mozilla Thunderbird
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: linux-serial@vger.kernel.org, linux-api@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com>
+ <20251107173743.GA3131573@mit.edu>
+Content-Language: en-US, sv-SE
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <20251107173743.GA3131573@mit.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-__{pgd,p4d,pud,pmd,pte}_alloc_one_*() always allocate pages with GFP
-flag GFP_PGTABLE_KERNEL/GFP_PGTABLE_USER. These two macros are defined
-as follows:
+On 2025-11-07 09:37, Theodore Ts'o wrote:
+> On Thu, Nov 06, 2025 at 11:53:23PM -0800, H. Peter Anvin wrote:
+>>
+>> I recently ran into a pretty serious issue due to the Unix/Linux
+>> (mis)behavior of forcing DTR and RTS asserted when a serial port is
+>> set, losing the pre-existing status in the process.
+> 
+> There's a hidden assumption in your problem statement which is that
+> DTR / RTS has a "state" which can be saved when the serial port is not
+> active, where active is one or more file descriptors holding the
+> serial port open.  There may be certain hardware or drivers where this
+> is just not possible, because nothing is defined if the serial port is
+> not active.  It might make sense if you are using a 8250 UART, but not
+> all the world is the National Semiconductor (or clones) UART.
+> 
+> Certainly the "state" will not be preserved across boots, since how we
+> autodetect the UART is going to mess with UART settings.  So
+> *presumably* what you are talking about is you want to be able to open
+> the serial port, mess with DTR / RTS, and then be able to close the
+> serial port, and then later on, re-open the serial port, have the DTR
+> / RTS remain the same.  And it's Too Hard(tm) to have userspace
+> keeping a file descriptor open during the whole time?  (Which is
+> traditionally how Unix/Linux has required that applications do
+> things.)
+> 
+> Is that a fair summary of the requirements?
+> 
 
- #define GFP_PGTABLE_KERNEL	(GFP_KERNEL | __GFP_ZERO)
- #define GFP_PGTABLE_USER	(GFP_PGTABLE_KERNEL | __GFP_ACCOUNT)
+Not really.
 
-There is no __GFP_HIGHMEM in them, so we needn't to clear __GFP_HIGHMEM
-explicitly.
+First of all, obviously virtual serial connections that don't fully emulate
+RS232/422/485 obviously may have other requirements, however, the ones that
+*do* currently have a problem, see for example:
 
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
-V2: Change the subject line as Vishal suggested.
+https://lore.kernel.org/linux-serial/20220531043356.8CAB637401A9@freecalypso.org/
 
- include/asm-generic/pgalloc.h | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+RS232 is rarely used these days with its original purpose, modems (except as a
+virtual port for things like GSM), but the ubiquitousness of the interface
+means it is used for a ton of other things.
 
-diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
-index 3c8ec3bfea44..706e87b43b19 100644
---- a/include/asm-generic/pgalloc.h
-+++ b/include/asm-generic/pgalloc.h
-@@ -18,8 +18,7 @@
-  */
- static inline pte_t *__pte_alloc_one_kernel_noprof(struct mm_struct *mm)
- {
--	struct ptdesc *ptdesc = pagetable_alloc_noprof(GFP_PGTABLE_KERNEL &
--			~__GFP_HIGHMEM, 0);
-+	struct ptdesc *ptdesc = pagetable_alloc_noprof(GFP_PGTABLE_KERNEL, 0);
- 
- 	if (!ptdesc)
- 		return NULL;
-@@ -172,7 +171,6 @@ static inline pud_t *__pud_alloc_one_noprof(struct mm_struct *mm, unsigned long
- 
- 	if (mm == &init_mm)
- 		gfp = GFP_PGTABLE_KERNEL;
--	gfp &= ~__GFP_HIGHMEM;
- 
- 	ptdesc = pagetable_alloc_noprof(gfp, 0);
- 	if (!ptdesc)
-@@ -226,7 +224,6 @@ static inline p4d_t *__p4d_alloc_one_noprof(struct mm_struct *mm, unsigned long
- 
- 	if (mm == &init_mm)
- 		gfp = GFP_PGTABLE_KERNEL;
--	gfp &= ~__GFP_HIGHMEM;
- 
- 	ptdesc = pagetable_alloc_noprof(gfp, 0);
- 	if (!ptdesc)
-@@ -270,7 +267,6 @@ static inline pgd_t *__pgd_alloc_noprof(struct mm_struct *mm, unsigned int order
- 
- 	if (mm == &init_mm)
- 		gfp = GFP_PGTABLE_KERNEL;
--	gfp &= ~__GFP_HIGHMEM;
- 
- 	ptdesc = pagetable_alloc_noprof(gfp, order);
- 	if (!ptdesc)
--- 
-2.47.3
+The standard ESP32 configuration for its serial port is that asserting RTS#
+even for a moment will cause a device reset, and asserting DTR# during reset
+forces the device into boot mode. So even if you execute TIOCMSET immediately
+after opening the device, you will have glitched the output, and only the
+capacitance of the output will save you, in the best case.
+
+The use of RTS# and DTR# as a reset and/or debug mode entry for embedded
+devices is, in fact, extremely common; another example is the Atmel single pin
+reset/debug interface.
+
+Another example is when the device is connected to an RS485 interface: in that
+case asserting RTS# will activate the transmitter, disrupting traffic on the
+bus. The kernel will manage RTS# *once it has been configured*, but until the
+kernel has been told that the port is used to drive an RS485 port, it has no
+way to know.
+
+Furthermore, *even if* the kernel already knew the state and could have
+reported it with TIOCMGET, that state is now lost.
+
+It is not correct that the state cannot be maintained across system reboots
+(without power loss.) The hardware may or may not allow the state to be read
+back (notably, the USB CDC ACM specification, oddly enough, has a
+GET_LINE_CODING command but no GET_CONTROL_LINE_STATE) but again, for *those
+that can* it should be possible. For those that cannot, there won't be any way
+to get valid data to TIOCMGET, but it is still possible to not send a change
+command. Either way, the power up state of write-only devices can generally be
+assumed to be RTS# and DTR# deasserted, not asserted.
+
+(USB is also a bit special because it is normal for the USB host to power
+cycle the device during bus initialization.)
+
+>> It seems to me that this may very well be a problem beyond ttys, in
+>> which case a new open flag to request to a driver that the
+>> configuration and (observable) state of the underlying hardware
+>> device -- whatever it may be -- should not be disturbed by calling
+>> open(). This is of course already the case for many devices, not to
+>> mention block and non-devices, in which case this flag is a don't
+>> care.
+> 
+> I think it's going to be a lot simpler to keep this specific to serial
+> ports and DTR / RTS, because the concept that the hardware should not
+> be changed when the file descriptor is opened may simply not be
+> possible.  For example, it might be that until you open it, the there
+> might not even be power applied to the device.  The concept that all
+> hardware should burn battery power once the machine is booted may not
+> make sense, and the assumption that hardware has the extra
+> millicent(s) worth of silicon to maintain state when power is dropped
+> may again, not be something that we can assume as being possible for
+> all devices.
+
+This is actually a great example! One should be able to open a file descriptor
+to such a device to configure the driver, without needing to power up the
+physical hardware.
+
+However, I intentionally defined this as a best-effort control for two reasons:
+
+1. As you say, the hardware may not be able to do it;
+2. It will take time until a significant set of drivers can implement this.
+
+> If that's the case, if you want to have something where DTR and RTS
+> stay the same, and for some reason we can't assume that userspace
+> can't just keep a process holding the tty device open, my suggestion is to use 
+> 
+> Given that DTR and RTS are secial port concepts, my suggesiton is to
+> set a serial port flag, using setserial(8).  It may be the case that
+> for certain types of serial device, the attempt to set the flag may be
+> rejected, but that's something which the ioctl used by setserial
+> already can do and which userspace applications such as setserial
+> understand may be the case.
+
+setserial (TIOCSSERIAL) and termios (TCSETS*) both require file descriptors,
+so that is not suitable. The 8250 driver, but *not* other serial drivers,
+allows the setserial information to be accessed via sysfs; however, this
+functionality is local to the 8250 driver.
+
+(Incidentally: the only way to find out the type of a tty driver in the
+current Linux kernel is to parse /proc/tty/drivers. This information is
+neither available in sysfs nor via ioctl.
+
+Consider the case of a terminal program wanting to display a list of serial
+ports. Right now, some serial drivers -- notably the generic UART driver --
+will create device nodes for all available minors, exactly so you would be
+able to manually attach a device with TIOCSSERIAL. There is no driver-generic
+way to find out if there is a hardware device configured other than opening
+the device and calling TCGETS or TIOCMGET (depending on exactly what you are
+looking for) and see if you get EIO back.
+
+The problem here really isn't the need for a file descriptor -- file
+descriptors are The Unix Way[TM] to refer to almost any kind of entity after
+all -- but that the act of obtaining the file descriptor -- open -- causes a
+direct action as well as loss of existing state.
+
+Now, we obviously can't disable the classical terminal behavior
+unconditionally -- that would break a whole lot of perfectly valid code.
+
+Using a sysfs attribute is reasonable on the surface of it (and is what the
+patchset linked to above implements) I believe this is the wrong approach,
+because it is modal on the device level, and that makes it racy: one program
+comes in, flips the attribute, then another program comes in and tries to open
+the same device for whatever reason. This opens up at least three possible
+race conditions:
+
+- Process 1 sets the nreset bit;
+- Process 2 opens the device, not expecting the nreset bit.
+
+- Process 1 reads the nreset bit, trying to be a good citizen;
+- Process 1 sets the nreset bit;
+- Process 2 reads the nreset bit, ditto;
+- ... other stuff happens ...
+- Process 1 restores the nreset bit
+- Process 2 restores the nreset bit, incorrectly setting it to 1
+
+- Process 1 sets the nreset bit;
+- Process 2 sets the nreset bit;
+- Process 1 does its work;
+- Process 1 clears the nreset bit;
+- Process 2 opens the device.
+
+
+Oh, yes, let's not forget: you need a file descriptor to lock the device for
+exclusive use.
+
+This is why I believe this:
+
+1. Needs to be atomic with open(), as opposed to tied to per-device state;
+
+2. Likely can have applications beyond the serial port space, and it would
+   be a good idea to have a uniform interface. We can discuss the proper
+   behavior for a device which cannot comply; the best way probably would be
+   to refuse the open and return an error, which would also happen on older
+   kernels without this functionality.
+
+Does this make more sense?
+
+	-hpa
 
 
