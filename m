@@ -1,136 +1,125 @@
-Return-Path: <linux-kernel+bounces-892054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A835C44349
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:06:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F49CC4432E
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:05:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86193B1CAD
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:06:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEC8A3B1A91
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0006130506A;
-	Sun,  9 Nov 2025 17:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B870A3043A4;
+	Sun,  9 Nov 2025 17:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="mbp3x7HN"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MvZrOFX1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AD93043AF
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 17:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDE02FFF8F;
+	Sun,  9 Nov 2025 17:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762707970; cv=none; b=PziHBAHm3UW2xi0VurOvLjAojLlHLwQmX1c/2INO1gHuOpUvlmS5XYO59WeFsJZ48QQ+Dp4ut5XLfxBb0XJBbbWEuK7/tiLTe822LpP9+A95HJqNfK8QIGYkKAgilwZYKmb/wR67euVNoZzP0biKYfKYcJ6TLkGiUz0BysGv8JY=
+	t=1762707951; cv=none; b=G4ehd3dxLNj30zeiZyLzkgQy3xDHP7fn+hl6dcxi4lxy0hFC0MQx6GFA8wrFjdb7ECJm2PHIihLxeLyw2/XktAX6ONqkX3Z4d+VGBA+WAE1M0uRN9uoLjxXyHPh0YAHwnQ5L5QQ2j/eyRsDpRwsIlqb0SFt5TKydiw+AZ4lj95A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762707970; c=relaxed/simple;
-	bh=RhBkr40435qqQR7ennySLZHbqJD8qlvK6xOZ8kA4q/o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lrHf30kczzMD49LiXYCMPsCoV4+c6vq7HK8b7GMbFchwWY0Ri24TZrQIo8ClQWIOcyWm3sD8Y+v8XfN+l7uukpFAT6W1Td65tFOy0VMwllI+kJNy6NzdzLuPKznJHj7Y2GkmiwxvGOdUNTme67G0FDKRTVVBTAPYEwEx1ISf26w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=mbp3x7HN; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1762707965;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8+c2slFEzvpnuvBcD3m7Q9rIW5GkW6bzoQAArBwQCS8=;
-	b=mbp3x7HNQaUSE3tE8uuKBbakcDwLBufkUi3KvKZ96eOfRvOEvr1SMAq/aw+GpWfufFKohC
-	tnBVGD74pj3pgNji84zBhj5FgdFbSS20wUjFA++wdW9Ch/PRG/6YGQa2FLB0OjhDA6T3EF
-	jWDdAIh5076hTOJvyvoUOF8nqiP48m7TgN6jJslczwnSpzaEKynsj0Oegg+tN51CQRnRhV
-	iSrlnA8RrP08AHrq82oLIVjULKBAvykaeJJ+sTgUjyKdd9HfLA1X6sQ1a7riFeLZSyzn9Z
-	fQ/ppQp6PGIZUuBXXeHrckP483ZxmhSd7GYOXExVdF1TVLYpLG3OGEgAuvI2NA==
-From: Diederik de Haas <diederik@cknow-tech.com>
-Date: Sun, 09 Nov 2025 18:05:27 +0100
-Subject: [PATCH 2/2] arm64: dts: rockchip: Move otg-port to controller on
- rk3566-pinenote
+	s=arc-20240116; t=1762707951; c=relaxed/simple;
+	bh=ZalydpZC9sowtVEzmQ+/6gdzAoR4PY0F4g1l2JMGZ3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YCVKXDiIBobzJ83ZmUJpyj+U83aVaZXptVNTgvwjGf6JjoEo+Zrnra1s+7jbCNI1/GjqmuE1aDGCAoK84WQ9jhQK97Ik4AQbZU5jJvu0Jr3nQ1UdSad10dpqHWI+xk6TIsxqc01o6YxEIVZ+W2zldIOd+MbIwtULDeSddrEDEuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MvZrOFX1; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762707950; x=1794243950;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZalydpZC9sowtVEzmQ+/6gdzAoR4PY0F4g1l2JMGZ3E=;
+  b=MvZrOFX17/8+uEFcl/loTVMCkYNHh1HF9NNxSYBgCZTTmhom3C3w/8Wp
+   RvPx72vi9tTrjOUPeUBmGG/D1mYjBK0EeMmP9GCtCYeE1ZT6Q8RkWJ4uY
+   X3s6wB+jobVO//NQlixcbgoR75/H8FHfl+ruiEP4H11W0Gwo9zVW1MwHr
+   GuP4ZF1DLWxYdZE2gSpUQXiGl97YsHf941d6AW5LxnFaZ62dlSnlLVolc
+   SjC1lGXld4rOkJQayz3iUYwlct/vlXRevbLfradmfkD9FZMGkidneGV9W
+   JOE8O2przOcIyV2pgNk8sH7L8noupB9vNaSMDdYJIi/73lfVV8dRug6TN
+   w==;
+X-CSE-ConnectionGUID: HIAxMCAgSSqi0/TpU1QJ+A==
+X-CSE-MsgGUID: B5U1LnRfSp+yCdCHtl+6rA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="75070859"
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="75070859"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 09:05:48 -0800
+X-CSE-ConnectionGUID: huSmQp89Tea5RmNNM7cgMw==
+X-CSE-MsgGUID: lo93QnP1T+KjCwloY495FA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="192875107"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.185])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 09:05:45 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vI8rH-000000074j2-0yag;
+	Sun, 09 Nov 2025 19:05:43 +0200
+Date: Sun, 9 Nov 2025 19:05:42 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ajith Anandhan <ajithanandhan0406@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] iio: adc: Add support for TI ADS1120
+Message-ID: <aRDJ5ugv8xJzbxTW@smile.fi.intel.com>
+References: <20251109141119.561756-1-ajithanandhan0406@gmail.com>
+ <20251109141119.561756-3-ajithanandhan0406@gmail.com>
+ <aRDJexPYkIDoE9nc@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251109-rk3566-pinenote-dt-fixes-upstream-v1-2-ed38d200cc04@cknow-tech.com>
-References: <20251109-rk3566-pinenote-dt-fixes-upstream-v1-0-ed38d200cc04@cknow-tech.com>
-In-Reply-To: <20251109-rk3566-pinenote-dt-fixes-upstream-v1-0-ed38d200cc04@cknow-tech.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Samuel Holland <samuel@sholland.org>
-Cc: hrdl <git@hrdl.eu>, phantomas <phantomas@phantomas.xyz>, 
- Dragan Simic <dsimic@manjaro.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Diederik de Haas <diederik@cknow-tech.com>, 
- stable@vger.kernel.org
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRDJexPYkIDoE9nc@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The 'rockchip,inno-usb2phy' binding's otg-port node does not have a port
-node, so the current definition causes this DT validation issue:
+On Sun, Nov 09, 2025 at 07:03:56PM +0200, Andy Shevchenko wrote:
+> On Sun, Nov 09, 2025 at 07:41:19PM +0530, Ajith Anandhan wrote:
 
-  usb2phy@fe8a0000 (rockchip,rk3568-usb2phy): otg-port:
-    'port' does not match any of the regexes: '^pinctrl-[0-9]+$'
+...
 
-Its purpose was to define the other endpoint for the USB-C connector
-port. The 'snps,dwc3-common.yaml' DT binding does have a port node to
-connect the dwc3 to type C connector with the 'usb-role-switch'
-property. Therefore move the port node to the dwc3 node and add the
-'usb-role-switch' property to it.
-This fixes the above mention DT validation issue.
+> Many are still missing... Please, follow IWYU principle.
+> 
+> > +#include <linux/bitfield.h>
+> > +#include <linux/cleanup.h>
+> > +#include <linux/delay.h>
+> 
+> > +#include <linux/device.h>
+> 
+> Not see why you need this and not
+> 
+> dev_printk.h
+> device/devres.h
 
-The incorrect definition also caused these kernel errors:
+Actually even devres.h is not needed if I did not miss anything.
 
-  rockchip-usb2phy fe8a0000.usb2phy: Failed to create device link (0x180) with supplier port0 for /usb2phy@fe8a0000/otg-port
-  rockchip-usb2phy fe8a0000.usb2phy: Failed to create device link (0x180) with supplier 3-0060 for /usb2phy@fe8a0000/otg-port
+> instead.
+> 
+> > +#include <linux/err.h>
+> > +#include <linux/module.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/spi/spi.h>
+> > +#include <linux/unaligned.h>
 
-With the changed definition, those errors are now also gone.
+...
 
-While at it, remove the 'dr_mode' property as that's already defined in
-rk356x-base.dtsi and there's no point in redefining it.
-
-Fixes: 87a267b4af09 ("arm64: dts: rockchip: Add USB and TCPC to rk3566-pinenote")
-Cc: stable@vger.kernel.org
-Signed-off-by: Diederik de Haas <diederik@cknow-tech.com>
----
- arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
-index 7c65fe4900be..be8076a8e30c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
-@@ -694,8 +694,14 @@ &uart2 {
- };
- 
- &usb_host0_xhci {
--	dr_mode = "otg";
-+	usb-role-switch;
- 	status = "okay";
-+
-+	port {
-+		usb2phy0_typec_hs: endpoint {
-+			remote-endpoint = <&typec_hs_usb2phy0>;
-+		};
-+	};
- };
- 
- &usb2phy0 {
-@@ -704,10 +710,4 @@ &usb2phy0 {
- 
- &usb2phy0_otg {
- 	status = "okay";
--
--	port {
--		usb2phy0_typec_hs: endpoint {
--			remote-endpoint = <&typec_hs_usb2phy0>;
--		};
--	};
- };
+Overall looks much better than previous version.
 
 -- 
-2.51.0
+With Best Regards,
+Andy Shevchenko
+
 
 
