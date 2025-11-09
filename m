@@ -1,152 +1,225 @@
-Return-Path: <linux-kernel+bounces-891988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF61AC44028
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 15:29:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783EFC4405B
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 15:37:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76FEE4E25E1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 14:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7241188BA93
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 14:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D75F2FDC54;
-	Sun,  9 Nov 2025 14:29:44 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AE12FA0EF;
+	Sun,  9 Nov 2025 14:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="JOMxotIX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hwohoQHX"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD3D2D63E5
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 14:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E8B18027;
+	Sun,  9 Nov 2025 14:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762698583; cv=none; b=h290XMyie8/i+2WvuGrka0/qf+kQR2BbPZzwciYYuTRqZ4HKJCCBrM+ityJLa/MO+mg0TY3G5YIMfFAC3S2ay5+BppB23DEwCeyRF3ddwPgxghQdRcw6eWK7l1QdENv98Ps96O3sJ5DzrDlj7PIeKtEHu36UwjnPF6HDHlw529g=
+	t=1762699037; cv=none; b=o6dT1hU1T8vFnnuBXn71UD68U+aFSoC5yo/vMYqtDUqLerqlNnDEi89aWMiZpIYddhrt7UC34msAQC6fp7+XHbK7bhSUCD7SpgpMZtKAnDtkBngH2Rbv38L4BEW3Cz3N5vWDbfrC5IBF3SdKGuftS1fjhymTJqrDHgbGPX4+9Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762698583; c=relaxed/simple;
-	bh=El850s7JwySWKVYInbHEg10TgWEZ3tVf+qoUNbg+B2M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ienuf4CrMNJAl+FEbCGUanHCW3nI1IlumwLtPfQeQkHC1isv7lz/1HKn1i3YIfiCHvrW0OO6vKc5hwwC7O3VoWMxbyPbJ8VlNRri6XG8XgDTxZ53Vb9zmUBfeNH2UF/rtjHezKTdH9DsXPSbxhG+jmti8ItoAEvz2xRqWQylK4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4331d49b5b3so80637945ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 06:29:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762698581; x=1763303381;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vKoh+MOfooAHbWdf4H36yFifk8wqW7vCid63G7HG7ng=;
-        b=wrgeRvNN2ZoB7AMt4CD383efOAVb04RVX4QIVKDS83z9mhqWC9QnnyAJNkuF5tTsO9
-         kM2//CWXWcf/QBiEr9K1l4eHHN1EHaSAioGHGHemn+Cg08/twvzMR8mfJM25fMsfsFLI
-         dq1cY+Qxto0y2ctsiH5ritIfBS+/5TUd6wFJM3oHRu86zJQfTyoX8vB6YyzZBCLy/Mx3
-         0qNR3+TieN7Jizx2ESSThDPA9uqWNZqUvPFYLMLI3Xk1J6//7nGIxXVyBci3LqmwCWO+
-         FXjRqVGFYENcI1inYGkjF+ykREfQ467XkDMEf6oX/PtHolenrPNB1OlqrpHVsSR+4MyF
-         uH8Q==
-X-Gm-Message-State: AOJu0YwnFtuER40NdqnxVhUVpExU+2speqBGVjuaFDbbKGPz9CIoL6PJ
-	An8GmfELgkadPEoikWnljq7nnzJDsRHFJzHXxTy51YJCynkBSUFX/x4vdipQaCulxdLT6LQBlxc
-	6aQLKIJs54t1zdwueHhwszDWPx7w28hzaOd8QeOk2pHfn7IV9apPAZI2g+CA=
-X-Google-Smtp-Source: AGHT+IGDNTjT9KvZMKVXazCOYUzDls3UtwB26vPgk5TncPnCDRBE1MiBU6c4Ng7JSAeP4lTL5TDJn0HBIBqZC/K5aBWxKkbMi434
+	s=arc-20240116; t=1762699037; c=relaxed/simple;
+	bh=y1XzxB4cxLOtgqM9iW/1pwq4IajwoALOAC6J6EHxfq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fmuw0TvDv30Dklh5Tj8YpI+TH96miAm7xKg0RWnQ+2ZWMlEK69WtkVfWwhCnteG1z9DWJ8erZHCSK/4IQCzDBQsnoCIqQwsCs4IE0oc0ATtZjuDff1ck/gkC6kqE6Tcploqus6rybvY4y5Rx1h/dqrfWwCYG1HzgzAd+GlrjmVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=JOMxotIX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hwohoQHX; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 0143E7A0091;
+	Sun,  9 Nov 2025 09:37:11 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Sun, 09 Nov 2025 09:37:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762699031;
+	 x=1762785431; bh=Co862sBr7FxEy0IOO1grCt0h3yVF3T4y2yphEC5DydM=; b=
+	JOMxotIXbwd1gW7ipHxll8LopLXbQ1q8WDOZj/I2nP1Ki/NvZwoYVWVu/JyV75zA
+	W6m7RbuhBEW7dkvLIpY5J9MmOm96ap4GiiijRU9W1PlcX5dmDOkt3z7fWcJkrQBe
+	ichFwfm7b8/dlNZiKpgit01T0xMH5coyyBAAEt9Rgcnt5OjbOOvEnWnf2wthY+8e
+	khMosXvMdSYdbaUCkZ50itfw8WJtUywVKHRmzyvsM4W4WxK8DoRhpOzBh1ZNlw9k
+	6CgdBU3w6icacCesECiNWwzQlQlz0WJAUNN5iDFXeYFbw733xavKZgNB2nDQrCnS
+	9378y7KmxMWW3Bv6T6Uxxg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762699031; x=
+	1762785431; bh=Co862sBr7FxEy0IOO1grCt0h3yVF3T4y2yphEC5DydM=; b=h
+	wohoQHX//ETZURmSoe1XPqSPa+DHwQKVNYA2GRuAXu6GMnt/y7CsOTea86uZhowX
+	czGqiXLyJTBeGPgsK3iny7/ZhI7WcZAUrmaIhTtTwDSQV1zyYD+IjMYKTkbILJgG
+	fiBvotG7BNzG5/UbYy7rKeuGihrauUQNAY6WWlZvbjyOq272ImnGbaAq6ll0PNSV
+	N9LimnO7bG61Mk8aLKSv3u61hQL29n/LznR+Wh2KazpjGkTBOPZGwydmT5VGWkvm
+	is3QUL4svgHw82QYrEm9NpJE75t0nyB9J4NgqCcqyL6fTMJfCnJ2SOR5HLycoAjC
+	Jvc8pZYm2yIMskmhI8Y9w==
+X-ME-Sender: <xms:F6cQaUNB5w-SzXJmXWoXOlndJs5NMWimOe3hHLbrFzmUj7atOpr2uA>
+    <xme:F6cQaURryrHBIyqEl74N3sNyINH-dP5NqZg2xygTPdZ8iy7lCm0h9gAIogfsEPbG-
+    stmhD1WE-w-H80P3pALrV5vDD7jhoX5cyaDzTWMGwcuBpon4wH6Xg>
+X-ME-Received: <xmr:F6cQaSiTtNCOObU45dLpJBgVodRdGEFMT3BmmqKhScmXAKM6ZtNZ3E5HMXKSPKRqQMevNsbdq6SRCPcmFTn7vj0B365IE8M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduleehieekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgr
+    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvsh
+    grshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeejveehuddtgfet
+    uedtffefheehtdefleejgeffudettddtveffudevudelvddugeenucffohhmrghinheplh
+    hinhgrrhhordhorhhgpdhfrggtvggsohhokhdrtghomhdpthifihhtthgvrhdrtghomhen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklh
+    grshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvpdhn
+    sggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghnih
+    gvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtohepthhglhigsehl
+    ihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheike
+    hkrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehg
+    lhhiuggvrhdrsggv
+X-ME-Proxy: <xmx:F6cQad-2KAEjouHkJAeOj4NF6ibmVLNjinbp20U2nWk_HAc7gWvMIw>
+    <xmx:F6cQaZGtPhin_DWOD187YHctEHstsdVLZ2isJmkczA9mG6KOQ2pBvw>
+    <xmx:F6cQaQkxGmFnOoAnxnfwKEM1HjT5ZB_x6-NCDiZ_FnGPvbybDUOASA>
+    <xmx:F6cQadbSxM2s3xpvYez9EE1lLQ-JsAtxHI3F_dqyBMHu6lpiqtjTMw>
+    <xmx:F6cQaRzCX80OZwPqlnoWtHFxf_kjERE0crmU4Zn_TzIX-03DO3LEgIl_>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 9 Nov 2025 09:37:10 -0500 (EST)
+Date: Sun, 9 Nov 2025 15:37:08 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v2] clocksource/drivers/sh_cmt: Always leave device
+ running after probe
+Message-ID: <20251109143708.GD4126953@ragnatech.se>
+References: <20251016182022.1837417-1-niklas.soderlund+renesas@ragnatech.se>
+ <c07ae384-4042-43f4-b876-7207b72260f7@linaro.org>
+ <20251105160627.GA3684509@ragnatech.se>
+ <ae167c7f-c32f-422b-9eb2-72889cbafef0@linaro.org>
+ <20251105183242.GB3684509@ragnatech.se>
+ <c4377971-173a-4af9-8566-24e5860787ae@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:178c:b0:433:39bc:2f6e with SMTP id
- e9e14a558f8ab-43367e69755mr76375275ab.26.1762698581640; Sun, 09 Nov 2025
- 06:29:41 -0800 (PST)
-Date: Sun, 09 Nov 2025 06:29:41 -0800
-In-Reply-To: <68eb4077.050a0220.ac43.0005.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6910a555.a70a0220.22f260.00b9.GAE@google.com>
-Subject: Forwarded: [PATCH] fs: fix inode use-after-free in chown_common
- delegation retry
-From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c4377971-173a-4af9-8566-24e5860787ae@linaro.org>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi Daniel,
 
-***
+On 2025-11-07 10:53:41 +0100, Daniel Lezcano wrote:
+> On 11/5/25 19:32, Niklas Söderlund wrote:
+> > Hi Daniel,
+> > 
+> > Thanks for your feedback.
+> > 
+> > On 2025-11-05 17:39:14 +0100, Daniel Lezcano wrote:
+> > > On 11/5/25 17:06, Niklas Söderlund wrote:
+> > > > On 2025-11-05 16:36:15 +0100, Daniel Lezcano wrote:
+> > > > > On 10/16/25 20:20, Niklas Söderlund wrote:
+> > > > > > The CMT device can be used as both a clocksource and a clockevent
+> > > > > > provider. The driver tries to be smart and power itself on and off, as
+> > > > > > well as enabling and disabling its clock when it's not in operation.
+> > > > > > This behavior is slightly altered if the CMT is used as an early
+> > > > > > platform device in which case the device is left powered on after probe,
+> > > > > > but the clock is still enabled and disabled at runtime.
+> > > > > > 
+> > > > > > This has worked for a long time, but recent improvements in PREEMPT_RT
+> > > > > > and PROVE_LOCKING have highlighted an issue. As the CMT registers itself
+> > > > > > as a clockevent provider, clockevents_register_device(), it needs to use
+> > > > > > raw spinlocks internally as this is the context of which the clockevent
+> > > > > > framework interacts with the CMT driver. However in the context of
+> > > > > > holding a raw spinlock the CMT driver can't really manage its power
+> > > > > > state or clock with calls to pm_runtime_*() and clk_*() as these calls
+> > > > > > end up in other platform drivers using regular spinlocks to control
+> > > > > > power and clocks.
+> > > > > 
+> > > > > So the fix is to remove PM management in the driver ?
+> > > > 
+> > > > Yes. As I understand it we can't do runtime pm in these drivers as the
+> > > > core calls into the functions with the raw spinlock held. I hope we can
+> > > > improve this in future.
+> > > 
+> > > 
+> > > IIUC, the changes done for PREEMPT_RT prevent to use pm_runtime by functions
+> > > running in atomic context because the spinlocks are actually mutexes.
+> > 
+> > My understanding is that the core issue is that the clockevent core uses
+> > raw spinlocks, so all operations done from the callbacks in drivers need
+> > to use them too.
+> > 
+> > The Renesas CMT and TMU (which I intend to fix too once we find a way
+> > forward for CMT) are the only clockenvet drivers attempting to do
+> > runtime pm.
+> > 
+> >      $ git grep -l pm_runtime_get -- drivers/clocksource
+> >      drivers/clocksource/sh_cmt.c
+> >      drivers/clocksource/sh_mtu2.c
+> >      drivers/clocksource/sh_tmu.c
+> >      drivers/clocksource/timer-ti-dm.c
+> > 
+> > The timer-ti-dm.c driver do not register a clockevent device.
+> > 
+> > > 
+> > > But if PREEMPT_RT is not set, then everything is running as usual.
+> > 
+> > I still get LOCKDEP warnings.
+> 
+> Ah ok, you get the LOCKDEP warning because it identifies the called code to
+> be invalid in case the PREEMPT_RT is compiled-in but does not reflect a real
+> problem with !PREEMPT_RT.
+> 
+> [ ... ]
+> 
+> > The problem is not really PREEMPT_RT. The problem is the clockevents
+> > core require drivers to use raw spinlocks as itself uses them.
+> > 
+> > I would prefer to get the driver in a state without splats, warnings and
+> > potential PREEMPT_RT issues. Especially if the cost is to disable
+> > runtime pm.
+> > 
+> > As I understand it most systems where CMT exists, who don't use it, keep
+> > them disabled in DT. And the devices that use them have
+> > is_sh_early_platform_device() set so they already disable runtime pm.
+> > 
+> > Once we have that fixed we can work on enabling it without the quirks.
+> > In your opinion am I missing something where this approach is a bad idea?
+> 
+> If you prefer to remove the PM in the driver, I'm fine with that.
 
-Subject: [PATCH] fs: fix inode use-after-free in chown_common delegation retry
-Author: kartikey406@gmail.com
+I'm not super fond of removing it, but for now I think it is the best 
+way to ensure correct operation in all cases. If anybody have ideas I'm 
+all ears. Specially as I will need to do a similar fix for the TMU 
+driver once we have found a acceptable way for CMT.
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Once we I'm out of the woods and not worried about whats currently in 
+tree can have issues I think it's time to start thinking, if and how we 
+can improve tings in the core so we can enable some or all of the PM CMT 
+and TMU.
 
-The chown_common() function has a use-after-free bug in its delegation
-retry path. When break_deleg_wait() is called, it internally calls
-iput() on the delegated inode, potentially freeing it if this was the
-last reference. However, chown_common() continues using the stale inode
-pointer on retry, leading to operations on freed memory.
+I really appreciate you pushed back on this, I agree removing runtime PM 
+support is kind of a last resort here. But I see no other path.
+> 
+> 
+> -- 
+> <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> 
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
 
-This manifests as a rwsem warning where the inode's rwsem owner field
-is corrupted:
-  DEBUG_RWSEMS_WARN_ON: owner = 0x0
-
-The bug is triggered by concurrent fchownat() calls and is reproducible
-on GFS2 filesystems where delegations are common.
-
-Fix by:
-1. Re-fetching inode from path->dentry->d_inode on each retry iteration
-2. Holding an explicit inode reference with ihold() at iteration start
-3. Releasing the reference with iput() on all exit paths
-
-This ensures the inode remains valid throughout delegation break and
-retry.
-
-Reported-by: syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=04c2672c56fbb9401640
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/open.c          | 12 ++++++++++++
- include/linux/fs.h |  5 +++++
- 2 files changed, 17 insertions(+)
-
-diff --git a/fs/open.c b/fs/open.c
-index 3d64372ecc67..e5ff4d052f80 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -787,9 +787,21 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 		path,
- 		from_vfsuid(idmap, fs_userns, newattrs.ia_vfsuid),
- 		from_vfsgid(idmap, fs_userns, newattrs.ia_vfsgid));
-+	printk(KERN_INFO "After security_path_chown: owner=%lx\n",
-+       		atomic_long_read(&inode->i_rwsem.owner));
- 	if (!error)
- 		error = notify_change(idmap, path->dentry, &newattrs,
- 				      &delegated_inode);
-+	printk(KERN_INFO "After notify_change: owner=%lx, error=%d\n",
-+       		atomic_long_read(&inode->i_rwsem.owner), error);
-+	if (atomic_long_read(&inode->i_rwsem.owner) != (long)current) {
-+   		printk(KERN_ERR "BUG: About to unlock rwsem we don't own!\n");
-+    		printk(KERN_ERR "  inode=%p\n", inode);
-+    		printk(KERN_ERR "  i_rwsem.owner=%lx\n", atomic_long_read(&inode->i_rwsem.owner));
-+    		printk(KERN_ERR "  current=%p\n", current);
-+    		printk(KERN_ERR "  delegated_inode=%p\n", delegated_inode);
-+    		dump_stack();
-+	}
- 	inode_unlock(inode);
- 	if (delegated_inode) {
- 		error = break_deleg_wait(&delegated_inode);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c895146c1444..005586e26688 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -987,6 +987,11 @@ static inline __must_check int inode_lock_killable(struct inode *inode)
- 
- static inline void inode_unlock(struct inode *inode)
- {
-+	printk(KERN_INFO "inode_unlock: inode=%p, owner=%lx, current=%p (%s:%d)\n",
-+	       inode,
-+	       atomic_long_read(&inode->i_rwsem.owner),
-+	       current, current->comm, current->pid);
-+	dump_stack();
- 	up_write(&inode->i_rwsem);
- }
- 
 -- 
-2.43.0
-
+Kind Regards,
+Niklas Söderlund
 
