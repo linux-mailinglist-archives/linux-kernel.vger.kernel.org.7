@@ -1,47 +1,86 @@
-Return-Path: <linux-kernel+bounces-892074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECACC444A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:37:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F72EC444AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:41:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9902C18898BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6DA3AC24B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC0F2FB087;
-	Sun,  9 Nov 2025 17:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8D02FB087;
+	Sun,  9 Nov 2025 17:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BaIYqTk1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="XH9JvugV";
+	dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="IijAKF9b"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0EB1227B9F;
-	Sun,  9 Nov 2025 17:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762709853; cv=none; b=BGHABHfEnLcM75Jcv43xK3R1pJdbbeo2L8TgMk99fyxNl4dmoL2KGl/iF3mY3h3r+jXes3m+Kp7n0JqcbFhO65WT9FlrYgg1zaoQUq4RzQ27YN6u89LGjFZRFy3ypP3JvR1+q+Vx5sMcBJhHIjPCyFhiNQJtjuTej6V+s7zOKzk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762709853; c=relaxed/simple;
-	bh=8yV3YXQ5JJVb+mjOEjRAWmnkAdLyrcHuJUwl6P8OwXc=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EE1227B9F;
+	Sun,  9 Nov 2025 17:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762710060; cv=pass; b=lDjntBHRqcd6zJSQBZKFc5pl1qtNRNMPsBp7hNHQ3xZNhxUnlSG0wyuPD37T99OTWRJSrrMCtek3Qy0b/N0L7KsuvkZ3IkClefQVLHjci9Pu6I01B/zAIpTRCRoGG+R808KV1LrcZPq85c/wDqMJDYzbHxnXs7JeCCgM3WSn93g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762710060; c=relaxed/simple;
+	bh=tegmH2B2Yl63pvMAO1R6dRbHPb7f04fN9G+050VWHFY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UFoX3o0nTF0d/FWfi/eBV6I9W+UIPCrjjyVB+7z1+GHYlVkxWcQJvdRJ3aVQzFd9AycehfvqO7KhQQUFIXVgF9rwkBC8cbcKhCYunSEmh/Z9UF4TGYkcswJZAsXaEfca8QQxjSAUDqdBHGGR9yxoikRteZikJS/MegSjSyfLNjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BaIYqTk1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A6BC4CEFB;
-	Sun,  9 Nov 2025 17:37:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762709851;
-	bh=8yV3YXQ5JJVb+mjOEjRAWmnkAdLyrcHuJUwl6P8OwXc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BaIYqTk1O4JjtjhAx79NcftDc/MMwKS5b820ijYjdQ2FmYeypwPSg4gzKcITP1N0i
-	 wlMD1o5fMpsDmySm2I5BcH7rpAJaekrBy2QMlDckDTE05pDF2Op3IEZhAA8gT4A/vA
-	 2MneAAwQ6714Clm8oTDYig2yDDLU0HodMp74hRL46+nPSe2sCwcpiruk8rq3KQv7j+
-	 grOg2URmL/7sfyynyK9wrrEBIxg4o5xuvrfJU3Y9joY4LG4rtg9PBQMNiiH1QgNc2d
-	 zbJzprr5Ybwe2m8knEnUoLeja6nDRo4ppP4VucnDQKj11gmO7Vnc05JA3hDjTGTzUA
-	 YSDGwB8h8TqZw==
-Message-ID: <a726fac9-afe5-4639-b06a-4bccc256d98f@kernel.org>
-Date: Sun, 9 Nov 2025 18:37:26 +0100
+	 In-Reply-To:Content-Type; b=onWk4wIyBz8MY2HCmIe9MdjSBAqGLn2rdZ3NFg//Jk4FsQjJdQV8sxCQXNBFik+c/gyGqsrOnQvGtQPM6Isv0JloMilGQ7g3WXMhN4lz3PgoLLqaOWIdYh82aHCIDhEGfcta4qcesgVyqrWmAgDPv9bLx6UJBDXn7uJLIweAI4Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=XH9JvugV; dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=IijAKF9b; arc=pass smtp.client-ip=81.169.146.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
+ARC-Seal: i=1; a=rsa-sha256; t=1762710048; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=QkzKF4BJPs07Yi9pabuFqcnz5KH32xZTXK3eOJGitPzlkEgfRQoIfNcNpPaWSsnuFp
+    Wa/wQ45z8mvxFpPUcVUb+l1hH+66QZe2pZ39itxsHfl6iFTeBY/+oDe5Kqi7c0YX5U04
+    8D0QwujbVzcg5JkJHWMQ42xOwQkZJGFihQ6ltKthtP4R1KwtyFn3dIPfxDbYWpRL8tHF
+    TnavMQ8yHFbW+T5ZYbVR3LnGS5QLksKDrqacaKckuGxRzwA4E9Orvt6VlALSL4g0y2zf
+    J3fDsyYklsG+jbQji6iAt2k4lJdgS3ItJcpDDJZ/p4wqi1d9MjqW+84lzgCIv9OFxpMK
+    xLKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1762710048;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=K01QPJmJXM63zrSXOqbrZaZyiLjZOa5zRGQfwrOjar0=;
+    b=GmjEyFPCRgB6bA5BeawXFE/5D+LCqWu7kqAUThoMs+YerFliO+wWKbbd4gZ9xpLxuD
+    rJP4fJW0aOUQwV78lvhM/ogMhtLqFQNSWzh219KRqirR9WZlaUgNXo0J9Tlmc9krXSgK
+    87NlSSAGUTQEO9zRBfKKSSPWsQ9VhAD2Ws6HLpjUg8xHW1IpbT9M4kx5Da1cb2FO+j+M
+    LOvbnew4vLNxQ1p3B6Ii9Rh4pANfke1qkw3QyQepaZxHAckvjKJ+nkxinmAywEUGriSB
+    ysvpZDtEw+woijRbB1awA4WK1NHADyVN904xJk4QEGUUfisJdRfWl6gNf/PQ/pqs27kr
+    nvBw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1762710048;
+    s=strato-dkim-0002; d=hartkopp.net;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=K01QPJmJXM63zrSXOqbrZaZyiLjZOa5zRGQfwrOjar0=;
+    b=XH9JvugVurPE+v0AyrCTKmsyWy0J5Xvk2EHR/jIIheWyLEHMeVCMkXN+wa+dJI2AVd
+    /AHdZNHxAnmCmpkMXBEyyJ/GTUwwQQOjH94US0flelJOY4X582xZwU22gdvnvinKvH+m
+    SIQuQhRkaf7u7p4lEsJe1fonDNa4prjBnytfCK4LDFHFAMe5qkFNDcIVA7jwCrpEaX38
+    JSRPHgVV/wnb1OEAldaX8OmJW11Kc/o9pX9+Okmqy49+reU/kLPCKPmI8LSRlN1v4lK1
+    4UTbG6SqriiRlZ7AJ374tZ6halq8A9WsXsATmWG/uUmn0/p7v92I5qoAHNGwoZa2R44M
+    y36Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1762710048;
+    s=strato-dkim-0003; d=hartkopp.net;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=K01QPJmJXM63zrSXOqbrZaZyiLjZOa5zRGQfwrOjar0=;
+    b=IijAKF9bEQncNtGSabjHsOO2y04QEaezHg2dB+zcMGeV+SZZz76WuqER8R3NElbiX1
+    e9h/nwm2OT8YnBV++wBw==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMrZpkO3Mw3lZ/t54cFxeEQ7s8bGWj0Q=="
+Received: from [IPV6:2a00:6020:4a38:6810::9f3]
+    by smtp.strato.de (RZmta 54.0.0 AUTH)
+    with ESMTPSA id Ke2b461A9HemFDM
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Sun, 9 Nov 2025 18:40:48 +0100 (CET)
+Message-ID: <1154dfe5-1529-48d5-bfe9-bf77b6a4604b@hartkopp.net>
+Date: Sun, 9 Nov 2025 18:40:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,81 +88,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: rockchip: Simplify usb-c-connector port
- on rk3566-pinenote
-To: Diederik de Haas <diederik@cknow-tech.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Samuel Holland <samuel@sholland.org>
-Cc: hrdl <git@hrdl.eu>, phantomas <phantomas@phantomas.xyz>,
- Dragan Simic <dsimic@manjaro.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+Subject: Re: [PATCH v2 05/10] can: netlink: add CAN_CTRLMODE_XL_TMS flag
+To: Vincent Mailhol <mailhol@kernel.org>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20251109-rk3566-pinenote-dt-fixes-upstream-v1-0-ed38d200cc04@cknow-tech.com>
- <20251109-rk3566-pinenote-dt-fixes-upstream-v1-1-ed38d200cc04@cknow-tech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+References: <20251021-canxl-netlink-v2-0-8b8f58257ab6@kernel.org>
+ <20251021-canxl-netlink-v2-5-8b8f58257ab6@kernel.org>
+ <a50a77c8-85ef-4ac8-b649-33b880ec4b17@hartkopp.net>
+ <77daaf44-e75f-4adf-9d87-d2833a255748@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251109-rk3566-pinenote-dt-fixes-upstream-v1-1-ed38d200cc04@cknow-tech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Oliver Hartkopp <socketcan@hartkopp.net>
+In-Reply-To: <77daaf44-e75f-4adf-9d87-d2833a255748@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 09/11/2025 18:05, Diederik de Haas wrote:
-> The USB-C connector on the PineNote has only 1 port, so there's no need
-> for a 'ports' node with address-/size-cells properties as a single
-> 'port' node suffices.
-> 
-> This fixes the following DT validation issue:
-> 
->   Warning (graph_child_address): /i2c@fe5c0000/tcpc@60/connector/ports:
->     graph node has single child node 'port@0',
->     #address-cells/#size-cells are not necessary
+Hi Vincent,
 
-This is not a DT validation, but DTC warning which we do not really fix.
-Are you sure the 'port' is accepted by bindings?
+On 09.11.25 15:28, Vincent Mailhol wrote:
+> Hello Oliver,
+> 
+> On 06/11/2025 at 09:42, Oliver Hartkopp wrote:
+>> Hello Vincent,
+>>
+>> On 21.10.25 17:47, Vincent Mailhol wrote:
+>>> The Transceiver Mode Switching (TMS) indicates whether the CAN XL
+>>> controller shall use the PWM or NRZ encoding during the data phase.
+>>>
+>>> The term "transceiver mode switching" is used in both ISO 11898-1 and
+>>> CiA 612-2 (although only the latter one uses the abbreviation TMS). We
+>>> adopt the same naming convention here for consistency.
+>>>
+>>> Add the CAN_CTRLMODE_XL_TMS flag to the list of the CAN control modes.
+>>>
+>>> In the netlink interface, each boolean option is in reality a tristate
+>>> in disguise: on, off or omitted. For the moment, TMS is implemented as
+>>> below:
+>>>
+>>>     - CAN_CTRLMODE_XL_TMS is set to false: TMS is disabled.
+>>>     - CAN_CTRLMODE_XL_TMS is set to true: TMS is enabled.
+>>>     - CAN_CTRLMODE_XL_TMS is omitted: return -EOPNOTSUPP.
+>>
+>> I would propose to follow the usual pattern:
+>>
+>> - TMS off (default)
+>> - TMS on (when selected on the command line)
+> 
+> OK. "TMS omitted" will be interpreted as "TMS off" in v2.
+> 
+
+Thx!
+
+>>> For most of the other control modes, omitting a flag default to the
+>>> option turned off. It could also be possible to provide a default
+>>> behaviour if the TMS flag is omitted (i.e. either default to TMS off
+>>> or on). However, it is not clear for the moment which default
+>>> behaviour is preferable. If the usage shows a clear trend (for example
+>>> if the vast majority of the users want TMS on by default), it is still
+>>> possible to revisit that choice in the future. Whereas once a default
+>>> option is provided, we can not change it back without breaking the
+>>> interface.
+>>>
+>>> As a corollary, for the moment, the users will be forced to specify
+>>> the TMS in the ip tool when using CAN XL.
+>>>
+>>> Add can_validate_xl_flags() to check the coherency of the TMS flag.
+>>> That function will be reused in upcoming changes to validate the other
+>>> CAN XL flags.
+>>>
+>>> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+>>> ---
+>>> Question:
+>>>
+>>> Is it still possible to send Classical CAN frames when TMS is on? If
+>>> not, we need to also add this filter in can_dev_dropped_skb():
+>>
+>> No.
+>>
+>> I've now learned there are two "CANXL-only" modes:
+>>
+>> 1. TMS on -> no CC/FD traffic
+>> 2. TMS off and ERR_SIG off -> no CC/FD traffic, because CC/FD require ERR_SIG on
+>> for a compliant transmission
+> 
+> I see. I was under the assumption that CC and FD could be used with error
+> signalling off in mixed mode. Thanks!
+> 
+>> And there is a "mixed-mode" with CC/FD/XL with TMS off ('ERR_SIG on' is default
+>> anyway).
+>>
+>> This "mixed-mode" requires all bitrates for CC/FD/XL to be set and all these CAN
+>> protocols can be sent.
+> 
+> Why? Will your device reject the configuration if you omit the FD bitrate? I did
+> not see anything in this direction in the ISO standard.
+> 
+> Did you have any source for this? Maybe the CiA provided some clarification
+> which I am not aware of?
+
+It wasn't clear to me either.
+
+Please take a look into the X_CAN user manual here:
+
+https://github.com/linux-can/can-doc/blob/master/x_can/xcan_user_manual_v350.pdf
+
+1.5.5.3 Operating Mode
+
+There you can see the valid (and invalid) modes & combinations.
+
+When XL is on, FD also has to be on. Of course this is Bosch specific in 
+the first place. But there are two modes (ERR_SIGNAL off either with TMS 
+on or off) that are "CANXL-Only" which means no CC and no FD traffic as 
+those need error-signalling. CAN XL is using the (CC) arbitration 
+bitrate in this XL-only mode but CAN CC frames can not be sent.
+
+I would recommend this CAN CiA Webinar from Dr. Arthur Mutter:
+https://www.youtube.com/watch?v=OSEj6ISJKAM
+
+As (only!) the CAN FD controllers are CAN XL tolerant (see video 
+timestamp 18:53) the "mixed-mode" basically means "a mix of XL and FD 
+controllers and protocols".
+
+The fact that FD&XL controllers then can also send CC frames in this 
+mixed-mode is just a side-effect IMO. The idea is FD & XL.
+
+Therefore the two XL modes "XL-Only" and "mixed-mode" leads to FD on in 
+the mixed-mode IMO. And this finally can be used in my "[PATCH 
+b4/canxl-netlink v2] can: drop unsupported CAN frames on socket
+and netdev level" patch.
 
 Best regards,
-Krzysztof
+Oliver
 
