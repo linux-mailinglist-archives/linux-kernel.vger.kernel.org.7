@@ -1,129 +1,197 @@
-Return-Path: <linux-kernel+bounces-891954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F642C43E77
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:15:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525E1C43E7D
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887AD188BEE0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:16:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 109DB188BCD5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391F72F693A;
-	Sun,  9 Nov 2025 13:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9932F7440;
+	Sun,  9 Nov 2025 13:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UbzObxx/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQiplyU/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452EA2D63E5
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 13:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C367C8F7D;
+	Sun,  9 Nov 2025 13:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762694152; cv=none; b=QmtqRXvXb5oMaTS7yR2bwK3bOVQFYJHG1w8oGDZ6Zld7xpyh6yHIPGqJz4uOY+oD2mnIfKDG2fw2OPrhJc/uuxGkh1osq1GAQJA/nlUPV1mvs92/uHnj5hE20nnm8wYJlybPJ7SHwerWjyy/rro52v+PnCAUyNrnYpcQjtkq544=
+	t=1762694178; cv=none; b=mSl2LaBKggdTPTdZfyODjlKqSBv9bcb2bukMen8IbFA9CJ0ISAmbi06950fpyCtj0sdIrsTC+l6hu9wTSZPtNJuAF2WskkLIIgT0LPvKWi96uQUimhrIxIg6oIqRZRP2Hc6rHtoh1R2KeR2YqAw2VKZ9SBqC0oIbNtvnwYGO+Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762694152; c=relaxed/simple;
-	bh=/v/wzx6TVHA6w4gVVmVw44uU7KClaZZTDL0IVwpYqbY=;
+	s=arc-20240116; t=1762694178; c=relaxed/simple;
+	bh=3KRQry2rN5yBVh+iljFYmxN/MaQaDt+KLgcTKHl1+9w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=npNCwX7GYL63j2cvfbYZE5KTY14QWn62hg1x4E/EMeZ8fWSsDZzujwb2LOra1V+wMC/rsaBcFyxYZNHEBnXXWR3jVTU9fSJAnarKxazLEXVZfl/EMwxGz2dinbjY1mXxNSIzQSbxPBTSd5clDkLE8j7ZHIoFMF2FvD3l7JIbC+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UbzObxx/; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762694150; x=1794230150;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/v/wzx6TVHA6w4gVVmVw44uU7KClaZZTDL0IVwpYqbY=;
-  b=UbzObxx/qkApQGGO0UGRQfOGP3mVPHJPcgrajz5VqbnkL+fGtWsaK2Cx
-   iSU0/kzqKnutsGJRbFrXIw+e9qZt7LqqM96GEk7MhMX0iaPy+A0qFGgBq
-   NPyZ/g7WOzEwisyOUH8uEEplUXAI9dtAMHdKQykyjQDXwogM3GVOuBng2
-   b0ksdGG9hq/41IHTpOhXRIupuNxDUKvAdStoRcAi4PGIpCNLEjNcULvtu
-   HG5EwLYQykm5r4x9Ki0IVSbtzpPqyuS3ZmuVJsHiywHdwGO4Iw96au/h0
-   ch+yyUXK/tJHm4/pK4LW8+qREsOTsXHkhnCWGlC4n35lk5QCRUij525Hk
-   A==;
-X-CSE-ConnectionGUID: OnsPns/uSP2ztkIMGOwwXA==
-X-CSE-MsgGUID: KpWulK0/Qu2v/rWNQWAykA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11607"; a="64681443"
-X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
-   d="scan'208";a="64681443"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 05:15:50 -0800
-X-CSE-ConnectionGUID: 9Q7luGKBQKmQSeKqcR7S9w==
-X-CSE-MsgGUID: ZBoNrpD3Q6aOPPg9WvDM8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
-   d="scan'208";a="188195706"
-Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 09 Nov 2025 05:15:47 -0800
-Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vI5Gi-00020p-0m;
-	Sun, 09 Nov 2025 13:15:44 +0000
-Date: Sun, 9 Nov 2025 21:14:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alejandro Colomar <alx@kernel.org>, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Alejandro Colomar <alx@kernel.org>, Kees Cook <kees@kernel.org>,
-	Christopher Bazley <chris.bazley.wg14@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Alexander Potapenko <glider@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH v2 1/4] array_size.h: Add ARRAY_END()
-Message-ID: <202511092053.40sHnHlA-lkp@intel.com>
-References: <35255c1ceb54518779a45351dcd79a3c1910818a.1762637046.git.alx@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KoIAIeKsGgHSTIn1Vz/SuvMNV8MT/8+TrzpJE8dNvY1F84CkOI40aVXAiZm++j7P7h4nB6BtKJj4pEJZPGheVbGEnVWd5LHFg7EWKICixohqUsDuz04O+kkkj2osi464rmRa2s6x1+PDdMO7VDRbM7Ktic672h/rm85XzDPhe9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQiplyU/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E491CC4CEF8;
+	Sun,  9 Nov 2025 13:16:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762694178;
+	bh=3KRQry2rN5yBVh+iljFYmxN/MaQaDt+KLgcTKHl1+9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oQiplyU/LbwRxAbtCRePLvDcPxvLpQS2NfkS5btfCzb0bsuWcEEtiKySAoSA1WW8e
+	 0TNN6r5KqR/ObQrunoaH00KsxTgy4sZ0KRO1pVsuZ7jGPPsPtmceUkYzWxOYJQxPVD
+	 6uAslhPWfpwHneONieUUjT6k66NnZKuM7SavY0U/wsGUk1UFXhDLATtJE7XXx/pNuq
+	 7ag1MYZC05SiY92HQxeC4b8g3YK7lWRGU8N4yhCVcX13FdIfTa1OWiPTsZeTPJYfo5
+	 JiQe5iy0AlZj6f35/kqemnNLbA8z+9js+iE/lstC3Tzvi5pxXnTDQjErfVgoN6/Fh3
+	 8OSvTMlZiidzg==
+Date: Sun, 9 Nov 2025 13:16:14 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Lakshmi Patil <lakshmi16796@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: Lakshmi Patil: dt-bindings: misc: Add Xilinx
+ AXI FIFO MM S controller binding
+Message-ID: <20251109-annually-nifty-42c9530b4f07@spud>
+References: <20251109033751.334711-1-lakshmi16796@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="H86Bpw1wREfxQN0S"
+Content-Disposition: inline
+In-Reply-To: <20251109033751.334711-1-lakshmi16796@gmail.com>
+
+
+--H86Bpw1wREfxQN0S
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <35255c1ceb54518779a45351dcd79a3c1910818a.1762637046.git.alx@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alejandro,
+On Sun, Nov 09, 2025 at 09:07:49AM +0530, Lakshmi Patil wrote:
+> Warning found by checkpatch.pl script.
 
-kernel test robot noticed the following build warnings:
+What? This commit message and subject is so weird that it looks like it
+was generated by some of LLM hallucination.
 
-[auto build test WARNING on 6146a0f1dfae5d37442a9ddcba012add260bceb0]
+>=20
+> Add the Device Tree binding documentation for the Xilinx AXI FIFO MM S
+> (AXI Memory Mapped to Stream) controller. The core provides a FIFO-based
+> interface between AXI Memory-Mapped and AXI-Stream domains and is used in
+> Xilinx SoC and FPGA designs to offload DMA-style data transfers.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alejandro-Colomar/array_size-h-Add-ARRAY_END/20251109-062234
-base:   6146a0f1dfae5d37442a9ddcba012add260bceb0
-patch link:    https://lore.kernel.org/r/35255c1ceb54518779a45351dcd79a3c1910818a.1762637046.git.alx%40kernel.org
-patch subject: [PATCH v2 1/4] array_size.h: Add ARRAY_END()
-config: x86_64-randconfig-001-20251109 (https://download.01.org/0day-ci/archive/20251109/202511092053.40sHnHlA-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511092053.40sHnHlA-lkp@intel.com/reproduce)
+There's already a binding in text form for this device. Your binding
+below contains almost none of the required properties in the text
+binding, nor does it actually remove the existing text binding.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511092053.40sHnHlA-lkp@intel.com/
+Did you just not check to see if it was already documented, or what's
+going on here? I am very confused to be honest.
 
-All warnings (new ones prefixed by >>):
+pw-bot: changes-requested
 
->> drivers/block/floppy.c:4805:9: warning: 'ARRAY_END' macro redefined [-Wmacro-redefined]
-    4805 | #define ARRAY_END(X) (&((X)[ARRAY_SIZE(X)]))
-         |         ^
-   include/linux/array_size.h:17:9: note: previous definition is here
-      17 | #define ARRAY_END(a)  (a + ARRAY_SIZE(a))
-         |         ^
-   1 warning generated.
+Cheers,
+Conor.
 
+>=20
+> The binding describes the required properties such as compatible string,
+> register region, clock, reset, and interrupt line.
+>=20
+> Signed-off-by: Lakshmi Patil <lakshmi16796@gmail.com>
+> ---
+>  .../bindings/misc/xlnx,axi-fifo-mm-s.yaml     | 69 +++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/xlnx,axi-fifo-=
+mm-s.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.ya=
+ml b/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml
+> new file mode 100644
+> index 000000000000..d02a7cf9ac0f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/misc/xlnx,axi-fifo-mm-s.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Xilinx AXI FIFO MM S Controller
+> +
+> +maintainers:
+> +  - Lakshmi lakshmi16796@gmail.com
+> +
+> +description: |
+> +  The Xilinx AXI FIFO Memory Mapped to Stream (MM2S / S2MM) core provides
+> +  a FIFO-based interface for moving data between AXI Memory-Mapped and
+> +  AXI-Stream domains. It supports both transmit and receive paths
+> +  and is typically used to offload DMA-style data transfers in
+> +  Xilinx SoCs or FPGA designs.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - xlnx,axi-fifo-mm-s-4.1
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description:
+> +      Base address and size of the AXI FIFO MM S register space.
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description:
+> +      Interrupt line from the AXI FIFO block, if available.
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description:
+> +      Reference clock for the AXI FIFO interface.
+> +
+> +  clock-names:
+> +    const: s_axi_aclk
+> +
+> +  resets:
+> +    maxItems: 1
+> +    description:
+> +      Reset line for the AXI FIFO interface.
+> +
+> +  reset-names:
+> +    const: s_axi_aresetn
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - resets
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    axi_fifo_mm_s@43c00000 {
+> +        compatible =3D "xlnx,axi-fifo-mm-s-4.1";
+> +        reg =3D <0x43c00000 0x10000>;
+> +        interrupts =3D <0 59 4>;
+> +        clocks =3D <&clkc 15>;
+> +        clock-names =3D "s_axi_aclk";
+> +        resets =3D <&rstc 0>;
+> +        reset-names =3D "s_axi_aresetn";
+> +    };
+> +
+> --=20
+> 2.34.1
+>=20
 
-vim +/ARRAY_END +4805 drivers/block/floppy.c
+--H86Bpw1wREfxQN0S
+Content-Type: application/pgp-signature; name="signature.asc"
 
-5a74db06cc8d36 Philippe De Muyter 2009-02-18  4804  
-5a74db06cc8d36 Philippe De Muyter 2009-02-18 @4805  #define ARRAY_END(X) (&((X)[ARRAY_SIZE(X)]))
-5a74db06cc8d36 Philippe De Muyter 2009-02-18  4806  
+-----BEGIN PGP SIGNATURE-----
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRCT/gAKCRB4tDGHoIJi
+0qbhAQDVf3sKkI6hwzIWM62RyARJKS8IANDqSwipdXd4qDmtiwD+NhUFDv9mLofo
+Ls6JUBUdgFPO4W/AMduv3e/drTji4QU=
+=aB42
+-----END PGP SIGNATURE-----
+
+--H86Bpw1wREfxQN0S--
 
