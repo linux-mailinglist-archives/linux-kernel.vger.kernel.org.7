@@ -1,137 +1,106 @@
-Return-Path: <linux-kernel+bounces-891968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03C60C43F08
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:39:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5BDC43F0B
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE2F8188BF11
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:39:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 062AA347674
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749AF2FB618;
-	Sun,  9 Nov 2025 13:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633CD2FB098;
+	Sun,  9 Nov 2025 13:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRuJdceF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCDTG7yW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ED02F9C2A;
-	Sun,  9 Nov 2025 13:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FAB2F9C2A;
+	Sun,  9 Nov 2025 13:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762695561; cv=none; b=jSiprsBlkmk8dIAyll7LjIQTVt/vqWfITlCXM1moeQp4q/DzI6cB6ydF3guQ5TkdQrNOzqBd9NJH5m67Ud7ky6Br5SYvC4bLQrFQN7tP/2ENa8zZ5v7/juVbVoN7TWgTzmG3a+zeHqWquAxYSrlwtld8U3Oz4HEfOgU0zI3SlPQ=
+	t=1762695569; cv=none; b=q5q0MloUJ+kb7O3vSUiAiQW1NpEKnOFasMBp4GA0lo0N+tJ6Y6+iKyXVaCgdVXVOUUmuiWgrUzSANAHXfgMQSpvkmrEg7BB4VEuH3eAJPkGVF8XGbyiCVybDx+Jzvyi6VIp2QkYZULtJ7CtuiZrKttpStrOITjrMVMJoKKLTuog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762695561; c=relaxed/simple;
-	bh=TmS8CkFMzA8p257zgP8ajlZZj7NKktorZzJfGu8kADk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oxPMtn2895LE8umcn2gLyZtWIGE4By/VkBSj7G/Qib0Lpm/tqGoR+eXIf+b/oZL+6C5Ph5FZTBiPjuPOPCGD3j9ko1i+crZ8aDl33bV3sb+kALOzrm42kPXoqc629Du+fFoWfg22Tr+lwbHW9w2XETGQ5uafLDP8DIAWQRkPVj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRuJdceF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3DF5C4CEF7;
-	Sun,  9 Nov 2025 13:39:07 +0000 (UTC)
+	s=arc-20240116; t=1762695569; c=relaxed/simple;
+	bh=FV6nIOrd9444B+mlGQsh9CSaoRsJM/FxBjLlQCcf7Ig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZD2hMqjdqX49qziHTjgtpTGy7QAhwl4D8EVI8AGN1rXEDOXpWhRg8o3D2cAca9i6PRq8k9VnN3+FtZq1J86l8XW86MRDTvqyETYC+lzxhAzBQ+pBq0nwC7hiWcoTBsOn2AD4zqxyQljD/Y9X0db7TSomHewhAdDCSpeQYCm+SII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JCDTG7yW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E154C4AF0C;
+	Sun,  9 Nov 2025 13:39:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762695561;
-	bh=TmS8CkFMzA8p257zgP8ajlZZj7NKktorZzJfGu8kADk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eRuJdceFQsdR7lWVjZXcQ5eo2LTrpkwCjVnhqhWqMgsWHpPaOmCSWAruleR0rDa3c
-	 zewmxH8r/ugX+Auz1z/GzwLYEmryJP7Yxt9ENJ0AKXlgrY5A6lsFG5/fgdl/WlQuI0
-	 wm5J1acBHw4E/gK68u06+opel8VRhYcrJcvtOFcncyLFMAVSPe89x4T+DcAQy3aEQQ
-	 oX85a3JCzSZAbUxwWvjBgSMTrD8mI2+wsSwQYY/Cvor7FYRe2eXlHmti2qvQabVS0/
-	 o+scmlpg9ZtBwS6CeH2c/exLXcnhRK2SIJLAmWLQvpPhhKxsXEyIVR2Jv6uyzWZ37T
-	 Qr+4vzbXZuRrg==
-Date: Sun, 9 Nov 2025 13:39:04 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Yury Norov <yury.norov@gmail.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>, Linus
- Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery
- <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, Lars-Peter
- Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun
- Hung <schung@nuvoton.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Johannes
- Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex
- Elder <elder@ieee.org>, David Laight <david.laight.linux@gmail.com>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Jason Baron
- <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck
- <tony.luck@intel.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Kim Seer Paller <kimseer.paller@analog.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>,
- Cosmin Tanislav <demonsingur@gmail.com>, Biju Das
- <biju.das.jz@bp.renesas.com>, Jianping Shen <Jianping.Shen@de.bosch.com>,
- Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
- <nick.desaulniers+lkml@gmail.com>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh
- Raghavendra <vigneshr@ti.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org,
- qat-linux@intel.com, linux-gpio@vger.kernel.org,
- linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v6 23/26] iio: imu: smi330: Convert to common
- field_{get,prep}() helpers
-Message-ID: <20251109133904.5eff2558@jic23-huawei>
-In-Reply-To: <a2275bd69f25d33f9fd3345409b2d8ae6285b9a7.1762435376.git.geert+renesas@glider.be>
-References: <cover.1762435376.git.geert+renesas@glider.be>
-	<a2275bd69f25d33f9fd3345409b2d8ae6285b9a7.1762435376.git.geert+renesas@glider.be>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=k20201202; t=1762695569;
+	bh=FV6nIOrd9444B+mlGQsh9CSaoRsJM/FxBjLlQCcf7Ig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JCDTG7yWV3lfOfydcImpyi17b3P3GZLuSATHpoliBde4zFx8fh61QvaCh34B/HHii
+	 pJ27gbrypWJWTH4Ulv+LOs72Quk/MUQ6LEtzHk02x8ZrpVtg5X87QGI4Nl3RU6aGOd
+	 lbBJpjgNUXe1JyH6/xkSaHKgUVe/JH/zCh1uPdHSwDpYxG/tMvoJ6iGev/uMqQHTV4
+	 SjvlJSoXJyzeQtNvM3gIcK9CnH290NCNuDjzDbc4fDFlbBYmlnB7RJzXJxV3foHm6E
+	 9exKHGGww7iriJrIByK4WlNzn/KZiugBpkenja+mrf9Vg9KpQqyMj1qWw4b0Ao2ATp
+	 aQQdmL5ydsFsg==
+Date: Sun, 9 Nov 2025 14:39:18 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: syzbot <syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com>
+Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
+	anna-maria@linutronix.de, bpf@vger.kernel.org, bsegall@google.com, cgroups@vger.kernel.org, 
+	david@redhat.com, dietmar.eggemann@arm.com, frederic@kernel.org, 
+	hannes@cmpxchg.org, jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, 
+	kees@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, 
+	mjguzik@gmail.com, mkoutny@suse.com, oleg@redhat.com, paul@paul-moore.com, 
+	peterz@infradead.org, rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, 
+	surenb@google.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
+	tj@kernel.org, vbabka@suse.cz, vincent.guittot@linaro.org, 
+	viro@zeniv.linux.org.uk, vschneid@redhat.com
+Subject: Re: [syzbot] [fs?] WARNING in destroy_super_work
+Message-ID: <20251109-lesung-erkaufen-476f6fb00b1b@brauner>
+References: <690da04f.a70a0220.22f260.0027.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <690da04f.a70a0220.22f260.0027.GAE@google.com>
 
-On Thu,  6 Nov 2025 14:34:11 +0100
-Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-
-> Drop the driver-specific field_get() and field_prep() macros, in favor
-> of the globally available variants from <linux/bitfield.h>.
+On Thu, Nov 06, 2025 at 11:31:27PM -0800, syzbot wrote:
+> Hello,
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-This will need a revist next cycle. I preferred not to have
-the odd looking undef in the driver at introduction so prefixed with smi330_
-instead.  Only one instance so it wasn't worth comments to make ti clear what was going on.
-
-J
-
-
-> ---
-> v6:
->   - No changes,
+> syzbot found the following issue on:
 > 
-> v5:
->   - New.
-> ---
->  drivers/iio/imu/smi330/smi330_core.c | 6 ------
->  1 file changed, 6 deletions(-)
+> HEAD commit:    982312090977 Add linux-next specific files for 20251103
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17b2932f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=43cc0e31558cb527
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1957b26299cf3ff7890c
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1347817c580000
 > 
-> diff --git a/drivers/iio/imu/smi330/smi330_core.c b/drivers/iio/imu/smi330/smi330_core.c
-> index a79964fe68fadf47..83e0dff5d973d046 100644
-> --- a/drivers/iio/imu/smi330/smi330_core.c
-> +++ b/drivers/iio/imu/smi330/smi330_core.c
-> @@ -67,12 +67,6 @@
->  #define SMI330_CHIP_ID 0x42
->  #define SMI330_SOFT_RESET_DELAY 2000
->  
-> -/* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
-> -#undef field_get
-> -#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> -#undef field_prep
-> -#define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
-> -
->  #define SMI330_ACCEL_CHANNEL(_axis) {					\
->  	.type = IIO_ACCEL,						\
->  	.modified = 1,							\
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/40058f8a830c/disk-98231209.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/1d7f42e8639f/vmlinux-98231209.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d8bb0284f393/bzImage-98231209.xz
+> 
+> The issue was bisected to:
+> 
+> commit 3c9820d5c64aeaadea7ffe3a6bb99d019a5ff46a
+> Author: Christian Brauner <brauner@kernel.org>
+> Date:   Wed Oct 29 12:20:24 2025 +0000
+> 
+>     ns: add active reference count
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=101e9bcd980000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=121e9bcd980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=141e9bcd980000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
+> Fixes: 3c9820d5c64a ("ns: add active reference count")
 
+#syz test: https://github.com/brauner/linux.git namespace-6.19.fixes
 
