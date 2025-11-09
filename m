@@ -1,173 +1,114 @@
-Return-Path: <linux-kernel+bounces-891771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2727FC436EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 01:50:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0AF2C436F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 01:52:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 066313B1425
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 00:49:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1167C3B0398
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 00:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204B415B971;
-	Sun,  9 Nov 2025 00:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ATd926b/";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="SpvVnK5/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284BF190685;
+	Sun,  9 Nov 2025 00:52:42 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF262AD35
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 00:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB4615B971
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 00:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762649393; cv=none; b=famBMoWHhiAVcazU0CNHQOzkeUxKQZD38Cq5WZhTpkzUrDeuKFjcpwWrbAatvBbwI2FntcsdHp0lSwqjLtlDmQEbtcMfqKR1M87iji8cQVN4MQkAuCjxsQz2JljUj8TiYCVM1cY2b/70B+ggS/+eQJa6EKaVDRhLun2ydAI3j3w=
+	t=1762649561; cv=none; b=HG3ULeqBBPSJfqoMwzdW6Ku3oQidmGddmrB9BnFQQiVOuxPO7GgIGlsuRHRkoAMg0+yyQaLI5VPou/oapV5wvAaCIJCkc1fB9qtX6EYHLNCiUxsopRATcqpPKqleHwbKDisxq5ZXQQ79gKE6nQi3waK5Oty+W6Fq4kJ0UGsd+rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762649393; c=relaxed/simple;
-	bh=35h9bHGswUlmXEswFD/hqaeKimDVcRaRKynaOdnE0zI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HHTQKrOOLumf7R8cyUylWhxtLWd/ikBwqSTowM4cy2A1hTI4lctuGwaciRZTZTBQ0D37lJQHpudGBCFNR13uavYA9mAHW/xlB4Qy5XhZg5LaG1Fz2cpeXhzvNkai2WLy/lF4ppujEVrKQlN17c03Ez5IccKYyWiA0aq7PT6BWJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ATd926b/; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=SpvVnK5/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762649390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t2Ymb42ZiTqgosmoR22d5OXXjmr+MiE+U60sgXdVW9Y=;
-	b=ATd926b/TJplmbGaPBFskB5SW67wjCCSozoFacAt3MKwRXL6Q1/Jvl+PMRSc49M0suJMDK
-	AUzR0HnocsTURMfnIb+Xvl2vKe9MtiKLUcAx1Vx25RXT6+h5iRQ9vH34RF4FhfE4H7JJML
-	p8sZHRgY/ubSigKnY40S1k1Ao8N6cK4=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-606-AERQKBDjPj-ctmvzFKdKdQ-1; Sat, 08 Nov 2025 19:49:49 -0500
-X-MC-Unique: AERQKBDjPj-ctmvzFKdKdQ-1
-X-Mimecast-MFC-AGG-ID: AERQKBDjPj-ctmvzFKdKdQ_1762649388
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3418ada9e6cso2249362a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 16:49:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762649388; x=1763254188; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t2Ymb42ZiTqgosmoR22d5OXXjmr+MiE+U60sgXdVW9Y=;
-        b=SpvVnK5/RqiXeKFgDLbwwkU7MKfCYdswxCmDsVy3/gRSepH2NBqkATqBXQf56k++j4
-         I8VYB2di1EDj8QsWo3pMVHkgNyNfiR916QNaPXzMxDLsNm1tro+QRVLZqdLX3dYh6x/f
-         gBbU9ut3if0sgm8ZkAlqKxN/+v6SXJQdIdTOsELEwV1xSZuoYbbk6H6NhDRmgoJBz/fR
-         kpCIrO51Mky4emu0onFAgITKIlpI1jr4cRhMxR62Vh1C6gcu9TSO4P7lGauiD1XqRE9w
-         dvjK6O27wEpzV2UAiMPBp8vg1w3DDkeL9v5qC9OWvHIx98xhIrdTm9RTESPclmi4zoPN
-         KJDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762649388; x=1763254188;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t2Ymb42ZiTqgosmoR22d5OXXjmr+MiE+U60sgXdVW9Y=;
-        b=YBBan78cHpD0E6ilAsw0URS4Q1b8ln3JDPfkRgwZuP1y+d9IVOiDCKViwEnDFsw/GR
-         rIN7QR5uLo63Ovlo9YjbpZv0Q0paQiqcp2txb1yUQgxC8iIjuf1vIVlqFY/2q6nWaQHf
-         RNYNsKDyct8zecB1++D9QsSVRGU1v5ArYdo0xlgllNj3UZ84GrSjtByWUe1L4vIteNYL
-         +8dB/6i9Xq9KffK1fLfSBaFdzUgiFWlwzYn8xGI/97tn+q8p8i5IquXKoFHq0XRZZ0WI
-         aRiOp3acEOmrEnKCVJww+tEd720UQcO6MEpXUKj7GbzHPOkgx8YBy7WPqW/UrmySSt/L
-         mJpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyAvZ67jzAEyVqVyqutTy7KxaHfDQUp5g9grY9KZM3mHXGUfeMJ2ixe1sULuIpYlx6W2pN1Puc/oZU+Oc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNdwvU4yNKY2aOJ321QIpMuFk7uagOxVBhWRC+AppJzY8YQaff
-	KqsbNYSHHmxtRCnID079oWyojFATekidyU6CHeAjGTI03GvGtHOBx2piBCeZYaGMdejETYR6REM
-	kVZUlAsu0G1KF50XF89n7yGOCyoFDnLY4B/b3d7NtTx6Xfk3qKwuWMISvxWVEhJSZEA==
-X-Gm-Gg: ASbGncugGymOUwASlckn+jlD9KxQI0A7151WoJ9q7HB98f6VqKWH3nVObls23U0wfCt
-	c2oNdvFUMFpV/O7K7KkJC9ayA2cyuawWvG/s10uDNlmkbqam2HBj3xqZi2eyzHFOagkbD3FnUY5
-	cOu4ju8NUplMZcFjDNboqXcA5Q05jfT/2VdU+pQgCdoY7OXPGkmbeJjhYkOETxYmAHMr+akD9lS
-	5Q3jfu6YHm15pyiqDtQSal4BKDjaEkQ7DWXRBrP6ZpPhgRYVfUCk4twzleUFdPyxAVNdu5XhsTh
-	CwFIyb19YefhEMUBE0fDWG+OoMKYLbOScuaucTPk/O9ZqeK2WppPaYqqSrbZjiWRM1rdUMvDSIf
-	72Wc0UUHYdyBVDobyZ2UCqXUIEVNIcex5lNN+QYA=
-X-Received: by 2002:a17:90b:4b0e:b0:341:6dc2:b9ac with SMTP id 98e67ed59e1d1-3436cb8c701mr4940940a91.24.1762649387979;
-        Sat, 08 Nov 2025 16:49:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFxUd/wYJQeZzGolYs8k/2NsUqG16JqtEd2OP0c4YL/uDiW0Lj6J6MWRmIO/rzOZX+Ke6CUTw==
-X-Received: by 2002:a17:90b:4b0e:b0:341:6dc2:b9ac with SMTP id 98e67ed59e1d1-3436cb8c701mr4940908a91.24.1762649387566;
-        Sat, 08 Nov 2025 16:49:47 -0800 (PST)
-Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c344838sm6476363a91.15.2025.11.08.16.49.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Nov 2025 16:49:46 -0800 (PST)
-Message-ID: <e94b7dc4-1141-4fcf-ba8f-65d5cd0e67a7@redhat.com>
-Date: Sun, 9 Nov 2025 10:49:32 +1000
+	s=arc-20240116; t=1762649561; c=relaxed/simple;
+	bh=9X8ZIls7ZXc+lK1POlli2gos/qev30fz/7qAGoTPOyA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u+0mG7edIkI7KoLQXABu/4Xxid+sPLC2hPJn4C4ttaykm9eJnVhx5aBvZToZ/9zaekk/aWGS82fcexM2d283yGA7faFgCdwS6szYzWqOpro5Do6lBOoaRJC8vAVlm+rliQPoB2bRXp136WX76Xp7VqQXvb6U/qyOL88BIOdrXmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 9F64112CF39;
+	Sun,  9 Nov 2025 00:52:32 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf18.hostedemail.com (Postfix) with ESMTPA id 679052F;
+	Sun,  9 Nov 2025 00:52:30 +0000 (UTC)
+Message-ID: <cc0edf9cf2ee40bc13eec609eec5686de4f9f77f.camel@perches.com>
+Subject: Re: [PATCH 1/1] checkpatch: add MA_STATE to declaration_macros
+From: Joe Perches <joe@perches.com>
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org
+Cc: akpm@linuxfoundation.org, kernel test robot <lkp@intel.com>, Andy
+ Whitcroft	 <apw@canonical.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn	 <lukas.bulwahn@gmail.com>
+Date: Sat, 08 Nov 2025 16:52:27 -0800
+In-Reply-To: <20251108234725.1650246-1-jim.cromie@gmail.com>
+References: <20251108234725.1650246-1-jim.cromie@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/33] arm_mpam: Add helpers for managing the locking
- around the mon_sel registers
-To: Ben Horgan <ben.horgan@arm.com>, james.morse@arm.com
-Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, guohanjun@huawei.com,
- jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-16-ben.horgan@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20251107123450.664001-16-ben.horgan@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 679052F
+X-Stat-Signature: yx6w6mncc67qgxm8563i1tgetdnd5ibd
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1+MblxEu1TEAoos0pUOn/yHmB9CpoLWbxw=
+X-HE-Tag: 1762649550-13431
+X-HE-Meta: U2FsdGVkX187WeBzzri5uOGxbbleEc9noZQFw7wKe9YbXMVssLNnlaBVD90QJlMZwdXGCYBfpvJH8mWjsTycFBq6KJZJLxipYw24MGN74xLeAXXvk+TG4vSAkOo53Q6VShj/tzXHPr4oCbe/StUGgHAChI8rS8SnNuiPbDtYpIxDTzMiFbIAZhET/D4Hv3icc0Mmo+6+ZyurpNYHgfsqTepg5iIQoGclsyFI22MAvfhfpk59l2hLqUC6L5sQ1NNS8bpQwT79mDvkNtC+x+lo3XQUwww7jOqAOm41Q6Z6/F70AjaXrMn+Uh+VAdCcC/U2nCzOVajqmAxnflJ0ahmEkxieAxOjzg2Uo5f34WXCnZkcSius1Y09rtjhxkgUuLF9tyucq9YoTDo=
 
-On 11/7/25 10:34 PM, Ben Horgan wrote:
-> From: James Morse <james.morse@arm.com>
-> 
-> The MSC MON_SEL register needs to be accessed from hardirq for the overflow
-> interrupt, and when taking an IPI to access these registers on platforms
-> where MSC are not accessible from every CPU. This makes an irqsave
-> spinlock the obvious lock to protect these registers. On systems with SCMI
-> or PCC mailboxes it must be able to sleep, meaning a mutex must be used.
-> The SCMI or PCC platforms can't support an overflow interrupt, and
-> can't access the registers from hardirq context.
-> 
-> Clearly these two can't exist for one MSC at the same time.
-> 
-> Add helpers for the MON_SEL locking. For now, use a irqsave spinlock and
-> only support 'real' MMIO platforms.
-> 
-> In the future this lock will be split in two allowing SCMI/PCC platforms
-> to take a mutex. Because there are contexts where the SCMI/PCC platforms
-> can't make an access, mpam_mon_sel_lock() needs to be able to fail. Do
-> this now, so that all the error handling on these paths is present. This
-> allows the relevant paths to fail if they are needed on a platform where
-> this isn't possible, instead of having to make explicit checks of the
-> interface type.
-> 
-> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-> Tested-by: Peter Newman <peternewman@google.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+On Sat, 2025-11-08 at 16:47 -0700, Jim Cromie wrote:
+> MA_STATE is used repeatedly as a declaration, add it to the list.
+
+OK but
+
+> I left out the $Storage regex component, since I saw no cases wanting
+> it, via: $> grep -r -B1 '\bMA_STATE' .
+>=20
+> This change fixes the following, reproduced locally.
+
+No following ?
+
+And I looked at the MA_STATE macro definition that has
+several NULL or zero unnecessary member initializations
+but doesn't initialize the entire structure as all
+non-named members are NULL or zero by default.
+
+I wonder if the unnecessary NULL/0 initializations there
+could actually increase the object size.
+
+With gcc 15.2.1 allyesconfig & defconfig do not change
+either way but I don't know if all supported versions
+minimize the initialization properly.
+
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202511071306.OJpTf7fK-lkp@i=
+ntel.com/
+
+This Closes: url is not found on lore
+
+>=20
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 > ---
-> Changes since v3:
-> use devm_mutex_init()
-> include tiying
-> stray comma (Jonathan)
-> ---
->   drivers/resctrl/mpam_devices.c  |  2 ++
->   drivers/resctrl/mpam_internal.h | 39 +++++++++++++++++++++++++++++++++
->   2 files changed, 41 insertions(+)
-> 
-
-Reviewed-by: Gavin Shan <gshan@redhat.com>
-
-
+>  scripts/checkpatch.pl | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index e722dd6fa8ef..4b5e2e64dece 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -1096,7 +1096,8 @@ our $declaration_macros =3D qr{(?x:
+>  	(?:$Storage\s+)?(?:[A-Z_][A-Z0-9]*_){0,2}(?:DEFINE|DECLARE)(?:_[A-Z0-9]=
++){1,6}\s*\(|
+>  	(?:$Storage\s+)?[HLP]?LIST_HEAD\s*\(|
+>  	(?:SKCIPHER_REQUEST|SHASH_DESC|AHASH_REQUEST)_ON_STACK\s*\(|
+> -	(?:$Storage\s+)?(?:XA_STATE|XA_STATE_ORDER)\s*\(
+> +	(?:$Storage\s+)?(?:XA_STATE|XA_STATE_ORDER)\s*\(|
+> +	(?:MA_STATE)\s*\(
+>  )};
+> =20
+>  our %allow_repeated_words =3D (
 
