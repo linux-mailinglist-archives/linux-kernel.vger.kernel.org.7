@@ -1,169 +1,195 @@
-Return-Path: <linux-kernel+bounces-891937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A41C43DC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:36:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB8F5C43DCB
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:36:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45D874E4FDE
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:36:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E75188C0AF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227C82ECD39;
-	Sun,  9 Nov 2025 12:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DFE2ECD39;
+	Sun,  9 Nov 2025 12:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ud1BvHBs"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="CwmWzn64"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03502E975A
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A843F2EC547
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762691763; cv=none; b=V/9bYYc7EWjgSeSBT8SljHDtwBERkgq2MEbzB5HMCxUB4AQRm5fDsPgAoCzR5LSfCcibJSYmYKIaE4fr2KMx9uaWyPATVUfYiqEpsofEph8xBl5H9koxMeKEGGzWPG0kx1ZpFBkCN77ApCFkIVQ+EhPS4Evm0XzoizhWv0JaoM4=
+	t=1762691782; cv=none; b=fhvM2Kx6ty99fG1ucHOBQ6oXWMmHnXYT1IEhe68n3j/pKo+TUa+rWSnpL9QMVtQ7IiCrEj9FwyO/N5q/mo8p+mF1v6S8XABzsjRkoCyeNcksRS4E/DJGEWgXmMpB5A+mpoU2JXFGWIkx3+GrzTmv3DZ055YPVgrA2Fic5iAxgFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762691763; c=relaxed/simple;
-	bh=aipiftIL6cxlw0GmgAzYCOHVmHzME3ZaXt6XC5G+Nz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I5Jw/OUMtvNRUGREpw/V9u4rxR9jZPn0KZFk7JEh6Ujuwhq6JGASz30WxPzOqYfSdVsu8K83hGjcJt4i+sx28CU35GofZu8qdau2eQoiBmcMCdXvpw1mQ465Pxb2hgotfgtePdoAFXZd7frDQuvHen69/17O8oXH3TAf7aQCYBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ud1BvHBs; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b4736e043f9so299260966b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:36:01 -0800 (PST)
+	s=arc-20240116; t=1762691782; c=relaxed/simple;
+	bh=0U+Xecz6Fprk4dFBomPdZ52Cm4H0r6qZsfE5vgiz9io=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tki8wheSfUFLrBWZXOwi77dJFayL2VQvQ0Nf5z1Rfmdz06P3hR/8N1v5c1/ZVmKWl1UPlmzPt2SQBNDuhbWY8Lj3mcFMPmy2CIyJEVoGh57vrGJdDIzv7DR7M7kN8qSWPOXNu1qZMBAEfhlcpW7zZbVBp/ZPrnIGdRFrliHLlx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=CwmWzn64; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3414de5b27eso1704528a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:36:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762691760; x=1763296560; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+0Qyhz1x92lWHWIws7RgtXksw84DNzrjoWDqoYr7AO8=;
-        b=Ud1BvHBsR5QO7ti9xgE1QeFTEurLQz9zSG7HJwoTOX7SsqbZpLllyznQ6nNml4ggQ5
-         HLngF89H3jaQzViZw0dyxi2GxgCrrQfTHTdKNFnAhBivADqdM+F0W6D362WwNIt5GIvM
-         bv3uQ4ea8cPUIFKOgyeylTbS6y1OegHQ/QAu9rSzOl9I+9EG452b1xPAq2TiljV+Qiwl
-         HEEZ4ECN7u3BC2eBeghl1McFiUES+wHR7HSBT/ydfYdhBq1iM3w+Tf+cBtAGZDEiuzFs
-         ndnJ0A7uhgpA+InddT4P8/hfn0q2HdKaAhEgEJKygbHC93ghdfnUO8sTfbAUB/oyJb89
-         M1eQ==
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1762691780; x=1763296580; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KJmBqFwSZPTgeDdxxWga7QZHqD9dNuDtkCKsKlOxCRA=;
+        b=CwmWzn64xu6rrzwg0+7loMOilGb4rKuLRpuGdxCfxC4/Pq4PgNE7cjZ6xa6+Uq/MGk
+         nbAT1eW4OlMtfBgw+FwbwqVy8DQ3wi20ii/by1ARkvNKyxPO3jVatFV2lIXlEchyTAfn
+         6IQ4FG02B6BQaPdEgErQLX7DpMuMxGHoqnLUVYcca2LYFcRf/i+R+cJDzC6lwbZWvt6z
+         zupquU7kEH9xcGYn438HppIwOCZuo0/iXge0cNC9gNDgngBntB2ZaMlDcBpUuHmrvtxl
+         h+1nur/i0KSS6PoRjgw4euPENUAWbdXlxjgnXxzvJJwgmrSj5FsDIFC8GBEITLH+udRw
+         WBwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762691760; x=1763296560;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+0Qyhz1x92lWHWIws7RgtXksw84DNzrjoWDqoYr7AO8=;
-        b=ulrfXsZrLARlOS0jNofMda0qNfyH59uPsVfGGavwXFRvLGleKcJoZa3ROKRowPup4O
-         n6146YLvVRf+2H9PSJ0vwB0xV9t2z+fUi1W/fZ7br6Lnl87cZOQ22+KwLATaEu5Iz03s
-         Y/CHTdHs3/Ap9VF7EyG+TNB54XH18BnbxvAyROdPHm4+rybcZuiBjcsHag0LZI28ZSYg
-         i02P/DgOVPNvCnNDM4g8rtizHUI9ieXgKI0K7HDDhOmuA//mfLEXrNTP7GQ/2j6OO/Ie
-         JUbgdIxOvr5bblBXgDXyqOjvmzrN9MCDyxzXLv6QHPKOZ3wPsIrLfJhrhgi8ltDbxhoo
-         Lb/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXlxMaptzGWzheWzhZdaLAtNqgM1/mIgom+iPCwNx45LLpcpBcd1VI/yRUEoUXYNqFhi/9kqWgxBiyr5YM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI5ac7hKk+cezo4QaJCEHUc+BIsNqGM7vuntrPtNczZZMptpo4
-	1bTW1P/kxeaBrk7TT9ILN/RQJj5/B3pDBHoZR+TsvP8aU9lYGkxPLYBsmf6z0CebZek=
-X-Gm-Gg: ASbGncv2bFG77XuIuprczS1QlRYAbd2URju5fSJuFWzghxo8KvWV4nst7APtxiCiLnC
-	pZJyRCYAHeE5IYEXNWDb0OoPajt0BLScW4w/weV6muXk5GoolBn4s8a9FyyGWKRHEXMrfjmSiJX
-	aJdLcyh7OPZOCCPBH9e20hIGMxYibUeqqqJT4bGB7lBQ4SFBMh9nDmuXWklehaBEMKDChAZX4Y6
-	X6sHPDPhiYdfvuw6alYSaPReC+WEXRsEuU8OTyP9aUEcFydLleHK2O20uczFiHlJQh7YjEJ2v6e
-	DGvgUK1keK9+JeUnoFLWKnqNFldizdofX6rcHMAdaE80l0HJQoUDcffTYRmcna5sHTIRJwWBKSB
-	ThmoK5qjHyJVhr/3OGNBwKy5dr0eeKESZ0+CGgwZDxDyamgoG/bVpZsypnsJTCwRvh9hwbzpm7+
-	E3SBgWwmeaZbCxHo59cRfOEk/u4W7JAIxwMOppb5Tyr3IVcsT8uUoVxi4mIu5u81ViTZdeSw47/
-	A6vFfabMS2UPJcjNaU79tkxuE66Utg792231HzwZZOIRCVq4vVxvsIHDivlZbo3MRL0hbbR3zFo
-X-Google-Smtp-Source: AGHT+IHyykZNktMvLQKNtgxSniaCk3u7efAcZ163+WwM1eqdehxI0ewxnn6NYoG1aJsp8Lj9a6zjlA==
-X-Received: by 2002:a17:907:2d8d:b0:b72:a899:169f with SMTP id a640c23a62f3a-b72e028a446mr537437266b.4.1762691755219;
-        Sun, 09 Nov 2025 04:35:55 -0800 (PST)
-Received: from ?IPV6:2001:1c00:3b8a:ea00:4729:b0ef:dcc4:b0b6? (2001-1c00-3b8a-ea00-4729-b0ef-dcc4-b0b6.cable.dynamic.v6.ziggo.nl. [2001:1c00:3b8a:ea00:4729:b0ef:dcc4:b0b6])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97ea95sm811509566b.44.2025.11.09.04.35.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Nov 2025 04:35:54 -0800 (PST)
-Message-ID: <f3a5c965-6bf7-4e0a-bccf-f0342928150f@linaro.org>
-Date: Sun, 9 Nov 2025 13:35:53 +0100
+        d=1e100.net; s=20230601; t=1762691780; x=1763296580;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KJmBqFwSZPTgeDdxxWga7QZHqD9dNuDtkCKsKlOxCRA=;
+        b=O7ySHbKOaMhGLN7qGj6JdGgGJ1EOi+xUBLsoM5ZAgHwtmBlHZkUhvvCmyK2pGeDa7X
+         6EcKnDzVRk9vcj++LH2JiYJBhRxOC4K0jodVBJ7H5DQQZ39JeA1XS8mhSrH52v4Ev0En
+         ULMVnSyuIYGbKwfsCaupVAxfHOJbj9x3WukH5dl5IlxoOo5xIE87bkTBSZhRSdDHvHhG
+         nsBeiOBiHG6jxYQ+UqqRfHKT5NI1YXzt4lvRgYfElDlqnvkOKp5e8u8eu1NbILzEuBww
+         BaxaLSJ8GcsgnpdrCBs3f4cTsUr/UFvW3UR+OmNwvAY6Agkvk7npD1ST7shb2BQsPG3T
+         9nnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqaDjBkgz3GG5wUNmjVQkSpdiW+tjEkZjGHPCTUoIbvzsjj0CzQsOOnMaGzsw6rj85CGja37NW4siY+bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2EMy787CBUp3sxEIfxhjeSdttfaWoXTl5910mL+9ACSzZqxuH
+	M1dHvJXk1g6lTKz5mt/7O1QCeYCgCTpiMUXcoQCNYvE6zYuVS+NYHrc9Jz64BhrtYgM=
+X-Gm-Gg: ASbGncvKUxijWoS6rgmQaz5eGQJtMjgzYv951K1NJYeEMpNif/1bEukmcEyuejBDAGR
+	ALmGG9tDuP0Xy7JMbVtIHlL+47/REtHkEgFJxmyPG6pIiMJBhaAuBaQUU+97tDMKIl9EwUe8O8z
+	jRsuj3bp20m7AtBbPzRlq2DIMbL7fGoBNKi11Ir9PfXLUSUEAGDUf4dV/NOA/iyBmN6oCUBMiNr
+	9+0E4HEMUa8cLt5Xgzn2D0bku04SVN5pXpULAGv8FMF7R+Y1Erx0/GddrgHwU3emohaZ1xNVwRq
+	9ZzcJMP1agmpwActkCfiL5ycKoWJBS4XkcKnlASH7mFuX1SvAdJVDsFTIFL6dgL8RcO15Jb4YEu
+	ZYOC9WINQYwjI4KbtUyHBgPXLAuDwZKXq0a8E3dtfSVZ8LeaIHGItV2dbPXaUjUruIvc58owi8U
+	CHrGVVr9XnX7R/EorTaTKCiDo8QzfkI8A=
+X-Google-Smtp-Source: AGHT+IFJcX4kraEUbC8VOW05T7p2FeSFYukhwLNqfkAsi9st8xXB4csrxqTW846Kb3/6J4WQhJ7aog==
+X-Received: by 2002:a17:90a:da8b:b0:33b:dec9:d9aa with SMTP id 98e67ed59e1d1-3436cbb171cmr5487179a91.25.1762691779910;
+        Sun, 09 Nov 2025 04:36:19 -0800 (PST)
+Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:519d:1960:dc93:9d0])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c337b20sm7781832a91.13.2025.11.09.04.36.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 04:36:18 -0800 (PST)
+Date: Sun, 9 Nov 2025 20:36:12 +0800
+From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>, ebiggers@kernel.org,
+	tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
+	idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
+	sagi@grimberg.me, home7438072@gmail.com,
+	linux-nvme@lists.infradead.org, linux-fscrypt@vger.kernel.org,
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
+ users
+Message-ID: <aRCKvJnJxmaDYKvI@wu-Pro-E500-G6-WS720T>
+References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
+ <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
+ <aQiC4zrtXobieAUm@black.igk.intel.com>
+ <aQiM7OWWM0dXTT0J@google.com>
+ <20251104090326.2040fa75@pumpkin>
+ <aQnMCVYFNpdsd-mm@smile.fi.intel.com>
+ <20251105094827.10e67b2d@pumpkin>
+ <aQtbmWLqtFXvT8Bc@smile.fi.intel.com>
+ <20251105143820.11558ca8@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/8] media: qcom: camss: csiphy: Introduce C-PHY
-To: david@ixit.cz, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Luca Weiss <luca.weiss@fairphone.com>, Petr Hodina <phodina@protonmail.com>,
- "Dr. Git" <drgitx@gmail.com>
-Cc: Joel Selvaraj <foss@joelselvaraj.com>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org
-References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
- <20251109-qcom-cphy-v1-2-165f7e79b0e1@ixit.cz>
-Content-Language: en-US, en-GB
-From: Casey Connolly <casey.connolly@linaro.org>
-In-Reply-To: <20251109-qcom-cphy-v1-2-165f7e79b0e1@ixit.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251105143820.11558ca8@pumpkin>
 
-Hi David,
-
-On 11/9/25 10:39, David Heidelberg via B4 Relay wrote:
-> From: David Heidelberg <david@ixit.cz>
+On Wed, Nov 05, 2025 at 02:38:20PM +0000, David Laight wrote:
+> On Wed, 5 Nov 2025 16:13:45 +0200
+> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 > 
-> Read C-PHY from the device-tree bus-type and save it into the csiphy
-> structure for later use.
+> > On Wed, Nov 05, 2025 at 09:48:27AM +0000, David Laight wrote:
+> > > On Tue, 4 Nov 2025 11:48:57 +0200
+> > > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:  
+> > > > On Tue, Nov 04, 2025 at 09:03:26AM +0000, David Laight wrote:  
+> > > > > On Mon, 3 Nov 2025 19:07:24 +0800
+> > > > > Kuan-Wei Chiu <visitorckw@gmail.com> wrote:    
+> > > > > > On Mon, Nov 03, 2025 at 11:24:35AM +0100, Andy Shevchenko wrote:    
+> > 
+> ...
+> > > How about this one?  
+> > 
+> > Better than previous one(s) but quite cryptic to understand. Will need a
+> > comment explaining the logic behind, if we go this way.
 > 
-> For C-PHY, skip clock line configuration, as there is none.
+> My first version (of this version) had all three character ranges in the define:
+> so:
+> #define INIT_1(v, ch_62, ch_63) \
+> 	[ v ] = (v) >= '0' && (v) <= '9' ? (v) - '0' \
+> 		: (v) >= 'A' && (v) <= 'Z' ? (v) - 'A' + 10 \
+> 		: (v) >= 'a' && (v) <= 'z' ? (v) - 'a' + 36 \
+> 		: (v) == ch_62 ? 62 : (v) == ch_63 ? 63 : -1
+> Perhaps less cryptic - even if the .i line will be rather longer.
+> It could be replicated for all 256 bytes, but I think the range
+> initialisers are reasonable for the non-printable ranges.
 > 
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
->   drivers/media/platform/qcom/camss/camss-csiphy.h | 2 ++
->   drivers/media/platform/qcom/camss/camss.c        | 8 ++++++--
->   2 files changed, 8 insertions(+), 2 deletions(-)
+> I did wonder if the encode and decode lookup tables count be interleaved
+> and both initialisers generated from the same #define.
+> But I can't think of a way of generating 'x' and "X" from a #define parameter.
+> (I don't think "X"[0] is constant enough...)
 > 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
-> index 895f80003c441..8f7d0e4c73075 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy.h
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
-> @@ -28,11 +28,13 @@ struct csiphy_lane {
->   
->   /**
->    * struct csiphy_lanes_cfg - CSIPHY lanes configuration
-> + * @cphy:     true if C-PHY is used, false if D-PHY is used
->    * @num_data: number of data lanes
->    * @data:     data lanes configuration
->    * @clk:      clock lane configuration (only for D-PHY)
->    */
->   struct csiphy_lanes_cfg {
-> +	bool cphy;
+> 	David
+>
 
-Bit of a nit, but it would read better to use an enum here I think, then 
-one doesn't have to infer that "!lncfg->cphy" means dphy mode.
+Thanks for your reply!
+We’ll adopt the approach you suggested in the next version.
 
-Kind regards,
-Casey (she/they)
+Best regards,
+Guan-Chun
 
->   	int num_data;
->   	struct csiphy_lane *data;
->   	struct csiphy_lane clk;
-> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-> index fcc2b2c3cba07..549780f3f948b 100644
-> --- a/drivers/media/platform/qcom/camss/camss.c
-> +++ b/drivers/media/platform/qcom/camss/camss.c
-> @@ -4055,9 +4055,13 @@ static int camss_of_parse_endpoint_node(struct device *dev,
->   	csd->interface.csiphy_id = vep.base.port;
->   
->   	mipi_csi2 = &vep.bus.mipi_csi2;
-> -	lncfg->clk.pos = mipi_csi2->clock_lane;
-> -	lncfg->clk.pol = mipi_csi2->lane_polarities[0];
->   	lncfg->num_data = mipi_csi2->num_data_lanes;
-> +	lncfg->cphy = vep.bus_type == V4L2_MBUS_CSI2_CPHY;
-> +
-> +	if (!lncfg->cphy) {
-> +		lncfg->clk.pos = mipi_csi2->clock_lane;
-> +		lncfg->clk.pol = mipi_csi2->lane_polarities[0];
-> +	}
->   
->   	lncfg->data = devm_kcalloc(dev,
->   				   lncfg->num_data, sizeof(*lncfg->data),
+> > 
+> > > #define INIT_1(v, ch_lo, ch_hi, off, ch_62, ch_63) \
+> > > 	[ v ] = ((v) >= ch_lo && (v) <= ch_hi) ? (v) - ch_lo + off \
+> > > 		: (v) == ch_62 ? 62 : (v) == ch_63 ? 63 : -1
+> > > #define INIT_2(v, ...) INIT_1(v, __VA_ARGS__), INIT_1((v) + 1, __VA_ARGS__)
+> > > #define INIT_4(v, ...) INIT_2(v, __VA_ARGS__), INIT_2((v) + 2, __VA_ARGS__)
+> > > #define INIT_8(v, ...) INIT_4(v, __VA_ARGS__), INIT_4((v) + 4, __VA_ARGS__)
+> > > #define INIT_16(v, ...) INIT_8(v, __VA_ARGS__), INIT_8((v) + 8, __VA_ARGS__)
+> > > #define INIT_32(v, ...) INIT_16(v, __VA_ARGS__), INIT_16((v) + 16, __VA_ARGS__)
+> > > 
+> > > #define BASE64_REV_INIT(ch_62, ch_63) { \
+> > > 	[ 0 ... 0x1f ] = -1, \
+> > > 	INIT_32(0x20, '0', '9', 0, ch_62, ch_63), \
+> > > 	INIT_32(0x40, 'A', 'Z', 10, ch_62, ch_63), \
+> > > 	INIT_32(0x60, 'a', 'z', 26, ch_62, ch_63), \
+> > > 	[ 0x80 ... 0xff ] = -1 }
+> > > 
+> > > which gets the pre-processor to do all the work.
+> > > ch_62 and ch_63 can be any printable characters.
+> > > 
+> > > Note that the #define names are all in a .c file - so don't need any
+> > > kind of namespace protection.  
+> > 
+> > > They can also all be #undef after the initialiser.  
+> > 
+> > Yes, that's too.
+> > 
+> > > > Moreover this table is basically a dup of the strings in the first array.
+> > > > Which already makes an unnecessary duplication.  
+> > > 
+> > > That is what the self tests are for.
+> > >   
+> > > > That's why I prefer to
+> > > > see a script (one source of data) to generate the header or something like
+> > > > this to have the tables and strings robust against typos.  
+> > > 
+> > > We have to differ on that one.
+> > > Especially in cases (like this) where generating that data is reasonably trivial.
+> > >   
+> > > > The above is simply an unreadable mess.  
+> > 
 > 
-
 
