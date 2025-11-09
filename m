@@ -1,114 +1,161 @@
-Return-Path: <linux-kernel+bounces-892120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D945EC44626
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 20:26:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73C4C44629
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 20:28:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 972BF3A7AD6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 19:26:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92F8188B8D9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 19:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AF423BD1B;
-	Sun,  9 Nov 2025 19:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B42E22A7E9;
+	Sun,  9 Nov 2025 19:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O8sd8LYq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="q+/NYAGA"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6233122538F;
-	Sun,  9 Nov 2025 19:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3061BDF59
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 19:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762716363; cv=none; b=Z8QQFRrsVSIyoIjEU+g2SOccmUc6w2/WjBK79qVEsgCbtGzRG02YsTVKnUCPOWYfqzSxbPrxhUwafVpgHublF3JZV9QkUUzCqgeQdfACwijSAc685syFKWF0gBLZVEgdldom+j8J4w49EogXrpIAFHeG4gQ8S3Z3tgKKcLJ0ywQ=
+	t=1762716507; cv=none; b=ClKdAcACRpvT/3xaLabo/Xr5+NDc2idv23DJpDI8VHbK+0N9m4r2VADFb5jMBEEBvjXYJzTgEwpQbIGCtDYNzFJNCYh9RH2hmy6ZDx3JAC0sUxlUK49gTzjaPEeznCEIYSbXzWo6T/KQRgA6jnG8+XJsFgPptCBT1sWOL3dAkaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762716363; c=relaxed/simple;
-	bh=upaeob8j34GVSsqrAgEGkGc6v0cl/aFwYXGFTvPcMx0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=in6hrFdBP8s82EKow0hLIO/V99/+ybEiLQk74psLC77V0s85ynBMOuNTRWQZ4tLVlbnDDqywpFflEdP5cGi0l0S71DjWY6dadI9wDA3ej7SI0GBMose9Tc95vGeR1A9Rj50xWKcitQGUWGlpefSK4FGkdDSne3GILZ+sePCiI1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O8sd8LYq; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762716362; x=1794252362;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=upaeob8j34GVSsqrAgEGkGc6v0cl/aFwYXGFTvPcMx0=;
-  b=O8sd8LYqTitUaHqoMLA+OMFobvvuIUp4MRPg/dQmzPmWPSREryEouNUx
-   QgqKT/ZmXwtTyxmToehIKbeEWesjGfyO7pKDxfPAlWibb/TUg7n1b3Aa2
-   REAHKjWzSXg8c7IjB9CDnwy4q89uLzXI6xZgaxxVBq+zaAAw5RMCc6EIP
-   Q/nqO6u3HVkoT4QevWwImYHs6adhoISUJMsZbkNnNV61ZMkguteHn7S+j
-   B56ci1Sl+vML/UnuLkJ3/j6p32E8GDNcYs5lny5AmdCpUT4DCxHvH86wy
-   Ozc7SPuNUphtgpYAC6b2DApJJyRzv1c1uJUXqLAyluTGQCu5+eo8g5CHj
-   g==;
-X-CSE-ConnectionGUID: +kM10htITjCa8+kwGEYxow==
-X-CSE-MsgGUID: GagaVh8rTxqzLR2L694s+w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="64820684"
-X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
-   d="scan'208";a="64820684"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 11:26:01 -0800
-X-CSE-ConnectionGUID: Ce9IDDcHRdOQGVYneTLvGA==
-X-CSE-MsgGUID: NUDF3D6ATfOroRlKtba7Wg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
-   d="scan'208";a="188664150"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa008.jf.intel.com with ESMTP; 09 Nov 2025 11:25:59 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 24BEF95; Sun, 09 Nov 2025 20:25:58 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] iio: imu: inv_icm42600: Convert to uXX and sXX integer types
-Date: Sun,  9 Nov 2025 20:24:36 +0100
-Message-ID: <20251109192556.3163077-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1762716507; c=relaxed/simple;
+	bh=pC0VLFZsf8G2B62bdNWPT+MgWwzx5QtGXcbHVTZwVlU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GfyndaDEIXN/5MAVZ1VKB55a4j51CF/YSVyKb1Wfy89EnmJpoUu6CRQqWzeEPxmNUhdQAuA6K58IePYvd/Iu0OnVsn18muqAuMD7DPBKpcz7ALlTUmzoN/o9xXyUY8hcMmxTurlkHtX4G4b9pHcS86kwJq5Fgu1UAUuH5QDxxYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=q+/NYAGA; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1762716496;
+	bh=pC0VLFZsf8G2B62bdNWPT+MgWwzx5QtGXcbHVTZwVlU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=q+/NYAGAFqPSyydyjiU/Mkn2O9ty9reoWuZ6/sXjRIwII7CEJvJSW1KCZpa7zCN4m
+	 Js59WKql96LVTAd02QCu4vbPM0Cun73oLWp+7J4uvEdRUzUV+ehTisSZCPhf5V1bCB
+	 WG2YjNyoxILZvxt5eZuzaFWjd0tc1Sz7wlEMcbrQ=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 09 Nov 2025 20:27:29 +0100
+Subject: [PATCH] tools/nolibc: avoid using plain integer as NULL pointer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20251109-nolibc-sparse-v1-1-02256638a99c@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIACDrEGkC/x3MTQqAIBBA4avIrBNU+qGuEi1MxxoIFQcikO6et
+ PwW71VgLIQMi6hQ8CamFBt0J8CdNh4oyTeDUWbQykwypot2Jznbwiid7gOqUc/oHbQmFwz0/L9
+ 1e98P+/HX2V8AAAA=
+X-Change-ID: 20251027-nolibc-sparse-c14fe0619edc
+To: Willy Tarreau <w@1wt.eu>
+Cc: linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762716494; l=3273;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=pC0VLFZsf8G2B62bdNWPT+MgWwzx5QtGXcbHVTZwVlU=;
+ b=LCKs0CrqxLl2sHQMoBEjOLB3Jt1rXLrwHgBI3BPv7i8WJN87f6vv2YEYubB8XlZUbmla52Nki
+ +9qcdPJ6XomBo+rVFWnmLr34BW+uXPID9+so/pwPKfiE8W2y5x2tpyv
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The driver code is full of intXX_t and uintXX_t types which is
-not the pattern we use in the IIO subsystem. Switch the driver
-to use kernel internal types for that. No functional changes.
+The integer zero should not be used as NULL pointer.
+It is invalid and sparse will complain about it.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Use proper NULL pointers instead.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/r/202509261452.g5peaXCc-lkp@intel.com/
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
+ tools/include/nolibc/getopt.h     | 2 +-
+ tools/include/nolibc/sys.h        | 2 +-
+ tools/include/nolibc/sys/reboot.h | 2 +-
+ tools/include/nolibc/unistd.h     | 6 +++---
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-Jonathan, what is the status of fixing the type for
-iio_push_to_buffers_with_timestamp()? This patch doesn't do that
-as I see no API has been fixed (and it seems the only one that uses
-the *intXX_t parameter).
+diff --git a/tools/include/nolibc/getopt.h b/tools/include/nolibc/getopt.h
+index 217abb95264b..87565e3b6a33 100644
+--- a/tools/include/nolibc/getopt.h
++++ b/tools/include/nolibc/getopt.h
+@@ -78,7 +78,7 @@ int getopt(int argc, char * const argv[], const char *optstring)
+ 		return '?';
+ 	}
+ 	if (optstring[i] == ':') {
+-		optarg = 0;
++		optarg = NULL;
+ 		if (optstring[i + 1] != ':' || __optpos) {
+ 			optarg = argv[optind++];
+ 			if (__optpos)
+diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
+index 28481feedb37..fcc36cffad4d 100644
+--- a/tools/include/nolibc/sys.h
++++ b/tools/include/nolibc/sys.h
+@@ -106,7 +106,7 @@ static __attribute__((unused))
+ void *sbrk(intptr_t inc)
+ {
+ 	/* first call to find current end */
+-	void *ret = sys_brk(0);
++	void *ret = sys_brk(NULL);
+ 
+ 	if (ret && sys_brk(ret + inc) == ret + inc)
+ 		return ret + inc;
+diff --git a/tools/include/nolibc/sys/reboot.h b/tools/include/nolibc/sys/reboot.h
+index 4a1e435be669..38274c64a722 100644
+--- a/tools/include/nolibc/sys/reboot.h
++++ b/tools/include/nolibc/sys/reboot.h
+@@ -28,7 +28,7 @@ ssize_t sys_reboot(int magic1, int magic2, int cmd, void *arg)
+ static __attribute__((unused))
+ int reboot(int cmd)
+ {
+-	return __sysret(sys_reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, cmd, 0));
++	return __sysret(sys_reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, cmd, NULL));
+ }
+ 
+ #endif /* _NOLIBC_SYS_REBOOT_H */
+diff --git a/tools/include/nolibc/unistd.h b/tools/include/nolibc/unistd.h
+index 7405fa2b89ba..bb5e80f3f05d 100644
+--- a/tools/include/nolibc/unistd.h
++++ b/tools/include/nolibc/unistd.h
+@@ -54,7 +54,7 @@ int msleep(unsigned int msecs)
+ {
+ 	struct timeval my_timeval = { msecs / 1000, (msecs % 1000) * 1000 };
+ 
+-	if (sys_select(0, 0, 0, 0, &my_timeval) < 0)
++	if (sys_select(0, NULL, NULL, NULL, &my_timeval) < 0)
+ 		return (my_timeval.tv_sec * 1000) +
+ 			(my_timeval.tv_usec / 1000) +
+ 			!!(my_timeval.tv_usec % 1000);
+@@ -67,7 +67,7 @@ unsigned int sleep(unsigned int seconds)
+ {
+ 	struct timeval my_timeval = { seconds, 0 };
+ 
+-	if (sys_select(0, 0, 0, 0, &my_timeval) < 0)
++	if (sys_select(0, NULL, NULL, NULL, &my_timeval) < 0)
+ 		return my_timeval.tv_sec + !!my_timeval.tv_usec;
+ 	else
+ 		return 0;
+@@ -78,7 +78,7 @@ int usleep(unsigned int usecs)
+ {
+ 	struct timeval my_timeval = { usecs / 1000000, usecs % 1000000 };
+ 
+-	return sys_select(0, 0, 0, 0, &my_timeval);
++	return sys_select(0, NULL, NULL, NULL, &my_timeval);
+ }
+ 
+ static __attribute__((unused))
 
- drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+---
+base-commit: 107eb8336e8782ae8e98b60962852a1e29aca715
+change-id: 20251027-nolibc-sparse-c14fe0619edc
 
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-index 54760d8f92a2..9be5ade24501 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-@@ -1209,7 +1209,7 @@ int inv_icm42600_accel_parse_fifo(struct iio_dev *indio_dev)
- 	ssize_t i, size;
- 	unsigned int no;
- 	const void *accel, *gyro, *timestamp;
--	const int8_t *temp;
-+	const s8 *temp;
- 	unsigned int odr;
- 	int64_t ts_val;
- 	/* buffer is copied to userspace, zeroing it to avoid any data leak */
+Best regards,
 -- 
-2.50.1
+Thomas Weißschuh <linux@weissschuh.net>
 
 
