@@ -1,191 +1,221 @@
-Return-Path: <linux-kernel+bounces-892214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0360C44A29
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 00:27:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B1BC44A35
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 00:29:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD4514E2FC6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 23:27:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12119188C95F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 23:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDA826E71E;
-	Sun,  9 Nov 2025 23:27:27 +0000 (UTC)
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A927B26D4D8;
+	Sun,  9 Nov 2025 23:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ro/6blGN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBA7221540;
-	Sun,  9 Nov 2025 23:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA331D6DA9;
+	Sun,  9 Nov 2025 23:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762730847; cv=none; b=UG3IZrKrznovuZv7/ABhm2Smqej2IJA7hW96x0YdKNl26JwuGRj9Q5UpMUOPUw7v5KzS9inbuRw0WWp7NWUMl8+f07hF0lgw4jio/khRWN/NU/sOYQAezKsPBcJsVqZkfwYO4HFq8ehlkujm7axiJqyEc2T0JDNt9UkXwOhfwv0=
+	t=1762730967; cv=none; b=NndEgkVyKL9wpI1dG40rc5Wz6s8wYnOAqJKv6mEkV/IdjYTXXSLrdCc9h0OlEctQL5gKJKib5W+qf4lESQOJoHJ/eTZAooeydZkVway7SDWU+kYV8Jkoq3hcnn9cZcVHBHINahY3eNyCctJFJE5kprdM9mdLADyyQ1YHQtfuCOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762730847; c=relaxed/simple;
-	bh=8SrTwbMflVcat3ahnfwwZTWOIz8pK42Ml9bkc01KNZ0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qi9YtsxjTz/d2tIWb4oLT1P+Pg2MVL3G4kxOwOySMwbpxYCldMw9gSMwutKyajwgyd8X/aQ3aly/Q7hjuholaob/fQSbWnlycBPPwhWijLEUAMPD97z6Ix+ix/7gVLqazYrfUW/OTN07g0FKsmbRa8KyEDDJSaRaSpb3o3iK08Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip3t1762730819tde5730c0
-X-QQ-Originating-IP: /NgVUa1Hm4yKathG8PIGfyt70MVAaoYNOhhfCI6iCDE=
-Received: from [IPV6:240f:10b:7440:1:64e0:6ba: ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 10 Nov 2025 07:26:56 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12146803779019856956
-Message-ID: <F8B2B6FA2884D69A+b7da13f2-0ffb-4308-b1ba-0549bc461be8@radxa.com>
-Date: Mon, 10 Nov 2025 08:26:56 +0900
+	s=arc-20240116; t=1762730967; c=relaxed/simple;
+	bh=fziFQOyzAXf7ELLEPYsKq6XLBdxtRH/8u0gcNrBETYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=enJV0ubp9IU4VyG3XpiFgnLFXfo6PRjnXOjS2i/cgWK3/XA/A3x/sqhgwkRWyg3OnoBQKF0aIfNapTZFAEJSL4dv3iPwkgBs1AHtCd8E1g84jBt8mVych1k/kpfCd+m1LQSPJ6VWEjKM54q43CiHXcVvMNsLZMX4a3+gPHFEZiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ro/6blGN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA5BAC4CEF7;
+	Sun,  9 Nov 2025 23:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762730966;
+	bh=fziFQOyzAXf7ELLEPYsKq6XLBdxtRH/8u0gcNrBETYw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ro/6blGNU9TECL/0nh6lj6iY53Xqk1FslNrna5sVJ44TCrkCtWpNlb5sodwTWJlcz
+	 lKJh9pU3dibDiSSgtuHR5DUVPSBzAfot8AKaQupdK8HOmKYtmadoTltvkCihvjMH03
+	 jwUyRzvlsaaAm2asC7keHRBY9cAUirQQgJJrj5PmEjAttBeuag4kfAyIOCpWMNS5ID
+	 95cuUtGST18nytg0q/9NbST9dCjPzVcJv8tfw2Yq9uCAqmdzwZKMZBJvK8E1CoR3Er
+	 Q01fap/HpDC6Bwq0Nl/aNVA0rrvJdfWkGJN2NenvHu25+L+LVPYgPC0UpfsFhK8L4d
+	 LWXnJErCMov+w==
+Date: Sun, 9 Nov 2025 16:29:22 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Graham Roff <grahamr@qti.qualcomm.com>
+Cc: Nicolas Schier <nsc@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>
+Subject: Re: [PATCH] Support conditional deps using "depends on X if Y"
+Message-ID: <20251109232922.GA2977577@ax162>
+References: <20251107-kconfig_conditional_deps-v1-1-aff22199ec0b@qti.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: FUKAUMI Naoki <naoki@radxa.com>
-Subject: [RESEND] Re: [PATCH] PCI: dw-rockchip: Skip waiting for link up
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>, Damien Le Moal
- <dlemoal@kernel.org>, Anand Moon <linux.amoon@gmail.com>,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Dragan Simic <dsimic@manjaro.org>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>,
- mani@kernel.org
-References: <20250113-rockchip-no-wait-v1-1-25417f37b92f@kernel.org>
- <1E8E4DB773970CB5+5a52c9e1-01b8-4872-99b7-021099f04031@radxa.com>
- <6e87b611-13ea-4d89-8dbf-85510dd86fa6@rock-chips.com>
- <aQ840q5BxNS1eIai@ryzen> <aQ9FWEuW47L8YOxC@ryzen>
- <55EB0E5F655F3AFC+136b89fd-98d4-42af-a99d-a0bb05cc93f3@radxa.com>
- <aRCI5kG16_1erMME@ryzen>
-Content-Language: en-US
-In-Reply-To: <aRCI5kG16_1erMME@ryzen>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz4b-0
-X-QQ-XMAILINFO: NChuY+V9daHbIcYr8tY7r7zqouRYG8/sElpemvh2s9b5D1MjX83g9Uf1
-	17ER4LvNvH8uEfuhqbdKDNhoi4bdUzM81o1FX+/v+Ko50Ws05zW/bb5KIdu79L/+DGHEnv5
-	c4kRMMpuCZKATQnEGryieZDtIXY4nvzWpoXpn4L28/v+UYHm66wcejwm+hjn2Qw20vjNsgs
-	SNQiyIOMYoleqlhdZasIbP8UbVSz//vLNUrOdxZ6hHeDe0SdHtaa1KqpeeSbvBCh2w5fn6b
-	luhCeEVmIp6LeT1d6IXwDcJ2u6uwUIMFAwvxCND1Toas8ZrLr3gJbYvF2jowndIjKftLcNV
-	j9PF2sjOfSuRnurGI18gSPOjhs6oBlN2LTUH6TDtW41/jhu+JBXkr8MjWllWjjp4ZbTYVpP
-	ChN64WaLo/ezWV7UAW+r4V/XY+P2J/lX8grj9zrJQDn7ok+Npfqvzx9U24jCzk5Qil4wvfU
-	jzcdkCIhU4pDgOB1y0bKzdUOBpxxPg9bNoYbZAgNgFH0Wyujb/szExW54ZR2Z/e7EhzNVV/
-	kTarvFbhtfNustB3pUboTNcgbonfIwIvFgpJ7XEfU91LFECeGVMA8SIJwOLK4Y1i0y7/ybf
-	G5+rD+TPwok3hwMo9uPTE95BSYaaUw7VhYKUySgRjVCdcxpwutgrzBB/zkrW2Ev41m6r2wD
-	WBMoMEGLGXUe3xFPWGRdOWPM3MYbZahddctktC2ycHp6CzsxeghRFr3Kz7zfYsTbS+StgoM
-	Cs5l8/X5O0Kldmzom0lEzJx2t9M+wGbQ2m4iBugM5k+Q+ugNoTUDJZcz9yj4X+mwf5a8Z7N
-	qAcIyyRYSnwE9H8xEUkCPzuTAO7GzdCJFXcGU7orNWXRaFbYP4FNI4aN6oKLzNmYGBFimUq
-	DkMPUoFFnMLcdzLkUxdSK3HcpRfjWCOyotkqDe4/FaArbr12Rnbq1mHwNx8VLWttnB9ra/m
-	fcuRR+6A3VcPb5mSgfw51CYoCjTA3o9e17//GcHSxFuUW+IdZLSN4VBPjxtUEVQrpq0F6aZ
-	6JBKL23JEWOhHdi0nU/aqPwr312MESJ1o9/QG2UI7dg8lfM3I9
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107-kconfig_conditional_deps-v1-1-aff22199ec0b@qti.qualcomm.com>
 
-(RESEND: fix mani's email address)
+Hi Graham,
 
-Hi Niklas,
-
-On 11/9/25 21:28, Niklas Cassel wrote:
-> On Sun, Nov 09, 2025 at 01:42:23PM +0900, FUKAUMI Naoki wrote:
->> Hi Niklas,
->>
->> On 11/8/25 22:27, Niklas Cassel wrote:
->> (snip)> (And btw. please test with the latest 6.18-rc, as, from experience,
->> the
->>> ASPM problems in earlier RCs can result in some weird problems that are
->>> not immediately deduced to be caused by the ASPM enablement.)
->>
->> Here is dmesg from v6.18-rc4:
->>   https://gist.github.com/RadxaNaoki/40e1d049bff4f1d2d4773a5ba0ed9dff
+On Fri, Nov 07, 2025 at 05:16:34PM -0800, Graham Roff wrote:
+> From: Nicolas Pitre <nico@fluxnic.net>
 > 
-> Same problem as before:
-> [    1.732538] pci_bus 0004:43: busn_res: can not insert [bus 43-41] under [bus 42-41] (conflicts with (null) [bus 42-41])
-> [    1.732645] pci_bus 0004:43: busn_res: [bus 43-41] end is updated to 43
-> [    1.732651] pci_bus 0004:43: busn_res: can not insert [bus 43] under [bus 42-41] (conflicts with (null) [bus 42-41])
-> [    1.732661] pci 0004:42:00.0: devices behind bridge are unusable because [bus 43] cannot be assigned for them
-> [    1.732840] pci_bus 0004:44: busn_res: can not insert [bus 44-41] under [bus 42-41] (conflicts with (null) [bus 42-41])
-> [    1.732947] pci_bus 0004:44: busn_res: [bus 44-41] end is updated to 44
-> [    1.732952] pci_bus 0004:44: busn_res: can not insert [bus 44] under [bus 42-41] (conflicts with (null) [bus 42-41])
-> [    1.732962] pci 0004:42:02.0: devices behind bridge are unusable because [bus 44] cannot be assigned for them
-> [    1.733134] pci_bus 0004:45: busn_res: can not insert [bus 45-41] under [bus 42-41] (conflicts with (null) [bus 42-41])
-> [    1.733246] pci_bus 0004:45: busn_res: [bus 45-41] end is updated to 45
-> [    1.733255] pci_bus 0004:45: busn_res: can not insert [bus 45] under [bus 42-41] (conflicts with (null) [bus 42-41])
-> [    1.733266] pci 0004:42:06.0: devices behind bridge are unusable because [bus 45] cannot be assigned for them
-> [    1.733438] pci_bus 0004:46: busn_res: can not insert [bus 46-41] under [bus 42-41] (conflicts with (null) [bus 42-41])
-> [    1.733544] pci_bus 0004:46: busn_res: [bus 46-41] end is updated to 46
-> [    1.733550] pci_bus 0004:46: busn_res: can not insert [bus 46] under [bus 42-41] (conflicts with (null) [bus 42-41])
-> [    1.733560] pci 0004:42:0e.0: devices behind bridge are unusable because [bus 46] cannot be assigned for them
-> [    1.733571] pci_bus 0004:42: busn_res: [bus 42-41] end is updated to 46
-> [    1.733575] pci_bus 0004:42: busn_res: can not insert [bus 42-46] under [bus 41] (conflicts with (null) [bus 41])
-> [    1.733585] pci 0004:41:00.0: devices behind bridge are unusable because [bus 42-46] cannot be assigned for them
-> [    1.733596] pcieport 0004:40:00.0: bridge has subordinate 41 but max busn 46
+> Extend the "depends on" syntax to support conditional dependencies
+> using "depends on X if Y". While functionally equivalent to "depends
+> on X || (Y == n)", "depends on X if Y" is much more readable and
+> makes the kconfig language uniform in supporting the "if <expr>"
+> suffix.
 > 
+> The change is implemented by converting the "X if Y" syntax into the
+> "X || (Y == n)" syntax during "depends on" token processing.
 > 
-> Seems like the ASM2806 switch, for some reason, is not ready.
+> Signed-off-by: Nicolas Pitre <nico@fluxnic.net>
 > 
-> One change that Diederik pointed out is that in the "good" case,
-> the link is always in Gen1 speed.
+> [Graham Roff: Rewrote commit message and redid patch for latest kernel]
 > 
-> Perhaps you could build with CONFIG_PCI_QUIRKS=y and try this patch:
+> Signed-off-by: Graham Roff <grahamr@qti.qualcomm.com>
+> ---
+> This patch updates an earlier one that was not merged to work on 
+> the latest kernel release.
 > 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index 214ed060ca1b..ac134d95a97f 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -96,6 +96,7 @@ int pcie_failed_link_retrain(struct pci_dev *dev)
->   {
->   	static const struct pci_device_id ids[] = {
->   		{ PCI_VDEVICE(ASMEDIA, 0x2824) }, /* ASMedia ASM2824 */
-> +		{ PCI_VDEVICE(ASMEDIA, 0x2806) }, /* ASMedia ASM2806 */
->   		{}
->   	};
->   	u16 lnksta, lnkctl2;
-
-It doesn't help with either probing behind the bridge or the link speed.
-
-> If that does not work, perhaps you could try this patch
-> (assuming that all Rock 5C:s have a ASM2806 on pcie2x1l2):
-
-ROCK 5C has a PCIe FPC connector and I'm using Dual 2.5G Router HAT.
-  https://radxa.com/products/rock5/5c#techspec
-  https://radxa.com/products/accessories/dual-2-5g-router-hat
-
-Regarding the link speed, I initially suspected the FPC connector and/or 
-cable might be the issue. However, I tried the Dual 2.5G Router HAT with 
-the ROCK 5A (which uses a different cable), and I got the same result.
-
-BTW, the link speed varies between 2Gb/s and 4Gb/s depending on the 
-reboot. (with or without quirk)
-
-Best regards,
-
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
-
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5c.dts b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5c.dts
-> index dd7317bab613..26f8539d934a 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5c.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5c.dts
-> @@ -452,6 +452,7 @@ &pcie2x1l2 {
->   	pinctrl-0 = <&pcie20x1_2_perstn_m0>;
->   	reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;
->   	vpcie3v3-supply = <&pcie2x1l2_3v3>;
-> +	max-link-speed = <1>;
->   	status = "okay";
->   };
+> Link: https://lwn.net/ml/linux-kernel/nycvar.YSQ.7.76.2004231102480.2671@knanqh.ubzr/#t
 > 
-> 
-> 
-> Kind regards,
-> Niklas
-> 
+> Support for this change has been expressed by a number of developers
+> since the original patch was proposed back in 2020, and has recently
+> also been raised as a patch to the Zephyr kconfig system.
 
+Do you have a link to this Zephyr Kconfig change?
+
+> One specific use is when mapping the Bluetooth specification to Kconfig,
+> as it explicitly provides dependencies between features as conditional
+> on other features. Many other cases exist where the "slightly
+> counterintuitive" (quoted from the Kconfig specification) expression 
+> "depends on BAR || !BAR" has been used when a proper "if" condition 
+> would be more readable.
+> 
+> The earlier patch discussion ended without a real conclusion and should
+> be revisited now.
+
+I think it would be useful to have a slightly more concrete example in
+the documentation of where this could be useful because even with the
+"if" syntax, it still feels a little confusing to me at least with the
+current example. Since this is just internally converting "depends on A
+if B" to "depends on A || !B", this seems like a low risk addition to
+the Kconfig language but it would be good to have some tests under
+scripts/kconfig/tests like the ones recently added by commit
+f9afce4f32e9 ("kconfig: Add transitional symbol attribute for migration
+support") upstream.
+
+> ---
+>  Documentation/kbuild/kconfig-language.rst | 12 +++++++++++-
+>  scripts/kconfig/lkc.h                     |  2 +-
+>  scripts/kconfig/menu.c                    | 12 +++++++++++-
+>  scripts/kconfig/parser.y                  |  6 +++---
+>  4 files changed, 26 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation/kbuild/kconfig-language.rst
+> index abce88f15d7c..61848f999db8 100644
+> --- a/Documentation/kbuild/kconfig-language.rst
+> +++ b/Documentation/kbuild/kconfig-language.rst
+> @@ -118,7 +118,7 @@ applicable everywhere (see syntax).
+>    This is a shorthand notation for a type definition plus a value.
+>    Optionally dependencies for this default value can be added with "if".
+>  
+> -- dependencies: "depends on" <expr>
+> +- dependencies: "depends on" <expr> ["if" <expr>]
+>  
+>    This defines a dependency for this menu entry. If multiple
+>    dependencies are defined, they are connected with '&&'. Dependencies
+> @@ -134,6 +134,16 @@ applicable everywhere (see syntax).
+>  	bool "foo"
+>  	default y
+>  
+> +  The dependency definition itself may be conditional by appending "if"
+> +  followed by an expression. If such expression is false (n) then this
+> +  dependency is ignored. One possible use case is:
+> +
+> +    config FOO
+> +	tristate
+> +	depends on BAZ if BAZ != n
+> +
+> +  meaning that FOO is constrained by the value of BAZ only when it is set.
+> +
+>  - reverse dependencies: "select" <symbol> ["if" <expr>]
+>  
+>    While normal dependencies reduce the upper limit of a symbol (see
+> diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
+> index 56548efc14d7..798985961215 100644
+> --- a/scripts/kconfig/lkc.h
+> +++ b/scripts/kconfig/lkc.h
+> @@ -82,7 +82,7 @@ void menu_warn(const struct menu *menu, const char *fmt, ...);
+>  struct menu *menu_add_menu(void);
+>  void menu_end_menu(void);
+>  void menu_add_entry(struct symbol *sym, enum menu_type type);
+> -void menu_add_dep(struct expr *dep);
+> +void menu_add_dep(struct expr *dep, struct expr *cond);
+>  void menu_add_visibility(struct expr *dep);
+>  struct property *menu_add_prompt(enum prop_type type, const char *prompt,
+>  				 struct expr *dep);
+> diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+> index 0f1a6513987c..b2d8d4e11e07 100644
+> --- a/scripts/kconfig/menu.c
+> +++ b/scripts/kconfig/menu.c
+> @@ -127,8 +127,18 @@ static struct expr *rewrite_m(struct expr *e)
+>  	return e;
+>  }
+>  
+> -void menu_add_dep(struct expr *dep)
+> +void menu_add_dep(struct expr *dep, struct expr *cond)
+>  {
+> +	if (cond) {
+> +		/*
+> +		 * We have "depends on X if Y" and we want:
+> +		 *	Y != n --> X
+> +		 *	Y == n --> y
+> +		 * That simplifies to: (X || (Y == n))
+> +		 */
+> +		dep = expr_alloc_or(dep,
+> +				expr_trans_compare(cond, E_EQUAL, &symbol_no));
+> +	}
+>  	current_entry->dep = expr_alloc_and(current_entry->dep, dep);
+>  }
+>  
+> diff --git a/scripts/kconfig/parser.y b/scripts/kconfig/parser.y
+> index 49b79dde1725..6d1bbee38f5d 100644
+> --- a/scripts/kconfig/parser.y
+> +++ b/scripts/kconfig/parser.y
+> @@ -323,7 +323,7 @@ if_entry: T_IF expr T_EOL
+>  {
+>  	printd(DEBUG_PARSE, "%s:%d:if\n", cur_filename, cur_lineno);
+>  	menu_add_entry(NULL, M_IF);
+> -	menu_add_dep($2);
+> +	menu_add_dep($2, NULL);
+>  	$$ = menu_add_menu();
+>  };
+>  
+> @@ -422,9 +422,9 @@ help: help_start T_HELPTEXT
+>  
+>  /* depends option */
+>  
+> -depends: T_DEPENDS T_ON expr T_EOL
+> +depends: T_DEPENDS T_ON expr if_expr T_EOL
+>  {
+> -	menu_add_dep($3);
+> +	menu_add_dep($3, $4);
+>  	printd(DEBUG_PARSE, "%s:%d:depends on\n", cur_filename, cur_lineno);
+>  };
+>  
+> 
+> ---
+> base-commit: a1388fcb52fcad3e0b06e2cdd0ed757a82a5be30
+> change-id: 20251106-kconfig_conditional_deps-51f1c903f863
+> 
+> Best regards,
+> -- 
+> Graham Roff <grahamr@qti.qualcomm.com>
+> 
 
