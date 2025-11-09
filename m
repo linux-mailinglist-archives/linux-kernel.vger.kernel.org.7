@@ -1,144 +1,392 @@
-Return-Path: <linux-kernel+bounces-892048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FCBC4430A
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:03:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC57BC44313
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:04:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6E443A3355
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:03:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DA663A2FC2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029D03002DB;
-	Sun,  9 Nov 2025 17:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F83303A05;
+	Sun,  9 Nov 2025 17:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="brXGgoWp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VXS8QS+W"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CD1883F;
-	Sun,  9 Nov 2025 17:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F4C883F;
+	Sun,  9 Nov 2025 17:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762707799; cv=none; b=DDsXBIq+KkKxpRWxF16fEKLehzCB95NWckqSitthF3x1tCF5qH++QWeFqxaGDGZ4JbjnkaJ/i6lAoSueiz4zHHqo+iHYsR0xueOOCKeImzDReoiX9rOsYbTmM9MKdyB00wMcODls73yiPJikl3HzI2LgQ8H+RskkGH7b5/orWwU=
+	t=1762707843; cv=none; b=C51koEtqnW8NyOBl7pVa195AQDwEV5Bj4/SfTNpRWrIwfmKJDBDKFI5uok7ehPqe25RPhanY6j1gG4O3r9JV2Kr1zGUg2+qSqw8Cd2NA7Et4IjIJtLtb8/YU1V7fMUiILBBtcMiX2kRV+cDy6g4j5ZrqXmsugzdJm+FbNBljGyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762707799; c=relaxed/simple;
-	bh=axbmF0SGDsmvQ9zcHfVj/xPuDxY4tpgaCZ5J8pxJ64I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=EWslLnhZAnAgc4e9CRlyFCJg/6zJTJNFt2YWEIxDvdLr/GMLLAwxt8bf9ODOzJomNHjjsmrL1/gC6XltACPES69bRXgjxOlyXkE5RTTMGIh6I2CaDDZgr3X523B8rXiBFEjGcNvUmX/6a0oxkqiW4dhfZLeb0xrj+vh38vjk2lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=brXGgoWp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B21FC4CEF8;
-	Sun,  9 Nov 2025 17:03:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1762707798;
-	bh=axbmF0SGDsmvQ9zcHfVj/xPuDxY4tpgaCZ5J8pxJ64I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=brXGgoWp4ZPbPVMQIXKKEvXI4EuQKlHge5IpgfKiGzNHzQkgDsih4YT/ZVPCU1KYH
-	 FGmvIJo3UNizCUEdTUove8nCxruE5bcpo/uvdZKGyBqONmBEKSLIfFV8mhmEUjVL3h
-	 jhm+MclN+8RSJGUrxjraUwiIMrHEGRay0H4mj7jI=
-Date: Sun, 9 Nov 2025 09:03:17 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Xie Yuanbin <qq570070308@gmail.com>
-Cc: nathan@kernel.org, nick.desaulniers+lkml@gmail.com, morbo@google.com,
- justinstitt@google.com, masahiroy@kernel.org, jack@suse.cz,
- maninder1.s@samsung.com, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, will@kernel.org
-Subject: Re: [PATCH] Fix redundant judgment in WARN_ONCE with clang
-Message-Id: <20251109090317.4261cff25a497bcc8a358a7d@linux-foundation.org>
-In-Reply-To: <20251109083715.24495-1-qq570070308@gmail.com>
-References: <20251109083715.24495-1-qq570070308@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762707843; c=relaxed/simple;
+	bh=2SoqEBC5cVetOqljionOBfjcJgmVzVrriPxCpv+k60U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fam9+mUaoSHvyLglW+jdznl/eRP1QpJDAV4DGUOFvPuVxQLzkigAavO7EJo8bJqWQOBkEe/utZvk4yVRvUvouSAhbx6EVJk6eOXajPa/rTDztKZv74uUPkFWLoXdLBtNfcL9n201gCEgatmTXHZSaunrps1x65DAPV3HAnao23E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VXS8QS+W; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762707842; x=1794243842;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2SoqEBC5cVetOqljionOBfjcJgmVzVrriPxCpv+k60U=;
+  b=VXS8QS+WUaSbbfMQ89sSw8kQqvDVL70loFultFIlewLNBov+jPiXK9/o
+   7fKey4LZQJPm9Rnpvp3/OS4V5cTo24RmmL6I5caX+EahoCbAPHsxI3er0
+   Lh7u7zKdksDvEU+kjBsEh1DSRwMxGC/1ZLAaAZ45kLqMX9J4uWxZ4vpe0
+   p1hHDnC6yUhLlJn/7sdM8eQtzYWug9WuU+l8uR1Gw5hyJ4jfub+X08yCf
+   iw6VFTia8zWy2ZFfeudI6MP2JPjlBNk3yFsl15nQPSt5TvQ7ONsMmtzZf
+   nFuKQDeUst9kc2+8vQyQe2XEhULD5sBikIKofkcnuxXG3VvB6aSqza86z
+   Q==;
+X-CSE-ConnectionGUID: dUHUEPbeR0eeESMlhjKh/Q==
+X-CSE-MsgGUID: kOT+Q7fXRA60rGyOHS120g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="75884742"
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="75884742"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 09:04:02 -0800
+X-CSE-ConnectionGUID: WN+GQ+8+SXWKSDu3w2jueA==
+X-CSE-MsgGUID: 2MudgvCARauTHhahPgMC0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="187784274"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.185])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 09:03:58 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vI8pY-000000074hl-0p7G;
+	Sun, 09 Nov 2025 19:03:56 +0200
+Date: Sun, 9 Nov 2025 19:03:55 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ajith Anandhan <ajithanandhan0406@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] iio: adc: Add support for TI ADS1120
+Message-ID: <aRDJexPYkIDoE9nc@smile.fi.intel.com>
+References: <20251109141119.561756-1-ajithanandhan0406@gmail.com>
+ <20251109141119.561756-3-ajithanandhan0406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251109141119.561756-3-ajithanandhan0406@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Sun,  9 Nov 2025 16:37:15 +0800 Xie Yuanbin <qq570070308@gmail.com> wrote:
-
-> For c code:
-> ```c
-> extern int xx;
-> void test(void)
-> {
-> 	if (WARN_ONCE(xx, "x"))
-> 		__asm__ volatile ("nop":::);
-> }
-> ```
+On Sun, Nov 09, 2025 at 07:41:19PM +0530, Ajith Anandhan wrote:
+> Add driver for the Texas Instruments ADS1120, a precision 16-bit
+> analog-to-digital converter with an SPI interface.
 > 
-> Clang will generate the following assembly code:
-> ```assemble
-> test:
-> 	movl	xx(%rip), %eax // Assume xx == 0 (likely case)
-> 	testl	%eax, %eax // judge once
-> 	je	.LBB0_3    // jump to .LBB0_3
-> 	testb	$1, test.__already_done(%rip)
-> 	je	.LBB0_2
-> .LBB0_3:
-> 	testl	%eax, %eax // judge again
-> 	je	.LBB0_5    // jump to .LBB0_5
-> .LBB0_4:
-> 	nop
-> .LBB0_5:
-> 	retq
-> 	// omit
-> ```
-> 
-> In the above code, `xx == 0` should be a likely case, but in this case,
-> xx has been judged twice.
->
-> ...
->
-> --- a/include/linux/once_lite.h
-> +++ b/include/linux/once_lite.h
-> @@ -10,17 +10,17 @@
->  #define DO_ONCE_LITE(func, ...)						\
->  	DO_ONCE_LITE_IF(true, func, ##__VA_ARGS__)
->  
-> -#define __ONCE_LITE_IF(condition)					\
-> -	({								\
-> -		static bool __section(".data..once") __already_done;	\
-> -		bool __ret_cond = !!(condition);			\
-> -		bool __ret_once = false;				\
-> -									\
-> -		if (unlikely(__ret_cond && !__already_done)) {		\
-> -			__already_done = true;				\
-> -			__ret_once = true;				\
-> -		}							\
-> -		unlikely(__ret_once);					\
-> +#define __ONCE_LITE_IF(condition)						\
-> +	({									\
-> +		static bool __section(".data..once") __already_done;		\
-> +		bool __ret_cond = !!(condition);				\
-> +		bool __ret_once = false;					\
-> +										\
-> +		if (unlikely(__ret_cond) && unlikely(!__already_done)) {	\
+> The driver supports:
+> - Differential and single-ended input channels
+> - Configurable gain (1-128 for differential, 1-4 for single-ended)
+> - Internal 2.048V reference
+> - Single-shot conversion mode
 
-Sure, !__already_done is unlikely here.
+> Also update MAINTAINER document.
 
-> +			__already_done = true;					\
-> +			__ret_once = true;					\
-> +		}								\
-> +		unlikely(__ret_once);						\
+Unneeded sentence in the commit message (may be located in the comment block,
+though).
 
-It's a shame you messed with the whitespace.  And I don't think it was
-necessary anyway.  Here's what it would have looked like:
+...
 
---- a/include/linux/once_lite.h~fix-redundant-judgment-in-warn_once-with-clang
-+++ a/include/linux/once_lite.h
-@@ -16,7 +16,7 @@
- 		bool __ret_cond = !!(condition);			\
- 		bool __ret_once = false;				\
- 									\
--		if (unlikely(__ret_cond && !__already_done)) {		\
-+		if (unlikely(__ret_cond) && unlikely(!__already_done)) {\
- 			__already_done = true;				\
- 			__ret_once = true;				\
- 		}							\
-_
+Many are still missing... Please, follow IWYU principle.
+
+> +#include <linux/bitfield.h>
+> +#include <linux/cleanup.h>
+> +#include <linux/delay.h>
+
+> +#include <linux/device.h>
+
+Not see why you need this and not
+
+dev_printk.h
+device/devres.h
+
+instead.
+
+> +#include <linux/err.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/unaligned.h>
+
+...
+
+> +/* Internal reference voltage in millivolts */
+> +#define ADS1120_VREF_INTERNAL_MV	2048
+
+_mV
+
+*Yes, it's okay to use small letter in this case (it's all about proper units).
+
+...
+
+> +struct ads1120_state {
+> +	struct spi_device	*spi;
+> +	struct regmap		*regmap;
+
+I'm not sure why do you need separate regmap and spi transactions at the same
+time. The commit message also kept silent about this. Needs a justification.
+
+In any case the spi device can be derived from regmap, so definitely you don't
+need both.
+
+> +	/*
+> +	 * Protects chip configuration and ADC reads to ensure
+> +	 * consistent channel/gain settings during conversions.
+> +	 */
+> +	struct mutex		lock;
+
+No header for this type.
+
+> +	int vref_mv;
+
+_mV
+
+> +	/* DMA-safe buffer for SPI transfers */
+> +	u8 data[4] __aligned(IIO_DMA_MINALIGN);
+
+No header for this type and __aligned attribute.
+
+> +};
+
+...
+
+> +	struct spi_transfer xfer[2] = {
+
+You may leave []
+
+> +		{
+> +			.tx_buf = st->data,
+> +			.len = 1,
+> +		}, {
+> +			.rx_buf = st->data,
+> +			.len = 2,
+> +		}
+> +	};
+> +
+> +	*val = sign_extend32(get_unaligned_be16(st->data), 15);
+
+No header for this API.
+
+> +	return 0;
+> +}
+
+...
+
+> +static int ads1120_read_measurement(struct ads1120_state *st,
+> +				    const struct iio_chan_spec *chan, int *val)
+> +{
+> +	int ret;
+> +
+> +	ret = ads1120_set_mux(st, chan->address);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ads1120_write_cmd(st, ADS1120_CMD_START);
+> +	if (ret)
+> +		return ret;
+
+Needs a comment explaining this rather big delay.
+
+> +	msleep(ADS1120_CONV_TIME_MS);
+> +
+> +	return ads1120_read_raw_adc(st, val);
+> +}
+
+...
+
+> +/* Regmap write function for ADS1120 */
+> +static int ads1120_regmap_write(void *context, const void *data, size_t count)
+> +{
+> +	struct ads1120_state *st = context;
+> +	const u8 *buf = data;
+> +
+> +	if (count != 2)
+> +		return -EINVAL;
+> +
+> +	/* WREG command: 0100rr00 where rr is register address */
+> +	st->data[0] = ADS1120_CMD_WREG | (buf[0] << 2);
+> +	st->data[1] = buf[1];
+> +
+> +	return spi_write(st->spi, st->data, 2);
+
+Wondering if there is a correlation between count == 2 and this 2. If it has
+1:1 relationship, perhaps use count directly here?
+
+> +}
+
+...
+
+> +static const struct regmap_config ads1120_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = ADS1120_REG_CONFIG3,
+
+> +	.cache_type = REGCACHE_FLAT,
+
+Why not MAPPLE? Or scattered FLAT?
+
+> +};
+
+...
+
+> +static int ads1120_init(struct ads1120_state *st)
+> +{
+> +	int ret;
+
+	struct device *dev = ... // from regmap
+
+> +	ret = ads1120_reset(st);
+> +	if (ret)
+> +		return dev_err_probe(&st->spi->dev, ret,
+> +					"Failed to reset device\n");
+
+		return dev_err_probe(dev, ret, "Failed to reset device\n");
+
+> +	/*
+> +	 * Configure Register 0:
+> +	 * - Input MUX: AIN0/AVSS
+> +	 * - Gain: 1
+> +	 * - PGA bypass enabled. When gain is set > 4, this bit is
+> +	 *   automatically ignored by the hardware and PGA is enabled,
+> +	 *   so it's safe to leave it set.
+> +	 */
+> +	ret = regmap_write(st->regmap, ADS1120_REG_CONFIG0,
+> +			   FIELD_PREP(ADS1120_CFG0_MUX_MASK,
+> +				      ADS1120_CFG0_MUX_AIN0_AVSS) |
+
+I would do it on a single line...
+
+> +			   FIELD_PREP(ADS1120_CFG0_GAIN_MASK,
+> +				      ADS1120_CFG0_GAIN_1) |
+
+...and this despite being long, But it's up to you and maintainers.
+Same for all similar cases.
+
+> +			   ADS1120_CFG0_PGA_BYPASS);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Configure Register 1:
+> +	 * - Data rate: 20 SPS (for single-shot mode)
+> +	 * - Operating mode: Normal
+> +	 * - Conversion mode: Single-shot
+> +	 * - Temperature sensor: Disabled
+> +	 * - Burnout current: Disabled
+> +	 */
+> +	ret = regmap_write(st->regmap, ADS1120_REG_CONFIG1,
+> +			   FIELD_PREP(ADS1120_CFG1_DR_MASK,
+> +				      ADS1120_CFG1_DR_20SPS) |
+> +			   FIELD_PREP(ADS1120_CFG1_MODE_MASK,
+> +				      ADS1120_CFG1_MODE_NORMAL) |
+> +			   FIELD_PREP(ADS1120_CFG1_CM_MASK,
+> +				      ADS1120_CFG1_CM_SINGLE) |
+> +			   FIELD_PREP(ADS1120_CFG1_TS_EN, 0) |
+> +			   FIELD_PREP(ADS1120_CFG1_BCS_EN, 0));
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Configure Register 2:
+> +	 * - Voltage reference: Internal 2.048V
+> +	 * - 50/60Hz rejection: Off
+> +	 * - Power switch: Disabled
+> +	 * - IDAC current: Off
+> +	 */
+> +	ret = regmap_write(st->regmap, ADS1120_REG_CONFIG2,
+> +			   FIELD_PREP(ADS1120_CFG2_VREF_MASK,
+> +				      ADS1120_CFG2_VREF_INTERNAL) |
+> +			   FIELD_PREP(ADS1120_CFG2_REJECT_MASK,
+> +				      ADS1120_CFG2_REJECT_OFF) |
+> +			   FIELD_PREP(ADS1120_CFG2_PSW_EN, 0) |
+> +			   FIELD_PREP(ADS1120_CFG2_IDAC_MASK,
+> +				      ADS1120_CFG2_IDAC_OFF));
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Configure Register 3:
+> +	 * - IDAC1: Disabled
+> +	 * - IDAC2: Disabled
+> +	 * - DRDY mode: Only reflects data ready status
+> +	 */
+> +	ret = regmap_write(st->regmap, ADS1120_REG_CONFIG3,
+> +			   FIELD_PREP(ADS1120_CFG3_IDAC1_MASK,
+> +				      ADS1120_CFG3_IDAC1_DISABLED) |
+> +			   FIELD_PREP(ADS1120_CFG3_IDAC2_MASK,
+> +				      ADS1120_CFG3_IDAC2_DISABLED) |
+> +			   FIELD_PREP(ADS1120_CFG3_DRDYM_MASK,
+> +				      ADS1120_CFG3_DRDYM_DRDY_ONLY));
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->vref_mv = ADS1120_VREF_INTERNAL_MV;
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int ads1120_probe(struct spi_device *spi)
+> +{
+> +	struct device *dev = &spi->dev;
+> +	struct iio_dev *indio_dev;
+> +	struct ads1120_state *st;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	st = iio_priv(indio_dev);
+> +	st->spi = spi;
+> +
+> +	ret = devm_mutex_init(dev, &st->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->regmap = devm_regmap_init(dev, &ads1120_regmap_bus, st,
+> +				      &ads1120_regmap_config);
+> +	if (IS_ERR(st->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(st->regmap),
+> +					"Failed to initialize regmap\n");
+> +
+> +	indio_dev->name = "ads1120";
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->channels = ads1120_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(ads1120_channels);
+
+No header for ARRAY_SIZE().
+
+> +	indio_dev->info = &ads1120_info;
+> +
+> +	ret = ads1120_init(st);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +					"Failed to initialize device\n");
+
+Besides broken indentation this may be a single line.
+
+> +	return devm_iio_device_register(dev, indio_dev);
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
