@@ -1,156 +1,85 @@
-Return-Path: <linux-kernel+bounces-891959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE803C43E8D
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:28:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A53C43E90
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC6D3A88FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:28:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 521A83ABECF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2B72F744C;
-	Sun,  9 Nov 2025 13:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NQYb1sLL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFE82F744C;
+	Sun,  9 Nov 2025 13:29:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F7634D395;
-	Sun,  9 Nov 2025 13:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032632F7441
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 13:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762694931; cv=none; b=jAybVD2jPZJHvs/gykXosWV0nRVvyykGDEuINXRhtPvfwexbTcda1EGQR/BZQ2Ifrt6CBYtkbndhguPzaoZKnV60oDNiNOp6YMUDGiS/07sI85VLsIpl0EbV7a7fOG//GOvAdzV6Y/LzVvDCHEWH8RVvewEnFIoENGXAg+oGqSA=
+	t=1762694945; cv=none; b=dygsT3sFdnbjo2nrJSsoOcjdQ4uwfTbCsJxKXGt3oR2dqmFuRmTrSM2p6orbUaF2lHNo33cakzqwpzt3z+ldyME91fVMZJwNH0rBDVMCc2ufa1hdxFhfZ/+QP+y1CXTTnzj11ubKkCQElqfFL0PYwq5iqqC+Je+6xHfD+9dDx+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762694931; c=relaxed/simple;
-	bh=egy0lm8KbcMkcn9xL91cir94+bUw2s619GaDs04yNRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LrHwwEMUozUkQvtibL4G6ps4feQ6rT0afcUFTnQXHIkjdG8koHr7X3SljzrGeIsWJG7XZFLZUk591H6jHbWwjLcjGrXG/GDw4wKXgoOW7d8tvwDXR2do801WNKac6Yi3RYRb9Wagm/2WX/RdNwAQndPDFudP0R6jGi0VGiSs2Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NQYb1sLL; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762694930; x=1794230930;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=egy0lm8KbcMkcn9xL91cir94+bUw2s619GaDs04yNRo=;
-  b=NQYb1sLLzjdpqNA5yhTVzL9W4X2quOejKyzYiSvfc4hC6ZkQ4QMZnSuq
-   Nkdrgq8X4K4oDOjK8ivA1KfoSBUQyBbg5eBiyIkgo7qNd31cICM7VLveo
-   UCBMBy+Rz6rBPl9AkorPEqM1jQZCFnbN9BlQhRy/4sCcnB3EieXjyAcEr
-   DUWy+03sJwf8uoETi7byVUnejoqQOruAQ99XCst/Z6rSS1jelfedxQOtM
-   ifB/RJc9i4q92DRfVgA2Wna96QRWjlT8dDCWt+GQrGtBS+Gyqg4UntkcZ
-   4h6ZCuebXDJoNM1R26ECNGwxymVxdZRJp+nsEfA1+N8OqmYRYYrNiBWjF
-   w==;
-X-CSE-ConnectionGUID: ILw46PiESsewQ2N8wqIJiA==
-X-CSE-MsgGUID: p81YM3LdTCqbFrM8sTGCCg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11607"; a="67374599"
-X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
-   d="scan'208";a="67374599"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 05:28:49 -0800
-X-CSE-ConnectionGUID: lqI5I1TzRQ2wUbcQY3p35g==
-X-CSE-MsgGUID: 1eOmrPStSNuZZaUdr7LFUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
-   d="scan'208";a="188411309"
-Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 09 Nov 2025 05:28:48 -0800
-Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vI5TJ-00021b-1e;
-	Sun, 09 Nov 2025 13:28:45 +0000
-Date: Sun, 9 Nov 2025 21:27:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: Report wrong dynamic event command
-Message-ID: <202511092149.N375MBPu-lkp@intel.com>
-References: <176259938768.261465.10714633393722227911.stgit@devnote2>
+	s=arc-20240116; t=1762694945; c=relaxed/simple;
+	bh=aM146yxzwz8M6e+zV5yyUXkkCC7w+Di/lE9P8XVIXlk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=T+OUofjTy1NvWQNLaUCM3JSaW1Clad5tWbzZZRCm2CmPMBsp0L3yk4iK24kVZj8Zs9es2VhjNx96oBIbio0BQcVzK1b6QMGi//7Xudd0VWh0EQ1g5qMoRigipG7D8Fy+HeWD4cbA3kglsbKqDEE4guHkIwrq4zaDRo2IHz1nonE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-9434f5350bcso173812539f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 05:29:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762694943; x=1763299743;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MZ3CBcY39rX+j6WS8jJkkWnJhEyFoE/ERQKorvmFMIM=;
+        b=AIhkkag+3VdI8HI/9ygDBcbhzcgud7uPodnbAQBNykXo+E5EjeWwR59RWiyAyQNsnv
+         Eg9fhHjlMNVXAoKCR5fEJ/z5Wa7PwWaPm8/fnxsSIkcFeJe64fWIPDB2CoYm2i967aOO
+         JX1uTMDpX1gSt7rSdCdfFha7ACnsp3WKL3is/G95LkzUg3dCkzEfKcgWApBnOayE0t7x
+         NvfnDJ5uwPg0A8VzMa3vRnX7vWeO3b1NV69XqVC/r9kBvz1P55AnjSfpwSsKuQQT+S4F
+         O8b44VXAelcR5sTtua9rCngeVgI++xZYr8c65mJkThGvlr3FqzjhPgcSUtkaQDkA8Anr
+         LevA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnT/MCHgtroWObVzV1IrXNRBQdkSBYV7eEoK3AhLzmdQRGp/WPHIiTneC1hjcCG9ueA2V7CYYAwcbUqI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxKg7iYYLCTdYlPWcI0o6qZHf1HX0yipt/GgWJn0GIfoP8mBOf
+	dr43kWGsWG+RqL+u2jQANvo3uek35kjcVHaxKUkRvCOTeN/JuJKECa/P9T+I9YStbMYwrcpKXuf
+	nSnR2oag7jyFvzbFDemL3zFyxzNcRAqacn4XnMG+LxE4o8STUjaaVkQ4EyLc=
+X-Google-Smtp-Source: AGHT+IHfXIX4xx9r2ov9DL73z6Fsxt15Mm4rkqtLm/nu3uA0LovxuxnmmhbMIhWOokgN0iQUbRcqxi1jpO3M1TuDrngYTTN9RGEW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <176259938768.261465.10714633393722227911.stgit@devnote2>
+X-Received: by 2002:a92:c5c5:0:b0:433:7183:c2de with SMTP id
+ e9e14a558f8ab-4337183c47amr41294645ab.7.1762694943095; Sun, 09 Nov 2025
+ 05:29:03 -0800 (PST)
+Date: Sun, 09 Nov 2025 05:29:03 -0800
+In-Reply-To: <20251109132736.1141174-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6910971f.a70a0220.22f260.00b5.GAE@google.com>
+Subject: Re: [syzbot] [gfs2?] WARNING in chown_common
+From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Masami,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot tried to test the proposed patch but the build/boot failed:
 
-[auto build test ERROR on trace/for-next]
-[also build test ERROR on next-20251107]
-[cannot apply to linus/master v6.18-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-Report-wrong-dynamic-event-command/20251108-185823
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/176259938768.261465.10714633393722227911.stgit%40devnote2
-patch subject: [PATCH] tracing: Report wrong dynamic event command
-config: s390-randconfig-002-20251109 (https://download.01.org/0day-ci/archive/20251109/202511092149.N375MBPu-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511092149.N375MBPu-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511092149.N375MBPu-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   s390-linux-ld: kernel/trace/trace_dynevent.o: in function `create_dyn_event':
->> kernel/trace/trace_dynevent.c:150: undefined reference to `trace_probe_log_init'
->> s390-linux-ld: kernel/trace/trace_dynevent.c:151: undefined reference to `__trace_probe_log_err'
->> s390-linux-ld: kernel/trace/trace_dynevent.c:152: undefined reference to `trace_probe_log_clear'
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for I2C_K1
-   Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && OF [=n]
-   Selected by [y]:
-   - MFD_SPACEMIT_P1 [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && I2C [=y]
+./include/linux/fs.h:991:9: error: use of undeclared identifier 'count'
 
 
-vim +150 kernel/trace/trace_dynevent.c
+Tested on:
 
-   133	
-   134	static int create_dyn_event(const char *raw_command)
-   135	{
-   136		struct dyn_event_operations *ops;
-   137		int ret = -ENODEV;
-   138	
-   139		if (raw_command[0] == '-' || raw_command[0] == '!')
-   140			return dyn_event_release(raw_command, NULL);
-   141	
-   142		mutex_lock(&dyn_event_ops_mutex);
-   143		list_for_each_entry(ops, &dyn_event_ops_list, list) {
-   144			ret = ops->create(raw_command);
-   145			if (!ret || ret != -ECANCELED)
-   146				break;
-   147		}
-   148		if (ret == -ECANCELED) {
-   149			/* Wrong dynamic event. Leave an error message. */
- > 150			trace_probe_log_init("dynevent", 1, &raw_command);
- > 151			trace_probe_log_err(0, BAD_DYN_EVENT);
- > 152			trace_probe_log_clear();
-   153			ret = -EINVAL;
-   154		}
-   155	
-   156		mutex_unlock(&dyn_event_ops_mutex);
-   157	
-   158		return ret;
-   159	}
-   160	
+commit:         439fc29d Merge tag 'drm-fixes-2025-11-09' of https://g..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df98b4d1d5944c56
+dashboard link: https://syzkaller.appspot.com/bug?extid=04c2672c56fbb9401640
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10eb8412580000
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
