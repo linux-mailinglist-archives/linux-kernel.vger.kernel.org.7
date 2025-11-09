@@ -1,197 +1,85 @@
-Return-Path: <linux-kernel+bounces-891955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525E1C43E7D
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:16:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD5FC43E81
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:25:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 109DB188BCD5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:16:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 342003AC542
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9932F7440;
-	Sun,  9 Nov 2025 13:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC38C2F6933;
+	Sun,  9 Nov 2025 13:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQiplyU/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nsLEKn9R"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C367C8F7D;
-	Sun,  9 Nov 2025 13:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648EE2D595A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 13:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762694178; cv=none; b=mSl2LaBKggdTPTdZfyODjlKqSBv9bcb2bukMen8IbFA9CJ0ISAmbi06950fpyCtj0sdIrsTC+l6hu9wTSZPtNJuAF2WskkLIIgT0LPvKWi96uQUimhrIxIg6oIqRZRP2Hc6rHtoh1R2KeR2YqAw2VKZ9SBqC0oIbNtvnwYGO+Hk=
+	t=1762694727; cv=none; b=Ye9O1DcheXBMNLH+B2hoK8c5E0qkBJZbKGTL5jHXxwzrr8NKqlhaIMXLUi8MMZaxBo+/DbnOPv1A5B98B2HMYumfi2zqmSr5Dehu+FE1tUoYsnUJg/g1R4FKW3XLGk4v92cKuIBthLWlDn+h6/2Wqh3Md+uHzl8y0sxv6UnoTcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762694178; c=relaxed/simple;
-	bh=3KRQry2rN5yBVh+iljFYmxN/MaQaDt+KLgcTKHl1+9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KoIAIeKsGgHSTIn1Vz/SuvMNV8MT/8+TrzpJE8dNvY1F84CkOI40aVXAiZm++j7P7h4nB6BtKJj4pEJZPGheVbGEnVWd5LHFg7EWKICixohqUsDuz04O+kkkj2osi464rmRa2s6x1+PDdMO7VDRbM7Ktic672h/rm85XzDPhe9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQiplyU/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E491CC4CEF8;
-	Sun,  9 Nov 2025 13:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762694178;
-	bh=3KRQry2rN5yBVh+iljFYmxN/MaQaDt+KLgcTKHl1+9w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oQiplyU/LbwRxAbtCRePLvDcPxvLpQS2NfkS5btfCzb0bsuWcEEtiKySAoSA1WW8e
-	 0TNN6r5KqR/ObQrunoaH00KsxTgy4sZ0KRO1pVsuZ7jGPPsPtmceUkYzWxOYJQxPVD
-	 6uAslhPWfpwHneONieUUjT6k66NnZKuM7SavY0U/wsGUk1UFXhDLATtJE7XXx/pNuq
-	 7ag1MYZC05SiY92HQxeC4b8g3YK7lWRGU8N4yhCVcX13FdIfTa1OWiPTsZeTPJYfo5
-	 JiQe5iy0AlZj6f35/kqemnNLbA8z+9js+iE/lstC3Tzvi5pxXnTDQjErfVgoN6/Fh3
-	 8OSvTMlZiidzg==
-Date: Sun, 9 Nov 2025 13:16:14 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Lakshmi Patil <lakshmi16796@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: Lakshmi Patil: dt-bindings: misc: Add Xilinx
- AXI FIFO MM S controller binding
-Message-ID: <20251109-annually-nifty-42c9530b4f07@spud>
-References: <20251109033751.334711-1-lakshmi16796@gmail.com>
+	s=arc-20240116; t=1762694727; c=relaxed/simple;
+	bh=a6Mm4Izv/l2Vj4Lk4uIhAUntZzlpFUu5dR42KJu4KxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k3MB2y6Jm3uM8gkRSPsZqvgST/fZkaIQwMU/4E+2lA2p3tFCUv7DyVBU9cVLuFYE20joUafkdPhJvuVKz8OJIlwn75PVmw+ieT13Aig7E3TxnLeb46K2BXQjqpYX13E3EEQVfO+cyFwZYvklHVa9FzezzvfZUz6ZmKoLnwHpAUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nsLEKn9R; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762694712;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+7YL1GuAIPNyLjQq6TclNsLYD8AzM0YeDoT6kWQUrj0=;
+	b=nsLEKn9R5peSkPpKZVkQZX+lcRXX9jWPKMof1BYqA6YzTkGP8+pKrcwLVPmNh0HsDl3Cc3
+	dTlTTVDelPepoWg7AD+iO4DOAAHG2f/xXf/8mqqK+36sCzakiaYDpkaAoI06TIXZ1HmvRB
+	zO2p31ciLstdRmAoJ6d9KvuuwRSbKro=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] fs/xattr: Annotate struct simple_xattr with __counted_by
+Date: Sun,  9 Nov 2025 14:23:51 +0100
+Message-ID: <20251109132356.473873-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="H86Bpw1wREfxQN0S"
-Content-Disposition: inline
-In-Reply-To: <20251109033751.334711-1-lakshmi16796@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Add the __counted_by() compiler attribute to the flexible array member
+'value' to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
---H86Bpw1wREfxQN0S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ include/linux/xattr.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sun, Nov 09, 2025 at 09:07:49AM +0530, Lakshmi Patil wrote:
-> Warning found by checkpatch.pl script.
+diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+index 86b0d47984a1..2d0ccf99ee75 100644
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -114,7 +114,7 @@ struct simple_xattr {
+ 	struct rb_node rb_node;
+ 	char *name;
+ 	size_t size;
+-	char value[];
++	char value[] __counted_by(size);
+ };
+ 
+ void simple_xattrs_init(struct simple_xattrs *xattrs);
+-- 
+2.51.1
 
-What? This commit message and subject is so weird that it looks like it
-was generated by some of LLM hallucination.
-
->=20
-> Add the Device Tree binding documentation for the Xilinx AXI FIFO MM S
-> (AXI Memory Mapped to Stream) controller. The core provides a FIFO-based
-> interface between AXI Memory-Mapped and AXI-Stream domains and is used in
-> Xilinx SoC and FPGA designs to offload DMA-style data transfers.
-
-There's already a binding in text form for this device. Your binding
-below contains almost none of the required properties in the text
-binding, nor does it actually remove the existing text binding.
-
-Did you just not check to see if it was already documented, or what's
-going on here? I am very confused to be honest.
-
-pw-bot: changes-requested
-
-Cheers,
-Conor.
-
->=20
-> The binding describes the required properties such as compatible string,
-> register region, clock, reset, and interrupt line.
->=20
-> Signed-off-by: Lakshmi Patil <lakshmi16796@gmail.com>
-> ---
->  .../bindings/misc/xlnx,axi-fifo-mm-s.yaml     | 69 +++++++++++++++++++
->  1 file changed, 69 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/misc/xlnx,axi-fifo-=
-mm-s.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.ya=
-ml b/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml
-> new file mode 100644
-> index 000000000000..d02a7cf9ac0f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml
-> @@ -0,0 +1,69 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/misc/xlnx,axi-fifo-mm-s.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Xilinx AXI FIFO MM S Controller
-> +
-> +maintainers:
-> +  - Lakshmi lakshmi16796@gmail.com
-> +
-> +description: |
-> +  The Xilinx AXI FIFO Memory Mapped to Stream (MM2S / S2MM) core provides
-> +  a FIFO-based interface for moving data between AXI Memory-Mapped and
-> +  AXI-Stream domains. It supports both transmit and receive paths
-> +  and is typically used to offload DMA-style data transfers in
-> +  Xilinx SoCs or FPGA designs.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - xlnx,axi-fifo-mm-s-4.1
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description:
-> +      Base address and size of the AXI FIFO MM S register space.
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description:
-> +      Interrupt line from the AXI FIFO block, if available.
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description:
-> +      Reference clock for the AXI FIFO interface.
-> +
-> +  clock-names:
-> +    const: s_axi_aclk
-> +
-> +  resets:
-> +    maxItems: 1
-> +    description:
-> +      Reset line for the AXI FIFO interface.
-> +
-> +  reset-names:
-> +    const: s_axi_aresetn
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - resets
-> +
-> +additionalProperties: true
-> +
-> +examples:
-> +  - |
-> +    axi_fifo_mm_s@43c00000 {
-> +        compatible =3D "xlnx,axi-fifo-mm-s-4.1";
-> +        reg =3D <0x43c00000 0x10000>;
-> +        interrupts =3D <0 59 4>;
-> +        clocks =3D <&clkc 15>;
-> +        clock-names =3D "s_axi_aclk";
-> +        resets =3D <&rstc 0>;
-> +        reset-names =3D "s_axi_aresetn";
-> +    };
-> +
-> --=20
-> 2.34.1
->=20
-
---H86Bpw1wREfxQN0S
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRCT/gAKCRB4tDGHoIJi
-0qbhAQDVf3sKkI6hwzIWM62RyARJKS8IANDqSwipdXd4qDmtiwD+NhUFDv9mLofo
-Ls6JUBUdgFPO4W/AMduv3e/drTji4QU=
-=aB42
------END PGP SIGNATURE-----
-
---H86Bpw1wREfxQN0S--
 
