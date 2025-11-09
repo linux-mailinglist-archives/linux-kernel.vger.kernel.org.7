@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-891911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E267C43CCE
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:44:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E2AC43CD1
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:45:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB47D4E4BC5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C252A3ADFC2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA562DC79A;
-	Sun,  9 Nov 2025 11:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0136B2DE718;
+	Sun,  9 Nov 2025 11:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=aerlync.com header.i=@aerlync.com header.b="aSiTYxvl"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kxDK60de"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1753311CA9
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27861E51E0;
+	Sun,  9 Nov 2025 11:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762688684; cv=none; b=AQaQKgbu1yGtrqtBbOGhRe2aQKfG1nRHZ1FGD0EipVvuqtHHlrpPEdqxyH3b9jVhtGoT0exAe62kS0zASDTfsol69RKorQ/rWRy6TkLY1//jCuxRuMo4vb3ekgcf/GSkpnA3hSnVzr9t+KL9emctS1pbWTwDePlpYMad+KZt2w0=
+	t=1762688714; cv=none; b=RwE+kTLnXH8XQXFpviktiq68JUNSdyfhKY0aN1fgKRXkaqrPF7GvtFjF+WRuGOtqXz0FizIdWDexnLen9wDUDJIlb+g+loxt5Co+q+PlUcr49khJoip48BDDQekzI3FfAqsg12yx20WnPzmihC3ZGyAB3G0y709C221zrlZxE8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762688684; c=relaxed/simple;
-	bh=lU2Pn+X9ZqNJ0QUXQEP/kMjGySaAD5tEPnrnOt/Pa78=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bzY9AaEFSSBgkqNy3FrnUJ0KR38XrYXaDxOHa+nMaQGCPhg6xYB961jqrcJchW6/pC7ciWnDCSseepct4YhUzfTTy/tuK5D/cjNG2uJdVPMh2W3k5D8Mj90Bzz+cE8kQVcHkZV8kcJjSy7+sHrtF2PcGx21nyrjrlLtutyMdgc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aerlync.com; spf=pass smtp.mailfrom=aerlync.com; dkim=fail (0-bit key) header.d=aerlync.com header.i=@aerlync.com header.b=aSiTYxvl reason="key not found in DNS"; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aerlync.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aerlync.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-34381ec9197so435013a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 03:44:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=aerlync.com; s=google; t=1762688680; x=1763293480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+DsiEsh4eUVH04bD394mJEOkHiS+PFJy/C7fcUmjwIg=;
-        b=aSiTYxvl9dXf8CUrfJGJPsv2n2ECkkJRv6Vt1GfyzoLImvOQzDzG+M6ddCIQvnHNQ1
-         ZpBDnNLsjuDWJjAPE8rJ4g46ZD8Z5l3wZfrbfxQOaGbXWFsAxqm2d4La0f7mLb8NAkij
-         JxPLLCGRjcATu4B3YahymtKS5OsKZzZt9QZK+FDDrk2Cn90WQ55st71j5iSen+owg5Bl
-         YZfdSt2ANaq1+QrOslXe6T8w/2hmaikVv4IHEE4qHL8bAFTqYruGd41IFzS5W8aW053C
-         lw48W4gCf/aOguyyU4DGlW5hv7ILlNvofAR/3PMvqYvJ+ve2edAGj05xnhCN4SDpLoSm
-         50hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762688680; x=1763293480;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+DsiEsh4eUVH04bD394mJEOkHiS+PFJy/C7fcUmjwIg=;
-        b=JyqMeFtyEqpYKhxz5c/lqPKrK++wSDq96YSmvCdFsoQLNLqVPxV26So8emhpBHJigf
-         jEPs0Ea8vWX0qYJ5n+9CCOML+eC9XKoVodD8UiU/5Lb4p3CkSS4PN6VDrgmVjbD0jGu2
-         OhB6jiuXXnY/qVtsuSkbQOmX/SSkNR56mRY3CN/cF1g2U4Mh5v2XN0oLUohuUyIiv4lc
-         MSafJ93zRGrmeNjisRBv/eeG23ovZnaA2up3c3RBWhJ5JuBk/uBLA75pFqsqade+9+0m
-         fAbkLNTmD511DxSifnz0R6QglejojNu0dfTzCGhi2YNbdnECNtrFcwB+Njyau4Qnlapq
-         QnSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRikjJi/ICSxsY3UNyX5whrfvBIY3LdigUXMrtrxcnF6c+K9imXCywudsfjCfWo0YnDi/iHDC6qLcJQU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd9jHJ1sGJLkSqcqXjuUKG7/79/1kiNJiTOpokVyIdSoERwE3u
-	ZhTOHZyPMNcPZ9YDuGgXi/vjZqyoxDWdW/RGO0bvYXeuxGwR1rV7KF3nr8RWZN49iOE=
-X-Gm-Gg: ASbGncv6OrGgX9X0VR0pX3g7LNKau9OWnrs8RzRTe1Zdc5hJPNsrsTGAAPKSPjsS0LA
-	Lg9CRltHGDHSSVSfRjTUDEB+cs5PTZlgq98l37tZZTf+oJpVsQYCxs7T099dx9g6SmQfgh/UfKA
-	LicazfbEYtnqu70j65PTrGLIdyGBTHdaSQbFI5zuaTq4PJg8U8i+qtEDnuNcf+5cA7+ycck0pgn
-	Kle3d3w/q3OIn3L7ENmAELtoC8GyqUm6n0KwhKqXnPMIT4Q3EWkRlxM8yGUad0yPJh1JXSzbm33
-	vAabBcHxhzDyAHmONIhVqFtWJju66zIE5ihqAZVzl1mnos52tZgQclTcGca9AQWhmYi/d8d1Bur
-	oIAky9kFpM/fHbHP43IAxtFE71NlbreEsIeM2wbk11rPea4VgD4KvVD705D/SzMEaFD+AJkGebF
-	BfbQU2/ypQYRqUEd1XSywVFEY9ip05pg9RbnFexsOdqQ==
-X-Google-Smtp-Source: AGHT+IF8kFwPjHl6+kry3//l7rLiQTHcRxA0nIv6IbtckHMItUDmmc9mA5ysz9x49+Adwd6XP8gc2Q==
-X-Received: by 2002:a17:90b:2f47:b0:341:8491:472a with SMTP id 98e67ed59e1d1-3436cb0d183mr6010243a91.4.1762688680411;
-        Sun, 09 Nov 2025 03:44:40 -0800 (PST)
-Received: from localhost.localdomain ([49.206.115.59])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c332f1csm7656552a91.11.2025.11.09.03.44.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 03:44:40 -0800 (PST)
-From: Sayooj K Karun <sayooj@aerlync.com>
-To: johannes@sipsolutions.net
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sayooj@aerlync.com
-Subject: [PATCH] mac80211: mesh: tolerate missing mesh RMC cache
-Date: Sun,  9 Nov 2025 17:13:21 +0530
-Message-ID: <20251109114321.10120-1-sayooj@aerlync.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762688714; c=relaxed/simple;
+	bh=O0nIcV0c5wgu+szwXxCd+tGsNyUfJ4GDEdOEOuMwZOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r6uxDTDwl5IkjoMP99KLFJXHTNtuTBs4rUFRbhHKcFov4vDijC2JzgyKDgn1NVYNMF2BLeP8BAnRfE9bvOrBQRVB1ueRleB+NkN12/0DbMIYAe81Mp4OWt5C/QyQ5cLkQBIh3NEZsuG8r1lojMXKLCwjDtyg0SQtVzHavBLkjwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kxDK60de; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ia/BGyrmRgCd/x4/Ff6ZBieRFwhNMm3rnIx8XPcPLnk=; b=kxDK60deRXrRM8BtbCLup/i7wK
+	XDcb6JVr7rcKhwUQWIsWRMLE5aZBMqSkTC7/x4zV+YzHxgCiI8lE+wqV5/Wxrx06B0lNFmwFR9X+0
+	qssKyj60IrgL4zkhevzQHR5dwvfHefBGwowxGOGACzEOaOJDVSk/S7+NuS4sGtSPfXuxf7Jr+R/wt
+	GXUfBOQ0Fd0C2WDx3JX5Mg7WHvEPDU/QqTaUXG+PBWMmGfgROehC1SDNwom5rwGUaSarxsp6rB7Qv
+	NyN7iFY2HnoNuIjOt76M0Ruk01D8NZRuyxum64F9NFhNcT5mQvpb2sV8HgEtDfwVhaRx0dnt2DUzk
+	R3yLr9nQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vI2zF-00000009048-2IlU;
+	Sun, 09 Nov 2025 10:49:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3101530023C; Sun, 09 Nov 2025 12:45:01 +0100 (CET)
+Date: Sun, 9 Nov 2025 12:45:00 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Liangyan <liangyan.peng@bytedance.com>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	james.clark@linaro.org, bigeasy@linutronix.de,
+	zengxianjun@bytedance.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf/core: Fix pending work re-queued in
+ __perf_event_overflow
+Message-ID: <20251109114500.GC2545891@noisy.programming.kicks-ass.net>
+References: <20251109103253.57081-1-liangyan.peng@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251109103253.57081-1-liangyan.peng@bytedance.com>
 
-Allow kmem_cache_create() to fail gracefully when the mesh RMC slab
-cannot be created so multicast forwarding continues even without
-duplicate filtering.
+On Sun, Nov 09, 2025 at 06:32:53PM +0800, Liangyan wrote:
+> A race condition occurs between task context and IRQ context when
+> handling sigtrap tracepoint event overflows:
+> 
+> 1. In task context, an event is overflowed and its pending work is
+>    queued to task->task_works
+> 2. Before pending_work is set, the same event overflows in IRQ context
+> 3. Both contexts queue the same perf pending work to task->task_works
+> 
+> This double queuing causes:
+> - task_work_run() enters infinite loop calling perf_pending_task()
+> - Potential warnings and use-after-free when event is freed in
+> perf_pending_task()
+> 
+> Fix the race by disabling interrupts during queuing of perf pending work.
 
-Signed-off-by: Sayooj K Karun <sayooj@aerlync.com>
----
- net/mac80211/mesh.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/net/mac80211/mesh.c b/net/mac80211/mesh.c
-index f37068a533f4..20f25226d2f2 100644
---- a/net/mac80211/mesh.c
-+++ b/net/mac80211/mesh.c
-@@ -2,10 +2,13 @@
- /*
-  * Copyright (c) 2008, 2009 open80211s Ltd.
-  * Copyright (C) 2018 - 2024 Intel Corporation
-+ * Copyright (C) 2025 Aerlync Labs Inc.
-  * Authors:    Luis Carlos Cobo <luisca@cozybit.com>
-  * 	       Javier Cardona <javier@cozybit.com>
-+ *	       Sayooj K Karun <sayooj@aerlync.com>
-  */
- 
-+#include <linux/printk.h>
- #include <linux/slab.h>
- #include <linux/unaligned.h>
- #include <net/sock.h>
-@@ -25,9 +28,14 @@ bool mesh_action_is_path_sel(struct ieee80211_mgmt *mgmt)
- 
- void ieee80211s_init(void)
- {
--	mesh_allocated = 1;
- 	rm_cache = kmem_cache_create("mesh_rmc", sizeof(struct rmc_entry),
- 				     0, 0, NULL);
-+	if (!rm_cache) {
-+		pr_warn("mac80211: failed to allocate mesh RMC cache; duplicate filtering disabled\n");
-+		return;
-+	}
-+
-+	mesh_allocated = 1;
- }
- 
- void ieee80211s_stop(void)
-@@ -35,6 +43,8 @@ void ieee80211s_stop(void)
- 	if (!mesh_allocated)
- 		return;
- 	kmem_cache_destroy(rm_cache);
-+	rm_cache = NULL;
-+	mesh_allocated = 0;
- }
- 
- static void ieee80211_mesh_housekeeping_timer(struct timer_list *t)
-@@ -231,8 +241,8 @@ int mesh_rmc_check(struct ieee80211_sub_if_data *sdata,
- 	struct rmc_entry *p;
- 	struct hlist_node *n;
- 
--	if (!rmc)
--		return -1;
-+	if (!rmc || !rm_cache)
-+		return 0;
- 
- 	/* Don't care about endianness since only match matters */
- 	memcpy(&seqnum, &mesh_hdr->seqnum, sizeof(mesh_hdr->seqnum));
--- 
-2.43.0
 
+> Fixes: c5d93d23a260 ("perf: Enqueue SIGTRAP always via task_work.")
+> Reported-by: Xianjun Zeng <zengxianjun@bytedance.com>
+> Signed-off-by: Liangyan <liangyan.peng@bytedance.com>
+> ---
+>  kernel/events/core.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index cae921f4d137..6c35a129f185 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -10427,12 +10427,14 @@ static int __perf_event_overflow(struct perf_event *event,
+>  		bool valid_sample = sample_is_allowed(event, regs);
+>  		unsigned int pending_id = 1;
+>  		enum task_work_notify_mode notify_mode;
+> +		unsigned long flags;
+>  
+>  		if (regs)
+>  			pending_id = hash32_ptr((void *)instruction_pointer(regs)) ?: 1;
+>  
+>  		notify_mode = in_nmi() ? TWA_NMI_CURRENT : TWA_RESUME;
+>  
+> +		local_irq_save(flags);
+
+This could be written as:
+
+		/*
+		 * Comment that explains why we need to disable IRQs.
+		 */
+		guard(irqsave)();
+
+>  		if (!event->pending_work &&
+>  		    !task_work_add(current, &event->pending_task, notify_mode)) {
+>  			event->pending_work = pending_id;
+> @@ -10458,6 +10460,7 @@ static int __perf_event_overflow(struct perf_event *event,
+>  			 */
+>  			WARN_ON_ONCE(event->pending_work != pending_id);
+>  		}
+> +		local_irq_restore(flags);
+>  	}
+>  
+>  	READ_ONCE(event->overflow_handler)(event, data, regs);
+> -- 
+> 2.39.3 (Apple Git-145)
+> 
 
