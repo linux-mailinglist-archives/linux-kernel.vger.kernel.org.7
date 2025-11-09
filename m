@@ -1,163 +1,174 @@
-Return-Path: <linux-kernel+bounces-891971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0701EC43F32
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:47:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275E7C43F35
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:50:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76AA4188C6AF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:47:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3D1E4E2A32
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B7B2FBDF3;
-	Sun,  9 Nov 2025 13:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9171E2FB094;
+	Sun,  9 Nov 2025 13:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jpULyxSj"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXUdPeIY"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0564D2FB99F
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 13:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FB11C695
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 13:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762696016; cv=none; b=pAMwALs5sCIya0/iogMhBy7ZsnGXhdK4fxR8MkXoQJpvbTirCbSOVXmWQmTPj8qPD+u/4uwQzAz0iamK9LxMwwptywriwSFaCW0N47Ri5+CJU3hwRa1Mir2nBG94RF12meIAG3b7PGq2gcu7zt4l4ylwtqjtftfCLS3ige0Wvyk=
+	t=1762696212; cv=none; b=R5r+t96l7/+BAOqKdbXYWE6/8swGsm/DfWr/Oo0t8sFXtMHBjpIl+RmxQxvkJazuqdwAD/bZsw1nePn2Ri45i6JP+sfYDG+Zv2JbbZWWeQs8deOB3dBHfI+MR81S/VJ11USQaCooJiiEYiGouPhLedLWA2LTdtSmsl1NSQGmhVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762696016; c=relaxed/simple;
-	bh=78sRp5/pEa3exZ9nnd39D16LidtkS04WArCUHi6XxZ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jFaUdiIhrcYq3/wnpmT1FRiyrsfoExgEhKpZaou7G2BXUEjekyfO5xZqeK25s8M+DcLCxexSJ1j0mtRbS4bkRPf+Gud5FnfVkrRz0WuTbEzAux0k1vEgZHrkcumFcuBx0E5+MRlOIPYpYJYgGXKTtfY+CLC0xY5kk88Jeno0ruw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jpULyxSj; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1762696212; c=relaxed/simple;
+	bh=FkXGQJ0cT+VzRQhQb+dZvS4bvOW1XkCYlyGjGKcSZdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RGx5bpyjmRhLMiEjek8Y0yMsz7j7R8s5X3MvzpuHcW8Vjc4sGnPVRtnQXSqeZKZ734Q2iJkA0CD6cmCvcj8Jpd5ZaXcBn1UxHQU0LldekPYR/bF6hHKVkeK1bFc36h6I9Ky7gxS0eHL+cVrE7KRwmCjwQF0IInKTibJU9+SPUVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXUdPeIY; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b4736e043f9so303680166b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 05:46:54 -0800 (PST)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-29555415c5fso27753405ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 05:50:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762696013; x=1763300813; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qOxOVz3OD8A8kOJ9jS3tsAyXqepvPRy5WhOjggMQTeU=;
-        b=jpULyxSjrasurBovd3jqp64akl/RwadL36n1rGmyvjqM6Bd/80RLfhQGNxUOd/6RM8
-         N/G8QxBCZHdYJIEULKpKXq1cra0PTbIXv/idbLh49wMaNAnjBETXPb6FnuFC6qKMxcGz
-         5M0dYD7FKcE6ITAruC7kz7fO0+Hiv+5EssyBCVOr8RQSTNVvhZA31BF2oKW2A2dZxHJp
-         BvbYE3nUyb5/wCEk1g9aTZKdKb/yUWCan9xehxVqepEWkVQPZ8R7WrRUfVdnCF5/uq3T
-         VCqBEojf5Op2vMbZiKp3CA98O5BbIj/u9dHDqTcVAsW+4J0SF59+VyZQn8PevRKtr27t
-         BsYw==
+        d=gmail.com; s=20230601; t=1762696211; x=1763301011; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FkXGQJ0cT+VzRQhQb+dZvS4bvOW1XkCYlyGjGKcSZdo=;
+        b=eXUdPeIY8EI+ii8BaoSagUwSjNxuGUfLJnAbTuNz2KHodVuS4kuw4GlAuIUgIypAx9
+         5z/PjxIUS5lP+UlE1zLgBmr7cMnmspf+MOA75FZWLurZGudDT8FB9Xq7V4LwrOpHjQjW
+         0ipw9XXuzb7wvIBUfqxeCkUFiCF9smhlFPpfnUX9geZLEaCi7n6ORWj8yjcLlHfLseLt
+         sY5EMkOtPbG+DIjDu/jCpFvpz+MOcI1d95bqGmqU1xapB4I7U3bDg4ZJVEFT/IXEBBjj
+         q8C7iKLBIkMKag+wJo46AQPCnMO0DoQT1D3bh/IhHgll+G9RrsBT8TlT1YRbAg34OITK
+         gEiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762696013; x=1763300813;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qOxOVz3OD8A8kOJ9jS3tsAyXqepvPRy5WhOjggMQTeU=;
-        b=Sfy2RRK7uclId7u/32ZggIcaLIH1MWLqbiDgapcqROgs4uXfQy2JQr+puEBndqZvDC
-         dsKmD7YG4iKWTqxS7TEEve5HpcfwNGpzDvLd32NITlI0SV3Dgk5Sw3hKo73YCA+Z4zaf
-         yP9XnKS3EHO5d4ov0lkcugJER1VGD2otM9iKlxxhGhYP8NSS7cs1Y6x2VjvPATGw7v9/
-         TH7c7wav9UQVOMfm7uGYjTPhxxFu+FiV2S8qNkPkrqSRXgN/vubDWhB9bXE1jVq8iZph
-         Teobh0BgBYc5x5TYxTw2racpM1w/FBNv8rNnnV99YmWIuqERZgcczrh+8sxjQW4Rybjr
-         jqqg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3XOOwOosJJUY2dW4cWRWEPAhQ0+hbDao3N/aaeIjaWLs1Xk1mvZ08Y2gkGf8UhzaW40SE+VbsOdeihEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVNpqhK54socMBdP6S+zhoxAVSxfVwww7NKF9J23mo59QGs15U
-	zw5+ln5tPjwPhbX3kLu2P/WqwHx275E4tdcE9PziVB2cmOsI97s0rW/Y
-X-Gm-Gg: ASbGncsKAVbsm+fK9BDKz6aSqcRMYd5qwJDeHoTPwchIghurehJ2tIGLoorDz+cLMFg
-	1W6Cj0NYiCyK92FwhYgBeOcbgYtUyRgbe9exBwTPEhN8r5I/Aw1ywFJwjFJXtIHMKiB7UPj/pKW
-	OMs9rYakBSEfIVo4PsyKb6nFBnViTcj/7glbnxdK/ZVFxflI9oJF7E2W4+YP0MRwlwJ/3rhxUEA
-	6pb/rcbgXCSTaNew/iu4nFsIb3B8syun9rcYJM/Zu9Kzv6CbKEKg8KShkawYPmJXRu0U0hsirnN
-	KJD0PgqQo+vFQ4p/4e59rnb6GDyvDzPDm3pYozYUVX8vuaaP0K/DMj7FIz963F4QXFSSH3D4XhF
-	icgNElLTNtm0Wn05QrAOknjS5HbkZYWTILVDg9fq1s3M6R5DFfXIe2ioibuVlGv5WhjAe5whUsO
-	NSRy7JxaVDicaTx3F+0dPOtqd5QCbACEcgDYnotsX2VmaqOa1a0F+TJXmP
-X-Google-Smtp-Source: AGHT+IG2hV7b23VcX9jieNe0izeHc+iQCgBkne69iwz7GrZJIKFtnUWh9WFnd5ZT0ZMVj1EktFc7Rg==
-X-Received: by 2002:a17:906:f5a2:b0:b72:6f76:cf73 with SMTP id a640c23a62f3a-b72e03037c4mr554584666b.21.1762696013043;
-        Sun, 09 Nov 2025 05:46:53 -0800 (PST)
-Received: from localhost (dslb-002-205-018-238.002.205.pools.vodafone-ip.de. [2.205.18.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa24d14sm804313566b.74.2025.11.09.05.46.52
+        d=1e100.net; s=20230601; t=1762696211; x=1763301011;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FkXGQJ0cT+VzRQhQb+dZvS4bvOW1XkCYlyGjGKcSZdo=;
+        b=XcCu69wvEGFXZ9JWQiCEZZ1YcwaknYbmIkBFgVNSh5JSEdSn34L5ggbgDR8d4DvLEp
+         LST1WAP37qMqBCgOdXKI1EWv7ICGeJTfHPGA+Sj4I2xKXv4MEbbE+aFWR+ZDXxkdm5Tb
+         hMgviMRgSkd4mbFzl/Kkjl4S7SaVkJ4giIm53kKcsKRUyRJF1aMOECdOgTBHTAoBfe/m
+         /bT6pPFQzOsJirIrFVZ3J/0jp5zoqNL8dj89yJVm+wuQceo/5mIR+lOkruo6058FPceC
+         Et5b2T/Oe5Zy6zfnCFuVo+jxKaay3GiqOnpL4MwqvY5zwh7iphHmvw6DX/Cp5ZnAnkK4
+         En5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUzd1LpBrolPpEBM9aMQP87g9bZgCnR/R9QdFml4owVbaPfUXsRGZ77/2iPnqAsgT6J7ERgUXn9pKj/+Ls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyazaZ2WNlYDWoK8Nh/SCFw7kj7bJO/guuyt7omJ/vz2JEkrlDw
+	uyhlbybCWVK3QmJ/kMWG17KJBgisfLC8L8IvXjmwCTb3Hfmry83tTiUM
+X-Gm-Gg: ASbGnctaFDkmz761qpJm3ynGnh8G8IjqDSvcotmv2i+R8syy+jKXx0B/UPBMLTCm9HS
+	ga3mYXfOlIVfSOrsoJpHQregQK1KRdrwIcOMnvauo/ET8c7s4v/z7LVqU/7STxtN3EQ6c+0dOBM
+	9RcpHJOKrr2hkHoyDVWqrfjjPr43B5BzGYAXluhlOUCn/hNTbYhSuuke8KGAVuQ5Br9imjvTcZt
+	u24cOTYUlteUtndc2+QeLop6xebshKc70pz5+FeBgHdnia9Gg9inftWcrGLr6ba+9Qo4NxsF8mH
+	ypz54wNRuaLLJIhb6NjPOyvlN6w0qUucTm5uqkZ5I24D9AzCarDj9gLeFriGyFdhlFAwFCF2n+I
+	pdkihwyX1CVTRE7h7wia6z/hRsgT5/aeHTGXj2pJuoRrLhHnfRVvq8iqjkybiBz89hSFa3nNt4V
+	OsRfz1+KQ2KNE=
+X-Google-Smtp-Source: AGHT+IHjeVuYYZlBuYzCRgd/i05+TaK7Ti7RdwUSllLIV+6yjd6NQGCJEudAhYXdgoPDVyrh2s/ePw==
+X-Received: by 2002:a17:903:2c03:b0:297:ea93:cc58 with SMTP id d9443c01a7336-297ea93ce1bmr58790815ad.60.1762696210761;
+        Sun, 09 Nov 2025 05:50:10 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5e3c5sm116341295ad.43.2025.11.09.05.50.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 05:46:52 -0800 (PST)
-From: Jonas Gorski <jonas.gorski@gmail.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	=?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>,
-	Vivien Didelot <vivien.didelot@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] net: dsa: tag_brcm: do not mark link local traffic as offloaded
-Date: Sun,  9 Nov 2025 14:46:35 +0100
-Message-ID: <20251109134635.243951-1-jonas.gorski@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Sun, 09 Nov 2025 05:50:09 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id C2CC342BF679; Sun, 09 Nov 2025 20:50:04 +0700 (WIB)
+Date: Sun, 9 Nov 2025 20:50:04 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>, dev.jain@arm.com
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: Guidance on contributing to MM subsystem
+Message-ID: <aRCcDI3cdKLUkqur@archie.me>
+References: <cb17f29e-b45a-4275-ab2b-1443d909d944@arm.com>
+ <20251109141452.7097-1-swarajgaikwad1925@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="o5P0qWO0UkoQwcFB"
+Content-Disposition: inline
+In-Reply-To: <20251109141452.7097-1-swarajgaikwad1925@gmail.com>
 
-Broadcom switches locally terminate link local traffic and do not
-forward it, so we should not mark it as offloaded.
 
-In some situations we still want/need to flood this traffic, e.g. if STP
-is disabled, or it is explicitly enabled via the group_fwd_mask. But if
-the skb is marked as offloaded, the kernel will assume this was already
-done in hardware, and the packets never reach other bridge ports.
+--o5P0qWO0UkoQwcFB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So ensure that link local traffic is never marked as offloaded, so that
-the kernel can forward/flood these packets in software if needed.
+On Sun, Nov 09, 2025 at 02:14:50PM +0000, Swaraj Gaikwad wrote:
+> Hi Dev,
+> Thank you so much for your reply and for sharing your experience.
+> I do have some basic understanding of how parts of the MM subsystem work,
+> but I=E2=80=99m still struggling with how to find meaningful issues or ta=
+sks to work
+> on. For example, I=E2=80=99ve been trying to explore various parts of the=
+ code and
+> read through documentation to get a better grasp of how things fit togeth=
+er.
+>=20
+> In other open-source projects, like on GitHub, there=E2=80=99s usually an=
+ =E2=80=9CIssues=E2=80=9D
+> section where contributors can easily find bugs or tasks to work on. In t=
+he
+> kernel, should I mainly focus on exploring TODOs, adding selftests, or
+> improving documentation (especially for new or less-documented parts)? I
+> also believe branches like mm-unstable and mm-new might have ongoing issu=
+es
+> or regressions, but how do developers usually find or detect them? Would
+> simply building these branches expose such problems through compiler erro=
+rs,
+> or should I try building with different configurations (for example, using
+> defconfig and other configs) to uncover potential issues?
+>=20
+> Even though I=E2=80=99m beginning to understand how different parts of th=
+e subsystem
+> interact, I=E2=80=99m not sure how developers usually identify new bugs o=
+r feature
+> ideas to work on. Once I understand the code flow better, how can I
+> effectively find such issues or areas where help is actually needed?
 
-Since the local termination in not configurable, check the destination
-MAC, and never mark packets as offloaded if it is a link local ether
-address.
+I can only speak for the documentation subsystem as I'm regular there.
 
-While modern switches set the tag reason code to BRCM_EG_RC_PROT_TERM
-for trapped link local traffic, they also set it for link local traffic
-that is flooded (01:80:c2:00:00:10 to 01:80:c2:00:00:2f), so we cannot
-use it and need to look at the destination address for them as well.
+For docs, I'm usually watching linux-next mailing list and looking for new
+build warnings report there. If the report says htmldocs AND the warnings a=
+re
+emitted from Sphinx (look for [docutils] like [1]), I reproduce them locally
+(make sure to set up the environment per Documentation/doc-guide/sphinx.rst)
+and fix them (in that case, I submit [2]). In absence of aforementioned, I
+build htmldocs then wandered through its resulting output to see what
+formatting improvements I can make and submit (e.g. [3], [4], and [5]).
 
-Fixes: 964dbf186eaa ("net: dsa: tag_brcm: add support for legacy tags")
-Fixes: 0e62f543bed0 ("net: dsa: Fix duplicate frames flooded by learning")
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
----
-I shortly considered changing dsa_default_offload_fwd_mark(), but
-decided against it because other switches may have a working trap bit,
-and would then do a needless destination mac check.
+Thanks.
 
-I used likely() because br_input.c uses
-unlikely(is_link_local_ether_addr()), and that seemed reasonable.
+[1]: https://lore.kernel.org/linux-next/20251106143925.578e411b@canb.auug.o=
+rg.au/
+[2]: https://lore.kernel.org/linux-doc/20251107081300.13033-2-bagasdotme@gm=
+ail.com/
+[3]: https://lore.kernel.org/linux-doc/20251103093817.52764-2-bagasdotme@gm=
+ail.com/
+[4]: https://lore.kernel.org/linux-doc/20251017064525.28836-2-bagasdotme@gm=
+ail.com/
+[5]: https://lore.kernel.org/linux-doc/20251013095630.34235-2-bagasdotme@gm=
+ail.com/
 
- net/dsa/tag_brcm.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+--=20
+An old man doll... just what I always wanted! - Clara
 
-diff --git a/net/dsa/tag_brcm.c b/net/dsa/tag_brcm.c
-index d9c77fa553b5..eadb358179ce 100644
---- a/net/dsa/tag_brcm.c
-+++ b/net/dsa/tag_brcm.c
-@@ -176,7 +176,8 @@ static struct sk_buff *brcm_tag_rcv_ll(struct sk_buff *skb,
- 	/* Remove Broadcom tag and update checksum */
- 	skb_pull_rcsum(skb, BRCM_TAG_LEN);
- 
--	dsa_default_offload_fwd_mark(skb);
-+	if (likely(!is_link_local_ether_addr(eth_hdr(skb)->h_dest)))
-+		dsa_default_offload_fwd_mark(skb);
- 
- 	return skb;
- }
-@@ -250,7 +251,8 @@ static struct sk_buff *brcm_leg_tag_rcv(struct sk_buff *skb,
- 	/* Remove Broadcom tag and update checksum */
- 	skb_pull_rcsum(skb, len);
- 
--	dsa_default_offload_fwd_mark(skb);
-+	if (likely(!is_link_local_ether_addr(eth_hdr(skb)->h_dest)))
-+		dsa_default_offload_fwd_mark(skb);
- 
- 	dsa_strip_etype_header(skb, len);
- 
+--o5P0qWO0UkoQwcFB
+Content-Type: application/pgp-signature; name=signature.asc
 
-base-commit: 96a9178a29a6b84bb632ebeb4e84cf61191c73d5
--- 
-2.43.0
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaRCcCAAKCRD2uYlJVVFO
+o4zEAQDYl4qSeekBOaAB9zxtXScuTFp6kvkLpXjcPuU8fui+UQEA6ZcPvcSCi55k
+Sqqw2oAAzD39cMDepBDho0hFAAPXrAw=
+=/YTl
+-----END PGP SIGNATURE-----
+
+--o5P0qWO0UkoQwcFB--
 
