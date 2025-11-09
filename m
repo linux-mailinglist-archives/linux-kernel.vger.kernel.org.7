@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-892115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875E8C445E1
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370C3C445E4
 	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 20:20:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 459C23AE801
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD8E3AE87D
 	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 19:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3110023E320;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3118F23E34C;
 	Sun,  9 Nov 2025 19:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fI7ORKK6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZdgNetd7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E8621D5AA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E1421D3F4;
 	Sun,  9 Nov 2025 19:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762716036; cv=none; b=lmRkDS8uoLTSd2K9FW08/L+EI45NdoZEeq6qA4YsbQLA1DBZxDsf+SShSsjPTKnQAdAqlSCdZMdpB+vL5N1xspx1FjvZhdXl8/nxRPMu39lgo3kTduiVxFrZ8PR5fOzd2VzkE+uwcK2JGNfuBbWHGe5qpDqJLA4KV70gmByM6C8=
+	t=1762716036; cv=none; b=ukPAe8S//M5qyEAOsro5xHZyYCr9FbEfu7qv/0hCc0TbUkr6ln0Oxz1zYugwnZqT9/o5uk1mRY5+NMujCwtkJYwymS5IkaKqYS773gLpAryhCLE+wLsTt3oHqDI3+BuB8jz5RccpaqBFpslAgD7skfNwnAHQ0xog7mEpiD9Nzoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762716036; c=relaxed/simple;
-	bh=pgFXozODZ+3i2d7mpI3QbBPaD7sHB3tdtINRQkoKMZI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=iSfNr4nyJY34ZiPd9AliIrqB/7k5Daau80aoT40aS+h2SIixlUPB9nOAPs4gzYJXtYBu8aRDrp4E+dPf/oFLeR+0RMZZ5qLUHEPw0n606qcwDE4biJSRtQ/FYris3K02iuprzdYEVy1LasXH9brg4+wYkaqiCn44tP6s3EuFPzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fI7ORKK6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37FC5C116B1;
+	bh=21OqZaDzuwtySgWJzal5LahB5pObDzPMa/w6X6tFWBs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DyaZ7SqkpPTK8MYtfwk01QJtmYNwUhDSyhSEE0zMI7UzVxK0aIUYb4OfzN9W1R0jnBEvKJp9/FLGdh1+Ll3o8W8LAlrfAJzcsyiUgveNgVMqaiU+rcX54ai4hw3Vzsa81XAtPvSUbcVIau/ToJ4cxfmG9uFgMLOkfZ58T1Ap+Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZdgNetd7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C435C19421;
 	Sun,  9 Nov 2025 19:20:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1762716036;
-	bh=pgFXozODZ+3i2d7mpI3QbBPaD7sHB3tdtINRQkoKMZI=;
+	bh=21OqZaDzuwtySgWJzal5LahB5pObDzPMa/w6X6tFWBs=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=fI7ORKK6NOHxrMb3x/0DEamw6vgu/YEZ5KxXo5oDNa0EqiNl+YYJGAnLiO2/7IrdZ
-	 IQDOjHhYHluzKBWwKV1xSjlPCteaLratVDWDHtVj4jSriYlgOCp9wiPG2pABe4WvUc
-	 GfEm+U7AzBkCLHxlPfAnHq4+cuCCldLxxioBzCio6CUJYR1kBg8Mh9NfZQ0c8W4kLw
-	 5j4/l36QnyYehcvJtQmCjFK0TL/c91A/FUeMsYe81CT6pmScft1hTxd9jGCaDsccTO
-	 GPyjcKYj9nAop7GsNO3nUA6vagFE+d6hdlAdMBndvydB9BSZe/9WV/ZtJvxCkViLVA
-	 u90/I9cMk2zeQ==
+	b=ZdgNetd7/yCdFu7RVvm++SaKd9z4yUqqQ+kYq/X9+BVTFUp4aSB8I+NMdzlYA7pRP
+	 YDar/Ghj4WhE6+9DE4ll4S/IZ+rhPJHHQAtlAGfJnwdoian6FxNrm5Io1KzzMp//CB
+	 gIX2oBCpH4UGWYUa5FdNl1mf5tNcW8yTK0X0JP/e8NW6kGVdsm1wUCddaRaN51oI50
+	 yhK7tsPD+AHY2PpTOLUlvqVcF2nMc2r/h5w3Kovxge6Qgdj6K68/ARBfwQJQgqBmeG
+	 citsQFUq9r7FkjbsglGtbApcieAi3lqjctusj9Cb2E2he3yUlwc0y3Sabho/+s8zyj
+	 rEw/SFKXq5MSQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AF8EB3A40FEA;
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE3503A40FE9;
 	Sun,  9 Nov 2025 19:20:08 +0000 (UTC)
-Subject: Re: [PULL REQUEST] i2c-for-6.18-rc5
+Subject: Re: [GIT PULL] Kbuild fixes for 6.18 #3
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <aRBI3ERoaz18MvCQ@shikoro>
-References: <aRBI3ERoaz18MvCQ@shikoro>
-X-PR-Tracked-List-Id: <linux-i2c.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aRBI3ERoaz18MvCQ@shikoro>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.18-rc5
-X-PR-Tracked-Commit-Id: 6a0dddc53f6f04281b27254a7d940fb9bb2d5a3b
+In-Reply-To: <20251109025637.GA2001503@ax162>
+References: <20251109025637.GA2001503@ax162>
+X-PR-Tracked-List-Id: <linux-kbuild.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20251109025637.GA2001503@ax162>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git tags/kbuild-fixes-6.18-3
+X-PR-Tracked-Commit-Id: 002621a4df3c166fab1427e8e502bc15acc26b13
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f850568efe3a7a9ec4df357cfad1f997f0058924
-Message-Id: <176271600756.1617788.17904772019480708754.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 3461e958c1052111f9729d74861cdf44fa2eda61
+Message-Id: <176271600754.1617815.13311620267765425591.pr-tracker-bot@kernel.org>
 Date: Sun, 09 Nov 2025 19:20:07 +0000
-To: Wolfram Sang <wsa@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Nicolas Schier <nsc@kernel.org>, linux-kbuild@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Sun, 9 Nov 2025 08:55:08 +0100:
+The pull request you sent on Sat, 8 Nov 2025 19:56:37 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.18-rc5
+> git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git tags/kbuild-fixes-6.18-3
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f850568efe3a7a9ec4df357cfad1f997f0058924
+https://git.kernel.org/torvalds/c/3461e958c1052111f9729d74861cdf44fa2eda61
 
 Thank you!
 
