@@ -1,169 +1,85 @@
-Return-Path: <linux-kernel+bounces-892064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DEBC44437
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:21:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2E3C44440
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 18:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9115B4EA30D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:19:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17C4E4EB3AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 17:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E180330597A;
-	Sun,  9 Nov 2025 17:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483BF3064AB;
+	Sun,  9 Nov 2025 17:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TSz+6fFR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJFFWXYT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9983F3043AC
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 17:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7B93054CC;
+	Sun,  9 Nov 2025 17:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762708615; cv=none; b=nBVfCxdBhMViGu+KSPau1Nucsgyv6eAEYX+Y5M2bCjraajuoV7x/082OQ9fRVgH73mw9jSBaqD+fjuSi47plCdIrvm08mAydSefnHvirZ1gtZnDnLyHYCnkdCA+LxFipmtZ5vi53TRH8DbSK3Bnu62Du1CWLhgxvuI/0Ch3QSp0=
+	t=1762708626; cv=none; b=k+2lO/RppB6VNBlS9h0MiiILALFx39zFzsMGVixbA9AbxWBEo5+9VG4z7AVmWFFQ+gKtzG+2DgZv8kDu8ftr7b4Y31mKfNsxjmDc+Z5ff/xA70STKfoF6iD/RJXE0r8ORul70+PSG7sXgoUrVRYIHjGfm9vMoO/lUFFc14DLkCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762708615; c=relaxed/simple;
-	bh=TEHCsYmNR3I9xmM/WSR88FgTxB0Xly9HoUofVNoZx/s=;
+	s=arc-20240116; t=1762708626; c=relaxed/simple;
+	bh=R+aGVCQ0i2lAkDRADliBSpecycRmFRWpm8BtWeh6TP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q0RY4I6oK9n4IregGq/4yIu/y3SK0cwrMQuLagG2FJDip+9bLJgBE7LuftJs0ZY7rE+cxZ8kAPN3GXdPGrwOdm6q0awjKkE2XRAfKpKMtSdZyknffDhW9vdbldl38rygY1w/PVhLZTi7ZY/FMvErJhzFf7wjaC1WpuYxG0FwvYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TSz+6fFR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762708612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=De3qwJZddIJhWbGGVbrDOYNQpF2Q/objdb0xufnPYfw=;
-	b=TSz+6fFRaO77dvaI+P/PSTXWFQoEudO1h7kSM4Szk+w6tZ6h0q2aOQcfz68OEv9veYCe7E
-	aDgOIMfGCLYgk8e/YP1wm+L4EcoUm20yFhJbtu5L4qb57QgQ+S9uMioFOiMd9DVNXS19b1
-	pgwUTpPmPLH6QA+TnneFStR3S7rmqTk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-503-sgxsSvgzNTOqDj75cxvXMA-1; Sun,
- 09 Nov 2025 12:16:50 -0500
-X-MC-Unique: sgxsSvgzNTOqDj75cxvXMA-1
-X-Mimecast-MFC-AGG-ID: sgxsSvgzNTOqDj75cxvXMA_1762708604
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0C53D19560B2;
-	Sun,  9 Nov 2025 17:16:44 +0000 (UTC)
-Received: from fedora (unknown [10.44.32.53])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3C7C919560A7;
-	Sun,  9 Nov 2025 17:16:19 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  9 Nov 2025 18:16:42 +0100 (CET)
-Date: Sun, 9 Nov 2025 18:16:17 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dmitry Levin <ldv@strace.io>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: [RFC PATCH 3/3] ptrace: ensure PTRACE_EVENT_EXIT won't stop if the
- tracee is killed by exec
-Message-ID: <aRDMYSuEV82irPmA@redhat.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRDL3HOB21pMVMWC@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=npQa8E0RWRr/TaCbwtWfojq6aSooyoSarasRc2IiS+gDxzgHhfrhQrkH4bHOTUJvQCsbeYyV8/Fp4jSpT5WJ894HM66gJdOfBRaYIaP1PS8NGp4487U0DYYW1OnPuLaz/PGfWE8XJlYOmq83rCUh/q5GrL2nL8dIv5C6hEOsFg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJFFWXYT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9286C19421;
+	Sun,  9 Nov 2025 17:17:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762708626;
+	bh=R+aGVCQ0i2lAkDRADliBSpecycRmFRWpm8BtWeh6TP4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CJFFWXYT6CpeXX7vBKlfTJqUg9yzeRHVQNOxsqfAzPDc2avlpQ6tenxzliBnTyh04
+	 wdhuUIQCzC8dFswXaVoLHabuqAxgHoe8tNy1a2SEBkL6eL3N2FtxBIN/sPuCOUAAB9
+	 CYBmkVf5KnAR1MFAdaQxUd7Qp7Cfj9rmL/J1nN8iYZcoW7/pIPoHb8F8RHQvFqv0r5
+	 M0F4xRsTDeBgm/6L+cbo0K+nnG5m1LGHG1+g4fzOkMmE4ESr2cqXCM5oayvMeJYDhy
+	 kYjXuykSPyS9oSpr6RdURpUB04TC0puK5wD7x8izuYFLkIA+RZ7FWXJR1EI+Fsbg9O
+	 wBh6dD4fHz8Tg==
+Date: Sun, 9 Nov 2025 18:17:03 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: broonie@kernel.org, tiwai@suse.de, andriy.shevchenko@linux.intel.com, 
+	13916275206@139.com, shenghao-ding@ti.com, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, k-yi@ti.com, henry.lo@ti.com, 
+	robinchen@ti.com, jesse-ji@ti.com, will-wang@ti.com, jim.shil@goertek.com, 
+	toastcheng@google.com, chinkaiting@google.com
+Subject: Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add
+ TAS2568/5806M/5806MD/5830 support
+Message-ID: <20251109-heavenly-observant-quetzal-b1bead@kuoka>
+References: <20251108110759.2409-1-baojun.xu@ti.com>
+ <20251108110759.2409-2-baojun.xu@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aRDL3HOB21pMVMWC@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <20251108110759.2409-2-baojun.xu@ti.com>
 
-The previous patch fixed the deadlock when mt-exec waits for debugger
-which should reap a zombie thread, but we can hit the same problem if
-the killed sub-thread stops in ptrace_event(PTRACE_EVENT_EXIT). Change
-ptrace_stop() to check signal->group_exit_task.
+On Sat, Nov 08, 2025 at 07:07:59PM +0800, Baojun Xu wrote:
+> TAS5806M, TAS5806MD and TAS5830 is in same family with TAS58XX.
+> TAS2568 is in family with TAS257X.
+> 
+> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+> ---
+>  .../devicetree/bindings/sound/ti,tas2781.yaml | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>
 
-This is a user-visible change. But hopefully it can't break anything.
-Note that the semantics of PTRACE_EVENT_EXIT was never really defined,
-it depends on /dev/random. Just for example, currently a sub-thread
-killed by exec will stop, but if it exits on its own and races with
-exec it will not stop, so nobody can rely on PTRACE_EVENT_EXIT anyway.
+Please organize the patch documenting compatible (DT bindings) before their user.
+See also: https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst#L46
 
-We really need to finally define what PTRACE_EVENT_EXIT should actually
-do, but this needs other changes.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- kernel/signal.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 334212044940..59f61e07905b 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2376,6 +2376,10 @@ static int ptrace_stop(int exit_code, int why, unsigned long message,
- 	if (!current->ptrace || __fatal_signal_pending(current))
- 		return exit_code;
- 
-+	/* de_thread() -> wait_for_notify_count() waits for us */
-+	if (current->signal->group_exec_task)
-+		return exit_code;
-+
- 	set_special_state(TASK_TRACED);
- 	current->jobctl |= JOBCTL_TRACED;
- 
--- 
-2.25.1.362.g51ebf55
-
+Best regards,
+Krzysztof
 
 
