@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-891895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597D2C43C6D
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:07:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02005C43C6A
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:07:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A78E3B35E3
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:06:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18F0B4E2CA1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971B02DEA6E;
-	Sun,  9 Nov 2025 11:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1852E06D2;
+	Sun,  9 Nov 2025 11:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJFs75lf"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V9yDI2YE"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A272DCBFA
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DE32DC337
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762686382; cv=none; b=Jt9hvYVTc7Yyu9FQ0FCfdOUS/AORW4TP27KU54iVpqDFYqf0P9xLAeCQjP765ByheLsM1/JQco3XVBUorL7OjtIaKTp1xPi301MMpx1KZCEVkHMKl1qJIJOXUTUQh0WyprSntqfpzmJqT5p2/S+axXErQOT7qYgM2JQvoptp11A=
+	t=1762686385; cv=none; b=kY8lDdRQ33SBvcw1CzKA4j56zB2m19GxA1nXdFLHU4JWcobodDBTdrFNaxwb0sKwY3q+QnJ+kdjTT+mg4Ci4HysB9NfJj60mc1w/pufPwhf5kmfoRg+6wR90aWKAo/MpM1NFEJR5WpdeDRvGFUsl084zvh/9e9S25yNN6/pgySk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762686382; c=relaxed/simple;
-	bh=Sl57n5h3qnQFQNcmwKkS4S8dI3DCYu3TXVSej6Ds+H8=;
+	s=arc-20240116; t=1762686385; c=relaxed/simple;
+	bh=FIaU/PJYhFPVOHbBtyegMmwlEvrKVznPXH2gtLOtgG4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fWvrxj5xpcKhsQyafgMccxlmTWpB0rd5uYAKYPe0QsFGH5leimcOMbfs480m33aVgNjY8p4r9Bijcqjk+V+I9X5bUwLHhIYZhXlPiPJDmYWG5yicrWh/z7ojr+d+3s+JCD9FvaNpC2up24JUVz+XG24ZQ/avlPu/wRQgwx4357g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hJFs75lf; arc=none smtp.client-ip=209.85.221.46
+	 In-Reply-To:To:Cc; b=ju9xi20qofDWee0YDjd//Y4Xj8XRrQ7LdjXdzJCtekQous9ANpaF+i4sbAo7TpG4fpSf3Phl6s0Q6zZKE/NiSInoul14pjwqrjpDHncDQAc/u8FnvjNW/R7/5R7grDotaOLXRYfChruwHIcIP4ZQ7NeqQT8Imujy6MZJFsJpPLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V9yDI2YE; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42b387483bbso183159f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 03:06:20 -0800 (PST)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47728f914a4so12320025e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 03:06:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762686379; x=1763291179; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762686381; x=1763291181; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=85FBK1N7968Zf3zmy7BJUL2wfVMtCnOsN9wdrJDgfgc=;
-        b=hJFs75lfTSw6dZ9ude0fkIzdZfEXfXOneUe+NdXfnS/ZG1l21Ppofl+AXJUrdPKvwo
-         nEr3PTun0Kkmvrh//hhyJBanf2bPN8xIVyrWQVTitZk1Nv3bTMN/MyUuTcLlt3vK63yU
-         RajnY7mQJv7TYrE4tIHcqo/wsl/58Nhuba+RQQDYC5LuVd1wO1TOS7o00VZBKz64eyoG
-         /vsY79s9uO9y5FZK0+F6FPRjZI7zcoZWR39/BTgVAjUVR6XqgFqreSkmdMIM9Oa3lRd0
-         Da1vT1dZNJFtw1v55W5X7YQc1X3vpR+yLVHwvMuISCQPqqgLGlsF0KrLvMVFyxQoLObF
-         l1kQ==
+        bh=FlM4y0l3wFyRG1MmirgQHO9XDWEVNYNhEnXHnpOtmJ8=;
+        b=V9yDI2YElAdYboNrz58iBbVmo+HkAlBMPmr4ZIdodbONCW6/K5YCzXiG/BTwPf6V5u
+         lJNdEWTuq+qJStLDuCdKb8C8JHR5wfgWZtojWjPfqx6FnwanUEX3U+s6HnKxu7TVCO0C
+         XGyjhUiKrw3OEl+XExNWSpl5HeWwz986iln5uUxkfc93Wby1IqreLLq2i5ii9BQk5GQQ
+         RFGfgZTOiONEL8MBNd6xN1gi8an7sSL8Vyrw+kVsW7JnGzUBjLKYV3M9Ex2cVyxNn2BL
+         GHMgc4k81Z/wzq6l/IX4tuY8F+FYkMT/nPxN+ZVBUCSAp+g7uD/do/3+b7L4dLSPUCFo
+         WnHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762686379; x=1763291179;
+        d=1e100.net; s=20230601; t=1762686381; x=1763291181;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=85FBK1N7968Zf3zmy7BJUL2wfVMtCnOsN9wdrJDgfgc=;
-        b=SdY+hkCTnmypuVhEqAkVL8y/p956PO6LuKds2zi6DqUKtDnG3Lyf4X8PNYvzjAXrcs
-         YDODQbdo90ICFu/cSvvAjZHAH39IghAJdN7AF5V779aUFEw1Z0mU6+I+Ef7oc1mdqTqN
-         Qrn1hu95s8Fhqy4CEwQl+XaMglGlRcnffYC8lLu+Pn2qDQg4SRueV30WKqwroa4aZ7dJ
-         G1S34praNZzIY+FAVv3NqxVBq0XvcywzEEkrHKy838yW2iM6uifidnCOb9f8jlQG8cda
-         w7axTB+jy5LVbEes8wyjeOcmkVQk4Z0GhjQ+Uc/T147ZqT9YxkLbj5tzDKnWT1gCDomD
-         AcwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXE/M/zhQwpRzs6ltSko6Kz/aXfnK0OTxlPl4sRpSiAocfw/GWEQcfvteLYfEfOx+PT7gXWl/yofsfg/xY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyylptFWEEd4cyJSdJ+1C/q2KoVG9vCZykl8GmWlY3xcw5UY162
-	0m3ZFmeoUhxfYYqB7AQDLZsMwOwFUpp+6KGmL9Nh63fwYcTOovzLcpyv
-X-Gm-Gg: ASbGnctazPzKZX1upJCUhBkpOPw2+NtH6yQm7yZidsdV9ikXK3MhpKqLd3Ms8pV5xNc
-	i4csfsfqL2QNde7H4iES7v0CnknlTH7eQfbmV2dqTJiS4vaa1Zwol3Ek1t5r3MG7kejyJA1dIRe
-	WAMZ6c+/QveVZnWiYDIEOeThBxkqauGx1o5bwrJrgkPQ54s8hw4TKAU7WOMt2JV6jt8aSlAVeKK
-	rtexPPKy7e4u05O1kGhJZvAQU0f31jKEqcrPFHfWisEZxWbwSUFax9RGjASPSitfORWp6ZfGLbd
-	Cd1VR+hflHw4VEJjnkZ6gLqjdTvECGZtlCX4KIf3Se9PFCSckz1NNMxpjvwbjYpN7JeO5FSgXp9
-	izhdgIM4iayMmoLwD8WdVzOHg46C/jozTIDxX8hyx4thKYYO9JKCjFk4QLgYuZgbccNHLyP+dzg
-	yzUI4x
-X-Google-Smtp-Source: AGHT+IHFIeiuJChm/jLLid7Ik0+NY4IPeqhmAps90p1OjDHbjatYqMo8FhZ3+4mJG2x/qi9W+hfY8A==
-X-Received: by 2002:a05:6000:2912:b0:42b:3ace:63cc with SMTP id ffacd0b85a97d-42b3ace6596mr20172f8f.35.1762686379085;
-        Sun, 09 Nov 2025 03:06:19 -0800 (PST)
+        bh=FlM4y0l3wFyRG1MmirgQHO9XDWEVNYNhEnXHnpOtmJ8=;
+        b=ZF9wnUABxo1KWyE8WLsIpKiAcFmfFUpwiAOjgHBOHgO+u/0BKFR4DjT/yxWkfl/hUF
+         eZcDz1wmfjwBUdwfLT64fYxSTrrix4HjtEGEquKiAq8Dz1W131vREFnlrYMeZRts+izh
+         dVsXm8h1cKFW1FqkyWJQydfCmzHdhA7vOwm9nI4jbfn0CYO83V+MswYln9/geO8un7Bi
+         ZbwMpGYhe/lKc2jhn0F8usTdDLzg3hBkj+zk3fuINxYn+WeZcPPycTT0OzCKcxN4E7CA
+         Io3ozB88lrki6F9sCc2JTRypFdVrI+uUhqGl+pf7Dwu4qUQqBh7+SyfdHA9YE3im6Jzg
+         Wzaw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1NhRgORaoH08bzajLMz/NYOa1rr3Wum1CoJQ02TPo3tnj/RP+LChonGc8r3gyyigDjEnajhm1ZZyIMAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCpE3iwl2OmdDoseK8p9OtmA+7+y9Afrgg6fnDOiBvbz0grFor
+	IGs8lb6V/VeBwSagOLXpvQVZ1FW4noQjj0ZxZS/cgUeJM0NT0P6lnxFo
+X-Gm-Gg: ASbGncuRjP9VtREyoPMlG3v8cHIIqZNJpv3HXQyVhuauIl3AobOYmynysCOH0B1tnKF
+	JJC3C0xvBkjp4s/KbpGiFbjq6GKls9khaVqF6ONK2+F+rXGl76e80PziAXdDEtqRTgqUaZaHAQA
+	jZnDOVOxZhH0DWD/UgeEI+DDJFzXGJ+4Cu+rDVKP7xVN7CDbg338U2KqZmhgiwCB7rRpw1Hm0Eg
+	ymXgTsidMgJdbWJN1Rmh090OBetha8SvoHU8hX3IJZmCwGtJ8/e4+Oe3WsCe4V08PQbN6PYNixP
+	46OpOWknV+ml0eQDI+3/wMG3QJDF2jwLI0T1+W8PodZfzv9ziFq+4LaOYZqv3Vpz4lqr40n7NOT
+	dGq1qAT3ENgdVIHeE/zjIO6reEcwbv1WxPBI5N/lV3ZUfnYkORaM1Ue4kTBZW10aUkcp8cxSQeP
+	ymR3mp67hb+6TRGkg=
+X-Google-Smtp-Source: AGHT+IGXNMTWbs/Y2C5fmQZcxJt3PJhVxlTT7teM44/vsz2vWDHEnObq/JmjatlT9IiI9Ya7rMuK8A==
+X-Received: by 2002:a05:600c:19d1:b0:477:7b16:5f88 with SMTP id 5b1f17b1804b1-4777b1661d5mr5895245e9.6.1762686380556;
+        Sun, 09 Nov 2025 03:06:20 -0800 (PST)
 Received: from [192.168.1.243] ([143.58.192.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b316775f2sm6354925f8f.16.2025.11.09.03.06.17
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b316775f2sm6354925f8f.16.2025.11.09.03.06.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 03:06:18 -0800 (PST)
+        Sun, 09 Nov 2025 03:06:19 -0800 (PST)
 From: Andre Carvalho <asantostc@gmail.com>
-Date: Sun, 09 Nov 2025 11:05:53 +0000
-Subject: [PATCH net-next v3 3/6] netconsole: add STATE_DEACTIVATED to track
- targets disabled by low level
+Date: Sun, 09 Nov 2025 11:05:54 +0000
+Subject: [PATCH net-next v3 4/6] netpoll: add wrapper around
+ __netpoll_setup with dev reference
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251109-netcons-retrigger-v3-3-1654c280bbe6@gmail.com>
+Message-Id: <20251109-netcons-retrigger-v3-4-1654c280bbe6@gmail.com>
 References: <20251109-netcons-retrigger-v3-0-1654c280bbe6@gmail.com>
 In-Reply-To: <20251109-netcons-retrigger-v3-0-1654c280bbe6@gmail.com>
 To: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
@@ -95,71 +95,73 @@ To: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-kselftest@vger.kernel.org, Andre Carvalho <asantostc@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762686373; l=2028;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762686373; l=2197;
  i=asantostc@gmail.com; s=20250807; h=from:subject:message-id;
- bh=C8sdELlfliWx0wFIHhmVjWXm2jGpSIoVSQHcSClL97Y=;
- b=VosP6vA0UGMteFuPJJrdAB8s4fo0qd1/JQ+Q+l3P3elVqVgg7+IR5SyFib/tuF7ioDch2jzq2
- PLd4XS9fShgDELOMFlnJkQ5b97MLBXZXZgrG/Qc6y8rZBZr0oy34OK2
+ bh=FIaU/PJYhFPVOHbBtyegMmwlEvrKVznPXH2gtLOtgG4=;
+ b=jqGwvMXsnTh9gpF8WtcivNejALws/gY5MNBLZJyu5aLSo39/iLcPs/94CM5o+F+o51AXr06CO
+ z7GYtxtPn5aC/n5whqJ3xdlIxlszErnaJM35XyWt8rFvodzV+oaW5Fn
 X-Developer-Key: i=asantostc@gmail.com; a=ed25519;
  pk=eWre+RwFHCxkiaQrZLsjC67mZ/pZnzSM/f7/+yFXY4Q=
 
-From: Breno Leitao <leitao@debian.org>
+Introduce __netpoll_setup_hold() which wraps __netpoll_setup() and
+on success holds a reference to the device. This helper requires caller
+to already hold RNTL and should be paired with netpoll_cleanup to ensure
+proper handling of the reference.
 
-When the low level interface brings a netconsole target down, record this
-using a new STATE_DEACTIVATED state. This allows netconsole to distinguish
-between targets explicitly disabled by users and those deactivated due to
-interface state changes.
+This helper is going to be used by netconsole to setup netpoll in
+response to a NETDEV_UP event. Since netconsole always perform cleanup
+using netpoll_cleanup, this will ensure that reference counting is
+correct and handled entirely inside netpoll.
 
-It also enables automatic recovery and re-enabling of targets if the
-underlying low-level interfaces come back online.
-
-From a code perspective, anything that is not STATE_ENABLED is disabled.
-Mark the device that is down due to  NETDEV_UNREGISTER as
-STATE_DEACTIVATED, this, should be the same as STATE_DISABLED from
-a code perspective.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
 Signed-off-by: Andre Carvalho <asantostc@gmail.com>
 ---
- drivers/net/netconsole.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ include/linux/netpoll.h |  1 +
+ net/core/netpoll.c      | 20 ++++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index 2d15f7ab7235..5a374e6d178d 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -120,6 +120,7 @@ enum sysdata_feature {
- enum target_state {
- 	STATE_DISABLED,
- 	STATE_ENABLED,
-+	STATE_DEACTIVATED,
- };
+diff --git a/include/linux/netpoll.h b/include/linux/netpoll.h
+index f22eec466040..345e74112674 100644
+--- a/include/linux/netpoll.h
++++ b/include/linux/netpoll.h
+@@ -69,6 +69,7 @@ static inline void netpoll_poll_enable(struct net_device *dev) { return; }
  
- /**
-@@ -575,6 +576,14 @@ static ssize_t enabled_store(struct config_item *item,
- 	if (ret)
- 		goto out_unlock;
+ int netpoll_send_udp(struct netpoll *np, const char *msg, int len);
+ int __netpoll_setup(struct netpoll *np, struct net_device *ndev);
++int __netpoll_setup_hold(struct netpoll *np, struct net_device *ndev);
+ int netpoll_setup(struct netpoll *np);
+ void __netpoll_free(struct netpoll *np);
+ void netpoll_cleanup(struct netpoll *np);
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index c85f740065fc..4d25ba422d81 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -605,6 +605,26 @@ int __netpoll_setup(struct netpoll *np, struct net_device *ndev)
+ }
+ EXPORT_SYMBOL_GPL(__netpoll_setup);
  
-+	/* When the user explicitly enables or disables a target that is
-+	 * currently deactivated, reset its state to disabled. The DEACTIVATED
-+	 * state only tracks interface-driven deactivation and should _not_
-+	 * persist when the user manually changes the target's enabled state.
-+	 */
-+	if (nt->state == STATE_DEACTIVATED)
-+		nt->state = STATE_DISABLED;
++/*
++ * Wrapper around __netpoll_setup that holds a reference to the device.
++ * The caller must pair this with netpoll_cleanup() to release the reference.
++ */
++int __netpoll_setup_hold(struct netpoll *np, struct net_device *ndev)
++{
++	int err;
 +
- 	ret = -EINVAL;
- 	current_enabled = nt->state == STATE_ENABLED;
- 	if (enabled == current_enabled) {
-@@ -1461,7 +1470,7 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 			case NETDEV_RELEASE:
- 			case NETDEV_JOIN:
- 			case NETDEV_UNREGISTER:
--				nt->state = STATE_DISABLED;
-+				nt->state = STATE_DEACTIVATED;
- 				list_move(&nt->list, &target_cleanup_list);
- 				stopped = true;
- 			}
++	ASSERT_RTNL();
++
++	err = __netpoll_setup(np, ndev);
++	if (err)
++		return err;
++
++	netdev_hold(ndev, &np->dev_tracker, GFP_KERNEL);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(__netpoll_setup_hold);
++
+ /*
+  * Returns a pointer to a string representation of the identifier used
+  * to select the egress interface for the given netpoll instance. buf
 
 -- 
 2.51.2
