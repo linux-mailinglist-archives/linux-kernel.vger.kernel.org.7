@@ -1,260 +1,269 @@
-Return-Path: <linux-kernel+bounces-891942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA1EC43DFB
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:49:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70056C43E0D
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:50:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA8E94E2537
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:49:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B5934E2945
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E932EDD64;
-	Sun,  9 Nov 2025 12:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LzHOoyiv"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0B92F068F;
+	Sun,  9 Nov 2025 12:50:03 +0000 (UTC)
+Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424C32EC0BF
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EF734D390
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762692583; cv=none; b=EUeHi5CnNqXPZzXLQReRtZueigjw3lRUh1s9JFVdJoIul4SifMIjigmK9591vLSGJfsmCfhMNO/nMCrJ04QR9Nj8Fa9pEJlDnlE+1Jmn5yeQuPkUjROWyIMgsJ9m0Va5Of6dI4WjxBV2fSBnfEn/A9IZK6AN++wi8aljB3ZwTpk=
+	t=1762692603; cv=none; b=Bd2ErhYi5xkaECxjHNcaR9cQ+HAWCsvoAuUHXFq3GgCwZTSQ8FKkl2L7kuFiruFpFm7TSXoVILLqeZ7SfAT1pJ3Lkhm2ADXO4hdtVhnbPR/Mk4I8b8+eNRWiuzz/pET1pFPfpzH58ll1Y1XEJfJrlUDG5KJAl65DmxzFCaytMPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762692583; c=relaxed/simple;
-	bh=JF2q7sTKzYiIVusFfVQ6qlbWbep+D+t1c3S+sk6voF0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YwkygMmZuxiPmUMtj5HxJuz9OdYusO0YRVDjQY8C4ei6hSJeMMHpR71CbYolu6IfrJ19oeBiHbpeiMlxRkq4SSZ3X6YElPVdqpPyuNp+ssxcUjPjA4xc+oMk2RPPT59BnY9oUvHvhUHt3PSvyjkYGtsf6zWBtUjLBRxmqyisFK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LzHOoyiv; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b727f330dd2so364584566b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:49:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762692580; x=1763297380; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hDZ3xafdhT/YtTTUoql25uDvUJxupIOBYIVvt5riwwA=;
-        b=LzHOoyivCN7TqrVfs1SH/3010EEQXneCel/Ht1s9wzDAO1cnvcIyTpK2UdcYVNApqa
-         q25lILxkcWkPxpQr/dhAlLS5LlLEDblcQEBnC26OboyeBzstSHW25/RLcHe39JF8PsPU
-         BI2tSJVuK4x6m6eU1+nkp8exx+tMYQ2cwRCQqxiz3JIKBsDD2h6RGoIL7EUKcRVU+i2y
-         1joXruWP0YGD91Fh2DVL1q3udqu5o9lwfk01Pf1+viEW5zkhdhhEPtZTtOKsQgJ4tEqa
-         +svApird7KA/5RKFOLNEI3g7UJuVHUbZKvxEPjKuqTyF9ob0qHQteX2Wx+cP7ecPlX2x
-         qm1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762692580; x=1763297380;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=hDZ3xafdhT/YtTTUoql25uDvUJxupIOBYIVvt5riwwA=;
-        b=NRrUFZjX+bbpOm4yKlitNo+bKQpqiEFpQj8ebchlMi8LC5OXmJYxPHVqS9Y6i8fu2n
-         sFH1gmm0qwf7fHcxfdf4AQ170YKrxy4u5pY7KTqF0IcxQ7MTrqX6BMXvxOXnjddR+9fK
-         PeduQT0KJa6nnWOeVh15P/pko9TqeYo84fsiYaw5zpDUiGaTzRJbydNJHZLuVKcKAo+a
-         o/u20xGr27jdI+7Af9LChL/BjczyukGNM1YgjPG5dctsvCm1LQIEokrV3ywQreUpZBzA
-         /eo1iqbtDcOYw0viVa3aJhWMBb8SmxeK13heN1LGYnnZGevdl5QOv2nQ8r6LIfF8SxRh
-         LHHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPKRmFNhwaYgM9eTQ4MuZg0O//W5ZzSOX6CCZayY9oGGPySOy7cgA60i3OQQ87Qn/HTm71/5iqK9xCVGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLD3/q4KTnRTDrZpLSi8qDRzdIchDBvZY3OCAgCdqmTXJQHpAu
-	w4ngrp9NMI6PiZvipVZRPHg7GQQoCYZkrRYXnJy85x/X6+htwC9cgFeWP00kK/pdc8OuL3Ht8oH
-	RYkO8RLMKyb83Y8KFKpK68zKj2H7tVCo=
-X-Gm-Gg: ASbGncswayLIeQpuWqftN1oqy7zbK0MP/YFyUvk+4DSW0V6o+z3/y0e14iYDmiUzGmN
-	DiVMvykisAJMT9si+PpnFoqn8NeywdjPYNBJ5yDyLE/q4WV8hadigB7WhRV3fmvWYDNsExmbGxS
-	VMnVw0Fg3bWSDc5hEh5yUSGutTXBfPnSjsXVKNlebA1khuKUVwtlAr2cWY+6nOHpmT6QckUrbnw
-	V2AuJDWuDAaT4QMMJybRCSUOUwH7hhTCIdduNxCgY4law6Xb0muVMtbN7oJ
-X-Google-Smtp-Source: AGHT+IHNVHcrPcoXcfMQAdrM6mfxVNIvqirPfSk4ZwLH/WJQN1X+/EwZuiwM1z9Tvembh+GaQUpS/PpKFfhnQ7ESKbE=
-X-Received: by 2002:a17:907:869f:b0:b33:a2ef:c7 with SMTP id
- a640c23a62f3a-b72e058a781mr441932566b.55.1762692579280; Sun, 09 Nov 2025
- 04:49:39 -0800 (PST)
+	s=arc-20240116; t=1762692603; c=relaxed/simple;
+	bh=wvsocl0Et2SLItHeh65bNaSfyrmCZWqDj6t5FavHHzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=T5YoouYqL111Tylsq6NUVV4JCehmqCzQRlxik/FxkmxAJli+VhLKBCA28h3pJI3adVpOYMegBZAfQgb2nbbBXU1RZSCuljvK5MxL7mShOWjF+ImGPpbJlr4sjdk0ut+SXDBKcExwYoizTDpaQ8EmrAiCuXmKGZZIEwy3pGe9ZSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330.lge.net) (10.177.112.156)
+	by 156.147.51.103 with ESMTP; 9 Nov 2025 21:49:52 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+From: Youngjun Park <youngjun.park@lge.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chrisl@kernel.org,
+	kasong@tencent.com,
+	hannes@cmpxchg.org,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	shikemeng@huaweicloud.com,
+	nphamcs@gmail.com,
+	bhe@redhat.com,
+	baohua@kernel.org,
+	youngjun.park@lge.com,
+	gunho.lee@lge.com,
+	taejoon.song@lge.com
+Subject: [RFC] mm/swap, memcg: Introduce swap tiers for cgroup based swap control
+Date: Sun,  9 Nov 2025 21:49:44 +0900
+Message-Id: <20251109124947.1101520-1-youngjun.park@lge.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1762621567.git.lorenzo.stoakes@oracle.com> <75c2e8fa38de383757a49bcc3f5c081be1e27a40.1762621568.git.lorenzo.stoakes@oracle.com>
-In-Reply-To: <75c2e8fa38de383757a49bcc3f5c081be1e27a40.1762621568.git.lorenzo.stoakes@oracle.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Sun, 9 Nov 2025 20:49:02 +0800
-X-Gm-Features: AWmQ_bm7gm65mOXTd2rtxZ-2sSA2POMXyYBKPT6giX8icbqtDuQMmyxTTsU5nEc
-Message-ID: <CAMgjq7AP383YfU3L5ZxJ9U3x-vRPnEkEUtmnPdXD29HiNC8OrA@mail.gmail.com>
-Subject: Re: [PATCH v2 04/16] mm: eliminate is_swap_pte() when
- softleaf_from_pte() suffices
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
-	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
-	Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, 
-	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, 
-	Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-s390@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, 
-	damon@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 9, 2025 at 2:16=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> In cases where we can simply utilise the fact that softleaf_from_pte()
-> treats present entries as if they were none entries and thus eliminate
-> spurious uses of is_swap_pte(), do so.
->
-> No functional change intended.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  mm/internal.h   |  7 +++----
->  mm/madvise.c    |  8 +++-----
->  mm/swap_state.c | 12 ++++++------
->  mm/swapfile.c   |  9 ++++-----
->  4 files changed, 16 insertions(+), 20 deletions(-)
->
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 9465129367a4..f0c7461bb02c 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -15,7 +15,7 @@
->  #include <linux/pagewalk.h>
->  #include <linux/rmap.h>
->  #include <linux/swap.h>
-> -#include <linux/swapops.h>
-> +#include <linux/leafops.h>
->  #include <linux/swap_cgroup.h>
->  #include <linux/tracepoint-defs.h>
->
-> @@ -380,13 +380,12 @@ static inline int swap_pte_batch(pte_t *start_ptep,=
- int max_nr, pte_t pte)
->  {
->         pte_t expected_pte =3D pte_next_swp_offset(pte);
->         const pte_t *end_ptep =3D start_ptep + max_nr;
-> -       swp_entry_t entry =3D pte_to_swp_entry(pte);
-> +       const softleaf_t entry =3D softleaf_from_pte(pte);
->         pte_t *ptep =3D start_ptep + 1;
->         unsigned short cgroup_id;
->
->         VM_WARN_ON(max_nr < 1);
-> -       VM_WARN_ON(!is_swap_pte(pte));
-> -       VM_WARN_ON(non_swap_entry(entry));
-> +       VM_WARN_ON(!softleaf_is_swap(entry));
->
->         cgroup_id =3D lookup_swap_cgroup_id(entry);
->         while (ptep < end_ptep) {
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 2d5ad3cb37bb..58d82495b6c6 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -195,7 +195,7 @@ static int swapin_walk_pmd_entry(pmd_t *pmd, unsigned=
- long start,
->
->         for (addr =3D start; addr < end; addr +=3D PAGE_SIZE) {
->                 pte_t pte;
-> -               swp_entry_t entry;
-> +               softleaf_t entry;
->                 struct folio *folio;
->
->                 if (!ptep++) {
-> @@ -205,10 +205,8 @@ static int swapin_walk_pmd_entry(pmd_t *pmd, unsigne=
-d long start,
->                 }
->
->                 pte =3D ptep_get(ptep);
-> -               if (!is_swap_pte(pte))
-> -                       continue;
-> -               entry =3D pte_to_swp_entry(pte);
-> -               if (unlikely(non_swap_entry(entry)))
-> +               entry =3D softleaf_from_pte(pte);
-> +               if (unlikely(!softleaf_is_swap(entry)))
->                         continue;
->
->                 pte_unmap_unlock(ptep, ptl);
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index d20d238109f9..8881a79f200c 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -12,7 +12,7 @@
->  #include <linux/kernel_stat.h>
->  #include <linux/mempolicy.h>
->  #include <linux/swap.h>
-> -#include <linux/swapops.h>
-> +#include <linux/leafops.h>
->  #include <linux/init.h>
->  #include <linux/pagemap.h>
->  #include <linux/pagevec.h>
-> @@ -732,7 +732,6 @@ static struct folio *swap_vma_readahead(swp_entry_t t=
-arg_entry, gfp_t gfp_mask,
->         pte_t *pte =3D NULL, pentry;
->         int win;
->         unsigned long start, end, addr;
-> -       swp_entry_t entry;
->         pgoff_t ilx;
->         bool page_allocated;
->
-> @@ -744,16 +743,17 @@ static struct folio *swap_vma_readahead(swp_entry_t=
- targ_entry, gfp_t gfp_mask,
->
->         blk_start_plug(&plug);
->         for (addr =3D start; addr < end; ilx++, addr +=3D PAGE_SIZE) {
-> +               softleaf_t entry;
-> +
->                 if (!pte++) {
->                         pte =3D pte_offset_map(vmf->pmd, addr);
->                         if (!pte)
->                                 break;
->                 }
->                 pentry =3D ptep_get_lockless(pte);
-> -               if (!is_swap_pte(pentry))
-> -                       continue;
-> -               entry =3D pte_to_swp_entry(pentry);
-> -               if (unlikely(non_swap_entry(entry)))
-> +               entry =3D softleaf_from_pte(pentry);
-> +
-> +               if (!softleaf_is_swap(entry))
+Hi all,
 
-Hi Lorenzo,
+In constrained environments, there is a need to improve workload
+performance by controlling swap device usage on a per-process or
+per-cgroup basis. For example, one might want to direct critical
+processes to faster swap devices (like SSDs) while relegating
+less critical ones to slower devices (like HDDs or Network Swap).
 
-This part isn't right, is_swap_pte excludes present PTE and non PTE,
-but softleaf_from_pte returns a invalid swap entry from a non PTE.
+Initial approach was to introduce a per-cgroup swap priority
+mechanism [1]. However, through review and discussion, several
+drawbacks were identified:
 
-This may lead to a kernel panic as the invalid swap value will be
-0x3ffffffffffff on x86_64 (pte_to_swp_entry(0)), the offset value will
-cause out of border access.
+a. There is a lack of concrete use cases for assigning a fine-grained,
+   unique swap priority to each cgroup. 
+b. The implementation complexity was high relative to the desired
+   level of control.
+c. Differing swap priorities between cgroups could lead to LRU
+   inversion problems.
 
-We might need something like this on top of patch 2:
+To address these concerns, I propose the "swap tiers" concept, 
+originally suggested by Chris Li [2] and further developed through 
+collaborative discussions. I would like to thank Chris Li and 
+He Baoquan for their invaluable contributions in refining this 
+approach, and Kairui Song, Nhat Pham, and Michal Koutný for their 
+insightful reviews of earlier RFC versions.
 
-diff --git a/include/linux/leafops.h b/include/linux/leafops.h
-index 1376589d94b0..49de62f96835 100644
---- a/include/linux/leafops.h
-+++ b/include/linux/leafops.h
-@@ -54,7 +54,7 @@ static inline softleaf_t softleaf_mk_none(void)
-  */
- static inline softleaf_t softleaf_from_pte(pte_t pte)
- {
--       if (pte_present(pte))
-+       if (pte_present(pte) || pte_none(pte))
-                return softleaf_mk_none();
+Concept
+-------
+A swap tier is a grouping mechanism that assigns a "named id" to a
+range of swap priorities. For example, all swap devices with a
+priority of 100 or higher could be grouped into a tier named "SSD",
+and all others into a tier named "HDD".
 
-        /* Temporary until swp_entry_t eliminated. */
+Cgroups can then select which named tiers they are permitted to use for
+swapping via a new cgroup interface. This effectively restricts a
+cgroup's swap activity to a specific subset of the available swap
+devices.
+
+Proposed Interface
+------------------
+1. Global Tier Definition: /sys/kernel/mm/swap/tiers
+
+This file is used to define the global swap tiers and their associated
+minimum priority levels.
+
+- To add tiers:
+  Format: + 'tier_name':'prio'[,|' ']'tier_name 2':'prio']...
+  Example:
+  # echo "+ SSD:100,HDD:2" > /sys/kernel/mm/swap/tiers
+
+  There are several rules for defining tiers:
+  - Priority ranges for tiers must not overlap.
+  - The combination of all defined tiers must cover the entire valid
+    priority range (DEF_SWAP_PRIO to SHRT_MAX) to ensure every swap device
+    can be assigned to a tier.
+  - A tier's prio value is its inclusive lower bound,
+    covering priorities up to the next tier's prio.
+    The highest tier extends to SHRT_MAX, and the lowest tier extends to DEF_SWAP_PRIO.
+  - If the specified tiers do not cover the entire priority range,
+    the priority of the tier with the lowest specified priority value
+    is set to SHRT_MIN
+  - The total number of tiers is limited. 
+
+- To remove tiers:
+  Format: - 'tier_name'[,|' ']'tier_name2']...
+  Example:
+  # echo "- SSD,HDD" > /sys/kernel/mm/swap/tiers
+
+  Note: A tier cannot be removed if it is currently in use by any
+  cgroup or if any active swap device is assigned to it. This acts as
+  a reference count to prevent disruption.
+
+- To show current tiers:
+  Reading the file displays the currently configured tiers, their
+  internal index, and the priority range they cover.
+  Example:
+  # echo "+ SSD:100,HDD:2" > /sys/kernel/mm/swap/tiers
+  # cat /sys/kernel/mm/swap/tiers
+  Name      Idx   PrioStart   PrioEnd
+            0
+  SSD       1    100         32767
+  HDD       2     -1         99
+
+  - `Name`: The name of the tier. The unnamed entry is a default tier.
+  - `Idx`: The internal index assigned to the tier.
+  - `PrioStart`: The starting priority of the range covered by this tier.
+  - `PrioEnd`: The ending priority of the range covered by this tier.
+
+Two special tiers are predefined:
+- "": Represents the default inheritance behavior in cgroups.
+- "zswap": Reserved for zswap integration.
+
+2. Cgroup Tier Selection: memory.swap.tiers
+
+This file controls which swap tiers are enabled for a given cgroup.
+
+- Reading the file:
+  The first line shows the operation that was written to the file.
+  The second line shows the final, effective set of tiers after
+  merging with the parent cgroup's configuration.
+
+- Writing to the file:
+  Format: [+/-] [+|-][TIER_NAME]...
+  - `+TIER_NAME`: Explicitly enables this tier for the cgroup.
+  - `-TIER_NAME`: Explicitly disables this tier for the cgroup.
+  - If a tier is not specified, its setting is inherited from the
+    parent cgroup.
+  - A standalone `+` at the beginning resets the configuration: it
+    ignores the parent's settings, enables all globally defined tiers,
+    and then applies the subsequent operations in the command.
+  - A standalone `-` at the beginning also resets: it ignores the
+    parent's settings, disables all tiers, and then applies subsequent
+    operations.
+  - The root cgroup defaults to an implicit `+`, enabling all swap
+    devices.
+
+  Example:
+  # echo "+ -SSD -HDD" > /sys/fs/cgroup/my_cgroup/memory.swap.tiers
+  This command first resets the cgroup's configuration to enable all
+  tiers (due to the leading `+`), and then explicitly disables the
+  "SSD" and "HDD" tiers.
+
+Further Discussion and Open Questions
+-------------------------------------
+I seek feedback on this concept and have identified several key
+points that require further discussion (though this is not an 
+exhaustive list). This topic will also be presented at the upcoming 
+Linux Plumbers Conference 2025 [3], and I would appreciate any 
+feedback here on the list beforehand, or in person at the conference.
+
+1.  The swap fast path utilizes a percpu cluster cache for efficiency.
+    In swap tiers, this has been changed to a per-device per-cpu 
+    cluster cache. (See the first patch in this series.)
+    An alternative approach would be to cache only the swap_info_struct 
+    (si) per-tier per-cpu, avoiding cluster caching entirely while still 
+    maintaining fast device acquisition without `swap_avail_lock`.
+    Should we pursue this alternative, or is the current per-device 
+    per-cpu cluster caching approach preferable?
+
+2.  Consistency with cgroup parent-child semantics: Unlike general
+    resource distribution, tier selection may bypass parent
+    constraints (e.g., a child can enable a tier disabled by its
+    parent). Is this behavior acceptable?
+
+3.  Per-cgroup swap tier limit: Is a `swap.tier.max` needed in
+    addition to the existing `swap.max`?
+
+4.  Parent-child tier mismatch: If a zombie memcg (child) uses a tier
+    that is not available to its new parent, how should this be
+    handled during recharging or reparenting? (This question is raised
+    in the context of ongoing work to improve memcg reparenting and
+    handle zombie memcgs [4, 5].)
+
+5.  Tier mask calculation: What are the trade-offs between calculating
+    the effective tier mask at runtime vs. pre-calculating it when the
+    interface is written to?
+
+6.  If a swap tier configuration is applied to a memcg, should we
+    migrate existing swap-out pages that are on devices not belonging
+    to any of the cgroup's allowed tiers?
+
+7.  swap tier could be good abstraction layer. Discuss on extended usage of swap tiers.
+
+Any feedback on the overall concept, interface, and these specific
+points would be greatly appreciated.
+
+Best Regards,
+Youngjun Park
+
+References
+----------
+[1] https://lore.kernel.org/linux-mm/aEvLjEInMQC7hEyh@yjaykim-PowerEdge-T330/T/#mbbb6a5e9e30843097e1f5f65fb98f31d582b973d
+[2] https://lore.kernel.org/linux-mm/20250716202006.3640584-1-youngjun.park@lge.com/
+[3] https://lpc.events/event/19/abstracts/2296/
+[4] https://lore.kernel.org/linux-mm/20230720070825.992023-1-yosryahmed@google.com/
+[5] https://blogs.oracle.com/linux/post/zombie-memcg-issues
+
+Youngjun Park (3):
+  mm, swap: change back to use each swap device's percpu cluster
+  mm: swap: introduce swap tier infrastructure
+  mm/swap: integrate swap tier infrastructure into swap subsystem
+
+ Documentation/admin-guide/cgroup-v2.rst |  32 ++
+ MAINTAINERS                             |   2 +
+ include/linux/memcontrol.h              |   4 +
+ include/linux/swap.h                    |  16 +-
+ mm/Kconfig                              |  13 +
+ mm/Makefile                             |   1 +
+ mm/memcontrol.c                         |  69 +++
+ mm/page_io.c                            |  21 +-
+ mm/swap.h                               |   4 +
+ mm/swap_state.c                         |  93 ++++
+ mm/swap_tier.c                          | 602 ++++++++++++++++++++++++
+ mm/swap_tier.h                          |  75 +++
+ mm/swapfile.c                           | 169 +++----
+ 13 files changed, 987 insertions(+), 114 deletions(-)
+ create mode 100644 mm/swap_tier.c
+ create mode 100644 mm/swap_tier.h
+
+base-commit: 02dafa01ec9a00c3758c1c6478d82fe601f5f1ba
+-- 
+2.34.1
+
 
