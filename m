@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-891799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FFBFC43863
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 05:37:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DF46C43869
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 05:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E24DA188A62E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 04:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16CA23AB32B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 04:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A831B2135AD;
-	Sun,  9 Nov 2025 04:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18962214A8B;
+	Sun,  9 Nov 2025 04:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTVTBHuT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMGe609/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FA729A1;
-	Sun,  9 Nov 2025 04:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA6621257E;
+	Sun,  9 Nov 2025 04:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762663027; cv=none; b=Mtz+R5+fpNfBQnBo4bf9j/QRJZv3Qm8ywUGGpDF2e0xmbvuOpzN9Zn4OpHC7R9MyUDbRyqlZo+kkzybhY68AnvNnixq3zgJDd+RE0X5MA3ED3HWsbnD+ezkjtu+DQX9/6WN3G8dyn6CbOaCzlSv64ZC6r+1VQyx0tj3ZR8MTV54=
+	t=1762663305; cv=none; b=YdwU3MRiDkzFFRua+w8JDPDqt+JGViuEtprSW1yMYghuONEezNcduZZVe1wHJpKgKv5Z08lFGomFMBAHVr6kJrtmvD5bBCou5niMj8Coy17OiZJ3QrSDDVqDYNocVkV6qaA6sfqNamByZkLBt92Tx+livdW0hsHjsgtC69Zh8To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762663027; c=relaxed/simple;
-	bh=JoxMDa+4HgV3beWyKgaRrYff5xzpCh4MsyKdXH6IvM0=;
+	s=arc-20240116; t=1762663305; c=relaxed/simple;
+	bh=8BA3ep0Sc+3QErfKfSP7MZ3FIMPJu8c+m224YJKms/E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CPIgijOLpF9JOVV5c2+zsqKdVAIOoHXc+1/PACrGe5K4WNWTLpQP2R7CIX8KwFiTdMRYYhQu7+USQUDCvNPj/oW8j0SoQhWWDnBrGhHdI8G0QuCOzr+/AVk0olJ2e98M9b2UZ6OvSKTvJOrsnrUsMfGVO9TAH7JTP4ZW1YPvx1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTVTBHuT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24CC3C19425;
-	Sun,  9 Nov 2025 04:37:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKDF9UoO+7HK47T7hgp/ROpkD6qytpWA3FzaHP4XTosPTEpgWcoYHgXo6AxH904L/iPVa7kUVSMzwEKCAdHCUpTG9U7SG+4Sa6UvuN85KnuSUyhQUqbII1t+Amq+yFICHX/g+REpCxI7YlrMMUGoJh3TQPDyYRIlD8howw99XkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMGe609/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88547C19421;
+	Sun,  9 Nov 2025 04:41:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762663026;
-	bh=JoxMDa+4HgV3beWyKgaRrYff5xzpCh4MsyKdXH6IvM0=;
+	s=k20201202; t=1762663304;
+	bh=8BA3ep0Sc+3QErfKfSP7MZ3FIMPJu8c+m224YJKms/E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BTVTBHuTSMMPtV0sESIPs7SxDGnrvLsqjpDkH7TlP1i5HmlEOyWYlDi9ctwE3eI2F
-	 FnRwukMVmRagdEc2aF/+Gwz6V/EgKPXkB+Fr/wuBQXXbSX3P0WmdjkNoCtOKcP0Bac
-	 orXcaTTrv3vDmI/J1/S6flHrbJeULBJ5pWpR7MGcpd1ztGNrB3SAZ9f0vb8QlbD4Ho
-	 eUM2jU0JQLzGNVggKSMYjh+Qii+K1CD35DeYV4YtDEUUZ2rmXsCGLqF0tTDw/9j+0a
-	 BMHpRLBiaS+4FcAfHSdXfM4mHMGZqNzwUMv0vQxf6LOHsDcaLVJM6UFgGm4mWRVgkU
-	 RFnkHSLYDFlwA==
-Date: Sun, 9 Nov 2025 06:37:02 +0200
+	b=VMGe609/+FgNccqAnYdBDn9n8Od2mcnR3bZAwOcHyaSB2lXM3WvTTwatl4zieeNWg
+	 v/zIIXMJoaX2k7VVJKwiWTj5nQT91dsJHpOhqGkmzld6mwmg9EOyYG4HcvmuFF6zlO
+	 zPHzRGG+Vk9w0OMxX8nWd6sbd/1Oes9E32nYqsSTtDnF9fBABSSB8gOBLfoyeqDT4/
+	 rbjPp0Vk37a2l6AQ081/IYsfwHaiy60INRyN6HP6HYlGIQYNcLFJQ22szF8FBMw2T2
+	 qlDGzqyCfJYebGQ5ePRviSwD7wuRHRnkzI3VgAI5mSv5aYWzzpJIEhUhyozFKF4DnH
+	 F3pk8c1OgSEIA==
+Date: Sun, 9 Nov 2025 06:41:41 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+To: Stuart Yoder <stuart.yoder@arm.com>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+	sudeep.holla@arm.com, Prachotan.Bathi@arm.com,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] keys: Fix grammar and formatting in 'struct key_type'
- comments
-Message-ID: <aRAabhvp7tweVqNf@kernel.org>
-References: <20251027223259.190625-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH] tpm_crb: add missing loc parameter to kerneldoc
+Message-ID: <aRAbhXdsupKGtDIP@kernel.org>
+References: <20251028020921.214189-1-stuart.yoder@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,49 +57,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251027223259.190625-2-thorsten.blum@linux.dev>
+In-Reply-To: <20251028020921.214189-1-stuart.yoder@arm.com>
 
-On Mon, Oct 27, 2025 at 11:33:00PM +0100, Thorsten Blum wrote:
-> s/it/if/ and s/revokation/revocation/, capitalize "clear", and add a
-> period after the sentence. Fix the comment formatting.
+On Mon, Oct 27, 2025 at 09:09:21PM -0500, Stuart Yoder wrote:
+> Update the kerneldoc parameter definitions for __crb_go_idle
+> and __crb_cmd_ready to include the loc parameter.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
 > ---
-> Changes in v3:
-> - Capitalize "clear", add a period, and fix comment formatting (Jarkko)
-> - Link to v2: https://lore.kernel.org/lkml/20251025095519.84361-1-thorsten.blum@linux.dev/
+>  drivers/char/tpm/tpm_crb.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> Changes in v2:
-> - Adjust the trailing '*/' as suggested by Jarkko
-> - Link to v1: https://lore.kernel.org/lkml/20251016123619.98728-2-thorsten.blum@linux.dev/
-> ---
->  include/linux/key-type.h | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/key-type.h b/include/linux/key-type.h
-> index 5caf3ce82373..bb97bd3e5af4 100644
-> --- a/include/linux/key-type.h
-> +++ b/include/linux/key-type.h
-> @@ -107,11 +107,14 @@ struct key_type {
->  	 */
->  	int (*match_preparse)(struct key_match_data *match_data);
->  
-> -	/* Free preparsed match data (optional).  This should be supplied it
-> -	 * ->match_preparse() is supplied. */
-> +	/*
-> +	 * Free preparsed match data (optional).  This should be supplied if
-> +	 * ->match_preparse() is supplied.
-> +	 */
->  	void (*match_free)(struct key_match_data *match_data);
->  
-> -	/* clear some of the data from a key on revokation (optional)
-> +	/*
-> +	 * Clear some of the data from a key on revocation (optional).
->  	 * - the key's semaphore will be write-locked by the caller
->  	 */
->  	void (*revoke)(struct key *key);
+> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> index c75a531cfb98..0eb48429f73d 100644
+> --- a/drivers/char/tpm/tpm_crb.c
+> +++ b/drivers/char/tpm/tpm_crb.c
+> @@ -179,6 +179,7 @@ static int crb_try_pluton_doorbell(struct crb_priv *priv, bool wait_for_complete
+>   *
+>   * @dev:  crb device
+>   * @priv: crb private data
+> + * @loc:  locality
+>   *
+>   * Write CRB_CTRL_REQ_GO_IDLE to TPM_CRB_CTRL_REQ
+>   * The device should respond within TIMEOUT_C by clearing the bit.
+> @@ -233,6 +234,7 @@ static int crb_go_idle(struct tpm_chip *chip)
+>   *
+>   * @dev:  crb device
+>   * @priv: crb private data
+> + * @loc:  locality
+>   *
+>   * Write CRB_CTRL_REQ_CMD_READY to TPM_CRB_CTRL_REQ
+>   * and poll till the device acknowledge it by clearing the bit.
 > -- 
-> 2.51.0
+> 2.34.1
 > 
 
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
