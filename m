@@ -1,136 +1,114 @@
-Return-Path: <linux-kernel+bounces-891913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678A9C43CD7
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:47:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDF8C43CE6
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:52:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C558188C436
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:47:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D633A6F5B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BAB2DC77F;
-	Sun,  9 Nov 2025 11:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703F22DE1E6;
+	Sun,  9 Nov 2025 11:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="PzRzahBw"
-Received: from pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com [50.112.246.219])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PgWp5Gwh"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79601272801;
-	Sun,  9 Nov 2025 11:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=50.112.246.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E0128031D;
+	Sun,  9 Nov 2025 11:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762688834; cv=none; b=SRnPGD0e0RXRZoVhzfanF2QSF39DNBL9WwFzb6+6JF/yJaEZsCb3BT0XC5nxAYQxVG+iBsDG1dzOlxRTI+SHr36pGXS3oo7PL/xpINVAk1mMaMKp3escycqnr9zwCey6UKoWJu06vjXOkmFeqfqAEe3/lDbCN4mrZN67TH4azWc=
+	t=1762689118; cv=none; b=cEVPZn8RpPgj6VqZq4HEePhZWQvuLJbgNmI+G2MHFMj7Sld85RBbUGtw6BLcsUYueCefWzCQCjohcfeNpa07066hUn2XulE+MYklvDfa2WeeDQ9CpG2raRcgJDrhotpo26ZyWXugxbg+73FV/sviAmCHEocHaG8dXQN3Wv4FTXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762688834; c=relaxed/simple;
-	bh=TGbsIJbNdmZDoghwpLH5vb7hIw6MrViTyBvoEOlSxQ8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IovwMywg+rNtaaFDZ9e7ImLKdirqM8TKoqugNYDN1J7H/2OGrZMZvG9MA76IDPgvnDrRJpwzfgJV0pL2kXNIWccbCJxdQ4jkhyCUPX+IVuU8lNqtfYeyJzQlHxH5SEPrSxBGM1RsnqLnVRS0rOSGshQDbKeP3MOluveEVLdvRQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=PzRzahBw; arc=none smtp.client-ip=50.112.246.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1762688833; x=1794224833;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FnH+XOeMpGV+rIc6L0kniRTBsRQVu5GU526boyROU3A=;
-  b=PzRzahBw+juIBN/D+CrIOp7zzB9UWL9YHv2skYjeKplJ2L2hROBrMZ9y
-   9q9INuKJV30VAhb4ghBrYqr3uWHUnNNSnQgo6H4nl8bZB2q2mixVfk8GX
-   ai/bTPGnW+kOVLZjvNXk2mf0QDaw8f6O2CoM3rKhEt8Vqegc7fyodBXoA
-   StfYZOnHkhVDYx/IpLZWqoxPKhWv8D1s4sjoVI9Y9zpU8QAPUYi/tvzco
-   vxKmhkn0achcf0TIRRFYnS37o9jaaktHY/Nm8wqjB1T7KuPiJhDERv7oz
-   fVc4TBYLBoABTwYi1+PvbIexzI69aGunwTkzAaieCpFqDc4gcuME70GUQ
-   w==;
-X-CSE-ConnectionGUID: P7BRPApNQ3CsxQ5GEntzWA==
-X-CSE-MsgGUID: XuE1YFYPT6W/VeQKBjpq5g==
-X-IronPort-AV: E=Sophos;i="6.19,291,1754956800"; 
-   d="scan'208";a="6525068"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 11:47:10 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [205.251.233.105:12405]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.51.49:2525] with esmtp (Farcaster)
- id a48445c3-2db9-4804-9d90-8e6dec0a1b66; Sun, 9 Nov 2025 11:47:10 +0000 (UTC)
-X-Farcaster-Flow-ID: a48445c3-2db9-4804-9d90-8e6dec0a1b66
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Sun, 9 Nov 2025 11:47:10 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
- (172.19.116.181) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29; Sun, 9 Nov 2025
- 11:47:08 +0000
-From: Eliav Farber <farbere@amazon.com>
-To: <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>,
-	<viro@zeniv.linux.org.uk>, <dan.j.williams@intel.com>, <willy@infradead.org>,
-	<jack@suse.cz>, <linux-fsdevel@vger.kernel.org>, <linux-nvdimm@lists.01.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <farbere@amazon.com>, Christoph Hellwig <hch@lst.de>, "Darrick J. Wong"
-	<djwong@kernel.org>
-Subject: [PATCH v2 5.10.y] fsdax: mark the iomap argument to dax_iomap_sector as const
-Date: Sun, 9 Nov 2025 11:47:03 +0000
-Message-ID: <20251109114703.16554-1-farbere@amazon.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1762689118; c=relaxed/simple;
+	bh=GwX7wATpjr480wc0HrGspcx3uSzhsELZXlRALMshYOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PvKs5sEvDlReALwchxJMnp3Dxf8I2PmQTjBIfQbiFb0FeCwuhSwUEDapiaDSr+bHUN2+JGkTAybYrSLXgF+W12b3vlxU8lyyJj9z/8IwgQoQNkE4+4smDJnakP6JKWyqJANvJMIpeWmxwdITMSlFJL2MNZiWPMvRvVpLLsYyq+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PgWp5Gwh; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IrXO1X7s/FvF2yB8F6me169g9f36OJ6/LkVLYuvSSMo=; b=PgWp5Gwhf5GnRl3/BOaXaulpFA
+	OXkZATs/SHRJQTUoZeROFDYov/No5gfPjlH8G2v8EEGgNilZ6QOHu9mAznoS8GJd6E3h4C7PFhTMn
+	1ts50mxrAxcR+4Zn3jL7H7G4pNv/Otc5+OqQcBg4f19QnZnCctSTOM7VgRfZbhMg222rVxVk80vf6
+	60Dk0k2rG/ywx0Tr+hAvzNJI1tXZMqvtksaTzMWp4+eJYnTy/OD6hZOFWuQyhm7hGFYbFM//7huaP
+	ckkFEHallmLK9nH/GdN8okr5MMAkYhnYBrp7+gLK6QCUY6ybbSfqMzeJN3hKuhUJOJl57eTUNsOEO
+	/hOSDBwA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vI35t-000000090QN-08Wu;
+	Sun, 09 Nov 2025 10:56:25 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 968E9300230; Sun, 09 Nov 2025 12:51:52 +0100 (CET)
+Date: Sun, 9 Nov 2025 12:51:52 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Xie Yuanbin <qq570070308@gmail.com>, david@redhat.com,
+	tglx@linutronix.de, segher@kernel.crashing.org, riel@surriel.com,
+	linux@armlinux.org.uk, mathieu.desnoyers@efficios.com,
+	paulmck@kernel.org, pjw@kernel.org, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, hca@linux.ibm.com,
+	gor@linux.ibm.com, agordeev@linux.ibm.com,
+	borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net,
+	andreas@gaisler.com, luto@kernel.org, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com, james.clark@linaro.org,
+	anna-maria@linutronix.de, frederic@kernel.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com, morbo@google.com,
+	justinstitt@google.com, thuth@redhat.com, brauner@kernel.org,
+	arnd@arndb.de, jlayton@kernel.org, aalbersh@redhat.com,
+	akpm@linux-foundation.org, david@kernel.org,
+	lorenzo.stoakes@oracle.com, max.kellermann@ionos.com,
+	ryan.roberts@arm.com, nysal@linux.ibm.com, urezki@gmail.com,
+	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev,
+	will@kernel.org
+Subject: Re: [PATCH v2 3/4] Provide the always inline version of some
+ functions
+Message-ID: <20251109115152.GD2545891@noisy.programming.kicks-ass.net>
+References: <20251108172346.263590-1-qq570070308@gmail.com>
+ <20251108172346.263590-4-qq570070308@gmail.com>
+ <04CA2D22-4DE2-4DE1-A2BC-AACE666F5F93@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D031UWC003.ant.amazon.com (10.13.139.252) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <04CA2D22-4DE2-4DE1-A2BC-AACE666F5F93@zytor.com>
 
-From: Christoph Hellwig <hch@lst.de>
+On Sat, Nov 08, 2025 at 02:14:44PM -0800, H. Peter Anvin wrote:
 
-[ Upstream commit 7e4f4b2d689d959b03cb07dfbdb97b9696cb1076 ]
+> >+static struct rq *finish_task_switch(struct task_struct *prev)
+> >+{
+> >+	return finish_task_switch_ainline(prev);
+> >+}
+> >+
+> > /**
+> >  * schedule_tail - first thing a freshly forked thread must call.
+> >  * @prev: the thread we just switched away from.
+> 
+> There is, in fact: you have to have an always_inline version, and wrap it in a noinline version.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Eliav Farber <farbere@amazon.com>
----
-V1 -> V2: Added missing 'Signed-off-by'
+Yes, but all of this is particularly retarded, there are exactly _2_
+callers of this function. Keeping an out-of-line copy for one while
+inlineing the other makes 0 sense.
 
-Fixes:
-
-fs/dax.c: In function 'dax_iomap_iter':
-fs/dax.c:1147:44: error: passing argument 1 of 'dax_iomap_sector' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
-   const sector_t sector = dax_iomap_sector(iomap, pos);
-                                            ^~~~~
-fs/dax.c:1009:17: note: expected 'struct iomap *' but argument is of type 'const struct iomap *'
-   static sector_t dax_iomap_sector(struct iomap *iomap, loff_t pos)
-                 ^~~~~~~~~~~~~~~~
-
-The issue was introduced by the cherry-pick of commit 8df4919cb921
-("fsdax: switch dax_iomap_rw to use iomap_iter")
-
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/fs/dax.c?h=v5.10.246&id=8df4919cb921b28809d05feae3e98dc5d8b48146
-
-The upstream change made callers pass a const struct iomap *:
-   const struct iomap *iomap = &iomi->iomap;
-but dax_iomap_sector() still expected a mutable pointer:
-   static sector_t dax_iomap_sector(struct iomap *iomap, loff_t pos)
-
- fs/dax.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/dax.c b/fs/dax.c
-index 91820b9b50b7..2ca33ef5d519 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1006,7 +1006,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
- }
- EXPORT_SYMBOL_GPL(dax_writeback_mapping_range);
- 
--static sector_t dax_iomap_sector(struct iomap *iomap, loff_t pos)
-+static sector_t dax_iomap_sector(const struct iomap *iomap, loff_t pos)
- {
- 	return (iomap->addr + (pos & PAGE_MASK) - iomap->offset) >> 9;
- }
--- 
-2.47.3
-
+Also, the amount of crap he needs to mark __always_inline doesn't make
+much sense to me, is he building with -Os or something?
 
