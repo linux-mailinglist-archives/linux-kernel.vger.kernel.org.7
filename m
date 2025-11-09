@@ -1,152 +1,156 @@
-Return-Path: <linux-kernel+bounces-891958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABF9C43E8A
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:27:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE803C43E8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:28:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E21203B287B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC6D3A88FF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03362F6933;
-	Sun,  9 Nov 2025 13:27:46 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2B72F744C;
+	Sun,  9 Nov 2025 13:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NQYb1sLL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18A034D395
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 13:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F7634D395;
+	Sun,  9 Nov 2025 13:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762694866; cv=none; b=IWT44Qv0dkb4gB3pxSBigHntjv0EAK0LEl7z1NyRzVlI+/1Kuyg/nJC+MmRoN5meqnyS6xgNi3cT41Sp6SX8KAN1dX29ThJS1kY/g1/O1NS32DFN4TQ5oKvxRWEaQr8sC1wnU0N0IYpWZu5ERw6r+4vhzecmcjXRU39NuN2rGa4=
+	t=1762694931; cv=none; b=jAybVD2jPZJHvs/gykXosWV0nRVvyykGDEuINXRhtPvfwexbTcda1EGQR/BZQ2Ifrt6CBYtkbndhguPzaoZKnV60oDNiNOp6YMUDGiS/07sI85VLsIpl0EbV7a7fOG//GOvAdzV6Y/LzVvDCHEWH8RVvewEnFIoENGXAg+oGqSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762694866; c=relaxed/simple;
-	bh=b/rGwfYereAWWCa21aLzql4pE4k3JAXEN1oChc63HH0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=APVDMLNMIhyR51Jfdk6ZsJAIg/sczeKOPVUUI+WwimQkMs5OfXV1+unolrn6NcthvVY03/b50af2D6c3DdoM9jl6d9TCb5Wuuc00yeqTo7rm/e1rofnrhE5fxpjIc+wqtm+zX9PRvLky3nImHftshqnM6svciFwDLWtmJa5pdFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4337e902d2bso1484545ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 05:27:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762694864; x=1763299664;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=29lLnYKRkWhL7gcHrrn70CmAVjWazEwQ/j0AqKgV5AY=;
-        b=Hv1X+fhnaLj1TjiyaeE1ceZX1mo3VXoqdfB2/LlEPrhDY9+SUPZJwaq3ov5+y5jRW0
-         bFdUauy00HhlDT6RkvOUsxNlzQerfrt2SIoq3BgVz+z0hy7PmSYdHtwaOeONjmENMWkg
-         Uwgc2dtgdFQnLX7FgASTSCIo/RjAS6dsAtRx0BKXUMYNRWWe+9I2HxX4eeDwfqwiOjd/
-         H2Dymjmufv2xPPdedHUzVjSFWunpoGu9213J4O0LPF4lH1H1tO11IFguJyulr4NRaqDL
-         iQgjUozNP3Qcvk0Kk4/M7MwAhp5s6s9yzwSCOrP1giM1+Bm3feOXukCmbfRu9boFHgmZ
-         ISdA==
-X-Gm-Message-State: AOJu0YypHw97Ar8ONjLT0FQJDQOW1nPdE6c/1YafAjSplQgLDntXVgNk
-	nbcDGH3H9FY+Wm36ABl4AiM1F8vF7ayxWdQ7UWH6a/nOYrjjWDRFXwqJOkt0Ag9+tEz/hdSvcr7
-	zx0UgniwL97oZao3MthzIJY6nR45ZJ4rCsBvnAeN4BPRNfNw8UzMc/JeJmqU=
-X-Google-Smtp-Source: AGHT+IHFlczUW+xcT+kUHWuDnrl6FYGDj+K2JhUkGIdxoeUjY/N3zhEhc0n1hl3TcAo8P4CDvQ1EaG7qzZgq7Rpv1DtMlCRKgYKc
+	s=arc-20240116; t=1762694931; c=relaxed/simple;
+	bh=egy0lm8KbcMkcn9xL91cir94+bUw2s619GaDs04yNRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LrHwwEMUozUkQvtibL4G6ps4feQ6rT0afcUFTnQXHIkjdG8koHr7X3SljzrGeIsWJG7XZFLZUk591H6jHbWwjLcjGrXG/GDw4wKXgoOW7d8tvwDXR2do801WNKac6Yi3RYRb9Wagm/2WX/RdNwAQndPDFudP0R6jGi0VGiSs2Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NQYb1sLL; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762694930; x=1794230930;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=egy0lm8KbcMkcn9xL91cir94+bUw2s619GaDs04yNRo=;
+  b=NQYb1sLLzjdpqNA5yhTVzL9W4X2quOejKyzYiSvfc4hC6ZkQ4QMZnSuq
+   Nkdrgq8X4K4oDOjK8ivA1KfoSBUQyBbg5eBiyIkgo7qNd31cICM7VLveo
+   UCBMBy+Rz6rBPl9AkorPEqM1jQZCFnbN9BlQhRy/4sCcnB3EieXjyAcEr
+   DUWy+03sJwf8uoETi7byVUnejoqQOruAQ99XCst/Z6rSS1jelfedxQOtM
+   ifB/RJc9i4q92DRfVgA2Wna96QRWjlT8dDCWt+GQrGtBS+Gyqg4UntkcZ
+   4h6ZCuebXDJoNM1R26ECNGwxymVxdZRJp+nsEfA1+N8OqmYRYYrNiBWjF
+   w==;
+X-CSE-ConnectionGUID: ILw46PiESsewQ2N8wqIJiA==
+X-CSE-MsgGUID: p81YM3LdTCqbFrM8sTGCCg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11607"; a="67374599"
+X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
+   d="scan'208";a="67374599"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 05:28:49 -0800
+X-CSE-ConnectionGUID: lqI5I1TzRQ2wUbcQY3p35g==
+X-CSE-MsgGUID: 1eOmrPStSNuZZaUdr7LFUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
+   d="scan'208";a="188411309"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 09 Nov 2025 05:28:48 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vI5TJ-00021b-1e;
+	Sun, 09 Nov 2025 13:28:45 +0000
+Date: Sun, 9 Nov 2025 21:27:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Report wrong dynamic event command
+Message-ID: <202511092149.N375MBPu-lkp@intel.com>
+References: <176259938768.261465.10714633393722227911.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc3:b0:433:3487:ea22 with SMTP id
- e9e14a558f8ab-43367deafd7mr86797315ab.13.1762694864032; Sun, 09 Nov 2025
- 05:27:44 -0800 (PST)
-Date: Sun, 09 Nov 2025 05:27:44 -0800
-In-Reply-To: <68eb4077.050a0220.ac43.0005.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <691096d0.a70a0220.22f260.00b4.GAE@google.com>
-Subject: Forwarded: [PATCH] fs: fix inode use-after-free in chown_common
- delegation retry
-From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <176259938768.261465.10714633393722227911.stgit@devnote2>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi Masami,
 
-***
+kernel test robot noticed the following build errors:
 
-Subject: [PATCH] fs: fix inode use-after-free in chown_common delegation retry
-Author: kartikey406@gmail.com
+[auto build test ERROR on trace/for-next]
+[also build test ERROR on next-20251107]
+[cannot apply to linus/master v6.18-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-Report-wrong-dynamic-event-command/20251108-185823
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/176259938768.261465.10714633393722227911.stgit%40devnote2
+patch subject: [PATCH] tracing: Report wrong dynamic event command
+config: s390-randconfig-002-20251109 (https://download.01.org/0day-ci/archive/20251109/202511092149.N375MBPu-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511092149.N375MBPu-lkp@intel.com/reproduce)
 
-The chown_common() function has a use-after-free bug in its delegation
-retry path. When break_deleg_wait() is called, it internally calls
-iput() on the delegated inode, potentially freeing it if this was the
-last reference. However, chown_common() continues using the stale inode
-pointer on retry, leading to operations on freed memory.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511092149.N375MBPu-lkp@intel.com/
 
-This manifests as a rwsem warning where the inode's rwsem owner field
-is corrupted:
-  DEBUG_RWSEMS_WARN_ON: owner = 0x0
+All errors (new ones prefixed by >>):
 
-The bug is triggered by concurrent fchownat() calls and is reproducible
-on GFS2 filesystems where delegations are common.
+   s390-linux-ld: kernel/trace/trace_dynevent.o: in function `create_dyn_event':
+>> kernel/trace/trace_dynevent.c:150: undefined reference to `trace_probe_log_init'
+>> s390-linux-ld: kernel/trace/trace_dynevent.c:151: undefined reference to `__trace_probe_log_err'
+>> s390-linux-ld: kernel/trace/trace_dynevent.c:152: undefined reference to `trace_probe_log_clear'
 
-Fix by:
-1. Re-fetching inode from path->dentry->d_inode on each retry iteration
-2. Holding an explicit inode reference with ihold() at iteration start
-3. Releasing the reference with iput() on all exit paths
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for I2C_K1
+   Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && OF [=n]
+   Selected by [y]:
+   - MFD_SPACEMIT_P1 [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && I2C [=y]
 
-This ensures the inode remains valid throughout delegation break and
-retry.
 
-Reported-by: syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=04c2672c56fbb9401640
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/open.c          | 12 ++++++++++++
- include/linux/fs.h |  5 +++++
- 2 files changed, 17 insertions(+)
+vim +150 kernel/trace/trace_dynevent.c
 
-diff --git a/fs/open.c b/fs/open.c
-index 3d64372ecc67..e5ff4d052f80 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -787,9 +787,21 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 		path,
- 		from_vfsuid(idmap, fs_userns, newattrs.ia_vfsuid),
- 		from_vfsgid(idmap, fs_userns, newattrs.ia_vfsgid));
-+	printk(KERN_INFO "After security_path_chown: owner=%lx\n",
-+       		atomic_long_read(&inode->i_rwsem.owner));
- 	if (!error)
- 		error = notify_change(idmap, path->dentry, &newattrs,
- 				      &delegated_inode);
-+	printk(KERN_INFO "After notify_change: owner=%lx, error=%d\n",
-+       		atomic_long_read(&inode->i_rwsem.owner), error);
-+	if (atomic_long_read(&inode->i_rwsem.owner) != (long)current) {
-+   		printk(KERN_ERR "BUG: About to unlock rwsem we don't own!\n");
-+    		printk(KERN_ERR "  inode=%p\n", inode);
-+    		printk(KERN_ERR "  i_rwsem.owner=%lx\n", atomic_long_read(&inode->i_rwsem.owner));
-+    		printk(KERN_ERR "  current=%p\n", current);
-+    		printk(KERN_ERR "  delegated_inode=%p\n", delegated_inode);
-+    		dump_stack();
-+	}
- 	inode_unlock(inode);
- 	if (delegated_inode) {
- 		error = break_deleg_wait(&delegated_inode);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c895146c1444..84f7267aac3d 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -987,6 +987,11 @@ static inline __must_check int inode_lock_killable(struct inode *inode)
- 
- static inline void inode_unlock(struct inode *inode)
- {
-+	printk(KERN_INFO "[%d] inode_unlock: inode=%p, owner=%lx, current=%p (%s:%d)\n",
-+	       count, inode,
-+	       atomic_long_read(&inode->i_rwsem.owner),
-+	       current, current->comm, current->pid);
-+	dump_stack();
- 	up_write(&inode->i_rwsem);
- }
- 
+   133	
+   134	static int create_dyn_event(const char *raw_command)
+   135	{
+   136		struct dyn_event_operations *ops;
+   137		int ret = -ENODEV;
+   138	
+   139		if (raw_command[0] == '-' || raw_command[0] == '!')
+   140			return dyn_event_release(raw_command, NULL);
+   141	
+   142		mutex_lock(&dyn_event_ops_mutex);
+   143		list_for_each_entry(ops, &dyn_event_ops_list, list) {
+   144			ret = ops->create(raw_command);
+   145			if (!ret || ret != -ECANCELED)
+   146				break;
+   147		}
+   148		if (ret == -ECANCELED) {
+   149			/* Wrong dynamic event. Leave an error message. */
+ > 150			trace_probe_log_init("dynevent", 1, &raw_command);
+ > 151			trace_probe_log_err(0, BAD_DYN_EVENT);
+ > 152			trace_probe_log_clear();
+   153			ret = -EINVAL;
+   154		}
+   155	
+   156		mutex_unlock(&dyn_event_ops_mutex);
+   157	
+   158		return ret;
+   159	}
+   160	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
