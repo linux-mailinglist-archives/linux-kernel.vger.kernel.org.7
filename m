@@ -1,71 +1,82 @@
-Return-Path: <linux-kernel+bounces-891811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F26C438F6
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 06:49:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2C1C438FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 06:58:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3BF1D347101
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 05:49:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B3B84E1872
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 05:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E5C21CFF6;
-	Sun,  9 Nov 2025 05:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294D02417E6;
+	Sun,  9 Nov 2025 05:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="e/XE+huK"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RvCt0oIC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B7E1C861D
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 05:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9501A9F88;
+	Sun,  9 Nov 2025 05:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762667363; cv=none; b=KA/kI6bwXXppNqgpgSjjNjl/+bhsAVUb5x+CXwSBSQGntAR+TA/5XbIFmsdLxMuO+fk8qgp0Vw3H+hBr6tpuEy1PfcJnZE6OSr7QwQQa8x3+09u048tU/8+tfxtRhvMhJ0cs3FeftY2RxLY1lN/RftStYuwNmYUevF+KQYd93Hw=
+	t=1762667929; cv=none; b=GnqrBxkFiSH8hAx7/v2Jo+YicHRN5iC8mooQfgpJnPvumDQBpuzIFmba4dEsRTLLonTNdTIYWQAXuEDihllWoFjJjux1RCATaxJ3/TMlMJudGN+FfdSKEQtEpMPMATINIfjKABCGXbl7LAZJFIyPezN1VZ2/PmXWsBzUjRj6PAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762667363; c=relaxed/simple;
-	bh=0Dduvwaj9EIu/iZq7xOO9Ljr/Gn7z49+hz14+MCPdMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=V2gjy9daJsUUFXFU/VWRExl1C37Xh4ExoynG5N7PF1I/GUroLLVC6qpIfGb35+08/DP6p1XWhrGL7BIJAtasTJsNWzABBF8evp00s7EY8uV6MhQQljbo4j3jjqemDL73y5ytMrl5+xgKRF/qbA63c57ZDYkAmdIc7MdsHYrXoAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=e/XE+huK; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id A5398104C1DA
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:19:07 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in A5398104C1DA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1762667347; bh=0Dduvwaj9EIu/iZq7xOO9Ljr/Gn7z49+hz14+MCPdMo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=e/XE+huK3Sb4k7QFZrxT4pGgEq7qJwRqyC9PNIkiz6zxeWDM2OOQokG8QaHZJM07z
-	 Pb5S/1EjK6GDj6EVBxRjl3pRvuDtPmK8TthE+NAr83EZxpf+8DEkN5WcmWm1/mhaeQ
-	 FHrFAVXk0RPedYlaV7Wu++XRyUOlFs8seVhSz0N0=
-Received: (qmail 24224 invoked by uid 510); 9 Nov 2025 11:19:07 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 1.838648 secs; 09 Nov 2025 11:19:07 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
-  by ldns1.iitb.ac.in with SMTP; 9 Nov 2025 11:19:05 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns1.iitb.ac.in (Postfix) with ESMTP id 4FB03360035;
-	Sun,  9 Nov 2025 11:19:05 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id DDADC1E814C9;
-	Sun,  9 Nov 2025 11:19:04 +0530 (IST)
-Date: Sun, 9 Nov 2025 11:18:59 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: alexandre.belloni@bootlin.com, ddaney@caviumnetworks.com,
-	david.daney@cavium.com, pombredanne@nexb.com
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
-Subject: [PATCH] rtc: isl12026: Add id_table
-Message-ID: <2025119-54859-2010914@bhairav-test.ee.iitb.ac.in>
+	s=arc-20240116; t=1762667929; c=relaxed/simple;
+	bh=dJDKBI9C/t3oC8rzuP3IFu6rPxvZkeXCeHJ+1VHh/oI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fmp8MJO8QMY42qRLmyhozGnNjf/2x+W4yoJwpM9Sjti8Cej7D/ndBEgoyAuR8gxxx/DUaiJosqBExFnmXpMkBZhJTiUNRSyDGkMNr8UMZThKRufEnQGfylk26qOoUUYOPWqkz7Gbu2mqZ2rO8ygKsvSSQsVdG2cv7GOo97r4w8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RvCt0oIC; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762667927; x=1794203927;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dJDKBI9C/t3oC8rzuP3IFu6rPxvZkeXCeHJ+1VHh/oI=;
+  b=RvCt0oICgu0eCezi7zWxWp9gYvdFgzncmp+u2RjzugQlgGD7IaWVlazD
+   wVNW3wUdksOkUkaHGkdRffa+9+J91L/SW7IbsRAbEq5+jQet6m1gW7Xqt
+   yZsUNOVTrJCBLZNPYRgQBENXIZ93XhdKzEMwT+LYKCysvmMrqDvdACV50
+   96oSAOBGI1Los3HSWpk1RjnbiQtwj5+pZgVYmQmKU69eR1JpDL7G+mMwq
+   T6FE5fXLf5SVpk7I+QQQyNCVfDvUP2M7GahPysavWgmRTwt/1W8M3FRym
+   YU68Qv2eqGQAiIgRqV9kkqcsKf869fO7e2RQH869NVLoaAlLJwvNbuRCt
+   w==;
+X-CSE-ConnectionGUID: KWqcI2gwRiex9ur+q+ZjVw==
+X-CSE-MsgGUID: XY5C3zcBSqqKm3uKTOfvHg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64685602"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64685602"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2025 21:58:47 -0800
+X-CSE-ConnectionGUID: yoGoFhiLQZ6PRUbwZTIMSw==
+X-CSE-MsgGUID: xnAORxazRya8mgr2lz4Zzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
+   d="scan'208";a="192784861"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 08 Nov 2025 21:58:44 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vHyRl-0001oF-1f;
+	Sun, 09 Nov 2025 05:58:41 +0000
+Date: Sun, 9 Nov 2025 13:57:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bod@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>,
+	Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+Subject: Re: [PATCH v5 3/5] media: iris: Add support for AV1 format in iris
+ decoder
+Message-ID: <202511091302.TuplwHhw-lkp@intel.com>
+References: <20251107-av1d_stateful_v3-v5-3-351652ba49cd@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,47 +85,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20251107-av1d_stateful_v3-v5-3-351652ba49cd@oss.qualcomm.com>
 
-Add i2c id_table for isl12026 rtc.
+Hi Deepa,
 
-Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
----
-tested by instantiating isl12026 device as
-echo "isl12026 0x6f" > new_device
-Tested rtc on TI am62x sk board on i2c-2 using rtctest.
-I am currently implementing alarm support for isl12026
-this patch helps to instantiate device runtime without DT
-for faster testing without reboots.
+kernel test robot noticed the following build errors:
 
- drivers/rtc/rtc-isl12026.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+[auto build test ERROR on 163917839c0eea3bdfe3620f27f617a55fd76302]
 
-diff --git a/drivers/rtc/rtc-isl12026.c b/drivers/rtc/rtc-isl12026.c
-index 2aabb9151d4c..45a2c9f676c5 100644
---- a/drivers/rtc/rtc-isl12026.c
-+++ b/drivers/rtc/rtc-isl12026.c
-@@ -484,6 +484,12 @@ static const struct of_device_id isl12026_dt_match[] = {
- };
- MODULE_DEVICE_TABLE(of, isl12026_dt_match);
- 
-+static const struct i2c_device_id isl12026_id[] = {
-+	{ "isl12026" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(i2c, isl12026_id);
-+
- static struct i2c_driver isl12026_driver = {
- 	.driver		= {
- 		.name	= "rtc-isl12026",
-@@ -491,6 +497,7 @@ static struct i2c_driver isl12026_driver = {
- 	},
- 	.probe		= isl12026_probe,
- 	.remove		= isl12026_remove,
-+	.id_table	= isl12026_id,
- };
- 
- module_i2c_driver(isl12026_driver);
+url:    https://github.com/intel-lab-lkp/linux/commits/Deepa-Guthyappa-Madivalara/media-uapi-videodev2-Add-support-for-AV1-stateful-decoder/20251108-122511
+base:   163917839c0eea3bdfe3620f27f617a55fd76302
+patch link:    https://lore.kernel.org/r/20251107-av1d_stateful_v3-v5-3-351652ba49cd%40oss.qualcomm.com
+patch subject: [PATCH v5 3/5] media: iris: Add support for AV1 format in iris decoder
+config: x86_64-buildonly-randconfig-005-20251109 (https://download.01.org/0day-ci/archive/20251109/202511091302.TuplwHhw-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511091302.TuplwHhw-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511091302.TuplwHhw-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/media/platform/qcom/iris/iris_platform_sm8250.c:20:48: error: array has incomplete element type 'struct iris_fmt'
+      20 | static struct iris_fmt platform_fmts_sm8250_dec[] = {
+         |                                                ^
+   drivers/media/platform/qcom/iris/iris_platform_common.h:217:9: note: forward declaration of 'struct iris_fmt'
+     217 |         struct iris_fmt *inst_iris_fmts;
+         |                ^
+   drivers/media/platform/qcom/iris/iris_platform_sm8250.c:21:3: error: use of undeclared identifier 'IRIS_FMT_H264'
+      21 |         [IRIS_FMT_H264] = {
+         |          ^
+>> drivers/media/platform/qcom/iris/iris_platform_sm8250.c:25:3: error: use of undeclared identifier 'IRIS_FMT_HEVC'
+      25 |         [IRIS_FMT_HEVC] = {
+         |          ^
+>> drivers/media/platform/qcom/iris/iris_platform_sm8250.c:29:3: error: use of undeclared identifier 'IRIS_FMT_VP9'
+      29 |         [IRIS_FMT_VP9] = {
+         |          ^
+   4 errors generated.
+
+
+vim +/IRIS_FMT_HEVC +25 drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+
+    19	
+    20	static struct iris_fmt platform_fmts_sm8250_dec[] = {
+    21		[IRIS_FMT_H264] = {
+    22			.pixfmt = V4L2_PIX_FMT_H264,
+    23			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
+    24		},
+  > 25		[IRIS_FMT_HEVC] = {
+    26			.pixfmt = V4L2_PIX_FMT_HEVC,
+    27			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
+    28		},
+  > 29		[IRIS_FMT_VP9] = {
+    30			.pixfmt = V4L2_PIX_FMT_VP9,
+    31			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
+    32		},
+    33	};
+    34	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
