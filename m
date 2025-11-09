@@ -1,127 +1,121 @@
-Return-Path: <linux-kernel+bounces-891875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25607C43B43
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 10:43:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DFEC43B4F
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 10:48:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9E0188AA2B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 09:42:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52B673AA8D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 09:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D312C2E093A;
-	Sun,  9 Nov 2025 09:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A612D876C;
+	Sun,  9 Nov 2025 09:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MEER7+0d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIOTaenL"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAD12D6630;
-	Sun,  9 Nov 2025 09:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1D022A4F4
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 09:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762681205; cv=none; b=RoJYv4RYBjWcmgcJBB5davulvBKaYi6xicvX1zDpq5zR3AAh7toagx382J7L6/yndz6hrVWJeux9QP2nZlHLqGxw2bsp/bR35VTJbfD5Yiec3Kaat8OXz4Ms/0UZiRWennrRjySbS0oTwvYISsaSytYLRQUgvN79opW7VMfepkg=
+	t=1762681692; cv=none; b=STJXLUJPbU8P3UdeqAgg+3wTq9EE50iYTsedmjyUXX0Zv/uXSqB1ajietU/7hoelPcpX6ExcuCCP/tlKgmrItHrQQ+ly2ip3zVfhVu9ZhblxSbhOO5v84A6QwEzXOaT2ZTDscKLjhQnNpkGZRqqXZb0wREw0bYFjpQVuQdnJuQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762681205; c=relaxed/simple;
-	bh=dqMMUSeQ+jdd/9lo3As8qjx3qL8HhQ6Z6MvK10c0nc4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KJ6NaLshBejC+ihjDtfuQKlTCFxMuEN8hddmknncanVKHtND3LjzEbl5BiSqUonqnGys/GZkXLxjbUgDCkR8tMPGX7FVvO2gMmEky479M8rLuj0pZd5oj62A/kdoQ9+aq7Hyby4PH/WmveqyFHNhYQnimKZFDdKxb2GEaU1rcG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MEER7+0d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 50B7BC2BC87;
-	Sun,  9 Nov 2025 09:40:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762681205;
-	bh=dqMMUSeQ+jdd/9lo3As8qjx3qL8HhQ6Z6MvK10c0nc4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=MEER7+0d0Rt/3WDwJi27yct5Gll/TNY2Ir8P6yjR4l9H605/9M82TGWFsDUU4qFUs
-	 Vwfs9qfHrKm8o55/2adNwCiEJJZlpuWJLXVer1QxSJ8EwycQvEqiSjCmEi8mfzyiC+
-	 oIssUYyZGcdGaV17R2dDMRkrELihyKmqFYDIJ7qXT8JLQ8JWVypIUfgl6TywwKyQ4D
-	 2bZl58k3If+j7vz6KQWXRc9o2Aec4tUOgwv5Z1sF68x8mGV1ftcswT80LrW26OWr9f
-	 KSw9s4+hVwCL9zl0BQdXs6DRe9MJBpZPD4dkOTtC7era90H13qSXwM1MeCB7r0ZZu6
-	 C1O2mnPf83qSw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FC7CD1297;
-	Sun,  9 Nov 2025 09:40:05 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Sun, 09 Nov 2025 10:39:51 +0100
-Subject: [PATCH RFC 8/8] media: qcom: camss: Remove D-PHY-only endpoint
- restriction
+	s=arc-20240116; t=1762681692; c=relaxed/simple;
+	bh=7UbbWu4YJEt2N5oFO0yvfHfoZZvWupJp9/gMRHzUkU4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=scvXvJI1sbamifwodFJgg3GNoLRROq49f3lP5c0NdSd3KCC1rgxIGVayKtQJIdy6OMq/5j8K1fI9HLI3fg7zyVMtUUyl7sJslPkbK/WjKsw1s6dN9J1LDTczn8L30lmaQ/c+NGh6fwVlL5KBiXcdN1h3iq+Yq37RMKpOaUxsomY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIOTaenL; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-340bb45e37cso327846a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 01:48:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762681690; x=1763286490; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7UbbWu4YJEt2N5oFO0yvfHfoZZvWupJp9/gMRHzUkU4=;
+        b=HIOTaenLfun9mvmLYJWA8wP8Uu0mjVwtY2hF3KT5qdzQAXjl3J/3zKVS1WRWkth4W8
+         uo3UgRK9ij2ADaMNy0vEAf5y3xMUFqu8hFk3jU7mnNH3FPQoTVyMthBOHOt6TGVXbl8Z
+         7yl4QBS2vq0nerwW0ygB7FqBM52h4N14OEHzXctUVvkNJnSm5Z+FRJ4sAL/nU0zz5o1F
+         Rehzm5XHqZCcpZebDgsHTwTmMd30QWJGUDe5gaX5IW3j28XcCfVBiYg6GB597fw9/UhV
+         eoIBWm0Ww+VgLED2c9ZfI5w299Jh4bijaRpqN54D/q4v4bbOMDXCJRFZSlghe45CnXQf
+         7NQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762681690; x=1763286490;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7UbbWu4YJEt2N5oFO0yvfHfoZZvWupJp9/gMRHzUkU4=;
+        b=hlClavKzqntSRerluXmj8GfkbfN5+v4ue3uehPb7F5ZRwMbaws/aFvCXG6Ak2IYbF1
+         uLlzuHTTQfQOQeo0L6qekxRPacmyO33ITmc5JXbX5om8RLXT1zkLLqoiBzRo/5IAxlQC
+         KOBtTkEDaJVZw1tKMe0vqAKZbV2B8Gv0XitJAzon4QN613/AQK8Yn+z9FidMQvxfqqPy
+         ViuX4n3cVb7M0BDlyXH2OGsbglWbl7yFYbEGP8ze23DO7fb5TYiu9z5t6hafQLifr3Uy
+         IK3iXFnOtvvA+CruKkZR8KEIYFqs08+ZW9tXOnzirjY9BwW7IiR1/0ZBPmIk34GzmM9m
+         Bz3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUeA9ueFaYvdXrTGQDafhp4vV+ZwCB7kTteLAbwR+f8u2Dgc1NjeZsoQMJxEqZnb87Idlmc5kmmX8vA6Y8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3aXeH7jf78e67r1U5UaNCpIOwc8e1GAJ8P8O4wABbA1zKTu3f
+	pc5J95D/3Gnp0bzfmNV/bJN0XyK4tIDVCorbb7XVaD0xpgLp8Ui/JOtm/oxR2jo3OxaCICrnlVn
+	4/yLce4BrYctpOe6eMu2Kw4vMnn24nRQ=
+X-Gm-Gg: ASbGncttTCO8RPmxwWRnli6jM3Zxjj2qaxE7yyOOUlHcXAqb6gHMoZdFTF+3fkhBfD4
+	I2hT/UmQvb5Ue0q/mZbYNsJ3M/cC8oxlp/B8Dx9TOFv/UnLzjTpENBYKmNo3duhrnWTqAGhGtA9
+	K5Ju80n9oSul1HxebvX9OeeMbqDoqD58yGEmrs3NE/+BKtoQAWBB8k/MQJCWi5xdpEkEzbZQVbW
+	hjhkMBqZVYN3kuRy2p/SAFuVnfaHGAKh9Tnh6+A5+5H0OsoVXJ46yvs9iE8XGrk/wliB1gK/rZU
+	hsp+Adv16ltIJHDUBDnUMqVIFma64VquvMXIQ1/SpAyA99XIZd59BvW9VgIuXMBwveg9XOWDenS
+	kGlE=
+X-Google-Smtp-Source: AGHT+IHJ3X970Fz+WZG6aqfSKGTdXxfzPaNAG0irWW2OKqnIbo7IoDwLMSbVP8viSAFnVGTRp05nHQrCuUons0eLXmA=
+X-Received: by 2002:a17:902:ea09:b0:295:511d:534 with SMTP id
+ d9443c01a7336-297e5731561mr32609445ad.10.1762681690341; Sun, 09 Nov 2025
+ 01:48:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251109-qcom-cphy-v1-8-165f7e79b0e1@ixit.cz>
-References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
-In-Reply-To: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Luca Weiss <luca.weiss@fairphone.com>, Petr Hodina <phodina@protonmail.com>, 
- Casey Connolly <casey.connolly@linaro.org>, "Dr. Git" <drgitx@gmail.com>
-Cc: Joel Selvaraj <foss@joelselvaraj.com>, linux-media@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=959; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=zDsFzpKtJmk7KEk5h22OnNp/nXx6STTnT1WeAcZBwYA=;
- b=owEBbAKT/ZANAwAIAWACP8TTSSByAcsmYgBpEGFzR5ywwp3YOPFsLYzk5y09hMnyI69rHKk2T
- p7r1//BEMmJAjIEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaRBhcwAKCRBgAj/E00kg
- cu0MD/dBQ5LH7bVr49IyfhX1vXrMkQzuBHMIUfDpVDGWKWzVVznV9CcopTkNZbdz6lfcbfl/D3p
- dF2G68aYGuo79pBTTsX5LycIJZqqrYLl3CmMM/CA2YqpDydDlw0/O2zwCx67lb6Ir6JZ/knCX08
- IGInYTQD9FsrfdRhxjYJ+rkoJLefYTgA1MBY42O2KzyFVymbdf5bR5VnfY78E3vHCb4PGvny6+q
- tD+luO9u8EWKmKjY9lHE5Ybs5eINa+q+I7gGue99qaWb7MFtoK0NevIZ9ZObMMiKLSxxvp2T138
- c4n13yoIPaQ2tDX26Gb16hp+Vv2pP1pbXZnlv65xgRb0v99atQdoeOQX4UT/h+sYP52ldYfy2va
- CBQnxizONrKdhpNS1j0d34qhOLXu0fzipXASRvJdutGPITHfUG6NQTK1BVHAr+H5KuDxXGRmOyu
- TdIknVTiCm0MKYvM7Z/4InX0aV1g2uSmlmyJMG9BjCfFlEjurO7SQBI+69BOEzVMhujZa8LEIVj
- 9NDVrOjJjagF1UEdFUhBW1Y2C9Eb7s7n3oSLFmv+tE6z7I7vlF04HH6U4Z/I1M9VDedMe2fzYh1
- uc3FIkug3CIzlP/CpYGDuPr241go4qkqSs5Sg0vT2aaNtSX80LqDUAbmAvz6KauHOsFHK/jy3ry
- 7Qjq8E6v5qi1B
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+References: <20251108043945.571266-1-jhubbard@nvidia.com> <20251108043945.571266-2-jhubbard@nvidia.com>
+ <673640f6b26617bc5e1f4962bc2f9f7257346efb.camel@nvidia.com>
+ <46c4877e-2af3-440b-b8c5-fa9078a5cf9c@nvidia.com> <DE3AAYKKI0HN.2QTWD76BN3LMO@nvidia.com>
+In-Reply-To: <DE3AAYKKI0HN.2QTWD76BN3LMO@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 9 Nov 2025 10:47:58 +0100
+X-Gm-Features: AWmQ_blUxjf3ArTwjKKrEFU9NX1RDrwQAlazu89gcX-vqWpEmM0esqgYqA4hVRU
+Message-ID: <CANiq72k3gkVnkW4_A47FzAD8CwYLHj3qDUhNsT27P71=XppRdA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/4] gpu: nova-core: implement Display for Spec
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
+	"dakr@kernel.org" <dakr@kernel.org>, "lossin@kernel.org" <lossin@kernel.org>, 
+	"a.hindborg@kernel.org" <a.hindborg@kernel.org>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>, 
+	"aliceryhl@google.com" <aliceryhl@google.com>, Zhi Wang <zhiw@nvidia.com>, 
+	"simona@ffwll.ch" <simona@ffwll.ch>, "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, 
+	"ojeda@kernel.org" <ojeda@kernel.org>, "tmgross@umich.edu" <tmgross@umich.edu>, 
+	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, 
+	"bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, Edwin Peer <epeer@nvidia.com>, 
+	"airlied@gmail.com" <airlied@gmail.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	"bhelgaas@google.com" <bhelgaas@google.com>, "gary@garyguo.net" <gary@garyguo.net>, 
+	Alistair Popple <apopple@nvidia.com>, Nouveau <nouveau-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: David Heidelberg <david@ixit.cz>
+On Sat, Nov 8, 2025 at 12:42=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.=
+com> wrote:
+>
+> I think this is the correct way to do; `Spec` should be the one to
+> decide how it is displayed, and from a maintainability perspective this
+> ensures that other sites that will want to print a `Spec` in the future
+> will reuse this implementation, instead of either rewriting one
+> themselves or having to figure out that there was already an existing
+> site and factor it out.
+>
+> Iow, this code is proactively doing the right thing.
 
-C-PHY mode is now supported, so the endpoint bus-type restriction to
-D-PHY can be removed.
+Yes, please, avoid hardcoding inlined display code.
 
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- drivers/media/platform/qcom/camss/camss.c | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 248aa6b21b5ad..1408e8a03f0bd 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -4044,15 +4044,6 @@ static int camss_of_parse_endpoint_node(struct device *dev,
- 	if (ret)
- 		return ret;
- 
--	/*
--	 * Most SoCs support both D-PHY and C-PHY standards, but currently only
--	 * D-PHY is supported in the driver.
--	 */
--	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY) {
--		dev_err(dev, "Unsupported bus type %d\n", vep.bus_type);
--		return -EINVAL;
--	}
--
- 	csd->interface.csiphy_id = vep.base.port;
- 
- 	mipi_csi2 = &vep.bus.mipi_csi2;
-
--- 
-2.51.0
-
-
+Cheers,
+Miguel
 
