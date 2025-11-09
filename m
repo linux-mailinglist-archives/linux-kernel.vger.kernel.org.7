@@ -1,158 +1,208 @@
-Return-Path: <linux-kernel+bounces-892078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A09CC444C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 19:00:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F37C444CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 19:06:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 161721887131
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 18:01:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686043A91A2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 18:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5815C21CFF6;
-	Sun,  9 Nov 2025 18:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793CC221DB9;
+	Sun,  9 Nov 2025 18:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEtLrUVt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKFSODqk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F517082F
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 18:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2561FF7C8;
+	Sun,  9 Nov 2025 18:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762711250; cv=none; b=BMsVCr9bm0+P6S5Fh3kuKn0s2AGbNH2eq5TFV2a6LdWeJr0yg6sCnPCAJT44+RJI1O3jn8gmjVESR6X+WKlCfcgyLG5FC4MmlQ8Ms+AdhPFO3Y3e523UBDVVogchNcQDfh3q0h7QlFMken4IzhK9gX+S01n9fjvYvlaKuDfhR04=
+	t=1762711567; cv=none; b=YUtDDIVPXmVjpvf29aGBai7m7xqTG7MRLtpNhzXuGyCcsPfn/PFlN/1i9C8mF8l/BBERQL+m37B8y6kq4VL3JfLYIgYaOb5PN6KeRpxYDsuZBQZtjzIuo5pjoT5xhf+ORR45V30/Z2VdbYXRHZ+qmwfA1Gzw4ghiQ4SX+n8okTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762711250; c=relaxed/simple;
-	bh=ngdJsBUltnXHKi403aGstSmuPBJQqtJoMuxj+Ue+A6Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tsYRwrdQCToHYPT4DDD7WGKsks72ffjmk9otEV1VC/8ULJh+0rqIet7m+XVkP9H03IWtuoWbNk792OoOU9BulQoj58ZwSZWixQUWdeDvr/O1E0Fs25DOrzvHEUty+ye0pbqMxqyXeYnKuo1f4LsMLuhPc43Hg2aGftqFfV6NjAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEtLrUVt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23AB5C19422
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 18:00:47 +0000 (UTC)
+	s=arc-20240116; t=1762711567; c=relaxed/simple;
+	bh=Rv5rj91RamEanT2fugz7Olj75634AA1cClCMNmzZM78=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HwlOrWmwSaJwm134nuEP7nLZaext2ep9qPSd0BV27oiiGC0DRdMdfqn6xW0xC85XGqSnX/pdktysVHDRfSRRwozBUitEVuSzFkGgCGreVbnSI9F2uG8q2bORKPJv+gRaXhL+Dg8Ah2c6ke+pdLmCJHYAZM6Dz7ytVJ4Tc0N9Czk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKFSODqk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1A6A3C4CEFB;
+	Sun,  9 Nov 2025 18:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762711247;
-	bh=ngdJsBUltnXHKi403aGstSmuPBJQqtJoMuxj+Ue+A6Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IEtLrUVtHjEsWm/C8MwdyhFG2iNPErdYRKzlSnY0aHAnuSWvL30RJ8uWSliWKCy66
-	 kmVOeRm5P53gNocD/3AlaVK4LGuI/bcPlRdwlIoHuE3g8Xaa2p+e9/zA7IybZwuHlA
-	 dt8PPtdUDmJC5fs/SEvsR/cfKqyN+MfLLPpK9+TK22GzFx6cfENsx2DPpsEC9Hyli1
-	 iJtrzkI7piY/HfuVhtJcKkoCJCpjNtjY9DO1IUu5UK68f51+vQk3AbZlecPmlD0g5x
-	 XVbSaJMl0u/OUqVGzC1NuuuG/zSZTIvkAZVfhsbDZ0dE/n7G2C2iCqjGimUdCV7Gkz
-	 sWypYnNvO6ANw==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-36295d53a10so18152351fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 10:00:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVY+I9ZAB8v77Ahp9IrTof2wppaEvmo0ZRKr8vtFVe821HDf2aZ7/8cO2hG1CTTN9PCnPX84I38o7sS7ao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCryshe3kMAgQrzV0NwoQ6FoxN2nsVCT7CzIxDpKnQ7FOZACJh
-	/rtHuoq51NzxfZkycmbfAgDU9Z8w6CeP8hseeLXpZN80ircQROXOhfBv0DzHFpkoiUkCMC9NgJD
-	Xh/DsrJFjnT/eUVcroWjB/hFl+NIiA08=
-X-Google-Smtp-Source: AGHT+IGzG8az736Ek/PKuPSVq9csQ+w8E7LVXJkHwNGCRjuZKzNqUTVu8H4LC4w4CqlfLzKUtK6ospJSS6Nc+qrcLqg=
-X-Received: by 2002:a05:6512:3b1e:b0:594:4e5f:a224 with SMTP id
- 2adb3069b0e04-5945f1dd5eamr1509661e87.39.1762711245529; Sun, 09 Nov 2025
- 10:00:45 -0800 (PST)
+	s=k20201202; t=1762711565;
+	bh=Rv5rj91RamEanT2fugz7Olj75634AA1cClCMNmzZM78=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=CKFSODqkHQ7lajblVBiiunadMTS7FxkMrl1FUVEvYMWbPrVewMnYvqw8Faz3HSOHO
+	 wYK0mqHj+P2DdQ3JWU7IW/l/lQv80/cz4hMzJDLxS4C5PeWLUnY0mEKaq1a7+sIXVn
+	 EjGCP/7Y/yBMCHwbqMyCahOB+JqzGM62GNRR1Upx/hRUyHPFUxZhPCtGyNavZ9A22A
+	 gh56UNc9kT501DhHTzC6x5HwA137NrxgsCmANUK2SpLPWKfvhF9zmOUWHuVkJd/6OB
+	 TjT1USFaxAkDaiX2NXDcq/tHsexW4Zh3Z3pN5fD87c1sBohbGazNj0magcn8QZ/8MJ
+	 NqJVH4OMboX3g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 098F4CCF9F8;
+	Sun,  9 Nov 2025 18:06:05 +0000 (UTC)
+From: Kairui Song via B4 Relay <devnull+kasong.tencent.com@kernel.org>
+Date: Mon, 10 Nov 2025 02:06:03 +0800
+Subject: [PATCH] Revert "mm, swap: avoid redundant swap device pinning"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107164240.2023366-2-ardb+git@google.com> <14ca1b28-df1d-4065-ad7a-97a3ff81a5a4@ursulin.net>
-In-Reply-To: <14ca1b28-df1d-4065-ad7a-97a3ff81a5a4@ursulin.net>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 9 Nov 2025 19:00:34 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEgfykaf9oB4_tuAQqwXDN+NLy_Hb_+RnQmeicVgKt0bA@mail.gmail.com>
-X-Gm-Features: AWmQ_bnvXvdUhRjp81oyBi2v9d3FvXVwwo8Xw1qggdpFOcTX930itimlVJwIpKw
-Message-ID: <CAMj1kXEgfykaf9oB4_tuAQqwXDN+NLy_Hb_+RnQmeicVgKt0bA@mail.gmail.com>
-Subject: Re: [PATCH] drm/i195: Fix format string truncation warning
-To: Tvrtko Ursulin <tursulin@ursulin.net>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251110-revert-78524b05f1a3-v1-1-88313f2b9b20@tencent.com>
+X-B4-Tracking: v=1; b=H4sIAArYEGkC/x2MQQqAIBAAvxJ7TnAtSftKdNBaay8WGhGEf086D
+ szMC5kSU4axeSHRzZmPWAHbBpbdxY0Er5VBSaURpRVVonSJwWjVe6kDuk7I3qGy2lMwDmp5Jgr
+ 8/NdpLuUDy1WRSmUAAAA=
+X-Change-ID: 20251109-revert-78524b05f1a3-04a1295bef8a
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+ Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>, 
+ Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+ Chris Li <chrisl@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+ Yosry Ahmed <yosry.ahmed@linux.dev>, 
+ Chengming Zhou <chengming.zhou@linux.dev>, 
+ Youngjun Park <youngjun.park@lge.com>, Kairui Song <ryncsn@gmail.com>, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Kairui Song <kasong@tencent.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762711563; l=4133;
+ i=kasong@tencent.com; s=kasong-sign-tencent; h=from:subject:message-id;
+ bh=alE+X02rbk4jwNfT7auzmxmmmbItfQDo8i+kaNeAHjY=;
+ b=y+ozs+sm7ni2QmqCYkgxfgsn49ITpx52INQ0Dq+5Kq9kcCBk7gA/JGdd6qZOmhRbyTjalAn2s
+ R3zWuGKIM3zBS6pl2r1pQbcyZsst8HOxUqBN0/qrRpv0I1JrjRU40Ny
+X-Developer-Key: i=kasong@tencent.com; a=ed25519;
+ pk=kCdoBuwrYph+KrkJnrr7Sm1pwwhGDdZKcKrqiK8Y1mI=
+X-Endpoint-Received: by B4 Relay for kasong@tencent.com/kasong-sign-tencent
+ with auth_id=562
+X-Original-From: Kairui Song <kasong@tencent.com>
+Reply-To: kasong@tencent.com
 
-On Sat, 8 Nov 2025 at 01:27, Tvrtko Ursulin <tursulin@ursulin.net> wrote:
->
->
-> On 07/11/2025 16:42, Ard Biesheuvel wrote:
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > GCC notices that the 16-byte uabi_name field could theoretically be too
-> > small for the formatted string if the instance number exceeds 100.
-> >
-> > Given that there are apparently ABI concerns here, this is the minimal
-> > fix that shuts up the compiler without changing the output or the
-> > maximum length for existing values < 100.
->
-> What would be those ABI concerns? I don't immediately see any.
-> > drivers/gpu/drm/i915/intel_memory_region.c: In function =E2=80=98intel_=
-memory_region_create=E2=80=99:
-> > drivers/gpu/drm/i915/intel_memory_region.c:273:61: error: =E2=80=98%u=
-=E2=80=99 directive output may be truncated writing between 1 and 5 bytes i=
-nto a region of size between 3 and 11 [-Werror=3Dformat-truncation=3D]
-> >    273 |         snprintf(mem->uabi_name, sizeof(mem->uabi_name), "%s%u=
-",
-> >        |                                                             ^~
-> > drivers/gpu/drm/i915/intel_memory_region.c:273:58: note: directive argu=
-ment in the range [0, 65535]
-> >    273 |         snprintf(mem->uabi_name, sizeof(mem->uabi_name), "%s%u=
-",
-> >        |                                                          ^~~~~=
-~
-> > drivers/gpu/drm/i915/intel_memory_region.c:273:9: note: =E2=80=98snprin=
-tf=E2=80=99 output between 7 and 19 bytes into a destination of size 16
-> >    273 |         snprintf(mem->uabi_name, sizeof(mem->uabi_name), "%s%u=
-",
-> >        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~
-> >    274 |                  intel_memory_type_str(type), instance);
-> >        |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >
-> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > ---
-> > Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> > Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> > Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> > Cc: Tvrtko Ursulin <tursulin@ursulin.net>
-> > Cc: David Airlie <airlied@gmail.com>
-> > Cc: Simona Vetter <simona@ffwll.ch>
-> > Cc: intel-gfx@lists.freedesktop.org
-> > Cc: dri-devel@lists.freedesktop.org
-> >
-> > This is unlikely to be the right fix, but sending a wrong patch is
-> > usually a better way to elicit a response than just sending a bug
-> > report.
-> >
-> >   drivers/gpu/drm/i915/intel_memory_region.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/i915/intel_memory_region.c b/drivers/gpu/d=
-rm/i915/intel_memory_region.c
-> > index 59bd603e6deb..ad4afcf0c58a 100644
-> > --- a/drivers/gpu/drm/i915/intel_memory_region.c
-> > +++ b/drivers/gpu/drm/i915/intel_memory_region.c
-> > @@ -271,7 +271,7 @@ intel_memory_region_create(struct drm_i915_private =
-*i915,
-> >       mem->instance =3D instance;
-> >
-> >       snprintf(mem->uabi_name, sizeof(mem->uabi_name), "%s%u",
-> > -              intel_memory_type_str(type), instance);
-> > +              intel_memory_type_str(type), instance % 100);
-> It's a theoretical issue only since there is no hardware with a double
-> digit number of instances.
->
-> But I guess much prettier fix would be to simply grow the buffer.
->
+From: Kairui Song <kasong@tencent.com>
 
-Whatever works for you - I don't really understand this code anyway.
+This reverts commit 78524b05f1a3e16a5d00cc9c6259c41a9d6003ce.
 
-> Also, hm, how come gcc does not find the mem->name vsnprintf from
-> intel_memory_region_set_name?
->
+While reviewing recent leaf entry changes, I noticed that commit
+78524b05f1a3 ("mm, swap: avoid redundant swap device pinning") isn't
+correct. It's true that most all callers of __read_swap_cache_async are
+already holding a swap entry reference, so the repeated swap device
+pinning isn't needed on the same swap device, but it is possible that
+VMA readahead (swap_vma_readahead()) may encounter swap entries from a
+different swap device when there are multiple swap devices, and call
+__read_swap_cache_async without holding a reference to that swap device.
 
-The optimizer works in mysterious ways, I guess. I cannot explain why
-I am the only one seeing this in the first place, but the warning
-seems legit to me.
+So it is possible to cause a UAF if swapoff of device A raced with
+swapin on device B, and VMA readahead tries to read swap entries from
+device A. It's not easy to trigger but in theory possible to cause real
+issues. And besides, that commit made swap more vulnerable to issues
+like corrupted page tables.
+
+Just revert it. __read_swap_cache_async isn't that sensitive to
+performance after all, as it's mostly used for SSD/HDD swap devices with
+readahead. SYNCHRONOUS_IO devices may fallback onto it for swap count >
+1 entries, but very soon we will have a new helper and routine for
+such devices, so they will never touch this helper or have redundant
+swap device reference overhead.
+
+Fixes: 78524b05f1a3 ("mm, swap: avoid redundant swap device pinning")
+Signed-off-by: Kairui Song <kasong@tencent.com>
+---
+ mm/swap_state.c | 14 ++++++--------
+ mm/zswap.c      |  8 +-------
+ 2 files changed, 7 insertions(+), 15 deletions(-)
+
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index 3f85a1c4cfd9..0c25675de977 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -406,13 +406,17 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 		struct mempolicy *mpol, pgoff_t ilx, bool *new_page_allocated,
+ 		bool skip_if_exists)
+ {
+-	struct swap_info_struct *si = __swap_entry_to_info(entry);
++	struct swap_info_struct *si;
+ 	struct folio *folio;
+ 	struct folio *new_folio = NULL;
+ 	struct folio *result = NULL;
+ 	void *shadow = NULL;
+ 
+ 	*new_page_allocated = false;
++	si = get_swap_device(entry);
++	if (!si)
++		return NULL;
++
+ 	for (;;) {
+ 		int err;
+ 
+@@ -499,6 +503,7 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 	put_swap_folio(new_folio, entry);
+ 	folio_unlock(new_folio);
+ put_and_return:
++	put_swap_device(si);
+ 	if (!(*new_page_allocated) && new_folio)
+ 		folio_put(new_folio);
+ 	return result;
+@@ -518,16 +523,11 @@ struct folio *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 		struct vm_area_struct *vma, unsigned long addr,
+ 		struct swap_iocb **plug)
+ {
+-	struct swap_info_struct *si;
+ 	bool page_allocated;
+ 	struct mempolicy *mpol;
+ 	pgoff_t ilx;
+ 	struct folio *folio;
+ 
+-	si = get_swap_device(entry);
+-	if (!si)
+-		return NULL;
+-
+ 	mpol = get_vma_policy(vma, addr, 0, &ilx);
+ 	folio = __read_swap_cache_async(entry, gfp_mask, mpol, ilx,
+ 					&page_allocated, false);
+@@ -535,8 +535,6 @@ struct folio *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 
+ 	if (page_allocated)
+ 		swap_read_folio(folio, plug);
+-
+-	put_swap_device(si);
+ 	return folio;
+ }
+ 
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 5d0f8b13a958..aefe71fd160c 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -1005,18 +1005,12 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
+ 	struct folio *folio;
+ 	struct mempolicy *mpol;
+ 	bool folio_was_allocated;
+-	struct swap_info_struct *si;
+ 	int ret = 0;
+ 
+ 	/* try to allocate swap cache folio */
+-	si = get_swap_device(swpentry);
+-	if (!si)
+-		return -EEXIST;
+-
+ 	mpol = get_task_policy(current);
+ 	folio = __read_swap_cache_async(swpentry, GFP_KERNEL, mpol,
+-			NO_INTERLEAVE_INDEX, &folio_was_allocated, true);
+-	put_swap_device(si);
++				NO_INTERLEAVE_INDEX, &folio_was_allocated, true);
+ 	if (!folio)
+ 		return -ENOMEM;
+ 
+
+---
+base-commit: 02dafa01ec9a00c3758c1c6478d82fe601f5f1ba
+change-id: 20251109-revert-78524b05f1a3-04a1295bef8a
+
+Best regards,
+-- 
+Kairui Song <kasong@tencent.com>
+
+
 
