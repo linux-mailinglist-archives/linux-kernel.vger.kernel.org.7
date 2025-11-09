@@ -1,147 +1,113 @@
-Return-Path: <linux-kernel+bounces-891774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342ABC436F9
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 02:00:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190BDC436FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 02:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 72D2A347B62
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 01:00:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9C903B02C1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 01:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8ADE2AD13;
-	Sun,  9 Nov 2025 01:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8150119F137;
+	Sun,  9 Nov 2025 01:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q+9/m0hI"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dzX/M/oI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29A534D382
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 01:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BEC1925BC;
+	Sun,  9 Nov 2025 01:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762650022; cv=none; b=PRQ9udFONuybKcxU9zUWMxhcPxYeg7F9yEZJalowd0TXU9yEU0ESoAiL1dLi+XRmv0TL6cVsrWYbScx8oam5ztM8BsJ1aR1uMmiXEnd3jFcn7XV0ZGYr1nznwdNcaFB58557P8MLoRhEGUDNYgB6R7i8Gcl6iiZt8g8iSl/veDs=
+	t=1762650854; cv=none; b=LKY8/aCIfLHvdWjPGJ1XkdeFQL9Ml9MNj1IFMRFX6jn19n4SmdiBYjr5H0AvhP4DT93xG1TiHQ0SaTkCGDHxoOIAr7jb5gtYLe4fRFtqgr3ThZvYFHc2nzq4EcZEg+t5ynDexMhMbS3kEQnK0xDmmNp2IEYAXf9Fx1qupqSf/QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762650022; c=relaxed/simple;
-	bh=YxvCs03ewNiGwh/gYtnUX+8yvLdOX7TFWZC1mF8j6dY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ori9luKWq0xo0+TN/J0nZX5r+ufwF/auSwYGlUk4VdZm9999EZm/AZ1Tc0dT0ekOnm8ry9SzJi/yHMGtZAhuQoVhM1lhi/RuDgv9EBP6x8xkJ4Uw6gtyZG+yRJWnOosjWhRsoQwR1l6Nyx0rKj4OdnNPmsFrW/guIqPywqiC+0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q+9/m0hI; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-ba4c6ac8406so1554804a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 17:00:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762650020; x=1763254820; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y75WeVh9hJ6IVQUJoOC/gRSUs+/cPxFQm1jQqSfBWSE=;
-        b=Q+9/m0hIIw4fyNV+RPotm9WBmFuE4YGCytF0hGG3gFbu/uP7eVZDqwPGPmJqlODYNx
-         O8GPeOmFraiSSdMD6VnkE4rJN2B5u3MasDj/WQLdeglVpVpYW5kdRZlNBGCWdw178UVI
-         uEu8+hLpBo3YY4A+roMjWHw9pl79F5jpWajDg0aysGaEV2L8BQ5KfuVPq690CZlBwGAj
-         kLSRIpRCbF13rbTzxoN4Au9y2EJ4LVAYi7/9GbWtHL9+1oaBWBeqjtdkcdOROLazLUyt
-         vbfDrdZeVBpsTCGme1LmBKKlhfwKvyxJmZdq7aO6mmv3d1EkdymnzsF5ZukNWZq3+0O9
-         AolQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762650020; x=1763254820;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y75WeVh9hJ6IVQUJoOC/gRSUs+/cPxFQm1jQqSfBWSE=;
-        b=SzDgaX+VyJoW468nL2eoRa8RK3SGJOAW8p8i7uxFxjoJ5b6EkZDg0IgJ/AiShNfSbe
-         GXAwYK4sJDGbN6P9o83EIDm6Hq9GW9zAjL/1pb0P9VQkwQ4czmFTMw87SXz/caDH4ZYr
-         RdnhAbmxYpDrwZNEm2aTWtS+gVKq13z4Wxlqeh6tsAmgtTZJSZor1YMOv8zJMzRH/j7r
-         UtCV8n7YdhWZFtmIeBOAtDtXwtrI1fgXPFQrGWJo2uUtIKwel0dr8ogAKLgKHdq5KNcZ
-         lH3k9Y2HBTLz0jCkBteZDaCQT+L3nMXn45C1gCh0PjGrhv59oKmi7x2cmhxS016ZjyWI
-         msxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaDxVam5C+TL8H3L3JpMfRGPaIIvk4SvCqZ+bNREsyG6DAG/xtRvPXLNqaphP0v5S3r6IA6irvyCbG5PU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOd5jDp9UFb+EI40umfnyH/gDdHKqph+iJRSlH/i8uRKJLiojr
-	6O6Pf8YPPhUvj8KIjeqyQNCeoOrw6oMV4qDkgPbMDFX97WGLDmJIWaB8L8RDmnVuhvO4a4yQNNd
-	WTPP978S1Ag==
-X-Google-Smtp-Source: AGHT+IFBWkwwvkk9VIwFOYjpj9Kza9G6P92OkFl1vCSi1xXLSNzNnEsJNGN3KkFU9gpd+OUj+2UuCJsfWjkC
-X-Received: from pfay6.prod.google.com ([2002:a05:6a00:1806:b0:77f:6432:dc05])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2396:b0:7ae:d1d:d500
- with SMTP id d2e1a72fcca58-7b225b5b53emr4981014b3a.4.1762650020018; Sat, 08
- Nov 2025 17:00:20 -0800 (PST)
-Date: Sat,  8 Nov 2025 16:59:59 -0800
-In-Reply-To: <20251109005959.2540616-1-irogers@google.com>
+	s=arc-20240116; t=1762650854; c=relaxed/simple;
+	bh=TbNj6GYPbm6qdt0QlpsEYV6u2D3QDP7IcXUOH4BFRlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FGtUb6LmbJa4CUt0ZCiUPYjlAH/uj3eKyWe0frrVD0DMXTdh01ohzkLmxS5nPyH8XvwrwCN2n8XKONmEObFoA7oJFGvnz/8A90Iypnqx2uIcUz4dWU/FJ2/PtBLQJUWkvnsBk/ESDCj71ibYlxRgebGEXMHBRV9AF3yz2gPTGvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dzX/M/oI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C5D8C113D0;
+	Sun,  9 Nov 2025 01:14:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1762650854;
+	bh=TbNj6GYPbm6qdt0QlpsEYV6u2D3QDP7IcXUOH4BFRlw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dzX/M/oI+gyDXlFTzG7OjQShMrlV8bzeCj7PrSUjAAh/u5+EkAfJndLrL7bQFBe/O
+	 eTa9/fYfUnWQcKbRPu0Ja2z6YsUfjMSSNEYjnkLkzkg0LVhdNL9lNtsBfgg9oa0iIY
+	 PylPfiWBHbz6u60rNX/hoh/5rf15NnoVa37oc/As=
+Date: Sun, 9 Nov 2025 09:49:29 +0900
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Stephen Rothwell <sfr@rothwell.id.au>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Alex Davis <alex47794@gmail.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Borislav Petkov <bp@alien8.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-serial <linux-serial@vger.kernel.org>
+Subject: Re: [Regression] depmod fails on kernel 6.17.1 rc1
+Message-ID: <2025110956-swaddling-chapter-5932@gregkh>
+References: <CADiockCvM6v+d+UoFZpJSMoLAdpy99_h-hJdzUsdfaWGn3W7-g@mail.gmail.com>
+ <20251106160235.GBaQzGm8W2Gt_VMy-s@fat_crate.local>
+ <aQzJveMYT6O3EHeK@smile.fi.intel.com>
+ <20251106162436.GFaQzLxBW-_50ndwtr@fat_crate.local>
+ <3fe70726-80d6-a84a-4101-446fd8b49209@linux.intel.com>
+ <ddfbc4bf-658f-3eda-5b4f-f111ecd932f5@linux.intel.com>
+ <82e2ce7f-bd08-4b53-b232-3dd8cb1a0726@kernel.org>
+ <20251109105203.622ebe9e@pine.rothwell.emu.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251109005959.2540616-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251109005959.2540616-2-irogers@google.com>
-Subject: [PATCH v3 2/2] perf test: Add test that command line period overrides
- sysfs/json values
-From: Ian Rogers <irogers@google.com>
-To: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Cc: Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251109105203.622ebe9e@pine.rothwell.emu.id.au>
 
-The behavior of weak terms is subtle, add a test that they aren't
-accidentally broken. The test finds an event with a weak 'period' and
-then overrides it. In no such event is present then the test skips.
+On Sun, Nov 09, 2025 at 10:52:03AM +1100, Stephen Rothwell wrote:
+> Hi Jiri,
+> 
+> On Fri, 7 Nov 2025 07:20:26 +0100 Jiri Slaby <jirislaby@kernel.org> wrote:
+> >
+> > On 06. 11. 25, 19:00, Ilpo Järvinen wrote:
+> > > This seems to resolve the build issue for me:
+> > > 
+> > > --
+> > > From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+> > > Subject: [PATCH 1/1] serial: 8250: Fix 8250_rsa symbol loop
+> > > 
+> > > make allmodconfig build fails due to dependency loop:
+> > > 
+> > >    depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
+> > >    depmod: ERROR: Found 2 modules in dependency cycles!
+> > > 
+> > > Break dependency loop by moving 8250_rsa.o into 8250_base and by
+> > > passing univ8250_port_base_ops to univ8250_rsa_support() that can make
+> > > a local copy of it.
+> > > 
+> > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Reported-by: Alex Davis <alex47794@gmail.com>
+> > > Fixes: b20d6576cdb3 ("serial: 8250: export RSA functions")
+> > > Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>  
+> > 
+> > LGTM, thanks for the fix.
+> > 
+> > Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+> > 
+> > If the reporters could give it a shot and mark this by Tested-by, it would be great...
+> 
+> I have not seen this for quite some time ... I assumed it had been
+> fixed.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
-v3: Add workaround in case the raw event is matched (Namhyung).
-v2: Add more comments to the test code and reduce the line length (Namhyung).
----
- tools/perf/tests/shell/record_weak_term.sh | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100755 tools/perf/tests/shell/record_weak_term.sh
+I too thought this was fixed a while ago, what changed to cause this to
+happen now?  Anyone have a .config to reproduce this, 'allmodconfig' on
+x86 works for me.
 
-diff --git a/tools/perf/tests/shell/record_weak_term.sh b/tools/perf/tests/shell/record_weak_term.sh
-new file mode 100755
-index 000000000000..811b00ffb47a
---- /dev/null
-+++ b/tools/perf/tests/shell/record_weak_term.sh
-@@ -0,0 +1,37 @@
-+#!/bin/bash
-+# record weak terms
-+# SPDX-License-Identifier: GPL-2.0
-+# Test that command line options override weak terms from sysfs or inbuilt json.
-+set -e
-+
-+shelldir=$(dirname "$0")
-+# shellcheck source=lib/setup_python.sh
-+. "${shelldir}"/lib/setup_python.sh
-+
-+# Find the first event with a specified period, such as
-+# "cpu_core/event=0x24,period=200003,umask=0xff/"
-+event=$(perf list --json | $PYTHON -c '
-+import json, sys
-+for e in json.load(sys.stdin):
-+    if "EventName" not in e or "/modifier" in e["EventName"]:
-+        continue
-+    if "Encoding" in e and "period=" in e["Encoding"]:
-+        print(e["EventName"])
-+        break
-+')
-+if [[ "$event" = "" ]]
-+then
-+  echo "Skip: No sysfs/json events with inbuilt period."
-+  exit 2
-+fi
-+
-+echo "Testing that for $event the period is overridden with 1000"
-+perf list --detail "$event"
-+if ! perf record -c 1000 -vv -e "$event" -o /dev/null true 2>&1 | \
-+  grep -q -F '{ sample_period, sample_freq }   1000'
-+then
-+  echo "Fail: Unexpected verbose output and sample period"
-+  exit 1
-+fi
-+echo "Success"
-+exit 0
--- 
-2.51.2.1041.gc1ab5b90ca-goog
-
+greg k-h
 
