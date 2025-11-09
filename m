@@ -1,133 +1,118 @@
-Return-Path: <linux-kernel+bounces-891897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3139C43C81
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:08:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A288C43C3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986763A8A9E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:07:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A2F63AE1AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7882DFF19;
-	Sun,  9 Nov 2025 11:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A30D2BEC4E;
+	Sun,  9 Nov 2025 11:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="DZaCzS7h"
-Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lSqs10w5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF032DC338;
-	Sun,  9 Nov 2025 11:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C492D274FE8;
+	Sun,  9 Nov 2025 11:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762686384; cv=none; b=GFW9fo594HZbqhiNsSqP/schaai0iOsOYDPAzS3F7dQNqzOoBfYsKxmV/b9DoQRSHFdc/mFZJOmOH34ajyJwKSFTmS/LTUI41vjzJzDo6Oi1EJH8nYH/Qv029A3wGYd9kYpTgRjFKcaJ+UzP/MegyJV5IZuHyargLt5xKzomktM=
+	t=1762686338; cv=none; b=hnJjQo5oG7x8qEctMsKpc+gV+AXdnkg+UcpTVJ0pIwKJhNt3Lh0MBJD96wBRd0ijsRFtaucrNVxYdXJqIQXKJw2lEkn693mU7yo7B9TwZVZXXlFqitmirdw3jhdvDESl+mnwm1HlUNQBbPwMXjXbiHNqTC6qG97IYiRfpaHOzu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762686384; c=relaxed/simple;
-	bh=628j+T4NN4U3fieq61FSy/7vinhuQ5xHDPEojaikKO8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ev3RrQiZ2ezthSht4Da2Fj4tBq06Qg6Q8dtbTpJzTOBszJIxPbTPuKZyKbtrnpXhl3RWeMKlMmA6zJrBpTaYebVzcmG7naE8eu2g9CeGmBnJnUVqqk1GFOOj1AFhmqlJOYBnOmybptJgy8EI/iNosubkkgyoOkVaX2SWWGXjdY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=DZaCzS7h; arc=none smtp.client-ip=178.154.239.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
-Received: from mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net [IPv6:2a02:6b8:c37:8120:0:640:c15b:0])
-	by forward500b.mail.yandex.net (Yandex) with ESMTPS id 61A51C092A;
-	Sun, 09 Nov 2025 14:00:19 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id G0KGd3lLrOs0-kx0gRr5n;
-	Sun, 09 Nov 2025 14:00:18 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
-	t=1762686018; bh=Ul+neqMs6+35CzJCWIQokzZfipMzxkGIjAKa5XhFakA=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=DZaCzS7hgPVQJUlGFb5xbirfZ+cGgJ0+JN/6nvvT9eyi2+toQ8pmKvGGbLtUaBvIK
-	 c/lTu+WdWozu8PqR8hIQiDLNvb5PhUmeZUOcQwEZu0IXO3jD8JubbW2KOinVjEFKaN
-	 B0uQ8oLH5FVCCcVhFz2xOw6x2WJGOWUz2Zrwc/ZA=
-Authentication-Results: mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
-Message-ID: <8a4aae40-46d3-403a-a1cf-117343c584f6@rosa.ru>
-Date: Sun, 9 Nov 2025 14:00:16 +0300
+	s=arc-20240116; t=1762686338; c=relaxed/simple;
+	bh=LbQh+xSzxA3IF+wgNKPSQawE5YX+Rtz2OEaR+RSqaAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tkyFVAzfvCoBMjgehMFVHT9/IFi8sK7hm3xZybhlynblTE1zCQDOt95UyD3J3QosyDqwxKaDh2Hk6o3HNOzu55TQm8SfGoe4tb6j3xNY/SppzOG2dNDwOSrHIEdda8kpzBmWd7+C36mM3xoXEeh0pRyQujOGpQ9a2uBJLz70LaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lSqs10w5; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762686336; x=1794222336;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LbQh+xSzxA3IF+wgNKPSQawE5YX+Rtz2OEaR+RSqaAw=;
+  b=lSqs10w5JEmnGYaZJ8j5YygTn4FBkJtEgSs7NlGq7stni93X1omTlR33
+   v4vzhEOkRL9jYgaM55+xPz4h/kPGJk2Fi7lT/bWXflqhNl/UXe/nqjZtp
+   CWowKvdItOpxG00WO+rtzSNsnYLIa7a6zRv0tp4rE5+aiI8TDWVroUxka
+   lu1fmzQwo3F61XFsISUqJ2wTwm86nmJWi+FmNXs9Vp9s31zUvr9GqgmpN
+   v/i7jPsP0JAw+Ddvniuapzw8TQ8QokGEhxKI/9GlJ1NHZ0YDYciFaPWnu
+   Zq0iK6PTeBcAocJV9Hyujrj49N0VQBbuGOjAf+qTrw0GTI2zqtCYDIP1W
+   w==;
+X-CSE-ConnectionGUID: zLoR9wHdQMqw30TOG4zxHQ==
+X-CSE-MsgGUID: 1o4PW84xQMK1FmnrM5c66Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11607"; a="64802050"
+X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
+   d="scan'208";a="64802050"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 03:05:36 -0800
+X-CSE-ConnectionGUID: rnSx8d0ZRpyViNuHfq8F4A==
+X-CSE-MsgGUID: YM+tXY0mQx65//3IMwaAzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
+   d="scan'208";a="188692485"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 09 Nov 2025 03:05:35 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vI3Ei-0001x3-2c;
+	Sun, 09 Nov 2025 11:05:32 +0000
+Date: Sun, 9 Nov 2025 19:05:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Report wrong dynamic event command
+Message-ID: <202511091817.JzD0Zi0O-lkp@intel.com>
+References: <176259938768.261465.10714633393722227911.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] bpf: hashtab: fix 32-bit overflow in memory usage
- calculation
-To: Yafang Shao <laoar.shao@gmail.com>,
- David Laight <david.laight.linux@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org,
- stable@vger.kernel.org
-References: <20251107100310.61478-1-a.safin@rosa.ru>
- <20251107114127.4e130fb2@pumpkin>
- <CALOAHbB1cJ3EAmOOQ6oYM4ZJZn-eA7pP07=sDeG3naOM2G9Aew@mail.gmail.com>
- <CALOAHbCz+9T349GCmyMkork=Nc_08OnXCoVCz+WO0kdXgx3MDA@mail.gmail.com>
-Content-Language: ru
-From: =?UTF-8?B?0JDQu9C10LrRgdC10Lkg0KHQsNGE0LjQvQ==?= <a.safin@rosa.ru>
-In-Reply-To: <CALOAHbCz+9T349GCmyMkork=Nc_08OnXCoVCz+WO0kdXgx3MDA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <176259938768.261465.10714633393722227911.stgit@devnote2>
 
-Thanks for the follow-up.
+Hi Masami,
 
-Just to clarify: the overflow happens before the multiplication by
-num_entries. In C, the * operator is left-associative, so the expression is
-evaluated as (value_size * num_possible_cpus()) * num_entries. Since
-value_size was u32 and num_possible_cpus() returns int, the first product is
-performed in 32-bit arithmetic due to usual integer promotions. If that
-intermediate product overflows, the result is already incorrect before it is
-promoted when multiplied by u64 num_entries.
+kernel test robot noticed the following build errors:
 
-A concrete example within allowed limits:
-value_size = 1,048,576 (1 MiB), num_possible_cpus() = 4096
-=> 1,048,576 * 4096 = 2^32 => wraps to 0 in 32 bits, even with 
-num_entries = 1.
+[auto build test ERROR on trace/for-next]
+[also build test ERROR on next-20251107]
+[cannot apply to linus/master v6.18-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This isn’t about a single >4GiB allocation - it’s about aggregated memory
-usage (percpu), which can legitimately exceed 4GiB in total.
+url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-Report-wrong-dynamic-event-command/20251108-185823
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/176259938768.261465.10714633393722227911.stgit%40devnote2
+patch subject: [PATCH] tracing: Report wrong dynamic event command
+config: parisc-randconfig-001-20251109 (https://download.01.org/0day-ci/archive/20251109/202511091817.JzD0Zi0O-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 9.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511091817.JzD0Zi0O-lkp@intel.com/reproduce)
 
-v2 promotes value_size to u64 at declaration, which avoids the 32-bit
-intermediate overflow cleanly.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511091817.JzD0Zi0O-lkp@intel.com/
 
-09.11.2025 11:20, Yafang Shao пишет:
-> On Sun, Nov 9, 2025 at 11:00 AM Yafang Shao <laoar.shao@gmail.com> wrote:
->> On Fri, Nov 7, 2025 at 7:41 PM David Laight
->> <david.laight.linux@gmail.com> wrote:
->>> On Fri,  7 Nov 2025 13:03:05 +0300
->>> Alexei Safin <a.safin@rosa.ru> wrote:
->>>
->>>> The intermediate product value_size * num_possible_cpus() is evaluated
->>>> in 32-bit arithmetic and only then promoted to 64 bits. On systems with
->>>> large value_size and many possible CPUs this can overflow and lead to
->>>> an underestimated memory usage.
->>>>
->>>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->>> That code is insane.
->>> The size being calculated looks like a kernel memory size.
->>> You really don't want to be allocating single structures that exceed 4GB.
->> I failed to get your point.
->> The calculation `value_size * num_possible_cpus() * num_entries` can
->> overflow. While the creation of a hashmap limits `value_size *
->> num_entries` to U32_MAX, this new formula can easily exceed that
->> limit. For example, on my test server with just 64 CPUs, the following
->> operation will trigger an overflow:
->>
->>            map_fd = bpf_map_create(BPF_MAP_TYPE_PERCPU_HASH, "count_map", 4, 4,
->>                                                       1 << 27, &map_opts)
-> Upon reviewing the code, I see that `num_entries` is declared as u64,
-> which prevents overflow in the calculation `value_size *
-> num_possible_cpus() * num_entries`. Therefore, this change is
-> unnecessary.
->
-> It seems that the Linux Verification Center (linuxtesting.org) needs
-> to be improved ;-)
->
+All errors (new ones prefixed by >>):
+
+   hppa-linux-ld: kernel/trace/trace_dynevent.o: in function `create_dyn_event':
+>> (.text+0x610): undefined reference to `trace_probe_log_init'
+>> hppa-linux-ld: (.text+0x61c): undefined reference to `__trace_probe_log_err'
+>> hppa-linux-ld: (.text+0x624): undefined reference to `trace_probe_log_clear'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
