@@ -1,177 +1,164 @@
-Return-Path: <linux-kernel+bounces-892188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97F8C44939
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 23:30:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A4FCC44957
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 23:41:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88F523B052D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 22:30:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE261346322
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 22:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBA92727EE;
-	Sun,  9 Nov 2025 22:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB5426CE2B;
+	Sun,  9 Nov 2025 22:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b="Ka7aCoAK"
-Received: from aye.elm.relay.mailchannels.net (aye.elm.relay.mailchannels.net [23.83.212.6])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H6/ufYUE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E1226B2CE;
-	Sun,  9 Nov 2025 22:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762727426; cv=pass; b=czijuHdVugeLpCtFv2wXVTU3i1GL/BsuTChvlq1Bx9jhko0x8dn/0ZN3iJKPGd4b2E/niMoqCJTHDz7ufh2qQzlH8639ALA+wEYgbThijpCEA90n4GjJPiGan9BF7wmagvwE+2PTF7B/UrFAL2z0IwOrfpoL4yih+pgpxxl7fsE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762727426; c=relaxed/simple;
-	bh=CPAIBprsq/IZeMcOp0Iqm+vQf75yS7rSnczSTarh0+Y=;
-	h=From:To:Cc:Subject:Message-ID:In-Reply-To:References:MIME-Version:
-	 Date; b=WQUqevlve1DuU6+bYmZeadgFF78ZM9WWQk7LZiM5hNbevzHSdCI0CPwEmembAGmn4BJtWE+eQlMRTxFj/voXpxwUuo1NHtbw8aODodorSjK6K9JFRV/EbyhfQafTWXzCG/VvcU+cyra3Kc6KXFlp30tSjBBEcrZoCckXYjxIpDk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com; spf=pass smtp.mailfrom=rootcommit.com; dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b=Ka7aCoAK; arc=pass smtp.client-ip=23.83.212.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rootcommit.com
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id DC9AF440F43;
-	Sun, 09 Nov 2025 22:30:16 +0000 (UTC)
-Received: from fr-int-smtpout22.hostinger.io (100-125-88-217.trex-nlb.outbound.svc.cluster.local [100.125.88.217])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 6998044138B;
-	Sun, 09 Nov 2025 22:30:14 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1762727416; a=rsa-sha256;
-	cv=none;
-	b=QxfFoUO9hAxGp2BxD+Ciop9r+2hDlUEmCCL8pyRNqi4SoLn66FMr4S4vr7iIQqACMLmSxM
-	y7bkyOKdrZ5L/z9Mv2velsoknedSpfDHlsseHGB1hP0qW8e1ZlJZyvDQKmb6JTLK4XBbmj
-	Lc2RpkMPWVGCXQmuEMSBOtedCQcSMF3QRV+dCjIwyTkMixjZDQjvRU1CnNCgUvYBndFEvp
-	4Lgk5kIRtkp4MSkznkRqJn4VCJKlfYM8Fn9P3cpAXO+00hnCB5DxBJ2sA48Xa+VqHboJ1P
-	VBpzAH5T+OG8H99npfYGxV/ScMJUneURK2BirNJUj1NDG045Hcgm+vlLX+Z+4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1762727416;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=bYTguI9fwtbRna746WVvfaBIUA/5jCg9JsnkhV14j6g=;
-	b=p2AXvFzmESiLvXPU8SzX3c9Mt0j56vEG3iQKyI6GTKtFo8+eyz9nCpUpo9uV/pgdLlgmnl
-	21fubFsQOgY2Ucjh30Uk6U7TdFuu40OPHA32VC2nJOGWD/eCns7iJx0iJ4QYfQtjlWLqT6
-	WoB32M7OkKzBiePb8gAKwnCN7Ry84qOHJfQRKSSr1qXdwjOLMZ9+hSn1mVRK63bg7XlTdc
-	8wpMD9bWTkrS111iI4qJ9uYQdoji9a8csJoyQfiuMv7pC+f8tB5a5Ykqs/a0nPExI9soPu
-	8vkMzmdL0Bf4H67ifcr+VRkcw6fkSq5Ri/kGBtrwmmL8tN4E4nkt9ZZg5aChYg==
-ARC-Authentication-Results: i=1;
-	rspamd-768b565cdb-9nvpf;
-	auth=pass smtp.auth=hostingeremail
- smtp.mailfrom=michael.opdenacker@rootcommit.com
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId:
- hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Whistle-Ski: 66dca66f3ecacaaa_1762727416803_1264572698
-X-MC-Loop-Signature: 1762727416803:844494980
-X-MC-Ingress-Time: 1762727416803
-Received: from fr-int-smtpout22.hostinger.io (fr-int-smtpout22.hostinger.io
- [148.222.54.26])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.125.88.217 (trex/7.1.3);
-	Sun, 09 Nov 2025 22:30:16 +0000
-Received: from localhost.localdomain (unknown [IPv6:2001:861:4450:d360:6854:e5c6:92e9:8517])
-	(Authenticated sender: michael.opdenacker@rootcommit.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4d4SD425VQzyTZ;
-	Sun,  9 Nov 2025 22:30:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rootcommit.com;
-	s=hostingermail-a; t=1762727412;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bYTguI9fwtbRna746WVvfaBIUA/5jCg9JsnkhV14j6g=;
-	b=Ka7aCoAKLCbqaVlv34WEfU8W1w7yEhMXfrqq2W32KWeny2aiuKTfQvIwghioUGEGN1iG7I
-	bxcMjmP/Y7IqPKc2tCvds7+A50DoMo9JG/zcYWQ3PPLYAUt5805HU4NdkGlLji5aFdXHBY
-	vG6eLinLjcxRL6I8oxtJPujAs+dIKwE6dyF3YPwKEmOJj41s3zaYFQvmDa/VlD4eNIq4Vc
-	BsHBJoBucMZDV0l90YFzh1GdukiobC/tbcuPakKshtXNnKhbBX1e+EJWQA9dtN0ilqiv9D
-	vn9eBKusecSVIb+WrT3EW0tnJZ0FS/qK+dd4AgGAZsBkZc5/G6LkjZMRLYxExw==
-From: michael.opdenacker@rootcommit.com
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Yixun Lan <dlan@gentoo.org>
-Cc: Michael Opdenacker <michael.opdenacker@rootcommit.com>,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] riscv: dts: spacemit: add eMMC to OrangePi R2S
-Message-ID: <20251109222858.3085488-5-michael.opdenacker@rootcommit.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251109222858.3085488-1-michael.opdenacker@rootcommit.com>
-References: <20251109222858.3085488-1-michael.opdenacker@rootcommit.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58A624A049;
+	Sun,  9 Nov 2025 22:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762728058; cv=none; b=Ryl/pqseQG5CBgEff26itAvMA7ZsyqAV/w0n9Oc4qifj7qnJ9KkfqOMchTU+FDnpzD87DKHeBRRmVOnrTZEZMLQOXS/sHUUKf/njzW6BvLEBqbRiZBibwNSCp1ZK+dLHHpS9QPC/Jqxe0EmPmQqBlF9qqtumpuSJ+rT/iy+U64Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762728058; c=relaxed/simple;
+	bh=cMmPa9Fxj7ZO+ut5H2ulYJ53jkvVxvjyBkouir73++0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YCawxlEKfcDb5tbT7T6E3+ljUYDXnHWr7lTXz5YmPDYh7Rq0EB76G1YX1lESXWpi6tYr10w3jHzCSDsZauDz/aVYYnq0XzJpmfdKoy+XfWXBPVzQLZmuH9jO8QcqDW1zaU/rbFlJAq95S1oiOF186T8AlUZbjvOyPbafjHCowqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H6/ufYUE; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762728057; x=1794264057;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cMmPa9Fxj7ZO+ut5H2ulYJ53jkvVxvjyBkouir73++0=;
+  b=H6/ufYUExB+5X8KVqNlDYlQELHoLdvkQtDhRlo4VR7+LVeIDBNJdjaR2
+   NivFWtMjisJP8eWLf+pj0aDtiAN+eE0zXU+fLTuGrxhcoWZdeO/jvM3Hy
+   HuecjagmKFkKIR3HoSAM5l6GaocT37n2stCtBwVDS7YrB/mtAv+zfNKYV
+   ZTss8PMisgAaSskC7Ena5XEIwFpGrPC8qSWb1NQL+2aLRnO0g2zFSvjMr
+   51tn0Rpz53keNXBR/FesSQe/ts/P30r70UcoIcO1uQ7vv5siw18nM/nsS
+   k8eZpYyemMnocZZZ/xcXzBBiEN7McUbMPcp54EXQBgxb6+SslDLWsBDir
+   w==;
+X-CSE-ConnectionGUID: RhgSzLsaQxiAmIXyjh9FSQ==
+X-CSE-MsgGUID: IJKCj/EGQDa8jwv5ZqAq/g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="75472365"
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="75472365"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 14:40:56 -0800
+X-CSE-ConnectionGUID: xAz8T/LTTc2AJbg4gm+ITg==
+X-CSE-MsgGUID: lWAqsRqVTdurGKj8c/WK7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="193540812"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 09 Nov 2025 14:40:53 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vIE5b-0002Sl-1r;
+	Sun, 09 Nov 2025 22:40:51 +0000
+Date: Mon, 10 Nov 2025 06:40:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sumit Kumar <sumit.kumar@oss.qualcomm.com>,
+	Manivannan Sadhasivam <mani@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Akhil Vinod <akhil.vinod@oss.qualcomm.com>,
+	Subramanian Ananthanarayanan <subramanian.ananthanarayanan@oss.qualcomm.com>,
+	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, quic_vpernami@quicinc.com,
+	Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+Subject: Re: [PATCH v2 3/3] bus: mhi: ep: Add loopback driver for data path
+ testing
+Message-ID: <202511100649.KfikwcaY-lkp@intel.com>
+References: <20251104-loopback_mhi-v2-3-727a3fd9aa74@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Date: Sun,  9 Nov 2025 22:30:12 +0000 (UTC)
-X-CM-Envelope: MS4xfD5Vag569iRn3Dn/qa/KjZSC9Jo7uCZs5mTseVkPlVTkngz3CQXvKqXlsYn5pjKCzZCwPJoExbN+YU7sMPia1EQEXoNVddWBTGip162qrvBGcKcvY8nb aeWBNcfwL6rr6WlyFJCI0w42ltN1BrWeFHPdtPPsBZWm0zRVcvgnQdjLQAPiN+CmnY59/MxuiagguNUgJ8Zon8qxlIsc30lifVfE6ipgVL3URwpp31CvwDPf BK3R+cqE9x/DEELKPxNn+H7Yyc8+Kq0lVm93jphferuQcAKDJMXNsEykyW9XF/xq9zg5cF3MQQfzxznk4p/jYM2pgJCn8c5e0T3368hwwLjtPx25ZFC4tCX4 j1BweXHSfhTK4CPthi6nAt8JvV0YhwnW7AwGDvZJJaCFt/IaP/C4amt4iTFo1ITrWcoEVYOkGvPWh9GwupJpo7zKmAsOMmsHWtXZqyRxYO1fxfWl4jcq/R8h RCt15ilAzQbbDSZFQBgX1fEGi/qxGZn4tbvqSapmBqCTllmJdtuZMTxCm9QFjz+zpV7+e0y5EemspkPzZHZU8KCV8AL09Wy/0QfQlnrZN+voVxTN+UPdbqj1 YppxSA6mIZccFErOUfN7savFpCoswc5J872XJOd4lIn447A7H1+019IyNewnAC+uksR6gNT6R+HHx0TJ9+4HcCCn0voJqdoKbH3nMcHlp53eQg==
-X-CM-Analysis: v=2.4 cv=Lflu6Sfi c=1 sm=1 tr=0 ts=691115f4 a=9hvhlO9olek7/vweJUpOAg==:617 a=xqWC_Br6kY4A:10 a=d70CFdQeAAAA:8 a=-18oh36_rWcDSRoscU8A:9 a=6GXZlH8O99NGPdPthH_S:22 a=NcxpMcIZDGm-g932nG_k:22
-X-AuthUser: michael.opdenacker@rootcommit.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104-loopback_mhi-v2-3-727a3fd9aa74@oss.qualcomm.com>
 
-From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+Hi Sumit,
 
-The OrangePi R2S board includes a 8 GB eMMC chip for storage.
+kernel test robot noticed the following build warnings:
 
-It works fine with the same description as on the BananaPi F3 board DTS.
+[auto build test WARNING on e6b9dce0aeeb91dfc0974ab87f02454e24566182]
 
-Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Sumit-Kumar/bus-mhi-host-Add-loopback-driver-with-sysfs-interface/20251104-174320
+base:   e6b9dce0aeeb91dfc0974ab87f02454e24566182
+patch link:    https://lore.kernel.org/r/20251104-loopback_mhi-v2-3-727a3fd9aa74%40oss.qualcomm.com
+patch subject: [PATCH v2 3/3] bus: mhi: ep: Add loopback driver for data path testing
+config: csky-randconfig-r061-20251110 (https://download.01.org/0day-ci/archive/20251110/202511100649.KfikwcaY-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 15.1.0
 
----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511100649.KfikwcaY-lkp@intel.com/
 
-Read tests
-----------
+cocci warnings: (new ones prefixed by >>)
+>> drivers/bus/mhi/ep/mhi_ep_loopback.c:80:2-7: WARNING: NULL check before some freeing functions is not needed.
+--
+>> drivers/bus/mhi/ep/mhi_ep_loopback.c:46:8-15: WARNING opportunity for kmemdup
 
-hdparm -t --direct /dev/mmcblk0
+vim +80 drivers/bus/mhi/ep/mhi_ep_loopback.c
 
-/dev/mmcblk0:
-Timing O_DIRECT disk reads: 846 MB in 3.01 seconds = 281.52 MB/sec
+    37	
+    38	static void mhi_ep_loopback_ul_callback(struct mhi_ep_device *mhi_dev,
+    39						struct mhi_result *mhi_res)
+    40	{
+    41		struct mhi_ep_loopback *mhi_ep_lb = dev_get_drvdata(&mhi_dev->dev);
+    42		struct mhi_ep_loopback_work *mhi_ep_lb_work;
+    43		void *buf;
+    44	
+    45		if (!(mhi_res->transaction_status)) {
+  > 46			buf = kmalloc(mhi_res->bytes_xferd, GFP_KERNEL);
+    47			if (!buf) {
+    48				dev_err(&mhi_dev->dev, "Failed to allocate buffer\n");
+    49				return;
+    50			}
+    51	
+    52			memcpy(buf, mhi_res->buf_addr, mhi_res->bytes_xferd);
+    53	
+    54			mhi_ep_lb_work = kmalloc(sizeof(*mhi_ep_lb_work), GFP_KERNEL);
+    55			if (!mhi_ep_lb_work) {
+    56				dev_err(&mhi_dev->dev, "Unable to allocate the work structure\n");
+    57				kfree(buf);
+    58				return;
+    59			}
+    60	
+    61			INIT_WORK(&mhi_ep_lb_work->work, mhi_ep_loopback_work_handler);
+    62			mhi_ep_lb_work->mdev = mhi_dev;
+    63			mhi_ep_lb_work->buf = buf;
+    64			mhi_ep_lb_work->len = mhi_res->bytes_xferd;
+    65	
+    66			queue_work(mhi_ep_lb->loopback_wq, &mhi_ep_lb_work->work);
+    67		}
+    68	}
+    69	
+    70	static void mhi_ep_loopback_dl_callback(struct mhi_ep_device *mhi_dev,
+    71						struct mhi_result *mhi_res)
+    72	{
+    73		void *buf;
+    74	
+    75		if (mhi_res->transaction_status)
+    76			return;
+    77	
+    78		buf = mhi_res->buf_addr;
+    79		if (buf)
+  > 80			kfree(buf);
+    81	}
+    82	
 
-Write tests
------------
-
-dd if=/dev/zero of=/dev/mmcblk0p2 bs=4M oflag=direct status=progress
-7600078848 bytes (7.6 GB, 7.1 GiB) copied, 127 s, 59.8 MB/s
-dd: error writing '/dev/mmcblk0p2': No space left on device
-1825+0 records in
-1824+0 records out
-7650410496 bytes (7.7 GB, 7.1 GiB) copied, 127.866 s, 59.8 MB/s
----
- arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts b/arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts
-index a4007a7a1656..58098c4a2aab 100644
---- a/arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts
-@@ -23,6 +23,16 @@ chosen {
- 	};
- };
- 
-+&emmc {
-+	bus-width = <8>;
-+	mmc-hs400-1_8v;
-+	mmc-hs400-enhanced-strobe;
-+	non-removable;
-+	no-sd;
-+	no-sdio;
-+	status = "okay";
-+};
-+
- &eth0 {
- 	phy-handle = <&rgmii0>;
- 	phy-mode = "rgmii-id";
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
