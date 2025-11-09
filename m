@@ -1,179 +1,145 @@
-Return-Path: <linux-kernel+bounces-891921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308F6C43D0A
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:03:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8727CC43D25
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:11:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C11994E4DC4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:03:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009583A98D2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522962E7BA3;
-	Sun,  9 Nov 2025 12:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C80B2E88A1;
+	Sun,  9 Nov 2025 12:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4pf0aKg"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0xKG8HL"
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0242E2E11D7
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5F02E7BD2
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762689790; cv=none; b=ZbF4rn0JIQB+gXRlFcPztydTMO9j2nRBh49enbT1Vk6lrKrtJYnkhFgLbCnrlWAwujUC8QCAxxMH8uZzd4s/LIC9Wkd/tSeP8Y0N0DJYNurcmIRiO5aNocRVaUa/lkaBjc6fPBASEH64+iiHXglqn9dR9PWSeeDhuT1P/1pCF8w=
+	t=1762690295; cv=none; b=DuLlcA+P4rSNGt0XcXZDGEZd0Gnjo1n/RPAzGduashf6J1Z6kdrDGuhbAfbppRi+Gzfvv+LBHX7HsXhzylyjOdgTFJg1g5fKXHuSs05y9ztPoKFuRsegNSqs/dJXSKpA9O4jOkVSKsRLUrWEEcmo2PNNdUMSk10pDkNOJmu1kfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762689790; c=relaxed/simple;
-	bh=qxv9oP1S4VQrVQ/WUkjRbwz93uUoCYdrmXkz6+1+qEU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h2lYdHDsqiME0rtzVnjaWXqqEblwn1Za35RC8lW4OohGqjZePuzpYpZXAm56zmS112Q1yWyDLdMc64ACWKNLd/8s5uLiB0ELbCykv+cMU2JEWFCVutuXTpia89Q0/DIGjCRWzu+w86bOnldje75XNPDpZ9OdrgorYk636kbb+sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O4pf0aKg; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1762690295; c=relaxed/simple;
+	bh=9TrRIYB2XOoX17zzX0ixZst/V96BVzam/k//08+kh8w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hvv9UHCvPkna/btFUuXXSyP3CU5gNyxv8ZjwPhS5ZpT6xAdJOuT52tYovVteQtyDdKAA7EzyS5YyGKvGKexiKr2/yOxHBcnarp7Do+ZQKMiMeAhXrQu58oE8fMXgDLnHObg/phPFIofpzQ/CHtjvzb16uU8y+0RPyUnnxGJ4EAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0xKG8HL; arc=none smtp.client-ip=74.125.224.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso1034410a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:03:06 -0800 (PST)
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-63f97c4eccaso1934484d50.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:11:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762689785; x=1763294585; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uhv3s6l+/V0AVNQ6yZgHV88airWpT9eUaCudXwyxKRw=;
-        b=O4pf0aKgdNZtPmz3A03L+8ya2nc1NnoP+3ocdwjilDmcAzPLBe7rXLv6094vJvdTN6
-         9kS+85umdip1HVUEWoeFmPjOtfPGM9x6aIrvG5GpvJaGT3Ik24GN3MKnywlFXWQxKEU0
-         j9iGKmCcmUNLvaOvaUr9JCoKgH+LqDYnVujNXqyRMTRVKjlFWieNave4CmNDUUGLmuru
-         Ny7YR/jU4oX8n+TA/PijAmHQnziq905aIbTFtrvBAiQs+PoTNGlI8hxweOAQLue44ww2
-         ctKjeeGamGOaqmF3bN9D4CKsFPpJTV3IO7vWstG5p1SJmmwZ8AU02nyTY1TLdF9oRYYY
-         a76A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762689785; x=1763294585;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762690293; x=1763295093; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Uhv3s6l+/V0AVNQ6yZgHV88airWpT9eUaCudXwyxKRw=;
-        b=v+iD0vOgH903CDEfFb/HDH/C6xCcPu1VFz58dCLtH/FtW4cXsPkypzQLVcWz7JRoHd
-         AlS6jc6mhbd0sUh383Wq34JNYC039pySaeTLnBUL92b0pLOfLzKCPDSU5maRAt03i52n
-         oXNBKVM79thkSSAkS/4hXBOaPuFUeG8ohQZcLJm+U9/aEUd/JH9/K3yEBMsO/f7awBo0
-         5jMVtANAYu7tDJdV+HloxNjvzlvV3dDTEgBRsPRxCL482pO6cYJR5yv/j7OhPHLy9GUw
-         /Qc+RzRtX6tXz3tlVjq4tjABMV+CakeBezqV65omxZkDspDSUCBniDM0sv0N/rh6BZ6/
-         GP6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU5VW+a+9pzpZhh83e7NCzsUEnfnhIUQtSHU+GhU5rJXm8HdvLF37f0SYh1ZH2eKp5tjP2LFgsYjL9ToSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybCtKpBXwjM/yUUgRTsfTp+cW0T8gE+YW/PcDhFRGCoOi3oND5
-	R5ijsPI4ilcLGzIpxa+konK4qJ4D8KCfquthwMb60FiRWFHTKWsnJVXsSSVPTQ==
-X-Gm-Gg: ASbGncsou/TSxtXg5T/WfkgJZR7FArNyS0V/9OvZat4n8v9Z492JVzDydpbVg/+fcOj
-	gDKsrDKG1QjBxaXBaI0ZHsXJqYnxMEwyAH2OZJnbdPAaoj6Y+dNNBqh9RLN+6biH8f+e/bS0Qom
-	Ni1vTjt0HttODOFBk9K9ob7Y82QggJTcZCfJ4JSinxlN8p90os4dhwo2kSPuKXgZIsnuem593XO
-	5NbFTfZ9EiEZXm8fWTj2UJ0PWbeF5tNgwca44VPTCLMID1sc2IT2BX0WEaHfWIeRwiaY3fgyLbm
-	vkE14G/VTlTJzhSYdZTsOvFJKENgmDapY7QjolcvxUxPD+HoshKg3sCezdn/u7K/WGTNi3vCZ13
-	XFfG5npC6lOrMZCaHFc9wtac4BPVBg7HM/p2KeKDEft3tagR/IEsEycveV05RosedWtliZzWfWt
-	ZLdRylLrnpHFEOTO8X3D5G71u0rj35S4BoZf3S55lgl3EvYWIX
-X-Google-Smtp-Source: AGHT+IE4B3XToGQDvImXqeLOymkkS7RFjZtOpBbs/n5FSVyFAWBKofw6zy/heUB61w1ZfdFoc2KFsg==
-X-Received: by 2002:a05:6402:13d0:b0:640:b7f1:1ce0 with SMTP id 4fb4d7f45d1cf-6415e6efb3dmr3652910a12.23.1762689784947;
-        Sun, 09 Nov 2025 04:03:04 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f86e9d7sm8775732a12.36.2025.11.09.04.03.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 04:03:04 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [MEH PATCH] fs: move fd_install() slowpath into a dedicated routine and provide commentary
-Date: Sun,  9 Nov 2025 13:02:59 +0100
-Message-ID: <20251109120259.1283435-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=SaB3iUzdscR6aViyJqwLMcsd0JlvtsbUTPKpewl2qBw=;
+        b=i0xKG8HLwJxJQcEyL2ltkvCVpmxagHX06H1+TkaAdLNrdGkDsu5HgIlgaq9FWa6WvO
+         778wxQiCre3f4LjyO+5X+h7e2oGY+3U+6VawUd0/AJ9OjFMAmtWQZ4MbfLbB9iUegERz
+         DW9CvOugr9jrIMCGEW8xhiR+2sOF00U5VYaYEQLys/WO4lN/iE0SN9VQ5+sus/cjGbk0
+         efenTlxYu3lJb/pdai0TMlsKRlh3OwzDOqWSaE0ODACKK5NqMooUynYg6YqmrPSXOh/A
+         ZHTpSW/Z+fdsKOxPssK92QFeflKqVutZMvWqMR/hmE3Ubq3hoxXgIiZ6eJEK5uvRuKFZ
+         F8Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762690293; x=1763295093;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=SaB3iUzdscR6aViyJqwLMcsd0JlvtsbUTPKpewl2qBw=;
+        b=GEZ2FyQVzSu9YDnckDruGOhBWrfYSgQv29IWSnjlyQ3j5JnHZbr+Ea2AIz5tIQ1d6T
+         KRSVLXpWIpQu4X0qh0r8C74ziE5EGZ6FAJR9bLAFfM9VggYKQEjAdhEMhZc9H99iaxmx
+         qqcTGgkMeKIQKRXCkcGImpuofYjG2CDjmmHhOxgmv0P/PI49bpX3sw5Lwuo38mW60dc+
+         EvKM8d7PvLgtp3pqbX64SkjOGXDWKxpoPmV0Y8refvg7oASOxj7K2GuZvzju7pxpyxNm
+         w9l0TSojykCOZiMRRlw0q8jDDxFV9SxYF1uy5+Zq0tlk2WqaNt+dy7XSF4WirYLHj0BK
+         tBpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhix+brizdycsdc1n/Szl8JNWlvivoDWRzFF+R5PfgCKD9JE9Hq4NfJKzTj+UbHxH99EP7PQfRzTUUzvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv/B0uMbPwqU1WYSOQpb171HrJMHz6Ftxhtx2qHkrLTqT9NCNU
+	9HgL3LyB6iz11zZFzvVYEu4ipC+inabvIQkMK0idqU0jd7Cqs9hS8XUzzquhIwgJyzAA8NivUrC
+	tBsAuA/+zgDrJaj/woaiABanWct6XcqA=
+X-Gm-Gg: ASbGnctO8k5IIxPLDsJSbmAXAvgeZdGETi9TaxiqHjmr17kivHSo1uQUPFDsEarEASf
+	IE/MaPZp4f+p01ZktcT0nabXgRZ41Di3jgfFaExuvnghr5PJ3/dhtFOMvnexMOrpBbEBG/u+ucY
+	EhdLIj6Jm6dZ1N1BGKQtjVLTCBn1uD/y7VlrGNOEikXHwsb0Pd4g06YUIe1DLXAvsBfEBEQNi5l
+	VGClF8Zx1buPkEzZh64UDFheV13roD5CqutmxDKRE0WOl4zqaquPCto1Ew3Wd7jqkbv2ehs
+X-Google-Smtp-Source: AGHT+IEKhjeme65HFe4rbHvn0fhtz0mbKIXocvNQ95paIv/R07SYgK3/Ab1CQi+EtohDNRjUSI8bQbzPh8xSQmFFyn8=
+X-Received: by 2002:a53:acc8:0:20b0:63f:aef7:d009 with SMTP id
+ 956f58d0204a3-640d4543d3emr3526712d50.5.1762690292759; Sun, 09 Nov 2025
+ 04:11:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251107100310.61478-1-a.safin@rosa.ru> <20251107114127.4e130fb2@pumpkin>
+ <CALOAHbB1cJ3EAmOOQ6oYM4ZJZn-eA7pP07=sDeG3naOM2G9Aew@mail.gmail.com>
+ <CALOAHbCz+9T349GCmyMkork=Nc_08OnXCoVCz+WO0kdXgx3MDA@mail.gmail.com> <8a4aae40-46d3-403a-a1cf-117343c584f6@rosa.ru>
+In-Reply-To: <8a4aae40-46d3-403a-a1cf-117343c584f6@rosa.ru>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Sun, 9 Nov 2025 20:10:56 +0800
+X-Gm-Features: AWmQ_blpVmNsJtsggeQbfkqHI6DRzOvkhrN0Qih5Gjdy_fjh5mvfLp1OZCiTq2g
+Message-ID: <CALOAHbBdcq6bKCeroGFmUNfo6Os+KOXGzeqVZjM=S0Q9hpxYew@mail.gmail.com>
+Subject: Re: [PATCH v2] bpf: hashtab: fix 32-bit overflow in memory usage calculation
+To: =?UTF-8?B?0JDQu9C10LrRgdC10Lkg0KHQsNGE0LjQvQ==?= <a.safin@rosa.ru>
+Cc: David Laight <david.laight.linux@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lvc-patches@linuxtesting.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On stock kernel gcc 14 emits avoidable register spillage:
-	endbr64
-	call   ffffffff81374630 <__fentry__>
-	push   %r13
-	push   %r12
-	push   %rbx
-	sub    $0x8,%rsp
-	[snip]
+On Sun, Nov 9, 2025 at 7:00=E2=80=AFPM =D0=90=D0=BB=D0=B5=D0=BA=D1=81=D0=B5=
+=D0=B9 =D0=A1=D0=B0=D1=84=D0=B8=D0=BD <a.safin@rosa.ru> wrote:
+>
+> Thanks for the follow-up.
+>
+> Just to clarify: the overflow happens before the multiplication by
+> num_entries. In C, the * operator is left-associative, so the expression =
+is
+> evaluated as (value_size * num_possible_cpus()) * num_entries. Since
+> value_size was u32 and num_possible_cpus() returns int, the first product=
+ is
+> performed in 32-bit arithmetic due to usual integer promotions. If that
+> intermediate product overflows, the result is already incorrect before it=
+ is
+> promoted when multiplied by u64 num_entries.
+>
+> A concrete example within allowed limits:
+> value_size =3D 1,048,576 (1 MiB), num_possible_cpus() =3D 4096
+> =3D> 1,048,576 * 4096 =3D 2^32 =3D> wraps to 0 in 32 bits, even with
+> num_entries =3D 1.
 
-Total fast path is 99 bytes.
+Thank you for the clarification.
 
-Moving the slowpath out avoids it and shortens the fast path to 74
-bytes.
+Based on my understanding, the maximum value_size for a percpu hashmap
+appears to be constrained by PCPU_MIN_UNIT_SIZE (32768), as referenced
+in htab_map_alloc_check():
 
-Take this opportunity to elaborate on the resize_in_progress machinery.
+  https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/ker=
+nel/bpf/hashtab.c#n457
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+This would require num_possible_cpus() to reach 131072 to potentially
+cause an overflow.  However, the maximum number of CPUs supported on
+x86_64 is typically 8192 in standard kernel configurations. I'm
+uncertain if any architectures actually support systems at this scale.
 
-I don't feel particularly strongly about the patch, so if there is
-resistance and I'm not going to argue for it.
 
-Spotted on the profile while looking at open()
+>
+> This isn=E2=80=99t about a single >4GiB allocation - it=E2=80=99s about a=
+ggregated memory
+> usage (percpu), which can legitimately exceed 4GiB in total.
+>
+> v2 promotes value_size to u64 at declaration, which avoids the 32-bit
+> intermediate overflow cleanly.
 
- fs/file.c | 37 ++++++++++++++++++++++++++++++-------
- 1 file changed, 30 insertions(+), 7 deletions(-)
 
-diff --git a/fs/file.c b/fs/file.c
-index 28743b742e3c..d73730203bb5 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -641,6 +641,35 @@ void put_unused_fd(unsigned int fd)
- 
- EXPORT_SYMBOL(put_unused_fd);
- 
-+/*
-+ * Install a file pointer in the fd array while it is being resized.
-+ *
-+ * We need to make sure our update to the array does not get lost as the resizing
-+ * thread can be copying the content as we modify it.
-+ *
-+ * We have two ways to do it:
-+ * - go off CPU waiting for resize_in_progress to clear
-+ * - take the spin lock
-+ *
-+ * The latter is trivial to implement and saves us from having to might_sleep()
-+ * for debugging purposes.
-+ *
-+ * This is moved out of line from fd_install() to convince gcc to optimize that
-+ * routine better.
-+ */
-+static void noinline fd_install_slowpath(unsigned int fd, struct file *file)
-+{
-+	struct files_struct *files = current->files;
-+	struct fdtable *fdt;
-+
-+	rcu_read_unlock_sched();
-+	spin_lock(&files->file_lock);
-+	fdt = files_fdtable(files);
-+	VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) != NULL);
-+	rcu_assign_pointer(fdt->fd[fd], file);
-+	spin_unlock(&files->file_lock);
-+}
-+
- /**
-  * fd_install - install a file pointer in the fd array
-  * @fd: file descriptor to install the file in
-@@ -658,14 +687,8 @@ void fd_install(unsigned int fd, struct file *file)
- 		return;
- 
- 	rcu_read_lock_sched();
--
- 	if (unlikely(files->resize_in_progress)) {
--		rcu_read_unlock_sched();
--		spin_lock(&files->file_lock);
--		fdt = files_fdtable(files);
--		VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) != NULL);
--		rcu_assign_pointer(fdt->fd[fd], file);
--		spin_unlock(&files->file_lock);
-+		fd_install_slowpath(fd, file);
- 		return;
- 	}
- 	/* coupled with smp_wmb() in expand_fdtable() */
--- 
-2.48.1
-
+--
+Regards
+Yafang
 
