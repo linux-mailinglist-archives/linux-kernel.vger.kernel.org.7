@@ -1,141 +1,88 @@
-Return-Path: <linux-kernel+bounces-892008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45626C44134
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 16:02:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0525C44140
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 16:04:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E5383AB106
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 15:02:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 339384E20F6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 15:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD512FBDE3;
-	Sun,  9 Nov 2025 15:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D882FDC24;
+	Sun,  9 Nov 2025 15:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="jEiMgCWo"
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkIOeFV1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11021C6FEC;
-	Sun,  9 Nov 2025 15:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84D22D6400;
+	Sun,  9 Nov 2025 15:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762700538; cv=none; b=EABF17KzbnwFRONvd27PYSAaWCXD5jX5e8IFns6VaGUHnjXvbU1EqLCAe0XGE10gNkmNk/FXRrFJdoN/ZhEAxkHBrBwvpu4Nk5oj25GoLdTGKpI1WAjz9KWKI6A4UX2GvUQlZm5MEQinYo0RG3uwGZ1R8JrqHQ0As48QMTyxWI8=
+	t=1762700644; cv=none; b=g+Q2NzF0nyTk55B6V1ckeWd6/mFVsuciY1mDO4eQ+iANmJ9hkQ9rx/qDE9HysUmx7VFm3MUgPZPWcGMSHhJkuqJlRQO1KL2RGwz2QNKdwbM6WqAZfHHtL7KcWLS6Zdngi8tTYNkQJ4YsKr+3/odhUJOY3HwbeQgz32ZCf6bfqw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762700538; c=relaxed/simple;
-	bh=Zkdum5SC2LYxCveNxXgCTkxgnkvhcptGomaCqwYs0vA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q3p0gIa2MapqaQhEXBKZSQYRkWNmyF9cQHLE4wQFXx7WqHovV3uTiukCN6Ts+P/DBNlV30xuyG/aM+O9rwy5GBbGczZNpNrsiyYB86DSGhU9EYZvbEq0syhlo/Go7XVuSaqlRNHoRhqGVA8+mhoAt64Q/qwlhqZ1lDavIMZ8Lbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=jEiMgCWo; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [221.228.238.82])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 28ea96279;
-	Sun, 9 Nov 2025 23:02:03 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: sd@queasysnail.net
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	herbert@gondor.apana.org.au,
-	horms@kernel.org,
-	jianhao.xu@seu.edu.cn,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	steffen.klassert@secunet.com,
-	zilin@seu.edu.cn
-Subject: Re: [PATCH] xfrm: fix memory leak in xfrm_add_acquire()
-Date: Sun,  9 Nov 2025 15:02:02 +0000
-Message-Id: <20251109150202.3685193-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <aQ8Wj0fIH9KSEKg7@krikkit>
-References: <aQ8Wj0fIH9KSEKg7@krikkit>
+	s=arc-20240116; t=1762700644; c=relaxed/simple;
+	bh=IUXxyPcnqpDHiv1qOb2dy4VYfAq79Wb3o8hOBTShskU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RODcxzvHy3hGHLmy16WuHBL/rL3z73oHS1tv9GWdI9oBgduSk1Hn6TZeZXq9nNFW6J9COgcz7d2f7aOI/5062thBDkTrYZwChW+RhJvYWwV4Wk4R6P7IG7rPEZyihVoN7Y7FM7med0L2eb0TmqbNRoZAalZ2unyauespT6CVUAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkIOeFV1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5045C116B1;
+	Sun,  9 Nov 2025 15:04:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762700644;
+	bh=IUXxyPcnqpDHiv1qOb2dy4VYfAq79Wb3o8hOBTShskU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DkIOeFV1+f18yDyApLUJy74bTRcPycSJScKMDXtjh3tIhxmXLqADiOOBXZhAF0uqo
+	 h3rVu6lHHaCdm2TISoR9+A117zDZhQKc8IM4iXJSOMDV7LaHpYL6eK3nMWlDBiLRur
+	 YBD8oaHA44QzSL665ddvLAmpZvaph/jDhKh+C74COZxwvp7q1k7PxUIyvLiUA/USjB
+	 czfi8cgRi9iyQo3bV3TOzBNxFs0QDaxxbFOfxh3WB23vr+yHNKCQC2o8FPr3vxUx33
+	 qlBAE3cjey5WcPjgh3W4IzGu/U6zai62L5drBm1ksFsV6wJKgHOhbrjVLM7oyNQM5q
+	 5fmyCrqvVBVLw==
+Date: Sun, 9 Nov 2025 15:03:57 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Billy Tsai <billy_tsai@aspeedtech.com>, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ joel@jms.id.au, andrew@codeconstruct.com.au, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] iio: adc: aspeed: Add AST2700 ADC support
+Message-ID: <20251109150357.513e3a25@jic23-huawei>
+In-Reply-To: <3d2fde56-d82e-40c2-9d0b-2888160a642b@baylibre.com>
+References: <20251103105217.1764355-1-billy_tsai@aspeedtech.com>
+	<20251103105217.1764355-2-billy_tsai@aspeedtech.com>
+	<3d2fde56-d82e-40c2-9d0b-2888160a642b@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a6923778903a1kunm581f46c89f1e10
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCS00dVktDQx9JTU9PHUNNH1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJSUpVSUlDVUlIQ1VDSVlXWRYaDxIVHRRZQVlPS0hVSktJQk1LSlVKS0tVS1
-	kG
-DKIM-Signature: a=rsa-sha256;
-	b=jEiMgCWoka534VZyLiHiH7lVaftGNtIJVz4bgv9JPSxnNJJXzwbl9F5x890HJf/h+24fdwnPu45Domtv6qyMWej/0tNgLLqWTnBlu41CDaUhSQoD+RP0ypqjrFrhiEnsRMkoeLjz9S0Y32+S6TayPye8sNlEaveBA6ecMBbnWb0=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=99ld6mKGou4R7C7V+AL1YXlKkWyHyUyysFU2gcsegaM=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 08, 2025 at 11:08:15AM +0100, Sabrina Dubroca wrote:
-> 2025-11-08, 05:10:54 +0000, Zilin Guan wrote:
-> > xfrm_add_acquire() constructs an xfrm_policy by calling
-> > xfrm_policy_construct(), which allocates the policy structure via
-> > xfrm_policy_alloc() and initializes its security context.
+On Mon, 3 Nov 2025 09:20:48 -0600
+David Lechner <dlechner@baylibre.com> wrote:
+
+> On 11/3/25 4:52 AM, Billy Tsai wrote:
+> > This patch adds support for the ADCs found on the Aspeed AST2700 SoC,
+> > which includes two instances: "ast2700-adc0" and "ast2700-adc1". While
+> > they are functionally similar to those on AST2600, the OTP trimming data
+> > is located at the same offset (0x820), but uses different bitfields.
 > > 
-> > However, xfrm_add_acquire() currently releases the policy with kfree(),
-> > which skips the proper cleanup and causes a memory leak.
-> > 
-> > Fix this by calling xfrm_policy_destroy() instead of kfree() to
-> > properly release the policy and its associated resources, consistent
-> > with the cleanup path in xfrm_policy_construct().
-> > 
-> > Fixes: 980ebd25794f ("[IPSEC]: Sync series - acquire insert")
-> > Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
-> > ---
-> >  net/xfrm/xfrm_user.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-> > index 010c9e6638c0..23c9bb42bb2a 100644
-> > --- a/net/xfrm/xfrm_user.c
-> > +++ b/net/xfrm/xfrm_user.c
-> > @@ -3035,7 +3035,7 @@ static int xfrm_add_acquire(struct sk_buff *skb, struct nlmsghdr *nlh,
-> >  	}
-> >  
-> >  	xfrm_state_free(x);
-> > -	kfree(xp);
-> > +	xfrm_policy_destroy(xp);
+> > Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> > ---  
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
 > 
-> I agree there's something missing here, but that's not the right way
-> to fix this. You're calling this function:
-> 
-> void xfrm_policy_destroy(struct xfrm_policy *policy)
-> {
-> 	BUG_ON(!policy->walk.dead);
-> [...]
-> 
-> 
-> And xfrm_add_acquire is not setting walk.dead. Have you tested your
-> patch?
 
-My apologies, I see the mistake now. To answer your question, I found 
-this issue through static analysis and failed to test the patch properly 
-before submission.
+Series applied.  I'd have preferred a cover letter given more than one patch
+as it both gives a meaningful series name in patchwork and provides a common
+place for replies like this one.
 
-> Even if we did set walk.dead before calling xfrm_policy_destroy, we
-> would still be missing the xfrm_dev_policy_delete call that is done in
-> xfrm_policy_kill for the normal policy cleanup path.
+Thanks,
 
-Thank you for pointing this out. I agree that the xfrm_dev_policy_delete() 
-call is also necessary.
-
-> I think we want something more like what xfrm_add_policy does if
-> insertion fails. In xfrm_policy_construct (which you mention in the
-> commit message), we don't have to worry about xfrm_dev_policy_delete
-> because xfrm_dev_policy_add has either not been called at all, or has
-> failed and does not need extra cleanup.
-> 
-> -- 
-> Sabrina
-
-Thank you for the detailed review and suggestion. I will follow the 
-error handling pattern in xfrm_add_policy() and prepare a v2 patch 
-accordingly.
-
-Best regards,
-Zilin Guan
+Jonathan
 
