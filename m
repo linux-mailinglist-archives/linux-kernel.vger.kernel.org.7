@@ -1,155 +1,201 @@
-Return-Path: <linux-kernel+bounces-892176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 803A3C448CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 23:13:54 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D3EEC448D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 23:16:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2033C188BE71
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 22:14:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A7B30346276
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 22:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C43723C516;
-	Sun,  9 Nov 2025 22:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94947262D0C;
+	Sun,  9 Nov 2025 22:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SP0pEs9B";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="lMc/KIhK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="CITd8G5K"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5620C2E63C
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 22:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521DB219A7A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 22:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762726424; cv=none; b=E9H/lM2228sW6C73EZ3xIpwrdORoZovynnr+tpB/DQHtE/kaP0DAC1JY3dYwfdwp9j2TcPFuMyUtL7EUdrmmsfFT99APZl4Ru2rPoBJQJ7RHpGdJ5X6fWJszcc2/338wmiqvwSayiQw0dsuFOUEAn5X23yOX9uHc2VatBPRcJak=
+	t=1762726556; cv=none; b=DxiExSvUAiqfaYBjJvTLz5YEFATzzOemv67zyfOQ7vBwmvfHJurIIu0DeZw17ASdXwYC3kS/Ff50H9yxqsKb2S5uayLX0K/fnOtNJSM7ko7PQEpDxSV5ALb7MWOQnfPxYyKEI5Iqx3Ajnw7+NwqqMYRWrilxpInZJonJnVADaNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762726424; c=relaxed/simple;
-	bh=kqJAIdbcHxKuX80fGRfNU2VWUZKbwaHAR5nHv+hbTTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jlGip9DJbJbvo35LUhhjwjyQxyZyBT/tzLzuEH1qFOX1FHCaazIxEffOYWdGPP7HFw6Wvq1WG/aMhu7TCBt5zfvAxBOdTmNzx2uroBvAXgTOYA3DeRz/nOclBq9qyWLajxKqzaOKDsqBcMnSygKAoOoSa3tfSMDMJy6gs833Lg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SP0pEs9B; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=lMc/KIhK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762726422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k1khi8+SBsdLtnYEbz8P8DQWF/VnSE7LC2X12JEweD8=;
-	b=SP0pEs9BOyPNL5LnlzPb/bAgM8AcJjHHJ/6FKIs5pnqFieWERuTCXXc+EQDW1T8OKUIE/M
-	Zpj6jh71IwKxCONOIwgt8eC+4TdsrqVMgaeR02J0ubRSGTn+5ZREVEh5cFdL3d+tcHpBDd
-	lPqI24HwflgFsRIJok+05oGyhoxV1YI=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-79-zTy4a_JjMSOMdtg1xkzB8Q-1; Sun, 09 Nov 2025 17:13:41 -0500
-X-MC-Unique: zTy4a_JjMSOMdtg1xkzB8Q-1
-X-Mimecast-MFC-AGG-ID: zTy4a_JjMSOMdtg1xkzB8Q_1762726420
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2982b47ce35so542495ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 14:13:40 -0800 (PST)
+	s=arc-20240116; t=1762726556; c=relaxed/simple;
+	bh=tKJObxD2DlAcBppI4XR2Q6wxmQG8NDqwYNptQ/xrx7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sRw7mBHMaFdFXy4uWbEDd0Z0RhzYhK3ExAMDmxu0Tg5Ql7Gkq7A4NvVQt7xjHbwzwD/A4ma/IsKRk5fOH/gYwmaDQumSOKP4bSbNtgQnQle4BmCJAnQR59IPiULgB7nKiXkKBwG38UpvqNcz1RAYrgIsNIi/2s31q8ZWBm9xru0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=CITd8G5K; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2953ad5517dso22087395ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 14:15:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762726420; x=1763331220; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k1khi8+SBsdLtnYEbz8P8DQWF/VnSE7LC2X12JEweD8=;
-        b=lMc/KIhK7Un8ANRhZMPaKhu4kt9fmFo2OclfHvERw7AITZnzqJyDASpoR7x043n/RQ
-         u4q5/gNWQmevL8DJNACRXs9fjoczPPxHzIvkfWNvY6ilaBHrxvTVt0mhHYCJLX+ZPo4U
-         snNa/3ab4wR4KxpuffHC+0a0tzACKCSZ8UXqk2ZQT8K+Lkh8/i4HlD7YsNkNIDrl8mjg
-         0zpr24o7/qme+jLUbLWVOpMbvv+voIFUp7Io/vMxtdjfPpz/IWZw8xW120qXo1MrijOI
-         2txWyNZqPuWqiiLBJmLC+FAuDDhzIWxSlCJzyfiaoxf7cYSIPMYkdddNG72BZlq9u+L3
-         10Qg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1762726554; x=1763331354; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o0lKfVVOJDL/oN342gKhQywskOHolZGAyYrUsYWvnBU=;
+        b=CITd8G5KOpvZ68qI9uSjNigevbXvarkWjiHv420oNmyotgIMqgsimGHUkexDMnk3xd
+         9kZ3ajk+h/d1EFhxPGc6bttlmZxwe25lKI51C8TUq/Sekgofp01piz63rZXq5XE0CLFo
+         SGdbmaSKP06tQSJHnZKRgyWsQW68cycMkcntfY8zSlXlvsxYMdismQiQeJmhB2qqaFC8
+         DXaOU5iLArBGDn67JLgWAJtJT+xtSyrakOCIZRYTWBx5/YKPtcRgjJS3lJAstCWTGBF9
+         yoKmYeh+uPyN9sZY2+IfPEvBoUH1/daBBplxqm/IcTrT4+nFAv/0qgzy4PhpDrwfl1kd
+         U2zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762726420; x=1763331220;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k1khi8+SBsdLtnYEbz8P8DQWF/VnSE7LC2X12JEweD8=;
-        b=PerjtJm1YtEVwl/IR4+IiC7h0OHw50AAeHzcqpPo5N6jP9IMCw7akPncVI3dJ0/z7g
-         D/4W6nKyZAsOSU9PkVKisFs+Hi4Zd7S4J34ur2Dz6FMaxFt9Mk+SASMjcEXUTzG6+jGG
-         Xj1pXQUnosSvJ8XQNARPickwiI0IoqtIawQcnt+z9RZ/gwjBIO7zGTt81+MmZKX70m3o
-         s0WVjk/8QebxHXR9oMEf16v6p3fJGSTjA0jtufEAAn7iHaNIUNl3ht71czCrjylv0ykJ
-         AXRtNqn+0RKqY/gxqq4opYOWDuBwFoCb7FohDGcM2II9ayYDS1KM8R8ePJenc8BpETcf
-         BtPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsyA73zMzWjAPNE0OTOzawvTtHLI5WkW0y9f+mLuzxw6YC4JB/E/N8Ab5/GnzsYx/xRe1IXyAznc4Nwdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyytpaw7iz4jVFUWWp3BXEJDFzEZD9s1uqffoMidX/aEKu36lxY
-	se3Dqjl0TzXSjd7/ETgb9HDiIS4eFxIe+qrd7ipEiS+5qpxtok8i9zfrDPMEMYaQh7dLzfvssAJ
-	fY83CfmTJWGtXmReavcYivO8ztR0JPmEa0V2XjW4YBp6egZhD9ou2i/vIc6xZQAl5fQ==
-X-Gm-Gg: ASbGncsgimoSME+BMmGSeIXF0skLcpEU66LsuJMC7PdHnvip7w6YVODxiq6G+CDZVEN
-	Eoov4XhjpIdYNeufWMbUScE17ssyupxF3BU7mzOltSLEq6HTnrk2eEke5A9nHUb8TpZ45hbl0UW
-	APi9sUg7pHbiepT9HBAq8NUMSwWWWDsGaVkuKZiMSJVnLhD04t0cbltjBelqcv21SFQDFY2RJCy
-	21MzTaT6T7G9QqYnQkzbXu2l0/96OlnDQiEwisjChuykW3FHYjY5Jn4egPlax/ri6BOPxZCjqkd
-	INN6M+zdZeXmt3WBYsMEVBXRNscFJlWGUHJJ0ztUDMjEDJWqvt9K2IP3aSbH7O7rGqZ5rHcRalQ
-	wPw7MekrL53IC7mZJK6I2Rmr2UgJXcxANFO7D/As=
-X-Received: by 2002:a17:903:3c4e:b0:298:2879:fdf5 with SMTP id d9443c01a7336-2982879fe66mr5263185ad.61.1762726420118;
-        Sun, 09 Nov 2025 14:13:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGb4XxQvoeJ0W8VROpZXADL4+iR0errP9SCVp5LKwsSJ4XS5XSp4nkIxyN5gwkjzdnJusKqWg==
-X-Received: by 2002:a17:903:3c4e:b0:298:2879:fdf5 with SMTP id d9443c01a7336-2982879fe66mr5263015ad.61.1762726419763;
-        Sun, 09 Nov 2025 14:13:39 -0800 (PST)
-Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c6f20dsm121120615ad.65.2025.11.09.14.13.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Nov 2025 14:13:39 -0800 (PST)
-Message-ID: <290d5834-65fa-4200-a76f-356a754c3f06@redhat.com>
-Date: Mon, 10 Nov 2025 08:13:26 +1000
+        d=1e100.net; s=20230601; t=1762726554; x=1763331354;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o0lKfVVOJDL/oN342gKhQywskOHolZGAyYrUsYWvnBU=;
+        b=J5oBq4NPlw6bYQAlrKzhDkxB7h4r1ZYtmPQ0o9iMch+3G8FmbBJ6QuN4uasey2IUaH
+         5VE+yV8eq2Hm8dQSDqXnFreMEtWjnojgzbEB4aPY34ZdScfmTJJxXxOy9M4C/QkCjk3G
+         3oTmg5obLGzfoyPtbo50ieFSK19Aho0zCByUsQ/Ueu96sDXkcOCb/z0cztRbsNNA1hB5
+         znxNAzKUMjcRLDWjnOzl7l+qJksGK7jKBrILB4aUX6oAkH1eOAWCjF9yb8iIabtKnuhv
+         pcfIGzw1AB6qwxWWR8BMbJ1JSFWDnhSu/Eo1OVjBu6/e8BRXKv1NgeAUvT21dDpWJOvX
+         q2Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCWczTkkxzt6OMwWGTX1Is8/KUO+qyWpySmlP/7g4VtVboXbdTZGQa9AgpuGediNyT4/WkMjDRm5ig6jOTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYpIPI29RR9D8vohA2fxM5SepUCR8JSbpcZ2k1pJ+zXEcH3fAb
+	Vv+E7fRsKghD4dwvKCxOh8/XV0bh+F8TLXQ0pBoN9cPK121/fLNrZi59DBhza6EkknI=
+X-Gm-Gg: ASbGnctM7RSPdxgO6pa51tfj1Gdc152xyghJdjvbht7K031MIQIkYoVIxI+M0Ld97d/
+	bgraEJRzigjUeAjRXFGVqiPNoDh3Cpmo1oEy4a8F/Ff4Qv9ZKho4EBcb6rNovd+i26x+x+VQDcz
+	IeMMjeFXY9CASY09WWwKimXAe2fhP8krccHDeLZuBJqvOhrgfU/hFytxect/g/pd8qdGzY/4S42
+	noa3f6uc9C+VJWQ8gZydsOprW5YKfB+UoNWtB/dG224lDMxjTcccfPH/c4NaoXURhUVeWsAdnMB
+	krAmsWQ42VQirEGabv4FNc2pcbiVmefUNXbXAX9QjmZSpSBTHK/jYU7WWirpD4QgMc/VbbBhmh5
+	vid1k7vnA4DME4rjceT2TloE7RwWMyPGcQgAb4ReJjSNrq1FTwJamooxqRlc7jFyptboc/2pyhu
+	+HrOfG+ON0228UhBBdM3nhjMpWMWGw4QDYJplAuxOMa0bq4aeOOSjHTRMrbKmM9A==
+X-Google-Smtp-Source: AGHT+IF8xjD56HA0NLui8kHyTpt5jvrPCAkNdesIKCe+WNAvzhOA6aIdD5XSQadn6WKTfCDM43WCgA==
+X-Received: by 2002:a17:903:fa5:b0:295:c2e7:7199 with SMTP id d9443c01a7336-297e56acaefmr86527445ad.29.1762726554460;
+        Sun, 09 Nov 2025 14:15:54 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-58-136.pa.nsw.optusnet.com.au. [49.181.58.136])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096b8f4sm122294505ad.10.2025.11.09.14.15.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 14:15:54 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1vIDhO-00000008fPl-33cV;
+	Mon, 10 Nov 2025 09:15:50 +1100
+Date: Mon, 10 Nov 2025 09:15:50 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Florian Weimer <fw@deneb.enyo.de>
+Cc: Christoph Hellwig <hch@lst.de>, Florian Weimer <fweimer@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
+	Carlos Maiolino <cem@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+Message-ID: <aRESlvWf9VquNzx3@dread.disaster.area>
+References: <20251106133530.12927-1-hans.holmberg@wdc.com>
+ <lhuikfngtlv.fsf@oldenburg.str.redhat.com>
+ <20251106135212.GA10477@lst.de>
+ <aQyz1j7nqXPKTYPT@casper.infradead.org>
+ <lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
+ <20251106170501.GA25601@lst.de>
+ <878qgg4sh1.fsf@mid.deneb.enyo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/33] arm_mpam: Add a helper to touch an MSC from any CPU
-To: Ben Horgan <ben.horgan@arm.com>, james.morse@arm.com
-Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, guohanjun@huawei.com,
- jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-20-ben.horgan@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20251107123450.664001-20-ben.horgan@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878qgg4sh1.fsf@mid.deneb.enyo.de>
 
-On 11/7/25 10:34 PM, Ben Horgan wrote:
-> From: James Morse <james.morse@arm.com>
+On Sat, Nov 08, 2025 at 01:30:18PM +0100, Florian Weimer wrote:
+> * Christoph Hellwig:
 > 
-> Resetting RIS entries from the cpuhp callback is easy as the
-> callback occurs on the correct CPU. This won't be true for any other
-> caller that wants to reset or configure an MSC.
-> 
-> Add a helper that schedules the provided function if necessary.
-> 
-> Callers should take the cpuhp lock to prevent the cpuhp callbacks from
-> changing the MSC state.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-> Tested-by: Peter Newman <peternewman@google.com>
-> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
-> ---
->   drivers/resctrl/mpam_devices.c | 37 +++++++++++++++++++++++++++++++---
->   1 file changed, 34 insertions(+), 3 deletions(-)
-> 
+> > On Thu, Nov 06, 2025 at 05:31:28PM +0100, Florian Weimer wrote:
+> >> It's been a few years, I think, and maybe we should drop the allocation
+> >> logic from posix_fallocate in glibc?  Assuming that it's implemented
+> >> everywhere it makes sense?
+> >
+> > I really think it should go away.  If it turns out we find cases where
+> > it was useful we can try to implement a zeroing fallocate in the kernel
+> > for the file system where people want it.
 
-Reviewed-by: Gavin Shan <gshan@redhat.com>
+This is what the shiny new FALLOC_FL_WRITE_ZEROS command is supposed
+to provide. We don't have widepsread support in filesystems for it
+yet, though.
 
+> > gfs2 for example currently
+> > has such an implementation, and we could have somewhat generic library
+> > version of it.
+
+Yup, seems like a iomap iter loop would be pretty trivial to
+abstract from that...
+
+> Sorry, I remember now where this got stuck the last time.
+> 
+> This program:
+> 
+> #include <fcntl.h>
+> #include <stddef.h>
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <sys/mman.h>
+> 
+> int
+> main(void)
+> {
+>   FILE *fp = tmpfile();
+>   if (fp == NULL)
+>     abort();
+>   int fd = fileno(fp);
+>   posix_fallocate(fd, 0, 1);
+>   char *p = mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+>   *p = 1;
+> }
+> 
+> should not crash even if the file system does not support fallocate.
+
+I think that's buggy application code.
+
+Failing to check the return value of a library call that documents
+EOPNOTSUPP as a valid error is a bug. IOWs, the above code *should*
+SIGBUS on the mmap access, because it failed to verify that the file
+extension operation actually worked.
+
+I mean, if this was "ftruncate(1); mmap(); *p =1" and ftruncate()
+failed and so SIGBUS was delivered, there would be no doubt that
+this is an application bug. Why is should we treat errors returned
+by fallocate() and/or posix_fallocate() any different here?
+
+> I hope we can agree on that.  I expect avoiding SIGBUS errors because
+> of insufficient file size is a common use case for posix_fallocate.
+> This use is not really an optimization, it's required to get mmap
+> working properly.
+> 
+> If we can get an fallocate mode that we can use as a fallback to
+> increase the file size with a zero flag argument, we can definitely
+
+The fallocate() API already support that, in two different ways:
+FALLOC_FL_ZERO_RANGE and FALLOC_FL_WRITE_ZEROS. 
+
+But, again, not all filesystems support these, so userspace has to
+be prepared to receive -EOPNOTSUPP from these calls. Hence userspace
+has to do the right thing for posix_fallocate() if you want to
+ensure that it always extend the file size even when fallocate()
+calls fail...
+
+> use that in posix_fallocate (replacing the fallback path on kernels
+> that support it).  All local file systems should be able to implement
+> that (but perhaps not efficiently).  Basically, what we need here is a
+> non-destructive ftruncate.
+
+You aren't going to get support for such new commands on existing
+kernels, so userspace is still going to have to code the ftruncate()
+fallback itself for the desired behaviour to be provided
+consistently to applications.
+
+As such, I don't see any reason for the fallocate() syscall
+providing some whacky "ftruncate() in all but name" mode.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
