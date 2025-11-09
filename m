@@ -1,288 +1,232 @@
-Return-Path: <linux-kernel+bounces-891900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E470EC43C8B
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:09:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C25C43C8E
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 12:16:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7441F3B41E1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:07:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A44443A8C58
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 11:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C062E3AEA;
-	Sun,  9 Nov 2025 11:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B270A272801;
+	Sun,  9 Nov 2025 11:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhfXtBun"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bvvvyK6M";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Bs4/hVB+"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5881F2DFF18
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762686387; cv=none; b=XS4csLDA/rvwpr4+y2pi64F5s8HPlEJL9IFFYYHdTUdoh2hv7nlF9wh3mLdyNXxJxjv+H3XIjVwKELIKan1WhRW92HeygRgYgbeVA5EvW1T+1wRSqKckEsbpVSHSdrC+C/lGDDPlvElPxz8tg+AF5itkYgwsmX9NjQL3FedezDM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762686387; c=relaxed/simple;
-	bh=UvRQaBE+xBWDjEoTvma8nwauXFhwx/8Rb4iPAQ5Y+mI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XSaiNnyH+eaejtj5eSGgYUUlD3yYwvtyjw4hkMZkHXobF9Upr0kC8lHbks3kXALBHAzgc9+n1tzMYnDsTt9wQOEncJKuqDo2yNrDsnZ4U8lJqrbWAmUK63aM59YiSl1Q4Wkx9AqaHLo52HzN/7MdgfmKhJSPEq3k4VlMmFnPEAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhfXtBun; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-429b895458cso1011217f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 03:06:25 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D422AD13
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762686999; cv=fail; b=GotwLhGyxN//guWzw0dP85Kum0JCEnl6FfJVKAJdsUrE/MWTVCyD26WUaGCzxBq47cQvQGfNjBpHR0wbQb113zg2yLVd1Cd1jOz8uV1fdYLhkpPJdd/cv1dCOliZtBELrG3ODucmfRS00fdJ6X0mslDJN7bmOEvqY3DiGHuSk1k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762686999; c=relaxed/simple;
+	bh=OvjuWYDBCllfdQTVioTr9QzBqYmUL1h4qlnfd+yfR8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=P6t4nBmk0qVk6/H2/KzFK6QFY1BIogMCa0kRxbqD9JBPdADQQNU79E0mTpKseB3GpPGZH0FP41q9cEY/Jch31eD6iymabzaKGasnRDX/ZUMoJrD2Y2K9vhj8RDXJtV5B5/YcnmyLma7sgl1sCAmPnSFjo1dL4ByWF22TAMjLt1c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bvvvyK6M; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Bs4/hVB+; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9B6kPQ006236;
+	Sun, 9 Nov 2025 11:16:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=om2GqzOaTxu5arg5
+	5u1YkSyccZu49zmhNumJPtJGqfg=; b=bvvvyK6MDyVpjEQ5g9ygE02/dtaHTsHm
+	TK6DHCR54104fZDg7j4Uxb3z5p8sapneD99bKkXCsP/jP9uPEbx8fqAU4FF24hLM
+	iOst7gky3K868xx7+Szbee0aV+nWKt14euVTZmoDtker/l7eSz8qAE1o0+PoFyp/
+	sDQwP1z0jhq/8vz2pWJEGHZuHZkQ8E0zwenjC7gcBNMc23ZFLEOx+OFwlsXBxAWh
+	eDYhlO8b6xbKYRUvL1HYuWPxDglm9RzFU3NOTectSDBQQKchkvttYpiWi0I4BklP
+	lm5MbseHiqIESaz/h9np7JpPojJtqKRLJ0ja6g03Nq+c4UcrkB0gZw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4aas1s81b0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 09 Nov 2025 11:16:19 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A95n7NW039984;
+	Sun, 9 Nov 2025 11:16:18 GMT
+Received: from dm5pr21cu001.outbound.protection.outlook.com (mail-centralusazon11011013.outbound.protection.outlook.com [52.101.62.13])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9va765rx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 09 Nov 2025 11:16:18 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dsNTi/H7+6hxskvAyQnAPnJfWNqzQ+B5zn82+9vNkjFMeFAxOwipDMkofsdrLxCXRICxt1CNR+t6KfwL13Lh57no9c3HPQbJO1Psx9vr41ifjlfs3n2dC6+rT7mwgmagYqXhze1l+s9C6OKbejrvKkcSe9ACnqHyO6Ulbr85NqeUV8ZIs1glBjXd6c1+VahyDsX3ZQ4MjyPBBtfw1vLYkjGAR2JFhPNvx0vfl2TxT8JsIKrdmjqkPk13PjsZbkZIEUoCn/PWBxvG5/oSGaZAGcz6OTf9lkYGdqT6Ne20qWFsePQJa7gytUtVdVg+eAAUhnfts83jIerlfdQlD1+/Zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=om2GqzOaTxu5arg55u1YkSyccZu49zmhNumJPtJGqfg=;
+ b=h91tZdcny0gifWTm/CUg5dQBGd7KNcnVXLY2GpQtQPo3Hl4iokJeBXepa2i0Q4s7l7R8wIV4aZlu+nq71J2D/NsbBgQrjpwBHw4wrqskybhZHJCIbaGHLkF/ciSA7OP4sbGjkThClw6R6D4kkzEvP2LCetchyj2cnCVPsMh/JATm59LS2FpWhWZ9W5jD/Uwd5ftRsKZEFn8TORscNWournLkf7GhkNXp58VJ515pkG88+GDBkvxy9X/vl66sSEJszvjbfeo3BLTpItrUzUcZyFqAsyQxuPYWSsppgQUZhHYlbjRDGVTNB0xMLeH4eU7XGFvVEeHTUY/3c9JySARoSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762686384; x=1763291184; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e+hYRYhUCbZd/x0skNNMpBqkY/5tBkO38vfAM3Du2Qw=;
-        b=RhfXtBun2NIt/w9RhohkzRGSorw8FN5Hi9T9CGuwhB0pLKA5wMtwygaHD2YE4iVm4p
-         9bnLXueZvBF358A2rGdMbTpyvbuWfFbhZfEGKRtryWF3qnslTvKc0KZHdpa5cai+IcOX
-         GsztNZLvGjBV1dp9clbjeBLv6juB/vlBF1pjfJhR3Q18hL8fBvKLBDyk8neU6pXDC3LY
-         dUgQ/voCzbRzqe+g+1TU2gSSoYMPBrtwUZmwNglWjC01e/uiVVtFRbZVUl7Gcq9fTcnV
-         JVFNqYbhGkGSGhBdZAJmIwzmqqYySU9O8pufu0RqVS85Pt68ysDhIs8c3ptX0TpyrqVh
-         dfIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762686384; x=1763291184;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=e+hYRYhUCbZd/x0skNNMpBqkY/5tBkO38vfAM3Du2Qw=;
-        b=MLelty/pH08hiUNbHQKrv+2NN83stVVZeChH3CUVeab6/ggqueSaNGIZjUwIthJAWj
-         wB6HSL79OJ9Q9zoIs1hIdmNb4Ig/yIUOOBQ/yYNghAuPI93uHEI0dpwpopzIzyz+CUuq
-         rHOzF3jromLUnJjz1TDMwSPD4LCJTLWAbcWMUGdnPPpbeY+5/XJtfnne84X09X/PVdta
-         h4ZUGDhF7yag2KjL59mC6dAPCOhqCo5buy+LhM3LhuT19WYgMoXSucxQ1l4/RfC5II6W
-         iKUTwxLWTDvYxsZce6/Kdu0Sw0gayE/299N4z5HUumeIdKTUSypE0mg6Acij4NlDnonA
-         /UhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXWJv+1lFHic//0wIxJJ0fl1+yHiyeQrIUSgCml1sEMmCXEwCb5FyffiVCvyZ89XV2zLjU14cghtxm5MU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKJ1KSOIx0g++PCgm99ArTwTtUU3BXAIzkCuSdtS5nmQ1Vvs9M
-	XrZ+QZ4PmMlhVhLskY2xmHuLnW3bcTG5qf33UuTlpb6IZuYDPePa59gX
-X-Gm-Gg: ASbGnct5OvATCeGrOvqod2G7mfCEduqHW/RFzfdTsL+1QNn8VUS2FHeKjJgk9anPPuy
-	kE6utD0F2rGdOi/hHm1lx2Dn0fe+PFkUYadfiNV/pC5ZzwG+bMvVDF0qI1Irysa8MYDP4dCf5xK
-	8xDUO4z6lYu2Y0EyWGIkIefYBswJ3AX2h7WmoXEJgJS6fZrnEpTFBT0jz3VRfHmFlhJM+3SImpy
-	JsYh9SMFMwt7sVOqQx/ir6dwkGkw5JFp2FyzrseTJIJyH1muTvxWPpktDa9K1fYIQ9W6hW0b36p
-	9yj+Ai5ju5vfRfcOSJ47zl2ak+BwDcLKMw0KU+XAof/o4Ux2vht36tVitttBT8jn8DfkM/Ktj3p
-	b2uB/LcIYcAx5t6H0Bmd4lm/qXgac3n2TJ1r1WMmdCVqUz8uF51G7TGm5VH1woA/9+PSzQOaG20
-	jBhamgLQ60oK6IcbQ=
-X-Google-Smtp-Source: AGHT+IH92q5QOXzI4WZ4CJLmbmLqEP8LnnpB979AA8pp1DpotusvDsiCb5AlA0AXesNOD4EDvj76Ww==
-X-Received: by 2002:a05:6000:2313:b0:42b:30f9:79b6 with SMTP id ffacd0b85a97d-42b30f97cabmr2472285f8f.58.1762686383589;
-        Sun, 09 Nov 2025 03:06:23 -0800 (PST)
-Received: from [192.168.1.243] ([143.58.192.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b316775f2sm6354925f8f.16.2025.11.09.03.06.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 03:06:22 -0800 (PST)
-From: Andre Carvalho <asantostc@gmail.com>
-Date: Sun, 09 Nov 2025 11:05:56 +0000
-Subject: [PATCH net-next v3 6/6] selftests: netconsole: validate target
- resume
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=om2GqzOaTxu5arg55u1YkSyccZu49zmhNumJPtJGqfg=;
+ b=Bs4/hVB+xvJC+1YzEwre0t5kdQ0LL3sRIhlC+lB9kUAQazfWqdGL4aX+SyrsP1WMuudp82Z7cF5H91a0yErGS0EjAaYjiQX4N9FCpyTPiaWtP5qIQkRdn3Uw0MGE0W6VaNmLEom8sBJ6MlOfO3fj+ida6U0tH1alaL9Wd0R3q4Q=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by PH8PR10MB6410.namprd10.prod.outlook.com (2603:10b6:510:1c5::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Sun, 9 Nov
+ 2025 11:16:14 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9298.010; Sun, 9 Nov 2025
+ 11:16:13 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@kernel.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Jann Horn <jannh@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] mm: perform guard region install/remove under VMA lock
+Date: Sun,  9 Nov 2025 11:16:05 +0000
+Message-ID: <cover.1762686301.git.lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P123CA0027.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:151::14) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251109-netcons-retrigger-v3-6-1654c280bbe6@gmail.com>
-References: <20251109-netcons-retrigger-v3-0-1654c280bbe6@gmail.com>
-In-Reply-To: <20251109-netcons-retrigger-v3-0-1654c280bbe6@gmail.com>
-To: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Andre Carvalho <asantostc@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762686373; l=6066;
- i=asantostc@gmail.com; s=20250807; h=from:subject:message-id;
- bh=UvRQaBE+xBWDjEoTvma8nwauXFhwx/8Rb4iPAQ5Y+mI=;
- b=Eb0IHEBBAkQPP9Q1S+7s8n9lVkGxOwxJABGurHAOtNTpg37S2wv8wVq4+JLgHqVDrahkZ9cp0
- wu2PefKD3ZsCc7ly9N818FVmcPMlbA8hZoJcWoLoiF3N0WEZ9aPHkZp
-X-Developer-Key: i=asantostc@gmail.com; a=ed25519;
- pk=eWre+RwFHCxkiaQrZLsjC67mZ/pZnzSM/f7/+yFXY4Q=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH8PR10MB6410:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1bc54803-9e76-44df-9a53-08de1f8164d8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?wsQ6qKqKp48gRF06yUWR00IOR1bb78yhF+kb6FmVIR7RcW6n+hzdhoViTKwO?=
+ =?us-ascii?Q?q7oZJDC6ly3Sfdw/B03Qya+S9ZRu6Wv4LsKJuWY3tMeDDhnQ1pWUKw9V3+Ei?=
+ =?us-ascii?Q?bwkeJQnWkfb6OreQ0M2WedfFYh/1z8BUpOTHRefgvNHgXLGwsyn3no/rheSL?=
+ =?us-ascii?Q?BEZE1yLKEHSXymYxoFgiKSat8O8BjYZ2ef9akx5zfOVwnVL6Me9HSGAdPeyg?=
+ =?us-ascii?Q?zS9DuxdpXcLZUu446DxWKf1kXR1y6Ssthtk8oy8HhfOAAxMca1FlyhOUI5SX?=
+ =?us-ascii?Q?JT4ZFVbB+NCgwfI39Etj9LuTKkNWDdSmyzXPs31ehH15h6YlEjHLj0uwt+Yg?=
+ =?us-ascii?Q?QvB6rKGUMsH8yC9gdqjW0yJK7/huN3dEgXzDaeGC33NORXFCrnmfKoU7HRBJ?=
+ =?us-ascii?Q?J4UP92gwpv+DHPPCtJBnbGuz9hYaKmD1joBn0sNvAhWSN0+yTjNPZxpon44X?=
+ =?us-ascii?Q?ZqgVzlT91/D28JtGXO4MZTvDpuAiA21RprbNMjzp8A5l5EBCOK2DKTtk9Prt?=
+ =?us-ascii?Q?WPQWYozikwGRVQhSIWoeP9M/qdWKShxGwhs9U0hd9PeUqyVlkslS6tQiEF7t?=
+ =?us-ascii?Q?RHcypEiHX2wMuZRjnsodjK1KX0rO5E72QUDcQE2qkLdwugVhhyo6tgrXhYQV?=
+ =?us-ascii?Q?NMMejYIo8mMld9NCtfLHyczmpT5NmqaWwkzaIDSJVoL/EG7W8SrnvfAwYjf/?=
+ =?us-ascii?Q?RNrZvZtbzbnRv0GVhk2tc398wNHYOMshAalXwFkxPA5+2FEvpdaENhn4yp/k?=
+ =?us-ascii?Q?pbvktdO31TJMxB/DMIDnkUTaNypLYZuzxq7i6qJALWX1Z1eG7jtUiteDlis3?=
+ =?us-ascii?Q?K/VBQd7rrd/QYODHgRc7Lz3ERBVYmkvgjXKfgOp6pnbAyqqTpr8HPa6qvrKi?=
+ =?us-ascii?Q?WvhljyDunYy3hZxt7BG7KUJFVX2N2futA4Ywhp6eSf4vdeukCbjZuxBbLmuH?=
+ =?us-ascii?Q?frmwP268evpeGmsuruZz065dpXMenaDoqJJ2lS/dWAcZRGl2gda3136GCQXl?=
+ =?us-ascii?Q?M/AsouIr3HnsLZe1ACirGughrNF+ttD7w5gpZkn6RjEgzf4djoka8hdtR/Mk?=
+ =?us-ascii?Q?zE54d35S9LUNs7xNR4vz4GBgHU6yXjUPia+OH+i5EsQ4aQw6gYyMocqetvB7?=
+ =?us-ascii?Q?kbpb0FDgwpsYXNRXi9lFjSNvbMAyAarZMY7GXAnjKolugdpIiWGLAGVafvjS?=
+ =?us-ascii?Q?8ADvf6ojRdamzLAHTXNPKD2Q+vJkMMB8H8oqrtgmHoRikonqGq328EPAUI8+?=
+ =?us-ascii?Q?D8EuxTRYRhmh/eGdSG37fExxuLedHv+Ba8iwSyvsl8zuDSk/7XFjmm3DRFMG?=
+ =?us-ascii?Q?6k1vEVmnF3YUJLXrPfCPsFhNl30CY6tekp/inp5nd0ZPhA28gzNIXulTKT6d?=
+ =?us-ascii?Q?nKBXszV54jpVQc8EaX988pG7XvQ+mWdexXWP4tQhrilAaarILeY6Lv44cC4M?=
+ =?us-ascii?Q?MAiztXA9kjVbQbESExOvVij5wSmRPuYd?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mLYZdbDBcAaSj8sXApRpeWX2DIl26lerT/+PUFzFwddR++5TCkcbQShKmwy/?=
+ =?us-ascii?Q?7y3Z66mqO8X7AxIBVyovbYxDp49mDTs4iCuvenAWYpLTHndyOPZS3uCZ2+7D?=
+ =?us-ascii?Q?Tz6Mk4izqXWGe4t0cGUWKMdVHcLrhp2FphMHiGhH5+EmT976lfNt1zWtVa8h?=
+ =?us-ascii?Q?MM1OSHvINVX35eQqi453SRbYz37cihS5ZmAk/XWx5TQ2Ga92RfVeb/hhkP+9?=
+ =?us-ascii?Q?I9Rzeew5BK84sMkf93ArMEk5nsEMXnmjzC+Hxz8ltQa8fi/8INYdIKywHIk3?=
+ =?us-ascii?Q?W5+A67jvsxpdPzGMxvYlAA/IsmemHWJs3LDc/UDo+lDGEnrW/fexvErPfLJW?=
+ =?us-ascii?Q?aXlXAAwbq6gAvHYdZ9RSujsJWUb2sOso+3iwYFBAPEA6z/Mfehq4a0BjP399?=
+ =?us-ascii?Q?7WDHDJKWXZ2sGa94tRYXNZ7q/HSudjIC87lz9m5MGplNR+OOfILG0lYJgOtX?=
+ =?us-ascii?Q?gwcMEliB+tlvzM6IdwAhRf3mL7qU+oXTy7GUeTGvc0J2nMhwd259wp7SYVCT?=
+ =?us-ascii?Q?BNOjhcAegi/qL27OYnbQJ36JOiGKwvSTLQl/4kQ1ydU64dKhsfX/BgrV8Nq5?=
+ =?us-ascii?Q?/DA1FCJd9I2FMLOKt46OZ0D8aEzqy1rqRCXG5gChyqTl15ypdZ14sjQr8vzV?=
+ =?us-ascii?Q?pmzS56oLJjUxGVKuX5/AeOQA1CXn8mYzak9uhYBu9pxPj34JAPLN9T9euE3O?=
+ =?us-ascii?Q?clCJ3SJsKdjGgpTlG2Lz2vvfJAYIu7Yr9Cj2Go/GsU0zet+wA5l+djap8jNI?=
+ =?us-ascii?Q?lgB+MOGRgSz8vWnBLL5CicfFlklfuUCOovd1a/Y/4Wp7YgFXgYlZE7txItet?=
+ =?us-ascii?Q?calYmtJ1p1Y07kRNhwkFnL4mg3vOliBCUAnFXefGzT205dxDklHT19a96BZ0?=
+ =?us-ascii?Q?iEi9DnYpsz32zMEZCVQTGSDz3WA4f8iodOofMl634tBEt0/9fKhvZ5UE/CUk?=
+ =?us-ascii?Q?EByzYIHSi1sXNHGA9/lBPkT5bDRRWTJvFn6eztHKuMFUKcYD51+0oNwrq8L5?=
+ =?us-ascii?Q?3S/2h/5oNH9O/MsKFEIFWx1LKUvWDVAOgAsiGV0rYyaKBwub8LWDNmRbKJ6W?=
+ =?us-ascii?Q?q0mVYkD2LDsdMQ/tD94v2kyjYaBz+UBMMxAkIimd7iRV4IW/UdmFvXWUC1P3?=
+ =?us-ascii?Q?VQziraesZwDY24Nv1qK+4g+5/oeuFwz8ArSmowT/P+MR6ojrproHRjh6Rw18?=
+ =?us-ascii?Q?22N4rAIfQz3UslwtZMBXMSTuG1rVGq3fVijMAm6xGfzVxiBanaeHiMOVhj/A?=
+ =?us-ascii?Q?R56SqHYQDCwcIJ26KVPQJrJhoL3ihA63LyeZLqL3o7eoOIaxBvDPq8w6A+Nb?=
+ =?us-ascii?Q?fvKTEX4rEe17zu+ZRm/s1tckq+uOE0Ul+JNmgCM+H/0DmjhRok/Pf1vlTy1s?=
+ =?us-ascii?Q?s+5unEvTHlorg9YAIIH+8/1Xyzr+Z5Qap1461AjOMIltSYXlaavsaGUQMIGN?=
+ =?us-ascii?Q?+sypGxoG+LmT4i4/3eyiG2V64IIrSo/J79wCV2O6OaZDD+I0sbm6UkockZAU?=
+ =?us-ascii?Q?z4dwqe/SAJinZZCCGSXW1w7TDRKrpQcI23v3NeiGTZNBdTZjXjY/nX1Hst9E?=
+ =?us-ascii?Q?XFHarc6nu+80qGnPPoML5vsSWFqgxVeJISzIMAUpvAlqrlTSRj0+wX890N2F?=
+ =?us-ascii?Q?TQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	BiScKSKUE2Vuomn+j/RcEeEpbklcSXHypPM3FHrNYCEeNMjXgeRQDpzlxEVy8ly5O784vAjE3Do1u6MUXbqzqXMgn7S1jdevnmREfvBTNGxNSg8AR2qD6Wgb+EnCzvCUEmFnEY4Lj9wFnXJ+xjD1nEsWkEWnm7zblmxep9hxuD+DHkCH2VCCq623/YlCC04OpTilqgLKL8xpRL/c2gqAqSpRLJxOJzbI3ggOOoCewPJM/ECF3NqvSgIpWeX+EXfXqWSCjqycMIqkmB6VfFm59B/P/Z8Wu2XzpZdAGZi2+9H1xu1hrQAhNZFOceJwb+fU/3odZGYV3gVZUgDI8n8+X8U21O3sLPSix8bUTTR4PAL5q1RwHJkxovki3ZV5iSyppuVYy7UErGH4j2ynT4IPKbnSgMadKzqZk/IVNj0clwnMICMzH7OwH3Fi/jGpMKBR/VRszzKgf8Gh688lmmS6xsdWB+1ziHoH2izUk39rSATz4YMD+3PmwjIHqpbXtMH5ov+neKTTg5LfvXLPRaS1eA32CK6pX2iP2bqG4Gve7H6QM5OBEVsoXfBJx7UJxO52XsVFZHH3RcR40RPr2pofDMBIFOQxSdDylPlDQPAXf24=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1bc54803-9e76-44df-9a53-08de1f8164d8
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2025 11:16:13.8349
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 17GkV6lS+332ZXLWd1hpj2qjgQ+PqAx07JZT9Hk8I2MllrDhAGNZdpMCqMjs/WoSdiaTFNYKkWAQqFgC0oZQsOgsXUfiipgS10LSYrd/4Ec=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR10MB6410
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-09_05,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
+ mlxlogscore=730 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511090099
+X-Authority-Analysis: v=2.4 cv=N6Yk1m9B c=1 sm=1 tr=0 ts=69107803 b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=6UeiqGixMTsA:10
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=WRmLX566G3Uji8YqiXYA:9
+X-Proofpoint-ORIG-GUID: MilvmVr3jnEm7SCpFZsV0tSV6zlskAU0
+X-Proofpoint-GUID: MilvmVr3jnEm7SCpFZsV0tSV6zlskAU0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA5MDA5MCBTYWx0ZWRfX+U4oiOo1flw3
+ Q4wRw7hlsq5o/YE0+ygJA4RScZRgHUdS0QJwrMPGAK5DT/PjSmjA5jpNYzooFZPnMW26J4PjzWj
+ iQwz1oZIX5/pGlHdjLt5xJ0T6w/B4bvKDUP7r3W3/lNsfhpqC9Sz91e/biASUFgHofI9i21r1Te
+ a6F7aVq0Lu3f5B8MeGQPCuKfbfS8c/6YYvCjUYnr0dTlhtOLtfru/vRjwzhnVrNxZQDxFdM9tJO
+ HU8G6sWbhxXHqoJ0M5rh9RYbrcHMo2bZ010W1KXfai1SUFZJzTWwGRBCA6RZOF7m2VCyT2Ai8Fz
+ FLA+H+R+mj7pAlfUKwFAInSb/ZUtfJuEeF9HzKi8rAJZE/BdyEj3OOb4ENWz4/HVjHIQfXSRJXA
+ tQ3Q4qPlaimRZSgV36dcnkjeDuWTeQ==
 
-Introduce a new netconsole selftest to validate that netconsole is able
-to resume a deactivated target when the low level interface comes back.
+There is no reason why can't perform guard region operations under the VMA
+lock, as long we take proper precautions to ensure that we do so in a safe
+manner.
 
-The test setups the network using netdevsim, creates a netconsole target
-and then remove/add netdevsim in order to bring the same interfaces
-back. Afterwards, the test validates that the target works as expected.
+This is fine, as VMA lock acquisition is always best-effort, so if we are
+unable to do so, we can simply fall back to using the mmap read lock.
 
-Targets are created via cmdline parameters to the module to ensure that
-we are able to resume targets that were bound by mac and interface name.
+Doing so will reduce mmap lock contention for callers performing guard
+region operations and help establish a precedent of trying to use the VMA
+lock where possible.
 
-Signed-off-by: Andre Carvalho <asantostc@gmail.com>
----
- tools/testing/selftests/drivers/net/Makefile       |  1 +
- .../selftests/drivers/net/lib/sh/lib_netcons.sh    | 30 ++++++-
- .../selftests/drivers/net/netcons_resume.sh        | 92 ++++++++++++++++++++++
- 3 files changed, 120 insertions(+), 3 deletions(-)
+As part of this change we perform a trivial rename of page walk functions
+which bypass safety checks (i.e. whether or not mm_walk_ops->install_pte is
+specified) in order that we can keep naming consistent with the mm walk.
 
-diff --git a/tools/testing/selftests/drivers/net/Makefile b/tools/testing/selftests/drivers/net/Makefile
-index 68e0bb603a9d..fbd81bec66cd 100644
---- a/tools/testing/selftests/drivers/net/Makefile
-+++ b/tools/testing/selftests/drivers/net/Makefile
-@@ -17,6 +17,7 @@ TEST_PROGS := \
- 	netcons_cmdline.sh \
- 	netcons_fragmented_msg.sh \
- 	netcons_overflow.sh \
-+	netcons_resume.sh \
- 	netcons_sysdata.sh \
- 	netpoll_basic.py \
- 	ping.py \
-diff --git a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-index 8e1085e89647..88b4bdfa84cf 100644
---- a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-+++ b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-@@ -186,12 +186,13 @@ function do_cleanup() {
- }
- 
- function cleanup() {
-+	local TARGETPATH=${1:-${NETCONS_PATH}}
- 	# delete netconsole dynamic reconfiguration
--	echo 0 > "${NETCONS_PATH}"/enabled
-+	echo 0 > "${TARGETPATH}"/enabled
- 	# Remove all the keys that got created during the selftest
--	find "${NETCONS_PATH}/userdata/" -mindepth 1 -type d -delete
-+	find "${TARGETPATH}/userdata/" -mindepth 1 -type d -delete
- 	# Remove the configfs entry
--	rmdir "${NETCONS_PATH}"
-+	rmdir "${TARGETPATH}"
- 
- 	do_cleanup
- }
-@@ -350,6 +351,29 @@ function check_netconsole_module() {
- 	fi
- }
- 
-+function wait_target_state() {
-+	local TARGET=${1}
-+	local STATE=${2}
-+	local FILE="${NETCONS_CONFIGFS}"/"${TARGET}"/"enabled"
-+
-+	if [ "${STATE}" == "enabled" ]
-+	then
-+		ENABLED=1
-+	else
-+		ENABLED=0
-+	fi
-+
-+	if [ ! -f "$FILE" ]; then
-+		echo "FAIL: Target does not exist." >&2
-+		exit "${ksft_fail}"
-+	fi
-+
-+	slowwait 2 sh -c "test -n \"\$(grep \"${ENABLED}\" \"${FILE}\")\"" || {
-+		echo "FAIL: ${TARGET} is not ${STATE}." >&2
-+		exit "${ksft_fail}"
-+	}
-+}
-+
- # A wrapper to translate protocol version to udp version
- function wait_for_port() {
- 	local NAMESPACE=${1}
-diff --git a/tools/testing/selftests/drivers/net/netcons_resume.sh b/tools/testing/selftests/drivers/net/netcons_resume.sh
-new file mode 100755
-index 000000000000..404df7abef1b
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/netcons_resume.sh
-@@ -0,0 +1,92 @@
-+#!/usr/bin/env bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# This test validates that netconsole is able to resume a target that was
-+# deactivated when its interface was removed when the interface is brought
-+# back up.
-+#
-+# The test configures a netconsole target and then removes netdevsim module to
-+# cause the interface to disappear. Targets are configured via cmdline to ensure
-+# targets bound by interface name and mac address can be resumed.
-+# The test verifies that the target moved to disabled state before adding
-+# netdevsim and the interface back.
-+#
-+# Finally, the test verifies that the target is re-enabled automatically and
-+# the message is received on the destination interface.
-+#
-+# Author: Andre Carvalho <asantostc@gmail.com>
-+
-+set -euo pipefail
-+
-+SCRIPTDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
-+
-+source "${SCRIPTDIR}"/lib/sh/lib_netcons.sh
-+
-+modprobe netdevsim 2> /dev/null || true
-+rmmod netconsole 2> /dev/null || true
-+
-+check_netconsole_module
-+
-+# Run the test twice, with different cmdline parameters
-+for BINDMODE in "ifname" "mac"
-+do
-+	echo "Running with bind mode: ${BINDMODE}" >&2
-+	# Set current loglevel to KERN_INFO(6), and default to KERN_NOTICE(5)
-+	echo "6 5" > /proc/sys/kernel/printk
-+
-+	# Create one namespace and two interfaces
-+	set_network
-+	trap do_cleanup EXIT
-+
-+	# Create the command line for netconsole, with the configuration from
-+	# the function above
-+	CMDLINE=$(create_cmdline_str "${BINDMODE}")
-+
-+	# The content of kmsg will be save to the following file
-+	OUTPUT_FILE="/tmp/${TARGET}-${BINDMODE}"
-+
-+	# Load the module, with the cmdline set
-+	modprobe netconsole "${CMDLINE}"
-+	# Expose cmdline target in configfs
-+	mkdir ${NETCONS_CONFIGFS}"/cmdline0"
-+	trap 'cleanup "${NETCONS_CONFIGFS}"/cmdline0' EXIT
-+
-+	# Target should be enabled
-+	wait_target_state "cmdline0" "enabled"
-+
-+	# Remove low level module
-+	rmmod netdevsim
-+	# Target should be disabled
-+	wait_target_state "cmdline0" "disabled"
-+
-+	# Add back low level module
-+	modprobe netdevsim
-+	# Recreate namespace and two interfaces
-+	set_network
-+	# Target should be enabled again
-+	wait_target_state "cmdline0" "enabled"
-+
-+	# Listen for netconsole port inside the namespace and destination
-+	# interface
-+	listen_port_and_save_to "${OUTPUT_FILE}" &
-+	# Wait for socat to start and listen to the port.
-+	wait_local_port_listen "${NAMESPACE}" "${PORT}" udp
-+	# Send the message
-+	echo "${MSG}: ${TARGET}" > /dev/kmsg
-+	# Wait until socat saves the file to disk
-+	busywait "${BUSYWAIT_TIMEOUT}" test -s "${OUTPUT_FILE}"
-+	# Make sure the message was received in the dst part
-+	# and exit
-+	validate_msg "${OUTPUT_FILE}"
-+
-+	# kill socat in case it is still running
-+	pkill_socat
-+	# Cleanup & unload the module
-+	cleanup "${NETCONS_CONFIGFS}/cmdline0"
-+	rmmod netconsole
-+	trap - EXIT
-+
-+	echo "${BINDMODE} : Test passed" >&2
-+done
-+
-+exit "${ksft_pass}"
+This is because we need to expose a VMA-specific walk that still allows us
+to install PTE entries.
 
--- 
-2.51.2
+Lorenzo Stoakes (2):
+  mm: rename walk_page_range_mm()
+  mm/madvise: allow guard page install/remove under VMA lock
 
+ mm/internal.h |   5 ++-
+ mm/madvise.c  | 110 ++++++++++++++++++++++++++++++++++++--------------
+ mm/pagewalk.c |  25 +++++++-----
+ 3 files changed, 99 insertions(+), 41 deletions(-)
+
+--
+2.51.0
 
