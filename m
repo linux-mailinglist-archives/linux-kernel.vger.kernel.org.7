@@ -1,145 +1,188 @@
-Return-Path: <linux-kernel+bounces-891794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B328C43838
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 04:30:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B556BC4383E
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 04:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10705188CDBC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 03:31:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63F9E3B2AFF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 03:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D481F1538;
-	Sun,  9 Nov 2025 03:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AFC20468D;
+	Sun,  9 Nov 2025 03:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aB6CrVDv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHGMEpVI"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EDB849C;
-	Sun,  9 Nov 2025 03:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7924C38DE1
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 03:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762659037; cv=none; b=ZUTK+xtIpeWT0dVD+wzyd49LaArkfkZm+rkCQ64kDLLqXY2/viDqX2+Kacc/mL+mJzmfi5T4mnXuPcQhXvVFP0RRM+hRPxdSXG67iWI+pleE3/AY08rejYfpkCb1ovg1Lam+CQ50t6qQKxzrMSCXl8PsI1+jh1UWbMEitD7+cwo=
+	t=1762659491; cv=none; b=aRQzqrRYlcQc0Uz18UbSGQXrxpTo+CoMkqYs0XhhKxXo1YgHAsWRBqG2SDojOkZajs9KVHW8jtb8qDk7EphWFSBvKTxFLFi6O4dLfmqlb2S2F7QljarC/TvUcKq/vDcF4/BzUMLkszEAcK7vf3cieRMarv3lk1TzSfz+d2rSrc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762659037; c=relaxed/simple;
-	bh=yZEAGwURIMOpNzUf3sxYiyZAyBr02IHF5nAGfKtPkWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A9VcwI8e/bbzuXGfrCY47K2gtiPLFisjPaFmh8sTuZ8+EkC3O6PiYsbfhc09+yCr07w6jgtWqTthaKgaN9Nvkpe7K9XozT/fFHd3rI5lcJyG/58oHnFUptFIamht2Kgj4PtGE8B+rqIti1QrNqC/5vSpcYSHXbKmCsaYMBZNbvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aB6CrVDv; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762659035; x=1794195035;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yZEAGwURIMOpNzUf3sxYiyZAyBr02IHF5nAGfKtPkWQ=;
-  b=aB6CrVDvuxnwwl9it4fAOuE70jDS9Yf3Gobmu/albaq1yofJ79zIZ+jb
-   /nXwGMbQWXpHFh1M74ccFL+1wn6KHQL9oaKIwlPME76GD0R1tcY8qAF/b
-   wy34E3VllVuXwqLZ4xwwMhvvroiTSVcJP4cg/s3WyGXa903PnaN0DYExm
-   SJ2z6ZEysY/OSDlayByc2X8yZMMKdFlhmNxHYoI1MaG6p20jimOtvALLb
-   eXXtGAyNuiuZC2bnUMzTqj2vlUnkd/EvJnrcbJvF6KcFS/nt+hc2qcyG+
-   T5kYHb3xr7XRh6T8ZcBwp3eIzr/WaF3a36qC6F62aFLxIrAhOEgJCTcB8
-   A==;
-X-CSE-ConnectionGUID: TAMDRmHrQwONZVZd9ZlsMg==
-X-CSE-MsgGUID: HOPUaL/QRc6mtU43U2gR1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64682658"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64682658"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2025 19:30:35 -0800
-X-CSE-ConnectionGUID: rwuu/ZJ7QQWX2vhcHh3YPQ==
-X-CSE-MsgGUID: 3SOf6dZuR7e+sb/YSRa2mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
-   d="scan'208";a="192766924"
-Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 08 Nov 2025 19:30:32 -0800
-Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vHw8L-0001jj-1S;
-	Sun, 09 Nov 2025 03:30:29 +0000
-Date: Sun, 9 Nov 2025 11:30:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bod@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>,
-	Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
-Subject: Re: [PATCH v5 3/5] media: iris: Add support for AV1 format in iris
- decoder
-Message-ID: <202511091157.56GOf0kL-lkp@intel.com>
-References: <20251107-av1d_stateful_v3-v5-3-351652ba49cd@oss.qualcomm.com>
+	s=arc-20240116; t=1762659491; c=relaxed/simple;
+	bh=xorGoL2/JFvg+z+FhPP7vCsuxkoPU25bF4A2iGRn9+4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FAJd317suLuCINBU3b+sRX8urIqBL8Nb6tI0TEuJsX0gjEmgomZFN4YsrnhW+Rc9qZOeZpzFhvoAuvhj9tMWRLoqL/x6fZNelbpg3hvUVH4ZS4Pc/l4HCDKarGQi4/n8UUMnEwvRbMOUFzM322m58c5TJCGNRz1TebUFeuy0gLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHGMEpVI; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3436a97f092so1332872a91.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 19:38:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762659489; x=1763264289; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xojEnQEqZiYpsf6DH1un5xJ5IIa/cvi+rBJ7ZwGzNIU=;
+        b=kHGMEpVIIlEQhM0gUHqz98y+qNaf0NAjKz4beeoB4tPloJD/s2sKMnDjGrDCWfnqzZ
+         tgxr21Jdpe+6fcDYxiNFdH8ByraEAiNuudQ3ET944X4i3BmV+hDVVi02+CLs5khLMeRX
+         hnetA3UcmhUc+gZ+PBPKM211K6e2yCU/TZ862+z0tfK2fFo2sMzl1LMrLsnY/UF0V37X
+         AVVROnfzIx4V3U6YagoflKT9rQ/2kiN52b79n/DvJc2NxP2xY2fG4G1bnpBUKuIjFRmG
+         TMqFSMH61LFJc23tzadB9LTU7upFduTE/+t+Sdz0lY6KGkcSko7BbopJkbGny5jN6bFP
+         sw5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762659489; x=1763264289;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xojEnQEqZiYpsf6DH1un5xJ5IIa/cvi+rBJ7ZwGzNIU=;
+        b=JdDkPVNBXSh7Ppv5L19L00epFqH8b3sXFpDKzUBWtCm+AZVKOLHXbKL5McduQaOtVl
+         AtrD1QJNz3Qg6G3vPTVWVn6TEcvgokvUz9GaS1JV3I+jLc4jZkW0S8key5Ebp688XiDk
+         KLyPFlsxNrT2fHX9DH+HG0kzq3pUmEAhNUzw7dyfcZ7xAu+FI+n+M8CJE9WSVXUjCwFZ
+         IAYoACVcCP3FOAXXCPSi4dVrCL/xE304b9t3B/sjKQF/M286KpFosI1/CVVBHx6OCKfn
+         dFsxyzfUsgkJzKzmnnPQoc1HUdhp9Wdo6otb5mVUP+8Wg1RAK5ZSQwr/ub6myB7exrzI
+         Xb0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUVw7pzN3go8djDOkZLis8MTPm0VKcjqbLHWJRuQBx+ZtZQe7Q4MSunoC+Binxv10zUIqDxRMNSnW2y19M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlz5lWunLTc/LNL9KFpJxV/a/0lvioR8uOR84kL9gQBxHTl0uS
+	fBv9eblRVarHtUjiuD2S4qfyH2tKe71sr7+jsGcWf19gRTQ9wpgip7QR
+X-Gm-Gg: ASbGncvQVf5xmELI3BvErb7aoY1lHwPZ8hdm+bjaT1BHnJKqETPMNrX9Io9ysghxf1v
+	TKP6DRS59M3Xao4jpCZ0FCcffTjy3l7PqgXhqSaiZCJ2YuFVFtysj41a3wMt8ClT7MqvEfT83H6
+	2fNQm3zq+aIlfEjrCugnzCtH7MIevSLU7M/JkefDN5MCukrrHS3FYRDlmqIjijBaNg6tiypNjm0
+	DIGv3ERvvGoTmcC0CHV0MOJGsXr8XMLpEguUDIiuYrfDa0iZ/TWJJxcBVmXH+QnkXs7PggMTSV6
+	l+6RsZOOYTPVrYaeqthCOw3KVln19xikw4UvAQT8gfkwtIy4ztLISpfZJ0/eWJzJfz3qfGJu+HJ
+	5nRO2Ps1UfLojAJU3tv5p3/gUGhnblNw2O9ntzG6dymC9T4WjEnXUlPNvJHH3gGXf7baYMnsMbg
+	jxGtw4/CpxyByJ6U4T9VfiCawGKvoDZ5Y=
+X-Google-Smtp-Source: AGHT+IEnMnLgV+RGsjYDaxeUICu3OiuqhDB7mJSu/fMdhk1sBQYN0RXJDZfBHv8BvFd1j8p1DOQD+A==
+X-Received: by 2002:a17:902:fc4b:b0:295:50f5:c0e1 with SMTP id d9443c01a7336-297e5628672mr55506935ad.15.1762659488588;
+        Sat, 08 Nov 2025 19:38:08 -0800 (PST)
+Received: from lakshmi-Latitude-5330.. ([2406:7400:51:9668:cf49:d10e:b8f5:581d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3436c3d7dddsm3532925a91.7.2025.11.08.19.38.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 19:38:08 -0800 (PST)
+From: Lakshmi Patil <lakshmi16796@gmail.com>
+To: 
+Cc: lakshmi16796@gmail.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: Lakshmi Patil: dt-bindings: misc: Add Xilinx AXI FIFO MM S controller binding
+Date: Sun,  9 Nov 2025 09:07:49 +0530
+Message-Id: <20251109033751.334711-1-lakshmi16796@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107-av1d_stateful_v3-v5-3-351652ba49cd@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Deepa,
+Warning found by checkpatch.pl script.
 
-kernel test robot noticed the following build errors:
+Add the Device Tree binding documentation for the Xilinx AXI FIFO MM S
+(AXI Memory Mapped to Stream) controller. The core provides a FIFO-based
+interface between AXI Memory-Mapped and AXI-Stream domains and is used in
+Xilinx SoC and FPGA designs to offload DMA-style data transfers.
 
-[auto build test ERROR on 163917839c0eea3bdfe3620f27f617a55fd76302]
+The binding describes the required properties such as compatible string,
+register region, clock, reset, and interrupt line.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Deepa-Guthyappa-Madivalara/media-uapi-videodev2-Add-support-for-AV1-stateful-decoder/20251108-122511
-base:   163917839c0eea3bdfe3620f27f617a55fd76302
-patch link:    https://lore.kernel.org/r/20251107-av1d_stateful_v3-v5-3-351652ba49cd%40oss.qualcomm.com
-patch subject: [PATCH v5 3/5] media: iris: Add support for AV1 format in iris decoder
-config: powerpc-randconfig-002-20251109 (https://download.01.org/0day-ci/archive/20251109/202511091157.56GOf0kL-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project b9ea93cd5c37fb6d606502fd01208dd48330549d)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511091157.56GOf0kL-lkp@intel.com/reproduce)
+Signed-off-by: Lakshmi Patil <lakshmi16796@gmail.com>
+---
+ .../bindings/misc/xlnx,axi-fifo-mm-s.yaml     | 69 +++++++++++++++++++
+ 1 file changed, 69 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511091157.56GOf0kL-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/media/platform/qcom/iris/iris_platform_sm8250.c:20:48: error: array has incomplete element type 'struct iris_fmt'
-      20 | static struct iris_fmt platform_fmts_sm8250_dec[] = {
-         |                                                ^
-   drivers/media/platform/qcom/iris/iris_platform_common.h:217:9: note: forward declaration of 'struct iris_fmt'
-     217 |         struct iris_fmt *inst_iris_fmts;
-         |                ^
->> drivers/media/platform/qcom/iris/iris_platform_sm8250.c:21:3: error: use of undeclared identifier 'IRIS_FMT_H264'
-      21 |         [IRIS_FMT_H264] = {
-         |          ^~~~~~~~~~~~~
-   2 errors generated.
-
-
-vim +20 drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-
-    19	
-  > 20	static struct iris_fmt platform_fmts_sm8250_dec[] = {
-  > 21		[IRIS_FMT_H264] = {
-    22			.pixfmt = V4L2_PIX_FMT_H264,
-    23			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
-    24		},
-    25		[IRIS_FMT_HEVC] = {
-    26			.pixfmt = V4L2_PIX_FMT_HEVC,
-    27			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
-    28		},
-    29		[IRIS_FMT_VP9] = {
-    30			.pixfmt = V4L2_PIX_FMT_VP9,
-    31			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
-    32		},
-    33	};
-    34	
-
+diff --git a/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml b/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml
+new file mode 100644
+index 000000000000..d02a7cf9ac0f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml
+@@ -0,0 +1,69 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/misc/xlnx,axi-fifo-mm-s.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Xilinx AXI FIFO MM S Controller
++
++maintainers:
++  - Lakshmi lakshmi16796@gmail.com
++
++description: |
++  The Xilinx AXI FIFO Memory Mapped to Stream (MM2S / S2MM) core provides
++  a FIFO-based interface for moving data between AXI Memory-Mapped and
++  AXI-Stream domains. It supports both transmit and receive paths
++  and is typically used to offload DMA-style data transfers in
++  Xilinx SoCs or FPGA designs.
++
++properties:
++  compatible:
++    enum:
++      - xlnx,axi-fifo-mm-s-4.1
++
++  reg:
++    maxItems: 1
++    description:
++      Base address and size of the AXI FIFO MM S register space.
++
++  interrupts:
++    maxItems: 1
++    description:
++      Interrupt line from the AXI FIFO block, if available.
++
++  clocks:
++    maxItems: 1
++    description:
++      Reference clock for the AXI FIFO interface.
++
++  clock-names:
++    const: s_axi_aclk
++
++  resets:
++    maxItems: 1
++    description:
++      Reset line for the AXI FIFO interface.
++
++  reset-names:
++    const: s_axi_aresetn
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - resets
++
++additionalProperties: true
++
++examples:
++  - |
++    axi_fifo_mm_s@43c00000 {
++        compatible = "xlnx,axi-fifo-mm-s-4.1";
++        reg = <0x43c00000 0x10000>;
++        interrupts = <0 59 4>;
++        clocks = <&clkc 15>;
++        clock-names = "s_axi_aclk";
++        resets = <&rstc 0>;
++        reset-names = "s_axi_aresetn";
++    };
++
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
