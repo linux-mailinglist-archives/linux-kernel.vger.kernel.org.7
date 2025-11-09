@@ -1,146 +1,146 @@
-Return-Path: <linux-kernel+bounces-892045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315BAC442F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:58:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66005C442EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:58:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D1484E6A65
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:58:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E673B0D6B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45AF13043C7;
-	Sun,  9 Nov 2025 16:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B65B3043BC;
+	Sun,  9 Nov 2025 16:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="eW1UA9p3"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqbObaft"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F2530216C;
-	Sun,  9 Nov 2025 16:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762707514; cv=pass; b=UkcD3ITw+/cl2VC2WlXU5jeXUDTReiRTmYRP5Mqulv9ZwfyTjwckubpV1lw04US4VbNpNj9tCUj2uXBXbMet9FdaMFjdDxO2Uf/ayaOP+5mwkIzPgHlVFwOX/iEK0I0ltvOK+bDxJPaFlj9bA5ObYN7iarfSQMI2X/MKBnmi2ek=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762707514; c=relaxed/simple;
-	bh=wyMTuUjI1reFQ+mad2ftXT0L4h7WPE0hx7QG7FkctIw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ncO3cAy9YxS832ZB5wnVGj9Pj6ICd5J2E9IYH8G0ujKr+dLCt6LqfOD886+rrvP7qhTiEXpYtabwr177EHqdFQwHeiY60g3dBBpJGHp/WtWfLMlJ9uNibiuS1Za8Vj2dgmb1FX+IkpTTXNN0MKOhWO85QHGap7vjS5c5XLfmBz0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=eW1UA9p3; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1762707484; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=iaJ22Y8ELSVGGGdBeuDYatFa6C/NG8tZxxNHkLezTIteWZH5+C2hT5J6qBhWoaMOL8G3YOufBQxLv1sftaKb3xKjhs1T89o+3upBDzbj3rGeVD0OadA4Zg8ZBAPlHaydhd4tXKG7TMQsF7CdU2eFRV85sdN8MgmomCa6/8Cc9ig=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762707484; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wyMTuUjI1reFQ+mad2ftXT0L4h7WPE0hx7QG7FkctIw=; 
-	b=hE8MpNTIRYZM/dh3x/mMRz9r53hVTYRDM3vGknABg7Q/IVB0l5mlWvPNBppBZCUe+prCBt/Bjf/E0Jx1MXBxZ5zRD3epi3wHuRdTcR9Lt14J6tp30zab8DlocSmOo6anuzuZAg9klJkrf9M3ZFq+VJZkifeY9nzKTAAf63zXFKs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762707484;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=wyMTuUjI1reFQ+mad2ftXT0L4h7WPE0hx7QG7FkctIw=;
-	b=eW1UA9p334Xm3sYAuaDy/mMg3F+yzETskp+U0jyQ5+JnxXzkOEU2KrmmaTXh7Jgp
-	EO6Q3xUOPJjvv8oYeOQlKCeqmLH5T8T9IbT159O0vakXXTMEYRQRLNER6K2flVLHcu5
-	Wkpzx1vG/jwlB6qLJ/Y8NNIAzMMqbdLEk/im50Jg=
-Received: by mx.zohomail.com with SMTPS id 176270748174653.74830281785046;
-	Sun, 9 Nov 2025 08:58:01 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9BF2E92DA;
+	Sun,  9 Nov 2025 16:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762707496; cv=none; b=INkrUhso5+jMT+x9Ghf3N3cKRZLd3fDi38nUKQf8hkEU8kt914kIpYrJ7oP0DzlSuX+cCBX5IxA5SYXGMj8W0Yr8quXpgpfa5Nx7jhbOpaAmUwpSUUhgVX8dGAd/skM4ScO5iJ4JcTZ2YBvUn2FUC13mR+MZ7DOEq+/czTqq0oY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762707496; c=relaxed/simple;
+	bh=b6sosotwC/oHOg9LGRqzgR279GDoawxDZ0ekAKfx+70=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=fRRvLvSJYfOuOy5zOj0dtWHFqaSQXZ2Q0nmrest63V/Bg9QTkPNiXyYcrtZa1KJOqlqC4o3EYAsJaYqDJghfXV94P813Zsc9GnZhPG+XHu5N/HTDGsabIsVRaKtjoUEkch/rroW1PtXyk8Q9sZ4YWTK/1ZK5Mz43CywtWXDGFpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqbObaft; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E941C16AAE;
+	Sun,  9 Nov 2025 16:58:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762707496;
+	bh=b6sosotwC/oHOg9LGRqzgR279GDoawxDZ0ekAKfx+70=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+	b=WqbObaftT+4n7+zzfmiM089HqwM54MVsjMUJ9epZseSqw6gZ/3qZt6ZwNS7AnFeuY
+	 qyGsV/LWhoXphn7GYJLya36fi6jk9hMZHdnqC+sbgKDUrAZ0vB2Lh/R3PCfJPGjdWY
+	 ypWt31DJK2jZ7TbPx0TDFRZJG+1IzsCxF2qN+05fszTFOzmWgyEUCwwO1aoKYhDsfv
+	 mAweHAp8Xh5KBuSGJchTwXLkfmkcRlgxEOeKpXu8LAS+CuIUadMcX6b5ykA/uk0MfC
+	 DCil7ySHUq+IydX+H8zwQb6Ht8GCnB0+aAGNrrboznizVTPugym50ntrYUrHW6prJy
+	 AiBkqIJ1tb03A==
+Content-Type: multipart/mixed; boundary="===============0591375349055705727=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v5] rust: add new macro for common bitmap operations
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20251109-feat-add-bitmask-macro-v5-1-9d911b207ef4@gmail.com>
-Date: Sun, 9 Nov 2025 13:57:45 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- rust-for-linux@vger.kernel.org,
- felipe_life@live.com,
- linux-kernel@vger.kernel.org,
- Lyude Paul <lyude@redhat.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BB94045A-37FE-4575-90A6-C97E08F2D117@collabora.com>
-References: <20251109-feat-add-bitmask-macro-v5-1-9d911b207ef4@gmail.com>
-To: Filipe Xavier <felipeaggger@gmail.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Message-Id: <886b17f3dd9f9836dd87b9249a01e737088fe52174b8d513ad6350c6bb19ff87@mail.kernel.org>
+In-Reply-To: <20251109163559.4102849-2-chen.dylane@linux.dev>
+References: <20251109163559.4102849-2-chen.dylane@linux.dev>
+Subject: Re: [PATCH bpf-next v5 1/3] perf: Refactor get_perf_callchain
+From: bot+bpf-ci@kernel.org
+To: chen.dylane@linux.dev,peterz@infradead.org,mingo@redhat.com,acme@kernel.org,namhyung@kernel.org,mark.rutland@arm.com,alexander.shishkin@linux.intel.com,jolsa@kernel.org,irogers@google.com,adrian.hunter@intel.com,kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org,linux-kernel@vger.kernel.org,bpf@vger.kernel.org,chen.dylane@linux.dev,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Sun,  9 Nov 2025 16:58:15 +0000 (UTC)
 
-Hi Filipe,
+--===============0591375349055705727==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-> On 9 Nov 2025, at 10:31, Filipe Xavier <felipeaggger@gmail.com> wrote:
->=20
-> We have seen a proliferation of mod_whatever::foo::Flags
-> being defined with essentially the same implementation
-> for BitAnd, BitOr, contains and etc.
->=20
-> This macro aims to bring a solution for this,
-> allowing to generate these methods for user-defined structs.
-> With some use cases in KMS and upcoming GPU drivers.
->=20
-> Link: =
-https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/=
-We.20really.20need.20a.20common.20.60Flags.60.20type
-> Signed-off-by: Filipe Xavier <felipeaggger@gmail.com>
-> Suggested-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Suggested-by: Lyude Paul <lyude@redhat.com>
-> ---
-> Changes in v5:
-> - Docs: improve macro documentation.
-> - Link to v4: =
-https://lore.kernel.org/r/20251026-feat-add-bitmask-macro-v4-1-e1b59b4762b=
-c@gmail.com
->=20
-> Changes in v4:
-> - Use enum: changed flag type from struct to enum.
-> - Minor fix: airect casting (flag as $ty) instead of field access =
-(.0).
-> - Link to v3: =
-https://lore.kernel.org/r/20250411-feat-add-bitmask-macro-v3-1-187bd3e4a03=
-e@gmail.com
->=20
-> Changes in v3:
-> - New Feat: added support to declare flags inside macro use.
-> - Minor fixes: used absolute paths to refer to items, fix rustdoc and =
-fix example cases.
-> - Link to v2: =
-https://lore.kernel.org/r/20250325-feat-add-bitmask-macro-v2-1-d3beabdad90=
-f@gmail.com
->=20
-> Changes in v2:
-> - rename: change macro and file name to impl_flags.
-> - negation sign: change char for negation to `!`.=20
-> - transpose docs: add support to transpose user provided docs.
-> - visibility: add support to use user defined visibility.
-> - operations: add new operations for flag,=20
-> to support use between bit and bitmap, eg: flag & flags.
-> - code style: small fixes to remove warnings.
-> - Link to v1: =
-https://lore.kernel.org/r/20250304-feat-add-bitmask-macro-v1-1-1c2d2bcb476=
-b@gmail.com
-> ---
->=20
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index fd1d91017..edd3058e4 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -67,6 +67,7 @@ struct perf_callchain_entry_ctx {
+>  	u32				nr;
+>  	short				contexts;
+>  	bool				contexts_maxed;
+> +	bool				add_mark;
+>  };
 
-I don=E2=80=99t see anything wrong with this patch. Please give me a few =
-days to test this on Tyr as well.
+[ ... ]
 
-=E2=80=94 Daniel
+> diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+> index 808c0d7a3..fb1f26be2 100644
+> --- a/kernel/events/callchain.c
+> +++ b/kernel/events/callchain.c
 
+[ ... ]
+
+> +void __get_perf_callchain_user(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs)
+> +{
+> +	int start_entry_idx;
+> +
+> +	if (!user_mode(regs)) {
+> +		if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
+> +			return;
+> +		regs = task_pt_regs(current);
+> +	}
+> +
+> +	if (ctx->add_mark)
+> +		perf_callchain_store_context(ctx, PERF_CONTEXT_USER);
+> +
+> +	start_entry_idx = ctx->nr;
+                          ^^^^^^^^
+> +	perf_callchain_user(ctx, regs);
+> +	fixup_uretprobe_trampoline_entries(ctx->entry, start_entry_idx);
+> +}
+
+Can this break uprobe trampoline fixups? The original code used
+entry->nr for start_entry_idx, but the refactored version uses ctx->nr.
+
+These two counters track different things:
+- entry->nr counts ALL entries (incremented by both
+  perf_callchain_store_context() and perf_callchain_store())
+- ctx->nr only counts regular callchain entries (incremented only by
+  perf_callchain_store(), not by perf_callchain_store_context())
+
+When add_mark is true, perf_callchain_store_context() increments
+entry->nr but not ctx->nr, causing them to become out of sync.
+
+For example, if kernel callchain collection runs first with add_mark
+set:
+
+  Initial: ctx->nr = entry->nr = 0
+
+  In __get_perf_callchain_kernel():
+    perf_callchain_store_context() stores PERF_CONTEXT_KERNEL marker
+      -> entry->nr becomes 1, ctx->nr still 0
+    perf_callchain_kernel() stores N kernel frames
+      -> entry->nr becomes 1+N, ctx->nr becomes N
+
+  In __get_perf_callchain_user():
+    perf_callchain_store_context() stores PERF_CONTEXT_USER marker
+      -> entry->nr becomes 2+N, ctx->nr still N
+    start_entry_idx = ctx->nr assigns N (should be 2+N)
+    fixup_uretprobe_trampoline_entries() scans from wrong index
+
+This causes fixup_uretprobe_trampoline_entries() to scan kernel
+callchain entries instead of user callchain entries, missing the
+uretprobe trampolines that need to be fixed up.
+
+Should this use ctx->entry->nr instead of ctx->nr?
+
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19211481431
+
+--===============0591375349055705727==--
 
