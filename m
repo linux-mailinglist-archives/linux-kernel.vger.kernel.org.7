@@ -1,114 +1,98 @@
-Return-Path: <linux-kernel+bounces-891979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267F1C43FAD
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 15:10:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5304CC43FB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 15:11:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 849AC3ADBFC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 14:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED39A188CF1D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 14:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA252F7ADF;
-	Sun,  9 Nov 2025 14:10:32 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BC32F6909
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 14:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A102FC01C;
+	Sun,  9 Nov 2025 14:11:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AB32FB618
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 14:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762697432; cv=none; b=AKZ38KLaKETz30JcC5Nwz9g5UnkWHRJ/F9YbHfy2oYkWzUiFsOziYpaRRmCBWc6suYP2Fv84ukB1nitW7spP2Y4+J/dgwBHx9BDHBsyhA1NeiWbGMuh6Z2txJ4Cf4g1BZQr4n8Oj6GIQ5ptDxTMqOJ3EDvANv3QXkp066qK3ENI=
+	t=1762697465; cv=none; b=GTLGpdyGhIJGtoCela+aLtWzAxWVV5RzAdFUXaFmoM37EqBxxC9JRnW34/RX0XO0cwTOP+ddrBkeEgyKEf2ttr0/gw7nfvfZwNF0+YxTbJ9DlbHUkCPbYbKongb5W+WW17OlA+pv5pwvtJ/OULB5hlbRN5gtVSInuv91lTlfmJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762697432; c=relaxed/simple;
-	bh=z3hFpIt0+B+x+Wgd1ap2OLKHSF4ldMpme4pWkGiEHao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g/A6HhR9a9I7CqDAP0aOQkePnYNkCD5Sx6wOcvqPgR5sAbYyqZZmzyYX83odXSDKfvXOIbJSuQQf36PoN+2fxoC9eEkdgpxLS2gQrPzpZlIldg0OrxOm6dHnC5bICdyDOGIlpPp3X7kTUgXulUi2sRUclimXRy1SwJQKevL+sIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [36.44.122.212])
-	by gateway (Coremail) with SMTP id _____8DxLvDQoBBpG_cgAA--.6063S3;
-	Sun, 09 Nov 2025 22:10:24 +0800 (CST)
-Received: from [192.168.0.111] (unknown [36.44.122.212])
-	by front1 (Coremail) with SMTP id qMiowJBxTMHMoBBp7LosAQ--.9208S3;
-	Sun, 09 Nov 2025 22:10:22 +0800 (CST)
-Message-ID: <a983c2b9-e18e-9e28-d827-77df96ad8904@loongson.cn>
-Date: Sun, 9 Nov 2025 22:10:23 +0800
+	s=arc-20240116; t=1762697465; c=relaxed/simple;
+	bh=y6Dy/w1K3XpX2uFUEe+rBJFRb32lSDcExJhalbXQ5aU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ZHnADk85rsFDUfhehKOo8UANwxl7W3MEMFG4US700k0dkqqsvuLWMFd8jx6B0hV6JgO2gsUN86t3zpZImFIY+tSJOt7UheIrovKF5pswTfaCw1saZA2+UPL7tFhw+nKiuF+sxaOUnumtVfFqgjkQ3paU1hQwilyTs/CABuRgdKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-433270dad0dso19162945ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 06:11:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762697462; x=1763302262;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m02kWE5lhyrzZgApWthbB6kQBtAUB+gmZPn3Dt1ZsD4=;
+        b=T7PDJjecGddaJCaLxCMtiBf9gBFB1JOfqH1716ifa/WEN6HY2kQzvtBSG0Z7+fvgML
+         6ZJa31Fh/yIKDVXnpkTteLQNlCwJnlO5UAf5TMq2V+A+BdcdC8/7VVsxCaFlv8wLcLAv
+         vkShXJnY+6dE6YZo5ARz7/IsI3Dk42oTP4VAy2HFKZKZgss/oeRqUu5ByCxKIQA7Jt7d
+         0VFoDYlcRs0rVaYMsQjCrr305Y4xJl7n/8/gkdqFjh8vQ1Ka0UtEKGQKAuX/1JD2UzeR
+         8feRdSp9hTfVtXee02gWYFtb2YJj70auqGf8IRf7+PMisWTTuwjRaH1IH3mSVPOPp8LI
+         zWew==
+X-Forwarded-Encrypted: i=1; AJvYcCUrOYjX9BMpCW/W0nt8wOplTrDxzoO4IrMrQMeRyAS8pjsU0JZUdhS67iUlA1VWlYAzjtdC7qnZXh6aYNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfQ0NpvDG533FgBNMIC+shefai7rJ7zenyBtD7pgwPk3Cdi651
+	1R9xOUUn9H+K2A0HSZBpCI0CVnal9vNHP4SugUTa7WZP4zvp77TU07fX7lkYU9Y4+m7njd1UZM5
+	F9LOne+D9aXi/RTpNuyN81uFZfF5KMSL0oh3y/bW45LBXTnyuXaPQ8hDX7Cs=
+X-Google-Smtp-Source: AGHT+IEw+SyBMcsmvsru2ydmWiAer57ckBKlQAwl2f1WWyRnepHiN7uVkkXdan4vghsxm/ZOPYzm213l8SerzWDt7Il3Poc2ozLJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH v1] LoongArch: Refine init_hw_perf_events()
-Content-Language: en-US
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20251014070227.22396-1-yangtiezhu@loongson.cn>
- <CAAhV-H6uRnP6MD7aV0fC-uL+rihuSDw=Opmx=0keQ9gFp9ERhw@mail.gmail.com>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-In-Reply-To: <CAAhV-H6uRnP6MD7aV0fC-uL+rihuSDw=Opmx=0keQ9gFp9ERhw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBxTMHMoBBp7LosAQ--.9208S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7uF13ur4kCr4xGFWrCFW7GFX_yoW8GF1xpr
-	4IkanIgFs8KFy8AFs7G3y5Wry2yFZ5GFyIvrn3Zr1UCFWDZ3sYqrnrXa1fuFykAryrC3WI
-	qFn2gwn7Wa9rJagCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4
-	CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
-	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MI
-	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
-	14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jUsqXU
-	UUUU=
+X-Received: by 2002:a05:6e02:4417:20b0:433:7d0b:b377 with SMTP id
+ e9e14a558f8ab-4337d0bb530mr14752975ab.15.1762697462239; Sun, 09 Nov 2025
+ 06:11:02 -0800 (PST)
+Date: Sun, 09 Nov 2025 06:11:02 -0800
+In-Reply-To: <20251109-lesung-erkaufen-476f6fb00b1b@brauner>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6910a0f6.a70a0220.22f260.00b8.GAE@google.com>
+Subject: Re: [syzbot] [fs?] WARNING in destroy_super_work
+From: syzbot <syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, anna-maria@linutronix.de, bpf@vger.kernel.org, 
+	brauner@kernel.org, bsegall@google.com, cgroups@vger.kernel.org, 
+	david@redhat.com, dietmar.eggemann@arm.com, frederic@kernel.org, 
+	hannes@cmpxchg.org, jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, 
+	kees@kernel.org, liam.howlett@oracle.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, 
+	mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, mjguzik@gmail.com, 
+	mkoutny@suse.com, oleg@redhat.com, paul@paul-moore.com, peterz@infradead.org, 
+	rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org, 
+	vbabka@suse.cz, vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, 
+	vschneid@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/3/25 17:09, Huacai Chen wrote:
-> Applied without rename loongson to loongson64, because loongson32 and
-> loongson64 have different event numbers, they need to be
-> distinguished.
-> 
-> Huacai
-> 
-> On Tue, Oct 14, 2025 at 3:02 PM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
->>
->> (1) Use the existing CPUCFG6_PMNUM_SHIFT macro definition instead of
->> the magic value 4 to get the PMU number.
->>
->> (2) Detect the value of PMU bits via CPUCFG instruction according to
->> the ISA manual instead of hard-coded as 64, because the value may be
->> different for various microarchitectures.
->>
->> (3) Rename the PMU name without the postfix 64 due to it is redundant
->> and may be inaccurate.
->>
->> Link: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#_cpucfg
->> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+Hello,
 
-I just saw the following reply about the patch title "Refine":
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-"I'm not really sure what "Refine ... about HIGHMEM" is supposed
-to mean. Might it be clearer to title this something like "Remove
-necessary highmem in ..."?"
+Reported-by: syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
+Tested-by: syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
 
-https://lore.kernel.org/linux-mm/aQ4lU02gPNCO9eXB@fedora/
+Tested on:
 
-This patch title is not clear too, should it split into two patches?
-The patch title can be:
+commit:         241462cd ns: fixes for namespace iteration and active ..
+git tree:       https://github.com/brauner/linux.git namespace-6.19.fixes
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e1517c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f1b1a45727d1f117
+dashboard link: https://syzkaller.appspot.com/bug?extid=1957b26299cf3ff7890c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-(1) LoongArch: Use CPUCFG6_PMNUM_SHIFT to get PMU number
-(2) LoongArch: Detect PMU bits via CPUCFG instruction
-
-Thanks,
-Tiezhu
-
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
