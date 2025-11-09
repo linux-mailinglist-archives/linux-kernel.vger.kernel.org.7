@@ -1,199 +1,116 @@
-Return-Path: <linux-kernel+bounces-892026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75DABC441FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:09:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5631C44212
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:13:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCF934E6A12
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:09:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA7583AC0CB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD753002D7;
-	Sun,  9 Nov 2025 16:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5A13002DB;
+	Sun,  9 Nov 2025 16:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="drlx4Ujx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tZpxlF53"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kOEZxO6C"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFADE19DFAB;
-	Sun,  9 Nov 2025 16:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770812F617B;
+	Sun,  9 Nov 2025 16:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762704549; cv=none; b=L32/Y1gmy5UPMuXuny25BuN3pNgN5HfLeZlcdb4FkAUMeSERGZIU7EdZuy3yAXQBuVvWJNWkZ6B8Pqjb7/8ayLitc6kmWhrNjSu8z7wFYDSwP7Rd3PviVakqxMTmNHjKBH+Su4TUmUhC8i2AxzNgk1aNBknj8QKiQ4BVfIpcGT8=
+	t=1762704826; cv=none; b=mdu1ITetSY+dG58NMH/I8EfFtzTRY3P92Y0FeZVdnomxiTpmeW4HuvPa7sXsquo22sRt9uqAaWY+fJjGSS/BvEQz5ZTZQKbaTDfasZhoThL5ZxF2/6aBrcsJQAlR4ghWskG0Ni4Q3DCFmVOz4py6fWbCIQ6lKOMutO07RSya2SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762704549; c=relaxed/simple;
-	bh=4jod38HpsiIabqfa0pDiZe29m1VSif005vhrT0/DnUc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=rqJz6Ag7ZTopezkYvVAHRrXus4HMbI9wzRhsMUyJLhkAuFpF8/ZJtDSHY3o9dNc6aCpbBPmKYDzVaMCPRlqCzQdGRxwIcghylNfWwvXod1dW+mArv+9oZL+3wCkpR387skJFjJrk+kHMfdYIwL7p46rXRf1MiM7dFQkHvFsHVww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=drlx4Ujx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tZpxlF53; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 0F2AE7A001C;
-	Sun,  9 Nov 2025 11:09:05 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Sun, 09 Nov 2025 11:09:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762704544;
-	 x=1762790944; bh=JEE330ySaodkvhl3xDjKL/tIDsvMEMAgBil3ykH1mCk=; b=
-	drlx4UjxHBc4BK+/NVJU89mFSbrfOcSM+lHamYWdL3egMM8mGQLm5jNme0hu1Rht
-	17ASKVfJ7qjrdeREn5wXdwvevseHMNdIxD0PLDg/GrY1oY17B5NGgz3QCVs9Pnsz
-	aahHFTPIvSg43oGQ2ldcMf2dKJQHda9YZyk4beeBQMqHa1wOoEsDdp8OH73q/niD
-	tTNdsiAq8d93OLEXExNoNy/umBFvSyfKYpAnKgph7sAtxtYFuv86g7XcY8RAZQgp
-	BmojD/4751TwCgFscyQZhmNeuhm+uTXFZqJY/dgVY/QfR0icOlnF2vwKeEC6o3TE
-	46IziJYcsvKnY8cp5l5B1g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762704544; x=
-	1762790944; bh=JEE330ySaodkvhl3xDjKL/tIDsvMEMAgBil3ykH1mCk=; b=t
-	ZpxlF53AtCgpy5zaK9XzTSw0xrnZE1DatfrBFVrRSWYxl4bTI1mCGnn4BeoQ6Vkr
-	aSauWlGgVMFTjq2hv7v9iIaAQyMrEsAFY7HaXSKggaScjCukiDUkQWSf3tAAGtw2
-	AmtNmi21+TxMlkCYr+9Y564q0KWWdQn4rlJ5/iE14Hs24g0LqxSziFK37Wtoxgd5
-	NFycR8/vwa/SrwPiiOY2f6yL33vU9cT9pa5eaF0D3zAxC0gN2JGYElrjix4QM/Te
-	we1M6Ll2YjybsX3J6FAVqONqELdi7WGpVpm69bFae9MG4L6YJgHEyUngPIOi1VEv
-	ZUoV7zykJiqiClh9ZBgNg==
-X-ME-Sender: <xms:m7wQactHBjhGmjaME3x7l_Ip111ypE856jTimBmaUzpicZxXSdM4Gg>
-    <xme:m7wQaUTH35MNFb2EDVu2u28sHYMVINxJnL9VcKPxRLHkM-u6vBuuEhaURZtWqYabf
-    fb5Jj6sU20jG9W9VKa9yd0plFCkDu5W1TfCGBQ6md7a_7udFru3QcI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduleehkeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfeuvedugedugfeiffdvtdettdeifeevfffghfefvefhvdehlefhheehjedvfffg
-    necuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghr
-    tghpthhtohepfeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtshgsohhgvg
-    hnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtoheptggrthgrlhhinhdr
-    mhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopehvihhntggvnhiiohdrfhhrrg
-    hstghinhhosegrrhhmrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhig
-    rdhorhhgrdhukhdprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsgh
-    hrohhuphdrvghupdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdp
-    rhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhopegrnh
-    gurhgvrghssehgrghishhlvghrrdgtohhmpdhrtghpthhtohepnhhpihhgghhinhesghhm
-    rghilhdrtghomh
-X-ME-Proxy: <xmx:m7wQabmF_YIbNBgdxFoevoHFJQ1eWu4ZnJ4xjCJtw66W2L-ukr0JXw>
-    <xmx:m7wQaRuILS_f_EquuhHZJAzhvti4hsBgThcJkmS8fwUn49V9jbw22Q>
-    <xmx:m7wQaSfVAsPMMG454n8tzXbzRCt1S_kSbiI9XIhUfh8Gag9s5h-lcw>
-    <xmx:m7wQaVahZheDTpO_ctNR7LNi3EgQoe8W4r0T2kpj8H5LbqG5RtGjRw>
-    <xmx:oLwQaSCuGOvbyudIA1SYvS95j7wbQLvk3z0UJxxth9q7U_J_OZSGmf0i>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id AB7B8700026; Sun,  9 Nov 2025 11:08:59 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1762704826; c=relaxed/simple;
+	bh=HlAawmje/6kO+lJDdfaN4Nvp64DgyW7C68TFJMZ22Iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gX/uFBph6/t9MLHv4ETExy3RvkJrvhPQE6cKVIn4mMYb7xlcL5+0ZZU3Hr3J21v3oTIJNjMU4trZm4Xu1M9p7HBxHRtqbiPNy0k0BzFcr3AdSt6C/2M41SJIiekqnQgsZOInKYuykYFR/eP2qH9GmgpEkTkzKa9wA8Cy3odESmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kOEZxO6C; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762704825; x=1794240825;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HlAawmje/6kO+lJDdfaN4Nvp64DgyW7C68TFJMZ22Iw=;
+  b=kOEZxO6CZK0c7d8fTUCMI1AKNoCmHvS38Dviq6qcPQ6pgNCGr1Njnp/p
+   Yy5RaTWRSQCuhkT5w/r3g6jmfUTmcvC2q4Gk1TtKdY5vf4O1TmJJluAx5
+   Raq2wQ10cD14uMAeqU2CXTAeMWKzZ2YHHXnUshlr6JDzVmjtqLR+OOsa7
+   ntRPkz7DuucOOaulqheyUBn1WRfdmjz4pZQ81wETEskt5xZtWEYO+cxDV
+   DbekP61LebrMD+yKp8fw3CEoqAT3odEEDCknJznP/LisY2dTbdF6Lr2cA
+   ++VH2YVuy6IsW1z8awPzS/x48PKu8QcOPT1r5bK0/9XUTD1mWDaAsJeS+
+   A==;
+X-CSE-ConnectionGUID: d50Ub1OeR7ecUG386mkCfg==
+X-CSE-MsgGUID: lKRXcNAwS6GOMWQo6f5+iQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="68621293"
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="68621293"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 08:13:44 -0800
+X-CSE-ConnectionGUID: NM0pyYurRACHM1Sts7daIQ==
+X-CSE-MsgGUID: kWBUeZNtRSyxg1OeGCp6jg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="188431108"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.185])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 08:13:42 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vI82s-000000073xF-26wf;
+	Sun, 09 Nov 2025 18:13:38 +0200
+Date: Sun, 9 Nov 2025 18:13:38 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Duoming Zhou <duoming@zju.edu.cn>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dmitry.torokhov@gmail.com, kuba@kernel.org,
+	alexander.deucher@amd.com, pali@kernel.org,
+	hverkuil+cisco@kernel.org, akpm@linux-foundation.org,
+	tglx@linutronix.de, mingo@kernel.org, Jonathan.Cameron@huawei.com
+Subject: Re: [PATCH 0/2] Input: alps/psmouse: Fix UAF bugs and improve
+ workqueue synchronization
+Message-ID: <aRC9spWVq43qJWRj@smile.fi.intel.com>
+References: <cover.1762604516.git.duoming@zju.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AisJtzLZ_1Kg
-Date: Sun, 09 Nov 2025 17:08:27 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: "Andy Lutomirski" <luto@kernel.org>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
- "David S . Miller" <davem@davemloft.net>,
- "Andreas Larsson" <andreas@gaisler.com>,
- "Nick Alcock" <nick.alcock@oracle.com>,
- "John Stultz" <jstultz@google.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- shuah <shuah@kernel.org>, "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- "Russell King" <linux@armlinux.org.uk>,
- "Madhavan Srinivasan" <maddy@linux.ibm.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Huacai Chen" <chenhuacai@kernel.org>, "WANG Xuerui" <kernel@xen0n.name>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Heiko Carstens" <hca@linux.ibm.com>,
- "Vasily Gorbik" <gor@linux.ibm.com>,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Shannon Nelson" <sln@onemain.com>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linux-s390@vger.kernel.org, "Arnd Bergmann" <arnd@kernel.org>
-Message-Id: <7eb1a661-e5bf-45cb-a3cf-7337fb0c4173@app.fastmail.com>
-In-Reply-To: <alpine.DEB.2.21.2511090221080.25436@angie.orcam.me.uk>
-References: <20251106-vdso-sparc64-generic-2-v5-0-97ff2b6542f7@linutronix.de>
- <b870aa47-5ed4-4dcf-a407-eca83d1733d8@app.fastmail.com>
- <6452c785-872a-4fe7-90e1-8138d73c6218@app.fastmail.com>
- <alpine.DEB.2.21.2511090221080.25436@angie.orcam.me.uk>
-Subject: Re: [PATCH v5 00/34] sparc64: vdso: Switch to the generic vDSO library
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1762604516.git.duoming@zju.edu.cn>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Sun, Nov 9, 2025, at 04:23, Maciej W. Rozycki wrote:
-> On Sat, 8 Nov 2025, Arnd Bergmann wrote:
->
->> On other architectures, I see that parisc (always aliasing) has stubbed
->> out the vdso functions, while mips/loongson has limited the page size
->> selection to never alias. A few other mips platforms can theoretically
->> enable both small pages and vdso, but my guess is that in practice
->> they don't use the vdso (mips32/ath79) or they use 16KB pages
->> (rm, dec, ip22) based on the defconfig settings.
->
->  Umm, I'd have to dive into the details (and I hardly have the resources 
-> at hand), but quite a bunch of MIPS microarchitectures suffer from cache 
-> aliases; some even have VIVT caches.
+On Sat, Nov 08, 2025 at 08:40:03PM +0800, Duoming Zhou wrote:
+> This patch series addresses use-after-free bugs in the ALPS
+> touchpad driver and enhances workqueue handling efficiency
+> in the psmouse subsystem.
+> 
+> The first patch fixes a critical use-after-free race condition
+> in the ALPS driver where dev3_register_work could be scheduled
+> after the alps_data structure was already freed. This was caused
+> by insufficient synchronization during device disconnection,
+> where flush_workqueue() couldn't prevent subsequent work item
+> submissions.
+> 
+> The second patch optimizes the psmouse disconnect path by replacing
+> flush_workqueue() with disable_delayed_work_sync() for better
+> efficiency and robustness.
 
-I was going with this list:
+You forgot two things:
+1) make it v2 (run `git format-patch -v<X> ...` where <X> is the version);
+2) changelog.
 
-$ git grep define.cpu_has_dc_aliases arch/mips/
-arch/mips/include/asm/cpu-features.h:#define cpu_has_dc_aliases (cpu_data[0].dcache.flags & MIPS_CACHE_ALIASES)
-arch/mips/include/asm/mach-ath79/cpu-feature-overrides.h:#define cpu_has_dc_aliases     1
-arch/mips/include/asm/mach-au1x00/cpu-feature-overrides.h:#define cpu_has_dc_aliases            0
-arch/mips/include/asm/mach-bcm63xx/cpu-feature-overrides.h:#define cpu_has_dc_aliases           0
-arch/mips/include/asm/mach-cavium-octeon/cpu-feature-overrides.h:#define cpu_has_dc_aliases     0
-arch/mips/include/asm/mach-dec/cpu-feature-overrides.h:#define cpu_has_dc_aliases               0
-arch/mips/include/asm/mach-dec/cpu-feature-overrides.h:#define cpu_has_dc_aliases               (PAGE_SIZE < 0x4000)
-arch/mips/include/asm/mach-ingenic/cpu-feature-overrides.h:#define cpu_has_dc_aliases   0
-arch/mips/include/asm/mach-ip22/cpu-feature-overrides.h:#define cpu_has_dc_aliases      (PAGE_SIZE < 0x4000)
-arch/mips/include/asm/mach-ip27/cpu-feature-overrides.h:#define cpu_has_dc_aliases              0
-arch/mips/include/asm/mach-ip28/cpu-feature-overrides.h:#define cpu_has_dc_aliases      0 /* see probe_pcache() */
-arch/mips/include/asm/mach-ip30/cpu-feature-overrides.h:#define cpu_has_dc_aliases              0
-arch/mips/include/asm/mach-loongson2ef/cpu-feature-overrides.h:#define cpu_has_dc_aliases       (PAGE_SIZE < 0x4000)
-arch/mips/include/asm/mach-loongson64/cpu-feature-overrides.h:#define cpu_has_dc_aliases        (PAGE_SIZE < 0x4000)
-arch/mips/include/asm/mach-malta/cpu-feature-overrides.h:/* #define cpu_has_dc_aliases  ? */
-arch/mips/include/asm/mach-malta/cpu-feature-overrides.h:/* #define cpu_has_dc_aliases  ? */
-arch/mips/include/asm/mach-ralink/mt7621/cpu-feature-overrides.h:#define cpu_has_dc_aliases     0
-arch/mips/include/asm/mach-rm/cpu-feature-overrides.h:#define cpu_has_dc_aliases        (PAGE_SIZE < 0x4000)
-arch/mips/include/asm/mach-sibyte/cpu-feature-overrides.h:#define cpu_has_dc_aliases    0
+No need to resend (unless requested by the maintainer), just reply with the
+missed changelog for now.
 
-which for many platforms seems to come up with a compile-time
-constant value. I hadn't checked the exact conditions for
-the runtime MIPS_CACHE_ALIASES flag, but I see that the kernel
-has a fairly centralized detection function in probe_pcache()
-https://elixir.bootlin.com/linux/v6.17.7/source/arch/mips/mm/c-r4k.c#L1251
+-- 
+With Best Regards,
+Andy Shevchenko
 
-which is used for the 'generic' platform and those that don't set
-a compile-time constant (ath25, bcm47xx, bmips, cobalt, ip32, malta,
-pic32, rc32434 and tx49xx).
 
-> (see the figures at the bottom; uptime quoted for an idea of the rate, 
-> though the system hasn't been heavily loaded).  It is possible with the 
-> aid of S$, which is inclusive and PIPT.
-
-I now found commit 0f02cfbc3d9e ("MIPS: VDSO: Match data page
-cache colouring when D$ aliases"), which probably does everything
-necessary to just make it work reliably on mips, and should
-be portable to sparc as Andy suggested as well.
-
-     Arnd
 
