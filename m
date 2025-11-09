@@ -1,142 +1,141 @@
-Return-Path: <linux-kernel+bounces-891839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7F1C43A11
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 09:01:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D6DC43A21
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 09:21:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0193AE4B7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 08:01:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543AF3AF3ED
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 08:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C096B24469E;
-	Sun,  9 Nov 2025 08:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF38426FD9D;
+	Sun,  9 Nov 2025 08:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="RHStroJO"
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3QdJTty"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8741A9FA0
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 08:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9FA18FDDB
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 08:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762675300; cv=none; b=PYbcYLxyXjzgZ0OKCHzRLEjLbgWvKHO+30SMVObByjKp8jZUwprCbZk78NK9CpDx5WtYMRYkKx/8e+aFY7lzOw8Rsy2pd49JyAnrjP9MkrBKi2+/a7wPVfjjea15Ll1+H9txwSRvwHGm3VeF+Y8lqLtib+qFrwLTl2p9Aua5l0M=
+	t=1762676498; cv=none; b=LjY4nqgklON7bPnSpitqh2a0hDjvMkyNpghrdpv0dTH6IaqVtntusHU4UgCDyPDoc6Q4UNvx5qAFZESuPc1hf6j2u015jJfZZqtUfNY7F/RasD3fnSUrWkslKbzCrZtQiZx6mNkkSlhmJW+OK3PBOXWhxfV6rnaG/+Qs/frXGp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762675300; c=relaxed/simple;
-	bh=uTC+PkKSK+WVl6tn9Cjr+7Zm5h0nvIfbFbJI+LFMSns=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XJ/QCxMmos9zTUk9tPcLWMvm1+45tIjnQ50OheKDCxyuziye2uakbqGGc+z+dIjeT73j7fFHsvbw84VaBbtV9IH0FQdfmyqCXdYblcgbhe9mcmMSCTPnzCBE6PqimkfltreFYDGOgzy5KN3A+dKnrNmhtLdiPab4BTwOd3Jt9QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=RHStroJO; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A97swWc2547971;
-	Sun, 9 Nov 2025 00:01:17 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:message-id:mime-version:subject:to; s=PPS06212021; bh=hqKCmdP7z
-	xwz+X23A5A9/L6yq/4SS8Ac005fbjv9X7Q=; b=RHStroJO+RWipWU1eSEzHwsjN
-	hT/oOvGZW9mLOBGJvyYHG+DNowTehyEDsZ9MM7qQGH5MgsnPxrPy2VUC9mu6kpVC
-	UcF0Ahl68oMe52g2T0S8L7QFvA6StizYpbrzC74Ltd4Ox0Pf7CvHDsdoc1J4n5aL
-	1FKpcydYV/K+wT6O1k4PtrObolKr3cwB1Y5itfQmxr+HRUrqozKAHVPRdF1HCSQP
-	F+BHfdIwROZdzPjajn+FXaJik0X/bBCJ9iaWcW1PFz4bPzQ29ClYkHLSJxFZxMKu
-	o6eKEUCrDyQYAc+EZ75Y+XUATBZHaUjqWLbcNZB+TpLj/c3BZHjpvwkLLG2lQ==
-Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4aa68jgh5k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sun, 09 Nov 2025 00:01:17 -0800 (PST)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Sun, 9 Nov 2025 00:01:16 -0800
-Received: from pek-lpd-ccm3.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Sun, 9 Nov 2025 00:01:14 -0800
-From: Yun Zhou <yun.zhou@windriver.com>
-To: <shaggy@kernel.org>, <akpm@linux-foundation.org>, <david@redhat.com>,
-        <byungchul@sk.com>, <gregkh@linuxfoundation.org>,
-        <yun.zhou@windriver.com>, <shivankg@amd.com>,
-        <ssrane_b23@ee.vjti.ac.in>
-CC: <jfs-discussion@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] jfs: add linelock->index boundary check in diWrite
-Date: Sun, 9 Nov 2025 16:01:13 +0800
-Message-ID: <20251109080113.236739-1-yun.zhou@windriver.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762676498; c=relaxed/simple;
+	bh=blBxIzHVxMDkVOYTtn6sgPlXbPeUDm01RifRQqnXCR0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YMX84JcBa5RbqqmuKaK8fL73sca6lfL5rOrhskq1aVkFGTIgSTeNRGtsUA7oVhTupKbXZfPDAY7yDed9c02eGQCTIHg5x7hTzXyvjYgkKv68/bQX2zRTfGCVEc73YmcaGNluWQU0ixeUjjz5WJIfDH/QDVAnTvYKtje1+dLO798=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3QdJTty; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-787da30c50fso6396987b3.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 00:21:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762676496; x=1763281296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d+G16wY2Uy0RV+AHrXQMNikD/m9lQ1yJj0Gcep7twG4=;
+        b=S3QdJTty/L11BVtLiwPOBbzCAagOfkD+f0DsIARoixGNax9XxDN0k8JA4UxXfahKNH
+         KLQJRcrqy/SbuWaYIzVPbcfBhodpb4zJbO0D4vjW8nqG8RiV1lvF8mHSFtfJeBifO6TQ
+         SJ/ytDBmSLz7w2g4A58x9PMARyddh0L5y682OrDDrozFTts0o4s2FwWy2yzrQ8aYkPyT
+         rCVt7Ux4Z2pknCmY/XoisWadoNXizg11SS00GoKluU+g+JSKRLU2yJ7bIDAFBLa+3Kv0
+         SrhZt5aFAv4SgFWJgY3rj5t7zgRKXJtfqN50v6lwsXnP20a+X1aeGwREbFLze+cd1sRB
+         1qSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762676496; x=1763281296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=d+G16wY2Uy0RV+AHrXQMNikD/m9lQ1yJj0Gcep7twG4=;
+        b=KMkzbNno2iIcn/xAPObQHJqpNNe5ycziRnlTX0ZkqrKEiGydgFRBRWzRSI2PIHb0Q+
+         wob3/4Kvs9Rd0LFr8+5p2URD4YWx1bKbFsaEQLfNjWBfh5eMH9AuE98my4tRjHPdVYbx
+         oFmf/hUygRu33midT3/ulLHhrxWVPx8rfRKTZS2i24ly4sd5JbWrnn2UqmT0cmErBOhi
+         Y7SaGuLl6gtlIpzB2cPegt+cndH2DB1hUji9oyG/mc1K8gq4AW7p7optBl5/xYg6BUnd
+         RjeAtxiPF7nA/ibIXDff6QLTZG7rA78Iha99VS0g/3vFPQWVAHhgOlDZV8jtio02Ipz0
+         Mnpw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpRSL6R60OxThyNhSAwQpJ7SRgJLwh2DFx+d0S2/AaMmGR/puXpFJavwymlYV/C3YE8J2N2HiNTZSex4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdRAARHt2voVb2f/6+DMnODrfXHFHWrksTPmWzXTxQLkIVkEB8
+	o5GXvhZ6fZSdzL3QJPc/pBjvDDuArmH7j92l6wB0Jxgl6YDetYD9dLNpm5MLD2nMd79SSUnjDQQ
+	vprqYzndpXHtcLtZwaEypAsyJYDRXRIA=
+X-Gm-Gg: ASbGnctVDDZGkG/6XBnaJsLxn6zXXC7j47zaVOTLIz7zcheAck4jk3osDalBgEs/f/i
+	0KhNpARxIFpVQzILCqTUngFQ7N8W5f5ztYePAaAIx92YOkgr6xub2NzzfjTJMuT+dN+laHMzlbi
+	syMoEllLWYiEJ1mk1oqjc7GXy3qHWXIxm/0UN3B3vq7SGB97Vn3Mvfbbl4CWWgMGCBYFQIFZ5rH
+	xnYtIIEoQqFmtpp2wqR8CMuCH8MiArOlp0vnp9tPSvRc5AqVBlOZwHlFcTwo+sFKxs42u4l
+X-Google-Smtp-Source: AGHT+IEaqIye4DtDHgikTrookKOjzbjgSvwfAg40yRgSxZD6MgtC7CaLSpR7r2YAQlHytf/EZLr37UyRk0xdeDBmYNI=
+X-Received: by 2002:a05:690c:610d:b0:787:ea39:6656 with SMTP id
+ 00721157ae682-787ea397030mr7757287b3.22.1762676495801; Sun, 09 Nov 2025
+ 00:21:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA5MDA2OSBTYWx0ZWRfX+nxJXFTVFzxm
- v1ZyFut3T0dND5GV4YayRuuERPa4UMMGzpRVZrfT5m7uq9MQRdONN6qJvpi/odhGWrNRsFmGpfa
- IzYneWhsVMpgoftBi27YSdxzwaZWqnjZJdH2+OqiVhzzp0yQ6BOt1ly/CrCQKr4EXto785h9JRr
- dpkmpZ0n1YP0ypn/SPO/rJ7IFdaElnKlcWUR1xm6oitAAU+t9NxrgU5HHxY+NiIrlypOlnJuEuy
- X52m3q8qzPkhEn6joCfjkzDnnIC12X+btJpD7jzV/Mcs4kALXHvMpWPFRgISNrQ0MLs5ISORliy
- eomPliTlTYtlF1PnIVfZllGMqQew1AuvDuDMX1VYTuIFKTiA1PIvlKafMI6DCBNBim7jl5Xo23H
- ivpqjs5bud9pEVqLXof6IF7mizMQlQ==
-X-Proofpoint-GUID: BpCl5-HMoPr1VIw6Am6Gap3W_YUZkI7r
-X-Proofpoint-ORIG-GUID: BpCl5-HMoPr1VIw6Am6Gap3W_YUZkI7r
-X-Authority-Analysis: v=2.4 cv=ef0wvrEH c=1 sm=1 tr=0 ts=69104a4d cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8
- a=839DiVg-qJ3f83dBwJIA:9 a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-09_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 suspectscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 clxscore=1011 spamscore=0 adultscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511090069
+References: <20251107100310.61478-1-a.safin@rosa.ru> <20251107114127.4e130fb2@pumpkin>
+ <CALOAHbB1cJ3EAmOOQ6oYM4ZJZn-eA7pP07=sDeG3naOM2G9Aew@mail.gmail.com>
+In-Reply-To: <CALOAHbB1cJ3EAmOOQ6oYM4ZJZn-eA7pP07=sDeG3naOM2G9Aew@mail.gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Sun, 9 Nov 2025 16:20:59 +0800
+X-Gm-Features: AWmQ_bnJ-vvvsH1qxIwP2kkBXgkqUH_eUTNwEZRz0N4xm2likEq83gy42ECpYgE
+Message-ID: <CALOAHbCz+9T349GCmyMkork=Nc_08OnXCoVCz+WO0kdXgx3MDA@mail.gmail.com>
+Subject: Re: [PATCH v2] bpf: hashtab: fix 32-bit overflow in memory usage calculation
+To: David Laight <david.laight.linux@gmail.com>, Alexei Safin <a.safin@rosa.ru>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lvc-patches@linuxtesting.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds boundary checks for the dilinelock->index in the
-diWrite() function of JFS to prevent out-of-bounds access to the lv
-array. When dilinelock->index exceeds dilinelock->maxcnt, it calls
-txLinelock() to refresh the dilinelock structure, ensuring valid access
-to dilinelock->lv[] during inode data writing.
+On Sun, Nov 9, 2025 at 11:00=E2=80=AFAM Yafang Shao <laoar.shao@gmail.com> =
+wrote:
+>
+> On Fri, Nov 7, 2025 at 7:41=E2=80=AFPM David Laight
+> <david.laight.linux@gmail.com> wrote:
+> >
+> > On Fri,  7 Nov 2025 13:03:05 +0300
+> > Alexei Safin <a.safin@rosa.ru> wrote:
+> >
+> > > The intermediate product value_size * num_possible_cpus() is evaluate=
+d
+> > > in 32-bit arithmetic and only then promoted to 64 bits. On systems wi=
+th
+> > > large value_size and many possible CPUs this can overflow and lead to
+> > > an underestimated memory usage.
+> > >
+> > > Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> >
+> > That code is insane.
+> > The size being calculated looks like a kernel memory size.
+> > You really don't want to be allocating single structures that exceed 4G=
+B.
+>
+> I failed to get your point.
+> The calculation `value_size * num_possible_cpus() * num_entries` can
+> overflow. While the creation of a hashmap limits `value_size *
+> num_entries` to U32_MAX, this new formula can easily exceed that
+> limit. For example, on my test server with just 64 CPUs, the following
+> operation will trigger an overflow:
+>
+>           map_fd =3D bpf_map_create(BPF_MAP_TYPE_PERCPU_HASH, "count_map"=
+, 4, 4,
+>                                                      1 << 27, &map_opts)
 
-Reported-by: syzbot+9489c9f9f3d437221ea2@syzkaller.appspotmail.com
-Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
----
- fs/jfs/jfs_imap.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Upon reviewing the code, I see that `num_entries` is declared as u64,
+which prevents overflow in the calculation `value_size *
+num_possible_cpus() * num_entries`. Therefore, this change is
+unnecessary.
 
-diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
-index ecb8e05b8b84..7f93150d319f 100644
---- a/fs/jfs/jfs_imap.c
-+++ b/fs/jfs/jfs_imap.c
-@@ -762,6 +762,8 @@ int diWrite(tid_t tid, struct inode *ip)
- 	 * copy inline symlink from in-memory inode to on-disk inode
- 	 */
- 	if (S_ISLNK(ip->i_mode) && ip->i_size < IDATASIZE) {
-+		if (unlikely(dilinelock->index >= dilinelock->maxcnt))
-+			dilinelock = txLinelock(dilinelock);
- 		lv = & dilinelock->lv[dilinelock->index];
- 		lv->offset = (dioffset + 2 * 128) >> L2INODESLOTSIZE;
- 		lv->length = 2;
-@@ -773,6 +775,8 @@ int diWrite(tid_t tid, struct inode *ip)
- 	 * 128 byte slot granularity
- 	 */
- 	if (test_cflag(COMMIT_Inlineea, ip)) {
-+		if (unlikely(dilinelock->index >= dilinelock->maxcnt))
-+			dilinelock = txLinelock(dilinelock);
- 		lv = & dilinelock->lv[dilinelock->index];
- 		lv->offset = (dioffset + 3 * 128) >> L2INODESLOTSIZE;
- 		lv->length = 1;
-@@ -785,6 +789,8 @@ int diWrite(tid_t tid, struct inode *ip)
- 	/*
- 	 *	lock/copy inode base: 128 byte slot granularity
- 	 */
-+	if (unlikely(dilinelock->index >= dilinelock->maxcnt))
-+		dilinelock = txLinelock(dilinelock);
- 	lv = & dilinelock->lv[dilinelock->index];
- 	lv->offset = dioffset >> L2INODESLOTSIZE;
- 	copy_to_dinode(dp, ip);
--- 
-2.34.1
+It seems that the Linux Verification Center (linuxtesting.org) needs
+to be improved ;-)
 
+--=20
+Regards
+Yafang
 
