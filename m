@@ -1,144 +1,92 @@
-Return-Path: <linux-kernel+bounces-892137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CD0BC446B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 21:17:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A28C446C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 21:27:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27FF8188AE26
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 20:18:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E73DB188ADBF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 20:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7F2257848;
-	Sun,  9 Nov 2025 20:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C9A23B60A;
+	Sun,  9 Nov 2025 20:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kh4UqDOL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="RgSKTigY"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0625621885A;
-	Sun,  9 Nov 2025 20:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380691D5146
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 20:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762719458; cv=none; b=jeM6BU6MgYzp8gd3FzjmDA7QUm7OBUufRf1lM9BYwmo+qhMphk7EkNV7hCLUT6Mr5fa1RychOWxwMXlL0HP9LJIrsRLx60PfIwKZYziNJ6QwRGss7mt3Z5ybdHxH/wdBgXIP9TAIhTUwqnj77dajj7y/8uCYvuXUI0MAgNWIMak=
+	t=1762720038; cv=none; b=NftIhBGJPKqn8xrQlt62DbBH3stXDVp8cX94XFuMUldr7XJEHmZsVBIux+OQ1qdIiqnWb97I1p+zoc2RhZuZXMpgVljawJ6jVPcKnKX2Klafxcvad1fJ7c7JRgZfr3MfeqPAkhV/3c4DE2mvYExtNNc8A4IWLC3bBLIbEAwkk9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762719458; c=relaxed/simple;
-	bh=1KRhyqT3RL8+J1aPjCPNmWkZUU7rTkrdCzwbvZfrVQg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u9P03K3m8vGvUbNNhnTJJI3acNasdYKuyJritBGqAwUJNTbXNGZ/Bq04ZoPErgQ57ljj8hCDfl1znZCq0lWKVuYDUa8ElhqRY7h2Xm3S2e4eGhtgoBheQwwZcV5iF8PnmbD+TB/0ejHyjvr2v+yUGzBIi45z9PzH02l2GLccjtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kh4UqDOL; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762719456; x=1794255456;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=1KRhyqT3RL8+J1aPjCPNmWkZUU7rTkrdCzwbvZfrVQg=;
-  b=Kh4UqDOLrXHj2z4SjsL0w+p8OnYdo8YXCIz9sOvXZGkES4YXCgQv0ez6
-   7b8VdLiHkIrPiefzGT3BRLMgOfmSFuPa2ZI4Os131WsUUMKqO813uw2Ip
-   cW453i2DKb4lxZUGXhKqirli7g5Vbb6F/ivnZxA1wm1QeS5QnX/qprkbn
-   B7OTzDUTJkvwyM9Jou5OdJs12+7mCVIeg4OZwbYEv5GLo4/RaFP03tBkP
-   RFDP1kimG75g6uTVupfw97jrX03Cr13D5fmdHebV+Nx40jb62TleAnXk5
-   /Qx0pkEJGV55LDIBUrR3Hiso2AwCNH7Edkl9n2mQqroqGfu9hBpwYcCp8
-   w==;
-X-CSE-ConnectionGUID: Y4mE6LmsSUSLGV5n5uwfGQ==
-X-CSE-MsgGUID: gG2zoX7kS4aXzu1DFRux1g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="67386916"
-X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
-   d="scan'208";a="67386916"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 12:17:35 -0800
-X-CSE-ConnectionGUID: zugnw0nQQXukRBAiH7eeEA==
-X-CSE-MsgGUID: fxxLKX4ITTuczS7ZqpXO6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
-   d="scan'208";a="225765073"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa001.jf.intel.com with ESMTP; 09 Nov 2025 12:17:34 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id D782C95; Sun, 09 Nov 2025 21:17:32 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Xu Yilun <yilun.xu@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Moritz Fischer <mdf@kernel.org>,
-	Tom Rix <trix@redhat.com>
-Subject: [PATCH v3 1/1] fpga: altera-cvp: Use pci_find_vsec_capability() when probing FPGA device
-Date: Sun,  9 Nov 2025 21:16:37 +0100
-Message-ID: <20251109201729.3220460-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1762720038; c=relaxed/simple;
+	bh=fKR3QBbaHqgZ3LcctrliMMiqU5fz+/oHsaft4+SoaA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IK6iLn0hmmNfnEA6uDJEsD1tckB+mf6CYjFcTH1Q4zxmKmo56Z4ooVZwbIC5ZwZdq6N3wLsS83b32NReVImcJs8CIO5n/QhVrjGv7j+ybnESpL/9CIBeCHnEwIIX9YUKnhvK/ABDP37mkv0Df8NpHjcx/+aHJSd99vzQug3ppRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=RgSKTigY; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1762720032;
+	bh=fKR3QBbaHqgZ3LcctrliMMiqU5fz+/oHsaft4+SoaA4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RgSKTigYOzKxxsqTPG7VPXFM67JiGn8gSxcQVTY3g6FgERi5ykMUSHwbQU4KB0ri3
+	 h4DrJLdCCe3z/i6hDDNtZqZ/H3c5nHzfzXBYu8/ls+u7QlU/tE2ndKH9CCl/9s7HDZ
+	 5iEao5HkAogDupjxUnTfIQ/qlFG42cvTsWspye5E=
+Date: Sun, 9 Nov 2025 21:27:11 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>
+Cc: linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] tools/nolibc: avoid using plain integer as NULL pointer
+Message-ID: <f85ba2f8-d611-4d68-829d-b96c45201882@t-8ch.de>
+References: <20251109-nolibc-sparse-v1-1-02256638a99c@weissschuh.net>
+ <20251109195754.GB20023@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251109195754.GB20023@1wt.eu>
 
-Currently altera_cvp_probe() open-codes pci_find_vsec_capability().
-Refactor the former to use the latter.
+On 2025-11-09 20:57:54+0100, Willy Tarreau wrote:
+> Hi Thomas,
+> 
+> On Sun, Nov 09, 2025 at 08:27:29PM +0100, Thomas Weißschuh wrote:
+> > The integer zero should not be used as NULL pointer.
+> > It is invalid and sparse will complain about it.
+> > 
+> > Use proper NULL pointers instead.
+> 
+> Huh ? I've been using that for decades and seeing it everywhere. That's
+> quite bizarre, 0 is perfectly valid as a pointer. Ah, here it is, in
+> C99:6.3.2.3:
+> 
+>   An integer constant expression with the value 0, or such an expression
+>   cast to type void *, is called a null pointer constant.
+> 
+> The change is small, so if it hurts sparse, I'm fine with changing it,
+> but at least the commit message should be adjusted to say that sparse
+> doesn't like it and not that it's not valid.
 
-With that done:
-- use the VSEC ID as per datasheet [1]
-- update the error message accordingly
+Yeah, indeed '0' is special and valid, even in C23.
+My recollection was wrong. Thanks for the hint!
 
-Link: https://www.intel.com/content/www/us/en/docs/programmable/683763/23-1/vendor-specific-header-register.html [1]
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/r/202509261452.g5peaXCc-lkp@intel.com/
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> 
+> For the patch: Acked-by: Willy Tarreau <w@1wt.eu>
 
-v3: used VSEC ID per datasheet (Xu), updated commit message (Xu)
+And thanks again.
 
- drivers/fpga/altera-cvp.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 5af0bd33890c..44badfd11e1b 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -22,9 +22,6 @@
- #define TIMEOUT_US	2000	/* CVP STATUS timeout for USERMODE polling */
- 
- /* Vendor Specific Extended Capability Registers */
--#define VSE_PCIE_EXT_CAP_ID		0x0
--#define VSE_PCIE_EXT_CAP_ID_VAL		0x000b	/* 16bit */
--
- #define VSE_CVP_STATUS			0x1c	/* 32bit */
- #define VSE_CVP_STATUS_CFG_RDY		BIT(18)	/* CVP_CONFIG_READY */
- #define VSE_CVP_STATUS_CFG_ERR		BIT(19)	/* CVP_CONFIG_ERROR */
-@@ -577,25 +574,18 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- {
- 	struct altera_cvp_conf *conf;
- 	struct fpga_manager *mgr;
--	int ret, offset;
--	u16 cmd, val;
-+	u16 cmd, offset;
- 	u32 regval;
--
--	/* Discover the Vendor Specific Offset for this device */
--	offset = pci_find_next_ext_capability(pdev, 0, PCI_EXT_CAP_ID_VNDR);
--	if (!offset) {
--		dev_err(&pdev->dev, "No Vendor Specific Offset.\n");
--		return -ENODEV;
--	}
-+	int ret;
- 
- 	/*
- 	 * First check if this is the expected FPGA device. PCI config
- 	 * space access works without enabling the PCI device, memory
- 	 * space access is enabled further down.
- 	 */
--	pci_read_config_word(pdev, offset + VSE_PCIE_EXT_CAP_ID, &val);
--	if (val != VSE_PCIE_EXT_CAP_ID_VAL) {
--		dev_err(&pdev->dev, "Wrong EXT_CAP_ID value 0x%x\n", val);
-+	offset = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_ALTERA, 0x1172);
-+	if (!offset) {
-+		dev_err(&pdev->dev, "Wrong VSEC ID value\n");
- 		return -ENODEV;
- 	}
- 
--- 
-2.50.1
-
+Thomas
 
