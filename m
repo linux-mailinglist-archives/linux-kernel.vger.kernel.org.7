@@ -1,203 +1,158 @@
-Return-Path: <linux-kernel+bounces-891867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB1BC43AEB
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 10:40:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 321D0C43B1F
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 10:41:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 895823AEA91
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 09:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC62188C474
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 09:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDC12C158F;
-	Sun,  9 Nov 2025 09:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4462DC772;
+	Sun,  9 Nov 2025 09:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="d4hRBC6F"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011031.outbound.protection.outlook.com [52.101.62.31])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNLQJC/M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440772D8780;
-	Sun,  9 Nov 2025 09:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762681169; cv=fail; b=gZ24LFk7v2vdxJbV4M9QkmJJMttUxXp6Y8eBxiAVXOT3MMc+V7p0hP8D+GiS6XcxPHZHl3nlhk4T/w5arxxeLX6o23q5ETcZ9XoytakPkbxAGcjm8dHZaSe0BLWpkb1LpJP8Y4QvRmA73o4rCpK1j3TNAdclT/SZjmPhse8/Hd4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762681169; c=relaxed/simple;
-	bh=OKtkv34FYx6Xai89ZtujWHYwECB4Sr0qeCJevKKPukA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O/jo2oTtgFAmCIlz7PBB8gJNigmLJ7+EDtwaDhLQbHWbc7sF6Pkew6QxlaS9AMczzEiw+nHujVcatpc3DurA1TgormQllbKT9k2QKbVOoZmQW1WbMbGyoEizk9Gam3NK0MprupJOlkscukHbdj4f26ZLSOAOLNZNxPi/G7nDlLU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=d4hRBC6F; arc=fail smtp.client-ip=52.101.62.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MNeQxZu3GVN3kqGERuC7cJ7hIX9sV9EUj0fKr++12PrCa6mYU2ZmwbCxu+rcfSGWTT9wJizTsNzeXAF/W1dwPML+9ngFXcuHGI6U5H54eNQWwPVGQagpFlakC+coUGqduzOjrwRIRGto5aqIjpP5fDamr520yPt7hW5Fl0TG2qY4FoTF0q1l+O9O+untRf4vbScZGoeXTjISEMgleRdjBwhYEvBL3D4StgqyXQ64WP+2vRrURePt91ru91QrNAOsHckR1V7c/RZcgjwjtuRy7kKQ9yd8+jCvkHHs5DVD6/eglxdraTtf9VnqQeidccSTCAhGoUfDUM/s6rUG6wwgKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fqc5Ev1T0u3Fy4rmmQ5GmvBxSB2Qcngtcea5BNijcOg=;
- b=pquyIIylnfrdHfW1fl2gPMwo+vS9LbLHR6maa0e2M/mg3N+B8IJIc5yxA4gqqtAMk+IrNLDtR1f4i9PS5ZXAHTsg2tCNlDdLj2MLpPuWDq35khgtRyns0L/4xkbwJfmcdnel5fpWoQazz01MUZvN6BJI5/0Uro6/8wScijGz3bD85YLsXz5+zVzQDzx8MUsi3jIq33jDDM+ibNNMMow8hJ+9ZFvsuvbUMz/sgUCzUyVZQkDhS9C01zKlYjj8gVxNMR/7D/WQEgXFo++C5Xr/o5ctq3anSHcoRctAymJm6Y/shVIygsAXdGGaRgAOHQykcS2BcW9IU6VAfUKm0Wjt3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fqc5Ev1T0u3Fy4rmmQ5GmvBxSB2Qcngtcea5BNijcOg=;
- b=d4hRBC6FzLUqqqsn4GlkfvmvVpimJicYP5IMzhu+oZALiq2mOG8GGBo63P5gHgZqiBjBHbX/oS7RzA97rAyZka6ViRd5QU2wKARvoDTsHS9ioXhnF/LFHoj8mY2+W3Jhqkzoyu7H1T2rfvkyuXQ/ZwWC4qW8143oiHRqo0HJi75XcerYP2UdRwUtdkPd0vXyji4fLsqzqVaZB4RMTQpjKMIqTs6dFlZ7/mwTFloz2brKuUmTIRqOTxV1c74v32M4YVxe4tUkOPhn2lz43Rmvpb3brGNS8AHECz549lVdYkrbTTwTzepT47s+dit31IpwA5vOH2nzQcK02JYtEu0ITw==
-Received: from BY5PR16CA0007.namprd16.prod.outlook.com (2603:10b6:a03:1a0::20)
- by DM4PR12MB5724.namprd12.prod.outlook.com (2603:10b6:8:5f::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.12; Sun, 9 Nov 2025 09:39:23 +0000
-Received: from MWH0EPF000989EC.namprd02.prod.outlook.com
- (2603:10b6:a03:1a0:cafe::d9) by BY5PR16CA0007.outlook.office365.com
- (2603:10b6:a03:1a0::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.14 via Frontend Transport; Sun,
- 9 Nov 2025 09:39:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- MWH0EPF000989EC.mail.protection.outlook.com (10.167.241.139) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Sun, 9 Nov 2025 09:39:22 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 9 Nov
- 2025 01:39:09 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 9 Nov
- 2025 01:39:08 -0800
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Sun, 9 Nov
- 2025 01:39:04 -0800
-From: Tariq Toukan <tariqt@nvidia.com>
-To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>
-CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>
-Subject: [PATCH net 5/5] net/mlx5e: Fix potentially misleading debug message
-Date: Sun, 9 Nov 2025 11:37:53 +0200
-Message-ID: <1762681073-1084058-6-git-send-email-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.8.0
-In-Reply-To: <1762681073-1084058-1-git-send-email-tariqt@nvidia.com>
-References: <1762681073-1084058-1-git-send-email-tariqt@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE5F2D6400;
+	Sun,  9 Nov 2025 09:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762681205; cv=none; b=Bjx0pQMZh2NNo4lupfR1SGTSFuNVbkcJelOr2oQGGlLpiydfIv+iYtD7uzGaVKxrxTINEO0kiSN5PcwLLYRZS+lrL2Z5/RK39fRFqp8b9eH8L3fxQ9zl04vBAFXASuoQkuHXCSC3FjJ2OwbIiitAljNxxtkGjRyLf+8gcq3BK+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762681205; c=relaxed/simple;
+	bh=1mafSDjzBgsMCZ7ArlDk0UuSa3iSLw6qNMUKGLRpjvw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Oz9iOY2DcQgbhuuE8EJUHtAYYJA/V3u00HwnoCluqLwS2a+QtMdpVhtRJT4hysQxlrZfDo3sxiW9LGdbIcY7RtLAaRYDbjgY69iKHVOsWjO49+pwetIwHigL3W3tOCzEr725rI5DyWplLaQiA2CwkpKUU2QBZevCxR/0YyRqyrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNLQJC/M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B2F63C4CEF8;
+	Sun,  9 Nov 2025 09:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762681204;
+	bh=1mafSDjzBgsMCZ7ArlDk0UuSa3iSLw6qNMUKGLRpjvw=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ZNLQJC/MliYq1YMSb99C1AI+K0n1njY75gqgXPUtW5Mi4gVhrbku+gruTkU3wVJr1
+	 i7TiA7LaUzf6vS7CeyxlyChbNYHjHNn/TIrqrFqQCpaTBt+nqSMZF2h5SOAnYEVIrm
+	 3f7rwHsa3NRKKpvaDnN/5uSLqx32oVQ2kh5649HxF4kKQREpKlGJefpRgyVXS+CM4q
+	 oJ1qj+DxFbrAx/vmpvnamWvPF7GDnm8sRb5AH1UXBrlsH6NhMUbM5RJRDWjncJO7yl
+	 0AfE4MWH5YWPzvZAORhjX34nizBQfvvSKL8nOAyICZW1NKMW8yDnKNu6u1WGZHA/Iw
+	 P/bkGCR4LhRbg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A90BACD1288;
+	Sun,  9 Nov 2025 09:40:04 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Subject: [PATCH RFC 0/8] media: camss: Add support for C-PHY configuration
+ on Qualcomm platforms
+Date: Sun, 09 Nov 2025 10:39:43 +0100
+Message-Id: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989EC:EE_|DM4PR12MB5724:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7a0b3e8-73e8-4f03-424d-08de1f73dd48
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DIqTXqAGyc7NSP82Zymua8AGgEQXcxenN87jQaFNgQqHIKmf5KfUFL2Sda2A?=
- =?us-ascii?Q?aPYomuIu/lbBor/JuFqobgJFwtNQ0G1zRvqgMgcJ4xYa3OHyUlrKa2fpIpk6?=
- =?us-ascii?Q?+VwyQXAB+eALlN/xdgaP3pmm/UdRDXPYrGrPDuyiRvU341wXcrQ2UzR4ijyg?=
- =?us-ascii?Q?fkP3rmANBk9LNYQHOhmBmPtfgZ16Z84l0rU2PDao8EJzdhB3yKwohhKTMYjy?=
- =?us-ascii?Q?vqNPf4RgCNaZ2geIUix/h2SsH3xmWZdUqBUqXFX0txHxPEHaHC9CrdpGyYJi?=
- =?us-ascii?Q?Kir9FVhwnD+gry75y+A1FxJluUMoLOZNB+1VXY6efcveG4wFERdaRIxDZKK6?=
- =?us-ascii?Q?W9tEcaye7paGtrVqHdk2pp8wGZSC7DPmaKRq3U3hnRYlt18Zzh9vpqcH4Ynm?=
- =?us-ascii?Q?r8oC1emNhRLUQ2qYRShu0sBHgcdlLx/wpdRjLozr9dANoyx5hLt4g+S0Ifg8?=
- =?us-ascii?Q?WO6Y7a+SDkJh5p5YJBufPvPHdZYzAobcPduOqkav8HoO26zjnrrUEGWxfDQe?=
- =?us-ascii?Q?DmkzQb0qkwUY9mseE/waJ2wlQapE5vjW3F/8aixIP8qEesek6KXkndibCyAB?=
- =?us-ascii?Q?+t2oD9G9Yuuzb4dUzxXQciER+LfEzw43FoO6CqkkNqT/uLbdgCTOb9H3lqj7?=
- =?us-ascii?Q?jEETXtNWExjDH6M405m+pxvOE7u5k40lJOWzlpr0Eae2NDCN3lmvTsjF5cPh?=
- =?us-ascii?Q?DkFRNaIXEUO6zhYzoFG1SzovndT3ZEz/MZakdVCU8bTEZNKA8sIO0o5/odan?=
- =?us-ascii?Q?iStsLzghBwcwpEeETBwBXkzvFzJtBNomw0uHTdMHfCveYlBdjJ94Kdc9S7GB?=
- =?us-ascii?Q?DbkmbnfTQUJb4u8mfWWWJTGNTMZqgD+wejkDiL3IENb5lb39Wq1J9sWTaRwi?=
- =?us-ascii?Q?U+0zQb7TK3WziuNbJLYLXzj9IPMzDeeH2zgpJpYBafqfDvfbc3Era5sl+iZI?=
- =?us-ascii?Q?8LzGRwFMPJvGsx0aoJ2l77Me9GldPvfKOJttJ8DelDij+8+S3V1G0JfHybvS?=
- =?us-ascii?Q?9uFwaUegfHq+q5y5z9iM9hNUS9OFuDF5kNmL3vMic1ijumFJtHZnLBms7YG3?=
- =?us-ascii?Q?cFhnAZiHeYGCc4LiAF8D6R6NmtbzU0DvDEBHHrkYg2pS9KzsfxhWyv7m6Oi4?=
- =?us-ascii?Q?+5SX3HzJBnp+qK//Gdsy2hHCgQDPJSNPUC8PGyOVWsQxoyU5ujt0aRvuCBxY?=
- =?us-ascii?Q?WigKIcwm6gYKUM0naJvPsVuRdAJc2/yHbXFWJHhdhJp46PrbXEftbkvX3rY7?=
- =?us-ascii?Q?QiZQTHy59Awyo5cnWY3Lxj5cYCVFMRuNo9ccvclmcpXrYUrhfb1ALW5DbXHh?=
- =?us-ascii?Q?5a/mMm65omeTgRQ3Rtgsf6DD0HTxeBHuXt8MQrkyjRFpiqbanlz8gFSt3tw6?=
- =?us-ascii?Q?VkOnLE5yiX2LVgZ0kCsOGOFsfK+ZTFLzCjehCDMZ2Ohv4aIiogrpYtInB27C?=
- =?us-ascii?Q?RTRKCLNu7FmUh7LUMNYfRcXY7JBpcwmGr22Vlxe4t/WMgLdPMIV2e7YRuKpR?=
- =?us-ascii?Q?oeonuqvM0kz9Dd2yWPwgZbeUaVZ/jaNBeKV///y/C1w25qM0xCv3tKEbd4f6?=
- =?us-ascii?Q?AnmX1R9ivVeKVgl0fuY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2025 09:39:22.6468
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7a0b3e8-73e8-4f03-424d-08de1f73dd48
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989EC.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5724
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF9hEGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDQwNL3cLk/Fzd5IKMSt2kJIvkpJREw2QzExMloPqCotS0zAqwWdFKQW7
+ OSrG1tQCzqm6gYAAAAA==
+X-Change-ID: 20251109-qcom-cphy-bb8cbda1c644
+To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Luca Weiss <luca.weiss@fairphone.com>, Petr Hodina <phodina@protonmail.com>, 
+ Casey Connolly <casey.connolly@linaro.org>, "Dr. Git" <drgitx@gmail.com>
+Cc: Joel Selvaraj <foss@joelselvaraj.com>, linux-media@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2819; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=1mafSDjzBgsMCZ7ArlDk0UuSa3iSLw6qNMUKGLRpjvw=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpEGFy2+CmwZYEuSn/R9jhfOrAc/Q8g4MAn54NH
+ Jy0hZCQstqJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaRBhcgAKCRBgAj/E00kg
+ ciHkD/9M7HjTM7Vr9eE8Z+80lQ5KK/JshPHF4fZsh/lgPbPqOcGyq+05W28Jnu+PKSsjp7Dn8MR
+ b7wM4PyKskvy/iLrBVgMzY9xM2v6iIzrratp1gLfoDRWLmStSmMcDvWebgFz+ocWGnd9iX4PL5T
+ Pe9hUCwlWNrEFAqHDj9WEZbsgI0/PKtVzRL1aDDBal/lobxzEfklLjtTNwhvIHPWVpfRSGjQlMM
+ XJD9965Th9OqvMX6wfDv6c3zw21AFmxZ+rg6REX25nqGMIYomuTM6ZIJBGpO0JmINRc15WjgTgp
+ que14JxgJ6C0cCdMoNYFIdJKFFUUjSOOWgfyqV9UPWJNzXas7RGMGwBJnimXSBuSa1jwsTuFUdB
+ mfgfSTbVDzrMCZnVF08Oc+knH53pv/9r4EoGrObSDdpMVmV3HdD3Es8KzQfXKM0Sllo9Cwwr9R3
+ QZZmKF4yqQwDUkcimMptVN339cktKgPVnASrWsYGf6vJ3lznXVUnE9l6afsIdMvITEaMpLbnf51
+ ACtmAIiKdNqgyq2DdnzFzmL+YZkb0VhkddzxnyzG4xBivuurdNs6d7MHgGTZ2ub6lIzEBlWtGM+
+ dEoP8CRHKy9d7UPCLs2GmSV3XtG3MYodFYBT+YNGSYv+W97VaObg8UHSjz/P7f576kjXhRHSrww
+ ko1toCiSge6IXfg==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-From: Gal Pressman <gal@nvidia.com>
+# Short summary
 
-Change the debug message to print the correct units instead of always
-assuming Gbps, as the value can be in either 100 Mbps or 1 Gbps units.
+This patch series extends the Qualcomm CAMSS (Camera Subsystem),
+including CSID and CSIPHY components, to support C-PHY mode configuration.
 
-Fixes: 5da8bc3effb6 ("net/mlx5e: DCBNL, Add debug messages log")
-Signed-off-by: Gal Pressman <gal@nvidia.com>
-Reviewed-by: Nimrod Oren <noren@nvidia.com>
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+# Background and motivation
+
+Modern smartphone cameras increasingly rely on MIPI C-PHY rather than D-PHY,
+thanks to its higher data throughput and signal efficiency. As a result,
+many OEMs adopt C-PHY interfaces for main (rear) cameras on Qualcomm-based
+devices.
+
+Until now, mainline Linux lacked C-PHY configuration support for Qualcomm
+chipsets, preventing bring-up of primary camera sensors on several
+Snapdragon platforms. This series closes that gap.
+
+ - Introduces C-PHY configuration support for the CAMSS driver stack,
+   covering both CSID and CSIPHY blocks.
+ - Successfully enables C-PHY operation on the Snapdragon 845 platform.
+ - Tested on OnePlus 6 and 6T phones running mainline Linux,
+   using the Sony IMX519 main camera sensor.
+ - The new configuration allows other chipsets versionsto enable C-PHY by
+   simply adding corresponding sensor driver support and csiphy
+   initialization data, following the example set for sdm845.
+
+With this patch series, mainline Linux gains working C-PHY support for
+Snapdragon 845, paving the way for improved main camera functionality
+across many Qualcomm-based devices. The groundwork also simplifies
+future enablement efforts for additional SoCs and sensors.
+
+Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
- .../net/ethernet/mellanox/mlx5/core/en_dcbnl.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+Casey Connolly (1):
+      media: qcom: camss: csiphy-3ph: Add Gen2 v1.1 MIPI CSI-2 CPHY init
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_dcbnl.c b/drivers/net/ethernet/mellanox/mlx5/core/en_dcbnl.c
-index d88a48210fdc..9b93da4d52f6 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_dcbnl.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_dcbnl.c
-@@ -598,6 +598,19 @@ static int mlx5e_dcbnl_ieee_setmaxrate(struct net_device *netdev,
- 	__u64 upper_limit_mbps;
- 	__u64 upper_limit_gbps;
- 	int i;
-+	struct {
-+		int scale;
-+		const char *units_str;
-+	} units[] = {
-+		[MLX5_100_MBPS_UNIT] = {
-+			.scale = 100,
-+			.units_str = "Mbps",
-+		},
-+		[MLX5_GBPS_UNIT] = {
-+			.scale = 1,
-+			.units_str = "Gbps",
-+		},
-+	};
- 
- 	memset(max_bw_value, 0, sizeof(max_bw_value));
- 	memset(max_bw_unit, 0, sizeof(max_bw_unit));
-@@ -628,8 +641,9 @@ static int mlx5e_dcbnl_ieee_setmaxrate(struct net_device *netdev,
- 	}
- 
- 	for (i = 0; i < IEEE_8021QAZ_MAX_TCS; i++) {
--		netdev_dbg(netdev, "%s: tc_%d <=> max_bw %d Gbps\n",
--			   __func__, i, max_bw_value[i]);
-+		netdev_dbg(netdev, "%s: tc_%d <=> max_bw %u %s\n", __func__, i,
-+			   max_bw_value[i] * units[max_bw_unit[i]].scale,
-+			   units[max_bw_unit[i]].units_str);
- 	}
- 
- 	return mlx5_modify_port_ets_rate_limit(mdev, max_bw_value, max_bw_unit);
+David Heidelberg (6):
+      media: qcom: camss: csiphy: Introduce C-PHY
+      media: qcom: camss: csiphy-3ph: Use odd bits for configuring C-PHY lanes
+      media: qcom: camss: Prepare CSID for C-PHY support
+      media: qcom: camss: csiphy-3ph: Use sdm845 C-PHY configuration sequence
+      media: qcom: camss: Account for C-PHY when calculating link frequency
+      media: qcom: camss: Remove D-PHY-only endpoint restriction
+
+Petr Hodina (1):
+      media: qcom: camss: Initialize lanes after lane configuration is available
+
+ .../media/platform/qcom/camss/camss-csid-gen2.c    |   1 +
+ drivers/media/platform/qcom/camss/camss-csid.c     |   3 +-
+ drivers/media/platform/qcom/camss/camss-csid.h     |   1 +
+ .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     | 165 ++++++++++++++++-----
+ drivers/media/platform/qcom/camss/camss-csiphy.c   |   6 +-
+ drivers/media/platform/qcom/camss/camss-csiphy.h   |   2 +
+ drivers/media/platform/qcom/camss/camss.c          |  24 ++-
+ drivers/media/platform/qcom/camss/camss.h          |   2 +-
+ 8 files changed, 146 insertions(+), 58 deletions(-)
+---
+base-commit: 9c0826a5d9aa4d52206dd89976858457a2a8a7ed
+change-id: 20251109-qcom-cphy-bb8cbda1c644
+
+Best regards,
 -- 
-2.31.1
+David Heidelberg <david@ixit.cz>
+
 
 
