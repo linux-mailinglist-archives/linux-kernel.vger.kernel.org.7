@@ -1,151 +1,113 @@
-Return-Path: <linux-kernel+bounces-891812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2C1C438FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 06:58:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F33C4390B
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 07:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B3B84E1872
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 05:58:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67B223B1F9C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 06:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294D02417E6;
-	Sun,  9 Nov 2025 05:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RvCt0oIC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C04923EA8B;
+	Sun,  9 Nov 2025 06:08:41 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9501A9F88;
-	Sun,  9 Nov 2025 05:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273DB1494C3;
+	Sun,  9 Nov 2025 06:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762667929; cv=none; b=GnqrBxkFiSH8hAx7/v2Jo+YicHRN5iC8mooQfgpJnPvumDQBpuzIFmba4dEsRTLLonTNdTIYWQAXuEDihllWoFjJjux1RCATaxJ3/TMlMJudGN+FfdSKEQtEpMPMATINIfjKABCGXbl7LAZJFIyPezN1VZ2/PmXWsBzUjRj6PAw=
+	t=1762668521; cv=none; b=d1FvJoPVw/22ST2jMHPOvgUjZkxrqrkcQYa5H9bwAyPSJgd17B4pneUG4WLyFwBfAS7RKk9Xh5g1TPqXCSJMbv9/mE+Sbt5cYpeDTJXpCRHx/pGYiy0NhXfvVMnVwNOAyEcVCD5oEC2v3nxyv8TuZ8sEW9Hw8sJXLkHWXkB1pbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762667929; c=relaxed/simple;
-	bh=dJDKBI9C/t3oC8rzuP3IFu6rPxvZkeXCeHJ+1VHh/oI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fmp8MJO8QMY42qRLmyhozGnNjf/2x+W4yoJwpM9Sjti8Cej7D/ndBEgoyAuR8gxxx/DUaiJosqBExFnmXpMkBZhJTiUNRSyDGkMNr8UMZThKRufEnQGfylk26qOoUUYOPWqkz7Gbu2mqZ2rO8ygKsvSSQsVdG2cv7GOo97r4w8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RvCt0oIC; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762667927; x=1794203927;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dJDKBI9C/t3oC8rzuP3IFu6rPxvZkeXCeHJ+1VHh/oI=;
-  b=RvCt0oICgu0eCezi7zWxWp9gYvdFgzncmp+u2RjzugQlgGD7IaWVlazD
-   wVNW3wUdksOkUkaHGkdRffa+9+J91L/SW7IbsRAbEq5+jQet6m1gW7Xqt
-   yZsUNOVTrJCBLZNPYRgQBENXIZ93XhdKzEMwT+LYKCysvmMrqDvdACV50
-   96oSAOBGI1Los3HSWpk1RjnbiQtwj5+pZgVYmQmKU69eR1JpDL7G+mMwq
-   T6FE5fXLf5SVpk7I+QQQyNCVfDvUP2M7GahPysavWgmRTwt/1W8M3FRym
-   YU68Qv2eqGQAiIgRqV9kkqcsKf869fO7e2RQH869NVLoaAlLJwvNbuRCt
-   w==;
-X-CSE-ConnectionGUID: KWqcI2gwRiex9ur+q+ZjVw==
-X-CSE-MsgGUID: XY5C3zcBSqqKm3uKTOfvHg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64685602"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64685602"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2025 21:58:47 -0800
-X-CSE-ConnectionGUID: yoGoFhiLQZ6PRUbwZTIMSw==
-X-CSE-MsgGUID: xnAORxazRya8mgr2lz4Zzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
-   d="scan'208";a="192784861"
-Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 08 Nov 2025 21:58:44 -0800
-Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vHyRl-0001oF-1f;
-	Sun, 09 Nov 2025 05:58:41 +0000
-Date: Sun, 9 Nov 2025 13:57:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bod@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>,
-	Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
-Subject: Re: [PATCH v5 3/5] media: iris: Add support for AV1 format in iris
- decoder
-Message-ID: <202511091302.TuplwHhw-lkp@intel.com>
-References: <20251107-av1d_stateful_v3-v5-3-351652ba49cd@oss.qualcomm.com>
+	s=arc-20240116; t=1762668521; c=relaxed/simple;
+	bh=JzGe8gBqJqRG3DdvZham7oPo7ql6kFZuuuNn+lKnDPU=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=S5tyrZiKaDX1xGL3c8RsEds7bcQbAFvUuhVLfm5zRIQEsSgxRfDUE0kFPVXvrwFOqlH41S0YyURHM8JREXtDaxen3j//y3uQVNSpmPUgu++Q+OdSm69144psijO84Pz7xpcGujoQZrKnazKjP9Rt1K0eTJULmKYNBEGbqva8LvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-01 (Coremail) with SMTP id qwCowAD3jMzTLxBpN0cSAA--.2587S2;
+	Sun, 09 Nov 2025 14:08:30 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: alexandre.belloni@bootlin.com
+Cc: linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] rtc: Fix error handling in devm_rtc_allocate_device
+Date: Sun,  9 Nov 2025 14:08:17 +0800
+Message-Id: <20251109060817.5620-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:qwCowAD3jMzTLxBpN0cSAA--.2587S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFyxAF13Gr47GF1Utw18Krg_yoW8GFW7pF
+	4fCa90krWUJr48Gw17u3WkuFyYgw4SkayfGF1xGwna9F93ZFyqyryxtryIqw18JFWkGay3
+	XFy7Ga1rCF18C3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9C14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_GF1l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUOo7_UUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107-av1d_stateful_v3-v5-3-351652ba49cd@oss.qualcomm.com>
 
-Hi Deepa,
+In rtc_allocate_device(), device_initialize() sets the reference count
+to 1. In rtc_allocate_device(), when devm_add_action_or_reset() or
+dev_set_name() fails after successful device initialization via
+device_initialize(), rtc_allocate_device() returns an error without
+properly calling put_device() and releasing the reference count.
 
-kernel test robot noticed the following build errors:
+Add proper error handling that calls put_device() in all error paths
+after device_initialize(), ensuring proper resource cleanup.
 
-[auto build test ERROR on 163917839c0eea3bdfe3620f27f617a55fd76302]
+Found by code review.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Deepa-Guthyappa-Madivalara/media-uapi-videodev2-Add-support-for-AV1-stateful-decoder/20251108-122511
-base:   163917839c0eea3bdfe3620f27f617a55fd76302
-patch link:    https://lore.kernel.org/r/20251107-av1d_stateful_v3-v5-3-351652ba49cd%40oss.qualcomm.com
-patch subject: [PATCH v5 3/5] media: iris: Add support for AV1 format in iris decoder
-config: x86_64-buildonly-randconfig-005-20251109 (https://download.01.org/0day-ci/archive/20251109/202511091302.TuplwHhw-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511091302.TuplwHhw-lkp@intel.com/reproduce)
+Cc: stable@vger.kernel.org
+Fixes: 3068a254d551 ("rtc: introduce new registration method")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/rtc/class.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511091302.TuplwHhw-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/media/platform/qcom/iris/iris_platform_sm8250.c:20:48: error: array has incomplete element type 'struct iris_fmt'
-      20 | static struct iris_fmt platform_fmts_sm8250_dec[] = {
-         |                                                ^
-   drivers/media/platform/qcom/iris/iris_platform_common.h:217:9: note: forward declaration of 'struct iris_fmt'
-     217 |         struct iris_fmt *inst_iris_fmts;
-         |                ^
-   drivers/media/platform/qcom/iris/iris_platform_sm8250.c:21:3: error: use of undeclared identifier 'IRIS_FMT_H264'
-      21 |         [IRIS_FMT_H264] = {
-         |          ^
->> drivers/media/platform/qcom/iris/iris_platform_sm8250.c:25:3: error: use of undeclared identifier 'IRIS_FMT_HEVC'
-      25 |         [IRIS_FMT_HEVC] = {
-         |          ^
->> drivers/media/platform/qcom/iris/iris_platform_sm8250.c:29:3: error: use of undeclared identifier 'IRIS_FMT_VP9'
-      29 |         [IRIS_FMT_VP9] = {
-         |          ^
-   4 errors generated.
-
-
-vim +/IRIS_FMT_HEVC +25 drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-
-    19	
-    20	static struct iris_fmt platform_fmts_sm8250_dec[] = {
-    21		[IRIS_FMT_H264] = {
-    22			.pixfmt = V4L2_PIX_FMT_H264,
-    23			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
-    24		},
-  > 25		[IRIS_FMT_HEVC] = {
-    26			.pixfmt = V4L2_PIX_FMT_HEVC,
-    27			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
-    28		},
-  > 29		[IRIS_FMT_VP9] = {
-    30			.pixfmt = V4L2_PIX_FMT_VP9,
-    31			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
-    32		},
-    33	};
-    34	
-
+diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
+index b1a2be1f9e3b..db5f33a22b14 100644
+--- a/drivers/rtc/class.c
++++ b/drivers/rtc/class.c
+@@ -379,13 +379,17 @@ struct rtc_device *devm_rtc_allocate_device(struct device *dev)
+ 	rtc->dev.parent = dev;
+ 	err = devm_add_action_or_reset(dev, devm_rtc_release_device, rtc);
+ 	if (err)
+-		return ERR_PTR(err);
++		goto err_put_device;
+ 
+ 	err = dev_set_name(&rtc->dev, "rtc%d", id);
+ 	if (err)
+-		return ERR_PTR(err);
++		goto err_put_device;
+ 
+ 	return rtc;
++
++err_put_device:
++	put_device(&rtc->dev);
++	return ERR_PTR(err);
+ }
+ EXPORT_SYMBOL_GPL(devm_rtc_allocate_device);
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.17.1
+
 
