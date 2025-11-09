@@ -1,160 +1,289 @@
-Return-Path: <linux-kernel+bounces-891854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A86AC43A8B
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 10:14:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9103CC43AAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 10:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A260D4E59DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 09:14:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C77643B2586
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 09:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E151C2D0C9D;
-	Sun,  9 Nov 2025 09:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0312C0F92;
+	Sun,  9 Nov 2025 09:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LL04uAuz"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="LbEgv20M"
+Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BC82C158F
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 09:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E20283C82
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 09:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762679647; cv=none; b=fKtL1g3KzQxeBMEn/lTKGJT4vEjhKOa5eijNhhqXZ/p/L1QxmKF0jSmRCSx13inyVEeT5DLj8twv4AHadJYIMsHlCW+5VwESnqBBlvcl1YzC+WLDZbCfy0CXxvMfIfUbxbuNk6BP1kJNpVAlfcUPheQQrtQxAm5j0miRjOfEH8g=
+	t=1762680331; cv=none; b=eSAFJxtUZEyH2rlyTdkZ2xTyj1gQ3TVVfV2wglklYOpZbV0KuA7yS6YH8OYQFU+0sxUfYmRXdop91wAfu5FiYIB8cSfCDshO9tlK9fyDJ0dHSfn2U2R9Kl1jfOhHU8YcIhOtMq8J/eXMzBXCM+/VorGYgddA1MTcqIiTHrT99UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762679647; c=relaxed/simple;
-	bh=HnQiRwzviFZfkE6loxr/BOANkRT7iJY6innAQLrusbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LDenBs7/NBC5gBS3XuDTuLHKAx5UNggWNXR+mL3UVStatqckP7ONhoZdYNR+YEt5Q1QeJz+zWx02PY5YuxZAFVQSNpqnAaJGDMIm/dUnZ1VwvPE6mXR4/L3maqJ7dWv+oC6mEx1mN1vo+ya/ciFPdItvda/6wbgUqGNnjdv0nig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LL04uAuz; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-34368216f06so215380a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 01:14:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762679645; x=1763284445; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4PMsTc2iEamsoaNNgA4bvlleTLsvEej8IKKb+6/VtSo=;
-        b=LL04uAuzG1+SIqqnm04+LCVDI8h2vl+FSxIHjHND88ZIXrn8ZRHm2YRP3xvDl8OD7T
-         6QKZlK2Rf8HO2zNzeKIHv9nQV7mO5yVpMAE57mOV4hFDQozRe6q8hRv2ak5A4yQUEcKq
-         7fDduXL9Q1ROM+gHbt8GuJ/CJa9eEPi+chw7YIpHCNuEK/PeJv26mfU8pkmUcDiQGPij
-         YHtoPIh52FOhsc2qc+TjRbUwY6PT4Av9CczTWYKlj4USIgHEvkG9IfSY+2jAj0Mo+nln
-         Nf+wdhdMwnVOQQEMoaSWr/exHwL+rJuJJ3XHDUMcCsHtm1x3lQnNP2hJ3j+66BlibkK0
-         xRpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762679645; x=1763284445;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4PMsTc2iEamsoaNNgA4bvlleTLsvEej8IKKb+6/VtSo=;
-        b=g+hBr+qiA0bv+kkEqOx2nIaSbqiHDv1BWSolNMwaK+hYihnFomrxSIr3gJmLBaOoHM
-         T8yJHHL5gh0V518Vg1FwVi2FGjlxPkDhqbfGQcP4PgK+gNdDzUHmrLoNOpXsmbPUbSmC
-         WATBh8w4Wo+eHD+lYfpUZ1dbAG9msjpLerypXmqyZw7Qq6+bcQFRjavz+3nXM9UUaXBl
-         2qMbKD9sisFdsMXr1DaTvT5mAU6QJjn0LPfYoZeqkVVVnmY4Lj/FWxIsRfSkpu5XfZ3a
-         VN8Qi6YNYitFPTGNSxdJ6LdYHJtzTQOe5TTTkzlAVeGlEMvY+LP39w4U+vMUG4//mE2h
-         KuYw==
-X-Gm-Message-State: AOJu0YwPHlV4X1RfLSuskTxlH1M5LTUXvW+3Mc9Rj6XZ6HmnPb/D7nju
-	2EOuIs5L/xQ33dlYEdEtajlqLL0k2NocV/JF5XtE842kVaD7RkBHbDVV
-X-Gm-Gg: ASbGnctMIg4TFSIURC/EnLqnlYiMqLX/wAxIL0cSVvMau5T0hTXx9bTWPZO9GaItO98
-	qWBkg9e4UnIN5bx/iHnY5UPcCt8/7TL6YBJtSZrV8cfTwj+erWh1NvM6h4WZEF3rPmDf9Y7aCS6
-	1yY1Ye3ZHZ9SeRL258HJU8/qm26rxd/Q7F8rYpO6ETq6tGAbTDZAjhgRf907+UaBbaqfojqrlB8
-	xjP74sQdIrzQQew/pq3KZfmbZ/6+oYy3V8KRYJzsptk2XM2YDo+RpoO8/FzZBhRCL9ijfTx520d
-	lwxMKd35jjPHtgm5hF4hhO1H5qmUHqN+PrmMFp7iL2e1UX8q1j2FEeBFrmkvxW4cqcqY0+bDoCg
-	eesq12PfYIqiUAVWym4IoUw9jpC42HWYG0ofMayc5FJokpkr2ap84HMKh9jJMb8Bnbetz1S97mR
-	2c2mCKUNxo/KIhxLyzHLtNSL0AgMn3vk08UCEIh/GlwQ==
-X-Google-Smtp-Source: AGHT+IHjXNmhuS8efz6vClWXbs3pBS9HpVo6djl/mfWt5tPuH+GEG2YZZK7drOxtvdXymvEDjvlxIg==
-X-Received: by 2002:a17:903:2343:b0:277:c230:bfca with SMTP id d9443c01a7336-297e565283dmr32156275ad.4.1762679645191;
-        Sun, 09 Nov 2025 01:14:05 -0800 (PST)
-Received: from ranganath.. ([2406:7400:10c:bc7a:cbdc:303c:21d1:e234])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c7409esm108974225ad.64.2025.11.09.01.14.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 01:14:04 -0800 (PST)
-From: Ranganath V N <vnranganath.20@gmail.com>
-To: edumazet@google.com,
-	davem@davemloft.net,
-	david.hunter.linux@gmail.com,
-	horms@kernel.org,
-	jhs@mojatatu.com,
-	jiri@resnulli.us,
-	khalid@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	vnranganath.20@gmail.com,
-	xiyou.wangcong@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
-Subject: [PATCH net v4 2/2] net: sched: act_ife: initialize struct tc_ife to fix KMSAN kernel-infoleak
-Date: Sun,  9 Nov 2025 14:43:36 +0530
-Message-ID: <20251109091336.9277-3-vnranganath.20@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251109091336.9277-1-vnranganath.20@gmail.com>
-References: <20251109091336.9277-1-vnranganath.20@gmail.com>
+	s=arc-20240116; t=1762680331; c=relaxed/simple;
+	bh=fMR63XBK9ZlriTE0ZDeJLOmInWjWXLWqMngtqubhF24=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pIactUmERGXtM0RxHYyFiheV4lQRZK6Hjvxtfsx5K+UtywJUrQbOw9qV1AplhgzOwL+cCpuJ2Fu9nx8+wWalA8+RdUCT9HBnQc4bmZC1P+EJ25qQA/ISbhZHFCL10jWFbzrygoOTt56y7Tjl9FNbmyGngWegRMllUaBiDgJx/zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=LbEgv20M; arc=none smtp.client-ip=37.27.248.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay10 (localhost.localdomain [127.0.0.1])
+	by relay10.grserver.gr (Proxmox) with ESMTP id B5E573EE82
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:19:40 +0200 (EET)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay10.grserver.gr (Proxmox) with ESMTPS id 9A5C93ED98
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:19:39 +0200 (EET)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 062EA201C21
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 11:19:38 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1762679979;
+	bh=aHykRTlntzOAtSbrXc2NFUXApwbab2EgevFPlL/otC4=;
+	h=Received:From:Subject:To;
+	b=LbEgv20MfY5D86AtFA/cJkawgMTboh2NQ+3qKdLcfQkQmKhNMu/0y6pEP6lAcMGXZ
+	 4h7fXNjYpOfWJNI/e2ApQFSQJXJfPxYXlDMUwmThxl2rbR0xoUjqLeANWyYu2z/L14
+	 1gQtMXd5MVZp9GrHsKH2nG9DA2kGhyIXGp0DPhcAAjm7uDISHTs6HYx8x7XmY08Qi/
+	 92I0+KneEJyCL80ULtgM0xG9Rzhm7oCsJr43ohzqUkVYQWqZkAFcTvhWuH6VTUYB2y
+	 vABG3DziROiw3wjQQ5pHtP+zOufLIj16k1BjTUg+T42+++TWTKbv9v/41oi1UGSXGR
+	 LEyC0v23DwjSA==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.174) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f174.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f174.google.com with SMTP id
+ 38308e7fff4ca-375eff817a3so20409211fa.1
+        for <linux-kernel@vger.kernel.org>;
+ Sun, 09 Nov 2025 01:19:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWoc7V63huqxK5m2yIVh7w0RMjUouwo9kBwYZtPfo1cnhWNHoRK55X3ryfCW+Fhy0/vNDeIOChthidHviQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN+wI8AbaKuTiYYa92nO4UpP0w3gE11xHCJcZuVcMtURr4+Kwe
+	IFSL005ibPovfsIpxVpDwlKpfTeDmNXCPNOicaLuzWBFuyZhPNp1AI/bdKHHhhrLhGbc9o+5JBL
+	PVBS/VKmubar9CXtm7xQYIdV25Zv0Wj4=
+X-Google-Smtp-Source: 
+ AGHT+IGfOzfusw+YUcgI7nYoTAG/l7L87WbQXvWz1J5w/4xf6lmp0H1CggvyuL0ow/5G8QOuuYYtSsSGpmyEH4rSRT4=
+X-Received: by 2002:a05:651c:2542:10b0:36e:93a3:979d with SMTP id
+ 38308e7fff4ca-37a7b1bc4a1mr11465251fa.19.1762679978426; Sun, 09 Nov 2025
+ 01:19:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251026191635.2447593-1-lkml@antheas.dev>
+ <20251026191635.2447593-2-lkml@antheas.dev>
+ <CAGwozwEwPj9VRRo2U50ccg=_qSM7p-1c_hw2y=OYA-pFc=p13w@mail.gmail.com>
+ <35A5783A-CA60-4B10-8C7B-5820B65307FE@linux.dev>
+ <CAGwozwFtah66p=5oy9rf5phVGdDTiWg0WuJBT3qGpWdP3A62Pg@mail.gmail.com>
+ <eb749233-0342-49a9-a41b-6d18239eb1d9@linux.dev>
+ <CAGwozwEKzurj7qeAnzvWjJbf03da70ij5DtOJ7svZaoJ7vK=aA@mail.gmail.com>
+ <CAGwozwEErv_cLxsP93n0oj20E03oPOk9-5v31mVnf_Adwjkwgg@mail.gmail.com>
+In-Reply-To: 
+ <CAGwozwEErv_cLxsP93n0oj20E03oPOk9-5v31mVnf_Adwjkwgg@mail.gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Sun, 9 Nov 2025 10:19:27 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwH_eUqErMsmyBsC6eMFTaHTbukkX68ZJO4MUqa_StiNUg@mail.gmail.com>
+X-Gm-Features: AWmQ_bl5Uaf_UCaGYstqmpIABlhX1nm-ar13zvwpx-n5Vra34-2Z1DaJUiS1MDw
+Message-ID: 
+ <CAGwozwH_eUqErMsmyBsC6eMFTaHTbukkX68ZJO4MUqa_StiNUg@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] ALSA: hda/realtek: Add match for ASUS Xbox Ally
+ projects
+To: Matthew Schwartz <matthew.schwartz@linux.dev>
+Cc: Shenghao Ding <shenghao-ding@ti.com>, Baojun Xu <baojun.xu@ti.com>,
+	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <176267997920.738702.619008280595742202@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-Fix a KMSAN kernel-infoleak detected  by the syzbot .
+On Sun, 2 Nov 2025 at 18:33, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+>
+> On Tue, 28 Oct 2025 at 18:27, Antheas Kapenekakis <lkml@antheas.dev> wrot=
+e:
+> >
+> > On Mon, 27 Oct 2025 at 20:58, Matthew Schwartz
+> > <matthew.schwartz@linux.dev> wrote:
+> > >
+> > > On 10/27/25 1:23 AM, Antheas Kapenekakis wrote:
+> > > > On Mon, 27 Oct 2025 at 07:02, Matthew Schwartz
+> > > > <matthew.schwartz@linux.dev> wrote:
+> > > >>
+> > > >>
+> > > >>
+> > > >>> On Oct 26, 2025, at 12:19=E2=80=AFPM, Antheas Kapenekakis <lkml@a=
+ntheas.dev> wrote:
+> > > >>>
+> > > >>> On Sun, 26 Oct 2025 at 20:16, Antheas Kapenekakis <lkml@antheas.d=
+ev> wrote:
+> > > >>>>
+> > > >>>> Bind the realtek codec to TAS2781 I2C audio amps on ASUS Xbox Al=
+ly
+> > > >>>> projects. While these projects work without a quirk, adding it i=
+ncreases
+> > > >>>> the output volume significantly.
+> > > >>>
+> > > >>> Also, if you can upstream the firmware files:
+> > > >>> TAS2XXX13840.bin
+> > > >>> TAS2XXX13841.bin
+> > > >>> TAS2XXX13940.bin
+> > > >>> TAS2XXX13941.bin
+> > > >>
+> > > >> This is the firmware at [1], correct? I=E2=80=99m testing the seri=
+es with that firmware on my ROG Xbox Ally X, and I found something interest=
+ing.
+> > > >>
+> > > >> By default, with just your kernel patches and the firmware files h=
+osted at [1], my unit is loading:
+> > > >>
+> > > >> tas2781-hda i2c-TXNW2781:00-tas2781-hda.0: Loaded FW: TAS2XXX13840=
+.bin, sha256: 58cffa36ae23a2d9b2349ecb6c1d4e89627934cd79218f6ada06eaffe6688=
+246
+> > > >>
+> > > >> However, with this firmware file,  TAS2XXX13840.bin, there is sign=
+ificant audio clipping above 75% speaker level on my individual unit.
+> > > >>
+> > > >> Then, I tried renaming the other firmware file, TAS2XXX13841.bin, =
+into TAS2XXX13840.bin. Now my unit is loading:
+> > > >>
+> > > >> tas2781-hda i2c-TXNW2781:00-tas2781-hda.0: Loaded FW: TAS2XXX13840=
+.bin, sha256: 0fda76e7142cb455df1860cfdb19bb3cb6871128b385595fe06b296a070f4=
+b8c
+> > > >>
+> > > >> With this firmware file, audio is perfect all the way to 100% spea=
+ker level.
+> > > >>
+> > > >> If I recall, there have been other ASUS products that required mat=
+ching amplifier hardware with firmware correctly, right? It looks like this=
+ might be another case of since it seems my unit is loading the wrong firmw=
+are for its amplifiers.
+> > > >
+> > > > The original Ally X had a similar setup, yes.
+> > > >
+> > > > First patch might not be perfect and your speaker pin might be 1. M=
+y
+> > > > Xbox Ally's pin is 1. It loads:
+> > > > Loaded FW: TAS2XXX13941.bin, sha256:
+> > > > 0fda76e7142cb455df1860cfdb19bb3cb6871128b385595fe06b296a070f4b8c
+> > > >
+> > > > And it sounds loud and crisp. So the pin is read.
+> > > >
+> > > > I had multiple users verify the X works, but perhaps it is not perf=
+ect
+> > > > yet. Make sure you are not using a dsp that might be interfering
+> > >
+> > > Seems like there have been other reports similar to mine on Xbox Ally=
+ X, where flipping the firmware files by renaming them fixes sound issues f=
+or them.
+> > >
+> > > @TI, Maybe something is different with the conditional logic for the =
+ROG Xbox Ally X? The current GPIO-detected speaker_id doesn't always corres=
+pond to the correct firmware choice on this model it seems.
+> >
+> > Yeah, it seems that specifically on the Xbox Ally X, the firmwares are
+> > swapped around? What could be the case for that?
+> >
+> > I had three users with popping and dropped audio swap the firmware on
+> > their X and they said the other one fixed it. And another two without
+> > issues swapping the firmware and saying it does not make a
+> > quantifiable change.
+>
+> Update on this. Users with a pin value of 1 are happy with the 1
+> firmware. Users with a value of 0 are not happy with TAS2XXX13840 and
+> TAS2XXX13841 works better for them. Moreover, users of the 1 firmware
+> are not happy with the 0 firmware.
+>
+> This is just on the Ally X, on the normal Ally there are no issues.
+>
+> So there is an issue with TAS2XXX13840 on the linux side, TAS2XXX13841
+> is correctly selected.
 
-[net?] KMSAN: kernel-infoleak in __skb_datagram_iter
+Hi, can I get a small bump on this?
 
-In tcf_ife_dump(), the variable 'opt' was partially initialized using a
-designatied initializer. While the padding bytes are reamined
-uninitialized. nla_put() copies the entire structure into a
-netlink message, these uninitialized bytes leaked to userspace.
+Baojun can you comment on the first patch? The fix works properly
+during our testing.
 
-Initialize the structure with memset before assigning its fields
-to ensure all members and padding are cleared prior to beign copied.
+Both patches do.
 
-This change silences the KMSAN report and prevents potential information
-leaks from the kernel memory.
+It seems there is a problem with firmware file TAS2XXX13840 and
+devices that select it. Those devices work fine with TAS2XXX13841 and
+we replaced 0 with it for now, all of them do. The problem with it is
+that the speakers clip on and off above 80% volume when TAS2XXX13840
+is loaded.
 
-This fix has been tested and validated by syzbot. This patch closes the
-bug reported at the following syzkaller link and ensures no infoleak.
+Unfortunately I do not have an affected X unit, only a non-X one that
+works fine with the 13941 project. Mat does and he could do some
+testing.
 
-Reported-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=0c85cae3350b7d486aee
-Tested-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
-Fixes: ef6980b6becb ("introduce IFE action")
-Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
----
- net/sched/act_ife.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/net/sched/act_ife.c b/net/sched/act_ife.c
-index 107c6d83dc5c..7c6975632fc2 100644
---- a/net/sched/act_ife.c
-+++ b/net/sched/act_ife.c
-@@ -644,13 +644,15 @@ static int tcf_ife_dump(struct sk_buff *skb, struct tc_action *a, int bind,
- 	unsigned char *b = skb_tail_pointer(skb);
- 	struct tcf_ife_info *ife = to_ife(a);
- 	struct tcf_ife_params *p;
--	struct tc_ife opt = {
--		.index = ife->tcf_index,
--		.refcnt = refcount_read(&ife->tcf_refcnt) - ref,
--		.bindcnt = atomic_read(&ife->tcf_bindcnt) - bind,
--	};
-+	struct tc_ife opt;
- 	struct tcf_t t;
- 
-+	memset(&opt, 0, sizeof(opt));
-+
-+	opt.index = ife->tcf_index,
-+	opt.refcnt = refcount_read(&ife->tcf_refcnt) - ref,
-+	opt.bindcnt = atomic_read(&ife->tcf_bindcnt) - bind,
-+
- 	spin_lock_bh(&ife->tcf_lock);
- 	opt.action = ife->tcf_action;
- 	p = rcu_dereference_protected(ife->params,
--- 
-2.43.0
+> Antheas
+>
+> > Antheas
+> >
+> >
+> > Antheas
+> >
+> > > >
+> > > > Antheas
+> > > >
+> > > >> Matt
+> > > >>
+> > > >> [1]: https://github.com/hhd-dev/hwfirm
+> > > >>
+> > > >>>
+> > > >>> That would be great :)
+> > > >>>
+> > > >>> Antheas
+> > > >>>
+> > > >>>> Cc: stable@vger.kernel.org # 6.17
+> > > >>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > > >>>> ---
+> > > >>>> sound/hda/codecs/realtek/alc269.c | 2 ++
+> > > >>>> 1 file changed, 2 insertions(+)
+> > > >>>>
+> > > >>>> diff --git a/sound/hda/codecs/realtek/alc269.c b/sound/hda/codec=
+s/realtek/alc269.c
+> > > >>>> index 8ad5febd822a..d1ad84eee6d1 100644
+> > > >>>> --- a/sound/hda/codecs/realtek/alc269.c
+> > > >>>> +++ b/sound/hda/codecs/realtek/alc269.c
+> > > >>>> @@ -6713,6 +6713,8 @@ static const struct hda_quirk alc269_fixup=
+_tbl[] =3D {
+> > > >>>>        SND_PCI_QUIRK(0x1043, 0x12f0, "ASUS X541UV", ALC256_FIXUP=
+_ASUS_MIC_NO_PRESENCE),
+> > > >>>>        SND_PCI_QUIRK(0x1043, 0x1313, "Asus K42JZ", ALC269VB_FIXU=
+P_ASUS_MIC_NO_PRESENCE),
+> > > >>>>        SND_PCI_QUIRK(0x1043, 0x1314, "ASUS GA605K", ALC285_FIXUP=
+_ASUS_GA605K_HEADSET_MIC),
+> > > >>>> +       SND_PCI_QUIRK(0x1043, 0x1384, "ASUS RC73XA", ALC287_FIXU=
+P_TXNW2781_I2C),
+> > > >>>> +       SND_PCI_QUIRK(0x1043, 0x1394, "ASUS RC73YA", ALC287_FIXU=
+P_TXNW2781_I2C),
+> > > >>>>        SND_PCI_QUIRK(0x1043, 0x13b0, "ASUS Z550SA", ALC256_FIXUP=
+_ASUS_MIC_NO_PRESENCE),
+> > > >>>>        SND_PCI_QUIRK(0x1043, 0x1427, "Asus Zenbook UX31E", ALC26=
+9VB_FIXUP_ASUS_ZENBOOK),
+> > > >>>>        SND_PCI_QUIRK(0x1043, 0x1433, "ASUS GX650PY/PZ/PV/PU/PYV/=
+PZV/PIV/PVV", ALC285_FIXUP_ASUS_I2C_HEADSET_MIC),
+> > > >>>> --
+> > > >>>> 2.51.1
+> > > >>>>
+> > > >>>>
+> > > >>>
+> > > >>>
+> > > >>
+> > > >>
+> > > >
+> > >
+> > >
 
 
