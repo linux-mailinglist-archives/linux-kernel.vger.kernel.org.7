@@ -1,116 +1,131 @@
-Return-Path: <linux-kernel+bounces-892217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29648C44A47
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 00:37:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5703C44A4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 00:39:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50C643AFCEF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 23:37:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2CC83AFD6F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 23:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553982727EA;
-	Sun,  9 Nov 2025 23:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4474B26ED4A;
+	Sun,  9 Nov 2025 23:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwnOpyVs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RkrcScgN"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08D9243376;
-	Sun,  9 Nov 2025 23:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1AB243376
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 23:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762731445; cv=none; b=sG7hWsoEm/J8b8BHpKdFcGvH1yo5K8Yp8XIpf54IjJ9ywbkVCpg54YVJCQFK6AniJyydheSv/ToYJG4od0ENMgJlDaA9xPrPu/6zace7NUY/J1BJI2HAYRuKSwvn7qyQdZkiFGeR3ZweaOXTDQLxfjAuugbEDsy7SSN3cULV+q0=
+	t=1762731570; cv=none; b=I+I4Hwir7R1mWUIqOo3iSPl0Wt/paPAKRFUIkOeQaWr82b8VezCL0kMXRX0+dnDp2+unPgUNvR1/Cd5UomOP7A2+2BYV7uR5p6kXMEObypTI6fpPhAg1gFuhT3LscvzWC8cbrtuQ9itBaW6odqazlfGdMR+Ln3GMRQ1zE2+zomQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762731445; c=relaxed/simple;
-	bh=5YEOu82QTmZW2HELOApkW8zOPzE/QRgh57UZFjoQzaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B5ZY42R3WG039uFg08pV3lkZ+DCS0N93+jp5XsztEq8nZAYHhJnC/5WS+CVVgAbOE3KE4TgsVtlXLtkDrsqe3hqHHm1JmqQ75rPN8xuw8VSrMM1V7Crr71byV9Gy5qLffScuCDzuUozIHIHXy4hBeYWEdlgUuDS6WZw4lgRhqKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwnOpyVs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CD19C4CEF7;
-	Sun,  9 Nov 2025 23:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762731445;
-	bh=5YEOu82QTmZW2HELOApkW8zOPzE/QRgh57UZFjoQzaY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MwnOpyVsRJk5v3uibYeRVnOCS2mEpIYu7UA25lknHfLbVYn5c0tnxogXclky73IXw
-	 yrDTeYj/kkD2tUuLkZnRbrOlrGIlx+gRHuxUgLbIkuRPZEdTMoENUZvLxPWrjXWcXY
-	 TvhOV1UDfUV7n/9tkkg7FkgtHb5nj9cTYTQ0AwmIUpkIC/VkV6yD5XHuPqVF8vK3tU
-	 G7llEsKGssu6wbw7AkmKT+YCjI9Rrl5WWmVGQtqcwALYW6yiBRJqsmDdI0FpEfs6KA
-	 uobnRFDZyqTFZ4mmXZj0E6Mp0YkMnzFCTFeLhtfQBYDeMCopY1sLKNrj/i35WfiMn3
-	 NjCIcAeWhh0LA==
-Date: Sun, 9 Nov 2025 16:37:20 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Jens Reidel <adrian@mainlining.org>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] mips: Use generic endianness macros instead of
- MIPS-specific ones
-Message-ID: <20251109233720.GB2977577@ax162>
-References: <20251108-mips-bpf-fix-v1-1-0467c3ee2613@mainlining.org>
+	s=arc-20240116; t=1762731570; c=relaxed/simple;
+	bh=XuTh1IgFrQYImvo9l5AWKwfidf2lOz9NOuVH4XPPcII=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jQHGjqQ4JqSdcRjdZgXUOzMZ4PmXeQEj18SdSRfNE2sBD1YlJ7rX9kjPj+/p7k7rzE1FZzQoUQ4zm/wpGZLtdQq73cBlVf6Ku4JwQuZBNigQpoE74LL3g0tRSfPYtIJoJaOJdBqb6e9xvZHqxv7CNAL8vGBD/zkRKyllWxoIzzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RkrcScgN; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47754e9cc7fso16218155e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 15:39:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762731567; x=1763336367; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iCF/69UO28JAIuxTpEGkmXYFsep6EElMd2T/qBX5DOg=;
+        b=RkrcScgN6GOFPhbNQF7lOSHUQ86afrgW4qv9tEDtJsT6pEIFbjm6La0BWUVJPNaAsw
+         6DrvhzwbNxXlR8Zl5PuLB7ud0Nk2LONiimEnay4kKDdbmwlPqbc6BuoMPqniMd6a8Z9N
+         VSfXJNsJ1bDy1n+jArnIAOt7QENvFhJR1TyWMZePiYewXzRN4kQEa4vTYU4TQfQfrlK9
+         i4wdcroTJHgBY3bzfGTWJZa9FAunmuRYNjBr6Ab8n89ybdsudE/qrah08hjsiPAx+jQK
+         A2aQhljGSbxHGug6HWalsBYlfSEfC/Qdf+ptEmiZnINkdqBM5cjkaONFTJ/VCQgkCrqm
+         9Ljw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762731567; x=1763336367;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iCF/69UO28JAIuxTpEGkmXYFsep6EElMd2T/qBX5DOg=;
+        b=CUrsj47tL/hTYtataUl63/76AI47gV51XsUoIUgluKka9rMw7QZfLfreezUiboD45E
+         xbsZFg2X2/WgTTjHcG8eodNjzF6V7Jd0zblSd9vUSwhA98kD5MSgPF7sMHW5zffbH4Vw
+         SJYPV9pLuwJ4c0cu67PwqAiNADqPxYHL6qgDDrby6G4j5t7aOm9hZxmz7pr2zH1OYVjc
+         K+gvH85FeirUnnDdUPApd8zyHtWwGhY6QPLvNTCaGxzBrEhQHHbp2oN3I5ZD/WeWKJJO
+         zpRPlUouCkNR8ROpR8ZxBhC69BF8T9RV5kEorGhraXuQc6+GFKs4vBQx7ZnCEHJYfmgR
+         3RDQ==
+X-Gm-Message-State: AOJu0YxXqYxFpuL3g5ZqeMoByFWH0pIdbklpf3Il+MUTaJ/jkWIaWd0w
+	3DRkJhBE6QK5VqglLvlEusfipD5KvsJX8YtbOToIggTE2K+CsatSOqt9
+X-Gm-Gg: ASbGncuyHOxa7iBU7z25dz9JV7oqgrmxSIgnnTffbJEp9MvWjSkGjxIGZag7UqGL1aP
+	bETmg+9L3ek1NEgmE54b5cZn1BCWJA5KuIRnvgsZ5y/Uo0Dsp47eSJcy0MQWbaGGiFxBf/8r8Ac
+	y5pV2b2L4erU7NLtXW+U5rY5eX5oDhvIA0Av5yAq4L9469caBWFv7dZBr5nEsZ6lEi6Rzxh2Ufn
+	8Ozyt+zptSqRy8a0c/7m8toCdlDbGLeBbawllcc5pzrS5s7EiR+qVWTK1/JV9pabpM6USGXTmPz
+	+6LZ6H/yw5Tsx7knL2vqTpMdeXyDwKiUqluuI2e/WluLjcpr039JqOj5Dmr+VCrxCtZq+Rg7q7+
+	xm5TK2QPHoQYkUyyhodjSoJwfL0rsuMs6/vgn5GOy2827pEac7CWlATFfiUipdZbSyeTO6x+M1F
+	0AbKE24G2EuSXmAVk4FOSainyjYerB1eWge3/bGoKF5QGuxFGw6jOTr1s2FMQ3sA==
+X-Google-Smtp-Source: AGHT+IFBy2xEZD2lLPvpla6AioQ/QiXqiEKzPxRtQorAJRobkTwVf4XlbVouu7QfhjKSCcwM2f//gA==
+X-Received: by 2002:a05:600c:1f90:b0:471:989:9d7b with SMTP id 5b1f17b1804b1-47773271adfmr67587065e9.21.1762731567164;
+        Sun, 09 Nov 2025 15:39:27 -0800 (PST)
+Received: from localhost.localdomain (178-119-182-195.access.telenet.be. [178.119.182.195])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe63ba87sm19761830f8f.14.2025.11.09.15.39.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 15:39:26 -0800 (PST)
+From: Kiril Maler <oss.kiril.maler@gmail.com>
+To: linux-spi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	broonie@kernel.org,
+	Kiril Maler <oss.kiril.maler@gmail.com>
+Subject: Fixes: 833026ad56f76d1a1035d6511 ("spi: spidev: prevent spidev->speed_hz from being zero")
+Date: Mon, 10 Nov 2025 00:39:05 +0100
+Message-ID: <20251109233905.8311-1-oss.kiril.maler@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251108-mips-bpf-fix-v1-1-0467c3ee2613@mainlining.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 08, 2025 at 11:05:55PM +0100, Jens Reidel wrote:
-> Compiling bpf_skel for mips currently fails because clang --target=bpf
-> is invoked and the source files include byteorder.h, which uses the
-> MIPS-specific macros to determine the endianness, rather than the generic
-> __LITTLE_ENDIAN__ / __BIG_ENDIAN__. Fix this by using the generic
-> macros, which are also defined when targeting bpf. This is already done
-> similarly for powerpc.
-> 
-> Signed-off-by: Jens Reidel <adrian@mainlining.org>
+[PATCH] Revert spi->max_speed_hz only when 0 in ioctl SPI_IOC_WR_MAX_SPEED_HZ
 
-As far as I can tell, this should be fine since clang defines these
-macros in the generic case since [1] and I assume GCC does as well but
-if there is a risk of this being a problem for userspace, these could be
-added in addition to __MIPSEB__ / __MIPSEL__.
+Some drivers (at least drivers/spi/spi-fsl-dspi.c) use spi->max_speed_hz to keep the value
+set with last ioctl SPI_IOC_WR_MAX_SPEED_HZ.
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+But at the end of case SPI_IOC_WR_MAX_SPEED_HZ the value is set back unconditionally to default, highest possible clock.
 
-[1]: https://github.com/llvm/llvm-project/commit/2c942c64fb521357ed98c380823e79833a121d18
+This results in erratic SPI transfers with highest clock, in my case instead of 6MHz was measured 37,5MHz.
 
-> ---
->  arch/mips/include/uapi/asm/byteorder.h | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/mips/include/uapi/asm/byteorder.h b/arch/mips/include/uapi/asm/byteorder.h
-> index b4edc85f9c30c09aafbc189ec820e6e2f7cbe0d8..5e3c3baa24994a9f3637bf2b63ea7c3577cae541 100644
-> --- a/arch/mips/include/uapi/asm/byteorder.h
-> +++ b/arch/mips/include/uapi/asm/byteorder.h
-> @@ -9,12 +9,10 @@
->  #ifndef _ASM_BYTEORDER_H
->  #define _ASM_BYTEORDER_H
->  
-> -#if defined(__MIPSEB__)
-> -#include <linux/byteorder/big_endian.h>
-> -#elif defined(__MIPSEL__)
-> +#ifdef __LITTLE_ENDIAN__
->  #include <linux/byteorder/little_endian.h>
->  #else
-> -# error "MIPS, but neither __MIPSEB__, nor __MIPSEL__???"
-> +#include <linux/byteorder/big_endian.h>
->  #endif
->  
->  #endif /* _ASM_BYTEORDER_H */
-> 
-> ---
-> base-commit: 9c0826a5d9aa4d52206dd89976858457a2a8a7ed
-> change-id: 20251108-mips-bpf-fix-8d1f14bc4903
-> 
-> Best regards,
-> -- 
-> Jens Reidel <adrian@mainlining.org>
+Probably also spidev->speed_hz must be adjusted, because it is used for ioctl SPI_IOC_RD_MAX_SPEED_HZ.
+
+
+How it was discovered:
+
+My board has SPI Flash and EEPROM chips behind slow FPGA spi-mux logic. Max clock is around 8MHz.
+
+The config sequence in /usr/sbin/flashrom -> linux_spi.c -> linux_spi_init(...) is
+	SPI_IOC_WR_MAX_SPEED_HZ
+	SPI_IOC_WR_MODE
+	SPI_IOC_WR_BITS_PER_WORD
+
+The RDID command to SPI target Flash chips resulted in incorrect Vendor/chipID, or ff ff ff
+
+After adding second SPI_IOC_WR_MAX_SPEED_HZ at the end of config sequence, correct clock
+was measured, programming all boards succeeded using flashrom or spi-pipe.
+
+
+Signed-off-by: Kiril Maler <oss.kiril.maler@gmail.com>
+
+index 5300c942a..4ad11381f 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -489,7 +489,7 @@ spidev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 			dev_dbg(&spi->dev, "%d Hz (max)\n", spidev->speed_hz);
+ 		}
+ 
+-		spi->max_speed_hz = save;
++		spi->max_speed_hz = spi->max_speed_hz ? : save;
+ 		break;
+ 	}
+ 	default:
 
