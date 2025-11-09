@@ -1,116 +1,149 @@
-Return-Path: <linux-kernel+bounces-892039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1736C442A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:45:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB5CAC442B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:49:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18AFF3AFEFA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:45:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB4F34E1F37
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1EC30216C;
-	Sun,  9 Nov 2025 16:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846C5303CBE;
+	Sun,  9 Nov 2025 16:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8Bqg5TT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9RwGyyR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25C618C26;
-	Sun,  9 Nov 2025 16:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E901AA7BF;
+	Sun,  9 Nov 2025 16:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762706744; cv=none; b=BwtGbcbG0agfljy3n0c9H2CzZS2ju40RhuCJFbTCsTsaiY/xm8GSCJY29mW22GN8Qc/9tUCuARGxWMVUWwQbF+acR0RKhfYqU+WKJcgMyafIHtuRsdFrpOh+f2LVQNg+8I3w5M1TEoAkWSfTectQOESRT9fAnqs8tC6bpvrANjw=
+	t=1762706955; cv=none; b=NwYCPQBRN6w1T70r/3YhgWRKOUoKJn2wKh5EetkjqIdjlra39+E7za9pTnX2FHuPYhVLOo5V09Bv7CLE5ArPWa2tCq1HUvZLqTPFWD/1HUTQYWHvxBVJXlRAU7M2ys0RsrvvBJj8ckL9yfWEtdpSNpO/o30sdLGPVo8WZ12jpS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762706744; c=relaxed/simple;
-	bh=LMpiD8lMyszFsZ3IYN/FGo6GYILYABYGkNHfbC8X2fQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IJXkFk2okqcpBy6gwNSRbjsA+Asq1qIgD5KXHNRmf4dnXniXFCSCB5AbRAAyr5ZxwfVhYPX5wou1COdaWwn3lXGzjyDsoag8TxTolQY+kmLP6e3KZJEJalAshpQLKOkcq9B84TKFvVozyGKMkuw8+BEp3j9MJBrALE4eLbnmCFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8Bqg5TT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B24CC19421;
-	Sun,  9 Nov 2025 16:45:40 +0000 (UTC)
+	s=arc-20240116; t=1762706955; c=relaxed/simple;
+	bh=n4hSzcHd13twCNudNTmDw4sXbKY11Ss4Ov/R5YPLLzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHWoBZK1BXE0EBbXOAVGQZ9e11LpN68VsxVGfua5Itwm80pDhrX28/hTm1aVWl1MV8qGQLIlRTewN0klnD3fbzFp09uKpuf6X2GUEdojX2VLiiKWAjS979aDQyfNWy4GytMmVmGtbxUo4d8F1u/uHeGXSAQrhx4DzPCHVvpCfeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9RwGyyR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9B13C4CEF7;
+	Sun,  9 Nov 2025 16:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762706743;
-	bh=LMpiD8lMyszFsZ3IYN/FGo6GYILYABYGkNHfbC8X2fQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R8Bqg5TTNPXyQCyHRSr12PRvLz+jgtPuU1+maTvGdRT5JtbTnCDQZ7VS+BpsxA+/R
-	 62+h2cTgC5szi09t7MIC4++8y4EXYpAflbw4fcOW++zzOx8lJXnBX/FJN7s8xaA0Gt
-	 Q+nWOasVMyUq8lcEU89eY17mAPxYe15b+JzT6KCeXJdxpQ/khHsQGGlOgBB455/jEG
-	 +6u71rVaNUbxPirMKkyzijAKrvbCz2ovaVNk+8efAZNALkZ05P4YRTOBiz5lOsgD+0
-	 OXmRQQ5yy3vlGMFyWPQ0cfIgSl66etE5waikLLgzuysoAXNMlMqC6V5Hrnkx9Rpsgm
-	 lyiC+6INfnJMw==
-Date: Sun, 9 Nov 2025 16:45:36 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Tejun Heo
- <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, Frederic
- Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, Marius Cristea
- <marius.cristea@microchip.com>
-Subject: Re: [PATCH] iio/adc/pac1934: replace use of system_wq with
- system_percpu_wq
-Message-ID: <20251109164536.2ed7867d@jic23-huawei>
-In-Reply-To: <20251105104330.111057-1-marco.crivellari@suse.com>
-References: <20251105104330.111057-1-marco.crivellari@suse.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=k20201202; t=1762706954;
+	bh=n4hSzcHd13twCNudNTmDw4sXbKY11Ss4Ov/R5YPLLzw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P9RwGyyRA/kvUZWhJ5Obm4NXxCl4uM4orfTPuniXCdZfAVOOzHZ9AJtzYDn9LefRh
+	 JrCHXAYpxOesbk+4SZirluizDJPcZ4M/KXKJXVkDq2OPSZ0VooIlqmiCchzXVeQPo1
+	 NiZvrUlAld7U8AJfIqWde+gCYMDVim8pSicYR8+NW8qIuZm2eTpuAmTJSgH73QY+nf
+	 ZLvtPqNr5tE2wFohMEIJ37oxkFGp9I9Mg3oQ7a8y+VE3Lh3L455cJsqoyBtg+ut0ss
+	 tDZsmllo/KU0y94eAGMXxaEbOJAblOTxQlDCDF5iZqpJrXb/NWXAadGl7XkcN4tf6a
+	 ubAZJ6wX5K0Hw==
+Date: Sun, 9 Nov 2025 22:18:58 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Abraham I <kishon@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: qcom: Enforce check for PHY,
+ PERST# properties
+Message-ID: <3wxfj3w2ilgmmmvntng4yohvorz3tn54egnyltg3dd3fwk67yq@f5p62em6sg2g>
+References: <20251106-pci-binding-v2-0-bebe9345fc4b@oss.qualcomm.com>
+ <20251106-pci-binding-v2-1-bebe9345fc4b@oss.qualcomm.com>
+ <20251108-toad-of-hypothetical-opportunity-ebfa74@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251108-toad-of-hypothetical-opportunity-ebfa74@kuoka>
 
-On Wed,  5 Nov 2025 11:43:30 +0100
-Marco Crivellari <marco.crivellari@suse.com> wrote:
+On Sat, Nov 08, 2025 at 12:59:50PM +0100, Krzysztof Kozlowski wrote:
+> On Thu, Nov 06, 2025 at 04:57:16PM +0530, Manivannan Sadhasivam wrote:
+> > Currently, the binding supports specifying the required PHY, PERST#
+> > properties in two ways:
+> > 
+> > 1. Controller node (deprecated)
+> > 	- phys
+> > 	- perst-gpios
+> > 
+> > 2. Root Port node
+> > 	- phys
+> > 	- reset-gpios
+> > 
+> > But there is no check to make sure that the both variants are not mixed.
+> > For instance, if the Controller node specifies 'phys', 'reset-gpios',
+> 
+> Schema already does not allow it, unless I missed which schema defines
+> reset-gpios in controller node.
+> 
 
-> Currently if a user enqueues a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> 
-> This lack of consistency cannot be addressed without refactoring the API.
-> 
-> This patch continues the effort to refactor worqueue APIs, which has begun
-> with the change introducing new workqueues and a new alloc_workqueue flag:
-> 
-> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-> 
-> system_percpu_wq replaced system_wq, so change the wq in iio/adc/pac1934.
-> 
-> The old wq (system_wq) will be kept for a few release cycles.
-> 
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
-I'd start these descriptions off by saying the system_wq is deprecated.
-Then people are already on the page for there being a necessity to make
-a change.
+'reset-gpios' is currently a valid property for both controller and Root Port
+nodes. Where does the schema restricts it?
 
-Anyhow, I've seen enough of the discussion of other related patches to
-be fine with this.
-
-Applied.
-
-> ---
->  drivers/iio/adc/pac1934.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > or if the Root Port node specifies 'phys', 'perst-gpios', then the driver
+> > will fail as reported. Hence, enforce the check in the binding to catch
+> > these issues.
 > 
-> diff --git a/drivers/iio/adc/pac1934.c b/drivers/iio/adc/pac1934.c
-> index 48df16509260..ec96bb0f2ed6 100644
-> --- a/drivers/iio/adc/pac1934.c
-> +++ b/drivers/iio/adc/pac1934.c
-> @@ -768,7 +768,7 @@ static int pac1934_retrieve_data(struct pac1934_chip_info *info,
->  		 * Re-schedule the work for the read registers on timeout
->  		 * (to prevent chip registers saturation)
->  		 */
-> -		mod_delayed_work(system_wq, &info->work_chip_rfsh,
-> +		mod_delayed_work(system_percpu_wq, &info->work_chip_rfsh,
->  				 msecs_to_jiffies(PAC1934_MAX_RFSH_LIMIT_MS));
->  	}
->  
+> I do not see such check.
+> 
 
+Don't you think the below required properties not enforce this check for Root
+Port and Controller node? This atleast makes sure that if 'phys' is present,
+'reset-gpios' would be required for Root Port and 'perst-gpios' is required for
+Controller node.
+
+> > 
+> > It is also possible that DTs could have 'phys' property in Controller node
+> > and 'reset-gpios' properties in the Root Port node. It will also be a
+> > problem, but it is not possible to catch these cross-node issues in the
+> > binding.
+> 
+> ... so this commit changes nothing?
+> 
+> The commit actually does change, but something completely different than
+> you write here, so entire commit msg is describing entirely different
+> cast. What you achieve here is to require perst-gpios, if controller
+> node defined phys. Unfortunately your commit msg does not explain why
+> perst-gpios are now required...
+> 
+
+The Qcom PCIe controller node never supported 'reset-gpios' for PERST#. It used
+the 'perst-gpios' property instead. And I do not wanted to replace it with
+'reset-gpios' property since we had decided to move PERST# to Root Port node,
+where 'reset-gpios' is already the norm.
+
+> > 
+> > Reported-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > Closes: https://lore.kernel.org/linux-pci/8f2e0631-6c59-4298-b36e-060708970ced@oss.qualcomm.com
+> > Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> 
+> That's too many tags. Either someone reported you bug or someone
+> suggested you to do something, not both (and proposing solution is not
+> suggesting a commit since you already knew you need to make the commit
+> because of bug...)
+> 
+
+I disagree. Both Konrad and Krishna reported the issue in mixing up the
+properties and driver ended up failing the probe. Then Dmitry suggested a schema
+snippet [1] to catch these kind of mixups during DT validation. I did see it as
+a valid suggestion that deserved the tag.
+
+- Mani
+
+[1] https://lore.kernel.org/linux-pci/qref5ooh6pl2sznf7iifrbric7hsap63ffbytkizdyrzt6mtqz@q5r27ho2sbq3/
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
