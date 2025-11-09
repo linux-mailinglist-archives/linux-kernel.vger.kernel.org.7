@@ -1,189 +1,152 @@
-Return-Path: <linux-kernel+bounces-891957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D111EC43E87
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:27:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABF9C43E8A
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 14:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 703193A14D6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:26:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E21203B287B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 13:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294D32F744B;
-	Sun,  9 Nov 2025 13:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJy4cR4J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03362F6933;
+	Sun,  9 Nov 2025 13:27:46 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3E22E9EAD;
-	Sun,  9 Nov 2025 13:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18A034D395
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 13:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762694813; cv=none; b=qWIVziIQ8DzFPZiH4Xh1SywGIyFOgYBVgUWoxwbzlFbzdZy8tC76odV6tOnlXd9UHf9XsmwIgaT0F6myXghQOAGMhb2C8LTbdmkuTKZRtIbB9z7K+JErQgljGF1P6HkitHZGpg7nBbvturyjY22CTwMNcju0tx1NZnpAXLYACow=
+	t=1762694866; cv=none; b=IWT44Qv0dkb4gB3pxSBigHntjv0EAK0LEl7z1NyRzVlI+/1Kuyg/nJC+MmRoN5meqnyS6xgNi3cT41Sp6SX8KAN1dX29ThJS1kY/g1/O1NS32DFN4TQ5oKvxRWEaQr8sC1wnU0N0IYpWZu5ERw6r+4vhzecmcjXRU39NuN2rGa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762694813; c=relaxed/simple;
-	bh=IUda8zNNMXVp7xJWxMaUMifTHdBiFeF3ML87rFUp4Ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q/P5rJtP4BmCvqof/qtte+5Vw2k3AOoeLRLANbLccQg/w0cDFjZ5srK/8oByikkvQ4TbFHCjLc+atSYealxw382BKV6ip0PloPDnzzuPWs52UApSxtvtu/NRDuw6oQdu2Bo8XQRk2FPJx2fMFiT6iV12lOvPnLeWcYx/KMFgdXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJy4cR4J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F429C19421;
-	Sun,  9 Nov 2025 13:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762694813;
-	bh=IUda8zNNMXVp7xJWxMaUMifTHdBiFeF3ML87rFUp4Ds=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sJy4cR4JcarB+ST0D41mdlj4zqYHkqcMMhq2W7xJMtuY3eSRPhFRzw6G876T/cJzk
-	 FvE7+uE+C+yR/PBJOvJAF7YaidZaX1MHfKZqYaEUGwby5ZR/0PNUjtIHMxKMA1wJaD
-	 G6vQJPvEgFV3pP2nGeoiJICSgUcnaYNPeYhayuEUGiXUHOiyRbByp27EOHzvCObOiS
-	 sbOrc8MpFMN4Rv0WoZmMEJYJnLDzAr4/7eLRKqD77ZpOu/w8ZLB+m5KTiKZ/wu/B88
-	 sPjKulUqLgA6gpYrPVR029HEnodYw0eg2R8yXdj2afdszfeOHLwHPOWvNvPgVAgd/0
-	 wvOsCuRP9CFBA==
-Date: Sun, 9 Nov 2025 13:26:46 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Eugen Hristev <eugen.hristev@linaro.org>
-Cc: Pei Xiao <xiaopei01@kylinos.cn>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
-Subject: Re: [PATCH v3] iio: adc: at91-sama5d2_adc: Fix potential
- use-after-free in sama5d2_adc driver
-Message-ID: <20251109132646.308c7126@jic23-huawei>
-In-Reply-To: <cbd2f040-9377-4862-ae52-aac35adb1b9d@linaro.org>
-References: <90dec520a9537af2feab9d56b22d99878fba9e2a.1761705396.git.xiaopei01@kylinos.cn>
-	<20251102115458.4d37556a@jic23-huawei>
-	<cbd2f040-9377-4862-ae52-aac35adb1b9d@linaro.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762694866; c=relaxed/simple;
+	bh=b/rGwfYereAWWCa21aLzql4pE4k3JAXEN1oChc63HH0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=APVDMLNMIhyR51Jfdk6ZsJAIg/sczeKOPVUUI+WwimQkMs5OfXV1+unolrn6NcthvVY03/b50af2D6c3DdoM9jl6d9TCb5Wuuc00yeqTo7rm/e1rofnrhE5fxpjIc+wqtm+zX9PRvLky3nImHftshqnM6svciFwDLWtmJa5pdFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4337e902d2bso1484545ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 05:27:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762694864; x=1763299664;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=29lLnYKRkWhL7gcHrrn70CmAVjWazEwQ/j0AqKgV5AY=;
+        b=Hv1X+fhnaLj1TjiyaeE1ceZX1mo3VXoqdfB2/LlEPrhDY9+SUPZJwaq3ov5+y5jRW0
+         bFdUauy00HhlDT6RkvOUsxNlzQerfrt2SIoq3BgVz+z0hy7PmSYdHtwaOeONjmENMWkg
+         Uwgc2dtgdFQnLX7FgASTSCIo/RjAS6dsAtRx0BKXUMYNRWWe+9I2HxX4eeDwfqwiOjd/
+         H2Dymjmufv2xPPdedHUzVjSFWunpoGu9213J4O0LPF4lH1H1tO11IFguJyulr4NRaqDL
+         iQgjUozNP3Qcvk0Kk4/M7MwAhp5s6s9yzwSCOrP1giM1+Bm3feOXukCmbfRu9boFHgmZ
+         ISdA==
+X-Gm-Message-State: AOJu0YypHw97Ar8ONjLT0FQJDQOW1nPdE6c/1YafAjSplQgLDntXVgNk
+	nbcDGH3H9FY+Wm36ABl4AiM1F8vF7ayxWdQ7UWH6a/nOYrjjWDRFXwqJOkt0Ag9+tEz/hdSvcr7
+	zx0UgniwL97oZao3MthzIJY6nR45ZJ4rCsBvnAeN4BPRNfNw8UzMc/JeJmqU=
+X-Google-Smtp-Source: AGHT+IHFlczUW+xcT+kUHWuDnrl6FYGDj+K2JhUkGIdxoeUjY/N3zhEhc0n1hl3TcAo8P4CDvQ1EaG7qzZgq7Rpv1DtMlCRKgYKc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1fc3:b0:433:3487:ea22 with SMTP id
+ e9e14a558f8ab-43367deafd7mr86797315ab.13.1762694864032; Sun, 09 Nov 2025
+ 05:27:44 -0800 (PST)
+Date: Sun, 09 Nov 2025 05:27:44 -0800
+In-Reply-To: <68eb4077.050a0220.ac43.0005.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <691096d0.a70a0220.22f260.00b4.GAE@google.com>
+Subject: Forwarded: [PATCH] fs: fix inode use-after-free in chown_common
+ delegation retry
+From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 6 Nov 2025 16:24:07 +0200
-Eugen Hristev <eugen.hristev@linaro.org> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> On 11/2/25 13:54, Jonathan Cameron wrote:
-> > On Wed, 29 Oct 2025 10:40:16 +0800
-> > Pei Xiao <xiaopei01@kylinos.cn> wrote:
-> >   
-> >> at91_adc_interrupt can call at91_adc_touch_data_handler function
-> >> to start the work by schedule_work(&st->touch_st.workq).
-> >>
-> >> If we remove the module which will call at91_adc_remove to
-> >> make cleanup, it will free indio_dev through iio_device_unregister but
-> >> quite a bit later. While the work mentioned above will be used. The
-> >> sequence of operations that may lead to a UAF bug is as follows:
-> >>
-> >> CPU0                                      CPU1
-> >>
-> >>                                      | at91_adc_workq_handler
-> >> at91_adc_remove                      |
-> >> iio_device_unregister(indio_dev)     |
-> >> //free indio_dev a bit later         |
-> >>                                      | iio_push_to_buffers(indio_dev)
-> >>                                      | //use indio_dev
-> >>
-> >> Fix it by ensuring that the work is canceled before proceeding with
-> >> the cleanup in at91_adc_remove.
-> >>
-> >> Fixes: 3ec2774f1cc ("iio: adc: at91-sama5d2_adc: add support for position and pressure channels")  
-> > This ID doesn't exist in my history  it should be
-> > 23ec2774f1cc
-> > 
-> > I'll fix that up whilst applying.  Ideally I'd like Eugen to take a look
-> > but I'm fairly confident so I'll queue this up on the fixes-togreg branch
-> > of iio.git and mark it for stable.
-> > 
-> > Thanks,
-> > 
-> > Jonathan
-> > 
-> > 
-> >   
-> >> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-> >> ---
-> >> changlog in v3: move cancel_work_sync after iio_device_unregister
-> >> changlog in v2: use correct Fix id
-> >> ---
-> >>  drivers/iio/adc/at91-sama5d2_adc.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-> >> index b4c36e6a7490..aa4ba3f5a506 100644
-> >> --- a/drivers/iio/adc/at91-sama5d2_adc.c
-> >> +++ b/drivers/iio/adc/at91-sama5d2_adc.c
-> >> @@ -2481,6 +2481,7 @@ static void at91_adc_remove(struct platform_device *pdev)
-> >>  	struct at91_adc_state *st = iio_priv(indio_dev);
-> >>  
-> >>  	iio_device_unregister(indio_dev);
-> >> +	cancel_work_sync(&st->touch_st.workq);  
-> 
-> Hi Jonathan,
-> 
-> Can we push to buffers *after* device was unregistered with
-> iio_device_unregister() ? Is that right ? Both Pei and I considered it's
-> not.
-I started answering this confidently with 'sure that's fine' then got
-less confident as I tried to show that :(
+***
 
-iio_buffer_deactivate_all() should have removed all the buffers from
-the list that iio_push_to_buffers() walks to find out what buffers are
-registered.  So it should end up as a noop after iio_device_unregister()
+Subject: [PATCH] fs: fix inode use-after-free in chown_common delegation retry
+Author: kartikey406@gmail.com
 
-That call is made from iio_disable_all_buffers() in iio_device_unregister()
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-It's worth checking there are no races if we end up with work whilst
-the unregister is ongoing. That I'm rather doubtful about having looked
-at this code for first time for a long while. The removal is under the
-info_exist_lock but the walk of the buffers in iio_push_to_buffers isn't.
+The chown_common() function has a use-after-free bug in its delegation
+retry path. When break_deleg_wait() is called, it internally calls
+iput() on the delegated inode, potentially freeing it if this was the
+last reference. However, chown_common() continues using the stale inode
+pointer on retry, leading to operations on freed memory.
 
-My first instinct is we should have a specific lock to protect the buffer
-list against concurrent accesses but that is messy.  We might be able to
-use the existence lock for that. (info_exist_lock) + a check on
-indio_dev->info (for consistency with the meaning of that lock rather than
-anything else as the buffers are actually removed just before that is set null).
+This manifests as a rwsem warning where the inode's rwsem owner field
+is corrupted:
+  DEBUG_RWSEMS_WARN_ON: owner = 0x0
 
-Before posing a patch though I'd like a few more eyes on this.
+The bug is triggered by concurrent fchownat() calls and is reproducible
+on GFS2 filesystems where delegations are common.
 
-Completely untested potential fix:
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index f1448ae1b843..ab76fc25c3b5 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -2382,6 +2382,10 @@ int iio_push_to_buffers(struct iio_dev *indio_dev, const void *data)
-        int ret;
-        struct iio_buffer *buf;
+Fix by:
+1. Re-fetching inode from path->dentry->d_inode on each retry iteration
+2. Holding an explicit inode reference with ihold() at iteration start
+3. Releasing the reference with iput() on all exit paths
+
+This ensures the inode remains valid throughout delegation break and
+retry.
+
+Reported-by: syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=04c2672c56fbb9401640
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/open.c          | 12 ++++++++++++
+ include/linux/fs.h |  5 +++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/fs/open.c b/fs/open.c
+index 3d64372ecc67..e5ff4d052f80 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -787,9 +787,21 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+ 		path,
+ 		from_vfsuid(idmap, fs_userns, newattrs.ia_vfsuid),
+ 		from_vfsgid(idmap, fs_userns, newattrs.ia_vfsgid));
++	printk(KERN_INFO "After security_path_chown: owner=%lx\n",
++       		atomic_long_read(&inode->i_rwsem.owner));
+ 	if (!error)
+ 		error = notify_change(idmap, path->dentry, &newattrs,
+ 				      &delegated_inode);
++	printk(KERN_INFO "After notify_change: owner=%lx, error=%d\n",
++       		atomic_long_read(&inode->i_rwsem.owner), error);
++	if (atomic_long_read(&inode->i_rwsem.owner) != (long)current) {
++   		printk(KERN_ERR "BUG: About to unlock rwsem we don't own!\n");
++    		printk(KERN_ERR "  inode=%p\n", inode);
++    		printk(KERN_ERR "  i_rwsem.owner=%lx\n", atomic_long_read(&inode->i_rwsem.owner));
++    		printk(KERN_ERR "  current=%p\n", current);
++    		printk(KERN_ERR "  delegated_inode=%p\n", delegated_inode);
++    		dump_stack();
++	}
+ 	inode_unlock(inode);
+ 	if (delegated_inode) {
+ 		error = break_deleg_wait(&delegated_inode);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c895146c1444..84f7267aac3d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -987,6 +987,11 @@ static inline __must_check int inode_lock_killable(struct inode *inode)
  
-+       guard(mutex)(&iio_dev_opaque->info_exist_lock);
-+       if (!indio_dev->info)
-+               return -ENODEV;
-+
-        list_for_each_entry(buf, &iio_dev_opaque->buffer_list, buffer_list) {
-                ret = iio_push_to_buffer(buf, data);
-                if (ret < 0)
-
-
-
-Thanks,
-
-Jonathan
-
-
-
-> 
-> Eugen
-> 
-> 
-> 
-> >>  
-> >>  	at91_adc_dma_disable(st);
-> >>    
-> >   
-> 
-> 
+ static inline void inode_unlock(struct inode *inode)
+ {
++	printk(KERN_INFO "[%d] inode_unlock: inode=%p, owner=%lx, current=%p (%s:%d)\n",
++	       count, inode,
++	       atomic_long_read(&inode->i_rwsem.owner),
++	       current, current->comm, current->pid);
++	dump_stack();
+ 	up_write(&inode->i_rwsem);
+ }
+ 
+-- 
+2.43.0
 
 
