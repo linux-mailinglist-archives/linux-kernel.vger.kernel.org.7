@@ -1,146 +1,219 @@
-Return-Path: <linux-kernel+bounces-891939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19E6C43DD8
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:41:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFDFC43DE3
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:42:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1CC3AC31B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:41:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8305C1886C55
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8732ECD32;
-	Sun,  9 Nov 2025 12:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFA82ECEAE;
+	Sun,  9 Nov 2025 12:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hujg0fN2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vNryNons"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2730E2E975A;
-	Sun,  9 Nov 2025 12:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27742D3A96
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762692092; cv=none; b=YtW4n9QQ8pSobrA5+z5QBcmdMX0I/c9TCgrPz8owoIsqUS18EBr1f8HobIiPtRetTzww4EBz6h6EuDLpm/zT3u69xzkVIGL+KBWANaK6g0xHA0kfA9/GuBY3lHjDqoV4pDc7CxzKjR7DFrZnPgnEYlgq0cGUCLR8YboqTKiHx5E=
+	t=1762692166; cv=none; b=lo8Oz/wXNMnvJu6nD4IsEwUuHBT/+ruQQQ0sOvvBqQmFbbKLPWteHPOhdjxyy6nZQWSMidNDbau1/qY9FBPsNIla2ViwE+VoadY66koLE/9ykrALhgfWgSsz9Ffvm3xCTdhLLRVw1CQcLzPQNIYrlk/0QXKDw2QJIrYGHLpMVYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762692092; c=relaxed/simple;
-	bh=D2fO6b+7RL/6aN1x3OLkpblQOqizg946JOHiToqSI74=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dniZS3fgcH28qZQv3G2vJaN0p80F3N+MoHaQNci6RMZI2UKzvqoY9C0LrrQw+mRR2bP1C6k7aU1rtZJe58p3xu6wnmItoOuySl954UBWW4HSIfLtxB19mQpy4rSSVA5so8WxTr5VNbQR3t1eGNNd75ELml5EareoOEHjpVodV8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hujg0fN2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC7DC19421;
-	Sun,  9 Nov 2025 12:41:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762692091;
-	bh=D2fO6b+7RL/6aN1x3OLkpblQOqizg946JOHiToqSI74=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Hujg0fN2+wBri0RREM3ucP+P8THVVeg3BCQcyEbRCRvCYSjbgNQutSnD7IXEV+ZxW
-	 JCGcFBMQFWZTIbPkeSiO0eSXYaSaC9mHT3/kIDWxp9BANxF4hHfCrj9MX3qwVSD3tq
-	 lR/RhZyD5IMnKKBeouwO0nzHhNC3oXhOA2x/rNk7ObogG2tuYh4Z/95pPTvvUIDGJW
-	 /PWDlAwhUPdAZxFaBxzDvYR8Vm1VnAwqM0BrPiyfk1tN2hxE2jcN3d1VeUx8jpYg5U
-	 cflBwc2xQCbiGsQL1gPAcmcM1SrKE5AyLzWdlu6j7s5cOEsawAuIIF8NNCqXtp7BgZ
-	 KRDvhjHdgvyHg==
-Date: Sun, 9 Nov 2025 12:41:25 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Petre Rodan <petre.rodan@subdimension.ro>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jagath Jog J
- <jagathjog1996@gmail.com>
-Subject: Re: [PATCH 3/6] iio: accel: bma220: add tap detection
-Message-ID: <20251109124125.2ab0d432@jic23-huawei>
-In-Reply-To: <aQ09qTYr0gqlb0If@lipo.home.arpa>
-References: <20251014-bma220_events-v1-0-153424d7ea08@subdimension.ro>
-	<20251014-bma220_events-v1-3-153424d7ea08@subdimension.ro>
-	<20251018181632.76851d4e@jic23-huawei>
-	<aQW9OnJSrOzn_Sws@lipo.home.arpa>
-	<20251102122053.49ee2632@jic23-huawei>
-	<aQ09qTYr0gqlb0If@lipo.home.arpa>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762692166; c=relaxed/simple;
+	bh=6TOHpgpqHJ5WgnknUzBZQ+Cb+5OFiDU38P5bXDVOJnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HyoTUptV1jseSPkbA8AIyrMHIckIZyTF0RwUQe3NuVWRQvqpOgxi4BUkBZ9nI6rPvl4rUxq4pBIp0gOBRCmR1MceU3k+Zl8QPy3VIaQLxt2vP1Hs55xPP3cLx4vaGmJ7/zSXmMGm+kx62Eym614cIMLIwP0Mgk/I6ShwOsBpalk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vNryNons; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6417313bddaso960406a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:42:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762692161; x=1763296961; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nXaxtSEsQGvchBbil4q1XD2yo5gxFEG8Hu3hgTDWe1I=;
+        b=vNryNonsftE4jxNo0F1H7ZDzVR2tKZIJan+FzQLQhasqwpJmkGZPpW3VPMZB8gIMV/
+         BxRRrRIwWCYxwTVo9zpNaPcXxhOeTsn3LM55+b2cI9w/QwXr4TFFlOuGGytpnIO7B2kt
+         HkWKgyzkjwmsvuTcisz7aezSaY9mVdWA1O1rNQlQ8Hareby7TMqd8fHbXuvQWFiCyfVq
+         pa8HV328a9oz2glV95iI7M/MvLXlxFAV8bKyijbYQ0/eBjIYEyjo+HCkYqAGPGORUhak
+         Ia++lRvQiFQWZxVu9KYEddSTY+Kb2WcP3xPe+vNLViI0bqn3Eye+m/98Rzkgn8XsKS+4
+         FC1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762692161; x=1763296961;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nXaxtSEsQGvchBbil4q1XD2yo5gxFEG8Hu3hgTDWe1I=;
+        b=GKk3BgCFrWaBen2iW92H2GYOpne6uWfS41e2O6a3bO+L/Naza5LEQh3s8fuRTU1MsX
+         hJtLGf55UKdFzN7ohB2xiXCRKf3Bwcni6boTvBO9Z/BqOIazt6xRCOAlRTMyLnSXdgjh
+         xQraEID3murr1sYEhxFrtwCpneyyutuGpAv0ECIEQlDVbLFw3WIczrGxqbMwcM6yG6CC
+         24KW0Ym6nUx9pbOW13ATCI2wXXbAk+alwUVcMaP+9bqRH7HFRB2ETCCN+sVXy2JfqBpP
+         wT4OttNSu6txZNwU9phhee39BVhSxdQw4KGKCVYjUIeCDci3WgSTNd/MSFNEbHx38ifY
+         TwTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDdrryFP0CxvYbZTpxVj9lBIpVsI4S3TfJjbOy5pqGqRWSu9GEiX/5VGAp7l7shgDlfzECEj70lw59/Hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0o2KCO8jzyyJrYmvF2Kmaprsi2No+1Cz3Ww7jRAL+DutsLKCB
+	zkpQaFFftFVwudl3IeFMQU3ntO9Psx53FvVZ2XG0FAVoxQ+YYLv02bdmemtwl+NLArU=
+X-Gm-Gg: ASbGncvSaca2ZYy89CkxY3xG+7XijFKAMF5lRQZlQZCkiZXUXs2qb5tRpX9AU8n/GmL
+	Ggcqbf+cwMlPUkarYKmSPgYi0pr146045wb6EnLiOXfIHqWkUEczWoaa4yYZJ8VdNJCPGrBnMSK
+	3zVR0hfDB8BHg/k39Kq2T46RdwkXEJo0OrgoNU7dBi26aQOs0r7fjbFjPkmaOIuasqgk2fRK/wW
+	gJI9HVtUZ9TPdO25zQfX97Duv7yS487dE4OczWu4d4vUmqQyvwINotTfU145VOnSbCImf6+vvDx
+	uraKHrSj4CC5/dAnUBPs5qecDzE0tULAX+v+O0jOaqJaO8+sxoeEHld+xmi7DNYhWIwXUfB5/oP
+	olqg2pBM/mjFjWdDqZoW4gGsbrDFRBL6ZoGCoI7FlY9wMp95DjHag+1c8q0XuHhXM4af8Lv4ZSv
+	VKHHi0WdwyXAbgk4PhuQzgTlVXMPMA6fnNyZ2Z+tx9OTpr1mh41Vg5VDParuf/SUS4j79vy4ntZ
+	vx7/tYARgO+JYv0lSr/SWLZx31Uyp4+B3IGRghrtWvjAvOU1On53U/Fquks7II32g==
+X-Google-Smtp-Source: AGHT+IENKoAaMYCpquqLORFICuxP93xzbU3KBb6gWvvqfSpI7tXUE7Swy7LtzA/UFFK4KqGX4Fsd5A==
+X-Received: by 2002:a17:906:f58e:b0:b70:fede:1b58 with SMTP id a640c23a62f3a-b72e028b9b0mr497726566b.2.1762692161300;
+        Sun, 09 Nov 2025 04:42:41 -0800 (PST)
+Received: from ?IPV6:2001:1c00:3b8a:ea00:4729:b0ef:dcc4:b0b6? (2001-1c00-3b8a-ea00-4729-b0ef-dcc4-b0b6.cable.dynamic.v6.ziggo.nl. [2001:1c00:3b8a:ea00:4729:b0ef:dcc4:b0b6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9bcd59sm784848566b.53.2025.11.09.04.42.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Nov 2025 04:42:40 -0800 (PST)
+Message-ID: <fd0a3ac1-1a6a-486f-ab0f-e5cd69f8127e@linaro.org>
+Date: Sun, 9 Nov 2025 13:42:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 7/8] media: qcom: camss: Account for C-PHY when
+ calculating link frequency
+To: david@ixit.cz, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Luca Weiss <luca.weiss@fairphone.com>, Petr Hodina <phodina@protonmail.com>,
+ "Dr. Git" <drgitx@gmail.com>
+Cc: Joel Selvaraj <foss@joelselvaraj.com>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>
+References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
+ <20251109-qcom-cphy-v1-7-165f7e79b0e1@ixit.cz>
+Content-Language: en-US, en-GB
+From: Casey Connolly <casey.connolly@linaro.org>
+In-Reply-To: <20251109-qcom-cphy-v1-7-165f7e79b0e1@ixit.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, 7 Nov 2025 02:30:33 +0200
-Petre Rodan <petre.rodan@subdimension.ro> wrote:
+Hi David,
 
-> On Sun, Nov 02, 2025 at 12:20:53PM +0000, Jonathan Cameron wrote:
-> > On Sat, 1 Nov 2025 09:56:42 +0200
-> > Petre Rodan <petre.rodan@subdimension.ro> wrote:
-> >   
-> > > Hello Jonathan,
-> > > 
-> > > thank you for the review.
-> > > 
-> > > On Sat, Oct 18, 2025 at 06:16:32PM +0100, Jonathan Cameron wrote:  
-> > > > > +			ret = regmap_read(data->regmap, BMA220_REG_CONF3, &reg_val);
-> > > > > +			if (ret)
-> > > > > +				return ret;
-> > > > > +			*val = FIELD_GET(BMA220_TT_DUR_MSK, reg_val);    
-> > > > 
-> > > > This needs to be in second if you are using duration. Is the register really in seconds?    
-> > > 
-> > > this IC has a very small number of bits that configure
-> > > duration/hysteresis/threshold levels. it's between 2 and 6 for each
-> > > of them. in the case of high and low G events the duration is not
-> > > even directly defined as a time interval, but as a count of samples
-> > > that are over a threshold value.  
-> > 
-> > The ABI is in seconds, so you have to deal with scaling wrt to the sampling
-> > frequency at the time.  I know it can be a pain to do, but consistent userspace
-> > is the aim and so we need to match the ABI.  
+On 11/9/25 10:39, David Heidelberg via B4 Relay wrote:
+> From: David Heidelberg <david@ixit.cz>
 > 
-> on this bma220 chip, when someone modifies the cut off frequency of the
-> filter then the ic automatically adjusts the sampling rate. and this 
-> sample rate is not exposed on any of the registers.
-> since duration parameters are defined as a count of samples 
-> and the sample rate looks to be unknown I don't see how I could
-> adapt to an API that is based on a unit of seconds.
-
-Does the datasheet document that relationship? Table 4 on the datasheet I looked
-at to seems to give settling time but I think is only relevant to low power
-modes that might not apply here.
-
-Would be very odd if there is no way to establish the sampling frequency from
-the settings configured.
-
+> Ensure that the link frequency divider correctly accounts for C-PHY
+> operation. The divider differs between D-PHY and C-PHY, as described
+> in the MIPI CSI-2 specification.
 > 
-> > > I was hoping that simply passing along a unitless value between 0 and
-> > > parameter_max would be enough to customize all the event parameters.
-> > > this does mean that the driver makes the assumption that the user is
-> > > familiar with the device datasheet and knows the number of bits every
-> > > parameter has been allocated. should the driver provide a conversion
-> > > table for tt_duration just like for _scale_table and
-> > > _lpf_3dB_freq_Hz_table?  
-> > 
-> > Exactly.  
+> For more details, see:
+> https://docs.kernel.org/driver-api/media/tx-rx.html#pixel-rate
 > 
-> I was thinking today of a more analog-feeling API, one in which a variable that can take values linearly between min and max can be set to a percentage of it's scale. think of stereo systems - most of us don't want to set a precise amount of decibels of attenuation when operating the volume knob, we just want to set it lower or higher until a condition matches. in this API the primary unit of measurement would not be dBs but notches or ticks - calculated based on min, max and the native resolution of the control (how many bits are allocated for it in the ic's memory map). this has also the benefit of translating nicely when the control is rendered as a widget in a GUI. think about a 0 to 11 volume knob.
-> is there anything like this already implemented? is there any merit to this idea?
-
-ABI is fixed the day it is defined and I'm not keen to have what sounds like
-a duplicate ABI.  We also need to if even vaguely possible have consistency across sensors.
-If you do it on basis of range set, and one sensor oddly provides twice the range
-of another, then a 5 on one is a 10 on that other.
-
-Hence the only things where we can do this sort of percentage thing are where
-the thing being controlled is a unit less ratio and hence a percentage type
-control is the only possible units.
-
-Thanks,
-
-Jonathan
-
-
+> Suggested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>   drivers/media/platform/qcom/camss/camss-csid.c   | 2 +-
+>   drivers/media/platform/qcom/camss/camss-csiphy.c | 6 ++++--
+>   drivers/media/platform/qcom/camss/camss.c        | 7 ++++---
+>   drivers/media/platform/qcom/camss/camss.h        | 2 +-
+>   4 files changed, 10 insertions(+), 7 deletions(-)
 > 
->  I will shelve the event part of this driver for another time, just got some Honeywell pressure sensors that need a new driver.
+> diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
+> index 68adea33cc719..9fb5834b28e2b 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csid.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csid.c
+> @@ -545,7 +545,7 @@ static int csid_set_clock_rates(struct csid_device *csid)
+>   	fmt = csid_get_fmt_entry(csid->res->formats->formats, csid->res->formats->nformats,
+>   				 csid->fmt[MSM_CSIPHY_PAD_SINK].code);
+>   	link_freq = camss_get_link_freq(&csid->subdev.entity, fmt->bpp,
+> -					csid->phy.lane_cnt);
+> +					csid->phy.lane_cnt, csid->phy.cphy);
+>   	if (link_freq < 0)
+>   		link_freq = 0;
+>   
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
+> index a734fb7dde0a4..61f2b2ac3f159 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
+> @@ -144,8 +144,9 @@ static int csiphy_set_clock_rates(struct csiphy_device *csiphy)
+>   	u8 bpp = csiphy_get_bpp(csiphy->res->formats->formats, csiphy->res->formats->nformats,
+>   				csiphy->fmt[MSM_CSIPHY_PAD_SINK].code);
+>   	u8 num_lanes = csiphy->cfg.csi2->lane_cfg.num_data;
+> +	bool cphy = csiphy->cfg.csi2->lane_cfg.cphy;
+>   
+> -	link_freq = camss_get_link_freq(&csiphy->subdev.entity, bpp, num_lanes);
+> +	link_freq = camss_get_link_freq(&csiphy->subdev.entity, bpp, num_lanes, cphy);
+>   	if (link_freq < 0)
+>   		link_freq  = 0;
+>   
+> @@ -270,9 +271,10 @@ static int csiphy_stream_on(struct csiphy_device *csiphy)
+>   	u8 bpp = csiphy_get_bpp(csiphy->res->formats->formats, csiphy->res->formats->nformats,
+>   				csiphy->fmt[MSM_CSIPHY_PAD_SINK].code);
+>   	u8 num_lanes = csiphy->cfg.csi2->lane_cfg.num_data;
+> +	bool cphy = csiphy->cfg.csi2->lane_cfg.cphy;
+>   	u8 val;
+>   
+> -	link_freq = camss_get_link_freq(&csiphy->subdev.entity, bpp, num_lanes);
+> +	link_freq = camss_get_link_freq(&csiphy->subdev.entity, bpp, num_lanes, cphy);
+>   
+>   	if (link_freq < 0) {
+>   		dev_err(csiphy->camss->dev,
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 549780f3f948b..248aa6b21b5ad 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -3912,20 +3912,21 @@ struct media_pad *camss_find_sensor_pad(struct media_entity *entity)
+>    * camss_get_link_freq - Get link frequency from sensor
+>    * @entity: Media entity in the current pipeline
+>    * @bpp: Number of bits per pixel for the current format
+> - * @lanes: Number of lanes in the link to the sensor
+> + * @nr_of_lanes: Number of lanes in the link to the sensor
+
+Missing cphy doc comment.>    *
+>    * Return link frequency on success or a negative error code otherwise
+>    */
+>   s64 camss_get_link_freq(struct media_entity *entity, unsigned int bpp,
+> -			unsigned int lanes)
+> +			unsigned int nr_of_lanes, bool cphy)
+>   {
+>   	struct media_pad *sensor_pad;
+> +	unsigned int div = nr_of_lanes * 2 * (cphy ? 7 : 16);
+
+What do the magic numbers 7 and 16 mean? It would be nice to describe these.
+
+Kind regards,
+Casey (she/they)
+
+>   
+>   	sensor_pad = camss_find_sensor_pad(entity);
+>   	if (!sensor_pad)
+>   		return -ENODEV;
+>   
+> -	return v4l2_get_link_freq(sensor_pad, bpp, 2 * lanes);
+> +	return v4l2_get_link_freq(sensor_pad, 16 * bpp, div);
+>   }
+>   
+>   /*
+> diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
+> index 9d9a62640e25d..0ab908b0c037f 100644
+> --- a/drivers/media/platform/qcom/camss/camss.h
+> +++ b/drivers/media/platform/qcom/camss/camss.h
+> @@ -162,7 +162,7 @@ int camss_enable_clocks(int nclocks, struct camss_clock *clock,
+>   void camss_disable_clocks(int nclocks, struct camss_clock *clock);
+>   struct media_pad *camss_find_sensor_pad(struct media_entity *entity);
+>   s64 camss_get_link_freq(struct media_entity *entity, unsigned int bpp,
+> -			unsigned int lanes);
+> +			unsigned int lanes, bool cphy);
+>   int camss_get_pixel_clock(struct media_entity *entity, u64 *pixel_clock);
+>   int camss_pm_domain_on(struct camss *camss, int id);
+>   void camss_pm_domain_off(struct camss *camss, int id);
 > 
-> best regards,
-> peter
 
 
