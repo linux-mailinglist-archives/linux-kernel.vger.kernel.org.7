@@ -1,158 +1,159 @@
-Return-Path: <linux-kernel+bounces-892012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E21AC44152
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 16:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB58C44155
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 16:16:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34A184E1774
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 15:10:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1557D4E633C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 15:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364152FE067;
-	Sun,  9 Nov 2025 15:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/HsiaUB"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBE11D799D;
+	Sun,  9 Nov 2025 15:16:13 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CD41C84DC
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 15:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287682EBBAA
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 15:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762701015; cv=none; b=pmbi5uBKCRZvpTYkBZ9kjsPhNhG18muLLXPphIZfX46fdBCXMlR8PNdqeBsh1ZWmOOysESefo7E688ovQh3NWu3JXMxNvC7yWlTQdiqPSJpa5uB8+IIGj1dkhrFxaUcTHMasClQAW1VWi0dP3niA7iw4PdGR5ClKVsicH/3DDDM=
+	t=1762701372; cv=none; b=TnSm/ijZJMvWzsamneUqeaY6nsKEWcvO9KMDBcElNCSgRVh/u7XxNcEO5UcBC2iFZI/kZ5/ls1logEfUcoBPodV1tBUUOfbLFznmwXNehXSrhkLs0WeGOOPtlKG7TMNcBZBXdM3X4u/7jvQek6y4XlC/4nulWhe3sCgrmntWDds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762701015; c=relaxed/simple;
-	bh=ic9oXRX/KaRVsd69aqaf21/OW+QO/vHVfurZJL7/ctw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lyAQbgYpl/nS1Gc7ZdNa8HymsXM4XfcmHzijUTbtpOukKKVrycc7aLLbm3z/PYd1nyrl1P/LwTj5wJBRY7Pa4e1L9jbjO6fqeCs6Ev1D013bs8+mSoRnTK0RBaU6l8FeCngu2i53hL8sc7YhRkt7tWVtptstLcP86NQ5H6BdcPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/HsiaUB; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-786635a8ce4so17799237b3.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 07:10:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762701013; x=1763305813; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u4I+yONFaRC7fqexg8U+HT2nmVmnkhZMZygoSEaoWNA=;
-        b=e/HsiaUBzpQ8ZizN48OcSziBxjMvUwrTqKDI+GmZ+CiU1feRVKDlH0BBr2wRla3yoU
-         /9INLAgpujGzES74ToD6nJHAr9qg3rdUOhz36UNN7fv+MdMqrw4GraSTPGw+j641aaeo
-         43SY3f3AGI8u/S9AemINxH069oxy/IcpeIslZdAQiQXdn8jzMCg0TDKLtX4W1eoLtJD1
-         abfMmQ9ZgXXKCvf6XO4StJOSUU32nX83eT6fXBNiKtuLJ9WB4UCxydbqk1heMireIOr/
-         AzTZili9whzLpQfHiLWtoAff1VIYGkvzxCnA6TraEf47h2bvgMjlQlb5V44bzSKXrSSY
-         bz4w==
+	s=arc-20240116; t=1762701372; c=relaxed/simple;
+	bh=50xjl0tdCp1eXb5sD/1a5GX+U8Dq3v1oi0/SD7mNPWo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JYUzygZs07Rbrk/mCVqR1h5Ta0fJkaR+KqtdR/l21NxHwupjh3vAz2zydvK4WE9KKZpBBPeEXDHnOzd9Z3gvTmPd4R2H0z53pJRhO+an3uCaoxfDhmiYQk1THb1cmtVZvDViQGKw3P8Gd+W8UqSJXW5QnYA0Dm5WGFDXtcMH7cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43329b607e0so38380745ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 07:16:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762701013; x=1763305813;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=u4I+yONFaRC7fqexg8U+HT2nmVmnkhZMZygoSEaoWNA=;
-        b=Mg+pZrQHeqm6vcKn6+zreEc9bzNW4R6TssOU3sHXW4dFAFrKCFV7Ujb0KszxhLaYMZ
-         HfvpnZ86cvB3MwkSvOouxzby55yTZMPV0xHgy93hYvKYX6xbqIRww8sZAMUYQj9mNa9q
-         A1Ws/I+nXWp9Xn9xAkYnWR7Y9ihUZRe74zwpdH+q/+H/c8bhmO2vW7aUcHpVqSOse18h
-         M/eQlkdtmQ9szwLLnZPPSdCzARc/Mz9YCkop/0THibdGkrcYfotX1Y+HcBF3ET+adDVD
-         b+Pw4LAymV5Bh/JfY1VpPrftYkeq2WM/IJWMdXk0WJVYMkZP5WN28BftPYyNGRwkrX5O
-         WvNw==
-X-Gm-Message-State: AOJu0YzEOI4zpA7HsfXbYsyRd5MY8rRQWZ4OyzRHRLsE3Ey8teljzQST
-	KJ7EOR+chB+Zl6ni7l0/+3jQ3iF4S0ZSasbfxvUT9NfBkqdxsL9N2JdHnlhy0QD7mI3TuIZ/6NQ
-	/6o739ch8vDDlaKGASSTi1A2rkvSeNu96kw==
-X-Gm-Gg: ASbGnctCdUeoD3cepTS1X+2/zhrIpMck+ffg3P6/TKkSE+iolOHhFhot3sY2bBjTcIO
-	Fe3hSG9SFPjzRX8O5Flw8V7TfYJ72S3BZV+jsMe9pF0SBdOokDwewiHwvHQzWW0ZHR0bM6dnS9s
-	l104WF2/CiXlJnt3k8lsKCL84JEw7R7DxsjdL8S431bBClCg6QYNIVIuhn8tp/xO+r7uUkGVOww
-	ndPK+rLRZQK8jmD2ADDsFSTi8AeaCe1gK44+MMYBjrA4EDcs/q9vbWHVZOb+uhxd6Wv
-X-Google-Smtp-Source: AGHT+IFrCC+krStX6Xak3OL09d3qv+5XNBkCTHr/2ekDDohIavTffFiQtNf8VsP8fPJQ78+gajdQ32WsyxAjKR1Hfpc=
-X-Received: by 2002:a05:690c:4a13:b0:786:56f9:215c with SMTP id
- 00721157ae682-787d53a1b45mr52211077b3.29.1762701012916; Sun, 09 Nov 2025
- 07:10:12 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762701368; x=1763306168;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8PlEUa1PiuST6rG63+D/5294jUbY5YhJU4bLLRPF3wo=;
+        b=gWTFR+RX2OwGYCy7cSyA0wGFukCHtf13hqPBruBEzDe1WvCYWEqcg7N5r49LWeUou5
+         UDJbHgSEudAeOaycJjh5ndPxoCjloGB4NZ0MNkZY9AeHXhZAdYxHruQUzxrGgQal8E7O
+         ZmJRg2Bvwk93QzH7gpziqN0E0J0UsOePZlSZyeFa24XVMI4smJ8ary4Cg8OEq3O/3Ryo
+         L9hvemSH9Va7Qi1o8S38QepzdPVfoKBuEzCJw6HojajEbg2bZI5Sj0fh32sHKGGcO7K4
+         Hbi36vZvNQ5AZjiwlxwOZqzXd2BKB0esN8UBQS8seaJAyBsvAHkOIcTrf+5YNDdiH0DD
+         MJQQ==
+X-Gm-Message-State: AOJu0YxQrDZb0igewcFIf0ap9Loqh9uNq9QiUoIbFpskTM2rahmx8CIo
+	k4eryRiDEFXt53uNDPORYY7WwfWAqRGq6lqP96LpWeTb/lcBy5xKNnfkszvbavG2xfTDAnxQ3aK
+	t4vAGjvR8vbmGbRYfszQIlFYg/QvMtuU7WrhZQ+mcNnp1yJy2iGODd8mEwnA=
+X-Google-Smtp-Source: AGHT+IHofZj5IKVGWyF1vgkilHH7ptgavgN1y7mQ/UjeyBDyLDb7lBxOVmA4x+RSZoFejkmoBmCOg6Flhk3nNgmu5s9dMg9laisZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251108234725.1650246-1-jim.cromie@gmail.com> <cc0edf9cf2ee40bc13eec609eec5686de4f9f77f.camel@perches.com>
-In-Reply-To: <cc0edf9cf2ee40bc13eec609eec5686de4f9f77f.camel@perches.com>
-From: jim.cromie@gmail.com
-Date: Sun, 9 Nov 2025 08:09:47 -0700
-X-Gm-Features: AWmQ_bknW3FxvV6C9ro0e5jn6Y9errQ2pAZyn-OOQnuuXVHVbd4yglkjOXtBTkU
-Message-ID: <CAJfuBxxfr3EgUB1cPDC_PXB0qVhrtDL330EmtTFeEbF=t8Wv5w@mail.gmail.com>
-Subject: Re: [PATCH 1/1] checkpatch: add MA_STATE to declaration_macros
-To: Joe Perches <joe@perches.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linuxfoundation.org, 
-	kernel test robot <lkp@intel.com>, Andy Whitcroft <apw@canonical.com>, 
-	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+X-Received: by 2002:a05:6e02:11:b0:433:4f9c:96a7 with SMTP id
+ e9e14a558f8ab-43367dd8073mr85038605ab.10.1762701368301; Sun, 09 Nov 2025
+ 07:16:08 -0800 (PST)
+Date: Sun, 09 Nov 2025 07:16:08 -0800
+In-Reply-To: <68eb4077.050a0220.ac43.0005.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6910b038.a70a0220.22f260.00bb.GAE@google.com>
+Subject: Forwarded: [PATCH] fs: fix inode use-after-free in chown_common
+ delegation retry
+From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 8, 2025 at 5:52=E2=80=AFPM Joe Perches <joe@perches.com> wrote:
->
-> On Sat, 2025-11-08 at 16:47 -0700, Jim Cromie wrote:
-> > MA_STATE is used repeatedly as a declaration, add it to the list.
->
-> OK but
->
-> > I left out the $Storage regex component, since I saw no cases wanting
-> > it, via: $> grep -r -B1 '\bMA_STATE' .
-> >
-> > This change fixes the following, reproduced locally.
->
-> No following ?
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-the oe-kbuild report followed, but the link didnt work right..
+***
 
->
-> And I looked at the MA_STATE macro definition that has
-> several NULL or zero unnecessary member initializations
-> but doesn't initialize the entire structure as all
-> non-named members are NULL or zero by default.
->
-> I wonder if the unnecessary NULL/0 initializations there
-> could actually increase the object size.
->
-> With gcc 15.2.1 allyesconfig & defconfig do not change
-> either way but I don't know if all supported versions
-> minimize the initialization properly.
->
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202511071306.OJpTf7fK-lkp=
-@intel.com/
->
-> This Closes: url is not found on lore
+Subject: [PATCH] fs: fix inode use-after-free in chown_common delegation retry
+Author: kartikey406@gmail.com
 
-That is weird.
-when I follow the Closes link, I get something unexpected - a "not
-found - look here maybe",
-AND a ../oe-kbuild/ link -
-clicking that takes me to the report proper.
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-If you retry, you can edit the "-all" out of the URL and it works.
+The chown_common() function has a use-after-free bug in its delegation
+retry path. When break_deleg_wait() is called, it internally calls
+iput() on the delegated inode, potentially freeing it if this was the
+last reference. However, chown_common() continues using the stale inode
+pointer on retry, leading to operations on freed memory.
 
-It sounds like a small bug somewhere in the lkp-robot CI chain.
+This manifests as a rwsem warning where the inode's rwsem owner field
+is corrupted:
+  DEBUG_RWSEMS_WARN_ON: owner = 0x0
 
+The bug is triggered by concurrent fchownat() calls and is reproducible
+on GFS2 filesystems where delegations are common.
 
->
-> >
-> > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-> > ---
-> >  scripts/checkpatch.pl | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> > index e722dd6fa8ef..4b5e2e64dece 100755
-> > --- a/scripts/checkpatch.pl
-> > +++ b/scripts/checkpatch.pl
-> > @@ -1096,7 +1096,8 @@ our $declaration_macros =3D qr{(?x:
-> >       (?:$Storage\s+)?(?:[A-Z_][A-Z0-9]*_){0,2}(?:DEFINE|DECLARE)(?:_[A=
--Z0-9]+){1,6}\s*\(|
-> >       (?:$Storage\s+)?[HLP]?LIST_HEAD\s*\(|
-> >       (?:SKCIPHER_REQUEST|SHASH_DESC|AHASH_REQUEST)_ON_STACK\s*\(|
-> > -     (?:$Storage\s+)?(?:XA_STATE|XA_STATE_ORDER)\s*\(
-> > +     (?:$Storage\s+)?(?:XA_STATE|XA_STATE_ORDER)\s*\(|
-> > +     (?:MA_STATE)\s*\(
-> >  )};
-> >
-> >  our %allow_repeated_words =3D (
+Fix by:
+1. Re-fetching inode from path->dentry->d_inode on each retry iteration
+2. Holding an explicit inode reference with ihold() at iteration start
+3. Releasing the reference with iput() on all exit paths
+
+This ensures the inode remains valid throughout delegation break and
+retry.
+
+Reported-by: syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=04c2672c56fbb9401640
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/attr.c |  5 ++++-
+ fs/open.c | 12 ++++++++++++
+ 2 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/fs/attr.c b/fs/attr.c
+index 795f231d00e8..a45d29032283 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -418,6 +418,8 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		  struct iattr *attr, struct inode **delegated_inode)
+ {
+ 	struct inode *inode = dentry->d_inode;
++	printk(KERN_INFO "notify_change START: inode=%p, owner=%lx\n",
++	       inode, atomic_long_read(&inode->i_rwsem.owner));
+ 	umode_t mode = inode->i_mode;
+ 	int error;
+ 	struct timespec64 now;
+@@ -551,7 +553,8 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		fsnotify_change(dentry, ia_valid);
+ 		security_inode_post_setattr(idmap, dentry, ia_valid);
+ 	}
+-
++	printk(KERN_INFO "notify_change END: inode=%p, owner=%lx, error=%d\n",
++	       inode, atomic_long_read(&inode->i_rwsem.owner), error);
+ 	return error;
+ }
+ EXPORT_SYMBOL(notify_change);
+diff --git a/fs/open.c b/fs/open.c
+index 3d64372ecc67..e5ff4d052f80 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -787,9 +787,21 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+ 		path,
+ 		from_vfsuid(idmap, fs_userns, newattrs.ia_vfsuid),
+ 		from_vfsgid(idmap, fs_userns, newattrs.ia_vfsgid));
++	printk(KERN_INFO "After security_path_chown: owner=%lx\n",
++       		atomic_long_read(&inode->i_rwsem.owner));
+ 	if (!error)
+ 		error = notify_change(idmap, path->dentry, &newattrs,
+ 				      &delegated_inode);
++	printk(KERN_INFO "After notify_change: owner=%lx, error=%d\n",
++       		atomic_long_read(&inode->i_rwsem.owner), error);
++	if (atomic_long_read(&inode->i_rwsem.owner) != (long)current) {
++   		printk(KERN_ERR "BUG: About to unlock rwsem we don't own!\n");
++    		printk(KERN_ERR "  inode=%p\n", inode);
++    		printk(KERN_ERR "  i_rwsem.owner=%lx\n", atomic_long_read(&inode->i_rwsem.owner));
++    		printk(KERN_ERR "  current=%p\n", current);
++    		printk(KERN_ERR "  delegated_inode=%p\n", delegated_inode);
++    		dump_stack();
++	}
+ 	inode_unlock(inode);
+ 	if (delegated_inode) {
+ 		error = break_deleg_wait(&delegated_inode);
+-- 
+2.43.0
+
 
