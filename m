@@ -1,228 +1,110 @@
-Return-Path: <linux-kernel+bounces-892035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C445C44282
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:37:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73F2C44288
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 17:38:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 879CE34669E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:37:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 990284E2EB5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 16:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AA5303CBE;
-	Sun,  9 Nov 2025 16:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA88303C9C;
+	Sun,  9 Nov 2025 16:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TwveU4X2"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNgRTevb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50421303C81
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 16:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613691FAC42;
+	Sun,  9 Nov 2025 16:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762706236; cv=none; b=KWEaHJuf27uWciq9lVLRSMdCakINv1+RKPErJ9GLxpahxA7eXpGByEndqdZiPGoubM7LaaRR4ZNrOrx5qXn03p1AQiOTg5NAjefPR/H9OCHlDh74lHc8gPl7HFwqVqCaXD75IZPWzsuEFmeGEENcwrv+8qsfyJiK/qyibJFid4M=
+	t=1762706326; cv=none; b=C+1KlKycPJYpb9rAqIS3xmNPlWwf2BbNFNNQN6VU70XRkuciu7m1wYBVlza82XDWIGK7yZSJ3fO8S7N/oFuFoIZtvolXUM9Lbq8DnRgSh9xKTlUvk96pyDICaqqwZEe6FTkjToi+YFI86ADsZvB4DMJiF3sf+LmBhfE89vuKQ90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762706236; c=relaxed/simple;
-	bh=hNAWHlmQuvUiJrfA36o2iOZOu3sIu3Ko/4lg5IxIDTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=plbsiuPrYgj5s+GsB1FlgUVNxDi1a7vW7ObcSU9jtSDy1wwHH+Ql+pHrlSRQgEQN7f+SIE+AquNLemfWNzh6C1giyWdobAf93mfgJrc3PZiy6kDUTZ/R/wGfmP0oEeNoS3gf3Uteq/TT40xPh7MH+VDPsHdvlu6LFBXy7RCp9qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TwveU4X2; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762706231;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K+FAv/HqxyqKXOjlEtMLSRilYuA/JiP8B+dO7mrVenw=;
-	b=TwveU4X20p1iQZm6jneWjjD85e9m1xPGKJ2wF4jlbQRVn9pJI/+6mzuP7utgw8xay9P5a5
-	zL9WpGQ0CvB2tN9kBU9d4WxIp2jLKAi7ucG4xT5DJmbSb97GfErpSzF0+rVjL/T3WWqQev
-	A+8uuXh/XvC3fACdkCLcTFI0aQSh/2M=
-From: Tao Chen <chen.dylane@linux.dev>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v5 3/3] bpf: Hold the perf callchain entry until used completely
-Date: Mon, 10 Nov 2025 00:35:59 +0800
-Message-ID: <20251109163559.4102849-4-chen.dylane@linux.dev>
-In-Reply-To: <20251109163559.4102849-1-chen.dylane@linux.dev>
-References: <20251109163559.4102849-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1762706326; c=relaxed/simple;
+	bh=tyUFY2EVCKcCKGylmHqPrCF4+Regt0Z1xbdOg2MeKdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HVjWedI5svUc7nRuHNg8Kyko1eU7Sx4Iakx5OoPF0Dg+U1/t+mlWp1PZXu9leOPpZ9GWWAeBRuMYf4ZbHJKO9nFyjnvfuqnzBarjK9wAC6RxhlP8O9N2f6Gv/DVVwAIvp0P0qbThlmQiOJXIwx+7ivYP1USrkFP+F+W5WlLr7n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNgRTevb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBD15C4CEF7;
+	Sun,  9 Nov 2025 16:38:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762706325;
+	bh=tyUFY2EVCKcCKGylmHqPrCF4+Regt0Z1xbdOg2MeKdA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nNgRTevbyQn1SM/yHdbbKUOALQlamILo5IBnDJLl6QKMPiqf/+qLJ+0UGcOr2cVRX
+	 RB2ynW5psFNYszlXuxEv2MyT40C+LF0irdT3G/Wg+gCx+omekS5ahGuFm3YwlSlKOf
+	 Dl8Pf5m+v3Qs4lCTESzn+JmtVTEMG3Sajg5yRi3vsb+Kwba7Wqw7Ml/vwt+WaqjBFk
+	 9yajWV4RxeR92P4pp1GJOj4G+ow5ML4BAx3LrPXHV6V8lM/fNZFROJiGDafatEgy4h
+	 pdV/L1ZxcA4tRawWuCZ0mLp3G2OfrnM2T2X4lmw/wetbqTMhgt4YoyIBg5Sd57/7pC
+	 CCl/keBUksy9A==
+Date: Sun, 9 Nov 2025 16:38:40 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Antoni Pokusinski <apokusinski01@gmail.com>, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] iio: mpl3115: use get_unaligned_be24 to retrieve
+ pressure data
+Message-ID: <20251109163840.64144586@jic23-huawei>
+In-Reply-To: <aQ1MfTu24hhk-dKP@debian-BULLSEYE-live-builder-AMD64>
+References: <20251105095615.4310-1-apokusinski01@gmail.com>
+	<20251105095615.4310-2-apokusinski01@gmail.com>
+	<aQ1MfTu24hhk-dKP@debian-BULLSEYE-live-builder-AMD64>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-As Alexei noted, get_perf_callchain() return values may be reused
-if a task is preempted after the BPF program enters migrate disable
-mode. The perf_callchain_entres has a small stack of entries, and
-we can reuse it as follows:
+On Thu, 6 Nov 2025 22:33:49 -0300
+Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
 
-1. get the perf callchain entry
-2. BPF use...
-3. put the perf callchain entry
+> On 11/05, Antoni Pokusinski wrote:
+> > The pressure measurement result is arranged as 20-bit unsigned value
+> > residing in three 8-bit registers. Hence, it can be retrieved using
+> > get_unaligned_be24 and by applying 4-bit shift.
+> > 
+> > Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
+> > ---
+> >  drivers/iio/pressure/mpl3115.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c  
+> ...
+> >  
+> > -		*val = be32_to_cpu(tmp) >> chan->scan_type.shift;
+> > +		*val = get_unaligned_be24(tmp) >> 4;  
+> hmm, now the number of bits shifted is dissociated from the channel characteristics.
+> We can do
+> 		*val = get_unaligned_be24(tmp) >> (24 - chan->scan_type.realbits);
+This encodes that the field is always aligned to the maximum bit. Whilst it might
+be true, there is nothing inherent that says it must be.
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- kernel/bpf/stackmap.c | 62 ++++++++++++++++++++++++++++++++++---------
- 1 file changed, 50 insertions(+), 12 deletions(-)
+I'm not sure why we aren't using chan->scan_type.shift though.
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 2365541c81d..58b4432ab00 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -210,13 +210,12 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
- }
- 
- static struct perf_callchain_entry *
--get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
-+get_callchain_entry_for_task(int *rctx, struct task_struct *task, u32 max_depth)
- {
- #ifdef CONFIG_STACKTRACE
- 	struct perf_callchain_entry *entry;
--	int rctx;
- 
--	entry = get_callchain_entry(&rctx);
-+	entry = get_callchain_entry(rctx);
- 
- 	if (!entry)
- 		return NULL;
-@@ -238,8 +237,6 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
- 			to[i] = (u64)(from[i]);
- 	}
- 
--	put_callchain_entry(rctx);
--
- 	return entry;
- #else /* CONFIG_STACKTRACE */
- 	return NULL;
-@@ -320,6 +317,31 @@ static long __bpf_get_stackid(struct bpf_map *map,
- 	return id;
- }
- 
-+static struct perf_callchain_entry *
-+bpf_get_perf_callchain(int *rctx, struct pt_regs *regs, bool kernel, bool user,
-+		       int max_stack, bool crosstask)
-+{
-+	struct perf_callchain_entry_ctx ctx;
-+	struct perf_callchain_entry *entry;
-+
-+	entry = get_callchain_entry(rctx);
-+	if (unlikely(!entry))
-+		return NULL;
-+
-+	__init_perf_callchain_ctx(&ctx, entry, max_stack, false);
-+	if (kernel)
-+		__get_perf_callchain_kernel(&ctx, regs);
-+	if (user && !crosstask)
-+		__get_perf_callchain_user(&ctx, regs);
-+
-+	return entry;
-+}
-+
-+static void bpf_put_perf_callchain(int rctx)
-+{
-+	put_callchain_entry(rctx);
-+}
-+
- BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	   u64, flags)
- {
-@@ -328,20 +350,24 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	struct perf_callchain_entry *trace;
- 	bool kernel = !user;
- 	u32 max_depth;
-+	int rctx, ret;
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
- 		return -EINVAL;
- 
- 	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
--	trace = get_perf_callchain(regs, kernel, user, max_depth,
--				   false, false);
-+	trace = bpf_get_perf_callchain(&rctx, regs, kernel, user, max_depth,
-+				       false);
- 
- 	if (unlikely(!trace))
- 		/* couldn't fetch the stack trace */
- 		return -EFAULT;
- 
--	return __bpf_get_stackid(map, trace, flags);
-+	ret = __bpf_get_stackid(map, trace, flags);
-+	bpf_put_perf_callchain(rctx);
-+
-+	return ret;
- }
- 
- const struct bpf_func_proto bpf_get_stackid_proto = {
-@@ -435,6 +461,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	bool kernel = !user;
- 	int err = -EINVAL;
- 	u64 *ips;
-+	int rctx;
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_USER_BUILD_ID)))
-@@ -467,18 +494,26 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 		trace = trace_in;
- 		trace->nr = min_t(u32, trace->nr, max_depth);
- 	} else if (kernel && task) {
--		trace = get_callchain_entry_for_task(task, max_depth);
-+		trace = get_callchain_entry_for_task(&rctx, task, max_depth);
- 	} else {
--		trace = get_perf_callchain(regs, kernel, user, max_depth,
--					   crosstask, false);
-+		trace = bpf_get_perf_callchain(&rctx, regs, kernel, user, max_depth,
-+					       crosstask);
- 	}
- 
--	if (unlikely(!trace) || trace->nr < skip) {
-+	if (unlikely(!trace)) {
- 		if (may_fault)
- 			rcu_read_unlock();
- 		goto err_fault;
- 	}
- 
-+	if (trace->nr < skip) {
-+		if (may_fault)
-+			rcu_read_unlock();
-+		if (!trace_in)
-+			bpf_put_perf_callchain(rctx);
-+		goto err_fault;
-+	}
-+
- 	trace_nr = trace->nr - skip;
- 	copy_len = trace_nr * elem_size;
- 
-@@ -497,6 +532,9 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	if (may_fault)
- 		rcu_read_unlock();
- 
-+	if (!trace_in)
-+		bpf_put_perf_callchain(rctx);
-+
- 	if (user_build_id)
- 		stack_map_get_build_id_offset(buf, trace_nr, user, may_fault);
- 
--- 
-2.48.1
+> or maybe
+> 		*val = get_unaligned_be24(tmp) >> (sizeof(tmp) - chan->scan_type.realbits);
+
+That one needs a BYTES_TO_BITS factor too.
+
+> but it starts becoming too long IMO. Even longer if `tmp` gets a more meaningful
+> name. Ah well, any of the three forms should work the same at the end of day so
+> no strong opinion.
+> 
+> Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> 
+> >  		return IIO_VAL_INT;
+> >  	}
+> >  	case IIO_TEMP: { /* in 0.0625 celsius / LSB */
+> > -- 
+> > 2.25.1
+> >   
 
 
