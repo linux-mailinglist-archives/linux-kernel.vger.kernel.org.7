@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-891930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E92C43D74
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:26:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E62EC43D77
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 712D13AB8A6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:26:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2B9473472D9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61AE2EC09D;
-	Sun,  9 Nov 2025 12:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734152EC09D;
+	Sun,  9 Nov 2025 12:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GS1R1HhK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JH4LM9aj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EAA2EBB9C
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823092EC09E
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762691205; cv=fail; b=VvoDBVXHVVTw0wrHRodnq+0ZN2zQDBqezEi83JfQhpbZMln71U7Oi7D0eW3+Y7jmJwaAKhszctWgTQaWI1z/ZID89UwHfvgl5aN93U2KhX6uhVkt/trOuO6g8hXqmy/kUREkUC+K7YHBsmKwVcP8KQw6Jz5VGg3024x4uxgio+A=
+	t=1762691235; cv=fail; b=coRsJfdHAXVgXXXPtEyBdDOlbl/wy01gQzeLPK56Txf7uwZa/pUIr3a0ejH4Gp0icFaaud8MrmC/0xeb9ENGmOQxJdo4zsPlhEyJYXyv/960gS9fvX24J+ZprpicImbSDFxAN6r45IDK9TojF08/4Jjk/nDFVzTglKgcZA+jNyo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762691205; c=relaxed/simple;
-	bh=MKTnv+hGGJkMBXHGgwWx+FkX3WL1UVlsEazmrc73LE8=;
+	s=arc-20240116; t=1762691235; c=relaxed/simple;
+	bh=xNqafeIiWm9KfNSjJmVNOmBHIs/vG6TTTp0kQWkbw1Q=;
 	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jJbrSKp3xgcvIM+GPF7gSUhsIQ0XMBoGUxUKbmxUG9xAOILbzjwyfM6uMN7IEHI1sC0LIy2a/vIXIG5GeUnvPNd2boaCRGcIPufVkfgNuIjce/sHK6RVQvtkb0rcXoozs3oMgjt8C/JEi/x+mL8YWxryGg5ztM0XhpKogA5NgnY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GS1R1HhK; arc=fail smtp.client-ip=192.198.163.9
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bKp4MmVi2E9dELhFWWNOdLQRARD66hbPuUed8fuKlNieO02FHWVfC093eynL9mG0XqNt4LSnYQ18ZbuLTsxPpPHTJLVzIOXPIN3Rt1SxQKP1/c1tCMwrwg2qKQlMJxlVzbfhd/qxW0OgKlQq6AWguoCm2J7tImS5GXJAggWzcUM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JH4LM9aj; arc=fail smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762691204; x=1794227204;
+  t=1762691231; x=1794227231;
   h=date:from:to:cc:subject:message-id:references:
    in-reply-to:mime-version;
-  bh=MKTnv+hGGJkMBXHGgwWx+FkX3WL1UVlsEazmrc73LE8=;
-  b=GS1R1HhKI6dMVsCs9wW7ZYaaxe44fPyqI2i1GRL+XPlM6jKASZYCCFoL
-   EJwHdHFg8fWZLZmfj4mOZ0jbY68oDjTcZftN3P31NWNOBGweUDS3ijOGD
-   SLTmJxNNu/azk8BiGqUWXTczLO2SOAm3FjkgRYqqDR720/iv8YqnSWq+I
-   t4Q5sG2y9BAhNC9eqttrD3a3nA60GeOq0bEsYLvfF9wPnasRZBQLqwiH0
-   HN1UGpGmbOOY/x8ejNngZdsfBuYrdpIPz7Dc6bwqcN3Toke23Jr6g030Y
-   4LTFy7ayRF2fAgtNQEv4jBPmD0Y02xbWJOwTHOCqH+EJJITcJ1Tccrjqs
-   w==;
-X-CSE-ConnectionGUID: 3CjbyfVdS6ipBeEotqHYjg==
-X-CSE-MsgGUID: TqXO/jpTSHiIlxsDePQWuw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11607"; a="75457225"
-X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
-   d="scan'208";a="75457225"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 04:26:43 -0800
-X-CSE-ConnectionGUID: PYNSOCANT4OY0FW06uilDw==
-X-CSE-MsgGUID: TkmwpL5zTtSZ7oApv0NiEQ==
+  bh=xNqafeIiWm9KfNSjJmVNOmBHIs/vG6TTTp0kQWkbw1Q=;
+  b=JH4LM9ajn+P9XXXUsoJE5ltCp6fDUVPdsKiFggs1rYcFw+71EZWthf6C
+   mosjxSdGH0nyDl+kF5FsVn5vMLYyHeSzf4d36CDYP6sOhfIDnNrhfOQGf
+   5h7yMvq/5SonAjg/zGwX7QRqRX0fLnsgFOHAuTA0PaMY+Sr9GpLHMXLPD
+   GAKd4b8OGTCTv8E2YAGZIb8U2+WmkIj4s44TPEc9KLNJxnALJFWKX3q7N
+   5Cez3OU8u79bgu7e3JtXKd+0yzvxAzEEbvmgl8Vs4RJZQPUXKIAHp3Jmk
+   fe9fUw+vV/Vu3UcJ+gy+Dwk9sj5rnGSCHTutQ7pFZQEDceL/WTR/JFfOY
+   g==;
+X-CSE-ConnectionGUID: U2gf7QsRRY2LDiP+zWHS8g==
+X-CSE-MsgGUID: yVt3aYciSK+dMAAVkPpz0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64676125"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64676125"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 04:27:10 -0800
+X-CSE-ConnectionGUID: 0GUoU/PxT7ecxBs91oGVOw==
+X-CSE-MsgGUID: rAqYKOGlTOy7OXMQTtmV/Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
-   d="scan'208";a="188189239"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 04:26:43 -0800
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+   d="scan'208";a="187750251"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 04:27:10 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Sun, 9 Nov 2025 04:26:42 -0800
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ 15.2.2562.27; Sun, 9 Nov 2025 04:27:09 -0800
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Sun, 9 Nov 2025 04:26:42 -0800
-Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.3) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ 15.2.2562.27 via Frontend Transport; Sun, 9 Nov 2025 04:27:09 -0800
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.8) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Sun, 9 Nov 2025 04:26:42 -0800
+ 15.2.2562.27; Sun, 9 Nov 2025 04:27:08 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NVCx9jHDiE5NF+Ks5LENY0PyY9HQEuWPJET53kgaMeqSw3+JzphNpe9jA98jcfWKl2UTZF//mMk+JtiLp2gy+mMgtu6yjPKmB3YxxEsjUOBOO2p8g3zjZZ6ldEENA7Q3/vitMWODHdEHCUktpUwzSOoaYe7RpJSoN1ntepznilP9HXgWxD18/EhheC1i0BihbIi861daiJsHxnFekVrRwG2j2/HXdahgPgnEoLB+R71bM+HmQud2vqU7T6hRAl+ZWHeyWohe4i826BEXKTcceBdPaCt0NYu/SltKgD2M0TXk2tyc25y4ol4ridNxu5rEtmHTDVLrubUKTo9KiYBiZw==
+ b=n+2NNM7WWrJGT732INjM2eqYA4WR3aSYDRyjTWGsBPL/cKYdvHBFqznhTDnLhueVaSCE7OcIZhO5g5kqrtrVBHpRGdnfvymmfNqkuYf8rOkHyRNRtty1XZmjY3yS+Dog4UBlldJMyAmUPSN/3Z/i2irZkdvzaahTSusN8ULsMlCvEw3iKblZqliQUr3qMesWYYXyrSS1hEYQ3jjTNU16mRK6eYsSMdhSFPFOYkhoQFXzGVliD4Ljws1ChIXeF2e/P6vTW/SstTryXpePuvRMa0HVNC8k1awWW9NhOc5ZJJ+9jfkz3p9G1xIgEYSYxeoZ5BIWbQHzm9YxHUR3ahhw6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6rb6yIJxBrDSy2FR4jjDchcOyg6AyO+Y6H9vcA81eFQ=;
- b=f5IEoqR4fEleqvmBVKBGBUDThzG1SJk1vqiR2INHKYVT4KGN5JjvLncFH6uvIevJRTjnHfH3mfiaWXUw2tEXq71jArYvN5MUFb7QvmUiNlwkmzolRDhEMPjOPrhV2GlJp1sgoQy736fQbP27XiyLV2vIC5w7dEBTWDblB/cMlS4I2iGH8NDR7yweMDK3htJi7hRmIk7rYG8xjdAQT/ylIRePLDYXFKXGzgA25GNnalTU6VqSfc7/LVaPzq5fRyKokvaf2lms4C1tGPneQvujrrEsSoPY4zbtUBNO9uqNVi76nw1d7OaBKwl4xSaJ67I95OVdOc8/Xml2GKx3bq+AAg==
+ bh=ScOhzdtn98j1Qj7DuwIKiGktmkvY5MHirJ7U1n9kiNM=;
+ b=SNU0h1FcvPIL9LkpFH9OqxYj7tT6iWexLjW5i5QhWpAUcCzgxVq7cnrSQm4QgtXjowqac1EqKY0Vfy0yVuwJX+ANBWVI+LuBnlqgyFxJwaSq6OSlQMJgTdn9pNWHxpeRmJ7XmDzdLnJSWsrF9ULV43uU/EC+tmYpzl0jJ5A3+TNVySmd3gtkkLKITFmTSScoHLBxm0zREw217hAcD3y5a8MG6xYtVP7nqnMBJ74l0qCiuHK3Cext6TsvfFqusboCOGwrDbWoD+tDWbkWAsctXfmqPO2SFdbN71scqRLz57UHadDr6vTxMYku9QZZOi8q9MwB5SmX6ZoeVaS6A1gb2w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -85,26 +85,26 @@ Received: from BY5PR11MB4165.namprd11.prod.outlook.com (2603:10b6:a03:18c::26)
  by CH3PR11MB8658.namprd11.prod.outlook.com (2603:10b6:610:1c5::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Sun, 9 Nov
- 2025 12:26:35 +0000
+ 2025 12:27:06 +0000
 Received: from BY5PR11MB4165.namprd11.prod.outlook.com
  ([fe80::d9f7:7a66:b261:8891]) by BY5PR11MB4165.namprd11.prod.outlook.com
  ([fe80::d9f7:7a66:b261:8891%7]) with mapi id 15.20.9275.015; Sun, 9 Nov 2025
- 12:26:34 +0000
-Date: Sun, 9 Nov 2025 20:26:25 +0800
+ 12:27:06 +0000
+Date: Sun, 9 Nov 2025 20:26:58 +0800
 From: Philip Li <philip.li@intel.com>
 To: kernel test robot <lkp@intel.com>
 CC: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>,
 	<linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>,
-	<llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>
+	<oe-kbuild-all@lists.linux.dev>
 Subject: Re: Forwarded: [PATCH] fs: fix inode use-after-free in chown_common
  delegation retry
-Message-ID: <aRCIcSYkYLI4a3Pk@rli9-mobl>
+Message-ID: <aRCIklO8pj8dkp/2@rli9-mobl>
 References: <691059ff.a70a0220.22f260.00a6.GAE@google.com>
- <202511091815.6q5WUuzH-lkp@intel.com>
+ <202511091831.tPcsumuB-lkp@intel.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <202511091815.6q5WUuzH-lkp@intel.com>
-X-ClientProxiedBy: SG2PR04CA0156.apcprd04.prod.outlook.com (2603:1096:4::18)
+In-Reply-To: <202511091831.tPcsumuB-lkp@intel.com>
+X-ClientProxiedBy: SG2PR04CA0161.apcprd04.prod.outlook.com (2603:1096:4::23)
  To BY5PR11MB4165.namprd11.prod.outlook.com (2603:10b6:a03:18c::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -114,83 +114,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: BY5PR11MB4165:EE_|CH3PR11MB8658:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64f79788-f089-4b0c-92a7-08de1f8b3827
+X-MS-Office365-Filtering-Correlation-Id: 70a6fd7b-86e2-436c-680b-08de1f8b4bbd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/J/04D7l+ZuuhRnPHa2hJadE9CcMmnIspkK3FGmQuIlf/wIDqKyetwUlAMZO?=
- =?us-ascii?Q?SG3Nk5LhhZIoUGJLkE/THraUXVPlpyc2SoFLW8RHm4JEAHCOW34jYAjspfId?=
- =?us-ascii?Q?osmYXtgDwtJNNZX+cGJPWLLuS7zGtORnopOKy59Y/X/UKNbeD4npY8xuxxzX?=
- =?us-ascii?Q?qnUKQbpJIMqub3gF+XmRvxNG8SJWCZaUJjyYx8TVxCfO8wHQhjsFDUiGvKQj?=
- =?us-ascii?Q?jbuI0XlQtwxKqApbm4KNIEC3HfoFG+0H/+gTYKuNBi348JQjZgY0lGdPiwtH?=
- =?us-ascii?Q?BmnzRadKiB2rWm/KLzAyTBVVIRq+K96vOLNLtnYIT6oIDmcdawV9kl382bLz?=
- =?us-ascii?Q?5I9F2Nufy8c+J1uNgRzr3c8iewelCzcOy3LOjVj5GW4Y9ossVj//N5ccDuAq?=
- =?us-ascii?Q?i6tM7r/Yj2XCzkg7TQ3PhNb/LyxSMBM7zNi+VEcvcZ1qAenTeOeRFMckZ+FF?=
- =?us-ascii?Q?AQ+lVz8H65k2K9PlByHmG7PeN+S9t/3Ut0IrAPG2RZvpS9iequ8K9LIvvPGY?=
- =?us-ascii?Q?wbrTX9ICxGmuxOR9T/x+PgDbTnr5kWiHeWP9v2hswxrWK7pPL6qiOk0H7cXu?=
- =?us-ascii?Q?iAjv69hpLvKo5noQ5PmWzFSPA+pRmOdsSjN92qkMp1nhfIbeKELCMmLHpqpO?=
- =?us-ascii?Q?uLeMPcJiWsAWn2bjEQaCkcQYl5ER8oCSZGDt7hm203WnoKuLFocO6BBNj9V6?=
- =?us-ascii?Q?Gy4MeY7BbCIxi93tkV3wmbSFYqHx5lCku3DbgEaqFc5kK3gjk+po7MsLfKct?=
- =?us-ascii?Q?/32L4mQjwTAomXP80QGNqIJTG2c88aW2xUT4zxJztSoVGqN0VfEo0i6OxI0x?=
- =?us-ascii?Q?H8deKnV1CYcaykc4pb/4DYtvWgzFJqQJU6xK3aRXY+6m5vXfg8DeOYexW/sp?=
- =?us-ascii?Q?xG38BRcuSTHQhIwmwpWz1L0K21F5rtOolFWOdl7gtWXBvVws1PIIpjLA0bug?=
- =?us-ascii?Q?6nJMyBAyokjCZc/ySzTdBTT3uRGLNxM424V7J2nLyXOcxCFdq5BcOd59dof+?=
- =?us-ascii?Q?n20RtJJ+DHM+j+sKE8vzK7VNsKEbYa9GtWP40m1S73yKg4R8WpKF8GxrLnDc?=
- =?us-ascii?Q?MHIddupL6qP5K3rWtgyW7ZZJs0rmPWudYIqmZ7ITVTLubJ8P/DiHoCL5XK34?=
- =?us-ascii?Q?c/k1RmMIjAifIdrgVett5YgfuHX415d7v3SBu5X/OxJmC0Q5hilSuwR4RIHP?=
- =?us-ascii?Q?xYr8mVd1lHaeYf2pRR0kErpT5uOAok3eJ/qJFiIb5Xm0t5JS1DageDUBUrPJ?=
- =?us-ascii?Q?NJtpoKHY1CSncszFz7s65gJnQxmawSobOWyI5KlWWvZHayTSJ4IUOWQEITLC?=
- =?us-ascii?Q?I75zdeVJe6qxPn6+NqllimrAChqANo/K+sG2PvMf68tTJkeu0llUjWyDCEbp?=
- =?us-ascii?Q?a8xuaCqLswU3eHE0gRjR0WLosAdqna9bygmMcubDec8BzRzFka0zLNVDqEZI?=
- =?us-ascii?Q?T0kErzpby5qkqdkLztY/UZvkla5iI6ZzSYYRsc99Nwrj955p+c2cYA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?fRw81qY0ooTzcSqGeGIQQedYQwUy5uueHEGDV5TNf5UmpuF24x8GFeAy4SPn?=
+ =?us-ascii?Q?Nnork2feNIV9V1EkQSz9EX3WPniex0P3bnPz8d0u+SIswi604oeqjALMHcBg?=
+ =?us-ascii?Q?biCyEd0YkapoVLdVPi5BITvOCmx1xwPIq9Rq/YDtvJ/wxNGVEZedbHBS5qiV?=
+ =?us-ascii?Q?mEKUQkxyKBhIs5sZQQxGEmA9jBUQ6zJ7RF76BwmyANHB6JXs79gnnLC9GDha?=
+ =?us-ascii?Q?NCEOkgJ6pHcKmLQXFGHJWvkeU1Gn9axaNUsd2NzCyHaM2yyWVpa5U4UEWmXa?=
+ =?us-ascii?Q?8yLam9roQTxaY/iRUfv3Q5Yi4SwnZR5r33Nb9LegF6PGN+bh0r6aZ44YYWm7?=
+ =?us-ascii?Q?aoovYugr68yGjQcVdHPf3JmJ7qr+rItMa8oOsvmhig5UqQVELnDhUZEACdXE?=
+ =?us-ascii?Q?0UnPD8NRulekMhpQw/q8U7G/04+t/fbDZ/lA6C++GQY8Aln3tgoBSV1//G9I?=
+ =?us-ascii?Q?MsDiR5HHrL3qtIDleRNgLNiTaGH5bf9J2LUDqnwsALJnGMlGrfzT7w/JzfQt?=
+ =?us-ascii?Q?8xzFVesvTkcb4iSYEynPwiBC2BxnP7ruDqgMyfPC+65mfxmcdBn5MlpJ4OdW?=
+ =?us-ascii?Q?3K6bMV7Wp18ORXjvhRxWamrNsJflIR2NVqkKLk6WCW+8JhhLmvZ5dh8rrbHj?=
+ =?us-ascii?Q?QKIK7e9frass1YLIbzaONPqEqtIh4nylKMAYRZuP1c8XNK7iIgI8vkw0c4xi?=
+ =?us-ascii?Q?NIiyNPWwP8vNid7G7uPAhYe6iwGTFDNWEcCF5UejwXx+dlcX48k1Inoan/WS?=
+ =?us-ascii?Q?f1RTKq1r1fiOyV+Z8TXBiYZZ7lxxuHayYK6wSnXrYNyGilmtsI7Yix4QhLg4?=
+ =?us-ascii?Q?/GK4rG4/OEsYw/QaYSJGVHw2iFn5I4179dOU/kiVh+eOOwgwMwRzbpRibR+M?=
+ =?us-ascii?Q?//gzn+G7O3UutkgNGib0/XoVd6gI+9p0BI1F6Vg3yKGW1RWXw/CqiuFSTYcf?=
+ =?us-ascii?Q?vnR1fvemdQLMvKiEYOWD/azlc0676swpQuqiwA1fnQMUr49flzcrK71WGm3F?=
+ =?us-ascii?Q?pKJoK6KTBL+cieLzgcIi/mEZJsk0+b+aD9NrgpEfkRdMr9VjGF4RQD1dROxg?=
+ =?us-ascii?Q?ziZQ2M0dL8D3UXGhXGBPt9kwsDq/+WsjfLszweeI1270Ujw9WkmKBbEPXv/8?=
+ =?us-ascii?Q?TqXNQVPuGI2qvyqe7hK98LQI/QperuZet7csto/htfLD92ldzjnEmeBPX9rt?=
+ =?us-ascii?Q?xKNaHFuQ0oknGah4pM9ItfsUBEJ24SmCMEMhEl/7VJjIkI/Uh1T+3CAzH3ak?=
+ =?us-ascii?Q?Mfjl90OKcIE5d/G+6G4y9eZ3WV5dIXSVhwpzVdtdd8fI26czI3wNdvNtst4w?=
+ =?us-ascii?Q?6d7IVTBQSVa1B2XNo1QDv150y9VEtrh3opa4spwAygB66JFl/OQUkAyykuGZ?=
+ =?us-ascii?Q?jnNBcXBqHdl3et1+ja2tAMurveMvvZfH4g765xjcJf4sjMVS4t3ekBhIExHx?=
+ =?us-ascii?Q?vIlU5xLD3GQtxyEpvKa9wcxblAba4xPIPibo03vWGvwJbIM5kZxREQ=3D=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR11MB4165.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gT1gvJ9MM7xJoQ3NX/pmQRGwo8h8fvEscOSFkvY9f1NSA7jFpSL0w2T3TXjq?=
- =?us-ascii?Q?eBQz8JgTASLOMRP7PdyzigMB3ZgMojqV2LxMG/QV3c6dm3LZA+mWE5tFCxnW?=
- =?us-ascii?Q?tvIYMd7H9R/46imy+apr0fIOnV5d64FMtYa71XQHK+jMKlI6n+++GnFGaDVP?=
- =?us-ascii?Q?6xkdZZaNO2R/fp7Smabux0j3CwbTvu4XzheMVVPBYJbsngH5eCP40OHhQNzY?=
- =?us-ascii?Q?CyXchVWjSwSlwkVcNY0BzyQNBGT6bjCytdFhW+G7vmfpg9zywjSKrxlpgfzB?=
- =?us-ascii?Q?ATYUpYJb+0A3QxFV3bumI4oU1ZDFvK8enZ5N7om5qEf2KqH9AM+qMX0B3Mrc?=
- =?us-ascii?Q?wgG+VNqClSO4aBIy41e0x78RaJUy1pxTcVWl1tt+Myt1ve6yuyagLCWY3iiE?=
- =?us-ascii?Q?PjWAEX5ZIKFv1rdKdpXJaBemsTiPLgmzEHcllC9R14xkpsp3/NdEqXpuY895?=
- =?us-ascii?Q?xn54udaTs1RXUzy5vEE16UxbCZ51/HlcZiy2bhS9blyb5YdJGHufz0MoQJcx?=
- =?us-ascii?Q?Q6qtrFw5kjRFZCP5nSThSqucFjcdS9b0f1VRTiVavPJUC/EmQqlyoZ2PirUf?=
- =?us-ascii?Q?nMbRGrIps+zj7X70a0VCTs25Po9iaMBDbwUO2aBat5G1W8fK9BsDRKlQZlnH?=
- =?us-ascii?Q?siaPPWXBs1hIPM9JucXCGfru+x91ejOlWJBRRXPBOck+HFBA7QuUC1yWACqS?=
- =?us-ascii?Q?rbc1/hkEHqUU5Esa66vUjmk8dDcR0Xi54v75stat45KwewH6mbVLayxHdNSX?=
- =?us-ascii?Q?Tm6dJJ5Wt1+zD/CWLhJoOxhNJz1cdxkrJlQL2AD3oyzMSK89A8Fy4OQNOCGo?=
- =?us-ascii?Q?7ANr4aUtRGBh81HtMGkeOI2dFseZY6PS0RA9DEyQ30dLv8CkZhayHODL0y7W?=
- =?us-ascii?Q?BwuN5xElquzfK1o62qPsEd8abeEDXD+PQfJst2BOIIHfluOfGpbW8kpNNpvh?=
- =?us-ascii?Q?QGvGaYV9qFAs8F0JCxFRF3caHTKsoifAoq/glBxjuX/P9zKh/5WV8H2n1GWF?=
- =?us-ascii?Q?AJwBwC/J1aVCyMQzEyic3yhf4qQkl4+xoCgtLysOaDFbwMta4lcQRzHihtwS?=
- =?us-ascii?Q?lBjo8QzptPafu8vo5VCwSfBOBbNOuuFEHwtpkoLPfCqvctq2z0aU/UJgrvHD?=
- =?us-ascii?Q?gZcD4U2YFASoqsgO7V9CQaT8xA00fVZ9FXKG6sJsV9bglAVYNl8X+tTvNg8w?=
- =?us-ascii?Q?Zc4CM3ky0izsf0WbEXiI4fUB5yFOhBjrXm2zB/3ayCWKH+wlFl7yVYLMgSUc?=
- =?us-ascii?Q?Jlq+6gY0TkGd66Ozi/r6iIwBkhJC2puoJEDc3P91GNyhsiG+ec30JtURJ17v?=
- =?us-ascii?Q?pB3t2yjIaaL+QEaVjRFjN1IutFiQDCwp6H4W6tCar0j1JrtI7RlSe563Kjb8?=
- =?us-ascii?Q?Y6Mgi0MO4dxTWIq/BgOCwFyD9R1iBEIOgbXHwEHWB4p0EV+N8RTBM1xmYISm?=
- =?us-ascii?Q?t9l64BYaLugJP0+wyqy0XF91twdnphqHoggXrCyHEWv0n/b6a8tyA+rkg9pV?=
- =?us-ascii?Q?NeMl//GSWLeogE/YSYsSC+3BkQkeQvdQVwBRXs1vDLyi+DUvOj7yfS3rQQv5?=
- =?us-ascii?Q?uVnOo+0y1xOQtHYjcVyqnenmMuwp/k9dRC4ed04N?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64f79788-f089-4b0c-92a7-08de1f8b3827
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?AmErHjIHuAThKxJu2WW/DS8WDJRUr2b5hv8D9P8cgRBpbeakR42ly5kocuIv?=
+ =?us-ascii?Q?eZJNeJpmjGGYJydacXhBiqSN0OB/JZi8+J4yMNlvO66wECYurlOU8Cl5tT+W?=
+ =?us-ascii?Q?n/xpV0B9oxYWN1VeVBN7fDFuSygahf3GbutqL9zHGq4p+1xosYq0F3T/cpkm?=
+ =?us-ascii?Q?ItOMf29jwELdlPkZBBFwc+IBrbcUVbdxSqG1YqffCUR7fgPwid8VXXpOpt45?=
+ =?us-ascii?Q?CwABn5SjekLaqBkJksPyQmg+5oTonR46bbchaPS5Wd/f/d69K9whmbhwdI80?=
+ =?us-ascii?Q?nqGSmqGbT4FkANfMrrism8gBT3Xki2KtrLetZrZa0zPAQwvXa18ff5EODI0P?=
+ =?us-ascii?Q?5yz+gtiuEiZToRtdeglArz7546618rRNdcOQ1/Hso06o+vksKIodA/FMILNs?=
+ =?us-ascii?Q?B/NyYUxUmax7up6zrl+qhDWXpqDvTGY3E/2r83Af/+bBiJMfGsiiOeCKWqhJ?=
+ =?us-ascii?Q?8MpzzVq8IQXQ/pMYlu/5lzfMmOdgItu6aVJWq1E6/nQiUZWHU1WvYPaBrnSM?=
+ =?us-ascii?Q?nIkU+akkObb3mzEZIbUDRKR2S16kCwnIdIO5Pq0JeepoEDSTXwDRow7jByKO?=
+ =?us-ascii?Q?2PlPMfcvvaRs3WX6mEmgaOakZheze0UFGmIGRxSzt+5gHV0ZNZKNpU7BWnM+?=
+ =?us-ascii?Q?L3P0X0X8+VkUlbnaHJNn3g9puUaVQP0xKL/AHXGgGTSDrDxGbqUQT8xP9P1+?=
+ =?us-ascii?Q?vbCiMjr80Tlf4JQalNyXMODuYRNQMhsnLilc3fGfC+klSA9OR2PiD8uJoHPH?=
+ =?us-ascii?Q?kDXdy2MKbd2iBRQk/MfDkmkp2aHQPAvqvMs7HqkaLZzQV1gG9JxkOpyJmZOE?=
+ =?us-ascii?Q?CvJahniII3zsDwBpQXwnR9wRlfZX5VyouJI1ffNH81iazaM2BAju0CP0sAdy?=
+ =?us-ascii?Q?pQjzCYKZz79TZsdMbFeqcDVqRMzNweZLMbqpcZvb5EAnOZ/UZP4GQZ5QfOgp?=
+ =?us-ascii?Q?yvH5Nkrw6nm6QOgd8U6q68vhTiWn+6+pqd7Xprp/UKMTIODj6haudu9XS3a7?=
+ =?us-ascii?Q?fZc2kr4gNyFSp6O5xjg1JZCM3FGBiQP67XKFgBC/BnmFRt2dWq0lPQjLwims?=
+ =?us-ascii?Q?lMvvRI3QsqnhpV2ILe/Ax9CL44lco+8ANKin0a0aqmbMsTvJxGlSUhdPQh/h?=
+ =?us-ascii?Q?tCs+FrKDGErQ/P5mQib5kUwBnVfcOu1SNprTawrLR2vKwrXtd6kRKyHzjQpd?=
+ =?us-ascii?Q?ovrMZy3JfWH2kIQywodMgwAkHmtpwn2rLhdjI3bSQUz714IccRbyNJuKatpu?=
+ =?us-ascii?Q?w6oTKqRn7Zq42sOwK7xtXiiMGwmL5qEbs+DOilbJax6jf7jAeU2XE5uaJeO4?=
+ =?us-ascii?Q?h7SLW2iCAF/dRUdhoXKnPcqtNT2nYaRO2fIMiIu7QIZa769B2ux6VdiNctD2?=
+ =?us-ascii?Q?SEcfDpQodWHLWdSbHs4CZkabxv7TndKdCF9oMTbsicRAVdj4mqM09dZp3ESv?=
+ =?us-ascii?Q?NvqfRTmINTrWYH9nLTJq+2BD6qax/sfNJSmopJ9Z4jk0NEQBZYGVnV9VfM/e?=
+ =?us-ascii?Q?xvAMGS++3pHM/8+CBxEkPz4/iLzvSTeTM4wYDVArk17ngf4FHc5Fe7Ir1m6H?=
+ =?us-ascii?Q?OzJ5EzJLBtybppG05jj14xpspNsKm4j6I0x/63st?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70a6fd7b-86e2-436c-680b-08de1f8b4bbd
 X-MS-Exchange-CrossTenant-AuthSource: BY5PR11MB4165.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2025 12:26:33.9859
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2025 12:27:06.7466
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 76a7EcfeXpT+0YqATr72hA3JwFXROs5fPkk4EEhlgzax2tZYOZN3pc5kDB1vrTr8CegOoDVXqoUtV/Ma5Vx3Bw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: VgpelmTYuTwCCGxTvwvwCMy08tskdmz69w8aic+UV8x/8uqQscL1cpj5AWKnGmQmZtqXGL7pNFwecZzyUQRSBw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8658
 X-OriginatorOrg: intel.com
 
-On Sun, Nov 09, 2025 at 07:05:11PM +0800, kernel test robot wrote:
+On Sun, Nov 09, 2025 at 08:17:42PM +0800, kernel test robot wrote:
 > Hi syzbot,
-> 
-> kernel test robot noticed the following build warnings:
 
 Sorry, kindly ignore this report.
 
+> 
+> kernel test robot noticed the following build warnings:
 > 
 > [auto build test WARNING on brauner-vfs/vfs.all]
 > [also build test WARNING on linus/master v6.18-rc4 next-20251107]
@@ -202,70 +202,104 @@ Sorry, kindly ignore this report.
 > base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
 > patch link:    https://lore.kernel.org/r/691059ff.a70a0220.22f260.00a6.GAE%40google.com
 > patch subject: Forwarded: [PATCH] fs: fix inode use-after-free in chown_common delegation retry
-> config: arm-allnoconfig (https://download.01.org/0day-ci/archive/20251109/202511091815.6q5WUuzH-lkp@intel.com/config)
-> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project b9ea93cd5c37fb6d606502fd01208dd48330549d)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511091815.6q5WUuzH-lkp@intel.com/reproduce)
+> config: i386-allnoconfig (https://download.01.org/0day-ci/archive/20251109/202511091831.tPcsumuB-lkp@intel.com/config)
+> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511091831.tPcsumuB-lkp@intel.com/reproduce)
 > 
 > If you fix the issue in a separate patch/commit (i.e. not just a new version of
 > the same patch/commit), kindly add following tags
 > | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202511091815.6q5WUuzH-lkp@intel.com/
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202511091831.tPcsumuB-lkp@intel.com/
 > 
 > All warnings (new ones prefixed by >>):
 > 
-> >> fs/open.c:771:9: warning: format specifies type 'void *' but the argument has type 'long' [-Wformat]
+>    In file included from include/asm-generic/bug.h:22,
+>                     from arch/x86/include/asm/bug.h:108,
+>                     from include/linux/bug.h:5,
+>                     from include/linux/mmdebug.h:5,
+>                     from include/linux/mm.h:6,
+>                     from fs/open.c:9:
+>    fs/open.c: In function 'chown_common':
+> >> fs/open.c:769:16: warning: format '%p' expects argument of type 'void *', but argument 5 has type 'long int' [-Wformat=]
 >      769 |         printk("DEBUG: [%s] retry_deleg: inode=%p, i_count=%d, i_rwsem.owner=%px\n",
->          |                                                                              ~~
->          |                                                                              %ld
+>          |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 >      770 |                current->comm, inode, atomic_read(&inode->i_count),
 >      771 |                atomic_long_read(&inode->i_rwsem.owner));
->          |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    include/linux/printk.h:512:60: note: expanded from macro 'printk'
->      512 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
->          |                                                     ~~~    ^~~~~~~~~~~
->    include/linux/printk.h:484:19: note: expanded from macro 'printk_index_wrap'
+>          |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>          |                |
+>          |                long int
+>    include/linux/printk.h:484:25: note: in definition of macro 'printk_index_wrap'
 >      484 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
->          |                         ~~~~    ^~~~~~~~~~~
->    fs/open.c:785:31: warning: format specifies type 'void *' but the argument has type 'long' [-Wformat]
+>          |                         ^~~~
+>    fs/open.c:769:9: note: in expansion of macro 'printk'
+>      769 |         printk("DEBUG: [%s] retry_deleg: inode=%p, i_count=%d, i_rwsem.owner=%px\n",
+>          |         ^~~~~~
+>    fs/open.c:769:79: note: format string is defined here
+>      769 |         printk("DEBUG: [%s] retry_deleg: inode=%p, i_count=%d, i_rwsem.owner=%px\n",
+>          |                                                                              ~^
+>          |                                                                               |
+>          |                                                                               void *
+>          |                                                                              %ld
+>    fs/open.c:784:16: warning: format '%p' expects argument of type 'void *', but argument 4 has type 'long int' [-Wformat=]
 >      784 |         printk("DEBUG: [%s] after inode_lock: inode=%p, i_rwsem.owner=%px (current=%px)\n",
->          |                                                                       ~~
->          |                                                                       %ld
+>          |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 >      785 |                current->comm, inode, atomic_long_read(&inode->i_rwsem.owner), current);
->          |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    include/linux/printk.h:512:60: note: expanded from macro 'printk'
->      512 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
->          |                                                     ~~~    ^~~~~~~~~~~
->    include/linux/printk.h:484:19: note: expanded from macro 'printk_index_wrap'
+>          |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>          |                                      |
+>          |                                      long int
+>    include/linux/printk.h:484:25: note: in definition of macro 'printk_index_wrap'
 >      484 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
->          |                         ~~~~    ^~~~~~~~~~~
->    fs/open.c:798:31: warning: format specifies type 'void *' but the argument has type 'long' [-Wformat]
+>          |                         ^~~~
+>    fs/open.c:784:9: note: in expansion of macro 'printk'
+>      784 |         printk("DEBUG: [%s] after inode_lock: inode=%p, i_rwsem.owner=%px (current=%px)\n",
+>          |         ^~~~~~
+>    fs/open.c:784:72: note: format string is defined here
+>      784 |         printk("DEBUG: [%s] after inode_lock: inode=%p, i_rwsem.owner=%px (current=%px)\n",
+>          |                                                                       ~^
+>          |                                                                        |
+>          |                                                                        void *
+>          |                                                                       %ld
+>    fs/open.c:797:16: warning: format '%p' expects argument of type 'void *', but argument 4 has type 'long int' [-Wformat=]
 >      797 |         printk("DEBUG: [%s] before inode_unlock: inode=%p, i_rwsem.owner=%px, delegated_inode=%p\n",
->          |                                                                          ~~
->          |                                                                          %ld
+>          |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 >      798 |                current->comm, inode, atomic_long_read(&inode->i_rwsem.owner), delegated_inode);
->          |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    include/linux/printk.h:512:60: note: expanded from macro 'printk'
->      512 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
->          |                                                     ~~~    ^~~~~~~~~~~
->    include/linux/printk.h:484:19: note: expanded from macro 'printk_index_wrap'
+>          |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>          |                                      |
+>          |                                      long int
+>    include/linux/printk.h:484:25: note: in definition of macro 'printk_index_wrap'
 >      484 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
->          |                         ~~~~    ^~~~~~~~~~~
->    fs/open.c:801:31: warning: format specifies type 'void *' but the argument has type 'long' [-Wformat]
+>          |                         ^~~~
+>    fs/open.c:797:9: note: in expansion of macro 'printk'
+>      797 |         printk("DEBUG: [%s] before inode_unlock: inode=%p, i_rwsem.owner=%px, delegated_inode=%p\n",
+>          |         ^~~~~~
+>    fs/open.c:797:75: note: format string is defined here
+>      797 |         printk("DEBUG: [%s] before inode_unlock: inode=%p, i_rwsem.owner=%px, delegated_inode=%p\n",
+>          |                                                                          ~^
+>          |                                                                           |
+>          |                                                                           void *
+>          |                                                                          %ld
+>    fs/open.c:800:16: warning: format '%p' expects argument of type 'void *', but argument 4 has type 'long int' [-Wformat=]
 >      800 |         printk("DEBUG: [%s] after inode_unlock: inode=%p, i_rwsem.owner=%px\n",
->          |                                                                         ~~
->          |                                                                         %ld
+>          |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 >      801 |                current->comm, inode, atomic_long_read(&inode->i_rwsem.owner));
->          |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    include/linux/printk.h:512:60: note: expanded from macro 'printk'
->      512 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
->          |                                                     ~~~    ^~~~~~~~~~~
->    include/linux/printk.h:484:19: note: expanded from macro 'printk_index_wrap'
+>          |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>          |                                      |
+>          |                                      long int
+>    include/linux/printk.h:484:25: note: in definition of macro 'printk_index_wrap'
 >      484 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
->          |                         ~~~~    ^~~~~~~~~~~
->    4 warnings generated.
+>          |                         ^~~~
+>    fs/open.c:800:9: note: in expansion of macro 'printk'
+>      800 |         printk("DEBUG: [%s] after inode_unlock: inode=%p, i_rwsem.owner=%px\n",
+>          |         ^~~~~~
+>    fs/open.c:800:74: note: format string is defined here
+>      800 |         printk("DEBUG: [%s] after inode_unlock: inode=%p, i_rwsem.owner=%px\n",
+>          |                                                                         ~^
+>          |                                                                          |
+>          |                                                                          void *
+>          |                                                                         %ld
 > 
 > 
-> vim +771 fs/open.c
+> vim +769 fs/open.c
 > 
 >    750	
 >    751	int chown_common(const struct path *path, uid_t user, gid_t group)
@@ -286,9 +320,9 @@ Sorry, kindly ignore this report.
 >    766		fs_userns = i_user_ns(inode);
 >    767	
 >    768	retry_deleg:
->    769		printk("DEBUG: [%s] retry_deleg: inode=%p, i_count=%d, i_rwsem.owner=%px\n",
+>  > 769		printk("DEBUG: [%s] retry_deleg: inode=%p, i_count=%d, i_rwsem.owner=%px\n",
 >    770		       current->comm, inode, atomic_read(&inode->i_count),
->  > 771		       atomic_long_read(&inode->i_rwsem.owner));
+>    771		       atomic_long_read(&inode->i_rwsem.owner));
 >    772		newattrs.ia_vfsuid = INVALID_VFSUID;
 >    773		newattrs.ia_vfsgid = INVALID_VFSGID;
 >    774		newattrs.ia_valid =  ATTR_CTIME;
