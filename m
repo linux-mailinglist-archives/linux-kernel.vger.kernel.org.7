@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-891805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4ACC4389C
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 05:53:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65870C438A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 05:53:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76DF63B2917
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 04:53:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 107434E13CC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 04:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36511DF980;
-	Sun,  9 Nov 2025 04:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDDB1F12E9;
+	Sun,  9 Nov 2025 04:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RB5e4/Jp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T37iSCDK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287DD42AA9;
-	Sun,  9 Nov 2025 04:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F8C42AA9;
+	Sun,  9 Nov 2025 04:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762664015; cv=none; b=RSaLRRYqBZJ07qtrtv9ezxEx3LivLxVQwSZ9WfktJsoMrSNRDsq40XTFHm4fgUG5n/MH7012B1YC7RZgP05DRMa6ZXaA+GId7ZTfv70iyqsOoGxWYHtHtxETUOoRPSTvc3ZPHDbY6+trBs2jIERA8AS//bzt/39rujZoIH5ttQs=
+	t=1762664024; cv=none; b=RHRIzoWVao48r2NUP7hmFTo+dCrPebNdTqCXOGzG22+sR+KA/tr9vEBZtorG1O8ijEvCSdB1zM1W06XR9bck7unBQOH0GvPd/QQtyrk0IBK433s1H/7feTFM9my3OpYWR/TO+496nHUhPAsFdYOtYz0j122u7iAePFNCFFcGQns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762664015; c=relaxed/simple;
-	bh=PGIN1U0HIv4R9SXPOP+Big3jmQVzwzwF8+ZjorSxbmY=;
+	s=arc-20240116; t=1762664024; c=relaxed/simple;
+	bh=T6L7mDfV+M7uBHz72EwdgW2d+D+/M0d9PPUT1B0HJKw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sZ/jRR4Q+Zrn+cRYo+ufpa3VYJ1ismUPmIR2kmMqQrGl94kIh/S9+RHjVk8G1IZhQ0kM3jk8RQA4nAEqIfY01IwqfW3vJZl2Ec16qp5bGVYiQXoDICbJBdPKVgJswgIHg/MfQQEO/NueUG4HbflYF4ZxzN2Ya5I1Yhg7DLcay4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RB5e4/Jp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43583C116B1;
-	Sun,  9 Nov 2025 04:53:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762664014;
-	bh=PGIN1U0HIv4R9SXPOP+Big3jmQVzwzwF8+ZjorSxbmY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RB5e4/JpWbNgfrZycbUO+JLgIqaP2JAsBB+zmeh+34zpqvhi8hq/B0ycJazmPZDSa
-	 K6m+RqMDuAVLw/7jreYgIQJbDoEd/8DHjogfxwd/ZgS63nffUndMUL54d8rd0l9xNS
-	 SQudghbIeo2f6mxORRJO0yaqChkAo8UAaSQUr9TViARqT2riIhU3kolJ/F6+gZ48dp
-	 CAwhP84dRKQ1FKv8HqBaY71LDURs6B39mqMQ59D6YcW+7Z2nQeMxflM8qJjkqtFePX
-	 zv2Jc2dioK2SExl7r7St5OzhLyKPjaiEjS3eezrdar21c0uFOfzgRiiB8mnRfV76oA
-	 tDlW7dN0b+Y3A==
-Date: Sun, 9 Nov 2025 06:53:31 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH] tpm: add WQ_PERCPU to alloc_workqueue users
-Message-ID: <aRAeS3TrSyqYFA-Y@kernel.org>
-References: <20251106162800.331872-1-marco.crivellari@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OHGAT0TJhiLqIaYEDFMDGCMcDmQv8RW0tOK1PGO9d0m8ogdVyL0qdVK0C2QwSnD0ckF4ylGOpWdFVJMMZSZ8f7TUf3ZZuv87k1+qahkG+Rz/Fh8XMKBPXcvwZMyLwTI5gD2mucTfz7KncpDUCIItkOgit9C5pA+BzTs/c6x5wLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T37iSCDK; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762664021; x=1794200021;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T6L7mDfV+M7uBHz72EwdgW2d+D+/M0d9PPUT1B0HJKw=;
+  b=T37iSCDKxaN7u6RwNW4+RqlOqau+WLdG/UPuTtEpMw/3bjV3O4b4FMo2
+   agQCzKed1+JAD2s4PUE80lNSkD+wKYcSKLEQGgEcD1DUk47lBgHqECWUZ
+   Qp3pCOCA6dI9fwLZ1nMsTHBknzP54QJlsROTfcagpEF0czFN+Q9ouRD7v
+   zRBd1f+rnluuMWwO4wJ68sXzCiJDj/XTX2x8l7Hfz8pcGcacCE2Ldx4Q8
+   IP157yFdgjj/fWpDO8vJnn0I8EYN5QV+Vi854k3ibrSX1HGSysyekmlf0
+   XxULTFblMMNYkhC+Lk/GQ5mDJCIhTN2IyRMiSBjAMARx+xPsBWkVC2aNM
+   g==;
+X-CSE-ConnectionGUID: jLVN1ziBTFesC8c5qxS49Q==
+X-CSE-MsgGUID: 1FGlVVz0Sp2WQirCgaXzvw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11607"; a="64847204"
+X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
+   d="scan'208";a="64847204"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2025 20:53:41 -0800
+X-CSE-ConnectionGUID: h5x42WdvTqu1BX/UaJUSBw==
+X-CSE-MsgGUID: Tj0BVNGOSm68/3cRdyBYDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,291,1754982000"; 
+   d="scan'208";a="188227193"
+Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 08 Nov 2025 20:53:38 -0800
+Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vHxQm-0001mV-1n;
+	Sun, 09 Nov 2025 04:53:36 +0000
+Date: Sun, 9 Nov 2025 12:53:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: ccc194101@163.com, stern@rowland.harvard.edu,
+	gregkh@linuxfoundation.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
+	Chen Changcheng <chenchangcheng@kylinos.cn>
+Subject: Re: [PATCH] usb: usb-storage: No additional quirks need to be added
+ to the ECD819-SU3 optical drive.
+Message-ID: <202511091243.dnLsy9w5-lkp@intel.com>
+References: <20251107061046.32339-1-ccc194101@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251106162800.331872-1-marco.crivellari@suse.com>
+In-Reply-To: <20251107061046.32339-1-ccc194101@163.com>
 
-On Thu, Nov 06, 2025 at 05:28:00PM +0100, Marco Crivellari wrote:
-> Currently if a user enqueues a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> This lack of consistency cannot be addressed without refactoring the API.
-> 
-> alloc_workqueue() treats all queues as per-CPU by default, while unbound
-> workqueues must opt-in via WQ_UNBOUND.
-> 
-> This default is suboptimal: most workloads benefit from unbound queues,
-> allowing the scheduler to place worker threads where they’re needed and
-> reducing noise when CPUs are isolated.
-> 
-> This continues the effort to refactor workqueue APIs, which began with
-> the introduction of new workqueues and a new alloc_workqueue flag in:
-> 
-> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-> 
-> This change adds a new WQ_PERCPU flag to explicitly request
-> alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
-> 
-> With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-> any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-> must now use WQ_PERCPU.
-> 
-> Once migration is complete, WQ_UNBOUND can be removed and unbound will
-> become the implicit default.
-> 
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
-> ---
->  drivers/char/tpm/tpm-dev-common.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-> index f2a5e09257dd..f942c0c8e402 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -275,7 +275,8 @@ void tpm_common_release(struct file *file, struct file_priv *priv)
->  
->  int __init tpm_dev_common_init(void)
->  {
-> -	tpm_dev_wq = alloc_workqueue("tpm_dev_wq", WQ_MEM_RECLAIM, 0);
-> +	tpm_dev_wq = alloc_workqueue("tpm_dev_wq", WQ_MEM_RECLAIM | WQ_PERCPU,
-> +				     0);
->  
->  	return !tpm_dev_wq ? -ENOMEM : 0;
->  }
-> -- 
-> 2.51.1
-> 
+Hi,
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+kernel test robot noticed the following build warnings:
 
-BR, Jarkko
+[auto build test WARNING on 284922f4c563aa3a8558a00f2a05722133237fe8]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/ccc194101-163-com/usb-usb-storage-No-additional-quirks-need-to-be-added-to-the-ECD819-SU3-optical-drive/20251107-141330
+base:   284922f4c563aa3a8558a00f2a05722133237fe8
+patch link:    https://lore.kernel.org/r/20251107061046.32339-1-ccc194101%40163.com
+patch subject: [PATCH] usb: usb-storage: No additional quirks need to be added to the ECD819-SU3 optical drive.
+config: nios2-randconfig-001-20251109 (https://download.01.org/0day-ci/archive/20251109/202511091243.dnLsy9w5-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511091243.dnLsy9w5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511091243.dnLsy9w5-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/usb/storage/uas.c:928:24: warning: initialization of 'long unsigned int' from 'void *' makes integer from pointer without a cast [-Wint-conversion]
+     928 |         .driver_info = (flags) }
+         |                        ^
+   drivers/usb/storage/unusual_uas.h:100:1: note: in expansion of macro 'UNUSUAL_DEV'
+     100 | UNUSUAL_DEV(0x13fd, 0x3940, 0x0310, 0x0310,
+         | ^~~~~~~~~~~
+   drivers/usb/storage/uas.c:928:24: note: (near initialization for 'uas_usb_ids[9].driver_info')
+     928 |         .driver_info = (flags) }
+         |                        ^
+   drivers/usb/storage/unusual_uas.h:100:1: note: in expansion of macro 'UNUSUAL_DEV'
+     100 | UNUSUAL_DEV(0x13fd, 0x3940, 0x0310, 0x0310,
+         | ^~~~~~~~~~~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for LEDS_EXPRESSWIRE
+   Depends on [n]: GPIOLIB [=n] || NEW_LEDS [=y] && GPIOLIB [=n]
+   Selected by [m]:
+   - BACKLIGHT_KTD2801 [=m] && HAS_IOMEM [=y] && BACKLIGHT_CLASS_DEVICE [=y]
+
+
+vim +928 drivers/usb/storage/uas.c
+
+115bb1ffa54c39 Matthew Wilcox 2010-10-07  923  
+79b4c06112f12c Hans de Goede  2013-10-25  924  #define UNUSUAL_DEV(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax, \
+79b4c06112f12c Hans de Goede  2013-10-25  925  		    vendorName, productName, useProtocol, useTransport, \
+79b4c06112f12c Hans de Goede  2013-10-25  926  		    initFunction, flags) \
+79b4c06112f12c Hans de Goede  2013-10-25  927  { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+79b4c06112f12c Hans de Goede  2013-10-25 @928  	.driver_info = (flags) }
+79b4c06112f12c Hans de Goede  2013-10-25  929  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
