@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-891826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29047C439BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 08:13:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29E8C439C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 08:13:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBED7188B42A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 07:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60D2F3A3263
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 07:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96B226C3BD;
-	Sun,  9 Nov 2025 07:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F9522B5AC;
+	Sun,  9 Nov 2025 07:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOX6qwnR"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvuxixPS"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AC41EB1AA
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 07:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA430245014
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 07:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762672397; cv=none; b=bblQobjLRqR3d1d50Sbz246DaaU0hagnY6gE1lrlg8HxAuWp+fzpQFUFMb4y1rWl6TN/Q5BKzlfluS3QHAX/kUA0sUZWNTpjLcjsJNeqSflYlxYHhi/A/EkSCdGutDkxNM3vgBGjH4feE/qhEh2LOo6NJRIZbnSsEMNWZdNhxPI=
+	t=1762672414; cv=none; b=kx9Y2LVHtVQQfr/S6W+W0qMtk8fmDXfJFOobwqprvBzqXDgJDgkTXd+4aHhzFxQaxemSFVHTl2X/qRaD21vjEBcE8Um9rg9Rl+DVZ8kFfgy1z41rGU5yPq6njyveqgDYx8Xi5hmhc4Qlzjfou4Tuv3OYxu5A0eujtITjWmdhEkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762672397; c=relaxed/simple;
-	bh=kCkl0IgEuB+qK0ucQM7ByvS2mgClHBC+newUobFrM2A=;
+	s=arc-20240116; t=1762672414; c=relaxed/simple;
+	bh=7K+eAw4I0x35tUGWi2MDACS8ckhhjNcr5P94y70Esvc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j/1NYLwqj9PEhRXVoi5qSZSB5lMCkU2MFEhIy2NJduUFFPstY2mPILxUxfkAmKX5CiDdpyJlt0BhmmhkC8S9fx5cHQjl8xL1vFhaEPuu3U0siEoTGd0c9M0sVPn8hu6oNlICR9Z/goD/Aic5I+MvKzzLOmc8nOkmAZbCWjD6wo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mOX6qwnR; arc=none smtp.client-ip=209.85.214.173
+	 MIME-Version; b=oat0sa9GG6rMhSZBzGhCbeijdShMNC/Qa0G4+/bcRqt/AToFp+10ecr7Zs4E6THo+To0CrUwHKiXbCGF4656MOmINcQq7zbpRDUnKWu36hbE10bYKRFnlKk5dwOS3X1W/zbBjIn1W7RRszeicHlg0bkOaUiURNjJswYuaP/O8Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvuxixPS; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-295395ceda3so2713525ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 23:13:15 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-297cf964774so2076765ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 23:13:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762672395; x=1763277195; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762672411; x=1763277211; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xwusb2qyqwUfitZumVkZ/28VAioj7VL64C6xxAS8wL4=;
-        b=mOX6qwnRHIZNmd/1YGRYE223nLT+gkppueRfKG8E6I2WZC9NbRzjRP5EwjynwSWwl9
-         dxROBwOCw//AEkIDeqseh7l5QeOz584aOte/uMGb7IUkjZb+Cat1EZ3Lp0c9n2EKqmLD
-         oYfLeHXbOcAGAPRjEZhjH2ZCv99HRVtRVRYunuFGR2ziTOUvhd8DZ6v5urXB1co42MSg
-         JC2cBHwurNDpI5dOKzdoHEXGTDVP8Bf3eOELL1E0Q1/U7qUUTACTVDm8NzJajoRxBD1Z
-         KnwG2Hay8cCY+eHe5AvxN1KsfThrjfYBqlEl1wHCNG/N2O1Zp//BD/OI7ptJfAxCCxla
-         ++lw==
+        bh=2Sr2F9MQzqFTYcs+5dw/LNJ/aMd5A19XEE7/9ksFfHo=;
+        b=UvuxixPSYkgoc048RxtHdniPIjlV3tjsCMnUUD971Q8pXMwXwaC3obepiCOvDv6zsm
+         o+B9IVaKOK/RJWXHBE7ck7cP86Ny2zsDoCE9Ixom9kxerF765WhUzwdj0UL7/WiQ+Rbh
+         sG/qCMKyv3Giggn8fG31uYoJGhzFATqR+fiFexk/i1o3GtkKKWYbstkFd3FQIstKguJv
+         fegUvMOzqi02XxAj28JTRUch0KOQDtIbnaNom9vDvnzutKY3l48b7UFj9gANG1caPa06
+         9V9XrEsUAdcI77K4gY5+w/etYkCa8zzDOUDfmfvR4+WKJANGjBGlBMq9otJP5iHWA+DJ
+         E5hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762672395; x=1763277195;
+        d=1e100.net; s=20230601; t=1762672411; x=1763277211;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=xwusb2qyqwUfitZumVkZ/28VAioj7VL64C6xxAS8wL4=;
-        b=Xej5JH1CwkOT6ZgrNxZeKzLEu0iCurhTEuwZHua8tBOjAqcXnynNnGL0AHkU5P2Pqy
-         D7gexMArszUomJaeCaIrK1mwLnXLJH3s0BCmuHnXtx2x/R+2WuY+iUSEc343eQuOYlJT
-         0zWSTF5sGTUTTYdTZiRHsA6sQJenEEYe4PU8LgS563V3CygMWHSkuoGgo3B4/CMg0DCf
-         QvmGDepbW45rY+2SY6t4BBighl5jfLTE3p4Y4UQ1q0Xj7hdJEj/34uha6sRyHqdYB/Zs
-         88Xzjzqb0DPMveJ3ijIwIhwKmE2BSoh00c0alVW9YT41GCvhmSjwM/PiWo+Jl5jHgeC0
-         jU0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXUFT3IJZ1e5Ok6IH4y0T0SgEzwvX7MWdn5UINxm+IGMN+ygXinFAYsvzdnVGHSuCaQGfP2VMBb7rBzwys=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6d4j6sKC4dC8YXSqJLB+nPvPdMQCfwC8bEF1qNz8tyTht381E
-	bgQHFqla9/yyWKBRC7H0RVgkjzcxDV3CF9SJ18QGF7jJ7xXRujftewpJ
-X-Gm-Gg: ASbGncujQpxuunPCvtxGqXKXaDJ9Rjjs+CVKUeUG3QKDBN2V7xB/3tQPbisK5GLvBLG
-	vNyGh1arBMT4BUWPedzDbiSPHGks+4T4FvwpWuYUMLcwQNdXt4hzIIo1hgrNSqw/OxYihZHmVax
-	FTY3WY4YhOP2UZfbYcGyYE5zq4e/laAxprpA4ewF1EpzV6nQmhaxN0do93E9IhnTv0VjhqvCP6P
-	lkgkYS2Mmu8Fn0YjgiM0bQ8XRv9gabT/AH+sK3C7pDdAHpNtFPIOsi+WfWpHSIVRXa4iF4HMdgj
-	NiKdq64mISzips8M0pqf1qNW1Qh+9dVPTV3JkCYD+i9lNpAvyF3wWV7KroOEgoGrOMPkTKn2o5l
-	0oO9p+/2KCXldt/rD7ZxOGJkDZJfJoT1M+jGWe8WZZ7ARskQbAjv9pGK1zrIyktW1J6g3Oc/2Er
-	oLnWvhHhr5gTvY6ZZUXg==
-X-Google-Smtp-Source: AGHT+IEy6utceTlq2dzE6jroNbB4zuXSzLqvToAaWYV/ORbFpst6LvtRaKQzKsVJDmFFSf2dbDX5rA==
-X-Received: by 2002:a17:902:e742:b0:297:f50a:d12a with SMTP id d9443c01a7336-297f50ad245mr18826875ad.8.1762672395171;
-        Sat, 08 Nov 2025 23:13:15 -0800 (PST)
+        bh=2Sr2F9MQzqFTYcs+5dw/LNJ/aMd5A19XEE7/9ksFfHo=;
+        b=AdVsagYkddI9nUIW0SJJvoabEGXnUbS5Zx0Td4VSETTGWx2BH7tnypYXe467T0bpL/
+         wim19UFiI18Unf+1uae0HuTe27UGH1fkNaGBa1vBazmtfbI913WynBLttWm+zqFndlIp
+         2FhelL5c9nCahpNPmy3JXlRXhNdd3qBLe82U0AZDGwTocOVRh8h7wgbVUbf3Cc9TInzj
+         gaAFoCJQFqeXxSCIl+v2YsorxChmmkuQNjCJPXHA+ziOdI//mjUMSfaj6vq0miF9A+AF
+         DLRrcYQ1EKOoBGxg3pN6MD/0xVNpAFShki2S6UyTFEUaF743PKaiCUBaLwAwZdh/PJQg
+         Wwng==
+X-Forwarded-Encrypted: i=1; AJvYcCUusupRTzHBeR4uy4by3NPP3pdgnq6Iy1AsCGe7mfBah3bqhxVvfl2oMCgumsmn7J8IL3kg87k/7qMJ00I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOtrl0hvMNfTaBV1155cHmumzqkCZOJWzATioa7w5suajB1nj0
+	zLgxjvRqrqo+QQfCpJ/z4q4TBpPDLjKJ3OQcuwW91HPMwpxXIne8Pz+t
+X-Gm-Gg: ASbGncvFLJO8jGHlK4eJmgMeFF83q0rDRSsVT+EGt2wRR0arb/BOf/am43ZKyr2B0xo
+	pKyoFA0BvZMxQEOktDWCXV9Sht2IQ/FXqiexw3d6hdL3sIC+tGLbdNu5BdccVSlKAHLtfyGxbX8
+	QHF7XPw/jH0bz7fgdh3KYCZGULFe0FcW/em5kzTGukXlTX6sAj7pmMDTx9z9ECTnFO07Neh2lX6
+	u/ekHMW/Ar4Avai3+8XpCZudZyrl7RVmiLm2WG2T0LxprBb6m83yaUdGCeS8LFz21eBF9vxPGCO
+	nq4N4EusS5CXthvpo72QkFbDPn8qyedj4KzFkUPLx0BX2Z6IpgNgxY+cfOf+2aN9OuKAHmFIwkc
+	lDWaptly14Kbmb8AHbvAgSCG9f8Bycnm3oZKQpX/bUpNerdx0esbgbrKuKZGCJXT2t0iTav6CFI
+	K2fJhR1yRz65RXl0EhgGJjR1thY7Yh
+X-Google-Smtp-Source: AGHT+IGbXs/m0KZgHZ/BEGvXV3TvyIMHnmN5bbAbrdte8kwOk8/1idc/hq0bNfXupt204mptBEpzrg==
+X-Received: by 2002:a17:902:ea0c:b0:298:f0c:6d36 with SMTP id d9443c01a7336-2980f0c6f48mr3180915ad.5.1762672411223;
+        Sat, 08 Nov 2025 23:13:31 -0800 (PST)
 Received: from elitemini.flets-east.jp ([2400:4050:d860:9700:75bf:9e2e:8ac9:3001])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-297d6859a92sm57287495ad.88.2025.11.08.23.13.13
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-297d6859a92sm57287495ad.88.2025.11.08.23.13.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 23:13:14 -0800 (PST)
+        Sat, 08 Nov 2025 23:13:30 -0800 (PST)
 From: Masaharu Noguchi <nogunix@gmail.com>
 To: jesperjuhl76@gmail.com,
 	Jeff Layton <jlayton@kernel.org>,
@@ -81,12 +81,13 @@ Cc: Alexander Aring <alex.aring@gmail.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Masaharu Noguchi <nogunix@gmail.com>
-Subject: [PATCH 0/2] fix AT_RENAME_* redefinitions with glibc < 2.43
-Date: Sun,  9 Nov 2025 16:13:02 +0900
-Message-ID: <20251109071304.2415982-1-nogunix@gmail.com>
+Subject: [PATCH 1/2] uapi: fcntl: guard AT_RENAME_* aliases
+Date: Sun,  9 Nov 2025 16:13:03 +0900
+Message-ID: <20251109071304.2415982-2-nogunix@gmail.com>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <CAHaCkme7C8LDpWVX8TnDQQ+feWeQy_SA3HYfpyyPNFee_+Z2EA@mail.gmail.com>
+In-Reply-To: <20251109071304.2415982-1-nogunix@gmail.com>
 References: <CAHaCkme7C8LDpWVX8TnDQQ+feWeQy_SA3HYfpyyPNFee_+Z2EA@mail.gmail.com>
+ <20251109071304.2415982-1-nogunix@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,35 +96,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-LKML reports show that `allyesconfig` currently fails with glibc 2.42
-because both `<stdio.h>` and `<linux/fcntl.h>` define the AT_RENAME_*
-macros.  A follow-up pointed to glibc commit `1166170d9586 ("libio:
-Define AT_RENAME_* with the same tokens as Linux")`, which will first
-appear in glibc 2.43.  Until that release lands in common distributions,
-upstream kernels still build against glibc versions that redeclare the
-macros and fail under `-Werror`.
-
-This series is a small, revertable workaround so developers on Fedora 43
-(glibc 2.42) and other distributions with glibc < 2.43 can keep building
-the samples.  The
-first patch only emits the AT_RENAME_* aliases when libc does not do so
-already, and the second patch undefines any libc-provided macros before
-including `<linux/fcntl.h>` in the VFS sample.  Once glibc 2.43+ is
-ubiquitous (or if we decide to remove the aliases entirely), these
-changes can be dropped.
-
-Link: https://lore.kernel.org/all/CAHaCkme7C8LDpWVX8TnDQQ+feWeQy_SA3HYfpyyPNFee_+Z2EA@mail.gmail.com/ # LKML report
-Link: https://lore.kernel.org/all/20251013012423.GA331@ax162/ # follow-up
-Link: https://sourceware.org/git/?p=glibc.git;a=commit;h=1166170d95863e5a6f8121a5ca9d97713f524f49 # glibc fix
-
-Masaharu Noguchi (2):
-  uapi: fcntl: guard AT_RENAME_* aliases
-  samples: vfs: avoid libc AT_RENAME_* redefinitions
-
+Signed-off-by: Masaharu Noguchi <nogunix@gmail.com>
+---
  include/uapi/linux/fcntl.h | 6 ++++++
- samples/vfs/test-statx.c   | 9 +++++++++
- 2 files changed, 15 insertions(+)
+ 1 file changed, 6 insertions(+)
 
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 3741ea1b73d8..e3026381fbe7 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -157,9 +157,15 @@
+  */
+ 
+ /* Flags for renameat2(2) (must match legacy RENAME_* flags). */
++#ifndef AT_RENAME_NOREPLACE
+ #define AT_RENAME_NOREPLACE	0x0001
++#endif
++#ifndef AT_RENAME_EXCHANGE
+ #define AT_RENAME_EXCHANGE	0x0002
++#endif
++#ifndef AT_RENAME_WHITEOUT
+ #define AT_RENAME_WHITEOUT	0x0004
++#endif
+ 
+ /* Flag for faccessat(2). */
+ #define AT_EACCESS		0x200	/* Test access permitted for
 -- 
 2.51.1
+
 
