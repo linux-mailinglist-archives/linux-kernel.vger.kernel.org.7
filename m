@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-891758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E053C4368A
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 00:59:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 975F9C4368E
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 01:03:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC423B092A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Nov 2025 23:59:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AFCC188BB39
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 00:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FF524886E;
-	Sat,  8 Nov 2025 23:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCF5A944;
+	Sun,  9 Nov 2025 00:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rothwell.id.au header.i=@rothwell.id.au header.b="jR5OBiKw"
-Received: from mail.rothwell.id.au (gimli.rothwell.id.au [103.230.158.156])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DlVNoBac"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D978B17A318;
-	Sat,  8 Nov 2025 23:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.230.158.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C56234D392;
+	Sun,  9 Nov 2025 00:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762646360; cv=none; b=W/Hh35jRzDnk7ke0Ntshktbi8yYdgsmDE73m3pwWugQkIdrzzkbzweUmFmDo1maQZc8C6UdPHAydGZXKiC927dp7uAOZ94GU6Ub/zBHlXQ7wnJo3YoCXV3EIGfWsuuyJFab5zspNj6GsSfMN9wy8LOFkmuV/vTrDrUEy13WFEps=
+	t=1762646602; cv=none; b=u1t1Hz0pxEw1OeuwHad+/iQuO7Alfqn0TVhfUyxsIeG9bdSXXlVKZ9pq8MA+I5tJUeCac7nn6pgS4pCrJxCp5jAZzKmcGwumKDI5kCh+Cv85Z5+8ls8FJn72efshNd9xAqs8X5ydXoXPYOC1CNtnMNTQBBBxWK9Mp4PbiWuc8SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762646360; c=relaxed/simple;
-	bh=+1E47EH8rxVpjX2CAdprYw4Di3IpDYFLIhdUC15ux/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k9J9JP7UtGEojUzGjuIU5JmWhxDUwhUZONFQAD9mYBqF/5U5qXJ43dCG7ajZ6gAaBnhSUd6679WeB2mCL005pz9FwN92JJM6P6+eE5ILiAcY2XFFg4+bqiPW/rPon9XG3BA+rGMYCa9wihvOePbwnZLUOmH6idcfzOv4iN0JDH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rothwell.id.au; spf=pass smtp.mailfrom=rothwell.id.au; dkim=pass (2048-bit key) header.d=rothwell.id.au header.i=@rothwell.id.au header.b=jR5OBiKw; arc=none smtp.client-ip=103.230.158.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rothwell.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rothwell.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rothwell.id.au;
-	s=201702; t=1762645945;
-	bh=cYUPLdCrS8zDAREt5PgYafk5U3i0ZvDcNTZmCFatbjg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jR5OBiKwdw/IbHkBfZpWmStbMsM44PaIYA7NTwxrHc4XV+Q/Nv22Epio+KpCrxHSv
-	 HQJinF/C95WFQcjq3+20QXhBKEFhqa1dOmW2IU6e9+1lAlRekVnk3zpTkmN3ojpkn0
-	 v9SPEvnd4ymzr23nJDqD4zM1H8AXMBDIxmg/2JMwUAtHBX/0Rj2Iq1XcKw4D9TSu9a
-	 /jMC0S7G09dPZxlQb6CZCisZ2ld2uUDGvIsvr906bdk8iDyaI/Z5sevI313hunhWxY
-	 sx1p06zwCkb8pG7H7EE46Yt2tnjyDCA+Ah5SmXp33f+SQnkyKMJxa1Hs8ul1mqJvYs
-	 KntDwFZCmtcIQ==
-Received: from authenticated.rothwell.id.au (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.rothwell.id.au (Postfix) with ESMTPSA id 4d3t5L0M52z15;
-	Sun, 09 Nov 2025 10:52:21 +1100 (AEDT)
-Date: Sun, 9 Nov 2025 10:52:03 +1100
-From: Stephen Rothwell <sfr@rothwell.id.au>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Alex
- Davis <alex47794@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>,
- Borislav Petkov <bp@alien8.de>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, John Ogness <john.ogness@linutronix.de>,
- linux-serial <linux-serial@vger.kernel.org>
-Subject: Re: [Regression] depmod fails on kernel 6.17.1 rc1
-Message-ID: <20251109105203.622ebe9e@pine.rothwell.emu.id.au>
-In-Reply-To: <82e2ce7f-bd08-4b53-b232-3dd8cb1a0726@kernel.org>
-References: <CADiockCvM6v+d+UoFZpJSMoLAdpy99_h-hJdzUsdfaWGn3W7-g@mail.gmail.com>
-	<20251106160235.GBaQzGm8W2Gt_VMy-s@fat_crate.local>
-	<aQzJveMYT6O3EHeK@smile.fi.intel.com>
-	<20251106162436.GFaQzLxBW-_50ndwtr@fat_crate.local>
-	<3fe70726-80d6-a84a-4101-446fd8b49209@linux.intel.com>
-	<ddfbc4bf-658f-3eda-5b4f-f111ecd932f5@linux.intel.com>
-	<82e2ce7f-bd08-4b53-b232-3dd8cb1a0726@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762646602; c=relaxed/simple;
+	bh=CfClJ40GSxvHuAolF3EfKnGl5IygGs3fM0TmxfJQGQM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kGhOCkrUDplMifagI1aaAgh8zQoqwngjbDTqUke5lqKvuXUGIbH55cF2IdEJL3Hxbm3k4gw2+o3211cls9H7YnNISua0ktYcGXQuzrcMVNr2RXeSW9wYb+fXffddwhVO3OosEevfJBoncepcZO5SR+qD4L6JyBzXZCmJPANrNF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DlVNoBac; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=9Iotjfk7zBGWmYINvak1u4IZsQhzzsxP73x3RqVXHZ0=; b=DlVNoBacRPtE/tKGvW1O8qKOel
+	QQjQ59MIqcS2vlarW55R30v5ebxNoRsIfLIzKXkpyzhffnemcK3ztS8/YsKDxaB5A+brUpiT3WWuL
+	Ju66nGpMfSnPY1CCxskioaQ3e0GC2teCnDVzj1KqgGIjkpelC+xPbn330g1F5SLdebs2/q8DYF0Qj
+	1HcimQv3xvY1qqYNo7vAyiVJTOw6IZyQZkr283fcYbRDMdVmVocaubcu5AM3OCYqex/wtKe3F/57Q
+	02oFLdtYU97Rw/JYItOvzXOQZOF6VNbymdggHLkQ0OM0L6XLQQyJoMR9S/hMyiXqM17243NdkTyjZ
+	tWP6BWyw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vHstn-00000003aga-3O5j;
+	Sun, 09 Nov 2025 00:03:15 +0000
+Message-ID: <90db7fc0-5ce5-4ed4-ac33-18910c37d3d7@infradead.org>
+Date: Sat, 8 Nov 2025 16:03:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/2YyYEpAAK1MtV.mE/IPn2AG";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/2YyYEpAAK1MtV.mE/IPn2AG
+User-Agent: Mozilla Thunderbird
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v1 1/1] kernel-doc: Issue warnings that were silently
+ discarded
+To: Jonathan Corbet <corbet@lwn.net>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20251104215502.1049817-1-andriy.shevchenko@linux.intel.com>
+ <87sees73i5.fsf@trenco.lwn.net>
+Content-Language: en-US
+In-Reply-To: <87sees73i5.fsf@trenco.lwn.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi Jiri,
 
-On Fri, 7 Nov 2025 07:20:26 +0100 Jiri Slaby <jirislaby@kernel.org> wrote:
->
-> On 06. 11. 25, 19:00, Ilpo J=C3=A4rvinen wrote:
-> > This seems to resolve the build issue for me:
-> >=20
-> > --
-> > From: =3D?UTF-8?q?Ilpo=3D20J=3DC3=3DA4rvinen?=3D <ilpo.jarvinen@linux.i=
-ntel.com>
-> > Subject: [PATCH 1/1] serial: 8250: Fix 8250_rsa symbol loop
-> >=20
-> > make allmodconfig build fails due to dependency loop:
-> >=20
-> >    depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
-> >    depmod: ERROR: Found 2 modules in dependency cycles!
-> >=20
-> > Break dependency loop by moving 8250_rsa.o into 8250_base and by
-> > passing univ8250_port_base_ops to univ8250_rsa_support() that can make
-> > a local copy of it.
-> >=20
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Reported-by: Alex Davis <alex47794@gmail.com>
-> > Fixes: b20d6576cdb3 ("serial: 8250: export RSA functions")
-> > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> =20
->=20
-> LGTM, thanks for the fix.
->=20
-> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
->=20
-> If the reporters could give it a shot and mark this by Tested-by, it woul=
-d be great...
 
-I have not seen this for quite some time ... I assumed it had been
-fixed.
---=20
-Cheers,
-Stephen Rothwell
+On 11/5/25 10:12 AM, Jonathan Corbet wrote:
+> [Heads up to Stephen: this change will add a bunch of warnings that had
+> been dropped before.]
+> 
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+> 
+>> When kernel-doc parses the sections for the documentation some errors
+>> may occur. In many cases the warning is simply stored to the current
+>> "entry" object. However, in the most of such cases this object gets
+>> discarded and there is no way for the output engine to even know about
+>> that. To avoid that, check if the "entry" is going to be discarded and
+>> if there warnings have been collected, issue them to the current logger
+>> as is and then flush the "entry". This fixes the problem that original
+>> Perl implementation doesn't have.
+> 
+> I would really like to redo how some of that logging is done, but that
+> is an exercise for another day.  For now, I have applied this one,
+> thanks.
 
---Sig_/2YyYEpAAK1MtV.mE/IPn2AG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I think that this patch is causing a (large) problem.
 
------BEGIN PGP SIGNATURE-----
+With this patch:
+$ make mandocs &>mandocs.out
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkP16MACgkQAVBC80lX
-0GwO0Qf+Mxy5X+u1cMVpG5RotRjuCmMxt57/B9IU4VVYIxmE3FRSZdB74RpCZE49
-5lUTfcNodPBYgmlufF5usix7tS3mTp8IjdYIfM/psbG04bGkV73TPaQHN2G9D5dT
-IxlJHidUB54qweDYg9nN3DZK5JCbeNzE4Ur8+Q8Edu2bhne8iYBy090LjjLSnhbt
-3KVMTE7k86zM6SN3TGozp45grezc0AOhD1/wLzC8kPb7xRyYYuQA2Z5+x47spttO
-PEx+jSv2SOg7XHzfMUQHZKEF6OeqgSxYSAbz65ap8EWrjljoMEZR+OZHQNKQX9Ae
-pYcBS67lRyJJoN44XXSqnLKjR3bBvA==
-=jV7i
------END PGP SIGNATURE-----
+Without this patch:
+$ make mandocs &>mandocsnoas.out
 
---Sig_/2YyYEpAAK1MtV.mE/IPn2AG--
+$ wc mandocs.out mandocsnoas.out
+  29544  267393 3229456 mandocs.out
+  10052   95948 1208101 mandocsnoas.out
+
+so it appears that this patch causes lots of extra output.
+Some of that may be what the patch was trying to do, but
+with this patch, "mandocs.out" above has lots of duplicated
+Warning: lines.
+
+$ sort mandocs.out | uniq > mandocsuq.out
+$ wc mandocsuq.out
+  18012  167689 1994145 mandocsuq.out
+
+$ grep -c "^Warning:"  mandocs.out mandocsnoas.out  mandocsuq.out 
+mandocs.out:25273
+mandocsnoas.out:10022
+mandocsuq.out:15252
+
+
+In mandocs.out above (29544 lines), this line:
+Warning: ../sound/soc/sprd/sprd-mcdt.h:48 struct member 'dma_chan' not described in 'sprd_mcdt_chan'
+
+is found at lines 7 and 29122.
+
+So maybe the logging output needs to be repaired sooner
+than later.
+
+-- 
+~Randy
+
 
