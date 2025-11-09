@@ -1,76 +1,114 @@
-Return-Path: <linux-kernel+bounces-892119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E881BC445F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 20:22:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D945EC44626
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 20:26:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88623A7B59
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 19:22:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 972BF3A7AD6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 19:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2397322F74A;
-	Sun,  9 Nov 2025 19:22:17 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AF423BD1B;
+	Sun,  9 Nov 2025 19:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O8sd8LYq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA014C81
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 19:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6233122538F;
+	Sun,  9 Nov 2025 19:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762716136; cv=none; b=KpAsujOpCfx4Ir4LUEGarJBQrzXxnjWLYaan04VKV7GlOch3PujJ+l6nhQTC9BFfAMjELhSJbWWgey4tuvSgIWI/k02tBRLO5xsALJJRWyawUuWPDBE0wz6CjDhrne1K48l9Ty5S9++lNmikFo/EVXZG6IOCFUV6K22mjleo8PM=
+	t=1762716363; cv=none; b=Z8QQFRrsVSIyoIjEU+g2SOccmUc6w2/WjBK79qVEsgCbtGzRG02YsTVKnUCPOWYfqzSxbPrxhUwafVpgHublF3JZV9QkUUzCqgeQdfACwijSAc685syFKWF0gBLZVEgdldom+j8J4w49EogXrpIAFHeG4gQ8S3Z3tgKKcLJ0ywQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762716136; c=relaxed/simple;
-	bh=L6ptIwyzAZi/q4JHq/o9JXyIBQFNvCVX29puu3IoiC8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fbkhSm5g8xjuTjAQ6ANZfXYCtNt/SNzPft/EauuyFYgwD2XsCcItfIBDAmbZh5PQcUl+bELkeuUwnRz7M6ayWFffvVJMjPnugGyCiZtrfkgJUh1aL4OTm+/TcAHE1+69nc6igyqA90k57nazSF25MbEeOvsZ7WRLcK0XWdCJ7KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4330bc0373bso18102635ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 11:22:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762716134; x=1763320934;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L6ptIwyzAZi/q4JHq/o9JXyIBQFNvCVX29puu3IoiC8=;
-        b=QXbxAeg65AY4uFisTKN3CQcrO3celtzKau6dn+CjD3qDSvW6xuM4A2lJ9O4bKHNgFS
-         SvZvGF7WGTe93WSxW3P2IcjbKz9wdH+dPGuPYCIShdnW+LZYPV2yCUa8SbLKt7F0d/jP
-         FqpkadB3ch/aREHsPF1CcAKzKmo9qR6jDIJbVK1vTJ70POI3wIqBu1Hm4V5gO4zr5f2X
-         QoZRWl5NK6pOWI6+3QItNjX3Xv+zjtt3voO6SSFFtDEd0v8o2/dv4UH19Boulywso+ol
-         l9vEGQdIIOjCRuJvFgwPDv3PfqM+4+qpslD3ni0aCb6Lpt36l7kUxsDxrktP4Ktts0gR
-         HMag==
-X-Gm-Message-State: AOJu0Yxb3Iu1Wfj0z/LncbDLgdAfbwOh2M8BfyOiwIY0yTXTTZ503GWJ
-	imrk+UBnnsysMHyMK5l/AmmbZzMuC3quUc8H156bbTB/0nGXDU3U1SiW5yH7uKoD+4bPsKS/uje
-	1Ieu/YyFIqBYuGQJ/IOlKV+nzjb2dnSEQ52aqK6lQvcyuIDh1ymVMZuFU+Rs=
-X-Google-Smtp-Source: AGHT+IHs+Ri8my6qJQnPpmQGV+B6SA2bXwynWrOsTCVJ0Ddwo+Qhjk+BT4EC2cNDxZobvP4mk9iE48aelQnHKHZT/aVdRtI2e7Fc
+	s=arc-20240116; t=1762716363; c=relaxed/simple;
+	bh=upaeob8j34GVSsqrAgEGkGc6v0cl/aFwYXGFTvPcMx0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=in6hrFdBP8s82EKow0hLIO/V99/+ybEiLQk74psLC77V0s85ynBMOuNTRWQZ4tLVlbnDDqywpFflEdP5cGi0l0S71DjWY6dadI9wDA3ej7SI0GBMose9Tc95vGeR1A9Rj50xWKcitQGUWGlpefSK4FGkdDSne3GILZ+sePCiI1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O8sd8LYq; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762716362; x=1794252362;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=upaeob8j34GVSsqrAgEGkGc6v0cl/aFwYXGFTvPcMx0=;
+  b=O8sd8LYqTitUaHqoMLA+OMFobvvuIUp4MRPg/dQmzPmWPSREryEouNUx
+   QgqKT/ZmXwtTyxmToehIKbeEWesjGfyO7pKDxfPAlWibb/TUg7n1b3Aa2
+   REAHKjWzSXg8c7IjB9CDnwy4q89uLzXI6xZgaxxVBq+zaAAw5RMCc6EIP
+   Q/nqO6u3HVkoT4QevWwImYHs6adhoISUJMsZbkNnNV61ZMkguteHn7S+j
+   B56ci1Sl+vML/UnuLkJ3/j6p32E8GDNcYs5lny5AmdCpUT4DCxHvH86wy
+   Ozc7SPuNUphtgpYAC6b2DApJJyRzv1c1uJUXqLAyluTGQCu5+eo8g5CHj
+   g==;
+X-CSE-ConnectionGUID: +kM10htITjCa8+kwGEYxow==
+X-CSE-MsgGUID: GagaVh8rTxqzLR2L694s+w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="64820684"
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="64820684"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 11:26:01 -0800
+X-CSE-ConnectionGUID: Ce9IDDcHRdOQGVYneTLvGA==
+X-CSE-MsgGUID: NUDF3D6ATfOroRlKtba7Wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,292,1754982000"; 
+   d="scan'208";a="188664150"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa008.jf.intel.com with ESMTP; 09 Nov 2025 11:25:59 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 24BEF95; Sun, 09 Nov 2025 20:25:58 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] iio: imu: inv_icm42600: Convert to uXX and sXX integer types
+Date: Sun,  9 Nov 2025 20:24:36 +0100
+Message-ID: <20251109192556.3163077-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:330f:b0:433:79d8:1e14 with SMTP id
- e9e14a558f8ab-43379d81edfmr39236545ab.3.1762716134307; Sun, 09 Nov 2025
- 11:22:14 -0800 (PST)
-Date: Sun, 09 Nov 2025 11:22:14 -0800
-In-Reply-To: <68f66418.050a0220.91a22.044d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6910e9e6.a70a0220.22f260.00c0.GAE@google.com>
-Subject: Forwarded: kernel BUG in ipgre_header (3)
-From: syzbot <syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+The driver code is full of intXX_t and uintXX_t types which is
+not the pattern we use in the IIO subsystem. Switch the driver
+to use kernel internal types for that. No functional changes.
 
-***
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-Subject: kernel BUG in ipgre_header (3)
-Author: zlatistiv@gmail.com
+Jonathan, what is the status of fixing the type for
+iio_push_to_buffers_with_timestamp()? This patch doesn't do that
+as I see no API has been fixed (and it seems the only one that uses
+the *intXX_t parameter).
 
-#syz test
+ drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+index 54760d8f92a2..9be5ade24501 100644
+--- a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
++++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+@@ -1209,7 +1209,7 @@ int inv_icm42600_accel_parse_fifo(struct iio_dev *indio_dev)
+ 	ssize_t i, size;
+ 	unsigned int no;
+ 	const void *accel, *gyro, *timestamp;
+-	const int8_t *temp;
++	const s8 *temp;
+ 	unsigned int odr;
+ 	int64_t ts_val;
+ 	/* buffer is copied to userspace, zeroing it to avoid any data leak */
+-- 
+2.50.1
+
 
