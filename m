@@ -1,145 +1,282 @@
-Return-Path: <linux-kernel+bounces-891922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8727CC43D25
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:11:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2F3C43D31
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 13:13:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009583A98D2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC8F83AB2C3
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 12:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C80B2E88A1;
-	Sun,  9 Nov 2025 12:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CEE2E8B75;
+	Sun,  9 Nov 2025 12:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0xKG8HL"
-Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XR6tU2QI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5F02E7BD2
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 12:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817B32E7F38;
+	Sun,  9 Nov 2025 12:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762690295; cv=none; b=DuLlcA+P4rSNGt0XcXZDGEZd0Gnjo1n/RPAzGduashf6J1Z6kdrDGuhbAfbppRi+Gzfvv+LBHX7HsXhzylyjOdgTFJg1g5fKXHuSs05y9ztPoKFuRsegNSqs/dJXSKpA9O4jOkVSKsRLUrWEEcmo2PNNdUMSk10pDkNOJmu1kfk=
+	t=1762690388; cv=none; b=cYZiQJJdAWwxw/81NRwzzs7o0eGiHuKoopTkzvMbRQAs4Clj3BswmoV0avPSTkcfVvrtPs4dXlFz27CJGDWGs5ogBQvvCvouKKjQ6eyDfkTSI+EZZGzGyES4CTRUMyr0ZkESFFHEcaamia/7K4F/aMMjmObOKmoIudAKhu9YlCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762690295; c=relaxed/simple;
-	bh=9TrRIYB2XOoX17zzX0ixZst/V96BVzam/k//08+kh8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hvv9UHCvPkna/btFUuXXSyP3CU5gNyxv8ZjwPhS5ZpT6xAdJOuT52tYovVteQtyDdKAA7EzyS5YyGKvGKexiKr2/yOxHBcnarp7Do+ZQKMiMeAhXrQu58oE8fMXgDLnHObg/phPFIofpzQ/CHtjvzb16uU8y+0RPyUnnxGJ4EAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0xKG8HL; arc=none smtp.client-ip=74.125.224.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-63f97c4eccaso1934484d50.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 04:11:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762690293; x=1763295093; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SaB3iUzdscR6aViyJqwLMcsd0JlvtsbUTPKpewl2qBw=;
-        b=i0xKG8HLwJxJQcEyL2ltkvCVpmxagHX06H1+TkaAdLNrdGkDsu5HgIlgaq9FWa6WvO
-         778wxQiCre3f4LjyO+5X+h7e2oGY+3U+6VawUd0/AJ9OjFMAmtWQZ4MbfLbB9iUegERz
-         DW9CvOugr9jrIMCGEW8xhiR+2sOF00U5VYaYEQLys/WO4lN/iE0SN9VQ5+sus/cjGbk0
-         efenTlxYu3lJb/pdai0TMlsKRlh3OwzDOqWSaE0ODACKK5NqMooUynYg6YqmrPSXOh/A
-         ZHTpSW/Z+fdsKOxPssK92QFeflKqVutZMvWqMR/hmE3Ubq3hoxXgIiZ6eJEK5uvRuKFZ
-         F8Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762690293; x=1763295093;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=SaB3iUzdscR6aViyJqwLMcsd0JlvtsbUTPKpewl2qBw=;
-        b=GEZ2FyQVzSu9YDnckDruGOhBWrfYSgQv29IWSnjlyQ3j5JnHZbr+Ea2AIz5tIQ1d6T
-         KRSVLXpWIpQu4X0qh0r8C74ziE5EGZ6FAJR9bLAFfM9VggYKQEjAdhEMhZc9H99iaxmx
-         qqcTGgkMeKIQKRXCkcGImpuofYjG2CDjmmHhOxgmv0P/PI49bpX3sw5Lwuo38mW60dc+
-         EvKM8d7PvLgtp3pqbX64SkjOGXDWKxpoPmV0Y8refvg7oASOxj7K2GuZvzju7pxpyxNm
-         w9l0TSojykCOZiMRRlw0q8jDDxFV9SxYF1uy5+Zq0tlk2WqaNt+dy7XSF4WirYLHj0BK
-         tBpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhix+brizdycsdc1n/Szl8JNWlvivoDWRzFF+R5PfgCKD9JE9Hq4NfJKzTj+UbHxH99EP7PQfRzTUUzvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv/B0uMbPwqU1WYSOQpb171HrJMHz6Ftxhtx2qHkrLTqT9NCNU
-	9HgL3LyB6iz11zZFzvVYEu4ipC+inabvIQkMK0idqU0jd7Cqs9hS8XUzzquhIwgJyzAA8NivUrC
-	tBsAuA/+zgDrJaj/woaiABanWct6XcqA=
-X-Gm-Gg: ASbGnctO8k5IIxPLDsJSbmAXAvgeZdGETi9TaxiqHjmr17kivHSo1uQUPFDsEarEASf
-	IE/MaPZp4f+p01ZktcT0nabXgRZ41Di3jgfFaExuvnghr5PJ3/dhtFOMvnexMOrpBbEBG/u+ucY
-	EhdLIj6Jm6dZ1N1BGKQtjVLTCBn1uD/y7VlrGNOEikXHwsb0Pd4g06YUIe1DLXAvsBfEBEQNi5l
-	VGClF8Zx1buPkEzZh64UDFheV13roD5CqutmxDKRE0WOl4zqaquPCto1Ew3Wd7jqkbv2ehs
-X-Google-Smtp-Source: AGHT+IEKhjeme65HFe4rbHvn0fhtz0mbKIXocvNQ95paIv/R07SYgK3/Ab1CQi+EtohDNRjUSI8bQbzPh8xSQmFFyn8=
-X-Received: by 2002:a53:acc8:0:20b0:63f:aef7:d009 with SMTP id
- 956f58d0204a3-640d4543d3emr3526712d50.5.1762690292759; Sun, 09 Nov 2025
- 04:11:32 -0800 (PST)
+	s=arc-20240116; t=1762690388; c=relaxed/simple;
+	bh=ICdilM6Tvq5eSGzGER2PDBb0PKbbw/XDeg0FHl87JWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gbUgcHnnNt0NUyCS9vWB1COB7ZH5RlIR1u2OZD7cA8JSyQMbR0ZhILw5AdzTl1xKuZWWzB92mecbhOLBTXP7YH7rPm3LcnIfWkU38DLd9cY8XQ6V/LgdT22iYnmi46A8au4SJSI+CjpngoyquR1XwcD0f05/v1/EKO+fsG3RopM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XR6tU2QI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3997FC4CEFB;
+	Sun,  9 Nov 2025 12:13:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762690388;
+	bh=ICdilM6Tvq5eSGzGER2PDBb0PKbbw/XDeg0FHl87JWQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XR6tU2QIT8x9b1wIZ1qNW5hW9CZZzUj7wx9oJUSBst1nQ/lcoGgBKbW/WbsuzVvUs
+	 j0ta13sbG30AgTsK5rV3ERWmt93wL86KbpwWHnttnkas9Jsk8eiCefrPm8xHxVH7On
+	 KEuu4Meef+oEMNp8Ht2e1/lnAHTXHGVU578a2Drxj1wFg8t66HOWLbxaiZAKEQ/IbY
+	 qbuyFzLRrB1Ybq41wXXUvhd6Rx8q3JDs8OkYw4YhnCncHMtQSfb4vr9RvUmU2kECP7
+	 eSR2BPwoBR3H/PMBbJO78qnUH7sxmvsHKx1Alf51w9IbQtTc2mZP/R4cTNCm9bYJRw
+	 PP42ycMZvw6ug==
+Date: Sun, 9 Nov 2025 12:12:59 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <noname.nuno@gmail.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ michael.hennerich@analog.com, nuno.sa@analog.com, eblanc@baylibre.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ corbet@lwn.net
+Subject: Re: [PATCH v6 8/8] iio: adc: ad4030: Support common-mode channels
+ with SPI offloading
+Message-ID: <20251109121259.4e4c1f3f@jic23-huawei>
+In-Reply-To: <aQklBYl2drPil69Y@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1760984107.git.marcelo.schmitt@analog.com>
+	<3fadbf22973098c4be9e5f0edd8c22b8b9b18ca6.1760984107.git.marcelo.schmitt@analog.com>
+	<20251027140423.61d96e88@jic23-huawei>
+	<aQJY7XizVWbE68ll@debian-BULLSEYE-live-builder-AMD64>
+	<ca6760182b4662c96df6204bae903d8affa6a8e3.camel@gmail.com>
+	<aQisqe5EWARTwpQq@debian-BULLSEYE-live-builder-AMD64>
+	<1c3712b9b5313ed6c9d07c1acbc9b918a4883056.camel@gmail.com>
+	<c365b17c-de18-4718-8d51-fa1d93236d90@baylibre.com>
+	<aQklBYl2drPil69Y@debian-BULLSEYE-live-builder-AMD64>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107100310.61478-1-a.safin@rosa.ru> <20251107114127.4e130fb2@pumpkin>
- <CALOAHbB1cJ3EAmOOQ6oYM4ZJZn-eA7pP07=sDeG3naOM2G9Aew@mail.gmail.com>
- <CALOAHbCz+9T349GCmyMkork=Nc_08OnXCoVCz+WO0kdXgx3MDA@mail.gmail.com> <8a4aae40-46d3-403a-a1cf-117343c584f6@rosa.ru>
-In-Reply-To: <8a4aae40-46d3-403a-a1cf-117343c584f6@rosa.ru>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 9 Nov 2025 20:10:56 +0800
-X-Gm-Features: AWmQ_blpVmNsJtsggeQbfkqHI6DRzOvkhrN0Qih5Gjdy_fjh5mvfLp1OZCiTq2g
-Message-ID: <CALOAHbBdcq6bKCeroGFmUNfo6Os+KOXGzeqVZjM=S0Q9hpxYew@mail.gmail.com>
-Subject: Re: [PATCH v2] bpf: hashtab: fix 32-bit overflow in memory usage calculation
-To: =?UTF-8?B?0JDQu9C10LrRgdC10Lkg0KHQsNGE0LjQvQ==?= <a.safin@rosa.ru>
-Cc: David Laight <david.laight.linux@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lvc-patches@linuxtesting.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 9, 2025 at 7:00=E2=80=AFPM =D0=90=D0=BB=D0=B5=D0=BA=D1=81=D0=B5=
-=D0=B9 =D0=A1=D0=B0=D1=84=D0=B8=D0=BD <a.safin@rosa.ru> wrote:
->
-> Thanks for the follow-up.
->
-> Just to clarify: the overflow happens before the multiplication by
-> num_entries. In C, the * operator is left-associative, so the expression =
-is
-> evaluated as (value_size * num_possible_cpus()) * num_entries. Since
-> value_size was u32 and num_possible_cpus() returns int, the first product=
- is
-> performed in 32-bit arithmetic due to usual integer promotions. If that
-> intermediate product overflows, the result is already incorrect before it=
- is
-> promoted when multiplied by u64 num_entries.
->
-> A concrete example within allowed limits:
-> value_size =3D 1,048,576 (1 MiB), num_possible_cpus() =3D 4096
-> =3D> 1,048,576 * 4096 =3D 2^32 =3D> wraps to 0 in 32 bits, even with
-> num_entries =3D 1.
+On Mon, 3 Nov 2025 18:56:21 -0300
+Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
 
-Thank you for the clarification.
+> On 11/03, David Lechner wrote:
+> > On 11/3/25 8:30 AM, Nuno S=C3=A1 wrote: =20
+> > > On Mon, 2025-11-03 at 10:22 -0300, Marcelo Schmitt wrote: =20
+> > >> On 10/30, Nuno S=C3=A1 wrote: =20
+> > >>> On Wed, 2025-10-29 at 15:11 -0300, Marcelo Schmitt wrote: =20
+> > >>>> On 10/27, Jonathan Cameron wrote: =20
+> > >>>>> On Mon, 20 Oct 2025 16:15:39 -0300
+> > >>>>> Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+> > >>>>> =20
+> > >>>>>> AD4030 and similar devices can read common-mode voltage together=
+ with
+> > >>>>>> ADC sample data. When enabled, common-mode voltage data is provi=
+ded in a
+> > >>>>>> separate IIO channel since it measures something other than the =
+primary
+> > >>>>>> ADC input signal and requires separate scaling to convert to vol=
+tage
+> > >>>>>> units. The initial SPI offload support patch for AD4030 only pro=
+vided
+> > >>>>>> differential channels. Now, extend the AD4030 driver to also pro=
+vide
+> > >>>>>> common-mode IIO channels when setup with SPI offloading capabili=
+ty.
+> > >>>>>>
+> > >>>>>> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > >>>>>> ---
+> > >>>>>> New patch.
+> > >>>>>> I hope this works for ADCs with two channels. It's not clear if =
+works as
+> > >>>>>> expected with current HDL and single-channel ADCs (like ADAQ4216=
+).
+> > >>>>>>
+> > >>>>>> The ad4630_fmc HDL project was designed for ADCs with two channe=
+ls and
+> > >>>>>> always streams two data channels to DMA (even when the ADC has o=
+nly one
+> > >>>>>> physical channel). Though, if the ADC has only one physical chan=
+nel, the
+> > >>>>>> data that would come from the second ADC channel comes in as noi=
+se and
+> > >>>>>> would have to be discarded. Because of that, when using single-c=
+hannel
+> > >>>>>> ADCs, the ADC driver would need to use a special DMA buffer to f=
+ilter out
+> > >>>>>> half of the data that reaches DMA memory. With that, the ADC sam=
+ple data
+> > >>>>>> could be delivered to user space without any noise being added t=
+o the IIO
+> > >>>>>> buffer. I have implemented a prototype of such specialized buffer
+> > >>>>>> (industrialio-buffer-dmaengine-filtered), but it is awful and on=
+ly worked
+> > >>>>>> with CONFIG_IIO_DMA_BUF_MMAP_LEGACY (only present in ADI Linux t=
+ree). Usual
+> > >>>>>> differential channel data is also affected by the extra 0xFFFFFF=
+FF data
+> > >>>>>> pushed to DMA. Though, for the differential channel, it's easier=
+ to see it
+> > >>>>>> shall work for two-channel ADCs (the sine wave appears "filled" =
+in
+> > >>>>>> iio-oscilloscope).
+> > >>>>>>
+> > >>>>>> So, I sign this, but don't guarantee it to work. =20
+> > >>>>>
+> > >>>>> So what's the path to resolve this?=C2=A0 Waiting on HDL changes =
+or not support
+> > >>>>> those devices until we have a clean solution? =20
+> > >>>>
+> > >>>> Waiting for HDL to get updated I'd say. =20
+> > >>>
+> > >>> Agree. We kind of control the IP here so why should we do awful tri=
+cks in
+> > >>> SW right :)? At the very least I would expect hdl to be capable to =
+discard the
+> > >>> data in HW.
+> > >>> =20
+> > >>>> =20
+> > >>>>>
+> > >>>>> Also, just to check, is this only an issue with the additional st=
+uff this
+> > >>>>> patch adds or do we have a problem with SPI offload in general (+=
+ this
+> > >>>>> IP) and those single channel devices? =20
+> > >>>>
+> > >>>> IMO, one solution would be to update the HDL project for AD4630 an=
+d similar ADCs
+> > >>>> to not send data from channel 2 to DMA memory when single-channel =
+ADCs are
+> > >>>> connected. Another possibility would be to intercept and filter ou=
+t the extra
+> > >>>> data before pushing it to user space. My first attempt of doing th=
+at didn't
+> > >>>> work out with upstream kernel but I may revisit that. =20
+> > >>>
+> > >>> I'm also confused. Is this also an issue with the current series wi=
+thout common mode?
+> > >>>
+> > >>> If I'm getting things right, one channel ADCs pretty much do not wo=
+rk right now with
+> > >>> spi offload? =20
+> > >>
+> > >> Yes, that's correct. It kind of works for single-channel ADCs, but h=
+alf of the
+> > >> data we see in user space is valid and the other half is not. For tw=
+o-channel
+> > >> ADCs, everything should be fine. =20
+> > >=20
+> > > To me that is something that does not work eheheh :). =20
+> Well, yeah, I tend to agree with that =F0=9F=98=85
+>=20
+> > > I mean, going with all this trouble
+> > > to sample as fast as we can just so we have to discard (or mask out) =
+half of every sample
+> > > in userspace (even though I can imagine we still get better performan=
+ce vs non offload case). =20
+> >=20
+> > If we are getting extra data to userspace, then either we aren't creati=
+ng the
+> > SPI message correctly and telling the controller to read too much data =
+or
+> > the HDL is broken. =20
+>=20
+> The current patch set version (v6) only asks for the amount of ADC precis=
+ion
+> bits in each transfer when offloading messages. I can't see how that woul=
+d work
+> but okay, I'll test it with smaller xfer length.
+>=20
+> >  =20
+> > >  =20
+> > >> =20
+> > >>>
+> > >>> If the above is correct I would just not support it for 1 channel A=
+DCs. =20
+> > >>
+> > >> Currently, it's just one part that is single-channel (AD4030). If pa=
+tches 6 and
+> > >> 7 were accepted, it would be 3 single-channel parts supported. I can=
+ add an `if`
+> > >> somewhere to check the number of channel, but it will eventually hav=
+e to be
+> > >> removed when HDL gets fixed. =20
+> > >=20
+> > > I would probably do the above or maybe we just need to push for an hd=
+l fix or some
+> > > final conclusion (like if they cannot fix it for some reason) and act=
+ accordingly.
+> > >  =20
+> > >>
+> > >> Or, if HDL can't be fixed, then we'll need the `if` now and somethin=
+g else
+> > >> latter to filter out extra data before pushing to IIO buffers as men=
+tioned
+> > >> above. Though, this scenario seems odd to me as I think the HDL woul=
+dn't be 100%
+> > >> compatible with single-channel AD4030-like parts. We would be writin=
+g code to
+> > >> support AD4030 _and_ a peculiar data stream from this specific HDL p=
+roject?
+> > >>
+> > >> My suggestion is to apply all patches except patch 8. IMHO, SPI offl=
+oad
+> > >> single-channel ADC support is broken due to HDL IP data stream not b=
+eing
+> > >> compatible with single-channel parts. That's not a Linux driver issu=
+e. =20
+> > >=20
+> > > Well, it's not a SW issue but we are driving the HW and we know it's =
+broken so I
+> > > don't see a point in having something that does not work. Given that =
+this is so
+> > > connected to the HDL part of it I'm not sure it's fine to ignore that=
+ offload does
+> > > not work for 1 channel parts.=20
+> > >=20
+> > > Anyways, it's odd to me but ultimately if Jonathan is fine with it, I=
+ won't object :)
+> > >=20
+> > >=20
+> > > - Nuno S=C3=A1 =20
+> >=20
+> > If single-channel parts currently don't work and two-channel parts need=
+ [1] or
+> > a hardware descrambler to work with a single data line, then it sounds =
+like we
+> > are blocked here until the HDL is improved or [1] is merged.
+> >=20
+> > [1]: https://lore.kernel.org/linux-iio/20251014-spi-add-multi-bus-suppo=
+rt-v1-0-2098c12d6f5f@baylibre.com/ =20
+>=20
+> Ack, I think so.
 
-Based on my understanding, the maximum value_size for a percpu hashmap
-appears to be constrained by PCPU_MIN_UNIT_SIZE (32768), as referenced
-in htab_map_alloc_check():
+OK.  So let me know (send a new version) when we have something we can move=
+ forwards with.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/ker=
-nel/bpf/hashtab.c#n457
+Looks to me like we should rule out single channel parts + spi offload for =
+now.
+I'll take a look at [1] later today.
 
-This would require num_possible_cpus() to reach 131072 to potentially
-cause an overflow.  However, the maximum number of CPUs supported on
-x86_64 is typically 8192 in standard kernel configurations. I'm
-uncertain if any architectures actually support systems at this scale.
+Jonathan
 
 
->
-> This isn=E2=80=99t about a single >4GiB allocation - it=E2=80=99s about a=
-ggregated memory
-> usage (percpu), which can legitimately exceed 4GiB in total.
->
-> v2 promotes value_size to u64 at declaration, which avoids the 32-bit
-> intermediate overflow cleanly.
 
 
---
-Regards
-Yafang
 
