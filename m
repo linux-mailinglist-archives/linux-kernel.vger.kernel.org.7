@@ -1,184 +1,76 @@
-Return-Path: <linux-kernel+bounces-892118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC67C445F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 20:21:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E881BC445F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 20:22:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0CDB64E2E2E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 19:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88623A7B59
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 19:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCE621D5AA;
-	Sun,  9 Nov 2025 19:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UUKLYQeJ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2397322F74A;
+	Sun,  9 Nov 2025 19:22:17 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCEC4C81
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 19:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA014C81
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 19:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762716101; cv=none; b=YY3/IYl+LB600GD3ksDUyVpNDK0nX+g/dgnAceib45DGSNgrbGdvUyXz1EsQir1AJGalkY5n/LNwYY9LhZq/++v/lwoI0wk1okC4rLdULSlq/mw24rIe2P1/ASET0VWayjZjtx5JE98EeD11olRc74jaYExtr85qeirn7VkOMIo=
+	t=1762716136; cv=none; b=KpAsujOpCfx4Ir4LUEGarJBQrzXxnjWLYaan04VKV7GlOch3PujJ+l6nhQTC9BFfAMjELhSJbWWgey4tuvSgIWI/k02tBRLO5xsALJJRWyawUuWPDBE0wz6CjDhrne1K48l9Ty5S9++lNmikFo/EVXZG6IOCFUV6K22mjleo8PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762716101; c=relaxed/simple;
-	bh=vA2TQqnBx9IQODBIRnR8HiIllBg9XNr7ijLGbLxx2zU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UhHwk4PZN2L0D2wszQ4UGny0/vSJpKe1KOyWEh1GksLBN2kOrqlx3R0oHFwKDvDxcp7SNS2BPMhbdb9qRtMgqzxPsAw8JWgY4i/VDvCcsLJU6SXAWZW6YXHk+MOhZC6U+k8hS24OaWLwjPrBc8zqxczwEjBjPWt+olLG0Jr8gvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UUKLYQeJ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-477442b1de0so15419345e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 11:21:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762716098; x=1763320898; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6vH5fXGe4VkkrWElN9kTcP4/mFYhBdwL1V1ZVaN0zdo=;
-        b=UUKLYQeJZbkUuchj9IEZ18ICBTJSog9t9pysgI907TXyuW+rql0H9FLriVTF7iipLx
-         hvCUeg5kmhGLZcJeP5I1RFsdRHwhSsMo2LjElfdR0aN9pvlZqSVrbzQk/2p3m+sWCbOg
-         ZZVPeydNkScJmkSeTSyzgFzOYRrzOlgGLo+pvsakyBdIhOgNR58MKI1Geblcqf3k43BE
-         uSR/OG1iAjjSKjCFqEj5J/HYn2JfR3Y6l5ZSuPK5n1+6wDJhGwjSqy0Nj62l1QccJJiy
-         We5GrPqLfWMwdIJawFStHFdXkYm4qeXFFUvGDBGPcVba069VSs+aKy0qWBwJpdyp+eLR
-         0s+w==
+	s=arc-20240116; t=1762716136; c=relaxed/simple;
+	bh=L6ptIwyzAZi/q4JHq/o9JXyIBQFNvCVX29puu3IoiC8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fbkhSm5g8xjuTjAQ6ANZfXYCtNt/SNzPft/EauuyFYgwD2XsCcItfIBDAmbZh5PQcUl+bELkeuUwnRz7M6ayWFffvVJMjPnugGyCiZtrfkgJUh1aL4OTm+/TcAHE1+69nc6igyqA90k57nazSF25MbEeOvsZ7WRLcK0XWdCJ7KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4330bc0373bso18102635ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 11:22:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762716098; x=1763320898;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6vH5fXGe4VkkrWElN9kTcP4/mFYhBdwL1V1ZVaN0zdo=;
-        b=uTpxiKtU0c1xMIP5OQEfLjTseZNipuFVPv5wnlmwkHU02VJmSNevZEwPAdbmdehogT
-         mcXV5HKbSaTJiGIX2mCN5lVvEHqt+VEbgDTGCevq+ow7XxYIaL+PtzBcpyG371cK5ivH
-         XqCYRFRTWcFJwm4ymYvnbvuZldI+yXQv3XuUdwjDo4ck6lymfZISj3E+a9HHDut2fUU6
-         JSLnE07NEvdb/JXAofNyh8AlzmofEuy2To0FgQN+zn3UJPkh8840d3thdypfgHwlNCkf
-         MXd6qdmoE7+J2pSYbpgbLMXmWqpBZRlrFgEX99uj1V1dYgDg6u16PhT7mUfb/KXrjMa9
-         fLwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPQyUdoqO3xAzh3uaZCPVV+IuZ4DoCR5+WbGjN7HhZ2K8syeJIS41lWYwGNPaZ8o4WBxkI8Ges2W9dsNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJuCr74WYmLGjCMmcSOESCAg4zXCQA2vSUJNix84zb5/x2HJyD
-	7Nogj3xsxPEqmm0jUY92e2mQgJdJO0K+293+X9bem8nMcUra2cHDrTZc
-X-Gm-Gg: ASbGncstXLQuIS3U3kOheltZLKMa5or/Ju6z89jhLsxp+29EAZONxotVCGUUKEY4w6a
-	B+G/bPIao616xqi5/x/0NlsRv8YUO42Ej6NR7Mo4delUvpL7LzfmDVUZYzf8OwJnNGPkMzOmf7B
-	MuqGimB9c3pwAdP/WHilyEhgSlmElZbFZwrKVSiEyG25958IeQdXBcpPDM8qXwMAlV2CFeG9xcG
-	fDOYKHsCKScuJDwO+RSN8Yb8aapPEzWf9iWoCU6d85dwDboNMrorl/dYscUl0VbrYNPkVuJ7zyk
-	ILrWk+HVo4g/HnuDz61tDfjBq4wFR1WZbzP1bQ4d9hnZiYxfCivYWOp7LMLTPqqfrLCJT8qkd+Y
-	awOp9g4Drb5u3QGwJDhOyyl7H1e9QpibF4zx4zpAvDPcuyw9I7xuepZZe4iu3m9v4u092qk9Rde
-	fNz64qrXHus7nTh/k8mdKGOkfE6mrlNvDd7LmRfegiDg==
-X-Google-Smtp-Source: AGHT+IHEGGaPojLqJnQJyx/eRJbJgTm2GWxMz4aHcXLzOtk0tX2JbG/6GFj/8DCLl3D0UN/5mSd4Yw==
-X-Received: by 2002:a05:600c:3554:b0:477:557b:6917 with SMTP id 5b1f17b1804b1-4777323ae5bmr54155475e9.18.1762716097419;
-        Sun, 09 Nov 2025 11:21:37 -0800 (PST)
-Received: from apple.sigmaris.info ([2a02:8010:6606:0:d132:d099:e4e7:cb00])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e7a6desm91150875e9.8.2025.11.09.11.21.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 11:21:35 -0800 (PST)
-From: Hugh Cole-Baker <sigmaris@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Dragan Simic <dsimic@manjaro.org>,
-	Alexey Charkov <alchark@gmail.com>,
-	Hugh Cole-Baker <sigmaris@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: rockchip: add pwm-fan for NanoPC-T6
-Date: Sun,  9 Nov 2025 19:20:51 +0000
-Message-ID: <20251109192128.72527-1-sigmaris@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20230601; t=1762716134; x=1763320934;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L6ptIwyzAZi/q4JHq/o9JXyIBQFNvCVX29puu3IoiC8=;
+        b=QXbxAeg65AY4uFisTKN3CQcrO3celtzKau6dn+CjD3qDSvW6xuM4A2lJ9O4bKHNgFS
+         SvZvGF7WGTe93WSxW3P2IcjbKz9wdH+dPGuPYCIShdnW+LZYPV2yCUa8SbLKt7F0d/jP
+         FqpkadB3ch/aREHsPF1CcAKzKmo9qR6jDIJbVK1vTJ70POI3wIqBu1Hm4V5gO4zr5f2X
+         QoZRWl5NK6pOWI6+3QItNjX3Xv+zjtt3voO6SSFFtDEd0v8o2/dv4UH19Boulywso+ol
+         l9vEGQdIIOjCRuJvFgwPDv3PfqM+4+qpslD3ni0aCb6Lpt36l7kUxsDxrktP4Ktts0gR
+         HMag==
+X-Gm-Message-State: AOJu0Yxb3Iu1Wfj0z/LncbDLgdAfbwOh2M8BfyOiwIY0yTXTTZ503GWJ
+	imrk+UBnnsysMHyMK5l/AmmbZzMuC3quUc8H156bbTB/0nGXDU3U1SiW5yH7uKoD+4bPsKS/uje
+	1Ieu/YyFIqBYuGQJ/IOlKV+nzjb2dnSEQ52aqK6lQvcyuIDh1ymVMZuFU+Rs=
+X-Google-Smtp-Source: AGHT+IHs+Ri8my6qJQnPpmQGV+B6SA2bXwynWrOsTCVJ0Ddwo+Qhjk+BT4EC2cNDxZobvP4mk9iE48aelQnHKHZT/aVdRtI2e7Fc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:330f:b0:433:79d8:1e14 with SMTP id
+ e9e14a558f8ab-43379d81edfmr39236545ab.3.1762716134307; Sun, 09 Nov 2025
+ 11:22:14 -0800 (PST)
+Date: Sun, 09 Nov 2025 11:22:14 -0800
+In-Reply-To: <68f66418.050a0220.91a22.044d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6910e9e6.a70a0220.22f260.00c0.GAE@google.com>
+Subject: Forwarded: kernel BUG in ipgre_header (3)
+From: syzbot <syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-FriendlyELEC offers an optional heatsink and fan addon for the NanoPC-T6
-and T6 LTS, which plugs in to the fan connector on the board driven by
-pwm1. Add the fan as an active cooling device for the SoC package.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Signed-off-by: Hugh Cole-Baker <sigmaris@gmail.com>
----
-Changes from v1: https://lore.kernel.org/linux-rockchip/20251026194858.92461-1-sigmaris@gmail.com/
-* add the fan to the base board dtsi instead of overlay (Heiko)
-* just use 2 trip points for warm and hot temperatures (Dragan, Alexey)
+***
 
-References:
-FriendlyELEC heatsink with fan addon:
-https://www.friendlyelec.com/index.php?route=product/product&product_id=305
-Vendor DT with trip points and PWM duty cycle values:
-https://github.com/friendlyarm/kernel-rockchip/blob/4944602540b62f5aad139fe602a76cf7c3176128/arch/arm64/boot/dts/rockchip/rk3588-nanopi6-rev01.dts#L75-L90
+Subject: kernel BUG in ipgre_header (3)
+Author: zlatistiv@gmail.com
 
- .../boot/dts/rockchip/rk3588-nanopc-t6.dtsi   | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
-index fafeabe9adf9e..9164a0ee6228e 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
-@@ -11,6 +11,7 @@
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/pinctrl/rockchip.h>
- #include <dt-bindings/soc/rockchip,vop2.h>
-+#include <dt-bindings/thermal/thermal.h>
- #include <dt-bindings/usb/pd.h>
- #include "rk3588.dtsi"
- 
-@@ -89,6 +90,14 @@ usr_led: led-1 {
- 		};
- 	};
- 
-+	fan: pwm-fan {
-+		compatible = "pwm-fan";
-+		cooling-levels = <0 35 64 100 150 255>;
-+		fan-supply = <&vcc5v0_sys>;
-+		pwms = <&pwm1 0 50000 0>;
-+		#cooling-cells = <2>;
-+	};
-+
- 	sound {
- 		compatible = "simple-audio-card";
- 		pinctrl-names = "default";
-@@ -591,6 +600,36 @@ &i2s6_8ch {
- 	status = "okay";
- };
- 
-+&package_thermal {
-+	polling-delay = <1000>;
-+
-+	trips {
-+		package_warm: package-warm {
-+			temperature = <50000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+
-+		package_hot: package-hot {
-+			temperature = <60000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+	};
-+
-+	cooling-maps {
-+		map0 {
-+			trip = <&package_warm>;
-+			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
-+		};
-+
-+		map1 {
-+			trip = <&package_hot>;
-+			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
-+		};
-+	};
-+};
-+
- &pcie2x1l0 {
- 	reset-gpios = <&gpio4 RK_PB3 GPIO_ACTIVE_HIGH>;
- 	vpcie3v3-supply = <&vcc_3v3_pcie20>;
--- 
-2.50.1 (Apple Git-155)
-
+#syz test
 
