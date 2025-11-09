@@ -1,188 +1,145 @@
-Return-Path: <linux-kernel+bounces-891795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B556BC4383E
-	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 04:38:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA2BC4384D
+	for <lists+linux-kernel@lfdr.de>; Sun, 09 Nov 2025 05:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63F9E3B2AFF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 03:38:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 646833AFE42
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Nov 2025 04:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AFC20468D;
-	Sun,  9 Nov 2025 03:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285602144CF;
+	Sun,  9 Nov 2025 04:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHGMEpVI"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+xddn9q"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7924C38DE1
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 03:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E9E1E9B3F
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Nov 2025 04:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762659491; cv=none; b=aRQzqrRYlcQc0Uz18UbSGQXrxpTo+CoMkqYs0XhhKxXo1YgHAsWRBqG2SDojOkZajs9KVHW8jtb8qDk7EphWFSBvKTxFLFi6O4dLfmqlb2S2F7QljarC/TvUcKq/vDcF4/BzUMLkszEAcK7vf3cieRMarv3lk1TzSfz+d2rSrc0=
+	t=1762661094; cv=none; b=AHfSVMC/RlIpDc2iYLh+zlo9MRhN755gvjrI4+/AsGE+Zla5yexSpQXN7zljKAPx+hEmWyHk65mN8geLMq57XC49m4U+wUF3lr1CPd4SbpNAHMlmZs0neJ+IaoYBdtPvRh/nUtM5aXmMXYmXeFKEwVrrwHyBLVgQ0EYYV43qfXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762659491; c=relaxed/simple;
-	bh=xorGoL2/JFvg+z+FhPP7vCsuxkoPU25bF4A2iGRn9+4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FAJd317suLuCINBU3b+sRX8urIqBL8Nb6tI0TEuJsX0gjEmgomZFN4YsrnhW+Rc9qZOeZpzFhvoAuvhj9tMWRLoqL/x6fZNelbpg3hvUVH4ZS4Pc/l4HCDKarGQi4/n8UUMnEwvRbMOUFzM322m58c5TJCGNRz1TebUFeuy0gLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHGMEpVI; arc=none smtp.client-ip=209.85.216.54
+	s=arc-20240116; t=1762661094; c=relaxed/simple;
+	bh=vy7e0Uz1+HoY2uFB4YSEuZK75o24i9fXUAPPGgAPgzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ovc+lcs7oXPQPnM56xI/9fNfJXsvg4VHipvuMt69IrU6dywtpQnFRQlciCelN5aVQGzGMrbl0o7iD/D58UbYYFCnuWMYfoXXcbSbHsQH70RTsFT7jl1AcSukdkI8v4kkp6ieBFICPhxW4L6v9iFMB/OnoysRYdnfAt1rFyk+p7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+xddn9q; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3436a97f092so1332872a91.3
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 19:38:09 -0800 (PST)
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b62e7221351so1654372a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Nov 2025 20:04:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762659489; x=1763264289; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xojEnQEqZiYpsf6DH1un5xJ5IIa/cvi+rBJ7ZwGzNIU=;
-        b=kHGMEpVIIlEQhM0gUHqz98y+qNaf0NAjKz4beeoB4tPloJD/s2sKMnDjGrDCWfnqzZ
-         tgxr21Jdpe+6fcDYxiNFdH8ByraEAiNuudQ3ET944X4i3BmV+hDVVi02+CLs5khLMeRX
-         hnetA3UcmhUc+gZ+PBPKM211K6e2yCU/TZ862+z0tfK2fFo2sMzl1LMrLsnY/UF0V37X
-         AVVROnfzIx4V3U6YagoflKT9rQ/2kiN52b79n/DvJc2NxP2xY2fG4G1bnpBUKuIjFRmG
-         TMqFSMH61LFJc23tzadB9LTU7upFduTE/+t+Sdz0lY6KGkcSko7BbopJkbGny5jN6bFP
-         sw5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762659489; x=1763264289;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762661092; x=1763265892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xojEnQEqZiYpsf6DH1un5xJ5IIa/cvi+rBJ7ZwGzNIU=;
-        b=JdDkPVNBXSh7Ppv5L19L00epFqH8b3sXFpDKzUBWtCm+AZVKOLHXbKL5McduQaOtVl
-         AtrD1QJNz3Qg6G3vPTVWVn6TEcvgokvUz9GaS1JV3I+jLc4jZkW0S8key5Ebp688XiDk
-         KLyPFlsxNrT2fHX9DH+HG0kzq3pUmEAhNUzw7dyfcZ7xAu+FI+n+M8CJE9WSVXUjCwFZ
-         IAYoACVcCP3FOAXXCPSi4dVrCL/xE304b9t3B/sjKQF/M286KpFosI1/CVVBHx6OCKfn
-         dFsxyzfUsgkJzKzmnnPQoc1HUdhp9Wdo6otb5mVUP+8Wg1RAK5ZSQwr/ub6myB7exrzI
-         Xb0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUVw7pzN3go8djDOkZLis8MTPm0VKcjqbLHWJRuQBx+ZtZQe7Q4MSunoC+Binxv10zUIqDxRMNSnW2y19M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlz5lWunLTc/LNL9KFpJxV/a/0lvioR8uOR84kL9gQBxHTl0uS
-	fBv9eblRVarHtUjiuD2S4qfyH2tKe71sr7+jsGcWf19gRTQ9wpgip7QR
-X-Gm-Gg: ASbGncvQVf5xmELI3BvErb7aoY1lHwPZ8hdm+bjaT1BHnJKqETPMNrX9Io9ysghxf1v
-	TKP6DRS59M3Xao4jpCZ0FCcffTjy3l7PqgXhqSaiZCJ2YuFVFtysj41a3wMt8ClT7MqvEfT83H6
-	2fNQm3zq+aIlfEjrCugnzCtH7MIevSLU7M/JkefDN5MCukrrHS3FYRDlmqIjijBaNg6tiypNjm0
-	DIGv3ERvvGoTmcC0CHV0MOJGsXr8XMLpEguUDIiuYrfDa0iZ/TWJJxcBVmXH+QnkXs7PggMTSV6
-	l+6RsZOOYTPVrYaeqthCOw3KVln19xikw4UvAQT8gfkwtIy4ztLISpfZJ0/eWJzJfz3qfGJu+HJ
-	5nRO2Ps1UfLojAJU3tv5p3/gUGhnblNw2O9ntzG6dymC9T4WjEnXUlPNvJHH3gGXf7baYMnsMbg
-	jxGtw4/CpxyByJ6U4T9VfiCawGKvoDZ5Y=
-X-Google-Smtp-Source: AGHT+IEnMnLgV+RGsjYDaxeUICu3OiuqhDB7mJSu/fMdhk1sBQYN0RXJDZfBHv8BvFd1j8p1DOQD+A==
-X-Received: by 2002:a17:902:fc4b:b0:295:50f5:c0e1 with SMTP id d9443c01a7336-297e5628672mr55506935ad.15.1762659488588;
-        Sat, 08 Nov 2025 19:38:08 -0800 (PST)
-Received: from lakshmi-Latitude-5330.. ([2406:7400:51:9668:cf49:d10e:b8f5:581d])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3436c3d7dddsm3532925a91.7.2025.11.08.19.38.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 19:38:08 -0800 (PST)
-From: Lakshmi Patil <lakshmi16796@gmail.com>
-To: 
-Cc: lakshmi16796@gmail.com,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: Lakshmi Patil: dt-bindings: misc: Add Xilinx AXI FIFO MM S controller binding
-Date: Sun,  9 Nov 2025 09:07:49 +0530
-Message-Id: <20251109033751.334711-1-lakshmi16796@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=Hv9xrZ2yv0nmyGUfiS3/1XZ0Dl71alHT6BglkhqZupw=;
+        b=R+xddn9qEX31BHz7cYv01PqV8p25v0QuFsKYxA0C/IQm1XwW7VYxjTb7UlZbTDq3OJ
+         jQfTPnjxez/77WZHDQa5r1B1qNsKIOGCwWDevipLCgh17SJ7hYkDK3LtMgjMx+Nv4dPm
+         1dXPGRRe2GD+ttMo6PaOcurqjk4tWG6F5sma5iYgFoWTRKf4/mu9WP3mH9YqUCyaJ3ch
+         CuxcuUldhHqzd74+mzyODlhoXrm4q3OjvabdigHJj87ILWZckp5/9Vx3CEjSffef2324
+         LOAY80tC8ICiyC0GxI3gxlOuBq4VdaFAppeLmKC6gmOMqNGO31DUOF+cPzk8jJ4JqJvq
+         Cu4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762661092; x=1763265892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Hv9xrZ2yv0nmyGUfiS3/1XZ0Dl71alHT6BglkhqZupw=;
+        b=Rsa8pELkbWhkUA7lPwogl4CnnaqqiV/9/YeeVMYDOSBr9FiLmtxXYQhLiprjgs8K8w
+         V146RI3DEJM6cBz6KXVUgcePd8tzVrEFdNLaxlpwWJT/lEFC1K2pAkudd+ODNqkJpcl+
+         8dkdTzciBVVfD1F6Ru1PiTFtHJthC2P1qBFguDkiaj8qFOY7tVaTBiOiwZQ1s6GRk2bl
+         bM96DzbqBG0eez9rsvhIwo0KenKszVWYbB410ZbS7uz0QZyfvw3wzc5FLALI3BM5IkuX
+         BqOULjdZvm60fToRTEAM5S7GS2jFfiIIZhWzC1VqRI7Mq0VllFboYho9D2X6a0dbGz7E
+         kxGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUO7hNiCnSUSGYC3DSsArjAAAI+Ba+uOa04vgYi+gGhuGux6JZkLapOv4AAZV0kPJPpYQPG5aOeKJSomhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyavzsGfOwYrdkrR1ZlVc0RY7KZUQktJ/Wtp3x+pLfSnuvyFLHW
+	z0RU3oC4Ov3V1I+uVeV7OuG52shvz3QOmk32/C6142n/YK7aGawcxtYkZTNfYUY35tp6vlJQ6bp
+	otTmwosJ5CVdeYixmQtRZce5FxFoS3eI=
+X-Gm-Gg: ASbGnct8VG0RKrFBW5foUYvYuYRboACtrmsOFRqTT5lLiccR6f82Z2YT41l5uroRFeO
+	c3jIiX2soHG5PYYivVpl1wkcyg0277Vu1H6zK2UnlnfkhTymGDP+6Pa7R8Rsd9xFVLiyIpt5X6F
+	emCRhcx3nSELYhjHbLbANNJRobF9FONIcTFZvVmeHroA4mWunizFOQSXkeqBJ76AC52M44Hv/ZE
+	Ji2dLHMZGLPm78pcZzpWY5Q8HKP7jzaAhGZhZeNft8Ve/Ld24elB0+3cm+lVHzTQdXG0UYJs1zu
+	T4s08nn/jWKmbF4zJYpCTA5SmumaraHmTO5/jqNI6Hpf4uAvsGqrl4HU
+X-Google-Smtp-Source: AGHT+IEcGZVVTcMhYTPoqkW+BIztOhsUvcA0pcYzLEUPTNs1B9rap7L/jCYqurq1olrU2M+Ac1pBzPS7A+rk7X+tkU4=
+X-Received: by 2002:a17:902:ec8d:b0:295:586d:677f with SMTP id
+ d9443c01a7336-297e540d259mr55218165ad.10.1762661092036; Sat, 08 Nov 2025
+ 20:04:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251107074145.2340-1-gautham.shenoy@amd.com> <CAJZ5v0jS_uNRz=3ZQQLsChf2V3UUvhf6BZ+MBL0WMv+rcW4H6w@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jS_uNRz=3ZQQLsChf2V3UUvhf6BZ+MBL0WMv+rcW4H6w@mail.gmail.com>
+From: Chris Harris <chris.harris79@gmail.com>
+Date: Sat, 8 Nov 2025 20:04:40 -0800
+X-Gm-Features: AWmQ_bl5lUahx-ddHLXQbQC5JBoYj958vCD7_rQlbtTof8rtQnJKJu5Jt7SEWN4
+Message-ID: <CAM+eXpe1inRG9Rbb7y=tGOWrKrQ0nnXut09MEtXwwV35Zc-tCw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] CPPC/amd-pstate: Fixes to limit actions to online CPUs
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Len Brown <lenb@kernel.org>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Yunhui Cui <cuiyunhui@bytedance.com>, 
+	Jeremy Linton <jeremy.linton@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Ionela Voinescu <ionela.voinescu@arm.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Warning found by checkpatch.pl script.
+Hi, I've tested all five v2 patches and have observed no issues in the
+use case the bug report was based upon.  I continue to successfully
+receive the desired amd-pstate scaling driver when 'nosmt=3Dforce' and
+'amd_pstate=3Dpassive' are set.  I've not tested other cases/scenarios
+for which the additional hardening/patches may have been intended.
 
-Add the Device Tree binding documentation for the Xilinx AXI FIFO MM S
-(AXI Memory Mapped to Stream) controller. The core provides a FIFO-based
-interface between AXI Memory-Mapped and AXI-Stream domains and is used in
-Xilinx SoC and FPGA designs to offload DMA-style data transfers.
+Thank you again for the rapid efforts that went into this solution.
 
-The binding describes the required properties such as compatible string,
-register region, clock, reset, and interrupt line.
+Chris Harris
 
-Signed-off-by: Lakshmi Patil <lakshmi16796@gmail.com>
----
- .../bindings/misc/xlnx,axi-fifo-mm-s.yaml     | 69 +++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml
-
-diff --git a/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml b/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml
-new file mode 100644
-index 000000000000..d02a7cf9ac0f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/misc/xlnx,axi-fifo-mm-s.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Xilinx AXI FIFO MM S Controller
-+
-+maintainers:
-+  - Lakshmi lakshmi16796@gmail.com
-+
-+description: |
-+  The Xilinx AXI FIFO Memory Mapped to Stream (MM2S / S2MM) core provides
-+  a FIFO-based interface for moving data between AXI Memory-Mapped and
-+  AXI-Stream domains. It supports both transmit and receive paths
-+  and is typically used to offload DMA-style data transfers in
-+  Xilinx SoCs or FPGA designs.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - xlnx,axi-fifo-mm-s-4.1
-+
-+  reg:
-+    maxItems: 1
-+    description:
-+      Base address and size of the AXI FIFO MM S register space.
-+
-+  interrupts:
-+    maxItems: 1
-+    description:
-+      Interrupt line from the AXI FIFO block, if available.
-+
-+  clocks:
-+    maxItems: 1
-+    description:
-+      Reference clock for the AXI FIFO interface.
-+
-+  clock-names:
-+    const: s_axi_aclk
-+
-+  resets:
-+    maxItems: 1
-+    description:
-+      Reset line for the AXI FIFO interface.
-+
-+  reset-names:
-+    const: s_axi_aresetn
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - resets
-+
-+additionalProperties: true
-+
-+examples:
-+  - |
-+    axi_fifo_mm_s@43c00000 {
-+        compatible = "xlnx,axi-fifo-mm-s-4.1";
-+        reg = <0x43c00000 0x10000>;
-+        interrupts = <0 59 4>;
-+        clocks = <&clkc 15>;
-+        clock-names = "s_axi_aclk";
-+        resets = <&rstc 0>;
-+        reset-names = "s_axi_aresetn";
-+    };
-+
--- 
-2.34.1
-
+On Fri, Nov 7, 2025 at 9:41=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.org=
+> wrote:
+>
+> Hi,
+>
+> On Fri, Nov 7, 2025 at 8:42=E2=80=AFAM Gautham R. Shenoy <gautham.shenoy@=
+amd.com> wrote:
+> >
+> > Hello,
+> >
+> > This is the v2 of the patchset to restrict certain actions to only
+> > online CPUs instead of present CPUs.
+> >
+> > The v1 of this patchset can be found here:
+> > https://lore.kernel.org/lkml/20251105143851.4251-1-gautham.shenoy@amd.c=
+om/
+> >
+> > Changes between v1 --> v2:
+> >
+> >  * Picked up the Reviewed-by tags from Mario for the first four
+> >    patches
+> >
+> >  * Picked up the Tested-by tags from Chris for the first two patches
+> >
+> >  * Added a fifth patch to fix calling of cppc_set_auto_sel() for only
+> >    online CPUs in the amd-pstate driver code (Mario)
+> >
+> >
+> > Gautham R. Shenoy (5):
+> >   ACPI: CPPC: Detect preferred core availability on online CPUs
+> >   ACPI: CPPC: Check _CPC validity for only the online CPUs
+> >   ACPI: CPPC: Perform fast check switch only for online CPUs
+> >   ACPI: CPPC: Limit perf ctrs in PCC check only to online CPUs
+>
+> The above 4 patches applied as 6.18-rc material.
+>
+> >   cpufreq/amd-pstate: Call cppc_set_auto_sel() only for online CPUs
+>
+> And I'm leaving this one to Mario.
+>
+> Thanks!
 
