@@ -1,202 +1,119 @@
-Return-Path: <linux-kernel+bounces-893745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAECC483A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:10:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091F6C483EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B46E84F3746
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E5B423193
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C6A2882AA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14482F6931;
+	Mon, 10 Nov 2025 17:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/f8290t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262F828D829;
 	Mon, 10 Nov 2025 17:04:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D2E28314E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762794248; cv=none; b=uY71AUnGYjdJT9w1wqfM+AQJ+kkIlVuuOIdhGAq0xAv1GnXExlzfnheWHLriKGsLEDSY2so9uBlNukL88XnxO7w3GdKNiiCZUglMuIa+It7Lk+QjBEIIZYuTiVnq+vAVw+Pab576O4pa+L8F2GcXbVkxMdPPROHnMs58DHkdCYg=
+	t=1762794249; cv=none; b=pUbX9ls2BYefcEXjHN00vxm1i4F164H7eTk7CdMKu5OH9yBivweV64THPckM5NeZDy/C5OG4nTqAImymHUxPIx6nglMgT8cQOPRXb/RJvLQZHRq5oL/BWBgNPb7OCjUgETkGEjzFeG5Mk5FJmqH5u987B8iZKxIdxOJLbAiqAcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762794248; c=relaxed/simple;
-	bh=9p9th6oFGnGWagzvVd99AelZoOneibcjQgWEEE9+TDw=;
+	s=arc-20240116; t=1762794249; c=relaxed/simple;
+	bh=GlWEUJ81HuML3QniPfob+FZyBGIp/OgbbJgntqBpGV0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MO5Met5Ak+R+U3DDBKtUKEUSF9ZTCW20BogpEZ25GxbdvZ3Zgq/NZbFxSyduiybh6eiCas0MfCr5Nic6DOEyPr5HRMUj4+KPBvykChc3G379VB0UTdQFwCbmNs4r3AKiRh+AC0xOLrglp4V7Lu+T3g682QsnCVloWNc8wxKjdM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4BF422B;
-	Mon, 10 Nov 2025 09:03:58 -0800 (PST)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8ADF43F66E;
-	Mon, 10 Nov 2025 09:04:01 -0800 (PST)
-Date: Mon, 10 Nov 2025 18:04:04 +0100
-From: Beata Michalska <beata.michalska@arm.com>
-To: Bowen Yu <yubowen8@huawei.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	catalin.marinas@arm.com, will@kernel.org, ptsm@linux.microsoft.com,
-	linuxarm@huawei.com, jonathan.cameron@huawei.com,
-	zhanjie9@hisilicon.com, prime.zeng@hisilicon.com,
-	wanghuiqiang@huawei.com, xuwei5@huawei.com, zhenglifeng1@huawei.com,
-	zhangpengjie2@huawei.com
-Subject: Re: [PATCH 1/3] arm64: topology: Improve AMU-based frequency
- calculation
-Message-ID: <aRIbBBBl8mxd2rtC@arm.com>
-References: <20251104075544.3243606-1-yubowen8@huawei.com>
- <20251104075544.3243606-2-yubowen8@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WYflYcfTK1r2rQUZcGIdzeKNqaJFwcZecFJnEpe1YrmFx6CfoN2yjCSmYhDqZXYpTub+4mce3PcON4ga5KxaTimcwwVseJUGL+zxLxO/qqhT1D50ZHVL6pL7I8ZIMNqooW5Mwwv0l3s+eal4EmKZuhlH75esnUAOS1P/+plQ1pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/f8290t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E8DDC4CEF5;
+	Mon, 10 Nov 2025 17:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762794248;
+	bh=GlWEUJ81HuML3QniPfob+FZyBGIp/OgbbJgntqBpGV0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V/f8290tO0Qum103i3UTbYvQJViWqXdRzOLaLZpBVpzFJbKTDf8GfzuY7aTcAvTRA
+	 /jF6uSv2pWoAceJx7WXTgkYDQbOUQid0BbI5xyZK/DMk/dP5EkZKnznNi3d9XAUS0w
+	 U5uoiA7WuqFmoo8FhrRcjTfambWpwdFgjro4beBd+36XfArmfbcp+v2EUD5ikr/EAm
+	 fALV09seY/gdEf074FGUCjQxQd8DiXYQGY2oAZ5Ogc0Iu49+IWaiGixzUHWtgtdwMW
+	 A2VqkOPYjDao3JHSacdLMAIiR2MVf4ykzKwnyTHKmtZE8u1pQNhQ6iKaS0oriFO0p8
+	 iGTOVCHfe65Ig==
+Date: Mon, 10 Nov 2025 17:04:05 +0000
+From: Mark Brown <broonie@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: spi: Add spi-buses property
+Message-ID: <aRIbBVNzo-7EYJbl@finisterre.sirena.org.uk>
+References: <20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
+ <20251014-spi-add-multi-bus-support-v1-1-2098c12d6f5f@baylibre.com>
+ <20251021142129.GA34073-robh@kernel.org>
+ <14ae0769-341b-4325-b925-7bba6d57bbdf@baylibre.com>
+ <20251030135126.GA3749313-robh@kernel.org>
+ <f731ebd7-6494-45f5-861d-05a2926cc5fa@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JY5VEXwAAsIpIsIR"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251104075544.3243606-2-yubowen8@huawei.com>
+In-Reply-To: <f731ebd7-6494-45f5-861d-05a2926cc5fa@baylibre.com>
+X-Cookie: You dialed 5483.
 
-On Tue, Nov 04, 2025 at 03:55:42PM +0800, Bowen Yu wrote:
-> The current approach of reverse-calculating CPU frequency from capacity
-> values introduces quantization errors due to intermediate scaling of
-> arch_scale_freq_capacity, which results in the calculated frequency having
-> only 1/1024 resolution.
-> 
-> This patch:
-> 1. Directly computes frequency using AMU counters in amu_scale_freq_tick():
-> freq = (core_cycles_delta * timer_freq) / (const_cycles_delta * 1000)
->  - core_cycles_delta: Measured CPU cycles
->  - timer_freq: Architectural timer frequency
->  - const_cycles_delta: Reference cycles from fixed-frequency timer
-> 2. Returns pre-computed avgfreq in arch_freq_get_on_cpu()
-> 
-> examples:
-> Before change
-> [root@localhost ~]# cat /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_avg_freq
-> 2297851
-> 2297851
-> 2295312
-> 2297851
-> 2297851
-> 2295312
-> 2297851
-> 2295312
-> 2297851
-> 2297851
-> 2297851
-> 2295312
-> 2295312
-> 2297851
-> 2297851
-> 2297851
-> 2297851
-> 2300390
-> 2297851
-> 2297851
-> 2297851
-> 
-> After change
-> [root@localhost ~]# cat /sys/devices/system/cpu/cpufreq/policy*/cpuinfo_avg_freq
-> 2299177
-> 2298117
-> 2299188
-> 2297330
-> 2296530
-> 2298817
-> 2298434
-> 2298986
-> 2298596
-> 2299395
-> 2299560
-> 2298446
-> 2299108
-> 2299294
-> 2298707
-> 2298453
-> 2298632
-> 2299218
-> 2297962
-Based on your numbers the shift is on average ~0.055–0.057%.
-I'm not entirely convinced it is worth it, especially that this is an average
-frequency. What is the use case here if < 0,2% makes a difference ?
 
----
-BR
-Beata
-> 
-> Signed-off-by: Bowen Yu <yubowen8@huawei.com>
-> ---
->  arch/arm64/kernel/topology.c | 20 +++++++++++---------
->  1 file changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 5d07ee85bdae..c0dbc27289ea 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -20,6 +20,7 @@
->  #include <linux/percpu.h>
->  #include <linux/sched/isolation.h>
->  #include <linux/xarray.h>
-> +#include <linux/units.h>
->  
->  #include <asm/cpu.h>
->  #include <asm/cputype.h>
-> @@ -144,6 +145,8 @@ int __init parse_acpi_topology(void)
->   */
->  static DEFINE_PER_CPU_READ_MOSTLY(unsigned long, arch_max_freq_scale) =  1UL << (2 * SCHED_CAPACITY_SHIFT);
->  static cpumask_var_t amu_fie_cpus;
-> +static DEFINE_PER_CPU(unsigned long, core_delta);
-> +static DEFINE_PER_CPU(unsigned long, const_delta);
->  
->  struct amu_cntr_sample {
->  	u64		arch_const_cycles_prev;
-> @@ -246,6 +249,7 @@ static void amu_scale_freq_tick(void)
->  	 * arch_max_freq_scale and the use of SCHED_CAPACITY_SHIFT.
->  	 */
->  	scale = core_cnt - prev_core_cnt;
-> +	this_cpu_write(core_delta, scale);
->  	scale *= this_cpu_read(arch_max_freq_scale);
->  	scale = div64_u64(scale >> SCHED_CAPACITY_SHIFT,
->  			  const_cnt - prev_const_cnt);
-> @@ -253,6 +257,7 @@ static void amu_scale_freq_tick(void)
->  	scale = min_t(unsigned long, scale, SCHED_CAPACITY_SCALE);
->  	this_cpu_write(arch_freq_scale, (unsigned long)scale);
->  
-> +	this_cpu_write(const_delta, const_cnt - prev_const_cnt);
->  	amu_sample->last_scale_update = jiffies;
->  }
->  
-> @@ -288,7 +293,7 @@ int arch_freq_get_on_cpu(int cpu)
->  	unsigned int start_cpu = cpu;
->  	unsigned long last_update;
->  	unsigned int freq = 0;
-> -	u64 scale;
-> +	u64 delta_core_kHz;
->  
->  	if (!amu_fie_cpu_supported(cpu) || !arch_scale_freq_ref(cpu))
->  		return -EOPNOTSUPP;
-> @@ -340,14 +345,11 @@ int arch_freq_get_on_cpu(int cpu)
->  			break;
->  		}
->  	}
-> -	/*
-> -	 * Reversed computation to the one used to determine
-> -	 * the arch_freq_scale value
-> -	 * (see amu_scale_freq_tick for details)
-> -	 */
-> -	scale = arch_scale_freq_capacity(cpu);
-> -	freq = scale * arch_scale_freq_ref(cpu);
-> -	freq >>= SCHED_CAPACITY_SHIFT;
-> +
-> +	if (check_mul_overflow(per_cpu(core_delta, cpu), arch_timer_get_cntfrq(), &delta_core_kHz))
-> +		return -EINVAL;
-> +
-> +	freq = div_u64(delta_core_kHz, per_cpu(const_delta, cpu) * HZ_PER_KHZ);
->  	return freq;
->  }
->  
-> -- 
-> 2.33.0
-> 
+--JY5VEXwAAsIpIsIR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Oct 30, 2025 at 05:42:44PM -0500, David Lechner wrote:
+> On 10/30/25 8:51 AM, Rob Herring wrote:
+
+> > But it can't really be 2 independent buses/controllers unless the ADC=
+=20
+> > has 2 completely independent interfaces, right?
+
+> Correct.
+
+> The proposed property really only concerns the data lines (tx/rx). It doe=
+sn't
+> care if there is 1 or 2 SCLK lines and it doesn't care if there is only 1=
+ CS
+> line.
+
+> So maybe spi-data-buses would be a better name for the property? Or
+> spi-data-ports (using the NXP FlexSPI controller docs terminology)?
+> Or spi-data-channels?
+
+This bindings discussion seems to have stalled out?
+
+--JY5VEXwAAsIpIsIR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkSGv0ACgkQJNaLcl1U
+h9ChyQgAg3ZRTKZiHLuTOHpkH+zC1xu6qXXVEgDCvya8kcGtk1SZuS/Z9ctSXQRd
+AUAwuRDDY51+uQVewX3TPXBjsfJK1c/3CQOWZ2boNWgOrpHcN4WhQESem7O9eYue
+ONdSa6DpVU0E+SLo0TYkNBSEeE0WKEhGGlYjW0CvIlHiZBHo7zxzqxt7lXPd48um
+2pYqZMdC/h5yeahRJ8Cjl2ZdJLKGvqnE+DP0UBLoHxNKxDznMCwFwzxHL8YLWsjn
+dxoMNisrtyJSeFBHrjdHPHFEeaZD4Pn2lvk4sCdi+vG/tWeGUVIU/Lnp9YjK96/D
+Q+Xe+sZVvakT+7qwg5XHHYOY5wVc8g==
+=XKp/
+-----END PGP SIGNATURE-----
+
+--JY5VEXwAAsIpIsIR--
 
