@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-894319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53A05C49BDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:27:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCEAC49BE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:27:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CFF4334A872
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:27:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C089934B8F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9E22FFF94;
-	Mon, 10 Nov 2025 23:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAA0305E09;
+	Mon, 10 Nov 2025 23:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PUifzqSs"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wJ1vlVba"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D452F691F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2166422FE11
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762817226; cv=none; b=ORyQts9oJ26tm41yCnMszprgKYcFqOgOYPv1Ch8Fd5rcNh9g6PUI5OxRrjOhfnvaf82aUBbyNTotkmHQgXuSvBNK3tYBSMwJJDA4CiLbk2cUU6NtNDlg5s4Yxi4aa1dRoK1lEjYRYPGtAzBHZO4kudZBiN1ImWSBltXNtsGPUpU=
+	t=1762817230; cv=none; b=A7Oz1IzExOyI+g36O0WTiTq5yBWma02rvPWidyRZ37Cgj7pVRGjXRIoGLevlZHVM6V8Bjm7kHsyWQH9VtTigTYRqhwMdk3nWmQERQmG6ATmhdJ/SpNJH/pp3UlKqdDZGPch8OEBY00RUC3xT0bcfWnKzLoSSPAoTvS9/YwMkHXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762817226; c=relaxed/simple;
-	bh=ogJdXeINqQWlpc3T1UEK6sCoWh8eJk5cHClB8hzYApw=;
+	s=arc-20240116; t=1762817230; c=relaxed/simple;
+	bh=WrgPfzyyb/jE9uQS/HLYwnkLtnXNRt0RBtDv5xhqIVI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s8w3PVQAj9ar19tfNlymxhbfVoAjNSX5LVt175YtkPhdNedcPT/X3mqZO2N/2axw6QLagrr0cDE2rgAr31h7nfUXv26V+DnYpr8tpX5TlsDz2g8+rKIlxJPkN5b5UjixiSUzmz/u9aX5dzHSGqwJTLDZlEzphv4SSKehhmjwj0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PUifzqSs; arc=none smtp.client-ip=91.218.175.172
+	 MIME-Version; b=c3JWBbsC67OF3GeaXv1bxxHy/csvf/DpDO5UHjnYjpxVDomxNiRi/mxNN+3T3nvyNmZ8UwftT3awqdOEB6G91jHLvTbyqWgx9L0NaLzeeIQ4JISFhByM4DFy134k+ZJ3A7JWeQZWMAnsJlRL1WLmlqiMN2AjAwffs4tZBYJ+dxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wJ1vlVba; arc=none smtp.client-ip=91.218.175.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762817222;
+	t=1762817224;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UZWKobXDfLkd7eERlrIkQnCB9bLEgjEGKzWLVchtxf0=;
-	b=PUifzqSsCvaC+q98arBe8udyvqY/HJ7NptyD9RL/9QuYJ4VChad7VyBR61qB2+AfGt1RuP
-	C0Z8H1iD+qohsuFjf2Wr76e1xkFvwv3/TdAhnsUyTPP4AxJIpfkqLDTBE6MGCrm2qI6uOD
-	BE2NkUimswhxkXh02YSsGW5W1Ou0boc=
+	bh=2+2lG7hu9KlvT0KTN68rDvTTKs1ubRL9Fu8DwYe6/Oc=;
+	b=wJ1vlVbazmoSgF+uhn8+wox7Z8BybdpC4UrtnnMmnm6eikuDigHD8GjNe23KDPfEN+AQ1G
+	e0hLVdJHAeqgoJs6R2Z4p9yhFh8Hhjw76FdVREAsH3+VZa7bBRjPnvX7oH1wP37ulemIUL
+	JlfHaS92P0q7iVtNycn8Lj6hct6Hh2Y=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: Sean Christopherson <seanjc@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>,
@@ -48,9 +48,9 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>,
 	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH v3 01/14] scripts: Always return '2' when skipping tests
-Date: Mon, 10 Nov 2025 23:26:29 +0000
-Message-ID: <20251110232642.633672-2-yosry.ahmed@linux.dev>
+Subject: [PATCH v3 02/14] x86/vmx: Skip vmx_pf_exception_test_fep early if FEP is not available
+Date: Mon, 10 Nov 2025 23:26:30 +0000
+Message-ID: <20251110232642.633672-3-yosry.ahmed@linux.dev>
 In-Reply-To: <20251110232642.633672-1-yosry.ahmed@linux.dev>
 References: <20251110232642.633672-1-yosry.ahmed@linux.dev>
 Precedence: bulk
@@ -62,34 +62,40 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-runtime.bash always returns 2 (or 77 in one case) when a test is
-skipped. But two cases are missed and return 0. Fix them.
+The check to skip the test is currently performed in the guest code.
+There a few TEST_ASSERTs that happen before the guest is run, which
+internally call report_passed(). The latter increases the number of
+passed tests.
+
+Hence, when vmx_pf_exception_test_fep is run, report_summary() does not
+return a "skip" error code because the total number of tests is larger
+than the number of skipped tests.
+
+Skip early if FEP is not available, before any assertions, such that
+report_summary() finds exactly 1 skipped test and returns the
+appropriate error code.
 
 Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 ---
- scripts/runtime.bash | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ x86/vmx_tests.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/runtime.bash b/scripts/runtime.bash
-index 6805e97f90c8f..0cbe2695948b8 100644
---- a/scripts/runtime.bash
-+++ b/scripts/runtime.bash
-@@ -103,13 +103,13 @@ function run()
+diff --git a/x86/vmx_tests.c b/x86/vmx_tests.c
+index 0b3cfe50c6142..4f214ebdbe1d9 100644
+--- a/x86/vmx_tests.c
++++ b/x86/vmx_tests.c
+@@ -10644,7 +10644,10 @@ static void vmx_pf_exception_test(void)
  
-     if [ -z "$GEN_SE_HEADER" ] && find_word "pv-host" "$groups"; then
-         print_result "SKIP" $testname "" "no gen-se-header available for pv-host test"
--        return
-+        return 2
-     fi
+ static void vmx_pf_exception_forced_emulation_test(void)
+ {
+-	__vmx_pf_exception_test(NULL, NULL, vmx_pf_exception_forced_emulation_test_guest);
++	if (is_fep_available)
++		__vmx_pf_exception_test(NULL, NULL, vmx_pf_exception_forced_emulation_test_guest);
++	else
++		report_skip("Forced emulation prefix (FEP) not available\n");
+ }
  
-     if [ -z "$only_group" ] && find_word nodefault "$groups" &&
-             skip_nodefault; then
-         print_result "SKIP" $testname "" "test marked as manual run only"
--        return;
-+        return 2
-     fi
- 
-     if [ -n "$arch" ] && [ "$arch" != "$ARCH" ]; then
+ static void invalidate_tlb_no_vpid(void *data)
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
