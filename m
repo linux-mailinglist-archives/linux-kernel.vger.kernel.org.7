@@ -1,250 +1,316 @@
-Return-Path: <linux-kernel+bounces-892985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04214C4647F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:32:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 745B3C46495
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:33:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0227A1897858
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:31:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 29F424EBB6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAF030BF67;
-	Mon, 10 Nov 2025 11:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BE330AD1F;
+	Mon, 10 Nov 2025 11:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W+L0gK5Q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvyuPw29"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8AE2F657C;
-	Mon, 10 Nov 2025 11:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4851D7E41
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762774241; cv=none; b=jjxLXDns8zdKDl5jkhpAe2uZt7Bpa3a68s2qQPC/DP7qeNUM9Rc5ouBS0QimLVWhQUIvR9KADRiU74rResL0zr3XIGaF7c4SRR8PwGagjlQEx0KogElK3SpztO3Puv/QfQC0OrT72eTgIwLPuVcwZUMN9lX58bA6LTmGBqnSqhg=
+	t=1762774225; cv=none; b=ndqSozS1Q7OrZXgb3j6ptbr54my5N6yxaW0B5Bwgbek1MqScLH9TlYpSfTt+gbtx0L5va2hXHq1y3L74YBxVFNNZsOdhifs5l01YOO0Iu8V6CStbXDbGtRW63cepX6pXKI1//6HXNMDAmNJb/Qzr8sOxxNLCcRFWkv1wsSkfh7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762774241; c=relaxed/simple;
-	bh=RxfqoO+yHS7u10hkcKNl7hz+iD8IaI6bqSG+tV23NGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F2WcezhE9r0jwbXl62YX9D9+Dda2ht9CDSGT2ayByl8Vx2NVadxnZ9HtCYO1loUBEAIO2D7BKERfALrFVia4ZcIPbMVAPet3Tb/j508Nwy6sd/XHIxycQ0To3+yZVuvIkW5Uk8my/Qorx1s925+9J8mclWfeIZEWMzXvqor8EhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W+L0gK5Q; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762774238; x=1794310238;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RxfqoO+yHS7u10hkcKNl7hz+iD8IaI6bqSG+tV23NGM=;
-  b=W+L0gK5QuH5DtLuKE4/HMopDdQxcnNNdyeu6cypQCh21WyCKA2uw7/tR
-   hOdj7lx9OGRcbc8hZhUckBQSh1+3iW7DLQwJjKnZtY7WSEVh6x75aygi5
-   xeKF4jFiPW10+/3XmokOX0wbHH7QS3kFCwR4TXaAVzCBytNwzc2Y6VxvZ
-   PPsUaA8ZcU9wqFbCNyjvLuQKwFQWUJtLp6b97y9guXzCCOT/U2o9nb9u7
-   QOoglFPhHOqc9/AUslZtct0gImLXqyaR8Dr6VJEa8JuLycviK/xbvmqDf
-   x962Qr9USTtjyII+NfZ+491rzFpaOipfpJa5ZREsmaOrDaD+KA0AwOvcD
-   g==;
-X-CSE-ConnectionGUID: 7d64s8Y7ROqcRpGgLv0btw==
-X-CSE-MsgGUID: HeW4apFDTXWqtKfJ3erGFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="64522245"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="64522245"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 03:30:38 -0800
-X-CSE-ConnectionGUID: CpyNSRr8R8+L7o4h4wO8uA==
-X-CSE-MsgGUID: eNsO4S4xQoaPjpnkFF2swQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="193661718"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 10 Nov 2025 03:30:34 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vIQ6S-0000LH-0z;
-	Mon, 10 Nov 2025 11:30:32 +0000
-Date: Mon, 10 Nov 2025 19:29:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, jfalempe@redhat.com,
-	javierm@redhat.com, simona@ffwll.ch, airlied@gmail.com,
-	mripard@kernel.org, maarten.lankhorst@linux.intel.com,
-	gregkh@linuxfoundation.org, jirislaby@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH 2/3] drm/client: Support emergency restore via sysrq for
- all clients
-Message-ID: <202511101914.Rt1WtmfO-lkp@intel.com>
-References: <20251107142612.467817-3-tzimmermann@suse.de>
+	s=arc-20240116; t=1762774225; c=relaxed/simple;
+	bh=CF3rzU8jIMRswcaMpUzkI1EDHIxMdo134zKxifMVFkw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=klnEe/opcCGFy9x9vBEXx6C4LGxNjt4X4gflnbvBkuCaN3U8a5QZO5+qpKol+Ytr7tEVDMpRD9qHvy7z/3Pz/RaGDIivGm6KbTmd+ttmpAOP3WPKdD5mncvaKWAomY78er7SM4Cr2RbcjCS+JVRhYeQeWe6YlIBm10ns/4q42zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvyuPw29; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47118259fd8so20006305e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:30:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762774222; x=1763379022; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+DHfgELXkhVwbquT5P2ScfIFNktEJf3l1zoswfQXwCs=;
+        b=JvyuPw29R1b4XwvB8XWXt3HFwRFafi/zCHwAnPBI/OcLO5pKCv72IRX4wtlBRJtv8k
+         ChzTBdLPFh33lI3UvijcXe01tye+esFP2aBnEzIL3pGM9iWgy3dIzBkE6nGUsa+4ZrMC
+         cQcTmx8v9+bYMUkQP5WBmAtIiPctE+chivhIu9osb3qqP269qRViRc3tqb6R6hICMeWu
+         Hscjf+5ZvBB66jSohyYwMNKhaVKthBAeZtdsi+c3OfGEZlPjDrtbNd0dfh643lRzL3Eu
+         SU964DGBlQsSQdqFPoEW6cCEX43t+z2JPMTUsNHrHIlmS4B6PZLZU6yAq5Xrx1mEnotm
+         kW+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762774222; x=1763379022;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+DHfgELXkhVwbquT5P2ScfIFNktEJf3l1zoswfQXwCs=;
+        b=tpGz3J49Gs3dUURPNfU/79xdUvNhkLVdYTZycUnFhmyXFBIIzh5W/PI5BQUEWnNj5F
+         wK6Tt2UiuxUdXVVv2xsWY1nBK6dt981S97D/RkXTLRKyufgPIF34IJJCB5OSXp0+kwP/
+         DJDMKZ4MjdnbL5nsMRbDIGycF367nN9pOUxIrI0yhEs7zBNiH/iAQc+lMPeSjtfAFxA7
+         Nbjj8uJysSAFedZC5D3R+VrsMgwTiUzV+t1M2+lbGQqiVx+mvD7ywt0/8iIbeFESFZPm
+         5SK2TPkN5LJrylmLARfW6bt0LW0FGuYapPym00kT653iEArwUQo61x/x9rAFhmTL0Rqf
+         tckg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0oOOh70wgyG8VfpTQnkyMeOumL9NasEsIuzidx5jAoI3qw28qXUt+Uw1X4QDq2K5ZEgBu+/1R1UYqjF4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDAP/+hCRkZv6O6MsNSOOE8mqnwEKvru+tym7eDTLWIj17js/A
+	WuA7D6bb1xXdlxI6bPrjbxssDBwSI+hKccIKpAwMM5H1nRbXbWqkLeDX
+X-Gm-Gg: ASbGnctPplsp6qsGjOI9uQlmDkPrAYXmn7T3FvOjDaL/H+NpPVld32vyEFU06Jtqpwt
+	rrf6XQ/zRvborHMF1NliYtLMeThc5UYfvmmSMIu5tTZ/9dt3i3Y/xok22HwTq23Yxx3fVPwv+d8
+	jaoijdpnMkS3CFFF46U6E/xtTJHGJ3qszLU+SniuN0SXSbQdiDByn4+G81l+2N683aTGlUn0THo
+	oAnGie1CbhMjH9gom6LWXUAxVV/02F8fNMT64kRMiWdsYybnzcCGVaKi9EmejspWFdTdysR8PtS
+	L8ciRTuCC5zDW4763QMo/VXjzzo3aOdYny1jTzhe41C1Jm5psp5s6tQG53920lcLnJN0Peiradk
+	07zm6jmXzxljIApKzptDOva/LIgtbBnVgOQww6RXBeAiK4M15n+9thREj20cqXWY6IkL3VSSQ4I
+	mJoiFr1dyhX5mS9FA=
+X-Google-Smtp-Source: AGHT+IFJfZmt0xxSrdQkoDsqsgPBc19P9epE+8RZNMB3WgQayLAvztXdTXuBwiKABJ42GiyeZr2u3A==
+X-Received: by 2002:a05:600c:46d5:b0:475:d952:342f with SMTP id 5b1f17b1804b1-4777329e142mr57554745e9.39.1762774221527;
+        Mon, 10 Nov 2025 03:30:21 -0800 (PST)
+Received: from Vasilio.Home ([176.26.203.25])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477773f7749sm116462535e9.7.2025.11.10.03.30.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 03:30:21 -0800 (PST)
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Asahi Lina <lina+kernel@asahilina.net>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Xiangfei Ding <dingxiangfei2009@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: [PATCH v7 2/4] rust: i2c: add manual I2C device creation abstractions
+Date: Mon, 10 Nov 2025 11:30:18 +0000
+Message-ID: <20251110113018.51510-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251110112437.50405-1-igor.korotin.linux@gmail.com>
+References: <20251110112437.50405-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107142612.467817-3-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Thomas,
+In addition to the basic I2C device support, add rust abstractions
+upon `i2c_new_client_device`/`i2c_unregister_device` C functions.
 
-kernel test robot noticed the following build errors:
+Implement the core abstractions needed for manual creation/deletion
+of I2C devices, including:
 
-[auto build test ERROR on next-20251107]
-[cannot apply to drm/drm-next drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-misc/drm-misc-next drm-tip/drm-tip linus/master v6.18-rc4 v6.18-rc3 v6.18-rc2 v6.18-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+ * `i2c::Registration` — a NonNull pointer created by the function
+                          `i2c_new_client_device`
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Zimmermann/drm-client-Pass-force-parameter-to-client-restore/20251107-223026
-base:   next-20251107
-patch link:    https://lore.kernel.org/r/20251107142612.467817-3-tzimmermann%40suse.de
-patch subject: [PATCH 2/3] drm/client: Support emergency restore via sysrq for all clients
-config: parisc-randconfig-002-20251110 (https://download.01.org/0day-ci/archive/20251110/202511101914.Rt1WtmfO-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251110/202511101914.Rt1WtmfO-lkp@intel.com/reproduce)
+ * `i2c::I2cAdapter` — a ref counted wrapper around `struct i2c_adapter`
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511101914.Rt1WtmfO-lkp@intel.com/
+ * `i2c::I2cBoardInfo` — a safe wrapper around `struct i2c_board_info`
 
-All error/warnings (new ones prefixed by >>):
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+---
+ rust/kernel/i2c.rs | 153 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 152 insertions(+), 1 deletion(-)
 
-   In file included from drivers/gpu/drm/drm_dumb_buffers.c:35:
->> drivers/gpu/drm/drm_internal.h:64:6: warning: no previous prototype for 'drm_client_sysrq_register' [-Wmissing-prototypes]
-      64 | void drm_client_sysrq_register(struct drm_device *dev)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/gpu/drm/drm_internal.h:66:6: warning: no previous prototype for 'drm_client_sysrq_unregister' [-Wmissing-prototypes]
-      66 | void drm_client_sysrq_unregister(struct drm_device *dev)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   In file included from drivers/gpu/drm/clients/drm_log.c:22:
->> drivers/gpu/drm/clients/../drm_internal.h:64:6: warning: no previous prototype for 'drm_client_sysrq_register' [-Wmissing-prototypes]
-      64 | void drm_client_sysrq_register(struct drm_device *dev)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/gpu/drm/clients/../drm_internal.h:66:6: warning: no previous prototype for 'drm_client_sysrq_unregister' [-Wmissing-prototypes]
-      66 | void drm_client_sysrq_unregister(struct drm_device *dev)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   hppa-linux-ld: drivers/gpu/drm/drm_auth.o: in function `drm_client_sysrq_register':
->> (.text+0x45c): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_auth.o: in function `drm_client_sysrq_unregister':
->> (.text+0x460): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_connector.o: in function `drm_client_sysrq_register':
-   (.text+0x1e90): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_connector.o: in function `drm_client_sysrq_unregister':
-   (.text+0x1e94): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_crtc.o: in function `drm_client_sysrq_register':
-   (.text+0xab8): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_crtc.o: in function `drm_client_sysrq_unregister':
-   (.text+0xabc): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_drv.o: in function `drm_client_sysrq_register':
-   (.text+0x14f4): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_drv.o: in function `drm_client_sysrq_unregister':
-   (.text+0x14f8): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_dumb_buffers.o: in function `drm_client_sysrq_register':
-   (.text+0x20c): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_dumb_buffers.o: in function `drm_client_sysrq_unregister':
-   (.text+0x210): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_edid.o: in function `drm_client_sysrq_register':
-   (.text+0x734c): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_edid.o: in function `drm_client_sysrq_unregister':
-   (.text+0x7350): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_encoder.o: in function `drm_client_sysrq_register':
-   (.text+0x444): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_encoder.o: in function `drm_client_sysrq_unregister':
-   (.text+0x448): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_file.o: in function `drm_client_sysrq_register':
-   (.text+0xf10): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_file.o: in function `drm_client_sysrq_unregister':
-   (.text+0xf14): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_framebuffer.o: in function `drm_client_sysrq_register':
-   (.text+0x1028): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_framebuffer.o: in function `drm_client_sysrq_unregister':
-   (.text+0x102c): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_gem.o: in function `drm_client_sysrq_register':
-   (.text+0x1738): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_gem.o: in function `drm_client_sysrq_unregister':
-   (.text+0x173c): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_ioctl.o: in function `drm_client_sysrq_register':
-   (.text+0xe10): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_ioctl.o: in function `drm_client_sysrq_unregister':
-   (.text+0xe14): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_lease.o: in function `drm_client_sysrq_register':
-   (.text+0x7a0): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_lease.o: in function `drm_client_sysrq_unregister':
-   (.text+0x7a4): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_managed.o: in function `drm_client_sysrq_register':
-   (.text+0x6b8): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_managed.o: in function `drm_client_sysrq_unregister':
-   (.text+0x6bc): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_mode_config.o: in function `drm_client_sysrq_register':
-   (.text+0xc34): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_mode_config.o: in function `drm_client_sysrq_unregister':
-   (.text+0xc38): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_prime.o: in function `drm_client_sysrq_register':
-   (.text+0xb74): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_prime.o: in function `drm_client_sysrq_unregister':
-   (.text+0xb78): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_syncobj.o: in function `drm_client_sysrq_register':
-   (.text+0x174c): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_syncobj.o: in function `drm_client_sysrq_unregister':
-   (.text+0x1750): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_sysfs.o: in function `drm_client_sysrq_register':
-   (.text+0x758): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_sysfs.o: in function `drm_client_sysrq_unregister':
-   (.text+0x75c): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_vblank.o: in function `drm_client_sysrq_register':
-   (.text+0x2458): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_vblank.o: in function `drm_client_sysrq_unregister':
-   (.text+0x245c): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_vblank_work.o: in function `drm_client_sysrq_register':
-   (.text+0x594): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_vblank_work.o: in function `drm_client_sysrq_unregister':
-   (.text+0x598): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_client.o: in function `drm_client_sysrq_register':
-   (.text+0x830): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_client.o: in function `drm_client_sysrq_unregister':
-   (.text+0x834): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_client_event.o: in function `drm_client_sysrq_register':
-   (.text+0x544): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_client_event.o: in function `drm_client_sysrq_unregister':
-   (.text+0x548): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_client_modeset.o: in function `drm_client_sysrq_register':
-   (.text+0x2d90): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_client_modeset.o: in function `drm_client_sysrq_unregister':
-   (.text+0x2d94): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_client_sysrq.o: in function `drm_client_sysrq_register':
-   (.text+0x0): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_client_sysrq.o: in function `drm_client_sysrq_unregister':
-   (.text+0x4): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_debugfs.o: in function `drm_client_sysrq_register':
-   (.text+0x1048): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_debugfs.o: in function `drm_client_sysrq_unregister':
-   (.text+0x104c): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_debugfs_crc.o: in function `drm_client_sysrq_register':
-   (.text+0x9c0): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_debugfs_crc.o: in function `drm_client_sysrq_unregister':
-   (.text+0x9c4): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_gem_atomic_helper.o: in function `drm_client_sysrq_register':
-   (.text+0x5c8): multiple definition of `drm_client_sysrq_register'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e18): first defined here
-   hppa-linux-ld: drivers/gpu/drm/drm_gem_atomic_helper.o: in function `drm_client_sysrq_unregister':
-   (.text+0x5cc): multiple definition of `drm_client_sysrq_unregister'; drivers/gpu/drm/drm_atomic.o:(.text+0x2e1c): first defined here
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for OF_GPIO
-   Depends on [n]: GPIOLIB [=y] && OF [=n] && HAS_IOMEM [=y]
-   Selected by [y]:
-   - GPIO_TB10X [=y] && GPIOLIB [=y] && HAS_IOMEM [=y] && (ARC_PLAT_TB10X || COMPILE_TEST [=y])
-   WARNING: unmet direct dependencies detected for MFD_STMFX
-   Depends on [n]: HAS_IOMEM [=y] && I2C [=y] && OF [=n]
-   Selected by [y]:
-   - PINCTRL_STMFX [=y] && PINCTRL [=y] && I2C [=y] && OF_GPIO [=y] && HAS_IOMEM [=y]
-   WARNING: unmet direct dependencies detected for I2C_K1
-   Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && OF [=n]
-   Selected by [y]:
-   - MFD_SPACEMIT_P1 [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && I2C [=y]
-
+diff --git a/rust/kernel/i2c.rs b/rust/kernel/i2c.rs
+index 41ef7c65c555..27f9ee628e2c 100644
+--- a/rust/kernel/i2c.rs
++++ b/rust/kernel/i2c.rs
+@@ -6,6 +6,7 @@
+ use crate::{
+     acpi, container_of, device,
+     device_id::{RawDeviceId, RawDeviceIdIndex},
++    devres::Devres,
+     driver,
+     error::*,
+     of,
+@@ -13,7 +14,12 @@
+     types::{AlwaysRefCounted, Opaque},
+ };
+ 
+-use core::{marker::PhantomData, ptr::NonNull};
++use core::{
++    marker::PhantomData,
++    ptr::{from_ref, NonNull},
++};
++
++use kernel::types::ARef;
+ 
+ /// An I2C device id table.
+ #[repr(transparent)]
+@@ -345,6 +351,101 @@ fn unbind(dev: &I2cClient<device::Core>, this: Pin<&Self>) {
+     }
+ }
+ 
++/// The i2c adapter representation.
++///
++/// This structure represents the Rust abstraction for a C `struct i2c_adapter`. The
++/// implementation abstracts the usage of an existing C `struct i2c_adapter` that
++/// gets passed from the C side
++///
++/// # Invariants
++///
++/// A [`I2cAdapter`] instance represents a valid `struct i2c_adapter` created by the C portion of
++/// the kernel.
++#[repr(transparent)]
++pub struct I2cAdapter<Ctx: device::DeviceContext = device::Normal>(
++    Opaque<bindings::i2c_adapter>,
++    PhantomData<Ctx>,
++);
++
++impl<Ctx: device::DeviceContext> I2cAdapter<Ctx> {
++    fn as_raw(&self) -> *mut bindings::i2c_adapter {
++        self.0.get()
++    }
++}
++
++impl I2cAdapter {
++    /// Returns the I2C Adapter index.
++    #[inline]
++    pub fn get_nr(&self) -> i32 {
++        // SAFETY: `self.as_raw` is a valid pointer to a `struct i2c_adapter`.
++        unsafe { (*self.as_raw()).nr }
++    }
++    /// Gets pointer to an `i2c_adapter` by index.
++    pub fn get(index: i32) -> Result<ARef<Self>> {
++        // SAFETY: `index` must refer to a valid I2C adapter; the kernel
++        // guarantees that `i2c_get_adapter(index)` returns either a valid
++        // pointer or NULL. `NonNull::new` guarantees the correct check.
++        let adapter = NonNull::new(unsafe { bindings::i2c_get_adapter(index) }).ok_or(ENODEV)?;
++
++        // SAFETY: `adapter` is non-null and points to a live `i2c_adapter`.
++        // `I2cAdapter` is #[repr(transparent)], so this cast is valid.
++        Ok(unsafe { (&*adapter.as_ptr().cast::<I2cAdapter<device::Normal>>()).into() })
++    }
++}
++
++// SAFETY: `I2cAdapter` is a transparent wrapper of a type that doesn't depend on `I2cAdapter`'s generic
++// argument.
++kernel::impl_device_context_deref!(unsafe { I2cAdapter });
++kernel::impl_device_context_into_aref!(I2cAdapter);
++
++// SAFETY: Instances of `I2cAdapter` are always reference-counted.
++unsafe impl crate::types::AlwaysRefCounted for I2cAdapter {
++    fn inc_ref(&self) {
++        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
++        unsafe { bindings::i2c_get_adapter(self.get_nr()) };
++    }
++
++    unsafe fn dec_ref(obj: NonNull<Self>) {
++        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
++        unsafe { bindings::i2c_put_adapter(obj.as_ref().as_raw()) }
++    }
++}
++
++/// The i2c board info representation
++///
++/// This structure represents the Rust abstraction for a C `struct i2c_board_info` structure,
++/// which is used for manual I2C client creation.
++#[repr(transparent)]
++pub struct I2cBoardInfo(bindings::i2c_board_info);
++
++impl I2cBoardInfo {
++    const I2C_TYPE_SIZE: usize = 20;
++    /// Create a new [`I2cBoardInfo`] for a kernel driver.
++    #[inline(always)]
++    pub const fn new(type_: &'static CStr, addr: u16) -> Self {
++        build_assert!(
++            type_.len_with_nul() <= Self::I2C_TYPE_SIZE,
++            "Type exceeds 20 bytes"
++        );
++        let src = type_.as_bytes_with_nul();
++        // Replace with `bindings::acpi_device_id::default()` once stabilized for `const`.
++        // SAFETY: FFI type is valid to be zero-initialized.
++        let mut i2c_board_info: bindings::i2c_board_info = unsafe { core::mem::zeroed() };
++        let mut i: usize = 0;
++        while i < src.len() {
++            i2c_board_info.type_[i] = src[i];
++            i += 1;
++        }
++
++        i2c_board_info.addr = addr;
++        Self(i2c_board_info)
++    }
++
++    fn as_raw(&self) -> *const bindings::i2c_board_info {
++        from_ref(&self.0)
++    }
++}
++
+ /// The i2c client representation.
+ ///
+ /// This structure represents the Rust abstraction for a C `struct i2c_client`. The
+@@ -423,3 +524,53 @@ unsafe impl Send for I2cClient {}
+ // SAFETY: `I2cClient` can be shared among threads because all methods of `I2cClient`
+ // (i.e. `I2cClient<Normal>) are thread safe.
+ unsafe impl Sync for I2cClient {}
++
++/// The registration of an i2c client device.
++///
++/// This type represents the registration of a [`struct i2c_client`]. When an instance of this
++/// type is dropped, its respective i2c client device will be unregistered from the system.
++///
++/// # Invariants
++///
++/// `self.0` always holds a valid pointer to an initialized and registered
++/// [`struct i2c_client`].
++#[repr(transparent)]
++pub struct Registration(NonNull<bindings::i2c_client>);
++
++impl Registration {
++    /// The C `i2c_new_client_device` function wrapper for manual I2C client creation.
++    pub fn new<'a>(
++        i2c_adapter: &I2cAdapter,
++        i2c_board_info: &I2cBoardInfo,
++        parent_dev: &'a device::Device<device::Bound>,
++    ) -> impl PinInit<Devres<Self>, Error> + 'a {
++        Devres::new(parent_dev, Self::try_new(i2c_adapter, i2c_board_info))
++    }
++
++    fn try_new(i2c_adapter: &I2cAdapter, i2c_board_info: &I2cBoardInfo) -> Result<Self> {
++        // SAFETY: the kernel guarantees that `i2c_new_client_device()` returns either a valid
++        // pointer or NULL. `from_err_ptr` separates errors. Following `NonNull::new` checks for NULL.
++        let raw_dev = from_err_ptr(unsafe {
++            bindings::i2c_new_client_device(i2c_adapter.as_raw(), i2c_board_info.as_raw())
++        })?;
++
++        let dev_ptr = NonNull::new(raw_dev).ok_or(ENODEV)?;
++
++        Ok(Self(dev_ptr))
++    }
++}
++
++impl Drop for Registration {
++    fn drop(&mut self) {
++        // SAFETY: `Drop` is only called for a valid `Registration`, which by invariant
++        // always contains a non-null pointer to an `i2c_client`.
++        unsafe { bindings::i2c_unregister_device(self.0.as_ptr()) }
++    }
++}
++
++// SAFETY: A `Registration` of a `struct i2c_client` can be released from any thread.
++unsafe impl Send for Registration {}
++
++// SAFETY: `Registration` offers no interior mutability (no mutation through &self
++// and no mutable access is exposed)
++unsafe impl Sync for Registration {}
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
