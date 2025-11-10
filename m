@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-893386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FCD7C473A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:34:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9AB2C473AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:35:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62F6B1886621
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:35:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 16B2D4EC6ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958EE31354A;
-	Mon, 10 Nov 2025 14:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6500B313E32;
+	Mon, 10 Nov 2025 14:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVK12m3s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpDFkjrN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD4D3128BF;
-	Mon, 10 Nov 2025 14:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C940313547;
+	Mon, 10 Nov 2025 14:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762785272; cv=none; b=HUIqbR+0Vrx/d7Bz5KsADWZ9jy8J22VRO6EYbL2N+97QUpmUwga2uICZkHfCnWzID3mDtwexqX7v1v/woK5wDbrefRrBwktFNb/T/K1zXYxaEnFRWuXr+PpTafPYVNEXbIPB/bPLvJ2qdWV+lhCSRfoqfA/hoiY+D7mR8nTkygQ=
+	t=1762785273; cv=none; b=Vs2U/8MU9kAINTKXK89S+CaprAaaQS9OJS/6JfdtRrSIix5Kau1diaMdrS5lDFXGD2gNcF1dkeZAE9h5s5FviV2gHGudCdMwxhVvPrfZF00ZjxCvdm2PwzQkZq3FVhIeRhW1Vi4ms1/Y90RrhjhRJusqZRaE/U/zw4aFGmlxhS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762785272; c=relaxed/simple;
-	bh=j2fpe8eJvApgn7cYpHzNxA3KOm/6F5GzlUkdK+ztIrg=;
+	s=arc-20240116; t=1762785273; c=relaxed/simple;
+	bh=QwWdaSFRpsrMkAfDVcCa6YyWRZmei08Q/wtKeOJql/Y=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=QEaIoSVU4IHHm63Mel0DyM7hge30MlwmLdnV8wT9IWMcuqrWheA7xtfgO6MSPFotHr4gnY4tPyDwYSKiBGBKTG32h0bKT8q7I9DKOLp8wKYDD4pGzpK4OYxgZ/NiAjjyXZjUryxnZmHn3PPSBKV0scU3zHNk4OSQ0ubEUAxznN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bVK12m3s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 140EDC19424;
-	Mon, 10 Nov 2025 14:34:31 +0000 (UTC)
+	 Message-Id:Subject; b=CIi3GGHF+IDvaD0FsFaBZIyZ3QsHEfj4Ta5D9xPCw89+CES9pWfTAaXzkIisi9tpWC8mHVaqg2QIZ4CCw19LDNoryBxSmTTzv5lTjRFDMwmknq7NEru/7wUIdo/0N0XDJXvZSuAv44E8yb9haPgnovYmS5yU+GBbxoNLE/8ttY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpDFkjrN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C10DEC16AAE;
+	Mon, 10 Nov 2025 14:34:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762785271;
-	bh=j2fpe8eJvApgn7cYpHzNxA3KOm/6F5GzlUkdK+ztIrg=;
+	s=k20201202; t=1762785273;
+	bh=QwWdaSFRpsrMkAfDVcCa6YyWRZmei08Q/wtKeOJql/Y=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=bVK12m3sOJGDFFJAv7gcPUux0ZlsYHoz8PnH2HKGIBWWMecav0QArZACBn4ru6Zi7
-	 81FXrM/RxNg5UaJP+58ouJd/IAe9bT0UdbIrt3BGw+wvsuqGauYu/MdJv499XO1ymW
-	 OvlJ8WNaHJ5+nM5qMJlQC1T9p0sSju+KfQt+BZ797sGrupVW+xNeFqZJ11hNggGazj
-	 0EwZu3VofGPuIndZRHNGCaoH8uAwfS1rASsSCSnLIZbQVwd+DH6aiya+kryDtOBFFG
-	 hqHwEn55hpzNouM515HEJISFkEIZh5gILJl7r4NHoQANUD0kwSqasEu/KjQNYV/DfZ
-	 oeduGCVhBNhUg==
-Date: Mon, 10 Nov 2025 08:34:30 -0600
+	b=rpDFkjrNAqvhPN9E4Z09RAKHhO5aprki9jUFwe2e/KFJUaxOlfE9Zw9cga/ImWv1M
+	 041C3Wp9dIvLAh885i/vkNCgT+xbuYmU6ceRmSgiFlqdgeIjWowQBILWGBtjQ11cC+
+	 9Ww807nhC7g8DF1hp72g47Bzyl2u3Og25W7xFydk6OdRl4eDy1MfLPpawg3LnYgcfJ
+	 7Bf1JONW/QgzIkQ6XLzwKw6rFfiCOqrZkFMvPY3EHrmXBMNaZzZRTzaaxz6bt8pehK
+	 JnDmYtMhosNwd9FmpBKxNazPQ76j+v267XcucKgF6EMX6H1d8D5+a7H5fw0CboLa4y
+	 sRPRZLTRxTujA==
+Date: Mon, 10 Nov 2025 08:34:31 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,119 +50,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, 
- linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, 
- Mikhail Anikin <mikhail.anikin@solid-run.com>, 
- Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
- Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>, 
- Yazan Shhady <yazan.shhady@solid-run.com>, Shawn Guo <shawnguo@kernel.org>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+Cc: Konrad Dybcio <konradybcio@kernel.org>, 
+ Jie Zhang <jie.zhang@oss.qualcomm.com>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jie Zhang <quic_jiezh@quicinc.com>, 
+ dri-devel@lists.freedesktop.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>, linux-kernel@vger.kernel.org, 
+ Simona Vetter <simona@ffwll.ch>, freedreno@lists.freedesktop.org, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Simona Vetter <simona@ffwll.ch>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Jon Nettleton <jon@solid-run.com>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Maxime Ripard <mripard@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Qingqing Zhou <quic_qqzhou@quicinc.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
  Thomas Zimmermann <tzimmermann@suse.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Josua Mayer <josua@solid-run.com>
-In-Reply-To: <20251107-imx8mp-hb-iiot-v2-0-d8233ded999e@solid-run.com>
-References: <20251107-imx8mp-hb-iiot-v2-0-d8233ded999e@solid-run.com>
-Message-Id: <176278493126.154536.17870405687578843628.robh@kernel.org>
-Subject: Re: [PATCH v2 00/11] arm64: dts: add description for solidrun
- imx8mp hummingboard-iiot
+ Bjorn Andersson <andersson@kernel.org>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, David Airlie <airlied@gmail.com>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+In-Reply-To: <20251107-qcs615-spin-2-v2-0-a2d7c4fbf6e6@oss.qualcomm.com>
+References: <20251107-qcs615-spin-2-v2-0-a2d7c4fbf6e6@oss.qualcomm.com>
+Message-Id: <176278493240.154578.17616368030607174523.robh@kernel.org>
+Subject: Re: [PATCH v2 0/6] Support for Adreno 612 GPU - Respin
 
 
-On Fri, 07 Nov 2025 12:46:07 +0100, Josua Mayer wrote:
-> This patchset mainl adds description for 3 SolidRun boards:
-> - i.MX8MP Hummingboard IIoT
-> - SolidSense N8 Compact
-> - i.MX8MM Hummingboard Ripple
+On Fri, 07 Nov 2025 02:20:05 +0530, Akhil P Oommen wrote:
+> This is a respin of an old series [1] that aimed to add support for
+> Adreno 612 GPU found in SM6150/QCS615 chipsets. In this version, we
+> have consolidated the previously separate series for DT and driver
+> support, along with some significant rework.
 > 
-> This includes dt bindings and a range of bug-fixes:
+> Regarding A612 GPU, it falls under ADRENO_6XX_GEN1 family and is a cut
+> down version of A615 GPU. A612 has a new IP called Reduced Graphics
+> Management Unit or RGMU, a small state machine which helps to toggle
+> GX GDSC (connected to CX rail) to implement the IFPC feature. Unlike a
+> full-fledged GMU, the RGMU does not support features such as clock
+> control, resource voting via RPMh, HFI etc. Therefore, we require linux
+> clock driver support similar to gmu-wrapper implementations to control
+> gpu core clock and GX GDSC.
 > 
-> - dt bindings for the boards
-> - fix to dsi panel bindings referncing panel-common and adding port
->   property
-> - cosmetic fix to some  solidrun imx8mp boards for regulator gpio
->    polarity
-> - fix dsi hdmi bridge on hummingboard pulse
-> - compile dtbs with symbols to support overlays
-> - gpiod_set_value _can_sleep conversion for panel and touchscreen
->    drivers
+> In this series, the description of RGMU hardware in devicetree is more
+> complete than in previous version. However, the RGMU core is not
+> initialized from the driver as there is currently no need for it. We do
+> perform a dummy load of RGMU firmware (now available in linux-firmware)
+> to ensure that enabling RGMU core in the future won't break backward
+> compatibility for users.
 > 
-> Open Questions:
+> Due to significant changes compared to the old series, all R-b tags have
+> been dropped. Please review with fresh eyes.
 > 
-> - How to describe HX3 USB-2.0/3.0 Hub placed on a USB-2.0-only Bus
->   (affects imx8mm-hummingboard-ripple.dts)
-> - Is "description for" implied not only on dt-bindings patches, but also
->   dts? E.g. is this commit subject acceptable?:
->   "arm64: dts: add solidrun solidsense-n8 board"
+> Last 3 patches are for Bjorn and the rest are for Rob Clark for pick up.
 > 
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
+> [1] Driver: https://lore.kernel.org/lkml/20241213-a612-gpu-support-v3-1-0e9b25570a69@quicinc.com/
+>     Devicetree: https://lore.kernel.org/lkml/fu4rayftf3i4arf6l6bzqyzsctomglhpiniljkeuj74ftvzlpo@vklca2giwjlw/
+> 
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
 > ---
 > Changes in v2:
-> - fix spelling mistakes in commit descriptions.
-> - remove redundant "binding for" from subject:
->   https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst
->   (Reported-by: Krzysztof Kozlowski <krzk@kernel.org>)
-> - remove one useless comment from imx8mm-sr-som.dtsi to fix long line
->   warning.
-> - change ronbo panel binding to inherit panel-common and switch
->   additionalProperties to unevaluatedProperties.
->   (Reported-by: Krzysztof Kozlowski <krzk@kernel.org>)
-> - add dt binding for winstar lvds panel
-> - fix dtbs_check for dsi & lvds panel addons
-> - change n8 board dts comment-style in header
-> - collected ack on solidrun boards bindings patch (patch 1 in the series)
->   (Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>)
-> - added standard led label property to hb-iiot multi-purpose leds
->   ensuring consistent names in case lp5562 driver starts using it.
-> - Link to v1: https://lore.kernel.org/r/20251027-imx8mp-hb-iiot-v1-0-683f86357818@solid-run.com
+> - Rebased on next-20251105
+> - Fix hwcg configuration (Dan)
+> - Reuse a few gmu-wrapper routines (Konrad)
+> - Split out rgmu dt schema (Krzysztof/Dmitry)
+> - Fixes for GPU dt binding doc (Krzysztof)
+> - Removed VDD_CX from rgmu dt node. Will post a separate series to
+> address the gpucc changes (Konrad)
+> - Fix the reg range size for adreno smmu node and reorder the properties (Konrad)
+> - Link to v1: https://lore.kernel.org/r/20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com
 > 
 > ---
-> Josua Mayer (11):
->       dt-bindings: arm: fsl: Add various solidrun i.mx8m boards
->       dt-bindings: display: panel: ronbo,rb070d30: panel-common ref
->       dt-bindings: panel: lvds: add Winstar WF70A8SYJHLNGA
->       Input: ilitek_ts_i2c: fix warning with gpio controllers that sleep
->       drm/panel: ronbo-rb070d30: fix warning with gpio controllers that sleep
->       arm64: dts: imx8mp-hummingboard-pulse/cubox-m: fix vmmc gpio polarity
->       arm64: dts: imx8mp-hummingboard-pulse: fix mini-hdmi dsi port reference
->       arm64: dts: imx8mp-sr-som: build dtbs with symbols for overlay support
->       arm64: dts: add description for solidrun imx8mp hummingboard-iiot
->       arm64: dts: add description for solidrun solidsense-n8 board
->       arm64: dts: add description for solidrun i.mx8mm som and evb
+> Akhil P Oommen (1):
+>       dt-bindings: display/msm: gpu: Document A612 GPU
 > 
->  Documentation/devicetree/bindings/arm/fsl.yaml     |   9 +
->  .../bindings/display/panel/panel-lvds.yaml         |   2 +
->  .../bindings/display/panel/ronbo,rb070d30.yaml     |  14 +-
->  arch/arm64/boot/dts/freescale/Makefile             |  15 +
->  .../dts/freescale/imx8mm-hummingboard-ripple.dts   | 335 ++++++++
->  arch/arm64/boot/dts/freescale/imx8mm-sr-som.dtsi   | 395 ++++++++++
->  .../dts/freescale/imx8mn-solidsense-n8-compact.dts | 853 +++++++++++++++++++++
->  arch/arm64/boot/dts/freescale/imx8mp-cubox-m.dts   |   2 +-
->  ...hummingboard-iiot-panel-dsi-WJ70N3TYJHMNG0.dtso |  69 ++
->  ...ummingboard-iiot-panel-lvds-WF70A8SYJHLNGA.dtso | 105 +++
->  .../imx8mp-hummingboard-iiot-rs485-a.dtso          |  18 +
->  .../imx8mp-hummingboard-iiot-rs485-b.dtso          |  18 +
->  .../dts/freescale/imx8mp-hummingboard-iiot.dts     | 712 +++++++++++++++++
->  .../imx8mp-hummingboard-pulse-common.dtsi          |   2 +-
->  .../imx8mp-hummingboard-pulse-mini-hdmi.dtsi       |  11 +-
->  drivers/gpu/drm/panel/panel-ronbo-rb070d30.c       |   8 +-
->  drivers/input/touchscreen/ilitek_ts_i2c.c          |   4 +-
->  17 files changed, 2548 insertions(+), 24 deletions(-)
+> Jie Zhang (4):
+>       drm/msm/a6xx: Add support for Adreno 612
+>       dt-bindings: display/msm/rgmu: Document A612 RGMU
+>       arm64: dts: qcom: sm6150: Add gpu and rgmu nodes
+>       arm64: dts: qcom: qcs615-ride: Enable Adreno 612 GPU
+> 
+> Qingqing Zhou (1):
+>       arm64: dts: qcom: sm6150: add the GPU SMMU node
+> 
+>  .../devicetree/bindings/display/msm/gpu.yaml       |  32 ++++-
+>  .../devicetree/bindings/display/msm/rgmu.yaml      | 131 +++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  arch/arm64/boot/dts/qcom/qcs615-ride.dts           |   8 ++
+>  arch/arm64/boot/dts/qcom/talos.dtsi                | 138 +++++++++++++++++++++
+>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c          |  16 +++
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c              |  23 +++-
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c              |  45 +++++--
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c        |   3 +-
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c            |   1 +
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h            |  16 ++-
+>  11 files changed, 398 insertions(+), 16 deletions(-)
 > ---
-> base-commit: 607bcb1e539a7f2b2ba6832ba96fe3ad73b7401c
-> change-id: 20251026-imx8mp-hb-iiot-525b03beea62
+> base-commit: 185cd3dc1a12b97194a62eba9d217d280ef74135
+> change-id: 20251015-qcs615-spin-2-ed45b0deb998
 > 
 > Best regards,
 > --
-> Josua Mayer <josua@solid-run.com>
+> Akhil P Oommen <akhilpo@oss.qualcomm.com>
 > 
 > 
 > 
@@ -183,18 +170,36 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: base-commit 607bcb1e539a7f2b2ba6832ba96fe3ad73b7401c not known, ignoring
+ Base: base-commit 185cd3dc1a12b97194a62eba9d217d280ef74135 not known, ignoring
  Base: attempting to guess base-commit...
- Base: tags/v6.18-rc1 (exact match)
- Base: tags/v6.18-rc1 (use --merge-base to override)
+ Base: tags/next-20251107 (best guess, 9/10 blobs matched)
+ Base: tags/next-20251107 (use --merge-base to override)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20251107-imx8mp-hb-iiot-v2-0-d8233ded999e@solid-run.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20251107-qcs615-spin-2-v2-0-a2d7c4fbf6e6@oss.qualcomm.com:
 
-arch/arm64/boot/dts/freescale/imx8mp-hummingboard-iiot.dtb: accelerometer@53 (adi,adxl345): 'interrupt-names' is a dependency of 'interrupts-extended'
-	from schema $id: http://devicetree.org/schemas/iio/accel/adi,adxl345.yaml
+arch/arm64/boot/dts/qcom/sm6115p-lenovo-j606f.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow ['core', 'iface', 'mem_iface', 'alt_mem_iface', 'gmu', 'xo']
+	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
+arch/arm64/boot/dts/qcom/sm6115p-lenovo-j606f.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow [[89, 13], [89, 4], [2, 150], [2, 76], [89, 7], [89, 10]]
+	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
+arch/arm64/boot/dts/qcom/qrb2210-rb1.dtb: gpu@5900000 (qcom,adreno-07000200): False schema does not allow ['core', 'iface', 'mem_iface', 'alt_mem_iface', 'gmu', 'xo']
+	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
+arch/arm64/boot/dts/qcom/qrb2210-rb1.dtb: gpu@5900000 (qcom,adreno-07000200): False schema does not allow [[90, 8], [90, 0], [31, 19], [31, 87], [90, 3], [90, 6]]
+	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
+arch/arm64/boot/dts/qcom/qrb4210-rb2.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow ['core', 'iface', 'mem_iface', 'alt_mem_iface', 'gmu', 'xo']
+	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
+arch/arm64/boot/dts/qcom/qrb4210-rb2.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow [[111, 13], [111, 4], [48, 150], [48, 76], [111, 7], [111, 10]]
+	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
+arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow ['core', 'iface', 'mem_iface', 'alt_mem_iface', 'gmu', 'xo']
+	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
+arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow [[101, 13], [101, 4], [2, 150], [2, 76], [101, 7], [101, 10]]
+	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
+arch/arm64/boot/dts/qcom/sm4250-oneplus-billie2.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow ['core', 'iface', 'mem_iface', 'alt_mem_iface', 'gmu', 'xo']
+	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
+arch/arm64/boot/dts/qcom/sm4250-oneplus-billie2.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow [[87, 13], [87, 4], [44, 150], [44, 76], [87, 7], [87, 10]]
+	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
 
 
 
