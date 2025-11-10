@@ -1,189 +1,91 @@
-Return-Path: <linux-kernel+bounces-893363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816EFC47295
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:26:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7587FC4734F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A772B420283
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 050361886483
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45A931354E;
-	Mon, 10 Nov 2025 14:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E76B31354C;
+	Mon, 10 Nov 2025 14:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8vg/nax"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eslnmnK/"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0526E313522;
-	Mon, 10 Nov 2025 14:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBC5312838;
+	Mon, 10 Nov 2025 14:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762784668; cv=none; b=orztZDLcWZZf89VTBZdjVkGXRsoIhBnlFNf0VEM9rOC8Hz79Vups/+U/X+tmwIhTYoXUO8FN30oM98uIE2Wofn4HK+m6aXSecpIn9vyyzw1A55jNWMgxActRJftf5AkGsNk/s6ezrEJlvBPpxPElw9sVlHP0ga181Z6oXchS2dI=
+	t=1762784950; cv=none; b=l24c4F4OcCDBrxENRG5Cvc7qyToeoJDtu1EfGR31tC7sORSM1HFWf7bS49jJPlNILMuppS+ZTQ1IzYds8+NyPk9a93RoD6sInGM5MbKAGzovjiQfUyEuIOGtThVqBhwBQhKv3eNA/pSUhQeQihfJkYoh7kX6uV2XWtT352HuO38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762784668; c=relaxed/simple;
-	bh=GaKv8q6+/jqwS770QPc+kVw036xa5WBZMlcSt21L4v0=;
+	s=arc-20240116; t=1762784950; c=relaxed/simple;
+	bh=0KEbmuKS3lKKlkFRd4WwQtzuYwiZEI/mNytmsaIfuLg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j3c95Fibbv+ngIrXSFvt8KeI71CqQJ4gCtjgm6ombTri39aJzWHG6xDwu772Poa9sZ6CpY5ecOEwOgOcMvSlFwtNg00h1UeCjrLfTuwC8jy7klB/wMQZPKIB3IDOH5r5E4qMrHFJXKHVhXPfR29W4a1LU4ebdkIlL0MQS/evC5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8vg/nax; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E6DC16AAE;
-	Mon, 10 Nov 2025 14:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762784667;
-	bh=GaKv8q6+/jqwS770QPc+kVw036xa5WBZMlcSt21L4v0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e8vg/nax9wtAltYG7PrG7pIwys+BgVU8AxVxEbt3u2AxTvlnShqwlZ7K3cU8bf5H8
-	 1iQk+gbSYciAw105VvJ2KKf4r1BeRvDmpHaWoJnNkN85ZWICW/fnXHR/dbXGB9DjSH
-	 24UJa37oo1eS404v+118BUH8jGDvvl7xrUVgIqIG3HnRke5VAwumJyW8P0zJIB7RXH
-	 zdfD1xJI9EMN/YKz8kf79DhBum7gZHLIGeK5uj1BRCNgz+egQhfLN/fkIdeXWbz7d9
-	 fP0EtWA0/knHpiV1RX4vrhWGBb63YjBk4NqoJdgeW0VRfM20ydMk5S7XkY/l3d913v
-	 yZ0fvfGW7PkRg==
-Date: Mon, 10 Nov 2025 08:28:33 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Sumit Kumar <sumit.kumar@oss.qualcomm.com>, 
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Akhil Vinod <akhil.vinod@oss.qualcomm.com>, 
-	Subramanian Ananthanarayanan <subramanian.ananthanarayanan@oss.qualcomm.com>, linux-kernel@vger.kernel.org, mhi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, quic_vpernami@quicinc.com
-Subject: Re: [PATCH v2 1/3] bus: mhi: host: Add loopback driver with sysfs
- interface
-Message-ID: <3r5biv2frrk4bjtdqulmpruieaocrktrfxwwq5f3xossjikyef@hoxb4fgitjqs>
-References: <20251104-loopback_mhi-v2-0-727a3fd9aa74@oss.qualcomm.com>
- <20251104-loopback_mhi-v2-1-727a3fd9aa74@oss.qualcomm.com>
- <g7yr3psfoyya76wvcgjs24xyyofgkllmdsvworjnfjgc3q3qeq@vjkxyh5oabkd>
- <zkhtvquyhgvdqcft6s3jmfjh76hg62mrwn4wj4qqoecrxprq4y@w5zvgp5vbbn2>
- <5pfglosaovwja7lgxmjc56jieo6whcugnmvh6krydzfpdynmqe@qfswxlfuvw4n>
- <fae5pl3su5mul7qnaealqvsgq37m6hlj2ckabrbjj55dqrixxw@q2dbbuq7pikw>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fk5IXpW9dKY7/qFQBDNEIgJeFK3OrTmjgrc4DpyARJkOYp4jDH38rHsxmSoIWwpXU7H1BBv7SfRMFKPWFVDZWX9m5L6sRLw6gMk/y1Y1oi2dFufEHi82XCW5hrSdC3lwYdewebpGk6+HC1C+34I+w57NRvNA0e81HEMVQ3/4v0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eslnmnK/; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=R0bFMfSQmAiR4R7u4OGiTL9L+yOue9pBltZEhnqo38w=; b=eslnmnK/Fby0VR4zb1/mKeZCLZ
+	DOjph/Dw0u5GrkDwKqHSBRXk1gceTtuqJYg4BDmZaKQCemaA5q0mDDEEc0+JCXIzY0tvf2mGzrDO0
+	3Hyvbw9h7V76gWnjonOCZ+T/KSmylsVj55R45EOXCYKgzjv7M1bGuJi1ntSJxMYABxdZMUUriUtiH
+	hJVShixpS42kQYAQTcMKciFVE5lwxWfYKZcx6WyY8z8WJCl4h6JJ/XcMrQR+QBhYZgOz/bCH6lP82
+	iWMr0TVqTcigKcg5e2r2HuFrxa/gAlk2iaFbO4JCzkjnaAq/Zr4THB3ALb6JakqPzz7ojZm3F5WV7
+	Hmk61tOg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vISt3-0000000HFKB-2W7K;
+	Mon, 10 Nov 2025 14:28:53 +0000
+Date: Mon, 10 Nov 2025 14:28:53 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Garg, Shivank" <shivankg@amd.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Zach O'Keefe <zokeefe@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Branden Moore <Branden.Moore@amd.com>
+Subject: Re: [PATCH 1/2] mm/khugepaged: do synchronous writeback for
+ MADV_COLLAPSE
+Message-ID: <aRH2pdhMBQ-20IC9@casper.infradead.org>
+References: <20251110113254.77822-1-shivankg@amd.com>
+ <aRHs3pA2kOr_uD3k@casper.infradead.org>
+ <b7313a45-c36e-4390-a0b8-46f412474f86@lucifer.local>
+ <39c8a4ed-53b5-48e3-baea-f67cc1e8be4f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fae5pl3su5mul7qnaealqvsgq37m6hlj2ckabrbjj55dqrixxw@q2dbbuq7pikw>
+In-Reply-To: <39c8a4ed-53b5-48e3-baea-f67cc1e8be4f@amd.com>
 
-On Mon, Nov 10, 2025 at 11:56:11AM +0530, Manivannan Sadhasivam wrote:
-> On Sun, Nov 09, 2025 at 10:00:26PM -0600, Bjorn Andersson wrote:
-> > On Fri, Nov 07, 2025 at 05:58:18PM +0530, Manivannan Sadhasivam wrote:
-> > > On Wed, Nov 05, 2025 at 04:17:41PM -0600, Bjorn Andersson wrote:
-> > > > On Tue, Nov 04, 2025 at 11:09:05AM +0530, Sumit Kumar wrote:
-> > > > > Add loopback driver for MHI host controllers that provides sysfs based
-> > > >   ^--- Here would be e good place to explain why we want this driver. Per
-> > > > https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
-> > > > start your commit message with a description of the problem you're
-> > > > solving.
-> > > > 
-> > > > > testing interface for data path validation. The driver supports the
-> > > > > "LOOPBACK" channel and offers configurable test parameters.
-> > > > > 
-> > > > > Sysfs interface provides:
-> > > > > - size: Configure TRE size
-> > > > > - num_tre: Set number of TREs for chained transfers
-> > > > > - start: Initiate loopback test
-> > > > > - status: Read test results
-> > > > 
-> > > > The words "loopback" and "testing" gives clear indications that this
-> > > > should live in debugfs and not sysfs.
-> > > > 
-> > > 
-> > > Though the wording gives an impression like that, this interface is for a MHI
-> > > channel that is defined in the MHI spec, so it is perfectly fine to have it
-> > > exposed as a sysfs interface to the users. This channel is intented to be used
-> > > for MHI protocol testing.
-> > > 
-> > 
-> > The fact that the protocol is defined in the specification doesn't imply
-> > that it's intended to be used by the typical user.
-> > 
-> > Also, the specification defines the LOOPBACK channel, it doesn't define
-> > an interface where the user can request that a certain number of packets
-> > of random data is sent and if those come back we can learn about that
-> > from a "results" file. Downstream has a completely different
-> > implementation of the same specification.
-> > 
-> > I could imagine that at some point one would want extend this test
-> > interface by altering the behavior of the packet generator, inject
-> > timestamps etc - to measure raw throughput, latency, jitter etc. Good
-> > reasons for not turning this into an ABI.
-> > 
+On Mon, Nov 10, 2025 at 07:50:17PM +0530, Garg, Shivank wrote:
+> The issue is copying those binary to a freshly mounted filesystem.
+> The page cache folios remain dirty until background writeback completes.
 > 
-> I missed one important point while replying. This channel has an existing
-> interface between the host and endpoint i.e., the MHI based WLAN and modems out
-> there in the field already support an *interface* on top of this channel.
+> Reproduces 100% for me: fresh XFS/EXT4 mount -> copy binary -> execute -> MADV_COLLAPSE fails.
 
-But, that defines what happens "on the wire", right?
-
-The MHI specification doesn't state that you have to expose this to the
-user in the form of taking a "size" and a "num_tre" number and then
-expose a "start" knob which performs a loopback test, of which result
-you can then find in a "status" file?
-
-> We
-> cannot control the interface unless we change the endpoint firmware (which is
-> not feasible).
-
-You're already changing the user-facing interface, because downstream
-this is implemented using UCI...and I bet it's not sysfs files in
-Windows...
-
-> And all the future extensions could only be possible if we could
-> modify the endpoint fw.
-> 
-
-I'm not talking about extensions to the protocol, or how the endpoint is
-supposed to react.
-
-I'm saying that it should be perfectly fine to have a test that just
-fills the out-pipe with packets containing say the current timestamp,
-and when they return I compare the timestamp in the payload with the
-clock to see how long time the particular message took to loop back.
-Same LOOPBACK protocol, different user-interface.
-
-> So for this specific reason, going by the sysfs ABI made sense to me. But to
-> admit, this point was never mentioned in the cover letter or in the patch
-> description and need to be fixed.
-> 
-
-I think you should include a comment in the driver as well, stating that
-the user-facing interface is ABI and the MHI LOOPBACK protocol defines
-that the payload has to be random etc. If that is the case...
-
-> I also asked the Qcom PCIe team to verify that this interface, just works with
-> all kind of MHI devices if the devices support the LOOPBACK channel.
-> 
-> > 
-> > Thinking more about the use case, I also presume most MHI devices has a
-> > LOOPBACK channel, so every user is going to have this .ko auto-loaded,
-> > just so that they can poke sysfs to send some random data... So perhaps
-> > we should omit MODULE_DEVICE_TABLE()?
-> > 
-> 
-> I don't want to omit the MODULE_DEVICE_TABLE() since that will require users to
-> load the driver manually to use it.
-
-Fair enough.
-
-> If users do not want this interface, then
-> they can always decide not to enable the driver while building the kernel :)
-> 
-
-I expect even you will use this interface approximately 0% of the times
-you boot the kernel. _Users_ will never use it.
-
-So, I guess per your suggestion, we leave this disabled everywhere
-(defconfig, distros etc), and then those few _developers_ who want it
-can enable it?
-
-Regards,
-Bjorn
-
-> - Mani
-> 
-> -- 
-> மணிவண்ணன் சதாசிவம்
+Yes, but this is an uncommon thing to do.  Really, it's the kind of
+thing you do when you're testing something (like, whether ext4 supports
+large folios, and whether that yields a performance improvement).
+It's more reasonable to change userspace than the kernel to solve this
+problem you're having.
 
