@@ -1,146 +1,116 @@
-Return-Path: <linux-kernel+bounces-893507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7687C479A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:42:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81018C47914
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:35:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B1393B59E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:34:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B64B218882FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A020A26AA94;
-	Mon, 10 Nov 2025 15:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F43258EF6;
+	Mon, 10 Nov 2025 15:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UbOW3SK3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="BP4u4OZ+"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7911D416C;
-	Mon, 10 Nov 2025 15:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C6D19F41C;
+	Mon, 10 Nov 2025 15:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762788828; cv=none; b=HbIUavC2w4Yk1yNMo8ec8FLp/szJWHP30UjfDy9XCik6n5ztR+ubC8vW9mBTxFbDVCytFpcRZ2hN1SOC/Ps5Z0tLBXB0sv3Tjp8ocep08D+dKQF61NhQVKQrb69AtTu56MKWMbMELtKa/7clu5VZtVyMtwc8rOOXbDIO0qsgtIU=
+	t=1762788902; cv=none; b=nObfPzv+UtD0ps1dCwtd1g1KGYZZRMy7epg3K+0LlDoJi3N5YraG90DUqF5Kd7lkMgCsQvS1Kss8Nwi2s955HPB63XmD6DwQ36gCpaEkTS8jhgEFE6NrQdNFvBmbF4nEFgxfjbD3fyAW9Tm9UOitszd5pgzjLGyuWgp+SQgpzSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762788828; c=relaxed/simple;
-	bh=+rymyB2H1GCpplFZN98ExnpzW0O9nCkV8E0c0HQjmWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uuJcQbQ1lHRtr0l1FxPEniXCdPrvXmugWm3KQAfZFoJRcmkRKGeV8YgPwN3MJJuCoCZbOY/LyA5Co5bDzQkQWgiVPWIZrNlTlecQ9/cDhrxmnDgJ2VK6rHc3yzcc68RMijDs65Arjzf1vFA+icxzaNcyJeQnr+co6YdcML7nG2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UbOW3SK3; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762788826; x=1794324826;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+rymyB2H1GCpplFZN98ExnpzW0O9nCkV8E0c0HQjmWE=;
-  b=UbOW3SK3fZRqEhqvS0xR8aj0rQFNGsXYJNhWFvrHN37ppp9EXmAfzI5m
-   y6VMyXcKEDObbAMQ/56auh9nQk4pY5CMGFBIv/YfYSjM/nDaewc0fBlgR
-   tAUtrJMGpvQKO2LisIHdUAbi3KamcWHYe4fnReASai1QMfzNsf2ekMlOV
-   J8LvC/at8btzoS2YD29iPDrazsT1QlJl+qp/VcmaIsSdeQ6E4rZlg/Q/L
-   r0u/tkfeuPfZ1OkrRdtrouOCJevfLqWMldpldtDOUbYofNh8HOU03Flxr
-   vcpy1kch5KWbJMmd+Oj9LpwEliX4/V2Hf7q6lgIaxNuq8GyqZYvPK9xPT
-   A==;
-X-CSE-ConnectionGUID: cADGsg1wSXqZSRXQBd8VmA==
-X-CSE-MsgGUID: +Yg0UMphRsmL9Pdq9yuVlA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="82237648"
-X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
-   d="scan'208";a="82237648"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 07:33:38 -0800
-X-CSE-ConnectionGUID: IwSUOry/SDKpLQ2tpxmPnA==
-X-CSE-MsgGUID: fQundh82RRibb0QT8W8jhQ==
-X-ExtLoop1: 1
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.235])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 07:33:33 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vITtZ-00000007V6M-2rxB;
-	Mon, 10 Nov 2025 17:33:29 +0200
-Date: Mon, 10 Nov 2025 17:33:29 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Stefan Wahren <wahrenst@gmx.net>, Vinod Koul <vkoul@kernel.org>,
-	Thomas Andreatta <thomasandreatta2000@gmail.com>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	Olivier Dautricourt <olivierdautricourt@gmail.com>,
-	Stefan Roese <sr@denx.de>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>,
-	Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 01/13] scatterlist: introduce sg_nents_for_dma() helper
-Message-ID: <aRIFyR0maAfZF7MN@smile.fi.intel.com>
-References: <20251110103805.3562136-1-andriy.shevchenko@linux.intel.com>
- <20251110103805.3562136-2-andriy.shevchenko@linux.intel.com>
- <waid6zxayuxacb6sntlxwgyjia3w25sfz2tzxxzb4tkqgmx63o@ndpztxeh6o32>
- <jea2owcqtjeomlbwkfopt3ujsnakn4p3xeyqhh7s4kowf7k7dr@deyg5pky5udo>
+	s=arc-20240116; t=1762788902; c=relaxed/simple;
+	bh=ZWjJD/1xH/fH/g6Z2KPOz2SHy5oPswPbHfvVgre9lho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pUlh3G+uBDtY1Wxi0JclM8+yGGPhCOT3bYgR6t7ptKPiP70E/FiolFXqqRF6fzfDwwMwIMiyKr5qmxRDlA64H8G494iCv32F3RytSi068mJr3aD0mALagJ17yUB18Zi881pzolI55Et/JhDwr7Sr18ASsT8kyMGbkaMVNHklga0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=BP4u4OZ+; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4d4tyS1s4Fz9tnx;
+	Mon, 10 Nov 2025 16:34:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1762788896;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D1KeoCbtv75IlU4XoXDiuWf8VyMocOvzgZGay5xD3M8=;
+	b=BP4u4OZ++RbvrdZGXlvL6nkwYIZu1vFtvKhEfQaIoLn3htMmnKxnSDlNvMqIwzPoGSyMYr
+	bVgyV07WHq6gls3khUNbU9x0oMYqFEWtTwUh3q4+O+01X4cIN97C9XHK9HIwlZttPv19Sn
+	EVe9xkmh+kWhk2mrGkij6GnJBCQn7+C6eXNUyjC/K72NbvqrhWNHTBJ2tLhMAnJcPiyJN7
+	d/TbT5zFKeEKxr0RgJk+6dSVc/wnuJO+r5WAgytk+3R4uEgVv6cj4HzJuS2/UsnqOFhMSW
+	c92zUNb+GUB1LwLRsg7BHPB5f5hKzX2aH4jrLNQEchS9J9Z+Koz/ndnscj1LVA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+Message-ID: <4bbea425-e896-4047-b30d-6598ff7e9165@pankajraghav.com>
+Date: Mon, 10 Nov 2025 16:34:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <jea2owcqtjeomlbwkfopt3ujsnakn4p3xeyqhh7s4kowf7k7dr@deyg5pky5udo>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Subject: Re: [PATCH v2 00/24] ext4: enable block size larger than page size
+To: Theodore Ts'o <tytso@mit.edu>, libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
+ linux-kernel@vger.kernel.org, mcgrof@kernel.org, ebiggers@kernel.org,
+ willy@infradead.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ chengzhihao1@huawei.com, libaokun1@huawei.com
+References: <20251107144249.435029-1-libaokun@huaweicloud.com>
+ <20251110043226.GD2988753@mit.edu>
+Content-Language: en-US
+From: Pankaj Raghav <kernel@pankajraghav.com>
+In-Reply-To: <20251110043226.GD2988753@mit.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4d4tyS1s4Fz9tnx
 
-On Mon, Nov 10, 2025 at 09:21:18AM -0600, Bjorn Andersson wrote:
-> On Mon, Nov 10, 2025 at 09:05:26AM -0600, Bjorn Andersson wrote:
-> > On Mon, Nov 10, 2025 at 11:23:28AM +0100, Andy Shevchenko wrote:
-
-...
-
-> > >  int sg_nents(struct scatterlist *sg);
-> > >  int sg_nents_for_len(struct scatterlist *sg, u64 len);
-> > > +int sg_nents_for_dma(struct scatterlist *sgl, unsigned int sglen, size_t len);
-
-
-^^^
-
-> > > +int sg_nents_for_dma(struct scatterlist *sgl, unsigned int sglen, size_t len)
+On 11/10/25 05:32, Theodore Ts'o wrote:
+> I've started looking at this patch series and playing with it, and one
+> thing which is worth noting is that CONFIG_TRANSPARENT_HUGEPAGE needs
+> to be enabled, or else sb_set_blocksize() will fail for block size >
+> page size.  This isn't specific to ext4, and maybe I'm missing
+> something, but apparently this isn't documented.  I had to go digging
+> through the source code to figure out what was needed.
 > 
-> All but two clients store the value in an unsigned int. Changing the
-> return type to unsigned int also signals that the function is just
-> returning a count (no errors).
+> I wonder if we should have some kind of warning in sb_set_blocksize()
+> where if there is an attempt to set a blocksize > page size and
+> transparent hugepages is not configured, we issue a printk_once()
+> giving a hint to the user that the reason that the mount failed was
+> because transparent hugepages wasn't enabled at compile time.
+> 
 
-The type is chosen for the consistency with the existing APIs.
-So, I prefer consistency in this case, if we need to change type, we need to do
-that for all above APIs I believe. And this is out of the scope here.
+I added something similar for block devices[1]. Probably we might need something
+here as well as a stop gap.
 
-Personally I was also puzzled of the choice as *nents members are all unsigned
-int in the scatterlist.h.
+> It **really** isn't obvious that large block size support and
+> transparent hugepages are linked.
 
-...
+Funny that you mention this because I have talk about this topic:
+Decoupling Large Folios from Transparent Huge Pages in LPC under MM MC [2].
+You are more than welcome to come to the talk :)
 
-> > We need an EXPORT_SYMBOL() here.
+But just a small summary: When large folios were introduced, it used
+THP infrastructure for splitting the folios (for example when we do a truncate).
 
-Good catch! I'll add it in next version.
+I hope we will soon be able to sort it out so that we don't have
+to sprinkle CONFIG_THP everywhere.
 
-> > With that, this looks good to me.
-> > 
-> > Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+--
+Pankaj
 
-Thanks!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+[1] https://lore.kernel.org/all/20250704092134.289491-1-p.raghav@samsung.com/
+[2] https://lpc.events/event/19/contributions/2139/>
+> 					- Ted
+> 
 
 
