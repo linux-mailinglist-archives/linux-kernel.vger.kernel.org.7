@@ -1,146 +1,126 @@
-Return-Path: <linux-kernel+bounces-892252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E54C44B5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:10:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4CBC44B67
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:10:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C13F4E6D92
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 01:09:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 279744E5A6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 01:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D632321C194;
-	Mon, 10 Nov 2025 01:09:47 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DE71A58D;
-	Mon, 10 Nov 2025 01:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE23021019C;
+	Mon, 10 Nov 2025 01:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nU6CpfGx"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F8420C023
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762736987; cv=none; b=fyeM4p78VsU4Kesps1UmH//+zZBkZIw9xng4rdUkarrUx8NC5w62jWKnoH4bDxAik4Bq+VxlL2CurRcOgfoF/YE0BHcSFGqMqPLdZRyKoonUoYrGArpK3/+14bSiPmpEUqZMlXR/u7ycnvMJxfU7MRRtYhiSvlkvcDWibevHCzI=
+	t=1762737001; cv=none; b=SiJ/n5sNJt/4JQlAA+U6NKriz/IwbQFd/J2EpDrFGLTirSr5nNb9tcJ2LBeou9Jzc/yxnUSm66f3jbSV7uG7QwTc0jf5yasuQ+6sbnQFViiNXye7hrsxkmJbVPsC+S40g6SewmlAKUBfUi3da/vVUzK3MpexZ+sMXuk521MdXXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762736987; c=relaxed/simple;
-	bh=6lBX/PQAGMpxyYl0SnTFFRgoUlmWnhp6tbfnUe4KM5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X281fVe7sJFmXHiBfJXoTkSo0BDgahSlchpHWVl7mx2GGanIWsRr+52GI/0g4kmUxWIRBHDqH01Jc04yDMLh0r7AQGsSF5jQ9HqI3A1XfT3pxNwSt7UP0Cw2LDknjHaCe3YqeTZG6OgzU9XKqeiWhpbrg3Uh3KbQ2cZaXYUV1ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c2dff70000001609-52-69113b4c406e
-Date: Mon, 10 Nov 2025 10:09:26 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
-	davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
-	sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org,
-	tariqt@nvidia.com, mbloch@nvidia.com, andrew+netdev@lunn.ch,
-	edumazet@google.com, pabeni@redhat.com, akpm@linux-foundation.org,
-	david@redhat.com, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, horms@kernel.org,
-	jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
-	ilias.apalodimas@linaro.org, willy@infradead.org,
-	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
-	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
-	almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
-	bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
-	sfr@canb.auug.org.au, dw@davidwei.uk, ap420073@gmail.com,
-	dtatulea@nvidia.com
-Subject: Re: [RFC mm v5 1/2] page_pool: check nmdesc->pp to see its usage as
- page pool for net_iov not page-backed
-Message-ID: <20251110010926.GA70011@system.software.com>
-References: <20251103075108.26437-1-byungchul@sk.com>
- <20251103075108.26437-2-byungchul@sk.com>
- <20251106173320.2f8e683a@kernel.org>
- <20251107015902.GA3021@system.software.com>
- <20251106180810.6b06f71a@kernel.org>
- <20251107044708.GA54407@system.software.com>
- <20251107174129.62a3f39c@kernel.org>
- <20251108022458.GA65163@system.software.com>
- <20251107183712.36228f2a@kernel.org>
+	s=arc-20240116; t=1762737001; c=relaxed/simple;
+	bh=7eX9gGzJac1YnRyU1DoWZcGMaFtLcH1z+haFd/emMM8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YnbjoCBXclf7r8kD5wAjxp4lyAo/KOrNgwfpVNciaEFOVWD1Hn7N1NQyr7w14VBBsv2FIwy3tUJ7B7DeiSBBrZkVJ5QlW3HvCaO+r5+ZTDoe4pa5O2AhQdgdFBVs1ykuGCY9cemiW4nmdVmxcbm0kQt8shQ5lCzKhlgx3690DmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nU6CpfGx; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-78682bab930so32748707b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 17:09:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762736998; x=1763341798; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7eX9gGzJac1YnRyU1DoWZcGMaFtLcH1z+haFd/emMM8=;
+        b=nU6CpfGxK4RtSYk49yZMW3990JkMcS+XMUZJlO18sQKn7K/6sPy3+NGt8j08/vDxWY
+         1ZMr8CCcTb0k2CyyLnJ+SptcK9oxeXS7Akvp59sA9Ig6Cqg+FE7HY7H4r57Agqw8geMk
+         P1tjf4wHm/7ABUkAIlUc9+HJaIgfqtlZ6otyFs68MdgVC0SOCid8YHwoFQA5VqWdLg5Y
+         BYjUeyjYTRWoo+WB3rrsA6Eg/r02LY0zNL8w8vrmxuKVjer+gmWhRM+wcMxy9WAoOvxI
+         WcCUarRLf4Wwtl9aD028Gfm4wgfYc6cs4MIJXRzSR9ZsQtFzgkFZVhs8K9EeoxddmXNm
+         homg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762736998; x=1763341798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7eX9gGzJac1YnRyU1DoWZcGMaFtLcH1z+haFd/emMM8=;
+        b=BOkeNTXN9IFTdVrrkm75Ykf5d9qPu9msJkT5NyYS4AzJlicbU1xSncQfUb9nWuntk4
+         BuLMYeN9a2TEXFJ12ueySSlDBihr4lLPcKeWTN+uVsyd1xtosDKtWWdDMOqTfGrU6Xhz
+         /tMx1ZeAMsBhaigawVgU0jNe69TWuPZdGWJOPWzwww3I404vD8TlOg04/HESX/T85Grt
+         iXDylg8YfMv1kNRJ8jAIuv/eydF5T0vmNtiWOFllNQIvJUa21z/QRWffZQtmbmFuFKm2
+         TT5Y4oAfjeVIX2TrFsxnfh0n/YuU6fO3zNujhJyn8Z3pJE92atg8RCDTAJVzpgpcO9w+
+         nYvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyTip1A/bfeRlb/+jxwOO7SCzmdJNGSadfxJGhGhvVkhTDC1BIB9eyeB8qgwdMc3Xok+kQOQpHh0hKQ90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytAjx4jY0LymTotbWPKJGZAkHi8iCBlZcWOeF2rwLe00ESKLeA
+	21qVIF8Otj0UjbCc7ne/eKICJWHyjsAYU75MxkvtRmJo66T+t+kDNTRDf9lyZLZOstua38N6Fgt
+	gzpCcWjq6ipbfLEnxHmnDpBnz3rPo80E=
+X-Gm-Gg: ASbGnctiKvpeJFkG0XfneSH7PNcVbdF/Um4ifxbQp2iwu8Zxw/tMTQSKhgX6jxKldZt
+	UQUlF2yoS53rgv0TzAjKNK6muGCKQHipg/X/vlfpaKGeBJgzr6zf0EGXL1qUT+A/gg765g593NV
+	b8QFcE6Sz1oF/Wk73ouVJBH1xx1NRJfGtSmcnu+Gjhgd8B437D8WWbYQYuEVTVBe1OI0Ij8Woqu
+	TFBZwK0nqqdcTMGwZqrsE5vUYMqtEZnCWw+XMImp15E0qoRrsGBYVvubdq/Qw==
+X-Google-Smtp-Source: AGHT+IE7viCJpPysTxjSYtoxvz6QMOaabnGiwqTrZ7JZS/uYgctgriankWFtobObgNaQUadLOO6MvQuYngmmgmrwvx4=
+X-Received: by 2002:a05:690c:f0d:b0:786:6c3b:be0e with SMTP id
+ 00721157ae682-787caab1d62mr79881967b3.7.1762736998559; Sun, 09 Nov 2025
+ 17:09:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107183712.36228f2a@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA03Se0hUaRjHcd7znpuDQ2fG2t50o2W6gZVdttinCxVFcLCCwCK6N+UhD40a
-	42QaFWMNlFNa7eY2jhOZUV5raCx1poy8rE5FOegaJ7Ydy7ba7WKDNxoddGeKqP8+8Pz48v7x
-	8ljrZWJ5Oc0kGdP0Bh2rolUfoktmrVmskecUdWjA4axiofJTFpQ+r2MgWPWGAkdFDYL+4F8c
-	jNa3IOhrbmXhXVMvgsuXBjE42iw0DDiHMLg9bxC8tV1j4VVLNweVrrXQdfU1DXeO12LoPu1l
-	Ic8yjKE+2MPB0bqycLjazIGvJp+Bc0NXMNSan3PQ4XGw4K8aZeB1Yx4N9+3lNAQKmjF05S+H
-	luIfYPDhewTNzloKBk9dYKGz0EPBrfpODn5rL2bhpaULQXtTNw0FoRMsFOXkIxj+FE72nOln
-	oOgPP7c8QcxRFFZsev8RizfLn1LiE9tZWlTuPqBEt/1vTix27Rery+JFq9KORVdFLiu6en/l
-	xGdP7rCi1zZMi+4XC0V3XR8l5h3rYdeN26xakiwZ5EzJOHvpTlWKJ1TC7Hs8Jst//QJjRuXR
-	VhTFE2E+Od1Qhr7aUnCCi5gWppJe79Bns8J0oihBHPFYYQqxVBfSVqTisRDgiE3xM5FDjGAi
-	gY/m8Ijj1QKQG6bIRCvkYmK1Vn/uqAUNuV/4Dx0xFuKJMvIfZUV82HGkdISPMEqYS8w3f4os
-	xgmTyb2aVurLywI8abi9/osnkIYyhT6DBPt3Uft3Ufu3aDHCFUgrp2Wm6mXD/ISU7DQ5K2F3
-	eqoLhf/X1cOhLXWo15fUiAQe6aLVCqeRtYw+MyM7tRERHuvGqkO7BFmrTtZnH5SM6TuM+w1S
-	RiOK42ndePW8wQPJWmGP3iTtlaR9kvHrleKjYs3IdKSId46G/BP5xH9jfC99Jeka77pfJv3Y
-	zjEzAsscizyznbV/rh7N3rYkCa+vXHWp85Xthudp4YEj3dM2l5zPfzTG8IJKXNmWm9gx8CzY
-	3+k+OW9VQexF+dzZmZ4FkzZmxW0f2MQv3epKMve1/jz+9742+90pK7oOjhyKU6X6cnx7Nujo
-	jBT93HhszND/D1lxqNNbAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRyG+c53bg5Hx2V10KBYSmGUCgW/UsQg6KM7SQlC2cxTjrzEprIF
-	wcyFtdIsE3RpWZHltLRp3sioaV4KLBTjRKVmZRfNli3zsrItiPzvgfd93r9eHqsqmQBem5ou
-	6VI1yWpWQSu2R2Sv2hLhpw3r+wVQUl3FQuWkAW4MNjIwVfWBghJbPQLX1EsOZlvaEXxv62Bh
-	pHUcwbUrExhKnppp+FE9jaGp+QOCz0W3WHjfPsRBpX0bDJQP03AvpwHD0NlOFnLNMxhapsY4
-	ON540zNca+KgtbSLgWf1eQxcmL6OocE0yEFvcwkL/VWzDAw7cmnoslbQ4CxswzCQFw3tZQth
-	4skogrbqBgomzpSy0FfcTMHdlj4OCnrKWHhrHkDQ0zpEQ6H7JAsXs/IQzEx6JsfyXQxcfNTP
-	RYeSLFlmSevoV0zqKl5Q5HnROZrI9x9TpMn6miNl9gxSezOEWOQeTOy2Uyyxj5/nyKvn91jS
-	WTRDk6Y360hT43eK5GaPsTsXxikiE6VkbaakC43ar0hqdl9ljnTPM/TfLmVMqMLXgnx4UVgj
-	mgtPcl6mhWBxvHP6L7PCclGWp7CX/YUg0VxbTFuQgseCkxOL5H7GG8wX0kXnV5OnxPFKAcQ7
-	6d6KSjiFRYul9u+OUvATu4rf0V7GQogo//5EWRDv4UDxxm/eiz5CuGiqW+ptLBCWiQ/qO6h8
-	pLTOka1zZOt/uQxhG/LXpmamaLTJa1frDycZU7WG1QfSUuzIc6HyY+5zjcjVu8mBBB6pfZUy
-	56dVMZpMvTHFgUQeq/2V7gRBq1ImaoxHJV1avC4jWdI7UCBPqxcpN8dK+1XCIU26dFiSjki6
-	fynF+wSYEA7W/3wQtSdkfKNzxjia9m393kD3/Wj7pcT8rQldMb07bo+scuhiEwtWmg2+xbaY
-	2d0Ng5FLvix+aHg5FPRRrbgc52rbVZMhhy8Ocp0e7tzXHWPM2lP3o/v0qzUpX6btJxKWqzpQ
-	QQAJXGu31WzYFr/i4Gw5ziERH8mvOh9n2F6lmtYnacJDsE6v+QPGyCplPgMAAA==
-X-CFilter-Loop: Reflected
+References: <20250926014552.1625950-1-jefflin994697@gmail.com>
+ <20251106093131.2009841-1-jefflin994697@gmail.com> <aQxtjo-wl-FkUbOx@smile.fi.intel.com>
+In-Reply-To: <aQxtjo-wl-FkUbOx@smile.fi.intel.com>
+From: Jeff Lin <jefflin994697@gmail.com>
+Date: Mon, 10 Nov 2025 09:09:47 +0800
+X-Gm-Features: AWmQ_bmtnCyr53f4Zza1_7T9TDauePdOQvjG42BFkl-rnwyoUGpyddnT3ubcrew
+Message-ID: <CAMdV+4ftKzSiPHWZNFqxythY_zmxNpCPA2WU6n5O8_WW1TVaOw@mail.gmail.com>
+Subject: Re: [PATCH v2] drivers/hwmon/pmbus: Add support for raa229141 in isl68137
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mariel.Tinaco@analog.com, cedricjustine.encarnacion@analog.com, 
+	chiang.brian@inventec.com, grantpeltier93@gmail.com, 
+	gregkh@linuxfoundation.org, jbrunet@baylibre.com, jdelvare@suse.com, 
+	johnerasmusmari.geronimo@analog.com, kimseer.paller@analog.com, 
+	krzysztof.kozlowski@linaro.org, leo.yang.sy0@gmail.com, 
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, linux@roeck-us.net, 
+	ninad@linux.ibm.com, nuno.sa@analog.com, peterz@infradead.org, 
+	thorsten.blum@linux.dev, tzungbi@kernel.org, william@wkennington.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 07, 2025 at 06:37:12PM -0800, Jakub Kicinski wrote:
-> On Sat, 8 Nov 2025 11:24:58 +0900 Byungchul Park wrote:
-> > On Fri, Nov 07, 2025 at 05:41:29PM -0800, Jakub Kicinski wrote:
-> > > On Fri, 7 Nov 2025 13:47:08 +0900 Byungchul Park wrote:
-> > > > The offset of page_type in struct page cannot be used in struct net_iov
-> > > > for the same purpose, since the offset in struct net_iov is for storing
-> > > > (struct net_iov_area *)owner.
-> > >
-> > > owner does not have to be at a fixed offset. Can we not move owner
-> > > to _pp_mapping_pad ? Or reorder it with type, enum net_iov_type
-> > > only has 2 values we can smoosh it with page_type easily.
+Got it. I resent a new email for v2.
+
+Thank you
+
+On Thu, Nov 6, 2025 at 5:42=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Thu, Nov 06, 2025 at 05:31:31PM +0800, Jeff Lin wrote:
+> > The RAA229141A is a digital dual output multiphase (X+Y =E2=89=A4 12) P=
+WM
+> > controller designed to be compliant with Intel VR13, VR13.HC, VR14 and
+> > VR14.Cloud specifications, targeting VCORE and auxiliary rails.
 > >
-> > I'm still confused.  I think you probably understand what this work is
-> > for.  (I've explained several times with related links.)  Or am I
-> > missing something from your questions?
-> >
-> > I've answered your question directly since you asked, but the point is
-> > that, struct net_iov will no longer overlay on struct page.
-> >
-> > Instead, struct netmem_desc will be responsible for keeping the pp
-> > fields while struct page will lay down the resonsibility, once the pp
-> > fields will be removed from struct page like:
-> 
-> I understand the end goal. I don't understand why patch 1 is a step
-> in that direction, and you seem incapable of explaining it. So please
-> either follow my suggestion on how to proceed with patch 2 without
-
-struct page and struct netmem_desc should keep difference information.
-Even though they are sharing some fields at the moment, it should
-eventually be decoupled, which I'm working on now.
-
-> patch 1 in current form. Or come back when have the full conversion
-> ready.
-
-This patch set represents the final phase of the full conversion process,
-awaiting the next steps. Once this patch is completed, the entire
-conversion will be finished, allowing for the final patch that removes
-the pp fields from the struct page to be carried out.
-
-	Byungchul
+> > The RAA229141A supports the Intel SVID interface along with PMBus V1.3
+> > specifications, making it ideal for controlling the microprocessor core=
+ and
+> > system rails in Intel VR13, VR13.HC, VR14 and VR14.Cloud platforms.
+>
+> Avoid In-Reply-to: email headers. I.o.w. start a new email thread when is=
+sue a
+> new version of the patch or series.
+>
+> (No need to resend in _this_ case, unless maintainer requests to do so.)
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
