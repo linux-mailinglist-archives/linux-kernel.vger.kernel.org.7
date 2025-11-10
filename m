@@ -1,191 +1,186 @@
-Return-Path: <linux-kernel+bounces-892674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F02C45979
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:20:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87696C45997
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:21:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2320D4E9AB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:19:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD22E4E998B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D5A2FDC29;
-	Mon, 10 Nov 2025 09:19:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30383155389;
-	Mon, 10 Nov 2025 09:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDC32FF153;
+	Mon, 10 Nov 2025 09:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1AHZDA0H";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QiNo9/Vx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87F34503B;
+	Mon, 10 Nov 2025 09:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766392; cv=none; b=OjnZ3jt7fS9SH0/RkdU7qlvs0e689teBRBhJTDgpBzX++xf+MEPFaD/Fj81NMO9kE6MHlL/Z5KINNm+vclb7+XbxGc8actI9/Jg9ZGFSX/73WprZ3uAJ00UM1lnilyckLBBFRKG5XfJC8JfHk3n07Lldln+LiosSBChiE5oo3RU=
+	t=1762766488; cv=none; b=tDhwtLNcT4rL7eAA96rwi1y1W6PZ8QoWnomD/4lXf8ihEv/pD8MIvzXFfvRi5ujHRr1V2TqjfDre8fkQKIxwN172o2ql8n1XdzWxzvm/yTR/1aT7hwhZvYjt55OLSWADFz4G98n7eKYpWZcjsJ/nCiDb2Ps19NgXp/N7NmcyIQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766392; c=relaxed/simple;
-	bh=eD19xs3HJscEy96qUFYPBBi/c+BeW29BDHqIKBjhVPE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RG2UqpeW+uXjplUL2VAUWHGTcZT/XAcx1IjLqqTGrpwC9qZ5VNSzEju1RwKBa0K2V73LAWgfyCDWr2kySLEap0zaDVSfbMVyBzyRrwPZH4UmVZnHMl1CuLoRrT0lg7xs66yLzxYHSQcExlScak+hxkYKPiP2U8DhGhQlv3a4q34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91A6F2B;
-	Mon, 10 Nov 2025 01:19:41 -0800 (PST)
-Received: from [10.57.85.123] (unknown [10.57.85.123])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CED693F63F;
-	Mon, 10 Nov 2025 01:19:42 -0800 (PST)
-Message-ID: <e428b1d5-65a8-49bc-92dc-ec4a4d933dec@arm.com>
-Date: Mon, 10 Nov 2025 09:19:40 +0000
+	s=arc-20240116; t=1762766488; c=relaxed/simple;
+	bh=UOXTFfctU+la1ZRGJ4ND5QM9NGb52PYcz12HWAlPtNs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PlMmdlb89hgstkxnQoptphjMd1yjukT5DKgF9+MgUmeH7QW87z43a57AhjMYevduMZSymEWVI1qd0IZoD0bM8/yhjrxhL9/E8eO1KfoetOEaWXMDM66bApn16FcexAFo1MTYQXqMfGl0ctS0ryzh+Hf2pL942M885y1dKpvUga0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1AHZDA0H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QiNo9/Vx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762766484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RH6y8AqWM02HDoXJucHQCnZ4iL8GJPZpMZrh3/buiXE=;
+	b=1AHZDA0HjqDPADvCENpUEaCHCNu3clHUkAhrYHRZAj7SW8m1mWA4wwXhAxsXw9/Ypg1aql
+	vC7+kpyBmfER8wn/9KvNWQO0rFSRZOGMYBF5W4dT/qMSeMaSYplCZNTCNz0Q0tmiyWSwf8
+	3eqib3Jl7Vyed1Y2axixqLpWDLkSTmSXKns6RLZH/tcZQ0Pcl/heCNj7aj2vqUyV3Ul8um
+	x5R7NCNT0RMZOgOxP/3EFZEU3YEKVcWTm3SG6iieA52kOiPXDyRMNWrmv78i6BSGx5WxjP
+	QHs0P7xNmwUNPBEJfU6QLUlz8jMi83kpf/Q85gxF85GBgNspEwPIESQlc7M7Hg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762766484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RH6y8AqWM02HDoXJucHQCnZ4iL8GJPZpMZrh3/buiXE=;
+	b=QiNo9/Vx7XmkYNoF4Q7UPAO9m0J/JXMYstBDyeujKvFPQREVnnJ7dGQTsIZRrGya3/NmnR
+	1nHl/bwTSAplPFDw==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, "amurray @ thegoodpenguin . co .
+ uk" <amurray@thegoodpenguin.co.uk>, brauner@kernel.org, chao@kernel.org,
+ djwong@kernel.org, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, Petr Mladek <pmladek@suse.com>
+Subject: Re: [PATCH 2/2] printk_ringbuffer: Create a helper function to
+ decide whether a more space is needed
+In-Reply-To: <20251107194720.1231457-3-pmladek@suse.com>
+References: <20251107194720.1231457-1-pmladek@suse.com>
+ <20251107194720.1231457-3-pmladek@suse.com>
+Date: Mon, 10 Nov 2025 10:27:23 +0106
+Message-ID: <87jyzyutt8.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/12] mm: introduce generic lazy_mmu helpers
-Content-Language: en-GB
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>,
- David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
- <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-7-kevin.brodsky@arm.com>
- <71418b31-aedb-4600-9558-842515dd6c44@arm.com>
- <c764489e-0626-4a50-87b5-39e15d9db733@gmail.com>
- <645178fd-df4e-42fe-b55e-97d9506499be@arm.com>
- <413b2c49-f124-4cda-8fea-a6cc165f6326-agordeev@linux.ibm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <413b2c49-f124-4cda-8fea-a6cc165f6326-agordeev@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 10/11/2025 08:11, Alexander Gordeev wrote:
-> On Fri, Nov 07, 2025 at 03:22:54PM +0000, Ryan Roberts wrote:
-> 
-> Hi Ryan,
-> 
->> On 07/11/2025 14:34, David Hildenbrand (Red Hat) wrote:
->>>>>   #ifndef pte_batch_hint
->>>>> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
->>>>> index 5d2a876035d6..c49b029d3593 100644
->>>>> --- a/mm/kasan/shadow.c
->>>>> +++ b/mm/kasan/shadow.c
->>>>> @@ -305,7 +305,7 @@ static int kasan_populate_vmalloc_pte(pte_t *ptep,
->>>>> unsigned long addr,
->>>>>       pte_t pte;
->>>>>       int index;
->>>>>   -    arch_leave_lazy_mmu_mode();
->>>>> +    lazy_mmu_mode_pause();
->>>>
->>>> I wonder if there really are use cases that *require* pause/resume? I think
->>>> these kasan cases could be correctly implemented using a new nest level instead?
->>>> Are there cases where the effects really need to be immediate or do the effects
->>>> just need to be visible when you get to where the resume is?
->>>>
->>>> If the latter, that could just be turned into a nested disable (e.g. a flush).
->>>> In this case, there is only 1 PTE write so no benefit, but I wonder if other
->>>> cases may have more PTE writes that could then still be batched. It would be
->>>> nice to simplify the API by removing pause/resume if we can?
->>>
->>> It has clear semantics, clearer than some nest-disable IMHO.
->>>
->>> Maybe you can elaborate how you would change ("simplify") the API in that
->>> regard? What would the API look like?
->>
->> By simplify, I just meant can we remove lazy_mmu_mode_pause() and
->> lazy_mmu_mode_resume() ?
->>
->>
->> We currently have:
->>
->> apply_to_page_range
->>   lazy_mmu_mode_enable()
->>     kasan_populate_vmalloc_pte()
->>       lazy_mmu_mode_pause()
->>       <code>
->>       lazy_mmu_mode_resume()
->>   lazy_mmu_mode_disable()
->>
->> Where <code> is setting ptes. But if <code> doesn't need the effects to be
->> visible until lazy_mmu_mode_resume(), then you could replace the block with:
->>
->> apply_to_page_range
->>   lazy_mmu_mode_enable()
->>     kasan_populate_vmalloc_pte()
->>       lazy_mmu_mode_enable()
->>       <code>
->>       lazy_mmu_mode_disable()
->>   lazy_mmu_mode_disable()
->>
->> However, looking at this more closely, I'm not really clear on why we need *any*
->> special attention to lazy mmu inside of kasan_populate_vmalloc_pte() and
->> kasan_depopulate_vmalloc_pte().
->>
->> I *think* that the original concern was that we were doing ptep_get(ptep) inside
->> of a lazy_mmu block? So we need to flush so that the getter returns the most
->> recent value? But given we have never written to that particular ptep while in
->> the lazy mmu block, there is surely no hazard in the first place?
-> 
-> There is, please see:
-> https://lore.kernel.org/linux-mm/cover.1755528662.git.agordeev@linux.ibm.com/
+Hi Petr,
 
-I've stared at this for a while, but I'm afraid I still don't see the problem.
-This all looks safe to me. Could you explain exactly what this issue is?
+Nit: For the patch subject, remove the word "a":
 
-If I've understood correctly, kasan_populate_vmalloc() is called during virtual
-range allocation by vmalloc. This is not in a nested lazy mmu block (but it
-wouldn't matter if it was once we have Kevin's nested changes to ensure flush
-when exiting the nested scope). kasan_populate_vmalloc() calls
-apply_to_page_range(), which will walk the set of ptes, calling
-kasan_populate_vmalloc_pte() for each one. kasan_populate_vmalloc_pte() does a
-ptep_get() then, if none, calls set_pte_at().
+"Create a helper function to decide whether more space is needed"
 
-That's not a hazard since you're calling get before the set and you only visit
-each pte once for the apply_to_page_range() lazy mmu block.
+More below...
 
-> 
->> apply_to_existing_page_range() will only call kasan_depopulate_vmalloc_pte()
->> once per pte, right? So given we read the ptep before writing it, there should
->> be no hazard? If so we can remove pause/resume.
-> 
-> Unfortunately, we rather not, please see:
-> https://lore.kernel.org/linux-mm/d407a381-099b-4ec6-a20e-aeff4f3d750f@arm.com/
+On 2025-11-07, Petr Mladek <pmladek@suse.com> wrote:
+> The decision whether some more space is needed is tricky in the printk
+> ring buffer code:
+>
+>   1. The given lpos values might overflow. A subtraction must be used
+>      instead of a simple "lower than" check.
+>
+>   2. Another CPU might reuse the space in the mean time. It can be
+>      detected when the subtraction is bigger than DATA_SIZE(data_ring).
+>
+>   3. There is exactly enough space when the result of the subtraction
+>      is zero. But more space is needed when the result is exactly
+>      DATA_SIZE(data_ring).
+>
+> Add a helper function to make sure that the check is done correctly
+> in all situations. Also it helps to make the code consistent and
+> better documented.
+>
+> Suggested-by: John Ogness <john.ogness@linutronix.de>
+> Link: https://lore.kernel.org/r/87tsz7iea2.fsf@jogness.linutronix.de
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  kernel/printk/printk_ringbuffer.c | 31 +++++++++++++++++++++++++++----
+>  1 file changed, 27 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+> index 3e6fd8d6fa9f..ede3039dd041 100644
+> --- a/kernel/printk/printk_ringbuffer.c
+> +++ b/kernel/printk/printk_ringbuffer.c
+> @@ -411,6 +411,23 @@ static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
+>  	return to_blk_size(size) <= DATA_SIZE(data_ring) / 2;
+>  }
+>  
+> +/*
+> + * Compare the current and requested logical position and decide
+> + * whether more space needed.
+> + *
+> + * Return false when @lpos_current is already at or beyond @lpos_target.
+> + *
+> + * Also return false when the difference between the positions is bigger
+> + * than the size of the data buffer. It might happen only when the caller
+> + * raced with another CPU(s) which already made and used the space.
+> + */
+> +static bool need_more_space(struct prb_data_ring *data_ring,
+> +			    unsigned long lpos_current,
+> +			    unsigned long lpos_target)
+> +{
+> +	return lpos_target - lpos_current - 1 < DATA_SIZE(data_ring);
+> +}
+> +
+>  /* Query the state of a descriptor. */
+>  static enum desc_state get_desc_state(unsigned long id,
+>  				      unsigned long state_val)
+> @@ -577,7 +594,7 @@ static bool data_make_reusable(struct printk_ringbuffer *rb,
+>  	unsigned long id;
+>  
+>  	/* Loop until @lpos_begin has advanced to or beyond @lpos_end. */
+> -	while ((lpos_end - lpos_begin) - 1 < DATA_SIZE(data_ring)) {
+> +	while (need_more_space(data_ring, lpos_begin, lpos_end)) {
+>  		blk = to_block(data_ring, lpos_begin);
+>  
+>  		/*
+> @@ -668,7 +685,7 @@ static bool data_push_tail(struct printk_ringbuffer *rb, unsigned long lpos)
+>  	 * sees the new tail lpos, any descriptor states that transitioned to
+>  	 * the reusable state must already be visible.
+>  	 */
+> -	while ((lpos - tail_lpos) - 1 < DATA_SIZE(data_ring)) {
+> +	while (need_more_space(data_ring, tail_lpos, lpos)) {
+>  		/*
+>  		 * Make all descriptors reusable that are associated with
+>  		 * data blocks before @lpos.
+> @@ -1148,8 +1165,14 @@ static char *data_realloc(struct printk_ringbuffer *rb, unsigned int size,
+>  
+>  	next_lpos = get_next_lpos(data_ring, blk_lpos->begin, size);
+>  
+> -	/* If the data block does not increase, there is nothing to do. */
+> -	if (head_lpos - next_lpos < DATA_SIZE(data_ring)) {
+> +	/*
+> +	 * Use the current data block when the size does not increase.
 
-Sorry but I don't see anything relavent to my point in this mail. Perhaps there
-is some s390-specific detail that I'm failing to understand?
+I would like to expand the above sentence so that it is a bit clearer
+how it relates to the new check. Perhaps:
 
-Thanks,
-Ryan
+	 * Use the current data block when the size does not increase, i.e.
+	 * when @head_lpos is already able to accommodate the new @next_lpos.
 
-> 
-> The problem is kasan code invokes apply_to_page_range(), which enters lazy_mmu
-> mode unconditionally. I would claim that is rather an obstacle for the kasan
-> code, not a benefit. But it needs to be tackled.
-> > Should apply_to_page_range() had an option not to enter the lazy_mmu mode
-> (e.g. an extra "bool skip_lazy" parameter) - the pause/resume could have
-> been avoided.
-> 
->> Thanks,
->> Ryan
-> 
-> Thanks!
+> +	 *
+> +	 * Note that need_more_space() could never return false here because
+> +	 * the difference between the positions was bigger than the data
+> +	 * buffer size. The data block is reopened and can't get reused.
+> +	 */
+> +	if (!need_more_space(data_ring, head_lpos, next_lpos)) {
+>  		if (wrapped)
+>  			blk = to_block(data_ring, 0);
+>  		else
+> -- 
+> 2.51.1
 
+Otherwise, LGTM. Thanks for choosing a name that presents contextual
+purpose rather than simply function.
+
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
