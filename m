@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-893905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB83DC48A09
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:46:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF8CC489EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:43:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17F453A6751
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:43:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB5224E205F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4070031D38F;
-	Mon, 10 Nov 2025 18:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AB930101C;
+	Mon, 10 Nov 2025 18:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZwHqEDw"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+1XNQ0g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D19329D281
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 18:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077692E9EAE;
+	Mon, 10 Nov 2025 18:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762800208; cv=none; b=iIdlc99suVVibtWccvtTwIraMCI5W9Yf4ZEQZtxNJMPO7ieJyZykIY/hj/TYr2NdS4CdS6ZDW6R/ZwTkgMV6RnwuLV/k7qatI4yygqqMhWqtXNcNt99T7JPCTb4ALFD64apq9B7ovhrVWGz/NoY36XvY412runuVkccgUH4Wo4Y=
+	t=1762800222; cv=none; b=oieMzv8XTSkwiGOsdzDezmqzcPPsT02tbX0a2VTUXSIrOdMAM57Jz3U2NGzk5QS1GfNpr/RyypL4x7iIMmNrS9w63OxjhyET2jdLz7DqUJYRAFGwFg5+uozZucmgTulPFdpt0lVDorSXEK6LxL70GYY1z1CHTSjyl9ofE8ermUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762800208; c=relaxed/simple;
-	bh=3oHXmj9WoLyn0WQEmfmVS2U1AeoHZy9lNL1vgxRq5Z0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QpaeQ+68VfWpAs4QPYc7hgStlpAGc3XwExyY1zS24UQf2tp8esb2fOUamiAn5oc1O8fFUENq0ZytH2e62cGhhZjaOFoRa5rTTPkZoV1U0XvOjoaOQunIhaSz9+NgtrbHokb7LWlSujslW6E0bIMdnl1ZQZsSbOLkXylKIY/0BoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZwHqEDw; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7b22ffa2a88so1471597b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:43:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762800206; x=1763405006; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qTyxgohfMyFm4qb2O3+6usfTAZwsXPA5PRmH04j0Qmo=;
-        b=OZwHqEDwDX12lcCM8Eo0zGhhqKje/XDogHEFeLy9j4PlRZZfy/c6EbMrjy86/hSKUF
-         BxkR8tVe0+sqTQdO+0qIYXztoqiKLG28wd1/aPPoimEPj+Y1ozGh4VvFDlSToVGuSBCj
-         T/QwGHIh5p/bKQ2oVgxCXCGtgE23zK8ALph0WXuzeR3xpDEyayaXviYjRq842H6L16tJ
-         QagQkzBaE/Va7zVfrSpWttT05yI1j0ez/5OF2RT7iKxra/x1YkN8/Wl6xY2rMZ+GLzgw
-         +QSzeXBP0BO6xR99dMWo4JpKZIXofLbC3PeUTltuNE8He+DtOIItDS3xi51M5+TaySB7
-         RbZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762800206; x=1763405006;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qTyxgohfMyFm4qb2O3+6usfTAZwsXPA5PRmH04j0Qmo=;
-        b=ghunuEXn2dcffvi6IYJpEdm5tIEJNk+dmRpPevxCY5Plu6URnS9RkEGfvNz9mO7shn
-         Iz8lc8rQw8z0xrfZ8XoYlHz6ZdVed9GFKruu2aKtJAoZ87A36n9xDdogv+9AHqHGoOE8
-         x1ca66pQ3TG9Y2znBlnHqs4q1PIBhqU5wJG8zCwb8sT1GoPQpAitUVKO3ctWLKFwb5BJ
-         TKrtBFxJZGVu0/SejH4QsepQxNW6um22hPXql+WWop55e50I9I15Ld/VnxsZmD5FzQDI
-         V10Rq638NQitFbRDzUpdrhY5OcSdkb4N+0XHdvZ1YB41oS6N9PUQq2AgWVFKcJRGyqqE
-         92pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmdb/nMSswjQ1gZZWGIOHjmokU88NrHKkBPcQlq/huMMDDm4MASIKXErDH03xJoFS/Vw7XzScEO2tR3RQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUKu/tCJmZgokXkExdlApUGO2Y4p0MR1/uZpDY270dXs24HWqg
-	u12qe+oUV6yVkRdHtFXM3OA5ehbGCFlmL8XVQMtfvF35+OldL/rkYcnP
-X-Gm-Gg: ASbGncsON2whlMv2vut+BBbTDVuNXeWxkdpQLYjPNKvt3juvKws1Fclx76TpMsTRddh
-	yqmGDQyqa9hnZn8FjBVmLnlM2ZdGl+yticnvwZ7sWMOZbBfO8IntvaRr4J3H20o2QH+0qjuiYka
-	ymx1unqffFqgbjZisfHDt8Y9jev3s+oVxxFKufktnRfX/FXLzG8AnVSVuW5NGBwfbgNtLdnnzvB
-	y+rqCSP+ArILuNsA3j3h5jcfNHoSxyH/LTsjaoe0UonleZroLQ3ybV9oX/eEIv5Nl1XfgH6N/aA
-	/caNTZZJpncDzhxiguNRZLP1BzdJJZ6DUvTqzNpcEGS5sskI+66NxaAu8hg4IhXjwtNkGrqvzy3
-	HMYAaeubdqtxyIyWbojIBPXtHQPxxLyWDEEs3D4x3opjHxPEWFMhfQrD58aCwtIml4Op1ZNjAP5
-	3vkYck4D1eM0nvzsZj
-X-Google-Smtp-Source: AGHT+IF4fMPiC1+hZjj42Db+3of7c2CrTI3c2MCrSQNXvPFvgkM/x/aKN8kmrrpZocQqP6cAFKLHxw==
-X-Received: by 2002:a17:90b:4a10:b0:340:9d52:44c1 with SMTP id 98e67ed59e1d1-3436cd0bd74mr12391588a91.35.1762800206045;
-        Mon, 10 Nov 2025 10:43:26 -0800 (PST)
-Received: from crl-3.node2.local ([125.63.65.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343bf922ef8sm65515a91.0.2025.11.10.10.43.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 10:43:25 -0800 (PST)
-From: Kriish Sharma <kriish.sharma2006@gmail.com>
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Kriish Sharma <kriish.sharma2006@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] drm/xe: fix kernel-doc function name mismatch in xe_pm.c
-Date: Mon, 10 Nov 2025 18:42:06 +0000
-Message-Id: <20251110184206.2113830-1-kriish.sharma2006@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762800222; c=relaxed/simple;
+	bh=DeBRnakymlJYR9KcihKOhaSs1gCeYKGx3st1JOBt6L0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E1JYtpNhmgyTJT/ys8LiTdKJafqHfV8o4NzMNNmM5Ld83WUTm+UXy6Uyo9WwHcgtRc6pzDBlQTX/wYF4y1bJCreuK6dNh8wH0NFET/+4nTSVqIkRQqk5ncLpf1EcHUPEWDIfMf0MNpEroFPsPO9BUSxkud3TcjQD5QCW3qRU1TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+1XNQ0g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2DBEC16AAE;
+	Mon, 10 Nov 2025 18:43:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762800221;
+	bh=DeBRnakymlJYR9KcihKOhaSs1gCeYKGx3st1JOBt6L0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O+1XNQ0gCyIQm7z/Ot/HsJS1Wblv3dMU9feJOgYdjO746WBpTEKhJMnpsWnc4lR9F
+	 t16MONTXdyF0V3HUmsOaLQIchNEXVgr013xYDlzA53CUsjwsBZcZk40dJBh4XvkZ3S
+	 1bvOXLvzinRyVjWcTbhsNyqqpit00UnGmPE7b98aPvgeHhpHGrdzRoaBd0rJjh7taN
+	 iWAwuw70sf4f+DxqMigT9VdVh71BIkPx/jFOGiVe7GzPt/+EIO8gZGNHbFHXSZfG5c
+	 9yt/78OLUya7/Rr+wCO5JgYRxLVpJidG5mJeIDgxk/F5B9kYh6oIvAWtLwTrTeTrXn
+	 iPA43mwiXAVWA==
+Date: Mon, 10 Nov 2025 18:43:37 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: phy: lan966x: Add optional
+ microchip,sx-tx/rx-inverted
+Message-ID: <20251110-unwound-award-a11d69b9da4f@spud>
+References: <20251110110536.2596490-1-horatiu.vultur@microchip.com>
+ <20251110110536.2596490-3-horatiu.vultur@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rzGVrB2TxiTooTzC"
+Content-Disposition: inline
+In-Reply-To: <20251110110536.2596490-3-horatiu.vultur@microchip.com>
 
-Documentation build reported:
 
-   WARNING: ./drivers/gpu/drm/xe/xe_pm.c:131 expecting prototype for xe_pm_might_block_on_suspend(). Prototype was for xe_pm_block_on_suspend() instead
+--rzGVrB2TxiTooTzC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The kernel-doc comment for xe_pm_block_on_suspend() incorrectly used
-the function name xe_pm_might_block_on_suspend(). Fix the header to
-match the actual function prototype.
+On Mon, Nov 10, 2025 at 12:05:36PM +0100, Horatiu Vultur wrote:
+> This allows to invert the N and P signals of the RX and TX Serdes
+> signals. This option allows the board designer to trace their signals
+> easier on the boards.
 
-No functional changes.
+Why can't this just be done in software, debugfs or something like that?
+Maybe it's just your description is poor, but sounds like the intention
+here is to just switch things around for debug purposes.
 
-Fixes: f73f6dd312a5 ("drm/xe/pm: Add lockdep annotation for the pm_block completion")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202511061736.CiuroL7H-lkp@intel.com/
-Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
----
- drivers/gpu/drm/xe/xe_pm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> ---
+>  .../phy/microchip,lan966x-serdes.yaml         | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/phy/microchip,lan966x-serd=
+es.yaml b/Documentation/devicetree/bindings/phy/microchip,lan966x-serdes.ya=
+ml
+> index 6e914fbbac567..21b19e06a75aa 100644
+> --- a/Documentation/devicetree/bindings/phy/microchip,lan966x-serdes.yaml
+> +++ b/Documentation/devicetree/bindings/phy/microchip,lan966x-serdes.yaml
+> @@ -41,6 +41,30 @@ properties:
+>        - The macro to be used. The macros are defined in
+>          dt-bindings/phy/phy-lan966x-serdes.
+> =20
+> +  microchip,s0-tx-inverted:
+> +    type: boolean
+> +    description: Invert the TX N and P signals for Serdes 0
+> +
+> +  microchip,s1-tx-inverted:
+> +    type: boolean
+> +    description: Invert the TX N and P signals for Serdes 1
+> +
+> +  microchip,s2-tx-inverted:
+> +    type: boolean
+> +    description: Invert the TX N and P signals for Serdes 2
+> +
+> +  microchip,s0-rx-inverted:
+> +    type: boolean
+> +    description: Invert the RX N and P signals for Serdes 0
+> +
+> +  microchip,s1-rx-inverted:
+> +    type: boolean
+> +    description: Invert the RX N and P signals for Serdes 1
+> +
+> +  microchip,s2-rx-inverted:
+> +    type: boolean
+> +    description: Invert the RX N and P signals for Serdes 2
+> +
+>  required:
+>    - compatible
+>    - reg
+> --=20
+> 2.34.1
+>=20
 
-diff --git a/drivers/gpu/drm/xe/xe_pm.c b/drivers/gpu/drm/xe/xe_pm.c
-index 7b089e6fb63f..44924512830f 100644
---- a/drivers/gpu/drm/xe/xe_pm.c
-+++ b/drivers/gpu/drm/xe/xe_pm.c
-@@ -112,7 +112,7 @@ void xe_pm_might_block_on_suspend(void)
- }
- 
- /**
-- * xe_pm_might_block_on_suspend() - Block pending suspend.
-+ * xe_pm_block_on_suspend() - Block pending suspend.
-  * @xe: The xe device about to be suspended.
-  *
-  * Block if the pm notifier has start evicting bos, to avoid
--- 
-2.34.1
+--rzGVrB2TxiTooTzC
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRIyWQAKCRB4tDGHoIJi
+0ouDAPwJpjpkFjLf661KEAYdqJLgHmRtuR95WHAIW2ybif5l3AEAvATKO3J4SKQD
+OIlE+Ps8vHUA9TAlvEeK+8+lNgi0zw4=
+=hZdA
+-----END PGP SIGNATURE-----
+
+--rzGVrB2TxiTooTzC--
 
