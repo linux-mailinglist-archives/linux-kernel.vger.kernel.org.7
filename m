@@ -1,101 +1,96 @@
-Return-Path: <linux-kernel+bounces-892741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F933C45B96
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:49:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4BBC45B90
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:49:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4F03B7CD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:48:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2816318905FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DC42EA485;
-	Mon, 10 Nov 2025 09:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAAA30149E;
+	Mon, 10 Nov 2025 09:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EctUO5bI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zsbE4z7V";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EctUO5bI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zsbE4z7V"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V81ddc2q"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A60D2264A8
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874453002DE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762768121; cv=none; b=XEQy1A7Cu25o5JuLQJJNZo9lTABA1KoWjWPwTJqZQubWd208AFinxn5U3GmKHImIBWZhbDSDH0t1LtELr6y2uM8Wz6lUu1u8twbW568UBvOzBiRiickoszIQU6I54j0NSZE0KRSLK+7YGQf8K/MLjX/S/C/QJ03ExDiyP1JoQ4c=
+	t=1762768134; cv=none; b=AcTLaD5LIBnM/WWIq+eoK7729Fk7fOWopcGcd4jGTFb3lJWk5L2qYxmYeEmFBVtyIZVRe1awWnGe/QvEvb4tdQ8NuqApbDyXYU4T+QddX1eu4+aM7qqDa7dMITTTOfVIv8XODUY5aQGmoaxqBTEt3cqBZTN2p74OGJoKbEUyQ30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762768121; c=relaxed/simple;
-	bh=DZgbW9BFBWg1TIR5Jl2wOLgWABb4QAUC4Oy4kmBFxQM=;
+	s=arc-20240116; t=1762768134; c=relaxed/simple;
+	bh=bw6QasuA8KeZgfQP2n/F9NjjLOI9T9u407i64LyA4pw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I7EhzBC18XALTkCIIoShILg9+GvJF7G4EEPST8hfcfTdtxerRaYTi4SPfgBYfXKAsHaUyolQ6jYi2NDEY2znlgraKrq9BXZg/vr/tjIYGt52B1pQ24K8V9PjkPOYAPmHaVXqhVv+dikN+IZVOGQZqKNuVpOf30JDgrZjhPMMznU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EctUO5bI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zsbE4z7V; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EctUO5bI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zsbE4z7V; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 73DE31F397;
-	Mon, 10 Nov 2025 09:48:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762768116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WU7G98rrEt7tXe5E2faQc4Poi7KzUxvIQKpI3xwvQy4=;
-	b=EctUO5bIAqq0Tpzus55v7D/Q4OyISy7k3m2Y7AcIqN0N7NXFBFohwY1Oz50JbNa3US30WV
-	gosCT4C2VVuPlAkZHO6BtKC7WCDWPnLWH4E7W/4HMtn9iKtAlATphCGNb74yUj0Y4elXI5
-	HRu7GTZa3oyoaI8EPqBKmks47kuEdao=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762768116;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WU7G98rrEt7tXe5E2faQc4Poi7KzUxvIQKpI3xwvQy4=;
-	b=zsbE4z7VqB+E7a+RYrwvPy9Gjl+7k9oqr+lX2PKuoc4zrfbf/C97FRMjmcYolIHSscqWk9
-	I0n1OZhE/h4zRWAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762768116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WU7G98rrEt7tXe5E2faQc4Poi7KzUxvIQKpI3xwvQy4=;
-	b=EctUO5bIAqq0Tpzus55v7D/Q4OyISy7k3m2Y7AcIqN0N7NXFBFohwY1Oz50JbNa3US30WV
-	gosCT4C2VVuPlAkZHO6BtKC7WCDWPnLWH4E7W/4HMtn9iKtAlATphCGNb74yUj0Y4elXI5
-	HRu7GTZa3oyoaI8EPqBKmks47kuEdao=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762768116;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WU7G98rrEt7tXe5E2faQc4Poi7KzUxvIQKpI3xwvQy4=;
-	b=zsbE4z7VqB+E7a+RYrwvPy9Gjl+7k9oqr+lX2PKuoc4zrfbf/C97FRMjmcYolIHSscqWk9
-	I0n1OZhE/h4zRWAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 67FC71431B;
-	Mon, 10 Nov 2025 09:48:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +CRjGfS0EWnTewAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 09:48:36 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1F6B9A28B1; Mon, 10 Nov 2025 10:48:36 +0100 (CET)
-Date: Mon, 10 Nov 2025 10:48:36 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, ebiggers@kernel.org, willy@infradead.org, yi.zhang@huawei.com, 
-	yangerkun@huawei.com, chengzhihao1@huawei.com, libaokun1@huawei.com
-Subject: Re: [PATCH v2 21/24] ext4: make data=journal support large block size
-Message-ID: <4xsntqfuxy3xiezmztf26qytijdfi3zwxjjgvkpsmxnumkpsf5@2gr4h36mti3g>
-References: <20251107144249.435029-1-libaokun@huaweicloud.com>
- <20251107144249.435029-22-libaokun@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xigh1dAdDdWj8s5fM7ykUATd7hbiVEvclUXU7IBTqZVFP5daJqTknOWmDPWblMHNd9gpD8KbWjrOBChL1/HsIK3YJ84h9/28RQ+eVrM6EQs/iO0sVANqgCFS+HWSvJ1LSrDTTIwOblQfGYjMToEoObs/Ynl3ci4KsZlkOSPpOVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V81ddc2q; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso1936941a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:48:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762768131; x=1763372931; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jhIrfg+ZeGmHHXgRYjIXkWVaO+GMicaDEEBop0R1M78=;
+        b=V81ddc2qxiRyTqCzgFZIZ8VateSKEepBtEeHhkhJRYWMIbeNYZtFKGbBfmQ+kNJ0pI
+         vfNoGO48VVKoZ5p+wto6BQkLMwI2mTUSN8T7kxqunTPoqV/HC0Hx++AKHY0IH8ZVfl4F
+         3awoP5efGFN3YTdaHQqNUWIOJmOWKOSzxOxdc8RTRLl1/77eBYm6ABRef9wt5wLEAsYw
+         jjV1sGafv1NRMsjYslQd7nNppLaKavP+rmQuOzOLXsLkh3kVhWVB+xV1HUEi5DEcqg3O
+         EJ9I1bsTi3H7OXjiVoB/7rEdyRqdI8zCFB3DIuwY18qR4tGbNPvNeaCxxg9he4UZFy56
+         Enfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762768131; x=1763372931;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jhIrfg+ZeGmHHXgRYjIXkWVaO+GMicaDEEBop0R1M78=;
+        b=KG7eI1+jukbv9JFx9boj8bydoQgj74nu/Dc0G2XMuws5TUOj+r1faHukc1raxVYmEB
+         coCjSy8GHuCR7pYIoU/UL44xtbxLrHEUQmEWGT+GvEOP+V90o0yzTBqfcSOn1ZlyyPef
+         julrWFla6iRuvGBwcTwtEaSrT5g5YDZiPMmcLO0fUwzvsCGVwaW4+k9TqdfFojXAr4db
+         XoWlLo6q9n2IHKVHWEbDhbEnlmHw7vm5yoCD9Bm0dizlUGGC2efJMrH/RcrlZQB0fBy1
+         buV3imB7Lcpu/tm0ShEnjhQtPyi+jybX2WbTYFZbQbFAHEIisuKh9Galmi+yih+8lsG/
+         jsDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkm5Ajy8AjH1HZr5cwlqhVcPREonxAp/xsNnFgqBHWICyswYsRPX9dp3CaNr8phPWHCdDpYH6aMvrPFT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm6rY1dyLRmMY8OUzARxPxo5NfVnWz1LUITyqgf6Y1zeeNZbBa
+	iiokZLf4nrxk+3kuyEKS2UJmmR+DhMFHPNObcb8nIKQ9aIPbF+LIarhrb3M66fVvpJ4=
+X-Gm-Gg: ASbGnct0RgIHIY2PkVeJeVxSQnK9W5Z/gXGM8kYf35oo8IsAta0+07BWTh7+fGq9ZDl
+	RVVyRIezpB71QQ3HyezbKpgh7wvQHUR+ni3H5O6unZaPntfS0SF0K5CoKJX9g/0s76KeVmDkhHQ
+	K0UwA3BRFSAll7zDNgn2kLX9OmBXEIS3362lnvJjsZKWrGdcFyt3hzpBsWDGDNS8qVa54d7jazG
+	swJFrc8/4E3cMH+XmiJpUBjt/zgNlXDOSiKIU6Sahw8Ss59w7zzmP1looQ/G7meihz87h19x0QB
+	uE28Zc8dYT+v/p6ylfXab8e7MmHmS7vAZ6/KvGiBIVAB/meQhgYmfqrTp3Myacya0A1Dl1BYoM9
+	qe6E1RpN36AmuhXprpjS8eX61Q3KwtIvGs4HI560nhajiSSUWVcW0vDRCgN7dmTZOHJ8rWn6sk2
+	OHsARwk5V1xtl83XJ561RTplbD
+X-Google-Smtp-Source: AGHT+IFxQkylFq2Crr8V5DsL5/o3I3bsVnjZJeM/h5I99Cls23cajzpMg5CawHlhDUEoe8P5BasDOg==
+X-Received: by 2002:a05:6402:50cf:b0:640:da69:334c with SMTP id 4fb4d7f45d1cf-6415e80fc71mr5848770a12.35.1762768130923;
+        Mon, 10 Nov 2025 01:48:50 -0800 (PST)
+Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f813eb6sm10864916a12.14.2025.11.10.01.48.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 01:48:50 -0800 (PST)
+Date: Mon, 10 Nov 2025 10:48:49 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, bpf@vger.kernel.org,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 23/23] bpf: selftests: PSI struct ops test
+Message-ID: <aRG1AX0tQjAJU6lT@tiehlicka>
+References: <20251027232206.473085-1-roman.gushchin@linux.dev>
+ <20251027232206.473085-13-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,75 +99,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251107144249.435029-22-libaokun@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.30 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email,huaweicloud.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -0.30
+In-Reply-To: <20251027232206.473085-13-roman.gushchin@linux.dev>
 
-On Fri 07-11-25 22:42:46, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
+On Mon 27-10-25 16:22:06, Roman Gushchin wrote:
+> Add a PSI struct ops test.
 > 
-> Currently, ext4_set_inode_mapping_order() does not set max folio order
-> for files with the data journalling flag. For files that already have
-> large folios enabled, ext4_inode_journal_mode() ignores the data
-> journalling flag once max folio order is set.
+> The test creates a cgroup with two child sub-cgroups, sets up
+> memory.high for one of those and puts there a memory hungry
+> process (initially frozen).
 > 
-> This is not because data journalling cannot work with large folios, but
-> because credit estimates will go through the roof if there are too many
-> blocks per folio.
+> Then it creates 2 PSI triggers from within a init() BPF callback and
+> attaches them to these cgroups.  Then it deletes the first cgroup,
+> creates another one and runs the memory hungry task. From the cgroup
+> creation callback the test is creating another trigger.
 > 
-> Since the real constraint is blocks-per-folio, to support data=journal
-> under LBS, we now set max folio order to be equal to min folio order for
-> files with the journalling flag. When LBS is disabled, the max folio order
-> remains unset as before.
-> 
-> Additionally, the max_order check in ext4_inode_journal_mode() is removed,
-> and mapping order is reset in ext4_change_inode_journal_flag().
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> The memory hungry task is creating a high memory pressure in one
+> memory cgroup, which triggers a PSI event. The PSI BPF handler
+> declares a memcg oom in the corresponding cgroup. Finally the checks
+> that both handle_cgroup_free() and handle_psi_event() handlers were
+> executed, the correct process was killed and oom counters were
+> updated.
 
-...
+I might be just dense but what is behind that deleted cgroup
+(deleted_cgroup_id etc) dance?
 
-> @@ -6585,6 +6590,7 @@ int ext4_change_inode_journal_flag(struct inode *inode, int val)
->  		ext4_clear_inode_flag(inode, EXT4_INODE_JOURNAL_DATA);
->  	}
->  	ext4_set_aops(inode);
-> +	ext4_set_inode_mapping_order(inode);
->  
->  	jbd2_journal_unlock_updates(journal);
->  	ext4_writepages_up_write(inode->i_sb, alloc_ctx);
-
-I think more needs to be done here because this way we could leave folios
-in the page cache that would be now larger than max order. To simplify the
-logic I'd make filemap_write_and_wait() call in
-ext4_change_inode_journal_flag() unconditional and add there
-truncate_pagecache() call to evict all the page cache before we switch the
-inode journalling mode.
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Michal Hocko
+SUSE Labs
 
