@@ -1,161 +1,207 @@
-Return-Path: <linux-kernel+bounces-893178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C388C46B7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:54:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF056C46B98
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:56:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5FE3BF6EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:53:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C0803B3972
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AEC30FF3A;
-	Mon, 10 Nov 2025 12:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216D330FF1D;
+	Mon, 10 Nov 2025 12:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pHAuyUbP"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="ISakgVbV"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B309430F946
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2965830FC31;
+	Mon, 10 Nov 2025 12:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762779185; cv=none; b=ix1N0ri70WiQLeJfu3iQaGnRSUJKfIJ2YoR+W+y7xXdKSQtz43u71w0qv+DiruXSZwhorwWpedUAszbvEWa9gKDtAP9ZSNgFlRuTvv0cT8wTNnjVHKA4lyHODQrW64MDzTfzL4AKfOn0Mabp7GcinrdyrfO2rPFcn60dSYOqoEU=
+	t=1762779372; cv=none; b=sK8aA6uMHNj20QLn7+j8MT+B6iP+ipXC0UZkbYya0/fW1+mJnqBErbgGTvfNdFPQocUU6cvr7XaeM/nf87MoUTo1lr1DdMUynmr5qISQ5/DslHQ9wq3nvRWU3Squ3a+6F/x2JMCY7x9risdOj/3ibknKVQ3VWajfovznuQERsNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762779185; c=relaxed/simple;
-	bh=lajD8QJElBkHp+szQMp4lvfntXaq7B2csoiFGrMzr/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UAeBq+OmvgFVYTOAnJ6lukbn9oXHZm+v7wqn0QyWPxd1ytStWZ4wMhjL0M/WCHbcvu8XnP6pHMKQuPgHcK3SObPIb0i/pSVxAo2Lx5AZewbPzM/YfhcqCo0sklNzlgNby58+OpO6eFjI9Kvmt7xM4rku2Je/lfTdfiNeV5O+zFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pHAuyUbP; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-3e0e4601faeso1777499fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:53:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762779183; x=1763383983; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lajD8QJElBkHp+szQMp4lvfntXaq7B2csoiFGrMzr/8=;
-        b=pHAuyUbPTRgXF6gAyhV8JVy7+EDCorUsZr9eGAo/TITyvpDhI1fXmNQU5oIzJlPQtl
-         +Tq+4arshPmQNek2fkonRGxqSqJYlhxpZ1TRy2SsyMwL6dwDtkkTIjCWJ6S9Nfq1C8xt
-         X5cSR6XyI+b+5nZSLyX9rqdq5a9VBpVp5BBIQQfnEX9fitosoxpIz24ADV3KXortYbl8
-         yxDdW1OYcSBH61IUagKk5zW4GjE5fxgf/hXxSJzyK8jVYPtsYf80RDMPb6WyaXfoJ5MV
-         a9Ku5JpyQZA66zbTkcPvsvG2WtvhaKtwRN4H80iw8QP9yYbSpIrk5Tl84oQF2a0gEG3i
-         8eOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762779183; x=1763383983;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lajD8QJElBkHp+szQMp4lvfntXaq7B2csoiFGrMzr/8=;
-        b=M7bs96Vx7SNMxhUGzZkZ5h9ehDrg2SB0hympDZQaggrVWSN+cu2mvQqa8ACNzGTZm/
-         yTnHsDcA0HsiwVedVUt+OVDK88WvVI7a4HhSLu0ID6GZ9Sr8MDLGyyeNVcmZXHkDRlRs
-         /6WP4rHlpFChi8XLG57tl8cHjhBh6Mo7ly9oHPCKk2otLI/wCu8eYXhDCCEMShunhhlL
-         7Jfq1VidlEyM5Pjwhnz0slTLThrSktNBl8K6m1YyG2u6oHjBHh2VJ0dz5O27I4fpBbn6
-         A5DhwzwkTLi88YReQ/+yNQJoUU1YQ7YXbW1YGiue3m7Dcr+3jVQnHVt6oUxcFic38CW/
-         l1Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGMfk+cWUrkpjtirA7YCCSvUlJrO3j6LAmdGzYxJfIxU4+j9MOx0TA2useYeDjKWItv3Kyr+O/gjcTUdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKNIg/3m1M6Ly54TfR1veoqYC8C4cFuabxJtCJ50pY+EsLPbxP
-	nzoyAx20GcEQWa2IZEsuxxZeL/bedY8CLOPHzwGJSkwuoLI/TSg4Na0sJ0pLgtGmhrjf8EL/d/V
-	On9PesoXnwOZU3zpB8mq8dsTDry0aILMkKIUC5LTNjQ==
-X-Gm-Gg: ASbGncsYb0TYgHB+8yHP7eOuujrcqKMGZ0nh2TLhrL3REujfZPiiAZcceu3f5e5GkQZ
-	O2Vk4jJQDIT/DrF7SCqgsUm9OyaLYJ7UFTpYXKxiKYnIoAZJ2W+ZpnZqhco3BcDfZTuafxMsTCw
-	sZeEyrbs5tVllcL43wvEIpfu4+9s9CYGcBlZSbogC1Ecg0xiRZEC1RPd7+9bnAVzdBA1R2XSGte
-	lWiyE7HYuVTUdkbMnPxOfVC7ux1MLxt/TQjwuyufnITxA3uGa2Nkjogc+jT
-X-Google-Smtp-Source: AGHT+IHaOc9Hf++xJ77n1T9F3eaANxA6a255QvjbOAcsfDAumQrnMbLyVAX5itd8dNhL35m/2iP5WQb/9KW6fxXbd5k=
-X-Received: by 2002:a05:6871:60c:b0:3d2:fddc:862c with SMTP id
- 586e51a60fabf-3e7c2452b4cmr4340908fac.7.1762779182758; Mon, 10 Nov 2025
- 04:53:02 -0800 (PST)
+	s=arc-20240116; t=1762779372; c=relaxed/simple;
+	bh=/E6u4sVYPZQo75fxF+c3SoVWgaxHtVKjN/2G9f5rLdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YDGNEpjAuBwYo5cdtLU+VM/NbIm6uKZu04nJ2smuXVexSOCqQ/YyxLw97d5cYLMb6KQQq1Kw+obR9qAQRvfTeSzLowFHw5z661ve/Ve9VwUX1jaS8pZ6XOrW+lDT2Sa41mwcaDVPL8KS4YAaR8RXYDfL3Vr7MI4ckAJqJibaMIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=ISakgVbV; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=AAD4UmkYawQOZGK8ntjSV1k+g+qyvWELVN6OsmxULkA=; b=ISakgVbVnXcMW4uxB8e0vrX+nL
+	S4BBt5dePylmarBQpXURZql+YXSV17gz/fy6mgI29ARrU6mgIDUWihgKffg6MNHTqY1EZKNwyvGGU
+	M5EHtqsKl9gOfZozEU/uVOtfex0FAc/+D6YSVcHSEJoDhT4fMfxU/jwsLfTtrzBFnuzUqZQ/7PAs1
+	H9dgqc3Qiq6ARcd2yX60QaLSSjC0KE0F9mH8iKJ4B8toZwSwoESu2SF4CngJvcj65GcoY3RW2deWL
+	DesydTWtCs5Uldj++Z0o5tAkzZbs3zqUDtwnifURVCF0EM/LBpJ/yvSLpEf48Z1+ujB17KtJ3Rlq4
+	cvbhJTBA==;
+Received: from [122.175.9.182] (port=5269 helo=cypher.couthit.local)
+	by server.couthit.com with esmtpa (Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1vIRRG-0000000Dzk4-1i3F;
+	Mon, 10 Nov 2025 07:56:06 -0500
+From: Parvathi Pudi <parvathi@couthit.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	danishanwar@ti.com,
+	parvathi@couthit.com,
+	rogerq@kernel.org,
+	pmohan@couthit.com,
+	basharath@couthit.com,
+	afd@ti.com
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	pratheesh@ti.com,
+	j-rameshbabu@ti.com,
+	vigneshr@ti.com,
+	praneeth@ti.com,
+	srk@ti.com,
+	rogerq@ti.com,
+	krishna@couthit.com,
+	mohan@couthit.com
+Subject: [PATCH net-next v4 0/3] STP/RSTP SWITCH support for PRU-ICSSM Ethernet driver
+Date: Mon, 10 Nov 2025 18:23:11 +0530
+Message-ID: <20251110125539.31052-1-parvathi@couthit.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251102-automatic-clocks-v3-0-ff10eafe61c8@linaro.org>
- <20251102-automatic-clocks-v3-1-ff10eafe61c8@linaro.org> <20251103-smoky-rustling-bloodhound-7590ce@kuoka>
- <CADrjBPpjX_qSehbNkaAG03f=whs09qFzzgNiY3sztk7v0QeCFw@mail.gmail.com> <20251104-enthusiastic-cream-gibbon-0e7b88@kuoka>
-In-Reply-To: <20251104-enthusiastic-cream-gibbon-0e7b88@kuoka>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 10 Nov 2025 12:52:51 +0000
-X-Gm-Features: AWmQ_bmYJGLwRqlUrf73Sc1rVwj8QxtUbwqaYUkACotkTBe74SIkf0KWHru_6Ms
-Message-ID: <CADrjBPpGt3qBGucF1COWZT=OZ+8ithg6=-QefhKUiW4tkC=KrA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: google,gs101-clock: add
- samsung,sysreg property as required
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
+X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Hi Krzysztof,
+Hi,
 
-On Tue, 4 Nov 2025 at 08:11, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Mon, Nov 03, 2025 at 01:49:53PM +0000, Peter Griffin wrote:
-> > Hi Krzysztof,
-> >
-> > Thanks for the review feedback!
-> >
-> > On Mon, 3 Nov 2025 at 09:41, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > On Sun, Nov 02, 2025 at 08:27:14PM +0000, Peter Griffin wrote:
-> > > > Each CMU (with the exception of cmu_top) has a corresponding sysreg bank
-> > > > that contains the BUSCOMPONENT_DRCG_EN and MEMCLK registers.
-> > > >
-> > > > If present these registers need to be initialised
-> > >
-> > >
-> > > ... for what exactly? What would happen if this was not initialized?
-> >
-> > The BUSCOMPONENT_DRCG_EN register enables dynamic root clock gating of
-> > bus components. So it is related to the automatic clock gating feature
-> > that is being enabled in this series. Things still work without
-> > initializing this register, but the bus components won't be
-> > automatically clock gated leading to increased dynamic power
-> > consumption. Similarly the memclk register enables/disables sram clock
-> > gate. Up until now we've not been initializing the registers as
-> > everything from Linux PoV has been in manual clock gating mode and
-> > until starting to implement this I wasn't aware there were some clock
-> > related registers in the corresponding sysreg. Additionally with
-> > Andre's work enabling power domains it has become clear we should be
-> > saving/restoring these two sysreg clock registers when the power
-> > domain is turned off and on.
-> >
-> > > What is the exact justification for ABI break - wasn't this working
-> > > before? Or new feature will not work (thus no ABI break allowed)?
-> >
-> > No, automatic clocks and dynamic root clock gating were not working
-> > prior to this series. Currently power domains and system wide
-> > suspend/resume aren't enabled upstream either. As we work on enabling
-> > these features we are finding some things that in an ideal world we
-> > would have known about earlier. Unfortunately it's not so obvious just
-> > from studying the downstream code either as they rely heavily on
-> > CAL-IF layer that has peeks/pokes all over the memory map especially
-> > for power/clock related functionality.
-> >
-> > Whilst it is technically an ABI break, I've tried to implement it in a
-> > backwards compatible way (i.e. an old DT without the samsung,sysreg
-> > phandle specified) will just fallback to the current behavior of not
-> > initializing these registers. Things will still work to the extent
-> > they did prior to this series. With a new DT the registers will be
-> > initialized, and dynamic power consumption will be better.
->
-> So explain that this is needed for proper and complete power management
-> solution on this SoC, however that is not an ABI break because Linux
-> driver will be stil backwards compatible.
+The DUAL-EMAC patch series for Megabit Industrial Communication Sub-system
+(ICSSM), which provides the foundational support for Ethernet functionality
+over PRU-ICSS on the TI SOCs (AM335x, AM437x, and AM57x), was merged into
+net-next recently [1].
 
-I'll send a new version shortly with an updated commit message like you suggest.
+This patch series enhances the PRU-ICSSM Ethernet driver to support bridge
+(STP/RSTP) SWITCH mode, which has been implemented using the "switchdev"
+framework and interacts with the "mstp daemon" for STP and RSTP management
+in userspace.
 
-Thanks,
+When the  SWITCH mode is enabled, forwarding of Ethernet packets using
+either the traditional store-and-forward mechanism or via cut-through is
+offloaded to the two PRU based Ethernet interfaces available within the
+ICSSM. The firmware running on the PRU inspects the bridge port states and
+performs necessary checks before forwarding a packet. This improves the
+overall system performance and significantly reduces the packet forwarding
+latency.
 
-Peter.
+Protocol switching from Dual-EMAC to bridge (STP/RSTP) SWITCH mode can be
+done as follows.
+
+Assuming eth2 and eth3 are the two physical ports of the ICSS2 instance:
+
+>> brctl addbr br0
+>> ip maddr add 01:80:c2:00:00:00 dev br0
+>> ip link set dev br0 address $(cat /sys/class/net/eth2/address)
+>> brctl addif br0 eth2
+>> brctl addif br0 eth3
+>> mstpd
+>> brctl stp br0 on
+# STP to RSTP mode
+>> mstpctl setforcevers br0 rstp
+>> ip link set dev br0 up
+
+To revert back to the default dual EMAC mode, the steps are as follows:
+
+>> ip link set dev br0 down
+>> brctl delif br0 eth2
+>> brctl delif br0 eth3
+>> brctl delbr br0
+
+The patches presented in this series have gone through the patch verification
+tools and no warnings or errors are reported.
+
+Sample test logs obtained from AM33x, AM43x and AM57x verifying the
+functionality on Linux next kernel are available here:
+
+[Interface up Testing](https://gist.github.com/ParvathiPudi/a2d76376f8eb04828061e44d0193156f)
+
+[Ping Testing](https://gist.github.com/ParvathiPudi/3d71e7765d64d87bf5957e3705a2ec9d)
+
+[Iperf Testing](https://gist.github.com/ParvathiPudi/e0d5d14cf0abf2a9f9a56c39142ba933)
+
+[1] https://lore.kernel.org/all/20250912104741.528721-1-parvathi@couthit.com/
+
+This is the v4 of the patch series [v1]. This version of the patchset
+addresses the comments made on [v3] of the series.
+
+Changes from v3 to v4:
+
+*) Addressed Andrew Lunn comments on patch 1 and 2 of the series.
+*) Rebased the series on latest net-next.
+
+Changes from v2 to v3:
+
+*) Dropped the RFC tag.
+*) Addressed  MD Danish Anwar comments on patch 3 of the series.
+*) Rebased the series on latest net-next.
+
+Changes from v1 to v2 :
+
+*) Added RFC tag as net-next is closed now.
+*) Updated the cover letter of the series to generalize and indicate support for
+both STP and RSTP along with subject change as per Andrew Lunn's suggestion.
+*) Addressed the Andrew Lunn's comments on patch 1 of the series.
+*) Rebased the series on latest net-next.
+
+[v1] https://lore.kernel.org/all/20250925141246.3433603-1-parvathi@couthit.com/
+[v2] https://lore.kernel.org/all/20251006104908.775891-1-parvathi@couthit.com/
+[v3] https://lore.kernel.org/all/20251014124018.1596900-1-parvathi@couthit.com/
+
+Thanks and Regards,
+Parvathi.
+
+Roger Quadros (3):
+  net: ti: icssm-prueth: Adds helper functions to configure and maintain
+    FDB
+  net: ti: icssm-prueth: Adds switchdev support for icssm_prueth driver
+  net: ti: icssm-prueth: Adds support for ICSSM RSTP switch
+
+ drivers/net/ethernet/ti/Makefile              |    2 +-
+ drivers/net/ethernet/ti/icssm/icssm_prueth.c  |  518 +++++++-
+ drivers/net/ethernet/ti/icssm/icssm_prueth.h  |   27 +-
+ .../ethernet/ti/icssm/icssm_prueth_fdb_tbl.h  |   76 ++
+ .../ethernet/ti/icssm/icssm_prueth_switch.c   | 1050 +++++++++++++++++
+ .../ethernet/ti/icssm/icssm_prueth_switch.h   |   37 +
+ drivers/net/ethernet/ti/icssm/icssm_switch.h  |  103 ++
+ .../net/ethernet/ti/icssm/icssm_switchdev.c   |  332 ++++++
+ .../net/ethernet/ti/icssm/icssm_switchdev.h   |   13 +
+ .../ti/icssm/icssm_vlan_mcast_filter_mmap.h   |  120 ++
+ 10 files changed, 2255 insertions(+), 23 deletions(-)
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_fdb_tbl.h
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_switch.c
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_switch.h
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_switchdev.c
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_switchdev.h
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_vlan_mcast_filter_mmap.h
+
+-- 
+2.43.0
+
 
