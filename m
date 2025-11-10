@@ -1,237 +1,363 @@
-Return-Path: <linux-kernel+bounces-894054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7EEC4927A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:58:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC522C4926E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:57:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19CD03B156C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:56:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CDD34EA647
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BB53375A4;
-	Mon, 10 Nov 2025 19:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B83337B80;
+	Mon, 10 Nov 2025 19:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g+Z70kXa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwX1ndXs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91212D8DB1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762804604; cv=fail; b=u37XdLL27RUS+0xwPH19I44ej8X9on+Cm0HpKYep1G+30hAbKZQjILXzt6+FY+1ENWmK26Zx4rh+0ODlwp8f3Geq/FrfmbEOumuLEJom8ga7YqmtqK/eEkyF0BGXiEPdxr4H1x3ZqVSZnONPnuqVerjVaHSjI6xm2tvMXBoyT4I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762804604; c=relaxed/simple;
-	bh=OWW/Re61UqVq90GuS30dxY6l2b4V0Zx0a5ByVYFp45c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oMi5fRuof2eORZ7gzsTwLsbeZzmeLdgfuc946TfpEtJ9YwOtVjWn5ztesCN/9V+MzO2f7S+CjYVLdbZhW2/PaLyhz2ixci5SsnkPWcqh98QVPX5jhfaF0uzTfxFpsF8I4JK9a5aJVynQe5Fw8pOrZP/FhUegBntUURZvXQy+ozc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g+Z70kXa; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762804601; x=1794340601;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=OWW/Re61UqVq90GuS30dxY6l2b4V0Zx0a5ByVYFp45c=;
-  b=g+Z70kXat3fs3EUKUoUA0egFn264mscGFK99oXeG+jDTz3rMXJjLVqEt
-   HTTnGWMKiBjAXt6EwjsRRtmVBD8i1HU87XCyLR3Pxdou+CPZN0UsgT+xf
-   T1eZnpiMdMtBOzFzFfhyHsNjucnPWLWcyUDT4gCcqgFcjDEL1vQZAhWqu
-   c6tHkarqwRDlPg7gUtIwizmG2W49UHWvs+RV6sieyikpSuNH/uQ0qNS5+
-   IrllxjqvQrgklBXe+NV+vM5LkNP2B833UJrnXBsB1QY40aduzUAxH1R5q
-   j2up1nGwFWkgVcBlsCWZxQXd1Sv2tdBQ9wKH2Y0hbiTeNcddMvL1GQ+SU
-   Q==;
-X-CSE-ConnectionGUID: ASeMRG4ASXCmm1cG6DNq9w==
-X-CSE-MsgGUID: Vp4YQyOlT+KRpqe8wdPmOA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="52420365"
-X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
-   d="scan'208";a="52420365"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 11:56:41 -0800
-X-CSE-ConnectionGUID: ayKcU5JZQVGluLiQW2wKug==
-X-CSE-MsgGUID: HKKSG/wpRKmzWmedJ3A8xQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
-   d="scan'208";a="192864527"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 11:56:41 -0800
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 10 Nov 2025 11:56:40 -0800
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Mon, 10 Nov 2025 11:56:40 -0800
-Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.56) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 10 Nov 2025 11:56:39 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ruu0fJMFv9vIrs4bBdau+PPYMgtod+J4osEoZ1KR1jw+C8CgFnGSw/lQv8g0ZDK3XVuF02WJSmo4KQO7LlMytN7fYB522gVQl6GeKFQ1zXZYkb5DecMZz4Uid1iboBNyskDjvZfDCvINpGh08c/NxU1wtQmsL/xDZgKezxaV/6ccMHHmLo8ceUJEUBXyzO/SnXBi2jb8/bEGp7cMob/aX07tZNRLQfFiHZMVawpCJx3SvvzsC6yecltHuH8Zdu0fWiWFrc9pdSpVjBmYQUSiqpbXnFyzz9QRU7AB63wwfNpy/E3DSD8lRQ7GxFWYkVIOC60UcCDneqsh1Ixnt+BfOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OWW/Re61UqVq90GuS30dxY6l2b4V0Zx0a5ByVYFp45c=;
- b=V2vzvdxRRvqJWcA7RjFQ7WKrmHWwYMQoF+3k7oGsh+piGd/FCJ+WOTesREpyKDaYDOJBLGUfs36iH8oBc1hFpb25yn/F0a/9Rrk32Cj2Emxr5qAEsQKAF9+HcpROg9+8i3F27Hhdt7P1gi6U75fLbvNo9NEXePmkQJO6DfsOQZnG4KS0x4DZTSDWfcIUuEHACZW6HHgmWGYpkQP7D4Hf/fwzSI+VB2GLPmpkpydruvpmNb3Yn+Uhy3yIP/mQtZYOFYR9SByoYWmNnFRuyReD4q92HUwQROyB2Zurxfbyr+ew3xYUcV7OJ8niYRPBAOOCly73xfa0K9KDQyCX7TKJOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by SA0PR11MB4702.namprd11.prod.outlook.com (2603:10b6:806:92::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 19:56:32 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9298.010; Mon, 10 Nov 2025
- 19:56:32 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Babu Moger <bmoger@amd.com>, Aaron Tomlin <atomlin@atomlin.com>
-CC: "Chatre, Reinette" <reinette.chatre@intel.com>, "Dave.Martin@arm.com"
-	<Dave.Martin@arm.com>, "james.morse@arm.com" <james.morse@arm.com>,
-	"babu.moger@amd.com" <babu.moger@amd.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
-	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: RE: [PATCH 1/2] x86/resctrl: Add io_alloc_min_cbm_all interface
- for CBM reset
-Thread-Topic: RE: [PATCH 1/2] x86/resctrl: Add io_alloc_min_cbm_all interface
- for CBM reset
-Thread-Index: AQHcT4VCMZzJIaIcpEO5HF/nc2I90rTnxWyAgAAGSYCAAAv9gIAAFBMAgAQ1DACAABM98IAAISWAgAACCLA=
-Date: Mon, 10 Nov 2025 19:56:32 +0000
-Message-ID: <SJ1PR11MB60836AB4270419338FBB4D1EFCCEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20251107012401.224515-1-atomlin@atomlin.com>
- <20251107012401.224515-2-atomlin@atomlin.com>
- <2a0b270a-e398-4d88-aa10-421f2769a759@amd.com>
- <53iuqiul6uo7zj6sfckm2h465cjusaxvpxrtdmnbmhvbzuqiq6@7ogm3zqddzjd>
- <fa2c3cbc-2af6-4d98-bd70-8ab49cb0d83e@amd.com>
- <4whfbgq336xfuov4i4nwwrn35ywwlwizuvpdlstmdqzkhvwrq6@eits26xbwyz6>
- <bcc8e6d2-8e91-4e91-9dab-f1c00f99c408@amd.com>
- <SJ1PR11MB6083701B503CE361E3D7A656FCCEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <f4a043d2-9cb0-41c9-a45d-31f96fd007d5@amd.com>
-In-Reply-To: <f4a043d2-9cb0-41c9-a45d-31f96fd007d5@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|SA0PR11MB4702:EE_
-x-ms-office365-filtering-correlation-id: cc39024a-e924-4b67-6bf6-08de20933ee4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?N3hsK0g5dzNiMXNJTDBSKzBIQ0NQTWliU3VTSGpITFNyZTN6WkJEeTJxRTlZ?=
- =?utf-8?B?MlNHUXp5SWtNT3NheGZrai9VSkVTRjhZVmNHVkxJMlFlL3N2RUw5TzRLWUlX?=
- =?utf-8?B?aC9sUVJjZ1Z4ekRsczBsU2VYcnZpZkVzdkVBQzF3RXBUd2Q0U1lldm96SFpC?=
- =?utf-8?B?aUNKNVhKUGlTczI2OStwUjFROTllTnBJUGh3VUxqallHVGRHYndDbGVtQ0Rq?=
- =?utf-8?B?MTVsSG5iQkhKMnkyWGpoY1ZvU2NNN1NSd1ViY1kxNnBIa0R3RjEvdk90WjRr?=
- =?utf-8?B?YUdONjJjTlVBM0NiRU8yM0YycngyNWRObWI2THpFNGsyOFg4Uy93MmIxbFpJ?=
- =?utf-8?B?Sk92TDdvMGVPRGRJd2tIdjF2TU9XVllBYXlTT205QnVJZnBsZ29hdnpVTGRF?=
- =?utf-8?B?M3VTWG81RXJ6YTJTWlk1WVVNSkxXeG5qODBDZStHc0orclhGZ0hRSlJUUzRE?=
- =?utf-8?B?cW5ia1dEeS9XZHJVVGhlVUloUTRuRUx3WnpNM0wzVVM1V3UyTmExMmtmdUZT?=
- =?utf-8?B?VTNnb01zSUU3ZWR2SjBzclh5eVJjRlp0bWsxL0FVeGRjSVFUMlBkL3l5YWdv?=
- =?utf-8?B?L3RMWjV6elFrMFdGSjNWZmQ0K3NXb29jM3hJbGNEWDFKNXdNSTZWOGVpWXNx?=
- =?utf-8?B?Q0Vtd1drQVlYMXhlL1ZDZkFhdlpsSk1qMlNvOFVQaXVBMWp6dGFTakI0RVhn?=
- =?utf-8?B?enljd0MxWlRsZ29rSUcxd0R1YXdFNHg4dTBCWlJpaFd3ZXJUYkxGcEdWdXd2?=
- =?utf-8?B?YWdUVkgxbkMyeHgrd29Nam9xMHVmOU81azB5MW9qTDVDMnBzZzhVNlFFRC9L?=
- =?utf-8?B?cEJQM2prMzB0YUo3a21aNTVwMHNoMitraWJBTitsK3BVeU92UG8rQXVuWXda?=
- =?utf-8?B?djZJUkltdC85b1RodmZvbnpkSUxzTHYvZGtheVdkMitIMThHT0d6aGhxV2hM?=
- =?utf-8?B?SUNYaXR4OWtveHpJbFE0QnB5aHdmRkJiSDhrUkF1ZVBOaFRTOGxzeVUvNEdW?=
- =?utf-8?B?VjRIWGpIQm5rSmREYUkvNnpTT1U3bFdLcDFSQXp6WHU1NkJlOWlLemN4RCtk?=
- =?utf-8?B?ZGFsWWRtR2lYR25vM2NmcjBNRVB1V0NUTzNrRThLZTNJdy9TcGpMWHZmeG5I?=
- =?utf-8?B?a3ZBUTJsMHRHQnNnM0gwOEk1a1NuWm0vQm1KeHJHckJVazdpWE94TCtLZmZU?=
- =?utf-8?B?Z3gvc24xZURBSktzZnlRQXljWEloSmp0SWREYmw5czlxM00yR2thcTQzc2NX?=
- =?utf-8?B?K0VUWk5xdXdYMVZqTWpjckdDbXpKOWNySGliMVlsdHp6a2grdEV3TUc4bW1q?=
- =?utf-8?B?MXc2VjFKTVFtTWQyY2ZUSzVlUEVmNXRpVS8rdDkxc3JScWNxV1QydHovQURY?=
- =?utf-8?B?U2xmZnVhSjJKc0E0d05zcDQ3U1NlQ0g4ajNrdXlZWUhHSXdzS1BYZzd6WjBk?=
- =?utf-8?B?b3hZWE5iR3hHUENvV3VSVE9Bdk54YXZPR3lhZjJCUmVFOE1PdDRRVlIzRGp1?=
- =?utf-8?B?Y3FvUW1uMCsvWGtRa2s5VEZqY21uMkx3RGcwNElRK29Yb1hJNEJQWXlzM3hs?=
- =?utf-8?B?QkU1RFBycUpLOW5NTTc0Qkl1YzRNUkcyZTlvVnJNcUVLT1lKRnRyanFjb3kx?=
- =?utf-8?B?eFJjYTdsUU40U0h2Q0VIQmpmVTM1OWNEODRmRDNhcCthd3RMMjV4bWpXM0tx?=
- =?utf-8?B?QnRyTFFTVXMzVzgyc0xoQjJBRkJtR2hvZlNEQmNXTThSMU9tK1czSU9MeC9I?=
- =?utf-8?B?aWJPclRhQjFXYU1FYnlRYVFvNHEzMHNkVGR0c28yOGR6N3VTdFR2VUhEeHlu?=
- =?utf-8?B?Lzd5M0RVcDJDSVMwOEVMaDNDUm0xc3B0TXNkMmVHZHhBaFcrU0p6cTNCOUkz?=
- =?utf-8?B?bEJyUjQ2SnpDTXVhc3JsOWhFOGlQN29NR3lLdWVVMzUxVnZZakVScTBHbW55?=
- =?utf-8?B?b3gyK0N2dDdCU0VIZEIxL0xic3JXemJOSi9XYmJBVjQrS2p1TGsvNWxXU25C?=
- =?utf-8?B?TjNYVkU2cE9HQ2M1ajExblpCa0Y0WHVwYnNKYUJpQXk0UUMyaFBDVHpQWlRR?=
- =?utf-8?Q?vM2TeU?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?L2tJYzE2MDNSZkpSeWNaOWNLSElOd0dCUGdmRE0zclN3UVRWL1ppTFRMdGpk?=
- =?utf-8?B?dU92eUVMV1N0UlpHa1ZZNE9sQjU4Nm95NlF5ZUpzcTlJa3NKUTNkcC9IL3Ja?=
- =?utf-8?B?K2dEMWYwWVBQMlV1UjdrWXc4eWFWd2ZJYk84dUYwT0FoL0NDeDc0ek1KRnM3?=
- =?utf-8?B?U21zVzdLQ0VJVGxIenl2WXh0ZE5hcmZ1cUl1V3FINURFTjd2MXliUVFqY0FH?=
- =?utf-8?B?WlA5YVlweUVyVjhJSlRIanc4cks4cUh0Z2JyWDhBR3VTUENtVGlQYTQwaEdG?=
- =?utf-8?B?Ly8xV2R0VnlxOXhTeVV5SkZ4RFlzenFBdTVXb2t4TzJIYVM0OXpLRXFqc2t3?=
- =?utf-8?B?RVhHbWxNVkp4QWxUVUFjNzdPK1NmY1RaRHR6bGt0bys5RHpzKzNjMzRyd2Z4?=
- =?utf-8?B?VWdKTXk0TWQ2bmRndFZSZ3I3Qzl0THRDMHA0TWFSWUpBTTFwVjlTSEtzcWVq?=
- =?utf-8?B?WjU1aGNsT3ZwclN4bUVKZ2o1YkFheWcxSEFFRkRrekZKV0xZR2FQM2hScVov?=
- =?utf-8?B?ZERwQ1ZhWkdGdnBWZ3Rxc3loeWVvWFRoK1U1L1dMdnN6WWF0T0VialdpZ2Fn?=
- =?utf-8?B?SFpOcWlwRmdIU1VCNHZnNFhLMWNkYW5xY3Qvbm5OS256WlhoU1dsREJoWU0x?=
- =?utf-8?B?WWlLUUNuWGhsb0Rod0xqMDVNQTZxQlZLcjk0bWhwd3RQNEtaMjhFMVdLU0Nw?=
- =?utf-8?B?RGkrQnNTZzNnSDFNSDlHV0pJeUd3R01ta0lEWmNJQUxjZ0JBQjN3MjFGWEh6?=
- =?utf-8?B?L1pkTEx5Sk11YmQ3eXNvVUJ1Z01RdEhhU015ZkdITnFwN3BHOG8wK285ODNh?=
- =?utf-8?B?Rm96cDVFVHBnY2F6bUJ0VFppZDJ0UFJvYVR3MHJwMTI5RlNzQ1plc1BGOVdk?=
- =?utf-8?B?NCtaTkNEMllsRkFHSjJDVk85Z0puYUdsaG43TnNRTG0vbXo3TldqNkRlMnll?=
- =?utf-8?B?bnJLb3dZRzNpNllJbE1rS2FJeFh5elcyR1BKQ0NIUXpFc3VBa3U3MmVDQ25J?=
- =?utf-8?B?Tk5zajgvQlRheEc5dkZTTzVmWk1sZmxwc0xGWW1pUkd4cVY1SHg4S05YL2hB?=
- =?utf-8?B?MDBWSUw2MUFOQk5NSWxSREVpdzRUL09GREJQaDFrajVRd3RURGxPZ25sZWQ1?=
- =?utf-8?B?UW9IY0Yzcmk3YUdNc0FCOHUvZWRCRWFQYnJGbHZER1FYcVVHZjRuUlQ5UTdy?=
- =?utf-8?B?dVR6Sk1UaEJqYlUzVFdMdDNKK0FMQmFWbThDYXBidWpFOFdyYTNLeG1IZy81?=
- =?utf-8?B?NUdlcEJ3di9jWG1tVW51NFhtVlB6OHhDeUVsQU56SzY0eWNwVnl2OTNUbFM4?=
- =?utf-8?B?ZVRvRkdlV1pNZVJqU0R5TDJGeDRPS2RmOFFkbW0zMkxQM0prci9Rc3dKYjdG?=
- =?utf-8?B?QldaNXJxZFdzaXFRemFXSXl2SElqYW9la21IOGhXNHZGQkxaMW5VOS9GTFNC?=
- =?utf-8?B?THZZNXE2dmJnQ0x0dS9wVGJsSnhabGxXOE9lY0xQVTVjdENlaHRvQlpVWVA0?=
- =?utf-8?B?Q2p0dkwxZWNidVdadHpkT3Q2TmQzVEdTNTM2R2FXOXBkZk1wZElSQ0RLQ1dO?=
- =?utf-8?B?dXFDQ1JPcXFtQ2dXa1ZLK3dHTnVwMGR0a1plLzdma0FYNXNXZ3V5OVFFMi9l?=
- =?utf-8?B?YTBEWFpOTndiWUowZzZUZXdEWjhBQUhkcDRiMHdoUlhIaXpVY3h5aVluK0hI?=
- =?utf-8?B?WFg4YmcxUUxoaEFBY1YwWjBkaE4wakxkeXhzY0YxWkZFSFVFTlJJcU8yMkpJ?=
- =?utf-8?B?MXRvNFh5bFBta3d1UHorYllraS9mMWlHQ3BZWEVhdjVZTmNHeW9mZTZ4emZR?=
- =?utf-8?B?aWRDRitmbW5DVXhsR3dnMVhpLzE2Rms3NjI4dnpPbnZEcDE0YU9XbjdCenNv?=
- =?utf-8?B?TEowYjNlMHVSTmNVZHd5V09COFErQXNwS0hVVXNoVXVWVEFySExwUzlKU1pU?=
- =?utf-8?B?TzE4c3JXMllpaWs4NHVDK2tkcGFQb0ZhZk5hN2RaOTVJWkRoUTNKRjJDOUxj?=
- =?utf-8?B?MTZmbVVIWkRQR213RHN6NlNGVnpldGFjMjIwQlEwTWJqWTRBVVVQM294QUNB?=
- =?utf-8?B?ajJJa0l3MEZacGk2aGVzZWp1ZnFFdVVJNVY1djRkaDVhbWdBT2JPTmVEeStS?=
- =?utf-8?Q?dWRY5j/BG3p57EWtLVUMqI3vu?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51462336EFD;
+	Mon, 10 Nov 2025 19:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762804648; cv=none; b=NakenPi2LpvSyRh1fUw6vrXNHbwp1M9pztrBniIneNhBdumvTPws5FiJI2audWYk+wn/ndyGxG77J05ysNhRhTd58CUNtQBaSDY4SUvRfvsiH1ArcBGP2sjG1tvB+Su4UW2i3bplradeZayP2/iC6N1YokY9hByanA0vLEBTbfQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762804648; c=relaxed/simple;
+	bh=7qoRu0+RlFlou80SR1CpX/1QJvwjgZWdZwchm3F0+R4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X/ztVf0ByPUf6M/EovWw4kCaPJkM2fdwrR2trWpknujevvRu30aX6BCwqo8U3iHOtBypehabTQGkrR/NrALWHKlNjwyCQXAPHkDJira/W4nF67+emaAcm6OXIVuBLLPbszK5BRHBrQzLpMU5i/bhF5WqjO6HZ1N9E1pNdCaeJuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwX1ndXs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BEBFC16AAE;
+	Mon, 10 Nov 2025 19:57:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762804647;
+	bh=7qoRu0+RlFlou80SR1CpX/1QJvwjgZWdZwchm3F0+R4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MwX1ndXsEPnx1OdZ0JL/opQXXrG6Z5jRcmuPfkE/5execmaAgpAaIG1bk2BZzaX6z
+	 Odq6EZ7+6e1STaRxM3p+xOx9rHsCa+qIEf/bpQ2bdVVFsInoXiMgHb0JxaDxalOYpd
+	 YzkiZv14LI9afF4MB4I7/bOScsTJyTW1aACr4zjEEXCVUW5By5cKuR9k3RN7qQkWE8
+	 oUFmug+Ir0gZICWJIfmHQ2z8dT+4FPQpWaEkOCyh0eQ3HUI4NUJE5emLfT374l/2nL
+	 +d1A9My/NMk/Z1ZEUZbCxtlSSR64Th4EWY0+v4+2NWbNgG3g6odHqoFr4LfSNwJNz9
+	 5bQXjQbh8oIlw==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Nishanth Menon <nm@ti.com>,
+	Simon Horman <horms@kernel.org>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	alexandre.f.demers@gmail.com,
+	alexander.deucher@amd.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.17-5.4] net: ethernet: ti: netcp: Standardize knav_dma_open_channel to return NULL on error
+Date: Mon, 10 Nov 2025 14:57:03 -0500
+Message-ID: <20251110195718.859919-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251110195718.859919-1-sashal@kernel.org>
+References: <20251110195718.859919-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc39024a-e924-4b67-6bf6-08de20933ee4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2025 19:56:32.0455
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aKOJNgxwJrV1w2NWVSoHdyjxlih1PZ34zjfi1tz20Zx3YHaV8h1mfvaSQmznLYLx113ii5cNOFv3o5CwZZAOMw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4702
-X-OriginatorOrg: intel.com
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.17.7
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-PiA+ICMgZWNobyAiTDI6Kj1mZmYiID4gc2NoZW1hdGENCj4gPg0KPiA+IHdvdWxkIHdvcmssLiBC
-dXQNCj4gPg0KPiA+ICMgZWNobyAiTDI6Kj1mZmZmIiA+IHNjaGVtYXRhDQo+ID4NCj4gPiB3b3Vs
-ZCB0cnkgdG8gc2V0IHVuaW1wbGVtZW50ZWQgYml0cyBvbiBzb21lIGNvcmVzIGFuZCB3b3VsZCBm
-YWlsLg0KPg0KPg0KPiBJIHdvdWxkIGNvbnNpZGVyIHRoaXMgYSB1c2VyIGVycm9yLCBhcyB0aGUg
-dXNlciBpcyBleHBlY3RlZCB0byBrbm93IHRoZQ0KPiBzdXBwb3J0ZWQgdmFsdWUgZm9yIHRoZSBk
-b21haW4uDQo+IFRoaXMgc2l0dWF0aW9uIGNhbiBvY2N1ciBldmVuIG5vdyDigJQgd2Ugc2ltcGx5
-IHJlcG9ydCB0aGUgZXJyb3IgYW5kIGV4aXQuDQoNCkJhYnUNCg0KTWF5YmUgaXQgd2FzIGEgcG9v
-ciBleHBsYW5hdGlvbiBvbiBteSBwYXJ0Lg0KDQpPbiBhIGh5YnJpZCBQLWNvcmUvRS1jb3JlIHN5
-c3RlbSB3aXRoIGRpZmZlcmVudCBMMiBjYWNoZSB0b3BvbG9neSBzY2hlbWF0YQ0KbWF5IGxvb2sg
-bGlrZSB0aGlzICg4IEwyIGRvbWFpbnMgb2Ygb25lIHR5cGUsIDQgTDIgZG9tYWlucyBvZiBvdGhl
-ciB0eXBlLg0KDQokIGNhdCBzY2hlbWF0YQ0KTDI6MD1mZmZmOzE9ZmZmZjsyPWZmZmY7Mz1mZmZm
-OzQ9ZmZmZjs1PWZmZmY7Nj1mZmZmOzc9ZmZmZjs4PTdmOzk9N2Y7MTA9N2Y7MTE9N2YNCg0KVGhl
-IHByb3Bvc2VkIHdpbGRjYXJkIHN5bnRheCBpcyBvbmx5IHVzZWZ1bCB0byBzZXQgYWxsIGRvbWFp
-bnMgdG8gYSB2YWx1ZQ0KdGhhdCBpcyBsZWdhbCBmb3IgYWxsIGRvbWFpbnMuIEl0IGNhbm5vdCBi
-ZSB1c2VkIGZvciB0aGUgInJlc2V0IGJhY2sgdG8gZGVmYXVsdHMiDQpjYXNlIGJlY2F1c2UgZGlm
-ZmVyZW50IGRvbWFpbnMgaGF2ZSBkaWZmZXJlbnQgZGVmYXVsdHMuDQoNCi1Ub255DQo=
+From: Nishanth Menon <nm@ti.com>
+
+[ Upstream commit 90a88306eb874fe4bbdd860e6c9787f5bbc588b5 ]
+
+Make knav_dma_open_channel consistently return NULL on error instead
+of ERR_PTR. Currently the header include/linux/soc/ti/knav_dma.h
+returns NULL when the driver is disabled, but the driver
+implementation does not even return NULL or ERR_PTR on failure,
+causing inconsistency in the users. This results in a crash in
+netcp_free_navigator_resources as followed (trimmed):
+
+Unhandled fault: alignment exception (0x221) at 0xfffffff2
+[fffffff2] *pgd=80000800207003, *pmd=82ffda003, *pte=00000000
+Internal error: : 221 [#1] SMP ARM
+Modules linked in:
+CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-rc7 #1 NONE
+Hardware name: Keystone
+PC is at knav_dma_close_channel+0x30/0x19c
+LR is at netcp_free_navigator_resources+0x2c/0x28c
+
+[... TRIM...]
+
+Call trace:
+ knav_dma_close_channel from netcp_free_navigator_resources+0x2c/0x28c
+ netcp_free_navigator_resources from netcp_ndo_open+0x430/0x46c
+ netcp_ndo_open from __dev_open+0x114/0x29c
+ __dev_open from __dev_change_flags+0x190/0x208
+ __dev_change_flags from netif_change_flags+0x1c/0x58
+ netif_change_flags from dev_change_flags+0x38/0xa0
+ dev_change_flags from ip_auto_config+0x2c4/0x11f0
+ ip_auto_config from do_one_initcall+0x58/0x200
+ do_one_initcall from kernel_init_freeable+0x1cc/0x238
+ kernel_init_freeable from kernel_init+0x1c/0x12c
+ kernel_init from ret_from_fork+0x14/0x38
+[... TRIM...]
+
+Standardize the error handling by making the function return NULL on
+all error conditions. The API is used in just the netcp_core.c so the
+impact is limited.
+
+Note, this change, in effect reverts commit 5b6cb43b4d62 ("net:
+ethernet: ti: netcp_core: return error while dma channel open issue"),
+but provides a less error prone implementation.
+
+Suggested-by: Simon Horman <horms@kernel.org>
+Suggested-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Nishanth Menon <nm@ti.com>
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Link: https://patch.msgid.link/20251103162811.3730055-1-nm@ti.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+LLM Generated explanations, may be completely bogus:
+
+Based on my comprehensive analysis using semantic code analysis tools
+and kernel repository examination, here is my determination:
+
+## **YES** - This commit SHOULD be backported to stable kernel trees
+
+---
+
+## Analysis Summary
+
+### Semantic Analysis Tools Used:
+
+1. **mcp__semcode__find_function** - Located all affected functions
+2. **mcp__semcode__find_callers** - Identified call sites and impact
+   scope
+3. **mcp__semcode__find_callchain** - Traced execution paths from user-
+   space
+4. **Read** - Examined header file and code structure
+5. **Grep** - Verified net_device_ops assignment
+6. **git log/show** - Investigated bug history and kernel version
+   presence
+
+### Key Findings:
+
+#### 1. **User-Space Triggerable Crash** (CRITICAL)
+- **Impact**: The bug causes a kernel crash (alignment exception at
+  0xfffffff2) when opening a network interface
+- **Trigger path**: User command (`ifconfig eth0 up` or `ip link set
+  eth0 up`) → `__dev_open()` → `netcp_ndo_open()`
+  (drivers/net/ethernet/ti/netcp_core.c:1942) →
+  `netcp_setup_navigator_resources()` → `knav_dma_open_channel()`
+- **Call graph analysis** shows `netcp_ndo_open` is assigned to
+  `.ndo_open` in `netcp_netdev_ops` structure, making it directly user-
+  triggerable
+
+#### 2. **Root Cause Analysis**
+The crash occurs due to inconsistent error handling:
+- **Header stub** (include/linux/soc/ti/knav_dma.h:168): Returns `NULL`
+  when driver disabled
+- **Driver implementation** (drivers/soc/ti/knav_dma.c:407-487): Returns
+  `(void *)-EINVAL` (ERR_PTR) on errors
+- **Callers** check `IS_ERR()` after calling `knav_dma_open_channel()`
+- **Cleanup code** in `netcp_free_navigator_resources()` (line 1548)
+  only checks `if (netcp->rx_channel)` before calling
+  `knav_dma_close_channel()`
+- When `rx_channel` contains `-EINVAL` (0xfffffff2), it's non-NULL, so
+  the check passes
+- `knav_dma_close_channel()` attempts to dereference this invalid
+  pointer → alignment exception crash
+
+#### 3. **Impact Scope** (from mcp__semcode__find_callers)
+- **Limited scope**: Only 2 callers of `knav_dma_open_channel()`:
+  - `netcp_setup_navigator_resources()`
+    (drivers/net/ethernet/ti/netcp_core.c:1582)
+  - `netcp_txpipe_open()` (drivers/net/ethernet/ti/netcp_core.c:1326)
+- **Affected hardware**: TI Keystone SoC users with NetCP driver
+- **Files changed**: Only 2 files, both in the same subsystem
+
+#### 4. **Bug Longevity**
+- **Introduced**: v4.12 (2017) by commit 5b6cb43b4d625
+- **Duration**: ~7-8 years of existence
+- **Fixed in**: v6.18-rc5 (November 2024)
+- Verified the buggy pattern exists in v6.6 LTS kernel
+
+#### 5. **Change Characteristics**
+- **Type**: Pure bug fix (crash fix)
+- **Size**: Small and contained
+  (drivers/net/ethernet/ti/netcp_core.c:1326-1366
+  netcp_core.c:1582-1694, drivers/soc/ti/knav_dma.c:407-487)
+- **Semantic changes** (from code inspection):
+  - Standardizes return value from ERR_PTR to NULL on all error paths
+  - Updates callers from `IS_ERR()` checks to simple NULL checks
+  - Updates cleanup from `IS_ERR_OR_NULL()` to simple NULL checks
+  - Changes error code from `PTR_ERR()` extraction to fixed `-EINVAL`
+- **No architectural changes**: No struct modifications, no API
+  additions
+- **No new features**: Only error handling standardization
+
+#### 6. **Backport Risk Assessment**
+- **Risk level**: LOW
+  - Changes are localized to error handling paths
+  - Makes behavior consistent with header stub
+  - No complex dependencies identified
+  - Code structure in v6.6 is compatible (verified)
+- **Regression potential**: Minimal
+  - Affects only error paths that were already broken
+  - Improves consistency between header and implementation
+  - All callers updated in same commit
+
+#### 7. **Stable Tree Compliance**
+- ✅ **Fixes important bug**: Kernel crash
+- ✅ **Small and contained**: 2 files, error handling only
+- ✅ **No new features**: Pure bug fix
+- ✅ **No architectural changes**: No struct/API changes
+- ✅ **Obvious and correct**: Crash trace in commit message proves the
+  fix
+- ✅ **Self-contained**: No dependencies on other commits
+- ❌ **Missing stable tags**: No "Cc: stable@vger.kernel.org" or "Fixes:"
+  tag (oversight)
+
+### Specific Code Reference Points:
+
+1. **drivers/soc/ti/knav_dma.c:407-487**: Changed all error returns from
+   `(void *)-EINVAL` to `NULL`
+2. **drivers/net/ethernet/ti/netcp_core.c:1339**: Changed from
+   `IS_ERR(tx_pipe->dma_channel)` to `!tx_pipe->dma_channel`
+3. **drivers/net/ethernet/ti/netcp_core.c:1361**: Changed from
+   `IS_ERR_OR_NULL()` to simple NULL check in cleanup
+4. **drivers/net/ethernet/ti/netcp_core.c:1680**: Changed from
+   `IS_ERR(netcp->rx_channel)` to `!netcp->rx_channel`
+
+### Conclusion:
+
+This commit is an **excellent candidate for stable backporting**:
+- Fixes a real, user-triggerable kernel crash with documented stack
+  trace
+- Affects users of TI Keystone SoCs who configure network interfaces
+- Small, well-contained, low-risk change
+- Bug has existed since v4.12 (2017) affecting all stable trees
+- Should be backported to all active stable kernels (at minimum v6.1+,
+  v6.6+, v6.12+)
+
+The absence of stable/Fixes tags appears to be an oversight and should
+not prevent backporting given the clear evidence of crash and the
+straightforward nature of the fix.
+
+ drivers/net/ethernet/ti/netcp_core.c | 10 +++++-----
+ drivers/soc/ti/knav_dma.c            | 14 +++++++-------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+index 857820657bac5..5ee13db568f08 100644
+--- a/drivers/net/ethernet/ti/netcp_core.c
++++ b/drivers/net/ethernet/ti/netcp_core.c
+@@ -1338,10 +1338,10 @@ int netcp_txpipe_open(struct netcp_tx_pipe *tx_pipe)
+ 
+ 	tx_pipe->dma_channel = knav_dma_open_channel(dev,
+ 				tx_pipe->dma_chan_name, &config);
+-	if (IS_ERR(tx_pipe->dma_channel)) {
++	if (!tx_pipe->dma_channel) {
+ 		dev_err(dev, "failed opening tx chan(%s)\n",
+ 			tx_pipe->dma_chan_name);
+-		ret = PTR_ERR(tx_pipe->dma_channel);
++		ret = -EINVAL;
+ 		goto err;
+ 	}
+ 
+@@ -1359,7 +1359,7 @@ int netcp_txpipe_open(struct netcp_tx_pipe *tx_pipe)
+ 	return 0;
+ 
+ err:
+-	if (!IS_ERR_OR_NULL(tx_pipe->dma_channel))
++	if (tx_pipe->dma_channel)
+ 		knav_dma_close_channel(tx_pipe->dma_channel);
+ 	tx_pipe->dma_channel = NULL;
+ 	return ret;
+@@ -1678,10 +1678,10 @@ static int netcp_setup_navigator_resources(struct net_device *ndev)
+ 
+ 	netcp->rx_channel = knav_dma_open_channel(netcp->netcp_device->device,
+ 					netcp->dma_chan_name, &config);
+-	if (IS_ERR(netcp->rx_channel)) {
++	if (!netcp->rx_channel) {
+ 		dev_err(netcp->ndev_dev, "failed opening rx chan(%s\n",
+ 			netcp->dma_chan_name);
+-		ret = PTR_ERR(netcp->rx_channel);
++		ret = -EINVAL;
+ 		goto fail;
+ 	}
+ 
+diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
+index a25ebe6cd5030..553ae7ee20f16 100644
+--- a/drivers/soc/ti/knav_dma.c
++++ b/drivers/soc/ti/knav_dma.c
+@@ -402,7 +402,7 @@ static int of_channel_match_helper(struct device_node *np, const char *name,
+  * @name:	slave channel name
+  * @config:	dma configuration parameters
+  *
+- * Returns pointer to appropriate DMA channel on success or error.
++ * Return: Pointer to appropriate DMA channel on success or NULL on error.
+  */
+ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 					struct knav_dma_cfg *config)
+@@ -414,13 +414,13 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 
+ 	if (!kdev) {
+ 		pr_err("keystone-navigator-dma driver not registered\n");
+-		return (void *)-EINVAL;
++		return NULL;
+ 	}
+ 
+ 	chan_num = of_channel_match_helper(dev->of_node, name, &instance);
+ 	if (chan_num < 0) {
+ 		dev_err(kdev->dev, "No DMA instance with name %s\n", name);
+-		return (void *)-EINVAL;
++		return NULL;
+ 	}
+ 
+ 	dev_dbg(kdev->dev, "initializing %s channel %d from DMA %s\n",
+@@ -431,7 +431,7 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 	if (config->direction != DMA_MEM_TO_DEV &&
+ 	    config->direction != DMA_DEV_TO_MEM) {
+ 		dev_err(kdev->dev, "bad direction\n");
+-		return (void *)-EINVAL;
++		return NULL;
+ 	}
+ 
+ 	/* Look for correct dma instance */
+@@ -443,7 +443,7 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 	}
+ 	if (!dma) {
+ 		dev_err(kdev->dev, "No DMA instance with name %s\n", instance);
+-		return (void *)-EINVAL;
++		return NULL;
+ 	}
+ 
+ 	/* Look for correct dma channel from dma instance */
+@@ -463,14 +463,14 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 	if (!chan) {
+ 		dev_err(kdev->dev, "channel %d is not in DMA %s\n",
+ 				chan_num, instance);
+-		return (void *)-EINVAL;
++		return NULL;
+ 	}
+ 
+ 	if (atomic_read(&chan->ref_count) >= 1) {
+ 		if (!check_config(chan, config)) {
+ 			dev_err(kdev->dev, "channel %d config miss-match\n",
+ 				chan_num);
+-			return (void *)-EINVAL;
++			return NULL;
+ 		}
+ 	}
+ 
+-- 
+2.51.0
+
 
