@@ -1,190 +1,209 @@
-Return-Path: <linux-kernel+bounces-893983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A09C49029
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:28:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E73CC49078
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:29:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B6463AB38A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E473A94E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605382DE718;
-	Mon, 10 Nov 2025 19:22:29 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D523321C4;
+	Mon, 10 Nov 2025 19:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Zt85dsqR"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505F1280A5B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E828B329E5D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762802548; cv=none; b=TvbrbvtKdEMD1sHplMd6o2ZeZPE5uWtKwdQMFVgXKB91DVGtRgzvqSKv29QHos7bi9q3F/HSi17XatCwOyqdRe+pZ1PmI2CQfPBxUMr6OBEw1r1od1l8UG+1ngIb60BDf9XSB2AVbkjgSMZjrPNEZO9de+0ZqZyc8xjCb7o0oNw=
+	t=1762802651; cv=none; b=adMRsoqu5/Tdo+rDdxqHiJsLrFXcqbzDz2t8W0vuJjFSAx1wHp1GHPGNbUKRTDevqO6Jm36HfzoMfHLMnIRsa3UcLj0PsVCw5B6Lvg672EfINkJg5J+DTa/9V0UB6M5CyALjbsfwx8cE0lwZLEPLUSzNzSxMO3dTtU+xpoyOjxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762802548; c=relaxed/simple;
-	bh=CP2l1GND9XmDlVmNP4ysESiaq2gHQkWz2iLVxiWjVnQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=bxjIQCXKYcreq0Yj3K7/evOlN0VwWiJRYGtVr/67+w5oYMueD2INvH/qgCKccyxuBD58D1iptRNwulO88YiR/UWBEba7xJmLcVOXY07nnvDrPlGZTmsN1UV6rNItzBhvcaVJDoJvk8xLJFshGoMh04H1L7dmSaI4NI5vPZReldY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-433795a17c1so35856605ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:22:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762802546; x=1763407346;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wl+H9Mj/MNZGwgtImdJWrasH0O/1gigXnZt/x9DQ9fY=;
-        b=caerXUKPO8BPBjh0XJLElEDzCgxhA3KDNdgUZI9osaR2lh95denQEfPV9vM6Hk+Xo8
-         hKAk/Vwq5YV3K4YzW5fm6+6Y5eVrKINmXsvr6560z8dqLNKddOqr8b0nlydUd/AxuBRF
-         PCzF8LHLZ0a+aR0quTPLPENsQFupGqueS/gfvCLGGxmolwTjw/qcWugo4eWRFi6/rqv7
-         6M3ZYgWo23N3Pw3g02IWP5Wmh4dllVxIW2tzklzFj6cOXY6nvPniOcuRfYwEzIgvu9Dx
-         C+M0sh6n8Y9e1fA9YrYUmDatVfhNk+3VMVvAmobdVbXCC5ycFqZNSTY9Thkfa9gQCw2n
-         WhSg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9yH8Ojy7Bfcf6iMg1hZFj748byOqxKXd26IM4+FKDHQQj3pXf6QmrG0CY2MCns1bqBB4/anQMSJlLqQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxozwB2HTCuWINBSpKzAKhFBT8dMFHq39JBJQHsHvxx7hZDq6nB
-	dTQDULGEl48D2GgpLZP/zYcIFfmx9vuiMtcCXO2UscmYYkb4Vt1KSWDo7vom6aLZiXrdTzTlUCN
-	nmLZ6uJwNKcNjjT2jcpPfgD16BYZzFNcG09UkWeQQqkmlI7mri/KxHItjENU=
-X-Google-Smtp-Source: AGHT+IEbPdtGfgRJqMVL2hawbUBqJT/8sv4vcnWwmm+eidH11LbtU0FVRNEsxsMeyGyMPxe7lShMhaEsnQrv4B9yHqEap8KA1zuM
+	s=arc-20240116; t=1762802651; c=relaxed/simple;
+	bh=cPHuYy1Wv4KChFqeJH+AEWpOUMF+PpB+ceAvxNwbR4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JtkayNhDGVj0SrELXiYg6eQQC9B2jkyetArK+/PhqGKzqbsiiBczogYqy9Hv1WRtmLTeaArsisYSccM5fGL/CetVMgZIzlCYdsQO750pOfdWsG/nfl7grMfhRm0LioL0dkHBuAKmnsvt6IUC+k3L/SFPLlcqBsb4NPd8yQGEvf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Zt85dsqR; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 10 Nov 2025 19:23:39 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762802636;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oOQqHpzs5q+h5Yjbnc6DPZt8+0zjzGikaeAdSf3y5Kg=;
+	b=Zt85dsqRh+CYFl2JZ84Z0d5GpmolfFxnYuzQ1yrgjLnTW0O5r3Xqe+FTSyHtRDu7VHMkuz
+	kGacCCsp9XHoKNYVMmciAUQgetU+IS1E0ISGouRZwUuBOlYeHma6+eOPWxPkSIAv5MAU/L
+	7T000vk8DdXcsxtFq98IvgcE2KaykyM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>, 
+	Jim Mattson <jmattson@google.com>, Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4/6] KVM: SVM: Switch svm_copy_lbrs() to a macro
+Message-ID: <dyfu7nopxqtdw6k6s37dmq3wedqua2risfgolsltepykffqjkp@ij3ogvhxpvrg>
+References: <20251108004524.1600006-1-yosry.ahmed@linux.dev>
+ <20251108004524.1600006-5-yosry.ahmed@linux.dev>
+ <be2a7126-2abc-4333-b067-75dd16634f13@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:248f:b0:433:7a5f:943a with SMTP id
- e9e14a558f8ab-4337a5f94e7mr79790175ab.19.1762802546481; Mon, 10 Nov 2025
- 11:22:26 -0800 (PST)
-Date: Mon, 10 Nov 2025 11:22:26 -0800
-In-Reply-To: <20251110160457.61791-1-vishal.moola@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69123b72.a70a0220.22f260.0105.GAE@google.com>
-Subject: [syzbot ci] Re: make vmalloc gfp flags usage more apparent
-From: syzbot ci <syzbot+ci9989da8336cb2bc7@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, hch@infradead.org, hch@lst.de, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, urezki@gmail.com, 
-	vishal.moola@gmail.com
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be2a7126-2abc-4333-b067-75dd16634f13@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-syzbot ci has tested the following series
+On Sun, Nov 09, 2025 at 08:59:18AM +0100, Paolo Bonzini wrote:
+> On 11/8/25 01:45, Yosry Ahmed wrote:
+> > In preparation for using svm_copy_lbrs() with 'struct vmcb_save_area'
+> > without a containing 'struct vmcb', and later even 'struct
+> > vmcb_save_area_cached', make it a macro. Pull the call to
+> > vmcb_mark_dirty() out to the callers.
+> 
+> The changes to use `struct vmcb_save_area_cached' are not included in this
+> series, so they are irrelevant.
+> 
+> Since I've applied patches 1-3, which fix the worst bugs, there are two ways
+> to handle the rest:
+> 
+> * keep the function instead of the macro, while making it take a struct
+> vmcb_save_area (and therefore pulling vmcb_mark_dirty() to the callers and
+> fixing the bug you mention below).
+> 
+> * you resubmit with the changes to use struct vmcb_save_area_cached, so that
+> the commit message makes more sense.
 
-[v1] make vmalloc gfp flags usage more apparent
-https://lore.kernel.org/all/20251110160457.61791-1-vishal.moola@gmail.com
-* [PATCH 1/4] mm/vmalloc: warn on invalid vmalloc gfp flags
-* [PATCH 2/4] mm/vmalloc: Add a helper to optimize vmalloc allocation gfps
-* [PATCH 3/4] mm/vmalloc: cleanup large_gfp in vm_area_alloc_pages()
-* [PATCH 4/4] mm/vmalloc: cleanup gfp flag use in new_vmap_block()
+I can include patches 4-6 with the respin of the series [1] that has the
+changes to use `struct vmcb_save_area_cached`. That series origianlly
+had the patch to switch svm_copy_lbrs() to a macro, but I moved it here
+to use for the save/restore patch. I was planning to rebase [1] on top
+of this series anyway.
 
-and found the following issue:
-WARNING: kmalloc bug in bpf_prog_alloc_no_stats
+There is a hiccup though, I assumed everything would go through Sean's
+tree so I planned to respin [1] on top of this series. Otherwise, they
+will conflict. With the first 3 patches in your tree, I am not sure how
+that would work.
 
-Full report is available here:
-https://ci.syzbot.org/series/488ab7c0-de91-4749-bbb2-ca76c3fb798b
+I can respin [1] on top of Sean's kvm-x86/next or kvm-x86/svm, but it
+will conflict with the patches you picked up eventually, and I already
+have them locally on top of the LBR fixes so it seems like wasted
+effort.
 
-***
+Sean, Paolo, how do you want to handle this?
 
-WARNING: kmalloc bug in bpf_prog_alloc_no_stats
+[1]https://lore.kernel.org/kvm/20251104195949.3528411-1-yosry.ahmed@linux.dev/
 
-tree:      mm-new
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/akpm/mm.git
-base:      02dafa01ec9a00c3758c1c6478d82fe601f5f1ba
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/2334ae39-552d-4ca2-8562-7adc18ce2cb0/config
-
-can: broadcast manager protocol
-can: netlink gateway - max_hops=1
-can: SAE J1939
-can: isotp protocol (max_pdu_size 8300)
-Bluetooth: RFCOMM TTY layer initialized
-Bluetooth: RFCOMM socket layer initialized
-Bluetooth: RFCOMM ver 1.11
-Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-Bluetooth: BNEP filters: protocol multicast
-Bluetooth: BNEP socket layer initialized
-Bluetooth: HIDP (Human Interface Emulation) ver 1.2
-Bluetooth: HIDP socket layer initialized
-NET: Registered PF_RXRPC protocol family
-Key type rxrpc registered
-Key type rxrpc_s registered
-NET: Registered PF_KCM protocol family
-lec:lane_module_init: lec.c: initialized
-mpoa:atm_mpoa_init: mpc.c: initialized
-l2tp_core: L2TP core driver, V2.0
-l2tp_ppp: PPPoL2TP kernel driver, V2.0
-l2tp_ip: L2TP IP encapsulation support (L2TPv3)
-l2tp_netlink: L2TP netlink interface
-l2tp_eth: L2TP ethernet pseudowire support (L2TPv3)
-l2tp_ip6: L2TP IP encapsulation support for IPv6 (L2TPv3)
-NET: Registered PF_PHONET protocol family
-8021q: 802.1Q VLAN Support v1.8
-sctp: Hash tables configured (bind 32/56)
-NET: Registered PF_RDS protocol family
-Registered RDS/infiniband transport
-Registered RDS/tcp transport
-tipc: Activated (version 2.0.0)
-NET: Registered PF_TIPC protocol family
-tipc: Started in single node mode
-smc: adding smcd device lo without pnetid
-NET: Registered PF_SMC protocol family
-9pnet: Installing 9P2000 support
-NET: Registered PF_CAIF protocol family
-NET: Registered PF_IEEE802154 protocol family
-Key type dns_resolver registered
-Key type ceph registered
-libceph: loaded (mon/osd proto 15/24)
-batman_adv: B.A.T.M.A.N. advanced 2025.4 (compatibility version 15) loaded
-openvswitch: Open vSwitch switching datapath
-NET: Registered PF_VSOCK protocol family
-mpls_gso: MPLS GSO support
-IPI shorthand broadcast: enabled
-sched_clock: Marking stable (21550045890, 115271513)->(21677757748, -12440345)
-registered taskstats version 1
-------------[ cut here ]------------
-Unexpected gfp: 0x100000 (__GFP_HARDWALL). Fixing up to gfp: 0xdc0 (GFP_KERNEL|__GFP_ZERO). Fix your code!
-WARNING: CPU: 1 PID: 1 at mm/vmalloc.c:3936 vmalloc_fix_flags+0x9c/0xe0
-Modules linked in:
-CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:vmalloc_fix_flags+0x9c/0xe0
-Code: 81 e6 1f 52 fe ff 89 74 24 30 81 e3 e0 ad 01 00 89 5c 24 20 90 48 c7 c7 80 b9 76 8b 4c 89 fa 89 d9 4d 89 f0 e8 85 31 6e ff 90 <0f> 0b 90 90 8b 44 24 20 48 c7 04 24 0e 36 e0 45 4b c7 04 2c 00 00
-RSP: 0000:ffffc90000066d60 EFLAGS: 00010246
-RAX: 50a201fad922ca00 RBX: 0000000000000dc0 RCX: ffff888160a80000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: ffffc90000066df8 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bba678 R12: 1ffff9200000cdac
-R13: dffffc0000000000 R14: ffffc90000066d80 R15: ffffc90000066d90
-FS:  0000000000000000(0000) GS:ffff8882a9f32000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 000000000dd38000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- __vmalloc_noprof+0xf2/0x120
- bpf_prog_alloc_no_stats+0x4a/0x4d0
- bpf_prog_alloc+0x3c/0x1a0
- bpf_prog_load+0x735/0x19e0
- __sys_bpf+0x507/0x860
- kern_sys_bpf+0x17d/0x6b0
- load+0x39e/0x940
- do_one_initcall+0x236/0x820
- do_initcall_level+0x104/0x190
- do_initcalls+0x59/0xa0
- kernel_init_freeable+0x334/0x4b0
- kernel_init+0x1d/0x1d0
- ret_from_fork+0x4bc/0x870
- ret_from_fork_asm+0x1a/0x30
- </TASK>
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+> 
+> Thanks,
+> 
+> Paolo
+> 
+> > Macros are generally not preferred compared to functions, mainly due to
+> > type-safety. However, in this case it seems like having a simple macro
+> > copying a few fields is better than copy-pasting the same 5 lines of
+> > code in different places.
+> > 
+> > On the bright side, pulling vmcb_mark_dirty() calls to the callers makes
+> > it clear that in one case, vmcb_mark_dirty() was being called on VMCB12.
+> > It is not architecturally defined for the CPU to clear arbitrary clean
+> > bits, and it is not needed, so drop that one call.
+> 
+> > Technically fixes the non-architectural behavior of setting the dirty
+> > bit on VMCB12.
+> > 
+> > Fixes: d20c796ca370 ("KVM: x86: nSVM: implement nested LBR virtualization")
+> > Cc: stable@vger.kernel.org
+> > 
+> > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > ---
+> >   arch/x86/kvm/svm/nested.c | 16 ++++++++++------
+> >   arch/x86/kvm/svm/svm.c    | 11 -----------
+> >   arch/x86/kvm/svm/svm.h    | 10 +++++++++-
+> >   3 files changed, 19 insertions(+), 18 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+> > index c81005b245222..e7861392f2fcd 100644
+> > --- a/arch/x86/kvm/svm/nested.c
+> > +++ b/arch/x86/kvm/svm/nested.c
+> > @@ -676,10 +676,12 @@ static void nested_vmcb02_prepare_save(struct vcpu_svm *svm, struct vmcb *vmcb12
+> >   		 * Reserved bits of DEBUGCTL are ignored.  Be consistent with
+> >   		 * svm_set_msr's definition of reserved bits.
+> >   		 */
+> > -		svm_copy_lbrs(vmcb02, vmcb12);
+> > +		svm_copy_lbrs(&vmcb02->save, &vmcb12->save);
+> > +		vmcb_mark_dirty(vmcb02, VMCB_LBR);
+> >   		vmcb02->save.dbgctl &= ~DEBUGCTL_RESERVED_BITS;
+> >   	} else {
+> > -		svm_copy_lbrs(vmcb02, vmcb01);
+> > +		svm_copy_lbrs(&vmcb02->save, &vmcb01->save);
+> > +		vmcb_mark_dirty(vmcb02, VMCB_LBR);
+> >   	}
+> >   	svm_update_lbrv(&svm->vcpu);
+> >   }
+> > @@ -1186,10 +1188,12 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
+> >   		kvm_make_request(KVM_REQ_EVENT, &svm->vcpu);
+> >   	if (unlikely(guest_cpu_cap_has(vcpu, X86_FEATURE_LBRV) &&
+> > -		     (svm->nested.ctl.virt_ext & LBR_CTL_ENABLE_MASK)))
+> > -		svm_copy_lbrs(vmcb12, vmcb02);
+> > -	else
+> > -		svm_copy_lbrs(vmcb01, vmcb02);
+> > +		     (svm->nested.ctl.virt_ext & LBR_CTL_ENABLE_MASK))) {
+> > +		svm_copy_lbrs(&vmcb12->save, &vmcb02->save);
+> > +	} else {
+> > +		svm_copy_lbrs(&vmcb01->save, &vmcb02->save);
+> > +		vmcb_mark_dirty(vmcb01, VMCB_LBR);
+> > +	}
+> >   	svm_update_lbrv(vcpu);
+> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> > index fc42bcdbb5200..9eb112f0e61f0 100644
+> > --- a/arch/x86/kvm/svm/svm.c
+> > +++ b/arch/x86/kvm/svm/svm.c
+> > @@ -795,17 +795,6 @@ static void svm_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
+> >   	 */
+> >   }
+> > -void svm_copy_lbrs(struct vmcb *to_vmcb, struct vmcb *from_vmcb)
+> > -{
+> > -	to_vmcb->save.dbgctl		= from_vmcb->save.dbgctl;
+> > -	to_vmcb->save.br_from		= from_vmcb->save.br_from;
+> > -	to_vmcb->save.br_to		= from_vmcb->save.br_to;
+> > -	to_vmcb->save.last_excp_from	= from_vmcb->save.last_excp_from;
+> > -	to_vmcb->save.last_excp_to	= from_vmcb->save.last_excp_to;
+> > -
+> > -	vmcb_mark_dirty(to_vmcb, VMCB_LBR);
+> > -}
+> > -
+> >   static void __svm_enable_lbrv(struct kvm_vcpu *vcpu)
+> >   {
+> >   	to_svm(vcpu)->vmcb->control.virt_ext |= LBR_CTL_ENABLE_MASK;
+> > diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> > index c2acaa49ee1c5..e510c8183bd87 100644
+> > --- a/arch/x86/kvm/svm/svm.h
+> > +++ b/arch/x86/kvm/svm/svm.h
+> > @@ -687,8 +687,16 @@ static inline void *svm_vcpu_alloc_msrpm(void)
+> >   	return svm_alloc_permissions_map(MSRPM_SIZE, GFP_KERNEL_ACCOUNT);
+> >   }
+> > +#define svm_copy_lbrs(to, from)					\
+> > +({								\
+> > +	(to)->dbgctl		= (from)->dbgctl;		\
+> > +	(to)->br_from		= (from)->br_from;		\
+> > +	(to)->br_to		= (from)->br_to;		\
+> > +	(to)->last_excp_from	= (from)->last_excp_from;	\
+> > +	(to)->last_excp_to	= (from)->last_excp_to;		\
+> > +})
+> > +
+> >   void svm_vcpu_free_msrpm(void *msrpm);
+> > -void svm_copy_lbrs(struct vmcb *to_vmcb, struct vmcb *from_vmcb);
+> >   void svm_enable_lbrv(struct kvm_vcpu *vcpu);
+> >   void svm_update_lbrv(struct kvm_vcpu *vcpu);
+> Since
+> 
 
