@@ -1,113 +1,304 @@
-Return-Path: <linux-kernel+bounces-892776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312E5C45CCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:04:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE197C45C7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:59:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D6B64EB86D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58400188FB38
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0AC2FE578;
-	Mon, 10 Nov 2025 09:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECBE2FD67E;
+	Mon, 10 Nov 2025 09:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="O0kz/qFH"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="baRxYAos";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5ASf5xM5";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I18YSwyG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vqhc/3k6"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C30234964
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D288D2FC87E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762768706; cv=none; b=OtMcr4vYQQkvPYjSea7FRVUxFtd+GSpzJcWRuFkgfhszej4lExS+36pW5yW6dClKDo4o/PDhIhmkfyYBhTt7tsPDxBu1Ngf3LALfSOKWVZAKazvxjN/3GhScTYsR6wOXMJ9XoNqS9lWT2p9tcoeX8YmsGnpGK9tyC0RicPLQSas=
+	t=1762768764; cv=none; b=CJoNksg+c/0EGK9mEZjCkcThPOU4yavWA/HYzHMSFiLYVoIisyGnPMGasQemzJfqQl2f9IrzAw0YVehL6cLCiV9t/g1uFu+i+nXpIJxFgEkv7sfw4oY/fa2zJOIDPqwg071KWA/sVfO1+28OmOtLlo3YYvBUs5kLkrvsajMNJdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762768706; c=relaxed/simple;
-	bh=Pr1wJd/7uGgpha5iPQ4Q3WZe4ih/H/T0063vCmTBsVQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r33Qk4XBjTo6rJxMTuB8gkPfYeGElyOU0DfrGLkw/oemI5trnMWCR8YPVvo+/Nj7/SaYRXy8c+lrg+Tcfgd5oPgY7VhTqOkJVN/pGzfSt+UhEK43IkOybQiUzLeOlVkBuHGipSJ68+5WRPpzq6SWUVbRfysXDC5Km8dlWvp7EWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=O0kz/qFH; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-591c98ebe90so2925476e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:58:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762768703; x=1763373503; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pr1wJd/7uGgpha5iPQ4Q3WZe4ih/H/T0063vCmTBsVQ=;
-        b=O0kz/qFHrNKb5iwf8nkrqE6EJDPyvFZh/dKJPVOfRjD6JjsrwVdkmqTUcyen6nrRQQ
-         sbGobThUSA6/jhOAqnxZzLK7EDyA9f7tVy2iXvIfaxMcHiujI/6UAegwF9dgaM6bxshO
-         xUp8Ee4ZjNqMv5R/3eEMUJzbJqviGKR28pkORfiNWDpeKz8XdUHqqzGv77kKTfhUiczu
-         0i1+kZz92AwUeFS61/4/CIEuYg7yj2Kj37ZCFZ1DE6Jb+9qn3T7+mjxoaVlvps7gnV2/
-         geziC8jlJ45F/HdnusZAomkSq+U471LAHj8+1KWt59SZ9avggebvss00zdGsx1h3S88s
-         5vug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762768703; x=1763373503;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Pr1wJd/7uGgpha5iPQ4Q3WZe4ih/H/T0063vCmTBsVQ=;
-        b=T+N5KZAjmMEfQrWtU1nxnMnzvduA16KIV7cfi0vyXMrVytxFSAdNjmPfwr3/cly1yQ
-         pecx10tNHrMmMXOALUQkfXDfikHSNwhWtrEfmKAAOeeju+KJyDph4BeLDUXjHeTj1FK8
-         tnRrN9Hf59B/fzcXFBxT3SsfU3E8DAC6af5au+ANL5xRs5hvRI6vUcWsG5h9Y4peULFv
-         DApQXcVgmf/fBiLE6HMJ95rEgzg7coUF78Q5iOOkfX9F9tZ5YgPfXhn+6C2duTLolu2b
-         lCAN8lpses2TUQP6RzdB1nCa4B7ulWD1WpchmXJZ0kr+U4xw5U6quIXwK2XcCJ9hk+zp
-         kSWA==
-X-Gm-Message-State: AOJu0YzhWI4LhBbvhKavu0Pz8RrM2b2DH0tQtpJxZTvoJWo5Z5kjnsbv
-	h6VE8NfKWCteHVoQ+gySumMp8zvJF+Ua4q4c5CVnt2M3hO8HGPQujOpczCzcs7CNm+bkoxZoNVI
-	uLs72kp3/3wgfl2/vk5UD+KrXXrOfQz/GzpBADVWXdQ==
-X-Gm-Gg: ASbGnctQxJgcAanr7V1HtNLtdfiZRsO+VWozYuWs8JG35VrDOsWoXwVemz9mO8EgMDi
-	ctNNTcxdRgDSyiErf14R7CpXkINpB+zILqZpYRpVA5VQabvbXV7vqub2U/FZ/fd6hNfQzSdLVhd
-	iOnPrJ5eWy5APyvKcvZQk7MOe/vHZEGgTl9wN246oINJ+yL+rcVlmEJpyZx3QxlKeBT6W11Bgaj
-	1TFcAwqvbuw//lf6dKASpNZ0i8HVnqQwt2DjMh7fAlUfBh944nV0gVKZHZd6bKpocdjsyrxDFaO
-	HUzdlIADNXrLafOKoOdJg8xEyuzp
-X-Google-Smtp-Source: AGHT+IH8nzVycdeOgzQi/3FgjBc86W9BwlRBJUJ1/mzPe889ufxIQJ9HVlvKbWPBD1jcEM/roczq0ZhI9VyTgtrOyjM=
-X-Received: by 2002:a05:6512:3d04:b0:594:2df2:84ab with SMTP id
- 2adb3069b0e04-5945f186cb5mr2251235e87.8.1762768702626; Mon, 10 Nov 2025
- 01:58:22 -0800 (PST)
+	s=arc-20240116; t=1762768764; c=relaxed/simple;
+	bh=cpc1EGzcXDrKoFHGwbK7Dq0lojsSqayNgTXC1mobsTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M0OuyQHIkMNWvmVf0xKLJNW/e+GAP2rQdoFOt3AOiq8/JsTr+LSxGVFn5Yh+LNa43YLQOuv7lehA2oNPpOgaDXgenwp/DMTvfIQ6sx8ldTPuIyvUbn2wBFdlnDVrtQBsL581qF6yxUq71I3uMx1fqmfUzOCVMX1S0+75//y9/q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=baRxYAos; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5ASf5xM5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I18YSwyG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vqhc/3k6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EE80321EA3;
+	Mon, 10 Nov 2025 09:59:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762768761; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V/e4bTMfw3VQWxMm+DwPiO0Zmnu9hLW5L1cpLKGBNoM=;
+	b=baRxYAosjp1S0vueMbMCX0HnKgBXtrEMcfRYGzImpDVDK8vMD1nokzStfRLAZhwr0Z8Y8N
+	XB4ZFbRb3W4Yiw5pPUvm486zHXE1cm6byJm2aobh/SLbQYTiVByCBZB0MQjgMCvRRWwxIV
+	wCzGJ8eNjrQRHLh1QA5luO2++0xuk84=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762768761;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V/e4bTMfw3VQWxMm+DwPiO0Zmnu9hLW5L1cpLKGBNoM=;
+	b=5ASf5xM5s6vw7lJjmxsOdtW6XduqK7mLgvb0IT5nKQyL+WzYH/3BkiuhU0M7c2Zq+lOr+t
+	c6gC0jUtCLpjxBDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762768760; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V/e4bTMfw3VQWxMm+DwPiO0Zmnu9hLW5L1cpLKGBNoM=;
+	b=I18YSwyGXX963oaGNa+QwH4BBsNILyejeYMABrU8LzO0M7T5uoLgPo8Frruq1fBzwbX1ZQ
+	NgfGowosNHJBgAeMhnoWETJJgM/HyoFMSw7KhZrXdOXB9bWVTFb6G9rxG3I2qtNOaNVOPR
+	UZ4YzNI/QIeECxC27GZdVCmKYg/njrQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762768760;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V/e4bTMfw3VQWxMm+DwPiO0Zmnu9hLW5L1cpLKGBNoM=;
+	b=vqhc/3k6gZJ8B3uW6VQFsH9MyaI8ir6YeItKmvQ4oH6F9rtTzrmQorNnmltPpy9ffgF+vb
+	7yRGRoc9umMjzhBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DE05514329;
+	Mon, 10 Nov 2025 09:59:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nu4/Nni3EWmSBwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 09:59:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8972EA28B1; Mon, 10 Nov 2025 10:59:20 +0100 (CET)
+Date: Mon, 10 Nov 2025 10:59:20 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, ebiggers@kernel.org, willy@infradead.org, yi.zhang@huawei.com, 
+	yangerkun@huawei.com, chengzhihao1@huawei.com, libaokun1@huawei.com
+Subject: Re: [PATCH v2 23/24] ext4: add checks for large folio
+ incompatibilities when BS > PS
+Message-ID: <gjlwnhyoqbecpmfqqt5c5gefw5eegaecccr4iwhvgyezmayrvy@vxvj7lvpnkex>
+References: <20251107144249.435029-1-libaokun@huaweicloud.com>
+ <20251107144249.435029-24-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107152950.293899-1-marco.crivellari@suse.com> <64df8b4e-6cd4-49e4-a0f9-c8f9c017b06c@csgroup.eu>
-In-Reply-To: <64df8b4e-6cd4-49e4-a0f9-c8f9c017b06c@csgroup.eu>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Mon, 10 Nov 2025 10:58:11 +0100
-X-Gm-Features: AWmQ_blCrzzwtNXT5OJKtaKmerZRqaCu4AKrtikaapFNCbK_j5LVXjJ3X5YXl6U
-Message-ID: <CAAofZF4QD_vAon4CpHPQCPpgQpp991QOJ-Zd=Qn0siaWz+jtDg@mail.gmail.com>
-Subject: Re: [PATCH] soc: fsl: qbman: add WQ_PERCPU to alloc_workqueue users
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107144249.435029-24-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.30 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	URIBL_BLOCKED(0.00)[suse.cz:email,huaweicloud.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email,huawei.com:email];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_NONE(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,huaweicloud.com:email,suse.cz:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.30
 
-On Sat, Nov 8, 2025 at 8:44=E2=80=AFPM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
-> IIUC this patch is part of a wide work on workqueues. I assume the will
-> go via the workqueue tree. Let me know if you want me to take it via soc
-> fsl.
->
-> Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+On Fri 07-11-25 22:42:48, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> Supporting a block size greater than the page size (BS > PS) requires
+> support for large folios. However, several features (e.g., encrypt)
+> do not yet support large folios.
+> 
+> To prevent conflicts, this patch adds checks at mount time to prohibit
+> these features from being used when BS > PS. Since these features cannot
+> be changed on remount, there is no need to check on remount.
+> 
+> This patch adds s_max_folio_order, initialized during mount according to
+> filesystem features and mount options. If s_max_folio_order is 0, large
+> folios are disabled.
+> 
+> With this in place, ext4_set_inode_mapping_order() can be simplified by
+> checking s_max_folio_order, avoiding redundant checks.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-Hi,
+Looks good. Feel free to add:
 
-Every maintainer is using its own tree, so I think it is fine if you
-use soc fsl.
-The change here is indeed under soc fsl, adding explicitly WQ_PERCPU.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Many thanks!
+								Honza
 
---=20
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
+> ---
+>  fs/ext4/ext4.h  |  4 +++-
+>  fs/ext4/inode.c | 39 ++++++++++-----------------------------
+>  fs/ext4/super.c | 41 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 54 insertions(+), 30 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 4bc0b2b7288a..79dc231d6e22 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1696,7 +1696,9 @@ struct ext4_sb_info {
+>  	unsigned long s_last_trim_minblks;
+>  
+>  	/* minimum folio order of a page cache allocation */
+> -	unsigned int s_min_folio_order;
+> +	u16 s_min_folio_order;
+> +	/* supported maximum folio order, 0 means not supported */
+> +	u16 s_max_folio_order;
+>  
+>  	/* Precomputed FS UUID checksum for seeding other checksums */
+>  	__u32 s_csum_seed;
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index b95826e4a419..d53dc5b794d4 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5146,42 +5146,23 @@ static int check_igot_inode(struct inode *inode, ext4_iget_flags flags,
+>  	return -EFSCORRUPTED;
+>  }
+>  
+> -static bool ext4_should_enable_large_folio(struct inode *inode)
+> +void ext4_set_inode_mapping_order(struct inode *inode)
+>  {
+>  	struct super_block *sb = inode->i_sb;
+> +	u16 min_order, max_order;
+>  
+> -	if (!S_ISREG(inode->i_mode))
+> -		return false;
+> -	if (ext4_has_feature_encrypt(sb))
+> -		return false;
+> -
+> -	return true;
+> -}
+> -
+> -/*
+> - * Limit the maximum folio order to 2048 blocks to prevent overestimation
+> - * of reserve handle credits during the folio writeback in environments
+> - * where the PAGE_SIZE exceeds 4KB.
+> - */
+> -#define EXT4_MAX_PAGECACHE_ORDER(i)		\
+> -		umin(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
+> -void ext4_set_inode_mapping_order(struct inode *inode)
+> -{
+> -	u32 max_order;
+> +	max_order = EXT4_SB(sb)->s_max_folio_order;
+> +	if (!max_order)
+> +		return;
+>  
+> -	if (!ext4_should_enable_large_folio(inode))
+> +	min_order = EXT4_SB(sb)->s_min_folio_order;
+> +	if (!min_order && !S_ISREG(inode->i_mode))
+>  		return;
+>  
+> -	if (test_opt(inode->i_sb, DATA_FLAGS) == EXT4_MOUNT_JOURNAL_DATA ||
+> -	    ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA) ||
+> -	    ext4_has_feature_verity(inode->i_sb))
+> -		max_order = EXT4_SB(inode->i_sb)->s_min_folio_order;
+> -	else
+> -		max_order = EXT4_MAX_PAGECACHE_ORDER(inode);
+> +	if (ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA))
+> +		max_order = min_order;
+>  
+> -	mapping_set_folio_order_range(inode->i_mapping,
+> -				      EXT4_SB(inode->i_sb)->s_min_folio_order,
+> -				      max_order);
+> +	mapping_set_folio_order_range(inode->i_mapping, min_order, max_order);
+>  }
+>  
+>  struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 0d32370a459a..6735152dd219 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -5040,6 +5040,43 @@ static const char *ext4_has_journal_option(struct super_block *sb)
+>  	return NULL;
+>  }
+>  
+> +/*
+> + * Limit the maximum folio order to 2048 blocks to prevent overestimation
+> + * of reserve handle credits during the folio writeback in environments
+> + * where the PAGE_SIZE exceeds 4KB.
+> + */
+> +#define EXT4_MAX_PAGECACHE_ORDER(sb)		\
+> +		umin(MAX_PAGECACHE_ORDER, (11 + (sb)->s_blocksize_bits - PAGE_SHIFT))
+> +static void ext4_set_max_mapping_order(struct super_block *sb)
+> +{
+> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
+> +
+> +	if (test_opt(sb, DATA_FLAGS) == EXT4_MOUNT_JOURNAL_DATA)
+> +		sbi->s_max_folio_order = sbi->s_min_folio_order;
+> +	else if (ext4_has_feature_verity(sb))
+> +		sbi->s_max_folio_order = sbi->s_min_folio_order;
+> +	else
+> +		sbi->s_max_folio_order = EXT4_MAX_PAGECACHE_ORDER(sb);
+> +}
+> +
+> +static int ext4_check_large_folio(struct super_block *sb)
+> +{
+> +	const char *err_str = NULL;
+> +
+> +	if (ext4_has_feature_encrypt(sb))
+> +		err_str = "encrypt";
+> +
+> +	if (!err_str) {
+> +		ext4_set_max_mapping_order(sb);
+> +	} else if (sb->s_blocksize > PAGE_SIZE) {
+> +		ext4_msg(sb, KERN_ERR, "bs(%lu) > ps(%lu) unsupported for %s",
+> +			 sb->s_blocksize, PAGE_SIZE, err_str);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int ext4_load_super(struct super_block *sb, ext4_fsblk_t *lsb,
+>  			   int silent)
+>  {
+> @@ -5316,6 +5353,10 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+>  
+>  	ext4_apply_options(fc, sb);
+>  
+> +	err = ext4_check_large_folio(sb);
+> +	if (err < 0)
+> +		goto failed_mount;
+> +
+>  	err = ext4_encoding_init(sb, es);
+>  	if (err)
+>  		goto failed_mount;
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
