@@ -1,403 +1,168 @@
-Return-Path: <linux-kernel+bounces-894113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7BFC494DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:48:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0C8C494F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:52:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BEC63B45A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:46:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 197023A5747
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB792F0C6C;
-	Mon, 10 Nov 2025 20:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816D42F3C0F;
+	Mon, 10 Nov 2025 20:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eDCRbUjt"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="NSpt4WjH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lII1Vsyh"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EF1258ED1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4FF286405;
+	Mon, 10 Nov 2025 20:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762807603; cv=none; b=g6P/ZS+FD9FbMGAwbI+XxHYTzVgPCt4wkXzPNqxnyq5VFnYmHrXgM6XcfvSeGguvgnLSblweYFDgWmqJXVT2yXj7yeJRe1igHECanwGwvmfNpY2bYlgo/rA9oFE1pgaWs/7MHIQKQx9x6UNs1b2C/4Xbi2CtvMj+9CXocE1LHjs=
+	t=1762807956; cv=none; b=j7cR7ZbRVa8KrEKv9vwExy2fWLYWxlS51D+1Wa/5n/TXLUmhAU6uwB4FH/JqJj0N+qroMqNToM0XR6MnIyo2vTZ5ONyV7BFiD+XpdEd9QHao5KNkRfF3mZzfR5bZc88asQZAGT6inD5yt4ycyFZzKu8EX3b/zBWrYQSMxlhKCDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762807603; c=relaxed/simple;
-	bh=V6et8XZiJmPajNXLpjiEYmS8e1Vn5RYYti7HnWvDPFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EcAQjbBPpDpP1oRpqM5naryk2h45gh2wCBOTR2/iX1dA2ipy/ONxA2+g1B1wVXaDWMXFCh1tAUHC5Rx9sy6W+YfiaDuDyxl8FpfbSR8Y1IYLt5jDJCwqsQ2s7Oaw93NtNcx4gornNeW1YgjXRBZxIBpTU/i5EaaAZbYwPIpO8Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eDCRbUjt; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so5509552a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:46:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762807599; x=1763412399; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Hx+3UErOC7a4/6wBfCIV+NGBUPJoJPn9KMJFM1rAmc=;
-        b=eDCRbUjtxdXCqL/poZO8/KqjwBz7KZYh47KyC0IdO17q+53irw6OhZrkJoi1oggTcI
-         4JxkTgLuhG4G6xCAtZLJfXyuo2Jz2OlxzSLT62Q7ARmhuLt8oMA21prPbhdcQTcUbKv4
-         6wRazD3LOcPaqd2F2itgKmuo+V5y4wHzf7NmylysAKblGSYQjIRr+c8R2I9R0DKzIw6y
-         Dh61g/9u0cQbrYtlOpe8QQv4+BDWBhKvDc+x0pg+WFSyCf208bJZt7QBT7+/q+ixVIxF
-         t5j8Kf0/5iKWwlcV2T4ngeqwSQAw5JQWbZFjI6vsz/ZXQbcdi9gVyUbsSmQ8f014TA4n
-         FAww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762807599; x=1763412399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6Hx+3UErOC7a4/6wBfCIV+NGBUPJoJPn9KMJFM1rAmc=;
-        b=hKUqjN/m2Edzrb80trIsVEcC7MUbTH6fHYpvrsMHrpnGeBoAIkOD6KPusuWpR8gzux
-         WIdOwoe4YixzI7S9Vsyjor397arTnqVjpMSLwIE0kOTMD9UVWy/iQ/JWwM89eT+1PtfY
-         TSj16mxNqNDr+ld9NN37brmHfShpR45IVgR42K9N2E+hSas0MA/V0NuBuKihiEPAEGDY
-         QYNGknghcjy8cHZidACxcFzYAJ6gWJWCK0EWGH1kl42BIw7NuJrNeTiuuC9DFSmaDZd/
-         ZlBjSF09rwUyjgptbMAvMGkuz8byrJ6/j0CxleJqYlCInawS0VHoI0fGMxLbTqS7WOCu
-         FyDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUodA18h9lyuKoDuJS1jEe5FRcjBSYBm1jqXibZrVYPRvZ7NcZXHaFwR/FlQcupaHVa1aDot47hM5PUgok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmGdXVMckJKrrE1owtz60zpTwxsBNHAlCaPNin2mHlqQ8w1Zgb
-	+vAtMMSBmQbIcGJZEzerWRAm57YrR4uuW4QVTry2P/ex0IpsMBKFEOP7a1039xfeJz6jm1qssID
-	lt7IlY67IvtcjQhRaYqQwGD55TIEZPNY=
-X-Gm-Gg: ASbGncsZIHBesICeBj+MHpZNJikBBkWQn69WGClbs6MoyAC5eYW+YFHSlZh8uMzq6BJ
-	x+BQOPHdTIWCO0URGvidSglcNKnoi7suM5wcHsDE/ml4MGzXNrc4a1fYhRmLBOFJuKYpFlzA3kp
-	EEKRDPVUVjjeH1/TljrV6NvRxwjiOUXycWrqEVdYov30HLwC6by+1oOdaqzQJNfrdChtp059kaA
-	nj/frCzu0Re68IIz4VgF7x+7EIutIm2JUZNvpIwcWtAYzs/YjDbCQVBN+NgtyMmTS41D9hU
-X-Google-Smtp-Source: AGHT+IGPBuMN+yAFnF0ZR3EjG2yEc6dIK2mrlQzy7SywuR84/WsrDdt3Or9lcOFeDlZjj4YFPbgIjGqJ7P9gvWVC3s4=
-X-Received: by 2002:a17:907:d8e:b0:b6d:7f24:8428 with SMTP id
- a640c23a62f3a-b72e0587c83mr1036102966b.54.1762807599197; Mon, 10 Nov 2025
- 12:46:39 -0800 (PST)
+	s=arc-20240116; t=1762807956; c=relaxed/simple;
+	bh=oJEomwA4h/k8618bRef7n045vNsSkpM6C9ZqkfHVxvo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=TJxPBn+E96zWSUQMr/Mvyb8w/lh/KtdYV5NOGsx2JIp4y082z3GwD4MOmyw8W/BT3rO8HBTXsm9yrlJAOgmHlWi0FCxIu3jketE9RsHa8OeGq+Z2oRk1S4pXhZyKdt4uYkxsQx+S0N6TQfW0zjPW0VRNaAfdh6PgBOZ0RhIwRoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=NSpt4WjH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lII1Vsyh; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 58FA5140011C;
+	Mon, 10 Nov 2025 15:52:32 -0500 (EST)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Mon, 10 Nov 2025 15:52:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762807952;
+	 x=1762894352; bh=02T9CV6FzxtQCVORxlgGvtmrENd/kFc0JCKIODyEpvc=; b=
+	NSpt4WjHgHnZ2ozF6XrWegnPasjSA8QB1NH+U0B+dLhH4rbHH6JTuyeQsz5Q+pVu
+	NOG6oKt2y9++706RlPWlGZ9Jej949kvULtBT52/cG9znpNQiwE3a9u34pP/1OnU9
+	767A3pjvhVWGXOVuPrBYe6/ZCDZ4p+9sKqSdlo/wmgDfgMdg/ehdQcsjiMK/Co/X
+	4KEOOiMKz2airJ+smOdZtTd9o9b7MFjq8sEaijuiUyMuxnS5Czwd8GrPStAR8GZe
+	9GwniPG+tMytrgkBKi1e3x1jTTWwhjmfNaDRBMcv4hQBB0PSSRy8CNjng9H8NsbA
+	dbAbf4Scu4v0ZUqXwESLjw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762807952; x=
+	1762894352; bh=02T9CV6FzxtQCVORxlgGvtmrENd/kFc0JCKIODyEpvc=; b=l
+	II1VsyhHVp2SbgZAJeXfn6pyYQJNAlgT1x6Df9YVj+OZCLSgQ7/icqOeNWFK9ccq
+	FHEY29KDQwpmrTDl3kiZ5WRhqRO374/xs6mZeLC2CMESy/Bt9Qhdn0N+4GNpAeQj
+	9Y3FXP40EtF0oE2GxD73Sah5kn31O8rRSJU6VesrxPpA1uMN0IyJDBh+lsCSrbAb
+	Qg65VH7xG2zGzLo7hcna15vLZ0G1e/xcJAOMSPL8Ips9KqGUxiAWB2FtDSYgNtSp
+	voKHEterSBVzFar8edOJH67gLsaeGuXnzT6AQe6fAd6UtnBExt77pbeKIYFzrVCm
+	s6nBY7INbfxrRKAhmmn4Q==
+X-ME-Sender: <xms:j1ASafFlwgE4pjHHcppW-qVfCARjf6dDTg8ADtXfxgZMcBvXYiAK3Q>
+    <xme:j1ASaXLBFjstjH1-gwrAU90z2f_l1fj5FuDhzMILR3nFXs23aeKJ-DE7hSsDAqL3Y
+    GsmIWGhgxeHJc1utRlCsyS7ejR3Yq3CGDfiGU8L9MAmiyz28RA8pA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduleelfedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdroh
+    hrghdprhgtphhtthhopegrghhorhguvggvvheslhhinhhugidrihgsmhdrtghomhdprhgt
+    phhtthhopegsohhrnhhtrhgrvghgvghrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpth
+    htohepghhorheslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehhtggrsehlihhn
+    uhigrdhisghmrdgtohhmpdhrtghpthhtohepkhhrvggssggvlheslhhinhhugidrihgsmh
+    drtghomhdprhgtphhtthhopehsvhgvnhhssehlihhnuhigrdhisghmrdgtohhmpdhrtghp
+    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqshefledtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:j1ASaeqIOnjN0xND9fKlrDqgYLCwTTGnVrfL6r-Zun0mKn4G0MEGyQ>
+    <xmx:j1ASaYhai-Kh4ZAWpMMOaXrn4aNnfeSv2YdS18ZYlmj9hRsdF3k9Qg>
+    <xmx:j1ASaQPX1t23SZ9_ico71aRrRa9t7PEAuvbMhLUsNef_2D5CXsXseQ>
+    <xmx:j1ASaSypmweJ2vMLS3-8TeyDm-Z8AbUY1Js4re5SGIR1YsdKON0H4A>
+    <xmx:kFASabM7PCr0YVACgM8RD5Ynh5kLc1qIw-ly1juzMIePPeUZhaNpuDaS>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id AECEB700063; Mon, 10 Nov 2025 15:52:31 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110061409.726028-1-o.rempel@pengutronix.de> <20251110061409.726028-3-o.rempel@pengutronix.de>
-In-Reply-To: <20251110061409.726028-3-o.rempel@pengutronix.de>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 10 Nov 2025 22:46:02 +0200
-X-Gm-Features: AWmQ_blXIxlzHMJq1NdqVVn7zUANqYXxGQTtjIxHfdA-UtT59FQKa8nuqtp1fME
-Message-ID: <CAHp75Vd9WCXR_QmefqPhWO1niMnESq7LAcN=eYvSiqkWfFrNhA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] iio: adc: Add TI ADS131M0x ADC driver
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	David Jander <david@protonic.nl>, kernel@pengutronix.de, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Nov 10, 2025 at 8:14=E2=80=AFAM Oleksij Rempel <o.rempel@pengutroni=
-x.de> wrote:
->
-> Add a new IIO ADC driver for Texas Instruments ADS131M0x devices
-> (ADS131M02/03/04/06/08). These are 24-bit, up to 64 kSPS, simultaneous-
-> sampling delta-sigma ADCs accessed via SPI.
->
-> Highlights:
-> - Supports 2/3/4/6/8-channel variants with per-channel RAW and SCALE.
-> - Implements device-required full-duplex fixed-frame transfers.
-> - Handles both input and output CRC; uses a non-reflected CCITT (0x1021)
->   implementation because the generic crc_ccitt helper is incompatible.
->
-> Note: Despite the almost identical name, this hardware is not
-> compatible with the ADS131E0x series handled by
-> drivers/iio/adc/ti-ads131e08.c.
-
-(Note, my address for IIO reviews is andy@kernel.org)
-
-...
-
-+ array_size.h
-+ bitops.h
-
-> +#include <linux/cleanup.h>
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-
-+ dev_printk.h
-+ device/devres.h
-
-> +#include <linux/err.h>
-> +#include <linux/iio/iio.h>
-
-+ lockdep.h
-
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-
-+ mutex.h
-
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/spi/spi.h>
-
-+ string.h
-
-> +#include <linux/unaligned.h>
-
-+ types.h
-
-...
-
-> +#define ADS131M_CMD_RREG(a, n) \
-> +       (0xa000 | ((u16)(a & 0x1f) << 7) | (u16)(n & 0x7f))
-
-> +#define ADS131M_CMD_WREG(a, n) \
-> +       (0x6000 | ((u16)(a & 0x1f) << 7) | (u16)(n & 0x7f))
-
-These two suspiciously look like a reinvention of proper unaligned
-getters with the specific shift / GENMASK().
-
-...
-
-> +/* 1.2V internal reference, in millivolts, for IIO_VAL_FRACTIONAL_LOG2 *=
-/
-> +#define ADS131M_VREF_INTERNAL_MV       1200
-
-_mV
-
-...
-
-> +/* 24-bit resolution */
-> +#define ADS131M_RESOLUTION_BITS                24
-> +/* Divisor is 2^(Res - 1) for signed 2's complement */
-> +#define ADS131M_SCALE_DIVISOR          (1UL << (ADS131M_RESOLUTION_BITS =
-- 1))
-
-Why not BIT() here?
-
-...
-
-> +struct ads131m_configuration {
-
-Running `pahole` might give some hints on optimisation of the layout.
-
-> +       const struct iio_chan_spec *channels;
-> +       u8 num_channels;
-> +       u16 reset_ack;
-> +       bool supports_extref;
-> +       bool supports_xtal;
-> +       const char *name;
-> +};
-
-...
-
-> +static inline u16 ads131m_crc_ccitt_byte(u16 crc, u8 data)
-> +{
-> +       int i;
-> +
-> +       crc ^=3D ((u16)data << 8);
-> +       for (i =3D 0; i < 8; i++) {
-> +               if (crc & 0x8000)
-> +                       crc =3D (crc << 1) ^ 0x1021;
-> +               else
-> +                       crc =3D (crc << 1);
-> +       }
-> +
-> +       return crc & 0xFFFF;
-> +}
-> +
-> +/**
-> + * ads131m_crc_calculate - Calculate CRC-16-CCITT over a buffer
-> + * @buffer: The data buffer to process
-> + * @len: The length of the buffer
-> + *
-> + * This function processes a buffer with the CCITT algorithm required
-> + * by the device, using the 0xFFFF seed.
-> + *
-> + * Return: The final 16-bit CRC.
-> + */
-> +static u16 ads131m_crc_calculate(const u8 *buffer, size_t len)
-> +{
-> +       u16 crc =3D 0xFFFF;
-> +       size_t i;
-> +
-> +       for (i =3D 0; i < len; i++)
-> +               crc =3D ads131m_crc_ccitt_byte(crc, buffer[i]);
-> +
-> +       return crc;
-> +}
-
-Why CRC16 library can't be used here (crc_ccitt() one perhaps)?
-
-...
-
-> +static int ads131m_write_reg_unlocked(struct ads131m_priv *priv, u8 reg,
-> +                                     u16 val)
-
-I would go with a single line here.
-
-...
-
-> +               dev_err_ratelimited(dev,
-> +                                   "SPI error on WREG (cycle 1)\n");
-
-Ditto.
-
-...
-
-> +               dev_err_ratelimited(dev,
-> +                                   "SPI error on WREG ACK (cycle 2)\n");
-
-Ditto.
-
-...
-
-> +       /*
-> +        * Cycle 3: Check STATUS for Input CRC error.
-> +        * This is necessary even if ACK was wrong, to clear the CRC_ERR =
-flag.
-> +        */
-> +       ret =3D ads131m_check_status_crc_err(priv);
-> +
-> +       return ret < 0 ? ret : ret_crc_err;
-
-Use standard way of checking:
-
-  ret =3D ...(...);
-  if (ret)
-    return ret;
-
-  return ret_crc_err;
-
-...
-
-> +static int ads131m_rmw_reg(struct ads131m_priv *priv, u8 reg, u16 clear,
-> +                          u16 set)
-
-One line.
-
-> +{
-> +       u16 old_val, new_val;
-> +       int ret;
-> +
-> +       guard(mutex)(&priv->lock);
-> +
-> +       ret =3D ads131m_read_reg_unlocked(priv, reg, &old_val);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       new_val =3D (old_val & ~clear) | set;
-
-> +
-
-Unneeded blank line.
-
-> +       if (new_val =3D=3D old_val)
-> +               return 0;
-> +
-> +       return ads131m_write_reg_unlocked(priv, reg, new_val);
-> +}
-
-...
-
-> +       /*
-> +        * The received 16-bit CRC is MSB-aligned in the last 24-bit word=
-.
-> +        * We extract it from the first 2 bytes (BE) of that word.
-> +        */
-> +       received_crc =3D get_unaligned_be16(&priv->rx_buffer[data_len]);
-
-> +
-
-Unneeded blank line.
-
-> +       if (calculated_crc !=3D received_crc) {
-> +               dev_err_ratelimited(dev,
-> +                                   "Output CRC error. Got %04x, expected=
- %04x\n",
-> +                                   received_crc, calculated_crc);
-> +               return -EIO;
-> +       }
-
-...
-
-> +       struct device *dev =3D &priv->spi->dev;
-> +       int vref_uv;
-
-_uV
-
-> +       int ret;
-
-...
-
-> +#define ADS131M_VOLTAGE_CHANNEL(num)   \
-> +       { \
-> +               .type =3D IIO_VOLTAGE, \
-> +               .indexed =3D 1, \
-> +               .channel =3D (num), \
-> +               .info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) | \
-> +                       BIT(IIO_CHAN_INFO_SCALE) \
-
-Leave trailing commas for non-terminating entries.
-
-> +       }
-
-...
-
-> +       /*
-> +        * Get the optional external reference. This schedules regulator_=
-put()
-> +        * automatically.
-> +        */
-> +       priv->refin_supply =3D devm_regulator_get_optional(dev, "refin");
-> +       if (IS_ERR(priv->refin_supply)) {
-> +               /* -ENODEV is fine, it just means we'll use the internal =
-ref */
-> +               if (PTR_ERR(priv->refin_supply) =3D=3D -ENODEV)
-> +                       priv->refin_supply =3D NULL;
-> +               else
-> +                       return dev_err_probe(dev, PTR_ERR(priv->refin_sup=
-ply),
-> +                                            "failed to get refin regulat=
-or\n");
-> +       }
-
-Can be untangled to
-
-  ... =3D devm_regulator_get_...
-  ret =3D PTR_ERR_OR_ZERO(...);
-  if (ret =3D=3D -ENODEV)
-    ... =3D NULL;
-  else if (ret)
-    return dev_err_probe(...);
-
-...
-
-> +               if (priv->config->supports_xtal) {
-> +                       if (!is_xtal) /* "clkin" */
-> +                               clk_set |=3D ADS131M_CLOCK_XTAL_DIS;
-> +               }
-
-if (foo) { if (bar) {...} } =3D=3D if (foo && bar) { ... }
-
-> +               if (priv->config->supports_extref) {
-> +                       if (!IS_ERR_OR_NULL(priv->refin_supply))
-> +                               clk_set |=3D ADS131M_CLOCK_EXTREF_EN;
-> +                       else
-> +                               clk_clear |=3D ADS131M_CLOCK_EXTREF_EN;
-
-Why not a positive check?
-
-> +               }
-
-...
-
-> +       ret =3D device_property_read_string(dev, "clock-names", &clock_na=
-me);
-> +       if (ret < 0)
-> +               return dev_err_probe(dev, ret,
-> +                                    "device property 'clock-names' not f=
-ound\n");
-> +       is_xtal =3D (strcmp(clock_name, "xtal") =3D=3D 0);
-
-Hmm... We have device_property_match_string().
-
-
---=20
-With Best Regards,
-Andy Shevchenko
+X-ThreadId: Ahf7rWlW2DAV
+Date: Mon, 10 Nov 2025 21:51:53 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Heiko Carstens" <hca@linux.ibm.com>,
+ "Alexander Gordeev" <agordeev@linux.ibm.com>,
+ "Vasily Gorbik" <gor@linux.ibm.com>,
+ "Christian Borntraeger" <borntraeger@linux.ibm.com>,
+ "Sven Schnelle" <svens@linux.ibm.com>,
+ "Andreas Krebbel" <krebbel@linux.ibm.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Message-Id: <f4531526-e981-4160-8369-50a8c8d86e36@app.fastmail.com>
+In-Reply-To: <20251110185440.2667511-9-hca@linux.ibm.com>
+References: <20251110185440.2667511-1-hca@linux.ibm.com>
+ <20251110185440.2667511-9-hca@linux.ibm.com>
+Subject: Re: [RFC PATCH 8/8] s390/syscalls: Switch to generic system call table
+ generation
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+On Mon, Nov 10, 2025, at 19:54, Heiko Carstens wrote:
+> The s390 syscall.tbl format differs slightly from most others, and
+> therefore requires an s390 specific system call table generation
+> script.
+> 
+> With compat support gone use the opportunity to switch to generic
+> system call table generation. The abi for all 64 bit system calls is
+> now common, since there is no need to specify if system call entry
+> points are only for 64 bit anymore.
+> 
+> Furthermore create the system call table in C instead of assembler
+> code in order to get type checking for all system call functions
+> contained within the table.
+
+Thanks a lot for taking care of this!
+
+I had a good look at the patch and checked that there are no
+stale syscalls that are no longer needed, the formatting,
+and the way this interfaces with the perf code that parses
+the same table. Everything looks good as far as I can see.
+
+> +161	common	sched_rr_get_interval		sys_sched_rr_get_interval
+> +162	common	nanosleep			sys_nanosleep
+> +163	common	mremap				sys_mremap
+> +167	common	query_module
+> +168	common	poll				sys_poll
+> +169	common	nfsservctl
+> +172	common	prctl				sys_prctl
+
+Nothing wrong with your patch, but while reading through this, I noticed
+that we are somewhat inconsistent about syscalls that are gone, with
+three possible methods:
+
+# 167 was query_module
+167	common	query_module                  sys_ni_syscall
+167	common	query_module
+
+You use the third one now, which is the same as x86 but nothing
+else. The second one using an explicit 'sys_ni_syscall' is the
+most common and has the same effect, so maybe use that as well.
+
+Eventually we may want to convert everything to the first method
+and drop the syscall macros, but that would be visible in
+user-space and might cause regression, so it should be a
+separate series across all architectures if we want to go there.
+
+I believe we just chickened out when we did the conversion to
+syscall.tbl format originally and just left whatever was
+in the unistd.h headers at the time.
+
+    Arnd
 
