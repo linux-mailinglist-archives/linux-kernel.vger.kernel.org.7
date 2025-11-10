@@ -1,367 +1,405 @@
-Return-Path: <linux-kernel+bounces-892262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1486C44B9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:29:22 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80887C44BA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:29:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572A03B0FD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 01:29:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 05761345F60
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 01:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48DD221542;
-	Mon, 10 Nov 2025 01:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="bx8FdL29"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013036.outbound.protection.outlook.com [52.101.83.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3E42222C0;
+	Mon, 10 Nov 2025 01:29:36 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE4C34D387;
-	Mon, 10 Nov 2025 01:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762738153; cv=fail; b=UIjMpRMsasc/1DzkBANazj6mPWg1O3LUZRt/elapidFOtTTY7Ve5lxm+KpV6OPbX8zJ2U8Pul2/3wg6hvAPpspwjC0+uPq3maYjZSuk1uvGRhXlMnuGwL+v93ndB1AEO/IipYa7WD2bHT5hn5ZzSE3ScVxIl1ZdxzgcfvTMB5NA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762738153; c=relaxed/simple;
-	bh=PPwPzFNVLrUSpjHkrD/v9m9r8mdP2Tvr/9g9wT1euhU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RU+rMx/1rTfEkv7e6iyFfMtWInyVzDQPZwvzxCcB3SAmCoyMfTFLtKKAHlDHRrWxnWKvyfRYkKaoSpWHicOwSaNmhZnpGwoMZSmmgxSejAUO8uMg80H9j/IzsnHj3m1SGxX20R3+eCjJfKxAWyapSTr0WloSWDXqoUrzRoMoUpk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=bx8FdL29; arc=fail smtp.client-ip=52.101.83.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GzGLfLabG79stgfOMu2DhKBgxJTQ9Ac5Kd6gEoViWYF+HnKhsR5JVdY30eLlWafSSWbXtEdszHwBuZ865xQtgzpBd36gMCiwdAf7QPaEro/c70T/jNkvmJVNnzy5/zSQiQers2m2NUbSS/2BTFoPR/oLai1bNhEjUdPjrNaefbXZXzfkQRI2P9RcInjKL/Q8aXnCZE6hmn/rU/ejJdPWpPEOJ6T6w1FlaIHN4W7ipBIvdk1yF5tt50tHj1xJLY9e8rgyE/q7jypXuggJ+QHTPrcE+n4VOty+UUD+m6FVCSeKGXxNXAG9BLIWoKjZEHSo+S/XVZSNbDQKuVHZta2EGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h6FPGNlxyAKyr0CuOsCsUcAyzyJK30BjXGKN5m5bmmc=;
- b=rR5V9i0yqpxAow10k28QnHP1SlAjShnmPJeiLUUKkborFsINXZRJwXuVK6vwo4Uf/Vu35+dfdB/oN9vAg70I39xVaMji/3OrIMhb5kYBDVuS/maWGU5qgpPh61PHJCI9L2EmF2OXA8vZ0vb2uc0O6m8R6YE0n/wboO4UVO+74wg9e86Qcx4XYgZgicLbxZ0jIczzgqqQ9fRt0Yi3mrw123PQnHIJddudFc5G2MC/OLQpxz84ehG2j8t2ZtVQCs4GfKIwIatyWk7z8IEjOpoKZlunG5orQrzuhfV2lGBlgbxDSWPerUlvkDiQs0FIbfSjQ7+hpWlWcPOWntXnlDY6zA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h6FPGNlxyAKyr0CuOsCsUcAyzyJK30BjXGKN5m5bmmc=;
- b=bx8FdL29fndH++YCfLy5FTR6otJMSK+N5D1CeDEKbHKHFwXLjd8yng252wIvhyzacWoF7cPCBwYiae27SJxKKz/iaRuCbxSFQUkr0ykJGVA2LZfaQhuKAygggSlq4i2VD3uUfTegaGvdqWUD58lWT7SndsR3xoRfcg5Ld+CieLg9fcSQMBpRmbkkbQWRMROOhgYAeKpiHCVDdONZNTKAT9WvMkZqbiTsqeT3MItjnVpZiFzrn0iU/fki7bUJaoHU3nCNQB5GXZ3/sO7agJ944xzjrlAvpwH8/tbupur4GRud814ADT1wNfGtP41yswFTqUFTLvAqb3RpcxLXXYq5PA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8254.eurprd04.prod.outlook.com (2603:10a6:102:1cd::24)
- by VI0PR04MB12136.eurprd04.prod.outlook.com (2603:10a6:800:317::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 01:29:07 +0000
-Received: from PAXPR04MB8254.eurprd04.prod.outlook.com
- ([fe80::2755:55ac:5d6f:4f87]) by PAXPR04MB8254.eurprd04.prod.outlook.com
- ([fe80::2755:55ac:5d6f:4f87%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 01:29:06 +0000
-Message-ID: <b0f41153-00b5-43ca-ad7a-bfa874f9043c@oss.nxp.com>
-Date: Mon, 10 Nov 2025 09:28:56 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] media: docs: dev-decoder: Trigger dynamic source
- change for colorspace
-To: Nicolas Dufresne <nicolas@ndufresne.ca>, mchehab@kernel.org,
- hverkuil-cisco@xs4all.nl
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, linux-imx@nxp.com, xiahong.bao@nxp.com,
- eagle.zhou@nxp.com, imx@lists.linux.dev, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250418085422.193-1-ming.qian@oss.nxp.com>
- <20250418085422.193-2-ming.qian@oss.nxp.com>
- <4d1260be46be22d7b40fab9788763af796d118dc.camel@ndufresne.ca>
- <0c68a2c0-7e30-46da-abf1-759a7dbb7ecf@oss.nxp.com>
- <141a14f366abe431be65e3977c27d2b39180f38e.camel@ndufresne.ca>
-From: "Ming Qian(OSS)" <ming.qian@oss.nxp.com>
-In-Reply-To: <141a14f366abe431be65e3977c27d2b39180f38e.camel@ndufresne.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0011.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::19) To PAXPR04MB8254.eurprd04.prod.outlook.com
- (2603:10a6:102:1cd::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B251216E32
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762738175; cv=none; b=Gid54LJuFatEI75ny0WRzwwwlSBVkAbBDpMKHcNeiGUKJnJOXbytoO3VY2pUHOrjH8vTdx880uOargAcORwFNRbPxEXprg+XDrXZU6DasXGc0HO7zgTFv9QM1MpALfA96cpN4NUfHBgXmSeyr7iyiWUahTARJaFiH9GSJpLNehU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762738175; c=relaxed/simple;
+	bh=DHlTN2qtuXrq4u5/vIXs+nZfVimey7qzTUmgNJ966i0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VYaeZat2HsSjq4hW10A8OwNnAhzoA/9xmO0Iybpvt+W5PkulNcWyR91qX+NZMQV/3gDRpuRZULbasEvYpdKquxLs0k0ssZjY0TDHuPXQ4VaDtjXGQAP5I8ZlqrHQZGc7CyMVtKm+GF7Y2/b/utlgsJWaO7LKH1R7aT7lmURNhYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-433783ff82aso24431935ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 17:29:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762738172; x=1763342972;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7JnwAT+Izqirtc4C6DNmUAJQECRSK2FvKEk84uKoC9g=;
+        b=JFJSMVBiHs1TRzIpsk5IeZcc1xcEcELKLYbeCIC7LALmRShF7DHPJFkh+jzHXZfF6Q
+         jBudk/jGw3PegSLZXCnqXcI6i2NuLcZvWATnYlzdAjIoIqJz+MZRGbD0rpo3ap3jhR/k
+         oKxMB+EiWCkW+fzV/iTcVmMrHLuU/01BH50ubzumlR8oM0V62Wmg3gjufixxfk9lqbqU
+         M7wNVKzlLDYnch7id4Umq+Kp5gZmH34KAyE9H4825GbE1dvNLXNhHZb0eDrGNYG+hcb8
+         lup8KUwYTIcdV9kL0wADhXTt6NZCxHYStV2nDVa+LoQ9SzxmHISf8hFFzsu1GRdR45PY
+         TdUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUP+2DxCWYRCmGaK0CQW7M29rVDBGEo/cLUSVh8shejWVR3MjY5D9W3b4mY9Kwn1C2KZbAbTyFMqDfelYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbrbruy3iV4K8OfpLeZ/vPqzHYldDfbtJ0Fbdxs0FxXGmdNeL8
+	3/qLqYILbvvS3zx7MKtpD2RQ8ecBt1I3aC6Lxz4EvJFwJ+Wlya7eJGXlb20eUzIrMaMQwuATBYF
+	ec/UZOg3E1C6yj2WR2OqGESu2s/uDQ8BdFEN/+sERuOCs/8M15OLg4c5nt7M=
+X-Google-Smtp-Source: AGHT+IGL1DQo0usZ0xWVNpwQmqa4othw2NAo5Ty/9rDbXXjja6bVkz4DyseLg/De2o+vHYbO5JfKU0H4L5zdy1B/935jN2qIGDpd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8254:EE_|VI0PR04MB12136:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5c1ec496-cf95-406a-5f4f-08de1ff889fd
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|19092799006|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M2lObXdaVHN2WjJJOU5qVWxJMXRRQmE1U2FKZFdxdG9GSkxKeWd5WmxSajkv?=
- =?utf-8?B?SEN2VkU3dHZwekljQ01JemVKQzVIZjYwWUdUT0ZkbS80aEJDK0JOcCtDSzBG?=
- =?utf-8?B?VnRzOXZQcms2ZEtVVTFvZXRFekUwRTJqQjJtbTdlTDJ6UHg4TkdFL0t2dUJX?=
- =?utf-8?B?Vk9jRnZCd0tMMXN0TldpSGE4NmlJUDQwR0lIWVhuMk5lR0pUY2J5YS9seTF3?=
- =?utf-8?B?ZFM5dy9WdzZ4SEI3T0RnL0JESk14WVR5VGQyZnhNNmF2eHZMc0liWmQ5OVph?=
- =?utf-8?B?U0F6dGNmVGpYZjVuRzd4VlNIc21VVXJRa2J5Z1E5dTUrREgraS9oNUZKNVYw?=
- =?utf-8?B?eC8zRm1LdHdTS2pQdURySzRUVG1sRGhocjVNUnp1S2hpbFMxUkg4U1N0SzhB?=
- =?utf-8?B?b3BpR1ZLanF4YU9RMVMva3kxQUxQbCtYRncrMkZuazBQRk93Y0h0cEF6ZDE0?=
- =?utf-8?B?WUp0UFdLTzBhd1FYZXdDUHpRUkswZ21RMjJLQUwxR2FlZk9EdEhOdmtjc09K?=
- =?utf-8?B?QTI4bkpnbVoyUmhGVXd0cHdFcnFvMWs3bCtuMWRyWjRVWGJrUDk4Rnd5SXZ3?=
- =?utf-8?B?Ym1PNGw2NkQ2TEpNWWxRK3Z6ZUh2N3plTjVjamVoYUhQMFdQUENkZVFtdE1r?=
- =?utf-8?B?TFpyUUJ6eHJoUElkUGYxMkV4dWZ2ZzZvd0gzNGpjaHRCSHoxeHJhak9QdnZs?=
- =?utf-8?B?NVNwMnVCaDM2NWN2eUVEcE5rUTVUcWM1allrSEhUZTZ0UTMwQlpoZDBYazhs?=
- =?utf-8?B?eGF4YUx3c0JlSEppUTVMNnROd0hTb2MrNXpPWkNUYVduRkdDOTQ5YjhJbmZw?=
- =?utf-8?B?Mklzd1JFTVFmZStWc1hzYm9ZU3dGUDkxU01RWFcyUXRIbXloS242QVFFaVpq?=
- =?utf-8?B?NU5nQitPY3E4T2IxNmFMT05oOE0yaGlXcFpUV01TN2l4eGFvOTR4bkNHb3Bo?=
- =?utf-8?B?Q0tReHlVSHVrTktLUlR4SGN1ek56SStSczBmWG9ITTZFelFiK2d0U2d3aG5Z?=
- =?utf-8?B?eE1taUJDOFk5SXdjeE5JMVNNZGxhSTdQL2E4WXJoYUlHc2prNHVacmptMzhY?=
- =?utf-8?B?RldaMjhHRE5PeWVzcnU1YTNBSXVYaG1mSDlTdXVDSStHSFluUm94UnBKQ1Y2?=
- =?utf-8?B?Y0Mva05Cckd3R2NVUm8yc3RwMk14SG81dW9GMk94TXhkdERNcXoyVVMxT1Vt?=
- =?utf-8?B?c3F4Y3BzWGt4R0ZWK0ZhemMwblBwQVN2dkh1ZkVEVFlIdXgrQklOSTBzNlZq?=
- =?utf-8?B?S3dTakVmZTNqemhPNVc2TXZ0TE1Xc0NhT3ovUmpTZWJXYitYbVRLRUk5ZWUr?=
- =?utf-8?B?VDhhRXRnKzlId0JncFVud2IvV1VGNi9qN0Q3alVaWVJjY3B0YU83VWFlMTBQ?=
- =?utf-8?B?M1NnMmk3K3ZObDZha1JuRklPejRCenlxOGtBRFNwZG5BWkt3REg2Mnh5MFhy?=
- =?utf-8?B?RjBWRzBpT0d2Vk9vSlRkaXpCVWdnNHQ1RXg2SXpFclpTZExHVi9KdzRlak95?=
- =?utf-8?B?a0pDSExONnQzd2dsMm1MRXoyZCtNaUlJVXYyMWE2eEkrMUxpcndtbXEwOWl0?=
- =?utf-8?B?UUZldU80MHdlbDROTXVCck0rS3FXMDZjVi85R05qNnBBb1Vna1NWc01EQWhI?=
- =?utf-8?B?c1hITDB2VTNTb1pKYUdKVnpQcFBKcmQ1ci8vVUJLNVExV1UwMk5QcHRHd0NX?=
- =?utf-8?B?bytSUVFwUkJCYzhoNDBZMUlMaDN1SUZqT0dtRkE4MzZMY3FMQUt4VkVMQnVE?=
- =?utf-8?B?WmRraTBDRHpobDgvNUlZU0VCZWlneXJ5d05DNWFJeWhtb3dZTGJQaklOMDNN?=
- =?utf-8?B?RE5DZ0ZiSlRlSHBKK1RxcjJzNzdUaTlUWml3OGt1cWVtK2tTV0JjeEVpSnZ4?=
- =?utf-8?B?S2RsTy9hUDhtb2RzcUVIYlVGR01sU0ZWNlBtUkJBdGVKQ1RuYzVRQ1cwNHp1?=
- =?utf-8?Q?o/upxIhsJEr5bFE782Fyvqx1DmMYDUfn?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8254.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(19092799006)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VCtzV3R2RzFkZFQ5QlVyV2RTSU5SYlZmRVd3WFlLZmZpaEJKUi94TGxMTFNn?=
- =?utf-8?B?UlFEUTlycGpNdHpVSktDN1FSUEZqaWxRN3RMek9XRDFJdjk4K1UvaUkrUTYr?=
- =?utf-8?B?V1YwODFFVXFZcHhsVyt2SDBzK0NJODNia2FaMW5aQ1E5M3hlalUzK1llNFg2?=
- =?utf-8?B?cXZzandNMnJsMWYreE1LMXdmeS85bSsvZ3JlWEJlWlY5ZGJhZzBRaUZjUnVP?=
- =?utf-8?B?VHllcmkyWHM4YXhPckdXNHlEK3dlUko5dXM1SnJ2cVNieGF6Y0M3MmF0MVU1?=
- =?utf-8?B?NGdBYkN5bUFlWS9Ubm9mZUNhbXFYMWNYQ1ExNVdNNWg5cVJROTlDSkZicEtr?=
- =?utf-8?B?S3RGM1lKOWJHa2JrMExlVXdKcm9kS2ZWYmRGc0M5TjUxR0t0Z05VbUoybmtr?=
- =?utf-8?B?c2FtSEIrbS9NRk91bC8yVDYwMVBQR2VqeVZEUy85TDV1TytFZFNXcjRweEgy?=
- =?utf-8?B?QzZVYUhWei9YK0VETGlpWHVCUGdjeElUNDZINnNqODFUa3dPcjJjYjNTeFdO?=
- =?utf-8?B?SHRxbXVycHhNRzdqTGZJY0ZCTURPOTZqVzFoelE4T3l5VXBpSnhzSUsvQ1U3?=
- =?utf-8?B?eWNHSDZXbi9FNnRCREZXVkQzV3p1K0xKVVgxNHV1dUJUQkNMOUJaajBuTzQv?=
- =?utf-8?B?TnFUU3dudGVLY095ZWFZaHNzMlo2NFl0K0YxRkVhSis3UElOVzdXSzVUaGZE?=
- =?utf-8?B?aHFlSW1Dem9sQ1FRNXp0NExEd05ZQjhOYUdjUEtuNGU2RGtmaG8xZVZqYmNT?=
- =?utf-8?B?VzBVL3lOTE9XNmpzZHo1b1M2Q0tTVThmc1owczR4YXQrVXJFbXVVc3lZSWs1?=
- =?utf-8?B?b0dCVTJBZHlVekJTRTBWTzJuSHJUUDdLQmE1a2dpTVJ3bFNNNThkSytTdm5z?=
- =?utf-8?B?dlA5dWdBMnlmcXlQZERINzNpVlV1WXo1RWRweTVCZmV1OG5LUVVhbUlBalg0?=
- =?utf-8?B?TlZnQjd6S3JmMTdiUHJqakNBaU9pWk1rZVl6bFR4Y1RoemhQVmRjLzBTalZG?=
- =?utf-8?B?R0ptVWE4UElYV3BTakFFS2hUdXRUVUtFVlFZa3Y2NTNKeXMzM0lhdkkvZXdC?=
- =?utf-8?B?UnU4WEg1RlpmRVdXdjIyNnFPOTN0QjVOUEduQVpWRy9yMExTc2NDeWZCVlVz?=
- =?utf-8?B?cnhiZWtmWWxDQWsvV0VsYVROUlZQTTJNVW1mRVN4bTJkSjAwV1pwMVVvTHhy?=
- =?utf-8?B?d3RnRzFBdkdFc1VwZ2o5NDR5dFZ1NmwyQ3BHZEcycVJtUTBIaDJ4cUNqUDk3?=
- =?utf-8?B?c0ZWY3gwMm1Bb1ZzTkdCREZCZ1ZabWZCekZIRFBsL04zN3RDbytHTTdZWnVn?=
- =?utf-8?B?MENDRzRnekd2eFFiVXRIQ3NlMHZ5cDgyT0pQK1lBekFTMjFibE5VQVc1RWFM?=
- =?utf-8?B?bTlaT1FCWkp2SWZnVjE1ZStaTjRSY1lZQU9nZlpzTkh2WVJ6Zms4QzVrbDVK?=
- =?utf-8?B?VzRObCsvRTlYK1BRYXJ2RDhzaFJWSUhRVTcySEVEbUYrdEtpYW84TFVockNt?=
- =?utf-8?B?aVJBTitJSE5SV05JTUkxSWF5T0xueFRWTXhPWHlGakhjTytrS1lHb3FCZ2tj?=
- =?utf-8?B?NjNtc25HSGxVS3lnaEVEZlc1S0ZLVmJVTlFzR1l4TDYraWxMNW9iUnVHUWNx?=
- =?utf-8?B?Y0diSi9rV0I0RUtPT3dLWHo5S0Zpd29tRTdHM2M4YlFqTkxNM3oza2NtNmNy?=
- =?utf-8?B?Y3lueE1PYllXMmg1bjFRU0dwaWplMTF2cW52SG1oakprZmd5Vi8vbHhRdlQx?=
- =?utf-8?B?M0F3Y003NEVSVlJXYkJoTWhtK1A2WURiUFFIZmdxRmRSaXFTaEZsOURUVngr?=
- =?utf-8?B?WE1XYllWNGtEZWxaRVpXRmpFQmVGZTQ0M0J0MFlkbHYvU0EyL2NpTFZudk4v?=
- =?utf-8?B?OWhLdmZWaE9BSGI1UEFXcUkzSkFHcjlISTg0MXdIcERWcDVBektkcGYvSlBX?=
- =?utf-8?B?a29kSWhCYlRyZDk0eXgxR0IxN2ZZSDhHcXdQRVBJaHFwNmsrSGZLdkJpeXh3?=
- =?utf-8?B?UjhPRDF6c0hFQStQOWh0OEJ4SDdWbEkvcnNJSXROOEJJZjhySHNQVEo1Yk5Z?=
- =?utf-8?B?MGpLMjVXUkNmb2tNbGhoRVhzMkpZMmVFaGxPSmJEZnd4Zk1YbHJTeVpBNGdr?=
- =?utf-8?Q?dI6R66AOVzMIkIfVmlaHIkT9N?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c1ec496-cf95-406a-5f4f-08de1ff889fd
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8254.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 01:29:06.4853
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6nmW9Tk/7iRLqoKxZbDCTP++JL+Su0UxnIjZixn6Zedoe1rdjRCek8+YkD/k5Os3G22/bib0JzVHtwcJiINT6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB12136
+X-Received: by 2002:a05:6e02:2581:b0:433:7a7c:e29f with SMTP id
+ e9e14a558f8ab-4337a7d0856mr39178395ab.21.1762738172371; Sun, 09 Nov 2025
+ 17:29:32 -0800 (PST)
+Date: Sun, 09 Nov 2025 17:29:32 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69113ffc.a70a0220.22f260.00cd.GAE@google.com>
+Subject: [syzbot] [mptcp?] possible deadlock in mptcp_subflow_shutdown (2)
+From: syzbot <syzbot+7902f127c28c701e913f@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, geliang@kernel.org, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	martineau@kernel.org, matttbe@kernel.org, mptcp@lists.linux.dev, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    dc77806cf3b4 Merge tag 'rust-fixes-6.18' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17dd9bcd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=19d831c6d0386a9c
+dashboard link: https://syzkaller.appspot.com/bug?extid=7902f127c28c701e913f
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a1c9259ca92c/disk-dc77806c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/98d084f2ad8b/vmlinux-dc77806c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c25e628e3491/bzImage-dc77806c.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7902f127c28c701e913f@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.7.3695/23717 is trying to acquire lock:
+ffff888087316860 (k-sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1679 [inline]
+ffff888087316860 (k-sk_lock-AF_INET){+.+.}-{0:0}, at: mptcp_subflow_shutdown+0x24/0x380 net/mptcp/protocol.c:2918
+
+but task is already holding lock:
+ffff888026899a60 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1679 [inline]
+ffff888026899a60 (sk_lock-AF_INET){+.+.}-{0:0}, at: mptcp_close+0x1d/0xe0 net/mptcp/protocol.c:3168
+
+which lock already depends on the new lock.
 
 
-Hi Nicolas，
+the existing dependency chain (in reverse order) is:
 
-On 11/7/2025 10:50 PM, Nicolas Dufresne wrote:
-> Hi,
-> 
-> I'm reviewing my backlog and this one has been stalled.
-> 
-> Le lundi 03 novembre 2025 à 09:45 +0800, Ming Qian(OSS) a écrit :
->> Hi Nicolas,
->>
->> On 8/1/2025 11:23 PM, Nicolas Dufresne wrote:
->>> Hi Ming,
->>>
->>> Le vendredi 18 avril 2025 à 16:54 +0800, ming.qian@oss.nxp.com a écrit :
->>>> From: Ming Qian <ming.qian@oss.nxp.com>
->>>>
->>>> If colorspace changes, the client needs to renegotiate the pipeline,
->>>> otherwise the decoded frame may not be displayed correctly.
->>>>
->>>> When a colorspace change in the stream, the decoder sends a
->>>> V4L2_EVENT_SOURCE_CHANGE event with changes set to
->>>> V4L2_EVENT_SRC_CH_COLORSPACE. After client receive this source change
->>>> event, then client can switch to the correct stream setting. And each
->>>> frame can be displayed properly.
->>>
->>> sorry for the long delay. While reading this, in any case userspace have to read
->>> the new format. Why can't userspace compare the old and new v4l2_format and
->>> decide to avoid re-allocation that way ?
->>>
->>> There is also backward compatbility issues for driver that was sending
->>> V4L2_EVENT_SRC_CH_RESOLUTION for colorspace change before. Despite the costly
->>> re-allocation, userspace only watching for V4L2_EVENT_SRC_CH_RESOLUTION would
->>> endup not updating the colorspace anymore.
->>>
->>> Combining both would be an option, but then V4L2_EVENT_SRC_CH_RESOLUTION means
->>> any v4l2_format changes, which is awkward. What do you think of leaving to
->>> userspace the task of comparing the old and new v4l2_format ?
->>>
->>> Nicolas
->>>
->>
->> Sorry for the delay response (I don't understand why I received this
->> email several months late.)
->>
->> I agree that comparing the old and new v4l2_format is feasible. And
->> there are currently four conditions that can trigger source change.
->> - coded resolution (OUTPUT width and height),
->> - visible resolution (selection rectangles),
->> - the minimum number of buffers needed for decoding,
->> - bit-depth of the bitstream has been changed.
->>
->> Therefore, comparing only v4l2_format is insufficient. This is much more
->> complicated than checking a flag. I'm not sure if existing applications
->> have already done this.
->>
->> I also think it's OK for driver to send V4L2_EVENT_SRC_CH_RESOLUTION for
->> colorspace change, This will only incur additional allocation overhead,
->> without causing any functional issues.
->>
->> Therefore, from a driver perspective:
->> - V4L2_EVENT_SRC_CH_RESOLUTION for format change      OK
->> - V4L2_EVENT_SRC_CH_RESOLUTION for colorspace chagne  OK, but
->> re-allocation cost
->> - V4L2_EVENT_SOURCE_CHANGE for colorspace change      OK
->>
->> from a client perspective:
->> - V4L2_EVENT_SRC_CH_RESOLUTION without compareing format    OK,
->> re-allocation
->> - V4L2_EVENT_SRC_CH_RESOLUTION with comparing format        OK,
->> additional support required
->> - V4L2_EVENT_SOURCE_CHANGE                                  OK,
->> additional support required
->>
->>
->> I believe that adding a V4L2_EVENT_SOURCE_CHANGE flag will help simplify
->> the process and will not cause too many backward compatibility issues.
-> 
-> So stepping back a little, the point is the V4L2_EVENT_SRC_CH_RESOLUTION is not
-> clear enough. For backward compatibility reason we have to keep it though. So
-> that gives two choices:
-> 
-> 1. We don't add new API, and its up to clients to check what actually changes.
-> Documentation to help this would be nice.
-> 
-> This is easy driver side, you just emit more SOURCE_CHANGE event, and get a
-> performance hit on client that have not been updated and just naively re-
-> allocate.
-> 
-> 2. We keep V4L2_EVENT_SRC_CH_RESOLUTION, but introduce SRC_CH_REALLOC,
-> SRC_CH_COLORSPACE, ...
-> 
-> We still endup seding more events. If the flags are exactly
-> V4L2_EVENT_SRC_CH_RESOLUTION, we have a legacy driver and can't assume anything.
-> Just realloc or check in the format details. Then if one or more flags of the
-> other are present, use this in order to minimize the work.
-> 
-> In all cases, a drain operation must happen, otherwise you would not know at
-> which boundary this change takes place. I will mark this as "Change Requested"
-> so it is removed from my queue. If you want to continue this work, I think this
-> is best plan I can think of with consideration for backward compatibility. If
-> you go for 1, no new API is needed, but perhaps some better doc would help.
-> 
-> Nicolas
-> 
-> 
+-> #7 (sk_lock-AF_INET){+.+.}-{0:0}:
+       lock_sock_nested+0x41/0xf0 net/core/sock.c:3720
+       lock_sock include/net/sock.h:1679 [inline]
+       inet_shutdown+0x67/0x440 net/ipv4/af_inet.c:907
+       nbd_mark_nsock_dead+0xae/0x5d0 drivers/block/nbd.c:319
+       recv_work+0x671/0xa80 drivers/block/nbd.c:1024
+       process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3263
+       process_scheduled_works kernel/workqueue.c:3346 [inline]
+       worker_thread+0x6c8/0xf10 kernel/workqueue.c:3427
+       kthread+0x3c5/0x780 kernel/kthread.c:463
+       ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
 
-Thank you for your explanation. I agree that method 1 is more reasonable
-and easier.
-I'll prepare the V4 driver patch based on the method 1.
+-> #6 (&nsock->tx_lock){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+       __mutex_lock+0x193/0x1060 kernel/locking/mutex.c:760
+       nbd_handle_cmd drivers/block/nbd.c:1146 [inline]
+       nbd_queue_rq+0x423/0x12d0 drivers/block/nbd.c:1210
+       blk_mq_dispatch_rq_list+0x416/0x1e20 block/blk-mq.c:2129
+       __blk_mq_do_dispatch_sched block/blk-mq-sched.c:168 [inline]
+       blk_mq_do_dispatch_sched block/blk-mq-sched.c:182 [inline]
+       __blk_mq_sched_dispatch_requests+0xcb7/0x15f0 block/blk-mq-sched.c:307
+       blk_mq_sched_dispatch_requests+0xd8/0x1b0 block/blk-mq-sched.c:329
+       blk_mq_run_hw_queue+0x239/0x670 block/blk-mq.c:2367
+       blk_mq_dispatch_list+0x514/0x1310 block/blk-mq.c:2928
+       blk_mq_flush_plug_list block/blk-mq.c:2976 [inline]
+       blk_mq_flush_plug_list+0x130/0x600 block/blk-mq.c:2948
+       __blk_flush_plug+0x2c4/0x4b0 block/blk-core.c:1225
+       blk_finish_plug block/blk-core.c:1252 [inline]
+       blk_finish_plug block/blk-core.c:1249 [inline]
+       __submit_bio+0x545/0x690 block/blk-core.c:651
+       __submit_bio_noacct_mq block/blk-core.c:724 [inline]
+       submit_bio_noacct_nocheck+0x53d/0xc10 block/blk-core.c:755
+       submit_bio_noacct+0x5bd/0x1f60 block/blk-core.c:879
+       submit_bh fs/buffer.c:2829 [inline]
+       block_read_full_folio+0x4db/0x850 fs/buffer.c:2461
+       filemap_read_folio+0xc8/0x2a0 mm/filemap.c:2444
+       do_read_cache_folio+0x263/0x5c0 mm/filemap.c:4024
+       read_mapping_folio include/linux/pagemap.h:999 [inline]
+       read_part_sector+0xd4/0x370 block/partitions/core.c:722
+       adfspart_check_ICS+0x93/0x940 block/partitions/acorn.c:360
+       check_partition block/partitions/core.c:141 [inline]
+       blk_add_partitions block/partitions/core.c:589 [inline]
+       bdev_disk_changed+0x723/0x1520 block/partitions/core.c:693
+       blkdev_get_whole+0x187/0x290 block/bdev.c:748
+       bdev_open+0x2c7/0xe40 block/bdev.c:957
+       blkdev_open+0x34e/0x4f0 block/fops.c:701
+       do_dentry_open+0x982/0x1530 fs/open.c:965
+       vfs_open+0x82/0x3f0 fs/open.c:1097
+       do_open fs/namei.c:3975 [inline]
+       path_openat+0x1de4/0x2cb0 fs/namei.c:4134
+       do_filp_open+0x20b/0x470 fs/namei.c:4161
+       do_sys_openat2+0x11b/0x1d0 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __x64_sys_openat+0x174/0x210 fs/open.c:1463
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Regards,
-Ming
+-> #5 (&cmd->lock){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+       __mutex_lock+0x193/0x1060 kernel/locking/mutex.c:760
+       nbd_queue_rq+0xbd/0x12d0 drivers/block/nbd.c:1202
+       blk_mq_dispatch_rq_list+0x416/0x1e20 block/blk-mq.c:2129
+       __blk_mq_do_dispatch_sched block/blk-mq-sched.c:168 [inline]
+       blk_mq_do_dispatch_sched block/blk-mq-sched.c:182 [inline]
+       __blk_mq_sched_dispatch_requests+0xcb7/0x15f0 block/blk-mq-sched.c:307
+       blk_mq_sched_dispatch_requests+0xd8/0x1b0 block/blk-mq-sched.c:329
+       blk_mq_run_hw_queue+0x239/0x670 block/blk-mq.c:2367
+       blk_mq_dispatch_list+0x514/0x1310 block/blk-mq.c:2928
+       blk_mq_flush_plug_list block/blk-mq.c:2976 [inline]
+       blk_mq_flush_plug_list+0x130/0x600 block/blk-mq.c:2948
+       __blk_flush_plug+0x2c4/0x4b0 block/blk-core.c:1225
+       blk_finish_plug block/blk-core.c:1252 [inline]
+       blk_finish_plug block/blk-core.c:1249 [inline]
+       __submit_bio+0x545/0x690 block/blk-core.c:651
+       __submit_bio_noacct_mq block/blk-core.c:724 [inline]
+       submit_bio_noacct_nocheck+0x53d/0xc10 block/blk-core.c:755
+       submit_bio_noacct+0x5bd/0x1f60 block/blk-core.c:879
+       submit_bh fs/buffer.c:2829 [inline]
+       block_read_full_folio+0x4db/0x850 fs/buffer.c:2461
+       filemap_read_folio+0xc8/0x2a0 mm/filemap.c:2444
+       do_read_cache_folio+0x263/0x5c0 mm/filemap.c:4024
+       read_mapping_folio include/linux/pagemap.h:999 [inline]
+       read_part_sector+0xd4/0x370 block/partitions/core.c:722
+       adfspart_check_ICS+0x93/0x940 block/partitions/acorn.c:360
+       check_partition block/partitions/core.c:141 [inline]
+       blk_add_partitions block/partitions/core.c:589 [inline]
+       bdev_disk_changed+0x723/0x1520 block/partitions/core.c:693
+       blkdev_get_whole+0x187/0x290 block/bdev.c:748
+       bdev_open+0x2c7/0xe40 block/bdev.c:957
+       blkdev_open+0x34e/0x4f0 block/fops.c:701
+       do_dentry_open+0x982/0x1530 fs/open.c:965
+       vfs_open+0x82/0x3f0 fs/open.c:1097
+       do_open fs/namei.c:3975 [inline]
+       path_openat+0x1de4/0x2cb0 fs/namei.c:4134
+       do_filp_open+0x20b/0x470 fs/namei.c:4161
+       do_sys_openat2+0x11b/0x1d0 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __x64_sys_openat+0x174/0x210 fs/open.c:1463
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
->>
->> Regards,
->> Ming
->>
->>>>
->>>> So add colorspace as a trigger parameter for dynamic resolution change.
->>>>
->>>> Signed-off-by: Ming Qian <ming.qian@oss.nxp.com>
->>>> ---
->>>> v2
->>>> - Add V4L2_EVENT_SRC_CH_COLORSPACE for colorspace source change event
->>>>
->>>>    .../userspace-api/media/v4l/dev-decoder.rst     | 17 +++++++++++++----
->>>>    1 file changed, 13 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/Documentation/userspace-api/media/v4l/dev-decoder.rst
->>>> b/Documentation/userspace-api/media/v4l/dev-decoder.rst
->>>> index ef8e8cf31f90..51d6da3eea4a 100644
->>>> --- a/Documentation/userspace-api/media/v4l/dev-decoder.rst
->>>> +++ b/Documentation/userspace-api/media/v4l/dev-decoder.rst
->>>> @@ -784,8 +784,8 @@ before the sequence started. Last of the buffers will have
->>>> the
->>>>    must check if there is any pending event and:
->>>>    
->>>>    * if a ``V4L2_EVENT_SOURCE_CHANGE`` event with ``changes`` set to
->>>> -  ``V4L2_EVENT_SRC_CH_RESOLUTION`` is pending, the `Dynamic Resolution
->>>> -  Change` sequence needs to be followed,
->>>> +  ``V4L2_EVENT_SRC_CH_RESOLUTION`` or ``V4L2_EVENT_SRC_CH_COLORSPACE`` is
->>>> pending,
->>>> +  the `Dynamic Resolution Change` sequence needs to be followed,
->>>>    
->>>>    * if a ``V4L2_EVENT_EOS`` event is pending, the `End of Stream` sequence
->>>> needs
->>>>      to be followed.
->>>> @@ -932,13 +932,17 @@ reflected by corresponding queries):
->>>>    
->>>>    * the minimum number of buffers needed for decoding,
->>>>    
->>>> -* bit-depth of the bitstream has been changed.
->>>> +* bit-depth of the bitstream has been changed,
->>>> +
->>>> +* colorspace of the bitstream has been changed.
->>>>    
->>>>    Whenever that happens, the decoder must proceed as follows:
->>>>    
->>>>    1.  After encountering a resolution change in the stream, the decoder sends a
->>>>        ``V4L2_EVENT_SOURCE_CHANGE`` event with ``changes`` set to
->>>> -    ``V4L2_EVENT_SRC_CH_RESOLUTION``.
->>>> +    ``V4L2_EVENT_SRC_CH_RESOLUTION``, or a colorspace change in the stream,
->>>> the
->>>> +    decoder sends a ``V4L2_EVENT_SOURCE_CHANGE`` event with ``changes`` set
->>>> to
->>>> +    ``V4L2_EVENT_SRC_CH_COLORSPACE``.
->>>>    
->>>>        .. important::
->>>>    
->>>> @@ -946,6 +950,11 @@ Whenever that happens, the decoder must proceed as
->>>> follows:
->>>>           values applying to the stream after the resolution change, including
->>>>           queue formats, selection rectangles and controls.
->>>>    
->>>> +.. note::
->>>> +        A ``V4L2_EVENT_SOURCE_CHANGE`` event with ``changes`` set to
->>>> +        ``V4L2_EVENT_SRC_CH_RESOLUTION`` will affect the allocation, but
->>>> +        ``V4L2_EVENT_SRC_CH_COLORSPACE`` won't.
->>>> +
->>>>    2.  The decoder will then process and decode all remaining buffers from
->>>> before
->>>>        the resolution change point.
->>>>    
+-> #4 (set->srcu){.+.+}-{0:0}:
+       srcu_lock_sync include/linux/srcu.h:173 [inline]
+       __synchronize_srcu+0xa1/0x290 kernel/rcu/srcutree.c:1439
+       blk_mq_wait_quiesce_done block/blk-mq.c:283 [inline]
+       blk_mq_wait_quiesce_done block/blk-mq.c:280 [inline]
+       blk_mq_quiesce_queue block/blk-mq.c:303 [inline]
+       blk_mq_quiesce_queue+0x149/0x1b0 block/blk-mq.c:298
+       elevator_switch+0x17d/0x810 block/elevator.c:588
+       elevator_change+0x391/0x5d0 block/elevator.c:691
+       elevator_set_default+0x2e9/0x380 block/elevator.c:767
+       blk_register_queue+0x384/0x4e0 block/blk-sysfs.c:942
+       __add_disk+0x74a/0xf00 block/genhd.c:528
+       add_disk_fwnode+0x13f/0x5d0 block/genhd.c:597
+       add_disk include/linux/blkdev.h:775 [inline]
+       nbd_dev_add+0x783/0xbb0 drivers/block/nbd.c:1987
+       nbd_init+0x1a2/0x3c0 drivers/block/nbd.c:2702
+       do_one_initcall+0x123/0x6e0 init/main.c:1283
+       do_initcall_level init/main.c:1345 [inline]
+       do_initcalls init/main.c:1361 [inline]
+       do_basic_setup init/main.c:1380 [inline]
+       kernel_init_freeable+0x5c8/0x920 init/main.c:1593
+       kernel_init+0x1c/0x2b0 init/main.c:1483
+       ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #3 (&q->elevator_lock){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+       __mutex_lock+0x193/0x1060 kernel/locking/mutex.c:760
+       queue_requests_store+0x3a7/0x670 block/blk-sysfs.c:117
+       queue_attr_store+0x26b/0x310 block/blk-sysfs.c:869
+       sysfs_kf_write+0xf2/0x150 fs/sysfs/file.c:142
+       kernfs_fop_write_iter+0x3af/0x570 fs/kernfs/file.c:352
+       new_sync_write fs/read_write.c:593 [inline]
+       vfs_write+0x7d3/0x11d0 fs/read_write.c:686
+       ksys_write+0x12a/0x250 fs/read_write.c:738
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&q->q_usage_counter(io)#52){++++}-{0:0}:
+       blk_alloc_queue+0x619/0x760 block/blk-core.c:461
+       blk_mq_alloc_queue+0x172/0x280 block/blk-mq.c:4399
+       __blk_mq_alloc_disk+0x29/0x120 block/blk-mq.c:4446
+       nbd_dev_add+0x492/0xbb0 drivers/block/nbd.c:1957
+       nbd_init+0x1a2/0x3c0 drivers/block/nbd.c:2702
+       do_one_initcall+0x123/0x6e0 init/main.c:1283
+       do_initcall_level init/main.c:1345 [inline]
+       do_initcalls init/main.c:1361 [inline]
+       do_basic_setup init/main.c:1380 [inline]
+       kernel_init_freeable+0x5c8/0x920 init/main.c:1593
+       kernel_init+0x1c/0x2b0 init/main.c:1483
+       ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:4269 [inline]
+       fs_reclaim_acquire+0x102/0x150 mm/page_alloc.c:4283
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4921 [inline]
+       slab_alloc_node mm/slub.c:5256 [inline]
+       __kmalloc_cache_noprof+0x58/0x780 mm/slub.c:5758
+       kmalloc_noprof include/linux/slab.h:957 [inline]
+       kzalloc_noprof include/linux/slab.h:1094 [inline]
+       ref_tracker_alloc+0x18e/0x5b0 lib/ref_tracker.c:271
+       __netns_tracker_alloc include/net/net_namespace.h:362 [inline]
+       netns_tracker_alloc include/net/net_namespace.h:371 [inline]
+       get_net_track include/net/net_namespace.h:388 [inline]
+       sk_net_refcnt_upgrade+0x141/0x1e0 net/core/sock.c:2384
+       rds_tcp_tune+0x23d/0x530 net/rds/tcp.c:507
+       rds_tcp_conn_path_connect+0x305/0x7f0 net/rds/tcp_connect.c:127
+       rds_connect_worker+0x1af/0x2c0 net/rds/threads.c:176
+       process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3263
+       process_scheduled_works kernel/workqueue.c:3346 [inline]
+       worker_thread+0x6c8/0xf10 kernel/workqueue.c:3427
+       kthread+0x3c5/0x780 kernel/kthread.c:463
+       ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #0 (k-sk_lock-AF_INET){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain kernel/locking/lockdep.c:3908 [inline]
+       __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5237
+       lock_acquire kernel/locking/lockdep.c:5868 [inline]
+       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
+       lock_sock_nested+0x41/0xf0 net/core/sock.c:3720
+       lock_sock include/net/sock.h:1679 [inline]
+       mptcp_subflow_shutdown+0x24/0x380 net/mptcp/protocol.c:2918
+       mptcp_check_send_data_fin+0x248/0x440 net/mptcp/protocol.c:3022
+       __mptcp_close+0x90e/0xbe0 net/mptcp/protocol.c:3116
+       mptcp_close+0x28/0xe0 net/mptcp/protocol.c:3170
+       inet_release+0xed/0x200 net/ipv4/af_inet.c:437
+       __sock_release+0xb3/0x270 net/socket.c:662
+       sock_close+0x1c/0x30 net/socket.c:1455
+       __fput+0x402/0xb70 fs/file_table.c:468
+       task_work_run+0x150/0x240 kernel/task_work.c:227
+       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+       exit_to_user_mode_loop+0xec/0x130 kernel/entry/common.c:43
+       exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+       syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+       syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+       do_syscall_64+0x426/0xfa0 arch/x86/entry/syscall_64.c:100
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  k-sk_lock-AF_INET --> &nsock->tx_lock --> sk_lock-AF_INET
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(sk_lock-AF_INET);
+                               lock(&nsock->tx_lock);
+                               lock(sk_lock-AF_INET);
+  lock(k-sk_lock-AF_INET);
+
+ *** DEADLOCK ***
+
+2 locks held by syz.7.3695/23717:
+ #0: ffff88805bc9ef48 (&sb->s_type->i_mutex_key#11){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:980 [inline]
+ #0: ffff88805bc9ef48 (&sb->s_type->i_mutex_key#11){+.+.}-{4:4}, at: __sock_release+0x86/0x270 net/socket.c:661
+ #1: ffff888026899a60 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1679 [inline]
+ #1: ffff888026899a60 (sk_lock-AF_INET){+.+.}-{0:0}, at: mptcp_close+0x1d/0xe0 net/mptcp/protocol.c:3168
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 23717 Comm: syz.7.3695 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2043
+ check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain kernel/locking/lockdep.c:3908 [inline]
+ __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5237
+ lock_acquire kernel/locking/lockdep.c:5868 [inline]
+ lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
+ lock_sock_nested+0x41/0xf0 net/core/sock.c:3720
+ lock_sock include/net/sock.h:1679 [inline]
+ mptcp_subflow_shutdown+0x24/0x380 net/mptcp/protocol.c:2918
+ mptcp_check_send_data_fin+0x248/0x440 net/mptcp/protocol.c:3022
+ __mptcp_close+0x90e/0xbe0 net/mptcp/protocol.c:3116
+ mptcp_close+0x28/0xe0 net/mptcp/protocol.c:3170
+ inet_release+0xed/0x200 net/ipv4/af_inet.c:437
+ __sock_release+0xb3/0x270 net/socket.c:662
+ sock_close+0x1c/0x30 net/socket.c:1455
+ __fput+0x402/0xb70 fs/file_table.c:468
+ task_work_run+0x150/0x240 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xec/0x130 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x426/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3b4d58f6c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3b4e423038 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 00007f3b4d7e5fa0 RCX: 00007f3b4d58f6c9
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: 0000000000000002
+RBP: 00007f3b4d611f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f3b4d7e6038 R14: 00007f3b4d7e5fa0 R15: 00007ffe23df93c8
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
