@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-893034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F1CDC46651
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:53:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A15C46663
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:55:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DF4D03479F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1279F18825AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06BC30ACEE;
-	Mon, 10 Nov 2025 11:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E265530B52F;
+	Mon, 10 Nov 2025 11:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="RzfKYxSW"
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yxe5My0q"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247432EB87F;
-	Mon, 10 Nov 2025 11:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8972FFFA4
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762775631; cv=none; b=RtH79nI8vFYZAw/SFq7GTrIxgzcemsDaq3lz7bRhgjDHeLoLafAYk03xcIWfTLJRwxaiBeQrOEZ4PBnSvgJL+cepgOoPkaflp2BEdRAzscFOpkfq4bslJp9pvFMoU1WMS6Nl1WPesq85R8uhUvCiWRvP4aaPWQ9nYeC7RqIvnRY=
+	t=1762775696; cv=none; b=bj4YkP8ChoqRp0JKqf1GnhCNYmhRkDDrRgSzvJThGcn43skScbKZGbq0iC0RyDhg6ifx+dXiGK+s1Zz0wj33bnLb6dnXhN6bZDJE6OG8+NX2te98Hd2uUIGWkUB1b3qJfaIeCHD+VnABqgO9QnW8wOJzbrTXBTIGvRVmsqCtcBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762775631; c=relaxed/simple;
-	bh=RXMDFWHoPjtIXzowWCmTOgffUV+hgTt3ySQLyBH/QU0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=f2x1Dzv0ij9iVWQ3ZqmO3lroS3Cyp4TXCjwKH6gwF21SHeR+uQ/OuSDGS61WaR+3++wsReQaWn0g0szhn2+hRd0CJDRgol9zdPDd5PNBRFXSNUwcQ/upbaNI2ai1yzTUhfl+6Mxeq7UgMKhbJ5zSDVzIuf0QJKDW5RFBUOkKFeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=RzfKYxSW; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=yEGmkXbOr7mtjgPnoGoKfiUGT9PqeS/urvU4eY+8abI=;
-	b=RzfKYxSWPftH1sI93cHul55M/JGzdsmo6aGP29YWE2lAcCfPPnQorIqza1ZA7u0++rteDM5N3
-	OFgdaGLQ6Mtk0ppVVlTNjOfuBDMYRW6uEXQc0cXFicbMY8qmX4qLqGhjwUO5XeFzYNTaX7b6wnB
-	lTt2NTJC2PvjfxHc/ZeJ/V4=
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4d4p1J3wwBz1prKK;
-	Mon, 10 Nov 2025 19:52:04 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7EB70140258;
-	Mon, 10 Nov 2025 19:53:43 +0800 (CST)
-Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 10 Nov
- 2025 19:53:42 +0800
-Message-ID: <5be37f62-500f-42cb-838b-e017a5c227fd@huawei.com>
-Date: Mon, 10 Nov 2025 19:53:41 +0800
+	s=arc-20240116; t=1762775696; c=relaxed/simple;
+	bh=Wld7jp9tEQXuIh09SWUvMZLGcORmYH4LRprox5mayS4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Aj/KvZxrMC4r1qO7r3HmIIT0aClk37HP3dnFlPo04+ZrFwlW0TbX+Ohs2qcYefLrG3nOET3jSY67FQEhRs+6MeQazTvA20hw3Nz95UmUiSqODGW02jZVavQV5LIFPZ7l875tjJ/gnaiR6/8dSRPQKgWfRBq8WcpzkN//TcIW5Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yxe5My0q; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-6409605a485so2917499a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:54:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762775693; x=1763380493; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQQBm4PwQuyI6yZ9AdqTjALBwiLdrNslKJZVi9Mtf9A=;
+        b=Yxe5My0qzeQJg0PhWL6EKJGdRWXdvyWwA6GKEJBtTzxfccEC879ZHcA6PZIRHCwRG1
+         JQARHzpFvIWNeLAlK7WJR70EHZOhaBETWBmwU3lsGS+jYgrkp47cMSr71HVvxORvg6ry
+         LEfQobC1E+pH58SKkK8cpdb+xofnjIyD8dpRbHKREEWMZ2Nj9ytEr6mAd99Bt648rWWs
+         6uH1w4mmjPOI7Ip3hP3V1G7UVTOXcU0BDEY3G9e/mSIRSdHz57ccrczAsrz6j/2yaeYr
+         3hE/T0rTw0LfuPbbnQC7TR54RFvl8k/rAbXiaNnXVbdA2ofwAsC9HySBeg2nyYQboonh
+         LIpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762775693; x=1763380493;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQQBm4PwQuyI6yZ9AdqTjALBwiLdrNslKJZVi9Mtf9A=;
+        b=k3Pf0FOIBlNdESyQVDqagrYjtwf3/3OaYK9qwaROB/MTjPYtzFhpAGV5plQKGZkbki
+         X6nYIlnch4hSznF14MvEeNQYSD0+UD4awLN9/gjYKOt+qgRElPkPlG74PbHFz84Y9yOE
+         1dZpxYntP96wfFuSWvFyO1SyQFk2Axy9wMyrvrV0L1UY5qNEUpr/OcsESruXtaW+Z/hj
+         rn2szf4TVxzI83A4TRfanmoRr/hfHvCW2cxCfK0VctdEjrwv2s1JTEeLEjpkJY0Wy/LK
+         nTCwYkVM9FTXy/VnML0N9Uia6kHVg7QVEyGNFzw6VR5seuPRuWEe52lED01z94hS7oEz
+         RiGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlCcyOLurjj+WnDVf9BWJ20cf6dm5+4OcVEvpNNNH5Yc1mBDz4e6VjfHBqeW8r26rrDEj4wOkot4OI9uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR9bVfGhuHV8/Y3adQCoGCB0msg6TxjdyxE43K+aWxA8TrZEoC
+	DxnupMickbiTgHzZlr/eVvU/+vyzhbS520eOCRBLulAullXoRAzTj8vamvL22tY5T4Bkjc6H02q
+	sMsdseMoL1f3bJAVqOw==
+X-Google-Smtp-Source: AGHT+IF3M40dNIzNZkxr/1+aJ+nfeEg2fTctw3V8OcAEVxMO8ut0+MdQ2WzFfOK9xMLQ2EWoslAnSoMKLCyCugk=
+X-Received: from edaa20.prod.google.com ([2002:a05:6402:24d4:b0:640:949d:9bf8])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:27d4:b0:640:fb00:9b0b with SMTP id 4fb4d7f45d1cf-6415e8565d6mr6321846a12.32.1762775693084;
+ Mon, 10 Nov 2025 03:54:53 -0800 (PST)
+Date: Mon, 10 Nov 2025 11:54:52 +0000
+In-Reply-To: <20251110113528.1658238-2-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 21/24] ext4: make data=journal support large block size
-Content-Language: en-GB
-To: Jan Kara <jack@suse.cz>
-CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
-	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
-	<mcgrof@kernel.org>, <ebiggers@kernel.org>, <willy@infradead.org>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
-	<libaokun@huaweicloud.com>
-References: <20251107144249.435029-1-libaokun@huaweicloud.com>
- <20251107144249.435029-22-libaokun@huaweicloud.com>
- <4xsntqfuxy3xiezmztf26qytijdfi3zwxjjgvkpsmxnumkpsf5@2gr4h36mti3g>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <4xsntqfuxy3xiezmztf26qytijdfi3zwxjjgvkpsmxnumkpsf5@2gr4h36mti3g>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Mime-Version: 1.0
+References: <20251110113528.1658238-1-ojeda@kernel.org> <20251110113528.1658238-2-ojeda@kernel.org>
+Message-ID: <aRHSjKsZVz3NfUrW@google.com>
+Subject: Re: [PATCH 2/2] rust: device: make example buildable
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Rae Moar <raemoar63@gmail.com>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
 
-On 2025-11-10 17:48, Jan Kara wrote:
-> On Fri 07-11-25 22:42:46, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> Currently, ext4_set_inode_mapping_order() does not set max folio order
->> for files with the data journalling flag. For files that already have
->> large folios enabled, ext4_inode_journal_mode() ignores the data
->> journalling flag once max folio order is set.
->>
->> This is not because data journalling cannot work with large folios, but
->> because credit estimates will go through the roof if there are too many
->> blocks per folio.
->>
->> Since the real constraint is blocks-per-folio, to support data=journal
->> under LBS, we now set max folio order to be equal to min folio order for
->> files with the journalling flag. When LBS is disabled, the max folio order
->> remains unset as before.
->>
->> Additionally, the max_order check in ext4_inode_journal_mode() is removed,
->> and mapping order is reset in ext4_change_inode_journal_flag().
->>
->> Suggested-by: Jan Kara <jack@suse.cz>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> ...
->
->> @@ -6585,6 +6590,7 @@ int ext4_change_inode_journal_flag(struct inode *inode, int val)
->>  		ext4_clear_inode_flag(inode, EXT4_INODE_JOURNAL_DATA);
->>  	}
->>  	ext4_set_aops(inode);
->> +	ext4_set_inode_mapping_order(inode);
->>  
->>  	jbd2_journal_unlock_updates(journal);
->>  	ext4_writepages_up_write(inode->i_sb, alloc_ctx);
-> I think more needs to be done here because this way we could leave folios
-> in the page cache that would be now larger than max order. To simplify the
-> logic I'd make filemap_write_and_wait() call in
-> ext4_change_inode_journal_flag() unconditional and add there
-> truncate_pagecache() call to evict all the page cache before we switch the
-> inode journalling mode.
->
-> 								Honza
+On Mon, Nov 10, 2025 at 12:35:28PM +0100, Miguel Ojeda wrote:
+> This example can easily be made buildable, thus do so.
+> 
+> It would have triggered an `unreachable_pub` warning without the previous
+> commit.
+> 
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-That makes sense. I forgot to truncate the old page cache here.
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-I will make the changes according to your suggestion in the next version.
-
-Thank you for your advice!
-
-
-Cheers,
-Baokun
-
+>  rust/kernel/device.rs | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> index a849b7dde2fd..d00f4af507db 100644
+> --- a/rust/kernel/device.rs
+> +++ b/rust/kernel/device.rs
+> @@ -67,7 +67,16 @@
+>  ///
+>  /// A bus specific device should be defined as follows.
+>  ///
+> -/// ```ignore
+> +/// ```
+> +/// # use core::marker::PhantomData;
+> +/// # use kernel::{
+> +/// #     device,
+> +/// #     types::Opaque, //
+> +/// # };
+> +/// # mod bindings {
+> +/// #     #[expect(non_camel_case_types)]
+> +/// #     pub struct bus_device_type;
+> +/// # }
+>  /// #[repr(transparent)]
+>  /// pub struct Device<Ctx: device::DeviceContext = device::Normal>(
+>  ///     Opaque<bindings::bus_device_type>,
+> -- 
+> 2.51.2
+> 
 
