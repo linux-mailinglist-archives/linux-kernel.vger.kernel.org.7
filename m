@@ -1,35 +1,35 @@
-Return-Path: <linux-kernel+bounces-892903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5C2C46121
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:54:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4255BC4611B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 977464E80C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:54:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 32DE24E9813
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BA93081CD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095223081A4;
 	Mon, 10 Nov 2025 10:54:19 +0000 (UTC)
 Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F631211A14;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6A5268C40;
 	Mon, 10 Nov 2025 10:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762772058; cv=none; b=NR7N4+YpWy1lwjFXiaOSlDuAeOzVHakjpZpLGnH6Ts+AbKKDEpjHRUhNVX1HlaXLFg5kFeMLqDt18G7mfQu2jl0DEc49ghztT37B+1mGPIKFvQL3FUk9NguS5kvDlfj+oOlgf3hdqiERIeXdMZKXj8vbRYr3TktiUeI6+Y6MxH0=
+	t=1762772058; cv=none; b=pb7x+lMUpCYsEfsn06APuU8H9PALdx+Le0LT/dr/hX1q0YjDfAc1TSA9g1Jp0QlH9yV3+pKTCeIRlAV1BEkEwfWael0gpopE5hmOCaG1sH2k9SfSkPSf8iR7Iu2xFff3sgPUms4TScen/Q8IZ/G6IKDAM89Dm61kfGm4y2eREJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762772058; c=relaxed/simple;
-	bh=8SVXE+F18W+GwJKdtUn01mMAOdlkYHPH0+mCESHIxjo=;
+	bh=9SlaqGcPSvj6PVufICMnZvQnvPxy0cvIV9NGMVLQwxE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rjENWWFIWe5vq5iSdIhSxkXkkCJuMFJPV5WzzvntDxcoIBrrrObsqJMW+9CXzJjE04MX5l2NU+S7sDoD4dkSrTUY+VoI3C3MPMaR0tOsdAjtqxdWSOWiMaLm4ifIrg7hvWBsRF+AvbzrqXi+mfvOQ6eDaRbdqPU18lWF5Eqk5bY=
+	 MIME-Version:Content-Type; b=ZwDbjfY6J8UN+L6kH7NtF8TSRFMUdcM3+JmlDNpQBKLS745nVkFU33U9UCV5EQwOrcVewptafDDp1OH5u+mZ0ZZ1iXdCcW7d4uaLM0LXFhGXYfRMLAZy7nCbWh3cyF2V7A7rR7KT+5+zWO3/OQEX+JAcJ06IuVD5CnD7ERLtsvM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
 Received: from mgb4.digiteq.red (unknown [62.77.71.229])
-	by mx.gpxsee.org (Postfix) with ESMTPSA id DEF783091E;
+	by mx.gpxsee.org (Postfix) with ESMTPSA id E437530D8B;
 	Mon, 10 Nov 2025 11:54:06 +0100 (CET)
 From: tumic@gpxsee.org
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -37,9 +37,9 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
 Cc: linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
-Subject: [PATCH v2 2/3] media: pci: mgb4: Add support for GMSL3 coaxial modules
-Date: Mon, 10 Nov 2025 11:53:56 +0100
-Message-ID: <20251110105357.1813-3-tumic@gpxsee.org>
+Subject: [PATCH v2 3/3] Documentation: admin-guide: media: mgb4: Add GMSL1 & GMSL3-coax modules info
+Date: Mon, 10 Nov 2025 11:53:57 +0100
+Message-ID: <20251110105357.1813-4-tumic@gpxsee.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251110105357.1813-1-tumic@gpxsee.org>
 References: <20251110105357.1813-1-tumic@gpxsee.org>
@@ -54,86 +54,42 @@ Content-Transfer-Encoding: 8bit
 
 From: Martin Tůma <martin.tuma@digiteqautomotive.com>
 
-Add support for GMSL3 modules with a coaxial interface, a variant of the
-already existing module with the id #4. The FW is the same as for all other
-GMSL3 modules.
+Add the mgb4 GMSL1 and GMSL3-coax modules info.
 
 Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
 ---
- drivers/media/pci/mgb4/mgb4_core.h |  7 +++++--
- drivers/media/pci/mgb4/mgb4_vin.c  | 27 +++++++++++++++++++++++----
- 2 files changed, 28 insertions(+), 6 deletions(-)
+ Documentation/admin-guide/media/mgb4.rst | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/pci/mgb4/mgb4_core.h b/drivers/media/pci/mgb4/mgb4_core.h
-index 06ef8bb44089..bfae75f30c7c 100644
---- a/drivers/media/pci/mgb4/mgb4_core.h
-+++ b/drivers/media/pci/mgb4/mgb4_core.h
-@@ -21,8 +21,11 @@
- #define MGB4_IS_GMSL1(mgbdev) \
- 	(((mgbdev)->module_version >> 4) == 6)
- #define MGB4_IS_GMSL3(mgbdev) \
--	((((mgbdev)->module_version >> 4) >= 2) && \
--	 (((mgbdev)->module_version >> 4) <= 4))
-+	(((((mgbdev)->module_version >> 4) >= 2) && \
-+	  (((mgbdev)->module_version >> 4) <= 4)) || \
-+	 (((mgbdev)->module_version >> 4) == 8))
-+#define MGB4_IS_GMSL3C(mgbdev) \
-+	(((mgbdev)->module_version >> 4) == 8)
- #define MGB4_IS_FPDL3(mgbdev) \
- 	(((mgbdev)->module_version >> 4) == 1)
- #define MGB4_HAS_VOUT(mgbdev) \
-diff --git a/drivers/media/pci/mgb4/mgb4_vin.c b/drivers/media/pci/mgb4/mgb4_vin.c
-index be55491b52b2..97d38f7baa98 100644
---- a/drivers/media/pci/mgb4/mgb4_vin.c
-+++ b/drivers/media/pci/mgb4/mgb4_vin.c
-@@ -50,6 +50,11 @@ static const struct i2c_board_info gmsl3_deser_info[] = {
- 	{I2C_BOARD_INFO("deserializer2", 0x2A)},
- };
+diff --git a/Documentation/admin-guide/media/mgb4.rst b/Documentation/admin-guide/media/mgb4.rst
+index 5ac69b833a7a..0a8a56e837f7 100644
+--- a/Documentation/admin-guide/media/mgb4.rst
++++ b/Documentation/admin-guide/media/mgb4.rst
+@@ -31,9 +31,11 @@ Global (PCI card) parameters
  
-+static const struct i2c_board_info gmsl3c_deser_info[] = {
-+	{I2C_BOARD_INFO("deserializer1", 0x6A)},
-+	{I2C_BOARD_INFO("deserializer2", 0x6C)},
-+};
-+
- static const struct i2c_board_info gmsl1_deser_info[] = {
- 	{I2C_BOARD_INFO("deserializer1", 0x2C)},
- 	{I2C_BOARD_INFO("deserializer2", 0x6C)},
-@@ -67,6 +72,13 @@ static const struct mgb4_i2c_kv gmsl3_i2c[] = {
- 	{0x308, 0x01, 0x01}, {0x10, 0x20, 0x20}, {0x300, 0x40, 0x40}
- };
+     | 0 - No module present
+     | 1 - FPDL3
+-    | 2 - GMSL (one serializer, two daisy chained deserializers)
+-    | 3 - GMSL (one serializer, two deserializers)
+-    | 4 - GMSL (two deserializers with two daisy chain outputs)
++    | 2 - GMSL3 (one serializer, two daisy chained deserializers)
++    | 3 - GMSL3 (one serializer, two deserializers)
++    | 4 - GMSL3 (two deserializers with two daisy chain outputs)
++    | 6 - GMSL1
++    | 8 - GMSL3 coax
  
-+static const struct mgb4_i2c_kv gmsl3c_i2c[] = {
-+	{0x01, 0x03, 0x03}, {0x300, 0x0C, 0x0C}, {0x03, 0xC0, 0xC0},
-+	{0x1CE, 0x0E, 0x0E}, {0x11, 0x05, 0x05}, {0x05, 0xC0, 0x40},
-+	{0x307, 0x0F, 0x00}, {0xA0, 0x03, 0x00}, {0x3E0, 0x07, 0x07},
-+	{0x308, 0x01, 0x01}, {0x10, 0x20, 0x20}, {0x300, 0x40, 0x40}
-+};
-+
- static const struct mgb4_i2c_kv gmsl1_i2c[] = {
- };
+ **module_version** (R):
+     Module version number. Zero in case of a missing module.
+@@ -42,7 +44,8 @@ Global (PCI card) parameters
+     Firmware type.
  
-@@ -812,10 +824,17 @@ static int deser_init(struct mgb4_vin_dev *vindev, int id)
- 	struct device *dev = &vindev->mgbdev->pdev->dev;
+     | 1 - FPDL3
+-    | 2 - GMSL
++    | 2 - GMSL3
++    | 3 - GMSL1
  
- 	if (MGB4_IS_GMSL3(vindev->mgbdev)) {
--		info = &gmsl3_deser_info[id];
--		addr_size = 16;
--		values = gmsl3_i2c;
--		count = ARRAY_SIZE(gmsl3_i2c);
-+		if (MGB4_IS_GMSL3C(vindev->mgbdev)) {
-+			info = &gmsl3c_deser_info[id];
-+			addr_size = 16;
-+			values = gmsl3c_i2c;
-+			count = ARRAY_SIZE(gmsl3c_i2c);
-+		} else {
-+			info = &gmsl3_deser_info[id];
-+			addr_size = 16;
-+			values = gmsl3_i2c;
-+			count = ARRAY_SIZE(gmsl3_i2c);
-+		}
- 	} else if (MGB4_IS_FPDL3(vindev->mgbdev)) {
- 		info = &fpdl3_deser_info[id];
- 		addr_size = 8;
+ **fw_version** (R):
+     Firmware version number.
 -- 
 2.51.0
 
