@@ -1,172 +1,98 @@
-Return-Path: <linux-kernel+bounces-892423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE09C450FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:12:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B80C45102
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F324C4E03B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:12:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 213904E6368
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC512E8E10;
-	Mon, 10 Nov 2025 06:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pyAN4c8D"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758292E8E16;
+	Mon, 10 Nov 2025 06:14:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE49216E32
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F00A227B9F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762755144; cv=none; b=rMMPe/l39j4NrG5hux/c6SbXwhnW1gne0T2FjISYR5uX5kt36NNKm6xvEhSbgOBbKiHhltvSiXjWl0nsLu5AxiL7xEBaSrDMAlkXQ4bvAAPha9SO55ph8WKLvq8VSGy4Mh++/DtfE7pYSj+pBGFhxuZ8I8Yw3GzGpWsUPjBc19w=
+	t=1762755277; cv=none; b=tqvvja0JWt6nvNlpzBn7MrcZDDUrXyDEj+ZT5ihNFru4rQX1l+p1zvCIjdnkgHcn4dU9FPS13z7U2NU7JTyIf3GOXX+tfLrGyLwh/gcDsCtBwWMoJ6QzBlE9yX2/eVUXwzHiATj/Y5qsPy9ZcV2VD+jFrO3wc/OROdGWdw0jzdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762755144; c=relaxed/simple;
-	bh=SKzxiJe8Vf2TaHzdLS7X3O/aj+2n2Ru2BTWsVVQe4cs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BR8U854ihdTZScxIniLew4oMTcr/6KoA3VCDXOzYRvyqO/TD3tlNtGLG0lJHl4KplLPo44z8oKQnqGANdVaAbolwabslRFgIomejAWjNr3XOcPxDwyTcAbG51QdJ3al9zRfNIT5JCQM1w9NMyI8gHYRpzPAMSt4AOk123vV5n0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pyAN4c8D; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <79ba4e0c-eac8-420e-b6b2-b7cdede5dcfc@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762755129;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TVI42Ht4KJq3XQAXSl87HHit5RIvDqcfLhp3PfZoCwg=;
-	b=pyAN4c8DF7ukkFGezZGvuyGuPkdtfhlCZrR120hxx6n2B1ZrtYQFeoh9xaUxAvVhlX2p5R
-	mH+pNLp+RF8MNwIpi7g0gd++ZzHw9smbam92okspni+o12Co6uwIClrFQrzMrsLPO8NZXe
-	ZSadIjKfb+qAhPAwJ2VlAmxj3HswspY=
-Date: Mon, 10 Nov 2025 14:11:54 +0800
+	s=arc-20240116; t=1762755277; c=relaxed/simple;
+	bh=L8/CpPKWWPySrKx02hV6jeIMbMHbHQsXvc4oCZUOP6w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oVQkg6wS/c2kbjZs+wdH6M9LcBwJw+kGK0ADpUd40FyV70z9yeFM6IfbkQWU+Vpb0g8A+We1zRbZVb+uX1T/zWxeBUfhB6GmWKkSeLTxOAuPF3ier77E75Xos4APTYBETynLl4Sdah5EQK36d+PQEEYcf0opXkEhGV0hrRz/DMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vILAL-0002LY-G6; Mon, 10 Nov 2025 07:14:13 +0100
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vILAK-007y73-2O;
+	Mon, 10 Nov 2025 07:14:12 +0100
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vILAK-000000032sn-2p8V;
+	Mon, 10 Nov 2025 07:14:12 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>
+Subject: [PATCH v2 0/2] iio: adc: Add support for TI ADS131M0x ADCs
+Date: Mon, 10 Nov 2025 07:14:07 +0100
+Message-ID: <20251110061409.726028-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, hannes@cmpxchg.org,
- hughd@google.com, mhocko@suse.com, roman.gushchin@linux.dev,
- muchun.song@linux.dev, david@redhat.com, lorenzo.stoakes@oracle.com,
- ziy@nvidia.com, imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
- axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
- akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, Muchun Song <songmuchun@bytedance.com>,
- Qi Zheng <zhengqi.arch@bytedance.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- linux-rt-devel@lists.linux.dev
-References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
- <97ea4728568459f501ddcab6c378c29064630bb9.1761658310.git.zhengqi.arch@bytedance.com>
- <aQ1_f_6KPRZknUGS@harry> <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
- <aQ3yLER4C4jY70BH@harry>
- <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
- <aRFKY5VGEujVOqBc@hyeyoo> <2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
- <aRF7eYlBKmG3hEFF@hyeyoo>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Qi Zheng <qi.zheng@linux.dev>
-In-Reply-To: <aRF7eYlBKmG3hEFF@hyeyoo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+This series adds support for the Texas Instruments ADS131M0x family of
+24-bit, simultaneous-sampling ADCs. The first patch introduces the
+DeviceTree binding, and the second adds the driver itself.
 
+These devices are not compatible with the ADS131E0x series despite the
+similar naming.
 
-On 11/10/25 1:43 PM, Harry Yoo wrote:
-> On Mon, Nov 10, 2025 at 12:30:06PM +0800, Qi Zheng wrote:
->>
->>
->> On 11/10/25 10:13 AM, Harry Yoo wrote:
->>> On Fri, Nov 07, 2025 at 10:32:52PM -0800, Shakeel Butt wrote:
->>>> On Fri, Nov 07, 2025 at 10:20:57PM +0900, Harry Yoo wrote:
->>>>>
->>>>> Although it's mentioned in the locking documentation, I'm afraid that
->>>>> local_lock is not the right interface to use here. Preemption will be
->>>>> disabled anyway (on both PREEMPT_RT and !PREEMPT_RT) when the stats are
->>>>> updated (in __mod_node_page_state()).
->>>>>
->>>>> Here we just want to disable IRQ only on !PREEMPT_RT (to update
->>>>> the stats safely).
->>>>
->>>> I don't think there is a need to disable IRQs. There are three stats
->>>> update functions called in that hunk.
->>>>
->>>> 1) __mod_lruvec_state
->>>> 2) __count_vm_events
->>>> 3) count_memcg_events
->>>>
->>>> count_memcg_events() can be called with IRQs. __count_vm_events can be
->>>> replaced with count_vm_events.
->>>
->>> Right.
->>>
->>>> For __mod_lruvec_state, the
->>>> __mod_node_page_state() inside needs preemption disabled.
->>>
->>> The function __mod_node_page_state() disables preemption.
->>> And there's a comment in __mod_zone_page_state():
->>>
->>>> /*
->>>>    * Accurate vmstat updates require a RMW. On !PREEMPT_RT kernels,
->>>>    * atomicity is provided by IRQs being disabled -- either explicitly
->>>>    * or via local_lock_irq. On PREEMPT_RT, local_lock_irq only disables
->>>>    * CPU migrations and preemption potentially corrupts a counter so
->>>>    * disable preemption.
->>>>    */
->>>> preempt_disable_nested();
->>>
->>> We're relying on IRQs being disabled on !PREEMPT_RT.
->>
->> So it's possible for us to update vmstat within an interrupt context,
->> right?
-> 
-> Yes, for instance when freeing memory in an interrupt context we can
-> update vmstat and that's why we disable interrupts now.
+David Jander (1):
+  iio: adc: Add TI ADS131M0x ADC driver
 
-Got it.
+Oleksij Rempel (1):
+  bindings: iio: adc: Add bindings for TI ADS131M0x ADCs
 
-> 
->> There is also a comment above __mod_zone_page_state():
->>
->> /*
->>   * For use when we know that interrupts are disabled,
->>   * or when we know that preemption is disabled and that
->>   * particular counter cannot be updated from interrupt context.
->>   */
-> 
-> Yeah we don't have to disable IRQs when we already know it's disabled.
-> 
->> BTW, the comment inside __mod_node_page_state() should be:
->>
->> /* See __mod_zone_page_state */
->>
->> instead of
->>
->> /* See __mod_node_page_state */
->>
->> Will fix it.
-> 
-> Right :) Thanks!
-> 
->>> Maybe we could make it safe against re-entrant IRQ handlers by using
->>> read-modify-write operations?
->>
->> Isn't it because of the RMW operation that we need to use IRQ to
->> guarantee atomicity? Or have I misunderstood something?
-> 
-> I meant using atomic operations instead of disabling IRQs, like, by
-> using this_cpu_add() or cmpxchg() instead.
+ .../bindings/iio/adc/ti,ads131m02.yaml        |  220 ++++
+ drivers/iio/adc/Kconfig                       |   10 +
+ drivers/iio/adc/Makefile                      |    1 +
+ drivers/iio/adc/ti-ads131m02.c                | 1063 +++++++++++++++++
+ 4 files changed, 1294 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads131m02.yaml
+ create mode 100644 drivers/iio/adc/ti-ads131m02.c
 
-Got it. I will give it a try.
-
-Thanks,
-Qi
-
-> 
+--
+2.47.3
 
 
