@@ -1,54 +1,56 @@
-Return-Path: <linux-kernel+bounces-892697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECED4C45A36
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:29:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF18C45A45
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:30:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E99214EB09D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:26:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 90A344E9CAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCDF301021;
-	Mon, 10 Nov 2025 09:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F5E30146F;
+	Mon, 10 Nov 2025 09:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UQMHZXOp"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lnxNBCka"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8252FFF98;
-	Mon, 10 Nov 2025 09:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DF128CF6F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766709; cv=none; b=aogiQQpWZ0J3fAoQ9+3C6Pd8KFweaZKb/XTvzIFBRR+wQ/eZzIO5V9SslalinJImq9uhKwMPt0S4qccJUxJOlekcfErPWkIUZ8RibkwlDgNKSI3TMlg1OlhQetqG2FlNWINADBj8WEdplmmXejXTcg/dFeQIiCE6n/q8RlT9eIk=
+	t=1762766710; cv=none; b=tEeOMaUKv0tKMeTJGRn41hJT5BKKbRbRg3FC3iEyXelFTP8ozsknm2Fr3PoPafitmCBBOcZFLsxZ926eppFaeDkbpF9UU91/U18YhCzqPo1SlKUOCSf2q6BSUv5mEdTOsGsiLVVSIperJR+ltdqzfM6ji2QU7c22GkRgR6wKHlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766709; c=relaxed/simple;
-	bh=iUZ/Yx3AukzK6pJNmffYidpyX2g/uXSCest8qxWEuqc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nzCdVmoSuUpamdHO0z90vfk/nMI4LlRXFrOYys71bhxoQIr8M4WRqhybFf9oF+h5DDwSFzzw9MMzeQdUejT3v24/kWrFKr6MXVmebSxlGAL8RHKzB0i4z7cguXatLhHRYsv/Jgvz4+ZnTBCW8rmVJVkzD/kEBA2g77ntBK6FDzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UQMHZXOp; arc=none smtp.client-ip=185.171.202.116
+	s=arc-20240116; t=1762766710; c=relaxed/simple;
+	bh=VF0B808n4szjmm435IxRlwSJgInTyKl/Z+XdCuwycps=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=I0yjy5e+1rCNSN8Yf7pRWXJk8M6yzPJ8azKaON347K2FxikYPWmrf2N4RqxvMSPgqVFWqiaxCjCypXOzV+DnNYJxvqQd1czxnFAq6IfshTe/tN6VMdj8uHlW7ZHyLDS+whpUDQtS5fEk0YqIkcI/X754lgoHrcDcD43wnl8RcYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lnxNBCka; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 8F4C1C108E5;
-	Mon, 10 Nov 2025 09:24:40 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 843D54E41607;
+	Mon, 10 Nov 2025 09:25:03 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id ED1AE606F5;
-	Mon, 10 Nov 2025 09:25:01 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 43C21103718CD;
-	Mon, 10 Nov 2025 10:24:56 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 59113606F5;
+	Mon, 10 Nov 2025 09:25:03 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8AA66103718C5;
+	Mon, 10 Nov 2025 10:25:01 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762766701; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=2UjXNUAU7fR3oSw2iEJYC571sGcvg1zBexjhCxPzTys=;
-	b=UQMHZXOpReBXvyFNfBv6U4tovBJdNrYDWQuOGjE7pe/xi/u+AE11n/wiFckZIprzy2+/SE
-	PR48KLP4NvwtDZ38WWt8hTlyaQ3MhPuWDJmbNDQ93hthwVqd/SU1ZB02ylISlajaqTfszS
-	yco9YZcGiJvg/lAaf1A+8RgE/65p0OpYJaI6oIOwHnDPh0azyjUsF1NerpswPubSUubXlM
-	VZlaTL/pji2AXUkXTQaFOaOyslnTASbzd/cNm/20S/v2LJ5Fc/fpukAABRacpOvauG26Ox
-	S+OsZF8KY83RI2cgHF3wqhUj6CoF/9aJY0348TSOCi7ApPx9/TK5qBW9KGcjeQ==
+	t=1762766702; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ahBjE0dA+/iYnH6oOmoggBaMYIM7enJhfD8WAtxUp38=;
+	b=lnxNBCkaOxOFAp54kUer4L+fRnjhmQIZTtcp/oI2mUQGrCw1m9pF5QCRlnlrRz0ImBZTrZ
+	smxx6vxaCtlvdD9uqdhZFYd1FSbNJsGPf5pRo/tMx713ONCRAC6tqw5svQdXn+Sf0DKMP2
+	uICt6xTocnUPNjW7PHEF6peM5xgjU7wiiV89OtDe2ElvwFN+ChM87Jb8gAt8Yoy0Fg4I3t
+	OVORZSmikwH6Z3x0pmsaRpw6VkSuWogq/kYGIRkXKQ49cGHVjDBIE9a+Mr70n+UjG/m2Nc
+	T4H8yW6bvXtclCnURAZZCKGb1DTIrb1Y9fOb4aZmZdHxgzzDSxPfnGrmtxiWoA==
 From: Romain Gantois <romain.gantois@bootlin.com>
-Subject: [PATCH net-next v2 0/3] net: phy: dp83869: Support 1000Base-X SFP
-Date: Mon, 10 Nov 2025 10:24:52 +0100
-Message-Id: <20251110-sfp-1000basex-v2-0-dd5e8c1f5652@bootlin.com>
+Date: Mon, 10 Nov 2025 10:24:53 +0100
+Subject: [PATCH net-next v2 1/3] net: phy: dp83869: Restart PHY when
+ configuring mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,11 +59,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGWvEWkC/12NQQqDMBBFryKz7pQZG6t05T2Ki5hOaqBNJAliE
- e/eIF11+Xj89zdIEp0kuFUbRFlccsEXqE8VmEn7p6B7FIaa6oaZLpjsjExEo06yoqbGtJ3qlG4
- UlM0cxbr16N3BS0Yva4ahmMmlHOLnOFr48L+m+msujIRWXdlyS6ZV0o8h5JfzZxPeMOz7/gUIG
- 4yftgAAAA==
-X-Change-ID: 20251103-sfp-1000basex-a05c78484a54
+Message-Id: <20251110-sfp-1000basex-v2-1-dd5e8c1f5652@bootlin.com>
+References: <20251110-sfp-1000basex-v2-0-dd5e8c1f5652@bootlin.com>
+In-Reply-To: <20251110-sfp-1000basex-v2-0-dd5e8c1f5652@bootlin.com>
 To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
  Russell King <linux@armlinux.org.uk>, 
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
@@ -72,49 +72,39 @@ Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hi everyone,
+The DP83869 PHY requires a software restart when the OP_MODE is changed.
 
-This is version two of my series which adds support for using the DP83869
-PHY as a transceiver between an RGMII upper MAC and a downstream 1000Base-X
-SFP module.
-
-Patch 1 and 2 of the series are necessary to get the PHY to properly switch its
-operating mode to RGMII<->1000Base-X when an SFP module is inserted.
-
-Patch 3 adds the actual SFP support, with only 1000Base-X modules supported for
-now.
-
-Side note: A wider-scoped series adding general SFP support to this PHY was sent
-some time ago, but was not pursued, mainly due to complications with SGMII
-support:
-
-https://lore.kernel.org/netdev/20250514-dp83869-1000basex-v1-0-1bdb3c9c3d63@bootlin.com/
-
-Best Regards,
-
-Romain
+Add this restart in dp83869_configure_mode().
 
 Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
 ---
-Changes in v2:
-- Simplified module capability check.
-- Fixed unchecked return value in configure_mode().
-- Link to v1: https://lore.kernel.org/r/20251104-sfp-1000basex-v1-0-f461f170c74e@bootlin.com
+ drivers/net/phy/dp83869.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
----
-Romain Gantois (3):
-      net: phy: dp83869: Restart PHY when configuring mode
-      net: phy: dp83869: ensure FORCE_LINK_GOOD is cleared
-      net: phy: dp83869: Support 1000Base-X SFP
+diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
+index 1f381d7b13ff..309bf608d630 100644
+--- a/drivers/net/phy/dp83869.c
++++ b/drivers/net/phy/dp83869.c
+@@ -792,11 +792,17 @@ static int dp83869_configure_mode(struct phy_device *phydev,
+ 	case DP83869_RGMII_1000_BASE:
+ 	case DP83869_RGMII_100_BASE:
+ 		ret = dp83869_configure_fiber(phydev, dp83869);
++		if (ret)
++			return ret;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
++	ret = phy_write(phydev, DP83869_CTRL, DP83869_SW_RESTART);
++
++	usleep_range(10, 20);
++
+ 	return ret;
+ }
+ 
 
- drivers/net/phy/dp83869.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
----
-base-commit: dd43cb8c0f1de74d7fa47913acbc2bc54672c6e0
-change-id: 20251103-sfp-1000basex-a05c78484a54
-
-Best regards,
 -- 
-Romain Gantois <romain.gantois@bootlin.com>
+2.51.2
 
 
