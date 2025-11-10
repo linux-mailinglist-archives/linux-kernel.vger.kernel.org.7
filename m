@@ -1,207 +1,186 @@
-Return-Path: <linux-kernel+bounces-892287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B534C44C52
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:25:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67DB8C44C58
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF7764E6382
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:25:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7730D4E60E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790CC22D7B5;
-	Mon, 10 Nov 2025 02:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089D318DB35;
+	Mon, 10 Nov 2025 02:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/Xhksbz"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aCkv6pDB";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MwLcOsEh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E2A1DE8BF
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A27221271
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762741503; cv=none; b=Uzp3Sf4CzS406Y/kaACap4RkmfoEe8EKV/xnwaoifJAbcBOnj1KlG9Vh3dPQkFn1e5O9iPMB9P1gaFSVkxvAeoG5El5L6RsMTFtF7WnJ4+4W0ezF6C8NVOkcpK0Kl79GIhtMnlYhQoC3E30q/JfABl8t1PDvushpqz+eAYuGnSo=
+	t=1762741625; cv=none; b=eRmqlHki0gpP55XG0NLhnEp2BEP5TIakc633EUghCfaRI+znVm/lIUjfbhD1lQg4kO5ZQ/U/BRc2BEDwwveyI4BYQiYUDRyRsFjOyR4jEkfjbs3Y9YkY4BSLOYg33jTWQhnEVeoU8G4VLYKEHf90gAC3wlL1B+9v4r3iDik4//M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762741503; c=relaxed/simple;
-	bh=zMmWG4XTZZReZm7Z4Ca/2dbr/V0sWN6r2sMwECjTims=;
+	s=arc-20240116; t=1762741625; c=relaxed/simple;
+	bh=7nmmqVl1N5N20DGFXlx5/q7VZBrB7/oaoEQ3991NUd4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P7S0HzUInscL+06CSOijt9ReZSkykckyNq3sWV/bMibQn4zUrFt128Y3mOx6vjVmYiFDw6l3gBj+aZapSg74cZN+HMvG1xmBn7yf6W0nRioNbofk78Rh9l2FTy3d0yzSW67yb490W1Vu50IIPajwgPT3w2xlBIvMWELX6mzjem8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M/Xhksbz; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-55960aa131dso697078e0c.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 18:25:01 -0800 (PST)
+	 To:Cc:Content-Type; b=nafv8A0esF8NMGzcUIVu99WX02vF5zTjnWzhMA8tGPz+QyXBNdJ3dSe/KE3v6oBA3DuzaSZ4Ksk764729zF11F/Aw7cCzRsOY2jYRqNWOpgDlU5a+qoYH+yzJl4Ou8ltA4nJxPOiwjHEoXVNOgp5BTZx4j82LzPsV5F1wu0hKN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aCkv6pDB; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MwLcOsEh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762741622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7nmmqVl1N5N20DGFXlx5/q7VZBrB7/oaoEQ3991NUd4=;
+	b=aCkv6pDB7FqAVc4bE1ldyapTcyn3pnc9X9bP+TN8dJN/GkXM8aP5/xOrNvunN6xQqY9Lzf
+	QuPNcc+BJxNjKC37kCtrov+owlEFRPwFUy2EU9v4KpFRsQQtLUWgTxT3MV0VuoE+DBImwU
+	U6O+BIEe8k2AorMRmBqAzf4SCCyjEPk=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-391-fmKKeYzjN76mHaKLG8fjdA-1; Sun, 09 Nov 2025 21:26:59 -0500
+X-MC-Unique: fmKKeYzjN76mHaKLG8fjdA-1
+X-Mimecast-MFC-AGG-ID: fmKKeYzjN76mHaKLG8fjdA_1762741618
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-37a3f2cf8a2so21362851fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 18:26:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762741501; x=1763346301; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1762741618; x=1763346418; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RQYjb15LQkUsCJVby49O7R+AcuVLuxsTRLE2IcB39qA=;
-        b=M/XhksbzQXf8ypeeUTl4LQxB3ErXz1inESIfPKgLDtnrw/3h2uenZzO6MP2vw38JyC
-         qo9721Erm6dJqr4xPWeUKrgMfZCmjuWiTf8I85nqOiq+6JtMcg1QguQ9TxRWIzxvqccR
-         7H/fI6+57kjh1BpwNeEtId02pg8jg3k1vyU3NxdOQZA72VOouh4Yk9BmGAxSNQ3Uhw+W
-         1Hfwd8ZLHQOb6GgO6WjerrR2h6XRcc9cWcrkJTGKf1pp+X7AjQZLXEvubHUjNbbz0JkA
-         8YhW5R0IBHz3+Uzi7L+fshYZrkDu098kpBmv7T4IlogI+D/IG8jqcqv49HJjchd2zwf1
-         7wKg==
+        bh=7nmmqVl1N5N20DGFXlx5/q7VZBrB7/oaoEQ3991NUd4=;
+        b=MwLcOsEhG19VnlzGej48Ca9hqdS3gIQk/zFVLTrUdDnhaiJWOqGu12PCiDpiEfwj+Q
+         L6agQMPp6JQJQbuJeZElsl4+D+IsK05Aeyx8YHlkCjZZM0djJ1OWfk5uydwBuf2Hndkw
+         5LYGHaBTfvuG5LoWefElsLKq404MJvHmSSWN2eZ5DSUJEQZye6WHdDrPgYfhYl4b8Xk8
+         JZtfVOf1G3yp0JKF1d2Z0C1gOHOTEaMxqh+hFadXqRa406UpRX7wtSjJ8gMU6Neac9gn
+         0Y28o7J4usw3TcELniyP2ODs8gVwdf1CQmAYzs8fdD/TXe/GbfaIBEe1F50c66QgiCMi
+         dPnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762741501; x=1763346301;
+        d=1e100.net; s=20230601; t=1762741618; x=1763346418;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=RQYjb15LQkUsCJVby49O7R+AcuVLuxsTRLE2IcB39qA=;
-        b=odMLJvs4HiW0Ev33m6INcTKE22ERTMjgeb06ETihyOgJ6rSRuIYgEM6jEeJnRkefxB
-         SyiZ7kojDKPZz8NeLLUwllS50G/RxnEopE3zBvSKcJHcCT7dBOKdil/dHmq3sRzgiP8K
-         K2QkZQYuo1H38v5i9TYP8iIjYPCFWE9B6VMxnrRuIMHRcj3EUvmbPx51zZDWnzCkH58k
-         iyuzyV+CrKUK8wtxQTSpLZM5U7W0Uk103qJNaqfYMfCTDWk8J1pwbF1VeGnMfrrmlPX8
-         3qPwApmJGF/v93AApyN6Yk9oN3LsrhKRWHszPxKzYy+5tEEbuvlJZoBl0VLG3YCCedTX
-         GZZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQLh7hzLULeUmsVF26Gc40VBemRnq7XgrCqzvP0MoFB3W6jpiYVxPt45150+62YRlo9lXm0HtA/tgdF+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJXun0MWuQuBumYp9X+aDVUNiKLFcPBW9dfluvMImpzWYeXcM2
-	59eAImw8t8r2qVFLzk30XrGgBJ9d3L38ocw8haoH3GKE8GS+yCH+r/swKubbMgK42PVQcoUpVVv
-	7QL5yD4nYWPimWIRkXbmsSPoMz81M5Ec=
-X-Gm-Gg: ASbGncs2F1uNpseEbd0+1tlAlVA+UFQzyLfbGpbzjq7jt8TT2ONznDcKuYTbehkKuil
-	a8cWBGtqz2LcztFxFqSIDiJYE8N5foK9/7roGZWBQZOHnmPIMxE3eQS/T3hx0g4QSAMznDfmy2n
-	cMEFavkLkN1b851lN4Q/AOn6TdHq0V2pPf+dUXVlb/jmamIc5Q/lzOt7fWU660/CbJWN5Yj3hTv
-	wvhevRFrtXtc9kBa+9GTKlsr20p7C/GRwJFJU1+SGtYIA8NOEHZXnOGlQoQhZkaR6zXAA==
-X-Google-Smtp-Source: AGHT+IF2EMlurBzuMt0qOjdQBCv2IFE0TWGHtCo4RfIbED7bE2bHbiRvxWtYQJUkcmfpI0qEQHMqGsLRQb6EJAlUMEM=
-X-Received: by 2002:a05:6102:2ac7:b0:5db:fb4c:3a8f with SMTP id
- ada2fe7eead31-5ddc485e4edmr2017252137.39.1762741501079; Sun, 09 Nov 2025
- 18:25:01 -0800 (PST)
+        bh=7nmmqVl1N5N20DGFXlx5/q7VZBrB7/oaoEQ3991NUd4=;
+        b=KtCYXvMLmzLCQBNmFQrtHAZs8YGb/GdQRAuSluN+dMW9VNp54LVMucN7s5KGiwkQBq
+         pthMCBwn9Iq3q78+AND4GRIZHmpzv6aJoCF5Uit3528xsntCEdX/PtSa0tipF7vrbt0k
+         Aal6HsacKVGxR1jGv/3VDGzjgYwJwYxFavMyk4CUr5IGc4Ec9FQtohR9E4+vvbSlo4XK
+         Jjm8WpzNFpTCDM8RI0mK5v+x5AGiRMmW1WIb0CqLUtkXlA6PlJiyVqM1jqHpIxaPYD8g
+         DTO8/nxpWRJ00MpkfZYJbQjY5LPf78A4o1ffv/iUYcW+42DHiNVJmzgw+llwvW/91RdI
+         bhRA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7AAniEIw2iwJ0HpixvVT9aM1S7DGgEfim6NoGWZ6jXE7znCw07KSVrcJFilpJWSyOTNIuEelww4RZGoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3MU1zIjYAThu8BQAoqGsPGG2+OJU8jC0RE2lcvBbSKQo4ZOCt
+	SufgekNlq/94mon1VvA6j1iz+qfU/JusNn7jrhow9FkWkgM0ilDCOZtQwwBAQCB1hEl4pF7fyVx
+	1H66+X/S/tcqNXqNM73mavplbWnKqlctlMpwtI4ybItRnV3bJ6UxZFmut6CpA2YSkpeNqp5HVqb
+	Z0oip6VW2uE4FvgrPQPA41xMKA9N58nHHi1dg+Mapc
+X-Gm-Gg: ASbGncvAEEnFLZLjUoSUfErDw6zFe/04TNmyPSB38pafk5GRhKlbtPNgkvG8gfBKE3m
+	H4Lp78nr/W4s1MbOd6cVyBEb+7Inl3EXE3V0A5WmxSWmLOG+YQpWPyZcRRMQxsHlOQxut6128gL
+	aC/vWaoyCsOj2xXzFv2rdYVUAYPrZnFVO/MSMZbJOjOtgMRoXCagLRiG5n
+X-Received: by 2002:a05:6512:3e22:b0:594:36b3:d1f9 with SMTP id 2adb3069b0e04-5945f1af20bmr1658106e87.25.1762741618366;
+        Sun, 09 Nov 2025 18:26:58 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG0OQ6POp2DvyduBqF18x2+BBZK5JQ/naempoem6bDJMgcg6osM3jUe/Zm740VX/IypFp1wgr5Bj9sbYSUkkJU=
+X-Received: by 2002:a05:6512:3e22:b0:594:36b3:d1f9 with SMTP id
+ 2adb3069b0e04-5945f1af20bmr1658101e87.25.1762741617924; Sun, 09 Nov 2025
+ 18:26:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250929042917epcas2p4c8f375cc2355b3a48141cdddb04a01c4@epcas2p4.samsung.com>
- <20250929043110.3631025-1-hy_fifty.lee@samsung.com> <20250929043110.3631025-2-hy_fifty.lee@samsung.com>
-In-Reply-To: <20250929043110.3631025-2-hy_fifty.lee@samsung.com>
-From: Inki Dae <daeinki@gmail.com>
-Date: Mon, 10 Nov 2025 11:24:23 +0900
-X-Gm-Features: AWmQ_bnpaBAd4D4AdmA6qBIjSKlXa89V9KyU_fLfaAFw_TI3ApflT_I8g0W-s48
-Message-ID: <CAAQKjZM3qgQO=FaAuc4d1aUT1fCT6Vfo0X7Y7B=NwRNM=B34wA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] drm/exynos: plane: Disable fully off-screen planes
- instead of zero-sized update
-To: Hoyoung Lee <hy_fifty.lee@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251103125757.1405796-1-linan666@huaweicloud.com>
+ <20251103125757.1405796-5-linan666@huaweicloud.com> <CALTww29-7U=o=RzS=pfo-zqLYY_O2o+PXw-8PLXqFRf=wdthvQ@mail.gmail.com>
+ <a660478f-b146-05ec-a3f4-f86457b096d0@huaweicloud.com> <CALTww29v7kKgDyWqUZnteNqHDEH9_KBRY+HtSMJoquMv0sTwkg@mail.gmail.com>
+ <2c1ab8fc-99ac-44fd-892c-2eeedb9581f4@fnnas.com> <CALTww289ZzZP5TmD5qezaYZV0Mnb90abqMqR=OnAzRz3NkmhQQ@mail.gmail.com>
+ <5396ce6f-ba67-4f5e-86dc-3c9aebb6dc20@fnnas.com> <CALTww2_MHcXCOjeOPha0+LHNiu8O_9P4jVYP=K5-ea951omfMw@mail.gmail.com>
+ <c3124729-4b78-4c45-9b13-b74d59881dba@fnnas.com> <CALTww29X5KizukDHpNcdeHS8oQ-vejwqTYrV5RFnOesZbFhYBQ@mail.gmail.com>
+ <8e240c3c-3cf7-4d48-8e13-2146a5d36c2b@fnnas.com>
+In-Reply-To: <8e240c3c-3cf7-4d48-8e13-2146a5d36c2b@fnnas.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Mon, 10 Nov 2025 10:26:45 +0800
+X-Gm-Features: AWmQ_bkEWK74DgGkBNl4ou8Ya5SG1OvgsF_zE3BWVU95djqIT-yojEdHF1L42eM
+Message-ID: <CALTww2_hu3uocnYvJTViL88A30WgVPHs3-ZHgQYK2qgB0S9b7w@mail.gmail.com>
+Subject: Re: [PATCH v9 4/5] md: add check_new_feature module parameter
+To: yukuai@fnnas.com
+Cc: Li Nan <linan666@huaweicloud.com>, corbet@lwn.net, song@kernel.org, hare@suse.de, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Thanks for contribution,
+On Fri, Nov 7, 2025 at 1:06=E2=80=AFAM Yu Kuai <yukuai@fnnas.com> wrote:
+>
+> Hi,
+>
+> =E5=9C=A8 2025/11/6 22:56, Xiao Ni =E5=86=99=E9=81=93:
+> > On Thu, Nov 6, 2025 at 9:31=E2=80=AFPM Yu Kuai <yukuai@fnnas.com> wrote=
+:
+> >> Hi,
+> >>
+> >> =E5=9C=A8 2025/11/6 21:15, Xiao Ni =E5=86=99=E9=81=93:
+> >>> In patch05, the commit says this:
+> >>>
+> >>> Future mdadm should support setting LBS via metadata field during RAI=
+D
+> >>> creation and the new sysfs. Though the kernel allows runtime LBS chan=
+ges,
+> >>> users should avoid modifying it after creating partitions or filesyst=
+ems
+> >>> to prevent compatibility issues.
+> >>>
+> >>> So it only can specify logical block size when creating an array. In
+> >>> the case you mentioned above, in step3, the array will be assembled i=
+n
+> >>> new kernel and the sb->pad3 will not be set, right?
+> >> No, lbs will be set to the value array actually use in metadata, other=
+wise
+> >> data loss problem will not be fixed for the array with different lbs f=
+rom
+> >> underlying disks, this is what we want to fix in the first place.
+> > But the case you mentioned is to assemble an existing array in a new
+> > kernel. The existing array in the old kernel doesn't set lbs. So the
+> > sb->pad3 will be zero when assembling it in the new kernel.
+>
+> Looks like you misunderstood the patch, lbs in sb->pad3 will be updated t=
+o the
+> real lbs when array is assembled in the new kernel. Set lbs in metadata i=
+s
+> necessary to avoid data loss.
+>
+> And please noted this patch is required to be backported to old kernel to
+> make it possible that array with default lbs can be assembled again in ol=
+d
+> kernel.
 
-2025=EB=85=84 9=EC=9B=94 29=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 1:29, H=
-oyoung Lee <hy_fifty.lee@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> Some configurations require additional actions when all windows are
-> disabled to keep DECON operating correctly. Programming a zero-sized wind=
-ow
-> in ->atomic_update() leaves the plane logically enabled and can bypass
-> those disable semantics.
->
-> Treat a fully off-screen plane as not visible and take the explicit disab=
-le
-> path.
->
-> Implementation details:
-> - exynos_plane_mode_set(): if computed actual_w/actual_h is zero, mark
->   state->visible =3D false and return early.
-> - exynos_plane_atomic_check(): if !visible, skip further checks and
->   return 0.
-> - exynos_plane_atomic_update(): if !visible, call ->disable_plane();
->   otherwise call ->update_plane().
->
-> No functional change for visible planes; off-screen planes are now cleanl=
-y
-> disabled, ensuring the disable hooks run consistently.
->
-> Signed-off-by: Hoyoung Lee <hy_fifty.lee@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_plane.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/=
-exynos/exynos_drm_plane.c
-> index 7c3aa77186d3..842974154d79 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> @@ -91,6 +91,11 @@ static void exynos_plane_mode_set(struct exynos_drm_pl=
-ane_state *exynos_state)
->         actual_w =3D exynos_plane_get_size(crtc_x, crtc_w, mode->hdisplay=
-);
->         actual_h =3D exynos_plane_get_size(crtc_y, crtc_h, mode->vdisplay=
-);
->
-> +       if (!actual_w || !actual_h) {
-> +               state->visible =3D false;
+Thanks for the explanation. The patch looks good to me.
+Reviewed-by: Xiao Ni <xni@redhat.com>
 
-The state->visible field in the DRM atomic framework is set to true
-only when the following conditions are met:
-- Both state->crtc and state->fb are present (having only one of them
-results in an error).
-- src_w/src_h and crtc_w/crtc_h are non-zero.
-- The source rectangle does not exceed the framebuffer bounds (e.g.,
-src_x + src_w <=3D fb->width).
-- Rotation and clipping checks pass successfully.
-
-However, this patch modifies the state->visible value within
-vendor-specific code. Doing so can be problematic because it overrides
-a field that is managed by the DRM atomic framework. Even if it
-currently works, it may lead to unexpected behavior in the future.
-
-For example, if the DRM atomic framework sets visible =3D true after
-validating the above conditions and begins processing certain logic,
-but the vendor driver later changes it to false, the framework may
-still assume the variable remains true, resulting in inconsistent
-states.
-
-Turning off a plane when it doesn=E2=80=99t need to be displayed is a good
-idea I think. You might consider contributing this behavior upstream
-so it can be properly handled within the DRM atomic framework itself.
-
-Thanks,
-Inki Dae
-
-> +               return;
-> +       }
-> +
->         if (crtc_x < 0) {
->                 if (actual_w)
->                         src_x +=3D ((-crtc_x) * exynos_state->h_ratio) >>=
- 16;
-> @@ -244,6 +249,9 @@ static int exynos_plane_atomic_check(struct drm_plane=
- *plane,
->         /* translate state into exynos_state */
->         exynos_plane_mode_set(exynos_state);
+Regards
+Xiao
 >
-> +       if (!new_plane_state->visible)
-> +               return 0;
-> +
->         ret =3D exynos_drm_plane_check_format(exynos_plane->config, exyno=
-s_state);
->         if (ret)
->                 return ret;
-> @@ -263,8 +271,10 @@ static void exynos_plane_atomic_update(struct drm_pl=
-ane *plane,
->         if (!new_state->crtc)
->                 return;
+> >
+> > And as planned, we will not support --lbs (for example) for the `mdadm
+> > --assemble` command.
+> >
+> > The original problem should be fixed by specifying lbs when creating
+> > an array (https://www.spinics.net/lists/raid/msg80870.html). Maybe we
+> > should avoid updating lbs when adding a new disk=EF=BC=9F
 >
-> -       if (exynos_crtc->ops->update_plane)
-> +       if (new_state->visible && exynos_crtc->ops->update_plane)
->                 exynos_crtc->ops->update_plane(exynos_crtc, exynos_plane)=
-;
-> +       else if (exynos_crtc->ops->disable_plane)
-> +               exynos_crtc->ops->disable_plane(exynos_crtc, exynos_plane=
-);
->  }
+> I don't understand, lbs modification should be forbidden once array is
+> created, it's only allowed to be updated before the array is running the
+> first time.
 >
->  static void exynos_plane_atomic_disable(struct drm_plane *plane,
-> --
-> 2.34.1
+> >
+> > Regards
+> > Xiao
+> >> Thanks,
+> >> Kuai
+> >>
 >
->
+
 
