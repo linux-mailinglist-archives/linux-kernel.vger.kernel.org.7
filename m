@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-893504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26364C4793E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:37:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0BDC478F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:33:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C23A44F016B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:33:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13DE81887D9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0254D26FDBD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C927272805;
 	Mon, 10 Nov 2025 15:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mary.zone header.i=@mary.zone header.b="hQ+61P9V"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=mary.zone header.i=@mary.zone header.b="DVcN4RTL"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BAF23D7DB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0478B258CD7
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762788788; cv=none; b=lU1EnIxn7rS/YVj9jV12joJITUahqw2BaaQMIiQowdOZwBGTgculAp8Pu3V5pgsMu5GHuPWNd+gg96lTIvLKa5twtFA+PNROjLKPRJrxvUtu4n2Ovg1a97rmH/6+4zWd6D5P9rofRtlB9nA+FclqNPq30ohM1Nn/LBladxr5G/U=
+	t=1762788788; cv=none; b=XgqboulxILy+Yqj3rVHjJBYv0ASFVcOdGnRQEom0CG4mTtO5JyIeF6ECU8t8QtgHDyeB+zAB808JQnsA5UEV+PktKRQFe1LaxQ6ZGTVXOh3EawenCd9Kc5Y3v0JyU6fBGNth4T8sCPdCSfsj7Ow0LzfRcOgAprawKgzzjg8kjN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762788788; c=relaxed/simple;
-	bh=oj+/7ZKp13/wE7+I0q9U+i1FJpHSZG5ujs5ZMwbspGc=;
+	bh=1t/XeZGSz7klYVmp8UNRLZxTGb1MDqM4Sp4fGb+4iBo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AqX2C/hSLEe3hs+CsjS3mD9taLVOSAUflk/VHsVGXCwOM1GoktAFDfiiIpn2IZWBqiN6ZtnbnBC9dVsO/87+lViKXdoHy5bduZxTF4bUll/PNF6o2TQ5lxEv2ZZ6KqQ7Qt3SSV06VUceY4umVcfem6ev4R2oznTzrsR59K/gH0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mary.zone; spf=none smtp.mailfrom=mary.zone; dkim=pass (2048-bit key) header.d=mary.zone header.i=@mary.zone header.b=hQ+61P9V; arc=none smtp.client-ip=209.85.208.51
+	 In-Reply-To:To:Cc; b=nPn+VeSDidsMvKGDj9opEaZtSpPfi3sBZTVA9ZHOCvkWeYedAHUoXRNbWqVowbEfNXPln6px8RI+kOR8QNTz0J4Sf4YCLmaOyh+vOM5YWKzbj7wtLsrBxgE37bIc5NdgrzuZeDxutiIxU77aMB1fZ506fbk9NDGhpmlABf6B0ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mary.zone; spf=none smtp.mailfrom=mary.zone; dkim=pass (2048-bit key) header.d=mary.zone header.i=@mary.zone header.b=DVcN4RTL; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mary.zone
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mary.zone
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64162c04f90so3692956a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:33:05 -0800 (PST)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b64cdbb949cso545040266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:33:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mary.zone; s=google; t=1762788784; x=1763393584; darn=vger.kernel.org;
+        d=mary.zone; s=google; t=1762788785; x=1763393585; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dV8HTrWRbKTwEKdId5EYrcLWXepKsv72Ez8s7uKyCdc=;
-        b=hQ+61P9V1sUhh+Y1NsOsnCj4yA48KCsVSvLB0ZHxHQlUNAbpkuCYdJJ784OSucNq4O
-         kLb5n7igM7aaipr7yDyrijPOXivgPkBptiI1ueWbK4YqrCdC1WLfaE/WC5VW6+ynA1im
-         HMbcepdsO2w+Id9Bm7DDAB7AkVE8E0sJhL/ueJ7rjkAmtvRn6+cs2u7/RmtDUDK8LjxR
-         sO9TXGg0YSGQXCAgsU9h03dQYt2bxJLMu1gvxYp79gw5VGxlDENKdIv20UqtG5Ngfv2y
-         njgZHGPt9jdlWOB8tSFn//IvD1DUnU4pljD3ipSldWZcv2CjV+Q4PFCdpVcwSzlihkoM
-         FC8Q==
+        bh=lphwm18lHOH8GUN+4yFjFjzr4xIhvT5dzK4hQnRKziE=;
+        b=DVcN4RTLbnH5X65cPcoQwd2CW1eFigmtyuQgIUIvNcTSfEDIDd4YhO0G3XBc2raIkd
+         Qa5AkBgln82nzwOrXbIfg0dlpu7z/ygx2ATGxqhxQE6aR+n7p8uDPUBxxpo05xyZN/Ls
+         zb8DUsv/NXgjdebOKB3zptjA1yTybfBjxM56IJR2UlrfYfSX7O69AyKGaVo4Y8F1Z9/C
+         Tk3ie2k7Hxq0+UblUtBnRKK49b8EXO6oIuS3sCLHposfq192NWCY/BqPWgAZuVrOx/nE
+         ESXtsY7STx4kmDRVOjwYIps4ouJt90cvp/8ppQlLi7+iEvIkAFi2sndQXwM+M/J/cuEt
+         zarA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762788784; x=1763393584;
+        d=1e100.net; s=20230601; t=1762788785; x=1763393585;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=dV8HTrWRbKTwEKdId5EYrcLWXepKsv72Ez8s7uKyCdc=;
-        b=aGtcTJgrH1j6txhd5ig1jKlkeIlxtYDB9wTEyP6FFTJXwBtv7FGaQ6xBqbwk3EnJSR
-         i8lXxpNoqArrf5srhtvf1DGz7HgT4PyZNSmGCDqf4q/flmapZneq/7YqbRT+ccQv4bVM
-         /rpNSOg7ypDniPh0GSsGZoPa3VThVetS4w4CxyerP/L4PV+LcfcPbChMlY9+Yhm+jhOz
-         zcqCfaIbAyJcKQtFsFH0m/mpJ5vtJSY4DRSXmQvTDavOEHQ/lvPln8tC3UF9K8Sim0sY
-         ZMjIFZVRO3YEWIa6l+E6HGFTkhD3mnXvMatvOElbfEcdszPQ7RVb6UurX88ngP7swkm7
-         KXJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtGCHPc5FyWYVO9Fsy0rZa8iE41+nF0DgvpTvwpmy6Q23lCMO+UOaMhqPdlGrvKWmxao6kQMvru5CWaws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHPDpp+/dGV4xk2Q2x/8LOIL5h4Iaxi6h1rjeUGkNcApwRu63+
-	PXylYqqmALmaE5MfU226o0NVzg+lfP8eLvyZmJVsEb+hj5568SwdUBK/8VWdyaD2Iyg=
-X-Gm-Gg: ASbGncuoRnSGUH+hTckH/8km6TENL7D12pYz/JtVg7c1IaRx6pQtCh3FcU68+bHRouN
-	eX09wGPN0B392gpqlYaaAjSovHzkLGd+GrgsiNSi+1rXaq5CNY2/TsZIOeourOniL/KE0fiyWxZ
-	pqkQHNFLu7q1mSlLCCPEbl2YaQUo3sKuO/WTdmEhUe0D81h6z5cd6lR/0zz67fC5lbKLJYY0hXJ
-	ej6i9UgS+19IPu0dMu+U2ENMYjNioP+5LstDJjYdGxBb0K7n6kyKQHO6M9eVv7BXyyhTrXKqH2t
-	3X4o6jaNkyN+xqyHyLMv7dRgivJf/HVACAFvHAxXw5ufVANvuq1vvVweAiW7fLPMbkzLxtXG+b5
-	/tNpj222e4KrPpF1FmRsOduGhcpaxthP33YZ/H+9TW94hfPolJ2h2kEVGvmcWzDZGr7IHjg5Qnf
-	PdrhRTK0D5LKZ/QqeLwauYdzzpxiCNWjyuCQe8TaLTZtDyt7s8+wGnKEgCVVC8
-X-Google-Smtp-Source: AGHT+IH1eO/pAsWGf3irlTOolQfuNePb26vDKwUgGAjxaSNbydnFYBUagX4wozVeTRQgUFJmawwuYQ==
-X-Received: by 2002:a17:907:9619:b0:b72:5d08:486c with SMTP id a640c23a62f3a-b72e0476fa5mr966079566b.27.1762788784221;
-        Mon, 10 Nov 2025 07:33:04 -0800 (PST)
+        bh=lphwm18lHOH8GUN+4yFjFjzr4xIhvT5dzK4hQnRKziE=;
+        b=N20ST4b49ij4yRUltiq/uNpsC6dyzYy4BiVlBeO3ITKhC9Hfn+yy1Rn+drjy2XOHfd
+         AoV2HYgLkF1qA9WoUzOTs0ZGrnEklnas0BI+N5GajD1j0rbseWxp16TbRi9fFbdQT6ox
+         2Zxx++4GY0qnBEqcjvR01UbXLNlCkEKcUc1ePC0OHl2SqpZS15VLYh0yO3U6ecpbQzpU
+         AfRJTfxRYWwR1Eeg3PsKyYFUdQyCJbehLKK/0Hv8fWo5uHWJZKQdN70pS1F1fbKTJN6h
+         5iftZ0j3ThBKIGUtUJ48N7e2wF/DVXElgxKVIF4s+W/bct2t5NqQQIumroQWggAdXfdb
+         TpGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWkb4YTXzuWe9SSXD6hvj6nkF2B5fd/t7KXczdCpYVtrflGDqTy+ehva1pwV2kMz5elV0Z5rd5MVG70f1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/klJpn3DIP5Y2idfS8zuPK691K9ps6CSAW/LnzWWYHWI8+hAY
+	Yqjjaq/nlqB0TvxNVZVSXAC0uh8vaw2W58OvByp5lLT7EMnjhzhN8FNlfEXgvDkNy6o=
+X-Gm-Gg: ASbGncvTJiKfUdP9R/xZxUjF2Hwkpti48R8NJmCXX2ZudEWoA+cGXHAsdarD3hyedI9
+	kfjKqDSHls9Bt04u2uXTqIt5bjEPsZ+OHoHLGpqEMNOrK5nqW1cNoc2Gtdb2ENx/GGI4bMsrYZH
+	8UBcIEG9uVs0MWRGk6vXAVkZebDn7ERQGqXp0oNCbN3u5rasQh//+op87adjiBJ0asz6JByxItM
+	BzYcS1U9SioVtKUkj1gdVwoxVBSfpMhT2AuMF3osfGQrc445IBO7GfdprHV9eGT/qVw1bvjluXa
+	jDEYrU9CKXTi2Go0+SWIQNSz8MKmcXMOBcd+4fUxAukxIHr4O/IL6B3eeaKLd0/8w/iAU1kHLCb
+	Siz3DI7L42DEbTOanfmDWF+mjduj2a1wCIQFPmk/2gyXocf2PF6eGhAlrPRjkeBxnRNK0Zha5xs
+	j/DFGNFI159i2wLccODy9LvMdUCqqGPj0srmSatUasct4puBYwm/fTN6UDrh12d3j97D6FyWg=
+X-Google-Smtp-Source: AGHT+IG70p62xu1Iuwa33zY/SzOofNGuNdD0jOrfLb2TRpLg/LojF9DWIwzRCiYu+VP8gJxW9BMb4A==
+X-Received: by 2002:a17:907:9807:b0:b6d:2b14:4aa4 with SMTP id a640c23a62f3a-b72e05ac909mr786170366b.63.1762788785220;
+        Mon, 10 Nov 2025 07:33:05 -0800 (PST)
 Received: from [192.168.1.42] (2a01cb0405e83a000cb38cfe29807c1e.ipv6.abo.wanadoo.fr. [2a01:cb04:5e8:3a00:cb3:8cfe:2980:7c1e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf7231dcsm1115978466b.31.2025.11.10.07.33.03
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf7231dcsm1115978466b.31.2025.11.10.07.33.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 07:33:03 -0800 (PST)
+        Mon, 10 Nov 2025 07:33:04 -0800 (PST)
 From: Mary Guillemard <mary@mary.zone>
-Date: Mon, 10 Nov 2025 16:32:58 +0100
-Subject: [PATCH v6 3/5] drm/nouveau/mmu/gp100: Remove unused/broken support
- for compression
+Date: Mon, 10 Nov 2025 16:32:59 +0100
+Subject: [PATCH v6 4/5] drm/nouveau/mmu/tu102: Add support for compressed
+ kinds
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-nouveau-compv6-v6-3-83b05475f57c@mary.zone>
+Message-Id: <20251110-nouveau-compv6-v6-4-83b05475f57c@mary.zone>
 References: <20251110-nouveau-compv6-v6-0-83b05475f57c@mary.zone>
 In-Reply-To: <20251110-nouveau-compv6-v6-0-83b05475f57c@mary.zone>
 To: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>, 
@@ -101,15 +101,8 @@ X-Mailer: b4 0.14.3
 
 From: Ben Skeggs <bskeggs@nvidia.com>
 
-From GP100 onwards it's not possible to initialise comptag RAM without
-PMU firmware, which nouveau has no support for.
-
-As such, this code is essentially a no-op and will always revert to the
-equivalent non-compressed kind due to comptag allocation failure.  It's
-also broken for the needs of VM_BIND/Vulkan.
-
-Remove the code entirely to make way for supporting compression on GPUs
-that support GSM-RM.
+Allow compressed PTE kinds to be written into PTEs when GSP-RM is
+present, rather than reverting to their non-compressed versions.
 
 Signed-off-by: Ben Skeggs <bskeggs@nvidia.com>
 Signed-off-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
@@ -117,118 +110,87 @@ Signed-off-by: Mary Guillemard <mary@mary.zone>
 Reviewed-by: Lyude Paul <lyude@redhat.com>
 Reviewed-by: James Jones <jajones@nvidia.com>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp100.c | 39 +++-------------------
- drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c |  4 +--
- 2 files changed, 6 insertions(+), 37 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp100.c | 46 +++++++++++++++++++++-
+ 1 file changed, 44 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp100.c b/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp100.c
-index 851fd847a2a9..ecff1096a1bb 100644
+index ecff1096a1bb..ed15a4475181 100644
 --- a/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp100.c
 +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp100.c
-@@ -21,9 +21,7 @@
-  */
- #include "vmm.h"
+@@ -109,12 +109,34 @@ gp100_vmm_pgt_pfn(struct nvkm_vmm *vmm, struct nvkm_mmu_pt *pt,
+ 	nvkm_done(pt->memory);
+ }
  
--#include <core/client.h>
- #include <subdev/fb.h>
--#include <subdev/ltc.h>
- #include <subdev/timer.h>
- #include <engine/gr.h>
- 
-@@ -117,8 +115,6 @@ gp100_vmm_pgt_pte(struct nvkm_vmm *vmm, struct nvkm_mmu_pt *pt,
++static inline u64
++gp100_vmm_comptag_nr(u64 size)
++{
++	return size >> 16; /* One comptag per 64KiB VRAM. */
++}
++
++static inline u64
++gp100_vmm_pte_comptagline_base(u64 addr)
++{
++	/* RM allocates enough comptags for all of VRAM, so use a 1:1 mapping. */
++	return (1 + gp100_vmm_comptag_nr(addr)) << 36; /* NV_MMU_VER2_PTE_COMPTAGLINE */
++}
++
++static inline u64
++gp100_vmm_pte_comptagline_incr(u32 page_size)
++{
++	return gp100_vmm_comptag_nr(page_size) << 36; /* NV_MMU_VER2_PTE_COMPTAGLINE */
++}
++
+ static inline void
+ gp100_vmm_pgt_pte(struct nvkm_vmm *vmm, struct nvkm_mmu_pt *pt,
+ 		  u32 ptei, u32 ptes, struct nvkm_vmm_map *map, u64 addr)
  {
  	u64 data = (addr >> 4) | map->type;
  
--	map->type += ptes * map->ctag;
--
++	if (map->ctag)
++		data |= gp100_vmm_pte_comptagline_base(addr);
++
  	while (ptes--) {
  		VMM_WO064(pt, vmm, ptei++ * 8, data);
  		data += map->next;
-@@ -142,7 +138,6 @@ gp100_vmm_pgt_dma(struct nvkm_vmm *vmm, struct nvkm_mmu_pt *pt,
- 		while (ptes--) {
- 			const u64 data = (*map->dma++ >> 4) | map->type;
- 			VMM_WO064(pt, vmm, ptei++ * 8, data);
--			map->type += map->ctag;
- 		}
- 		nvkm_done(pt->memory);
- 		return;
-@@ -200,8 +195,6 @@ gp100_vmm_pd0_pte(struct nvkm_vmm *vmm, struct nvkm_mmu_pt *pt,
+@@ -195,6 +217,9 @@ gp100_vmm_pd0_pte(struct nvkm_vmm *vmm, struct nvkm_mmu_pt *pt,
  {
  	u64 data = (addr >> 4) | map->type;
  
--	map->type += ptes * map->ctag;
--
++	if (map->ctag)
++		data |= gp100_vmm_pte_comptagline_base(addr);
++
  	while (ptes--) {
  		VMM_WO128(pt, vmm, ptei++ * 0x10, data, 0ULL);
  		data += map->next;
-@@ -411,8 +404,6 @@ gp100_vmm_valid(struct nvkm_vmm *vmm, void *argv, u32 argc,
- 		struct gp100_vmm_map_vn vn;
- 		struct gp100_vmm_map_v0 v0;
- 	} *args = argv;
--	struct nvkm_device *device = vmm->mmu->subdev.device;
--	struct nvkm_memory *memory = map->memory;
- 	u8  kind, kind_inv, priv, ro, vol;
- 	int kindn, aper, ret = -ENOSYS;
- 	const u8 *kindm;
-@@ -450,30 +441,8 @@ gp100_vmm_valid(struct nvkm_vmm *vmm, void *argv, u32 argc,
+@@ -440,9 +465,26 @@ gp100_vmm_valid(struct nvkm_vmm *vmm, void *argv, u32 argc,
+ 		return -EINVAL;
  	}
  
++	/* Handle compression. */
  	if (kindm[kind] != kind) {
--		u64 tags = nvkm_memory_size(memory) >> 16;
--		if (aper != 0 || !(page->type & NVKM_VMM_PAGE_COMP)) {
--			VMM_DEBUG(vmm, "comp %d %02x", aper, page->type);
--			return -EINVAL;
--		}
--
--		if (!map->no_comp) {
--			ret = nvkm_memory_tags_get(memory, device, tags,
--						   nvkm_ltc_tags_clear,
--						   &map->tags);
--			if (ret) {
--				VMM_DEBUG(vmm, "comp %d", ret);
--				return ret;
--			}
--		}
--
--		if (!map->no_comp && map->tags->mn) {
--			tags = map->tags->mn->offset + (map->offset >> 16);
--			map->ctag |= ((1ULL << page->shift) >> 16) << 36;
--			map->type |= tags << 36;
--			map->next |= map->ctag;
--		} else {
--			kind = kindm[kind];
--		}
-+		/* Revert to non-compressed kind. */
-+		kind = kindm[kind];
+-		/* Revert to non-compressed kind. */
+-		kind = kindm[kind];
++		struct nvkm_device *device = vmm->mmu->subdev.device;
++
++		/* Compression is only supported when using GSP-RM, as
++		 * PMU firmware is required in order to initialise the
++		 * compbit backing store.
++		 */
++		if (nvkm_gsp_rm(device->gsp)) {
++			/* Turing GPUs require PTE_COMPTAGLINE to be filled,
++			 * in addition to specifying a compressed kind.
++			 */
++			if (device->card_type < GA100) {
++				map->ctag  = gp100_vmm_pte_comptagline_incr(1 << map->page->shift);
++				map->next |= map->ctag;
++			}
++		} else {
++			/* Revert to non-compressed kind. */
++			kind = kindm[kind];
++		}
  	}
  
  	map->type |= BIT(0);
-@@ -592,8 +561,8 @@ gp100_vmm = {
- 		{ 47, &gp100_vmm_desc_16[4], NVKM_VMM_PAGE_Sxxx },
- 		{ 38, &gp100_vmm_desc_16[3], NVKM_VMM_PAGE_Sxxx },
- 		{ 29, &gp100_vmm_desc_16[2], NVKM_VMM_PAGE_Sxxx },
--		{ 21, &gp100_vmm_desc_16[1], NVKM_VMM_PAGE_SVxC },
--		{ 16, &gp100_vmm_desc_16[0], NVKM_VMM_PAGE_SVxC },
-+		{ 21, &gp100_vmm_desc_16[1], NVKM_VMM_PAGE_SVxx },
-+		{ 16, &gp100_vmm_desc_16[0], NVKM_VMM_PAGE_SVxx },
- 		{ 12, &gp100_vmm_desc_12[0], NVKM_VMM_PAGE_SVHx },
- 		{}
- 	}
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c
-index e081239afe58..5791d134962b 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c
-@@ -34,8 +34,8 @@ gp10b_vmm = {
- 		{ 47, &gp100_vmm_desc_16[4], NVKM_VMM_PAGE_Sxxx },
- 		{ 38, &gp100_vmm_desc_16[3], NVKM_VMM_PAGE_Sxxx },
- 		{ 29, &gp100_vmm_desc_16[2], NVKM_VMM_PAGE_Sxxx },
--		{ 21, &gp100_vmm_desc_16[1], NVKM_VMM_PAGE_SxHC },
--		{ 16, &gp100_vmm_desc_16[0], NVKM_VMM_PAGE_SxHC },
-+		{ 21, &gp100_vmm_desc_16[1], NVKM_VMM_PAGE_SxHx },
-+		{ 16, &gp100_vmm_desc_16[0], NVKM_VMM_PAGE_SxHx },
- 		{ 12, &gp100_vmm_desc_12[0], NVKM_VMM_PAGE_SxHx },
- 		{}
- 	}
 
 -- 
 2.51.1
