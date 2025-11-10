@@ -1,190 +1,136 @@
-Return-Path: <linux-kernel+bounces-892653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1007DC458B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:13:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D21C458C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:13:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD0561890396
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:14:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1C11890376
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4126E2FE59C;
-	Mon, 10 Nov 2025 09:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA782FF173;
+	Mon, 10 Nov 2025 09:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IeTpOANL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oAH1FF64"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jbaqOO6S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6538212560;
-	Mon, 10 Nov 2025 09:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD0E212560;
+	Mon, 10 Nov 2025 09:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766001; cv=none; b=k8hAytAMKSf9Mke/j4NH6A665Xt04ISarTLSE53qGtagEhX2J9PgjYoB631uwtsDSi2nRVjlsP2L9qJQydXQSNlYbQUGxY/LMOAqZYGaaKA4S1TjwMAHMvY0VyJ5ZpuxnBJuqLT+pBectYmIeWhtnreYiuGLc7cbr/UYZNKW700=
+	t=1762766006; cv=none; b=IvfUhPBFtRrJ4aJvUy3S0LIuauxbjqp8zNynK3XZJa3goCtnlaI2fmAxBqzRIYmEwEXlwXkdCifdRz7XhfmlOIDFVymYFbwJRj+3lrGowErfJ0Qj/Nisk+/CGVoX7HY/553sBiTFV5ErjB3bOylYJBpz19i7VuK2AiYE7Pot4V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766001; c=relaxed/simple;
-	bh=HoHGOdSj7bTFhoiT0pF3v/Oy7LXbjZm8k5NEe753yd4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sa4rfaqJ4NR+AaLNP7qCeRP9DLSqY1Ud6rrY6KZUXF9xDcM1omO6x1cDpckvtpj5gWWA3PR5dNSXA64RtGMMo+OC7BMbrf0DTMLtZKL6ihwJkJ6QpKtXGgVZv16xF9Y165RT3Jn4H1wrvywX4ZMEFX6lBnr40ikrBhGkxhWLyp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IeTpOANL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oAH1FF64; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762765998;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aWYulQfR0TreZlqe/qFy/nUmcaT6X+aYnci2sC0M8+s=;
-	b=IeTpOANLyUhi255Pz3g+GevA/LeLToFvR9GF2uEztHAPEeKnyegJT3Hx3QBbSw6VWL+pCX
-	KPmV+FYcX4exu56pt2rFkK9IVBVptW6wt88fQE/voW9NljT+MUXz4q1quD3uhoiaxmOvDZ
-	kW1IIDMpoHlwWkc7+o4msV5t9Pb8rScnkzWoNd8ZeEtkcdpkAk6bA6X6QhPQNHeFyyucR5
-	LBLBwFz3cMuMKC6TCHnNCi5qTU8UwAKD2BbzxBom5/9H4XmT8FQpz9d3d3E7i2le3FHHUx
-	djBrKgBBegfnxGC7fpOzxx1qO6r3Hu1XnnsQY2upt8YdYK2VfC8a/O2WlymhJg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762765998;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aWYulQfR0TreZlqe/qFy/nUmcaT6X+aYnci2sC0M8+s=;
-	b=oAH1FF64UEij1BWuPu1puzZO5DMShnO2Ri9sQ+M46IzSSjZp9jXlTuVFsi3DBPswFcgpav
-	x7YvoAmfFmu0DdDQ==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, "amurray @ thegoodpenguin . co .
- uk" <amurray@thegoodpenguin.co.uk>, brauner@kernel.org, chao@kernel.org,
- djwong@kernel.org, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, Petr Mladek <pmladek@suse.com>
-Subject: Re: [PATCH 1/2] printk_ringbuffer: Fix check of valid data size
- when blk_lpos overflows
-In-Reply-To: <20251107194720.1231457-2-pmladek@suse.com>
-References: <20251107194720.1231457-1-pmladek@suse.com>
- <20251107194720.1231457-2-pmladek@suse.com>
-Date: Mon, 10 Nov 2025 10:19:17 +0106
-Message-ID: <87ms4uuu6q.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1762766006; c=relaxed/simple;
+	bh=ozqUDcensak/8G7dfcCGnqzO7BNxUQLL3rY5M2dtdg8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tryY1U0JW6gBtTVP72+1m5kV+ceeJ4cpQWcCVfmxj3rQgULTdVECjV8AcEfaKB4ctdCYkFFS/87b8mOk286eBu7Li2uCNw6vAqjLZ3855U3e4kTIl6V0cAffM1Hqu5hce96pfCrJwggXkig5BAdMwPoI56pR9Zxz7c5AEWGCjBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jbaqOO6S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5542BC19425;
+	Mon, 10 Nov 2025 09:13:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762766005;
+	bh=ozqUDcensak/8G7dfcCGnqzO7BNxUQLL3rY5M2dtdg8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jbaqOO6S7vUjM1RdDqi1HKSdpmMQizgF0RD+2CpbhXhb4zkgkUBNNFUN6RuUjIZy9
+	 gcpws3UVICLCD1LeM/jdlan+tmX7yZZIM55i9GmcKiREm8SPK5yTEek2/zNDNh5Jtt
+	 YJhntTD4GBYoXoAC7suqU3GxztsenBrXRnSHczoXNr1FfzOaByOw2gyESw+ygzUYe/
+	 FdJfSVOoSGBZCizfnisex8bEC6yr4wfmFcnliMhMjzJQ4pTwZx82DmAEf0+bX7WqL3
+	 ZsJshIedNdd+okZ+wgO1fEq0m/nxGyBo7bO5JkZfCTUqsjJ5RoM1ifTfGbB4D0EuU9
+	 C8KlI9wg1SUHA==
+Message-ID: <35e8ef89-3fbc-48ac-9b2b-10c2e95ab024@kernel.org>
+Date: Mon, 10 Nov 2025 10:13:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 1/3] arm64: dts: qcom: sm8750: Add SDC2 nodes for
+ sm8750 soc
+To: Sarthak Garg <sarthak.garg@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_nguyenb@quicinc.com,
+ quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
+ quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
+ quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
+References: <20251110085013.802976-1-sarthak.garg@oss.qualcomm.com>
+ <20251110085013.802976-2-sarthak.garg@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251110085013.802976-2-sarthak.garg@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-11-07, Petr Mladek <pmladek@suse.com> wrote:
-> The commit 67e1b0052f6bb8 ("printk_ringbuffer: don't needlessly wrap
-> data blocks around") allows to use the last 4 bytes of the ring buffer.
->
-> But the check for the @data_size was not properly updated in get_data().
-> It fails when "blk_lpos->next" overflows to "0". In this case:
->
->   + is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next)
->     returns "false" because it checks "blk_lpos->next - 1".
->
->   + "blk_lpos->begin < blk_lpos->next" fails because "blk_lpos->next"
->     is already 0.
->
->   + is_blk_wrapped(data_ring, blk_lpos->begin + DATA_SIZE(data_ring),
->     blk_lpos->next) returns "false" because "begin_lpos" is from
->     the next wrap but "next_lpos - 1" is from the previous one.
->
-> As a result, get_data() triggers the WARN_ON_ONCE() for "Illegal
-> block description", for example:
->
-> [  216.317316][ T7652] loop0: detected capacity change from 0 to 16
-> ** 1 printk messages dropped **
-> [  216.327750][ T7652] ------------[ cut here ]------------
-> [  216.327789][ T7652] WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0x48a/0x840, CPU#1: syz.0.585/7652
-> [  216.327848][ T7652] Modules linked in:
-> [  216.327907][ T7652] CPU: 1 UID: 0 PID: 7652 Comm: syz.0.585 Not tainted syzkaller #0 PREEMPT(full)
-> [  216.327933][ T7652] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-> [  216.327953][ T7652] RIP: 0010:get_data+0x48a/0x840
-> [  216.327986][ T7652] Code: 83 c4 f8 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 07 84 c0 0f 85 ee 01 00 00 44 89 65 00 49 83 c5 08 eb 13 e8 a7 19 1f 00 90 <0f> 0b 90 eb 05 e8 9c 19 1f 00 45 31 ed 4c 89 e8 48 83 c4 28 5b 41
-> [  216.328007][ T7652] RSP: 0018:ffffc900035170e0 EFLAGS: 00010293
-> [  216.328029][ T7652] RAX: ffffffff81a1eee9 RBX: 00003fffffffffff RCX: ffff888033255b80
-> [  216.328048][ T7652] RDX: 0000000000000000 RSI: 00003fffffffffff RDI: 0000000000000000
-> [  216.328063][ T7652] RBP: 0000000000000012 R08: 0000000000000e55 R09: 000000325e213cc7
-> [  216.328079][ T7652] R10: 000000325e213cc7 R11: 00001de4c2000037 R12: 0000000000000012
-> [  216.328095][ T7652] R13: 0000000000000000 R14: ffffc90003517228 R15: 1ffffffff1bca646
-> [  216.328111][ T7652] FS:  00007f44eb8da6c0(0000) GS:ffff888125fda000(0000) knlGS:0000000000000000
-> [  216.328131][ T7652] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  216.328147][ T7652] CR2: 00007f44ea9722e0 CR3: 0000000066344000 CR4: 00000000003526f0
-> [  216.328168][ T7652] Call Trace:
-> [  216.328178][ T7652]  <TASK>
-> [  216.328199][ T7652]  _prb_read_valid+0x672/0xa90
-> [  216.328328][ T7652]  ? desc_read+0x1b8/0x3f0
-> [  216.328381][ T7652]  ? __pfx__prb_read_valid+0x10/0x10
-> [  216.328422][ T7652]  ? panic_on_this_cpu+0x32/0x40
-> [  216.328450][ T7652]  prb_read_valid+0x3c/0x60
-> [  216.328482][ T7652]  printk_get_next_message+0x15c/0x7b0
-> [  216.328526][ T7652]  ? __pfx_printk_get_next_message+0x10/0x10
-> [  216.328561][ T7652]  ? __lock_acquire+0xab9/0xd20
-> [  216.328595][ T7652]  ? console_flush_all+0x131/0xb10
-> [  216.328621][ T7652]  ? console_flush_all+0x478/0xb10
-> [  216.328648][ T7652]  console_flush_all+0x4cc/0xb10
-> [  216.328673][ T7652]  ? console_flush_all+0x131/0xb10
-> [  216.328704][ T7652]  ? __pfx_console_flush_all+0x10/0x10
-> [  216.328748][ T7652]  ? is_printk_cpu_sync_owner+0x32/0x40
-> [  216.328781][ T7652]  console_unlock+0xbb/0x190
-> [  216.328815][ T7652]  ? __pfx___down_trylock_console_sem+0x10/0x10
-> [  216.328853][ T7652]  ? __pfx_console_unlock+0x10/0x10
-> [  216.328899][ T7652]  vprintk_emit+0x4c5/0x590
-> [  216.328935][ T7652]  ? __pfx_vprintk_emit+0x10/0x10
-> [  216.328993][ T7652]  _printk+0xcf/0x120
-> [  216.329028][ T7652]  ? __pfx__printk+0x10/0x10
-> [  216.329051][ T7652]  ? kernfs_get+0x5a/0x90
-> [  216.329090][ T7652]  _erofs_printk+0x349/0x410
-> [  216.329130][ T7652]  ? __pfx__erofs_printk+0x10/0x10
-> [  216.329161][ T7652]  ? __raw_spin_lock_init+0x45/0x100
-> [  216.329186][ T7652]  ? __init_swait_queue_head+0xa9/0x150
-> [  216.329231][ T7652]  erofs_fc_fill_super+0x1591/0x1b20
-> [  216.329285][ T7652]  ? __pfx_erofs_fc_fill_super+0x10/0x10
-> [  216.329324][ T7652]  ? sb_set_blocksize+0x104/0x180
-> [  216.329356][ T7652]  ? setup_bdev_super+0x4c1/0x5b0
-> [  216.329385][ T7652]  get_tree_bdev_flags+0x40e/0x4d0
-> [  216.329410][ T7652]  ? __pfx_erofs_fc_fill_super+0x10/0x10
-> [  216.329444][ T7652]  ? __pfx_get_tree_bdev_flags+0x10/0x10
-> [  216.329483][ T7652]  vfs_get_tree+0x92/0x2b0
-> [  216.329512][ T7652]  do_new_mount+0x302/0xa10
-> [  216.329537][ T7652]  ? apparmor_capable+0x137/0x1b0
-> [  216.329576][ T7652]  ? __pfx_do_new_mount+0x10/0x10
-> [  216.329605][ T7652]  ? ns_capable+0x8a/0xf0
-> [  216.329637][ T7652]  ? kmem_cache_free+0x19b/0x690
-> [  216.329682][ T7652]  __se_sys_mount+0x313/0x410
-> [  216.329717][ T7652]  ? __pfx___se_sys_mount+0x10/0x10
-> [  216.329836][ T7652]  ? do_syscall_64+0xbe/0xfa0
-> [  216.329869][ T7652]  ? __x64_sys_mount+0x20/0xc0
-> [  216.329901][ T7652]  do_syscall_64+0xfa/0xfa0
-> [  216.329932][ T7652]  ? lockdep_hardirqs_on+0x9c/0x150
-> [  216.329964][ T7652]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> [  216.329988][ T7652]  ? clear_bhb_loop+0x60/0xb0
-> [  216.330017][ T7652]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> [  216.330040][ T7652] RIP: 0033:0x7f44ea99076a
-> [  216.330080][ T7652] Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> [  216.330100][ T7652] RSP: 002b:00007f44eb8d9e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> [  216.330128][ T7652] RAX: ffffffffffffffda RBX: 00007f44eb8d9ef0 RCX: 00007f44ea99076a
-> [  216.330146][ T7652] RDX: 0000200000000180 RSI: 00002000000001c0 RDI: 00007f44eb8d9eb0
-> [  216.330164][ T7652] RBP: 0000200000000180 R08: 00007f44eb8d9ef0 R09: 0000000000000000
-> [  216.330181][ T7652] R10: 0000000000000000 R11: 0000000000000246 R12: 00002000000001c0
-> [  216.330196][ T7652] R13: 00007f44eb8d9eb0 R14: 00000000000001a1 R15: 0000200000000080
-> [  216.330233][ T7652]  </TASK>
->
-> Solve the problem by moving and fixing the sanity check. The problematic
-> if-else-if-else code will just distinguish three basic scenarios:
-> "regular" vs. "wrapped" vs. "too many times wrapped" block.
->
-> The new sanity check is more precise. A valid "data_size" must be
-> lower than half of the data buffer size. Also it must not be zero at
-> this stage. It allows to catch problematic "data_size" even for wrapped
-> blocks.
->
-> Closes: https://lore.kernel.org/all/69096836.a70a0220.88fb8.0006.GAE@google.com/
-> Closes: https://lore.kernel.org/all/69078fb6.050a0220.29fc44.0029.GAE@google.com/
-> Fixes: 67e1b0052f6bb82 ("printk_ringbuffer: don't needlessly wrap data blocks around")
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+On 10/11/2025 09:50, Sarthak Garg wrote:
+> Add SD Card host controller for sm8750 soc.
+> 
+> Signed-off-by: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8750.dtsi | 54 ++++++++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> index a82d9867c7cb..95b210fbfead 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> @@ -3482,6 +3482,60 @@ pcie0_phy: phy@1c06000 {
+>  			status = "disabled";
+>  		};
+>  
+> +		sdhc_2: mmc@8804000 {
 
-Reviewed-by: John Ogness <john.ogness@linutronix.de>
-Tested-by: John Ogness <john.ogness@linutronix.de>
+Nothing improved.
+
+Best regards,
+Krzysztof
 
