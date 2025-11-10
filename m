@@ -1,832 +1,162 @@
-Return-Path: <linux-kernel+bounces-892406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2796C45068
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 324AEC4506E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:33:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05C383B1AEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:31:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDEFA3B1661
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC20288537;
-	Mon, 10 Nov 2025 05:31:26 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5DA28E59E;
+	Mon, 10 Nov 2025 05:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6/GyxCt"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294D5883F;
-	Mon, 10 Nov 2025 05:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790681C6FE1
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762752685; cv=none; b=pxZNbH1gzpLESxmaBN+mal1GSkRvD6Trj3XHH4UDBpajvdBIi2cbIt5h4ET3P30jE7KLTMH8rlZeqsUk4FKhiiyiOXQzwaz1Kh03qkesV/DltGPx+lPPHTUJRzQ0+k17Vox6rmNgn6vvcdJx0/kPvAv1bO1YY1uxecf/VfTK8C4=
+	t=1762752812; cv=none; b=SIScyEG4C6CIfR7g2MRs7SB2SOBluIVq79qukpZ9EO+yBxtAQBk3Y+E6rIxWZLBfLUoJtHvKJR9Rk/kROJ0RoPgbpL+bE1CdyrgXHE75HO6bNQXHgmfDAVulAoM4Jn55CO2EYgkQx4kFdubX4NaQCatCdO7wsVtfcV4jEFRp2ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762752685; c=relaxed/simple;
-	bh=9QUUd4Nd2ZJgy+okzTGMgN6JlOnYNMg+7OoazWc6O/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T72UNO4wTgzFY+ZyPIO9LoxGRGb7jufghFS1f4AyNilFKMpk6qH1mAORBKgMjk1S6eym2aChF22rzYKFQWuFbFP1VY5FZ+LvYhlztMSLJIU44Xngf4qVLjLQhZ2ONnLsKvVOJf0r0hzfHLo0dsZJUpQ9xzpyoyRg12kxOu0rifI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B06181A14C6;
-	Mon, 10 Nov 2025 06:31:20 +0100 (CET)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4FCF41A2167;
-	Mon, 10 Nov 2025 06:31:20 +0100 (CET)
-Received: from lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com (lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com [10.52.9.99])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DF62E18000AF;
-	Mon, 10 Nov 2025 13:31:17 +0800 (+08)
-Date: Mon, 10 Nov 2025 14:31:17 +0900
-From: Joseph Guo <qijian.guo@nxp.com>
-To: Francesco Valla <francesco@valla.it>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Fabian Pflug <f.pflug@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Haidong Zheng <haidong.zheng@nxp.com>,
-	Danwei Luo <danwei.luo@nxp.com>, Lei Xu <lei.xu@nxp.com>,
-	Joseph Guo <qijian.guo@nxp.com>,
-	Justin Jiang <justin.jiang@nxp.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: freescale: add support for NXP i.MX93
- FRDM
-Message-ID: <aRF4pYXtMMMO0NZg@lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com>
-References: <20251022-fpg-nxp-imx93-frdm-v3-0-03ec40a1ccc0@pengutronix.de>
- <20251022-fpg-nxp-imx93-frdm-v3-2-03ec40a1ccc0@pengutronix.de>
- <7192181.9J7NaK4W3v@fedora.fritz.box>
+	s=arc-20240116; t=1762752812; c=relaxed/simple;
+	bh=y6LEgdgdd9v8Z7GZe+XO/MCaNmA1ideLxm9iboioNS0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KFbSXPY1NaRWcuXUpLUehi38iLaT5NPJfUInNzD+lncLpAwauXah2CNqFhwv6xrCA9LNenGUEaUrrVqFS2okVZVQO5pYpc6+zxmi3L5I6abv79asgNqkOn5axAK00buP52teQgg5IRzfBSqtFBExM5DljIIw4frSSUXsbAiTXYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6/GyxCt; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6419aaced59so480098a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 21:33:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762752809; x=1763357609; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qR/MbGcnUq0EBQz4ehwdMha/tCfwYBiuvbwmX0gSrQU=;
+        b=U6/GyxCth/p6wjpu9TwJziMGHlCB5Pv4pRjdmZZZ4J280KITfK7iNQKtKeT8+cbEzq
+         wMG+2tbRoEFy+1W6dCx9czZKv9zpgQUsm3hqhbyLGjSaKRRJm98H6ntTa7VcDkPZSq0G
+         w3xHJCroyXymSxlnkJlI+LLsgT3N+J53CAoPFtQiDf7BIYoB/KgKUEIRsaD2rHQXfcMK
+         4t5NeNHCngHCa5/I9oUU4eWOfIEHOh1aqDk5rS9QjeWse3+R9rbNd6t/WBS+tKcR/NV2
+         RF0RF9B6V4oxmDu44KgDSAGOcL4sIuvT4fW2fZbzpQ+cw/FX6WH4nMC7arjEiZXExAfP
+         aCXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762752809; x=1763357609;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qR/MbGcnUq0EBQz4ehwdMha/tCfwYBiuvbwmX0gSrQU=;
+        b=P+L2hVZ64ns15tAwhw8mQuAN81K1CgsvoWeAvw6r24WiGA5+rYCzli5BGwq1a+lffS
+         ghN/6cv/nLVticZHFzH7xFOyBpzm9QCw5RCLIcwj2rwR0vb/CbHgp6ReMi6T5rvfkj07
+         /j0+c6RVDYTjYIeUoMtc3FWHOczRlPAIdCAj2UjUYrzIpvTnclNwSnB1L7qLErbo4xFW
+         xwc470VuB7fENM3+xSTbx5jEN8aJF4dI1Y6ufUoJDMJ/lqTrVFVfXmC1phlA4FlaHFzd
+         oUlK0CGNbpIdFSO+86Siv4Wo5ITKrdw2ykTtANv3umBLkSiBZLjPPIFGYeXqxLPlUD4s
+         3NXA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1StyQNC3bpPR5LPRQkuiCmrOYLOOqnKQn49f9S/fzv2JAF1Y0+ICJDfrlDEu0lgKdOlFbv1xPLjpmWlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznK6EmI+KEEI0IZcbEtY2psNl96YDRgeEgTsWgGMdm2LW0EQo7
+	cfgQTizAfmBQt7cxYnhEkIZhStBu8wEq6b/JZzulzYjct4coeXbDU2k5rwOvs3xF1SCRBk4xsHy
+	u0XweHorswFNevsPrp+lNYS3UIBIrV54=
+X-Gm-Gg: ASbGncu+lFLIE4XR9HWaRkbq6widknqsod3lsYRLFNErj3uK6tBdc3OamruKpInQQha
+	PHgbghCMCma4PYOOgqWFp53ze+UJ9+7odOnPhBiBdydPRzZYudkyC6yphdadpN8wDVFICPvBvCV
+	DOmJviFfOLrhBIqIQ5LYrP9FnkrUUyZHlpFWLhF4HQkvtL28esie58+gUbF3356yOiRm3lnewlH
+	kuCQwRJEi1vQl+GArEgXn73fgVg1aGn7xFJKrGBkR2Lrk8hqo7HTXVOX0Qf
+X-Google-Smtp-Source: AGHT+IEQaTF+1TfzvP4FKyKjl0iE5Fs96BjILlbZ5Ppxh1pUUmMmsbNSxF6n9/ltcRRgD+ILMiYpD6RIg1jm5j9TO5c=
+X-Received: by 2002:a17:907:3fa4:b0:b57:2c65:116e with SMTP id
+ a640c23a62f3a-b72e02b3515mr749481466b.12.1762752808595; Sun, 09 Nov 2025
+ 21:33:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7192181.9J7NaK4W3v@fedora.fritz.box>
-X-Virus-Scanned: ClamAV using ClamSMTP
+References: <20251110-revert-78524b05f1a3-v1-1-88313f2b9b20@tencent.com> <875xbiodl2.fsf@DESKTOP-5N7EMDA>
+In-Reply-To: <875xbiodl2.fsf@DESKTOP-5N7EMDA>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Mon, 10 Nov 2025 13:32:52 +0800
+X-Gm-Features: AWmQ_bk0J22Vk5bVsirS-BlCYuVlPSn2kEJtIWp5JuDlLDq9qg3-goJo61eNTfo
+Message-ID: <CAMgjq7CTdtjMUUk2YvanL_PMZxS_7+pQhHDP-DjkhDaUhDRjDw@mail.gmail.com>
+Subject: Re: [PATCH] Revert "mm, swap: avoid redundant swap device pinning"
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: Kairui Song via B4 Relay <devnull+kasong.tencent.com@kernel.org>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	Chris Li <chrisl@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Youngjun Park <youngjun.park@lge.com>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 10:28:22PM +0200, Francesco Valla wrote:
-> Hi Fabian,
-> 
-> I restarted working on my FRDM just a couple of days ago, so this will
-> probably feel like a late review for the v2. Anyhow...
-> 
-> On Wednesday, 22 October 2025 at 16:05:23 Fabian Pflug <f.pflug@pengutronix.de> wrote:
-> > The FRDM i.MX 93 development board is a low-cost and compact development
-> > board featuring the i.MX93 applications processor.
-> > 
-> > It features:
-> > - Dual Cortex-A55
-> > - 2 GB LPDDR4X / LPDDR4
-> > - 32 GB eMMC5.1
-> > - MicroSD slot
-> > - GbE RJ45 x 2
-> > - USB2.0 1x Type C, 1x Type A
-> > 
-> > This file is based upon the one provided by nxp in their own kernel and
-> > yocto meta layer for the device, but adapted for mainline.
-> > 
-> > Signed-off-by: Haidong Zheng <haidong.zheng@nxp.com>
-> > Signed-off-by: Danwei Luo <danwei.luo@nxp.com>
-> > Signed-off-by: Lei Xu <lei.xu@nxp.com>
-> > Signed-off-by: Fabian Pflug <f.pflug@pengutronix.de>
-> > ---
-> >  arch/arm64/boot/dts/freescale/Makefile             |   1 +
-> >  arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 658 +++++++++++++++++++++
-> >  2 files changed, 659 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> > index 525ef180481d3..a7e5fdd6faff1 100644
-> > --- a/arch/arm64/boot/dts/freescale/Makefile
-> > +++ b/arch/arm64/boot/dts/freescale/Makefile
-> > @@ -351,6 +351,7 @@ imx93-9x9-qsb-i3c-dtbs += imx93-9x9-qsb.dtb imx93-9x9-qsb-i3c.dtbo
-> >  dtb-$(CONFIG_ARCH_MXC) += imx93-9x9-qsb-i3c.dtb
-> >  
-> >  dtb-$(CONFIG_ARCH_MXC) += imx93-11x11-evk.dtb
-> > +dtb-$(CONFIG_ARCH_MXC) += imx93-11x11-frdm.dtb
-> >  dtb-$(CONFIG_ARCH_MXC) += imx93-14x14-evk.dtb
-> >  dtb-$(CONFIG_ARCH_MXC) += imx93-kontron-bl-osm-s.dtb
-> >  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash.dtb
-> > diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
-> > new file mode 100644
-> > index 0000000000000..1f21eeb15b721
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
-> > @@ -0,0 +1,658 @@
-> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> > +/dts-v1/;
-> > +
-> > +#include <dt-bindings/usb/pd.h>
-> > +#include "imx93.dtsi"
-> > +
-> > +/ {
-> > +	compatible = "fsl,imx93-11x11-frdm", "fsl,imx93";
-> > +	model = "NXP i.MX93 11X11 FRDM board";
-> > +
-> > +	aliases {
-> > +		ethernet0 = &fec;
-> > +		ethernet1 = &eqos;
-> > +		i2c0 = &lpi2c1;
-> > +		i2c1 = &lpi2c2;
-> > +		i2c2 = &lpi2c3;
-> > +		mmc0 = &usdhc1; /* EMMC */
-> > +		mmc1 = &usdhc2; /* uSD */
-> > +		rtc0 = &pcf2131;
-> > +		serial0 = &lpuart1;
-> > +	};
-> > +
-> > +	chosen {
-> > +		stdout-path = &lpuart1;
-> > +	};
-> > +
-> > +	reg_usdhc2_vmmc: regulator-usdhc2 {
-> > +		compatible = "regulator-fixed";
-> > +		off-on-delay-us = <12000>;
-> > +		pinctrl-0 = <&pinctrl_reg_usdhc2_vmmc>;
-> > +		pinctrl-names = "default";
-> > +		regulator-min-microvolt = <3300000>;
-> > +		regulator-max-microvolt = <3300000>;
-> > +		regulator-name = "VSD_3V3";
-> > +		vin-supply = <&buck4>;
-> > +		gpio = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-> > +		enable-active-high;
-> > +	};
-> > +
-> > +	reg_usdhc3_vmmc: regulator-usdhc3 {
-> 
-> This is not used - maybe it should be disabled?
-> 
-> > +		compatible = "regulator-fixed";
-> > +		regulator-min-microvolt = <3300000>;
-> > +		regulator-max-microvolt = <3300000>;
-> > +		regulator-name = "WLAN_EN";
-> > +		vin-supply = <&buck4>;
-> > +		gpio = <&pcal6524 20 GPIO_ACTIVE_HIGH>;
-> 
-> This does not seem to match the design files available for the FRDM on the NXP
-> website. The WiFi chip connected to the usdhc3 port is in fact powered by the
-> VPCIe_3V3 power rail, which is enabled by the EXT1_PWREN signal that is in turn
-> connected to GPIO 13 of the pcal6524 expander.
-> 
-> GPIO 20 of the pcal6524 expander should be driving M2_nDIS1 and then W2_nDIS1
-> and finally PDn/PCAL6408_RST, which is connected to the reset signal for a
-> PCAL6408 GPIO expander (U748).
-> 
-> This is at least what I understood, but you may have more information on the
-> DNP (Do Not Populated) madness inside the schematic.
+On Mon, Nov 10, 2025 at 9:56=E2=80=AFAM Huang, Ying
+<ying.huang@linux.alibaba.com> wrote:
 >
+> Hi, Kairui,
+>
+> Kairui Song via B4 Relay <devnull+kasong.tencent.com@kernel.org> writes:
+>
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > This reverts commit 78524b05f1a3e16a5d00cc9c6259c41a9d6003ce.
+> >
+> > While reviewing recent leaf entry changes, I noticed that commit
+> > 78524b05f1a3 ("mm, swap: avoid redundant swap device pinning") isn't
+> > correct. It's true that most all callers of __read_swap_cache_async are
+> > already holding a swap entry reference, so the repeated swap device
+> > pinning isn't needed on the same swap device, but it is possible that
+> > VMA readahead (swap_vma_readahead()) may encounter swap entries from a
+> > different swap device when there are multiple swap devices, and call
+> > __read_swap_cache_async without holding a reference to that swap device=
+.
+> >
+> > So it is possible to cause a UAF if swapoff of device A raced with
+> > swapin on device B, and VMA readahead tries to read swap entries from
+> > device A. It's not easy to trigger but in theory possible to cause real
+> > issues. And besides, that commit made swap more vulnerable to issues
+> > like corrupted page tables.
+> >
+> > Just revert it. __read_swap_cache_async isn't that sensitive to
+> > performance after all, as it's mostly used for SSD/HDD swap devices wit=
+h
+> > readahead. SYNCHRONOUS_IO devices may fallback onto it for swap count >
+> > 1 entries, but very soon we will have a new helper and routine for
+> > such devices, so they will never touch this helper or have redundant
+> > swap device reference overhead.
+>
+> Is it better to add get_swap_device() in swap_vma_readahead()?  Whenever
+> we get a swap entry, the first thing we need to do is call
+> get_swap_device() to check the validity of the swap entry and prevent
+> the backing swap device from going under us.  This helps us to avoid
+> checking the validity of the swap entry in every swap function.  Does
+> this sound reasonable?
 
-Hi Francesco,
+Hi Ying, thanks for the suggestion!
 
-This regulator should keep. It has same design as imx93-11x11-evk. 
-The reg_usdhc3_vmmc and usdhc3_pwrseq is used to keep the right power on 
-sequence of the wifi bt module.
+Yes, that's also a feasible approach.
 
-Regards,
-Joseph
-> > +		enable-active-high;
-> > +		/*
-> > +		 * IW612 wifi chip needs more delay than other wifi chips to complete
-> > +		 * the host interface initialization after power up, otherwise the
-> > +		 * internal state of IW612 may be unstable, resulting in the failure of
-> > +		 * the SDIO3.0 switch voltage.
-> > +		 */
-> > +		startup-delay-us = <20000>;
-> > +	};
-> > +
-> > +	reserved-memory {
-> > +		ranges;
-> > +		#address-cells = <2>;
-> > +		#size-cells = <2>;
-> > +
-> > +		linux,cma {
-> > +			compatible = "shared-dma-pool";
-> > +			alloc-ranges = <0 0x80000000 0 0x30000000>;
-> > +			reusable;
-> > +			size = <0 0x10000000>;
-> > +			linux,cma-default;
-> > +		};
-> > +
-> > +		rsc_table: rsc-table@2021e000 {
-> > +			reg = <0 0x2021e000 0 0x1000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		vdev0vring0: vdev0vring0@a4000000 {
-> > +			reg = <0 0xa4000000 0 0x8000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		vdev0vring1: vdev0vring1@a4008000 {
-> > +			reg = <0 0xa4008000 0 0x8000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		vdev1vring0: vdev1vring0@a4010000 {
-> > +			reg = <0 0xa4010000 0 0x8000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		vdev1vring1: vdev1vring1@a4018000 {
-> > +			reg = <0 0xa4018000 0 0x8000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		vdevbuffer: vdevbuffer@a4020000 {
-> > +			compatible = "shared-dma-pool";
-> > +			reg = <0 0xa4020000 0 0x100000>;
-> > +			no-map;
-> > +		};
-> > +	};
-> > +
-> > +	usdhc3_pwrseq: usdhc3_pwrseq {
-> 
-> This is also not used.
-> 
-> > +		compatible = "mmc-pwrseq-simple";
-> > +		reset-gpios = <&pcal6524 12 GPIO_ACTIVE_LOW>;
-> > +	};
-> > +};
-> > +
-> > +&adc1 {
-> > +	vref-supply = <&buck5>;
-> > +	status = "okay";
-> > +};
-> > +
-> > +&mu1 {
-> > +	status = "okay";
-> > +};
-> > +
-> > +&cm33 {
-> > +	mboxes = <&mu1 0 1>,
-> > +		 <&mu1 1 1>,
-> > +		 <&mu1 3 1>;
-> > +	mbox-names = "tx", "rx", "rxdb";
-> > +	memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
-> > +			<&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
-> > +	status = "okay";
-> > +};
-> > +
-> > +&eqos {
-> > +	pinctrl-names = "default", "sleep";
-> > +	pinctrl-0 = <&pinctrl_eqos>;
-> > +	pinctrl-1 = <&pinctrl_eqos_sleep>;
-> > +	phy-handle = <&ethphy1>;
-> > +	phy-mode = "rgmii-id";
-> > +	status = "okay";
-> > +
-> > +	mdio {
-> > +		compatible = "snps,dwmac-mdio";
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +		clock-frequency = <5000000>;
-> > +
-> > +		ethphy1: ethernet-phy@1 {
-> > +			reg = <1>;
-> > +			reset-assert-us = <10000>;
-> > +			reset-deassert-us = <80000>;
-> > +			reset-gpios = <&pcal6524 15 GPIO_ACTIVE_LOW>;
-> > +			realtek,clkout-disable;
-> > +		};
-> > +	};
-> > +};
-> > +
-> > +&fec {
-> > +	pinctrl-names = "default", "sleep";
-> > +	pinctrl-0 = <&pinctrl_fec>;
-> > +	pinctrl-1 = <&pinctrl_fec_sleep>;
-> > +	phy-mode = "rgmii-id";
-> > +	phy-handle = <&ethphy2>;
-> > +	fsl,magic-packet;
-> > +	status = "okay";
-> > +
-> > +	mdio {
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +		clock-frequency = <5000000>;
-> > +
-> > +		ethphy2: ethernet-phy@2 {
-> > +			reg = <2>;
-> > +			eee-broken-1000t;
-> 
-> eee-broken-1000t should not be required, see:
-> 
-> https://lore.kernel.org/all/20250901103632.3409896-6-joy.zou@nxp.com/
-> 
-> > +			reset-assert-us = <10000>;
-> > +			reset-deassert-us = <80000>;
-> > +			reset-gpios = <&pcal6524 16 GPIO_ACTIVE_LOW>;
-> > +			realtek,clkout-disable;
-> > +		};
-> > +	};
-> > +};
-> > +
-> > +&lpi2c1 {
-> > +	clock-frequency = <400000>;
-> > +	pinctrl-0 = <&pinctrl_lpi2c1>;
-> > +	pinctrl-names = "default";
-> > +	status = "okay";
-> > +
-> > +	it6263: hdmi@4c {
-> > +		compatible = "ite,it6263";
-> > +		reg = <0x4c>;
-> > +		ivdd-supply = <&buck5>;
-> > +		ovdd-supply = <&buck4>;
-> > +		txavcc18-supply = <&buck5>;
-> > +		txavcc33-supply = <&buck4>;
-> > +		pvcc1-supply = <&buck5>;
-> > +		pvcc2-supply = <&buck5>;
-> > +		avcc-supply = <&buck4>;
-> > +		anvdd-supply = <&buck5>;
-> > +		apvdd-supply = <&buck5>;
-> > +	};
-> > +};
-> > +
-> > +&lpi2c2 {
-> > +	clock-frequency = <400000>;
-> > +	pinctrl-0 = <&pinctrl_lpi2c2>;
-> > +	pinctrl-names = "default";
-> > +	status = "okay";
-> > +
-> > +	pcal6524: gpio@22 {
-> > +		compatible = "nxp,pcal6524";
-> > +		reg = <0x22>;
-> > +		#interrupt-cells = <2>;
-> > +		interrupt-controller;
-> > +		interrupt-parent = <&gpio3>;
-> > +		interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
-> > +		#gpio-cells = <2>;
-> > +		gpio-controller;
-> > +		pinctrl-0 = <&pinctrl_pcal6524>;
-> > +		pinctrl-names = "default";
-> > +		/* does not boot with supplier set, because it is the bucks interrupt parent */
-> > +		/* vcc-supply = <&buck4>; */
-> > +	};
-> > +
-> > +	pmic@25 {
-> > +		compatible = "nxp,pca9451a";
-> > +		reg = <0x25>;
-> > +		interrupt-parent = <&pcal6524>;
-> > +		interrupts = <11 IRQ_TYPE_EDGE_FALLING>;
-> > +
-> > +		regulators {
-> > +
-> > +			buck1: BUCK1 {
-> > +				regulator-name = "VDD_SOC_0V8";
-> > +				regulator-min-microvolt = <650000>;
-> > +				regulator-max-microvolt = <950000>;
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-ramp-delay = <3125>;
-> > +			};
-> > +
-> > +			buck2: BUCK2 {
-> > +				regulator-name = "LPD4_x_VDDQ_0V6";
-> > +				regulator-min-microvolt = <600000>;
-> > +				regulator-max-microvolt = <670000>;
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-ramp-delay = <3125>;
-> > +			};
-> > +
-> > +			buck4: BUCK4 {
-> > +				regulator-name = "VDD_3V3";
-> > +				regulator-min-microvolt = <3300000>;
-> > +				regulator-max-microvolt = <3300000>;
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +			};
-> > +
-> > +			buck5: BUCK5 {
-> > +				regulator-name = "VDD_1V8";
-> > +				regulator-min-microvolt = <1800000>;
-> > +				regulator-max-microvolt = <1800000>;
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +			};
-> > +
-> > +			buck6: BUCK6 {
-> > +				regulator-name = "LPD4_x_VDD2_1V1";
-> > +				regulator-min-microvolt = <1100000>;
-> > +				regulator-max-microvolt = <1100000>;
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +			};
-> > +
-> > +			ldo1: LDO1 {
-> > +				regulator-name = "NVCC_BBSM_1V8";
-> > +				regulator-min-microvolt = <1620000>;
-> > +				regulator-max-microvolt = <1980000>;
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +			};
-> > +
-> > +			ldo4: LDO4 {
-> > +				regulator-name = "VDD_ANA_0V8";
-> > +				regulator-min-microvolt = <800000>;
-> > +				regulator-max-microvolt = <840000>;
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +			};
-> > +
-> > +			ldo5: LDO5 {
-> > +				regulator-name = "NVCC_SD";
-> > +				regulator-min-microvolt = <1800000>;
-> > +				regulator-max-microvolt = <3300000>;
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +			};
-> > +		};
-> > +	};
-> > +
-> > +	eeprom: eeprom@50 {
-> > +		compatible = "atmel,24c256";
-> > +		reg = <0x50>;
-> > +		pagesize = <64>;
-> > +		vcc-supply = <&buck4>;
-> > +	};
-> > +};
-> > +
-> > +&lpi2c3 {
-> > +	clock-frequency = <400000>;
-> > +	pinctrl-0 = <&pinctrl_lpi2c3>;
-> > +	pinctrl-names = "default";
-> > +	status = "okay";
-> > +
-> > +	ptn5110: tcpc@50 {
-> > +		compatible = "nxp,ptn5110", "tcpci";
-> > +		reg = <0x50>;
-> > +		interrupt-parent = <&gpio3>;
-> > +		interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
-> > +
-> > +		typec1_con: connector {
-> > +			compatible = "usb-c-connector";
-> > +			data-role = "dual";
-> > +			label = "USB-C";
-> > +			op-sink-microwatt = <15000000>;
-> > +			power-role = "dual";
-> > +			self-powered;
-> > +			sink-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)
-> > +					PDO_VAR(5000, 20000, 3000)>;
-> > +			source-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
-> > +			try-power-role = "sink";
-> > +
-> > +			ports {
-> > +				#address-cells = <1>;
-> > +				#size-cells = <0>;
-> > +
-> > +				port@0 {
-> > +					reg = <0>;
-> > +
-> > +					typec1_dr_sw: endpoint {
-> > +						remote-endpoint = <&usb1_drd_sw>;
-> > +					};
-> > +				};
-> > +			};
-> > +		};
-> > +	};
-> > +
-> > +	pcf2131: rtc@53 {
-> > +		compatible = "nxp,pcf2131";
-> > +		reg = <0x53>;
-> > +		interrupt-parent = <&pcal6524>;
-> > +		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
-> > +	};
-> > +};
-> > +
-> > +&lpuart1 { /* console */
-> > +	pinctrl-0 = <&pinctrl_uart1>;
-> > +	pinctrl-names = "default";
-> > +	status = "okay";
-> > +};
-> > +
-> > +&usbotg1 {
-> > +	adp-disable;
-> > +	disable-over-current;
-> > +	dr_mode = "otg";
-> > +	hnp-disable;
-> > +	srp-disable;
-> > +	usb-role-switch;
-> > +	samsung,picophy-dc-vol-level-adjust = <7>;
-> > +	samsung,picophy-pre-emp-curr-control = <3>;
-> > +	status = "okay";
-> > +
-> > +	port {
-> > +
-> 
-> This white line should probably be removed.
-> 
-> > +		usb1_drd_sw: endpoint {
-> > +			remote-endpoint = <&typec1_dr_sw>;
-> > +		};
-> > +	};
-> > +};
-> > +
-> > +&usbotg2 {
-> > +	disable-over-current;
-> > +	dr_mode = "host";
-> > +	samsung,picophy-dc-vol-level-adjust = <7>;
-> > +	samsung,picophy-pre-emp-curr-control = <3>;
-> > +	status = "okay";
-> > +};
-> > +
-> > +&usdhc1 {
-> > +	bus-width = <8>;
-> > +	non-removable;
-> > +	pinctrl-0 = <&pinctrl_usdhc1>;
-> > +	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
-> > +	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
-> > +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-> > +	vmmc-supply = <&buck4>;
-> > +	status = "okay";
-> > +};
-> > +
-> > +&usdhc2 {
-> > +	bus-width = <4>;
-> > +	cd-gpios = <&gpio3 00 GPIO_ACTIVE_LOW>;
-> > +	no-mmc;
-> > +	no-sdio;
-> > +	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
-> > +	pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
-> > +	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
-> > +	pinctrl-3 = <&pinctrl_usdhc2_sleep>, <&pinctrl_usdhc2_gpio_sleep>;
-> > +	pinctrl-names = "default", "state_100mhz", "state_200mhz", "sleep";
-> > +	vmmc-supply = <&reg_usdhc2_vmmc>;
-> > +	status = "okay";
-> > +};
-> > +
-> > +&wdog3 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&pinctrl_wdog>;
-> > +	fsl,ext-reset-output;
-> > +	status = "okay";
-> > +};
-> > +
-> > +&iomuxc {
-> > +
-> > +	pinctrl_eqos: eqosgrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_ENET1_MDC__ENET_QOS_MDC			0x57e
-> > +			MX93_PAD_ENET1_MDIO__ENET_QOS_MDIO			0x57e
-> > +			MX93_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0			0x57e
-> > +			MX93_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1			0x57e
-> > +			MX93_PAD_ENET1_RD2__ENET_QOS_RGMII_RD2			0x57e
-> > +			MX93_PAD_ENET1_RD3__ENET_QOS_RGMII_RD3			0x57e
-> > +			MX93_PAD_ENET1_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x58e
-> > +			MX93_PAD_ENET1_RX_CTL__ENET_QOS_RGMII_RX_CTL		0x57e
-> > +			MX93_PAD_ENET1_TD0__ENET_QOS_RGMII_TD0			0x57e
-> > +			MX93_PAD_ENET1_TD1__ENET_QOS_RGMII_TD1			0x57e
-> > +			MX93_PAD_ENET1_TD2__ENET_QOS_RGMII_TD2			0x57e
-> > +			MX93_PAD_ENET1_TD3__ENET_QOS_RGMII_TD3			0x57e
-> > +			MX93_PAD_ENET1_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x58e
-> > +			MX93_PAD_ENET1_TX_CTL__ENET_QOS_RGMII_TX_CTL		0x57e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_eqos_sleep: eqossleepgrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_ENET1_MDC__GPIO4_IO00			0x31e
-> > +			MX93_PAD_ENET1_MDIO__GPIO4_IO01			0x31e
-> > +			MX93_PAD_ENET1_RD0__GPIO4_IO10			0x31e
-> > +			MX93_PAD_ENET1_RD1__GPIO4_IO11			0x31e
-> > +			MX93_PAD_ENET1_RD2__GPIO4_IO12			0x31e
-> > +			MX93_PAD_ENET1_RD3__GPIO4_IO13			0x31e
-> > +			MX93_PAD_ENET1_RXC__GPIO4_IO09			0x31e
-> > +			MX93_PAD_ENET1_RX_CTL__GPIO4_IO08		0x31e
-> > +			MX93_PAD_ENET1_TD0__GPIO4_IO05			0x31e
-> > +			MX93_PAD_ENET1_TD1__GPIO4_IO04			0x31e
-> > +			MX93_PAD_ENET1_TD2__GPIO4_IO03			0x31e
-> > +			MX93_PAD_ENET1_TD3__GPIO4_IO02			0x31e
-> > +			MX93_PAD_ENET1_TXC__GPIO4_IO07			0x31e
-> > +			MX93_PAD_ENET1_TX_CTL__GPIO4_IO06		0x31e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_fec: fecgrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_ENET2_MDC__ENET1_MDC			0x57e
-> > +			MX93_PAD_ENET2_MDIO__ENET1_MDIO			0x57e
-> > +			MX93_PAD_ENET2_RD0__ENET1_RGMII_RD0		0x57e
-> > +			MX93_PAD_ENET2_RD1__ENET1_RGMII_RD1		0x57e
-> > +			MX93_PAD_ENET2_RD2__ENET1_RGMII_RD2		0x57e
-> > +			MX93_PAD_ENET2_RD3__ENET1_RGMII_RD3		0x57e
-> > +			MX93_PAD_ENET2_RXC__ENET1_RGMII_RXC		0x58e
-> > +			MX93_PAD_ENET2_RX_CTL__ENET1_RGMII_RX_CTL	0x57e
-> > +			MX93_PAD_ENET2_TD0__ENET1_RGMII_TD0		0x57e
-> > +			MX93_PAD_ENET2_TD1__ENET1_RGMII_TD1		0x57e
-> > +			MX93_PAD_ENET2_TD2__ENET1_RGMII_TD2		0x57e
-> > +			MX93_PAD_ENET2_TD3__ENET1_RGMII_TD3		0x57e
-> > +			MX93_PAD_ENET2_TXC__ENET1_RGMII_TXC		0x58e
-> > +			MX93_PAD_ENET2_TX_CTL__ENET1_RGMII_TX_CTL	0x57e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_fec_sleep: fecsleepgrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_ENET2_MDC__GPIO4_IO14			0x51e
-> > +			MX93_PAD_ENET2_MDIO__GPIO4_IO15			0x51e
-> > +			MX93_PAD_ENET2_RD0__GPIO4_IO24			0x51e
-> > +			MX93_PAD_ENET2_RD1__GPIO4_IO25			0x51e
-> > +			MX93_PAD_ENET2_RD2__GPIO4_IO26			0x51e
-> > +			MX93_PAD_ENET2_RD3__GPIO4_IO27			0x51e
-> > +			MX93_PAD_ENET2_RXC__GPIO4_IO23			0x51e
-> > +			MX93_PAD_ENET2_RX_CTL__GPIO4_IO22		0x51e
-> > +			MX93_PAD_ENET2_TD0__GPIO4_IO19			0x51e
-> > +			MX93_PAD_ENET2_TD1__GPIO4_IO18			0x51e
-> > +			MX93_PAD_ENET2_TD2__GPIO4_IO17			0x51e
-> > +			MX93_PAD_ENET2_TD3__GPIO4_IO16			0x51e
-> > +			MX93_PAD_ENET2_TXC__GPIO4_IO21			0x51e
-> > +			MX93_PAD_ENET2_TX_CTL__GPIO4_IO20		0x51e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_flexcan2: flexcan2grp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_GPIO_IO25__CAN2_TX			0x139e
-> > +			MX93_PAD_GPIO_IO27__CAN2_RX			0x139e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_lpi2c1: lpi2c1grp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_I2C1_SCL__LPI2C1_SCL			0x40000b9e
-> > +			MX93_PAD_I2C1_SDA__LPI2C1_SDA			0x40000b9e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_lpi2c2: lpi2c2grp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_I2C2_SCL__LPI2C2_SCL			0x40000b9e
-> > +			MX93_PAD_I2C2_SDA__LPI2C2_SDA			0x40000b9e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_lpi2c3: lpi2c3grp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_GPIO_IO28__LPI2C3_SDA			0x40000b9e
-> > +			MX93_PAD_GPIO_IO29__LPI2C3_SCL			0x40000b9e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_pcal6524: pcal6524grp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_CCM_CLKO2__GPIO3_IO27			0x31e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_reg_usdhc2_vmmc: regusdhc2vmmcgrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_SD2_RESET_B__GPIO3_IO07		0x31e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_uart1: uart1grp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_UART1_RXD__LPUART1_RX			0x31e
-> > +			MX93_PAD_UART1_TXD__LPUART1_TX			0x31e
-> > +		>;
-> > +	};
-> > +
-> > +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> > +	pinctrl_usdhc1: usdhc1grp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_SD1_CLK__USDHC1_CLK		0x1582
-> > +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x40001382
-> > +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x40001382
-> > +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x40001382
-> > +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x40001382
-> > +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x40001382
-> > +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x40001382
-> > +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x40001382
-> > +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x40001382
-> > +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x40001382
-> > +			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x1582
-> > +		>;
-> > +	};
-> > +
-> > +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> > +	pinctrl_usdhc1_100mhz: usdhc1-100mhzgrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_SD1_CLK__USDHC1_CLK		0x158e
-> > +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x4000138e
-> > +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x4000138e
-> > +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x4000138e
-> > +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x4000138e
-> > +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x4000138e
-> > +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x4000138e
-> > +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x4000138e
-> > +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x4000138e
-> > +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x4000138e
-> > +			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x158e
-> > +		>;
-> > +	};
-> > +
-> > +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> > +	pinctrl_usdhc1_200mhz: usdhc1-200mhzgrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_SD1_CLK__USDHC1_CLK		0x15fe
-> > +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x400013fe
-> > +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x400013fe
-> > +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x400013fe
-> > +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x400013fe
-> > +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x400013fe
-> > +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x400013fe
-> > +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x400013fe
-> > +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x400013fe
-> > +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x400013fe
-> > +			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x15fe
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_usdhc2_gpio: usdhc2gpiogrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_SD2_CD_B__GPIO3_IO00		0x31e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_usdhc2_gpio_sleep: usdhc2gpiosleepgrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_SD2_CD_B__GPIO3_IO00		0x51e
-> > +		>;
-> > +	};
-> > +
-> > +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> > +	pinctrl_usdhc2: usdhc2grp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_SD2_CLK__USDHC2_CLK		0x1582
-> > +			MX93_PAD_SD2_CMD__USDHC2_CMD		0x40001382
-> > +			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x40001382
-> > +			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x40001382
-> > +			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x40001382
-> > +			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x40001382
-> > +			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
-> > +		>;
-> > +	};
-> > +
-> > +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> > +	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_SD2_CLK__USDHC2_CLK		0x158e
-> > +			MX93_PAD_SD2_CMD__USDHC2_CMD		0x4000138e
-> > +			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x4000138e
-> > +			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x4000138e
-> > +			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x4000138e
-> > +			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x4000138e
-> > +			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
-> > +		>;
-> > +	};
-> > +
-> > +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> > +	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_SD2_CLK__USDHC2_CLK		0x15fe
-> > +			MX93_PAD_SD2_CMD__USDHC2_CMD		0x400013fe
-> > +			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x400013fe
-> > +			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x400013fe
-> > +			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x400013fe
-> > +			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x400013fe
-> > +			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_usdhc2_sleep: usdhc2-sleepgrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_SD2_CLK__GPIO3_IO01		0x51e
-> > +			MX93_PAD_SD2_CMD__GPIO3_IO02		0x51e
-> > +			MX93_PAD_SD2_DATA0__GPIO3_IO03		0x51e
-> > +			MX93_PAD_SD2_DATA1__GPIO3_IO04		0x51e
-> > +			MX93_PAD_SD2_DATA2__GPIO3_IO05		0x51e
-> > +			MX93_PAD_SD2_DATA3__GPIO3_IO06		0x51e
-> > +			MX93_PAD_SD2_VSELECT__GPIO3_IO19	0x51e
-> > +		>;
-> > +	};
-> > +
-> > +	pinctrl_wdog: wdoggrp {
-> > +		fsl,pins = <
-> > +			MX93_PAD_WDOG_ANY__WDOG1_WDOG_ANY	0x31e
-> > +		>;
-> > +	};
-> > +};
-> > 
-> > 
-> 
-> 
-> Just FYI: there is a open bug on v6.18-rc2 which prevent the Bluetooth chip to
-> work correctly. Just a heads up, as I wasted some _hours_ chasing it yesterday:
-> 
-> https://lore.kernel.org/all/6837167.ZASKD2KPVS@fedora.fritz.box/
-> 
-> 
-> Thank you!
-> 
-> Regards,
-> Francesco
-> 
-> 
-> 
-> 
+What I was thinking is that, currently except the readahead path, all
+swapin entry goes through the get_swap_device() helper, that helper
+also helps to mitigate swap entry corruption that may causes OOB or
+NULL deref. Although I think it's really not that helpful at all to
+mitigate page table corruption from the kernel side, but seems not a
+really bad idea to have.
+
+And the code is simpler this way, and seems more suitable for a stable
+& mainline fix. If we want  to add get_swap_device() in
+swap_vma_readahead(), we need to do that for every entry that doesn't
+match the target entry's swap device. The reference overhead is
+trivial compared to readhead and bio layer, and only non
+SYNCHRONOUS_IO devices use this helper (madvise is a special case, we
+may optimize that later). ZRAM may fallback to the readahead path but
+this fallback will be eliminated very soon in swap table p2.
+
+Another approach I thought about is that we might want readahead to
+stop when it sees entries from a different swap device. That swap
+device might be ZRAM where VMA readahead is not helpful.
+
+How do you think?
 
