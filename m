@@ -1,303 +1,97 @@
-Return-Path: <linux-kernel+bounces-894341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B467C49C89
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:39:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE6DC49C8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA82D188C33E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:39:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64BF0188C38E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8CB3019D8;
-	Mon, 10 Nov 2025 23:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TMHd2hFq"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71913043BE;
+	Mon, 10 Nov 2025 23:38:52 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6840821B196;
-	Mon, 10 Nov 2025 23:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE937242D78;
+	Mon, 10 Nov 2025 23:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762817931; cv=none; b=gki2rwmjgGUez8+9u7hhrgCyQRn09InCkVnuq9TR8DOnTtWlfHgOjEkMPpwJszZlpCQVZcHpJyqji7DwdIxc3hk/ex9i9FKhG4F9cvAHoIJkt49Zx6wl+zNxtkNY8OUO5a1MoTm3a5hEiBtPyOwNcI2gkH4BQvLd8/locAtPVEA=
+	t=1762817932; cv=none; b=jicLPxeaOjzJYSOhMfMyPxpf/Aq26fHVnRPnkhilbvEyd2V6BR2s7n/oQTdYZ+FnGlgi4fqKjlL4aKG+4yVTcD7X2YXGjHH3GuQld7IiSoXZ8oo0KkV0ncJyqLyySneAF5+QoaRiZD94WCuu0mYHdWHdikhLi/qxEMMO5Gdyefg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762817931; c=relaxed/simple;
-	bh=sR43zrzrdmlvoBwZ64SsCIgT5y5AVagDKmg9rPhaoxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Z2IoC4s+PIug6fAQcpn/q82ZZ3Rw9rkw8f2MEX3J+lSlWEeZB5XIqXC6sQN/bXSVfToiYY+k1lNNx27xlVHo5TDYbz8iPgCd+6dtMURJf/v5r3l+9xGQWEFbukrsSKbb9yQ8quEc4u4s93GWXfPjkuuU9iVGGLM1+PJbwF2bryE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TMHd2hFq; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762817918;
-	bh=9+n8g7Oe9NC8CoA1EbspLz1bfjTzk0COygqpR6OrGWs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TMHd2hFqVdpC/DVSfVnmat3/dUC/bZpxo/YLMSqzt8eDSwy8vSXtk21YTg1EtQfPR
-	 Bk4jMUcDeWFAEoGfaJZ44scMuTI+g3KJzqfFwawOg+RLiJLwK2HzP2S6s6VC00d0G6
-	 quRPFMV981VFgGjyGLlIPIFc9zLDBcYLbVhEV8Y4hEKPZNzcRYFmmYJwqKvGRKnCJz
-	 F/ci82lOtwUXf4Ph9EL4DABe+Dzk/qTDjJDwgONeFv6XOkFvJkJQmcNM2VMQek7oV8
-	 7KPH6nBY1k0GvOvJulpJcaU3WZasvc/+JO+tLlgoiyg95ew9E7Biq7GHUsya8+ngGA
-	 lih91MUZpr1dg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d55hZ4kggz4wBD;
-	Tue, 11 Nov 2025 10:38:38 +1100 (AEDT)
-Date: Tue, 11 Nov 2025 10:38:37 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>, Anna Schumaker
- <anna@kernel.org>, Trond Myklebust <trondmy@gmail.com>
-Cc: Anna Schumaker <anna.schumaker@oracle.com>, Mike Snitzer
- <snitzer@kernel.org>, NFS Mailing List <linux-nfs@vger.kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the vfs-brauner tree with the nfs-anna
- tree
-Message-ID: <20251111103837.0ecdf26d@canb.auug.org.au>
+	s=arc-20240116; t=1762817932; c=relaxed/simple;
+	bh=TSiKRn8KXstGb+AC1BS5OZza7As7Vr2R+Z54KsY7zj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jVAO6KadsE7gG/Xwn2DT9QLfNHbyXD3rAmupCbzjwZcemdqVNk3v2r4Ksa2irXhSqI/rspU/Iz6gobR2kE0boRCCWGKD7D7THnFlr/wAQ5E9PQy7poP1yl4YFD1y3VFPSkBy8rhsf3C6Cg7PfbtMB2php3tSctn0GweDIGZm+jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 49B441DFFD0;
+	Mon, 10 Nov 2025 23:38:48 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 1D41A6000A;
+	Mon, 10 Nov 2025 23:38:46 +0000 (UTC)
+Date: Mon, 10 Nov 2025 18:38:54 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yongliang Gao <leonylgao@gmail.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Yongliang
+ Gao <leonylgao@tencent.com>, Huang Cun <cunhuang@tencent.com>
+Subject: Re: [PATCH] trace/pid_list: optimize pid_list->lock contention
+Message-ID: <20251110183854.48b33b50@gandalf.local.home>
+In-Reply-To: <20251015114952.4014352-1-leonylgao@gmail.com>
+References: <20251015114952.4014352-1-leonylgao@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TDV1KL+3TQeTorugdiyX=w5";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/TDV1KL+3TQeTorugdiyX=w5
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: jaoz51kcyaca59m77edasd36mqwscmrj
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 1D41A6000A
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+xXfvQ1MzHszbnHM1kX5j0D6qEpKU6Vsk=
+X-HE-Tag: 1762817926-346271
+X-HE-Meta: U2FsdGVkX1+cz/SfyESL2m0HHcS8jBCFNg4dfoe62FGdyQKUUTk1w/Z8tAlarMUuFDOO2427OxKoAjd2RMirNZpXpoJCzNH0P2g7lLyhIxZB5I4E6l22nBAVCWRAB1Ok8C/FljCPHdzqUafoPRiIH5pppa4cmPTzhypaVCanvQhssBrTt4tHq2Wsrwn0Hk7yJvYlJO43w1UPAlEzPHRp7uoZu3Z42J+9hIgae4KCAn/TI57jLWWhD05WZWBf0/HLtudSqIYxPP2atPJYRVU3hNqqXwx3RCbO8wFmhWd6mWSPAWU04arQQY4Z2+OixD7SdF9rRg99Ply9vdFltE98usw7+KC/lkz2
 
-Hi all,
+On Wed, 15 Oct 2025 19:49:52 +0800
+Yongliang Gao <leonylgao@gmail.com> wrote:
 
-Today's linux-next merge of the vfs-brauner tree got a conflict in:
+> diff --git a/kernel/trace/pid_list.c b/kernel/trace/pid_list.c
+> index 090bb5ea4a19..62082a4f60db 100644
+> --- a/kernel/trace/pid_list.c
+> +++ b/kernel/trace/pid_list.c
+> @@ -138,14 +138,14 @@ bool trace_pid_list_is_set(struct trace_pid_list *pid_list, unsigned int pid)
+>  	if (pid_split(pid, &upper1, &upper2, &lower) < 0)
+>  		return false;
+>  
+> -	raw_spin_lock_irqsave(&pid_list->lock, flags);
+> +	read_lock_irqsave(&pid_list->lock, flags);
+>  	upper_chunk = pid_list->upper[upper1];
+>  	if (upper_chunk) {
+>  		lower_chunk = upper_chunk->data[upper2];
+>  		if (lower_chunk)
+>  			ret = test_bit(lower, lower_chunk->data);
+>  	}
+> -	raw_spin_unlock_irqrestore(&pid_list->lock, flags);
+> +	read_unlock_irqrestore(&pid_list->lock, flags);
+>  
+>  	return ret;
+>  }
 
-  fs/nfs/localio.c
+Unfortunately you cannot do this because this is called while holding the
+task pi_lock and rq locks. In PREEMPT_RT() the read/write_lock_* turn into
+mutexes.
 
-between commits:
+Sebastian, is there any equivalent of raw_read/write_locks() that can be
+used?
 
-  51a491f2708d ("nfs/localio: remove unecessary ENOTBLK handling in DIO WRI=
-TE support")
-  f2060bdc21d7 ("nfs/localio: add refcounting for each iocb IO associated w=
-ith NFS pgio header")
-  d0497dd27452 ("nfs/localio: backfill missing partial read support for mis=
-aligned DIO")
-  6a218b9c3183 ("nfs/localio: do not issue misaligned DIO out-of-order")
-
-from the nfs-anna tree and commit:
-
-  94afb627dfc2 ("nfs: use credential guards in nfs_local_call_read()")
-
-from the vfs-brauner tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/nfs/localio.c
-index 656976b4f42c,0c89a9d1e089..000000000000
---- a/fs/nfs/localio.c
-+++ b/fs/nfs/localio.c
-@@@ -620,37 -595,30 +620,34 @@@ static void nfs_local_call_read(struct=20
-  	struct nfs_local_kiocb *iocb =3D
-  		container_of(work, struct nfs_local_kiocb, work);
-  	struct file *filp =3D iocb->kiocb.ki_filp;
-- 	const struct cred *save_cred;
- +	bool force_done =3D false;
-  	ssize_t status;
- +	int n_iters;
- =20
-- 	save_cred =3D override_creds(filp->f_cred);
-+ 	scoped_with_creds(filp->f_cred) {
- -		for (int i =3D 0; i < iocb->n_iters ; i++) {
-++		n_iters =3D atomic_read(&iocb->n_iters);
-++		for (int i =3D 0; i < n_iters ; i++) {
-+ 			if (iocb->iter_is_dio_aligned[i]) {
-+ 				iocb->kiocb.ki_flags |=3D IOCB_DIRECT;
- -				iocb->kiocb.ki_complete =3D nfs_local_read_aio_complete;
- -				iocb->aio_complete_work =3D nfs_local_read_aio_complete_work;
- -			}
-++				/* Only use AIO completion if DIO-aligned segment is last */
-++				if (i =3D=3D iocb->end_iter_index) {
-++					iocb->kiocb.ki_complete =3D nfs_local_read_aio_complete;
-++					iocb->aio_complete_work =3D nfs_local_read_aio_complete_work;
-++				}
-++			} else
-++				iocb->kiocb.ki_flags &=3D ~IOCB_DIRECT;
- =20
-- 	n_iters =3D atomic_read(&iocb->n_iters);
-- 	for (int i =3D 0; i < n_iters ; i++) {
-- 		if (iocb->iter_is_dio_aligned[i]) {
-- 			iocb->kiocb.ki_flags |=3D IOCB_DIRECT;
-- 			/* Only use AIO completion if DIO-aligned segment is last */
-- 			if (i =3D=3D iocb->end_iter_index) {
-- 				iocb->kiocb.ki_complete =3D nfs_local_read_aio_complete;
-- 				iocb->aio_complete_work =3D nfs_local_read_aio_complete_work;
-- 			}
-- 		} else
-- 			iocb->kiocb.ki_flags &=3D ~IOCB_DIRECT;
--=20
-- 		status =3D filp->f_op->read_iter(&iocb->kiocb, &iocb->iters[i]);
-- 		if (status !=3D -EIOCBQUEUED) {
-- 			if (unlikely(status >=3D 0 && status < iocb->iters[i].count))
-- 				force_done =3D true; /* Partial read */
-- 			if (nfs_local_pgio_done(iocb, status, force_done)) {
-- 				nfs_local_read_iocb_done(iocb);
-- 				break;
- -			iocb->kiocb.ki_pos =3D iocb->offset[i];
-+ 			status =3D filp->f_op->read_iter(&iocb->kiocb, &iocb->iters[i]);
-+ 			if (status !=3D -EIOCBQUEUED) {
- -				nfs_local_pgio_done(iocb->hdr, status);
- -				if (iocb->hdr->task.tk_status)
-++				if (unlikely(status >=3D 0 && status < iocb->iters[i].count))
-++					force_done =3D true; /* Partial read */
-++				if (nfs_local_pgio_done(iocb, status, force_done)) {
-++					nfs_local_read_iocb_done(iocb);
-+ 					break;
-++				}
-  			}
-  		}
-  	}
---
-- 	revert_creds(save_cred);
- -	if (status !=3D -EIOCBQUEUED) {
- -		nfs_local_read_done(iocb, status);
- -		nfs_local_pgio_release(iocb);
- -	}
-  }
- =20
-  static int
-@@@ -820,47 -781,78 +817,55 @@@ static void nfs_local_write_aio_complet
-  	nfs_local_pgio_aio_complete(iocb); /* Calls nfs_local_write_aio_complete=
-_work */
-  }
- =20
-- static void nfs_local_call_write(struct work_struct *work)
-+ static ssize_t do_nfs_local_call_write(struct nfs_local_kiocb *iocb,
-+ 				       struct file *filp)
-  {
-- 	struct nfs_local_kiocb *iocb =3D
-- 		container_of(work, struct nfs_local_kiocb, work);
-- 	struct file *filp =3D iocb->kiocb.ki_filp;
-- 	unsigned long old_flags =3D current->flags;
-- 	const struct cred *save_cred;
- +	bool force_done =3D false;
-  	ssize_t status;
- +	int n_iters;
- =20
-- 	current->flags |=3D PF_LOCAL_THROTTLE | PF_MEMALLOC_NOIO;
-- 	save_cred =3D override_creds(filp->f_cred);
--=20
-  	file_start_write(filp);
- -	for (int i =3D 0; i < iocb->n_iters ; i++) {
- +	n_iters =3D atomic_read(&iocb->n_iters);
- +	for (int i =3D 0; i < n_iters ; i++) {
-  		if (iocb->iter_is_dio_aligned[i]) {
-  			iocb->kiocb.ki_flags |=3D IOCB_DIRECT;
- -			iocb->kiocb.ki_complete =3D nfs_local_write_aio_complete;
- -			iocb->aio_complete_work =3D nfs_local_write_aio_complete_work;
- -		}
- -retry:
- -		iocb->kiocb.ki_pos =3D iocb->offset[i];
- +			/* Only use AIO completion if DIO-aligned segment is last */
- +			if (i =3D=3D iocb->end_iter_index) {
- +				iocb->kiocb.ki_complete =3D nfs_local_write_aio_complete;
- +				iocb->aio_complete_work =3D nfs_local_write_aio_complete_work;
- +			}
- +		} else
- +			iocb->kiocb.ki_flags &=3D ~IOCB_DIRECT;
- +
-  		status =3D filp->f_op->write_iter(&iocb->kiocb, &iocb->iters[i]);
-  		if (status !=3D -EIOCBQUEUED) {
- -			if (unlikely(status >=3D 0 && status < iocb->iters[i].count)) {
- -				/* partial write */
- -				if (i =3D=3D iocb->end_iter_index) {
- -					/* Must not account partial end, otherwise, due
- -					 * to end being issued before middle: the partial
- -					 * write accounting in nfs_local_write_done()
- -					 * would incorrectly advance hdr->args.offset
- -					 */
- -					status =3D 0;
- -				} else {
- -					/* Partial write at start or buffered middle,
- -					 * exit early.
- -					 */
- -					nfs_local_pgio_done(iocb->hdr, status);
- -					break;
- -				}
- -			} else if (unlikely(status =3D=3D -ENOTBLK &&
- -					    (iocb->kiocb.ki_flags & IOCB_DIRECT))) {
- -				/* VFS will return -ENOTBLK if DIO WRITE fails to
- -				 * invalidate the page cache. Retry using buffered IO.
- -				 */
- -				iocb->kiocb.ki_flags &=3D ~IOCB_DIRECT;
- -				iocb->kiocb.ki_complete =3D NULL;
- -				iocb->aio_complete_work =3D NULL;
- -				goto retry;
- -			}
- -			nfs_local_pgio_done(iocb->hdr, status);
- -			if (iocb->hdr->task.tk_status)
- +			if (unlikely(status >=3D 0 && status < iocb->iters[i].count))
- +				force_done =3D true; /* Partial write */
- +			if (nfs_local_pgio_done(iocb, status, force_done)) {
- +				nfs_local_write_iocb_done(iocb);
-  				break;
- +			}
-  		}
-  	}
-  	file_end_write(filp);
- =20
-- 	revert_creds(save_cred);
-+ 	return status;
-+ }
-+=20
-+ static void nfs_local_call_write(struct work_struct *work)
-+ {
-+ 	struct nfs_local_kiocb *iocb =3D
-+ 		container_of(work, struct nfs_local_kiocb, work);
-+ 	struct file *filp =3D iocb->kiocb.ki_filp;
-+ 	unsigned long old_flags =3D current->flags;
-+ 	ssize_t status;
-+=20
-+ 	current->flags |=3D PF_LOCAL_THROTTLE | PF_MEMALLOC_NOIO;
-+=20
-+ 	scoped_with_creds(filp->f_cred)
-+ 		status =3D do_nfs_local_call_write(iocb, filp);
-+=20
-  	current->flags =3D old_flags;
- -
- -	if (status !=3D -EIOCBQUEUED) {
- -		nfs_local_write_done(iocb, status);
- -		nfs_local_vfs_getattr(iocb);
- -		nfs_local_pgio_release(iocb);
- -	}
-  }
- =20
-  static int
-
---Sig_/TDV1KL+3TQeTorugdiyX=w5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkSd30ACgkQAVBC80lX
-0GwQ8Qf+JNBhJW3HHY9s99XWPThbcmK/3t6eMDCUnS9dUKhIyD0jTAkoe2ugAX+o
-EEaAycevgrLcaUDWjXFN8kak3CARIfgZbLUDmoH5pL9oL5KfeQxSP6RO+Pb9C32h
-srguHNv0E8KJglMpFXxwtFJN9npR2Ce+FudgfdouseCFKxLP26VLd/EpsDDaiXbu
-y9shhSUD8Fyq3RtUbWp7wr5gF+mQz/+7LTlpp7LW/YFs9depCeMg9I0t9dErzUue
-fJz9VB9wACvrIcBplZMbGxpy3yf9u4ap0tz6jDa6jqK3dQTPHE1ok6lgOGnE5Aw6
-gtvGRLgzEeqN5tlEtQJmgGKSHrRTaw==
-=4z7x
------END PGP SIGNATURE-----
-
---Sig_/TDV1KL+3TQeTorugdiyX=w5--
+-- Steve
 
