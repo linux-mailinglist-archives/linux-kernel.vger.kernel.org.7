@@ -1,90 +1,111 @@
-Return-Path: <linux-kernel+bounces-892856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84FC7C45F4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:36:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12249C45F72
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:37:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41E8F1883230
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 946B63B1FF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED558301474;
-	Mon, 10 Nov 2025 10:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgZvgEp2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516572FFDFA;
-	Mon, 10 Nov 2025 10:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C4F2FF17D;
+	Mon, 10 Nov 2025 10:37:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918AF3064A3;
+	Mon, 10 Nov 2025 10:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762770965; cv=none; b=OVatbVesSoINv/ZiPiKjwQvt1cyPYAErF4He9YYIB00tbOYK+WWvYU6jDsaRmcW6Atqgde68s62+W8OoHm4hUoYpbggLKw/6OyK9NRMxQca0eh/d2SCIG26KsKpelXClTXp6onzR+HVkLGov6jN4jKZWp4GbUcr1A14IZOfn+G0=
+	t=1762771043; cv=none; b=Ms7uic+kuz+aUb8Qhq4IQ/bF2eCbLBzrkhefgzOuHloyHBw6GQGHYYhvJrOR9mVUBq31oeeMbk/8FEXr+5mGjUyuWO+wspNUPgMKzZClhXYrYhAUU13buUQombmDFmYzvOYJmyRY+GKyeBoCqSe/zM+6BTpiqx+1UOK7GNdCS5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762770965; c=relaxed/simple;
-	bh=oVvMsotVgJ8fLnT1PNq+SF5qQAbCTphuBRN/mJCO1Xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iTLgusI7yBzJoajE7JW83jSksJnKNpOG+4qov/8LJOl5+QlAM8lDyTlyB/haoFFengF9LQ6STh8Ebas/OUf6Q3xm/vAm12gXyqG8qARy3/iHN0IgXz2rwSItM8jH3DfRVnnm0PZq9xdk3BsNAPvsMMIn5xfxkzr4mjT411XhSXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgZvgEp2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2362C4CEFB;
-	Mon, 10 Nov 2025 10:36:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762770963;
-	bh=oVvMsotVgJ8fLnT1PNq+SF5qQAbCTphuBRN/mJCO1Xc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SgZvgEp2tbvY2NtbGlGqmOyuI5ghaENGdDQU8f5Uwcf7fg6BUqSdNH/MeXdY1t1lc
-	 l2HzMa3I6Y+2dMsyDRn5iO+++XakPlamh8a4FpnIDapgSRQ8pSWgfgiSHup9IE2wRv
-	 hNOb79iHFo/wMmB5NpVohZFjsQ29f5vMSwE6Vg5jImqtPxe80hfuF16+0V0P+oXBEW
-	 ngDlpLnYZd6P5RiVSP+PuKxtTUYIhoxu5Z6myuPNar7LSedJ5Xm1WhMCe0woZpWxP9
-	 N3Eo02s+iW+VQC/jZCo+Kk2wAvb+MklzED8i+87OUIGFjvnHXxBsNymS4OFpHimfmW
-	 RRhk3vwy3uvZg==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vIPFj-0000000012s-3UJA;
-	Mon, 10 Nov 2025 11:36:03 +0100
-Date: Mon, 10 Nov 2025 11:36:03 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/11] gpib: Add gpib Kconfig option
-Message-ID: <aRHAE_zC7ldGxUzc@hovoldconsulting.com>
-References: <20251110102507.1445-1-dpenkler@gmail.com>
- <20251110102507.1445-11-dpenkler@gmail.com>
+	s=arc-20240116; t=1762771043; c=relaxed/simple;
+	bh=wwdS1VB3vgYSOM1P254K506c5LfSj/vi1RAI9w6ktio=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E6QjOFoGK5P5mnHc3pCVFeIVNdMktznrVh1SGD+bK1GwtHWLpePYreEh3+6z9quc9WP240SRKkC044/3ohImW2DWgYsh88M/V2zoqoYKzyfYHKGA6isgsJ1eTQ5fZTj562d9TWrB8GAp8q+OtaUfcTGAddaQNug9b/HHXKMvSqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CEEFE497;
+	Mon, 10 Nov 2025 02:37:12 -0800 (PST)
+Received: from [10.57.39.147] (unknown [10.57.39.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E4913F66E;
+	Mon, 10 Nov 2025 02:37:12 -0800 (PST)
+Message-ID: <b21fb5b9-2e7f-4cbc-ae62-015b1317a9bd@arm.com>
+Date: Mon, 10 Nov 2025 11:36:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110102507.1445-11-dpenkler@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/12] x86/xen: simplify flush_lazy_mmu()
+To: Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
+ <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-3-kevin.brodsky@arm.com>
+ <b165098a-8164-4664-aaaf-1e8c4391d797@arm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <b165098a-8164-4664-aaaf-1e8c4391d797@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 10, 2025 at 11:25:06AM +0100, Dave Penkler wrote:
-> As part of destaging the gpib drivers we need to add the sourcing
-> of the gpib Kconfig file to the main drivers Kconfig file. It has
-> been added just after the Kconfig for the comedi drivers as they
-> are most related to the gpib drivers.
-> 
-> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
-> ---
->  drivers/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/Kconfig b/drivers/Kconfig
-> index 4915a63866b0..01602581b880 100644
-> --- a/drivers/Kconfig
-> +++ b/drivers/Kconfig
-> @@ -161,6 +161,8 @@ source "drivers/greybus/Kconfig"
->  
->  source "drivers/comedi/Kconfig"
->  
-> +source "drivers/gpib/Kconfig"
+On 07/11/2025 12:31, Ryan Roberts wrote:
+> On 29/10/2025 10:08, Kevin Brodsky wrote:
+>> arch_flush_lazy_mmu_mode() is called when outstanding batched
+>> pgtable operations must be completed immediately. There should
+>> however be no need to leave and re-enter lazy MMU completely. The
+>> only part of that sequence that we really need is xen_mc_flush();
+>> call it directly.
+>>
+>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> This looks functionally equivalent to me, so:
+>
+> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+>
+> But I don't think this tidy up is strictly necessary for your series to work?
+> (perhaps I'll change my mind on that as I go through it).
 
-And fold this into the commit adding the Kconfig.
+I initially thought it might be, but in the end I think you're right -
+it should still work fine without this patch.
 
-Joha
+Still, I'd rather avoid unnecessary calls to arch_enter() and
+arch_leave() as it makes it harder to reason about what is called where.
+Namely, keeping them here means that a nested call to
+lazy_mmu_mode_disable() would cause arch_leave() then arch_enter() to be
+called - rather unexpected.
+
+The only calls to arch_enter() and arch_leave() that are left after this
+series are the ones in <linux/pgtable.h> and the Xen context-switching
+logic (the one case where calling arch hooks directly is justified, see
+discussion on v3 [1]).
+
+- Kevin
+
+[1]
+https://lore.kernel.org/all/390e41ae-4b66-40c1-935f-7a1794ba0b71@arm.com/
 
