@@ -1,264 +1,230 @@
-Return-Path: <linux-kernel+bounces-893821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32E4C48702
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:56:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757A4C48711
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:58:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C0FF4E880B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16E073B7E13
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710F12E6CAF;
-	Mon, 10 Nov 2025 17:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977F92E6CD5;
+	Mon, 10 Nov 2025 17:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FaKRlyES"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZvrIVtsu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4B52D8393
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762797364; cv=none; b=NToHqvgDH2NEwjVEgLT9UdUYml9FQcYzY+AKh/MDOhYjwiWONFtpPkmEVZ/7uOeNgxW1BO+h1jkcg5bAM/KV250Xt9FxUx5n4YuhGbbaeliaDnIlojNkGiP1m0gnlCKC0PClryN1Fnx85vWDx5wPiDoCp4SJ2PeROUAL7ySLEAU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762797364; c=relaxed/simple;
-	bh=AZPkb/7jkVQ65GMJXdoTdsWp0WFNQv9BH8xC3IUHJMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/H6D7zksMdwlt176owgMakYJEmhp6Y003RuhDaE/GEfuicjRvFXZ0Odz6C+S78d77dynxiY4hCPaKB1nZY4ChL+5ktJyP+2Jwy5HLg/2lUtVYR8fRmdaaiVD8pWxcMbQ/lRsBLkxzChVuIWzesoLxkNXRUlF+ctQkUPc7sfxW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FaKRlyES; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b72db05e50fso516020866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:56:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762797360; x=1763402160; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=87oo0NjzU5gVBElPXv51xM5CWxLbNXP1OAbLCeiVmXA=;
-        b=FaKRlyESFSwpKnTraYV0au2JMnJQTMw0NQcxQvWDvfPLqb+BOdZr3g8ksDla8J24aM
-         lhqViLSL4fOoQ0dMzOw12x5GQ5Qt9waHz+PnvdSCxqD9KcgqzirAhaV7EH2vuh1mBHNL
-         nijPUMiOXb08WSY9HSE4ip8FmH1YmVD0eEfZyjSnMtEGG09G2/OruTXLVRNE3Dz5x93A
-         kpl43n7l5SDzhdkbdEWBxHt0zXvnaj3N/3V9r/v37HcBquAKdoLdwSwlUbVbgz1CveTI
-         ZVYjq9pX1AYTkPbH8bDcFIZD6dbw4YYVYrrfdPzDo1DFIovbnMbVQIU43WYXxAJ9blyN
-         SRaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762797360; x=1763402160;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=87oo0NjzU5gVBElPXv51xM5CWxLbNXP1OAbLCeiVmXA=;
-        b=cK+hnF1hm79OmkzLWvEYq33uOtlwnzrnCKmlWgipiifvAXmcbv2E869g4yXCYf1gfG
-         uUrM5hsSYYFDLPgzOolT161GzETUlNMU5Vho1Uwru6l5OqML2kMfLvLeIAPh9KRu3z8Q
-         OMAg7OZ3CPsaAi5D1qwCsvFWlPh30MQhh+U4UWuubPDiGIoifiUQ2gV9nhojnJUql3DF
-         ZtpTR5BbzPF1/Rgb/1W8yBpyOyFPNkoZddIPO/ZUR9PVRQB4NgGdyDP2/YCIu8JOmCVZ
-         GZiNbjW7ct116Y8GCSUiiuwRQdMulFnnvzCL88NAWuNkY+0/dyoAbKjsS3Gk8TcviW0Y
-         5u0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVgkBPk7Uh7KszYyjqOMkR3BCo/YiDw+3oSyShnoVgnE0/H2/KI8JDDxp+90kYhCwYTe8MCYS3Ymt9JKp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvtv+IRkfYiBXuXyzeaY6DTOesv0ypN7gQ0ES5GHtVlZN7R6ve
-	8mGRbregvEcM4SVGW1MPUWygQhDOamYIiFy1XjZrH8V/zI2OamvXis5j0K8SLt1uKjA=
-X-Gm-Gg: ASbGncsfPM53Z4yG7hbuF0JyXVi8Xgt71+0TFN/8q0bwpd2Z21/Rqtq64QJsF2xz47M
-	cRWNvx49gsonEwDFHLpeHI8peS/tC3xtb5dClHBYAgmTUKdz0/JG34gmwqMfN6X/lxSo2ppmFXx
-	kJUjiJS7zitON6+28nL6RG3ke8Zpbnvh+7Wl3gEQZXDNf/F0weKE3gMP73dnWFW23jUdMILjR3/
-	pGkdCitHRxjI1LrjO+v8khU3rtsaeAJbzAGBm0khGfY8bxJ/R+64cDyAsft1Yb/H7WS/N06jKPN
-	A70wfgQX7DbHY3t+a2psvoMXAarqhm559p1yCRHyQQDLqtcI+S7/CO+LB+gFWBDZ3cKfHV8Ho11
-	k5rxk8WBCqLO3P6Q7mYT0iHfWsecF5tgdX8IxW9Z7a+cg3yyKGClbRt1Rm0sA7OBvTyAJ0mDnXH
-	j5lUOMLHLdEf8SHw==
-X-Google-Smtp-Source: AGHT+IEOHSm+DTRNh96tdtDTv4rBUx6JMJ7FM0MMopRhHwQGm3OHMwuo1WzwWCW/YMe+fw14jqJSnw==
-X-Received: by 2002:a17:907:2d91:b0:b72:9961:dc04 with SMTP id a640c23a62f3a-b72e0377a59mr954305166b.28.1762797360037;
-        Mon, 10 Nov 2025 09:56:00 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d43bsm1189365066b.45.2025.11.10.09.55.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 09:55:59 -0800 (PST)
-Date: Mon, 10 Nov 2025 18:55:57 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Lance Yang <ioworker0@gmail.com>, paulmck@kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] hung_task: Add hung_task_sys_info sysctl to dump sys
- info on task-hung
-Message-ID: <aRInLdgKCzaVeyG0@pathway.suse.cz>
-References: <20251106023032.25875-1-feng.tang@linux.alibaba.com>
- <20251106023032.25875-3-feng.tang@linux.alibaba.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC132D8393;
+	Mon, 10 Nov 2025 17:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762797394; cv=fail; b=GBIEfoMZFd9ot50AZ3M6A9k3juorPZjsp1J8/W3LGvDkwEibNrPFvWnc83i8Opq0VDpPUX3tK3mGQ/JDzXFnw/COS3JuYMco9NrKGzbn5PzgxkZe5i9j+6xbT1OK32bVcospTJNt+ewrm/PwoeK8S9cvIWabvffWL/oTTxB6dCw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762797394; c=relaxed/simple;
+	bh=bsb6FgEY2wp2mq25+wKB3uoQyCeZFYYGOQf63uoxhnw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=f4Uni+9PVFGDaaV1jqaIwYeQaxpA6cqgAWqa94hPgoexMuPMc9wp1I6QBfPHP+Snu/JFqiIKWqzuwL2a6YZNIRVRDd26JepoxGlgn87gLc2Oruovl+RogLDjZX+iWtzSiwnrDffKQOTMMUqd5fplnC7pD2zSQ3UEv6qmN1RjRrk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZvrIVtsu; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762797394; x=1794333394;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=bsb6FgEY2wp2mq25+wKB3uoQyCeZFYYGOQf63uoxhnw=;
+  b=ZvrIVtsuudc1Z3kFFOwDELmyG/3ugxeCIcbisVpF4xy1adoWDDTVz3kf
+   OOr6jDlTMymd1rMcJlDNatpkE9w/CTmPLTzHJaYF+hR1kWdMMXq8BOcOD
+   PtKzUoRo23JlfoA8SzvJrd18CmYJFnC3p2YoCfKxhbjz9RmZASMDMYDHm
+   kRlV+Rt5aBvtONmbTL3D/xZhs29757iJnkaMQdqWE4XEodPFVCV7+PUh9
+   UmXPVgfsfwE1YbbyZlXAkc6tLQGsK+6Tb+AsEo2i8F5GZD/IDWo8c5pwQ
+   nW7ue530fYOrw3EYpfde3vHYqaLJmhnrcC0Qju/BdebsMZFLk1WQjO5bP
+   w==;
+X-CSE-ConnectionGUID: VtoBhm/eTee3yeoNQXGhQw==
+X-CSE-MsgGUID: DZiK7yPoTYGaPpPPNP5zSA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64781489"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64781489"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 09:56:33 -0800
+X-CSE-ConnectionGUID: 8BXa5mQaQ++kiyMOn+Y7qQ==
+X-CSE-MsgGUID: Xcau19b3T168y6Dp0evBeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
+   d="scan'208";a="212120454"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 09:56:32 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 10 Nov 2025 09:56:31 -0800
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 10 Nov 2025 09:56:31 -0800
+Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.68) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 10 Nov 2025 09:56:31 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bdwCTtVYwFES0bJAt/QrPJh7R5RL1D4Jh2GyjiI2A4YMC4AhB7NcjkIrNeOdmj+2wid8jDqXXYqJ3n8I+siJJ3jkCAvqIg7hjZWTFL7BVbpKr0feMA69B70MsAAc2oSrK2543oGg/JWIK+iMHAEXR2Su1NWbd+eA/iA5EZwOazyW3iu7spIau50pc6P/TdHpVG4x3N/ZbUfAkT9CQsxPeDybpKJ+HZ/GF0blSsdzmRABEKke1sCcXv1BaOBiSTeq3Kk4zDk2uOM/bqyMQT+YVwJjnK6nzdzkB/VjBxDUa6+s2KX34+nhz7/+VwW7YIvbq3oe8MQrV2Ktv9+IxlzayA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bsb6FgEY2wp2mq25+wKB3uoQyCeZFYYGOQf63uoxhnw=;
+ b=awZGI7Mi/MDtpZM4moyG82RqnkHmFigOjxhjeeb0o8Ysxo2k9K7wT+Cp07hY8Z05vHJc9r3FDUuL8IKRI8WpDtOK4KkvqwEhFxLcVoJ32D8a7yOqTy1sVqmldah1RNKBgxBCc682uvq3qVJ/S4/0b4LsjevvaTJdrNL2Ii0yV900U2ATkR9Q8TKI0eiuswx8IxbhvvL+mLAfUdxr+cdB1ZynndLTaWIpt0MzAXV5s+MtxDeBIU55PMXi6GYuBDKXk/vFELnszdlrR6x20ikciv6MZ/aTxTmjkYCC/q8BNSMmpY6bp+pjVkE4CcSfZtEqJF+qms1JEBaoff7y3VlNcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by SA2PR11MB5179.namprd11.prod.outlook.com (2603:10b6:806:112::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 17:56:30 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9298.010; Mon, 10 Nov 2025
+ 17:56:29 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>
+CC: Christian Brauner <brauner@kernel.org>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Vlastimil Babka <vbabka@suse.cz>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"workflows@vger.kernel.org" <workflows@vger.kernel.org>,
+	"ksummit@lists.linux.dev" <ksummit@lists.linux.dev>, Steven Rostedt
+	<rostedt@goodmis.org>, "Williams, Dan J" <dan.j.williams@intel.com>, Theodore
+ Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>, "Jonathan Corbet"
+	<corbet@lwn.net>, Kees Cook <kees@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, Shuah Khan
+	<shuah@kernel.org>
+Subject: RE: [PATCH] [v2] Documentation: Provide guidelines for tool-generated
+ content
+Thread-Topic: [PATCH] [v2] Documentation: Provide guidelines for
+ tool-generated content
+Thread-Index: AQHcUhW8eCcx7eGkpEu2OqRw7hpCqLTrnE0AgACNcoCAAAVGAIAAAlNA
+Date: Mon, 10 Nov 2025 17:56:29 +0000
+Message-ID: <SJ1PR11MB6083291B22FFEC4F38999D31FCCEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
+ <653b4187-ec4f-4f5d-ae76-d37f46070cb4@suse.cz>
+ <20251110-weiht-etablieren-39e7b63ef76d@brauner>
+ <20251110172507.GA21641@pendragon.ideasonboard.com>
+ <CAHk-=wgEPve=BO=SOmgEOd4kv76bSbm0jWFzRzcs4Y7EedpgfA@mail.gmail.com>
+In-Reply-To: <CAHk-=wgEPve=BO=SOmgEOd4kv76bSbm0jWFzRzcs4Y7EedpgfA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|SA2PR11MB5179:EE_
+x-ms-office365-filtering-correlation-id: e598e538-4501-4bfd-e425-08de20827a0c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?WWF5MXZ4bEx6elhKUkx3VkRVRFJxbko0RHgxNkhWVkdDV3NMU0NBOGt0S01a?=
+ =?utf-8?B?NHlZNkRZUEtjVFlpQkZaQmg5K0didU02RU5vZ1l4YzRIaEt2TW5oSmdSVmV3?=
+ =?utf-8?B?SXg4MmpnL0N1WDRXZ09uUVh4by9laEEwYkFJU3VHRzRZbkdmbXd2UU52d003?=
+ =?utf-8?B?VW41NlhJZzl0TndxckZSdWZtcTJhNUMreWFsVFN1Tm5IYkRvSG9EOGVVcjFV?=
+ =?utf-8?B?NjV3dU9rcGlYT2RDR0l6bXVkUkdhUGFjKzY0TGhLblRaSzdvMFB6UU4yZ2hv?=
+ =?utf-8?B?N2RsK3FkUDlIM2JiMHRTcjNPNVlrL28veUh5Wkd4SXM0cWpTaXlCaHFYMW9P?=
+ =?utf-8?B?Und0b2NFYWJxWUlLNElyMllVSnR4N3B3WmVzd2RtVkJXV0Q5ZmpvZnYyWVhG?=
+ =?utf-8?B?b3RlNWpuTGt4aytEK2VwbmoxNWpyek1JaXhneVR5VlRkTFFPOENodXRKSzhW?=
+ =?utf-8?B?bk14NUFYVXJHTi9jTVNnR3hDTmpqZm1ZUVMvWlBVa2k5L0NDSzBWdEo5STNt?=
+ =?utf-8?B?Q2pORVBuTk02QkxPVWJ2eXNTbzZCWkdZdE9VTXJmL1BqQTdMa0l2Tzk2Qmdl?=
+ =?utf-8?B?SkxhbURxVmg3dzI2N2RaTGFIVXEwZU01M0JvYmErME43VjQrNDJCYy8rOG1r?=
+ =?utf-8?B?UVVaN0xYZ2FtMXpIMUpJVFU5a3NXdWpQQldpT1NrekR2ZGhSUjZidmRIQUJk?=
+ =?utf-8?B?Z0JERGU4WkYyUnR3eEFhbGlDVS80RlcvZXBsWG44Mjl6WWNvb2dvaEZpTGlN?=
+ =?utf-8?B?QzAwMUd5WTdnNEFrOXdVVmozZG5NcnNMbGZGdVV3UGFFRnFvVjgzUkV2UU04?=
+ =?utf-8?B?Z3pNV09UODFyOEY5UERNWTNYZDdxMzAzcG95MWdXZW5ob01kNXdyOU5kbnhR?=
+ =?utf-8?B?VUNXcWM5VnNRbGcvdllyTXczNE92Q1luOEJpTW56NDJmRWc2K2wzMmlPc01N?=
+ =?utf-8?B?M0dOZ3g3R0lsMGR5WnJxaFJsYUxHU3RtVjlkbGFPblZlQkc4UDVKMXNzTkFo?=
+ =?utf-8?B?SjFvU3NCVVE2MTJwbXhhaFhKWVFnMTVwV2JhZlJPUnlObXRGTldmbFVpMWI2?=
+ =?utf-8?B?WFN4clhMbzJxNStpT09SOVhSUGVEcTVTR0Y1bENhMFlCQkh0dTk0TDBjU0wy?=
+ =?utf-8?B?OVVDbkYwa2xMbnJoeFIybVp2MTlIK1ZJZ0JHRVRnS2Z2VHRwaHUvZUFWZndq?=
+ =?utf-8?B?V1Ezb2Nna2Q4TkVsbStmVXlSVm43Nm5xcDFqWHJhZ3o5aWplMmJKZThod0gv?=
+ =?utf-8?B?anBNQ3dKb294eDFkRVo0MGhtMHRyNGNxS3FsNFc4R1NzNEE5UWFjb3pVdCt0?=
+ =?utf-8?B?ZFpZMEUxSDQvdXluZmJzVHBSSXpwMUNKc2xCYjQ1c2V6QXdwaTU5amlLUWEz?=
+ =?utf-8?B?b3RFb2QyWStiOGZzL1ZlRXl0b1Z1bWhmNCs0SjB6SHNRZVN4ZlcxVmo0elZP?=
+ =?utf-8?B?WHcyTXoyZVJuNEJSY20wQzNzMUdJYWNnKzd6bkdydzlsTkJvdm1XRG04S2N1?=
+ =?utf-8?B?NFpHSjlQNFFxN3dRZHVxeDlJZm5UZW1hZDYxUmVQekl2K1Z1L09Qd2FCWUFp?=
+ =?utf-8?B?WVUvN3luL0JVKzNPZVhkNkRTZkh6SFhLenY2emVzcHNxeFFLTTIwTlpnQmVE?=
+ =?utf-8?B?amoyZWhsNEtjNSt1Q095amtxczZXWGUwdmw4L0sxV1hqb0lFOWxRMW0wOE4y?=
+ =?utf-8?B?WnNIcG94Zm5raUp3WHZiMjVCZWdWS1dHY1U1Zis3U3drblVWQWtDakx3VVQ0?=
+ =?utf-8?B?VFluRFlEZWgwNXVTMkVaWGd5T3hWQ2pTNndwelJOd01NeWdNYTBYUmtWaWg3?=
+ =?utf-8?B?L1U2UzZXTkhWTXk3NWRVZjVxbkliS2ZUVlhFUlk0akV0WXB6Rk9mWTNPajdk?=
+ =?utf-8?B?Z0hsZFFtcUVEV2wyVHFTOGpQRFpEa0tDdDRZS3RFZE96c2xQeDhyNGpOZUwv?=
+ =?utf-8?B?dWQ2dXMzaEw3VEZrL2RWdnNlUnpXZWh2Rk53Uy9xbUZTTFd1N0lpRysyOGI3?=
+ =?utf-8?B?WmF2dTFMQ3R0VHFHZENKYWV2TmxLK3RWamxRWU8zc1kxSGxybHpWVE1uRElH?=
+ =?utf-8?Q?Ozklbc?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YnlZM0tWandSc0lwc0Nzek50NmlzRXg2YXJDNUJhVXpLMGFmWDNsdHg3dWZW?=
+ =?utf-8?B?a2wvZFM5c2k2enQ1anZOVW9vd09VYUUxQmVxQ0tWSVNiUXI1ZlQxUERKNDFa?=
+ =?utf-8?B?ckJ4MlphMVJNTWI4S2FySTBiN29hZXh2QW1qc25saVMvZHArZVRLazM0dXNn?=
+ =?utf-8?B?RzY5VloySjBXWEo4OTh6a21kSTY4OVNPcVQzSkZiTkd6MHgvNlM0Y3pXcTNy?=
+ =?utf-8?B?YWdjYlpFMHNldFAxYldqaXZ6TjZRMm9ZS3Y4aFhiendWVVIzeDFqdEZSYXlF?=
+ =?utf-8?B?Sm1FS0hzUEl2UTFQS1RSOGgvWmhaaDczekdkeGZ1dEtQbHVyTndoNi9WV1E3?=
+ =?utf-8?B?bzRYMzhmSVBza1hiRlBicnZ1SlVwM3hYZ01ua3RwMGliSDRMWVBDN1crM3lP?=
+ =?utf-8?B?SE52N25nREhyT2wwMERpYVNrcHFKMGRyaWw1MTlTcUF1UGFRMDJ4UDRlcXNq?=
+ =?utf-8?B?ZnJ1ZHRScWE4WmtRczBVRkdrY21OOUtIaDF6c1VPcys0ZnNyL3dVWHVrcUJF?=
+ =?utf-8?B?cDJiZktUQnpNb3NwT2ZETmZFaGtkb2xPY3RKUTZUa1c2d3I1UlhRck42MURZ?=
+ =?utf-8?B?OE03aks1SCtpa3VGVzB2Tkhvajh2eUdJTkQrcm1VTW9IQjdYTmNpbXpjenhH?=
+ =?utf-8?B?TU42OWZOV250bmN6bjFiZE1JdER4QjE2L2VUeUFBdDNQelZFWkVQYzBHWWpC?=
+ =?utf-8?B?SUpLR3ZqR1FHWHdKcFdCdGVVZ1RFZ1ltdXJYaldTU3E3eHpFUGcrT0xWZXFs?=
+ =?utf-8?B?VG1peWlLT3dSd3hxMnlrMDB4Y09pdnFvSXFMaDFTQnIwTVZmbVk0Z2FMN25Q?=
+ =?utf-8?B?b00xUUt2R2dTajVyQnc0TUZIMUJEcEpXTWRXVW1VVTRuNkVaZHJDVSsvUGs5?=
+ =?utf-8?B?bFBzbVNtUHl6VW5yNitxbmthZTZxbUNJa3FFYXRCWW95MnVqdlhqbnlDbURU?=
+ =?utf-8?B?YkdJbjVjdUplVWUrVjYvYnVFYXB6V2JpcnR6OTZaeHRINTh3K0tXaUFJUW5B?=
+ =?utf-8?B?SjhNZDhhRFNON0JqNVA2QWcyN1hEY3FEeVJCSFZRV1NpLzZkUDBHNGlNeExU?=
+ =?utf-8?B?UmpYUTdnUHdBSVBxdUNSck8yd2FJYXVmcGpwanUrVkNwVzZLbVpmdWhzY0tB?=
+ =?utf-8?B?SUFTSnpmdjFZeTBLaFV6OXpsV3U4LzY3ZWoyQnVucmlOR3hIa2phbEdneTA2?=
+ =?utf-8?B?c2FmMHRJTUJGN0lXU01rMEM5em85Z0h1Ti9PYUtsSlk4MWlGdm44SW8rcWNN?=
+ =?utf-8?B?UE1oZVVJa3dycEVLamxPY1l0RlVsT0crTDRpS2ZZbVhoS2xGbktWRWFWbEpW?=
+ =?utf-8?B?cWFFVUNqQlh3UFY3ZUIvTUJMOTdBMzlrWEc1THRYbzRGcHFkNGlSNlNvWHFj?=
+ =?utf-8?B?aVM4aEJRbFVMYUZZWFJYSWJWMlNGVWU3TXRzUk4zaUxGYnpmblN1M0hhdWk2?=
+ =?utf-8?B?Z2lPRyt6OVh5SGVITTkvQ0RJMFZLK0M3UnBuNUVmbDBjN09EUXhXa1JjeDFW?=
+ =?utf-8?B?STZJcmhTVWhWcG1iRHFNNkJGUENQRHFDeEFXcDRSdC9haXV4dDl6UHMyV2RQ?=
+ =?utf-8?B?R250UGR6K0x4cXliZ1YwRTF2SitPWE5kQ3kwTFVEeVRwR2M4Zzl0enBCcklh?=
+ =?utf-8?B?M0U4WkY4c0w0SUdmWTlCUlRZRWlkdE9mNW12dzNQSys2OGNrODRIMW9tZ2Js?=
+ =?utf-8?B?eERVeldUdG8zc09PKzFjTC9DbVc5VjlPTWRGUnNvdXVBUjFrQURUTVowcU5q?=
+ =?utf-8?B?b3pSWFBISS92TC9ORnFzKzRZb3NzYTVGbmY5MFVrelRqUlVzSnJ5cHQ0ZkNZ?=
+ =?utf-8?B?UmNMc2tkWDl4SFg5NVBKRHBmS2UvZnY3UkdSMHd6T0tWMmIvbWxhODhoZE42?=
+ =?utf-8?B?SnFydi9hN0piSGtFK2QvbnRMY29XZXQyOWQ5VHBDTHNwKzZGUVNMSExYbE9y?=
+ =?utf-8?B?T2pYaU5QK2F2YzJXaFdva1R0SVR0cnFBRnByekFRaWh0ZUYxNElXRkxNQWxY?=
+ =?utf-8?B?ZWlWeEtXNStRUFcvK0RHQjdyTzBGTVNOUmg5OXdJTmoxNWtWamp4ZHNLZDlr?=
+ =?utf-8?B?bzRVNGgxcHVobjA4emJQeVpBK3RmamQzcEtOd3dCWGJJSXFKWkRxRUtpY3hu?=
+ =?utf-8?Q?/Bcz+54tDwgIyEF+kG2YYB+Oj?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106023032.25875-3-feng.tang@linux.alibaba.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e598e538-4501-4bfd-e425-08de20827a0c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2025 17:56:29.7984
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VKerUCfjlD5+9IJh2CljYDlbx10Iqa+Xn+c+4JNmW18xhTQXoqI1PjUCd8hg5rk7JjDESsKodVFG0bIspj8bjA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5179
+X-OriginatorOrg: intel.com
 
-On Thu 2025-11-06 10:30:31, Feng Tang wrote:
-> When task-hung happens, developers may need different kinds of system
-> information (call-stacks, memory info, locks, etc.) to help debugging.
-> 
-> Add 'hung_task_sys_info' sysctl knob to take human readable string like
-> "tasks,mem,timers,locks,ftrace,...", and when task-hung happens, all
-> requested information will be dumped. (refer kernel/sys_info.c for more
-> details).
-> 
-> Meanwhile, the newly introduced sys_info() call is used to unify some
-> existing info-dumping knobs.
-> 
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -60,12 +61,23 @@ static unsigned long __read_mostly sysctl_hung_task_check_interval_secs;
->  static int __read_mostly sysctl_hung_task_warnings = 10;
->  
->  static int __read_mostly did_panic;
-> -static bool hung_task_show_lock;
->  static bool hung_task_call_panic;
-> -static bool hung_task_show_all_bt;
->  
->  static struct task_struct *watchdog_task;
->  
-> +/*
-> + * A bitmask to control what kinds of system info to be printed when
-> + * a hung task is detected, it could be task, memory, lock etc. Refer
-> + * include/linux/sys_info.h for detailed bit definition.
-> + */
-> +static unsigned long hung_task_si_mask;
-> +
-> +/*
-> + * There are several sysctl knobs, and this serves as the runtime
-> + * effective sys_info knob
-> + */
-> +static unsigned long cur_si_mask;
-
-It seems that this variable is used to pass information between
-check_hung_task() and check_hung_uninterruptible_tasks().
-
-And "hung_task_show_lock" and "hung_task_show_all_bt" had the same
-purpose.
-
-If I get it correctly, we could move these decisions to
-check_hung_uninterruptible_tasks() and avoid the global
-variable.
-
-I think that it even makes the code a bit cleaner.
-
-Something like this on top of this patch:
-
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index 5f0275b2c742..c2a0dfce1e56 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -71,12 +71,6 @@ static struct task_struct *watchdog_task;
-  */
- static unsigned long hung_task_si_mask;
- 
--/*
-- * There are several sysctl knobs, and this serves as the runtime
-- * effective sys_info knob
-- */
--static unsigned long cur_si_mask;
--
- #ifdef CONFIG_SMP
- /*
-  * Should we dump all CPUs backtraces in a hung task event?
-@@ -229,11 +223,8 @@ static inline void debug_show_blocker(struct task_struct *task, unsigned long ti
- }
- #endif
- 
--static void check_hung_task(struct task_struct *t, unsigned long timeout,
--		unsigned long prev_detect_count)
-+static void check_hung_task(struct task_struct *t, unsigned long timeout)
- {
--	unsigned long total_hung_task;
--
- 	if (!task_is_hung(t, timeout))
- 		return;
- 
-@@ -243,16 +234,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout,
- 	 */
- 	sysctl_hung_task_detect_count++;
- 
--	total_hung_task = sysctl_hung_task_detect_count - prev_detect_count;
- 	trace_sched_process_hang(t);
- 
--	cur_si_mask = hung_task_si_mask;
--	if (sysctl_hung_task_panic && total_hung_task >= sysctl_hung_task_panic) {
--		console_verbose();
--		cur_si_mask |= SYS_INFO_LOCKS;
--		hung_task_call_panic = true;
--	}
--
- 	/*
- 	 * Ok, the task did not get scheduled for more than 2 minutes,
- 	 * complain:
-@@ -272,10 +255,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout,
- 			" disables this message.\n");
- 		sched_show_task(t);
- 		debug_show_blocker(t, timeout);
--		cur_si_mask |= SYS_INFO_LOCKS;
- 
--		if (sysctl_hung_task_all_cpu_backtrace)
--			cur_si_mask |= SYS_INFO_ALL_BT;
- 		if (!sysctl_hung_task_warnings)
- 			pr_info("Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings\n");
- 	}
-@@ -315,8 +295,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- {
- 	int max_count = sysctl_hung_task_check_count;
- 	unsigned long last_break = jiffies;
-+	unsigned long total_hung_task;
- 	struct task_struct *g, *t;
- 	unsigned long prev_detect_count = sysctl_hung_task_detect_count;
-+	unsigned long si_mask;
- 
- 	/*
- 	 * If the system crashed already then all bets are off,
-@@ -325,6 +307,14 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 	if (test_taint(TAINT_DIE) || did_panic)
- 		return;
- 
-+	si_mask = hung_task_si_mask;
-+	if (sysctl_hung_task_warnings || hung_task_call_panic) {
-+		si_mask |= SYS_INFO_LOCKS;
-+
-+		if (sysctl_hung_task_all_cpu_backtrace)
-+			si_mask |= SYS_INFO_ALL_BT;
-+	}
-+
- 	rcu_read_lock();
- 	for_each_process_thread(g, t) {
- 
-@@ -336,16 +326,20 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 			last_break = jiffies;
- 		}
- 
--		check_hung_task(t, timeout, prev_detect_count);
-+		check_hung_task(t, timeout);
- 	}
-  unlock:
- 	rcu_read_unlock();
- 
--	if (unlikely(cur_si_mask)) {
--		sys_info(cur_si_mask);
--		cur_si_mask = 0;
-+	total_hung_task = sysctl_hung_task_detect_count - prev_detect_count;
-+	if (sysctl_hung_task_panic && total_hung_task >= sysctl_hung_task_panic) {
-+		console_verbose();
-+		hung_task_call_panic = true;
- 	}
- 
-+	if (unlikely(si_mask))
-+		sys_info(si_mask);
-+
- 	if (hung_task_call_panic)
- 		panic("hung_task: blocked tasks");
- }
-
-What do you think?
-
-Hmm, maybe, we might still need to pass "prev_detect_count" and
-keep "console_verbose()" in check_hung_task().
-
-Best Regards,
-Petr
+PiBJIHRoaW5rIHdlIHNob3VsZCB0cmVhdCBhbnkgQUkgZ2VuZXJhdGVkIHBhdGNoZXMgc2ltaWxh
+cmx5OiBwZW9wbGUNCj4gc2hvdWxkIG1lbnRpb24gdGhlIHRvb2wgaXQgd2FzIGRvbmUgd2l0aCwg
+YW5kIHRoZSBzY3JpcHQgKG9rLCB0aGUNCj4gInNjcmlwdHMiIGFyZSBjYWxsZWQgInByb21wdHMi
+LCBiZWNhdXNlIEFJIGlzIHNvICJzcGVjaWFsIikgdXNlZC4NCg0KQUkgaXMgYWxzbyBzcGVjaWFs
+IGluIHRoYXQgaXQgaXMgZWZmZWN0aXZlbHkgbm9uLWRldGVybWluaXN0aWMuIFlvdSBwcm9iYWJs
+eSB3b24ndCBnZXQNCnRoZSBzYW1lIG91dHB1dCBmcm9tIHRoZSBzYW1lIHByb21wdC4NCg0KTWF5
+YmUgc3RpbGwgaGVscGZ1bCB0byBpbmNsdWRlIHRoZSBwcm9tcHQsIGJ1dCBpdCBoYXMgbGVzcyB1
+dGlsaXR5IHRoYXQgYQ0Kc2VkIG9yIGNvY2NpbmVsbGUgc2NyaXB0Lg0KDQotVG9ueQ0K
 
