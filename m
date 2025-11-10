@@ -1,131 +1,113 @@
-Return-Path: <linux-kernel+bounces-894344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D08C49CC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6E3C49CDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77A913B09A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:39:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C24F3AD3B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A295E3019D8;
-	Mon, 10 Nov 2025 23:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA9A30505B;
+	Mon, 10 Nov 2025 23:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPN4Sai3"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUZQS6i5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58F92E62BE
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078782FB99D;
+	Mon, 10 Nov 2025 23:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762817971; cv=none; b=um/v4mUDaKLrh0wEYo1aJrNEANt7VPDPDqP9zriIgSHyx8Ml1Ehkd7cT+XRkUIF8ITBnbq95LXBq7SIJx95ua/9w3IFZ2uLbvXVnhXOhNjFwaf5YhAobu4tn0te6zUg6qcohUKrkAXk6MLLv3YfZP9PG+u8c03fP2OPpYKqUbjM=
+	t=1762818213; cv=none; b=poXPj2Ho2iOPkX7y8ajHw5mtPGUfAeZwFQFAMRm4YDCRHBb785YSiYr60ZEJqbovWqqTS+Gcx+S2a0WKp3H12yrqz0lP6MBx9t9g9zkRr6Gm6fSGYwAAiikTzBP3aU1On0GACkMv80IULMbXNEzTnBU3lVqv9S8T+BXdT35HvVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762817971; c=relaxed/simple;
-	bh=1cCEzFjzFyynAjNG1FFpcR8zgbzlE7XPHiymBHl+NSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rhXvME9g6kq5t+LDQDG67kFrAngBdtUJs7H1KZThLARQLV7Ax3O5pOj/G43LTtx3XEzbdb/jeX0S/XJTHlzHEpthk4Qagwmtbzja8cukT1AbtpRxtKG61FJOivXhVl8+/ol6oby/12SVc5p4RcCpUWh+53w0fO8QON3i4c6r3ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OPN4Sai3; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3418ad69672so2411995a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:39:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762817969; x=1763422769; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1cCEzFjzFyynAjNG1FFpcR8zgbzlE7XPHiymBHl+NSg=;
-        b=OPN4Sai3Vd//m/qP3LSL5aIWMF/Oj7ZKNf41fVeidX+FH6BiyE7U22ug52jcnImDO1
-         Oflm8p3VbkU+YtbWWFB/DGMS80m5B6ieRhcihomDguGxx4O/PJvTqe1AIeuRtda5bJig
-         WYBYbe4VIVaNAr1lr2uhlibsjdrWqLktagHOk1bPJ4Hrp1iR6HFWEziLuOioDFTm39zY
-         yReSqXyt9NmUH6Eqtdppfc2i+z6/aol4DTrsKgI200typa5Nz081fmng1D0SBbTLRZPR
-         34J3Ym9MntMXTZjLFzjAxA70m4UKaO7/wpRpEX1FxQTkGqCIWvP+EG5oHelA2T0K6z2X
-         6YoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762817969; x=1763422769;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1cCEzFjzFyynAjNG1FFpcR8zgbzlE7XPHiymBHl+NSg=;
-        b=XENTsuR6hToKWX2oq15Q77sMqa7gSyMplsAIw4Sv0Z+hAdP+xOHRu6LOrRwt+ycWnc
-         C95o4aE2g9I07uTGDsPYPZ0C8JOAcyhbZG5tLB6A2aShqC7lXvADSIl6uHOhWiYbKMKl
-         w98BoeuQFojnJ2+xAE9Kqh0pfM8pWHX1AUaasLkmfmfDM8GQbcB/kMvLByEEmMxhBxwj
-         E5wJGSMTuB4A0Zt+qRC6X9cqV8D+sTylfcCxswaUcOEO1THiucLBVBP1XWpS9bCaNJr8
-         GfqNYOJsPna6iB+colVp42/lz13sCyNrv7BCSDEtPYp+C3yLhSNoBqKbNlciXrCU8qN+
-         0Ahg==
-X-Gm-Message-State: AOJu0YzFwyWox2HfOecB9bPSPotEv/7Ttp40PY63BoozWphgzgBqovng
-	92NXZU/oMEf9jhSbkpBV/ldiOPaB2w1sRWEhZNGwA3GSyL8A7Lr0jcC3
-X-Gm-Gg: ASbGncuwVlz7eGOa1yRWMpcbvmZTF15PrmJOX100fksCDvkviCfWggDYJAPh5Zbqo76
-	4ThHMYR8tY+4GSNObdKEZwLxnPMfsH/YztF5h9N+QZZpaULZa17BtflTlfxq1JS21L/XBuJc5TN
-	ql89SJe71HnLaaHHtFc60RtSCrEp8Dh1XPrswuURJHHKZvE513kepXbTLpgYBSY2SV05dOVC7tH
-	7dVKMANLCH12iu9PiSE8icFCd95S5SMxxdIdbLBkqJe7fOjVbBmznbuyMWquCr6iRBOHH6in9q8
-	mRAlUU/+RQPh97h5tkc77+hGWBEJE3La1N3X8YQTXiZGPyog+frQcB42iAHRFKkBqLtcc05Hfoy
-	4M7zihGHCqw99+4jOsN0p+asEdHSmxfPLIR+/bd0jpClvuQUJwTVkyCVR6QldXSipByZnKmkxDc
-	G+tbOBnQraP3c=
-X-Google-Smtp-Source: AGHT+IGNoUDFbEycsFFzEVxa73D1puHH1tGo3xImIbeJfxgr+6wQcg9RSQmi7aGMv0B/b6rZU75/ww==
-X-Received: by 2002:a17:90b:180e:b0:33b:b020:5968 with SMTP id 98e67ed59e1d1-3436cb8de8dmr12568294a91.21.1762817968931;
-        Mon, 10 Nov 2025 15:39:28 -0800 (PST)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba90307193fsm13641074a12.38.2025.11.10.15.39.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 15:39:27 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 1A7E541D950E; Tue, 11 Nov 2025 06:39:25 +0700 (WIB)
-Date: Tue, 11 Nov 2025 06:39:25 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Networking <netdev@vger.kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH net-next v3 0/9] xfrm docs update
-Message-ID: <aRJ3rVhjky-YmoEj@archie.me>
-References: <20251103015029.17018-2-bagasdotme@gmail.com>
+	s=arc-20240116; t=1762818213; c=relaxed/simple;
+	bh=HlTxVdTLrc63r2+iJxCSItKGLvTwsg82jFmrgJbH9oc=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=I9C+rWD1RzZtbwscCtzrWDUGQQKnvB3s6n1CmfOLMCQmdIJp+xC+F6ljX0ePa/BcIvx+S8p/XwamriZukau20TtwMM71wXbheNa1RuitgUJH4nj9kVfgZp8SvmSjUpE4jU9YLGSwO/YIfh0uQP7lMYkS2SippSrGYjdux5/l5uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUZQS6i5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CC61C19421;
+	Mon, 10 Nov 2025 23:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762818212;
+	bh=HlTxVdTLrc63r2+iJxCSItKGLvTwsg82jFmrgJbH9oc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=eUZQS6i5azLkAvUvZtd3sxq861MbsmzrE/Mythj0YS8kAKGWFcCsetJnuGSUkhkOo
+	 X06MfkzIBVHhsK5fFoW7Qf6eLvwHNqLNZ1002HIvrzJr6OzHG98MvbzXinCq9NjQgL
+	 jf7zqo2FZPEtkLk0J3ZALnU51dYraw3gpm9LZK9SfC6bkj5BnMPeBIPdvIH/lRST7Y
+	 M2iCgfAexWTasXCL0iw8vj5HzYSI+0fuegEKkNurvhM/t2gDfiUvIUUXXm0ryRZqIP
+	 PR5u59vOWHsJIqufI3TJiVAAOdZL4jGbMBO09E6hYWVXmGq80J3wdEW0qF0KbdOQY/
+	 va78G0U7tUCrw==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1vIbXx-00000000ac3-35mn;
+	Mon, 10 Nov 2025 18:43:41 -0500
+Message-ID: <20251110234157.808080361@kernel.org>
+User-Agent: quilt/0.68
+Date: Mon, 10 Nov 2025 18:41:57 -0500
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v3 0/3] tracing: Fix tracer options per instance
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aTusp3mqYER4Xr41"
-Content-Disposition: inline
-In-Reply-To: <20251103015029.17018-2-bagasdotme@gmail.com>
+
+The tracers (like function and function_graph) have options that modify
+how they behave or how they are shown in the trace file. As these options
+were created before instances (multiple buffers), the flags variable that
+represent these options were global for the tracer.
+
+Now that a tracer may exist in multiple instances, having a global flags
+that kinda affect every instance of that tracer does not make sense.
+The reason it "kinda" affects them, is that the code that updates an option
+for an instance, only does the change for the tracer running in that instance.
+If a tracer is already running in another instance, it will not be affected.
+But because the option is saved in a global variable, if the tracer is stopped
+and restarted in the instance, then the option will take affect.
+
+Since each instance has its own interface to modify the options, the effect
+of an option should only affect the tracer for the given instance. This means
+that the state of the options for each tracer must be saved for each instance
+separately.
+
+Add a new struct tracers field in the trace_array (instance descriptor) that
+holds a descriptor that points to a tracer and contains its flags values. This
+will be used to see what tracers are available for an instance.
+
+Now when a tracer option is modified for an instance, it only affects the
+tracer in that instance and not semi-effects the tracers in other instances.
 
 
---aTusp3mqYER4Xr41
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes since v2: https://lore.kernel.org/linux-trace-kernel/20251106171557.011333928@kernel.org/
 
-On Mon, Nov 03, 2025 at 08:50:21AM +0700, Bagas Sanjaya wrote:
-> Hi,
->=20
-> Here are xfrm documentation patches. Patches [1-7/9] are formatting polis=
-hing;
-> [8/9] groups the docs and [9/9] adds MAINTAINERS entries for them.
+- Fix check of tracer not found in instance. The loop is a
+  list_for_each_entry() and testing the value of the entry for NULL is not
+  going to work.
+    
 
-netdev maintainers: Would you like to merge this series or not?
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/core
 
---=20
-An old man doll... just what I always wanted! - Clara
+Head SHA1: 23857cfa3f9e6c505bf6b7e7cc4344710801209c
 
---aTusp3mqYER4Xr41
-Content-Type: application/pgp-signature; name=signature.asc
 
------BEGIN PGP SIGNATURE-----
+Steven Rostedt (3):
+      tracing: Have tracer option be instance specific
+      tracing: Have function tracer define options per instance
+      tracing: Have function graph tracer define options per instance
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaRJ3rAAKCRD2uYlJVVFO
-o5l2AP9QdLeK5UwYeR12qSi/P8HWRDJPVuEZJ/D/TUwwWhp5ZwEA5GOBAq3sdTDK
-qdxwxx2kZ6EszBRgO0Q1LlJEWpmjZgI=
-=emxr
------END PGP SIGNATURE-----
-
---aTusp3mqYER4Xr41--
+----
+ kernel/trace/trace.c                 | 221 ++++++++++++++++++++++++-----------
+ kernel/trace/trace.h                 |   3 +
+ kernel/trace/trace_functions.c       |  10 +-
+ kernel/trace/trace_functions_graph.c |  18 +--
+ 4 files changed, 169 insertions(+), 83 deletions(-)
 
