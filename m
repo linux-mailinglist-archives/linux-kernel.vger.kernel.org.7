@@ -1,332 +1,287 @@
-Return-Path: <linux-kernel+bounces-893325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55486C47131
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:02:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA7CAC47167
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2248188DD58
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:03:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BC643B1B73
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CA127280B;
-	Mon, 10 Nov 2025 14:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC5C24BC07;
+	Mon, 10 Nov 2025 14:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SlnM8E5b";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="G1b+LgyB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AkybZguU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFA625D527
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762783360; cv=none; b=ueS9jYmO8+fooK0GNv6Xk/OVQ3ymzy5IcbvomSHuwCsTuBeYklXGCtWELuexOjzNYGNXmG24XqjOxUAOg/crlB2L/wXTnTE5KVu4BO8gFAbmQB1ltBMgU3r0A20bpfEDMT+B9VKvOZYb7mynhSksL0deVhEd0CoO5xRo+++r7Rg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762783360; c=relaxed/simple;
-	bh=0Aig3teqTXZjp1WaCYovhcmFzxBrLGcLff4uioKRAfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jJxor8P74Ve9Gp0WAqCH3nNWtZVyN5v3bAtV3cTS5LDWXwBVS/YkHna0/X+kmwDNXM+ZlSPPM625dLr0VCZ4iHc93FNG7bAaeKUX61npUKKwHGVM7DpWLmZ0ul8f8uHS9a3XEKZqZxgVI9Nt32hT3bQJvhZwh31w2ODJdCooSek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SlnM8E5b; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=G1b+LgyB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762783357;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2+1NLhv4ynxcUSugYQr6fzZ4Za57RfULtHeBZTwsduU=;
-	b=SlnM8E5belhv7qFCYykgBq0ywRcV7lA8HNRlyeGCWo6cjZNOLZqlujCzpYuUR+nR8ujOYn
-	ZlKbU3Sl08B0bMdlSh7MldEpy6LfuFbll1X3rrAxoAJYhRL3SDLsxWtOvZ9DnIicsSwUQo
-	CTnKiUc+G5PJZzkGd3EcMEMJSejihrk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-103-kuj8oaa9NKWfKQrhw9w7aA-1; Mon, 10 Nov 2025 09:02:36 -0500
-X-MC-Unique: kuj8oaa9NKWfKQrhw9w7aA-1
-X-Mimecast-MFC-AGG-ID: kuj8oaa9NKWfKQrhw9w7aA_1762783352
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4710d174c31so25042045e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:02:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762783352; x=1763388152; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2+1NLhv4ynxcUSugYQr6fzZ4Za57RfULtHeBZTwsduU=;
-        b=G1b+LgyBhevJmlQtNy/QNeJsNMMHD9qhRFpjO++Nr9h0Aldxc2QUyQIR1jlKGxSnzK
-         7BCWRatHnh0iD39u3yiRE1KT5Q6G4WLIi4tUjUFlrL2WD6dmuKZUraJO+yZ+VYMD8shr
-         PvtuxMXGVgAM84f5FU99wmzWvwjsjNjz6nTXYApJ5U/cYII77CgHvKeL7+SdtckXe573
-         g6JYDeNoGuOEVH+WGlIrvLBj8wj6QSIQ0AEZgxNY9TmIi7Ile80jIhgLsff3JFM7DpVT
-         rfL+uZWUOYhbpbuo8TlM8wYJEhw30bM/d/aDC+az2OqhRnvCHrCdXuGr1AZti+XnTQlb
-         TszA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762783352; x=1763388152;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2+1NLhv4ynxcUSugYQr6fzZ4Za57RfULtHeBZTwsduU=;
-        b=AoKNTDTFeNVYpN9a1svjLywBz55vtYWKHAJJqKzsfSD1McaH7gvn4nVJr7N2OHhMev
-         PAc7sdlaSwo23G+mWKEUAXOqnQXmtx8zyBeTYIDd6vuLfHHLI+Cpkch5OMXNvNGeZ18e
-         jm1XU3o0wXit8LyfSRayMae8zVO4hjb3U7Az0Pf0NY/FBZnAZHUTGWyx1nJpLFiZNUIQ
-         tCK66W3ri0Ot0pUjT8nt8XPKidavUbD1Uqq7LbT3a0OuV40V28nYIL6/QIqll1DBX+Nq
-         Qo15Tl5aiu9rWil7xf0Z932socSaVE8iIiale8oOufd5pgaBKJhYfpSxSEcn8Jv90uW4
-         5Mtg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMmrb7IWS+qegaL5K/zVoQHZ8vwkYcQbMUC59mjXuL6uzj7uyd3HbiOqmfFrCxsITAqiDSCaNEdF26Zu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHYPfgaPzkJFNO10+C6tYDCoPQ643UiyOQz+pKFLOLM2mzErYB
-	wG5ClAYXWQqMpZQUNsnAJsMWapvzjxYLCn7bWfsOMTsXlYGnYvEQAKGEEEVXi/tUgHkyepuSVFj
-	Ip8+FtvZRjuRvziKW1Q15FXrJ8yZVfqirRT5qiEhPK8DZfbKIytX1e18jMV2/9gB0ZQ==
-X-Gm-Gg: ASbGncsKT7yu2LSPTj81NBUlLJVhK7o4/OGV1+Js4tFjOmNkCSYdnM/h0XO3xl3vaNZ
-	EMUkMSyBwYmA+vyO0FmfEIDAJUlsoYSuVdsk8MXh22x9EzHu7KHEWisuGhesjWgo7D3tLBYXGKw
-	Xk+BfeHmPBUdCUf2JgyGxTOp+FZjvNfMJQAVSOgT/RrCGxhZ+N3n7DwGiGBR545mOkJl+e43cCc
-	oC4nsgCo3TIkLJP0dpgeiTu1dUqAUEf8j1obuVVyVnPnuPwDg4+xVXoVAookg+SnxIKF0hKSAjB
-	SPCWzsQR3CRytRkW+QN0xjLnOcUe+RXN0pHKaV139buR7zivjpE6UHOlifHtMUD9tY5fr5uQDJt
-	YYg7PvW+HJ805ahh/LuHzNA9F8cv6HdD3a42vguI=
-X-Received: by 2002:a05:600c:6c90:b0:477:3f35:66d5 with SMTP id 5b1f17b1804b1-47773271a8fmr37054825e9.26.1762783351812;
-        Mon, 10 Nov 2025 06:02:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEaBKIohJ95g0BQDXG+Q59OIuRNMSygwDSAKhcDi9d3T3pdiSgJxUCU+yL0tt+Xh55xDeNIlw==
-X-Received: by 2002:a05:600c:6c90:b0:477:3f35:66d5 with SMTP id 5b1f17b1804b1-47773271a8fmr37054405e9.26.1762783351241;
-        Mon, 10 Nov 2025 06:02:31 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce2cde0sm325813385e9.15.2025.11.10.06.02.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 06:02:30 -0800 (PST)
-Message-ID: <ac63816c-b12a-4127-b975-ee80b53ee11f@redhat.com>
-Date: Mon, 10 Nov 2025 15:02:26 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238233126BE;
+	Mon, 10 Nov 2025 14:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762783366; cv=fail; b=BdMbZu8IyHXKLH7JRK6h8I45qiW/9AFLwcCztFdXQZTYb0Euw5lnODRwoC1e67k98SDw5V0HwG5G6ehQZxZ0sxzXtcheWXuSO0S+0D9wufyXoPUjhhrMhtBCDat8L5TmcyM3dSvylajjjfHC+AQerr6ZPnvFuDmBX3Au1d/SXfU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762783366; c=relaxed/simple;
+	bh=qZG9kvPfRV1aqGof0ckElg7ZY0VFrf9hHd7O1MQsbwQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CuNeyKyspiB609GxWxhZvDZpH6ndKkrkb45lW1zjakMLdQXn0XZo4kNJslYPbi25oesk8ADWzt/7rvJn+htS3CKh8SY6gLWMLlge+umRFb1vXdfcfwzaaior++MyT08fHW0J9OsFA8CvAXHxhvmLJ0DjiI8tWFTlj+DfCkVvtk4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AkybZguU; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762783364; x=1794319364;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=qZG9kvPfRV1aqGof0ckElg7ZY0VFrf9hHd7O1MQsbwQ=;
+  b=AkybZguUzLucxe7/3f4/+2ShWAjk3cjmOpalybEZiopMwnU3/fOqTnIL
+   3L9KC9lw6dDlThQNz1g5ofOjL2WGg8H+JTT2eKq3GNYIqL7esAhJB66uO
+   mmeiJsRvgPAHO9r158KuVlykn9YqsSWX+EY9X7iqW4tap3CeV4CMf1yvG
+   zGtQhR/KxX0GTdwd92mE2+F8ynpxVc8P0tzi/wI96ilV5RwqMUEVjhDBc
+   KAmS9gCFVvskdBsNRZQj81LhcNPNAbtHH1Bt2RFC47EeXv5ymv503H1Tu
+   Eskx6aaf1I3YkcfZwctS2e4zaNlMlfZJ0i6Xh9XJ3RALcTPzz+JfaJG1U
+   A==;
+X-CSE-ConnectionGUID: VYlIJ813RuOZ7mtaFEdixg==
+X-CSE-MsgGUID: mY2aDvMqQHydNqe6ceXWDg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="64987385"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="64987385"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 06:02:44 -0800
+X-CSE-ConnectionGUID: dwJX/aowR1SL84yVPjfXZA==
+X-CSE-MsgGUID: 7nH14OIZSS2EIrwg+LAIhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="193062713"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 06:02:44 -0800
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 10 Nov 2025 06:02:42 -0800
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 10 Nov 2025 06:02:42 -0800
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.41) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 10 Nov 2025 06:02:42 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yzUbC1Xmc/D6yV2zkkO7X+Px2ZlnnT5gSBIm90dMAO+7d/v2NkY9SLA+Q7pyIGpVo56jWQwNidXSpKLHhy3Mr9S8xWsz/xPJx6bk4vdYVqt8TdYSZrLIPOFqjC3dav4pwtWBa/M60YkmrjOE4sS12wAHPDMC8CBRmWI3Ajra5mm5HAQufpUi6N+2f8Y2HFJTN9Lz3Xz5NVLni/m6PeHXlszXQQWiVyE4XHuXTGOrGMGeZ7W1bn1i9WYc/fR/zK1iP87nvUidEABd1PVPqCW+d9UTkUVg+ezgEHiS5hqxqp+vQPWGETzCZ1xFuTodRsJeCcoxibEqZsLWwwMVvldkCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rSsDQzbGNLgLMukXZKfcoEKEX4TN8D7tl7IYu5F8Zxk=;
+ b=IJ9l0PRbs9NzMhFPWO3O32jE5MSyJ78/5EtEacakEJaG36rZUbW9+iWh2LbxgiMmd/2SM7xZQAA60Yg3SVKKJlQRRfMtlBDQOGo/pGkl3Hh9b9IhEwnECnLVUp8aiy1WycGcudeI2upjLgN1o3T7uHlrjBxsAo3SMaIf49ogq6fFT+GWgcA5+sSadQ1vgkZI0tbw/AX0vwDTM6PZyA5b66Oh/4itm+efwfuSNf38JmSYBZw3OOKXT9UMVeAdGZUy8/Om/P/FLhRxmrh3hYRsWJhcT2seVzfQB4CDtfBWyhNALIFWs+KDwF27/QS12h4babO0Sx0jMfd/dVxYFsOTZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
+ by DS4PPF7A0031045.namprd11.prod.outlook.com (2603:10b6:f:fc02::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 14:02:38 +0000
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::5670:5b2e:6ecb:dcaf]) by CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::5670:5b2e:6ecb:dcaf%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 14:02:38 +0000
+From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Yury Norov
+	<yury.norov@gmail.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, "Cabiddu, Giovanni" <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>,
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+	<brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, Jonathan Cameron
+	<jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang
+	<ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>, Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski
+	<kuba@kernel.org>, Alex Elder <elder@ieee.org>, David Laight
+	<david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, "Luck, Tony"
+	<tony.luck@intel.com>, Michael Hennerich <Michael.Hennerich@analog.com>, "Kim
+ Seer Paller" <kimseer.paller@analog.com>, "Lechner, David"
+	<dlechner@baylibre.com>, =?iso-8859-1?Q?Nuno_S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Richard Genoud
+	<richard.genoud@bootlin.com>, Cosmin Tanislav <demonsingur@gmail.com>, "Biju
+ Das" <biju.das.jz@bp.renesas.com>, Jianping Shen
+	<Jianping.Shen@de.bosch.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
+ Desaulniers" <nick.desaulniers+lkml@gmail.com>, Miquel Raynal
+	<miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, "Vignesh
+ Raghavendra" <vigneshr@ti.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-crypto@vger.kernel.org"
+	<linux-crypto@vger.kernel.org>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, qat-linux <qat-linux@intel.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+	"linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v6 03/26] EDAC/ie31200: #undef field_get() before local
+ definition
+Thread-Topic: [PATCH v6 03/26] EDAC/ie31200: #undef field_get() before local
+ definition
+Thread-Index: AQHcTyLZlBp+VEoVpkGka3pFTqVJFrTr85wg
+Date: Mon, 10 Nov 2025 14:02:37 +0000
+Message-ID: <CY8PR11MB71340DBA5EA023F7CADD008A89CEA@CY8PR11MB7134.namprd11.prod.outlook.com>
+References: <cover.1762435376.git.geert+renesas@glider.be>
+ <581bca4d109242bb5acb3be49dbf1bde780f2884.1762435376.git.geert+renesas@glider.be>
+In-Reply-To: <581bca4d109242bb5acb3be49dbf1bde780f2884.1762435376.git.geert+renesas@glider.be>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|DS4PPF7A0031045:EE_
+x-ms-office365-filtering-correlation-id: 07020963-c15d-44ed-f9b8-08de2061ce64
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700021|921020;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?Ukoixdh8/bnnn0Yy33rOWJvyz3RDNFBSh5yXYAh437ZqCyLFYwnnnbX+IP?=
+ =?iso-8859-1?Q?EJhoIv3FJbJCms1z0OhYji5B1agRpdxWm9I5Pi8kiUnzBfk0ddT2u8EFni?=
+ =?iso-8859-1?Q?LUuvpWVSlb7ZcWmB9HJ8bhoElCZ41hHJxvYwHBlKlMQR7hfi46xNLkDpUi?=
+ =?iso-8859-1?Q?NpDRrrQsEnhJ1NmJHU7Y8QXspSeznBo6eHezf163iN84//x5HX6fZoeVKw?=
+ =?iso-8859-1?Q?8TZjH6CHqHDKmpZrXGHVIljB1wR1rf4rgIoSwRk8XaxheHBvoaJfAtZ8SY?=
+ =?iso-8859-1?Q?OJC2KFDBMbZICGjeOtzGSkiWHHJUeuG4k+mH9a9XNhSjXvjb/fUgynlWO4?=
+ =?iso-8859-1?Q?WvtRqMWWJ8fyO3Ul1YNfHTcvwSNuH9FNgVHXTSxXDRfWFe7Qwcdki8R9U+?=
+ =?iso-8859-1?Q?ALiDzAYbBZ0MZI8BJijwB7Gs19I200hffW4SKFEcos6tvR/OrbaliPS0Kr?=
+ =?iso-8859-1?Q?DEl9TGwunRfBlQHJRMwibyRDM8dElllEYROPJrfAEhXXdJ6CQ+VJ81sl8n?=
+ =?iso-8859-1?Q?6vPObdv+Wa0JeLb+QUf91t2KUCBQvj2zrTCNkocubzryL9VHaM4IM4sXZ/?=
+ =?iso-8859-1?Q?zRN1gcAhwBidqZj0YL6s4HIO5y5cbYeUS8EBiZcgGZp9+M1b59+qXYcnQN?=
+ =?iso-8859-1?Q?BSxKrgIADE2QQ5toyWjArBZGzDsvWzQ3W1lftfMNEANcnJ/APmw4BDtyn3?=
+ =?iso-8859-1?Q?CqVNHvG99mTn4M7vLGIAWdO5Sv8W5+xCu8f/7UhPUPAqRelb23MotGZNBU?=
+ =?iso-8859-1?Q?sXv3fU6DJnWset4KaOH8sNBxzumPQeVl+XRARJ9LGqJZo4dj4SYmYyJI04?=
+ =?iso-8859-1?Q?WUbnUFbpPIIaDG8gZITbpRQNX7WQQEOZEqKwZVLUr6I+MLFetCzIFGpAlR?=
+ =?iso-8859-1?Q?Iv+njzSjXvf6rxWrxuWvdfyXBiEo3iKF5U4Nc2xyLL7+NnXa+TLGlUxAaS?=
+ =?iso-8859-1?Q?nU+cVFkj1v7PZkcDd1qezE/SYCe0YXu1BgIackTzECcDlBTcYVHyh4gXGP?=
+ =?iso-8859-1?Q?8e2QjAWOD8BQt40MnJ/hpIXVO+VNBODsn8SHDpWFtE4QUhBnS7eYRbNOHH?=
+ =?iso-8859-1?Q?vYgSCmFn1JPMzFKbt7cUFD0GstT0ISUlggHBtjnwxa9qqiBsEvwxzfUquM?=
+ =?iso-8859-1?Q?LD1vtP1TK673zrdlpO0DVCXC97ry25PvYVOjaUdEnwqkTwwoHXUJPCM9ep?=
+ =?iso-8859-1?Q?FiZ/1zMzPKLykWv8gXnGmX65XTfaDduiIDt8komS6wuoQZqiv2DjP+Asz3?=
+ =?iso-8859-1?Q?157u8fUdoZDe732plMRdXxKYU29q97QFfruzRP5CcbBCjLxBN3J1RwL4Pk?=
+ =?iso-8859-1?Q?PM8nv5owHjq6x6H9raiiJA4Ua0NWOoalD+jBLCiT7JopMgzLvttvS0QCtZ?=
+ =?iso-8859-1?Q?eMgWMj5I4eVOszML5wUPckEv/2PqGNDSxMOBZlm8z1pJwfeTlgbM0wl1x2?=
+ =?iso-8859-1?Q?xCS/IcF/gNDDH4XaJ/RkVE098I2O5blZBElpxjiBfA+xpLxS+dm+oBr/M8?=
+ =?iso-8859-1?Q?y3OGiyjlrCLtUzC2Qm8iK3rxccl/pcyioDDZzHI5V7jvDr920dFN3lVJ5M?=
+ =?iso-8859-1?Q?RmCCWMk1SouY3feyOdn6FwSYF05P6SwZ9yfq2+5LMv3aQWyy8w=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700021)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?lbvOFlvl/6b9cVnji49Zol6chG2c6qmMvYXSLBA9wjzC0ewgp3zBQOUJ1Z?=
+ =?iso-8859-1?Q?bCXQHAuySWybnYfZF9RKyVPwFtt/0QQmrGPo22kQ1qTy/BGrVXwzE+CLie?=
+ =?iso-8859-1?Q?2X51RginulLJCra4vsrIdnB/PNCotx8Vnzmin1cqmHZEnRKtJRjJN3xZ3m?=
+ =?iso-8859-1?Q?v++S8e7R1Mo9yPnebz9If6gJs91jfgHPZ0pMfsrptrjIDjzjDjEexOQVve?=
+ =?iso-8859-1?Q?W3kWsGNdgY9RnREUeEAZTqDwL/N8f0noW3PwXOtm5GF93Oy7uCc+cJUh9S?=
+ =?iso-8859-1?Q?0zB/+2Wr5Z7BWTYlN62cXTshfRQSNHYmlR5RwReRiXgQp289VoXl8Gj2X4?=
+ =?iso-8859-1?Q?w4zLG0iuUsDs2mBCn8Te4uRB6HqsgOOxls2JS8Gxp0qMrK4xXcLovYtvST?=
+ =?iso-8859-1?Q?lLzOtOt6lm/P6ZWXQD7AtEC7BrqJsDWOO/6VvO8GxwTIdMRDy0pJhaqq4V?=
+ =?iso-8859-1?Q?yVu65onOYg9+HH/j1kRT2/O2WyyFQ3T+Nq0h82M9gWRqywvrxMjZyXArk6?=
+ =?iso-8859-1?Q?uSjhiY2kuClTgX+ojCZ1Tmf2M2KYVSSKpnOAsZ++dc2wo86Ur2q3doaN7Q?=
+ =?iso-8859-1?Q?QOndC6+eL547AiRRE3uOIodfNVM6WbmIne3H4RHAuRE23kdGJ23zYjvDys?=
+ =?iso-8859-1?Q?fDK4bPE2JpO77lmTvKeRVNRA9fqzYOmTw4kICMJM8TpUtl2MQhel92voDZ?=
+ =?iso-8859-1?Q?JmXhdtHL7oPHGzHouJPAhbVOqoeMoRF9bHsjNGQUniEqkNrxZG8/VJ7lDM?=
+ =?iso-8859-1?Q?H6dzJznGkajo0WReq75w2bxAxXaeFA6Eyat4A8HfJs1JmN38lQEyrJvX8k?=
+ =?iso-8859-1?Q?WwaN3LoyEke+MAyL5IgVQN0/pbSM9SsD1PWNSAnDWk4VknNndJM6Xu5lIE?=
+ =?iso-8859-1?Q?rOwUVDsQpEZc3elk8oqa+A3rsqn+gBsWUQOUgFA5LLT+/nAI9sNFqfQWEN?=
+ =?iso-8859-1?Q?yxwwWcZ/mytRX2EvF3gD2vSvJn4B+k7AybiERqaMEWJpWOq/ZC07M0xYWC?=
+ =?iso-8859-1?Q?1fHki/eWkpa8AGlmHUuAv/SFL5Jo77osaNY9Ze97eLa5UTB5sVblaRCD3X?=
+ =?iso-8859-1?Q?jpPl7ZpJKDYjd4s/Ou4jg1sLe/0faXe0wWg8p43GFi0ZJidGYOv/KD0g87?=
+ =?iso-8859-1?Q?kAEQoHSsWjKoFeeqiINtIi1aqpl5KNxi5UoOcUiFUUN6mhjkEKdtc+2s0v?=
+ =?iso-8859-1?Q?WeufQQ4wLCo9JzAalGXtD/nXhxJmOXVPgcFMFe0ckSPn0Sx3+m7/rXh5HQ?=
+ =?iso-8859-1?Q?Q1sd9T8Ai/8+Fz/HcW37Ivw8uXqpWMX5qgavME5SVkuTSIp1S9HwTcUucz?=
+ =?iso-8859-1?Q?vSHr5DL3LjVnvlmn22Wx8v/7F+ExlukwoGYDUR739dVoVOknEK/gWwzZBx?=
+ =?iso-8859-1?Q?F3R5oG7K+mgGT3G34L3SKCa7P4KEIwpro5+7GMhzulT8QboUAM0T8gcMln?=
+ =?iso-8859-1?Q?TD7cOmVdble7uaig7aMUPtZI6kZW7uJTM5wCZkutPH82R3u974yVXfhWQr?=
+ =?iso-8859-1?Q?ANbQhdiExySPawF2F6W6q9a2NIIH10ImI0J70L2n87pr3WVfUgbSXbeUVO?=
+ =?iso-8859-1?Q?pjuv5a5uknJdD8Kf2URRig0MFeNL7ROR2+5Yfuvd+fEDQ7cpkMMeQdQQL5?=
+ =?iso-8859-1?Q?JB9AqQLXNwoLNPaF3CknJwDeFIjF8HE/PM?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] drm/client: Pass force parameter to client restore
-To: Thomas Zimmermann <tzimmermann@suse.de>, javierm@redhat.com,
- simona@ffwll.ch, airlied@gmail.com, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, gregkh@linuxfoundation.org,
- jirislaby@kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-References: <20251107142612.467817-1-tzimmermann@suse.de>
- <20251107142612.467817-2-tzimmermann@suse.de>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20251107142612.467817-2-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07020963-c15d-44ed-f9b8-08de2061ce64
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2025 14:02:37.8700
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: o/SOjpEBbEcNcg76PAAPiH34aRMlkRY7gv4W3yYyMaVYu3agIBvdY/Psf7rTB2GHbuYx58pZvbnlxD5HMNMJBg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPF7A0031045
+X-OriginatorOrg: intel.com
 
-On 07/11/2025 15:19, Thomas Zimmermann wrote:
-> Add force parameter to client restore and pass value through the
-> layers. The only currently used value is false.
-> 
-> If force is true, the client should restore its display even if it
-> does not hold the DRM master lock. This is be required for emergency
-> output, such as sysrq.
-> 
-> While at it, inline drm_fb_helper_lastclose(), which is a trivial
-> wrapper around drm_fb_helper_restore_fbdev_mode_unlocked().
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> Sent: Thursday, November 6, 2025 9:34 PM
+> To: Yury Norov <yury.norov@gmail.com>; Michael Turquette
+> <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Nicolas
+> Ferre <nicolas.ferre@microchip.com>; Alexandre Belloni
+> <alexandre.belloni@bootlin.com>; Claudiu Beznea
+> <claudiu.beznea@tuxon.dev>; Cabiddu, Giovanni
+> <giovanni.cabiddu@intel.com>; Herbert Xu <herbert@gondor.apana.org.au>;
+> David Miller <davem@davemloft.net>; Linus Walleij
+> <linus.walleij@linaro.org>; Bartosz Golaszewski <brgl@bgdev.pl>; Joel Sta=
+nley
+> <joel@jms.id.au>; Andrew Jeffery <andrew@codeconstruct.com.au>; Crt
+> Mori <cmo@melexis.com>; Jonathan Cameron <jic23@kernel.org>; Lars-
+> Peter Clausen <lars@metafoo.de>; Jacky Huang <ychuang3@nuvoton.com>;
+> Shan-Chun Hung <schung@nuvoton.com>; Rasmus Villemoes
+> <linux@rasmusvillemoes.dk>; Jaroslav Kysela <perex@perex.cz>; Takashi Iwa=
+i
+> <tiwai@suse.com>; Johannes Berg <johannes@sipsolutions.net>; Jakub
+> Kicinski <kuba@kernel.org>; Alex Elder <elder@ieee.org>; David Laight
+> <david.laight.linux@gmail.com>; Vincent Mailhol
+> <mailhol.vincent@wanadoo.fr>; Jason Baron <jbaron@akamai.com>; Borislav
+> Petkov <bp@alien8.de>; Luck, Tony <tony.luck@intel.com>; Michael
+> Hennerich <Michael.Hennerich@analog.com>; Kim Seer Paller
+> <kimseer.paller@analog.com>; Lechner, David <dlechner@baylibre.com>;
+> Nuno S=E1 <nuno.sa@analog.com>; Andy Shevchenko <andy@kernel.org>;
+> Richard Genoud <richard.genoud@bootlin.com>; Cosmin Tanislav
+> <demonsingur@gmail.com>; Biju Das <biju.das.jz@bp.renesas.com>;
+> Jianping Shen <Jianping.Shen@de.bosch.com>; Nathan Chancellor
+> <nathan@kernel.org>; Nick Desaulniers <nick.desaulniers+lkml@gmail.com>;
+> Miquel Raynal <miquel.raynal@bootlin.com>; Richard Weinberger
+> <richard@nod.at>; Vignesh Raghavendra <vigneshr@ti.com>
+> Cc: linux-clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linu=
+x-
+> renesas-soc@vger.kernel.org; linux-crypto@vger.kernel.org; linux-
+> edac@vger.kernel.org; qat-linux <qat-linux@intel.com>; linux-
+> gpio@vger.kernel.org; linux-aspeed@lists.ozlabs.org; linux-
+> iio@vger.kernel.org; linux-sound@vger.kernel.org; linux-
+> mtd@lists.infradead.org; linux-kernel@vger.kernel.org; Geert Uytterhoeven
+> <geert+renesas@glider.be>
+> Subject: [PATCH v6 03/26] EDAC/ie31200: #undef field_get() before local
+> definition
+>=20
+> Prepare for the advent of a globally available common field_get() macro b=
+y
+> undefining the symbol before defining a local variant.  This prevents
+> redefinition warnings from the C preprocessor when introducing the common
+> macro later.
+>=20
+> Suggested-by: Yury Norov <yury.norov@gmail.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks for this work, it looks good to me.
+Good to see the global field_{get,prep}() macros are available for use.
+Thanks.
 
-Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->   drivers/gpu/drm/clients/drm_fbdev_client.c |  6 ++++--
->   drivers/gpu/drm/drm_client_event.c         |  4 ++--
->   drivers/gpu/drm/drm_fb_helper.c            | 24 ++++++----------------
->   drivers/gpu/drm/drm_file.c                 |  2 +-
->   include/drm/drm_client.h                   |  8 +++++---
->   include/drm/drm_client_event.h             |  4 ++--
->   include/drm/drm_fb_helper.h                |  8 ++------
->   7 files changed, 22 insertions(+), 34 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/clients/drm_fbdev_client.c b/drivers/gpu/drm/clients/drm_fbdev_client.c
-> index 47e5f27eee58..28951e392482 100644
-> --- a/drivers/gpu/drm/clients/drm_fbdev_client.c
-> +++ b/drivers/gpu/drm/clients/drm_fbdev_client.c
-> @@ -38,9 +38,11 @@ static void drm_fbdev_client_unregister(struct drm_client_dev *client)
->   	}
->   }
->   
-> -static int drm_fbdev_client_restore(struct drm_client_dev *client)
-> +static int drm_fbdev_client_restore(struct drm_client_dev *client, bool force)
->   {
-> -	drm_fb_helper_lastclose(client->dev);
-> +	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
-> +
-> +	drm_fb_helper_restore_fbdev_mode_unlocked(fb_helper, force);
->   
->   	return 0;
->   }
-> diff --git a/drivers/gpu/drm/drm_client_event.c b/drivers/gpu/drm/drm_client_event.c
-> index d25dc5250983..7b3e362f7926 100644
-> --- a/drivers/gpu/drm/drm_client_event.c
-> +++ b/drivers/gpu/drm/drm_client_event.c
-> @@ -102,7 +102,7 @@ void drm_client_dev_hotplug(struct drm_device *dev)
->   }
->   EXPORT_SYMBOL(drm_client_dev_hotplug);
->   
-> -void drm_client_dev_restore(struct drm_device *dev)
-> +void drm_client_dev_restore(struct drm_device *dev, bool force)
->   {
->   	struct drm_client_dev *client;
->   	int ret;
-> @@ -115,7 +115,7 @@ void drm_client_dev_restore(struct drm_device *dev)
->   		if (!client->funcs || !client->funcs->restore)
->   			continue;
->   
-> -		ret = client->funcs->restore(client);
-> +		ret = client->funcs->restore(client, force);
->   		drm_dbg_kms(dev, "%s: ret=%d\n", client->name, ret);
->   		if (!ret) /* The first one to return zero gets the privilege to restore */
->   			break;
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> index 53e9dc0543de..1392738ce2fe 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -255,6 +255,7 @@ __drm_fb_helper_restore_fbdev_mode_unlocked(struct drm_fb_helper *fb_helper,
->   /**
->    * drm_fb_helper_restore_fbdev_mode_unlocked - restore fbdev configuration
->    * @fb_helper: driver-allocated fbdev helper, can be NULL
-> + * @force: ignore present DRM master
->    *
->    * This helper should be called from fbdev emulation's &drm_client_funcs.restore
->    * callback. It ensures that the user isn't greeted with a black screen when the
-> @@ -263,9 +264,9 @@ __drm_fb_helper_restore_fbdev_mode_unlocked(struct drm_fb_helper *fb_helper,
->    * Returns:
->    * 0 on success, or a negative errno code otherwise.
->    */
-> -int drm_fb_helper_restore_fbdev_mode_unlocked(struct drm_fb_helper *fb_helper)
-> +int drm_fb_helper_restore_fbdev_mode_unlocked(struct drm_fb_helper *fb_helper, bool force)
->   {
-> -	return __drm_fb_helper_restore_fbdev_mode_unlocked(fb_helper, false);
-> +	return __drm_fb_helper_restore_fbdev_mode_unlocked(fb_helper, force);
->   }
->   EXPORT_SYMBOL(drm_fb_helper_restore_fbdev_mode_unlocked);
->   
-> @@ -1328,9 +1329,9 @@ int drm_fb_helper_set_par(struct fb_info *info)
->   	 * the KDSET IOCTL with KD_TEXT, and only after that drops the master
->   	 * status when exiting.
->   	 *
-> -	 * In the past this was caught by drm_fb_helper_lastclose(), but on
-> -	 * modern systems where logind always keeps a drm fd open to orchestrate
-> -	 * the vt switching, this doesn't work.
-> +	 * In the past this was caught by drm_fb_helper_restore_fbdev_mode_unlocked(),
-> +	 * but on modern systems where logind always keeps a drm fd open to
-> +	 * orchestrate the vt switching, this doesn't work.
->   	 *
->   	 * To not break the userspace ABI we have this special case here, which
->   	 * is only used for the above case. Everything else uses the normal
-> @@ -1955,16 +1956,3 @@ int drm_fb_helper_hotplug_event(struct drm_fb_helper *fb_helper)
->   	return 0;
->   }
->   EXPORT_SYMBOL(drm_fb_helper_hotplug_event);
-> -
-> -/**
-> - * drm_fb_helper_lastclose - DRM driver lastclose helper for fbdev emulation
-> - * @dev: DRM device
-> - *
-> - * This function is obsolete. Call drm_fb_helper_restore_fbdev_mode_unlocked()
-> - * instead.
-> - */
-> -void drm_fb_helper_lastclose(struct drm_device *dev)
-> -{
-> -	drm_fb_helper_restore_fbdev_mode_unlocked(dev->fb_helper);
-> -}
-> -EXPORT_SYMBOL(drm_fb_helper_lastclose);
-> diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
-> index eebd1a05ee97..be5e617ceb9f 100644
-> --- a/drivers/gpu/drm/drm_file.c
-> +++ b/drivers/gpu/drm/drm_file.c
-> @@ -405,7 +405,7 @@ EXPORT_SYMBOL(drm_open);
->   
->   static void drm_lastclose(struct drm_device *dev)
->   {
-> -	drm_client_dev_restore(dev);
-> +	drm_client_dev_restore(dev, false);
->   
->   	if (dev_is_pci(dev->dev))
->   		vga_switcheroo_process_delayed_switch();
-> diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
-> index 5ecde0f6f591..c972a8a3385b 100644
-> --- a/include/drm/drm_client.h
-> +++ b/include/drm/drm_client.h
-> @@ -57,12 +57,14 @@ struct drm_client_funcs {
->   	 *
->   	 * Note that the core does not guarantee exclusion against concurrent
->   	 * drm_open(). Clients need to ensure this themselves, for example by
-> -	 * using drm_master_internal_acquire() and
-> -	 * drm_master_internal_release().
-> +	 * using drm_master_internal_acquire() and drm_master_internal_release().
-> +	 *
-> +	 * If the caller passes force, the client should ignore any present DRM
-> +	 * master and restore the display anyway.
->   	 *
->   	 * This callback is optional.
->   	 */
-> -	int (*restore)(struct drm_client_dev *client);
-> +	int (*restore)(struct drm_client_dev *client, bool force);
->   
->   	/**
->   	 * @hotplug:
-> diff --git a/include/drm/drm_client_event.h b/include/drm/drm_client_event.h
-> index 985d6f02a4c4..79369c755bc9 100644
-> --- a/include/drm/drm_client_event.h
-> +++ b/include/drm/drm_client_event.h
-> @@ -10,7 +10,7 @@ struct drm_device;
->   #if defined(CONFIG_DRM_CLIENT)
->   void drm_client_dev_unregister(struct drm_device *dev);
->   void drm_client_dev_hotplug(struct drm_device *dev);
-> -void drm_client_dev_restore(struct drm_device *dev);
-> +void drm_client_dev_restore(struct drm_device *dev, bool force);
->   void drm_client_dev_suspend(struct drm_device *dev);
->   void drm_client_dev_resume(struct drm_device *dev);
->   #else
-> @@ -18,7 +18,7 @@ static inline void drm_client_dev_unregister(struct drm_device *dev)
->   { }
->   static inline void drm_client_dev_hotplug(struct drm_device *dev)
->   { }
-> -static inline void drm_client_dev_restore(struct drm_device *dev)
-> +static inline void drm_client_dev_restore(struct drm_device *dev, bool force)
->   { }
->   static inline void drm_client_dev_suspend(struct drm_device *dev)
->   { }
-> diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
-> index c1d38d54a112..63e3af8dd5ed 100644
-> --- a/include/drm/drm_fb_helper.h
-> +++ b/include/drm/drm_fb_helper.h
-> @@ -254,7 +254,8 @@ int drm_fb_helper_set_par(struct fb_info *info);
->   int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
->   			    struct fb_info *info);
->   
-> -int drm_fb_helper_restore_fbdev_mode_unlocked(struct drm_fb_helper *fb_helper);
-> +int drm_fb_helper_restore_fbdev_mode_unlocked(struct drm_fb_helper *fb_helper,
-> +					      bool force);
->   
->   struct fb_info *drm_fb_helper_alloc_info(struct drm_fb_helper *fb_helper);
->   void drm_fb_helper_release_info(struct drm_fb_helper *fb_helper);
-> @@ -283,7 +284,6 @@ int drm_fb_helper_hotplug_event(struct drm_fb_helper *fb_helper);
->   int drm_fb_helper_initial_config(struct drm_fb_helper *fb_helper);
->   int drm_fb_helper_debug_enter(struct fb_info *info);
->   int drm_fb_helper_debug_leave(struct fb_info *info);
-> -void drm_fb_helper_lastclose(struct drm_device *dev);
->   #else
->   static inline void drm_fb_helper_prepare(struct drm_device *dev,
->   					 struct drm_fb_helper *helper,
-> @@ -409,10 +409,6 @@ static inline int drm_fb_helper_debug_leave(struct fb_info *info)
->   {
->   	return 0;
->   }
-> -
-> -static inline void drm_fb_helper_lastclose(struct drm_device *dev)
-> -{
-> -}
->   #endif
->   
->   #endif
-
+> [...]
 
