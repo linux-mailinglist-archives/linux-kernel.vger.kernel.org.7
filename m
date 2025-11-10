@@ -1,263 +1,140 @@
-Return-Path: <linux-kernel+bounces-893491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA3A1C47879
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:27:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3E9C4777C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3ECB188B3FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:25:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B0E84EE672
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BFA2405E7;
-	Mon, 10 Nov 2025 15:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7833932570C;
+	Mon, 10 Nov 2025 15:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipearl.com header.i=@sipearl.com header.b="sLznb25g"
-Received: from smtpout.sipearl.com (smtpout.sipearl.com [178.170.11.57])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ij2YPvvI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77F7242D8B;
-	Mon, 10 Nov 2025 15:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.170.11.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D76324B30;
+	Mon, 10 Nov 2025 15:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762788311; cv=none; b=mVEMJ1otGYmN3QbYPlQKP6gr6/x6+LMWcPpAQaLKCSDmx88mYb32Z99+S/mG3lyrBpERpr8T5HmpXqCu1Mg0RiNq602ChzhqdKZjB+9YUPZ6HcQSz52o0kWM/PkIwXTh7QVQDFtx9fXi4riDEocqwkap4wmfqXvSwR2Rc8UzRjk=
+	t=1762787373; cv=none; b=Vt01lGGt8qfO2D4pTCt1PuE9pwp4EbdiY0wfykR0hJqECFh0fqU5FSVY3MwGU4AfFlxSU/sbUKs4CPFBAh4UfeHxXUsM/nO/0R/UdQ/1T42xL45qZfBDt6XA15vUtdp9J2AISadsifQilbhy4E2nEcnH04f6jkTeWwsBpRjk0uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762788311; c=relaxed/simple;
-	bh=6aDfq1O4bhca5RLhLmmdUwU0lECAmu17Hzx+ZbV7QJw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NQLt0+W8+ImcfTekDz6y2/ejbGDWt3LBaxdVhSgoNGWBLWR52ICA78J/msuDhjVBKe3qQCFcIIrzSmonWZD+n9DzmyLudxX+BWk+jI9Eyfb1XdDU8ulcayJqDlHijBa45tQGHKsGHGyCRvnk5i2ahKvrZA1JIZPrkZdYiGr2f7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipearl.com; spf=pass smtp.mailfrom=sipearl.com; dkim=pass (2048-bit key) header.d=sipearl.com header.i=@sipearl.com header.b=sLznb25g; arc=none smtp.client-ip=178.170.11.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipearl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipearl.com
-Received: from smtpout.sipearl.com ([172.31.29.1])
-	by smtpin.sipearl.com  with ESMTPS id 5AAF9et3032096-5AAF9et5032096
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 16:09:40 +0100
-Received: from dc2pvlnosz001.pub.int.sipearl.com (172.31.65.18) by
- dc2pvwexcz001.sipearl.corp (172.31.29.1) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.36; Mon, 10 Nov 2025 16:09:40 +0100
-From: Andrea Tomassetti <andrea.tomassetti@sipearl.com>
-To: <sudeep.holla@arm.com>, <jassisinghbrar@gmail.com>, <rafael@kernel.org>
-CC: Andrea Tomassetti <andrea.tomassetti@sipearl.com>, <lenb@kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<olivierdautricourt@gmail.com>, Thibault Cantori
-	<thibault.cantori@sipearl.com>, Olivier Dautricourt
-	<olivier.dautricourt@sipearl.com>
-Subject: [PATCH] mailbox: pcc: support polling mode when there is no platform IRQ
-Date: Mon, 10 Nov 2025 16:08:21 +0100
-Message-ID: <20251110150825.3548819-1-andrea.tomassetti@sipearl.com>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1762787373; c=relaxed/simple;
+	bh=OiZjviKQjU08OlUi4t2BENexV5D4xornk0SbQ9lo5Do=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=mgaC8stgIp4Ehz7DNJxaNPYdnPnk8hTBbInvS0OTzN8R9A1Jno1sMB+FoF0cRZ9VR2DuqtgtljVCRbe9Oduuc4i5bzsIMoqgnIM0wc5JIPDbat0WU9F+84CVVVB4VcEakFraE7GhoEKYHjTj92m003kHzXYJ3LKdorBvUQIbXBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ij2YPvvI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE1FEC113D0;
+	Mon, 10 Nov 2025 15:09:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762787373;
+	bh=OiZjviKQjU08OlUi4t2BENexV5D4xornk0SbQ9lo5Do=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=ij2YPvvI+QorgA98O/jD9q+PPCzvr2A41SESN6SJ95E8aObVpFfYvcndZNt6CWdM4
+	 52XZ1eKK/v4DmXxjQY66vWOt0XOkha4HhdPV+pQa3dYhHePVfhIQBtkeaaok3FhmBn
+	 lRv/GDPemSSgKxfP3QKYnVOULMRR1wyDRjnbwTUEvTGwNDQmh0/E5E0gRxKO7gtUq7
+	 SlTknudc771PZYu84j62hzaPcqr3pq+hCUV/qCdvPIVQaxkL9SD7ZHiXSRcnepVzvU
+	 X53go0dMucVWxH8RH6In0dfxRS1FHk1XJvA8xhXR2BY8RGQ7Pz16ktWZ54E1fDenMz
+	 6/n8GTEBz89LQ==
+From: Christian Brauner <brauner@kernel.org>
+Date: Mon, 10 Nov 2025 16:08:22 +0100
+Subject: [PATCH 10/17] fs: use boolean to indicate anonymous mount
+ namespace
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dc2pvwexcz001.sipearl.corp (172.31.29.1) To
- dc2pvwexcz001.sipearl.corp (172.31.29.1)
-X-FEAS-Client-IP: 172.31.29.1
-X-FE-Policy-ID: 2:2:2:SYSTEM
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=sipearl.com; s=sipearl2024; c=relaxed/relaxed;
- h=from:to:cc:subject:date:message-id:mime-version:content-type;
- bh=C7vAsdXnHh8Asw9/J2zJB9CUMoD7+9IQATCBZPO7A/Y=;
- b=sLznb25gh5CK3kMHxtpaXcml6fci1C+cbmGtraD46M/buQl/5fYBxPM2KfGuCyW4xiZIuJLkm9U4
-	nUMefaYgOAJH2LvjgySd7I93ryQMz9T7ehNsL0Klif8Alle7BRr+g09pLflGe6dHuYa6BcltZ51V
-	udRTF7GA9mdzwqzMo74P7FRBcmGj+OfLKgSFlnj8ASq3QIPEnDz3dvbCu+Z9VSuRNt5pW+76X2Qq
-	0IFFxxUqO4A54qKjpxcdVxTvfYzLgV7fmsUpEOx4//Eb9SUarJ4jCW0grbN/GR8Pw/h4Pz79uFf5
-	5Ll0l5C25fAgwzMt1r2hK5YJtjW4NofK4Go4iQ==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251110-work-namespace-nstree-fixes-v1-10-e8a9264e0fb9@kernel.org>
+References: <20251110-work-namespace-nstree-fixes-v1-0-e8a9264e0fb9@kernel.org>
+In-Reply-To: <20251110-work-namespace-nstree-fixes-v1-0-e8a9264e0fb9@kernel.org>
+To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>
+Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ Lennart Poettering <mzxreary@0pointer.de>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+ Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, 
+ Johannes Weiner <hannes@cmpxchg.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1757; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=OiZjviKQjU08OlUi4t2BENexV5D4xornk0SbQ9lo5Do=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQK/v9sNyWiINjt6hXJbbkBalsYvEuTIpwzrln1VC1xL
+ VJK7s3pKGVhEONikBVTZHFoNwmXW85TsdkoUwNmDisTyBAGLk4BmEitNSPDAQ/n43M/BjSrby1a
+ /+aye41BtVTXt/dmacsfXbj6fu7P+wz/U8T/7XlzRtiaPWe66vmfV/mv77sVpqbi1iGlEv6o7OB
+ +LgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-The goal is to allow clients to submit a message in both irq and polling
-mode of the pcc mailbox. The ACPI specification does not require a
-platform irq for pcc channels. Let's implement the case where it is not
-available.
+Stop playing games with the namespace id and use a boolean instead:
 
-peek_data is mapped to pcc_mbox_error_check_and_clear, so that it
-returns true if no error occurred while the platform processed last
-message, and therefore clients can fetch response data provided by the
-platform.
+* This will remove the special-casing we need to do everywhere for mount
+  namespaces.
 
-Tested-by: Thibault Cantori <thibault.cantori@sipearl.com>
-Co-developed-by: Olivier Dautricourt <olivier.dautricourt@sipearl.com>
-Signed-off-by: Olivier Dautricourt <olivier.dautricourt@sipearl.com>
-Signed-off-by: Andrea Tomassetti <andrea.tomassetti@sipearl.com>
+* It will allow us to use asserts on the namespace id for initial
+  namespaces everywhere.
+
+* It will allow us to put anonymous mount namespaces on the namespaces
+  trees in the future and thus make them available to statmount() and
+  listmount().
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/acpi/acpi_pcc.c | 77 ++++++++++++++++++++++++++++-------------
- drivers/mailbox/pcc.c   | 12 ++++++-
- 2 files changed, 63 insertions(+), 26 deletions(-)
+ fs/mount.h     | 3 ++-
+ fs/namespace.c | 5 +++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/acpi_pcc.c b/drivers/acpi/acpi_pcc.c
-index 97064e943768..ef5d7eae150b 100644
---- a/drivers/acpi/acpi_pcc.c
-+++ b/drivers/acpi/acpi_pcc.c
-@@ -51,7 +51,6 @@ acpi_pcc_address_space_setup(acpi_handle region_handle, u32 function,
+diff --git a/fs/mount.h b/fs/mount.h
+index f13a28752d0b..2d28ef2a3aed 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -27,6 +27,7 @@ struct mnt_namespace {
+ 	unsigned int		nr_mounts; /* # of mounts in the namespace */
+ 	unsigned int		pending_mounts;
+ 	refcount_t		passive; /* number references not pinning @mounts */
++	bool			is_anon;
+ } __randomize_layout;
+ 
+ struct mnt_pcp {
+@@ -175,7 +176,7 @@ static inline bool is_local_mountpoint(const struct dentry *dentry)
+ 
+ static inline bool is_anon_ns(struct mnt_namespace *ns)
  {
- 	struct pcc_data *data;
- 	struct acpi_pcc_info *ctx = handler_context;
--	struct pcc_mbox_chan *pcc_chan;
- 	static acpi_status ret;
-
- 	data = kzalloc(sizeof(*data), GFP_KERNEL);
-@@ -59,7 +58,7 @@ acpi_pcc_address_space_setup(acpi_handle region_handle, u32 function,
- 		return AE_NO_MEMORY;
-
- 	data->cl.rx_callback = pcc_rx_callback;
--	data->cl.knows_txdone = true;
-+	data->cl.knows_txdone = false;
- 	data->ctx.length = ctx->length;
- 	data->ctx.subspace_id = ctx->subspace_id;
- 	data->ctx.internal_buffer = ctx->internal_buffer;
-@@ -73,61 +72,89 @@ acpi_pcc_address_space_setup(acpi_handle region_handle, u32 function,
- 		goto err_free_data;
+-	return ns->ns.ns_id == 0;
++	return ns->is_anon;
+ }
+ 
+ static inline bool anon_ns_root(const struct mount *m)
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ad19530a13b2..efaff8680eaf 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4093,8 +4093,9 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
+ 		dec_mnt_namespaces(ucounts);
+ 		return ERR_PTR(ret);
  	}
-
--	pcc_chan = data->pcc_chan;
--	if (!pcc_chan->mchan->mbox->txdone_irq) {
--		pr_err("This channel-%d does not support interrupt.\n",
--		       ctx->subspace_id);
--		ret = AE_SUPPORT;
--		goto err_free_channel;
--	}
--
- 	*region_context = data;
- 	return AE_OK;
-
--err_free_channel:
--	pcc_mbox_free_channel(data->pcc_chan);
- err_free_data:
- 	kfree(data);
-
- 	return ret;
- }
-
-+static acpi_status
-+acpi_pcc_send_msg_polling(struct pcc_data *data)
-+{
-+	int ret;
+-	if (!anon)
+-		ns_tree_gen_id(new_ns);
++	ns_tree_gen_id(new_ns);
 +
-+	ret = mbox_send_message(data->pcc_chan->mchan, data->pcc_chan->shmem);
-+	if (ret == -ETIME) {
-+		pr_err("PCC command executed timeout!\n");
-+		return AE_TIME;
-+	}
-+
-+	if (ret < 0)
-+		return AE_ERROR;
-+
-+	if (!mbox_client_peek_data(data->pcc_chan->mchan))
-+		return AE_ERROR;
-+
-+	return AE_OK;
-+}
-+
-+static acpi_status
-+acpi_pcc_send_msg_irq(struct pcc_data *data)
-+{
-+	int ret;
-+
-+	ret = mbox_send_message(data->pcc_chan->mchan, NULL);
-+	if (ret < 0)
-+		return AE_ERROR;
-+
-+	ret = wait_for_completion_timeout(&data->done,
-+					  usecs_to_jiffies(data->cl.tx_tout * USEC_PER_MSEC));
-+	if (ret == 0) {
-+		pr_err("PCC command executed timeout!\n");
-+		return AE_TIME;
-+	}
-+
-+	mbox_chan_txdone(data->pcc_chan->mchan, ret);
-+
-+	return AE_OK;
-+}
-+
- static acpi_status
- acpi_pcc_address_space_handler(u32 function, acpi_physical_address addr,
- 			       u32 bits, acpi_integer *value,
- 			       void *handler_context, void *region_context)
- {
--	int ret;
-+	acpi_status ret;
- 	struct pcc_data *data = region_context;
- 	u64 usecs_lat;
-+	bool use_polling = data->pcc_chan->mchan->mbox->txdone_poll;
++	new_ns->is_anon = anon;
+ 	refcount_set(&new_ns->passive, 1);
+ 	new_ns->mounts = RB_ROOT;
+ 	init_waitqueue_head(&new_ns->poll);
 
- 	reinit_completion(&data->done);
+-- 
+2.47.3
 
- 	/* Write to Shared Memory */
- 	memcpy_toio(data->pcc_chan->shmem, (void *)value, data->ctx.length);
-
--	ret = mbox_send_message(data->pcc_chan->mchan, NULL);
--	if (ret < 0)
--		return AE_ERROR;
--
- 	/*
- 	 * pcc_chan->latency is just a Nominal value. In reality the remote
- 	 * processor could be much slower to reply. So add an arbitrary
- 	 * amount of wait on top of Nominal.
- 	 */
- 	usecs_lat = PCC_CMD_WAIT_RETRIES_NUM * data->pcc_chan->latency;
--	ret = wait_for_completion_timeout(&data->done,
--						usecs_to_jiffies(usecs_lat));
--	if (ret == 0) {
--		pr_err("PCC command executed timeout!\n");
--		return AE_TIME;
--	}
-
--	mbox_chan_txdone(data->pcc_chan->mchan, ret);
-+	data->cl.tx_block = use_polling;
-+	data->cl.tx_tout = usecs_lat / USEC_PER_MSEC;
-+
-+	if (use_polling)
-+		ret = acpi_pcc_send_msg_polling(data);
-+	else
-+		ret = acpi_pcc_send_msg_irq(data);
-
- 	memcpy_fromio(value, data->pcc_chan->shmem, data->ctx.length);
-
--	return AE_OK;
-+	return ret;
- }
-
- void __init acpi_init_pcc(void)
-diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-index 0a00719b2482..e4e744669f81 100644
---- a/drivers/mailbox/pcc.c
-+++ b/drivers/mailbox/pcc.c
-@@ -579,11 +579,17 @@ static void pcc_shutdown(struct mbox_chan *chan)
- 		devm_free_irq(chan->mbox->dev, pchan->plat_irq, chan);
- }
-
-+static bool pcc_peek_data(struct mbox_chan *chan)
-+{
-+	return pcc_mbox_error_check_and_clear(chan->con_priv) == 0;
-+}
-+
- static const struct mbox_chan_ops pcc_chan_ops = {
- 	.send_data = pcc_send_data,
- 	.startup = pcc_startup,
- 	.shutdown = pcc_shutdown,
- 	.last_tx_done = pcc_last_tx_done,
-+	.peek_data = pcc_peek_data,
- };
-
- /**
-@@ -877,8 +883,12 @@ static int pcc_mbox_probe(struct platform_device *pdev)
- 		(unsigned long) pcct_tbl + sizeof(struct acpi_table_pcct));
-
- 	acpi_pcct_tbl = (struct acpi_table_pcct *) pcct_tbl;
--	if (acpi_pcct_tbl->flags & ACPI_PCCT_DOORBELL)
-+	if (acpi_pcct_tbl->flags & ACPI_PCCT_DOORBELL) {
- 		pcc_mbox_ctrl->txdone_irq = true;
-+	} else {
-+		pcc_mbox_ctrl->txdone_poll = true;
-+		pcc_mbox_ctrl->txpoll_period = 1;
-+	}
-
- 	for (i = 0; i < count; i++) {
- 		struct pcc_chan_info *pchan = chan_info + i;
---
-2.25.0
 
