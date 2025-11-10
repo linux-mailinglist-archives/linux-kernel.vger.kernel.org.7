@@ -1,142 +1,173 @@
-Return-Path: <linux-kernel+bounces-894211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94FEDC497BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:06:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7B8C497BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:06:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7A134E7EB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4A86188A36A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6794F2F6582;
-	Mon, 10 Nov 2025 22:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C052F5A3C;
+	Mon, 10 Nov 2025 22:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHwNLLb9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b="qQZPj31e"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22572D6605;
-	Mon, 10 Nov 2025 22:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E819E28980A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 22:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762812374; cv=none; b=QYnrlUtFfozoTA31Pr6VWDijJmQaULyEIo9jvFuMSd16Uu7JEH6SdnAmREk2rI8BR/BSmOGZ2pOELPC0dAFqSTxWDnoRc+aYnhqQciLcE+w03r7Nwcds7TvAoRLBl7USYO8HjCh2gWH8KhkUN7cBM8do6NKF7/DXty9D0KpiEAo=
+	t=1762812400; cv=none; b=FKrWKssZQEQSFuBJv2j/F+HKg6eTHZ9IvHvcB9hKogk93lW4BUSejxoI0r5lOxKL0EH4bREkS8sby8tyRUfUt5fn0syaRHwUDaWxtD1iRXvIKIcHsAt2UhKENHxfRYpfIR5ydHRLXXaiJGPVuF3WDSKhdl1oo/yloeh1SxOvNgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762812374; c=relaxed/simple;
-	bh=ANbHoAoxXFqFOwqzSzLfvjdSSMJWajzcDa95+kDS2s4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lNBX0xIhXx7l+iFhQ5F+os49oB309U77NjcmHj8B6TAmc8xum0U3voSGAxLR7jkWxkNqAoS/2yh1XcQE64HxYFGvco1pK2oT7pL5vIS74GEW3uI71kSvsFhmGC6FIMXU7CCTZl2QdvtlNkkbot1wQo+J3P/8NHnwK4kHCukMMlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHwNLLb9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B1DC19424;
-	Mon, 10 Nov 2025 22:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762812373;
-	bh=ANbHoAoxXFqFOwqzSzLfvjdSSMJWajzcDa95+kDS2s4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YHwNLLb9zWuTURbZGIRD48rB/Di+bP62dlO9Tg4mblA7Cbrptfo5W832oIEwE2aqV
-	 BQp2jZtEpMKH+cOnCAZRPKnI4PG9Rg9H1KQ4U0xpMVUtja3fRru5m+VQAHUbTSVvOj
-	 qt45nJ0KxrsNpFIPUSJ1J/vERRVZ5INczOA7vaMMWEWARr1lHrpd+mPldP3U95b+Ql
-	 vojHRk0K9uFFeli/VQ/KOkQsmkeD+mbdbpYdQPB+/h/LrAIbxB/I8jfbbX4st4lQ50
-	 8clcY5KfY1AxZOfPXuHbp/B6UYSspc941HtKxg5p2uxIE3PO3cc5JjC+Jy4lBQQjuq
-	 Vawpzf2lSDAcA==
-Date: Mon, 10 Nov 2025 23:06:08 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, Marco Elver <elver@google.com>, Kees Cook <kees@kernel.org>, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Linux Memory Management List <linux-mm@kvack.org>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Michal Hocko <mhocko@suse.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v1 2/3] mm: Fix benign off-by-one bugs
-Message-ID: <6vzrgu2gei2g2445cuwod37gmxz3zejnhegrqseymb6gofydum@agw3bgic3v52>
-References: <87445e701574058b142e036c3b8a0f505086ab64.1758806023.git.alx@kernel.org>
- <202511110100.9uPtQqN1-lkp@intel.com>
+	s=arc-20240116; t=1762812400; c=relaxed/simple;
+	bh=rYhUBnvwT+ub027fXUx5R6wsKiOlOm+VBlO4fl6AhFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s4RMgyk1P5S3HGgBd6KF2l34lr+3edj3Br0oPag8ixfmZKDbqSYmjLDz3AV0TP9OgiZodzyjG1SxXw3nRgKNi5pmvWei653aB0SUqx33aIFm5BMrOklMqZ07VTyfHVbg8y608eNgWjB4NDcTXNO3hFntwvf5bH2yOvYRFtRnYb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com; spf=pass smtp.mailfrom=etsalapatis.com; dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b=qQZPj31e; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etsalapatis.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-786943affbaso26775017b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:06:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=etsalapatis-com.20230601.gappssmtp.com; s=20230601; t=1762812395; x=1763417195; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V4f9Zy+Xxr8e4Nr+RON0+4DZk9ZxxU3ItskZZmBVohc=;
+        b=qQZPj31eNP9l/okgyltIVFWSQC7i1dKDsYslXbsAwC/8x45ar5FCQQo8E+UVs8868L
+         xOnQGozp7w8f4uBcvN+hd81jNsbQwirPYtc8EVV5DMCjU1fOxj5nkaa8YWDTQOFEdquO
+         FN6WwXw4sW2fAPKJaM/Bt+zpSAWDOIabGbbXR4+2fyfH+Xa3kRTWh7fNtXCNIg0n0Dve
+         dpP9Fn/q3ler80nv5zRYtI5EKqUkAp6XB+IvT5btxQpgekr2UPDWEGEr4/Ypuct7Fr3+
+         xpy5XnOyPtr9EUDcKJ15Lsyr6K5VK8QXpS1GuLepzyEhwZGqz61Wn+gomxgmNlZQ1MdV
+         2Jsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762812395; x=1763417195;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=V4f9Zy+Xxr8e4Nr+RON0+4DZk9ZxxU3ItskZZmBVohc=;
+        b=Zdi2YHv59O10IVEYfpbJK/LTOAp+OjgJ6t3y9uukLcBjbrZs1uRkPsKoyNVNw26jrx
+         QsgSqW9j4Z5nW7mpGo/JNbzzNjebunOYtCM8GN46F0HZcVk+aiuZ4PEiQ90mi1qapwRa
+         RBnPyAI6rDrdKCT28KNlSOKbyeczX+RVGtIYiJI56/yxl/ixvHHLZ421FjId+GY8zWh9
+         AAu9enUKZEDC+BnCDrNtan/79hhiT1gJ9Po1lU5iQPqGRLhFHPkRqe42e7k39MURFbLY
+         YbBmB+S/wJC03sYgytXsFxmZOCrjWrjXJ0q5apDSvDIJg1PXK++9sntpaTSrUVQV4D2t
+         D8Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1dh6LILApuWGSkfAgGIEwtYVBis4rIstDbROo416DPcreDuZ+wdND21+zI+yZeVQI8G46p/sS0yAfH5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEIvmuIeoN9EcnDHJABNZYbAzPnjoSYVie5YvotJ6YDrv5PmS3
+	Jho3jZfjhg/yrm2MDmpwVKDfXr1BtbhZTg+d5mEfhEDh2YLtrygU9gEccevmkYho8xwXQZqPJLM
+	vr8pA4VYpEHqCaD6yKTMxMpcjyRua6PpLwkRt6fYaCw==
+X-Gm-Gg: ASbGncvJ7SJr8CGePGiS0PQVmRcHFDDsqUarrJoWsT0NSIyPfDPJR3GOXiTQcJZsd6i
+	Gpj6a7Hj+fifv5X4rBV0Zp5ONHxQGzk8ei8jC5Y+quqF9syReBLXG4Wz6QN6oa8uUC+WuLrSY7C
+	Rd8SXV6QKvXPHYQQFkl+PXzRZvUdlIpdd68qW8o7vF1GLsx/096ag3a/I8kntzHmJjN8L0+9pTq
+	0YuUjuI8XLt5wPmTLPzcrZvFENSySqHB2ZlrvZxYQjs3mxPgYp01eq9blp0YjNZNHHoYY3VRg==
+X-Google-Smtp-Source: AGHT+IEqKxEQusQc/mEf1PmchCpojHyKOU/NUBIfL+zGYTHhwKG7RuZt2UrTDFinoTIQeRfak7YI8kK8uxQLm3HA6bg=
+X-Received: by 2002:a05:690c:dc1:b0:786:4f0d:46be with SMTP id
+ 00721157ae682-787d534d0c5mr106568497b3.3.1762812394823; Mon, 10 Nov 2025
+ 14:06:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="spgz4wpgupnke5j7"
-Content-Disposition: inline
-In-Reply-To: <202511110100.9uPtQqN1-lkp@intel.com>
-
-
---spgz4wpgupnke5j7
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20251110205636.405592-1-tj@kernel.org> <20251110205636.405592-4-tj@kernel.org>
+In-Reply-To: <20251110205636.405592-4-tj@kernel.org>
+From: Emil Tsalapatis <linux-lists@etsalapatis.com>
+Date: Mon, 10 Nov 2025 17:06:24 -0500
+X-Gm-Features: AWmQ_bmy4aLQoNCiZ7KPQEb20_Z93-ZWMhtAodbv3pzouiv5G_qhwQFn1xmSKp4
+Message-ID: <CABFh=a5e0jAfLV7m8VBsDwUEOziMpeHDvyAf-9oTPYqsk3N6_g@mail.gmail.com>
+Subject: Re: [PATCH v2 03/14] sched_ext: Refactor do_enqueue_task() local and
+ global DSQ paths
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Andrea Righi <andrea.righi@linux.dev>, 
+	Changwoo Min <changwoo@igalia.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
+	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Andrea Righi <arighi@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, Marco Elver <elver@google.com>, Kees Cook <kees@kernel.org>, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Linux Memory Management List <linux-mm@kvack.org>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Michal Hocko <mhocko@suse.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v1 2/3] mm: Fix benign off-by-one bugs
-Message-ID: <6vzrgu2gei2g2445cuwod37gmxz3zejnhegrqseymb6gofydum@agw3bgic3v52>
-References: <87445e701574058b142e036c3b8a0f505086ab64.1758806023.git.alx@kernel.org>
- <202511110100.9uPtQqN1-lkp@intel.com>
-MIME-Version: 1.0
-In-Reply-To: <202511110100.9uPtQqN1-lkp@intel.com>
 
-Hi,
+On Mon, Nov 10, 2025 at 3:57=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+>
+> The local and global DSQ enqueue paths in do_enqueue_task() share the sam=
+e
+> slice refill logic. Factor out the common code into a shared enqueue labe=
+l.
+> This makes adding new enqueue cases easier. No functional changes.
+>
+> Reviewed-by: Andrea Righi <arighi@nvidia.com>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> ---
 
-On Tue, Nov 11, 2025 at 01:47:19AM +0800, kernel test robot wrote:
-> kernel test robot noticed the following build errors:
+Reviewed-by: Emil Tsalapatis <emil@etsalapatis.com>
 
-[...]
+>  kernel/sched/ext.c | 21 ++++++++++++---------
+>  1 file changed, 12 insertions(+), 9 deletions(-)
+>
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index abf2075f174f..b18864655d3a 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -1279,6 +1279,7 @@ static void do_enqueue_task(struct rq *rq, struct t=
+ask_struct *p, u64 enq_flags,
+>  {
+>         struct scx_sched *sch =3D scx_root;
+>         struct task_struct **ddsp_taskp;
+> +       struct scx_dispatch_q *dsq;
+>         unsigned long qseq;
+>
+>         WARN_ON_ONCE(!(p->scx.flags & SCX_TASK_QUEUED));
+> @@ -1346,8 +1347,17 @@ static void do_enqueue_task(struct rq *rq, struct =
+task_struct *p, u64 enq_flags,
+>  direct:
+>         direct_dispatch(sch, p, enq_flags);
+>         return;
+> -
 
-> >> mm/kfence/kfence_test.c:113:8: error: call to undeclared function 'END=
-OF'; ISO C99 and later do not support implicit function declarations [-Wimp=
-licit-function-declaration]
->      113 |         end =3D ENDOF(expect[0]);
->          |               ^
-> >> mm/kfence/kfence_test.c:113:6: error: incompatible integer to pointer =
-conversion assigning to 'const char *' from 'int' [-Wint-conversion]
->      113 |         end =3D ENDOF(expect[0]);
->          |             ^ ~~~~~~~~~~~~~~~~
->    mm/kfence/kfence_test.c:143:6: error: incompatible integer to pointer =
-conversion assigning to 'const char *' from 'int' [-Wint-conversion]
->      143 |         end =3D ENDOF(expect[1]);
->          |             ^ ~~~~~~~~~~~~~~~~
->    3 errors generated.
+Nit: Similar to the note for the next patch, we could inline the
+dispatch_enqueue where the goto local_norefill statement is (though
+the current code is pretty easy to follow - all the dispatch
+statements are organized into what is basically a big switch
+statement, with the goto labels doubling as documentation).
 
-I'm pretty sure I tested this some months ago.  I'll test again...
-
-
-Have a lovely night!
-Alex
-
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
-
---spgz4wpgupnke5j7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmkSYckACgkQ64mZXMKQ
-wqmJCQ/+JJ2uBd3GqMbPFAmeC+dhFJE0AjE6nWO7TvCPfIJRmNhY6MfqRWqVH4Lv
-fM5+eLBctHCg42qsiN4tbMPfnQzL3KmXomqza7VW79aUDtTrHPTSd16HH43jlOiX
-5PzfxVGkVEO3bK9ABpHu6LQpcNJY9C7hsAcX5QSA8evg2YCRO51XgoG5Y8OpYBAX
-s7hm2VSassXxPTpcPcJ1SXeXfq6oC0CkF+ZCr/a+PfpyWTHtJEBkcxDiqCSB9Aur
-1HIBIzggzAS1OgeDY3L5iNIPYW3js+2P3ROSL3OffA/cgZ/cqR8iWmRs/VBqVyXn
-knPLFrT6qrznvPQdbSm0IO5njxAJAkO6C2KwnvIlZd4KX0qbhlb1vR8OgGhJXdVH
-r7C5+1OWGAvb/62+Bl3Tea7kFxr1jzN2MKW2Jwt/ao1e2rvCnnanHhvtsfE2x7Mu
-JTb048s4EmnqenWqK8l+KfQdmw+SMQBIGMpBI0e0AnZ+yGeceWZ7nZdIvI2neDKa
-bM30oIXekTNxuMRxGqoQSb7E0PCpK+/ozxuOkM7xnU2RYsv9+v5dXetWmKaXMxAd
-Av35yX6RRaSca2tKpWj4DkaLqvrOCtDuyscryk9fY/qxwP/ELG0Yw6ebctmDPPFT
-kXrvRSuvWv6AvE9JlWSG+MH490uxGWkqBYHrrIJKSKVHZy68HJk=
-=5BWZ
------END PGP SIGNATURE-----
-
---spgz4wpgupnke5j7--
+> +local_norefill:
+> +       dispatch_enqueue(sch, &rq->scx.local_dsq, p, enq_flags);
+> +       return;
+>  local:
+> +       dsq =3D &rq->scx.local_dsq;
+> +       goto enqueue;
+> +global:
+> +       dsq =3D find_global_dsq(sch, p);
+> +       goto enqueue;
+> +
+> +enqueue:
+>         /*
+>          * For task-ordering, slice refill must be treated as implying th=
+e end
+>          * of the current slice. Otherwise, the longer @p stays on the CP=
+U, the
+> @@ -1355,14 +1365,7 @@ static void do_enqueue_task(struct rq *rq, struct =
+task_struct *p, u64 enq_flags,
+>          */
+>         touch_core_sched(rq, p);
+>         refill_task_slice_dfl(sch, p);
+> -local_norefill:
+> -       dispatch_enqueue(sch, &rq->scx.local_dsq, p, enq_flags);
+> -       return;
+> -
+> -global:
+> -       touch_core_sched(rq, p);        /* see the comment in local: */
+> -       refill_task_slice_dfl(sch, p);
+> -       dispatch_enqueue(sch, find_global_dsq(sch, p), p, enq_flags);
+> +       dispatch_enqueue(sch, dsq, p, enq_flags);
+>  }
+>
+>  static bool task_runnable(const struct task_struct *p)
+> --
+> 2.51.2
+>
+>
 
