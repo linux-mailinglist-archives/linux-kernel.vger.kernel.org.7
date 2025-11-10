@@ -1,159 +1,154 @@
-Return-Path: <linux-kernel+bounces-893347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F53AC47208
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:18:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60003C47211
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:19:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C6094E290E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:18:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D02F23BCA99
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904EC305040;
-	Mon, 10 Nov 2025 14:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C943126BF;
+	Mon, 10 Nov 2025 14:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="c+nNSTHm"
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="tGk9KTsQ"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6117E309EF9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38381397;
+	Mon, 10 Nov 2025 14:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762784305; cv=none; b=YpVnoXTScGfKb/fRgCxP11fOCT62UHeumQSeTZTbjnW+BaI6d23z680s3/+zKm+oohy7IOT5x/0NlAI4iti8qb26KlxR8nGjTyqaHLzffVMKZHYECMoD6TE129n0A+5rhO4WCC1RdPmvQP4Kd3HtQIp5yydpzRL2LalfD+/35Us=
+	t=1762784371; cv=none; b=phcHcQSe1Z+BQJkSxuAmXSsr0G0WjtBUvAnRsvVk/3L2HOLgVodOI3dvZcu8ig6/LmlYXnaGVqp34laRXbA2jTSH0GnGWbYZX8X+KM+uiMCtsWtHfgLPqVhN9IGeaZPVB6+Lnu4SwuSc05T8ir15TnRZXfDzwfL5aYJFZfBGnuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762784305; c=relaxed/simple;
-	bh=TBulgHUmGgHcU6g30OL52i5zw4w9JS+dsapqF+rgFIA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=sf2DGJX6+AZ/Zwz1HCSc6MTPFR6CbdgIwzWHG0RLQCcyTfbwLcnge6gw0G34j7SftrkOHgCNgTtJ3HSFcCjQHQ3iJBD6Vk7frYDWWMmZqUjgh3CSyFMGT+oO7upmsEBhNB7u8eSS22Fmz38il3sT2iYlxgqczfElEUFxHiOu9ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=c+nNSTHm; arc=none smtp.client-ip=203.205.221.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1762784300; bh=R0x9DhiVDf7Dz005eIZelTEs/yFHWQKK4/txoXmSkMw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=c+nNSTHmUMlqP72xmHFSYiafliKlfVPGzuFmIKKzzZCa1QQjoYqAmhO6Ck6iuHbTA
-	 Kpm81Vl29XTE/NMtGxmrCcAdxvsxu55iaP7b6nnTNanpPWG+LG7MhItwq3F1rF8W+3
-	 6wOGeT9TXwrCulMmGjT/4z4Io3ILQKWeq0HqFut0=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.201.7.117])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id 49226690; Mon, 10 Nov 2025 22:18:18 +0800
-X-QQ-mid: xmsmtpt1762784298t368eb5v1
-Message-ID: <tencent_89E8A2ED9ECDEC7B1E6C242E516C24970C0A@qq.com>
-X-QQ-XMAILINFO: MQAOa38Yz/8/5q6TsBkwa9ZXDvTX4t5vEkMifuC6Gq2BlE26QOlhu43RCP9VHQ
-	 eTHdeoCJUVroevWk8CRQ2JTtpqFnS73htWrv4ZIzELeEAOWxtHfSbCd0MmBgBLyLZ2T5BpVM5ozX
-	 hXXDNihYMoCRJEuvWrnb/P1puGyPKpEa5oJPyv4vTfIV3UcyqFjaNTN7QaRi+5Uajyi2vYhgfiLX
-	 oPsF7jpQOrvGfFwHMB+wJkmyk7PzMMfZ5NUiHLruH8YY4dkQhBlcriQ/0aSvp/fRVFf4ge454AZa
-	 19aKYtafCeujeWEF4ZepVVwBUTdFT9q7XEi1lMx0zspeeQjFGir3p9FGHFOcd1GgYCT3gZpdXibi
-	 OSjMn+XFkfquZZy9UU6UdQCl8UEA0YoALLRNjK9SxwrR1afSh+yGOMc5UnjkcF8H2hUZlNDxvOfS
-	 1hCLU4FFsvpYhIswwwMNAlsAwBc8K83w8Qk7o8qDcplRIBQbE6ZbKl5xl5sbyjPOuqLYaL6krdjb
-	 S2aU6nbAC54zBGWeYOqVRKLLMbjTg0fFoXnyKoAmrvJQ9SoKtknoX+h3sJJo3TSkaFDxtMs/yQ7K
-	 iZDnsSX6iILSbDFBWAOggepfgnoc5a3tWWMY3nldaKn78NmkZzhL/kXt302pul06qbbW16XUVvaR
-	 yqpqtEJFGe0bqyqMR3TAjvUn4HQeRXHC9rpXBoFYnEAHj2cYzl5vM9oDgOQfkDzZ3DqNqlJXsyb+
-	 jk7VURDFk2exV7FgaGipLu742Mj/N6fRrtX3t0qv+FdIJDGhZxRqMimFDSGAKw03LUA6cE+nkbb5
-	 iqbcnSFD6yx/7nKuhyKZnqbChpjhdmlxpTqgwC2f6nrSaSerNJVUQQqHo1rLgBp5Z19XviKN/9AI
-	 PhlkipHrpaG0/j7AKz5Zf3MX8e5UFmObODBM4iisSlhCr4/fNyFalE1ziNdI8u+siTkyWYz0IYEM
-	 soQqE9t4IYatwVgep6SkCsdr1xtd8FA9HV/jKAHgsWM9owfD4yql/klI9FvlM3
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+08df3e4c9b304b37cb04@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [block?] general protection fault in rtlock_slowlock_locked
-Date: Mon, 10 Nov 2025 22:18:19 +0800
-X-OQ-MSGID: <20251110141818.1553137-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <690ec096.a70a0220.22f260.0070.GAE@google.com>
-References: <690ec096.a70a0220.22f260.0070.GAE@google.com>
+	s=arc-20240116; t=1762784371; c=relaxed/simple;
+	bh=CZjpfv7ugZLpQEjHOI/k47q3vnyfBFO3OcNKUMEYJr0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=H2JHAQ8b/FYAeVJMuX08f+QtgnDO/e+z4mQBxSXp5PaW56bGGnXduH3sp6UfNGBaU2zwWu5Z/jZrOt818I4PGFRAFeNdxmSNs+JiZJ9cJTTXccIdNTp5Veei5mmNf3zdJRSew5k69mcmQPRbffowQcvOT5E2fyQ9R7yHw2mu6+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=tGk9KTsQ; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 29A7C1A19AE;
+	Mon, 10 Nov 2025 14:19:27 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E8E9E606F5;
+	Mon, 10 Nov 2025 14:19:26 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B459D1037176A;
+	Mon, 10 Nov 2025 15:19:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762784365; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=AixT7Oh+5FxWWMEZrxu1kDjvQPH8JSRwqc8kK2kvJaU=;
+	b=tGk9KTsQI2Q65bzJrFFGVZMBlqJL0S5t7NCc7oHdD3VkJ7+4DvdWCQ1H+fAUPwNSCCkKTo
+	mb4cak229bqD5R2nYdIofNZNfCwEYFNwjrDP2XMzY4gRkKtvgxHNNDrEpzrh+F7s+3tohi
+	IF88La9EBzOBGWNmzeDbgNfVvwUMISSod2H02ulMO04OGgjoqPISyStUXuj5kb6RpzzPfx
+	u3G2MpuRo2y5hlF0j1NqsgamhemSCsrxPqK4Z/TgsRHzg6He2ENBbGaz16F4XH62zhf7nz
+	ypVF6xKKeHJphkB1yWfga+Le2zF3iBCyw2R7QXAhmJKB/9bIEv/riz+QGqXDXQ==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Josua Mayer <josua@solid-run.com>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Rabeeh Khoury <rabeeh@solid-run.com>, Yazan Shhady
+ <yazan.shhady@solid-run.com>, Mikhail Anikin
+ <mikhail.anikin@solid-run.com>, Jon Nettleton <jon@solid-run.com>,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Josua Mayer
+ <josua@solid-run.com>
+Subject: Re: [PATCH 1/2] Revert "arm64: dts: marvell: cn9132-clearfog: fix
+ multi-lane pci x2 and x4 ports"
+In-Reply-To: <20251030-cn913x-pci-clk-v1-1-e034d5903df1@solid-run.com>
+References: <20251030-cn913x-pci-clk-v1-0-e034d5903df1@solid-run.com>
+ <20251030-cn913x-pci-clk-v1-1-e034d5903df1@solid-run.com>
+Date: Mon, 10 Nov 2025 15:19:23 +0100
+Message-ID: <87pl9qrmvo.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-#syz test
+Josua Mayer <josua@solid-run.com> writes:
 
-diff --git a/fs/jfs/jfs_lock.h b/fs/jfs/jfs_lock.h
-index feb37dd9debf..6aa5ff62ca7c 100644
---- a/fs/jfs/jfs_lock.h
-+++ b/fs/jfs/jfs_lock.h
-@@ -19,7 +19,7 @@
-  *
-  * lock_cmd and unlock_cmd take and release the spinlock
-  */
--#define __SLEEP_COND(wq, cond, lock_cmd, unlock_cmd)	\
-+#define __SLEEP_COND(wq, cond, lock_cmd, unlock_cmd, idle)	\
- do {							\
- 	DECLARE_WAITQUEUE(__wait, current);		\
- 							\
-@@ -29,7 +29,10 @@ do {							\
- 		if (cond)				\
- 			break;				\
- 		unlock_cmd;				\
--		io_schedule();				\
-+		if (idle)				\
-+			schedule_timeout_idle(HZ*10);	\
-+		else					\
-+			io_schedule();			\
- 		lock_cmd;				\
- 	}						\
- 	__set_current_state(TASK_RUNNING);			\
-diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-index b343c5ea1159..e70bde3b7f40 100644
---- a/fs/jfs/jfs_logmgr.c
-+++ b/fs/jfs/jfs_logmgr.c
-@@ -113,11 +113,11 @@ static DEFINE_SPINLOCK(jfsLCacheLock);
- /*
-  * See __SLEEP_COND in jfs_locks.h
-  */
--#define LCACHE_SLEEP_COND(wq, cond, flags)	\
-+#define LCACHE_SLEEP_COND(wq, cond, flags, idle)	\
- do {						\
- 	if (cond)				\
- 		break;				\
--	__SLEEP_COND(wq, cond, LCACHE_LOCK(flags), LCACHE_UNLOCK(flags)); \
-+	__SLEEP_COND(wq, cond, LCACHE_LOCK(flags), LCACHE_UNLOCK(flags), idle); \
- } while (0)
- 
- #define	LCACHE_WAKEUP(event)	wake_up(event)
-@@ -711,7 +711,7 @@ int lmGroupCommit(struct jfs_log * log, struct tblock * tblk)
- 	tblk->flag |= tblkGC_READY;
- 
- 	__SLEEP_COND(tblk->gcwait, (tblk->flag & tblkGC_COMMITTED),
--		     LOGGC_LOCK(log), LOGGC_UNLOCK(log));
-+		     LOGGC_LOCK(log), LOGGC_UNLOCK(log), 0);
- 
- 	/* removed from commit queue */
- 	if (tblk->flag & tblkGC_ERROR)
-@@ -1860,6 +1860,7 @@ static void lbmLogShutdown(struct jfs_log * log)
- 	lbuf = log->lbuf_free;
- 	while (lbuf) {
- 		struct lbuf *next = lbuf->l_freelist;
-+		lbmIOWait(lbuf, 0);
- 		__free_page(lbuf->l_page);
- 		kfree(lbuf);
- 		lbuf = next;
-@@ -1881,7 +1882,7 @@ static struct lbuf *lbmAllocate(struct jfs_log * log, int pn)
- 	 * recycle from log buffer freelist if any
- 	 */
- 	LCACHE_LOCK(flags);
--	LCACHE_SLEEP_COND(log->free_wait, (bp = log->lbuf_free), flags);
-+	LCACHE_SLEEP_COND(log->free_wait, (bp = log->lbuf_free), flags, 0);
- 	log->lbuf_free = bp->l_freelist;
- 	LCACHE_UNLOCK(flags);
- 
-@@ -2148,7 +2149,8 @@ static int lbmIOWait(struct lbuf * bp, int flag)
- 
- 	LCACHE_LOCK(flags);		/* disable+lock */
- 
--	LCACHE_SLEEP_COND(bp->l_ioevent, (bp->l_flag & lbmDONE), flags);
-+	LCACHE_SLEEP_COND(bp->l_ioevent, (bp->l_flag & lbmDONE), flags,
-+			  bp->l_flag & (lbmWRITE | lbmSYNC | lbmDIRECT));
- 
- 	rc = (bp->l_flag & lbmERROR) ? -EIO : 0;
- 
+> This reverts commit 794a066688038df46c01e177cc6faebded0acba4 because it
+> misunderstood interworking between arm trusted firmware and the common
+> phy driver, and does not consistently resolve the issue it was intended
+> to address.
+>
+> Further diagnostics have revealed the root cause for the reported system
+> lock-up in a race condition between pci driver probe and clock core
+> disabling unused clocks.
+>
+> Revert the wrong change restoring driver control over all pci lanes.
+> As a temporary workaround for the original issue, users can boot with
+> "clk_ignore_unused".
+>
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
 
+
+Applied on mvebu/dt64
+
+Thanks,
+
+Gregory
+
+
+> ---
+>  arch/arm64/boot/dts/marvell/cn9132-clearfog.dts | 16 ++--------------
+>  1 file changed, 2 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts b/arch/arm64=
+/boot/dts/marvell/cn9132-clearfog.dts
+> index 5cf83d8ca1f59..2507896d58f9b 100644
+> --- a/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts
+> +++ b/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts
+> @@ -413,13 +413,7 @@ fixed-link {
+>  /* SRDS #0,#1,#2,#3 - PCIe */
+>  &cp0_pcie0 {
+>  	num-lanes =3D <4>;
+> -	/*
+> -	 * The mvebu-comphy driver does not currently know how to pass correct
+> -	 * lane-count to ATF while configuring the serdes lanes.
+> -	 * Rely on bootloader configuration only.
+> -	 *
+> -	 * phys =3D <&cp0_comphy0 0>, <&cp0_comphy1 0>, <&cp0_comphy2 0>, <&cp0=
+_comphy3 0>;
+> -	 */
+> +	phys =3D <&cp0_comphy0 0>, <&cp0_comphy1 0>, <&cp0_comphy2 0>, <&cp0_co=
+mphy3 0>;
+>  	status =3D "okay";
+>  };
+>=20=20
+> @@ -481,13 +475,7 @@ &cp1_eth0 {
+>  /* SRDS #0,#1 - PCIe */
+>  &cp1_pcie0 {
+>  	num-lanes =3D <2>;
+> -	/*
+> -	 * The mvebu-comphy driver does not currently know how to pass correct
+> -	 * lane-count to ATF while configuring the serdes lanes.
+> -	 * Rely on bootloader configuration only.
+> -	 *
+> -	 * phys =3D <&cp1_comphy0 0>, <&cp1_comphy1 0>;
+> -	 */
+> +	phys =3D <&cp1_comphy0 0>, <&cp1_comphy1 0>;
+>  	status =3D "okay";
+>  };
+>=20=20
+>
+> --=20
+> 2.51.0
+>
+
+--=20
+Gr=C3=A9gory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
