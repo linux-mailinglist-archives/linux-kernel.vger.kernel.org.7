@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-894017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6255C4916E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:36:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4990C49177
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 61DD04EEEFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:36:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 50E42348F0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254173396E5;
-	Mon, 10 Nov 2025 19:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387F37B3E1;
+	Mon, 10 Nov 2025 19:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jCGtMTmd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="H2VjVHLy"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD244336EFD;
-	Mon, 10 Nov 2025 19:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA1731B810
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762803369; cv=none; b=lqjCNSwRdNR6+IxeeFuitQLVri/MV9VcM/Z+TWnCNlL+otVVOaewdIlSlAxpKvDLpZjU1mAqd7R69jUQWD8sSwqmxkI7eNvwzNuRyl655rBTAlBoB/NX6qGlXyD9scHni1qWCflS2pExyBh8q91z6cPWf0tOsHAOAipXsOKcwY8=
+	t=1762803407; cv=none; b=FW00sLro2EGxrmReR2o9Nf8xvFDzvymsAkvZEeznqrWbHXWKNZ3daLd/k/JTKBMmQ3WmGEXrUda+t60mojtsM04d2lz+YXzBsHowmWN631WJmn1m1BlQ6P1dLml692YcGopSCs6S/KqTI6pMm3YumlMvZUiKqPgXOE3yu0RSSUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762803369; c=relaxed/simple;
-	bh=olv7d//xcCevUgqm9DIDkmw0k6Ut2QCEuYEXptcV9sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P/YiRNogIH4K545YECnH0Uq4nXtAlSAYAb+VEIDutnnOjGFgwSXs1LhLf0Bf+4gIRaB0pCbXCtd140GgndjpSm3FIrSCj30MGk2esu6QG/ppFfTPGau845sKj0BoiizNYBdUyoNntsW9f/DWkBfpfdjUSxLulvjdxJfxqZjaCbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jCGtMTmd; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762803368; x=1794339368;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=olv7d//xcCevUgqm9DIDkmw0k6Ut2QCEuYEXptcV9sY=;
-  b=jCGtMTmd3qmaiO7tGkm4Vzxs2MaZIe2nVAXWmCBtBQLamUnzWdbSRzmf
-   2zzEHSIG4xuESe76m/RWxPcSLItwZg+9Om5Mdfm9hw2452Dpbo+m/rNCk
-   ebuWK1nAS107txAeTAlLdkxogQpWQdbJG8HbfVLEmOnfhwzG8atfuHj+/
-   7/UCqi5I2JEIC4mAj2R/1JXcAqBITon0xjolMHxcXhPXUFslYM+OEdQJU
-   a2WSbx5km3l8kexMlc049vTHQbAKljZ8uiDy2E6fohCVeAPCErFV+5DzK
-   swdIlzfVRbJ1chmMf7pkx9GcPOEV8gLLO9pZ+mhF3V+YQ1F6NqvHQ4RPT
-   g==;
-X-CSE-ConnectionGUID: gTOxp0/NRIm10/61xoT29Q==
-X-CSE-MsgGUID: LL96BJzNRSuJX3xepD9qhA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="75546759"
-X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
-   d="scan'208";a="75546759"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 11:36:07 -0800
-X-CSE-ConnectionGUID: +Q9UiPQPRvSLyVkLuGMm/A==
-X-CSE-MsgGUID: rosFfrD0QyqcFhI9x8YSvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
-   d="scan'208";a="193760668"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.235])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 11:36:05 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vIXgI-00000007Yi7-1PZM;
-	Mon, 10 Nov 2025 21:36:02 +0200
-Date: Mon, 10 Nov 2025 21:36:02 +0200
-From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"nathan@kernel.org" <nathan@kernel.org>,
-	"justinstitt@google.com" <justinstitt@google.com>,
-	"idryomov@gmail.com" <idryomov@gmail.com>,
-	Xiubo Li <xiubli@redhat.com>,
-	"nick.desaulniers+lkml@gmail.com" <nick.desaulniers+lkml@gmail.com>,
-	"morbo@google.com" <morbo@google.com>
-Subject: Re: [PATCH v1 1/1] libceph: Amend checking to fix `make W=1` build
- breakage
-Message-ID: <aRI-ohUyQLxIY1vu@smile.fi.intel.com>
-References: <20251110144653.375367-1-andriy.shevchenko@linux.intel.com>
- <8d1983c9d4c84a6c78b72ba23aa196e849b465a1.camel@ibm.com>
+	s=arc-20240116; t=1762803407; c=relaxed/simple;
+	bh=uOPdRM2zXUbj0uAF4/Y1KdXhAAYdQVcF5zz7omcQwNA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZIv/u36gthL3ed42kaLMhvj6C08eVpLKsiBHLJxx8EfY/dfRtSGgOeBwpPzkpYRAO0qza95O6mX/jgp9G7abyYGX0dG3jrRwukSFx2QLvNNFeASNHbAtlUZz1bAyqTkdotA1rL4D73qtLx4hI6OPJucj/ygF27bi/AUyKi1b3DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=H2VjVHLy; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47758595eecso18052965e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:36:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762803403; x=1763408203; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YDpt0zy7PtnsCd6fKg/NI/I37lccoSys25WO0LkUemM=;
+        b=H2VjVHLyJvbeTUJmvaX6D1/Mk5MMIzvGOzaQ0YqgDPSWmjLUWywvO7mHfVQVCldqig
+         FdYnboyQqE7doRR1hyBJx7CVkbvbgNsg3Xz1/fkOoodMaZhFarOWw3geJOxwLGXTnTKc
+         funqi5dWl05SbdIRZ2bWB0GgackLEXXsk8XSH9QPK5PTY5ZXIlOY0v1S2pKYcBi0KZL9
+         u4LEJt1P6dfaUAMwXJgZaVwVN4c4jei3eQes4nZ7cX4eV5mPjJ39f7JcXcm0LqCMkwTK
+         Nll6ntBK/xDWfEyF7iBtf+rK2TOlIfemg+tIQDboywb39uqAWYHQ1QdTCgE5vtqmRosW
+         Axxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762803403; x=1763408203;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YDpt0zy7PtnsCd6fKg/NI/I37lccoSys25WO0LkUemM=;
+        b=Vk0NTkmV1s0TKx7/wvpHgMUhcPBWQl/KYHGBEJP1Nz8cZa5Wxr3We8XgLdP6oTTwjG
+         vIcCWVaAGkcEDjYZoz4uW+IhprbST980MpWNArS46jm1eY1H0F2MnPxOgY1/pQdaW6R3
+         1ViPpgdwOtjF8vV1Yg6W11TdSBDSl+eEztNWf3XWABHByF0AqjsEerkmSzoQog5JgT6e
+         tYlSOAFak3V2opvWMneeTVm4vnQZZtTL6RvTWv/5rJFo1eGdJTKpG/vtpuuzWRn23YQ9
+         2/H/3UVBYb6T1LAuPQjdZN0a0M2fXZxJ5D4AhksXRkr0BwwWRe8aOO0jTsNd1iNGMBlc
+         82tw==
+X-Forwarded-Encrypted: i=1; AJvYcCWiWUF3nmOnpIaEKzoE5ROyRu1JSknLj1MgxVDuEiGmU1Ai1ksVL+8w9Rzvb0CFMwj3lnCoM9srmBfc2og=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl3Ra4dgw/r9om48N+LXqW7EkoBya5t+NXHAZ6/c62LkNgEnuz
+	75y1C63NWUGE8ueR5TjALUhPAoD+/K4Xa3WGsLjvaSY0X6ES6wk5Qpc5UG4PPMq20Gw=
+X-Gm-Gg: ASbGnctjIBKX9Q+RHUlLPWTlzau3gyRZuAW2aF9hx0x7Q/XKmfV1EEUGGVmnPhXKK+9
+	ln0OAmaJVQ57ygpne9pFwgucNycznmvhU/BbkZto7ebhNdjeHVybY1bCGrJgkmlIQhnNo5A24rY
+	ItyaLGpvUttK8sH+odow9SstJWqeAEFJOwzJ+CegyCxD0dv6yck79S2o9Eniaw0uZSg3rX9fAST
+	XK7pCRBObMd/ll59xMTmknBGNkSS88na+OuewcS1c1rw24NBsQKjrEdbiTCaR/3veqhSU7O5+5i
+	N4ty4dwHsehIxvQL4a4Xd/aUbkAZAIfGwTVDykB/8qrPnRkn9KiQaUUcqzyRg6i4ZKCMLHuKi8Y
+	/n/1+P+Y2AWuoFUhUgvNKNhyH041c9JofYZDrkLS96PtAbVX5lZe+tQoIFC6tCe9h8YpHTRAwnL
+	plVv3W1HEDSxan20i/4byyqHOUotrpoVU=
+X-Google-Smtp-Source: AGHT+IHeuLkKSsH8AzcRusY4bSGEmMJr+yCrFo1Kif3KcLfYiwCAAN+hODaeTCLagsz7hdm8X9yqTQ==
+X-Received: by 2002:a05:600c:3b01:b0:46d:ba6d:65bb with SMTP id 5b1f17b1804b1-47773288bf9mr97918675e9.31.1762803403412;
+        Mon, 10 Nov 2025 11:36:43 -0800 (PST)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce32653sm336766725e9.13.2025.11.10.11.36.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 11:36:43 -0800 (PST)
+From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+To: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org
+Cc: Natalie Vock <natalie.vock@gmx.de>,
+	Maarten Lankhorst <dev@lankhorst.se>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH RESEND 0/3] Memory reclaim documentation fixes
+Date: Mon, 10 Nov 2025 20:36:32 +0100
+Message-ID: <20251110193638.623208-1-mkoutny@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d1983c9d4c84a6c78b72ba23aa196e849b465a1.camel@ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 10, 2025 at 07:28:36PM +0000, Viacheslav Dubeyko wrote:
-> On Mon, 2025-11-10 at 15:46 +0100, Andy Shevchenko wrote:
+I think the reclaim target is a concept that is not just an
+implementation detail and hence it should be documented how it applies
+to protection configuration (the first patch). Second patch is a "best
+practice" bit of information, it may be squashed with the first one. The
+last patch just makes docs indefinite until the idea is implemented.
 
-...
+Originally sent in [1], this is rebased and resent since I still think
+it'd be good to have the concept somewhere documented. (E.g. for the
+guys who are implementing protection for the dmem controller [2] to
+arrive at similar behavior.)
 
-> >  	ceph_decode_32_safe(p, end, len, e_inval);
-> >  	if (len == 0 && incremental)
-> >  		return NULL;	/* new_pg_temp: [] to remove */
-> > -	if (len > (SIZE_MAX - sizeof(*pg)) / sizeof(u32))
-> > +	if ((size_t)len > (SIZE_MAX - sizeof(*pg)) / sizeof(u32))
-> >  		return ERR_PTR(-EINVAL);
-> >  
-> >  	ceph_decode_need(p, end, len * sizeof(u32), e_inval);
+[1] https://lore.kernel.org/lkml/20200729140537.13345-1-mkoutny@suse.com/
+[2] https://lore.kernel.org/r/20251110-dmemcg-aggressive-protect-v3-5-219ffcfc54e9@gmx.de
 
-> I am guessing... What if we change the declaration of len on size_t, then could
-> it be more clear solution here? For example, let's consider this for both cases:
-> 
-> size_t len, i;
-> 
-> Could it eliminate the issue and to make the Clang happy? Or could it introduce
-> another warnings/issues?
+Michal Koutný (3):
+  docs: cgroup: Explain reclaim protection target
+  docs: cgroup: Note about sibling relative reclaim protection
+  docs: cgroup: No special handling of unpopulated memcgs
 
-Probably, but the code is pierced with the sizeof(u32) and alike, moreover
-size_t is architecture-dependent type, while the set of macros in decode.h
-seems to operate on the fixed-width type. That said, I prefer my way of fixing
-this. But if you find another, better one, I am all ears!
+ Documentation/admin-guide/cgroup-v2.rst | 31 ++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 6 deletions(-)
 
-*Also note, I'm not familiar with the guts of the ceph, so maybe your solution
-is the best, but I want more people to confirm this.
 
+base-commit: 1c353dc8d962de652bc7ad2ba2e63f553331391c
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.51.1
 
 
