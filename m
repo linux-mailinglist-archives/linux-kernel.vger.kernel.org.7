@@ -1,144 +1,156 @@
-Return-Path: <linux-kernel+bounces-894110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87ABCC494B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:46:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DABCC49497
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:45:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01C544F292C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:44:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73F271889ADF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AAD2F3621;
-	Mon, 10 Nov 2025 20:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54F52F12DD;
+	Mon, 10 Nov 2025 20:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JiRFOmOZ"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hs6EgrmQ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ENPZoCy0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AA02F290B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0E82ECD31
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762807466; cv=none; b=HZF7cy3KRjYYVoVQbEuAtyhmPM80J2OkPsMzEEWKtkUtenyjeDE6oDypB0ofRvlLUCdEBeAuNGgZNpgEBSTG7LAsyNvwpFRqZShAqGwoBYViB0D8LRwIBDvrkqMYX7qu7niyP8lGUPDc8OyXHiV4yE+8qFKjRZRSZQlwrzishmo=
+	t=1762807498; cv=none; b=sCfVQDsedrFQoFNMBnW33/W7V12Tq/QPfqVEdZIM/XvZjgd7byecWxb9J34UpYe5/AztojVBVZpRu9MLuf8xW1GaqR3HRQRf2XRGhiHNHBi9env5Hg5RBoOtLHGWHAx0TwlwUBtfbT+C7UYKePQE8csX9lYqN96moCseLrwzlHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762807466; c=relaxed/simple;
-	bh=1pRo6FcYmFekXp6UMZ3cZqMsEhMk7Ue52qE3SPSdaiA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hv1ygNMgV48wm7NjN3Kjq77O45rGyuY86/RD5WvF8H6bChdyrbMpUy6CVFXBYVU9wrwXTvVThOKvl9PDyeF5lUwKkGeJSpEppv3auWwgwS3lRpQ+NPjoVx6UtPUtu+cxaGdm3IHDsW8fQq3ZRnRDbYWNZSzUKuyO8hzJ+cG9aUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JiRFOmOZ; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7aad4823079so3125288b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:44:24 -0800 (PST)
+	s=arc-20240116; t=1762807498; c=relaxed/simple;
+	bh=0QmLAhB4Dr1WEPpk3887110fcGYJhxEIE8hNtWv5p9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KaYmlavCHpJjO7EW3G3hT1YF2HLGdeNIZyrEGOBFx6O9pg6kHWE61z85TUAjCm2g5T5myRuWjTg4RiCAluNL2IUGbJeEZd5oaa9eThqwZeZZsBFNGEvpkX726QZqMugoI310CXK3bf6MQQ/KuiWISEfi8KSpnR8eYVhyNS4llFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hs6EgrmQ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ENPZoCy0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762807492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0QmLAhB4Dr1WEPpk3887110fcGYJhxEIE8hNtWv5p9w=;
+	b=hs6EgrmQIDgnDTOH7X/W5iJLUuSMn956wLRjDslN9bsxZqROrb8sJdr4M4L9FeHVhMjMFC
+	eUUnjGer0cyJtroCaon+WbUM4sPT/qj3awCpvtB2JR/IzB0wgsaDt5+g4cPfSwAmtNPkVz
+	lKCDsEk/LNUL4TdgWoktVk53THTvGdQ=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-70-X1G2mdN5PNqGUIxqiZR9NQ-1; Mon, 10 Nov 2025 15:44:51 -0500
+X-MC-Unique: X1G2mdN5PNqGUIxqiZR9NQ-1
+X-Mimecast-MFC-AGG-ID: X1G2mdN5PNqGUIxqiZR9NQ_1762807490
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-47111dc7c5dso588835e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:44:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762807464; x=1763412264; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iKPfFuPx59pn0UpS2AdXRDeAfpJEQ1HphTQyjMZvYAg=;
-        b=JiRFOmOZX2Eq+5qgWUjRa2X3kbqiBt5jOO8rZAIrdytPrNh45dVjPnmzxlqhZz76Cy
-         ZDrNapc5UCBTMvFwx5a2l1HeXXR1QZv8Azd2YTbQFppeRNbQXGWyeQzBzkF/xrSzMCLM
-         fZHbtY7/brz7XKRy+RT21YF6yo/aEuQ7rbw6iwZLAuDRRlE/7eWWbe1Gv3JFXFGzpDb1
-         kod0FZd5/1V7jRnWvU7Rv3EPkOEi1SmdVMnzg5231H9yQXDgiPib6UXSr0Z0dQmJF1qP
-         V+0F2VdnU9/a+5wal9AmqZkz4JLvhEQwl84L4KoWcP/5VdchsIfK3p52Gmh14O//Hs1Q
-         INcQ==
+        d=redhat.com; s=google; t=1762807490; x=1763412290; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0QmLAhB4Dr1WEPpk3887110fcGYJhxEIE8hNtWv5p9w=;
+        b=ENPZoCy0Y5Ucx0OvtHBoir7oqkL46BKyCGz7Zxun3iFZX/mSB3M6LpZjJA57ajn9cC
+         e2TfJS3KMPUTYeSyloLORAd4hz4RtbJdRynZQhOXuc0HMMcNZ1FgXayFx4dHe5lFpttT
+         SFA8yl0HT1/at5uM7af+H5XO111q0G3WRV+TCi4bfRao2kv8Dhc67RowED1y8XGs3jae
+         9oaUDq/AtmDcBmNlholvzzPGe/I+sq0Rhxacn0eccv0wCFxOl88i0QxB1CXEW2jVQ4Ol
+         tw1GAs+Okn7W1fN4Yf05GfxoavGAqmAYSf3vrbkgcX/ZpBE7rIBUShcH9LG2w1hPNq5V
+         V65Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762807464; x=1763412264;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iKPfFuPx59pn0UpS2AdXRDeAfpJEQ1HphTQyjMZvYAg=;
-        b=ApfhMn2GtdtP9D0UHqwWU/KA+gsnjSx2hQTcITcVS4gHjjDSjjC3V65CFC/6kJp4y8
-         9S0mzhxnHwRkPtpbxELcL/0cWjnAMNGZ1GJbbl/eXJdHf7XTukOwBfsoWx8DFBnu/+0c
-         KWDOzFenMyriD6rKQDEOFmOz46oYbq10LorcKr2hCOFmEg0oJ0Z2Db2DFv1e2N9ihbOw
-         Nf4N0U+iPhV1IPkYoTj/hKRY2Td35Rrsk2zIYLYG0aanqC0g0e56JcKXrOVaPdl+Zf3P
-         Z/pRZb9LkaWUBy/o+Ebgjmek21M3xvaTmPmFAfHYjWuH/bYtAPflN+JdFrdPUUALNO00
-         25ig==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Rdb0Yb6NP6OUKoGoCtxwLESxzMYbCYLnnb6DQkG4q/eIbL6SnUVxZt53c0/JxvRpPmFM2NdnGzHSupo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB3WE5wGkft/k+ZghgaNSSWmHch3nfgFQ0gSl7eKCuQdm8JJpS
-	ynVzDHzGQSTvbrqEq8qWgF/bSeYNHG8m4iZ809GIhDNgPHzxyWOTOguL1rcmIPPH
-X-Gm-Gg: ASbGncvoSIOPfoBVGX/uZVO0A1y3SDyd4iuHlNxzzjfClwaOXChrUiqP6YdLP5WbkPc
-	knAx+3URygz7ckFiDFxGOWX1WISq4XdlSK9g/iJheYXq+9KNl4Rc3Qp/sdAemO8/SpqdQYcuBFO
-	OYkoAOksMOCra3XWt5tOelev7dUBJFK+Gi/qM8XcUQp4bVTS9STb4H7SlPTKsRyxA4lv5OWTYbg
-	u2dytfEsAYu/r88xDxvQtP3F5Ric0DPN5q3eG6cOKm7jfdMAuKgZutNB3V/qXS+hG7bxSZSHccf
-	82G10TB6r2Z8q+XeMrp7ca7RnkOSRQP5mUwNd7QwgriJ4jLRQoE3ANbVvl8ZBHOXvP5qfG65Pab
-	zVDm1asgmxIK2BXFcCGROG60h4MesScaKAedGOFDcFz5ZAozwECQpBl+06wSKjRZ65RAvNinmOx
-	rB/OW3hqrm1EtHNvnSJcCX1YEJ
-X-Google-Smtp-Source: AGHT+IGLQ+TKStFopEippXXCOLfymt5XyhUQ0gz+x+HlNHUomSsmKq2g8X5d42p43jRwj51NHHo8YA==
-X-Received: by 2002:a17:903:988:b0:297:dde4:8024 with SMTP id d9443c01a7336-297e56622c0mr113277145ad.23.1762807464301;
-        Mon, 10 Nov 2025 12:44:24 -0800 (PST)
-Received: from ?IPv6:2a03:83e0:115c:1:5ff:e0da:7503:b2a7? ([2620:10d:c090:500::7:ecb1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-297dfcbe798sm92498915ad.19.2025.11.10.12.44.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 12:44:23 -0800 (PST)
-Message-ID: <854a2c2ceaa52f1ad26fb803d1ad5668fd3200b3.camel@gmail.com>
-Subject: Re: [PATCH v5 6/7] btf: Add lazy sorting validation for binary
- search
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Donglin Peng <dolinux.peng@gmail.com>, Alexei Starovoitov	
- <alexei.starovoitov@gmail.com>, Andrii Nakryiko
- <andrii.nakryiko@gmail.com>,  Ihor Solodrai <ihor.solodrai@linux.dev>
-Cc: bot+bpf-ci@kernel.org, Alexei Starovoitov <ast@kernel.org>, 
-	zhangxiaoqin@xiaomi.com, LKML <linux-kernel@vger.kernel.org>, bpf	
- <bpf@vger.kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Song Liu	
- <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>, Andrii Nakryiko	
- <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai
- Lau	 <martin.lau@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- Chris Mason	 <clm@meta.com>
-Date: Mon, 10 Nov 2025 12:44:21 -0800
-In-Reply-To: <CAErzpmtViehGv3uLMFwv5bnRJi4HJu=wE6an6S0Gv2up3vncgA@mail.gmail.com>
-References: <20251106131956.1222864-7-dolinux.peng@gmail.com>
-	 <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
-	 <CAErzpmtRYnSpLuO=oM7GgW0Sss2+kQ2cJsZiDmZmz04fD0Noyg@mail.gmail.com>
-	 <74d4c8e40e61dad369607ecd8b98f58a515479f0.camel@gmail.com>
-	 <CAADnVQLkS0o+fzh8SckPpdSQ+YZgbBBwsCgeqHk_76pZ+cchXQ@mail.gmail.com>
-	 <5a8c765f8e2b4473d9833d468ea43ad8ea7e57b6.camel@gmail.com>
-	 <CAADnVQKbgno=yGjshJpo+fwRDMTfXXVPWq0eh7avBj154dCq_g@mail.gmail.com>
-	 <6cbeb051a6bebb75032bc724ad10efed5b65cbf7.camel@gmail.com>
-	 <CAErzpmtViehGv3uLMFwv5bnRJi4HJu=wE6an6S0Gv2up3vncgA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        d=1e100.net; s=20230601; t=1762807490; x=1763412290;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0QmLAhB4Dr1WEPpk3887110fcGYJhxEIE8hNtWv5p9w=;
+        b=gcyRv34QKk78+99FzIcf3onYigVXJ/bZ1hUCHyKHW2rxNDwwzIMjSZXTOY7Kh8+0kc
+         tUVKlG7quWUBmo+aPphBc8q0aOWl8z8qS6KYczlT+1QIsimWJGXPmM/Du+dMqqBNff91
+         Y8sa1cKo4LD+9mos+k04gB/BrWfEDNz5p1/hj4OLgs+E+RD/HihLVJUhaewXqkbVFYnZ
+         EKWLQjaRFDqUtU79fUhRrhVS67WK/LQHGn+K6YuqZPM0bqJRnsc6sbu1aFtWl6lPxa/r
+         ESV6wSEKVrI7vNDM/T7pLNtmCaTqL06h0S472M8JMciGX6xQohr0e7sX1NMHGKV+B07t
+         3KuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWh4B9Oasvbnjo6qm6BusUSAoyK4B/Kb1G6MeG6tDj1nFXT47ppE3G19aF5Dsl+s+WvS1MKc/ckSTW5WpI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOmZjwWRFFlSLur6F6hpTEyqT/2aNNBRjD75tn0TSG1uMFaQuB
+	pNNkYct6e1JCNtAPIUzlXM/3YjEpUKk4cLDndLuzutzgl9aaJZmPfd0t4+O/HxCSA2Igub2shjZ
+	jlXneBDu5hppQw2Cip5L2BGKdQlWeEL4HKVo1yBMnI1sWL/uU9bQPvlVliJ2lLoTw1sqt5HK9+f
+	Lw5AApHZF9H1PNd+zDp3nA148U94BR3jZW0YpfOUME
+X-Gm-Gg: ASbGnctWyIAHFDlnHHdFhY3ndb7YRsM6J1rm1QM/Zb3FzIVW3JpOpHP8j7ZK8XQ8Ai3
+	XdhUjlVhqXs1dOINqP5eokkCShJlZ2Gb7ZpuUdbzh5oxXbQMJcJU1lWlByEccP98/X14EcCv9HQ
+	JfL/GerSXEBHK6kYECWF5FYhPyhePXWoVG7nR3KQ/UAUv/b7wmR5LHFlDpBsbzgIDa2tEiSM62K
+	q7Uhq9xJ4aKR2aJ70XUFBiQ7OZQheo9u3Y+bBzRwYOGfYnEqjMbDIGX7i7sOg==
+X-Received: by 2002:a05:600c:705:b0:477:81d8:df8 with SMTP id 5b1f17b1804b1-47781d8110dmr569375e9.19.1762807490024;
+        Mon, 10 Nov 2025 12:44:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHxgmlnkD4pZaOUZoaHUEyi4FhNrg7OIYNzNltbzPAiHrzD/ABZ6T0/DHHvTLeLO5rSzr5b0t7kC6amnCZvfAo=
+X-Received: by 2002:a05:600c:705:b0:477:81d8:df8 with SMTP id
+ 5b1f17b1804b1-47781d8110dmr569225e9.19.1762807489677; Mon, 10 Nov 2025
+ 12:44:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20220424101557.134102-1-lei4.wang@intel.com> <20251110162900.354698-1-lrh2000@pku.edu.cn>
+In-Reply-To: <20251110162900.354698-1-lrh2000@pku.edu.cn>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Mon, 10 Nov 2025 21:44:36 +0100
+X-Gm-Features: AWmQ_bmE9lW1YJSBbubQWZMySQSyLd1I6Mr0gyYvS3wFNwWQ6M81mIDCY6FrJwU
+Message-ID: <CABgObfZc4FQa9sj=FK5Q-tQxr2yQ-9Ez69R5z=5_R0x5MS1d0A@mail.gmail.com>
+Subject: Re: The current status of PKS virtualization
+To: Ruihan Li <lrh2000@pku.edu.cn>
+Cc: lei4.wang@intel.com, Sean Christopherson <seanjc@google.com>, 
+	Chenyi Qiang <chenyi.qiang@intel.com>, Jim Mattson <jmattson@google.com>, 
+	Joerg Roedel <joro@8bytes.org>, kvm <kvm@vger.kernel.org>, 
+	"Kernel Mailing List, Linux" <linux-kernel@vger.kernel.org>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Wanpeng Li <wanpengli@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2025-11-10 at 09:42 +0800, Donglin Peng wrote:
+Il lun 10 nov 2025, 17:32 Ruihan Li <lrh2000@pku.edu.cn> ha scritto:
+>
+> Hi,
+>
+> I'm sorry to bother you by replying to the email from years ago. I would like
+> to learn about the current status of PKS virtualization.
+>
+> In short, I tried to rebase this patch series on the latest kernel. The result
+> was a working kernel that supports PKS virtualization, which would be useful
+> for my purposes. Would PKS virtualization be accepted even if the kernel itself
+> does not use PKS?
 
-[...]
 
-> [[Resending in plain text format - previous HTML email was rejected]
->=20
-> Thanks for the feedback. Based on the previous discussions, I plan
-> to implement the following changes in the next version:
->=20
-> 1. Modify the btf__permute interface to adopt the ID map approach, as
->     suggested by Andrii.
->=20
-> 2. Remove the lazy sort check and move the verification to the BTF
->     parsing phase. This addresses two concerns: potential race conditions
->     with write operations and const-cast issues. The overhead is negligib=
-le
->      (approximately 1.4ms for vmlinux BTF).
->=20
-> 3. Invoke the btf__permute interface to implement BTF sorting in resolve_=
-btfids.
->=20
-> I welcome any further suggestions.
+Yes, I think it should.
 
-Hi Donglin,
+Virtualized PKS does not depend on host PKS, because it uses an MSR
+rather than XSAVE areas (which are harder to add to KVM without host
+support).
 
-I think this summarizes the discussion pretty well.
-One thing to notice about (2): if sorting is done by resolve_btfids,
-there is no need to check for BTF being sorted in vmlinux BTF.
-So, maybe it's a good idea to skip this check for it, as Alexei suggested
-(but not for programs BTF).
+> Fundamentally, I don't think this patch series
+> has to be built on top of basic PKS support. But I am unsure whether there is a
+> policy or convention that states virtualization support can only be added after
+> basic support.
 
-Thanks,
-Eduard.
+No, there is none. In fact, the only dependency of the original series
+on host PKS was for functions to read/write the host PKRS MSR. Without
+host PKS support it could be loaded with all-ones, or technically it
+could even be left with the guest value. Since the host clears
+CR4.PKS, the actual value won't matter.
+
+> One problem is that if the Linux kernel does not use PKS, we will be unable to
+> test PKS virtualization with a guest Linux kernel. However, given that we have
+> KVM unit test infrastructure, I believe we can find a way to properly test PKS
+> virtualization for its correctness?
+
+I agree. Thanks!
+
+Paolo
+
+> I'd like to hear from you to know whether I understand things correctly. Thank
+> you in advance for any feedback.
+>
+> Thanks,
+> Ruihan Li
+>
+
 
