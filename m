@@ -1,166 +1,182 @@
-Return-Path: <linux-kernel+bounces-893417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C7CC47549
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:49:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC10C4753D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E16B74EBFA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:49:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 813984E920E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D61731355A;
-	Mon, 10 Nov 2025 14:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07543313542;
+	Mon, 10 Nov 2025 14:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qj8t2lOB"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mrKtTsa/"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9948A30FC19
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED9C31355A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762786137; cv=none; b=fufgTbba/ldzcd1oEXBO7Po31kT+Zs5oP1izp3dyZdRogOQXx4daTikmlQnmxTnAUClP/EfW3Zix2VY1AaK/QCdIoy+A6vt8c/j8aYTqZngsI+V7UJ8TyEn8zK41Sl/z7VDAYfR1ns+lVUvC/WuPoPtGB/c1SINGIy0CiB5bpOA=
+	t=1762786095; cv=none; b=jEA+KMY2HdGj02P+v7dVDMut66QM2Xds/It6be+B6GLGm8CpwlbrHFLkEil6VOuFleFphSSCxskD2n5ghWn6vykIRPQvxewClwWZID+fjhlTKkHEfsEeGozW4++q3LUZelyHqAyiFKo/LE+IVTZ/xTMAjHGgxshMrj7ETXc6VHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762786137; c=relaxed/simple;
-	bh=QvLvyRTtOe3YpANvSN2TJE7jXUgDr0aVixqk0y131fg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PA0I0tWWKgC7ScWaoUenLfNIgq8JHALFGBtbeCa4VLiYeMxOwEZwQlJPjB2GFiCBXayYKCYSfRpQ9WJOCbctIk/ifwQbWGiDrycPn6cf15u51j2NJqPZ3ziVYnyNjHuEQxNcae4PhYjYZwmdmVrst+PP16cUGrzT2Qjnl7PUbD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qj8t2lOB; arc=none smtp.client-ip=209.85.216.53
+	s=arc-20240116; t=1762786095; c=relaxed/simple;
+	bh=LPHuH34GPzz+FS33GWGiucjUVrgKTliQiQDa8mDrPto=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ivl7eDXXik1h1tiCQBKMoC3I4ipAs390xvggZULMKZf1V038wM3hPWQiY8fvBsApsVZq8xqp3jDpfRbMnN8qgSi0ZvG9G/RPI+I+5XF43rH/eTSx54wIdKYNHFffmnEnY49KRR77bd4UNuEjFdVaZKD7fv4W18FbCx+GD/zaAY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mrKtTsa/; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3437af8444cso1364736a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:48:55 -0800 (PST)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477563e28a3so21251055e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:48:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762786135; x=1763390935; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FrgskyzgQxtRPQXe+YA6yojSKzP/1EuspyiSaUY67z8=;
-        b=Qj8t2lOBhL3+SKQ9YLEjjqg5q8RodXiItrSBwp09JDbTitHiWc2eoS7DzbDn1La+GK
-         WhEXzdnwaazwFa8OyTC1iC7dgvuWT7O6DBmsg4dLTImcsEk/nzAnjriVzhrMqePcbYx5
-         L8VQj99YvR2/DiN7pEvhfMcgrCFCpG47JVVH7NURT5avljVkiR8D6Eiw4SWOFaysekxY
-         mEdBNu4LTXcMr0optpyMYvI+6Mx1IqSXVLQkfR21De+RxOn8a6g1BCWt533EaRATrZ5x
-         szULOegP/aUbF7mG/Q1AyOuP/9fygMG5RD8+WT7Blj4xJ7F5v/tA1cp7B5HmCOF2KgWm
-         uNwQ==
+        d=gmail.com; s=20230601; t=1762786091; x=1763390891; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LPHuH34GPzz+FS33GWGiucjUVrgKTliQiQDa8mDrPto=;
+        b=mrKtTsa/Waj1IsC00cI2/hZIW3lo0cdVW7+7mKXNZtIH+0sINwOiud66lJSMlFl8Lu
+         NSegLjc9zyP/bcP4NLVFR+4+B28aocJbymeEVpNYIbBcsutZQCOQepec8dkpVYrvGMMg
+         vP+gWyegzSO6Zm46s12EwF/AS1aPcASDEhAbjNhtXu+VnvZIkkwucFIKSr53XwvFrGgv
+         NB4YEX7XTSmGkCo646UzXMp1x9zuSfLEZxGD6WKGX9nyKeuh5fRJodobCLquBl+JTgPp
+         wwdufxIdXyE5kBIOol8fdoGRNht5nrMPZLv/YUhJ44ekIqC0gx5/7SsFRRcZmrROyzsE
+         0Hiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762786135; x=1763390935;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FrgskyzgQxtRPQXe+YA6yojSKzP/1EuspyiSaUY67z8=;
-        b=DjMR64VwRp2SWr167y0Oe4NoDYL93OllfVO/LtsEnnyNhVGe2aXdKloK2xyV8a5vpf
-         CINxzx0fg7B89MLM75dp2AJvk4ZEMlSomlix2PBDdoJEM6Pkan1WmECMAA9yKLMlJxRi
-         Bv8Tosw4wM9/1kfLIVyz1TJa/NKaCeveFYj/q0Ey7pjyvOdGQMSbpB/UTiTR8zfGbiJ2
-         FRk3JDJBJ5UFB9FDxG7H8eSYpOSUjg96nHMdvDrePEPP1KtZ+jhsjG95IgXBQWEKsPkg
-         3opBIlINc7XsAvbtoJB4uIXxBEkQlzeEDQQP6lE6Gc5+qqX4xSf1RBoNzZJsPaUyjFw6
-         qJHQ==
-X-Gm-Message-State: AOJu0Yy1aHDzBAvR0/3ZKBbvq9/8g2HWMhLhxx08Sc1uUzyst/yLKNQx
-	+OAqoU1kwmQK8oL7nURSbAELeXIxczRkh+ijaoo/ImmuXDK84VNNI2M1
-X-Gm-Gg: ASbGnctqQKVTkxGN7p0OSbnoxqhzR5xj35QwXmKy6jzfQJJeT1SPauUg5fzYWRzFVCP
-	3LfkUjogJ03CmEUAE+uaQM9NbJAu/9GfkBDdw5tNL4i5nEcwovlX6ZjVejgdWZxYqAwXRU/rp9v
-	YyC3cxL9+p7DmLDbegI9NuZDh1F5NWXIZrYK2yNu2FVJyM4n0zZFK6tvIgPK0oKq+/XFxfecwQT
-	prdpDq4/hruzqZbo18AFsUXxJxdUi1dSjbwCnzJzbGHNUI54VGl+o9uPeHC345++XuzxtPuvv+u
-	/W7HIIPVJug9/y73zqiFrdVC1Crp2w9fiz15JfQTBnQH7LZhV+ktw/u9r3KYZlsjH6eDJbRnV3n
-	T/aVGf4SyNpMP0Gw6E4eePRJwVluAR7p+h2KRROJvw+GtuOS+9+pvaUvO9JczUzQMe5gzFTD9xP
-	ajXfxZiNlTUog3s4L0FRh/aafN
-X-Google-Smtp-Source: AGHT+IFO7qcki/gcHxPVszkVoI6yIC1USYq4fWfL3CjPS2tpRrsdQwNQQWhcDI05RjMTZ5o9QWvvag==
-X-Received: by 2002:a17:90b:3bc6:b0:336:b563:993a with SMTP id 98e67ed59e1d1-3436cbf7f73mr10435722a91.23.1762786134867;
-        Mon, 10 Nov 2025 06:48:54 -0800 (PST)
-Received: from DESKTOP-8TIG9K0.localdomain ([119.28.20.50])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3437221b329sm7579364a91.16.2025.11.10.06.48.50
+        d=1e100.net; s=20230601; t=1762786091; x=1763390891;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LPHuH34GPzz+FS33GWGiucjUVrgKTliQiQDa8mDrPto=;
+        b=p48yRSQdv8UiXGVkuHzl4c836rOAlTxpqc6Au/JfAVNOtqxpoTqOM9EVpZ4pUVgAXg
+         EMS2dUr2acigg5F4nAPCVj+EB0mBSkon9qTo5mnVg393Jf3VnqKAtG0CK7qdOBLIr9rt
+         mbz5AVaFH6ylW5dv94AjrM4EBmWvTde8RyFQXlXbvgG0VkntqWPehTnw5wi+uWNwL+rj
+         UTHlRrQ40Cj5oGJvYLZ33gcZt28QCy/+4H3htuxfZz4wp4qi3yG9WfHw0y696oNypEN7
+         IhMjog8yGIVpj5Zc/58JSJtgFPpO+o2aRE54ko/79ZTqJ7o03z0L5+STFXW9GYxyQczy
+         /9+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXEURQGG8DBXCEMBnKeU2yZ9UQNnbrGggGlwmrmVzcSOQcza0UuD4APJxJnno1Kkm3E2T+B/kKTC8/lL0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+UZu0oOIifRLBW2A2bK71YOCbiDY3dzaECmnsLWlqvqUCDle2
+	F7j9D6bZjywsreG+uKp6YqZ10f8BpOTw1PK8M2AdHgVoch4Foy2ObhbF+Z3yrzZK
+X-Gm-Gg: ASbGncuuCaBWF8piX9ZW2C4J4ojktgmVGRVsfI+cOCXiNXeNiXZCA9AeWm04AkiHKun
+	/1l3VCSCZV4brxmBi1u3nFKriZousJ6QEFy+Cazjw2haOgNbwOYXH5KZ4SW2N5h3hMXYiirW6Zc
+	m6clfaK/9UKMBJ5r8meqimmsNWi5WcApnYOXTDfx/52+mf+6A2aT16+GuzOSsLSfnG3R0A/1YXB
+	bjaLnMEeHuZ7CZlP52i7aTP72qeJednOrcABc8agE1iGhGQ/ljfX1HO7Ss1nHg4v6YOrVrjlLhV
+	CG8Sli+WZklddc228ds4Bhb9V1KYJhtP357ftbRBqEVPBCY4wMzdf+IExAtV2dGP2hmVgGnWA9u
+	Booq/HctQmlqOIrkG269lEkiH5RwbCzr9bwc3EGB7XjXcQbnoKljjKhNIeUY4JCn76432YmNRXB
+	cmvuU/6fGUPxrTpQ7yJQo=
+X-Google-Smtp-Source: AGHT+IFyyPGi2h2HdORU5Y7qZAm0mzvGdm657Ujj5pRLIdfkz1ikPx4AlWnK/vjsN3l+QNuYFG0dhA==
+X-Received: by 2002:a05:600c:a30d:b0:471:ea1:a460 with SMTP id 5b1f17b1804b1-4776dcbe68cmr86535255e9.11.1762786090588;
+        Mon, 10 Nov 2025 06:48:10 -0800 (PST)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b2e052f32sm15817388f8f.17.2025.11.10.06.48.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 06:48:54 -0800 (PST)
-From: Xie Yuanbin <qq570070308@gmail.com>
-To: nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	morbo@google.com,
-	justinstitt@google.com,
-	qq570070308@gmail.com,
-	masahiroy@kernel.org,
-	jack@suse.cz,
-	akpm@linux-foundation.org,
-	maninder1.s@samsung.com
-Cc: linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	will@kernel.org
-Subject: [PATCH v2] Fix redundant judgment in WARN_ONCE with clang
-Date: Mon, 10 Nov 2025 22:48:44 +0800
-Message-ID: <20251110144844.1376-1-qq570070308@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        Mon, 10 Nov 2025 06:48:10 -0800 (PST)
+Message-ID: <5e0ea52e6a77a1d6af861ba5aaeeea5c3d514705.camel@gmail.com>
+Subject: Re: [PATCH v1 0/3] iio: adc: Add AD4134 minimum I/O support
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+ 	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: jic23@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
+ andy@kernel.org, 	Michael.Hennerich@analog.com, robh@kernel.org,
+ krzk+dt@kernel.org, 	conor+dt@kernel.org, corbet@lwn.net,
+ cosmin.tanislav@analog.com, 	marcelo.schmitt1@gmail.com
+Date: Mon, 10 Nov 2025 14:48:46 +0000
+In-Reply-To: <cover.1762777931.git.marcelo.schmitt@analog.com>
+References: <cover.1762777931.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-For c code:
-```c
-extern int xx;
-void test(void)
-{
-	if (WARN_ONCE(xx, "x"))
-		__asm__ volatile ("nop":::);
-}
-```
+On Mon, 2025-11-10 at 09:44 -0300, Marcelo Schmitt wrote:
+> This patch series adds basic support for ad4134. AD4134 is a very flexibl=
+e
+> device that can be configured in many different ways. This series aims to
+> support the simplest way of interfacing with AD4134 which is called minim=
+um I/O
+> mode in data sheet. This is essentially usual SPI with the addition of an=
+ ODR
+> (Output Data Rate) GPIO which functions as conversion start signal in min=
+imum
+> I/O mode. The CS pin may be connected to a host controller CS pin or grou=
+nded.
+>=20
+> This set provides just one feature:
+> - Single-shot ADC sample read.
+>=20
+> [PATCH 1] Device tree documentation for AD4134.
+> [PATCH 2] IIO Linux driver for AD4134.
+> [PATCH 3] Initial IIO documentation.
+>=20
+> There is a driver by Cosmin on ADI Linux tree that supports AD4134 in wir=
+ing
+> configurations suited for high speed data transfers. Even though the mini=
+mum I/O
+> support was initialy based on that high speed transfer driver, the result=
+ ended
+> up becoming entirely different. Also, because the different wiring
+> configurations are likely going to use different resources and software
+> interfaces, the code for AD4134 support was split into ad4134-spi.c,
+> ad4134-common.h, and ad4134-common.c.
 
-Clang will generate the following assembly code:
-```assemble
-test:
-	movl	xx(%rip), %eax // Assume xx == 0 (likely case)
-	testl	%eax, %eax // judge once
-	je	.LBB0_3    // jump to .LBB0_3
-	testb	$1, test.__already_done(%rip)
-	je	.LBB0_2
-.LBB0_3:
-	testl	%eax, %eax // judge again
-	je	.LBB0_5    // jump to .LBB0_5
-.LBB0_4:
-	nop
-.LBB0_5:
-	retq
-	// omit
-```
+I'm familiar with the odd way this part is implemented in ADI tree :). Ques=
+tion is, are
+you intending to support the high speed bits? I guess so, otherwise having =
+the above split
+would not make much sense.
 
-In the above code, `xx == 0` should be a likely case, but in this case,
-xx has been judged twice.
+- Nuno S=C3=A1
 
-Test info:
-1. kernel source:
-linux-next
-commit 9c0826a5d9aa4d52206d ("Add linux-next specific files for 20251107")
-2. compiler:
-clang: Debian clang version 21.1.4 (8) with
-Debian LLD 21.1.4 (compatible with GNU linkers)
-3. config:
-base on default x86_64_defconfig, and setting:
-CONFIG_MITIGATION_RETHUNK=n
-CONFIG_STACKPROTECTOR=n
-
-v1->v2: https://lore.kernel.org/20251109083715.24495-1-qq570070308@gmail.com
-  - Code format adjustment
-
-Signed-off-by: Xie Yuanbin <qq570070308@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- include/linux/once_lite.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/once_lite.h b/include/linux/once_lite.h
-index 27de7bc32a06..236592c4eeb1 100644
---- a/include/linux/once_lite.h
-+++ b/include/linux/once_lite.h
-@@ -16,7 +16,7 @@
- 		bool __ret_cond = !!(condition);			\
- 		bool __ret_once = false;				\
- 									\
--		if (unlikely(__ret_cond && !__already_done)) {		\
-+		if (unlikely(__ret_cond) && unlikely(!__already_done)) {\
- 			__already_done = true;				\
- 			__ret_once = true;				\
- 		}							\
--- 
-2.51.0
-
+>=20
+> With best regards,
+> Marcelo
+>=20
+> Marcelo Schmitt (3):
+> =C2=A0 dt-bindings: iio: adc: Add AD4134
+> =C2=A0 iio: adc: Initial support for AD4134
+> =C2=A0 Docs: iio: Add AD4134
+>=20
+> =C2=A0.../bindings/iio/adc/adi,ad4134.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 | 209 +++++++++++++
+> =C2=A0Documentation/iio/ad4134.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 58 =
+++++
+> =C2=A0Documentation/iio/index.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0=C2=A0 1 +
+> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0=C2=A0 9 +
+> =C2=A0drivers/iio/adc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 15 +
+> =C2=A0drivers/iio/adc/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0=C2=A0 2 +
+> =C2=A0drivers/iio/adc/ad4134-common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 200 ++++++++++++
+> =C2=A0drivers/iio/adc/ad4134-common.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 132 ++++++++
+> =C2=A0drivers/iio/adc/ad4134-spi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 287 +++++=
++++++++++++++
+> =C2=A09 files changed, 913 insertions(+)
+> =C2=A0create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad=
+4134.yaml
+> =C2=A0create mode 100644 Documentation/iio/ad4134.rst
+> =C2=A0create mode 100644 drivers/iio/adc/ad4134-common.c
+> =C2=A0create mode 100644 drivers/iio/adc/ad4134-common.h
+> =C2=A0create mode 100644 drivers/iio/adc/ad4134-spi.c
+>=20
+>=20
+> base-commit: c5411c8b9ed1caf53604bb1a5be3f487988efc98
 
