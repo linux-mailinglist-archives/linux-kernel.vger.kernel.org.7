@@ -1,248 +1,429 @@
-Return-Path: <linux-kernel+bounces-892289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CFEC44C64
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:30:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806D9C44C6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 186713A6DBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:30:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A3994E7171
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35F11E9905;
-	Mon, 10 Nov 2025 02:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F21220330;
+	Mon, 10 Nov 2025 02:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="GUxFPHmh"
-Received: from mail-m32117.qiye.163.com (mail-m32117.qiye.163.com [220.197.32.117])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jqe0+8Ls";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="TmcKf7qc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FE020ED;
-	Mon, 10 Nov 2025 02:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538524A33
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762741839; cv=none; b=DTUPPMKOjZy11qnjciSP674uU8xQGlKDaYfBsqbCZCmmmTdZoUSqUa53jH1hdsyqIud8IMsRPkQECL+78D0IzuyohjOpcdiP51+B3gYiSrIw3+nsGb8OERlrP4S4EuIBqX+lhvxq7y1n91bvlmunKrMnOMREGIdFlWm5rNvXUHY=
+	t=1762741881; cv=none; b=TZzW+JxJQ5H69KmffbgUIAtKYCDgc35ooGg4hEioduUwlAwkdfgEIV24uf9i50EsB740mfLOU8lvqq6z7tRHbibulL1TEiGHorbnbJoDL4lRrzeUI5N0yQcYjUVqKC/B388WbxdRWKPdS9O/vwKeobwXprlkb6DmoiqnysmT5W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762741839; c=relaxed/simple;
-	bh=semVxE4nupV8mktdww+1XMfEXXQO9FmklDp6OOkMI6A=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=F2kqFruG3coFtk6yPmKVkMi3CNUiZf0m4apzwM3JGu7WHFdVucps9ZfCdgpxElwMBkWunR7HYjtocyAJt2Ml3FinHAvDepwopC4EGP8ImUCStuZrqp4fBC8EjK9ZyO11Y2mrWzelPXgT/Zp0KPuZDQ/Y4mJ45RxsUOG+RuWvm00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=GUxFPHmh; arc=none smtp.client-ip=220.197.32.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.129] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 28f6e9869;
-	Mon, 10 Nov 2025 10:30:24 +0800 (GMT+08:00)
-Message-ID: <780a4209-f89f-43a9-9364-331d3b77e61e@rock-chips.com>
-Date: Mon, 10 Nov 2025 10:30:20 +0800
+	s=arc-20240116; t=1762741881; c=relaxed/simple;
+	bh=agCrlEn+1UVxT4zTacRYF2se801n/68iQ70kdwJIdgQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P5+78kNVfbuaFeJn7hOw42cYnB+LtVE5UKRzlNa+rm3qj5eMJZfSjb0BIZchIRpumJMwUtp8IJWaxTgGGKseC7YQQ86H28ou7E97L8o7zogE32FBZfJ5gt2NhSR7QkjOBAmsw7CqIk3uzy+l1wQ7EY7JAu99eJa0wOGrANUm74Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jqe0+8Ls; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=TmcKf7qc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762741878;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EJjbMiht/N5P0FKj2UX16ocUflg4ct2JhS64yw2D2Qs=;
+	b=Jqe0+8LsF1f0ENmoSq1AKfrHfiUd/TgMVoBzR2y+TaUNfpTrp4kvcWZoT047y009jEOUm9
+	Vfa4+HhgE+hJwFgggnt5+71+s6K42MdvqCbuSpoolAOdhaxerGryk8xAAI5tfGPcKwYLOY
+	3lzmJpCBwCzZCAy+f9i8fow0tcUqsiE=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-581-HUvIlh1VO4-QOr8dgabNaQ-1; Sun, 09 Nov 2025 21:31:16 -0500
+X-MC-Unique: HUvIlh1VO4-QOr8dgabNaQ-1
+X-Mimecast-MFC-AGG-ID: HUvIlh1VO4-QOr8dgabNaQ_1762741876
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-787c609417aso22789717b3.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 18:31:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762741875; x=1763346675; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EJjbMiht/N5P0FKj2UX16ocUflg4ct2JhS64yw2D2Qs=;
+        b=TmcKf7qcGjPbdh45C9zikTBq2ELLeRsUp1vcJ5q1EfjALlX8lo8PPG0aoQ3Rinasrp
+         wOoEeXTcaxG4n9dc832YcFjhGyYxFdfVsPydT0y9/PO7UKrOKLYrNncdURxF8mpAyG6P
+         u7Y+NMWgTxsxjHYp/yPNxhn434HD3QR6v3CFnGjUKs+eeA+hPwYxBnbrDwPLdNI6XnSC
+         sh12HQ7XhaRgEFfnymEFCLo3noYxJmXnBee1iUqMdBCjM1l84bbzEPY3Mh7+7CnCa1CR
+         ksynoLS8pmh6xyDBoMcqJ/ZMADbIIQ9NWWX88uxp99JMGZrrdQz/wp6Hrs+66RcYpe5X
+         6zBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762741875; x=1763346675;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=EJjbMiht/N5P0FKj2UX16ocUflg4ct2JhS64yw2D2Qs=;
+        b=dC1bVre4WV2BmMjxf3tmSSzA+sncor5eLGH5i6Np4uknV0JEsv6HptS09tr1dAWoYX
+         Ubk95tR24VfiIPkzfGKhpv1hoKrIyOj1KM3r+uALitgCQY3HaQvy0VbosIIElBCvVAsv
+         8p0It/DXICP942JnqrqBLD8vH5Gt61pwAkGUox9Swsy2cA6GIb4t+hvW03ScgD17idAW
+         LJQC/DTLNXqCgszIeSQqoK6Xovql++ZAc6YS+q7zYdJPGJVjdaHZDo8XiW8+gt5xq7JI
+         4ZYECRzWBVgIs3Q3mq4zTp5hqkJYgvp2S/q+pTK+PBxa1bHsFjTFZgOh4nDV21ehY11n
+         6wNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYSJU247ksLT7/1vqlDB7is9AI6KxnlLmzb/JepF/FvULEYcPIjn1iHDO1NgWARbMsVOruRuKw1mdtUR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUDpDtMTikaWCW3o/TRct5j9ATpu3FLGYSZXi4f/IHmkg9AON1
+	0yHkFbhDO/3yv56M2Nni3/zKdi2Bo7+MZOFfNdHYx+fn+34IxRuQBa7r0oU0D6+Ra/V+12n12/O
+	IQ4OE9Bs/JK+7mEXufcWCZ1QY/0S8A+yn21b7MuNnweSA2zLGXS9gXnAjUkCG+jH8AuxHWpteID
+	O8zEop4xaoWEQna57p9nY02qDC1dhOQWsBEE8yPZ4YkCRLlk5Ogbc=
+X-Gm-Gg: ASbGncudsPFfFGNjVgI1dj/BXz2vqjl7jLn+cc1DCqkoxrppUWr7QvUH7IYv/VZL3rE
+	4innPM7wiH3hhKqtRrkq08nlZKka7VVOLsLbYf41xZzCHc3LVZot1lamjVdVByXk/caYbgFop0j
+	jfyti6xJUcKrKTY8bozubOfbtGGRqEKAoX9nBGy79DzA6ssdimEkuiUfL0
+X-Received: by 2002:a05:690c:b96:b0:786:660b:82b5 with SMTP id 00721157ae682-787d53a7a10mr61480437b3.27.1762741875039;
+        Sun, 09 Nov 2025 18:31:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEMPh2N6k6ML216hxK7CX656D3mzPsUL3tDVmxptiZG0gis1LUqTj6iF3RlQO7WRybnvAbVNvj2OZk1R2nncgI=
+X-Received: by 2002:a05:690c:b96:b0:786:660b:82b5 with SMTP id
+ 00721157ae682-787d53a7a10mr61480257b3.27.1762741874575; Sun, 09 Nov 2025
+ 18:31:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, Damien Le Moal <dlemoal@kernel.org>,
- Anand Moon <linux.amoon@gmail.com>, linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Dragan Simic <dsimic@manjaro.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Heiko Stuebner <heiko@sntech.de>, mani@kernel.org,
- Niklas Cassel <cassel@kernel.org>
-Subject: Re: [RESEND] Re: [PATCH] PCI: dw-rockchip: Skip waiting for link up
-To: FUKAUMI Naoki <naoki@radxa.com>
-References: <20250113-rockchip-no-wait-v1-1-25417f37b92f@kernel.org>
- <1E8E4DB773970CB5+5a52c9e1-01b8-4872-99b7-021099f04031@radxa.com>
- <6e87b611-13ea-4d89-8dbf-85510dd86fa6@rock-chips.com>
- <aQ840q5BxNS1eIai@ryzen> <aQ9FWEuW47L8YOxC@ryzen>
- <55EB0E5F655F3AFC+136b89fd-98d4-42af-a99d-a0bb05cc93f3@radxa.com>
- <aRCI5kG16_1erMME@ryzen>
- <F8B2B6FA2884D69A+b7da13f2-0ffb-4308-b1ba-0549bc461be8@radxa.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <F8B2B6FA2884D69A+b7da13f2-0ffb-4308-b1ba-0549bc461be8@radxa.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a6b99abfe09cckunm39d6557412b970a
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQh9IHVZIGBhMSh0aGkJJHxpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	xVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=GUxFPHmh5MX8wp7RrOmxB7Fy+w6B+Zbl+TkUp3xCyX6leuKuiZCEFDdiKy0akiHYJJ+ykpT8yYLRVhjtplDwDi210e+zX1I9nI8LBPfoA4nn5T50/H5L3/kwWPOBHjGFG2hrGK534NEh9XfEtJtZdcDhKuiJWgTB2uW9Gc7jEx4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=ST4GcK2McWrhDhZAl75VtQG+4FHxpdlWOF4ND05GHw4=;
-	h=date:mime-version:subject:message-id:from;
+References: <20251103125757.1405796-1-linan666@huaweicloud.com> <20251103125757.1405796-6-linan666@huaweicloud.com>
+In-Reply-To: <20251103125757.1405796-6-linan666@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Mon, 10 Nov 2025 10:30:55 +0800
+X-Gm-Features: AWmQ_bny1JxQznfWpBKLAFq5VHnn-1VGKkeCkBDuzefNBgUmOFE9Kn0LbkFn9xg
+Message-ID: <CALTww29YpgLSzPPkvo79bf5M-pNjGroJrmGBwx2XGQhMOQEe4A@mail.gmail.com>
+Subject: Re: [PATCH v9 5/5] md: allow configuring logical block size
+To: linan666@huaweicloud.com
+Cc: corbet@lwn.net, song@kernel.org, yukuai@fnnas.com, linan122@huawei.com, 
+	hare@suse.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Fukaumi
+On Mon, Nov 3, 2025 at 9:06=E2=80=AFPM <linan666@huaweicloud.com> wrote:
+>
+> From: Li Nan <linan122@huawei.com>
+>
+> Previously, raid array used the maximum logical block size (LBS)
+> of all member disks. Adding a larger LBS disk at runtime could
+> unexpectedly increase RAID's LBS, risking corruption of existing
+> partitions. This can be reproduced by:
+>
+> ```
+>   # LBS of sd[de] is 512 bytes, sdf is 4096 bytes.
+>   mdadm -CRq /dev/md0 -l1 -n3 /dev/sd[de] missing --assume-clean
+>
+>   # LBS is 512
+>   cat /sys/block/md0/queue/logical_block_size
+>
+>   # create partition md0p1
+>   parted -s /dev/md0 mklabel gpt mkpart primary 1MiB 100%
+>   lsblk | grep md0p1
+>
+>   # LBS becomes 4096 after adding sdf
+>   mdadm --add -q /dev/md0 /dev/sdf
+>   cat /sys/block/md0/queue/logical_block_size
+>
+>   # partition lost
+>   partprobe /dev/md0
+>   lsblk | grep md0p1
+> ```
+>
+> Simply restricting larger-LBS disks is inflexible. In some scenarios,
+> only disks with 512 bytes LBS are available currently, but later, disks
+> with 4KB LBS may be added to the array.
+>
+> Making LBS configurable is the best way to solve this scenario.
+> After this patch, the raid will:
+>   - store LBS in disk metadata
+>   - add a read-write sysfs 'mdX/logical_block_size'
+>
+> Future mdadm should support setting LBS via metadata field during RAID
+> creation and the new sysfs. Though the kernel allows runtime LBS changes,
+> users should avoid modifying it after creating partitions or filesystems
+> to prevent compatibility issues.
+>
+> Only 1.x metadata supports configurable LBS. 0.90 metadata inits all
+> fields to default values at auto-detect. Supporting 0.90 would require
+> more extensive changes and no such use case has been observed.
+>
+> Note that many RAID paths rely on PAGE_SIZE alignment, including for
+> metadata I/O. A larger LBS than PAGE_SIZE will result in metadata
+> read/write failures. So this config should be prevented.
+>
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> ---
+>  Documentation/admin-guide/md.rst | 10 +++++
+>  drivers/md/md.h                  |  1 +
+>  include/uapi/linux/raid/md_p.h   |  3 +-
+>  drivers/md/md-linear.c           |  1 +
+>  drivers/md/md.c                  | 77 ++++++++++++++++++++++++++++++++
+>  drivers/md/raid0.c               |  1 +
+>  drivers/md/raid1.c               |  1 +
+>  drivers/md/raid10.c              |  1 +
+>  drivers/md/raid5.c               |  1 +
+>  9 files changed, 95 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/admin-guide/md.rst b/Documentation/admin-guide=
+/md.rst
+> index 1c2eacc94758..b7e7081889fe 100644
+> --- a/Documentation/admin-guide/md.rst
+> +++ b/Documentation/admin-guide/md.rst
+> @@ -238,6 +238,16 @@ All md devices contain:
+>       the number of devices in a raid4/5/6, or to support external
+>       metadata formats which mandate such clipping.
+>
+> +  logical_block_size
+> +     Configure the array's logical block size in bytes. This attribute
+> +     is only supported for 1.x meta. Write the value before starting
+> +     array. The final array LBS uses the maximum between this
+> +     configuration and LBS of all combined devices. Note that
+> +     LBS cannot exceed PAGE_SIZE before RAID supports folio.
+> +     WARNING: Arrays created on new kernel cannot be assembled at old
+> +     kernel due to padding check, Set module parameter 'check_new_featur=
+e'
+> +     to false to bypass, but data loss may occur.
+> +
+>    reshape_position
+>       This is either ``none`` or a sector number within the devices of
+>       the array where ``reshape`` is up to.  If this is set, the three
+> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> index 38a7c2fab150..a6b3cb69c28c 100644
+> --- a/drivers/md/md.h
+> +++ b/drivers/md/md.h
+> @@ -432,6 +432,7 @@ struct mddev {
+>         sector_t                        array_sectors; /* exported array =
+size */
+>         int                             external_size; /* size managed
+>                                                         * externally */
+> +       unsigned int                    logical_block_size;
+>         __u64                           events;
+>         /* If the last 'event' was simply a clean->dirty transition, and
+>          * we didn't write it to the spares, then it is safe and simple
+> diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/md_=
+p.h
+> index ac74133a4768..310068bb2a1d 100644
+> --- a/include/uapi/linux/raid/md_p.h
+> +++ b/include/uapi/linux/raid/md_p.h
+> @@ -291,7 +291,8 @@ struct mdp_superblock_1 {
+>         __le64  resync_offset;  /* data before this offset (from data_off=
+set) known to be in sync */
+>         __le32  sb_csum;        /* checksum up to devs[max_dev] */
+>         __le32  max_dev;        /* size of devs[] array to consider */
+> -       __u8    pad3[64-32];    /* set to 0 when writing */
+> +       __le32  logical_block_size;     /* same as q->limits->logical_blo=
+ck_size */
+> +       __u8    pad3[64-36];    /* set to 0 when writing */
+>
+>         /* device state information. Indexed by dev_number.
+>          * 2 bytes per device
+> diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
+> index 7033d982d377..50d4a419a16e 100644
+> --- a/drivers/md/md-linear.c
+> +++ b/drivers/md/md-linear.c
+> @@ -72,6 +72,7 @@ static int linear_set_limits(struct mddev *mddev)
+>
+>         md_init_stacking_limits(&lim);
+>         lim.max_hw_sectors =3D mddev->chunk_sectors;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.max_write_zeroes_sectors =3D mddev->chunk_sectors;
+>         lim.max_hw_wzeroes_unmap_sectors =3D mddev->chunk_sectors;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 5921fb245bfa..e5f994c33dfe 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -1998,6 +1998,7 @@ static int super_1_validate(struct mddev *mddev, st=
+ruct md_rdev *freshest, struc
+>                 mddev->layout =3D le32_to_cpu(sb->layout);
+>                 mddev->raid_disks =3D le32_to_cpu(sb->raid_disks);
+>                 mddev->dev_sectors =3D le64_to_cpu(sb->size);
+> +               mddev->logical_block_size =3D le32_to_cpu(sb->logical_blo=
+ck_size);
+>                 mddev->events =3D ev1;
+>                 mddev->bitmap_info.offset =3D 0;
+>                 mddev->bitmap_info.space =3D 0;
+> @@ -2207,6 +2208,7 @@ static void super_1_sync(struct mddev *mddev, struc=
+t md_rdev *rdev)
+>         sb->chunksize =3D cpu_to_le32(mddev->chunk_sectors);
+>         sb->level =3D cpu_to_le32(mddev->level);
+>         sb->layout =3D cpu_to_le32(mddev->layout);
+> +       sb->logical_block_size =3D cpu_to_le32(mddev->logical_block_size)=
+;
+>         if (test_bit(FailFast, &rdev->flags))
+>                 sb->devflags |=3D FailFast1;
+>         else
+> @@ -5935,6 +5937,68 @@ static struct md_sysfs_entry md_serialize_policy =
+=3D
+>  __ATTR(serialize_policy, S_IRUGO | S_IWUSR, serialize_policy_show,
+>         serialize_policy_store);
+>
+> +static int mddev_set_logical_block_size(struct mddev *mddev,
+> +                               unsigned int lbs)
+> +{
+> +       int err =3D 0;
+> +       struct queue_limits lim;
+> +
+> +       if (queue_logical_block_size(mddev->gendisk->queue) >=3D lbs) {
+> +               pr_err("%s: Cannot set LBS smaller than mddev LBS %u\n",
+> +                      mdname(mddev), lbs);
+> +               return -EINVAL;
+> +       }
+> +
+> +       lim =3D queue_limits_start_update(mddev->gendisk->queue);
+> +       lim.logical_block_size =3D lbs;
+> +       pr_info("%s: logical_block_size is changed, data may be lost\n",
+> +               mdname(mddev));
+> +       err =3D queue_limits_commit_update(mddev->gendisk->queue, &lim);
+> +       if (err)
+> +               return err;
+> +
+> +       mddev->logical_block_size =3D lbs;
+> +       /* New lbs will be written to superblock after array is running *=
+/
+> +       set_bit(MD_SB_CHANGE_DEVS, &mddev->sb_flags);
+> +       return 0;
+> +}
+> +
+> +static ssize_t
+> +lbs_show(struct mddev *mddev, char *page)
+> +{
+> +       return sprintf(page, "%u\n", mddev->logical_block_size);
+> +}
+> +
+> +static ssize_t
+> +lbs_store(struct mddev *mddev, const char *buf, size_t len)
+> +{
+> +       unsigned int lbs;
+> +       int err =3D -EBUSY;
+> +
+> +       /* Only 1.x meta supports configurable LBS */
+> +       if (mddev->major_version =3D=3D 0)
+> +               return -EINVAL;
+> +
+> +       if (mddev->pers)
+> +               return -EBUSY;
+> +
+> +       err =3D kstrtouint(buf, 10, &lbs);
+> +       if (err < 0)
+> +               return -EINVAL;
+> +
+> +       err =3D mddev_lock(mddev);
+> +       if (err)
+> +               goto unlock;
+> +
+> +       err =3D mddev_set_logical_block_size(mddev, lbs);
+> +
+> +unlock:
+> +       mddev_unlock(mddev);
+> +       return err ?: len;
+> +}
+> +
+> +static struct md_sysfs_entry md_logical_block_size =3D
+> +__ATTR(logical_block_size, 0644, lbs_show, lbs_store);
+>
+>  static struct attribute *md_default_attrs[] =3D {
+>         &md_level.attr,
+> @@ -5957,6 +6021,7 @@ static struct attribute *md_default_attrs[] =3D {
+>         &md_consistency_policy.attr,
+>         &md_fail_last_dev.attr,
+>         &md_serialize_policy.attr,
+> +       &md_logical_block_size.attr,
+>         NULL,
+>  };
+>
+> @@ -6087,6 +6152,17 @@ int mddev_stack_rdev_limits(struct mddev *mddev, s=
+truct queue_limits *lim,
+>                         return -EINVAL;
+>         }
+>
+> +       /*
+> +        * Before RAID adding folio support, the logical_block_size
+> +        * should be smaller than the page size.
+> +        */
+> +       if (lim->logical_block_size > PAGE_SIZE) {
+> +               pr_err("%s: logical_block_size must not larger than PAGE_=
+SIZE\n",
+> +                       mdname(mddev));
+> +               return -EINVAL;
+> +       }
+> +       mddev->logical_block_size =3D lim->logical_block_size;
+> +
+>         return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(mddev_stack_rdev_limits);
+> @@ -6698,6 +6774,7 @@ static void md_clean(struct mddev *mddev)
+>         mddev->chunk_sectors =3D 0;
+>         mddev->ctime =3D mddev->utime =3D 0;
+>         mddev->layout =3D 0;
+> +       mddev->logical_block_size =3D 0;
+>         mddev->max_disks =3D 0;
+>         mddev->events =3D 0;
+>         mddev->can_decrease_events =3D 0;
+> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+> index fbf763401521..47aee1b1d4d1 100644
+> --- a/drivers/md/raid0.c
+> +++ b/drivers/md/raid0.c
+> @@ -380,6 +380,7 @@ static int raid0_set_limits(struct mddev *mddev)
+>         lim.max_hw_sectors =3D mddev->chunk_sectors;
+>         lim.max_write_zeroes_sectors =3D mddev->chunk_sectors;
+>         lim.max_hw_wzeroes_unmap_sectors =3D mddev->chunk_sectors;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+>         lim.io_opt =3D lim.io_min * mddev->raid_disks;
+>         lim.chunk_sectors =3D mddev->chunk_sectors;
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 64bfe8ca5b38..167768edaec1 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -3212,6 +3212,7 @@ static int raid1_set_limits(struct mddev *mddev)
+>         md_init_stacking_limits(&lim);
+>         lim.max_write_zeroes_sectors =3D 0;
+>         lim.max_hw_wzeroes_unmap_sectors =3D 0;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.features |=3D BLK_FEAT_ATOMIC_WRITES;
+>         err =3D mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRIT=
+Y);
+>         if (err)
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index 6b2d4b7057ae..71bfed3b798d 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -4000,6 +4000,7 @@ static int raid10_set_queue_limits(struct mddev *md=
+dev)
+>         md_init_stacking_limits(&lim);
+>         lim.max_write_zeroes_sectors =3D 0;
+>         lim.max_hw_wzeroes_unmap_sectors =3D 0;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+>         lim.chunk_sectors =3D mddev->chunk_sectors;
+>         lim.io_opt =3D lim.io_min * raid10_nr_stripes(conf);
+> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+> index aa404abf5d17..92473850f381 100644
+> --- a/drivers/md/raid5.c
+> +++ b/drivers/md/raid5.c
+> @@ -7747,6 +7747,7 @@ static int raid5_set_limits(struct mddev *mddev)
+>         stripe =3D roundup_pow_of_two(data_disks * (mddev->chunk_sectors =
+<< 9));
+>
+>         md_init_stacking_limits(&lim);
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+>         lim.io_opt =3D lim.io_min * (conf->raid_disks - conf->max_degrade=
+d);
+>         lim.features |=3D BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE;
+> --
+> 2.39.2
+>
 
-在 2025/11/10 星期一 7:26, FUKAUMI Naoki 写道:
-> (RESEND: fix mani's email address)
-> 
-> Hi Niklas,
-> 
-> On 11/9/25 21:28, Niklas Cassel wrote:
->> On Sun, Nov 09, 2025 at 01:42:23PM +0900, FUKAUMI Naoki wrote:
->>> Hi Niklas,
->>>
->>> On 11/8/25 22:27, Niklas Cassel wrote:
->>> (snip)> (And btw. please test with the latest 6.18-rc, as, from 
->>> experience,
->>> the
->>>> ASPM problems in earlier RCs can result in some weird problems that are
->>>> not immediately deduced to be caused by the ASPM enablement.)
->>>
->>> Here is dmesg from v6.18-rc4:
->>>   https://gist.github.com/RadxaNaoki/40e1d049bff4f1d2d4773a5ba0ed9dff
->>
->> Same problem as before:
->> [    1.732538] pci_bus 0004:43: busn_res: can not insert [bus 43-41] 
->> under [bus 42-41] (conflicts with (null) [bus 42-41])
->> [    1.732645] pci_bus 0004:43: busn_res: [bus 43-41] end is updated 
->> to 43
->> [    1.732651] pci_bus 0004:43: busn_res: can not insert [bus 43] 
->> under [bus 42-41] (conflicts with (null) [bus 42-41])
->> [    1.732661] pci 0004:42:00.0: devices behind bridge are unusable 
->> because [bus 43] cannot be assigned for them
->> [    1.732840] pci_bus 0004:44: busn_res: can not insert [bus 44-41] 
->> under [bus 42-41] (conflicts with (null) [bus 42-41])
->> [    1.732947] pci_bus 0004:44: busn_res: [bus 44-41] end is updated 
->> to 44
->> [    1.732952] pci_bus 0004:44: busn_res: can not insert [bus 44] 
->> under [bus 42-41] (conflicts with (null) [bus 42-41])
->> [    1.732962] pci 0004:42:02.0: devices behind bridge are unusable 
->> because [bus 44] cannot be assigned for them
->> [    1.733134] pci_bus 0004:45: busn_res: can not insert [bus 45-41] 
->> under [bus 42-41] (conflicts with (null) [bus 42-41])
->> [    1.733246] pci_bus 0004:45: busn_res: [bus 45-41] end is updated 
->> to 45
->> [    1.733255] pci_bus 0004:45: busn_res: can not insert [bus 45] 
->> under [bus 42-41] (conflicts with (null) [bus 42-41])
->> [    1.733266] pci 0004:42:06.0: devices behind bridge are unusable 
->> because [bus 45] cannot be assigned for them
->> [    1.733438] pci_bus 0004:46: busn_res: can not insert [bus 46-41] 
->> under [bus 42-41] (conflicts with (null) [bus 42-41])
->> [    1.733544] pci_bus 0004:46: busn_res: [bus 46-41] end is updated 
->> to 46
->> [    1.733550] pci_bus 0004:46: busn_res: can not insert [bus 46] 
->> under [bus 42-41] (conflicts with (null) [bus 42-41])
->> [    1.733560] pci 0004:42:0e.0: devices behind bridge are unusable 
->> because [bus 46] cannot be assigned for them
->> [    1.733571] pci_bus 0004:42: busn_res: [bus 42-41] end is updated 
->> to 46
->> [    1.733575] pci_bus 0004:42: busn_res: can not insert [bus 42-46] 
->> under [bus 41] (conflicts with (null) [bus 41])
->> [    1.733585] pci 0004:41:00.0: devices behind bridge are unusable 
->> because [bus 42-46] cannot be assigned for them
->> [    1.733596] pcieport 0004:40:00.0: bridge has subordinate 41 but 
->> max busn 46
->>
->>
->> Seems like the ASM2806 switch, for some reason, is not ready.
->>
->> One change that Diederik pointed out is that in the "good" case,
->> the link is always in Gen1 speed.
->>
->> Perhaps you could build with CONFIG_PCI_QUIRKS=y and try this patch:
->>
->> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
->> index 214ed060ca1b..ac134d95a97f 100644
->> --- a/drivers/pci/quirks.c
->> +++ b/drivers/pci/quirks.c
->> @@ -96,6 +96,7 @@ int pcie_failed_link_retrain(struct pci_dev *dev)
->>   {
->>       static const struct pci_device_id ids[] = {
->>           { PCI_VDEVICE(ASMEDIA, 0x2824) }, /* ASMedia ASM2824 */
->> +        { PCI_VDEVICE(ASMEDIA, 0x2806) }, /* ASMedia ASM2806 */
->>           {}
->>       };
->>       u16 lnksta, lnkctl2;
-> 
-> It doesn't help with either probing behind the bridge or the link speed.
-> 
->> If that does not work, perhaps you could try this patch
->> (assuming that all Rock 5C:s have a ASM2806 on pcie2x1l2):
-> 
-> ROCK 5C has a PCIe FPC connector and I'm using Dual 2.5G Router HAT.
->   https://radxa.com/products/rock5/5c#techspec
->   https://radxa.com/products/accessories/dual-2-5g-router-hat
-> 
-> Regarding the link speed, I initially suspected the FPC connector and/or 
-> cable might be the issue. However, I tried the Dual 2.5G Router HAT with 
-> the ROCK 5A (which uses a different cable), and I got the same result.
-> 
-> BTW, the link speed varies between 2Gb/s and 4Gb/s depending on the 
-> reboot. (with or without quirk)
-
-Could you please help check this patch?
-
---- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-+++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-@@ -454,6 +454,8 @@ static irqreturn_t 
-rockchip_pcie_rc_sys_irq_thread(int irq, void *arg)
-         struct dw_pcie *pci = &rockchip->pci;
-         struct dw_pcie_rp *pp = &pci->pp;
-         struct device *dev = pci->dev;
-+       struct pci_bus *child, *root_bus = NULL;
-+       struct pci_dev *bridge;
-         u32 reg;
-
-         reg = rockchip_pcie_readl_apb(rockchip, 
-PCIE_CLIENT_INTR_STATUS_MISC);
-@@ -462,12 +464,21 @@ static irqreturn_t 
-rockchip_pcie_rc_sys_irq_thread(int irq, void *arg)
-         dev_dbg(dev, "PCIE_CLIENT_INTR_STATUS_MISC: %#x\n", reg);
-         dev_dbg(dev, "LTSSM_STATUS: %#x\n", 
-rockchip_pcie_get_ltssm(rockchip));
-
-+       list_for_each_entry(child, &pp->bridge->bus->children, node) {
-+               if (child->parent == pp->bridge->bus) {
-+                       root_bus = child;
-+                       bridge = root_bus->self;
-+                       break;
-+               }
-+        }
-+
-         if (reg & PCIE_RDLH_LINK_UP_CHGED) {
-                 if (rockchip_pcie_link_up(pci)) {
-                         msleep(PCIE_RESET_CONFIG_WAIT_MS);
-                         dev_dbg(dev, "Received Link up event. Starting 
-enumeration!\n");
-                         /* Rescan the bus to enumerate endpoint devices */
-                         pci_lock_rescan_remove();
-+                       pci_stop_and_remove_bus_device(bridge);
-                         pci_rescan_bus(pp->bridge->bus);
-                         pci_unlock_rescan_remove();
-                 }
-
-
-> 
-> Best regards,
-> 
-> -- 
-> FUKAUMI Naoki
-> Radxa Computer (Shenzhen) Co., Ltd.
-> 
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5c.dts b/arch/ 
->> arm64/boot/dts/rockchip/rk3588s-rock-5c.dts
->> index dd7317bab613..26f8539d934a 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5c.dts
->> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5c.dts
->> @@ -452,6 +452,7 @@ &pcie2x1l2 {
->>       pinctrl-0 = <&pcie20x1_2_perstn_m0>;
->>       reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;
->>       vpcie3v3-supply = <&pcie2x1l2_3v3>;
->> +    max-link-speed = <1>;
->>       status = "okay";
->>   };
->>
->>
->>
->> Kind regards,
->> Niklas
->>
-> 
-> 
+Looks good to me.
+Reviewed-by: Xiao Ni <xni@redhat.com>
 
 
