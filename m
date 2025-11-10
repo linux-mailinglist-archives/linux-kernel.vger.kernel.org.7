@@ -1,125 +1,135 @@
-Return-Path: <linux-kernel+bounces-893441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9053C4767F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:07:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE49C4768C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:08:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8575E4EA06F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:07:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02858188E27A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D668313537;
-	Mon, 10 Nov 2025 15:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5107314D28;
+	Mon, 10 Nov 2025 15:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rLgb7gH5"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLm0/4Ev"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081573126CB;
-	Mon, 10 Nov 2025 15:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100AE1A7AE3;
+	Mon, 10 Nov 2025 15:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787238; cv=none; b=tyTgzMc5+5Es4dyNBvwiA29tpVlH4kML8SltD3FxHK/a/QOtM6H9OEF2tt2Sul5v5PGvlL1syYkhMkJQN76WUay5NI+Lrs9t6s1o6829rvYXGUt8DEol7Vc14v1jbiQVtPIamJoZhlH+MObaC8sV6otUc+CgDU5CmJURCgCBaGI=
+	t=1762787322; cv=none; b=MpvA/76q5WBhBMMmErudHZoA0S46RT1gI9ZxXleeQp7ZPSMmwm4pFLSr8piti7XLknDisijgaLrKdRkCB5FQdoqV0ga5zHygBpHDKL4curnU77wXn7zj8/zkzTbabwpzlRIj7fpOK5pZaL+GjKqEM6zcpOxG2xdNWKUfgugmGyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787238; c=relaxed/simple;
-	bh=W9YP9EPcgv4yW7lsw2YUUlPgBSPV+K7+EaYQKOSEkMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h8EO+Wp+OeO6or+A1gjznugXmbOomHazQXWQHbL3UZ93OZEvP4HoJ8pn8e+lJwx/fSPmwsopSSNdlyekIIc64CqUC19WpCrzS8M31W9pHFB9g+sh1/JeIrpKnc3v+CyjT6wTen+mAHMKXDY55wpW08uuY7ZTTP0bdMjwhdjM6CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rLgb7gH5; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AABX70n000636;
-	Mon, 10 Nov 2025 15:06:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=2gASaus2jqaxvWdWfOb8cTjqDY+Cs7
-	E/4GuM+QjTvI8=; b=rLgb7gH5CmxPjj3KC5viSGx4YRyoUuj57IzwptauTpLVF/
-	l20N0SZQ2yHBphT36lYlS04sEAnoFoVKrI+iytCTCXrgj8zZDAu7BNdIaRZ5aIhs
-	dsDhAManMsql68BVC5NWBL6sKw6Ud8pvHVSj1uNqmjVk/7ZFhaQ7WXE8Z0kOePsp
-	OjPYPjSMbsU7J951M6GuDHO5ORaVGSZsNnd1idoQMg5yYNHEbjM+pqB4ihgoiVad
-	c9acetq//UKLKokRhmXVb63W+14U9Utpx+nM1m4UyGJ72hQRput/QKDp6yqkE3PV
-	Cvc+yJzV5QmLbpbjnFSOonGjZxmIyESKa2XiuRxw==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5tjppxb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 15:06:42 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAD5RBF011600;
-	Mon, 10 Nov 2025 15:06:41 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aajw15vhr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 15:06:41 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AAF6bkL41091344
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 15:06:37 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 799E32004B;
-	Mon, 10 Nov 2025 15:06:37 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0CE2E20043;
-	Mon, 10 Nov 2025 15:06:37 +0000 (GMT)
-Received: from osiris (unknown [9.87.148.55])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 10 Nov 2025 15:06:36 +0000 (GMT)
-Date: Mon, 10 Nov 2025 16:06:35 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] s390/ipl: Mark store_status as __noreturn
-Message-ID: <20251110150635.15528B2f-hca@linux.ibm.com>
-References: <20251110132803.1520-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1762787322; c=relaxed/simple;
+	bh=6KSwsK8hJ3VsxaX3vSZfCo2wVNblyfeSCIhlDo7+M8s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QAAvSfisKgZ0lhvOLuS/5ICYa4T8x82tcpaAd9HNrZqrpHlLc73H9qsjrr1JD0baRbtA+/qXUA75qdS5zPDGYMdZOCzAyEB3jfgBWYuFPorhjyRoVV3b/plT9HFUzBhkiR6Kj2vf6+14bFTZkJkIYjATQeDkQBPuMmEo+k8WKFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLm0/4Ev; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77677C113D0;
+	Mon, 10 Nov 2025 15:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762787321;
+	bh=6KSwsK8hJ3VsxaX3vSZfCo2wVNblyfeSCIhlDo7+M8s=;
+	h=From:Subject:Date:To:Cc:From;
+	b=uLm0/4EvJE1j74j9QrirPiPyBOSzPMEk/h/hXjnZIEdQ180jK+CQjUqfYCuGpk4Vf
+	 5mobfv4yPgkePiyxcD6931VgiqR944gHEROE/Wyih0wahEAMNE4JxyyBJdAueainrp
+	 uh4+nQKWGr+in+771km0LEE5tCpV4pYhQi11wdGREl7LqMC60DbVDYpGq5OHabFy2d
+	 UngFeoTeREhmgCy/D+pwkHjnlxonZgRPbAycgSi/7aEVXNrHqc4GgTScMbV1sOZIvX
+	 8sqnHIUyfO+j/10N487rOEaY33MQvYwCyujkiHEvYinl5EYVJFDdhtbcECrpcDWpGA
+	 8VKES//ZwEnWQ==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 00/17] ns: header cleanups and initial namespace reference
+ count improvements
+Date: Mon, 10 Nov 2025 16:08:12 +0100
+Message-Id: <20251110-work-namespace-nstree-fixes-v1-0-e8a9264e0fb9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110132803.1520-1-thorsten.blum@linux.dev>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: _3UY6e4Vncmr7vb_UjCjcr-GwQW9lhUA
-X-Proofpoint-ORIG-GUID: _3UY6e4Vncmr7vb_UjCjcr-GwQW9lhUA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA5OSBTYWx0ZWRfX3e6euJQqPfsv
- 4/TQGC5LKUHNcj9K1mDvR6h9QFTuq9opCqgBGfGxAQUJ37ihakEeNiAKhxAKRTSP8swMJ7seU4P
- aXgMRq6huLul3vAqgQk9QSAwONP/6/hNlGqVWuzfX724OKrgfP0wtnio6uxN50TNHkq1pSrOBAn
- HiDkqNSLYus4ILgJ/Yco7H8S+zKUb0WcR6imsJWAtsI0vCQqtqDF2w6TA+JhRXtUJ2bF9hEQn7n
- x7HbQbBQ84r1F0aPxB8T1lRL2qJSdtoYRd/lzi2jXE2h/VwBvpe/nm8CYXDB63PcnuVIY6Ww739
- I4nATf5leOZLluh8igKUc7vAPKLJAKVCOjVYYSjE3QU6HlQG0R34mjUvXaMXHgT2S8eOQZ7n7Hv
- SE5KuE0YL8Qe3OWYSIh1E1gQ1Ti9RQ==
-X-Authority-Analysis: v=2.4 cv=V6xwEOni c=1 sm=1 tr=0 ts=6911ff82 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=YE7ldlw9Mkp0iZv7zvUA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_05,2025-11-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 adultscore=0 malwarescore=0 impostorscore=0
- suspectscore=0 priorityscore=1501 phishscore=0 bulkscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080099
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANz/EWkC/0XMQQrCQAxA0auUrE2ZTFGoVxEXmTG1g5iWpKhQe
+ nenblw+PvwVXKyIw7lZweRVvExaQYcG8sh6Fyy3aoghHoko4HuyByo/xWfOguqLieBQPuI4xK7
+ viENIHKEeZpNfqIPLtTqxCyZjzeP+3Nn+V6eWeti2Lx80KNOTAAAA
+X-Change-ID: 20251110-work-namespace-nstree-fixes-f23931a00ba2
+To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>
+Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ Lennart Poettering <mzxreary@0pointer.de>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+ Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, 
+ Johannes Weiner <hannes@cmpxchg.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2728; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=6KSwsK8hJ3VsxaX3vSZfCo2wVNblyfeSCIhlDo7+M8s=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQK/v+sx9I829Vx/dJT0dYO/bk8rzg27U5LYN7h9iE3S
+ vKfgIFsRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETS2hkZ1p+8KSZhx8wk4XH/
+ 3y1F57kChquubJ0gVh50I+jinRlX+BgZ9lwRMytQ1/zhUerw06P496wDmdHWVvofdxteP25TMzG
+ WGQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Mon, Nov 10, 2025 at 02:27:51PM +0100, Thorsten Blum wrote:
-> store_status() performs a tail call (BR_EX) to the function passed as
-> the first parameter and does not return. Annotate the declaration with
-> the __noreturn attribute to improve compiler optimizations.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  arch/s390/include/asm/ipl.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Cleanup the namespace headers by splitting them into types and helpers.
+Better separate common namepace types and functions from namespace tree
+types and functions.
 
-This doesn't make any sense. If a function is called, which calls
-another one with a tail call, then _of course_ it looks to the caller
-like the function returned.
+Fix the reference counts of initial namespaces so we don't do any
+pointless cacheline ping-pong for them when we know they can never go
+away. Add a bunch of asserts for both the passive and active reference
+counts to catch any changes that would break it.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (17):
+      ns: move namespace types into separate header
+      nstree: decouple from ns_common header
+      nstree: move nstree types into separate header
+      nstree: add helper to operate on struct ns_tree_{node,root}
+      nstree: switch to new structures
+      nstree: simplify owner list iteration
+      nstree: use guards for ns_tree_lock
+      ns: make is_initial_namespace() argument const
+      ns: rename is_initial_namespace()
+      fs: use boolean to indicate anonymous mount namespace
+      ipc: enable is_ns_init_id() assertions
+      ns: make all reference counts on initial namespace a nop
+      ns: add asserts for initial namespace reference counts
+      ns: add asserts for initial namespace active reference counts
+      pid: rely on common reference count behavior
+      ns: drop custom reference count initialization for initial namespaces
+      selftests/namespaces: fix nsid tests
+
+ fs/mount.h                                     |   3 +-
+ fs/namespace.c                                 |   9 +-
+ include/linux/ns/ns_common_types.h             | 196 ++++++++++++++++
+ include/linux/ns/nstree_types.h                |  55 +++++
+ include/linux/ns_common.h                      | 266 +++++-----------------
+ include/linux/nstree.h                         |  38 ++--
+ include/linux/pid_namespace.h                  |   3 +-
+ init/version-timestamp.c                       |   2 +-
+ ipc/msgutil.c                                  |   2 +-
+ ipc/namespace.c                                |   3 +-
+ kernel/cgroup/cgroup.c                         |   2 +-
+ kernel/nscommon.c                              |  15 +-
+ kernel/nstree.c                                | 304 ++++++++++++++-----------
+ kernel/pid.c                                   |   2 +-
+ kernel/pid_namespace.c                         |   2 +-
+ kernel/time/namespace.c                        |   2 +-
+ kernel/user.c                                  |   2 +-
+ tools/testing/selftests/namespaces/nsid_test.c | 107 +++++----
+ 18 files changed, 576 insertions(+), 437 deletions(-)
+---
+base-commit: c9255cbe738098e46c9125c6b409f7f8f4785bf6
+change-id: 20251110-work-namespace-nstree-fixes-f23931a00ba2
+
 
