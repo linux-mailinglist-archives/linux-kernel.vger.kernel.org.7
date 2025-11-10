@@ -1,152 +1,96 @@
-Return-Path: <linux-kernel+bounces-893432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EDC4C4760F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:57:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D111C47606
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:57:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1C24B349D50
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:57:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A804F4ED30B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9541D314D3B;
-	Mon, 10 Nov 2025 14:57:27 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92CA314B76;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5C7314B6C;
 	Mon, 10 Nov 2025 14:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762786647; cv=none; b=UYEbqnWdx7NnNoQQ2fGJ/ANutsSdBuVtiyM+ftZBcivu6EkTfkgCjJNihkXJJWJNwKbL+gyDSWzLj7qzInAZxMBd2if/udgu4nJPm/qnmdkQFEQYhClncOl8Akh0VYAlc/HNjmRLf3Jbr05Xz8/yMmYyO5Av0nwswJe1XqxDqyY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762786647; c=relaxed/simple;
-	bh=ytkZLxUvZNz1oafWKGBnM5poTq2DgkQpU0drTR4RYJQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tzMIoXRT41im5zssPk/sKPPzfr0HsRRw+Stixisk+MTdP/Ug6mnFh3Ws6l0MMW/u8QaY85e5K037fN/DE5KL5BHK42J3mCi/oyN9cYs/tdIYmMZc4s7banEL70wKXSWf8Rorw29krUD1ro0fwT7RFTFoWo68670wfJ7gl/hTzlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z2APgdQ6"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id C523461CC3FED;
-	Mon, 10 Nov 2025 15:57:08 +0100 (CET)
-Message-ID: <8c5da0af-0c41-433e-894c-a7bb69a2e85a@molgen.mpg.de>
-Date: Mon, 10 Nov 2025 15:57:07 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EB93054F0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762786642; cv=none; b=KaBOSrgMe6AGLeSpicaV4O5FQqqhXGhuVijMUnDEMUcFXlyQEecna9I7BrPxhNDXdtyuaFPgjegwYwzr2c4eD9aHtjFVsSYln5xsWWEilhYQtTrpTsrdElYleYAmUWNXi4d/77YXYgh3C6F1TzUK0dmW5NqdSon5d/LH0kirfS0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762786642; c=relaxed/simple;
+	bh=XrYjurcXwMFuI1n6vQ4mS/+j3z0zFW9n2Q2HRAorD/k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iOEYbUmr99y6zXODRxOq1oUWkv0wAI4e/LE6ZBIS1eVGSNDLyM8Ir3oE8Up7E/g32bfSKTGJG9CN3ZY8FLN2yciuvXyJyawkuOD4bgPHwkWAUHrsDobn1SxWYHBNVwkhUBwEfGeHj++2u3fHgJVOWUahR4Zmc/3eaOJNGncQyas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z2APgdQ6; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b70caafad59so335463266b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:57:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762786639; x=1763391439; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XrYjurcXwMFuI1n6vQ4mS/+j3z0zFW9n2Q2HRAorD/k=;
+        b=z2APgdQ68ppohMezTmMnZUfXJwArZ+yKG2bGNYUSiLZUZi9tdGyAt8NDkBH3P/eXwE
+         LSceGSJUCNJHwSQlVLYkNWD+AQSmJoGCl5ksxV/2Fd64cm3YDojMcOirkQLf087pRVaQ
+         WfmdSbxqgGycjfK4OOlWtjVIpALEF5q9Po+mMSLqT/WGCy8xkhb9T41e50ssu3Ru8Uci
+         BgOv9WtcD8YYVx/F7KjtpacxOnm5g/bb9z3CPOzPlq3wBGa7iU+KXrO0j04GfZRSyNLI
+         6cXRItaSLfwQqE8FZOtSIm4b3cCxkEiiYvnWc3gCWj9BLkenWXT8/FVQqoHtmAzZTz+1
+         R2wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762786639; x=1763391439;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XrYjurcXwMFuI1n6vQ4mS/+j3z0zFW9n2Q2HRAorD/k=;
+        b=bj5RAFLfU3ry1hMU/Z7ArlnWdn1YqyM7QI5yNzW3r9bxDXUbLYoZ7sP0/4PlgXYx55
+         ypM0q+xh7HuoPGiDb68D4qjdKdZKzm72M0VZndSItwehiuEoBEaF9V+YdpRERWz3Jmpj
+         f42aaYeOhwoOP2jKb2RG/AE0AFgWESTAIiAFpF2L/YndW9RpXYx6dxoK7rY2flxypdPT
+         xbjW6mk/Ix0UPzkcLSV4s/0Rby0a29UBPp7GvJjhaSHmoRBabvPdKqjik1+w2EUp1k8s
+         czh4WL1j40/ft+KBBRjP83dYi74pkXIidpK9z8QBpk4mxspnjWgtMoqMycFoK7Yjalb2
+         jeRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpk+EhQZtLd6oYonzEX73xrrN9UZV3EvcbRcowyJQJYVIkFNnSfEG3Qep108w7dDwxuJi17vfL5PBsOZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyenACR9oJnMAEshAVx8ZhxMZl17F7A1ORN4iiiQPjT4pt2+E46
+	HiE/n3nnAHtMPRLENycgldvkQcIlMn4C7+lSATxWpoADPi4kma/Vn1tiQ/SEs0udOaYR7hOlf/3
+	o+lZmhAkG1oWmE0CsOA==
+X-Google-Smtp-Source: AGHT+IGOnlG8lE2H2BKECccs5w83Ie0qMvDDSxYqNCeNyk/4OUCiSM9N6qmdcMFCMYYfeMybQOzcZG1uqwa4NcY=
+X-Received: from ejcvb9.prod.google.com ([2002:a17:907:d049:b0:b72:b433:246a])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:1c85:b0:b3b:4e6:46e6 with SMTP id a640c23a62f3a-b72e02ca1d9mr839517866b.1.1762786639240;
+ Mon, 10 Nov 2025 06:57:19 -0800 (PST)
+Date: Mon, 10 Nov 2025 14:57:18 +0000
+In-Reply-To: <20251110131913.1789896-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/1] Bluetooth: btusb: add default nvm file
-To: Shuai Zhang <quic_shuaz@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, quic_chejiang@quicinc.com,
- quic_jiaymao@quicinc.com, quic_chezhou@quicinc.com
-References: <20251110132225.2413017-1-quic_shuaz@quicinc.com>
- <20251110132225.2413017-2-quic_shuaz@quicinc.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20251110132225.2413017-2-quic_shuaz@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20251110131913.1789896-1-ojeda@kernel.org>
+Message-ID: <aRH9Tjf0tszyQhKX@google.com>
+Subject: Re: [PATCH v2] gendwarfksyms: Skip files with no exports
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Sami Tolvanen <samitolvanen@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
+	Haiyue Wang <haiyuewa@163.com>
+Content-Type: text/plain; charset="utf-8"
 
-Dear Shuai,
+On Mon, Nov 10, 2025 at 02:19:13PM +0100, Miguel Ojeda wrote:
+> Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned in older LTSs).
 
+Is gendwarfksyms actually present in 6.12 upstream? I know we have it in
+Android's 6.12 branch, but I thought we backported for Android only.
 
-Am 10.11.25 um 14:22 schrieb Shuai Zhang:
-> If no NVM file matches the board_id, load the default NVM file to ensure
-> basic Bluetooth functionality. The default NVM file may differ in
-> functionality and performance because specific NVM files enable certain
-> vendor commands based on chip capabilities. This fallback improves
-> compatibility when a dedicated NVM file is not available.
-> 
-> Also, pass board_id explicitly to select the correct NVM file. This is
-> required for proper NVM file determination.
-> 
-> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
-> ---
->   drivers/bluetooth/btusb.c | 28 +++++++++++++++++++---------
->   1 file changed, 19 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index dcbff7641..09e81320c 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
->   }
->   
->   static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
-> -					const struct qca_version *ver)
-> +					const struct qca_version *ver,
-> +					u16 board_id)
->   {
->   	u32 rom_version = le32_to_cpu(ver->rom_version);
->   	const char *variant, *fw_subdir;
->   	int len;
-> -	u16 board_id;
->   
->   	fw_subdir = qca_get_fw_subdirectory(ver);
-> -	board_id = qca_extract_board_id(ver);
->   
->   	switch (le32_to_cpu(ver->ram_version)) {
->   	case WCN6855_2_0_RAM_VERSION_GF:
-> @@ -3517,14 +3516,14 @@ static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
->   
->   static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
->   				    struct qca_version *ver,
-> -				    const struct qca_device_info *info)
-> +				    const struct qca_device_info *info,
-> +				    u16 board_id)
->   {
->   	const struct firmware *fw;
->   	char fwname[80];
->   	int err;
->   
-> -	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
-> -
-> +	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id);
->   	err = request_firmware(&fw, fwname, &hdev->dev);
->   	if (err) {
->   		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
-> @@ -3606,10 +3605,21 @@ static int btusb_setup_qca(struct hci_dev *hdev)
->   	btdata->qca_dump.controller_id = le32_to_cpu(ver.rom_version);
->   
->   	if (!(status & QCA_SYSCFG_UPDATED)) {
-> -		err = btusb_setup_qca_load_nvm(hdev, &ver, info);
-> -		if (err < 0)
-> -			return err;
-> +		u16 board_id = qca_extract_board_id(&ver);
->   
-> +		err = btusb_setup_qca_load_nvm(hdev, &ver, info, board_id);
-> +		if (err < 0) {
-> +			/* If the board-specific NVM file is not found, set board_id to 0
-> +			 * and load the default NVM file to ensure basic functionality.
-> +			 */
-> +			if (err == -ENOENT && board_id != 0) {
-> +				err = btusb_setup_qca_load_nvm(hdev, &ver, info, 0);
-> +				if (err < 0)
-> +					return err;
-> +			} else {
-> +				return err;
-> +			}
-> +		}
->   		/* WCN6855 2.1 and later will reset to apply firmware downloaded here, so
->   		 * wait ~100ms for reset Done then go ahead, otherwise, it maybe
->   		 * cause potential enable failure.
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
+Alice
 
