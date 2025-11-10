@@ -1,135 +1,127 @@
-Return-Path: <linux-kernel+bounces-894291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA7AC49B15
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:04:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B93C49B27
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EC353A8A1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2019188B26E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97A72FF648;
-	Mon, 10 Nov 2025 23:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD2830101B;
+	Mon, 10 Nov 2025 23:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b="A9ijqw1p"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UhQ1D1Km"
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A169122B8B6
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849EF2FE58D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762815834; cv=none; b=g5i9ys2UuIlv/15JFszOYxU5xWa89s7mS6kXvGVOGgsTyo4P3SMrPKlJ2NbGqzZtB8Jz5ahMcA/vKY8yDuZIcSGxwPkTvMAhQnHNJ6aruGV1LS59SfJujqBEUWWoGjhwYAwsb6mdzelf7WMw5oaNfJ3M693GpRah2CKVU1AVT7Q=
+	t=1762815867; cv=none; b=ddAXAB01cHPwsBpdGsr5yORntEJ9xVVJpyLO7UbvaWXyNK4/rmxGoZFw/QzRGOnBv/57Lrvx8E1oCMGWxFBJBRhUX3sXjg8s5XexrTeZ1sjbpGML+b8fjOdBggrVHuING9Am9Im5pBPcfoV61/Q/FViQpv016Fw4NdWxzpNwf9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762815834; c=relaxed/simple;
-	bh=SpBXcCXhucc4vOTbhq3IyeNwX9Ph+ezvTLGmCPeyPVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJWzKwzcxUNAFsP+/ZSNRTgNg0mLhMAucvlAMaCimIL34gSYenaXgXf5/pO0A7ANEYLG6dpStyGKJT9grMRkw2R0eIgy7gAD/ceN/mL24Efb0VzLzq3A/1hQDZ2oST9P9YrIIXOMyaz18JNqj2xvfUqAhxYU+yv7VgJm/hho4gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com; spf=pass smtp.mailfrom=gvernon.com; dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b=A9ijqw1p; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gvernon.com
-Date: Mon, 10 Nov 2025 23:03:57 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gvernon.com; s=key1;
-	t=1762815828;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PqdKJLsgz2wpHczRCT84sJa40n6KuIUNVZ83IxQxhI8=;
-	b=A9ijqw1pL8UsQDLt09M5yWaNkOxZZs3w2n/hJKCSDEOoJQtfrfqr1f9FXTYEZB+3V5BKbl
-	8hnHF+QyjocsFwB5e9MP53PAUIuF+dvBApji7K/1Iymd/b0LJs/xMy6H7B3tSsI1QsPu19
-	cKSvlVg2Ex/PHP+w8pTnIWejlyV0g+Ul6uwT7BEkZuUkaD7km6RT62AEKjW2Kv5r0LkZNM
-	KUnq4K/n2R94lR4AnHaDB+5k2SvgITC6BzQthfthvxc2MAR+LoZ+F0uha4cDYnWBbwDOPb
-	EkPaXiaHNCIaftkFawrYP4AqnWt+CTYNmtzu4HI3UYvDgCqDB8AQ08kXGpnDkg==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: George Anthony Vernon <contact@gvernon.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-	"slava@dubeyko.com" <slava@dubeyko.com>,
-	"frank.li@vivo.com" <frank.li@vivo.com>,
-	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel-mentees@lists.linux.dev" <linux-kernel-mentees@lists.linux.dev>,
-	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com" <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>
-Subject: Re: [PATCH v2 2/2] hfs: Update sanity check of the root record
-Message-ID: <aRJvXWcwkUeal7DO@Bertha>
-References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
- <20251104014738.131872-4-contact@gvernon.com>
- <ef0bd6a340e0e4332e809c322186e73d9e3fdec3.camel@ibm.com>
+	s=arc-20240116; t=1762815867; c=relaxed/simple;
+	bh=iJtkiZUOo775Ftb6cLEsbpL0tmdErWFS9CRdvdq4yBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WLssv6GrEzAKtiu9tQVfH9xSw6L07mgdFHc9xNHOXdcusGYU+R6mUWhWWHePEbdfLEJLvrCDfppNp53l7BVQ3lEkWzi6Yy6osj/4Y7fVguc0MuFyJMzRQXfWV0rq01y63zZqwx0etfoRiNzjhgYHvpARjFtvJ4UABq93YMtUg7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UhQ1D1Km; arc=none smtp.client-ip=74.125.224.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-63f9beb27b9so3177878d50.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:04:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762815864; x=1763420664; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iJtkiZUOo775Ftb6cLEsbpL0tmdErWFS9CRdvdq4yBY=;
+        b=UhQ1D1KmPSyna4F/76ZCUiG8KhIv95nF4dhc49qrIM3p2GzZR8fl4PtKw6Yk5uaenr
+         Jxo6B1MPDizlQu/eAzhlHvAjPysa3NgZUqffrBat8sUZCey95AmWJHKnSMiP9zRpfVwn
+         yDf7hD9zPMNJY5K/TDMfIBp874x/FBBHi88+dxfp8g2/um8X8UHQj372t+OGfbo82eR1
+         O1hbOAThw5oCk4Sy/TkWbTHXa+HDjeRny+D/HCyIsPlxXxKrnhIkL79zMZOuophqGxN7
+         HEm1Hqzly5dxGv5sdqIOUUxBQAtVaiVswEfsuQw5gUpO4MhmxEB5Nma4Cgn7+HcHKITN
+         65kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762815864; x=1763420664;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=iJtkiZUOo775Ftb6cLEsbpL0tmdErWFS9CRdvdq4yBY=;
+        b=uSszgKvl6pYjbpCCihXjZwQ8/nxtmq7p2FQfJCJkAc5v9/W1YIVT34YRvdDuHihXpt
+         sI/evKtcesvVaBc+dAYIaZH/uWPP9x5dkXHr9b12khnu9BiePi++Ace70jKO2H0NMFyG
+         HH/wVHZlhlE+9IjKGQW8s8CUmh8W/rC6t9EW7bY2AE3yj1QZrQNuxS3FZVoEEeh2gDfh
+         PzKEZ2Ep+zE3nRrSuWHpdWxTkAzxGwkkC8Ksr49+7ykOJIPSn9UsOk3DayDZ+jIOuzUk
+         /2jbyuowJVLxCMbbsMq6AZ0df4paIW1o7vSkI15NF3Y5t3Y01GBnao3MjDn+AC+IOtLg
+         os9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVzAhWQu/zslt+GJN7vVCNoOjjTphSGxi4I7uX8ErOanSxHBqr5RiSRy5vdE/yczdVos91lWA+JNyTU/gM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywun1TSLzq5Rf2x8Tlp8/wX/AKfodZpjq6/kpMr7d99aCL0khNy
+	ELqaMrCryE8wn59Eqv+dX7ws7iol2yxw3jUQrPWnsSmdCWsydlS2X2iwC0Zs43YGUhqhAhoPBWk
+	SaIKS42dsCDRdVW1bHUEEDcc/4IKlSRZif804g8EU4g==
+X-Gm-Gg: ASbGnctAKrg2uNZ0y0z8HcLe/x7zn5PCb7LdXPflKlr/yFrTWAj+zyJq85/3hMVIFH5
+	kHjs5v6a0tl/4Oz2UEQj3QAbhVAO6TiFF2YEye6Qk56kreuV+qIlv7CzofGmGe4I3MU5hem7arE
+	z1avfmoXtXjY5n4VyNPao80lz4I9+XDW5Slx3a4iQrnA27/HLpPLlbYXWPLa+VqutxHNKdV0PWu
+	yIzMw4Ko4gW39ZAZZtjdiCJflVe7oepVCiO630sngaldOeCaC58WzE018Akzb1NyW/Hk58=
+X-Google-Smtp-Source: AGHT+IHoC/R8TGWkSsRmVYTrTznpjr4STw1JDCmsU2sbR9qoad5PnTy6Rrlwiey4S9ikwN3xlZNQtXBlBuI95lMoqZY=
+X-Received: by 2002:a05:690c:6385:b0:786:4fd5:e5cb with SMTP id
+ 00721157ae682-787d541b7f3mr90568307b3.35.1762815864323; Mon, 10 Nov 2025
+ 15:04:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef0bd6a340e0e4332e809c322186e73d9e3fdec3.camel@ibm.com>
-X-Migadu-Flow: FLOW_OUT
+References: <cover.1762327887.git.mazziesaccount@gmail.com> <742fcdcc8b6dcb5989418e8c1cf5a7d7ba5434a5.1762327887.git.mazziesaccount@gmail.com>
+In-Reply-To: <742fcdcc8b6dcb5989418e8c1cf5a7d7ba5434a5.1762327887.git.mazziesaccount@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 11 Nov 2025 00:04:09 +0100
+X-Gm-Features: AWmQ_blNtjThswk7W8THjiE7tdsgu2zFtwGMw_ARgVxMcfWy78tjHu1U0YBhMO0
+Message-ID: <CACRpkdbP-GZXtj_-AuZ=q8zUKwt0qWQ1L6v7WsoQ50JwTs6JUA@mail.gmail.com>
+Subject: Re: [PATCH v3 02/16] dt-bindings: battery: Clarify trickle-charge
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2025 at 11:01:31PM +0000, Viacheslav Dubeyko wrote:
-> On Tue, 2025-11-04 at 01:47 +0000, George Anthony Vernon wrote:
-> > syzbot is reporting that BUG() in hfs_write_inode() fires upon unmount
-> > operation when the inode number of the record retrieved as a result of
-> > hfs_cat_find_brec(HFS_ROOT_CNID) is not HFS_ROOT_CNID, for commit
-> > b905bafdea21 ("hfs: Sanity check the root record") checked the record
-> > size and the record type but did not check the inode number.
-> > 
-> > Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b  
-> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > Signed-off-by: George Anthony Vernon <contact@gvernon.com>
-> > ---
-> >  fs/hfs/super.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-> > index 47f50fa555a4..a7dd20f2d743 100644
-> > --- a/fs/hfs/super.c
-> > +++ b/fs/hfs/super.c
-> > @@ -358,7 +358,7 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
-> >  			goto bail_hfs_find;
-> >  		}
-> >  		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
-> > -		if (rec.type != HFS_CDR_DIR)
-> > +		if (rec.type != HFS_CDR_DIR || rec.dir.DirID != cpu_to_be32(HFS_ROOT_CNID))
-> 
-> This check is completely unnecessary. Because, we have hfs_iget() then [1]:
-> 
-> The hfs_iget() calls iget5_locked() [2]:
-> 
-> And iget5_locked() calls hfs_read_inode(). And hfs_read_inode() will call
-> is_valid_cnid() after applying your patch. So, is_valid_cnid() in
-> hfs_read_inode() can completely manage the issue. This is why we don't need in
-> this modification after your first patch.
-> 
+On Wed, Nov 5, 2025 at 8:36=E2=80=AFAM Matti Vaittinen
+<matti.vaittinen@linux.dev> wrote:
 
-I think Tetsuo's concern is that a directory catalog record with
-cnid > 15 might be returned as a result of hfs_bnode_read, which
-is_valid_cnid() would not protect against. I've satisfied myself that
-hfs_bnode_read() in hfs_fill_super() will populate hfs_find_data fd
-correctly and crash out if it failed to find a record with root CNID so
-this path is unreachable and there is no need for the second patch.
-
-> But I think we need to check that root_inode is not bad inode afterwards:
-> 
-> 	root_inode = hfs_iget(sb, &fd.search_key->cat, &rec);
-> 	hfs_find_exit(&fd);
-> 	if (!root_inode || is_bad_inode(root_inode))
-> 		goto bail_no_root;
-
-Agreed, I see hfs_read_inode might return a bad inode. Thanks for
-catching this. I noticed also that it returns an int but the return
-value holds no meaning; it is always zero.
-
-> Thanks,
-> Slava.
+> From: Matti Vaittinen <mazziesaccount@gmail.com>
 >
+> The term 'trickle-charging' is used to describe a very slow charging
+> phase, where electrons "trickle-in" the battery.
+>
+> There are two different use-cases for this type of charging. At least
+> some Li-Ion batteries can benefit from very slow, constant current,
+> pre-pre phase 'trickle-charging', if a battery is very empty.
+>
+> Some other batteries use top-off phase 'trickle-charging', which is
+> different from the above case.
+>
+> The battery bindings use the term 'trickle-charge' without specifying
+> which of the use-cases properties are addressing. This has already
+> caused some confusion.
+>
+> Clarify that the 'trickle-charge-current-microamp' refers to the first
+> one, the "pre-pre" -charging use-case.
+>
+> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Many thanks again,
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-George
+Yours,
+Linus Walleij
 
