@@ -1,159 +1,103 @@
-Return-Path: <linux-kernel+bounces-892727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 957BAC45AE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:39:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A26EC45B0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:41:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C329189148C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:40:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 203033B6A60
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A57F301480;
-	Mon, 10 Nov 2025 09:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C062E3009C3;
+	Mon, 10 Nov 2025 09:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N19wyuih";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3prbPczX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Ixp4jR4R"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81EA3009F5;
-	Mon, 10 Nov 2025 09:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270332FFFA2;
+	Mon, 10 Nov 2025 09:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762767541; cv=none; b=Bz/EZnof1Efeaz/ZReXhSZSS7sLr5Y3ry5q59f8btcPvufJWEe4kQ5qiTqzi9ha01w0XPbCdsXDbD2FFgm7bnlKXGy7Jn5H5MYkn3Q/PHhRpUTI/P4MEj8mZzRGachmuYWb5VP7XSNUEIPU2aTeB58uNmiXQsimksxFRuXhrSgU=
+	t=1762767688; cv=none; b=MBZKpSflXU6i4+NF6UReeDSRexFxif5dxKo3/mH07azDXT33VfNBJ7ujnoa/yBZySJUUdzYPl+EeEvBvFKfJ9T4aR9EdBQGlvsMI9kPcVI/Eu6Gwn1F906GcL0gD/neGai4p8zVkAH/pQtvRovwmEonrWlZuup5XY5N+KS4waD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762767541; c=relaxed/simple;
-	bh=Z7vd8CeGFdm/VB/9K1E3bADy3YcngSckDUMHi3AJFSs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OtxgdbiHLuj20qQDJSDQjSJEjjI9edIlyY2aB2yDKRY5LucnvihRDkGP5aRTSJMkALPdba3BXncu4ghcJc2wBBDvxlQYpHPVSbx0LieQoBB5NvozKwhuNMds+6d5g0i8u+TfwyMwlWTkHPa/2F4jljzrlWmL28MUUViviNUuIqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N19wyuih; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3prbPczX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762767538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TkRdkj79k9FYq5BLiI92p7/ZGuBv94lRr/Umjv2MFBY=;
-	b=N19wyuihCAUoO+bttQewCDnEJSKXBjMjnH2h1k6Fhfttdvltu8XgdV9Qoz/R9h1bg9cnkO
-	5dfz1IbSipmStO21U+SAt1c4smNbHJKcAluAHzS6SE/6BRHP8BSL3/4hiURtxReXuCBcep
-	pMDd6wnG0U2/le7wr49VeksW9HwnNjveJlSSIkiHqxaKVSz+Y4C5Wr+te6rRkQy1EA4/tA
-	ZXfJrkJaSYVGjpNIqH4Scsf/Ock6oZdPqZ7Vf3JH8wfvZv75FTfYPDwGNoPaCGCT/lbWFs
-	KwSVdIjSZ13whah+Nc2XMheTt6nEfHmm9bGPUgL4zQLJlflUyOgDMlsZS4vNEg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762767538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TkRdkj79k9FYq5BLiI92p7/ZGuBv94lRr/Umjv2MFBY=;
-	b=3prbPczX5kba5ob082own+tQWaOrpxX1jk2JRA1Z7bDRltliJ/fiI3l45OelD8MlLdPl+c
-	pknzbxJAt8RvEXBQ==
-Date: Mon, 10 Nov 2025 10:38:53 +0100
-Subject: [PATCH 3/3] hrtimer: Store time as ktime_t in restart block
+	s=arc-20240116; t=1762767688; c=relaxed/simple;
+	bh=gLj2cPxRN9CtHdNcql73JdedyYuqWcqJKw2vsGfE7fc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nkOarpkZ9CYxRuqPw5eW9t0KycYpGafh9n6SD3OlkdZGYR+Xrj+YTEpHP8VhFJO8krEwPtq5YN+EomOoxXFNd1A1Yeq/DDDKxvilIPBFLKQ9o88yyxJ4tg147dKEDubSfDJkAcJAM+iwqVMJ7zN/dXiVkXmrEwrPWJphjHWQEeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Ixp4jR4R; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 695a537ebe1911f0b33aeb1e7f16c2b6-20251110
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=nqpj+uo11Rm1HYYL5ztqdJwKIU7oUJ9VEIdxvf4qDNI=;
+	b=Ixp4jR4RNq5pA7HmFF7vxpJKLklxTCCxFiY20e8pftp4fvvTIxysj1bL4QSvMm6HEnGf4TyHe8yTMlGpX3O9vd6eyzL/3qnfXY/kY1bGFLAMobOKv/9U2153Da1foemuytq4ZN68eKVC7ijoPK7S671Qem3EJUHys7bGxtYhVjA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:1c5e7bef-7d26-4e55-8381-2ce864fe2975,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:79cfee63-6377-47fe-8022-3226f0b92c45,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
+	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 695a537ebe1911f0b33aeb1e7f16c2b6-20251110
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <hanchien.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 786824231; Mon, 10 Nov 2025 17:41:19 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 10 Nov 2025 17:41:18 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.26 via Frontend Transport; Mon, 10 Nov 2025 17:41:18 +0800
+From: Hanchien Lin <hanchien.lin@mediatek.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Balsam
+ CHIHI <bchihi@baylibre.com>
+CC: <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <hanchien.lin@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<raymond.sun@mediatek.com>, <Irving-CH.lin@mediatek.com>
+Subject: [PATCH 0/2] arm64: dts/thermal: Add MT8189 thermal controller and driver support
+Date: Mon, 10 Nov 2025 17:40:37 +0800
+Message-ID: <20251110094113.3965182-1-hanchien.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251110-restart-block-expiration-v1-3-5d39cc93df4f@linutronix.de>
-References: <20251110-restart-block-expiration-v1-0-5d39cc93df4f@linutronix.de>
-In-Reply-To: <20251110-restart-block-expiration-v1-0-5d39cc93df4f@linutronix.de>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
- Davidlohr Bueso <dave@stgolabs.net>, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762767533; l=3047;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=Z7vd8CeGFdm/VB/9K1E3bADy3YcngSckDUMHi3AJFSs=;
- b=smNlYvv9OtwROE5ka2hUsuluSoCFORhPENKDjqLxzL4ahRKe4roHsoscnPxBNRYDLKVMMlzXV
- fGYbuJONGtFDab6K955aRDrzOqVxji0hUsTj9gTLKrrI3If4aw/Z2vO
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain
 
-The hrtimer core uses ktime_t to represent times, use that also for the
-restart block. CPU timers internally use nanoseconds instead of ktime_t
-but use the same restart block, so use the correct accessors for those.
+This patch series adds support for the thermal controller on MediaTek MT8189 SoC.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- include/linux/restart_block.h  | 2 +-
- kernel/time/hrtimer.c          | 4 ++--
- kernel/time/posix-cpu-timers.c | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+Patch 1 adds the device tree node for the MT8189 thermal controller.
+Patch 2 adds MT8189 support to the LVTS thermal driver.
 
-diff --git a/include/linux/restart_block.h b/include/linux/restart_block.h
-index 3c2bd13f609120a8a914f6e738ffea97bf72c32d..9b262109726d25ca1d7871d916280a7bf336355a 100644
---- a/include/linux/restart_block.h
-+++ b/include/linux/restart_block.h
-@@ -44,7 +44,7 @@ struct restart_block {
- 				struct __kernel_timespec __user *rmtp;
- 				struct old_timespec32 __user *compat_rmtp;
- 			};
--			u64 expires;
-+			ktime_t expires;
- 		} nanosleep;
- 		/* For poll */
- 		struct {
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 88aa062b8a556db071dad74d34ba5953c3e57339..f8ea8c8fc89529889ab3a4d0a9acaec872856c85 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -2145,7 +2145,7 @@ static long __sched hrtimer_nanosleep_restart(struct restart_block *restart)
- 	int ret;
- 
- 	hrtimer_setup_sleeper_on_stack(&t, restart->nanosleep.clockid, HRTIMER_MODE_ABS);
--	hrtimer_set_expires_tv64(&t.timer, restart->nanosleep.expires);
-+	hrtimer_set_expires(&t.timer, restart->nanosleep.expires);
- 	ret = do_nanosleep(&t, HRTIMER_MODE_ABS);
- 	destroy_hrtimer_on_stack(&t.timer);
- 	return ret;
-@@ -2172,7 +2172,7 @@ long hrtimer_nanosleep(ktime_t rqtp, const enum hrtimer_mode mode,
- 
- 	restart = &current->restart_block;
- 	restart->nanosleep.clockid = t.timer.base->clockid;
--	restart->nanosleep.expires = hrtimer_get_expires_tv64(&t.timer);
-+	restart->nanosleep.expires = hrtimer_get_expires(&t.timer);
- 	set_restart_fn(restart, hrtimer_nanosleep_restart);
- out:
- 	destroy_hrtimer_on_stack(&t.timer);
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 2e5b89d7d8660585460490557021dfbf7799740d..0de2bb7cbec01c423fc98e78c5a0aeb5c910381d 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -1557,7 +1557,7 @@ static int do_cpu_nanosleep(const clockid_t which_clock, int flags,
- 		 * Report back to the user the time still remaining.
- 		 */
- 		restart = &current->restart_block;
--		restart->nanosleep.expires = expires;
-+		restart->nanosleep.expires = ns_to_ktime(expires);
- 		if (restart->nanosleep.type != TT_NONE)
- 			error = nanosleep_copyout(restart, &it.it_value);
- 	}
-@@ -1599,7 +1599,7 @@ static long posix_cpu_nsleep_restart(struct restart_block *restart_block)
- 	clockid_t which_clock = restart_block->nanosleep.clockid;
- 	struct timespec64 t;
- 
--	t = ns_to_timespec64(restart_block->nanosleep.expires);
-+	t = ktime_to_timespec64(restart_block->nanosleep.expires);
- 
- 	return do_cpu_nanosleep(which_clock, TIMER_ABSTIME, &t);
- }
+Hanchien Lin (2):
+  arm64: dts: mediatek: mt8189: Add thermal controller node
+  thermal/drivers/mediatek/lvts_thermal: Add MT8189 support
+
+ .../thermal/mediatek,lvts-thermal.yaml        |  27 ++-
+ drivers/thermal/mediatek/lvts_thermal.c       | 155 ++++++++++++++++--
+ .../thermal/mediatek,lvts-thermal.h           |  20 +++
+ 3 files changed, 189 insertions(+), 13 deletions(-)
 
 -- 
-2.51.0
+2.45.2
 
 
