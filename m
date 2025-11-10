@@ -1,221 +1,135 @@
-Return-Path: <linux-kernel+bounces-893829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC0AC48738
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:00:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4DC7C4871D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:58:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1B5C1890DE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:00:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 505C91890C5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEB7314D1B;
-	Mon, 10 Nov 2025 17:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4042E6CC2;
+	Mon, 10 Nov 2025 17:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a21IpJTp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BP9aovPS"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F5A303C97
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4992E7BA0;
+	Mon, 10 Nov 2025 17:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762797533; cv=none; b=CVvLeU5ZL/Kjee4Ity8yYCP6PYIe5klzBD3U5JY6ylGJaKKNxqaw0nDEAQMasNHo4Lr0viNY/h27zgWeOzbC2i4BYnhn3S3nG+znBoNan+bnEsp4DhpQzPt9NJyrI/9J7LLiwlMLFOhNMeHFheSxH98BAwzFZdTfarNpkfZs2aA=
+	t=1762797513; cv=none; b=PyN7Dq7Cv9DYENhwCSP0VpCRExX5mFL6FcMlJWmbxKfoKRV8BDVArX9of+pt7ysHG3Cwtexmc0AI5Nf/UugEQ9ItIwX0anI6u8K7ERjFBzLVWf1iCAdrZmWkvVsYP+IKFVpBqEhoRwzlzi9KD4xt6ZQd8+Mtsf6/cTQC8vUMBI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762797533; c=relaxed/simple;
-	bh=WGl8DP/e/+VnYn8C3uYrsdOuYr6SojLzWShAwr+tv6k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J66DrR4xymLCUaBfNEW8+Tfn3EAqmnu2/TRevY6SGAn38RMf8yQfPUYj4yfMbD5SzyaakosnTVkELHTLyPlbSBfW6fCnGmNIGkp90ypvv8jQxUSD4M1zJP9mnvzC8ISUhr2GS+mkZ8ZuoBf9GrcTPzMjbguGjPA9eXyvsEq6RX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a21IpJTp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762797530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mKzPhPd7GeQ9w5/pssxPxDnXDnFFtiQ8qQ0W7dttM3g=;
-	b=a21IpJTpWQxXrFNKiQSIgzt9GonO46jBzjFCRyJWtKTKgw4lF8TR/IRH0QBfXEdUKiEkwO
-	rmwLaJlNiwWeBICI9565Li/HouHWurgM285HAvgOrNJKtDJrdOi2nGBAk/KiWaEyzVBeGV
-	fupC0hpiUkbmiidwfcEdIvN5bCaq1f8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-378-mz8aEsrXO2yFozxKi_58aQ-1; Mon,
- 10 Nov 2025 12:58:45 -0500
-X-MC-Unique: mz8aEsrXO2yFozxKi_58aQ-1
-X-Mimecast-MFC-AGG-ID: mz8aEsrXO2yFozxKi_58aQ_1762797523
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 63123180048E;
-	Mon, 10 Nov 2025 17:58:43 +0000 (UTC)
-Received: from p16v.luc.cera.cz (unknown [10.45.224.193])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A1CB91800367;
-	Mon, 10 Nov 2025 17:58:40 +0000 (UTC)
-From: Ivan Vecera <ivecera@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Petr Oros <poros@redhat.com>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Michal Schmidt <mschmidt@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 6/6] dpll: zl3073x: Remove unused dev wrappers
-Date: Mon, 10 Nov 2025 18:58:18 +0100
-Message-ID: <20251110175818.1571610-7-ivecera@redhat.com>
-In-Reply-To: <20251110175818.1571610-1-ivecera@redhat.com>
-References: <20251110175818.1571610-1-ivecera@redhat.com>
+	s=arc-20240116; t=1762797513; c=relaxed/simple;
+	bh=7z2IDwtyS4Ys9cw/VTpUa7QzwCJw3FQZivCVne2NoeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+sZ9A8Loeu4EF5PdDZ/CfGuYELtxarZRPnO1C7NURMmALeObXy2WvSoVdbLK8V7F6DaRlSR9vImtWf20RBzj2Fm+a05rCrY5bbPSpKlbdVI42827wlUYKtc5vqZZKZQxguu4UHm3Kd3pQSypG6lacIHNIgaywU3ilkUO+cHqBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BP9aovPS; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=yku6WYi/8Aqkl37bHVgVbeJ2RCQUTyTa2qVprr48KAc=; b=BP9aovPSNEiNKGTIp6YUewi+yn
+	C5jAHl8nmr2MHoydLlxOaWX41eEVGf82n/s2cAWhZoWn3AXf/n5J6puHPzg6UeqmEBybxpqcUAWLE
+	qjBYO0pLlcjeEyhDalWg7OOBG12eJPummzij/22XfHrknSTOp4LzTq8hJrIV8pAYPSQk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vIW9n-00DY2T-5G; Mon, 10 Nov 2025 18:58:23 +0100
+Date: Mon, 10 Nov 2025 18:58:23 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
+Message-ID: <01edc2c2-fd1e-479d-8f65-a07b0ed634e1@lunn.ch>
+References: <9fd8ccd9-560a-43b4-a48d-f7a3eaa07eb1@lunn.ch>
+ <PAXPR04MB9185C4A4B91F863CFD49718E89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <0be8c911-3c31-40da-b431-e5a24339c0f9@lunn.ch>
+ <PAXPR04MB9185D9EBE8F46715FD114A2989C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <cadcbbc7-2024-413a-8e9b-bde5fa233df5@lunn.ch>
+ <PAXPR04MB9185E2C3E50D365F64F10E3A89C3A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <0980eb35-b3fd-4383-af86-433769a4fd97@lunn.ch>
+ <PAXPR04MB9185156672C7B334E717F11789CEA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <638dac3d-ddcb-4d53-b06d-e0bd3d9077c3@lunn.ch>
+ <PAXPR04MB9185F5CC1FEE1557B6AD320889CEA@PAXPR04MB9185.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB9185F5CC1FEE1557B6AD320889CEA@PAXPR04MB9185.eurprd04.prod.outlook.com>
 
-Remove several zl3073x_dev_... inline wrapper functions from core.h
-as they are no longer used by any callers.
+On Mon, Nov 10, 2025 at 04:30:29PM +0000, Shenwei Wang wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Andrew Lunn <andrew@lunn.ch>
+> > Sent: Monday, November 10, 2025 9:59 AM
+> > To: Shenwei Wang <shenwei.wang@nxp.com>
+> > Cc: Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier
+> > <mathieu.poirier@linaro.org>; Rob Herring <robh@kernel.org>; Krzysztof
+> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn
+> > Guo <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
+> > Jonathan Corbet <corbet@lwn.net>; Linus Walleij <linus.walleij@linaro.org>;
+> > Bartosz Golaszewski <brgl@bgdev.pl>; Pengutronix Kernel Team
+> > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Peng Fan
+> > <peng.fan@nxp.com>; linux-remoteproc@vger.kernel.org;
+> > devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-
+> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
+> > doc@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
+> > Subject: [EXT] Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
+> > > The remote firmware does not need to know whether Linux is asleep. The
+> > > GPIO is not used to wake Linux directly; instead, it serves as a
+> > > wake-up source for the remote firmware if configured accordingly. Once
+> > > the remote firmware is awake, it sends a notification message to Linux. This
+> > notification is the actual event that wakes Linux.
+> > >
+> > > This works because there is always a physical interface connecting Linux and
+> > the remote firmware.
+> > > On i.MX platforms, this interface is the MU block. When the remoteproc
+> > > driver is running, the MU block is automatically configured as a
+> > > wake-up source for Linux by default. As a result, the notification message can
+> > wake the Linux system if it is asleep.
+> > 
+> > You need to add a lot more documentation to the specification to make this
+> > clear. As you said, the firmware and Linux have different sleep/wake life cycles.
+> > How does the firmware know it is safe to go to sleep, if it has no idea Linux is
+> > running or suspended?
+> > 
+> 
+> The remoteproc driver is responsible for managing the remote firmware. The GPIO driver 
+> operates independently of this process and functions transparently on top of it. 
+> So the GPIO driver does not require to know the firmware's running states.
 
-Removed functions:
-* zl3073x_dev_ref_ffo_get
-* zl3073x_dev_ref_is_enabled
-* zl3073x_dev_synth_dpll_get
-* zl3073x_dev_synth_is_enabled
-* zl3073x_dev_out_signal_format_get
+Great. Just document this. Document what are the
+expectations/assumptions about the channel. The specification needs to
+be clear enough that somebody can implement it. At the moment, i doubt
+anybody would get this correct from the specification alone.
 
-This is a cleanup after recent refactoring, as the remaining callers
-now fetch the state object and use the base helpers directly.
-
-Reviewed-by: Petr Oros <poros@redhat.com>
-Tested-by: Prathosh Satish <Prathosh.Satish@microchip.com>
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
----
- drivers/dpll/zl3073x/core.h | 77 -------------------------------------
- 1 file changed, 77 deletions(-)
-
-diff --git a/drivers/dpll/zl3073x/core.h b/drivers/dpll/zl3073x/core.h
-index fe8b70e25d3cc..09bca2d0926d5 100644
---- a/drivers/dpll/zl3073x/core.h
-+++ b/drivers/dpll/zl3073x/core.h
-@@ -182,21 +182,6 @@ zl3073x_output_pin_out_get(u8 id)
- 	return id / 2;
- }
- 
--/**
-- * zl3073x_dev_ref_ffo_get - get current fractional frequency offset
-- * @zldev: pointer to zl3073x device
-- * @index: input reference index
-- *
-- * Return: the latest measured fractional frequency offset
-- */
--static inline s64
--zl3073x_dev_ref_ffo_get(struct zl3073x_dev *zldev, u8 index)
--{
--	const struct zl3073x_ref *ref = zl3073x_ref_state_get(zldev, index);
--
--	return zl3073x_ref_ffo_get(ref);
--}
--
- /**
-  * zl3073x_dev_ref_freq_get - get input reference frequency
-  * @zldev: pointer to zl3073x device
-@@ -227,21 +212,6 @@ zl3073x_dev_ref_is_diff(struct zl3073x_dev *zldev, u8 index)
- 	return zl3073x_ref_is_diff(ref);
- }
- 
--/**
-- * zl3073x_dev_ref_is_enabled - check if the given input reference is enabled
-- * @zldev: pointer to zl3073x device
-- * @index: input reference index
-- *
-- * Return: true if input refernce is enabled, false otherwise
-- */
--static inline bool
--zl3073x_dev_ref_is_enabled(struct zl3073x_dev *zldev, u8 index)
--{
--	const struct zl3073x_ref *ref = zl3073x_ref_state_get(zldev, index);
--
--	return zl3073x_ref_is_enabled(ref);
--}
--
- /*
-  * zl3073x_dev_ref_is_status_ok - check the given input reference status
-  * @zldev: pointer to zl3073x device
-@@ -257,22 +227,6 @@ zl3073x_dev_ref_is_status_ok(struct zl3073x_dev *zldev, u8 index)
- 	return zl3073x_ref_is_status_ok(ref);
- }
- 
--/**
-- * zl3073x_dev_synth_dpll_get - get DPLL ID the synth is driven by
-- * @zldev: pointer to zl3073x device
-- * @index: synth index
-- *
-- * Return: ID of DPLL the given synthetizer is driven by
-- */
--static inline u8
--zl3073x_dev_synth_dpll_get(struct zl3073x_dev *zldev, u8 index)
--{
--	const struct zl3073x_synth *synth;
--
--	synth = zl3073x_synth_state_get(zldev, index);
--	return zl3073x_synth_dpll_get(synth);
--}
--
- /**
-  * zl3073x_dev_synth_freq_get - get synth current freq
-  * @zldev: pointer to zl3073x device
-@@ -289,22 +243,6 @@ zl3073x_dev_synth_freq_get(struct zl3073x_dev *zldev, u8 index)
- 	return zl3073x_synth_freq_get(synth);
- }
- 
--/**
-- * zl3073x_dev_synth_is_enabled - check if the given synth is enabled
-- * @zldev: pointer to zl3073x device
-- * @index: synth index
-- *
-- * Return: true if synth is enabled, false otherwise
-- */
--static inline bool
--zl3073x_dev_synth_is_enabled(struct zl3073x_dev *zldev, u8 index)
--{
--	const struct zl3073x_synth *synth;
--
--	synth = zl3073x_synth_state_get(zldev, index);
--	return zl3073x_synth_is_enabled(synth);
--}
--
- /**
-  * zl3073x_dev_out_synth_get - get synth connected to given output
-  * @zldev: pointer to zl3073x device
-@@ -341,21 +279,6 @@ zl3073x_dev_out_is_enabled(struct zl3073x_dev *zldev, u8 index)
- 	return zl3073x_synth_is_enabled(synth) && zl3073x_out_is_enabled(out);
- }
- 
--/**
-- * zl3073x_dev_out_signal_format_get - get output signal format
-- * @zldev: pointer to zl3073x device
-- * @index: output index
-- *
-- * Return: signal format of given output
-- */
--static inline u8
--zl3073x_dev_out_signal_format_get(struct zl3073x_dev *zldev, u8 index)
--{
--	const struct zl3073x_out *out = zl3073x_out_state_get(zldev, index);
--
--	return zl3073x_out_signal_format_get(out);
--}
--
- /**
-  * zl3073x_dev_out_dpll_get - get DPLL ID the output is driven by
-  * @zldev: pointer to zl3073x device
--- 
-2.51.0
-
+	Andrew
 
