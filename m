@@ -1,110 +1,102 @@
-Return-Path: <linux-kernel+bounces-894076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A475BC49395
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:25:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 266F8C4939E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:28:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7649C18906A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18123B00E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FBA27AC4C;
-	Mon, 10 Nov 2025 20:25:51 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F042ECD37;
+	Mon, 10 Nov 2025 20:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCUQg3vL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2A128000B;
-	Mon, 10 Nov 2025 20:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52CD2E8B60;
+	Mon, 10 Nov 2025 20:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762806350; cv=none; b=ohk95vcxcFmrH9Ijt8TEC+iY9U8yQZzYEVT6mAhTiWacwxbtRntRFXdH4KsIWqheg+feBlPz+BoxeVCXr2SaX0Bu6pAAPizOUShcByksYXQhNBBwEDJUvXWraCNGNwYvMXxkpsy2idfi0+HkDpQHjgYiQXg2F514RIqi//ct7pA=
+	t=1762806475; cv=none; b=EczMQSO73kB4KrZkymW3b6y8D2utYLctfHcDCl8yyP+2CtVNwnSIIhkc1qZ4HbfQGSeyKQqHRkm/yFRoDJYEgjyHBWxL30soxd8t5VzfGYDdTanFpKQSP37okXl3bd0po0/241I4pjs42rMSrOTuTeUk4jfk7mBtTelz1pq2rHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762806350; c=relaxed/simple;
-	bh=L7qUPrj9zPJEA0pzgGDw3h6kHJ+Q94P567LKoLIHNrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mxbVquqXGuZ/z11IWKBtG3/y2sYNsB78HxLE3/v7rmnLg9EcDTCwkxmoWOeDh0NYzZyGJ08clODP0HOju4KfhditmdFZsxh3sPuLIPjGX44gUWlSunzfjvBFyf4CCuPpwzHDVAeJzXthM81Venmlsfg+vV6hDaa/WxJPh7VgaMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id E50C11DF6C3;
-	Mon, 10 Nov 2025 20:25:45 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 0D75E20023;
-	Mon, 10 Nov 2025 20:25:41 +0000 (UTC)
-Date: Mon, 10 Nov 2025 15:25:50 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "H. Peter Anvin"
- <hpa@zytor.com>, Mike Rapoport <rppt@kernel.org>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Christian Brauner
- <brauner@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Vlastimil
- Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
- "workflows@vger.kernel.org" <workflows@vger.kernel.org>,
- "ksummit@lists.linux.dev" <ksummit@lists.linux.dev>, Dan Williams
- <dan.j.williams@intel.com>, Theodore Ts'o <tytso@mit.edu>, Sasha Levin
- <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Kees Cook
- <kees@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel
- Ojeda <ojeda@kernel.org>, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH] [v2] Documentation: Provide guidelines for
- tool-generated content
-Message-ID: <20251110152550.5d462fb2@gandalf.local.home>
-In-Reply-To: <20251110-spiffy-intelligent-cockle-efde1e@lemur>
-References: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
-	<653b4187-ec4f-4f5d-ae76-d37f46070cb4@suse.cz>
-	<20251110-weiht-etablieren-39e7b63ef76d@brauner>
-	<20251110172507.GA21641@pendragon.ideasonboard.com>
-	<CAHk-=wgEPve=BO=SOmgEOd4kv76bSbm0jWFzRzcs4Y7EedpgfA@mail.gmail.com>
-	<aRIxYkjX7EzalSoI@kernel.org>
-	<CAHk-=wir-u3so=9NiFgG+bWfZHakc47iNy9vZXmSNWSZ+=Ue8g@mail.gmail.com>
-	<A274AB1C-8B6B-4004-A2BC-D540260A5771@zytor.com>
-	<CAHk-=whczwG=+-sAzoWoTY_VOwdFH3b5AkvQbgh+z98=p1iaXA@mail.gmail.com>
-	<20251110145405.5bc87cc5@gandalf.local.home>
-	<20251110-spiffy-intelligent-cockle-efde1e@lemur>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762806475; c=relaxed/simple;
+	bh=xqht5VPTMHaX/GKxsh9FtHie1CtnNQDDC8CGQ8gGXr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QdiEvg2iQnxpose2uqHX6C8x5sxjOozzX9uAMvo2FgZgvhW/XbpyDme4Z333MRJjoXxCaH0AWp+HPQV1VtvnJrGzKcbWwg2fcms/obOZ7vpeSMySbYVoYhpRFgEElGxdYB+kdVOPclbvI2U4Zngmi2WDqSPdaRmhTR8OQ8hDFew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCUQg3vL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34040C19423;
+	Mon, 10 Nov 2025 20:27:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762806475;
+	bh=xqht5VPTMHaX/GKxsh9FtHie1CtnNQDDC8CGQ8gGXr4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HCUQg3vLPwQzlucTGF4oM4w6xX3PkWVbCkeeYQ3xDLcMdKXVI+rx1Hqc6906H2/oS
+	 ffkOChOrZQ7EJ/WXuQkCxksbLlIXswN1RxFDub1facaE5Ij1kX2EigYLiecaNHleTD
+	 LP35Joo5tOBsh8Wtn+x4bPap3wxpBb+gbqF/Jkq4EG2Reagb9whF00/ZjP0Bf/UVCt
+	 n29Qky/NBvtjSzAY2TfGPp/dFB2/JOoYeqCiIHVwVB5hb4Nxr1+uet/kIxVAy+391V
+	 lHBSX6jMVP9M4KORxi2nAOT2n5D54npZkX2UN3Q8G5hf4+coDwyVqYTu7X5dlyOpa5
+	 IIzBgTOc8dgTw==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [GIT PULL] pinctrl: samsung: drivers for v6.19
+Date: Mon, 10 Nov 2025 21:27:48 +0100
+Message-ID: <20251110202748.10090-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 0D75E20023
-X-Stat-Signature: 4eg9c48ys38wj9qpyxq11fmcbc9ciep4
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18oPbG4zobniY+OHcdjesyIJghSfa8m1os=
-X-HE-Tag: 1762806341-920127
-X-HE-Meta: U2FsdGVkX18Hbux9ScpxOgizMIUE0KT/uDM4MaDbvfNrCyqytGrUwcnSTuiDWg4T+RrHg9NQu7mrlSMeN2t4vFqxakNFor5ewPY2sMqfE2tbCH9Ef8y7I1LYA93L17rlre0JZWI/RWsyu3mCNLcfVWkyxtd6UPH87ppYUe+I2xLwl+NNtSH9szvRrqGjncV8xXuKrpa3F97FrFH23VS0pFWQKUlplK0lGQnnIjk2C8Ea3y73lOD5/lTqp1qBFMWemnbIV8/N6iw0A2YPEps6FhfxWZLzzBcwK9mBmemOAmNbHp49tyA/9OEm4tTpXVNoXMhPXE2yjqiJR1jq85D/HjwvPQZkydqFjvkOcupu1E7kxKEKHn/769eJpneGszCD
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1609; i=krzk@kernel.org; h=from:subject; bh=xqht5VPTMHaX/GKxsh9FtHie1CtnNQDDC8CGQ8gGXr4=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpEkrEmX3ZkmzBioa40xqUoItANOt8+TThg8hQP SBHRD59ALCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaRJKxAAKCRDBN2bmhouD 1z5mD/4lksCWQrylzIsRpv9BV8fo0E2sLlWT/KHglodP+t+Qa9oz7X3LDDvbzEqVhRfhqaM8Uh4 WIU+ARcRyvtOKfFM1N/+cOOS7X9+CP1JFtjKwicjlDu+hvT29NwudnUDoaRDEDhxqAgJpN65m6Y ZpFOeSIFCn5eI4COVsIPTBtpmuwcYFOx7kmT22jKxpZNRWTRu8pQMOCssdf2NcNi5CWjaIORb8k GBTM1op3GNFpK/9v2HpwURHHhXuq/zZMGDFYcSdFqThtCN45vJixBiXpJqUU1iYeE+FK2a9NNyS jnwP11IVEPnyOVVCFFVnRY86eeLMupAKu2hoJi7mAY5gR/pj611EegK0JSx2KDujjkspZQsRtBN 4GZjUHx1FlnQqT0s/oncObxD974VeRo2lv9RzmUHP6MPqgR9tVr/em1KbRi6S7R7RJSepxZXx5O QVCzX+QlK0REKj7CSlEwBTOl3jW/o83JAAHbk0OF6qGbR8XtYiH3knbRIvO7njolWUFWpcOqyts MPEaHzGrcEg2hACDrN9jP6K2jUpRpFxYDrSLE/gDyY4yM5ArboV5wr/2x6KG+ZGbtsfX7nWA9H3 Y9tOdeIiPQEs6J2ACsI9P/fTX3OcqvDFRuzJ3qXL6as7g+69Ja1fy4tWZ9bGwqUJLYWiljs4mSO HJeIm/FzxegdlQw==
+X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On Mon, 10 Nov 2025 15:00:54 -0500
-Konstantin Ryabitsev <konstantin@linuxfoundation.org> wrote:
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-> On Mon, Nov 10, 2025 at 02:54:05PM -0500, Steven Rostedt wrote:
-> > Probably no difference. I would guess the real liability is for those t=
-hat
-> > use AI to submit patches. With the usual disclaimers of IANAL, I'm assu=
-ming
-> > that when you place your "Signed-off-by", you are stating that you have=
- the
-> > right to submit this code. If it comes down that you did not have the r=
-ight
-> > to submit the code, the original submitter is liable. =20
->=20
-> And if the lawyers come back and say that the submitter is not liable, wh=
-at's
-> to prevent someone from copypasting actual copyrighted code from a propri=
-etary
-> source and adding a "Generated-by: Chat j'ai-p=C3=A9t=C3=A9" line to abso=
-lve themselves?
->=20
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-Wouldn't that be up to the courts? I shouldn't say "the lawyers come back
-and say", it's more like "a court has ruled", and keeping to court
-precedent, the lawyers would say "this is how it was ruled before". Of
-course, today I'm not really sure how much "precedent" matters :-p
+are available in the Git repository at:
 
--- Steve
+  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-6.19
+
+for you to fetch changes up to 3cfc60e09bdc95483875f0b63cfdc23aea67135b:
+
+  pinctrl: samsung: Add ARTPEC-9 SoC specific configuration (2025-10-13 03:02:21 +0200)
+
+----------------------------------------------------------------
+Samsung pinctrl drivers changes for v6.19
+
+Add pin controller support for Samsung Exynos8890 and Axis ARTPEC-9
+SoCs.  The latter is a newer design of Artpec SoCs made/designed by
+Samsung, thus it shares most of the core blocks with Samsung Exynos,
+including the pinctrl.
+
+----------------------------------------------------------------
+Ivaylo Ivanov (3):
+      dt-bindings: pinctrl: samsung: add exynos8890 compatible
+      dt-bindings: pinctrl: samsung: add exynos8890-wakeup-eint compatible
+      pinctrl: samsung: add exynos8890 SoC pinctrl configuration
+
+SeonGu Kang (2):
+      dt-bindings: pinctrl: samsung: Add compatible for ARTPEC-9 SoC
+      pinctrl: samsung: Add ARTPEC-9 SoC specific configuration
+
+ .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   1 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml          |   6 +-
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 206 +++++++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |   4 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   2 +
+ 5 files changed, 218 insertions(+), 1 deletion(-)
 
