@@ -1,252 +1,192 @@
-Return-Path: <linux-kernel+bounces-893202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF28CC46C6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:08:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE37BC46C4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22EDB4EBFB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:07:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A0CF18871A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ECA31282C;
-	Mon, 10 Nov 2025 13:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27872FFDC9;
+	Mon, 10 Nov 2025 13:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wPvVM0CQ"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zHxosS5Y"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1636531282D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BD81FE451
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762779983; cv=none; b=KBuLby/Qpy8BIxQ71Y0g5n4BnrKzw/LwH3kKCTXLEjnX81PhzskIN1icmbO+h47YgwYzYupvtDyh+oN6YqW3tswEuA6bfjbszjkmnMXI1cqt89UX/Xz6ORQq4PBanQwfNVa60nuCGVj7iE53KrkcxjTHNEo90BJDs6HcyQVEU+w=
+	t=1762779973; cv=none; b=IdJ7SHErZg7rpBGtGd5Ls50l/nSPXLD7uGVUtE+cMqonONWpLByjDPBuzb8GcMxI4yX3Nb8sL8ZcDmBy23bWLUiIHwtjoziX8TmHANiflnqdSRy1ae0Q5eXepR0gyd/XRY8ElPPiYYlcbqjWjdo62Mrnz0/wOD2+pNckbEtVMVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762779983; c=relaxed/simple;
-	bh=7993m8OvBem5aU3JmUxqvYCw1dEJgILWjzrL2R/Lw9k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gaF8ctpbb3fHcgAC0LZuIN/6EBCBA5+b+ZYmVzgyio9xBE8AkSpkoDvxJ77M7PU/jEfZXQnG5CFK2E9Eo/pLKOn8cqhOOgw2LvdNDZjvAWcvwTxdXWE9Ypididgona74DtU8RYzyZHZqNnGlsQpk+z7evNHT/Q/tA+QkGCKCIOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wPvVM0CQ; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b6d7405e6a8so317466766b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:06:21 -0800 (PST)
+	s=arc-20240116; t=1762779973; c=relaxed/simple;
+	bh=EFduA5IK5SFrmlRbhZan0kyK7crRwbF+SBZ8qjksjNg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eIheaahDiVndKFaXIlV12MyBcKM4S8XKLRSvLbiTCyKW3HFLJDVS5s0QYJiPLtyAOEluTFoLYOrGb7veYv3nk6QbfXIC9SboyWr2AWbPuUOlbkBJkFQupyeCDD9NxYxkUZpSK0YSrhnfol1ffnIc1P5oecKfgchQ/HzpCrxDaeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zHxosS5Y; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4710022571cso29204975e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:06:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762779980; x=1763384780; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tSGXuP7AugTGZlYmteSMimkU/xIm9yUQuBQEE4/o9H4=;
-        b=wPvVM0CQVbQQT2J3iJR/Gw44Xu+nVqLy5nF2102cvBohp+JbndFDYl6GXaj3cf7BW4
-         gTsP3CYlupQd+JxEngRODvxh8r5SLegef0UBwOXAhB4hruQ70J08mTV7gi8Fu6NOOpDG
-         tV9cWmyhIxwqDpzWqNx4teIvn4EHcv9b8XHGqnEIDB20kBL1sPrmywgTN2Xgk2nH5Vqd
-         FYPgZu+axFlnLi9vf6w1L4A24ylFrwy7YsNcidhAtkYIaTdAihwAYBy7rCDUjkgtW4G2
-         kEeX+Wh3hwwkw3fDFr7J/FW5QHIwf4AyDnMr5USYJop8i3CIps67oDaj0GXL2RtuL8+e
-         CjLw==
+        d=linaro.org; s=google; t=1762779969; x=1763384769; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IFcBbXPwvkiMGC/UX+vL3kGptND9Aa39FQ9X5eJiJ0I=;
+        b=zHxosS5Y1Fu6z7SFNXxbBteAPLE9jFKuvxopE4oAdg3/UxSWDXPMADzsVVPic3M5iJ
+         4b5EjgE1B6swH5nP8pDTaJIQUzlyAlCSpYmrrJYN74Wd4q5GbTkpetahmR3b+lQZ0MK2
+         hT2pZv79IQNZvAnP6u7jrae426vMzTfKI86z8tuWKAMA4NWqUvMTGGeIuKXU676YADDI
+         cN1YDSp1JUyIpbXAiRaqWFw3aHS3JJfNOqcmSfGCX8c6mTvc4M6MYk+ssMldaCHU1RD4
+         +tV8jZ9Fj/pjhWxeE/ZLRkX7rG1Wf405XSqzlRYpkx40Se0BUngl1dc2yhVkAXjTTi6k
+         LCuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762779980; x=1763384780;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tSGXuP7AugTGZlYmteSMimkU/xIm9yUQuBQEE4/o9H4=;
-        b=C8qUMcYTzz+RyG8Yva4j7IlPe6PLW3OlPxWgEkISHAbXosvNWnDcJEhS2NK5hcKDDP
-         xj4udjSjBxdpgDljORGfsJdS/1EohHkPdJsxHKmdJULCIGVmdr7WcndOSVao43+t4oJO
-         a69ebZ5sYM/PBxqSra8V2axNfB9Ce97mUmldRbyF1NjYmJBTPhgS0KBLoMQeuVDc/nLk
-         q8z6RBWjADY2kshWgRkSmv8dvZI/ydKlLhO6r1oci3ntdRlLOGJKAbJwnBtOxava7DlW
-         7b8/m8+Mms46md4pL9QCeI0x/PwBMjhFjwiJVVE4X2qRCO6IJIZ4KVzayCk2IhjXObJY
-         2xHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWt0drqDf/Uu2DbfB4gmoi+KqbSVMsgn8ewm6fDPA/xkEgk6Xu7ReA7+yixBffSYDfSwSUPsKrsEo6eNN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQGVyx88s0MHcpS+6kavbvn8WpyxnOnGgC9Ga6LZXufnF0+Tu/
-	T2mqOcRmbiqlT1R6wgafCNLcmKhsQ6st5WV3u39NwqCHTx7yTbNYTYoU549xWIXMB18bE70g8O9
-	mtJZwRMYULBCkwL/zxw==
-X-Google-Smtp-Source: AGHT+IHOFRtzj17r98BrZnYhPDH7BcIr6LDvYu4u4o4VD9su1BOVPDC9ImKEK33//ppmHMOfYOGZsDg3neBj2Us=
-X-Received: from ejra23.prod.google.com ([2002:a17:906:4697:b0:b72:99b5:37df])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:96a6:b0:b71:d742:5148 with SMTP id a640c23a62f3a-b72dff5fe26mr813962066b.31.1762779980520;
- Mon, 10 Nov 2025 05:06:20 -0800 (PST)
-Date: Mon, 10 Nov 2025 13:05:59 +0000
-In-Reply-To: <20251110-binder-bitmap-v4-0-5ed8a7fab1b9@google.com>
+        d=1e100.net; s=20230601; t=1762779969; x=1763384769;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IFcBbXPwvkiMGC/UX+vL3kGptND9Aa39FQ9X5eJiJ0I=;
+        b=hNuGaYewCJZkO4S2Zmpn4aCua7xWdQCUMV+J6MyqsKAWuLFiBKYUFF+aPn+NZaGGGp
+         NURIwauFTwAEc+nluBiHA1qiQhpdZWM67LnLlBHxy3IVYSoC8csOxWNNByd/P8G4hRHU
+         WEvlR6DmmdqRKaizY9Z5u3aTdgqtOzSDErHiQczPcU906Ljipb+MeKWuuXtI+lw98Y64
+         2o+QjGg+WvkeOJGbkjQWfoxY3IpxurIoQGs/VeNN88nfiZicV1Ei6xSI/dl9e+If1Szj
+         hxArbHXsnnKt0u1tQX4/Gh34XzSXHJpQr6uPvEdqFSlo9JvzfUIa7HQMVWv4msQNNPsT
+         RYTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKVtGdAwgqmSDI5U3CfykSbdw52a0IXyZ3M7FIWWJ83TU5xlfx/HLQo0B2JJLt9hPKJ+tbYwfaBwq7hF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSnwCyfvSWWhnIKPrrIByp3KUispHZaampHefbVilkKaU5SCyW
+	0JiDepKa7yj8npH1NU0ko6+glK+wPsuGq6E9j1cwafzmNpmIx8SQZTlXaASBwqAkKak=
+X-Gm-Gg: ASbGnct3qSAfncW8xIL2/lzPeXyObQcmxPAU0Oyegi/NzdhPgGUBISyNT1Y2wbrufgl
+	nET3SLZXYTPEqmJs91x1C0mnWw2/t9tVB0yme9o12fawkQ7BqPzAiUNhwtswCjWXJbN4gWD+Wsd
+	MXprI8XRy3pCtbT6IX3eTqLGyjQ29gEOcs/zLwcHruzgNo7tYd6e/aFATphUKfE3nU1YjCZehlk
+	laZfj3MZe84jqwS7nDrtfJOafx38JtbmGiP9oE56kNEOrrkoItD+zt34fi8o7bCE7/cj2MvPARM
+	7uvZz2Saq3M2facSO0XaCNFVIpuKyHyxo86BzFt5/FxfootS1B018k1QjaOh1aHu/Akakby3XXo
+	a0wBkY3oKy+juGToO4hsJIeXFE65/8bwNtwqAu67raFUBO0fng9M+U1vZrhVS7u6hjRK533p7ln
+	cQ7tu+cgIoYP5GReOA8odU0PORvd7msbLfpIvxDwNbBkDeKaxojbVTgwM=
+X-Google-Smtp-Source: AGHT+IFtXNJpzD2gW9iSn0NztWrLxTZvcOLBaFBOCFqkmNRmqw71Iuc2gfKNjESDEOfAEahNU8T56w==
+X-Received: by 2002:a05:600c:4f8b:b0:477:569c:34e9 with SMTP id 5b1f17b1804b1-47773271a62mr83156425e9.23.1762779969396;
+        Mon, 10 Nov 2025 05:06:09 -0800 (PST)
+Received: from ?IPV6:2a05:6e02:1041:c10:2b20:d700:6e9c:533c? ([2a05:6e02:1041:c10:2b20:d700:6e9c:533c])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4776bcfcfc7sm240169015e9.12.2025.11.10.05.06.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 05:06:08 -0800 (PST)
+Message-ID: <1e0545da-5d24-4ca4-863d-0d5671902d0b@linaro.org>
+Date: Mon, 10 Nov 2025 14:06:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251110-binder-bitmap-v4-0-5ed8a7fab1b9@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6263; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=7993m8OvBem5aU3JmUxqvYCw1dEJgILWjzrL2R/Lw9k=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpEeNEMpMJqOpS6vIvvgVJKQWGpTEXjHrw5nnLe
- DBhh9GwD8mJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaRHjRAAKCRAEWL7uWMY5
- RsTlD/4yqoxdmXqu0CysOfbItj6bzfgoWbW4mYKEwrHO0xdwfBI2NyzZGGvy5l3jRI0q+iDf2Bi
- L5dmkNwuzmb4mgo8EaQgMnG1LzOSLw9Xxo7cY0v/pyO0y8VqkOqfMzGjj6jWe8Nn3MVSbEdcpa8
- 0kRmzy5JT3HnIr7C6BgopF3HIxu+dFHZCIvAiEw6DCRjlizXmd8W+xShEP1/5gOLeBAEBlTVQoV
- BAvVcJuUuP/+V/jzAaVPAQSPatevA5owydUoWSu16/ctbTmCsOvpjkIIz0YDHyAg5B1CLLzj7kA
- Y4R12Nb2+YerF+wjgReex+60s9KyOkMxbBKsDjlT4kauvsPjrl2vVYl7dlFCRU+B4PJotXCtTWd
- 87jQ19xNFHOH4w0XtqmVc7zzaxAk73BuDq5hz2HiJTdMsCbdFW49+z/8kNmN4XrNZWV9dNJxHBC
- hcuMJzLB6WoUgkYA4g5maa1tf6/HJRI7wsGe8bIz/hwfCKAUBd7bdXUaJMv3OK98/KySdzE9fzF
- gDc4ZtPPAhDeZPg+T75Efnwqd+OWniKhDq42Bi0RisKy4nt/+QoEEpEYdL2iNn32nN8kJFZP3nV
- 4Es8cNR7O4bSiHziscyy0hSIi4SLHehvE/bHY5s4N0gi8ma70X+oNOUZVUd63ZWsiEpCyzJeiSJ tD6nGm7fXBHiAvg==
-X-Mailer: b4 0.14.2
-Message-ID: <20251110-binder-bitmap-v4-6-5ed8a7fab1b9@google.com>
-Subject: [PATCH v4 6/6] rust_binder: use bitmap for allocation of handles
-From: Alice Ryhl <aliceryhl@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yury Norov <yury.norov@gmail.com>
-Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
-	Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v3 4/9] thermal: mediatek: lvts: Add platform ops
+ to support alternative conversion logic
+To: Laura Nao <laura.nao@collabora.com>, srini@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
+ rui.zhang@intel.com, lukasz.luba@arm.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com
+Cc: nfraprado@collabora.com, arnd@arndb.de, colin.i.king@gmail.com,
+ u.kleine-koenig@baylibre.com, andrew-ct.chen@mediatek.com,
+ lala.lin@mediatek.com, bchihi@baylibre.com, frank-w@public-files.de,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, kernel@collabora.com,
+ Fei Shao <fshao@chromium.org>
+References: <20251016142158.740242-1-laura.nao@collabora.com>
+ <20251016142158.740242-5-laura.nao@collabora.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20251016142158.740242-5-laura.nao@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-To find an unused Binder handle, Rust Binder currently iterates the
-red/black tree from the beginning until it finds a gap in the keys. This
-is extremely slow.
+On 10/16/25 16:21, Laura Nao wrote:
+> Introduce lvts_platform_ops struct to support SoC-specific versions of
+> lvts_raw_to_temp() and lvts_temp_to_raw() conversion functions.
+> 
+> This is in preparation for supporting SoCs like MT8196/MT6991, which
+> require a different lvts_temp_to_raw() implementation.
+> 
+> Reviewed-by: Fei Shao <fshao@chromium.org>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> ---
+>   drivers/thermal/mediatek/lvts_thermal.c | 27 ++++++++++++++++++++++---
+>   1 file changed, 24 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
+> index 4ef549386add..df1c0f059ad0 100644
+> --- a/drivers/thermal/mediatek/lvts_thermal.c
+> +++ b/drivers/thermal/mediatek/lvts_thermal.c
+> @@ -125,8 +125,14 @@ struct lvts_ctrl_data {
+>   			continue; \
+>   		else
+>   
+> +struct lvts_platform_ops {
+> +	int (*lvts_raw_to_temp)(u32 raw_temp, int temp_factor);
+> +	u32 (*lvts_temp_to_raw)(int temperature, int temp_factor);
+> +};
+> +
+>   struct lvts_data {
+>   	const struct lvts_ctrl_data *lvts_ctrl;
+> +	const struct lvts_platform_ops *ops;
+>   	const u32 *conn_cmd;
+>   	const u32 *init_cmd;
+>   	int num_cal_offsets;
+> @@ -300,6 +306,7 @@ static int lvts_get_temp(struct thermal_zone_device *tz, int *temp)
+>   	struct lvts_ctrl *lvts_ctrl = container_of(lvts_sensor, struct lvts_ctrl,
+>   						   sensors[lvts_sensor->id]);
+>   	const struct lvts_data *lvts_data = lvts_ctrl->lvts_data;
+> +	const struct lvts_platform_ops *ops = lvts_data->ops;
+>   	void __iomem *msr = lvts_sensor->msr;
+>   	u32 value;
+>   	int rc;
+> @@ -332,7 +339,7 @@ static int lvts_get_temp(struct thermal_zone_device *tz, int *temp)
+>   	if (rc)
+>   		return -EAGAIN;
+>   
+> -	*temp = lvts_raw_to_temp(value & 0xFFFF, lvts_data->temp_factor);
+> +	*temp = ops->lvts_raw_to_temp(value & 0xFFFF, lvts_data->temp_factor);
 
-To improve the performance, add a bitmap that keeps track of which
-indices are actually in use. This allows us to quickly find an unused
-key in the red/black tree.
+Don't do this in each functions. It does not help for the readability.
 
-This logic matches the approach used by C Binder. It was chosen
-partially because it's the most memory efficient solution.
+May be something like:
 
-Reviewed-by: Burak Emir <bqe@google.com>
-Acked-by: Carlos Llamas <cmllamas@google.com>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- drivers/android/binder/process.rs | 63 ++++++++++++++++++++++++++++-----------
- 1 file changed, 46 insertions(+), 17 deletions(-)
+int lvts_raw_to_temp(u32 raw_temp, const struct lvts_ctrl_data)
+{
+	return data->ops->lvts_temp_to_raw(raw_temp, data->temp_factor);
+}
 
-diff --git a/drivers/android/binder/process.rs b/drivers/android/binder/process.rs
-index f13a747e784c84a0fb09cbf47442712106eba07c..933b0f737b38ffac536b19c9330dfc63ffc72f2b 100644
---- a/drivers/android/binder/process.rs
-+++ b/drivers/android/binder/process.rs
-@@ -19,6 +19,7 @@
-     cred::Credential,
-     error::Error,
-     fs::file::{self, File},
-+    id_pool::IdPool,
-     list::{List, ListArc, ListArcField, ListLinks},
-     mm,
-     prelude::*,
-@@ -367,6 +368,8 @@ impl ListItem<{Self::LIST_NODE}> for NodeRefInfo {
- struct ProcessNodeRefs {
-     /// Used to look up nodes using the 32-bit id that this process knows it by.
-     by_handle: RBTree<u32, ListArc<NodeRefInfo, { NodeRefInfo::LIST_PROC }>>,
-+    /// Used to quickly find unused ids in `by_handle`.
-+    handle_is_present: IdPool,
-     /// Used to look up nodes without knowing their local 32-bit id. The usize is the address of
-     /// the underlying `Node` struct as returned by `Node::global_id`.
-     by_node: RBTree<usize, u32>,
-@@ -381,6 +384,7 @@ impl ProcessNodeRefs {
-     fn new() -> Self {
-         Self {
-             by_handle: RBTree::new(),
-+            handle_is_present: IdPool::new(),
-             by_node: RBTree::new(),
-             freeze_listeners: RBTree::new(),
-         }
-@@ -775,7 +779,7 @@ pub(crate) fn get_node(
-     pub(crate) fn insert_or_update_handle(
-         self: ArcBorrow<'_, Process>,
-         node_ref: NodeRef,
--        is_mananger: bool,
-+        is_manager: bool,
-     ) -> Result<u32> {
-         {
-             let mut refs = self.node_refs.lock();
-@@ -794,7 +798,32 @@ pub(crate) fn insert_or_update_handle(
-         let reserve2 = RBTreeNodeReservation::new(GFP_KERNEL)?;
-         let info = UniqueArc::new_uninit(GFP_KERNEL)?;
- 
--        let mut refs = self.node_refs.lock();
-+        let mut refs_lock = self.node_refs.lock();
-+        let mut refs = &mut *refs_lock;
-+
-+        let (unused_id, by_handle_slot) = loop {
-+            // ID 0 may only be used by the manager.
-+            let start = if is_manager { 0 } else { 1 };
-+
-+            if let Some(res) = refs.handle_is_present.find_unused_id(start) {
-+                match refs.by_handle.entry(res.as_u32()) {
-+                    rbtree::Entry::Vacant(entry) => break (res, entry),
-+                    rbtree::Entry::Occupied(_) => {
-+                        pr_err!("Detected mismatch between handle_is_present and by_handle");
-+                        res.acquire();
-+                        continue;
-+                    }
-+                }
-+            }
-+
-+            let grow_request = refs.handle_is_present.grow_request().ok_or(ENOMEM)?;
-+            drop(refs_lock);
-+            let resizer = grow_request.realloc(GFP_KERNEL)?;
-+            refs_lock = self.node_refs.lock();
-+            refs = &mut *refs_lock;
-+            refs.handle_is_present.grow(resizer);
-+        };
-+        let handle = unused_id.as_u32();
- 
-         // Do a lookup again as node may have been inserted before the lock was reacquired.
-         if let Some(handle_ref) = refs.by_node.get(&node_ref.node.global_id()) {
-@@ -804,20 +833,9 @@ pub(crate) fn insert_or_update_handle(
-             return Ok(handle);
-         }
- 
--        // Find id.
--        let mut target: u32 = if is_mananger { 0 } else { 1 };
--        for handle in refs.by_handle.keys() {
--            if *handle > target {
--                break;
--            }
--            if *handle == target {
--                target = target.checked_add(1).ok_or(ENOMEM)?;
--            }
--        }
--
-         let gid = node_ref.node.global_id();
-         let (info_proc, info_node) = {
--            let info_init = NodeRefInfo::new(node_ref, target, self.into());
-+            let info_init = NodeRefInfo::new(node_ref, handle, self.into());
-             match info.pin_init_with(info_init) {
-                 Ok(info) => ListArc::pair_from_pin_unique(info),
-                 // error is infallible
-@@ -838,9 +856,10 @@ pub(crate) fn insert_or_update_handle(
-         // `info_node` into the right node's `refs` list.
-         unsafe { info_proc.node_ref2().node.insert_node_info(info_node) };
- 
--        refs.by_node.insert(reserve1.into_node(gid, target));
--        refs.by_handle.insert(reserve2.into_node(target, info_proc));
--        Ok(target)
-+        refs.by_node.insert(reserve1.into_node(gid, handle));
-+        by_handle_slot.insert(info_proc, reserve2);
-+        unused_id.acquire();
-+        Ok(handle)
-     }
- 
-     pub(crate) fn get_transaction_node(&self, handle: u32) -> BinderResult<NodeRef> {
-@@ -905,6 +924,16 @@ pub(crate) fn update_ref(
-                 let id = info.node_ref().node.global_id();
-                 refs.by_handle.remove(&handle);
-                 refs.by_node.remove(&id);
-+                refs.handle_is_present.release_id(handle as usize);
-+
-+                if let Some(shrink) = refs.handle_is_present.shrink_request() {
-+                    drop(refs);
-+                    // This intentionally ignores allocation failures.
-+                    if let Ok(new_bitmap) = shrink.realloc(GFP_KERNEL) {
-+                        refs = self.node_refs.lock();
-+                        refs.handle_is_present.shrink(new_bitmap);
-+                    }
-+                }
-             }
-         } else {
-             // All refs are cleared in process exit, so this warning is expected in that case.
+or
+
+int lvts_raw_to_temp(u32 raw_temp, const struct lvts_ctrl_data)
+{
+	int temperature;
+
+	if (data->ops->lvts_temp_to_raw)
+		return data->ops->lvts_temp_to_raw(raw_temp, data->temp_factor);
+
+	temperature = ((s64)(raw_temp & 0xFFFF) * temp_factor) >> 14;
+         temperature += golden_temp_offset;
+
+         return temperature;
+}
+
+... and get rid of all the lvts_platform_ops_v1
+
+(btw _v1 is confusing, it suggests there multiple versions of the same SoC)
+
+[ ... ]
 
 -- 
-2.51.2.1041.gc1ab5b90ca-goog
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
