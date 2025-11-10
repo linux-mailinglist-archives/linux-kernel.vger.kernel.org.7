@@ -1,206 +1,122 @@
-Return-Path: <linux-kernel+bounces-893104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B768EC46901
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:20:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BF3C4689E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:17:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 909FF3A7B7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5331E1886BD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044FF30F93B;
-	Mon, 10 Nov 2025 12:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T+Ks6Cf2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22FB30DD35;
+	Mon, 10 Nov 2025 12:12:04 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D02F30F930
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91F130214B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762776728; cv=none; b=RzL1nTy+5O2zZ5iqA7bTvVXyddv6yyhkc6+3qVxDiBDzViGhnb/5fm/5XBW6PIfLc4lTtQCoZkiu+I/nTQGYOxHsgPMzkEfjkSoqRe7oP2Jp2nBm7gtZC55rEIy0Qop4wkY34inu+gyAp1SRGlpy66RCKmZH0PofY9a5ceMYi14=
+	t=1762776724; cv=none; b=m71YbA+Ib93v+GByfUWWIoMkk5SBaNFsxxlL/5H/7pSdPTNM+bo/xKJyWnKOHQdvvlCsaV8zRrm2lwBAwHk8LYMkzWCbfFiT8Bu/CnFmHeo30VGhd0qVa3hVgg4YeHvuUWELlAlKN6dlzq18yeAypTxD1WcklIyIOzktu9caaZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762776728; c=relaxed/simple;
-	bh=Gq1Qz9de0zDdr7Qza9fayAQEpXpfGWwvApSfAxEFrck=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nJHW9hUWWf0+tg6dAAiqEq6yizqRaUcG3TzCM9RR+B69UTZO/eOsEjxToQlThM5nulnxKlbykL9Ujn/5kq4Fh75KO33Ld9wA3jZVmpKwA95G9AQKbmTN58OP3zO3TNjrT7w3v05+pb9h9Pyggx0NNwZtOyGdx2heuVqQ68b/i3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T+Ks6Cf2; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762776726; x=1794312726;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=Gq1Qz9de0zDdr7Qza9fayAQEpXpfGWwvApSfAxEFrck=;
-  b=T+Ks6Cf2BTGN4iVGmESew/iCY6X7/CTMYK/f5Fp7OdxKdUPBKW5WORnk
-   Nv0nXV66cldU5xpVhgKCPWtZxy5UuVjyGM+mJT4BjwDtwWfDO1FC2jpsV
-   BumIvr6EoGn30Ru466p4LZaArLbyCK4W/a2KJxp7oMsew/6BP9wYwF8I+
-   KiVCZGDb6iJ+MSwnFB2/xV6oaT4rPN4W1lPnKyOZj890F49iFn55k7nMK
-   eVT1ZPFVr55JzTM27puiRhrdnHrT6OnXn66pahHqAV1FAyfI/56caPi+P
-   1d2QAhLQ35l9AQfsk8row/6abakRf9yy6Fyp+Tgea6xvnT24WNLf0Uws1
-   Q==;
-X-CSE-ConnectionGUID: hvsU8+5KRAeOy0WFwcZNdw==
-X-CSE-MsgGUID: lUDQ1HClQnimacm/A6cvwQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="68467717"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="68467717"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:12:05 -0800
-X-CSE-ConnectionGUID: HH7CDWeHTiWebboaKijKWA==
-X-CSE-MsgGUID: BnoiTsyASuSg/n0lzooiUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="189379199"
-Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.202])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:11:59 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Krzysztof Karas <krzysztof.karas@intel.com>, Marco Crivellari
- <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko
- <mhocko@suse.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>
-Subject: Re: [PATCH v3 0/3] replace old wq(s), add WQ_PERCPU to alloc_workqueue
-In-Reply-To: <34ozsv3e6ujs4rn6c2r4nrjcjifgazddy5jecwur6atfcop6vp@bunf3uyofmb4>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20251104100032.61525-1-marco.crivellari@suse.com>
- <34ozsv3e6ujs4rn6c2r4nrjcjifgazddy5jecwur6atfcop6vp@bunf3uyofmb4>
-Date: Mon, 10 Nov 2025 14:11:56 +0200
-Message-ID: <aaac1c9b25d0fc2500e67d05948a22d77dcc72e7@intel.com>
+	s=arc-20240116; t=1762776724; c=relaxed/simple;
+	bh=kGGSG8exyRIv+H/CZk5d7bgGJFQ1KT2GYaSG3fbMzEc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mv2A3GIE7gqB/NmKUbMdBUx72THBaOO5skv1/P4goXiOjRU4SH9mkvFD9e5M6a89esN9GRzs83s+7N8Ny2vINi04L/dBjm/WIpSSuUa2dkd5kBUJMvmDhRgzxdCMJ8+SE1gkiP76ANnvvYCQToLPsg2D2axCrbhEaI0GxJ/JL58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-9486ebd1e4dso275264839f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:12:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762776722; x=1763381522;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u/AjLwdw2hcC2DY1nsTE8RvHzb5JV5jTVMSoB5vTOxA=;
+        b=vwKLgFxBd8aHIjpHC3dL3gqGA1qK6OfZk7RtHw5Mtn6oZOHF1AM/ObWo0buVkX7Chi
+         X4b6x6w3M2GUkYt6zIKmptyI4Z7Wr0CPxGTPFk0Fe9BQ4S50bSdS5ybM6117A2u5rdQx
+         YnK3cT58fzVRO1lbhNoMTcSet5XGzTOy+rkd2cN3GyyOP80pMBNjJCMgNB1B5g6ZUKdZ
+         bjJIYU0vzKgL6VEpM3F7TvzCh9+vYvxA5TR7qDbzanX5g8IHRV5V3lHCQVr25m6zcY8M
+         oi8DEQ2CKrBK3IS4HNsamac0iUrAuNqWF++SoV2iQGJd8MyWMONR4GI6wtx5C9gRmU4k
+         ciBw==
+X-Gm-Message-State: AOJu0Yzs02Vzme2UOQ8e/xmRw6aArNXt+WZQIAEM0oheKfRcUjH9Wr6H
+	dukZOO5EzkmtDw4LPng0OqI9h4L/SICBcJpk+TAXodqAA+F5cB6XyAjrX+zd92USfQwOBaruudj
+	hcCrfarISJwPgLxuXpvKjwLqxjDZHjwhJLKdfnXMcCseVhV+09zwQ23CHRiU=
+X-Google-Smtp-Source: AGHT+IFbUnaSfLcxgZk0G/4OSd8ar3FSatThyNWZTmatKCeL/jNUsRTikBHCFQdZyD87q3nsHB4M1cvCPoxm9X4+soiCZduttlPB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6602:29d2:b0:940:d7cb:139a with SMTP id
+ ca18e2360f4ac-94895fca436mr1186275939f.7.1762776722180; Mon, 10 Nov 2025
+ 04:12:02 -0800 (PST)
+Date: Mon, 10 Nov 2025 04:12:02 -0800
+In-Reply-To: <bf35b502-ca85-41a4-b47b-c3ae63155257@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6911d692.a70a0220.22f260.00ea.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] general protection fault in txCommit (2)
+From: syzbot <syzbot+9489c9f9f3d437221ea2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	yun.zhou@windriver.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 05 Nov 2025, Krzysztof Karas <krzysztof.karas@intel.com> wrote:
-> Hi Marco,
->
-> thanks for addressing my comments!
->
-> Reviewed-by: Krzysztof Karas <krzysztof.karas@intel.com>
-> on the whole series.
+Hello,
 
-The series absolutely must go through both i915 and xe CI before
-merging. Krzysztof, can you please make follow through with that?
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: array-index-out-of-bounds in dtInsertEntry
 
-BR,
-Jani.
+loop0: detected capacity change from 0 to 32768
+UFO tlock:0xffffc900034d11f8
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dtree.c:3707:8
+index -1 is out of range for type 'struct dtslot[128]'
+CPU: 0 UID: 0 PID: 6833 Comm: syz.0.56 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
+ __ubsan_handle_out_of_bounds+0xe9/0xf0 lib/ubsan.c:455
+ dtInsertEntry+0x936/0x1430 fs/jfs/jfs_dtree.c:3707
+ dtInsert+0x931/0x6000 fs/jfs/jfs_dtree.c:894
+ jfs_create+0x6c8/0xa80 fs/jfs/namei.c:137
+ lookup_open fs/namei.c:3796 [inline]
+ open_last_lookups fs/namei.c:3895 [inline]
+ path_openat+0x1500/0x3840 fs/namei.c:4131
+ do_filp_open+0x1fa/0x410 fs/namei.c:4161
+ do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+ do_sys_open fs/open.c:1452 [inline]
+ __do_sys_creat fs/open.c:1530 [inline]
+ __se_sys_creat fs/open.c:1524 [inline]
+ __x64_sys_creat+0x8f/0xc0 fs/open.c:1524
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc0cd3bf6c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc0cca2e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007fc0cd615fa0 RCX: 00007fc0cd3bf6c9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000200000000580
+RBP: 00007fc0cd441f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fc0cd616038 R14: 00007fc0cd615fa0 R15: 00007ffc096fa2d8
+ </TASK>
+---[ end trace ]---
 
->  
-> Best Regards,
-> Krzysztof
->
-> On 2025-11-04 at 11:00:29 +0100, Marco Crivellari wrote:
->> Hi,
->> 
->> === Current situation: problems ===
->> 
->> Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
->> set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
->> 
->> This leads to different scenarios if a work item is scheduled on an
->> isolated CPU where "delay" value is 0 or greater then 0:
->>         schedule_delayed_work(, 0);
->> 
->> This will be handled by __queue_work() that will queue the work item on the
->> current local (isolated) CPU, while:
->> 
->>         schedule_delayed_work(, 1);
->> 
->> Will move the timer on an housekeeping CPU, and schedule the work there.
->> 
->> Currently if a user enqueue a work item using schedule_delayed_work() the
->> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
->> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
->> schedule_work() that is using system_wq and queue_work(), that makes use
->> again of WORK_CPU_UNBOUND.
->> 
->> This lack of consistency cannot be addressed without refactoring the API.
->> 
->> === Recent changes to the WQ API ===
->> 
->> The following, address the recent changes in the Workqueue API:
->> 
->> - commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
->> - commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
->> 
->> The old workqueues will be removed in a future release cycle.
->> 
->> === Introduced Changes by this series ===
->> 
->> 1) [P 1-2]  Replace uses of system_wq and system_unbound_wq
->> 
->>     system_wq is a per-CPU workqueue, but his name is not clear.
->>     system_unbound_wq is to be used when locality is not required.
->> 
->>     Because of that, system_wq has been replaced with system_percpu_wq, and
->>     system_unbound_wq has been replaced with system_dfl_wq.
->> 
->> 2) [P 3] WQ_PERCPU added to alloc_workqueue()
->> 
->>     This change adds a new WQ_PERCPU flag to explicitly request
->>     alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
->> 
->> 
->> Thanks!
->> 
->> ---
->> Changes in 3:
->> - Improved commit logs
->> 
->> Changes in v2:
->> - fix typo in patch subject (add instead of added).
->> 
->> - in every patch is also present the specific commit hash about the
->>   workqueue API change.
->> 
->> - fixed commit log of P1 (removed "Adding system_dfl_wq...").
->> 
->> - P2: subject changed reflecting the effective change.
->> 
->> - rebased to v6.18-rc4.
->> 
->> 
->> Marco Crivellari (3):
->>   drm/i915: replace use of system_unbound_wq with system_dfl_wq
->>   drm/i915: replace use of system_wq with system_percpu_wq in the
->>     documentation
->>   drm/i915: add WQ_PERCPU to alloc_workqueue users
->> 
->>  drivers/gpu/drm/i915/display/intel_display_driver.c | 4 ++--
->>  drivers/gpu/drm/i915/display/intel_display_power.c  | 2 +-
->>  drivers/gpu/drm/i915/display/intel_tc.c             | 4 ++--
->>  drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c        | 2 +-
->>  drivers/gpu/drm/i915/gt/uc/intel_guc.c              | 4 ++--
->>  drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c           | 4 ++--
->>  drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c   | 6 +++---
->>  drivers/gpu/drm/i915/i915_active.c                  | 2 +-
->>  drivers/gpu/drm/i915/i915_driver.c                  | 5 +++--
->>  drivers/gpu/drm/i915/i915_drv.h                     | 2 +-
->>  drivers/gpu/drm/i915/i915_sw_fence_work.c           | 2 +-
->>  drivers/gpu/drm/i915/i915_vma_resource.c            | 2 +-
->>  drivers/gpu/drm/i915/pxp/intel_pxp.c                | 2 +-
->>  drivers/gpu/drm/i915/pxp/intel_pxp_irq.c            | 2 +-
->>  drivers/gpu/drm/i915/selftests/i915_sw_fence.c      | 2 +-
->>  drivers/gpu/drm/i915/selftests/mock_gem_device.c    | 2 +-
->>  16 files changed, 24 insertions(+), 23 deletions(-)
->> 
->> -- 
->> 2.51.1
->> 
->
 
--- 
-Jani Nikula, Intel
+Tested on:
+
+commit:         e9a6fb0b Linux 6.18-rc5
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=108a1a92580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=9489c9f9f3d437221ea2
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13df260a580000
+
 
