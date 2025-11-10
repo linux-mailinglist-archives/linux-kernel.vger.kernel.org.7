@@ -1,182 +1,161 @@
-Return-Path: <linux-kernel+bounces-893416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC10C4753D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:48:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0BAC47577
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 813984E920E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:48:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B443B5E24
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07543313542;
-	Mon, 10 Nov 2025 14:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC2B3148D0;
+	Mon, 10 Nov 2025 14:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mrKtTsa/"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CQQLCJ9N"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED9C31355A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501D5313E27
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762786095; cv=none; b=jEA+KMY2HdGj02P+v7dVDMut66QM2Xds/It6be+B6GLGm8CpwlbrHFLkEil6VOuFleFphSSCxskD2n5ghWn6vykIRPQvxewClwWZID+fjhlTKkHEfsEeGozW4++q3LUZelyHqAyiFKo/LE+IVTZ/xTMAjHGgxshMrj7ETXc6VHc=
+	t=1762786201; cv=none; b=eBp8guDjocpzbNflAtIhbBlG41d+KBktdKRNgIk5B+Jgn3ftoaq4ChToO82rqBjzuEnWODFftg05p8/KJf84f0w8Nk0VrzKeqvYjlFlCdERZUUkExqQQGBFiEnpXLvhPlcyYgL6CA88DRuSzoB8FPE0ctlczdMLNnS/GNxKIA3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762786095; c=relaxed/simple;
-	bh=LPHuH34GPzz+FS33GWGiucjUVrgKTliQiQDa8mDrPto=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ivl7eDXXik1h1tiCQBKMoC3I4ipAs390xvggZULMKZf1V038wM3hPWQiY8fvBsApsVZq8xqp3jDpfRbMnN8qgSi0ZvG9G/RPI+I+5XF43rH/eTSx54wIdKYNHFffmnEnY49KRR77bd4UNuEjFdVaZKD7fv4W18FbCx+GD/zaAY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mrKtTsa/; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477563e28a3so21251055e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:48:12 -0800 (PST)
+	s=arc-20240116; t=1762786201; c=relaxed/simple;
+	bh=Gc+O81ogEJ7jg6lTwk7sikDMYWSEoZ1JuGrT/rBhWLg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rB0wwydw5gLSzN3Fc2bj/vATWFZlq73BY+PRPjVRIMy72RVrUGYkxXkrBOgsZG58rgkhyBr3bd4yb4a7idj6cesHaHmofer8dC/4oHpWn4kfH0euCuou8yDeR/9o41uZR5KshQAwM9qk6Awk2Ax4wpMuAY0X4yCDHg41H+6+hUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CQQLCJ9N; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b98a619f020so2750762a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:50:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762786091; x=1763390891; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LPHuH34GPzz+FS33GWGiucjUVrgKTliQiQDa8mDrPto=;
-        b=mrKtTsa/Waj1IsC00cI2/hZIW3lo0cdVW7+7mKXNZtIH+0sINwOiud66lJSMlFl8Lu
-         NSegLjc9zyP/bcP4NLVFR+4+B28aocJbymeEVpNYIbBcsutZQCOQepec8dkpVYrvGMMg
-         vP+gWyegzSO6Zm46s12EwF/AS1aPcASDEhAbjNhtXu+VnvZIkkwucFIKSr53XwvFrGgv
-         NB4YEX7XTSmGkCo646UzXMp1x9zuSfLEZxGD6WKGX9nyKeuh5fRJodobCLquBl+JTgPp
-         wwdufxIdXyE5kBIOol8fdoGRNht5nrMPZLv/YUhJ44ekIqC0gx5/7SsFRRcZmrROyzsE
-         0Hiw==
+        d=google.com; s=20230601; t=1762786199; x=1763390999; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yuV15cVIkOZ3osUBoMrFPeh8PgM7VFfcDiPWWGwwe8E=;
+        b=CQQLCJ9NAKA+ZD8OwPCqIA8xwisIvvCFH+VmBCDMZF2CAnMhlh5y80dLr2TtE878BQ
+         p8xP10qKYiUdp6sojMSh+F8P1psQI1ZE44vANvNd8EbJumgLo1x0ZpZ7cFmeDhipmfeX
+         OwevkGMZ1u+VSnr9QsKZYW+Qvt2qg3l0FDz1Ow4ofUtkN4do48GnRBbFtZmRv56RkMT2
+         rXubGJAWAR8fzk7GLbqm9DYmPpMOb4wUwmVKAKBoy63zGfCF68/5on7lYo/S47EEw4C9
+         BYt7DZYd9XRli6J9BhpZdxFPSqkB08TdWMYKPDZlhzNQaArTctHHLvVzz6jWkK3WkKxJ
+         /EFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762786091; x=1763390891;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LPHuH34GPzz+FS33GWGiucjUVrgKTliQiQDa8mDrPto=;
-        b=p48yRSQdv8UiXGVkuHzl4c836rOAlTxpqc6Au/JfAVNOtqxpoTqOM9EVpZ4pUVgAXg
-         EMS2dUr2acigg5F4nAPCVj+EB0mBSkon9qTo5mnVg393Jf3VnqKAtG0CK7qdOBLIr9rt
-         mbz5AVaFH6ylW5dv94AjrM4EBmWvTde8RyFQXlXbvgG0VkntqWPehTnw5wi+uWNwL+rj
-         UTHlRrQ40Cj5oGJvYLZ33gcZt28QCy/+4H3htuxfZz4wp4qi3yG9WfHw0y696oNypEN7
-         IhMjog8yGIVpj5Zc/58JSJtgFPpO+o2aRE54ko/79ZTqJ7o03z0L5+STFXW9GYxyQczy
-         /9+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXEURQGG8DBXCEMBnKeU2yZ9UQNnbrGggGlwmrmVzcSOQcza0UuD4APJxJnno1Kkm3E2T+B/kKTC8/lL0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+UZu0oOIifRLBW2A2bK71YOCbiDY3dzaECmnsLWlqvqUCDle2
-	F7j9D6bZjywsreG+uKp6YqZ10f8BpOTw1PK8M2AdHgVoch4Foy2ObhbF+Z3yrzZK
-X-Gm-Gg: ASbGncuuCaBWF8piX9ZW2C4J4ojktgmVGRVsfI+cOCXiNXeNiXZCA9AeWm04AkiHKun
-	/1l3VCSCZV4brxmBi1u3nFKriZousJ6QEFy+Cazjw2haOgNbwOYXH5KZ4SW2N5h3hMXYiirW6Zc
-	m6clfaK/9UKMBJ5r8meqimmsNWi5WcApnYOXTDfx/52+mf+6A2aT16+GuzOSsLSfnG3R0A/1YXB
-	bjaLnMEeHuZ7CZlP52i7aTP72qeJednOrcABc8agE1iGhGQ/ljfX1HO7Ss1nHg4v6YOrVrjlLhV
-	CG8Sli+WZklddc228ds4Bhb9V1KYJhtP357ftbRBqEVPBCY4wMzdf+IExAtV2dGP2hmVgGnWA9u
-	Booq/HctQmlqOIrkG269lEkiH5RwbCzr9bwc3EGB7XjXcQbnoKljjKhNIeUY4JCn76432YmNRXB
-	cmvuU/6fGUPxrTpQ7yJQo=
-X-Google-Smtp-Source: AGHT+IFyyPGi2h2HdORU5Y7qZAm0mzvGdm657Ujj5pRLIdfkz1ikPx4AlWnK/vjsN3l+QNuYFG0dhA==
-X-Received: by 2002:a05:600c:a30d:b0:471:ea1:a460 with SMTP id 5b1f17b1804b1-4776dcbe68cmr86535255e9.11.1762786090588;
-        Mon, 10 Nov 2025 06:48:10 -0800 (PST)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b2e052f32sm15817388f8f.17.2025.11.10.06.48.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 06:48:10 -0800 (PST)
-Message-ID: <5e0ea52e6a77a1d6af861ba5aaeeea5c3d514705.camel@gmail.com>
-Subject: Re: [PATCH v1 0/3] iio: adc: Add AD4134 minimum I/O support
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- 	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: jic23@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
- andy@kernel.org, 	Michael.Hennerich@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, 	conor+dt@kernel.org, corbet@lwn.net,
- cosmin.tanislav@analog.com, 	marcelo.schmitt1@gmail.com
-Date: Mon, 10 Nov 2025 14:48:46 +0000
-In-Reply-To: <cover.1762777931.git.marcelo.schmitt@analog.com>
-References: <cover.1762777931.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+        d=1e100.net; s=20230601; t=1762786199; x=1763390999;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yuV15cVIkOZ3osUBoMrFPeh8PgM7VFfcDiPWWGwwe8E=;
+        b=XTiAg9CCHEZRpgT36C2TKRbgfpAm8NH/QlDq+r5xSlbJUzsBHCltGk16lnYTCbOpe5
+         uhGQWvgHD6MKpojDGedpGAhWhtE9jtBEkoT/CnaipYmLXwIWIRd7y+mS+xn1bbPxhXp3
+         3G+Z0XVRpWtGLyLc63w/YnwnmhrAaSse3LPa2GRnr7/BqsOev/22N1kn2b45vszBkYYh
+         c1IliuWDABd0liOFVWxDoMkssY8VVAwnqJUsyxnKZ5F6IxvaKTj1do2WvlWScV61E8qj
+         CvhjF9R8fB7t4j3HqNbgx6cMJ/GrcwnyZlBBx7AsvjjqRnIVPKMggt3ZqsYuVlqz8GbY
+         g4Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOoneH8kMmjPogznBjWQvdKdwrNLO8oR+qqjJWYbys0hOaaVSMaSQY8K7oN65ZTsEPYr6c+62gDrlj8xo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKbDCJUfIyVT5T9AX8mLN6xopN7nK+q1px2C2eYCdofnMf+2GQ
+	+KWugRfFuV59pgoVflji+U0yKN3Clqw9boHfGDpXDOddaC4xRthiIBaR/As5AAQEgpaHJw17g/8
+	vnXYDo/XSPuzO6E00LkMHXCESqU5egNoIiy1rEnyK
+X-Gm-Gg: ASbGncsNTBqBlbe3uXDoCs3G8cwzl25IS1VTN+ApM6C9qzBW79J96jzvHz3TTWIXMqH
+	sg4/Pt8KToNjMLZo3CSMuQ5Nb3zGNkxJ0axp1WusR3IpSDtxpXEFEvnblK0Ss4lhCDDfYSiJPfC
+	UfvDE5J4AMf2qYdfWSj2j35Im3WnHy+TUcQ9EvfZPEc4jd5NreHVgS8nuZy+tkTcpqSyei4+/dB
+	IknQE3ZIquVCw1S/+7U42IgOJfRMYUH2FgriLpDbV61ApbMfSjChyN7yttI63dcOTUrhPVUWYSx
+	IzH+wGmXAHk/g4sW5MwHUqHxdn4=
+X-Google-Smtp-Source: AGHT+IFJrWpsYMgqYHxsl7TDahL4sWC/rojvNE8jvjvqAW1DXIbEkhegStBh6RAJqXTedR75u3LJC4XuuR5ASPiDRjI=
+X-Received: by 2002:a17:903:2f88:b0:295:24c3:8b49 with SMTP id
+ d9443c01a7336-297e56cf5bemr117461485ad.46.1762786198920; Mon, 10 Nov 2025
+ 06:49:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <cover.1761763681.git.m.wieczorretman@pm.me> <81848c9df2dc22e9d9104c8276879e6e849a5087.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <81848c9df2dc22e9d9104c8276879e6e849a5087.1761763681.git.m.wieczorretman@pm.me>
+From: Marco Elver <elver@google.com>
+Date: Mon, 10 Nov 2025 15:49:22 +0100
+X-Gm-Features: AWmQ_bltIHaW2m2Y_rXOjdB0rjwB0avPjx0FCrIDnvZhp3yD5E0mxdw5HHzg9_w
+Message-ID: <CANpmjNM+ot5A-pRLhV6Esn=QvCeCStd9fG_pgwrVA=6pxD8aqw@mail.gmail.com>
+Subject: Re: [PATCH v6 17/18] x86/kasan: Logical bit shift for kasan_mem_to_shadow
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, 
+	kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, 
+	ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, 
+	morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, 
+	baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, 
+	wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, 
+	fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, 
+	ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, 
+	brgerst@gmail.com, pankaj.gupta@amd.com, glider@google.com, 
+	mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, 
+	thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, 
+	jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, 
+	mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, 
+	vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com, 
+	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, 
+	ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, 
+	maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, 
+	rppt@kernel.org, will@kernel.org, luto@kernel.org, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, 
+	llvm@lists.linux.dev, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2025-11-10 at 09:44 -0300, Marcelo Schmitt wrote:
-> This patch series adds basic support for ad4134. AD4134 is a very flexibl=
-e
-> device that can be configured in many different ways. This series aims to
-> support the simplest way of interfacing with AD4134 which is called minim=
-um I/O
-> mode in data sheet. This is essentially usual SPI with the addition of an=
- ODR
-> (Output Data Rate) GPIO which functions as conversion start signal in min=
-imum
-> I/O mode. The CS pin may be connected to a host controller CS pin or grou=
-nded.
->=20
-> This set provides just one feature:
-> - Single-shot ADC sample read.
->=20
-> [PATCH 1] Device tree documentation for AD4134.
-> [PATCH 2] IIO Linux driver for AD4134.
-> [PATCH 3] Initial IIO documentation.
->=20
-> There is a driver by Cosmin on ADI Linux tree that supports AD4134 in wir=
-ing
-> configurations suited for high speed data transfers. Even though the mini=
-mum I/O
-> support was initialy based on that high speed transfer driver, the result=
- ended
-> up becoming entirely different. Also, because the different wiring
-> configurations are likely going to use different resources and software
-> interfaces, the code for AD4134 support was split into ad4134-spi.c,
-> ad4134-common.h, and ad4134-common.c.
+On Wed, 29 Oct 2025 at 21:11, Maciej Wieczor-Retman
+<m.wieczorretman@pm.me> wrote:
+>
+> From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+>
+> While generally tag-based KASAN adopts an arithemitc bit shift to
+> convert a memory address to a shadow memory address, it doesn't work for
+> all cases on x86. Testing different shadow memory offsets proved that
+> either 4 or 5 level paging didn't work correctly or inline mode ran into
+> issues. Thus the best working scheme is the logical bit shift and
+> non-canonical shadow offset that x86 uses for generic KASAN, of course
+> adjusted for the increased granularity from 8 to 16 bytes.
+>
+> Add an arch specific implementation of kasan_mem_to_shadow() that uses
+> the logical bit shift.
+>
+> The non-canonical hook tries to calculate whether an address came from
+> kasan_mem_to_shadow(). First it checks whether this address fits into
+> the legal set of values possible to output from the mem to shadow
+> function.
+>
+> Tie both generic and tag-based x86 KASAN modes to the address range
+> check associated with generic KASAN.
+>
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+> ---
+> Changelog v4:
+> - Add this patch to the series.
+>
+>  arch/x86/include/asm/kasan.h | 7 +++++++
+>  mm/kasan/report.c            | 5 +++--
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kasan.h b/arch/x86/include/asm/kasan.h
+> index 375651d9b114..2372397bc3e5 100644
+> --- a/arch/x86/include/asm/kasan.h
+> +++ b/arch/x86/include/asm/kasan.h
+> @@ -49,6 +49,13 @@
+>  #include <linux/bits.h>
+>
+>  #ifdef CONFIG_KASAN_SW_TAGS
+> +static inline void *__kasan_mem_to_shadow(const void *addr)
+> +{
+> +       return (void *)((unsigned long)addr >> KASAN_SHADOW_SCALE_SHIFT)
+> +               + KASAN_SHADOW_OFFSET;
+> +}
 
-I'm familiar with the odd way this part is implemented in ADI tree :). Ques=
-tion is, are
-you intending to support the high speed bits? I guess so, otherwise having =
-the above split
-would not make much sense.
+You're effectively undoing "kasan: sw_tags: Use arithmetic shift for
+shadow computation" for x86 - why?
+This function needs a comment explaining this.
 
-- Nuno S=C3=A1
-
->=20
-> With best regards,
-> Marcelo
->=20
-> Marcelo Schmitt (3):
-> =C2=A0 dt-bindings: iio: adc: Add AD4134
-> =C2=A0 iio: adc: Initial support for AD4134
-> =C2=A0 Docs: iio: Add AD4134
->=20
-> =C2=A0.../bindings/iio/adc/adi,ad4134.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 209 +++++++++++++
-> =C2=A0Documentation/iio/ad4134.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 58 =
-++++
-> =C2=A0Documentation/iio/index.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
-=A0=C2=A0 1 +
-> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- |=C2=A0=C2=A0 9 +
-> =C2=A0drivers/iio/adc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 15 +
-> =C2=A0drivers/iio/adc/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0=C2=A0 2 +
-> =C2=A0drivers/iio/adc/ad4134-common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 200 ++++++++++++
-> =C2=A0drivers/iio/adc/ad4134-common.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 132 ++++++++
-> =C2=A0drivers/iio/adc/ad4134-spi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 287 +++++=
-+++++++++++++
-> =C2=A09 files changed, 913 insertions(+)
-> =C2=A0create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad=
-4134.yaml
-> =C2=A0create mode 100644 Documentation/iio/ad4134.rst
-> =C2=A0create mode 100644 drivers/iio/adc/ad4134-common.c
-> =C2=A0create mode 100644 drivers/iio/adc/ad4134-common.h
-> =C2=A0create mode 100644 drivers/iio/adc/ad4134-spi.c
->=20
->=20
-> base-commit: c5411c8b9ed1caf53604bb1a5be3f487988efc98
+Also, the commit message just says "it doesn't work for all cases" - why?
 
