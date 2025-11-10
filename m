@@ -1,103 +1,122 @@
-Return-Path: <linux-kernel+bounces-893809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78F23C486B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:48:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF734C486C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:49:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B3E3AF9BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9742018906CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FF52E613C;
-	Mon, 10 Nov 2025 17:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D55A2E5B10;
+	Mon, 10 Nov 2025 17:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjBCbPjF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nRaz1H4j"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB792DE1E6;
-	Mon, 10 Nov 2025 17:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8A42E540C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762796893; cv=none; b=etT8UQpYEqbcffhXi98n1ZNy45T3d+0RxN0d03jJoqN2UadUqLffncIT/z7J1zk/fs4HWuOteX8rotNE5dikfyqXO0KnWzxbugC0EXK+PmTNAT9Bl8LN7DZIKYY3fVcGIh3QQP1qYDEETh0DkAAAQm4+uFEfSE3o20BXKzH6iUI=
+	t=1762796957; cv=none; b=rK/rhqiX0hpQuL1cEWFgt7yHdm1uCEmriNFyscVDaHx6BD0eKz9VcjgtHpnlFkNtfeQ5m390ninHrjZFjX6IN04VpyTrOnaTiwg9jGUE0y+e9VNfjYo4xB8jiSoUDQzpdufzdhIegwbgiwP8zqJNUaW13ois4XLKhpJDXo2WhlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762796893; c=relaxed/simple;
-	bh=YgbgNsSEiQWlF4PLVZbqV3I1bOvbG0wsgtM8VKg1iBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubVA1rQrrItlSXI+YHuE2wIi8pfl2fv0ulMCsNJ9l2ujKOrkTFldVgi4kLtXPz/9TTcELIS27Jo2G3Q5BAFu07g7/tFECmP6/It7ooC5l5xu9zy1RMpWlY38kel6qQwJNzFW4UbAoKd+Jt+Yj49MGJzrubHtZyGEkdF0Ltp7SH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjBCbPjF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4AE8C113D0;
-	Mon, 10 Nov 2025 17:48:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762796892;
-	bh=YgbgNsSEiQWlF4PLVZbqV3I1bOvbG0wsgtM8VKg1iBI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SjBCbPjFf8CCqzZRPr7jq92dA+zmOBYsL5kjYvk8d/64Q+vbzzVG+X8CckDHnq/NZ
-	 vwwY6uBXSW+KMCVpKYpm4Mtn6IISmxIy5HhlToTJ9gsV8wCP29n0NUmCF82W91+mQb
-	 xVd7VJQNc6abB4NCy94LYfxJmNc7yNXt5b4wTi0KbJt2q5PKFGvgRXkyq/0h//pPcP
-	 o46qxF8RR4yaiceZhdwYQM0n6elEUfOrkd85e5H0fl3pkaKhGv8M970YrC/QOQgaVa
-	 gfJpGyQBvJiPNwTZxrQIfkdPcFSCl/iysdpvN6x75+9diOKookyBlqnF+j7ydAWQgO
-	 tO8Hh78vwbbmA==
-Date: Mon, 10 Nov 2025 17:48:08 +0000
-From: Simon Horman <horms@kernel.org>
-To: Kai-Heng Feng <kaihengf@nvidia.com>
-Cc: irusskikh@marvell.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: aquantia: Add missing descriptor cache invalidation
- on ATL2
-Message-ID: <aRIlWAR1Px-OFKEr@horms.kernel.org>
-References: <20251107052052.42126-1-kaihengf@nvidia.com>
+	s=arc-20240116; t=1762796957; c=relaxed/simple;
+	bh=O98arH5WjcI5ZayKxsmOANfoxY47t5wDmB6i5QtbFzo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZETzqSYdUYRpKIQYDPodSdS0L2+VNQP3zfZRyQXNgxTuVGOkTSzockUg8YtwFIph4XdwUkJv7mZmCUIVdUPd4i8/oNFDD25KMn1jHJc36a19DdTe1GCREh9vpBRjzkIQ5XbKxRiyDG0TMTRo9ME0yEugsmP+4GE1XUIHJYZywdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nRaz1H4j; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-88058103dcfso23992096d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:49:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762796954; x=1763401754; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BPbi2NPPrBKl69IkN7kcBKOxfNw5kLfKkjmbVe2fGbs=;
+        b=nRaz1H4jWcNq5aIIMP1HzMyzpXUE547dlrLoh9EEQXJSuCzeEmLTrNGOqgOIyzgxxi
+         +4IxsSc9/xH0X92oJKKEHX5/Eva4+4NjRJcuZLk/Ah1PozRGH/9qgW1d58nsKqXSiEUZ
+         R94HC13GQTfmF+o3k64nrAJFhgB7tRETmKjcJaeIgJwdwLCdOwiuGl9fXTGmiDOlm8xq
+         W7zInIYwwqKhB2X/8sdIHYY4y4yVdtATJe3k3vIoBMisK84GJP9ei+GoZ/LqOWlyahr5
+         O/RHBC0rxI/wRA/C+Dzi/MLypGcHkUzdhmyHtv3V74PEYHPmHuQDIbmIjtwftXvbdENa
+         648Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762796954; x=1763401754;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BPbi2NPPrBKl69IkN7kcBKOxfNw5kLfKkjmbVe2fGbs=;
+        b=CMoupRqzgTgBJI0BC2aYQ90UkGKVZ2IMCBKAJK5U41htGF2g2DT8a2PbZcjn3JBM2m
+         0yVIgUkoXunoFeuDG7NhGydIBQq69SMy4EPmz+CzCL4/EVbkv0vZ9Z2x4HHDYE5J5EN5
+         lBTxOizRAp63YofA9Dodn3MngZd3qU9HM7QjjaGMs9QTVVvXbO5breIk5Jl/Ik7fhM66
+         qTtiQDMnGO5FRSYcGyVoS6rAZtpUbl9mCDtuqzar0NuRVqVDwKw/N9BLq/q6+x3vLGtm
+         tUCbeaJv9nKD9s8riGBMBT6Wht1Q5hDpyeRGZBPpksTMV6YF5ZOxijBL2JU26GMCRYnz
+         V0Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKHQZjoHi9HH8J4tu4bjUYuGJ3bJaBfFtx3nNvdoNFE4/DR9jJurYoBnBCOYWNH7SsoXjuga3gi1J4hNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ0i6UijCwpojmuetJQA4qCB77X0aU8fUwoJIokuShr7Ih4dIr
+	rjqe8JUXHfa/IjcFrvn6M3sFpK722ZavGinPPpzEi6e316oZJniMuswUxRaL+vREMJ61pJpWtVY
+	nzA4nYFTQysdNwZ6OEILNkep3owlpeokcXjbVI+Pq
+X-Gm-Gg: ASbGncsqNMJnLE+EyVqXi0qRAk3qhwBIWKDnNVu66ygKU1esHYyCpKje/e/IAyz5EKs
+	gp3If27LsKgylGsTM5HRUXr0Mjqp7O0c0dIuLOEwtbmqALYillA37Bx/YN6cuOpMLm/h9QLdlZO
+	0bKaOVENBn6mJnzArAhbxAsVNurb//81RlBiJvkKtjQKUIMc5vasUMTnuub0Ya3aZAIuh/fyAyR
+	u7LKQP6C6b0n77+Jfo7sszDb4hvNTxzQlscmYk4+i9e/uIXhf4l5JZei3ABNvrKjCMglCYu9mZt
+	Xz+j6T+eFukB0bLyzoy6G9lNMQ==
+X-Google-Smtp-Source: AGHT+IHaNRtCNWgUYc5RPhLYoD+nULNJ4nH9LNtSZkCbb+Nk0d7DtvBVzdaKV0/uL+kFEgmffI/ryLd+1MDzyV+BJT4=
+X-Received: by 2002:a05:6214:1cc2:b0:880:4bde:e0cb with SMTP id
+ 6a1803df08f44-882385de9demr131074376d6.29.1762796952867; Mon, 10 Nov 2025
+ 09:49:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107052052.42126-1-kaihengf@nvidia.com>
+References: <cover.1761763681.git.m.wieczorretman@pm.me> <0ca5d46e292e5074c119c7c58e6ec9901fb0ed73.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <0ca5d46e292e5074c119c7c58e6ec9901fb0ed73.1761763681.git.m.wieczorretman@pm.me>
+From: Alexander Potapenko <glider@google.com>
+Date: Mon, 10 Nov 2025 18:48:35 +0100
+X-Gm-Features: AWmQ_bkJUSMUoO8onDW_Kv00mrjnva_voIrMRMQdowErjlplIdY_Q4t-6BqV8ig
+Message-ID: <CAG_fn=W033hGM7_jnj0irwW0gc6McLw2nbhfZROWfieqKTxVdQ@mail.gmail.com>
+Subject: Re: [PATCH v6 14/18] x86: Minimal SLAB alignment
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, 
+	kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, 
+	ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, 
+	morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, 
+	baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, 
+	wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, 
+	fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, 
+	ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, 
+	brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, 
+	mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, 
+	thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, 
+	jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, 
+	mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, 
+	vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com, 
+	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, 
+	ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, 
+	maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, 
+	rppt@kernel.org, will@kernel.org, luto@kernel.org, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, 
+	llvm@lists.linux.dev, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 07, 2025 at 01:20:48PM +0800, Kai-Heng Feng wrote:
-> ATL2 hardware was missing descriptor cache invalidation in hw_stop(),
-> causing SMMU translation faults during device shutdown and module removal.
-> 
-> Commit 7a1bb49461b1 ("net: aquantia: fix potential IOMMU fault after
-> driver unbind") and commit ed4d81c4b3f2 ("net: aquantia: when cleaning
-> hw cache it should be toggled") fixed cache invalidation for ATL B0, but
-> ATL2 was left with only interrupt disabling. This allowed hardware to
-> write to cached descriptors after DMA memory was unmapped, triggering
-> SMMU faults.
-> 
-> Add shared aq_hw_invalidate_descriptor_cache() helper and use it in both
-> ATL B0 and ATL2 hw_stop() implementations for consistent behavior.
+> diff --git a/arch/x86/include/asm/cache.h b/arch/x86/include/asm/cache.h
+> index 69404eae9983..3232583b5487 100644
+> --- a/arch/x86/include/asm/cache.h
+> +++ b/arch/x86/include/asm/cache.h
+> @@ -21,4 +21,8 @@
+>  #endif
+>  #endif
+>
+> +#ifdef CONFIG_KASAN_SW_TAGS
+> +#define ARCH_SLAB_MINALIGN (1ULL << KASAN_SHADOW_SCALE_SHIFT)
 
-I think it would be useful to mention how this bug was found.
-And what sort of testing has been conducted: compilation only,
-exercised on real hardware, ...
-
-As a bug fix I think this should have a Fixes tag denoting
-the commit that introduced the problem. In this case, perhaps:
-
-Fixes: e54dcf4bba3e ("net: atlantic: basic A2 init/deinit hw_ops")
-
-The fixes tag should go immediately above your signed-off-by line,
-with no blank lines in between.
-
-> Signed-off-by: Kai-Heng Feng <kaihengf@nvidia.com>
-
-And lastly, for reference: as a fix for code present in the net tree, this
-should be targeted at that tree, which should be denoted in the Subject
-like this:
-
-Subject: [PATCH net] ...
-
-You can see more on process for Networking patches here:
-https://docs.kernel.org/process/maintainer-netdev.html
-
-...
+I don't think linux/linkage.h (the only header included here) defines
+KASAN_SHADOW_SCALE_SHIFT, does it?
 
