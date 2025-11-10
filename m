@@ -1,81 +1,231 @@
-Return-Path: <linux-kernel+bounces-893808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F05C486A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:48:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 968A2C48657
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3875D189049D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00A971884278
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249C62DE1E6;
-	Mon, 10 Nov 2025 17:48:05 +0000 (UTC)
-Received: from blackbird.sr71.net (blackbird.sr71.net [198.145.64.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407DF2DCC1C;
+	Mon, 10 Nov 2025 17:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="APWm8CP+"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CFB28643C;
-	Mon, 10 Nov 2025 17:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.145.64.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61B22C026D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762796884; cv=none; b=dsgoewsKc8og7P3PSWXSI+Tmnsxqq/qyUaGoC+sy15/eFEwosnu8Vtup2eFZodXvVtPxvmnrwkhvZZep/ICYUAe2C2ozR3y85Eu6MCH0/xHZIeebfO3b5p6VWXzn2GrmktIGSUFMcOWFZ7CxJmYkvP+wp2UczlbbnA/S/CjrNaE=
+	t=1762796580; cv=none; b=d7pi9QKjEOVRKPq0f2iIAZdMpgqxVpSztcGON5Q00gpaABaWANucn5XZzd8TO5Too7SWF3zvFJb6n8TwXv3zMc2JSdzulxLHex/FQ5DT9sIoPSExdbD9QTE1bd1oLFGZ18K9c4uhZNBAzkGiF4L+ymrI2X7G7v1t68CFllbd/Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762796884; c=relaxed/simple;
-	bh=4iJ0iHDZd+yoC6UHBTaQrxmaV6kxPQ/saCltDKoD8bM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=We/7UK97CSqQMWHN70UzmGFyLaLUCL10LaH1rmDfTbYqkbIbJCtuIWRuThTsoO27KIf71lnQMdyR01145bovIc4QHFGebS4Sccvxo5wUlFdueVTd1bWoaCKsBozZJ9aysuQZSh8RBlG+D0tk80pg8Fx4MSP+41pxSP2J5dhPmZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sr71.net; spf=pass smtp.mailfrom=sr71.net; arc=none smtp.client-ip=198.145.64.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sr71.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sr71.net
-Received: from [0.0.0.0] (unknown [134.134.139.75])
-	(Authenticated sender: dave)
-	by blackbird.sr71.net (Postfix) with ESMTPSA id E283D2019E;
-	Mon, 10 Nov 2025 09:41:55 -0800 (PST)
-Message-ID: <b9eb9f19-9b77-4ece-ac54-9e25a801c565@sr71.net>
-Date: Mon, 10 Nov 2025 09:41:54 -0800
+	s=arc-20240116; t=1762796580; c=relaxed/simple;
+	bh=1jUZUYtOVtlvHWAFniX5k1AQ7sW+PemaRKAUKppWEUQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SOiLynhyzOWyVDZK60MDbUhaq57VyLHEEhEa141XtkyXQx0jM8dKu0EpePXtufA1rV0iuUD7XSw74QP2HFKNEmSn+2394+PaUzgXmT+rmqbv3gqy065CkILp+CuTSRMfO3WTqK+Ap9aU559DTcxFPapo3I+0dsXj6yhXB+7jLRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=APWm8CP+; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640a3317b89so4999303a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:42:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1762796577; x=1763401377; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dUewd4yleLJA5JoGTJV3GbsdDnDLJGqt03O6urjLvaA=;
+        b=APWm8CP+ROuK9JraWpsJmgK1GfiEaPZowkjDlst+mroLWWAtMwyphwXCL5Oue3RYwM
+         fKE1tmuDTfKak8a2uZLOIrOjsremCBdbNl7MsUbOKNqI1sJ4nBXl9gnFA+iYU1JoSpxX
+         H0m2Pj0VmW2qbjEYRyP3AZK/mRFRmPNxChW+yqcwYIWeQYoekghRu6E0nDaW6qW/OXXr
+         JUple65wvQ+EWi0qMue5VABMkAGG7yZOqiI+ONOTQmyFXZwGQ3xRnlRSI7Hvdo/ifbde
+         Q9OnTLgAlYN9elOs/c1ZKmU4Xd14QoOn8AVNMgf9q7ZrqSHNUwKxBeTqzfkLn4yLHrk0
+         yn6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762796577; x=1763401377;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=dUewd4yleLJA5JoGTJV3GbsdDnDLJGqt03O6urjLvaA=;
+        b=nmzy5SN/FU8WVVRzBDvPitmG78VPROOON1vhf5f76yonRo9Dsu0sl8UMN01UBaMSK2
+         7i8bVjDPT0v1cJLFDddMN+GCF1pSg3GS/tnDadAqRFbeJg/2I0J6P7yCcK4UyJK6jXvS
+         vVYEtOm5//IYAOAhFXxXwpzq3sN/YZvEbMjlJ4yusOeqI8EjV7xcAwRHQ5iToRcqjq5v
+         tkJWZ7R32uvC92aLsPDsBnfBeRAMQrcPiNSfjT6m8oVX6ptmjZ4rJemuqb938wKi4XS4
+         95y2A1JyPB6gRLsQzoVkgOWolXJTg2iefioexwP5TgxEiGPU+YyDACaItypvapCjW0Ll
+         +4qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUd0wbMaT/4sUer5UFz6syYCtcxxdiwhZ20YYWBSyZVk2zGTephXju0JdFOjZRHt4U6O6SYfkIe9Fy4xVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvGUz5lleDBpF69C3okP7QAJY35SFAX7RrMPy8508G7EK0brHz
+	johh2wIKDwrKB1OtJHG7EHSGZZSvQR3onDH77hB8hv/rjpnBpUSjcK+kAcqH+zBU1oGtqB4Cy6O
+	T/oQPITdqcO/a1bLA59BZHEcAKqzZKhrM/VV+TEAeYA==
+X-Gm-Gg: ASbGncsedB/u6kiFT+rdYTRMoHM83LgdjO8dVH525/ikWnWEG1r8ZOOxVRHYrjbJOJW
+	O+Gd67irJTHqQ8pLolk066JuaLMazNPMQpyGrd2pfFZDHpdRhswtsPS7CfokJ849oXEL84Iiri7
+	6Kfu5C0mSLTCvjd0XLTFRoH6bIFMCGx60QLH9CqAGJNJP9wgpalHi0sD7q0lzw2Ls4kWEzcIcV9
+	ORIbn4jVJRNJmQYJsCCxiTYnLUKlctyXPBLhdSGKkRvpg/l3UcoqWVRkZWYCB+InqMB
+X-Google-Smtp-Source: AGHT+IGohd97iFSzusnKQDkeinSJTmpnCSTGsIETDXka805LYidOh0KbeB0Llp5c7t8ysAzDBzzykZsDEtrUy45tKnE=
+X-Received: by 2002:a05:6402:1ec5:b0:640:80cc:f08e with SMTP id
+ 4fb4d7f45d1cf-6415e83dbc4mr7456751a12.26.1762796576718; Mon, 10 Nov 2025
+ 09:42:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [v2] Documentation: Provide guidelines for tool-generated
- content
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Christian Brauner <brauner@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
- Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
- "workflows@vger.kernel.org" <workflows@vger.kernel.org>,
- "ksummit@lists.linux.dev" <ksummit@lists.linux.dev>,
- Steven Rostedt <rostedt@goodmis.org>, Dan Williams
- <dan.j.williams@intel.com>, Theodore Ts'o <tytso@mit.edu>,
- Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Kees Cook <kees@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>,
- Shuah Khan <shuah@kernel.org>
-References: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
- <653b4187-ec4f-4f5d-ae76-d37f46070cb4@suse.cz>
- <20251110-weiht-etablieren-39e7b63ef76d@brauner>
- <20251110172507.GA21641@pendragon.ideasonboard.com>
-From: Dave Hansen <dave@sr71.net>
-Content-Language: en-US
-In-Reply-To: <20251110172507.GA21641@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-9-pasha.tatashin@soleen.com> <mafs0ms4tajcs.fsf@kernel.org>
+In-Reply-To: <mafs0ms4tajcs.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 10 Nov 2025 12:42:20 -0500
+X-Gm-Features: AWmQ_bmosonxcvpRMVKb6ujiu2Wwb5WZcJ_Ml7LhP2hix7ibfaliD6vYbfTF0S4
+Message-ID: <CA+CK2bCWeqLmndDa8eg+iLrSBHg0XAvMr0mHeKSeH0Y=6F02kQ@mail.gmail.com>
+Subject: Re: [PATCH v5 08/22] liveupdate: luo_file: implement file systems callbacks
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: jasonmiu@google.com, graf@amazon.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
+	witu@nvidia.com, hughd@google.com, skhawaja@google.com, chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/10/25 09:25, Laurent Pinchart wrote:
->>>> + - Purely mechanical transformations like variable renaming
-> Mechanical transformations are often performed with Coccinelle. Given
-> how you mention that tool below, I wouldn't frame it as out of scope
-> here.
+On Mon, Nov 10, 2025 at 12:27=E2=80=AFPM Pratyush Yadav <pratyush@kernel.or=
+g> wrote:
+>
+> Hi Pasha,
+>
+> Caught a small bug during some of my testing.
+>
+> On Fri, Nov 07 2025, Pasha Tatashin wrote:
+>
+> > This patch implements the core mechanism for managing preserved
+> > files throughout the live update lifecycle. It provides the logic to
+> > invoke the file handler callbacks (preserve, unpreserve, freeze,
+> > unfreeze, retrieve, and finish) at the appropriate stages.
+> >
+> > During the reboot phase, luo_file_freeze() serializes the final
+> > metadata for each file (handler compatible string, token, and data
+> > handle) into a memory region preserved by KHO. In the new kernel,
+> > luo_file_deserialize() reconstructs the in-memory file list from this
+> > data, preparing the session for retrieval.
+> >
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> [...]
+> > +int luo_preserve_file(struct luo_session *session, u64 token, int fd)
+> > +{
+> > +     struct liveupdate_file_op_args args =3D {0};
+> > +     struct liveupdate_file_handler *fh;
+> > +     struct luo_file *luo_file;
+> > +     struct file *file;
+> > +     int err =3D -ENOENT;
+> > +
+> > +     lockdep_assert_held(&session->mutex);
+> > +
+> > +     if (luo_token_is_used(session, token))
+> > +             return -EEXIST;
+> > +
+> > +     file =3D fget(fd);
+> > +     if (!file)
+> > +             return -EBADF;
+> > +
+> > +     err =3D luo_session_alloc_files_mem(session);
+>
+> err gets set to 0 here...
+>
+> > +     if (err)
+> > +             goto  exit_err;
+> > +
+> > +     if (session->count =3D=3D LUO_FILE_MAX) {
+> > +             err =3D -ENOSPC;
+> > +             goto exit_err;
+> > +     }
+> > +
+> > +     list_for_each_entry(fh, &luo_file_handler_list, list) {
+> > +             if (fh->ops->can_preserve(fh, file)) {
+> > +                     err =3D 0;
+> > +                     break;
+> > +             }
+> > +     }
+>
+> ... say no file handler can preserve this file ...
+>
+> > +
+> > +     /* err is still -ENOENT if no handler was found */
+> > +     if (err)
+>
+> ... err is not ENOENT, but 0. So this function does not error but, but
+> goes ahead with fh =3D=3D luo_file_handler_list (since end of list). This
+> causes an out-of-bounds access. It eventually causes a kernel fault and
+> panic.
+>
+> You should drop the ENOENT at initialization time and set it right
+> before list_for_each_entry().
 
-The key here isn't which tool is used, it's how it's used.
+Right, thank you for reporting this. Should add it to self-tests,
+where we try to preserve FD that does not have a file handler.
 
-If you go use Coccinelle for pure variable renaming, you don't need to
-mention it. Same as if you use perl or vim to do a s/foo/bar/.
+Pasha
 
-That said, if you choose to attach your trivial variable renaming
-Coccinelle script, everyone will be better off for it.
+>
+> > +             goto exit_err;
+> > +
+> > +     luo_file =3D kzalloc(sizeof(*luo_file), GFP_KERNEL);
+> > +     if (!luo_file) {
+> > +             err =3D -ENOMEM;
+> > +             goto exit_err;
+> > +     }
+> > +
+> > +     luo_file->file =3D file;
+> > +     luo_file->fh =3D fh;
+> > +     luo_file->token =3D token;
+> > +     luo_file->retrieved =3D false;
+> > +     mutex_init(&luo_file->mutex);
+> > +
+> > +     args.handler =3D fh;
+> > +     args.session =3D (struct liveupdate_session *)session;
+> > +     args.file =3D file;
+> > +     err =3D fh->ops->preserve(&args);
+> > +     if (err) {
+> > +             mutex_destroy(&luo_file->mutex);
+> > +             kfree(luo_file);
+> > +             goto exit_err;
+> > +     } else {
+> > +             luo_file->serialized_data =3D args.serialized_data;
+> > +             list_add_tail(&luo_file->list, &session->files_list);
+> > +             session->count++;
+> > +     }
+> > +
+> > +     return 0;
+> > +
+> > +exit_err:
+> > +     fput(file);
+> > +     luo_session_free_files_mem(session);
+> > +
+> > +     return err;
+> > +}
+> [...]
+>
+> --
+> Regards,
+> Pratyush Yadav
 
