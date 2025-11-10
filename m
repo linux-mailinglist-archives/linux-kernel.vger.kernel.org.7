@@ -1,96 +1,77 @@
-Return-Path: <linux-kernel+bounces-892322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC3DC44D95
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:40:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2863AC44DAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:42:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 020693B0D81
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:40:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBD78188C56A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D282857CF;
-	Mon, 10 Nov 2025 03:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAF1286419;
+	Mon, 10 Nov 2025 03:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XgnCPLtC"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Zh9oVguS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD1228505E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CD926CE06;
+	Mon, 10 Nov 2025 03:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762746002; cv=none; b=q40xVqnPdjEzpBIIhNPR2ruHfzS7ZX79kKs19zvPovqhsApHxYPYPSr+sOOzjn6livEHAiVX7XKAuI7RJ0wfMDZfc6oeO4YlSmvOdbqldKG2pyKU2CjLAbOlGs3puZQohadzHljk8mhjp5D+mNn3UBvmNhwKAV/w4LsSlJmV6fM=
+	t=1762746109; cv=none; b=JtIaM8fTP/Xla7iE41iSW7pQKH/gMTAwQJ/d+yvQKY7Cy95DBOzH9BxiyBjlOIMkaq9HlVP22DdYejHHqyGo1J5IJA9UnsUHj1GTRrb9kE32n/+UrnXM3C73MKAD17qWKQntshCfERV5Xxn/I/25Tcy6qpTVVhKKrQuaWLWKb/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762746002; c=relaxed/simple;
-	bh=9fSVaG1uC1BiaaraAMlQRxKUAMgCSO5mz0dNmTqscUY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ehYlHMS/8eZxvdZErL2qGFQPlPEcKrErTstnkQpDZsWCWcdq7cwyOS0dINs2Nn3z+N2vyTclA4qw1ORAICyzSufiW7tGzCDBndXcqUpYAbkjOnlFqt3rZ7eMaVjwsfrYr9DPMAqRXH/XIaAQ/GM/v7t+YNO0Qqj4ibODvKpqG0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XgnCPLtC; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b98983bae8eso1273867a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 19:40:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762746000; x=1763350800; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kyHdinwOK0g1o44QvaD951QSRNsd3g9ZIX/MxVLDNPY=;
-        b=XgnCPLtCVigIljv8y+CSnw6JNOAamiWNdKO4Ol8P2mtKBOaVp8MBzm+EZ7i918jvKq
-         YTnHmQiph8wgKqHDTTUAwzEfwm1SBgbLSrrbvUWOA4xP2MDZVVY9wr2kIkom+bmEiOtQ
-         2UyJw+740wRIYAqnFYU3qKRhx4Bp+AG2G5lMt+/5Eec63hL9augL67Z90FZe5W63zgDb
-         mEagfuRbUmJM6OuGR74nMSV/pYVZ5skO/c01xSNl6x+wCHmrd3+L2dRt3z3kVQ7zLgBG
-         ZRAVpnbYrTC4pi3zPw1ClKtYj+43c/EvSaoINaKpV5wuDX5XS6L/BsDeQYjnk2S5pPiG
-         6+pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762746000; x=1763350800;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kyHdinwOK0g1o44QvaD951QSRNsd3g9ZIX/MxVLDNPY=;
-        b=F1rq99LM7RWvQbrShJKWl8a1J6Tz46hkYc8RIe0w8fjFYKGd2tt06UwTjBzzv1b6im
-         giHOQm0mhdyvJ0W4QGgc7mzOn5CwL7bsKDkikyJtAry5ev8/CAG1Hdp/tGCcsrTKfTIC
-         QiJ/o2X3FVzMlq9pvYqTiGkFTMu/h2i7W0wCRYWVhRuyH0WnXoEyDD26vGeGJsO5HLcc
-         qvSrr2a1Ojc8zPxbmycVTmjuQkDbAbUu5jyirIo1b14S8xhBEH8xqfBxQSe1lYkS/TxG
-         aYetGrgEm9ShibCY7OWQsg61K1lO+YjVmCq3X7HJwFG4mJVfXqQVtVli+q1JzhTiOXAb
-         FDxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4dTdh7CrPM3i0VDuIxikO3Jat0pfkzz1yCPKl9fFxrR+nU/gSPrs5g3Y/APV0tYuASMKkNr5cDMV7Xk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2sQwlTUTKmy7FakBGjAI2IvsQ997cWPrfYfd1o4bsAnRXdd1r
-	Njl91HtwDXrbVVJ2D2qf5wy0IaO5YA95yvf3pZkVd7j4Tlj9Hi8St/p3
-X-Gm-Gg: ASbGncujlhJT87RhUby2LBkwrLPB6pRw9MVVoBL2TAn9qAQRI17piTnT7wiFTMEqHBZ
-	u/Kbmb+RnQW/wf6tQfvb+yv2qv5nwfMno3ZoarXaV/UQJ3HFoKbCrfP62Q8+TS9T8C9YHW3Wkyv
-	hPovljypeEXmlBMukolGrqE+Dcfy/FOD7aAVq23k2i627bqNlDFnnhh3vK2ve0mBd9OoBn7DfrA
-	wb/lTjpIfNwQB2aVeR/H+JjnGwlSLFDEsoYS5uohLtkRwNtU9doGp9QkNhkGPGsjTfsFUenqriu
-	bKKNQ8eygvMXkmKV+eGv+2o+GrU+gY2sn+dPBKCdLg/m0J7Vx75F1l/kUJvRz+a7zhwpvANdbNV
-	2+TQLOjpY7/gEj/jYmP/KO0m6H+yH5GUl5/8lb7SFzjKLGlKrpdJP4UbQXsWBAT0lie533/mtRI
-	W3LkK3vVXI
-X-Google-Smtp-Source: AGHT+IFpEw2uaxPZOv2frrYrOOFzZim7qBgUpLz1BMg7jwJmYB9wgwu99U615UVe3F+N/pX5E14Y6Q==
-X-Received: by 2002:a17:903:1a0c:b0:297:fc22:3a9f with SMTP id d9443c01a7336-297fc223c26mr50766735ad.38.1762746000290;
-        Sun, 09 Nov 2025 19:40:00 -0800 (PST)
-Received: from wanpengli.. ([124.93.80.37])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2964f2a9716sm131118915ad.0.2025.11.09.19.39.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 19:39:59 -0800 (PST)
-From: Wanpeng Li <kernellwp@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 10/10] KVM: Relaxed boost as safety net
-Date: Mon, 10 Nov 2025 11:39:54 +0800
-Message-ID: <20251110033954.13524-1-kernellwp@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251110033232.12538-1-kernellwp@gmail.com>
-References: <20251110033232.12538-1-kernellwp@gmail.com>
+	s=arc-20240116; t=1762746109; c=relaxed/simple;
+	bh=PSLZKd9ah2HF9P9CJVgNLBGyh5cXlvJguICr7JIeukU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=niXbSI/GR/XXetQXcVQK3Q1PyImxxmM/pumto3QqzKqYKRPMBZLtIC2HVa0tYw8VtmxrWJ9eooGbIeOoSWOnPewUWj/pgDPj4a4CcwKDB0pbkzQ5ENM/JEeegkraqVc9gEK5R1IOb9O/A+u2v2g+u7c6+ziGwM1gUGZ3F+AXL80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Zh9oVguS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A9NvOkb1672507;
+	Mon, 10 Nov 2025 03:41:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=I//g5Oo3nlbrIPB4+qDk6xkOrk6YIL3gE0T
+	auqAqbS8=; b=Zh9oVguSG54bm/HY/m+7H/Db5xnKNifPzjvypljXYMVmwozHi0c
+	FnLBw6rCR59+NevrKuRvnaT6+8tcvuKnhM6N2ZOlYS86vJ2hvolyifI/QBlQQk10
+	VNicP3RVpBE/qanryD95NwgivLIb66NK8TnHxyzYbN+PftwbOZ7Vwh0Qxatk5qgW
+	XFseF01IwL6ZHUdpWVcwQAuieFvGLU29jlxDmckN0oouv0t/+ATRSTvD/1NUSysJ
+	BdvES81+0fCP5aFR9XNkPvdAlXvzk/Szgfu1TK7nBt4yxwUhBgmY/KSqxxTLKf1s
+	qIakjW0XIo4rtopKvSQX82ceaQ3QdWFtOAg==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a9xs7ba9a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 03:41:42 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AA3fetQ006185;
+	Mon, 10 Nov 2025 03:41:40 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a9xxkxkkw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 03:41:40 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5AA3feQB006180;
+	Mon, 10 Nov 2025 03:41:40 GMT
+Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 5AA3fedk006178
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 03:41:40 +0000
+Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
+	id 5C35023296; Mon, 10 Nov 2025 11:41:39 +0800 (CST)
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, quic_chejiang@quicinc.com,
+        quic_jiaymao@quicinc.com, quic_chezhou@quicinc.com,
+        Shuai Zhang <quic_shuaz@quicinc.com>
+Subject: [PATCH v4 0/1] Bluetooth: btusb: add default nvm file
+Date: Mon, 10 Nov 2025 11:41:33 +0800
+Message-Id: <20251110034134.1016537-1-quic_shuaz@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,97 +79,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: h7S-jt_uOT19lBuUCJELtzlGSGl1EHh_
+X-Proofpoint-ORIG-GUID: h7S-jt_uOT19lBuUCJELtzlGSGl1EHh_
+X-Authority-Analysis: v=2.4 cv=LtifC3dc c=1 sm=1 tr=0 ts=69115ef6 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=7ROp174qnhEf4X4c8SkA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDAyOCBTYWx0ZWRfXxIk99ctO7Azq
+ 0aJXJBXTWZmyQUqynS7Rdk3NWIGQYaos4RN0sd2dKvwBfHRfqYCXJmlQOBkBkofIcdnO/v034/x
+ 0NjCDle2YxwtgQEh+Y5PGwKdUxgVia31n7ug+e0RzL5fA6w5Jj6+08GSmCsKOhjV05+qu8PPKlF
+ AQl4yR3ZaoQlyKLk0g805kAQ2Yyfipv0Pa8es32gpNfxT9S0KYZYwMWUOVxK0FdQnrLq9bOPLF+
+ pJjV0ppXvpcXy1+7EpoFM3WzJYTfI3KfB/CNbEWy5oJWyWk8kMu0YrAK9m+L9WEntv5FiFtLBF0
+ jvhA3TolxpOl8ECBkWsgO9B4/RnHyIVoUwoQ1uVHS330eXhR7YAOh0Q7IOUI9XzLYmVnRpblXmx
+ 1S5z/PdvDPNnXdo+Ol8PqALsOs6eBQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_01,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 suspectscore=0 phishscore=0 lowpriorityscore=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 spamscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511100028
 
-From: Wanpeng Li <wanpengli@tencent.com>
+this patch adds support for default NVM file
 
-Add a minimal two-round fallback mechanism in kvm_vcpu_on_spin() to
-avoid pathological stalls when the first round finds no eligible
-target.
+Changes v4:
+- Remove email CC @stable.
+- Link to v3
+  https://lore.kernel.org/all/20251104112441.2667316-2-quic_shuaz@quicinc.com/
 
-Round 1 applies strict IPI-aware candidate selection (existing
-behavior). Round 2 provides a relaxed scan gated only by preempted
-state as a safety net, addressing cases where IPI context is missed or
-the runnable set is transient.
+Changes v3:
+- Remove rery, modify btusb_setup_qca_load_nvm, and add board_id to enable the use of the default NVM file.
+- Link to v2
+  https://lore.kernel.org/all/20251029022955.827475-2-quic_shuaz@quicinc.com/
 
-The second round is controlled by module parameter enable_relaxed_boost
-(bool, 0644, default on) to allow easy disablement by distributions if
-needed.
+Changes v2:
+- Add log for failed default nvm file request.
+- Added Cc: stable@vger.kernel.org to comply with stable kernel rules.
+- Link to v1:
+  https://lore.kernel.org/all/20251028120550.2225434-1-quic_shuaz@quicinc.com/
 
-Introduce the enable_relaxed_boost parameter, add a first_round flag,
-retry label, and reset of yielded counter. Gate the IPI-aware check in
-round 1 and use preempted-only gating in round 2. Keep churn minimal
-by reusing the same scan logic while preserving all existing
-heuristics, tracing, and bookkeeping.
+Shuai Zhang (1):
+  Bluetooth: btusb: add default nvm file
 
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- virt/kvm/kvm_main.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ drivers/bluetooth/btusb.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 9cf44b6b396d..b03be8d9ae4c 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -101,6 +101,9 @@ EXPORT_SYMBOL_FOR_KVM_INTERNAL(halt_poll_ns_shrink);
- static bool allow_unsafe_mappings;
- module_param(allow_unsafe_mappings, bool, 0444);
- 
-+static bool enable_relaxed_boost = true;
-+module_param(enable_relaxed_boost, bool, 0644);
-+
- /*
-  * Ordering of locks:
-  *
-@@ -4015,6 +4018,7 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
- 	struct kvm *kvm = me->kvm;
- 	struct kvm_vcpu *vcpu;
- 	int try = 3;
-+	bool first_round = true;
- 
- 	nr_vcpus = atomic_read(&kvm->online_vcpus);
- 	if (nr_vcpus < 2)
-@@ -4025,6 +4029,9 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
- 
- 	kvm_vcpu_set_in_spin_loop(me, true);
- 
-+retry:
-+	yielded = 0;
-+
- 	/*
- 	 * The current vCPU ("me") is spinning in kernel mode, i.e. is likely
- 	 * waiting for a resource to become available.  Attempt to yield to a
-@@ -4057,7 +4064,12 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
- 			continue;
- 
- 		/* IPI-aware candidate selection */
--		if (!kvm_vcpu_is_good_yield_candidate(me, vcpu, yield_to_kernel_mode))
-+		if (first_round &&
-+			!kvm_vcpu_is_good_yield_candidate(me, vcpu, yield_to_kernel_mode))
-+			continue;
-+
-+		/* Minimal preempted gate for second round */
-+		if (!first_round && !READ_ONCE(vcpu->preempted))
- 			continue;
- 
- 		if (!kvm_vcpu_eligible_for_directed_yield(vcpu))
-@@ -4071,6 +4083,16 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
- 			break;
- 		}
- 	}
-+
-+	/*
-+	 * Second round: relaxed boost as safety net, with preempted gate.
-+	 * Only execute when enabled and when the first round yielded nothing.
-+	 */
-+	if (enable_relaxed_boost && first_round && yielded <= 0) {
-+		first_round = false;
-+		goto retry;
-+	}
-+
- 	kvm_vcpu_set_in_spin_loop(me, false);
- 
- 	/* Ensure vcpu is not eligible during next spinloop */
 -- 
-2.43.0
+2.34.1
 
 
