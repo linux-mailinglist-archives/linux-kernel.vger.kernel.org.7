@@ -1,103 +1,95 @@
-Return-Path: <linux-kernel+bounces-893589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C688AC47C68
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:08:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7636CC47D24
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:14:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA751884316
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:00:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C87464F2117
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603E7275AFF;
-	Mon, 10 Nov 2025 15:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6572749CE;
+	Mon, 10 Nov 2025 15:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Ox6XwAOd"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="e0QCiNxE"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DCD26F2AB;
-	Mon, 10 Nov 2025 15:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E00A2571DD;
+	Mon, 10 Nov 2025 15:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790377; cv=none; b=TAwP6BCwZlR4BlxQy+WRDSI13yXifC62TZ9lcVvZ6pYOYZvLMQPUaRS4HVP71O8/JfvTVjgeLwKqGj5r5Z/cyuyttxGmUDgUpHZQuu0+VR3GtJI7AHjVIKpsPVSzPGNQZPhxMITfKZhS4GoTVGgGlE/ENKPcxLYzP4rNfrnUV4E=
+	t=1762790374; cv=none; b=HGG38xmizOlWS0BrCppIb+uZFAwEJukLaI+1wDv1A3EOLp5P9PVGW+Mz0eCPv6ZV80NA50YwOVW4z0yI40A8eN3BOxaJBz44I2kkvFW3p8HWyYD4ZMGGLOn8mQpbnTLG2qEx1GpIlRz1zziVMkw0vhE2O0HM0U/C7uLE0R8NIZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790377; c=relaxed/simple;
-	bh=aVjo65n8JMiOdMaIDnZuK3b1Ua/36ApF5ZunmCQlPsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sye40yQOkbv/ExVgTgFE+tRNMpYUYOcriv8kR/dZZ/DKAIAzDtv8K/EB59IuTQehtMWzbudsG84HZDG7u/9r8iXtNNYT/XqbMgI4AkfFTMkj1NsE2vAZGbEH3g3pcE5NrQcs+UzmPmDvRCWEw4uud7Fe3NyU7gCh+ZwyBrO+GmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Ox6XwAOd; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=u6EdUrtGOgPUXIy8ofOhog5nFCSibC5nE5AJRWXwH2A=; b=Ox6XwAOdURwqkScwgJ8DNjCjRY
-	uWzTHKNjxNlzagA73QE5DzDgE+I3YQNw8jLQXx8sVaoeAcu6ArCpjXL4xvTysJSHI2/p8mNzXXdsW
-	SKEl0LDR4mbTNZ1yaiDeTWJHVEv3JIRxKO2422IJC/vGyvhb8wT6G7K5J0YYMNcHRa88=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vIUIh-00DXM5-90; Mon, 10 Nov 2025 16:59:27 +0100
-Date: Mon, 10 Nov 2025 16:59:27 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-Message-ID: <638dac3d-ddcb-4d53-b06d-e0bd3d9077c3@lunn.ch>
-References: <20251104203315.85706-1-shenwei.wang@nxp.com>
- <20251104203315.85706-4-shenwei.wang@nxp.com>
- <9fd8ccd9-560a-43b4-a48d-f7a3eaa07eb1@lunn.ch>
- <PAXPR04MB9185C4A4B91F863CFD49718E89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <0be8c911-3c31-40da-b431-e5a24339c0f9@lunn.ch>
- <PAXPR04MB9185D9EBE8F46715FD114A2989C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <cadcbbc7-2024-413a-8e9b-bde5fa233df5@lunn.ch>
- <PAXPR04MB9185E2C3E50D365F64F10E3A89C3A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <0980eb35-b3fd-4383-af86-433769a4fd97@lunn.ch>
- <PAXPR04MB9185156672C7B334E717F11789CEA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1762790374; c=relaxed/simple;
+	bh=gZKxNyrE0sD4Ub1Vp21weYbIAfnS5QGtyu7iDsvgYQg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KNA5Q0YvCzt1ScQ4fNw1vLtvCjWB+JkS9H5EEzLMBf6IJsl8NfGjV4NBbP/QH+TgAVrchntvlTylYWVx/1//0naqgjCfOYMlrXlsFPji+8CQh9Yn3Q29ZxegwAain8Z0EnxZ/1xXlBHupfFKP45QU4KhXhqf3wLIvMVhDz/m7CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=e0QCiNxE; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 35ED040B69
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1762790372; bh=Hw+JoTlh+fN1+Vj5gYyi6iRz4VoCII4mPEe6jsXkwAM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=e0QCiNxEJiNsmAymdVvzafHbL4N3MlHG/hLKh2dZAeFddQV+VBU0pTJBiqdwrntWP
+	 GGCK/cDT9+FpOqaj4+oIAe2UflenT4JcnFjD/M3vYPdTCrhQb8a9JbCIBKjqIFEMjf
+	 EFdM2k5tlwDvmyEd7jOFDdmxb7J5g4TW+Pye+4ER5gyQeldu7JTMQ1jpi1ltrgfYqN
+	 Xz4D949JKTwHaVmsVt8hJ/lELpYQx+/3JUDxk1M/A9XMbcYv3B0Ne4EL04aN7GUYXg
+	 1g00E3bAner5Gj+nhgB8i7Gl03CNkqG6+fF33udgQgSVnAfn/INQfvRDlrBhMHvllw
+	 LzBkzQ5sl7cJw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 35ED040B69;
+	Mon, 10 Nov 2025 15:59:32 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Miguel Ojeda <ojeda@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas@fjasle.eu>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl
+ <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich
+ <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev
+Subject: Re: [PATCH 00/18] `syn` support
+In-Reply-To: <20251110095025.1475896-1-ojeda@kernel.org>
+References: <20251110095025.1475896-1-ojeda@kernel.org>
+Date: Mon, 10 Nov 2025 08:59:31 -0700
+Message-ID: <874ir1zxng.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB9185156672C7B334E717F11789CEA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+Content-Type: text/plain
 
-> The remote firmware does not need to know whether Linux is asleep. The GPIO is not used 
-> to wake Linux directly; instead, it serves as a wake-up source for the remote firmware if configured 
-> accordingly. Once the remote firmware is awake, it sends a notification message to Linux. This 
-> notification is the actual event that wakes Linux.
-> 
-> This works because there is always a physical interface connecting Linux and the remote firmware. 
-> On i.MX platforms, this interface is the MU block. When the remoteproc driver is running, the MU 
-> block is automatically configured as a wake-up source for Linux by default. As a result, the notification 
-> message can wake the Linux system if it is asleep.
+Miguel Ojeda <ojeda@kernel.org> writes:
 
-You need to add a lot more documentation to the specification to make
-this clear. As you said, the firmware and Linux have different
-sleep/wake life cycles. How does the firmware know it is safe to go to
-sleep, if it has no idea Linux is running or suspended?
+> This patch series introduces support for `syn` (and its dependencies).
+> Having such support allows to greatly simplify writing complex macros
+> such as `pin-init`.
 
-	Andrew
+Just in case I'm not the only ignorant person who didn't immediately
+know what "syn" is and why we might want 57,000 lines of it in the
+kernel... :)
+
+    Syn is a parsing library for parsing a stream of Rust tokens into a
+    syntax tree of Rust source code.
+
+    Currently this library is geared toward use in Rust procedural
+    macros, but contains some APIs that may be useful more generally
+
+https://docs.rs/syn/latest/syn/
+
+Thanks,
+
+jon
 
