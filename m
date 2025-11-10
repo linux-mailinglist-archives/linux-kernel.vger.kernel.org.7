@@ -1,81 +1,39 @@
-Return-Path: <linux-kernel+bounces-893233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB803C46DDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:24:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1120C46E1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:26:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E103B69DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:23:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABFD83BBEEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304EF311C19;
-	Mon, 10 Nov 2025 13:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RuLC3IaV"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF705311963
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4ED30506A;
+	Mon, 10 Nov 2025 13:25:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF3523C516;
+	Mon, 10 Nov 2025 13:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762781001; cv=none; b=f1/j4Ol/Y/jSnoSP6R5diRKlIqNOHtHl6y4W2tmKtxPtpVrvHVAycQGFr2NQowmPErom4IjeMnYOTDSKebFbAHbY+psMaF7cKb26fl9dZ8swr89gNMm7G1v6OpssunPEQSsIvMyBPzDs+J5GxzBb3YxVlwFYejbkQISjPjGak9U=
+	t=1762781110; cv=none; b=iL1w0wl5/6T+Iq3jumm8snHUpYbydPCUxgcENSyRJPuQcMjPGWF/BTRGCXv9IMgRgRDirjtLK4Cc8G/CVH6M+gLGMyj2evX7p/maRssyud0QSCeumx5ar1CXqTxqH6EYSvCmGLiAqB3ozwi7FY8+4zFf92i0I8xGmu2ITEtKtNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762781001; c=relaxed/simple;
-	bh=MYr02ZEBmHq0uhIy/4dPDK1/fPU1Kg9EJNPjNarkYCE=;
+	s=arc-20240116; t=1762781110; c=relaxed/simple;
+	bh=KgVBkMXWtTRD5CdPecRsv2QlZ+DcPeksW4yC29jCPuc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uqHHHue0GMQpriUXE+7qo2YOPvSp0paU/HwcFY2t1FGp2TATKXL3fJWVqCdYySVlK8Lm6Mflh+S65Fp3d64FESDD+kqCZ3E+MQ0gouKfDpK60pldwptJkPhMfDM7Zr0DK34hdRA/MTMa+amwr8eJNghsxQVj0dGMIk6xhBLwupk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RuLC3IaV; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-641977dc00fso1218194a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:23:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762780997; x=1763385797; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eX8cXaP/IKh8VGGvFDRWHiVF+8A64KKj3ky2qGHDfis=;
-        b=RuLC3IaVTFNTUQc2EwPiv6zaSgjdyIKtAqyZr+mveZ9a5YtOD6UJllbf9qNdarRQ9h
-         KSeFnYpKNLHZiD6lTKO6xbz0EUgDX1OJ9cPLs9rvKpEJGo5ZxOOFeaBbqzsAnCcz4B+L
-         c6XRWFjpHWfp3pesXF5HcV0nDktiVcPjnRCAC80koSKcYGVhfnIR2vBUAMrQc9oiuAMx
-         YTtXngXxbom562wS7l5DpQz33il2tPLu8rlepvXjFlzKTTingF5FIyme/131B2mXQu26
-         5Mck6HVs8lrAuJ0bamNgfOkv5IKugv/cu3Dav4EEqdqP/9I6YUP8bY43IdLsV0e/ZzJf
-         O1WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762780997; x=1763385797;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eX8cXaP/IKh8VGGvFDRWHiVF+8A64KKj3ky2qGHDfis=;
-        b=jH7FvybtfbjJ/3br+k7FZrAHLSv/tpOMPLsVqlzVh7fd4GoicmOp6D5NM2/Iyo9HO7
-         LK8yLQjepa0Ti/IyIx7bZ4XD/UEtXB11wVTbpX6RN+Sdua9TZmLh0hoRNPvyMMOWUWpk
-         7ApDGaHL7MmDaIEeqK4eHDfaqxXRxjS3Xe1Mpty/1OTqtEpLc5VgBT4B5ZtMI5Lp1fFM
-         jHO7wKO1AMKmz+3rxwnQP1PJygAVJxvcqu4SFF/WwtWBSjGetZjW5xiLJiLT49NT1aqp
-         O8So6/djpbPd6HAVW1pTJ6xAXp7C41OUS4HMvmKdrztXkn8bChZoRu9b+nztqlJFPcFx
-         g0HA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8F7JoecwIkAtGiwjBcZjqhRQ+4w8VUbeqS0BRwoAwWAqLe7lBo9oF/Nuz5UEGwAwoIFxRwkwXL1xIZHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6k9aNI/tbnoWLL6xisGF4rTiByWM9u9Y8Qrj9L9y9l7C6hKhQ
-	pZUw8h3OTzXsMc8nd6t8tqZ6pLFwv6V946aiNOhP6Nv5j3D3IUDVsvZsBL8RqQ+eyJ4=
-X-Gm-Gg: ASbGncvftmEvU2LY/hqUhRYE8Uu+WUgwEFv1lI16p2NQMJ03PHzsWtwb1FreEMp4gss
-	UFLh73InCD6ezjcDIkW3N22goA7rWh6RVPvV6RA1eo+iraGpxYYEXvU9hJ+zhA7NU0dGmcjdRzr
-	VgAkafvUFfl7/ZhIaSACMKT85gsikHtOL0aD+RoUnOru9JU81r/kY2LAeVlvnWmcSvAnU+wv/8P
-	yYBBRxshnbIiOijBALsBXXW74Eo5Wm+W6dgb1Zy3HoQ8QSCPWCocbOwwdT8tMwaC4e3qZKqwjsm
-	mQVY+P/dRPDMuHaaRJAoMQ0xogF80gPd4dRZ8qjJOUm3FURQw3bCQNvMcyAO4apHNeYi2MFXeq9
-	bxILmleBbS8OtvwhR7lrb5+mvGCAW6DSPbjORlswW0FfT5TRBmKqfD9Ef3mfLVt/ygT+uSeNYIu
-	v95r5sw43S8MseDDGUc/3+IyGnhMsI1nkCgr+A7OHb54c=
-X-Google-Smtp-Source: AGHT+IEUjJOmZes5x9oG6eap4HMLLuDUBze6Ph1eKOXxCDMcrtDYaszjSgs/iHIicGpw340vcMk2FA==
-X-Received: by 2002:a05:6402:2755:b0:641:8137:e1c8 with SMTP id 4fb4d7f45d1cf-6418137ed28mr4140452a12.34.1762780996736;
-        Mon, 10 Nov 2025 05:23:16 -0800 (PST)
-Received: from ?IPV6:2001:a61:131d:c701:d281:81d3:7d40:d3c6? ([2001:a61:131d:c701:d281:81d3:7d40:d3c6])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f862697sm11360513a12.25.2025.11.10.05.23.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 05:23:16 -0800 (PST)
-Message-ID: <eb0e0fda-2292-4759-89e7-66e590c4ca83@suse.com>
-Date: Mon, 10 Nov 2025 14:23:15 +0100
+	 In-Reply-To:Content-Type; b=XvH4TAn3oRpOMrqhr3h/nvYt6kVKYouAbm6Xcmx444/nvH/35wxVnt7R3bvzDMPc3ylwWgsn3iGE+Kwi/fYiG3FoZ7t4yFfpIVMx09tY2QeLUPYOFRk1Y1J2BVNQPyLM8ieJ00yCeqLywJcQfkbON40rBIhEh+aYk5aWTE6Yk98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5247497;
+	Mon, 10 Nov 2025 05:24:58 -0800 (PST)
+Received: from [10.164.136.34] (Mac.blr.arm.com [10.164.136.34])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E21ED3F63F;
+	Mon, 10 Nov 2025 05:25:00 -0800 (PST)
+Message-ID: <3f5f8a48-fa3b-4985-95e1-dd0ac21b5dcc@arm.com>
+Date: Mon, 10 Nov 2025 18:54:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,97 +41,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] usb: uas: fix urb unmapping issue when the uas device
- is remove during ongoing data transfer
-To: guhuinan <guhuinan@xiaomi.com>, Oliver Neukum <oneukum@suse.com>,
- Alan Stern <stern@rowland.harvard.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-scsi@vger.kernel.org,
- usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
- Yu Chen <chenyu45@xiaomi.com>, Michal Pecio <michal.pecio@gmail.com>
-References: <20251104061608.1336-1-guhuinan@xiaomi.com>
+Subject: Re: [PATCH 1/2] mm/khugepaged: do synchronous writeback for
+ MADV_COLLAPSE
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Shivank Garg <shivankg@amd.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Zach O'Keefe <zokeefe@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ Branden Moore <Branden.Moore@amd.com>
+References: <20251110113254.77822-1-shivankg@amd.com>
+ <f21b37bb-7a2b-412b-be76-e8968b4c375d@lucifer.local>
 Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20251104061608.1336-1-guhuinan@xiaomi.com>
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <f21b37bb-7a2b-412b-be76-e8968b4c375d@lucifer.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 04.11.25 07:16, guhuinan wrote:
-> From: Owen Gu <guhuinan@xiaomi.com>
-> 
-> When a UAS device is unplugged during data transfer, there is
-> a probability of a system panic occurring. The root cause is
-> an access to an invalid memory address during URB callback handling.
-> Specifically, this happens when the dma_direct_unmap_sg() function
-> is called within the usb_hcd_unmap_urb_for_dma() interface, but the
-> sg->dma_address field is 0 and the sg data structure has already been
-> freed.
-> 
-> The SCSI driver sends transfer commands by invoking uas_queuecommand_lck()
-> in uas.c, using the uas_submit_urbs() function to submit requests to USB.
-> Within the uas_submit_urbs() implementation, three URBs (sense_urb,
-> data_urb, and cmd_urb) are sequentially submitted. Device removal may
-> occur at any point during uas_submit_urbs execution, which may result
-> in URB submission failure. However, some URBs might have been successfully
-> submitted before the failure, and uas_submit_urbs will return the -ENODEV
-> error code in this case. The current error handling directly calls
-> scsi_done(). In the SCSI driver, this eventually triggers scsi_complete()
-> to invoke scsi_end_request() for releasing the sgtable. The successfully
-> submitted URBs, when being unlinked to giveback, call
-> usb_hcd_unmap_urb_for_dma() in hcd.c, leading to exceptions during sg
-> unmapping operations since the sg data structure has already been freed.
-> 
-> This patch modifies the error condition check in the uas_submit_urbs()
-> function. When a UAS device is removed but one or more URBs have already
-> been successfully submitted to USB, it avoids immediately invoking
-> scsi_done() and save the cmnd to devinfo->cmnd array. If the successfully
-> submitted URBs is completed before devinfo->resetting being set, then
-> the scsi_done() function will be called within uas_try_complete() after
-> all pending URB operations are finalized. Otherwise, the scsi_done()
-> function will be called within uas_zap_pending(), which is executed after
-> usb_kill_anchored_urbs().
-> 
-> The error handling only takes effect when uas_queuecommand_lck() calls
-> uas_submit_urbs() and returns the error value -ENODEV . In this case,
-> the device is disconnected, and the flow proceeds to uas_disconnect(),
-> where uas_zap_pending() is invoked to call uas_try_complete().
-> 
-> Signed-off-by: Yu Chen <chenyu45@xiaomi.com>
-> Signed-off-by: Owen Gu <guhuinan@xiaomi.com>
-Acked-by: Oliver Neukum <oneukum@suse.com>> ---
-> v3: Add some commit message.
-> v2: Upon uas_submit_urbs() returning -ENODEV despite successful URB
-> submission, the cmnd is added to the devinfo->cmnd array before
-> exiting uas_queuecommand_lck().
-> https://lore.kernel.org/linux-usb/20251015153157.11870-1-guhuinan@xiaomi.com/
-> v1: https://lore.kernel.org/linux-usb/20250930045309.21588-1-guhuinan@xiaomi.com/
-> ---
-> ---
->   drivers/usb/storage/uas.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
-> index 4ed0dc19afe0..45b01df364f7 100644
-> --- a/drivers/usb/storage/uas.c
-> +++ b/drivers/usb/storage/uas.c
-> @@ -698,6 +698,10 @@ static int uas_queuecommand_lck(struct scsi_cmnd *cmnd)
->   	 * of queueing, no matter how fatal the error
->   	 */
->   	if (err == -ENODEV) {
-> +		if (cmdinfo->state & (COMMAND_INFLIGHT | DATA_IN_URB_INFLIGHT |
-> +				DATA_OUT_URB_INFLIGHT))
-> +			goto out;
-> +
->   		set_host_byte(cmnd, DID_NO_CONNECT);
->   		scsi_done(cmnd);
->   		goto zombie;
-> @@ -711,6 +715,7 @@ static int uas_queuecommand_lck(struct scsi_cmnd *cmnd)
->   		uas_add_work(cmnd);
->   	}
->   
-> +out:
->   	devinfo->cmnd[idx] = cmnd;
->   zombie:
->   	spin_unlock_irqrestore(&devinfo->lock, flags);
 
+On 10/11/25 5:31 pm, Lorenzo Stoakes wrote:
+> On Mon, Nov 10, 2025 at 11:32:53AM +0000, Shivank Garg wrote:
+>> When MADV_COLLAPSE is called on file-backed mappings (e.g., executable
+>> text sections), the pages may still be dirty from recent writes. The
+>> current code triggers an async flush via filemap_flush() and returns
+>> SCAN_FAIL, requiring userspace to retry the operation.
+>>
+>> This is problematic for userspace that wants to collapse text pages into
+>> THPs to reduce ITLB pressure. The first madvise() call always fails with
+>> EINVAL, and only subsequent calls succeed after writeback completes.
+>>
+>> For direct MADV_COLLAPSE calls (!cc->is_khugepaged), perform a synchronous
+>> writeback using filemap_write_and_wait_range() before scanning the folios.
+>> This ensures that folios are clean on the first attempt.
+>>
+>> Reported-by: Branden Moore <Branden.Moore@amd.com>
+>> Closes: https://lore.kernel.org/all/4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com
+>> Fixes: 34488399fa08 ("mm/madvise: add file and shmem support to MADV_COLLAPSE")
+>> Suggested-by: David Hildenbrand <david@redhat.com>
+>> Signed-off-by: Shivank Garg <shivankg@amd.com>
+>> ---
+>> Applies cleanly on:
+>> 6.18-rc5
+>> mm-stable:e9a6fb0bc
+> Please base on mm-unstable. mm-stable is usually out of date until very close to
+> merge window.
+>
+>>
+>>   mm/khugepaged.c | 17 +++++++++++++++++
+>>   1 file changed, 17 insertions(+)
+>>
+>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> index abe54f0043c7..d08ed6eb9ce1 100644
+>> --- a/mm/khugepaged.c
+>> +++ b/mm/khugepaged.c
+>> @@ -21,6 +21,7 @@
+>>   #include <linux/shmem_fs.h>
+>>   #include <linux/dax.h>
+>>   #include <linux/ksm.h>
+>> +#include <linux/backing-dev.h>
+>>
+>>   #include <asm/tlb.h>
+>>   #include <asm/pgalloc.h>
+>> @@ -1845,6 +1846,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+>>   	struct page *dst;
+>>   	struct folio *folio, *tmp, *new_folio;
+>>   	pgoff_t index = 0, end = start + HPAGE_PMD_NR;
+>> +	loff_t range_start, range_end;
+>>   	LIST_HEAD(pagelist);
+>>   	XA_STATE_ORDER(xas, &mapping->i_pages, start, HPAGE_PMD_ORDER);
+>>   	int nr_none = 0, result = SCAN_SUCCEED;
+>> @@ -1853,6 +1855,21 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+>>   	VM_BUG_ON(!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && !is_shmem);
+>>   	VM_BUG_ON(start & (HPAGE_PMD_NR - 1));
+>>
+>> +	/*
+>> +	 * For MADV_COLLAPSE on regular files, do a synchronous writeback
+>> +	 * to ensure dirty folios are flushed before we attempt collapse.
+>> +	 * This is a best-effort approach to avoid failing on the first
+>> +	 * attempt when freshly-written executable text is still dirty.
+>> +	 */
+>> +	if (!is_shmem && cc && !cc->is_khugepaged && mapping_can_writeback(mapping)) {
+>> +		range_start = (loff_t)start << PAGE_SHIFT;
+>> +		range_end = ((loff_t)end << PAGE_SHIFT) - 1;
+>> +		if (filemap_write_and_wait_range(mapping, range_start, range_end)) {
+>> +			result = SCAN_FAIL;
+>> +			goto out;
+>> +		}
+>> +	}
+> I feel this is the wrong level of abstraction.
+>
+> We explicitly invoke this oth from khugepaged and madvise(..., MADV_COLLAPSE):
+>
+>
+> khugepaged_scan_mm_slot() / madvise_collapse()
+> -> hpage_collapse_scan_file()
+> -> collapse_file()
+>
+> ofc you are addressing this with the !cc->is_khugepaged, but feels like we'd be
+> better off just doing it in madvise_collapse().
+
+I suppose the common case is that writeback is not needed, and I don't know what
+is the overhead of filemap_write_and_wait_range() in that case, but your
+suggestion will force that unconditional overhead and skip all the early exits
+possible in hpage_collapse_scan_file()?
+
+> I wonder also if doing I/O without getting the mmap lock again and revalidating
+> is wise, as the state of things might have changed significantly.
+>
+> So maybe need a hugepage_vma_revalidate() as well?
+
+The file collapse path (apart from collapse_pte_mapped_thp) is solely concerned
+about doing the collapse in the page cache, for which information about the mm or
+the vma is not needed, that is why no locking is required. The get_file() in
+khugepaged_scan_mm_slot() seems to be serving the same function as maybe_unlock_mmap_for_io().
+So I don't think this is needed?
+
+>
+>
+>> +
+>>   	result = alloc_charge_folio(&new_folio, mm, cc);
+>>   	if (result != SCAN_SUCCEED)
+>>   		goto out;
+>>
+>> base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
+>> --
+>> 2.43.0
+>>
+> Thanks, Lorenzo
 
