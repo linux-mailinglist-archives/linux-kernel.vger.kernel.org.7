@@ -1,175 +1,167 @@
-Return-Path: <linux-kernel+bounces-893854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70037C4883B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:19:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242B1C4884A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA483AE230
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:19:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C26733AE2E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE338320A0E;
-	Mon, 10 Nov 2025 18:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ejwAqVOX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A92932A3FE;
+	Mon, 10 Nov 2025 18:19:34 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D88330EF62
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 18:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91F332939E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 18:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762798761; cv=none; b=mf9Zsshrl1zaGVOVM69kFDreebHS2fh2XWhEc6sfShbiIZCPlfizhOixocMOopwEeKSVKL4D/MoOCspsI6nUVmv/vTJE3quSNIo5VVXFHt+83i6REL8jguWnrRGrUBbBkIgED07aIOxLUz0xdzgWc0MRvYEtH/To3Asz/Xf8t6g=
+	t=1762798773; cv=none; b=qqRj/39Z0w8s4KXI7GUZZd2hnyN/DEbsQc6HC5yLcvn38XzAmbqpDPggv1LGTHAf4ECkPVKZPepl4ibyEkg9BYq71cDNYyl4mMA6mVshh2FDoJpdNBNNLviZgtROvYAoFUjhfsSjBk9a6Dq7K4yCOv1kxskFcUN0YmFXDysAh5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762798761; c=relaxed/simple;
-	bh=8SlPamZJejxs8K/p57gDVjByc++zwz9KkU9dzXwCCOo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dvHsqPz4VRfdpOQHRk30z4t22t0mpMNFYxtXtr9PolciAXElNXyY2HAIvhMDcHVLsq2GkDLyj7q1T5rHXcp1aKq5YewKmg94RsrnauUizdpGG74oAtKGSmpbJ/bM1wOX83iHIYh5tgUy8PrlLiRO4gwf1tjzcqjtCcgeYDWfets=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ejwAqVOX; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762798759; x=1794334759;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=8SlPamZJejxs8K/p57gDVjByc++zwz9KkU9dzXwCCOo=;
-  b=ejwAqVOXhAEJqHemKftrP3GxGBrM9Nb0GEBydeeDjVBvy4ZUpo8Nt8H7
-   I5tHBNAqbq97qlqMhlcHtdwopqcGlbLKrfmkvvuqTScsujhhHD+HMD2Sp
-   nnLvRlQwBMbdUl8V/9hJPJEbs25tI4Fy4m2eXH8kvpKJjTtOPCeT/ge8w
-   SXzCebNNKO0kEGGJHGtJKieb8rsMXU7T6TSdIW7koQ5xMMY19yg8rLWl6
-   YGULbXm/VB55jROmt+MVTQWeH18Lp6+AMu4+GIpCkX0YzZKGwfPSRkAyx
-   Rs+vV1rNA8jUfYiNEAsucfskUO1kDOU4lMOSf+PAqBt1e99HByYQIF4XC
-   A==;
-X-CSE-ConnectionGUID: G6VI/g9qRi+HRr31Rgqd6w==
-X-CSE-MsgGUID: +v7SpQHCSS2GPD6x7rd9xg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="68497487"
-X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
-   d="scan'208";a="68497487"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 10:19:19 -0800
-X-CSE-ConnectionGUID: YLVQ2DaOT3W6AZX5iu94Xg==
-X-CSE-MsgGUID: g6rSbShESvOSQMy/Zk8lSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
-   d="scan'208";a="193926148"
-Received: from unknown (HELO [10.241.243.18]) ([10.241.243.18])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 10:19:18 -0800
-Message-ID: <8e47ec72494ba67a4da3c86aeebfb80908d98f40.camel@linux.intel.com>
-Subject: Re: [PATCH v3] sched/fair: Skip sched_balance_running cmpxchg when
- balance is not due
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Shrikanth Hegde
-	 <sshegde@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Chen Yu <yu.c.chen@intel.com>, Doug
- Nelson	 <doug.nelson@intel.com>, Mohini Narkhede
- <mohini.narkhede@intel.com>, 	linux-kernel@vger.kernel.org, Vincent Guittot
- <vincent.guittot@linaro.org>
-Date: Mon, 10 Nov 2025 10:19:18 -0800
-In-Reply-To: <df068896-82f9-458d-8fff-5a2f654e8ffd@amd.com>
-References: 
-	<52fcd1e8582a6b014a70f0ce7795ce0d88cd63a8.1762470554.git.tim.c.chen@linux.intel.com>
-	 <1d6c22aa-c882-4833-b0be-a3999d684885@amd.com>
-	 <2edf1a85-4736-4e8b-bfc9-003dd1f34be7@linux.ibm.com>
-	 <df068896-82f9-458d-8fff-5a2f654e8ffd@amd.com>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQENBE6N6zwBCADFoM9QBP6fLqfYine5oPRtaUK2xQavcYT34CBnjTlhbvEVMTPlNNzE5
- v04Kagcvg5wYcGwr3gO8PcEKieftO+XrzAmR1t3PKxlMT1bsQdTOhKeziZxh23N+kmA7sO/jnu/X2
- AnfSBBw89VGLN5fw9DpjvU4681lTCjcMgY9KuqaC/6sMbAp8uzdlue7KEl3/D3mzsSl85S9Mk8KTL
- MLb01ILVisM6z4Ns/X0BajqdD0IEQ8vLdHODHuDMwV3veAfnK5G7zPYbQUsK4+te32ruooQFWd/iq
- Rf815j6/sFXNVP/GY4EWT08UB129Kzcxgj2TEixe675Nr/hKTUVKM/NrABEBAAGJAS4EIAECABgFA
- k6ONYoRHQFLZXkgaXMgcmVwbGFjZWQACgkQHH3vaoxLv2UmbAgAsqa+EKk2yrDc1dEXbZBBGeCiVP
- XkP7iajI/FiMVZHFQpme4vpntWhg0BIKnF0OSyv0wgn3wzBWx0Zh3cve/PICIj268QvXkb0ykVcIo
- RnWwBeavO4dd304Mzhz5fBzJwjYx06oabgUmeGawVCEq7UfXy+PsdQdoTabsuD1jq0MbOL/4sB6CZ
- c4V2mQbW4+Js670/sAZSMj0SQzK9CQyQdg6Wivz8GgTBjWwWsfMt4g2u0s6rtBo8NUZG/yw6fNdao
- DaT/OCHuBopGmsmFXInigwOXsjyp15Yqs/de3S2Nu5NdjJUwmN1Qd1bXEc/ItvnrFB0RgoNt2gzf2
- 5aPifLabQlVGltIENoZW4gPHRpbS5jLmNoZW5AbGludXguaW50ZWwuY29tPokBOAQTAQIAIgUCTo3
- rPAIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQHH3vaoxLv2XYdAf8DgRO4eIAtWZy4zLv
- 0EZHWiJ35GYAQ5fPFWBoNURE0+vICrvLyfCKTlUTFxFxTiAWHUO7JM+uBHQSJVsE+ERmTPsiUO1m7
- SxZakGy9U2WOEiWMZMRp7HZE8vPUY5AM1OD0b38WBeUD3FPx5WRlQ0z6izF9aIHxoQhci0/WtmGLO
- Pw3HUlCy1c4DDl6cInpy/JqUPcYlvsp+bWbdm7R5b33WW2CNVVr1eLj+1UP0Iow4jlLzNLW+jOpiv
- LDs3G/bNC1Uu/SAzTvbaDBRRO9ToX5rlg3Zi8PmOUXWzEfO6N+L1gFCAdYEB4oSOghSbk2xCC4DRl
- UTlYoTJCRsjusXEy4ZkCDQROjjboARAAtXPJWkNkK3s22BXrcK8w9L/Kzqmp4+V9Y5MkkK94Zv66l
- XAybnXH3UjL9ATQgo7dnaHxcVX0S9BvHkEeKqEoMwxg86Bb2tzY0yf9+E5SvTDKLi2O1+cd7F3Wba
- 1eM4Shr90bdqLHwEXR90A6E1B7o4UMZXD5O3MI013uKN2hyBW3CAVJsYaj2s9wDH3Qqm4Xe7lnvTA
- GV+zPb5Oj26MjuD4GUQLOZVkaA+GX0TrUlYl+PShJDuwQwpWnFbDgyE6YmlrWVQ8ZGFF/w/TsRgJM
- ZqqwsWccWRw0KLNUp0tPGig9ECE5vy1kLcMdctD+BhjF0ZSAEBOKyuvQQ780miweOaaTsADu5MPGk
- d3rv7FvKdNencd+G1BRU8GyCyRb2s6b0SJnY5mRnE3L0XfEIJoTVeSDchsLXwPLJy+Fdd2mTWQPXl
- nforgfKmX6BYsgHhzVsy1/zKIvIQey8RbhBp728WAckUvN47MYx9gXePW04lzrAGP2Mho+oJfCpI0
- myjpI9CEctvJy4rBXRgb4HkK72i2gNOlXsabZqy46dULcnrMOsyCXj6B1CJiZbYz4xb8n5LiD31SA
- fO5LpKQe/G4UkQOZgt+uS7C0Zfp61+0mrhKPG+zF9Km1vaYNH8LIsggitIqE05uCFi9sIgwez3oiU
- rFYgTkTSqMQNPdweNgVhSUAEQEAAbQ0VGltIENoZW4gKHdvcmsgcmVsYXRlZCkgPHRpbS5jLmNoZW
- 5AbGludXguaW50ZWwuY29tPokCVQQTAQgAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQT
- RofI2lb24ozcpAhyiZ7WKota4SQUCYjOVvwUJF2fF1wAKCRCiZ7WKota4SeetD/4hztE+L/Z6oqIY
- lJJGgS9gjV7c08YH/jOsiX99yEmZC/BApyEpqCIs+RUYl12hwVUJc++sOm/p3d31iXvgddXGYxim0
- 0+DIhIu6sJaDzohXRm8vuB/+M/Hulv+hTjSTLreAZ9w9eYyqffre5AlEk/hczLIsAsYRsqyYZgjfX
- Lk5JN0L7ixsoDRQ5syZaY11zvo3LZJX9lTw0VPWlGeCxbjpoQK91CRXe9dx/xH/F/9F203ww3Ggt4
- VlV6ZNdl14YWGfhsiJU2rbeJ930sUDbMPJqV60aitI93LickNG8TOLG5QbN9FzrOkMyWcWW7FoXwT
- zxRYNcMqNVQbWjRMqUnN6PXCIvutFLjLF6FBe1jpk7ITlkS1FvA2rcDroRTU/FZRnM1k0K4GYYYPj
- 11Zt3ZBcPoI0J3Jz6P5h6fJioqlhvZiaNhYneMmfvZAWJ0yv+2c5tp2aBmKsjmnWecqvHL5r/bXez
- iKRdcWyXqrEEj6OaJr3S4C0MIgGLteARvbMH+3tNTDIqFuyqdzHLKwEHuvKxHzYFyV7I5ZEQ2HGH5
- ZRZ2lRpVjSIlnD4L1PS6Bes+ALDrWqksbEuuk+ixFKKFyIsntIM+qsjkXseuMSIG5ADYfTla9Pc5f
- VpWBKX/j0MXxdQsxT6tiwE7P+osbOMwQ6Ja5Qi57hj8jBRF1znDjDZkBDQRcCwpgAQgAl12VXmQ1X
- 9VBCMC+eTaB0EYZlzDFrW0GVmi1ii4UWLzPo0LqIMYksB23v5EHjPvLvW/su4HRqgSXgJmNwJbD4b
- m1olBeecIxXp6/S6VhD7jOfi4HACih6lnswXXwatzl13OrmK6i82bufaXFFIPmd7x7oz5Fuf9OQlL
- OnhbKXB/bBSHXRrMCzKUJKRia7XQx4gGe+AT6JxEj6YSvRT6Ik/RHpS/QpuOXcziNHhcRPD/ZfHqJ
- SEa851yA1J3Qvx1KQK6t5I4hgp7zi3IRE0eiObycHJgT7nf/lrdAEs7wrSOqIx5/mZ5eoKlcaFXiK
- J3E0Wox6bwiBQXrAQ/2yxBxVwARAQABtCVUaW0gQ2hlbiA8dGltLmMuY2hlbkBsaW51eC5pbnRlbC
- 5jb20+iQFUBBMBCAA+FiEEEsKdz9s94XWwiuG96lQbuGeTCYsFAlwLCmACGwMFCQHhM4AFCwkIBwI
- GFQoJCAsCBBYCAwECHgECF4AACgkQ6lQbuGeTCYuQiQf9G2lkrkRdLjXehwCl+k5zBkn8MfUPi2It
- U2QDcBit/YyaZpNlSuh8h30gihp5Dlb9BnqBVKxooeIVKSKC1HFeG0AE28TvgCgEK8qP/LXaSzGvn
- udek2zxWtcsomqUftUWKvoDRi1AAWrPQmviNGZ4caMd4itKWf1sxzuH1qF5+me6eFaqhbIg4k+6C5
- fk3oDBhg0zr0gLm5GRxK/lJtTNGpwsSwIJLtTI3zEdmNjW8bb/XKszf1ufy19maGXB3h6tA9TTHOF
- nktmDoWJCq9/OgQS0s2D7W7f/Pw3sKQghazRy9NqeMbRfHrLq27+Eb3Nt5PyiQuTE8JeAima7w98q
- uQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762798773; c=relaxed/simple;
+	bh=olKFaO/OI2/liOcPRH5LB4YfTWeqsev/dMmMcseUwUg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UAE9IIM8xoeHmhGyHfsyAGXtJR/ovbG7gN/cAP6Oqi0uxrJXF3GtKIUgdHhd2Ra90j3GbYGSa6Vk4p9/5GnXmthMHXjf12gZHMfLvS4rwkCcnalQQphqN+INRAlgqRPqIdeEuXoLAEF89Hj6cv0uFOQeNivkaJxsMTv/yI2oNfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-948a2f950fcso145897839f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:19:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762798771; x=1763403571;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jmE3j6LxMOU0XTkDOfjLYMmbajGt/pVI8XUPpcWT/4g=;
+        b=YEnCtVls1cA6nUFqrF35IyytGvnSo7BrJSLnh1lqEftShRxTOSoiGPUiDiJEIqNypT
+         9lOXrLHJvhXkJWDg4zkhLgB2PmMy8khrirBbzWLXLpiVej8BDQPWonXR6+QIp3jChLYb
+         taBXQ2no7oXVxyONAp8Cg8nu6OX7x162zTjNlF9ma8bVTIVBS2eSUSpkHlIBt1iuNSCZ
+         BJSEc1ik+ASJ8XNIa+69twn9Qky+eE1QmQaY89HHMQdlRQebh3hpI/syswvFCu6Oi9n1
+         /8wV2zVvONTlmK+3RoOYaYG8GRheqYgzLtEp0WQcbesyoNSrYluLykodhZV+1I+g29TS
+         bNag==
+X-Forwarded-Encrypted: i=1; AJvYcCWuhHH9sU/sq3Hi/FoKrbyZyBmMMg2L5qcteuLXryAiq/E0yq6OxoelFOIKPZgSV515orUoTSFnV4waa5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeZObI1N1hIIEAHRLsIf7klT1y1lb4DqyhEeUMhhKgd/ZeEWG6
+	7sgNgfTBQjP5Yl+Hso9vsDjXJetJdnU7MCuFomW9bMJSkum8xQlzXQLklXiyhwneCEoGVqxYCNT
+	ovJ/7phM7ZCTMFApCHpkcWndNT2SkYtRrjcjR42kJPWnyUeMA5cNTtPgcBdE=
+X-Google-Smtp-Source: AGHT+IFwiJZ+Y0/N7OFBA8xydfNiDpVXBtb1ugetPqR0xN9WqGYlLs3Ju1g/vrlLJiU8dybpDGIc9JS1FMpgm4giDu5GF42keP1I
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:178c:b0:433:4f6b:4ca with SMTP id
+ e9e14a558f8ab-43367e487cdmr103026575ab.24.1762798771097; Mon, 10 Nov 2025
+ 10:19:31 -0800 (PST)
+Date: Mon, 10 Nov 2025 10:19:31 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69122cb3.a70a0220.22f260.00ff.GAE@google.com>
+Subject: [syzbot] [perf?] WARNING in perf_event_throttle_group
+From: syzbot <syzbot+a945e9d15c8a49a7a7f0@syzkaller.appspotmail.com>
+To: acme@kernel.org, adrian.hunter@intel.com, 
+	alexander.shishkin@linux.intel.com, irogers@google.com, jolsa@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	mark.rutland@arm.com, mingo@redhat.com, namhyung@kernel.org, 
+	netdev@vger.kernel.org, peterz@infradead.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2025-11-10 at 09:28 +0530, K Prateek Nayak wrote:
-> Hello Shrikanth,
->=20
-> On 11/7/2025 2:27 PM, Shrikanth Hegde wrote:
-> > > > =C2=A0 @@ -11768,6 +11784,13 @@ static int sched_balance_rq(int thi=
-s_cpu, struct rq *this_rq,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto out_bal=
-anced;
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > > =C2=A0 +=C2=A0=C2=A0=C2=A0 if (idle !=3D CPU_NEWLY_IDLE && (sd->fla=
-gs & SD_SERIALIZE)) {
-> >=20
-> > Can you also try removing "idle !=3D CPU_NEWLY_IDLE" and see the worklo=
-ad behavior?
-> > If workloads don't observe regression, it might be worth serializing it=
- too.
->=20
-> P.S. In one of my previous testing, I had tested only serialized for
-> !env.idle (__CPU_NOT_IDLE) and I didn't spot any difference in my
-> benchmark runs compared to always serializing.
->=20
-> I believe the "max_newidle_lb_cost" along with the plethora of
-> need_resched() checks we have help bail out of newidle balance if
-> there is a wakeup on the same CPU.
->=20
-> Idle balance too was okay with a greater number of search. If the
-> first CPU of group fails to pull any task and remains idle, all
-> the other idle CPUs simply bail out at should_we_balance() which
-> is probably why there was no difference in the set of benchmarks I
-> tested.
->=20
-> Serializing all shouldn't make it any worse that what we have now
-> so I don't mind either.
+Hello,
 
-Serializing the CPU_NEWLY_IDLE case does not make things worse
-from our testing. I will be posting an updated patch shortly.
+syzbot found the following issue on:
 
-Tim
+HEAD commit:    e427054ae7bc Merge branch 'x86-fgraph-bpf-fix-orc-stack-un..
+git tree:       bpf
+console output: https://syzkaller.appspot.com/x/log.txt?x=11f2cb42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
+dashboard link: https://syzkaller.appspot.com/bug?extid=a945e9d15c8a49a7a7f0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=128bea92580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13b5a412580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c1ac942fc5fb/disk-e427054a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/be05ef12ba31/vmlinux-e427054a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c75604292a15/bzImage-e427054a.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a945e9d15c8a49a7a7f0@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 7448 at kernel/events/core.c:2703 perf_event_throttle_group+0x375/0x3d0 kernel/events/core.c:2703
+Modules linked in:
+CPU: 1 UID: 0 PID: 7448 Comm: syz.0.1231 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:perf_event_throttle_group+0x375/0x3d0 kernel/events/core.c:2703
+Code: 8a 32 00 e9 ec fe ff ff e8 38 d5 cc ff eb 05 e8 31 d5 cc ff 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc cc e8 1c d5 cc ff 90 <0f> 0b 90 e9 54 fe ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c c9
+RSP: 0018:ffffc9000ca07490 EFLAGS: 00010293
+RAX: ffffffff81f34174 RBX: ffff88806fddf6c0 RCX: ffff888026e3bc80
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: 0000000000000000 R08: ffffc9000ca07137 R09: 0000000000000000
+R10: ffffc9000ca07120 R11: fffff52001940e27 R12: ffff88806fddf8d8
+R13: dffffc0000000000 R14: ffff88806fddf8f8 R15: ffffffff8dff1598
+FS:  0000555573ca6500(0000) GS:ffff88812623d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000040 CR3: 0000000028a98000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __perf_event_account_interrupt+0x23c/0x250 kernel/events/core.c:10180
+ __perf_event_overflow+0x105/0xe40 kernel/events/core.c:10327
+ perf_swevent_overflow kernel/events/core.c:10467 [inline]
+ perf_swevent_event+0x530/0x5e0 kernel/events/core.c:10505
+ perf_tp_event+0x4f6/0x1380 kernel/events/core.c:11012
+ perf_trace_run_bpf_submit+0xee/0x170 kernel/events/core.c:10936
+ do_perf_trace_lock_acquire include/trace/events/lock.h:24 [inline]
+ perf_trace_lock_acquire+0x335/0x410 include/trace/events/lock.h:24
+ __do_trace_lock_acquire include/trace/events/lock.h:24 [inline]
+ trace_lock_acquire include/trace/events/lock.h:24 [inline]
+ lock_acquire+0x311/0x360 kernel/locking/lockdep.c:5831
+ rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ class_rcu_constructor include/linux/rcupdate.h:1195 [inline]
+ futex_hash+0x5d/0x2d0 kernel/futex/core.c:308
+ class_hb_constructor kernel/futex/futex.h:240 [inline]
+ futex_wake+0x161/0x560 kernel/futex/waitwake.c:172
+ do_futex+0x395/0x420 kernel/futex/syscalls.c:135
+ __do_sys_futex kernel/futex/syscalls.c:207 [inline]
+ __se_sys_futex+0x36f/0x400 kernel/futex/syscalls.c:188
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fdfcf98f6c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe276dac28 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: ffffffffffffffda RBX: 00007fdfcfbe5fa8 RCX: 00007fdfcf98f6c9
+RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007fdfcfbe5fac
+RBP: 0000000000000000 R08: 3fffffffffffffff R09: 0000000a276daf1f
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fdfcfbe5fac
+R13: 00007fdfcfbe5fa0 R14: 0000000000000843 R15: 0000000000000003
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
