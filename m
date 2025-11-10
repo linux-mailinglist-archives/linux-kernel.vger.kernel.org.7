@@ -1,142 +1,97 @@
-Return-Path: <linux-kernel+bounces-892732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3963DC45B2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:45:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B723C45B2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19FD34E82A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:45:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF4D3B71A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D176B301492;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA48301460;
 	Mon, 10 Nov 2025 09:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EZ7akTCd";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="HTojAgFJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EN5+Dk6s"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513A3301025
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B201A25784E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762767912; cv=none; b=agQv+LXf0p4c3F9Md7zuDrKcs0od3M9H/3x3s2gqkjGOy/ApGwW1yGOGUjm377y7o2OAYSIIQXMxrSLepllYMECj5iGm7VeNN35dU1UNJyWemtqFQqkJry7C/yWZWdYzphOUNqaBVlnsOCFaPW4KGjIJemWy3eSYthZkJdfV1b0=
+	t=1762767911; cv=none; b=FDuTdYvRm2MkfH/T0vH3VNi3Ih1qIUdklUgpoZdiUxLG+/NlyFIf8mz7r+6Dw3O60Msm9a6B63082c7CKlng3ltP4sA7J4zd8vbiO0eWd5etoAGoW5Far29xdTrBcnVHBshTGtNY39J91SPAWrZ4zjF5uV/6KKxszb8O4h+Bsg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762767912; c=relaxed/simple;
-	bh=yLyXjYFXqWstrak83rCupm0ESjDS9MUZyp6jbuMyBOI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bh/F+XIKTm3SKuMGIW+BR/gUXuIEgobd5jgW2SbdM5l0ZuyIoHbY1V2up96YRwbr3rMBDyLNy2vt+6QOMrRnNIxb5M7obx7rTdot8sLk2yfb+G2ovkzWxHBRcT0ReCci+0vas36nt7a6NkzNFmkEJ565N6kFm5gBWh8qvKLPQOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EZ7akTCd; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=HTojAgFJ; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1762767911; c=relaxed/simple;
+	bh=goBB6a9ijYsjH1ApwGICOTD9RRiuY+gQpLOMLI1pKjM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dKyEjtmKsVLx/Th+wjxe/SwL0O3qqyHHWJ0uVx3Hcc52cJyU6FambAxjZBeeZLa276cOUChwnoCdiI+rs4E9qoddLVg/aQE/Y0R/f1/x978+vOH7qcNVpU/cqrKOENCOp6r70zKtH3ug1KFUGFhQvsmjzRMcO0xHTvKLDO+1TL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EN5+Dk6s; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762767909;
+	s=mimecast20190719; t=1762767908;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yLyXjYFXqWstrak83rCupm0ESjDS9MUZyp6jbuMyBOI=;
-	b=EZ7akTCdxRs7EzwWO7GNduVzJefrsX9d9UPCjeVxfyTvLcRg2bLRoasQ6+bEOCULZCq7tV
-	F0Lu7M7tfB8YOzTuiNEE1yXJ088/4Ngg14whPcp/h9essUNHvL9jSTQwSVNlWwx0kizQv7
-	2XVnI+9/ITxqUYW5cH6/V5q24TJW+uM=
-Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
- [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-656-tGhzK2D6Nw2Ffg8XgVMq2A-1; Mon, 10 Nov 2025 04:45:07 -0500
-X-MC-Unique: tGhzK2D6Nw2Ffg8XgVMq2A-1
-X-Mimecast-MFC-AGG-ID: tGhzK2D6Nw2Ffg8XgVMq2A_1762767907
-Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-5dd83e15408so1757735137.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:45:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762767907; x=1763372707; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yLyXjYFXqWstrak83rCupm0ESjDS9MUZyp6jbuMyBOI=;
-        b=HTojAgFJUJwSWWah3cTzkcwC4Yc4SHcx9/xD4bgFJWR3ThgrepbsxGLJLRslRI3yxk
-         vy/0NzNVwn6fw8ZXM7RHaa+5GT92yJ51OqyNZWEGtAp0IgvY+pww1V2EOkgSCokAwsXQ
-         ITy4+ihQSsdkPmrv9FrZcy0ZbCbrlffvhYkik22ArVmXhyOwUGTkaza+cDUu5Ehfd2KR
-         iIskhmGspy3tGANrO7AbnZ6qcFnjCQbnsvam08AFW+HQY3PwWwvDKfjjvY4ynzzTxSwX
-         qNEMbHN+XmllhwmDZYs2s5ZSZmt/rfon+jhoyPpYVdcaFGX04XryBGosnygUK7gEVrOj
-         YHog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762767907; x=1763372707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yLyXjYFXqWstrak83rCupm0ESjDS9MUZyp6jbuMyBOI=;
-        b=vphSGPYnJR3VEFkyDdtVsZ16VH07yCfedIrUQn3O5mJk5akZWKm0zlQBEl2IOVooWN
-         ARKy2rCSRwZRfUdBhOd/mcBHpKDVoLWsb+IdmS7glPM03gRMCYUMIfQniIwlQjb3s17x
-         9i+sD0CC7uTVuzgeI6vwIPRNYborVhEYunlD18MGqPmRcNnVR5wVnq4MRUJQWSpDB/10
-         T8yBtS0Z/ohAu2hMzBJqPlqXBuhIblPFjx5RTjTfyZ1RFrNGbSSw0e57qAJTo3n7VsCT
-         +24XlbuDCZIcnbx1nJiAlQAkxFFFSk4PqMgWi13UhH5ewoDoTnMwOyBjYEkHWfy4lOyL
-         BYRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdnS98RSGafmSQmeI7tr3h03HWwS9AwMRP/zVnXqqjGcqhmjUxyjeEYt3pgV9Jvnc1Vg1xkFSuAY2zuck=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9uLZ6OYe1m8YV6PbtL5TWz5wz8EWwROFdZzxhQkbnFD8AV8DO
-	cMcfNa8b9Rq9gCyfES0t6ffdBo0eOKl+XX7HBfRFo07PaPfI9Bh/qofeTAs8SV+F+N48KHWb2hD
-	B/6MNXzzty2Vjsf2NO0K19YVQtFgsQQGkhZVU42VCHDyG4kMg6dHYhGo3EffUcQlWZRMdgRzf2U
-	jJMV1cmG0MJfEupM9EwQDS51DRq5bMfpWpsWt1+xWs
-X-Gm-Gg: ASbGnct95YYPvriLyqfzWT00KuQMZryftaiHfGydQjxtkYdNlupj5ugte35aa1ubLZ/
-	MyPUaasy1GQyHHSaheIVux2zZiwAhfZUCfOjo5Zex1RcLVwwxQFgURZe31fxMz3nM689dp3S8n3
-	du2D9Ih67YjB6HNtSuWdsxzRBOlYen2av8v13CLael2fSSSbfagwqZEKvR
-X-Received: by 2002:a05:6102:509f:b0:5dd:b288:e780 with SMTP id ada2fe7eead31-5ddc45376b3mr2501940137.0.1762767907008;
-        Mon, 10 Nov 2025 01:45:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH/yYFVdBstpEFb3Ck1k5v17TU9H66w5gxYmC9oJYim2lSVQ0mI7Bkz15ozgt0Kajlovah77rM8bEk8zqdRVoM=
-X-Received: by 2002:a05:6102:509f:b0:5dd:b288:e780 with SMTP id
- ada2fe7eead31-5ddc45376b3mr2501936137.0.1762767906633; Mon, 10 Nov 2025
- 01:45:06 -0800 (PST)
+	bh=UVXpka/wfvK1NTQpXcElrqr+Eu4p1Ghvs93NaoRYmkY=;
+	b=EN5+Dk6s6JdV9do6X8Q8A6/KeSwTvyOotNrVahm1Wednj5/1byPwJ1PPic8kS1E5AjnpD8
+	u2BApCKj6/4uMffAixsx+/yxxyIQFcFoorQlcYQOx6IrB5RdSjEt8U6IzP2kLlw5l3Xcn/
+	EImDe38Q30M5oYdYvO0xMmhGFsp+abA=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-tAv0p3UENYmR87MU9ynLsg-1; Mon,
+ 10 Nov 2025 04:45:06 -0500
+X-MC-Unique: tAv0p3UENYmR87MU9ynLsg-1
+X-Mimecast-MFC-AGG-ID: tAv0p3UENYmR87MU9ynLsg_1762767905
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 12E97195606D;
+	Mon, 10 Nov 2025 09:45:05 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.47])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 25B581800576;
+	Mon, 10 Nov 2025 09:45:00 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Dave Chinner <david@fromorbit.com>,  Matthew Wilcox
+ <willy@infradead.org>,  Hans Holmberg <hans.holmberg@wdc.com>,
+  linux-xfs@vger.kernel.org,  Carlos Maiolino <cem@kernel.org>,  "Darrick J
+ . Wong" <djwong@kernel.org>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+In-Reply-To: <20251110093701.GB22674@lst.de> (Christoph Hellwig's message of
+	"Mon, 10 Nov 2025 10:37:01 +0100")
+References: <20251106133530.12927-1-hans.holmberg@wdc.com>
+	<lhuikfngtlv.fsf@oldenburg.str.redhat.com>
+	<20251106135212.GA10477@lst.de>
+	<aQyz1j7nqXPKTYPT@casper.infradead.org>
+	<lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
+	<20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de>
+	<aRESlvWf9VquNzx3@dread.disaster.area> <20251110093701.GB22674@lst.de>
+Date: Mon, 10 Nov 2025 10:44:58 +0100
+Message-ID: <lhuframz0f9.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20220227234258.24619-1-ematsumiya@suse.de> <20220228092215.GA8549@lst.de>
- <36cfd242-6bb0-0af6-0faf-946c79baa378@kernel.dk> <20220301033001.tozk6cakdznww6wi@cyberdelia>
-In-Reply-To: <20220301033001.tozk6cakdznww6wi@cyberdelia>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Mon, 10 Nov 2025 17:44:55 +0800
-X-Gm-Features: AWmQ_bljs7L0oGwHxE2CM5naDDRqZ6T5ZNbQfm76vOzWoHAALjpDvqmytaIxKts
-Message-ID: <CAFj5m9KDFNi+8AMdGeJzgbsKFnfanWJk2dESeCgdF=KXi+9arA@mail.gmail.com>
-Subject: Re: [PATCH] nvme-pci: trigger disk activity LED
-To: Enzo Matsumiya <ematsumiya@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, linux-nvme@lists.infradead.org, 
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, Mar 1, 2022 at 11:30=E2=80=AFAM Enzo Matsumiya <ematsumiya@suse.de>=
- wrote:
->
-> On 02/28, Jens Axboe wrote:
-> >On 2/28/22 2:22 AM, Christoph Hellwig wrote:
-> >> I don't think we should add code to the absolutel fast path for
-> >> blinkenlights.
-> >
-> >Agree. It'd be a lot better to put the cost on the led trigger
-> >side, and not need anything in the fast path for block devices.
-> >Monitor disk stats, or something like that.
->
-> There's been at least 4 attempts to do so, as far as I'm aware (one of
-> them being mine). All got rejected due to the complexity it introduced,
-> that's how I ended up with this one-liner.
->
-> Performance-wise, I'm understand the problems, but according to ftrace,
-> ledtrig_disk_activity() adds an average of 0.2us overhead, whether an
-> LED is assigned or not. Is that really unacceptable?
->
-> If so, would introducing a CONFIG_NVME_LED (default =3Dn) and wrap that
-> call around it make it better? Then at least there's a chance to inform
-> users that desires this feature about performance costs.
+* Christoph Hellwig:
 
-Another solution is to do it in userspace by tracking iostat in a fixed per=
-iod,
-such as, triggering one led activity if any read/write IO happens during 0.=
-5sec.
+> I think what Florian wants (although I might be misunderstanding him)
+> is an interface that will increase the file size up to the passed in
+> size, but never reduce it and lose data.
 
-Thanks,
+Exaclty.  Thank you for the succinct summary.
+
+Florian
 
 
