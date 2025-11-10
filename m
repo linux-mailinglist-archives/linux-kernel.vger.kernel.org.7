@@ -1,407 +1,114 @@
-Return-Path: <linux-kernel+bounces-893287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61FF7C46FD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:44:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B818C470E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:59:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7B5188E405
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD9C3AEE9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9BF30CD8D;
-	Mon, 10 Nov 2025 13:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W/5XgENX"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010016.outbound.protection.outlook.com [52.101.56.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AD83112DB;
+	Mon, 10 Nov 2025 13:53:20 +0000 (UTC)
+Received: from postmaster.electro-mail.ru (postmaster.electro-mail.ru [109.236.68.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D012726F297;
-	Mon, 10 Nov 2025 13:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762782225; cv=fail; b=OAbWE/k/6ch8yW7TK5jukrhyQALEUyT6/CKz63UEe/oNUNfKcv6nmMT9tYh3hwLgmUJTe7uVxe0twxPXrkh6KOGNjMgIAlWdNGSRyO++fk6Rf8zHYzIpdkSZkyzh0mn6Lf12b6TLxji3zqtsKausSVEUVDwoJ4NBX/HFUAtHal4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762782225; c=relaxed/simple;
-	bh=ac5dQm32GYZ5oaVBZPeUWFQfjvNP7bDZ2bS8Q0s5aeA=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=VqZygsJKehPs8VgR9747A9fAu7sfyUFgQRRcIEbR/dDfTU2bDeGf+SdLd8QdlpYkRULCV8eBTNXgCXIgvk4hVBGcKUsnpxcZ+Gjir3SJSMGw4scROovIV4SX49bZGv0QzRijpzOvfTtdvLQVD7vMytSfkbrXjjTq+x32HgxZ7tI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W/5XgENX; arc=fail smtp.client-ip=52.101.56.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KDNF/TUxzZqUzFNur92Rsq1zKQtlhO5J4DVueuB4mxLYU3KFB/aQsw2Jf17vG/h55dnFhRoEN/5ZUF1jBCzCJn4HSyxyXEGWav2+YfgQAtSR8Pnvjxsgc8eWbkksNQc7u/EHNssnffAz/zqPMDbO6Yf5bdIEd9Q40ZtUM4DID22LzEatuR+h7QG7lQg4SZjjLbCNaGz5JKlZzrQRkCOm36Kj6Zz+OGbDqhx5vZNQcXo4dnBGvgw7eq9FDc2v8CScXAlWBULX11Twf7O8laOWe/qK7mCGHd64hiF9OHVZPSGi5sWFNRjBPaf9bpTxvC7ZZIIVGBUlrNDg01Y7BsNCKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fa+uDcmeS38N/xQ2jdxuFWwZdeghyJx8d6Gs+8++eCM=;
- b=eRfjxB7B/uHF1j20Ro4pItG+aKx0UMHtA1cobRIlsIEde3uj4c45WPIyUVl9qZ1858iwAPBiLez3llfUEBEHGW2QXLxmHIjiWMU7VaAXlB0YtI1D44y0IIj0QSGCKTLr+fOJTBG+DjwgPaFHhGlrDKGYRSC2y30UGh1feArCIrN75+ZGKhfnnAazMV1iXsQDOSoIGCeVwz5ycSh3z2suKrf2KkxJQjBSAkaz4aTs7Q52Wlusuf8Acs1uBXBu2wb1nB8bWxOYXz0cQvxAC9DS4fNqHdG25dqrLjoiUWEl3is1g6uuDYQUzr6TNuiZo7WrkiwCN9eGEPzYd0DBFukvXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fa+uDcmeS38N/xQ2jdxuFWwZdeghyJx8d6Gs+8++eCM=;
- b=W/5XgENXLN+kSox9W56kcJhHX8jPUffEhuie+AgPaBSze7qryA1UGJR8l91DhtKUYDYYrzuOpDXYawvqqT6vKivtyPNwpM9ZH7qO3XtvrOr0u5+97e0GAvlc/l45mqU75uGOkosFnTS7BxVRz+efOWSmOerirTQs5QOCKHyelCwB6twcTJc4m6NbSdmpfUbeFcHOu4ZehOHH9qETvp26bBLIEjAC426oTcdMCwL/icWRJEwdSHooiN2BKLkRBaDHSUgmGi2y1XETRd/NkmdbBGkO8zNgpTrXxOKsGLpOaD7RvlRRCH/SYFwZRTXG3uGnhF+VTVUnJ7EILmYVAL5EQg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by CYXPR12MB9340.namprd12.prod.outlook.com (2603:10b6:930:e4::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 13:43:40 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 13:43:40 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 10 Nov 2025 22:43:36 +0900
-Message-Id: <DE5256UCJHXU.27RS8A445Z1XN@nvidia.com>
-Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, <nouveau@lists.freedesktop.org>, "Nouveau"
- <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH v2 07/12] nova-core: Implement the GSP sequencer
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, <acourbot@nvidia.com>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
- <20251102235920.3784592-8-joelagnelf@nvidia.com>
-In-Reply-To: <20251102235920.3784592-8-joelagnelf@nvidia.com>
-X-ClientProxiedBy: TYCPR01CA0208.jpnprd01.prod.outlook.com
- (2603:1096:405:7a::16) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8E3225417;
+	Mon, 10 Nov 2025 13:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.236.68.122
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762782800; cv=none; b=bslTxE9wBz+iBCvmDoxplnpq59LLnyhWY8ezIJ84WnBwMVEksPCI7uDN9PxSED/RwUuf5u3kurM2vl3yMWLgSu7Kr8IcDDTSBQark+gJ3GknUwh4bridcHzk0SgsVi8O0Rz7eKG0qEXzcLGyVIe+I4AAuLmPJkEsHm3rEhOFC9Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762782800; c=relaxed/simple;
+	bh=PJKxtiMdy5PQki0XTyfXhR7VS9xxuP+6xbZzXQLijds=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ISMJ5PvESDgqQAUykmlVwS5i1f5p48pqLssXOJrw7EqPrspaT1wR+oGIvR6qLM3K93yvfzNkPvysMyFUTQ819HP+ZM5iiJ1MDEmQV6p+hrKhSCxX482rPB3hYW3h2IHy+cuJtBdeEs5cTid1i1ZlghDWUsWz+4zT40u6/Del650=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tpz.ru; spf=pass smtp.mailfrom=tpz.ru; arc=none smtp.client-ip=109.236.68.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tpz.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tpz.ru
+Received: from localhost (localhost [127.0.0.1])
+	by postmaster.electro-mail.ru (Postfix) with ESMTP id 6EFD6FFC581;
+	Mon, 10 Nov 2025 16:45:25 +0300 (MSK)
+Received: from postmaster.electro-mail.ru ([127.0.0.1])
+	by localhost (postmaster.electro-mail.ru [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id l7jmAB_-WevC; Mon, 10 Nov 2025 16:45:25 +0300 (MSK)
+Received: from postmaster.electro-mail.ru (localhost [127.0.0.1])
+	by postmaster.electro-mail.ru (Postfix) with ESMTPS id E4BA8FFC582;
+	Mon, 10 Nov 2025 16:45:24 +0300 (MSK)
+Received: from email.electro-mail.ru (unknown [10.10.0.10])
+	by postmaster.electro-mail.ru (Postfix) with ESMTPS id D5BCEFFC581;
+	Mon, 10 Nov 2025 16:45:24 +0300 (MSK)
+Received: from lvc.d-systems.local (109.236.68.122) by email.electro-mail.ru
+ (10.120.0.4) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 10 Nov 2025
+ 16:45:23 +0300
+From: Ilya Krutskih <devsec@tpz.ru>
+To: <sdl@secdev.space>
+CC: Ilya Krutskih <devsec@tpz.ru>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <tglx@linutronix.de>, <mingo@kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH] net: fealnx: fixed possible out of band acces to an array
+Date: Mon, 10 Nov 2025 13:44:22 +0000
+Message-ID: <20251110134423.432612-1-devsec@tpz.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CYXPR12MB9340:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f7aad33-8ab7-4776-945a-08de205f280b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M1RmREN3TDI0cFhpWUZWNHYxOW9URSsrK1UzY0hsaXk1Sm1zUmZIMTlXNHVo?=
- =?utf-8?B?ZmZiOFR0b1YvVTBnSVlLdUh1dG9qaENNd0xwTERESXhqeWlYNzExMTA0QVkz?=
- =?utf-8?B?TXppK1M2UktvWTJYUzZ5bW55eG1KSHVnWVVmWU9zZk1qNSs0MWVKOFAyV0VR?=
- =?utf-8?B?UitIak5CeEcxazZlL0Q1bzdGd3AzT0FsMXNQeU10UlNJVmhHdDJPaENYejhm?=
- =?utf-8?B?Wm9ZMEtLYWxPRUQ4L1JXMUF3ZTVoeTE4b21wU0hOU1lzd0Rxemp0QklPT1ll?=
- =?utf-8?B?cjRSVEdCTEEvREE2YWovd2tHejVGTmpPU0VpemRkbHcrRWJxWTJwL1ovOFlr?=
- =?utf-8?B?MlhEaGRJQ0dnc3dBK3hpbCtUc2ZqUE5jMHNncE9rQklvc0NJZFQ5MzBmajN6?=
- =?utf-8?B?SmlxYTRIZzlPVG5maUdUcTJsQXBMSkFNTkZmVzBTbEp3VzhLK05VMkxNeldE?=
- =?utf-8?B?N3Z6dFE3S0I3OTdnVjNtSGhUWkR6cHAzODF6dC9Wb2lJKzYvZXQvUjdqeWl1?=
- =?utf-8?B?eGJVYmpTaEFCQmN4RVFtYTdndHlxcjFhMHVZblR4c1o0WFZ2ZEdQem9KNW1O?=
- =?utf-8?B?Rk1VRVo5V2g4cWdQVDdQVFJBMlZza3N0Qm9ud1E5MTBiaWd4bHNpTWQ5dFJL?=
- =?utf-8?B?TVBOcUg0TlNUdll2OU1DOGNJNEwwUjQ0dGU5SWlHQmxUSGZ3Z1JaTEk2dUJw?=
- =?utf-8?B?ZlhldEtMdlNOV2E5a2xZWUgxMzlqY1lScjRJNEEwVUhFbUErVzhEUXUyTzFu?=
- =?utf-8?B?QWxmblpFbzBSUzF0U1NKVnpobVJnZUtpd1NnRUNCWUVyOTBEMDhOeE1HMHdh?=
- =?utf-8?B?NEJ6WnY0cnNnWWVRZ0p5Vi91Q1FVU3RGSW5janlPSGNXckFScndNOXZyeVZK?=
- =?utf-8?B?cXMzUytvdTZGYTJjMXNFeWNURjBVODVQbHN0M0RQTDEyVjdCenM3bnBINXZ6?=
- =?utf-8?B?dlBxZWxkWDVES29EdzRvOE93a0t3eVpHd1FJL3dVQkJoRnNzblNjZmFtTTN4?=
- =?utf-8?B?eXpoY2FrWlBPY2FWM2VRZE0wTlZwOFk1RDVyQytkZENtN2RMMXQwUUE5N2lW?=
- =?utf-8?B?Z29Cc1Naa05CMXVVY3RDWDYwNVozdk9Gb2ZGVldUSkZnR2oybU5IeFgxZ3ZV?=
- =?utf-8?B?M25yUWJWOVZ1d3pZOEF4N0krUkdlaFRyQkl1aHh2SkEwRTh4RStyS3VZb3Y4?=
- =?utf-8?B?TUZXQ3d0bHNkK1liK21pcFFYWDY5SFI2WXFFeXhEYXIwTzJ5ZlV6UmxSdGFv?=
- =?utf-8?B?YWwvRkRUUHBRZ2NEazVRV1lMVDdDblZEeEF6Y2psSWZScDZpdlJWUlgyQWtr?=
- =?utf-8?B?UGlCenFTSEpyS3Q0UlppN3E0Qkd2V3dJeFhnQjBkZVZGN09LcnpsRmM3V3Nt?=
- =?utf-8?B?MzNrNEF3aktwNm1DR2JyUVdPNktCRmJjTEE4WkNzdUU2M25XZjJtYXBuMW1N?=
- =?utf-8?B?NjZvUFVySXc4Vk50V0NyRmtkVDdvZExqYm5yQnMvUTVoUEg5OFNnZFUzNGxT?=
- =?utf-8?B?TWZ6aWlpZVdDZGF0V2ZzSDFqcGN2ZVg2b1ZBRGxTY2Z2VGdGMFZ3aUFTR2o3?=
- =?utf-8?B?enVnQ2RVYWtTRHhja3FYWlhwV05KOGN5Qk51NmVhV0o3M1h6M2tnRGh5dXlO?=
- =?utf-8?B?WGc4cHdMbUxNbVJ5SnYxNWdEVFIvVkViVFJaWjBzTW9LeVRwSkpOaTNiUUxC?=
- =?utf-8?B?QlV5RkNza0FKWnJQYWxmWUVOU2xSb0c5V3J6QkthKzNkWnU3dlR6bzNvaDJn?=
- =?utf-8?B?S01QbjJXNkVsNXQ3eXlNVWNUeGtTR2dMc01oa2FnM0lYYU00ZmdwNndKZTBI?=
- =?utf-8?B?TnlFOVFBWTM3SjhHaEplaEgxcFo1UkVMemxWT1hUa04zTEg0a0hMRlFHcDJO?=
- =?utf-8?B?UDRZd2hrWFB3NnZ5UDFVZnhZWkVmTXZVTTV3TTRmbWVTcHdDTjI5a1ZCY1VJ?=
- =?utf-8?Q?0ZCjuHiHIXzM4t7ZD6Y+BlfPiqecqq6U?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MFowWjZFN2pqZTBxZzJOeE9vdW45ZmZ0bG1xUVJGdmdQMU1yZFZNMVhpMTZN?=
- =?utf-8?B?V24vRmJ1S0VvY3hFazF1L3FuajR6KytNWVZyQTNGNVROUnliRVFzd05ITzJp?=
- =?utf-8?B?aVNQekowK0t1ZnZldmVxM0NEV2VLYVhlM2UyRzB0cE1mK0VNcFpWazVUcncv?=
- =?utf-8?B?NWl4NVRSd0liSnhyZHZFQ3V0a2xuUjh2MEhlTWVMQ3hzME1XRGJscGVJY0RJ?=
- =?utf-8?B?R1ZVTnFrN1lRWVN4bERvUHNQVEF5T3dMRTY5MWVsSTE5clFkNGFSOGJwNDlz?=
- =?utf-8?B?UW1lTmJzaEgrNktKcHdWc3g1cit6RUo1Q3FIcFZWd2F0aEhZME1PY0dGYlBa?=
- =?utf-8?B?ZVRJOVJiUEVONXJaVGowMDQwVTVQa1VGS2RpYzZVb2lrcFdJVUphQ3lvOHFz?=
- =?utf-8?B?VWVlZVdVWURmaVRRUk5QTEw2SGszOE5TZ3VNSE1BRVlHU0p4V1hTZzRBWDR0?=
- =?utf-8?B?NTV2SjlXQkkwR29jNm1yQUxGMFZPU2huNStvS2hoR1VOdjdjeWRuTEQ1SUJH?=
- =?utf-8?B?Vzl5TEtSRmhXUVptdllSWEZ1WkFLbmRXMDN6cDB6VjFHVjNpUkJ3NUJ3Sjhr?=
- =?utf-8?B?SUx2NFlWenhFYkZyS3ZhWGF1OERTNUJMb0FYOVFjUS82cjJ6bzlCbmFxNlBY?=
- =?utf-8?B?NTNJOENwWkQxN0lhQXFQK2lBc25SbGpZQXBudmZpNTVVWEgwS1YxL0RYcCtT?=
- =?utf-8?B?UGhjaEEydGZCME80eTJnVnNHRmxBci9udmFLQ29XSTBUcEM0V1NOdHRyaGQr?=
- =?utf-8?B?WFYxSUgxRGhDbmRKSnRDZlNPVEhseUxWODg3NFZiZm9qWis4SzNJTkZxQmJm?=
- =?utf-8?B?ZHdjZTlRQWdmbXp2UnNrbXZTc01lNGFwZERPdmxjWmkwZjU2WWx1cVhJZEdZ?=
- =?utf-8?B?Q0s0ci9HWWZEZGR3TVZpdE0xcTlhYk15OGdVejkwdm01T0p4cmYxaGhqbXpQ?=
- =?utf-8?B?QkpJRk8wN2pWV3Q1VjB5Qi91djNTWXJpZUZadjdhcUZOSG9mb0dxc1c3Yjhw?=
- =?utf-8?B?QnYyRU1CSzZpTkNUdEVUNjV1bmdsRGZtMGoxMjltNFZxRnBucEN5dWR2ZzlM?=
- =?utf-8?B?RkNmcHFIcWV2ckU5MmhIUlF5N0hEQlhJU1RRYzZwOVV0N2hpSzQ5bVJrK1VX?=
- =?utf-8?B?NldJNzU1eVpBSE5TRCsyUEJROGNzRkhHNUw0M2ZYblVCNWFjTzV0NmZkOUdQ?=
- =?utf-8?B?MGdBT05vZU1hSVJ5bkozNGtCZ1Q4U0hrT2ROeXZ3b3NpUkpFOHVRL29rb0lF?=
- =?utf-8?B?TXdzRm5TQjRiU0tTcU04SFdsSEFLWTNSNEF1dHdQK045ZzV1dHhZWHU4NjVV?=
- =?utf-8?B?VEJidSt6RHhJVkZ1T0pESVN3SHVzcGNvZ08rNVhDNHZBTmpmWXpoa1dnVjJ2?=
- =?utf-8?B?a0FBVWlFUUlrTnlOWFJXZGFhZXFON0UyN1NwZWtycGVEWHZtSDZOWUpVN2ky?=
- =?utf-8?B?NG5SSGFTajlzN2g5MTcxSmNnUzBJZTAyaVZaSnZlRFlZS1UzSHhVQXRWQ1Ns?=
- =?utf-8?B?UEI1NG83blBQWExlMUJEcGZGR3B0Nk1RRE0vVHJTMnd1VWE4bnAxSnpsVm80?=
- =?utf-8?B?enRiY1pIN1g3NW9TakRrc2kxdTZzNFRYNkE5WURDWk4xK21peENacVpYYW92?=
- =?utf-8?B?Z1FaWThIaTMrd3dHMVZLQVpRbys1T2xRdEloajRkdEFSVVVYdVVveFF2d1dw?=
- =?utf-8?B?YXZ5djZ1MVIyOUgyRU1EdURIQmlIeGcrcVlDVDVZUnpFcGw0bHYzVjA5WnA4?=
- =?utf-8?B?UHB1VGw3azc2NS9yUThRa1RocUI3UmEvVmlqaXlyVEdaNlU3eUZrRE5sOTlS?=
- =?utf-8?B?K3l5Y3NXaER5Mm1CYVhHMnFoSVBlVlpnNCtGbk04a0NnSDliWG5tb1VzelZy?=
- =?utf-8?B?L29vcEc0aU1xUFl3UG5kalhDUHRFM3Qwb1ZZdk4ramhFZUVXNkswbzdLWEk2?=
- =?utf-8?B?ODNOVzRSNzVxYmxUUk0wZjdJODBPY21Jb1poOXRnMW5oTjB4YVA0SVNVdnlj?=
- =?utf-8?B?S2dqWGhNQUVtK1g1VUtPN1R4K0tuck40NVErTk5DbEMwNkhEc1JUMm9kcjkw?=
- =?utf-8?B?QkpZTnBtb2N4UDdmbWJLY0VqMGNOL1gzelU0UEpPbVZYOWNYMkEzc0VnTEls?=
- =?utf-8?B?UFdMMEVONGZHL3RqL2lIcG9vOTRKcHEzSERDQ2VGQ2xPUkVValBNVDVOOUpC?=
- =?utf-8?Q?fbh9MUSC4wNaxo6kqQXYHRsnz8FIW1MocejhFLk0RziT?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f7aad33-8ab7-4776-945a-08de205f280b
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 13:43:40.0671
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cEfiMLzEf01Mp2t7+wscStij80Ru0U3BpdiQcB3l+5mxLuo9YXI1xYAa9R4mGh6AYhnHomVMl+G3ksmPA+pfeg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9340
+Content-Type: text/plain
+X-KSE-ServerInfo: srv-mail-01.tpz.local, 9
+X-KSE-AntiSpam-Interceptor-Info: trusted connection
+X-KSE-Antiphishing-Interceptor-Info: protection disabled
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 09.10.2024 20:59:00
+X-KSE-Attachment-Filter-Scan-Result: Clean
+X-KSE-Attachment-Filter-Scan-Result: skipped
+Content-Transfer-Encoding: quoted-printable
 
-Hi Joel,
+fixed possible out of band access to an array=20
+If the fealnx_init_one() function is called more than MAX_UNITS times=20
+or card_idx is less than zero
 
-I guess you will want to rebase the series on top of the GSP boot v9,
-for fixing the conflicts with the imports, squash patch 13 where it
-should belong, and also because it adds a few things that should
-simplify this patch.
+Added a check: 0 <=3D card_idx < MAX_UNITS
 
-As a general comment, the structures and their members could benefit
-from short doccomments (thankfully after this review there should be a
-few less :)).
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-On Mon Nov 3, 2025 at 8:59 AM JST, Joel Fernandes wrote:
-<snip>
-> diff --git a/drivers/gpu/nova-core/gsp/sequencer.rs b/drivers/gpu/nova-co=
-re/gsp/sequencer.rs
-> new file mode 100644
-> index 000000000000..48c40140876b
-> --- /dev/null
-> +++ b/drivers/gpu/nova-core/gsp/sequencer.rs
-> @@ -0,0 +1,208 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! GSP Sequencer implementation for Pre-hopper GSP boot sequence.
-> +
-> +use core::mem::size_of;
-> +use kernel::alloc::flags::GFP_KERNEL;
-> +use kernel::device;
-> +use kernel::prelude::*;
-> +use kernel::time::Delta;
-> +use kernel::transmute::FromBytes;
-> +
-> +use crate::driver::Bar0;
-> +use crate::falcon::{
-> +    gsp::Gsp,
-> +    sec2::Sec2,
-> +    Falcon, //
-> +};
-> +use crate::firmware::gsp::GspFirmware;
-> +use crate::gsp::cmdq::{
-> +    Cmdq,
-> +    MessageFromGsp, //
-> +};
-> +use crate::gsp::fw;
-> +
-> +use kernel::{
-> +    dev_dbg,
-> +    dev_err, //
-> +};
-> +
-> +impl MessageFromGsp for fw::rpc_run_cpu_sequencer_v17_00 {
-> +    const FUNCTION: fw::MsgFunction =3D fw::MsgFunction::GspRunCpuSequen=
-cer;
-> +}
-> +
-> +const CMD_SIZE: usize =3D size_of::<fw::GSP_SEQUENCER_BUFFER_CMD>();
-> +
-> +struct GspSequencerInfo<'a> {
-> +    info: &'a fw::rpc_run_cpu_sequencer_v17_00,
-> +    cmd_data: KVec<u8>,
-> +}
-> +
-> +/// GSP Sequencer Command types with payload data.
-> +/// Commands have an opcode and a opcode-dependent struct.
-> +#[allow(dead_code)]
-> +pub(crate) enum GspSeqCmd {}
-> +
-> +impl GspSeqCmd {
-> +    /// Creates a new GspSeqCmd from a firmware GSP_SEQUENCER_BUFFER_CMD=
-.
-> +    pub(crate) fn from_fw_cmd(_cmd: &fw::GSP_SEQUENCER_BUFFER_CMD) -> Re=
-sult<Self> {
-> +        Err(EINVAL)
-> +    }
-> +
-> +    pub(crate) fn new(data: &[u8], dev: &device::Device<device::Bound>) =
--> Result<Self> {
-> +        let fw_cmd =3D fw::GSP_SEQUENCER_BUFFER_CMD::from_bytes(data).ok=
-_or(EINVAL)?;
-> +        let cmd =3D Self::from_fw_cmd(fw_cmd)?;
-> +
-> +        if data.len() < cmd.size_bytes() {
-> +            dev_err!(dev, "data is not enough for command.\n");
-> +            return Err(EINVAL);
-> +        }
-> +
-> +        Ok(cmd)
-> +    }
-> +
-> +    /// Get the size of this command in bytes, the command consists of
-> +    /// a 4-byte opcode, and a variable-sized payload.
-> +    pub(crate) fn size_bytes(&self) -> usize {
-> +        0
-> +    }
+Signed-off-by: Ilya Krutskih <devsec@tpz.ru>
+---
+ drivers/net/ethernet/fealnx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Instead of having this (which involves another dedicated match
-statement), how about having the `new` method return the size in bytes
-that are read, that the caller can add to its cursor?
-
-> +}
-> +
-> +#[expect(dead_code)]
-> +pub(crate) struct GspSequencer<'a> {
-> +    seq_info: GspSequencerInfo<'a>,
-> +    bar: &'a Bar0,
-> +    sec2_falcon: &'a Falcon<Sec2>,
-> +    gsp_falcon: &'a Falcon<Gsp>,
-> +    libos_dma_handle: u64,
-> +    gsp_fw: &'a GspFirmware,
-
-`gsp_fw` seems to be only needed to obtain the bootloader app version -
-let's store that information directly instead a reference to a whole
-structure we don't need.
-
-> +    dev: &'a device::Device<device::Bound>,
-
-Since this is only used for logging purposes, we don't need a bound
-device. This can be an `ARef<device::Device>`, which removes a
-reference.
-
-> +}
-> +
-> +pub(crate) trait GspSeqCmdRunner {
-> +    fn run(&self, sequencer: &GspSequencer<'_>) -> Result;
-> +}
-> +
-> +impl GspSeqCmdRunner for GspSeqCmd {
-> +    fn run(&self, _seq: &GspSequencer<'_>) -> Result {
-> +        Ok(())
-> +    }
-> +}
-> +
-> +pub(crate) struct GspSeqIter<'a> {
-> +    cmd_data: &'a [u8],
-> +    current_offset: usize, // Tracking the current position.
-> +    total_cmds: u32,
-> +    cmds_processed: u32,
-> +    dev: &'a device::Device<device::Bound>,
-> +}
-> +
-> +impl<'a> Iterator for GspSeqIter<'a> {
-> +    type Item =3D Result<GspSeqCmd>;
-> +
-> +    fn next(&mut self) -> Option<Self::Item> {
-> +        // Stop if we've processed all commands or reached the end of da=
-ta.
-> +        if self.cmds_processed >=3D self.total_cmds || self.current_offs=
-et >=3D self.cmd_data.len() {
-> +            return None;
-> +        }
-> +
-> +        // Check if we have enough data for opcode.
-> +        let opcode_size =3D size_of::<fw::GSP_SEQ_BUF_OPCODE>();
-> +        if self.current_offset + opcode_size > self.cmd_data.len() {
-
-`opcode_size` looks superfluous as it is only used once.
-
-> +            return Some(Err(EINVAL));
-
-Should probably be `EIO` as the data is not the expected size.
-
-> +        }
-> +
-> +        let offset =3D self.current_offset;
-> +
-> +        // Handle command creation based on available data,
-> +        // zero-pad if necessary (since last command may not be full siz=
-e).
-> +        let mut buffer =3D [0u8; CMD_SIZE];
-> +        let copy_len =3D if offset + CMD_SIZE <=3D self.cmd_data.len() {
-> +            CMD_SIZE
-> +        } else {
-> +            self.cmd_data.len() - offset
-> +        };
-> +        buffer[..copy_len].copy_from_slice(&self.cmd_data[offset..offset=
- + copy_len]);
-> +        let cmd_result =3D GspSeqCmd::new(&buffer, self.dev);
-> +
-> +        cmd_result.map_or_else(
-> +            |_err| {
-> +                dev_err!(self.dev, "Error parsing command at offset {}",=
- offset);
-> +                None
-> +            },
-
-This looks a bit redundant: we are processing errors here, but then we
-also have another error handler in the caller (the one that says "Error
-running command..."). I'm pretty sure there is room for simplification
-here.
-
-> +            |cmd| {
-> +                self.current_offset +=3D cmd.size_bytes();
-> +                self.cmds_processed +=3D 1;
-> +                Some(Ok(cmd))
-> +            },
-> +        )
-> +    }
-> +}
-> +
-> +impl<'a, 'b> IntoIterator for &'b GspSequencer<'a> {
-> +    type Item =3D Result<GspSeqCmd>;
-> +    type IntoIter =3D GspSeqIter<'b>;
-> +
-> +    fn into_iter(self) -> Self::IntoIter {
-> +        let cmd_data =3D &self.seq_info.cmd_data[..];
-> +
-> +        GspSeqIter {
-> +            cmd_data,
-> +            current_offset: 0,
-> +            total_cmds: self.seq_info.info.cmdIndex,
-> +            cmds_processed: 0,
-> +            dev: self.dev,
-> +        }
-> +    }
-> +}
-
-You can do without this implementation by just having an `iter` method
-returning the iterator where appropriate (in the current version this
-would be `GspSequencer`, but I suggest moving that to the
-`GspSequencerInfo/GspSequence`).
+diff --git a/drivers/net/ethernet/fealnx.c b/drivers/net/ethernet/fealnx.=
+c
+index 6ac8547ef9b8..c7f2141a01fe 100644
+--- a/drivers/net/ethernet/fealnx.c
++++ b/drivers/net/ethernet/fealnx.c
+@@ -491,8 +491,8 @@ static int fealnx_init_one(struct pci_dev *pdev,
+=20
+ 	card_idx++;
+ 	sprintf(boardname, "fealnx%d", card_idx);
+-
+-	option =3D card_idx < MAX_UNITS ? options[card_idx] : 0;
++	if (card_idx >=3D 0)
++		option =3D card_idx < MAX_UNITS ? options[card_idx] : 0;
+=20
+ 	i =3D pci_enable_device(pdev);
+ 	if (i) return i;
+@@ -623,7 +623,7 @@ static int fealnx_init_one(struct pci_dev *pdev,
+ 		np->default_port =3D option & 15;
+ 	}
+=20
+-	if (card_idx < MAX_UNITS && full_duplex[card_idx] > 0)
++	if ((0 <=3D card_idx && MAX_UNITS > card_idx) && full_duplex[card_idx] =
+> 0)
+ 		np->mii.full_duplex =3D full_duplex[card_idx];
+=20
+ 	if (np->mii.full_duplex) {
+--=20
+2.43.0
 
 
