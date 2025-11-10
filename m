@@ -1,268 +1,155 @@
-Return-Path: <linux-kernel+bounces-892696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3396C45A2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:28:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED6CC45A1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:28:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10DC04EAD02
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:25:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D0F044E99E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3994A2FFF93;
-	Mon, 10 Nov 2025 09:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85E32FF168;
+	Mon, 10 Nov 2025 09:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="M0zedMx4"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCNs/tO5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEF02FFDC9;
-	Mon, 10 Nov 2025 09:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766692; cv=pass; b=njZIf4q5lAjmZpDQ3QEzKf0Jc1jH48IirIhgiMWE2Ph25yFWd6t9XnJRe5XqEnlX3PzSMNdDVesoGyARRPytYkFPjasGZi7G4gUqx01exG86F2aSSSUa3DVcK0/D7vHlfHGAc5xaEWFEjXjo9gNoS9B/QGVb5nMtvPX9F7KuWa0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766692; c=relaxed/simple;
-	bh=/9IyHse28dhhfDUIv53BKo7Pw+5RouaKVxJ8DZ5TDsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dZZ8ON8LJEwy9OmJTv+5KFGTV9MzfcetnYVcV9VlkI88Y3u2JLz/vLQLqEhHaVXgQ48lJEETaW1oCQEMAj0xLmpaErgDmN33z2O6YTkpzXjGOw/rXI3iokhNvhbtfODlQrfc2ONntBadcTHt7CxWuFZMOg/Umys32qM70rWoOYA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=M0zedMx4; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1762766633; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VjrlaTXRT1DTspIRhNm8LqC+UeVeIz39ALeceKY8V7A5/ao3cVaWPJGQCtUJkoopAY3oEk19DUBQ5ibEOHjsNshLnbMXcJb7jHIVgj27JBHdSNW83mWJAtEyjqKUkU+70aUVA5OqDkOgeToKqF1ezdim2D85BEoTmgeE8g+8iMw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762766633; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VSfkaAkbqob94VjtZuefTP3rzVGvzkZ2PyLqZ5TTMEA=; 
-	b=XLMEUim6kByafUhy0mTCMpYnie0fvJC94Rlkmr9OvZoBM/BvE4A8qAyaZJ28JgXr5CMUUniOkUWEgT5jJKcEHivS6qOX4MtH7q2lmgiy0e6eGeOEQjX7p1tA7pKaMacSQhpY/rAvCpENb6KBfOD+Fn0GJelXd6Ekc/lXY/RIzCo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762766633;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=VSfkaAkbqob94VjtZuefTP3rzVGvzkZ2PyLqZ5TTMEA=;
-	b=M0zedMx4CrQIdjkZsoQwJ8KticXzTN1x4GvoNv08cmSC0hYxvMv9qSGvBmrKDbyw
-	i03mA/4eYRl4HLbD6swqiUagf75i5IfHFPr9wXgIDK/4mT9WJ1C3K1oenQu1UUNzxrQ
-	/62gPcbfd3SJ2sYn/ob1aR6YI0N5+KdulfvauR6Y=
-Received: by mx.zohomail.com with SMTPS id 1762766632129188.4290479822298;
-	Mon, 10 Nov 2025 01:23:52 -0800 (PST)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Peter Wang =?UTF-8?B?KOeOi+S/oeWPiyk=?= <peter.wang@mediatek.com>,
- Chunfeng Yun =?UTF-8?B?KOS6keaYpeWzsCk=?= <Chunfeng.Yun@mediatek.com>,
- "kishon@kernel.org" <kishon@kernel.org>,
- "avri.altman@wdc.com" <avri.altman@wdc.com>,
- "bvanassche@acm.org" <bvanassche@acm.org>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "broonie@kernel.org" <broonie@kernel.org>,
- "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
- "chu.stanley@gmail.com" <chu.stanley@gmail.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "robh@kernel.org" <robh@kernel.org>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@hansenpartnership.com>,
- "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
- "vkoul@kernel.org" <vkoul@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Chaotian Jing =?UTF-8?B?KOS6leacneWkqSk=?= <Chaotian.Jing@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "kernel@collabora.com" <kernel@collabora.com>,
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>
-Subject: Re: [PATCH v3 10/24] scsi: ufs: mediatek: Rework probe function
-Date: Mon, 10 Nov 2025 10:23:44 +0100
-Message-ID: <5025239.GXAFRqVoOG@workhorse>
-In-Reply-To: <90a10fba2e41db4df4c28a72d182c5f0df8c016d.camel@mediatek.com>
-References:
- <20251023-mt8196-ufs-v3-0-0f04b4a795ff@collabora.com>
- <20251023-mt8196-ufs-v3-10-0f04b4a795ff@collabora.com>
- <90a10fba2e41db4df4c28a72d182c5f0df8c016d.camel@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354F22FF652
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762766675; cv=none; b=i97u1MOmIt0CuQXOO51bGuXf6VT/3FFZ7YLg7XsM8g1NwJ+IA8Z91vVszdcvvpN8Ej0UXf6J/+U0XrkOBar9oTi9JgY9+JQvILZgZWjgkLrgh+hIyUTwmX9V87fUGp2/pNmd4dqZhh5VEPZZ1KBf58b1rkNSxuqZqK5FvLXonK4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762766675; c=relaxed/simple;
+	bh=12tkn2eW7OKiky0Am/v0/JrN2IhWAn/ZzkRw2A93Cwg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CexwhtdZKt+aPkE0Frr1sb0yON+mTwYuG5VasOnAO01+TaKZ5DEvq7MwsUqFYPsUs5huOv5Y2VuXJcBU+/jhjeFFe/TGaYcS+a5ImMRYLajuA2qsBCeJVtUEstzfUWzlwTlCprUHMydyqOTwXn90Xcbx5yiL3aURE3n14uMujx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCNs/tO5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC9EC4AF0B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:24:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762766674;
+	bh=12tkn2eW7OKiky0Am/v0/JrN2IhWAn/ZzkRw2A93Cwg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cCNs/tO5EsnPNMxP/SotUQtXnQ71dpVJYG81OT+YmAutR+A3zcT/umYw89tAP8tUa
+	 VfvSnUkU16V2PMbU60VLwi53xHVE+2nGCsh82OdHqTPN/o8gTJsM9O7zgC/dL9TUXN
+	 ibFyX6BZXBisNgDLNOHPwQtdUEYzZ7YNTZwqRdFf2xV/7MiPQyt7PngcRM+1vIUEEC
+	 xIKrsanxxl6lMxVViy1XF/C40Z75OS6raZAQh10wv/Q92ddsy14/YzyrAZGqlr52K8
+	 9iSlYPoN8kIBaqMP6x1c0SoFmDBDI95/BnP8svcSK9OhGWaSwfMaI1MNadleEUoYHi
+	 ReyQ3gASQxydg==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6408f9cb1dcso4718077a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:24:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXIYNw4w8Wiypz6nSmTvGpRQaprHSxvfxVJr419hWb/IGRZy4yROkbhNR18WUC9XLsLkc5oAjmYQqlGzY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp4QKnDYzdXIqtbk48i+a8wGAKnE0dY/sDfpTj/BsRnkU3VzWT
+	5Ipm4s8jer7MvIcmQd+NoPT/Qe1GnnR8/6IhQbXwemzpKvoiE9Kx/yDX3bUdctRVPCOQ8eO1cGj
+	7sNxDTg+f5Sb+sgIH//D8Xx24iM2LeYY=
+X-Google-Smtp-Source: AGHT+IHKLwR3YcjGB27F6aLZCc3GGMDReeuLQsVw8nwIi5NtUxvpWutqEIYChjtFC5B0M3L6kaUwrciXh/cEPB/BUMM=
+X-Received: by 2002:a17:907:6eaa:b0:b70:b077:b957 with SMTP id
+ a640c23a62f3a-b72e02d4af4mr791414866b.15.1762766673263; Mon, 10 Nov 2025
+ 01:24:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251021091114.982820-1-maqianga@uniontech.com>
+In-Reply-To: <20251021091114.982820-1-maqianga@uniontech.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 10 Nov 2025 17:24:31 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6T-V8zV9L9wH-mGJNHAP3BGyQxDwKCWtKOxUGdtL4zOg@mail.gmail.com>
+X-Gm-Features: AWmQ_bmSDX66uxK8yo85VkAuS7JO9qpqETnO9k2fkOAx8Ls_pzNpFjyp-PE2Kno
+Message-ID: <CAAhV-H6T-V8zV9L9wH-mGJNHAP3BGyQxDwKCWtKOxUGdtL4zOg@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: kexec_file: print out debugging message if required
+To: Qiang Ma <maqianga@uniontech.com>
+Cc: kernel@xen0n.name, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-On Wednesday, 5 November 2025 07:28:39 Central European Standard Time Chaot=
-ian Jing (=E4=BA=95=E6=9C=9D=E5=A4=A9) wrote:
-> On Thu, 2025-10-23 at 21:49 +0200, Nicolas Frattaroli wrote:
-> > Remove the ti,syscon-reset cruft.
-> >=20
-> > Make PHY mandatory. All the compatibles supported by the binding make
-> > it
-> > mandatory.
-> >=20
-> why make the PHY mandatory ? note that not all of MediaTek SoCs have
-> the PHY node.
+Applied, thanks.
 
-Why don't they have the PHY node? Does the hardware not have a PHY?
+Huacai
 
-The mainline binding makes the phys property mandatory. If you have
-downstream device trees that don't have the PHY node properly
-described in the DT even though the PHY exists, then that is not a
-thing the mainline kernel should support.
-
-If the hardware really doesn't have a PHY, which would surprise me,
-then the binding should properly document this, so that the DT checks
-pass without warnings.
-
-> > Entertain this driver's insistence on playing with the PHY's RPM, but
-> > at
-> > least fix the part where it doesn't increase the reference count,
-> > which
-> > would lead to use-after-free.
-> >=20
-> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > ---
-> >  drivers/ufs/host/ufs-mediatek.c | 87 +++++++++++++++--------------
-> > ------------
-> >  1 file changed, 32 insertions(+), 55 deletions(-)
-> >=20
-> > diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-
-> > mediatek.c
-> > index 9c0ac72d6e43..889a1d58a041 100644
-> > --- a/drivers/ufs/host/ufs-mediatek.c
-> > +++ b/drivers/ufs/host/ufs-mediatek.c
-> > @@ -2353,74 +2353,49 @@ MODULE_DEVICE_TABLE(of, ufs_mtk_of_match);
-> >   */
-> >  static int ufs_mtk_probe(struct platform_device *pdev)
-> >  {
-> > -	int err;
-> > -	struct device *dev =3D &pdev->dev, *phy_dev =3D NULL;
-> > -	struct device_node *reset_node, *phy_node =3D NULL;
-> > -	struct platform_device *reset_pdev, *phy_pdev =3D NULL;
-> > -	struct device_link *link;
-> > -	struct ufs_hba *hba;
-> > +	struct platform_device *phy_pdev;
-> > +	struct device *dev =3D &pdev->dev;
-> > +	struct device_node *phy_node;
-> >  	struct ufs_mtk_host *host;
-> > +	struct device *phy_dev;
-> > +	struct ufs_hba *hba;
-> > +	int err;
-> > =20
-> > -	reset_node =3D of_find_compatible_node(NULL, NULL,
-> > -					     "ti,syscon-reset");
-> > -	if (!reset_node) {
-> > -		dev_notice(dev, "find ti,syscon-reset fail\n");
-> > -		goto skip_reset;
-> > -	}
-> > -	reset_pdev =3D of_find_device_by_node(reset_node);
-> > -	if (!reset_pdev) {
-> > -		dev_notice(dev, "find reset_pdev fail\n");
-> > -		goto skip_reset;
-> > -	}
-> > -	link =3D device_link_add(dev, &reset_pdev->dev,
-> > -		DL_FLAG_AUTOPROBE_CONSUMER);
-> > -	put_device(&reset_pdev->dev);
-> > -	if (!link) {
-> > -		dev_notice(dev, "add reset device_link fail\n");
-> > -		goto skip_reset;
-> > -	}
-> > -	/* supplier is not probed */
-> > -	if (link->status =3D=3D DL_STATE_DORMANT) {
-> > -		err =3D -EPROBE_DEFER;
-> > -		goto out;
-> > -	}
-> > -
-> > -skip_reset:
-> >  	/* find phy node */
-> >  	phy_node =3D of_parse_phandle(dev->of_node, "phys", 0);
-> > +	if (!phy_node)
-> > +		return dev_err_probe(dev, -ENOENT, "No PHY node
-> > found\n");
-> > =20
-> > -	if (phy_node) {
-> > -		phy_pdev =3D of_find_device_by_node(phy_node);
-> > -		if (!phy_pdev)
-> > -			goto skip_phy;
-> > -		phy_dev =3D &phy_pdev->dev;
-> > +	phy_pdev =3D of_find_device_by_node(phy_node);
-> > +	of_node_put(phy_node);
-> > +	if (!phy_pdev)
-> > +		return dev_err_probe(dev, -ENODEV, "No PHY device
-> > found\n");
-> > =20
-> > -		pm_runtime_set_active(phy_dev);
-> > -		pm_runtime_enable(phy_dev);
-> > -		pm_runtime_get_sync(phy_dev);
-> > +	phy_dev =3D &phy_pdev->dev;
-> > =20
-> > -		put_device(phy_dev);
-> > -		dev_info(dev, "phys node found\n");
-> > -	} else {
-> > -		dev_notice(dev, "phys node not found\n");
-> > +	err =3D pm_runtime_set_active(phy_dev);
-> > +	if (err) {
-> > +		dev_err_probe(dev, err, "Failed to activate PHY
-> > RPM\n");
-> > +		goto err_put_phy;
-> > +	}
-> > +	pm_runtime_enable(phy_dev);
-> > +	err =3D pm_runtime_get_sync(phy_dev);
-> > +	if (err) {
-> > +		dev_err_probe(dev, err, "Failed to power on PHY\n");
-> > +		goto err_put_phy;
-> >  	}
-> > =20
-> > -skip_phy:
-> >  	/* perform generic probe */
-> >  	err =3D ufshcd_pltfrm_init(pdev, &ufs_hba_mtk_vops);
-> >  	if (err) {
-> > -		dev_err(dev, "probe failed %d\n", err);
-> > -		goto out;
-> > +		dev_err_probe(dev, err, "Generic platform probe
-> > failed\n");
-> > +		goto err_put_phy;
-> >  	}
-> > =20
-> >  	hba =3D platform_get_drvdata(pdev);
-> > -	if (!hba)
-> > -		goto out;
-> > =20
-> > -	if (phy_node && phy_dev) {
-> > -		host =3D ufshcd_get_variant(hba);
-> > -		host->phy_dev =3D phy_dev;
-> > -	}
-> > +	host =3D ufshcd_get_variant(hba);
-> > +	host->phy_dev =3D phy_dev;
-> > =20
-> >  	/*
-> >  	 * Because the default power setting of VSx (the upper layer of
-> > @@ -2429,9 +2404,11 @@ static int ufs_mtk_probe(struct
-> > platform_device *pdev)
-> >  	 */
-> >  	ufs_mtk_dev_vreg_set_lpm(hba, false);
-> > =20
-> > -out:
-> > -	of_node_put(phy_node);
-> > -	of_node_put(reset_node);
-> > +	return 0;
-> > +
-> > +err_put_phy:
-> > +	put_device(phy_dev);
-> > +
-> >  	return err;
-> >  }
-> > =20
-> >=20
->=20
-
-
-
-
+On Tue, Oct 21, 2025 at 5:12=E2=80=AFPM Qiang Ma <maqianga@uniontech.com> w=
+rote:
+>
+> When specifying '-d' for kexec_file_load interface, loaded locations
+> of kernel/initrd/cmdline etc can be printed out to help debug.
+>
+> Commit eb7622d908a0 ("kexec_file, riscv: print out debugging message
+> if required") fixes the same issue on RISC-V.
+>
+> So, remove kexec_image_info() because the content has been printed
+> out in generic code.
+>
+> And on Loongson-3A5000, the printed messages look like below:
+>
+> [  288.667939] kexec_file: kernel: 00000000d9aad283 kernel_size: 0x2e77f3=
+0
+> [  288.668414] kexec_file(EFI): No LoongArch PE image header.
+> [  288.703104] kexec_file: Loaded initrd at 0x80000000 bufsz=3D0x1637cd0 =
+memsz=3D0x1638000
+> [  288.703674] kexec_file(ELF): Loaded kernel at 0x9c20000 bufsz=3D0x27f1=
+800 memsz=3D0x2950000
+> [  288.704092] kexec_file: nr_segments =3D 2
+> [  288.704277] kexec_file: segment[0]: buf=3D0x00000000cc3e6c33 bufsz=3D0=
+x27f1800 mem=3D0x9c20000 memsz=3D0x2950000
+> [  288.741213] kexec_file: segment[1]: buf=3D0x00000000bb75a541 bufsz=3D0=
+x1637cd0 mem=3D0x80000000 memsz=3D0x1638000
+> [  288.757182] kexec_file: kexec_file_load: type:0, start:0xb15d000 head:=
+0x18db60002 flags:0x8
+>
+> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+> ---
+>  arch/loongarch/kernel/machine_kexec.c | 22 ----------------------
+>  1 file changed, 22 deletions(-)
+>
+> diff --git a/arch/loongarch/kernel/machine_kexec.c b/arch/loongarch/kerne=
+l/machine_kexec.c
+> index e4b2bbc47e62..2d64b7c81e5e 100644
+> --- a/arch/loongarch/kernel/machine_kexec.c
+> +++ b/arch/loongarch/kernel/machine_kexec.c
+> @@ -39,34 +39,12 @@ static unsigned long systable_ptr;
+>  static unsigned long start_addr;
+>  static unsigned long first_ind_entry;
+>
+> -static void kexec_image_info(const struct kimage *kimage)
+> -{
+> -       unsigned long i;
+> -
+> -       pr_debug("kexec kimage info:\n");
+> -       pr_debug("\ttype:        %d\n", kimage->type);
+> -       pr_debug("\tstart:       %lx\n", kimage->start);
+> -       pr_debug("\thead:        %lx\n", kimage->head);
+> -       pr_debug("\tnr_segments: %lu\n", kimage->nr_segments);
+> -
+> -       for (i =3D 0; i < kimage->nr_segments; i++) {
+> -               pr_debug("\t    segment[%lu]: %016lx - %016lx", i,
+> -                       kimage->segment[i].mem,
+> -                       kimage->segment[i].mem + kimage->segment[i].memsz=
+);
+> -               pr_debug("\t\t0x%lx bytes, %lu pages\n",
+> -                       (unsigned long)kimage->segment[i].memsz,
+> -                       (unsigned long)kimage->segment[i].memsz /  PAGE_S=
+IZE);
+> -       }
+> -}
+> -
+>  int machine_kexec_prepare(struct kimage *kimage)
+>  {
+>         int i;
+>         char *bootloader =3D "kexec";
+>         void *cmdline_ptr =3D (void *)KEXEC_CMDLINE_ADDR;
+>
+> -       kexec_image_info(kimage);
+> -
+>         kimage->arch.efi_boot =3D fw_arg0;
+>         kimage->arch.systable_ptr =3D fw_arg2;
+>
+> --
+> 2.20.1
+>
 
