@@ -1,191 +1,408 @@
-Return-Path: <linux-kernel+bounces-893300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0430CC47059
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:51:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC37C4706B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3F24434961C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:51:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 075434EC657
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250813112A5;
-	Mon, 10 Nov 2025 13:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51CC30E849;
+	Mon, 10 Nov 2025 13:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="UD0fhW2S";
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="UD0fhW2S"
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XusxzQb5"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010062.outbound.protection.outlook.com [52.101.61.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EECD223DF9;
-	Mon, 10 Nov 2025 13:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762782653; cv=none; b=But4LUBVZMiKJRCfwwZYSaKzvslDqP9Ru2HcYIGras9JHeqJBs8LzKRXdUILRwEZOzd1GULBWKxmWpV0Zvy82Xw+ViYv1v2Thzv2jeWstuN3DzAJXUx2c3Bq3ajBMPpX4RHYnt8zuTSVJ10FqozlfuRdu5GIi6+XyAaajJmXUKw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762782653; c=relaxed/simple;
-	bh=51j2eBq86PpSEVOcai+wKv7GjF/Cj/f4soVhV6QLva8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YjihRhH5KxmW9EKHk1kfF/6mzEafPla0UmKFdao6tFDdZOsEtME6VUsXTKd1MUyQJMTCQJw0/OoqOoqxp6HjJ/eouV+Oj83ILaAvdPHD5W33JeebupTcV+9UpttB/0oie0794aT3+1K7gCO957D7+FY5DqeJvo2gRlzl80aKokM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=UD0fhW2S; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=UD0fhW2S; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=tTVZptE9yhavDPYFhKzpNou/6CcU7o9cuxLzEmT1XSo=;
-	b=UD0fhW2SqX/JSAcOaD/yxVnfiTA5qPzfQCSMIKBD5kQ+/8y535cdK8FU+D6oTTQR7986lK/F4
-	glg5leKC1YVV7GuuX7ZnqNDQ04yxpOLe98GImTY3O2iRCtWyxGwTwQtQhT14zE5S6quiKbeS7Mk
-	8kTvaLMU37O54CGhjIWb51M=
-Received: from canpmsgout09.his.huawei.com (unknown [172.19.92.135])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTPS id 4d4rds4lxHz1BGLl;
-	Mon, 10 Nov 2025 21:50:25 +0800 (CST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=tTVZptE9yhavDPYFhKzpNou/6CcU7o9cuxLzEmT1XSo=;
-	b=UD0fhW2SqX/JSAcOaD/yxVnfiTA5qPzfQCSMIKBD5kQ+/8y535cdK8FU+D6oTTQR7986lK/F4
-	glg5leKC1YVV7GuuX7ZnqNDQ04yxpOLe98GImTY3O2iRCtWyxGwTwQtQhT14zE5S6quiKbeS7Mk
-	8kTvaLMU37O54CGhjIWb51M=
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4d4rcB1Ddgz1cyPS;
-	Mon, 10 Nov 2025 21:48:58 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id DAC661A0188;
-	Mon, 10 Nov 2025 21:50:36 +0800 (CST)
-Received: from [10.174.178.24] (10.174.178.24) by
- kwepemf100008.china.huawei.com (7.202.181.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 10 Nov 2025 21:50:34 +0800
-Message-ID: <7df04942-5afa-604d-3573-ec54a2c89945@huawei.com>
-Date: Mon, 10 Nov 2025 21:50:34 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DA33112C4;
+	Mon, 10 Nov 2025 13:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762782658; cv=fail; b=Tb8r/GPF08fNKrSIXdDpsMeBeN2n4CHS1P+Fe57OPI9TKSfCacw57DxmyQDeC/LzjUq9bZw+2AOpP61HYgXeHiYRWa69HlJZwpUV6LJlCQ0enLDO7qkQUqooBERi4Z0vO7T29flng/nIpvwYRtJWLQBN0Q54i2hsJlGebGwIzbU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762782658; c=relaxed/simple;
+	bh=7jIQcVx428t5cftDsZMSVeFgE5ka+ARHl3eTB5l2ElE=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=sEp8pMJb0TTGZ8oG3XxV1M6AYB+rE+w2FC/c06mA2HaOfxa25Zb1t1mrG2ji9r0grzcNR6N0MRGWOjEqpzo4uMT99MTH3g4DHRgsMmAzNCzVJt+zrHJTFUOMjLh1DPJOe61kudmCpT84vDZ1dcCJ/UlwFXqvDXjJf24mHTsRILA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XusxzQb5; arc=fail smtp.client-ip=52.101.61.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t44IGI4tIev5C3QiWlQ6v+AtvUlLtwuhQOGg8Y0EddbcXJ9I61xBJTiV+XGRPV+mHiz3KWbWLXC0x5aBGs9cxrx/qXP7IglWNrqjnLC6Td9BoHMMD2ycGO5hvMEPDJ5BDD1zePg69Cqp17Hpref5WSWzm+/T5Zr9RKBr8FTYMUN2fk19fYBqXunJw7le7XtLJhpGIe/ABz1ZKC9VagYWdnCwShIzhymP6088FrU/1XBn73x0HbECDhfDHoXFqeBYL0ePBOwKEDzZrc6LpqJR7uYAreRcZqUvkYHuapazxh3RlTCWu899JGtUAH9T1R/2X/AcHSlA+OpHy3dYG3AiNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ovMUDQqSeHdh760JkrTKanAkv/mFk06JJe0zKOD3oao=;
+ b=X4lalc24pRGvh+oOQRiB6jybA8fNuZMY3s9JdZFbAx2R1aT2v3WAkYdVM5aHLd5/bXngU8PYsMxYF9iaMFLVQRZvpx6q/PlpynuduHVjTXXR2x6WXM7qfwoTzUV9JZOPZU/egbdOUQEC5BCxTHmP6oJuEbSbIVgixofJr4pDpgn+a9l8R0web4Tjxy1+vtzoBX93LodGyGJPcGEm8STVQ+1N8zS3vUBSxy9pNpRjDmfE800/8r0Hj0Gyvlwyn2MI8BVxQPUK4PN9BUvptmxf6uY0+rWtkJuoxgi41hGiChF9zO3qMPh8iODG69meD+z8C6d1Lll6xLstmiaAY8BlWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ovMUDQqSeHdh760JkrTKanAkv/mFk06JJe0zKOD3oao=;
+ b=XusxzQb5DcHRWs621Ue+/J8qXr2IXF+bvG23XNG6p6mxuKZDti662p0Tkesa6PasIgPSfyx+tc1JVlFn5Cyhc3fZOYOBgmrFmd1m/JUEsLYcU6wUZtHkiNCHBz1cQXCjKVoGqZjEwsXWaSgDHAkezAiIL73Iu1GyKBzDLk0WmkorY0Sj26G3d0ob3unTiswtJI1WmDMC8O4QYYymsW49awIeqsB+IZ0yuP4dSvbtULtJyzGnjqdP4NoNgTkUDRYV6KwU1wq+oQgfkeLfc/RQX/gkIhAciJq23n2nymb96vSDGCUToJfps197pj/WQWFwBAEJMlrga9RjybPlDel0Sg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CYXPR12MB9340.namprd12.prod.outlook.com (2603:10b6:930:e4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 13:50:53 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 13:50:53 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 10 Nov 2025 22:50:49 +0900
+Message-Id: <DE52APJTD9NN.A41RA78NMNIE@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, <acourbot@nvidia.com>
+Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, <nouveau@lists.freedesktop.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH v2 08/12] nova-core: sequencer: Add register opcodes
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
+ <20251102235920.3784592-9-joelagnelf@nvidia.com>
+In-Reply-To: <20251102235920.3784592-9-joelagnelf@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0344.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:38e::16) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 28/33] arm_mpam: Consider overflow in bandwidth counter
- state
-Content-Language: en-US
-To: Ben Horgan <ben.horgan@arm.com>, <james.morse@arm.com>
-CC: <amitsinght@marvell.com>, <baisheng.gao@unisoc.com>,
-	<baolin.wang@linux.alibaba.com>, <bobo.shaobowang@huawei.com>,
-	<carl@os.amperecomputing.com>, <catalin.marinas@arm.com>, <dakr@kernel.org>,
-	<dave.martin@arm.com>, <david@redhat.com>, <dfustini@baylibre.com>,
-	<fenghuay@nvidia.com>, <gregkh@linuxfoundation.org>, <gshan@redhat.com>,
-	<guohanjun@huawei.com>, <jeremy.linton@arm.com>,
-	<jonathan.cameron@huawei.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
-	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
-	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
-	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
-	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
-	<xhao@linux.alibaba.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-29-ben.horgan@arm.com>
-From: Zeng Heng <zengheng4@huawei.com>
-In-Reply-To: <20251107123450.664001-29-ben.horgan@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CYXPR12MB9340:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a40cb8d-b292-4cd1-0f6a-08de20602a69
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eStOMnZqc1ZETUZDUVRudHYzT2ZXMU5DQ2I4R2U2bXBOV0Roc1h0STJ0TUtx?=
+ =?utf-8?B?ellrdWFjMWNFUTZKazk5Z0RPR0o0aTdHejQ3YUFqM3RVRVBtbkM1S052VU50?=
+ =?utf-8?B?L3JrVkFiWUw2cGhnZy96RnhnbWQzTkJSYXY4a0dFaDVXbzFleDF1cFdhandu?=
+ =?utf-8?B?dzl5Qm04VEkzSVBqMlRTZjd5Nm5HTXUrVW5PVnhZU1ltOU83a1VNZmxZY1dn?=
+ =?utf-8?B?OU1BYkxIS3oxNGRzRjRYT2xFcDduVko1QnQ5SVRGR2ZhTnhRSncrSHFEaVV5?=
+ =?utf-8?B?R1dYTGQ4KzZkR0dTcXlrUXV3V3lXUXB4amVkWUh0Rkt2RHdzYlZFaWF3TVJ4?=
+ =?utf-8?B?Rm1selFySzRlNmFidkY1MDNqZ0ZoNnJGMVRJaEUyeHlKNi9Bb0pMQ1QzZTNF?=
+ =?utf-8?B?elFwMnc4MVBoRjBSQlNJeXhvZGtYaDQ5ZkUrTnFRSlJjRGprdkdZeW40eHBK?=
+ =?utf-8?B?ZVh4K0tsQ0dQblBxNEhMQXA3VjJjR2pVOEJWcGVlQ0tVOVV2cW1EUnFMb3dE?=
+ =?utf-8?B?bGI2MkJFTHdjdDVaZGM2cGd5YTUrSXNpZ1N1RGhLSWpMY2lJQ21XOXNIdzl0?=
+ =?utf-8?B?citJTjRsbm4welJtZzhKbEk2UjQyZStzR2NKY2JVbjdGY2xIYjVvZWFoUkp3?=
+ =?utf-8?B?WlVhRW9ZTGt5V3IwYVkzT1dlTE0vMnpleUp0aldWRVJHU2Q0RFJpcytERk05?=
+ =?utf-8?B?ckdHYUVQVnBDQ2RPUW5XeGNJRWQ4NkU0OEpKZUZZMnJCTGdRZ3NZanl3eWdV?=
+ =?utf-8?B?NzZtMnlBMXFaZ3hjSlQweW8wOGpoeHZ5UkQ3UjhvK2dTaFhFMzAveCt5SEhs?=
+ =?utf-8?B?ZisyS1RRNzdLb3p6cU8yZjJVdWhOeXdMR3lqQnpUM2NaRWlqOGRTZ0s0V21H?=
+ =?utf-8?B?REZ1d0VNd284eU9iQ3hZcnF1Wkc2dEJ6S1hnOG5uaTlGcnA2bXp5c2twVmQ0?=
+ =?utf-8?B?QWF5alcxNWdBbHIvbkxlbWZDVnBtOFhTWC9INnpmcE9QT0d0elJKbytJUjJ3?=
+ =?utf-8?B?b1dWL2NlUko3Nm1kVGNTOXNSY2s1ODE1T2xoRDdPeVdaU0RmczJ3TlpjUVJx?=
+ =?utf-8?B?Z0p0UjhVVkhOZkxKOHByWkx4Y3orRXh2bnozWVRiT2QwSFZBWHZ5aUJoVDdJ?=
+ =?utf-8?B?eUNoeVg2NHk0QWFRMWtOR2hMYXh3MGtmVnpLRUd2emx3SFovb1JFaEVoc3FZ?=
+ =?utf-8?B?b21ldit4L0lRNldZWTJQejhkdVZwd1V6RVg2ckc1dVFNRGRuTmx1TzJCQXBE?=
+ =?utf-8?B?RUh5SHBDQ29vMTRpRkV1ZGN6WngwUXFrRHA4L2hSWFpDVWw1NE41UWFWQ1hE?=
+ =?utf-8?B?bGZ6T2tNWGNDUzBUNSt6L01iMXg1dytYZnBmLytCb3hQWEM2NTZtVU9ZbWpr?=
+ =?utf-8?B?VVoxWWpuL1hpV09qV1dneVZOT2IyMUNyTlZlK3k1dk9SRU52aVhWbnNaV0ta?=
+ =?utf-8?B?QnpJNW1GS09rSVJXZ0RBWjB3K1ZtMjJyeDM3ZnQ2bW5ocm8vZi8wV3BIcjFz?=
+ =?utf-8?B?aGFxb0xkYlVCc3A0aWFQekloRVNvR2dTYmdyRTBWenI1MUpuWVljV2ZaMDVz?=
+ =?utf-8?B?cXBsNi9zcitPYUNWM2FIWnBtMzRQUGVRLytaNlEzOWRLYitpanpPVmpONlp1?=
+ =?utf-8?B?SVhhNUFuUzJONE5lNlVKZTVPd1pYL0RaanQzRitpTU1yaXpwV01qZ1JlZU42?=
+ =?utf-8?B?WXRtdTZhbmZNM1VLYkdDQWl2OE4vQzlPaGE3VWU4L2wrWnRYQnkzcEdSSkhk?=
+ =?utf-8?B?YW5YSFVUTnZUVUZsQmp1WmExNDNSRGRSYnhYcDVzQStycVR5bUg5UStXNU5C?=
+ =?utf-8?B?T3NzMWRNamRQMnc2cThlSlNyQjQ1TzZ1d2h5SC9yYlhUTkZRUTZkQnBKelhP?=
+ =?utf-8?B?RXFITFJaZVY1YzJacjFiY050dHg4N2hXV0xEUTBjZDdsTkFNWnpHZUNDZzdM?=
+ =?utf-8?Q?/D82G5kU0UwLXxDIXn/YF1/Q9EVFAqmX?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TmNJUHk3OTR5UWNPQjJ4M242T2tIZ3ppMU53djM3aEtYT2l3MVVGOHdoTTBh?=
+ =?utf-8?B?dXgrUkorVkF5WndhSGhEd2ErUXp3VkEvV3F6T2MxeUJ6QXNtb1VMcFc3ZndG?=
+ =?utf-8?B?ZDNpTlRTeUlyUFMzUFdNdDFsK2RndmpZOVVtWG1VdTlMTEFjTEFsd0I3bHM3?=
+ =?utf-8?B?MTA4dnA4MzBJamVwVURHdkVXS1RzeGtMZmtMQVcrR2ZqQWdYWkFIV1dYRUtq?=
+ =?utf-8?B?OFRVcVZaWDhNaitub2RZWm9RM2RpZmVacjhFL1llTmN5MHRsaXVuOW40dTUw?=
+ =?utf-8?B?NFNBVVZ4MVh5alVFM3BpL1hDVVVPUk5uVFVvSkJ4LzZya0JoMVlwQVcrNENV?=
+ =?utf-8?B?TXpWSG93OE1PWDlSek5KWmpSSG1VZzBIbmlQSVBEbEkvdEUrRnUxeGN6RGR3?=
+ =?utf-8?B?eThRU3N5SW1ONGl0d1J0bjl2QVBSeEJqR21GTTZXTlFQQkJHS0o4VG9tN2wv?=
+ =?utf-8?B?bXEvZVJ6WTIyZkJyblZZZjFNUmJpSTdmRVlGOFVvcUd3S0xaTjc5MUU4QmhV?=
+ =?utf-8?B?T254WGdqL0J3RFM2cXFWZDlQNUJVQS9ZbzVyWUJjdEpTVCswaEhGVUE0bGJq?=
+ =?utf-8?B?ekJMbEY5WUNodXY4d1NTTm5xdWhqSHAxSGN3bGdkd2FsRWpIeWEwM3dEbE9Q?=
+ =?utf-8?B?c0FBeHkvUnJ1dU44V2taWm5FaytJSEtBOXQ3eGJXdzBvVVlmY3dvdE5TZXlx?=
+ =?utf-8?B?eWM5TVRoNXE3Wm13Sk16R3YveEwydmlsNExDUWZ2K1ZSRHVhUjZjbEdNdjBp?=
+ =?utf-8?B?L3UrV292bGJXK2ZzK1lOWlBCeEVaQVhOZFNIemhNdHM2QlJSQlBXVGM1T2lv?=
+ =?utf-8?B?dE9LNVhvbG5mZElPTEJMc0x2RVpmb2xmdnBNUXZqcG13bk9vRFlwd3kzTGJQ?=
+ =?utf-8?B?OVV4RlplODlyT1RuTUFvRjhQUDBqY0ZMakJVQUN5bmNrbitjS1cxQ3pFVFdK?=
+ =?utf-8?B?SEtjV0VQK1praStSQnJvT2pnOEdLMVpYZWVlKzJlMVY0OGJqNjFvZlFRQUlv?=
+ =?utf-8?B?eGhEU3RNZjV2M0pEZXlxbGMwejA3K3B0dDhkLzNvWU5lcWdVRHJpY1N2VG5m?=
+ =?utf-8?B?My9wMDB3WUs2QmJwK211d1c1MTl6Tk9CNjRKVzZZelU5RldGOUVIYmoybGdJ?=
+ =?utf-8?B?cWxuMEFWMTBMUUlmbmZwcTdYN3lpeTVhT0w2T2w5ZWowQ3hYWWtaRW93SVlI?=
+ =?utf-8?B?czhiQWxWMUdQblE5TjRIT3VOKzI1bk5Pa1NvcElSbFBXLzdpSTN3ZVhGaFNV?=
+ =?utf-8?B?cFNRSWZuSGJRa3hKVmV5aXovekxtUkxJMHhZNS9lZllOVWRQNnJyVG9zNVJl?=
+ =?utf-8?B?cE9FSnRjVEdMVmhmeDhkSGNLNU1DTzZaZGZUWlNCWUZLQ2Y5d0lzbjYxZjdT?=
+ =?utf-8?B?UE9vN0pFNlNiLzRVTmozNll4UjF4RjllQ2MyaEd3VmlzOWJFaU1qOFBiUnEw?=
+ =?utf-8?B?NkwyQUVKZktPSzFmbzVyOTZjMGIzR0xmZ2tBbzZBWVVzRFIzaXp5VG5NazFD?=
+ =?utf-8?B?ejQ1RDY4UVdnay9BeGhzbFZ3eHlTcnVsZC9WMEFFZG43UkJJL1M5SmRCZlZo?=
+ =?utf-8?B?V2taYitITjVlRG5vU0pSU1cyazdnYWtFckJkdlhicmlhZFdBUWp3cGZpcTdi?=
+ =?utf-8?B?MnBQT2lNS3YrTzRIaUJkdjE5bjlMTk9laHY3dDk2K04vQVFsTGdlRmZ0MUdE?=
+ =?utf-8?B?Y0swWlc5WXFhMGMwVkRjZC9mV2FIS3JFY1FWeSsvQzQwWnMxQUxtRUN1TnU5?=
+ =?utf-8?B?RzkrcmRBSmQyVVFXaUdpQnNuaGJ1Mml2VEZtWDN2RzFpWURkdVFOSGNPRHRu?=
+ =?utf-8?B?Vk1CeUk5TTk1T05NWEgwVDRKMEh4K1pNaW4rRGp0YVZDUGtyb1hFU2lYNXNr?=
+ =?utf-8?B?RkEwVnB5SUdmQ3J5Qk1uU2p0aUhIaFZNMmxDeXJOeC9tODlIVmM5a29acjZv?=
+ =?utf-8?B?YlkwZ3VZZHg5ek1nVnc2clZxbVZXb3NTbjRDbkF6VWVjODZ3Y0VlYkNiN0s4?=
+ =?utf-8?B?QUNuQm5jV0xFd3pOazhXZWtVTFdqc043TzdwVU9NaVJrckE3NlF6c3oxMWpZ?=
+ =?utf-8?B?Z1psd0EvUW40Wk9sZmVDQTYyendDbUwvMnBITHdpbHpvSFJxOUVjTmtUVk0w?=
+ =?utf-8?B?V1dicWRENy9HS1YvZEloc2pBTk1rREpwTXVlSU1mZkhINjAvdjdGZy9waWg0?=
+ =?utf-8?Q?V+0rz2/lSq0XQ38bH8fzmLTSsIPGW1+dZtVgndMfJ/dD?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a40cb8d-b292-4cd1-0f6a-08de20602a69
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 13:50:53.5196
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7w+EM+D2Q7Rh5cRduLv1H8PiIOg2/ga/wuGU1hnQLCqGXilMOhddrT1dQiLsn6frwxJBSqf+fnT4Jq0kjZdvbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9340
 
-
-
-On 2025/11/7 20:34, Ben Horgan wrote:
-> Use the overflow status bit to track overflow on each bandwidth counter
-> read and add the counter size to the correction when overflow is detected.
-> 
-> This assumes that only a single overflow has occurred since the last read
-> of the counter. Overflow interrupts, on hardware that supports them could
-> be used to remove this limitation.
-> 
-> Cc: Zeng Heng <zengheng4@huawei.com>
-> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+On Mon Nov 3, 2025 at 8:59 AM JST, Joel Fernandes wrote:
+> These opcodes are used for register write, modify, poll and store (save)
+> sequencer operations.
+>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 > ---
->   drivers/resctrl/mpam_devices.c  | 24 ++++++++++++++++++++++--
->   drivers/resctrl/mpam_internal.h |  3 ++-
->   2 files changed, 24 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index 2d1cef824b8e..eea082dfcddc 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -986,11 +986,18 @@ static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
->   	}
->   }
->   
-> +static u64 mpam_msmon_overflow_val(enum mpam_device_features type)
-> +{
-> +	/* TODO: scaling, and long counters */
-> +	return BIT_ULL(hweight_long(MSMON___VALUE));
+>  drivers/gpu/nova-core/gsp/sequencer.rs | 138 +++++++++++++++++++++++--
+>  1 file changed, 131 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/nova-core/gsp/sequencer.rs b/drivers/gpu/nova-co=
+re/gsp/sequencer.rs
+> index 48c40140876b..f429fee01f86 100644
+> --- a/drivers/gpu/nova-core/gsp/sequencer.rs
+> +++ b/drivers/gpu/nova-core/gsp/sequencer.rs
+> @@ -5,6 +5,7 @@
+>  use core::mem::size_of;
+>  use kernel::alloc::flags::GFP_KERNEL;
+>  use kernel::device;
+> +use kernel::io::poll::read_poll_timeout;
+>  use kernel::prelude::*;
+>  use kernel::time::Delta;
+>  use kernel::transmute::FromBytes;
+> @@ -40,13 +41,36 @@ struct GspSequencerInfo<'a> {
+> =20
+>  /// GSP Sequencer Command types with payload data.
+>  /// Commands have an opcode and a opcode-dependent struct.
+> -#[allow(dead_code)]
+> -pub(crate) enum GspSeqCmd {}
+> +#[allow(clippy::enum_variant_names)]
+> +pub(crate) enum GspSeqCmd {
+> +    RegWrite(fw::GSP_SEQ_BUF_PAYLOAD_REG_WRITE),
+> +    RegModify(fw::GSP_SEQ_BUF_PAYLOAD_REG_MODIFY),
+> +    RegPoll(fw::GSP_SEQ_BUF_PAYLOAD_REG_POLL),
+> +    RegStore(fw::GSP_SEQ_BUF_PAYLOAD_REG_STORE),
+> +}
+> =20
+>  impl GspSeqCmd {
+>      /// Creates a new GspSeqCmd from a firmware GSP_SEQUENCER_BUFFER_CMD=
+.
+> -    pub(crate) fn from_fw_cmd(_cmd: &fw::GSP_SEQUENCER_BUFFER_CMD) -> Re=
+sult<Self> {
+> -        Err(EINVAL)
+> +    pub(crate) fn from_fw_cmd(cmd: &fw::GSP_SEQUENCER_BUFFER_CMD) -> Res=
+ult<Self> {
+> +        match cmd.opCode {
+> +            fw::GSP_SEQ_BUF_OPCODE_GSP_SEQ_BUF_OPCODE_REG_WRITE =3D> {
+> +                // SAFETY: We're using the union field that corresponds =
+to the opCode.
+> +                Ok(GspSeqCmd::RegWrite(unsafe { cmd.payload.regWrite }))
+> +            }
+> +            fw::GSP_SEQ_BUF_OPCODE_GSP_SEQ_BUF_OPCODE_REG_MODIFY =3D> {
+> +                // SAFETY: We're using the union field that corresponds =
+to the opCode.
+> +                Ok(GspSeqCmd::RegModify(unsafe { cmd.payload.regModify }=
+))
+> +            }
+> +            fw::GSP_SEQ_BUF_OPCODE_GSP_SEQ_BUF_OPCODE_REG_POLL =3D> {
+> +                // SAFETY: We're using the union field that corresponds =
+to the opCode.
+> +                Ok(GspSeqCmd::RegPoll(unsafe { cmd.payload.regPoll }))
+> +            }
+> +            fw::GSP_SEQ_BUF_OPCODE_GSP_SEQ_BUF_OPCODE_REG_STORE =3D> {
+> +                // SAFETY: We're using the union field that corresponds =
+to the opCode.
+> +                Ok(GspSeqCmd::RegStore(unsafe { cmd.payload.regStore }))
+> +            }
+
+I'd rather have these `unsafe` statements in the `fw` module - guess
+that's all he more reason to add an abstraction layer there.
+
+> +            _ =3D> Err(EINVAL),
+> +        }
+>      }
+> =20
+>      pub(crate) fn new(data: &[u8], dev: &device::Device<device::Bound>) =
+-> Result<Self> {
+> @@ -64,7 +88,16 @@ pub(crate) fn new(data: &[u8], dev: &device::Device<de=
+vice::Bound>) -> Result<Se
+>      /// Get the size of this command in bytes, the command consists of
+>      /// a 4-byte opcode, and a variable-sized payload.
+>      pub(crate) fn size_bytes(&self) -> usize {
+> -        0
+> +        let opcode_size =3D size_of::<fw::GSP_SEQ_BUF_OPCODE>();
+> +        match self {
+> +            // For commands with payloads, add the payload size in bytes=
+.
+> +            GspSeqCmd::RegWrite(_) =3D> opcode_size + size_of::<fw::GSP_=
+SEQ_BUF_PAYLOAD_REG_WRITE>(),
+> +            GspSeqCmd::RegModify(_) =3D> {
+> +                opcode_size + size_of::<fw::GSP_SEQ_BUF_PAYLOAD_REG_MODI=
+FY>()
+> +            }
+> +            GspSeqCmd::RegPoll(_) =3D> opcode_size + size_of::<fw::GSP_S=
+EQ_BUF_PAYLOAD_REG_POLL>(),
+> +            GspSeqCmd::RegStore(_) =3D> opcode_size + size_of::<fw::GSP_=
+SEQ_BUF_PAYLOAD_REG_STORE>(),
+> +        }
+>      }
+>  }
+> =20
+> @@ -83,12 +116,103 @@ pub(crate) trait GspSeqCmdRunner {
+>      fn run(&self, sequencer: &GspSequencer<'_>) -> Result;
+>  }
+> =20
+> -impl GspSeqCmdRunner for GspSeqCmd {
+> -    fn run(&self, _seq: &GspSequencer<'_>) -> Result {
+> +impl GspSeqCmdRunner for fw::GSP_SEQ_BUF_PAYLOAD_REG_WRITE {
+> +    fn run(&self, sequencer: &GspSequencer<'_>) -> Result {
+> +        dev_dbg!(
+> +            sequencer.dev,
+> +            "RegWrite: addr=3D0x{:x}, val=3D0x{:x}\n",
+> +            self.addr,
+> +            self.val
+> +        );
+
+Per the other feedback I believe you are going to remove these `dev_dbg`
+anyway, but since the opcodes derive a `Debug` implementation, you could
+have just printed that from the caller for a similar result and no extra
+code.
+
+> +        let addr =3D self.addr as usize;
+> +        let val =3D self.val;
+> +        let _ =3D sequencer.bar.try_write32(val, addr);
+> +        Ok(())
+> +    }
 > +}
 > +
->   static void __ris_msmon_read(void *arg)
->   {
->   	u64 now;
->   	bool nrdy = false;
->   	bool config_mismatch;
-> +	bool overflow;
->   	struct mon_read *m = arg;
->   	struct mon_cfg *ctx = m->ctx;
->   	struct mpam_msc_ris *ris = m->ris;
-> @@ -1012,13 +1019,20 @@ static void __ris_msmon_read(void *arg)
->   	 * This saves waiting for 'nrdy' on subsequent reads.
->   	 */
->   	read_msmon_ctl_flt_vals(m, &cur_ctl, &cur_flt);
-> +	overflow = cur_ctl & MSMON_CFG_x_CTL_OFLOW_STATUS;
+> +impl GspSeqCmdRunner for fw::GSP_SEQ_BUF_PAYLOAD_REG_MODIFY {
+> +    fn run(&self, sequencer: &GspSequencer<'_>) -> Result {
+> +        dev_dbg!(
+> +            sequencer.dev,
+> +            "RegModify: addr=3D0x{:x}, mask=3D0x{:x}, val=3D0x{:x}\n",
+> +            self.addr,
+> +            self.mask,
+> +            self.val
+> +        );
 > +
->   	clean_msmon_ctl_val(&cur_ctl);
->   	gen_msmon_ctl_flt_vals(m, &ctl_val, &flt_val);
->   	config_mismatch = cur_flt != flt_val ||
->   			  cur_ctl != (ctl_val | MSMON_CFG_x_CTL_EN);
->   
-> -	if (config_mismatch)
-> +	if (config_mismatch) {
->   		write_msmon_ctl_flt_vals(m, ctl_val, flt_val);
-> +		overflow = false;
-> +	} else if (overflow) {
-> +		mpam_write_monsel_reg(msc, CFG_MBWU_CTL,
-> +				      cur_ctl & ~MSMON_CFG_x_CTL_OFLOW_STATUS);
-> +	}
->   
->   	switch (m->type) {
->   	case mpam_feat_msmon_csu:
-> @@ -1038,7 +1052,13 @@ static void __ris_msmon_read(void *arg)
->   
->   		mbwu_state = &ris->mbwu_state[ctx->mon];
->   
-> -		/* Include bandwidth consumed before the last hardware reset */
-> +		if (overflow)
-> +			mbwu_state->correction += mpam_msmon_overflow_val(m->type);
+> +        let addr =3D self.addr as usize;
+> +        if let Ok(temp) =3D sequencer.bar.try_read32(addr) {
+> +            let _ =3D sequencer
+> +                .bar
+> +                .try_write32((temp & !self.mask) | self.val, addr);
+> +        }
+>          Ok(())
+>      }
+>  }
+> =20
+> +impl GspSeqCmdRunner for fw::GSP_SEQ_BUF_PAYLOAD_REG_POLL {
+> +    fn run(&self, sequencer: &GspSequencer<'_>) -> Result {
+> +        dev_dbg!(
+> +            sequencer.dev,
+> +            "RegPoll: addr=3D0x{:x}, mask=3D0x{:x}, val=3D0x{:x}, timeou=
+t=3D0x{:x}, error=3D0x{:x}\n",
+> +            self.addr,
+> +            self.mask,
+> +            self.val,
+> +            self.timeout,
+> +            self.error
+> +        );
 > +
-> +		/*
-> +		 * Include bandwidth consumed before the last hardware reset and
-> +		 * a counter size increment for each overflow.
-> +		 */
->   		now += mbwu_state->correction;
->   		break;
->   	default:
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index 1f2b04b7703e..7c99d4f3dc9c 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -209,7 +209,8 @@ struct msmon_mbwu_state {
->   	struct mon_cfg	cfg;
->   
->   	/*
-> -	 * The value to add to the new reading to account for power management.
-> +	 * The value to add to the new reading to account for power management,
-> +	 * and overflow.
->   	 */
->   	u64		correction;
->   
+> +        let addr =3D self.addr as usize;
+> +        let mut timeout_us =3D i64::from(self.timeout);
+> +
+> +        // Default timeout to 4 seconds.
+> +        timeout_us =3D if timeout_us =3D=3D 0 { 4000000 } else { timeout=
+_us };
 
-Reviewed-by: Zeng Heng <zengheng4@huawei.com>
+`let timeout_us =3D if self.timeout =3D=3D 0 { 4_000_000 } else {
+i64::from(self.timeout)`
+
+(removes the `mut` on `timeout_us`)
+
+> +
+> +        // First read.
+> +        sequencer.bar.try_read32(addr)?;
+> +
+> +        // Poll the requested register with requested timeout.
+> +        read_poll_timeout(
+> +            || sequencer.bar.try_read32(addr),
+> +            |current| (current & self.mask) =3D=3D self.val,
+> +            Delta::ZERO,
+> +            Delta::from_micros(timeout_us),
+> +        )
+> +        .map(|_| ())
+> +    }
+> +}
+> +
+> +impl GspSeqCmdRunner for fw::GSP_SEQ_BUF_PAYLOAD_REG_STORE {
+> +    fn run(&self, sequencer: &GspSequencer<'_>) -> Result {
+> +        let addr =3D self.addr as usize;
+> +        let _index =3D self.index;
+> +
+> +        let val =3D sequencer.bar.try_read32(addr)?;
+> +
+> +        dev_dbg!(
+> +            sequencer.dev,
+> +            "RegStore: addr=3D0x{:x}, index=3D0x{:x}, value=3D{:?}\n",
+> +            self.addr,
+> +            self.index,
+> +            val
+> +        );
+> +
+> +        Ok(())
+> +    }
+> +}
+> +
+> +impl GspSeqCmdRunner for GspSeqCmd {
+> +    fn run(&self, seq: &GspSequencer<'_>) -> Result {
+> +        match self {
+> +            GspSeqCmd::RegWrite(cmd) =3D> cmd.run(seq),
+> +            GspSeqCmd::RegModify(cmd) =3D> cmd.run(seq),
+> +            GspSeqCmd::RegPoll(cmd) =3D> cmd.run(seq),
+> +            GspSeqCmd::RegStore(cmd) =3D> cmd.run(seq),
+> +        }
+> +    }
+> +}
+
+This makes me wonder: do we need to store the deserialized version of
+these operands, and make a second `match` on them? How about passing the
+`bar` to the deserialization command and have it run the operand
+immediately?
 
