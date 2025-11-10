@@ -1,200 +1,235 @@
-Return-Path: <linux-kernel+bounces-892790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A89C45D5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:11:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37139C45D76
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:12:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E486C4EEFD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:06:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F367F4EA7BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76442FFF84;
-	Mon, 10 Nov 2025 10:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6881302163;
+	Mon, 10 Nov 2025 10:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="giRz8wQD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F3IgI36c";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BeHTpw9H"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB4B2FC866
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2382F6922
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762769193; cv=none; b=H1aBfc5Twn4qjc8NptgwotpMDl4qwqtFBuxmBEAOHrMxDAUEuwPOkVUHgG5U0w/G6dwEzIR6reH+8WcuqTf3jobQjglQLLgBteDak31qclPR3gfIPauNkJa0VfDuSyYMcQ+r+hxf+/4SgR5+AEQQbcfbuhZMnrByQYeXNqxGnng=
+	t=1762769313; cv=none; b=DDT8DWGnh1a9HWkHkGP5YG0SfY1lb1pzvGGtJbLFXnYKSwOpbmuVWwQpSWCUIuj/siPepg8Azy0GOZIB1E3pPK0/aLhaC+Ym9i5OZFTK3AwtA+xt+iYPOIXlAu/C05i6Tsyg6mgTPmKgFCwYQu0f8fLOenEQEZ+WclCYY9a1ajw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762769193; c=relaxed/simple;
-	bh=njMvkb3GKogZWduhp71RZ/0zgC5Z05aRgumYU/Ofx3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NPjm2kI90yzTgjGx5gLPX3UQmpYiE+wd0mEdtBTR1yffqWzFuBLMuLkGUK7pMIxhCp/P6gpF4Q+fGhxGkx/lX6S9roNQoP/Mtsj30Qjuw1YqSKCabOKLvr5PgNq2e01GcMJBpkw8/UCPzhaK1Bt6qvHg8WuteGUpLPqjxTjSLqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=giRz8wQD; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762769191; x=1794305191;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=njMvkb3GKogZWduhp71RZ/0zgC5Z05aRgumYU/Ofx3k=;
-  b=giRz8wQDVQoUYMDCrehXgXrZpLGwTg8rRwOx4+5s4E8EMKHqyRK9L3+U
-   IR4z70zPF5sNMUQ133bZg6BPjWC2NJj25WIxD3a4pCRCfe7SukAEPN651
-   ahNVvTOf1I6HJP9F/2trp/TZ9lYivopw4lH7YM63f9Wo0EH+kp+3tfzHH
-   ee18mLtpFvamhgyC00C2t59AWLshQD0zczYee47bV9PMy840lk6jBGk9z
-   n92NZ9/WId0RTVcdKQKudigj5UwU6QMBloTtb6g/+i7NkD7X0zgJnwYn8
-   IVWnPlV+CQB0ZbrJviUbVsS8YKTINpMdUVXgaEww92EWjJaU9uhTYkL+t
-   A==;
-X-CSE-ConnectionGUID: ZUnq8wIVRN+Zd9LGVQVHuw==
-X-CSE-MsgGUID: rUjmkg7eS5mSzZMZ3cwYeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="76164162"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="76164162"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 02:06:30 -0800
-X-CSE-ConnectionGUID: NKU8XwPTQqCuTvGu0yP1NQ==
-X-CSE-MsgGUID: GSJ8l7dqQwCwM32MrKNugw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="212032316"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 10 Nov 2025 02:06:26 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vIOn2-0000HD-1v;
-	Mon, 10 Nov 2025 10:06:24 +0000
-Date: Mon, 10 Nov 2025 18:06:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	Mary Guillemard <mary@mary.zone>,
-	Faith Ekstrand <faith.ekstrand@collabora.com>,
-	Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	nouveau@lists.freedesktop.org,
-	Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>,
-	James Jones <jajones@nvidia.com>
-Subject: Re: [PATCH v5 2/5] drm/nouveau/uvmm: Allow larger pages
-Message-ID: <202511101750.gQGInWw5-lkp@intel.com>
-References: <20251108194919.68754-3-mohamedahmedegypt2001@gmail.com>
+	s=arc-20240116; t=1762769313; c=relaxed/simple;
+	bh=0dbOoM1JgFEw8FONGDy+H2SN6rDl1TPboIDJvPZ2RZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=on1EdfMGBy6kKs75hmBPMGaJ9FciUfoBJ+4aISjCjnlRgLjwybBH7rlITskI0pPvBxyMEmu5IQxdZuQiF/Ise6iEbklWotbllql8sldFybdcABz70Syo1q29Z76av4G8WEuaCL/UZgfr5gSgopt5WutE4HxF65/mkXpt2HKbVu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F3IgI36c; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BeHTpw9H; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AA9ChxB3146440
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:08:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	z3KAbPP/h+63EoRNBS2Ni6wBbFMkQ1zOPX3P54o6wtg=; b=F3IgI36cgE4ZJveP
+	6RqM7bB3ScGFaZBzdgUpY7E9W4zUIIAOHAJkL39s1F6BaecBQvwQQEhZVCtRsxyn
+	U98hIFKeNaEFCxcpuSJi/5GIeWh2XSH8YOPr6dI9/56/A58hOjs8e87ReC0JJUTB
+	D08ieNxQ4mXOerb+pbcK8Xlom8/gBpunMeeCjQdiLHKuSrC8u6vkoqN9dMi3TRNn
+	SP7v9535gIbMp1q+4qvV47Wo8GYUtr7EDPncBqQyDloJIo+9xOfYJBsxj5SuIAjM
+	0BmEurNNYL69GKw4FFmsY93gsJU/lOklJejP0oji6fqlwJdsDA0yaDvy3YV4K/kZ
+	oNFqPQ==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abd7hr6j8-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:08:30 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-295b713530cso34544695ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:08:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762769310; x=1763374110; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z3KAbPP/h+63EoRNBS2Ni6wBbFMkQ1zOPX3P54o6wtg=;
+        b=BeHTpw9HgXOl1iWo2PzWMRmPdZ/MIfx78AllhM+/Pg48ukksMAFsZKVFaHns0A77Uc
+         Ro6TCEGoRiR6HBXaICHUICVxrOUgBKQiFk1dsipNaX4f4CVX5/gK6xnAV6U3LEFFEgp/
+         wPEg45CBQTVx6zDLgN4AqIk0mBgkZRUX0NfaYJtv6O+3xCu31+uYKIuAHtMgfEuf0Zhb
+         zuxeLWBf8JmOrd8BDlk1e6actpZ+pjIN4bwo7DUli0OVqUZRasDL/6Ax+O02jO6EDwwH
+         wP67Ed0N29/HepJxPKxfIMl7jcRR9y+g+Ndmnf3xbHK+ZfqWeQpY56QqkltfjGZHlPY4
+         qPIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762769310; x=1763374110;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z3KAbPP/h+63EoRNBS2Ni6wBbFMkQ1zOPX3P54o6wtg=;
+        b=ecgu+AMLnhX6AJOyJZfY9TVkEYpFByDK58KlJQTsov6ISp7PAVpIRwDJaakieQn+qN
+         b9ZnHFyJC/zdahq3fFtAwBxkCggA39DNYB8TkC7HNa1uWv55ev8Zgr/WLZeq6UX1oF+F
+         nxST6p+UAgWGUsx/NohM5BNuaxyt8ygtCPQrIFHK7MwuCJyAUY0Q0/NXkxWFxTE8KucR
+         IlEo3KIS12z1UdELUWYQ3iJiMHEczJbSDSbxviwb6Z27tndtfrabusJmAPgPuC6OAqJj
+         2dqMbYBfZbciFdwd5ynBPQx/7Mp75/U/yTyDIx58B6RrXbx8rCxu8hW0O+tpu+58An4Q
+         LLEA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4t9yjtNNnMF1CHPTKq5Z8P0Bd9jhCsl653ZyCg/aCJPTmwufRNDRt6VMJAceY5fyshk5iY1/WHUvrfhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV2+EZdpow9WsZ4ivwVZ9m3ajG1pIj/Dcfk0bGhQ8dR8pZDX8t
+	pLVgaryjVgXXpdL+woJ0eRzHFznzGRSChPCzTStlBlmAGKuMbQjItRNR/a8VHFvVcx+68AAthIH
+	S7XglS+ilqBdjNv/hHfzCOEbaBh46sMyJkURwnHQAA/Db50owux4UkC2lBSsExFnSO1U=
+X-Gm-Gg: ASbGncvjqPXhsepJGmtXSgxIlhJcKXj9yuRzAQ0GK2GL9ZWMdHviK2WzavOabUiHPB/
+	1O7LAoRadAVqcvkQotCYKTJV01YREUjdiFGrGlzEFhMnnHfqaYTehYluUfrl7chVxQ+LJOteU+7
+	J7r0jnshLhC0b6DaGAyGKPZm8jtBlLWq88xSIzMMuybfxDPC2vXDaWirCrclHITMC5N2mCtOulg
+	2VQTQPgikRfdw3YxiKK4hjdpj+0NFOR3BqaJ8QPcUcf6JzYUj0VJpuFEkNV/3Ee8rdwZiYdsSsi
+	x3xTv0OnOdWoB+IRjso3MsT2n++W0UoTS4iULR+nW+eV8i71jkVbEE1zui1aiVcvgSiAm5/kpq7
+	osMnlvXc1EaNjRgeuG0A52imi7khiQ0s=
+X-Received: by 2002:a17:903:40c9:b0:297:d741:d28a with SMTP id d9443c01a7336-297e56c9eb4mr84302465ad.31.1762769309730;
+        Mon, 10 Nov 2025 02:08:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHyXqPJFzXxIoU0geQ41zcRiNCHrftpqqkDVpgzXcbP6SifdSRX3i0G9WOKxg+fHf1fYfI9Hw==
+X-Received: by 2002:a17:903:40c9:b0:297:d741:d28a with SMTP id d9443c01a7336-297e56c9eb4mr84302105ad.31.1762769309152;
+        Mon, 10 Nov 2025 02:08:29 -0800 (PST)
+Received: from [10.218.4.221] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c93cebsm140244045ad.90.2025.11.10.02.08.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 02:08:28 -0800 (PST)
+Message-ID: <8776d2ca-90b9-7e14-a278-01f20e81297a@oss.qualcomm.com>
+Date: Mon, 10 Nov 2025 15:38:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251108194919.68754-3-mohamedahmedegypt2001@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v6 0/6] can: mcp251xfd: add gpio functionality
+To: Manivannan Sadhasivam <mani@kernel.org>, mkl@pengutronix.de
+Cc: thomas.kopp@microchip.com, mailhol.vincent@wanadoo.fr, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
+        brgl@bgdev.pl, linux-can@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mukesh.savaliya@oss.qualcomm.com,
+        anup.kulkarni@oss.qualcomm.com
+References: <20251001091006.4003841-1-viken.dadhaniya@oss.qualcomm.com>
+ <dvqn5hwvoi36djxkfte2sw2o2nnk7irh6tgt5vmtqgm6t2dbyc@snde7uwlzbia>
+Content-Language: en-US
+From: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+In-Reply-To: <dvqn5hwvoi36djxkfte2sw2o2nnk7irh6tgt5vmtqgm6t2dbyc@snde7uwlzbia>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: dsw_hDNpdeoPXkEs9EIReuCtvukWEzpC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDA4OCBTYWx0ZWRfX1B7zlHKH1k3C
+ HM3qK2N8irxmJwurK6ARXA/bPqtiPiLMl23fjVxnus8mH9dRhj5irD1+TCgbfqIdx988OwJIVq5
+ yUI3V1x9gehewY6gdFVND7N8gh+DO0qhwAYz3hiTpR+xSUohAz7+S9OoTzQ/tJ5g8u76vx8srNX
+ Qz3rPvL1V6BiYGEppZXwMQP1WyaDU9CDz1i8vp9LjDVWp+MiJwBvIrm3Ul+4EC+WsxMftWq0a/A
+ WXCobXjmQL3PGoJmrPtMOg/8bUFNDGQLzZb78wTqQjLzpbdwHBA/NjayAQzJJ1ZPBW/HQzddgxq
+ hPo1dFvHnT5jeKhplaKEWmncZgkuY5OWASkh7v9gA0UfDAcvaFwLtveD+PaksEaN4+T6PsMV2sN
+ rtN2uS5dzKa8h1UylDyburBhJirb4Q==
+X-Proofpoint-ORIG-GUID: dsw_hDNpdeoPXkEs9EIReuCtvukWEzpC
+X-Authority-Analysis: v=2.4 cv=Yt4ChoYX c=1 sm=1 tr=0 ts=6911b99e cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=8f9FM25-AAAA:8
+ a=JNVGp1IlC4mDD8BcjtkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22 a=uSNRK0Bqq4PXrUp6LDpb:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_04,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 spamscore=0 phishscore=0 malwarescore=0
+ impostorscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511100088
 
-Hi Mohamed,
+Hi Marc
 
-kernel test robot noticed the following build errors:
+I wanted to follow up on this patch series. I noticed it hasn’t been picked up yet,
+so I wanted to check if there are any remaining concerns or comments that need to be addressed.
 
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on drm/drm-next drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-tip/drm-tip linus/master v6.18-rc5 next-20251110]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks
+Viken Dadhaniya
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mohamed-Ahmed/drm-nouveau-uvmm-Prepare-for-larger-pages/20251109-035142
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20251108194919.68754-3-mohamedahmedegypt2001%40gmail.com
-patch subject: [PATCH v5 2/5] drm/nouveau/uvmm: Allow larger pages
-config: parisc-defconfig (https://download.01.org/0day-ci/archive/20251110/202511101750.gQGInWw5-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251110/202511101750.gQGInWw5-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511101750.gQGInWw5-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/device.h:15,
-                    from include/linux/pci.h:37,
-                    from drivers/gpu/drm/nouveau/include/nvif/os.h:8,
-                    from drivers/gpu/drm/nouveau/include/nvif/object.h:4,
-                    from drivers/gpu/drm/nouveau/include/nvif/client.h:5,
-                    from drivers/gpu/drm/nouveau/nouveau_drv.h:42,
-                    from drivers/gpu/drm/nouveau/nouveau_uvmm.c:23:
-   drivers/gpu/drm/nouveau/nouveau_uvmm.c: In function 'select_page_shift':
->> drivers/gpu/drm/nouveau/nouveau_uvmm.c:508:34: error: passing argument 1 of '_dev_warn' from incompatible pointer type [-Wincompatible-pointer-types]
-     508 |         dev_warn_once(op->gem.obj->dev, "Could not find an appropriate page size.\n");
-         |                       ~~~~~~~~~~~^~~~~
-         |                                  |
-         |                                  struct drm_device *
-   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                         ^~~
-   include/linux/dev_printk.h:181:17: note: in expansion of macro 'dev_warn'
-     181 |                 dev_level(dev, fmt, ##__VA_ARGS__);                     \
-         |                 ^~~~~~~~~
-   include/linux/dev_printk.h:201:9: note: in expansion of macro 'dev_level_once'
-     201 |         dev_level_once(dev_warn, dev, fmt, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~
-   drivers/gpu/drm/nouveau/nouveau_uvmm.c:508:9: note: in expansion of macro 'dev_warn_once'
-     508 |         dev_warn_once(op->gem.obj->dev, "Could not find an appropriate page size.\n");
-         |         ^~~~~~~~~~~~~
-   include/linux/dev_printk.h:52:37: note: expected 'const struct device *' but argument is of type 'struct drm_device *'
-      52 | void _dev_warn(const struct device *dev, const char *fmt, ...);
-         |                ~~~~~~~~~~~~~~~~~~~~~^~~
-
-
-vim +/_dev_warn +508 drivers/gpu/drm/nouveau/nouveau_uvmm.c
-
-   466	
-   467	static u8
-   468	select_page_shift(struct nouveau_uvmm *uvmm, struct drm_gpuva_op_map *op)
-   469	{
-   470		struct nouveau_bo *nvbo = nouveau_gem_object(op->gem.obj);
-   471	
-   472		/* nouveau_bo_fixup_align() guarantees that the page size will be aligned
-   473		 * for most cases, but it can't handle cases where userspace allocates with
-   474		 * a size and then binds with a smaller granularity. So in order to avoid
-   475		 * breaking old userspace, we need to ensure that the VA is actually
-   476		 * aligned before using it, and if it isn't, then we downgrade to the first
-   477		 * granularity that will fit, which is optimal from a correctness and
-   478		 * performance perspective.
-   479		 */
-   480		if (op_map_aligned_to_page_shift(op, nvbo->page))
-   481			return nvbo->page;
-   482	
-   483		struct nouveau_mem *mem = nouveau_mem(nvbo->bo.resource);
-   484		struct nvif_vmm *vmm = &uvmm->vmm.vmm;
-   485		int i;
-   486	
-   487		/* If the given granularity doesn't fit, let's find one that will fit. */
-   488		for (i = 0; i < vmm->page_nr; i++) {
-   489			/* Ignore anything that is bigger or identical to the BO preference. */
-   490			if (vmm->page[i].shift >= nvbo->page)
-   491				continue;
-   492	
-   493			/* Skip incompatible domains. */
-   494			if ((mem->mem.type & NVIF_MEM_VRAM) && !vmm->page[i].vram)
-   495				continue;
-   496			if ((mem->mem.type & NVIF_MEM_HOST) &&
-   497			    (!vmm->page[i].host || vmm->page[i].shift > PAGE_SHIFT))
-   498				continue;
-   499	
-   500			/* If it fits, return the proposed shift. */
-   501			if (op_map_aligned_to_page_shift(op, vmm->page[i].shift))
-   502				return vmm->page[i].shift;
-   503		}
-   504	
-   505		/* If we get here then nothing can reconcile the requirements. This should never
-   506		 * happen.
-   507		 */
- > 508		dev_warn_once(op->gem.obj->dev, "Could not find an appropriate page size.\n");
-   509	
-   510		return PAGE_SHIFT;
-   511	}
-   512	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On 10/23/2025 10:46 AM, Manivannan Sadhasivam wrote:
+> On Wed, Oct 01, 2025 at 02:40:00PM +0530, Viken Dadhaniya wrote:
+>> Hi all,
+>>
+>> The mcp251xfd allows two pins to be configured as GPIOs. This series
+>> adds support for this feature.
+>>
+>> The GPIO functionality is controlled with the IOCON register which has
+>> an erratum.
+>>
+>> Patch 1 from https://lore.kernel.org/linux-can/20240429-mcp251xfd-runtime_pm-v1-3-c26a93a66544@pengutronix.de/
+>> Patch 2 refactor of no-crc functions to prepare workaround for non-crc writes
+>> Patch 3 is the fix/workaround for the aforementioned erratum
+>> Patch 4 only configure pin1 for rx-int
+>> Patch 5 adds the gpio support
+>> Patch 6 updates dt-binding
+>>
+>> As per Marc's comment on below patch, we aim to get this series into
+>> linux-next since the functionality is essential for CAN on the RB3 Gen2
+>> board. As progress has stalled, Take this series forward with minor code
+>> adjustments. Include a Tested-by tag to reflect validation performed on the
+>> target hardware.
+>>
+> 
+> LGTM! For the series,
+> 
+> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+> 
+> - Mani> 
+>> https://lore.kernel.org/all/20240806-industrious-augmented-crane-44239a-mkl@pengutronix.de/
+>> ---
+>> Changes in v6:
+>> - Simplified error handling by directly returning regmap_update_bits() result.
+>> - Added Acked-By tag.
+>> - Link to v5: https://lore.kernel.org/all/20250926133018.3071446-1-viken.dadhaniya@oss.qualcomm.com/
+>>
+>> Changes in v5:
+>> - Removed #ifdef GPIOLIB and added select GPIOLIB in Kconfig
+>> - Rebased patch on latest baseline
+>> - Resolved Kernel Test Robot warnings
+>> - Link to v4: https://lore.kernel.org/all/20250918064903.241372-1-viken.dadhaniya@oss.qualcomm.com/
+>>
+>> Changes in v4:
+>> - Moved GPIO register initialization into mcp251xfd_register after enabling
+>>   runtime PM to avoid GPIO request failures when using the gpio-hog
+>>   property to set default GPIO state.
+>> - Added Tested-by and Signed-off-by tags.
+>> - Dropped the 1st and 2nd patches from the v3 series as they have already been merged.
+>> - Link to v3: https://lore.kernel.org/linux-can/20240522-mcp251xfd-gpio-feature-v3-0-8829970269c5@ew.tq-group.com/
+>>
+>> Changes in v3:
+>> - Implement workaround for non-crc writes
+>> - Configure only Pin1 for rx-int feature
+>> - moved errata check to .gather_write callback function
+>> - Added MCP251XFD_REG_IOCON_*() macros
+>> - Added Marcs suggestions
+>> - Collect Krzysztofs Acked-By
+>> - Link to v2: https://lore.kernel.org/r/20240506-mcp251xfd-gpio-feature-v2-0-615b16fa8789@ew.tq-group.com
+>>
+>> ---
+>> Gregor Herburger (5):
+>>   can: mcp251xfd: utilize gather_write function for all non-CRC writes
+>>   can: mcp251xfd: add workaround for errata 5
+>>   can: mcp251xfd: only configure PIN1 when rx_int is set
+>>   can: mcp251xfd: add gpio functionality
+>>   dt-bindings: can: mcp251xfd: add gpio-controller property
+>>
+>> Marc Kleine-Budde (1):
+>>   can: mcp251xfd: move chip sleep mode into runtime pm
+>>
+>>  .../bindings/net/can/microchip,mcp251xfd.yaml |   5 +
+>>  drivers/net/can/spi/mcp251xfd/Kconfig         |   1 +
+>>  .../net/can/spi/mcp251xfd/mcp251xfd-core.c    | 273 +++++++++++++++---
+>>  .../net/can/spi/mcp251xfd/mcp251xfd-regmap.c  | 114 ++++++--
+>>  drivers/net/can/spi/mcp251xfd/mcp251xfd.h     |   8 +
+>>  5 files changed, 335 insertions(+), 66 deletions(-)
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
 
