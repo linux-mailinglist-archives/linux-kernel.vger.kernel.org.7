@@ -1,106 +1,161 @@
-Return-Path: <linux-kernel+bounces-893572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49AE2C47BE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:01:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A10C47BF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:02:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15AF1188AAD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:54:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552CA188B954
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0775E274B51;
-	Mon, 10 Nov 2025 15:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVpo+GOY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5634C274FC1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C320927B34F;
+	Mon, 10 Nov 2025 15:52:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DF5274FC1;
+	Mon, 10 Nov 2025 15:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762789910; cv=none; b=TFzC/y7no6tHIqRQL8kVNMCxlQHT6x7sMQunQ8iYvEnbHCWB8CVfdA4dd9ve0WDSYqmAlyA5TMGkuyY7kG1GXVQZo5zHrv9QnD/6J62a5QBeNwsDuw0D7zf0NleK7AvIcBBxOw2rgGHr8+BSVvE9SV9QVyKJLo1ofKSI7jVU0Fo=
+	t=1762789926; cv=none; b=qrBLFGuXEffYnJrfm5oasZ5tKXPMgM9EDOsBN2BiuaKnTMTRHbhxYQsgqmIEiQy1v37LWC9fTCJcQV/zwSghOVtmjEN64KSwm8yxDp9NufJcWfWXtfOrrOygqTde2ueP7ktiejJhbQBSsA1EQ+uuHjnhaHrfpPvfK2E3OXc9e0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762789910; c=relaxed/simple;
-	bh=GSFlX0y3gsnIwhRYANOlx9NAjCA/sGqwGHm+2KMpqBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kiJP/frEhZiV8zpLCYVoNhZlhX0DzDnpZCY+pjZBz6qAYj9U5F1A+x+kEzzl1DCw1TUhpflTGyG6dHzDIJRLasNk9a3Rtk9jfSzW7FXy/9rENIx8igPBdaIwf1x+Dd8T+vIzIw5sIWQ8g/CFfLCX+YRU5vKcY7RKTRBCIShONs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVpo+GOY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4AE5C4CEFB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762789909;
-	bh=GSFlX0y3gsnIwhRYANOlx9NAjCA/sGqwGHm+2KMpqBY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VVpo+GOYqrcRwErJq+EY6x/R+wfzxftEcuN/IrjlQG/QMzkDpN0VrssvggLGv2Leg
-	 gsyc/OyQrE2utGXFZ30DSwFqII9DEVZzVYMXpuWrbLqUjl4znBhT7+kvcaM/eVgGMh
-	 byIxNH+3ae3fkR2RySpRfqamwmqAENZdHeehqVzYl8CImJTZXVQlF6KDCfZmaOIsz+
-	 S5Iv6HY/Pmnq75vCYxNbj4WhFj287voWG6RF1fe2SuD8azr0ZSJxG48kAaxDuvLEpR
-	 pcspZBUePYji66DtPKAdATp8p5PwZ03QRTqZ+laXx0H1FOfg4zTJ7rhCShYxlNV0E6
-	 WGtWyzNnceHYw==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5943b7bdc37so2965325e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:51:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUYQwcEbtvFxrdqq3H66CTFDHRAx+dnUa78lFViJU9Ks9rADdUA8cv8yreHj9Ashms8QpxJNSw75p8G3DQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycxOUzID65GPRpOZNrsrJIEehS7MUY4ktSLZNodEqzfNO+4NAg
-	1yBsdv97lQLblh+fnHXBBCiylg+x2QRV7+k7juACVbMzhej/1JkpcelmWiJk+6TSs2B2Iwh6bpz
-	fUcDnJ0bdqUHhl6HoghF35yx2Rxf7fpE=
-X-Google-Smtp-Source: AGHT+IFXuPtKwkkkVh2oaEjkAj6BoMkJvY6oWI0baW4Ym5w1O2+M/t+LwpzAkaGKMejiWXgBe1nKuDFew8RPK+mVPWM=
-X-Received: by 2002:a05:6512:1321:b0:592:fc99:5a40 with SMTP id
- 2adb3069b0e04-59459992b04mr3246687e87.6.1762789908213; Mon, 10 Nov 2025
- 07:51:48 -0800 (PST)
+	s=arc-20240116; t=1762789926; c=relaxed/simple;
+	bh=xdEbNKFWPSwfwj0BOf5/HLomw0fzTbpFjodjnfrwQwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qwhQ9rXOLe6mTfqgnXrwUvHPoru6q0Bg1EXpznnz20bJIIGWlWAP7/oU+lcF2pZAQxmTcsy1HD5D2f+4lepExTDL5QguCyuI3/u1EXS4NuICRGFTPcPLS00tkrQAUlITCruZ6HZAUmX0n18vfV4qqSx1LW/l51HQ3XmsrsQNHF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65B902F;
+	Mon, 10 Nov 2025 07:51:55 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 812F73F66E;
+	Mon, 10 Nov 2025 07:51:58 -0800 (PST)
+Message-ID: <374f53a9-6ff5-4c37-bd41-9e746eaec1da@arm.com>
+Date: Mon, 10 Nov 2025 15:51:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251109234726.638437-1-ebiggers@kernel.org>
-In-Reply-To: <20251109234726.638437-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 10 Nov 2025 16:51:36 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEve+1uPcdECLeyD_N-prXvbe7jhOYoNO66S1eaxg-JNg@mail.gmail.com>
-X-Gm-Features: AWmQ_bkZy1tCqLQPs6sUKods1yGx8M4ndxZup1PcnhLiXuTBiAPxNGcqnJd6tS4
-Message-ID: <CAMj1kXEve+1uPcdECLeyD_N-prXvbe7jhOYoNO66S1eaxg-JNg@mail.gmail.com>
-Subject: Re: [PATCH 0/9] POLYVAL library
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Jason A . Donenfeld" <Jason@zx2c4.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/33] ACPI / PPTT: Add acpi_pptt_cache_v1_full to use
+ pptt cache as one structure
+To: Gavin Shan <gshan@redhat.com>, james.morse@arm.com
+Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
+ baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
+ carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
+ dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
+ fenghuay@nvidia.com, gregkh@linuxfoundation.org, guohanjun@huawei.com,
+ jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
+ lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
+ rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
+ scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
+ tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-4-ben.horgan@arm.com>
+ <04f4c2f6-19ff-413f-96fb-86432d53830e@redhat.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <04f4c2f6-19ff-413f-96fb-86432d53830e@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 10 Nov 2025 at 00:49, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> This series is targeting libcrypto-next.  It can also be retrieved from:
->
->     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git polyval-lib-v1
->
-> This series migrates the POLYVAL code to lib/crypto/.  It turns out that
-> just like Poly1305, the library is a much better fit for it.
->
-> This series also replaces the generic implementation of POLYVAL with a
-> much better one.
->
-> Notably, this series improves the performance of HCTR2, since it
-> eliminates unnecessary overhead that was being incurred by accessing
-> POLYVAL via the crypto_shash API.  I see a 45% increase in throughput
-> with 64-byte messages, 53% with 128-byte, or 6% with 4096-byte.
->
-> It also eliminates the need to explicitly enable the optimized POLYVAL
-> code, as it's now enabled automatically when HCTR2 support is enabled.
->
-> Eric Biggers (9):
->   crypto: polyval - Rename conflicting functions
->   lib/crypto: polyval: Add POLYVAL library
->   lib/crypto: tests: Add KUnit tests for POLYVAL
->   lib/crypto: arm64/polyval: Migrate optimized code into library
->   lib/crypto: x86/polyval: Migrate optimized code into library
->   crypto: hctr2 - Convert to use POLYVAL library
->   crypto: polyval - Remove the polyval crypto_shash
->   crypto: testmgr - Remove polyval tests
->   fscrypt: Drop obsolete recommendation to enable optimized POLYVAL
->
+Hi Gavin,
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+On 11/8/25 04:54, Gavin Shan wrote:
+> Hi Ben,
+> 
+> On 11/7/25 10:34 PM, Ben Horgan wrote:
+>> In actbl2.h, struct acpi_pptt_cache describes the fields in the original
+>> cache type structure. In PPTT table version 3 a new field was added at
+>> the
+>> end, cache_id. This is described in struct acpi_pptt_cache_v1. Introduce
+>> the new, acpi_pptt_cache_v1_full to contain both these structures. Update
+>> the existing code to use this new struct. This simplifies the code,
+>> removes
+>> a non-standard use of ACPI_ADD_PTR and allows using the length in the
+>> header to check if the cache_id is valid.
+>>
+>> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+>> ---
+>> Changes since v3:
+>> New patch
+>> ---
+>>   drivers/acpi/pptt.c | 104 ++++++++++++++++++++++++--------------------
+>>   1 file changed, 58 insertions(+), 46 deletions(-)
+>>
+> 
+> Two nitpicks below. LGTM in either way.
+> 
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
+> 
+>> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+>> index 1027ca3566b1..1ed2099c0d1a 100644
+>> --- a/drivers/acpi/pptt.c
+>> +++ b/drivers/acpi/pptt.c
+>> @@ -21,6 +21,11 @@
+>>   #include <linux/cacheinfo.h>
+>>   #include <acpi/processor.h>
+>>   +struct acpi_pptt_cache_v1_full {
+>> +    struct acpi_pptt_cache        f;
+>> +    struct acpi_pptt_cache_v1    extra;
+>> +} __packed;
+>> +
+>>   static struct acpi_subtable_header *fetch_pptt_subtable(struct
+>> acpi_table_header *table_hdr,
+>>                               u32 pptt_ref)
+>>   {
+>> @@ -50,10 +55,24 @@ static struct acpi_pptt_processor
+>> *fetch_pptt_node(struct acpi_table_header *tab
+>>       return (struct acpi_pptt_processor
+>> *)fetch_pptt_subtable(table_hdr, pptt_ref);
+>>   }
+>>   -static struct acpi_pptt_cache *fetch_pptt_cache(struct
+>> acpi_table_header *table_hdr,
+>> -                        u32 pptt_ref)
+>> +static struct acpi_pptt_cache_v1_full *fetch_pptt_cache(struct
+>> acpi_table_header *table_hdr,
+>> +                            u32 pptt_ref)
+>>   {
+>> -    return (struct acpi_pptt_cache *)fetch_pptt_subtable(table_hdr,
+>> pptt_ref);
+>> +    return (struct acpi_pptt_cache_v1_full
+>> *)fetch_pptt_subtable(table_hdr, pptt_ref);
+>> +}
+>> +
+>> +#define ACPI_PPTT_CACHE_V1_LEN sizeof(struct acpi_pptt_cache_v1_full)
+>> +
+>> +/*
+>> + * From PPTT table version 3, a new field cache_id was added at the
+>> end of
+>> + * the cache type structure.  We now use struct acpi_pptt_cache_v1_full,
+>> + * containing the cache_id, everywhere but must check validity before
+>> accessing
+>> + * the cache_id.
+>> + */
+>> +static bool acpi_pptt_cache_id_is_valid(struct
+>> acpi_pptt_cache_v1_full *cache)
+>> +{
+>> +    return (cache->f.header.length >= ACPI_PPTT_CACHE_V1_LEN &&
+>> +        cache->f.flags & ACPI_PPTT_CACHE_ID_VALID);
+>>   }
+>>   
+> 
+> This function is nice fit to 'inline'. Besides, I'm not sure if we can just
+> use sizeof(*cache) instead of ACPI_PPTT_CACHE_V1_LEN, which is used for
+> once
+> in pptt.c
+
+Yes, the define is unnecessary and the function can be inlined. Thanks
+for pointing it out. I'm likely to rework this patch though.
+
+Thanks,
+
+Ben
+
 
