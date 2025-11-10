@@ -1,112 +1,176 @@
-Return-Path: <linux-kernel+bounces-893534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5CFC47D42
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:15:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44002C47B51
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0DA23BD7E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:45:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3445A4F9C80
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D35A2264BA;
-	Mon, 10 Nov 2025 15:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96BF27FB25;
+	Mon, 10 Nov 2025 15:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="oPXpjoEe"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FyBqNXII";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IQgr6j/B";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eUjB/tiS";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="T8OCU6Zq"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AEC2236E5
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F23927EFEF
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762789453; cv=none; b=S59npfKkRss9O2AQEwzlNfffxjl/U7f5lP0/QSIrnxmXLz2VhbCCN9RCGkCbaeL/SYQnzI0vZPWwq8P6tr6A78Y9/g6svbSQsIMY1l9eaLD9HmqKOT0IobgRXd1MICVH7nXhdqD5Nd7VzrHF4BACOn/iFmv1Pb0JVkyyKSrTXI4=
+	t=1762789584; cv=none; b=ndtDtpALkyvt2iB9gK/QQ82vj4Qw5v0dIrpBii3wc5xOH8zWDxcR6XQgNm0Ii9iS/NHPWFQ0TiFROvQH9gBIWabIRFRSsQTCP90ZJFNosfS4UrtlR2Y1SkCgBZL2LD3IJFC8lpnvW9fzFTB3OiDJEOBUuw5JwNdY8TNAgVX5Zc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762789453; c=relaxed/simple;
-	bh=m1Hi0yONI4EaULJNgBROwxy7rsqEZV5zIc3zZaLnWA8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qlgIsml6Jg/MWVyXXXbaQMAfMu2dd5gwmrpvN8p1H6unX77QGw1t4pu52J1Ba/wQFtjGx1lcdfz6VKJaVZwlXoako/Pb1LoYPhFSQ/JPJf4w3lIMDdALs4rbrD+yC8+CAhgqr/eiLo7J3EP+TdtIqTJiqViaEAya5XY7VHeWc6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=oPXpjoEe; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A740640B1B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1762789450; bh=VIBUdo9LhDz++8I9kKiuqHA89LV869bDVf4M/P0h3vg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=oPXpjoEeeIoaYzjFTdIBbf+/0qsCPQ/iOiw/STZrJ9NtYYiYExKtm9ZmOVvcS9vtX
-	 ro4O2TUnZFNSnZvzUV3P4oBwT7oGm3161YfUMLpl0WqeCqAiT07urjPAa0k/chAYsw
-	 lN451/CvRDGFRhNLN6P7oP1OuYOqfecw0JDON4Qb2V7uvBoHJ9E2JGvsEiiZzH40IC
-	 3lcnTVn8ZESAPhBvpsIy+sNRjZRzRIJ+GGmHjMMeDRwK1uXPdqMU+cbV6jdDdhOBNo
-	 dR5CmbDzIUMgfB4xp7QeIViHrVrIrFACte1fHAGT5cUSSGC1jhNNBCCzUDyOrUScFt
-	 X2cBxP9CBnzHg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	s=arc-20240116; t=1762789584; c=relaxed/simple;
+	bh=2vZMMsrcdP8AQZfMKs/BTZ0mIpw0ZUjcG3KexydJ40M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZlM8XRouNpIkR8LRkgAPObyvMNHPdsYz/EzIIIr9FvJ7i8XQqZcQJtd6afvEjdP3bikkodVqx2r4LtjJelkXtdalYpk/iVutJqBONvgDyjkpuS41FLqVY5pswxkfBfeB4/Dra6sz2F3nNa0be8y5MqsB28tFBIRehaQzC0nDdNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FyBqNXII; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IQgr6j/B; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eUjB/tiS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=T8OCU6Zq; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id A740640B1B;
-	Mon, 10 Nov 2025 15:44:10 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>, Dan Williams
- <dan.j.williams@intel.com>, Theodore Ts'o <tytso@mit.edu>, Sasha Levin
- <sashal@kernel.org>, Kees Cook <kees@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, Shuah Khan
- <shuah@kernel.org>
-Subject: Re: [PATCH] [v2] Documentation: Provide guidelines for
- tool-generated content
-In-Reply-To: <414139b0-92bb-4516-8286-732f2d5e6bda@lucifer.local>
-References: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
- <11eaf7fa-27d0-4a57-abf0-5f24c918966c@lucifer.local>
- <87h5v1zzib.fsf@trenco.lwn.net>
- <414139b0-92bb-4516-8286-732f2d5e6bda@lucifer.local>
-Date: Mon, 10 Nov 2025 08:44:09 -0700
-Message-ID: <878qgdzyd2.fsf@trenco.lwn.net>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E67921F81C;
+	Mon, 10 Nov 2025 15:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762789581; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=H+gyrLQ2twDoaaLxcUfklHs12upNHsyrZM7lOdeN4zI=;
+	b=FyBqNXIIXw0MVbe4HGkG1ARc49NgwTVlZ5kM4Y/6C9hOcTS+FUjAqRz4hmZvafomHtpbWJ
+	ToUWNuCkwzYuG0fhBfUZasYd3EJfjukHB3CBL0cGlRQ1VW06GWNpq1oACVA6KPjXGsHHLs
+	oeSGHwP2jXxmw1VBjSyFkZj6K0Mxmho=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762789581;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=H+gyrLQ2twDoaaLxcUfklHs12upNHsyrZM7lOdeN4zI=;
+	b=IQgr6j/Bu3qSTQVqdu67DDl7gAuDC0Aa7JoBkwxrvCE/+3FLOG8IQVEaZoLWGgv2P+DbgK
+	FHtchQWd8Jnt7+Bw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762789580; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=H+gyrLQ2twDoaaLxcUfklHs12upNHsyrZM7lOdeN4zI=;
+	b=eUjB/tiSHsSetunQDNaILQYArEVwDVXf51FC/xhchCmCBULLBLmkoCiCLTjY9Np52DmR5R
+	PWl+zpzduIiK4Ps5OjByi60CsbdVF0Pnqs9r+TysLIWUYFROmMEvOG0KDh0mt1LJYsMrxt
+	9YRpAwsW0x5yKpz6l4pKSja7VKI2tKE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762789580;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=H+gyrLQ2twDoaaLxcUfklHs12upNHsyrZM7lOdeN4zI=;
+	b=T8OCU6ZqF1GJ7r7qXmKnNPukCEwh8lbko6b95lYMIm0hBFMKYSd33eWY0WEyM4cYpNR2Or
+	QAoSv5q7Hscd1xAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8229014483;
+	Mon, 10 Nov 2025 15:46:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kNVjHswIEmlHXQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 10 Nov 2025 15:46:20 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: jfalempe@redhat.com,
+	javierm@redhat.com,
+	francesco@valla.it,
+	rrameshbabu@nvidia.com,
+	simona@ffwll.ch,
+	airlied@gmail.com,
+	mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v2 0/3] drm/client: Wire up sysrq for all clients and update drm_log
+Date: Mon, 10 Nov 2025 16:44:20 +0100
+Message-ID: <20251110154616.539328-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FREEMAIL_TO(0.00)[redhat.com,valla.it,nvidia.com,ffwll.ch,gmail.com,kernel.org,linux.intel.com,linuxfoundation.org];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
+DRM's fbdev emulation has long supported SysRq+v to bring up the
+framebuffer console for emergency output. Wire up sysrq for all
+DRM clients and make it work with drm_log.
 
-> On Mon, Nov 10, 2025 at 08:19:24AM -0700, Jonathan Corbet wrote:
->> Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
->>
->> > It also seems slightly odd to produce this in advance of the maintainer's
->> > summit, as I felt there was some agreement that the topic should be discussed
->> > there?
->> >
->> > Obviously there may be very good reasons for this but it'd be good for
->> > them to be clarified and those who engaged in these discussions to be
->> > cc'd also (or at least ping on threads linking!)
->>
->> The reasoning, from my point of view at least, was to have a starting
->> point for the Maintainers Summit discussion.  Trying to start from
->> scratch in Tokyo seems unlikely to get us far.
->
-> I Would understand if this was an RFC or there was a big block saying 'this
-> is not yet official' or something, but lt the moment it seems like a change
-> sent only to the TAB committee as an apparent 'fait complete' with no
-> indication of it being just a starting point? (forgive me if I missed it).
->
-> I think pinging the relevant threads would have been helpful, but maybe we
-> need a better procedure in general for this kind of thing.
+Patch 1 and 2 set up DRM client functionality for sysrq. The patches
+adopt existing conventions from fbdev emulation, so that there's no
+visible change to users. Invoke SysRq+v to bring up the in-kernel DRM
+client.
 
-I agree that sending to those threads would have made sense.  Folks are
-busy ... I didn't think of that, and it only occurred to me this weekend
-that I knew a certain web site where it might make sense to post a
-note... 
+Patch 3 adds restore functionality to drm_log. This enables SysRq, but
+also brings back drm_log when user space releases control of the display.
 
-> I'm not invited to the MS but I wondered if this planned to be discussed
-> there? I don't really care about my involvement, only that there is
-> community engagement on this.
+Tested on amdgpu and bochs.
 
-The agenda has not been worked out, but this topic seems certain to be
-there once it is.
+v2:
+- fix placeholder functions
+- fix grammar in commit descriptions
 
-jon
+Thomas Zimmermann (3):
+  drm/client: Pass force parameter to client restore
+  drm/client: Support emergency restore via sysrq for all clients
+  drm/client: log: Implement struct drm_client_funcs.restore
+
+ drivers/gpu/drm/Makefile                   |  3 +-
+ drivers/gpu/drm/clients/drm_fbdev_client.c |  6 +-
+ drivers/gpu/drm/clients/drm_log.c          | 13 ++++
+ drivers/gpu/drm/drm_client.c               |  1 +
+ drivers/gpu/drm/drm_client_event.c         |  4 +-
+ drivers/gpu/drm/drm_client_sysrq.c         | 65 ++++++++++++++++++++
+ drivers/gpu/drm/drm_drv.c                  |  3 +
+ drivers/gpu/drm/drm_fb_helper.c            | 69 +++-------------------
+ drivers/gpu/drm/drm_file.c                 |  2 +-
+ drivers/gpu/drm/drm_internal.h             | 11 ++++
+ include/drm/drm_client.h                   |  8 ++-
+ include/drm/drm_client_event.h             |  4 +-
+ include/drm/drm_device.h                   |  8 +++
+ include/drm/drm_fb_helper.h                |  8 +--
+ 14 files changed, 126 insertions(+), 79 deletions(-)
+ create mode 100644 drivers/gpu/drm/drm_client_sysrq.c
+
+-- 
+2.51.1
+
 
