@@ -1,255 +1,137 @@
-Return-Path: <linux-kernel+bounces-894213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B6AC497C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:07:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD57C497CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:08:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A406A3A1124
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:07:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AE4B4EE1BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08F22F7444;
-	Mon, 10 Nov 2025 22:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC962FD684;
+	Mon, 10 Nov 2025 22:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b="Z1NBuBm8"
-Received: from rusty.tulip.relay.mailchannels.net (rusty.tulip.relay.mailchannels.net [23.83.218.252])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mJxT1Bq2"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BA42F291B;
-	Mon, 10 Nov 2025 22:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.252
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762812417; cv=pass; b=LX9n1KAmKhjcDoklL5ANrjobsUdQUkmqZWBEKeokgfFQyXxvM7z54ECAwpbjcRQCoXwrOBIQrGPGH3fuzRqjtXudOiqZC8UAdyVfCxJTkYPENUf2twhOUI1zq0qFFGsr11UGTvzEADB3NwvTIM9/IylvdZLEeagDwvTdJa8k1NA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762812417; c=relaxed/simple;
-	bh=LScC7KbySktlhyWc8QzWuaJL1BV1VNB3Fzub7Zg8vxA=;
-	h=From:To:Cc:Subject:Message-ID:In-Reply-To:References:MIME-Version:
-	 Date; b=NinTF0onVkwkH66cvxbTfjK/l1bVKiNT5nuh3zX0KGYYjCQKtdymbzKD1U6wMpH6NgL1nzp7hZYMaQxE1fbNRxsCC5OZoFLUGSAALgrO6ahT2vFge5N1MztrnVV0HQJRHjokuAScKGA2z1yHvj/eY3sANlDe5TJNZW2mwkpoq/g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com; spf=pass smtp.mailfrom=rootcommit.com; dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b=Z1NBuBm8; arc=pass smtp.client-ip=23.83.218.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rootcommit.com
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 207CD161A51;
-	Mon, 10 Nov 2025 22:06:55 +0000 (UTC)
-Received: from fr-int-smtpout26.hostinger.io (trex-green-9.trex.outbound.svc.cluster.local [100.124.161.181])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id B1083161925;
-	Mon, 10 Nov 2025 22:06:52 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1762812414; a=rsa-sha256;
-	cv=none;
-	b=jNJG1q+L+SRks5GOz39k67OP4yFJT94cFmPAG5lAtKULpaF6+5ggXv1TQGW2syQUk30qvk
-	J6iI9KBzFxkqynyV96wTDzZESrBgJf6q0pemz8xdZ4AS2hS8F7+UxUyaQQLYEiU3vDaOO6
-	LK3i+TjF82vU2hwvrbGqH5Lsft5PnoF5XWgfvnVSlY0Ziux5AokW7uoVV4xafw1HGIqBdK
-	ctrvro9gHSlpfm5JSDRcshMTOWp7Sx+lkSKJatl10+HWqZev8oh2HYnERn9wdkNvVyLuGd
-	FJ0uBgMlqn0hnELDn3T6FCdNltVH+Ixy84OM9QGTDnjyAifAGJra/h+tkd7o6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1762812414;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=Mg5JZD6BNpU/K0I63m6EJYff359L/0jj4o7n86WLhVI=;
-	b=A/VurjAqFrBSjb531ID2BFrwUzAzdevDmP4R196Q11ezyUPcw91e7luNTXoiQXwbqaWK60
-	wK/q0I/j/2IJsmsMJGWV0HTL/lNFqks0jPEuomPUlFh/TaiQyLJVQSfomtO15DrU+mM2vs
-	wKvF9j33KR4GzQAmz2GRlGesI/wZgNXBDELAbmRk/vDwqfhGs0+TqwuzrdvlBGqEWCQPFz
-	MmXzHt0aTl9eZkvxbJAkcQXjoEEEAUWF+r2r/h5rSlhnuujA5BVX0YWOCTfC0r/LS4sAUG
-	LdqTZZczjR+ubS1eEv0JO1b85VMXLtapCKa15s9opJlxopqcgpu6jh6PVIPISA==
-ARC-Authentication-Results: i=1;
-	rspamd-77bb85d8d5-8r9nj;
-	auth=pass smtp.auth=hostingeremail
- smtp.mailfrom=michael.opdenacker@rootcommit.com
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId:
- hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Trail-Squirrel: 5496329a39398fab_1762812415040_2059087144
-X-MC-Loop-Signature: 1762812415040:854549598
-X-MC-Ingress-Time: 1762812415040
-Received: from fr-int-smtpout26.hostinger.io (fr-int-smtpout26.hostinger.io
- [148.222.54.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.124.161.181 (trex/7.1.3);
-	Mon, 10 Nov 2025 22:06:55 +0000
-Received: from localhost.localdomain (unknown [IPv6:2001:861:4450:d360:31e9:b9de:fe42:7704])
-	(Authenticated sender: michael.opdenacker@rootcommit.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4d53ff2Zb5z1yQg;
-	Mon, 10 Nov 2025 22:06:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rootcommit.com;
-	s=hostingermail-a; t=1762812410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mg5JZD6BNpU/K0I63m6EJYff359L/0jj4o7n86WLhVI=;
-	b=Z1NBuBm8Oyu3ZPQe3iqQErofO1s0BGgoQf+Kq3Q/gyM5N2sJvy1/YetaMDKhpelU4o6Z+U
-	9/eONoj0wGBnn9AIrnz/TW/kLsxj42x7+OP7f8YTevuIa44TGB+pjX9vvdlm0PJ+viiJ9J
-	OhEvx6J0hzh7xI2Fk5lKzvUEKv9uIFPPHSXnVLbKKjfcIAIHUk0ZCiMYXKcRfKHIhSCk5Q
-	dpa2k9UpQINSlOCnu+PMNDE7wp8puzM+1FSBNQj+Um+XhY4d8gdMWsEH5r9Ictt8o22l+/
-	H8VbN3VFQ8kb23zoPBzlpT0kkLlhWX0wgPDf7foROuvRCp3pGkF5P52dNF4Qwg==
-From: michael.opdenacker@rootcommit.com
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Yixun Lan <dlan@gentoo.org>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Cc: Michael Opdenacker <michael.opdenacker@rootcommit.com>,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] riscv: dts: spacemit: Add OrangePi R2S board device tree
-Message-ID: <20251110220641.1751392-3-michael.opdenacker@rootcommit.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251110220641.1751392-1-michael.opdenacker@rootcommit.com>
-References: <20251110220641.1751392-1-michael.opdenacker@rootcommit.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD18230274;
+	Mon, 10 Nov 2025 22:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762812482; cv=none; b=lFpnanUaII+CVuN1JXBo8hvrQ6qCzVdh8sFOwn2SoEnemZdI70MHnCK7+G3X3XfE1lbtEQNnJIsXMGvzxLxjIwcrPal4KbtJBf8KrpgpJG6CD/zM7YV+CY4HFelj6cFHB29xEFnNj8JsY7x3WwrkLAAkxSzrriQxzga9JsGvbjM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762812482; c=relaxed/simple;
+	bh=0FSwDKxCfdjaaQDVegDktJ3ifH//AtGtcN9f1ncK/Eg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Nj1LVJpfxQw2Jg/dotvmEMho1cSkqIp3x+3LJXGk6ZWqciN5q94H3YoARmV0Wif0MWEyvIV4lxi7sjNiIq045AGXviU786bWPwt1iEG2Zwlx8y/TReNroAmEgxvp84HalEuv2OKQ9WD27X1nFNQI5X5sdPbBSlIF4gkoKEcPrb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=mJxT1Bq2; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1762812479;
+	bh=0FSwDKxCfdjaaQDVegDktJ3ifH//AtGtcN9f1ncK/Eg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=mJxT1Bq2UYFcsDW2x1JJcYIrJf1H01a1QahcIXAThaSsg12o9lWSlSw20L8siO+IR
+	 PIkUsPUNmw2AjKJe7VvM0iyVEfTz7PSYJSIgFN0m1KdfaPSU7VGgJZjPbvzwW6thPk
+	 z+2os9wCKFJOvQL9adZckdI5txUbcZ87Z5Ac3N0U=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 50E5C1C00F6;
+	Mon, 10 Nov 2025 17:07:59 -0500 (EST)
+Message-ID: <9613a8a7b9fd77a48667a39ffde9e92b361c4fd1.camel@HansenPartnership.com>
+Subject: Re: [PATCH] [v2] Documentation: Provide guidelines for
+ tool-generated content
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: "Luck, Tony" <tony.luck@intel.com>, Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "H. Peter Anvin"
+ <hpa@zytor.com>, Mike Rapoport <rppt@kernel.org>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Christian Brauner
+ <brauner@kernel.org>,  Dave Hansen <dave.hansen@linux.intel.com>, Vlastimil
+ Babka <vbabka@suse.cz>,  "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "workflows@vger.kernel.org"
+ <workflows@vger.kernel.org>, "ksummit@lists.linux.dev"
+ <ksummit@lists.linux.dev>,  "Williams, Dan J" <dan.j.williams@intel.com>,
+ Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,  Jonathan
+ Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, Shuah Khan
+ <shuah@kernel.org>
+Date: Mon, 10 Nov 2025 17:07:58 -0500
+In-Reply-To: <SJ1PR11MB6083B928B445DF82EE5AE3EEFCCEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
+	 <653b4187-ec4f-4f5d-ae76-d37f46070cb4@suse.cz>
+	 <20251110-weiht-etablieren-39e7b63ef76d@brauner>
+	 <20251110172507.GA21641@pendragon.ideasonboard.com>
+	 <CAHk-=wgEPve=BO=SOmgEOd4kv76bSbm0jWFzRzcs4Y7EedpgfA@mail.gmail.com>
+	 <aRIxYkjX7EzalSoI@kernel.org>
+	 <CAHk-=wir-u3so=9NiFgG+bWfZHakc47iNy9vZXmSNWSZ+=Ue8g@mail.gmail.com>
+	 <A274AB1C-8B6B-4004-A2BC-D540260A5771@zytor.com>
+	 <CAHk-=whczwG=+-sAzoWoTY_VOwdFH3b5AkvQbgh+z98=p1iaXA@mail.gmail.com>
+	 <20251110145405.5bc87cc5@gandalf.local.home>
+	 <21622a5393ef21413cae91d9c8ebbb8425d2c193.camel@HansenPartnership.com>
+	 <20251110164225.4b343fe4@gandalf.local.home>
+	 <SJ1PR11MB6083B928B445DF82EE5AE3EEFCCEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Date: Mon, 10 Nov 2025 22:06:50 +0000 (UTC)
-X-CM-Envelope: MS4xfP3Q4WNBpiDRsdhHInwiObK+Gr6NxnwTGnrA5mZIDsJ87EnQeurXIuF3jEke7Nc3BM5GZHSZ/ZL9hsCzdSuNxeMwmrTB8CIwMABtH9GxFE2uR4zMZ8Aq /XsT29QMD7zcZn+x125X+x1/bSjMB0BluHq2vMBAg5g5/fNteP/NgSron+b8vw6yRghg4CHYSsJlQ7vGEP0OPm4C0IyY8iGJG/keS09ZE53gu+riim6jFyVk +OsgMEGXbuuc6Xs/DYqRPe5lDvGIeuKOIERGrlevVbtGUdom3ySitSCl8/JAYE2e66okR5aZFf4YN2YagtYkY0S05Sjew0JLBptkfEeHi/Fw6Db/tbiR5q4y IzsUyTBoU5SnPvW6cnETm2y6UDrVFESLZ2GIwHYBA4RgpB717sQnyz2GGX2lOTD6maTn47WaBmMgYYD7ymFOQkHBIS8GTlYKdyjuQgO5/BfjP95BZNHB88Ha U9EyR9z1ltYSE/4cH1rrW3rOunaVZAmQ94d5RsBTRat/lB65rm4y2ZpRYmQOCH3tIBnuFoSgsETaNH7NyZPHJm2AEvb5+k3kc3mwzRWruj04NiCAtgs0sZ9T L4cRJoR/SuNyHSM8HhzRrLL/95mljnxVRv5dQKF80VptXQhM6uq0Qgl92pJDshDOv2sS3Z3MvRrE8yhanlQWAwCgdoJ1K67jAX1G00kaNu5JIg==
-X-CM-Analysis: v=2.4 cv=Lflu6Sfi c=1 sm=1 tr=0 ts=691261fa a=6hOvbz5PeP13GDnUra1LTQ==:617 a=xqWC_Br6kY4A:10 a=5dAzR5NRAAAA:8 a=lv0vYI88AAAA:8 a=d70CFdQeAAAA:8 a=MVgXUy26Hj1uv-KAJh8A:9 a=9STjDIb-X-UA:10 a=ZKAZAlVgJm32z6MX8p4a:22 a=9qqun4PRrEabIEPCFt1_:22 a=NcxpMcIZDGm-g932nG_k:22
-X-AuthUser: michael.opdenacker@rootcommit.com
 
-From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+On Mon, 2025-11-10 at 21:52 +0000, Luck, Tony wrote:
+> > I believe that's what is currently being argued in court. If AI is
+> > trained on human content and prints out something based on it, is
+> > it a non-human creation?
 
-Add initial device tree support for the OrangePi RV2 board [1], which is
-marketed as using the Ky X1 SoC but has been confirmed to be
-identical to the SpacemiT K1 [2].
+So far (Bartz v. Anthropic and Kadrey v. Meta) the decisions have been
+that the output is transformative enough that that is, in fact, an
+independent creation.
 
-Enable UART0, to boot into a serial console
+> > =C2=A0 This isn't a case of a monkey taking a selfie, where the
+> > content provider is clearly non-human. This is a machine that uses
+> > human created content to derive new creations.
+>=20
+> If the output were deemed copyrightable, who should own that
+> copyright?
+>=20
+> Option 1 is "The human that crafted the prompt to generate it"
 
-Two Gigabit Ethernet ports with RGMII interface standard support
-are enabled, each port is connected to an external
-Motorcomm YT8531C PHY chip which uses the GPIO for reset control.
+This is possible, but so far hasn't been argued.
 
-Enable PDMA.
+>=20
+> Option 2 is "The corporation that spent vast resources to create that
+> AI model"
 
-Enable 8 GB eMMC chip for storage.
+This would require a change of law in the US to allow a non-human
+content creator to hold copyright; absent that there's nothing
+copyrightable the corporation can lay claim to (not that the AI
+industry might not be motivated to seek this eventually if they have
+trouble monetizing AI).
 
-Link: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-R2S.html [1]
-Link: https://www.spacemit.com/en/key-stone-k1 [2]
-Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
----
- arch/riscv/boot/dts/spacemit/Makefile         |  1 +
- .../boot/dts/spacemit/k1-orangepi-r2s.dts     | 90 +++++++++++++++++++
- 2 files changed, 91 insertions(+)
- create mode 100644 arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts
+> Option 3 is "The owners of the copyrighted material used to train the
+> AI".
 
-diff --git a/arch/riscv/boot/dts/spacemit/Makefile b/arch/riscv/boot/dts/spacemit/Makefile
-index 942ecb38bea0..96b3a13a3944 100644
---- a/arch/riscv/boot/dts/spacemit/Makefile
-+++ b/arch/riscv/boot/dts/spacemit/Makefile
-@@ -3,3 +3,4 @@ dtb-$(CONFIG_ARCH_SPACEMIT) += k1-bananapi-f3.dtb
- dtb-$(CONFIG_ARCH_SPACEMIT) += k1-milkv-jupiter.dtb
- dtb-$(CONFIG_ARCH_SPACEMIT) += k1-musepi-pro.dtb
- dtb-$(CONFIG_ARCH_SPACEMIT) += k1-orangepi-rv2.dtb
-+dtb-$(CONFIG_ARCH_SPACEMIT) += k1-orangepi-r2s.dtb
-diff --git a/arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts b/arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts
-new file mode 100644
-index 000000000000..58098c4a2aab
---- /dev/null
-+++ b/arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (C) 2025 Michael Opdenacker <michael.opdenacker@rootcommit.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "k1.dtsi"
-+#include "k1-pinctrl.dtsi"
-+
-+/ {
-+	model = "OrangePi R2S";
-+	compatible = "xunlong,orangepi-r2s", "spacemit,k1";
-+
-+	aliases {
-+		serial0 = &uart0;
-+		ethernet0 = &eth0;
-+		ethernet1 = &eth1;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0";
-+	};
-+};
-+
-+&emmc {
-+	bus-width = <8>;
-+	mmc-hs400-1_8v;
-+	mmc-hs400-enhanced-strobe;
-+	non-removable;
-+	no-sd;
-+	no-sdio;
-+	status = "okay";
-+};
-+
-+&eth0 {
-+	phy-handle = <&rgmii0>;
-+	phy-mode = "rgmii-id";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&gmac0_cfg>;
-+	rx-internal-delay-ps = <0>;
-+	tx-internal-delay-ps = <0>;
-+	status = "okay";
-+
-+	mdio-bus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		reset-gpios = <&gpio K1_GPIO(110) GPIO_ACTIVE_LOW>;
-+		reset-delay-us = <10000>;
-+		reset-post-delay-us = <100000>;
-+
-+		rgmii0: phy@1 {
-+			reg = <0x1>;
-+		};
-+	};
-+};
-+
-+&eth1 {
-+	phy-handle = <&rgmii1>;
-+	phy-mode = "rgmii-id";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&gmac1_cfg>;
-+	rx-internal-delay-ps = <0>;
-+	tx-internal-delay-ps = <250>;
-+	status = "okay";
-+
-+	mdio-bus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		reset-gpios = <&gpio K1_GPIO(115) GPIO_ACTIVE_LOW>;
-+		reset-delay-us = <10000>;
-+		reset-post-delay-us = <100000>;
-+
-+		rgmii1: phy@1 {
-+			reg = <0x1>;
-+		};
-+	};
-+};
-+
-+&pdma {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_2_cfg>;
-+	status = "okay";
-+};
+This is the derivative of training argument which has so far failed.
+
+Regards,
+
+James
+
 
