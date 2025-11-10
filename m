@@ -1,92 +1,95 @@
-Return-Path: <linux-kernel+bounces-892857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB6EC45F57
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:37:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70144C45FBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:39:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A17D1881C85
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:37:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 636AB1882118
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6937301034;
-	Mon, 10 Nov 2025 10:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExuiExjn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3FA23D7FB;
-	Mon, 10 Nov 2025 10:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC665301034;
+	Mon, 10 Nov 2025 10:37:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324E93054C4;
+	Mon, 10 Nov 2025 10:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762771029; cv=none; b=YLEBkbGSNmoZGV+8RKoKYo3YI7MZrk6aFxhyTdfd6H+mmWX8ILPdIWVdzuSU60w+TyNcyIL965WDf+NFXkfMBViYygC2mE3L4suDT0rbVIrPHQMCzAmMiDvEToASdappZwQDK3QAc11HR8mrwqOACETjhO1bd0VN6yBuloVt6W4=
+	t=1762771073; cv=none; b=FpeWxy8Zeq+sYFNK9PZjdIKM1UK6G1SR+37vA0ek9aTcd0YaebyjESpw+HGWJZDQw5xTA2KWw8EtWGHu8VIU7L2YP/Jze0iu4aqerYQDDuzz46ttPUbyxHKEExGG9BJqPtBzBISU369oaV56gyn84WuKh5/Vlx2gZJBXX+M43TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762771029; c=relaxed/simple;
-	bh=c21XxuCvXG7uNmvnZVpcQwEPPEygi6NBh1nPRti0jxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E1e448GDtO/CqBP0nMAJcs8JirKlMKbaGNaD+v+7tLvrNXj7mf7wgkteW1I+up+aerfY6YPyea53pZaPu+K57qtuBoePravvcIgVh55gCC2yPEWXLWllC7Hijrk65UoG0qL9Rhhev2XSt4ZMyplI1RYx+zdpOFt8WUyJgjrmwak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExuiExjn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B660BC19425;
-	Mon, 10 Nov 2025 10:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762771027;
-	bh=c21XxuCvXG7uNmvnZVpcQwEPPEygi6NBh1nPRti0jxM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ExuiExjnrBqFMgF3VY++M5kTuwdrLQfgN86BIkL3uQ+hJMLR41IdyPXKcg7gF5qOo
-	 ATnPx0PMLy+MxgS4nx+6lB96GOCz+J3QyQg9jOZnK1N9AOJlSxc3shC7rRK5BHn9AP
-	 55KBj9Jj3rfEcvf1IztBzn0LNgYQKzqiKQkZz0wA5OlNPuBzhKxWNk7DKiWXVQUb5A
-	 HeLaUz0cBLRedVQz5DIibLQX5u/+MDql/ULXmRAnPMU7rcrcJ3SFzh1aAgTWOO0PL2
-	 hX3uinOxpbSdB5+e1jUKVg8i4Vsh7svHDIqkBmHeTVfzuT+Gd09TQ0TbypFemTGJq8
-	 2Klr2FvEDbh5g==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vIPGm-0000000013s-0h2f;
-	Mon, 10 Nov 2025 11:37:08 +0100
-Date: Mon, 10 Nov 2025 11:37:08 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/11] gpib: Add build rule for gpib to Makefile
-Message-ID: <aRHAVCxtOBNIDlk5@hovoldconsulting.com>
-References: <20251110102507.1445-1-dpenkler@gmail.com>
- <20251110102507.1445-12-dpenkler@gmail.com>
+	s=arc-20240116; t=1762771073; c=relaxed/simple;
+	bh=eoFD0YFTsJTKbLlfwzGMf+Jg0P/3aPzXI9tcKHy77Yc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iOO+XAThnNsWHWqcldKG5nrhTRqUtNP+crJgpMgcNRmQS0EThiD+ogUlu/dFjifIOsfw+Atk32itRhuDr+f9kPjgXcDgXpXsckJR3K9ARWOBqpgRNuoKz967GWQUh37xSbAN2z9p/egilDcPtTYgnRVxqugAQhyTpsKbPDg2HRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4A3CFEC;
+	Mon, 10 Nov 2025 02:37:43 -0800 (PST)
+Received: from [10.57.39.147] (unknown [10.57.39.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0EB953F66E;
+	Mon, 10 Nov 2025 02:37:43 -0800 (PST)
+Message-ID: <0d00dd6e-9e39-4ac6-8ea4-9407e75947eb@arm.com>
+Date: Mon, 10 Nov 2025 11:37:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110102507.1445-12-dpenkler@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/12] mm: introduce CONFIG_ARCH_HAS_LAZY_MMU_MODE
+To: Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
+ <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-6-kevin.brodsky@arm.com>
+ <6a9c846f-22b6-4d5f-81dc-6cdcd4905952@arm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <6a9c846f-22b6-4d5f-81dc-6cdcd4905952@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 10, 2025 at 11:25:07AM +0100, Dave Penkler wrote:
-> As part of the destaging of the gpib drivers we need to add the
-> gpib rule to the main drivers Makefile.
-> 
-> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
-> ---
->  drivers/Makefile | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/Makefile b/drivers/Makefile
-> index 8e1ffa4358d5..d275b1526cdd 100644
-> --- a/drivers/Makefile
-> +++ b/drivers/Makefile
-> @@ -150,6 +150,7 @@ obj-$(CONFIG_VHOST_IOTLB)	+= vhost/
->  obj-$(CONFIG_VHOST)		+= vhost/
->  obj-$(CONFIG_GREYBUS)		+= greybus/
->  obj-$(CONFIG_COMEDI)		+= comedi/
-> +obj-$(CONFIG_GPIB)		+= gpib/
+On 07/11/2025 13:56, Ryan Roberts wrote:
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index 6663ffd23f25..e6bf5c7311b5 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -122,6 +122,7 @@ config ARM64
+>>  	select ARCH_WANTS_NO_INSTR
+>>  	select ARCH_WANTS_THP_SWAP if ARM64_4K_PAGES
+>>  	select ARCH_HAS_UBSAN
+>> +	select ARCH_HAS_LAZY_MMU_MODE
+> nit: This list is mostly in alphabetical order. Further up the list there are a
+> lot of ARCH_HAS_* entries. Perhaps move it to the correct position in that lot?
+> Then ARCH_HAS_UBSAN stays out of order on its own.
 
-And similar here, fold it into the patch moving the first gpib bits out
-of staging.
+That's fair, it does look like it's mostly in order apart from
+ARCH_HAS_UBSAN. Will move it further up.
 
->  obj-$(CONFIG_STAGING)		+= staging/
->  obj-y				+= platform/
-
-Johan
+- Kevin
 
