@@ -1,50 +1,127 @@
-Return-Path: <linux-kernel+bounces-894342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE6DC49C8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:39:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB57DC49CBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64BF0188C38E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:39:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A74D3B0428
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71913043BE;
-	Mon, 10 Nov 2025 23:38:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22871305044;
+	Mon, 10 Nov 2025 23:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mEGty8YH"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE937242D78;
-	Mon, 10 Nov 2025 23:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48092F7471
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762817932; cv=none; b=jicLPxeaOjzJYSOhMfMyPxpf/Aq26fHVnRPnkhilbvEyd2V6BR2s7n/oQTdYZ+FnGlgi4fqKjlL4aKG+4yVTcD7X2YXGjHH3GuQld7IiSoXZ8oo0KkV0ncJyqLyySneAF5+QoaRiZD94WCuu0mYHdWHdikhLi/qxEMMO5Gdyefg=
+	t=1762817955; cv=none; b=e8h1tmNmAjnzqOEPdAlNf/DU0Nnko/4SfPKPjxF2jV/dPRYir99e5l7d6Eab+GpQlWAIydSkpwkUnPuamUhAtyXE35qBgL+MqPsWW1ySzHQ4IVK9t1ZaTxy4d83cniyvR7jCfP5fw/TiihW89DQQrCdgJVUkN66MqzK7P0sm4ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762817932; c=relaxed/simple;
-	bh=TSiKRn8KXstGb+AC1BS5OZza7As7Vr2R+Z54KsY7zj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jVAO6KadsE7gG/Xwn2DT9QLfNHbyXD3rAmupCbzjwZcemdqVNk3v2r4Ksa2irXhSqI/rspU/Iz6gobR2kE0boRCCWGKD7D7THnFlr/wAQ5E9PQy7poP1yl4YFD1y3VFPSkBy8rhsf3C6Cg7PfbtMB2php3tSctn0GweDIGZm+jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 49B441DFFD0;
-	Mon, 10 Nov 2025 23:38:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 1D41A6000A;
-	Mon, 10 Nov 2025 23:38:46 +0000 (UTC)
-Date: Mon, 10 Nov 2025 18:38:54 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Yongliang Gao <leonylgao@gmail.com>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Yongliang
- Gao <leonylgao@tencent.com>, Huang Cun <cunhuang@tencent.com>
-Subject: Re: [PATCH] trace/pid_list: optimize pid_list->lock contention
-Message-ID: <20251110183854.48b33b50@gandalf.local.home>
-In-Reply-To: <20251015114952.4014352-1-leonylgao@gmail.com>
-References: <20251015114952.4014352-1-leonylgao@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762817955; c=relaxed/simple;
+	bh=Dn/NYX3Wj4798jgUyiyxe8j2iflj/zcXoK6zpJuJGpw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MbzwTex8ekO/Ad+uCBfBL9QeKVewshj6tAft1w4Oi8ciU+app4ks/jkoe7UHch0yVOJ1UCvqxp9piE4WXiCRDt+4+lahq/YU7+ijsEj7WabGCieucOWO21QAn7hHH7ywofbtC3Pfsp4An5MortgxnEcZeoB2TVVjsUtpQoXW55g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mEGty8YH; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-787eb2d8663so5202837b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:39:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762817951; x=1763422751; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=auOCGMGZsgkQSYvZ+oudFtHe19C6Wc96WcK7gMZx0zg=;
+        b=mEGty8YHoT9lQfsMZxDzImwxoSukZsGElucuwailTczNWbXvFVZVaib8NlFztpaXjv
+         DINb0HvO59EpPjVQfH0dH4S9w7v5cVqho+oGE80jK/g5WRlAsbjgkFwn5QPHyC8nmK07
+         yb9DAiwpQJrZc/sRM2CnfxddXUN01w56nFY8HfWO2EUoGU9B2AAnDCx3C+julOLyBBDr
+         h9cm2VEX4KSRyrToAhtT6SMUYjDHt+wAtEhNMLGz+qUy2MiCJ8q18pspYRWMbS2LzXe4
+         h17Xk9fpaU8yFq9XP6jrXvmBGM87DwA5BW+gedZmfW58GymS/Yo9xOliYgTr4VWJQHJe
+         9OEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762817951; x=1763422751;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=auOCGMGZsgkQSYvZ+oudFtHe19C6Wc96WcK7gMZx0zg=;
+        b=pWMRVkQyXi0W7Tcz6wrs3ZbVpeS/CsjzW/3nJKPfkK/W28RxOXjSgH+Dr8//OBBP1c
+         xHzmfew1HIqLs4lLigd7aFAT4ItG7kwn1UizhThAUS6IDz9YA9hAzi5VAtQagUbxI/UI
+         cI7icTkFHeawJvJ4L9bag+4X4fMi1I+jLUnkOI25GZCjevpGXikL+ATAu8aHRlBC8sxc
+         HWTLYOXP0F83hm0i2Nt7M7dQOGCoDpsjlwuihCeELBbgkutSSebBRhVP0+ValTe9EKct
+         OnC2etKwynIaj29SHJwLL20Y60aCkbeCyv1b+fz1ifMIMzcrTLzhoqdb13a/H86GkmxZ
+         dQjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBOtVgTQe0QgTKMwPuh54yT8TkaQPQGcRjgoDdrkX/h3k0EMOwmfRSp7hO2RVqD64jDvaAttB2/jMikW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0TqLhy+UcqVxkbLyweMJLbDmghuONb1c6z37Jv6PdLOBoX3Eo
+	5wEgNEM1zG8/Je0cOEihehkKZxpbRjQAyFYbu1n1CrPRrCpiXCrXryODWZyRbiN5pg==
+X-Gm-Gg: ASbGncv+wdHdosrKbFIi+2PzHZvQDFd66RE+YG9/nVxAuMk8OafE3TijZpq5eH7+D+d
+	1HE4Uz2v78Rx/RuaMqAv5CwPox4AScM1kA8uLORUXRVAZCho3y1L0Ngni9U83vJ8FCiSmX1R0r1
+	dPDWI7AgD2Z040oRVEzVClBI9Zo0fp+la54b9Yo3OhQ5yFySMsCY8oviE0MCHfEtAU+EDdB2Z50
+	1OemXUUAL2ICTfaQF6kHvJFW7kfvIMpe9He/nBMaOA5nlqcDQe6N1zzTPoiINj+VMEtycX77e+o
+	Rbb1iCf5pPk8vMGprpeBZYMflTnQ7jkOaVWGBTcFlTVR3EbG6Ulb69+PryveegWj/RVfzeFsg8x
+	bMM7tsUXXmnMcHwXY6aRGtnSyatOb4krxIgM6ODWO9ITY7yVaAUFCgt5YaGTXu9GGo+6MExl/7l
+	LViFGS41BNmuQgvHAsR6zNWXpPrrNXhRBJgIbQSotO4CwmleqPup1Z1YsWz9pAveI9WCCxcwQwE
+	ySLX8gXfg==
+X-Google-Smtp-Source: AGHT+IGhKzpHrBaCl8nie6rdibzD1wCPS/Sl7zTN9XwZ4g855DlbGN22SspoKQKrIKKHgp9q/nU6ag==
+X-Received: by 2002:a81:8a07:0:b0:787:d107:ca88 with SMTP id 00721157ae682-7880355f82bmr9116177b3.10.1762817950151;
+        Mon, 10 Nov 2025 15:39:10 -0800 (PST)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-787d6a2947asm27792067b3.55.2025.11.10.15.39.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 15:39:09 -0800 (PST)
+Date: Mon, 10 Nov 2025 15:38:55 -0800 (PST)
+From: Hugh Dickins <hughd@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+cc: Chris Li <chrisl@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+    Christian Borntraeger <borntraeger@linux.ibm.com>, 
+    Janosch Frank <frankja@linux.ibm.com>, 
+    Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+    David Hildenbrand <david@redhat.com>, 
+    Alexander Gordeev <agordeev@linux.ibm.com>, 
+    Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+    Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+    Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, 
+    Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+    Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+    Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+    Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+    Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+    Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, 
+    Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+    Michal Hocko <mhocko@suse.com>, Matthew Brost <matthew.brost@intel.com>, 
+    Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, 
+    Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+    Ying Huang <ying.huang@linux.alibaba.com>, 
+    Alistair Popple <apopple@nvidia.com>, 
+    Axel Rasmussen <axelrasmussen@google.com>, 
+    Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
+    Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
+    Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
+    SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+    Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
+    Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
+    Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>, 
+    Naoya Horiguchi <nao.horiguchi@gmail.com>, 
+    Pedro Falcato <pfalcato@suse.de>, 
+    Pasha Tatashin <pasha.tatashin@soleen.com>, 
+    Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
+    Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org, 
+    kvm@vger.kernel.org, linux-s390@vger.kernel.org, 
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+    linux-arch@vger.kernel.org, damon@lists.linux.dev
+Subject: Re: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
+ entries, introduce leaf entries
+In-Reply-To: <3c0e9dd0-70ac-4588-813b-ffb24d40f067@lucifer.local>
+Message-ID: <c9e3ad0e-02ef-077c-c12c-f72057eb7817@google.com>
+References: <cover.1762621567.git.lorenzo.stoakes@oracle.com> <CACePvbVq3kFtrue2smXRSZ86+EuNVf6q+awQnU-n7=Q4x7U9Lw@mail.gmail.com> <5b60f6e8-7eab-4518-808a-b34331662da5@lucifer.local> <CACePvbUvQu+So7OoUbJTMLODz8YDAOgWaM8A-RXFj2U_Qc-dng@mail.gmail.com>
+ <3c0e9dd0-70ac-4588-813b-ffb24d40f067@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,46 +129,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: jaoz51kcyaca59m77edasd36mqwscmrj
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 1D41A6000A
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+xXfvQ1MzHszbnHM1kX5j0D6qEpKU6Vsk=
-X-HE-Tag: 1762817926-346271
-X-HE-Meta: U2FsdGVkX1+cz/SfyESL2m0HHcS8jBCFNg4dfoe62FGdyQKUUTk1w/Z8tAlarMUuFDOO2427OxKoAjd2RMirNZpXpoJCzNH0P2g7lLyhIxZB5I4E6l22nBAVCWRAB1Ok8C/FljCPHdzqUafoPRiIH5pppa4cmPTzhypaVCanvQhssBrTt4tHq2Wsrwn0Hk7yJvYlJO43w1UPAlEzPHRp7uoZu3Z42J+9hIgae4KCAn/TI57jLWWhD05WZWBf0/HLtudSqIYxPP2atPJYRVU3hNqqXwx3RCbO8wFmhWd6mWSPAWU04arQQY4Z2+OixD7SdF9rRg99Ply9vdFltE98usw7+KC/lkz2
 
-On Wed, 15 Oct 2025 19:49:52 +0800
-Yongliang Gao <leonylgao@gmail.com> wrote:
+On Mon, 10 Nov 2025, Lorenzo Stoakes wrote:
+> On Mon, Nov 10, 2025 at 03:04:48AM -0800, Chris Li wrote:
+> >
+> > That is actually the reason to give the swap table change more
+> > priority. Just saying.
+> 
+> I'm sorry but this is not a reasonable request. I am being as empathetic and
+> kind as I can be here, but this series is proceeding without arbitrary delay.
+> 
+> I will do everything I can to accommodate any concerns or issues you may have
+> here _within reason_ :)
 
-> diff --git a/kernel/trace/pid_list.c b/kernel/trace/pid_list.c
-> index 090bb5ea4a19..62082a4f60db 100644
-> --- a/kernel/trace/pid_list.c
-> +++ b/kernel/trace/pid_list.c
-> @@ -138,14 +138,14 @@ bool trace_pid_list_is_set(struct trace_pid_list *pid_list, unsigned int pid)
->  	if (pid_split(pid, &upper1, &upper2, &lower) < 0)
->  		return false;
->  
-> -	raw_spin_lock_irqsave(&pid_list->lock, flags);
-> +	read_lock_irqsave(&pid_list->lock, flags);
->  	upper_chunk = pid_list->upper[upper1];
->  	if (upper_chunk) {
->  		lower_chunk = upper_chunk->data[upper2];
->  		if (lower_chunk)
->  			ret = test_bit(lower, lower_chunk->data);
->  	}
-> -	raw_spin_unlock_irqrestore(&pid_list->lock, flags);
-> +	read_unlock_irqrestore(&pid_list->lock, flags);
->  
->  	return ret;
->  }
+But Lorenzo, have you even tested your series properly yet, with
+swapping and folio migration and huge pages and tmpfs under load?
+Please do.
 
-Unfortunately you cannot do this because this is called while holding the
-task pi_lock and rq locks. In PREEMPT_RT() the read/write_lock_* turn into
-mutexes.
+I haven't had time to bisect yet, maybe there's nothing more needed
+than a one-liner fix somewhere; but from my experience it is not yet
+ready for inclusion in mm and next - it stops testing other folks' work.
 
-Sebastian, is there any equivalent of raw_read/write_locks() that can be
-used?
+I haven't tried today's v3, but from the cover letter of differences,
+it didn't look like much of importance is fixed since v2: which
+(after a profusion of "Bad swap offet entry 3ffffffffffff" messages,
+not seen with v1, and probably not really serious) soon hits an Oops
+or a BUG or something (as v1 did) - I don't have any logs or notes
+to give yet, just forewarning before pursuing later in the day.
 
--- Steve
+If you think v3 has fixed real crashes under load, please say so:
+otherwise, I doubt it's worth Andrew hurrying to replace v2 by v3.
+
+(Or have I got something bad in my build, and will have to apologize?
+Or am I blaming your series - seems most likely - when it's actually
+something else which came into mm in the last week?)
+
+Hugh
 
