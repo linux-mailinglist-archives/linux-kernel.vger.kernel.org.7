@@ -1,143 +1,183 @@
-Return-Path: <linux-kernel+bounces-892515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE81C45423
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:53:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D92DC4542E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:54:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 047B34E0554
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:53:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43FCC188981B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBFB2EA481;
-	Mon, 10 Nov 2025 07:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvnngAHx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089832EB85B;
+	Mon, 10 Nov 2025 07:53:59 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08DD25334B;
-	Mon, 10 Nov 2025 07:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F552E8B8B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762761196; cv=none; b=gEp3zxatqdrhBMjwbFi5pMdn4KbcoebMUkCSm3wl2nSTusPk7Dz88u/1O2TiiyWbV0WerDoqi6mcJw/pCXCccb7WVGz3qomSIlWG64Wtn5oB0B6R9zqc3MofqUU5xCMQW51ZeyawpYsPkEWmNISZVpelmThvM5KE+Nojd1xsMr8=
+	t=1762761238; cv=none; b=QCGcf7gv0Z1+mKzMpJxSwq7fH1g8qfKYZkLK73lDnVYYtwPn2pFhcrO9Re1OwLnFM3xMH+XRbYZfEYDVQ8D5yHgOlWZiRPpPr7vlyLoH2IdPq8NILKJBilrPfUDSTYCQmQBgvmVhpptsSwpK2OtUMBMLX8SCaY//mf/nxuGj6Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762761196; c=relaxed/simple;
-	bh=LyEMoOLZiTrd9LySWb9koZvay36C0UCjBpRBe1jqpl8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jzsE9jD3v2MTbEjJOhuL107fSMSxQfAQdr1pp/qLtb4d4rzeEzuqMXTkTfP5ObciHj6d0JnllEXyBSGCAnMJZOjxWtP8mpb8a+Z/t6rjLdvUEEqmrNe4F+YzVvPVnHjBi6CyOIdPBoY/WxbGLLZJsWQ6fJ9UpFFMmjNDvVrOl78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OvnngAHx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F193C4CEF5;
-	Mon, 10 Nov 2025 07:53:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762761196;
-	bh=LyEMoOLZiTrd9LySWb9koZvay36C0UCjBpRBe1jqpl8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=OvnngAHx64UTtYeKytR904eLAsob/M8xHiqcZNAl23TyFL8FxsnCkHooxNVk9W9ow
-	 QKQcbNJVz1b9CEuMt7oSSMfOMCoBou9Dmoe9UrXgl1n1/U5o1hHHjE7vTRd57QYlTv
-	 YgY4kF2Q+ULSSzF52EuSK7UDOgun2iFaOYqWAsT7+quFHDo67+PzsqpHm39d/N7PnJ
-	 4fTIEwl4ewK4WQselQeX0rFNl0L1KjeoNWxVgyyhGF7ls0No7uavnRoWdnd+L4uEkA
-	 A1V3/Jc5/JVgOf4jc2aaTBcrPj6D2Y0FyPwHABMwKUK0Bpg1+1MI/32JDMkYqlphMo
-	 N94jaDzJ4qcYg==
-Message-ID: <1c879d71-a4a5-4241-a0db-bfd2c61bf32c@kernel.org>
-Date: Mon, 10 Nov 2025 08:53:12 +0100
+	s=arc-20240116; t=1762761238; c=relaxed/simple;
+	bh=wCMkYccJ40kQEpeS0gRyNupi2YzXSTU2Ywzj2Ab9tnc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tNWzcF5XNpyb6rGK+esaOA6m9yqVGst1f0hkHwhmRDt6pF7bWWuh5pglwbaTXfvk0Mm8VGjFkLOeWAfeKWhFp0G50uWvEWBYGh0CI92oOeGMXulSsuxYAwwEI36FJJjmvev5HcTOCzOuaeF6Z6TBjf29KHCnB1227jOhlmp1FsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vIMiZ-0001jm-0O; Mon, 10 Nov 2025 08:53:39 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vIMiX-007z4n-0e;
+	Mon, 10 Nov 2025 08:53:37 +0100
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vIMiX-000000002gp-0Uik;
+	Mon, 10 Nov 2025 08:53:37 +0100
+Message-ID: <90e735aa4d0121c4ec6cf9772b80823b570d5a43.camel@pengutronix.de>
+Subject: Re: [PATCH RESEND v3 2/3] clk: en7523: Add reset-controller support
+ for EN7523 SoC
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>, Michael Turquette	
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring	
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Felix
+ Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: Andreas Gnau <andreas.gnau@iopsys.eu>
+Date: Mon, 10 Nov 2025 08:53:37 +0100
+In-Reply-To: <20251110035645.892431-3-mikhail.kshevetskiy@iopsys.eu>
+References: <20251110035645.892431-1-mikhail.kshevetskiy@iopsys.eu>
+	 <20251110035645.892431-3-mikhail.kshevetskiy@iopsys.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: intel: Add Agilex3 SoCFPGA board
-To: niravkumarlaxmidas.rabara@altera.com, Dinh Nguyen <dinguyen@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1762756191.git.niravkumarlaxmidas.rabara@altera.com>
- <51ecc7f4eb7e419c00ee51fc26156e25686dfece.1762756191.git.niravkumarlaxmidas.rabara@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <51ecc7f4eb7e419c00ee51fc26156e25686dfece.1762756191.git.niravkumarlaxmidas.rabara@altera.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 10/11/2025 07:47, niravkumarlaxmidas.rabara@altera.com wrote:
-> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
-> 
-> Add compatible for Agilex3 SoCFPGA board.
-> 
-> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+On Mo, 2025-11-10 at 06:56 +0300, Mikhail Kshevetskiy wrote:
+> Introduce reset API support to EN7523 clock driver. EN7523 uses the
+> same reset logic as EN7581, so just reuse existing code.
+>=20
+> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
 > ---
->  Documentation/devicetree/bindings/arm/intel,socfpga.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml b/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
-> index cf7a91dfec8a..e706c4eff019 100644
-> --- a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
-> +++ b/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
-> @@ -21,6 +21,11 @@ properties:
->                - intel,socfpga-agilex-n6000
->                - intel,socfpga-agilex-socdk
->            - const: intel,socfpga-agilex
-> +      - description: Agilex3 boards
+>  drivers/clk/clk-en7523.c | 64 ++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 59 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+> index 15bbdeb60b8e..08cc8e5acf43 100644
+> --- a/drivers/clk/clk-en7523.c
+> +++ b/drivers/clk/clk-en7523.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/regmap.h>
+>  #include <linux/reset-controller.h>
+>  #include <dt-bindings/clock/en7523-clk.h>
+> +#include <dt-bindings/reset/airoha,en7523-reset.h>
+>  #include <dt-bindings/reset/airoha,en7581-reset.h>
+> =20
+>  #define RST_NR_PER_BANK			32
+> @@ -299,6 +300,53 @@ static const u16 en7581_rst_ofs[] =3D {
+>  	REG_RST_CTRL1,
+>  };
+> =20
+> +static const u16 en7523_rst_map[] =3D {
+> +	/* RST_CTRL2 */
+> +	[EN7523_XPON_PHY_RST]		=3D 0,
+> +	[EN7523_XSI_MAC_RST]		=3D 7,
+> +	[EN7523_XSI_PHY_RST]		=3D 8,
+> +	[EN7523_NPU_RST]		=3D 9,
+> +	[EN7523_I2S_RST]		=3D 10,
+> +	[EN7523_TRNG_RST]		=3D 11,
+> +	[EN7523_TRNG_MSTART_RST]	=3D 12,
+> +	[EN7523_DUAL_HSI0_RST]		=3D 13,
+> +	[EN7523_DUAL_HSI1_RST]		=3D 14,
+> +	[EN7523_HSI_RST]		=3D 15,
+> +	[EN7523_DUAL_HSI0_MAC_RST]	=3D 16,
+> +	[EN7523_DUAL_HSI1_MAC_RST]	=3D 17,
+> +	[EN7523_HSI_MAC_RST]		=3D 18,
+> +	[EN7523_WDMA_RST]		=3D 19,
+> +	[EN7523_WOE0_RST]		=3D 20,
+> +	[EN7523_WOE1_RST]		=3D 21,
+> +	[EN7523_HSDMA_RST]		=3D 22,
+> +	[EN7523_I2C2RBUS_RST]		=3D 23,
+> +	[EN7523_TDMA_RST]		=3D 24,
+> +	/* RST_CTRL1 */
+> +	[EN7523_PCM1_ZSI_ISI_RST]	=3D RST_NR_PER_BANK + 0,
+> +	[EN7523_FE_PDMA_RST]		=3D RST_NR_PER_BANK + 1,
+> +	[EN7523_FE_QDMA_RST]		=3D RST_NR_PER_BANK + 2,
+> +	[EN7523_PCM_SPIWP_RST]		=3D RST_NR_PER_BANK + 4,
+> +	[EN7523_CRYPTO_RST]		=3D RST_NR_PER_BANK + 6,
+> +	[EN7523_TIMER_RST]		=3D RST_NR_PER_BANK + 8,
+> +	[EN7523_PCM1_RST]		=3D RST_NR_PER_BANK + 11,
+> +	[EN7523_UART_RST]		=3D RST_NR_PER_BANK + 12,
+> +	[EN7523_GPIO_RST]		=3D RST_NR_PER_BANK + 13,
+> +	[EN7523_GDMA_RST]		=3D RST_NR_PER_BANK + 14,
+> +	[EN7523_I2C_MASTER_RST]		=3D RST_NR_PER_BANK + 16,
+> +	[EN7523_PCM2_ZSI_ISI_RST]	=3D RST_NR_PER_BANK + 17,
+> +	[EN7523_SFC_RST]		=3D RST_NR_PER_BANK + 18,
+> +	[EN7523_UART2_RST]		=3D RST_NR_PER_BANK + 19,
+> +	[EN7523_GDMP_RST]		=3D RST_NR_PER_BANK + 20,
+> +	[EN7523_FE_RST]			=3D RST_NR_PER_BANK + 21,
+> +	[EN7523_USB_HOST_P0_RST]	=3D RST_NR_PER_BANK + 22,
+> +	[EN7523_GSW_RST]		=3D RST_NR_PER_BANK + 23,
+> +	[EN7523_SFC2_PCM_RST]		=3D RST_NR_PER_BANK + 25,
+> +	[EN7523_PCIE0_RST]		=3D RST_NR_PER_BANK + 26,
+> +	[EN7523_PCIE1_RST]		=3D RST_NR_PER_BANK + 27,
+> +	[EN7523_PCIE_HB_RST]		=3D RST_NR_PER_BANK + 29,
+> +	[EN7523_XPON_MAC_RST]		=3D RST_NR_PER_BANK + 31,
+> +};
+> +
+>  static const u16 en7581_rst_map[] =3D {
+>  	/* RST_CTRL2 */
+>  	[EN7581_XPON_PHY_RST]		=3D 0,
+> @@ -357,6 +405,9 @@ static const u16 en7581_rst_map[] =3D {
+>  	[EN7581_XPON_MAC_RST]		=3D RST_NR_PER_BANK + 31,
+>  };
+> =20
+> +static int en7581_reset_register(struct device *dev, void __iomem *base,
+> +				 const u16 *rst_map, int nr_resets);
+> +
+>  static u32 en7523_get_base_rate(const struct en_clk_desc *desc, u32 val)
+>  {
+>  	if (!desc->base_bits)
+> @@ -552,7 +603,8 @@ static int en7523_clk_hw_init(struct platform_device =
+*pdev,
+> =20
+>  	en7523_register_clocks(&pdev->dev, clk_data, base, np_base);
+> =20
+> -	return 0;
+> +	return en7581_reset_register(&pdev->dev, np_base, en7523_rst_map,
+> +				     ARRAY_SIZE(en7523_rst_map));
 
-Agilex3?
+I wonder if this wouldn't be better moved out of hw_init(), with
+rst_map and the corresponding ARRAY_SIZE() stored in struct
+en_clk_soc_data. Registering a reset controller is not hardware
+initialization, after all. But that's not an issue with this patch.
 
-> +        items:
-> +          - enum:
-> +              - intel,socfpga-agilex3-socdk
-> +          - const: intel,socfpga-agilex5
-
-Or Agilex5? Decide. Cannot be both.
-
->        - description: Agilex5 boards>          items:
->            - enum:
-
-
-Best regards,
-Krzysztof
+regards
+Philipp
 
