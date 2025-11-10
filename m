@@ -1,202 +1,241 @@
-Return-Path: <linux-kernel+bounces-892966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B843C463BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:26:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B0AC463C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:26:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87CE64EB7BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:25:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9BE43A68EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6DF309EE0;
-	Mon, 10 Nov 2025 11:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CF530F544;
+	Mon, 10 Nov 2025 11:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DXEFd4Uj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OGD8oKbf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Torrhd+o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C2530CD8E;
-	Mon, 10 Nov 2025 11:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F04C30EF86;
+	Mon, 10 Nov 2025 11:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762773857; cv=none; b=Ml18Jx3OJG+//QhG750oH4FY2rM2EYLk0FcVp3wBdqO50m4ErobJQcw/mYbco7hiTb6xnsWzT+sz1NvLAeVnok3zIHBVY4UAS0zNi+KFY4hVgUEEu96VZLd8iBScoSmzlqpS1VOrgzOH74GhaC3Y+4+UofskvbZxjDHRngQDQhY=
+	t=1762773866; cv=none; b=mejazwugBY4dVdWl0iXy7LUm0BvkDDjku4sKcPsRvCSdKOGn880iQobGt1xU1yahVrcOPTZI0jaXPZeoz6Fevf6zHxuqAq7o4BRy/MTykMPnLwS3G+BAT+ym8V7mtQFmS8CS+ngXkvYqG28MEvzi9cJ/qcLCH7Qb48WQ+xelWAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762773857; c=relaxed/simple;
-	bh=t7oYPr0nA5k7sctEhM/hJB7ljC3f9ZRuI/DqK+KCKaM=;
+	s=arc-20240116; t=1762773866; c=relaxed/simple;
+	bh=RsaOGTix9Ur+eCDtdyFW52wEEbBpedzXfB2AohWy/OQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ntL+VskuwEBFCIr34zs3aJT5s8Shp2Ek29miaXvQ6atdXy6NxgZBi5kbrqh55n9QyRgmdhaXHLUfUESmI6kOP8eEFBH0P03INARw/cTUW+nLQ//xkfi7nnIRJHQMIDQpqbgOo7z1yQ4HbNZphWSmlpRDuZ+GlTM5mX9pc/ffLZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DXEFd4Uj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OGD8oKbf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 10 Nov 2025 12:24:13 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762773853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p96pAwq/VC3UfPWRsm0wtdyMQb6nexxAkpfro+m18b4=;
-	b=DXEFd4UjN9Qd6hW+g2n27mHddszaRAS18B/aA/XIVGLJc2KTiyMZLtg5QqpWMb8uU/H3B9
-	KxnWzKfryNbO05muzqQ3EH/Qy5Ex39fIt9aYPvZwzk7tYaYM0Ga4rAGfDqmWVm/ijDiqJe
-	UreuQgu+ljTfyt03fyLMCP2q72vQK65Yg3bTwRjrhywPiUNs3bonCC/dovrLW3yrxbzRLi
-	SEetB1OBIOrzMR9Pm7BKtsFVVl7zaT8kZoGkXTgYkXKJlzu5u5qpoGroxIRpsPxffobOnp
-	2wiRdJptvgJPn1+5yi2wq0KxIAFgq0y5/TLYt4qlSVLaw1erJhuu6jtNQWRfXw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762773853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p96pAwq/VC3UfPWRsm0wtdyMQb6nexxAkpfro+m18b4=;
-	b=OGD8oKbfgNkv/Z96N3ixFCGRB4K/UzZRB9Pseb2rl8K66Ye5pHYKSiQNyZcS40WSC4Ian5
-	duIbPgXrooL+qfDQ==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Shuah Khan <shuah@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
-	Russell King <linux@armlinux.org.uk>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v5 19/34] random: vDSO: only access vDSO datapage after
- random_init()
-Message-ID: <20251110114550-a3f2afa8-4f86-4048-be5b-2dc4f4ef340d@linutronix.de>
-References: <20251106-vdso-sparc64-generic-2-v5-0-97ff2b6542f7@linutronix.de>
- <20251106-vdso-sparc64-generic-2-v5-19-97ff2b6542f7@linutronix.de>
- <aQ6EvdukQytvqK-u@zx2c4.com>
- <20251110094555-353883a9-1950-4cc6-a774-bb0ef5db11c5@linutronix.de>
- <aRHAU7bVAIyaOrpA@zx2c4.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MNXGPFhcq5LxzgF7vlGeL3LgB0wneGrcdca+UBaxPyyJRKBylBkuA/er2Lr51VoPlf6uMIL0AfJBQSqpWj5hAtV1K5aUdHnjBCtS9TJNwO9sdc0faPLWKwThuwsuKNsPsTrc/9E198kc157v7eQulH4JatgEd81YbpYmH5m1Xp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Torrhd+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02DF2C116D0;
+	Mon, 10 Nov 2025 11:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762773865;
+	bh=RsaOGTix9Ur+eCDtdyFW52wEEbBpedzXfB2AohWy/OQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Torrhd+o19dK8++DuxENcSYZFvhQ52lCnhlUZM07H/XkV5MODzY14KibeWlBQXKTL
+	 4EjSms5fYq7BIcbvUdTIrC7lr4/YfJgFabzNQHmQ6wUsNGSPengbQid2Mc/Mjta4a8
+	 JwOjhbwXLz6/+ddnP9o2NeJxC88XVeiEBLeEqRHkMZof/iy8XhtD5LHAoanTGuar2B
+	 t9p1RLNe3D2C7tOPkuBISJpUidRJ1UR4aHC9GInyeKmSSkdSYkjFyQ0znKHODp3LWw
+	 dyvqhnwUIvKTvYEIGSQWmDSUFds2sSa8zgVHTRpCHo3FIYNzQsn0LkQVXDfb7J5clG
+	 OFWvSN6FiFaYw==
+Date: Mon, 10 Nov 2025 16:54:13 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: FUKAUMI Naoki <naoki@radxa.com>
+Cc: Niklas Cassel <cassel@kernel.org>, 
+	Shawn Lin <shawn.lin@rock-chips.com>, Damien Le Moal <dlemoal@kernel.org>, 
+	Anand Moon <linux.amoon@gmail.com>, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Dragan Simic <dsimic@manjaro.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [RESEND] Re: [PATCH] PCI: dw-rockchip: Skip waiting for link up
+Message-ID: <4f4wsgf56eublizg63fz6xmdjixesalb2q3rxetphd55jpqqju@zfyzsxfgiyim>
+References: <20250113-rockchip-no-wait-v1-1-25417f37b92f@kernel.org>
+ <1E8E4DB773970CB5+5a52c9e1-01b8-4872-99b7-021099f04031@radxa.com>
+ <6e87b611-13ea-4d89-8dbf-85510dd86fa6@rock-chips.com>
+ <aQ840q5BxNS1eIai@ryzen>
+ <aQ9FWEuW47L8YOxC@ryzen>
+ <55EB0E5F655F3AFC+136b89fd-98d4-42af-a99d-a0bb05cc93f3@radxa.com>
+ <aRCI5kG16_1erMME@ryzen>
+ <F8B2B6FA2884D69A+b7da13f2-0ffb-4308-b1ba-0549bc461be8@radxa.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aRHAU7bVAIyaOrpA@zx2c4.com>
+In-Reply-To: <F8B2B6FA2884D69A+b7da13f2-0ffb-4308-b1ba-0549bc461be8@radxa.com>
 
-On Mon, Nov 10, 2025 at 11:37:07AM +0100, Jason A. Donenfeld wrote:
-> On Mon, Nov 10, 2025 at 10:04:17AM +0100, Thomas Wei�schuh wrote:
-> > On Sat, Nov 08, 2025 at 12:46:05AM +0100, Jason A. Donenfeld wrote:
-> > > I'm not a huge fan of this change:
-> > > 
-> > > On Thu, Nov 06, 2025 at 11:02:12AM +0100, Thomas Wei�schuh wrote:
-> > > > +static DEFINE_STATIC_KEY_FALSE(random_vdso_is_ready);
-> > > >  
-> > > >  /* Control how we warn userspace. */
-> > > >  static struct ratelimit_state urandom_warning =
-> > > > @@ -252,6 +253,9 @@ static void random_vdso_update_generation(unsigned long next_gen)
-> > > >  	if (!IS_ENABLED(CONFIG_VDSO_GETRANDOM))
-> > > >  		return;
-> > > >  
-> > > > +	if (!static_branch_likely(&random_vdso_is_ready))
-> > > > +		return;
-> > > > +
-> > > >  	/* base_crng.generation's invalid value is ULONG_MAX, while
-> > > >  	 * vdso_k_rng_data->generation's invalid value is 0, so add one to the
-> > > >  	 * former to arrive at the latter. Use smp_store_release so that this
-> > > > @@ -274,6 +278,9 @@ static void random_vdso_set_ready(void)
-> > > >  	if (!IS_ENABLED(CONFIG_VDSO_GETRANDOM))
-> > > >  		return;
-> > > >  
-> > > > +	if (!static_branch_likely(&random_vdso_is_ready))
-> > > > +		return;
-> > > > +
-> > > >  	WRITE_ONCE(vdso_k_rng_data->is_ready, true);
-> > > >  }
-> > > >  
-> > > > @@ -925,6 +932,9 @@ void __init random_init(void)
-> > > >  	_mix_pool_bytes(&entropy, sizeof(entropy));
-> > > >  	add_latent_entropy();
-> > > >  
-> > > > +	if (IS_ENABLED(CONFIG_VDSO_GETRANDOM))
-> > > > +		static_branch_enable(&random_vdso_is_ready);
-> > > > +
-> > > >  	/*
-> > > >  	 * If we were initialized by the cpu or bootloader before jump labels
-> > > >  	 * or workqueues are initialized, then we should enable the static
-> > > > @@ -934,8 +944,10 @@ void __init random_init(void)
-> > > >  		crng_set_ready(NULL);
-> > > >  
-> > > >  	/* Reseed if already seeded by earlier phases. */
-> > > > -	if (crng_ready())
-> > > > +	if (crng_ready()) {
-> > > >  		crng_reseed(NULL);
-> > > > +		random_vdso_set_ready();
-> > > > +	}
-> > > 
-> > > The fact that the vdso datapage is set up by the time random_init() is
-> > > called seems incredibly contingent on init details. Why not, instead,
-> > > make this a necessary part of the structure of vdso setup code, which
-> > > can actually know about what happens when?
-> > 
-> > The whole early init is "carefully" ordered in any case. I would have been
-> > happy to allocate the data pages before the random initialization, but the
-> > allocator is not yet usable by then.
-> > We could also make the ordering more visible by having the vDSO datastore call
-> > into a dedicated function to allow the random core to touch the data pages:
-> > random_vdso_enable_datapages().
-> > 
-> > > For example, one clean way of
-> > > doing that would be to make vdso_k_rng_data always valid by having it
-> > > initially point to __initdata memory, and then when it's time to
-> > > initialize the real datapage, memcpy() the __initdata memory to the new
-> > > specially allocated memory. Then we don't need the complex state
-> > > tracking that this commit and the prior one introduce.
-> > 
-> > Wouldn't that require synchronization between the update path and the memcpy()
-> > path? Also if the pointer is going to change at some point we'll probably need
-> > to use READ_ONCE()/WRITE_ONCE(). In general I would be happy about a cleaner
-> > solution for this but didn't find a great one.
+On Mon, Nov 10, 2025 at 08:26:56AM +0900, FUKAUMI Naoki wrote:
+> (RESEND: fix mani's email address)
 > 
-> This is still before userspace has started, and interrupts are disabled,
-> so I don't think so?
 
-Interrupts being disabled is a good point. But we are still leaking
-implementation details from the random code into the vdso datastore.
+Thanks for looping me in! My Linaro email is not functional anymore.
 
-> Also, you only care about being after
-> mm_core_init(), right? So move your thing before sched_init() and then
-> you'll really have nothing to worry about.
+> Hi Niklas,
+> 
+> On 11/9/25 21:28, Niklas Cassel wrote:
+> > On Sun, Nov 09, 2025 at 01:42:23PM +0900, FUKAUMI Naoki wrote:
+> > > Hi Niklas,
+> > > 
+> > > On 11/8/25 22:27, Niklas Cassel wrote:
+> > > (snip)> (And btw. please test with the latest 6.18-rc, as, from experience,
+> > > the
+> > > > ASPM problems in earlier RCs can result in some weird problems that are
+> > > > not immediately deduced to be caused by the ASPM enablement.)
+> > > 
+> > > Here is dmesg from v6.18-rc4:
+> > >   https://gist.github.com/RadxaNaoki/40e1d049bff4f1d2d4773a5ba0ed9dff
+> > 
+> > Same problem as before:
+> > [    1.732538] pci_bus 0004:43: busn_res: can not insert [bus 43-41] under [bus 42-41] (conflicts with (null) [bus 42-41])
+> > [    1.732645] pci_bus 0004:43: busn_res: [bus 43-41] end is updated to 43
+> > [    1.732651] pci_bus 0004:43: busn_res: can not insert [bus 43] under [bus 42-41] (conflicts with (null) [bus 42-41])
+> > [    1.732661] pci 0004:42:00.0: devices behind bridge are unusable because [bus 43] cannot be assigned for them
+> > [    1.732840] pci_bus 0004:44: busn_res: can not insert [bus 44-41] under [bus 42-41] (conflicts with (null) [bus 42-41])
+> > [    1.732947] pci_bus 0004:44: busn_res: [bus 44-41] end is updated to 44
+> > [    1.732952] pci_bus 0004:44: busn_res: can not insert [bus 44] under [bus 42-41] (conflicts with (null) [bus 42-41])
+> > [    1.732962] pci 0004:42:02.0: devices behind bridge are unusable because [bus 44] cannot be assigned for them
+> > [    1.733134] pci_bus 0004:45: busn_res: can not insert [bus 45-41] under [bus 42-41] (conflicts with (null) [bus 42-41])
+> > [    1.733246] pci_bus 0004:45: busn_res: [bus 45-41] end is updated to 45
+> > [    1.733255] pci_bus 0004:45: busn_res: can not insert [bus 45] under [bus 42-41] (conflicts with (null) [bus 42-41])
+> > [    1.733266] pci 0004:42:06.0: devices behind bridge are unusable because [bus 45] cannot be assigned for them
+> > [    1.733438] pci_bus 0004:46: busn_res: can not insert [bus 46-41] under [bus 42-41] (conflicts with (null) [bus 42-41])
+> > [    1.733544] pci_bus 0004:46: busn_res: [bus 46-41] end is updated to 46
+> > [    1.733550] pci_bus 0004:46: busn_res: can not insert [bus 46] under [bus 42-41] (conflicts with (null) [bus 42-41])
+> > [    1.733560] pci 0004:42:0e.0: devices behind bridge are unusable because [bus 46] cannot be assigned for them
+> > [    1.733571] pci_bus 0004:42: busn_res: [bus 42-41] end is updated to 46
+> > [    1.733575] pci_bus 0004:42: busn_res: can not insert [bus 42-46] under [bus 41] (conflicts with (null) [bus 41])
+> > [    1.733585] pci 0004:41:00.0: devices behind bridge are unusable because [bus 42-46] cannot be assigned for them
+> > [    1.733596] pcieport 0004:40:00.0: bridge has subordinate 41 but max busn 46
+> > 
+> > 
+> > Seems like the ASM2806 switch, for some reason, is not ready.
+> > 
+> > One change that Diederik pointed out is that in the "good" case,
+> > the link is always in Gen1 speed.
+> > 
+> > Perhaps you could build with CONFIG_PCI_QUIRKS=y and try this patch:
+> > 
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index 214ed060ca1b..ac134d95a97f 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -96,6 +96,7 @@ int pcie_failed_link_retrain(struct pci_dev *dev)
+> >   {
+> >   	static const struct pci_device_id ids[] = {
+> >   		{ PCI_VDEVICE(ASMEDIA, 0x2824) }, /* ASMedia ASM2824 */
+> > +		{ PCI_VDEVICE(ASMEDIA, 0x2806) }, /* ASMedia ASM2806 */
+> >   		{}
+> >   	};
+> >   	u16 lnksta, lnkctl2;
+> 
+> It doesn't help with either probing behind the bridge or the link speed.
+> 
+> > If that does not work, perhaps you could try this patch
+> > (assuming that all Rock 5C:s have a ASM2806 on pcie2x1l2):
+> 
+> ROCK 5C has a PCIe FPC connector and I'm using Dual 2.5G Router HAT.
+>  https://radxa.com/products/rock5/5c#techspec
+>  https://radxa.com/products/accessories/dual-2-5g-router-hat
+> 
+> Regarding the link speed, I initially suspected the FPC connector and/or
+> cable might be the issue. However, I tried the Dual 2.5G Router HAT with the
+> ROCK 5A (which uses a different cable), and I got the same result.
+> 
+> BTW, the link speed varies between 2Gb/s and 4Gb/s depending on the reboot.
+> (with or without quirk)
+> 
 
-The callchains random_init_early() -> crng_reseed()/_credit_init_bits() could
-still touch the datapage before it is allocated.
-Adding conditionals to prevent those is essentially what my patch does.
+From the dmesg log, it looks like the issue is most probably due to bus number
+assignment for the Root Port. During the initial bus scan, the PCI core will
+assign the subordinate bus number (max bus number behind the PCI bridge) of the
+PCI bridge based on the available busses scanned behind the bridge. Before the
+link up IRQ patch, I guess the PCIe switch connected to the Root Port gets
+enumerated during dw_pcie_wait_for_link() itself i.e., before the PCI core
+starts the bus scan with a call to pci_host_probe(). So the switch appears when
+the PCI core starts scanning the bus and the subordinate bus number gets
+assigned correctly as the PCI core could see the available busses behind the
+Root Port.
 
-> But I think globally I agree with Andy/Arnd -- this is kind of ugly and
-> not worth it. Disable vDSO for these old CPUs with cache aliasing
-> issues.
+This could be confirmed from the timing of the success log:
 
-(I obviously still need to properly respond to Andy and Arnd)
+[    1.875690] pci 0004:40:00.0: bridge configuration invalid ([bus 01-ff]), reconfiguring
+[    1.876543] pci 0004:41:00.0: [1b21:2806] type 01 class 0x060400 PCIe Switch Upstream Port
 
-The dynamic allocation does more.
-1) It is a preparation for mlockall() for the datapages [0].
-2) On the SPARC T4 Niagara this was tested on, the MMU would send an exception,
-if userspace accessed the mapped kernel .data page. Even compensating for dcache
-aliasing did not prevent this, so that is not the reason. It is not clear why
-it happens. At some point I gave up investigating as point 1) would still hold
-true.
+Time difference is 853ms.
 
-[0] https://lore.kernel.org/lkml/20250901-vdso-mlockall-v2-0-68f5a6f03345@linutronix.de/
-    (This revision used 'struct page' with .data memory, but that doesn't
-    actually work everywhere)
+But with the link up IRQ patch, dw_pcie_wait_for_link() is skipped and the
+device appears *after* the initial bus scan by the PCI core.
 
+From the failure log:
 
-Thomas
+[    1.392130] pci 0004:40:00.0: PCI bridge to [bus 41]
+[    1.392607] pci_bus 0004:40: resource 4 [io  0x0000-0xfffff]
+[    1.393103] pci_bus 0004:40: resource 5 [mem 0xf4200000-0xf4ffffff]
+[    1.393657] pci_bus 0004:40: resource 6 [mem 0xa00000000-0xa3fffffff]
+[    1.412296] pci 0004:41:00.0: [1b21:2806] type 01 class 0x060400 PCIe Switch Upstream Port
+
+Note the timing and also the PCI bridge resource assignment.
+
+So during the initial scan, PCI core doesn't see the switch and since the Root
+Port is not hot plug capable (I'm assuming that's the case), the secondary bus
+number gets assigned as the subordinate bus number (41). This means, the PCI
+core assumes that only one bus will appear behind the Root Port since the Root
+Port is not hot plug capable. This will work perfectly fine for PCIe endpoints
+connected to the Root Port, since they don't extend the bus. But if you connect
+a PCIe switch, then you'll see the issue as the downstream busses starts showing
+up and PCI core doesn't extend the subordinate bus number after initial scan
+during boot.
+
+This is also confirmed by the below log in failure case:
+
+[    1.478814] pcieport 0004:40:00.0: bridge has subordinate 41 but max busn 46
+
+If you try the below hack, you might get the switch working:
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index c83e75a0ec12..01afb5b23eba 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1701,6 +1701,11 @@ void set_pcie_hotplug_bridge(struct pci_dev *pdev)
+ {
+        u32 reg32;
+ 
++       if (pdev->vendor == 0x1d87 && pdev->device == 0x3588) {
++               pdev->is_hotplug_bridge = pdev->is_pciehp = 1;
++               return;
++       }
++
+        pcie_capability_read_dword(pdev, PCI_EXP_SLTCAP, &reg32);
+        if (reg32 & PCI_EXP_SLTCAP_HPC)
+                pdev->is_hotplug_bridge = pdev->is_pciehp = 1;
+
+The above diff just fakes the Root Port as hot plug capable to the PCI core so
+that more subordinate bus numbers gets assigned to it in the anticipation of
+more busses showing up post scan.
+
+If the above works, then you should make sure that the switch is powered and the
+link to be up before the initial bus scan. The proper way to do this would be by
+modeling your switch power resources in devicetree and relying on the
+CONFIG_PWRCTRL_SLOT driver to power it up and scan the bus. But this driver
+needs some extra work to satisfy your needs and I'm going to post a series in
+the coming weeks for that.
+
+Until then, I'd suggest to revert the link up IRQ patch as a stop-gap solution.
+
+NOTE: As Niklas rightly pointed out, this issue also affects the Qcom platforms
+which follows the same code pattern and also other platforms as well. For Qcom,
+we are relying on the upcoming pwrctrl fixes to properly enumerate the PCIe
+switches in upstream.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
