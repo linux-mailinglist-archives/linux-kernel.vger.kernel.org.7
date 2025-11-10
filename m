@@ -1,160 +1,149 @@
-Return-Path: <linux-kernel+bounces-892888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1E8C460D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:50:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8916C460DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:50:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB9BE3A31D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:48:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FEAD3A93B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CCC3054C2;
-	Mon, 10 Nov 2025 10:48:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35FC211A14;
-	Mon, 10 Nov 2025 10:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6743830596D;
+	Mon, 10 Nov 2025 10:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LIT+guEJ"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C03301010
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762771717; cv=none; b=tpHvj1gYCRoyggmrOJAVLrgCUijRcPgmvrOy6pcyqsgwhztC4sy33THns+7+bTxvbUnVnc8BsA6hAIJTZRE/pweEWCIpPUtRjwQYeV9912Gc9s4U6Q8TSs9aZk5HmW6iIs2pAz9F0a0OThcrgDHM+ssLqQDfJoo8VapBOILFM6Y=
+	t=1762771736; cv=none; b=dySdHguDGXb1rrA0qAjgnMm8AmgnQ5kT18uegXdJVh01yWOn2MDOo0J/wtVae7emwncaWoHjfFol6VnVUpiMR2XKvvpvmgX8iXx9g/LdEZuaKR5/Jk3XyRjGEPffScfR1H8Z+2NibQBfgGCw2JUMyKKDid+k0r+wrDo60vIBHLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762771717; c=relaxed/simple;
-	bh=ZIfJgcsUGcQAHsjVRdxt6Yur9mIBlLhyH/RPJPjkf4Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TqhthClNREIuvQHJSvA4HWRFn7CEil0CdU2Bf8AKwZB4hnOnAntmXSQUlCbsuGJbLIN8DXKsJHre4LeshMarVARTi2Ark5BzDILgtWTrub+5eCDHso3LLG6YUovGYBdzF62NrxbRgb3uVi+A4SSZCKTF41kPMSvio8N/z2KDepE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BB20497;
-	Mon, 10 Nov 2025 02:48:27 -0800 (PST)
-Received: from [10.57.39.147] (unknown [10.57.39.147])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A51E03F66E;
-	Mon, 10 Nov 2025 02:48:27 -0800 (PST)
-Message-ID: <f7ed51e6-c3f6-402c-b328-8af5f970006d@arm.com>
-Date: Mon, 10 Nov 2025 11:48:24 +0100
+	s=arc-20240116; t=1762771736; c=relaxed/simple;
+	bh=xrxwoznpXpxNSfNbja8LI6AG/5ekNGybu+V3S1CSNQU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hjUh/gXqQfn+gCawZ02cPhUQ8H8r7AWKGnjPaEpK/8YRfwWl2+vEPP08Jn+IBDvdND00MGZuX1lCA3Idjsa3d1collzNMEFM7GCrF3Al/KGD7qZTHywJPYzlLve7o3fxiCJCR8B/dOcqnv4xkA2R51hFmlDP7Orizuz85WyKdHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LIT+guEJ; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-29558061c68so34581035ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:48:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762771734; x=1763376534; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+cJ0HZa/RIQ3oZ9bdzNteTdSwTIuu4RhJvYmWAVNz08=;
+        b=LIT+guEJ1I5Z0jOjLZ8hHfBipi0MTaV/dK4py9deFJ3fpUB6a4PO14NHgX7AD+BcEw
+         JwQ1V0Rvfmpay6Oq+iVrVs0sSwT4RzOJWkjva9THjhoPcjOZEXguwA6avgrDxYzpFtgx
+         P3xbd51v0k1j/ybNzpjLfqftUyk2cWxajAKAtxhKReQla7RbR9heY1VcfynjkOhuBq/p
+         CbHjhSjwa0sThA5TJqq0MZjAE4L3AVivVBVzgeIkSiPS3OoIPGDyYYYzBHfssGPOAee/
+         z4F4NWjSfGvox3JP7mwbaaw8oYAaxxgvADNqUJV4PHmNcoY0GIgarnfhLoNlOaeEmxqs
+         Vrgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762771734; x=1763376534;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+cJ0HZa/RIQ3oZ9bdzNteTdSwTIuu4RhJvYmWAVNz08=;
+        b=AMgtNY562ZyDJldkKP8ftpbNWaQezowu0f2anmCg/AVORJmOa6/fK0E4sY4uWJLeMZ
+         +Crx+ILKtnOT3e3VyAunOmgEorE+6ZX3ey8WcV3K3YXqWj8G0xpBttCuuE3EZuUPJk14
+         +AceVCr88pSwChpXZfWZTss/nykfa46jC/ULqAJ4k7hJz5+OGgV5Suq87/de9EQ1eia5
+         dTgzvfVoHnKJGnpAlFGGrnhWlCyEwgtXeLwrM/FfML7kWL78RQuN0A0QKf1LV16/Msal
+         riwjrCAltVhtbu1DRWgfIHhgMRJSEQacu3R78rtNXKDgf5CEo2e9Sy1RspZyEENGv6cX
+         fRZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyr6JIoTmsiHjYpeZD4M4SDz6SQ4rhIhkddi6yxK0P/SotLI28ROGeMMgEu534F3N5o/3ikj9I4MAl5Fw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn/HIaQew+367l7O7JyXFT/7DiU4zhaYLPeAh6TVtavZjMsbHU
+	jEvSddYkNM/+1tPbVyGO3drjBKcjHRvcwVSOIn5rBvZLnNM0Vo3bU6eAPiHLlvIy7V2ziBh7MCI
+	YrHX1RemuF0snYAxR07cKv/6UtK+4YZwYrD27HbsZ+w==
+X-Gm-Gg: ASbGncsuehswRBMqKlMciFugtt9XBLpg5F/48+koj6y/HACCFJxAE5aLD1riQ2Bm7M4
+	1haSD5Xkn8sygLcYot1OS4zGV4L9DwW1nS6EYQm0q4Yp5foJQTDUNznxyimkFqvHy12pQpWUWO4
+	CLJVlvhWBen5Vs8CxrLDEddeCxoAGihcRRxy7w6ysTh0Ba9CRJ/+1zajxJBnR/iuZ+lBWTwUH3I
+	liUBBlcsddiL102byldS28SF3sGgv71rYokoQuDIGGcM4oOgjTUWqzoHjMv0MOrQoMw2UGZhJH6
+	MpEdqcy2tkBftg==
+X-Google-Smtp-Source: AGHT+IE0FRG82nD93aofUD0cfwt+8b4Cf99CbEmLHNKF85pla2dK3w+D2zv8As6P254OUXAtQqh7YN7RNUqhVZAS+EA=
+X-Received: by 2002:a17:903:41d2:b0:297:c0f0:42a1 with SMTP id
+ d9443c01a7336-297e56d0d34mr99121845ad.44.1762771733753; Mon, 10 Nov 2025
+ 02:48:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 12/12] mm: bail out of lazy_mmu_mode_* in interrupt
- context
-To: Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
- <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-13-kevin.brodsky@arm.com>
- <8a38db66-4d1a-4296-a2dc-e0276c6cdde8@arm.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <8a38db66-4d1a-4296-a2dc-e0276c6cdde8@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251107044319.8356-1-manivannan.sadhasivam@oss.qualcomm.com>
+In-Reply-To: <20251107044319.8356-1-manivannan.sadhasivam@oss.qualcomm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 10 Nov 2025 11:48:40 +0100
+X-Gm-Features: AWmQ_blifxa081st-IFJuyykgPdA-ffOj8SxBaRYKjoJg0IU0sOOhKrJk_VvJmc
+Message-ID: <CAKfTPtBd=D9gTfyfcAjH8ucMtDFP-7jZHkZq8HN+yVCnNmK8Aw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] PCI: dwc: Check for device presence in suspend and resume
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, 
+	bhelgaas@google.com, will@kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, robh@kernel.org, linux-arm-msm@vger.kernel.org, 
+	zhangsenchuan@eswincomputing.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 07/11/2025 15:42, Ryan Roberts wrote:
-> On 29/10/2025 10:09, Kevin Brodsky wrote:
->> The lazy MMU mode cannot be used in interrupt context. This is
->> documented in <linux/pgtable.h>, but isn't consistently handled
->> across architectures.
->>
->> arm64 ensures that calls to lazy_mmu_mode_* have no effect in
->> interrupt context, because such calls do occur in certain
->> configurations - see commit b81c688426a9 ("arm64/mm: Disable barrier
->> batching in interrupt contexts"). Other architectures do not check
->> this situation, most likely because it hasn't occurred so far.
->>
->> Both arm64 and x86/Xen also ensure that any lazy MMU optimisation is
->> disabled while in interrupt mode (see queue_pte_barriers() and
->> xen_get_lazy_mode() respectively).
->>
->> Let's handle this in the new generic lazy_mmu layer, in the same
->> fashion as arm64: bail out of lazy_mmu_mode_* if in_interrupt(), and
->> have in_lazy_mmu_mode() return false to disable any optimisation.
->> Also remove the arm64 handling that is now redundant; x86/Xen has
->> its own internal tracking so it is left unchanged.
->>
->> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
->> ---
->>  arch/arm64/include/asm/pgtable.h | 17 +----------------
->>  include/linux/pgtable.h          | 16 ++++++++++++++--
->>  include/linux/sched.h            |  3 +++
->>  3 files changed, 18 insertions(+), 18 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->> index 61ca88f94551..96987a49e83b 100644
->> --- a/arch/arm64/include/asm/pgtable.h
->> +++ b/arch/arm64/include/asm/pgtable.h
->> @@ -62,37 +62,22 @@ static inline void emit_pte_barriers(void)
->>  
->>  static inline void queue_pte_barriers(void)
->>  {
->> -	if (in_interrupt()) {
->> -		emit_pte_barriers();
->> -		return;
->> -	}
->> -
->>  	if (in_lazy_mmu_mode())
->>  		test_and_set_thread_flag(TIF_LAZY_MMU_PENDING);
->>  	else
->>  		emit_pte_barriers();
->>  }
->>  
->> -static inline void arch_enter_lazy_mmu_mode(void)
->> -{
->> -	if (in_interrupt())
->> -		return;
->> -}
->> +static inline void arch_enter_lazy_mmu_mode(void) {}
->>  
->>  static inline void arch_flush_lazy_mmu_mode(void)
->>  {
->> -	if (in_interrupt())
->> -		return;
->> -
->>  	if (test_and_clear_thread_flag(TIF_LAZY_MMU_PENDING))
->>  		emit_pte_barriers();
->>  }
->>  
->>  static inline void arch_leave_lazy_mmu_mode(void)
->>  {
->> -	if (in_interrupt())
->> -		return;
->> -
->>  	arch_flush_lazy_mmu_mode();
->>  }
-> Ahh ok, by the time you get to the final state, I think a most of my
-> comments/concerns are solved. Certainly this now looks safe for the interrupt
-> case, whereas I think the intermediate state when you initially introduce
-> nesting is broken. So perhaps you want to look at how to rework it to prevent that.
+On Fri, 7 Nov 2025 at 05:43, Manivannan Sadhasivam
+<manivannan.sadhasivam@oss.qualcomm.com> wrote:
+>
+> Hi,
+>
+> This series aims to fix the usage of dw_pcie_link_up() API to check for Link up
+> during system suspend. The motivation for this series comes from recent
+> discussions [1] [2], where developers wanted to skip PME_Turn_Off broadcast in
+> dw_pcie_suspend_noirq() API when devices are not attached to the bus. They ended
+> up using dw_pcie_link_up() to check for the device presence due to the bad
+> example in the pcie-qcom driver which does the same. The usage of
+> dw_pcie_link_up() API here would be racy as the link can go down at any time
+> after the check.
+>
+> So to properly check for the device presence, this series introduces an API,
+> pci_root_ports_have_device(), that accepts the Root bus pointer and checks for
+> the presence of a device under any of the Root Ports. This API is used to
+> replace the dw_pcie_link_up() check in suspend path of pcie-qcom driver and also
+> used to skip the PME_Turn_Off brodcast message in dwc_pcie_suspend_noirq() API
+> and to skip waiting for the link up in dwc_pcie_resume_noirq() API.
+>
+> Testing
+> =======
+>
+> This series is tested on Qualcomm Lenovo Thinkpad T14s and observed no
+> functional change during the system suspend path.
+>
+> - Mani
+>
+> [1] https://lore.kernel.org/linux-pci/CAKfTPtCtHquxtK=Zx2WSNm15MmqeUXO8XXi8FkS4EpuP80PP7g@mail.gmail.com/
+> [2] https://lore.kernel.org/linux-pci/27516921.17f2.1997bb2a498.Coremail.zhangsenchuan@eswincomputing.com/
+>
+> Changes in v2:
+>
+> * Skipped waiting for link up in dwc_pcie_resume_noirq() if there was no device
+>   before suspend.
+> * Fixed the kdoc for pci_root_ports_have_device()
+>
+> Manivannan Sadhasivam (3):
+>   PCI: host-common: Add an API to check for any device under the Root
+>     Ports
+>   PCI: qcom: Check for the presence of a device instead of Link up
+>     during suspend
+>   PCI: dwc: Check for the device presence during suspend and resume
 
+You already queued it but FWIW
+Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Agreed, as discussed on patch 7. I might split this patch - first add
-the in_interrupt() checks before patch 7, and then remove the
-now-redundant checks on arm64.
-
-- Kevin
+>
+>  .../pci/controller/dwc/pcie-designware-host.c | 13 ++++++++++++
+>  drivers/pci/controller/dwc/pcie-qcom.c        |  6 ++++--
+>  drivers/pci/controller/pci-host-common.c      | 21 +++++++++++++++++++
+>  drivers/pci/controller/pci-host-common.h      |  2 ++
+>  4 files changed, 40 insertions(+), 2 deletions(-)
+>
+> --
+> 2.48.1
+>
 
