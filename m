@@ -1,103 +1,146 @@
-Return-Path: <linux-kernel+bounces-892569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401C5C455F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:27:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66FB3C455F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A9504E5D83
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:27:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0D3F5346E58
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB4D2F83A7;
-	Mon, 10 Nov 2025 08:27:23 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C022F998D;
+	Mon, 10 Nov 2025 08:27:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3017218AB0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF1D2F83AC
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762763243; cv=none; b=o7YQmoR0S3hT4V+v6cfMVAFzrSeQu3/PjVqwJrTrWA3eGzoOCt8K0k0XNlUNCWGtkPOCNoHEZTFQTefsMa/jsse4JUh5zEVTGJBTnlsDxmKw/ljqre7UG08YBQbKvDgH9zL35bizxRfcFCpNQsuM1czJK9ZDWNdFXKB5V0DHeas=
+	t=1762763258; cv=none; b=qBdNGivLGIG9zXPyjk5tzgZeCiAYPnsM49iJ8Dk2q1SExELbpEYxFlQxVNPcq4uxyJwN9agwfltIMV4VcZvUOkzZj/jOviUIaXOORBetiCcKVsdbhUfnM6hG6o50pvIutQ5rkOQppWd8Jadmb3o4BZHLIsk6SJpYWm0Gf+pzmIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762763243; c=relaxed/simple;
-	bh=wJWHebgrYKzfaMDxrTJCt2SRjGANAbVo1bTHRG5X3NY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hcj39DPmo6c6PdmtOokIg2exI0wzH8Q21bs+TU6xNZGQPxYhMTZb4jpbnSlu//ZBEuxLXKGAo4N2HbE2Q7ARfKBdzuvWlhy0V/KIKme85XxKUNkaVNeA5anW3o0c4UArCmjvmb3kYal3ZV4tzzV8bafNamH+HEdTCzaFoEt6SCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowAB3CNvjoRFp3aU2AA--.10298S2;
-	Mon, 10 Nov 2025 16:27:15 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: srini@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] nvmem: qnap-mcu-eeprom: Convert comma to semicolon
-Date: Mon, 10 Nov 2025 16:27:06 +0800
-Message-Id: <20251110082706.3258532-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762763258; c=relaxed/simple;
+	bh=1pCml4h8G2RzejcPO09IpeB8HRIK4qZx7GIqLp3Rmc4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rNHVDofZ0375LntAVsBYUaC67m5CdBhpmmSRiH93l1GZCjwymLGiy0jX+5ddLC7ZNwZeI6XE6Vvt4zZLUXEyUN2rBgtTi06YKzPj0c4kE9tXPPIbKO48/Ti9fDwt+bE3H5qJZkUxscWAU1qWQswOaf6zMrA07V9KhtWs13n/m1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vINFB-0006EL-PQ; Mon, 10 Nov 2025 09:27:21 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vINFB-007zQY-0g;
+	Mon, 10 Nov 2025 09:27:21 +0100
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vINFB-00000000472-0YzL;
+	Mon, 10 Nov 2025 09:27:21 +0100
+Message-ID: <90e5e430743eaca4b21097c64c42dd4f579bc48b.camel@pengutronix.de>
+Subject: Re: [PATCH 5/6] media: staging: media: imx6-mipi-csi2: use guard()
+ to simplify code
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Frank Li <Frank.Li@nxp.com>, Steve Longerbeam <slongerbeam@gmail.com>, 
+ Mauro Carvalho Chehab	 <mchehab@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team	 <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: imx@lists.linux.dev, linux-media@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 10 Nov 2025 09:27:21 +0100
+In-Reply-To: <20251107-stage-csi2-cleanup-v1-5-5d42535243ac@nxp.com>
+References: <20251107-stage-csi2-cleanup-v1-0-5d42535243ac@nxp.com>
+	 <20251107-stage-csi2-cleanup-v1-5-5d42535243ac@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAB3CNvjoRFp3aU2AA--.10298S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoWkXFX_Za
-	48Zwn3Z3yjyr15Kr15Cr4avFW3tFyaga9Yvr1Ig39Iv3yUZay3WanrZrWDAry5uw45CF9x
-	Kw1UG3ya9a429jkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbc8FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r43
-	MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
-	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0E
-	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
-	W8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAI
-	cVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfU04E_DUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Replace comma between expressions with semicolons.
+On Fr, 2025-11-07 at 15:44 -0500, Frank Li wrote:
+> Use guard() to simplify mutex locking. No functional change.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/staging/media/imx/imx6-mipi-csi2.c | 54 +++++++++++-------------=
+------
+>  1 file changed, 19 insertions(+), 35 deletions(-)
+>=20
+> diff --git a/drivers/staging/media/imx/imx6-mipi-csi2.c b/drivers/staging=
+/media/imx/imx6-mipi-csi2.c
+> index f8d0b3b8b250774af51f2aba731e639131aceff9..54e9491d3428686288a5bc9bb=
+58a5a0a25aca696 100644
+> --- a/drivers/staging/media/imx/imx6-mipi-csi2.c
+> +++ b/drivers/staging/media/imx/imx6-mipi-csi2.c
+> @@ -413,21 +413,17 @@ static int csi2_s_stream(struct v4l2_subdev *sd, in=
+t enable)
+>  	struct csi2_dev *csi2 =3D sd_to_dev(sd);
+>  	int i, ret =3D 0;
+> =20
+> -	mutex_lock(&csi2->lock);
+> +	guard(mutex)(&csi2->lock);
+> =20
+> -	if (!csi2->src_sd) {
+> -		ret =3D -EPIPE;
+> -		goto out;
+> -	}
+> +	if (!csi2->src_sd)
+> +		return -EPIPE;
+> =20
+>  	for (i =3D 0; i < CSI2_NUM_SRC_PADS; i++) {
+>  		if (csi2->sink_linked[i])
+>  			break;
+>  	}
+> -	if (i >=3D CSI2_NUM_SRC_PADS) {
+> -		ret =3D -EPIPE;
+> -		goto out;
+> -	}
+> +	if (i >=3D CSI2_NUM_SRC_PADS)
+> +		return -EPIPE;
+> =20
+>  	/*
+>  	 * enable/disable streaming only if stream_count is
+> @@ -442,14 +438,12 @@ static int csi2_s_stream(struct v4l2_subdev *sd, in=
+t enable)
+>  	else
+>  		csi2_stop(csi2);
+>  	if (ret)
+> -		goto out;
+> +		return ret;
+> =20
+>  update_count:
+>  	csi2->stream_count +=3D enable ? 1 : -1;
+>  	if (csi2->stream_count < 0)
+>  		csi2->stream_count =3D 0;
+> -out:
+> -	mutex_unlock(&csi2->lock);
+>  	return ret;
 
-Using a ',' in place of a ';' can have unintended side effects.
-Although that is not the case here, it is seems best to use ';'
-unless ',' is intended.
+This is mixing goto and cleanup in the same function, which the scope-
+based cleanup helpers documentation suggests shouldn't be done.
 
-Found by inspection.
-No functional change intended.
-Compile tested only.
+In this case I see no problem because we only jump to update_count from
+under the lock, but since issues with gotos around automatic cleanup
+are easy to miss, I think it would be better to also turn the
+update_count jump into a conditional block.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/nvmem/qnap-mcu-eeprom.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/nvmem/qnap-mcu-eeprom.c b/drivers/nvmem/qnap-mcu-eeprom.c
-index 0b919895b3b2..07bdaa2a33fa 100644
---- a/drivers/nvmem/qnap-mcu-eeprom.c
-+++ b/drivers/nvmem/qnap-mcu-eeprom.c
-@@ -86,10 +86,10 @@ static int qnap_mcu_eeprom_probe(struct platform_device *pdev)
- 	nvcfg.read_only = true;
- 	nvcfg.root_only = false;
- 	nvcfg.reg_read = qnap_mcu_eeprom_read;
--	nvcfg.size = QNAP_MCU_EEPROM_SIZE,
--	nvcfg.word_size = 1,
--	nvcfg.stride = 1,
--	nvcfg.priv = mcu,
-+	nvcfg.size = QNAP_MCU_EEPROM_SIZE;
-+	nvcfg.word_size = 1;
-+	nvcfg.stride = 1;
-+	nvcfg.priv = mcu;
- 
- 	ndev = devm_nvmem_register(&pdev->dev, &nvcfg);
- 	if (IS_ERR(ndev))
--- 
-2.25.1
-
+regards
+Philipp
 
