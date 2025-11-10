@@ -1,118 +1,244 @@
-Return-Path: <linux-kernel+bounces-893638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B34D2C47F44
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:32:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2254C47F6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:34:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D3554F3638
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:28:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 336014F4274
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE4128136C;
-	Mon, 10 Nov 2025 16:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q15FDMmE"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCB527A442
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF89F280325;
+	Mon, 10 Nov 2025 16:28:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FF927A442;
+	Mon, 10 Nov 2025 16:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762792084; cv=none; b=i3UE8LGkNchLSUpo/xK3I2l2ykX6NinmbCQHwzLbTMQ+ITCN6xrFoWy9thI/QszVvxSU+as3Sz8F5EC1lqnUxiB8rAKIXY8JdsaAFbmjX/EwK9xJKi+rSgj6WbyswHR3XXFF2bx4+c5n/6TXem0IAwRuVSmroFow05aiLqRfKzs=
+	t=1762792099; cv=none; b=X7uZvJLb4rMTgv+h+RCjOm5USRbTu8twcLDDvaDgn3HYV1eSRpCt9uLKMQ4LL5FW7bt8oTwKhXlCgtadiSBIQCt0Yg32cNoFnGmc8ajck2bmDAnLSf2I5NZ1fDM69PxorPWhF6rM9GOuaX8bxii63WXE5pD+IYfj+0ClMu9bkJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762792084; c=relaxed/simple;
-	bh=tBN9AhtVsBHbwNizdKtj/2J8yuNXmt4B3VF2b9obKoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=amx/+HTtpcBfIKJuJkiPRyZ9Y5YK32+7TfGdO1penb3VvdShvPeVvvf9HREjATX1VsgkGJau+2TOKXuKyeCLqh9i+/NowUA9eRCpE+PdsRdYL+O1BDWpn5zj3Miz/WHfMbWHt7GojgJOSmREkWTDRlCor7b+q+Vo0k/CT+Bg6QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q15FDMmE; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b9ab6cdf64bso1152276a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:28:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762792082; x=1763396882; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Bdh2/fuv59j6lPYvKx2wt0F4julUgDFPU3TDfHRXW0c=;
-        b=Q15FDMmEKfJDY+XUWN9W2jnDMBpbGRL7y8WifnkVZzv4ZhvF2O6Cn/4+gw2IsDsmBA
-         xpXogA32JkEj9kEaMJuzgnvFsKdT+6XhO3WOb3YaRxrYQveLPPRN1SRraUVUFoEIGcIP
-         3YdIQVPyJIEYyyCe2QkVHwsBaYAPRLlPtCygX2mLVdaRRByg9OIktT2Ap5wPc5SZ8/Y0
-         Ghh613OwFB7Eh1KsgTRonI+Q1ZZLzhKMTv1XcDdUQ2iDsYyARdpHPMPryC3llXVy82R6
-         YiLDRyuKcQ/sd1RZdESs97XX7DAfOTVZ5IImul8LXgoyfu2B78ghHEeFzpD2Kt2g7jy4
-         /Idg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762792082; x=1763396882;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bdh2/fuv59j6lPYvKx2wt0F4julUgDFPU3TDfHRXW0c=;
-        b=AvevXFxQrmTHdyQOC3AEd6GnOQY2Jp3blWoEk9UlVaECo+QCvy670TgR2Asq0yQJ4l
-         Hi3DlzhZwlWm1Ap/pILnu5vIRbKaiFQc2QiEXczrEG1YFHlDfyKAmMYgoLVtfHUxamn8
-         MVY8hsSjfIgn+430dgzh/oQtekNWHT4diEXo9AT5cIuck9rmM/HKmX8bVAWS1D//ob3g
-         fwsV0YfmvQCxrsWYvOluWyRbzlNXax7e4Acq65fc9o/ymisIuLoGVRaXDI3llpx75hlL
-         OEkfvSNYc+zfDwCUUWjMlGZnutjjobY17T7PG54AdBOETfIW2RzraJ6dO0Z2OM1Y3qTK
-         Mpgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwe9VjPIqjEyNshQN0nsoENb2vca8Uxs5OBYKxooTJ0xj4qQGUTsaUGOWDojLn/fyXNixY05r5Sjg4WG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdJYhxG1pnF2tTP5T2AATXAc+Uv5LlF8FS0/dgpN70aS8aDPvq
-	HK9g8jcU8b9dG3KFaBlpAdlMFnxk2JHpboe6GIeVIXkM92TKdy7CNSWX
-X-Gm-Gg: ASbGncukmrVaqGDW8f7JtvzpZCSQDl0MfSCflfAY8b3s646oSTRE5pJ2QsGwPqRvFiI
-	kBsgOv4Uzm0F6uN4DgP8gNCju/Kug/J3AI/M19dpd4O4k5JZ5c4e1NFtyi4H+dBgy6IOgZ54Kzq
-	uIcocT6DqFxubqJznvojQ+dQCAv0Fk6l8epcBOQHYHo5qe2Vld+YrhUE5qcztLvX4pJgtRnjHuK
-	nWFeZ69LDIVA72IrSyycZHy4KGVVB2NdQ83Ok+UmqRR32iSN1NHDVx9o2Va8nI6h0muXl8lLeZd
-	Q+aWJHFsafx44J7Lgbi+Bsf5K4tviCBpn7oiIVIdZegdm38Px9+7hGDVr9MXiKRwKj223WcW1qV
-	4RIXsZ2WDIfqg7e8FsxswGHxa0/VKeqZsCI8oJ7aEgxazHa2IMO/G3McMuCEhiX6Z4nlIghtMjD
-	ZGNm1AGMKekDMkzzbahu/aOV0O/HIJoJQv1Q4WOZ9BOSEa
-X-Google-Smtp-Source: AGHT+IEEdWC+UxJFbOnFiE6h4StiPlXpNa8D2CyYAuq/ZX+Q7gi7EUdCd8OvPyYrowcVZcB6UHmGnQ==
-X-Received: by 2002:a17:903:a90:b0:294:fc13:7e8c with SMTP id d9443c01a7336-297e1dcecc0mr144078575ad.13.1762792081714;
-        Mon, 10 Nov 2025 08:28:01 -0800 (PST)
-Received: from joaog-nb.corp.toradex.com ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651045bf0sm152026805ad.48.2025.11.10.08.27.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 08:28:00 -0800 (PST)
-Date: Mon, 10 Nov 2025 13:27:52 -0300
-From: 
-	=?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Parth Pancholi <parth.pancholi@toradex.com>, Francesco Dolcini <francesco.dolcini@toradex.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 0/7] drm/bridge: tc358768: Long command support
-Message-ID: <bskxfzp63qzkeydne6qianvjbfso2lssjloaw4rkogub4zuvb6@xjxpbba5pbox>
-References: <20251021-tc358768-v1-0-d590dc6a1a0c@ideasonboard.com>
+	s=arc-20240116; t=1762792099; c=relaxed/simple;
+	bh=HeioBUljwwONtU7NFw7bhqlAdCXsdAmH39LdDfy+92M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bDPsYReqXT7e0XtMgmpqLeu7Ki2sC5Z/yFu02/rBiyga2PhWhaHkR4JRITWrI5OykdDxwwy/rb7GoCPadoiHIPG4On54Xzs1Emkpz8AbeVxx+i8W3hA7GhoI9iOEEAMhxbVshj19gagtlgf1n6QVBH+hRb62UC46MBJnP+lK/T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AEA82B;
+	Mon, 10 Nov 2025 08:28:08 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C5463F66E;
+	Mon, 10 Nov 2025 08:28:11 -0800 (PST)
+Message-ID: <17caf75c-a00f-41d8-bacc-af5ba6c485d9@arm.com>
+Date: Mon, 10 Nov 2025 16:28:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251021-tc358768-v1-0-d590dc6a1a0c@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/33] ACPI / PPTT: Add acpi_pptt_cache_v1_full to use
+ pptt cache as one structure
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: james.morse@arm.com, amitsinght@marvell.com, baisheng.gao@unisoc.com,
+ baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
+ carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
+ dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
+ fenghuay@nvidia.com, gregkh@linuxfoundation.org, gshan@redhat.com,
+ guohanjun@huawei.com, jeremy.linton@arm.com, kobak@nvidia.com,
+ lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
+ rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
+ scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
+ tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-4-ben.horgan@arm.com>
+ <20251110154610.00002247@huawei.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20251110154610.00002247@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Tomi,
+Hi Jonathan,
 
-On Tue, Oct 21, 2025 at 04:22:56PM +0300, Tomi Valkeinen wrote:
-> This series makes some small improvements to the tc358768 driver, and
-> then adds support for long commands, commands that have more than 8
-> bytes of payload.
+On 11/10/25 15:46, Jonathan Cameron wrote:
+> On Fri, 7 Nov 2025 12:34:20 +0000
+> Ben Horgan <ben.horgan@arm.com> wrote:
 > 
-> This has been tested on Toradex Verdin AM62 board, with a ST7703 based
-> DSI panel which requires initial configuration using commands that have
-> 8+ bytes.
+>> In actbl2.h, struct acpi_pptt_cache describes the fields in the original
+>> cache type structure. In PPTT table version 3 a new field was added at the
+>> end, cache_id. This is described in struct acpi_pptt_cache_v1. Introduce
+>> the new, acpi_pptt_cache_v1_full to contain both these structures. Update
+>> the existing code to use this new struct. This simplifies the code, removes
+>> a non-standard use of ACPI_ADD_PTR and allows using the length in the
+>> header to check if the cache_id is valid.
+>>
+>> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+> 
+> Whilst I wish the ACPICA stuff did structures like this, I'm not sure
+> if the ACPI maintainers will feel it is appropriate to work around it
+> with generic sounding structures like this one.
+> 
+> I'd also say that we should only cast it to your _full structure
+> if we know we have rev 3 of PPTT.  Otherwise we should continue manipulating
+> it as a struct acpi_pptt_cache
+
+Fair enough. My thinking was that you had to check the valid flag anyway
+to use cache_id but it's less robust. I'll delay the casting to later
+which IIUC is what Jeremy Linton suggested offline.
+
+> 
+>> ---
+>> Changes since v3:
+>> New patch
+>> ---
+>>  drivers/acpi/pptt.c | 104 ++++++++++++++++++++++++--------------------
+>>  1 file changed, 58 insertions(+), 46 deletions(-)
+>>
+>> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+>> index 1027ca3566b1..1ed2099c0d1a 100644
+>> --- a/drivers/acpi/pptt.c
+>> +++ b/drivers/acpi/pptt.c
+>> @@ -21,6 +21,11 @@
+>>  #include <linux/cacheinfo.h>
+>>  #include <acpi/processor.h>
+>>  
+>> +struct acpi_pptt_cache_v1_full {
+>> +	struct acpi_pptt_cache		f;
+>> +	struct acpi_pptt_cache_v1	extra;
+>> +} __packed;
+> 
+>> +#define ACPI_PPTT_CACHE_V1_LEN sizeof(struct acpi_pptt_cache_v1_full)
+>> +
+>> +/*
+>> + * From PPTT table version 3, a new field cache_id was added at the end of
+>> + * the cache type structure.  We now use struct acpi_pptt_cache_v1_full,
+>> + * containing the cache_id, everywhere but must check validity before accessing
+>> + * the cache_id.
+>> + */
+>> +static bool acpi_pptt_cache_id_is_valid(struct acpi_pptt_cache_v1_full *cache)
+>> +{
+>> +	return (cache->f.header.length >= ACPI_PPTT_CACHE_V1_LEN &&
+> 
+> Although I later say I don't think you should pass a v1_full structure in here (as
+> we don't know it is at least that large until after this check) if you do keep this
+> why not use sizeof(*cache) and get rid of the V1_LEN definition as providing no obvious
+> value here?
+
+Yes, the define was never needed.
+
+> 
+>> +		cache->f.flags & ACPI_PPTT_CACHE_ID_VALID);
+>>  }
+> 
+>> @@ -355,7 +374,6 @@ static struct acpi_pptt_cache *acpi_find_cache_node(struct acpi_table_header *ta
+>>   * @this_leaf: Kernel cache info structure being updated
+>>   * @found_cache: The PPTT node describing this cache instance
+>>   * @cpu_node: A unique reference to describe this cache instance
+>> - * @revision: The revision of the PPTT table
+>>   *
+>>   * The ACPI spec implies that the fields in the cache structures are used to
+>>   * extend and correct the information probed from the hardware. Lets only
+>> @@ -364,23 +382,20 @@ static struct acpi_pptt_cache *acpi_find_cache_node(struct acpi_table_header *ta
+>>   * Return: nothing. Side effect of updating the global cacheinfo
+>>   */
+>>  static void update_cache_properties(struct cacheinfo *this_leaf,
+>> -				    struct acpi_pptt_cache *found_cache,
+>> -				    struct acpi_pptt_processor *cpu_node,
+>> -				    u8 revision)
+>> +				    struct acpi_pptt_cache_v1_full *found_cache,
+>> +				    struct acpi_pptt_processor *cpu_node)
+>>  {
+>> -	struct acpi_pptt_cache_v1* found_cache_v1;
+>> -
+>>  	this_leaf->fw_token = cpu_node;
+>> -	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID)
+>> -		this_leaf->size = found_cache->size;
+>> -	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID)
+>> -		this_leaf->coherency_line_size = found_cache->line_size;
+>> -	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID)
+>> -		this_leaf->number_of_sets = found_cache->number_of_sets;
+>> -	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID)
+>> -		this_leaf->ways_of_associativity = found_cache->associativity;
+>> -	if (found_cache->flags & ACPI_PPTT_WRITE_POLICY_VALID) {
+>> -		switch (found_cache->attributes & ACPI_PPTT_MASK_WRITE_POLICY) {
+>> +	if (found_cache->f.flags & ACPI_PPTT_SIZE_PROPERTY_VALID)
+>> +		this_leaf->size = found_cache->f.size;
+>> +	if (found_cache->f.flags & ACPI_PPTT_LINE_SIZE_VALID)
+>> +		this_leaf->coherency_line_size = found_cache->f.line_size;
+>> +	if (found_cache->f.flags & ACPI_PPTT_NUMBER_OF_SETS_VALID)
+>> +		this_leaf->number_of_sets = found_cache->f.number_of_sets;
+>> +	if (found_cache->f.flags & ACPI_PPTT_ASSOCIATIVITY_VALID)
+>> +		this_leaf->ways_of_associativity = found_cache->f.associativity;
+>> +	if (found_cache->f.flags & ACPI_PPTT_WRITE_POLICY_VALID) {
+>> +		switch (found_cache->f.attributes & ACPI_PPTT_MASK_WRITE_POLICY) {
+>>  		case ACPI_PPTT_CACHE_POLICY_WT:
+>>  			this_leaf->attributes = CACHE_WRITE_THROUGH;
+>>  			break;
+>> @@ -389,8 +404,8 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
+>>  			break;
+>>  		}
+>>  	}
+>> -	if (found_cache->flags & ACPI_PPTT_ALLOCATION_TYPE_VALID) {
+>> -		switch (found_cache->attributes & ACPI_PPTT_MASK_ALLOCATION_TYPE) {
+>> +	if (found_cache->f.flags & ACPI_PPTT_ALLOCATION_TYPE_VALID) {
+>> +		switch (found_cache->f.attributes & ACPI_PPTT_MASK_ALLOCATION_TYPE) {
+>>  		case ACPI_PPTT_CACHE_READ_ALLOCATE:
+>>  			this_leaf->attributes |= CACHE_READ_ALLOCATE;
+>>  			break;
+>> @@ -415,13 +430,11 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
+>>  	 * specified in PPTT.
+>>  	 */
+>>  	if (this_leaf->type == CACHE_TYPE_NOCACHE &&
+>> -	    found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID)
+>> +	    found_cache->f.flags & ACPI_PPTT_CACHE_TYPE_VALID)
+>>  		this_leaf->type = CACHE_TYPE_UNIFIED;
+>>  
+>> -	if (revision >= 3 && (found_cache->flags & ACPI_PPTT_CACHE_ID_VALID)) {
+>> -		found_cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
+>> -	                                      found_cache, sizeof(struct acpi_pptt_cache));
+>> -		this_leaf->id = found_cache_v1->cache_id;
+>> +	if (acpi_pptt_cache_id_is_valid(found_cache)) {
+> 
+> Only here do we know that found_cache is the _full type. 
+> 
+>> +		this_leaf->id = found_cache->extra.cache_id;
+>>  		this_leaf->attributes |= CACHE_ID;
+>>  	}
+>>  }
+>> @@ -429,7 +442,7 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
+>>  static void cache_setup_acpi_cpu(struct acpi_table_header *table,
+>>  				 unsigned int cpu)
+>>  {
+>> -	struct acpi_pptt_cache *found_cache;
+>> +	struct acpi_pptt_cache_v1_full *found_cache;
+> 
+> This isn't necessarily valid. Until deep in update_cache_properties() we don't care about the ID
+> so this structure may be smaller than this implies.
+> 
+>>  	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+>>  	u32 acpi_cpu_id = get_acpi_id_for_cpu(cpu);
+>>  	struct cacheinfo *this_leaf;
+>> @@ -445,8 +458,7 @@ static void cache_setup_acpi_cpu(struct acpi_table_header *table,
+>>  		pr_debug("found = %p %p\n", found_cache, cpu_node);
+>>  		if (found_cache)
+>>  			update_cache_properties(this_leaf, found_cache,
+>> -						ACPI_TO_POINTER(ACPI_PTR_DIFF(cpu_node, table)),
+>> -						table->revision);
+>> +						ACPI_TO_POINTER(ACPI_PTR_DIFF(cpu_node, table)));
+>>  
+>>  		index++;
+>>  	}
 > 
 
-Tested-by: João Paulo Gonçalves <joao.goncalves@toradex.com> # Toradex Verdin AM62
+Thanks,
 
-Best Regards,
-João Paulo Gonçalves
+Ben
+
 
