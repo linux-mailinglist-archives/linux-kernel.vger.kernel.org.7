@@ -1,90 +1,100 @@
-Return-Path: <linux-kernel+bounces-892260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECE2C44B92
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:26:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC12C44B98
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:27:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7FD0C345F42
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 01:26:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60E8C3AA9CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 01:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63525145B3E;
-	Mon, 10 Nov 2025 01:26:33 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3116134D38F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D3022128B;
+	Mon, 10 Nov 2025 01:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CwiFrC0I"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA33B1E9905;
+	Mon, 10 Nov 2025 01:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762737993; cv=none; b=PaXv2nKXwDhCgGfHyq4/CitpWH2nbtszuLGyKQE8qbzMXIjju0RvS+Acvtpc3EvfpiDPuvQP8vpe5151dRcGNs2/rPZvZNgxGkXX3XAUHDLb2oUaC9UD77Ix6qSuG6s0z43sKL1KtsDaHMmOB5SK9x3hk6hcUvI9ENowUejAYRM=
+	t=1762738029; cv=none; b=QywCywuBU9CmC44ziYZDczD4WRMGucxfEMI/w1H4UkNmk2n9URIuV+5UJ1UDgIH9+EJmAbI79cB1DoajUJpC6U9Hl8ha37UkDHZdciNK+9324KIID/Nyap3PIsBJpzE2tKgire7p8D0df0868ncAjtrgf8LsFrjVLzZ5zUplS/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762737993; c=relaxed/simple;
-	bh=BavP+TaIcTuP+MLnz4Ujbq9GTWMn7t2ikjORWgFFXjI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pF4qeLN+UgJU9AA1c4/RK8GTqkn7NR5vR2922DKNFfx94GbQsbh7Nopw7H9CAHpuEKFUpgZ1712E1tJ9T3KF0NuAVAmBb6Ks5QKz6Haf8Wax563iFeX/xwdcl4jxYHd/FMJF1O9FChdttw98CS+DHzS5dB0+OqwwIACGhVuWjtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee569113f3a69c-c17c1;
-	Mon, 10 Nov 2025 09:26:18 +0800 (CST)
-X-RM-TRANSID:2ee569113f3a69c-c17c1
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from Z04181454368174 (unknown[36.137.216.22])
-	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee469113f36140-dae3b;
-	Mon, 10 Nov 2025 09:26:18 +0800 (CST)
-X-RM-TRANSID:2ee469113f36140-dae3b
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: tj@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	jiangshanlai@gmail.com,
-	lkml@gmail.com,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] workqueue:  Remove unused assert_rcu_or_wq_mutex_or_pool_mutex
-Date: Mon, 10 Nov 2025 09:26:07 +0800
-Message-ID: <20251110012608.764-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1762738029; c=relaxed/simple;
+	bh=tzNHOK1d95q/1G8fyVpIDm80RxRcb2k1a3TLUSHEDxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=psO6/sxo+tiL57QsX/vGfAdHw9BWLYrPl2MKId5X92WJ6rQCJbGNVqqtVMeFamdosawSqtaFTt23e8cuqu/DGAZEX4yFQ/AT6ZA888YjfVUoRpsCpT9nc+Jrdd/8Dxl5nEZiR52SfV856AFCps+AP0Bzcdnguv6mAdQy5AfXYTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CwiFrC0I; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5oKuZgtaNQCtAJZcA95VPaPSHsVNko66++UTyGhLbWE=; b=CwiFrC0IiNO9S7Lp0rKvMOl5mr
+	lDfz9diYj+q+9IccDXL+tKSE1jkBYnYf0W8UkcvD0e16vofsVnKFBwfNqmwRSJFMsvgSODKDdbGRm
+	b1l+gRc2rR2GdmVYMaMhwiw7w/ZtuMtwnnr7tjDxuahfIau0/rbf+9ddsPPaH7VQkce/q+ls3RnEm
+	rzLkrV630ykuW9v3JHU4Sdb6Osy2ZNH+gNh6Eesoj10E9Pt1KV5wrfk5fwQ+mxtDhSZgxV/gTqm3C
+	Gs6m/0S4Jm2gQfA27q5cLCpkj4CMn3lkMeiBgeDTqIZ/vDZkyBGudpSZXPfGjd5Rmq0ZVVn0JCgk/
+	TuNAFsGQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vIGgT-0000000CCy4-0QGq;
+	Mon, 10 Nov 2025 01:27:05 +0000
+Date: Mon, 10 Nov 2025 01:27:05 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: avoid calls to legitimize_links() if possible
+Message-ID: <20251110012705.GI2441659@ZenIV>
+References: <20251109185409.1330720-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251109185409.1330720-1-mjguzik@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On Sun, Nov 09, 2025 at 07:54:09PM +0100, Mateusz Guzik wrote:
 
-assert_rcu_or_wq_mutex_or_pool_mutex is never referenced in the code.
-Just remove it.
+> @@ -882,8 +887,10 @@ static bool try_to_unlazy(struct nameidata *nd)
+>  
+>  	BUG_ON(!(nd->flags & LOOKUP_RCU));
+>  
+> -	if (unlikely(!legitimize_links(nd)))
+> -		goto out1;
+> +	if (unlikely(need_legitimize_links(nd))) {
+> +		if (unlikely(!legitimize_links(nd)))
+> +			goto out1;
+> +	}
+>  	if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
+>  		goto out;
+>  	if (unlikely(!legitimize_root(nd)))
+> @@ -917,8 +924,10 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry)
+>  	int res;
+>  	BUG_ON(!(nd->flags & LOOKUP_RCU));
+>  
+> -	if (unlikely(!legitimize_links(nd)))
+> -		goto out2;
+> +	if (unlikely(need_legitimize_links(nd))) {
+> +		if (unlikely(!legitimize_links(nd)))
+> +			goto out2;
+> +	}
+>  	res = __legitimize_mnt(nd->path.mnt, nd->m_seq);
+>  	if (unlikely(res)) {
+>  		if (res > 0)
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- kernel/workqueue.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index c6b79b3675c3..a86889d8218b 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -539,12 +539,6 @@ static void show_one_worker_pool(struct worker_pool *pool);
- 			 !lockdep_is_held(&wq_pool_mutex),		\
- 			 "RCU or wq_pool_mutex should be held")
- 
--#define assert_rcu_or_wq_mutex_or_pool_mutex(wq)			\
--	RCU_LOCKDEP_WARN(!rcu_read_lock_any_held() &&			\
--			 !lockdep_is_held(&wq->mutex) &&		\
--			 !lockdep_is_held(&wq_pool_mutex),		\
--			 "RCU, wq->mutex or wq_pool_mutex should be held")
--
- #define for_each_bh_worker_pool(pool, cpu)				\
- 	for ((pool) = &per_cpu(bh_worker_pools, cpu)[0];		\
- 	     (pool) < &per_cpu(bh_worker_pools, cpu)[NR_STD_WORKER_POOLS]; \
--- 
-2.33.0
-
-
-
+Seeing that odds of extra callers showing up are pretty much nil,
+I think your need_legitimize_links() is only obfuscating things.
+Let's just make it
+	if (unlikely(nd->depth) && !legitimize_links(nd))
+		goto ...
+and be done with that.
 
