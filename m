@@ -1,179 +1,265 @@
-Return-Path: <linux-kernel+bounces-892886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BD4CC460C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:49:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 370FCC460C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:49:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230963B3FE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:47:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE6DB3B7E19
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599723064A9;
-	Mon, 10 Nov 2025 10:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TbU+pPnI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7spBBA46";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TbU+pPnI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7spBBA46"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29035301010
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7B030217E;
+	Mon, 10 Nov 2025 10:48:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33922FFFA8;
+	Mon, 10 Nov 2025 10:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762771657; cv=none; b=qZ5vI5mNPcimLZ1oBN4UIUUKOBEyiZ8Ak5/WY+Hz2WpMhBpY1i0CwwNzvI2ySAPYhXWFvR7pMDVEt/+L6lj8qMazvLgFosiFlB0k6c9raFasPGKsw2qza2xjLgb+XvZgP773E5F3yJbhPlUDnQ1B9jDm4hYmtcVWgle+0bTIiNg=
+	t=1762771684; cv=none; b=gPZiZ60E0YruTXOAw3SdQpRfuCzTzkCRpLNBJ1dO47ETheuj+ox8/6UgVgJmzgQ8YKKH35DaEChXJR3FHF980SgUxnjZogb9ok7s1Dt81R4d4FtXXRGSw075/6UgEh8B+x0QaISl/ogGJxK1qIFFG6RDWFvJbmsTwGwYa3IsvyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762771657; c=relaxed/simple;
-	bh=Eo7RZoUL7l0/1gH/3UEyxcymuoJvJUE2YepVh/83NnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogRfHRhlEXkYpo8kMB/732nignE4x0Iyfmb49w2rWq1ly8dj6n/aH3DVX3CSEPRshxQGPNpQNHuv4PSM7Vq62xNbL+nVwWWDuEkfCMCYL+YPTDOAgTajYhJ9dOBtJshFpAcknYcO28vngW5zW/JGDZ2qxZde0QLbhabhiBNV978=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TbU+pPnI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7spBBA46; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TbU+pPnI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7spBBA46; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 734F21F449;
-	Mon, 10 Nov 2025 10:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762771654; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OyTyJYOj8Go/lJND2u8cb4af3+7OG2+cVk6eC6qUr2w=;
-	b=TbU+pPnIx0sKoHeQ7Ah8U4ZgIX1Q6Ch5w1Voij1zK0TL/LB8UQZRm4xn6GEzaH3ubzNxxY
-	Z835G2pDs6zGQtuy6jORTEZgIMfO+6hu4tHjFTOfLz7sOT9aofC1mS56CJY0x6VkJ+rWFp
-	X0Ae7mXN0EA6+Pm9C1miOU788nzaa2U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762771654;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OyTyJYOj8Go/lJND2u8cb4af3+7OG2+cVk6eC6qUr2w=;
-	b=7spBBA46/Zn/v7PtTNXUJBon9BtmwU6k3B4BLnFhGe68ZytKp6Uq0WjEz1HF/vunFElD4d
-	9TwKEhlHeDj7iiDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762771654; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OyTyJYOj8Go/lJND2u8cb4af3+7OG2+cVk6eC6qUr2w=;
-	b=TbU+pPnIx0sKoHeQ7Ah8U4ZgIX1Q6Ch5w1Voij1zK0TL/LB8UQZRm4xn6GEzaH3ubzNxxY
-	Z835G2pDs6zGQtuy6jORTEZgIMfO+6hu4tHjFTOfLz7sOT9aofC1mS56CJY0x6VkJ+rWFp
-	X0Ae7mXN0EA6+Pm9C1miOU788nzaa2U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762771654;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OyTyJYOj8Go/lJND2u8cb4af3+7OG2+cVk6eC6qUr2w=;
-	b=7spBBA46/Zn/v7PtTNXUJBon9BtmwU6k3B4BLnFhGe68ZytKp6Uq0WjEz1HF/vunFElD4d
-	9TwKEhlHeDj7iiDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 640A61435B;
-	Mon, 10 Nov 2025 10:47:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id e75sGMbCEWlENQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 10:47:34 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 18D02A28B1; Mon, 10 Nov 2025 11:47:34 +0100 (CET)
-Date: Mon, 10 Nov 2025 11:47:34 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: touch predicts in do_dentry_open()
-Message-ID: <jxuw4d73w4gjnuzykcanbawpjyw5bw5jq6pq2bo3fsyykhdeob@wp2536gkor5m>
-References: <20251109125254.1288882-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1762771684; c=relaxed/simple;
+	bh=2g/pyEIbC0w+N/mtV3eA/z1d8E6486kKiAchLgsDtkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hZRUITc4BjrurbgVnmewyJrq22XlT0kVxOpgk5Cqe/3rpHuxypfypLYbLe293MAPzQDMaLqLnEphxluLAVj0OqRhiVaJOesyMAvyXYmj+3rOph64hh4riqDbFYnkqP7B0Yptm/pysS9y0wA74hEsUfJcWbrTPQ8AZ8AZWIUFTRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CA95497;
+	Mon, 10 Nov 2025 02:47:54 -0800 (PST)
+Received: from [10.57.39.147] (unknown [10.57.39.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 183443F66E;
+	Mon, 10 Nov 2025 02:47:53 -0800 (PST)
+Message-ID: <cc9dc398-b9c5-4bb8-94ad-7e7f3ddd5b4f@arm.com>
+Date: Mon, 10 Nov 2025 11:47:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251109125254.1288882-1-mjguzik@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 07/12] mm: enable lazy_mmu sections to nest
+To: Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
+ <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-8-kevin.brodsky@arm.com>
+ <999feffa-5d1d-42e3-bd3a-d949f2a9de9d@arm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <999feffa-5d1d-42e3-bd3a-d949f2a9de9d@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun 09-11-25 13:52:54, Mateusz Guzik wrote:
-> Helps out some of the asm, the routine is still a mess.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+On 07/11/2025 14:59, Ryan Roberts wrote:
+> On 29/10/2025 10:09, Kevin Brodsky wrote:
+>> [...]
+>>
+>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+>> index b5fdf32c437f..e6064e00b22d 100644
+>> --- a/include/linux/pgtable.h
+>> +++ b/include/linux/pgtable.h
+>> @@ -228,27 +228,86 @@ static inline int pmd_dirty(pmd_t pmd)
+>>   * of the lazy mode. So the implementation must assume preemption may be enabled
+>>   * and cpu migration is possible; it must take steps to be robust against this.
+>>   * (In practice, for user PTE updates, the appropriate page table lock(s) are
+>> - * held, but for kernel PTE updates, no lock is held). Nesting is not permitted
+>> - * and the mode cannot be used in interrupt context.
+>> + * held, but for kernel PTE updates, no lock is held). The mode cannot be used
+>> + * in interrupt context.
+> "The mode cannot be used in interrupt context"; except it is for arm64. KFENCE
+> and/or DEBUG_PAGEALLOC will request the arch to change linear map permissions,
+> which will enter lazy mmu (now using the new generic API). This can happen in
+> softirq context.
 
-Looks good. Feel free to add:
+Are you happy with the wording update in patch 12?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+>> + *
+>> + * The lazy MMU mode is enabled for a given block of code using:
+>> + *
+>> + *   lazy_mmu_mode_enable();
+>> + *   <code>
+>> + *   lazy_mmu_mode_disable();
+>> + *
+>> + * Nesting is permitted: <code> may itself use an enable()/disable() pair.
+>> + * A nested call to enable() has no functional effect; however disable() causes
+>> + * any batched architectural state to be flushed regardless of nesting. After a
+>> + * call to disable(), the caller can therefore rely on all previous page table
+>> + * modifications to have taken effect, but the lazy MMU mode may still be
+>> + * enabled.
+>> + *
+>> + * In certain cases, it may be desirable to temporarily pause the lazy MMU mode.
+>> + * This can be done using:
+>> + *
+>> + *   lazy_mmu_mode_pause();
+>> + *   <code>
+>> + *   lazy_mmu_mode_resume();
+>> + *
+>> + * This sequence must only be used if the lazy MMU mode is already enabled.
+>> + * pause() ensures that the mode is exited regardless of the nesting level;
+>> + * resume() re-enters the mode at the same nesting level. <code> must not modify
+>> + * the lazy MMU state (i.e. it must not call any of the lazy_mmu_mode_*
+>> + * helpers).
+>> + *
+>> + * in_lazy_mmu_mode() can be used to check whether the lazy MMU mode is
+>> + * currently enabled.
+>>   */
+> Nice documentation!
 
-								Honza
+Thanks!
 
-> ---
->  fs/open.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/open.c b/fs/open.c
-> index 1d73a17192da..2a2cf9007900 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -937,7 +937,7 @@ static int do_dentry_open(struct file *f,
->  	}
->  
->  	error = security_file_open(f);
-> -	if (error)
-> +	if (unlikely(error))
->  		goto cleanup_all;
->  
->  	/*
-> @@ -947,11 +947,11 @@ static int do_dentry_open(struct file *f,
->  	 * pseudo file, this call will not change the mode.
->  	 */
->  	error = fsnotify_open_perm_and_set_mode(f);
-> -	if (error)
-> +	if (unlikely(error))
->  		goto cleanup_all;
->  
->  	error = break_lease(file_inode(f), f->f_flags);
-> -	if (error)
-> +	if (unlikely(error))
->  		goto cleanup_all;
->  
->  	/* normally all 3 are set; ->open() can clear them if needed */
-> -- 
-> 2.48.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>>  #ifdef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>>  static inline void lazy_mmu_mode_enable(void)
+>>  {
+>> -	arch_enter_lazy_mmu_mode();
+>> +	struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>> +
+>> +	VM_WARN_ON_ONCE(state->nesting_level == U8_MAX);
+>> +	/* enable() must not be called while paused */
+>> +	VM_WARN_ON(state->nesting_level > 0 && !state->active);
+>> +
+>> +	if (state->nesting_level++ == 0) {
+> Hmm... for the arm64 case of calling this in an interrupt, Is it safe?
+>
+> If a task is calling this function and gets interrupted here, nesting_level==1
+> but active==false. The interrupt then calls this function and increments from 1
+> to 2 but arch_enter_lazy_mmu_mode() hasn't been called.
+>
+> More dangerously (I think), when the interrupt handler calls
+> lazy_mmu_mode_disable(), it will end up calling arch_flush_lazy_mmu_mode() which
+> could be an issue because as far as the arch is concerned, it's not in lazy mode.
+>
+> The current arm64 implementation works because setting and clearing the thread
+> flags is atomic.
+>
+> Perhaps you need to disable preemption around the if block?
+
+As you found out this is addressed in patch 12, but indeed I hadn't
+realised that this patch leaves the generic API in an unsafe situation
+w.r.t. interrupts. We at least need to have in_interrupt() checks in the
+generic layer by the time we get to this patch.
+
+>> +		state->active = true;
+>> +		arch_enter_lazy_mmu_mode();
+>> +	}
+>>  }
+>>  
+>>  static inline void lazy_mmu_mode_disable(void)
+>>  {
+>> -	arch_leave_lazy_mmu_mode();
+>> +	struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>> +
+>> +	VM_WARN_ON_ONCE(state->nesting_level == 0);
+>> +	VM_WARN_ON(!state->active);
+>> +
+>> +	if (--state->nesting_level == 0) {
+>> +		state->active = false;
+>> +		arch_leave_lazy_mmu_mode();
+>> +	} else {
+>> +		/* Exiting a nested section */
+>> +		arch_flush_lazy_mmu_mode();
+>> +	}
+>>  }
+>>  
+>>  static inline void lazy_mmu_mode_pause(void)
+>>  {
+>> +	struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>> +
+>> +	VM_WARN_ON(state->nesting_level == 0 || !state->active);
+> nit: do you need the first condition? I think when nesting_level==0, we expect
+> to be !active?
+
+I suppose this should never happen indeed - I was just being extra
+defensive.
+
+Either way David suggested allowing pause()/resume() to be called
+outside of any section so the next version will bail out on
+nesting_level == 0.
+
+>> +
+>> +	state->active = false;
+>>  	arch_leave_lazy_mmu_mode();
+>>  }
+>>  
+>>  static inline void lazy_mmu_mode_resume(void)
+>>  {
+>> +	struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>> +
+>> +	VM_WARN_ON(state->nesting_level == 0 || state->active);
+> Similar argument?
+>
+>> +
+>> +	state->active = true;
+>>  	arch_enter_lazy_mmu_mode();
+>>  }
+>>  #else
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index cbb7340c5866..11566d973f42 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -1441,6 +1441,10 @@ struct task_struct {
+>>  
+>>  	struct page_frag		task_frag;
+>>  
+>> +#ifdef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>> +	struct lazy_mmu_state		lazy_mmu_state;
+>> +#endif
+>> +
+>>  #ifdef CONFIG_TASK_DELAY_ACCT
+>>  	struct task_delay_info		*delays;
+>>  #endif
+>> @@ -1724,6 +1728,18 @@ static inline char task_state_to_char(struct task_struct *tsk)
+>>  	return task_index_to_char(task_state_index(tsk));
+>>  }
+>>  
+>> +#ifdef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>> +static inline bool in_lazy_mmu_mode(void)
+>> +{
+>> +	return current->lazy_mmu_state.active;
+>> +}
+>> +#else
+>> +static inline bool in_lazy_mmu_mode(void)
+>> +{
+>> +	return false;
+> Just pointing out that this isn't really a correct implementation:
+>
+> lazy_mmu_mode_enable()
+> ASSERT(in_lazy_mmu_mode()) << triggers for arches without lazy mmu
+> lazy_mmu_mode_disable()
+>
+> Although it probably doesn't matter in practice?
+
+I'd say that the expectation is invalid - lazy MMU mode can only be
+enabled if the architecture supports it. In fact as you pointed out
+above the API may be called in interrupt context but it will have no
+effect, so this sequence would always fail in interrupt context.
+
+Worth nothing that in_lazy_mmu_mode() is only ever called from arch code
+where lazy MMU is implemented. I added the fallback as a matter of
+principle, but it isn't actually required.
+
+- Kevin
 
