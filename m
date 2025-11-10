@@ -1,132 +1,209 @@
-Return-Path: <linux-kernel+bounces-893594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51EE9C48050
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:39:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611C3C47D10
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53CEE4A62E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:02:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A561B189790D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8F0279DB1;
-	Mon, 10 Nov 2025 16:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="V/CodVWD"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DAE27280A;
+	Mon, 10 Nov 2025 16:02:28 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB4D274B35
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D6A274B35;
+	Mon, 10 Nov 2025 16:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790537; cv=none; b=U1Xc4SVVodRZmYNtwX19RhU9LAMQrer55I5exjNLBb80t/ozBRu+bgcXuv5JWtrPlqdcwdUKr8yq2lU0zxq16CULQWTYZqCss6D7FHNbltBqQ3V9w0aVBHwWQrXOKbQgdDvh7yONoPdpvX4Gms27oBIiAR0elXm2mUFVtpTMWSg=
+	t=1762790547; cv=none; b=b2cIgdgVpkxFqYQLLYpNOdHal0HTREhsmvdiwdswYbnhNbUoqtccfWIdCRrVEN8Am41ooJgp5Gv9OaN8Xxb6bf+n/yZ8RbOWM+t9+JpQjFXZXNVhPm9JCmOnTTmpfSYlFZmIBntv4RYokTmu9Fprel1s/Ik+aQhmzgVZGlOj3jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790537; c=relaxed/simple;
-	bh=p/1qhH6xmniK+PfATBXgJ42s1VF2p1s4AgqIm+wOw8A=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Baeq5S+61NJ9eWC2Yie2oDYAZ0GEUPhX4BE2Z2tT+cKaQIn7/yIBUE3iXQUHvDIB7c+b+qLsbtRJIiFHkGaze98LaCELwZxGOneUK2/ZLywgEsCKTxbUVQzUxmCBny4xVOtkjZuPElN3TMW9j77WMTqxrrNQn70vtINvtHhRdxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=V/CodVWD; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id GNrnMqdFLTCmJdO0; Mon, 10 Nov 2025 11:02:13 -0500 (EST)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=c8zRG11co9dumla/LDYfv4z7smyuYYWJRicANGOJ9h8=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=V/CodVWDY2WFjsvV/a0o
-	IgQqI+w9mw2OuF2LNOubsuKsmuS0/dBDsKIBJNnebsIk3EZlthCXTfhu8PJLatOgQfQOEysQ0lR0S
-	MO4b6EOyZGoR91HGIPI6/tnNWcD9aV2MRn4Yyt7CadW5gUtKn2jBzznCBONaeSHtVivgcwCejw=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14272472; Mon, 10 Nov 2025 11:02:13 -0500
-Message-ID: <d4b0203f-7817-4517-9789-5866bb24fad7@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 10 Nov 2025 11:02:13 -0500
+	s=arc-20240116; t=1762790547; c=relaxed/simple;
+	bh=xHY7+8k/4eXNUxPO00Ti1z04MrM/y7weYnCC8wx8yqA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MWkLZZVArMUg7VgcyszD0g9/dXzw9ji/I0dFKHM7Vfun9W1XVutR2ldRdQFesCkUO4HsURmhgr/lzUKv1HtL6sZi/TJouBeP1FAFYpPbzIsR6rdDJ2fvOoDHnwDDlGX73TDPbsWkpl0Q95ZAnesizEF8SSw7FCqvhjuojOgoLmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4vYW71dQzJ46YC;
+	Tue, 11 Nov 2025 00:01:51 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 704A31402FF;
+	Tue, 11 Nov 2025 00:02:21 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 10 Nov
+ 2025 16:02:20 +0000
+Date: Mon, 10 Nov 2025 16:02:18 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Ben Horgan <ben.horgan@arm.com>
+CC: <james.morse@arm.com>, <amitsinght@marvell.com>,
+	<baisheng.gao@unisoc.com>, <baolin.wang@linux.alibaba.com>,
+	<bobo.shaobowang@huawei.com>, <carl@os.amperecomputing.com>,
+	<catalin.marinas@arm.com>, <dakr@kernel.org>, <dave.martin@arm.com>,
+	<david@redhat.com>, <dfustini@baylibre.com>, <fenghuay@nvidia.com>,
+	<gregkh@linuxfoundation.org>, <gshan@redhat.com>, <guohanjun@huawei.com>,
+	<jeremy.linton@arm.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
+	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
+	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
+	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
+	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
+	<xhao@linux.alibaba.com>
+Subject: Re: [PATCH 04/33] ACPI / PPTT: Find cache level by cache-id
+Message-ID: <20251110160218.00001d65@huawei.com>
+In-Reply-To: <20251107123450.664001-5-ben.horgan@arm.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+	<20251107123450.664001-5-ben.horgan@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v3 13/16] scsi: qla2xxx: add cmd->rsp_sent
-Content-Language: en-US
-X-ASG-Orig-Subj: [PATCH v3 13/16] scsi: qla2xxx: add cmd->rsp_sent
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Dmitry Bogdanov <d.bogdanov@yadro.com>,
- Xose Vazquez Perez <xose.vazquez@gmail.com>
-References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
-In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1762790533
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 1551
-X-Barracuda-BRTS-Status: 1
-X-ASG-Debug-ID: 1762790533-1cf439139110cf20001-xx1T2L
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-(target mode)
+On Fri, 7 Nov 2025 12:34:21 +0000
+Ben Horgan <ben.horgan@arm.com> wrote:
 
-Add cmd->rsp_sent to indicate that the SCSI status has been sent
-successfully, so that SCST can be informed of any transport errors.
-This will also be used for logging in later patches.
+> From: James Morse <james.morse@arm.com>
+> 
+> The MPAM table identifies caches by id. The MPAM driver also wants to know
+> the cache level to determine if the platform is of the shape that can be
+> managed via resctrl. Cacheinfo has this information, but only for CPUs that
+> are online.
+> 
+> Waiting for all CPUs to come online is a problem for platforms where
+> CPUs are brought online late by user-space.
+> 
+> Add a helper that walks every possible cache, until it finds the one
+> identified by cache-id, then return the level.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
 
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
+A few things inline.
 
-v2 -> v3: no changes
+> ---
+> Changes since v3:
+> Tags dropped due to rework
+> Fallout/simplification from adding acpi_pptt_cache_v1_full
+> Look for each cache type before incrementing level
+> ---
+>  drivers/acpi/pptt.c  | 63 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/acpi.h |  5 ++++
+>  2 files changed, 68 insertions(+)
+> 
+> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> index 1ed2099c0d1a..71841c106020 100644
+> --- a/drivers/acpi/pptt.c
+> +++ b/drivers/acpi/pptt.c
+> @@ -918,3 +918,66 @@ void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
+>  				     entry->length);
+>  	}
+>  }
+> +
+> +/**
+> + * find_acpi_cache_level_from_id() - Get the level of the specified cache
+> + * @cache_id: The id field of the cache
+> + *
+> + * Determine the level relative to any CPU for the cache identified by
+> + * cache_id. This allows the property to be found even if the CPUs are offline.
+> + *
+> + * The returned level can be used to group caches that are peers.
+> + *
+> + * The PPTT table must be rev 3 or later.
+> + *
+> + * If one CPU's L2 is shared with another CPU as L3, this function will return
+> + * an unpredictable value.
+> + *
+> + * Return: -ENOENT if the PPTT doesn't exist, the revision isn't supported or
+> + * the cache cannot be found.
+> + * Otherwise returns a value which represents the level of the specified cache.
+> + */
+> +int find_acpi_cache_level_from_id(u32 cache_id)
+> +{
+> +	int cpu;
+> +	struct acpi_table_header *table;
+> +
+> +	table = acpi_get_pptt();
+> +	if (!table)
+> +		return -ENOENT;
+> +
+> +	if (table->revision < 3)
+> +		return -ENOENT;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		bool not_empty = true;
+> +		u32 acpi_cpu_id;
+> +		struct acpi_pptt_cache_v1_full *cache;
+> +		struct acpi_pptt_processor *cpu_node;
+> +
+> +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
 
-v1 -> v2: no changes
+Might as well combine this one with declaration.
 
- drivers/scsi/qla2xxx/qla_target.c | 4 ++++
- drivers/scsi/qla2xxx/qla_target.h | 4 ++++
- 2 files changed, 8 insertions(+)
+> +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
+> +		if (!cpu_node)
+> +			continue;
+> +
+> +		for (int level = 1; not_empty; level++) {
 
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index c2876b442a08..a71000b122ce 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -4075,6 +4075,10 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
- 
- 	if (cmd->state == QLA_TGT_STATE_PROCESSED) {
- 		cmd->trc_flags |= TRC_CTIO_DONE;
-+
-+		if (likely(status == CTIO_SUCCESS))
-+			cmd->rsp_sent = 1;
-+
- 	} else if (cmd->state == QLA_TGT_STATE_NEED_DATA) {
- 		cmd->state = QLA_TGT_STATE_DATA_IN;
- 
-diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
-index 97aa6d9cfc27..ab2285c40573 100644
---- a/drivers/scsi/qla2xxx/qla_target.h
-+++ b/drivers/scsi/qla2xxx/qla_target.h
-@@ -882,6 +882,10 @@ struct qla_tgt_cmd {
- 	unsigned int conf_compl_supported:1;
- 	unsigned int sg_mapped:1;
- 	unsigned int write_data_transferred:1;
-+
-+	/* Set if the SCSI status was sent successfully. */
-+	unsigned int rsp_sent:1;
-+
- 	unsigned int q_full:1;
- 	unsigned int term_exchg:1;
- 	unsigned int cmd_sent_to_fw:1;
--- 
-2.43.0
+This smells very much like a while loop rather than a for loop. Make
+it a do/while and you can avoid the somewhat nasty setting not_empty = true
+just to get in for first iteration.
+
+		int level = 1;
+		do {
+			int cache_type[] = { CACHE_TYPE_INST, CACHE_TYPE_DATA, CACHE_TYPE_UNIFIED };
+
+			not_empty = false;
+			for (int i = 0; i < ARRAY_SIZE(cache_type); i++) {
+				cache = acpi_find_cache_node(table, acpi_cpu_id, cache_type[i],
+							     level, &cpu_node);
+				if (!cache)
+					continue;
+
+				not_empty = true;
+
+				if (acpi_pptt_cache_id_is_valid(cache) &&
+				    cache->extra.cache_id == cache_id)
+					return level;
+			}
+		} while (not_empty);
+
+Maybe flip sense of that bool to be empty and !empty for the test.
+
+
+> +			int cache_type[] = {CACHE_TYPE_INST, CACHE_TYPE_DATA, CACHE_TYPE_UNIFIED};
+> +
+> +			not_empty = false;
+> +			for (int i = 0; i < ARRAY_SIZE(cache_type); i++) {
+> +				cache = acpi_find_cache_node(table, acpi_cpu_id, cache_type[i],
+> +							     level, &cpu_node);
+> +				if (!cache)
+> +					continue;
+> +
+> +				not_empty = true;
+> +
+> +				if (acpi_pptt_cache_id_is_valid(cache) &&
+> +				    cache->extra.cache_id == cache_id)
+> +					return level;
+> +			}
+> +		}
+> +	}
+> +
+> +	return -ENOENT;
+> +}
 
 
 
