@@ -1,88 +1,105 @@
-Return-Path: <linux-kernel+bounces-893629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25EFDC47ED8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 828DAC47EE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:27:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D370E4EE191
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:22:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0064A4EDF06
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B67827A460;
-	Mon, 10 Nov 2025 16:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTnHkDWc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587A227B32B;
+	Mon, 10 Nov 2025 16:23:39 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3B623E340;
-	Mon, 10 Nov 2025 16:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E9F26ED5B;
+	Mon, 10 Nov 2025 16:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762791752; cv=none; b=s6SoWbcgugrJSfBmzzPKSxzqGOjUUo+RC8SeBilWrK7rg4SBu4dBhWy9ekrLAgv7hfLB3Pwdp2mZF5yk+252flKPham3dizw8lwSHN7vrVqlgUW340Sxh8btKyd+VIIKI7TIpsyGuELEal+Z30HQZcOq1RA6yGJTMZLzWIN060I=
+	t=1762791819; cv=none; b=gCYR3nDfYGGZhqjXs7D44D4BRUUOjCKRIGo+M3860hB/kO1lVVq6o8JVtWSFZM4iScGTyeDnLfz+MlZP8kMYqy6fh5Z0JslXB9fi5Dy4Ypxv/oyxBLx6Dd3xCxeh1yPyUc0nS+Hs6dNbrtTD87cHrMPJjMtt33iDo2FUVyGaG8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762791752; c=relaxed/simple;
-	bh=7Yi7/eAJdF0WRqAilUrUGH64dpViOujUNV9Yz2ZA9BM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YS3QGxkAiwyglXP0fztyrEApN1ThldLSQNAtTKfpu4Q4hqmtH6vR2oE0N3oJwK4luRwH8GqXxxNsDhK64iBvo/3vXfeZu4qf2dJ7SuQ3EhBHlzYZsLM7Yqm9wp+bk4HdcCC8eNFyT3TQOFqzhINSxtZKRw4ylzb3h+TtfhcDCGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTnHkDWc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBEF6C113D0;
-	Mon, 10 Nov 2025 16:22:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762791752;
-	bh=7Yi7/eAJdF0WRqAilUrUGH64dpViOujUNV9Yz2ZA9BM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WTnHkDWcCoffOZTbSWEWa3tt/B0sXtSVAOjqDzk5NFd9YWnjIW6F9b9t0Tr7beZXY
-	 t2AmDjo7OoUMqtCzfEnA9seTCyX0F2CPp9+D896BE0R1cdMH0hiC27JLcxuF+Yfp9W
-	 CVd0GmZszVjRnfKaiRUdaznsskIU8Le7Ywr1WK+gVn5NhGo/nHPdZvy6nqpTb4Ozxn
-	 EcjxOAhqdgw6VQbYC62eJBCRwrEeyTeOXt48ctS+LcSR4El2M9jsskCX+lZc9B4u9G
-	 hQWoaWmxz6HfgNlQArWwGt6NkbStXVisCVCc57zkBlVY1m4zFNzWv+tiWdsTH51R1U
-	 ZRxrqYUXtCj0Q==
-Date: Mon, 10 Nov 2025 06:22:31 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Dan Schatzberg <schatzberg.dan@gmail.com>,
-	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/13] sched_ext: Make slice values tunable and use
- shorter slice in bypass mode
-Message-ID: <aRIRR0hWpd5PKUGk@slm.duckdns.org>
-References: <20251109183112.2412147-1-tj@kernel.org>
- <20251109183112.2412147-3-tj@kernel.org>
- <aRGOSSN9PiCBCoWy@gpd4>
- <aRIQ9rptcggpUVft@slm.duckdns.org>
+	s=arc-20240116; t=1762791819; c=relaxed/simple;
+	bh=8ZT2OXNdZ2uBCLKH/JF4yu29nQu0BrS1b7YRJ7GigqM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a6ZSgJGS/jFX0ZxrbvpLdXX8qWQ9Td9gwXvoonNvkfMB2vJldzs/lnn4XmriOsJHD6151zCeWAG9VTgSZJEUbfIggjj7PXsmEyt6xUcys7iumAyXOPjBn1m3hJlSHWL3ycttp9lLNo1FTC7umGXhRcCY56z2oeJ5xapACtmFt3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4w2F3PGtzHnH6F;
+	Tue, 11 Nov 2025 00:23:17 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id DBB3C1402F5;
+	Tue, 11 Nov 2025 00:23:32 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 10 Nov
+ 2025 16:23:31 +0000
+Date: Mon, 10 Nov 2025 16:23:30 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Ben Horgan <ben.horgan@arm.com>
+CC: <james.morse@arm.com>, <amitsinght@marvell.com>,
+	<baisheng.gao@unisoc.com>, <baolin.wang@linux.alibaba.com>,
+	<bobo.shaobowang@huawei.com>, <carl@os.amperecomputing.com>,
+	<catalin.marinas@arm.com>, <dakr@kernel.org>, <dave.martin@arm.com>,
+	<david@redhat.com>, <dfustini@baylibre.com>, <fenghuay@nvidia.com>,
+	<gregkh@linuxfoundation.org>, <gshan@redhat.com>, <guohanjun@huawei.com>,
+	<jeremy.linton@arm.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
+	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
+	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
+	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
+	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
+	<xhao@linux.alibaba.com>, Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+Subject: Re: [PATCH 09/33] ACPI / MPAM: Parse the MPAM table
+Message-ID: <20251110162330.00002917@huawei.com>
+In-Reply-To: <20251107123450.664001-10-ben.horgan@arm.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+	<20251107123450.664001-10-ben.horgan@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRIQ9rptcggpUVft@slm.duckdns.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Mon, Nov 10, 2025 at 06:21:10AM -1000, Tejun Heo wrote:
-> Hello,
+On Fri, 7 Nov 2025 12:34:26 +0000
+Ben Horgan <ben.horgan@arm.com> wrote:
+
+> From: James Morse <james.morse@arm.com>
 > 
-> On Mon, Nov 10, 2025 at 08:03:37AM +0100, Andrea Righi wrote:
-> > I agree that slice_bypass_us can be a tunable in sysfs, but I think it'd be
-> > nicer if the default time slice would be a property of sched_ext_ops, is
-> > there any reason to not do that?
+> Add code to parse the arm64 specific MPAM table, looking up the cache
+> level from the PPTT and feeding the end result into the MPAM driver.
 > 
-> My thinking was that a scheduler should always be able to avoid using the
-> default slice. Even if we allow the default slice to be overridden by the
-> scheduler, it's still very crude as it will apply the same slice to all
-> tasks. I'm not necessarily against moving it into ops but a bit unsure how
-> useful it is.
+> This happens in two stages. Platform devices are created first for the
+> MSC devices. Once the driver probes it calls acpi_mpam_parse_resources()
+> to discover the RIS entries the MSC contains.
+> 
+> For now the MPAM hook mpam_ris_create() is stubbed out, but will update
+> the MPAM driver with optional discovered data about the RIS entries.
+> 
+> CC: Carl Worth <carl@os.amperecomputing.com>
+> Link: https://developer.arm.com/documentation/den0065/3-0bet/?lang=en
+> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Tested-by: Peter Newman <peternewman@google.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+Nothing to add to Gavin's comments.
 
-Hmm... for now, let me drop slice_dfl knob from this patch. We can address
-this separately.
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-Thanks.
 
--- 
-tejun
+
+
 
