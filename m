@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-892316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D599AC44D68
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:34:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F87C44D71
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:34:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5A68F345DFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:34:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B3E93B0FB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F96C28CF6F;
-	Mon, 10 Nov 2025 03:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766B7295516;
+	Mon, 10 Nov 2025 03:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqqtVuFI"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZdUGXTRp"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2637285C99
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FF328A701
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762745580; cv=none; b=p8/meX4TmyjAGmdc33lIwTMs4D8vLug7k7i8ypGv7uxaJWQP2aumjQANfRhXR8SD14ZRXpB2brBEfXi0E8mTJpqYkphjk9phV5cvrzYZkqudS378TqLtEOMX56Im56QgdYi1nNXcdHNgmsNzljEajOp6dT1MwvzhB+nOgaCuJHQ=
+	t=1762745583; cv=none; b=PEGIVPl6gWVlZxuuAYhfx1O3Bti6MA0K40RyjlwYS2pvTzOTZLaIqakXmQlWpAlItF+MotC7xMR4rMfZS+Ka5kjBL34DOmjXRW2DqxNOqnk2IoRkzJvi57S61JSqT9SSqw9m1d7L6XfWPzEOh3j26YIVxIU9qnwmW/7JN7dLC3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762745580; c=relaxed/simple;
-	bh=K+lphNvEVvrv9gfmCYZhBpGCmBM0Fe+h3Fs8GflYSas=;
+	s=arc-20240116; t=1762745583; c=relaxed/simple;
+	bh=wUyiywX8HHaEWbLEv2lmqnlnMpiUcQdXEeaTse2sVjA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uZQbsJBY/ed5JiuVYR80NS6EcOI4/kMfvANas7MOYLw6DHzBcsPDt7AMFOrr9wQwu9aKq+cE7QvP3QEEtoQ3HA4geK+fZM6whJqSU2E5ztk787iA8L8G9LHNIPGbR1VFga1Qif28BVuc36y1clrgv0aLONV2BhF/FeieoNRvNnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqqtVuFI; arc=none smtp.client-ip=209.85.215.179
+	 MIME-Version; b=HLX71dc3Tytm1F5wMffLqtVZ1OdEXaKSVFSnvCa1zdT8+EpKXE/t7IBWNJh6OK+x/i/QxGiWV0qBV0Xod8br7nZyFOZYti/6odkuCBWqGGJS+2W/psrFhnPOX/fbltJdox1z2MLsFyXPqNaQtGe3Y+g5ebodc6el4q2o+ggIziU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZdUGXTRp; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b99bfb451e5so1479023a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 19:32:58 -0800 (PST)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3436a97f092so2056712a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 19:33:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762745578; x=1763350378; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762745581; x=1763350381; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j5CylEexNgZw6tRk9eSa035lMMZnjoNawAO+XSe5fkM=;
-        b=gqqtVuFI5BgXNC8FYPEreoEUH16NklznaayPlzRgrfS35rZpeXJaSZunlPI0/WVECF
-         nJk7x2A5RwY7wBDJ28zJJXyXLJM5vcaAFva9Xl9mskpjdBboIV023a9BQ0NqmCI31L87
-         7R42C2azNqOgM2jsgcmUCFJoEFX5MH5txFg4bYvIDZ/m0tG2wRjuuTB5K/6KT0JjBPIW
-         6wb84XvzxF9Livb8BU9JyY0gvZ23BVOdaO+JLzdIjQSBqWMXKwd+6aHL0vnlVaQMsjzX
-         /CJIjmm0tnNDBYayFmXHMQqNA9G4CV1WtCr80ZUoktlTe53w0fa34oLimARVNbvSWe8Y
-         8gyw==
+        bh=2ybWNsbg/E05WgR7p5k3lqGaIc94oz7znz8JCSDp+Uo=;
+        b=ZdUGXTRpC3pFdmNnKuSkPtZQ+rHg5XmEf8ygqOGLWJZFkCGPjR5/Z5HGlcYWyQoiQm
+         XU/Uu40lmqaY4gTxMD7BTPW3FWd1u95cPmiKpuRUqaYG3S3LLIyjcas2rgfkU7BK5BRe
+         dpqtfzjqtUQ19xzgDci+QmCBShikH3k6agDlCNgDp0vAu06e9xfbWgL2Z7AR+9hDQW0u
+         6uHbqnXunVfgHolvuhprMUihHBZSVq7cUG1ZlI2k6KgjzyXXOfUxCamdbUlexVEUoyUw
+         jOo+l6jBgVHwJoIheI3Js93XbgDDdPev0pKYAaOjn5/RPF2p5VGH85KH7ua39kwtUq83
+         1i1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762745578; x=1763350378;
+        d=1e100.net; s=20230601; t=1762745581; x=1763350381;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=j5CylEexNgZw6tRk9eSa035lMMZnjoNawAO+XSe5fkM=;
-        b=rul7604cJxiDM82VfbhXL8AY3O7RZ0SZfNklwWNkGt2KoeVVOxQ861Bld8IrFG1RR9
-         sdKx9amRJKGHmyc9rB9PAjJTMH2mFQRNGkMfq+zLAxNHNaO6XFGlMmHkn5E/epj5vs31
-         q0dBrhmHly2K+378QlUzjRu9TGJ/tZ3xqPp908MUpbmh+oL6N5sHcLKXgVPzQs3GgSht
-         L1v3MxsfgambaiPyvig/QNH4fWN0C05oL+KCK0oSOFvXve3SOKW9Rmbav+E8rjfiioC1
-         ps6APZ08B4NE84zUnz+p7HYkOjcuBzBY+nPfjt8bT/PjNr3cMDKxUONh0st285Y0PdQ5
-         ECNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOOc8spNz0N3uvI/HAqEmxMmin/qQNCVTQFRVlYk6dLQqmd6NHb/3DqLdqlD/VNzf3vVpvSpNpOReHU9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxkZ9p3YiHrhdVLvu5F/srQodB5jC7bXDd0uGGtd8yeWnhsbiV
-	/iwz1ADegLfWQmi008rpSVCunWxiBcSZ0uFtoH8pymc9nA6ptNJ/9MxK
-X-Gm-Gg: ASbGnctj3xaoVhlssc+zB4A1pflwTquXiRzX8QKZGrlXvf84rFI1PxTFkNx+Pq0avdh
-	0h75c4sGC1iqqrkAIEgPhwG0HNSf4MtsqVygMcRoFn+xNs3sQZTyi+XYU9Btjf3DfHd/s6YYi65
-	l4gw22Bc2K71+MsiywNLmlxnCjA/E9umg3ZNz7hnefq4WvGBuE0oNkN661IZBkvhfM7RIK0b+L+
-	O9JnBaL7j0ro/GfUAriokYHdo1heyJ5DTH4YFamsvWpS+MW+8BQW9hcs30DJM1E0wwJvZkVJ/Eu
-	049YnUHwQi2LqyhqJSh2EirZXqywtCrQ0Wer3R8COeAFUjYCptveQnvjnadyPWgRUUYXPhP8sQU
-	vzeIZQvdQDWPOpZgAvi4XZGP2cjiqyyXpZ38rTzahz5RK/HGg+ldyNPGlPKxWuoDa7/MnwN3rQg
+        bh=2ybWNsbg/E05WgR7p5k3lqGaIc94oz7znz8JCSDp+Uo=;
+        b=b78Mw6oI0RPXJ/inYiSaZshB2ZiRTa8L6LxaIQdh9raP6sjnKbiVD1XRQ+aGES3fDZ
+         VjzNmIwMipwTd3wnDUYUL76ORWP9v0mc1Xp1zode+8njJax4x2dNtZESKwLUedqELAWc
+         ZCsJRAs4mgWozFWCZ7Exq/a0ahHGUN2dOEDR58WaNX+XscajAXoFPH5zXPBPiuFJckGd
+         FBOoQ1KH1GSQ0ocLTeAXECh5TvGctIH0ZAgooIuJXfVxfEKGewvpQQz8V0j1Cv93SJJz
+         qu39zJoYQqqKL9HWOawEij/YSEC905l+kIZM9O3zcujxYOETl+Nm2yk7fM0fLj7nCjgn
+         +jIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJDa6mYuL5vz1JmZ3etbgDedPcClHFwGn795TD6NsdVKs3djXAGSUDI7v7nZhPCn1n0EukJy3OzHX+UWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcRfcxINBx+fABCPSCJnH6UnETTBrU3CgVpMwngftdOO3Howa8
+	9Zv0+3/4VBb4Zau4TNuIhEhTPmRaFcg/7MC+XYyJm57flFLMQWZMYwMZ
+X-Gm-Gg: ASbGncutxYKq/3J2zJ9sbQeKiXvZQQIPKnOOab7OZYEAidm2ObktmsgslwGHKDIUR+3
+	8OFfsUvR2aLRLEqCn9j80D1W+4otIAgwAVDdYqYPpOdxAglDXfbWPlxweTlv/9xuaELKR0vsSes
+	AByG8WOmRg5AICFuMSEogpSrcgN04jS2JMOjvDezXD4UgzVmsyuiN8keLDHo+Wf/GSQSMcY3VYu
+	ZPPcdGOP85LQEIcC5Vx1C3wGZtegXi6otA8mb/EbiiehPWRstB37JGjId3r6Pkx63ooNrDCHEiL
+	EiMkARxZAlYSDu1Q3wPz6pHtlbiX+xAwirmVuFNI2HeRPava2B8WlQnjIwPgP5InTmlMkI1wUz5
+	PmGl1ZgLrUqJUyo9cbivfmOvnYZlCReFgewNYAoigPdfGutsqAbXuLaj/KTDxs0swUC5cTN0jrg
 	==
-X-Google-Smtp-Source: AGHT+IGez4kk9g88q/buP2zyNcZIHIq1gn1zm8dGzl3wEIxqyDd+cNXnlR/pLncvcW2A4Il/2swyiA==
-X-Received: by 2002:a17:902:e80e:b0:268:cc5:5e4e with SMTP id d9443c01a7336-297e561a8femr97012465ad.1.1762745577754;
-        Sun, 09 Nov 2025 19:32:57 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGB0ChoFCeyPh389xbUK5wIixXaUmpWEyfozp174FCz0qkbFk4vEPQ2Z/4r106b3OFiDjFdOg==
+X-Received: by 2002:a17:90b:270a:b0:340:ff89:8b62 with SMTP id 98e67ed59e1d1-3436cbb4076mr8133343a91.21.1762745581630;
+        Sun, 09 Nov 2025 19:33:01 -0800 (PST)
 Received: from wanpengli.. ([124.93.80.37])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-ba900fa571esm10913877a12.26.2025.11.09.19.32.54
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-ba900fa571esm10913877a12.26.2025.11.09.19.32.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 19:32:57 -0800 (PST)
+        Sun, 09 Nov 2025 19:33:01 -0800 (PST)
 From: Wanpeng Li <kernellwp@gmail.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -85,9 +85,9 @@ Cc: Steven Rostedt <rostedt@goodmis.org>,
 	linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org,
 	Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 05/10] sched/fair: Wire up yield deboost in yield_to_task_fair()
-Date: Mon, 10 Nov 2025 11:32:26 +0800
-Message-ID: <20251110033232.12538-6-kernellwp@gmail.com>
+Subject: [PATCH 06/10] KVM: Fix last_boosted_vcpu index assignment bug
+Date: Mon, 10 Nov 2025 11:32:27 +0800
+Message-ID: <20251110033232.12538-7-kernellwp@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251110033232.12538-1-kernellwp@gmail.com>
 References: <20251110033232.12538-1-kernellwp@gmail.com>
@@ -103,148 +103,32 @@ From: Wanpeng Li <wanpengli@tencent.com>
 
 From: Wanpeng Li <wanpengli@tencent.com>
 
-Integrate the yield deboost mechanism into yield_to_task_fair() to
-improve yield_to() effectiveness for virtualization workloads.
+In kvm_vcpu_on_spin(), the loop counter 'i' is incorrectly written to
+last_boosted_vcpu instead of the actual vCPU index 'idx'. This causes
+last_boosted_vcpu to store the loop iteration count rather than the
+vCPU index, leading to incorrect round-robin behavior in subsequent
+directed yield operations.
 
-Add yield_to_deboost() as the main entry point that validates tasks,
-finds cgroup LCA, updates rq clock and accounting, calculates penalty,
-and applies EEVDF field adjustments.
-
-The integration point after set_next_buddy() and before yield_task_fair()
-works in concert with the existing buddy mechanism: set_next_buddy()
-provides immediate preference, yield_to_deboost() applies bounded
-vruntime penalty for sustained advantage, and yield_task_fair()
-completes the standard yield path.
-
-This is particularly beneficial for vCPU workloads where lock holder
-detection triggers yield_to(), the holder needs sustained preference
-to make progress, vCPUs may be organized in nested cgroups,
-high-frequency yields require rate limiting, and ping-pong patterns
-need debouncing.
-
-Operation occurs under rq->lock with bounded penalties. The feature
-can be disabled at runtime via
-/sys/kernel/debug/sched/sched_vcpu_debooster_enabled.
-
-Dbench workload in a virtualized environment (16 pCPUs host, 16 vCPUs
-per VM running dbench-16 benchmark) shows consistent gains:
-  2 VMs: +14.4% throughput
-  3 VMs:  +9.8% throughput
-  4 VMs:  +6.7% throughput
-
-Performance gains stem from more effective yield_to() behavior,
-enabling lock holders to make faster progress and reducing contention
-overhead in overcommitted scenarios.
+Fix this by using 'idx' instead of 'i' in the assignment.
 
 Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 ---
- kernel/sched/fair.c | 58 +++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 54 insertions(+), 4 deletions(-)
+ virt/kvm/kvm_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 4bad324f3662..619af60b7ce6 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9017,7 +9017,7 @@ static bool yield_deboost_rate_limit(struct rq *rq, u64 now_ns)
-  * Returns false with appropriate debug logging if any validation fails,
-  * ensuring only safe and meaningful yield operations proceed.
-  */
--static bool __maybe_unused yield_deboost_validate_tasks(struct rq *rq, struct task_struct *p_target,
-+static bool yield_deboost_validate_tasks(struct rq *rq, struct task_struct *p_target,
- 					  struct task_struct **p_yielding_out,
- 					  struct sched_entity **se_y_out,
- 					  struct sched_entity **se_t_out)
-@@ -9066,7 +9066,7 @@ static bool __maybe_unused yield_deboost_validate_tasks(struct rq *rq, struct ta
-  * the appropriate level for vruntime adjustments and EEVDF field updates
-  * (deadline, vlag) to maintain scheduler consistency.
-  */
--static bool __maybe_unused yield_deboost_find_lca(struct sched_entity *se_y, struct sched_entity *se_t,
-+static bool yield_deboost_find_lca(struct sched_entity *se_y, struct sched_entity *se_t,
- 				    struct sched_entity **se_y_lca_out,
- 				    struct sched_entity **se_t_lca_out,
- 				    struct cfs_rq **cfs_rq_common_out)
-@@ -9162,7 +9162,7 @@ static u64 yield_deboost_apply_debounce(struct rq *rq, struct sched_entity *se_t
-  * and implements reverse-pair debounce (~300us) to reduce ping-pong effects.
-  * Returns 0 if no penalty needed, otherwise returns clamped penalty value.
-  */
--static u64 __maybe_unused yield_deboost_calculate_penalty(struct rq *rq, struct sched_entity *se_y_lca,
-+static u64 yield_deboost_calculate_penalty(struct rq *rq, struct sched_entity *se_y_lca,
- 				    struct sched_entity *se_t_lca, struct sched_entity *se_t,
- 				    int nr_queued)
- {
-@@ -9250,7 +9250,7 @@ static u64 __maybe_unused yield_deboost_calculate_penalty(struct rq *rq, struct
-  * scheduler state consistency. Returns true on successful application,
-  * false if penalty cannot be safely applied.
-  */
--static void __maybe_unused yield_deboost_apply_penalty(struct rq *rq, struct sched_entity *se_y_lca,
-+static void yield_deboost_apply_penalty(struct rq *rq, struct sched_entity *se_y_lca,
- 				 struct cfs_rq *cfs_rq_common, u64 penalty)
- {
- 	u64 new_vruntime;
-@@ -9303,6 +9303,52 @@ static void yield_task_fair(struct rq *rq)
- 	se->deadline += calc_delta_fair(se->slice, se);
- }
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index b7a0ae2a7b20..cde1eddbaa91 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -4026,7 +4026,7 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
  
-+/*
-+ * yield_to_deboost - deboost the yielding task to favor the target on the same rq
-+ * @rq: runqueue containing both tasks; rq->lock must be held
-+ * @p_target: task to favor in scheduling
-+ *
-+ * Cooperates with yield_to_task_fair(): buddy provides immediate preference;
-+ * this routine applies a bounded vruntime penalty at the cgroup LCA so the
-+ * target keeps advantage beyond the buddy effect. EEVDF fields are updated
-+ * to keep scheduler state consistent.
-+ *
-+ * Only operates on tasks resident on the same rq; throttled hierarchies are
-+ * rejected early. Penalty is bounded by granularity and queue-size caps.
-+ *
-+ * Intended primarily for virtualization workloads where a yielding vCPU
-+ * should defer to a target vCPU within the same runqueue.
-+ * Does not change runnable order directly; complements buddy selection with
-+ * a bounded fairness adjustment.
-+ */
-+static void yield_to_deboost(struct rq *rq, struct task_struct *p_target)
-+{
-+	struct task_struct *p_yielding;
-+	struct sched_entity *se_y, *se_t, *se_y_lca, *se_t_lca;
-+	struct cfs_rq *cfs_rq_common;
-+	u64 penalty;
-+
-+	/* Step 1: validate tasks and inputs */
-+	if (!yield_deboost_validate_tasks(rq, p_target, &p_yielding, &se_y, &se_t))
-+		return;
-+
-+	/* Step 2: find LCA in cgroup hierarchy */
-+	if (!yield_deboost_find_lca(se_y, se_t, &se_y_lca, &se_t_lca, &cfs_rq_common))
-+		return;
-+
-+	/* Step 3: update clock and current accounting */
-+	update_rq_clock(rq);
-+	if (se_y_lca != cfs_rq_common->curr)
-+		update_curr(cfs_rq_common);
-+
-+	/* Step 4: calculate penalty (caps + debounce) */
-+	penalty = yield_deboost_calculate_penalty(rq, se_y_lca, se_t_lca, se_t,
-+						  cfs_rq_common->nr_queued);
-+
-+	/* Step 5: apply penalty and update EEVDF fields */
-+	yield_deboost_apply_penalty(rq, se_y_lca, cfs_rq_common, penalty);
-+}
-+
- static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
- {
- 	struct sched_entity *se = &p->se;
-@@ -9314,6 +9360,10 @@ static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
- 	/* Tell the scheduler that we'd really like se to run next. */
- 	set_next_buddy(se);
- 
-+	/* Apply deboost under rq lock. */
-+	yield_to_deboost(rq, p);
-+
-+	/* Complete the standard yield path. */
- 	yield_task_fair(rq);
- 
- 	return true;
+ 		yielded = kvm_vcpu_yield_to(vcpu);
+ 		if (yielded > 0) {
+-			WRITE_ONCE(kvm->last_boosted_vcpu, i);
++			WRITE_ONCE(kvm->last_boosted_vcpu, idx);
+ 			break;
+ 		} else if (yielded < 0 && !--try) {
+ 			break;
 -- 
 2.43.0
 
