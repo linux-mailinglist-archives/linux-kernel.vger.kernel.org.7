@@ -1,132 +1,200 @@
-Return-Path: <linux-kernel+bounces-893130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3B6C4694C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:26:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C58B3C46985
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91F344E1F08
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:26:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 114443A1E11
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CCF30AD0C;
-	Mon, 10 Nov 2025 12:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF7D307AFC;
+	Mon, 10 Nov 2025 12:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="DVVZXDAL"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T9bcXDfH"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011051.outbound.protection.outlook.com [52.101.52.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BCF18626;
-	Mon, 10 Nov 2025 12:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762777596; cv=none; b=ubBcJR9EbF4yDa1MhRkpyAJe38Ri15O9IGprVEss8LMHCo/5Fw+LQOnp/ji5boI5bhH238KZ8fuFG9hazWGfcq5CXIzHi1CggtzQ1LmsTrahJ4ATX6IqMHN5khl9d22ge2K8P8UZ1yq2dYN/IcaNWg0SLSisX4Q/hy0X5XOUQZg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762777596; c=relaxed/simple;
-	bh=L6naHV+R0hdfap4NIv1kJN6rQ8xwUu00wffuXt5IU48=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TdGf9kMwLZ0kvSjhRaVu7zCdeJgJRz20QD9Lbi/Mi9708DEDY1wIs0ovZAYLMbjRuAibhI/S0gH1i25mikQXJyFzCyHZc2i/zjvef4B3sdDqb5761w4hPQIHxtWz8XhCVZ+jDjSeIatQT46vK1yHBc5nC9M9bPj3GaxpO1w2Gh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=DVVZXDAL; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4d4pmv41h6z9tg2;
-	Mon, 10 Nov 2025 13:26:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1762777583;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oxS3S4E3EDuqOd1N7IeIu20lm6MwawNUsDUFEyJ5EOA=;
-	b=DVVZXDALmpZf7p5azYl1KM5JiBGgvL0SI3d3FNeL1QXGezr24cIfGHJrGn6NmiqGfFQ8m7
-	U7hk0FbBGBSGxIM6FaV/rvlOEuSUOPV0PQSwvx/Ujit8hlpzx9hTXJSkkoAbIy2ly7/a8P
-	CxSkvKI7M4agb9AR85nDccyjxLhnYUlgAy+kpvr90+Vm9yEdhMGsy0EH8ARGX0wVjdJnPj
-	WNceECQSDhbxnL+z+jZC8+fD4L6HEXdfjw+FvviypgNwLRScd1BltMMvFH+anJkHpDRg5M
-	W8C+TAvL0LMf4qVGfw5h+bDc9snZzMj0qgF7nJuJUDx5eA53JzXDuyuwIpckFQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Message-ID: <af30cb7e-a59d-4937-8fc5-1b9c68685939@pankajraghav.com>
-Date: Mon, 10 Nov 2025 13:26:14 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E152FE585
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762777631; cv=fail; b=dMwTepFTWB8TOnGke0gbHtZk0HyHXRkrDYxZh7mQJg5txaomlKibN73XnD32FA0K5MNPk5qzC1gMZKD+ks9Pvt54CkSxfPgZFsQz+HR+bOhvcJUZrj+8THFWfhSMtBpChKyBsocEU32vC7Q8IhhzTzhYoOhrPFIz3ISHIkNi3yw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762777631; c=relaxed/simple;
+	bh=Dwl5d5OCuH+AofkpWJ2rGxYTQ0OhupFtZiJaQo+TEWc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hXrcQxnAVxH6JTQvLPXyVxS0s1xLEIC8PBJa0cDZee9TY2dQrQwsAtRfACuhwyM/9tiOirBmmT5qwtco2Lu+dqoZwK2sYpSQosqD9taDw645zxXc8ImO2A2VhqTHG8/4JpY/3W69UejWTyRR0x5h5zedU9MFH+VidGclJyD1N4M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=T9bcXDfH; arc=fail smtp.client-ip=52.101.52.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jhVWm45Lb0DbwlNC9qTpH0QT5M5OBzGvLnXGF28s5iypR69YaMZNmAGphw1WIqIVoGjbHiXiUbf9KypqXOOj9DbEKd4BZFm8O/8EZc/5bXZlWZmfRDMba70I0AnFFdOiwX1a78bRq/PS6Ec3SGZyxakcIq34fjSURnXqbjj3MKecY9dOl63J6pqK1KjClMNm/j+m/vX7Cp27mOlrq/F2zGhJEOXGlUQw2len+HOGLSqx83d1baoDX9Xs8ArA8HET93QkViJutY+AxNxvIGuSRE3ej8f3yH1BBQVkW/0aUbHIFr0QxUyptXXF1gXX2UfI6pc46vGVo+hPBnRjUe2M0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6/alG1gJ7XqPqUDi2aSQqrMS7c/8JTAjaO7cxtC5v0Y=;
+ b=dhDNV5kyc4dxnnee/6IulYfyhEKuKdG13k/GBcH53n10VZ9Zoa3NG2vBChIpN115mG9D8H7WBdbcdkZsqfwIySQHYfW73zuY31io/m9kH5pLqEEhrWQZfe7kvtnNhGRVAhdTnTywVlCJZzb4rgXNZ6n8Rvk+rOXEoI5uUWKwsotV9mgotL8DgVjlM17RFULSRRsiqmRmxmiiehA3i27owisoys3Hm893gXwPlzUt9B1dfiQOrQWkSUOeUUYHQ8isz3BTT77CX0m2y34U66F+bPFDadRgTHXiXNHop9GraJdIFea/aLyT/IJjc9zUEOC1x/1BrlHj2nm+8CqkQNhwIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6/alG1gJ7XqPqUDi2aSQqrMS7c/8JTAjaO7cxtC5v0Y=;
+ b=T9bcXDfH0d286PFFRPgfMIym+zEi/8eoGUfbuUynIzdb2inO9aRFaW+f+gyhiI9gJRz7A8lXFJs7YgmsJvPgVNhzn1/zgAqx8VEWjyjRLrRzQvxecjHSW82gPMnpAAmJ1OepWoFS3IiN1o52G8QCBjXh44Gwh/UgQe/cC/lYsGM=
+Received: from BN9PR03CA0555.namprd03.prod.outlook.com (2603:10b6:408:138::20)
+ by DS0PR10MB6272.namprd10.prod.outlook.com (2603:10b6:8:d0::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 12:27:02 +0000
+Received: from BN2PEPF000044A2.namprd02.prod.outlook.com
+ (2603:10b6:408:138:cafe::bd) by BN9PR03CA0555.outlook.office365.com
+ (2603:10b6:408:138::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Mon,
+ 10 Nov 2025 12:26:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ BN2PEPF000044A2.mail.protection.outlook.com (10.167.243.153) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Mon, 10 Nov 2025 12:27:00 +0000
+Received: from DFLE205.ent.ti.com (10.64.6.63) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 10 Nov
+ 2025 06:26:57 -0600
+Received: from DFLE200.ent.ti.com (10.64.6.58) by DFLE205.ent.ti.com
+ (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 10 Nov
+ 2025 06:26:57 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE200.ent.ti.com
+ (10.64.6.58) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 10 Nov 2025 06:26:57 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5AACQvx93356586;
+	Mon, 10 Nov 2025 06:26:57 -0600
+Date: Mon, 10 Nov 2025 06:26:57 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Md Shofiqul Islam <shofiqtest@gmail.com>
+CC: <ssantosh@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] soc: ti: knav_qmss_queue: free resources in remove
+ callback
+Message-ID: <20251110122657.jzda24kcperpqp2t@amigo>
+References: <20251105013049.45646-1-shofiqtest@gmail.com>
+ <20251108221741.48610-1-shofiqtest@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 08/24] ext4: support large block size in ext4_readdir()
-To: libaokun@huaweicloud.com, linux-ext4@vger.kernel.org
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
- linux-kernel@vger.kernel.org, mcgrof@kernel.org, ebiggers@kernel.org,
- willy@infradead.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- chengzhihao1@huawei.com, libaokun1@huawei.com
-References: <20251107144249.435029-1-libaokun@huaweicloud.com>
- <20251107144249.435029-9-libaokun@huaweicloud.com>
-Content-Language: en-US
-From: Pankaj Raghav <kernel@pankajraghav.com>
-In-Reply-To: <20251107144249.435029-9-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4d4pmv41h6z9tg2
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251108221741.48610-1-shofiqtest@gmail.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A2:EE_|DS0PR10MB6272:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7fc6069c-67e2-4b1b-f63b-08de20547268
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oS7ZSlarCAIzMkqBnA2tdR4dXPp1qaYL0QDu8qudZe0PnSlSYSNbhOBkK3gb?=
+ =?us-ascii?Q?NSy0q9CSnjUwI58m3vX9Rfj8ULTdCUjzF6PeBVOHUXu+Yj3HpYOOa01sflZL?=
+ =?us-ascii?Q?GSQ5MzKeXMuHAlkd0crF9k82KMmdC95PXQDbd65gP62vw0GLw0EiX97lwAfL?=
+ =?us-ascii?Q?KUUziBl2MBo4iFiZHIOclx1zLKg1V0fzEDvvHGBV0zkml4yIiUIrh2XS79hG?=
+ =?us-ascii?Q?LNphW3x58EL/eB3gS9+eeDrA27AJVCxnEshOSAKclBtjd1FrrfBsyEuM66TR?=
+ =?us-ascii?Q?TA4huEzI0Exo9wqS1+BszNUYe3DC/wjMYxAXvPchwQmwuhsurwlQqSxzAj3Y?=
+ =?us-ascii?Q?yxG5f2lV6KokJ4zvxYH8DQztV6VIk9/W7a77SFK3xiyY+LR/HPXLspQriJOD?=
+ =?us-ascii?Q?EAIkN/Hol10GxOpQ9yyV5e9fsNuSd4IBRbMrJDiBQXPgJAOO9FH5tNSFbumA?=
+ =?us-ascii?Q?4TNG4Qy1O3xOyLnDINY4JY03O9aOudXyoH62ADtoME6d5uNqUv8fh3nxz0oi?=
+ =?us-ascii?Q?CiMEhUvDiTp8/D6ToHQV9eIUibHW1Iof5WUJWsYoFVWWMCn7wytovp0AXsL0?=
+ =?us-ascii?Q?C25aqUXl1D5uaSi2XNjuXEGxqAcnJY6gnmH4Tsx4tKnqoB7nv3io8pXrm6FY?=
+ =?us-ascii?Q?+yJi53GAQadu+Ef6OShYafRV6CobEs5Zsfq86qwbrhMTgaL2dQ1jHhLRhFHs?=
+ =?us-ascii?Q?AC8TWhZfv9Ml77MpO1j/9gpoZJE7DsfLgXJ54/suByNHPF6xTrBB96LlSKO/?=
+ =?us-ascii?Q?ya55lSCBVODKa+vnwLa4glsuHwZBijKVAsqgt/Ccu+UUUOWf9MjjqHbfWdGy?=
+ =?us-ascii?Q?ibhnvLv6rTHVYrpjbw/uSwYsaQGD8Lbrf+diU4ZpXgwjVOzj4IOAyaSo09dU?=
+ =?us-ascii?Q?owCKEaE+ThxHUxdddopu+GPbycpFsm6BxWW1mQfawEr39F0q9wopMMz6BKXL?=
+ =?us-ascii?Q?q+/ocu1t2nHRpK1BcI6yZxuwhVtB5FXTDzinTxmEzsI9FrzaI8hMDHFacMUG?=
+ =?us-ascii?Q?ztA30jn3VXn1a7tzDp2MBHeFu/1nDccelzBdCxa2+TJbFRNQ2JdffYeZa/pD?=
+ =?us-ascii?Q?qMoZxX/oP5wUwEvO/Bfb0isQAiBudrSGTOxW9wMiTbkJOtdXJW33Ry6TFJrN?=
+ =?us-ascii?Q?JAQAW9nccYoxBPTFTFiTDXFIYnwcoiHpfGLgaBXsmw+jKNDQzsNS1Yw8CWzB?=
+ =?us-ascii?Q?mqkEaseVWcSrsfQPbOPw4goLvO7M1yQOviWzDyJ3NBVnCHqJCaQshAmLW+4J?=
+ =?us-ascii?Q?DFuueHh7fNxHdrfxNvV2h5KJkatyx+HaRpMJIg5L0TMLAtP32sxePcl7nGqe?=
+ =?us-ascii?Q?XycqHknyK5WyyaAmrn21OrS89XDI/EYWGp1Sn6ppHWYg5U1Wqu0Up7XsS2Cx?=
+ =?us-ascii?Q?M/VNqixl91Vittwdp4vVMFJUC7vh+VpSCTfcaYZmI8vyKDeKMT7lJYeIVj8f?=
+ =?us-ascii?Q?3SUSoM6PwHO7NbYMQp2FYmU26gS5HjnIyQYoAIYwwQ1xovitLqSXAe5QPG5D?=
+ =?us-ascii?Q?mnCpOYPnt9C6rKIt3cjcU6EZ5Qi8hU4PUIJWpADRXYvBnUJMu+NVaeEj0K8z?=
+ =?us-ascii?Q?TgC7iFGC8e7MVZmmElA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 12:27:00.0845
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fc6069c-67e2-4b1b-f63b-08de20547268
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044A2.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6272
 
-On 11/7/25 15:42, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
+On 00:17-20251109, Md Shofiqul Islam wrote:
+> Implement the TODO in knav_queue_remove() by stopping PDSPs and
+> freeing queue regions and queue ranges before disabling runtime PM,
+> mirroring the allocations performed in the probe path.
 > 
-> In ext4_readdir(), page_cache_sync_readahead() is used to readahead mapped
-> physical blocks. With LBS support, this can lead to a negative right shift.
+> This ensures resources are released on driver unbind and avoids
+> leaking queue/region state.
 > 
-> To fix this, the page index is now calculated by first converting the
-> physical block number (pblk) to a file position (pos) before converting
-> it to a page index. Also, the correct number of pages to readahead is now
-> passed.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Md Shofiqul Islam <shofiqtest@gmail.com>
 > ---
-Minor general comments below.
-
-Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
-
->  fs/ext4/dir.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  drivers/soc/ti/knav_qmss_queue.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-> index d4164c507a90..256fe2c1d4c1 100644
-> --- a/fs/ext4/dir.c
-> +++ b/fs/ext4/dir.c
-> @@ -192,13 +192,13 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
->  			continue;
->  		}
->  		if (err > 0) {
-> -			pgoff_t index = map.m_pblk >>
-> -					(PAGE_SHIFT - inode->i_blkbits);
-> +			pgoff_t index = map.m_pblk << inode->i_blkbits >>
-> +					PAGE_SHIFT;
+> diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+> index 6e56e7609ccd..1e5f3e9faa99 100644
+> --- a/drivers/soc/ti/knav_qmss_queue.c
+> +++ b/drivers/soc/ti/knav_qmss_queue.c
+> @@ -1884,9 +1884,14 @@ static int knav_queue_probe(struct platform_device *pdev)
+>  
+>  static void knav_queue_remove(struct platform_device *pdev)
+>  {
+> -	/* TODO: Free resources */
+> -	pm_runtime_put_sync(&pdev->dev);
+> -	pm_runtime_disable(&pdev->dev);
+> +    struct knav_device *kdev = platform_get_drvdata(pdev);
+> +
+> +    knav_queue_stop_pdsps(kdev);
+> +    knav_queue_free_regions(kdev);
+> +    knav_free_queue_ranges(kdev);
+> +
+> +    pm_runtime_put_sync(&pdev->dev);
+> +    pm_runtime_disable(&pdev->dev);
+>  }
+>  
+>  static struct platform_driver keystone_qmss_driver = {
+> -- 
+> 2.51.1
+> 
 
-It will be nice to have some common helper for this operation. We do something
-similar in filemap.c as well.
+Did you happen to send the same patch as previous? it has the exact same
+formatting issues that i flagged.
 
->  			if (!ra_has_index(&file->f_ra, index))
->  				page_cache_sync_readahead(
->  					sb->s_bdev->bd_mapping,
-> -					&file->f_ra, file,
-> -					index, 1);
-> +					&file->f_ra, file, index,
-> +					1 << EXT4_SB(sb)->s_min_folio_order);
-Just a personal opinion but it would be nice to have some variable for this instead of doing it
-inline? It could be defined along with index.
-
-unsigned long min_nr_pages = 1UL << EXT4_SB(sb)->s_min_folio_order;
-
-
->  			file->f_ra.prev_pos = (loff_t)index << PAGE_SHIFT;
->  			bh = ext4_bread(NULL, inode, map.m_lblk, 0);
->  			if (IS_ERR(bh)) {
-
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
