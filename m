@@ -1,123 +1,157 @@
-Return-Path: <linux-kernel+bounces-893837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A7D3C48783
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:07:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA6EC487C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 499AF4E06DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:07:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4A5C3A6B87
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A302E92BA;
-	Mon, 10 Nov 2025 18:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0C8316194;
+	Mon, 10 Nov 2025 18:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Qc+tLPkT"
-Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="NGiRFIvW"
+Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7EE2D877E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 18:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3453128A0;
+	Mon, 10 Nov 2025 18:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762798044; cv=none; b=fzzWHGnLBG6GIZbZFnInHFRoek3HxW3eDb7G+qyMRZB7eHCosuGZIetFyMPxM0Bw6NeRRLttSmv7silDeDzO5JI98KeHh1GgbUuN9p2jsBdg7GSpgOeCXsjck6C+ptVKmxbSHNOHpVmIC8pGD9FzedQ5zrNwHGoJN4Coy3M9RzE=
+	t=1762798140; cv=none; b=Hd5CXJNtk5s5zgRivjLh8OsfMtY/LYrLMvzT2kzGwV2nNyo/C46yGfcWhkUGdQHrMsGZBgYT91xSlA0Cc15KdxYkDveFj6jRCoy3iqoz0DK9SWfehRyWfaXc5BAPlQtuPOTVjzqn7QmUBEmLWUBYHCGrakF+ujion++EoUJAia4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762798044; c=relaxed/simple;
-	bh=VyNx6LSk1rPawkaGefXghtNCiVu7lxr+6r5EZNgS9dk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=fEFMivtv4peRy4kLm4Lzqf9PGR1a/mG2ZNmShu/3DOKCpDFRCEW8QqfWUZQpnmjA2DP3+WOQJxe9hsNj+xEvGjLFwa3fMn2UBYcEY/w+uZYQV4OUlDgC4xA+TQ1arEPUp+VMyKXEWIo0j1G9HragIeHeqP4KkVSu+T3Q49SHO5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=Qc+tLPkT; arc=none smtp.client-ip=74.125.224.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-63f97c4eccaso3073531d50.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:07:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1762798041; x=1763402841; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qL9D4+vuZNdcA1n/TETU1FBv3lcXALq5Yj616FCh89Y=;
-        b=Qc+tLPkTvF4Tc9IGINAgDBhYp4lKYUMRuXynP7i5350BkoquH2lPAE5K0upBGbg9Sw
-         pSTTUrDQDQhaWm/YSWoYxWMuc2wFmj7jMVAitDwWHDImMC/We3HxrMKvwlIP2jWGwtAj
-         Qterb18xr4scD0td3Ld5IDpAfoc0crVf8I1foB9xuC/+sq0GBwhm5uDYH+gSfEG9+48A
-         keEfmPz9B0DlD03yKX6yEs85E1xrxZl7DLvjyMnWd5Lw2phL7vy1sg7I9WoxxT85YOVD
-         D7u5cE8pKrMRpgewexeHZUrKnK3gL5gyJlV1X+ojhwxZPFOMSzgVN9TjUD+5aahcEZ15
-         mB+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762798041; x=1763402841;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qL9D4+vuZNdcA1n/TETU1FBv3lcXALq5Yj616FCh89Y=;
-        b=Y2A3h8Oc/HmqkBfmYUIkfo2E1M2MpJW8D+xMLhuj9hhDb1bjCfrQNebDyusPBB+oSF
-         Ggnfq1QMUFlN4Fk+x/um+08Z6KuwVs5dz4crw4a1mDXHdCFDWWz5HWNLcScl12Ubz4/h
-         s81u/x2SSRnWiAj35jDciuUaR9xrpilzYlsY6qN/IuVnjkabT8CWWpuSvnLRjN52AVCy
-         aKJjJ1DY/ySReu9Cy8/xK135wfYGnPh/bDLRovLpWQEQPZ/C2U1YoMA2sSnOU6672072
-         7tgj1ehTUuASvfIjANAQdM7dbgOZ0kYZjku93xL4bak9KroH6k1dTXHN02WYGVxsNUnT
-         87Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/+ayRtFnIAAoA/wfa9PUsxG934fSalPRs7+t4M1kNi9LeWIKsUupkRrEEknNgqvl+8D/egtQSQazf7aA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmKZp0/sVQMUQAFSmxdTkhS/FQoA4AY7v6UWWuwD6amHnfvX5I
-	oMuGUXF/0Zo2/YPAX9UAFA/361O/WMDcslqZxWNX3zGdknYdDlx+gHUe+j5nTrIjBZE=
-X-Gm-Gg: ASbGnctQVdooQw9n6R+3ZnJ4N979DJp7UevQZW3WG/WJKevXA3AvXylEKh+akAPP7fg
-	6jo4PaGNy1U0tszRLpXRq33rHd0d/UdEvk2k9cd6X967Dc8igGJrR801kSDYYiFBXKIjOFFhmzk
-	YJl1KoCoiv/2JYOXJc08ODMDGXK37ZoyDKzzoeYBR6V38WAIm6eZYFAJQ7HHdPaqUctZloZT2bp
-	k4oJrHIZIKiHM2Uq0h0BwYOUoQnwuEOC7z93ewc/yM2/RiVyqa2WF0cZdRdj0dPOnf24zr4WsDd
-	thTOLDwSUTDhA1TLeTFUFM2JpkWKSj5VAbMhopGF5Ar8cDbZ1ml/aiW5GALGyVS7dQrVff9bEL0
-	13XJ+8QOYVjQM48niqqR1+CImPKcLNm7YHEY1foScqXa7a2V03Ec6SvKGgJ1r2ZEzLAlDfagUQ/
-	QYypATcoFJhSV2nPniPyqeYMMH3HVPqJpm7liEhk88rigjXLgR3Jk/065cbXQFNiEEevADQDAW7
-	2NcGKU=
-X-Google-Smtp-Source: AGHT+IFI8k9m6fstEvlSakNx4eRqRGXfQ5gFh54/EdAevddbPRJpRnpFRHjsRRXHMaEqb+vKcs/2pw==
-X-Received: by 2002:a05:690c:3505:b0:787:cad1:bdac with SMTP id 00721157ae682-787d5473912mr97384637b3.65.1762798041432;
-        Mon, 10 Nov 2025 10:07:21 -0800 (PST)
-Received: from soleen.c.googlers.com.com (182.221.85.34.bc.googleusercontent.com. [34.85.221.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787d6a3f334sm25489757b3.60.2025.11.10.10.07.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 10:07:20 -0800 (PST)
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-To: akpm@linux-foundation.org,
-	pasha.tatashin@soleen.com,
-	rppt@kernel.org,
-	graf@amazon.com,
-	pratyush@kernel.org,
-	linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org,
-	linux-mm@kvack.org
-Subject: [PATCH] liveupdate: kho: Enable KHO by default
-Date: Mon, 10 Nov 2025 13:07:15 -0500
-Message-ID: <20251110180715.602807-1-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+	s=arc-20240116; t=1762798140; c=relaxed/simple;
+	bh=kBmezTJCGwCF0Xm3+En0GTLVE5KOt1l8t8uXDrmXSVc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hNwm5/8zN7kPuRQN5zwiUc22jZvh+TczW00wpkJtcAtjx1WFYmFYKxOe/1oTmK7ka42EviO0PTtIkygyoLnjfuTzIPJMIzedY4MOTuby67l4KmKzJpJTBW+wT8FWtJ/QZLPYtVKQYlZN9NVbzRTZBoVGcXXspIS2xboKszN74Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=NGiRFIvW; arc=none smtp.client-ip=78.46.171.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay11 (localhost.localdomain [127.0.0.1])
+	by relay11.grserver.gr (Proxmox) with ESMTP id 4EBF8C300A;
+	Mon, 10 Nov 2025 20:08:51 +0200 (EET)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay11.grserver.gr (Proxmox) with ESMTPS id 769D9C2CBB;
+	Mon, 10 Nov 2025 20:08:50 +0200 (EET)
+Received: from antheas-z13 (unknown [IPv6:2a05:f6c2:511b:0:8d8a:5967:d692:ea4e])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id A01BC1FCFC4;
+	Mon, 10 Nov 2025 20:08:49 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1762798130;
+	bh=jVewx3ek5Gw0vAkopuKVo74gY283IJ/K3La3r/dmK7U=; h=From:To:Subject;
+	b=NGiRFIvWLvxf0zgnQOlsBu6akulrj+EXzMtwk0XsBFOMuW1GG7qzFrS+1UR4DtUO9
+	 MPdG76rqGkSxdxDz4giWT36yhzkMEAJCBEjc/NTaest4FGhfQirzKZeA3KOGPNcfi5
+	 zaszQG+DxopqapvS4ExP2AZjV4KJ6W6STL6cheCkG8JgN/Ask/xnqDRwGRa29NaWrW
+	 oG7gp1uUEXuP7wjTjEXL340LFgZErEW7Cn8CcN8Fb28bl1aCVyBB5+tNfPCnc7WIc2
+	 img8lh4K4h4anKTXl998TZw8yWjZ+YtD5nS0K/3cIc94CeFABzsLo7dzNifaW+GZYM
+	 slBMaU11Sd+3w==
+Authentication-Results: linux3247.grserver.gr;
+	spf=pass (sender IP is 2a05:f6c2:511b:0:8d8a:5967:d692:ea4e) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Derek John Clark <derekjohn.clark@gmail.com>,
+	=?UTF-8?q?Joaqu=C3=ADn=20Ignacio=20Aramend=C3=ADa?= <samsagax@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v4 0/6] platform/x86: ayaneo-ec: Add Ayaneo Embedded
+ Controller platform driver
+Date: Mon, 10 Nov 2025 19:08:40 +0100
+Message-ID: <20251110180846.1490726-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <176279813014.3664465.16699886879339568418@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-Upcoming LUO requires KHO for its operations, the requirement to place
-both KHO=on and liveupdate=on becomes redundant. Set KHO to be enabled
-by default.
+This series introduces a platform driver for Ayaneo devices, ayaneo-ec.
+This driver provides hwmon support, power management, and module management
+(for the new Ayaneo 3 device). Module management is done through the new
+firmware attributes sysfs interface.
 
-Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Luckily, all Ayaneo devices with an ACPI mapped EC use the same registers.
+Older devices also use a memory mapped region for RGB[1], but that is
+replaced by HID in the new Ayaneo 3. Therefore, this allows for a simple
+driver design that provides robust future support. The memory mapped region
+can be upstreamed as a different RGB driver in the future or remain
+out-of-tree[1].
+
+This change also allows cleaning up the oxpec driver, by removing Ayaneo
+devices from it. In parallel, charge limiting is added for these devices.
+
+[1] https://github.com/ShadowBlip/ayaneo-platform
+
 ---
- kernel/liveupdate/kexec_handover.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V3: https://lore.kernel.org/all/20251031163651.1465981-1-lkml@antheas.dev/
+V2: https://lore.kernel.org/all/20251015084414.1391595-1-lkml@antheas.dev/
+V1: https://lore.kernel.org/all/20250820160628.99678-1-lkml@antheas.dev/
 
-diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
-index b54ca665e005..568cd9fe9aca 100644
---- a/kernel/liveupdate/kexec_handover.c
-+++ b/kernel/liveupdate/kexec_handover.c
-@@ -51,7 +51,7 @@ union kho_page_info {
- 
- static_assert(sizeof(union kho_page_info) == sizeof(((struct page *)0)->private));
- 
--static bool kho_enable __ro_after_init;
-+static bool kho_enable __ro_after_init = true;
- 
- bool kho_is_enabled(void)
- {
+Changes since V3:
+  - Move ABI date to November
+  - Add mutex to suspend hook and cleanup
+  - Fix data access from within hwmon in suspend hook
 
-base-commit: ab40c92c74c6b0c611c89516794502b3a3173966
+Changes since V2:
+  - Fix various non-functional nits
+  - On hibernation restore, use restore instead of thaw, switch to bools,
+    and restore fan pwm mode, but only after the first pwm write after
+    hibernation. Also, release pwm when entering hibernation.
+
+Changes since V1:
+  - Use plain sysfs attrs for magic module attributes
+  - Combine quirk for power and modules, so attribute tree is simpler
+  - Use switch statement in hwmon
+  - Add hibernation hook for charge bypass in last patch
+    - Restoring fan speed is a liability so it is omitted, see patch notes
+      Note that for EC managed fan curves, it would be acceptable
+    - Regmap comment: Using regmap is unprecedented for ACPI mapped ECs
+      and overkill for one value (> 100 LOC)
+  - fixp_linear_interpolate() comment: it requires importing an extra header,
+    is not used for static parameters in other modules, and expands to the
+    same equation for parameters used, so it is omitted
+
+Antheas Kapenekakis (6):
+  platform/x86: ayaneo-ec: Add Ayaneo Embedded Controller platform
+    driver
+  platform/x86: ayaneo-ec: Add hwmon support
+  platform/x86: ayaneo-ec: Add charge control support
+  platform/x86: ayaneo-ec: Add controller power and modules attributes
+  platform/x86: ayaneo-ec: Move Ayaneo devices from oxpec to ayaneo-ec
+  platform/x86: ayaneo-ec: Add suspend hook
+
+ .../ABI/testing/sysfs-platform-ayaneo-ec      |  19 +
+ MAINTAINERS                                   |   7 +
+ drivers/platform/x86/Kconfig                  |  16 +-
+ drivers/platform/x86/Makefile                 |   3 +
+ drivers/platform/x86/ayaneo-ec.c              | 591 ++++++++++++++++++
+ drivers/platform/x86/oxpec.c                  | 115 +---
+ 6 files changed, 634 insertions(+), 117 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-ayaneo-ec
+ create mode 100644 drivers/platform/x86/ayaneo-ec.c
+
+
+base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
 -- 
-2.51.2.1041.gc1ab5b90ca-goog
+2.51.2
+
 
 
