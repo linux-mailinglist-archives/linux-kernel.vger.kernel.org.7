@@ -1,196 +1,123 @@
-Return-Path: <linux-kernel+bounces-892602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C540C456E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:49:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4615FC456FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6BD188FBC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:49:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F6603B276B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D042FD698;
-	Mon, 10 Nov 2025 08:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52092FD7B9;
+	Mon, 10 Nov 2025 08:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QakBKAIe"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J769OGb7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067632FD1BE
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E672FCBF7;
+	Mon, 10 Nov 2025 08:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762764545; cv=none; b=EJdq/jDWRUJDukqsh4U1P9b083tSC86NVOMQ96nPBFxLqWQAkbmtjlH7OFev0vvbXUx1EeJH8Sll23DQTzwnK86zlQDIR4vBoNKoKE/5moNsr0dohxXEQL7rDOsXo0nbnJqtqsZXZp9IIs1SHInJzNCMEFge7f6NEr1wIkNQYp0=
+	t=1762764592; cv=none; b=G2L5w3PD2vt2fTbVINebIxuIIs/kxSBTkV6YlrQYg6RWe0OB95ZEYV2osWJPKlgzEzBZya9/1zqZ9UtaSu7xnyatiWoTZ0Vwj8iSAupcqaogedY/wPv9ANvrOV6tx345TIjChz6DhVMsy2WGK1T7D+71t/L84ojpqPk+yXNjy/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762764545; c=relaxed/simple;
-	bh=SYX+Wy7bJsOihCfrh07XC2V+14ZgJEkkJ3rX4N05Puk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UVFALSQlCS9OOtwzN21jRCI5OF+r1tA4SANwJ4wSSShM7qV8xd+blQY/0z4f1gdyk0I4E5uNOh1S1wtN+Vln3Qk6zj9ZYp7zvXUjJpCTStlcaEgjB6FuFT//QrjNeItesQn7wt6wsMrywRvvEeuQY75fq1GoaAGuAlT6fzn64do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QakBKAIe; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-b626a4cd9d6so413484366b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 00:49:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762764541; x=1763369341; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MYB3eNFBCkjH9q1uLbtzcXRkRk6p1kh+Sygy8eTu3sY=;
-        b=QakBKAIe/3yS67qIEcpuvukggq1LgUspMnGX4htskEVXk1zn1I0y2o8KYWPr2CUE3d
-         fhhLcSOtLH7YMw4KhZeH6/TPHOiWE4z9mCihclFUxyfrXSx2cZ5O/gxJ+eVp3UlxgBWk
-         savu48/aDFOsqYzHGARsRwBBfLrVmdVkQi3m9KNNvzA2v9XeC5kteHaH6I4+l8uepCS/
-         35NGsA3G70gFeCWFw4mLot930jUX716OxTtWfPZeutu2a3rJ7MPQ9RaOY261Y26l9woi
-         q1cgnMz6OMLAtqcSamq/EV+rJDeUd4obdrOd05K6bd2qbpFwNkYrwXcIDIvpzI0Blb0Q
-         5hzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762764541; x=1763369341;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MYB3eNFBCkjH9q1uLbtzcXRkRk6p1kh+Sygy8eTu3sY=;
-        b=pmw/mPdph+KG4hFXLh4l/FPiire8ugT91bSYerJRLbILfGz6M0+fC77bCTz3KOdAC1
-         DOpGfZ5o7x+/VQq7Is1aDZz4xq70cVwgdY+g4EixDuba48OPE/H7e9aGRyIT2u6FbTVL
-         OHri7IImUl1DdizNH+XiJMoFzUiFvRy/zGkC8JYO2/hbH87ATXT/vrkzkFNS7LdPwCVs
-         mGUv1iaz0Sy2hZLR5dddohj+rKK6vK9/POm/NNjz1a9wUkxzkR93orr5rdwU9h1ansUH
-         xDiMJyuj2AgNjWuzv5XRxWAfocCVbOy7czZxIIwlBoEfzqjTBFe36fyMjMjXmAql6CMZ
-         T5GA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAeD+Cyc457BPrJsPhDUVqsxSWhW5Vw8XCsAES9Fo71VM2yP5qKH7nDk7wyBCQCh8blr/rjxkPYnemJkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOOF/G3tg2P/iMOe/UQ58CpEJgBmN2ip7cjIM7fw6xBQbB6pGZ
-	S3MCqqtAFX7mPZA4MK1I74OGQLOXuglIR+aNdEaDMJpd/Cus2Nxu2r9kQshP1maoZHE=
-X-Gm-Gg: ASbGnctap/enQFZ2z+6f4kpKKX3dYO3EDWXyWG1BaXLhrj4gwsOTXyQn8B+KihIZcKg
-	aIuOTVR7jalAJN2O2Jc48uBnGA6t2TW6bormL2wcQ803daJ7TtBuISUnumeHCerlzf01ZCNTTSY
-	1yEBUOAt1IBoY2G0mvedmSdyOOzvW/PGHLNxXhcm30h7T9p0GEqBwwnzMPC/9wetI7ntoYhjt86
-	eptXO2QgF8O7q/+uDe/O2FyUYrqDj9MJ0brMOZDTaJw02aMj0z1v7NLH+Tp3n5dI512FGIJqQ3f
-	9P/KyPaMvZ65jWWWsMCVc/rm3igYNaGDgZn/I+Vbs6B82I8glHst73+srXpvFgvGYMDSE8bUa32
-	03YmzWca9/+zzCJhjUSjUpydqNG7LuMms5hPPV8lbsJCJxaLHqoMlKj+rxYIld122KCfXOLYqwF
-	99xPLskEzNbdnDB5jvBnylp1EZ
-X-Google-Smtp-Source: AGHT+IHkCcGZffVbGb8qG3xm/rRfqIb/GgVIQQoNThnr6QrJwoyhjqnbS9/gl3lEpfFn0E7hIkOGtw==
-X-Received: by 2002:a17:907:9807:b0:b6d:2b14:4aa4 with SMTP id a640c23a62f3a-b72e05ac909mr660427666b.63.1762764541165;
-        Mon, 10 Nov 2025 00:49:01 -0800 (PST)
-Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9be184sm1016802566b.56.2025.11.10.00.49.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 00:49:00 -0800 (PST)
-Date: Mon, 10 Nov 2025 09:48:59 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	David Rientjes <rientjes@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] mm: memcg: dump memcg protection info on oom or alloc
- failures
-Message-ID: <aRGm-yJwkHIlF07I@tiehlicka>
-References: <20251107234041.3632644-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1762764592; c=relaxed/simple;
+	bh=L8WwRtc/KVhcwVxx2iw6AWXl76LzJPVUQX89gEvL+zg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=K/LpjJakbIDE2AkOl/b0f5Lj3ALArTo8vKAJqn7p0/dKG+3NsJLvcVHMkWy2QKpJpOKKRVQI6YWTkDpQqNqRISUNaP8r/j/SkjJkKSS1xsIMwQjgHBGGTuY8A0hBQG1vMOTGt54/M1krhdfHy7YUZkp0uxnrEt6HuIz1GZO0moo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J769OGb7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A397EC116D0;
+	Mon, 10 Nov 2025 08:49:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762764591;
+	bh=L8WwRtc/KVhcwVxx2iw6AWXl76LzJPVUQX89gEvL+zg=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=J769OGb7KshC5EGg3bpiJMvSav3sFXhFww5eKdD9rO+6S+MFA/po/bP2bDDzj16I+
+	 pvr3d1tCPbD5S8VpW3iOECSeIPqVmdDu+S1ZY6qTTbCHLnnbn/k42Aeqbsq3O1o0aP
+	 DYM5wJlMi8l3/IrJEDAv7tzs/B2O7Vj+d1lHEzyMpyRdtG72+lUzZfIoNXE61p3LGJ
+	 nG1ADhmy4jP7veqcP8uRKG79G4SriQ12z8XIG054oThmxnRaOvB0jPt9LbR99GI9Y1
+	 MWpbm5ItcxEx5agO/oSv/V9OGVmjTPjbdokukGsmTasTSRQtj5tqjl7zOHa4HK2+ln
+	 0h+OqSF3jOWYg==
+Message-ID: <51c19bc4-35cb-43ea-a4d6-4496142baa9e@kernel.org>
+Date: Mon, 10 Nov 2025 09:49:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107234041.3632644-1-shakeel.butt@linux.dev>
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH 17/18] media: videodev2.h, v4l2-ioctl: Add microchip
+ statistics format
+To: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Eugen Hristev <eugen.hristev@linaro.org>, Chas Williams
+ <3chas3@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Balakrishnan Sambath <balakrishnan.s@microchip.com>,
+ Hans Verkuil <hverkuil@kernel.org>, Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Daniel Scally <dan.scally+renesas@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20251009155251.102472-1-balamanikandan.gunasundar@microchip.com>
+ <20251009155251.102472-18-balamanikandan.gunasundar@microchip.com>
+Content-Language: en-US, nl
+In-Reply-To: <20251009155251.102472-18-balamanikandan.gunasundar@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri 07-11-25 15:40:41, Shakeel Butt wrote:
-> Currently kernel dumps memory state on oom and allocation failures. One
-> of the question usually raised on those dumps is why the kernel has not
-> reclaimed the reclaimable memory instead of triggering oom. One
-> potential reason is the usage of memory protection provided by memcg.
-> So, let's also dump the memory protected by the memcg in such reports to
-> ease the debugging.
-
-Makes sense to me.
-
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-Thanks!
-
-> ---
->  include/linux/memcontrol.h |  5 +++++
->  mm/memcontrol.c            | 13 +++++++++++++
->  mm/oom_kill.c              |  1 +
->  mm/page_alloc.c            |  1 +
->  4 files changed, 20 insertions(+)
+On 09/10/2025 17:52, Balamanikandan Gunasundar wrote:
+> Add microchip ISC specific statistics meta data format. This data consists
+> of raw histogram statistics that is exported to userspace for further
+> processing. This fixes the kernel warning "Unknown pixelformat"
 > 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 8d2e250535a8..6861f0ff02b5 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -1779,6 +1779,7 @@ static inline bool memcg_is_dying(struct mem_cgroup *memcg)
->  	return memcg ? css_is_dying(&memcg->css) : false;
->  }
->  
-> +void mem_cgroup_show_protected_memory(struct mem_cgroup *memcg);
->  #else
->  static inline bool mem_cgroup_kmem_disabled(void)
->  {
-> @@ -1850,6 +1851,10 @@ static inline bool memcg_is_dying(struct mem_cgroup *memcg)
->  {
->  	return false;
->  }
-> +
-> +static inline void mem_cgroup_show_protected_memory(struct mem_cgroup *memcg)
-> +{
-> +}
->  #endif /* CONFIG_MEMCG */
->  
->  #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index c34029e92bab..623446821b00 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5636,3 +5636,16 @@ bool mem_cgroup_node_allowed(struct mem_cgroup *memcg, int nid)
->  {
->  	return memcg ? cpuset_node_allowed(memcg->css.cgroup, nid) : true;
->  }
-> +
-> +void mem_cgroup_show_protected_memory(struct mem_cgroup *memcg)
-> +{
-> +	if (mem_cgroup_disabled() || !cgroup_subsys_on_dfl(memory_cgrp_subsys))
-> +		return;
-> +
-> +	if (!memcg)
-> +		memcg = root_mem_cgroup;
-> +
-> +	pr_warn("Memory cgroup min protection %lukB -- low protection %lukB",
-> +		K(atomic_long_read(&memcg->memory.children_min_usage)*PAGE_SIZE),
-> +		K(atomic_long_read(&memcg->memory.children_low_usage)*PAGE_SIZE));
-> +}
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index c145b0feecc1..5eb11fbba704 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -472,6 +472,7 @@ static void dump_header(struct oom_control *oc)
->  		if (should_dump_unreclaim_slab())
->  			dump_unreclaimable_slab();
->  	}
-> +	mem_cgroup_show_protected_memory(oc->memcg);
->  	if (sysctl_oom_dump_tasks)
->  		dump_tasks(oc);
->  }
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index e4efda1158b2..26be5734253f 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -3977,6 +3977,7 @@ static void warn_alloc_show_mem(gfp_t gfp_mask, nodemask_t *nodemask)
->  		filter &= ~SHOW_MEM_FILTER_NODES;
->  
->  	__show_mem(filter, nodemask, gfp_zone(gfp_mask));
-> +	mem_cgroup_show_protected_memory(NULL);
->  }
->  
->  void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
-> -- 
-> 2.47.3
+> Signed-off-by: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>
+> ---
+>  drivers/media/v4l2-core/v4l2-ioctl.c | 1 +
+>  include/uapi/linux/videodev2.h       | 3 +++
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index 01cf52c3ea33..a03e8f3ab610 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1467,6 +1467,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  	case V4L2_META_FMT_RK_ISP1_PARAMS:	descr = "Rockchip ISP1 3A Parameters"; break;
+>  	case V4L2_META_FMT_RK_ISP1_STAT_3A:	descr = "Rockchip ISP1 3A Statistics"; break;
+>  	case V4L2_META_FMT_RK_ISP1_EXT_PARAMS:	descr = "Rockchip ISP1 Ext 3A Params"; break;
+> +	case V4L2_META_FMT_ISC_STAT_3A: descr = "Microchip ISP statistics"; break;
 
--- 
-Michal Hocko
-SUSE Labs
+statistics -> Statistics
+
+>  	case V4L2_META_FMT_C3ISP_PARAMS:	descr = "Amlogic C3 ISP Parameters"; break;
+>  	case V4L2_META_FMT_C3ISP_STATS:		descr = "Amlogic C3 ISP Statistics"; break;
+>  	case V4L2_PIX_FMT_NV12_8L128:	descr = "NV12 (8x128 Linear)"; break;
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index becd08fdbddb..ba628f9bb89f 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -875,6 +875,9 @@ struct v4l2_pix_format {
+>  #define V4L2_META_FMT_RK_ISP1_STAT_3A	v4l2_fourcc('R', 'K', '1', 'S') /* Rockchip ISP1 3A Statistics */
+>  #define V4L2_META_FMT_RK_ISP1_EXT_PARAMS	v4l2_fourcc('R', 'K', '1', 'E') /* Rockchip ISP1 3a Extensible Parameters */
+>  
+> +/* Vendor specific - used for Microchip camera sub-system */
+> +#define V4L2_META_FMT_ISC_STAT_3A      v4l2_fourcc('I', 'S', 'C', 'S')
+> +
+>  /* Vendor specific - used for C3_ISP */
+>  #define V4L2_META_FMT_C3ISP_PARAMS	v4l2_fourcc('C', '3', 'P', 'M') /* Amlogic C3 ISP Parameters */
+>  #define V4L2_META_FMT_C3ISP_STATS	v4l2_fourcc('C', '3', 'S', 'T') /* Amlogic C3 ISP Statistics */
+
+This meta format must be documented just like e.g. V4L2_META_FMT_C3ISP_STATS.
+
+Regards,
+
+	Hans
 
