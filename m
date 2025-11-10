@@ -1,88 +1,97 @@
-Return-Path: <linux-kernel+bounces-894083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DDB1C493E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:31:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610C4C493CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:30:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A8214EE423
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:30:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC64C4E7370
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4852EDD7E;
-	Mon, 10 Nov 2025 20:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAEC2EFD9E;
+	Mon, 10 Nov 2025 20:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KbUMGl9Y"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UhWQK11V"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010057.outbound.protection.outlook.com [52.101.46.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A606289E13
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762806645; cv=none; b=lRa6ompow7nqbXKaBdMnguTBQFkjR8ZGJm+aXqMgqRaVKjNPSGrwSayO5OvKJq1d+v0NoeZydjAD2p19fZmyXDNNwSXN3RgKjjeo+OrkqhJStiEn7uZrUMTimVKbXfAH816/X7Xx7hOQAyAjqVBti4ClyWMWDx4RbXNVvrBcaoI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762806645; c=relaxed/simple;
-	bh=XPCALEKMTqvrYzdXKp4012lIXgr9shCCsxUVs1Kr7cc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KCbt4oTUfiGYA/MOxjdsQ0ojAFDp1vPIZdbjhwF8+ikq2+LBDH6jFeW9gmD7p7wuMbtozK6bg0I2wg04e5D9OC3v6xXFaRukFNpGfLqwGWVO7GpH7pvM/RncXjZIp3bLLnJpi6GSKJ+6gMjNM7CrvnNiPhDxxS+8+9V8LIfzhI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KbUMGl9Y; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7aca3e4f575so2845241b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:30:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762806643; x=1763411443; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ro8LfVFs4vPgQTzcnnWdFnGjc8mt7GRah6t2C6MZm1M=;
-        b=KbUMGl9Yo5qAFVgGbUrAm7Oc576vr4RG9tMaeqM3Xx/+fzn0wEOoM1yVPIzVpgkyra
-         j7qPCHV/Jz/ZPoIfowLPZf+fTcLgIhcY8aoqBHDAxgWSUI8RpRTwKppHMYPDulKi/Bv8
-         1bUtNkJ4pMHe6Tu0N0O2tzeGc/naWbN8LNgCGEjXeXRz3f5oHczgwiQ1YQr5cvR7Z6lc
-         CNBVQf+/Curfnts28VUr9g4QBVEE+45elG3hySf8vjiP3mT6f9uuYqMj/PCHwrJkMmlE
-         Va5FvQM7BtT2h5fXI/EuTYAflru3CQeDr+/E9XbeRiDSig85dccHfi08zQfdZGbHUs7S
-         Hy+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762806643; x=1763411443;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ro8LfVFs4vPgQTzcnnWdFnGjc8mt7GRah6t2C6MZm1M=;
-        b=l1Ttc8Oe/VqBIPlPW+THRxbrUh+Yxm9JY3BqHy0M1t1LXqTZn/MLNps7doo22fI7dW
-         bJPk3ftczUe+Ez2vt20iLybpwBH73VQK/N5/MgoX4OPo53Fx47ajSGR2ixhkE7IA0JvK
-         u6fjtg/MGF0TcBL+qbb6PNne9e1aj/riuywOmOJXu1/ihGJUF1enjv15me2gJWzO8yV6
-         RQTLQ554vFAvPcdMIkmtCDwbo9r8XcdVNPu7gmLXpF3E9pqaGF1alXYrMkFMp7x326WX
-         r9w86u4CA8noLF0J81IF42Ot7CItMrCvnC3qLg23sASBLrLltgXOEcHJxdVxqj3xkehH
-         Sziw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxdCtybTpvmRsKquLFs6EIdYdlnGWMwVkaZ0yo9qZdkd2WLBVTYF8AZ1mnmprop+bEv92eMEEgpSRRg7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7y1bTS62KJi8nGCMrPgxTHt7xn52gRkp14d12BOExNyTTB4lO
-	31Qa9EF12GKxk+DjJUOFQAQGaGsnFpZvP72bAUw4UVLdar4pb1YYn596mBIYy30r
-X-Gm-Gg: ASbGncv/SULbFQXXJN6iIvxFCEibD7ZgK4gCnHPurHyh/6HXjj1RkVHFm2Ef9aKZ1Qc
-	FeDQ0FQs+0F6kEQZzb00CbT5XY+y/wH+6ju8na3IpkFfH03GS7ATHIW0hxmfw6ghy/dRd41NWrQ
-	YDFs5eNzkYckb5sxMhbjmbQze6XSq0hRJRyoAxy9vq/UobsBUI1O4P36wQ0bopPokclOXCNjpe1
-	XrkbnYHLogvsmD7azcycx9byXFq60pKThYFxh1XXO2oH4w+IPPI9XRJ7U3d2KaLMdkwt9i0yght
-	ZuNZOq/44ogigC9izQUzBqHhfMmi2SM4QIGAydFqNaav7owoYozkpeJWNNhrdUbLhlIr6nRGuEe
-	xA+1C6cwDBNe0O572MxnqRAm1YRyyzus3HM6U3lc9T/os4AEtkzhn6kwtwg/ezhjZxiOkV6zJ6p
-	+nXZAx70Snc1fmFhk6
-X-Google-Smtp-Source: AGHT+IGkzYVEYBFXghKEZPwUaZCu1Fha5OHUKNcP3PPtxc6UkSUM+cKWRwlTckCHb6/fSObwrLGs6Q==
-X-Received: by 2002:a05:6a00:b53:b0:7a2:7237:79ff with SMTP id d2e1a72fcca58-7b225acd9admr10942610b3a.7.1762806643188;
-        Mon, 10 Nov 2025 12:30:43 -0800 (PST)
-Received: from crl-3.node2.local ([125.63.65.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17a688sm12920048b3a.40.2025.11.10.12.30.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 12:30:42 -0800 (PST)
-From: Kriish Sharma <kriish.sharma2006@gmail.com>
-To: "Michael S . Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-Cc: virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Kriish Sharma <kriish.sharma2006@gmail.com>
-Subject: [PATCH] virtio: fix kernel-doc for mapping/free_coherent functions
-Date: Mon, 10 Nov 2025 20:29:20 +0000
-Message-Id: <20251110202920.2250244-1-kriish.sharma2006@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414482ED86E;
+	Mon, 10 Nov 2025 20:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762806610; cv=fail; b=RdAGtP2xRllUdvjVF7lKPPQ20Ui8NiMkTU5IBX6d62HBmKrTxQiWmh0l6PiAwhy+26jN2CC3h/JFKdup4X1SfL3Qgdn90C/WWHszfnvxcRst2hUH+HTTm6daeLSp37/z9tm6Pq0vDVi4G+DU4rGhjgB7GbJgFDg25GAdT41iYW8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762806610; c=relaxed/simple;
+	bh=qXqdL5tjQYTpjl1GEHBoAy5EGttGebzTRJnY5/tVi4k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aumaWEgQumTcs906SAfYFKR7DI2Vz8dV/TNwZIoy7X74oBiwl9o1L89ZxB5oKgwAY3cb18HVRi4DXtJHZLT7zoB1KRcChDRYyhT8w/VVsES5CE0K45Fb+ynr3v5Lz1P91O01SZSaxccFQYlZMuIvWR94uFR2COZOGmDk+wagFag=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UhWQK11V; arc=fail smtp.client-ip=52.101.46.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Yj2u9Riyy/x/X6jWXu/hTks+pRfzfNlFfh/kGCZ4fmZVHhSVIT0FvsjH7KofKVp0zHNL/2w+ihDO/zQd5aXtwgWLHLiFv9BPKy0ecudFNaGIJB1Mxp1CXGUe0Tb0fuWsfv2HHFtxF60MTWAJrJJ3BrvNUGbDSsrVz/o6NlIv5MzxpPAaShlMdWKA2WQmQnxd980EL/pDDS/9nNgSOcC1VTom1Z5zsPSA21Wcds9hFdDcSMJ2SSzKTwGXT+HZiuX3Ojay4edvqDgEu0QdAd42jBW1BMFOq5qzpWZIN3GozKr70Did9ScQoU087IGQZy6iwYftDwQ9kqhoZCa5fKa2Ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KZlVyj0mHAEWtJI0/UraZYf0EjYuxE5E4EMasUsopnA=;
+ b=n+Gw5SUEMUlLRptAq30Fj1HfmrBifJ0d/xuakJ+83zfY9kAbfLlARj/3irhz+HBquNVMqIuAIFRZ4YuUg5DUzzSQv0SjTBgqcembsaw3Rgg11OTS/tYse2l/w0JgO4JxPkT0cjX+nWPKjiK5mcitVcbKJAZXvsnY28xCorisI97hW2rAHL3hGsKZSe7URhwx08TvCkhKqLA1DH1CwYnPWzTi3iUQIsPNTOIGQJfu5O6qWJq6HnSGD04D+mjcjsEAgMNpTUuJDvAzc2v+pBJMlrZAEMFHyWTvZQqFxGw/0w8CXGuk7MusBy7OJv/7LIQz/i5LCfM0wDhlQwISIWiEpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KZlVyj0mHAEWtJI0/UraZYf0EjYuxE5E4EMasUsopnA=;
+ b=UhWQK11Vb8IEYevx9eerxsF3rZlVs4EcIfVlkydg096CsC799nW302kA8mLUm+xOSQoQoquPE2JDH3w2EtFskeHDNBsB/Qdd9lSL5aBcwqVwlGZNfSAk2Hsz5QtGBKRGC1JyM/PcD+zcWVk+p3AYTnRj+zJovhkiPnjo9CDGtZgmh+tNMEgHuAg6d2p6RHp2kCgZA1d5x/cgEbwZ2qeVAHSmW7X2xvyg3sOmdGjtmwer8tJEMdaM3P4KLzbid+XWQVuedE3VTR/+uvuKNT6BAmX0fBn6qQYhfvzYh2FArLYoNHfrg1Rylxf+KO+hjVC+bUoXlgh6CUfMOVEfalKeFw==
+Received: from CH0P223CA0018.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:116::28)
+ by SA0PR12MB4400.namprd12.prod.outlook.com (2603:10b6:806:95::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 20:30:04 +0000
+Received: from CH1PEPF0000AD78.namprd04.prod.outlook.com
+ (2603:10b6:610:116:cafe::ac) by CH0P223CA0018.outlook.office365.com
+ (2603:10b6:610:116::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Mon,
+ 10 Nov 2025 20:29:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH1PEPF0000AD78.mail.protection.outlook.com (10.167.244.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Mon, 10 Nov 2025 20:30:04 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 10 Nov
+ 2025 12:29:50 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 10 Nov
+ 2025 12:29:49 -0800
+Received: from inno-vm-xubuntu (10.127.8.9) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Mon, 10
+ Nov 2025 12:29:41 -0800
+From: Zhi Wang <zhiw@nvidia.com>
+To: <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <dakr@kernel.org>, <aliceryhl@google.com>, <bhelgaas@google.com>,
+	<kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+	<boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+	<lossin@kernel.org>, <a.hindborg@kernel.org>, <tmgross@umich.edu>,
+	<markus.probst@posteo.de>, <helgaas@kernel.org>, <cjia@nvidia.com>,
+	<smitra@nvidia.com>, <ankita@nvidia.com>, <aniketa@nvidia.com>,
+	<kwankhede@nvidia.com>, <targupta@nvidia.com>, <acourbot@nvidia.com>,
+	<joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <zhiwang@kernel.org>, "Zhi
+ Wang" <zhiw@nvidia.com>
+Subject: [PATCH v6 0/7] rust: pci: add config space read/write support
+Date: Mon, 10 Nov 2025 22:29:32 +0200
+Message-ID: <20251110202939.17445-1-zhiw@nvidia.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,67 +99,169 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD78:EE_|SA0PR12MB4400:EE_
+X-MS-Office365-Filtering-Correlation-Id: 41f65a28-990f-4101-a229-08de2097ee61
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lHjvTnccXUUUIRyRqu5xxZAhUFOlMvcBuw4Oto1ztZpFwK0Hkg19M2qED8hE?=
+ =?us-ascii?Q?n1WGgs2oHDROl4yOLtrEORMioiE5vufE9sNlp8wR7jKMzFdMZmCzPxay8Ltn?=
+ =?us-ascii?Q?mkOgV7uwfUvr/aQ4eRzsGenvRAYQXaEwB3kiLWXg7wIcWriSJir2RVT3xIPa?=
+ =?us-ascii?Q?wBJcqOWVE0q8Eh1RFURVOQdkVWbK6blgJsy3QNdpIraak7+Q72DR3Ip7cXZk?=
+ =?us-ascii?Q?9itM/Z83Q+E7qO7tIniEwzrhKGjDvkxA5NHbl8TkKJ454RuKnpTrS/0b+m7N?=
+ =?us-ascii?Q?Wl98AOXufbpNqaDlBCN4elGS4oULK00TJE1fnBtWU7pzbg+aRf/WdXDMDRO+?=
+ =?us-ascii?Q?6LUhEqcEV1z5XdbHTmb4ASboR95X8a/1SqiBGHqCBuOz3p4ZjnABNhhCbZdg?=
+ =?us-ascii?Q?nPwYceb/e66kVrll6Puw6LtdDQiUfjB0HRL4uUsW0afciHll6WSDkX3yWi7S?=
+ =?us-ascii?Q?Cu6zNgzvHKXZ7vOc9sH9QmUUuCbOlXKpTxrtU5k6FUzwsqiYPi97C3CdzSB5?=
+ =?us-ascii?Q?Psp1TWouIuH5syybJo8eecrwWFaO1Q4apCPgT6Qcn2sJ+ZwWofoGIPuh13ra?=
+ =?us-ascii?Q?K+kA3UfqDfDwvL2iTncE7zdH1ZfNk52040WlLJ1wrXahOUodQug5gp6V2ul9?=
+ =?us-ascii?Q?PucHNhOM32+Ap+hrlgZPGYjpx1OeiHybxMLTRexD4cqPZdEGiT0ew7nlGrRh?=
+ =?us-ascii?Q?RYnaZi0cCMpfG8dYy68oqXBjkSIUFQrRtmtx2ta5XL1fu1j37WjYybZuh/GM?=
+ =?us-ascii?Q?KHFf5uF2WUA15zvm3nqUf5Xdw8g9kbP1/9pyCNGmNN3PmxsVt4DCIO011JxG?=
+ =?us-ascii?Q?tAUFvuZDXOLYb/J3gUaQY9ZTwj8WTqkc56urAIkiB6RiusKYsdlz1uqJ2bet?=
+ =?us-ascii?Q?lb81xb0O4Lx1yGJn1x3a3sb/qDgxwyhof9jqWgtB0JiwPrcfWVKdCaLYWOpF?=
+ =?us-ascii?Q?VsXUHzoaapw9k6XKcSePJwdL0jJAbmRFUqVHEAWCK9brK/WpFTatl0ysaci4?=
+ =?us-ascii?Q?qqKB6MF8Y02/f7jUMpx9G8T3mUDuzZDsPv6jrzXjdGVTxNJE9WpdUrWTF1dH?=
+ =?us-ascii?Q?qWuHwKRlpTvR/fyAoaN2DtMKY6BdrbnjsOCgYn5kDpWNhuJ826AgZCa7myMd?=
+ =?us-ascii?Q?rnh/N1JmzZVYCNdd0LBsJkiVCj1/p+Sw+xO7vv1r0rwp4b0J2dhgSZ+y4Qvb?=
+ =?us-ascii?Q?Mxzctch+09hVD0+Uq/wMOOAemHtF0wYCiHWxKH2KCTn+ni6X9QBVUZEB6cit?=
+ =?us-ascii?Q?vpfbbMsZEfFGwHfx7P4miayjFc/qN7QuKLrgYowYdADN9lRjcHOaDKJrnG+j?=
+ =?us-ascii?Q?ESCfkbduhdtx66KyvtVGPG9Mc7vYSBP4IkF79QTz9f6HeJS5+Er/8Vo2Sr4j?=
+ =?us-ascii?Q?oaiw0sQ5RnmVo+Rvg7Sb2kfiU94mMWVpnNMlmTmTb6uyRHkADJXHSWHj8RNX?=
+ =?us-ascii?Q?JZ5Yr32SYzt2OtVszeftjKi1kyc73fwx6NFnqnbHApb7RX7vrmwo0RLve1Nq?=
+ =?us-ascii?Q?9NIAbLpRXw3CMrSEUayUT0iINju62gVByMwDeu0qzsyuc4kw2qgq5vbkWn1D?=
+ =?us-ascii?Q?33txCQzVdRpanap+JKmcvBp5pzXThayejWBUAQZz?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 20:30:04.3026
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41f65a28-990f-4101-a229-08de2097ee61
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD78.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4400
 
-Documentation build reported:
+In the NVIDIA vGPU RFC [1], the PCI configuration space access is
+required in nova-core for preparing gspVFInfo when vGPU support is
+enabled. This series is the following up of the discussion with Danilo
+for how to introduce support of PCI configuration space access in Rust
+PCI abstractions.
 
-  WARNING: ./drivers/virtio/virtio_ring.c:3174 function parameter 'vaddr' not described in 'virtqueue_map_free_coherent'
-  WARNING: ./drivers/virtio/virtio_ring.c:3308 expecting prototype for virtqueue_mapping_error(). Prototype was for virtqueue_map_mapping_error() instead
+This patch series is implemented based on kernel vertical fixes patches
+[2][3].
 
-The kernel-doc block for virtqueue_map_free_coherent() omitted the @vaddr parameter, and
-the kernel-doc header for virtqueue_map_mapping_error() used the wrong function name
-(virtqueue_mapping_error) instead of the actual function name.
+v6:
 
-This change updates:
+- Implement config_space() and config_space_extended() in device::Bound
+  lifecycle. (Danilo)
+- Fix the "use" in the comment for generating proper rust docs, verify
+  the output of rustdoc. (Miguel)
+- Improve the comments of PCI configuration space when checking the
+  output of rustdoc.
 
-  - the function name in the comment to virtqueue_map_mapping_error()
-  - adds the missing @vaddr description in the comment for virtqueue_map_free_coherent()
+v5:
 
-Fixes: b41cb3bcf67f ("virtio: rename dma helpers")
-Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
----
- drivers/virtio/virtio_ring.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+- Remove fallible accessors of PCI configuration space. (Danilo)
+- Add #[repr(usize)] for enum ConfigSpace. (Danilo)
+- Refine the handling of return value in read accessors. (Danilo)
+- Add debug_assert!() in pdev::cfg_size(). (Danilo)
+- Add ConfigSpace.as_raw() for extracting the raw value. (Danilo)
+- Rebase the patches on top of driver-core-testing branch.
+- Convert imports touched by this series to vertical style.
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 7b6205253b46..ddab68959671 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -3166,6 +3166,7 @@ EXPORT_SYMBOL_GPL(virtqueue_map_alloc_coherent);
-  * @vdev: the virtio device we are talking to
-  * @map: metadata for performing mapping
-  * @size: the size of the buffer
-+ * @vaddr: the virtual address that needs to be freed
-  * @map_handle: the mapped address that needs to be freed
-  *
-  */
-@@ -3190,7 +3191,7 @@ EXPORT_SYMBOL_GPL(virtqueue_map_free_coherent);
-  * @dir: mapping direction
-  * @attrs: mapping attributes
-  *
-- * Returns mapped address. Caller should check that by virtqueue_mapping_error().
-+ * Returns mapped address. Caller should check that by virtqueue_map_mapping_error().
-  */
- dma_addr_t virtqueue_map_page_attrs(const struct virtqueue *_vq,
- 				    struct page *page,
-@@ -3249,7 +3250,7 @@ EXPORT_SYMBOL_GPL(virtqueue_unmap_page_attrs);
-  * The caller calls this to do dma mapping in advance. The DMA address can be
-  * passed to this _vq when it is in pre-mapped mode.
-  *
-- * return mapped address. Caller should check that by virtqueue_mapping_error().
-+ * return mapped address. Caller should check that by virtqueue_map_mapping_error().
-  */
- dma_addr_t virtqueue_map_single_attrs(const struct virtqueue *_vq, void *ptr,
- 				      size_t size,
-@@ -3299,7 +3300,7 @@ void virtqueue_unmap_single_attrs(const struct virtqueue *_vq,
- EXPORT_SYMBOL_GPL(virtqueue_unmap_single_attrs);
- 
- /**
-- * virtqueue_mapping_error - check dma address
-+ * virtqueue_map_mapping_error - check dma address
-  * @_vq: the struct virtqueue we're talking about.
-  * @addr: DMA address
-  *
+v4:
+
+- Refactor the SIZE constant to be an associated constant. (Alice)
+- Remove the default method implementations in the Io trait. (Alice)
+- Make cfg_size() private. (Danilo/Bjorn)
+- Implement the infallible accessors of ConfigSpace. (Danilo)
+- Create a new Io64 trait specifically for 64-bit accessors. (Danilo)
+- Provide two separate methods for driver: config_space() and
+  config_space_extended(). (Danilo)
+- Update the sample driver to test the infallible accessors. (Danilo)
+
+v3:
+
+- Turn offset_valid() into a private function of kernel::io:Io. (Alex)
+- Separate try and non-try variants. (Danilo)
+- Move all the {try_}{read,write}{8,16,32,64} accessors to the I/O trait.
+  (Danilo)
+- Replace the hardcoded MMIO type constraint with a generic trait bound
+  so that register! macro can be used in other places. (Danilo)
+- Fix doctest. (John)
+- Add an enum for PCI configuration space size. (Danilo)
+- Refine the patch comments. (Bjorn)
+
+v2:
+
+- Factor out common trait as 'Io' and keep the rest routines in original
+  'Io' as 'Mmio'. (Danilo)
+- Rename 'IoRaw' to 'MmioRaw'. Update the bus MMIO implementation to use
+  'MmioRaw'.
+- Introduce pci::Device<Bound>::config_space(). (Danilo)
+- Implement both infallible and fallible read/write routines, the device
+  driver decicdes which version should be used.
+
+This ideas of this series are:
+
+- Factor out common traits for other accessors to share the same
+  compiling/runtime check like before.
+
+- Factor the MMIO read/write macros from the define_read! and
+  define_write! macros. Thus, define_{read, write}! can be used in other
+  backends.
+
+  In detail:
+
+  * Introduce `call_mmio_read!` and `call_mmio_write!` helper macros
+    to encapsulate the unsafe FFI calls.
+  * Update `define_read!` and `define_write!` macros to delegate to
+    the call macros.
+  * Export `define_read` and `define_write` so they can be reused
+    for other I/O backends (e.g. PCI config space).
+
+- Implement the PCI configuration space access backend in PCI
+  abstractions.
+
+- Add tests for config space routines in rust PCI sample driver.
+
+[1] https://lore.kernel.org/all/20250903221111.3866249-1-zhiw@nvidia.com/
+[2] https://lore.kernel.org/all/20251104133301.59402-1-dakr@kernel.org/
+[3] https://lore.kernel.org/all/20251105120352.77603-1-dakr@kernel.org/
+
+
+Zhi Wang (7):
+  samples: rust: rust_driver_pci: use "kernel vertical" style for
+    imports
+  rust: devres: style for imports
+  rust: io: style for imports
+  rust: io: factor common I/O helpers into Io trait
+  rust: io: factor out MMIO read/write macros
+  rust: pci: add config space read/write support
+  sample: rust: pci: add tests for config space routines
+
+ drivers/gpu/nova-core/regs/macros.rs |  90 +++++---
+ drivers/gpu/nova-core/vbios.rs       |   1 +
+ rust/kernel/devres.rs                |  64 ++++--
+ rust/kernel/io.rs                    | 323 ++++++++++++++++++++-------
+ rust/kernel/io/mem.rs                |  16 +-
+ rust/kernel/io/poll.rs               |   8 +-
+ rust/kernel/pci.rs                   |  41 +++-
+ rust/kernel/pci/io.rs                |  85 ++++++-
+ samples/rust/rust_driver_pci.rs      |  38 +++-
+ 9 files changed, 519 insertions(+), 147 deletions(-)
+
 -- 
-2.34.1
+2.51.0
 
 
