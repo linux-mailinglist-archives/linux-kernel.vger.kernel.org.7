@@ -1,176 +1,147 @@
-Return-Path: <linux-kernel+bounces-893601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67305C47C2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:05:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B1DC47D39
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:14:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E09CA349B90
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:05:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2F21888971
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C0B279917;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DA327B34E;
 	Mon, 10 Nov 2025 16:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="OWoTnNo+"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Ab8K8VWU"
+Received: from mail-il1-f226.google.com (mail-il1-f226.google.com [209.85.166.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADB9274B32;
-	Mon, 10 Nov 2025 16:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76810274B35
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790688; cv=none; b=SrvP3LuCxedv+TwxN9eGl0/Wo8+PbOFt7/AO4WaEHJPtzwZpUUq1X620NZqEEg3ddghAYDxYyKAsBOi9hTYrJ2PeM0APCQPyr0woeRpsUkvRr9FJPatxbQEN4AJmt2qwJsDXCL/LOy/Iielyx6z8p+qps9umJF7JQhSsRVa8sOk=
+	t=1762790689; cv=none; b=Xwksk4gQB8H707Jp6Y1d9lIJdQeNvEwCB4hHMtZjjNZYBLoWqTX1JTNZW65sYPkC/2OCEXtkOaH6273kxSWgoQPVSY9FvDXobs+upT89K4b19ZzIZvWfe2MVPYaeoObeRxBK26CQM+VjSn9ogESmBUuDRDl/hJYUMcP5Ep1imsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790688; c=relaxed/simple;
-	bh=kv4Vq5wtS3JRrjbQqkk4nTAvEfRYYDNfg2iKngv5+Kc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bZho2gKO11uBJIxEBQP3BGDKU6GTRC1r/TYhmVwMH1FAJFyInbuNpkRO4Lr/EMQcyoLwlMWU2NM/sWjk7JuWEgYNUllskOBW3HYMO2ScOPKismsTGS7j1a39AZ6pzfRwvRWtbi+1EBc10Slv82Cay88yI+rZl/710pPhgM0L5mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=OWoTnNo+; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 143AE5341253;
-	Mon, 10 Nov 2025 17:04:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1762790676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zO8m+PMVGX7GOfax0A/1JrTYsgZuiAvHWe2nRQ/tu5w=;
-	b=OWoTnNo+q8W5cqAnQpq53M8qrztwUTo4afiD3TcwTbjIUl16MdTmEfaqzNpY68GS3RjeVA
-	KUHMobhG1g3oYsdkBLbWR8lchCc1pMK9j6CDoRCgsjUuWKFw/pdDnSk1/BaO8CApPpQT2V
-	AfsKKH26lfvUs77lgbIM22Hrvl5LXig=
-Message-ID: <5fbe9d10-5d6d-404c-8f47-e4a12ebe7eeb@ixit.cz>
-Date: Mon, 10 Nov 2025 17:04:35 +0100
+	s=arc-20240116; t=1762790689; c=relaxed/simple;
+	bh=xsCQeyVupDZ70P10hcuA2gENJ0NgW9gpLTOfi9ZPS6I=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=p/fIFlTK6KP2NSjuHBNY0IYQdbzEAnyclqcppSwBlrOGAs2tp/0/YewMEDh9xg57SwM4/px5HryoI6FHZFwjaafVv4WSZA+Qn0BqSR2gLQRidxKaj8cKaG6pX01yVzVckNLGw7zOyKBHgxK+aAkcPMn2b6SbPvo+erLDxUGKqT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Ab8K8VWU; arc=none smtp.client-ip=209.85.166.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-il1-f226.google.com with SMTP id e9e14a558f8ab-43320651e53so27166395ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:04:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762790686; x=1763395486;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:subject:cc:to:from:date:dkim-signature:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xsCQeyVupDZ70P10hcuA2gENJ0NgW9gpLTOfi9ZPS6I=;
+        b=Wl/J0BE7tOptXTtpeVM/r9U/GKGzS3zviH/QCorkBcTfGZs1fkTRAofMeuDFW328eY
+         Xt/EL3gEzBuqOX819iHjFVs9ZOnKn61CUYPqPkfjZFSCUJbjD55u2PIs+OQK81c8xAA4
+         dpluLLUq4wE+/e8cZh4eJVX+b2FGqz5UKmw9CcNpMH5UCCF1wBE5t10yPLbrluA1ENj7
+         yo23sokZFnkyvJ+xTWfnzZQGKQXA6sDKPUaCz19xfRXOoKdSvJjolTzSKRbx8zI9KuDI
+         2jjDCS6n+O5HaBzTIegKjD7fGBmwq5uF268t3Uf4fZW2MIvW47Bp/xZggNvHxCqPC5+R
+         Aj1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXfKgBiEcF0OP2m6PNoKwgRi5r5P/0uaIGdNRkwWWqnKQshcIR+se0giuP+PbFgKQI4cTiuCSRMDcBDyTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIgcxg50A0lK1T3/lL1MVhJ3/QsC2mtkcLo0nSb2cxQTYobBdp
+	MIaeAzJcVk0f4RTPeNw7sVnUZFiodFHMEmjrj8P8DpkKu8jP/2bj4/qXnIAbsbsUoTWS6wHH01P
+	ceTEp6kDpont7NnN2K0mhOd2I4XhqWHXnoGytcdsEpuwvHcdu23ONwL+rma4Yos848b1V/mDZMI
+	THJj4k6YMt6Cfmux2QMYOmPUVXybexBcGLtljVDtpfLWqEEvv9LwDZ1Xug+stqTC/liAj+0u/OL
+	vd5Rpno3fiNBOS6IqWS/UoQ
+X-Gm-Gg: ASbGncsOrWfP8u9DFm5Uz8M7M2KoBNVQLxxC+7AcMajSmikpx3CMNksvBrYliwY4oxB
+	0OpcrEdy2XBzIpG3i5BHalBln1l/s7pBKM2i3OLel1MNgJW+iY+NuFoPjc8AuX7k72dDWYtOpa6
+	Z+eCzOsdmwvU5eWApqAzz6twpaG2e8vwsxoSMbNMQg2cIG+odC4GPJb2Cm2aspzKrYujirKHk1P
+	996T5amJ2pgoWFoePhoJ6qvlNK3FkavlXjMv25AQOIyt5P/MJvrwUIUd4BLZuKnyJUDbY75VaZY
+	pMrIHXlg1AjAZRFTOmBFp2NxNJSGYgf2k0piOC/ov9nI9zgpO+VgqYW/ri6t7r/LGdXD4UG5Uy3
+	x9SmrDU9Xgbn5Y3lcn18Wz2eZSp2j49SwgF8OFRCDzCpyHVEG7FTHfVD6Qb9xkKWNuH/t3y1ceB
+	4/UtYYFcS6F2tvT4AOnOp6OVMWixDtcUtFVzc0qv7cOQ==
+X-Google-Smtp-Source: AGHT+IGine6opEJ4RVBx2ZtM1bxOsZvM39rFZ9TwtN+NpTiPwUC0b1XmFYlqqL/x/87Y+85y+KNjwbIy5i0t
+X-Received: by 2002:a05:6e02:8f4:b0:433:6f20:32cc with SMTP id e9e14a558f8ab-4336f2035f7mr81137685ab.16.1762790686497;
+        Mon, 10 Nov 2025 08:04:46 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
+        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-5b746739ab8sm1401983173.6.2025.11.10.08.04.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Nov 2025 08:04:46 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7aa440465a1so6164610b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:04:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1762790684; x=1763395484; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xsCQeyVupDZ70P10hcuA2gENJ0NgW9gpLTOfi9ZPS6I=;
+        b=Ab8K8VWUF5lFwcaG39BN5HRtuy9WBb9T70SvNmz4gmr7sHFpvzg+OKkemTCI5ZWjHr
+         0/Lpm0iinaZ3b2lw29bq11wI8hJj2eRT8u0FaP0gVIbV7EHdcHoGpmGj/HVLDMleKwQY
+         Z0jILx8VfyBykGbgc9/tKj8QhSZ5zRrhHbQgY=
+X-Forwarded-Encrypted: i=1; AJvYcCUtolVk9+2SqjuKA/Iy0MLZpqg2dap81NHi/WOm0298nWiydbahfGkA51fpG1fwMn3D6a2lbz+YUlo/D4w=@vger.kernel.org
+X-Received: by 2002:a05:6a00:bd83:b0:7a2:83f2:4989 with SMTP id d2e1a72fcca58-7b225aea11cmr10247681b3a.5.1762790683949;
+        Mon, 10 Nov 2025 08:04:43 -0800 (PST)
+X-Received: by 2002:a05:6a00:bd83:b0:7a2:83f2:4989 with SMTP id d2e1a72fcca58-7b225aea11cmr10247634b3a.5.1762790683437;
+        Mon, 10 Nov 2025 08:04:43 -0800 (PST)
+Received: from ehlo.thunderbird.net ([2600:8802:b00:ba1:b6a4:5eaf:bf66:49de])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0ca1e718asm12233192b3a.30.2025.11.10.08.04.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 08:04:42 -0800 (PST)
+Date: Mon, 10 Nov 2025 08:04:38 -0800
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: Jonas Gorski <jonas.gorski@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ =?ISO-8859-1?Q?=C1lvaro_Fern=E1ndez_Rojas?= <noltari@gmail.com>,
+ Vivien Didelot <vivien.didelot@gmail.com>
+CC: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_net=5D_net=3A_dsa=3A_tag=5Fbrcm=3A_do_?=
+ =?US-ASCII?Q?not_mark_link_local_traffic_as_offloaded?=
+In-Reply-To: <20251109134635.243951-1-jonas.gorski@gmail.com>
+References: <20251109134635.243951-1-jonas.gorski@gmail.com>
+Message-ID: <BBB3B106-E173-4098-A90A-3A75C2C545B6@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] arm64: dts: qcom: sdm845-oneplus: add ath10k
- calibration variant
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Dylan Van Assche <me@dylanvanassche.be>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org
-References: <20251110-sdm845-calibration-variants-v1-0-2c536ada77c2@ixit.cz>
- <20251110-sdm845-calibration-variants-v1-1-2c536ada77c2@ixit.cz>
- <wqjil4hhrbsozvhwdf355dqpwu736z4x2nwnurug2bpx23ed3g@c4shkwfyohky>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <wqjil4hhrbsozvhwdf355dqpwu736z4x2nwnurug2bpx23ed3g@c4shkwfyohky>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On 10/11/2025 16:58, Dmitry Baryshkov wrote:
-> On Mon, Nov 10, 2025 at 04:37:46PM +0100, David Heidelberg via B4 Relay wrote:
->> From: Dylan Van Assche <me@dylanvanassche.be>
->>
->> SDM845-based Oneplus 6 and 6T have their own calibration files
->> for the WCN3990 WiFi/Bluetooth radio with the ath10k driver.
->> Add the calibration variant name to the DTS to reflect this to
->> allow using the calibration files from linux-firmware.
->>
->> [David] Adjust the compatible as ath10k-calibration-variant is deprecated
->> Signed-off-by: Dylan Van Assche <me@dylanvanassche.be>
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> ---
->>   arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
->> index db6dd04c51bb5..a0c2f6efec59d 100644
->> --- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
->> @@ -929,5 +929,6 @@ &wifi {
->>   	vdd-3.3-ch0-supply = <&vreg_l25a_3p3>;
->>   	vdd-3.3-ch1-supply = <&vreg_l23a_3p3>;
->>   
->> +	qcom,calibration-variant = "oneplus_sdm845";
-> 
-> oneplus_sdm845_6? or oneplus_6_6t? SDM845 is too broad.
+On November 9, 2025 5:46:35 AM PST, Jonas Gorski <jonas=2Egorski@gmail=2Eco=
+m> wrote:
+>Broadcom switches locally terminate link local traffic and do not
+>forward it, so we should not mark it as offloaded=2E
+>
+>In some situations we still want/need to flood this traffic, e=2Eg=2E if =
+STP
+>is disabled, or it is explicitly enabled via the group_fwd_mask=2E But if
+>the skb is marked as offloaded, the kernel will assume this was already
+>done in hardware, and the packets never reach other bridge ports=2E
+>
+>So ensure that link local traffic is never marked as offloaded, so that
+>the kernel can forward/flood these packets in software if needed=2E
+>
+>Since the local termination in not configurable, check the destination
+>MAC, and never mark packets as offloaded if it is a link local ether
+>address=2E
+>
+>While modern switches set the tag reason code to BRCM_EG_RC_PROT_TERM
+>for trapped link local traffic, they also set it for link local traffic
+>that is flooded (01:80:c2:00:00:10 to 01:80:c2:00:00:2f), so we cannot
+>use it and need to look at the destination address for them as well=2E
+>
+>Fixes: 964dbf186eaa ("net: dsa: tag_brcm: add support for legacy tags")
+>Fixes: 0e62f543bed0 ("net: dsa: Fix duplicate frames flooded by learning"=
+)
+>Signed-off-by: Jonas Gorski <jonas=2Egorski@gmail=2Ecom>
 
-I verified with 
-https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/ath10k/WCN3990/hw1.0/board-2.bin
+Reviewed-by: Florian Fainelli <florian=2Efainelli@broadcom=2Ecom>
 
-$ strings board-2.bin | rg oneplus
-bus=snoc,qmi-board-id=ff,qmi-chip-id=30214,variant=oneplus_sdm845mmm
-
-$ ./ath10k-bdencoder -e ~/Downloads/board-2.bin
-...
-bus=snoc,qmi-board-id=ff,qmi-chip-id=30214,variant=oneplus_sdm845.bin 
-created size: 19152
-...
-
-Since OP6/6T should have same WiFi.
-
-David>
-> BTW: Were those board files sent to the ath10k ML for inclusion?
-> 
->>   	qcom,snoc-host-cap-8bit-quirk;
->>   };
->>
->> -- 
->> 2.51.0
->>
->>
-> 
--- 
-David Heidelberg
-
+Florian
 
