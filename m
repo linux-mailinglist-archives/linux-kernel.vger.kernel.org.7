@@ -1,94 +1,121 @@
-Return-Path: <linux-kernel+bounces-893397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855E5C47418
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:39:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5E3C473EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:37:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A0CE54ECAFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:39:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 460463B4000
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EDE3128C8;
-	Mon, 10 Nov 2025 14:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC3F31355B;
+	Mon, 10 Nov 2025 14:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQhzOK8s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3UKjnX8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3701B6CE9;
-	Mon, 10 Nov 2025 14:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C76131355F;
+	Mon, 10 Nov 2025 14:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762785549; cv=none; b=bBdighcRGE4h5mFpnasZ8tZlOs9z7LErn22iJ1yp5C3MftNwkAUjHdYnc5ouSbNRIfF30yyk5HNsDORHy07Ti7ADR2eXL5gZszkJM0WzF/VUSDrrd8SFMaRwsbna8mmcUd8kqgqPDrIi6xTYT/aYl4y9hwCvexbdZqDT+A3q74Q=
+	t=1762785315; cv=none; b=dhchazKegpdj/NLCXivlxy4tr2D3PJNeU05STXO9xhzEWA71ta5pYBO970ohHFXa+HiQq4+2d7Q+ad1fHo5T3YyGwNJXLc7PaI5e9b4mJ+wlAqxuSyKWQ7N2r4lcTSNR/XuXB099zW8Knmwy9TCBoL28D6gdrmnJ+JAQPND+TbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762785549; c=relaxed/simple;
-	bh=UfZIIURxKG02GFYs3TglXy1N8g+Xmh2JJT+tt4nBTVs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=qoZMNIS/UhhnlTlXIqQ8SDHsWnTn7JLwKjtkaSZtAJfNpwQtGoM1qa0EGCr2/yAqVHqrMtf/CUY6bqTR5YMM/81wj1DwGQ/vNx7MFvwvGr6kv4Zma+nCjkNdKKgJjf9Jj4GhO/KFW5B5sPQWMoWrJ47PrTQ39Bl3mXso4QMpaXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQhzOK8s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0A28C4CEF5;
-	Mon, 10 Nov 2025 14:39:03 +0000 (UTC)
+	s=arc-20240116; t=1762785315; c=relaxed/simple;
+	bh=H+NeCQZyJ3FrRAyNmW1uwJi2sTQM5CPCDpAyzhoE1nA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rRLcexf1j4ng77n9DViI595F7/SBkWYoVY0dthsngMEI9UqvhVqKl+W3El/BwdLx9IDgjlzXCMdHhcDr1YK0rhvuodxTbphw7eYVWfy0HBFlIAzFd1L5vK+8ex9R414Nuww+9MzpUffCOkRZqVy8b/b0MBXsxN7icJcuhg4rX7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3UKjnX8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 037CFC19424;
+	Mon, 10 Nov 2025 14:35:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762785547;
-	bh=UfZIIURxKG02GFYs3TglXy1N8g+Xmh2JJT+tt4nBTVs=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=mQhzOK8s/s49v5TaSnR5d5ICY8q9ff+8mRzFyNvkAlhRdiDH3F6AhQtQexwshSaKi
-	 ReveQogDQr7jLYtb388kxmjmGA+OlYUKecb/hNFXMF0lByKsKBf7bUo0Qw0ZE3mtLo
-	 yesMpZIv/zK8xC17OxIG3C6Oz7xT8GPHz6TkYTZMXVaTVjaRxBZxLShfp8uPsA47+s
-	 21LnIwZ/VY0/aOCk1scjaQ6wYMC1jXsEZYCelzurBdu7+T7D5ZTHyBwXu2V6SWQjpD
-	 JtASMzUDzdxzdIF73xvM9RbMfNvP0K8IsjXWGuKwGkt4HAAVYCLKUdGIzdRt3iGWUu
-	 xSqpJk0iMHqSg==
+	s=k20201202; t=1762785315;
+	bh=H+NeCQZyJ3FrRAyNmW1uwJi2sTQM5CPCDpAyzhoE1nA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y3UKjnX8hUBPhrVYuuBNZfHdauDMLUzlXl65kSP7yd4j/iPDwmNgqMjPQasE3l/+a
+	 LN012CHjB7A5J3Tm4oLVPyhJIUlv74CnNgCVTTbvKlRy06M4z0dQ5Zc4IjUr9JTmcb
+	 yutHNZUZxZHOdBGqjolmM6kOYokzwnmwUo6zmJsHhiBNNVg0AJwlzYmKdnlxQs5HH6
+	 1o6zeo7buInBDFgnOoYlC6Xxa6Kza16jhdq+lXcXDU/ZABPSmbHoLhyGjkTE7ViVpL
+	 /wYjdAWmP9brLyMjhlzXuA4y5Uj4+IXc/NSmGa+55hDOUlpxHHKkFKozjgYDHWGA6A
+	 9csQy72zVAGGg==
+Date: Mon, 10 Nov 2025 08:39:20 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com, 
+	quic_pragalla@quicinc.com, quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com, 
+	quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
+Subject: Re: [PATCH V1] mmc: sdhci-msm: Avoid early clock doubling during
+ HS400 transition
+Message-ID: <wshfjbdjmoe5hfsmh2rrwxiy67wo4k6i7bzap4hz4n5j22uiol@xz7wfxaw4bve>
+References: <20251110063801.641866-1-sarthak.garg@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 10 Nov 2025 15:39:01 +0100
-Message-Id: <DE53BMEA2TXG.115SFKG1ZHPB@kernel.org>
-Cc: "Rae Moar" <raemoar63@gmail.com>, <linux-kselftest@vger.kernel.org>,
- <kunit-dev@googlegroups.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
- Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <patches@lists.linux.dev>
-Subject: Re: [PATCH 1/2] rust: allow `unreachable_pub` for doctests
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Miguel Ojeda" <ojeda@kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>, "Brendan Higgins"
- <brendan.higgins@linux.dev>, "David Gow" <davidgow@google.com>, "Alex
- Gaynor" <alex.gaynor@gmail.com>
-X-Mailer: aerc 0.21.0
-References: <20251110113528.1658238-1-ojeda@kernel.org>
-In-Reply-To: <20251110113528.1658238-1-ojeda@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110063801.641866-1-sarthak.garg@oss.qualcomm.com>
 
-On Mon Nov 10, 2025 at 12:35 PM CET, Miguel Ojeda wrote:
-> Examples (i.e. doctests) may want to show public items such as structs,
-> thus the `unreachable_pub` warning is not very helpful.
->
-> Thus allow it for all doctests.
->
-> In addition, remove it from the existing `expect`s we have in a couple
-> doctests.
->
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Link: https://lore.kernel.org/rust-for-linux/aRG9VjsaCjsvAwUn@google.com/
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-
-Acked-by: Benno Lossin <lossin@kernel.org>
-
-Cheers,
-Benno
-
+On Mon, Nov 10, 2025 at 12:08:01PM +0530, Sarthak Garg wrote:
+> According to the hardware programming guide, the clock frequency must
+> remain below 52MHz during the transition to HS400 mode.
+> 
+> However,in the current implementation, the timing is set to HS400 (a
+> DDR mode) before adjusting the clock. This causes the clock to double
+> prematurely to 104MHz during the transition phase, violating the
+> specification and potentially resulting in CRC errors or CMD timeouts.
+> 
+> This change ensures that clock doubling is avoided during intermediate
+> transitions and is applied only when the card requires a 200MHz clock
+> for HS400 operation.
+> 
+> Signed-off-by: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
 > ---
->  rust/kernel/init.rs         | 2 +-
->  rust/kernel/types.rs        | 2 +-
->  scripts/rustdoc_test_gen.rs | 1 +
->  3 files changed, 3 insertions(+), 2 deletions(-)
+>  drivers/mmc/host/sdhci-msm.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index 4e5edbf2fc9b..eca6a09a4547 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -355,7 +355,8 @@ static unsigned int msm_get_clock_mult_for_bus_mode(struct sdhci_host *host)
+>  	 */
+>  	if (ios.timing == MMC_TIMING_UHS_DDR50 ||
+>  	    ios.timing == MMC_TIMING_MMC_DDR52 ||
+> -	    ios.timing == MMC_TIMING_MMC_HS400 ||
+> +	    (ios.timing == MMC_TIMING_MMC_HS400 &&
+> +	    ios.clock == MMC_HS200_MAX_DTR) ||
+
+It's a bit ugly that sdhci_msm_execute_tuning() passes ios.clock as an
+argument to msm_set_clock_rate_for_bus_mode(), which then calls
+msm_get_clock_mult_for_bus_mode() where you reach back into ios.clock.
+
+In fact, having msm_get_clock_mult_for_bus_mode() reach into
+host->mmc->ios to get ios.timing, seems a violation of the original
+intent of the prototype.
+
+
+How about cleaning this up and passing "timing" as an argument to
+msm_set_clock_rate_for_bus_mode(), and then pass host, clock, and timing
+to msm_get_clock_mult_for_bus_mode()?
+
+That way we avoid this mix of passing parameters to the functions in
+both arguments and in state at the same time.
+
+Regards,
+Bjorn
+
+>  	    host->flags & SDHCI_HS400_TUNING)
+>  		return 2;
+>  	return 1;
+> -- 
+> 2.34.1
+> 
+> 
 
