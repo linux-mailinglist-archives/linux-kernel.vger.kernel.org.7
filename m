@@ -1,157 +1,144 @@
-Return-Path: <linux-kernel+bounces-894352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7E0C49D19
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:57:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8449CC49D1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:58:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 142A14ECFBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:57:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE035188D202
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BD5305043;
-	Mon, 10 Nov 2025 23:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EDA305E09;
+	Mon, 10 Nov 2025 23:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b="siIW8zRY"
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rMfnUB62"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0380C2EB5BD
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA80B337113
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762819022; cv=none; b=MYWCiqPvkVd1ihlWCKrMkp5o0uVoJ+MWxbX3/YitvsxuzT5O8Itua5usv2yfr7p5MRUps+sSnlsDwm2GcGYf2ohlHymEVsg9KYQRLRSck7IopGfKEc+n09Pk/lGpw6WYbZzAFJ/E1j4Bfwho+ArkeDUVYHUsAv2I1FsjTkp3tEg=
+	t=1762819085; cv=none; b=NFRq7LEk4SXwgS0EaoyMOLfL5oeVP6ycy6wLGHk7xo3mHRrx8cUmVrc1UlqseP9aGS3kR6Ho8BkuS9IvpETQlJQfQO0SHoj/tmjGj/mFC/uGFbtcNoE/YQt9t6bfkxzXs1EttKINJaW1KgIg2QCekz6d3HMF+7aqKo3Er1Ve5Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762819022; c=relaxed/simple;
-	bh=tgfiS9cTra3MjR8Qx3EjT2AU898OkeuQf4TpjzJhbkw=;
+	s=arc-20240116; t=1762819085; c=relaxed/simple;
+	bh=gR2t+MCFT0pENLeKE/c4frJpybxo9Ti1EMQAvfgDQGI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V2BvLkNMU4vR4KmHb/e0mMcsOpMPnBm1DGwGj1vUX11HBNvyjYCGw863wC/dYaQqdHY41lMXpmZ+DhJ/tn4ycVfDyBhTnEi3y6CXRlsps+LPuO/jfrRKIWpxRwsOTtjgaBOopocN5K2Th7STJ2IaDbMzBqjUN2P7jZU1YKDnmCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com; spf=pass smtp.mailfrom=etsalapatis.com; dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b=siIW8zRY; arc=none smtp.client-ip=74.125.224.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etsalapatis.com
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-640d4f2f13dso2293468d50.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:56:59 -0800 (PST)
+	 To:Cc:Content-Type; b=e5x4+YTG28AgejATvnCOxj9T85HaIAGj07qtdRMTuTUPgCGQchlbQCmtuAsGLzKRQXGAhnp2c+ajNLI/inxKfomnSb2vzvuAgQPdDtmenaPzv9DUpCrUAi/YP+e09p6p0o3o45sNlI3w6+j4mgoYz+xgu4bvL2keaIyQTNESAR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rMfnUB62; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-378d54f657fso29922001fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:58:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=etsalapatis-com.20230601.gappssmtp.com; s=20230601; t=1762819019; x=1763423819; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1762819082; x=1763423882; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5Nj1q0mNcasYTnvKP6x35pxta4p3k2au3FFGEe/4tvQ=;
-        b=siIW8zRYc1ReXTsTWSrWGloL1nOBHgK3ZKVtOjr5UnCW0OVD9mcV9NGbbWQh6XGHQ8
-         rgf8IX0zB+WjQmJ44LrJZxCXRG/Ef/ic35wy09a2RlCedUJKMgJ5yPbn7vodnHLzvHtm
-         tzVuIWSmklSeB3q+fuL9WmlhCz41m7VbQ6AW27EW+2iHrCGhn6gemRcNsWNbt9A9SZu7
-         h6BernU2zDVKqOYKA6uxWOCfQbGVGpU+vfTb1vFn092RJh/Rkxj3ExmCY/Q7fS9VQ7l3
-         lrn/ek8rBdmxj1HDs5TBoE3a7l6cOKeNaKgy+ag/AY8+o/NvCedvYCLu20mOlFv1ALmF
-         a8Bw==
+        bh=gR2t+MCFT0pENLeKE/c4frJpybxo9Ti1EMQAvfgDQGI=;
+        b=rMfnUB62IkZBgU4Z+MwGW9CfUGrmA19YQdXxMpBNsOeSJ0mEIRcXgpji9QXC0EYyJa
+         o+/Tku8BunlJT5rqpTHIDQcnC0gQ3F+JkdSrYjtxQfXoIsyhWp6/QS7GuituJLbu5Vwy
+         Y2z36yLhaznblXd+6FSzx3ztBGjYUzzA+q46QqvbjDXeQi0qTzWXA3AuPHvGZXRtu8Cq
+         RTZKrvyOiNDmIj/4kKFajk4V5MVhg+bkHb0LR2U8TtduyxRf1DorNvQFruPMZ/SbpwDG
+         13aG9D3U2O+aC7XKZ2XKF3l80D0Wm2qCGZQQeTFm/o11lzRynFNQt5R4bLoZZjz8H5GR
+         UBqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762819019; x=1763423819;
+        d=1e100.net; s=20230601; t=1762819082; x=1763423882;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=5Nj1q0mNcasYTnvKP6x35pxta4p3k2au3FFGEe/4tvQ=;
-        b=KZNS7vImWw1hKKHGDQC/u9FYh2Zy6OmuNz/jfRCba9A2AReaOe1Gou4l/bh2RJk5n+
-         LcJuOw6p+6NsxodbDNTSJkH7VCQltHWfl6gztbbgcYOSfwzI1H04kraYXs8rEMDXwrTn
-         yvhVgCrZBZT2R2TMXLAfNMU27OmQMHjoa0MM5BgE5Eg+xjjTMhFpw+znCMJKqg/SFBYo
-         FYnh5MdiYJP4y9GyboJwKBi7lWnE5v8tyahTNToewZrLm+Zj3HdUmE8wJDWtA2DNuBLO
-         Xa/7+4G91mDtzJO/oRujPbN9Rdl+L/aKBZdu8EIpLPDTF7PI8CylvBwZt9Rt4Zp3yzbF
-         vnLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtfeSkniyFKMelpzqjYE9wb/bYwQyRlJw8bFg3aK59MJkecLq+RoI8x+yhVuz/Rp9WCH2NVDorkB8iRBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYy4G+X7qqG0ObwyZnXxJDS7FXFuvbNFx34PeILJzL5snXcOZR
-	qsIT3NpnHwNEf2C1L/FNcjUFBuw0zaBzmcJqSeuLff2xSrFHReeauM9yoQbJQCDFT3PqW0GnyvQ
-	0JSXD5RvG9dzxQIDW7bZeVUSGOY1XkzBNLEQ5/vGAUg==
-X-Gm-Gg: ASbGncu15oAIt1RfT+H9G9/s4iQ5v+vZIUQ9jbVpEGQO+HFBl6u528GVQ6dNaA5sht2
-	sRnfb0SDnOSJZ8wsgkLXxfde+/pgK6wPdDoNyrkhrZgu6n3SgN/kZz4SVVncn9aiGEMSSBMnb55
-	ditrExQkeTVV+4Bwp4n4E+kdaY+uS/WzXUTT4YCp14Gn3AAW4j5Wnrkdj/tZ9enBMKL298pSAyZ
-	CYmS2/YJfel3nFlT2oqNt7J+b0pPGHPBFOwTdayrgmqdk2aKj4ewi3wjKthXUk=
-X-Google-Smtp-Source: AGHT+IEYS9SgK5WzsgyfFw2SD3xybWKtZXTp6PZoYwrkPfKwTSmMkqLzXwB/JbmTscVTXPcbHxNw0AfHx1HwzeaUldc=
-X-Received: by 2002:a05:690c:4681:b0:786:4ed4:24ff with SMTP id
- 00721157ae682-787d5350164mr91957387b3.1.1762819018909; Mon, 10 Nov 2025
- 15:56:58 -0800 (PST)
+        bh=gR2t+MCFT0pENLeKE/c4frJpybxo9Ti1EMQAvfgDQGI=;
+        b=uMvE9huTqF/hxC/M9sQgAd2r/Da8862kL4s9Mi5Gb6AENo3JFmOJ4VOBLYMnmgdhDI
+         pvELlsdQCG+61Mc2HdjsAisygj35g16lVRE1LYNfHaWOShdorHkKSLTHc/bRHjsfXguZ
+         R1uFnw2bjZ27o/vsQStLM2tNztqcKDOgvGjg/yUQRwlA6VlDLn3CmzW/6/6QCaVdAkl8
+         RJ4fEKZ8vvk4ve2Q7+Bvm+Ewl7gu/eMphNfeOF14fT0YNORPSTwQ3pzqTvhb9sIV5lB7
+         S+OOXap9VeM505MgJfFuo0m7135+ldEQFvy6pZNwgY3xxaIVrPM0MPJmuFUOYE/auiRY
+         qFPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6G2uwkm5mFOGfo0ZHkN2r71Rg3IlDGLLszVzcFOV7iFzqsQJmHxgpuwmBzrBq40JEpIXba3SeQvmWQyI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEcSm9Ept+DMvp3ciI4zxrrtDtskLTN3imAxk94XVKPjIpAkgV
+	T0S9gQ3cRU/3mgdshE/eCqwpq1CK6eBisxxk7ODA3QJzLp9/1KvyJxHlU4oY9DEdiWh4doET75s
+	5Xah8CzB9HhSH7+MY1Z4eFyrAsSaNtJxAXhbc45KHjQ==
+X-Gm-Gg: ASbGncsLaXt10hO2VfuPcBprzYKs0xSFqLXxBsHTGfYS/bqzTSS+dLEnx7a9HG0itQK
+	9w/E7g9U9CJajZtr34RK/6p4kjwVaUFS8Qo33heSOxHseC8ekyN1wKtSsLDeQ0VygNaN1ib1tmo
+	XXoEhdb621POE793p4cPIjjC/5N7MDZ9qiLfYRSK9A/UcOIpOX/me/yMELDiMCEGScUwqyl3QVz
+	hMYo2nZPFW1SO5jIMeWVDfWQrC+3STEEM9CCB/kl6Wec6HFubKVfYIcfJ2yGfTyeU9dD8M=
+X-Google-Smtp-Source: AGHT+IGq8/YFN7hlWLIK9a4/CG12Y6T0bDy/N5/JTLofPKZElIMDZsi5lcAadM+CuswrNL2lnuY1YgL0/HzwYkg+O1w=
+X-Received: by 2002:a05:6512:b03:b0:594:4a5a:346 with SMTP id
+ 2adb3069b0e04-5945f15bf72mr2619011e87.17.1762819081904; Mon, 10 Nov 2025
+ 15:58:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110205636.405592-1-tj@kernel.org> <20251110205636.405592-13-tj@kernel.org>
-In-Reply-To: <20251110205636.405592-13-tj@kernel.org>
-From: Emil Tsalapatis <linux-lists@etsalapatis.com>
-Date: Mon, 10 Nov 2025 18:56:48 -0500
-X-Gm-Features: AWmQ_bnZeNnUS9oP_2Fx4DPImpvH26pzs7x9mbIoeSRMS41rpiNw8pWfz58gD0Y
-Message-ID: <CABFh=a7x4rXergkASTr2T8c20Yu1E0+_5ZaPijLhzGEkM_Pmrw@mail.gmail.com>
-Subject: Re: [PATCH v2 12/14] sched_ext: Factor out scx_dsq_list_node cursor
- initialization into INIT_DSQ_LIST_CURSOR
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Andrea Righi <andrea.righi@linux.dev>, 
-	Changwoo Min <changwoo@igalia.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
-	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Andrea Righi <arighi@nvidia.com>
+References: <20251107-wakeirq_support-v5-0-464e17f2c20c@oss.qualcomm.com> <20251107-wakeirq_support-v5-2-464e17f2c20c@oss.qualcomm.com>
+In-Reply-To: <20251107-wakeirq_support-v5-2-464e17f2c20c@oss.qualcomm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 11 Nov 2025 00:57:50 +0100
+X-Gm-Features: AWmQ_blAezbQ4rkb-Vrevk4Zgb5huFnQ0lcUTpotRRUAIJPGPB05jzXROpJ4ido
+Message-ID: <CACRpkdY9HsnG=xo=swnMcVha+unmvmxR6e6Ynsj09srM_tPmWA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] PCI: Add support for PCIe WAKE# interrupt
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, quic_vbadigan@quicinc.com, quic_mrana@quicinc.com, 
+	sherry.sun@nxp.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2025 at 3:56=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
-> Factor out scx_dsq_list_node cursor initialization into INIT_DSQ_LIST_CUR=
-SOR
-> macro in preparation for additional users.
->
-> Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
-> Cc: Emil Tsalapatis <etsal@meta.com>
-> Acked-by: Andrea Righi <arighi@nvidia.com>
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> ---
+On Fri, Nov 7, 2025 at 10:22=E2=80=AFAM Krishna Chaitanya Chundru
+<krishna.chundru@oss.qualcomm.com> wrote:
 
-Reviewed-by: Emil Tsalapatis <emil@etsalapatis.com>
+> According to the PCIe specification 6, sec 5.3.3.2, there are two defined
+> wakeup mechanisms: Beacon and WAKE# for the Link wakeup mechanisms to
+> provide a means of signaling the platform to re-establish power and
+> reference clocks to the components within its domain. Beacon is a hardwar=
+e
+> mechanism invisible to software (PCIe r7.0, sec 4.2.7.8.1). Adding WAKE#
+> support in PCI framework.
+>
+> According to the PCIe specification, multiple WAKE# signals can exist in
+> a system. In configurations involving a PCIe switch, each downstream port
+> (DSP) of the switch may be connected to a separate WAKE# line, allowing
+> each endpoint to signal WAKE# independently. From figure 5.4, WAKE# can
+> also be terminated at the switch itself. To support this, the WAKE#
+> should be described in the device tree node of the endpint/bridge. If all
+> endpoints share a single WAKE# line, then WAKE# should be defined in the
+> each node.
+>
+> To support legacy devicetree in direct attach case, driver will search
+> in root port node for WAKE# if the driver doesn't find in the endpoint
+> node.
+>
+> In pci_device_add(), PCI framework will search for the WAKE# in its node,
+> If not found, it searches in its upstream port only if upstream port is
+> root port to support legacy bindings. Once found, register for the wake I=
+RQ
+> in shared mode, as the WAKE# may be shared among multiple endpoints.
+>
+> When the IRQ is asserted, the handle_threaded_wake_irq() handler triggers
+> a pm_runtime_resume(). The PM framework ensures that the parent device is
+> resumed before the child i.e controller driver which can bring back devic=
+e
+> state to D0.
+>
+> WAKE# is added in dts schema and merged based on below links.
+>
+> Link: https://lore.kernel.org/all/20250515090517.3506772-1-krishna.chundr=
+u@oss.qualcomm.com/
+> Link: https://github.com/devicetree-org/dt-schema/pull/170
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.co=
+m>
 
->  include/linux/sched/ext.h | 7 +++++++
->  kernel/sched/ext.c        | 5 ++---
->  2 files changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/sched/ext.h b/include/linux/sched/ext.h
-> index 4b501ad7a3fc..3f6bf2875431 100644
-> --- a/include/linux/sched/ext.h
-> +++ b/include/linux/sched/ext.h
-> @@ -149,6 +149,13 @@ struct scx_dsq_list_node {
->         u32                     priv;           /* can be used by iter cu=
-rsor */
->  };
->
-> +#define INIT_DSQ_LIST_CURSOR(__node, __flags, __priv)                   =
-       \
-> +       (struct scx_dsq_list_node) {                                     =
-       \
-> +               .node =3D LIST_HEAD_INIT((__node).node),                 =
-         \
-> +               .flags =3D SCX_DSQ_LNODE_ITER_CURSOR | (__flags),        =
-         \
-> +               .priv =3D (__priv),                                      =
-         \
-> +       }
-> +
->  /*
->   * The following is embedded in task_struct and contains all fields nece=
-ssary
->   * for a task to be scheduled by SCX.
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index d16525abf9e0..82f0d2202b99 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -6249,9 +6249,8 @@ __bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_ite=
-r_scx_dsq *it, u64 dsq_id,
->         if (!kit->dsq)
->                 return -ENOENT;
->
-> -       INIT_LIST_HEAD(&kit->cursor.node);
-> -       kit->cursor.flags =3D SCX_DSQ_LNODE_ITER_CURSOR | flags;
-> -       kit->cursor.priv =3D READ_ONCE(kit->dsq->seq);
-> +       kit->cursor =3D INIT_DSQ_LIST_CURSOR(kit->cursor, flags,
-> +                                          READ_ONCE(kit->dsq->seq));
->
->         return 0;
->  }
-> --
-> 2.51.2
->
->
+The GPIO parts look all right to me, a bit complex since we can't use
+devm_* stuff here, but that happens.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
