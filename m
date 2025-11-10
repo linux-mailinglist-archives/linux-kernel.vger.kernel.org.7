@@ -1,132 +1,155 @@
-Return-Path: <linux-kernel+bounces-893040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A287FC4667E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:57:10 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F66BC46687
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:57:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 49730343550
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:57:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0398E343D1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F1E307AD6;
-	Mon, 10 Nov 2025 11:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yZ8sbvzu"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EA030DD19;
+	Mon, 10 Nov 2025 11:56:59 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092152FE585
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C116B30C606;
+	Mon, 10 Nov 2025 11:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762775815; cv=none; b=kk333P2L9m8pE2b8YTxKEbNfrW7S0QEtgnnA/omK+yWigWWYSTH1UI2U540AXz2v4NdIA2H8qsEdwkjYsc+n5R4miR6ZEUBl1tjqW/HENtW3gNIowPTEdcVdHEwYAju0m8v1tFdEMXvkyrEISU3zBN2c/npZSKGlVzxlMHBJvqM=
+	t=1762775819; cv=none; b=SEJGqeoMpwp6nwapfsEakVoA8fCXSXZmsCiquaolna7WC+RrjT/ou6AodYJTpPi1ZQko0Os629gr2ohG8hxL1FdSgLD3Ym+cegfLFCWReAtr6jI+kz4JMm274zUajpcwCTgXbtjgxtWsCJSUg5fsKc/gUZObCXB76VDoNC5j1Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762775815; c=relaxed/simple;
-	bh=oUgierYSU3dRBhCJGCsjS3J9M3HkXvV59r1SNiAzvk0=;
+	s=arc-20240116; t=1762775819; c=relaxed/simple;
+	bh=Y/jAnkngLZQo+uWruFgZLanl3mb34pYToR6q/XAXuS0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NJpx6PfaQfxoymiuI8idmki+H17Hi0pjrWNrRT2cYAjWxSILUonm6amJzrFJ7vGJo4PWSrHOZImaTZI6S1lLfeeuuRJTu5dB6KlNiG0Ctua4Ox18Busqs6JkC7bVuyjIIYNRGPNyoLBRa559OGKVA9T9ZcxVw5D8yGJB6rA1wNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yZ8sbvzu; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429ce7e79f8so2118695f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:56:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762775812; x=1763380612; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4g2z/CUdSCaQjy9LxpwOngAggO4WOQO9SBX2pApcNyk=;
-        b=yZ8sbvzuAGCw2mrF/znpax5qC41Ec7OITzSh/dmx2az4dedT5WWB6bpqwtSq1I4Nlr
-         oIpLrJxktDxHg06jbPw7jL2jKcc+0jSEAQd3c+S4v1KeOvQi/QSH90zJ/r6OyfXi506r
-         hmTKfE/X0/sdzVMa9BE+0dwJJQdEftjpNt6jt1tHT6/j6tfYT6HVn/algXMNXZKO3VB+
-         dRSM/3B6u/fUySKFFntvkD2WpNch/ElHnxg6XbZjgr8WjqdfdMpnrFgmL2piHu4dwSty
-         M8OWYVWlLYbBk3RJ3adi7uPuosp/yzM+ERCRJasi1lgQxCnJnXtKfsoEfV5hkEUCGeMw
-         hsWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762775812; x=1763380612;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4g2z/CUdSCaQjy9LxpwOngAggO4WOQO9SBX2pApcNyk=;
-        b=H87ujcMPkXeAQ+1YlWo/XEdfE1EL+sLNuMTOXR/VD1MVGsPIAPPAaDI1D5W6ZfTUiJ
-         lgVJGnwMtQWT2NHjaRNS61AJqSyMGDTp6JuC8c+qSk8ADjn339NQ4dYz7e4yg8Tn0g7h
-         zSIsKfnLcGol2gp1sG0ZgPNoeljxfwPYGE4rEEh5GIoklKD5Ni0RsAq3w9Adw3z5HLCs
-         Hw+8EMpIWJnka8+M92eWbH4nUqw98LNf1MDaxd8b57MjY6uOe3UI/Pp/3YRKKZL4Lt25
-         Z8GJU7O2OpSX/RDY2YtvJH/woFdozm1EcbPAZ7ljzE9u8l9SW7NHczRCA/QSEbzqOgkx
-         lTVw==
-X-Forwarded-Encrypted: i=1; AJvYcCU05yhmkQFH3gVcwoQvx5JH7JEWs9yXxWwrpu2LPFxcWSGwMckFYkLCRylBGvEu/o94LZE6wN1DpPdDUww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVcIrj6QSAg7+iy8ikY95W7S6C8iwU4i4M0wUMpTPb0LP0FoFa
-	gBZAKTTL8OyuV+pUlrdA1ekQMRBr4StR7UfTOgNtP5TcIW/HsxM1GBz+rcHJ3iZWJAc=
-X-Gm-Gg: ASbGncuOmBEevPdhA1smGg+qLjRsq96suXpk4DhnCXbRTOG8f1jwH0KGn+EumSYpOIb
-	JLULJEiSOczTPzj2YCm23DxSf0rgofmaGk686e0jxZuED6yjVOgnnpMm7clYYKp9clOilCLFSWC
-	eoaNKuIN90+s1FBdhYWDEgclsUYTMlbfCx0yjRR7milYCFyBxmdddyGn2Gl1qGaIv8gzFS+Y6SF
-	5vQ83W77ENNb3DLDvfelFkftlEgLp9FeeDkT3yTLmv/Xtu0lOsptvqch0AOrthVuC3N0O5nygGj
-	ZYvm++I3e+qi+bRH0m06Z35srsbT2FzfW+4em4woRGJzwoSga3TM4t07SarGvPbHRd03e2OEwTt
-	NJwzbd+eZUPy7ZGj//Ynr6ikW1GzFw3U1trrgXklu+/dE0RxyDpOMnbd+/73LlgABwjcKzfDc6T
-	G28WqVJ6WeqTuR+DxGlQn4vBvevg4euh5zaHJpECyi3VChilMjpy/aeZk=
-X-Google-Smtp-Source: AGHT+IFbcw4K9ivqGLQddDZa5CrYY9iwv64S3IIlLZWbi+XRwqAEU+75TumzHzlJ4CnXK9gTK1CTaA==
-X-Received: by 2002:a5d:5f42:0:b0:429:bca4:6b44 with SMTP id ffacd0b85a97d-42b2dc1f4e9mr6741662f8f.13.1762775812360;
-        Mon, 10 Nov 2025 03:56:52 -0800 (PST)
-Received: from ?IPV6:2a05:6e02:1041:c10:2b20:d700:6e9c:533c? ([2a05:6e02:1041:c10:2b20:d700:6e9c:533c])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-42ac679c5dcsm24735244f8f.44.2025.11.10.03.56.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 03:56:51 -0800 (PST)
-Message-ID: <d36f89d7-2d18-4c24-840c-243d4fa10de0@linaro.org>
-Date: Mon, 10 Nov 2025 12:56:50 +0100
+	 In-Reply-To:Content-Type; b=CqaElTBCbOgpzHeaMYBANpjjJ2wVJclqPVoVPS4/KAx6FqqwR18XI+BPWGKEY7hEvGtQTW3Bgm8C9o5/wHqaiqFm3QvUJwEW5xka1H5LdhNvr3SSnudllmEqSXjUMmIobO2kvYxSlYPin4dgORK/O9c9LSIKh6LIDTBrHmzVolI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d4p6P2zknzYQtyD;
+	Mon, 10 Nov 2025 19:56:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 6CFA91A018C;
+	Mon, 10 Nov 2025 19:56:54 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP2 (Coremail) with SMTP id Syh0CgD3VHsC0xFpdVoLAQ--.11444S3;
+	Mon, 10 Nov 2025 19:56:52 +0800 (CST)
+Message-ID: <ae9fde4f-eaf3-b5a2-4fea-8d83cad42ae4@huaweicloud.com>
+Date: Mon, 10 Nov 2025 19:56:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: thermal: r9a09g047-tsu: Document
- RZ/V2H TSU
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>,
- john.madieu.xa@bp.renesas.com, rafael@kernel.org, rui.zhang@intel.com,
- lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20251020143107.13974-1-ovidiu.panait.rb@renesas.com>
- <20251020143107.13974-3-ovidiu.panait.rb@renesas.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20251020143107.13974-3-ovidiu.panait.rb@renesas.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v2 03/11] md/raid1,raid10: return actual write status in
+ narrow_write_error
+To: yukuai@fnnas.com, linan666@huaweicloud.com, song@kernel.org,
+ neil@brown.name, namhyung@gmail.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, xni@redhat.com,
+ k@mgml.me, yangerkun@huawei.com, yi.zhang@huawei.com
+References: <20251106115935.2148714-1-linan666@huaweicloud.com>
+ <20251106115935.2148714-4-linan666@huaweicloud.com>
+ <63857ce2-0521-4f38-b3d4-d95c8eafc175@fnnas.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <63857ce2-0521-4f38-b3d4-d95c8eafc175@fnnas.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgD3VHsC0xFpdVoLAQ--.11444S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ary3ur43Gry3Zw17CFW5GFg_yoW8uw45p3
+	yqgF9IyFyDWry5u3WDXFy5WFyFy397KFW2yr4xJwnxur9Yyr93GF40qryYgFykur9xKa10
+	qr4qgrZxuF1jyFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
+	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
+	vtAUUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On 10/20/25 16:31, Ovidiu Panait wrote:
-> The Renesas RZ/V2H SoC includes a Thermal Sensor Unit (TSU) block designed
-> to measure the junction temperature. The device provides real-time
-> temperature measurements for thermal management, utilizing two dedicated
-> channels for temperature sensing.
+
+
+在 2025/11/8 18:07, Yu Kuai 写道:
+> Hi,
 > 
-> The Renesas RZ/V2H SoC is using the same TSU IP found on the RZ/G3E SoC,
-> the only difference being that it has two channels instead of one.
+> 在 2025/11/6 19:59, linan666@huaweicloud.com 写道:
+>> From: Li Nan <linan122@huawei.com>
+>>
+>> narrow_write_error() currently returns true when setting badblocks fails.
+>> Instead, return actual status of all retried writes, succeeding only when
+>> all retried writes complete successfully. This gives upper layers accurate
+>> information about write outcomes.
+>>
+>> When setting badblocks fails, mark the device as faulty and return at once.
+>> No need to continue processing remaining sections in such cases.
+>>
+>> Signed-off-by: Li Nan <linan122@huawei.com>
+>> ---
+>>    drivers/md/raid1.c  | 17 +++++++++--------
+>>    drivers/md/raid10.c | 15 +++++++++------
+>>    2 files changed, 18 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>> index e65d104cb9c5..090fe8f71224 100644
+>> --- a/drivers/md/raid1.c
+>> +++ b/drivers/md/raid1.c
+>> @@ -2541,11 +2541,15 @@ static bool narrow_write_error(struct r1bio *r1_bio, int i)
+>>    		bio_trim(wbio, sector - r1_bio->sector, sectors);
+>>    		wbio->bi_iter.bi_sector += rdev->data_offset;
+>>    
+>> -		if (submit_bio_wait(wbio) < 0)
+>> +		if (submit_bio_wait(wbio)) {
+>>    			/* failure! */
+>> -			ok = rdev_set_badblocks(rdev, sector,
+>> -						sectors, 0)
+>> -				&& ok;
+>> +			ok = false;
+>> +			if (!rdev_set_badblocks(rdev, sector, sectors, 0)) {
+>> +				md_error(mddev, rdev);
+>> +				bio_put(wbio);
+>> +				break;
+>> +			}
+>> +		}
+>>    
+>>    		bio_put(wbio);
+>>    		sect_to_write -= sectors;
+>> @@ -2596,10 +2600,7 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
+>>    			 * errors.
+>>    			 */
+>>    			fail = true;
+>> -			if (!narrow_write_error(r1_bio, m))
+>> -				md_error(conf->mddev,
+>> -					 conf->mirrors[m].rdev);
+>> -				/* an I/O failed, we can't clear the bitmap */
+>> +			narrow_write_error(r1_bio, m);
 > 
-> Add new compatible string "renesas,r9a09g057-tsu" for RZ/V2H and use
-> "renesas,r9a09g047-tsu" as a fallback compatible to indicate hardware
-> compatibility with the RZ/G3E implementation.
+> Now that return value is not used, you can make this helper void.
 > 
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> Thanks,
+> Kuai
+> 
 
-Applied patch 2/3
+Hi, Kuai
 
-Thanks
-
+In v1, I changed return type of narrow_write_error() to void.
+But a better return value will help Akagi's fix:
+https://lore.kernel.org/all/8136b746-50c9-51eb-483b-f2661e86d3eb@huaweicloud.com/
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Thanks,
+Nan
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
