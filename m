@@ -1,212 +1,132 @@
-Return-Path: <linux-kernel+bounces-893134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA0DC46976
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:28:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 306AEC46988
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:30:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21A824EA9F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:28:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E286F4EABA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DEB30B533;
-	Mon, 10 Nov 2025 12:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88CE30BB95;
+	Mon, 10 Nov 2025 12:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MvnMhZxl";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ctfAxeNS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vojs3Ny7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273E92FE585
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9F42FE585;
+	Mon, 10 Nov 2025 12:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762777720; cv=none; b=l15+ukijpIsDX+GAywoJ82S1kgWakBnViVdShcNKPw6lPt6kmvvQNknZ1YRag30wboK/YgPoobMT2ON1zHOjdUnrXVVDPNt0Y2cs4wPxprXMKxMaS9HKuD/qFNaK175jnRE7HrEMGmi0zh2Cwan3fTvjjDvFJYtFqwvse2tfr3U=
+	t=1762777786; cv=none; b=bd60k5uwBmRF3qNf2q2tuH5jPb0iVo9TEABDPaerQQCMsBD4dzXMTZv+NKXVmh0j+ZYPnqUBqF/SjSOYXqzhhSHQ4G6YsducrGC8EBoOnY6vE/dKTyrExI18/xbJp0P3lLnwJBGC94miImfazq/Bag7BeRBUWH4c0b4H2rkzn/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762777720; c=relaxed/simple;
-	bh=wvQv8x5QLsGOu8cOE9WdXI12O/iTMNRil3FtOPEraWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cfzI2lNvGzw2CMTHT7e8sw0ASBuvwCvESBq3KfrRvy849iqz7WmHtUswIY1sE7im8hn5HsaQU/WVFqvzWL6iOWZ4NA4S7k9lRVT9FD8+TB8a0fQv0kS3Lq2HZAeKeH04l+qWW733KfuVWoKDiFes7g6qdoGb4975JfH3dQpTDpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MvnMhZxl; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ctfAxeNS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AA6SLvi2407322
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:28:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xvC5tylk1sHK0qkeaSY7kYE/
-	Js6EfOGyj+3jgzqwPC8=; b=MvnMhZxl/iW4KuAs8Wm7Gw8jAuvAb8KfulrNlYNg
-	EScblnQuteuG8Mra9hOdYcdbij+rPGyoUgdeWje1mgROtnvIS8haMsfs/IIOeofj
-	3OtdieslBjRPqjtWo14eD8P6TMFhdWtbNd/dqoIpNzkRnBr1c0T+vOkK6oYuP/go
-	hxUzbPEAKu5DoWc9l3WEkYoqAPjHidipz7IWNAhEQU2KvIZQhzJ5JWYI2YvSJyfM
-	lmDYkHh8oOr0OiDS6ELrzOlRLKgpMxWtrVCGG4InRuCseYx8Tx/rdNxl0TkeFHg3
-	M3whPPYegtzsIw8C6LYu+p865PVPDaqjGAQv7bu/Ht0B9w==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abatd93e4-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:28:38 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-297b35951b7so52194835ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:28:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762777718; x=1763382518; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xvC5tylk1sHK0qkeaSY7kYE/Js6EfOGyj+3jgzqwPC8=;
-        b=ctfAxeNSfmkiP4URySTKfJJn5s4+45vFK6O3wA6TDYuyycuXZQtinC3e4TaCS/IKkn
-         E9wh7B4+bddFgD/rxn7rRVKBQnav7X55FFUlXvZAQ2fN5njdTb1l2lOs4EmkAnbhYXYr
-         qsu5bccrlUh+SxPuDalHPI2LPBxDcbzxr8iaesOwqnmuP/MAiXSAcYulLXvSUd7NZ9p+
-         +A7v0YV9oHcLR4GmjgytQG8qA8QqjyRtzNjmSNe1WK1WZeii9uwjm7fpsr1jgnaDmPqx
-         iChXXnXfH/YF+oe5LQQzlvNYbNg70BClomzUz3WRX33DQKfJLvlrrq5DOLBbxZjxfWHA
-         NTSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762777718; x=1763382518;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xvC5tylk1sHK0qkeaSY7kYE/Js6EfOGyj+3jgzqwPC8=;
-        b=jmR1HD8HkiZCJzYrdfiZWche+M06yUPonkQ7D7506WahaHkK+DsaPUntwNoUht3yde
-         wYB+LyrE0v9TxR5iGcn8YmF/IGVyb6gFWJ67Oqp5x10muBBiNII+tDFMpSfWdeXPLzES
-         CbG7AEhLIp/hkSQ1FwfJYykfsWhERy3IhSPr4HjUER/eKWw3XVPeZ1tgVelRadYo36Yt
-         F5e4I+eG2PPyl7hbc+8tOKrME9VxPuQOKp0zNMgX6s7CXuiJNuBZi1vYObb5Ll7IxIra
-         +4c/aFRz2XQ6h/p4ezkvIWSQHTseFQn/WTbUfHUYAmuKTZLY9Xe0qJaqNya/doF3oSr2
-         mR6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUUZk4CqQZjR648rleNn9eTo5XIa/95og5/edszKxPghUIyMdh50eFHqRTBv0EEKRKDELX4njPsbo7YQVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxrnbe0O6cTLk2Irv4wLKKFpeKZpOjMyMOsmUkgSHwksa2kVegN
-	b9qsbvNgUVk2pcdk6mWS1ZceO5d26RroixwQLiyat4KS8/gbCVRQWK8+UPE5X43VFwVy44YGA2F
-	bPKMhhbId0mQ7kBP/ERW5Srug6HPWzU80Mpd9kMcCpCm81GoyCJ6gzWef7PkIgbQWJK0=
-X-Gm-Gg: ASbGncujd+2EmLTVlipvZDVZ5ZIxdhq4z6XLg8lfPH7Noy9pxy42boKHp4pYzuG4yb9
-	2KNg2fR5lZg4GaZLShIiWlV/oJbW6A1TzcY5S9X9WVMSh01GScJvTQAK4bPOMxngOxtWk9Grc26
-	kJWhQDMvuQa9Ml/xdsIpnxjTF2M1WLsn0SITISIZ9MltPpBqNzUND6OVDXYrwtb0XupAlpf0zna
-	4dzPx6aqVOpIRi/Fn6A4Utc59/F9EeHJYyIGNIhqXyuaVTd9r1sWO9T4fV1eDu5DpG3BYbaaZkQ
-	YKQ0zjL2lhgUYWRlqbvYcj4SB4Ur0K48WROkXf9ntwPOT40Lp8ygvMKlPQf7o/w+QRIKk1cTwmH
-	odBVFIwKGDLpSVJj6vhm73/OLpQ==
-X-Received: by 2002:a17:903:2c03:b0:296:5ea8:ed7c with SMTP id d9443c01a7336-297e562e81emr111981415ad.17.1762777717524;
-        Mon, 10 Nov 2025 04:28:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGwNP3fxkUJGLqN8FHuaSG3OfyFaMMBHENbvYTPgP0pEg/sV6ty2vZFcY/LvfBaaJEc8EM4Tg==
-X-Received: by 2002:a17:903:2c03:b0:296:5ea8:ed7c with SMTP id d9443c01a7336-297e562e81emr111980905ad.17.1762777716858;
-        Mon, 10 Nov 2025 04:28:36 -0800 (PST)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c93cebsm144992255ad.90.2025.11.10.04.28.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 04:28:36 -0800 (PST)
-Date: Mon, 10 Nov 2025 17:58:24 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Moritz Fischer <moritz.fischer@ettus.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andre Draszik <andre.draszik@linaro.org>,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Xin Liu <xin.liu@oss.qualcomm.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Elliot Berman <elliot.berman@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v17 09/12] arm64: dts: qcom: qcs6490-rb3gen2: Add PSCI
- SYSTEM_RESET2 types
-Message-ID: <20251110122824.5je5jfoanivl6xrh@hu-mojha-hyd.qualcomm.com>
-References: <20251109-arm-psci-system_reset2-vendor-reboots-v17-0-46e085bca4cc@oss.qualcomm.com>
- <20251109-arm-psci-system_reset2-vendor-reboots-v17-9-46e085bca4cc@oss.qualcomm.com>
+	s=arc-20240116; t=1762777786; c=relaxed/simple;
+	bh=CHqHQvKuqRvxJRHlw0G9YM2cvk8+dDccmko+WcI99KA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=ppM1OBJDbmTsEuOtQEURYcw4fAq0lVQiQO5SEDk7Dxke2h7/2GQn3GQwh1tJGBEcBOxOQ+3QTmc7h6wSCW+FmgquG8B3ISHLhvtp2VYAaLvcq3lEhuL8/tHaH+3z49mII3MiATS+fht15br6iemUwsU6CAZ1PnwZRCFvn/CwIZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vojs3Ny7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384CFC16AAE;
+	Mon, 10 Nov 2025 12:29:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762777785;
+	bh=CHqHQvKuqRvxJRHlw0G9YM2cvk8+dDccmko+WcI99KA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Vojs3Ny7+r1bvs7xTzB+Em17tnHg4ejqwiAsKUBRNYBKq2ESJ8HM7869IXkyne2Ic
+	 kQYYlyBmu1zFWRa+XAKfg+syhhn8K7Ke/Aot2v11KTSHp0E+iUNBkh4cD9IDovyqLm
+	 I3qy+942BJ+DIqcDZ5xo75PyknQcArDRNJRFGjwoGZrHJkkyzGqNWYn6yS5v1Sfu+F
+	 T3edgQ6vZ1QXPQogA+ippFN1frbOwGnby77b3KjRDBEAT/mjKLLSmsiCAn4JPUwmez
+	 yfrUUnoHWOXIgAiE4QYBaHHoDbQ7usE/VbAQ4+F+cBaKnNnNbymnEDKXE29apneaw/
+	 xxSWFOH6NdReg==
+Date: Mon, 10 Nov 2025 06:29:43 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251109-arm-psci-system_reset2-vendor-reboots-v17-9-46e085bca4cc@oss.qualcomm.com>
-X-Proofpoint-GUID: vT1B1bfkjikCcQqfpaikj35e7BMB1jqd
-X-Authority-Analysis: v=2.4 cv=eZowvrEH c=1 sm=1 tr=0 ts=6911da76 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=vzLQbmpfVAQOsT_rZiMA:9
- a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: vT1B1bfkjikCcQqfpaikj35e7BMB1jqd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDEwOSBTYWx0ZWRfX8F/YfT4TZvnh
- kvKZDbLdSwt6dRyhBnEAAJJJur31sqBkZM5Kgjy5fnNbJLMf4qDpgrzx5wK5VQ2YUHYXdXVakzh
- iX5ESlkZx8U9B93wLZECcdERIjIX6tqaHXXSaiuKnv4sf8rK2JV3aSLBJLkc61ZA4CtBaBUs2YN
- UjowC3esJEhRCvXrGAmX6mGbofQHLBk+UL199hPjhopWo44zojFGOiE+DvSiM/0nIBhy2OkCdh7
- XCZJJWvr8qbaBQUuB4NTiPC4Z+Gb4ZmbFUVeuNhvCkZ4WkV01u3mu7GIzm2EGnkVDvYGNHi4jt2
- Qzbn1fI7aR3P1OaS7ZhutbYaWWw+oC1xGRlbTZiXqXseFd7fOhuaZTWjHrijRpTFQiXH/vH1h9U
- v58z7GiZtAcgcfl87rQX9s9Ze1t/fQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_05,2025-11-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0
- clxscore=1015 malwarescore=0 priorityscore=1501 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511100109
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, netdev@vger.kernel.org, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ taoren@meta.com, Po-Yu Chuang <ratbert@faraday-tech.com>, 
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-aspeed@lists.ozlabs.org
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+In-Reply-To: <20251110-rgmii_delay_2600-v4-1-5cad32c766f7@aspeedtech.com>
+References: <20251110-rgmii_delay_2600-v4-0-5cad32c766f7@aspeedtech.com>
+ <20251110-rgmii_delay_2600-v4-1-5cad32c766f7@aspeedtech.com>
+Message-Id: <176277778351.3693581.6347765163045847296.robh@kernel.org>
+Subject: Re: [PATCH net-next v4 1/4] dt-bindings: net: ftgmac100: Add delay
+ properties for AST2600
 
-On Sun, Nov 09, 2025 at 08:07:22PM +0530, Shivendra Pratap wrote:
-> From: Elliot Berman <elliot.berman@oss.qualcomm.com>
+
+On Mon, 10 Nov 2025 19:09:25 +0800, Jacky Chou wrote:
+> The AST2600 contains two dies, each with its own MAC, and these MACs
+> require different delay configurations.
+> Previously, these delay values were configured during the bootloader
+> stage rather than in the driver. This change introduces the use of the
+> standard properties defined in ethernet-controller.yaml to configure
+> the delay values directly in the driver.
 > 
-> Add support for SYSTEM_RESET2 vendor-specific resets in
-> qcs6490-rb3gen2 as reboot-modes.  Describe the resets:
-> "bootloader" will cause device to reboot and stop in the
-> bootloader's fastboot mode. "edl" will cause device to reboot
-> into "emergency download mode", which permits loading images via
-> the Firehose protocol.
+> Add the new property, "aspeed,rgmii-delay-ps", to specify per step of
+> RGMII delay in different MACs. And for Aspeed platform, the total steps
+> of RGMII delay configuraion is 32 steps, so the total delay is
+> "apseed,rgmii-delay-ps' * 32.
+> Default delay values are declared so that tx-internal-delay-ps and
+> rx-internal-delay-ps become optional. If these properties are not present,
+> the driver will use the default values instead.
+> Add conditional schema constraints for Aspeed AST2600 MAC controllers:
+> - For MAC0/1, aspeed,rgmii-delay-ps property is 45 ps
+> - For MAC2/3, aspeed,rgmii-delay-ps property is 250 ps
+> - Both require the "aspeed,scu" and "aspeed,rgmii-delay-ps" properties.
+> Other compatible values remain unrestricted.
 > 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Elliot Berman <elliot.berman@oss.qualcomm.com>
-> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
 > ---
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> index 721a26d49ccaeb1429e2cc1c3a5c8d9517da3be6..cebdedd5d614b9efb6dfbee91dd67f3c3e322a38 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> @@ -935,6 +935,13 @@ &pon_resin {
->  	status = "okay";
->  };
->  
-> +&psci {
-> +	reboot-mode {
-> +		mode-bootloader = <0x10001 0x2>;
-> +		mode-edl = <0 0x1>;
-> +	};
-> +};
-> +
-
-Make sense for this as it leverages sc7280 and adding it there would not
-have made sense.
-
-Acked-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-
->  &qup_uart7_cts {
->  	/*
->  	 * Configure a bias-bus-hold on CTS to lower power
-> 
-> -- 
-> 2.34.1
+>  .../devicetree/bindings/net/faraday,ftgmac100.yaml | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
 > 
 
--- 
--Mukesh Ojha
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml: properties:aspeed,rgmii-delay-ps: 'anyOf' conditional failed, one must be fixed:
+	'maxItems' is a required property
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'type' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	Additional properties are not allowed ('type' was unexpected)
+		hint: Arrays must be described with a combination of minItems/maxItems/items
+	'type' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
+	from schema $id: http://devicetree.org/meta-schemas/cell.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml: properties:aspeed,rgmii-delay-ps:type: 'integer' is not one of ['boolean', 'object']
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251110-rgmii_delay_2600-v4-1-5cad32c766f7@aspeedtech.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
