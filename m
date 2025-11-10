@@ -1,169 +1,163 @@
-Return-Path: <linux-kernel+bounces-892440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E89EC451A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:38:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CC0C451B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:39:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 288383B15A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:38:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5EFA4E7D08
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12523238C2F;
-	Mon, 10 Nov 2025 06:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1B12E92B4;
+	Mon, 10 Nov 2025 06:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="l7eRzVtp";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hOjeE5dF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ePRcT3vf"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59682E6CA4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FF82E8B95
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762756699; cv=none; b=mJbmSmB2DdH5k9/4rjduPEOxCvssfJaBuAY9JKD2i66dmAkFtSUAVGNT7XhzkQZ4H2kxy3Qb9utFhZTHZKx+IWjyoXzcuWwR+x77BQZxKl3oaRsFJJErEvZdQSCOwedSP8M0SchjI3I8Mg8Jlz2MbRJIhop0gsjYXHzPhLFgTeY=
+	t=1762756723; cv=none; b=ZgA11EJFEhKcWqnJrX1gbK2u0+r8yR70DW733wJmudO6GUPNgT/SOWqNjK9ACaLThxRakLeby3xfGslFfhmoyP8P5d0Z9A6uPOenHpAB5DKHDAQsqP72m1B0Pi77E1ostEnNNeLLQTvN5NkwXRm213dGSi0LYvgie669KihHseI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762756699; c=relaxed/simple;
-	bh=q3JNVrxXbb+AXhPvJ9Bpegf2+j2OtGhx+/LfN31RE2k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jcEP3DNog5UAm34SBBHywnzKslrDsDoOQJ+RLC/nku7sUTMmWobBaslsoycltyjmo9ltv/WllJPDJcWwUvEC1AhOW4Jea/Ters5/gYmU2R6xCSvaIwHV5uNS1igBSzpnG7GDs/EaZiT+HESB+PBtehues9lOjZ+PmmcFRanLkFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=l7eRzVtp; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hOjeE5dF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AA0XBtt1808874
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:38:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=AH4fOfUq2O4PEbyuB9Tb1ekT9XBUf1NjKPE
-	/rCkAa+g=; b=l7eRzVtpMJ1IcwyHnm1Ofstsa1RumQPAU7z3DEGFEESuys+oT+J
-	fEBJN/2gpik0ffoih0m1UXL54ssIrVh8N9U/L1WbnaQ1JwLwt4a0tfufBcJ6FdrB
-	eVT8vwRJGfWMzRVxduWI0LW+xAzLzOQnQ4bKp8V5OxvS1x7tkL89QuanohUsyiEi
-	RvSGxuu5m54Ijxw5i/sMFs7RvIOKWCxwovDyI4/Tj1Mna3dFjd+03eB9s3UUukAW
-	WIrgp1AcZ6TTtF97mvHNMBJpz4241Cadbz3wkPT2yJoN0MAxVVOMgvWc1hwI72t/
-	QgJPlI7wq3ui+cp4taUN7ti2MBiL/TRaZVg==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ab5m1gr5e-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:38:10 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b62e5979d4fso150358a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 22:38:10 -0800 (PST)
+	s=arc-20240116; t=1762756723; c=relaxed/simple;
+	bh=GS5S/kAL5cB0dyezw9Y2bdHtxdBpYhgJJzuBS8KofsY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H8NS4x6e/7Dl3E6ygGQ4lBDC19e3UMG7yX4UPutOROgvE62iNoH6KW8rx14Sv8YG0J/jctYEbffGIIj20bcSUxo9TkMv8yHmKYZ6wvDDYV6PdAjDBru+RLISXiABaqdJbxRPzNahDYlqkPHaE+Urwi10MVbGYHccRrM3LDkzksA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ePRcT3vf; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso20126095e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 22:38:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762756690; x=1763361490; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AH4fOfUq2O4PEbyuB9Tb1ekT9XBUf1NjKPE/rCkAa+g=;
-        b=hOjeE5dFLJNhiyWEIGR3tE6NMvXSCrQ86YTprOwKdj9cGa9ac2DWckM0gHGjOBPzQ8
-         BZQpO4QWppfsxd27AuEfaoQmvWXv9NxZZ0F9xaW4W7V2hxhkuAwovTH6BjsxUPo2Z8qa
-         T85AoDaOe1PT0fuZyaDrkmZDTQfSW5QBhOKLQL3nAltK9gC+3/xg7jSyIrf1e1jRjBJf
-         S705BcHb8Abd871OdS18B7h13s8fIXJBLntCUZAeVeVSP27jGYfRdjBP4y9OP6xfpaqs
-         OB+dYupIIWoI0Dc4/XeMarhTRyQBXwH8bIREmn6br2HszZ/7ExHWrgoUEzFa4K/G5NpJ
-         gC3A==
+        d=linaro.org; s=google; t=1762756720; x=1763361520; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7kSQR2mHljVM9pPmspMiUraHJjkPCCeKTaNFeu9c9xc=;
+        b=ePRcT3vf4E4fMrTbGe3pLH2BI5yhJi0W39PxZwwc/PJZCIbsHgkVYVQcJDvUAx+YP/
+         yF4NNhjUU24pomxpVgN4IeJuSOxpRYg1PJTn19POZN2wdw+ATxlZeTWCXoaPZiYyulGQ
+         WGBOrF8Pf5asQgsTM9fnp9OnmDOzhn+7bk9nCqkYKsHzzEdWcvzTufMsYQ4wWsUZyU+A
+         pSykHuMCbRITFegkCAWms7BS9QredTLjkcBoI8oVbacmz1zNixe+0ycwdENhD3sv4LeI
+         vsFEcPDdr8w3DXpEmc5atjZekOrdNlTpAbl66v1Ri6w+l1xyfKHJdHjglg1CR3DpMLcz
+         zA0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762756690; x=1763361490;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AH4fOfUq2O4PEbyuB9Tb1ekT9XBUf1NjKPE/rCkAa+g=;
-        b=lVKtvi62XYpzEBf3HlzviDDNkQ15kD7QIVkJpVzNggCl69yanF7yiDcYgzcjcYwswA
-         GQwBJG0yM/Qps+LxL9UtbpuBnZK/i3mLqhFrCJpDBZ80aajjww17KSDIiQUZjLg9BJ9s
-         k/3RaT2UC8oWeAEmBfo41nLBnex7J9n+KTthC7XW+0Co5q+2KwuzbypqnctFOizJnL9C
-         U3OBSfmEbW+/67OdZAdj4wP+93BdCWRSTvbsM+u9+A/UoQFHfT1nU4921J1TremPqh66
-         gidzSTGB/x7sQBxS23j0yDilSekeTb0wg3LKcuCXBGaLs4UxXIFIQrbiBjVSF3sJhEV9
-         dkrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUv4/kdHmNUPDWc8NoI7gAlicR5XED0nelswPU0nmFYxGdyzZEzNDzyoBNSRse0s7YygTS0DW3G5UE1Bis=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaRjAkc6USl9mkfPak9PXvDClIeF3RzvNhBNXu8uwrB8vcr06D
-	P7M2bVCmSvMHPfUanU/zWDZ8sL6c3iD0AoTb6jvhOejQ+2XMaZAKffRW0UDPE2z6RIO2Z9/1eHM
-	kceDzq1nukX5vcnzl+sZCjcIKT4kBprNBKbtrboUbbpBLgwwMQIM64J0vZhdnGbjnpw==
-X-Gm-Gg: ASbGncuQFjWVEcq7yesf0+tslXHyBvK/LgAZO7YimedTsBSCT2uEfIKHLBI4jKsMRAN
-	6UYQt5bTcs/zJ2rZRF74PxDcQG1RN4LjGEOglYSxRlS8pj8SluF+fCqnSquOWvge9O+dhpioWPM
-	E1UKEr5GdEx7bcuEPoBD0t0iorxNbRr3M9ZtvyMW7VfjzM7c1zkvLZbRV05/EQ9g4PXQ1jXHHuZ
-	R9uvi0SLVUCBxXr267Wqaqy5BkESsKNEl6G7G8Oh3Bp0pMHAbt3eUx2RgsLt4vJUaSnIBReHytF
-	53exawEVrstb8cRl1MkQbkxFJceezPCVadjcGjtR/d7toByazHQ/pcrzt3OaGRr8FvszB87v3TY
-	zffGIwbvHvRRuKtQQSyw+yG3PvOwlQw==
-X-Received: by 2002:a05:6a20:729d:b0:353:946f:fd62 with SMTP id adf61e73a8af0-353a2f44127mr4884754637.3.1762756690149;
-        Sun, 09 Nov 2025 22:38:10 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFC/4Nsj2pQuLupI3eM2rkx7A3zoslP1yulMykcuUQ5KUIQsaeg/izh0mL76mVc/tBPGwubaw==
-X-Received: by 2002:a05:6a20:729d:b0:353:946f:fd62 with SMTP id adf61e73a8af0-353a2f44127mr4884734637.3.1762756689720;
-        Sun, 09 Nov 2025 22:38:09 -0800 (PST)
-Received: from hu-sartgarg-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-baa3c2d92a9sm10729797a12.20.2025.11.09.22.38.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 22:38:09 -0800 (PST)
-From: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_nguyenb@quicinc.com,
-        quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
-        quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
-        quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com,
-        Sarthak Garg <sarthak.garg@oss.qualcomm.com>
-Subject: [PATCH V1] mmc: sdhci-msm: Avoid early clock doubling during HS400 transition
-Date: Mon, 10 Nov 2025 12:08:01 +0530
-Message-Id: <20251110063801.641866-1-sarthak.garg@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1762756720; x=1763361520;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7kSQR2mHljVM9pPmspMiUraHJjkPCCeKTaNFeu9c9xc=;
+        b=PHFui8oCRnIg+37UvkSXw6Jqo32mj9Orkwes2oRGwfDGRvvrlVc5CfvH7ReegQYlts
+         I2OdZbZ8/sjmIYEP7gvyisAWEKwqnMGGRsKvoSvzTQZHwJi3FlCrPnH/rHxgRajHaEe/
+         wA76QV+YKsEKWWrregcPVps/jDdO40hIzFqyZhoZXa6MpYMYfp7Z0oOy8ioLJAxWZOrf
+         BEfz25b24bavV7NousAmBnras0IfrQCYQEaeS1hBtsRaoAW3ls9S8TpTUC1ax/qeneoa
+         apybczM3TbNCzSkq5ntD4nRWtPP7Kll5WJQt610WjGL6/3gipGs23NhHGnd3NKFa5NOo
+         jGOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJAPR5Ch1wCC4XNmzdQldfA/YjZRS1SHGAQz3db1otzd2hgAbqek4azVaohbDSXksInXhxQgGTv2d5qoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSOBJooCZIj3AUQANc29WsB/sYJxFUiuq4P1WVbVBUSqiH79hz
+	6vs7MX1f3g4Xr3BdwwroRwyTNwUm38z2Adtj7+HQk5veJs4ynDIuiJHVNHxKoF+TV/I=
+X-Gm-Gg: ASbGncu8vQmBfmWQ/n6sC8OM/UTV+N06rKE9qv4TpypACRJoIY5GKrU2cJiwgyqjj0Q
+	a9jq4iuSgskUw7Yl42hy3p6b2pKjIer3efXUhwVqfWvE7wd9lMoHto4nHfPeWwms2oTYaTtugmM
+	dWR/aDbZ+07ESEnLQUUsARx9zmI4Fmo3unqKvPSBvciAWCr8ULUVxwFt2IMArDYHPsWogSfVWSV
+	izYAJSVxee3f9Nr0ejtHx+8wAkbDukz4IqkkcbMGzEEcgxaPy3TBlNE71A/TyrlX/YeW6lh6Nsz
+	d47vH8zFmXbP/JKxURZWTPVyb63pwqh+2MiPs5/wLyzdSa8OoCdcpVHrH8MFi4i0h0Atu6+dkDr
+	dqbL28Hy5NrtrAfuwHkykpKOZtUWKdsmQbirf7+6VccmjO7ZCsqvRjrvvDM/p1kn1ZHRvSAWevd
+	Ws9KiqlKBcXERbUCQ2
+X-Google-Smtp-Source: AGHT+IFMcnA9pYYlnbLP/XD39suwrsBDerGX9hKDXL4+G1Ps4KoXb3zZoLCORFMf9T8PgOyp+I/FKQ==
+X-Received: by 2002:a05:6000:3107:b0:427:914:7468 with SMTP id ffacd0b85a97d-42b2dc1e528mr6060266f8f.15.1762756719387;
+        Sun, 09 Nov 2025 22:38:39 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac67920fcsm20181653f8f.39.2025.11.09.22.38.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Nov 2025 22:38:38 -0800 (PST)
+Message-ID: <4479a34b-58b3-45aa-9d2e-5e2a64f61e9d@linaro.org>
+Date: Mon, 10 Nov 2025 08:38:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDA1NiBTYWx0ZWRfXy+La2CKZVdUP
- SbG9YvmPoSdaa+45agbzJGtyJqE6KTFmS/6g00EWN57fGh0ngTY7Oqqf4KZJigCgA3JtNEBLIFW
- 4RCSESfsG+ioybXTeQG+rLMq4crrSMF4kBIvNR2aM30hSs0d9jiwkMCXQI7wK7plYAEffPWBqok
- qwJ4JOl6RXnsPcM8vumFp2vF2S2RtDJAgkpDF732yMl6xxnbs/EWjPlh/eeu4K2bC8FU5h5gL4J
- GkCxTdp0TshHcuYklZYtUFUGMDs+Nmx5hBDXtUAJByFyK8p9WxRmwbCnRRA092/SPvMlbCILu/R
- tBCnpjeLiMP0X4xXOKzKbTWl0EEh4sVxU42uZ/7ydfmBdvhvnPYZoXhJ2zaMynvWrj31UtpHAa0
- ZJSkdhIdl5vaQ0/8xXE9yBVP6uMFHg==
-X-Authority-Analysis: v=2.4 cv=TsXrRTXh c=1 sm=1 tr=0 ts=69118852 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=hZQ1MXfSydDMrBGxCwYA:9 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-ORIG-GUID: fnklCaxh_7LUJ1GOFspG0dV73_I_MVdN
-X-Proofpoint-GUID: fnklCaxh_7LUJ1GOFspG0dV73_I_MVdN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 spamscore=0
- malwarescore=0 impostorscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511100056
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] mtd: spi-nor: micron-st: add die erase for
+ mt35xu512aba
+To: Haibo Chen <haibo.chen@nxp.com>, Pratyush Yadav <pratyush@kernel.org>,
+ Michael Walle <mwalle@kernel.org>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev
+References: <20251110-nor-v1-0-cde50c81db05@nxp.com>
+ <20251110-nor-v1-2-cde50c81db05@nxp.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20251110-nor-v1-2-cde50c81db05@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-According to the hardware programming guide, the clock frequency must
-remain below 52MHz during the transition to HS400 mode.
 
-However,in the current implementation, the timing is set to HS400 (a
-DDR mode) before adjusting the clock. This causes the clock to double
-prematurely to 104MHz during the transition phase, violating the
-specification and potentially resulting in CRC errors or CMD timeouts.
 
-This change ensures that clock doubling is avoided during intermediate
-transitions and is applied only when the card requires a 200MHz clock
-for HS400 operation.
+On 11/10/25 6:02 AM, Haibo Chen wrote:
+> mt35xu512aba do not support chip erase command, and it contains one
+> die, and only support die erase.
 
-Signed-off-by: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
----
- drivers/mmc/host/sdhci-msm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+does this need a fixes tag then? With that:
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>> 
+> Unfortunately the die erase opcode does not have a 4-byte opcode,
+> here forced to enter in the 4 byte address mode in order to benefit
+> of the die erase.
+> 
+> Link: https://datasheet.octopart.com/MT35XU02GCBA1G12-0AAT-Micron-datasheet-138896808.pdf
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+> ---
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 4e5edbf2fc9b..eca6a09a4547 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -355,7 +355,8 @@ static unsigned int msm_get_clock_mult_for_bus_mode(struct sdhci_host *host)
- 	 */
- 	if (ios.timing == MMC_TIMING_UHS_DDR50 ||
- 	    ios.timing == MMC_TIMING_MMC_DDR52 ||
--	    ios.timing == MMC_TIMING_MMC_HS400 ||
-+	    (ios.timing == MMC_TIMING_MMC_HS400 &&
-+	    ios.clock == MMC_HS200_MAX_DTR) ||
- 	    host->flags & SDHCI_HS400_TUNING)
- 		return 2;
- 	return 1;
--- 
-2.34.1
+Also, would you please help us with SFDP dumps, as you did in the next patches?
+It helps ups keep a database and update flashes to get rid of the non SFDP data.
+
+Thanks!
+
+>  drivers/mtd/spi-nor/micron-st.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/drivers/mtd/spi-nor/micron-st.c b/drivers/mtd/spi-nor/micron-st.c
+> index 92eb14ca76c57f29ece1edb3fe652c56d1c2888f..89cd146095584ddebdd258a186f6398b420e5800 100644
+> --- a/drivers/mtd/spi-nor/micron-st.c
+> +++ b/drivers/mtd/spi-nor/micron-st.c
+> @@ -159,6 +159,22 @@ static int micron_st_nor_two_die_late_init(struct spi_nor *nor)
+>  	return spi_nor_set_4byte_addr_mode(nor, true);
+>  }
+>  
+> +static int micron_st_nor_one_die_late_init(struct spi_nor *nor)
+> +{
+> +	struct spi_nor_flash_parameter *params = nor->params;
+> +
+> +	params->die_erase_opcode = SPINOR_OP_MT_DIE_ERASE;
+> +	params->n_dice = 1;
+> +
+> +	/*
+> +	 * Unfortunately the die erase opcode does not have a 4-byte opcode
+> +	 * correspondent for these flashes. The SFDP 4BAIT table fails to
+> +	 * consider the die erase too. We're forced to enter in the 4 byte
+> +	 * address mode in order to benefit of the die erase.
+> +	 */
+> +	return spi_nor_set_4byte_addr_mode(nor, true);
+> +}
+> +
+>  static void mt35xu512aba_default_init(struct spi_nor *nor)
+>  {
+>  	nor->params->set_octal_dtr = micron_st_nor_set_octal_dtr;
+> @@ -189,6 +205,7 @@ static int mt35xu512aba_post_sfdp_fixup(struct spi_nor *nor)
+>  static const struct spi_nor_fixups mt35xu512aba_fixups = {
+>  	.default_init = mt35xu512aba_default_init,
+>  	.post_sfdp = mt35xu512aba_post_sfdp_fixup,
+> +	.late_init = micron_st_nor_one_die_late_init,
+>  };
+>  
+>  static const struct flash_info micron_nor_parts[] = {
+> 
 
 
