@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-892457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193DDC45222
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:54:36 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC457C45228
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 075D64E80D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:54:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 98110346A55
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4222E9733;
-	Mon, 10 Nov 2025 06:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Br9zEjbq"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD382E8E14;
+	Mon, 10 Nov 2025 06:55:17 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D652E8B95
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E11414A60C;
+	Mon, 10 Nov 2025 06:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762757670; cv=none; b=f1ccUFIhUtMFPR+AeIfL3/IdhwaNhWBPPQbQXkH8LcofD5UV+0Uxve07dh8UAIYGI3WyysBrIeR61x+xTqbtZzh9jrv3Hh5CEq94PVi5pzhRdmlkfyRDESfXFK1E2qnn1PMJj2oSUq5dkIHkERE471ryP1EB4gNZ3LBD8+7VLfI=
+	t=1762757716; cv=none; b=FL/fXZjr+PreKEDJjDiQdONO8XpEW71z9Eh0geAhuscBNSG8JzM5zO6hLNJ94oRqQxSTFgdTNkQXduWRy/cKFB4Lh054mj44Q8PTsFHT1MDaqaMpuUbSNwYBodrIwR+z+a2n7aWswqIEFYpsmnlx/xj/9xRj2QgmTmcXULQggNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762757670; c=relaxed/simple;
-	bh=U27FR47vvI/+sK8vvk3aBB/np16WyOGQoW5cBKa4vNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TjwwimwNbVpgDcdPVtIIfHIBzQyAI4Ff0cLvomKX1ge0VApOz9p5Lap6yp0IhlNivTX+urEq8/Noix8mPw8YhxyER3QC4B5IjP1U468U3b6KH/6xM3+1DmkmI4UsJnotaawXQ9d1k7QEZf6SOX1yLCaTgIpwRiaXOvwCL5kdhjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Br9zEjbq; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-42b32a5494dso465033f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 22:54:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762757667; x=1763362467; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U27FR47vvI/+sK8vvk3aBB/np16WyOGQoW5cBKa4vNk=;
-        b=Br9zEjbqG1VIXlTjsll9fsBldskDLAfNTuV9+BN4Ca7+rWfLJnxMPdqRYYoqX7aUld
-         NihjEnrIk33vgYwHLVan4cBbh6YfThM+ToKjZB+HHhR6+l6XW9JmQtcIEYxlzNmA8Rci
-         1QwQMgbvIE5GTs3iBPJ22QryrygoB2ZZcNYgKp8Hfc+0naI0PhCOdkBq3Hsvfi16qtH3
-         MQjnBZa87Be3wg5tHSGbgwCq3rNt5ycRf/w6mxRcbhQ1oH5nnceIh83GdvQn093ZA2nH
-         DsGEUHVKcK4QDVdWNagUX6d8EF1psPQUDATNQjRcCwgP3DkB84gHT5M+yT2z9qlU1MyE
-         wdHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762757667; x=1763362467;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U27FR47vvI/+sK8vvk3aBB/np16WyOGQoW5cBKa4vNk=;
-        b=qCNA0VdEJrvnWSrjj8+w6lrd6b5e9YMnW5aW86r5TNmrgfpaIGDsZs7UniYfXIcplU
-         l1iLYhO+FjLFuJThnOm8DX+GafUFxwxzs1q64Smx7k9Ja2P39NLQ9mkKnn0XFmN6ZFiM
-         X42YPjxe7IeUeyD9zzVqg2JsflfUBaNY2EvbTeL59VV89++FZmCNbsDdDnVpGpK0RB77
-         lHbXt/g0UnaXMsVsErluFGaQhrSK4wPnq8e3JYFVDltfLJBuB9cyTB7m/5jsWuRa6gLa
-         +7OWYi9Ye4hClN67wXW56Y/UEa6QRO6bYvgiNcReMFd0/a3vIlxjig+EHrxWhTONV98n
-         UbjA==
-X-Forwarded-Encrypted: i=1; AJvYcCU99Fa6T1jAPQrmljxMqTzglmNQ5B2EPy8JdmjAxpLODtwx/JufnaLPX1TE+A6GsUQmDFFRG5ZxAhSh1+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydTmkPykfb2P43qqXCQMGWJQs7yjC3ALBY0ZqqaokbpyRE6Y4v
-	MSA7rTzORZ3NK5Esh4GzupeOmptFfk1HgRpQM+12o5QM3qChxRvWcp0k/BeHjgB/Lz0=
-X-Gm-Gg: ASbGncvK/2OKZkcKX2wKb/HuHYv3CrILDD8qoO0nCqu0nzjOOaeRDiA/LnHaH9V9Ca0
-	0n9EhmbSHGBCgJ7JJGDe/+ogOLqUF4/T7o9avTQpqXwr7MyOgpDhmpBgb4Qh/CaUt0MbGD7OQy+
-	T4PXHk67BDpn2aEUoyGWnWGHK4GWBNTioHN4Ys85fj1pQ/v08ojNwezzQCYvfK/nxwoR5XPkftB
-	Yv8lvj6Nzov+BPPp6nmXIKZlJDHnuhbLY04ekcsOn0Xp4fIxPqh/8kdhuKj9AoGVBTHGuXzjL+H
-	M6p7pe0qvFoaIS/CgekjCs0HpATAkqhcM6uu+4t/iTxvDrDp9AP7ci1Jz0uRX6ALz2bDRAZpoAv
-	1Kr7EStVK4LQw0UhuGt1PSWp5f7NqvzhN/0QrfkPtDIQKx26Y6N5Oq3xe2RwuVVa/1p2+S51QqQ
-	ugT7hgq5b1polpokB/
-X-Google-Smtp-Source: AGHT+IG87FW8xkI+HPhFc3NsIT1cI0tR3t1R9dpEVJouEeUSbLV2nxEXO/MYUxjy/6jIyUp7TqvHtw==
-X-Received: by 2002:a05:6000:2a0c:b0:42b:3ee9:4772 with SMTP id ffacd0b85a97d-42b3ee96373mr151631f8f.52.1762757667400;
-        Sun, 09 Nov 2025 22:54:27 -0800 (PST)
-Received: from [10.11.12.107] ([5.12.85.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac677ab75sm19848370f8f.35.2025.11.09.22.54.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Nov 2025 22:54:26 -0800 (PST)
-Message-ID: <c67466c0-c133-4fac-82d5-b412693f9d30@linaro.org>
-Date: Mon, 10 Nov 2025 08:54:24 +0200
+	s=arc-20240116; t=1762757716; c=relaxed/simple;
+	bh=vl24YyeTi1eeULzWrbNkRM3cgOR7pIDchtUMwWFoL0U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=btIC1jlmdtHf5sElfQ4ZI+5q7zLS/D2gwtLRWoSvVWzSDIcTalW1EB5c0mN4OxMOdXAp2akKLiWEh2QC92I9kFGCAwTN8/XIxLy7reYCGd8NWU8KUp2NAvDOMoOPdRQYrOOOJWBWVNhulNZCbwbuK8caGTXOiHFql4TCAdwFmdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowABH19kxjBFpPGk0AA--.10014S2;
+	Mon, 10 Nov 2025 14:54:42 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: jiajie.ho@starfivetech.com,
+	william.qiu@starfivetech.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] crypto: starfive: Correctly handle return of sg_nents_for_len
+Date: Mon, 10 Nov 2025 14:54:38 +0800
+Message-ID: <20251110065438.898-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] Hello,
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <STLin2@winbond.com>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Sean Anderson <sean.anderson@linux.dev>
-References: <20251105-winbond-v6-18-rc1-spi-nor-v1-0-42cc9fb46e1b@bootlin.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251105-winbond-v6-18-rc1-spi-nor-v1-0-42cc9fb46e1b@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABH19kxjBFpPGk0AA--.10014S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF4kWw1kKF4DAryxAw1fWFg_yoW8Ww1UpF
+	4YyFZYyrW5Jw17CF95JrnYkr1rJ3sakr12gFW0g34ayr15Xa4kZ34fCrW0qFnrAFZ7Gw18
+	KFZF9w15AFs8ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUBVbkUUU
+	UU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgoCA2kRRWaDEAABsE
 
-Hi, Miquel,
+The return value of sg_nents_for_len was assigned to an unsigned long
+in starfive_hash_digest, causing negative error codes to be converted
+to large positive integers.
 
-On 11/5/25 7:26 PM, Miquel Raynal wrote:
-> Here is a series adding support for 6 Winbond SPI NOR chips. Describing
-> these chips is needed otherwise the block protection feature is not
-> available. Everything else looks fine otherwise.
+Add error checking for sg_nents_for_len and return immediately on
+failure to prevent potential buffer overflows.
 
-I'm glad to see this, you're an locking expert now :). Do you care to
-extend the SPI NOR testing requirements [1] with steps on how to test the
-locking? There's some testing proposed at [2], would you please check and
-review it?
+Fixes: 7883d1b28a2b ("crypto: starfive - Add hash and HMAC support")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ drivers/crypto/starfive/jh7110-hash.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Thanks!
-ta
+diff --git a/drivers/crypto/starfive/jh7110-hash.c b/drivers/crypto/starfive/jh7110-hash.c
+index 6cfe0238f615..66a8b04c0a55 100644
+--- a/drivers/crypto/starfive/jh7110-hash.c
++++ b/drivers/crypto/starfive/jh7110-hash.c
+@@ -326,6 +326,7 @@ static int starfive_hash_digest(struct ahash_request *req)
+ 	struct starfive_cryp_ctx *ctx = crypto_ahash_ctx(tfm);
+ 	struct starfive_cryp_request_ctx *rctx = ahash_request_ctx(req);
+ 	struct starfive_cryp_dev *cryp = ctx->cryp;
++	int sg_len;
+ 
+ 	memset(rctx, 0, sizeof(struct starfive_cryp_request_ctx));
+ 
+@@ -334,7 +335,10 @@ static int starfive_hash_digest(struct ahash_request *req)
+ 	rctx->in_sg = req->src;
+ 	rctx->blksize = crypto_tfm_alg_blocksize(crypto_ahash_tfm(tfm));
+ 	rctx->digsize = crypto_ahash_digestsize(tfm);
+-	rctx->in_sg_len = sg_nents_for_len(rctx->in_sg, rctx->total);
++	sg_len = sg_nents_for_len(rctx->in_sg, rctx->total);
++	if (sg_len < 0)
++		return sg_len;
++	rctx->in_sg_len = sg_len;
+ 	ctx->rctx = rctx;
+ 
+ 	return crypto_transfer_hash_request_to_engine(cryp->engine, req);
+-- 
+2.50.1.windows.1
 
-[1] https://docs.kernel.org/driver-api/mtd/spi-nor.html#minimum-testing-requirements
-[2] https://lore.kernel.org/linux-mtd/92e99a96-5582-48a5-a4f9-e9b33fcff171@linux.dev/
 
