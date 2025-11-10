@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-893262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53301C46F5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:40:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17733C46F33
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:38:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C3C6420A34
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:36:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89AC11885EE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00C0313E15;
-	Mon, 10 Nov 2025 13:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654D4314D36;
+	Mon, 10 Nov 2025 13:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WlgablEf"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NmMy3omp"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C1B31353D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F60314D2A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762781697; cv=none; b=JiKU/cND6mwOtBqiSbwZV0+Qa3+Up6ooWYcyr7ZpS6lD6LbLteCG+9jNNO7DZh90wX64qlmvc9xyk2n42ePItANmDOv+cE/7T5iL1C95WWsTxmnhlsZIN7SZkNwZmlfI0zRMKN3wFS7CQKCBJYhBDLKQ2v8pgNgqGrktsMOrYGM=
+	t=1762781717; cv=none; b=rJq7ERf/24dpKhCOODO90rf8HeVDQ252BzBt2BfPx0yFCT3Qa5QvnocqChovrLm3951SsQxSRS8znhlYgb1gM5uJm2FRCNa/t2gFUKkH6t+Q6lJJ4FaOARLjo//emG9m/FjoAVs6srk/WvhzZhoOw6jzLKmyoJHhziiTT3dEGFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762781697; c=relaxed/simple;
-	bh=hOoHELQJUct+/jjBWDM/iGci2iRQNFOKXIkYMSUGeuo=;
+	s=arc-20240116; t=1762781717; c=relaxed/simple;
+	bh=lJTzHX80gcOt+ynIbaRl5FvzwWQVyPrlRODf/k1ryGc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hjdVR2ykpWrXj1yGXw79fZ+CQKpa87we2Ltd2VkD8qgevDb2JUdVoIcY9F7hhsGO+28xK66K6/6VX/MsUIuIMSElwH1evUN2BDVQFhk0M1zx4bQg8ibW0ODkaYGJBYqavbqjSL1emy8pb9wS0XYmkMYYS93YV9QVqZZRBuJuYAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WlgablEf; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=jH9nHC8L2lBLqsykyJ4SKnv2dQ16eSf6s96yI+THvknC8igrj8xJKGa67HFKD/WXPMu2ePPl87JZ2qP6sVf+MM+hbUJ57oosu/rsvBvZ3MGUwdgee5x5eAwOygbGMGNkKme0nIMbOcDgI6DDRPLQU2oMODrKVUaGFHhpU0kbUGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NmMy3omp; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47754e6bddbso23096285e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:34:54 -0800 (PST)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-42b2ad2a58cso1052654f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:35:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762781693; x=1763386493; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762781714; x=1763386514; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hOoHELQJUct+/jjBWDM/iGci2iRQNFOKXIkYMSUGeuo=;
-        b=WlgablEf2ZxZFD/npMLOVEj4uxhJYiLDKZGJG/iBj83rnJ4g16cib1qrr2NHi7KIpD
-         kL8Qw7IZemZ/suNsJsqBhO8n7AIVB19rQ7AwpLB9mTZ3R69ToB76lYFKnM50fyxBbyno
-         RbsEI/Nqc66EBkpukv87OndMroafuYMybqhjRuSNtbf2uhcoLu44EX1ZU8GNXu7Aj5dW
-         JGnbf3OPqPGH9PicuHDLBL81x/BQLV/g803szp0ZZaqgGxe9Bl/kn7sILwf57pDEbJwT
-         TXi+Pg/JYqAAqOGEwHo9+4KBBW3L9G3OspQLjQ9INlqvEB5762GlcPXlFdQDdUU46LJf
-         EPGQ==
+        bh=lJTzHX80gcOt+ynIbaRl5FvzwWQVyPrlRODf/k1ryGc=;
+        b=NmMy3ompkpJ7M7DZcb9QIjXGen+v1jnvVkANE9ZmA5pYh/Q/flffBFWd+jFniMYMOS
+         /PToix+QODa5BRG2vc/+/RkUEKH7sHxyuURW57993Dqwl/oGfB8C+/6jlk/nNO0oA5jQ
+         l90aSscFt4Tv2OOTKLYahsafAlTMnkOWzfsYvZFrEAIoA6t0e4vKYqwxrSV0dS6vv79b
+         Ip4MuWpB1cURYR5euwiZQYAEotVDK9dSSB6xvpaSMAeRDRnmIxiAaQPcY/UBzjsTWQo7
+         cxXjjiQjomtWuairhCamQbYZIcsCQjBWVCOuFefNCECIVCW6q5KMd8OHatNfoVqWy8HV
+         3CwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762781693; x=1763386493;
+        d=1e100.net; s=20230601; t=1762781714; x=1763386514;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=hOoHELQJUct+/jjBWDM/iGci2iRQNFOKXIkYMSUGeuo=;
-        b=cixX42J+wdWE3dPx8OdTR+R+4R5Q5QuyTTv/pncoWDUDA5Qr9plT36k99zaNU9Hb5I
-         w437Z2SykqKJCeFKSH6OeIFgyaWnDdmPFVrgv+5/q04SywGvqRfkrgt2zlEkQVlLHNA8
-         og0xe3d8PJ6jNnXbXcxTHnY1YO6YoBrHCeKs6b0d5b4x02sK9TBfCg7X3sfOZnE1JBhi
-         Z6xYSf0/83JsGioLF0hPfN5d7tMnwVBoSPsgUiANdn6DEoRDmAxn7uWb9bOxsvGZR498
-         psfU0XAO43z6jje0xkcwY+gjM0dvIp1a8lxKKe0eq7n7uuNxQgm0kv1wBLiG1Ln2oP10
-         m4Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUl9+L/9WZpb1/Vw/EfMOUr7OlNR98Bu9USby/NHPc/RDmeur3nDboEWkdarrrCC+J67pqBwwkjjnObHe4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+8lrBQ44YMjwQlEOh6eyX4LGQsml8vnGQRvlZkmhlNmHQdW1q
-	Fl87i1I9QlrBsEfrDy1VQg6PJ9Sm7NGd9YXFV7BfQG0npimsjUtUOHgptH7axe7CIAMvXaQ2VuX
-	4sidQFOSt22KH4Nk1ZA==
-X-Google-Smtp-Source: AGHT+IEhcd7v1I50vLKbfj11e6ZHlmUaM3O4D8Dzo9IdUzmf1+ToowaPgG4/VPB3oFSYHqCUiGhbSA+XEU/bilA=
-X-Received: from wmoo8-n1.prod.google.com ([2002:a05:600d:108:10b0:477:55e7:9973])
+        bh=lJTzHX80gcOt+ynIbaRl5FvzwWQVyPrlRODf/k1ryGc=;
+        b=D1upCkm6iH0GFx1LMUTwvOiZ0WWJ81ZXFxL3k9xFLfLR4XQtPu6EbpcJNKvmjedwCf
+         PHsqXpXlpbjLWIpLEv6Uep7exAQJ2fRuPLGNIgV3S7niX+WVlxmmXoxGpOS6OuesTJFA
+         12/IyvM/KrsKdNayyLBkkTDE1L2YjGMC76+J5inXImxao1L4bQNaU+wtMmcdkBulEw4V
+         liNIFxieH6QNvhMx7NcQ/zZ1tCsFY/9uA4rmNN5cl1Z60x7RYvKZvD3/6mGsAK2Yh9Gy
+         8asRQe6ddnXH2/28wd+wJNW+DrmrrWnSzwCPWwMB33/wmbVikT9m2RAyFkauFw0/B3GI
+         +wEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxhOa7rQQUdEI1M95F/8wSK5o8JnTar/MGc19nOjK0OkfKVPNXKSo33j7if+PismphQTLuL0/qLPpNNJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzgnDqEiWxUO3bt2YkkyXkj2KSdn5wGTvw6imFqj6aRoJ9IjX7
+	W/CTPbsRrpqvI1WAL5fBEaex+DbSaYXzV2KTjsNUxHWDmLdgLdPrwq0xq2b+s/XAbTLq8djfscP
+	SagmORlXtOJE70lzxdQ==
+X-Google-Smtp-Source: AGHT+IGnJplCiE5BS7Zbk5yxG+qcfdSbsxfffIFOw2vKoXQs/5pM3T2FKjbg9K9S0Pk9TrgnCi+z7Nq4/0WV7WQ=
+X-Received: from wrtp8.prod.google.com ([2002:a5d:4e08:0:b0:429:c4e9:626])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1ca0:b0:477:7a63:611f with SMTP id 5b1f17b1804b1-4777a6362e2mr49082565e9.36.1762781693427;
- Mon, 10 Nov 2025 05:34:53 -0800 (PST)
-Date: Mon, 10 Nov 2025 13:34:52 +0000
-In-Reply-To: <CANiq72mGYKYZmQ8g5AbXCsRS+WPxbeaSyngR69jsEpY8akouog@mail.gmail.com>
+ 2002:a05:6000:288e:b0:3ec:db13:89e with SMTP id ffacd0b85a97d-42b2dbe331emr5614498f8f.7.1762781713969;
+ Mon, 10 Nov 2025 05:35:13 -0800 (PST)
+Date: Mon, 10 Nov 2025 13:35:12 +0000
+In-Reply-To: <CANiq72nkjWbtEktSU_TrEfY2Agy7FK0-OLBWPLqTvp_p-CkBUg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251110095025.1475896-1-ojeda@kernel.org> <20251110095025.1475896-10-ojeda@kernel.org>
- <aRHOnGyLx-bEVqcY@google.com> <20251110131049.18e2f5c9@eugeo> <CANiq72mGYKYZmQ8g5AbXCsRS+WPxbeaSyngR69jsEpY8akouog@mail.gmail.com>
-Message-ID: <aRHp_MadSjnYwHdy@google.com>
-Subject: Re: [PATCH 09/18] rust: proc-macro2: enable support in kbuild
+References: <20251110095025.1475896-1-ojeda@kernel.org> <20251110095025.1475896-14-ojeda@kernel.org>
+ <aRHQA6FEoxACerIQ@google.com> <20251110131326.309545df@eugeo> <CANiq72nkjWbtEktSU_TrEfY2Agy7FK0-OLBWPLqTvp_p-CkBUg@mail.gmail.com>
+Message-ID: <aRHqEPN-aCI5YkIr@google.com>
+Subject: Re: [PATCH 13/18] rust: quote: enable support in kbuild
 From: Alice Ryhl <aliceryhl@google.com>
 To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 Cc: Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, 
@@ -90,28 +90,19 @@ Cc: Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>,
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2025 at 02:28:06PM +0100, Miguel Ojeda wrote:
-> On Mon, Nov 10, 2025 at 2:10=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote=
+On Mon, Nov 10, 2025 at 02:22:53PM +0100, Miguel Ojeda wrote:
+> On Mon, Nov 10, 2025 at 2:13=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote=
 :
 > >
-> > So I think the implementation here is sensible. I believe Miguel's
-> > patch is also pretty much replicating the logic in proc-macro2's
-> > build.rs.
+> > This is to be able to skip over edition flags for `quote` when building
+> > the rusttestlib?
 >=20
-> Exactly, I was essentially following what upstream does for stable compil=
-ers.
+> Yes, it is needed to support skipping the flags, which isn't needed
+> until this patch.
 >=20
-> (More generally, even if a feature may work, if upstream doesn't
-> usually test "older nightlies", then I wonder if we should enable such
-> combinations/setups anyway, unless we need them for a particular
-> reason).
+> It can be done earlier separately since it doesn't hurt -- a simpler
+> option is just to mention it here in the log.
 
-If these features change the public API exposed by proc-macro2, then it
-seems better to always disable it to prevent situations where you
-accidentally wrote code that does not work on our minimum rustc version.
-
-(Of course, this is a polyfill and no API is changed, then that's a
-different situation and then this LGTM.)
-
-Alice
+With that mentioned:
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
