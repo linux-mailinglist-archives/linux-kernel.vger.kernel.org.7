@@ -1,114 +1,153 @@
-Return-Path: <linux-kernel+bounces-893987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C1CC490D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:31:18 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5CD5C48FFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 285713B216F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:25:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9235234AFCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC88A333444;
-	Mon, 10 Nov 2025 19:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50959331A72;
+	Mon, 10 Nov 2025 19:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LrNdybCn"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpqC+x8V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA6C33290C;
-	Mon, 10 Nov 2025 19:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E578186294;
+	Mon, 10 Nov 2025 19:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762802674; cv=none; b=p1Z0lJ6UgN5SHusw8PmFHnFkeXMC5a7xJfcGOWf2kTUkd0yLza8neZjgzDI+X7ZlkihcO/flGX4Qea/utLyCnetDci9bAsUxdcTfGtNa5xVLzVE8l91A2sXsDaXYLSwOyuG12KJmZOomcRNhjDM5RCEtxQ2FKWUOvCt2NBR6vbo=
+	t=1762802735; cv=none; b=kC5Q46DzcjdrVP5SkUebDSWsfFsAQWKlaOEF/Oh8YkPdwzlFfccvX4NbdMM+7WPJL8OB7dr0oeJeRiMJrn4C4qdiOJCfmASGBIiPLOKfOlQOHU4IlEcfj9AbMQDllETRsKMkaWku3+k7nbuiHKOtNG36nO14wrYvxvmJJ35qoAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762802674; c=relaxed/simple;
-	bh=jekjcNBy2E4c1c0yPWqzQqES4OUUHGM0AQmpLGpOFqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t1OpVBMUhlsOfUBfLeqQUYP9MImPGv1GDglderEmk54zns2GwR+YoV4/M7HwInaIDC4P+lzQhBjnaPExveuAQ9qvo0OSssaFId5HsnoU8OoshgNTqesMyqrgm2T17dCR1rP6BWbY4oLhpRHtvmZGDVFWgfgw6BtP6+lhRkv1ugM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LrNdybCn; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=zHSN+Mh7ncyx0AYcFN5Z7T7CQcFnHal6f6bYdu4mO7U=; b=LrNdybCneDc8S5CX2nR1LifOsF
-	M/YwjpXSTZpN0JEv2FW1sgH28soA27Pwy/KrS72Fo+dZj+hhWOP3j8hOYrGNwcGcefKB3dX64jLL+
-	l0zFx5XII5TM3WAtx5ItPBrO16j6CZGwOig6CpsLwtTTOUSFvCCz/8itqVVR5DTwsEhcz5XsVYOYA
-	nnCWFuGnumYs3qADGxZI6CGpcJ2EYdjAxonN5XjWWpJrV1ksXYW5J58f1oM1NoCqkvQ9SLpik+pcU
-	zNCeRauXvZgVRW7z6JvXd1jM0FNINoA+nGLIS5GQ4HzLgVnnEOV35V/Ne2ZD74ICXjBpvdPrilMmX
-	jWzg2vjQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIXV8-000000061UF-1p4b;
-	Mon, 10 Nov 2025 19:24:30 +0000
-Message-ID: <b5c1e5ec-0081-4a26-afb2-135d9a0a14bf@infradead.org>
-Date: Mon, 10 Nov 2025 11:24:29 -0800
+	s=arc-20240116; t=1762802735; c=relaxed/simple;
+	bh=GrymXJeErTy9u70PVzPmfw43ubyTayEwBn+LiCzgBE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lwidPniZDUEpXJSoBBNCvebIm4GHk9NH1eJ42d9k2I9XHLz3Wyq18xYiRx9tAcAsh7zJos2yLxCdcdujOaqcm5lb/YjA2TxqrSn8hyyIM+d9djiN5bws++IbDF5VL4NTqKOeCkjTGVVzTVuaUloVm513OF4iS12gpfJIFGMxC1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpqC+x8V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17E9CC16AAE;
+	Mon, 10 Nov 2025 19:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762802735;
+	bh=GrymXJeErTy9u70PVzPmfw43ubyTayEwBn+LiCzgBE4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cpqC+x8V3BJ6v7fmFkIt+t3dVhDH0GKKdgDZh1nM0OX818sGDugtU8rjaIBwPdmKF
+	 QiEAvjcAlzFdMnYeBsYbJXlzbd53uuAdTpD+Si2EO8CF5/l2w6IkrAGj7h0drqhYHk
+	 zhs/qLZU8Ti3aUUAB6VDwUTDs4Yc2BpZCv3bMcgTEKKeKpHHPWiGfrGv1HUUY6bbaa
+	 8eiRsMGt3WbjCUNz2oUWjf+1KVcEWr4yHx07JgpWdX5GZ2IBw0Wn0s6pCx+ubse27h
+	 ay/YPZh79ewOXvUjiJMCAOmnLNtXfMj0c/YXq+74ER4kBPBH6xuu+hsRw8IefMlFcX
+	 kRcF6RUdPZdug==
+Date: Mon, 10 Nov 2025 19:25:25 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Xingyu Wu <xingyu.wu@starfivetech.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Maud Spierings <maudspierings@gocontroll.com>,
+	Andy Yan <andyshrk@163.com>, Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH RFC 08/13] soc: starfive: Add jh7110-vout-subsystem driver
+Message-ID: <20251110-acetone-slinky-0f8e81291371@spud>
+References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
+ <CGME20251108010504eucas1p26e8ee9aa88ab75bebd832eaea81720e9@eucas1p2.samsung.com>
+ <20251108-jh7110-clean-send-v1-8-06bf43bb76b1@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] Docs: iio: Add AD4134
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: jic23@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
- andy@kernel.org, Michael.Hennerich@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
- cosmin.tanislav@analog.com, marcelo.schmitt1@gmail.com
-References: <cover.1762777931.git.marcelo.schmitt@analog.com>
- <bbb702b6e2cad4bf79b1490c4280ce998b46827b.1762777931.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <bbb702b6e2cad4bf79b1490c4280ce998b46827b.1762777931.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d6w1nrcqngNa0tVG"
+Content-Disposition: inline
+In-Reply-To: <20251108-jh7110-clean-send-v1-8-06bf43bb76b1@samsung.com>
 
 
+--d6w1nrcqngNa0tVG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 11/10/25 4:45 AM, Marcelo Schmitt wrote:
-> diff --git a/Documentation/iio/ad4134.rst b/Documentation/iio/ad4134.rst
-> new file mode 100644
-> index 000000000000..fe20ec6f2132
-> --- /dev/null
-> +++ b/Documentation/iio/ad4134.rst
-> @@ -0,0 +1,58 @@
-> +.. SPDX-License-Identifier: GPL-2.0-only
-> +
-> +=============
-> +AD4134 driver
-> +=============
-> +
-> +Device driver for Analog Devices Inc. AD4134 and similar ADCs.
-> +
-> +Supported devices
-> +=================
-> +
-> +* `AD4134 <https://www.analog.com/AD4134>`_
-> +* `AD7134 <https://www.analog.com/AD7134>`_
-> +
-> +Wiring connections
-> +------------------
-> +
-> +AD4134 and similar ADCs can operate in a few different wiring configurations.
-> +
-> +Minimum I/O mode (SPI control mode)
-> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+On Sat, Nov 08, 2025 at 02:04:42AM +0100, Michal Wilczynski wrote:
+> Add the wrapper driver for the StarFive JH7110 VOUT subsystem.
+>=20
+> This driver is responsible for managing the shared resources for all
+> video output devices. It enables the PD_VOUT power domain, enables the
+> top-level NoC bus clock, and deasserts the main bus reset.
+>=20
+> Once these resources are active, it calls of_platform_populate() to
+> create and probe the child devices (DC8200, VOUTCRG, HDMI MFD) that
+> reside within this subsystem.
+>=20
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  MAINTAINERS                                  |   1 +
+>  drivers/soc/Kconfig                          |   1 +
+>  drivers/soc/Makefile                         |   1 +
+>  drivers/soc/starfive/Kconfig                 |  25 ++++++
+>  drivers/soc/starfive/Makefile                |   2 +
+>  drivers/soc/starfive/jh7110-vout-subsystem.c | 117 +++++++++++++++++++++=
+++++++
+>  6 files changed, 147 insertions(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 052876c6538f980f75ff64e78b6ebea460307904..74e562a6b57ac9f776c4be2d6=
+f0977c62bc03d46 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -24051,6 +24051,7 @@ F:	Documentation/devicetree/bindings/display/brid=
+ge/starfive,jh7110-inno-hdmi-co
+>  F:	Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-mfd.yaml
+>  F:	Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.y=
+aml
+>  F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-vout-s=
+ubsystem.yaml
+> +F:	drivers/soc/starfive/jh7110-vout-subsystem.c
 
-Fourth level "underlines" should be "~~~~~~~~~~~~~~~~~~~~~~"
-according to Documentation/doc-guide/sphinx.rst.
+The parent directory that you've created here for the driver (or created
+in a different patch) should probably be added to the "RISC-V MISC SOC
+SUPPORT" entry, along with the binding directory. Otherwise I'm probably
+not going to see the patches for the former (Emil maintains the
+plarform, but for $reasons I'm the one who applies patches and sends the
+PRs to Arnd). Think it used to be there, but got removed when the last
+(only?) driver was moved out.
 
-> +
-> +The minimum I/O mode wiring allows AD4134 register and data access with the
-> +conventional set of SPI bus lines. The hardware configuration settings for using
-> +AD4134 in minimum I/O mode are:
+--d6w1nrcqngNa0tVG
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-~Randy
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRI8JQAKCRB4tDGHoIJi
+0iL7AQCiyLJiCSE3NKVn/dTVaRDq4/xjTR7nxORX6exO8YKwTAD/f4qo7cSk4n8+
+BG25eAfUyQihtYUjB8FnpYKCw2j6mQ8=
+=kAFU
+-----END PGP SIGNATURE-----
+
+--d6w1nrcqngNa0tVG--
 
