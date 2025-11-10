@@ -1,169 +1,146 @@
-Return-Path: <linux-kernel+bounces-893460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E18C47782
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:17:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88CF9C477F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190F518929B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:14:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37AB13BACB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852DC329C5F;
-	Mon, 10 Nov 2025 15:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA96C315D3C;
+	Mon, 10 Nov 2025 15:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d+3I4qJu"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QfqhNo2/"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA9B329C43
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F76A1A7AE3
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787398; cv=none; b=S7PMrl1BwMrYQQlYQCCQ1U2WXitNaZJKOkn72blPGQ6cvomM4pKHjyN3+0Rt4g2Y6pRTePQpw6pKwvTJVOkT2wBwwzX+VPQBCMLrk7oxeOoPtZcJV42pPD+AGK9VQY9+kCE52wzIVa4CB2xjbqxop6zqqLb9VGJxHIPcF9NfQmE=
+	t=1762787481; cv=none; b=Mt7iG8pKaM4M+JuU/Y2P1JiDN7G1g1yCE7VkMi1pxYpRa8AKYtbp/fmmWr5VKbhzxmyKNOvL7+EXKNAfSd6tfgluBkTM0v5RdflYiSSt/l85vAqA42qH7PvsFN/p/v9Xo/hPi84tIY4NnG51R7PaoV+ev/gViUWKh2sETIcQ7Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787398; c=relaxed/simple;
-	bh=Rj9G8IFEjlzisLHEn/O9WORrl+0cZLi6zlkht4lv9Mg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HgDaQvGLGdf+cLBA+Qb/WSK5PG28eNQccIYe9roYfgbxayFZW5JR9Kx1zUNsauNRpgKIaCO3yRZU7YPiWSLM6Nd+rYDvU4OdtvNdb0G4/hc2tR3ACEwOllwCKkM+EBVhf8l4ojOoJzPyJfc0PAjhezrN9r1+cw6tCu9juyN3CzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d+3I4qJu; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-78665368a5cso28871097b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:09:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762787395; x=1763392195; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KbWyUnaltl9mde3lXFQpujvquSvJb+LnnWGVBKXm7v0=;
-        b=d+3I4qJuPpBCju+7Ga5lk1Mav2ICwuVB+UMEIssiIsD+SOCMAESN+JpjQQ1AxUi2Xc
-         H2viDCx6fMXUb8WGaKsUzHqto4/S9yMLpR1VKWWjEw6bbyxbe9W1P7s0vipwzk1ua291
-         Q8y+i1mxx1Y4bHuphNYNtUfDZ9SqbIaZjGw/gAWWQAd3Cl3ioLoLfwhNun8u08ZYGQjN
-         iJelm/oXPQGDUYw8K4wy8jjayaKlNzJmQ6r95H75BjIV6yxaiV42iPTqvd/pdhQ5Ujpc
-         qRIK+SYlVLkKPVFC1UCWUmh0neq+3x7gm36OE6SO3wJKCIiAgXwZReX6xNhgfNj6p7If
-         /0vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762787395; x=1763392195;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KbWyUnaltl9mde3lXFQpujvquSvJb+LnnWGVBKXm7v0=;
-        b=IvlBexCBVH3GcLthNtQyVtdd/cMvZO09OaaZinaSDiXsohuK6NWbBK81OKH12H5BrF
-         D8aylOHQamoZf/Zxkk8c6cps+PxaBmkcKXTHuDz2p+9DLN/wgMn+ZsU2V6dw+nqYEE65
-         XxRFrW0u1csO2F+c8EVJIHYmx68BzCq30+OJqwuhbxkKfgit4ZlqD6KGqM8M5miAUvCO
-         Vi3TMAw7xpIYPbQGdb2KIeStpRUZ/sqkIHCvzKvo4IoXtlDqsmd7bcSl63XnREsPgk2B
-         zuK4G+krpnCpTp1D1OCp+bxlTSMQoxUsgDit5bx/+Pqvcn8I9dexEY0a+nAbQ5IvXZWK
-         2JNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzvDoPAzauasRzcefF08r42Byguc2SG59eeQbS0Y27eeTJGyO/waj5TwaEDivEzP0QtRwYKygXeLhJJdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4EC6fs3W8hf2aOdhbjvC9t+Gnfp4IPDO2RnfC1P6t9vUxOFFv
-	LkR09s4gL61raDuiojpVQTp7HjnhBNMxsmWxf4TOfHOxkJhUkJc80cHM
-X-Gm-Gg: ASbGnct0RXkHdoUPvAC7OiKy++Gk7h8zw102ulGvK9pKk6zIoIvCI/s4i4Y8KSzi9ia
-	heFkDJbkINSXeouR0I/18vhJPIuw7+8ar/Z2l5rvYoN4DIoX4LbJY6W/gUnSclwi8DTkbfVt4Kj
-	P0fia1Z3NTAgW/iORu270zM8OJvbMm/AkRTNc9YuOmD+/ngx8sIZAwpe/gyj3y5dHY/AkTSKLrk
-	J9JjxrKCSLwZE9wFS3G4xJDF5J6yRNAdiolXdOdur+tLbjBTnOlfUzDSZ1NKEqtirmEE3E4IZWW
-	HMFhNotz4p5aUUdDedWPBRLgqV/nXdweSa2wGMX5n+1jLrvmwebIbJqlCQWqPBGGjETesAfjTAu
-	UZcCqNqYes1a7+QeIagEOovZAG27dZxyuyLWMQnuzkSfhW62YnLb14mrAbC8aInoPK38P2MWxQ/
-	BH8/OjuPiS1hgJMs/Njz766X/ZD7L5n9as
-X-Google-Smtp-Source: AGHT+IFrAjrniG9BqJ1S9xPDXhNH4sZLvzscceoEFbHM4PmfHq9Xxx41lhZiVBUQ/FUix83x+tNDww==
-X-Received: by 2002:a05:690e:d47:b0:640:e6aa:b2bf with SMTP id 956f58d0204a3-640e6aab4e1mr3921691d50.43.1762787395046;
-        Mon, 10 Nov 2025 07:09:55 -0800 (PST)
-Received: from localhost (c-73-105-0-253.hsd1.fl.comcast.net. [73.105.0.253])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787d69ba646sm23716177b3.30.2025.11.10.07.09.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 07:09:54 -0800 (PST)
-Date: Mon, 10 Nov 2025 10:09:53 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Tamir Duberstein <tamird@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] rust: bitmap: add MAX_LEN and NO_ALLOC_MAX_LEN
- constants
-Message-ID: <aRIAQVjLiM1UKzXT@yury>
-References: <20251110-binder-bitmap-v4-0-5ed8a7fab1b9@google.com>
- <20251110-binder-bitmap-v4-1-5ed8a7fab1b9@google.com>
- <CAJ-ks9kvMQ9tUMZyM07jRr8O+pJ6RRvCZodenB==tzDChhHT=A@mail.gmail.com>
- <aRH0oRU5JXKpAKpB@google.com>
- <aRH-ScufjvGYPx5W@yury>
+	s=arc-20240116; t=1762787481; c=relaxed/simple;
+	bh=FPlXeQmlbpUeuFc/ceY/IQijGNTe8SceVdpRkBYmgd0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hRXstDSyK2qJiBloBvyq7fJ4MLTOXEtXhmVpC/C/U//HSxom6SniKi7jIj4Op+RWlTYJmym7YQinwW/SSLhssMx2CsPeCdnRFwXzIRiPDNZhmpaDXg6VjGa2n5c//KgVD7Zg7UA0eK6rcuJTVKsv8iBvCDFqIJFcXZm1Gq25Fcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QfqhNo2/; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id E87B1C108F0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:10:55 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 61D74606F5;
+	Mon, 10 Nov 2025 15:11:17 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12B06103718D6;
+	Mon, 10 Nov 2025 16:11:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762787476; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=wJUr/0EUzjfCaK+KSuA5yM/imTi7pw3eemoaLfp6LKk=;
+	b=QfqhNo2/G3HQxs/W7N3+/hwen5dY46GEKIU3Wnc8Iksx6Avkh9be9p7gLH9zzDmSM7tH/a
+	AaYhmj/U0WQC/e2VYQkRUX49MQAZYzFbJS85OeTIkwSzXSRRJmHL5b6XaOORgjJfBZKdXQ
+	UuHG0qnKFnyDT9chCkvfSd5i1hod3ks1hDygZy1RSkHSsdJuqSNCIR94z+tG5X0MaAA8nw
+	GzI5FvThdAjWFBBpJis8C23MPtRd+I+3VdcGWmVmGulP5QGJu/qSyydRhvqiPbNb94VhbU
+	dJQmLalY5exmCVEcdro31ZxgAr643zB/oYCOuFIzYMJKMyR3DA6BPIZt5KI9OA==
+Message-ID: <5ea31c61-7bf5-441c-a7c1-e346039d03d2@bootlin.com>
+Date: Mon, 10 Nov 2025 16:11:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aRH-ScufjvGYPx5W@yury>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/2] firmware: ti_sci: handle IRQ restore in
+ BOARDCFG_MANAGED mode during resume
+To: Nishanth Menon <nm@ti.com>
+Cc: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>, richard.genoud@bootlin.com,
+ Udit Kumar <u-kumar1@ti.com>, Prasanth Mantena <p-mantena@ti.com>,
+ Abhash Kumar <a-kumar2@ti.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251017-ti-sci-jacinto-s2r-restore-irq-v1-0-34d4339d247a@bootlin.com>
+ <20251017-ti-sci-jacinto-s2r-restore-irq-v1-2-34d4339d247a@bootlin.com>
+ <20251107115457.i6tkt466bp62mwp2@whiff>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <20251107115457.i6tkt466bp62mwp2@whiff>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Nov 10, 2025 at 10:01:32AM -0500, Yury Norov wrote:
-> On Mon, Nov 10, 2025 at 02:20:17PM +0000, Alice Ryhl wrote:
-> > On Mon, Nov 10, 2025 at 08:59:36AM -0500, Tamir Duberstein wrote:
-> > > On Mon, Nov 10, 2025 at 8:06 AM Alice Ryhl <aliceryhl@google.com> wrote:
-> > > >
-> > > > To avoid hard-coding these values in drivers, define constants for them
-> > > > that drivers can reference.
-> > > >
-> > > > Acked-by: Danilo Krummrich <dakr@kernel.org>
-> > > > Reviewed-by: Burak Emir <bqe@google.com>
-> > > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > > > ---
-> > > >  rust/kernel/bitmap.rs | 16 +++++++++++-----
-> > > >  1 file changed, 11 insertions(+), 5 deletions(-)
-> > > >
-> > > > diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
-> > > > index aa8fc7bf06fc99865ae755d8694e4bec3dc8e7f0..15fa23b45054b9272415fcc000e3e3b52c74d7c1 100644
-> > > > --- a/rust/kernel/bitmap.rs
-> > > > +++ b/rust/kernel/bitmap.rs
-> > > > @@ -149,14 +149,14 @@ macro_rules! bitmap_assert_return {
-> > > >  ///
-> > > >  /// # Invariants
-> > > >  ///
-> > > > -/// * `nbits` is `<= i32::MAX` and never changes.
-> > > > +/// * `nbits` is `<= MAX_LEN`.
-> > > >  /// * if `nbits <= bindings::BITS_PER_LONG`, then `repr` is a `usize`.
-> > > 
-> > > Should this and other references to bindings::BITS_PER_LONG be
-> > > `NO_ALLOC_MAX_LEN` instead?
-> > 
-> > Ah yeah it probably makes sense to update this in a bunch of places.
-> 
-> Yes, please. 
-> 
-> NO_ALLOC sounds a bit weird in exported API. Maybe NBITS_INPLACE
-> or similar?
+Hello Nishanth,
 
-You add a 'new_inline()' constructor in this series, so this parameter
-should be LEN_INLINE or NBITS_INLINE, like that.
- 
-> Also, at this point we're really close to:
+On 11/7/25 12:54 PM, Nishanth Menon wrote:
+> On 16:44-20251017, Thomas Richard (TI.com) wrote:
+>> In BOARDCFG_MANAGED mode, the firmware cannot restore IRQs during
+>> resume. This responsibility is delegated to the ti_sci driver,
+>> which maintains an internal list of all requested IRQs. This list
+>> is updated on each set/free operation, and all IRQs are restored
+>> during the resume_noirq() phase.
 > 
->    pub const NBITS_INPLACE: usize = CONFIG_NBITS_INPLACE;
+> Couple of drive by comments:
 > 
->    union BitmapRepr {
->        bitmap: [usize, BITS_TO_LONGS(NBITS_INPLACE)]
->        ptr: NonNull<usize>,
->    }
+> clarify why is this not handled by ia / ir driver?
+
+A patch was sent to handle this in intr driver [1], but the feedback
+was: this shall be done in ti_sci driver [2].
+
+And now I have an other argument:
+
+I'm actually working on having functional PCIe after a suspend-resume on
+J784s4. And I noticed that set_parent (sci-clk driver) shall be restored
+during resume. Restoring irqs and set_parent clk config is only needed
+on Jacinto platforms. The sci-clk and inta/intr driver don't know if we
+are running on a Jacinto platform or not. The ti_sci have the
+information so it can take the decision to restore irqs and set_parent
+configs.
+
+[1] https://lore.kernel.org/all/20220607061912.12222-1-a-govindraju@ti.com/
+[2] https://lore.kernel.org/all/87r0l96f0e.wl-maz@kernel.org/
+
 > 
-> That would be a very useful addition for some particular scenarios,
-> I believe. Even if you don't want to make it configurable, let's
-> keep this option in mind?
+>>
+>> Signed-off-by: Thomas Richard (TI.com) <thomas.richard@bootlin.com>
+>> ---
+>>  drivers/firmware/ti_sci.c | 143 +++++++++++++++++++++++++++++++++++++++++++---
+>>  1 file changed, 135 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+>> index f9f1a67e8e66b0a4048fae04ce31be54ca5cba7a..a211f8805dd21c7675b8cefd61929ecfda8e0f7f 100644
+>> --- a/drivers/firmware/ti_sci.c
+>> +++ b/drivers/firmware/ti_sci.c
+>> @@ -87,6 +87,16 @@ struct ti_sci_desc {
+>>  	int max_msg_size;
+> [...]
+>> +
+>> +	irq_desc.valid_params = valid_params;
+>> +	irq_desc.src_id = src_id;
+>> +	irq_desc.src_index = src_index;
+>> +	irq_desc.dst_id = dst_id;
+>> +	irq_desc.dst_host_irq = dst_host_irq;
+>> +	irq_desc.ia_id = ia_id;
+>> +	irq_desc.vint = vint;
+>> +	irq_desc.global_event = global_event;
+>> +	irq_desc.vint_status_bit = vint_status_bit;
+>> +	irq_desc.secondary_host = s_host;
+>> +
+>> +	list_for_each(this, &info->irqs.list) {
 > 
-> Thanks,
-> Yury
+> list_for_each_entry_safe ?
+> 
+> How big is this list on a j784s4 class device? is it worth creating a
+> irq_desc_hash and using a hlist a better option?
+
+I did the test with arm64 defconfig on j784s4 and the list has 43 elements.
+I'll look at the hlist.
+
+Best Regards,
+Thomas
 
