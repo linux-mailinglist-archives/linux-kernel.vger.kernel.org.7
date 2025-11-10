@@ -1,302 +1,149 @@
-Return-Path: <linux-kernel+bounces-892953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 789EFC4633C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:19:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEABFC46315
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:18:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F76A3B0DD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:18:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA4E84EA1D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAFA309EE0;
-	Mon, 10 Nov 2025 11:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127C730B52F;
+	Mon, 10 Nov 2025 11:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FC4kTTES"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XVmxM9s2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A755242D60;
-	Mon, 10 Nov 2025 11:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0ED030AACE;
+	Mon, 10 Nov 2025 11:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762773481; cv=none; b=s9JqK5O26FnNBKd6Toz2L4DvJ/MxwYVKoRWdFCJA1WGtOzlsBkkZXSEbOVOXLHS4jlGdZeyBxgy+P2lkoXJEdBLtCYZe8RqA9G/AzmwdaZTKSiRBDuo4CivQ3AeS5b+BC99W7IN8ySzSwC6VHed6675by0TZy0gLgfGLjuOkNVM=
+	t=1762773485; cv=none; b=oo4JdF2RlU6hnVBqWkLBcW0UdBGjh67udB0G5oaTSVC9Ddnc3D9hCmoG7XWgXTdLXPVtQ1ZdSjxzwBaGNRFDFESf2SMUdy/kSDiSruOknKLZ6irFJ4KBGeOta4niNxIVnW5kna6reTOCXbhKEMIcDZKid3rzLEa8/nrerIbu4ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762773481; c=relaxed/simple;
-	bh=NIAAx4JunbkrPcpYLtzJRP0ejun2IKiSU8XUZ9l2/Eg=;
+	s=arc-20240116; t=1762773485; c=relaxed/simple;
+	bh=yTNk15ujPUZN4tCu3ROJSJZtUjZoH00ykxCOtBE7gmA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rZIEjbhYLBpy9KfnfGndL5bEqc8RbPMHj0nw52r04opy7jGQ+0pQ/x8mUT3XP/aWCGo1DEmaQLNQnia8tCMjyMQ+y5OmAN1VAzDLGTVQgTcB0GVvQHm/baayS3/Sbkzci68WJwZcFnBa7Oe7migJHxWdnTF6ZS1xBOIvScA3eL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FC4kTTES; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9DDC4AF09;
-	Mon, 10 Nov 2025 11:17:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762773480;
-	bh=NIAAx4JunbkrPcpYLtzJRP0ejun2IKiSU8XUZ9l2/Eg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FC4kTTES4inuLVRkpM9Knzu/Vo8ICIwXu8gJws08E2DEeIakmSJ9OLrucvNnKu+d/
-	 TEcsvUnsBQ8KoT4hJXsNteTaYKAMXCZAihELXRm90w35gav+O+H1fUQyvAH6/DW/0T
-	 PdvhHwjK8TIwS1wnav0U2mv8Y4ZZv3Ehj7yq5emuOIDd3bvdzmM68MMIAMcixvtmTX
-	 JNaeJfLt3XW0QSwSByZHq62hgT3q4Vfj24bUJcL6RzEiRQBhJF+wReRfrxKCTZnV5l
-	 glUfYUzgQyFF0SNc5seTGv5pbzpohUBP1I/QKih+p0rh1hUkHfOxJv4BPFJ1hBoPi/
-	 dpJN+8zU3jTZQ==
-Date: Mon, 10 Nov 2025 12:17:57 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Biju Das <biju.das.au@gmail.com>
-Subject: Re: [PATCH v24 4/4] pwm: rzg2l-gpt: Add support for gpt linking with
- poeg
-Message-ID: <mipf6ogg45h5bsdekr27sf3nfllbbylkqjiowutg5cugbyosy4@r4glajhjcorn>
-References: <20250226144531.176819-1-biju.das.jz@bp.renesas.com>
- <20250226144531.176819-5-biju.das.jz@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kA1oOCfHAXm4tgJ2uYkIKroUvOLRCaBsfIdVJCiCy+OgXunYH2XSWSeZE6S4l3SMIhAHmENSG0aYleSGnMCLME68PtxHehtdCv92pao8+S1TlF5ARGjXah86kWYzZ60ISz5qLgpJ58bv9ju7hL/ArKCxHlXvPzK8vY4y6V81e/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XVmxM9s2; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762773483; x=1794309483;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yTNk15ujPUZN4tCu3ROJSJZtUjZoH00ykxCOtBE7gmA=;
+  b=XVmxM9s2WQMB7z5mVjFMqasvzgUn9b5YKATOKGmqgx2p3/W6zUK/074K
+   iy8oAEzzi7aC8w6uU7bCrV5JbztbZ4zfNeobuqdreUfSqo2Cy10ZDdcXt
+   7FSl444YPOK3qrevtf28mSJ/OUfZDBDOpv2b6sc5qX5tF6SVnERZKJTfA
+   1tjwOC96M7TjkkcpWuMKeQYjEZ/pwiz+AZFbXPaWKw+/tWc9ZP1g9544z
+   zl1nLbq+5rTe81ZlN5wQImBvjzJG3BI1I4QecLbwGKkRTpSx05QyIANCq
+   YyQGdHnnXCyL6vE0TC4a1pYyK9Ism+XjecaIx6M9T64l43pAeL+62VIrz
+   w==;
+X-CSE-ConnectionGUID: HLp32CkSS8qjbPpwlow59A==
+X-CSE-MsgGUID: bKSDZADwTOuffJ1BQy7qgA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="82448422"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="82448422"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 03:18:03 -0800
+X-CSE-ConnectionGUID: wdIRu+1bT2e+/HoY4UdvvA==
+X-CSE-MsgGUID: NUr6m8N+Tr+XXURuyaZPTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="212045271"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 03:18:01 -0800
+Date: Mon, 10 Nov 2025 12:17:58 +0100
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: hansg@kernel.org, ilpo.jarvinen@linux.intel.com,
+	linus.walleij@linaro.org, brgl@bgdev.pl,
+	platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] platform/x86/intel: Introduce Intel Elkhart Lake
+ PSE I/O
+Message-ID: <aRHJ5gnMaWeJmQzc@black.igk.intel.com>
+References: <20251110052728.383339-1-raag.jadav@intel.com>
+ <20251110052728.383339-2-raag.jadav@intel.com>
+ <aRGTVguXqO2oNCCW@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gj6zsmmzisxrp5zc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226144531.176819-5-biju.das.jz@bp.renesas.com>
+In-Reply-To: <aRGTVguXqO2oNCCW@smile.fi.intel.com>
 
+On Mon, Nov 10, 2025 at 09:25:10AM +0200, Andy Shevchenko wrote:
+> On Mon, Nov 10, 2025 at 10:56:40AM +0530, Raag Jadav wrote:
+> > Intel Elkhart Lake Programmable Service Engine (PSE) includes two PCI
+> > devices that expose two different capabilities of GPIO and Timed I/O
+> > as a single PCI function through shared MMIO with below layout.
+> > 
+> > GPIO: 0x0000 - 0x1000
+> > TIO:  0x1000 - 0x2000
+> > 
+> > This driver enumerates the PCI parent device and creates auxiliary child
+> > devices for these capabilities. The actual functionalities are provided
+> > by their respective auxiliary drivers.
+> 
+> ...
+> 
+> > +static int ehl_pse_io_dev_add(struct pci_dev *pci, const char *name, int idx)
+> > +{
+> > +	struct auxiliary_device *aux_dev;
+> > +	struct device *dev = &pci->dev;
+> > +	struct ehl_pse_io_dev *io_dev;
+> > +	resource_size_t start, offset;
+> > +	int ret;
+> > +
+> > +	io_dev = devm_kzalloc(dev, sizeof(*io_dev), GFP_KERNEL);
+> > +	if (!io_dev)
+> > +		return -ENOMEM;
+> > +
+> > +	start = pci_resource_start(pci, 0);
+> > +	offset = EHL_PSE_IO_DEV_SIZE * idx;
+> > +
+> > +	io_dev->irq = pci_irq_vector(pci, idx);
+> > +	io_dev->mem = DEFINE_RES_MEM(start + offset, EHL_PSE_IO_DEV_SIZE);
+> > +
+> > +	aux_dev = &io_dev->aux_dev;
+> > +	aux_dev->name = name;
+> > +	aux_dev->id = (pci_domain_nr(pci->bus) << 16) | pci_dev_id(pci);
+> > +	aux_dev->dev.parent = dev;
+> > +	aux_dev->dev.release = ehl_pse_io_dev_release;
+> > +
+> > +	ret = auxiliary_device_init(aux_dev);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = auxiliary_device_add(aux_dev);
+> > +	if (ret) {
+> > +		auxiliary_device_uninit(aux_dev);
+> > +		return ret;
+> > +	}
+> 
+> Can it be now auxiliary_device_create() ?
 
---gj6zsmmzisxrp5zc
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v24 4/4] pwm: rzg2l-gpt: Add support for gpt linking with
- poeg
-MIME-Version: 1.0
+Could be. With that perhaps we won't even need the 'intel' prefix.
 
-On Wed, Feb 26, 2025 at 02:45:23PM +0000, Biju Das wrote:
-> The General PWM Timer (GPT) is capable of detecting "dead time error
-> and short-circuits between output pins" and send Output disable
-> request to poeg(Port Output Enable for GPT).
->=20
-> Add support for linking poeg group with gpt, so that
-> gpt can control the output disable function.
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v23->v24:
->  * No change.
-> v22>v23:
->  * No change
-> v21>v22:
->  * No change
-> v20->21:
->  * Dropped local variable offs for calculating RZG2L_GTINTAD channel regi=
-ster
->    and instead using the macro RZG2L_GTINTAD(ch).
-> v19->v20:
->  * No change
-> v18->v19:
->  * No change
-> v17->v18:
->  * Moved bitpos near to the user.
-> v16->v17:
->  * No change
-> v15->v16:
->  * No change.
-> v14->v15:
->  * Updated commit description by replacing "This patch add"-> "Add".
-> v3->v14:
->  * Removed the parenthesis for RZG2L_MAX_POEG_GROUPS.
->  * Renamed rzg2l_gpt_parse_properties()->rzg2l_gpt_poeg_init() as it not =
-only parse
->    the properties but also implements the needed register writes.
->  * Added acomment here about the purpose of the function rzg2l_gpt_poeg_i=
-nit()
->  * Removed magic numbers from rzg2l_gpt_poeg_init()
->  * Fixed resource leak in rzg2l_gpt_poeg_init().
->  * Moved the patch from series[1] to here
->  [1] https://lore.kernel.org/linux-renesas-soc/20221215205843.4074504-1-b=
-iju.das.jz@bp.renesas.com/T/#t
-> v2->v3:
->  * Updated commit header and description
->  * Added check for poeg group in rzg2l_gpt_parse_properties().
-> v1->v2:
->  * Replaced id->poeg-id as per poeg bindings.
-> This patch depend upon [1]
-> [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20221214=
-132232.2835828-3-biju.das.jz@bp.renesas.com/
-> ---
->  drivers/pwm/pwm-rzg2l-gpt.c | 83 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 83 insertions(+)
->=20
-> diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
-> index 2ddbb13f50aa..a551554aec77 100644
-> --- a/drivers/pwm/pwm-rzg2l-gpt.c
-> +++ b/drivers/pwm/pwm-rzg2l-gpt.c
-> @@ -39,6 +39,7 @@
->  #define RZG2L_GTCR(ch)		(0x2c + RZG2L_GET_CH_OFFS(ch))
->  #define RZG2L_GTUDDTYC(ch)	(0x30 + RZG2L_GET_CH_OFFS(ch))
->  #define RZG2L_GTIOR(ch)		(0x34 + RZG2L_GET_CH_OFFS(ch))
-> +#define RZG2L_GTINTAD(ch)	(0x38 + RZG2L_GET_CH_OFFS(ch))
->  #define RZG2L_GTBER(ch)		(0x40 + RZG2L_GET_CH_OFFS(ch))
->  #define RZG2L_GTCNT(ch)		(0x48 + RZG2L_GET_CH_OFFS(ch))
->  #define RZG2L_GTCCR(ch, sub_ch)	(0x4c + RZG2L_GET_CH_OFFS(ch) + 4 * (sub=
-_ch))
-> @@ -55,12 +56,21 @@
->  #define RZG2L_GTUDDTYC_UP_COUNTING	(RZG2L_GTUDDTYC_UP | RZG2L_GTUDDTYC_U=
-DF)
-> =20
->  #define RZG2L_GTIOR_GTIOA	GENMASK(4, 0)
-> +#define RZG2L_GTIOR_OADF	GENMASK(10, 9)
->  #define RZG2L_GTIOR_GTIOB	GENMASK(20, 16)
-> +#define RZG2L_GTIOR_OBDF	GENMASK(26, 25)
-> +
->  #define RZG2L_GTIOR_GTIOx(sub_ch)	((sub_ch) ? RZG2L_GTIOR_GTIOB : RZG2L_=
-GTIOR_GTIOA)
-> +
->  #define RZG2L_GTIOR_OAE		BIT(8)
->  #define RZG2L_GTIOR_OBE		BIT(24)
->  #define RZG2L_GTIOR_OxE(sub_ch)		((sub_ch) ? RZG2L_GTIOR_OBE : RZG2L_GTI=
-OR_OAE)
-> =20
-> +#define RZG2L_GTIOR_OADF_HIGH_IMP_ON_OUT_DISABLE	BIT(9)
-> +#define RZG2L_GTIOR_OBDF_HIGH_IMP_ON_OUT_DISABLE	BIT(25)
-> +#define RZG2L_GTIOR_PIN_DISABLE_SETTING \
-> +	(RZG2L_GTIOR_OADF_HIGH_IMP_ON_OUT_DISABLE | RZG2L_GTIOR_OBDF_HIGH_IMP_O=
-N_OUT_DISABLE)
-> +
->  #define RZG2L_INIT_OUT_HI_OUT_HI_END_TOGGLE	0x1b
->  #define RZG2L_GTIOR_GTIOA_OUT_HI_END_TOGGLE_CMP_MATCH \
->  	(RZG2L_INIT_OUT_HI_OUT_HI_END_TOGGLE | RZG2L_GTIOR_OAE)
-> @@ -71,12 +81,17 @@
->  	((sub_ch) ? RZG2L_GTIOR_GTIOB_OUT_HI_END_TOGGLE_CMP_MATCH : \
->  	 RZG2L_GTIOR_GTIOA_OUT_HI_END_TOGGLE_CMP_MATCH)
-> =20
-> +#define RZG2L_GTINTAD_GRP_MASK	GENMASK(25, 24)
-> +
->  #define RZG2L_MAX_HW_CHANNELS	8
->  #define RZG2L_CHANNELS_PER_IO	2
->  #define RZG2L_MAX_PWM_CHANNELS	(RZG2L_MAX_HW_CHANNELS * RZG2L_CHANNELS_P=
-ER_IO)
->  #define RZG2L_MAX_SCALE_FACTOR	1024
->  #define RZG2L_MAX_TICKS		((u64)U32_MAX * RZG2L_MAX_SCALE_FACTOR)
-> =20
-> +#define RZG2L_MAX_POEG_GROUPS	4
-> +#define RZG2L_LAST_POEG_GROUP	3
-> +
->  struct rzg2l_gpt_chip {
->  	void __iomem *mmio;
->  	struct mutex lock; /* lock to protect shared channel resources */
-> @@ -84,6 +99,7 @@ struct rzg2l_gpt_chip {
->  	u32 period_ticks[RZG2L_MAX_HW_CHANNELS];
->  	u32 channel_request_count[RZG2L_MAX_HW_CHANNELS];
->  	u32 channel_enable_count[RZG2L_MAX_HW_CHANNELS];
-> +	DECLARE_BITMAP(poeg_gpt_link, RZG2L_MAX_POEG_GROUPS * RZG2L_MAX_HW_CHAN=
-NELS);
->  };
-> =20
->  static inline struct rzg2l_gpt_chip *to_rzg2l_gpt_chip(struct pwm_chip *=
-chip)
-> @@ -362,6 +378,72 @@ static const struct pwm_ops rzg2l_gpt_ops =3D {
->  	.apply =3D rzg2l_gpt_apply,
->  };
-> =20
-> +/*
-> + * This function links a poeg group{A,B,C,D} with a gpt channel{0..7} and
-> + * configure the pin for output disable.
-> + */
-> +static void rzg2l_gpt_poeg_init(struct platform_device *pdev,
-> +				struct rzg2l_gpt_chip *rzg2l_gpt)
-> +{
-> +	struct of_phandle_args of_args;
-> +	unsigned int i;
-> +	u32 poeg_grp;
-> +	u32 bitpos;
-> +	int cells;
-> +	int ret;
-> +
-> +	cells =3D of_property_count_u32_elems(pdev->dev.of_node, "renesas,poegs=
-");
-> +	if (cells =3D=3D -EINVAL)
-> +		return;
+> > +	return devm_add_action_or_reset(dev, ehl_pse_io_dev_destroy, aux_dev);
+> > +}
+> 
+> ...
+> 
+> > +#define auxiliary_dev_to_ehl_pse_io_dev(auxiliary_dev) \
+> > +	container_of(auxiliary_dev, struct ehl_pse_io_dev, aux_dev)
+> 
+> Wondering if we may use container_of_const()
 
-Please catch other errors, too.
+Or just use platdata instead? Let me send out a v3.
 
-> +	cells >>=3D 1;
-
-Is it an error if cells is an odd number?
-
-> +	for (i =3D 0; i < cells; i++) {
-> +		ret =3D of_parse_phandle_with_fixed_args(pdev->dev.of_node,
-> +						       "renesas,poegs", 1, i,
-> +						       &of_args);
-> +		if (ret) {
-> +			dev_err(&pdev->dev,
-> +				"Failed to parse 'renesas,poegs' property\n");
-> +			return;
-
-So .probe() might emit an error message now, but it doesn't fail. I
-would suggest to change the latter.
-
-> +		}
-> +
-> +		if (of_args.args[0] >=3D RZG2L_MAX_HW_CHANNELS) {
-> +			dev_err(&pdev->dev, "Invalid channel %d >=3D %d\n",
-> +				of_args.args[0], RZG2L_MAX_HW_CHANNELS);
-> +			of_node_put(of_args.np);
-> +			return;
-> +		}
-> +
-> +		if (!of_device_is_available(of_args.np)) {
-> +			/* It's fine to have a phandle to a non-enabled poeg. */
-> +			of_node_put(of_args.np);
-> +			continue;
-
-Does of_device_is_available() return false if the poeg is enabled, but
-not yet probed? In that case .probe() should return -EPROBE_DEFER.
-
-> +		}
-> +
-> +		if (!of_property_read_u32(of_args.np, "renesas,poeg-id", &poeg_grp)) {
-> +			if (poeg_grp > RZG2L_LAST_POEG_GROUP) {
-> +				dev_err(&pdev->dev, "Invalid poeg group %d > %d\n",
-> +					poeg_grp, RZG2L_LAST_POEG_GROUP);
-> +				of_node_put(of_args.np);
-> +				return;
-> +			}
-> +
-> +			bitpos =3D of_args.args[0] + poeg_grp * RZG2L_MAX_HW_CHANNELS;
-> +			set_bit(bitpos, rzg2l_gpt->poeg_gpt_link);
-> +
-> +			rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTINTAD(of_args.args[0]),
-> +					 RZG2L_GTINTAD_GRP_MASK,
-> +					 poeg_grp << 24);
-> +
-> +			rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTIOR(of_args.args[0]),
-> +					 RZG2L_GTIOR_OBDF | RZG2L_GTIOR_OADF,
-> +					 RZG2L_GTIOR_PIN_DISABLE_SETTING);
-> +		}
-> +
-> +		of_node_put(of_args.np);
-> +	}
-> +}
-
-Best regards
-Uwe
-
---gj6zsmmzisxrp5zc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkRyeMACgkQj4D7WH0S
-/k7s9wgApCZDVIdO2bIqi/aIZVXoUJ7Wp6EJTjtihSWwg8QQGUNZvLY7h2KtzLXq
-1z6r02LlanMr2QZebHLRE8mqx/vBx+QiyNQgoPwXO5m3jhN9J2x+hv1LzWfCVhFg
-ylmuLMg4bl16xcPQANUbZqsoJDf/babU3GS/BI/LsOZ3Xhnf2uByJMCfBeS2cMXJ
-Vp1tm7331KdC22xhQPiJfCd6ws/X/OfECyZgnI244w2/VW4QJg9dM2tvE9KKJxXI
-Pp4X/8A4JMKJHansRYlFAHVEH7aUi6s3nLARDi5prF6RvRnGvosJu1xcoXCG3+u7
-rBtbrkSzlGsES6hQYLQ29fDXwG8B+Q==
-=t5A5
------END PGP SIGNATURE-----
-
---gj6zsmmzisxrp5zc--
+Raag
 
