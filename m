@@ -1,159 +1,202 @@
-Return-Path: <linux-kernel+bounces-892641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E10C45838
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:06:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD4AC4584A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:06:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60D343B618E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39049188276E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0CA2FE045;
-	Mon, 10 Nov 2025 09:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6902FE045;
+	Mon, 10 Nov 2025 09:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XRcUotCT"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhU2qiu8"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD87E2FCC12
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAC92FD684
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762765492; cv=none; b=d4zqCcuAxzZLqOoX5LctNyzAWzWCSy0mLzPE6t3VoE6aBhFL1SZsBk/Hxb74lISlwGlG+iIrzHQ7gnojFDgrIly8h7uiZAe5rgx+Hto1cokAm2LVy9JLVEcxEIXxzgJhM9MHmkp6fUpc2k+E4MyBFz41htB9GfZb0P9rj7wmrQk=
+	t=1762765608; cv=none; b=GUfbMJXBNzP+5K7lUw4dHjt/PqeDELTtwesGo2YgTMfrWcuR/NCpiR5aLKUSpAco7IMqeGXJZIWqDAOo01RcDWvUVmYsy+w3HzCZqoeILWhagrteS2Xo16dNlzkXKDvap1nxOyi0VTwm1apmkJRoZxStO8Jnt1iBfJZ6hxi2o5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762765492; c=relaxed/simple;
-	bh=cuSN+/ibhibAMGoE5yYpTwRCJCYlYwVkoPXJV+RI0GQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O2jT9IwCki+J3lciYH34uodZsuxfHEx2aTifmPOcgM75lNt//f+M4YdTo1W07npDqxoucuCEkbJxRBONn7dmUai/8wPIrv++E5aSRlb+T90lxIkaDpWpWU4NlV5ObVPEB5VKQwWfLdbQL/3jnIlxOQNUTXzGeLgtiBN68jv0RAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XRcUotCT; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1762765608; c=relaxed/simple;
+	bh=siUpimkYk3gLSAZv1jl2j/aQszEfhBnebYgez6oqgPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QCx/inoF061u75xbby8TKr2ipI+nwjV/rx3ZkfGdoR5ljQVyHItmY01gdXEzwXkp6QRd5jVgAjaZDfib3jLnqhO3zm7hzcSTmjPhEavs7w9vB6zlEEQStiWsGEbsLcYb8VdjE6xDkCdi0Sizf5MdFwQoMleKTByswij8cGUDblE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dhU2qiu8; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so14271255e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:04:50 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5943b62c47dso2334274e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:06:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762765489; x=1763370289; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sk5vRB2A8CTvXBhPjKRDoJZr7gkm+Aa51P8sRfLV4X0=;
-        b=XRcUotCTCEu69tsMyqU8cbA/VzEnq+xVT5zvc3d5dWA+vReauW3pcLGqUIp/q52jIV
-         bx9lyRzhy8cm9pBeWlQtU8ty3uxMFhvhhHFxDPWr9TIPAVpABY/1gHcaGfcaHCzZIFaV
-         fBLcD7Tk8m3FENIP6KkjYDh7EA/r4cjBT6KkUg7bXCAWZtcJyJMlNC/LZjk6N+N5Uwrv
-         5kDW7BUo1OX3y+F+HLk8mN2zzGYKZUGu3FcJNoe38D6z1+URhPX+mUVqUALI4aRKTRd/
-         AOEmxp+LxcNlqT6YwUKVLB7Y+lZlf5++QOKdNmk5zh/iYrXmi7DfrwJDuxnFgW8ZDDKu
-         rFGg==
+        d=gmail.com; s=20230601; t=1762765604; x=1763370404; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kv669uPkHrSvw8LzIPDONi9ciYMUaJTZqlDY6Vg+I9o=;
+        b=dhU2qiu8HSzNe2e4F+We5f0ueCYX/MRij4qVcaRigm25vdhb7okGEO52ZeXHrf6E1Z
+         p/3A7t1Mlx22guee9uMHHycXK/qYvENZrIIQMLVAhWqza9LafFMf+OXpkB1dqaQFzg00
+         VPUQTFmSrIfTgRedtLqQkZnjl5Kxh+AMu8bnCrSV7cplc4AP/UvldCnHjixL84q4YcK1
+         Zi6fpw6BZRe3kQwhD/igd7lZ65zlmFWEwry7DPzqi2JgApFeRIDVmhUWdEtJYvkCj7Ys
+         6x6Z36sBXqagMSX3rtF6nTPkuYPP+703b94vbYTYOFzlqrkJhZEDLQ2nKbgAwUP2xASe
+         nrTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762765489; x=1763370289;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sk5vRB2A8CTvXBhPjKRDoJZr7gkm+Aa51P8sRfLV4X0=;
-        b=IPC3nnXIrpN+EByMEoBxPY+cgWu7OYRdV0wztX1Prl45e/4j1ab8SQsUk2fc2Tb8ZS
-         GJ39TSJRFkEIM5uFptwTztmASBuAbO9csM3aS9bdbkvH+m5zAdZRatznNhAVfv4C0zth
-         rrewQlBRXOa/Sa+tQexDvZBKefkAPCK7LK32F2h4NuMu4u2xSb9tEsvKF3yLeTm/T0yZ
-         sohBVEJqFOtg6efNSW3ZqrmHKpzfMeuhZx1BKc6T6yztzL/Wk6g8PIxqGXWps8urPIm6
-         RO6oiJebIRdrHVA+Xjq+G+lsH/pjNMk4jgNIIEIGkWkMvq5IsKjzxH94IAEJhvUOEtY5
-         C9xg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBPdJ/M6RzD5gXQhAeaHa/GpnbcMjwntcy5WQC6/eKXf9IzfhZT57pMKD3x1nwbGdHUWuw71nX2ebc9IQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmYTnJeg6xOu+MPVQnj7mxKaKi+JM9supbtYZCu18QqBH6FMAc
-	9mElJAP1WT855lFO5SrdYoZLD1m/4Vs6K1UaKS2os5fqSKXwxC3o/jf3
-X-Gm-Gg: ASbGncs0gWsePkz0CAfZG0LnkOA3/Lc2x07jdByqPl1ra9s9OOVnpsRpB4zlRVFJfQc
-	AfufbLVS6y/VfgldD8VIO9EfGktmL+9j59uQiy4ouXVAdMfjOYtPeiswcUltPNsJSKsHMbEG2QN
-	puQUlbNUmWWsygWz2xbB0tpkNMrmwkCs3Gme/C4GYPQB1mrUMp7fWyqCk/4GMyMDIpwclCLcgmm
-	UH5cIwKwlgjHp8nyHp8HjFLL2VpZYIA4T87v1AgrtmkORphJr7luVis5AYvZVOAqUpp8cBxMBlF
-	0QxGu1bp5Q5/PRlmtZptiuGE9mXvgkGJVPP+soh/96RclT6caZCAX4J3e1d83859M6T+Bq9ut0Y
-	gyxfiqjhyzkqaFhaPeaqnQRcyM4hdz74kCTN3I+uTkVX+zxmXVpXgXh/rU3BEcofBugxC1/0pU9
-	yjomedLdc1fS3EB94/XHmkXneXc/P7BpiYl6Yioj6RAimU6uqtGRi3tgkAZVQ=
-X-Google-Smtp-Source: AGHT+IEwdnOYLiRxGnlYWFiugvoKZP0MLjXKBzH1fGwb5TD6K5KB/oIeeQdF5BkkS4fmoxY0g26LaA==
-X-Received: by 2002:a05:600c:444b:b0:477:7a78:3016 with SMTP id 5b1f17b1804b1-4777a783204mr26968615e9.8.1762765488848;
-        Mon, 10 Nov 2025 01:04:48 -0800 (PST)
-Received: from dell (229.red-88-1-12.dynamicip.rima-tde.net. [88.1.12.229])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e7a6desm103083205e9.8.2025.11.10.01.04.48
+        d=1e100.net; s=20230601; t=1762765604; x=1763370404;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kv669uPkHrSvw8LzIPDONi9ciYMUaJTZqlDY6Vg+I9o=;
+        b=xGwCQCV789DCJmTdayRW0tIjBxoTQ3qrkrhUjTC4I91vqBGoo/oJfdJT6QzMPyBlEc
+         L/hlmC7AkjFILZhw32x97s8aumxsleo/fHa60wl0qPnTnM6AisU/mh/T0OZu2g1uJBso
+         l1H5vcgaVCpD7nfAoYvAmA4cijrbSrX1T6fm7NmMCN+NyE+MImmE7kBYJThqufW1l9AO
+         wUFecBjXb7aU4CMjuGhy9WHZCsUey6pI+j7tFUNpdg2Pq1qHzVB3ms2Zei+f/6Nafuef
+         jzfdxXe2o7dByuZSQ/CO/EAWDPtIuqfn/65XjF0XjCL4J8pY8cuxvRYuGtBFVUMbx7z1
+         RDww==
+X-Forwarded-Encrypted: i=1; AJvYcCVOh3lxqxR0TGl5yWrabs2/U07k6kg2sEnXrbqzSoHLWW1/78fMTN9f0zipGeKDOPOMQ7UIQEQfr/G9MyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5OiRPYo5IG6E0m13s4lyG4u570W3hnHsb1Ov01q3FqxH3sUkW
+	mG4wdFtsb5gg2i4uELoVgFgeBXq4rUD5CTpHBMUrf3+h2MSJbeOIpy4B
+X-Gm-Gg: ASbGncvaARjCpvkvJDFTmYbcQJe2J2v2YTwxLXqX7cLfhzOEA78J57iyJzyHSeaXWk/
+	obQkl5xJ7zGj8GDtbKPl4X4E65Jvy1qx9pOBXlq5Y2LFF40K6p/+IZv0anwOOzDNUNqRMTFgkqB
+	o2HF+GA1lZ8tAqeFypTjpemrTotv4S2o2sueELQn2aJF0BqRrtkMXBLJgPcqlRGJz7NVHupmD45
+	pdIJPnZIxmFvoEHgzouG+KEZAe3uVJ3t4JQUiUB2MqB/RaNoi3VOdzClH/hPHsfnn6t2bLHwSO8
+	L1UCJej4geUKrHFRl4zq4Ssqu17pIWdEgc2GQUmhKIuQexw+4HVgUjRY3srq6uJiBPQhpM2OFSg
+	MCqwvaMp/0JtNDZopTrkkXG10JQRb6GkF5CjX5OHWSrf5OCIyVolEXyjdhR2zqK9eovipzyWc+n
+	i4eH5Ls9B6w/Vu+jpzfDA2eZYJJT07hLCRXLad
+X-Google-Smtp-Source: AGHT+IH2Bad+qTl99d6KPJeCk3sJy+GS6VSBYjrpF8xVgr/9IQeDjmTmz+kfeOOZUKCjh1vpE36b/w==
+X-Received: by 2002:a05:6512:61a1:b0:594:31af:4de0 with SMTP id 2adb3069b0e04-5945f0bd59bmr1813454e87.0.1762765604346;
+        Mon, 10 Nov 2025 01:06:44 -0800 (PST)
+Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a01fb14sm3744501e87.39.2025.11.10.01.06.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 01:04:48 -0800 (PST)
-From: Javier Garcia <rampxxxx@gmail.com>
-To: deller@gmx.de
-Cc: linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	Javier Garcia <rampxxxx@gmail.com>
-Subject: [PATCH] fbdev/vga16fb: Use dev_* fn's instead printk.
-Date: Mon, 10 Nov 2025 10:04:46 +0100
-Message-ID: <20251110090446.2910998-1-rampxxxx@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        Mon, 10 Nov 2025 01:06:43 -0800 (PST)
+Date: Mon, 10 Nov 2025 10:06:41 +0100
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 0/5] I2C Mux per channel bus speed
+Message-ID: <aRGrIRNgNlRqDLzr@gmail.com>
+References: <20251020-i2c-mux-v3-0-908ac5cf9223@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="N/hTo/3gW1AqHJcu"
+Content-Disposition: inline
+In-Reply-To: <20251020-i2c-mux-v3-0-908ac5cf9223@gmail.com>
 
-- Family dev_* fn's will show device name, giving extra info to logs.
-- Delete the prefix `vga16fb:` from msg strings, not needed now.
 
-[    1.037947] vga16fb vga-framebuffer.0: initializing
+--N/hTo/3gW1AqHJcu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
----
- drivers/video/fbdev/vga16fb.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Hi all,
 
-diff --git a/drivers/video/fbdev/vga16fb.c b/drivers/video/fbdev/vga16fb.c
-index 3b4c50d98ba6..432ba7c8164b 100644
---- a/drivers/video/fbdev/vga16fb.c
-+++ b/drivers/video/fbdev/vga16fb.c
-@@ -1324,7 +1324,7 @@ static int vga16fb_probe(struct platform_device *dev)
- 		dev_err(&dev->dev, "vga16b: cannot reserve video memory at 0x%lx\n",
- 		       vga16fb_fix.smem_start);
- 	}
--	printk(KERN_DEBUG "vga16fb: initializing\n");
-+	dev_dbg(&dev->dev, "initializing\n");
- 	info = framebuffer_alloc(sizeof(struct vga16fb_par), &dev->dev);
- 
- 	if (!info) {
-@@ -1336,12 +1336,12 @@ static int vga16fb_probe(struct platform_device *dev)
- 	info->screen_base = (void __iomem *)VGA_MAP_MEM(VGA_FB_PHYS_BASE, 0);
- 
- 	if (!info->screen_base) {
--		printk(KERN_ERR "vga16fb: unable to map device\n");
-+		dev_err(&dev->dev, "unable to map device\n");
- 		ret = -ENOMEM;
- 		goto err_ioremap;
- 	}
- 
--	printk(KERN_INFO "vga16fb: mapped to 0x%p\n", info->screen_base);
-+	dev_info(&dev->dev, "mapped to 0x%p\n", info->screen_base);
- 	par = info->par;
- 
- 	par->isVGA = screen_info_video_type(si) == VIDEO_TYPE_VGAC;
-@@ -1369,13 +1369,13 @@ static int vga16fb_probe(struct platform_device *dev)
- 	i = (info->var.bits_per_pixel == 8) ? 256 : 16;
- 	ret = fb_alloc_cmap(&info->cmap, i, 0);
- 	if (ret) {
--		printk(KERN_ERR "vga16fb: unable to allocate colormap\n");
-+		dev_err(&dev->dev, "unable to allocate colormap\n");
- 		ret = -ENOMEM;
- 		goto err_alloc_cmap;
- 	}
- 
- 	if (vga16fb_check_var(&info->var, info)) {
--		printk(KERN_ERR "vga16fb: unable to validate variable\n");
-+		dev_err(&dev->dev, "unable to validate variable\n");
- 		ret = -EINVAL;
- 		goto err_check_var;
- 	}
-@@ -1386,7 +1386,7 @@ static int vga16fb_probe(struct platform_device *dev)
- 	if (ret)
- 		goto err_check_var;
- 	if (register_framebuffer(info) < 0) {
--		printk(KERN_ERR "vga16fb: unable to register framebuffer\n");
-+		dev_err(&dev->dev, "unable to register framebuffer\n");
- 		ret = -EINVAL;
- 		goto err_check_var;
- 	}
--- 
-2.50.1
+On Mon, Oct 20, 2025 at 09:17:23AM +0200, Marcus Folkesson wrote:
+> This was a RFC on how to implement a feature to have different bus
+> speeds on different channels with an I2C multiplexer/switch.
+> As no major complaints on the design came up during the review, I
+> decided to submit the series without the RFC tag.
+>=20
+> The benefit with this feature is that you may group devices after
+> the fastest bus speed they can handle.
+> A real-world example is that you could have e.g. a display running @400kHz
+> and a smart battery running @100kHz using the same I2C controller.
+>=20
+> There are many corner cases where this may cause a problem for some
+> hardware topologies. I've tried to describe those I could think of
+> in the documentation, see Patch #5.
+>=20
+> E.g. one risk is that if the mux driver does not disconnect channels
+> when Idle, this may cause a higher frequency to "leak" through to
+> devices that are supposed to run at lower bus speed.
+> This is not only a "problem" for changing bus speed but could also be
+> an issue for potential address conflicts.
+>=20
+> The implementation is split up into several patches:
+>=20
+> Patch #1 Introduce a callback for the i2c controller to set bus speed
+> Patch #2 Introduce functionality to adjust bus speed depending on mux
+>          channel.
+> Patch #3 Cleanup i2c-davinci driver a bit to prepare it for set_clk_freq
+> Parch #4 Implement set_clk_freq for the i2c-davinci driver
+> Parch #5 Update documentation with this feature
+>=20
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> ---
+> Changes in v3:
+> - Return -EINVAL if channel is faster than parent (kernel test robot)
+> - Link to v2: https://lore.kernel.org/r/20251002-i2c-mux-v2-0-b698564cd95=
+6@gmail.com
+>=20
+> Changes in v2:
+> - Changed bus_freq field to bus_freq_hz in davinci_i2c_dev (Bartosz Golas=
+zewski)
+> - Removed idle_state from mux core (Peter Rosin)
+> - Link to v1: https://lore.kernel.org/r/20250922-i2c-mux-v1-0-28c94a61093=
+0@gmail.com
+>=20
+> ---
+> Marcus Folkesson (5):
+>       i2c: core: add callback to change bus frequency
+>       i2c: mux: add support for per channel bus frequency
+>       i2c: davinci: calculate bus freq from Hz instead of kHz
+>       i2c: davinci: add support for setting bus frequency
+>       docs: i2c: i2c-topology: add section about bus speed
+>=20
+>  Documentation/i2c/i2c-topology.rst | 176 +++++++++++++++++++++++++++++++=
+++++++
+>  drivers/i2c/busses/i2c-davinci.c   |  41 ++++++---
+>  drivers/i2c/i2c-mux.c              | 116 +++++++++++++++++++++---
+>  include/linux/i2c.h                |  13 +++
+>  4 files changed, 324 insertions(+), 22 deletions(-)
+> ---
+> base-commit: 22f20375f5b71f30c0d6896583b93b6e4bba7279
+> change-id: 20250913-i2c-mux-b0063de2ae4d
+>=20
+> Best regards,
+> --=20
 
+A friendly ping on this series.
+
+Thank you in advance,
+Marcus Folkesson
+
+
+> Marcus Folkesson <marcus.folkesson@gmail.com>
+>=20
+
+--N/hTo/3gW1AqHJcu
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmkRqxwACgkQiIBOb1ld
+UjJBVA/9FekIGivuFU6wWlAnooD4cBtWh+Jfox7uf+UfY2IOlmHIdcYoSlV47Fmb
+Z3uCe0KE/ZC8uaSMHiVAYiLoWP5Oq7vWcI7Hs7rCllsctRMt3RHd7PAEpn2m+SrL
+U2w086QVnQe/srRRHPuACYrQIw2Rzs6m13CwsVY9dgnJZ4gp8TMWd1ublGyFfmF5
+8vASpAJNf5wb4YArKjLZC5y7tX0mN7MsxDjSzrH8H9Sjn3jzIdq/vlsfudLof3gh
+rlIuetHCo0OUQB5SOEtnP+pu8j31ULTPmevcMtNOHG25TG+zOwnLCu65gF/DcZAm
+AXvLpSUjmfZCZB57I1gn71j+7hKbRE4ibT0tRGxKxcqTpC8sfiGd2++dTubn6QCd
+xcj3/km2CKJvKl6V0jHtVdaOLSRQttfE0mQVzuUoLegOpHOXw4RSTA0pDBpIj1mE
++ivVa33rMlzjrHxpMYtoNWWBmA38n7Sm361WBysD//Ucnv5/b7Xkc5gLJGybBNHB
+8eMB8TKSTJYLAhDejCl9CFslIzecaMf68Iu48Wiwz3pQ9It4i3bjQ77FeuZIqRNE
+L4MGB4MN++mWXBu2/WQTLrG3YwfhUL0YlFEZh8wkYrrErrzGPaAxH9tGTZc0QAEu
+lNg8KXZSNhLEtBjNZLstbqdSJNHMKLGhmUwOZb1s2BSgPPoJjQE=
+=iKc4
+-----END PGP SIGNATURE-----
+
+--N/hTo/3gW1AqHJcu--
 
