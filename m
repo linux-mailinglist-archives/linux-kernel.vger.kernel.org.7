@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-893370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35451C472E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:28:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45CBEC47328
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:29:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AEE863481A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:28:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFFA23A1D18
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A6C3128D6;
-	Mon, 10 Nov 2025 14:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E43731327D;
+	Mon, 10 Nov 2025 14:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Cg+ZW5Um"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cS1ot4vR"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F4C307AEA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FB330E82B;
 	Mon, 10 Nov 2025 14:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762784875; cv=none; b=ghYCDQt9Bzh0McYi2UeBgNdR1Rd880PgcTrWbN8tfNbbaXhTFtqGl8h7zvB2968sNzY6drAZf2IdG7uQ+DxhVRFTX3tFfYSHrONMLCQruk5a/tFcG3b8o+HbrEkdFTLF5ItG6ndgUpLf/iDIlFVwTd+rEV0l5VgwFHBncTh1rRU=
+	t=1762784875; cv=none; b=IiwPmI2TFflA5tketWXGFEzKgWJo4emam61PUkeCVst2AhMKVaDZarEOkYf2q+Ys8xIiwhCd0sHzTpZn2Dxriu8b0T0AO+5X7gq0oXb3xhPCFVq/HrV27CpE/TCTz0JjYUYOF6clktON0cONUMHH4Avw02W01Zlxu/F6vRKq8J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762784875; c=relaxed/simple;
-	bh=I3hDlgnUiFEeHYO7l/Z1ZTVOyh5tZR91I5wEgfYLxhA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IGQQfkAWbAn7mFklLPCBkAsX8lhrdY7UaPqkinkOR8gYUD7e2rGvP7VNCXwhimkc9mcgzMIYtoFiUklredAuU2i/aLG/ZYv+jJAvwSZ8O2PGBI0HJdelCpYV4tvHTgqz3q8DrJEwRAa5HV0V3eHMYlQeSYXL1+MkmrIHmy4D11M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Cg+ZW5Um; arc=none smtp.client-ip=148.251.105.195
+	bh=sQcBV/ZWlVLGeAwivyndjv3Kv+k/mZS823qVLbIeFmg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DNO8Q6uttPhqhqWm3DVEgP5Vm33aKNNuT64eLbLr0bGovm4BpxopGlrESKevb98NS83Ty9q128C9w0TzDbJdIRcGCMEbjdVX2pC09IYuEfwwQL4Ozn9d10b9iV8BLJfA9aVwRcRgXnngKEkIQaDmSPI7WXxu1tT1hv0EMYuV530=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cS1ot4vR; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762784871;
-	bh=I3hDlgnUiFEeHYO7l/Z1ZTVOyh5tZR91I5wEgfYLxhA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Cg+ZW5UmcV+OPWWiVEIBEa71YhgKHcLsSHBua7s+xkI6A6fo9dVDIF0jxdDR9/4wv
-	 MjA1rjz8N0cDT6mEz+IEMwv3O+R84lHlS+D/t5vLSb0p88yV8ct1kCcqxhlXR292s5
-	 n9Um2Vwfx9ZpZBL8HAEmAVSyhGDdJfur9x2h+3L9zpKghOdQBRumTmSI/i5AZuTiqt
-	 Sbs1UnPBOMo5g3+xvmhQ+KDbkoNeTRQpOdQ9u7k+3JNGxgcLxf/IX2EWQB6Sm7j7BS
-	 YVprWLa9yJWr0bZWJGAIx5IKQNEviK/rAqlW/sLKIUoJF+rFkUUAxJcx4RKj+l7NNO
-	 klylxUGZLn0Qg==
+	s=mail; t=1762784872;
+	bh=sQcBV/ZWlVLGeAwivyndjv3Kv+k/mZS823qVLbIeFmg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cS1ot4vRNiTpYwf2SDxPZ7X+NRW3f5Kubg3x8VbmxKsmpOA2ds9lt2BuHWBkJAu1P
+	 iI4wVVmfXtusxUSBEvoJWvjvNpvohvdg4lojybouSt4t27QqmZ007NaWsCWistZTBM
+	 mQQaxzXduyvviPjZ5N03icVSyODOqeopduWqqcv6OMNwHuwLrBMsLaBYkYGSWmBMja
+	 UpRzHuIr/iLNc+JRePmjJNybKMyy9zLyE4EC3Jos/hM+7n7R5w4Y4ayLbuqZlOGOFI
+	 Uqq5dE3PQ21hVo1oO+oGxwzmeXEIppRiYNHyJ0XvjBohXa02eEm+Hv3FbkQJtd9n/F
+	 SG8wmh6owgwzg==
 Received: from debian-rockchip-rock5b-rk3588.. (unknown [IPv6:2a01:e0a:5e3:6100:2e0:4cff:fe03:d8c])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: loicmolinari)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5A6DF17E1313;
-	Mon, 10 Nov 2025 15:27:50 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 627B817E13B5;
+	Mon, 10 Nov 2025 15:27:51 +0100 (CET)
 From: =?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -81,10 +82,12 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-doc@vger.kernel.org,
 	kernel@collabora.com
-Subject: [PATCH v6 00/11] drm: Reduce page tables overhead with THP
-Date: Mon, 10 Nov 2025 15:27:35 +0100
-Message-ID: <20251110142746.3490-1-loic.molinari@collabora.com>
+Subject: [PATCH v6 01/11] drm/shmem-helper: Simplify page offset calculation in fault handler
+Date: Mon, 10 Nov 2025 15:27:36 +0100
+Message-ID: <20251110142746.3490-2-loic.molinari@collabora.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251110142746.3490-1-loic.molinari@collabora.com>
+References: <20251110142746.3490-1-loic.molinari@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,81 +97,37 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This series aims to reduce the page tables overhead of DRM drivers for
-builds with CONFIG_TRANSPARENT_HUGEPAGE enabled and either the sysfs
-knob '/sys/kernel/mm/transparent_hugepage/shmem_enabled' appropriately
-set or drivers using a dedicated huge tmpfs mount point.
+For a fault at address addr, the page offset is
+  page_offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT
+              = ((addr & PAGE_MASK) - vma->vm_start) >> PAGE_SHIFT
+	      = (addr - vma->vm_start) >> PAGE_SHIFT
 
-It starts by checking whether a faulty address in the page fault
-handler is part of a huge page in order to attempt a PMD sized PFN
-insertion into the VMA. It then introduces a dedicated
-get_unmapped_area file operation on the DRM file descriptor for GEM
-objects to get the best virtual address alignment for the underlying
-shmem buffers.
+Since the faulty logical page offset based on VMA is
+  vmf->pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT)
 
-The remaining commits propose shmem helpers to create and release huge
-tmpfs mount points and adapt the i915 and V3D drivers. The helpers are
-then used to optionally enable Transparent Hugepage for Panfrost and
-Panthor.
+We can slightly simplify the calculation using
+  page_offset = vmf->pgoff - vma->vm_pgoff
 
-For Panthor on a Rock 5B, this series makes the first memcpy() to an
-entire BO object mapped in userspace about twice as fast with
-Transparent Hugepage enabled.
+Signed-off-by: Loïc Molinari <loic.molinari@collabora.com>
+---
+ drivers/gpu/drm/drm_gem_shmem_helper.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Implementing a fault-around handler using the arm64 contiguous page
-hint (contptes) could also greatly help reduce page tables overhead
-for small pages by mapping several contiguous pages around a faulty
-address at once. This will be proposed in another patch series.
-
-Loïc Molinari (11):
-  drm/shmem-helper: Simplify page offset calculation in fault handler
-  drm/shmem-helper: Map huge pages in fault handler
-  drm/gem: Introduce drm_gem_get_unmapped_area() fop
-  drm/gem: Add huge tmpfs mountpoint helpers
-  drm/i915: Use huge tmpfs mountpoint helpers
-  drm/v3d: Use huge tmpfs mountpoint helpers
-  drm/gem: Get rid of *_with_mnt helpers
-  drm/panthor: Introduce huge tmpfs mountpoint option
-  drm/panthor: Improve IOMMU map/unmap debugging logs
-  drm/panfrost: Introduce huge tmpfs mountpoint option
-  Documentation/gpu/drm-mm: Add THP paragraph to GEM mapping section
-
- Documentation/gpu/drm-mm.rst                  |  22 +-
- drivers/gpu/drm/drm_gem.c                     | 203 +++++++++++++-----
- drivers/gpu/drm/drm_gem_shmem_helper.c        |  97 +++++----
- drivers/gpu/drm/i915/Makefile                 |   3 +-
- drivers/gpu/drm/i915/gem/i915_gem_shmem.c     |  47 ++--
- drivers/gpu/drm/i915/gem/i915_gemfs.c         |  69 ------
- drivers/gpu/drm/i915/gem/i915_gemfs.h         |  14 --
- .../gpu/drm/i915/gem/selftests/huge_pages.c   |  11 +-
- drivers/gpu/drm/i915/i915_drv.h               |   5 -
- drivers/gpu/drm/panfrost/panfrost_device.c    |   3 +
- drivers/gpu/drm/panfrost/panfrost_drv.c       |   6 +
- drivers/gpu/drm/panfrost/panfrost_drv.h       |   9 +
- drivers/gpu/drm/panfrost/panfrost_gem.c       |  18 ++
- drivers/gpu/drm/panfrost/panfrost_gem.h       |   2 +
- drivers/gpu/drm/panthor/panthor_device.c      |   3 +
- drivers/gpu/drm/panthor/panthor_drv.c         |   7 +
- drivers/gpu/drm/panthor/panthor_drv.h         |   9 +
- drivers/gpu/drm/panthor/panthor_gem.c         |  18 ++
- drivers/gpu/drm/panthor/panthor_gem.h         |   2 +
- drivers/gpu/drm/panthor/panthor_mmu.c         |  19 +-
- drivers/gpu/drm/v3d/Makefile                  |   3 +-
- drivers/gpu/drm/v3d/v3d_bo.c                  |   6 +-
- drivers/gpu/drm/v3d/v3d_drv.c                 |   2 +-
- drivers/gpu/drm/v3d/v3d_drv.h                 |  11 +-
- drivers/gpu/drm/v3d/v3d_gem.c                 |  27 ++-
- drivers/gpu/drm/v3d/v3d_gemfs.c               |  60 ------
- include/drm/drm_device.h                      |  15 ++
- include/drm/drm_gem.h                         |  37 +++-
- include/drm/drm_gem_shmem_helper.h            |   3 -
- 29 files changed, 439 insertions(+), 292 deletions(-)
- delete mode 100644 drivers/gpu/drm/i915/gem/i915_gemfs.c
- delete mode 100644 drivers/gpu/drm/i915/gem/i915_gemfs.h
- create mode 100644 drivers/gpu/drm/panfrost/panfrost_drv.h
- create mode 100644 drivers/gpu/drm/panthor/panthor_drv.h
- delete mode 100644 drivers/gpu/drm/v3d/v3d_gemfs.c
-
+diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+index dc94a27710e5..be89be1c804c 100644
+--- a/drivers/gpu/drm/drm_gem_shmem_helper.c
++++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+@@ -577,8 +577,8 @@ static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
+ 	struct page *page;
+ 	pgoff_t page_offset;
+ 
+-	/* We don't use vmf->pgoff since that has the fake offset */
+-	page_offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
++	/* Offset to faulty address in the VMA (without the fake offset). */
++	page_offset = vmf->pgoff - vma->vm_pgoff;
+ 
+ 	dma_resv_lock(shmem->base.resv, NULL);
+ 
 -- 
 2.47.3
 
