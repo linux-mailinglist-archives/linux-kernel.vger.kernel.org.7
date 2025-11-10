@@ -1,142 +1,76 @@
-Return-Path: <linux-kernel+bounces-893137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF81C469BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:32:23 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5483EC469E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B9B40342BEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:32:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 007D534496C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8984730E823;
-	Mon, 10 Nov 2025 12:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bEbv6jB5"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C1E308F0B;
+	Mon, 10 Nov 2025 12:33:12 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8BA30EF71
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710AD2FD66A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762777934; cv=none; b=Oy2bhNWSiCoMuqvmdUhGiEYPensM7abOmNeqGjK2MCLHz9XrJ2VJitQcVYCYrXiU1QlxnYPSSWbxy1v465aEs9SLaiNxdLdmL+sS8I8SZkh5yJuyVptnZ3qTaU6ATyyuTCzsgarxOz+SOM1wtQae/B7LeLHSqoFEFosDD+K6/mM=
+	t=1762777991; cv=none; b=sQzHa2eUpdQ17Ag2QkM6Kp9YiL0ri8vdD0Y0iKE9sLUxohC15qoL5XpCuc8DB8Nii0oft8OI/LLJBGnSFNmLrYNeH6a/8Gi9YwUAWQqnqod1RdJZniPWMVdeawWPZopok8bD3QpPr2myJYf7qAJv+p5jvlNEFz0/b7KLwgWPze8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762777934; c=relaxed/simple;
-	bh=xbn6RDPlAz1JBYaCMfNzcorMgqIxLXlfE2DgvYo/pIc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kq2VXGsUrWl2TQAYjCxl/eIETXtjpTfo9QAxy4iz2uZKBXSNom4YudR+UwqFrGQy3j26K6caUlCbzzn/hNelSZqcWm6R7Q4FH1nYlKEWkwsBLKFdo8PEZWQfkp9AMVRXlAtufH2HL7UgvQSyS4ruaycqiyRD5RwSEVMpMA2auA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bEbv6jB5; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-477632d45c9so19578125e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:32:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762777926; x=1763382726; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xbn6RDPlAz1JBYaCMfNzcorMgqIxLXlfE2DgvYo/pIc=;
-        b=bEbv6jB5OfPLMDJaO4TwA3DEv525aPXe4vHlZsC3Fnz4CBv+nrEha6tiuzCu7FvoTW
-         U4kwm0SiFUi2YKtt3+hQ5+UJd5PddicKITkipZM4fmp2gmNcJzSpqv/L8HoiEe88Y4ta
-         k7+Zi7vMJZiiGkH8WzvF6h7y7CxitWjtTAw/R92IckmpNTGrcixZuq0YIjYffl0LvEGW
-         Wzkf+JMvtpPeBmWSeqWK1QYqSjsgEwmqIWAwy/NxvBaVr3HFuoYirZ0hZY+KiFHRbj/8
-         37EQQeUBuhl5VFwLRyRzwSmJKG0L0XcPqvcMjNh3PLjd5iqJyb9UmYlEb5yoZ7Pxmt0I
-         NN3g==
+	s=arc-20240116; t=1762777991; c=relaxed/simple;
+	bh=hvgxU9WYOhjPOQBT6MnJZluumT/J40sc4Orhlp6AI6g=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ncNtiHnfRLyJ2+kvBuTxOhSQylbsOxo+BSDvzyrKQSdYlGJHfNuLldzIEsEE5YbBTNcA6C+f7Pf91Y+dWbeKqk0/V+TuMpgovbcUOlRSXSUlEFSW6tpGyAANFFxXdO4SwgTzQzYD5Lk9/On55sUIFkvJWufG0tWfMldBAkDQ4Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4337b5c3388so47574235ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:33:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762777926; x=1763382726;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+        d=1e100.net; s=20230601; t=1762777986; x=1763382786;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xbn6RDPlAz1JBYaCMfNzcorMgqIxLXlfE2DgvYo/pIc=;
-        b=aHy4EhO6uG8KdVtaH2bd304wrT3qoH+cDMf71cAzF+Ce/7XRrNFqPYsXPp9iwoZcbB
-         cP6USKLPkZ6tgnbdwr9H/hprfgvdE1pVHJzDwGcdbIb2OLALWtF4DipNzcqi/wjlp2g3
-         XUsTCNq6yeCZ8+rZS9vonjwknREUHNDq9kYSTKePls60P/OYfIMUe1gQXs7D71bnJ5c1
-         sPta+JTBk0CgEsFYBPjcujMb21H9lMSyzEjj3hFYX9i4B1Bp1w/gp5khJjyEDo/97K5P
-         WLhwuixuMGSiaJ4kLNjpA7c//2v0qXbWVBNDeZLHQdlYnKfs5ZI0lJt7/Yel+tXaD3kq
-         FsCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXffkjkHrr5NqMm/Kc5HqB1TuJbcITSQ71/lM2aNytmy+o2CTofMU0omyQa/Lxq+64zJ4kecTged5V/+sw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBhl9ZdMGm6zdQ8+4pfJUdy7AjCrgn4bJMhWqvFenZPxk7mWnD
-	F4B9eZAa9BrMNCm/VpQAC35jXgSmegpuGFpAQTkDhE1bImReW+tHZa7R
-X-Gm-Gg: ASbGncsKcP7FGm8qzy7BdQtrVrHIKFuBu1rAwm6JdSmZXRwjnv1b5lz6IKUj4HDWx+0
-	A7u4B6po3Bo/SwD3HjfbGeMT0A3T18jL5CnB0E+g5xK6bSbjLhvBlR/1iuFAzIb0m+gvpMlE9ih
-	DTPvlcdyjZohmh05G06BHRqXJfVdgjOa0vOcKtytn6kmj4M04ux3rvpSgiVnmzBDwxpU2FUpBti
-	LW0OoJ3l1oo5JaLfJnTyLS6hTID3mh20bo/KaJiG+Td6cxlzhqUFBAgujuCbV0iKUJ7+nBXbr6b
-	XMKVpXjVHqLGMQUt8TS1LyshJaLFA669Fza7ntMicKyUkMNstbaCTvI6pmPvcBX1sBBgvgxgyA0
-	YYF78RIVyF8l1jomdbpmqUjmve019NMZTr2y3ccHWEg+98P/kGAAGpnui3TAleCQuGevyngcTmc
-	69VN+l6Nj0
-X-Google-Smtp-Source: AGHT+IGdjmBcJW+8X35ii7y+/PGwV34Q4JqH9e5PMe/Gj88DnW3qWYR3wQhKPBIE+gTXCpLrK7KBEA==
-X-Received: by 2002:a05:600c:1c1c:b0:475:dac3:699f with SMTP id 5b1f17b1804b1-4777322f0c4mr73804405e9.9.1762777925514;
-        Mon, 10 Nov 2025 04:32:05 -0800 (PST)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bd084d4sm249891675e9.14.2025.11.10.04.32.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 04:32:05 -0800 (PST)
-Message-ID: <3ead5d7aa5e6be2b6df3bb91b35fec37e23353f3.camel@gmail.com>
-Subject: Re: [PATCH 2/2] gpio: adg1712: add driver support
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Antoniu Miclaus
-	 <antoniu.miclaus@analog.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 10 Nov 2025 12:32:42 +0000
-In-Reply-To: <CACRpkdYdtcnxyP4xVsqVK+geurEOEURqZO5eLC96YMqh1sE5Sw@mail.gmail.com>
-References: <20251031160710.13343-1-antoniu.miclaus@analog.com>
-	 <20251031160710.13343-3-antoniu.miclaus@analog.com>
-	 <CACRpkdYdtcnxyP4xVsqVK+geurEOEURqZO5eLC96YMqh1sE5Sw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+        bh=hvgxU9WYOhjPOQBT6MnJZluumT/J40sc4Orhlp6AI6g=;
+        b=Is/NUdxEt+TqfPfFisVvE5o7F9AWltH1OYfcnNNHQU4ga3zLBOv1x9YzqK3liQPFc1
+         WGbydqN8KJ3Rswp6twOTVqULEa/FSiIwLNy6hBTf/puEKqLU+2l8p2jDQ2JXwVvCfaE+
+         rUifqc+QpUcgn+h+3VoRafFEAfVZYZ9Q5DyP1J92oi92DCTuvKaxS9jnqrlSDGT0PQIt
+         83+f8AbqgC4uqn0+6WdZBJuuvKi2x90D0r/+AAucNFE6FeJ+LOmP76M9AXeq/cIEGOqZ
+         7pILI09JlXdCi+SMdl0XijyRdmt5C22T4HWVyk7W2Aoy/wDrbFETyKMcRKIvDXzokIam
+         M6uA==
+X-Gm-Message-State: AOJu0Yysle1aIRf8ZrK6JbsIHXHN8aX8/tshmZTYU/74vz2F9W2FXAXq
+	YmIAfGQZclDvKNIaq+k4e2X9en4Zi6erXBBggJxquTG5TdhZqVr2k0xPGjhHJN3Lh/Oqziz3hNI
+	da4PBeLBrl4amXjlojFHK3LcysnWGTeH01RLQlhPHJxZ6LTL7ZlEd5ZqwphU=
+X-Google-Smtp-Source: AGHT+IHmK4ZMKAqddYbNOOOiE+ZC1Vk8hU9Rj+rB+n19ESeRSc8J7l/A97w5onCz7DomWKloaR+35WZueF9PLaUnKHkwuv0mGgWe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1a03:b0:433:7964:d82e with SMTP id
+ e9e14a558f8ab-4337964dae0mr85197475ab.13.1762777986553; Mon, 10 Nov 2025
+ 04:33:06 -0800 (PST)
+Date: Mon, 10 Nov 2025 04:33:06 -0800
+In-Reply-To: <690d9fd3.a70a0220.22f260.0021.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6911db82.a70a0220.22f260.00eb.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [jfs?] general protection fault in txCommit (2)
+From: syzbot <syzbot+9489c9f9f3d437221ea2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2025-11-10 at 11:30 +0100, Linus Walleij wrote:
-> Hi Antoniu,
->=20
-> thanks for your patch!
->=20
-> On Fri, Oct 31, 2025 at 5:08=E2=80=AFPM Antoniu Miclaus
-> <antoniu.miclaus@analog.com> wrote:
->=20
-> > Add driver support for the ADG1712, which contains four independent
-> > single-pole/single-throw (SPST) switches and operates with a
-> > low-voltage single supply range from +1.08V to +5.5V or a low-voltage
-> > dual supply range from =C2=B11.08V to =C2=B12.75V.
-> >=20
-> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
->=20
-> So tying into the binding discussion:
->=20
-> GPIO means "general purpose input/output".
->=20
-> I am really confused as whether this is:
->=20
-> - General purpose - seems to be for the purpose of switching
-> =C2=A0 currents and nothing else.
->=20
-> - Input/Output - It's switching something else and not inputting
-> =C2=A0 or outputting anything and this makes the driver look strange.
->=20
->=20
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Not the first time a part like this pops up [1]. At the time, the final
-conclusion was to go with gpiolib. Naturally you can think otherwise now :)
+***
 
-Also, it looks like that series did not went anywhere (I'll probably ping t=
-he author internally)
+Subject: Re: [syzbot] [jfs?] general protection fault in txCommit (2)
+Author: yun.zhou@windriver.com
 
-
-[1]:=C2=A0https://lore.kernel.org/linux-gpio/20250213-for_upstream-v2-2-ec4=
-eff3b3cd5@analog.com/
-
-- Nuno S=C3=A1
-
+#syz test
 
