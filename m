@@ -1,54 +1,46 @@
-Return-Path: <linux-kernel+bounces-894160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E95C49628
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:20:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9361DC4963A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:20:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5EACD4E319A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:19:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC7B34E7D38
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FE72FB0AE;
-	Mon, 10 Nov 2025 21:19:55 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B502DCBEB;
-	Mon, 10 Nov 2025 21:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448F42FD667;
+	Mon, 10 Nov 2025 21:20:52 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064362FC865;
+	Mon, 10 Nov 2025 21:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762809594; cv=none; b=cZbo4lgDlW7xDdIkRKaotee3p4xfbz6zK8osOb58xhyrozIQU1R0M2X8r/G4hYMdPbb0uI+U1KLaxsO5h1Fi1AY9SjYF5Cy9DsPWaGu6+THLMpvpRVqE64Wrmswms4cXXzRDTTQZWPL5D9SC+1JWWiCzg5H6RXTTFtavt8cjlmE=
+	t=1762809645; cv=none; b=e5l9PMs1NuSvE6OdKYEqo2piyg7I9vY2tZ23kiIBoJWlxcsYGZMYaWsdRgPh3r01gug7Im0t7bPfg3SKSXKUTjVz/a8M8us3hxF5E7nJaxpIOkVGsKUY40UsHKFrtnQKNX+nUNuCoIm8BDaM+6zwDcFtnfYNQQs/NV4QgPRpMK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762809594; c=relaxed/simple;
-	bh=KnZIP5lqBOP+Y1Fi23ifRMahLs/Wrq9XkCW71/QM+kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D/fuq/mRIl5/tF3W/1mtpwqfDGkBBnyQH13wHAWsI1kpTSruZLJQWIrFw43bPg99XCXJ3QJTD7yMHVD3jvlSdvZs84lzJExW5LlvhgygIlCUyYjJPS1svdaQU6Lmc3wLNMGWGLn0JRShw7T7VXZ4qB/O2MMRfu7N/bTPO7VKIzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id B7CA21402E5;
-	Mon, 10 Nov 2025 21:19:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id C800540;
-	Mon, 10 Nov 2025 21:19:45 +0000 (UTC)
-Date: Mon, 10 Nov 2025 16:19:54 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Balbir Singh <balbirs@nvidia.com>
-Cc: linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Zi Yan
- <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim
- <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price
- <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, Alistair
- Popple <apopple@nvidia.com>
-Subject: Re: [PATCH] mm/migrate_device: Add tracepoints for debugging
-Message-ID: <20251110161954.47d88433@gandalf.local.home>
-In-Reply-To: <20251016054619.3174997-1-balbirs@nvidia.com>
-References: <20251016054619.3174997-1-balbirs@nvidia.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762809645; c=relaxed/simple;
+	bh=SIB82DYGsoDdXbGRdYYJPu5MrdH6oNGIZB+RopftBNs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gYx+75R0UcMpG3+Yn5wtJb/nes5uC0az//CHnj4pM4YSPhFuKnrfdXGihf9f7odoFKwHHW09En67IYfP5AkRGVd/0kqc2GR6QRPvCZlr0hAFv3DxCxd3yz1sXRUbVz92t/dFTS46lyWlFWUmXP0SZ6hPXa7jOt6v0OJSwExZgtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 7AAE592009C; Mon, 10 Nov 2025 22:20:30 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 773B592009B;
+	Mon, 10 Nov 2025 21:20:30 +0000 (GMT)
+Date: Mon, 10 Nov 2025 21:20:30 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: mm: Only uniquify on CPU cores where it's needed
+In-Reply-To: <20251110194754.47626-1-tsbogend@alpha.franken.de>
+Message-ID: <alpine.DEB.2.21.2511102053470.25436@angie.orcam.me.uk>
+References: <20251110194754.47626-1-tsbogend@alpha.franken.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,415 +48,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: C800540
-X-Stat-Signature: xscwmtigddcm7zdx3enkgjiomje69mwc
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/3Pr4+3LUHhr0AeUUgO5HhSseUA8EaFaA=
-X-HE-Tag: 1762809585-440114
-X-HE-Meta: U2FsdGVkX18BsMzElzuLsMD34FPDD4fKo+Kgu8jIiag0c9GLy/cngUyB8adf/SbfOZHT/zm6ibd1t/neLfem/KcgJ8/HRaHXoMg0+172CP/PJy9F0gb3R7EYD9eYAXfkLJDhU4k2pvcAodUUkhznHbEgpOU323yeDdEbU02PXNv3HAZOgCUeL0/lEm+62gCZYF22IrSIDfMm0B6o6w+pNgyFdbL26i1LftrC8SI+Z75XckNoAcSwfeLOvugIWWo0gJOXKhHo8cohOgWpil8PRdxJr72Vntg5FvyzTuknxZDz9on278cpqiatWzMYgtoab4yWztvoKgNFPmTtwWaPI5IXQUjZPgBXdNmpCSAW03CXwascw2q+Y89ZScRGt0j7E0nKYTqUK190NR4qXGRJjCSmXNnshRREErRIJKWd91U31Tiy/3EAWKf3HQfAQKTMhkgZvq8uphZG8W4mlGM8ydGQXl0Opm5U2sS3VYdPs6JVZHNdr6Mgq6gGNRfo1kaVHKoukzqBEEwug5MZPgA9xeRkJTCBfLWXTF18B46vyNKF8sViMrQKdTDg13KnU8LEwoeK8NG2cqynscl9F6f8aoKabPn34PEP+I/EUGCrb3V3nm2rHry0fB7fbFEFF1xv70kfM9lmmi80qa/q7NosKLnXKdqjw4/kkIzumL2XxI8KZJY1GXe84zMoKTcSH8Y5AtqkQA2mvFsCoJ4axmC3Y2NF6CvwrW8r
 
-On Thu, 16 Oct 2025 16:46:19 +1100
-Balbir Singh <balbirs@nvidia.com> wrote:
+On Mon, 10 Nov 2025, Thomas Bogendoerfer wrote:
 
-> Add tracepoints for debugging device migration flow in migrate_device.c.
-> This is helpful in debugging how long migration took (time can be
-> tracked backwards from migrate_device_finalize to migrate_vma_setup).
-> 
-> A combination of these events along with existing thp:*, exceptions:*
-> and migrate:* is very useful for debugging issues related to
-> migration.
-> 
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Cc: Rakie Kim <rakie.kim@sk.com>
-> Cc: Byungchul Park <byungchul@sk.com>
-> Cc: Gregory Price <gourry@gourry.net>
-> Cc: Ying Huang <ying.huang@linux.alibaba.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> 
-> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
-> ---
-> 
-> Sample output from hmm-tests
-> 
->        hmm-tests-855   [002]    50.042792: migrate_vma_setup:    start=0x7f2908a00000 end=0x7f2908c00000 nr_pages=512
->        hmm-tests-855   [002]    50.042800: set_migration_pmd:    addr=7f2908a00000, pmd=dfffffffd39ffe00
->        hmm-tests-855   [002]    50.042801: migrate_vma_collect_skip: start=0x7f2908a01000 end=0x7f2908c00000
->        hmm-tests-855   [002]    50.042802: migrate_vma_collect:  start=0x7f2908a00000 end=0x7f2908c00000 npages=512
->        hmm-tests-855   [002]    50.061929: migrate_device_pages: npages=512 migrated=512
->        hmm-tests-855   [002]    50.062345: remove_migration_pmd: addr=7f2908a00000, pmd=efffffe00403fe00
->        hmm-tests-855   [002]    50.062371: migrate_vma_finalize: npages=512
+> Commit 35ad7e181541 ("MIPS: mm: tlb-r4k: Uniquify TLB entries on init")
+> switches initial TLB flushing to a mode needed for microAptiv/M5150
+> cores.  This breaks (at least) R4x00 cores if the tlb probe hits
+> multiple matching TLB entries (SGI IP22 prom for examples sets up all
+> TLBs to the same virtual address). Use the new TLB flushing only on
+> M5150 and local_tlb_flush_all() for everything else.
 
-Looks like some of these tracepoints can be combined via classes:
+ This surely isn't enough.  Even the plain old 4Kc core will trigger an 
+MCheck under the same condition.  The fix surely has to be more general.  
 
->        hmm-tests-855   [002]    50.042792: migrate_vma_setup:    start=0x7f2908a00000 end=0x7f2908c00000 nr_pages=512
->        hmm-tests-855   [002]    50.042802: migrate_vma_collect:  start=0x7f2908a00000 end=0x7f2908c00000 npages=512
+ Perhaps we should take the simplest approach: read all the TLB entries 
+with TLBR, sort them by their VPN value and deduplicate to be able to 
+search for a match quickly, assign and write temporary VPN values outside 
+our unique range avoiding a clash with any of the values obtained, and 
+then finally call local_tlb_flush_all().
 
-Is there a difference between "nr_pages" and "npages"?
+ This will require some memory and the computational complexity may exceed 
+O(n), but our TLBs are small with their size architecturally limited to 64 
+entries, so it's not a big deal in reality and this code will only execute 
+once at boot.
 
->        hmm-tests-855   [002]    50.042800: set_migration_pmd:    addr=7f2908a00000, pmd=dfffffffd39ffe00
->        hmm-tests-855   [002]    50.062345: remove_migration_pmd: addr=7f2908a00000, pmd=efffffe00403fe00
-
-Each TRACE_EVENT() is equivalent to:
-
-DECLARE_EVENT_CLASS(event, ...)
-DEFINE_EVENT(event, event, ...)
-
-Where a class is around 4-5K in size, and the DEFINE_EVENT is between
-500 and 1k in size.
-
-By using a single DECLARE_EVENT_CLASS() for multiple events, you can save
-several thousands of bytes of memory.
-
-> 
-> 
->  include/trace/events/migrate_device.h | 196 ++++++++++++++++++++++++++
->  mm/migrate_device.c                   |  11 ++
->  2 files changed, 207 insertions(+)
->  create mode 100644 include/trace/events/migrate_device.h
-> 
-> diff --git a/include/trace/events/migrate_device.h b/include/trace/events/migrate_device.h
-> new file mode 100644
-> index 000000000000..9b2782800ea9
-> --- /dev/null
-> +++ b/include/trace/events/migrate_device.h
-> @@ -0,0 +1,196 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES
-> + */
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM migrate_device
-> +
-> +#if !defined(_TRACE_MIGRATE_DEVICE_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _TRACE_MIGRATE_DEVICE_H
-> +
-> +#include <linux/tracepoint.h>
-> +#include <linux/migrate.h>
-> +
-> +TRACE_EVENT(migrate_vma_setup,
-> +
-> +	TP_PROTO(unsigned long start, unsigned long end, unsigned long nr_pages),
-> +
-> +	TP_ARGS(start, end, nr_pages),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(unsigned long, start)
-> +		__field(unsigned long, end)
-> +		__field(unsigned long, nr_pages)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->start = start;
-> +		__entry->end = end;
-> +		__entry->nr_pages = nr_pages;
-> +	),
-> +
-> +	TP_printk("start=0x%lx end=0x%lx nr_pages=%lu",
-> +		__entry->start, __entry->end, __entry->nr_pages)
-> +);
-
-Make the above into:
-
-DECLAER_EVENT_CLASS(migrate_vma_pages_template,
-
-	TP_PROTO(unsigned long start, unsigned long end, unsigned long nr_pages),
-
-	TP_ARGS(start, end, nr_pages),
-
-	TP_STRUCT__entry(
-		__field(unsigned long, start)
-		__field(unsigned long, end)
-		__field(unsigned long, nr_pages)
-	),
-
-	TP_fast_assign(
-		__entry->start = start;
-		__entry->end = end;
-		__entry->nr_pages = nr_pages;
-	),
-
-	TP_printk("start=0x%lx end=0x%lx nr_pages=%lu",
-		__entry->start, __entry->end, __entry->nr_pages)
-);
-
-DEFINE_EVENT(migrate_vma_pages_template, migrate_vma_setup,
-	TP_PROTO(unsigned long start, unsigned long end, unsigned long nr_pages),
-	TP_ARGS(start, end, nr_pages));
-
-DEFINE_EVENT(migrate_vma_pages_template, migrate_vma_collect,
-	TP_PROTO(unsigned long start, unsigned long end, unsigned long nr_pages),
-	TP_ARGS(start, end, nr_pages));
-
-DEFINE_EVENT(migrate_vma_pages_template, migrate_vma_collect_hole,
-	TP_PROTO(unsigned long start, unsigned long end, unsigned long nr_pages),
-	TP_ARGS(start, end, nr_pages));
-
-> +
-> +TRACE_EVENT(migrate_vma_collect_skip,
-> +
-> +	TP_PROTO(unsigned long start, unsigned long end),
-> +
-> +	TP_ARGS(start, end),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(unsigned long, start)
-> +		__field(unsigned long, end)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->start = start;
-> +		__entry->end = end;
-> +	),
-> +
-> +	TP_printk("start=0x%lx end=0x%lx", __entry->start, __entry->end)
-> +);
-
-> +
-> +TRACE_EVENT(migrate_vma_unmap,
-> +
-> +	TP_PROTO(unsigned long npages, unsigned long cpages),
-> +
-> +	TP_ARGS(npages, cpages),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(unsigned long, npages)
-> +		__field(unsigned long, cpages)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->npages = npages;
-> +		__entry->cpages = cpages;
-> +	),
-> +
-> +	TP_printk("npages=%lu cpages=%lu",
-> +		__entry->npages, __entry->cpages)
-> +);
-> +
-> +TRACE_EVENT(migrate_device_pages,
-> +
-> +	TP_PROTO(unsigned long npages, unsigned long migrated),
-> +
-> +	TP_ARGS(npages, migrated),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(unsigned long, npages)
-> +		__field(unsigned long, migrated)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->npages = npages;
-> +		__entry->migrated = migrated;
-> +	),
-> +
-> +	TP_printk("npages=%lu migrated=%lu",
-> +		__entry->npages, __entry->migrated)
-> +);
-
-The above two could be converted to:
-
-DECLARE_EVENT_CLASS(migrate_vma_device_template
-
-	TP_PROTO(unsigned long npages, unsigned long cpage_migrate),
-
-	TP_ARGS(npages, cpage_migrate),
-
-	TP_STRUCT__entry(
-		__field(unsigned long, npages)
-		__field(unsigned long, cpage_migrated)
-	),
-
-	TP_fast_assign(
-		__entry->npages = npages;
-		__entry->cpage_migrated = cpage_migrate;
-	),
-
-	TP_printk("npages=%lu migrated=%lu",
-		__entry->npages, __entry->migrated)
-);
-
-DEFINE_EVENT(migrate_vma_device_template, migrate_device_pages,
-	TP_PROTO(unsigned long npages, unsigned long cpage_migrate),
-	TP_ARGS(npages, cpage_migrate));
-
-DEFINE_EVENT_PRINT(migrate_vma_device_template, migrate_vma_unmap
-	TP_PROTO(unsigned long npages, unsigned long cpage_migrate),
-	TP_ARGS(npages, cpage_migrate),
-	TP_printk("npages=%lu cpages=%lu",
-		__entry->npages, __entry->cpages));
-
-Where the second one will show a different print format.
-
-
-> +
-> +TRACE_EVENT(migrate_vma_pages,
-> +
-> +	TP_PROTO(unsigned long npages, unsigned long start, unsigned long end),
-> +
-> +	TP_ARGS(npages, start, end),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(unsigned long, npages)
-> +		__field(unsigned long, start)
-> +		__field(unsigned long, end)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->npages = npages;
-> +		__entry->start = start;
-> +		__entry->end = end;
-> +	),
-> +
-> +	TP_printk("npages=%lu start=0x%lx end=0x%lx",
-> +		__entry->npages, __entry->start, __entry->end)
-
-Is there a reason npages is not at the end? Otherwise you can save even more memory with:
-
-DEFINE_EVENT(migrate_vma_pages_template, migrate_vma_pages,
-	TP_PROTO(unsigned long start, unsigned long end, unsigned long nr_pages),
-	TP_ARGS(start, end, nr_pages));
-
-
-> +);
-> +
-> +TRACE_EVENT(migrate_device_finalize,
-> +
-> +	TP_PROTO(unsigned long npages),
-> +
-> +	TP_ARGS(npages),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(unsigned long, npages)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->npages = npages;
-> +	),
-> +
-> +	TP_printk("npages=%lu", __entry->npages)
-> +);
-> +
-> +TRACE_EVENT(migrate_vma_finalize,
-> +
-> +	TP_PROTO(unsigned long npages),
-> +
-> +	TP_ARGS(npages),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(unsigned long, npages)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->npages = npages;
-> +	),
-> +
-> +	TP_printk("npages=%lu", __entry->npages)
-> +);
-
-The above two can be converted to:
-
-DECLARE_EVENT_CLASS(migrate_finalize_template,
-
-	TP_PROTO(unsigned long npages),
-
-	TP_ARGS(npages),
-
-	TP_STRUCT__entry(
-		__field(unsigned long, npages)
-	),
-
-	TP_fast_assign(
-		__entry->npages = npages;
-	),
-
-	TP_printk("npages=%lu", __entry->npages)
-);
-
-DEFINE_EVENT(migrate_finalize_template, migrate_device_finalize,
-	TP_PROTO(unsigned long npages),
-	TP_ARGS(npages));
-
-DEFINE_EVENT(migrate_finalize_template, migrate_vma_finalize,
-	TP_PROTO(unsigned long npages),
-	TP_ARGS(npages));
-
-
--- Steve
-
-
-> +#endif /* _TRACE_MIGRATE_DEVICE_H */
-> +
-> +#include <trace/define_trace.h>
-> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-> index fa42d2ebd024..c869b272e85a 100644
-> --- a/mm/migrate_device.c
-> +++ b/mm/migrate_device.c
-> @@ -18,6 +18,9 @@
->  #include <asm/tlbflush.h>
->  #include "internal.h"
->  
-> +#define CREATE_TRACE_POINTS
-> +#include <trace/events/migrate_device.h>
-> +
->  static int migrate_vma_collect_skip(unsigned long start,
->  				    unsigned long end,
->  				    struct mm_walk *walk)
-> @@ -25,6 +28,8 @@ static int migrate_vma_collect_skip(unsigned long start,
->  	struct migrate_vma *migrate = walk->private;
->  	unsigned long addr;
->  
-> +	trace_migrate_vma_collect_skip(start, end);
-> +
->  	for (addr = start; addr < end; addr += PAGE_SIZE) {
->  		migrate->dst[migrate->npages] = 0;
->  		migrate->src[migrate->npages++] = 0;
-> @@ -69,6 +74,7 @@ static int migrate_vma_collect_hole(unsigned long start,
->  		migrate->cpages++;
->  	}
->  
-> +	trace_migrate_vma_collect_hole(start, end, migrate->npages);
->  	return 0;
->  }
->  
-> @@ -517,6 +523,7 @@ static void migrate_vma_collect(struct migrate_vma *migrate)
->  
->  	mmu_notifier_invalidate_range_end(&range);
->  	migrate->end = migrate->start + (migrate->npages << PAGE_SHIFT);
-> +	trace_migrate_vma_collect(migrate->start, migrate->end, migrate->npages);
->  }
->  
->  /*
-> @@ -748,6 +755,8 @@ int migrate_vma_setup(struct migrate_vma *args)
->  	if (args->fault_page && !PageLocked(args->fault_page))
->  		return -EINVAL;
->  
-> +	trace_migrate_vma_setup(args->start, args->end, nr_pages);
-> +
->  	memset(args->src, 0, sizeof(*args->src) * nr_pages);
->  	args->cpages = 0;
->  	args->npages = 0;
-> @@ -1259,6 +1268,7 @@ EXPORT_SYMBOL(migrate_device_pages);
->  void migrate_vma_pages(struct migrate_vma *migrate)
->  {
->  	__migrate_device_pages(migrate->src, migrate->dst, migrate->npages, migrate);
-> +	trace_migrate_device_pages(migrate->npages, migrate->npages);
->  }
->  EXPORT_SYMBOL(migrate_vma_pages);
->  
-> @@ -1312,6 +1322,7 @@ static void __migrate_device_finalize(unsigned long *src_pfns,
->  			folio_put(dst);
->  		}
->  	}
-> +	trace_migrate_vma_finalize(npages);
->  }
->  
->  /*
-
+  Maciej
 
