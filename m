@@ -1,183 +1,256 @@
-Return-Path: <linux-kernel+bounces-893296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53999C4702C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:49:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56634C470A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:54:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 121614EA5F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:49:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CD3B534959B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F53E3054E1;
-	Mon, 10 Nov 2025 13:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zxl62qE/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316113115B8;
+	Mon, 10 Nov 2025 13:54:11 +0000 (UTC)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FDE1DF271;
-	Mon, 10 Nov 2025 13:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBF130F953
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762782535; cv=none; b=QcRLsaqs/zxm33uVEpNavjFgoiNZqcoA1uIynh3aOc9+vJKK057WtN0eck8z8yD2otGEp6KAKeCh/VcOrWJIJ/7XBCc1HVmojDUY5exDfU51/WdkOSjQsij+ovBeZmD/5zd9i+kqvMRvKkv60G4JNWNEk01cFHXL2qboNZd4xcI=
+	t=1762782850; cv=none; b=T0dqd1n1JxKEhQTQlNnyGBgDb21PQ62gzKj+KLw56lbogYtqWt5q0u+Uu0Uqx97++APAQrXiBS9+DYk2rpJ+f0OIWYWQuM8BYOYHtROPclk+sIx5wOlzdI+O+ZQl0mQtpVHzWA19jdH3cL8pkbR1usdmLupJs+ELrKEPksskDOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762782535; c=relaxed/simple;
-	bh=LOyAN0iO2EMSmgKDPwrtHMT6er9B+4VjQSQPgBTISus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QhLwMvTZ3PdDZIx0Z9bCnps//wuPXJvVpYiZksOf3gcEBKXNebSnS6bhV3DhWJ2jEva+qhIO8sxtyxJzEbXFAp2KETXs9lB87KPLO3P7pwlqyzQY1wz7MfOTSWTek6za6kaWsaEGMztWNJQhMxwB0ej5A/2/KTyIka0rwitBC3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zxl62qE/; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762782533; x=1794318533;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LOyAN0iO2EMSmgKDPwrtHMT6er9B+4VjQSQPgBTISus=;
-  b=Zxl62qE/F8pjfiV+uyQYleO5AnsFg2/uTYj+sRB7Fk9XbeNES4JrdZ12
-   vZMyxOPzmR2nKCVhM1r11EMV4D2PXmMAyfjKJjWz3Xdk6WcdxXDYJshz4
-   jbMJPBfkeNfCc/eqZVcJHAK9cJzplxEq/IIuN35q4y+HraNWIetkuAk8r
-   PH9XvX8B+XXnSDhPwYNZ7FGAHE4FiQDNNq5oZTF8IwzfZmdTNsiwnsixA
-   ZvkNM1Y578A84cyi3QK1aze30Qn6l9w7qvzNwz92+ND43cN7T4/x2VsV+
-   jW0+nfDet2qxntYU3Czs2DL6lnL96xQzj5G0IXHdzWJSefGqVDcwEWHqR
-   Q==;
-X-CSE-ConnectionGUID: hRK1iNcsRsmpVOhaLzbJKg==
-X-CSE-MsgGUID: SjfAveFiRkyDjqObyaMuag==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="75936348"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="75936348"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 05:48:53 -0800
-X-CSE-ConnectionGUID: ksHDq/jlT0CyTbiAG0Kh1A==
-X-CSE-MsgGUID: fTYm8Jd0R7+bZjc6v7kurQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="193060165"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 10 Nov 2025 05:48:50 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vISGF-0000UV-1e;
-	Mon, 10 Nov 2025 13:48:47 +0000
-Date: Mon, 10 Nov 2025 21:47:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, jfalempe@redhat.com,
-	javierm@redhat.com, simona@ffwll.ch, airlied@gmail.com,
-	mripard@kernel.org, maarten.lankhorst@linux.intel.com,
-	gregkh@linuxfoundation.org, jirislaby@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH 2/3] drm/client: Support emergency restore via sysrq for
- all clients
-Message-ID: <202511102156.RRA8JQGz-lkp@intel.com>
-References: <20251107142612.467817-3-tzimmermann@suse.de>
+	s=arc-20240116; t=1762782850; c=relaxed/simple;
+	bh=TLoF+tW6MGQGC3ZdXzJEdfrUV9IkUw4etXHaqpJERy8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DYjoMrROzaZ/53kR8LMjHlDkZCQzW7zWMUoJSP+s+l5nAZ9lxDYgWZ33hV7rdEg4Ayzz4RStmStzUFATSItCYmnM4MqDRXA3lpMj/k24OfgW2ZNGWg2bsf05ltSIcEZET/3M6lrGBblT0kmsvRrGQbW3gk2OCsBLQRr/m2cEKI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4edb6e678ddso16275771cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:54:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762782844; x=1763387644;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yiUUP6y/tdABD28k7Uj6Lx28HH/CBe9ubTZdjhyrBDg=;
+        b=i+MvzQGjf/i2BPCN2AwhCm9/C4HZYt40REGhZQTWqBJa/DJw1e1LkK301n/ldB0vUe
+         LfFjXa2kf1jAQF9amY1WvqRhS0bZZBY8cxDTh8J6IviIoimMhvp0G0TbwpQeuEdzu7Rz
+         Inc7cAn+99pNWEraXL6/30pmo3YJ9dZF7c3rrKncefFkHJgP4Yz56wY+srJh/kuA6hcO
+         U/+IOKl3jDXjPc/Tn7YcULEIdlneLt9f06vRhzlp0ENj4IB2taqKZXH9dUYth70exStY
+         +R7Y6FClEPrLHQNB2OxQgyy+BxfTgh0lsl5c77GMTQECPk78r+z3aM7faSg6xUK+bwUc
+         ggsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdnd3HMYC3cNQzsxla6KYmt1ofLwqPHFwVcqq4E8UARHWOgzg4dqnXa1ImupSc/LBnFLbU8/RZhQHZtS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAbBfXvft+6VGVk+kkMVnsEJds6K/gzxeo0SO8rtVkiSTKL3Ia
+	ZnPneNnDspyj36rkimryQ4pmE8j/Qni46KsRukuS8UONLF/74tVDKwAv2bEn66GQ
+X-Gm-Gg: ASbGncthtRu/km4X1Mc5GsB4u1eEpwvppfx+yjhCwesqxvDhbiU4hGjMyVKijb7SItC
+	Uh3jhl9ZIdKh8uYKJr8m8fXR3UZsog8PKamADMgdhWdlbdQJQ3L+OiA7YyWmppLH/Zr9bnT3dGl
+	Pw/xLVeYWxZrtitN7Bu3KLzxAT8Ubey+v7TLybxJoJEkT+lMR4c9zoYGYRZ7++w+iiOpVPaFbiL
+	AiPa+okTiAAeUX/I9/q+aJ7BT1P+BcAX4QkJMLphjPDiSvXA5nqHYl0Ow77OUGgUIiOy9KRyUQy
+	+2dakSaTc5Ljo8ja7wCnsKwHme6ZPlGhHaZVHxGNhnw7k9sZVYOl3Mihe3SDTu+i1aqmCucdJlp
+	k6MGuonOI4bWR9YzzwKOctVkt1JGUDdCwtUAmPPY2p5YOXxsxoWiJUjWsevV4n3j20WeuR6LqY1
+	iVDWWcVsSbQY+5jazu5UUtYjPL3W+FI0d2NeosYA==
+X-Google-Smtp-Source: AGHT+IEfL3a3uLv1FLQa/EX4KcijT+Sy5i7eqdGzixUIPP106f8IaZCmxxrA8iaDZ44JguYPaMM72g==
+X-Received: by 2002:a05:622a:255:b0:4e8:a442:d6cb with SMTP id d75a77b69052e-4eda4fe1900mr112765391cf.83.1762782843737;
+        Mon, 10 Nov 2025 05:54:03 -0800 (PST)
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com. [209.85.219.42])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eda5956968sm47901711cf.6.2025.11.10.05.54.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 05:54:03 -0800 (PST)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-88054872394so46348006d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:54:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWmyOJywe4xcOu21C7Gw8r7XoKXhSH99BR6C/KcZAeo5KpL9r1nJBEg+NLQ2CcNu4vfqTUwvxLPo99LlMk=@vger.kernel.org
+X-Received: by 2002:a05:6102:510a:b0:5db:d7a5:ba18 with SMTP id
+ ada2fe7eead31-5ddc4807e64mr3048323137.44.1762782494661; Mon, 10 Nov 2025
+ 05:48:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107142612.467817-3-tzimmermann@suse.de>
+References: <20251028165127.991351-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251028165127.991351-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20251028165127.991351-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Nov 2025 14:48:03 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWSB4OvS5AeWqOBQPNG2J9VMYe9YUeXAp9kPjcJEQm3+g@mail.gmail.com>
+X-Gm-Features: AWmQ_bmKTzSHX049lQiR1VHWNPu-wG2BlrvB51tlczP7EyXTuG2z2m7Th5IlB-8
+Message-ID: <CAMuHMdWSB4OvS5AeWqOBQPNG2J9VMYe9YUeXAp9kPjcJEQm3+g@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] clk: renesas: r9a09g077: Add xSPI core and module clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Thomas,
+Hi Prabhakar,
 
-kernel test robot noticed the following build errors:
+On Tue, 28 Oct 2025 at 17:52, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add core clocks and module clock definitions required by the xSPI
+> (Expanded SPI) IP on the R9A09G077 SoC.
+>
+> Define the new SCKCR fields FSELXSPI0/FSELXSPI1 and DIVSEL_XSPI0/1 and
+> add two new core clocks XSPI_CLK0 and XSPI_CLK1. The xSPI block uses
+> PCLKH as its bus clock (use as module clock parent) while the operation
+> clock (XSPI_CLKn) is derived from PLL4. To support this arrangement
+> provide mux/div selectors and divider tables for the supported
+> XSPI operating rates.
+>
+> Add CLK_TYPE_RZT2H_FSELXSPI to implement a custom divider/mux clock
+> where the determine_rate() callback enforces the hardware constraint:
+> when the parent output is 600MHz only dividers 8 and 16 are valid,
+> whereas for 800MHz operation the full divider set (6,8,16,32,64) may
+> be used. The custom determine_rate() picks the best parent/divider pair
+> to match the requested rate and programs the appropriate SCKCR fields.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2:
+> - Added custom divider clock type for XSPI clocks to enforce hardware
+>   constraints on supported operating rates.
 
-[auto build test ERROR on next-20251107]
-[cannot apply to drm/drm-next drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-misc/drm-misc-next drm-tip/drm-tip linus/master v6.18-rc4 v6.18-rc3 v6.18-rc2 v6.18-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks for the update!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Zimmermann/drm-client-Pass-force-parameter-to-client-restore/20251107-223026
-base:   next-20251107
-patch link:    https://lore.kernel.org/r/20251107142612.467817-3-tzimmermann%40suse.de
-patch subject: [PATCH 2/3] drm/client: Support emergency restore via sysrq for all clients
-config: powerpc64-randconfig-001-20251110 (https://download.01.org/0day-ci/archive/20251110/202511102156.RRA8JQGz-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 0d786b9a207aa0e6d88dde7fd9ffe0b364db69a4)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251110/202511102156.RRA8JQGz-lkp@intel.com/reproduce)
+> --- a/drivers/clk/renesas/r9a09g077-cpg.c
+> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511102156.RRA8JQGz-lkp@intel.com/
+> @@ -54,12 +56,19 @@
+>  #define DIVSCI3ASYNC   CONF_PACK(SCKCR3, 12, 2)
+>  #define DIVSCI4ASYNC   CONF_PACK(SCKCR3, 14, 2)
+>
+> +#define FSELXSPI0      CONF_PACK(SCKCR, 0, 3)
+> +#define FSELXSPI1      CONF_PACK(SCKCR, 8, 3)
+> +#define DIVSEL_XSPI0   CONF_PACK(SCKCR, 6, 1)
+> +#define DIVSEL_XSPI1   CONF_PACK(SCKCR, 14, 1)
+>  #define SEL_PLL                CONF_PACK(SCKCR, 22, 1)
+>
+> +#define DIVSELXSPI_RATE_600MHZ         600000000UL
+> +#define DIVSELXSPI_RATE_800MHZ         800000000UL
 
-All errors (new ones prefixed by >>):
+I find it a bit weird that the name of the define includes its value.
+Perhaps just use "600 * MEGA" resp. "800 * MEGA" in the code instead?
+But see below...
 
->> ld.lld: error: duplicate symbol: drm_client_sysrq_register
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_atomic.o:(drm_client_sysrq_register) in archive vmlinux.a
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_auth.o:(.text+0x0) in archive vmlinux.a
---
->> ld.lld: error: duplicate symbol: drm_client_sysrq_unregister
-   >>> defined at drm_internal.h:67 (drivers/gpu/drm/drm_internal.h:67)
-   >>>            drivers/gpu/drm/drm_atomic.o:(drm_client_sysrq_unregister) in archive vmlinux.a
-   >>> defined at drm_internal.h:67 (drivers/gpu/drm/drm_internal.h:67)
-   >>>            drivers/gpu/drm/drm_auth.o:(.text+0x40) in archive vmlinux.a
---
->> ld.lld: error: duplicate symbol: drm_client_sysrq_register
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_atomic.o:(drm_client_sysrq_register) in archive vmlinux.a
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_edid.o:(.text+0x0) in archive vmlinux.a
---
->> ld.lld: error: duplicate symbol: drm_client_sysrq_unregister
-   >>> defined at drm_internal.h:67 (drivers/gpu/drm/drm_internal.h:67)
-   >>>            drivers/gpu/drm/drm_atomic.o:(drm_client_sysrq_unregister) in archive vmlinux.a
-   >>> defined at drm_internal.h:67 (drivers/gpu/drm/drm_internal.h:67)
-   >>>            drivers/gpu/drm/drm_edid.o:(.text+0x40) in archive vmlinux.a
---
->> ld.lld: error: duplicate symbol: drm_client_sysrq_register
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_atomic.o:(drm_client_sysrq_register) in archive vmlinux.a
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_encoder.o:(.text+0x0) in archive vmlinux.a
---
->> ld.lld: error: duplicate symbol: drm_client_sysrq_unregister
-   >>> defined at drm_internal.h:67 (drivers/gpu/drm/drm_internal.h:67)
-   >>>            drivers/gpu/drm/drm_atomic.o:(drm_client_sysrq_unregister) in archive vmlinux.a
-   >>> defined at drm_internal.h:67 (drivers/gpu/drm/drm_internal.h:67)
-   >>>            drivers/gpu/drm/drm_encoder.o:(.text+0x40) in archive vmlinux.a
---
->> ld.lld: error: duplicate symbol: drm_client_sysrq_register
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_atomic.o:(drm_client_sysrq_register) in archive vmlinux.a
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_file.o:(.text+0x0) in archive vmlinux.a
---
->> ld.lld: error: duplicate symbol: drm_client_sysrq_unregister
-   >>> defined at drm_internal.h:67 (drivers/gpu/drm/drm_internal.h:67)
-   >>>            drivers/gpu/drm/drm_atomic.o:(drm_client_sysrq_unregister) in archive vmlinux.a
-   >>> defined at drm_internal.h:67 (drivers/gpu/drm/drm_internal.h:67)
-   >>>            drivers/gpu/drm/drm_file.o:(.text+0x40) in archive vmlinux.a
---
->> ld.lld: error: duplicate symbol: drm_client_sysrq_register
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_atomic.o:(drm_client_sysrq_register) in archive vmlinux.a
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_framebuffer.o:(.text+0x0) in archive vmlinux.a
---
->> ld.lld: error: duplicate symbol: drm_client_sysrq_unregister
-   >>> defined at drm_internal.h:67 (drivers/gpu/drm/drm_internal.h:67)
-   >>>            drivers/gpu/drm/drm_atomic.o:(drm_client_sysrq_unregister) in archive vmlinux.a
-   >>> defined at drm_internal.h:67 (drivers/gpu/drm/drm_internal.h:67)
-   >>>            drivers/gpu/drm/drm_framebuffer.o:(.text+0x40) in archive vmlinux.a
---
->> ld.lld: error: duplicate symbol: drm_client_sysrq_register
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_atomic.o:(drm_client_sysrq_register) in archive vmlinux.a
-   >>> defined at drm_internal.h:65 (drivers/gpu/drm/drm_internal.h:65)
-   >>>            drivers/gpu/drm/drm_gem.o:(.text+0x0) in archive vmlinux.a
-..
+> @@ -154,6 +180,15 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
+>         DEF_DIV(".sci5async", CLK_SCI5ASYNC, CLK_PLL4D1, DIVSCI5ASYNC,
+>                 dtable_24_25_30_32),
+>
+> +       DEF_FIXED(".pll4d1_div3", CLK_PLL4D1_DIV3, CLK_PLL4D1, 3, 1),
+> +       DEF_FIXED(".pll4d1_div4", CLK_PLL4D1_DIV4, CLK_PLL4D1, 4, 1),
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Please move these two just below the existing entry for ".pll4d1".
+
+> +       DEF_MUX(".divselxspi0", CLK_DIVSELXSPI0_SCKCR, DIVSEL_XSPI0,
+> +               sel_clk_pll4d1_div3_div4,
+> +               ARRAY_SIZE(sel_clk_pll4d1_div3_div4), 0),
+> +       DEF_MUX(".divselxspi1", CLK_DIVSELXSPI1_SCKCR, DIVSEL_XSPI1,
+> +               sel_clk_pll4d1_div3_div4,
+> +               ARRAY_SIZE(sel_clk_pll4d1_div3_div4), 0),
+> +
+>         /* Core output clk */
+>         DEF_DIV("CA55C0", R9A09G077_CLK_CA55C0, CLK_SEL_CLK_PLL0, DIVCA55C0,
+>                 dtable_1_2),
+
+> @@ -264,6 +305,116 @@ r9a09g077_cpg_mux_clk_register(struct device *dev,
+>         return clk_hw->clk;
+>  }
+>
+> +static int r9a09g077_cpg_fselxspi_determine_rate(struct clk_hw *hw,
+> +                                                struct clk_rate_request *req)
+> +{
+> +       struct clk_divider *divider = to_clk_divider(hw);
+> +       unsigned long parent_rate, best = 0, now;
+> +       const struct clk_div_table *clkt;
+> +       unsigned long rate = req->rate;
+> +       int div = 0;
+
+unsigned int
+
+> +
+> +       if (!rate)
+> +               rate = 1;
+> +
+> +       for (clkt = divider->table; clkt->div; clkt++) {
+> +               parent_rate = clk_hw_round_rate(req->best_parent_hw, rate * clkt->div);
+
+I had expected the use of some *_determinate_rate_*() helper, as the
+parent can be changed to find a better clock rate?
+Perhaps you should use a composite clock for that?
+
+> +               /*
+> +                * DIVSELXSPIx supports 800MHz and 600MHz operation.
+> +                * When the parent_rate is 600MHz, only dividers of 8 and 16
+> +                * are supported otherwise dividers of 6, 8, 16, 32, 64 are supported.
+> +                * This check ensures that FSELXSPIx is set correctly.
+> +                */
+> +               if (parent_rate == DIVSELXSPI_RATE_600MHZ &&
+
+Does this actually work as expected? I doubt parent_rate is guaranteed
+to be exactly 600 or 800 MHz, and expect it can differ slightly due
+to rounding.  Hence I would look at clk_fixed_factor.div instead.
+
+> +                   (clkt->div != 8 && clkt->div != 16))
+> +                       continue;
+> +               now = DIV_ROUND_UP_ULL((u64)parent_rate, clkt->div);
+
+No need to cast to u64 (DIV_ROUND_*_ULL() handle this internally).
+
+> +               if (abs(rate - now) < abs(rate - best)) {
+> +                       div = clkt->div;
+> +                       best = now;
+> +                       req->best_parent_rate = parent_rate;
+> +               }
+> +       }
+> +
+> +       if (!div) {
+> +               u8 maxdiv = 0;
+> +
+> +               req->best_parent_rate = clk_hw_round_rate(req->best_parent_hw, 1);
+> +               /*
+> +                * If DIVSELXSPIx is set to 800MHz set the maximum divider
+> +                * or else fall back to divider of 16 which is a maximum
+> +                * supported divider for 600MHz operation.
+> +                */
+> +               if (req->best_parent_rate == DIVSELXSPI_RATE_800MHZ) {
+> +                       for (clkt = divider->table; clkt->div; clkt++) {
+> +                               if (clkt->div > maxdiv)
+> +                                       maxdiv = clkt->div;
+> +                       }
+> +                       div = maxdiv;
+
+Why not hardcode the divider, like in the else branch?
+
+> +               } else {
+> +                       div = 16;
+> +               }
+> +       }
+> +
+> +       req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div);
+
+No need to cast to u64.
+
+
+> +
+> +       return 0;
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
