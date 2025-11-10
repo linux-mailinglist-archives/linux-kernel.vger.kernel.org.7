@@ -1,137 +1,94 @@
-Return-Path: <linux-kernel+bounces-893721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9D1C48205
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:53:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAF4C4824F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:56:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F02AD34A86C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:53:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA308188F2DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4E4285CB9;
-	Mon, 10 Nov 2025 16:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C443126C7;
+	Mon, 10 Nov 2025 16:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="EIE1mYY8"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Op1P68AK"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3112773CC
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAC52EA470
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762793280; cv=none; b=pNFofin1Y3e5wxJFAlsxFBdApqXA+47YfV0XSvNKwfcf/iQYZDZHi/Ht9aah0oCqkqJETGZ9TKquZAHaZ+ByzwzSZ/CGHQ9AP7smgwYGkmJU5J8POXXrgmcOCajpiIO9GTR/sKxnDnsBXGJGFTIMgsZB7S9wneiFCQ2zCXm0ehM=
+	t=1762793299; cv=none; b=mD7eQfoh/w0v4HCGGmiiaxTSWQMfL5pod/d2hOUdaJcBXoJSYvbUbPbB10X/irrKj6/S7rWaaVSbEUplTx8SzSILmJPesVC7PH+5pxtdr9bu8ILtWuQ9u5PjD375TG22MtdE7c2J/+TYblUa7YkjJucasaCXtasLAQ4HbZXILkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762793280; c=relaxed/simple;
-	bh=nOIq144xGgFO4bva4FYwPZPvaRNZDvPcNywFLSl7Wtk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VaMDDcHyfM5ZTcrF2/FNFDuGsLXCH13iCt4Kt5tRc8PRP+/xBPO8EF2L53TXMAHmTL8YTwfN8uo1oBFXx2s4530qJgXmm55X14d3WnetEexjlRy8mBefEzfruDv8A8XFdv5e04WnAsYB71jBUJtTiCEwvN4Q2sbEq6J4uNgLqv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=EIE1mYY8; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-29806bd4776so2713085ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:47:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1762793278; x=1763398078; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xZqfsqvlctuD50vkPLsM39GcbviXIyVkPfjtYlBZ/X4=;
-        b=EIE1mYY8cMtV/BEwVJHw4yegOmjxsyMLsaj1JcTJtE3KNNf5J4AlxFYgWXDNKCQFG3
-         YyGGCgkPXkFkMtNiiTBajQi9FLptD8LkGzM/URxVGNADKkLyrVuEezxwi1yGpAHaBCSf
-         I3qnhxPsGI/dDiS3lzlXKN5tyJZx/0lShIZcBInnJ/3Z+6IRns5ark6f2YLRVJBsFUki
-         cXLWsHAr6PQQZYuoeKs3M9EJNFCSM3B3SRqB1oNhItXOh8o/2cCPpQ+NRMsUAFSlV8Mp
-         NbTdNoDmCBO6j0ZSplp0pFXvcVwZjmqKUm1FeJTx/+wETuzNOoK9XaQpvEf3xv0DqXk8
-         YGtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762793278; x=1763398078;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xZqfsqvlctuD50vkPLsM39GcbviXIyVkPfjtYlBZ/X4=;
-        b=DJwGDNp1sjYwB6Uf90AVTujjaeGTeKeoC1R0x3dA3syelrOscTt5dW/AIIH+PoZoFC
-         LmbG4irWVwyY6Zh5eYlj04/WJ5eUlsh06Fb0vzLIwmrIGDRH+ZH9uneUIWWT4sYUaa1m
-         3lJ2hZ81M1vkqM8zdpMQdhW2v++3WFCTzqCZu9avTOIo3sNQZo7EUKQo6l1IC+kHXWr+
-         YdzPX3HOYw0nQa4WKl+vuUCEoluX9X9uGQLzA72QzhcivRalY5AmEGvy/JkRi4lQHEDn
-         SP5d7TgrFdeRUfqazBybjcZx3zexYrB3shEjOBoGKzLh6Dqn4buYaPzm/EeT05I2k8Fw
-         Kqyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhf5YJ/C4kvQdhXYXY4g0XwEf7txfXTGiTbKbhA1NyW+RuHMw2BxR82XgI51aouSo7VNQty4JgvF8XLOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEy8JFV9c6dtUGRuMSLie1tGPjZ89Bi2pf4x1SVpcbh6oMb/lW
-	MZlVmZefvWEpTsbezBgV90JwaPfWLYG8YhVVopIu48DELTL/+TakJb989/tlT7TXmjQQXTmkoQ+
-	A5+/nDQ5OPsPl4mEyrediUfACxS6eHiyrDrri8jSSjw==
-X-Gm-Gg: ASbGncvT1ypwd9mRFMPO+qGB3l/S+K8sAxStR+SqwZkbLHnNlqS4pH/GzQz76uIGkb4
-	MW3lTRWF2yN8C2BtOK1AzO4CwDC06MYxTY3z5MD4g3kqcnOPM7KMQ0p0DjkOvJ2htpUbJE6oQvv
-	ecGsuz9Nip8Q+y7n11+gHORKE5WXsqz9DX1ASpKtB3E6GNtRGbtBfFuDymSqEhPZ75LPFz7tTWP
-	szu0d6p+A7G+WJGf5ZXueRD3XZkG8OIBhXM1mBPCZUZY8pOiY9gztH00WmKVH7YunOyxtuuumTd
-	LDFVZ5lpB4+Uk78PKz3a/bI6CjlE
-X-Google-Smtp-Source: AGHT+IFIOdjBHi3w1pnM/HGJ88+v2H+dG9zQ6DmQ1N7yZm773WThOr3yfaWrN+hUKMkOOzsS5iJ835zONe6DvUk5kkI=
-X-Received: by 2002:a17:902:eccc:b0:272:2bf1:6a1f with SMTP id
- d9443c01a7336-297e5657e71mr63866195ad.4.1762793278132; Mon, 10 Nov 2025
- 08:47:58 -0800 (PST)
+	s=arc-20240116; t=1762793299; c=relaxed/simple;
+	bh=nbTXEmv9LY/cKsYu4ZiCODgVkOSqUwPWnFRQmS2Y+K0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZcgrPaGZZwcdj67kVMHckjwmVuR/goACnal92LKA/JKnk4alYUpXNr1oR98jtuWDH6PLOqn/M66q0hhJlHSpQQap+0C/EFyrjvlwT7V0VPA3qVGFUTuFnwVvc1IY/JoQTgKgfedWLzTQJiXEhgpCPWA3GKqFMY+MwwkwUnsJIXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Op1P68AK; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 10 Nov 2025 08:47:57 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762793285;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xd3QhG39y54BYRm7BE+GdV6fPsrzgc5k/otRLVZG40Q=;
+	b=Op1P68AKP718zvoxiL1HqKGS4nBheJkeq7JhxPVCOxpu8rVb2yLWW0mPcsf8NnNVNKG7gx
+	61esQYqXGExt2UH/pe2AHZyPCmZmyZu2DROK3PSsjbECpfaOfWaNKDCsLjMQS2xsYBb3O2
+	pPuA297SZhouAMdmqFt+sgt8zY8Z7Fo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Qi Zheng <qi.zheng@linux.dev>, hannes@cmpxchg.org, hughd@google.com, 
+	mhocko@suse.com, roman.gushchin@linux.dev, muchun.song@linux.dev, 
+	david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com, 
+	imran.f.khan@oracle.com, kamalesh.babulal@oracle.com, axelrasmussen@google.com, 
+	yuanchu@google.com, weixugc@google.com, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	Muchun Song <songmuchun@bytedance.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
+Message-ID: <aqdvjyzfk6vpespzcszfkmx522iy7hvddefcjgusrysglpdykt@uqedtngotzmy>
+References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
+ <97ea4728568459f501ddcab6c378c29064630bb9.1761658310.git.zhengqi.arch@bytedance.com>
+ <aQ1_f_6KPRZknUGS@harry>
+ <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
+ <aQ3yLER4C4jY70BH@harry>
+ <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
+ <aRFKY5VGEujVOqBc@hyeyoo>
+ <2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
+ <aRF7eYlBKmG3hEFF@hyeyoo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251108230101.4187106-1-csander@purestorage.com>
- <20251108230101.4187106-2-csander@purestorage.com> <aRCG3OUThPCys92r@fedora>
-In-Reply-To: <aRCG3OUThPCys92r@fedora>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 10 Nov 2025 08:47:46 -0800
-X-Gm-Features: AWmQ_blYPrkmtS7MiqmLPPXzGp4JyIMEirgGSbanrjWPFtKq4gAWKN2U4mpi-Qg
-Message-ID: <CADUfDZocSmRC2uSiY=1gayxQ5TGAcCnKQRSg+4SeficpQ3Bfhw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] loop: use blk_rq_nr_phys_segments() instead of
- iterating bvecs
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Damien Le Moal <dlemoal@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Keith Busch <kbusch@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRF7eYlBKmG3hEFF@hyeyoo>
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, Nov 9, 2025 at 4:20=E2=80=AFAM Ming Lei <ming.lei@redhat.com> wrote=
-:
->
-> On Sat, Nov 08, 2025 at 04:01:00PM -0700, Caleb Sander Mateos wrote:
-> > The number of bvecs can be obtained directly from struct request's
-> > nr_phys_segments field via blk_rq_nr_phys_segments(), so use that
-> > instead of iterating over the bvecs an extra time.
-> >
-> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > ---
-> >  drivers/block/loop.c | 5 +----
-> >  1 file changed, 1 insertion(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> > index 13ce229d450c..8096478fad45 100644
-> > --- a/drivers/block/loop.c
-> > +++ b/drivers/block/loop.c
-> > @@ -346,16 +346,13 @@ static int lo_rw_aio(struct loop_device *lo, stru=
-ct loop_cmd *cmd,
-> >       struct request *rq =3D blk_mq_rq_from_pdu(cmd);
-> >       struct bio *bio =3D rq->bio;
-> >       struct file *file =3D lo->lo_backing_file;
-> >       struct bio_vec tmp;
-> >       unsigned int offset;
-> > -     int nr_bvec =3D 0;
-> > +     unsigned short nr_bvec =3D blk_rq_nr_phys_segments(rq);
-> >       int ret;
-> >
-> > -     rq_for_each_bvec(tmp, rq, rq_iter)
-> > -             nr_bvec++;
-> > -
->
-> The two may not be same, since one bvec can be splitted into multiple seg=
-ments.
+On Mon, Nov 10, 2025 at 02:43:21PM +0900, Harry Yoo wrote:
+> On Mon, Nov 10, 2025 at 12:30:06PM +0800, Qi Zheng wrote:
+> > > Maybe we could make it safe against re-entrant IRQ handlers by using
+> > > read-modify-write operations?
+> > 
+> > Isn't it because of the RMW operation that we need to use IRQ to
+> > guarantee atomicity? Or have I misunderstood something?
+> 
+> I meant using atomic operations instead of disabling IRQs, like, by
+> using this_cpu_add() or cmpxchg() instead.
 
-Hmm, io_buffer_register_bvec() already assumes
-blk_rq_nr_phys_segments() returns the number of bvecs iterated by
-rq_for_each_bvec(). I asked about this on the patch adding it, but
-Keith assures me they match:
-https://lore.kernel.org/io-uring/Z7TmrB4_aBnZdFbo@kbusch-mbp/.
+We already have mod_node_page_state() which is safe from IRQs and is
+optimized to not disable IRQs for archs with HAVE_CMPXCHG_LOCAL which
+includes x86 and arm64.
 
-Best,
-Caleb
+Let me send the patch to cleanup the memcg code which uses
+__mod_node_page_state.
 
