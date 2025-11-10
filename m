@@ -1,119 +1,117 @@
-Return-Path: <linux-kernel+bounces-893965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92987C48EF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:15:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E22C48EFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:16:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F623B63D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:07:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77591883A42
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72FEC318146;
-	Mon, 10 Nov 2025 19:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8BofuqZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5397C32C94C;
+	Mon, 10 Nov 2025 19:15:52 +0000 (UTC)
+Received: from srv01.abscue.de (abscue.de [89.58.28.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4C323ABA1;
-	Mon, 10 Nov 2025 19:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5367530AAAD;
+	Mon, 10 Nov 2025 19:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.28.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762801650; cv=none; b=FbgZy14Kg/YHka6c00NKdbNrP/5DiV9zxtEYre1oVjoONzVtZPjhlZYKaLGAGLH7kqkcoD528GEEzDVtl7fiMHOtg3kxi26legN3aAC3l3XQkpWONrVqGXc2MumDWJJJ8sLLXTizWHPRzmaS8UqwdVozNp4g0L80M6F2A4vX5js=
+	t=1762802151; cv=none; b=rKXoYkHTcCo4/5ZpiZQYR7psa3YgaPAK6ZOHdynNlGtHXWfcQGEBVlexY4sp1UIaKLTwe7WwgjE55UyA4TXuMb5SKtljVjVafHj/NJMVlEDZEjvrGdAeox6cwSnvrzWsmwSEUpp7/ALHgUurNmH6YKNsdVGkGMyo2YuU+v/QIOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762801650; c=relaxed/simple;
-	bh=gdMPSWFUx6fQxjEeg88AQCpfbokaGBVOZ3O5cWM3Xts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O97/1+VOtg0iqj8tFRGgJutaz5I5Ce3D+ZLZZLjyynMJu/k8asnXC+vtu1pcJom9En09Fw9aHKi4yQo7TfSxVMDJq+aDCpR+hmF64/yAHO391lYZBsUbQpjaLIAhHXFKUAxoMD3w6QiQhZoWl1McxO8eOTtQDVJ6llo41Lmv5tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8BofuqZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C83CC4CEF5;
-	Mon, 10 Nov 2025 19:07:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762801650;
-	bh=gdMPSWFUx6fQxjEeg88AQCpfbokaGBVOZ3O5cWM3Xts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z8BofuqZKxDxoVpIR4gMTKkobJ7QaF6zjZmN6oY9SWF1wnk3/nUCO1tVsXHeGeRu3
-	 F8X5wlX4tqmRBbxbMVAvXkz5zzDMbvTIo9BI5sLSbYTSv2tuNsLGo8Ky43OPPtdkqx
-	 bzrxwtuJFOFNKz6DcFe74hc4sRkm2fwFcgSRHFBjA0SKyca0TRKg/6O6yIzfpGSmsp
-	 7Xfec9U7HeRxJNJw/SLCR/YNxLf9+lcEPB4j8mZ7jpGKc5PIshX66ozUMceiWF/K8p
-	 0cpkNLprCSxaElJekdx2syr7EMObMmswk3KPNzEVvUwVnVVTJXAz+xUEg5xQC9ngbc
-	 hPzOHcsqMvJog==
-Date: Mon, 10 Nov 2025 19:07:24 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jic23@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
-	andy@kernel.org, Michael.Hennerich@analog.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
-	cosmin.tanislav@analog.com, marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v1 1/3] dt-bindings: iio: adc: Add AD4134
-Message-ID: <20251110-unsightly-blah-410539e95a18@spud>
-References: <cover.1762777931.git.marcelo.schmitt@analog.com>
- <608ab00821af9f766c75d88f59940fed87cb6df7.1762777931.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1762802151; c=relaxed/simple;
+	bh=7+obkWlFOlCgYi1gvLlelNaSXmUPyVp5CQygoFDhooA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KhY8LVZce350jtF5pRM/+QhFb5XUbUzLwRbvPbT3vAZp57Npxyf7VPXDgeYiLtMln7ocQNxxD5cN9MVceIN871CsYMx1UvU7ixXU2r2NVtM986a0cWMB/GTdueqGDQUnVX7L+HN70A+8sqb0yESy+UjHUuPSP13Fdfvo4k5SOiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de; spf=pass smtp.mailfrom=abscue.de; arc=none smtp.client-ip=89.58.28.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=abscue.de
+Received: from srv01.abscue.de (localhost [127.0.0.1])
+	by spamfilter.srv.local (Postfix) with ESMTP id F02291C019A;
+	Mon, 10 Nov 2025 20:10:29 +0100 (CET)
+X-Spam-Level: 
+Received: from fluffy-mammal.metal.fwg-cag.de (unknown [IPv6:2001:9e8:cdd8:ff00:36bc:9812:27d4:17cf])
+	by srv01.abscue.de (Postfix) with ESMTPSA id 488041C0036;
+	Mon, 10 Nov 2025 20:10:29 +0100 (CET)
+From: =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+Subject: [PATCH v2 0/3] mfd: sprd-sc27xx: Move poweroff/reboot support to
+ the parent MFD driver
+Date: Mon, 10 Nov 2025 20:08:57 +0100
+Message-Id: <20251110-sc27xx-mfd-poweroff-v2-0-fd5842e732fe@abscue.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rJNX4uVi5xG0GC+z"
-Content-Disposition: inline
-In-Reply-To: <608ab00821af9f766c75d88f59940fed87cb6df7.1762777931.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEk4EmkC/32NQQ7CIBBFr9LM2jGAIRRX3sN00cKMZWFpoFZM0
+ 7uLPYDL95L//gaZUqAM12aDRGvIIU4V1KkBN/bTgzD4yqCE0lIIg9kpUwo+2eMc35QiM1rHRrV
+ eayYPdTkn4lCO6r2rPIa8xPQ5Tlb5s/97q0SBre0VW2kHc5G3fsjuRWdP0O37/gWGO7NotgAAA
+ A==
+X-Change-ID: 20251007-sc27xx-mfd-poweroff-9cf728d55fed
+To: Lee Jones <lee@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Sebastian Reichel <sre@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-spi@vger.kernel.org, linux-pm@vger.kernel.org, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+X-Mailer: b4 0.14.2
 
+Registers for powering off the system are present in all SC27xx-series
+PMICs, although their locations vary between the specific PMIC models.
+On systems using these chips, the PMIC can always power off the system
+and is usually the only chip capable of doing this. Similarly, the PMICs
+(except for SC2731) contain a reset register that can always be used to
+restart the system.
 
---rJNX4uVi5xG0GC+z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+There is an existing sc27xx-poweroff driver, but it currently only works
+on SC2731 and is not probed anywhere since it is missing an OF match
+table and is not instantiated by the MFD driver. Reboot for SC2731 is
+implemented in drivers/spi/spi-sprd-adi.c, which is not really an
+appropriate location for PMIC-specific code.
 
-On Mon, Nov 10, 2025 at 09:45:18AM -0300, Marcelo Schmitt wrote:
+Since a separate device tree node for the poweroff support would not
+provide anything useful (see [1]) and passing platform-specific data
+between drivers is unnecessarily complex for such a simple feature,
+reimplement the poweroff functionality in the main MFD driver. While at
+it, add support for the newer SC2730 PMIC and its hardware reset
+register.
 
-> +  adi,control-mode:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      Describes whether the device is wired to an SPI interface or not. The
+Reboot is special because it requires storing the reboot mode. Move the
+existing code for this from the SPI bus driver to the MFD driver.
 
-Can you explain how you don't automagically know this from what bus
-you're on?
+[1]: https://lore.kernel.org/all/20251002025344.GA2958334-robh@kernel.org/
 
-> +      PIN/SPI pin on the device must be set accordingly, i.e., PIN/SPI must be
-> +      set to logic high for SPI Control Mode, low for Pin Control Mode. When
-> +      absent, implies the SPI interface configuration.
-> +    enum: [ spi-control-mode, pin-control-mode ]
-> +    default: spi-control-mode
-> +
-> +  adi,asrc-mode:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      Asynchronous Sample Rate Converter (ASRC) operation mode control input.
-> +      Describes whether the MODE pin is set to a high level (for master mode
-> +      operation) or to a low level (for slave mode operation).
+Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+---
+Changes in v2:
+- Fix style issues in MFD driver
+- Use dev_err instead of pr_emerg
+- Link to v1: https://lore.kernel.org/r/20251007-sc27xx-mfd-poweroff-v1-0-89a2f919b731@abscue.de
 
-I don't really get this one. If this is an input to the device that
-controls behaviour (master v slave) why is an option needed too? Clearly
-this is not a gpio but it seems like it could be one, in which case you'd
-need some sort of asrc-gpios property. Is it not possible to read the
-value of this setting out of the device's registers (maybe it's not when
-there's no spi interface connected?)?
-It's not used in your driver, so I can't look there easily to see what's
-going on.
+---
+Otto Pflüger (3):
+      mfd: sprd-sc27xx: Integrate power off and reboot support
+      spi: sprd-adi: Remove code for storing the reboot mode
+      power: reset: sc27xx: Drop unused driver
 
-> +    enum: [ high, low ]
-> +    default: low
+ drivers/mfd/sprd-sc27xx-spi.c         | 148 ++++++++++++++++++++++++++++++++++
+ drivers/power/reset/Kconfig           |   9 ---
+ drivers/power/reset/Makefile          |   1 -
+ drivers/power/reset/sc27xx-poweroff.c |  79 ------------------
+ drivers/spi/spi-sprd-adi.c            |  73 +----------------
+ 5 files changed, 149 insertions(+), 161 deletions(-)
+---
+base-commit: ab40c92c74c6b0c611c89516794502b3a3173966
+change-id: 20251007-sc27xx-mfd-poweroff-9cf728d55fed
 
---rJNX4uVi5xG0GC+z
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+Otto Pflüger <otto.pflueger@abscue.de>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRI37AAKCRB4tDGHoIJi
-0jIVAP9dkrrgzG/cSA6tOhSgQaiGaYLQh5ZGJauZzUJXnSJVPwD8Dugs/GOYERvs
-j5eJjvifsUN8QWWVuP2JQLxEV+Jnug8=
-=nHVh
------END PGP SIGNATURE-----
-
---rJNX4uVi5xG0GC+z--
 
