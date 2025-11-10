@@ -1,107 +1,104 @@
-Return-Path: <linux-kernel+bounces-892633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E639C457F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:03:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8EB3C457F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84473AF4F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:02:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41BF23B4CF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6472FC896;
-	Mon, 10 Nov 2025 09:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B73E2FC89F;
+	Mon, 10 Nov 2025 09:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4nTXJfkM"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HDn9GlST"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E3A2FC879
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B582F531F;
+	Mon, 10 Nov 2025 09:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762765370; cv=none; b=PYG5UuGIEwnSJ5ozTRQecvsBUjnD/3xCgxSQKXwYfKJAXxqYmG0KLbrpxWuzfbWbz+7EC1Ymj/2Gv34AlbiGQPZk6MLttWBlLacG4uWDZ+hRoLS0cUhbSYCUOWGcofS3RC5l7XLldo2QLqIvo6jLs2tMZBYApC6Q91FVrDP+Mds=
+	t=1762765398; cv=none; b=HwsZSfGeejAHJcQCs4F4y7x6JU4mOAgmebXEWH90zxGn4RvAEnGMYFqrot1DQK7K4MnOb1pYbEqipeHmtIzOSegp4lcLGLTy27J5KkdTWRtEJCdCs2RZiZVjqF+g56y139Ah4L9GOM7PZuYnIdH6sQmOkSg432lXWHalSjuukXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762765370; c=relaxed/simple;
-	bh=lGQwVUMBK/+CPrWtS4F6QQXvH91dHdstz43CnGGeZbQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XY9ug+/HeiE1INYIBaQ64ZrcCMbWMGzLC+AogTBwQ7SwLnvJD+kpG5cVEGmix3mCN4DihF60hH+bRDPlfFl5H5oPQPhcozBEy0918t0WUP/to1j/pT3cq6ik5tWegOV0FTrFl5OFbxlsD/b7gPqagfpbwgb4kWN6n9YL0OUkDxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4nTXJfkM; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e47d14dceso13624925e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:02:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762765366; x=1763370166; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nIDUdeozIhDI2hlJ0i5K2pwvazKO86pOLo5DtCSzJuI=;
-        b=4nTXJfkM094NT7s+ewY3JdtvhIGbAVZO8UTYobbhAKCehvcSpHXtYrJjUIe0J/R/BW
-         5F6qrtfUp5Zm8n59XhTNybL+XX7M635fRdU83VwV4Li17dYMFsNu6DHc/2qfppYHUt+1
-         pCbu/csRk0yo+U26DNVKAvhMSQDaT2i9B81eL9raeWIHd5dWKW+tdMM4qRZ1KbA7NBcD
-         Ex+gDdiVKYML7Z0/UxdcRacS+k6KPCeFPp9rjHnTlaIRgBTA8pGvFq5iU3OlxWS7g0N0
-         mq2fKRe2pFRfoIcFpSDGfkeF0oHt2mj5sC+xx30TtVgWDudvrMt/MBbl1uUjhw61IiE4
-         /REA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762765366; x=1763370166;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nIDUdeozIhDI2hlJ0i5K2pwvazKO86pOLo5DtCSzJuI=;
-        b=W5iTirl6XfTAV9mdLa2Xg/a3yUcmK6BivB7LEiAwwmuWUHqXRPWi5ulSU0MtgjcJUc
-         7HSjwo3P1HpqpzrKDnTheeDf1rQlGAPxJH2lAIUctsCCgfa1d5gtxhwuLvglLi9oR373
-         TjD3huCC/gruCMOexMXGaRLAa6HQMdt4LrMlHlERToKE52/b87MS+P9RShzyfuZZApvh
-         fMbJVzZr8O9n0HZMzdwmyy+9fKLQVpCb8WqASuq+wbk1eXG/Rn/WE3UHW6Rzjy6y/DqE
-         N8nSPGn8ztsN/8ithnAslvCL08NERwbqg8cCiif7M+dza/OYHJz3ZYNKe+kHkVZdmz1u
-         ztGw==
-X-Forwarded-Encrypted: i=1; AJvYcCX60OzZwi195kGX0K3g1KLRwUcd8hA1Cy0vzhKSO+4SVFCSaISFoouf1pCegIFDqgJ1OaX/CGyp+WWyTK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNsmXq7J2ci9SNSXMO81V2ZRsRf+zWWcDPABU8i3jnYbQLc10F
-	omKqY50n4v/0yPEVnY0aygoov9ylXORKHc6WxnP0X/F0vYDs7F3OYmcoOPIshQNKy/2b6QMOMa3
-	QvWT1MfDNCmTIpHbS1Q==
-X-Google-Smtp-Source: AGHT+IG62ut6tZCTX7ilWOkDOMJIy2efcqrDPZDvsUPwtMS/puW7d2bX4/HekffUm0OxAW4LTrKcb+NjTPS54S0=
-X-Received: from wmbgz3.prod.google.com ([2002:a05:600c:8883:b0:477:3fdf:4c24])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1f1a:b0:477:7f4a:44ba with SMTP id 5b1f17b1804b1-4777f4a4988mr7040275e9.4.1762765365927;
- Mon, 10 Nov 2025 01:02:45 -0800 (PST)
-Date: Mon, 10 Nov 2025 09:02:45 +0000
-In-Reply-To: <20251020-clk-send-sync-v2-0-44ab533ae084@google.com>
+	s=arc-20240116; t=1762765398; c=relaxed/simple;
+	bh=iP0pmJD7p/Bep5voU0Il6HrQY7P1kccQ8mI1YFlWCbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JAbtZ8UBal/U6lpAvYON9eFSXESeIKz2hDLK8hmxgYdWST+UcAeOJDHaT7ggX+mMS0Lg062lhN7aszw3iBuLM5x79h7ILpLyQqZHU1+qJkU+zkCKFuX4au5XjrkKkNo+4h4w68v34V4nmY1161Rdz165qRJeJVyxw9A4FzDhxZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HDn9GlST; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FSR+Ot9br0PyGeycL2DqffDKXnlSzEU/stDQCwoZvls=; b=HDn9GlSTe6h+2jOlorwx9A8J3/
+	/FXOnqdyIpVUIbUz0h3T1CD8a2I5WH2JrGdHxPGP8S+/+HZ8/4S7NLFL9uPhWb3NfuboHWSJp3VPp
+	C+1gfWO3gh0NYeMV5hbmIQwdvn4lQ7v1UcKhg70dtsl+NlxVc+7ATldLSaIGI2WaB2DIZEFGo8iPV
+	mie4AbxYz5/76NDN2CHTD7wiUQHtAkzRwAHCIcDSgu6YXDJfyRjwvdQymCzcDZFUfXYTalvFB7b9f
+	KnL3xz4rb5ER2oAhiHdP+vdbiAedKUeFb+KbHqc3tIdsYFjCN9V0cn++2TOL66KuSsJKCcnH0GTAG
+	ROssKh4w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vINns-0000000BBEO-0DQV;
+	Mon, 10 Nov 2025 09:03:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 852EC30029E; Mon, 10 Nov 2025 10:03:11 +0100 (CET)
+Date: Mon, 10 Nov 2025 10:03:11 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
+	Zide Chen <zide.chen@intel.com>,
+	Falcon Thomas <thomas.falcon@intel.com>,
+	Xudong Hao <xudong.hao@intel.com>
+Subject: Re: [Patch v9 10/12] perf/x86/intel: Update dyn_constranit base on
+ PEBS event precise level
+Message-ID: <20251110090311.GW3245006@noisy.programming.kicks-ass.net>
+References: <20251029102136.61364-1-dapeng1.mi@linux.intel.com>
+ <20251029102136.61364-11-dapeng1.mi@linux.intel.com>
+ <20251106145217.GA4067720@noisy.programming.kicks-ass.net>
+ <09210c12-cc61-4af5-bd13-830fd9650f9b@linux.intel.com>
+ <20251107130552.GB4067720@noisy.programming.kicks-ass.net>
+ <a0416429-23d4-4f4f-af73-bcd87b4e773c@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251020-clk-send-sync-v2-0-44ab533ae084@google.com>
-Message-ID: <aRGqNUVwOcLr_UvN@google.com>
-Subject: Re: [PATCH v2 0/2] Implement Send and Sync for clk
-From: Alice Ryhl <aliceryhl@google.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a0416429-23d4-4f4f-af73-bcd87b4e773c@linux.intel.com>
 
-On Mon, Oct 20, 2025 at 09:35:33AM +0000, Alice Ryhl wrote:
-> I added a patch to remove the Send/Sync impl for the Tyr driver as well.
-> I think it's fine for the Tyr patch to land through whichever tree takes
-> the clk patch, as there should be no non-trivial merge conflicts. Or we
-> can also take the clk patch through drm-rust where tyr patches normally
-> go if preferred by clk maintainers.
-> 
-> Regarding Daniel's patch [1], I suggest that Daniel sends his type-state
-> change rebased on top of this series (without including the patches in
-> this series in his).
-> 
-> [1]: https://lore.kernel.org/rust-for-linux/20250910-clk-type-state-v2-2-1b97c11bb631@collabora.com/
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On Mon, Nov 10, 2025 at 08:23:55AM +0800, Mi, Dapeng wrote:
 
-Stephen, any chance you could pick up this series? Thanks!
+> > @@ -5536,6 +5540,14 @@ static void intel_pmu_check_dyn_constr(s
+> >  				continue;
+> >  			mask = hybrid(pmu, acr_cause_mask64) & GENMASK_ULL(INTEL_PMC_MAX_GENERIC - 1, 0);
+> >  			break;
+> > +		case DYN_CONSTR_PEBS:
+> > +			if (x86_pmu.arch_pebs)
+> > +				mask = hybrid(pmu, arch_pebs_cap).counters;
+> > +			break;
+> > +		case DYN_CONSTR_PDIST:
+> > +			if (x86_pmu.arch_pebs)
+> > +				mask = hybrid(pmu, arch_pebs_cap).pdists;
+> > +			break;
+> >  		default:
+> >  			pr_warn("Unsupported dynamic constraint type %d\n", i);
+> >  		}
+> 
+> Yes, exactly. Thanks.
 
-Alice
+Excellent. Could you please double check and try the bits I have in
+queue/perf/core ? I don't think I've got v6 hardware at hand.
 
