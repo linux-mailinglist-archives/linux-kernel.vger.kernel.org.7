@@ -1,155 +1,181 @@
-Return-Path: <linux-kernel+bounces-892905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D3DC4614B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:57:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35EBC460DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:50:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB5C63BAA61
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:55:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5658189027E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE10305E08;
-	Mon, 10 Nov 2025 10:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="S0Xsly9W"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D8A305979;
+	Mon, 10 Nov 2025 10:50:32 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9E323B60A;
-	Mon, 10 Nov 2025 10:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987D6211A14
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762772131; cv=none; b=TmrzwRjqiP46Ih22zTSrdXmm5zn8Zyk71ENMg+ll/xaOp8zkh3ndFqitgDjB0VIMWOJTZiqlfQqjNgnX9yqvQNV8po/dkI+k2xlW2701bDaJEu9E6aduGLeSUFc+a+sucznVmkvJ9lSjgyD7E2KytQG3TYIQZspw+NWhR6O3T1I=
+	t=1762771832; cv=none; b=mpXPQG1BHcLWJBZyICjGCXtiiREo2GuhJj6aPgtNMyE7UZHdqPG/0EaBxYSMXNQVxjQu6dyoeN5rvofNlwbN8wDAz281M4jMAOOu/dlDW8FWlOWNx/gNMQe6L/IWNNvFLVtgoUn9i+e1NBswa+E6NLcNRz3vgcSmeLS/ZuHrPk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762772131; c=relaxed/simple;
-	bh=Q8IujptSu2LeCXU8JhQKUxaH7FsIZEOd9utsCw4OaiA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CD9lk6tPoYcSw28LO894WEm0xjzpZ0OILJIqUdtlCx+/Iocv2Lp/pLrrC5t7Ab266eH++BTh53AlRvNG9o43YAXEgicDzPcMhtpkBAyjch3WNlsPfNKF8I/ZOty0wqZlkmcXz11f5ul9az1slyWB2tj/MhZ9Fto0MdVR92+62E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=S0Xsly9W; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1762772124; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=IYGpWxlfS7Ghtlne/3hBnEGQd5/vaVez4+R8iM/BRvc=;
-	b=S0Xsly9W6abOUcCOpwfQjpjm12cwEqHwLF0vC24JAfMXWy1cA4AQNyqV8mq+NyusVZA+hAUmL3Ur/9oODTxOqU7AwCsrAIa5B9EJ8QyvC/nXG2l2fO54ao8XkngaeJXCkxdIl7AUP8b/Ki0g1ykuOnmEvm1Lh+ur2EbW37KQn6A=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0Ws1z-Vy_1762771801 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 10 Nov 2025 18:50:02 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: Kairui Song via B4 Relay <devnull+kasong.tencent.com@kernel.org>,
-  linux-mm@kvack.org,  Andrew Morton <akpm@linux-foundation.org>,  Kemeng
- Shi <shikemeng@huaweicloud.com>,  Nhat Pham <nphamcs@gmail.com>,  Baoquan
- He <bhe@redhat.com>,  Barry Song <baohua@kernel.org>,  Chris Li
- <chrisl@kernel.org>,  Johannes Weiner <hannes@cmpxchg.org>,  Yosry Ahmed
- <yosry.ahmed@linux.dev>,  Chengming Zhou <chengming.zhou@linux.dev>,
-  Youngjun Park <youngjun.park@lge.com>,  linux-kernel@vger.kernel.org,
-  stable@vger.kernel.org,  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Subject: Re: [PATCH] Revert "mm, swap: avoid redundant swap device pinning"
-In-Reply-To: <CAMgjq7CTdtjMUUk2YvanL_PMZxS_7+pQhHDP-DjkhDaUhDRjDw@mail.gmail.com>
-	(Kairui Song's message of "Mon, 10 Nov 2025 13:32:52 +0800")
-References: <20251110-revert-78524b05f1a3-v1-1-88313f2b9b20@tencent.com>
-	<875xbiodl2.fsf@DESKTOP-5N7EMDA>
-	<CAMgjq7CTdtjMUUk2YvanL_PMZxS_7+pQhHDP-DjkhDaUhDRjDw@mail.gmail.com>
-Date: Mon, 10 Nov 2025 18:50:01 +0800
-Message-ID: <877bvymaau.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762771832; c=relaxed/simple;
+	bh=Zhrp4LDk7dOUXkkLZz4/sptStXebClv+Ej6ovl65JYM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dZiBOVhG2b1RUNP/aUXCv67qCHM7M7ihdIKBXo/VcPScAldUxU57qa0OGPj683uygmhxSsBzB0b2K1SmLws90On9/FqhVmaBRac9C1r7Jy8N3WugkGwTc6PTU3Kya6UkR8F5ICS6xKiiSsxYQHZhfFUy1iOO29X8B6OGR1TtD0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-43300f41682so24183055ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:50:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762771830; x=1763376630;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MqgVM9CCWpCtNK7cyv2/w16aYIHi4Yzf7vfwrkHV6vE=;
+        b=FNRb1rVsS8Y12dC8hSM2RlJ2H09TpFnDe3rD5riWhUk7OxQFYfheH9mBv+XqaQlUed
+         HDD+eRXtV4ICzTyxFR02mnJmZqFXQhYkRlZ+iA40qRTSyJkWs6AzvDO1H2d60hvuHwuY
+         01daryCm9t0xXmlTNcAPZDvrlMweCHhi/ff26suLY7rsAD9e4teUdY4Nz5Q2Muq/ed1k
+         suXgyQPBX4o98eC1HmlIvxWuUgz/rRE2Q5GEeYOCURLXWGpmx9PJPdOIYzNvQxXa9AQz
+         9V/UO23ikwOvhl79dhGRsaoT30ku6AyuSkLUqeN68uOvJLtA0ombtdkWjFVhYGMta8iX
+         BPFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUF+PKU2p+JAjaJKMeoDNq4dmLYmeLPFT5zCboSTrv8L6NEvL6fac9I2p8rtBezGYiFlIaw/+vweGbNc+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9b8QAzdWEWDTsm2lxmrN+gpyduan7oMpaaC7zXOemDzhzx/RB
+	Y7ACyocyE6ssf7QQAH2SxqV+Jcq3l03sg5uwy00Z11nONmXGQkVXgttlZs4JPIoGPTIfQz/skz4
+	4lO7zg1KyopKr3YnYlQCMeasPNQKUgM4eUhkIltbm3Fy2zZxSIOldiTdGAPE=
+X-Google-Smtp-Source: AGHT+IHVPLOFlpWEKucXQ7ln1rVHLKQy82gMbywydBWzmvUrylE97m2oukC3gH6R31IYd8ZJ3X0O34jOzAZYCO0w+UTtVa6pxNAC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1a81:b0:433:773d:adc0 with SMTP id
+ e9e14a558f8ab-433773db12amr83866195ab.17.1762771829788; Mon, 10 Nov 2025
+ 02:50:29 -0800 (PST)
+Date: Mon, 10 Nov 2025 02:50:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6911c375.a70a0220.22f260.00e2.GAE@google.com>
+Subject: [syzbot] [kernel?] WARNING in prb_reserve_in_last
+From: syzbot <syzbot+df3efe4853f4ce1836ea@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Kairui Song <ryncsn@gmail.com> writes:
+Hello,
 
-> On Mon, Nov 10, 2025 at 9:56=E2=80=AFAM Huang, Ying
-> <ying.huang@linux.alibaba.com> wrote:
->>
->> Hi, Kairui,
->>
->> Kairui Song via B4 Relay <devnull+kasong.tencent.com@kernel.org> writes:
->>
->> > From: Kairui Song <kasong@tencent.com>
->> >
->> > This reverts commit 78524b05f1a3e16a5d00cc9c6259c41a9d6003ce.
->> >
->> > While reviewing recent leaf entry changes, I noticed that commit
->> > 78524b05f1a3 ("mm, swap: avoid redundant swap device pinning") isn't
->> > correct. It's true that most all callers of __read_swap_cache_async are
->> > already holding a swap entry reference, so the repeated swap device
->> > pinning isn't needed on the same swap device, but it is possible that
->> > VMA readahead (swap_vma_readahead()) may encounter swap entries from a
->> > different swap device when there are multiple swap devices, and call
->> > __read_swap_cache_async without holding a reference to that swap devic=
-e.
->> >
->> > So it is possible to cause a UAF if swapoff of device A raced with
->> > swapin on device B, and VMA readahead tries to read swap entries from
->> > device A. It's not easy to trigger but in theory possible to cause real
->> > issues. And besides, that commit made swap more vulnerable to issues
->> > like corrupted page tables.
->> >
->> > Just revert it. __read_swap_cache_async isn't that sensitive to
->> > performance after all, as it's mostly used for SSD/HDD swap devices wi=
-th
->> > readahead. SYNCHRONOUS_IO devices may fallback onto it for swap count >
->> > 1 entries, but very soon we will have a new helper and routine for
->> > such devices, so they will never touch this helper or have redundant
->> > swap device reference overhead.
->>
->> Is it better to add get_swap_device() in swap_vma_readahead()?  Whenever
->> we get a swap entry, the first thing we need to do is call
->> get_swap_device() to check the validity of the swap entry and prevent
->> the backing swap device from going under us.  This helps us to avoid
->> checking the validity of the swap entry in every swap function.  Does
->> this sound reasonable?
->
-> Hi Ying, thanks for the suggestion!
->
-> Yes, that's also a feasible approach.
->
-> What I was thinking is that, currently except the readahead path, all
-> swapin entry goes through the get_swap_device() helper, that helper
-> also helps to mitigate swap entry corruption that may causes OOB or
-> NULL deref. Although I think it's really not that helpful at all to
-> mitigate page table corruption from the kernel side, but seems not a
-> really bad idea to have.
->
-> And the code is simpler this way, and seems more suitable for a stable
-> & mainline fix. If we want  to add get_swap_device() in
-> swap_vma_readahead(), we need to do that for every entry that doesn't
-> match the target entry's swap device. The reference overhead is
-> trivial compared to readhead and bio layer, and only non
-> SYNCHRONOUS_IO devices use this helper (madvise is a special case, we
-> may optimize that later). ZRAM may fallback to the readahead path but
-> this fallback will be eliminated very soon in swap table p2.
+syzbot found the following issue on:
 
-We have 2 choices in general.
+HEAD commit:    df5d79720b15 Add linux-next specific files for 20251106
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11fc6532580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4204c002971894e3
+dashboard link: https://syzkaller.appspot.com/bug?extid=df3efe4853f4ce1836ea
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-1. Add get/put_swap_device() in every swap function.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-2. Add get/put_swap_device() in every caller of the swap functions.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c94253b384cb/disk-df5d7972.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9625b013dc5e/vmlinux-df5d7972.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f7a8fb31fb9f/bzImage-df5d7972.xz
 
-Personally, I prefer 2.  It works better in situations like calling
-multiple swap functions.  It can reduce duplicated references.  It helps
-improve code reasoning and readability.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+df3efe4853f4ce1836ea@syzkaller.appspotmail.com
 
-> Another approach I thought about is that we might want readahead to
-> stop when it sees entries from a different swap device. That swap
-> device might be ZRAM where VMA readahead is not helpful.
->
-> How do you think?
+------------[ cut here ]------------
+WARNING: mm/slub.c:6760 at free_large_kmalloc+0x15c/0x1f0 mm/slub.c:6760, CPU#1: syz-executor/5836
+Modules linked in:
+CPU: 1 UID: 0 PID: 5836 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:free_large_kmalloc+0x15c/0x1f0 mm/slub.c:6760
+Code: 44 89 f6 e8 f6 d0 fc ff 65 48 8b 05 fe ac 58 10 48 3b 44 24 08 75 57 48 83 c4 10 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc cc 90 <0f> 0b 90 65 48 8b 05 d9 ac 58 10 48 3b 44 24 08 75 32 48 89 df 48
+------------[ cut here ]------------
+WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278, CPU#1: syz-executor/5836
+Modules linked in:
+CPU: 1 UID: 0 PID: 5836 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278
+Code: 83 c4 f8 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 07 84 c0 0f 85 ee 01 00 00 44 89 65 00 49 83 c5 08 eb 13 e8 f7 45 1f 00 90 <0f> 0b 90 eb 05 e8 ec 45 1f 00 45 31 ed 4c 89 e8 48 83 c4 28 5b 41
+RSP: 0000:ffffc9000422f3a0 EFLAGS: 00010093
+RAX: ffffffff81a238a9 RBX: 00003fffffffffff RCX: ffff8880789b0000
+RDX: 0000000000000000 RSI: 00003fffffffffff RDI: 0000000000000000
+RBP: 0000000000000012 R08: ffffc9000422f4e7 R09: 1ffff92000845e9c
+R10: dffffc0000000000 R11: fffff52000845e9d R12: 0000000000000012
+R13: 0000000000000000 R14: ffffffff8de2d650 R15: 1ffffffff1bca6c2
+FS:  000055556d8e1500(0000) GS:ffff888125fc5000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa3d4427000 CR3: 0000000077ae4000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ prb_reserve_in_last+0x574/0x18f0 kernel/printk/printk_ringbuffer.c:1447
+ vprintk_store+0x641/0xd00 kernel/printk/printk.c:2273
+ vprintk_emit+0x15f/0x590 kernel/printk/printk.c:2399
+ _printk+0xcf/0x120 kernel/printk/printk.c:2448
+ __show_regs+0x77/0x620 arch/x86/kernel/process_64.c:82
+ show_regs+0x36/0x70 arch/x86/kernel/dumpstack.c:483
+ __warn+0x182/0x4c0 kernel/panic.c:899
+ __report_bug lib/bug.c:195 [inline]
+ report_bug+0x2be/0x4f0 lib/bug.c:215
+ handle_bug+0x84/0x160 arch/x86/kernel/traps.c:338
+ exc_invalid_op+0x1a/0x50 arch/x86/kernel/traps.c:392
+ asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:616
+RIP: 0010:free_large_kmalloc+0x15c/0x1f0 mm/slub.c:6760
+Code: 44 89 f6 e8 f6 d0 fc ff 65 48 8b 05 fe ac 58 10 48 3b 44 24 08 75 57 48 83 c4 10 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc cc 90 <0f> 0b 90 65 48 8b 05 d9 ac 58 10 48 3b 44 24 08 75 32 48 89 df 48
+RSP: 0000:ffffc9000422fc48 EFLAGS: 00010206
+RAX: 00000000ff000000 RBX: ffffea0000389000 RCX: ffffea0000389008
+RDX: 0000000000000000 RSI: ffffffff8e240580 RDI: ffffea0000389000
+RBP: 1ffff1100db81943 R08: ffffffff8f7d9077 R09: 1ffffffff1efb20e
+R10: dffffc0000000000 R11: fffffbfff1efb20f R12: 1ffff1100db81936
+R13: dffffc0000000000 R14: ffff88806dc0c9b0 R15: ffff888028ec3708
+ ntfs_put_super+0x15b/0x1b0 fs/ntfs3/super.c:709
+ generic_shutdown_super+0x135/0x2c0 fs/super.c:643
+ kill_block_super+0x44/0x90 fs/super.c:1723
+ ntfs3_kill_sb+0x44/0x1b0 fs/ntfs3/super.c:1848
+ deactivate_locked_super+0xbc/0x130 fs/super.c:474
+ cleanup_mnt+0x425/0x4c0 fs/namespace.c:1317
+ task_work_run+0x1d4/0x260 kernel/task_work.c:233
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ __exit_to_user_mode_loop kernel/entry/common.c:44 [inline]
+ exit_to_user_mode_loop+0xff/0x4f0 kernel/entry/common.c:75
+ __exit_to_user_mode_prepare include/linux/irq-entry-common.h:226 [inline]
+ syscall_exit_to_user_mode_prepare include/linux/irq-entry-common.h:256 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:159 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:194 [inline]
+ do_syscall_64+0x2e9/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f715c7909f7
+Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffd679885e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007f715c811d7d RCX: 00007f715c7909f7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffd679886a0
+RBP: 00007ffd679886a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffd67989730
+R13: 00007f715c811d7d R14: 000000000002be47 R15: 00007ffd67989770
+ </TASK>
 
-One possible solution is to skip or stop for a swap entry from the
-SYNCHRONOUS_IO swap device.
 
 ---
-Best Regards,
-Huang, Ying
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
