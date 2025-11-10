@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-893673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524A8C48131
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:45:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9558C48144
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D5034F2544
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:40:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66EF84F7572
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD8F2F747A;
-	Mon, 10 Nov 2025 16:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178132877E8;
+	Mon, 10 Nov 2025 16:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJ82IX1t"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQBR1353"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6669A31A81B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B3431B13F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762792666; cv=none; b=drFd8o/Nc8t+WH7Hy/ljtBEAcmpxpLYPkRTd4t5fsEwHnd/hcJSZp3ZIeI2QRBrUhEyQYVu7Hnhs9jxMOpi27Nd0eWDVrf+Myv5MKsgqK86OE6p6vewv4CWABWENv96UxMyCu46L77Fvc9+y73syAraaBOyGnyl3pooPqUSGIs8=
+	t=1762792671; cv=none; b=ZEvTMJvcVricb6cEcrHkQhZuVgha7hK7uLuJkj4jpSRgP7lbNJIpFRdvL+736bq7LVodROZpMNEByp+8OHQ8MuELsZNsAKrxu7NkG/2d3IShRTNkwEv6l7eYDK9QO9JunTqktCCN4rYegcv5Fcn0mHXdiBc/5wmGaPZQNAFXvFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762792666; c=relaxed/simple;
-	bh=ugzTOOBc4YO6IdubWCkDyybIdRjQGKqV6BTx+jx7Hdw=;
+	s=arc-20240116; t=1762792671; c=relaxed/simple;
+	bh=e4vkEHA+9PTiYMh5yLQWM+MeyKZuslfqcgr629D3+7E=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZtXQVICRkykSMAeqRvrsmAK0rIKWr+TTwtJQ9dwUBs07/zLI8R+fKynxXtUbYc59Zz+OvQ84ge5yAgpL9ruaqQLEi/qE93qYVg9iRXH76wJ8YVud/zZfz2QoXaCyF6xSs1aRLM/ymSwp5V9RGi957vGyTzUTUSxq65Wk82MA5pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gJ82IX1t; arc=none smtp.client-ip=209.85.210.170
+	 MIME-Version; b=RfKuYofmMcRoqBtbjBC4boID2hoD5yZJ54J7prrT4TWZru9/xpw1aEE/a0YaqiGcxtE/oV1EnrZRtlgTzATScl9OJMM3W8Ds6EhaKeMsFTYJqlilUaCSXn7BgrwwyaH1Zu4e26olb319EX0AqoDiBZD8Nm4gpc5qOJsa3e5s704=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQBR1353; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7a9fb6fccabso2599048b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:37:44 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-29516a36affso30297095ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:37:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762792664; x=1763397464; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762792668; x=1763397468; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rUIy2ZawuG8l7hvlTJp6NnNoOG+7tynb2rchqUDRw1k=;
-        b=gJ82IX1tjcB06wfqQsfkyNftKgQlSgYhYuSO08Ub+ZaJ8BYx6k0vxZ1XYkn/OWSuKE
-         QAvA2HFaPCC6T6DzdlndgKs5GmjfJ3f958JFg1Ak2v7ATYfBjFDj1N0ocBv2qTAxz23w
-         uX+Rwc8icuVN6BFkgDgX2XWDEncAVX1FSYZka86B8YrxPdrFYHiZ80T5mJwU/uHkzHDK
-         EuVszyNk/Us3LaJUNIze/NLneLhwmjmVVONjKoAWxmPq23LUIJ1k4LL/DW+s7P007U0s
-         jjpydf8NXCVQR2ZlVphNlhCbcMctGtpVzQ0XlL+Lk8uz6++XZM5LVbOQfD7tJpNsORZn
-         aXZQ==
+        bh=mbgbln0r/0DljbZ66YwwMMl7cTrgB9t9J30U0WpMJ+k=;
+        b=OQBR135369VT4PBc2hT+xdd5VzRxTuB3C1HjCn9+F1vDopvc539ePQpm6Ee2GA+EqD
+         lfx6/UfDSuphvjq+xMy7mV4jp4iNppQvvP7+ysUMaqPz5bjGbFvRqP6+zOPenEBsfyaQ
+         oWpmrc/pgw2jbDKu5FqjNAYvNNG1Otf2niawwM25tVE8PeEZJ0Wdor6Yh8ialpn4SWYo
+         3qpm8WtvKl6LiY70DZ6jIrbPPlgPa2eBOE+vWhG1lXysEREIC8SC2A69IcKRasMH7J0/
+         i6Im5iL2Kh828eRW2hS74RRA3Xq4J+oC9wBBEFWVQwXvxzuc57ta5ISEyQwq0b/KSOWg
+         LTJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762792664; x=1763397464;
+        d=1e100.net; s=20230601; t=1762792668; x=1763397468;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=rUIy2ZawuG8l7hvlTJp6NnNoOG+7tynb2rchqUDRw1k=;
-        b=malH0nMOUMBZgnvYbeF7iZU6EZP1bIGr/YSSPHx9gQCJoZorEDCZZUorFL0SJv5HrR
-         TozeiTD2dQe7d8UN9IfLNaPW/bnmmfocKW2Rb1VaF8fqx9Af9qfa8URTQg8WiizBfuJV
-         eUprXowu89iXCQSlozEdIIbi3WiBt5AR/1MI6JDEdYyELIRhy7x2XvkHxz5EWNfEKGNl
-         B5tZxdVIhF7M8nmo46kJU0pEaU9XGoE6/STr5wpyMQJ1xk7sXnGD7yUpM/vGKX/kMK4m
-         2iV1hxqixk8bqMtcB9uZTBZIAmsU6/v0yjR7shimr7tUxUzE4XlnNi57BS/Rc39N4b0K
-         pdhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWzDpgb5PUk4ZeQXV2KvAxJ2k7Z02MZU13sZsWP82oIYerd94i0UmH5Esaezp6REVqSGx9MLlO2fk/KOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD/zDgfFe6WWPt4+FCxgaAIFONm4efdxWd3U/9kvcdMMpPXhxT
-	s88YunIVqhmUIMXQ8x7Q037CklEMXgOr++CTyLZ4+cTusYKjKkuzpdos
-X-Gm-Gg: ASbGnctbjVPqPisRELP/2Q9YsTqZTkkNGn43QBfEspDNzA5bYMB17uac21Xe7tPpgxC
-	3tWm6U+OugdZoIdMDRd3URashqeScpJjgEQpYNwzpHOrcPCtiY3ktq8HcQzNfm6lmPjhAQvx7pj
-	7QprrEozMsFZhgxPns2hBXBmojkIJ4QH/YXfn+By2g/3rtXojqRcMQVLvZpqI9N8wXY9Iqr/HnG
-	L0QlQ8HEWG/zLNuKO47JptK2yoq0OXwfWKpwwrUSTVrbDiO2RUECXLwF9P5kRqHZD2kqhbOD5O+
-	T1HqRu5QO+6I0FXghQvaWdhNYZPQha6wHYdhfRY6JJgH74J+TTDSNyALvEVgSf4YQGaK+AKRIoN
-	zyWA0LwfGVT2ry6aL+SipvaiLQE65PkdNPqysN/UmKrKewxTzfYbId/g89bWCad12LE+vi3TGcU
-	rHNZDz/LGDvF0=
-X-Google-Smtp-Source: AGHT+IHmtKjxaoNsV7D/kMioLqLEx1DalHNLT8KZpVzjD66EjiPrOQ3mNXTEP3A6f7b/Rdv9Vcu6sQ==
-X-Received: by 2002:a05:6a00:b81:b0:7a9:e786:bdaf with SMTP id d2e1a72fcca58-7b225c9b43amr11411331b3a.14.1762792663661;
-        Mon, 10 Nov 2025 08:37:43 -0800 (PST)
+        bh=mbgbln0r/0DljbZ66YwwMMl7cTrgB9t9J30U0WpMJ+k=;
+        b=vZNHusPTiGzUZAE0EBEe9epmsaLSlX/BOtBHMgXGQueQ5WQ9YuO3slQUPd+Jvv1TAs
+         qgZrf4EnHVPpX/2+Nx+ZUvxSrest/p2QBgvnVuhC4OMikKNB6umEJ2fsRgNRDYdPnp8v
+         AW/sYfy3pbBQweYDC+CkmHaGxouLM5vzLZqlBOHuC3zy8aQAq7z+puxCjELephIbKBCQ
+         cp8pA2rfVtUgauQ25r1Gf2XqZB7sVIWc5v6MYUU+e95INLOHamNzVuFy5Q6QoGw1reR6
+         W3W29+13y7xxsKMn40QXBrR8556NeHbrsaxjziUrroqV7cS8g14fZ5s+tx5N5TZbNuhG
+         DC0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUslD5mhONHNAc2d9ltDPcCRoTW4sHK9/ReUvTz9yHyx4pyyDLTmd6GTmZQ8hYd9MUDRt2mjapmWr5wa5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXI7TVvUeNV773dRRGmC4kqOlrw80ndkFGIdV9EWdX9lrkqjiP
+	7C4jPqtcti0jIj9p8tfSxK84+pIpfp4xqk3K41zLOmi7/vhwUQ7lwRWV
+X-Gm-Gg: ASbGncu8Z4eZ9daxTHYjfWXHLmz+xDX3zCMl159YPD72WZAdF9EUoKDigbeys3csk10
+	fFxA+WKhMAIzuL6kPVapDbW1Mh/YxOeRmwQsR0ceClSAlHE7G+WM8USCta/DFDVDnv0V4dVg7bw
+	iW/JcfTp94zMDACQuT8X4PiCc3gZHk+RJvyBpxdRVh7QGig9lpGN/rgXVZ3yXBDPR3zaIP/mGH3
+	He48Z3vw0fRkCzda13CMSga3A4hs20kpjIAXEzm4/5j3R0WQHJAtCtJM3kKvcBR7KjhJBQfCpe5
+	Je9GmDrN5VJ+qcIo18GG09NekOyRGq0+BxkGOqaNAzZXyjMOYAsV4Ggvc31SnqOf89+APqpA44L
+	ApEoQo704c+YZBaalrrMvnWtJ2P0e4LkhhVR3Z5PERvTANcp7/t1g6Ih7Hcp9KaeaJA6i4rStkj
+	2cjpl7pwN0YW4=
+X-Google-Smtp-Source: AGHT+IF9D2s5oh2IOSIoqnbGH6eyisWVL5PhHGPCW6i2QHK95VMIMn4wu9hvntS0Aig4CKNxr1HiEw==
+X-Received: by 2002:a17:902:ebc1:b0:294:cc8d:c0c2 with SMTP id d9443c01a7336-297e5663a67mr107303455ad.27.1762792667923;
+        Mon, 10 Nov 2025 08:37:47 -0800 (PST)
 Received: from localhost ([103.88.46.62])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0c9635007sm12550190b3a.2.2025.11.10.08.37.42
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c92cddsm154610615ad.83.2025.11.10.08.37.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 08:37:43 -0800 (PST)
+        Mon, 10 Nov 2025 08:37:47 -0800 (PST)
 From: Jinchao Wang <wangjinchao600@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
@@ -146,9 +146,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	Will Deacon <will@kernel.org>,
 	workflows@vger.kernel.org,
 	x86@kernel.org
-Subject: [PATCH v8 14/27] mm/ksw: resolve stack watch addr and len
-Date: Tue, 11 Nov 2025 00:36:09 +0800
-Message-ID: <20251110163634.3686676-15-wangjinchao600@gmail.com>
+Subject: [PATCH v8 15/27] mm/ksw: limit canary search to current stack frame
+Date: Tue, 11 Nov 2025 00:36:10 +0800
+Message-ID: <20251110163634.3686676-16-wangjinchao600@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251110163634.3686676-1-wangjinchao600@gmail.com>
 References: <20251110163634.3686676-1-wangjinchao600@gmail.com>
@@ -160,116 +160,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add helpers to find the stack canary or a local variable addr and len
-for the probed function based on ksw_get_config(). For canary search,
-limits search to a fixed number of steps to avoid scanning the entire
-stack. Validates that the computed address and length are within the
-kernel stack.
+Use the compiler-provided frame pointer when CONFIG_FRAME_POINTER is
+enabled to restrict the stack canary search range to the current
+function frame. This prevents scanning beyond valid stack bounds and
+improves reliability across architectures.
+
+Also add explicit handling for missing CONFIG_STACKPROTECTOR and make
+the failure message more visible.
 
 Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
 ---
- mm/kstackwatch/stack.c | 80 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 77 insertions(+), 3 deletions(-)
+ mm/kstackwatch/stack.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
 diff --git a/mm/kstackwatch/stack.c b/mm/kstackwatch/stack.c
-index 96014eb4cb12..60371b292915 100644
+index 60371b292915..3455d1e70db9 100644
 --- a/mm/kstackwatch/stack.c
 +++ b/mm/kstackwatch/stack.c
-@@ -8,6 +8,7 @@
- #include <linux/kstackwatch_types.h>
- #include <linux/printk.h>
+@@ -64,15 +64,32 @@ static unsigned long ksw_find_stack_canary_addr(struct pt_regs *regs)
+ 	unsigned long *stack_ptr, *stack_end, *stack_base;
+ 	unsigned long expected_canary;
+ 	unsigned int i;
++#ifdef CONFIG_FRAME_POINTER
++	unsigned long *fp = NULL;
++#endif
  
-+#define MAX_CANARY_SEARCH_STEPS 128
- static struct kprobe entry_probe;
- static struct fprobe exit_probe;
+ 	stack_ptr = (unsigned long *)kernel_stack_pointer(regs);
+-
+ 	stack_base = (unsigned long *)(current->stack);
  
-@@ -58,13 +59,86 @@ static bool ksw_stack_check_ctx(bool entry)
- 		return false;
- }
+-	// TODO: limit it to the current frame
+ 	stack_end = (unsigned long *)((char *)current->stack + THREAD_SIZE);
++#ifdef CONFIG_FRAME_POINTER
++	/*
++	 * Use the compiler-provided frame pointer.
++	 * Limit the search to the current frame
++	 * Works on any arch that keeps FP when CONFIG_FRAME_POINTER=y.
++	 */
++	fp = __builtin_frame_address(0);
  
-+static unsigned long ksw_find_stack_canary_addr(struct pt_regs *regs)
-+{
-+	unsigned long *stack_ptr, *stack_end, *stack_base;
-+	unsigned long expected_canary;
-+	unsigned int i;
++	if (fp > stack_ptr && fp < stack_end)
++		stack_end = fp;
++#endif
 +
-+	stack_ptr = (unsigned long *)kernel_stack_pointer(regs);
-+
-+	stack_base = (unsigned long *)(current->stack);
-+
-+	// TODO: limit it to the current frame
-+	stack_end = (unsigned long *)((char *)current->stack + THREAD_SIZE);
-+
-+	expected_canary = current->stack_canary;
-+
-+	if (stack_ptr < stack_base || stack_ptr >= stack_end) {
-+		pr_err("Stack pointer 0x%lx out of bounds [0x%lx, 0x%lx)\n",
-+		       (unsigned long)stack_ptr, (unsigned long)stack_base,
-+		       (unsigned long)stack_end);
-+		return 0;
-+	}
-+
-+	for (i = 0; i < MAX_CANARY_SEARCH_STEPS; i++) {
-+		if (&stack_ptr[i] >= stack_end)
-+			break;
-+
-+		if (stack_ptr[i] == expected_canary) {
-+			pr_debug("canary found i:%d 0x%lx\n", i,
-+				 (unsigned long)&stack_ptr[i]);
-+			return (unsigned long)&stack_ptr[i];
-+		}
-+	}
-+
-+	pr_debug("canary not found in first %d steps\n",
-+		 MAX_CANARY_SEARCH_STEPS);
++#ifdef CONFIG_STACKPROTECTOR
+ 	expected_canary = current->stack_canary;
++#else
++	pr_err("no canary without CONFIG_STACKPROTECTOR\n");
 +	return 0;
-+}
-+
-+static int ksw_stack_validate_addr(unsigned long addr, size_t size)
-+{
-+	unsigned long stack_start, stack_end;
-+
-+	if (!addr || !size)
-+		return -EINVAL;
-+
-+	stack_start = (unsigned long)current->stack;
-+	stack_end = stack_start + THREAD_SIZE;
-+
-+	if (addr < stack_start || (addr + size) > stack_end)
-+		return -ERANGE;
-+
-+	return 0;
-+}
-+
- static int ksw_stack_prepare_watch(struct pt_regs *regs,
- 				   const struct ksw_config *config,
- 				   ulong *watch_addr, u16 *watch_len)
- {
--	/* implement logic will be added in following patches */
--	*watch_addr = 0;
--	*watch_len = 0;
-+	ulong addr;
-+	u16 len;
-+
-+	if (ksw_get_config()->auto_canary) {
-+		addr = ksw_find_stack_canary_addr(regs);
-+		if (!addr)
-+			return -EINVAL;
-+		len = sizeof(ulong);
-+	} else {
-+		addr = kernel_stack_pointer(regs) + ksw_get_config()->sp_offset;
-+		len = ksw_get_config()->watch_len;
-+		if (!len)
-+			len = sizeof(ulong);
-+	}
-+
-+	if (ksw_stack_validate_addr(addr, len)) {
-+		pr_err("invalid stack addr:0x%lx len :%u\n", addr, len);
-+		return -EINVAL;
-+	}
-+
-+	*watch_addr = addr;
-+	*watch_len = len;
++#endif
+ 
+ 	if (stack_ptr < stack_base || stack_ptr >= stack_end) {
+ 		pr_err("Stack pointer 0x%lx out of bounds [0x%lx, 0x%lx)\n",
+@@ -85,15 +102,11 @@ static unsigned long ksw_find_stack_canary_addr(struct pt_regs *regs)
+ 		if (&stack_ptr[i] >= stack_end)
+ 			break;
+ 
+-		if (stack_ptr[i] == expected_canary) {
+-			pr_debug("canary found i:%d 0x%lx\n", i,
+-				 (unsigned long)&stack_ptr[i]);
++		if (stack_ptr[i] == expected_canary)
+ 			return (unsigned long)&stack_ptr[i];
+-		}
+ 	}
+ 
+-	pr_debug("canary not found in first %d steps\n",
+-		 MAX_CANARY_SEARCH_STEPS);
++	pr_err("canary not found in first %d steps\n", MAX_CANARY_SEARCH_STEPS);
  	return 0;
  }
  
