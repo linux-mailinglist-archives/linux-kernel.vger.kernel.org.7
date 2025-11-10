@@ -1,93 +1,100 @@
-Return-Path: <linux-kernel+bounces-892906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6646C46145
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:56:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8B3C4615A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:58:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5CFC4E9B57
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:56:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13A4D1890D01
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7689E211A14;
-	Mon, 10 Nov 2025 10:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530123074A7;
+	Mon, 10 Nov 2025 10:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gKaBLUd8"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTcqSOx7"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B76306B00
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4A3305E27
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762772181; cv=none; b=YCWvOFCByrc4y1rF3wrwbQIsjLmDd8wEvlBGW6wIRwNoQasFKkejQE8LzGaLxz6spWvmrqjmiZcZq/AnXZHsfXxYPG8uJCPbNq+Jo/rwhyMGlW1TrF+iklyJ+TjIPuGpe6cWdPfFaVD2+tLdiY2BSZJ9xnbL97ygUnRYwvrxR+0=
+	t=1762772303; cv=none; b=FPbBJ4TF1t0V9jc7U0UxjCA20b8k5DL6nmJjZXRBQAu70RFOiCGpIQtLg7sxScGDOT9vXPM2rC4QnTICYujp+cKqZQnICfPb3K/kRtH6nLOv9XrbxW0AOXuPB72zg7QIICexFkNcc/OKshA0X9H7DvMQTiHaui6+99YKjAHR7zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762772181; c=relaxed/simple;
-	bh=dEl+crxWx0Ue6Eap9IyJQOsh+WWdfuIJZKBgNUUOskU=;
+	s=arc-20240116; t=1762772303; c=relaxed/simple;
+	bh=2U4KaUAelMziEmY2ShfzM/dox45MOEZL+6xWWn9Wxas=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bK4nsf/JCJ92yZ/jFM1AO29DqaH4Ku5BKGkCUegl5r5e/KJU0I45lbO5szCc4KpesprAT/MhYDQJtBzJYQyaxLqnZI7UBh1enCJk5z093RegeG6VIPeqoOo2qklkYUx9X8xvi8ex9ljSjz2JaeuI8oS3B/nvdepO/YXY5n468sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gKaBLUd8; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b679450ecb6so2258518a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:56:18 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MVP/pTwZpUHlaks5InS/vl6BO82eWMldepd5hawzuyHfvO6yxBP0rNOzoh/JuK53EglAiRgkGIoyDO8TIYte83yH9rf0lHLj5jEpBE/y8DL2nzNXV/xSKcA+VBKP9HPD13JQUp8pzkEp2ybJzYVCnqsRb7KxbZ4F112dPEm3KEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTcqSOx7; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-36bf096b092so22626241fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:58:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762772178; x=1763376978; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HOTgQEUB8GcmpUQcmIkml8fFvXO2yWgEKzXQF7vCTcc=;
-        b=gKaBLUd8yrvPVoLyJ80CXi/2i4l/MtEV6mMzBU+Z3JHKX6VOOOfpEhRPfPP8aXEGG2
-         TUcf/VMxLyuXljSA+kw8vdEhmUvbjSYf6E7jMeKqHx+HRb9kL7LhIry6g0WMkUFe7x4+
-         kRUdnLOR+EjcklQaG5iJ/fCBbmUbZLJy96sQZDrHS/cmCJPfPqJNlZzyt/ytOGIoMISw
-         1Lir7UTb14vlK3asD6EnW+PeZmBiZiCNKY6gjsxcrEaX9B6kFcukVIMxH4TqeKLqjyuQ
-         uEZNNfA9wkKrK0oKfqqA6g5mOeLXvfHGWgIxeSkkg/qkB+A6ExHOdwDy9v/KaL3/AnNo
-         eoUw==
+        d=gmail.com; s=20230601; t=1762772300; x=1763377100; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5cQtUBYgJJUDzd/kGspKY/MZmhkbZxSeoEQPwDEqgRs=;
+        b=NTcqSOx7ig9H2EIc158DWbLgS07sNYRKpJfCyIdI4ilhKtbi3USxe7AusiqhwLy/lz
+         s9IoLfSktAalSXpMeDil/3umKjgSx13p66KaU6kMidfBkpF0Tpdy6Q3WN5/H0ZWcqBpj
+         eV7okqZsfqxG3qI5031IOur+LbphMQzKbw3I4SwwT8rPmMdWiu5yxZxmbM2RtZ24ljY6
+         pLerxSAmTuKINtn8SY7iOWpOFoABU8ZJs4FPJL8xE/fS1kj5UWZjHdqZmj4tMotWe/5T
+         PM3FzRxkGiHp1ucmmNV7VoJ+OqqFZ48eFc7c+ZYzM5T95gJdzL779itiMaCqaMlnVu+5
+         BW+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762772178; x=1763376978;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HOTgQEUB8GcmpUQcmIkml8fFvXO2yWgEKzXQF7vCTcc=;
-        b=nbF4XoqnkUekUx893lmqMnzdXMhO7y3mNXLz/mmsfYR7fcuXS3QQBKwp2G30cOAvei
-         V2QzvD/OOsUmeEXJoA6WEsbr4JTlR20ItnAi9AuKgq+SEVuSBZkorxWR2e47oKriidMr
-         CzuhYVurU4sjdmbIVXqyTolX3pkCpMwFk8UREmQjuNCmFU82w1oBqUWO3L9Li2fDx+1x
-         wK/5h5G9xM4Xfm+pZv6pBd5QmK9hkxRztIy5OOfeJtDvCy/CzDPGsUjkANZe6JfILt1r
-         BWDX9KZIZ1XP6XKQfBLFYI2V+ANyIb5MyKXvhiqUc6xoYln8Bf7pk/SlmQtqYjOYNh6f
-         eD/g==
-X-Forwarded-Encrypted: i=1; AJvYcCW3hkWZBTXFGjmbiW3FpJGwT4Gnm78CQT//wZttV6YFgj5f5CvfKobInJZnXFxeGoAJQzQ9DpqSE02B/A0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM4RzS0yEhV/UaCB2Ul0po7aHozJDFJCUmLIKnjRg2a3smq+hd
-	8ERylWwe1i96SKBg7Wz57izSZnY+pStmp7Quoy7Igp99geWcvxVKFOX5AgKQa/k4ieo=
-X-Gm-Gg: ASbGnct9Q0CWhZx/wsrAPhroiTuPXCaaS+g4dczlHgaK6ua46Yr0eMv328/CpunpGnl
-	aDKzu3n9jSx/uQV1KHuOd3mMHs8O1kPdWuhzGalhQcxlITUjwv8MdFN3i8U4dRqkc9kayCcfpHK
-	8udUaiaau9W15ZXc6xwNRZNgUwSQyzJdGUix3t0B0NsCSacxnb2gxWyn0qQMon5q1hNdnQj3NbC
-	axiwvoUAVMzDPP7nvcYVdqtc83V1nPTeMrmV5x2luLTtleGdQEsqMspIzZXS2dG+UISDA2/TTu8
-	Wnl8k3kzhmi9mK/q23MisZO20nY5E/BwzUNqfAwiowjdEXNa1xV9/l8ALgngFuNhDUTIQ53LyL5
-	gtDlYmKVjRZV+PyzNGTrUYjMt0fMlTt3KMKB1PGrkbvv4uhmPRtBjrTUslQCUBYZZpIXX/dY6rA
-	aqN9xuJTeCJBk=
-X-Google-Smtp-Source: AGHT+IELCZjjS9db2GOOi5gG1D3fReIWK6Fsulo/YaMjMnn+TlgjP5Y2DF6HQCR7hzQBYtF9UG4Urg==
-X-Received: by 2002:a17:902:d551:b0:27e:ec72:f6d with SMTP id d9443c01a7336-297e53e7af3mr99902655ad.11.1762772178225;
-        Mon, 10 Nov 2025 02:56:18 -0800 (PST)
-Received: from localhost ([122.172.86.94])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-297fe688c96sm49938925ad.58.2025.11.10.02.56.17
+        d=1e100.net; s=20230601; t=1762772300; x=1763377100;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5cQtUBYgJJUDzd/kGspKY/MZmhkbZxSeoEQPwDEqgRs=;
+        b=Ze1Fjs39bcNbg6PaPJHONjVKVq2/Hi2R+gailPzazDrVmCyMkWtQSXg8M8bLQSld0R
+         rmh04aEgOBZ79oyZDFTJkrsyjUGjVApSrPmdvktvEbtZGaBeXU1mn9fMCQM4wv37XPSi
+         ysyVj7u7rw86KI2F5IpDjzNcQjtSIxjitzmF4RxMiSHKhDhmx3/aBJHEiR7TqGxt3Thw
+         lx4E6et6r9z3BJ5AXwQtWZzOAKSD0gxVOum7T9pBsIhXBh16wjtcMJq3DtTDFvyOi3s0
+         ksyDHua7tPBjj/bIMIGCfvUDraoEk7dXonLPbBCGCYMLs+qkYhcPtgSThFwiFeGjGUwK
+         71ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWvm803WCOIN5xsxzdM7RUpdL13Fy7pR5w9BjKvtuoHFnhslGFP224Q02bjhmO9Hplw5Fib+Yh+WsFpH/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNeMXg4eBTgupXYIXKEd7gO7dcMYiFN9BJQ+lFep4rLCOX1fRT
+	a50QB9GT/W3ksMmjtdjZm9rR3PwQJLMZ9V/UUFrfKRppXmJdg7SSwK4Q
+X-Gm-Gg: ASbGnctzyCDtfBZl1yvM5ncqt0byd3RF6O84BY162CsByc3n4KrmgtDrjoWpxJeDv+1
+	0p2mjVmTFkUAgwoqp/1qAG0AeUy35d+nztcFmUFpaPj+yDmJpkiIohEresZfmYp0PoJCKxG3sG0
+	ld/cbkwM6bSN5RF80ASBL+YP2bJ0SGiCjP41dmLTgmjIyHaOjlPlkexzLuyJAlNVESgeq2yT1Jk
+	1MoM4l4i4+SO+M0QcDytu+260cFe5Dstv/Lh3ei9nTIdeEEHTIWX2b0GDvai/ZTTcmEXIdqBEfe
+	FPED/nRuSCdFqaLniveChr8RB4s0gszlBfHknJQQL3/H157WZtSXSkI5KE+C/GCkTA+UmtPP/s0
+	BQp0fQ0BiD4I5PvCF4cc8VNrJqjuZCVtzvaC2yIpgRFyIKsJuFoMlUvxs6lxA10PuASiwqvuVgR
+	csZgwyEHLEeVWY
+X-Google-Smtp-Source: AGHT+IF7uc05YKR1RuoI0CoWlX07D9z81TzLgbg2o88xiS2GWX+oFbp3ZEM1dvWDPFPIbk1p56pL9Q==
+X-Received: by 2002:a2e:7206:0:b0:378:df5b:fbac with SMTP id 38308e7fff4ca-37a7b30c374mr15069891fa.38.1762772299942;
+        Mon, 10 Nov 2025 02:58:19 -0800 (PST)
+Received: from grain.localdomain ([5.18.255.97])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a5f0ee40csm34451431fa.43.2025.11.10.02.58.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 02:56:17 -0800 (PST)
-Date: Mon, 10 Nov 2025 16:26:15 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: rafael@kernel.org, lenb@kernel.org, robert.moore@intel.com, 
-	corbet@lwn.net, pierre.gondois@arm.com, zhenglifeng1@huawei.com, 
-	rdunlap@infradead.org, ray.huang@amd.com, gautham.shenoy@amd.com, 
-	mario.limonciello@amd.com, perry.yuan@amd.com, ionela.voinescu@arm.com, 
-	zhanjie9@hisilicon.com, linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com, 
-	ksitaraman@nvidia.com, sanjayc@nvidia.com, nhartman@nvidia.com, bbasu@nvidia.com
-Subject: Re: [PATCH v4 1/8] cpufreq: CPPC: Add generic helpers for sysfs
- show/store
-Message-ID: <s5xt53i6c5wryje5x6zlq75r3lx6nxb7pat6umnghpnldi4p2h@jaeew4iimdd3>
-References: <20251105113844.4086250-1-sumitg@nvidia.com>
- <20251105113844.4086250-2-sumitg@nvidia.com>
+        Mon, 10 Nov 2025 02:58:19 -0800 (PST)
+Received: by grain.localdomain (Postfix, from userid 1000)
+	id 691DA5A0033; Mon, 10 Nov 2025 13:58:18 +0300 (MSK)
+Date: Mon, 10 Nov 2025 13:58:18 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 2/3] exec: don't wait for zombie threads with
+ cred_guard_mutex held
+Message-ID: <aRHFSrTxYSOkFic7@grain>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aRDL3HOB21pMVMWC@redhat.com>
+ <aRDMNWx-69fL_gf-@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,42 +103,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251105113844.4086250-2-sumitg@nvidia.com>
+In-Reply-To: <aRDMNWx-69fL_gf-@redhat.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On 05-11-25, 17:08, Sumit Gupta wrote:
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> -static ssize_t show_auto_act_window(struct cpufreq_policy *policy, char *buf)
-> +static ssize_t cppc_cpufreq_sysfs_show_u64(unsigned int cpu, int (*get_func)(int, u64 *), char *buf)
->  {
->  	u64 val;
-> -	int ret;
-> -
-> -	ret = cppc_get_auto_act_window(policy->cpu, &val);
-> +	int ret = get_func(cpu, &val);
+On Sun, Nov 09, 2025 at 06:15:33PM +0100, Oleg Nesterov wrote:
+..
+> static int kill_sub_threads(struct task_struct *tsk)
+> {
+>  	struct signal_struct *sig = tsk->signal;
+> 	int err = -EINTR;
+> 
+> 	read_lock(&tasklist_lock);
+> 	spin_lock_irq(&tsk->sighand->siglock);
+> 	if (!((sig->flags & SIGNAL_GROUP_EXIT) || sig->group_exec_task)) {
+> 		sig->group_exec_task = tsk;
+> 		sig->notify_count = -zap_other_threads(tsk);
 
-Why no casting required here, when you need it ... 
+Hi Oleg! I somehow manage to miss a moment -- why negative result here?
 
-> -static ssize_t store_auto_act_window(struct cpufreq_policy *policy,
-> -				     const char *buf, size_t count)
-> +static ssize_t cppc_cpufreq_sysfs_store_u64(unsigned int cpu, int (*set_func)(int, u64),
-> +					    const char *buf, size_t count)
->  {
-> -	u64 usec;
-> +	u64 val;
->  	int ret;
->  
-> -	ret = kstrtou64(buf, 0, &usec);
-> +	ret = kstrtou64(buf, 0, &val);
->  	if (ret)
->  		return ret;
->  
-> -	ret = cppc_set_auto_act_window(policy->cpu, usec);
-> -	if (ret)
-> -		return ret;
-> +	ret = set_func((int)cpu, val);
+> 		err = 0;
+> 	}
+> 	spin_unlock_irq(&tsk->sighand->siglock);
+> 	read_unlock(&tasklist_lock);
+> 
+> 	return err;
+> }
 
-... here ?
+p.s. i've dropped long CC but left ML intact)
 
--- 
-viresh
+	Cyrill
 
