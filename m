@@ -1,112 +1,113 @@
-Return-Path: <linux-kernel+bounces-893643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B3AC47F83
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:35:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49126C4810D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:44:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B75004F52FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:29:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49F663B9DAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236B828469A;
-	Mon, 10 Nov 2025 16:28:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14EE280A5A;
-	Mon, 10 Nov 2025 16:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F551279DB4;
+	Mon, 10 Nov 2025 16:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=pku.edu.cn header.i=@pku.edu.cn header.b="b8p91nzC"
+Received: from pku.edu.cn (mx17.pku.edu.cn [162.105.129.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A8B283FC5;
+	Mon, 10 Nov 2025 16:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.105.129.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762792128; cv=none; b=ieRHukfnCPHcZIf+53V1ccRu9sojNrr//uYQ7Ihec0CZszl7ThESgDszDd3PYPCiCmoaLWpEu2MEsb+cD2YsrLUmdreGBcaWV+QNzWEsX8EQBj9j0bVdVvBvo4h1TwKaZZCN8fQzT+Ciihz+5MYPZizbzRKG3C+UXBQ8qYQagt8=
+	t=1762792326; cv=none; b=sgVpCYj4LjiLhkOiJAHG6AFaLdWOUTMLd5nJ8MqnL8qoG2f5zUJBvZ35ilDP3bUj8lRtiF3FfCwTfPWLdxp5yTDYdKbwha0k7juyPZVXV5K/SO4NEFTdpXPNziuM9ydVcrOj/tiG1TapWJRJIMwM7MCMcAXUH5OhvxFzCggCOFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762792128; c=relaxed/simple;
-	bh=l/aU0HZFwL9DexYyDyDNj/KW5vxEQESB+dU0Cog8fmY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bFSqjm0Fbuyobg+IRX0WnVxxbZIN1vAf1laB5Z1iWu2rYsapn35m5jOcb11Xuj6JeAJFk4iEkVcp+gpIZ4D2XdiJFLS1ISM91bQ94gUIgms8ZYs1V5hXxbbhhYhp0BeHyi4Lw1biXXwvzhSk6NpxMyKh0/bdT3YauQbsLFrj1y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 824C916A3;
-	Mon, 10 Nov 2025 08:28:38 -0800 (PST)
-Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F4523F66E;
-	Mon, 10 Nov 2025 08:28:45 -0800 (PST)
-From: Leo Yan <leo.yan@arm.com>
-Date: Mon, 10 Nov 2025 16:28:32 +0000
-Subject: [PATCH v2 2/2] perf: arm_spe: Ensure profiling buffer is properly
- disabled
+	s=arc-20240116; t=1762792326; c=relaxed/simple;
+	bh=lWnh50PqXFlhEyYamQgKHdaiBHiW776Trd3dcosjSkk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iPn9EOzmItpXKkMH9qgER/kLmDGVGBMFggDgdOXToNOiH40AOdK93Sqzc0w3t5Yq4h+QE6zdaCBATXlvZU96ROzlOwL9sWHYT4QOI2uqZ4QI9iteQsTOldmA8Y6mCcXEsQM7QbqFFnH7Ht7Pg0xpJLXYqukffFoDkSEtPXfyyas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pku.edu.cn; spf=pass smtp.mailfrom=pku.edu.cn; dkim=pass (1024-bit key) header.d=pku.edu.cn header.i=@pku.edu.cn header.b=b8p91nzC; arc=none smtp.client-ip=162.105.129.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pku.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pku.edu.cn
+Received: from pku.edu.cn (unknown [10.7.30.65])
+	by mtasvr (Coremail) with SMTP id _____7Dw3ffTEhJpxbJpAA--.8884S3;
+	Tue, 11 Nov 2025 00:29:08 +0800 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=pku.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
+	Message-ID:In-Reply-To:References:MIME-Version:
+	Content-Transfer-Encoding; bh=lWnh50PqXFlhEyYamQgKHdaiBHiW776Trd
+	3dcosjSkk=; b=b8p91nzCG3p4hzFVKiUE83PkgtplVDh7ZnXpvZe5lOYUXOPTE1
+	lFJyU36dWjwcff70RxLDrxMJb2KKGXJpzTosTtSs5dE/ezx8uMFGf9rVLA4Bc5BS
+	gfLxgGV2RrZnxQPanaS9yMG6ILOAYxdjOizx45AkL+z3QVjal7itTm1oU=
+Received: from localhost (unknown [10.7.30.65])
+	by front02 (Coremail) with SMTP id 54FpogAX75_MEhJpACBcAQ--.55300S2;
+	Tue, 11 Nov 2025 00:29:06 +0800 (CST)
+From: Ruihan Li <lrh2000@pku.edu.cn>
+To: lei4.wang@intel.com,
+	seanjc@google.com
+Cc: chenyi.qiang@intel.com,
+	jmattson@google.com,
+	joro@8bytes.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pbonzini@redhat.com,
+	vkuznets@redhat.com,
+	wanpengli@tencent.com,
+	lrh2000@pku.edu.cn
+Subject: The current status of PKS virtualization
+Date: Tue, 11 Nov 2025 00:29:00 +0800
+Message-ID: <20251110162900.354698-1-lrh2000@pku.edu.cn>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20220424101557.134102-1-lei4.wang@intel.com>
+References: <20220424101557.134102-1-lei4.wang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251110-arm_spe_fix_truncated_flag-v2-2-a629740985cc@arm.com>
-References: <20251110-arm_spe_fix_truncated_flag-v2-0-a629740985cc@arm.com>
-In-Reply-To: <20251110-arm_spe_fix_truncated_flag-v2-0-a629740985cc@arm.com>
-To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexandru Elisei <alexandru.elisei@arm.com>, 
- James Clark <james.clark@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762792122; l=1864;
- i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=l/aU0HZFwL9DexYyDyDNj/KW5vxEQESB+dU0Cog8fmY=;
- b=MFjvNr8klWeo7hLRbQ8b/v89thS4UmvzMhR8j8p+QGdvZ1ckEAuOLFlQn9yaHuEVzICSJEDs6
- ZeCAgwsGsq+DNw3B/BilBY0qtHm5KdabmEEFH9VkRxdRYTsRXTbrQr4
-X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
- pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
+X-CM-TRANSID:54FpogAX75_MEhJpACBcAQ--.55300S2
+X-CM-SenderInfo: yssqiiarrvmko6sn3hxhgxhubq/1tbiAgEKBWkA6EEIawAVs6
+X-CM-DELIVERINFO: =?B?tXD+XaaAH6dYjNjDbLdWX9VB7ttaQFyXTaecYZzOeDisy/krtsX5TsLkpeAzENeCPc
+	0+BGeASIntztwfi8J9JaFaT+fUWlM1Q81OmB0KK6btj5wZoSkrq2Heyi0QCXGKu0hj48+j
+	23Jtl6qgUJCOGAQPyNgfi+csIjBNqYdlQrlji/7QokZ4Tw/NMmyYtGmpLVVuSQ==
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-During interrupt handling, if arm_spe_perf_aux_output_begin() fails to
-calculate a valid limit, it queues the disable callback in the IRQ work
-and sets the PERF_HES_STOPPED flag.
+Hi,
 
-Afterwards, the disable callback arm_spe_pmu_stop() is invoked, but
-since the PERF_HES_STOPPED flag has already been set, arm_spe_pmu_stop()
-exits immediately. As a result, the profiling buffer is not properly
-stopped — profiling on exception levels is not disabled, and buffered
-data is not drained.
+I'm sorry to bother you by replying to the email from years ago. I would like
+to learn about the current status of PKS virtualization.
 
-To fix this, explicitly disable the profiling buffer for stopped events
-in the interrupt handler.
+In short, I tried to rebase this patch series on the latest kernel. The result
+was a working kernel that supports PKS virtualization, which would be useful
+for my purposes. Would PKS virtualization be accepted even if the kernel itself
+does not use PKS?
 
-Fixes: d5d9696b0380 ("drivers/perf: Add support for ARMv8.2 Statistical Profiling Extension")
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- drivers/perf/arm_spe_pmu.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Here's a longer explanation: I noticed that this patch series is built on top
+of basic PKS support. Meanwhile, it appears that the basic PKS support "was
+dropped after the main use case was rejected (pmem stray write protection)"
+[1]. I suppose that's why this patch series won't be merged into the kernel?
 
-diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
-index fc8f908c2c3a270f2d1ae574c2badb1fbcf51484..4f51510d5f8a660c12e3934eae8a66f1a1416617 100644
---- a/drivers/perf/arm_spe_pmu.c
-+++ b/drivers/perf/arm_spe_pmu.c
-@@ -761,6 +761,20 @@ static irqreturn_t arm_spe_pmu_irq_handler(int irq, void *dev)
- 		if (!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED)) {
- 			arm_spe_perf_aux_output_begin(handle, event);
- 			isb();
-+
-+			/*
-+			 * A non-zero state indicates that an error occurred in
-+			 * arm_spe_perf_aux_output_begin(), for example, if the
-+			 * buffer overflowed and failed to get a valid limit.
-+			 *
-+			 * Since the PERF_HES_STOPPED flag has been set, the
-+			 * afterwards disable callback exits immediately and
-+			 * the buffer disable flow is skipped (see
-+			 * arm_spe_pmu_stop()). Explicitly disable the profiling
-+			 * buffer here.
-+			 */
-+			if (event->hw.state)
-+				arm_spe_pmu_disable_and_drain_local();
- 		}
- 		break;
- 	case SPE_PMU_BUF_FAULT_ACT_SPURIOUS:
+ [1]: https://lore.kernel.org/lkml/3b3c941f1fb69d67706457a30cecc96bfde57353.camel@intel.com/
 
--- 
-2.34.1
+For my purposes, I don't need the Linux kernel to use PKS. I do want the kernel
+to support PKS virtualization so that I can run another OS that requires PKS
+support with the help of KVM. Fundamentally, I don't think this patch series
+has to be built on top of basic PKS support. But I am unsure whether there is a
+policy or convention that states virtualization support can only be added after
+basic support.
+
+One problem is that if the Linux kernel does not use PKS, we will be unable to
+test PKS virtualization with a guest Linux kernel. However, given that we have
+KVM unit test infrastructure, I believe we can find a way to properly test PKS
+virtualization for its correctness?
+
+I'd like to hear from you to know whether I understand things correctly. Thank
+you in advance for any feedback.
+
+Thanks,
+Ruihan Li
 
 
