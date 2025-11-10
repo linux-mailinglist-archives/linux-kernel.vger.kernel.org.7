@@ -1,114 +1,126 @@
-Return-Path: <linux-kernel+bounces-892394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800B5C45017
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:26:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F26CC45041
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:28:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D94BB1880871
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:27:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 728023B278D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A172E8B94;
-	Mon, 10 Nov 2025 05:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55DD2E6CD9;
+	Mon, 10 Nov 2025 05:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wl+2SZRI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TT0qTdxP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6002E5B3D;
-	Mon, 10 Nov 2025 05:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8902C11CAF;
+	Mon, 10 Nov 2025 05:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762752390; cv=none; b=JmBLd6pi0/Dw52RLLAy2dDAgwy1X++8+wY7K19b6UiiFJa8KVI/U7uHwGGyv0EGAV/fbeY9yfFmHtpNcN3eWzyrp/XEL73s7FFIgRBqM0nMUnvgnFXBCHf6uXYFNS91Njx93ILWo6KEtq+GqomClmdbaNFjv4egW9gJLMEQdRNo=
+	t=1762752498; cv=none; b=bzpXx9wtFHj6OyKNDDf1IFDQEZVfQdYGifu2UVV47gRzXIOhdzy/yJMW2i5dsimzfkbPNa1eIv+zOv14ZTaubjDBeW3hrZSpUwTwlEaGlGCuQGvJOxkoLu2mDmACbF6wS3lq578Ymq+n39KWTsyORF0ssxlqQWhJCqTDFmqBEB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762752390; c=relaxed/simple;
-	bh=wL5I5CT+0Sw7TlLK9lpIO1ktLGl5C5Cx/Oz2HSvRTuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RD6PUbhV9OZUrjAm1Thgz2wOLJIfv/cQ5Bx1J1nhCgDHiM+8QcCOgdOY3zadICXztc8DXPxqX+at7PLlw0EH64AeNL/uEhPD9QgHafLxIa8Yx6B/w1phwI4BiGu8TEJ7htNGtXl28bUrSqaDyyjOjv+UZ/bqQpEvH+f3vSwnFbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wl+2SZRI; arc=none smtp.client-ip=198.175.65.9
+	s=arc-20240116; t=1762752498; c=relaxed/simple;
+	bh=5GlQ2RD8Es6ybAmN+inqFqJieIz9so3nxskK/NZ1PLw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YTdZzFzvUYiETRbyb6Qe7Woq3mgN6aS20wxn+zkwWvMRPhOwJAmXdxeQWcWUd3F1s85t5POMjq63jpD1pvEoZbmtYzbAb7dD4bXy9xQRZ/w+YDKDvO9kIL0yJnDp/TSpHMaocU3r0AiRc+buZb83v4mh201RGlb3YLrzfZ/qRLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TT0qTdxP; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762752389; x=1794288389;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wL5I5CT+0Sw7TlLK9lpIO1ktLGl5C5Cx/Oz2HSvRTuA=;
-  b=Wl+2SZRID0BYDT953JMpVnT2MCrDoUmRiRIJfqjIUD9DiqTtavBw+8za
-   m3Sown2YrUeZS9BPW1r50M6Cei4GYRH62aUntmhk7DK4B16fDxgnK5fB4
-   Ea6LOgBGg33QFa44ZG2I6OTaXCpMCbuT49oGk6eQ8YPVrDTH3xIiYj1ui
-   ohTM3ZnUk+5aOa7J/6T8qYaJsPWHMuUuWlHzx3QjwLE/KJOY0RRYa41ZH
-   BVUEaTFkJc5dsCgI1rEVoFDx3/sQzxd4NC7ZYtJy+nSWoLK7i1GOUSaan
-   EQi+wltMcRxa26L8hcSgf3CheE9QDz1b/rDqURXlNDcfHg1Kk6VPUBh5i
-   g==;
-X-CSE-ConnectionGUID: zipJisqGRQWKTwh6O5enjw==
-X-CSE-MsgGUID: 8yLgHbn/ToaFDX3kkLRrqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="87429397"
+  t=1762752496; x=1794288496;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5GlQ2RD8Es6ybAmN+inqFqJieIz9so3nxskK/NZ1PLw=;
+  b=TT0qTdxPNRPMSsEKFLa9Cfox+9qCzxymCmunx60LxCOK2HPdwi9VD+/I
+   xDQWy3NntmguJ022Y4kyR/MJmch/bkmZvd1oMUSJBiZPibz6tT7XeRNbw
+   wVCi84xE3+51dXGTVrWS6Oy5vC7CpRvz0IMsDmfeemsHb5iaUUUnp998q
+   g+GfShGpFILbqKqfBCGCwYtjGWEqn3tvW5ThyDihcH/xTIILY8dczv/s4
+   z2T/FBJ2Rez6XaGb3SmJ0lMuztVwlT1B5bWAATCAQd8Ei5OifWOlH4BlN
+   ExMWoCIhnKopE+Q9fY192wZbviNnQrPYuvuW6sLfIE6mSgvQb5VwieU/K
+   A==;
+X-CSE-ConnectionGUID: g828SGDXT2i4OkFoXXWdnw==
+X-CSE-MsgGUID: QgccLiSRScSsNqInba+ryQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="67405750"
 X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="87429397"
+   d="scan'208";a="67405750"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 21:26:28 -0800
-X-CSE-ConnectionGUID: lyN/dndFTY+1Uj/vKCqYTA==
-X-CSE-MsgGUID: nrSbbf2hSraEoB1wjOby6w==
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 21:28:16 -0800
+X-CSE-ConnectionGUID: RxEuLfN5QwOKtP/ua+v7oA==
+X-CSE-MsgGUID: nXCTuBdnT5yWDrpbPLCEJg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="192691430"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.185])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 21:26:26 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vIKQ2-00000007Llr-3v7s;
-	Mon, 10 Nov 2025 07:26:22 +0200
-Date: Mon, 10 Nov 2025 07:26:22 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Subject: Re: [PATCH v4 1/2] iio: trigger: add missing mutex_destroy in
- iio_trig_release
-Message-ID: <aRF3fokq4u0-JYd9@smile.fi.intel.com>
-References: <20251110035701.36691-1-make24@iscas.ac.cn>
+   d="scan'208";a="192691670"
+Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
+  by orviesa003.jf.intel.com with ESMTP; 09 Nov 2025 21:28:13 -0800
+From: Raag Jadav <raag.jadav@intel.com>
+To: hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v2 0/2] Introduce Intel Elkhart Lake PSE I/O
+Date: Mon, 10 Nov 2025 10:56:39 +0530
+Message-ID: <20251110052728.383339-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110035701.36691-1-make24@iscas.ac.cn>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 10, 2025 at 11:57:01AM +0800, Ma Ke wrote:
-> Add missing mutex_destroy() call in iio_trig_release() to properly
-> clean up the mutex initialized in viio_trigger_alloc(). Ensure proper
-> resource cleanup and follows kernel practices.
-> 
-> Found by code review.
+This series adds Intel Elkhart Lake PSE I/O driver which enumerates the
+PCI parent device and splits two child I/O devices (GPIO and Timed I/O
+which are available as a single PCI function through shared MMIO) to their
+respective I/O drivers.
 
-First of all, the patches should form the series and include a cover letter,
-usually it can be done by running
+In spirit, it is a continuation of PSE TIO series[1] which received
+objection from Greg for abusing platform device and has now been reworked
+to use auxiliary device instead.
 
-	git format-patch -v<X> --cover-letter --base ...
+Currently TIO driver[2] falls under PPS subsystem supporting generator
+functionality and will be coming up in a separate follow-up series for
+its independent design changes as per below roadmap.
 
-against the branch where changes are located on top of.
+=> Extend TIO driver[2] to support PPS client functionality.
+=> Develop a PPS common driver which hooks to both generator and client
+   counterparts.
+=> Develop an auxiliary glue driver for PPS common driver.
 
-Then, here makes sense to add
+[1] https://lore.kernel.org/r/20250307052231.551737-1-raag.jadav@intel.com
+[2] https://lore.kernel.org/r/20250219040618.70962-1-subramanian.mohan@intel.com
 
-Suggested-by:: Andy Shevchenko <andriy.shevchenko@intel.com>
+v2:
+- Consolidate OFFSET and SIZE macros (Andy)
+- Make child device objects parent managed (Andy)
+- Fix double free on error path (Andy)
+- Shorten child device names to fit id string length (Andy)
 
-The change otherwise LGTM (no need to resend this time),
+Raag Jadav (2):
+  platform/x86/intel: Introduce Intel Elkhart Lake PSE I/O
+  gpio: elkhartlake: Convert to auxiliary driver
 
-Reviewed-by:: Andy Shevchenko <andriy.shevchenko@intel.com>
-
+ MAINTAINERS                             |   7 ++
+ drivers/gpio/Kconfig                    |   2 +-
+ drivers/gpio/gpio-elkhartlake.c         |  34 ++++----
+ drivers/platform/x86/intel/Kconfig      |  13 +++
+ drivers/platform/x86/intel/Makefile     |   1 +
+ drivers/platform/x86/intel/ehl_pse_io.c | 107 ++++++++++++++++++++++++
+ include/linux/ehl_pse_io_aux.h          |  30 +++++++
+ 7 files changed, 175 insertions(+), 19 deletions(-)
+ create mode 100644 drivers/platform/x86/intel/ehl_pse_io.c
+ create mode 100644 include/linux/ehl_pse_io_aux.h
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
