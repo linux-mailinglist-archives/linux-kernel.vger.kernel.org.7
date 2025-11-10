@@ -1,101 +1,132 @@
-Return-Path: <linux-kernel+bounces-893967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DF9C48F8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:21:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10641C48EFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:15:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53ABC3AF29D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:11:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DCC904F0954
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E1B32A3FE;
-	Mon, 10 Nov 2025 19:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJqXI5pb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A673132D0E5;
+	Mon, 10 Nov 2025 19:13:10 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DAD32274B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C265432ABD6;
+	Mon, 10 Nov 2025 19:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762801889; cv=none; b=evfCZqnOq87o3imlm4H/2E6q7ga/Z/CsW/0bsQae+NFLeVBREwtMUEoPfZ6Ri4CzA7yh/2aB0Ofuv7VbFm388VG/epocaWZHeFdrCDdTKbvlD1E6uIF4zyroKRrHkM/e4dxZj4ES+M/zuHkwDdDxfQ7mUkqB7RgvsqSj/hfo8yY=
+	t=1762801990; cv=none; b=pQ96Ej8zU7UXS+ZDRtvqI5SLU1ymdcEadBCwG6eo243fGWV7bQ1JjKGwGal2SUTwl0frOOrMV9xsKKNp5tG8ntHvC4UEinl8zaHq42pVvB+rIwiyhFkuoXh/+fUrpLCnz4+EjhUbE9T4pCkydY8RwnXIMWzftsiP9j6bJ1j3bHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762801889; c=relaxed/simple;
-	bh=H4rp7RZQupzK9V1V6jWQ63JhkC5HQCmbB4coEew+cFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DzjtfExiVf6cy8Uv2d+knkvyyRe3EAkO4dyG/8Ktvgw0VhBSq7u1Mv+oVBflTltTcayRfbPNMqU9ZXhrhnhvToIUQJC9soHKeQHuZx/6r8s53TkSDg93c2HwXUWyBnSiwJCx6rHGPrSyzb9l3M8AwdA8eBuBilZxM6munq0CJwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJqXI5pb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CA4DC4CEF5;
-	Mon, 10 Nov 2025 19:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762801888;
-	bh=H4rp7RZQupzK9V1V6jWQ63JhkC5HQCmbB4coEew+cFg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MJqXI5pbwcnDAHtxT5eqiavC/EURQOStdQ4WIkrjc1Kz0i9BrZ2i/tucEiqv7RgFl
-	 YzNEflTmwAgiTOCSR3hUrqZAs5f62inkGTj8HRtjZv9X+5b1M98VnxaeiegqYWpwV4
-	 58dWSPdCecWB0wsD9yg2SYOHUApR0zRKGmUVkB5i0GWzEtHZ773O07j6Ch2B9hQpjK
-	 vyLnCfgXcc2uDgKAiODOLEW14mPNpaIeFZoN6SZLziPS4I6Z6KLHUuS/RkFtaTQG25
-	 mdUqsliTIktZRlwb1/dnSNPph4+3E2LBBWYP9uvvwzN+Fxk0WATghBaDqUjQR2KSZA
-	 KHSS2SSg0lHiQ==
-Date: Mon, 10 Nov 2025 11:11:26 -0800
-From: Drew Fustini <fustini@kernel.org>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Johan Hovold <johan@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Subject: Re: [PATCH] mailbox: th1520: fix clock imbalance on probe failure
-Message-ID: <aRI43i80Z5AdhGro@x1>
-References: <20251017055414.7753-1-johan@kernel.org>
+	s=arc-20240116; t=1762801990; c=relaxed/simple;
+	bh=RiJLyBV73BEgucWtLc4TULL0H6E19LTREO/MrcBJ0BE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tlYSBAT6ou8lAij02EprmJlw3qZVTRSqkPRPb88y6SeNzR368PXgFdWeq0cM7+0+yPVispeF5xBbZwMZ9M+pKZRep/xNhR1ZTjuqs0dZbGsel0mfeI83g/O8mumFGZx2q4cuLRiYFjABx+1gVhHi0X+XMIerWl9MyTjD8PVS/hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 93E52139F71;
+	Mon, 10 Nov 2025 19:13:00 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 8E96560009;
+	Mon, 10 Nov 2025 19:12:20 +0000 (UTC)
+Date: Mon, 10 Nov 2025 14:12:28 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Corey Minyard <corey@minyard.net>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Alex Deucher <alexander.deucher@amd.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Dmitry Baryshkov
+ <dmitry.baryshkov@oss.qualcomm.com>, Rob Clark
+ <robin.clark@oss.qualcomm.com>, Matthew Brost <matthew.brost@intel.com>,
+ Hans Verkuil <hverkuil@kernel.org>, Laurent Pinchart
+ <laurent.pinchart+renesas@ideasonboard.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Vitaly Lifshits <vitaly.lifshits@intel.com>,
+ Manivannan Sadhasivam <mani@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+ Calvin Owens <calvin@wbinvd.org>, Sagi Maimon <maimon.sagi@gmail.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>, Karan Tilak Kumar
+ <kartilak@cisco.com>, Casey Schaufler <casey@schaufler-ca.com>, Petr Mladek
+ <pmladek@suse.com>, Max Kellermann <max.kellermann@ionos.com>, Takashi Iwai
+ <tiwai@suse.de>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ openipmi-developer@lists.sourceforge.net, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, linux-pci@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-staging@lists.linux.dev, ceph-devel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-sound@vger.kernel.org, Rasmus
+ Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Gustavo Padovan <gustavo@padovan.org>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, Sean
+ Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Lucas De Marchi
+ <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
+ <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Vladimir Oltean
+ <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kwilczynski@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn
+ Helgaas <bhelgaas@google.com>, Rodolfo Giometti <giometti@enneenne.com>,
+ Jonathan Lemon <jonathan.lemon@gmail.com>, Vadim Fedorenko
+ <vadim.fedorenko@linux.dev>, Richard Cochran <richardcochran@gmail.com>,
+ Stefan Haberland <sth@linux.ibm.com>, Jan Hoeppner
+ <hoeppner@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
+ <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, Christian
+ Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+ <svens@linux.ibm.com>, Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela
+ <sebaddel@cisco.com>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov
+ <idryomov@gmail.com>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+ <tiwai@suse.com>
+Subject: Re: [PATCH v1 23/23] tracing: Switch to use %ptSp
+Message-ID: <20251110141228.3f91d9a7@gandalf.local.home>
+In-Reply-To: <20251110184727.666591-24-andriy.shevchenko@linux.intel.com>
+References: <20251110184727.666591-1-andriy.shevchenko@linux.intel.com>
+	<20251110184727.666591-24-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017055414.7753-1-johan@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 8E96560009
+X-Stat-Signature: 5hi1hakohzsg8hn7n1iyodmbff6458bx
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/1YrbZuC0QyunYMMdAkDIH9kIv38TXqEA=
+X-HE-Tag: 1762801940-392122
+X-HE-Meta: U2FsdGVkX1/BylAg4AKkX/T62VAai09Fwoml7NNoYheN1mcYKcRGTBSABLgOYxDBmZc3QXGw435NWRW1fm6j26IoZJclHSgat1CYtqifdgYizQSiwftLFhR3KIWkHQZvWjzyXLg2mc0Q3PcpPlmly9wdl81xZUnfgj6L460ZoglHnyWOhH4JCMlOWSZwOcmlpyYl23ptJhBgBsvpLR2Kx8Ll9VVqHi6WIJKGvEKEkx6ilvffX6p0Md+SqUXFIyHv2WyDFgTArKQogLnmdfsVyUsJ0uOL4cbXthMvjI+fNrmir9/oaclf5f3+GPufx6UoMsebdMhlI3Sr4FpPoQrK6K880hi143pnEp1yWy8fDYta7ZhDYpeLLlRXJu8Dj1z7txbS6MErRzmgbJiDnG8EIQ==
 
-On Fri, Oct 17, 2025 at 07:54:14AM +0200, Johan Hovold wrote:
-> The purpose of the devm_add_action_or_reset() helper is to call the
-> action function in case adding an action ever fails so drop the clock
-> disable from the error path to avoid disabling the clocks twice.
+On Mon, 10 Nov 2025 19:40:42 +0100
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+> Use %ptSp instead of open coded variants to print content of
+> struct timespec64 in human readable format.
 > 
-> Fixes: 5d4d263e1c6b ("mailbox: Introduce support for T-head TH1520 Mailbox driver")
-> Cc: Michal Wilczynski <m.wilczynski@samsung.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  drivers/mailbox/mailbox-th1520.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mailbox/mailbox-th1520.c b/drivers/mailbox/mailbox-th1520.c
-> index a6b2aa9ae952..626957c2e435 100644
-> --- a/drivers/mailbox/mailbox-th1520.c
-> +++ b/drivers/mailbox/mailbox-th1520.c
-> @@ -435,10 +435,8 @@ static int th1520_mbox_probe(struct platform_device *pdev)
->  	}
->  
->  	ret = devm_add_action_or_reset(dev, th1520_disable_clk, priv);
-> -	if (ret) {
-> -		clk_bulk_disable_unprepare(ARRAY_SIZE(priv->clocks), priv->clocks);
-> +	if (ret)
->  		return ret;
-> -	}
->  
->  	/*
->  	 * The address mappings in the device tree align precisely with those
-> -- 
-> 2.49.1
-> 
+>  kernel/trace/trace_output.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Acked-by: Drew Fustini <fustini@kernel.org>
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Jassi - are you able to take this through your mailbox tree?
-
-Thanks,
-Drew
+-- Steve
 
