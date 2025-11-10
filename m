@@ -1,288 +1,180 @@
-Return-Path: <linux-kernel+bounces-892818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D03EFC45E38
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:20:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57400C45DF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09FE31891D39
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:20:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00860188F29D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F9D30216A;
-	Mon, 10 Nov 2025 10:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADA8305066;
+	Mon, 10 Nov 2025 10:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="UrC7Vxy9"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="Bc/nggo4"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFF924BBE4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B512FE57B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762770007; cv=none; b=WFEUEUgwJNtpTnofLPDAAZBgNfMy0ka0QrZXkEzTIpR97+izGvFTOK/kd2gYntBC39pjCmBO8zi5Q5RrsoNlunoKuzoFztbXTeySsu20tflM/dWZYBcI5FeAgXygi6MW7obtsWvCDV6RM1qcSrh/qtgC3o2V/CxcUDFdYLJqovg=
+	t=1762769872; cv=none; b=PH3xRPrE/UdHr+A/Ya9rt8zOLsm0LEuWb0CbZ3/IPCbOZqHqHYbC1XSIYvPmyVRja0FAL1zM/bdHeNLnvtWd7Paja/8vLyz8jmNxMoGdgeVeGwCBPo5iXcnfhu+gpQxl/Pun99YeYUqwPhiMjzLAc2suSWUq/VTiBAxWhbqOeKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762770007; c=relaxed/simple;
-	bh=GqUB6OdRuR8B21IHUNRuCDfou43BL1Hu4iux/1Rgm2k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VM6BUclE9TPJ4+IL61ld8LBUlC2dA+HEsDtgSomEFeJl4KVA/A3icjUPdOih6puQVHD+YSQalPnOHL70xNbV6xVFzncgsDIjJJOw9/3/CkfkefOkWpIaxCjX2bD8+Llgjn4nqBKvSycG4LW7rK4IYy2POBV1BaMdWd2CfYAuPh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=UrC7Vxy9; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3438d4ae152so1101556a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:20:04 -0800 (PST)
+	s=arc-20240116; t=1762769872; c=relaxed/simple;
+	bh=ytVSzmYaDqD0qwMAifjOEvYSRHFoM76EE2Q+SxLmLnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jBJ8SwHQrOvL/Xd+pL2Va7+A6JeUK1ktONKjr8snhluIzkPCIlZO1fyRo+PJjGLvtO4FAqH2Q+9gOI3yj6vLIfmotq4YnfAB2I+y8oejyVeyNHyc9HmzYfKVMG3nlpIfMMLJ/nr8WIuPpncMO2bx12nkJwpqypCF/CutAtnNBTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=Bc/nggo4; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42b3c965cc4so230238f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:17:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1762770004; x=1763374804; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u9Um+h9dOsIowK0Xeh4oFsJO5SmqkrPeMg+IBmuohd8=;
-        b=UrC7Vxy9NcOWP0GluQ0+3haj3LpfvglBOtrHkGy5ENZsletZ8q2xJQVQT7nDnJm9G1
-         i/mG4ofKsZZIxaNHWLSK0TNwkfv45fjxDtpjPY/pZNyGb8kRaSpVaOpG7AqhaBT46n5w
-         N61R6PgVRuZctFD1zPXUzNoIP2A175oynVWjJk9YzBKcGekiaAJCE7vR7Aa6Ymx1SKjR
-         kHSJZ28MjuAPqHgDJcMXi9RHRpbcg373cajVcydof92fnZYwvuwdkjxTSuJsE5GatfMY
-         Gu9gtcyCK0vBcqKFDqOoeq+SKDBPtZfBvMS7yxnwbVV6Q12GmHwK1olSC5uuaUsJuGH2
-         rNfg==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1762769866; x=1763374666; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+cGOOrdlJvwUvrBTIxkNqf0S9KSK2YAvxzQBiD0nhFs=;
+        b=Bc/nggo4DD+U+wO0qS71yHjtA7jHJNMLKFlQ4bOmL2fIOp2OT/FsuO1q66wZag0ZlS
+         wcGRYBnT0zqQSZfATNyZHGrhXwJ9vHIWfS3tmBd8371aRKOZY5AIqkF2ZeRKCcpeYDTW
+         0/L2STKrv2P9/MWfgqIb0Y7qwOO/pTN+17cn4GKmA4BrMh6Xv791vJS1GPyqzEfvuDQD
+         8nC/kdZdz4nuA0f4mHmT8cvBjvWg48bb4k/G06dwlRU8in5PqCdwgkl1zp9xQNRLrBoe
+         kROW6uuxpjM6Ta/EvddLHx+IRzoiDEs70lx4pWkFIciy5lo1qk0Ahddn4MN6rscJiDe7
+         MVDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762770004; x=1763374804;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u9Um+h9dOsIowK0Xeh4oFsJO5SmqkrPeMg+IBmuohd8=;
-        b=XBrf/sPyY9A73B8Bh86jMO2N6QH7QNV69NgylKX9569LVQ8HNg+04w77K8ZivP6Dzh
-         05YhcjTxe+ez5UYpYI9Of2apzetZqyB/QAx5CHQ4MBHUTnzoaVQtb2oIe+YbGuKNFx0F
-         iQTIHW6zig5VeCEwdAKEZWwwaxfo03KH2NtIj3wbii2ylF5bQ/RnDDELOPJlF5KidEak
-         mGG1erfCbSOwyXBHVGmBZ6LH3Zp3blms5rIZ7WJU460YGa+gFiltkWpwjOleznaA2LA8
-         iwsAy0Mrx9Pz5MBju1pe6kzSMGDbR/JZRRyXLjevfWZt/8hzlIf6JOoWZNRQjLQ0sk6r
-         1zNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnyjMqedRy+aLg7BcPUJsFCt5vuUSiRD/Bmxp/NDvqMx1eeRH9ppCEan9w0Sj8F85CA6bd7oLTkIvR4lE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt/YxJhO5fVu4bpNDBWiCW0ATMBT5lIFxpBSAlQaPT0kxmRjfi
-	blprLIAXruh/739zPAWizzG2vnEXYFEXljRTkSlSHDao4EGz/LjPmo9YE/wmm+CvAkY=
-X-Gm-Gg: ASbGnctFtG4c7OscJODtZ33UE0nSTZuW40OwMXN0KRVkKnii31HUpPklao4jbaHUi0k
-	A3p19tD5NkE86zoxGovTB78Fal8Q5GCDDeagRCY19L3rvnnpD/essFFwNURuBVEcS1Bx7ZfLkZl
-	gjtgr8AvRP0FIoE3hWRayimYLqSHEqFLoHunl84fCZPLgLFsUQ4iEDYl+sXz5f7IvOFt7hqh1bL
-	4T1Y+aRA5/wOKP9ZiuY3Y0p1vWiVKnAiVwEQ8CICwdUjOq13KCzJuvE5AaohCCZrWJStWOqTXNG
-	pMSTraXEQe6GgTw7BtZQkugVq2FFIiBWvVKdju9JuD0z5o472FBFke96oXt1pdctmdT84L5XH9s
-	A46LMl+0RWTtvSv8ssJzbi/R3tezkzcZygiultAlE/cnLpL5rtGNi/QqjQWyZw0q/cJsrJXrOg1
-	YSAbOIMUiu1QlNJA==
-X-Google-Smtp-Source: AGHT+IGg+qZi4q9NfQViBJozr4dBl5TzCMHd9K8BS4nEMBk0sFI9y2oNIm83/8ZcSK7PJ3Gqzu8SSQ==
-X-Received: by 2002:a17:90b:582b:b0:340:f05a:3ec3 with SMTP id 98e67ed59e1d1-3436cbc8edamr8666587a91.33.1762770003828;
-        Mon, 10 Nov 2025 02:20:03 -0800 (PST)
-Received: from .shopee.com ([122.11.166.8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a69b626csm17372339a91.19.2025.11.10.02.19.59
+        d=1e100.net; s=20230601; t=1762769866; x=1763374666;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+cGOOrdlJvwUvrBTIxkNqf0S9KSK2YAvxzQBiD0nhFs=;
+        b=cjUVoD8Htk1ch115xfcWY16JyrI0uovvajcFNISP/qkrXCXfij/NRThF8pDl2D20/D
+         qliEHhBSIotetpCq11EJVRRd/ePHb9MRN3jsuIrQh+cyD4i1bzTE9TAKp4eRUAt4HkLR
+         DxiU7GJcYRVFUjmJOuSFXphnyg5h1CQxFME2eDZd4f/HSsymTMM0en1W7+As46SDX7Pb
+         +G68vpGtfYl5BZoTBk2OhUUkgIa8ekE2RFI7dJzgVjxjSX+x0m/t8f93EWmirdYiip4O
+         jZS89AXwO5JCn97p09PgouKT+momdzdmkHUfw4y/0xMnT4wSoquUROqLai9c+4LgR2Os
+         AcNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnE+I18JOLWeUST55Us+KvI3HUDbw+NmfclvpnqO2bSn29Gnntdv/6R0lhlpjznMkpDZTFaL27WRnmZhU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFd5g5aXP6bDr80FJ1Mod4RU2Rj3y7t9EChKUkCLqD36P9LqQ1
+	Z0f+ZSMbgWcyFw826QM0KlpbnOj6hyjWJlyzUvist1/bByS7onCKKAH1yC/6xd69rJI=
+X-Gm-Gg: ASbGncsvQw+afNZ0ODPxwsnKzoNScfItsQAjSM7So1/lg87XAmrOC+FY0nU4rhTWq/9
+	YJ591coOfilGXhpHIDSDEiRrzGMmoYv0rAkNHeUKCgJXVhecHO18m7dQNACmI4BnXPRfjtTpEye
+	/CHjUybwMAPTDnsQUbIWyDI60SfJm93M9sMy+Pg9JuhMm7gi0Z7JiFNLxfAmpjFEW3VXXhT0aaW
+	vO+a0W14smDP7cQL6HKMHArJ/1iljBUkZxGL/nYEhA2UQv0PwW9eE5Q5jnrgqrSbxKgRd9L3YWq
+	JEh4xzdRWItl1Q2hMYzEASVPBIXErcqRfIPIgi9fM1omfx5VrO7w0Gw1ECp3ov11YhVZaj6B1zo
+	2ZiqvleBszP+NIOIAIYvep0J5hOfCTvECfvdZ9wcBRrTyyFG94h2RflmWODjvocFKjtKCWFz3gv
+	6Mxpvudye1ugyVI5Y/RbrxWZo2BMPMFIteXBgUpsaUS+aIwUEsKTrgb3YOmAg=
+X-Google-Smtp-Source: AGHT+IGUpHSfeagdIBM88vePaTs3yIVY9gCWpK2lN42s3k1Y6AfvZPuuxOVOOc+I4rI5U6e1xXLxSw==
+X-Received: by 2002:a05:6000:228a:b0:429:f088:7fb with SMTP id ffacd0b85a97d-42b2c655058mr7359131f8f.7.1762769866339;
+        Mon, 10 Nov 2025 02:17:46 -0800 (PST)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b2e96441dsm13918929f8f.23.2025.11.10.02.17.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 02:20:03 -0800 (PST)
-From: Leon Huang Fu <leon.huangfu@shopee.com>
-To: linux-mm@kvack.org
-Cc: tj@kernel.org,
-	mkoutny@suse.com,
-	hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org,
-	joel.granados@kernel.org,
-	jack@suse.cz,
-	laoar.shao@gmail.com,
-	mclapinski@google.com,
-	kyle.meyer@hpe.com,
-	corbet@lwn.net,
-	lance.yang@linux.dev,
-	leon.huangfu@shopee.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org
-Subject: [PATCH mm-new v3] mm/memcontrol: Add memory.stat_refresh for on-demand stats flushing
-Date: Mon, 10 Nov 2025 18:19:48 +0800
-Message-ID: <20251110101948.19277-1-leon.huangfu@shopee.com>
-X-Mailer: git-send-email 2.51.2
+        Mon, 10 Nov 2025 02:17:44 -0800 (PST)
+Date: Mon, 10 Nov 2025 10:19:56 +0000
+From: Daniel Thompson <daniel@riscstar.com>
+To: Maud Spierings <maudspierings@gocontroll.com>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/4] backlight: add max25014atg backlight
+Message-ID: <aRG8TMqehv-oR6v1@aspen.lan>
+References: <20251107-max25014-v5-0-9a6aa57306bf@gocontroll.com>
+ <20251107-max25014-v5-2-9a6aa57306bf@gocontroll.com>
+ <aQ4a2SBDldYgQb56@aspen.lan>
+ <f4e52cc1-9c5f-4069-9079-83be794ab2b3@gocontroll.com>
+ <aRG359gIeP48V2ZZ@aspen.lan>
+ <59c36699-ee54-467f-9342-6756a0092a98@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <59c36699-ee54-467f-9342-6756a0092a98@gocontroll.com>
 
-Memory cgroup statistics are updated asynchronously with periodic
-flushing to reduce overhead. The current implementation uses a flush
-threshold calculated as MEMCG_CHARGE_BATCH * num_online_cpus() for
-determining when to aggregate per-CPU memory cgroup statistics. On
-systems with high core counts, this threshold can become very large
-(e.g., 64 * 256 = 16,384 on a 256-core system), leading to stale
-statistics when userspace reads memory.stat files.
+On Mon, Nov 10, 2025 at 11:03:27AM +0100, Maud Spierings wrote:
+> On 11/10/25 11:01, Daniel Thompson wrote:
+> > On Mon, Nov 10, 2025 at 09:40:07AM +0100, Maud Spierings wrote:
+> > > On 11/7/25 17:14, Daniel Thompson wrote:
+> > > > On Fri, Nov 07, 2025 at 01:49:59PM +0100, Maud Spierings via B4 Relay wrote:
+> > > > > +/*
+> > > > > + * 1. disable unused strings
+> > > > > + * 2. set dim mode
+> > > > > + * 3. set initial brightness
+> > > >
+> > > > How does this code set the initial brightness? It doens't set the
+> > > > MAX25014_TON* registers.
+> > >
+> > > Yep forgot to remove that, I discovered the backlight core takes care of the
+> > > default brightness, so I removed it from here.
+> >
+> > What do you mean by this? Are you sure you aren't relying on another
+> > driver to enable the backlight rather than the backlight core?
+>
+> Not that I know of, there is the systemd backlight service, but I am pretty
+> sure I can see it first turn on, then get switched to the old value by the
+> systemd service. Unless the simple-panel driver controls it? The backlight
+> is linked to that.
 
-This is particularly problematic for monitoring and management tools
-that rely on reasonably fresh statistics, as they may observe data
-that is thousands of updates out of date.
+I think you should look at the code. I think it's likely the backlight
+is only coming on due to the link to simple-panel.
 
-Introduce a new write-only file, memory.stat_refresh, that allows
-userspace to explicitly trigger an immediate flush of memory statistics.
-Writing any value to this file forces a synchronous flush via
-__mem_cgroup_flush_stats(memcg, true) for the cgroup and all its
-descendants, ensuring that subsequent reads of memory.stat and
-memory.numa_stat reflect current data.
+Normal way to handle that case (if you want to avoid the backlight
+turning on "too early") is to set the power mode to BACKLIGHT_POWER_OFF
+if (and only off) the backlight is linked to a panel. See
+pwm_backlight_initial_power_state() for an example.
 
-This approach follows the pattern established by /proc/sys/vm/stat_refresh
-and memory.peak, where the written value is ignored, keeping the
-interface simple and consistent with existing kernel APIs.
+If you are relying on "the backlight core [to take] care of the default
+brightness" then you have to request it in the driver (by calling
+backlight_update_status() after registering the backlight).
 
-Usage example:
-  echo 1 > /sys/fs/cgroup/mygroup/memory.stat_refresh
-  cat /sys/fs/cgroup/mygroup/memory.stat
 
-The feature is available in both cgroup v1 and v2 for consistency.
+> > > > > + * 4. set setting register
+> > > > > + * 5. enable the backlight
+> > > > > + */
+> > > > > +static int max25014_configure(struct max25014 *maxim)
+> >
+> >
+> > > > > +static int max25014_probe(struct i2c_client *cl)
+> > > > > <snip>
+> > > > > +
+> > > > > +	/* Enable can be tied to vin rail wait if either is available */
+> > > > > +	if (maxim->enable || maxim->vin) {
+> > > > > +		/* Datasheet Electrical Characteristics tSTARTUP 2ms */
+> > > > > +		usleep_range(2000, 2500);
+> > > > > +	}
+> > > >
+> > > > If you really want to keep the devm_regulator_get_optional() I guess
+> > > > maybe you could persuade me it's need to avoid this sleep... although
+> > > > I'd be fairly happy to remove the NULL checks here too!
+> > >
+> > > Just wait unconditionally?
+> >
+> > If you think it will be unusual for the driver to be used without enable
+> > or regulator then it's ok to wait unconditionally (all examples you
+> > have added so far have an enable pin).
+>
+> I think it may actually be a very common implementation to have the enable
+> pin attached to Vin, we don't have it set up that way. But it is displayed
+> that way in an example schematic in the datasheet.
 
-Signed-off-by: Leon Huang Fu <leon.huangfu@shopee.com>
----
-v2 -> v3:
-  - Flush stats by memory.stat_refresh (per Michal)
-  - https://lore.kernel.org/linux-mm/20251105074917.94531-1-leon.huangfu@shopee.com/
+Your call.
 
-v1 -> v2:
-  - Flush stats when write the file (per Michal).
-  - https://lore.kernel.org/linux-mm/20251104031908.77313-1-leon.huangfu@shopee.com/
 
- Documentation/admin-guide/cgroup-v2.rst | 21 +++++++++++++++++--
- mm/memcontrol-v1.c                      |  4 ++++
- mm/memcontrol-v1.h                      |  2 ++
- mm/memcontrol.c                         | 27 ++++++++++++++++++-------
- 4 files changed, 45 insertions(+), 9 deletions(-)
-
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 3345961c30ac..ca079932f957 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1337,7 +1337,7 @@ PAGE_SIZE multiple when read back.
- 	cgroup is within its effective low boundary, the cgroup's
- 	memory won't be reclaimed unless there is no reclaimable
- 	memory available in unprotected cgroups.
--	Above the effective low	boundary (or
-+	Above the effective low	boundary (or
- 	effective min boundary if it is higher), pages are reclaimed
- 	proportionally to the overage, reducing reclaim pressure for
- 	smaller overages.
-@@ -1785,6 +1785,23 @@ The following nested keys are defined.
- 		up if hugetlb usage is accounted for in memory.current (i.e.
- 		cgroup is mounted with the memory_hugetlb_accounting option).
-
-+  memory.stat_refresh
-+	A write-only file which exists on non-root cgroups.
-+
-+	Writing any value to this file forces an immediate flush of
-+	memory statistics for this cgroup and its descendants. This
-+	ensures subsequent reads of memory.stat and memory.numa_stat
-+	reflect the most current data.
-+
-+	This is useful on high-core count systems where per-CPU caching
-+	can lead to stale statistics, or when precise memory usage
-+	information is needed for monitoring or debugging purposes.
-+
-+	Example::
-+
-+	  echo 1 > memory.stat_refresh
-+	  cat memory.stat
-+
-   memory.numa_stat
- 	A read-only nested-keyed file which exists on non-root cgroups.
-
-@@ -2173,7 +2190,7 @@ of the two is enforced.
-
- cgroup writeback requires explicit support from the underlying
- filesystem.  Currently, cgroup writeback is implemented on ext2, ext4,
--btrfs, f2fs, and xfs.  On other filesystems, all writeback IOs are
-+btrfs, f2fs, and xfs.  On other filesystems, all writeback IOs are
- attributed to the root cgroup.
-
- There are inherent differences in memory and writeback management
-diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index 6eed14bff742..c3eac9b1f1be 100644
---- a/mm/memcontrol-v1.c
-+++ b/mm/memcontrol-v1.c
-@@ -2041,6 +2041,10 @@ struct cftype mem_cgroup_legacy_files[] = {
- 		.name = "stat",
- 		.seq_show = memory_stat_show,
- 	},
-+	{
-+		.name = "stat_refresh",
-+		.write = memory_stat_refresh_write,
-+	},
- 	{
- 		.name = "force_empty",
- 		.write = mem_cgroup_force_empty_write,
-diff --git a/mm/memcontrol-v1.h b/mm/memcontrol-v1.h
-index 6358464bb416..a14d4d74c9aa 100644
---- a/mm/memcontrol-v1.h
-+++ b/mm/memcontrol-v1.h
-@@ -29,6 +29,8 @@ void drain_all_stock(struct mem_cgroup *root_memcg);
- unsigned long memcg_events(struct mem_cgroup *memcg, int event);
- unsigned long memcg_page_state_output(struct mem_cgroup *memcg, int item);
- int memory_stat_show(struct seq_file *m, void *v);
-+ssize_t memory_stat_refresh_write(struct kernfs_open_file *of, char *buf,
-+				  size_t nbytes, loff_t off);
-
- void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n);
- struct mem_cgroup *mem_cgroup_id_get_online(struct mem_cgroup *memcg);
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index bfc986da3289..19ef4b971d8d 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -610,6 +610,15 @@ static void __mem_cgroup_flush_stats(struct mem_cgroup *memcg, bool force)
- 	css_rstat_flush(&memcg->css);
- }
-
-+static void memcg_flush_stats(struct mem_cgroup *memcg, bool force)
-+{
-+	if (mem_cgroup_disabled())
-+		return;
-+
-+	memcg = memcg ?: root_mem_cgroup;
-+	__mem_cgroup_flush_stats(memcg, force);
-+}
-+
- /*
-  * mem_cgroup_flush_stats - flush the stats of a memory cgroup subtree
-  * @memcg: root of the subtree to flush
-@@ -621,13 +630,7 @@ static void __mem_cgroup_flush_stats(struct mem_cgroup *memcg, bool force)
-  */
- void mem_cgroup_flush_stats(struct mem_cgroup *memcg)
- {
--	if (mem_cgroup_disabled())
--		return;
--
--	if (!memcg)
--		memcg = root_mem_cgroup;
--
--	__mem_cgroup_flush_stats(memcg, false);
-+	memcg_flush_stats(memcg, false);
- }
-
- void mem_cgroup_flush_stats_ratelimited(struct mem_cgroup *memcg)
-@@ -4530,6 +4533,12 @@ int memory_stat_show(struct seq_file *m, void *v)
- 	return 0;
- }
-
-+ssize_t memory_stat_refresh_write(struct kernfs_open_file *of, char *buf, size_t nbytes, loff_t off)
-+{
-+	memcg_flush_stats(mem_cgroup_from_css(of_css(of)), true);
-+	return nbytes;
-+}
-+
- #ifdef CONFIG_NUMA
- static inline unsigned long lruvec_page_state_output(struct lruvec *lruvec,
- 						     int item)
-@@ -4666,6 +4675,10 @@ static struct cftype memory_files[] = {
- 		.name = "stat",
- 		.seq_show = memory_stat_show,
- 	},
-+	{
-+		.name = "stat_refresh",
-+		.write = memory_stat_refresh_write,
-+	},
- #ifdef CONFIG_NUMA
- 	{
- 		.name = "numa_stat",
---
-2.51.2
-
+Daniel.
 
