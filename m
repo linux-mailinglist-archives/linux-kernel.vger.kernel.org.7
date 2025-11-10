@@ -1,249 +1,206 @@
-Return-Path: <linux-kernel+bounces-893099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A65AC468D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:18:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B768EC46901
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:20:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E64E93BFB57
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 909FF3A7B7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A4F314B6C;
-	Mon, 10 Nov 2025 12:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044FF30F93B;
+	Mon, 10 Nov 2025 12:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eYl5bPPt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T+Ks6Cf2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF1E314A67;
-	Mon, 10 Nov 2025 12:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D02F30F930
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762776683; cv=none; b=Y7Crxr6spt2Il3BZKVDiVItkXxWUGjpjxIh7x1MR2cqHSkfDJ0zPy7+zq3bMvUJEdhLs5ZeAS81wAqyX6m0mWyYlpnn08ipmlMUFmchjLYKgncjUc1ZF6HYSIfOZ1jSaRBdqIppQOJc2K+Ld0aLfgxLeVGl6lQBcu2ud8rcJFL0=
+	t=1762776728; cv=none; b=RzL1nTy+5O2zZ5iqA7bTvVXyddv6yyhkc6+3qVxDiBDzViGhnb/5fm/5XBW6PIfLc4lTtQCoZkiu+I/nTQGYOxHsgPMzkEfjkSoqRe7oP2Jp2nBm7gtZC55rEIy0Qop4wkY34inu+gyAp1SRGlpy66RCKmZH0PofY9a5ceMYi14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762776683; c=relaxed/simple;
-	bh=3wXlbjfXIgU7+GGD6R37TOwSczIqwGNGvvc81bNQiiA=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=owffNzqBq7xQrfk1CuDBieFE35n8Vai4RS0sv2QjxsrxlgPH2WKml49nxsJh1Jd8l49x9clIuufiAl20vBcPFK0b/Lgwz5bVY7FqSnneiRDzLjHk4ZNSkX9VnmbQWjt5c7iKQ/PSPXHGWyQYj3C61OJj8jBx9zActCyB8yhQruk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eYl5bPPt; arc=none smtp.client-ip=198.175.65.9
+	s=arc-20240116; t=1762776728; c=relaxed/simple;
+	bh=Gq1Qz9de0zDdr7Qza9fayAQEpXpfGWwvApSfAxEFrck=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nJHW9hUWWf0+tg6dAAiqEq6yizqRaUcG3TzCM9RR+B69UTZO/eOsEjxToQlThM5nulnxKlbykL9Ujn/5kq4Fh75KO33Ld9wA3jZVmpKwA95G9AQKbmTN58OP3zO3TNjrT7w3v05+pb9h9Pyggx0NNwZtOyGdx2heuVqQ68b/i3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T+Ks6Cf2; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762776681; x=1794312681;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=3wXlbjfXIgU7+GGD6R37TOwSczIqwGNGvvc81bNQiiA=;
-  b=eYl5bPPtXQ6GnAx38N69nihSqs6NOPBQz7floeAnuXIn2XLGBgjYdVs4
-   fahJ0v0Qh5m5kSwcbK1dv0yIf7k4Ip9OPOnfoxLkSm7FNSMnBRDbT8LSB
-   Jh1u8rQsnLZw2R5E1UqTaaGpr9GL1EN9TZ2OGE0Q6bEi28GqpkFoa5AtD
-   tMhGJkff6FAw706/Y1I/dN7SF6Sy78vqOBFAQZAdj0xMfdowwBSfhoOLK
-   W+BVVKcNVx+BXaYMJN8oo3/7YfoiDlGVvhx3llcPUa/xgB0BTrWPkyKvx
-   E/brUC2L4yL88y3WDLft9QHVmIYTk3WBfJ9ZrH+r5hRhYBrbnojWyO2pe
+  t=1762776726; x=1794312726;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=Gq1Qz9de0zDdr7Qza9fayAQEpXpfGWwvApSfAxEFrck=;
+  b=T+Ks6Cf2BTGN4iVGmESew/iCY6X7/CTMYK/f5Fp7OdxKdUPBKW5WORnk
+   Nv0nXV66cldU5xpVhgKCPWtZxy5UuVjyGM+mJT4BjwDtwWfDO1FC2jpsV
+   BumIvr6EoGn30Ru466p4LZaArLbyCK4W/a2KJxp7oMsew/6BP9wYwF8I+
+   KiVCZGDb6iJ+MSwnFB2/xV6oaT4rPN4W1lPnKyOZj890F49iFn55k7nMK
+   eVT1ZPFVr55JzTM27puiRhrdnHrT6OnXn66pahHqAV1FAyfI/56caPi+P
+   1d2QAhLQ35l9AQfsk8row/6abakRf9yy6Fyp+Tgea6xvnT24WNLf0Uws1
    Q==;
-X-CSE-ConnectionGUID: eWOdHAecRl6G7nRvR4H34g==
-X-CSE-MsgGUID: foPRafjDRdut2vt9qrvIAA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="87455880"
+X-CSE-ConnectionGUID: hvsU8+5KRAeOy0WFwcZNdw==
+X-CSE-MsgGUID: lUDQ1HClQnimacm/A6cvwQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="68467717"
 X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="87455880"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:11:21 -0800
-X-CSE-ConnectionGUID: zkZGdcy2TcGTa3haXpMZ7A==
-X-CSE-MsgGUID: syhEAcKARXmlw66wEWnXgA==
+   d="scan'208";a="68467717"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:12:05 -0800
+X-CSE-ConnectionGUID: HH7CDWeHTiWebboaKijKWA==
+X-CSE-MsgGUID: BnoiTsyASuSg/n0lzooiUg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="188300237"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.13])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:11:16 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 10 Nov 2025 14:11:12 +0200 (EET)
-To: Antheas Kapenekakis <lkml@antheas.dev>
-cc: Armin Wolf <W_Armin@gmx.de>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-hwmon@vger.kernel.org, 
-    Hans de Goede <hansg@kernel.org>, 
-    Derek John Clark <derekjohn.clark@gmail.com>, 
-    =?ISO-8859-15?Q?Joaqu=EDn_Ignacio_Aramend=EDa?= <samsagax@gmail.com>, 
-    Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v3 6/6] platform/x86: ayaneo-ec: Add suspend hook
-In-Reply-To: <CAGwozwFJKeU-pWzNTkryoUpD63LFuJVSB6=y4C_22+4qat05eA@mail.gmail.com>
-Message-ID: <a99dee5b-8469-c09f-0388-d7e6d6071bdf@linux.intel.com>
-References: <20251031163651.1465981-1-lkml@antheas.dev> <20251031163651.1465981-7-lkml@antheas.dev> <83b004ce-b34e-41a4-b35d-1f24056ac60a@gmx.de> <CAGwozwFJKeU-pWzNTkryoUpD63LFuJVSB6=y4C_22+4qat05eA@mail.gmail.com>
+   d="scan'208";a="189379199"
+Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.202])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:11:59 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Krzysztof Karas <krzysztof.karas@intel.com>, Marco Crivellari
+ <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko
+ <mhocko@suse.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>
+Subject: Re: [PATCH v3 0/3] replace old wq(s), add WQ_PERCPU to alloc_workqueue
+In-Reply-To: <34ozsv3e6ujs4rn6c2r4nrjcjifgazddy5jecwur6atfcop6vp@bunf3uyofmb4>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20251104100032.61525-1-marco.crivellari@suse.com>
+ <34ozsv3e6ujs4rn6c2r4nrjcjifgazddy5jecwur6atfcop6vp@bunf3uyofmb4>
+Date: Mon, 10 Nov 2025 14:11:56 +0200
+Message-ID: <aaac1c9b25d0fc2500e67d05948a22d77dcc72e7@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 
-On Sun, 2 Nov 2025, Antheas Kapenekakis wrote:
+On Wed, 05 Nov 2025, Krzysztof Karas <krzysztof.karas@intel.com> wrote:
+> Hi Marco,
+>
+> thanks for addressing my comments!
+>
+> Reviewed-by: Krzysztof Karas <krzysztof.karas@intel.com>
+> on the whole series.
 
-> On Sun, 2 Nov 2025 at 19:35, Armin Wolf <W_Armin@gmx.de> wrote:
-> >
-> > Am 31.10.25 um 17:36 schrieb Antheas Kapenekakis:
-> >
-> > > The Ayaneo EC resets after hibernation, losing the charge control state.
-> > > Add a small PM hook to restore this state on hibernation resume.
-> > >
-> > > The fan speed is also lost during hibernation, but since hibernation
-> > > failures are common with this class of devices, setting a low fan speed
-> > > when the userspace program controlling the fan will potentially not
-> > > take over could cause the device to overheat, so it is not restored.
-> >
-> > Please update the patch description.
-> >
-> > >
-> > > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > > ---
-> > >   drivers/platform/x86/ayaneo-ec.c | 73 ++++++++++++++++++++++++++++++++
-> > >   1 file changed, 73 insertions(+)
-> > >
-> > > diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
-> > > index 9548e3d22093..e1ad5968d3b4 100644
-> > > --- a/drivers/platform/x86/ayaneo-ec.c
-> > > +++ b/drivers/platform/x86/ayaneo-ec.c
-> > > @@ -41,6 +41,8 @@
-> > >   #define AYANEO_MODULE_LEFT  BIT(0)
-> > >   #define AYANEO_MODULE_RIGHT BIT(1)
-> > >
-> > > +#define AYANEO_CACHE_LEN     1
-> > > +
-> > >   struct ayaneo_ec_quirk {
-> > >       bool has_fan_control;
-> > >       bool has_charge_control;
-> > > @@ -51,6 +53,9 @@ struct ayaneo_ec_platform_data {
-> > >       struct platform_device *pdev;
-> > >       struct ayaneo_ec_quirk *quirks;
-> > >       struct acpi_battery_hook battery_hook;
-> > > +
-> > > +     bool restore_charge_limit;
-> > > +     bool restore_pwm;
-> > >   };
-> > >
-> > >   static const struct ayaneo_ec_quirk quirk_fan = {
-> > > @@ -207,10 +212,14 @@ static int ayaneo_ec_read(struct device *dev, enum hwmon_sensor_types type,
-> > >   static int ayaneo_ec_write(struct device *dev, enum hwmon_sensor_types type,
-> > >                          u32 attr, int channel, long val)
-> > >   {
-> > > +     struct ayaneo_ec_platform_data *data = platform_get_drvdata(
-> > > +             to_platform_device(dev));
-> > > +     int ret;
-> > >       switch (type) {
-> > >       case hwmon_pwm:
-> > >               switch (attr) {
-> > >               case hwmon_pwm_enable:
-> > > +                     data->restore_pwm = false;
-> > >                       switch (val) {
-> > >                       case 1:
-> > >                               return ec_write(AYANEO_PWM_ENABLE_REG,
-> > > @@ -224,6 +233,15 @@ static int ayaneo_ec_write(struct device *dev, enum hwmon_sensor_types type,
-> > >               case hwmon_pwm_input:
-> > >                       if (val < 0 || val > 255)
-> > >                               return -EINVAL;
-> > > +                     if (data->restore_pwm) {
-> > > +                             // Defer restoring PWM control to after
-> > > +                             // userspace resumes successfully
-> > > +                             ret = ec_write(AYANEO_PWM_ENABLE_REG,
-> > > +                                            AYANEO_PWM_MODE_MANUAL);
-> > > +                             if (ret)
-> > > +                                     return ret;
-> > > +                             data->restore_pwm = false;
-> >
-> > I suspect that you need to use a mutex to protect the restore sequence.
-> 
-> This is indeed true. I can respin the last patch with a mutex and fix
-> the description.
-> 
-> If the date on the control modules patch is the only issue, I can skip
-> re-sending the first 5.
+The series absolutely must go through both i915 and xe CI before
+merging. Krzysztof, can you please make follow through with that?
 
-As usual, please send next version of the series once you've addressed the 
-review comments.
+BR,
+Jani.
 
-If you want some patches to not delay the first part of the series, send 
-those separately.
+>  
+> Best Regards,
+> Krzysztof
+>
+> On 2025-11-04 at 11:00:29 +0100, Marco Crivellari wrote:
+>> Hi,
+>> 
+>> === Current situation: problems ===
+>> 
+>> Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+>> set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+>> 
+>> This leads to different scenarios if a work item is scheduled on an
+>> isolated CPU where "delay" value is 0 or greater then 0:
+>>         schedule_delayed_work(, 0);
+>> 
+>> This will be handled by __queue_work() that will queue the work item on the
+>> current local (isolated) CPU, while:
+>> 
+>>         schedule_delayed_work(, 1);
+>> 
+>> Will move the timer on an housekeeping CPU, and schedule the work there.
+>> 
+>> Currently if a user enqueue a work item using schedule_delayed_work() the
+>> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+>> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+>> schedule_work() that is using system_wq and queue_work(), that makes use
+>> again of WORK_CPU_UNBOUND.
+>> 
+>> This lack of consistency cannot be addressed without refactoring the API.
+>> 
+>> === Recent changes to the WQ API ===
+>> 
+>> The following, address the recent changes in the Workqueue API:
+>> 
+>> - commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+>> - commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+>> 
+>> The old workqueues will be removed in a future release cycle.
+>> 
+>> === Introduced Changes by this series ===
+>> 
+>> 1) [P 1-2]  Replace uses of system_wq and system_unbound_wq
+>> 
+>>     system_wq is a per-CPU workqueue, but his name is not clear.
+>>     system_unbound_wq is to be used when locality is not required.
+>> 
+>>     Because of that, system_wq has been replaced with system_percpu_wq, and
+>>     system_unbound_wq has been replaced with system_dfl_wq.
+>> 
+>> 2) [P 3] WQ_PERCPU added to alloc_workqueue()
+>> 
+>>     This change adds a new WQ_PERCPU flag to explicitly request
+>>     alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+>> 
+>> 
+>> Thanks!
+>> 
+>> ---
+>> Changes in 3:
+>> - Improved commit logs
+>> 
+>> Changes in v2:
+>> - fix typo in patch subject (add instead of added).
+>> 
+>> - in every patch is also present the specific commit hash about the
+>>   workqueue API change.
+>> 
+>> - fixed commit log of P1 (removed "Adding system_dfl_wq...").
+>> 
+>> - P2: subject changed reflecting the effective change.
+>> 
+>> - rebased to v6.18-rc4.
+>> 
+>> 
+>> Marco Crivellari (3):
+>>   drm/i915: replace use of system_unbound_wq with system_dfl_wq
+>>   drm/i915: replace use of system_wq with system_percpu_wq in the
+>>     documentation
+>>   drm/i915: add WQ_PERCPU to alloc_workqueue users
+>> 
+>>  drivers/gpu/drm/i915/display/intel_display_driver.c | 4 ++--
+>>  drivers/gpu/drm/i915/display/intel_display_power.c  | 2 +-
+>>  drivers/gpu/drm/i915/display/intel_tc.c             | 4 ++--
+>>  drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c        | 2 +-
+>>  drivers/gpu/drm/i915/gt/uc/intel_guc.c              | 4 ++--
+>>  drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c           | 4 ++--
+>>  drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c   | 6 +++---
+>>  drivers/gpu/drm/i915/i915_active.c                  | 2 +-
+>>  drivers/gpu/drm/i915/i915_driver.c                  | 5 +++--
+>>  drivers/gpu/drm/i915/i915_drv.h                     | 2 +-
+>>  drivers/gpu/drm/i915/i915_sw_fence_work.c           | 2 +-
+>>  drivers/gpu/drm/i915/i915_vma_resource.c            | 2 +-
+>>  drivers/gpu/drm/i915/pxp/intel_pxp.c                | 2 +-
+>>  drivers/gpu/drm/i915/pxp/intel_pxp_irq.c            | 2 +-
+>>  drivers/gpu/drm/i915/selftests/i915_sw_fence.c      | 2 +-
+>>  drivers/gpu/drm/i915/selftests/mock_gem_device.c    | 2 +-
+>>  16 files changed, 24 insertions(+), 23 deletions(-)
+>> 
+>> -- 
+>> 2.51.1
+>> 
+>
 
---
- i.
-
-> 
-> 
-> > Thanks,
-> > Armin Wolf
-> >
-> > > +                     }
-> > >                       return ec_write(AYANEO_PWM_REG, (val * 100) / 255);
-> > >               default:
-> > >                       break;
-> > > @@ -474,10 +492,65 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
-> > >       return 0;
-> > >   }
-> > >
-> > > +static int ayaneo_freeze(struct device *dev)
-> > > +{
-> > > +     struct platform_device *pdev = to_platform_device(dev);
-> > > +     struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
-> > > +     int ret;
-> > > +     u8 tmp;
-> > > +
-> > > +     if (data->quirks->has_charge_control) {
-> > > +             ret = ec_read(AYANEO_CHARGE_REG, &tmp);
-> > > +             if (ret)
-> > > +                     return ret;
-> > > +
-> > > +             data->restore_charge_limit = tmp == AYANEO_CHARGE_VAL_INHIBIT;
-> > > +     }
-> > > +
-> > > +     if (data->quirks->has_fan_control) {
-> > > +             ret = ec_read(AYANEO_PWM_ENABLE_REG, &tmp);
-> > > +             if (ret)
-> > > +                     return ret;
-> > > +
-> > > +             data->restore_pwm = tmp == AYANEO_PWM_MODE_MANUAL;
-> > > +
-> > > +             // Release the fan when entering hibernation to avoid
-> > > +             // overheating if hibernation fails and hangs
-> > > +             if (data->restore_pwm) {
-> > > +                     ret = ec_write(AYANEO_PWM_ENABLE_REG, AYANEO_PWM_MODE_AUTO);
-> > > +                     if (ret)
-> > > +                             return ret;
-> > > +             }
-> > > +     }
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static int ayaneo_restore(struct device *dev)
-> > > +{
-> > > +     struct platform_device *pdev = to_platform_device(dev);
-> > > +     struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
-> > > +     int ret;
-> > > +
-> > > +     if (data->quirks->has_charge_control && data->restore_charge_limit) {
-> > > +             ret = ec_write(AYANEO_CHARGE_REG, AYANEO_CHARGE_VAL_INHIBIT);
-> > > +             if (ret)
-> > > +                     return ret;
-> > > +     }
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static const struct dev_pm_ops ayaneo_pm_ops = {
-> > > +     .freeze = ayaneo_freeze,
-> > > +     .restore = ayaneo_restore,
-> > > +};
-> > > +
-> > >   static struct platform_driver ayaneo_platform_driver = {
-> > >       .driver = {
-> > >               .name = "ayaneo-ec",
-> > >               .dev_groups = ayaneo_ec_groups,
-> > > +             .pm = &ayaneo_pm_ops,
-> > >       },
-> > >       .probe = ayaneo_ec_probe,
-> > >   };
-> >
-> 
-> 
+-- 
+Jani Nikula, Intel
 
