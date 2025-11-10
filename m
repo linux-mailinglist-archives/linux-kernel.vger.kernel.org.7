@@ -1,220 +1,247 @@
-Return-Path: <linux-kernel+bounces-892296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0752C44CAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:45:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F284C44CE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 995F33AF5E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:45:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B926F188C9BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B213A233707;
-	Mon, 10 Nov 2025 02:45:21 +0000 (UTC)
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F244369A;
-	Mon, 10 Nov 2025 02:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762742721; cv=none; b=iMWb08DOMHUR6r86/Mm3YhQbZAuzjCfZzbkeOCkbmD9Fm2YRwAnzMX1XfqY6QBoR5YAQDbrsQMJpG09+0syhLgYdG7Trd7heHs3GFFBae0aEsQSJ8ckgVlF45pLoDgQMtD38PzzKlBQQP3LeHcnv2/duZrlVkugjXFePkC8Y0NQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762742721; c=relaxed/simple;
-	bh=y4WfvXv5b4L717iLbIXBeiLiyCL2YGQGylM54A2grs0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MMISbDDEQmoJOsUrHVa0gQdS4AkIwjD6bus+IB67DajyT895k4ddc2PUBu1K7hops4jmRVakFGmY0U2TuihIKbkNq5WMwtEzO+h37aRWHrS3KkcCX9bnbwv1nxPde+AqQTZeILONWYkc+TZom2s6msoRTIFro9rAY/dpn9f4yuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0006493LT.eswin.cn (unknown [10.127.112.153])
-	by app1 (Coremail) with SMTP id TAJkCgC3sGivURFptWZuAA--.10678S4;
-	Mon, 10 Nov 2025 10:45:05 +0800 (CST)
-From: caohang@eswincomputing.com
-To: gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	Thinh.Nguyen@synopsys.com,
-	p.zabel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Hang Cao <caohang@eswincomputing.com>,
-	Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-Subject: [PATCH v7 2/2] usb: dwc3: eic7700: Add EIC7700 USB driver
-Date: Mon, 10 Nov 2025 10:45:00 +0800
-Message-ID: <20251110024500.104-1-caohang@eswincomputing.com>
-X-Mailer: git-send-email 2.45.1.windows.1
-In-Reply-To: <20251110024339.73-1-caohang@eswincomputing.com>
-References: <20251110024339.73-1-caohang@eswincomputing.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CF523C4FD;
+	Mon, 10 Nov 2025 02:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="RcLTX6GQ"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023100.outbound.protection.outlook.com [40.107.44.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EDC233707;
+	Mon, 10 Nov 2025 02:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.100
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762743029; cv=fail; b=q1o1N2/0IuzjOoySKyYGwZOt+m0TMLoyi//Hh3jbg07ce/Dg8CuxT99QTbdiGiWBViYOhcaiBbyqr/yKFh3wYeZ2d6ACbTPcinkAHS95WRl/YuMfm1o2EDitOhPKM64IeFjlvNUc8g/mugpTbZLZWJeC6O6x25rzMQSFbqt0rRM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762743029; c=relaxed/simple;
+	bh=3nlxRlwYYK9hKtnv6GxMfaE70+hEJVCF8m1q0pkJMz0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KwUtzNaPwo7N6G7hW06CtqACBXRtMtpEsYASt0M63wZD8ddtfDrRPVlgh09mIqPm7ntwLJAPCLWiN6zLw11/l/LVVv6xXcK+MePmX3Dh7Bs8SuoUuHjfBCI5sjxuBhDZehIS2jujsVEjVjJbbNIYkXm1a1dTX9m/Ul0Uynw0mJ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=RcLTX6GQ; arc=fail smtp.client-ip=40.107.44.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FWQLSFfk+i0WlpWjw2kHz6noovIJ25sqsYzfZ0eaUx1nndLYzscwte+vNPigpKstyN40bV6gk8mUe42/LZdNZ4pfxpyqhaODxTGOUgs3MbnHXyaHF6wvrOzqFRP9JXT2aQeVgBdD3zMdodZhaKJF632WeZoLj7eTyhMlVXY18Zk3RntDnlsnUEwSdS0eeo3ZkRSZaUnValSgEJX4N7eES/Mp904XUKdH1/euo1KU8WOHt8J+/4Ng9bJ7y1JdXN7pKi17hHo/dIjmp+rsnlv0wJi4H8eyMBW8Ix2PVrnKGm3tbAGjU3A7ogt0yKqIGNjjv5TKp/I2p3mm0nlro7NB3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b+npg3JgvV20C4F4h9AgUZAk0WszRM4esTGfJkYT8vk=;
+ b=uulbYriPCZ3i9t1YUni+aalNzk53P+WFNVP14bRcq49YU4pI+gvDMFjB8HEjOIz6eImxYqnjDaeBMl1QROIp4FVB3bSc0Zt7aDYq84uUvxs4nC2m2qd5ETWBasqs7NzupDr0aSO378LkVGYO0JNbJIhaPtMShkaw95zUSydQ/8kJin+60eP6AQ4VRqyb5e1HoKtlU+NsjfhS+95mDKByqtKIkaenar3jWFy0fyaH7ISjZUuFj9jw419OxbVL2GXuBo1u7aC58IhbNoVawOp1DbL3Uji1i4QSwjX8UPg0CdqE38Jxb70KIgXcYgd35EvJ7iQI2I3/h91wZzRVtH3+Yg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b+npg3JgvV20C4F4h9AgUZAk0WszRM4esTGfJkYT8vk=;
+ b=RcLTX6GQaWvV6YSJSEXNR8Wrlvq849rfelC1owVrM3s2qYctSFNjcY9l3B/HPvDiGNcSOCYkxHxcvydPYNtkTgjceJiEz20wybaNhZeL4Sze4+PsFplGTGwQ03r53u/AZMxFwVD3sYUvTmWo0PftI2P91WF6SzojTK1mgAkmFV71PonVPb6poYCdYY5uabQxZC/TSF1At15FpBZs2tiEsQbdLN+ERW2bcKsOQVsuIOLMKVlvj1d18RaQbKWZCJdepiSJr9+6Gt2txGvlH3PBN2rAgg51GMN9RLiBQCfWhGLZeGm/V6fSOPcXqGG7UHW/h28Tqdi6zSiFhG6pzGFONA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from SI2PR03MB5786.apcprd03.prod.outlook.com (2603:1096:4:150::10)
+ by PUZPR03MB7015.apcprd03.prod.outlook.com (2603:1096:301:f2::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 02:50:22 +0000
+Received: from SI2PR03MB5786.apcprd03.prod.outlook.com
+ ([fe80::3f37:cacc:420b:9b86]) by SI2PR03MB5786.apcprd03.prod.outlook.com
+ ([fe80::3f37:cacc:420b:9b86%2]) with mapi id 15.20.9298.010; Mon, 10 Nov 2025
+ 02:50:21 +0000
+Message-ID: <a43d769b-bc61-40df-aa96-c67eb30105d6@amlogic.com>
+Date: Mon, 10 Nov 2025 10:49:49 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] clk: amlogic: optimize the PLL driver
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
+ <CAFBinCBSjKzHZ_k+c70B+YsJHiOS4qbjAgtnWaEeQy11xg94cA@mail.gmail.com>
+From: Chuan Liu <chuan.liu@amlogic.com>
+In-Reply-To: <CAFBinCBSjKzHZ_k+c70B+YsJHiOS4qbjAgtnWaEeQy11xg94cA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR01CA0001.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::13) To SI2PR03MB5786.apcprd03.prod.outlook.com
+ (2603:1096:4:150::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgC3sGivURFptWZuAA--.10678S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxCFy8Xw1UXFW5XFWrtr15XFb_yoWrtry7pa
-	1q9a4YkrZ5GFs3Ka9ay3WkAF13KrsrCry5tryxC3Z2qr1Dt34UGFyvg3WFqF95GryxXry5
-	Ga1kKFy8uF47X3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUHCJQUUUUU=
-X-CM-SenderInfo: xfdrxt1qj6v25zlqu0xpsx3x1qjou0bp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR03MB5786:EE_|PUZPR03MB7015:EE_
+X-MS-Office365-Filtering-Correlation-Id: 341109da-64b1-496b-4c6a-08de2003e404
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dmhieHpvdVJUWmxFTnRDMlpQaHF3dXVyMWNDeFVMeE5QN3VkOEw2emNWVUtD?=
+ =?utf-8?B?RmY5T2NDMWNzbFBjS0hhbWVCNVRROURLdkxrUnNaSm1WUkcxM1UyVXpzMkMv?=
+ =?utf-8?B?T3JkbGtKSUtsamVUb1BNMHZ2SFZLbTZhaHFmM1N6dzJBNytmU1lIdHJMZGRx?=
+ =?utf-8?B?bCtqSUZuTjh3ZHNJR3ZZSWFZeUhzNWFRaTk1WUhLaGxocUpQYStQU2NWdkxt?=
+ =?utf-8?B?YUQ4eVlhdlJjMzNSMksyTnNzRTVvVEFXUTZRN1gvWjh4NkxhWlp4VFBMSGdS?=
+ =?utf-8?B?eEc3NkdoaEp1SjFqVUc1c1d1N3ZBeDVQY25BaFNlU3QwSVJJbXNZYWlGWDly?=
+ =?utf-8?B?Vy9sRmV1UVR4OGhKYXNkL2F4NVhUVFdGOXRHUldqaDF3eFVJZExVUnV0bkpY?=
+ =?utf-8?B?Y0ZWdVo5Q3RVUm93UGFGZ1pEOGhlZzArRWtVUWRLdUt3RDBiY04vNWtQWlR1?=
+ =?utf-8?B?YmJQbWFVUzMrZlFoc3pmTmcxcHppS1FMSE9JZDZSV1Y4VGgxenNZM2dpMkVJ?=
+ =?utf-8?B?MjM1S2tFd0xVTEx6YTljTmgvN2pud3RJNjl2ZVFZcUREeDZRYUZrTW5kdlpj?=
+ =?utf-8?B?V0JRVEUzNnM1VTlhZzN5SStLekY3Q2d3THdwcE1PUkFTdmhSa2tiTlR5aFMv?=
+ =?utf-8?B?RU5MZWFIU0swY3BUZXhMU2FmcVgzK2pYcjNhdUE3dGIwWFN3dWRoSDNQL1lS?=
+ =?utf-8?B?OC9QazF4NGtTZzBGK0pMNnY5WTZDZHV5TTlkM1d4dTFRTC8xbWlvM1Z1ek5W?=
+ =?utf-8?B?SmxtRkZ6S3hHS0wyb3VrWXBydTAyaVoycDg4bjVKMnJ4OCswc2FQdk5kOUdB?=
+ =?utf-8?B?SnNac3pxemlVUjFCRmVTWm40UmJGVnlaUFVOWjI5S25UQ3JNWU9GV0tveG1W?=
+ =?utf-8?B?b2VzN04yL3BLdS83Q2xxWUtFVDc2SDVLZmJ1UVg2MHVpMm1zWmRUeEpyNmVr?=
+ =?utf-8?B?ZTkyMFFqQTZ4M09KOTNHWXNSUHd5VDdGc1JwR2FRS2dsUmQvZTNIQ1pJY2Nu?=
+ =?utf-8?B?dlB5RFBTaG1lemI2a3NLdW91emFWNTM4SHgyZGhYNkVmc2l5ZU84QXJ2Nldm?=
+ =?utf-8?B?NXdqN0E1SEFhelNWQTdpL1hVU2dVUzBZRWt4NVlMN1M2UnlDNUZRZHh1enNl?=
+ =?utf-8?B?bXFBempLVFZlNUtCRmFqKzZDNDNBOFF6SWx6Rmw3VG1uYlNSVW1JVnQ3cWNp?=
+ =?utf-8?B?aTlEVnZWQzhESU9ZQzdSZVNML3FJZ3YwY2g1UE9NL21OR09SN3U0bThFTW1a?=
+ =?utf-8?B?OUV1eUoxaElURVIwc2ZjZTdzWTBjcWFSQXE2RE1XMDBSK2s3YUdnV3JjS2E0?=
+ =?utf-8?B?dlhORjROK3ZsVnNrYkkyaFVNL2R5MkNsL281c0ZuekZybk1Za2wzaXM0S1BZ?=
+ =?utf-8?B?NDNjS1FyeTgzcS9WSjFoRTBMU3FpY1JzdzhpNjFpYnk3QlE0SDFPdGVtcmI1?=
+ =?utf-8?B?Q2draisrV3NQSW0rOVhybDFTYi9UbDBVMkIxZnZ0dTR4SCtUNW1FNGRuN3pv?=
+ =?utf-8?B?WURaKy9wWjRpb24vdjRnN0x3dy9pemNZek9TcWZJTUF4dW92K3RNUzhqWmxH?=
+ =?utf-8?B?QnFURk9kdlRtMFpGd3BxanQ3cDdGSWNlaG9XYnpzdC85UW9GTnZaZGgzbW5K?=
+ =?utf-8?B?RGdGcTNLa1N2d2xTbHU1OXJSbVhYenlvZW9KVEhiVjVPMXNlNTFYZkZZeHdr?=
+ =?utf-8?B?Mm1YRU5UbFk2ZEVEcVV3Z1pNSTI1ZTYwbEtHNjJDZ2VZWVVDSlRSaVIrNytC?=
+ =?utf-8?B?amFvZEVyUkh6MFpTa0gyK0phdUUvSDE4UWV4Uk5ucDhHTnZHY3FqWUJwR0R4?=
+ =?utf-8?B?VWxUcjErNTI2NjVtVU51RUJxTWlhM1NJWWNONENFNUFYK1JoMTdkTGo1ZnZa?=
+ =?utf-8?B?c09xdERrV1BjdDNXcW1NR2JNSVNBeDNOTys3Y1IwQ3Jaek5pU3JLd2FQVUd2?=
+ =?utf-8?Q?oXLhySewnJ7omE0X/WBCMrmi9Z38AKKl?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR03MB5786.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QSswU1VHRjdxeUVIMlJydEU4K1JkRVVzOWQ5aU5MOXJVYWpxT0JJRVAwZmF1?=
+ =?utf-8?B?QmpsaFk2S1FHUnRndXhNcDkvSG5odTJxWGZCaTBWaVpieHJmcnVqczZxV1FF?=
+ =?utf-8?B?eTdUYTlmRDkxRGxvOWVNOGxGSVZXR2tySkZpTy9INTE5UHV0SXBOTndhZXdp?=
+ =?utf-8?B?cmRtejZaeXhwWVRGMUZQS3hVeS9HQ0ZjWjloQUpkSTlkTWczZ1ZVYTZLZ2RS?=
+ =?utf-8?B?UmM2Q212OWhWaThBa2R2dCtXRG5tRkFzbFF1a1h0V3hqWjlHVGJDeE45WjQ0?=
+ =?utf-8?B?U24yWk5KY09KUE1sZXFudTUyMW1Ia0pkSjM1Y09WQUFocVRPR2ltRWltOEpL?=
+ =?utf-8?B?T1dJNEJ1SmUyYXJ6azkyZUZ5Q2JaTVNQK050Q0pKM3VSbGFERkxWN2RPMUNq?=
+ =?utf-8?B?eSsyRU5GelVuM2ZCeGJTY09ZSGNuU1BHQlV1YzBPMjFISTUxY3BTM1J3eUsv?=
+ =?utf-8?B?R0JlWkJtUkozNGFZQ1JNTmhDamZRWnczVWl5K3VZcG1YZUxFU1JMbE5PMm5O?=
+ =?utf-8?B?b0poNUhyS0VJd1dyWDd2TWxIRlJ5U1pBSGFCaUhvK1FKbTQ5MWJjL2t0azFs?=
+ =?utf-8?B?aEttNzJEbnJLT3NMMG5udnpqa2wyb2JkOTlXSFpHTmVQRlhHd0ErRkJvNWNX?=
+ =?utf-8?B?eXJCbzc5dVBuZzZnZGJLT2NScTA5VnNSRG43Tzhua3B4ZU1uMkowSjc4Q3RU?=
+ =?utf-8?B?VG1Ra2NvNUt3U0dmUHIxMlU1SmxCWjJkWmt6N1dXWUFBalRjb1RyTnlkY2lj?=
+ =?utf-8?B?MVRIYmdJTURDeTVQY3pDbnQzMDd0ck51eld4akpBUWNiVHB5T1FTNjJzcVpp?=
+ =?utf-8?B?eWFnK1RQemRmSkxycGwweDM3Ky85b2k0OVJTV0oyOUl4SmFDRzBOK1B5SFh0?=
+ =?utf-8?B?OTFZVit3TmZ5Tng4TGM1ejk3T3UrNHQ4Y0NlUnQvU1Evc3IrRm9wckhTYzgx?=
+ =?utf-8?B?aFIweVJiRlFrUDM0VHcreEppbXNkbVd6NnlwT1cycG4remlncHcwbHl0Sjky?=
+ =?utf-8?B?VG11ZXVHSUNTUzI3RytBM1NCRktheWtPTTU2azNaNGtpdjNPbFBrUElhTXFQ?=
+ =?utf-8?B?U2N6NjhIdE91UEtmNU9BYUd6Nmd2eU1WNGZlcHJqaW1sWkZPTysvUVpGcWd3?=
+ =?utf-8?B?YmlZZ3lrYThJdk5jYTlubGJSSTlLRVh2eEE4VVB5S21VVGpjOFpMQmxrdENF?=
+ =?utf-8?B?N3Q1NmdKOVpzYlFBODF5bjdTZUQrUi9NZG9WVFJrY1NaZHhySmZublRoU2hR?=
+ =?utf-8?B?VWo0b210N0J6RjVBNHFUUURDMk1WajZuUEMzY3JmaUFBMlZza09VeHVEemEr?=
+ =?utf-8?B?ci9oemYrTCttV29XNG9BV0Qwb29NZU5ZSDJxMndreStIUm42OWE4NDFQRHov?=
+ =?utf-8?B?SXdReHBabmRpK3FnY0R2ZHUyTHArbUIwRmY3UFdZNldNS0g1WDFrVHdjdUl6?=
+ =?utf-8?B?U1B5dHhjUXJMVE1zR1FYbitLdGNuK2hjU25nSythRVkwRG9zbnlNdysyOVZL?=
+ =?utf-8?B?ekJjbXJ5UzVjZGN4OXE5UlFvWWIwWis1S3lSWW5JaEVONm9zdlZPM0NZY1lj?=
+ =?utf-8?B?dU9LK0EwZU9pSmZiNTlmOHhGMERMSHVxRXl5TzlTK2hLRm9WTTdLKzI5NXox?=
+ =?utf-8?B?SThoWWpldS96TVgvRlR2YllLZUVmSXJsbTN6OHU5VUhVREZlb0FXTkJwczAx?=
+ =?utf-8?B?Q3c1WWlPOGVUL1lCdnN4V0VVZ2NTSThWYUlWNU1XTkcrSFlwVmEzTzBDdkpt?=
+ =?utf-8?B?R0F6dUhJeEsyQVVTTkZyQmNMNFo2ZkEzVEhWZzFickYybVFudldVQ21JMU9O?=
+ =?utf-8?B?ZnNwaDF2QkpydXJVRldWRlk0d0VOK0xtSkhldVZXcXpGcGJjY0ltSzByaFQw?=
+ =?utf-8?B?TVBybUFGUmVFcm9DZG5TWmtFMGxCWmtsVnFoNkxlbW1rYThQQzVucDYydVBT?=
+ =?utf-8?B?c1ZXNEVmRFdrR1o1ajI1RmtvUHRveHdrb3Q3U0swSUNOWU04dnljS3VEQXo5?=
+ =?utf-8?B?QmxvRHQ2UjJXczhadEN0YXgwVTJjTVZBN1FQYmRtRXZpSDErWDhBWHV0ak9S?=
+ =?utf-8?B?eVVKNVI5Y0VPcm9UV21LL2RCUWZuKzVLRi9XVG1SbFZFYXcwNXZZTDNzcWxY?=
+ =?utf-8?Q?NMgVe69fXkrgQSSgu9C232K6Y?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 341109da-64b1-496b-4c6a-08de2003e404
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR03MB5786.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 02:50:21.8036
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /dLPwhlzp9FBf8QWcABilgWyc798TzQzD3YbmRm80C8Z0PZAQFeM9ScRQyhTaRHTKRcpnbwSU6sH8fvYGAaDug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR03MB7015
 
-From: Hang Cao <caohang@eswincomputing.com>
+Hi Martin,
 
-The EIC7700 instantiates two USB 3.0 DWC3 IPs, each of which is backward
-compatible with USB interfaces. It supports Super-speed (5Gb/s), DRD mode,
-and compatible with xHCI 1.1, etc. Each of instances supports 16 endpoints
-in device's mode and max 64 devices in host's mode.
+Thank you for providing the test results. I previously found a
+Meson8b board and wanted to try a stress test, but it threw errors
+when running in the kernel (maybe because my bootloader version is
+too old)... Anyway, thank you!
 
-This module needs to interact with the NOC via the AXI master bus, thus
-requiring some HSP configuration operations to achieve this. Ops include
-bus filter, pm signal or status to usb bus and so on.
+On 11/9/2025 5:04 AM, Martin Blumenstingl wrote:
+> [ EXTERNAL EMAIL ]
+> 
+> On Fri, Oct 31, 2025 at 9:10 AM Chuan Liu via B4 Relay
+> <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+>>
+>> This patch series consists of four topics involving the amlogic PLL
+>> driver:
+>> - Fix out-of-range PLL frequency setting.
+>> - Improve the issue of PLL lock failures.
+>> - Add handling for PLL lock failure.
+>> - Optimize PLL enable timing.
+>>
+>> For easier review and management, these are submitted as a single
+>> patch series.
+>>
+>> The PLL timing optimization changes were merged into our internal
+>> repository quite some time ago and have been verified on a large
+>> number of SoCs:
+>> - Already supported upstream: G12A, G12B, SM1, S4, A1, C3.
+>> - Planned for upstream support: T7, A5, A4, S7, S7D, S6, etc.
+>>
+>> Based on the upstream code base, I have performed functional testing
+>> on G12A, A1, A5, A4, T7, S7, S7D, and S6, all of which passed.
+> In the past I had most problems with Meson8/8b/8m2 CPU clock scaling
+> (via sys_pll).
+> So I tested this series locally using the following shell script on an
+> Odroid-C1 (Meson8b):
+> #!/bin/bash
+> 
+> CPUFREQ="/sys/bus/cpu/devices/cpu0/cpufreq"
+> 
+> echo "userspace" > "${CPUFREQ}/scaling_governor"
+> 
+> while read -ra LINE
+> do
+>      for (( i=0; i<${#LINE[*]}; i++ ))
+>      do
+>          for (( j=0; j<${#LINE[*]}; j++ ))
+>          do
+>              if [ $i != $j ]
+>              then
+>                  echo "${LINE[i]} -> ${LINE[j]}"
+>                  echo "${LINE[i]}" > "${CPUFREQ}/scaling_setspeed"
+>                  sleep 1s
+>                  echo "${LINE[j]}" > "${CPUFREQ}/scaling_setspeed"
+>                  sleep 1s
+>              fi
+>          done
+>      done
+> done < "${CPUFREQ}/scaling_available_frequencies"
+> 
+> This has been running in a loop for two hours (at an ambient
+> temperature of ~13°C) and I haven't observed any problem.
+> Since most patches are a no-op for my case I'll separately reply to
+> patch #2 with my Tested-by (as that's what I've been effectively
+> testing).
+> 
+> 
+> Best regards,
+> Martin
 
-Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-Signed-off-by: Hang Cao <caohang@eswincomputing.com>
----
- drivers/usb/dwc3/dwc3-generic-plat.c | 71 +++++++++++++++++++++++++---
- 1 file changed, 64 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
-index e869c7de7bc8..704cd1c490ea 100644
---- a/drivers/usb/dwc3/dwc3-generic-plat.c
-+++ b/drivers/usb/dwc3/dwc3-generic-plat.c
-@@ -10,8 +10,16 @@
- #include <linux/clk.h>
- #include <linux/platform_device.h>
- #include <linux/reset.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
- #include "glue.h"
- 
-+#define EIC7700_HSP_BUS_FILTER_EN	BIT(0)
-+#define EIC7700_HSP_BUS_CLKEN_GM	BIT(9)
-+#define EIC7700_HSP_BUS_CLKEN_GS	BIT(16)
-+#define EIC7700_HSP_AXI_LP_XM_CSYSREQ	BIT(0)
-+#define EIC7700_HSP_AXI_LP_XS_CSYSREQ	BIT(16)
-+
- struct dwc3_generic {
- 	struct device		*dev;
- 	struct dwc3		dwc;
-@@ -20,6 +28,11 @@ struct dwc3_generic {
- 	struct reset_control	*resets;
- };
- 
-+struct dwc3_generic_config {
-+	int (*init)(struct dwc3_generic *dwc3g);
-+	struct dwc3_properties properties;
-+};
-+
- #define to_dwc3_generic(d) container_of((d), struct dwc3_generic, dwc)
- 
- static void dwc3_generic_reset_control_assert(void *data)
-@@ -27,9 +40,38 @@ static void dwc3_generic_reset_control_assert(void *data)
- 	reset_control_assert(data);
- }
- 
-+static int dwc3_eic7700_init(struct dwc3_generic *dwc3g)
-+{
-+	struct device *dev = dwc3g->dev;
-+	struct regmap *regmap;
-+	u32 hsp_usb_axi_lp;
-+	u32 hsp_usb_bus;
-+	u32 args[2];
-+	u32 val;
-+
-+	regmap = syscon_regmap_lookup_by_phandle_args(dev->of_node,
-+						      "eswin,hsp-sp-csr",
-+						      ARRAY_SIZE(args), args);
-+	if (IS_ERR(regmap)) {
-+		dev_err(dev, "No hsp-sp-csr phandle specified\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	hsp_usb_bus       = args[0];
-+	hsp_usb_axi_lp    = args[1];
-+
-+	regmap_read(regmap, hsp_usb_bus, &val);
-+	regmap_write(regmap, hsp_usb_bus, val | EIC7700_HSP_BUS_FILTER_EN |
-+		     EIC7700_HSP_BUS_CLKEN_GM | EIC7700_HSP_BUS_CLKEN_GS);
-+
-+	regmap_write(regmap, hsp_usb_axi_lp, EIC7700_HSP_AXI_LP_XM_CSYSREQ |
-+		     EIC7700_HSP_AXI_LP_XS_CSYSREQ);
-+	return 0;
-+}
-+
- static int dwc3_generic_probe(struct platform_device *pdev)
- {
--	const struct dwc3_properties *properties;
-+	const struct dwc3_generic_config *plat_config;
- 	struct dwc3_probe_data probe_data = {};
- 	struct device *dev = &pdev->dev;
- 	struct dwc3_generic *dwc3g;
-@@ -77,12 +119,21 @@ static int dwc3_generic_probe(struct platform_device *pdev)
- 	probe_data.res = res;
- 	probe_data.ignore_clocks_and_resets = true;
- 
--	properties = of_device_get_match_data(dev);
--	if (properties)
--		probe_data.properties = *properties;
--	else
-+	plat_config = of_device_get_match_data(dev);
-+	if (!plat_config) {
- 		probe_data.properties = DWC3_DEFAULT_PROPERTIES;
-+		goto core_probe;
-+	}
- 
-+	probe_data.properties = plat_config->properties;
-+	if (plat_config->init) {
-+		ret = plat_config->init(dwc3g);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "failed to init
-+					     platform\n");
-+	}
-+
-+core_probe:
- 	ret = dwc3_core_probe(&probe_data);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to register DWC3 Core\n");
-@@ -150,13 +201,19 @@ static const struct dev_pm_ops dwc3_generic_dev_pm_ops = {
- 		       dwc3_generic_runtime_idle)
- };
- 
--static const struct dwc3_properties fsl_ls1028_dwc3 = {
--	.gsbuscfg0_reqinfo = 0x2222,
-+static const struct dwc3_generic_config fsl_ls1028_dwc3 = {
-+	.properties.gsbuscfg0_reqinfo = 0x2222,
-+};
-+
-+static const struct dwc3_generic_config eic7700_dwc3 =  {
-+	.init = dwc3_eic7700_init,
-+	.properties = DWC3_DEFAULT_PROPERTIES,
- };
- 
- static const struct of_device_id dwc3_generic_of_match[] = {
- 	{ .compatible = "spacemit,k1-dwc3", },
- 	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
-+	{ .compatible = "eswin,eic7700-dwc3", &eic7700_dwc3},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, dwc3_generic_of_match);
--- 
-2.34.1
 
 
