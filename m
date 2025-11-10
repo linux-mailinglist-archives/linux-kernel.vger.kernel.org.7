@@ -1,76 +1,67 @@
-Return-Path: <linux-kernel+bounces-893509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 637F0C47977
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:40:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F43C479B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:43:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8176D4F2205
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:35:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 501BA3B7F5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72183257841;
-	Mon, 10 Nov 2025 15:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD87526ED59;
+	Mon, 10 Nov 2025 15:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JtFxUy8E"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="B0vBeX50"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E882B19F41C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5756D257841;
+	Mon, 10 Nov 2025 15:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762788910; cv=none; b=DnkFOrsmYLJ0trJ9UkMfz5fr7N1BNHjz4agUvYDScjhb6uKUClNcU0dL3ZS1Dh4lXLkVZlBi7fHgSo4O4dFGlQCXc48J70lbhODy4pG0tRmjCbIKbExMnVDOZF/u7nMSiPQLl/YR2k5jjahem/KZ6GthNFfrFLzsI93rMU5Glc8=
+	t=1762788932; cv=none; b=pRgHTotkPcF+V9Taj4gLtQLacrYp2aRclvxYd5dZXGFLPs2Yuo3//fJTOsXmZd028PopijEHGdxVwzG6UF9SNOkrjtoWCffnjIXLyn2dKqIOLQLJw3eRjXWDENReNanBMpAAehHQDcBoYIq9xlgro2hg17+bnXopreIVX/1uo7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762788910; c=relaxed/simple;
-	bh=Vll0viGrFpBgqaCXcM3MMzrDn7mBoXFqsinEjxNKOpw=;
+	s=arc-20240116; t=1762788932; c=relaxed/simple;
+	bh=G+azJXcP4oT7JjHwD0cX74wLwbf39y5vwRD/6ZACn5c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bjzAxP8gfa1ckRxs9n2r7/vrV+5im/3RvnUg6McmMqQXHwCC8pDCXIym8vbdw/fpww4DCyLFRj0lhszixN1GrOxjRLP+fFnTQf1L6vHS/yAzWdFd7sOS/+mUmRKUyWRTUYtjLfv+OIotIyNC0FQ1SuVlx/3MIn+6oMV1jm7QTOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JtFxUy8E; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762788909; x=1794324909;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Vll0viGrFpBgqaCXcM3MMzrDn7mBoXFqsinEjxNKOpw=;
-  b=JtFxUy8ELntVUy/p787Efur5MP7eKoeY26BWFhSpZtDH2vI1GrXl8ICl
-   2K6TYCghNNMfJUAsIoHxKhkD0aR9sD/nCBqMI1k361y0ZpVAD7x+OmvTf
-   ynXKoIT2YV8ABAUk1GjgQC940akPyXkqgVPRaNIwEP/ByQZ/D5hkHx1eg
-   M7ozQ4ZsKgS4v0JlMm940Xc5SDNWlegbCcQa5S7GbbUSie8PpBShrCft1
-   LVRPN6kGSWinjzHMuCwOaQem6OkZksN/aqVkTQXL4VEm5415wES4w+1Bh
-   XYpksdzru6ANBWGyUrjsYMAAuqw6AXUbXzEEbIai0/i/pSAReH4ebeeKU
-   A==;
-X-CSE-ConnectionGUID: kHRB9UHDSKKP/6u/JnMWJQ==
-X-CSE-MsgGUID: A4GGhHc6RKWnPZxZAF4OEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="64046011"
-X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
-   d="scan'208";a="64046011"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 07:35:08 -0800
-X-CSE-ConnectionGUID: rLXXQdKCShWF+873cb7XZg==
-X-CSE-MsgGUID: XJORpZfnSCO8aEgPdepsLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
-   d="scan'208";a="188446952"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.235])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 07:35:07 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vITv6-00000007V7i-0nnn;
-	Mon, 10 Nov 2025 17:35:04 +0200
-Date: Mon, 10 Nov 2025 17:35:03 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v1 1/1] math.h: Amend kernel-doc and add a note about
- signed type limits
-Message-ID: <aRIGJ8xo-6TeJUmc@smile.fi.intel.com>
-References: <20251106152051.2361551-1-andriy.shevchenko@linux.intel.com>
- <aRID4efkPf6x6Gqi@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wjbseh4Yzz8JzF1mrYUwT7w1SUkR0PY59B3LGtJLO1fRxZmta8xLyQ5r0OoeZ9puDZ0Fo0neBggopc64B1Bxdb1z82H+eTqeseaVmVUj+ZYLUXU735cHq/iqtzCrF2HljpPkrtNEYprhA5hVcylT49o8TD3H1NWhkPBYNINNXEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=B0vBeX50; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=01rfLZwpM4pmMKU3kqbEEzw3i2BzLBr0hbB6YkfV3no=; b=B0vBeX50L5XIgkqjrniD4kQSsI
+	sbc+Q3WoA0Z19I03hXsGH6xMRB6yrOs2MvmnCW9nxDEe+IvAzmQts2rvB0n+uCUWjToSn28T/4WH4
+	O/jWqx8JNxLcvgL+fV9SkJhzTrr6bXtzXXOwU1KVkOKIvxJjUg8lIHcD16tWYd9XzuQU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vITvF-00DX7o-GK; Mon, 10 Nov 2025 16:35:13 +0100
+Date: Mon, 10 Nov 2025 16:35:13 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Po-Yu Chuang <ratbert@faraday-tech.com>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, taoren@meta.com
+Subject: Re: [PATCH net-next v4 4/4] net: ftgmac100: Add RGMII delay support
+ for AST2600
+Message-ID: <68f10ee1-d4c8-4498-88b0-90c26d606466@lunn.ch>
+References: <20251110-rgmii_delay_2600-v4-0-5cad32c766f7@aspeedtech.com>
+ <20251110-rgmii_delay_2600-v4-4-5cad32c766f7@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,30 +70,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aRID4efkPf6x6Gqi@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20251110-rgmii_delay_2600-v4-4-5cad32c766f7@aspeedtech.com>
 
-On Mon, Nov 10, 2025 at 11:25:21PM +0800, Kuan-Wei Chiu wrote:
-> On Thu, Nov 06, 2025 at 04:20:51PM +0100, Andy Shevchenko wrote:
+> +	/* Add a warning to notify the existed dts based on AST2600. It is
+> +	 * recommended to update the dts to add the rx/tx-internal-delay-ps to
+> +	 * specify the RGMII delay and we recommend using the "rgmii-id" for
+> +	 * phy-mode property to tell the PHY enables TX/RX internal delay and
+> +	 * add the corresponding rx/tx-internal-delay-ps properties.
+> +	 */
 
-...
+I would not say that exactly. Normally you don't need
+rx/tx-internal-delay-ps. It is only requires for badly designed boards
+where the designer did not correctly balance the line lengths.  So i
+would word this such that it is recommended to use "rgmii-id", and if
+necessary, add small "rx/tx-internal-delay-ps" values.
 
-> > + * NOTE, for signed type if @x is the minimum, the returned result is undefined
-> > + * as there is not enough bits to represent it as a positive number.
-> 
-> Nit: s/is/are
+> +	scu = syscon_regmap_lookup_by_phandle(np, "aspeed,scu");
+> +	if (IS_ERR(scu)) {
+> +		dev_err(dev, "failed to get aspeed,scu");
+> +		return PTR_ERR(scu);
+> +	}
 
-I hope Andrew can combine this with the original patch.
+This is an optional property. If it does not exist, you have an old DT
+blob. It is not an error. So you need to do different things depending
+on what the error code is. If it does not exist, just return 0 and
+leave the hardware alone. If it is some other error report it, and
+abort the probe.
 
-> Otherwise, the patch is:
-> Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> +
+> +	ret = of_property_read_u32(np, "aspeed,rgmii-delay-ps",
+> +				   &rgmii_delay_unit);
+> +	if (ret) {
+> +		dev_err(dev, "failed to get aspeed,rgmii-delay-ps value\n");
+> +		return -EINVAL;
+> +	}
 
-Thank you!
+Again, optional.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+	Andrew
 
