@@ -1,140 +1,212 @@
-Return-Path: <linux-kernel+bounces-893188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DDA0C46BB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:58:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E2CC46B2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:50:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3DF694E9F3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:58:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487F91885569
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFAB30FC29;
-	Mon, 10 Nov 2025 12:58:07 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B7F30F93B;
+	Mon, 10 Nov 2025 12:49:52 +0000 (UTC)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE3928B415;
-	Mon, 10 Nov 2025 12:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BF430E857
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762779486; cv=none; b=UpkVJomAHVebkjiJexb4E6dPkKa9a36GblEKcdYhfbahW+bWHP7MFyaS3pVOJhi4p8zzI1YIk3fZX81jxN2Xu6r8d1OsCS2J04f1VTvIoEWtGk8wDNMzoMsUrueDTEYSFoaKd7YpV0Uh/WURBGVNa67m41XRh1n8T6snmb8o/ws=
+	t=1762778991; cv=none; b=t57Jv3Vsb+yxG5VqrckCdpIXXR3hR7H4G70qU2qy88QT0ceLEWZ6BgX90TtE848Ap+JF8ZahC35mVcqqz2Mei+KZUWylrVcHC/PIM06iYwVBMJdYsYJB/PAy6j0cmpSJ0IF/DOD2NdTkvB1Zw2E8S/dXgGfKoG6Pb4KIpNjVPrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762779486; c=relaxed/simple;
-	bh=pns06N2Youi4f1wGvNXHVEUQOTtynPEsqQVZbJ+wnBQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DY836AF+7TO8VQ4BvSIFT3okOCIrZG535nc7TFXb9b8oCmZN/QbvkLlBnADaBXei+KpDeQ9xCkYves06q6sOlC8M2TKtNrP/ncOVH0o6hHL23odCbAKC83mGpAD1+PKJI5Ce0yKe64PYNwj2mJGa/3GyUEldx2tBHx+LbNR4v28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d4qSv1cZkzYQvBq;
-	Mon, 10 Nov 2025 20:57:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 4D9D71A0FB8;
-	Mon, 10 Nov 2025 20:58:00 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.87.129])
-	by APP2 (Coremail) with SMTP id Syh0CgAHZXtX4RFpBDUQAQ--.13239S4;
-	Mon, 10 Nov 2025 20:58:00 +0800 (CST)
-From: Zheng Qixing <zhengqixing@huaweicloud.com>
-To: josef@toxicpanda.com,
-	axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	nbd@other.debian.org,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	zhengqixing@huawei.com
-Subject: [PATCH] nbd: defer config unlock in nbd_genl_connect
-Date: Mon, 10 Nov 2025 20:49:20 +0800
-Message-Id: <20251110124920.1333561-1-zhengqixing@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1762778991; c=relaxed/simple;
+	bh=cAw6KDVicFMiZpuDduunfg3+w/yg4gN+HRNZWYDOi/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mCK+K5AAhyGkb9zaSyetAbHUxhS/eoePpXIxNDTATbqY1tlTWSVEazeSGZjXm9xVck2YgCltL6xAN1J4hB+UzDByXW08wGjTSJBXm/hhJSsbpt/OBxiWZNDbv8vbqbT8qZPEME3fNrJHDILABv+mxMHO6lKfq3aHB0RYBJZfi0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-93526e2842dso663459241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:49:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762778989; x=1763383789;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fh17CiieclZAsVeAhUA/WaKqsZ8PVmhh++ya3iPI2Ik=;
+        b=nxuz4CCfR97YgrtMtkoOTbscJ/j+ugTD+IzyncNJesCBangJpoNB3iT57Kv7dgX0dD
+         ubodlnCijm32BC33r6XO3TYta9F9DEW2FNKDBG9gJIhkrfYohi6h66eyQq7VdyqSt8BI
+         8WV/iJXoZH/8MtbsZCaT0aFZDUCaoae/PLrUPc3Yq7rCu6NRbevuU2nCsoj9lJuweG/2
+         RVHyJpPgKS8GuO2x+Zl26WCwrk18tvueUyLSng+qSItQK+wmgaBKdhRJLfiXn1wz/aWW
+         XD+VktLHEHp+jmSoGXdvpRs/VI9kIwjwbe6/b+Xg5SwLDc6mxJhV5PyOgDS9FVXDmpb/
+         Jzzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwWreI095jHrUwiNofiKcpUh1BQvdgcPLR7sgjdXPv6R2HTUXgx+mVMkkH32fecq7dE4KM4NZWzD0yk24=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf5K7d35S44HdR2mZ2+1qKHV/H7SgqPBZdc7ZxmydjioQLR9xo
+	ERC+vMzwcXX2rsfCrcI0Rt1rN88rGrYuKKyYQqO4XGz98InL1lpFBNLhXCMYm2f7
+X-Gm-Gg: ASbGncv7Piyg2uYrgvAqcihB/0dSVjYzLCA5WbgckGSBKveaP8IA8GG42Z9/nNEOcMo
+	3VRfXAx8fkRah8uFGfE0bgQHKDtVQ+0Jj6+jwjrCEP2x6TV9HshLnXSPdWJyvUxWm+1G0X7Tm//
+	cZxp4K4KgiDzo1j0D3o/86xGW+jh/BXNasowZS7pE3UsosWpf+vKMhKAfpC0KI7RF+BmN1f5DOi
+	oPsi7mOYGh0dlEbDerKfamGiASvoANgDOUGcFPaqzqzRHATtTL1HY4Ko8ZWeu6DLeGk02b5g5Ku
+	hbdYXT0BN7ThORKgGAZQdewbxcwB9b45FzqdUiHrQca2nUKCHzSxoA46tF9BCnK/1JR0ZjtfLJP
+	SqcVR5sAp1kMdRv16CIH4Si2KVKSFNrAZ8mYehaMMxlMj63EaHoN6PLJX2IMLP2v9mYNbp71TZg
+	wHxF/Vbv2yFo+0BMZkqC3mbWeH/e5+prqV8Pd4KYYWiLWYgGWD
+X-Google-Smtp-Source: AGHT+IGegd91VATXRHMNbxFF0L+FXxIEOECfjGag11NxkYSExV874Ne0Q5VerPKNsonurX3J/YYZgg==
+X-Received: by 2002:a05:6102:dce:b0:5db:e338:ba18 with SMTP id ada2fe7eead31-5ddc4839d63mr2333771137.37.1762778988891;
+        Mon, 10 Nov 2025 04:49:48 -0800 (PST)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5dda205c0efsm5686259137.13.2025.11.10.04.49.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 04:49:47 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-93720fd0723so614857241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:49:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWF2cxkabbocUMKW76UaLA1o+b+R/Q2WF5JArG2WOQx98D6GJbhvLzdvyI5//oOa6fLuKzOLl73yAoLJkY=@vger.kernel.org
+X-Received: by 2002:a05:6102:3a0a:b0:5db:f352:afbd with SMTP id
+ ada2fe7eead31-5ddc467ebffmr2222725137.3.1762778986813; Mon, 10 Nov 2025
+ 04:49:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAHZXtX4RFpBDUQAQ--.13239S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF13JFyrKFW5KF4kZr1xuFg_yoW8Cw1rpa
-	1akFZ7Gw18Ja1rWrWkC3s7W3W5tasrKr1xKry7Jw1Fv3s3A34xur4kK34fXFyUXr9rJFW3
-	AFW8W3WIkFWvkwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4I
-	kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IY
-	c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-	026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF
-	0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
-	vE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UpCJPUUUUU=
-X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
+References: <20251105104151.1489281-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251105104151.1489281-12-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20251105104151.1489281-12-cosmin-gabriel.tanislav.xa@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Nov 2025 13:49:35 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWTH_uuQURgqQrg1RGDMwzdDAWFk__mS9+Gc8mcESfUyA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkfRzk8FN2qNNCBLlLG0XaTRUdRgwFG7IJoHivC4Q2Ld9wLwHCuz85ymR8
+Message-ID: <CAMuHMdWTH_uuQURgqQrg1RGDMwzdDAWFk__mS9+Gc8mcESfUyA@mail.gmail.com>
+Subject: Re: [PATCH v3 11/14] dt-bindings: spi: renesas,rzv2h-rspi: document
+ RZ/T2H and RZ/N2H
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-spi@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Zheng Qixing <zhengqixing@huawei.com>
+Hi Cosmin,
 
-There is one use-after-free warning when running NBD_CMD_CONNECT and
-NBD_CLEAR_SOCK:
+On Wed, 5 Nov 2025 at 11:44, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have four SPI
+> peripherals.
+>
+> Compared to the previously supported RZ/V2H, these SoCs have a smaller
+> FIFO, no resets, and only two clocks: PCLKSPIn and PCLK. PCLKSPIn,
+> being the clock from which the SPI transfer clock is generated, is the
+> equivalent of the TCLK from V2H.
+>
+> Document them, and use RZ/T2H as a fallback for RZ/N2H as the SPIs are
+> entirely compatible.
+>
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-nbd_genl_connect
-  nbd_alloc_and_init_config // config_refs=1
-  nbd_start_device // config_refs=2
-  set NBD_RT_HAS_CONFIG_REF			open nbd // config_refs=3
-  recv_work done // config_refs=2
-						NBD_CLEAR_SOCK // config_refs=1
-						close nbd // config_refs=0
-  refcount_inc -> uaf
+Thanks for your patch!
 
-------------[ cut here ]------------
-refcount_t: addition on 0; use-after-free.
-WARNING: CPU: 24 PID: 1014 at lib/refcount.c:25 refcount_warn_saturate+0x12e/0x290
- nbd_genl_connect+0x16d0/0x1ab0
- genl_family_rcv_msg_doit+0x1f3/0x310
- genl_rcv_msg+0x44a/0x790
+> --- a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> +++ b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> @@ -9,12 +9,15 @@ title: Renesas RZ/V2H(P) Renesas Serial Peripheral Interface (RSPI)
+>  maintainers:
+>    - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+>
+> -allOf:
+> -  - $ref: spi-controller.yaml#
+> -
+>  properties:
+>    compatible:
+> -    const: renesas,r9a09g057-rspi # RZ/V2H(P)
+> +    oneOf:
+> +      - enum:
+> +          - renesas,r9a09g057-rspi # RZ/V2H(P)
+> +          - renesas,r9a09g077-rspi # RZ/T2H
+> +      - items:
+> +          - const: renesas,r9a09g087-rspi # RZ/N2H
+> +          - const: renesas,r9a09g077-rspi # RZ/T2H
+>
+>    reg:
+>      maxItems: 1
+> @@ -36,13 +39,12 @@ properties:
+>        - const: tx
+>
+>    clocks:
+> +    minItems: 2
+>      maxItems: 3
+>
+>    clock-names:
+> -    items:
+> -      - const: pclk
+> -      - const: pclk_sfr
+> -      - const: tclk
+> +    minItems: 2
+> +    maxItems: 3
+>
+>    resets:
+>      maxItems: 2
+> @@ -62,12 +64,55 @@ required:
+>    - interrupt-names
+>    - clocks
+>    - clock-names
+> -  - resets
+> -  - reset-names
+>    - power-domains
+>    - '#address-cells'
+>    - '#size-cells'
+>
+> +allOf:
+> +  - $ref: spi-controller.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - renesas,r9a09g057-rspi
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 3
+> +          maxItems: 3
 
-The issue can be easily reproduced by adding a small delay before
-refcount_inc(&nbd->config_refs) in nbd_genl_connect():
+No need for maxItems here (already at 3 above).
 
-        mutex_unlock(&nbd->config_lock);
-        if (!ret) {
-                set_bit(NBD_RT_HAS_CONFIG_REF, &config->runtime_flags);
-+               printk("before sleep\n");
-+               mdelay(5 * 1000);
-+               printk("after sleep\n");
-                refcount_inc(&nbd->config_refs);
-                nbd_connect_reply(info, nbd->index);
-        }
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - renesas,r9a09g077-rspi
+> +              - renesas,r9a09g087-rspi
 
-Fixes: e46c7287b1c2 ("nbd: add a basic netlink interface")
-Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
----
- drivers/block/nbd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+No need for renesas,r9a09g087-rspi, as it implies renesas,r9a09g077-rspi
+is present, too.
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 215fc18115b7..a05ff68e58d0 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -2241,12 +2241,13 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
- 
- 	ret = nbd_start_device(nbd);
- out:
--	mutex_unlock(&nbd->config_lock);
- 	if (!ret) {
- 		set_bit(NBD_RT_HAS_CONFIG_REF, &config->runtime_flags);
- 		refcount_inc(&nbd->config_refs);
- 		nbd_connect_reply(info, nbd->index);
- 	}
-+	mutex_unlock(&nbd->config_lock);
-+
- 	nbd_config_put(nbd);
- 	if (put_dev)
- 		nbd_put(nbd);
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+
+No need for minItems.
+
+> +          maxItems: 2
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.39.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
