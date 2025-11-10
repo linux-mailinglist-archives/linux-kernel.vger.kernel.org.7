@@ -1,120 +1,88 @@
-Return-Path: <linux-kernel+bounces-892524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24446C45474
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:58:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69ADDC4549B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80E3E188F0E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:59:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE9244E8F55
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E9E2F39AD;
-	Mon, 10 Nov 2025 07:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885332F5469;
+	Mon, 10 Nov 2025 07:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KzKkQMaH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b="RxnV9ire"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11023140.outbound.protection.outlook.com [40.107.162.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87A12F12D4;
-	Mon, 10 Nov 2025 07:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFDF2F49ED;
+	Mon, 10 Nov 2025 07:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.140
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762761519; cv=fail; b=p2FC/iZoUd5Eai1Tk7rUvzcNNcM7HkMPe1NoQYUQG7agvAeC1A3uMTnZuJ0TI3mK75n774UB7fwSbF6ADbQSb7kYtpcNdzJN+KvyOE4wDgOTgNroz2SPAOWOcTu+2AsZXWpey4KOR1Yl7QgelzVUdnjTbEWDNcJp0BzZZk548Es=
+	t=1762761596; cv=fail; b=lf8F7xSHVVwfDkKxScLzQAVPKacRE8ORySFASSws8v2Rzb7hmCE3AakEWQ2FU6CN4nr2f3iPK1etVryvkuw8j2/4HpOL1GTu60k4/HK6kVq5lsoHNlMvnlG8X9Er9sGED8U+XLvlxGineM+90aJRz/QxSUv65UnKmXjqCihpAic=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762761519; c=relaxed/simple;
-	bh=6X31F61gYwMuUmvUGOKjX88KKytuiKHKar17cjekyk4=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JTeOX1tYJ0A0NaT+7njKLTw7Ax12xxYLDX4Z7v/yKr8HndKrC4gXGDBj+q/f8GK2o7PB13jq+2LuUj7GbdhCA5DjWJZSfbkXn1WAErtCdQmhBKeCyBCPYjxxLOAY0RroTost5q9dHr+aLsfF9M3j3p5mH8vYWXTmGZGJ67De/Gk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KzKkQMaH; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762761517; x=1794297517;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=6X31F61gYwMuUmvUGOKjX88KKytuiKHKar17cjekyk4=;
-  b=KzKkQMaHxOhEtMSTYUPgYKtr/JFLDIT9QX7CMlI6s9q0OlLq7cBrUXJd
-   acUF8hd6M0Puy0cVxyURDZV6017jBK5OOyZQSaXMeKPHTIiRyvovX1/3U
-   tG49BX3J3qm9KBc9h75lq9S8ZrIb6YrkdQhNkbRwzAP4uvI9/loklKfGy
-   f2qAOEBdIUfO/XTVI1nuijDg5KwLJPpHXKq7jipL18yhTExQyK9f+curo
-   XNWv/p9m53AuSa8Kiu50O03zUdvJvQqXBE6SuBJd12OlGZMkEOAvFi0tJ
-   I1kM5VUeHcTVZmaC9LLKI6BPC45OBKCVQYWn2WOIKHzRgxgH5Rho+tYGE
-   Q==;
-X-CSE-ConnectionGUID: vEX46kjmTaCVeK1iZtj/gA==
-X-CSE-MsgGUID: uPT020odRoeC66GdG4X9fg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64735343"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64735343"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 23:58:36 -0800
-X-CSE-ConnectionGUID: iunm/PObShmn0Aw8bxJK+Q==
-X-CSE-MsgGUID: NmCdyfM+QWSRAMAKdULC0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="188446232"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 23:58:36 -0800
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Sun, 9 Nov 2025 23:58:35 -0800
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Sun, 9 Nov 2025 23:58:35 -0800
-Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.30) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Sun, 9 Nov 2025 23:58:35 -0800
+	s=arc-20240116; t=1762761596; c=relaxed/simple;
+	bh=VdtLS7hGxLhVgBH+ds2Q0NxFBFYKrLn5yfqArtUY6lg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=CE/Vfnlp67O8JeGO8vbJugzhEpDPxbVOyJs3Ul+CQCWZlM7oVFQaAYAVMUo3ys8fW/ecLk+/g+XRpHDurCC03gW7UvQJdiFM1WONbxJ6YXIxfzhOoTjHrdTOioaEUILNZa3ttgXANuEFZVCUg8mZGM0KgrksQ9fTsaJ4a4NrzPk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com; spf=pass smtp.mailfrom=gocontroll.com; dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b=RxnV9ire; arc=fail smtp.client-ip=40.107.162.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gocontroll.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LfMuRupgqFnmsLq2DGcScec5leMzKTL0Cugv29CZjmuHD+jl+o0kZT6YhfkpwCqoknqzytZXqHePPjAt4j3avBTPC4+mvLRq655/NNnrWfYb9jpIbJ14gx/tx5RHDsbiCOP4ZtEsKwD+RCp1T4VGnKrGJY4VrEgHwRF3SlN1idTfRq/DIAgxIN7b4rl2vYKKtfXmVA3jOqdp8qpep5CHl0XlUK8U9GBgEpHHC17UIX1Gdlo5wJNZ3kbhtSV744RU0Cmfwgm3Qh5KmdxGTnOTyjaCDe9wjdztH8clU4COKYrQQOl9waA14gCEuBegS572iFvVWB5J1ATxywUwKHuV5Q==
+ b=WwtW3pJ0y1NlLWuPfk5HdIfT2g9yGugScIOlxrLMTLf3X+fVY8xK5RzLiADvN2stH8vzQ4FPKiBZee+4vwpcJltAlLGZuEqpoI6qcc9gf/dX3in2ZjRJ/4gErX3aoiyu7uJn7nEcZIUJHr3mE2LBouvzlJxFC0gNgAmtLsijd0RQME7l9v7SQR9ftGzpiwyvCU9EXw5P91XorTszmQP0878iRJyu7peA15+r2NbvUVVj86S2bHK3Az8t+0mrzesBGhUm6Ryjx5Ne+BxU/6TyE3RnNEBM9M9WGgIxZYL4LRrW/hNIU+XPuxJzjJAeD3P0P7B1tFTlmlCPCrk+5qJ0Xg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I8WmskQsmnByjJr7rBEGkSTDN2MlD6olssyobd/BntE=;
- b=vv5Zq5u1KieN37ujN6d7F3u7u/rujiVBPqWXD4x3KZY0f7REV52Nr+esiDofnHM/C8d6Ja0Epieg0hKbZEyQKI7f+rprdRnVeIjphigAewWawvUWkknJs4MoSUupxZt4xSLsdle6XBeMAvRBP9LnWEgBwgz9p2bvXuwQfKRAa3h5YnwycYLzlx0PjXGBeJdY8z46br1WCIe7L59+4FL9XFkVczHPcKxZeFzsmRhEklfNpL3vNg+NUJUklyCumP92vlDTUINc3O3XUp37EPt9YDer+vYi7GP9eJRvD5TSVH7bkZZ1tgM+wbL2U/BLVVDpjlzDOSpe9e9c3M22hhlniw==
+ bh=S3A96plC3jpqKDZ3J5oQI0P3rWZ+1DwIzjkEvrmzFrE=;
+ b=eOMxMLhec78ZADQswMU0PTYLimikD3JWBsjpHIeTCmC1XPEaUFiYl09C7Cg90GwX5fSIhKoiZCl1vD97VwUwd28ZQZXHLbc1SVqqxkFVS7HKBQ7tMs0JB2sN5KecjCrnFd0mSBE8Owk/Nse6GZzYa4OEyGWpr8OZc7UIi7ulDCbB7G/uFqVQ9ybcAnggcCiz1y69g9Dh24IBUi/61sq0T14AUvLfbfvGvjovKtLqf5IXlydMxWtebPbwQh0PtzDppwvoJoVcIqUWT5fEClaHJLCWGYzSY5C4mjrov+dDsCmvPDUtm/6pM2ooc6J+fdQNpmFRipnTp4MTMtncy69OmA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=gocontroll.com; dmarc=pass action=none
+ header.from=gocontroll.com; dkim=pass header.d=gocontroll.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gocontrollcom.onmicrosoft.com; s=selector1-gocontrollcom-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S3A96plC3jpqKDZ3J5oQI0P3rWZ+1DwIzjkEvrmzFrE=;
+ b=RxnV9ireiSZd2EgCf+oMzSjCJTfxzGJ4Cu1yvw6pP0y5mj+xrPurcGqHhKXhGKy38vfy2pRqDY40TQqTW/SHO1iUbox0gK8Qu6yFm5eZZGnTI7SoUoI44/4404L+9sUy7EGtYAMoMyXKCjaqXKQbe237Th6oc/B+9OCkL45Sa5g1+Bus5C6sa6fW5mUl0/ONGGjuXLR+X1aOOGrIB3wynXkRVJUZXHbMT4vkxw1Kh+cVpx+P229cNymvVmYW/pzvagU+l5VgK7a2rgwnxvuEZUmLQNLtjCwgSqgrGm9OnaOZM53UeX5JLd7H2dXRF0bXLl2rGvvsMDKRjEm7Uo2ikA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
- by SN7PR11MB7019.namprd11.prod.outlook.com (2603:10b6:806:2ae::22) with
+ header.d=none;dmarc=none action=none header.from=gocontroll.com;
+Received: from AMBPR04MB11741.eurprd04.prod.outlook.com (2603:10a6:20b:6f3::7)
+ by AM9PR04MB8400.eurprd04.prod.outlook.com (2603:10a6:20b:3e9::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 07:58:28 +0000
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::eeac:69b0:1990:4905]) by IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::eeac:69b0:1990:4905%7]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 07:58:28 +0000
-Message-ID: <abb4a253-6f4b-4547-a238-db6f60ee3244@intel.com>
-Date: Mon, 10 Nov 2025 09:58:24 +0200
+ 2025 07:59:50 +0000
+Received: from AMBPR04MB11741.eurprd04.prod.outlook.com
+ ([fe80::c39b:dab3:ae88:c5ba]) by AMBPR04MB11741.eurprd04.prod.outlook.com
+ ([fe80::c39b:dab3:ae88:c5ba%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 07:59:50 +0000
+Message-ID: <b4e76c88-0981-4b71-bcbc-25332c6e3bf3@gocontroll.com>
+Date: Mon, 10 Nov 2025 08:59:10 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mmc: sdhci-of-dwcmshc: Add command queue support
- for rockchip SOCs
-To: Sebastian Reichel <sebastian.reichel@collabora.com>, Ulf Hansson
-	<ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner
-	<heiko@sntech.de>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
-	<kernel@collabora.com>, Yifeng Zhao <yifeng.zhao@rock-chips.com>
-References: <20251031-rockchip-emmc-cqe-support-v2-0-958171f5edad@collabora.com>
- <20251031-rockchip-emmc-cqe-support-v2-1-958171f5edad@collabora.com>
+Subject: Re: [PATCH v5 1/4] dt-bindings: backlight: Add max25014 supporty
+To: Frank Li <Frank.li@nxp.com>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+ Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20251107-max25014-v5-0-9a6aa57306bf@gocontroll.com>
+ <20251107-max25014-v5-1-9a6aa57306bf@gocontroll.com>
+ <aQ4RqNiGsngOWrV5@lizhi-Precision-Tower-5810>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
- 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
- 4, Domiciled in Helsinki
-In-Reply-To: <20251031-rockchip-emmc-cqe-support-v2-1-958171f5edad@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Maud Spierings <maudspierings@gocontroll.com>
+In-Reply-To: <aQ4RqNiGsngOWrV5@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU2PR04CA0236.eurprd04.prod.outlook.com
- (2603:10a6:10:2b1::31) To IA1PR11MB7198.namprd11.prod.outlook.com
- (2603:10b6:208:419::15)
+X-ClientProxiedBy: AM9P250CA0016.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21c::21) To AMBPR04MB11741.eurprd04.prod.outlook.com
+ (2603:10a6:20b:6f3::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -122,295 +90,267 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|SN7PR11MB7019:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d33df5f-8ad3-4bba-9bce-08de202eef15
+X-MS-TrafficTypeDiagnostic: AMBPR04MB11741:EE_|AM9PR04MB8400:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7106a08a-59bc-48df-f51e-08de202f1ff6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?SUNBeHVhUVQzUXh4NXAxdTlHLzQzUzBSNTNISVVXYXNtb3hHRHV5ZThpamdJ?=
- =?utf-8?B?K2x2ektvOUVScmROaVgrRnJxd0FxcExaTXA0emx6ZTZ5aWJxeUVEQW85L3Zx?=
- =?utf-8?B?MmRhRWtnY0k3S09XdXByQkNmM0hvSE91N2lJSUhWRFJnM1NuVWo0c29MUi90?=
- =?utf-8?B?SjdrNTd4L0U0UkhKOVRjRktEbGsxZTR1bEZMeGFXc0NXcGwzRzQ1K0FQcStT?=
- =?utf-8?B?NlJVazRyTTB5WGowbHRBRTlReUNqZEprdmZZQjBiSjQ2am5CZ2ZZLzU2emEv?=
- =?utf-8?B?bGlwMmlQcWJXaWtCbzFqcE42MEVTTUpBaEw4VHdPaTFJNjRXdzJYT3IwSEpM?=
- =?utf-8?B?YjNsQ1pUSER4RTJCd3pUV285dEROdnVoL2g3Zk52K1B5a2Y4c3hWTFdJMmRY?=
- =?utf-8?B?NjFZUnp4SzFKS0I0dWdHWVluZ3hOOGZ6dm9ZUHlhTVVvelFMVi9YUlFQeUtK?=
- =?utf-8?B?Zm9oYWhQdm9Vc0NlRHBNNU00dmlXWS91M0NzUEFFVGgxNk53cjJoUThiNHF4?=
- =?utf-8?B?NWYyWEtwbHhYdnpWaVVsM2xaZ0R0T3VlcDJTc2NxcHZJNDVxMm5DWDQzVENn?=
- =?utf-8?B?ZG1wVmRidnNzeVE4Umw1RGdZVVNxNTRSS0JSMDJRaHkyU1kwRFgrRXd6Z2d3?=
- =?utf-8?B?MWs5bmhxLzYrU3pKMTJ5S0loQ1FkQ2h1RlJJU0lPcm9wT1BFb1p5bmtXb3kv?=
- =?utf-8?B?RWdKSGliZjFzYlJLcnlEdEhaUGRPZnJaUmtBeGtjQUg3T3Y2TVNmb1ltSkE3?=
- =?utf-8?B?bFlOL3NKTlFxUlM4TUlDTGM3UUlvdm9ib1lCYklDbWdKcG1DR0tUNml0ODlx?=
- =?utf-8?B?blBHNFJld1RSYnkzTWdSR2c4ZVpSZVNVYis5eTgxV2tJczBUcXFuR0hzZ1R5?=
- =?utf-8?B?dzBpaWJaN2JvSENwOHE4bUxhRVBOdktpclgyNWd0bCtTK0hyZ2ZaSTUyNmYy?=
- =?utf-8?B?UUlSbGdOOG1hVzNUdi8xcTZYRnY2QlYvNXJHTGV6M0lTZnJ1dDNZY0k4TjNj?=
- =?utf-8?B?cEg2NTdwb3VWUWxhNTZRTjNhNmFwdjEwTkRhVEJ1NUJpTSszYlRYbTVpOUdz?=
- =?utf-8?B?K2RjS01qSmZMOHFocHJCY0hnK1N0WVRyMDlBRlo2MmVmUGZ5QlMxSE12ODdo?=
- =?utf-8?B?dGNaUC9rOFBLTTMyMXYyS1pSVFNSUXNoZHdzelU2cmwvOHFsRFhZdFM3RC80?=
- =?utf-8?B?UEVoZXBGd1VJYnY4ZlJrWjRKanVBcG8yaHpCaHQrSXV6bVdyRWY3ODhWMWhm?=
- =?utf-8?B?ZWxpRkp3cm9mVzl0blo5SHB3MzZNZTN5OVFPYWxlS29Jb0wxNUVCK1J1MFly?=
- =?utf-8?B?NVJCaUk5UG5QdEZaSTVKWWFaN0J0aFRrQ2VDY2hmTVdCNnhWTk1lcmhaS1pW?=
- =?utf-8?B?V0xsd3owN0V1RVp4SUJ5c2tVVlgxTEhyczQyWkdLR3ZrRFRiL1ZJMnorUWc4?=
- =?utf-8?B?ZFVqRzdJNVQ5Mlh5QU1nelFpVGhCKzBvbmtsWVY1bHUwTytlWmZqb3dOTW8r?=
- =?utf-8?B?eFNBTVpPU0hSallmMHNGTllRSnBnQmpJRHNnRitEMHBVa2lqazIybEhRY04v?=
- =?utf-8?B?bnpDdC9VZGhPcXNpQVhoS0Z2SHZWQ2hER0haVGVOL0crRForbkRvdWJVVE5B?=
- =?utf-8?B?c3BSSzgrMEZpNGtlcXM5SERBUmNDY1QyNXFDOUQ5Znd5SXo0SVVBN0cwNE9t?=
- =?utf-8?B?dFhSU24zTjhDbDFCRnk4KzdHYktvNUhzUVN4UUp0bnF5VWhBUm93RUtINHk5?=
- =?utf-8?B?TWFOVW1jcWtMRUg3UlY5RWRjc2NONFBtcHd2TEgzdWJxdWQ3T29XNkxhWHl1?=
- =?utf-8?B?S1BwbDZkekVYRUpSb1BNSTIrZlJGNVE4cDh0WDdrcnA2RXc5SldqMDNseVdN?=
- =?utf-8?B?dDdSaGZUYTg4d1p3YVhHcDFmR0lRVy9rL01ibk93OEJ2L25aVmd2akEvY3NK?=
- =?utf-8?Q?6FZoaKPuF1e9+/Ox/HaLXxCxKv7sdWa5?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|10070799003|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MExDcW85dVo3NkVhR3FLTUVXMHIzS3dwU1BaTWtzSnhNb25EU0ZRMlA4U242?=
+ =?utf-8?B?STlPVy9qUGlsVysxM1NseWd5MXFVKzBFSHVRUzk0Vk9qY21zcGQzcXFZR05p?=
+ =?utf-8?B?dUptd3FkNkd4NHVGeE5jbXZKQTlDMmtFTWRHdzl6dXJGeEhWSDZRSkQ4dzR3?=
+ =?utf-8?B?dmE0U3J3bnRpRDFrbVY2WVNWNGdhaW1EdXhlTjVSM0RPMHl4VkZTVmxCS1A5?=
+ =?utf-8?B?cWFPUEJUenkxT215OFhxRHFiRytjWllVcjgxamV5cklrNHp5N1NHK0RWSUc2?=
+ =?utf-8?B?eWNhZWtLRFhRbzArbS9DbHYrRUd2VUZwcCsrUUFya2lVdWtQWEpVelk0KzFE?=
+ =?utf-8?B?a21pZitMK2hmSXJ3Umc4LzJyb0x1S3FUbUZ4SURBK1Z5ZG5VQmRRZEhraDVR?=
+ =?utf-8?B?VHdjZ3lENERQbmJ2NVE2a3pmTUY4cE5GWXhnTEM3d0xGdFN1NTZUU1Z3eVdE?=
+ =?utf-8?B?aXYyYlV6Q0U1ZVZSbnJXVElmdWtFN3JJTDExNDUzZ2NMSDFIYnF5TkZaUisr?=
+ =?utf-8?B?bnZkcnpHcEVLM0t0aXJIaFdxeGZlNG1udWc5UVpRZkVudFBUcW4vT09Ocndk?=
+ =?utf-8?B?QTN6MUNqeGtVYkhuTStVbjh6alZUTnJLQTZNZmI4M24xTjBWSi83aldjc2NN?=
+ =?utf-8?B?TG9hcjVIVldhdFNEak0zNTlQT1VZWFVDSG1MdUVPM0RKNERnM1pFZTNOWkxo?=
+ =?utf-8?B?dlhXK0NCNWJ1VDVNWCtCM0VBNGJpMmVWMGo0SytzQkxqcXZFNnJBblRodm4v?=
+ =?utf-8?B?SEdSVk5ZREkraDJsbjhIU3ZCS1lGazNrNUxNdEIrcHlab1hpYzF0aW9uU085?=
+ =?utf-8?B?SEwrVkZqMUVVSmpjREo3aXlDRC9HdzJ1c1gxQ2FuWHRCdkVxYmQ5U0k1MVBX?=
+ =?utf-8?B?TFRvRTBMQkQwZzNneWNZdWJEdkJKNnRkd1pDS2VOQndCazN3cVRZVkN4UmFi?=
+ =?utf-8?B?Tm5HSXRKRXZxTU5PN3d6dElqMHE5Z0R1VHE1cUlkU1JXd3l5b2pxbzJ4UWcv?=
+ =?utf-8?B?OWFWYTBSWVNNUWlvalNMLysvUVEvUVRldVgyNlFTSTU2ZXFXQ0lOVG40b2RJ?=
+ =?utf-8?B?V0MzcCs2aFZMK2pOTXhXZys0WjJVam9PcmFxekhjcUNrRjEvSzk4Tk9Tb0pT?=
+ =?utf-8?B?cUJDVWc4NFY2UEVlVE05U29kTGQzTEpFWmYrdlJMSTNpU3JyRGVPTnkwZHBY?=
+ =?utf-8?B?ajAvcStkVDVOR2lpRkkya2pxY0RvMXVBV29tbFVQOG5VUzR3bjgwY1dJaUxP?=
+ =?utf-8?B?ZmJWWjk5RkhPaEFJNVVXK0hJaXNnRnp3azl1VWQ1TXZkVmJrWDJPbXRvbldM?=
+ =?utf-8?B?OWgxYklGNVk2WHdjT25ieEpYa1lCZ2NUNjdUenRrcHZBUk16UlBNTldLem03?=
+ =?utf-8?B?d2NoYy9mblk5aCtCWDhKMEVxNjhXNk44dCtNenN1eFZVeFVxOUtUV1N2V0I0?=
+ =?utf-8?B?bEpFb1Q2M0xZYjh4TUxBY3IzNWZtSVQwUC9INVdWcUdoMEtLMXMyZzg4bHJC?=
+ =?utf-8?B?WC95OTJWMXd1dGJDTkZ4NVQvcDZTVnpnRk4wbUd3bHFwY3RJZzFCMnJxSmNR?=
+ =?utf-8?B?aisva1VjYk1GaVNScFBTOFdGY0lldVZVZmNBVzN2TjMvajJWRXNBN0ZIZTBO?=
+ =?utf-8?B?b3UybHpzRlpId3ZYSVBhOUpwSEJCcFVoR1FCZXVOalZySWx6VTRhREpxc3pI?=
+ =?utf-8?B?aGtIZk05RnlLeG1LUjR5bzFrOEI0N1NqTENQVjYvNm1Dekl4VmVMVXhjZ1lE?=
+ =?utf-8?B?a3JNZ2hmY2Vjb2FkZnYrdFZwUzlXa1RyNGxUcXI4QXYrSzFvelR3L2JlZjNB?=
+ =?utf-8?B?eWR4bmNwZ1BOREVPcXpNNjVnbWtKV3JRMjhCVTNQdzBhNkVsRk5JamgvNFc5?=
+ =?utf-8?B?Z0Q4TjdQR0xaV3lxN1Z6Mmp5QS9Rb3IzTWRHanJaR014SEE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AMBPR04MB11741.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YjZaeHVjaEVqYWxPeFlvR2hhYm5DUVhJZ1JqS3prWHVOaWh0STBZQ21Xb3lC?=
- =?utf-8?B?WE1uZDVBdHVyNVVsZmdVaEFraUExSndpTGdyaWlKS25PdGtXWHJlNnc0b0Jh?=
- =?utf-8?B?ZWFXbnE1WFF4L24xa3puSjgyUzJpWTErTVcvMW5MZExyQlBQa2NMU1ZRcHdn?=
- =?utf-8?B?MExici9SZFJpRlNQZ05qWVJnUkpVQi8xT283NWxhRmtBcXR6NHVGQnQ4ZWNr?=
- =?utf-8?B?Y1hkeGp3LzlaV0pmUnY3d1ZycHRKZ3FYNWpJN3pVVVBkOWdSdFFLRG9jY2Zm?=
- =?utf-8?B?Um8yV0xRV2M4ZllsTlUxOVprTjRNOUVaaklUVWp6ZGtjTGZvVzVTQ0d0cGEy?=
- =?utf-8?B?czgzSXA5QlRXYndFSjJ0Tk9ONkc4dkp5M0w4eTBUUHp5eXY2bEN4RTBhV3ha?=
- =?utf-8?B?RWp0K3ExMkhRMzJIZ0JZWkJmMnhyLzNjeHpUK2NGNE1MblJVckFTMVdPUndi?=
- =?utf-8?B?SEU3VThiMXB6bWpjWkxLbUNQc3AvL3YzcXQvMlBMdFp4N20vUnV1SncvbHdM?=
- =?utf-8?B?MlF3Q1M0b3Jjb2xEQmd6bU9WSkFvR0JleHQxR2svRTQyejU0TkZlNzRVQlV0?=
- =?utf-8?B?d2RLblZZalVjZTFQOUN1WGxSckNEVERibTNmNTBselNnSERLZ0puWUxJbXA5?=
- =?utf-8?B?d05lOUQvUXZhbzh6WStJa3paM09nTENGQjhyaHI4Q1dBblR1aUZwd05DYVRk?=
- =?utf-8?B?VHJZR2tub01WSDFBdlFHZENaRVFrcFozSmFZUENpeEtTWXZhQlU3SFVabWVU?=
- =?utf-8?B?OGxhTmMxeVBJSGpRQ3Fmd0VVeVVCTHh5RzFhSkhGcHpXbm8vWGRSeldnMkZn?=
- =?utf-8?B?dkd5MHBmVjRoNWNBYjBWSkFtYjRxaEhKN3YvaFdRZGw1dE1SSm9DTmZQSDdl?=
- =?utf-8?B?UjFYN0dwcktYR0c0UlkxRFJZeVFOamdYZk9FdGNHWUdxbEFCN0JZTXByZG83?=
- =?utf-8?B?dGZ4UnJtMmhLaS9UNzJyZ0tHTElqSy8vSUl4b2JpSlA0TzFTNzJsWFBaQUxQ?=
- =?utf-8?B?LzZaaGJsM1Jxcklkc2pLSk5XcTB1Q3N4UDkrMTQ2OXFZaHRwOUdZN1hJb1hh?=
- =?utf-8?B?TzBjWGtZRlg2aUVsWFpCcCtpQngvaHpFeFVCeVhtaXdNNGdnK29GK1Y1NUlw?=
- =?utf-8?B?cVVwQ0VvdG9zY3hQSEJNVzVMOVhXVGkwMzNJMXV4TUd2cW0yRElzaUNhUGdp?=
- =?utf-8?B?MnpYS29VNjJGUzJjK0treTMvei9ycWhwZG52cGRkeHhwWVlwYW91R0xLSUFu?=
- =?utf-8?B?UHNIVG1vTW1VMWY3VjJCNzJSZTVzUm8yN1lVSy9VeWZNNkJvaFNUNWJNMzhD?=
- =?utf-8?B?NHhZdmJNeWRoM050NndXSGk2TEJPdHRqNzNFWkZlWTNDVzBZZzRjclpvY2JR?=
- =?utf-8?B?RDNSQkJBTitVL1h1UDMvNXN4NUhZTTY5VFVKT3hKR2ZPOVBmRm5iWWozN3RD?=
- =?utf-8?B?alNhNEJDRk5JeTZQdmI1S3NOZXIzL2FIaXhYV1ZwdTZtVER2YWIzVUJYZmhI?=
- =?utf-8?B?VlVOeVlvSFZvd3pLQXdJNlhrV3BUTVdrMGlNc0hyb1ZaYXJzL0NtVlliQno2?=
- =?utf-8?B?RVAwaVZRWmhici9GVFZ1NlJtdFY1K3M4N3RuUVN1MTdQTHVRbldEY1FoWFFh?=
- =?utf-8?B?aW9ySVZPekkwV2ovakxjejJET0RGQWtCZzBseW00T0ZxWUF4L0NkOXZJMng0?=
- =?utf-8?B?S2cvYm9GbnlQNmRaWlowRWVSMGdCN0ZvUVR4ZTB5K1FlY2p0ck8yTitYTU4z?=
- =?utf-8?B?MmlFV0tYeXhOampyTnhGNGhwUlZoMG9GVUJVT2JNN1d4UlhXNjB4aGdsUEta?=
- =?utf-8?B?TWNyQzBCbU5MZFFGbkZOTFZoTkVtbFR3UDNlckZQb1ZFc1cwSkFEeURTeGE1?=
- =?utf-8?B?TTZELzhuOGMrYTIzVll3aEYvOXR3eDNSSDFsZmI5ZnN4ajNFOUltUi9NMGJa?=
- =?utf-8?B?Q2hZanA5ZmRWV1BWdWRncWVSdW1tNXpCcVB5dE5tWmFxdWpHdys1UDR4RnpB?=
- =?utf-8?B?MVBtcFFndGI1WjVjOHczRnF1KzdRaXc0RUdMdWprVkU0VkRtVGR6cXhPUWx6?=
- =?utf-8?B?RUhQNnR1Ly92TmRZVm9DTFJLT0tPMklqZDdlVkw5MU02VEFycndJaCtTVlhM?=
- =?utf-8?B?MGxLOUhGdXQrb1daQ1lCR08yZGo4MHRYMW1TNVdnODVtSWtTR090bGJUTWZD?=
- =?utf-8?B?VXc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d33df5f-8ad3-4bba-9bce-08de202eef15
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N1FVUnlkTVd1UHF5RnZ4SEVmU3Y1UWRoZVpndERRTDIvTmRLTFZWdG5KWVdv?=
+ =?utf-8?B?dkc3RG9sVlB3SnA2L3Z1NlZBZHJRSExVaUdNSWl1dmU4RkVZdGJRZzFzNkJl?=
+ =?utf-8?B?R2tZZURBKzc0dHFrcm0xaHdJMU9qRWFsLzJ4YVpBT3Q5YW9kVXh0akJ3R3Bn?=
+ =?utf-8?B?Q2hGcHdZekwwL2lZOEtQTktGb056NlQ2Q2hsV0U5VHJYZEw5UWJrZUtjSXZz?=
+ =?utf-8?B?VjZhREJRRThNalBkakV1RjZCTGtPS0NJVWFiZFJWQmU4QTJVTElvOTE1eVgy?=
+ =?utf-8?B?S2VYUWZNdHhMVk9ZR1hKbWdZU3J0b3hFVHlTSFlHTkZlTlZ5aklSVmdvTnBK?=
+ =?utf-8?B?dmM2RjJyQjlSU3I2ZThEVDQ4UjM1OXIxeGxSMkdrMDFtQ3c0cWFTcGZKejJZ?=
+ =?utf-8?B?UFdvZEZ6MkhPbTlmWmprQWdGSDlNY092R0NxZVpxWUlhOGVQL0x6SE5vQlM0?=
+ =?utf-8?B?eHUzdjBHSFhob3F6ZDlqQkRpbWpOazVTbDlHMWRlQ1VzNEhvYlQvTkRyM0s2?=
+ =?utf-8?B?cGdBclM2V3dsaUZCdldpMWVqMGhpbGFWTXg4V09tbWNDR2dTNUtaNjNjc3lq?=
+ =?utf-8?B?VHJZZWo0UmdEZHNXR3NWMFlVMmV1WUQzZThhK3hzVUdiZmU4YldLZjVaZ0Fu?=
+ =?utf-8?B?TVJwV2JDb1d3a0Y1M1FFYS9XU1p2T3NCbHE1UTdXY2Njbkx3cnBsd0JaK0Rq?=
+ =?utf-8?B?Y2w5UmIwSWFsL3d2cytFc0tJUVZjMm1QK3lUY0kyUm9MZGhNcnYyeTZFNkk4?=
+ =?utf-8?B?SkNYNThHT3oyTyt3Y0NHVEFqdXhXVjUrWWkza0R4SWhWdG85K1ZYeXd1cU9u?=
+ =?utf-8?B?TkJaa1pRbEtKU0pzVUVzZlJPZ1ovampsNWxrVmFvUDloWXZuZHRnbTd4ZDFI?=
+ =?utf-8?B?UmF3MXl3bEZYc0J2cjA4NHN0S2JjR0pqeUp6cXRXR0tiWUNZczZZWnZrV09B?=
+ =?utf-8?B?M290YzRSZzVtdXZPYUdtRE0vdnZLNGVjQnFrM3NxS1I5STBjYnlxQUJWSXdN?=
+ =?utf-8?B?NENyRS9nNzRTUExvRWNEcEorbllqY09BQUhFSkE2M1ZVcytFRG9JUWlkOC9L?=
+ =?utf-8?B?ZjZQS1VNNXJsZnhHYmZYdXdKNUtIb0xvVHpaSnQzd3hydGl3VzdvakVqMUtF?=
+ =?utf-8?B?QUxNZGxwWTNRdTdjMDZpTmExSzdtOEZHc0NqYm1iVUlVa0hWNGV2emZta2tN?=
+ =?utf-8?B?Uzc4bzhMNjFya2ZuNmdtaHZoMkhoa21ycVdXWXJZYnFoMVVCOUVDd3BBNncv?=
+ =?utf-8?B?dHRscThYYjFaUWpDMDdBckFJUnBTSkU5RVU0L1g4Y04rR214TkM5SDdKZFVo?=
+ =?utf-8?B?Y0xuZUlCNGRaaWsyNGhNczd4Ni91Mi90aGhqT1diYmc2NDlDUlBrN0k5Rll4?=
+ =?utf-8?B?NW5DSDYxbFJNdWlEa2s1cjZnMC9Lc1BjQ0lPdWhxNXFzRkZxNm5UcUtXM2NM?=
+ =?utf-8?B?aEVUQ241Y0ZqWVJQUGN1TG41TkxWNHNYTHpRaWxxcVNpblVtQTNlMlA4THVY?=
+ =?utf-8?B?VWdyempKWkZsTEtPMHFST1lmL0xKNjI5Ty9XemhWYk5DRVVaSVhTSVJMZ21t?=
+ =?utf-8?B?NDhIRUJRbWgzWHhEUFIvTWVnS1UvMHozTXQ2S0J3aEtOKy9qSUxwMngvRTEw?=
+ =?utf-8?B?K0dMVUhKZTBoV0FOaXVLY1ZTamZOMGNxcGQ5VktwNFJDQjBiN05SSTBYdnRP?=
+ =?utf-8?B?VDZNOW5IVmtIeFFkQi9pbDZkKzdlbkJtb0htWGU5ZjBRR2UxUUlsOExEUUs0?=
+ =?utf-8?B?REtpWHNvWU1EVmZhN29DdjJQTm1hUXVMZmdhRDZ3TktuUW9uT1R1d2k0a0JV?=
+ =?utf-8?B?aWtnY25rRXdiRytMelNKZE5pODVjc1NNeGVLaGtocE1PV0FYZE5JdkljUzNU?=
+ =?utf-8?B?bjJaV00yWmdQN0w2QzB1M1ZWN0tRenNaSEF1M3hrUm9QTTA5NllxQWlER0VV?=
+ =?utf-8?B?VElucWhGQXF2NEtnSDY5TENjbWNRc0Vtc3VZMDljNjloTG44SXZMNWhKeTgr?=
+ =?utf-8?B?ZSsxVXVLV0RDb25Xb1B2UkRzckVja2RoYWdQODBwS3hoY1lwMHNFRWJtRk14?=
+ =?utf-8?B?Mmo1OFRHTUlmYjV4ZEp0a1Fxa1A3RjUrWmdSdnFhU1EySG1ickFPU2xlRXRu?=
+ =?utf-8?B?Q0czMTY1TFZuZlBMSGVBcnNRUnpGNG1DdFd2YmRBTkdEZ2poU2NJS0FoNzVP?=
+ =?utf-8?B?VldBdFh1ZEYyclJqNStDQTdueWpEN3BRZU1vck93Um04UHZsejR3YWRsRngr?=
+ =?utf-8?B?Q2hwaXgyVUNhSWhDNWswdmU2TmxBPT0=?=
+X-OriginatorOrg: gocontroll.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7106a08a-59bc-48df-f51e-08de202f1ff6
+X-MS-Exchange-CrossTenant-AuthSource: AMBPR04MB11741.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 07:58:28.7615
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 07:59:50.7488
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 4c8512ff-bac0-4d26-919a-ee6a4cecfc9d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MC64eJlX4Xc9QiLikWF+039AAL6ws8WS9QpCeEEdfDulb2wL/Or0muyePkmBmmwd1ue0RS5/9wqkmBzzCrhoYQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7019
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: BZXMqRjall9FDsZJ2+Oukk7uXLZDd3dadGI3SbwKhtxiDuq2eB3bz7U3QD3yOSanvgRLAgZoqetsUK0HWbcFUIm0CZmcti3wiN+KGdwohTw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8400
 
-On 31/10/2025 17:58, Sebastian Reichel wrote:
-> This adds CQE support for the Rockchip RK3588 and RK3576 platform. To
-> be functional, the eMMC device-tree node must have a 'supports-cqe;'
-> flag property.
+On 11/7/25 16:35, Frank Li wrote:
+> On Fri, Nov 07, 2025 at 01:49:58PM +0100, Maud Spierings via B4 Relay wrote:
+>> From: Maud Spierings <maudspierings@gocontroll.com>
+>>
+>> The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
+>> with integrated boost controller.
+>>
+>> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+>>
+>> ---
+>>
+>> In the current implementation the control registers for channel 1,
+>> control all channels. So only one led subnode with led-sources is
+>> supported right now. If at some point the driver functionality is
+>> expanded the bindings can be easily extended with it.
+>> ---
+>>   .../bindings/leds/backlight/maxim,max25014.yaml    | 107 +++++++++++++++++++++
+>>   MAINTAINERS                                        |   5 +
+>>   2 files changed, 112 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml b/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
+>> new file mode 100644
+>> index 000000000000..e83723224b07
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
+>> @@ -0,0 +1,107 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/leds/backlight/maxim,max25014.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Maxim max25014 backlight controller
+>> +
+>> +maintainers:
+>> +  - Maud Spierings <maudspierings@gocontroll.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - maxim,max25014
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  "#address-cells":
+>> +    const: 1
+>> +
+>> +  "#size-cells":
+>> +    const: 0
+>> +
+>> +  enable-gpios:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  power-supply:
+>> +    description: Regulator which controls the boost converter input rail.
+>> +
+>> +  pwms:
+>> +    maxItems: 1
+>> +
+>> +  maxim,iset:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    maximum: 15
+>> +    default: 11
+>> +    description:
+>> +      Value of the ISET field in the ISET register. This controls the current
+>> +      scale of the outputs, a higher number means more current.
+>> +
+>> +  led@0:
+>> +    type: object
+>> +    description: Properties for a string of connected LEDs.
+>> +    $ref: common.yaml#
+>> +
+>> +    properties:
+>> +      reg:
+>> +        const: 0
 > 
-> As the RK3576 device-tree has been upstreamed with the 'supports-cqe;'
-> property set by default, the kernel already tried to use CQE, which
-> results in system hang during suspend. This fixes the issue.
+> If reg is const 0, why need use led@0?
 > 
-> Co-developed-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
-> Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-One question below, otherwise:
+I made it this way so that at a later point the driver can be expanded 
+with 4 led subnodes when that functionality gets supported. If I were to 
+lock it to just led: right now I feel that may cause incompatibility 
+later on.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+If there is a better way to do this, I'm open to suggestions.
 
-> ---
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 93 +++++++++++++++++++++++++++++++++++--
->  1 file changed, 90 insertions(+), 3 deletions(-)
+Kind regards,
+Maud
+
 > 
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> index eebd45389956..47509435254b 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -24,6 +24,7 @@
->  
->  #include "sdhci-pltfm.h"
->  #include "cqhci.h"
-> +#include "sdhci-cqhci.h"
->  
->  #define SDHCI_DWCMSHC_ARG2_STUFF	GENMASK(31, 16)
->  
-> @@ -82,6 +83,8 @@
->  #define DWCMSHC_EMMC_DLL_TXCLK		0x808
->  #define DWCMSHC_EMMC_DLL_STRBIN		0x80c
->  #define DECMSHC_EMMC_DLL_CMDOUT		0x810
-> +#define DECMSHC_EMMC_MISC_CON		0x81C
-> +#define MISC_INTCLK_EN			BIT(1)
->  #define DWCMSHC_EMMC_DLL_STATUS0	0x840
->  #define DWCMSHC_EMMC_DLL_START		BIT(0)
->  #define DWCMSHC_EMMC_DLL_LOCKED		BIT(8)
-> @@ -234,6 +237,7 @@ struct dwcmshc_priv {
->  
->  struct dwcmshc_pltfm_data {
->  	const struct sdhci_pltfm_data pdata;
-> +	const struct cqhci_host_ops *cqhci_host_ops;
->  	int (*init)(struct device *dev, struct sdhci_host *host, struct dwcmshc_priv *dwc_priv);
->  	void (*postinit)(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv);
->  };
-> @@ -561,6 +565,68 @@ static void dwcmshc_cqhci_dumpregs(struct mmc_host *mmc)
->  	sdhci_dumpregs(mmc_priv(mmc));
->  }
->  
-> +static void rk35xx_sdhci_cqe_pre_enable(struct mmc_host *mmc)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct dwcmshc_priv *dwc_priv = sdhci_pltfm_priv(pltfm_host);
-> +	u32 reg;
-> +
-> +	reg = sdhci_readl(host, dwc_priv->vendor_specific_area2 + CQHCI_CFG);
-> +	reg |= CQHCI_ENABLE;
-> +	sdhci_writel(host, reg, dwc_priv->vendor_specific_area2 + CQHCI_CFG);
-> +}
-> +
-> +static void rk35xx_sdhci_cqe_enable(struct mmc_host *mmc)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	u32 reg;
-> +
-> +	reg = sdhci_readl(host, SDHCI_PRESENT_STATE);
-> +	while (reg & SDHCI_DATA_AVAILABLE) {
-> +		sdhci_readl(host, SDHCI_BUFFER);
-> +		reg = sdhci_readl(host, SDHCI_PRESENT_STATE);
-> +	}
-> +
-> +	sdhci_writew(host, DWCMSHC_SDHCI_CQE_TRNS_MODE, SDHCI_TRANSFER_MODE);
-> +
-> +	sdhci_cqe_enable(mmc);
-> +}
-> +
-> +static void rk35xx_sdhci_cqe_disable(struct mmc_host *mmc, bool recovery)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	unsigned long flags;
-> +	u32 ctrl;
-> +
-> +	/*
-> +	 * During CQE command transfers, command complete bit gets latched.
-> +	 * So s/w should clear command complete interrupt status when CQE is
-> +	 * either halted or disabled. Otherwise unexpected SDCHI legacy
-> +	 * interrupt gets triggered when CQE is halted/disabled.
-> +	 */
-> +	spin_lock_irqsave(&host->lock, flags);
-> +	ctrl = sdhci_readl(host, SDHCI_INT_ENABLE);
-> +	ctrl |= SDHCI_INT_RESPONSE;
-> +	sdhci_writel(host,  ctrl, SDHCI_INT_ENABLE);
-> +	sdhci_writel(host, SDHCI_INT_RESPONSE, SDHCI_INT_STATUS);
-> +	spin_unlock_irqrestore(&host->lock, flags);
-> +
-> +	sdhci_cqe_disable(mmc, recovery);
-> +}
-> +
-> +static void rk35xx_sdhci_cqe_post_disable(struct mmc_host *mmc)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct dwcmshc_priv *dwc_priv = sdhci_pltfm_priv(pltfm_host);
-> +	u32 ctrl;
-> +
-> +	ctrl = sdhci_readl(host, dwc_priv->vendor_specific_area2 + CQHCI_CFG);
-> +	ctrl &= ~CQHCI_ENABLE;
-> +	sdhci_writel(host, ctrl, dwc_priv->vendor_specific_area2 + CQHCI_CFG);
-> +}
-> +
->  static void dwcmshc_rk3568_set_clock(struct sdhci_host *host, unsigned int clock)
->  {
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -679,6 +745,10 @@ static void rk35xx_sdhci_reset(struct sdhci_host *host, u8 mask)
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->  	struct dwcmshc_priv *dwc_priv = sdhci_pltfm_priv(pltfm_host);
->  	struct rk35xx_priv *priv = dwc_priv->priv;
-> +	u32 extra = sdhci_readl(host, DECMSHC_EMMC_MISC_CON);
-> +
-> +	if ((host->mmc->caps2 & MMC_CAP2_CQE) && (mask & SDHCI_RESET_ALL))
-> +		cqhci_deactivate(host->mmc);
->  
->  	if (mask & SDHCI_RESET_ALL && priv->reset) {
->  		reset_control_assert(priv->reset);
-> @@ -687,6 +757,9 @@ static void rk35xx_sdhci_reset(struct sdhci_host *host, u8 mask)
->  	}
->  
->  	sdhci_reset(host, mask);
-> +
-> +	/* Enable INTERNAL CLOCK */
-> +	sdhci_writel(host, MISC_INTCLK_EN | extra, DECMSHC_EMMC_MISC_CON);
-
-rk35xx_sdhci_reset() is in sdhci_dwcmshc_rk35xx_ops.
-sdhci_dwcmshc_rk3576_pdata also uses sdhci_dwcmshc_rk35xx_ops but isn't
-supporting CQE ops.  Is this change OK for rk3576?
-
->  }
->  
->  static int dwcmshc_rk35xx_init(struct device *dev, struct sdhci_host *host,
-> @@ -1188,6 +1261,15 @@ static const struct dwcmshc_pltfm_data sdhci_dwcmshc_bf3_pdata = {
->  };
->  #endif
->  
-> +static const struct cqhci_host_ops rk35xx_cqhci_ops = {
-> +	.pre_enable	= rk35xx_sdhci_cqe_pre_enable,
-> +	.enable		= rk35xx_sdhci_cqe_enable,
-> +	.disable	= rk35xx_sdhci_cqe_disable,
-> +	.post_disable	= rk35xx_sdhci_cqe_post_disable,
-> +	.dumpregs	= dwcmshc_cqhci_dumpregs,
-> +	.set_tran_desc	= dwcmshc_set_tran_desc,
-> +};
-> +
->  static const struct dwcmshc_pltfm_data sdhci_dwcmshc_rk35xx_pdata = {
->  	.pdata = {
->  		.ops = &sdhci_dwcmshc_rk35xx_ops,
-> @@ -1196,6 +1278,7 @@ static const struct dwcmshc_pltfm_data sdhci_dwcmshc_rk35xx_pdata = {
->  		.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
->  			   SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
->  	},
-> +	.cqhci_host_ops = &rk35xx_cqhci_ops,
->  	.init = dwcmshc_rk35xx_init,
->  	.postinit = dwcmshc_rk35xx_postinit,
->  };
-> @@ -1245,7 +1328,8 @@ static const struct cqhci_host_ops dwcmshc_cqhci_ops = {
->  	.set_tran_desc	= dwcmshc_set_tran_desc,
->  };
->  
-> -static void dwcmshc_cqhci_init(struct sdhci_host *host, struct platform_device *pdev)
-> +static void dwcmshc_cqhci_init(struct sdhci_host *host, struct platform_device *pdev,
-> +			       const struct dwcmshc_pltfm_data *pltfm_data)
->  {
->  	struct cqhci_host *cq_host;
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -1275,7 +1359,10 @@ static void dwcmshc_cqhci_init(struct sdhci_host *host, struct platform_device *
->  	}
->  
->  	cq_host->mmio = host->ioaddr + priv->vendor_specific_area2;
-> -	cq_host->ops = &dwcmshc_cqhci_ops;
-> +	if (pltfm_data->cqhci_host_ops)
-> +		cq_host->ops = pltfm_data->cqhci_host_ops;
-> +	else
-> +		cq_host->ops = &dwcmshc_cqhci_ops;
->  
->  	/* Enable using of 128-bit task descriptors */
->  	dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
-> @@ -1443,7 +1530,7 @@ static int dwcmshc_probe(struct platform_device *pdev)
->  		priv->vendor_specific_area2 =
->  			sdhci_readw(host, DWCMSHC_P_VENDOR_AREA2);
->  
-> -		dwcmshc_cqhci_init(host, pdev);
-> +		dwcmshc_cqhci_init(host, pdev, pltfm_data);
->  	}
->  
->  	if (pltfm_data->postinit)
-> 
+>> +
+>> +      led-sources:
+>> +        allOf:
+>> +          - minItems: 1
+>> +            maxItems: 4
+>> +            items:
+>> +              minimum: 0
+>> +              maximum: 3
+>> +            default: [0, 1, 2, 3]
+>> +
+>> +      default-brightness:
+>> +        minimum: 0
+>> +        maximum: 100
+>> +        default: 50
+>> +
+>> +    required:
+>> +      - reg
+>> +
+>> +    additionalProperties: false
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/gpio/gpio.h>
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +
+>> +    i2c {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        backlight@6f {
+>> +            compatible = "maxim,max25014";
+>> +            reg = <0x6f>;
+>> +            #address-cells = <1>;
+>> +            #size-cells = <0>;
+>> +            enable-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
+>> +            interrupt-parent = <&gpio1>;
+>> +            interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
+>> +            power-supply = <&reg_backlight>;
+>> +            pwms = <&pwm1>;
+>> +            maxim,iset = <7>;
+>> +
+>> +            led@0 {
+>> +                reg = <0>;
+>> +                led-sources = <0 1 2 3>;
+>> +                default-brightness = <50>;
+>> +            };
+>> +        };
+>> +    };
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 58c7e3f678d8..606ce086f758 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -15261,6 +15261,11 @@ F:	Documentation/userspace-api/media/drivers/max2175.rst
+>>   F:	drivers/media/i2c/max2175*
+>>   F:	include/uapi/linux/max2175.h
+>>
+>> +MAX25014 BACKLIGHT DRIVER
+>> +M:	Maud Spierings <maudspierings@gocontroll.com>
+>> +S:	Maintained
+>> +F:	Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
+>> +
+>>   MAX31335 RTC DRIVER
+>>   M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
+>>   L:	linux-rtc@vger.kernel.org
+>>
+>> --
+>> 2.51.2
+>>
+>>
 
 
