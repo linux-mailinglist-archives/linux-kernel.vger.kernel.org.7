@@ -1,146 +1,182 @@
-Return-Path: <linux-kernel+bounces-893464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88CF9C477F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:23:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DE4C477EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:22:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37AB13BACB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:15:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A2144EF193
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA96C315D3C;
-	Mon, 10 Nov 2025 15:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DC531A553;
+	Mon, 10 Nov 2025 15:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QfqhNo2/"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AHYgGko0"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F76A1A7AE3
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D454313E0D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787481; cv=none; b=Mt7iG8pKaM4M+JuU/Y2P1JiDN7G1g1yCE7VkMi1pxYpRa8AKYtbp/fmmWr5VKbhzxmyKNOvL7+EXKNAfSd6tfgluBkTM0v5RdflYiSSt/l85vAqA42qH7PvsFN/p/v9Xo/hPi84tIY4NnG51R7PaoV+ev/gViUWKh2sETIcQ7Vo=
+	t=1762787499; cv=none; b=pkMbG4inSh0xIUyoya9DPpJ1x2yd9kbcuAupvyCuu8hGt4lK3KfXQusT8uSyCkYghVJcv/zyi7vIda3W5pwRl68LBYm3TKPT/CCyhqlTWb9vOi27dBVJ0Gg278xFnOV3BipLNxqN5RFmznHi7gCOXykUqE4kEmr0jpxWlLnvw9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787481; c=relaxed/simple;
-	bh=FPlXeQmlbpUeuFc/ceY/IQijGNTe8SceVdpRkBYmgd0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hRXstDSyK2qJiBloBvyq7fJ4MLTOXEtXhmVpC/C/U//HSxom6SniKi7jIj4Op+RWlTYJmym7YQinwW/SSLhssMx2CsPeCdnRFwXzIRiPDNZhmpaDXg6VjGa2n5c//KgVD7Zg7UA0eK6rcuJTVKsv8iBvCDFqIJFcXZm1Gq25Fcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QfqhNo2/; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id E87B1C108F0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:10:55 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 61D74606F5;
-	Mon, 10 Nov 2025 15:11:17 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12B06103718D6;
-	Mon, 10 Nov 2025 16:11:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762787476; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=wJUr/0EUzjfCaK+KSuA5yM/imTi7pw3eemoaLfp6LKk=;
-	b=QfqhNo2/G3HQxs/W7N3+/hwen5dY46GEKIU3Wnc8Iksx6Avkh9be9p7gLH9zzDmSM7tH/a
-	AaYhmj/U0WQC/e2VYQkRUX49MQAZYzFbJS85OeTIkwSzXSRRJmHL5b6XaOORgjJfBZKdXQ
-	UuHG0qnKFnyDT9chCkvfSd5i1hod3ks1hDygZy1RSkHSsdJuqSNCIR94z+tG5X0MaAA8nw
-	GzI5FvThdAjWFBBpJis8C23MPtRd+I+3VdcGWmVmGulP5QGJu/qSyydRhvqiPbNb94VhbU
-	dJQmLalY5exmCVEcdro31ZxgAr643zB/oYCOuFIzYMJKMyR3DA6BPIZt5KI9OA==
-Message-ID: <5ea31c61-7bf5-441c-a7c1-e346039d03d2@bootlin.com>
-Date: Mon, 10 Nov 2025 16:11:15 +0100
+	s=arc-20240116; t=1762787499; c=relaxed/simple;
+	bh=e41KUEQkCI83Pj0eBDnULI9EieLfc+PrPGbBZCQVW34=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=d1A1VZJLGtDZAnZpqpCSTIQ8DbDsLSnGjBULuTlICL/Ok09rCiL2HDXV2EKszw+kR450C/gYBSve2gRjdOYeE2r1J2mFJVd+gMOrqPf3D71OkjaFP1skNdARpgTfcV5A1aBlM62VPxzhgdYHx68Ctg3OjsU6zAKFb5P4po1Yl2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AHYgGko0; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-640cdaf43aeso2825164a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:11:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762787496; x=1763392296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bVuIBWwz8TeHXsPjnU/vf4FRd0BvXZesO2CMM5Oe16o=;
+        b=AHYgGko0XqrhEA1vif2W2eAIEnrMJQ9otUv4QFV8jJ6u9ADBg74mVqSFw0vXAirAQG
+         vqrbxCA7ZIwUJtdwRhwmK2nHGauxaDAJ+D5v/adfwK2iwKBBoqFC2/UnUnxZnMxyrHzr
+         cLFkD5WH7TPZUWOeRoPYk6kDensha1an8XMHXL7hqLfguKAtzSxnSh1KN2LzTPnCiENc
+         LxebE0Wqn1a0z/zpSQR6bk7LRR6xBMGhtiKQnn6SHebbab0K0OzxWlIUas8nIcHiOikS
+         yX+LLG1N9WMWfbmju+EROFvmXENxp3fE0uLSW8aqRurrFdrTCQXM+0QU8G85MF7GInsz
+         kkmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762787496; x=1763392296;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bVuIBWwz8TeHXsPjnU/vf4FRd0BvXZesO2CMM5Oe16o=;
+        b=FqQzMDm+8qZ1gY0OkZ8jWRfia5mRRcSAvfavJhuQF4+m4eWHme3jU7RVsEoWSmm3mU
+         ywn6oVMX7WZMqLuRDvg1GLfXR6bm48hVCIhtVhthtAZKi0X769BKHaDSNdzBwW3jq0JY
+         1k1VMgK+sB7kqu8d+iuyMCLkHhu9hOOLamMbNeY7LpftRvt3Q4jyaLtZNFbD0TmhQ936
+         HihwDXS1Zqm7Ms2fFjgF6pvCwl6Slp4CTHWWl1AuZe2Izh3gGpnQSPJF4Qxph+c8AC7w
+         +tkl799Ru/BEHzQBA0HLDEZpSAKzaIDxRJ9QF6IYPatlCETeoNa4xiR5RedvyN/sXeI9
+         hMEw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0A5eI+5X25scwU+BVw0iqwjI02fgAN7OjCOylYMMufBCSbgqUQ9Eo96F/DASy9MlZRKguCtbKzhgNdqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyla+XUxT3xJL5gNcvxCLavPlvig1AJIGEG72v0G+NinlyGzQ++
+	TgeSOuMucQTWfhKtVQJBGDiiPlq1vPEQH+BYsPGU142d7bFjxixTVy4Mq2UA/DSFHKl75vBk8nO
+	8uFzrUF0riOYgTUIs/Q==
+X-Google-Smtp-Source: AGHT+IFcz9xhXtdSWWsSNnakXTmc94w8f4qYVgDYqMrImPS2rfopKwtNGIQ99/JJqYZQESgV4WJXhLDpColfHEE=
+X-Received: from edr25.prod.google.com ([2002:a05:6402:44d9:b0:641:1f23:7304])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:4408:b0:63e:600b:bc86 with SMTP id 4fb4d7f45d1cf-6415dc19b19mr6937044a12.14.1762787495992;
+ Mon, 10 Nov 2025 07:11:35 -0800 (PST)
+Date: Mon, 10 Nov 2025 15:11:35 +0000
+In-Reply-To: <aRH-ScufjvGYPx5W@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/2] firmware: ti_sci: handle IRQ restore in
- BOARDCFG_MANAGED mode during resume
-To: Nishanth Menon <nm@ti.com>
-Cc: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- Gregory CLEMENT <gregory.clement@bootlin.com>, richard.genoud@bootlin.com,
- Udit Kumar <u-kumar1@ti.com>, Prasanth Mantena <p-mantena@ti.com>,
- Abhash Kumar <a-kumar2@ti.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251017-ti-sci-jacinto-s2r-restore-irq-v1-0-34d4339d247a@bootlin.com>
- <20251017-ti-sci-jacinto-s2r-restore-irq-v1-2-34d4339d247a@bootlin.com>
- <20251107115457.i6tkt466bp62mwp2@whiff>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <20251107115457.i6tkt466bp62mwp2@whiff>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Mime-Version: 1.0
+References: <20251110-binder-bitmap-v4-0-5ed8a7fab1b9@google.com>
+ <20251110-binder-bitmap-v4-1-5ed8a7fab1b9@google.com> <CAJ-ks9kvMQ9tUMZyM07jRr8O+pJ6RRvCZodenB==tzDChhHT=A@mail.gmail.com>
+ <aRH0oRU5JXKpAKpB@google.com> <aRH-ScufjvGYPx5W@yury>
+Message-ID: <aRIAp3LHs0NsEKvL@google.com>
+Subject: Re: [PATCH v4 1/6] rust: bitmap: add MAX_LEN and NO_ALLOC_MAX_LEN constants
+From: Alice Ryhl <aliceryhl@google.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Tamir Duberstein <tamird@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Nishanth,
+On Mon, Nov 10, 2025 at 10:01:29AM -0500, Yury Norov wrote:
+> On Mon, Nov 10, 2025 at 02:20:17PM +0000, Alice Ryhl wrote:
+> > On Mon, Nov 10, 2025 at 08:59:36AM -0500, Tamir Duberstein wrote:
+> > > On Mon, Nov 10, 2025 at 8:06=E2=80=AFAM Alice Ryhl <aliceryhl@google.=
+com> wrote:
+> > > >
+> > > > To avoid hard-coding these values in drivers, define constants for =
+them
+> > > > that drivers can reference.
+> > > >
+> > > > Acked-by: Danilo Krummrich <dakr@kernel.org>
+> > > > Reviewed-by: Burak Emir <bqe@google.com>
+> > > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > > > ---
+> > > >  rust/kernel/bitmap.rs | 16 +++++++++++-----
+> > > >  1 file changed, 11 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
+> > > > index aa8fc7bf06fc99865ae755d8694e4bec3dc8e7f0..15fa23b45054b927241=
+5fcc000e3e3b52c74d7c1 100644
+> > > > --- a/rust/kernel/bitmap.rs
+> > > > +++ b/rust/kernel/bitmap.rs
+> > > > @@ -149,14 +149,14 @@ macro_rules! bitmap_assert_return {
+> > > >  ///
+> > > >  /// # Invariants
+> > > >  ///
+> > > > -/// * `nbits` is `<=3D i32::MAX` and never changes.
+> > > > +/// * `nbits` is `<=3D MAX_LEN`.
+> > > >  /// * if `nbits <=3D bindings::BITS_PER_LONG`, then `repr` is a `u=
+size`.
+> > >=20
+> > > Should this and other references to bindings::BITS_PER_LONG be
+> > > `NO_ALLOC_MAX_LEN` instead?
+> >=20
+> > Ah yeah it probably makes sense to update this in a bunch of places.
+>=20
+> Yes, please.=20
+>=20
+> NO_ALLOC sounds a bit weird in exported API. Maybe NBITS_INPLACE
+> or similar?
 
-On 11/7/25 12:54 PM, Nishanth Menon wrote:
-> On 16:44-20251017, Thomas Richard (TI.com) wrote:
->> In BOARDCFG_MANAGED mode, the firmware cannot restore IRQs during
->> resume. This responsibility is delegated to the ti_sci driver,
->> which maintains an internal list of all requested IRQs. This list
->> is updated on each set/free operation, and all IRQs are restored
->> during the resume_noirq() phase.
-> 
-> Couple of drive by comments:
-> 
-> clarify why is this not handled by ia / ir driver?
+Ah, good point. We started using the "inplace" wording in other places,
+so lets also do so here.
 
-A patch was sent to handle this in intr driver [1], but the feedback
-was: this shall be done in ti_sci driver [2].
+> Also, at this point we're really close to:
+>=20
+>    pub const NBITS_INPLACE: usize =3D CONFIG_NBITS_INPLACE;
+>=20
+>    union BitmapRepr {
+>        bitmap: [usize, BITS_TO_LONGS(NBITS_INPLACE)]
+>        ptr: NonNull<usize>,
+>    }
+>=20
+> That would be a very useful addition for some particular scenarios,
+> I believe. Even if you don't want to make it configurable, let's
+> keep this option in mind?
 
-And now I have an other argument:
+Actually, one option here is to define BitmapVec like this:
 
-I'm actually working on having functional PCIe after a suspend-resume on
-J784s4. And I noticed that set_parent (sci-clk driver) shall be restored
-during resume. Restoring irqs and set_parent clk config is only needed
-on Jacinto platforms. The sci-clk and inta/intr driver don't know if we
-are running on a Jacinto platform or not. The ti_sci have the
-information so it can take the decision to restore irqs and set_parent
-configs.
+pub struct BitmapVec<const INPLACE_LEN: usize =3D 1> {
+    repr: BitmapRepr<INPLACE_LEN>,
+    nbits: usize,
+}
 
-[1] https://lore.kernel.org/all/20220607061912.12222-1-a-govindraju@ti.com/
-[2] https://lore.kernel.org/all/87r0l96f0e.wl-maz@kernel.org/
+union BitmapRepr<const INPLACE_LEN: usize> {
+    bitmap: [usize; INPLACE_LEN],
+    ptr: NonNull<usize>,
+}
 
-> 
->>
->> Signed-off-by: Thomas Richard (TI.com) <thomas.richard@bootlin.com>
->> ---
->>  drivers/firmware/ti_sci.c | 143 +++++++++++++++++++++++++++++++++++++++++++---
->>  1 file changed, 135 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
->> index f9f1a67e8e66b0a4048fae04ce31be54ca5cba7a..a211f8805dd21c7675b8cefd61929ecfda8e0f7f 100644
->> --- a/drivers/firmware/ti_sci.c
->> +++ b/drivers/firmware/ti_sci.c
->> @@ -87,6 +87,16 @@ struct ti_sci_desc {
->>  	int max_msg_size;
-> [...]
->> +
->> +	irq_desc.valid_params = valid_params;
->> +	irq_desc.src_id = src_id;
->> +	irq_desc.src_index = src_index;
->> +	irq_desc.dst_id = dst_id;
->> +	irq_desc.dst_host_irq = dst_host_irq;
->> +	irq_desc.ia_id = ia_id;
->> +	irq_desc.vint = vint;
->> +	irq_desc.global_event = global_event;
->> +	irq_desc.vint_status_bit = vint_status_bit;
->> +	irq_desc.secondary_host = s_host;
->> +
->> +	list_for_each(this, &info->irqs.list) {
-> 
-> list_for_each_entry_safe ?
-> 
-> How big is this list on a j784s4 class device? is it worth creating a
-> irq_desc_hash and using a hlist a better option?
+This way, the driver can specify this by saying: BitmapVec<4> for a
+BitmapVec where the inline capacity is 4 longs.
 
-I did the test with arm64 defconfig on j784s4 and the list has 43 elements.
-I'll look at the hlist.
+And if Binder wanted to make that configurable, Binder could define a
+constant based on a Binder specific CONFIG_* that controls what value
+Binder passes.
 
-Best Regards,
-Thomas
+Since I wrote `=3D 1` in the struct, you may also write BitmapVec without
+specifying any number and get the default.
+
+It may be possible to specify the number in bits rather than longs too,
+but then we have to decide what to do if it's not divisible by
+BITS_PER_LONG.
+
+(But in the case of Rust Binder, the value we want is one long worth of
+bits.)
+
+Alice
 
