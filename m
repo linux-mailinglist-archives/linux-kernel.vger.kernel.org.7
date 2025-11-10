@@ -1,125 +1,81 @@
-Return-Path: <linux-kernel+bounces-893222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04944C46D47
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:18:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06793C46D4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:18:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 098AF3493BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:18:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA5DF3A7202
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4C53101C8;
-	Mon, 10 Nov 2025 13:18:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D87D303A39;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6371430F550;
+	Mon, 10 Nov 2025 13:18:38 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DCE30F800;
 	Mon, 10 Nov 2025 13:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762780715; cv=none; b=fp0MTvktxFF8dSU3CkfndM2eae22QhODfJIveOwviPFp1y4vd55kFcHBR/cZ4GIeABlaadtC3F+Wp9BgtYhE22ISTqrj0tnuoiQkFaE0sXS8w/Xf2czXzWLWs5BbrQbhHq9meOr86yFsxYN5k+2wRKUoM2lkvnCOmBY8xIe7mjI=
+	t=1762780714; cv=none; b=dDG9om25JMLq3K9jHeJWc9owQlfGkP4PV5MejRSzFQnbrkykzlc6I/f/oj8Xj/aMT84+j7P1ieVnJ36lUVnakdrlzijnToS3ppWFQslUwLUWGNk27+j5Jxgg7b9E9Ojy0y2+36JIXbOAIVT6jBc33oqldVP4cetU/z0B3DZyajE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762780715; c=relaxed/simple;
-	bh=e61PmBuBpKPW0kEFbYkXrje4f08ptI1Bgty+XwFb8EM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cLJu9lgvmcujp4KL4nZKWZ9+i4COOoilkH88sg2ypvqCl3ox4jsiinU9o6Af+qq9MTjcIhW+wJ4HJ7xaZfPqHtZR+iWMUncR01eVL+Sd3B6qlZVhArmDkD58mRkHfiy65lD4STnyUrvFOS3hH26uhhbKYew60+0ZFr13QV/egvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7B25497;
-	Mon, 10 Nov 2025 05:18:22 -0800 (PST)
-Received: from [10.57.39.147] (unknown [10.57.39.147])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D493F3F63F;
-	Mon, 10 Nov 2025 05:18:22 -0800 (PST)
-Message-ID: <d0ce35ad-bfcd-496b-996d-17e59a1d5a73@arm.com>
-Date: Mon, 10 Nov 2025 14:18:20 +0100
+	s=arc-20240116; t=1762780714; c=relaxed/simple;
+	bh=LfGrKo3YYZD2l2hXjA0gXOCu8xjIGMYKjzEOK+GY8hk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cHW3qWNxJXmLCYl9fjRl9rZFAt5al8UIP49/BErhAe5er7astfybvz3jEcr14IolbVbiABDjhEFmzmeLqF6EGCdtwGw8ECfT5B49G1xl6T5ZnkUW7MMqOr87NbE40cfu77pQwrm7lUoixiPhjLHMOGrFJ4f8hdf1z81eGkLmh3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.119])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 6C36C340EA8;
+	Mon, 10 Nov 2025 13:18:31 +0000 (UTC)
+Date: Mon, 10 Nov 2025 21:18:26 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: michael.opdenacker@rootcommit.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: riscv: spacemit: Add OrangePi R2S
+ board
+Message-ID: <20251110131826-GYA1585958@gentoo.org>
+References: <20251110101110.948198-1-michael.opdenacker@rootcommit.com>
+ <20251110101110.948198-2-michael.opdenacker@rootcommit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/12] powerpc/64s: Do not re-activate batched TLB
- flush
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org,
- Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-2-kevin.brodsky@arm.com>
- <87qzud42n1.ritesh.list@gmail.com>
- <b3e4a92f-5b51-4eee-bfb8-c454add0f0d2@arm.com>
- <87cy5t4b0a.ritesh.list@gmail.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <87cy5t4b0a.ritesh.list@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110101110.948198-2-michael.opdenacker@rootcommit.com>
 
-On 08/11/2025 00:35, Ritesh Harjani (IBM) wrote:
-> Kevin Brodsky <kevin.brodsky@arm.com> writes:
->
->> [...]
->>
->>> With this analysis - the patch looks good to me. I will give this entire
->>> patch series a try on Power HW with Hash mmu too (which uses lazy mmu and
->>> let you know the results of that)!
->> That'd be very appreciated, thanks a lot!
->>
-> I did give this patch series a run on Power10 with Hash MMU. I ran the
-> following stress-ng tests and didn't observe any issues (kernel warnings) so far.
->
-> stress-ng --all 0 -t 60s --perf -v --verify \
-> --tlb-shootdown 0 \
-> --fault 0 \
-> --userfaultfd 0 \
-> --fork 0 \
-> --exec 0 \
-> --memfd 0 \
-> --numa 0 \
-> --pkey 0 \
-> --remap 0 \
-> --vm 0 \
-> --rmap 0 \
-> -x swap,pagemove
-> (Note not all options shown here will work with --verify)
+Hi Michael,
 
-That's great, many thanks!
+On 10:11 Mon 10 Nov     , michael.opdenacker@rootcommit.com wrote:
+> From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+> 
+> Document the compatible string for the OrangePi R2S board [1], which
+> is marketed as using the Ky X1 SoC but is in fact identical to
+> the SpacemiT K1 SoC [2].
+> 
+> Link: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-R2S.html [1]
+> Link: https://www.spacemit.com/en/key-stone-k1 [2]
+..
+> 
+drop this blank line, it's not necessary
+> Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
 
-> Let me know what else I can run for validation?
-> Do you know of any specific tests for validation of lazy mmu feature?
-
-I don't think there is - lazy MMU is not supposed to have any observable
-effect, all we can do is exercise the paths that use it and check that
-nothing explodes.
-
-That said it wouldn't hurt to run the mm kselftests:
-
-    make -C tools/testing/selftests/ TARGETS=mm
-
-Thanks!
-
-- Kevin
+-- 
+Yixun Lan (dlan)
 
