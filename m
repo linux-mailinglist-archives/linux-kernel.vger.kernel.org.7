@@ -1,179 +1,243 @@
-Return-Path: <linux-kernel+bounces-892276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E89C44BEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:43:08 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1428C44BF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:47:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72BF44E3E2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 01:43:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C4A293459EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 01:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C7622FDEA;
-	Mon, 10 Nov 2025 01:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D41618DB01;
+	Mon, 10 Nov 2025 01:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eS3vIvpS"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PiNaYkMO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B607715A85A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9917C34D38B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762738980; cv=none; b=a678HyiCBOSu9StXFha8fYRpyVtvxwGABqP6yvu2/F+tx+KojeLQw2yATtuMZ0bucJ6pOhBXFRDvm8MOt+b0lcI3rg1Q4DB+uulhujLI+AWj6QCRx5iEUE5PpLbCmUZjgjcEIpuhst+f4ycUDoBDVEZJVvQ+dw1GSAfiVVb1DNw=
+	t=1762739256; cv=none; b=lBv9ki5m4tniHOwGu+kzCAbJCWbX+Vh0bb2vrxSSAyOPmJJMHwCT3El5C0wd6LopfQYOPsg/MCtqzl+L72aciQH3qFSTBLVjLjgMaFPsQ6QcLiQzz2ab9zpZf2ldunieFUhpweM0tNlaP43lkt8DaF2WKQvaWc6nrYtitk+Ohuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762738980; c=relaxed/simple;
-	bh=roeKHosmV5a9D0vtB00ZurrUNmOU0pldpLOfqIPJE1M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LLdZscJK3wKQF+96Xp5kAHrZR83wH/w/Fc0wosSjDLkpV2A12RK/hE+iQzZYpDeZun1dR05uOVxxm2xuKhxa0TViV5gBARIOTsiEpbkGLDcsNBH+wa0KGZo3yYsOE+AZUja9qFeM0NTm3+ev4vrJpuBK55zODExMKdb1LZ4IAEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eS3vIvpS; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b7277324054so350167366b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 17:42:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762738977; x=1763343777; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JP3DVa4WnhcXTOt0TA+45TQS+vl712XR/n54d7dvW4k=;
-        b=eS3vIvpSX6YkRrMDggJ5LsLm8rc/HDINAe1c7i8O9tjmOzsIuU5HmLiYQiGYV5+tgM
-         palilX0twSPr8UkOVnxJo/Reaq1BZpTk4Ucm1YS8e+9PEnufoovc9FSqmrxtHkSyTnhG
-         ujOOXcRql/4yCuT/WDNI/7s3mjd+EGJFLmNRwroE8IN7NSAVjoHLQzKdvR0fkFrEuf10
-         Me8xXN25PMBUCeJAs85rUgkXGGqAijFEiNQ4MHpRtjV6peRNqF8S4hzGaYcsz1IhbQmo
-         P7Jn9rKATGjj4trer7PWTu1VnuJHBt6bGOjoQ8L2XBoZVq6d4ux9CAfiDw2QTg+lksGY
-         CoUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762738977; x=1763343777;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JP3DVa4WnhcXTOt0TA+45TQS+vl712XR/n54d7dvW4k=;
-        b=igb5EI3AEhGbsnsCFoKjScesWZjxMwr3ucOJC4d9HeZjU1cUnyvmhmE2TGnj1g60z8
-         klB1a5tS8XceCApiL32r2rG5WtQ3Bhu8lWs3/V7lAPx++6n62dzg6/sXxpXqtw/ea+gt
-         c/bfGp1mLL2+Z0SRG054G40WhVYH6XbUcpuAGSKfgjVdLa5ou+vARBcKthW6ndVcHgcF
-         h92igYhQKn1xHsBFLaXzOTQpXOXTgHuOgjsADbUaImkKod12RoczUQ6xVqMlaiRmQNi4
-         cvW1zSu0sGANzKFxVBsAWpTxU8LyJvLiZU7ie7WqvHP7wMd2/LOiIGqMzXXWvEpYsqmC
-         MuQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXb9QdiE+m+hqkvTFT8SjxL17ljoUIe3r8xXm6QAlVIghB16K1qIXkjb0DBSUmUzeW8W9p1owWl9GBlyig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH5aVpc1j+QO7ll0I1DsPIcxvZwfVlZzJFlGyE1LtIcRBro70B
-	G5okgsPVyeXaNuX1mEOeXpczWgSTgN6oxYDPI8s7cN/jysjUagCvXUZdEtLRbW/wnzddZrVq1zc
-	HOOI0JlQO5aTTeP1mePFpoSXD1bJs+VQ=
-X-Gm-Gg: ASbGncuHAH72NCIhU16vHzXLN9RUzKeBc+nI1IzWnKyM2I69KbC2QVjzcYmoqRjZpED
-	a8CL4S83Z/dZr67JzZKSfeLykZCHjU4DQLCQjeFuXSl+kenKLMNpbGwQ++wUhdQy7hFJCyXf7Au
-	ue5zVnpY+tDCIWuEdBi49+18DymO3xPRLxIb2l/iCevQJ9ZO4NsMSsKUcBEV1+Az1Ymde5KVdkK
-	AjKkm1nokEhXhmDJkxG9jtyWE2hYYz3XECORSJJxsDNP8eJ5KIbumWdJbQ/PvmGw/E8zf+b
-X-Google-Smtp-Source: AGHT+IHxalHuUl0diHbHbqSgdtteSP39RbhhDJcfDrHDQLwiewaAgReJxi8MSmaTfP49jHGdIaJy8QVnIJfdydncSCI=
-X-Received: by 2002:a17:907:960f:b0:b6d:573d:bbc5 with SMTP id
- a640c23a62f3a-b72e05216a8mr651354766b.37.1762738976855; Sun, 09 Nov 2025
- 17:42:56 -0800 (PST)
+	s=arc-20240116; t=1762739256; c=relaxed/simple;
+	bh=FulMp6Eem6PG6+92p6Suhc/Bk0S30dBxL+B3O6SN9vU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f40G02ZL+5halsmhnqg9TuaLhZv4XkHOn6QJjhJBcQzC0Df6LRw7TiP26+KtsuLoq8T/2D3/dZgyx8EysKXwwMR/eJOArAWD15XdnSrASlpIq6WH7iLNXn1ImAPpz61HXJANMY8o+cQ1v6wU8CLhIBekgpDo8DVyAZ5fNwUopG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PiNaYkMO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762739253;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1mW+VFOxHLx1G37VL3/ek86NigQzHVKgkRFvwy3hb64=;
+	b=PiNaYkMOkWzIdhjtJNoOPcyNCRMFrjff1e712OTFf14RTaGCy2Ob6RQPchgFAJyWGBHiEa
+	uNCmPmnBkQxU9QWHlyeT+HStO1CLNLToxkk1HJ0AubLHmrFHib8OOD6RRFHgUvoWozo6Tl
+	SaiXRpq/SJju+bN7u5YGgOvyOPFyIUs=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-611-HxlT3WwBMsmk_q3rTshKvA-1; Sun,
+ 09 Nov 2025 20:47:29 -0500
+X-MC-Unique: HxlT3WwBMsmk_q3rTshKvA-1
+X-Mimecast-MFC-AGG-ID: HxlT3WwBMsmk_q3rTshKvA_1762739248
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2B00D1800451;
+	Mon, 10 Nov 2025 01:47:27 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.72.112.58])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E426A30001B9;
+	Mon, 10 Nov 2025 01:47:19 +0000 (UTC)
+From: Pingfan Liu <piliu@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Pingfan Liu <piliu@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Chen Ridong <chenridong@huaweicloud.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: [PATCHv5] sched/deadline: Walk up cpuset hierarchy to decide root domain when hot-unplug
+Date: Mon, 10 Nov 2025 09:47:06 +0800
+Message-ID: <20251110014706.8118-1-piliu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106131956.1222864-7-dolinux.peng@gmail.com>
- <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
- <CAErzpmtRYnSpLuO=oM7GgW0Sss2+kQ2cJsZiDmZmz04fD0Noyg@mail.gmail.com>
- <74d4c8e40e61dad369607ecd8b98f58a515479f0.camel@gmail.com>
- <CAADnVQLkS0o+fzh8SckPpdSQ+YZgbBBwsCgeqHk_76pZ+cchXQ@mail.gmail.com>
- <5a8c765f8e2b4473d9833d468ea43ad8ea7e57b6.camel@gmail.com>
- <CAADnVQKbgno=yGjshJpo+fwRDMTfXXVPWq0eh7avBj154dCq_g@mail.gmail.com> <6cbeb051a6bebb75032bc724ad10efed5b65cbf7.camel@gmail.com>
-In-Reply-To: <6cbeb051a6bebb75032bc724ad10efed5b65cbf7.camel@gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Mon, 10 Nov 2025 09:42:44 +0800
-X-Gm-Features: AWmQ_bl_xaW29RwtOH8GX4T2QXaqHNL_zJ_DvR2CHtswjBcenwUdIazXf1_6bMs
-Message-ID: <CAErzpmtViehGv3uLMFwv5bnRJi4HJu=wE6an6S0Gv2up3vncgA@mail.gmail.com>
-Subject: Re: [PATCH v5 6/7] btf: Add lazy sorting validation for binary search
-To: Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Ihor Solodrai <ihor.solodrai@linux.dev>
-Cc: bot+bpf-ci@kernel.org, Alexei Starovoitov <ast@kernel.org>, zhangxiaoqin@xiaomi.com, 
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, Chris Mason <clm@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Sat, Nov 8, 2025 at 3:51=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com>=
- wrote:
->
-> On Fri, 2025-11-07 at 11:01 -0800, Alexei Starovoitov wrote:
-> > On Fri, Nov 7, 2025 at 10:58=E2=80=AFAM Eduard Zingerman <eddyz87@gmail=
-.com>
-> > wrote:
-> > >
-> > > On Fri, 2025-11-07 at 10:54 -0800, Alexei Starovoitov wrote:
-> > >
-> > > [...]
-> > >
-> > > > > > > > @@ -610,7 +674,7 @@ s32 btf_find_by_name_kind(const
-> > > > > > > > struct
-> > > > > > > > btf
-> > > > > > > > *btf, const char *name, u8 kind)
-> > > > > > > >                       goto out;
-> > > > > > > >       }
-> > > > > > > >
-> > > > > > > > -     if (btf->nr_sorted_types !=3D BTF_NEED_SORT_CHECK) {
-> > > > > > > > +     if (btf_check_sorted((struct btf *)btf)) {
-> > > > > > >                                   ^
-> > > > > > >
-> > > > > > > The const cast here enables the concurrent writes discussed
-> > > > > > > above.
-> > > > > > > Is
-> > > > > > > there a reason to mark the btf parameter as const if we're
-> > > > > > > modifying it?
-> > > > > >
-> > > > > > Hi team, is casting away const an acceptable approach for our
-> > > > > > codebase?
-> > > > >
-> > > > > Casting away const is undefined behaviour, e.g. see paragraph
-> > > > > 6.7.3.6
-> > > > > N1570 ISO/IEC 9899:201x Programming languages =E2=80=94 C.
-> > > > >
-> > > > > Both of the problems above can be avoided if kernel will do
-> > > > > sorted
-> > > > > check non-lazily. But Andrii and Alexei seem to like that
-> > > > > property.
-> > > >
-> > > > Ihor is going to move BTF manipulations into resolve_btfid.
-> > > > Sorting of BTF should be in resolve_btfid as well.
-> > > > This way the build process will guarantee that BTF is sorted
-> > > > to the kernel liking. So the kernel doesn't even need to check
-> > > > that BTF is sorted.
-> > >
-> > > This would be great.
-> > > Does this imply that module BTFs are sorted too?
-> >
-> > Yes. The module build is supposed to use the kernel build tree where
-> > kernel BTF expectations will match resolve_btfid actions.
-> > Just like compiler and config flags should be the same.
->
-> There is also program BTF. E.g. btf_find_by_name_kind() is called for
-> program BTF in bpf_check_attach_target(). I think it would be fine to
-> check program BTF for being sorted at the BTF load time.
+*** Bug description ***
+When testing kexec-reboot on a 144 cpus machine with
+isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
+encounter the following bug:
 
-[[Resending in plain text format - previous HTML email was rejected]
+[   97.114759] psci: CPU142 killed (polled 0 ms)
+[   97.333236] Failed to offline CPU143 - error=-16
+[   97.333246] ------------[ cut here ]------------
+[   97.342682] kernel BUG at kernel/cpu.c:1569!
+[   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
+[...]
 
-Thanks for the feedback. Based on the previous discussions, I plan
-to implement the following changes in the next version:
+In essence, the issue originates from the CPU hot-removal process, not
+limited to kexec. It can be reproduced by writing a SCHED_DEADLINE
+program that waits indefinitely on a semaphore, spawning multiple
+instances to ensure some run on CPU 72, and then offlining CPUs 1–143
+one by one. When attempting this, CPU 143 failed to go offline.
+  bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devices/system/cpu/cpu$i/online 2>/dev/null; done'
 
-1. Modify the btf__permute interface to adopt the ID map approach, as
-    suggested by Andrii.
+Tracking down this issue, I found that dl_bw_deactivate() returned
+-EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
+But that is not the fact, and contributed by the following factors:
+When a CPU is inactive, cpu_rq()->rd is set to def_root_domain. For an
+blocked-state deadline task (in this case, "cppc_fie"), it was not
+migrated to CPU0, and its task_rq() information is stale. So its rq->rd
+points to def_root_domain instead of the one shared with CPU0.  As a
+result, its bandwidth is wrongly accounted into a wrong root domain
+during domain rebuild.
 
-2. Remove the lazy sort check and move the verification to the BTF
-    parsing phase. This addresses two concerns: potential race conditions
-    with write operations and const-cast issues. The overhead is negligible
-     (approximately 1.4ms for vmlinux BTF).
+*** Issue ***
+The key point is that root_domain is only tracked through active rq->rd.
+To avoid using a global data structure to track all root_domains in the
+system, there should be a method to locate an active CPU within the
+corresponding root_domain.
 
-3. Invoke the btf__permute interface to implement BTF sorting in resolve_bt=
-fids.
+*** Solution ***
+To locate the active cpu, the following rules for deadline
+sub-system is useful
+  -1.any cpu belongs to a unique root domain at a given time
+  -2.DL bandwidth checker ensures that the root domain has active cpus.
 
-I welcome any further suggestions.
+Now, let's examine the blocked-state task P.
+If P is attached to a cpuset that is a partition root, it is
+straightforward to find an active CPU.
+If P is attached to a cpuset that has changed from 'root' to 'member',
+the active CPUs are grouped into the parent root domain. Naturally, the
+CPUs' capacity and reserved DL bandwidth are taken into account in the
+ancestor root domain. (In practice, it may be unsafe to attach P to an
+arbitrary root domain, since that domain may lack sufficient DL
+bandwidth for P.) Again, it is straightforward to find an active CPU in
+the ancestor root domain.
 
-Thanks,
-Donglin
+This patch groups CPUs into isolated and housekeeping sets. For the
+housekeeping group, it walks up the cpuset hierarchy to find active CPUs
+in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
+
+Signed-off-by: Pingfan Liu <piliu@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Chen Ridong <chenridong@huaweicloud.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Pierre Gondois <pierre.gondois@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Valentin Schneider <vschneid@redhat.com>
+To: linux-kernel@vger.kernel.org
+---
+v4 -> v5:
+  Move the housekeeping part into deadline.c (Thanks for Waiman's suggestion)
+  Use cpuset_cpus_allowed() instead of introducing new cpuset function (Thanks for Ridong's suggestion)
+
+ kernel/sched/deadline.c | 50 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 44 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 72c1f72463c75..7555b7af49486 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2879,11 +2879,43 @@ void __init init_sched_dl_class(void)
+ 					GFP_KERNEL, cpu_to_node(i));
+ }
+ 
++/*
++ * This function always returns a non-empty bitmap in @cpus. This is because
++ * if a root domain has reserved bandwidth for DL tasks, the DL bandwidth
++ * check will prevent CPU hotplug from deactivating all CPUs in that domain.
++ */
++static void dl_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
++{
++	const struct cpumask *hk_msk;
++
++	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
++	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
++		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
++			/*
++			 * CPUs isolated by isolcpu="domain" always belong to
++			 * def_root_domain.
++			 */
++			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
++			return;
++		}
++	}
++
++	/*
++	 * If a root domain holds a DL task, it must have active CPUs. So
++	 * active CPUs can always be found by walking up the task's cpuset
++	 * hierarchy up to the partition root.
++	 */
++	cpuset_cpus_allowed(p, cpus);
++}
++
++/* The caller should hold cpuset_mutex */
+ void dl_add_task_root_domain(struct task_struct *p)
+ {
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 	struct dl_bw *dl_b;
++	unsigned int cpu;
++	struct cpumask msk;
+ 
+ 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
+ 	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
+@@ -2891,16 +2923,22 @@ void dl_add_task_root_domain(struct task_struct *p)
+ 		return;
+ 	}
+ 
+-	rq = __task_rq_lock(p, &rf);
+-
++	/*
++	 * Get an active rq, whose rq->rd traces the correct root
++	 * domain.
++	 * And the caller should hold cpuset_mutex, which gurantees
++	 * the cpu remaining in the cpuset until rq->rd is fetched.
++	 */
++	dl_get_task_effective_cpus(p, &msk);
++	cpu = cpumask_first_and(cpu_active_mask, &msk);
++	BUG_ON(cpu >= nr_cpu_ids);
++	rq = cpu_rq(cpu);
+ 	dl_b = &rq->rd->dl_bw;
+-	raw_spin_lock(&dl_b->lock);
+ 
++	raw_spin_lock(&dl_b->lock);
+ 	__dl_add(dl_b, p->dl.dl_bw, cpumask_weight(rq->rd->span));
+-
+ 	raw_spin_unlock(&dl_b->lock);
+-
+-	task_rq_unlock(rq, p, &rf);
++	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
+ }
+ 
+ void dl_clear_root_domain(struct root_domain *rd)
+-- 
+2.49.0
+
 
