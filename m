@@ -1,65 +1,66 @@
-Return-Path: <linux-kernel+bounces-894060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE50C492BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:02:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D71BC492C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7733A7E21
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82F203B189A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF6A33F37B;
-	Mon, 10 Nov 2025 20:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAC133F8A0;
+	Mon, 10 Nov 2025 20:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="MvdQFh+p"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NFecNSsk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD61823ABAA;
-	Mon, 10 Nov 2025 20:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9A8337B8A;
+	Mon, 10 Nov 2025 20:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762804844; cv=none; b=qV5nnmALa/TJnYUYWlUVXst//ii4cpMegkzQuSY/vr5y/6wxZc5cgmuQEFwjhLb0Udozo06O49xYeXR7pK43duqmj20aEzKCRyYuFmChUQr1Vn4q0aI39sM7Ku1/M4OSAhjbb9d2Ybqtbqy0RKA9XXEFBrn51L8fxSTp5nC/Xtw=
+	t=1762804856; cv=none; b=t44YPkZrU0d00pzsMscq557Dt50RMiQaXRStRSCgZaTFHXo1eK8jXxARo80TZiKAB/jquT3w+QquYxWFubrDhf9j9ovGQ7/AJZRn3es+z9+0aGLnA3gd+1FRCYQKsNLkqAbyut19rovZPSQYp8Q9kVPywGEkIZKUohj8QUxZ9mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762804844; c=relaxed/simple;
-	bh=x3/zNfptxWLesTC0zLnXtLKCOdpS9US28LaLU57PJYE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BOvzKw0hPGByXYdEbDj8OfJjhkfdCegi71WEH9RMhYjXLjY/5lJjtKlSZETMHLr2imt/vDJdhWAmBSzUYYTdQTTYwZH1ofYoiTesoSyCDUmHIF/EfqSbLDeyHv+y4/nLBFu8a7g5HHEjv76DiDwNqRySlaNM7VrhJ9cnLAeWXQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=MvdQFh+p; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net EC94D40AFB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1762804842; bh=q4tGKQ/Buw90yug1sDXqAML16zlt1m1AKUdfO1e3XuU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=MvdQFh+p7soAU+Q4EEOZVUp40TCC9BxygeHkyl0sPBwXPK6AQnUTsQhHSxB9jMPSx
-	 AIrwtaELKfZcSWiNqlazlRGh8/Hq2rZZUV2BkbFAqvj3C+ACxgOIDkVUuULoRze6qa
-	 Wf84RK+3IVFkrmBbpddmNbzKF0cwXjbBO3ceLPMxtfiDgsqC+kg72ysq+nIK7QGEzE
-	 O89awm2CQ9lB83VkLmV5pr6xe6TkZjSWEcQV6OeaU+QtJJQFD0uOUJPShwunaVJhB8
-	 JjzzhxGq0+/OKtZyzcVV68vjVhmoOKtnupiaIjD/e7v8lWzN8+Xni5fMuiKrM71nIC
-	 DRMIUyKDU2fzQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id EC94D40AFB;
-	Mon, 10 Nov 2025 20:00:41 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
- cgroups@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Natalie Vock <natalie.vock@gmx.de>, Maarten Lankhorst
- <dev@lankhorst.se>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
- Tejun Heo
- <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH RESEND 1/3] docs: cgroup: Explain reclaim protection target
-In-Reply-To: <20251110193638.623208-2-mkoutny@suse.com>
-References: <20251110193638.623208-1-mkoutny@suse.com>
- <20251110193638.623208-2-mkoutny@suse.com>
-Date: Mon, 10 Nov 2025 13:00:41 -0700
-Message-ID: <87wm3xwtcm.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1762804856; c=relaxed/simple;
+	bh=h3o9LAmSyvnIV3axnAq88Rd/1hcBZOHc9Sn/FM6kKjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUkhrp79e3lRCMRictC3UW6/coDuEO10HPKf4Izetf3gUVw2Tol4F4TdryvQ85I6CEnj9c0ljnEo6lfD/e6lmKwpWtK4V4cB6lZ8AcLeAcb/ex8OST48wAB+Te03Qv7PpUYEdtrz6f1i7XXLqAOVFWUp8tww+gMu83/qeuUWWSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NFecNSsk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D34BC16AAE;
+	Mon, 10 Nov 2025 20:00:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1762804855;
+	bh=h3o9LAmSyvnIV3axnAq88Rd/1hcBZOHc9Sn/FM6kKjc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NFecNSsktu3j835501fvdrNAHQdcXfJBeqB/8rcmLpxHpDaI9gnaWVUe1QmuoKv2W
+	 TiLgRNTNBihqF8c8738rDT7E9BFfMJl1eJoU2EF3fs5rS6FVJo1vSaRHMP7EcZyjyr
+	 TpDV9XYDgVKY6jv4GwkshuNcMgKPZ17S1MciZGfU=
+Date: Mon, 10 Nov 2025 15:00:54 -0500
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Mike Rapoport <rppt@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Christian Brauner <brauner@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
+	"workflows@vger.kernel.org" <workflows@vger.kernel.org>, "ksummit@lists.linux.dev" <ksummit@lists.linux.dev>, 
+	Dan Williams <dan.j.williams@intel.com>, Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH] [v2] Documentation: Provide guidelines for
+ tool-generated content
+Message-ID: <20251110-spiffy-intelligent-cockle-efde1e@lemur>
+References: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
+ <653b4187-ec4f-4f5d-ae76-d37f46070cb4@suse.cz>
+ <20251110-weiht-etablieren-39e7b63ef76d@brauner>
+ <20251110172507.GA21641@pendragon.ideasonboard.com>
+ <CAHk-=wgEPve=BO=SOmgEOd4kv76bSbm0jWFzRzcs4Y7EedpgfA@mail.gmail.com>
+ <aRIxYkjX7EzalSoI@kernel.org>
+ <CAHk-=wir-u3so=9NiFgG+bWfZHakc47iNy9vZXmSNWSZ+=Ue8g@mail.gmail.com>
+ <A274AB1C-8B6B-4004-A2BC-D540260A5771@zytor.com>
+ <CAHk-=whczwG=+-sAzoWoTY_VOwdFH3b5AkvQbgh+z98=p1iaXA@mail.gmail.com>
+ <20251110145405.5bc87cc5@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,79 +68,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251110145405.5bc87cc5@gandalf.local.home>
 
-Michal Koutn=C3=BD <mkoutny@suse.com> writes:
+On Mon, Nov 10, 2025 at 02:54:05PM -0500, Steven Rostedt wrote:
+> Probably no difference. I would guess the real liability is for those that
+> use AI to submit patches. With the usual disclaimers of IANAL, I'm assuming
+> that when you place your "Signed-off-by", you are stating that you have the
+> right to submit this code. If it comes down that you did not have the right
+> to submit the code, the original submitter is liable.
 
-> The protection target is necessary to understand how effective reclaim
-> protection applies in the hierarchy.
->
-> Signed-off-by: Michal Koutn=C3=BD <mkoutny@suse.com>
-> ---
->  Documentation/admin-guide/cgroup-v2.rst | 24 +++++++++++++++++++++---
->  1 file changed, 21 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admi=
-n-guide/cgroup-v2.rst
-> index 0e6c67ac585a0..a6def773a3072 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -53,7 +53,8 @@ v1 is available under :ref:`Documentation/admin-guide/c=
-group-v1/index.rst <cgrou
->       5-2. Memory
->         5-2-1. Memory Interface Files
->         5-2-2. Usage Guidelines
-> -       5-2-3. Memory Ownership
-> +       5-2-3. Reclaim Protection
-> +       5-2-4. Memory Ownership
+And if the lawyers come back and say that the submitter is not liable, what's
+to prevent someone from copypasting actual copyrighted code from a proprietary
+source and adding a "Generated-by: Chat j'ai-pété" line to absolve themselves?
 
-I always have to ask...do we really need the manually maintained TOC
-here?=20
-
->       5-3. IO
->         5-3-1. IO Interface Files
->         5-3-2. Writeback
-> @@ -1317,7 +1318,7 @@ PAGE_SIZE multiple when read back.
->  	smaller overages.
->=20=20
->  	Effective min boundary is limited by memory.min values of
-> -	all ancestor cgroups. If there is memory.min overcommitment
-> +	ancestor cgroups. If there is memory.min overcommitment
->  	(child cgroup or cgroups are requiring more protected memory
->  	than parent will allow), then each child cgroup will get
->  	the part of parent's protection proportional to its
-> @@ -1343,7 +1344,7 @@ PAGE_SIZE multiple when read back.
->  	smaller overages.
->=20=20
->  	Effective low boundary is limited by memory.low values of
-> -	all ancestor cgroups. If there is memory.low overcommitment
-> +	ancestor cgroups. If there is memory.low overcommitment
->  	(child cgroup or cgroups are requiring more protected memory
->  	than parent will allow), then each child cgroup will get
->  	the part of parent's protection proportional to its
-> @@ -1934,6 +1935,23 @@ memory - is necessary to determine whether a workl=
-oad needs more
->  memory; unfortunately, memory pressure monitoring mechanism isn't
->  implemented yet.
->=20=20
-> +Reclaim Protection
-> +~~~~~~~~~~~~~~~~~~
-> +
-> +The protection configured with "memory.low" or "memory.min" applies rela=
-tively
-> +to the target of the reclaim (i.e. any of memory cgroup limits, proactive
-> +memory.reclaim or global reclaim apparently located in the root cgroup).
-> +
-> +  root ... - A - B - C
-> +              \    ` D
-> +               ` E
-
-This will not render properly, you want it in a literal block.  The
-easiest way is to just make the line above read:
-
-   ...located in the root cgroup)::
-
-Thanks,
-
-jon
+-K
 
