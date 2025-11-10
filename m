@@ -1,137 +1,158 @@
-Return-Path: <linux-kernel+bounces-892819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5892EC45E5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:23:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021C2C45E56
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:22:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BA0A4EBEDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:20:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFF583A6C24
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844272FB978;
-	Mon, 10 Nov 2025 10:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54B630103A;
+	Mon, 10 Nov 2025 10:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IgH64gcS"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ekezcl0q";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="NPHspo++"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5A72F7AAC
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8F82F7AAC
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762770039; cv=none; b=tWc/SZBjCRSAuZGGyfQxS00jku6IbirsLCjGyuDiXmiUz10D9HaPPfG/nNivKWj3Ci3/axAkRb+Ru3GRJcWRu7CWlfx5UMReQ88zmGaAZxlBGSwJLoceeL7gZnVi62Yo+kY3WFAOC6U1LkZwGHzw9IIWK4du+t9PYqILecIIEec=
+	t=1762770125; cv=none; b=N9h9AOmukYzuw+19nvF16G5neq44Pb0c0QaPHrv17YPFxv17FQIzSBQsLCxP9rv1dJC0uM49yRQnaV4UkswU7PkzLGJfvyBguGPxy7zx4LjkF3VT3jLfxOR3MCRM7bkS2UBdAm5E6v2jn3PIz6SyRcqo94noLCKli4dzpNNPrVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762770039; c=relaxed/simple;
-	bh=NwuE0OymVSZ9Pgk9z4LwcFOxB4oAvyBUKaNACTeODX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YhSbZEol7HB4uiaEdJPgqGkb0zrn5BCO5MDc8BpPWuQvLh2WJJRwz1FycaUCqbv1ggzepW01Bs1hdzbWQGYsx7kIxWf62vNT16yJOSMjr6Ik6lbTnsZrlUSQcDWzE+s0ysmd5vjHsc7VK0q44HSlwYgt6RIFdnU+fFG91oq/owg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IgH64gcS; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47774d3536dso11504175e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:20:38 -0800 (PST)
+	s=arc-20240116; t=1762770125; c=relaxed/simple;
+	bh=BYFGMXA/UXxp1mCIzOizUs/qzKuKUPoAJ3Q6wLSw51I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lK+6Ir9WiU2BkMm5vuFLHU3cXAotoDjqy+y05ZDfcO0cAabexxtc4RuDScfr9sPATGPoGeOJ7ymQeOAoxL2D5VATMoT3tmzJ1cnmpP8plMgTSh3OyzSbZZ+BeaDKaf/h/eJB04ShxcF6GRnxKTjZGsVCll8dAkGcCatVoljS+sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ekezcl0q; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=NPHspo++; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AA6Srew2408556
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:22:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4vgVa6+vfpuHHyT/6RavB+XSFElugjvayi2iI6sahjk=; b=Ekezcl0q9Lbj91vq
+	kjEzJYMIIXuYpcKx88PQMDaK/dx5fmdm5SictKhofLHzdU33P3G/HB7E9hrn+wR3
+	c5OcZXvuMG7C1U7gWs5fSMSfQfs02OqVoWaJZ4HJAz+nazUoCODEI2coYTaF5rvH
+	EQXfS89a+4MoNpaVDTrWs79/0BCxbvdK8uX4prncAES82CayO+sjNIuJm4tm8jJw
+	FQmhr/CTykqh2JdY0ubyaSI8oKov8DiPyPLpVoJodBQE+iW1vud9f76Ojbu5z9PJ
+	lAOOEFiqlUCO9HNn6lKmo3rmPb8P6cM8d6qx82i5AoCAcn6az8sHBR69TRJaPqzE
+	m0M46g==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abatd8ra4-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:22:01 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ed6317be8cso11259451cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:22:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762770037; x=1763374837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YHN6hT4IBJzArtDOwYIufgC/ZHeLt/dXS4u8pqqIeWA=;
-        b=IgH64gcSLPPAGDGicIAciGdy5cZdAb613AYJ/+Ui+EHrNfsBZzxzrVD9zmNijjCbr1
-         8FXLdU6R8v2Wc7VlIDGx9ZntmSdg65xKYXqenKZ3EsLGJ8Ref1UIdGwOkxNnoquxaI5d
-         dSGLCxKA0PTFVB/SnlTUXvS0XNWILHQj0/y5KafOaP1lS/EAEgJnLnVr68XHvgDVTahe
-         IrOauZRCF3qKXgsDUaUMMjrxlMGIFF2u0akRPRz0/LeBZju3ePgmF1Bo9hdpRo1jjtHn
-         XqjbwIrchn9cYzTRLRumNwlL7/EBh+0QlZTkwja0vX+urixmuggPfWhwIEXU7xE9tQ0N
-         FySQ==
+        d=oss.qualcomm.com; s=google; t=1762770121; x=1763374921; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4vgVa6+vfpuHHyT/6RavB+XSFElugjvayi2iI6sahjk=;
+        b=NPHspo++FFQX9XYCPVjZCGTMDBKQh+JbLr4dy1LpGqaPY05zB6/on/lCnj4LudMGS7
+         y2JbP+pKX0vl1mS0H983c6XbVPBCod1XUuAaIeYLACCEAVbvnhET1wKz4TIwDQo27FqE
+         Cet4k56+Y+ibO68njmemV7bro04wYJyY7fnNVOBuLHrzcDvVZFGPPcXbQO1iIsUcX9Xc
+         AlRZRhO5fbD3jmVOhoJyMxtdvKpNnMtZEs4EQ3fzqLv5cxf1rIpKfkxQjr7Bb3kAlABB
+         2Mr80OcPsSeh1sArhjsJMHRHQ5O9lOht/OAnUsEBCzxRYVMl7Z54DBV6SVa4dMp9Y5Q4
+         NkrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762770037; x=1763374837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YHN6hT4IBJzArtDOwYIufgC/ZHeLt/dXS4u8pqqIeWA=;
-        b=Pz7SJBYNEFlw2e+EH4kFeQBmoj8ELOe5DWHVQak25fhLmAVBeKfIWk7i11L51X3SKE
-         meXFhL5ZkXavxM8yJ4nuLmrcukii1tMuJ9a26llC9tUe6VQUnjDXdt3jczJHD04qblsz
-         6Rk1J8yizyIGLKAxBdD/QqJ3nxr09jRfLmascUcA9BCT2cTPWVC2ZeHZCEpRd51GBLo2
-         4U9jGeT72bjM3F5uY580GIGfW/MX2vJWFiayNO907FZrR4IoYEOn2X3jB3+fMnetgz+x
-         lgjtGD8Z0o2OLlfy6AGAH3XG0F/Xxoplu7EmHZkoni+Hvg8Kz4Cz+jgDs1KnV6AJoZIH
-         xnmA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+3P2CCswmomgEeWEt3b9D4dol0vU1olHzSoN05fHlf1uG0bgRRrtTKZNxwV230OKvu0z/SyrrB8X8cp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIIMqA7mOW6JmaCetpeB0vb5HeM2My2g7b1P9uEIsyGbXoI5en
-	dfoUYkB16SBLBEDGh/mEUVn7nD7dW386cmHHQIzxBjqXijERy7Kl5Vdw
-X-Gm-Gg: ASbGncs+dmGGoTsv2+akASRuSjBZpp6EFyJFYJ6OPNSVt2iFtgkGIOABMiFu73R9Gsw
-	nKOI7gBO+FLIQVF41SeaVvUQdGPEz/UPZRNSCCnUUu0kKUI5fG8PGaIZV/LBlxPB/E64orabB78
-	snI6Mmz0Z8einJusipKI/2C4k/bNczMPJq6oa5t537XR3aUmD3oi9wMYZYKxwwh7xZ9N/ulQ1H+
-	l9ouqJT8vfBT2vRCBzX+Z09M2QjYF7w24NDLjjRy5c2foBEdXSIqR5h5MieL913bYnRb56A8B83
-	JDsXfTaAQYgccOJxQryl0RqROQENvHbmFqKjTFl52OMkCkmFEUX1m7xBRUWbyhimCzkFrDLi2Br
-	esreY9wjfJQX6effNtUaLfH+9UpUn+4PMrcTSs8EF2f8RN0nH0IwyQ8h0T4VNUup/Gp5HE/ORPn
-	kxXydns0Fu5YNwa8O2iRSbrj5mdqg5O76olydvyHJSX/Yu6vlMz569zEDTf3IGR4h0HoBPqRXg7
-	Co=
-X-Google-Smtp-Source: AGHT+IFP3O2YUEuoot/+M0fJaUnySlBCmO85Z/WipYoF1i2pacbVS7QKl7uZsAR7sKgw63LPBf7HNw==
-X-Received: by 2002:a05:600c:3b01:b0:46e:59bd:f7e2 with SMTP id 5b1f17b1804b1-47772deb36bmr71489405e9.11.1762770036422;
-        Mon, 10 Nov 2025 02:20:36 -0800 (PST)
-Received: from u67f9ca6e60d851.ant.amazon.com (54-240-197-232.amazon.com. [54.240.197.232])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac679c5dcsm24159885f8f.44.2025.11.10.02.20.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 02:20:35 -0800 (PST)
-Date: Mon, 10 Nov 2025 11:20:33 +0100
-From: Praveen Kumar <kpraveen.lkml@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v2 2/3] dmaengine: Use device_match_of_node() helper
-Message-ID: <aRG8cVly3b7sR9Vw@u67f9ca6e60d851.ant.amazon.com>
-References: <20251110085349.3414507-1-andriy.shevchenko@linux.intel.com>
- <20251110085349.3414507-3-andriy.shevchenko@linux.intel.com>
+        d=1e100.net; s=20230601; t=1762770121; x=1763374921;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4vgVa6+vfpuHHyT/6RavB+XSFElugjvayi2iI6sahjk=;
+        b=I1oyJDmrCLABSZsWEmVKUnvi2X9xcW/XxjXY8KEpBUcOyOk4ukRmkqsjVuhabygCPp
+         8AfwRm3KdaBbGTZKUWAY5O5+lmg6pJ4IaG2jNgeKErTwSM/s2buH9JuFgDZGVNAVy/35
+         AHWIaWiKLinfDdBeH719fFoX/tuHm7aSEE1KzIT+6/CigrehF06Wdkxcg4f1w4z+8pcj
+         VagWLUY/FWrirjSklZ3R48+DZS1qhiu7T6RgaOYfHpcpUEw+Et/SXJ8eA4Ok0IudgLqs
+         bk+EBAwOABdZ+al/J+dZw3FHDTGiqtlMpRbwjh4h3J9bc88SZK3ioiKS92VgiMVMvN9D
+         RHIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0NVlaq3FQUvIGUm7SA7ywtqNpYaQq2EosIOZ6xdU+SE36YZYIQv0uGU3oNuT9Wbpt1FroqPWh6CFpSbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+bj2//1t324DreO2tsAVMyR0B9VF9pBCre0BpDkTB2K1Fk0d8
+	8L36r7CNrmxzn92GCimNM49CR29sMVvz1f2TzeXR7nImxVzhtmOhlCyIfrbJECkBBRwUZdTzfOK
+	50WlaMMB1dkG3VcMu0TskayPFy6AAlSPqDpW+asccu5W1dvz5r219xWraIGJzZTJEk1o=
+X-Gm-Gg: ASbGnctHqQ93a56WdY+3HA0w/8rqaP4SQx0HkcaRgQ0lEsISsc3Y+S//gFxzgC2cGlH
+	3RCNX1kAyO/lO0BGCDpKzatE88AaRV/+M5B8eSQfyj+eZuZvyzJMEU2CKzCB6RuLobSl3m7CNOl
+	1eViBs090t886QgvyY5pBCWqT/TrWV4ukd4OcxTn/ST2BYpUvWrl9EKtb6Umjo9Rcao80ha4y6j
+	Ra+j/SsN8s+B7rww+qE2I7WrrGbzDQlK6f/iRCTy8mFP3eoC9K7lnVX3eOBZYXZN8v1k1oPPVS5
+	2WiZle0m0h072mHu/UGL8r9qKPLx3HO9zUnAbFUEi1MQhWN25YAVBMkfRv0foeK8c76A4e+emdf
+	xhgtaV/e/vewodcKufIVbJzJjhclGUms0iFepWldwjJZuG89224wzhm7G
+X-Received: by 2002:a05:622a:24a:b0:4ed:7f85:225c with SMTP id d75a77b69052e-4eda4f9ab05mr68489121cf.10.1762770121014;
+        Mon, 10 Nov 2025 02:22:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHMZeSyWG1kpIQ0TUH1bX2pG4Eapv1I51CVFEMZ6ksXeC/t9idk6nZNtkUGmJLq10rhDDTVBA==
+X-Received: by 2002:a05:622a:24a:b0:4ed:7f85:225c with SMTP id d75a77b69052e-4eda4f9ab05mr68489031cf.10.1762770120650;
+        Mon, 10 Nov 2025 02:22:00 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d461sm1104993766b.47.2025.11.10.02.21.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 02:22:00 -0800 (PST)
+Message-ID: <55870352-eb6d-4cc2-840f-9de1a59ead93@oss.qualcomm.com>
+Date: Mon, 10 Nov 2025 11:21:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110085349.3414507-3-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] arm64: dts: qcom: sm6350: Add clocks for aggre1 &
+ aggre2 NoC
+To: Luca Weiss <luca.weiss@fairphone.com>, Georgi Djakov <djakov@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251107-sm6350-icc-qos-v1-0-8275e5fc3f61@fairphone.com>
+ <20251107-sm6350-icc-qos-v1-5-8275e5fc3f61@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251107-sm6350-icc-qos-v1-5-8275e5fc3f61@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: wn9R5tCUmi6KFcHLT5z1VJHvbU461C9i
+X-Authority-Analysis: v=2.4 cv=eZowvrEH c=1 sm=1 tr=0 ts=6911bcca cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8
+ a=WWQFUNGd85j635JlVwcA:9 a=QEXdDO2ut3YA:10 a=AYr37p2UDEkA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-ORIG-GUID: wn9R5tCUmi6KFcHLT5z1VJHvbU461C9i
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDA5MCBTYWx0ZWRfX06lQZ9khyhtL
+ t6NmdWVwqVpXojKL+lYTK9cayaJbBnOy2a2uUdCtorirKzNzuINtOZg5//yLMZNhcgnZPRGMI/5
+ t93gCelXWHcgcMEf/pHYel+jDSKKE+KsNR3Kw+4GwUUbMAwX5KDXvP3JWKEaf3JhrmLrshv5pMX
+ Zpctct8zB72PrUW29c0hZYPTe+NmfovtmZHv7yobaydTt5okHv+FkojJzndw5ATWYbiNxHQl8PL
+ doejOtqV1QoqRBLUFuhG7sBLqcivNTIlYALAt5CUbn/7kLf30GhK6jQsHZU5MgqGuU69dfyPI5P
+ eMDebrAAWNOrPaNTurSEzK07icjG5n0b5qLEWLmK7qYzEmxadN3+jNRAhsZGnKPnVnm4ryIMP8j
+ MNhGcOs/fuwRBbS1LpOC4qHW3hrJFQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_04,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511100090
 
-On Mon, Nov 10, 2025 at 09:47:44AM +0100, Andy Shevchenko wrote:
-> Instead of open coding, use device_match_of_node() helper.
+On 11/7/25 5:08 PM, Luca Weiss wrote:
+> As per updated bindings, add the clocks for those two interconnects,
+> which are required to set up QoS correctly.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 > ---
->  drivers/dma/dmaengine.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-> index eb27a72cd4c5..e89280587d5d 100644
-> --- a/drivers/dma/dmaengine.c
-> +++ b/drivers/dma/dmaengine.c
-> @@ -765,7 +765,7 @@ struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
->  	mutex_lock(&dma_list_mutex);
->  	list_for_each_entry_safe(device, _d, &dma_device_list, global_node) {
->  		/* Finds a DMA controller with matching device node */
-> -		if (np && device->dev->of_node && np != device->dev->of_node)
-> +		if (np && !device_match_of_node(device->dev, np))
 
-I see a difference in what device_match_of_node does vs what was
-happening in the previous check. And, we have an unwanted double
-check of np.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-int device_match_of_node(struct device *dev, const void *np)
-{
-        return np && dev->of_node == np;
-}
-
-Instead, I would recommend,
-
-        if (device->dev->of_node && !device_match_of_node(device->dev, np))
-                continue;
-
-Regards,
-Praveen Kumar.
-
->  			continue;
->  
->  		chan = find_candidate(device, mask, fn, fn_param);
-> -- 
-> 2.50.1
-> 
+Konrad
 
