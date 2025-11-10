@@ -1,53 +1,51 @@
-Return-Path: <linux-kernel+bounces-893582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F17AAC47E7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:22:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E69FC47E60
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:21:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FC6D426766
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDBD6422C44
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F4821D3F4;
-	Mon, 10 Nov 2025 15:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E102236E5;
+	Mon, 10 Nov 2025 15:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nlRoKtBs"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="mThySaAb"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6836A1E1A05;
-	Mon, 10 Nov 2025 15:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F8C1925BC
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790177; cv=none; b=S3FNpOjF8q7l8kJ8PBD7RsAu5JaWjGtSvG6UuY2kPjZ03MXnZ5Uiq3XcPdhNMZcx85ta26s8nUC8XOsgq/Vszdg2iIeA+hBzAhxVWjHpt7i9cb8+2K9bkuRpcM9qrtrdPMq/2KycYnESOPDf58Pgwscue9AjRTGkutrUeBYJkDM=
+	t=1762790224; cv=none; b=JKu/wtWDR0eCG8lufeP6sJ2oedOWKb7UFKaP7jM+mmN9oLlFDojtsbAtRzVIYAy/4Sn06C0uOT0siGKNLbuvfnaBnGyJpa9vDY//4xCbsPaePsPQHcVLOibxYAEzhe8K6DhW+fLzN1cdw3dkN0059+UanWTWApT79MO+dXIIvfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790177; c=relaxed/simple;
-	bh=Evj+lOVrr01ab8zRTT97Wh3Dmv5xu2JkXAvwKz1JgQI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=cN4h8Yl3r/D1nu/3R5gAyYRPtXUiLpLd/S3URhV05D3daq2VN2c5BUpa4JAg2fzlJo2FDPKfU7Sb19dnb9j97gFcdBTWxv2LSWvSefUZ44ymSkpt0tQlNDNAlVBCwCimpyiz6B/fIzUEqqjyyQE5qZ5kxmAuOdA59L/L2ERg9N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nlRoKtBs; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1762790173; x=1763394973; i=markus.elfring@web.de;
-	bh=NyoRtKZMt3Y8HN4bgmHM+MGmoizriekNDriW1so/mFQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=nlRoKtBs2qflyusofjSBFQkf2PRupO9XIeTcfI88ZJc/o3PA0j2chqOCXYA7xGjB
-	 9Vb8utV5A5vfI3jrnvpHH5qWln33LZhuMpG960R4v9GIv+LzlqKOdka7GlOZnkH4m
-	 V76hRtR8dD0PjDEYe5U5HEsGeu7Ou/wb82tzZqHdoo1qbm5zHhlsH60XmHjQ0Q9GV
-	 w+GFpTOHg1GK83x5dmkpQFSUuTcNgLDSN4pONLyHnUNOrFONKUYhADJRqrtKCBYep
-	 U9tF6cChPE7lipAeNPhvHHBfhQlvaN/4w4UM1Evue2bVP3/gYUFfAQ3XRJH6rdB1l
-	 0uA1uaEFq5kNewSxvg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.196]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mpl4z-1vzqLo1LMT-00gBDR; Mon, 10
- Nov 2025 16:56:13 +0100
-Message-ID: <d9574f40-8d0f-4f14-bc9f-b29c56069b8b@web.de>
-Date: Mon, 10 Nov 2025 16:56:10 +0100
+	s=arc-20240116; t=1762790224; c=relaxed/simple;
+	bh=9h5y07HfWi1JW4gkFfK8S6D02+e3sfc0C26Hruy0yhI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NnmFPkKMhPf4Q04l78TjRmSctjgzxFW7u5ULfzUYU4kxlxkWGK0oaOKEUEJEC+xzcetRD4JLTJ7rLn8QVqemNBYqL0Ro4yhJLswY29oB6fTDBZTX/Pe6iZdCp0qIyzC2urTJOGoeFN1mqReamyVDPHKpbCJ+40eWWBOvmkq62pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=mThySaAb; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id 1HSry8VHPsrT745Q; Mon, 10 Nov 2025 10:57:00 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=dajjb8uz5mecip9sfd9W0SLfv2m1ZqKHaKUfIKWBy/M=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=mThySaAbmewOGFMMJaH0
+	rRI5JXZLippwUlwqvZU30z4HcVxWq5zACUGAMJZT3oWtInV4wW//bn0SuQSrvTXuVrBbIi2gkNbBf
+	r2HTyaz4l0Wwpd2fgbmD8JuPcy+e+G7nCEEUdCgLgulSzZjTnQkpblq85KGr2Pnjkp11XvQ4ws=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14272439; Mon, 10 Nov 2025 10:57:00 -0500
+Message-ID: <2c8d03e4-308b-4d5a-a418-a334be23f815@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 10 Nov 2025 10:57:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,120 +53,541 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Herbert Xu <herbert@gondor.apana.org.au>, Neil Horman <nhorman@tuxdriver.com>
-Content-Language: en-GB, de-DE
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] crypto: rng - Combine two seq_printf() calls into one in
- crypto_rng_show()
+Subject: [PATCH v3 09/16] scsi: qla2xxx: fix races with aborting commands
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH v3 09/16] scsi: qla2xxx: fix races with aborting commands
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8DsCZLSh6bLsiUFrFP8wn97UVCT9AK6f5n1hWN9Zd5QxNk/dQz2
- w0wdozaMANQl+v0R/ohLtDzAS09chGCiJMDuu+Qo4x3O9pAvq+Pabwqe8S3Zu9Wd/fLbAEl
- P2ksBzh8LXSILFBIpi6BfxXM2L30AW0OFSSveku06BZ+4HSnp5E1LHe0zW2r+Nrlug6gyWJ
- GDvE+n6oGzRfSkHLmFXnQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:tl9rr/ktowk=;JNksCw1sDTrTeC0Vk5ej4osDsGd
- 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
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1762790220
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 19154
+X-ASG-Debug-ID: 1762790220-1cf439139110cdb0001-xx1T2L
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 10 Nov 2025 16:45:13 +0100
+(target mode)
 
-A bit of data was put into a sequence by two separate function calls.
-Print the same data by a single function call instead.
+cmd->cmd_lock only protects cmd->aborted, but when deciding how to
+process a cmd, it is necessary to consider other factors such as
+cmd->state and if the chip has been reset, which are protected by
+qpair->qp_lock_ptr.  So replace cmd_lock with qp_lock_ptr, whick makes
+it possible to check additional values and make decisions about what to
+do without racing with the CTIO handler and other code.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- crypto/rng.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+- Lock cmd->qpair->qp_lock_ptr when aborting a cmd.
+- Eliminate cmd->cmd_lock and change cmd->aborted to a bitfield since it
+  is now protected by qp_lock_ptr just like all the other flags.
+- Add another command state QLA_TGT_STATE_DONE to avoid any possible
+  races between qlt_abort_cmd() and tgt_ops->free_cmd().
+- Add the cmd->sent_term_exchg flag to indicate if
+  qlt_send_term_exchange() has already been called.
+- Export qlt_send_term_exchange() for SCST so that it can be called
+  directly instead of trying to make qlt_abort_cmd() work for both
+  TMR abort and HW timeout.
 
-diff --git a/crypto/rng.c b/crypto/rng.c
-index ee1768c5a400..479c4ac6fb6c 100644
-=2D-- a/crypto/rng.c
-+++ b/crypto/rng.c
-@@ -81,8 +81,7 @@ static void crypto_rng_show(struct seq_file *m, struct c=
-rypto_alg *alg)
- 	__maybe_unused;
- static void crypto_rng_show(struct seq_file *m, struct crypto_alg *alg)
- {
--	seq_printf(m, "type         : rng\n");
--	seq_printf(m, "seedsize     : %u\n", seedsize(alg));
-+	seq_printf(m, "type         : rng\nseedsize     : %u\n", seedsize(alg));
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
+
+v2 -> v3: no changes
+
+v1 -> v2:
+- On second timeout, reset the ISP rather than unmapping DMA that
+  might be in use by the hardware.
+- Apply "scsi: qla2xxx: clear cmds after chip reset" from Dmitry
+  Bogdanov as prerequisite.  This is required for the ISP reset to clear
+  the locked-up command.
+- Move the revert of 26f9ce53817a ("scsi: qla2xxx: Fix missed DMA unmap
+  for aborted commands") from this patch to the previous patch since
+  that patch fixed the oops, even though this patch is still necessary
+  for its other improvements.  Rename this patch and reword the patch
+  description to match.
+- No longer export qlt_unmap_sg().
+- Export qla2xxx_wake_dpc().
+- Remove TRC_CTIO_IGNORED.
+
+ drivers/scsi/qla2xxx/qla_os.c      |   1 +
+ drivers/scsi/qla2xxx/qla_target.c  | 198 +++++++++++++----------------
+ drivers/scsi/qla2xxx/qla_target.h  |  17 ++-
+ drivers/scsi/qla2xxx/tcm_qla2xxx.c |   2 +
+ 4 files changed, 102 insertions(+), 116 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 739137ddfd68..2a3eb1dacf86 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -7248,6 +7248,7 @@ qla2xxx_wake_dpc(struct scsi_qla_host *vha)
+ 	if (!test_bit(UNLOADING, &vha->dpc_flags) && t)
+ 		wake_up_process(t);
  }
-=20
- static const struct crypto_type crypto_rng_type =3D {
-=2D-=20
-2.51.1
++EXPORT_SYMBOL(qla2xxx_wake_dpc);
+ 
+ /*
+ *  qla2x00_rst_aen
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 2abdb8ce0302..c6dc5e9efb69 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -104,8 +104,6 @@ static void qlt_response_pkt(struct scsi_qla_host *ha, struct rsp_que *rsp,
+ 	response_t *pkt);
+ static int qlt_issue_task_mgmt(struct fc_port *sess, u64 lun,
+ 	int fn, void *iocb, int flags);
+-static void qlt_send_term_exchange(struct qla_qpair *, struct qla_tgt_cmd
+-	*cmd, struct atio_from_isp *atio, int ha_locked, int ul_abort);
+ static void qlt_alloc_qfull_cmd(struct scsi_qla_host *vha,
+ 	struct atio_from_isp *atio, uint16_t status, int qfull);
+ static void qlt_disable_vha(struct scsi_qla_host *vha);
+@@ -136,20 +134,6 @@ static struct workqueue_struct *qla_tgt_wq;
+ static DEFINE_MUTEX(qla_tgt_mutex);
+ static LIST_HEAD(qla_tgt_glist);
+ 
+-static const char *prot_op_str(u32 prot_op)
+-{
+-	switch (prot_op) {
+-	case TARGET_PROT_NORMAL:	return "NORMAL";
+-	case TARGET_PROT_DIN_INSERT:	return "DIN_INSERT";
+-	case TARGET_PROT_DOUT_INSERT:	return "DOUT_INSERT";
+-	case TARGET_PROT_DIN_STRIP:	return "DIN_STRIP";
+-	case TARGET_PROT_DOUT_STRIP:	return "DOUT_STRIP";
+-	case TARGET_PROT_DIN_PASS:	return "DIN_PASS";
+-	case TARGET_PROT_DOUT_PASS:	return "DOUT_PASS";
+-	default:			return "UNKNOWN";
+-	}
+-}
+-
+ /* This API intentionally takes dest as a parameter, rather than returning
+  * int value to avoid caller forgetting to issue wmb() after the store */
+ void qlt_do_generation_tick(struct scsi_qla_host *vha, int *dest)
+@@ -252,7 +236,7 @@ static void qlt_queue_unknown_atio(scsi_qla_host_t *vha,
+ 	return;
+ 
+ out_term:
+-	qlt_send_term_exchange(vha->hw->base_qpair, NULL, atio, ha_locked, 0);
++	qlt_send_term_exchange(vha->hw->base_qpair, NULL, atio, ha_locked);
+ 	goto out;
+ }
+ 
+@@ -271,7 +255,7 @@ static void qlt_try_to_dequeue_unknown_atios(struct scsi_qla_host *vha,
+ 			    "Freeing unknown %s %p, because of Abort\n",
+ 			    "ATIO_TYPE7", u);
+ 			qlt_send_term_exchange(vha->hw->base_qpair, NULL,
+-			    &u->atio, ha_locked, 0);
++			    &u->atio, ha_locked);
+ 			goto abort;
+ 		}
+ 
+@@ -285,7 +269,7 @@ static void qlt_try_to_dequeue_unknown_atios(struct scsi_qla_host *vha,
+ 			    "Freeing unknown %s %p, because tgt is being stopped\n",
+ 			    "ATIO_TYPE7", u);
+ 			qlt_send_term_exchange(vha->hw->base_qpair, NULL,
+-			    &u->atio, ha_locked, 0);
++			    &u->atio, ha_locked);
+ 		} else {
+ 			ql_dbg(ql_dbg_async + ql_dbg_verbose, vha, 0x503d,
+ 			    "Reschedule u %p, vha %p, host %p\n", u, vha, host);
+@@ -3461,7 +3445,6 @@ qlt_handle_dif_error(struct qla_qpair *qpair, struct qla_tgt_cmd *cmd,
+ 	uint8_t		*ep = &sts->expected_dif[0];
+ 	uint64_t	lba = cmd->se_cmd.t_task_lba;
+ 	uint8_t scsi_status, sense_key, asc, ascq;
+-	unsigned long flags;
+ 	struct scsi_qla_host *vha = cmd->vha;
+ 
+ 	cmd->trc_flags |= TRC_DIF_ERR;
+@@ -3535,13 +3518,10 @@ qlt_handle_dif_error(struct qla_qpair *qpair, struct qla_tgt_cmd *cmd,
+ 		vha->hw->tgt.tgt_ops->handle_data(cmd);
+ 		break;
+ 	default:
+-		spin_lock_irqsave(&cmd->cmd_lock, flags);
+-		if (cmd->aborted) {
+-			spin_unlock_irqrestore(&cmd->cmd_lock, flags);
++		if (cmd->sent_term_exchg) {
+ 			vha->hw->tgt.tgt_ops->free_cmd(cmd);
+ 			break;
+ 		}
+-		spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+ 
+ 		qlt_send_resp_ctio(qpair, cmd, scsi_status, sense_key, asc,
+ 		    ascq);
+@@ -3696,9 +3676,22 @@ static int __qlt_send_term_exchange(struct qla_qpair *qpair,
+ 	return 0;
+ }
+ 
+-static void qlt_send_term_exchange(struct qla_qpair *qpair,
+-	struct qla_tgt_cmd *cmd, struct atio_from_isp *atio, int ha_locked,
+-	int ul_abort)
++/*
++ * Aborting a command that is active in the FW (i.e. cmd->cmd_sent_to_fw == 1)
++ * will usually trigger the FW to send a completion CTIO with error status,
++ * and the driver will then call the ->handle_data() or ->free_cmd() callbacks.
++ * This can be used to clear a command that is locked up in the FW unless there
++ * is something more seriously wrong.
++ *
++ * Aborting a command that is not active in the FW (i.e.
++ * cmd->cmd_sent_to_fw == 0) will not directly trigger any callbacks.  Instead,
++ * when the target mode midlevel calls qlt_rdy_to_xfer() or
++ * qlt_xmit_response(), the driver will see that the cmd has been aborted and
++ * call the appropriate callback immediately without performing the requested
++ * operation.
++ */
++void qlt_send_term_exchange(struct qla_qpair *qpair,
++	struct qla_tgt_cmd *cmd, struct atio_from_isp *atio, int ha_locked)
+ {
+ 	struct scsi_qla_host *vha;
+ 	unsigned long flags = 0;
+@@ -3722,10 +3715,14 @@ static void qlt_send_term_exchange(struct qla_qpair *qpair,
+ 		qlt_alloc_qfull_cmd(vha, atio, 0, 0);
+ 
+ done:
+-	if (cmd && !ul_abort && !cmd->aborted) {
+-		if (cmd->sg_mapped)
+-			qlt_unmap_sg(vha, cmd);
+-		vha->hw->tgt.tgt_ops->free_cmd(cmd);
++	if (cmd) {
++		/*
++		 * Set this even if -ENOMEM above, since term exchange will be
++		 * sent eventually...
++		 */
++		cmd->sent_term_exchg = 1;
++		cmd->aborted = 1;
++		cmd->jiffies_at_term_exchg = jiffies;
+ 	}
+ 
+ 	if (!ha_locked)
+@@ -3733,6 +3730,7 @@ static void qlt_send_term_exchange(struct qla_qpair *qpair,
+ 
+ 	return;
+ }
++EXPORT_SYMBOL(qlt_send_term_exchange);
+ 
+ static void qlt_init_term_exchange(struct scsi_qla_host *vha)
+ {
+@@ -3783,35 +3781,35 @@ static void qlt_chk_exch_leak_thresh_hold(struct scsi_qla_host *vha)
+ 
+ int qlt_abort_cmd(struct qla_tgt_cmd *cmd)
+ {
+-	struct qla_tgt *tgt = cmd->tgt;
+-	struct scsi_qla_host *vha = tgt->vha;
+-	struct se_cmd *se_cmd = &cmd->se_cmd;
++	struct scsi_qla_host *vha = cmd->vha;
++	struct qla_qpair *qpair = cmd->qpair;
+ 	unsigned long flags;
+ 
+-	ql_dbg(ql_dbg_tgt_mgt, vha, 0xf014,
+-	    "qla_target(%d): terminating exchange for aborted cmd=%p "
+-	    "(se_cmd=%p, tag=%llu)", vha->vp_idx, cmd, &cmd->se_cmd,
+-	    se_cmd->tag);
++	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
+ 
+-	spin_lock_irqsave(&cmd->cmd_lock, flags);
+-	if (cmd->aborted) {
+-		spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+-		/*
+-		 * It's normal to see 2 calls in this path:
+-		 *  1) XFER Rdy completion + CMD_T_ABORT
+-		 *  2) TCM TMR - drain_state_list
+-		 */
+-		ql_dbg(ql_dbg_tgt_mgt, vha, 0xf016,
+-		    "multiple abort. %p transport_state %x, t_state %x, "
+-		    "se_cmd_flags %x\n", cmd, cmd->se_cmd.transport_state,
+-		    cmd->se_cmd.t_state, cmd->se_cmd.se_cmd_flags);
+-		return -EIO;
++	ql_dbg(ql_dbg_tgt_mgt, vha, 0xf014,
++	    "qla_target(%d): tag %lld: cmd being aborted (state %d) %s; %s\n",
++	    vha->vp_idx, cmd->se_cmd.tag, cmd->state,
++	    cmd->cmd_sent_to_fw ? "sent to fw" : "not sent to fw",
++	    cmd->aborted ? "aborted" : "not aborted");
++
++	if (cmd->state != QLA_TGT_STATE_DONE && !cmd->sent_term_exchg) {
++		if (!qpair->fw_started ||
++		    cmd->reset_count != qpair->chip_reset) {
++			/*
++			 * Chip was reset; just pretend that we sent the term
++			 * exchange.
++			 */
++			cmd->sent_term_exchg = 1;
++			cmd->aborted = 1;
++			cmd->jiffies_at_term_exchg = jiffies;
++		} else {
++			qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1);
++		}
+ 	}
+-	cmd->aborted = 1;
+-	cmd->trc_flags |= TRC_ABORT;
+-	spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+ 
+-	qlt_send_term_exchange(cmd->qpair, cmd, &cmd->atio, 0, 1);
++	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL(qlt_abort_cmd);
+@@ -3842,40 +3840,6 @@ void qlt_free_cmd(struct qla_tgt_cmd *cmd)
+ }
+ EXPORT_SYMBOL(qlt_free_cmd);
+ 
+-/*
+- * ha->hardware_lock supposed to be held on entry. Might drop it, then reaquire
+- */
+-static int qlt_term_ctio_exchange(struct qla_qpair *qpair, void *ctio,
+-	struct qla_tgt_cmd *cmd, uint32_t status)
+-{
+-	int term = 0;
+-	struct scsi_qla_host *vha = qpair->vha;
+-
+-	if (cmd->se_cmd.prot_op)
+-		ql_dbg(ql_dbg_tgt_dif, vha, 0xe013,
+-		    "Term DIF cmd: lba[0x%llx|%lld] len[0x%x] "
+-		    "se_cmd=%p tag[%x] op %#x/%s",
+-		     cmd->lba, cmd->lba,
+-		     cmd->num_blks, &cmd->se_cmd,
+-		     cmd->atio.u.isp24.exchange_addr,
+-		     cmd->se_cmd.prot_op,
+-		     prot_op_str(cmd->se_cmd.prot_op));
+-
+-	if (ctio != NULL) {
+-		struct ctio7_from_24xx *c = (struct ctio7_from_24xx *)ctio;
+-
+-		term = !(c->flags &
+-		    cpu_to_le16(OF_TERM_EXCH));
+-	} else
+-		term = 1;
+-
+-	if (term)
+-		qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1, 0);
+-
+-	return term;
+-}
+-
+-
+ /* ha->hardware_lock supposed to be held on entry */
+ static void *qlt_ctio_to_cmd(struct scsi_qla_host *vha,
+ 	struct rsp_que *rsp, uint32_t handle, void *ctio)
+@@ -3981,22 +3945,35 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 	qlt_unmap_sg(vha, cmd);
+ 
+ 	if (unlikely(status != CTIO_SUCCESS)) {
++		bool term_exchg = false;
++
++		/*
++		 * If the hardware terminated the exchange, then we don't need
++		 * to send an explicit term exchange message.
++		 */
++		if (ctio_flags & OF_TERM_EXCH) {
++			cmd->sent_term_exchg = 1;
++			cmd->aborted = 1;
++			cmd->jiffies_at_term_exchg = jiffies;
++		}
++
+ 		switch (status & 0xFFFF) {
+ 		case CTIO_INVALID_RX_ID:
++			term_exchg = true;
+ 			if (printk_ratelimit())
+ 				dev_info(&vha->hw->pdev->dev,
+ 				    "qla_target(%d): CTIO with INVALID_RX_ID ATIO attr %x CTIO Flags %x|%x\n",
+ 				    vha->vp_idx, cmd->atio.u.isp24.attr,
+ 				    ((cmd->ctio_flags >> 9) & 0xf),
+ 				    cmd->ctio_flags);
+-
+ 			break;
++
+ 		case CTIO_LIP_RESET:
+ 		case CTIO_TARGET_RESET:
+ 		case CTIO_ABORTED:
+-			/* driver request abort via Terminate exchange */
++			term_exchg = true;
++			fallthrough;
+ 		case CTIO_TIMEOUT:
+-			/* They are OK */
+ 			ql_dbg(ql_dbg_tgt_mgt, vha, 0xf058,
+ 			    "qla_target(%d): CTIO with "
+ 			    "status %#x received, state %x, se_cmd %p, "
+@@ -4017,6 +3994,7 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 			    logged_out ? "PORT LOGGED OUT" : "PORT UNAVAILABLE",
+ 			    status, cmd->state, se_cmd);
+ 
++			term_exchg = true;
+ 			if (logged_out && cmd->sess) {
+ 				/*
+ 				 * Session is already logged out, but we need
+@@ -4062,19 +4040,21 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 			break;
+ 		}
+ 
++		cmd->trc_flags |= TRC_CTIO_ERR;
+ 
+-		/* "cmd->aborted" means
+-		 * cmd is already aborted/terminated, we don't
+-		 * need to terminate again.  The exchange is already
+-		 * cleaned up/freed at FW level.  Just cleanup at driver
+-		 * level.
++		/*
++		 * In state QLA_TGT_STATE_NEED_DATA the failed CTIO was for
++		 * Data-Out, so either abort the exchange or try sending check
++		 * condition with sense data depending on the severity of
++		 * the error.  In state QLA_TGT_STATE_PROCESSED the failed CTIO
++		 * was for status (and possibly Data-In), so don't try sending
++		 * an error status again in that case (if the error was for
++		 * Data-In with status, we could try sending status without
++		 * Data-In, but we don't do that currently).
+ 		 */
+-		if ((cmd->state != QLA_TGT_STATE_NEED_DATA) &&
+-		    (!cmd->aborted)) {
+-			cmd->trc_flags |= TRC_CTIO_ERR;
+-			if (qlt_term_ctio_exchange(qpair, ctio, cmd, status))
+-				return;
+-		}
++		if (!cmd->sent_term_exchg &&
++		    (term_exchg || cmd->state != QLA_TGT_STATE_NEED_DATA))
++			qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1);
+ 	}
+ 
+ 	if (cmd->state == QLA_TGT_STATE_PROCESSED) {
+@@ -4164,7 +4144,6 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
+ 		goto out_term;
+ 	}
+ 
+-	spin_lock_init(&cmd->cmd_lock);
+ 	cdb = &atio->u.isp24.fcp_cmnd.cdb[0];
+ 	cmd->se_cmd.tag = le32_to_cpu(atio->u.isp24.exchange_addr);
+ 
+@@ -4201,7 +4180,7 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
+ 	 */
+ 	cmd->trc_flags |= TRC_DO_WORK_ERR;
+ 	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
+-	qlt_send_term_exchange(qpair, NULL, &cmd->atio, 1, 0);
++	qlt_send_term_exchange(qpair, NULL, &cmd->atio, 1);
+ 
+ 	qlt_decr_num_pend_cmds(vha);
+ 	cmd->vha->hw->tgt.tgt_ops->rel_cmd(cmd);
+@@ -5360,6 +5339,7 @@ static void qlt_handle_imm_notify(struct scsi_qla_host *vha,
+ 		if (qlt_24xx_handle_els(vha, iocb) == 0)
+ 			send_notify_ack = 0;
+ 		break;
++
+ 	default:
+ 		ql_dbg(ql_dbg_tgt_mgt, vha, 0xf06d,
+ 		    "qla_target(%d): Received unknown immediate "
+@@ -5394,7 +5374,7 @@ static int __qlt_send_busy(struct qla_qpair *qpair,
+ 	sess = qla2x00_find_fcport_by_nportid(vha, &id, 1);
+ 	spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
+ 	if (!sess) {
+-		qlt_send_term_exchange(qpair, NULL, atio, 1, 0);
++		qlt_send_term_exchange(qpair, NULL, atio, 1);
+ 		return 0;
+ 	}
+ 	/* Sending marker isn't necessary, since we called from ISR */
+@@ -5623,7 +5603,7 @@ static void qlt_24xx_atio_pkt(struct scsi_qla_host *vha,
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe05f,
+ 				    "qla_target: Unable to send command to target, sending TERM EXCHANGE for rsp\n");
+ 				qlt_send_term_exchange(ha->base_qpair, NULL,
+-				    atio, 1, 0);
++				    atio, 1);
+ 				break;
+ 			case -EBUSY:
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe060,
+@@ -5830,7 +5810,7 @@ static void qlt_response_pkt(struct scsi_qla_host *vha,
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe05f,
+ 				    "qla_target: Unable to send command to target, sending TERM EXCHANGE for rsp\n");
+ 				qlt_send_term_exchange(rsp->qpair, NULL,
+-				    atio, 1, 0);
++				    atio, 1);
+ 				break;
+ 			case -EBUSY:
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe060,
+@@ -6720,7 +6700,7 @@ qlt_24xx_process_atio_queue(struct scsi_qla_host *vha, uint8_t ha_locked)
+ 
+ 			adjust_corrupted_atio(pkt);
+ 			qlt_send_term_exchange(ha->base_qpair, NULL, pkt,
+-			    ha_locked, 0);
++			    ha_locked);
+ 		} else {
+ 			qlt_24xx_atio_pkt_all_vps(vha,
+ 			    (struct atio_from_isp *)pkt, ha_locked);
+diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
+index c483966d0a84..eb15d8e9f79e 100644
+--- a/drivers/scsi/qla2xxx/qla_target.h
++++ b/drivers/scsi/qla2xxx/qla_target.h
+@@ -754,6 +754,7 @@ int qla2x00_wait_for_hba_online(struct scsi_qla_host *);
+ #define QLA_TGT_STATE_NEED_DATA		1 /* target needs data to continue */
+ #define QLA_TGT_STATE_DATA_IN		2 /* Data arrived + target processing */
+ #define QLA_TGT_STATE_PROCESSED		3 /* target done processing */
++#define QLA_TGT_STATE_DONE		4 /* cmd being freed */
+ 
+ /* ATIO task_codes field */
+ #define ATIO_SIMPLE_QUEUE           0
+@@ -876,8 +877,6 @@ struct qla_tgt_cmd {
+ 	/* Sense buffer that will be mapped into outgoing status */
+ 	unsigned char sense_buffer[TRANSPORT_SENSE_BUFFER];
+ 
+-	spinlock_t cmd_lock;
+-	/* to save extra sess dereferences */
+ 	unsigned int conf_compl_supported:1;
+ 	unsigned int sg_mapped:1;
+ 	unsigned int write_data_transferred:1;
+@@ -887,13 +886,14 @@ struct qla_tgt_cmd {
+ 	unsigned int cmd_in_wq:1;
+ 	unsigned int edif:1;
+ 
++	/* Set if the exchange has been terminated. */
++	unsigned int sent_term_exchg:1;
++
+ 	/*
+-	 * This variable may be set from outside the LIO and I/O completion
+-	 * callback functions. Do not declare this member variable as a
+-	 * bitfield to avoid a read-modify-write operation when this variable
+-	 * is set.
++	 * Set if sent_term_exchg is set, or if the cmd was aborted by a TMR,
++	 * or if some other error prevents normal processing of the command.
+ 	 */
+-	unsigned int aborted;
++	unsigned int aborted:1;
+ 
+ 	struct scatterlist *sg;	/* cmd data buffer SG vector */
+ 	int sg_cnt;		/* SG segments count */
+@@ -932,6 +932,7 @@ struct qla_tgt_cmd {
+ #define DIF_BUNDL_DMA_VALID 1
+ 	uint16_t prot_flags;
+ 
++	unsigned long jiffies_at_term_exchg;
+ 	uint64_t jiffies_at_alloc;
+ 	uint64_t jiffies_at_free;
+ 
+@@ -1055,6 +1056,8 @@ extern void qlt_response_pkt_all_vps(struct scsi_qla_host *, struct rsp_que *,
+ extern int qlt_rdy_to_xfer(struct qla_tgt_cmd *);
+ extern int qlt_xmit_response(struct qla_tgt_cmd *, int, uint8_t);
+ extern int qlt_abort_cmd(struct qla_tgt_cmd *);
++void qlt_send_term_exchange(struct qla_qpair *qpair,
++	struct qla_tgt_cmd *cmd, struct atio_from_isp *atio, int ha_locked);
+ extern void qlt_xmit_tm_rsp(struct qla_tgt_mgmt_cmd *);
+ extern void qlt_free_mcmd(struct qla_tgt_mgmt_cmd *);
+ extern void qlt_free_cmd(struct qla_tgt_cmd *cmd);
+diff --git a/drivers/scsi/qla2xxx/tcm_qla2xxx.c b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+index ceaf1c7b1d17..169219fe47a2 100644
+--- a/drivers/scsi/qla2xxx/tcm_qla2xxx.c
++++ b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+@@ -303,6 +303,8 @@ static void tcm_qla2xxx_rel_cmd(struct qla_tgt_cmd *cmd)
+  */
+ static void tcm_qla2xxx_free_cmd(struct qla_tgt_cmd *cmd)
+ {
++	cmd->state = QLA_TGT_STATE_DONE;
++
+ 	cmd->qpair->tgt_counters.core_qla_free_cmd++;
+ 	cmd->cmd_in_wq = 1;
+ 
+-- 
+2.43.0
+
 
 
