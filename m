@@ -1,155 +1,109 @@
-Return-Path: <linux-kernel+bounces-892734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11264C45B6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:47:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53EB1C45B77
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:47:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD8534EB1AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:46:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 298B54EA0A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F216B301021;
-	Mon, 10 Nov 2025 09:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7394301711;
+	Mon, 10 Nov 2025 09:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="p2CMFFxd"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HYTErRMq"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB00234964
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A80301492
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762767970; cv=none; b=NtIzQ0geHpehPWVAjekJDNqO7dKOL76iHxLPRLvNMYCdiIILT7DZCSfLPqoq9UPIENgRy17eFrgnh3ISfflwyFrY43mEPn3CFpwAMTkAYNRgkSN4VljrTNBtMyRyzSAQntzExb9/qyxLvIrl2dvMJOwjIyzsnPSVrBh6qBYwOnU=
+	t=1762767976; cv=none; b=I/LITdSPzIr0qcD9pvxodjJuBbdes7jWan0d/2m4Rss2V/1ZSzKPcysx8eZNGd9ngqNH8CClYgyL12F+pKCdW3aoX5V2Zo0czD5oFwitKUdPlflizm3lYNn+rmDge/kYW7/1UR/KtQPuWiJe1OCpRZn2Nv1CtehOsJEvWdrd+mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762767970; c=relaxed/simple;
-	bh=S1wGfyaVdsxk2Z9k/75oWbkAnuDI8szZ8sPaIPGsbg4=;
+	s=arc-20240116; t=1762767976; c=relaxed/simple;
+	bh=G8FyUb4ahZ5DaUZfNRANTrYRf6oD8kdXRJpCHUd06PA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rYkQCdk4Z1Wfh8X60mihr9EmRjHUZSUxC8kckJy8m2NroAFgaV8A2fdrd5ff75jdfOVN4A629nwl3p9SZZaJhGUsAOETKd06hM0t36AM9M0P+Xq/FOtlzoU41f0kQxwekeOSzXjZJi85pAGUqM71pDd7cQOS4/YFXXrFzNlazZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=p2CMFFxd; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-378cffe5e1aso29820341fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:46:06 -0800 (PST)
+	 To:Cc:Content-Type; b=QcZ2wQ/kB3PKTVVSbc6TBhkr2dYzxBfuXP3lh1lfnLrlnUFZwC330076wSTxa+xJQLGO5wz/iD36uSZt3dCXYXmy/kPPgiWhrJMl8vz5NOnevowbDqhZb7f/9iFGYqzerRaFHgQon9Mt/ME4fn5uU6FJ6yqDWwSb5DF42oWUnYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HYTErRMq; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-594259bc5f1so1989732e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:46:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762767964; x=1763372764; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1762767971; x=1763372771; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S1wGfyaVdsxk2Z9k/75oWbkAnuDI8szZ8sPaIPGsbg4=;
-        b=p2CMFFxdz/LXcki8b/9cQ63b1+vPg6eVxWnP6h8Fjc08dAAs/BibvCUlORK3rO9SGk
-         CSbG4iXmZbM5+KC11hm2SEnV7BgdtMZrMONK36sbkrF69f+5rh4z0sn7Mmp6pHn/fvVw
-         nkEaB075udlFLU3IKgs7tEIFG4/PQzkf9sAA028wJG6pl0m2fM1zYA4SxOJsA4IYpJhy
-         2v1K8l20JvcJ56iLY690oB2e6BJJG8HFdInZrVobJB+4S6AGntT2Nu1O1dqcDXYuc94u
-         qY1sIi9BJndrjtIUG5d/T/SyH31lEBEh+NTt/qMqaJDKOQ5X9HEkqzpHDCSR1tsfieBp
-         eV6w==
+        bh=GaXS6m3NcTkH+l9Uwp9vlSWhXICs1XAI8l9sEjUIZu0=;
+        b=HYTErRMq42J6I7OM51UzHsne0kRDistQ1SShANn/IFd2+HgUL8BxHoeDnF6jTPOs1R
+         oXQ1Hkgurq+ud29XGAIWUpVQ7Pos6R2Hf881n75NrfRkEMUwYttipgQ+TtAr2Mif2FwR
+         oZ5tJyQyA7CCdFoB9tj05yWMpRz2ihTFTyO8lkEY53ONb53XWZj3Tp6ljEqPA5y3jnKp
+         rDsexGTeW3iurEem1PqFIYUZRVBPU/nGEAgSo9T4f8MxJXTpU54uoMqIiud1P5vivVAN
+         XYqGdBy1U4YyIJmYDh99ipBpKENBBE3XYxnUSdq5uTI2LqLtIKTh0fJBb752ma4vv4OB
+         QViA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762767964; x=1763372764;
+        d=1e100.net; s=20230601; t=1762767971; x=1763372771;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=S1wGfyaVdsxk2Z9k/75oWbkAnuDI8szZ8sPaIPGsbg4=;
-        b=EG3Emtlsba/6ts/H0x6LGxAwvVOxyoeQj96Ghfw2kKEH5AhIzY0fKvclRhwZe2RoU5
-         3ArNUIAsIhTW9JUxfxWWIQAVBt9/vvZpGv94CO1rHRMntGwmv2J3E5Ov8zjvQHe+aCpm
-         wnKIWQ166OlRad4iTfKiV+gbiAO5J//2wjwxZM0S7VAEbYaZJ7WMyMGUH7/bmZGppcTb
-         wc+dgjox0MqxWGf43ILK7IHL4f33nlKjAdVji0+ue9m7hJi0K6VTxliHMU+FLSzFVSUE
-         ClBlcRds2YQHuhH//+6X8sH4bUC5PNbUSkJF38bDZkRF8M20JyTcMbk4SGoWYVnPlcJ3
-         Jpqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuAeo/q1JcbB5Z50L/+Lc7B9YLdKL+9z10NRSlMdt7zZs/EFNnP8X9T24AaoXISTwObES3WEg5e7JMH1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlV3iS5LnAdR5fFhtSGoYGeZBiq9nPwsmMSIWdNQQmq/Jlh2tD
-	kxoiguq/IFHWC0D3RWlp5I7nzMj58XuEm/MMJ4FhyhDuvH6mE5XkzMrCay0GKxKBHJibITPG/4D
-	08AqxERcyxC9Xbtc8ugjLscWS1AfFJq+nJ8466yODmg==
-X-Gm-Gg: ASbGncvpcQlXAfOzjN8Fe6kZiS3+NxkdvYxaK3lcTvo0V7ZqmE+i7h0fE8ZgkbL3BQ1
-	WgxV8Ir4BjMeBoeSkJ3lmLaeitPGZXd1YG+xBWDyrMgF5hfpaK25tGBU0VUQIqoU5zhPovEOJBw
-	6HhTDv8Y5sGa2FJfEUP2F+OFCHD6ECYGAhIe5UMGWAyej0dFyHzYJAeyP7cL5FCax9YUX1W5fVL
-	eE2F9Qkz1e1PKrH6Yr6bZUBcbAautw1DwuydQCdXztm8v/5b/lPeMKKmqTWvYP583y3EpzMn3iK
-	hoKh5lFf0S5Qe2LE+trMIG+FHH0=
-X-Google-Smtp-Source: AGHT+IEapDIVTd3K1bAU32YeDgJ+hfEUFZ75bdtJQQ2tm2wsLYYaIB9HdEFBH57etQ4VQO2ruXk7jNm7rMa1KIXieBs=
-X-Received: by 2002:a05:6512:108a:b0:594:4b3e:2815 with SMTP id
- 2adb3069b0e04-5945f1867a2mr1922781e87.2.1762767964507; Mon, 10 Nov 2025
- 01:46:04 -0800 (PST)
+        bh=GaXS6m3NcTkH+l9Uwp9vlSWhXICs1XAI8l9sEjUIZu0=;
+        b=Lrdb4oCaC6GhW8Ctuj6KJr690EOGxbKcQ8yhZEdruPUFNTutlfqVlvcbKwrWwIvIeG
+         L+ViQP/LMemVxEyZf6uNLhARXBS+/UCY90CSMd4U+LiPrWbX2+fpX2ARvgVk9xIqHuxc
+         qCOxhP3CKQ4CoHfO+tKfhtwtnATsXF67637w++WSf0VNVeb66DWKLU5mOse0CEjFHfUE
+         db53uFJFQyiND/Pz9bYmMOGW4HcVxmE1J++yh7nU3cuSMsQgse8Vu8cvbCGYyTBCT8qG
+         9ExAXOuGVSUoU05ztvZHcUOI2rCdX0raw2dbsCSePhAAFnhqSG11sMV/zBmhH59xmHok
+         hn+Q==
+X-Gm-Message-State: AOJu0YwXsct4OJWrOxNhS2jfctXspWNOje9V9f9gSBqkc3RJ1eG18ZPL
+	QsqDnX0Cctq/g2k3gdzKSCuPX/fxb3BZgsmG04eDMWOJS67rHjiAOfl8HE+hfNgOdNt6+mykZjM
+	eYDQtHydbfSqLxj4nIeOmcmwtFCb6JRUozXlvqY3e9Q==
+X-Gm-Gg: ASbGncvMsNVFe9H/vNj7sxaJF8+JxystgRlKSaAx6Vpla7nhXMKQFgP5Zsl1EuSLTGJ
+	JOrE0ruLrAztYwiS7Gi6WpiSBsUnW8BACwJ6UjTw3x1YAFOCT+Bw+e94kyIOooFIT3LKrOs+sSz
+	EIF899EV35nScE2+Q8jmFeo3iAkJoW3VddPIsWBL3FSKc4YsiH3onAEw/Ggc4Rx+7jUzJwNoEES
+	NwqH4j+g2RbySy+XqcpIBdzW3qpQj7Jho03z/EiEvCIujLmL5KTE/2JNZIT+UGLXCNLUlRygOXR
+	csyaLj5Zox0FDPbahC8QA9A9Qmaq
+X-Google-Smtp-Source: AGHT+IFl1HIzxhu+5+xHMGe9KG/BTowlyYL1X4kciQxoixfdv4RCOTF+DqBRORHhpwcj1OT/9qYIy2M7s4tgYPW892U=
+X-Received: by 2002:a05:6512:39d2:b0:594:339d:8b8d with SMTP id
+ 2adb3069b0e04-5945f1cbc64mr2296242e87.54.1762767971378; Mon, 10 Nov 2025
+ 01:46:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org>
-In-Reply-To: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 10 Nov 2025 10:45:53 +0100
-X-Gm-Features: AWmQ_bmNaGfRXrBGj05YeySBEfqaBzH8jnH775-U4Qey4HBlXtV5VLim7kMBPJg
-Message-ID: <CAMRc=Md4X-GWpeRgun6zv6dddKFqqrjUSveq3fNOe5AboLAcXg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] gpio: improve support for shared GPIOs
-To: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Alexey Klimov <alexey.klimov@linaro.org>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20251107133626.190952-1-marco.crivellari@suse.com> <176268787482.581844.7324846885016543491.b4-ty@kernel.org>
+In-Reply-To: <176268787482.581844.7324846885016543491.b4-ty@kernel.org>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Mon, 10 Nov 2025 10:46:00 +0100
+X-Gm-Features: AWmQ_bnrAuDTTrwaWs2Ag0G5kodCMZnaZYI4o0vDoMUA-msokQy6U766q6ZjZ9Y
+Message-ID: <CAAofZF6smnssmFpg9KpLzQH=sxB4bC8Vq0SpgQkrNh8O8n741Q@mail.gmail.com>
+Subject: Re: [PATCH] IB/isert: add WQ_PERCPU to alloc_workqueue users
+To: Leon Romanovsky <leon@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	target-devel@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, 
+	Sagi Grimberg <sagi@grimberg.me>, Jason Gunthorpe <jgg@ziepe.ca>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 12:20=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
+On Sun, Nov 9, 2025 at 12:31=E2=80=AFPM Leon Romanovsky <leon@kernel.org> w=
+rote:
+> [...]
+> Applied, thanks!
 >
-> Problem statement: GPIOs are implemented as a strictly exclusive
-> resource in the kernel but there are lots of platforms on which single
-> pin is shared by multiple devices which don't communicate so need some
-> way of properly sharing access to a GPIO. What we have now is the
-> GPIOD_FLAGS_BIT_NONEXCLUSIVE flag which was introduced as a hack and
-> doesn't do any locking or arbitration of access - it literally just hand
-> the same GPIO descriptor to all interested users.
->
-> The proposed solution is composed of three major parts: the high-level,
-> shared GPIO proxy driver that arbitrates access to the shared pin and
-> exposes a regular GPIO chip interface to consumers, a low-level shared
-> GPIOLIB module that scans firmware nodes and creates auxiliary devices
-> that attach to the proxy driver and finally a set of core GPIOLIB
-> changes that plug the former into the GPIO lookup path.
->
-> The changes are implemented in a way that allows to seamlessly compile
-> out any code related to sharing GPIOs for systems that don't need it.
->
-> The practical use-case for this are the powerdown GPIOs shared by
-> speakers on Qualcomm db845c platform, however I have also extensively
-> tested it using gpio-virtuser on arm64 qemu with various DT
-> configurations.
->
-> I'm Cc'ing some people that may help with reviewing/be interested in
-> this: OF maintainers (because the main target are OF systems initially),
-> Mark Brown because most users of GPIOD_FLAGS_BIT_NONEXCLUSIVE live
-> in audio or regulator drivers and one of the goals of this series is
-> dropping the hand-crafted GPIO enable counting via struct
-> regulator_enable_gpio in regulator core), Andy and Mika because I'd like
-> to also cover ACPI (even though I don't know about any ACPI platform that
-> would need this at the moment, I think it makes sense to make the
-> solution complete), Dmitry (same thing but for software nodes), Mani
-> (because you have a somewhat related use-case for the PERST# signal and
-> I'd like to hear your input on whether this is something you can use or
-> maybe it needs a separate, implicit gpio-perst driver similar to what
-> Krzysztof did for reset-gpios) and Greg (because I mentioned this to you
-> last week in person and I also use the auxiliary bus for the proxy
-> devices).
->
-> Merging strategy: patches 1-6 should go through the GPIO tree and then
-> ARM-SoC, ASoC and regulator trees can pull these changes from an
-> immutable branch and apply the remaining patches.
+> [1/1] IB/isert: add WQ_PERCPU to alloc_workqueue users
+>       https://git.kernel.org/rdma/rdma/c/5c467151f6197d
 >
 
-Can I get some Reviewed-bys under the GPIO patches if there are no
-other open issues? I would like for this to start making its way
-upstream if there are no strong objections to the concept. After a
-release or two, I'd like to start enabling it on more platforms.
+Many thanks!
 
-Bart
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
