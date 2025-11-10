@@ -1,122 +1,339 @@
-Return-Path: <linux-kernel+bounces-893113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1ADC468D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:18:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E028DC4690D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1871887AF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:17:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D19F3BA430
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6423223DF9;
-	Mon, 10 Nov 2025 12:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734E130DEAC;
+	Mon, 10 Nov 2025 12:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eSUZI9ts"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fl/IsUo1";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="WPr0DGjj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9442C2F690D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157A230C378
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762776988; cv=none; b=YB80AmPwzeEnfrlLitEKMtMwQ1XGi0Y63dBbnDlTS9/00JxxbTDnoqM9WF0775m1wtSy4cvkqh3uWxb7GsrTuVmKKMaXK8JRYr95oV8GUldmCInk6Oqg30OwxoFVxRxGmv2+PXeh1tP0/Jg5KBHiSYWWyy6OORAtR/Ch1wLl1a4=
+	t=1762777010; cv=none; b=MPUKuN/obWfyHtUg9mODaBrTTdgAETL/PYAAEQsAzSMIbR8kSLI+lZtqz1oeP87KEcNEX7MaAvyJVm59VAHs0nIA2JXLYNYQEWyf8Y4oP8yMxgrkoD2XJwNjquW2j1GlvV7V2eZynqh8vN8trs/nwTpPfZsfQS3h4K904cI/ZMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762776988; c=relaxed/simple;
-	bh=65nKoDUoFIUiAg1myvM8LtWnuiNkl0O1D9IGuidRscg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jy6S24n9Vay97e3umJ9bzV0cITKo+jWNQXALWmN3WSQxCM3Grt9swb8jxVySGtaI+2UZvqWqFy9M6CP9AZVtYc8IIBYOYMN3TuliGns/9Hxv9tAY28iJpQYfzJdQHCpUPrpfS0ruBEZiA522NlnToVscXGhlXMu0ZtVslftCKVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eSUZI9ts; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4775638d819so16615585e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:16:26 -0800 (PST)
+	s=arc-20240116; t=1762777010; c=relaxed/simple;
+	bh=V4af1rYT9OtrMAix1yJfCa00gTPi64G1CMZK/upk2k4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KOoppMQpH5UGcy3hq8GmUHkNESWfSe2hBXucpHH+deyaJsEQD2sslFZjEr9rc189N66Nn43qaxPLZBACF7UebOJVRghTEMZe4tXbELiZfXt5269E8t/jCPWJTNwzdlFeA2s62i28nY5anruKWKWkFvQF7U4EjTVT8V8gZiNqVNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fl/IsUo1; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=WPr0DGjj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762777006;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=74+HnH+rhIexyx6g5es8cFazSWzppP2vcLxSnUPEPvM=;
+	b=fl/IsUo1zAnLyPhF7kyT9gh44R/ODYYkupdcg3Fw8+miH68X1EViVcHwVqiUrkMQwUSEV2
+	Mwem1wtv5xwpmgyLQP9N9/zh061PCLHPikya8GpIQ2roTNy3fOIhSZ8aFVd3GHjX8Qq5iq
+	MfPan53XAILSA1nv08wCMMu7GF3YGg0=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-616-FK3IUHslO4ieHXecWqHOsw-1; Mon, 10 Nov 2025 07:16:45 -0500
+X-MC-Unique: FK3IUHslO4ieHXecWqHOsw-1
+X-Mimecast-MFC-AGG-ID: FK3IUHslO4ieHXecWqHOsw_1762777004
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b726a3c3214so285494066b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:16:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762776985; x=1763381785; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1762777004; x=1763381804; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lQ4pWNj+5DYuWusiU6JflUXLx4iUaUawZwWl6Dd89c4=;
-        b=eSUZI9tsnqkm5UgmLZwmSfKRK/Hh5eEflLQ6cXXpjR/NN4VDblYUuw6C0geI5+Quhs
-         i9IfPl8Eo5AP9klWWBoQNLVJRBMPVvSxeqOiBFfnXiSmu8wzFyRLbdOG/IvZnuV8ED9h
-         73lj+K5rKFtA2KUHjggbtPWqqIH02/xq/c3eHj7FC1qeg/tE3TxFgVGNlewofWpbbsVW
-         xYNK6sA6TmxIbLvNLf2plsQtR8lEsB8ksj2KlkSU+HUX5A8yD993stGGg0mYl4s87y23
-         W1vff2cB+bYlsHR9G1BYU7I/TD6xPEvm9AaYgBzemwmyOY3Menh5dmJfSSZgNFmQUl+y
-         jS/Q==
+        bh=74+HnH+rhIexyx6g5es8cFazSWzppP2vcLxSnUPEPvM=;
+        b=WPr0DGjj+NoxDbD2x3lvjADyKueoXmBp7xEI/RBfFsJzYCCCUwMNqtZFL/VNsnsnop
+         wPb38tUMx2MTB4rGXi5ngep5LGbOJ4xFGHpEVlWc0RhkPo/0UmKs/EpUUVGFfjB37UKh
+         JE/8yS6W3KTalAPvNqQU0zhwmvMUJNevlUy9hG5jfFkOjwzk+De0rr1CAa8/kzH+apO9
+         udecH/WSo6P+pSbwS/AL1YmK4YHnC4NM6OSblF0Tz8/RUr5lG8z8Pj6RB6coSewKYTUy
+         iGD0bOB2bco2Aday6V/cSFoeWaEgk46b4MlnME8CHtzNy/9/atIfYbhIOGwmS/f9Nofr
+         v+HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762776985; x=1763381785;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1762777004; x=1763381804;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=lQ4pWNj+5DYuWusiU6JflUXLx4iUaUawZwWl6Dd89c4=;
-        b=v+Xx7DbfFv+TzDnD7YxS90cX0zEmvqnk6NH1RjtES3a5j8gXh00UIc6LtqP/M4uS87
-         uwjTkeTqOGqwxwtYst1xudhJh/mJ28KmHgp1YIeNkILX+nPhY4O+HmF2B9UeUCSyShD4
-         S0Amjut6S9qd8EDzyjmnIDN0y2ax4GA1t1LhtRwN21Lw4L7P4iiDmfjmn5N8FWueYqXv
-         xaXYbssBOlvre8cvPoZvBqvoUhPWzInYjRTYFfH8DvNWZpaJ1xlNFCmUICSN+5rNEes1
-         LzL4+cxGZme2S3ervzw+2637Ghatk9wMGjpYQyR8A4ihtvzHcl/EEqlA30UAL+wAo71+
-         mRyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBghsSjXaN4xSJiKogR6XgtAsNvPyQ6ZLffEhok8uBDohDuQHvC/MdLsV0HuxyZtEAux6IaL32AHqWgUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLXb4jiBe4fHJ5SmUxA00uiw5jku+E57kl1xGU+QWMcsMvIiXn
-	zt2jDCerWByxiv0na22wkD7Sx0brfilIJQRjjnM/eig5fC4Uz0ZwboGV4iVfzA==
-X-Gm-Gg: ASbGnctNBa+G7x9w/Dau8xbCh6hLq1v17PTib2wdD8EYzxerp6TPniSV7+wELcIah64
-	Aau+ybY4FwL860Hb8ZhCIgzeAoWncqXeMQHu2XXOewsHQ0B/MNF/X34mU8x6sSHngyonXrIoO3m
-	Gs83T6hP72/UlOgWM8/mwi1Fu5XI0c0FZ+a9oznkfFc2bTNet/GJjunnRrEaK5C0JGRyMkVGGzs
-	xKp/ggm4taLVsuK9rq4VprWXceqLU5KIBmJ3zNxSTe4hSvUan3TShOHFbL27NEWNNqUgY2UjuvT
-	GFR2/T6G+KoJ65blqIN5W7cUX23tPlwDmqMAbRJJRxDoFTPnb5CjpnVkVMOO+p4jTBOi1nAkH7w
-	RuU+9XVxyDkJE2/A6iNUfkTwKKpyiXU21aoeL8jU0G33sR6g/bP7qIwjIFENi02ORVzKcRvkPuK
-	6H8WkOx823qBaEH9Gy6sgOv/D6YXOu/EPfhP6FcldXPyjYOz9wckhh
-X-Google-Smtp-Source: AGHT+IHX98LBMovhSaAmEHq01WKy8RWXFKKoQWco+RI+gpz9ggdDIRjzYZmzG5GCfce4+jqQZjgRMw==
-X-Received: by 2002:a05:600c:314a:b0:477:73cc:82c2 with SMTP id 5b1f17b1804b1-4777b567f0amr30545285e9.9.1762776984599;
-        Mon, 10 Nov 2025 04:16:24 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce20ee3sm316469945e9.9.2025.11.10.04.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 04:16:24 -0800 (PST)
-Date: Mon, 10 Nov 2025 12:16:22 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <linux@weissschuh.net>,
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] tools/nolibc: avoid using plain integer as NULL pointer
-Message-ID: <20251110121622.3a8e4a40@pumpkin>
-In-Reply-To: <20251109195754.GB20023@1wt.eu>
-References: <20251109-nolibc-sparse-v1-1-02256638a99c@weissschuh.net>
-	<20251109195754.GB20023@1wt.eu>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=74+HnH+rhIexyx6g5es8cFazSWzppP2vcLxSnUPEPvM=;
+        b=sN9PBwP3A6Q+RPfJ0gGFylHTugViGc7IAscoVolNNgSpmSlyRGkVPOW81SIMFoByBF
+         2PDyI7oTJ2orFJIeBahGYJuScpuWqDbw7rqyVrV6N5As29z2ACgq60882+HbWGm3ioMo
+         ifQOqWE0FA4o0bs0xrb+03I+JZ+7USj9+iM95gLLd+4O766AuepiRZQhvyYbqMjRRSzF
+         dHmYd6idUGGp54Q6nFfNTiSINoRMVxBacDWUoFOWUQBvc8fOywG5AmQCQFfJGKiJMEuy
+         M+ByP8jPJy9ikDfh5/Hy2wIRG7VTMLpKeJ8ytYTxl3YI/uAYxw+pmqjCihZjI+lnFKfz
+         sD5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVnoRn6Xy1rec5nv3s19BnfuSE0w/sJbgTQwqN43Yj1uj+dv6xOG/+2EwG7zEffcJ5GL1yyrO/05J3ccdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBPblCAtgZRPkdAf1Th4mFMASeEg3XkXIVGa6Mt6dXs4SED6Co
+	ZFfwMMr5SU0vc7QN4tYZfVFQ2inzn8MyBa8SbLIZnl6i9Lrf83vcfddJNdIqNKjMsh/s5mAmmVq
+	GtFIXqY60UBzd0YlqsrtKleq8t3UNdYhJN3pGcBsWHxhzYPReXOGjVaIIJ+VPN/pb/CGhEJlgU4
+	iSscpI1Nh+ToAYDvAFC4jBChnvyYmOWPsr3CyT8lCl
+X-Gm-Gg: ASbGncs3cm3PDXBZPeXRdVsZQEieRCA2K9kDru7EdF+omItgqzxyvkhS/KZOGowE+/D
+	Id9m3IJ7R+mA6F1Sv+8ntGxiUnN/fPB4dS0I1oR5EfeAD6upASoFvNJGMF7VqST7TJSVySokju5
+	MJOAnLB3V463Ysac5prDauq7pfL8lqTS3CZdssiewy+E6pX0gZZYqWA4Ch/pe5t8aMkvg9LK9o3
+	RdWIj32o14xoXHn
+X-Received: by 2002:a17:906:ee8e:b0:b71:1164:6a7e with SMTP id a640c23a62f3a-b72e003924bmr875326166b.0.1762777004306;
+        Mon, 10 Nov 2025 04:16:44 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGhlJwu++LA0y6rHYS/X7Tkcx19E/oD+HEnPU1cI7qBA37rwKLUdQWUCTDNq1VIndy2ptAzXROTIVyAJWm7Ev0=
+X-Received: by 2002:a17:906:ee8e:b0:b71:1164:6a7e with SMTP id
+ a640c23a62f3a-b72e003924bmr875322766b.0.1762777003918; Mon, 10 Nov 2025
+ 04:16:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <acd8109245882afd78cdf2805a2344c20fef1a08.1762434837.git.rrobaina@redhat.com>
+ <e92df5b09f0907f78bb07467b38d2330@paul-moore.com>
+In-Reply-To: <e92df5b09f0907f78bb07467b38d2330@paul-moore.com>
+From: Ricardo Robaina <rrobaina@redhat.com>
+Date: Mon, 10 Nov 2025 09:16:32 -0300
+X-Gm-Features: AWmQ_bncMcE9PB4nKORFD7uOEDM8kBtbm971Ai2s5IVLXxLujIHjE41gMiPa2LI
+Message-ID: <CAABTaaCVsFOmouRZED_DTMPy_EimSAsercz=8A3RLTUYnpvf_A@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] audit: add audit_log_packet_ip4 and
+ audit_log_packet_ip6 helper functions
+To: Paul Moore <paul@paul-moore.com>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, eparis@redhat.com, 
+	fw@strlen.de, pablo@netfilter.org, kadlec@netfilter.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, 9 Nov 2025 20:57:54 +0100
-Willy Tarreau <w@1wt.eu> wrote:
+On Fri, Nov 7, 2025 at 7:46=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Nov  6, 2025 Ricardo Robaina <rrobaina@redhat.com> wrote:
+> >
+> > Netfilter code (net/netfilter/nft_log.c and net/netfilter/xt_AUDIT.c)
+> > have to be kept in sync. Both source files had duplicated versions of
+> > audit_ip4() and audit_ip6() functions, which can result in lack of
+> > consistency and/or duplicated work.
+> >
+> > This patch adds two helper functions in audit.c that can be called by
+> > netfilter code commonly, aiming to improve maintainability and
+> > consistency.
+> >
+> > Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
+> > Acked-by: Florian Westphal <fw@strlen.de>
+> > ---
+> >  include/linux/audit.h    | 12 +++++++++++
+> >  kernel/audit.c           | 39 ++++++++++++++++++++++++++++++++++++
+> >  net/netfilter/nft_log.c  | 43 ++++------------------------------------
+> >  net/netfilter/xt_AUDIT.c | 43 ++++------------------------------------
+> >  4 files changed, 59 insertions(+), 78 deletions(-)
+>
+> ...
+>
+> > diff --git a/net/netfilter/nft_log.c b/net/netfilter/nft_log.c
+> > index e35588137995..f53fb4222134 100644
+> > --- a/net/netfilter/nft_log.c
+> > +++ b/net/netfilter/nft_log.c
+> > @@ -26,41 +26,6 @@ struct nft_log {
+> >       char                    *prefix;
+> >  };
+> >
+> > -static bool audit_ip4(struct audit_buffer *ab, struct sk_buff *skb)
+> > -{
+> > -     struct iphdr _iph;
+> > -     const struct iphdr *ih;
+> > -
+> > -     ih =3D skb_header_pointer(skb, skb_network_offset(skb), sizeof(_i=
+ph), &_iph);
+> > -     if (!ih)
+> > -             return false;
+> > -
+> > -     audit_log_format(ab, " saddr=3D%pI4 daddr=3D%pI4 proto=3D%hhu",
+> > -                      &ih->saddr, &ih->daddr, ih->protocol);
+> > -
+> > -     return true;
+> > -}
+> > -
+> > -static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+> > -{
+> > -     struct ipv6hdr _ip6h;
+> > -     const struct ipv6hdr *ih;
+> > -     u8 nexthdr;
+> > -     __be16 frag_off;
+> > -
+> > -     ih =3D skb_header_pointer(skb, skb_network_offset(skb), sizeof(_i=
+p6h), &_ip6h);
+> > -     if (!ih)
+> > -             return false;
+> > -
+> > -     nexthdr =3D ih->nexthdr;
+> > -     ipv6_skip_exthdr(skb, skb_network_offset(skb) + sizeof(_ip6h), &n=
+exthdr, &frag_off);
+> > -
+> > -     audit_log_format(ab, " saddr=3D%pI6c daddr=3D%pI6c proto=3D%hhu",
+> > -                      &ih->saddr, &ih->daddr, nexthdr);
+> > -
+> > -     return true;
+> > -}
+> > -
+> >  static void nft_log_eval_audit(const struct nft_pktinfo *pkt)
+> >  {
+> >       struct sk_buff *skb =3D pkt->skb;
+> > @@ -80,18 +45,18 @@ static void nft_log_eval_audit(const struct nft_pkt=
+info *pkt)
+> >       case NFPROTO_BRIDGE:
+> >               switch (eth_hdr(skb)->h_proto) {
+> >               case htons(ETH_P_IP):
+> > -                     fam =3D audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+> > +                     fam =3D audit_log_packet_ip4(ab, skb) ? NFPROTO_I=
+PV4 : -1;
+> >                       break;
+> >               case htons(ETH_P_IPV6):
+> > -                     fam =3D audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+> > +                     fam =3D audit_log_packet_ip6(ab, skb) ? NFPROTO_I=
+PV6 : -1;
+> >                       break;
+> >               }
+> >               break;
+> >       case NFPROTO_IPV4:
+> > -             fam =3D audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+> > +             fam =3D audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1=
+;
+> >               break;
+> >       case NFPROTO_IPV6:
+> > -             fam =3D audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+> > +             fam =3D audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1=
+;
+> >               break;
+> >       }
+>
+> We can probably take this a step further by moving the case statements
+> into the audit functions too.  I think this will make some of the other
+> changes a bit cleaner and should reduce the amount of audit code in the
+> NFT code.
+>
+> If we don't want to do that, it might be worthwhile to take the
+> NFPROTO_BRIDGE protocol family reset shown below in audit_log_nft_skb()
+> and use that in the nft_log_eval_audit() function so we aren't
+> duplicating calls into the audit code.
+>
+> [WARNING: completely untested code, but you should get the basic idea]
+>
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 26a332ffb1b8..72ba3f51f859 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -2538,6 +2538,59 @@ static void audit_log_set_loginuid(kuid_t koldlogi=
+nuid, kuid_t kloginuid,
+>         audit_log_end(ab);
+>  }
+>
+> +int audit_log_nft_skb(struct audit_buffer *ab,
+> +                     struct sk_buff *skb, u8 nfproto)
+> +{
+> +       /* find the IP protocol in the case of NFPROTO_BRIDGE */
+> +       if (nfproto =3D=3D NFPROTO_BRIDGE) {
+> +               switch (eth_hdr(skb)->h_proto) {
+> +               case htons(ETH_P_IP):
+> +                       nfproto =3D NFPROTO_IPV4;
+> +               case htons(ETH_P_IPV6):
+> +                       nfproto =3D NFPROTO_IPV6;
+> +               default:
+> +                       goto unknown_proto;
+> +               }
+> +       }
+> +
+> +       switch (nfproto) {
+> +       case NFPROTO_IPV4: {
+> +               struct iphdr iph;
+> +               const struct iphdr *ih;
+> +
+> +               ih =3D skb_header_pointer(skb, skb_network_offset(skb),
+> +                                       sizeof(_iph), &_iph);
+> +               if (!ih)
+> +                       return -ENOMEM;
+> +
+> +               audit_log_format(ab, " saddr=3D%pI4 daddr=3D%pI4 proto=3D=
+%hhu",
+> +                                &ih->saddr, &ih->daddr, ih->protocol);
+> +               break;
+> +       }
+> +       case NFPROTO_IPV6: {
+> +               struct ipv6hdr iph;
+> +               const struct ipv6hdr *ih;
+> +
+> +               ih =3D skb_header_pointer(skb, skb_network_offset(skb),
+> +                                       sizeof(_iph), &_iph);
+> +               if (!ih)
+> +                       return -ENOMEM;
+> +
+> +               audit_log_format(ab, " saddr=3D%pI6 daddr=3D%pI6 proto=3D=
+%hhu",
+> +                                &ih->saddr, &ih->daddr, ih->protocol);
+> +               break;
+> +       }
+> +       default:
+> +               goto unknown_proto;
+> +       }
+> +
+> +       return 0;
+> +
+> +unknown_proto:
+> +       audit_log_format(ab, " saddr=3D? daddr=3D? proto=3D?");
+> +       return -EPFNOSUPPORT;
+> +}
+> +
+>  /**
+>   * audit_set_loginuid - set current task's loginuid
+>   * @loginuid: loginuid value
+> diff --git a/net/netfilter/nft_log.c b/net/netfilter/nft_log.c
+> index e35588137995..6f444e2ad70a 100644
+> --- a/net/netfilter/nft_log.c
+> +++ b/net/netfilter/nft_log.c
+> @@ -75,28 +75,7 @@ static void nft_log_eval_audit(const struct nft_pktinf=
+o *pkt)
+>                 return;
+>
+>         audit_log_format(ab, "mark=3D%#x", skb->mark);
+> -
+> -       switch (nft_pf(pkt)) {
+> -       case NFPROTO_BRIDGE:
+> -               switch (eth_hdr(skb)->h_proto) {
+> -               case htons(ETH_P_IP):
+> -                       fam =3D audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+> -                       break;
+> -               case htons(ETH_P_IPV6):
+> -                       fam =3D audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+> -                       break;
+> -               }
+> -               break;
+> -       case NFPROTO_IPV4:
+> -               fam =3D audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+> -               break;
+> -       case NFPROTO_IPV6:
+> -               fam =3D audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+> -               break;
+> -       }
+> -
+> -       if (fam =3D=3D -1)
+> -               audit_log_format(ab, " saddr=3D? daddr=3D? proto=3D-1");
+> +       audit_log_nft_skb(ab, skb, nft_pf(pkt));
+>
+>         audit_log_end(ab);
+>  }
+>
+> --
+> paul-moore.com
+>
 
-> Hi Thomas,
->=20
-> On Sun, Nov 09, 2025 at 08:27:29PM +0100, Thomas Wei=C3=9Fschuh wrote:
-> > The integer zero should not be used as NULL pointer.
-> > It is invalid and sparse will complain about it.
-> >=20
-> > Use proper NULL pointers instead. =20
->=20
-> Huh ? I've been using that for decades and seeing it everywhere. That's
-> quite bizarre, 0 is perfectly valid as a pointer. Ah, here it is, in
-> C99:6.3.2.3:
->=20
->   An integer constant expression with the value 0, or such an expression
->   cast to type void *, is called a null pointer constant.
+Thanks for reviewing this patch, Paul.
 
-Note also that the above is true even if the value stored in memory for
-a NULL point isn't the 'all zero' bit pattern.
+It makes sense to me. I'll work on a newer version addressing your suggesti=
+ons.
 
-The only time it actually matters whether you use 0 or NULL is in varargs
-function calls.
-Even that is dependant on the calling convention (when NULL is zero).
-
-	David
 
