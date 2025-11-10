@@ -1,363 +1,286 @@
-Return-Path: <linux-kernel+bounces-894055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC522C4926E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:57:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C35B1C4927D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CDD34EA647
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:57:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D94F7188EA89
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B83337B80;
-	Mon, 10 Nov 2025 19:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89F633F8D6;
+	Mon, 10 Nov 2025 19:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwX1ndXs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qgtc/d+k"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51462336EFD;
-	Mon, 10 Nov 2025 19:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762804648; cv=none; b=NakenPi2LpvSyRh1fUw6vrXNHbwp1M9pztrBniIneNhBdumvTPws5FiJI2audWYk+wn/ndyGxG77J05ysNhRhTd58CUNtQBaSDY4SUvRfvsiH1ArcBGP2sjG1tvB+Su4UW2i3bplradeZayP2/iC6N1YokY9hByanA0vLEBTbfQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762804648; c=relaxed/simple;
-	bh=7qoRu0+RlFlou80SR1CpX/1QJvwjgZWdZwchm3F0+R4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X/ztVf0ByPUf6M/EovWw4kCaPJkM2fdwrR2trWpknujevvRu30aX6BCwqo8U3iHOtBypehabTQGkrR/NrALWHKlNjwyCQXAPHkDJira/W4nF67+emaAcm6OXIVuBLLPbszK5BRHBrQzLpMU5i/bhF5WqjO6HZ1N9E1pNdCaeJuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwX1ndXs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BEBFC16AAE;
-	Mon, 10 Nov 2025 19:57:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762804647;
-	bh=7qoRu0+RlFlou80SR1CpX/1QJvwjgZWdZwchm3F0+R4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MwX1ndXsEPnx1OdZ0JL/opQXXrG6Z5jRcmuPfkE/5execmaAgpAaIG1bk2BZzaX6z
-	 Odq6EZ7+6e1STaRxM3p+xOx9rHsCa+qIEf/bpQ2bdVVFsInoXiMgHb0JxaDxalOYpd
-	 YzkiZv14LI9afF4MB4I7/bOScsTJyTW1aACr4zjEEXCVUW5By5cKuR9k3RN7qQkWE8
-	 oUFmug+Ir0gZICWJIfmHQ2z8dT+4FPQpWaEkOCyh0eQ3HUI4NUJE5emLfT374l/2nL
-	 +d1A9My/NMk/Z1ZEUZbCxtlSSR64Th4EWY0+v4+2NWbNgG3g6odHqoFr4LfSNwJNz9
-	 5bQXjQbh8oIlw==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Nishanth Menon <nm@ti.com>,
-	Simon Horman <horms@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	alexandre.f.demers@gmail.com,
-	alexander.deucher@amd.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.17-5.4] net: ethernet: ti: netcp: Standardize knav_dma_open_channel to return NULL on error
-Date: Mon, 10 Nov 2025 14:57:03 -0500
-Message-ID: <20251110195718.859919-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251110195718.859919-1-sashal@kernel.org>
-References: <20251110195718.859919-1-sashal@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D408D3385A1;
+	Mon, 10 Nov 2025 19:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762804650; cv=fail; b=BvDRh7tycJk8ZfAm/tWw3DOx3q4KOEgzvoCYdGobDZ1dee3ht0tOW3In1yhsbtJL068zXQol0nwsL1jNlWAlPK2Lkj5U95q/2AtEdrnrqOaFRJFMyv+tFbfHtapdsZTJMNjipmS3r6wu/f8y2n5rv+LXoQXMX6ttum/2vYdbOXE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762804650; c=relaxed/simple;
+	bh=hm+VQlmfkLSY3C1vPmg36/nhLpGXT2OjYRtYH7i/5n0=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=V/uOmbS6nvj+Z3LLRlAqA2Ptuy9wQEWcxqGh3LzD3TnXCqSazdA8EIpqtwBMqjb6MEfe7U0LRjnx0te8W6OG6EbJBo73pWH95D8vYQk9m1Bj4Z8nQUKa6jbtihA5L2EKqc5SWpxL3JA8vPNRDkLO/NKm/PJdjXxgplj3BbcXTJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qgtc/d+k; arc=fail smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAG3MpC003210;
+	Mon, 10 Nov 2025 19:57:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp1; bh=hm+VQlmfkLSY3C1vPmg36/nhLpGXT2OjYRtYH7i/5n0=; b=qgtc/d+k
+	Wx+l8zjzJit0v2U/bDX1bGF7iJa1yOeM5uZloNZhPoyCu6uTXs4j5r0DxyzEbUga
+	I/akn8ohn67KsyIb7lWXVXqnsb/LoeKEQaF0+kD1/Mxhe8UhiyN/Woi9moHzi/U9
+	EhjFs1WjInXyBYG2FAKJqM17bP1JOkZ8r/dm8abL2lkKtzhhZLz8hitxSdBL75Xv
+	C+yFnx7rNLKON3AFCRYz1AznlxgaGzbHPS7H6cQx5Yc0e1qzpgdy6NTtn4KSs8q1
+	WbyhnQmAPaWFelglXzzZWWNl+kl3NN0SbEXhf/bKNOaPgzEXVqnBbiacjpNIhFd5
+	ljRnm1TJWrbg1w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk81xg8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 19:57:21 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AAJpO2s002171;
+	Mon, 10 Nov 2025 19:57:21 GMT
+Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazon11010033.outbound.protection.outlook.com [52.101.193.33])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk81xg6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 19:57:21 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D/ihXOHjjHNAPRbPQ5YLwxnKRcLeB4KHXI4ZFGmBQpEQsCnwdG01TnuV/51IYdV2K2IXS9YJu3un7aU0CvqymXF+BldYt/c8O8dlwcluJXyNOixBCj7ii7Mec7a0W2I05W1iqQplDxkjJSQLIc/6g4xjVUgtt6Kn5BHTl3bzDtv67/QeVmTYlF2VZscdJPPpr0tQDDn6l9JDno2TaRimH+yf+C5iLztbW1OtsdLZhh0zxg20am6lVdmjt6JNM8IRVUg17WiaGNzwGHFpwDtG/Lxy+G304TRswdzeMRtT6bd+iEzK7iLE9vyeFp2Ekx8eCUrXRAlsC4Ec2Aoya6MIeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hm+VQlmfkLSY3C1vPmg36/nhLpGXT2OjYRtYH7i/5n0=;
+ b=VwmOCOoiMIxn/jEQPWap8B6whOI/2G/wA11HBD17lTX4ATLfNAz0U862gMLYaY8DgUrSoWIF4nh7jPDNZS6NJEL1pm9MOuOukU5IKMEfkSkJnC0jo2ZQoE18n2ZfT1fpkMQL5wfn53QP3pyrIYs515WWk5QA11RdCmkMnlllFUDZEaZyNtY0JL27bH3VKFgRDjEmsyX0oREb1o637zq6RiwZCxHeN9G7ZaknmmCO/B5ZUw76TXwp3HV4qTolgeDT76BFZNPD4jV2jIcpI6yu2WrBGnoC4sNJ0n8MFCOZKuHlFHQbVBAYCeEVeMcdvAl8M27JWd+m5QxSSmgZVpCyhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
+ header.d=ibm.com; arc=none
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
+ by SA0PR15MB3887.namprd15.prod.outlook.com (2603:10b6:806:8b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 19:57:18 +0000
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 19:57:18 +0000
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+To: Gregory Farnum <gfarnum@redhat.com>
+CC: Xiubo Li <xiubli@redhat.com>,
+        "justinstitt@google.com"
+	<justinstitt@google.com>,
+        "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>,
+        "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "nathan@kernel.org" <nathan@kernel.org>,
+        "morbo@google.com" <morbo@google.com>,
+        "idryomov@gmail.com"
+	<idryomov@gmail.com>,
+        "nick.desaulniers+lkml@gmail.com"
+	<nick.desaulniers+lkml@gmail.com>,
+        "ceph-devel@vger.kernel.org"
+	<ceph-devel@vger.kernel.org>
+Thread-Topic: [EXTERNAL] Re: [PATCH v1 1/1] ceph: Amend checking to fix `make
+ W=1` build breakage
+Thread-Index: AQHcUnsZwcN+bEDhFkO0820vr4BqvrTsU3iA
+Date: Mon, 10 Nov 2025 19:57:18 +0000
+Message-ID: <01593a9ca971421a39c483819855d41c251da905.camel@ibm.com>
+References: <20251110144404.369928-1-andriy.shevchenko@linux.intel.com>
+		 <9f7339a71c281e9f9e5b1ff34f7c277f62c89a69.camel@ibm.com>
+	 <CAJ4mKGYPoxPS62yFigmqFPPTHOSwgtj+WKwEtdpNGsu3BJya3w@mail.gmail.com>
+In-Reply-To:
+ <CAJ4mKGYPoxPS62yFigmqFPPTHOSwgtj+WKwEtdpNGsu3BJya3w@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|SA0PR15MB3887:EE_
+x-ms-office365-filtering-correlation-id: fcdb34a7-6590-4b05-df0c-08de20935ab6
+x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|10070799003|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Z28wYXVmRnE1RFVRenRzNnRPc1VmNTUrdGdSdFZ2b01NZUdiUkE5Sk1vc3R6?=
+ =?utf-8?B?aVJpbS94NUpOVVNBREwvdXZKSEwyZlNnUjdpUUcvN3hDRlg5VTN6SE9sWFp2?=
+ =?utf-8?B?bHBlWm1XL0NYNTg3YmwwMHAybnFhV0RFMzN3eGxzSTRhdzRxZm9CNkhpUGRa?=
+ =?utf-8?B?dEJsOU5IZ1pwSUY2b1BiUWcxclduNjBHekk4dktLZ2FyMTR3Y1QyQndDRU0v?=
+ =?utf-8?B?UEJNVytTVEhTdnYzQk9kR0hMUEZ5SWMvcHdmZHFndEd5bTZTUGJQUXhqRGxS?=
+ =?utf-8?B?TnZoUE9UbjhyRU9LVFVzOUxDdmdNei95STB1a1k1YVU3MTEyTzJGUEh1QXZP?=
+ =?utf-8?B?N0ZvelNoazA1V2tpcWtFSmhEai9OcE92ZHk4RHdXdDQ1cFNDUElkSmJoQVdN?=
+ =?utf-8?B?UWJKdEdXeGF1Rm1nZWJCaEpLR21SL3RhZllBaDY1TzFWeU9kbHdhdkFPQkp2?=
+ =?utf-8?B?bFM2NU11VUFEYUlQZldGa2FBQ1l0d3BnSklRVGVZa3NhWXZOTVBNMlpQcW1M?=
+ =?utf-8?B?L2VncDE0UFhjam0vR1dFZ0tKQnBYbXJ1ZklVaVFmaGJYR09UN01SU0pTK2tY?=
+ =?utf-8?B?UkRnTUJRWkNhZThJcjN3aS94eFhrYkZOd3ZiMGI2MlAvdDZQQW9UbkQzNkFa?=
+ =?utf-8?B?TmEwMW9oR1Zsa01RSVJQbVpEVHBDTWNDK0NybkVpb1VVeGlaTG9CNjNrMEN0?=
+ =?utf-8?B?citmSzZKN1lQMWl6cXRLTXMvUEhlaVFXSjhiSTJjMkl3S0w5Vm9zbzNEMmlo?=
+ =?utf-8?B?SE83Vk1tM0t0dWtqeWI2OXlWY29nZ1pNaEpUZUZZdGlRYjFJdHpOdHphOHds?=
+ =?utf-8?B?cjJMM1hpMzF5RDZRZTB0OTRLTkVqRFNhR3A4eTIyaTZyUUZtTDVWQWxRVVhp?=
+ =?utf-8?B?eGpncHBTMzVRbW42RWhXTjlwc2lzSkVYOWhTSE1kNWpBRjB6ckVQS3lYN2I2?=
+ =?utf-8?B?LzA3TTQ5MXRlMzNPRkdBYWpuOE8xVmxGNC9aTjJwS2NWRDhsZGpqUUcvS3ZC?=
+ =?utf-8?B?U0p3WEJLMnBBR2ozV0VtOWtlRjV6WkJYUEF1dCtjNUdQYW02cWZubE9JaElE?=
+ =?utf-8?B?Tmt0R3lPdGtzOE5uMW50amNaWmF2Z1l0SjR3dmhaNDFmd1dpbUtsdlZyMXdZ?=
+ =?utf-8?B?WU13UDhEWTZ2V0d4dllxa29zMkp0TVlMQjVQYXlDWVpLbGJ6Z295OE5XMmp6?=
+ =?utf-8?B?S2x6aWRzQ29oQzF5ZWVqQXIrTlFocGlGb3UwMnFsRTBsNC9xam5iMERaOFll?=
+ =?utf-8?B?aHRJcXNXcW9XNDNWVGY1RjQxOU0yclZQS1p3UmVnZkdLREs2K1UwejlXZE16?=
+ =?utf-8?B?ejVKOEJVUzNzMWVnYjYrTHI0a3FXajU5dEJkenBSOWtUVittNjlSckhOK1BR?=
+ =?utf-8?B?VFdtU0R0cmMrc0ZRM3ZHakhwcE9aWWFoR29YcWxQbTZYQkhKOTBwUVcrZnVV?=
+ =?utf-8?B?bXpQQllQKzQveWF2elhqWi9VZERtalBKeGlVTjB4OXFlYTFQb1lvZWxMTmpU?=
+ =?utf-8?B?czRWTVVybGx0clBjNkZmdDk0T0NTZFFQTzFWNTh5ZVZpSmFUTDQyNkVubWVE?=
+ =?utf-8?B?bERTNE5zKzNEMUQxQ1d6MXcwR2xoSWp2YVZ5SzNuQ3JHSHdHcHpXTXFQeFFY?=
+ =?utf-8?B?ZHptSWE4cWducCtLUnY3WWJOOWJ3dnJkWTRGcWpOUHZzTi9BL3l4dUVlZGxy?=
+ =?utf-8?B?dXdqMVVoUnZjQkloNTdaSWJlRHBwM2tiQnRDK1hZR1R6R2FKdU1TaTdBUkVR?=
+ =?utf-8?B?UHZ0TGJjTVdCYlF6ejBUTXNXL3pIUXZxSDIzSjZyUG04SjU4OHVSaUphRGhX?=
+ =?utf-8?B?dlNUUDlodU80T3FxUlFJcUxqZE16UEcwRUNxZWRuTUZUa3Z4RnNNTWdTdnMy?=
+ =?utf-8?B?OVZOYkhySzJoL2Y0RnR0eDd5Z2xsSS9VM3gxaGY0Unk2cER6Tm5OdTFSNlhF?=
+ =?utf-8?B?N3Jldk1kak51dFE5VlJ5QnIrY2pxeFhwTG8wUlZDNEN2OFByL1R5d2VoL0ZB?=
+ =?utf-8?B?M1NDanRQM2J6UUdEaUE1T0RMYmNuQXFJeXpHVnN1dlA5WUZCU3ZMUTBzaHZ1?=
+ =?utf-8?Q?8Zsy3g?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(10070799003)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?VnRTNGdZdzFPcDVybnBlbndyaUdNa2c0WmZhL2ZSUS9oZktZYTRoZEQ1cExa?=
+ =?utf-8?B?blpDckF0eldMQmlFY2JpaGc0dzlNS3ZTQmtzVlcvQzRJWlVuR0M4SHo0UG05?=
+ =?utf-8?B?OXRPaytMajNuZDBnd25zbzE1S1JQdnZ4eW1TZ3ZsYmE3ZzFMZkdxc1pVYk52?=
+ =?utf-8?B?azhqa0ZQR3BWTEYyR1VEZEhiOVB1NzlWMkpRNXYxZnJVK01JTFVOcURydEd2?=
+ =?utf-8?B?S3BJUDNrZHRVcTRiV2dmbXF6R0Zqc05CVVhJblhtaWJnbysrRzdvcHhvQU9r?=
+ =?utf-8?B?R2JBY09qYk1yQ1JRNGZxZkJtRUZJWTdJMkRhNzAyR3ZrczVjM3FweEZaT2ZX?=
+ =?utf-8?B?SXVaMys5Q3FrRG5jbENaVTFOM1Y3YlVSWGRJcTRXQy8wblBjYzQxOVlhcDZJ?=
+ =?utf-8?B?NWdCVEQzZmVHcys4VXI0ajhuaGd2MUMzeXVDdGZRZkphazdZN2FZTEpvWlNI?=
+ =?utf-8?B?ODRsS0FCbW5ZdnBCL3ZUVTdrZHoxMkYxNTBhOVVmM1NSUG1PZjlMSFlhS00v?=
+ =?utf-8?B?ODIzSDZWTTkvcDNmQ2dMWmt2cU1zSHVZTkp6Z21zS25Oc3k2TllXSE1pME5X?=
+ =?utf-8?B?NG9GSDlBdncwbTBjNDZmcEZqYVJSWkthQzZPZlJyZjVYdUd3MUdOL0YwZlVV?=
+ =?utf-8?B?K2lOSERFMFRNcU8rSXpFQk56TTI2b2I5MXJScWtqZTN3T3pFZHVDTVBGQk1T?=
+ =?utf-8?B?eHVUSEt4aTRBU3N2MmVhT2xJb1RhOWlCbVVyMXBmOW9IdXkzd0lIYitPeWNG?=
+ =?utf-8?B?TjVvZmcvK2JrWWhSUVlTbS9IQ3R6dEtFZmlFUU9WbTh4RHdGcXlCQWdIb0tx?=
+ =?utf-8?B?TkVHd1VjVHE2d3NhdndtRGdmQlpNSFFiNko1Vkwvb0kzRkQ1Mm9NeGtnOGNl?=
+ =?utf-8?B?ai8rRHUyMWMxR05GMHdMelJYMGVkeTNwVzFSalFwaGljSUJGMzlBd3BFblZ3?=
+ =?utf-8?B?TU1WQzhCUUdXV05yeEZYUEVBU21NZ2s1SmxwYTlFUy9MT0l0emFFeVZpeTZz?=
+ =?utf-8?B?bHEzSFdKamp0ZmZ4UEtkR2FRWEUrY2xYT09rdFJuUStyVUdZSXRoemx0U1Nn?=
+ =?utf-8?B?SDE5c3phaEh0aWt2SjVLVVFQNmN6OXB2cFZiRFRONkF5emV6S1FJS0xPM3hr?=
+ =?utf-8?B?cjR3bW8vci80K0JTQTN4bkoxR2lNa1VxWjdYR3NGUHZDR1FkWjZrbEtVbGMv?=
+ =?utf-8?B?alFtSEFZTFZuRy94eGVlNE9KQ3ZZbGpiT3lGQjkrMk0rQUlvaFhtRjVnejU1?=
+ =?utf-8?B?RVNFV1JVaThINGxRR29pdHJqcEJiSEt1cSsyZ3ZQQ3JOMkMzazFPaDlnUnpx?=
+ =?utf-8?B?bUI5ZGVuUTdWVzVFb0I2R2xUU2pDTEY5dkxRWFVHcVNOQ0hHNWRnRTdaZUVL?=
+ =?utf-8?B?eEJ2WXpHYkpHYmJMcW0rZXNLRTBWaHpMcmcxV2VqR3o0TXd2aDVoOFVRckFH?=
+ =?utf-8?B?WC9QNjRhZ081WFNZTUt4K3BjcWpJZVdjWXIydjNQOEl4RWRjSVljVVJkc1Rk?=
+ =?utf-8?B?OXFRb3hMRXdsbVlhVW5TanJBNkVHTHVaMU8xR2NNNU8vMEo2RzczYUlGTzAr?=
+ =?utf-8?B?dWV5aEhlNDlzaWVqdGlIWW1jeU9Sa2UyMGtTaENoc1Z0c2I1NndPRFlNbytn?=
+ =?utf-8?B?eUFTM1dUN24xS3VzdVJNTkY5ZzRTN0R2dVpKYU4vZndNcmJLUlhPaDZQd200?=
+ =?utf-8?B?OUptOXpsS2QxbW9WU3d0VmduVnloVlAvYXBWSHo0OEx3VFJDa1hmbWtWUnlo?=
+ =?utf-8?B?UmxRanl5MEt2S2p4NVhDbDFDS1M2cEpqYnJmY2xqMDdRSmUxd2hneDBXT2Qz?=
+ =?utf-8?B?Tk1zeWJtSmF2TjZKbXBpbkxTTWdYUmpUMnlzTzNQUmFoSTJ4MHpwZTRoSmxv?=
+ =?utf-8?B?Rm9GbjdCQUhFZmZUeSs4QnB0SXFGOHdUa214VFB1Rlg4Ulo4YzU4WWgvTWJT?=
+ =?utf-8?B?TDQrQkZKdmxudkJUL08yUStES0ZVTDNLbGNMNUVNT3V6R3NyV2kwaWFxK3lQ?=
+ =?utf-8?B?eWFhVTRsc3RVM2lSeXhldFVrZE5jSTN1UXdQN2tzRzlvYWd5MlE2RkhtWHJG?=
+ =?utf-8?B?b2FlWlVTdWtIcFdxOVV2RStDT2R6UVVVaFNpOEt1enRaYmRTRkRTNlJwOUNF?=
+ =?utf-8?B?bjgzYVUzNUpCbnJ1YVJjc1F1dlJSdUxLclNZL3gvMGZOckhRQTJIQlhWMVlW?=
+ =?utf-8?Q?x6xHn40Ztf7IpCciSsBSoZg=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EB49F62BBDB3CD46B7D8036D4C1BB9A5@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.17.7
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcdb34a7-6590-4b05-df0c-08de20935ab6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2025 19:57:18.6950
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LSewfeONwhrgLwn99kAi21ewR5eBbs4DJxqw2TD726Ri7CKsVJiP6bdk7oWouBLTQRQA+l7tZbszEyZi30BnCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR15MB3887
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfXy9wMQVPnXiJ/
+ OAyZmJJJT5DIi7KM4P1rf3as37R992LeNd4eCSXN4z/Fix8/sUMC39lj4TdcCbeJz9h5IFzzkJX
+ GPuc0r0S57n5GFsZZtdxk1KAobSvEVIFu/6ZKv3ILEqTbWWLniYeIfmmQO4OLOizkNNeLTMJoBp
+ 8hQRvlznvuGtQlEigWeOY/MkCv1XVhDXsl8E5gLIrKyHBIAdv6QG4FOT0GID8KZCPtTfijoeUKc
+ 2/NPLmc5jNO20FP1uOIZHv9Ydcd82m2bjaF34H14yup7HId4OCzb+EndFV3OzzTRkZ7ZxIjFrM7
+ SMSrX1DHEPLLiT8aU+zryRDzz5EpgqVXLNg+T5caMCyV8KtfWd/jK8uCuh7QW16p+sVsfKHxAcD
+ jXuUTo5v4zfMe4LsdTlK71GXAzHgDw==
+X-Authority-Analysis: v=2.4 cv=ZK3aWH7b c=1 sm=1 tr=0 ts=691243a1 cx=c_pps
+ a=s4741YMcG+xsu4HPw1GdWw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8 a=QyXUC8HyAAAA:8
+ a=lcHQ55qyRYMRVMbbq20A:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: b66lP8-88NhXry7R6mdPBgCQsjhidlFe
+X-Proofpoint-GUID: KFO9KmotPyGwMF7aafJXxTiofQW8qqbj
+Subject: RE: [PATCH v1 1/1] ceph: Amend checking to fix `make W=1` build
+ breakage
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_07,2025-11-10_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511080022
 
-From: Nishanth Menon <nm@ti.com>
-
-[ Upstream commit 90a88306eb874fe4bbdd860e6c9787f5bbc588b5 ]
-
-Make knav_dma_open_channel consistently return NULL on error instead
-of ERR_PTR. Currently the header include/linux/soc/ti/knav_dma.h
-returns NULL when the driver is disabled, but the driver
-implementation does not even return NULL or ERR_PTR on failure,
-causing inconsistency in the users. This results in a crash in
-netcp_free_navigator_resources as followed (trimmed):
-
-Unhandled fault: alignment exception (0x221) at 0xfffffff2
-[fffffff2] *pgd=80000800207003, *pmd=82ffda003, *pte=00000000
-Internal error: : 221 [#1] SMP ARM
-Modules linked in:
-CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-rc7 #1 NONE
-Hardware name: Keystone
-PC is at knav_dma_close_channel+0x30/0x19c
-LR is at netcp_free_navigator_resources+0x2c/0x28c
-
-[... TRIM...]
-
-Call trace:
- knav_dma_close_channel from netcp_free_navigator_resources+0x2c/0x28c
- netcp_free_navigator_resources from netcp_ndo_open+0x430/0x46c
- netcp_ndo_open from __dev_open+0x114/0x29c
- __dev_open from __dev_change_flags+0x190/0x208
- __dev_change_flags from netif_change_flags+0x1c/0x58
- netif_change_flags from dev_change_flags+0x38/0xa0
- dev_change_flags from ip_auto_config+0x2c4/0x11f0
- ip_auto_config from do_one_initcall+0x58/0x200
- do_one_initcall from kernel_init_freeable+0x1cc/0x238
- kernel_init_freeable from kernel_init+0x1c/0x12c
- kernel_init from ret_from_fork+0x14/0x38
-[... TRIM...]
-
-Standardize the error handling by making the function return NULL on
-all error conditions. The API is used in just the netcp_core.c so the
-impact is limited.
-
-Note, this change, in effect reverts commit 5b6cb43b4d62 ("net:
-ethernet: ti: netcp_core: return error while dma channel open issue"),
-but provides a less error prone implementation.
-
-Suggested-by: Simon Horman <horms@kernel.org>
-Suggested-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Nishanth Menon <nm@ti.com>
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Link: https://patch.msgid.link/20251103162811.3730055-1-nm@ti.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-LLM Generated explanations, may be completely bogus:
-
-Based on my comprehensive analysis using semantic code analysis tools
-and kernel repository examination, here is my determination:
-
-## **YES** - This commit SHOULD be backported to stable kernel trees
-
----
-
-## Analysis Summary
-
-### Semantic Analysis Tools Used:
-
-1. **mcp__semcode__find_function** - Located all affected functions
-2. **mcp__semcode__find_callers** - Identified call sites and impact
-   scope
-3. **mcp__semcode__find_callchain** - Traced execution paths from user-
-   space
-4. **Read** - Examined header file and code structure
-5. **Grep** - Verified net_device_ops assignment
-6. **git log/show** - Investigated bug history and kernel version
-   presence
-
-### Key Findings:
-
-#### 1. **User-Space Triggerable Crash** (CRITICAL)
-- **Impact**: The bug causes a kernel crash (alignment exception at
-  0xfffffff2) when opening a network interface
-- **Trigger path**: User command (`ifconfig eth0 up` or `ip link set
-  eth0 up`) → `__dev_open()` → `netcp_ndo_open()`
-  (drivers/net/ethernet/ti/netcp_core.c:1942) →
-  `netcp_setup_navigator_resources()` → `knav_dma_open_channel()`
-- **Call graph analysis** shows `netcp_ndo_open` is assigned to
-  `.ndo_open` in `netcp_netdev_ops` structure, making it directly user-
-  triggerable
-
-#### 2. **Root Cause Analysis**
-The crash occurs due to inconsistent error handling:
-- **Header stub** (include/linux/soc/ti/knav_dma.h:168): Returns `NULL`
-  when driver disabled
-- **Driver implementation** (drivers/soc/ti/knav_dma.c:407-487): Returns
-  `(void *)-EINVAL` (ERR_PTR) on errors
-- **Callers** check `IS_ERR()` after calling `knav_dma_open_channel()`
-- **Cleanup code** in `netcp_free_navigator_resources()` (line 1548)
-  only checks `if (netcp->rx_channel)` before calling
-  `knav_dma_close_channel()`
-- When `rx_channel` contains `-EINVAL` (0xfffffff2), it's non-NULL, so
-  the check passes
-- `knav_dma_close_channel()` attempts to dereference this invalid
-  pointer → alignment exception crash
-
-#### 3. **Impact Scope** (from mcp__semcode__find_callers)
-- **Limited scope**: Only 2 callers of `knav_dma_open_channel()`:
-  - `netcp_setup_navigator_resources()`
-    (drivers/net/ethernet/ti/netcp_core.c:1582)
-  - `netcp_txpipe_open()` (drivers/net/ethernet/ti/netcp_core.c:1326)
-- **Affected hardware**: TI Keystone SoC users with NetCP driver
-- **Files changed**: Only 2 files, both in the same subsystem
-
-#### 4. **Bug Longevity**
-- **Introduced**: v4.12 (2017) by commit 5b6cb43b4d625
-- **Duration**: ~7-8 years of existence
-- **Fixed in**: v6.18-rc5 (November 2024)
-- Verified the buggy pattern exists in v6.6 LTS kernel
-
-#### 5. **Change Characteristics**
-- **Type**: Pure bug fix (crash fix)
-- **Size**: Small and contained
-  (drivers/net/ethernet/ti/netcp_core.c:1326-1366
-  netcp_core.c:1582-1694, drivers/soc/ti/knav_dma.c:407-487)
-- **Semantic changes** (from code inspection):
-  - Standardizes return value from ERR_PTR to NULL on all error paths
-  - Updates callers from `IS_ERR()` checks to simple NULL checks
-  - Updates cleanup from `IS_ERR_OR_NULL()` to simple NULL checks
-  - Changes error code from `PTR_ERR()` extraction to fixed `-EINVAL`
-- **No architectural changes**: No struct modifications, no API
-  additions
-- **No new features**: Only error handling standardization
-
-#### 6. **Backport Risk Assessment**
-- **Risk level**: LOW
-  - Changes are localized to error handling paths
-  - Makes behavior consistent with header stub
-  - No complex dependencies identified
-  - Code structure in v6.6 is compatible (verified)
-- **Regression potential**: Minimal
-  - Affects only error paths that were already broken
-  - Improves consistency between header and implementation
-  - All callers updated in same commit
-
-#### 7. **Stable Tree Compliance**
-- ✅ **Fixes important bug**: Kernel crash
-- ✅ **Small and contained**: 2 files, error handling only
-- ✅ **No new features**: Pure bug fix
-- ✅ **No architectural changes**: No struct/API changes
-- ✅ **Obvious and correct**: Crash trace in commit message proves the
-  fix
-- ✅ **Self-contained**: No dependencies on other commits
-- ❌ **Missing stable tags**: No "Cc: stable@vger.kernel.org" or "Fixes:"
-  tag (oversight)
-
-### Specific Code Reference Points:
-
-1. **drivers/soc/ti/knav_dma.c:407-487**: Changed all error returns from
-   `(void *)-EINVAL` to `NULL`
-2. **drivers/net/ethernet/ti/netcp_core.c:1339**: Changed from
-   `IS_ERR(tx_pipe->dma_channel)` to `!tx_pipe->dma_channel`
-3. **drivers/net/ethernet/ti/netcp_core.c:1361**: Changed from
-   `IS_ERR_OR_NULL()` to simple NULL check in cleanup
-4. **drivers/net/ethernet/ti/netcp_core.c:1680**: Changed from
-   `IS_ERR(netcp->rx_channel)` to `!netcp->rx_channel`
-
-### Conclusion:
-
-This commit is an **excellent candidate for stable backporting**:
-- Fixes a real, user-triggerable kernel crash with documented stack
-  trace
-- Affects users of TI Keystone SoCs who configure network interfaces
-- Small, well-contained, low-risk change
-- Bug has existed since v4.12 (2017) affecting all stable trees
-- Should be backported to all active stable kernels (at minimum v6.1+,
-  v6.6+, v6.12+)
-
-The absence of stable/Fixes tags appears to be an oversight and should
-not prevent backporting given the clear evidence of crash and the
-straightforward nature of the fix.
-
- drivers/net/ethernet/ti/netcp_core.c | 10 +++++-----
- drivers/soc/ti/knav_dma.c            | 14 +++++++-------
- 2 files changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
-index 857820657bac5..5ee13db568f08 100644
---- a/drivers/net/ethernet/ti/netcp_core.c
-+++ b/drivers/net/ethernet/ti/netcp_core.c
-@@ -1338,10 +1338,10 @@ int netcp_txpipe_open(struct netcp_tx_pipe *tx_pipe)
- 
- 	tx_pipe->dma_channel = knav_dma_open_channel(dev,
- 				tx_pipe->dma_chan_name, &config);
--	if (IS_ERR(tx_pipe->dma_channel)) {
-+	if (!tx_pipe->dma_channel) {
- 		dev_err(dev, "failed opening tx chan(%s)\n",
- 			tx_pipe->dma_chan_name);
--		ret = PTR_ERR(tx_pipe->dma_channel);
-+		ret = -EINVAL;
- 		goto err;
- 	}
- 
-@@ -1359,7 +1359,7 @@ int netcp_txpipe_open(struct netcp_tx_pipe *tx_pipe)
- 	return 0;
- 
- err:
--	if (!IS_ERR_OR_NULL(tx_pipe->dma_channel))
-+	if (tx_pipe->dma_channel)
- 		knav_dma_close_channel(tx_pipe->dma_channel);
- 	tx_pipe->dma_channel = NULL;
- 	return ret;
-@@ -1678,10 +1678,10 @@ static int netcp_setup_navigator_resources(struct net_device *ndev)
- 
- 	netcp->rx_channel = knav_dma_open_channel(netcp->netcp_device->device,
- 					netcp->dma_chan_name, &config);
--	if (IS_ERR(netcp->rx_channel)) {
-+	if (!netcp->rx_channel) {
- 		dev_err(netcp->ndev_dev, "failed opening rx chan(%s\n",
- 			netcp->dma_chan_name);
--		ret = PTR_ERR(netcp->rx_channel);
-+		ret = -EINVAL;
- 		goto fail;
- 	}
- 
-diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
-index a25ebe6cd5030..553ae7ee20f16 100644
---- a/drivers/soc/ti/knav_dma.c
-+++ b/drivers/soc/ti/knav_dma.c
-@@ -402,7 +402,7 @@ static int of_channel_match_helper(struct device_node *np, const char *name,
-  * @name:	slave channel name
-  * @config:	dma configuration parameters
-  *
-- * Returns pointer to appropriate DMA channel on success or error.
-+ * Return: Pointer to appropriate DMA channel on success or NULL on error.
-  */
- void *knav_dma_open_channel(struct device *dev, const char *name,
- 					struct knav_dma_cfg *config)
-@@ -414,13 +414,13 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
- 
- 	if (!kdev) {
- 		pr_err("keystone-navigator-dma driver not registered\n");
--		return (void *)-EINVAL;
-+		return NULL;
- 	}
- 
- 	chan_num = of_channel_match_helper(dev->of_node, name, &instance);
- 	if (chan_num < 0) {
- 		dev_err(kdev->dev, "No DMA instance with name %s\n", name);
--		return (void *)-EINVAL;
-+		return NULL;
- 	}
- 
- 	dev_dbg(kdev->dev, "initializing %s channel %d from DMA %s\n",
-@@ -431,7 +431,7 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
- 	if (config->direction != DMA_MEM_TO_DEV &&
- 	    config->direction != DMA_DEV_TO_MEM) {
- 		dev_err(kdev->dev, "bad direction\n");
--		return (void *)-EINVAL;
-+		return NULL;
- 	}
- 
- 	/* Look for correct dma instance */
-@@ -443,7 +443,7 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
- 	}
- 	if (!dma) {
- 		dev_err(kdev->dev, "No DMA instance with name %s\n", instance);
--		return (void *)-EINVAL;
-+		return NULL;
- 	}
- 
- 	/* Look for correct dma channel from dma instance */
-@@ -463,14 +463,14 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
- 	if (!chan) {
- 		dev_err(kdev->dev, "channel %d is not in DMA %s\n",
- 				chan_num, instance);
--		return (void *)-EINVAL;
-+		return NULL;
- 	}
- 
- 	if (atomic_read(&chan->ref_count) >= 1) {
- 		if (!check_config(chan, config)) {
- 			dev_err(kdev->dev, "channel %d config miss-match\n",
- 				chan_num);
--			return (void *)-EINVAL;
-+			return NULL;
- 		}
- 	}
- 
--- 
-2.51.0
-
+T24gTW9uLCAyMDI1LTExLTEwIGF0IDExOjQ4IC0wODAwLCBHcmVnb3J5IEZhcm51bSB3cm90ZToN
+Cj4gT24gTW9uLCBOb3YgMTAsIDIwMjUgYXQgMTE6NDLigK9BTSBWaWFjaGVzbGF2IER1YmV5a28N
+Cj4gPFNsYXZhLkR1YmV5a29AaWJtLmNvbT4gd3JvdGU6DQo+ID4gDQo+ID4gT24gTW9uLCAyMDI1
+LTExLTEwIGF0IDE1OjQ0ICswMTAwLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6DQo+ID4gPiBJbiBh
+IGZldyBjYXNlcyB0aGUgY29kZSBjb21wYXJlcyAzMi1iaXQgdmFsdWUgdG8gYSBTSVpFX01BWCBk
+ZXJpdmVkDQo+ID4gPiBjb25zdGFudCB3aGljaCBpcyBtdWNoIGhpZ2hlciB0aGFuIHRoYXQgdmFs
+dWUgb24gNjQtYml0IHBsYXRmb3JtcywNCj4gPiA+IENsYW5nLCBpbiBwYXJ0aWN1bGFyLCBpcyBu
+b3QgaGFwcHkgYWJvdXQgdGhpcw0KPiA+ID4gDQo+ID4gPiBmcy9jZXBoL3NuYXAuYzozNzc6MTA6
+IGVycm9yOiByZXN1bHQgb2YgY29tcGFyaXNvbiBvZiBjb25zdGFudCAyMzA1ODQzMDA5MjEzNjkz
+OTQ4IHdpdGggZXhwcmVzc2lvbiBvZiB0eXBlICd1MzInIChha2EgJ3Vuc2lnbmVkIGludCcpIGlz
+IGFsd2F5cyBmYWxzZSBbLVdlcnJvciwtV3RhdXRvbG9naWNhbC1jb25zdGFudC1vdXQtb2YtcmFu
+Z2UtY29tcGFyZV0NCj4gPiA+ICAgMzc3IHwgICAgICAgICBpZiAobnVtID4gKFNJWkVfTUFYIC0g
+c2l6ZW9mKCpzbmFwYykpIC8gc2l6ZW9mKHU2NCkpDQo+ID4gPiAgICAgICB8ICAgICAgICAgICAg
+IH5+fiBeIH5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+DQo+ID4gPiAN
+Cj4gPiA+IEZpeCB0aGlzIGJ5IGNhc3RpbmcgdG8gc2l6ZV90LiBOb3RlLCB0aGF0IHBvc3NpYmxl
+IHJlcGxhY2VtZW50IG9mIFNJWkVfTUFYDQo+ID4gPiBieSBVMzJfTUFYIG1heSBsZWFkIHRvIHRo
+ZSBiZWhhdmlvdXIgY2hhbmdlcyBvbiB0aGUgY29ybmVyIGNhc2VzLg0KPiA+ID4gDQo+ID4gPiBT
+aWduZWQtb2ZmLWJ5OiBBbmR5IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4Lmlu
+dGVsLmNvbT4NCj4gPiA+IC0tLQ0KPiA+ID4gIGZzL2NlcGgvc25hcC5jIHwgMiArLQ0KPiA+ID4g
+IDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+ID4gDQo+
+ID4gPiBkaWZmIC0tZ2l0IGEvZnMvY2VwaC9zbmFwLmMgYi9mcy9jZXBoL3NuYXAuYw0KPiA+ID4g
+aW5kZXggYzY1ZjJiMjAyYjJiLi41MjE1MDdlYTgyNjAgMTAwNjQ0DQo+ID4gPiAtLS0gYS9mcy9j
+ZXBoL3NuYXAuYw0KPiA+ID4gKysrIGIvZnMvY2VwaC9zbmFwLmMNCj4gPiA+IEBAIC0zNzQsNyAr
+Mzc0LDcgQEAgc3RhdGljIGludCBidWlsZF9zbmFwX2NvbnRleHQoc3RydWN0IGNlcGhfbWRzX2Ns
+aWVudCAqbWRzYywNCj4gPiA+IA0KPiA+ID4gICAgICAgLyogYWxsb2MgbmV3IHNuYXAgY29udGV4
+dCAqLw0KPiA+ID4gICAgICAgZXJyID0gLUVOT01FTTsNCj4gPiA+IC0gICAgIGlmIChudW0gPiAo
+U0laRV9NQVggLSBzaXplb2YoKnNuYXBjKSkgLyBzaXplb2YodTY0KSkNCj4gPiA+ICsgICAgIGlm
+ICgoc2l6ZV90KW51bSA+IChTSVpFX01BWCAtIHNpemVvZigqc25hcGMpKSAvIHNpemVvZih1NjQp
+KQ0KPiA+IA0KPiA+IFRoZSBzYW1lIHF1ZXN0aW9uIGlzIGhlcmUuIERvZXMgaXQgbWFrZXMgc2Vu
+c2UgdG8gZGVjbGFyZSBudW0gYXMgc2l6ZV90PyBDb3VsZA0KPiA+IGl0IGJlIG1vcmUgY2xlYW4g
+c29sdXRpb24/IE9yIGNvdWxkIGl0IGludHJvZHVjZSBhbm90aGVyIHdhcm5pbmdzL2Vycm9ycz8N
+Cj4gDQo+IEdpdmVuIHRoYXQgdGhlIG51bWJlciBvZiBzbmFwcyBpcyBjb25zdHJhaW5lZCBvdmVy
+IHRoZSB3aXJlIGFzIGENCj4gMzItYml0IGludGVnZXIsIHlvdSBwcm9iYWJseSB3YW50IHRvIGtl
+ZXAgdGhhdCBtYXBwaW5nLi4uKFRob3VnaCBJDQo+IGd1ZXNzIGl0J3MgdGhlIHN1bSBvZiB0d28g
+MzItYml0IGludGVnZXJzIHdoaWNoIHRlY2huaWNhbGx5IGNvdWxkDQo+IG92ZXJmbG93LCBhbmQg
+SSdtIG5vdCBzdXJlIHdoYXQgaGFwcGVucyBpZiB5b3UgYWN0dWFsbHkgaGl0IHRob3NlDQo+IGJv
+dW5kYXJpZXMgb24gdGhlIHNlcnZlciDigJQgYnV0IG5vYm9keSBnZW5lcmF0ZXMgc25hcHNob3Rz
+IG9uIHRoZSBzYW1lDQo+IGZpbGUgaW4gdGhhdCBxdWFudGl0eSkuDQo+IA0KPiBBbGwgdGhhdCBz
+YWlkLCBpdCdkIGJlIGtpbmQgb2YgbmljZSBpZiB3ZSBjb3VsZCBqdXN0IGFubm90YXRlIGZvcg0K
+PiBjbGFuZyB0aGF0IHdlIGFyZSBwZXJmZWN0bHkgaGFwcHkgZm9yIHRoZSBldmFsdWF0aW9uIHRv
+IGFsd2F5cyBiZSB0cnVlDQo+IG9uIGEgNjQtYml0IGFyY2hpdGVjdHVyZSAoYXMgc25hcGlkcyBh
+cmUgNjQgYml0cywgd2Ugd2lsbCBhbHdheXMgYmUNCj4gYWJsZSB0byBjb3VudCB0aGVtKS4NCg0K
+U28sIGFyZSB5b3Ugc3VnZ2VzdGluZyB0byBkZWNsYXJlIG51bSBhcyB1NjQgaGVyZT8gQW0gSSBj
+b3JyZWN0Pw0KDQpUaGFua3MsDQpTbGF2YS4NCg0KPiA+IA0KPiA+ID4gICAgICAgICAgICAgICBn
+b3RvIGZhaWw7DQo+ID4gPiAgICAgICBzbmFwYyA9IGNlcGhfY3JlYXRlX3NuYXBfY29udGV4dChu
+dW0sIEdGUF9OT0ZTKTsNCj4gPiA+ICAgICAgIGlmICghc25hcGMpDQo=
 
