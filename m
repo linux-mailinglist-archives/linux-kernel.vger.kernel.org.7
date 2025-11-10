@@ -1,155 +1,278 @@
-Return-Path: <linux-kernel+bounces-893591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49227C47C7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:08:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EB4C47D36
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:14:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BF97188789A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:01:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E15D64F0D03
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC083274B51;
-	Mon, 10 Nov 2025 15:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3A52773D4;
+	Mon, 10 Nov 2025 15:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdxdSnPE"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="DmHJLSKw"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B651F2749C7
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46041274B51
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790389; cv=none; b=Q/BSinQ4ZZ82QMsBoAElALZuLYiIbRJDNuK00xcdArw/L/RonrkjFmlTgOHUcaw0Vqv7tV1nU6PhVoGnq2ZcY6D77LaV1l7lYWANfvKW5k7ic/lyT56OiPJJqQ9ucuxgZWrGjwkR3A+pkNm0Vj8iEsmgkFC9A+cNCpKFmcJuHU4=
+	t=1762790379; cv=none; b=DVfYzEx5uk6vN81II58whYKxWRj85+1hkTqrpeIX+fe9PfWrADAsoEU6OAk8p09UNJMi2J4B24cG9uQMj5DWLRUNMQ6mbRKAXOyzkl2y817yi/s/YjWZlMH3gg54PpxnTubrOWHX3BiAeEsQ3xWwrwQ7ZnlIdi7IYXuo0GYvz7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790389; c=relaxed/simple;
-	bh=3XR5xOZFw7m7F99cDS59uJSVbCi5klWDCylfHhnjIJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ny6sxjBj9GCBIDnTgK970WbTI77/ivFjcvk0yGuUZxq/W9007pBkW780SfUK1tMuqoR8T6R3io7pKPwD5235tgibpFrYijs3L+XMOxsYSW0JXWzJDjlLURg84zsDry7zx8681ihHYX3BFUXc2n1chm+YW5r4y+lxqcbIyJpe7iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hdxdSnPE; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-477775d3728so16005075e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:59:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762790385; x=1763395185; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/8OtEDzPninIAmrIyyW9v/oj/TtbUvCgO2RuWZGfmfg=;
-        b=hdxdSnPEZVbJAWImgyGWFhXHqkpqiSG3XNnSQ9XwjMQ3WvkO0hrMB6yWy8FMf5L9eE
-         8rRCcYTJVzm8hwFs/zKsNoY+/t5IZfUj9sQrdu0/fdGgbisnz3Xdg2lFeRL0CoWZZbFV
-         vVE/5gPJRNSxpqfwLvjQnGGCexQnqdLAk8WFe3owDYEjXjKLUf0RKHAKvwebyyZzcOL4
-         uOjdBSCFrtGyR9eHCj0joc48LxDshmcjznvZUdN3lRRBvSDHY+8+XACSPVKgrFjD1IFC
-         KzOLBxsDQn1k3pne4Qc/ohqERNizLp3vFMqa9uVCBPrRR+au5GGdGjXeBhkV1/LW2g6U
-         /YxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762790385; x=1763395185;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/8OtEDzPninIAmrIyyW9v/oj/TtbUvCgO2RuWZGfmfg=;
-        b=nsD64uXoSLwTjmalQBrQl6H+5CQgXDPPh+QdHJISDOqK5enb9nx7Sgm89hNDbcX0wE
-         Wh7GdWWp0txrwN2m9Ce4yjydbIgCXoK+eJOTfQ6V/qSzf/Ork0DcyIvK0nwCkPZsKbG2
-         PO/hsjHoDD4/2BFe5Z11t8r1lj3iYl3uNePnc+YWrq+WAI+gy5bcxZPEVfSZ3wuLuzh3
-         PfQzS1C0Ql9qMUHATUCKqIscTXsAlO8rweumn1tkUSTh+fgRG0ocPuXvGwUxAzIL5rut
-         t/JpYKT9omNxNV77vJP4XRF79PDgT/khDMkbeVG2Vmv0JHAD58S71vE7NqEUa13PsYt2
-         46gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWzqHaiubmhctNkXm83/REmBiypu9wJBvvE1k6TAUOl+trj7Tj92zTgf179bNcUTtwP6/BNNkLceFZdfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfA8P8LNHrdPXawOLdntffpxser3XMdx9Ez7F/LVOqrrKB2pW7
-	bTxyDFz6nUXF7TKBJDk6nr138pBNNvTRwSIL60BDO1OhYUMiXS+sAKNN
-X-Gm-Gg: ASbGncvWajqlGUJ1jTdtXw/9ctSj3tRVWosqPuJ18m6kHqunsL55lkqULmdNO1ps+cS
-	I+atgBtQ84hr4v1yabJxFqnhmsku6XhaBcwvpRS6POkXItubkl30Z0bc+onh5scyVKulKv+Eahe
-	ZCkrtba9KHusNtJB6yOM7ImLB9hrDipE+h1CxLWgiUnnPWoeZzzZ0lRbil7oy9OP+C+3ARtiRTp
-	cYBeXa6B4pXJU4PFLgqVml3S7vXx/6GdH3tysUogYPnykXoJyh3O+QXdbLzYKqvhHljJfKx/p8G
-	LDVpBBtTluhQ7bLE7MheeQNPamsKEQ8PCZggIvpdQti6oB9fsdJYyUHboqvQnULINartxDjmxCU
-	UcQXuX8SReXFpv0coLAudHiD5vN/NmZNhgUFOwASO2m/DIdIemcFVvXUdDYzlmuViF0G4Ub7Eh8
-	EFMzfRKpONTRMCS+rYEyX0k5Wxrixyf1x666mEeGFFJDRgQcP/mA/v1w==
-X-Google-Smtp-Source: AGHT+IGfuwlyQtxVjwr9CEgE9pocum/nwloht2L5pCeLUj0SFtQpO9BEkf5q4jSMf+Ykwzb+AJV7AA==
-X-Received: by 2002:a05:600c:1c8e:b0:475:dd53:6c06 with SMTP id 5b1f17b1804b1-477732892b4mr78053345e9.40.1762790384755;
-        Mon, 10 Nov 2025 07:59:44 -0800 (PST)
-Received: from antoni-VivoBook-ASUSLaptop-X512FAY-K512FA ([78.209.76.229])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4777a96e7f8sm82334945e9.13.2025.11.10.07.59.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 07:59:44 -0800 (PST)
-Date: Mon, 10 Nov 2025 16:59:32 +0100
-From: Antoni Pokusinski <apokusinski01@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, marcelo.schmitt1@gmail.com
-Cc: andy@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] iio: mpl3115: use get_unaligned_be24 to retrieve
- pressure data
-Message-ID: <20251110155932.o2oipfzuxhgq4vn4@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
-References: <20251105095615.4310-1-apokusinski01@gmail.com>
- <20251105095615.4310-2-apokusinski01@gmail.com>
- <aQ1MfTu24hhk-dKP@debian-BULLSEYE-live-builder-AMD64>
- <20251109163840.64144586@jic23-huawei>
+	s=arc-20240116; t=1762790379; c=relaxed/simple;
+	bh=FflRpot8dsZaR6QtASFvNa8+5PQWm8ZksmmZCh+KxN4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=M3nRwjXqjFhNmB8f9ezpgmUAk2BzI3tD2oryPT981VggSjDx8RDa0hNx1pM6XqgQYFZCJUdtnjFKtInhsXU8faqH8X+aX666jkvVXqfbKvyo/xXFxBfQJvrWticsqBsR3g5uExehm/JId002bAjb06subk3rA1yo5RP1oqKCxw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=DmHJLSKw; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id aEMnnkhNBqwAI0jx; Mon, 10 Nov 2025 10:59:35 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=oDiu89Ob9KdKFz/fiDOT6j+mIJv/OSgEPF95PNBurXU=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=DmHJLSKwMgLJPI3f8sPK
+	eLlC7SxSo6oFsz5/C1NyqysaZQthp56XWiu0xldrQ/m2ALf6b2cPzzyIMHBiXe7RIy2Yl4XwU+2i0
+	qTSp8F9DZ/ssVRYt+rdELeqid9z8CkvTJyQ8hDS5t3j2xxG81gg9OoU0psYalKKKgkYwoAE/10=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14272452; Mon, 10 Nov 2025 10:59:35 -0500
+Message-ID: <09a1ff3d-6738-4953-a31b-10e89c540462@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 10 Nov 2025 10:59:35 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251109163840.64144586@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v3 11/16] scsi: qla2xxx: fix TMR failure handling
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH v3 11/16] scsi: qla2xxx: fix TMR failure handling
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1762790375
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 6781
+X-ASG-Debug-ID: 1762790375-1cf439139110ce00001-xx1T2L
 
-On Sun, Nov 09, 2025 at 04:38:40PM +0000, Jonathan Cameron wrote:
-> On Thu, 6 Nov 2025 22:33:49 -0300
-> Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
-> 
-> > On 11/05, Antoni Pokusinski wrote:
-> > > The pressure measurement result is arranged as 20-bit unsigned value
-> > > residing in three 8-bit registers. Hence, it can be retrieved using
-> > > get_unaligned_be24 and by applying 4-bit shift.
-> > > 
-> > > Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
-> > > ---
-> > >  drivers/iio/pressure/mpl3115.c | 7 ++++---
-> > >  1 file changed, 4 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c  
-> > ...
-> > >  
-> > > -		*val = be32_to_cpu(tmp) >> chan->scan_type.shift;
-> > > +		*val = get_unaligned_be24(tmp) >> 4;  
-> > hmm, now the number of bits shifted is dissociated from the channel characteristics.
-> > We can do
-> > 		*val = get_unaligned_be24(tmp) >> (24 - chan->scan_type.realbits);
-> This encodes that the field is always aligned to the maximum bit. Whilst it might
-> be true, there is nothing inherent that says it must be.
-> 
-> I'm not sure why we aren't using chan->scan_type.shift though.
-The chan->scan_type.shift is 12 for the pressure channel, because
-.realbits is 32. In order to better reflect the actual data format,
-the pressure .shift and .realbits should be changed to 4 and 24 respectively
-and the we could use the chan->scan_type.shift in here indeed.
+(target mode)
 
-But then the `iio_generic_buffer` tool should also be updated so that it
-can manage the scan_data with realbits not being in the form 2^n.
-Currently it supports only scan sizes of 1,2,4,8 bytes [1].
+If handle_tmr() fails:
 
-[1]: https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/tree/tools/iio/iio_generic_buffer.c#n189
-> 
-> > or maybe
-> > 		*val = get_unaligned_be24(tmp) >> (sizeof(tmp) - chan->scan_type.realbits);
-> 
-> That one needs a BYTES_TO_BITS factor too.
-> 
-> > but it starts becoming too long IMO. Even longer if `tmp` gets a more meaningful
-> > name. Ah well, any of the three forms should work the same at the end of day so
-> > no strong opinion.
-> > 
-> > Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> > 
-> > >  		return IIO_VAL_INT;
-> > >  	}
-> > >  	case IIO_TEMP: { /* in 0.0625 celsius / LSB */
-> > > -- 
-> > > 2.25.1
-> > >   
->
-Kind regards,
-Antoni Pokusinski
+- The code for QLA_TGT_ABTS results in memory-use-after-free and
+  double-free:
+	qlt_do_tmr_work()
+		qlt_build_abts_resp_iocb()
+			qpair->req->outstanding_cmds[h] = (srb_t *)mcmd;
+		mempool_free(mcmd, qla_tgt_mgmt_cmd_mempool); FIRST FREE
+	qlt_handle_abts_completion()
+		mcmd = qlt_ctio_to_cmd()
+			cmd = req->outstanding_cmds[h];
+			return cmd;
+		vha  = mcmd->vha; USE-AFTER-FREE
+		ha->tgt.tgt_ops->free_mcmd(mcmd); SECOND FREE
+
+- qlt_send_busy() makes no sense because it sends a SCSI command
+  response instead of a TMR response.
+
+Instead just call qlt_xmit_tm_rsp() to send a TMR failed response,
+since that code is well-tested and handles a number of corner cases.
+But it would be incorrect to call ha->tgt.tgt_ops->free_mcmd() after
+handle_tmr() failed, so add a flag to mcmd indicating the proper way to
+free the mcmd so that qlt_xmit_tm_rsp() can be used for both cases.
+
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
+
+v2 -> v3:
+- Check for mcmd == NULL in qlt_free_ul_mcmd().
+
+v1 -> v2:
+- Change FCP_TMF_REJECTED to FCP_TMF_FAILED.
+- Add QLA24XX_MGMT_LLD_OWNED and qlt_free_ul_mcmd().
+- Improve patch description.
+
+ drivers/scsi/qla2xxx/qla_os.c     |  2 +-
+ drivers/scsi/qla2xxx/qla_target.c | 56 +++++++++++++------------------
+ drivers/scsi/qla2xxx/qla_target.h |  2 ++
+ 3 files changed, 27 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 2a3eb1dacf86..64387224f28a 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -1893,7 +1893,7 @@ __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
+ 				 * Currently, only ABTS response gets on the
+ 				 * outstanding_cmds[]
+ 				 */
+-				ha->tgt.tgt_ops->free_mcmd(
++				qlt_free_ul_mcmd(ha,
+ 					(struct qla_tgt_mgmt_cmd *) sp);
+ 				break;
+ 			default:
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 849ab256807b..009b9ca5c2b9 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -2005,7 +2005,6 @@ static void qlt_do_tmr_work(struct work_struct *work)
+ 	struct qla_hw_data *ha = mcmd->vha->hw;
+ 	int rc;
+ 	uint32_t tag;
+-	unsigned long flags;
+ 
+ 	switch (mcmd->tmr_func) {
+ 	case QLA_TGT_ABTS:
+@@ -2020,34 +2019,12 @@ static void qlt_do_tmr_work(struct work_struct *work)
+ 	    mcmd->tmr_func, tag);
+ 
+ 	if (rc != 0) {
+-		spin_lock_irqsave(mcmd->qpair->qp_lock_ptr, flags);
+-		switch (mcmd->tmr_func) {
+-		case QLA_TGT_ABTS:
+-			mcmd->fc_tm_rsp = FCP_TMF_REJECTED;
+-			qlt_build_abts_resp_iocb(mcmd);
+-			break;
+-		case QLA_TGT_LUN_RESET:
+-		case QLA_TGT_CLEAR_TS:
+-		case QLA_TGT_ABORT_TS:
+-		case QLA_TGT_CLEAR_ACA:
+-		case QLA_TGT_TARGET_RESET:
+-			qlt_send_busy(mcmd->qpair, &mcmd->orig_iocb.atio,
+-			    qla_sam_status);
+-			break;
+-
+-		case QLA_TGT_ABORT_ALL:
+-		case QLA_TGT_NEXUS_LOSS_SESS:
+-		case QLA_TGT_NEXUS_LOSS:
+-			qlt_send_notify_ack(mcmd->qpair,
+-			    &mcmd->orig_iocb.imm_ntfy, 0, 0, 0, 0, 0, 0);
+-			break;
+-		}
+-		spin_unlock_irqrestore(mcmd->qpair->qp_lock_ptr, flags);
+-
+ 		ql_dbg(ql_dbg_tgt_mgt, mcmd->vha, 0xf052,
+ 		    "qla_target(%d):  tgt_ops->handle_tmr() failed: %d\n",
+ 		    mcmd->vha->vp_idx, rc);
+-		mempool_free(mcmd, qla_tgt_mgmt_cmd_mempool);
++		mcmd->flags |= QLA24XX_MGMT_LLD_OWNED;
++		mcmd->fc_tm_rsp = FCP_TMF_FAILED;
++		qlt_xmit_tm_rsp(mcmd);
+ 	}
+ }
+ 
+@@ -2234,6 +2211,21 @@ void qlt_free_mcmd(struct qla_tgt_mgmt_cmd *mcmd)
+ }
+ EXPORT_SYMBOL(qlt_free_mcmd);
+ 
++/*
++ * If the upper layer knows about this mgmt cmd, then call its ->free_cmd()
++ * callback, which will eventually call qlt_free_mcmd().  Otherwise, call
++ * qlt_free_mcmd() directly.
++ */
++void qlt_free_ul_mcmd(struct qla_hw_data *ha, struct qla_tgt_mgmt_cmd *mcmd)
++{
++	if (!mcmd)
++		return;
++	if (mcmd->flags & QLA24XX_MGMT_LLD_OWNED)
++		qlt_free_mcmd(mcmd);
++	else
++		ha->tgt.tgt_ops->free_mcmd(mcmd);
++}
++
+ /*
+  * ha->hardware_lock supposed to be held on entry. Might drop it, then
+  * reacquire
+@@ -2326,12 +2318,12 @@ void qlt_xmit_tm_rsp(struct qla_tgt_mgmt_cmd *mcmd)
+ 			"RESET-TMR online/active/old-count/new-count = %d/%d/%d/%d.\n",
+ 			vha->flags.online, qla2x00_reset_active(vha),
+ 			mcmd->reset_count, qpair->chip_reset);
+-		ha->tgt.tgt_ops->free_mcmd(mcmd);
++		qlt_free_ul_mcmd(ha, mcmd);
+ 		spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
+ 		return;
+ 	}
+ 
+-	if (mcmd->flags == QLA24XX_MGMT_SEND_NACK) {
++	if (mcmd->flags & QLA24XX_MGMT_SEND_NACK) {
+ 		switch (mcmd->orig_iocb.imm_ntfy.u.isp24.status_subcode) {
+ 		case ELS_LOGO:
+ 		case ELS_PRLO:
+@@ -2364,7 +2356,7 @@ void qlt_xmit_tm_rsp(struct qla_tgt_mgmt_cmd *mcmd)
+ 	 * qlt_xmit_tm_rsp() returns here..
+ 	 */
+ 	if (free_mcmd)
+-		ha->tgt.tgt_ops->free_mcmd(mcmd);
++		qlt_free_ul_mcmd(ha, mcmd);
+ 
+ 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
+ }
+@@ -5742,7 +5734,7 @@ static void qlt_handle_abts_completion(struct scsi_qla_host *vha,
+ 		if (le32_to_cpu(entry->error_subcode1) == 0x1E &&
+ 		    le32_to_cpu(entry->error_subcode2) == 0) {
+ 			if (qlt_chk_unresolv_exchg(vha, rsp->qpair, entry)) {
+-				ha->tgt.tgt_ops->free_mcmd(mcmd);
++				qlt_free_ul_mcmd(ha, mcmd);
+ 				return;
+ 			}
+ 			qlt_24xx_retry_term_exchange(vha, rsp->qpair,
+@@ -5753,10 +5745,10 @@ static void qlt_handle_abts_completion(struct scsi_qla_host *vha,
+ 			    vha->vp_idx, entry->compl_status,
+ 			    entry->error_subcode1,
+ 			    entry->error_subcode2);
+-			ha->tgt.tgt_ops->free_mcmd(mcmd);
++			qlt_free_ul_mcmd(ha, mcmd);
+ 		}
+ 	} else if (mcmd) {
+-		ha->tgt.tgt_ops->free_mcmd(mcmd);
++		qlt_free_ul_mcmd(ha, mcmd);
+ 	}
+ }
+ 
+diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
+index eb15d8e9f79e..223c40bc9498 100644
+--- a/drivers/scsi/qla2xxx/qla_target.h
++++ b/drivers/scsi/qla2xxx/qla_target.h
+@@ -966,6 +966,7 @@ struct qla_tgt_mgmt_cmd {
+ 	unsigned int flags;
+ #define QLA24XX_MGMT_SEND_NACK	BIT_0
+ #define QLA24XX_MGMT_ABORT_IO_ATTR_VALID BIT_1
++#define QLA24XX_MGMT_LLD_OWNED	BIT_2
+ 	uint32_t reset_count;
+ 	struct work_struct work;
+ 	uint64_t unpacked_lun;
+@@ -1059,6 +1060,7 @@ extern int qlt_abort_cmd(struct qla_tgt_cmd *);
+ void qlt_send_term_exchange(struct qla_qpair *qpair,
+ 	struct qla_tgt_cmd *cmd, struct atio_from_isp *atio, int ha_locked);
+ extern void qlt_xmit_tm_rsp(struct qla_tgt_mgmt_cmd *);
++void qlt_free_ul_mcmd(struct qla_hw_data *ha, struct qla_tgt_mgmt_cmd *mcmd);
+ extern void qlt_free_mcmd(struct qla_tgt_mgmt_cmd *);
+ extern void qlt_free_cmd(struct qla_tgt_cmd *cmd);
+ extern void qlt_unmap_sg(struct scsi_qla_host *vha, struct qla_tgt_cmd *cmd);
+-- 
+2.43.0
+
 
 
