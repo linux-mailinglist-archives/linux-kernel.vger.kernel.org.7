@@ -1,84 +1,191 @@
-Return-Path: <linux-kernel+bounces-893295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26937C470B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:54:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0430CC47059
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:51:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8539A3BF808
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:48:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3F24434961C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4DB3043CB;
-	Mon, 10 Nov 2025 13:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250813112A5;
+	Mon, 10 Nov 2025 13:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YeqBQVIi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="UD0fhW2S";
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="UD0fhW2S"
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267B122652D;
-	Mon, 10 Nov 2025 13:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EECD223DF9;
+	Mon, 10 Nov 2025 13:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762782497; cv=none; b=SZoqkm7odcPP10Yq3ThTlsp72A7MfC28AExOs+lbVCmqwQOCTzBZKsFhk/26+vqzxG5AMcvsxqMuWNyPzIWSPvaJMFhmzhpqgjY2VzMSsDoAcC2OeKKtoEjOa/aSbPLbD14bamL0KanZlXcCdeL9e1KRtyoMksw2cVfOdF1rKqg=
+	t=1762782653; cv=none; b=But4LUBVZMiKJRCfwwZYSaKzvslDqP9Ru2HcYIGras9JHeqJBs8LzKRXdUILRwEZOzd1GULBWKxmWpV0Zvy82Xw+ViYv1v2Thzv2jeWstuN3DzAJXUx2c3Bq3ajBMPpX4RHYnt8zuTSVJ10FqozlfuRdu5GIi6+XyAaajJmXUKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762782497; c=relaxed/simple;
-	bh=c4ibANFzZi0AKft9rX0nhMv9appXuYAGUW3N5OZWpEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XvYXqXTzww3PMQ6BgIX3ctsKA0h/eZcfBhwZcLjvLAj4gUYx49O/M2vlrmt3yaTJXFC0nBtBDKGrQGtLSjWpU4PlfBln3+3Q/A3c/asaA2DgEdi94rEYFiFSpSCYDdS0hkib1zLJZGIlAIQ02N2IxQU+94hRfDiM5+61qs+Hbz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YeqBQVIi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78BFAC113D0;
-	Mon, 10 Nov 2025 13:48:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762782496;
-	bh=c4ibANFzZi0AKft9rX0nhMv9appXuYAGUW3N5OZWpEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YeqBQVIi2BbRrIY0GKloL18yr4OcPXU/EGUNPRcpaDUkCRs7wKVo+ZtXwKJ1wASFh
-	 Tmxkm9TQrtZR9iXPwnWpdpQn4h/IvK7W37CgjWEkL35/ioUi5OOJy1WfEya4BwdCX1
-	 AN5nmpgtprr8f5eS9dtOD9eo3Y/eGNwglxrbxh++GOBGzv0urLqX7HF0E+nVtgP43y
-	 lvXmtoXFftyoovVo+YC49sbWmkPdSQ2OTRtCgjh4CApdNXCPRYGfSmf+GKJv1rGC23
-	 PafwZfR1aCq3XSDPT250cO4+4jj1TgNA5YTWLS62jSHPirmJPDgwYUIAZS7Ly9pGue
-	 plHzAj+FPC7DQ==
-Date: Mon, 10 Nov 2025 13:50:25 +0000
-From: Daniel Thompson <danielt@kernel.org>
-To: Junjie Cao <caojunjie650@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, Pengyu Luo <mitltlatltl@gmail.com>
-Subject: Re: [PATCH v3 2/2] backlight: aw99706: Add support for Awinic
- AW99706 backlight
-Message-ID: <aRHtofMfaB1TI-LX@aspen.lan>
-References: <20251109032240.3422503-1-caojunjie650@gmail.com>
- <20251109032240.3422503-3-caojunjie650@gmail.com>
+	s=arc-20240116; t=1762782653; c=relaxed/simple;
+	bh=51j2eBq86PpSEVOcai+wKv7GjF/Cj/f4soVhV6QLva8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YjihRhH5KxmW9EKHk1kfF/6mzEafPla0UmKFdao6tFDdZOsEtME6VUsXTKd1MUyQJMTCQJw0/OoqOoqxp6HjJ/eouV+Oj83ILaAvdPHD5W33JeebupTcV+9UpttB/0oie0794aT3+1K7gCO957D7+FY5DqeJvo2gRlzl80aKokM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=UD0fhW2S; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=UD0fhW2S; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=tTVZptE9yhavDPYFhKzpNou/6CcU7o9cuxLzEmT1XSo=;
+	b=UD0fhW2SqX/JSAcOaD/yxVnfiTA5qPzfQCSMIKBD5kQ+/8y535cdK8FU+D6oTTQR7986lK/F4
+	glg5leKC1YVV7GuuX7ZnqNDQ04yxpOLe98GImTY3O2iRCtWyxGwTwQtQhT14zE5S6quiKbeS7Mk
+	8kTvaLMU37O54CGhjIWb51M=
+Received: from canpmsgout09.his.huawei.com (unknown [172.19.92.135])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTPS id 4d4rds4lxHz1BGLl;
+	Mon, 10 Nov 2025 21:50:25 +0800 (CST)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=tTVZptE9yhavDPYFhKzpNou/6CcU7o9cuxLzEmT1XSo=;
+	b=UD0fhW2SqX/JSAcOaD/yxVnfiTA5qPzfQCSMIKBD5kQ+/8y535cdK8FU+D6oTTQR7986lK/F4
+	glg5leKC1YVV7GuuX7ZnqNDQ04yxpOLe98GImTY3O2iRCtWyxGwTwQtQhT14zE5S6quiKbeS7Mk
+	8kTvaLMU37O54CGhjIWb51M=
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4d4rcB1Ddgz1cyPS;
+	Mon, 10 Nov 2025 21:48:58 +0800 (CST)
+Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
+	by mail.maildlp.com (Postfix) with ESMTPS id DAC661A0188;
+	Mon, 10 Nov 2025 21:50:36 +0800 (CST)
+Received: from [10.174.178.24] (10.174.178.24) by
+ kwepemf100008.china.huawei.com (7.202.181.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 10 Nov 2025 21:50:34 +0800
+Message-ID: <7df04942-5afa-604d-3573-ec54a2c89945@huawei.com>
+Date: Mon, 10 Nov 2025 21:50:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251109032240.3422503-3-caojunjie650@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 28/33] arm_mpam: Consider overflow in bandwidth counter
+ state
+Content-Language: en-US
+To: Ben Horgan <ben.horgan@arm.com>, <james.morse@arm.com>
+CC: <amitsinght@marvell.com>, <baisheng.gao@unisoc.com>,
+	<baolin.wang@linux.alibaba.com>, <bobo.shaobowang@huawei.com>,
+	<carl@os.amperecomputing.com>, <catalin.marinas@arm.com>, <dakr@kernel.org>,
+	<dave.martin@arm.com>, <david@redhat.com>, <dfustini@baylibre.com>,
+	<fenghuay@nvidia.com>, <gregkh@linuxfoundation.org>, <gshan@redhat.com>,
+	<guohanjun@huawei.com>, <jeremy.linton@arm.com>,
+	<jonathan.cameron@huawei.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
+	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
+	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
+	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
+	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
+	<xhao@linux.alibaba.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-29-ben.horgan@arm.com>
+From: Zeng Heng <zengheng4@huawei.com>
+In-Reply-To: <20251107123450.664001-29-ben.horgan@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemf100008.china.huawei.com (7.202.181.222)
 
-On Sun, Nov 09, 2025 at 11:22:40AM +0800, Junjie Cao wrote:
-> Add support for Awinic AW99706 backlight, which can be found in
-> tablet and notebook backlight, one case is the Lenovo Legion Y700
-> Gen4. This driver refers to the official datasheets and android
-> driver, they can be found in [1].
->
-> [1] https://www.awinic.com/en/productDetail/AW99706QNR
->
-> Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
-> Tested-by: Pengyu Luo <mitltlatltl@gmail.com>
-> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-
-Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org>
 
 
-Daniel.
+On 2025/11/7 20:34, Ben Horgan wrote:
+> Use the overflow status bit to track overflow on each bandwidth counter
+> read and add the counter size to the correction when overflow is detected.
+> 
+> This assumes that only a single overflow has occurred since the last read
+> of the counter. Overflow interrupts, on hardware that supports them could
+> be used to remove this limitation.
+> 
+> Cc: Zeng Heng <zengheng4@huawei.com>
+> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+> ---
+>   drivers/resctrl/mpam_devices.c  | 24 ++++++++++++++++++++++--
+>   drivers/resctrl/mpam_internal.h |  3 ++-
+>   2 files changed, 24 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index 2d1cef824b8e..eea082dfcddc 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -986,11 +986,18 @@ static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
+>   	}
+>   }
+>   
+> +static u64 mpam_msmon_overflow_val(enum mpam_device_features type)
+> +{
+> +	/* TODO: scaling, and long counters */
+> +	return BIT_ULL(hweight_long(MSMON___VALUE));
+> +}
+> +
+>   static void __ris_msmon_read(void *arg)
+>   {
+>   	u64 now;
+>   	bool nrdy = false;
+>   	bool config_mismatch;
+> +	bool overflow;
+>   	struct mon_read *m = arg;
+>   	struct mon_cfg *ctx = m->ctx;
+>   	struct mpam_msc_ris *ris = m->ris;
+> @@ -1012,13 +1019,20 @@ static void __ris_msmon_read(void *arg)
+>   	 * This saves waiting for 'nrdy' on subsequent reads.
+>   	 */
+>   	read_msmon_ctl_flt_vals(m, &cur_ctl, &cur_flt);
+> +	overflow = cur_ctl & MSMON_CFG_x_CTL_OFLOW_STATUS;
+> +
+>   	clean_msmon_ctl_val(&cur_ctl);
+>   	gen_msmon_ctl_flt_vals(m, &ctl_val, &flt_val);
+>   	config_mismatch = cur_flt != flt_val ||
+>   			  cur_ctl != (ctl_val | MSMON_CFG_x_CTL_EN);
+>   
+> -	if (config_mismatch)
+> +	if (config_mismatch) {
+>   		write_msmon_ctl_flt_vals(m, ctl_val, flt_val);
+> +		overflow = false;
+> +	} else if (overflow) {
+> +		mpam_write_monsel_reg(msc, CFG_MBWU_CTL,
+> +				      cur_ctl & ~MSMON_CFG_x_CTL_OFLOW_STATUS);
+> +	}
+>   
+>   	switch (m->type) {
+>   	case mpam_feat_msmon_csu:
+> @@ -1038,7 +1052,13 @@ static void __ris_msmon_read(void *arg)
+>   
+>   		mbwu_state = &ris->mbwu_state[ctx->mon];
+>   
+> -		/* Include bandwidth consumed before the last hardware reset */
+> +		if (overflow)
+> +			mbwu_state->correction += mpam_msmon_overflow_val(m->type);
+> +
+> +		/*
+> +		 * Include bandwidth consumed before the last hardware reset and
+> +		 * a counter size increment for each overflow.
+> +		 */
+>   		now += mbwu_state->correction;
+>   		break;
+>   	default:
+> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+> index 1f2b04b7703e..7c99d4f3dc9c 100644
+> --- a/drivers/resctrl/mpam_internal.h
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -209,7 +209,8 @@ struct msmon_mbwu_state {
+>   	struct mon_cfg	cfg;
+>   
+>   	/*
+> -	 * The value to add to the new reading to account for power management.
+> +	 * The value to add to the new reading to account for power management,
+> +	 * and overflow.
+>   	 */
+>   	u64		correction;
+>   
+
+Reviewed-by: Zeng Heng <zengheng4@huawei.com>
 
