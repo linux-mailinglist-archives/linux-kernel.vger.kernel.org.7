@@ -1,184 +1,266 @@
-Return-Path: <linux-kernel+bounces-893656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC538C47F8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:36:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4004C482A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:00:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 10B1F347ED2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E4C4A1D71
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1EF28468C;
-	Mon, 10 Nov 2025 16:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A1E31CA50;
+	Mon, 10 Nov 2025 16:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ODpHXld4"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="akYXr6hT"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EAA273D8D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B80031B839
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762792574; cv=none; b=Y+LNh9SyuQkRxG5bkIeyB9+OrWOSk0q1/N6k2t1fNt5H08+dUv2a+Q/937vvv1U7OKTgBkFeJaq35zq8+i8vHCrSA0hQxjGiHkjMTbLaE+1ycrHALSLoHWuPRyijHfs8iRS7CMw5ZtMScwTOYTXI2DbUOEMJ88TsDRfhpvHZzC8=
+	t=1762792675; cv=none; b=WkGsrIxkoobbdDmiMHOs6Vfci/PCbOzpMoZVO1oX01B8K4qdnObgUV6k7pEo4loCvljGMKct+6mjMas5GPSCh5+IHxl8MZh+6iaAZFndMGRpA+0jn2MoWjLTXOqBGoIwFJWA/FOTU8ynBMmUHDgtc+Z1PnWbO8qLn+oSmnTpWKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762792574; c=relaxed/simple;
-	bh=yNST3azyTjbEzIfSXsR4ftDpA3b1K/IxtYd636Ors3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sj2cu+fnGLyW2sETQ6rkwMoXgkggfNHN1Uc1MpVDX0hQYvbV/aHX8XgLEd0vfcUib0z3pTLW/9dKDT788PmMip9X4Ji+oYcFyBe9H+5CkSGujZpSEz0JYCu4UtaZ9WiKePAtc+rRNUB2nRcbmssNlycRrUDWRBJC3eth9nZud0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ODpHXld4; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1762792675; c=relaxed/simple;
+	bh=wQ1McUxBvOQybWZtkihRRIOMW2MyuqP74EGicbjl+yY=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t/ybs9snnIJN3kVh1XbR4nPeXsjK9JiQC4mfAgwz9XMEE4ezzg9RAcmC/AQfg0wi/BCRHldU5gGGej2elHKP9JlPuNEdcLU3V/yuQmmImTBW+H4lE8rajVq8Hu/HYEpH6dLxpTOFaO5Gabxyow00N0ChRYghr3fOhgH9GJqf7r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=akYXr6hT; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47775fb6c56so22724905e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:36:11 -0800 (PST)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3436a97f092so2885552a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:37:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762792570; x=1763397370; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nhAB4koRV8OuSw3ZkNH4jbevIDkGt3mgNcrifk4gAgI=;
-        b=ODpHXld4lc46GHDiy6xfLCTyRQdy6+PFZCBgyLe04sSo1Iw5/MYyYwH+Kz1FFiQS9y
-         WK5s8fOmzLAcTELmELc3SxARKxaoam519UkWodjCaQgaAiM31RYzyPi6u8riWeC+Z6i6
-         KRJEspwxE3JDcodZLnmaiGpuS99ETEB7dcL/IUk1p2VFuGiolAJFaYcwt6Lj73vqkpQf
-         b57GU+9mWrD0eDmiDKHAQgTt81zYXiOoYZfOKWCfXPFIxJnpqHxwkSo0sXnGxIAejNYI
-         2MtCn5lKs0bEUBK7tLCcgL87oi7t6MTFKr0u6nlW/ZzeFyhh/0akpYKyBS5S+bEjb4+m
-         u5qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762792570; x=1763397370;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1762792673; x=1763397473; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nhAB4koRV8OuSw3ZkNH4jbevIDkGt3mgNcrifk4gAgI=;
-        b=NBfpB7DPLIp/m71LWEkKD+Zk13G4bqdlCtu+Mn43pg3cpos25+QmqWJ4/9tyTRVZrI
-         9Ri5CaaR8MdO7xt7lBE7UzM7kjBKzorwq500FhFmRkdEP2LMXTs8QIzD1iqJAphliarq
-         8eBaXX67aRhLNMg8MzwJwQHn/gEzYOhzulixgviiFf7/eYu7xaHQCuP2TBU/FYvWQcGn
-         w7cjcz+5HEh803Ju2feESXE9zq8/U4D5O0EwS0Gmcu7n3P2hk3/SVUBQV1YUGThK7AlI
-         Kc2/rphBZpmg/cnwcJ/nqSR0Wr/IqEBAxWN8WNA9ZsUlQ7fQ1Q/8do2P+3Y125iqQCxR
-         wWHw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0dGZd55QQuJMcyeywq8U6IHYUmNXwsvbgTf6geijxcYrpJzAojSb8iVO9Bthj41ivR1nVi3ga8oR5BH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpgtOyGH7Td2qs+EjveHncuWyG1PjJtBpwOA9asI+3sRVtUpb8
-	WG4MjgD6XACnQkpvnmFnspEwY9TLWSvpGr3Y8j5ccKneIbOo2nmUitOI
-X-Gm-Gg: ASbGncv65r08JF6v91aPScQQoHSMI4zZBhOOnj+IHVWYeUCpxz2bq1hgYdxA5cOtEZl
-	yjRAu4lNwKvTqkxELh7HwrH5ry+9wbPnGkR5px8X+5Wogk3XtwxpA/ZqPxmL+fdfE4eJHd0C/hh
-	exftXyMunc18oJHiGUrFUFN3J/8l4RTI8tb6IOPqj/okd3CgRhvRGJ/lPONzoWsUOkW3Vnql5jD
-	WjVVKgcIcERb/Ird1eBNQQzhkbcKBwVXwVba1g4rlyj3T3Oc+Jv8nA18iUrSOw8/SKvnOlom85c
-	zuIr0mN+N3YOmG4OJaV0SyBuWXSWggL+wa4we2E8RSj3D2aAhT+KYRdJAKZ1Vkp049+Dmsscfjp
-	cMB+uIubSlwCrTYFxW6T+M/PqypyONVdGNfLwdpUpi8qhdV0Wei9B1mConjb5kz/e9cocp4WPqN
-	c7KBoarywOgIKEcOY5CmHk2CakkLZYWaQJRA8fd0WaVyBw0IErAnLALKDortDAWgsJGDGjcImIt
-	RHm7s3qTQqGtFdjmk9uf/B+CllU+1E+BbJQ+P/UnrwAjCvLW8vX/A==
-X-Google-Smtp-Source: AGHT+IGs5J1xMt/Q53jRJfEgjoMy3/YUcsKcG5K93obiroIZyFWnVkswPcCfCztZiqkkrd0lEC/Ppg==
-X-Received: by 2002:a05:600c:3b11:b0:477:fcb:2256 with SMTP id 5b1f17b1804b1-4777323ec9amr65987355e9.17.1762792569980;
-        Mon, 10 Nov 2025 08:36:09 -0800 (PST)
-Received: from ?IPV6:2003:ea:8f33:1e00:300e:33dd:b203:22f9? (p200300ea8f331e00300e33ddb20322f9.dip0.t-ipconnect.de. [2003:ea:8f33:1e00:300e:33dd:b203:22f9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4777f1b61acsm32277365e9.3.2025.11.10.08.36.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 08:36:09 -0800 (PST)
-Message-ID: <f341419d-d565-446e-8030-bd2e7ee5d764@gmail.com>
-Date: Mon, 10 Nov 2025 17:36:10 +0100
+        bh=Z475VFvVTEIt4JwZ3YGODDVB/J4Mi7oiMRjRIDfUacs=;
+        b=akYXr6hTTmKYO6bD/KyxeV16JXOYZWQ8DwCYDA0t0jVp3SHPE27q3tvfZErkdMW+lP
+         2RSaYGsAM7BXt3NSMeS5cAQRjuQpwMA1lYXTG8f3TGbIxwGNhq9vEREUVVFEbCM5/x2m
+         jE+91qFsxS+7OvZ2hTW0lIbLdO1VAcYE0ZVtpQTqaHlTLykJpl/uu5XWg/0LVEeSXk2+
+         X7l3snS2OX6ralC067tjX44SbtnYJ77M2S5ykFuDV4JPGuxZ7YXw+WH+AbMxw6YSuoN0
+         O5NWHDIWyPS2lY5FBZ+Wy1RAEhJBG69v0RXKnAHaaSLBwzfwkMXLuJFtazFI5aE/WXfR
+         wuiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762792673; x=1763397473;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Z475VFvVTEIt4JwZ3YGODDVB/J4Mi7oiMRjRIDfUacs=;
+        b=uILUCt6SUXBtGl3ujFtGQA8ivK2sEJNLSuwOJINcD1mZHb44qimxspe8huzG3/eLWL
+         Swe4sQM4wzoNazAm5A1fpaxSLFCgPELRavoYexIlSlSMa6O6yt5ld+356nyBNnLuQqDz
+         DBOjywmfejaobh1wN7AeEeLcqaCeIMTKqku0lIuVZ3RnanrZ6qHuOGmtWEP1bu9ngXF3
+         vOlYLVHqy7qYZVyJ/zE+V8Obj3ZMTc0tKRt2IwH0M0pX/Xb5xbwOTpReiVESYfn46QFr
+         HiaB3Zn8L01tmkQS44ZL+EC2a8mpq3VilXKRnL1xfaIZHjERGV1RyFCKX/Sn+fd7y5mr
+         8LhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJR91Ob+O7dWfaceyalSyBII5axPl1ATO2CaKDh4P0fuefnkK2Z2/G7Ndo8nYIYYMWkPJ2MqCg11erMMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhYrTZYn1wEohDwRZCzZWUaijshn9Qprn1/AVG+eq0OP4w+wQI
+	cVM80pcM2CCsBOGgfFNW/8Tx7AeZyCrULkp7hl8hfYjJFFKzHiHQpukF
+X-Gm-Gg: ASbGnct93oFiT3D3zQ585v0Txwpc3LHA3XhkspQ7MNhkCBLP+XJf6adQRh8YuuhyDM4
+	vSaV3V3fC+OXG2VUXHWbv20q44pARJF7M8PAjF2M5w8/jl/kyXX9vFUdo1e3vO+NraPC2GOXaVP
+	90PGiArEKi82XyTLnECLf5RLM+zBtc08U4c5neAi7qD4t6Oq2eSNF2uNSM5QRj+TC7NLIO6xKMm
+	aYcWU6+v4c5gdwc8UUL+yCvUqM584GXV/7RhTwCFHpsdmpTHmoZB3b/ps4ScCQ35kXLojMxEqGt
+	m5UJJ8xU8zym4HjmcNU4A0bePxCb4uGubIkmNbrRl1+urTdZSmxNkw6duAPb8Kuhhxrl2a0jsv3
+	b0lRlOSeal1nXzNSBGlr8Tfh5DUNfoQ5pQ9ibxCYH1sV5WQoox+WA8IvsbDHpWMMjDRz35GPh4w
+	uQR2v2vIkZeio=
+X-Google-Smtp-Source: AGHT+IFMkp6mzspl/QeVRsUZzdmIZ1SaB55q2G1mEh95QyGe2qx8u+PVoYkCuCMgJ33eu6H6IlXxoQ==
+X-Received: by 2002:a17:90b:2d0d:b0:341:d326:7354 with SMTP id 98e67ed59e1d1-3436cbda0e8mr11097915a91.37.1762792672604;
+        Mon, 10 Nov 2025 08:37:52 -0800 (PST)
+Received: from localhost ([103.88.46.62])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a68ad143sm18023453a91.3.2025.11.10.08.37.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 08:37:51 -0800 (PST)
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Marco Elver <elver@google.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ben Segall <bsegall@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	David Kaplan <david.kaplan@amd.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ian Rogers <irogers@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	James Clark <james.clark@linaro.org>,
+	Jinchao Wang <wangjinchao600@gmail.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Justin Stitt <justinstitt@google.com>,
+	kasan-dev@googlegroups.com,
+	Kees Cook <kees@kernel.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	"Liang Kan" <kan.liang@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-perf-users@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Michal Hocko <mhocko@suse.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nam Cao <namcao@linutronix.de>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Naveen N Rao <naveen@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Rong Xu <xur@google.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Will Deacon <will@kernel.org>,
+	workflows@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v8 16/27] mm/ksw: manage probe and HWBP lifecycle via procfs
+Date: Tue, 11 Nov 2025 00:36:11 +0800
+Message-ID: <20251110163634.3686676-17-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251110163634.3686676-1-wangjinchao600@gmail.com>
+References: <20251110163634.3686676-1-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] r8169: add support for RTL8125K
-To: javen <javen_xu@realsil.com.cn>, nic_swsd@realtek.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251110093558.3180-1-javen_xu@realsil.com.cn>
-Content-Language: en-US
-From: Heiner Kallweit <hkallweit1@gmail.com>
-In-Reply-To: <20251110093558.3180-1-javen_xu@realsil.com.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/10/2025 10:35 AM, javen wrote:
-> This adds support for chip RTL8125K. Its XID is 0x68a. It is basically
-> based on the one with XID 0x688, but with different firmware file.
-> 
-If the only difference is the firmware, then you don't need to add a new
-chip version number. You can reuse RTL_GIGA_MAC_VER_64.
+Allow dynamic enabling/disabling of KStackWatch through user input of proc.
+With this patch, the entire system becomes functional.
 
-{ 0x7cf, 0x68a, RTL_GIGA_MAC_VER_64, "RTL8125K", FIRMWARE_8125K_1 }
+Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+---
+ mm/kstackwatch/kernel.c | 60 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 58 insertions(+), 2 deletions(-)
 
-> Signed-off-by: javen <javen_xu@realsil.com.cn>
-> ---
->  drivers/net/ethernet/realtek/r8169.h            | 1 +
->  drivers/net/ethernet/realtek/r8169_main.c       | 5 +++++
->  drivers/net/ethernet/realtek/r8169_phy_config.c | 1 +
->  3 files changed, 7 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/realtek/r8169.h b/drivers/net/ethernet/realtek/r8169.h
-> index 2c1a0c21af8d..050ba3f4f874 100644
-> --- a/drivers/net/ethernet/realtek/r8169.h
-> +++ b/drivers/net/ethernet/realtek/r8169.h
-> @@ -68,6 +68,7 @@ enum mac_version {
->  	RTL_GIGA_MAC_VER_61,
->  	RTL_GIGA_MAC_VER_63,
->  	RTL_GIGA_MAC_VER_64,
-> +	RTL_GIGA_MAC_VER_65,
->  	RTL_GIGA_MAC_VER_66,
->  	RTL_GIGA_MAC_VER_70,
->  	RTL_GIGA_MAC_VER_80,
-> diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
-> index d18734fe12e4..2adffbc691b3 100644
-> --- a/drivers/net/ethernet/realtek/r8169_main.c
-> +++ b/drivers/net/ethernet/realtek/r8169_main.c
-> @@ -57,6 +57,7 @@
->  #define FIRMWARE_8125B_2	"rtl_nic/rtl8125b-2.fw"
->  #define FIRMWARE_8125D_1	"rtl_nic/rtl8125d-1.fw"
->  #define FIRMWARE_8125D_2	"rtl_nic/rtl8125d-2.fw"
-> +#define FIRMWARE_8125K_1	"rtl_nic/rtl8125k-1.fw"
->  #define FIRMWARE_8125BP_2	"rtl_nic/rtl8125bp-2.fw"
->  #define FIRMWARE_8126A_2	"rtl_nic/rtl8126a-2.fw"
->  #define FIRMWARE_8126A_3	"rtl_nic/rtl8126a-3.fw"
-> @@ -110,6 +111,7 @@ static const struct rtl_chip_info {
->  	{ 0x7cf, 0x681,	RTL_GIGA_MAC_VER_66, "RTL8125BP", FIRMWARE_8125BP_2 },
->  
->  	/* 8125D family. */
-> +	{ 0x7cf, 0x68a, RTL_GIGA_MAC_VER_65, "RTL8125K", FIRMWARE_8125K_1 },
->  	{ 0x7cf, 0x689,	RTL_GIGA_MAC_VER_64, "RTL8125D", FIRMWARE_8125D_2 },
->  	{ 0x7cf, 0x688,	RTL_GIGA_MAC_VER_64, "RTL8125D", FIRMWARE_8125D_1 },
->  
-> @@ -770,6 +772,7 @@ MODULE_FIRMWARE(FIRMWARE_8125A_3);
->  MODULE_FIRMWARE(FIRMWARE_8125B_2);
->  MODULE_FIRMWARE(FIRMWARE_8125D_1);
->  MODULE_FIRMWARE(FIRMWARE_8125D_2);
-> +MODULE_FIRMWARE(FIRMWARE_8125K_1);
->  MODULE_FIRMWARE(FIRMWARE_8125BP_2);
->  MODULE_FIRMWARE(FIRMWARE_8126A_2);
->  MODULE_FIRMWARE(FIRMWARE_8126A_3);
-> @@ -3844,6 +3847,7 @@ static void rtl_hw_config(struct rtl8169_private *tp)
->  		[RTL_GIGA_MAC_VER_61] = rtl_hw_start_8125a_2,
->  		[RTL_GIGA_MAC_VER_63] = rtl_hw_start_8125b,
->  		[RTL_GIGA_MAC_VER_64] = rtl_hw_start_8125d,
-> +		[RTL_GIGA_MAC_VER_65] = rtl_hw_start_8125d,
->  		[RTL_GIGA_MAC_VER_66] = rtl_hw_start_8125d,
->  		[RTL_GIGA_MAC_VER_70] = rtl_hw_start_8126a,
->  		[RTL_GIGA_MAC_VER_80] = rtl_hw_start_8127a,
-> @@ -3863,6 +3867,7 @@ static void rtl_hw_start_8125(struct rtl8169_private *tp)
->  	switch (tp->mac_version) {
->  	case RTL_GIGA_MAC_VER_61:
->  	case RTL_GIGA_MAC_VER_64:
-> +	case RTL_GIGA_MAC_VER_65:
->  	case RTL_GIGA_MAC_VER_66:
->  	case RTL_GIGA_MAC_VER_80:
->  		for (i = 0xa00; i < 0xb00; i += 4)
-> diff --git a/drivers/net/ethernet/realtek/r8169_phy_config.c b/drivers/net/ethernet/realtek/r8169_phy_config.c
-> index 032d9d2cfa2a..dff1daafc8a7 100644
-> --- a/drivers/net/ethernet/realtek/r8169_phy_config.c
-> +++ b/drivers/net/ethernet/realtek/r8169_phy_config.c
-> @@ -1344,6 +1344,7 @@ void r8169_hw_phy_config(struct rtl8169_private *tp, struct phy_device *phydev,
->  		[RTL_GIGA_MAC_VER_61] = rtl8125a_2_hw_phy_config,
->  		[RTL_GIGA_MAC_VER_63] = rtl8125b_hw_phy_config,
->  		[RTL_GIGA_MAC_VER_64] = rtl8125d_hw_phy_config,
-> +		[RTL_GIGA_MAC_VER_65] = rtl8125d_hw_phy_config,
->  		[RTL_GIGA_MAC_VER_66] = rtl8125bp_hw_phy_config,
->  		[RTL_GIGA_MAC_VER_70] = rtl8126a_hw_phy_config,
->  		[RTL_GIGA_MAC_VER_80] = rtl8127a_1_hw_phy_config,
+diff --git a/mm/kstackwatch/kernel.c b/mm/kstackwatch/kernel.c
+index 87fef139f494..a0e676e60692 100644
+--- a/mm/kstackwatch/kernel.c
++++ b/mm/kstackwatch/kernel.c
+@@ -14,6 +14,43 @@ static struct ksw_config *ksw_config;
+ static struct dentry *dbgfs_config;
+ static struct dentry *dbgfs_dir;
+ 
++static bool watching_active;
++
++static int ksw_start_watching(void)
++{
++	int ret;
++
++	/*
++	 * Watch init will preallocate the HWBP,
++	 * so it must happen before stack init
++	 */
++	ret = ksw_watch_init();
++	if (ret) {
++		pr_err("ksw_watch_init ret: %d\n", ret);
++		return ret;
++	}
++
++	ret = ksw_stack_init();
++	if (ret) {
++		pr_err("ksw_stack_init ret: %d\n", ret);
++		ksw_watch_exit();
++		return ret;
++	}
++	watching_active = true;
++
++	pr_info("start watching: %s\n", ksw_config->user_input);
++	return 0;
++}
++
++static void ksw_stop_watching(void)
++{
++	ksw_stack_exit();
++	ksw_watch_exit();
++	watching_active = false;
++
++	pr_info("stop watching: %s\n", ksw_config->user_input);
++}
++
+ struct param_map {
+ 	const char *name;       /* long name */
+ 	const char *short_name; /* short name (2 letters) */
+@@ -119,8 +156,18 @@ static int ksw_parse_config(char *buf, struct ksw_config *config)
+ static ssize_t ksw_dbgfs_read(struct file *file, char __user *buf, size_t count,
+ 			      loff_t *ppos)
+ {
+-	return simple_read_from_buffer(buf, count, ppos, ksw_config->user_input,
+-		ksw_config->user_input ? strlen(ksw_config->user_input) : 0);
++	const char *out;
++	size_t len;
++
++	if (watching_active && ksw_config->user_input) {
++		out = ksw_config->user_input;
++		len = strlen(out);
++	} else {
++		out = "not watching\n";
++		len = strlen(out);
++	}
++
++	return simple_read_from_buffer(buf, count, ppos, out, len);
+ }
+ 
+ static ssize_t ksw_dbgfs_write(struct file *file, const char __user *buffer,
+@@ -135,6 +182,9 @@ static ssize_t ksw_dbgfs_write(struct file *file, const char __user *buffer,
+ 	if (copy_from_user(input, buffer, count))
+ 		return -EFAULT;
+ 
++	if (watching_active)
++		ksw_stop_watching();
++
+ 	input[count] = '\0';
+ 	strim(input);
+ 
+@@ -149,6 +199,12 @@ static ssize_t ksw_dbgfs_write(struct file *file, const char __user *buffer,
+ 		return ret;
+ 	}
+ 
++	ret = ksw_start_watching();
++	if (ret) {
++		pr_err("Failed to start watching with %d\n", ret);
++		return ret;
++	}
++
+ 	return count;
+ }
+ 
+-- 
+2.43.0
 
 
