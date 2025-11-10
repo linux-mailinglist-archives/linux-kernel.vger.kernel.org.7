@@ -1,94 +1,213 @@
-Return-Path: <linux-kernel+bounces-894073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4293C49353
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:19:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F76C49389
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:24:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 005ED4E4F4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:19:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E88E03AFF98
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436B32EA16A;
-	Mon, 10 Nov 2025 20:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1FE2EC557;
+	Mon, 10 Nov 2025 20:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="EARyUQnV"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mts42I+x"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0614E2E8B60
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E8E2EAD1C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762805986; cv=none; b=M4qSkN+w11gmTYGVaOWkdAKSk7eZ+9pQsAUUACXygJP1jxyRPOtOIttHLb3gCtkipEPgDeNDo022SbWcYErKxUIzX8Fz+r3IcW2OyXvCaiWLawwN2xWd5/HyA7phRdAW1KjYxLqesH2Nupmll1b3B/moxLEa81gY4uuWFxiwWv0=
+	t=1762806246; cv=none; b=hR11rO62y3BESyA+oBL/WuBLnyQxDHujp5sGOJfLKNUoqCt/pOiR8uvdkMX1Yzhf2plxDVbHJ6ANv6QEmh3+dMsnfceCMR4JaqlmKsaw+O7NiOAoDhseUoLFrkKu4pt8KpTeL0SgromnFuYbj1FIobJFZWAmkcB2REsBV9PPwxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762805986; c=relaxed/simple;
-	bh=9v9++OA9cIJhvT0eKRdiOOu8490H3SixxGQOWwhedd8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JV6ueKtHpl8FmhiuXHpXK0OrEpPzwBB2EGHwWc1y/O0AHuVrpHRwcZEBOcCZ2UkHdSdFB+sE/TJvO/wgWF5nDhcxjPu+bbsXWSzykLFddJmvXgYp2abvC2xFDIVji4NKJ3Pj0jgSkv4BN74y3Vq0LZHX9gENYUMpNr14JuXRcX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=EARyUQnV; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-122-154.bstnma.fios.verizon.net [173.48.122.154])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5AAKJXmC009830
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 15:19:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1762805975; bh=XuNPATJHIZqaQ2tHE6vIjR+2AYXe/lFA1UKMDSwl9lQ=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=EARyUQnVdrh/iSMn4TEmyk29zOSAaxGPnL0EndZCGFrVbGIfk48HhYZLXk+Fo9kxv
-	 GaVGGNY1dYwpBtE0ncN4vbhawz1fbTVOr+XAiO9XQpZjDDj10EB5UieCU70pDm8dSc
-	 r/0kJohxzgVqHPbHCE/BSz8/MxgMfA26IdDVmzRqqBQ2YjqevpZlpVEMIz1ckg016j
-	 8aotsyyXleX8ezN4sfWLFSSDbzqNBGvFZP7en6i97VW7Pv8SsShTVbuV36ygaJDtRW
-	 zDePABD64Kk7F8GAbDJrOHh9Dstq/Mzyh11CHSlFUHxf0n3kl9Nz1nUiWWRSmqsONq
-	 hclihBYZTuVaA==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 334442E00D9; Mon, 10 Nov 2025 15:19:33 -0500 (EST)
-Date: Mon, 10 Nov 2025 15:19:33 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Maarten Brock <Maarten.Brock@sttls.nl>
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
-Message-ID: <20251110201933.GH2988753@mit.edu>
-References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com>
- <20251107173743.GA3131573@mit.edu>
- <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com>
- <20251110033556.GC2988753@mit.edu>
- <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
- <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com>
+	s=arc-20240116; t=1762806246; c=relaxed/simple;
+	bh=avENlQ35BzgI6tLMYtHuimKSX5F3uSHgrD8IvoL218c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B1MHTmC1sCVHRYlnh8v8/tHl5yciippoFIr1+ogJvlX0UfHpkgLGqgrFnLQiYArWBCDXCAqgKgvuvHJhGrgfD77OrNWotJDebBdIeBTeGkHhc4/g56P1+7LTrS5aipHWb5/8YJ+x94IIjGx4FLkKIJHleGujbrG71psR7SiLdrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mts42I+x; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-37a492d38e0so3032711fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:24:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762806242; x=1763411042; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GaNjgHiC4lYNLgJR1dvbSFLh/5KALMDQ9SZCFN88ta8=;
+        b=mts42I+xAsgv8eZE4+D5iwBfrt6505Gw+8ie43Jwc4Uzp8+eVtfzmeMalW/SBDv1pl
+         qyxEiUxi3qo6goc42iJ9vLKPEh6hGdcH3tBlkI7vnceyhz5Q9jAENVhhDY+FTgRkUw6k
+         DhVBDZ+ZwRtwyOu21RIMMBAtv3DuMV6FPLuMq5HjKfCW77HLhO8WycCrjy6f1exvn8EE
+         N9Hf0poSaaHl8rIusXBOvtFAL5YGqInPg9XbMI0C/vtNP8NOYUgF80uvujHE8T0CFuq7
+         ogybdERSxRHTkOOK3JaOCB/1r9uZp7+gHGIruaO0e5nfH9R0D81R9NuZqv5oyGRDf/iU
+         ERMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762806242; x=1763411042;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GaNjgHiC4lYNLgJR1dvbSFLh/5KALMDQ9SZCFN88ta8=;
+        b=s1EzH1U9+cm9q8zaVcAUD1B4Muz/zTYZtO30PiSn/QgMVKqVuYEvsYW1/cNxnM6cGW
+         CBQUM+d7IVeNm3GJUCDEy6FuVMZIlggzXUYYrg4NY1boPvLYzDKN3jJTfSPdp1tfBbKx
+         vHIcNMJFAdtCy7gP+7HHiL/b03p8rIcNh6zlWtLE1MPH57lWmgjGfXejlOcWETxVpn1z
+         U372uWAaCbB/xbZdF1Vq3aU6eFAihSmvzKl7LrVkKlrgAhfUogIrxEzaSJ/R1/2oDqSf
+         hQgp/tSDsxasrc47TBL7rE1eWpPJlauwO8oaDlnS4eRg9B32kRNkPOVZZyh4CYzrW2u9
+         qAKg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+bqIs1b56szM/skjoGBPw6lTONFwzwJoRUEIdASUxt8ZYE+uJTcSocUc5SI7JOGTRXtOWCidwcJlAjkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1/ftgLyB3MmZqaNtCrqOKgyQwpZ7Rs+7xGxdH2tGQlPxNDSrt
+	gjawNLefuvgBwO8w4maiOvnphC5eYltvMbShw020p52v/zc7SLmfBKSnWh3jHTik+GtimAEG1M6
+	J6rW6
+X-Gm-Gg: ASbGncvMtWSjA5r5ucT8VjUiPj685zXTefDwfiguQJuwTFMYebViky6mRYdgKVyvOZO
+	r+7eCgOQlm3fJwNzZ7J1Rk+3F/vFyYM3qI78QML2CKjjQCI/EWEX9JKXk6oSNjONovEjPdsFBXt
+	Xtjf2mafBJWGa3drzxlnqcGiO0M8ELqZHulUofvkULJQGtwhh1mdRDNCUb2UFLaUfd4HthAYZEq
+	XLA0yMomy7gjMLQUPnMEOWdyqCdNdBka/4VpKjobBe10DUsD/ArE6TEv73davMqH+E6rx2cJGLU
+	lH+NnlwO57WXqMQatBSKlr9pQr5xOfwY4pGfM3Swp25yDiLFQZBenNl9dt/2JCbl5jXtK4uRhUH
+	vvc18VqjAr4bi3Guz6BkJ8OlS/kdtEBIINkzAfQVrivs51qYaGHahrPT3043fP1BbGj3ryqLQT4
+	CHfvfb7iNxA4H1MiyPK89afYJTQ1zKvJLar5mT+gIfhclRY0fx5xaOhQI=
+X-Google-Smtp-Source: AGHT+IH8eu2yFwyQ/7LEhVqdgKoEtPLjRlteAv+Gq5Xpiwbyk2U8UW/TW9k1sGKDpmscx/ao2kCmVA==
+X-Received: by 2002:a05:6512:3c8c:b0:594:2d0d:a3dc with SMTP id 2adb3069b0e04-5945f1dc4f9mr1551360e87.6.1762806242080;
+        Mon, 10 Nov 2025 12:24:02 -0800 (PST)
+Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-594549b4cd1sm3681566e87.8.2025.11.10.12.23.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 12:24:01 -0800 (PST)
+Message-ID: <df209178-2871-4317-bfb6-d6605fb9f19b@linaro.org>
+Date: Mon, 10 Nov 2025 22:23:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/8] media: qcom: camss: csiphy-3ph: Add Gen2 v1.1
+ MIPI CSI-2 CPHY init
+To: david@ixit.cz, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Luca Weiss <luca.weiss@fairphone.com>, Petr Hodina <phodina@protonmail.com>,
+ Casey Connolly <casey.connolly@linaro.org>, "Dr. Git" <drgitx@gmail.com>
+Cc: Joel Selvaraj <foss@joelselvaraj.com>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org
+References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
+ <20251109-qcom-cphy-v1-1-165f7e79b0e1@ixit.cz>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20251109-qcom-cphy-v1-1-165f7e79b0e1@ixit.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 10, 2025 at 10:06:02AM +0000, Maarten Brock wrote:
-> I fully agree that you cannot expect users that wired something like RS485 Driver
-> Enable or a microcontroller reset to RTS or DTR to write their own kernel driver.
-> And you need to open the port to make the appropriate settings. But opening a
-> port should not e.g. claim the RS485 bus and mess up whatever communication
-> was going on there.
+On 11/9/25 11:39, David Heidelberg via B4 Relay wrote:
+> From: Casey Connolly <casey.connolly@linaro.org>
+> 
+> Add a PHY configuration sequence for the sdm845 which uses a Qualcomm
+> Gen 2 version 1.1 CSI-2 PHY.
+> 
+> The PHY can be configured as two phase or three phase in C-PHY or D-PHY
+> mode. This configuration supports three-phase C-PHY mode.
+> 
+> Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>   .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     | 64 ++++++++++++++++++++++
+>   1 file changed, 64 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> index 619abbf607813..f28c32d1a4ec5 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> @@ -144,6 +144,7 @@ csiphy_lane_regs lane_regs_sa8775p[] = {
+>   };
+>   
+>   /* GEN2 1.0 2PH */
+> +/* 5 entries: clock + 4 lanes */
+>   static const struct
+>   csiphy_lane_regs lane_regs_sdm845[] = {
+>   	{0x0004, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
+> @@ -218,6 +219,69 @@ csiphy_lane_regs lane_regs_sdm845[] = {
+>   	{0x0664, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
+>   };
+>   
+> +/* GEN2 1.0 3PH */
+> +/* 3 entries: 3 lanes (C-PHY) */
+> +static const struct
+> +csiphy_lane_regs lane_regs_sdm845_3ph[] = {
+> +	{0x015C, 0x43, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0168, 0xA0, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x016C, 0x25, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0104, 0x06, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x010C, 0x12, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
+> +	{0x0108, 0x00, 0x00, CSIPHY_SETTLE_CNT_HIGHER_BYTE},
+> +	{0x0114, 0x20, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0150, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0118, 0x3e, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x011C, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0120, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0124, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0128, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x012C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0144, 0x12, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0160, 0x02, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x01CC, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0164, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x01DC, 0x51, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x035C, 0x43, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0368, 0xA0, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x036C, 0x25, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0304, 0x06, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x030C, 0x12, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
+> +	{0x0308, 0x00, 0x00, CSIPHY_SETTLE_CNT_HIGHER_BYTE},
+> +	{0x0314, 0x20, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0350, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0318, 0x3e, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x031C, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0320, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0324, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0328, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x032C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0344, 0x12, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0360, 0x02, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x03CC, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0364, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x03DC, 0x51, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x055C, 0x43, 0x00, CSIPHY_DEFAULT_PARAMS},
 
-Again, the existing seral driver code *will* mess with RTS and DTR at
-boot up because that's part of the autoconfiuration code, and that was
-added because it was needed for some number of serial ports.
+You may find it be more structured, if the array is split between
+0x01zz, 0x03zz and 0x05zz blocks by new lines, each of those three
+blocks is a configuration of one of three lanes in total.
 
-If that's going to "mess up" the RS485 bus, maybe we need accept that
-RS-232 != RS-485 and have a different driver for the two.  That's
-going to be a lot simpler than trying to make the same code work for
-both RS-232 and RS-485, and claiming that the existing RS-232 code is
-"fundamentally buggy" when it interacts poorly with something that has
-very different requirements than the historical RS-232 use cases.
+> +	{0x0568, 0xA0, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x056C, 0x25, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0504, 0x06, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x050C, 0x12, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
+> +	{0x0508, 0x00, 0x00, CSIPHY_SETTLE_CNT_HIGHER_BYTE},
+> +	{0x0514, 0x20, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0550, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0518, 0x3e, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x051C, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0520, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0524, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0528, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x052C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0544, 0x12, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0560, 0x02, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x05CC, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0564, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x05DC, 0x51, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +};
+> +
+>   /* GEN2 1.1 2PH */
+>   static const struct
+>   csiphy_lane_regs lane_regs_sc8280xp[] = {
+> 
 
-              	  	     	    - Ted
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+
+-- 
+Best wishes,
+Vladimir
 
