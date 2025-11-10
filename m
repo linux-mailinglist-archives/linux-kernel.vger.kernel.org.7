@@ -1,168 +1,198 @@
-Return-Path: <linux-kernel+bounces-893775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F66C48513
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:27:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133B1C48588
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:31:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C462934A24F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:27:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B56C54EFFFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4262BE7A6;
-	Mon, 10 Nov 2025 17:27:33 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051CA2BF3CA;
+	Mon, 10 Nov 2025 17:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOEmXq56"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFF627F74B;
-	Mon, 10 Nov 2025 17:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B362BE655;
+	Mon, 10 Nov 2025 17:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762795653; cv=none; b=nQ/NCBetv2QGEMwcTOqcs5aR7mvBhwfeB+KwIa5gaBZ52rwwic3417dibSTdannudG2xGqhjkMkCCfkKKtldVKTFWnptkAdC+XwinRd3cKNo9cKuAi3biAAf+ZTTpFpYcobv76paoP8bLE8vIdffQfEU0jmW7VtZorGE/KCOlf0=
+	t=1762795662; cv=none; b=V4ZrB+9wQ15j9Z+0bTL1bcK0dUXDvomC+//2knJdr8To7ONn6WM1E0OaNfPtzgX/gU6NjpfoaNbNO7zcOXwswYnilwFA8upF+chQVKoK0XllzzW2JMJ2xbF/lp8V0unDzz2fqgbFfhjObsz/FhEm5paHdhu9/mWZ+Sqv5w6Uuaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762795653; c=relaxed/simple;
-	bh=XNTPb2CQYs4j8ULibpqU5Vo9ZhP/k37sp6wJQuryjxA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T9koqfd3SYykR8ii17Yqi7zcgWn6mMiYeseaz0dLNVl4xdN1wo0lTrF4+Zcb7C+zb7v6L3VNDf6DAoOqZshopQM6Qf5Ho5F5tNXv/k2Vi73LbIHL4sCTkFVYBHsbQ2zGCEEsg/L5ZD/TkH5j8sUHNclZw++VKm5PAXd0zO5/pUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4xRz5k1QzHnGjG;
-	Tue, 11 Nov 2025 01:27:11 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 49F8E14033C;
-	Tue, 11 Nov 2025 01:27:27 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 10 Nov
- 2025 17:27:25 +0000
-Date: Mon, 10 Nov 2025 17:27:24 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Ben Horgan <ben.horgan@arm.com>
-CC: <james.morse@arm.com>, <amitsinght@marvell.com>,
-	<baisheng.gao@unisoc.com>, <baolin.wang@linux.alibaba.com>,
-	<bobo.shaobowang@huawei.com>, <carl@os.amperecomputing.com>,
-	<catalin.marinas@arm.com>, <dakr@kernel.org>, <dave.martin@arm.com>,
-	<david@redhat.com>, <dfustini@baylibre.com>, <fenghuay@nvidia.com>,
-	<gregkh@linuxfoundation.org>, <gshan@redhat.com>, <guohanjun@huawei.com>,
-	<jeremy.linton@arm.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
-	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
-	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
-	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
-	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
-	<xhao@linux.alibaba.com>
-Subject: Re: [PATCH 23/33] arm_mpam: Allow configuration to be applied and
- restored during cpu online
-Message-ID: <20251110172724.00005675@huawei.com>
-In-Reply-To: <20251107123450.664001-24-ben.horgan@arm.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
-	<20251107123450.664001-24-ben.horgan@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762795662; c=relaxed/simple;
+	bh=HHttyIN4ZrA3AcpdgGnhsSW/6Bj+qI781YjC1EPK/3Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lFc9R22hTA5XJgsVF+VscnkdrnyKNS/SNpY4J6hSAnEwFxBCS7xXKarVWilOAk4e8Z++RP7imb19F/Ex5rzB4Jtty6OmOUgnmMAqz8qnaCV3Y8LaaZMG8HKvJFM0RIToSqRq+fQMXkQcDZGM5h9PBJaenThrs9HrR0z3TTATIGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOEmXq56; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 473ABC4CEFB;
+	Mon, 10 Nov 2025 17:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762795661;
+	bh=HHttyIN4ZrA3AcpdgGnhsSW/6Bj+qI781YjC1EPK/3Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=kOEmXq56QEOhYKVDYg3pmTTbZaQ3owW/HDKwcBuDdC82JmIqyrI0H+yxc99FUcDUL
+	 fwXU81C3GkaANePQ13/nt1UtzHQ8MyPYe22/hw6izEBVPomnOaNifH0nL2YjIuoVqz
+	 bFDQnk/vsnnCJkXC34jzPZvxkem36m07cBLE0RclncJ9pC8+XMc/avvKcXYiGT+kXB
+	 IxJB+zIQ1WdF4EG+YSFYbws5XOV+2UNYGXQCOLRsjYTSDn6n0KjUr0PPbAlCviICtC
+	 SXhBCSgF6rWyM5byi12R1vmT5TvXzSZLCbZ+DnAFyM+S/lRmxXR0TspGUHGzkxmBaW
+	 qPOuJVi+O+KYQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
+  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
+  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
+  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
+  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
+  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
+  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
+  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
+  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org
+Subject: Re: [PATCH v5 08/22] liveupdate: luo_file: implement file systems
+ callbacks
+In-Reply-To: <20251107210526.257742-9-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Fri, 7 Nov 2025 16:03:06 -0500")
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+	<20251107210526.257742-9-pasha.tatashin@soleen.com>
+Date: Mon, 10 Nov 2025 18:27:31 +0100
+Message-ID: <mafs0ms4tajcs.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain
 
-On Fri, 7 Nov 2025 12:34:40 +0000
-Ben Horgan <ben.horgan@arm.com> wrote:
+Hi Pasha,
 
-> From: James Morse <james.morse@arm.com>
-> 
-> When CPUs come online the MSC's original configuration should be restored.
-> 
-> Add struct mpam_config to hold the configuration. This has a bitmap of
-> features that were modified. Once the maximum partid is known, allocate
+Caught a small bug during some of my testing.
 
-I'm not following 'were modified'.  When?  Sometime in the past?
-Perhaps "features that have been modified when XXX happens" or
+On Fri, Nov 07 2025, Pasha Tatashin wrote:
 
-Having read the code I think this is something like "are modified as configuration
-is read".
+> This patch implements the core mechanism for managing preserved
+> files throughout the live update lifecycle. It provides the logic to
+> invoke the file handler callbacks (preserve, unpreserve, freeze,
+> unfreeze, retrieve, and finish) at the appropriate stages.
+>
+> During the reboot phase, luo_file_freeze() serializes the final
+> metadata for each file (handler compatible string, token, and data
+> handle) into a memory region preserved by KHO. In the new kernel,
+> luo_file_deserialize() reconstructs the in-memory file list from this
+> data, preparing the session for retrieval.
+>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+[...]
+> +int luo_preserve_file(struct luo_session *session, u64 token, int fd)
+> +{
+> +	struct liveupdate_file_op_args args = {0};
+> +	struct liveupdate_file_handler *fh;
+> +	struct luo_file *luo_file;
+> +	struct file *file;
+> +	int err = -ENOENT;
+> +
+> +	lockdep_assert_held(&session->mutex);
+> +
+> +	if (luo_token_is_used(session, token))
+> +		return -EEXIST;
+> +
+> +	file = fget(fd);
+> +	if (!file)
+> +		return -EBADF;
+> +
+> +	err = luo_session_alloc_files_mem(session);
 
-> a configuration array for each component, and reprogram each RIS
-> configuration from this.
-> 
-> CC: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Cc: Shaopeng Tan (Fujitsu) tan.shaopeng@fujitsu.com
-> Cc: Peter Newman peternewman@google.com
-> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
-> ---
-> Changes since v3:
-> Drop tags
-> Fix component reset, otherwise cpbm wrong and controls not set.
-> Add a cfg_lock to guard configuration of an msc
+err gets set to 0 here...
 
-The use of bitmap_set() for things that aren't unsigned long (arrays) is a bad
-idea. Much better to use GENMASK() to fill those.
-
-> ---
->  drivers/resctrl/mpam_devices.c  | 268 ++++++++++++++++++++++++++++++--
->  drivers/resctrl/mpam_internal.h |  27 ++++
->  2 files changed, 280 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index 3a0ad8d93fff..8b0944bdaf28 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-
-
-
-> @@ -1125,6 +1225,9 @@ static struct mpam_msc *do_mpam_msc_drv_probe(struct platform_device *pdev)
->  	if (err)
->  		return ERR_PTR(err);
->  	err = devm_mutex_init(dev, &msc->error_irq_lock);
 > +	if (err)
-> +		return ERR_PTR(err);
-Trivial: As in earlier patches. I'd put a blank line here for readability.
-> +	err = devm_mutex_init(dev, &msc->cfg_lock);
->  	if (err)
->  		return ERR_PTR(err);
->  	mpam_mon_sel_lock_init(msc);
-> @@ -1585,6 +1688,70 @@ static void mpam_unregister_irqs(void)
->  	}
->  }
->  
-> +static void __destroy_component_cfg(struct mpam_component *comp)
-> +{
-> +	add_to_garbage(comp->cfg);
-> +}
+> +		goto  exit_err;
 > +
-> +static void mpam_reset_component_cfg(struct mpam_component *comp)
-> +{
-> +	int i;
-> +	struct mpam_props *cprops = &comp->class->props;
-> +
-> +	mpam_assert_partid_sizes_fixed();
-> +
-> +	if (!comp->cfg)
-> +		return;
-> +
-> +	for (i = 0; i <= mpam_partid_max; i++) {
-> +		comp->cfg[i] = (struct mpam_config) {};
-> +		bitmap_fill(comp->cfg[i].features, MPAM_FEATURE_LAST);
-> +		bitmap_set((unsigned long *)&comp->cfg[i].cpbm, 0, cprops->cpbm_wd);
-
-Why manipulate a u32 with bitmap_set() with a horrible pretend it's an unsigned long cast.
-Instead just do:
-		comp->cfg[i].cpbm = GENMASK(cprops->cpbm_wd, 0);
-Which is indeed what bitmap_set will do internally due to an optimization for small bitmaps
-but lets avoid that making one integer pretend to be another of a different length.
-
-
-> +		bitmap_set((unsigned long *)&comp->cfg[i].mbw_pbm, 0, cprops->mbw_pbm_bits);
-> +		bitmap_set((unsigned long *)&comp->cfg[i].mbw_max, 16 - cprops->bwa_wd, cprops->bwa_wd);
+> +	if (session->count == LUO_FILE_MAX) {
+> +		err = -ENOSPC;
+> +		goto exit_err;
 > +	}
-> +}
+> +
+> +	list_for_each_entry(fh, &luo_file_handler_list, list) {
+> +		if (fh->ops->can_preserve(fh, file)) {
+> +			err = 0;
+> +			break;
+> +		}
+> +	}
 
+... say no file handler can preserve this file ...
+
+> +
+> +	/* err is still -ENOENT if no handler was found */
+> +	if (err)
+
+... err is not ENOENT, but 0. So this function does not error but, but
+goes ahead with fh == luo_file_handler_list (since end of list). This
+causes an out-of-bounds access. It eventually causes a kernel fault and
+panic.
+
+You should drop the ENOENT at initialization time and set it right
+before list_for_each_entry().
+
+> +		goto exit_err;
+> +
+> +	luo_file = kzalloc(sizeof(*luo_file), GFP_KERNEL);
+> +	if (!luo_file) {
+> +		err = -ENOMEM;
+> +		goto exit_err;
+> +	}
+> +
+> +	luo_file->file = file;
+> +	luo_file->fh = fh;
+> +	luo_file->token = token;
+> +	luo_file->retrieved = false;
+> +	mutex_init(&luo_file->mutex);
+> +
+> +	args.handler = fh;
+> +	args.session = (struct liveupdate_session *)session;
+> +	args.file = file;
+> +	err = fh->ops->preserve(&args);
+> +	if (err) {
+> +		mutex_destroy(&luo_file->mutex);
+> +		kfree(luo_file);
+> +		goto exit_err;
+> +	} else {
+> +		luo_file->serialized_data = args.serialized_data;
+> +		list_add_tail(&luo_file->list, &session->files_list);
+> +		session->count++;
+> +	}
+> +
+> +	return 0;
+> +
+> +exit_err:
+> +	fput(file);
+> +	luo_session_free_files_mem(session);
+> +
+> +	return err;
+> +}
+[...]
+
+-- 
+Regards,
+Pratyush Yadav
 
