@@ -1,66 +1,48 @@
-Return-Path: <linux-kernel+bounces-893437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206C2C4764F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:04:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB8CC482B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:02:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C0C14EC23C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:03:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792264A0261
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32377313E25;
-	Mon, 10 Nov 2025 15:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8PXbnaQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8728B228CBC;
-	Mon, 10 Nov 2025 15:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5533A31B13F;
+	Mon, 10 Nov 2025 16:52:09 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A45277C9E;
+	Mon, 10 Nov 2025 16:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787031; cv=none; b=Bobth2WbPm9hCWEQO4aJUatalDqqfcEfxIsAAvdz6Qbvh0poj2iqslvSG2KRefvyJyU5il9PYYgbzJuP4moDRthwQM/lK7sOWAduiU+hq2qf6uWJLUedjy5SfyttBLdQE1nCdSZTznjYtiXE5IwcSq2thwrY8G4kwzxwvqcHPh8=
+	t=1762793528; cv=none; b=kwDOuc9kW09a6aTLy8UljjwzQqiZgTQAaJp9rA3BN0bIwQHoUVqqxBWmlu/uqvpGifaUbXtC8MYOA+/Hcoa9qGK/o211MqwCs4Qmbe2kMls6kwnU9k71lnXLtWmh3Lce5irbF/EDao/Cgaev/m8bg82nPCYo1R4o7BbjZP1SEqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787031; c=relaxed/simple;
-	bh=sbDuCxiH4BWmq1jNsQnpgU8AKhximrB4rxK/Jdna2kE=;
+	s=arc-20240116; t=1762793528; c=relaxed/simple;
+	bh=g/3LWrwhzXiK+StyewVO5x9YDmbI74yUYMlvkCQHe6Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSdYabM/VGFTQsWTb6Yyxb5X03IJp3jxBNynSqEoDySwpf53kA7tKniCVsFr/YdPyEnSJPP3IY47sEnT3YsR/pOY8+LrB+Otn3V/JxrLV8B7TISKPpW+e8GfN9zSYDkqHqp1sfdjWvTw+ji1pNr3Lj5nBX5dd09N0ISkVEXGxJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8PXbnaQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9B3C19425;
-	Mon, 10 Nov 2025 15:03:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762787031;
-	bh=sbDuCxiH4BWmq1jNsQnpgU8AKhximrB4rxK/Jdna2kE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j8PXbnaQMWmMJIx1higvqx2H6vt9K1FdO5kEhsnasDcPZtMs5a6sbExVxrxIcq5TK
-	 wTJPJZOAjz7lAWe8alVoFxMIFMZP04jkyvZizkiF9kaatFcwS5ZO4+bvM+TtvlKOvC
-	 I11LXqM8yr56kRauiBRBO9ynO/qF9VIaI9/7mgfm36ydUYt9s4qinZ7qROKHAMWogc
-	 iRio20p8f9Bs2x3TTycyByUCIlhh/EdayCDnE6+9FaIyj/1kXDK6oOyFM+oVt7aQgw
-	 G8lnvqumVp8Bur7sr0HTcWyn8L/ZBiiD7wAGyp02AZkBEOfCbWe/czoS7jxTgNsZ61
-	 shRuRsgMwLZgA==
-Date: Mon, 10 Nov 2025 09:07:56 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Stefan Wahren <wahrenst@gmx.net>, Vinod Koul <vkoul@kernel.org>, 
-	Thomas Andreatta <thomasandreatta2000@gmail.com>, Caleb Sander Mateos <csander@purestorage.com>, 
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, Olivier Dautricourt <olivierdautricourt@gmail.com>, 
-	Stefan Roese <sr@denx.de>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Daniel Mack <daniel@zonque.org>, 
-	Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
-	Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
-	Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, Michal Simek <michal.simek@amd.com>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 10/13] dmaengine: qcom: bam_dma: use
- sg_nents_for_dma() helper
-Message-ID: <ibcqximr6bt7ed7eizuyhhsaqadgvuomy7qpefito26fjpiqwf@ptsxovmyt3le>
-References: <20251110103805.3562136-1-andriy.shevchenko@linux.intel.com>
- <20251110103805.3562136-11-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mPeGMd48IUXz5E27IqFg2+/sehJ5/t4Ttd29dmXblmQbZdsFQjQUKbvWIDv+Fu3090SVXt+rdt6QpcTM1Am17oRyzb8DVv0pzlyygpo2dfSRIXwlDDQZ7N6O5zn6j/1i4Qp79WP7w4lYVVM+T2kSByKT352ha2j4ADkg2vjMA20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1vIV7V-0005ri-00; Mon, 10 Nov 2025 17:51:57 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 9D032C0591; Mon, 10 Nov 2025 15:37:22 +0100 (CET)
+Date: Mon, 10 Nov 2025 15:37:22 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: =?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] MIPS: Fix HOTPLUG_PARALLEL dependency
+Message-ID: <aRH4osz_OFxx8QZc@alpha.franken.de>
+References: <20251027-mips_paralell_hotplug-v1-1-01b6cd13ee85@bootlin.com>
+ <87v7jirnj0.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,53 +51,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251110103805.3562136-11-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <87v7jirnj0.fsf@BLaptop.bootlin.com>
 
-On Mon, Nov 10, 2025 at 11:23:37AM +0100, Andy Shevchenko wrote:
-> Instead of open coded variant let's use recently introduced helper.
+On Mon, Nov 10, 2025 at 03:05:23PM +0100, Gregory CLEMENT wrote:
+> Hello Thomas,
 > 
+> > With MIPS, it is possible to have SMP enabled without HOTPLUG_CPU
+> > selected. However, in kernel/cpu.c, some code that uses
+> > HOTPLUG_PARALLEL also requires HOTPLUG_CPU to be selected. Therefore,
+> > we should fix the HOTPLUG_PARALLEL dependency to depend on
+> > HOTPLUG_CPU, not just SMP.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202510270120.21wA1aX1-lkp@intel.com/
+> > Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> 
+> Do you have any comments about this fix?
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+all good from my side, does it need to go via mips-fixes ?
 
-Regards,
-Bjorn
+Thomas.
 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/dma/qcom/bam_dma.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
-> index 2cf060174795..62b3921f0d11 100644
-> --- a/drivers/dma/qcom/bam_dma.c
-> +++ b/drivers/dma/qcom/bam_dma.c
-> @@ -655,22 +655,17 @@ static struct dma_async_tx_descriptor *bam_prep_slave_sg(struct dma_chan *chan,
->  	struct scatterlist *sg;
->  	u32 i;
->  	struct bam_desc_hw *desc;
-> -	unsigned int num_alloc = 0;
-> -
-> +	unsigned int num_alloc;
->  
->  	if (!is_slave_direction(direction)) {
->  		dev_err(bdev->dev, "invalid dma direction\n");
->  		return NULL;
->  	}
->  
-> -	/* calculate number of required entries */
-> -	for_each_sg(sgl, sg, sg_len, i)
-> -		num_alloc += DIV_ROUND_UP(sg_dma_len(sg), BAM_FIFO_SIZE);
-> -
->  	/* allocate enough room to accommodate the number of entries */
-> +	num_alloc = sg_nents_for_dma(sgl, sg_len, BAM_FIFO_SIZE);
->  	async_desc = kzalloc(struct_size(async_desc, desc, num_alloc),
->  			     GFP_NOWAIT);
-> -
->  	if (!async_desc)
->  		return NULL;
->  
-> -- 
-> 2.50.1
-> 
-> 
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
