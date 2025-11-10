@@ -1,160 +1,117 @@
-Return-Path: <linux-kernel+bounces-893725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76BBFC483B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:12:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15540C48383
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:09:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB1B14237F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:54:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D63D4FBB2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73C93164B8;
-	Mon, 10 Nov 2025 16:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357213164A8;
+	Mon, 10 Nov 2025 16:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="TxKlYjN/"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXCIop9C"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2910F2737F3;
-	Mon, 10 Nov 2025 16:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0622C2D97A6
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762793371; cv=none; b=NQoBM8lupNrM6HXnI8R/Tcx3DQCfOWkdncdUoDZA3jcwyVx8p9mpJSG7hNi7QJOrp0zljT1KBbBx2wcQM/4Qv7Ukb0mu/Pyyu6CJwhTKB3Kk4O3GG+m8/CxneR1gBNP0XvFuxRUj7FRkQhxXSGiBXV7m2WZddFgsltIvVApRQic=
+	t=1762793345; cv=none; b=DQGbc//Rh22a6Q9RFhVmA3Dekd7xiy92csDMgnujVsvyp0QSi6aUQM8NUpHSn6k6AopcPwx6daLf97XH/Nxqtzc0HEd1CgLMDol2IXE+tSntOb23KkOHLjnXgQntJTbkOhNOWZMxAZ2wv/Tx+ZvY1CuvUM+4JMFfWHTYmttxddg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762793371; c=relaxed/simple;
-	bh=dAg7lV6p38a92584BWoHIvoT+pZ93ZRcc+WXnalEY/I=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kGB3Bq7q/1hzMJZGKxqzGTdz6C5PrizWqThRph0+N3O6to2kpLzx1RW+QLlPQKhB22yUtnwjilgofOPPndfoKtGBKqQ7INvuTwKvceNn++THNVTnFQt4Xr1pXgo9uyFJOxjRa99e7urxXT4WsM9zaY05OgnMYk0QidriHQYaCok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=TxKlYjN/; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AAFOIKB3199890;
-	Mon, 10 Nov 2025 08:49:23 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=D+PntMDPhPtz0A95s+u1
-	swkQIUSc56a8yJ/Neey5cFU=; b=TxKlYjN/GnQHdKrnyJVbKALyyPQezDVH9Xjd
-	MIh69kFfgcn9ScSdgwiM+Xc5YXtwqbL3/qVmmny+SkCKIfZ3IbVWAQmWa1sXwQA9
-	M21VTOefSTCuhWmee51GLf2WZGwLsa50fVNi/Y2XK5s103vbdiKzhzoRDrR1Z62J
-	HznYku6RDTrGScTvEhfjmNNWjEmc9ADR2SH/G1ucHPTHu5/AN0FXZSAmtPqh+fyV
-	WLQb6b6MogCerYjbHWltCumcVUqG7weElGpGxzNhusWP6NloSwxVUl5r/xCxBDt0
-	VFYAVhVcbHGaLKGfHIhlL6Qr/BormukRVTpPjAgXPMuXL04XTg==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4abjnqrune-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 10 Nov 2025 08:49:23 -0800 (PST)
-Received: from devgpu015.cco6.facebook.com (2620:10d:c085:108::150d) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Mon, 10 Nov 2025 16:48:51 +0000
-Date: Mon, 10 Nov 2025 08:48:46 -0800
-From: Alex Mastro <amastro@fb.com>
-To: Alex Williamson <alex@shazbot.org>
-CC: David Matlack <dmatlack@google.com>,
-        Alex Williamson
-	<alex.williamson@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] vfio: selftests: Skip vfio_dma_map_limit_test if mapping
- returns -EINVAL
-Message-ID: <aRIXboz5X4KKq/8R@devgpu015.cco6.facebook.com>
-References: <20251107222058.2009244-1-dmatlack@google.com>
- <aQ6MFM1NX8WsDIdX@devgpu015.cco6.facebook.com>
- <aQ+l5IRtFaE24v0g@devgpu015.cco6.facebook.com>
- <20251108143710.318702ec.alex@shazbot.org>
- <aQ/sShi4MWr6+f5l@devgpu015.cco6.facebook.com>
- <20251110081709.53b70993.alex@shazbot.org>
+	s=arc-20240116; t=1762793345; c=relaxed/simple;
+	bh=WCn2M9Pn98zQCwXGhIe94Mp208rWyyDEa7Ij/HDRHtE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H4iGN9zjyaOwshXniDCm4B7BZTLoRCxRm/QBd/27doV6OZjsFaBgIV8bnXkKCBPcBPJmobOp8nAWidmbO0rnG2mRpIgNPeKQ+BrLLkRe1XOVsZLBpsnITtMMDpAFlCUL6fcr6ml0/ncYvYFZ0tartZb3ZNFzuQSfGzM9TZJ/cgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LXCIop9C; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-297f5278e5cso4042965ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:49:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762793343; x=1763398143; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WCn2M9Pn98zQCwXGhIe94Mp208rWyyDEa7Ij/HDRHtE=;
+        b=LXCIop9C9154lwZg3Trtm3kb7fxgwtRrx/MWfU21BhkvGi1QP8dHv3OAgCWJtm01hK
+         sQzeTMCj9AAr+qxes3HBTPDDwt+FhNNRhgoZPAoUJF/KDNwqjy9azSHvI5ez49Oi5W/Q
+         cRe9LcY2DZJfksaFhejhBVfAJNu57XIA8qFIn7VzWA3LWJ3Ett3CijAsRTTpzEgEMi50
+         X7Ccwwxua/Wefi5U9121aYnrM9GinZ2kc4vZF6bOmH0rFAae6lb/iLvfK8iqdpkNIyYo
+         NBF/v2yqn7x6o2qKP0RxJ82yYoFHS3LM1V6sEPbNEzM4Gcdw8a/BO9otQvGHsEEtTdb/
+         svHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762793343; x=1763398143;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WCn2M9Pn98zQCwXGhIe94Mp208rWyyDEa7Ij/HDRHtE=;
+        b=nJuRburTt2329kPux8omJmBzFfTyoZ/Vbw98kNTgn8W6LDbPLQWopvFvnplXj5sUjY
+         4Dn0NtgxkMOZr0frgj9/RPFOyNbGKrCm71ir+5Q1MRphDxZrj2WPfTrdZZQiKpHBNCLE
+         CR5kAQ9NtjqZvSzIQwXLCkx5hAa6TVt6LKeJIM0MTerUfwFn9qGqYuCYM6Qu976V1mQD
+         9trBtS8FjevbnEaMXrY8YP5j83Pf1H4I8aabBYMmQwahrNBrRDSir6S/64VqeCo6qU2t
+         S6AfGCkeIA/gS4bLHavOw3JexNIGXM/jFAo2fU/wgkbb2BrZz9KLvQLTwDNp0zROyXDE
+         mwzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOQu34bmwad/I830bvi52O0E27Mpjg2FHUC3b6ZSEcNgg/SOpA3VTC+Rc9jEbwoKEA9KXlqCNFKX4prao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVMYMcz60gKqXHNyR2y0piddEBVi/LltTrkz3HwK4o4T12JHpo
+	0/uIngkohN/fMxtovnY6aUR/0GoMpfjeFfrm4pkY9YG3QaD3ChJANrcNpaoX0GUkv3NRF75lJ8e
+	OfxhmsAiJ1dgQV+nuzcHaBTyN+dEsKfI=
+X-Gm-Gg: ASbGncsar1hrmeZZWBNxf6i9mLay8qDlUBrBXiNFLvd7PWy3mivEOPiqc8WTq4PcVS6
+	EVDYJIpnAV+ijQ9eM/vDuY06Ey39TF3PKWDrjXNKgD/ogFdC9XtIPxBYTnXo+myH4BeHyGIrlqL
+	nuRQ4Qy0Nb5yKvzZVu06z+H13Ddf0HS2eLSjPTFKP0qNXfhmgjChlDe1TBqpHqWyge/MghqjX8o
+	z2O73x4y9nzWcoQtn23iY7MXUCNF7M9PjqQfTrgejsetGrhBfcK6Jnn2oo82D6mdt3cynrxNQ8e
+	hMC26VNCZRZeZL4ZHOz9Y4EJN0fDXrBETaU39v3PgGzmn88h8T3TUyB8yBx+thLe7ROOxo07YSw
+	aQGoxTcU4SbFR2Q==
+X-Google-Smtp-Source: AGHT+IH5I1+eyd6kWRNYzgBd7iVcE03A1u5jBf0zW8VtsXhcRPQLzp8sRacyFb9Hd3dmI6N+ld/TjvRphEHH4nekiBM=
+X-Received: by 2002:a17:902:d506:b0:290:ad79:c617 with SMTP id
+ d9443c01a7336-297e5611fd3mr70148695ad.1.1762793343249; Mon, 10 Nov 2025
+ 08:49:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251110081709.53b70993.alex@shazbot.org>
-X-Proofpoint-ORIG-GUID: Oiga7WGzTg6NXT49QFGeJsRppwyHIy0v
-X-Authority-Analysis: v=2.4 cv=RMq+3oi+ c=1 sm=1 tr=0 ts=69121793 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=r1p2_3pzAAAA:8 a=FOH2dFAWAAAA:8 a=-7Oq7wjPLrkyoNOUAdIA:9
- a=CjuIK1q_8ugA:10 a=r_pkcD-q9-ctt7trBg_g:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDE0MSBTYWx0ZWRfX7BMpE22kGDB1
- k3hKpd/L27vShvc1uIQrsQpOHcw0ikR6L1JDeV9NquWxiJMfTELVRQ9/i5qT5/hcGSDD27mvyzg
- e1PaVIBRx33pshs7k0Gv6JvT//q0EbCIh0tc1CN66kVE+/FGk/b0MS0A4tb6pxoxNEea6ygFY4t
- 140E7gvaavaaqHgZEo+GVQAulgmn9LaTBSjWaVu48HIx4uOBirAABTxzcT3GBSWKeI8H/Ixy1Ve
- JHtWQ0YtnLalczxU200RI3m7UTNtKLvOLJ2fpTCVzJ0Q3E3l4goNkRn66YbaPXTjb41+31/RvPe
- +apQ17hqbqpFv8tN4A/vjC07i9HlELucwqHz+KE07OHBOO9uIHEaxpwhB2YZYunGG3uGyO0B3aF
- 7Na9Y94JHEDbSLi0bChRYbnN9hMaIQ==
-X-Proofpoint-GUID: Oiga7WGzTg6NXT49QFGeJsRppwyHIy0v
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_06,2025-11-10_02,2025-10-01_01
+References: <20251110131913.1789896-1-ojeda@kernel.org> <aRH9Tjf0tszyQhKX@google.com>
+In-Reply-To: <aRH9Tjf0tszyQhKX@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 10 Nov 2025 17:48:51 +0100
+X-Gm-Features: AWmQ_bnW52r8h-0gmyLN7ivgaSD0gXN5MS8PTRXx5xySmJt3bBV43-xYwc4HHKc
+Message-ID: <CANiq72m4K+UZxodnKqdx3cowbYB+Mj_Z0gB63j=3jE+E-x+3UA@mail.gmail.com>
+Subject: Re: [PATCH v2] gendwarfksyms: Skip files with no exports
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
+	Haiyue Wang <haiyuewa@163.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2025 at 08:17:09AM -0700, Alex Williamson wrote:
-> On Sat, 8 Nov 2025 17:20:10 -0800
-> Alex Mastro <amastro@fb.com> wrote:
-> 
-> > On Sat, Nov 08, 2025 at 02:37:10PM -0700, Alex Williamson wrote:
-> > > On Sat, 8 Nov 2025 12:19:48 -0800
-> > > Alex Mastro <amastro@fb.com> wrote:  
-> > > > Here's my attempt at adding some machinery to query iova ranges, with
-> > > > normalization to iommufd's struct. I kept the vfio capability chain stuff
-> > > > relatively generic so we can use it for other things in the future if needed.  
-> > > 
-> > > Seems we were both hacking on this, I hadn't seen you posted this
-> > > before sending:
-> > > 
-> > > https://lore.kernel.org/kvm/20251108212954.26477-1-alex@shazbot.org/T/#u
-> > > 
-> > > Maybe we can combine the best merits of each.  Thanks,  
-> > 
-> > Yes! I have been thinking along the following lines
-> > - Your idea to change the end of address space test to allocate at the end of
-> >   the supported range is better and more general than my idea of skipping the
-> >   test if ~(iova_t)0 is out of bounds. We should do that.
-> > - Introducing the concept iova allocator makes sense.
-> > - I think it's worthwhile to keep common test concepts like vfio_pci_device
-> >   less opinionated/stateful so as not to close the door on certain categories of
-> >   testing in the future. For example, if we ever wanted to test IOVA range
-> >   contraction after binding additional devices to an IOAS or vfio container.
-> 
-> Yes, fetching the IOVA ranges should really occur after all the devices
-> are attached to the container/ioas rather than in device init.  We need
-> another layer of abstraction for the shared IOMMU state.  We can
-> probably work on that incrementally.
-> 
-> I certainly like the idea of testing range contraction, but I don't
-> know where we can reliably see that behavior.
+On Mon, Nov 10, 2025 at 3:57=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> Is gendwarfksyms actually present in 6.12 upstream? I know we have it in
+> Android's 6.12 branch, but I thought we backported for Android only.
 
-I'm not sure about the exact testing strategy for that yet either actually.
+No, you are right, this is just me being overeager. It should be:
 
-> > - What do you think about making the concept of an IOVA allocator something
-> >   standalone for which tests that need it can create one? I think it would
-> >   compose pretty cleanly on top of my vfio_pci_iova_ranges().
-> 
-> Yep, that sounds good.  Obviously what's there is just the simplest
-> possible linear, aligned allocator with no attempt to fill gaps or
-> track allocations for freeing.  We're not likely to exhaust the address
-> space in an individual unit test, I just wanted to relieve the test
-> from the burden of coming up with a valid IOVA, while leaving some
-> degree of geometry info for exploring the boundaries.
+Cc: stable@vger.kernel.org # Needed in 6.17.y.
 
-Keeping the simple linear allocator makes sense to me.
+It would only be needed in 6.12.y if someone actually backports the
+feature (which does rarely happen, so I guess someone could have found
+it useful since there is no Fixes tag, but hopefully people would grep
+the log in that case...).
 
-> Are you interested in generating a combined v2?
+Thanks!
 
-Sure -- I can put up a v2 series which stages like so
-- adds stateless low level iova ranges queries
-- adds iova allocator utility object
-- fixes end of ranges tests, uses iova allocator instead of iova=vaddr 
-
-> TBH I'm not sure that just marking a test as skipped based on the DMA
-> mapping return is worthwhile with a couple proposals to add IOVA range
-> support already on the table.  Thanks,
-
-I'll put up the new series rooted on linux-vfio/next soon.
+Cheers,
+Miguel
 
