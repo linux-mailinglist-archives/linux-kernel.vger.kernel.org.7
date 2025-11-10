@@ -1,154 +1,128 @@
-Return-Path: <linux-kernel+bounces-893348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60003C47211
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:19:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3927AC47214
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:20:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D02F23BCA99
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:19:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C359D3BE03B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C943126BF;
-	Mon, 10 Nov 2025 14:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E332F31282C;
+	Mon, 10 Nov 2025 14:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="tGk9KTsQ"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o8wPV626"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38381397;
-	Mon, 10 Nov 2025 14:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C925930EF7D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762784371; cv=none; b=phcHcQSe1Z+BQJkSxuAmXSsr0G0WjtBUvAnRsvVk/3L2HOLgVodOI3dvZcu8ig6/LmlYXnaGVqp34laRXbA2jTSH0GnGWbYZX8X+KM+uiMCtsWtHfgLPqVhN9IGeaZPVB6+Lnu4SwuSc05T8ir15TnRZXfDzwfL5aYJFZfBGnuA=
+	t=1762784421; cv=none; b=cG7u/pH/isBimjwfnobNj2vgaXcMCIXt96OibGVFtqIpN2rmVtAegNy/dzrw5w6xZfV0QgJ5LO/qODOVDu/Wpzb+6ozqhav3ocl+vexU49ykKnRRVbTHNmmdWrcGRL0X4sV6IPgfwLRmeiA8LV+4jikxF+/ImySFhR5Jj9eK1sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762784371; c=relaxed/simple;
-	bh=CZjpfv7ugZLpQEjHOI/k47q3vnyfBFO3OcNKUMEYJr0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H2JHAQ8b/FYAeVJMuX08f+QtgnDO/e+z4mQBxSXp5PaW56bGGnXduH3sp6UfNGBaU2zwWu5Z/jZrOt818I4PGFRAFeNdxmSNs+JiZJ9cJTTXccIdNTp5Veei5mmNf3zdJRSew5k69mcmQPRbffowQcvOT5E2fyQ9R7yHw2mu6+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=tGk9KTsQ; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 29A7C1A19AE;
-	Mon, 10 Nov 2025 14:19:27 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E8E9E606F5;
-	Mon, 10 Nov 2025 14:19:26 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B459D1037176A;
-	Mon, 10 Nov 2025 15:19:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762784365; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=AixT7Oh+5FxWWMEZrxu1kDjvQPH8JSRwqc8kK2kvJaU=;
-	b=tGk9KTsQI2Q65bzJrFFGVZMBlqJL0S5t7NCc7oHdD3VkJ7+4DvdWCQ1H+fAUPwNSCCkKTo
-	mb4cak229bqD5R2nYdIofNZNfCwEYFNwjrDP2XMzY4gRkKtvgxHNNDrEpzrh+F7s+3tohi
-	IF88La9EBzOBGWNmzeDbgNfVvwUMISSod2H02ulMO04OGgjoqPISyStUXuj5kb6RpzzPfx
-	u3G2MpuRo2y5hlF0j1NqsgamhemSCsrxPqK4Z/TgsRHzg6He2ENBbGaz16F4XH62zhf7nz
-	ypVF6xKKeHJphkB1yWfga+Le2zF3iBCyw2R7QXAhmJKB/9bIEv/riz+QGqXDXQ==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Josua Mayer <josua@solid-run.com>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: Rabeeh Khoury <rabeeh@solid-run.com>, Yazan Shhady
- <yazan.shhady@solid-run.com>, Mikhail Anikin
- <mikhail.anikin@solid-run.com>, Jon Nettleton <jon@solid-run.com>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Josua Mayer
- <josua@solid-run.com>
-Subject: Re: [PATCH 1/2] Revert "arm64: dts: marvell: cn9132-clearfog: fix
- multi-lane pci x2 and x4 ports"
-In-Reply-To: <20251030-cn913x-pci-clk-v1-1-e034d5903df1@solid-run.com>
-References: <20251030-cn913x-pci-clk-v1-0-e034d5903df1@solid-run.com>
- <20251030-cn913x-pci-clk-v1-1-e034d5903df1@solid-run.com>
-Date: Mon, 10 Nov 2025 15:19:23 +0100
-Message-ID: <87pl9qrmvo.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1762784421; c=relaxed/simple;
+	bh=qOe6RlsRxbbpjF5yUGUHA1xvBuskgAyFDmfx01XXhAw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dmgGe+NgbHnxx1DCK8eA5bAPpawbOCGrYKr3ezhRWQIt1VYg0yA6oprlF25mhZC9bOexCe+xyeGw7DhOrtY1tMinEtsLaIW3T370tFMd3Dj0+dISfwe4bt8IACCpG6IlO5T3GRw0LORuH89fOKLCnDXBmArzrJdDx+dAGhz86Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o8wPV626; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-429cdb0706aso2055960f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:20:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762784418; x=1763389218; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=psMAW+A9N493zhAMdvYWcZIn1t44bxjpvUHDwOK81aM=;
+        b=o8wPV626NgQ2GpWxaojClOj7FUfOEzVml/oAEJVZDlT2W4Vu81DjzBPHhALFM3I4iI
+         f8H4EB9W+9hoWlxsMakpf0uFpJJxtCGqKlym38K4IC8u8IiHPPJjeAQoj7QKtnExKpsb
+         eQvSNsB2WNd56hyP6rEAQAmfR9N/8zKhQeDGt4BkunLAzJ3cwmVCOlEfYCPcXRywpunk
+         hKFa26vICNHDH0nYa8OL6Q3jUzHPCyF6QRoKUFDczSzC+orpUOpWONvS46yaxj3n3hgQ
+         ZYY5T4/1g0xpUACH3gD+fxC09fHq+7ak9r65SNli3byWFCPUmpPShJ0alV79ilU/4ibf
+         jkGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762784418; x=1763389218;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=psMAW+A9N493zhAMdvYWcZIn1t44bxjpvUHDwOK81aM=;
+        b=Xf0NEeJesgYR/r7BZ/E9ASwlZBgOyTrlxyANMOlhAECzBrldQOVIhSTtfCK+o6lstt
+         V6J7jLixKReORcFYDOS3X8UbmrRMZbTIqK5AgQxOz5bS9nqWlrKBZ2NKeE5hq0deLIfH
+         AjbWUugYvVmcRujDwQmoIusxPbDyrMOCd55ju3B+WtXGh3X0mGM5ihO5JX2G5EWct0oy
+         iAnrWBt3ixBo/eNtq6gvEnGCQAeOvV4AtgM3hJ+s2GIAQINrHHAKwBgSnHb/nVMGwpzp
+         PMVP6YQAdukq1amgBlHKD3LuGTi8F8JKY0FRBmjtbsC/jJVZ9ovVJX8anckrIVbLk3wT
+         Wwfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHE7PTxwUBt5VLzp3NnfdHJ4kWjviBW+N3d5zTN3v9P75yFS77VfX9V/52oYVGASzvBVGTmoXngQlyOCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyUkDruFznxnsdSrVwRM4b/4jV3esGZ7FeXFByX0LRkaGERghA
+	veF0Gi/88Q4JhWUJNPPmKWeuUoWgO6TsTKPMLI/qkzxQWn/jBjYwKnvMbFK+n1UJGSlR1Vxf5Hd
+	DYlCulr4F8F8vbUyBjg==
+X-Google-Smtp-Source: AGHT+IE7lZKYOZxQK4wSJWQnJ1H7sAQgindPi4gfJiLl8K1QY12SP/r6PQCMmeTdn9tCxq3wOp7gpa8Kwy9YvTw=
+X-Received: from wrxk16.prod.google.com ([2002:a05:6000:50:b0:429:c767:a6f5])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:186e:b0:42b:3d9d:c605 with SMTP id ffacd0b85a97d-42b3d9dca2emr1761165f8f.49.1762784418053;
+ Mon, 10 Nov 2025 06:20:18 -0800 (PST)
+Date: Mon, 10 Nov 2025 14:20:17 +0000
+In-Reply-To: <CAJ-ks9kvMQ9tUMZyM07jRr8O+pJ6RRvCZodenB==tzDChhHT=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
+References: <20251110-binder-bitmap-v4-0-5ed8a7fab1b9@google.com>
+ <20251110-binder-bitmap-v4-1-5ed8a7fab1b9@google.com> <CAJ-ks9kvMQ9tUMZyM07jRr8O+pJ6RRvCZodenB==tzDChhHT=A@mail.gmail.com>
+Message-ID: <aRH0oRU5JXKpAKpB@google.com>
+Subject: Re: [PATCH v4 1/6] rust: bitmap: add MAX_LEN and NO_ALLOC_MAX_LEN constants
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yury Norov <yury.norov@gmail.com>, 
+	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-Josua Mayer <josua@solid-run.com> writes:
+On Mon, Nov 10, 2025 at 08:59:36AM -0500, Tamir Duberstein wrote:
+> On Mon, Nov 10, 2025 at 8:06=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> >
+> > To avoid hard-coding these values in drivers, define constants for them
+> > that drivers can reference.
+> >
+> > Acked-by: Danilo Krummrich <dakr@kernel.org>
+> > Reviewed-by: Burak Emir <bqe@google.com>
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/kernel/bitmap.rs | 16 +++++++++++-----
+> >  1 file changed, 11 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
+> > index aa8fc7bf06fc99865ae755d8694e4bec3dc8e7f0..15fa23b45054b9272415fcc=
+000e3e3b52c74d7c1 100644
+> > --- a/rust/kernel/bitmap.rs
+> > +++ b/rust/kernel/bitmap.rs
+> > @@ -149,14 +149,14 @@ macro_rules! bitmap_assert_return {
+> >  ///
+> >  /// # Invariants
+> >  ///
+> > -/// * `nbits` is `<=3D i32::MAX` and never changes.
+> > +/// * `nbits` is `<=3D MAX_LEN`.
+> >  /// * if `nbits <=3D bindings::BITS_PER_LONG`, then `repr` is a `usize=
+`.
+>=20
+> Should this and other references to bindings::BITS_PER_LONG be
+> `NO_ALLOC_MAX_LEN` instead?
 
-> This reverts commit 794a066688038df46c01e177cc6faebded0acba4 because it
-> misunderstood interworking between arm trusted firmware and the common
-> phy driver, and does not consistently resolve the issue it was intended
-> to address.
->
-> Further diagnostics have revealed the root cause for the reported system
-> lock-up in a race condition between pci driver probe and clock core
-> disabling unused clocks.
->
-> Revert the wrong change restoring driver control over all pci lanes.
-> As a temporary workaround for the original issue, users can boot with
-> "clk_ignore_unused".
->
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
+Ah yeah it probably makes sense to update this in a bunch of places.
 
-
-Applied on mvebu/dt64
-
-Thanks,
-
-Gregory
-
-
-> ---
->  arch/arm64/boot/dts/marvell/cn9132-clearfog.dts | 16 ++--------------
->  1 file changed, 2 insertions(+), 14 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts b/arch/arm64=
-/boot/dts/marvell/cn9132-clearfog.dts
-> index 5cf83d8ca1f59..2507896d58f9b 100644
-> --- a/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts
-> +++ b/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts
-> @@ -413,13 +413,7 @@ fixed-link {
->  /* SRDS #0,#1,#2,#3 - PCIe */
->  &cp0_pcie0 {
->  	num-lanes =3D <4>;
-> -	/*
-> -	 * The mvebu-comphy driver does not currently know how to pass correct
-> -	 * lane-count to ATF while configuring the serdes lanes.
-> -	 * Rely on bootloader configuration only.
-> -	 *
-> -	 * phys =3D <&cp0_comphy0 0>, <&cp0_comphy1 0>, <&cp0_comphy2 0>, <&cp0=
-_comphy3 0>;
-> -	 */
-> +	phys =3D <&cp0_comphy0 0>, <&cp0_comphy1 0>, <&cp0_comphy2 0>, <&cp0_co=
-mphy3 0>;
->  	status =3D "okay";
->  };
->=20=20
-> @@ -481,13 +475,7 @@ &cp1_eth0 {
->  /* SRDS #0,#1 - PCIe */
->  &cp1_pcie0 {
->  	num-lanes =3D <2>;
-> -	/*
-> -	 * The mvebu-comphy driver does not currently know how to pass correct
-> -	 * lane-count to ATF while configuring the serdes lanes.
-> -	 * Rely on bootloader configuration only.
-> -	 *
-> -	 * phys =3D <&cp1_comphy0 0>, <&cp1_comphy1 0>;
-> -	 */
-> +	phys =3D <&cp1_comphy0 0>, <&cp1_comphy1 0>;
->  	status =3D "okay";
->  };
->=20=20
->
-> --=20
-> 2.51.0
->
-
---=20
-Gr=C3=A9gory CLEMENT, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Alice
 
