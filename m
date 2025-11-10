@@ -1,121 +1,109 @@
-Return-Path: <linux-kernel+bounces-892325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A19C44DC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:56:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB8E5C44E3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:03:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B0BC4E6BD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:56:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4F355345E0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267BE28C849;
-	Mon, 10 Nov 2025 03:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110D6263C8A;
+	Mon, 10 Nov 2025 04:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CmlwjeyH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BWxAoMxs"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA2D14A4CC;
-	Mon, 10 Nov 2025 03:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B3028FFE7;
+	Mon, 10 Nov 2025 04:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762746983; cv=none; b=XDTkGYLeT7GbTa8Pdpc+dU+3dVc9CcTmd9OrANhC3dWBD8BUGn2aV+f09A/61pSVlz/zZGbGkfnb+bDk187zF8eHdYxQqCslo85cHNc42SaQGx1VkE71VmTmgqwIT/EsSghXC7F+RcYHrDMu/UXIaGvEuCMqbJYFtWCoAFN4Yc4=
+	t=1762747380; cv=none; b=Mu4clhf1gVJtZN2+l1ge5ug4wGDUZa/VDXX5zhA9YwJNZ51l/PPJjHeRV3hpDYruhoNqQIoLAh75Ks1SEuCbLJW/NogVzgl7kFTTrrl4wGGO36yh2mYyHkeG6XDoA6otFW8TJHtf5nynzXSI1D4qLyd8Yfhyc62dm2s4DbVUl5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762746983; c=relaxed/simple;
-	bh=Ko6UTuObw8qUA0cDGOYIoZibQbucSDCxolu3fam2u+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SnVjOYSuCa60zTfNyrL8s7rPY8mvNH5vf4ojUsbZ/x9g0IuYRJ0ydNslDOyQnXAOdL88IotPLDayyRJ8sfu/If0YYDxMmRj5HlvPGlXyel2fYmJ7uvq5kYvbkcQrjJAgspsq6y2Fdqh4NKv2lWFRT05jfY1mmYpDgKe4ueyNIg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CmlwjeyH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31E48C113D0;
-	Mon, 10 Nov 2025 03:56:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762746982;
-	bh=Ko6UTuObw8qUA0cDGOYIoZibQbucSDCxolu3fam2u+E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CmlwjeyHn/Ccc3vEKx9dqE3NRvkrqpyf6RN5WOhVI/tO2wQmiBTQ7+Ny+y/30KlNA
-	 GAJ++XWS/CnyrMFeKINkfHU77/EhTv2stVsNumUZQkuBp+C5OqlLU6CZGD0fNuUwpJ
-	 7IYf96uXKcRiNUVeWInLeiWD6PA8j3JFWrf+hPqcq+ht9Cbw1wDjd0bdY5yNn5T/y/
-	 EH/G/goa1PdbMTdI13/ILx8463cg6beXJ3vkP0YC64vFaQ98Df8+YYWF4drGo4HuY2
-	 uANpXu8FQ8lsbSS33BeXnf4IHNizVi3PID+PEHq5T0/Tb2ABvA/se6/4dOwoLkuVMI
-	 yPzuOqdWr3TsQ==
-Date: Sun, 9 Nov 2025 22:00:26 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Sumit Kumar <sumit.kumar@oss.qualcomm.com>, 
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Akhil Vinod <akhil.vinod@oss.qualcomm.com>, 
-	Subramanian Ananthanarayanan <subramanian.ananthanarayanan@oss.qualcomm.com>, linux-kernel@vger.kernel.org, mhi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, quic_vpernami@quicinc.com
-Subject: Re: [PATCH v2 1/3] bus: mhi: host: Add loopback driver with sysfs
- interface
-Message-ID: <5pfglosaovwja7lgxmjc56jieo6whcugnmvh6krydzfpdynmqe@qfswxlfuvw4n>
-References: <20251104-loopback_mhi-v2-0-727a3fd9aa74@oss.qualcomm.com>
- <20251104-loopback_mhi-v2-1-727a3fd9aa74@oss.qualcomm.com>
- <g7yr3psfoyya76wvcgjs24xyyofgkllmdsvworjnfjgc3q3qeq@vjkxyh5oabkd>
- <zkhtvquyhgvdqcft6s3jmfjh76hg62mrwn4wj4qqoecrxprq4y@w5zvgp5vbbn2>
+	s=arc-20240116; t=1762747380; c=relaxed/simple;
+	bh=Z6fQ0Yz+trntsuSzGB7GLHNJStdZw3kwoeRyU/jtnGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tBP9Bfqmx0Zsniq8yy6ONG5Ae/fv2bz/ZXlVNCNurAZWkNls/YwFm7vZ3NLCuXEO8d7xtNerAenfZr0KtfjvtKtaQSJ5cncXA24SAKTvvxifjqGobuJHUD6+gmHC9GBin45Hj9lqW6aullGqQeDQdIb1anrA95X4/8FHRZkxBXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BWxAoMxs; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762747373;
+	bh=dNUM8ue5EXaD5dTFa1aKJ3VMqhV/PgINqGPbQ28J3po=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BWxAoMxspxaJE9uP8tkzOzIss+PGWchTNXCwRKEJWGCKCXIcFWKvdDJo64kXhYDB/
+	 fMmsgPDNhi6LFVcujZBO5hCA7uq2ZpL+LMEWIxDtwq1+dUnUQ1qAJfk+9wjP3QZhV5
+	 2gh6DtxFEBt6miY+fw+QpHIQJOJlwvp1hol3toS8snWkm2n83mIPTIRcttvKzfGkt3
+	 t7JgxNo3xR6fHv5bQHAaQBYSFqMrfCEcIytAKEfYUKUjYBtYDXzZFC2cyYzBtdIb0U
+	 nusiz43jIzgJPBcYv5ySvks8NKryUD8DXIA3uo4ZnqlpDYG7Oa6YMi9GtUMfuGxe1F
+	 0txjKciiyf25w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d4bbx1q1pz4wCp;
+	Mon, 10 Nov 2025 15:02:52 +1100 (AEDT)
+Date: Mon, 10 Nov 2025 15:02:52 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the loongarch tree
+Message-ID: <20251110150252.032ab0bc@canb.auug.org.au>
+In-Reply-To: <20251110083140.67ca8722@canb.auug.org.au>
+References: <20251110083140.67ca8722@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <zkhtvquyhgvdqcft6s3jmfjh76hg62mrwn4wj4qqoecrxprq4y@w5zvgp5vbbn2>
+Content-Type: multipart/signed; boundary="Sig_/RhO+J54lB+92Cipm2w5HJbk";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Nov 07, 2025 at 05:58:18PM +0530, Manivannan Sadhasivam wrote:
-> On Wed, Nov 05, 2025 at 04:17:41PM -0600, Bjorn Andersson wrote:
-> > On Tue, Nov 04, 2025 at 11:09:05AM +0530, Sumit Kumar wrote:
-> > > Add loopback driver for MHI host controllers that provides sysfs based
-> >   ^--- Here would be e good place to explain why we want this driver. Per
-> > https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
-> > start your commit message with a description of the problem you're
-> > solving.
-> > 
-> > > testing interface for data path validation. The driver supports the
-> > > "LOOPBACK" channel and offers configurable test parameters.
-> > > 
-> > > Sysfs interface provides:
-> > > - size: Configure TRE size
-> > > - num_tre: Set number of TREs for chained transfers
-> > > - start: Initiate loopback test
-> > > - status: Read test results
-> > 
-> > The words "loopback" and "testing" gives clear indications that this
-> > should live in debugfs and not sysfs.
-> > 
-> 
-> Though the wording gives an impression like that, this interface is for a MHI
-> channel that is defined in the MHI spec, so it is perfectly fine to have it
-> exposed as a sysfs interface to the users. This channel is intented to be used
-> for MHI protocol testing.
-> 
+--Sig_/RhO+J54lB+92Cipm2w5HJbk
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The fact that the protocol is defined in the specification doesn't imply
-that it's intended to be used by the typical user.
+Hi all,
 
-Also, the specification defines the LOOPBACK channel, it doesn't define
-an interface where the user can request that a certain number of packets
-of random data is sent and if those come back we can learn about that
-from a "results" file. Downstream has a completely different
-implementation of the same specification.
+On Mon, 10 Nov 2025 08:31:40 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>=20
+> Commit
+>=20
+>   4f82248f363d ("LoongArch: Let {pte,pmd}_modify() record the status of _=
+PAGE_DIRTY")
+>=20
+> is missing a Signed-off-by from its committer.
 
-I could imagine that at some point one would want extend this test
-interface by altering the behavior of the packet generator, inject
-timestamps etc - to measure raw throughput, latency, jitter etc. Good
-reasons for not turning this into an ABI.
+This is now commit
 
+  a073d637c8cf ("LoongArch: Let {pte,pmd}_modify() record the status of _PA=
+GE_DIRTY")
 
-Thinking more about the use case, I also presume most MHI devices has a
-LOOPBACK channel, so every user is going to have this .ko auto-loaded,
-just so that they can poke sysfs to send some random data... So perhaps
-we should omit MODULE_DEVICE_TABLE()?
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/RhO+J54lB+92Cipm2w5HJbk
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-That said, these are merely my humble opinions. If you think it's
-broadly useful in this form, please proceed.
+-----BEGIN PGP SIGNATURE-----
 
-Regards,
-Bjorn
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkRY+wACgkQAVBC80lX
+0GyMkQf+LN/Sd1zXyDdUybbScxXLPiQRQE+9/9WMW50LaJuree/uBxOxOrYaS6EH
+7aDh7PVIYIdNhbZ9iEZ+rHLiURiz0U61/jLR34sAvEXHUMTONeDzW8sGzU+cRuqv
+a/SuAXYCZzoMyTRM3TrlxZCXPqnC+PY89LMo6vBvBUda/Vu5nOCWYZ1b1T6C+/vD
+359TZh21GPMW+YAcbJgXeAxT2GmiN04T58LwxyAkngpYZbqpd1+s+rwH4UDFipyU
+WtbQwHv3HYRWk+37VBCPuk7XWutE2/jfzBrKppNl/q9HXtnbDL5fQrKpPVEc7wY9
+V7a5NPjguI8+wSWYyzKrH95s5Kc93w==
+=hJmR
+-----END PGP SIGNATURE-----
+
+--Sig_/RhO+J54lB+92Cipm2w5HJbk--
 
