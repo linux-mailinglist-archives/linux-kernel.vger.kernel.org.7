@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-893220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C01C46D38
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:18:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04944C46D47
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:18:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3900E1882E8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:18:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 098AF3493BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655813093D8;
-	Mon, 10 Nov 2025 13:18:23 +0000 (UTC)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B76E18CBE1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4C53101C8;
+	Mon, 10 Nov 2025 13:18:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D87D303A39;
+	Mon, 10 Nov 2025 13:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762780703; cv=none; b=q+SZH3otByQEcUZSunFU6W2blSQZLY2oCB1MNyDxO7u8WzcPwwkoWROYGnnjnPDYSLEmKhQ1BGwBcjOeI+yUZmK+JpcWfxuKBttkTRBK1TioZUYBgqfNXmHDe7fvJJif2YTZErc441ZfGla3jixroxQXxKlv9NrgGMmzPhLh7z0=
+	t=1762780715; cv=none; b=fp0MTvktxFF8dSU3CkfndM2eae22QhODfJIveOwviPFp1y4vd55kFcHBR/cZ4GIeABlaadtC3F+Wp9BgtYhE22ISTqrj0tnuoiQkFaE0sXS8w/Xf2czXzWLWs5BbrQbhHq9meOr86yFsxYN5k+2wRKUoM2lkvnCOmBY8xIe7mjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762780703; c=relaxed/simple;
-	bh=vDBZRrptiL8B1JchW6TdyIwfOCu0iFp0Ce/dGtkhJC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hcwcunra7FFlSnhGrY5KBQ0LDl1POw9DpqacapWcPoUtg904ADVLIBRBdNxClFmSFA2CISA8WQCP0g9SJvJHhCnzmV9b8/a5sYL+sTXPTLGP4xdCM43ma1w/N2Y3GmIGi61Kd5za+n6/k7ECvnEl4dxcmkoDmdlrjgEg5kFP7ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-55982d04792so2064201e0c.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:18:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762780700; x=1763385500;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zJ0ifGUcnHr6Kd16YmJsShuaDbT8XpGIPU3sUDQV+ek=;
-        b=dFPRLj6qMrvbiHIy+50+T04MWVTRHPQvAQ2AryXOhUsdE5CIWpMruSfz+K94132tF0
-         3+wmu/d3gy4GhZd+OhxGIFq5BpVlXI9pSBtOXUJmQY16tDoZ/1lBhWGlUlm3FL5EvEQK
-         XH+dnM4y4m58QYbfkqMiqP4KtKDAADmJEu/Riq5be5+YlbyR+SrurSzoTqD2t3wFE9hR
-         l5wQL44D4YPgiieRwySpKWyUcUN7IAQ3lWv2/uHHwItYxLycUFc6jrPBZxwipNajHaBb
-         4hv4J7vjZzVeIfjtZyP1tc+jNpHtRp3HBTrpjqPIt9eVZ2Q5p7QE1e6BIDjsSrzV9S0N
-         77cA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDGZ0GLMvZld5a7oaLN8J8S4QOl/fX0Ot195NfZK59nmdtUirv80sMiGHUZXK9b7pdpQeeBhKgbwPU3U8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsCdJWndcAJ5ZoTZGDvCAYVVwnrP5+r8Nv4R76oPmRlj1lZ7LA
-	fJVGOltwefuxXjE8Qm6WgJb6dWlTjkJMSwV/Lo6lA0y4WEYEdPSC7nauup7Uryrx
-X-Gm-Gg: ASbGnctNnbFb9ZISE5moPAojILZBceDxOeaAzOfriZ6/hUW87FGJfn+NLTjD/NaK0ls
-	U3om58foYEFqn0RIX8dyZh6ng7suROBV8bVLNzY7qLgWMDE9AhTf/3OP4M1NqWCKPbUnTPY0Xf1
-	x3lPNMcnukdIsRTaGO/IFLlW2mq8ok3ZKOgwtD8cw2wRHFbLGvLVfczysJLBw47vUPOQgZCRYr7
-	agukDi78z8Tt+1lTrPZCWHMtT0ftqZAy3Zhh+buFyOKBpZbpZFUJQAl5LYDrSMH5jc+ycSStTW5
-	X8Hro4SFbp/tjWHxKA7G/0L98y+xtjfwPqswwmlTq56XNK2Z//gHrpvzPEvQJw48vBGeBB5c7Aa
-	f4BMO3252zHtFirnC2NIjSnNDFGST6sborLYdaGjw85KFXczTT0VAAn/jk8afb1q4Mxm6XJzF6G
-	XAVkVB56eOEsuWVwb3QVvGbzxOQMybQ+yf5d0HL4xL4gNlepD6
-X-Google-Smtp-Source: AGHT+IGe5urlw0yQXtwa9hu0WVCdRMMkRsa7FzKiesThnrWc9IrmmT3DRvLhGUixKAG0WCNDY9OrwQ==
-X-Received: by 2002:a05:6102:c90:b0:5dd:b317:aa19 with SMTP id ada2fe7eead31-5ddc46ae5d5mr2692103137.13.1762780700202;
-        Mon, 10 Nov 2025 05:18:20 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-93708522abcsm5850619241.0.2025.11.10.05.18.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 05:18:19 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-93729793469so1098327241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:18:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW3FgJeBaqaZpKUjjKTD01gO95w4dQt8q4IlpOCR6oek/ZmDSWpc0yaqAh39TomPjkbbllT0plcUuLjDFA=@vger.kernel.org
-X-Received: by 2002:a05:6102:5492:b0:5d5:f6ae:38ef with SMTP id
- ada2fe7eead31-5ddc481b944mr2851696137.38.1762780697780; Mon, 10 Nov 2025
- 05:18:17 -0800 (PST)
+	s=arc-20240116; t=1762780715; c=relaxed/simple;
+	bh=e61PmBuBpKPW0kEFbYkXrje4f08ptI1Bgty+XwFb8EM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cLJu9lgvmcujp4KL4nZKWZ9+i4COOoilkH88sg2ypvqCl3ox4jsiinU9o6Af+qq9MTjcIhW+wJ4HJ7xaZfPqHtZR+iWMUncR01eVL+Sd3B6qlZVhArmDkD58mRkHfiy65lD4STnyUrvFOS3hH26uhhbKYew60+0ZFr13QV/egvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7B25497;
+	Mon, 10 Nov 2025 05:18:22 -0800 (PST)
+Received: from [10.57.39.147] (unknown [10.57.39.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D493F3F63F;
+	Mon, 10 Nov 2025 05:18:22 -0800 (PST)
+Message-ID: <d0ce35ad-bfcd-496b-996d-17e59a1d5a73@arm.com>
+Date: Mon, 10 Nov 2025 14:18:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028165127.991351-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251028165127.991351-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20251028165127.991351-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Nov 2025 14:18:06 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVAyN-XQVoBNncCC5Jka4TMqSeswe8frht9sPOEJB+VLw@mail.gmail.com>
-X-Gm-Features: AWmQ_blg0wBfBRVHEE39XqXvRiX15hbIbJMqYeX6Rvu1lD8v_t2OD6KHWJX8VBE
-Message-ID: <CAMuHMdVAyN-XQVoBNncCC5Jka4TMqSeswe8frht9sPOEJB+VLw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] clk: renesas: r9a09g077: Propagate rate changes to
- parent clocks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/12] powerpc/64s: Do not re-activate batched TLB
+ flush
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org,
+ Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-2-kevin.brodsky@arm.com>
+ <87qzud42n1.ritesh.list@gmail.com>
+ <b3e4a92f-5b51-4eee-bfb8-c454add0f0d2@arm.com>
+ <87cy5t4b0a.ritesh.list@gmail.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <87cy5t4b0a.ritesh.list@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 28 Oct 2025 at 17:51, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 08/11/2025 00:35, Ritesh Harjani (IBM) wrote:
+> Kevin Brodsky <kevin.brodsky@arm.com> writes:
 >
-> Add the CLK_SET_RATE_PARENT flag to divider clock registration so that rate
-> changes can propagate to parent clocks when needed. This allows the CPG
-> divider clocks to request rate adjustments from their parent, ensuring
-> correct frequency scaling and improved flexibility in clock rate selection.
+>> [...]
+>>
+>>> With this analysis - the patch looks good to me. I will give this entire
+>>> patch series a try on Power HW with Hash mmu too (which uses lazy mmu and
+>>> let you know the results of that)!
+>> That'd be very appreciated, thanks a lot!
+>>
+> I did give this patch series a run on Power10 with Hash MMU. I ran the
+> following stress-ng tests and didn't observe any issues (kernel warnings) so far.
 >
-> Fixes: 065fe720eec6e ("clk: renesas: Add support for R9A09G077 SoC")
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> stress-ng --all 0 -t 60s --perf -v --verify \
+> --tlb-shootdown 0 \
+> --fault 0 \
+> --userfaultfd 0 \
+> --fork 0 \
+> --exec 0 \
+> --memfd 0 \
+> --numa 0 \
+> --pkey 0 \
+> --remap 0 \
+> --vm 0 \
+> --rmap 0 \
+> -x swap,pagemove
+> (Note not all options shown here will work with --verify)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.19.
+That's great, many thanks!
 
-Gr{oetje,eeting}s,
+> Let me know what else I can run for validation?
+> Do you know of any specific tests for validation of lazy mmu feature?
 
-                        Geert
+I don't think there is - lazy MMU is not supposed to have any observable
+effect, all we can do is exercise the paths that use it and check that
+nothing explodes.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+That said it wouldn't hurt to run the mm kselftests:
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+    make -C tools/testing/selftests/ TARGETS=mm
+
+Thanks!
+
+- Kevin
 
