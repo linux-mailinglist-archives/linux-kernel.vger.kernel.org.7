@@ -1,800 +1,299 @@
-Return-Path: <linux-kernel+bounces-892416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC24C450B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:53:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E488FC450BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:54:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 930803AF422
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:53:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C76C14E7B62
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB3F2E8E14;
-	Mon, 10 Nov 2025 05:53:18 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E682D2E7BAA;
+	Mon, 10 Nov 2025 05:54:18 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204CD279784;
-	Mon, 10 Nov 2025 05:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E591EF092
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762753997; cv=none; b=na7CzMOfJF4jyQSoPfs/X+QAZR+b15HpKUqNO8ONr9iy2AQMGduoDP+ClWRKLDyeSJggz71Tru6g/gzrH5ipqOUOUaWQ4MKZhKbLvjssn+tYxeS0Yicv9E9ouzhU9+xHGsAP26kiR1Ulv5jjTz3juwNV/38Tobf+Ttg6lmCXzRM=
+	t=1762754058; cv=none; b=mNR1Tu5CHhr4yLSM2rnQta8vQYcvX1zHJStW700IqNisz88uIFFn4f8DCCqn5ZmmRoGLlByGZdddP+3fYQ02skizE9Cyb3BLn4bD2t0Gm1xHMYg2d60WNNFQk09dTS4Nj/XAr1vxMIqopsm2zBX5FfrK6G4daDpPAo6fuRK7Tdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762753997; c=relaxed/simple;
-	bh=NmPXD5BqOpW8L+MDUGyxyY3yfauIizOdrW240QZeR+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6ba1UcY3B6kwMZpPs7OCCmTtRQMuOISVk4dysjsR6UkYEwh86o0MzDVKuGOgZ8/c5LC1LmcJX4RaSiCWw0O+uNMvVdSu1/nlWDyFThUrmdqARL+lnm4jDdUOQqeW7cuot1fTBN+3HaybTahqfo5skfb6U/0D0a5N+KlKNdULZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9594D1A14A1;
-	Mon, 10 Nov 2025 06:53:13 +0100 (CET)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3224D1A1239;
-	Mon, 10 Nov 2025 06:53:13 +0100 (CET)
-Received: from lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com (lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com [10.52.9.99])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D40611800087;
-	Mon, 10 Nov 2025 13:53:10 +0800 (+08)
-Date: Mon, 10 Nov 2025 14:53:10 +0900
-From: Joseph Guo <qijian.guo@nxp.com>
-To: Fabian Pflug <f.pflug@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Haidong Zheng <haidong.zheng@nxp.com>,
-	Danwei Luo <danwei.luo@nxp.com>, Lei Xu <lei.xu@nxp.com>,
-	Joseph Guo <qijian.guo@nxp.com>,
-	Justin Jiang <justin.jiang@nxp.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: freescale: add support for NXP i.MX93
- FRDM
-Message-ID: <aRF9xlvWU/27+80K@lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com>
-References: <20251022-fpg-nxp-imx93-frdm-v3-0-03ec40a1ccc0@pengutronix.de>
- <20251022-fpg-nxp-imx93-frdm-v3-2-03ec40a1ccc0@pengutronix.de>
+	s=arc-20240116; t=1762754058; c=relaxed/simple;
+	bh=pi1ZjXi3n7jn8gFwAV+wFTsqbKQjM5M8erbVCzAqp6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UovnuWhezkj8f+k0/m+VLLvPJNg1HTbv/vq0DOQddvmKnnefnKiE3LvLrh3xkH9KAS3Az72Mu+plQFGbUJ2Chyt4DTapMzAS3fF3UxJjD9KvHCU6XfpLW4EQXrojekjnYizxB0WCJcIZYl2CNxDDFA5qpUTKWj3O3ony2NTJmng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: ab57b4d0bdf911f0a38c85956e01ac42-20251110
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:2f6e72d8-d770-4979-b607-3281a7764172,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:b0e8edb61dd256a2a58d8e2f3ba068b7,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|15|52,E
+	DM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA
+	:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: ab57b4d0bdf911f0a38c85956e01ac42-20251110
+X-User: oushixiong@kylinos.cn
+Received: from [10.42.17.251] [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <oushixiong@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 1072133735; Mon, 10 Nov 2025 13:54:06 +0800
+Message-ID: <376a4a95-5428-47d6-9da5-51c8141e71d1@kylinos.cn>
+Date: Mon, 10 Nov 2025 13:54:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022-fpg-nxp-imx93-frdm-v3-2-03ec40a1ccc0@pengutronix.de>
-X-Virus-Scanned: ClamAV using ClamSMTP
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/fb-helper: add fbdev screen expended mode display
+ support
+To: Thomas Zimmermann <tzimmermann@suse.de>, oushixiong1025@163.com,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Tiger Liu <liuyihu@kylinos.cn>
+References: <20251107092641.111431-1-oushixiong1025@163.com>
+ <15166a78-b603-464a-8fa5-b7dd43d55029@suse.de>
+Content-Language: en-US
+From: Shixiong Ou <oushixiong@kylinos.cn>
+In-Reply-To: <15166a78-b603-464a-8fa5-b7dd43d55029@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 04:05:23PM +0200, Fabian Pflug wrote:
-> The FRDM i.MX 93 development board is a low-cost and compact development
-> board featuring the i.MX93 applications processor.
-> 
-> It features:
-> - Dual Cortex-A55
-> - 2 GB LPDDR4X / LPDDR4
-> - 32 GB eMMC5.1
-> - MicroSD slot
-> - GbE RJ45 x 2
-> - USB2.0 1x Type C, 1x Type A
-> 
-> This file is based upon the one provided by nxp in their own kernel and
-> yocto meta layer for the device, but adapted for mainline.
-> 
-> Signed-off-by: Haidong Zheng <haidong.zheng@nxp.com>
-> Signed-off-by: Danwei Luo <danwei.luo@nxp.com>
-> Signed-off-by: Lei Xu <lei.xu@nxp.com>
-> Signed-off-by: Fabian Pflug <f.pflug@pengutronix.de>
-Hi Fabian,
 
-I'm maintainer of the NXP mainline for FRDM board.
-Thanks for your contribution for FRDM board upstreaming.
-imx93 frdm board official name is FRDM-IMX93. Please change
-the name in commit message from FRDM i.MX 93 development board
-to FRDM-IMX93 board.
+在 2025/11/7 18:06, Thomas Zimmermann 写道:
+>
+>
+> Am 07.11.25 um 10:26 schrieb oushixiong1025@163.com:
+>> From: Shixiong Ou <oushixiong@kylinos.cn>
+>>
+>> Add fbdev screen extended mode display support
+>
+> What? What is this about?
+>
+If an fbdev device has multiple screens, they are mirrored by default.
+This patch aims to enable extended display for the tty, allowing 
+horizontal or
+vertical expansion to achieve a screen splicing effect in the tty terminal.
 
-> ---
->  arch/arm64/boot/dts/freescale/Makefile             |   1 +
->  arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 658 +++++++++++++++++++++
->  2 files changed, 659 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 525ef180481d3..a7e5fdd6faff1 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -351,6 +351,7 @@ imx93-9x9-qsb-i3c-dtbs += imx93-9x9-qsb.dtb imx93-9x9-qsb-i3c.dtbo
->  dtb-$(CONFIG_ARCH_MXC) += imx93-9x9-qsb-i3c.dtb
->  
->  dtb-$(CONFIG_ARCH_MXC) += imx93-11x11-evk.dtb
-> +dtb-$(CONFIG_ARCH_MXC) += imx93-11x11-frdm.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx93-14x14-evk.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx93-kontron-bl-osm-s.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
-> new file mode 100644
-> index 0000000000000..1f21eeb15b721
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
-> @@ -0,0 +1,658 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+Best regards,
+Shixiong
 
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/usb/pd.h>
-> +#include "imx93.dtsi"
-> +
-> +/ {
-> +	compatible = "fsl,imx93-11x11-frdm", "fsl,imx93";
-> +	model = "NXP i.MX93 11X11 FRDM board";
-	model = "NXP FRDM-IMX93";
-	compatible = "fsl,frdm-imx93", "fsl,imx93";
-> +
-> +	aliases {
-> +		ethernet0 = &fec;
-> +		ethernet1 = &eqos;
-> +		i2c0 = &lpi2c1;
-> +		i2c1 = &lpi2c2;
-> +		i2c2 = &lpi2c3;
-> +		mmc0 = &usdhc1; /* EMMC */
-> +		mmc1 = &usdhc2; /* uSD */
-> +		rtc0 = &pcf2131;
-> +		serial0 = &lpuart1;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = &lpuart1;
-> +	};
-> +
-> +	reg_usdhc2_vmmc: regulator-usdhc2 {
-> +		compatible = "regulator-fixed";
-> +		off-on-delay-us = <12000>;
-> +		pinctrl-0 = <&pinctrl_reg_usdhc2_vmmc>;
-> +		pinctrl-names = "default";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-name = "VSD_3V3";
-> +		vin-supply = <&buck4>;
-> +		gpio = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +	};
-> +
-> +	reg_usdhc3_vmmc: regulator-usdhc3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-name = "WLAN_EN";
-> +		vin-supply = <&buck4>;
-> +		gpio = <&pcal6524 20 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +		/*
-> +		 * IW612 wifi chip needs more delay than other wifi chips to complete
-> +		 * the host interface initialization after power up, otherwise the
-> +		 * internal state of IW612 may be unstable, resulting in the failure of
-> +		 * the SDIO3.0 switch voltage.
-> +		 */
-> +		startup-delay-us = <20000>;
-> +	};
-> +
-> +	reserved-memory {
-> +		ranges;
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +
-> +		linux,cma {
-> +			compatible = "shared-dma-pool";
-> +			alloc-ranges = <0 0x80000000 0 0x30000000>;
-> +			reusable;
-> +			size = <0 0x10000000>;
-> +			linux,cma-default;
-> +		};
-> +
-> +		rsc_table: rsc-table@2021e000 {
-> +			reg = <0 0x2021e000 0 0x1000>;
-> +			no-map;
-> +		};
-> +
-> +		vdev0vring0: vdev0vring0@a4000000 {
-> +			reg = <0 0xa4000000 0 0x8000>;
-> +			no-map;
-> +		};
-> +
-> +		vdev0vring1: vdev0vring1@a4008000 {
-> +			reg = <0 0xa4008000 0 0x8000>;
-> +			no-map;
-> +		};
-> +
-> +		vdev1vring0: vdev1vring0@a4010000 {
-> +			reg = <0 0xa4010000 0 0x8000>;
-> +			no-map;
-> +		};
-> +
-> +		vdev1vring1: vdev1vring1@a4018000 {
-> +			reg = <0 0xa4018000 0 0x8000>;
-> +			no-map;
-> +		};
-> +
-> +		vdevbuffer: vdevbuffer@a4020000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0 0xa4020000 0 0x100000>;
-> +			no-map;
-> +		};
-> +	};
-> +
-> +	usdhc3_pwrseq: usdhc3_pwrseq {
-> +		compatible = "mmc-pwrseq-simple";
-> +		reset-gpios = <&pcal6524 12 GPIO_ACTIVE_LOW>;
-> +	};
-> +};
-> +
-> +&adc1 {
-> +	vref-supply = <&buck5>;
-> +	status = "okay";
-> +};
-> +
-> +&mu1 {
-> +	status = "okay";
-> +};
-> +
-
-Please sort the node alphabetically.
-> +&cm33 {
-> +	mboxes = <&mu1 0 1>,
-> +		 <&mu1 1 1>,
-> +		 <&mu1 3 1>;
-> +	mbox-names = "tx", "rx", "rxdb";
-> +	memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
-> +			<&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
-> +	status = "okay";
-> +};
-> +
-> +&eqos {
-> +	pinctrl-names = "default", "sleep";
-> +	pinctrl-0 = <&pinctrl_eqos>;
-> +	pinctrl-1 = <&pinctrl_eqos_sleep>;
-> +	phy-handle = <&ethphy1>;
-> +	phy-mode = "rgmii-id";
-> +	status = "okay";
-> +
-> +	mdio {
-> +		compatible = "snps,dwmac-mdio";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		clock-frequency = <5000000>;
-> +
-> +		ethphy1: ethernet-phy@1 {
-> +			reg = <1>;
-> +			reset-assert-us = <10000>;
-> +			reset-deassert-us = <80000>;
-> +			reset-gpios = <&pcal6524 15 GPIO_ACTIVE_LOW>;
-> +			realtek,clkout-disable;
-> +		};
-> +	};
-> +};
-> +
-> +&fec {
-> +	pinctrl-names = "default", "sleep";
-> +	pinctrl-0 = <&pinctrl_fec>;
-> +	pinctrl-1 = <&pinctrl_fec_sleep>;
-> +	phy-mode = "rgmii-id";
-> +	phy-handle = <&ethphy2>;
-> +	fsl,magic-packet;
-> +	status = "okay";
-> +
-> +	mdio {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		clock-frequency = <5000000>;
-> +
-> +		ethphy2: ethernet-phy@2 {
-> +			reg = <2>;
-> +			eee-broken-1000t;
-> +			reset-assert-us = <10000>;
-> +			reset-deassert-us = <80000>;
-> +			reset-gpios = <&pcal6524 16 GPIO_ACTIVE_LOW>;
-> +			realtek,clkout-disable;
-> +		};
-> +	};
-> +};
-> +
-> +&lpi2c1 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-0 = <&pinctrl_lpi2c1>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	it6263: hdmi@4c {
-> +		compatible = "ite,it6263";
-> +		reg = <0x4c>;
-> +		ivdd-supply = <&buck5>;
-> +		ovdd-supply = <&buck4>;
-> +		txavcc18-supply = <&buck5>;
-> +		txavcc33-supply = <&buck4>;
-> +		pvcc1-supply = <&buck5>;
-> +		pvcc2-supply = <&buck5>;
-> +		avcc-supply = <&buck4>;
-> +		anvdd-supply = <&buck5>;
-> +		apvdd-supply = <&buck5>;
-> +	};
-I dont't understand why the it6263 node like this.
-Also you didn't enable display related node with it.
-I suggest to drop it.
-> +};
-> +
-> +&lpi2c2 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-0 = <&pinctrl_lpi2c2>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	pcal6524: gpio@22 {
-> +		compatible = "nxp,pcal6524";
-> +		reg = <0x22>;
-> +		#interrupt-cells = <2>;
-> +		interrupt-controller;
-> +		interrupt-parent = <&gpio3>;
-> +		interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +		pinctrl-0 = <&pinctrl_pcal6524>;
-> +		pinctrl-names = "default";
-> +		/* does not boot with supplier set, because it is the bucks interrupt parent */
-> +		/* vcc-supply = <&buck4>; */
-> +	};
-> +
-> +	pmic@25 {
-> +		compatible = "nxp,pca9451a";
-> +		reg = <0x25>;
-> +		interrupt-parent = <&pcal6524>;
-> +		interrupts = <11 IRQ_TYPE_EDGE_FALLING>;
-> +
-> +		regulators {
-> +
-> +			buck1: BUCK1 {
-> +				regulator-name = "VDD_SOC_0V8";
-> +				regulator-min-microvolt = <650000>;
-610000
-> +				regulator-max-microvolt = <950000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-ramp-delay = <3125>;
-> +			};
-> +
-> +			buck2: BUCK2 {
-> +				regulator-name = "LPD4_x_VDDQ_0V6";
-> +				regulator-min-microvolt = <600000>;
-> +				regulator-max-microvolt = <670000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-ramp-delay = <3125>;
-> +			};
-> +
-> +			buck4: BUCK4 {
-> +				regulator-name = "VDD_3V3";
-> +				regulator-min-microvolt = <3300000>;
-1620000
-> +				regulator-max-microvolt = <3300000>;
-3400000
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +
-> +			buck5: BUCK5 {
-> +				regulator-name = "VDD_1V8";
-> +				regulator-min-microvolt = <1800000>;
-1620000
-> +				regulator-max-microvolt = <1800000>;
-3400000
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +
-> +			buck6: BUCK6 {
-> +				regulator-name = "LPD4_x_VDD2_1V1";
-> +				regulator-min-microvolt = <1100000>;
-1060000
-> +				regulator-max-microvolt = <1100000>;
-1140000
-
-Regards,
-Joseph
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +
-> +			ldo1: LDO1 {
-> +				regulator-name = "NVCC_BBSM_1V8";
-> +				regulator-min-microvolt = <1620000>;
-> +				regulator-max-microvolt = <1980000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +
-> +			ldo4: LDO4 {
-> +				regulator-name = "VDD_ANA_0V8";
-> +				regulator-min-microvolt = <800000>;
-> +				regulator-max-microvolt = <840000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +
-> +			ldo5: LDO5 {
-> +				regulator-name = "NVCC_SD";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +		};
-> +	};
-> +
-> +	eeprom: eeprom@50 {
-> +		compatible = "atmel,24c256";
-> +		reg = <0x50>;
-> +		pagesize = <64>;
-> +		vcc-supply = <&buck4>;
-> +	};
-> +};
-> +
-> +&lpi2c3 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-0 = <&pinctrl_lpi2c3>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	ptn5110: tcpc@50 {
-> +		compatible = "nxp,ptn5110", "tcpci";
-> +		reg = <0x50>;
-> +		interrupt-parent = <&gpio3>;
-> +		interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
-> +
-> +		typec1_con: connector {
-> +			compatible = "usb-c-connector";
-> +			data-role = "dual";
-> +			label = "USB-C";
-> +			op-sink-microwatt = <15000000>;
-> +			power-role = "dual";
-> +			self-powered;
-> +			sink-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)
-> +					PDO_VAR(5000, 20000, 3000)>;
-> +			source-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
-> +			try-power-role = "sink";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +
-> +					typec1_dr_sw: endpoint {
-> +						remote-endpoint = <&usb1_drd_sw>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	pcf2131: rtc@53 {
-> +		compatible = "nxp,pcf2131";
-> +		reg = <0x53>;
-> +		interrupt-parent = <&pcal6524>;
-> +		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
-> +	};
-> +};
-> +
-> +&lpuart1 { /* console */
-> +	pinctrl-0 = <&pinctrl_uart1>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> +
-> +&usbotg1 {
-> +	adp-disable;
-> +	disable-over-current;
-> +	dr_mode = "otg";
-> +	hnp-disable;
-> +	srp-disable;
-> +	usb-role-switch;
-> +	samsung,picophy-dc-vol-level-adjust = <7>;
-> +	samsung,picophy-pre-emp-curr-control = <3>;
-> +	status = "okay";
-> +
-> +	port {
-> +
-> +		usb1_drd_sw: endpoint {
-> +			remote-endpoint = <&typec1_dr_sw>;
-> +		};
-> +	};
-> +};
-> +
-> +&usbotg2 {
-> +	disable-over-current;
-> +	dr_mode = "host";
-> +	samsung,picophy-dc-vol-level-adjust = <7>;
-> +	samsung,picophy-pre-emp-curr-control = <3>;
-> +	status = "okay";
-> +};
-> +
-> +&usdhc1 {
-> +	bus-width = <8>;
-> +	non-removable;
-> +	pinctrl-0 = <&pinctrl_usdhc1>;
-> +	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
-> +	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
-> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-> +	vmmc-supply = <&buck4>;
-> +	status = "okay";
-> +};
-> +
-> +&usdhc2 {
-> +	bus-width = <4>;
-> +	cd-gpios = <&gpio3 00 GPIO_ACTIVE_LOW>;
-> +	no-mmc;
-> +	no-sdio;
-> +	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
-> +	pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
-> +	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
-> +	pinctrl-3 = <&pinctrl_usdhc2_sleep>, <&pinctrl_usdhc2_gpio_sleep>;
-> +	pinctrl-names = "default", "state_100mhz", "state_200mhz", "sleep";
-> +	vmmc-supply = <&reg_usdhc2_vmmc>;
-> +	status = "okay";
-> +};
-> +
-> +&wdog3 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_wdog>;
-> +	fsl,ext-reset-output;
-> +	status = "okay";
-> +};
-> +
-> +&iomuxc {
-> +
-> +	pinctrl_eqos: eqosgrp {
-> +		fsl,pins = <
-> +			MX93_PAD_ENET1_MDC__ENET_QOS_MDC			0x57e
-> +			MX93_PAD_ENET1_MDIO__ENET_QOS_MDIO			0x57e
-> +			MX93_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0			0x57e
-> +			MX93_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1			0x57e
-> +			MX93_PAD_ENET1_RD2__ENET_QOS_RGMII_RD2			0x57e
-> +			MX93_PAD_ENET1_RD3__ENET_QOS_RGMII_RD3			0x57e
-> +			MX93_PAD_ENET1_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x58e
-> +			MX93_PAD_ENET1_RX_CTL__ENET_QOS_RGMII_RX_CTL		0x57e
-> +			MX93_PAD_ENET1_TD0__ENET_QOS_RGMII_TD0			0x57e
-> +			MX93_PAD_ENET1_TD1__ENET_QOS_RGMII_TD1			0x57e
-> +			MX93_PAD_ENET1_TD2__ENET_QOS_RGMII_TD2			0x57e
-> +			MX93_PAD_ENET1_TD3__ENET_QOS_RGMII_TD3			0x57e
-> +			MX93_PAD_ENET1_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x58e
-> +			MX93_PAD_ENET1_TX_CTL__ENET_QOS_RGMII_TX_CTL		0x57e
-> +		>;
-> +	};
-> +
-> +	pinctrl_eqos_sleep: eqossleepgrp {
-> +		fsl,pins = <
-> +			MX93_PAD_ENET1_MDC__GPIO4_IO00			0x31e
-> +			MX93_PAD_ENET1_MDIO__GPIO4_IO01			0x31e
-> +			MX93_PAD_ENET1_RD0__GPIO4_IO10			0x31e
-> +			MX93_PAD_ENET1_RD1__GPIO4_IO11			0x31e
-> +			MX93_PAD_ENET1_RD2__GPIO4_IO12			0x31e
-> +			MX93_PAD_ENET1_RD3__GPIO4_IO13			0x31e
-> +			MX93_PAD_ENET1_RXC__GPIO4_IO09			0x31e
-> +			MX93_PAD_ENET1_RX_CTL__GPIO4_IO08		0x31e
-> +			MX93_PAD_ENET1_TD0__GPIO4_IO05			0x31e
-> +			MX93_PAD_ENET1_TD1__GPIO4_IO04			0x31e
-> +			MX93_PAD_ENET1_TD2__GPIO4_IO03			0x31e
-> +			MX93_PAD_ENET1_TD3__GPIO4_IO02			0x31e
-> +			MX93_PAD_ENET1_TXC__GPIO4_IO07			0x31e
-> +			MX93_PAD_ENET1_TX_CTL__GPIO4_IO06		0x31e
-> +		>;
-> +	};
-> +
-> +	pinctrl_fec: fecgrp {
-> +		fsl,pins = <
-> +			MX93_PAD_ENET2_MDC__ENET1_MDC			0x57e
-> +			MX93_PAD_ENET2_MDIO__ENET1_MDIO			0x57e
-> +			MX93_PAD_ENET2_RD0__ENET1_RGMII_RD0		0x57e
-> +			MX93_PAD_ENET2_RD1__ENET1_RGMII_RD1		0x57e
-> +			MX93_PAD_ENET2_RD2__ENET1_RGMII_RD2		0x57e
-> +			MX93_PAD_ENET2_RD3__ENET1_RGMII_RD3		0x57e
-> +			MX93_PAD_ENET2_RXC__ENET1_RGMII_RXC		0x58e
-> +			MX93_PAD_ENET2_RX_CTL__ENET1_RGMII_RX_CTL	0x57e
-> +			MX93_PAD_ENET2_TD0__ENET1_RGMII_TD0		0x57e
-> +			MX93_PAD_ENET2_TD1__ENET1_RGMII_TD1		0x57e
-> +			MX93_PAD_ENET2_TD2__ENET1_RGMII_TD2		0x57e
-> +			MX93_PAD_ENET2_TD3__ENET1_RGMII_TD3		0x57e
-> +			MX93_PAD_ENET2_TXC__ENET1_RGMII_TXC		0x58e
-> +			MX93_PAD_ENET2_TX_CTL__ENET1_RGMII_TX_CTL	0x57e
-> +		>;
-> +	};
-> +
-> +	pinctrl_fec_sleep: fecsleepgrp {
-> +		fsl,pins = <
-> +			MX93_PAD_ENET2_MDC__GPIO4_IO14			0x51e
-> +			MX93_PAD_ENET2_MDIO__GPIO4_IO15			0x51e
-> +			MX93_PAD_ENET2_RD0__GPIO4_IO24			0x51e
-> +			MX93_PAD_ENET2_RD1__GPIO4_IO25			0x51e
-> +			MX93_PAD_ENET2_RD2__GPIO4_IO26			0x51e
-> +			MX93_PAD_ENET2_RD3__GPIO4_IO27			0x51e
-> +			MX93_PAD_ENET2_RXC__GPIO4_IO23			0x51e
-> +			MX93_PAD_ENET2_RX_CTL__GPIO4_IO22		0x51e
-> +			MX93_PAD_ENET2_TD0__GPIO4_IO19			0x51e
-> +			MX93_PAD_ENET2_TD1__GPIO4_IO18			0x51e
-> +			MX93_PAD_ENET2_TD2__GPIO4_IO17			0x51e
-> +			MX93_PAD_ENET2_TD3__GPIO4_IO16			0x51e
-> +			MX93_PAD_ENET2_TXC__GPIO4_IO21			0x51e
-> +			MX93_PAD_ENET2_TX_CTL__GPIO4_IO20		0x51e
-> +		>;
-> +	};
-> +
-> +	pinctrl_flexcan2: flexcan2grp {
-> +		fsl,pins = <
-> +			MX93_PAD_GPIO_IO25__CAN2_TX			0x139e
-> +			MX93_PAD_GPIO_IO27__CAN2_RX			0x139e
-> +		>;
-> +	};
-> +
-> +	pinctrl_lpi2c1: lpi2c1grp {
-> +		fsl,pins = <
-> +			MX93_PAD_I2C1_SCL__LPI2C1_SCL			0x40000b9e
-> +			MX93_PAD_I2C1_SDA__LPI2C1_SDA			0x40000b9e
-> +		>;
-> +	};
-> +
-> +	pinctrl_lpi2c2: lpi2c2grp {
-> +		fsl,pins = <
-> +			MX93_PAD_I2C2_SCL__LPI2C2_SCL			0x40000b9e
-> +			MX93_PAD_I2C2_SDA__LPI2C2_SDA			0x40000b9e
-> +		>;
-> +	};
-> +
-> +	pinctrl_lpi2c3: lpi2c3grp {
-> +		fsl,pins = <
-> +			MX93_PAD_GPIO_IO28__LPI2C3_SDA			0x40000b9e
-> +			MX93_PAD_GPIO_IO29__LPI2C3_SCL			0x40000b9e
-> +		>;
-> +	};
-> +
-> +	pinctrl_pcal6524: pcal6524grp {
-> +		fsl,pins = <
-> +			MX93_PAD_CCM_CLKO2__GPIO3_IO27			0x31e
-> +		>;
-> +	};
-> +
-> +	pinctrl_reg_usdhc2_vmmc: regusdhc2vmmcgrp {
-> +		fsl,pins = <
-> +			MX93_PAD_SD2_RESET_B__GPIO3_IO07		0x31e
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart1: uart1grp {
-> +		fsl,pins = <
-> +			MX93_PAD_UART1_RXD__LPUART1_RX			0x31e
-> +			MX93_PAD_UART1_TXD__LPUART1_TX			0x31e
-> +		>;
-> +	};
-> +
-> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> +	pinctrl_usdhc1: usdhc1grp {
-> +		fsl,pins = <
-> +			MX93_PAD_SD1_CLK__USDHC1_CLK		0x1582
-> +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x40001382
-> +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x40001382
-> +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x40001382
-> +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x40001382
-> +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x40001382
-> +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x40001382
-> +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x40001382
-> +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x40001382
-> +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x40001382
-> +			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x1582
-> +		>;
-> +	};
-> +
-> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> +	pinctrl_usdhc1_100mhz: usdhc1-100mhzgrp {
-> +		fsl,pins = <
-> +			MX93_PAD_SD1_CLK__USDHC1_CLK		0x158e
-> +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x4000138e
-> +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x4000138e
-> +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x4000138e
-> +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x4000138e
-> +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x4000138e
-> +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x4000138e
-> +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x4000138e
-> +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x4000138e
-> +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x4000138e
-> +			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x158e
-> +		>;
-> +	};
-> +
-> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> +	pinctrl_usdhc1_200mhz: usdhc1-200mhzgrp {
-> +		fsl,pins = <
-> +			MX93_PAD_SD1_CLK__USDHC1_CLK		0x15fe
-> +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x400013fe
-> +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x400013fe
-> +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x400013fe
-> +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x400013fe
-> +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x400013fe
-> +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x400013fe
-> +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x400013fe
-> +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x400013fe
-> +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x400013fe
-> +			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x15fe
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc2_gpio: usdhc2gpiogrp {
-> +		fsl,pins = <
-> +			MX93_PAD_SD2_CD_B__GPIO3_IO00		0x31e
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc2_gpio_sleep: usdhc2gpiosleepgrp {
-> +		fsl,pins = <
-> +			MX93_PAD_SD2_CD_B__GPIO3_IO00		0x51e
-> +		>;
-> +	};
-> +
-> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> +	pinctrl_usdhc2: usdhc2grp {
-> +		fsl,pins = <
-> +			MX93_PAD_SD2_CLK__USDHC2_CLK		0x1582
-> +			MX93_PAD_SD2_CMD__USDHC2_CMD		0x40001382
-> +			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x40001382
-> +			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x40001382
-> +			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x40001382
-> +			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x40001382
-> +			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
-> +		>;
-> +	};
-> +
-> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> +	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
-> +		fsl,pins = <
-> +			MX93_PAD_SD2_CLK__USDHC2_CLK		0x158e
-> +			MX93_PAD_SD2_CMD__USDHC2_CMD		0x4000138e
-> +			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x4000138e
-> +			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x4000138e
-> +			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x4000138e
-> +			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x4000138e
-> +			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
-> +		>;
-> +	};
-> +
-> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-> +	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
-> +		fsl,pins = <
-> +			MX93_PAD_SD2_CLK__USDHC2_CLK		0x15fe
-> +			MX93_PAD_SD2_CMD__USDHC2_CMD		0x400013fe
-> +			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x400013fe
-> +			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x400013fe
-> +			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x400013fe
-> +			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x400013fe
-> +			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc2_sleep: usdhc2-sleepgrp {
-> +		fsl,pins = <
-> +			MX93_PAD_SD2_CLK__GPIO3_IO01		0x51e
-> +			MX93_PAD_SD2_CMD__GPIO3_IO02		0x51e
-> +			MX93_PAD_SD2_DATA0__GPIO3_IO03		0x51e
-> +			MX93_PAD_SD2_DATA1__GPIO3_IO04		0x51e
-> +			MX93_PAD_SD2_DATA2__GPIO3_IO05		0x51e
-> +			MX93_PAD_SD2_DATA3__GPIO3_IO06		0x51e
-> +			MX93_PAD_SD2_VSELECT__GPIO3_IO19	0x51e
-> +		>;
-> +	};
-> +
-> +	pinctrl_wdog: wdoggrp {
-> +		fsl,pins = <
-> +			MX93_PAD_WDOG_ANY__WDOG1_WDOG_ANY	0x31e
-> +		>;
-> +	};
-> +};
-> 
-> -- 
-> 2.47.3
-> 
+>>
+>> Signed-off-by: Tiger Liu <liuyihu@kylinos.cn>
+>> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+>> ---
+>>   drivers/gpu/drm/drm_fb_helper.c | 143 ++++++++++++++++++++++++++++++--
+>>   1 file changed, 135 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_fb_helper.c 
+>> b/drivers/gpu/drm/drm_fb_helper.c
+>> index 53e9dc0543de..a6ec03bf3aef 100644
+>> --- a/drivers/gpu/drm/drm_fb_helper.c
+>> +++ b/drivers/gpu/drm/drm_fb_helper.c
+>> @@ -78,6 +78,17 @@ MODULE_PARM_DESC(drm_leak_fbdev_smem,
+>>            "Allow unsafe leaking fbdev physical smem address 
+>> [default=false]");
+>>   #endif
+>>   +#define SCREEN_CLONE            0x0
+>> +#define SCREEN_EXPAND_HORIZONTAL    0x1
+>> +#define SCREEN_EXPAND_VERTICAL        0x2
+>> +
+>> +static bool drm_fbdev_screen_expand_mode_enabled;
+>> +static int drm_fbdev_screen_mode = SCREEN_CLONE;
+>> +module_param_named(screen_mode, drm_fbdev_screen_mode, int, 0444);
+>> +MODULE_PARM_DESC(screen_mode,
+>> +         "Screen display of the fbdev. [0 = clone(default), 1 = 
+>> expand horizontally,"
+>> +         "2 = expand vertically]");
+>> +
+>>   static LIST_HEAD(kernel_fb_helper_list);
+>>   static DEFINE_MUTEX(kernel_fb_helper_lock);
+>>   @@ -1345,15 +1356,35 @@ int drm_fb_helper_set_par(struct fb_info 
+>> *info)
+>>   }
+>>   EXPORT_SYMBOL(drm_fb_helper_set_par);
+>>   -static void pan_set(struct drm_fb_helper *fb_helper, int dx, int dy)
+>> +static void pan_set_locked(struct drm_client_dev *client,
+>> +               int dx, int dy)
+>>   {
+>>       struct drm_mode_set *mode_set;
+>> +    int screen_x_offset = dx;
+>> +    int screen_y_offset = dy;
+>>   -    mutex_lock(&fb_helper->client.modeset_mutex);
+>> -    drm_client_for_each_modeset(mode_set, &fb_helper->client) {
+>> -        mode_set->x += dx;
+>> -        mode_set->y += dy;
+>> +    drm_client_for_each_modeset(mode_set, client) {
+>> +        if (drm_fbdev_screen_expand_mode_enabled) {
+>> +            if (drm_fbdev_screen_mode == SCREEN_EXPAND_HORIZONTAL) {
+>> +                mode_set->x += screen_x_offset;
+>> +                mode_set->y += screen_y_offset;
+>> +                screen_x_offset += mode_set->mode->hdisplay;
+>> +            } else if (drm_fbdev_screen_mode == 
+>> SCREEN_EXPAND_VERTICAL) {
+>> +                mode_set->x += screen_x_offset;
+>> +                mode_set->y += screen_y_offset;
+>> +                screen_y_offset += mode_set->mode->vdisplay;
+>> +            }
+>> +        } else {
+>> +            mode_set->x = screen_x_offset;
+>> +            mode_set->y = screen_y_offset;
+>> +        }
+>>       }
+>> +}
+>> +
+>> +static void pan_set(struct drm_fb_helper *fb_helper, int dx, int dy)
+>> +{
+>> +    mutex_lock(&fb_helper->client.modeset_mutex);
+>> +    pan_set_locked(&fb_helper->client, dx, dy);
+>>       mutex_unlock(&fb_helper->client.modeset_mutex);
+>>   }
+>>   @@ -1387,10 +1418,8 @@ static int pan_display_legacy(struct 
+>> fb_var_screeninfo *var,
+>>         mutex_lock(&client->modeset_mutex);
+>>       drm_modeset_lock_all(fb_helper->dev);
+>> +    pan_set_locked(client, var->xoffset, var->yoffset);
+>>       drm_client_for_each_modeset(modeset, client) {
+>> -        modeset->x = var->xoffset;
+>> -        modeset->y = var->yoffset;
+>> -
+>>           if (modeset->num_connectors) {
+>>               ret = drm_mode_set_config_internal(modeset);
+>>               if (!ret) {
+>> @@ -1461,6 +1490,94 @@ static uint32_t 
+>> drm_fb_helper_find_format(struct drm_fb_helper *fb_helper, const
+>>       return DRM_FORMAT_INVALID;
+>>   }
+>>   +/*
+>> + * Check if the device supports extended mode
+>> + *
+>> + * return true if the device supports extended mode,
+>> + * otherwise return false.
+>> + */
+>> +static bool drm_fb_helper_validate_extended_mode(struct 
+>> drm_fb_helper *fb_helper,
+>> +                         struct drm_fb_helper_surface_size *sizes)
+>> +{
+>> +    struct drm_client_dev *client = &fb_helper->client;
+>> +    struct drm_device *dev = fb_helper->dev;
+>> +    struct drm_mode_config *config = &dev->mode_config;
+>> +    struct drm_mode_set *mode_set;
+>> +    u32 crtc_count;
+>> +
+>> +    drm_client_for_each_modeset(mode_set, client) {
+>> +        crtc_count++;
+>> +
+>> +        for (int j = 0; j < mode_set->num_connectors; j++) {
+>> +            struct drm_connector *connector = mode_set->connectors[j];
+>> +
+>> +            if (connector->has_tile) {
+>> +                drm_dbg_kms(client->dev,
+>> +                        "Don't support extended with tile mode 
+>> connector yet\n");
+>> +                return false;
+>> +            }
+>> +        }
+>> +    }
+>> +
+>> +    if (crtc_count < 2) {
+>> +        drm_dbg_kms(client->dev,
+>> +                "Only support extended mode when device have 
+>> mult-crtcs\n");
+>> +        return false;
+>> +    }
+>> +
+>> +    if (drm_fbdev_screen_mode == SCREEN_EXPAND_HORIZONTAL) {
+>> +        u32 x = 0;
+>> +
+>> +        drm_client_for_each_modeset(mode_set, client) {
+>> +            struct drm_display_mode *desired_mode;
+>> +
+>> +            desired_mode = mode_set->mode;
+>> +            x = mode_set->x;
+>> +            sizes->fb_width = sizes->surface_width  += 
+>> desired_mode->hdisplay;
+>> +            sizes->surface_height =
+>> +                min_t(u32, desired_mode->vdisplay + mode_set->y,
+>> +                      sizes->surface_height);
+>> +            sizes->fb_height = min_t(u32, desired_mode->vdisplay + 
+>> mode_set->y,
+>> +                         sizes->fb_height);
+>> +        }
+>> +        sizes->fb_width = sizes->surface_width += x;
+>> +
+>> +        if (sizes->fb_width > config->max_width) {
+>> +            drm_dbg_kms(client->dev,
+>> +                    "screen_buffer total width %d > config width %d\n",
+>> +                    sizes->fb_width, config->max_width);
+>> +            return false;
+>> +        }
+>> +    } else if (drm_fbdev_screen_mode == SCREEN_EXPAND_VERTICAL) {
+>> +        u32 y = 0;
+>> +
+>> +        drm_client_for_each_modeset(mode_set, client) {
+>> +            struct drm_display_mode *desired_mode;
+>> +
+>> +            desired_mode = mode_set->mode;
+>> +            y = mode_set->y;
+>> +            sizes->fb_height = sizes->surface_height += 
+>> desired_mode->vdisplay;
+>> +            sizes->surface_width =
+>> +                min_t(u32, desired_mode->hdisplay + mode_set->x,
+>> +                      sizes->surface_width);
+>> +            sizes->fb_width = min_t(u32, desired_mode->hdisplay + 
+>> mode_set->x,
+>> +                        sizes->fb_width);
+>> +        }
+>> +        sizes->fb_height = sizes->surface_height += y;
+>> +
+>> +        if (sizes->fb_height > config->max_height) {
+>> +            drm_dbg_kms(client->dev,
+>> +                    "screen_buffer_total_height %d > config height 
+>> %d\n",
+>> +                    sizes->fb_height, config->max_height);
+>> +            return false;
+>> +        }
+>> +    } else {
+>> +        return false;
+>> +    }
+>> +
+>> +    return true;
+>> +}
+>> +
+>>   static int __drm_fb_helper_find_sizes(struct drm_fb_helper *fb_helper,
+>>                         struct drm_fb_helper_surface_size *sizes)
+>>   {
+>> @@ -1527,6 +1644,16 @@ static int __drm_fb_helper_find_sizes(struct 
+>> drm_fb_helper *fb_helper,
+>>         /* first up get a count of crtcs now in use and new min/maxes 
+>> width/heights */
+>>       crtc_count = 0;
+>> +
+>> +    /* Check if we support extended mode. If we do, we will adjust 
+>> the sizes accordingly. */
+>> +    if (drm_fbdev_screen_mode &&
+>> +        drm_fb_helper_validate_extended_mode(fb_helper, sizes)) {
+>> +        drm_fbdev_screen_expand_mode_enabled = true;
+>> +        drm_dbg_kms(dev, "Extended mode: horizontal expansion, 
+>> width: %d, height: %d\n",
+>> +                sizes->surface_width, sizes->surface_height);
+>> +        return 0;
+>> +    }
+>> +
+>>       drm_client_for_each_modeset(mode_set, client) {
+>>           struct drm_display_mode *desired_mode;
+>>           int x, y, j;
+>
 
