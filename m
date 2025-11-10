@@ -1,103 +1,118 @@
-Return-Path: <linux-kernel+bounces-893896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF9AC489BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:39:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC428C4898E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4764A3AA409
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:34:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 326F81890DB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3862E62C4;
-	Mon, 10 Nov 2025 18:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED663128B7;
+	Mon, 10 Nov 2025 18:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CihK0FPj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHjgQXbi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B714F18C26
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 18:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A17242925;
+	Mon, 10 Nov 2025 18:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762799695; cv=none; b=KZ93T2aY1NTl0NkZGCFpfKGYpD9lKqY+JKfWvk1YT7Zf3cqj6t5DX4+uR5ATztbA6a+j5X9oh5NFEEkFDpozy1Luuk3ImY/wjL/at2xwPkyaoHbqFQPpdKwmJ6SO8ZqdmES6kuCg530TrzehKKos01T09W9avgxzuR1tgclVDso=
+	t=1762799788; cv=none; b=VGyhPOKqXewDbljNCDIKAIuCuzfVYF+ZBMMqualfwykAH2798XVQT8oung++V2efaCtUQL9rLs6OYusOVtMKQ3EqN3tQYM5+WAZr+Pv82Jkrkkye0ZSy3GPRX94v0DF2yCCeMUqqb+EiKlgVTahOcgtRDWEB7LyhTwTXvbJMcqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762799695; c=relaxed/simple;
-	bh=FQjzy3ZKmgutMS5buIYRozIFCGNCd/pVylb5uaoZKQM=;
+	s=arc-20240116; t=1762799788; c=relaxed/simple;
+	bh=X2UMR+ek8t4dC9FVAihJ8te21o4CcIV3uaXVHjtVgcI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xy1T6StyGaQIgjY0/nkfQY2I/rgjEKi2fmTmQ2OZutz0ONKbforg0fE6fsevNBTih9KUG1Gofp4wHQ9CSHIxOBWBqCUiwSWL8lvEOVoyjtQaWtTp4u8MaiqlgAMcQGmpdVGEAMa4N7KScPJbtoGV1QKJnY/dx/N9GTZNrKzhfHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CihK0FPj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6488C116D0;
-	Mon, 10 Nov 2025 18:34:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aChs30n3E2AhK+AAntc/VWrGXRy2Bgs8f1eKOfqlHUH/hifohQ47C8Jp8rYE+7XPfFDNDyOY0lIjPAU9VSTfDwYSZnFD9Y0e3q1qYlAJsQKPfvyrMOaw9iS9SHOjlEdDc5yoqyQdZZUFNLqS0Me4vk6PSx2k/yk69RSEduBSI+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHjgQXbi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6263C116B1;
+	Mon, 10 Nov 2025 18:36:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762799695;
-	bh=FQjzy3ZKmgutMS5buIYRozIFCGNCd/pVylb5uaoZKQM=;
+	s=k20201202; t=1762799787;
+	bh=X2UMR+ek8t4dC9FVAihJ8te21o4CcIV3uaXVHjtVgcI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CihK0FPjPD1VMDZ2iA5q9fLWUD+ajedl3qWXAK9vmc92x1+nvCH1jtiC04/W7BU1l
-	 6ZRyz9Ve4iGH/jFMw08q3FJqmnZNhXFgpGkViU9Em2lvtFXqXf0lif6zzO9zpUEdvA
-	 Tt6obIDeIlS7E8Ks32yfM3q4BaKp/e0PE2kArqXiTpEDM4laHWCyTq4MuH3AIq7FUd
-	 pEtPkOFl57dB5ITtBYjz13stwHOhBr3cf7nRFw7w4VNaUQ3pBhPNoTqIEGV6kOWQHD
-	 a81ehbRobuFJuPdZK1ZwuRCa4+w/6xZ4B1vPdsZrUWHBH/jde9mXFtcC3HEvy9zU0M
-	 JwTPCO/DWYUlA==
-Date: Mon, 10 Nov 2025 20:34:48 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, graf@amazon.com, pratyush@kernel.org,
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] liveupdate: kho: Enable KHO by default
-Message-ID: <aRIwSEF8Y0I6q8Cy@kernel.org>
-References: <20251110180715.602807-1-pasha.tatashin@soleen.com>
+	b=qHjgQXbiAMJaLpbNPCzTNjHjQvoLTAlkmWF++9regAa9FjAr6Zu6vqf7TY/j0EJTl
+	 iGiOQpzp0AnQMKNXY6qj+2KPgHeiceemXV8Up9jDQe3GfrfYsaKWN7Og/6TUQKFFrR
+	 C7JuU/vC5nfFRY7jnEH202SPLeFN0sbaCwwbC8F5O8VdLzL5g1lRhOsf3hu2IBsoNw
+	 ZkQQKXckpe7gyO/9uUQlZm9s1pZ34252/byXsxLdczV5Ez1OCWBgCDiZQSROTnPTJy
+	 fooEUE8E7vlmmo4H/j+LtSMMPVe6N0WoC4iyEN7g8v6OlCm26TbVtzCmU359R2ixV/
+	 pwCqNZMVW0Akw==
+Date: Mon, 10 Nov 2025 19:36:21 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: George Moussalem <george.moussalem@outlook.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Baruch Siach <baruch@tkos.co.il>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Devi Priya <quic_devipriy@quicinc.com>, 
+	Baruch Siach <baruch.siach@siklu.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v18 1/6] dt-bindings: pwm: add IPQ6018 binding
+Message-ID: <tqbdvt2yj2e7ycxiu7nlvwgeh4cf7em6n7gia7cd4f7lsqjdeg@ksyfpy63laop>
+References: <20251029-ipq-pwm-v18-0-edbef8efbb8e@outlook.com>
+ <20251029-ipq-pwm-v18-1-edbef8efbb8e@outlook.com>
+ <gkvbziqeae53bunqd556r4swaye4s4lcnwthryouynwfwqrnsi@6o4cjgxiwxco>
+ <lkbwgakmqknqptsjrb7hvxv3bxi3fo62vml7tmf4avo7nr7cue@dwsovmchu2pp>
+ <DS7PR19MB88832537DA9998530BAAC9C39DCEA@DS7PR19MB8883.namprd19.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="s5dbfl4angh7vjuo"
 Content-Disposition: inline
-In-Reply-To: <20251110180715.602807-1-pasha.tatashin@soleen.com>
+In-Reply-To: <DS7PR19MB88832537DA9998530BAAC9C39DCEA@DS7PR19MB8883.namprd19.prod.outlook.com>
 
-On Mon, Nov 10, 2025 at 01:07:15PM -0500, Pasha Tatashin wrote:
->
-> Subject: [PATCH] liveupdate: kho: Enable KHO by default
 
-No need to put a directory (liveupdate) prefix here. "kho: " is enough.
+--s5dbfl4angh7vjuo
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v18 1/6] dt-bindings: pwm: add IPQ6018 binding
+MIME-Version: 1.0
 
-With that fixed
+Hello George,
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+On Mon, Nov 10, 2025 at 03:41:49PM +0400, George Moussalem wrote:
+> On 11/10/25 15:32, Uwe Kleine-K=F6nig wrote:
+> >>> +  "#pwm-cells":
+> >>> +    const: 2
+> >=20
+> > Please use 3 here.
+>=20
+> The driver doesn't support polarity and I don't know whether the HW even
+> supports it. Hence, I kept it as 2 as originally submitted by qcom
+> (Devi). I don't have access to the datasheets. Would you like me to
+> resubmit a new version anyways or keep as is?
 
-> Upcoming LUO requires KHO for its operations, the requirement to place
-> both KHO=on and liveupdate=on becomes redundant. Set KHO to be enabled
-> by default.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
->  kernel/liveupdate/kexec_handover.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
-> index b54ca665e005..568cd9fe9aca 100644
-> --- a/kernel/liveupdate/kexec_handover.c
-> +++ b/kernel/liveupdate/kexec_handover.c
-> @@ -51,7 +51,7 @@ union kho_page_info {
->  
->  static_assert(sizeof(union kho_page_info) == sizeof(((struct page *)0)->private));
->  
-> -static bool kho_enable __ro_after_init;
-> +static bool kho_enable __ro_after_init = true;
->  
->  bool kho_is_enabled(void)
->  {
-> 
-> base-commit: ab40c92c74c6b0c611c89516794502b3a3173966
-> -- 
-> 2.51.2.1041.gc1ab5b90ca-goog
-> 
+I want all new drivers use 3 pwm-cells for consistency even if the
+hardware doesn't support the (currently) only flag. Additionally this
+simplifies things like pwm nexus nodes (see
+e71e46a6f19c46b38983bebde8bfac1c04968fdf).
 
--- 
-Sincerely yours,
-Mike.
+So yes, please change to 3.
+
+Best regards
+Uwe
+
+--s5dbfl4angh7vjuo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkSMKMACgkQj4D7WH0S
+/k6MvwgAmAv345GS0OBmiRO1V+Um4ZZv+MMGog8wAp4dG4wNqRSfg+bJcDwN/11Z
+4yRhFo26C4hVPPs5JYHOx178k2EwvOtphK1flrb9r91w+24ySpvPDHhOzbOlk91M
+sVhXrVXHAUaVxZS+2lbyqXzWptistZhDfLGMso0s1M20vVYsmdMJkF7Z0N5OSzhW
+qplkJltikAmqaqYr8SPAVbH/a0mtPKProR/WPrV64gf9PFo6LwIpD9julJiJLlMB
+Ke//T2lvmH3YJwOov7UfszhXp7+TA8yKhwmxePPGcag7JIycFKsanR04XwvpB6JQ
+ADIY4Fd/OKtJZVbiAUf27scd1cMV0g==
+=XKuc
+-----END PGP SIGNATURE-----
+
+--s5dbfl4angh7vjuo--
 
