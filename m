@@ -1,257 +1,611 @@
-Return-Path: <linux-kernel+bounces-892973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D32C46411
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:29:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7531EC464E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60AEE4ED373
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:27:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 530CE4EA900
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CEE30BF58;
-	Mon, 10 Nov 2025 11:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D242E309EF5;
+	Mon, 10 Nov 2025 11:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FLcCjLas"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010023.outbound.protection.outlook.com [52.101.201.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+13pEoP"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D36310629;
-	Mon, 10 Nov 2025 11:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762773894; cv=fail; b=fRmCcmZwfrM9uYWK3EYpJBggjdpa3TUCSc7spQ0DzjEvwQWvq8Qd546OFcNdgQiDJhhndRMoAGVdBrauIm7Vc9qYN51fjmaso9EF+XbOPCL3D8zkSsowlP+tujX1Ix9eNQl2P4ahJsXVD8hnpRKluDfmm8yKIId3NMXhYWo9pgo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762773894; c=relaxed/simple;
-	bh=w9lCZp1gBLdlY9u7PFFIuQtKLreX7AUYLGK1hfSP4+c=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sBXEv2g7RgsNkjOlKxY7riyJzsO0t8jtD33oi/BWVn2I4Ju/mevzLoMryahlmqkVBwZw0AEhvwSJjv86sO/W1bREg18h4c/Tt4k0nQuv2PaIuVOIpBF0PThqpBJylYAzSARzZA5fIrKBDXv6D2Ft+orVMV1DzSjsJr7uoaj1Pnc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FLcCjLas; arc=fail smtp.client-ip=52.101.201.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rKTMSqmyd2NX6AG75/8hln02qEZ1AZ6cadOXaqURb2Fk5cnyMTV31hYe7cj4unQ5r5GS4nv28lCK5xgXJGQOMsAuTzYQP2mZNHNrD3icIga1XGAzh48ydypHk6D3sEvgHj9tufVn8vpJTihH0Wmz8HLd7ZzSKmHyLPg7e/rOfTyA8Ks9Xfi5tZun8Tubme3X8ALFMPtFol7m7IiI+VNk40d97QOoKxdlay58k/qPnqDic3rXCMwDP7cj4MNiF9UexfCh1pT3bqCtPS/8dqbaXAR10yjANIwiHXwAdOjIAxQDA2cm1V4R5Tx5zyqai/hIaLXo3erPXDLUBdD5R6H8vQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bMocElK0rErTnx6NUK+Xg/GaiXLnnDzflwg8eU6RjIo=;
- b=puZjxO68kBUAhvRUqfdPtyA7ib85JbkPIwVT88RJuaLuzjf5k9qD2+UqBWtDXhsGSqwRPpSKrRUWh3ZUqtthMpe4xji7XY1CzMpw/iz9CC7HxN+xu3sylnm/uAZUcIf85mHhKZQjOQvBWV81BIiXqFzZyfCcj+vvF8JLJG5kEbsvF0ndxojXOfP09W7TCdjnhZMvdkZ/E43OLwSBFoI95NiTdZ9DcBkRbe5HL50g4Uo3wvStsc6PefqO7IIvnXEBnzM2zFoDdaXxFR9wzPX7chzV/0hpGZGlF8mbr6x1ZnFkq9j2dG0hgQ3NfGEBtwIX/2XVY8wMxy/WDBbwXsNccw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bMocElK0rErTnx6NUK+Xg/GaiXLnnDzflwg8eU6RjIo=;
- b=FLcCjLasbxiN7g8TbW3V83/C4lNEoLDZ4EmiEBZwbRfrBAZTbqWgSWyjZXDi8/IZzYlFgxApV8RH57l+yy4Jk3y5QlJOt0daupmao7rnpNX5VFjUNglv4mbc7ZeSc7lDu/YHXvJI6sr1tklb7qUZpWVM1mQTYndXCydIUMwF5sU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by CYYPR12MB8891.namprd12.prod.outlook.com (2603:10b6:930:c0::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 11:24:50 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 11:24:50 +0000
-Message-ID: <ee63ca7d-77d2-44d8-973b-7276f8c4d4a5@amd.com>
-Date: Mon, 10 Nov 2025 12:24:46 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sched: Fix UB in spsc_queue
-To: Philipp Stanner <phasta@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>,
- Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>, dakr@kernel.org,
- Matthew Brost <matthew.brost@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20251110081903.11539-2-phasta@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20251110081903.11539-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0157.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ba::12) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DC330E0E2
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762774305; cv=none; b=bHjvUiJIGyV0XRqplVqOOWG3J2cwbaV8YJbmEgAxo2wZY+XDb5U35LF1LF31L8fA+4Ls1Pl/2pWeVk4WTk8wqJWvv2eaelanmSmc/2pmWeViFJlqrxmt6IetEDwUBV3AAlYwwY/AGSYpqokG8qEnAW70Md0QcDWsqe0XeH7ZOJQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762774305; c=relaxed/simple;
+	bh=OfKe33PZ4jVxK62r9E/y9a4Z1s6PmBdGD9WWYgb8n88=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PZSUoNuiNkOqbkYSBNSab7qDtPbflQEqGSmp+0gHdNxgz8GPY/pQPBMdbq7Zm0yV8u04d3+dbR2I4XDl2rYxwi6Nd097jVIK+kNMop2oQ6iB50/Br6zJPFU5dGAgqZtFkbUxjX/fjpmlkOmhHTfzokZg13Ds0hMYmniTySfCd3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+13pEoP; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47755de027eso19692955e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:31:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762774301; x=1763379101; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i2/M4+EN5YNR0EtZX8jaOygcLVo9aZ5Ma5/OhttBbPw=;
+        b=m+13pEoP+wk8K0kifwiTxNd8lZ5oKXl4LDfa11LSF5+gtFNTNTY8tb5Oa8ZRTtwaug
+         99JoNAGIT32Zo8Pgx+rV6ESxRnbACZPzBeCm8PYIMqnmSxK4oGPta5Gdq5d9LZ9VUZcn
+         MNDY23wKC2y8EsI98YD5rkzKRnKwBjuPzAejQq60JwOSNVlalXVELl+ElS70yC8HjoAu
+         uWHTsiReT1eLrPtmF+ZNyw7b6jHyph92kAtMDrZySUvZDI+pl7bEs7eatbO8oiTmkqWy
+         7yj2dOahccIGzS/LuaBvAUGsASkV5UJUVGj4rw9f2qWGKDr5e0dz4z0+Lin2t3uHLFTy
+         VxsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762774301; x=1763379101;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=i2/M4+EN5YNR0EtZX8jaOygcLVo9aZ5Ma5/OhttBbPw=;
+        b=n9lOebMfB2Lw7jJHNSGiJuBcXhIFwp0z7fNIZrVtweKN4NzLKwzFEIGGz4374+6lQx
+         y+eJCHMM7FnGKE8CwCaE/U0/9FlS0aEphQNtbkr9lpr8zFMA3gICIEnexmhN7FnfCgPQ
+         IZaP+DgKLuSFyrUYXjc+vfIzYFjRaJX1iOVPgDlU7Nls9uUe7hFvTcZPg0ZeaEQ/XbHp
+         Wo2WGC39/5D6Uon45Gbuh16RvpZsf8FM2latAmxq+IFTkS7I3SD844PJMFtHucqH62W/
+         9euB8XGycoKP4FVIEGZbKoyNNtwf2U3nJt+z+LxyEQAaqxNwAKObG88MQGdzAWM/0ryP
+         Tq+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVct3Lfp5B3ltBEKp1pigk0FnIm9Fsczlc9r2go+p+eHUQZ+d2cjZ7JUXvpV6WjQQGp+M7FP1T09Z/d8J0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz044VP7Dq6RkqUIYkOEGozGpkHCtof+78BJdJC4ABh0BkoamRE
+	jGuwwkOoN+wSAys2Mf4LOATW3+7313QD4FhC3weCJZcHW4XC4t/x7qHNVoKWiiB2
+X-Gm-Gg: ASbGncth1Sxmf17LEnbMexWQmRr5q3oT1soqcm03G9rFcKskZrReqhM+WtHmqMq3zau
+	RFA+X3/emAnxXTSigz1r4d6AOaGxzP5zqorlfsduMkyGIthi9Uu4+SuSEYQEj/Ya9M7eA9KnI35
+	RziWKIJqflsFITOr079b688AninvWWhPJXS/YrJoo22JaLjHqTijXaPCNuf/ZbEH472pXxu6lTm
+	FnVqjClGNDFByIVRC+U0jyzvRwaQte5B8Z73OXol9PneC+lj7BNxOTS0RcMwbxvxU7JojFGOEY+
+	ls5iz5fuXX5dKGxT3OCHjRgeNtorpyCbAPKt1aeRgoEKiUlBgiID765Z8kFlXImFvorU1YE2QQw
+	rXLWgQg34mxK9CdhCqtSYmBK4rTjYG56R2VcpKPV8JI0afAgFXn2/4sWbmYzcarO+VQzGLQgJGB
+	E1xrsCwNlpUaOygVo=
+X-Google-Smtp-Source: AGHT+IFb5h1KMKctXiim7FWSKyQS0eSKR5f1iV4BeC/7GMWQCiCHdeGDuyWOrHD3yCTOZGAP39EUsQ==
+X-Received: by 2002:a5d:5d0a:0:b0:429:92d8:3371 with SMTP id ffacd0b85a97d-42b2dc12a1fmr7124488f8f.11.1762773909867;
+        Mon, 10 Nov 2025 03:25:09 -0800 (PST)
+Received: from Vasilio.Home ([176.26.203.25])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac679e06csm21416030f8f.47.2025.11.10.03.25.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 03:25:09 -0800 (PST)
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Asahi Lina <lina+kernel@asahilina.net>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Xiangfei Ding <dingxiangfei2009@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: [PATCH v7 1/4] rust: i2c: add basic I2C device and driver abstractions
+Date: Mon, 10 Nov 2025 11:25:07 +0000
+Message-ID: <20251110112507.50525-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251110112437.50405-1-igor.korotin.linux@gmail.com>
+References: <20251110112437.50405-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CYYPR12MB8891:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9f0d517-1cab-42c2-663f-08de204bc316
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eGdSR2tpWWsxcEE2U0VxUWFDazZJTXBRczFMYTU5TW45c3BsdWNud1gzd1pr?=
- =?utf-8?B?S0pkVWNvZGVOS2ZsUlgva1o3NmZMYTlPTzQrOU1vM0RhaThLOCtKOStRdVFC?=
- =?utf-8?B?L1hVVGo5aHNKL3ZpYzMrTzJQQkVob3Z3VWc1dm9lNmRLRmFkemFNM1ViWEdU?=
- =?utf-8?B?SEdKRVU1SncramFXSk5keW04T3FoWktjcDIyNmdGWWtTaTBMOExxL29LaVBj?=
- =?utf-8?B?RmRwOExOc3dQQ29WbG9lSnF1OFhGODFRNHdOcnJJc1NhNFJOUVZqYSt5OURT?=
- =?utf-8?B?N0Rvcy9zUFNBdjYyd2xuaVV4QUVaOCsvUDdwNjdCSHNjKzdzWWFRdlRpNnZM?=
- =?utf-8?B?Q1JybDBvZ1lOYXhWODJSZ21rWkxGWHVHRVQzU2VQcXFha3dhWXowZWg2WkFk?=
- =?utf-8?B?bGROeHBKaDhjVVhkTVh6WUN3R0xkaWU1VnZSR2d3b1hOek5BK25POC9lbzNT?=
- =?utf-8?B?RDZyQjF1KytVVW9oWGsxVnVSZEd6V3o0TSttNDFGRlQ5TWFBWk1zVWtYTVNK?=
- =?utf-8?B?UjFZZFdlMjg0WUhDcTBpbnBScmE5VlBnY1ZSK2dtMlFmYk43K3JOdDBnaWx6?=
- =?utf-8?B?bjNVV1BxMmFtaWtkempYWmppTHROTEYwcTBtTklZRDJFMk5FclYxbkVPSVB0?=
- =?utf-8?B?OExOQnAwUnJYemFvV2xOamJuK0dqT3NlU1lkcExEMTBKOHd4dkdnNHFnUndC?=
- =?utf-8?B?c3R4NXYyNkswSVlBRG5nTTJNSDFHTjI3YUU3MEZPMm0wNHByVCthODNMNE8x?=
- =?utf-8?B?ejRkK1NMTVN3djJKQ0RLeWE1TEZ0dkRUWWtjVVJSV3JqSlFST0dBUFFHc05y?=
- =?utf-8?B?a041VUJEMG5lS0M4amFjZHBsdWc1K2hKVVdBMEV2RXZDN0FVQzlrMFhkZ1da?=
- =?utf-8?B?NGZRdS90L0dsNFFHbzE5VW5TU2d5aG9HWVVmK3N6QzFKUitKTW9tTHpEUVFD?=
- =?utf-8?B?bndISDFQVG51d2psVllNZlRIaVZGZFlNc2xtTkh4bzlYOElQdGtoMUx1NVNM?=
- =?utf-8?B?bkFkRTdyWjZZcm1tZWlENDhIL3BNTEFkWGNrL0pOMlN3YjJYUExOWE84QWtG?=
- =?utf-8?B?cXJGTTFIeFhLbDV2bmtRZWF3RmQ2YzZPMTdxYkJLa0NrMzVuUUdUd21xZ01W?=
- =?utf-8?B?V3hHcWMrY1pmc3l4TDdGNFppdGI1VitBUVo4UEx2ZHB0YWhsN04xKzBrUkxJ?=
- =?utf-8?B?OEx4aFVmZFN2VklWTlkySk1iZkVWQVVjeEgzbkdmS0p1aE5idmRGdWd2Z2x0?=
- =?utf-8?B?M3I5T3gwb3dNYzJZNTBZSXBSc3ZoNTdrUnVMTmdZblgraDlHUURkbm5BandH?=
- =?utf-8?B?bURoTEk3Mk44YVBMaC9wSllxaSsrSzVjYUJMTlBUeGFzRUJXMHd3ZS9QVCsz?=
- =?utf-8?B?OHQwY2Z1TFB1eTZDWS9ySVRsdnJ6MzluZGJPV0VlTEY1V0k0Kzgzd1h6L09T?=
- =?utf-8?B?QVVYZ3J1VkFHTXRUdTdtM2E4TnYvVkVBb04xaER5Y095UHVJU1FpUXhMMnhm?=
- =?utf-8?B?c3BheVpjVUhKNXZJa1RjWHVVc2Z3ZGdUZ1h4QXZIaURtRUtlam9vZFlqWUda?=
- =?utf-8?B?NVRSSUlVdlBJMS81R2laYm9rUEwwcmlaOVRGS0NOV3ppVTlHcEtZRGNDTzM2?=
- =?utf-8?B?NlRsQVZlUHA1cForcnY1Nk1DNVBELzc1cU9mZzFBMVJCRHZHcmU5UHU5M3Fz?=
- =?utf-8?B?RmtzWnFSdmdqTzl5YUhIWjVEYkcrWVRFM2FuQTdlZVZPRWZEcHUrMW5tMndG?=
- =?utf-8?B?eG5EZFZwOHkrQ1lyc2ZON0ZDN1owRUdzWFcxTmFYa2czT1BTTEltZ2t2d0Mv?=
- =?utf-8?B?dlRkbU13SFRHanZIeVNabDNVaEo0WUxwQXJqMGd0QmUxYWhMeEY5UGN3blpX?=
- =?utf-8?B?SXpQMjhoSzJ2Y1dxYnk5WEJjNjNsVWNPY09JSE9ma0xucERhbXpQK1V0RkRu?=
- =?utf-8?Q?jZUNEjQRw3aoIQGy+hYiuDdKKZ5Bt4RS?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?REZCcmk0Smh5Q2JBM2VJeTNsUWJlQzBwYlZaRkdHMFNuMDNFMkc4YzljaThz?=
- =?utf-8?B?aldCZU91SWJQWHZxNkZ1dktwRFNQR1VqSFpsdHM2c1VKZU1TbXZ6djF3SmF4?=
- =?utf-8?B?U3MzMk9WZVRXQWZTSklQTEJ2M2VCUlFtUStGNHRFd0RITWd0MXB3S1dTTmEr?=
- =?utf-8?B?VkJaTXRPSDZTV2hKT2tGbEk0ZVdVM2ExOGlBdENpSUF1Vk90MFBYTXlEVVdi?=
- =?utf-8?B?dkxPNnZvZHRlOGQyMlV2UEw4VTkwcUswYm1CdWRmNlEzMUdzNDc0cGVLbVhp?=
- =?utf-8?B?ZFdmZlhCbFliSGVCY0I4YnNDa0VrODNZUnFJWUtUTUMrdkxUbFgxRXFNVUdx?=
- =?utf-8?B?UGZQbmRsVXRONEhwMHBKT0pTQTZBZ2ZzY05sZGdHcWs4N21qaTFhRStUeE9r?=
- =?utf-8?B?NFQ0amt4eE1oNkxBcU03SDJuNFd1dHVnRmRjQXp6ZXBZOEZnNFJGbHIvMzdD?=
- =?utf-8?B?UUJPU2FHQWRiRXUyckoySUtBZWtvZmhHT0xoeXVsZnpDT3JyQkpyWUI5N3NE?=
- =?utf-8?B?cktiQkx2d25pb29IWFJwMDJjbXArcll5T2hIdmJqKzZnMmRCZHNwMFlNSlFX?=
- =?utf-8?B?NHVSYVd4Y0Y0bVUyRXNIazlRK3JzMGR4S2VBNzgxeDloby9tTXNnUnNGeEdt?=
- =?utf-8?B?S1hxQ3JJRGtKS0ZFVHhlSTJKcHBCRy9RS1RTNENjRDRNWWxjNFQ0MUhKUGhG?=
- =?utf-8?B?cGxxc2hSb0lscnFzNGFSdmhVLy85eXY4aXFaN2hBeWs5WkMveWkzUXNrNDA2?=
- =?utf-8?B?Ym1wK1BCUmg5cUZZSjkvY0xISVIzNHY2UXBSdk1lYXRxVEdXa3oyWloyUWJo?=
- =?utf-8?B?TlRFamg5NXZKb2duY25xSGJlR2lFNmhLMXNWYTRabHB0T3dLVG5SZEE4b1ll?=
- =?utf-8?B?eFhwOGxyNStKbVFqSW83UCtxdXYzVzUydVpMT1VtNnVhVXp5RjZ3bHRTeWZq?=
- =?utf-8?B?MThuVlkrcFVaNlhBK3NzUHhveUREVmNrd2pSTEd5SDZGbmdOS2NxRWtUM01Z?=
- =?utf-8?B?Y01JYXJpS0NISHFMS29GcHlBVHVySWJCUzViWUZFNDVpOGhIWUtFZEkrQkVR?=
- =?utf-8?B?ZkZZVkg5VU5CdFgvbHd2OE84Z29LSjJjMVNEYTJMZ09obHdlcEVaM0p0Z1VC?=
- =?utf-8?B?WTlsRFlhZHpzWXNwMzdLdjA0RCtLRXZiNjdVcXl3aHVxdmd5ODFML3hOQzVN?=
- =?utf-8?B?aUIrS2UxemthdnI0VlcvRERJQ3pMNzZYTkRrTWV4MGs5eWQrMlVtbnhwSDRN?=
- =?utf-8?B?RG9GR2JtbFl1bnc1L01acWZhc1lIcWFBNGxmN2JOcG1yOE84ZmY3eGJUUHBO?=
- =?utf-8?B?MnZhSEU1UjJ3NkwxaEE5ays0SkxIQ1JnbGJmZ1d3VmcvTGl6UWlPc0ZHZXh0?=
- =?utf-8?B?TDRwRFVLVkJaWkRKeWhtNTFGa3NXdGVvbGNNWHRJVVE2NytGVmZRZHhFQllm?=
- =?utf-8?B?R0p4UVplRU9HbHk0d2lZd1ZoMExWZlpXRVhYOFBESEpXRmk1V2JSNWl5VllU?=
- =?utf-8?B?YmIwQWUrdisyUjVHaTNGQTJCMjNXaWRYd1gxUGlMQ0NxTUhidjZhcWNsV1ps?=
- =?utf-8?B?UHNIQ2NFbmd1RU1sT1czV2pTM2lMSm9VemhDOFVoeEVsYVBOdDRJdkFWYTNy?=
- =?utf-8?B?YVdrYlNIYW5nYTFua09wbExlbUppR2g2cEhydHM0Tmc4SlBFOGF1QWQzMzFK?=
- =?utf-8?B?UUJESllaWGZBelM4U2NxbHBFa29yRXkzcTQ2Z3ZMSXhDNGwvWmFaVGNhQnpN?=
- =?utf-8?B?TnUxa1lPQkMrN1VRWWkwOXdvWkw5QkhXSWNvOSszanJOOWtmMUpPSlY2cGo2?=
- =?utf-8?B?MWV3azV0NFVodUZydjExQTJ6RzNEQVBoSElBNnNpdkhYN2NQK3d6TXJJNnRv?=
- =?utf-8?B?SEJvWmVqUnlGbGlDZmlrYzI4WnBpT1FmdEVsb2FQdkhicFpHZWNWZ1U0RTR1?=
- =?utf-8?B?dWR6bTF3QTh3aTdrbFA5ZldFNE5ndzlaZkZEQnc2UkVBZFJGMG1MSEN1M2V4?=
- =?utf-8?B?NHVwL0hCZXBVQ3FMdUlNK21uREt3MERQZHVubUx0cm9WRUt0ZXZvUEowMmNF?=
- =?utf-8?B?YTFENjU1WnBkbkM3NURMeWo3ZWtUS1ZQVnlPZmhtamlWbEdCdk5vZUtsZllC?=
- =?utf-8?Q?oEFdzcOBdAe8agsorwt4iJcni?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9f0d517-1cab-42c2-663f-08de204bc316
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 11:24:50.4242
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fb4cotuu2d+oOwlJhsHXT90rRwnKComXJO37nBQTv4yZDmbezSUXwycRRC0/2fSE
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8891
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-As far as I can see that is not correct or rather not complete.
+Implement the core abstractions needed for I2C drivers, including:
 
-The peek function should only be used to opportunistically look at the top of the queue. It would only be problematic if it returns a non NULL value once and then a NULL value later.
+* `i2c::Driver` — the trait drivers must implement, including `probe`
 
-The whole idea of the SPSC is that it is barrier-free and the signaling of new entries to the consumer side is providing the barrier.
+* `i2c::I2cClient` — a safe wrapper around `struct i2c_client`
 
-So basically on the provider side you have
-spsc_push(entry)
-wake_up(consumer)
+* `i2c::Adapter` — implements `driver::RegistrationOps` to hook into the
+  generic `driver::Registration` machinery
 
-And on the consumer side you have:
+* `i2c::DeviceId` — a `RawDeviceIdIndex` implementation for I2C device IDs
 
-woken_up_by_provider() {
-	entry = spsc_peek();
-	...
-	spsc_pop();
-}
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+---
+ MAINTAINERS                     |   8 +
+ rust/bindings/bindings_helper.h |   1 +
+ rust/kernel/i2c.rs              | 425 ++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |   2 +
+ 4 files changed, 436 insertions(+)
+ create mode 100644 rust/kernel/i2c.rs
 
-The problem we are facing here is that the spsc only provides the guarantee that you see the entry pointer, but not the content of entry itself.
-
-So use cases like:
-
-woken_up_by_provider() {
-	while (entry = spsc_peek()) {
-		...
-		spsc_pop();
-	}
-}
-
-Are illegal since you don't have the correct memory barriers any more.
-
-Took me an eternity to understand that as well, so bear with me that I didn't previously explained that.
-
-Question is what should we do?
-
-Regards,
-Christian.
-
-On 11/10/25 09:19, Philipp Stanner wrote:
-> The spsc_queue is an unlocked, highly asynchronous piece of
-> infrastructure. Its inline function spsc_queue_peek() obtains the head
-> entry of the queue.
-> 
-> This access is performed without READ_ONCE() and is, therefore,
-> undefined behavior. In order to prevent the compiler from ever
-> reordering that access, or even optimizing it away, a READ_ONCE() is
-> strictly necessary. This is easily proven by the fact that
-> spsc_queue_pop() uses this very pattern to access the head.
-> 
-> Add READ_ONCE() to spsc_queue_peek().
-> 
-> Cc: stable@vger.kernel.org # v4.16+
-> Fixes: 27105db6c63a ("drm/amdgpu: Add SPSC queue to scheduler.")
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
-> I think this makes it less broken, but I'm not even sure if it's enough
-> or more memory barriers or an rcu_dereference() would be correct. The
-> spsc_queue is, of course, not documented and the existing barrier
-> comments are either false or not telling.
-> 
-> If someone has an idea, shoot us the info. Otherwise I think this is the
-> right thing to do for now.
-> 
-> P.
-> ---
->  include/drm/spsc_queue.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/drm/spsc_queue.h b/include/drm/spsc_queue.h
-> index ee9df8cc67b7..39bada748ffc 100644
-> --- a/include/drm/spsc_queue.h
-> +++ b/include/drm/spsc_queue.h
-> @@ -54,7 +54,7 @@ static inline void spsc_queue_init(struct spsc_queue *queue)
->  
->  static inline struct spsc_node *spsc_queue_peek(struct spsc_queue *queue)
->  {
-> -	return queue->head;
-> +	return READ_ONCE(queue->head);
->  }
->  
->  static inline int spsc_queue_count(struct spsc_queue *queue)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 46126ce2f968..828f6d8b1c32 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11737,6 +11737,14 @@ F:	include/linux/i2c.h
+ F:	include/uapi/linux/i2c-*.h
+ F:	include/uapi/linux/i2c.h
+ 
++I2C SUBSYSTEM [RUST]
++M:	Igor Korotin <igor.korotin.linux@gmail.com>
++R:	Danilo Krummrich <dakr@kernel.org>
++R:	Daniel Almeida <daniel.almeida@collabora.com>
++L:	rust-for-linux@vger.kernel.org
++S:	Maintained
++F:	rust/kernel/i2c.rs
++
+ I2C SUBSYSTEM HOST DRIVERS
+ M:	Andi Shyti <andi.shyti@kernel.org>
+ L:	linux-i2c@vger.kernel.org
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 2e43c66635a2..a24f9dffed3a 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -58,6 +58,7 @@
+ #include <linux/firmware.h>
+ #include <linux/interrupt.h>
+ #include <linux/fs.h>
++#include <linux/i2c.h>
+ #include <linux/ioport.h>
+ #include <linux/jiffies.h>
+ #include <linux/jump_label.h>
+diff --git a/rust/kernel/i2c.rs b/rust/kernel/i2c.rs
+new file mode 100644
+index 000000000000..41ef7c65c555
+--- /dev/null
++++ b/rust/kernel/i2c.rs
+@@ -0,0 +1,425 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! I2C Driver subsystem
++
++// I2C Driver abstractions.
++use crate::{
++    acpi, container_of, device,
++    device_id::{RawDeviceId, RawDeviceIdIndex},
++    driver,
++    error::*,
++    of,
++    prelude::*,
++    types::{AlwaysRefCounted, Opaque},
++};
++
++use core::{marker::PhantomData, ptr::NonNull};
++
++/// An I2C device id table.
++#[repr(transparent)]
++#[derive(Clone, Copy)]
++pub struct DeviceId(bindings::i2c_device_id);
++
++impl DeviceId {
++    const I2C_NAME_SIZE: usize = 20;
++
++    /// Create a new device id from an I2C 'id' string.
++    #[inline(always)]
++    pub const fn new(id: &'static CStr) -> Self {
++        build_assert!(
++            id.len_with_nul() <= Self::I2C_NAME_SIZE,
++            "ID exceeds 20 bytes"
++        );
++        let src = id.as_bytes_with_nul();
++        // Replace with `bindings::acpi_device_id::default()` once stabilized for `const`.
++        // SAFETY: FFI type is valid to be zero-initialized.
++        let mut i2c: bindings::i2c_device_id = unsafe { core::mem::zeroed() };
++        let mut i = 0;
++        while i < src.len() {
++            i2c.name[i] = src[i];
++            i += 1;
++        }
++
++        Self(i2c)
++    }
++}
++
++// SAFETY: `DeviceId` is a `#[repr(transparent)]` wrapper of `i2c_device_id` and does not add
++// additional invariants, so it's safe to transmute to `RawType`.
++unsafe impl RawDeviceId for DeviceId {
++    type RawType = bindings::i2c_device_id;
++}
++
++// SAFETY: `DRIVER_DATA_OFFSET` is the offset to the `driver_data` field.
++unsafe impl RawDeviceIdIndex for DeviceId {
++    const DRIVER_DATA_OFFSET: usize = core::mem::offset_of!(bindings::i2c_device_id, driver_data);
++
++    fn index(&self) -> usize {
++        self.0.driver_data
++    }
++}
++
++/// IdTable type for I2C
++pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<DeviceId, T>;
++
++/// Create a I2C `IdTable` with its alias for modpost.
++#[macro_export]
++macro_rules! i2c_device_table {
++    ($table_name:ident, $module_table_name:ident, $id_info_type: ty, $table_data: expr) => {
++        const $table_name: $crate::device_id::IdArray<
++            $crate::i2c::DeviceId,
++            $id_info_type,
++            { $table_data.len() },
++        > = $crate::device_id::IdArray::new($table_data);
++
++        $crate::module_device_table!("i2c", $module_table_name, $table_name);
++    };
++}
++
++/// An adapter for the registration of I2C drivers.
++pub struct Adapter<T: Driver>(T);
++
++// SAFETY: A call to `unregister` for a given instance of `RegType` is guaranteed to be valid if
++// a preceding call to `register` has been successful.
++unsafe impl<T: Driver + 'static> driver::RegistrationOps for Adapter<T> {
++    type RegType = bindings::i2c_driver;
++
++    unsafe fn register(
++        idrv: &Opaque<Self::RegType>,
++        name: &'static CStr,
++        module: &'static ThisModule,
++    ) -> Result {
++        build_assert!(
++            T::ACPI_ID_TABLE.is_some() || T::OF_ID_TABLE.is_some() || T::I2C_ID_TABLE.is_some(),
++            "At least one of ACPI/OF/Legacy tables must be present when registering an i2c driver"
++        );
++
++        let i2c_table = match T::I2C_ID_TABLE {
++            Some(table) => table.as_ptr(),
++            None => core::ptr::null(),
++        };
++
++        let of_table = match T::OF_ID_TABLE {
++            Some(table) => table.as_ptr(),
++            None => core::ptr::null(),
++        };
++
++        let acpi_table = match T::ACPI_ID_TABLE {
++            Some(table) => table.as_ptr(),
++            None => core::ptr::null(),
++        };
++
++        // SAFETY: It's safe to set the fields of `struct i2c_client` on initialization.
++        unsafe {
++            (*idrv.get()).driver.name = name.as_char_ptr();
++            (*idrv.get()).probe = Some(Self::probe_callback);
++            (*idrv.get()).remove = Some(Self::remove_callback);
++            (*idrv.get()).shutdown = Some(Self::shutdown_callback);
++            (*idrv.get()).id_table = i2c_table;
++            (*idrv.get()).driver.of_match_table = of_table;
++            (*idrv.get()).driver.acpi_match_table = acpi_table;
++        }
++
++        // SAFETY: `idrv` is guaranteed to be a valid `RegType`.
++        to_result(unsafe { bindings::i2c_register_driver(module.0, idrv.get()) })
++    }
++
++    unsafe fn unregister(idrv: &Opaque<Self::RegType>) {
++        // SAFETY: `idrv` is guaranteed to be a valid `RegType`.
++        unsafe { bindings::i2c_del_driver(idrv.get()) }
++    }
++}
++
++impl<T: Driver + 'static> Adapter<T> {
++    extern "C" fn probe_callback(idev: *mut bindings::i2c_client) -> kernel::ffi::c_int {
++        // SAFETY: The I2C bus only ever calls the probe callback with a valid pointer to a
++        // `struct i2c_client`.
++        //
++        // INVARIANT: `idev` is valid for the duration of `probe_callback()`.
++        let idev = unsafe { &*idev.cast::<I2cClient<device::CoreInternal>>() };
++
++        let info =
++            Self::i2c_id_info(idev).or_else(|| <Self as driver::Adapter>::id_info(idev.as_ref()));
++
++        from_result(|| {
++            let data = T::probe(idev, info);
++
++            idev.as_ref().set_drvdata(data)?;
++            Ok(0)
++        })
++    }
++
++    extern "C" fn remove_callback(idev: *mut bindings::i2c_client) {
++        // SAFETY: `idev` is a valid pointer to a `struct i2c_client`.
++        let idev = unsafe { &*idev.cast::<I2cClient<device::CoreInternal>>() };
++
++        // SAFETY: `remove_callback` is only ever called after a successful call to
++        // `probe_callback`, hence it's guaranteed that `I2cClient::set_drvdata()` has been called
++        // and stored a `Pin<KBox<T>>`.
++        let data = unsafe { idev.as_ref().drvdata_obtain::<Pin<KBox<T>>>() };
++
++        T::unbind(idev, data.as_ref());
++    }
++
++    extern "C" fn shutdown_callback(idev: *mut bindings::i2c_client) {
++        // SAFETY: `shutdown_callback` is only ever called for a valid `idev`
++        let idev = unsafe { &*idev.cast::<I2cClient<device::CoreInternal>>() };
++
++        // SAFETY: `shutdown_callback` is only ever called after a successful call to
++        // `probe_callback`, hence it's guaranteed that `Device::set_drvdata()` has been called
++        // and stored a `Pin<KBox<T>>`.
++        let data = unsafe { idev.as_ref().drvdata_obtain::<Pin<KBox<T>>>() };
++
++        T::shutdown(idev, data.as_ref());
++    }
++
++    /// The [`i2c::IdTable`] of the corresponding driver.
++    fn i2c_id_table() -> Option<IdTable<<Self as driver::Adapter>::IdInfo>> {
++        T::I2C_ID_TABLE
++    }
++
++    /// Returns the driver's private data from the matching entry in the [`i2c::IdTable`], if any.
++    ///
++    /// If this returns `None`, it means there is no match with an entry in the [`i2c::IdTable`].
++    fn i2c_id_info(dev: &I2cClient) -> Option<&'static <Self as driver::Adapter>::IdInfo> {
++        let table = Self::i2c_id_table()?;
++
++        // SAFETY:
++        // - `table` has static lifetime, hence it's valid for reads
++        // - `dev` is guaranteed to be valid while it's alive, and so is `dev.as_raw()`.
++        let raw_id = unsafe { bindings::i2c_match_id(table.as_ptr(), dev.as_raw()) };
++
++        if raw_id.is_null() {
++            return None;
++        }
++
++        // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct i2c_device_id` and
++        // does not add additional invariants, so it's safe to transmute.
++        let id = unsafe { &*raw_id.cast::<DeviceId>() };
++
++        Some(table.info(<DeviceId as RawDeviceIdIndex>::index(id)))
++    }
++}
++
++impl<T: Driver + 'static> driver::Adapter for Adapter<T> {
++    type IdInfo = T::IdInfo;
++
++    fn of_id_table() -> Option<of::IdTable<Self::IdInfo>> {
++        T::OF_ID_TABLE
++    }
++
++    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>> {
++        T::ACPI_ID_TABLE
++    }
++}
++
++/// Declares a kernel module that exposes a single i2c driver.
++///
++/// # Examples
++///
++/// ```ignore
++/// kernel::module_i2c_driver! {
++///     type: MyDriver,
++///     name: "Module name",
++///     authors: ["Author name"],
++///     description: "Description",
++///     license: "GPL v2",
++/// }
++/// ```
++#[macro_export]
++macro_rules! module_i2c_driver {
++    ($($f:tt)*) => {
++        $crate::module_driver!(<T>, $crate::i2c::Adapter<T>, { $($f)* });
++    };
++}
++
++/// The i2c driver trait.
++///
++/// Drivers must implement this trait in order to get a i2c driver registered.
++///
++/// # Example
++///
++///```
++/// # use kernel::{acpi, bindings, c_str, device::Core, i2c, of};
++///
++/// struct MyDriver;
++///
++/// kernel::acpi_device_table!(
++///     ACPI_TABLE,
++///     MODULE_ACPI_TABLE,
++///     <MyDriver as i2c::Driver>::IdInfo,
++///     [
++///         (acpi::DeviceId::new(c_str!("LNUXBEEF")), ())
++///     ]
++/// );
++///
++/// kernel::i2c_device_table!(
++///     I2C_TABLE,
++///     MODULE_I2C_TABLE,
++///     <MyDriver as i2c::Driver>::IdInfo,
++///     [
++///          (i2c::DeviceId::new(c_str!("rust_driver_i2c")), ())
++///     ]
++/// );
++///
++/// kernel::of_device_table!(
++///     OF_TABLE,
++///     MODULE_OF_TABLE,
++///     <MyDriver as i2c::Driver>::IdInfo,
++///     [
++///         (of::DeviceId::new(c_str!("test,device")), ())
++///     ]
++/// );
++///
++/// impl i2c::Driver for MyDriver {
++///     type IdInfo = ();
++///     const I2C_ID_TABLE: Option<i2c::IdTable<Self::IdInfo>> = Some(&I2C_TABLE);
++///     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
++///     const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
++///
++///     fn probe(
++///         _idev: &i2c::I2cClient<Core>,
++///         _id_info: Option<&Self::IdInfo>,
++///     ) -> impl PinInit<Self, Error> {
++///         Err(ENODEV)
++///     }
++///
++///     fn shutdown(_idev: &i2c::I2cClient<Core>, this: Pin<&Self>) {
++///     }
++/// }
++///```
++pub trait Driver: Send {
++    /// The type holding information about each device id supported by the driver.
++    // TODO: Use `associated_type_defaults` once stabilized:
++    //
++    // ```
++    // type IdInfo: 'static = ();
++    // ```
++    type IdInfo: 'static;
++
++    /// The table of device ids supported by the driver.
++    const I2C_ID_TABLE: Option<IdTable<Self::IdInfo>> = None;
++
++    /// The table of OF device ids supported by the driver.
++    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
++
++    /// The table of ACPI device ids supported by the driver.
++    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = None;
++
++    /// I2C driver probe.
++    ///
++    /// Called when a new i2c client is added or discovered.
++    /// Implementers should attempt to initialize the client here.
++    fn probe(
++        dev: &I2cClient<device::Core>,
++        id_info: Option<&Self::IdInfo>,
++    ) -> impl PinInit<Self, Error>;
++
++    /// I2C driver shutdown.
++    ///
++    /// Called by the kernel during system reboot or power-off to allow the [`Driver`] to bring the
++    /// [`Device`] into a safe state. Implementing this callback is optional.
++    ///
++    /// Typical actions include stopping transfers, disabling interrupts, or resetting the hardware
++    /// to prevent undesired behavior during shutdown.
++    ///
++    /// This callback is distinct from final resource cleanup, as the driver instance remains valid
++    /// after it returns. Any deallocation or teardown of driver-owned resources should instead be
++    /// handled in `Self::drop`.
++    fn shutdown(dev: &I2cClient<device::Core>, this: Pin<&Self>) {
++        let _ = (dev, this);
++    }
++
++    /// I2C driver unbind.
++    ///
++    /// Called when a [`Device`] is unbound from its bound [`Driver`]. Implementing this callback
++    /// is optional.
++    ///
++    /// This callback serves as a place for drivers to perform teardown operations that require a
++    /// `&Device<Core>` or `&Device<Bound>` reference. For instance, drivers may try to perform I/O
++    /// operations to gracefully tear down the device.
++    ///
++    /// Otherwise, release operations for driver resources should be performed in `Self::drop`.
++    fn unbind(dev: &I2cClient<device::Core>, this: Pin<&Self>) {
++        let _ = (dev, this);
++    }
++}
++
++/// The i2c client representation.
++///
++/// This structure represents the Rust abstraction for a C `struct i2c_client`. The
++/// implementation abstracts the usage of an existing C `struct i2c_client` that
++/// gets passed from the C side
++///
++/// # Invariants
++///
++/// A [`I2cClient`] instance represents a valid `struct i2c_client` created by the C portion of
++/// the kernel.
++#[repr(transparent)]
++pub struct I2cClient<Ctx: device::DeviceContext = device::Normal>(
++    Opaque<bindings::i2c_client>,
++    PhantomData<Ctx>,
++);
++
++impl<Ctx: device::DeviceContext> I2cClient<Ctx> {
++    fn as_raw(&self) -> *mut bindings::i2c_client {
++        self.0.get()
++    }
++}
++
++// SAFETY: `I2cClient` is a transparent wrapper of a type that doesn't depend on `I2cClient`'s generic
++// argument.
++kernel::impl_device_context_deref!(unsafe { I2cClient });
++kernel::impl_device_context_into_aref!(I2cClient);
++
++// SAFETY: Instances of `I2cClient` are always reference-counted.
++unsafe impl AlwaysRefCounted for I2cClient {
++    fn inc_ref(&self) {
++        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
++        unsafe { bindings::get_device(self.as_ref().as_raw()) };
++    }
++
++    unsafe fn dec_ref(obj: NonNull<Self>) {
++        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
++        unsafe { bindings::put_device(&raw mut (*obj.as_ref().as_raw()).dev) }
++    }
++}
++
++impl<Ctx: device::DeviceContext> AsRef<device::Device<Ctx>> for I2cClient<Ctx> {
++    fn as_ref(&self) -> &device::Device<Ctx> {
++        let raw = self.as_raw();
++        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a pointer to a valid
++        // `struct i2c_client`.
++        let dev = unsafe { &raw mut (*raw).dev };
++
++        // SAFETY: `dev` points to a valid `struct device`.
++        unsafe { device::Device::from_raw(dev) }
++    }
++}
++
++impl<Ctx: device::DeviceContext> TryFrom<&device::Device<Ctx>> for &I2cClient<Ctx> {
++    type Error = kernel::error::Error;
++
++    fn try_from(dev: &device::Device<Ctx>) -> Result<Self, Self::Error> {
++        // SAFETY: By the type invariant of `Device`, `dev.as_raw()` is a valid pointer to a
++        // `struct device`.
++        if unsafe { bindings::i2c_verify_client(dev.as_raw()).is_null() } {
++            return Err(EINVAL);
++        }
++
++        // SAFETY: We've just verified that the type of `dev` equals to
++        // `bindings::i2c_client_type`, hence `dev` must be embedded in a valid
++        // `struct i2c_client` as guaranteed by the corresponding C code.
++        let idev = unsafe { container_of!(dev.as_raw(), bindings::i2c_client, dev) };
++
++        // SAFETY: `idev` is a valid pointer to a `struct i2c_client`.
++        Ok(unsafe { &*idev.cast() })
++    }
++}
++
++// SAFETY: A `I2cClient` is always reference-counted and can be released from any thread.
++unsafe impl Send for I2cClient {}
++
++// SAFETY: `I2cClient` can be shared among threads because all methods of `I2cClient`
++// (i.e. `I2cClient<Normal>) are thread safe.
++unsafe impl Sync for I2cClient {}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 3dd7bebe7888..8c0070a8029e 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -94,6 +94,8 @@
+ pub mod firmware;
+ pub mod fmt;
+ pub mod fs;
++#[cfg(CONFIG_I2C = "y")]
++pub mod i2c;
+ pub mod id_pool;
+ pub mod init;
+ pub mod io;
+-- 
+2.43.0
 
 
