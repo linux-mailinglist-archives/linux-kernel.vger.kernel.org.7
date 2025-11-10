@@ -1,118 +1,200 @@
-Return-Path: <linux-kernel+bounces-892842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5866BC45EE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:29:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EDEC45EED
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:30:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B67C3B7785
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:28:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1698B3B7D39
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CBB30EF6C;
-	Mon, 10 Nov 2025 10:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBF0309EE2;
+	Mon, 10 Nov 2025 10:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BM7buIM+"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhN5L9t/"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA4E222562
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F179D30216D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762770343; cv=none; b=RmR4b2uNgZ8iQ6R42LetBJEsjx4gTn+ajIs3Xy6cO+Grg0XLxfIHzKO0XDi8n8ymqXqSFpWNbuNfWNaIYh/HGqdRFILqzhY0m+wN3t9VsgSPGT9PSguG+lj9ObNQxnLmtfoNiRPpIKGWpApjTBPv/Evc9Q6y7REQbs2nJxcLvI8=
+	t=1762770375; cv=none; b=FGYIcMzABg9Oo42Fe18tJfyFSe6qlzmRSPq21b//xnQAjOi25hz4PA4gftONTY8GLYtWQiGWzhd+CedLkyIKHG1y3YPFFVuqt9y1wI2Zx6EaL0GJJ9zXGsOv9oKteepFHoMNbkpTSK1aduDekg0jKHwmNYzY60ilzZ5+g1/x9DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762770343; c=relaxed/simple;
-	bh=Frd8hw4dYLxqNXW8oZMU3F/+0VvHIFZEWTqp90N9D5c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pJpTpgfLFzujUzcRpT81vUz3oJjboyk/PadImD/An+EuqN7bP+3WEIzzP6jexSaKsFsd+zYtekLYfdz2q3xuBh3fDc/d2Id5afVKmcjNt19rPkuiCSOiVMx8WFk/75H4nJwJJDDYgsIf3Eigz8lD7tt/FOzprN3zLvJ1hvuSzSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BM7buIM+; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1762770375; c=relaxed/simple;
+	bh=NVfWpvkVvTAgCSIX0tKarfXupAWex1W6dIbaCGoKFlY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aq8yKt2LNurbBkJ5FRfSZi2vmTD/Ml9wlv680bbl996NZuqXz/ya3ddTjOwq8KWK6qZvqrGonNiREyw8R6/a5J3PxGvoBKlTFz0EYMU/lqTZAacszQhpZS9LUaI4rZtygcrvDBgeAWQDJ1fKBXP5n8g7v9HLLW/nvM+Ql+Up4eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhN5L9t/; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4777707a7c2so10198025e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:25:41 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-58b025fce96so2359420e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:26:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762770340; x=1763375140; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ytGXTNjC8Z5iSUdVMoFae3EHPD5igwJPE1XmSPrltk0=;
-        b=BM7buIM+eC05nlSLHIsxjvUBap3eOlzIpKXdhedg6UWEPGqTlbDTRlPy25e13IvAfj
-         /o3ufrFUNGP6EJkKcy8suQjLhVHTUvD9ze5TPdeP7wS4xZN1U8xaP2tHWMyhZYXxgwZZ
-         ji+3RFpcsisrpctYduaMX0PUrO8I6G0nGTauk5xAD9WqvLP1y5SvmAyBmHRW+5fntlFl
-         T/SUV4VDk6tdMq+v17tYUHhyanFNosjoWGrjhtPgGePB7uvUAzeyb37EKQWLPyTPt3nO
-         KZ649PtpX/fp9eTA2h2od3NEidYQwf85x/EaNUVfPQQFImAF55CPyw/w/yaPNmvPjPgb
-         sPhw==
+        d=gmail.com; s=20230601; t=1762770372; x=1763375172; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ewdf73ORA74EmIwjByKtBRnel8D4jCLt63rwPXIKWQg=;
+        b=AhN5L9t/9bcNP7VHOJCVkA2xZ2iWkE3Qio7U+ZoSWtlB9WGeiOC2fkyZtb+o/tfYwu
+         jimiZrnvK+qIy4Oa4Dk96ErFx0wyfwGSqDnlWXN+9LXEgZhODPW00KOOR8lyJYxV88cA
+         wfrYx0asL0+dfps4zBxgjEIj1dbWV96Ng7w6lUuGsz/dYktGTtyW4FtkWNttbZvoadEB
+         C/Dnw0WZ2PA19q7MSTik0axgrkod4Gop4C12F8lZPItaNT9dnf+JPD5MR9kTMRW+FiNf
+         XpeQw2iRqGXaa1AZpSkBk6trETh/YlXvdaNTj7rmTTJXRRJ2gZVrclDD0fhw+2C+vcfW
+         j0Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762770340; x=1763375140;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ytGXTNjC8Z5iSUdVMoFae3EHPD5igwJPE1XmSPrltk0=;
-        b=gX835NHvR/CzBjraugAelYuX1O8MW0K7e+0cEZhR8Z2XBkiSGB0IozzPrjjmhj+nER
-         41GJjePCWq0MDF8T6KD15cNzmaFb5FM0TI3ZMQ6zWi0uiNaUsR8i+DNn5W8yLtcqYxhv
-         BNOixivROpE6KaA1A2Hv4aQWj/z7Q3+y9SpDSUkYAD7Amuwh3Z+MQptUXWLflWg+CJAe
-         k8eZF8j6K98fNB8bTqQqRDduDsZenh7QjPMiZAv5HUk9B9+Ah6jWBYPQHGn2uxWuY7Qi
-         rEgEPpbk5qjA15xZPoEpPGzzxeSZVK2u6CPhpe+37loeFbKdZGXagltnvwfub0zBQ+nt
-         dOcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWep0I689jgSFg1SHpQ8A2QPQdA3Uh4JZ40fO+RsdCvuyR2i/MPmesLhYCS+heb6WWh1YsCIT3zlq1Y2g4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8jr+yTm1s/h+DSF9ts6JoZlOmSyo+8azmt93pkZwwS4BPBNIH
-	Yf23yQYV+zlyCrihDQa4ULZHYJuBhFbjUZ8VcIbSehLs2AM0Jb6KIjSrfq3NgNCK
-X-Gm-Gg: ASbGnctVnjcJlo96hZE5DWWJ9ht9BCxVINzjWpnkOneS/0Tph3eFHXUZmMZT9PMh9J7
-	fts9FAbuxyOXypJJACxn2AReK2N4bj2R8nJ0C9i8Xd1K3mP1Tss1Q2+lnEVzzKcKPsw/ZyxU2eA
-	sZpcLkS+Pc5Y9QHdypfO9KiDqI3hVUhMBqkMw9FY6hA/Q0kzgx+83uTDhpeDs+Tk5wJLu/PSllc
-	cpN3zScYTZlX/Zxh6o5E/6sFVXC6O7gwfv5rhd3RTm6yMCQ+tPeWDZU5wwEtmP4HNajWL9/Nbqf
-	yjbZSXSgM4YyKvEyCBASJIvhsqcmO0IhLSLo4NAX0m4ljE3efQTrAW9YBjRofueksGZAiWzi6iN
-	LN8ba5mn4mbrAGim+YgaXIuPWAG8m5BKxj6LGDfYkpgeOBjJ6aYe5QpEN9C73Q1FPDbZKVW5kfG
-	eMuLZvvys4siky0fD9
-X-Google-Smtp-Source: AGHT+IGs5K6nIRJvSlRanofUly7s8XfcPvPm6T/Xv6CDWDlt5Y8NVKkMCch7JYaVka+0Jp7Du4nnrw==
-X-Received: by 2002:a05:600c:34cd:b0:477:5639:ff66 with SMTP id 5b1f17b1804b1-4776dcbfed3mr90862785e9.13.1762770339837;
-        Mon, 10 Nov 2025 02:25:39 -0800 (PST)
-Received: from egonzo (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4777a96e7f8sm67326715e9.13.2025.11.10.02.25.39
+        d=1e100.net; s=20230601; t=1762770372; x=1763375172;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ewdf73ORA74EmIwjByKtBRnel8D4jCLt63rwPXIKWQg=;
+        b=E1qhjnHykdFkS0V5mfABJR++iZeH9apTWgA8FRABD/PPuXwyyI0NEHhPMeY1PeYJmZ
+         zbOfXmaoi3adgp5lbicmCo88uH3jMw4BT7hIVePRSwFk3djWZccYd8KPLEgvHVx2vZhq
+         Vdsxkqjf+Bfs5iAIxy9tY9GG6QuTOO4xI3UYhbakjmUrEIP6If0rT2oYeis8GMmhl+82
+         5Wff1VRABJlbVHflQtk7VEMuhPzS53Ly34tdrCVf9DoJJKlDiZxPLAWwXgrTcPJ8SscP
+         L/U+bTLyXCAYsLQh03mNLiRZO7jGc1piv12EudeLgErAuW7KFMqgPQ4me8szXkHsfiY6
+         yCsg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6KGo0jpgjJF8LbaP94suxFsNNSop+llyZ2MvwMv0RJEqAM/42Rw8wGtFU1ntRW948K/Ei6nYx2/ueGtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykewedVfWIy7gO1hcMUYS5gJVcLvWu/I3nhKLBBzRgVzMvvKO+
+	vvANY75OXaPnLAbD1zN5tvg0wJ3/fumoBmJ6/7w5GoJDZzh7PyHpWBAT
+X-Gm-Gg: ASbGncsyRSCfMKpdcqrSdbxZ1td+XSC4B2/kGwDQFoo+6d6BpcgwvZ6TrzivJRBatFo
+	xmuj836k8PQe7uV8f0GqnW3qSclF+xvaEKSqqihq2Rh2T6S6B8v6hTW+vfqN9c2VgJ7vIsl3eWy
+	DPBuzqWbeWrdj4yXYsoRYZmMyaLRrNwt9s269HQf+RcPRsoR3acfOug+j6kzQAXHXe0EvlTUZ7j
+	8GtBAcLFrA34jLDFvI+eR8PXlUgMWnlx1vcyDaR+r2kmTSoT7BzxuUKNDIMIN/nF+KC6pJbVLVs
+	lkqzToJPExx+8r77HIG74gx1ThGxAgrwiukiYPcjqDtFvyR74/9JTLvawSvcNjQBSOdTzd/z674
+	h3cLbRRzxasu+JeudIqg2JPaO90GIXo45az3NftkJardrMHVWB+/QDqLBZgroA0UjswvDENKKsJ
+	VZ5TL7+to0Xdo2TQRvl5qwGxqpIDR6Bzh4TJ/DEZC6
+X-Google-Smtp-Source: AGHT+IHudJKoKPiG0LQ9lbIoxNO8k1GkVn+qEN63QzX3e9UkArrSvU30UPfUxCkx6meUV76CCDyq/A==
+X-Received: by 2002:a05:6512:10c2:b0:594:25a6:99c1 with SMTP id 2adb3069b0e04-5945f15bffcmr2259502e87.14.1762770371806;
+        Mon, 10 Nov 2025 02:26:11 -0800 (PST)
+Received: from pc636 (host-90-233-197-228.mobileonline.telia.com. [90.233.197.228])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a58ed40sm3936997e87.88.2025.11.10.02.26.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 02:25:39 -0800 (PST)
-From: Dave Penkler <dpenkler@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Dave Penkler <dpenkler@gmail.com>
-Subject: [PATCH 11/11] gpib: Add build rule for gpib to Makefile
-Date: Mon, 10 Nov 2025 11:25:07 +0100
-Message-ID: <20251110102507.1445-12-dpenkler@gmail.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251110102507.1445-1-dpenkler@gmail.com>
-References: <20251110102507.1445-1-dpenkler@gmail.com>
+        Mon, 10 Nov 2025 02:26:11 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 10 Nov 2025 11:26:08 +0100
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>, Alasdair Kergon <agk@redhat.com>,
+	DMML <dm-devel@lists.linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Snitzer <snitzer@redhat.com>, Christoph Hellwig <hch@lst.de>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dm-bufio: align write boundary on bdev_logical_block_size
+Message-ID: <aRG9wBP71wxE2Mtk@pc636>
+References: <20251020123350.2671495-1-urezki@gmail.com>
+ <cdb598ce-88ec-0c3c-8e4b-b557093bea92@redhat.com>
+ <aQCDLBie3fGwMDW2@milan>
+ <aQDCmAPfpIGZiceo@milan>
+ <b791d8e8-5e30-b50c-04ca-e823c0a06747@redhat.com>
+ <aQIRV51yLQzOwJvB@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQIRV51yLQzOwJvB@pc636>
 
-As part of the destaging of the gpib drivers we need to add the
-gpib rule to the main drivers Makefile.
+On Wed, Oct 29, 2025 at 02:06:31PM +0100, Uladzislau Rezki wrote:
+> On Wed, Oct 29, 2025 at 11:24:25AM +0100, Mikulas Patocka wrote:
+> > 
+> > 
+> > On Tue, 28 Oct 2025, Uladzislau Rezki wrote:
+> > 
+> > > On Tue, Oct 28, 2025 at 09:47:40AM +0100, Uladzislau Rezki wrote:
+> > > > Hello!
+> > > > 
+> > > > Sorry i have missed you email for unknown reason to me. It is
+> > > > probably because you answered to email with different subject
+> > > > i sent initially.
+> > > > 
+> > > > > 
+> > > > > On Mon, 20 Oct 2025, Uladzislau Rezki (Sony) wrote:
+> > > > > 
+> > > > > > When performing a read-modify-write(RMW) operation, any modification
+> > > > > > to a buffered block must cause the entire buffer to be marked dirty.
+> > > > > > 
+> > > > > > Marking only a subrange as dirty is incorrect because the underlying
+> > > > > > device block size(ubs) defines the minimum read/write granularity. A
+> > > > > > lower device can perform I/O only on regions which are fully aligned
+> > > > > > and sized to ubs.
+> > > > > 
+> > > > > Hi
+> > > > > 
+> > > > > I think it would be better to fix this in dm-bufio, so that other dm-bufio 
+> > > > > users would also benefit from the fix. Please try this patch - does it fix 
+> > > > > it?
+> > > > > 
+> > > > If it solves what i describe i do not mind :)
+> > > > 
+> > > > > 
+> > > > > 
+> > > > > From: Mikulas Patocka <mpatocka@redhat.com>
+> > > > > 
+> > > > > There may be devices with logical block size larger than 4k. Fix
+> > > > > dm-bufio, so that it will align I/O on logical block size. This commit
+> > > > > fixes I/O errors on the dm-ebs target on the top of emulated nvme device
+> > > > > with 8k logical block size created with qemu parameters:
+> > > > > 
+> > > > > -device nvme,drive=drv0,serial=foo,logical_block_size=8192,physical_block_size=8192
+> > > > > 
+> > > > > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> > > > > Cc: stable@vger.kernel.org
+> > > > > 
+> > > > > ---
+> > > > >  drivers/md/dm-bufio.c |    9 +++++----
+> > > > >  1 file changed, 5 insertions(+), 4 deletions(-)
+> > > > > 
+> > > > > Index: linux-2.6/drivers/md/dm-bufio.c
+> > > > > ===================================================================
+> > > > > --- linux-2.6.orig/drivers/md/dm-bufio.c	2025-10-13 21:42:47.000000000 +0200
+> > > > > +++ linux-2.6/drivers/md/dm-bufio.c	2025-10-20 14:40:32.000000000 +0200
+> > > > > @@ -1374,7 +1374,7 @@ static void submit_io(struct dm_buffer *
+> > > > >  {
+> > > > >  	unsigned int n_sectors;
+> > > > >  	sector_t sector;
+> > > > > -	unsigned int offset, end;
+> > > > > +	unsigned int offset, end, align;
+> > > > >  
+> > > > >  	b->end_io = end_io;
+> > > > >  
+> > > > > @@ -1388,9 +1388,10 @@ static void submit_io(struct dm_buffer *
+> > > > >  			b->c->write_callback(b);
+> > > > >  		offset = b->write_start;
+> > > > >  		end = b->write_end;
+> > > > > -		offset &= -DM_BUFIO_WRITE_ALIGN;
+> > > > > -		end += DM_BUFIO_WRITE_ALIGN - 1;
+> > > > > -		end &= -DM_BUFIO_WRITE_ALIGN;
+> > > > > +		align = max(DM_BUFIO_WRITE_ALIGN, bdev_logical_block_size(b->c->bdev));
+> > > >
+> > > Should it be physical_block_size of device? It is a min_io the device
+> > > can perform. The point is, a user sets "ubs" size which should correspond
+> > > to the smallest I/O the device can write, i.e. physically.
+> > 
+> > physical_block_size is unreliable - some SSDs report physical block size 
+> > 512 bytes, some 4k. Regardless of what they report, all current SSDs have 
+> > 4k sector size internally and they do slow read-modify-write cycle on 
+> > requests that are not aligned on 4k boundary.
+> > 
+> I see. Some NVMEs have buggy firmwares therefore we have a lot of quicks
+> flags. I agree there is mess there.
+>  
+> The change does not help my project and case. I posted the patch to fix
+> the dm-ebs as the code offloads partial size instead of ubs size, what
+> actually a user asking for. When a target is created, the physical_block_size
+> corresponds to ubs.
+>  
+> I really appreciate if you take the fix i posted. Your patch can be
+> sent out separately.
+>  
+> Does it work for you?
+>  
+Any feedback or comments on it?
 
-Signed-off-by: Dave Penkler <dpenkler@gmail.com>
----
- drivers/Makefile | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/Makefile b/drivers/Makefile
-index 8e1ffa4358d5..d275b1526cdd 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -150,6 +150,7 @@ obj-$(CONFIG_VHOST_IOTLB)	+= vhost/
- obj-$(CONFIG_VHOST)		+= vhost/
- obj-$(CONFIG_GREYBUS)		+= greybus/
- obj-$(CONFIG_COMEDI)		+= comedi/
-+obj-$(CONFIG_GPIB)		+= gpib/
- obj-$(CONFIG_STAGING)		+= staging/
- obj-y				+= platform/
- 
--- 
-2.51.2
-
+--
+Uladzislau Rezki
 
