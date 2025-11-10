@@ -1,100 +1,157 @@
-Return-Path: <linux-kernel+bounces-894351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2078BC49D13
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:50:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7E0C49D19
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:57:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC332188D04E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:51:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 142A14ECFBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7655A305043;
-	Mon, 10 Nov 2025 23:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BD5305043;
+	Mon, 10 Nov 2025 23:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bdzdViAu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b="siIW8zRY"
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B7A194A73;
-	Mon, 10 Nov 2025 23:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0380C2EB5BD
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762818644; cv=none; b=p50UvB7IpozEht1VKUU4YXvAR1VQzoERH6yuEL8oTM1CGJ1gWzcXRh3WWXtMWYo28sSth4fGCJvfaXgMJfzX59HkpgV8xYSgfHQYHq7hdaYdiJgbJvNZx6zL2Tu8O6dhjG1Z+j/zcYF4VeT2L6OS9ZrJAe2rQF2+SGPNUKTPkZE=
+	t=1762819022; cv=none; b=MYWCiqPvkVd1ihlWCKrMkp5o0uVoJ+MWxbX3/YitvsxuzT5O8Itua5usv2yfr7p5MRUps+sSnlsDwm2GcGYf2ohlHymEVsg9KYQRLRSck7IopGfKEc+n09Pk/lGpw6WYbZzAFJ/E1j4Bfwho+ArkeDUVYHUsAv2I1FsjTkp3tEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762818644; c=relaxed/simple;
-	bh=29gaiYI3dWNEWIACZ9XRwKB433NzhJewEGqvUDHbs5c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V91a5+cSv8Mm8dhy7iY/6YbbDhEUVKGiC90w7vXpCjASV6fFD8RuP1J3vIKeetcngjLvYcEHpZ0+cOyLDeWeYEA3OpcO+N/RREARzkFAxblQKi6FlyG5fFB0HUcfJHp+kg8BddFIj6SvWcqeqZ/hd2xHTSd94o5uNqQC1EbnXyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bdzdViAu; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762818643; x=1794354643;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=29gaiYI3dWNEWIACZ9XRwKB433NzhJewEGqvUDHbs5c=;
-  b=bdzdViAuTkHv4lSsIcN5fkJ1LF0SzC7I9EEiwNqW0caoQugzNMHuaa30
-   IZ8TkgvlYLZQi2uuQP7sG/maZHLxk7v/dv0X/I0m7Ebtvbz3QIrEqz7pr
-   ko/tvGjbDMOiwElna0ZnuND2tgJ8nXW9YPHeIK1Jraa6McJcBV1Odd0AJ
-   coOC48YG6JqoXIDl65wLHHKHrlDj7VnlDa3eYaO2YWqr8ZEV9+iECqYGo
-   rJVNAn3byue7OnPVzlRyHMU9dVgCVlb6bbDe+5WWjYZDC7Om5oF/f2GVe
-   CDHpR+t6f53XCXbo9689wmpwtAmFFYh7sDZecx6qMix4Nrq54pCU3rokc
-   A==;
-X-CSE-ConnectionGUID: YJF+iwTrR/6ULUp7gLpFoQ==
-X-CSE-MsgGUID: Lpi0JM1aTiivtpFn/FnAoQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="64910716"
-X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="64910716"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 15:50:42 -0800
-X-CSE-ConnectionGUID: v0/8y6UUT1OeyU+Cf1Kd2A==
-X-CSE-MsgGUID: vDFYy77vQXaNq+urdOQq0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="188772879"
-Received: from spandruv-desk.jf.intel.com ([10.54.55.20])
-  by orviesa007.jf.intel.com with ESMTP; 10 Nov 2025 15:50:42 -0800
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: alexhung@gmail.com,
-	hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] platform/x86/intel/hid: Add Nova Lake support
-Date: Mon, 10 Nov 2025 15:50:41 -0800
-Message-ID: <20251110235041.123685-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762819022; c=relaxed/simple;
+	bh=tgfiS9cTra3MjR8Qx3EjT2AU898OkeuQf4TpjzJhbkw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V2BvLkNMU4vR4KmHb/e0mMcsOpMPnBm1DGwGj1vUX11HBNvyjYCGw863wC/dYaQqdHY41lMXpmZ+DhJ/tn4ycVfDyBhTnEi3y6CXRlsps+LPuO/jfrRKIWpxRwsOTtjgaBOopocN5K2Th7STJ2IaDbMzBqjUN2P7jZU1YKDnmCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com; spf=pass smtp.mailfrom=etsalapatis.com; dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b=siIW8zRY; arc=none smtp.client-ip=74.125.224.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etsalapatis.com
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-640d4f2f13dso2293468d50.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:56:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=etsalapatis-com.20230601.gappssmtp.com; s=20230601; t=1762819019; x=1763423819; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Nj1q0mNcasYTnvKP6x35pxta4p3k2au3FFGEe/4tvQ=;
+        b=siIW8zRYc1ReXTsTWSrWGloL1nOBHgK3ZKVtOjr5UnCW0OVD9mcV9NGbbWQh6XGHQ8
+         rgf8IX0zB+WjQmJ44LrJZxCXRG/Ef/ic35wy09a2RlCedUJKMgJ5yPbn7vodnHLzvHtm
+         tzVuIWSmklSeB3q+fuL9WmlhCz41m7VbQ6AW27EW+2iHrCGhn6gemRcNsWNbt9A9SZu7
+         h6BernU2zDVKqOYKA6uxWOCfQbGVGpU+vfTb1vFn092RJh/Rkxj3ExmCY/Q7fS9VQ7l3
+         lrn/ek8rBdmxj1HDs5TBoE3a7l6cOKeNaKgy+ag/AY8+o/NvCedvYCLu20mOlFv1ALmF
+         a8Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762819019; x=1763423819;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5Nj1q0mNcasYTnvKP6x35pxta4p3k2au3FFGEe/4tvQ=;
+        b=KZNS7vImWw1hKKHGDQC/u9FYh2Zy6OmuNz/jfRCba9A2AReaOe1Gou4l/bh2RJk5n+
+         LcJuOw6p+6NsxodbDNTSJkH7VCQltHWfl6gztbbgcYOSfwzI1H04kraYXs8rEMDXwrTn
+         yvhVgCrZBZT2R2TMXLAfNMU27OmQMHjoa0MM5BgE5Eg+xjjTMhFpw+znCMJKqg/SFBYo
+         FYnh5MdiYJP4y9GyboJwKBi7lWnE5v8tyahTNToewZrLm+Zj3HdUmE8wJDWtA2DNuBLO
+         Xa/7+4G91mDtzJO/oRujPbN9Rdl+L/aKBZdu8EIpLPDTF7PI8CylvBwZt9Rt4Zp3yzbF
+         vnLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtfeSkniyFKMelpzqjYE9wb/bYwQyRlJw8bFg3aK59MJkecLq+RoI8x+yhVuz/Rp9WCH2NVDorkB8iRBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYy4G+X7qqG0ObwyZnXxJDS7FXFuvbNFx34PeILJzL5snXcOZR
+	qsIT3NpnHwNEf2C1L/FNcjUFBuw0zaBzmcJqSeuLff2xSrFHReeauM9yoQbJQCDFT3PqW0GnyvQ
+	0JSXD5RvG9dzxQIDW7bZeVUSGOY1XkzBNLEQ5/vGAUg==
+X-Gm-Gg: ASbGncu15oAIt1RfT+H9G9/s4iQ5v+vZIUQ9jbVpEGQO+HFBl6u528GVQ6dNaA5sht2
+	sRnfb0SDnOSJZ8wsgkLXxfde+/pgK6wPdDoNyrkhrZgu6n3SgN/kZz4SVVncn9aiGEMSSBMnb55
+	ditrExQkeTVV+4Bwp4n4E+kdaY+uS/WzXUTT4YCp14Gn3AAW4j5Wnrkdj/tZ9enBMKL298pSAyZ
+	CYmS2/YJfel3nFlT2oqNt7J+b0pPGHPBFOwTdayrgmqdk2aKj4ewi3wjKthXUk=
+X-Google-Smtp-Source: AGHT+IEYS9SgK5WzsgyfFw2SD3xybWKtZXTp6PZoYwrkPfKwTSmMkqLzXwB/JbmTscVTXPcbHxNw0AfHx1HwzeaUldc=
+X-Received: by 2002:a05:690c:4681:b0:786:4ed4:24ff with SMTP id
+ 00721157ae682-787d5350164mr91957387b3.1.1762819018909; Mon, 10 Nov 2025
+ 15:56:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251110205636.405592-1-tj@kernel.org> <20251110205636.405592-13-tj@kernel.org>
+In-Reply-To: <20251110205636.405592-13-tj@kernel.org>
+From: Emil Tsalapatis <linux-lists@etsalapatis.com>
+Date: Mon, 10 Nov 2025 18:56:48 -0500
+X-Gm-Features: AWmQ_bnZeNnUS9oP_2Fx4DPImpvH26pzs7x9mbIoeSRMS41rpiNw8pWfz58gD0Y
+Message-ID: <CABFh=a7x4rXergkASTr2T8c20Yu1E0+_5ZaPijLhzGEkM_Pmrw@mail.gmail.com>
+Subject: Re: [PATCH v2 12/14] sched_ext: Factor out scx_dsq_list_node cursor
+ initialization into INIT_DSQ_LIST_CURSOR
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Andrea Righi <andrea.righi@linux.dev>, 
+	Changwoo Min <changwoo@igalia.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
+	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Andrea Righi <arighi@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add ACPI ID for Nova Lake.
+On Mon, Nov 10, 2025 at 3:56=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+>
+> Factor out scx_dsq_list_node cursor initialization into INIT_DSQ_LIST_CUR=
+SOR
+> macro in preparation for additional users.
+>
+> Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
+> Cc: Emil Tsalapatis <etsal@meta.com>
+> Acked-by: Andrea Righi <arighi@nvidia.com>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> ---
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/platform/x86/intel/hid.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Emil Tsalapatis <emil@etsalapatis.com>
 
-diff --git a/drivers/platform/x86/intel/hid.c b/drivers/platform/x86/intel/hid.c
-index f25a427cccda..9c07a7faf18f 100644
---- a/drivers/platform/x86/intel/hid.c
-+++ b/drivers/platform/x86/intel/hid.c
-@@ -55,6 +55,7 @@ static const struct acpi_device_id intel_hid_ids[] = {
- 	{ "INTC10CB" },
- 	{ "INTC10CC" },
- 	{ "INTC10F1" },
-+	{ "INTC10F2" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, intel_hid_ids);
--- 
-2.51.0
-
+>  include/linux/sched/ext.h | 7 +++++++
+>  kernel/sched/ext.c        | 5 ++---
+>  2 files changed, 9 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/sched/ext.h b/include/linux/sched/ext.h
+> index 4b501ad7a3fc..3f6bf2875431 100644
+> --- a/include/linux/sched/ext.h
+> +++ b/include/linux/sched/ext.h
+> @@ -149,6 +149,13 @@ struct scx_dsq_list_node {
+>         u32                     priv;           /* can be used by iter cu=
+rsor */
+>  };
+>
+> +#define INIT_DSQ_LIST_CURSOR(__node, __flags, __priv)                   =
+       \
+> +       (struct scx_dsq_list_node) {                                     =
+       \
+> +               .node =3D LIST_HEAD_INIT((__node).node),                 =
+         \
+> +               .flags =3D SCX_DSQ_LNODE_ITER_CURSOR | (__flags),        =
+         \
+> +               .priv =3D (__priv),                                      =
+         \
+> +       }
+> +
+>  /*
+>   * The following is embedded in task_struct and contains all fields nece=
+ssary
+>   * for a task to be scheduled by SCX.
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index d16525abf9e0..82f0d2202b99 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -6249,9 +6249,8 @@ __bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_ite=
+r_scx_dsq *it, u64 dsq_id,
+>         if (!kit->dsq)
+>                 return -ENOENT;
+>
+> -       INIT_LIST_HEAD(&kit->cursor.node);
+> -       kit->cursor.flags =3D SCX_DSQ_LNODE_ITER_CURSOR | flags;
+> -       kit->cursor.priv =3D READ_ONCE(kit->dsq->seq);
+> +       kit->cursor =3D INIT_DSQ_LIST_CURSOR(kit->cursor, flags,
+> +                                          READ_ONCE(kit->dsq->seq));
+>
+>         return 0;
+>  }
+> --
+> 2.51.2
+>
+>
 
