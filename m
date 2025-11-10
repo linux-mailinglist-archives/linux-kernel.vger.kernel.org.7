@@ -1,47 +1,101 @@
-Return-Path: <linux-kernel+bounces-893475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C64CC47840
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:26:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0ECEC4787C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:28:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EFB034F276E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:18:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF7904F5A6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422C62512D7;
-	Mon, 10 Nov 2025 15:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2299323D7DE;
+	Mon, 10 Nov 2025 15:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PuXbbjVR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FSf2bZdP";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="J6SfizIQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895BB24169A;
-	Mon, 10 Nov 2025 15:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779E01A5B92
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787871; cv=none; b=LLc/+fRehmw/2av6WoC7Hh/kA73NiYavKzl5j34O3tjzK2/EgKLh5+SRXC79XjsmL6OAW9jfyNqL0InA4nVCWQ4pySV6IWP7/JBCnINOF48N9j08QJvXUCy9p7pDNsvNgv4fEI7vkJ2JhPAhL9Sa/pUBOBF9ACVhk2rkw6KPXeM=
+	t=1762787934; cv=none; b=iKlwlMYaC+9Y3qVqkCxIYXPxE6WhEUWHymypKDgLuWNff9aPnjroPPhcEIMPVltVKWuMRwB081GbykJJjLGkmn5zDkT4e3IUYiRyW31AZjshiOLMU9BkxnQISp78h4n+PKVOibiaLBXrEMW/osMT331Z5cl1Rc3zckMzpHWT8Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787871; c=relaxed/simple;
-	bh=QP8oacYKLVsmnu+iuxXTiGIQwJLtP0opRzzvlntxhk0=;
+	s=arc-20240116; t=1762787934; c=relaxed/simple;
+	bh=ipX76GJ+E+MU92+t7o//0oqh+sfpvzqejU1G4XYNo1o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f8mlWeMP6iy+WaP6w1krkYNjuvSMZFgNa7ZvvBH4zC4cyA8QRL/qgihKgrjB3hexs0/Hh5MSQULkhoVHocZTvuwzFawkfZbvMAcqTvXEbuZxs8gcAy3df3wkkj2Q28ZIUVrAOt8KyQUTVz03zpV048c3sROLIZn6gWM6RZe1Fj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PuXbbjVR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1462AC4CEF5;
-	Mon, 10 Nov 2025 15:17:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762787871;
-	bh=QP8oacYKLVsmnu+iuxXTiGIQwJLtP0opRzzvlntxhk0=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PuXbbjVR3EurWNeIKMGa5jzk5wJtPwmH5Rt8KPzT63A0TEFz6gzrGCS67Z/oFz5NP
-	 snuBRlQ+Uemqxszpn8irDW9nnN+IjeAc///D3GJUGengTep2kH/StpQ5koY+0T2ilL
-	 m4yCoYJvLkjn/ylYsNig48dcSUn6O3AVg8wVNU8+30RRO15uWX1+WRXC1FzohenLLE
-	 n5B0OM0Ax7B/U2iKIM/7VN+u3RW4o253z3wwEnujGhIUGcOMPxQyIehxRFwVIajfvJ
-	 urxAkTl1FAjnsFQWro0D4DGmxm8F7BZRqVfhrihoUzcYIhAPytfmgIDrwhWsCOtSTa
-	 pSzAgoMdJeXIw==
-Message-ID: <ea36d12b-15b9-4c1c-b81f-75834bc3269a@kernel.org>
-Date: Mon, 10 Nov 2025 16:17:47 +0100
+	 In-Reply-To:Content-Type; b=MwhMH/e3W72I1Bj8zqAKfqn6a9MdiIizBWT13LFgCkjy9CqPP0O9LxoIgI1LE1/D1G3yGntZYR+WEln/pJiVqUyKmfVWU9+sTOrgO6wYYfenDcX+mq+MRQT0n306vce81DY9kYUrtPUWEzPWNs9L0C3LCOjrfO1+s/vyot2e9eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FSf2bZdP; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=J6SfizIQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762787931;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=AlA+x0tRAsBDGTDa9nRiETe1XJez8KQz5PhSrdYv6ys=;
+	b=FSf2bZdPyXz4BPBHFx70cWxbGN5oqjZFP/4/s+5rV9tvJf5Ys+vLlwtVrQcUReeQ/YO6dx
+	B0PRLQr+xiBig08K+msob//izGRcuZaMmtL/g6YcbWo7AhZVYTwCAkb/Xyg2q973KvcZ5A
+	d+or1Tg+OvpDW5OHx7uigg1VpC/gTck=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-687-rYjBlg84NcyMcSXgyrtuSg-1; Mon, 10 Nov 2025 10:18:50 -0500
+X-MC-Unique: rYjBlg84NcyMcSXgyrtuSg-1
+X-Mimecast-MFC-AGG-ID: rYjBlg84NcyMcSXgyrtuSg_1762787928
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7a9fb6fcc78so2458469b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:18:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762787928; x=1763392728; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AlA+x0tRAsBDGTDa9nRiETe1XJez8KQz5PhSrdYv6ys=;
+        b=J6SfizIQTfgOSs7RVTnbI68sLJ8L3ozByVForhOJDam7Jlh0cETc2kakFalNEWYXxx
+         sQr4OqlUXPVISE3r3MWNxQbtxQv16SDfIKv+l2FnOiWBQyBY/+V89atJ4mK8bhD1MCnW
+         UlPiToOZLxv0zjA2gHEIAFw/jxRbxplXB4k+PswjR9sG8CyCgUsscc6AYvM0dg43dAbQ
+         N/RtsOal5RZZTbdclUDWfej+3KBZHCVNbuuf9u8Z98VDJYhKj4FedoQ9VYhxmCYvNKzl
+         L0K0Suw4uhQI8aRAUwRdzQhsXAoWCmblbIsXwBVTj+PLbKBUkM2t0jH6X1/OAeyknBL2
+         g7GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762787928; x=1763392728;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AlA+x0tRAsBDGTDa9nRiETe1XJez8KQz5PhSrdYv6ys=;
+        b=AClIBGaB5Rj3BJiHYFjctwD0kmOPvau4HBbfyv1cnTcx4yVNLd1OhDQmTr/59XNh1+
+         /AbUKvIyF9WQ/Ilet3vesloxwlD1blE52mNkIpfUd/FHJeAMA9UiwFmv7fy5fJcyioI3
+         mSMSoZwQ3cJZ5U7rPH08JtdTjbPe7gLf+D6626YPP1Aj8k8504YaiInRG47+/aE0sKe3
+         7luizE2efw+9tP5LdP9+t8Tx+pQpjtTeMuuhrhTgmv+ZOiV6lB2m97HyEWuMFeK5n7Ax
+         afqXk69rEr1lfsW0GulJU+zWOZML19oC3RlzkjI1YBvGlZN4iRG8R+h88sYAzLr8b6Tc
+         2UdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUD0jq4TlVh6lldDquuzvRhUkNDryrmVs2CyrCGautKeYp3mRL4YYZPqVncx5ZP+Myjt/IHoeo8ZVS8Dk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQfN1iQOo2jPrIsJjXmQYQKBLoRaDEwb1fpxbQg0deRhrdXaL9
+	Pacg1GPNmiHeUN1lMHfnTNRhum1/2Nd6bxOMbmVIJIFlqsYbVMHP8bN8Ezo+PipQWjIdcz4U0nj
+	4V6lbKIfDtoVofQTrnOKl6DqFz3IyaIivs2hpL4A23NRnwkEWFU9CGl2A8fJE//B1SA==
+X-Gm-Gg: ASbGncs1guTCuhfmCqJ5Oyift+zN+hAQvsi4h4Cr7m3BBcYGKcKz1JdoXzKD0Y7fvUb
+	eP4gXVBZO/TgLS3Ljr7EjpKXCs5Tcuppj2gTijF5hzVHA0ghdphRv3OUa0ONGuvqwVhOg+qzESC
+	+bN9Rn5ilpOYeXddoBI/R93ppk4Ibji2t+bylrt6GSG2YCmAq4NcX1ofP+OW4d7WeuzztBspdqE
+	PaG4b1jjOOzf//qlB/aye1o3xhJkvcl/40OoVF5jwjJlCNsBg2OFexkK4dbv1WDtns1wVusvdjO
+	nqA50eZMNyTwKUVvWS7xJwLvc8G8730w6+p3C6UIkdCgU9BfvosT9nh1uOkKK2DWVTGK5LdB9AH
+	v9K7HAZJe8GFJAyjTN3BTzuXnOv0HDvce8OSDIplzf0eZizuDRgAYeZSuKxZr1mTAcSzseBZxzw
+	UUVH45TRDdZr0XldtQB3VQdX8EGUYj
+X-Received: by 2002:a05:6a20:5483:b0:342:873d:7e62 with SMTP id adf61e73a8af0-353a2d42046mr10053486637.29.1762787928214;
+        Mon, 10 Nov 2025 07:18:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH2rcG42hzb4L/Vmwsv1WFpuCX/wTouXy7m9UtumHSxM2ed5rjvQJY8JW0zkSSyPLbwhXkjug==
+X-Received: by 2002:a05:6a20:5483:b0:342:873d:7e62 with SMTP id adf61e73a8af0-353a2d42046mr10053435637.29.1762787927572;
+        Mon, 10 Nov 2025 07:18:47 -0800 (PST)
+Received: from [10.201.49.111] (nat-pool-mxp-u.redhat.com. [149.6.153.187])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7b0c953d0a6sm12124750b3a.12.2025.11.10.07.18.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 07:18:46 -0800 (PST)
+Message-ID: <e47c4e56-d279-4aa8-8e78-ca1fe77b9f3e@redhat.com>
+Date: Mon, 10 Nov 2025 16:18:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,63 +103,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH 1/2] module: Override -EEXISTS module return
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Petr Pavlu <petr.pavlu@suse.com>
-References: <20251013-module-warn-ret-v1-0-ab65b41af01f@intel.com>
- <20251013-module-warn-ret-v1-1-ab65b41af01f@intel.com>
+Subject: Re: [PATCH] KVM: x86: Enforce use of EXPORT_SYMBOL_FOR_KVM_INTERNAL
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chao Gao <chao.gao@intel.com>
+References: <20251106202811.211002-1-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20251013-module-warn-ret-v1-1-ab65b41af01f@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20251106202811.211002-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 13/10/2025 18.26, Lucas De Marchi wrote:
-> The -EEXIST errno is reserved by the module loading functionality. When
-> userspace calls [f]init_module(), it expects a -EEXIST to mean that the
-> module is already loaded in the kernel. If module_init() returns it,
-> that is not true anymore.
-> 
-> Add a warning and override the return code to workaround modules
-> currently returning the wrong code. It's expected that they eventually
-> migrate to a better suited error.
+On 11/6/25 21:28, Sean Christopherson wrote:
+> +# Fail the build if there is unexpected EXPORT_SYMBOL_GPL (or EXPORT_SYMBOL)
+> +# usage.  All KVM-internal exports should use EXPORT_SYMBOL_FOR_KVM_INTERNAL.
+> +# Only a handful of exports intended for other modules (VFIO, KVMGT) should
+> +# use EXPORT_SYMBOL_GPL, and EXPORT_SYMBOL should never be used.
+> +ifdef CONFIG_KVM_X86
+> +define newline
+> +
+> +
+> +endef
 
-I've been following the thread (and apologies for the delay) and reviewing the
-patches, and I do not believe we should push this workaround. While this "fixes"
-the bug reported, it also hides the real problem and drivers will continue
-misusing EEXIST at module initialization.
+$(newline) is already defined in scripts/Kbuild.include, is it necessary 
+here?
 
-From the bug report thread, I agree with Christophe's suggestion that
-nf_conntrack_helpers_register() should return EBUSY instead of EEXIST. This
-would fix the root cause for this particular module and will allow others to
-change their module behavior, if we also follow up with proper documentation
-about EEXIST.
+> +# Search recursively for whole words and print line numbers.  Filter out the
+> +# allowed set of exports, i.e. those that are intended for external usage.
+> +exports_grep_trailer := --include='*.[ch]' -nrw $(srctree)/virt/kvm $(srctree)/arch/x86/kvm | \
+> +			grep -v -e kvm_page_track_register_notifier \
+> +				-e kvm_page_track_unregister_notifier \
+> +				-e kvm_write_track_add_gfn \
+> +				-e kvm_write_track_remove_gfn \
+> +				-e kvm_get_kvm \
+> +				-e kvm_get_kvm_safe \
+> +				-e kvm_put_kvm
+> +
+> +# Force grep to emit a goofy group separator that can in turn be replaced with
+> +# the above newline macro (newlines in Make are a nightmare).  Note, grep only
+> +# prints the group separator when N lines of context are requested via -C,
+> +# a.k.a. --NUM.  Simply request zero lines.  Print the separator only after
+> +# filtering out expected exports to avoid extra newlines in the error message.
+> +define get_kvm_exports
+> +$(shell grep "$(1)" -C0 $(exports_grep_trailer) | grep "$(1)" -C0 --group-separator="AAAA")
 
-> 
-> Closes: https://lore.kernel.org/all/aKLzsAX14ybEjHfJ@orbyte.nwl.cc/
-> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
-> ---
->  kernel/module/main.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index c66b261849362..74ff87b13c517 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -3038,6 +3038,11 @@ static noinline int do_init_module(struct module *mod)
->  	if (mod->init != NULL)
->  		ret = do_one_initcall(mod->init);
->  	if (ret < 0) {
-> +		if (ret == -EEXIST) {
-> +			pr_warn("%s: init suspiciously returned -EEXIST: Overriding with -EBUSY\n",
-> +				mod->name);
-> +			ret = -EBUSY;
-> +		}
->  		goto fail_free_freeinit;
->  	}
->  	if (ret > 0) {
-> 
+Maybe replace AAAA with something less goofy like !SEP! or similar?
+
+> +endef
+> +
+> +define check_kvm_exports
+> +nr_kvm_exports := $(shell grep "$(1)" $(exports_grep_trailer) | wc -l)
+> +
+> +ifneq (0,$$(nr_kvm_exports))
+> +$$(error ERROR ***\
+> +$$(newline)found $$(nr_kvm_exports) unwanted occurrences of $(1):\
+> +$$(newline)  $(subst AAAA,$$(newline) ,$(call get_kvm_exports,$(1)))\
+> +$$(newline)in directories:\
+> +$$(newline)  $(srctree)/arch/x86/kvm\
+> +$$(newline)  $(srctree)/virt/kvm\
+> +$$(newline)Use EXPORT_SYMBOL_FOR_KVM_INTERNAL, not $(1))
+> +endif # nr_kvm_exports != expected
+> +undefine exports_advice
+> +undefine nr_kvm_exports
+> +endef # check_kvm_exports
+> +
+> +$(eval $(call check_kvm_exports,EXPORT_SYMBOL_GPL))
+> +$(eval $(call check_kvm_exports,EXPORT_SYMBOL))
+> +
+> +undefine check_kvm_exports
+> +undefine get_kvm_exports
+> +undefine exports_grep_trailer
+> +undefine newline
+
+(if the definition is not needed above, remember to remove the 
+"undefine" here too).
+
+Thanks,
+
+Paolo
+
 
