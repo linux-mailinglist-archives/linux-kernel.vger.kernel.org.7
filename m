@@ -1,89 +1,96 @@
-Return-Path: <linux-kernel+bounces-893554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E4BC47D4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:15:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A316AC47BC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3A8423287
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D127C422EDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941E1275AFF;
-	Mon, 10 Nov 2025 15:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC31271441;
+	Mon, 10 Nov 2025 15:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkDGoHUt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5JUpHFn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08742749ED
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68016228CA9
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762789736; cv=none; b=Vz8rtcug4ZddA6MxlhJStRIjEcv3pJ4X7u0K/Y4P36ldq6ufgSAk4QShulgWLBi/jW3vN2yeygLj3HLfs7X+irs/i6lvnyknXVaxdYHz+LI9IevHKDGa8w65Fsh9rHLcBmUhz7t3i9L85nlmnp0lrT7q1LRTQou/F9a8puwFqhY=
+	t=1762789771; cv=none; b=n1p/WrVE9UftugbN5n5Mpc+UMxok0D1t9LLC6VJeWh+xgvMXyFYOVncy9+WWEzQN95Abq/XRWz5o3ierETFguXa1/wQEqEDxioZH24v+MQkpoUCLuymM/3eObrBj+9iNlummjN6VakcOObGH2HXx8LzFWlL39WgtjeYbx3gzA+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762789736; c=relaxed/simple;
-	bh=7usNNwK1oc17KCZRQqTRb/jOrzz/mLzKHFv/CibFkeo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y//jphaWrNFBUAeGQOUVnDgpDdnSmsmCNwahStrenCUEeK3D/nP8dEb/OSfFhkoCT9TBdHryVhHOkHj5WgU4S6ZzyYZnHgsvMsOeEzTNMUL7wRlFFFZpuc6CP7Uo5ndvYuh96JoXBD7i5ujwplN0gTnkc9zO9wEXaE3T/J5vkrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkDGoHUt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13125C4CEF5;
-	Mon, 10 Nov 2025 15:48:52 +0000 (UTC)
+	s=arc-20240116; t=1762789771; c=relaxed/simple;
+	bh=hGdO1gmyGy3Mjf/B3EyUkRcvknyUCE7lR5zjrkG/6Os=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u7NApDPkflUq7ERoynLs6NoZOSHh7lSLtAxrImvKZa7uif/LkNvHbvcaHbh6K6zloSPtEeLLJhU+RvLGKdpZqyHfT73EMh9rowaYrVASoRp10sOQEQXBLV/inMWeDWhdo+5KNiisJIUKNRdvC78gkLF4DoX4qvcw9Ds/irDArB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5JUpHFn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1681EC2BC87
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:49:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762789735;
-	bh=7usNNwK1oc17KCZRQqTRb/jOrzz/mLzKHFv/CibFkeo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LkDGoHUtlL8QYpGw4ssnW9I1tDmONc4GV/GO/tQBHXeFFR5yPpVf/tXZxGcf3mzH4
-	 loJlkqn3ALuwlm3wFCbm2t7gFrDDJsflbmdJuICFfvXfphGisNrEYHOmy2xdHpEy7t
-	 vI2WK3v9FsDIvMDCpvjbORMZTOwQjU0y6aBdWPlKagw2cMPNtMeKdjrarMqqlGWxdu
-	 Eg6e6m8AWcs5/lIzTp8vTBKvNXWwwD4okmCMe/mKu91/wECnkLCk6VFbMLrA7Vsixd
-	 v4TA8fDYJoPg+THe6BniVVBWlUBB93nnDgMstLqijd672t2AXdSJQDR9W+Y5EZyBY5
-	 C3qs9WcXC+1Kg==
-Message-ID: <f7a69885-7bf6-456b-81fe-3c6a5a29b470@kernel.org>
-Date: Mon, 10 Nov 2025 16:48:51 +0100
+	s=k20201202; t=1762789771;
+	bh=hGdO1gmyGy3Mjf/B3EyUkRcvknyUCE7lR5zjrkG/6Os=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=n5JUpHFnwn4HUIetGF+2nQui8NhsmjNy88d2eXYQoa7/zpdR/nyVLQcek968/b1po
+	 VWCjvBF64431pWiiDwAlZH3lswaqmHdo79hqJPoNNkKgjr9VWemG2AtyUExOnnJwHh
+	 5fsH5UFowdx9vt0ozNxpCDFJFCU1nIjl1bPfKONOH4kzM3ZaQBxNN29HwwR7aFR9aK
+	 ZpSSyKg1XG21TiXYvIrUiO14c4ab180APV4s72aMTp8npQ0hyfnZ3IMJefFQ2frO2u
+	 IRoKcO6US7vMSIJRhhfxT/YuIjmUhwjLw0JbnFsVczlnJqKh3Di8Gx/xa3wthoSiyX
+	 dEIhywG04KFHg==
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-63fbed0f71aso2610761d50.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:49:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXgZhWp34RShzJc/4mZX+vvNNpeHVHRseFfxG8X1rgkJ4isf56NiMqvNXWjXbyr9ZFG5rAUyWLyuR8x+Nw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiI5+mGw8T/go7tWK3aCV0MJeaYG1YxmGloUIBha1V8X548P50
+	hrRE7YMf2VWc/GTd+2OW3JfyH5SPa6O19Wr65VubglwXMFe/DeWNb8ISuNhA4Xo2EdFrjKlZ6jt
+	DDNBZnR5biK7drxq4fEaUYCWSTdHnJPI=
+X-Google-Smtp-Source: AGHT+IFm7yZ3qguylHdoB7xjNQBy0bMKMjR02J1cRGt4ffC2O34eT91/wd8Mmx9ibXalI8LutBCMwAfMcAT7RBiagB4=
+X-Received: by 2002:a05:690c:4681:b0:786:70d6:96bf with SMTP id
+ 00721157ae682-787d5435332mr92636977b3.32.1762789770167; Mon, 10 Nov 2025
+ 07:49:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: rename walk_page_range_mm()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Jann Horn <jannh@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1762686301.git.lorenzo.stoakes@oracle.com>
- <2e48c7ffbd2ecec8ac189569636173fb44ed3631.1762686301.git.lorenzo.stoakes@oracle.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <2e48c7ffbd2ecec8ac189569636173fb44ed3631.1762686301.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251110120705.1553694-1-dongml2@chinatelecom.cn>
+In-Reply-To: <20251110120705.1553694-1-dongml2@chinatelecom.cn>
+From: Song Liu <song@kernel.org>
+Date: Mon, 10 Nov 2025 07:49:18 -0800
+X-Gmail-Original-Message-ID: <CAHzjS_vj26p7SwVupAb0XyTZs__NProJ+CN6DKy+-E1R+Wk33Q@mail.gmail.com>
+X-Gm-Features: AWmQ_bm1hQ3TeUIh6zBIsI2NAfUjz2s_DU0yIZ9d33dDtimQL_En8Q7O5Ah2cVo
+Message-ID: <CAHzjS_vj26p7SwVupAb0XyTZs__NProJ+CN6DKy+-E1R+Wk33Q@mail.gmail.com>
+Subject: Re: [PATCH bpf] bpf: handle the return of ftrace_set_filter_ip in register_fentry
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: ast@kernel.org, song@kernel.org, daniel@iogearbox.net, 
+	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, yonghong.song@linux.dev, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, jiang.biao@linux.dev, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09.11.25 12:16, Lorenzo Stoakes wrote:
-> Make it clear we're referencing an unsafe variant of this function
-> explicitly.
-> 
-> This is laying the foundation for exposing more such functions and
-> maintaining a consistent naming scheme.
+On Mon, Nov 10, 2025 at 4:07=E2=80=AFAM Menglong Dong <menglong8.dong@gmail=
+.com> wrote:
+>
+> The error that returned by ftrace_set_filter_ip() in register_fentry() is
+> not handled properly. Just fix it.
+>
+> Fixes: 00963a2e75a8 ("bpf: Support bpf_trampoline on functions with IPMOD=
+IFY (e.g. livepatch)")
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> ---
+>  kernel/bpf/trampoline.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-IIUC, the "unsafe" variants only bypass the check_ops_valid() check, 
-correct?
+LGTM. Thanks for the fix!
 
-Staring at the code, I wonder if we should then rename check_ops_valid() 
-to something like "are_ops_safe()" [or something similar along the lines 
-of safe vs. unsafe]
+Acked-by: Song Liu <song@kernel.org>
 
-Because now we will have valid vs. unsafe which is a bit confusing, at 
-least for me.
+Can we add a test for this code path?
 
--- 
-Cheers
-
-David
+Song
 
