@@ -1,311 +1,106 @@
-Return-Path: <linux-kernel+bounces-894312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863F1C49BB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:22:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B66C49BA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64D114EFE50
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:21:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F84C3AB9B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52A03019D8;
-	Mon, 10 Nov 2025 23:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FAF303A3A;
+	Mon, 10 Nov 2025 23:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="R4NU6Q8J"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJB3kG+Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24BE2F745E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37DC2F745E;
+	Mon, 10 Nov 2025 23:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762816888; cv=none; b=cwKtWdpvdlOaeANwBgL3UqWV8N20VdL8vqBAc0OTzTFrXtpOdKP6hrcu9LvW4PKiUla8jUEmOPhTzq/XgiUkCjOTXktkdaY6ThP4+BHhM3O6aYLipDvPNiGG6ZwGzEgP2Kpibkn6eaYrh67WXvOCUn/1W58AlDUzhiwhhYiqXt4=
+	t=1762816839; cv=none; b=b16YgMo2YvzBvhzmK9oh4fztAcLXJTYIPUs0mcWei/PIqS107ugAmlbwDehwRU3HRB42lkFY5wZuIIHO2mwMORXooufdRQIyLwDYXyzBwaeUWwK5DsjYGtQMcjLLQUz678j53LorOpTxetqnz/SBS9EWUlaQfkmQ2460rWtMAaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762816888; c=relaxed/simple;
-	bh=WLEBOTkZKUM14cVgKXUz+PaAOxh51gV8vtHKxRIAvWQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HIWgc5uDJi2ME3LOYpu/cLnLWhGdpsoi0rK2JMl8Xg3a7/zFjf21rwdj/TW0nZmtqzVuKbtlRGa9fVDh50AsX4BBibRJ1FuGkuAWXa9vwwICJZFeLbcf8i5pDN4r55KZmSwUdCuQAvTWesu9G56NwlpIAjTqQeNQMYBDsBekBtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=R4NU6Q8J; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762816883;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KeXZlzM9S/cAH2YiJk+aaehPaWC6sAatt90g+33TR9M=;
-	b=R4NU6Q8JCz+vv5o5XmD4mFPnZiEkcZEeGblXosVFQw+RFf9leuRmhR0urgV21dHwZQIuL9
-	T3w0t0fzyPiOGdBbxvlt0vGbaBSsux7ELLDLlXmNEd0BBaDNtaUNWI0NmH6bvA0RUStsI0
-	ANDzkbGwvlFROHEOOQpmnoW1jnNzIAk=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Qi Zheng <qi.zheng@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: [PATCH 4/4] memcg: remove __lruvec_stat_mod_folio
-Date: Mon, 10 Nov 2025 15:20:08 -0800
-Message-ID: <20251110232008.1352063-5-shakeel.butt@linux.dev>
-In-Reply-To: <20251110232008.1352063-1-shakeel.butt@linux.dev>
-References: <20251110232008.1352063-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1762816839; c=relaxed/simple;
+	bh=FIeaS0AVxWNe9gMVVor1LhTI7CIaaVmn2VWhVMDjN9E=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ra1h2UlArmpUbbZBAJx3VsUisUb97poZzW9grIofmetEbiSlkZBsNNZ4PMQ1hhGIIWwaHGMFAXqVJl5gm19IZ11h9H5VD+VHKtawr3T78LE0w411DLA0izfGUqYTzFSn/NG0jV8WGl4trwG98rP0A2mbCQPq56wYDx7Kx9nwJj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJB3kG+Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B6FC4CEF5;
+	Mon, 10 Nov 2025 23:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762816839;
+	bh=FIeaS0AVxWNe9gMVVor1LhTI7CIaaVmn2VWhVMDjN9E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TJB3kG+Zfq5iwiqyKCdKsPXVEpen8pNtMx1TpJNY677D/p9HXUqytmIoyfw2aYscH
+	 K7YQWtOu9yqE6d2z7J7fd3Lyc5Wp7ucnDxmythM4AIUL6PGmGBABqOuHs/Ve6dHW0n
+	 Wnz9DbUyuCIvYmReUCRRPMeZDJpjBJEP/YNT2eWmDh/ot9g7k9DMCqLBeZemTr7ko0
+	 tRUVyGM5kcqa5gbhUlB8eBgJUYoPehwelf3je6qEOH4UZk8vSccsotb+dQsz5xzEkM
+	 jkEW3aJs8GNV7Td09B8ZlyqZFxz1g9e6u0gnkSlK1ethw+Zn4oLWqKrp7xSGlC5bOl
+	 nwqN27UzeABLQ==
+Date: Tue, 11 Nov 2025 08:20:33 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: rostedt@goodmis.org, jolsa@redhat.com, mhiramat@kernel.org,
+ mark.rutland@arm.com, mathieu.desnoyers@efficios.com, jiang.biao@linux.dev,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH] ftrace: avoid redundant initialization in
+ register_ftrace_direct
+Message-Id: <20251111082033.32f65dec4f8d3ddc417b2b0b@kernel.org>
+In-Reply-To: <20251110121808.1559240-1-dongml2@chinatelecom.cn>
+References: <20251110121808.1559240-1-dongml2@chinatelecom.cn>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The __lruvec_stat_mod_folio is already safe against irqs, so there is no
-need to have a separate interface (i.e. lruvec_stat_mod_folio) which
-wraps calls to it with irq disabling and reenabling. Let's rename
-__lruvec_stat_mod_folio to lruvec_stat_mod_folio.
+On Mon, 10 Nov 2025 20:18:08 +0800
+Menglong Dong <menglong8.dong@gmail.com> wrote:
 
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- include/linux/vmstat.h | 30 +-----------------------------
- mm/filemap.c           | 20 ++++++++++----------
- mm/huge_memory.c       |  4 ++--
- mm/khugepaged.c        |  8 ++++----
- mm/memcontrol.c        |  4 ++--
- mm/page-writeback.c    |  2 +-
- mm/rmap.c              |  4 ++--
- mm/shmem.c             |  6 +++---
- 8 files changed, 25 insertions(+), 53 deletions(-)
+> The FTRACE_OPS_FL_INITIALIZED flag is cleared in register_ftrace_direct,
+> which can make it initialized by ftrace_ops_init() even if it is already
+> initialized. It seems that there is no big deal here, but let's still fix
+> it.
+> 
+> Fixes: f64dd4627ec6 ("ftrace: Add multi direct register/unregister interface")
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 
-diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-index 4eb7753e6e5c..3398a345bda8 100644
---- a/include/linux/vmstat.h
-+++ b/include/linux/vmstat.h
-@@ -523,19 +523,9 @@ static inline const char *vm_event_name(enum vm_event_item item)
- void mod_lruvec_state(struct lruvec *lruvec, enum node_stat_item idx,
- 			int val);
- 
--void __lruvec_stat_mod_folio(struct folio *folio,
-+void lruvec_stat_mod_folio(struct folio *folio,
- 			     enum node_stat_item idx, int val);
- 
--static inline void lruvec_stat_mod_folio(struct folio *folio,
--					 enum node_stat_item idx, int val)
--{
--	unsigned long flags;
--
--	local_irq_save(flags);
--	__lruvec_stat_mod_folio(folio, idx, val);
--	local_irq_restore(flags);
--}
--
- static inline void mod_lruvec_page_state(struct page *page,
- 					 enum node_stat_item idx, int val)
- {
-@@ -550,12 +540,6 @@ static inline void mod_lruvec_state(struct lruvec *lruvec,
- 	mod_node_page_state(lruvec_pgdat(lruvec), idx, val);
- }
- 
--static inline void __lruvec_stat_mod_folio(struct folio *folio,
--					 enum node_stat_item idx, int val)
--{
--	mod_node_page_state(folio_pgdat(folio), idx, val);
--}
--
- static inline void lruvec_stat_mod_folio(struct folio *folio,
- 					 enum node_stat_item idx, int val)
- {
-@@ -570,18 +554,6 @@ static inline void mod_lruvec_page_state(struct page *page,
- 
- #endif /* CONFIG_MEMCG */
- 
--static inline void __lruvec_stat_add_folio(struct folio *folio,
--					   enum node_stat_item idx)
--{
--	__lruvec_stat_mod_folio(folio, idx, folio_nr_pages(folio));
--}
--
--static inline void __lruvec_stat_sub_folio(struct folio *folio,
--					   enum node_stat_item idx)
--{
--	__lruvec_stat_mod_folio(folio, idx, -folio_nr_pages(folio));
--}
--
- static inline void lruvec_stat_add_folio(struct folio *folio,
- 					 enum node_stat_item idx)
- {
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 63eb163af99c..9a52fb3ba093 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -182,13 +182,13 @@ static void filemap_unaccount_folio(struct address_space *mapping,
- 
- 	nr = folio_nr_pages(folio);
- 
--	__lruvec_stat_mod_folio(folio, NR_FILE_PAGES, -nr);
-+	lruvec_stat_mod_folio(folio, NR_FILE_PAGES, -nr);
- 	if (folio_test_swapbacked(folio)) {
--		__lruvec_stat_mod_folio(folio, NR_SHMEM, -nr);
-+		lruvec_stat_mod_folio(folio, NR_SHMEM, -nr);
- 		if (folio_test_pmd_mappable(folio))
--			__lruvec_stat_mod_folio(folio, NR_SHMEM_THPS, -nr);
-+			lruvec_stat_mod_folio(folio, NR_SHMEM_THPS, -nr);
- 	} else if (folio_test_pmd_mappable(folio)) {
--		__lruvec_stat_mod_folio(folio, NR_FILE_THPS, -nr);
-+		lruvec_stat_mod_folio(folio, NR_FILE_THPS, -nr);
- 		filemap_nr_thps_dec(mapping);
- 	}
- 	if (test_bit(AS_KERNEL_FILE, &folio->mapping->flags))
-@@ -831,13 +831,13 @@ void replace_page_cache_folio(struct folio *old, struct folio *new)
- 	old->mapping = NULL;
- 	/* hugetlb pages do not participate in page cache accounting. */
- 	if (!folio_test_hugetlb(old))
--		__lruvec_stat_sub_folio(old, NR_FILE_PAGES);
-+		lruvec_stat_sub_folio(old, NR_FILE_PAGES);
- 	if (!folio_test_hugetlb(new))
--		__lruvec_stat_add_folio(new, NR_FILE_PAGES);
-+		lruvec_stat_add_folio(new, NR_FILE_PAGES);
- 	if (folio_test_swapbacked(old))
--		__lruvec_stat_sub_folio(old, NR_SHMEM);
-+		lruvec_stat_sub_folio(old, NR_SHMEM);
- 	if (folio_test_swapbacked(new))
--		__lruvec_stat_add_folio(new, NR_SHMEM);
-+		lruvec_stat_add_folio(new, NR_SHMEM);
- 	xas_unlock_irq(&xas);
- 	if (free_folio)
- 		free_folio(old);
-@@ -920,9 +920,9 @@ noinline int __filemap_add_folio(struct address_space *mapping,
- 
- 		/* hugetlb pages do not participate in page cache accounting */
- 		if (!huge) {
--			__lruvec_stat_mod_folio(folio, NR_FILE_PAGES, nr);
-+			lruvec_stat_mod_folio(folio, NR_FILE_PAGES, nr);
- 			if (folio_test_pmd_mappable(folio))
--				__lruvec_stat_mod_folio(folio,
-+				lruvec_stat_mod_folio(folio,
- 						NR_FILE_THPS, nr);
- 		}
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 949250932bb4..943099eae8d5 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3866,10 +3866,10 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
- 			if (folio_test_pmd_mappable(folio) &&
- 			    new_order < HPAGE_PMD_ORDER) {
- 				if (folio_test_swapbacked(folio)) {
--					__lruvec_stat_mod_folio(folio,
-+					lruvec_stat_mod_folio(folio,
- 							NR_SHMEM_THPS, -nr);
- 				} else {
--					__lruvec_stat_mod_folio(folio,
-+					lruvec_stat_mod_folio(folio,
- 							NR_FILE_THPS, -nr);
- 					filemap_nr_thps_dec(mapping);
- 				}
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 1a08673b0d8b..2a460664a67d 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -2174,14 +2174,14 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
- 	}
- 
- 	if (is_shmem)
--		__lruvec_stat_mod_folio(new_folio, NR_SHMEM_THPS, HPAGE_PMD_NR);
-+		lruvec_stat_mod_folio(new_folio, NR_SHMEM_THPS, HPAGE_PMD_NR);
- 	else
--		__lruvec_stat_mod_folio(new_folio, NR_FILE_THPS, HPAGE_PMD_NR);
-+		lruvec_stat_mod_folio(new_folio, NR_FILE_THPS, HPAGE_PMD_NR);
- 
- 	if (nr_none) {
--		__lruvec_stat_mod_folio(new_folio, NR_FILE_PAGES, nr_none);
-+		lruvec_stat_mod_folio(new_folio, NR_FILE_PAGES, nr_none);
- 		/* nr_none is always 0 for non-shmem. */
--		__lruvec_stat_mod_folio(new_folio, NR_SHMEM, nr_none);
-+		lruvec_stat_mod_folio(new_folio, NR_SHMEM, nr_none);
- 	}
- 
- 	/*
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index c31074e5852b..7f074d72dabc 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -777,7 +777,7 @@ void mod_lruvec_state(struct lruvec *lruvec, enum node_stat_item idx,
- 		mod_memcg_lruvec_state(lruvec, idx, val);
- }
- 
--void __lruvec_stat_mod_folio(struct folio *folio, enum node_stat_item idx,
-+void lruvec_stat_mod_folio(struct folio *folio, enum node_stat_item idx,
- 			     int val)
- {
- 	struct mem_cgroup *memcg;
-@@ -797,7 +797,7 @@ void __lruvec_stat_mod_folio(struct folio *folio, enum node_stat_item idx,
- 	mod_lruvec_state(lruvec, idx, val);
- 	rcu_read_unlock();
- }
--EXPORT_SYMBOL(__lruvec_stat_mod_folio);
-+EXPORT_SYMBOL(lruvec_stat_mod_folio);
- 
- void mod_lruvec_kmem_state(void *p, enum node_stat_item idx, int val)
- {
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index a124ab6a205d..ccdeb0e84d39 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2652,7 +2652,7 @@ static void folio_account_dirtied(struct folio *folio,
- 		inode_attach_wb(inode, folio);
- 		wb = inode_to_wb(inode);
- 
--		__lruvec_stat_mod_folio(folio, NR_FILE_DIRTY, nr);
-+		lruvec_stat_mod_folio(folio, NR_FILE_DIRTY, nr);
- 		__zone_stat_mod_folio(folio, NR_ZONE_WRITE_PENDING, nr);
- 		__node_stat_mod_folio(folio, NR_DIRTIED, nr);
- 		wb_stat_mod(wb, WB_RECLAIMABLE, nr);
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 60c3cd70b6ea..1b3a3c7b0aeb 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1212,12 +1212,12 @@ static void __folio_mod_stat(struct folio *folio, int nr, int nr_pmdmapped)
- 
- 	if (nr) {
- 		idx = folio_test_anon(folio) ? NR_ANON_MAPPED : NR_FILE_MAPPED;
--		__lruvec_stat_mod_folio(folio, idx, nr);
-+		lruvec_stat_mod_folio(folio, idx, nr);
- 	}
- 	if (nr_pmdmapped) {
- 		if (folio_test_anon(folio)) {
- 			idx = NR_ANON_THPS;
--			__lruvec_stat_mod_folio(folio, idx, nr_pmdmapped);
-+			lruvec_stat_mod_folio(folio, idx, nr_pmdmapped);
- 		} else {
- 			/* NR_*_PMDMAPPED are not maintained per-memcg */
- 			idx = folio_test_swapbacked(folio) ?
-diff --git a/mm/shmem.c b/mm/shmem.c
-index c3ed2dcd17f8..4fba8a597256 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -882,9 +882,9 @@ static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index
- static void shmem_update_stats(struct folio *folio, int nr_pages)
- {
- 	if (folio_test_pmd_mappable(folio))
--		__lruvec_stat_mod_folio(folio, NR_SHMEM_THPS, nr_pages);
--	__lruvec_stat_mod_folio(folio, NR_FILE_PAGES, nr_pages);
--	__lruvec_stat_mod_folio(folio, NR_SHMEM, nr_pages);
-+		lruvec_stat_mod_folio(folio, NR_SHMEM_THPS, nr_pages);
-+	lruvec_stat_mod_folio(folio, NR_FILE_PAGES, nr_pages);
-+	lruvec_stat_mod_folio(folio, NR_SHMEM, nr_pages);
- }
- 
- /*
+Looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks,
+
+> ---
+>  kernel/trace/ftrace.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 42bd2ba68a82..efb5ce32298f 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -6043,7 +6043,7 @@ int register_ftrace_direct(struct ftrace_ops *ops, unsigned long addr)
+>  	new_hash = NULL;
+>  
+>  	ops->func = call_direct_funcs;
+> -	ops->flags = MULTI_FLAGS;
+> +	ops->flags |= MULTI_FLAGS;
+>  	ops->trampoline = FTRACE_REGS_ADDR;
+>  	ops->direct_call = addr;
+>  
+> -- 
+> 2.51.2
+> 
+
+
 -- 
-2.47.3
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
