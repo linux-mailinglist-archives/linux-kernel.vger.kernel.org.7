@@ -1,213 +1,196 @@
-Return-Path: <linux-kernel+bounces-894074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F76C49389
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:24:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD80C4938F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:24:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E88E03AFF98
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:24:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C643B02CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1FE2EC557;
-	Mon, 10 Nov 2025 20:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA96B2EAD1C;
+	Mon, 10 Nov 2025 20:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mts42I+x"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKZqXayJ"
+Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E8E2EAD1C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CD62E92AF
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762806246; cv=none; b=hR11rO62y3BESyA+oBL/WuBLnyQxDHujp5sGOJfLKNUoqCt/pOiR8uvdkMX1Yzhf2plxDVbHJ6ANv6QEmh3+dMsnfceCMR4JaqlmKsaw+O7NiOAoDhseUoLFrkKu4pt8KpTeL0SgromnFuYbj1FIobJFZWAmkcB2REsBV9PPwxE=
+	t=1762806264; cv=none; b=uNQvpGlouJ4yUgMwWZqKBj3kGhHeT63kZ7YncvNHqfranE+NSHTl7Orjzhk0HQO4td7qG3W1yu0pVk8E24siYpk04RwAVkATtE30kRt0C5Pcsik2tMa+DXGgMmvc3u8xVoc0K2zlRiDBokSywo6LvPXqW8AhoL6F2ujw/NduJF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762806246; c=relaxed/simple;
-	bh=avENlQ35BzgI6tLMYtHuimKSX5F3uSHgrD8IvoL218c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B1MHTmC1sCVHRYlnh8v8/tHl5yciippoFIr1+ogJvlX0UfHpkgLGqgrFnLQiYArWBCDXCAqgKgvuvHJhGrgfD77OrNWotJDebBdIeBTeGkHhc4/g56P1+7LTrS5aipHWb5/8YJ+x94IIjGx4FLkKIJHleGujbrG71psR7SiLdrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mts42I+x; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-37a492d38e0so3032711fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:24:03 -0800 (PST)
+	s=arc-20240116; t=1762806264; c=relaxed/simple;
+	bh=MM9+8E+GZgDraH0Himq5JuKGwG+RbTe11fXxGHrRfl8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V3OlQMnn8cVP8sgfGEhMn8ZRHnIvWALxKmvHuY8oK5aPB5zQhViU8HqQup8OL9Sv0dlXvFsWeLPvT+Mw9lAiMwyNb5XC/j0RH5r0qwffgOvPAzJ/NiD9YYNPwd8vjKE9eg8T/9lEAtj9o6rwhQXi46oglCy+OxILNWkYJymdmws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKZqXayJ; arc=none smtp.client-ip=74.125.224.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-640c9c85255so4297611d50.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:24:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762806242; x=1763411042; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762806261; x=1763411061; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GaNjgHiC4lYNLgJR1dvbSFLh/5KALMDQ9SZCFN88ta8=;
-        b=mts42I+xAsgv8eZE4+D5iwBfrt6505Gw+8ie43Jwc4Uzp8+eVtfzmeMalW/SBDv1pl
-         qyxEiUxi3qo6goc42iJ9vLKPEh6hGdcH3tBlkI7vnceyhz5Q9jAENVhhDY+FTgRkUw6k
-         DhVBDZ+ZwRtwyOu21RIMMBAtv3DuMV6FPLuMq5HjKfCW77HLhO8WycCrjy6f1exvn8EE
-         N9Hf0poSaaHl8rIusXBOvtFAL5YGqInPg9XbMI0C/vtNP8NOYUgF80uvujHE8T0CFuq7
-         ogybdERSxRHTkOOK3JaOCB/1r9uZp7+gHGIruaO0e5nfH9R0D81R9NuZqv5oyGRDf/iU
-         ERMw==
+        bh=3YLJvRTwWAHeioYw48ioM3TOlUOIaEqWMfhP+92vigo=;
+        b=BKZqXayJQxw5qpzNXIy+aZGTL6zKgeX4gcxy2A+DpRII4HudSosKJEO244QuWkBZ4R
+         JIic7K+6sl8lGH+nton8FjN5MSUJZXyklUqtTx1J/DdmVjd1ayl+HRCEfwYEsvvwPc6t
+         Dw8/MSY3mSqLEERt+nwaEPNSq4x/dBQZ52z/SlBzbHpZQtt4j+ZCtXdPFbNZXzs6fIaj
+         TF30QtPV2BLDGQQzDfPnpVW8KmufSXttinS96ECjx97sy6Z/GoRxe+V2tWgrgzI38O73
+         ONSasiv9JQaBcdD1FGvFuGZpMBdlRUjn8kz2gmMXu8wDOthxkt4pIbKYqaZIdJXsEj9v
+         yt2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762806242; x=1763411042;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GaNjgHiC4lYNLgJR1dvbSFLh/5KALMDQ9SZCFN88ta8=;
-        b=s1EzH1U9+cm9q8zaVcAUD1B4Muz/zTYZtO30PiSn/QgMVKqVuYEvsYW1/cNxnM6cGW
-         CBQUM+d7IVeNm3GJUCDEy6FuVMZIlggzXUYYrg4NY1boPvLYzDKN3jJTfSPdp1tfBbKx
-         vHIcNMJFAdtCy7gP+7HHiL/b03p8rIcNh6zlWtLE1MPH57lWmgjGfXejlOcWETxVpn1z
-         U372uWAaCbB/xbZdF1Vq3aU6eFAihSmvzKl7LrVkKlrgAhfUogIrxEzaSJ/R1/2oDqSf
-         hQgp/tSDsxasrc47TBL7rE1eWpPJlauwO8oaDlnS4eRg9B32kRNkPOVZZyh4CYzrW2u9
-         qAKg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+bqIs1b56szM/skjoGBPw6lTONFwzwJoRUEIdASUxt8ZYE+uJTcSocUc5SI7JOGTRXtOWCidwcJlAjkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1/ftgLyB3MmZqaNtCrqOKgyQwpZ7Rs+7xGxdH2tGQlPxNDSrt
-	gjawNLefuvgBwO8w4maiOvnphC5eYltvMbShw020p52v/zc7SLmfBKSnWh3jHTik+GtimAEG1M6
-	J6rW6
-X-Gm-Gg: ASbGncvMtWSjA5r5ucT8VjUiPj685zXTefDwfiguQJuwTFMYebViky6mRYdgKVyvOZO
-	r+7eCgOQlm3fJwNzZ7J1Rk+3F/vFyYM3qI78QML2CKjjQCI/EWEX9JKXk6oSNjONovEjPdsFBXt
-	Xtjf2mafBJWGa3drzxlnqcGiO0M8ELqZHulUofvkULJQGtwhh1mdRDNCUb2UFLaUfd4HthAYZEq
-	XLA0yMomy7gjMLQUPnMEOWdyqCdNdBka/4VpKjobBe10DUsD/ArE6TEv73davMqH+E6rx2cJGLU
-	lH+NnlwO57WXqMQatBSKlr9pQr5xOfwY4pGfM3Swp25yDiLFQZBenNl9dt/2JCbl5jXtK4uRhUH
-	vvc18VqjAr4bi3Guz6BkJ8OlS/kdtEBIINkzAfQVrivs51qYaGHahrPT3043fP1BbGj3ryqLQT4
-	CHfvfb7iNxA4H1MiyPK89afYJTQ1zKvJLar5mT+gIfhclRY0fx5xaOhQI=
-X-Google-Smtp-Source: AGHT+IH8eu2yFwyQ/7LEhVqdgKoEtPLjRlteAv+Gq5Xpiwbyk2U8UW/TW9k1sGKDpmscx/ao2kCmVA==
-X-Received: by 2002:a05:6512:3c8c:b0:594:2d0d:a3dc with SMTP id 2adb3069b0e04-5945f1dc4f9mr1551360e87.6.1762806242080;
-        Mon, 10 Nov 2025 12:24:02 -0800 (PST)
-Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-594549b4cd1sm3681566e87.8.2025.11.10.12.23.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 12:24:01 -0800 (PST)
-Message-ID: <df209178-2871-4317-bfb6-d6605fb9f19b@linaro.org>
-Date: Mon, 10 Nov 2025 22:23:52 +0200
+        d=1e100.net; s=20230601; t=1762806261; x=1763411061;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3YLJvRTwWAHeioYw48ioM3TOlUOIaEqWMfhP+92vigo=;
+        b=T7fNJZ2RuTurc1ZorU7Jg4LRzyE17KmFKBCUeFkpHr9P2q5AXyGwwU7pbKQW5UXVFR
+         uqbXEqevY2v6PtEcZ/rhS/ECFFNFq0bi5WGG7KaV5oaubYEPeTQ1cdEC3h/GLCr6sAm0
+         sO1LoMHJhFXVEMWBUPU7B4ZkOLvAVW/J1n0QbRN6gcVn769k0jvrd20tAc3crTP9irS8
+         zgqUj3b/x4Vfa5EFXpb/hSUMa4KWv4KOIrEOOv6tiZlR/HNsSb8pim2gb3i9CxQM4Yf8
+         7r+RwY6rKOmej4eqKb4IZ5bF3CjQ9WWNErOGFHbyrbM7a3VevqiRea4bAmXW3xEeH0Xr
+         FsLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKbu2ifgJtd/8J2wVtVXV3StSuf6/I/WtxunQat8clZFFuvc10cEbIWbjt2cpG4zpRlHbwLgRS6iRJZoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYaRPWTolLKtnOgs0nvj/4klugie+FFjvF2ivaRFdmJ/ZPd0VN
+	3VyL2E2obP06u0Md36ysPNriVymm80D/TscZbBSCpBR14+ImW4vDsCGduJzS6mh99cfv+fKAf9r
+	FBM+MjIxNcBrz1IeTP+LVulpzHm6kns4=
+X-Gm-Gg: ASbGncvrBx7JR9OEwSrAKHQucNH7+6GeDVHxQgK+e56NFsgsddZFLVtZY+Upj9nRgVZ
+	n/AjRK0hE1+oG/EkqWVCd2KdluUsmMtrP5qtezA9W9u5dj7PDk4umGYRDjkaW7XCxeK/lg0LNWH
+	SF5oaZIuQiZO/cpUI6fDa7AaUf8+uWlLRfce5HI8ZSlp49ECpODetRED3TxlHyyvigBnGsqhQZt
+	yrXi3ZGLbZKt+ZmUNrIZk9bXGAWVBjyyHEhP6dW/POHTzHBRG6Tf5aiDQ3YJ9Msyrf0hN4LAAvA
+	ZFd3mZQ8
+X-Google-Smtp-Source: AGHT+IH1mIDulGVb7q7tn5z5ztHbSvLB3cHEN5rgeiioPy3PtF0rCncjMwbJ6yUVoHomSJF2gUM87uyh+BkEJDcXbuE=
+X-Received: by 2002:a05:690e:2557:b0:63f:b4db:91e9 with SMTP id
+ 956f58d0204a3-640d45b7279mr6137231d50.49.1762806261436; Mon, 10 Nov 2025
+ 12:24:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/8] media: qcom: camss: csiphy-3ph: Add Gen2 v1.1
- MIPI CSI-2 CPHY init
-To: david@ixit.cz, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Luca Weiss <luca.weiss@fairphone.com>, Petr Hodina <phodina@protonmail.com>,
- Casey Connolly <casey.connolly@linaro.org>, "Dr. Git" <drgitx@gmail.com>
-Cc: Joel Selvaraj <foss@joelselvaraj.com>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org
-References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
- <20251109-qcom-cphy-v1-1-165f7e79b0e1@ixit.cz>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20251109-qcom-cphy-v1-1-165f7e79b0e1@ixit.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251106185938.6419-1-rosenp@gmail.com> <20251106185938.6419-3-rosenp@gmail.com>
+ <aQ2csK4TtTOFmyLj@yilunxu-OptiPlex-7050> <CAKxU2N8QHoQxb0ddUtMTtK6psL4gPPGSTwTf5X=7py22GXxkrw@mail.gmail.com>
+ <aQ7As9KVG+5Dn5FB@yilunxu-OptiPlex-7050>
+In-Reply-To: <aQ7As9KVG+5Dn5FB@yilunxu-OptiPlex-7050>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 10 Nov 2025 12:24:08 -0800
+X-Gm-Features: AWmQ_blHnwZ4jZXTsCH8nSi2m1cRiASy-p1toImjcRejScKOeL7cr9yZYRwJRcY
+Message-ID: <CAKxU2N_ssbQyGAHuRma8UqxesoGrVsTrPNY=hjfCZXKx__vj=A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fpga: stratix10-soc: add COMPILE_TEST support
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: linux-fpga@vger.kernel.org, Moritz Fischer <mdf@kernel.org>, 
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/9/25 11:39, David Heidelberg via B4 Relay wrote:
-> From: Casey Connolly <casey.connolly@linaro.org>
-> 
-> Add a PHY configuration sequence for the sdm845 which uses a Qualcomm
-> Gen 2 version 1.1 CSI-2 PHY.
-> 
-> The PHY can be configured as two phase or three phase in C-PHY or D-PHY
-> mode. This configuration supports three-phase C-PHY mode.
-> 
-> Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
->   .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     | 64 ++++++++++++++++++++++
->   1 file changed, 64 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> index 619abbf607813..f28c32d1a4ec5 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> @@ -144,6 +144,7 @@ csiphy_lane_regs lane_regs_sa8775p[] = {
->   };
->   
->   /* GEN2 1.0 2PH */
-> +/* 5 entries: clock + 4 lanes */
->   static const struct
->   csiphy_lane_regs lane_regs_sdm845[] = {
->   	{0x0004, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
-> @@ -218,6 +219,69 @@ csiphy_lane_regs lane_regs_sdm845[] = {
->   	{0x0664, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
->   };
->   
-> +/* GEN2 1.0 3PH */
-> +/* 3 entries: 3 lanes (C-PHY) */
-> +static const struct
-> +csiphy_lane_regs lane_regs_sdm845_3ph[] = {
-> +	{0x015C, 0x43, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0168, 0xA0, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x016C, 0x25, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0104, 0x06, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x010C, 0x12, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
-> +	{0x0108, 0x00, 0x00, CSIPHY_SETTLE_CNT_HIGHER_BYTE},
-> +	{0x0114, 0x20, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0150, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0118, 0x3e, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x011C, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0120, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0124, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0128, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x012C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0144, 0x12, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0160, 0x02, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x01CC, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0164, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x01DC, 0x51, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x035C, 0x43, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0368, 0xA0, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x036C, 0x25, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0304, 0x06, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x030C, 0x12, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
-> +	{0x0308, 0x00, 0x00, CSIPHY_SETTLE_CNT_HIGHER_BYTE},
-> +	{0x0314, 0x20, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0350, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0318, 0x3e, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x031C, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0320, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0324, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0328, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x032C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0344, 0x12, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0360, 0x02, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x03CC, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0364, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x03DC, 0x51, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x055C, 0x43, 0x00, CSIPHY_DEFAULT_PARAMS},
+On Fri, Nov 7, 2025 at 8:16=E2=80=AFPM Xu Yilun <yilun.xu@linux.intel.com> =
+wrote:
+>
+> On Fri, Nov 07, 2025 at 11:28:03AM -0800, Rosen Penev wrote:
+> > On Thu, Nov 6, 2025 at 11:30=E2=80=AFPM Xu Yilun <yilun.xu@linux.intel.=
+com> wrote:
+> > >
+> > > On Thu, Nov 06, 2025 at 10:59:38AM -0800, Rosen Penev wrote:
+> > > > Allow the buildbots to find compilation issues.
+> > > >
+> > > > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > > > ---
+> > > >  drivers/fpga/Kconfig | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> > > > index 311313f3b282..f2e2776acdd5 100644
+> > > > --- a/drivers/fpga/Kconfig
+> > > > +++ b/drivers/fpga/Kconfig
+> > > > @@ -60,7 +60,7 @@ config FPGA_MGR_ZYNQ_FPGA
+> > > >
+> > > >  config FPGA_MGR_STRATIX10_SOC
+> > > >       tristate "Intel Stratix10 SoC FPGA Manager"
+> > > > -     depends on (ARCH_INTEL_SOCFPGA && INTEL_STRATIX10_SERVICE)
+> > > > +     depends on (ARCH_INTEL_SOCFPGA && INTEL_STRATIX10_SERVICE) ||=
+ COMPILE_TEST
+> > >
+> > > I don't think it works without INTEL_STRATIX10_SERVICE, maybe:
+> > >
+> > >         depends on ARCH_INTEL_SOCFPGA || COMPILE_TEST
+> > >         depends on INTEL_STRATIX10_SERVICE
+> > >
+> > > But INTEL_STRATIX10_SERVICE depends on HAVE_ARM_SMCCC, and they all
+> > > require arch configurations...
+> > Yeah I don't think INTEL_STRATIX10_SERVICE is needed for COMPILE_TEST.
+>
+> Have you actually passed compilation without INTEL_STRATIX10_SERVICE?
+> I can't image how it works without stratix10_svc_xx kAPI definitions.
+Based on kernel test bot, It seems INTEL_STRATIX10_SERVICE needs
+COMPILE_TEST too.
 
-You may find it be more structured, if the array is split between
-0x01zz, 0x03zz and 0x05zz blocks by new lines, each of those three
-blocks is a configuration of one of three lanes in total.
+It also needs fixing. On 32-bit, I get this output:
 
-> +	{0x0568, 0xA0, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x056C, 0x25, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0504, 0x06, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x050C, 0x12, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
-> +	{0x0508, 0x00, 0x00, CSIPHY_SETTLE_CNT_HIGHER_BYTE},
-> +	{0x0514, 0x20, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0550, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0518, 0x3e, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x051C, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0520, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0524, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0528, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x052C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0544, 0x12, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0560, 0x02, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x05CC, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x0564, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +	{0x05DC, 0x51, 0x00, CSIPHY_DEFAULT_PARAMS},
-> +};
-> +
->   /* GEN2 1.1 2PH */
->   static const struct
->   csiphy_lane_regs lane_regs_sc8280xp[] = {
-> 
-
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-
--- 
-Best wishes,
-Vladimir
+drivers/firmware/stratix10-rsu.c: In function =E2=80=98rsu_get_spt_callback=
+=E2=80=99:
+drivers/firmware/stratix10-rsu.c:285:28: error: left shift count >=3D
+width of type [-Werror=3Dshift-count-overflow]
+  285 |         priv->spt0_address <<=3D 32;
+      |                            ^~~
+drivers/firmware/stratix10-rsu.c:289:28: error: left shift count >=3D
+width of type [-Werror=3Dshift-count-overflow]
+  289 |         priv->spt1_address <<=3D 32;
+      |                            ^~~
+In file included from <command-line>:
+drivers/firmware/stratix10-rsu.c: In function =E2=80=98rsu_status_callback=
+=E2=80=99:
+././include/linux/compiler_types.h:597:45: error: call to
+=E2=80=98__compiletime_assert_377=E2=80=99 declared with attribute error: F=
+IELD_GET:
+type of reg too small for mask
+  597 |         _compiletime_assert(condition, msg,
+__compiletime_assert_, __COUNTER__)
+      |                                             ^
+././include/linux/compiler_types.h:578:25: note: in definition of
+macro =E2=80=98__compiletime_assert=E2=80=99
+  578 |                         prefix ## suffix();
+         \
+      |                         ^~~~~~
+././include/linux/compiler_types.h:597:9: note: in expansion of macro
+=E2=80=98_compiletime_assert=E2=80=99
+  597 |         _compiletime_assert(condition, msg,
+__compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+./include/linux/build_bug.h:39:37: note: in expansion of macro
+=E2=80=98compiletime_assert=E2=80=99
+   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg=
+)
+      |                                     ^~~~~~~~~~~~~~~~~~
+./include/linux/bitfield.h:72:17: note: in expansion of macro =E2=80=98BUIL=
+D_BUG_ON_MSG=E2=80=99
+   72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask,
+_mask) >     \
+      |                 ^~~~~~~~~~~~~~~~
+./include/linux/bitfield.h:155:17: note: in expansion of macro
+=E2=80=98__BF_FIELD_CHECK=E2=80=99
+  155 |                 __BF_FIELD_CHECK(_mask, _reg, 0U, "FIELD_GET:
+");       \
+      |                 ^~~~~~~~~~~~~~~~
+drivers/firmware/stratix10-rsu.c:122:40: note: in expansion of macro =E2=80=
+=98FIELD_GET=E2=80=99
+  122 |                 priv->status.version =3D FIELD_GET(RSU_VERSION_MASK=
+,
+      |                                        ^~~~~~~~~
+>
+> > >
+> > > >       help
+> > > >         FPGA manager driver support for the Intel Stratix10 SoC.
+> > > >
+> > > > --
+> > > > 2.51.2
+> > > >
+> > > >
 
