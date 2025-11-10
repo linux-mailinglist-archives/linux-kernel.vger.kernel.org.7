@@ -1,139 +1,146 @@
-Return-Path: <linux-kernel+bounces-892956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 607ADC46342
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:20:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F1AC46357
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:22:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F7763BAAAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:19:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4B31888CA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CE0309DC0;
-	Mon, 10 Nov 2025 11:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEC53093D8;
+	Mon, 10 Nov 2025 11:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OXq52Cb7"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKMX1fu8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA0D306B11
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6544301498;
+	Mon, 10 Nov 2025 11:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762773535; cv=none; b=vGjEQ2nqRgEVKJb+snmUwgaUn1E2YssBC3FJFRRQXeOMaAdAmslGppeLF2nwo0UVG5MM6jnh3xkSLu4WEPs+ym2YbjGqOibuGTfrl5WMwmXhrNihDWwviskxjrdBr9NFYWcJcCdu3JoFy19oVqGaiLePds0/sgUsZVLeaket8Nw=
+	t=1762773734; cv=none; b=aDNPOdqFpvMfBqY3sIpvf5uF3qQjyJ9y/Hy1n1+57qH+GFbwCtkHLmX9Ev1oA+QSSf94JqLU32RpuJbw4PozzLHTe2csJhvNKIhJH0lAygnUA+Y13/kEPxU8hl6+/P4lhJfAZeGI45Hk+FoCfK7iME+iVcWUOhDQ6GqdzuA7xxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762773535; c=relaxed/simple;
-	bh=CtcnWX3Saefaqoy8rC2bEN8d8RUkMd9EngZJbMCIyr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OYePhIesUjbnXree2jAVIdZQZPzKB8RVbbwcqKlu6wdA7F3wpKzh4RQrUttbIbIX3dBY9D0OvxVMkm0S6OwK3l9hU+gyRkDTPfsSyDGp+jGekZaXntydeFYsBYXGC5BHKfvr+y2QQi+UMCwhPzVqm6Z+/qNK0NAAbaPnhKJmK8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OXq52Cb7; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640b0639dabso5008136a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:18:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762773532; x=1763378332; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fWujc1t71h98OiupS/0FkoKIpGifqdnl63DSESHd7Mo=;
-        b=OXq52Cb7SWnSIzwdEYTgNtqfRqxu97eff2EFTTPGm8+hM2bN8cy3tn+3nUa4Box/Bq
-         nJLUQcXknP7RQN1rBoDAlnHGIe8N4PJVpecddcivug/2wLxBK0gPdEfkXr9a7/RfHmvR
-         2+dSTbmPEIgpAaM34ZWnAdNmvhWV7XDVV0IHQ3fsJX/Nagel7DU8qoPoL4jCgP6/esCw
-         eQc1rHCbW5ahjIyAP1eEMLMbGNyMCzA9n8ED+yEmbtRGNWH8Z4uyMvpOMt/GYNBScSCU
-         Ds0RYcu0BlqzvYVBph3amLc/uUdWT6QoAFWWamlplwgzh+RfOX122UmDX8HpMfDHH3YU
-         4STQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762773532; x=1763378332;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fWujc1t71h98OiupS/0FkoKIpGifqdnl63DSESHd7Mo=;
-        b=Ny4gBd0kOa37Hyi6VYNJsyFRT8UMfU9vg0GmaukkHqMVkqlX2TjT/IR8QNeMT6/g4G
-         Vn/SrDe3nD7QDR2LYYaH13GRVzQieLBjKyZ1ZqF7GR8D+gM8cD2eW6iSR3SOuXnEhZ0j
-         1aU+MIxOzJKcRy8I1dSmqV68SHRJZU6LC8QHWMyKTjLdGlSdJic7GvfQAdsIrts5lwnr
-         bhGaZDe8IQtVseg3c9xhHXQ4JLo05fMztDvK4K0Zh4HvycFDX8ZqfdvmGVuF+xXAUa9R
-         V2+zUw2cHkgzfLXENDp9rtgdqneY5xpRybUmx8DmXP3AhBgD2qArBO8P6cIrI/83zVUD
-         QYJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGZUf8g878QMBHD2GmancNy17GPlhpbFl8ktDgJVLiDOC6CgbD4na2mO7kfWedSTYRWgq9c3wL2EhiiAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWQuSFlTCpLV+DLD/c3PEs9z9nQyYK/aX5CIDfBqRn6xFwENHZ
-	1lFcRK1sntyIqqHsrMX4myOOl6dXYB835YX5buLpyt8GmHeywa7ZS+uJRrW/1d+c7JZwfPukdfv
-	7m+2D
-X-Gm-Gg: ASbGncuRIDRlpst5lst2XpbyexQWQNWCQ07cTn8iSZT31PMRDTsh8BETKxUZ5rhzi2A
-	acBlI1WjqFBmkq48X5B5pelD6QnAglzR1sB21+KAgBMDAQjRJs6wTXNTG1s1ee3K/3GfBFUGFN0
-	ld2dOIhd2qMjk9rnJoUAGMj9VTtT2Iy/dUSezlaUvp0Pj/Ky1yGBjbLW7k+8QT3ky6RpmWHTwEj
-	EgiXFmj3a90l2Yuo8gx9VoA0PZBEGgIObYjDWMDHy9Si9wCv6UMzSIdWlvOKh259Xhsy4JZcS54
-	PpmFCt9hfakohkQ8F1X6BdXWWL6L9DUX/qUqa9m1AHOUCJJ+7bkOuloI8ZU9v1dny2ml5LULOAT
-	hIwgNysYJnQZ+Z+HGmau8GVlLF68RoM56ilt088QIQsEsvIyWxC1aaI3yZ+PKYYyYwyPgntysgZ
-	k76E4ONHBQ9FKuC4UbILjhw1p56pxJm5ONslQqv+7JOonw4Q==
-X-Google-Smtp-Source: AGHT+IGKZ4MeSZHa1um6peBrNmfVOTXndNtZud9k37T7qMj8M9oQCOFbXIJKx4r88XPM9ZK0mYZCng==
-X-Received: by 2002:a05:6402:440a:b0:640:bb31:cbf4 with SMTP id 4fb4d7f45d1cf-6415dc0dcc6mr6197325a12.11.1762773532050;
-        Mon, 10 Nov 2025 03:18:52 -0800 (PST)
-Received: from localhost (host-79-49-235-115.retail.telecomitalia.it. [79.49.235.115])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f86ea13sm11070391a12.37.2025.11.10.03.18.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 03:18:51 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mbrugger@suse.com,
-	guillaume.gardet@arm.com,
-	tiwai@suse.com,
-	Lizhi Hou <lizhi.hou@amd.com>,
-	Rob Herring <robh@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>
-Subject: [PATCH v4] PCI: of: Drop error message on missing of_root node
-Date: Mon, 10 Nov 2025 12:21:10 +0100
-Message-ID: <20251110112110.10620-1-andrea.porta@suse.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762773734; c=relaxed/simple;
+	bh=Gawe2MofqR4MSLrVw1BVcmEmYjo26D7m9S3MjUbm7nM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tGjZktuHVasG/vknpRW613U1tUtnAWc2y9Vcgk05tC3l5ob28xvxP07lDwqE8G8XMvMVyVOJmcTt7rtPWLfDZZU/aeTdEfyZfTju7v8uAsIrnI82/CbZ74ZJzouF9DpVF6v+60ji6KTKHXbNrzHNa9NKPfDjliaCBZPt47lB0oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKMX1fu8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30967C19421;
+	Mon, 10 Nov 2025 11:22:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762773734;
+	bh=Gawe2MofqR4MSLrVw1BVcmEmYjo26D7m9S3MjUbm7nM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kKMX1fu8bxZH9HG8mbbLZBgcBWKSAyi9MC4e/jINfdo035xBYqTy24n48Fu+wKKPD
+	 KYYwSwN5iS1oSKTEg10RAQlg1C+IByLrPdNW0NdFLV9CfSQa7tcG+AuOQIBfMuEi52
+	 DHn78hNBLdRapC7iTXH4JwO//ziw0Q5yi/pFAIPn6Lc1MukrZDo6FWy/pbEyd62vBS
+	 kLRdViq7n+A6FiOl5aWrWfK3OGjMxOWSDicHv2mc7W2aIWHtVuMgzKjkULUNUccHD/
+	 ALBYAzbBx46wKOS7rHfRFsgnIcI2htpq9aueqRNOwxeFe5YMKeIqi3xf2GgHzGQnLM
+	 A5vxrk/QrodpQ==
+Message-ID: <38e8e068-d06b-41f0-9cae-5dfdf0fcce6f@kernel.org>
+Date: Mon, 10 Nov 2025 12:22:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW1BBVENIIDIvM10gUmVzZXQ6IGNpeDogYWRkIHN1?=
+ =?UTF-8?Q?pport_for_cix_sky1_resets?=
+To: Gary Yang <gary.yang@cixtech.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ cix-kernel-upstream <cix-kernel-upstream@cixtech.com>
+References: <20251107033819.587712-1-gary.yang@cixtech.com>
+ <20251107033819.587712-3-gary.yang@cixtech.com>
+ <69efdb9a-c03a-42f4-a78e-18c8a2b29322@kernel.org>
+ <PUZPR06MB58875805D441AF3213189979EFCEA@PUZPR06MB5887.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <PUZPR06MB58875805D441AF3213189979EFCEA@PUZPR06MB5887.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When CONFIG_PCI_DYNAMIC_OF_NODES is enabled, an error message
-is generated if no 'of_root' node is defined.
+On 10/11/2025 12:18, Gary Yang wrote:
+>>
+>>> +static struct platform_driver sky1_reset_driver = {
+>>> +     .probe  = sky1_reset_probe,
+>>> +     .driver = {
+>>> +             .name           = KBUILD_MODNAME,
+>>> +             .of_match_table = sky1_reset_dt_ids,
+>>> +     },
+>>> +};
+>>> +static int __init reset_sky1_init(void) {
+>>> +     return platform_driver_register(&sky1_reset_driver);
+>>> +}
+>>> +subsys_initcall(reset_sky1_init);
+>>
+>> This should be rather just module_platform_driver. Does not look like part of
+>> subsystem, but looks like regular driver.
+>>
+> 
+> Some modules depend reset module. When boot system, these modules can't probe before register reset.
 
-On DT-based systems, this cannot happen as a root DT node is
-always present.
-On ACPI-based systems that declare an empty root DT node (e.g.
-x86 with CONFIG_OF_EARLY_FLATTREE=y), this also won't happen.
-On platforms where ACPI is mutually exclusive to DT (e.g. ARM)
-the error will be caught (and possibly shown) by drivers that
-rely on the root node.
+Which modules? You statement is so imprecise that my only answer is:
+sorry, deferred probe is old thing now and everyone should use it.
 
-Drop the error message altogether.
+> To make these modules probe earlier, we use subsys_initcall() to instead of module_platform_driver(). Do you
+> have better suggestions?
 
-Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
----
-CHANGES in V4:
-- dropped {} from the single line conditional body
+Look how deferred probe works.
 
-V3: https://lore.kernel.org/all/20251110105415.9584-1-andrea.porta@suse.com/
----
- drivers/pci/of.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index 3579265f1198..c222944eec40 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -774,10 +774,8 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
- 	}
- 
- 	/* Check if there is a DT root node to attach the created node */
--	if (!of_root) {
--		pr_err("of_root node is NULL, cannot create PCI host bridge node\n");
-+	if (!of_root)
- 		return;
--	}
- 
- 	name = kasprintf(GFP_KERNEL, "pci@%x,%x", pci_domain_nr(bridge->bus),
- 			 bridge->bus->number);
--- 
-2.35.3
-
+Best regards,
+Krzysztof
 
