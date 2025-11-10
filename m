@@ -1,47 +1,51 @@
-Return-Path: <linux-kernel+bounces-893577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7D9C47C9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:09:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71995C47E9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4ED384F8ACC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:55:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BA413B2E31
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2A9274B29;
-	Mon, 10 Nov 2025 15:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12642765E2;
+	Mon, 10 Nov 2025 15:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KubTYskI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="uukvdMjr"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C34257841;
-	Mon, 10 Nov 2025 15:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84016274B44
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790046; cv=none; b=U0OSk7u9gSK1AINI+ZaEchj5RNwCjlbxgqooWTHD+/S2zOU5Q6wlXVB9AjW89WXljAMHxXYl06FCBl4Jpt4mt1eUoXQHMrUPX+dSYwEVBi9ndYAGPn043/m+keD2bP5M6L/b0uv/Zq4J2LDE4MmnC3UdcEc4/lnyN271wcuBPhY=
+	t=1762790051; cv=none; b=b1bzj1v7iE0Av3C3Vnmt+PcybZHCOSwOFP0SxqWP79m8bI/UAKU37hGTj1g6md2ZsH+ow+YBBguEM2Ek39Hp4RP9pQyyRKbRYH5TiZ63EZSEH/zB0xLt+myh7I+P+ke+hapmLVown64FPxjgDX+CrWKOvR4bofv3gxg/+pOoOIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790046; c=relaxed/simple;
-	bh=QnnErlrJTBfn1cAyTBylGg5Xqlm3o3Uti35tHTccASM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nQ9eh/cm28ZcIpCDujFxtCzqVhhMiHSnNEdceQeenkxvA7c/4E38Ux2BZm45SPPTUjyaZSRmNVlKdm/37cwcW5iUMoXeEQ1/nTZFXu/KNFJiw7RdGU+3HW0XvqaG3uPYYzUpyvYTgU23A9HYtGTBpAa4jjlqsLTJzXtQmR4jkx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KubTYskI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 378BCC116D0;
-	Mon, 10 Nov 2025 15:54:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762790046;
-	bh=QnnErlrJTBfn1cAyTBylGg5Xqlm3o3Uti35tHTccASM=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KubTYskISSxS4+9khnrtO7MktZcAaIdEQew19DlwkkmIc9xJ7g7jdpDKPNWNEIM6J
-	 +kS1hfZC2sfQ48JDgAdkI7/KhCFs5fSs9DjB11BAnF5T3rspqgZTgcV5SZtIEGnAAJ
-	 o10fcc6ANVMLB4HQW+dwc3JXm5h+/gInjjXst6JC3g8P7lGKk3sDlpb0b5yNAgmTR7
-	 hUx16Lr6JKSiiEb5PS8GzWnzHHG4sT94eBQCgAlw/fGZzGuFMFrgw+AUFez1/9PWC/
-	 6Z+EqYLL1gLEyZENxd62lOkJ+X0SQnrp6zjCX9cQKDSoaI/WOyzcrwZmPNqwsb2OlA
-	 54GGpqRtAaWjg==
-Message-ID: <2b53a2d1-3e86-4558-ba7f-5ce3b1368f0f@kernel.org>
-Date: Mon, 10 Nov 2025 16:54:01 +0100
+	s=arc-20240116; t=1762790051; c=relaxed/simple;
+	bh=aBlBadCDo4jvS2t/xfKllS/OSshvWCm5WkY+vvGthz8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VXsOPVB1gofwa3JK/UWeY2IZp1CSgQJIy+g6XPf1E3thQC83RAyszAGDdQPfA/olUH0h/ZUZ17fz+LTlTdp2odPaDm/9b4K1i/C3WhXn5s8VT21YymE9Rhw5/ECX/f7MQWmtjGa7Tnxhj9F2uoMtzAjwAoTvjfZmEC0yDO0fGYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=uukvdMjr; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id zXuXQP7jDdVtO64Z; Mon, 10 Nov 2025 10:54:08 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=7DIf7QZ4vnXO7OepTCyx9SQG+Ol4HqEKsoV4eUbPbq4=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=uukvdMjrHv2AlOI1AZRN
+	I7nGyMAlWcFozYwmIgejAhj/3ytS1DAArI7fz4vfQEou+b1AEZGQO8D++PY2YBbUGSU2wcQuPXhaX
+	8o1bgosRPfpQSznaSMd0oCe0WkRZZxSLoJi3Xp7LYdncr1svkokBt4TN2gyyw3yqlxOj8c7jdQ=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14272430; Mon, 10 Nov 2025 10:54:07 -0500
+Message-ID: <22f8a0b6-0e24-474d-9f28-9d65c9b7af03@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 10 Nov 2025 10:54:07 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,86 +53,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Daniel Gomez <da.gomez@samsung.com>, Luis Chamberlain
- <mcgrof@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>,
- Sami Tolvanen <samitolvanen@google.com>, Petr Pavlu <petr.pavlu@suse.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Michal Wilczynski <m.wilczynski@samsung.com>
-References: <20251104104827.1de36ea0@canb.auug.org.au>
- <20251104105415.68bfb090@canb.auug.org.au>
- <f374sh5rsbxvboowft6xpiimxlzw264i32txgiok53on2vxxu7@lpetaklaofzb>
- <ad9c5b79-8a33-4183-a048-48ba516e6aaf@kernel.org>
- <26c7zdxc4nv3wx25xferlggtjipigtd3tc6fk554g4tmqsuvmr@e6cll772nz2r>
+Subject: [PATCH v3 06/16] scsi: qla2xxx: improve debug output for term
+ exchange
 Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <26c7zdxc4nv3wx25xferlggtjipigtd3tc6fk554g4tmqsuvmr@e6cll772nz2r>
+X-ASG-Orig-Subj: [PATCH v3 06/16] scsi: qla2xxx: improve debug output for term
+ exchange
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1762790048
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 4064
+X-ASG-Debug-ID: 1762790047-1cf439139110cd20001-xx1T2L
+
+(target mode)
+
+Print better debug info when terminating a command, and print the
+response status from the hardware.
+
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
+
+v2 -> v3: no changes
+
+v1 -> v2: no changes
+
+ drivers/scsi/qla2xxx/qla_dbg.c    |  2 +-
+ drivers/scsi/qla2xxx/qla_target.c | 40 +++++++++++++++++++++++++++----
+ 2 files changed, 36 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_dbg.c b/drivers/scsi/qla2xxx/qla_dbg.c
+index 5136549005e7..ff4124eccc9c 100644
+--- a/drivers/scsi/qla2xxx/qla_dbg.c
++++ b/drivers/scsi/qla2xxx/qla_dbg.c
+@@ -54,7 +54,7 @@
+  * | Misc                         |       0xd303       | 0xd031-0xd0ff	|
+  * |                              |                    | 0xd101-0xd1fe	|
+  * |                              |                    | 0xd214-0xd2fe	|
+- * | Target Mode		  |	  0xe081       |		|
++ * | Target Mode		  |	  0xe084       |		|
+  * | Target Mode Management	  |	  0xf09b       | 0xf002		|
+  * |                              |                    | 0xf046-0xf049  |
+  * | Target Mode Task Management  |	  0x1000d      |		|
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index df5c9aac5617..72c74f8f5375 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -1909,6 +1909,10 @@ static void qlt_24xx_retry_term_exchange(struct scsi_qla_host *vha,
+ 	 * ABTS response. So, in it ID fields are reversed.
+ 	 */
+ 
++	ql_dbg(ql_dbg_tgt_mgt, vha, 0xe082,
++	    "qla_target(%d): tag %u: Sending TERM EXCH CTIO for ABTS\n",
++	    vha->vp_idx, le32_to_cpu(entry->exchange_addr_to_abort));
++
+ 	ctio->entry_type = CTIO_TYPE7;
+ 	ctio->entry_count = 1;
+ 	ctio->nport_handle = entry->nport_handle;
+@@ -3620,16 +3624,24 @@ static int __qlt_send_term_exchange(struct qla_qpair *qpair,
+ {
+ 	struct scsi_qla_host *vha = qpair->vha;
+ 	struct ctio7_to_24xx *ctio24;
+-	struct qla_hw_data *ha = vha->hw;
+ 	request_t *pkt;
+ 	int ret = 0;
+ 	uint16_t temp;
+ 
+-	ql_dbg(ql_dbg_tgt, vha, 0xe009, "Sending TERM EXCH CTIO (ha=%p)\n", ha);
+-
+ 	if (cmd)
+ 		vha = cmd->vha;
+ 
++	if (cmd) {
++		ql_dbg(ql_dbg_tgt_mgt, vha, 0xe009,
++		    "qla_target(%d): tag %lld: Sending TERM EXCH CTIO state %d cmd_sent_to_fw %u\n",
++		    vha->vp_idx, cmd->se_cmd.tag, cmd->state,
++		    cmd->cmd_sent_to_fw);
++	} else {
++		ql_dbg(ql_dbg_tgt_mgt, vha, 0xe009,
++		    "qla_target(%d): tag %u: Sending TERM EXCH CTIO (no cmd)\n",
++		    vha->vp_idx, le32_to_cpu(atio->u.isp24.exchange_addr));
++	}
++
+ 	pkt = (request_t *)qla2x00_alloc_iocbs_ready(qpair, NULL);
+ 	if (pkt == NULL) {
+ 		ql_dbg(ql_dbg_tgt, vha, 0xe050,
+@@ -3920,6 +3932,7 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 	struct se_cmd *se_cmd;
+ 	struct qla_tgt_cmd *cmd;
+ 	struct qla_qpair *qpair = rsp->qpair;
++	uint16_t ctio_flags;
+ 
+ 	if (handle & CTIO_INTERMEDIATE_HANDLE_MARK) {
+ 		/* That could happen only in case of an error/reset/abort */
+@@ -3931,11 +3944,28 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 		return;
+ 	}
+ 
++	ctio_flags = le16_to_cpu(ctio->flags);
++
+ 	cmd = qlt_ctio_to_cmd(vha, rsp, handle, ctio);
+-	if (cmd == NULL)
++	if (unlikely(cmd == NULL)) {
++		if ((handle & ~QLA_TGT_HANDLE_MASK) == QLA_TGT_SKIP_HANDLE &&
++		    (ctio_flags & 0xe1ff) == (CTIO7_FLAGS_STATUS_MODE_1 |
++		     CTIO7_FLAGS_TERMINATE)) {
++			u32 tag = le32_to_cpu(ctio->exchange_address);
++
++			if (status == CTIO_SUCCESS)
++				ql_dbg(ql_dbg_tgt_mgt, vha, 0xe083,
++				    "qla_target(%d): tag %u: term exchange successful\n",
++				    vha->vp_idx, tag);
++			else
++				ql_dbg(ql_dbg_tgt_mgt, vha, 0xe084,
++				    "qla_target(%d): tag %u: term exchange failed; status = 0x%x\n",
++				    vha->vp_idx, tag, status);
++		}
+ 		return;
++	}
+ 
+-	if ((le16_to_cpu(ctio->flags) & CTIO7_FLAGS_DATA_OUT) && cmd->sess)
++	if ((ctio_flags & CTIO7_FLAGS_DATA_OUT) && cmd->sess)
+ 		qlt_chk_edif_rx_sa_delete_pending(vha, cmd->sess, ctio);
+ 
+ 	se_cmd = &cmd->se_cmd;
+-- 
+2.43.0
 
 
-
-On 10/11/2025 16.42, Uwe Kleine-König wrote:
-> Hello Daniel,
-> 
-> On Mon, Nov 10, 2025 at 02:59:15PM +0100, Daniel Gomez wrote:
->> On 07/11/2025 17.44, Uwe Kleine-König wrote:
->>> Hi Daniel,
->>>
->>> On Tue, Nov 04, 2025 at 10:54:15AM +1100, Stephen Rothwell wrote:
->>>> [adding the modules tree contacts]
->>>>
->>>> On Tue, 4 Nov 2025 10:48:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>>>
->>>>> Today's linux-next merge of the pwm tree got a conflict in:
->>>>>
->>>>>   rust/macros/module.rs
->>>>>
->>>>> between commits:
->>>>>
->>>>>   3809d7a89fe5 ("rust: module: use a reference in macros::module::module")
->>>>>   0b24f9740f26 ("rust: module: update the module macro with module parameter support")
->>>>>
->>>>> from the modules tree and commit:
->>>>>
->>>>>   927687809649 ("rust: macros: Add support for 'imports_ns' to module!")
->>>
->>> I reshuffled my tree such that the import_ns commit sits directly on top
->>> of 6.18-rc1. The new commit-id is 739ad9be61e5.
->>>
->>>>> from the pwm tree.
->>>>> [...]
->>>>>  -    if let Some(imports) = info.imports_ns {
->>>>> ++    if let Some(imports) = &info.imports_ns {
->>>>> +         for ns in imports {
->>>>> +             modinfo.emit("import_ns", &ns);
->>>>> +         }
->>>>> +     }
->>>
->>> Given that the conflict resolution is non-trivial and we already know
->>> what to do, I suggest you merge my commit into the modules tree.
->>
->> Do you mean creating a separate branch that includes the conflict resolution, to
->> be used as an example when sending the PR?
-> 
-> If I were the module maintainer I'd pull
-> 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git rust-module-namespace
-> 
-> into my tree and include that into the v6.19-rc1 pull request. That way
-> the merge conflict doesn't happen at all for Linus.
-
-
-That's not my understanding on how to deal with conflicts:
-
-https://docs.kernel.org/maintainer/rebasing-and-merging.html#merging-from-sibling-or-upstream-trees
-
-> 
-> Best regards
-> Uwe
 
