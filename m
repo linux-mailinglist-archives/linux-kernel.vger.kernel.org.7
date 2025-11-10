@@ -1,58 +1,66 @@
-Return-Path: <linux-kernel+bounces-892655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C69EC458C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:14:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2937CC458D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:14:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05ABB4E9A38
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:13:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D28A9347917
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B552FE56C;
-	Mon, 10 Nov 2025 09:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694812FE592;
+	Mon, 10 Nov 2025 09:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QoC5IbCY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScSKpRKZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A712620D2
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EF62FE045;
+	Mon, 10 Nov 2025 09:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766018; cv=none; b=A6Ap/dXySHKBWfx6amItzgSpVAAQGNaMxB8tyjL+X/yzh9JVbhNk7MSHyidCHa6PSXDuPO77Gibsw0KyCTBH6xFlVHTe8rjXAH3p4wC2MgXD86UHoGCvDtoJn5799QssRPMj+1NCa0qQhbM8pDTvQZ1Fg/aYPr1EDpqZcLWGn7U=
+	t=1762766057; cv=none; b=KZaP1dmT6uFJpaSvXVyVqjJvEpbt22zsVtDPN+iFg5nu+jmCQrRk+Rmg0ifEdMqWkG5WqD4gUN1le+esJGPE9896SsRBsSrcVkYtbYmPHtWKIBAltmLvmaD+jr2UdSBxCrVsRVNmnVM+1NNWbncrRKcZoTm2cvkfdQDTGajVwv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766018; c=relaxed/simple;
-	bh=85HrPyg/hTWliRANeFpxubEYlHWfEwl2bNLk2ditCLU=;
+	s=arc-20240116; t=1762766057; c=relaxed/simple;
+	bh=TSzf9gtEscKmLMkFqIrtQq5zPwAvv690aIMF1B0z9Yw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sHwcE+u7VT0cceS1snNmKitzA0C4uRdBccANjVuWfGVUiZqj+64/Q+kS+CafEUlr9eK5t7CsKeZN+qnbzGQ0x18jXUsVrG7TbCnYM7RQ4TDeyUGgPqhWNYTWPP+J/FkID3EH4MTy+7a7NUE9d4aI3MauMnm4AUCS2+N/JHYbI/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QoC5IbCY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C99CC19421;
-	Mon, 10 Nov 2025 09:13:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oMuId7KsydyB9ZIX6rvXaZRLDKomwk1YiAWwFEh4NqgR+W/bmpY6ZGhA6/7ZTH+sqEO8UFpWMGgWKfVFLX/kED5qj7FYlRx6d1k0ynGDhD4WmrD/Shp6cDVOH50GkD2QEwlVyTDtS6cgr+7rzNSBXpWe9S6DPyvcQxxQNF85oPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ScSKpRKZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99764C2BC9E;
+	Mon, 10 Nov 2025 09:14:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762766018;
-	bh=85HrPyg/hTWliRANeFpxubEYlHWfEwl2bNLk2ditCLU=;
+	s=k20201202; t=1762766057;
+	bh=TSzf9gtEscKmLMkFqIrtQq5zPwAvv690aIMF1B0z9Yw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QoC5IbCYiqx9zytH3QW5WKyMIqXWlcHckaZ0Xuq+YECw1Qz9c3LnmAr6hSmJsO2cK
-	 QlM2kIPpb35472SeXU+mmBVjEsszbopj/t4U4ipZ/9gQnlOGenDM+x86NEO4KcSeLP
-	 /O/EZ614i7QmV7ZbXPwP6W+hWov9l12N+26Z8MEz/e00Nq+vkCgcY3iNQIRQte1AHz
-	 rwjlUX+IEq0JFbm+wUlxBea2CzSzWFZULN2rHApnv+0xEmp8PMYoXUps0VilGXvlIG
-	 aRAnsGuq+kUhhOkzMD+x3J73kvOG9e9OOMwtXInt3VhAzrnl63kwsX13KI/XeokLeq
-	 mObwW4QD/oPLw==
+	b=ScSKpRKZ4EJjOhqwq2nysSqIJoXUNjpfDf/fZsvKqpkhN4oX0/RnIteeA9bNqxvIC
+	 6KAvY5WlTrSMaCzHkVWkGQJjHdw4kifrIvcNRHSzwHNsCuZGzHqC40BlV2JPraJlbH
+	 qSBJCiN4runUQXDz0tCOxQ+mwRQtKLB09y4K3nlbDjUU4XdbWMacqsFXnvSw11+1/d
+	 pdTVVA5MxTR1oJIQlzIfEKM2YgG2dDT9TWOgAps/3H5A4eWfzIYD/OQta1rOl3qAZc
+	 7HnLU6Wi3TsUncoEgjEXTRCvjz+iQZgbcdlHTlbR49othCyWVi1hdXoh782+AIYIgD
+	 zJ0mNvctDdcFQ==
 Received: from johan by xi.lan with local (Exim 4.98.2)
 	(envelope-from <johan@kernel.org>)
-	id 1vINxy-000000008FO-0TfW;
-	Mon, 10 Nov 2025 10:13:38 +0100
-Date: Mon, 10 Nov 2025 10:13:38 +0100
+	id 1vINyb-000000008G2-1t5j;
+	Mon, 10 Nov 2025 10:14:17 +0100
+Date: Mon, 10 Nov 2025 10:14:17 +0100
 From: Johan Hovold <johan@kernel.org>
-To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Subject: Re: [PATCH] mailbox: th1520: fix clock imbalance on probe failure
-Message-ID: <aRGswsgOmPGXMjMI@hovoldconsulting.com>
-References: <20251017055414.7753-1-johan@kernel.org>
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/14] iommu: fix device leaks
+Message-ID: <aRGs6Xu9BvKaHE9N@hovoldconsulting.com>
+References: <20251020045318.30690-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,19 +69,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017055414.7753-1-johan@kernel.org>
+In-Reply-To: <20251020045318.30690-1-johan@kernel.org>
 
-On Fri, Oct 17, 2025 at 07:54:14AM +0200, Johan Hovold wrote:
-> The purpose of the devm_add_action_or_reset() helper is to call the
-> action function in case adding an action ever fails so drop the clock
-> disable from the error path to avoid disabling the clocks twice.
+On Mon, Oct 20, 2025 at 06:53:04AM +0200, Johan Hovold wrote:
+> This series fixes device leaks in the iommu drivers, which pretty
+> consistently failed to drop the reference taken by
+> of_find_device_by_node() when looking up iommu platform devices.
 > 
-> Fixes: 5d4d263e1c6b ("mailbox: Introduce support for T-head TH1520 Mailbox driver")
-> Cc: Michal Wilczynski <m.wilczynski@samsung.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> ---
+> Included are also a couple of related cleanups.
 
-Can this one be picked up for 6.19?
+> Changes in v3
+>  - fix mediatek use-after-free on probe deferral
+>  - add acks and reviewed-bys from Marek, Yong and Thierry
+> 
+> Changes in v2
+>  - drop omap reference sooner; remove unused pointer
+>   - amend exynos commit message with reference to partial fix
+>    - amend tegra commit message with reference to partial fix
+>     - add Robin's ack
+> 
+> 
+> Johan Hovold (14):
+>   iommu/apple-dart: fix device leak on of_xlate()
+>   iommu/qcom: fix device leak on of_xlate()
+>   iommu/exynos: fix device leak on of_xlate()
+>   iommu/ipmmu-vmsa: fix device leak on of_xlate()
+>   iommu/mediatek: fix device leak on of_xlate()
+>   iommu/mediatek: fix use-after-free on probe deferral
+>   iommu/mediatek: simplify dt parsing error handling
+>   iommu/mediatek-v1: fix device leak on probe_device()
+>   iommu/mediatek-v1: fix device leaks on probe()
+>   iommu/mediatek-v1: add missing larb count sanity check
+>   iommu/omap: fix device leaks on probe_device()
+>   iommu/omap: simplify probe_device() error handling
+>   iommu/sun50i: fix device leak on of_xlate()
+>   iommu/tegra: fix device leak on probe_device()
+
+Can these be picked up for 6.19?
 
 Johan
 
