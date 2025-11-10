@@ -1,110 +1,123 @@
-Return-Path: <linux-kernel+bounces-892896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D208C46109
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:52:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CE2C4610F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:53:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C3A3B90F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B99203AA9F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1D4305E27;
-	Mon, 10 Nov 2025 10:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C859A3064A9;
+	Mon, 10 Nov 2025 10:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cU5KlekL"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AU8bDxQY"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD69211A14
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A46630216D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762771898; cv=none; b=OPVzmWVOIq8P3GXzhmAcuwgpCf8sxgp7Xb1UZgpA1HEQ9SfxR61KkXKvHv0w4kBmjei7yLJIyRzUV/BaMjzqatw/NUUwBDYKHjY8doxtFvgvaSz1y9CS2PFBLa5hsQhpw5NW3tv4WacVJ7XwQidikabYg8wkbJ2Dofz2KhflLVQ=
+	t=1762771955; cv=none; b=I52cJ5oHRdhue2LRW93Ze9zRdILFj9T8GzFo+YidLwqJhdj47/0goyfkx01dmHJp74d0TMnEz/szAlipz+NKMqX3jJXCzPDS9A25hFoHToMQ4bSRVAm4EcwY/xyoRx6RgEemuigu/lrhGLQZ/WFmyEO4HMz2x+RW8bkGRtqr4FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762771898; c=relaxed/simple;
-	bh=sV8cROs3dFOC6pjCX5PL2NJwZ3NP1xrJN8UDmNflI8A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AV8rwhc1uVtHvolNSz3T793FPypWNfwq1cq0kmti/byaY7N+AjYObg7ULtuHPe//Nh8KbiLr08xh2jkq51dJa1Yrtk0FzVoQYH31SDMNtyigyrEmZkX0IrJYImUSWlYfVRZDB4hieKbL9toa1+uWvaiEGO0OgQ6AVkCKNvAW08I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cU5KlekL; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-586883eb9fbso2808787e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:51:35 -0800 (PST)
+	s=arc-20240116; t=1762771955; c=relaxed/simple;
+	bh=g1oy0my9Z+ccbHHb+iF/yvdsIdcE9KiibVk4bik3RqI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=RXvBPsHwF0maKWweaUU5mGFYq5VwILJQXkPML9pyPpYYQSoeWUJUcxfvBdpsyPjT+wAMuikerVqent0hZ4wX50gIo860KaQEIND1D6F9hI4fhdj+ygOan5WLLMegkAeG0qCk1QXfPjyvFd9RtHgyt2FRAqn0EzbKylctb+VZBYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AU8bDxQY; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e39567579so15307605e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:52:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762771894; x=1763376694; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W3nSyx7sHEHeDeu7LgYEFiB0vbj1RV28VjEOVhrx7z8=;
-        b=cU5KlekLQWeHbHVY5EazKftYRjhWKrax0JxwTsgySCGeAjJnnfy/a9EDXZme86RWsS
-         DDZSMcONgBLMOrSk2U9bPqKfsUxULIKY+2LTpcelxaYuOYHr8kpoXHs4qyV3gojqeEwj
-         /k25nHseOfm1yYPEXJBPDob4WwxgnCPPP0HxHLWzNJYBnoNuc9ckeK/xmVQ0/TdmDU97
-         kRssIahkUIZvJCxGPBKnKL75NX2qKZ8eNGVnS5gEsCOO3OmBPOdkqId5y2TAYOSyAgDD
-         QMjShlVhlC4apb+5wSMejViUdiIcBG8s4khdjOrPExKQdAAubQdeXKz0S4t5x7v5vJED
-         EF+A==
+        d=google.com; s=20230601; t=1762771952; x=1763376752; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N6NZ9bgEr68vNmFOnWb6hMPpN/BBFhK5I6oSe3Kfhy0=;
+        b=AU8bDxQYlVdQEDJK9Zd6BYPEwO1anamptPIdlz0an90HYGqn1/IiO26qV534glPh4w
+         F0HddtxKFO1Tqq4jIJMa/sAn+4l5qBHddi04lJp+dwyoKsvA9BDlnub32frdrp0xXMQ1
+         QUCcGGhzyIQWpe6MfQMzTBgfXj/+mzFKhplFCrMLDOv6RYC1g3GQXWclAr6+sy4EENVJ
+         h+P+iDrvRJBqBqrOKSBi6wGJFpwSRnYOU/VojkXzE3qiViGB4ejW86Rm21XjT5YoIFoC
+         0zVeIbNMbEiUTVzNDVPlQFyVpUHMBVgrfmHAyepwltJVHiqaLoBi2ksGIoe7uKFjzPdm
+         PIfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762771894; x=1763376694;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=W3nSyx7sHEHeDeu7LgYEFiB0vbj1RV28VjEOVhrx7z8=;
-        b=NYICpTno038QoBYk/rRUSo5KN4G6ksJCu20hCcbmGSf6CXrVyl5BL9b+HRFa4TyqaH
-         2kFx48Lx+l6bVvMeoQOPweUD82XDavGSd7ktyEJWCr9EJMUkjnKZIpQOqAy5U4AO4T6C
-         UBGiQ8FGK/bME1DADfRgYN7ghnKQ9HqDvZxrY91F3q0HUstsGIZG4/Vfc0wPkCp0CfSN
-         lLOgykkBIt+UdcMmFhEVopqXemkE/s3eZIgAnFqQy/1nFGRzHYrZ4dTIoMaAyQudQc8B
-         S1hCjUf0w6dL+vpbFUBJTNkdAHyRb5SBnQ0osQMirXuZrHplwqdKMzgUKhrcTdconJr1
-         HsOw==
-X-Gm-Message-State: AOJu0YwHb5MC5R2WeWNrslSYicaEjCpsTIDucDrWNZSWcV/gLtTUr4aC
-	YGHjQj24Aso66vZp/Um5AnIBsBSLWekU2p2/OPGOxAI55StP6uuMjvJXytbaHAJhO9BnYzYZZ30
-	WjCBdf/2hxus+E0kfAXOkBeYygYQdPos8Vu7MCY+TDQ==
-X-Gm-Gg: ASbGncvhtvDCYCq2DIKuxWcw0yE+TD2GZFzXAfkvXscnzpFEUexz/VIZvrDLo1Noroa
-	owHwEhh58K4bApHmX1NzSOCc3phHoz6J/bKqz9iNSHO4iq5MFOqpCV56RNd9s+Rm1VAFl78aQXm
-	ssCmizMJisTe3BnpO3tt5gBmOyWIPtY3sbn2hD/8wIOvzQ+37gCT/AWhOi35S1e4ukexM+YGO46
-	9pUUbAcV+jm7vBsXS99Hb9yCINXyBe2mJe/ddwGS+k8WrrXdA9swj+zidQHQRQbG6bnoBbAP9LQ
-	t2jwceWQdkFoXjUXWD00she4GyML
-X-Google-Smtp-Source: AGHT+IHVTxNZg9Iea46RFVb+GORMLRps5peJQgiMFx4r9xzzIy/O3W2vJG4Z14WApk/wO+ZVzi5LspbnzJr6l7WI5dI=
-X-Received: by 2002:a05:6512:108d:b0:578:f613:ed9c with SMTP id
- 2adb3069b0e04-5945f1cb2f9mr1931017e87.43.1762771894136; Mon, 10 Nov 2025
- 02:51:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762771952; x=1763376752;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N6NZ9bgEr68vNmFOnWb6hMPpN/BBFhK5I6oSe3Kfhy0=;
+        b=QkQ55wukpMReiSN1GkkxjfN5xqG3yT7jkCDIaQgFn0n5bsKmD+QJtvUBOHI9W7ZFzv
+         riKTpy+FVs4d4D+/mipTq3b8Ua7xNxfqRQTRHTf2HwRURhmTwNb7kYa3td7+fix78isK
+         ooO9Z0ffirfvLz3B4g/JxSWp1k1NogzXl8EiyEz3vkT06W713KS33EMWSL0ueXjKbygP
+         jfU9oSkugMVBarpTNxmvByhE2vjbD209A2dwhgbTf5KzpK17A455KAWvV6LK0FM8sNbH
+         uSjeKi27W7arA/Xa427m4idjioK9S2wjGl+1hmhYmfUSjfyNG4lcvyGTCB8dtRgjEHlX
+         6EOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGyrU9+MUjXO+7kal6CjONTAYwru4Z3QVFsTfiz6gAeDFlJ9kDh3fAnFmEaqxBe9v7PeevmKVDTFZNncQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQdYTbjp2L+U8CDsFQnTx5y7JBxmFbQ4J3kSluJmSKzWor7mLo
+	zFvOdCmEEMFLnaZiDPxpwYoZHadozCx5hsBrVSlCKvGgvsIgXkbB/s8BekyRp5OHsXnoSgGZQS6
+	8pl2z/D89o2ziL2tY4g==
+X-Google-Smtp-Source: AGHT+IHLTlx/88ANqEFu1mmPKn7N2gVA3BGY0KVpSBasitym/dwRaUr5k7lI5g/0T3mMBoRLLo/Kvlowmg2Jd7c=
+X-Received: from wmjf14.prod.google.com ([2002:a7b:cd0e:0:b0:475:d8de:fe5b])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:524a:b0:46f:d682:3c3d with SMTP id 5b1f17b1804b1-4777323eb5fmr65374595e9.13.1762771951937;
+ Mon, 10 Nov 2025 02:52:31 -0800 (PST)
+Date: Mon, 10 Nov 2025 10:52:30 +0000
+In-Reply-To: <20251110095025.1475896-9-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251106163341.336989-1-marco.crivellari@suse.com> <atnzuecdwp77svypw76e5z5occyh4tkswfc7rg4yqh4joeh7fn@ayygwyjdpe7x>
-In-Reply-To: <atnzuecdwp77svypw76e5z5occyh4tkswfc7rg4yqh4joeh7fn@ayygwyjdpe7x>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Mon, 10 Nov 2025 11:51:23 +0100
-X-Gm-Features: AWmQ_bkcdXSQHUYUpXYWbrqofEomSBTPQr7krtEx6F2AVUGd0pGtyz4_3n0RhQg
-Message-ID: <CAAofZF4gSgeY7_qkHG4n375eqHhpkoZTmJu9=p2_k=qwUR3vEg@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: add WQ_PERCPU to alloc_workqueue users
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20251110095025.1475896-1-ojeda@kernel.org> <20251110095025.1475896-9-ojeda@kernel.org>
+Message-ID: <aRHD7m2f7CS_LGK4@google.com>
+Subject: Re: [PATCH 08/18] rust: proc-macro2: add `README.md`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Nov 10, 2025 at 11:49=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.=
-org> wrote:
-> [...]
-> Updated subject to:
->
->     cpufreq: tegra194: add WQ_PERCPU to alloc_workqueue users
->
-> Applied. Thanks.
+On Mon, Nov 10, 2025 at 10:50:13AM +0100, Miguel Ojeda wrote:
+> Originally, when the Rust upstream `alloc` standard library crate was
+> vendored in commit 057b8d257107 ("rust: adapt `alloc` crate to the
+> kernel"), a `README.md` file was added to explain the provenance and
+> licensing of the source files.
+> 
+> Thus do the same for the `proc-macro2` crate.
+> 
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+>  rust/proc-macro2/README.md | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>  create mode 100644 rust/proc-macro2/README.md
+> 
+> diff --git a/rust/proc-macro2/README.md b/rust/proc-macro2/README.md
+> new file mode 100644
+> index 000000000000..af044fee4f59
+> --- /dev/null
+> +++ b/rust/proc-macro2/README.md
+> @@ -0,0 +1,13 @@
+> +# `proc-macro2`
+> +
+> +These source files come from the Rust `proc-macro2` crate, version
+> +1.0.101 (released 2025-08-16), hosted in the
+> +<https://github.com/dtolnay/proc-macro2> repository, licensed under
+> +"Apache-2.0 OR MIT" and only modified to add the SPDX license
+> +identifiers and to remove the `unicode-ident` dependency.
+> +
+> +For copyright details, please see:
+> +
+> +    https://github.com/dtolnay/proc-macro2/blob/1.0.101/README.md#license
+> +    https://github.com/dtolnay/proc-macro2/blob/1.0.101/LICENSE-APACHE
+> +    https://github.com/dtolnay/proc-macro2/blob/1.0.101/LICENSE-MIT
 
-Many thanks, Viresh!
-
---=20
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
