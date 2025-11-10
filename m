@@ -1,100 +1,126 @@
-Return-Path: <linux-kernel+bounces-892522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6AD8C45465
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:58:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97FAC4546B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:58:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D284D4E837B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:58:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670553B3003
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329CA2F12D4;
-	Mon, 10 Nov 2025 07:58:04 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7A93F9FB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853E02F39A3;
+	Mon, 10 Nov 2025 07:58:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8557E3F9FB;
+	Mon, 10 Nov 2025 07:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762761483; cv=none; b=LjH4ZqbQ2Y2lNfC1hPNjv1wR26DkJuqO32xytq0LA8XDDaxpdtb+TQ++fJDllmINyYi4f0h0vIgAxPmPciF1LSVlDHKvmJsSpPH+V/X+dkdOXudNTxU6+EnRy/h7q6Jb4K6CwcB0c0JHqyM3CISQF7ec9t63s3s/TZO3ml1Wk+w=
+	t=1762761503; cv=none; b=b69M+FwWmQud2O8MseS/u7uRQoXiH7XMCAYxRw63X03UJm4jvsJGgUEsndI9vdNUBvFKGMUidAWYMCqfjX3pEpD9cDJn2xGGWwCPHq9AvN9upX8uPTbCurV3GyTxKLipfHGFhhh4nKy40i6k66BhMTHZ4qRiw95GqymC71E4TFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762761483; c=relaxed/simple;
-	bh=BIZi1ebaU0AyjJhULTC7n5R++5NV5jZTZ3241TQiLcE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BwU5thhoV+yL4DVJS2AlDX/9ZKw4VRjyPh5hTPfyV3Xm9dG8NRTd9txB8QFm29DYiJfX5vPemwCorN2rReet5JCGnF1JojFWXw0aogksqwl3VIvINTPU7MU0pUAm1oCKys4nWtS6nOjEdzUmWlFMBVWJMRtUaM3ZlXkPI1tork0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowAAXHG0DmxFp04U1AA--.10577S2;
-	Mon, 10 Nov 2025 15:57:55 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] debug: Fix a NULL vs IS_ERR() bug in __debug_object_init()
-Date: Mon, 10 Nov 2025 15:57:46 +0800
-Message-ID: <20251110075746.1680-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1762761503; c=relaxed/simple;
+	bh=LXZMOcDw+7IrvIz/VaN4tZqsfZyNEhgyEz8akMeEqbo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jziLRvxWZItkpSskq8RDfGzsuDH4xbQsUglwXkVmcjE5Pp9otrSK1PbpDiElwCGoreI/j5Spxp6egc33Bmx1Ys2TL5AnXl34il0kgKNddgSDDW3cFeruqtibD3+OCUXacLUwAkc7/cgkigURGezQxUSWUh1GLpLgsXObpyOkIQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00487497;
+	Sun,  9 Nov 2025 23:58:07 -0800 (PST)
+Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CDC2B3F66E;
+	Sun,  9 Nov 2025 23:58:13 -0800 (PST)
+Message-ID: <ccf56821-6553-4bcc-8f87-1367fe27d734@arm.com>
+Date: Mon, 10 Nov 2025 07:58:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAAXHG0DmxFp04U1AA--.10577S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw1rJr4fGr1xtr48uw4kJFb_yoWkJrcEyF
-	WFv3ZrXr4UZFyUGw42kw4xtr109ry3Jr1xZ39aqF1DW343JFyDZFWkX3Z3Ar1fWF45uF1U
-	Grn8Zay3WryI9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb2AFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8CwCF
-	04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
-	18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vI
-	r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr
-	1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
-	x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUfpnQUUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAYCA2kRjggzFgAAsQ
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] cpuidle: Add sanity check for exit latency and target
+ residency
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linux PM <linux-pm@vger.kernel.org>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+References: <12779486.O9o76ZdvQC@rafael.j.wysocki>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <12779486.O9o76ZdvQC@rafael.j.wysocki>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The lookup_object_or_alloc() returns error pointers on failure, but the
-code only checks for NULL. This leads to dereferencing an invalid error
-pointer and causes a kernel crash.
+On 11/7/25 19:07, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Make __cpuidle_driver_init() fail if the exit latency of one of the
+> driver's idle states is less than its exit latency which would break
 
-Use IS_ERR_OR_NULL() instead of a NULL check to properly handle both
-error pointers and NULL returns.
+s/exit latency/target residency/
+for the second one here.
 
-Fixes: 63a759694eed ("debugobject: Prevent init race with static objects")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- lib/debugobjects.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Apart from that
+Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 7f50c4480a4e..9587ef619054 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -741,9 +741,10 @@ __debug_object_init(void *addr, const struct debug_obj_descr *descr, int onstack
- 	raw_spin_lock_irqsave(&db->lock, flags);
- 
- 	obj = lookup_object_or_alloc(addr, db, descr, onstack, false);
--	if (unlikely(!obj)) {
-+	if (IS_ERR_OR_NULL(obj)) {
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
--		debug_objects_oom();
-+		if (!obj)
-+			debug_objects_oom();
- 		return;
- 	}
- 
--- 
-2.50.1.windows.1
+> cpuidle assumptions.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> v1 -> v2: Make __cpuidle_driver_init() fail if the check is not passed (Artem).
+> 
+> ---
+>  drivers/cpuidle/driver.c |   16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> --- a/drivers/cpuidle/driver.c
+> +++ b/drivers/cpuidle/driver.c
+> @@ -152,7 +152,7 @@ static void cpuidle_setup_broadcast_time
+>   * __cpuidle_driver_init - initialize the driver's internal data
+>   * @drv: a valid pointer to a struct cpuidle_driver
+>   */
+> -static void __cpuidle_driver_init(struct cpuidle_driver *drv)
+> +static int __cpuidle_driver_init(struct cpuidle_driver *drv)
+>  {
+>  	int i;
+>  
+> @@ -193,7 +193,17 @@ static void __cpuidle_driver_init(struct
+>  			s->exit_latency_ns =  0;
+>  		else
+>  			s->exit_latency = div_u64(s->exit_latency_ns, NSEC_PER_USEC);
+> +
+> +		/*
+> +		 * Ensure that the exit latency of a CPU idle state does not
+> +		 * exceed its target residency which is assumed in cpuidle in
+> +		 * multiple places.
+> +		 */
+> +		if (s->exit_latency_ns > s->target_residency_ns)
+> +			return -EINVAL;
+>  	}
+> +
+> +	return 0;
+>  }
+>  
+>  /**
+> @@ -223,7 +233,9 @@ static int __cpuidle_register_driver(str
+>  	if (cpuidle_disabled())
+>  		return -ENODEV;
+>  
+> -	__cpuidle_driver_init(drv);
+> +	ret = __cpuidle_driver_init(drv);
+> +	if (ret)
+> +		return ret;
+>  
+>  	ret = __cpuidle_set_driver(drv);
+>  	if (ret)
+> 
+> 
+> 
+> 
 
 
