@@ -1,86 +1,85 @@
-Return-Path: <linux-kernel+bounces-892505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5AACC453AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C7CC453A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BADC3B2FE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:36:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2373B2EFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10A42EC547;
-	Mon, 10 Nov 2025 07:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB9D2EBDF4;
+	Mon, 10 Nov 2025 07:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2FVL5ka"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="FMGw7e+O"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2484B2EC083;
-	Mon, 10 Nov 2025 07:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AFC2EBB87;
+	Mon, 10 Nov 2025 07:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762760181; cv=none; b=quaQ6Lt87Rx0n2ZyioAkyuGtKhYXbx+l4xrjRSlvDa9e0WqWSlLU+9VyLqLL94Sp2OT5ad2popA0iHDECylsJ6IkH789t8dcN57eiv/KBDDmreki/ySo7DpOPkj6wQNDPVWA5UIjHutjGTwQEruoL08yTEmrtrqloer+MTBIpVw=
+	t=1762760180; cv=none; b=cgaGpYPMxocACi6TcUNOeJUyJouk9cN3xqJUg3BxegdTRx2P7dPTGz9L1Iybs426HwgCdzzXXK04TDZc2ZUIirGUh1rjVkVpKtntUY+91q1kqBIjXONFvDZPlV8MyVayb0wSxiz9wWk0MkwclBVKy2eV5aAs9w5qdLJYf1mGF+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762760181; c=relaxed/simple;
-	bh=y+wG/rw2tXAG5zLwj0mDQigKy7jfvT4bcUlh+zg3SdY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QzvINaJ8D8giPsw1LOkHEhN4wlbXnhkwUTUl6sCBxYgcv4wtcHk+RsS0VsprO+2uv5rTZFWi2tweiDd/xdeb6QKGORvS+dj08caS2iAIdCJyrb2v4Cgky2S+NteVxuEC3wufSuLAgehgFx6AHbfGK5BiSvHlnVB5w/bHwK6tF1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2FVL5ka; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44809C16AAE;
-	Mon, 10 Nov 2025 07:36:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762760180;
-	bh=y+wG/rw2tXAG5zLwj0mDQigKy7jfvT4bcUlh+zg3SdY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=H2FVL5kaQjTDPPrF4gGMzntCN89sGQfM3jiiro+diCD7zESTrd099Q1dZ2QXjI/a5
-	 +KMPhtSX+i6EagnhL1F/DBKdSVoXl47j8TA1NKkd7oOdzrAjRTdL6zWKmwBtSs0iNa
-	 OG+cYCyWjbpsW12P/R0oZosv+/7EUiy9+iX6CA5F5zjCPVpF/QuPFaR3dNvROKnl4f
-	 dBLn2mDm9kZek6h4Nu+nmW69rnzNh2lfyOv4FcfCRrdI+t0dLSBoZc2jhlYQ2MNM1b
-	 6f/fauO7bThPmSbxskrrnpnA2YxCjksTSuFbwsX6Bpg+t8Nykdq29+gesqmBZ2gXU6
-	 vfSjXyc2DbDHw==
-From: Srinivas Kandagatla <srini@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
- Lala Lin <lala.lin@mediatek.com>, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org
-In-Reply-To: <20251030-mt8189-dt-bindings-efuse-v1-1-1148e474a9f5@collabora.com>
-References: <20251030-mt8189-dt-bindings-efuse-v1-1-1148e474a9f5@collabora.com>
-Subject: Re: [PATCH] dt-bindings: nvmem: mediatek: efuse: Add compatible
- for MT8189 SoC
-Message-Id: <176276017278.17598.8750030991108782000.b4-ty@kernel.org>
-Date: Mon, 10 Nov 2025 07:36:12 +0000
+	s=arc-20240116; t=1762760180; c=relaxed/simple;
+	bh=nHgdQJhh3qGAN7bMip7XjynVr8WuQqSOo/b0cQJPQDo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=T3yn5Wg0lsNtGcnVfZoKvrVtFWb2LimRLO7mjXpk//yESGATg4FZPJiOuyKQnXtXimgf4VAoz9LTlklY9algWx9+4C+CIQ/AciDGMkYToKdUSUorq3V0L9vwPQiW1pWfK4zxTxEjX9GH6F3nofVUIkQsHf8Ompva5o4Xv/lUHGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=FMGw7e+O; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=VeJSuMmYtYdReQErdsDSeVOQsotd8G6jtSTIcmmRuRw=;
+	t=1762760178; x=1763969778; b=FMGw7e+O7K2qkjWdAEPOMqZO4dE06/GRif5Vh9ztOZLgB/U
+	mt85drLkaRk1oWKgagj5iUrbhglLPoXUetmesbJ5l3MAOHa+3aCpmGy2vIv0SJfsdqzaElmxBTi5v
+	4BFsxqq2SS14/h2P+VLenWc8U8yMpyGxdeQyssqbQnX2wgZlCKPhBn7NU732Idxm78F6XL0fnqSPz
+	gNmWa19Vmog7OIoG4Msm6Z28nGF7c8+mr+QVMY5TBXX2IJCRbxMSocxRAtpNkzTRfozmVDGXDNXUK
+	NvPgemXWdQdtEdMFwojDX4fLR9AW+fgbA8dI1BQ6cP9sZwjkUKzdEglJ4KiYyz4A==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1vIMRk-0000000AqqQ-0y3r;
+	Mon, 10 Nov 2025 08:36:16 +0100
+Message-ID: <f27e024e442078b51d70ce5cfdbe2beab9b822c4.camel@sipsolutions.net>
+Subject: Re: [PATCH] mac80211: mesh: tolerate missing mesh RMC cache
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Sayooj K Karun <sayooj@aerlync.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 10 Nov 2025 08:36:15 +0100
+In-Reply-To: <20251109114321.10120-1-sayooj@aerlync.com>
+References: <20251109114321.10120-1-sayooj@aerlync.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+X-malware-bazaar: not-scanned
+
+You need to fix the subject.
 
 
-On Thu, 30 Oct 2025 11:26:10 +0100, Louis-Alexis Eyraud wrote:
-> Add compatible string for the eFuse layout on MT8189 SoC, that is
-> compatible with MT8186.
-> 
-> 
+>  void ieee80211s_init(void)
+>  {
+> -	mesh_allocated =3D 1;
+>  	rm_cache =3D kmem_cache_create("mesh_rmc", sizeof(struct rmc_entry),
+>  				     0, 0, NULL);
+> +	if (!rm_cache) {
+> +		pr_warn("mac80211: failed to allocate mesh RMC cache; duplicate filter=
+ing disabled\n");
 
-Applied, thanks!
+A message after an allocation failure is almost always pointless since
+it's already a really big scary warning... Maybe there's a way to
+supress the original warning in this case (not sure) and then have this
+message.
 
-[1/1] dt-bindings: nvmem: mediatek: efuse: Add compatible for MT8189 SoC
-      commit: 11a4220f789fb8a75b5941a5205d866da4fe39c2
-
-Best regards,
--- 
-Srinivas Kandagatla <srini@kernel.org>
-
+johannes
 
