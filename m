@@ -1,284 +1,191 @@
-Return-Path: <linux-kernel+bounces-892675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBC8C45988
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:20:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F02C45979
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:20:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 675164E9BE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:20:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2320D4E9AB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318F8222562;
-	Mon, 10 Nov 2025 09:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="FSyKtglp"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7944503B;
-	Mon, 10 Nov 2025 09:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766418; cv=pass; b=JJNFYh9thNCXHtdpm0CvevJAqVhnsG02pSOFSEA3VvmtzybusIfeOKi/egqszi+guk6Q9ofkjyP6QgpVmIPtWaRpxWSCm6UaEdMRDh4aJwcvle2Thplf0XMOVI4qpcLmi4kg/zzrVrZX9uVlC8FdOLjF+SNQmSsGBoIz4kpfPQs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766418; c=relaxed/simple;
-	bh=aiQbFvykbkMPAcRTW3HRuLSEfDYUjHVu9JHorCRdmr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ceeMK/R4/OFPXU2hE9X6UxvU8p3cQ0aZ0p0b+4CVFDzL8Gcf9qVSj8rbSpOIHlDOq7zGFlZtlQvu+kgqqHsjj3lfoyb5UVGNAtBd7wsp8n9jVtOkl/azzYkli4UzMqAXE3rX2YyOv1iRbJVSK+auzcVrswFqYW6Bv1DU8MIMhsc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=FSyKtglp; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1762766377; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mQxPVYOATQezqBL5yCJPKwUbX+JgMrUABoUyvim3PFza8c5ZHhZestibHiJFWxXvoUng13jVC8P9S64jLTObD3EpZPUjgof53bxKAflmbD/d78+0IWCG8rNnUURNAQ8Oje3LhaAfmz53emfB473ehmaxkoUhLVNdPpqAiCm1FeU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762766377; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=hxLXwdvcR73afnWX3+U+TbZmEVnvtJ1WDn3vMJOYfeI=; 
-	b=AUtP6OnBexLHP6078mlNSuvrN1eMtg8eyILcYQm+PCUyEel5aO3GjP5o+k/IR2p8jF5aO/vUOfWan+DKf+K6QVxlPMK3JNUqhpcbD2Q6ZQc69QnOsjAw2W5iAuL+QEHBPlJ0aoWglABTbUZzwNG9t4F8qJN4UUICHgiaxNcj24E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762766376;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=hxLXwdvcR73afnWX3+U+TbZmEVnvtJ1WDn3vMJOYfeI=;
-	b=FSyKtglpf319WU2vjW77dgt25xU6yIInC/sCx6LK4hbKihknuUJcM+Xfc4doAzdm
-	TkVp3GcYUsXL3ydIq01zsOAj8rnMcOSkAt6BZ5AUWKkDs6fcC2OqtvmkDzvhvjE66+d
-	HJOO9ylHv/KRJd9AOt8FaM/tBgmLyh5foC6PyvK0=
-Received: by mx.zohomail.com with SMTPS id 1762766374404175.65977685098846;
-	Mon, 10 Nov 2025 01:19:34 -0800 (PST)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Peter Wang =?UTF-8?B?KOeOi+S/oeWPiyk=?= <peter.wang@mediatek.com>,
- Chunfeng Yun =?UTF-8?B?KOS6keaYpeWzsCk=?= <Chunfeng.Yun@mediatek.com>,
- "kishon@kernel.org" <kishon@kernel.org>,
- "avri.altman@wdc.com" <avri.altman@wdc.com>,
- "bvanassche@acm.org" <bvanassche@acm.org>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "broonie@kernel.org" <broonie@kernel.org>,
- "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
- "chu.stanley@gmail.com" <chu.stanley@gmail.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "robh@kernel.org" <robh@kernel.org>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@hansenpartnership.com>,
- "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
- "vkoul@kernel.org" <vkoul@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Chaotian Jing =?UTF-8?B?KOS6leacneWkqSk=?= <Chaotian.Jing@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "kernel@collabora.com" <kernel@collabora.com>,
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>
-Subject:
- Re: [PATCH v3 09/24] scsi: ufs: mediatek: Rework the crypt-boost stuff
-Date: Mon, 10 Nov 2025 10:19:25 +0100
-Message-ID: <6210035.lOV4Wx5bFT@workhorse>
-In-Reply-To: <9ae7495023a8562566ff57bd2dfa60524194ee30.camel@mediatek.com>
-References:
- <20251023-mt8196-ufs-v3-0-0f04b4a795ff@collabora.com>
- <20251023-mt8196-ufs-v3-9-0f04b4a795ff@collabora.com>
- <9ae7495023a8562566ff57bd2dfa60524194ee30.camel@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D5A2FDC29;
+	Mon, 10 Nov 2025 09:19:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30383155389;
+	Mon, 10 Nov 2025 09:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762766392; cv=none; b=OjnZ3jt7fS9SH0/RkdU7qlvs0e689teBRBhJTDgpBzX++xf+MEPFaD/Fj81NMO9kE6MHlL/Z5KINNm+vclb7+XbxGc8actI9/Jg9ZGFSX/73WprZ3uAJ00UM1lnilyckLBBFRKG5XfJC8JfHk3n07Lldln+LiosSBChiE5oo3RU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762766392; c=relaxed/simple;
+	bh=eD19xs3HJscEy96qUFYPBBi/c+BeW29BDHqIKBjhVPE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RG2UqpeW+uXjplUL2VAUWHGTcZT/XAcx1IjLqqTGrpwC9qZ5VNSzEju1RwKBa0K2V73LAWgfyCDWr2kySLEap0zaDVSfbMVyBzyRrwPZH4UmVZnHMl1CuLoRrT0lg7xs66yLzxYHSQcExlScak+hxkYKPiP2U8DhGhQlv3a4q34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91A6F2B;
+	Mon, 10 Nov 2025 01:19:41 -0800 (PST)
+Received: from [10.57.85.123] (unknown [10.57.85.123])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CED693F63F;
+	Mon, 10 Nov 2025 01:19:42 -0800 (PST)
+Message-ID: <e428b1d5-65a8-49bc-92dc-ec4a4d933dec@arm.com>
+Date: Mon, 10 Nov 2025 09:19:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/12] mm: introduce generic lazy_mmu helpers
+Content-Language: en-GB
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
+ <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-7-kevin.brodsky@arm.com>
+ <71418b31-aedb-4600-9558-842515dd6c44@arm.com>
+ <c764489e-0626-4a50-87b5-39e15d9db733@gmail.com>
+ <645178fd-df4e-42fe-b55e-97d9506499be@arm.com>
+ <413b2c49-f124-4cda-8fea-a6cc165f6326-agordeev@linux.ibm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <413b2c49-f124-4cda-8fea-a6cc165f6326-agordeev@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tuesday, 4 November 2025 08:28:18 Central European Standard Time Chaotia=
-n Jing (=E4=BA=95=E6=9C=9D=E5=A4=A9) wrote:
-> On Thu, 2025-10-23 at 21:49 +0200, Nicolas Frattaroli wrote:
-> > I don't know whether the crypt-boost functionality as it is currently
-> > implemented is even appropriate for mainline. It might be better done
-> > in
-> > some generic way. But what I do know is that I can rework the code to
-> > make it less obtuse.
-> >=20
-> > Prefix the boost stuff with the appropriate vendor prefix, remove the
-> > pointless clock wrappers, and rework the function.
-> >=20
-> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > ---
-> >  drivers/ufs/host/ufs-mediatek.c | 91 +++++++++++++++--------------
-> > ------------
-> >  1 file changed, 32 insertions(+), 59 deletions(-)
-> >=20
-> > diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-
-> > mediatek.c
-> > index 131f71145a12..9c0ac72d6e43 100644
-> > --- a/drivers/ufs/host/ufs-mediatek.c
-> > +++ b/drivers/ufs/host/ufs-mediatek.c
-> > @@ -562,21 +562,6 @@ static int ufs_mtk_mphy_power_on(struct ufs_hba
-> > *hba, bool on)
-> >  	return 0;
-> >  }
-> > =20
-> > -static int ufs_mtk_get_host_clk(struct device *dev, const char
-> > *name,
-> > -				struct clk **clk_out)
-> > -{
-> > -	struct clk *clk;
-> > -	int err =3D 0;
-> > -
-> > -	clk =3D devm_clk_get(dev, name);
-> > -	if (IS_ERR(clk))
-> > -		err =3D PTR_ERR(clk);
-> > -	else
-> > -		*clk_out =3D clk;
-> > -
-> > -	return err;
-> > -}
-> > -
-> >  static void ufs_mtk_boost_crypt(struct ufs_hba *hba, bool boost)
-> >  {
-> >  	struct ufs_mtk_host *host =3D ufshcd_get_variant(hba);
-> > @@ -633,65 +618,53 @@ static void ufs_mtk_boost_crypt(struct ufs_hba
-> > *hba, bool boost)
-> >  	clk_disable_unprepare(cfg->clk_crypt_mux);
-> >  }
-> > =20
-> > -static int ufs_mtk_init_host_clk(struct ufs_hba *hba, const char
-> > *name,
-> > -				 struct clk **clk)
-> > -{
-> > -	int ret;
-> > -
-> > -	ret =3D ufs_mtk_get_host_clk(hba->dev, name, clk);
-> > -	if (ret) {
-> > -		dev_info(hba->dev, "%s: failed to get %s: %d",
-> > __func__,
-> > -			 name, ret);
-> > -	}
-> > -
-> > -	return ret;
-> > -}
-> > -
-> > -static void ufs_mtk_init_boost_crypt(struct ufs_hba *hba)
-> > +static int ufs_mtk_init_boost_crypt(struct ufs_hba *hba)
-> You change the return type but never checked the return value when
-> calling this function ?
+On 10/11/2025 08:11, Alexander Gordeev wrote:
+> On Fri, Nov 07, 2025 at 03:22:54PM +0000, Ryan Roberts wrote:
+> 
+> Hi Ryan,
+> 
+>> On 07/11/2025 14:34, David Hildenbrand (Red Hat) wrote:
+>>>>>   #ifndef pte_batch_hint
+>>>>> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
+>>>>> index 5d2a876035d6..c49b029d3593 100644
+>>>>> --- a/mm/kasan/shadow.c
+>>>>> +++ b/mm/kasan/shadow.c
+>>>>> @@ -305,7 +305,7 @@ static int kasan_populate_vmalloc_pte(pte_t *ptep,
+>>>>> unsigned long addr,
+>>>>>       pte_t pte;
+>>>>>       int index;
+>>>>>   -    arch_leave_lazy_mmu_mode();
+>>>>> +    lazy_mmu_mode_pause();
+>>>>
+>>>> I wonder if there really are use cases that *require* pause/resume? I think
+>>>> these kasan cases could be correctly implemented using a new nest level instead?
+>>>> Are there cases where the effects really need to be immediate or do the effects
+>>>> just need to be visible when you get to where the resume is?
+>>>>
+>>>> If the latter, that could just be turned into a nested disable (e.g. a flush).
+>>>> In this case, there is only 1 PTE write so no benefit, but I wonder if other
+>>>> cases may have more PTE writes that could then still be batched. It would be
+>>>> nice to simplify the API by removing pause/resume if we can?
+>>>
+>>> It has clear semantics, clearer than some nest-disable IMHO.
+>>>
+>>> Maybe you can elaborate how you would change ("simplify") the API in that
+>>> regard? What would the API look like?
+>>
+>> By simplify, I just meant can we remove lazy_mmu_mode_pause() and
+>> lazy_mmu_mode_resume() ?
+>>
+>>
+>> We currently have:
+>>
+>> apply_to_page_range
+>>   lazy_mmu_mode_enable()
+>>     kasan_populate_vmalloc_pte()
+>>       lazy_mmu_mode_pause()
+>>       <code>
+>>       lazy_mmu_mode_resume()
+>>   lazy_mmu_mode_disable()
+>>
+>> Where <code> is setting ptes. But if <code> doesn't need the effects to be
+>> visible until lazy_mmu_mode_resume(), then you could replace the block with:
+>>
+>> apply_to_page_range
+>>   lazy_mmu_mode_enable()
+>>     kasan_populate_vmalloc_pte()
+>>       lazy_mmu_mode_enable()
+>>       <code>
+>>       lazy_mmu_mode_disable()
+>>   lazy_mmu_mode_disable()
+>>
+>> However, looking at this more closely, I'm not really clear on why we need *any*
+>> special attention to lazy mmu inside of kasan_populate_vmalloc_pte() and
+>> kasan_depopulate_vmalloc_pte().
+>>
+>> I *think* that the original concern was that we were doing ptep_get(ptep) inside
+>> of a lazy_mmu block? So we need to flush so that the getter returns the most
+>> recent value? But given we have never written to that particular ptep while in
+>> the lazy mmu block, there is surely no hazard in the first place?
+> 
+> There is, please see:
+> https://lore.kernel.org/linux-mm/cover.1755528662.git.agordeev@linux.ibm.com/
 
-Yeah, I should probably check the return in ufs_mtk_init_host_caps
-instead of continuing on silently.
+I've stared at this for a while, but I'm afraid I still don't see the problem.
+This all looks safe to me. Could you explain exactly what this issue is?
 
-> >  {
-> >  	struct ufs_mtk_host *host =3D ufshcd_get_variant(hba);
-> >  	struct ufs_mtk_crypt_cfg *cfg;
-> >  	struct device *dev =3D hba->dev;
-> > -	struct regulator *reg;
-> > -	u32 volt;
-> > +	int ret;
-> > =20
-> > -	host->crypt =3D devm_kzalloc(dev, sizeof(*(host->crypt)),
-> > -				   GFP_KERNEL);
-> > -	if (!host->crypt)
-> > -		goto disable_caps;
-> > +	cfg =3D devm_kzalloc(dev, sizeof(*cfg), GFP_KERNEL);
-> > +	if (!cfg)
-> > +		return -ENOMEM;
-> > =20
-> > -	reg =3D devm_regulator_get_optional(dev, "dvfsrc-vcore");
-> > -	if (IS_ERR(reg)) {
-> > -		dev_info(dev, "failed to get dvfsrc-vcore: %ld",
-> > -			 PTR_ERR(reg));
-> > -		goto disable_caps;
-> > +	cfg->reg_vcore =3D devm_regulator_get_optional(dev, "dvfsrc-
-> > vcore");
-> > +	if (IS_ERR(cfg->reg_vcore)) {
-> > +		dev_err(dev, "Failed to get dvfsrc-vcore: %pe", cfg-
-> > >reg_vcore);
-> Since this regulator is optional, why use dev_err ? and why retune an
-> error since you never check the return value ?
+If I've understood correctly, kasan_populate_vmalloc() is called during virtual
+range allocation by vmalloc. This is not in a nested lazy mmu block (but it
+wouldn't matter if it was once we have Kevin's nested changes to ensure flush
+when exiting the nested scope). kasan_populate_vmalloc() calls
+apply_to_page_range(), which will walk the set of ptes, calling
+kasan_populate_vmalloc_pte() for each one. kasan_populate_vmalloc_pte() does a
+ptep_get() then, if none, calls set_pte_at().
 
-Because get_optional doesn't mean what you think it means. It means
-the function returns -ENODEV if the regulator is absent, instead of
-creating a dummy supply. We want to hard error out if the regulator
-is absent, because the regulator is needed.
+That's not a hazard since you're calling get before the set and you only visit
+each pte once for the apply_to_page_range() lazy mmu block.
 
-Whether or not the return code is checked makes no functional
-difference in this case. If this function exits early,
-UFS_MTK_CAP_BOOST_CRYPT_ENGINE isn't added to the host caps,
-and the host->crypt member isn't set to cfg.
+> 
+>> apply_to_existing_page_range() will only call kasan_depopulate_vmalloc_pte()
+>> once per pte, right? So given we read the ptep before writing it, there should
+>> be no hazard? If so we can remove pause/resume.
+> 
+> Unfortunately, we rather not, please see:
+> https://lore.kernel.org/linux-mm/d407a381-099b-4ec6-a20e-aeff4f3d750f@arm.com/
 
-The return code may be useful for additional logging, which is not
-critical to the correctness of the code.
+Sorry but I don't see anything relavent to my point in this mail. Perhaps there
+is some s390-specific detail that I'm failing to understand?
 
-> > +		return PTR_ERR(cfg->reg_vcore);
-> >  	}
-> > =20
-> > -	if (of_property_read_u32(dev->of_node, "boost-crypt-vcore-min",
-> > -				 &volt)) {
-> > -		dev_info(dev, "failed to get boost-crypt-vcore-min");
-> > -		goto disable_caps;
-> > +	ret =3D of_property_read_u32(dev->of_node, "mediatek,boost-crypt-
-> > vcore-min",
-> > +				   &cfg->vcore_volt);
-> > +	if (ret) {
-> > +		dev_err(dev, "Failed to get mediatek,boost-crypt-vcore-
-> > min: %pe\n",
-> > +			ERR_PTR(ret));
-> > +		return ret;
-> >  	}
-> > =20
-> > -	cfg =3D host->crypt;
-> > -	if (ufs_mtk_init_host_clk(hba, "crypt_mux",
-> > -				  &cfg->clk_crypt_mux))
-> > -		goto disable_caps;
-> > +	cfg->clk_crypt_mux =3D devm_clk_get(dev, "crypt_mux");
-> > +	if (IS_ERR(cfg->clk_crypt_mux)) {
-> > +		dev_err(dev, "Failed to get clock crypt_mux: %pe\n",
-> > cfg->clk_crypt_mux);
-> > +		return PTR_ERR(cfg->clk_crypt_mux);
-> > +	}
-> > =20
-> > -	if (ufs_mtk_init_host_clk(hba, "crypt_lp",
-> > -				  &cfg->clk_crypt_lp))
-> > -		goto disable_caps;
-> > +	cfg->clk_crypt_lp =3D devm_clk_get(dev, "crypt_lp");
-> > +	if (IS_ERR(cfg->clk_crypt_lp)) {
-> > +		dev_err(dev, "Failed to get clock crypt_lp: %pe\n",
-> > cfg->clk_crypt_lp);
-> > +		return PTR_ERR(cfg->clk_crypt_lp);
-> > +	}
-> > =20
-> > -	if (ufs_mtk_init_host_clk(hba, "crypt_perf",
-> > -				  &cfg->clk_crypt_perf))
-> > -		goto disable_caps;
-> > +	cfg->clk_crypt_perf =3D devm_clk_get(dev, "crypt_perf");
-> > +	if (IS_ERR(cfg->clk_crypt_perf)) {
-> > +		dev_err(dev, "Failed to get clock crypt_perf: %pe\n",
-> > cfg->clk_crypt_perf);
-> > +		return PTR_ERR(cfg->clk_crypt_perf);
-> > +	}
-> > =20
-> > -	cfg->reg_vcore =3D reg;
-> > -	cfg->vcore_volt =3D volt;
-> > +	host->crypt =3D cfg;
-> >  	host->caps |=3D UFS_MTK_CAP_BOOST_CRYPT_ENGINE;
-> > =20
-> > -disable_caps:
-> > -	return;
-> > +	return 0;
-> >  }
-> > =20
-> >  static void ufs_mtk_init_host_caps(struct ufs_hba *hba)
-> >=20
->=20
+Thanks,
+Ryan
 
-
-
+> 
+> The problem is kasan code invokes apply_to_page_range(), which enters lazy_mmu
+> mode unconditionally. I would claim that is rather an obstacle for the kasan
+> code, not a benefit. But it needs to be tackled.
+> > Should apply_to_page_range() had an option not to enter the lazy_mmu mode
+> (e.g. an extra "bool skip_lazy" parameter) - the pause/resume could have
+> been avoided.
+> 
+>> Thanks,
+>> Ryan
+> 
+> Thanks!
 
 
