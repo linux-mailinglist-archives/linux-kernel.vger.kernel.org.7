@@ -1,142 +1,307 @@
-Return-Path: <linux-kernel+bounces-892500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE06CC45378
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:30:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6AB2C4538A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:32:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 809E93B2A61
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:30:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4F7188943C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26942EB5A6;
-	Mon, 10 Nov 2025 07:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60082EC083;
+	Mon, 10 Nov 2025 07:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5wTaWfV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TttXGVvk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3217022A1D4;
-	Mon, 10 Nov 2025 07:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76A82EBBA2
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762759846; cv=none; b=XVuDyjYj3NZXfR3aKHrxmhPXJrXAIDwn6KoPSgrG/7E72+rlWCyzy9V3Zphe5u5k+9+j4Z8jzl+HAxoGPim9n1HOe20FSDaDZrji4MiY8CtcUc/t3e/BeXNAVRneHKqYHljc0+qdNQpNax9wl0s7qshrdJta/Jnhf+JGOZsOkFA=
+	t=1762759943; cv=none; b=NppzfC/C9rdJZiIQjRshT0XaVhMTkWi4lyAdrly611Cnyq4GvHnAAVp5e7+8LTewgIr3F9bLWXn3knfXbnJ+n+/Mt3grw4iQGaAuk6TIGeL0XJfcfiYeTeMFPs6lIbinUMScDxoP/ot/EGEkJe2Hyqseui/bNgAsuTTLmstcEgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762759846; c=relaxed/simple;
-	bh=4xslD6BDGHYGuPZJ1zAw4ssu77FJ6xR1d8cCxP9DLhY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pekTT9prIy+UwiNbjonN/cJ8HtmqBfSvEmT4qlFo+YHQpCzeXSQOgMawp6dKIVTxLnAK58VddiKXBK1Le4fdcucyc0vnNfTB86fIVdBpbc27/RsAhzSeVH28VLeOec7S6u1h1oFYIqe6oBL1X7C5IwgLJNMEC/8aA+OgDvMOcyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5wTaWfV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5192DC4AF09;
-	Mon, 10 Nov 2025 07:30:43 +0000 (UTC)
+	s=arc-20240116; t=1762759943; c=relaxed/simple;
+	bh=cQN4kGT4Z9RnV16R7zCdXa49GPir2ZqJr/78v+Lovzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BRuSdR0tyXY2BNYivaDOh2EGFLUHCGzIGxepR8+zdLNrPQeBcJrfW2AegZ2rOKpaU+MuwMY8Ea26Q4HrTgwusVp7l8+cilaV1nvTKa2Ms0vvmoVnuteh3UMGt1MN+b/F4/slg0j79JQL/+kb38nd5dpeAYpLCS4Mes/9pXjO0yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TttXGVvk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D18C2BCB5
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762759845;
-	bh=4xslD6BDGHYGuPZJ1zAw4ssu77FJ6xR1d8cCxP9DLhY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G5wTaWfVlNUktljmwf21w29gxj9RXO+P+pWWdGztes8UBvL6o0TuQ9/VXJ2YOGdwt
-	 hF7JOVTEY9cSXbgr70vmcA24NX4NLTfYoKrE9x8UJnOJKQ9kb1rp1qej1KVWM59UUA
-	 XHZ0M/d9RcCzbDapTyu/1087dAD/1oeQtJr7o67Od+7PjVd/xdESbouzUUYfUEmYz+
-	 TU77iQmpRsMqtZ85AkZCymO6FhtUxeJBqG1YyL9SdjQRBWc2DJdpSvxv9mKcTTWmSH
-	 M7P2q/ixxA0AJC7bYleg3zJ4QJrTS+p9PyIskhjY39w56mklOU0FDrTys3w9htAl3V
-	 J1jpo2BYyOXqw==
-Message-ID: <83b3dbf4-0916-432b-b46f-bf459ce264f3@kernel.org>
-Date: Mon, 10 Nov 2025 08:30:41 +0100
+	s=k20201202; t=1762759943;
+	bh=cQN4kGT4Z9RnV16R7zCdXa49GPir2ZqJr/78v+Lovzc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TttXGVvkIUJaWyrEQTsAzD644dY6txmMdgi2+MXugsuxrrMgrxL6k4WJpBn8dGyjw
+	 gdg5w1Wc99/87cFpxrTixUJqu4IPoJXxTyNLOpOstsESvCVQu+6vcPKEL7QwdR4uZh
+	 oivdkq4j3l6mTXWxOi50WWVo1ZmUflmauyayiwiEzLt6llnKO6RxWlDX+zBaxqo5mD
+	 IDNYnZ4nNsJJYM7BZpuN0iPdm1CtafZiLyPWf+Q1nNa3WbvahTWo7bZLfDRht1ooQU
+	 ijYvdG/NVMT/rz85mliJiPLwTcZsWdZEpf05HbJuNO/p4d5dbihb4zbKJHfq0y9TVx
+	 9NfW5vbscOshQ==
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7868b7b90b8so24521717b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 23:32:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV4cFqEnC6vknzOVaHLhCaR3iG/I8qk5PWsJwB7txudKBxNMQnvh8haAXh6gflNcG6JVl4jL3W7dqD7Kn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2kM9vlaVVa4H8RIuKViNr40EVCxOz/LzEvf/sAOO8Wmugp2wW
+	fwU7UxcCAb92ujTwfdYd6GELowQMDIQLruJQlNd8x4Hh3TR2higOzofeVorQlV+lYLwSpS0TGTu
+	SrXiH3gZXePB0Y1bxpBDDcAm3fb23OOv1lyglb1gBFA==
+X-Google-Smtp-Source: AGHT+IFQ9N0QJyzxbx3agttaPppdKNBBAeeuQ6oXFqx9fA4bbGoFwr4rbbdYkUn5xJYMpCIw+moKhVHJZhszc+EwPJo=
+X-Received: by 2002:a05:690c:670f:b0:786:61c6:7e57 with SMTP id
+ 00721157ae682-787d5438549mr67487947b3.42.1762759941154; Sun, 09 Nov 2025
+ 23:32:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: regulator: Add Fitipower FP9931/JD9930
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-References: <20251107-fp9931-submit-v1-0-aa7b79d9abb6@kemnade.info>
- <20251107-fp9931-submit-v1-2-aa7b79d9abb6@kemnade.info>
- <20251108-vagabond-lyrical-hawk-ad3490@kuoka>
- <20251108152114.53422ea6@kemnade.info>
- <aa330123-e6d9-44ce-b030-b266cba1df9c@kernel.org>
- <20251108175244.0b51fac6@kemnade.info>
- <aa54cf7c-cabd-490b-9bdd-a7a077ced35c@kernel.org>
- <20251109221212.182d7862@kemnade.info>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251109221212.182d7862@kemnade.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Sun, 9 Nov 2025 23:32:09 -0800
+X-Gmail-Original-Message-ID: <CACePvbVq3kFtrue2smXRSZ86+EuNVf6q+awQnU-n7=Q4x7U9Lw@mail.gmail.com>
+X-Gm-Features: AWmQ_blwAcP-jPkdX_BL8n-dN0nskCj9MNzjkUZFE3hb8I8DIawlcAt-KR_uwfY
+Message-ID: <CACePvbVq3kFtrue2smXRSZ86+EuNVf6q+awQnU-n7=Q4x7U9Lw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
+ entries, introduce leaf entries
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
+	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, 
+	damon@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/11/2025 22:12, Andreas Kemnade wrote:
->>
->> You must drop ref. That's the entire point of common unit suffix.
->>
-> I tried without it:
-> 
->   fitipower,tdly-ms:
->     description:
->       Power up soft start delay settings tDLY1-4 bitfields in the
->       POWERON_DELAY register
->     default: <0 0 0 0>
+On Sat, Nov 8, 2025 at 9:09=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> There's an established convention in the kernel that we treat leaf page
+> tables (so far at the PTE, PMD level) as containing 'swap entries' should
+> they be neither empty (i.e. p**_none() evaluating true) nor present
+> (i.e. p**_present() evaluating true).
+>
+> However, at the same time we also have helper predicates - is_swap_pte(),
+> is_swap_pmd() - which are inconsistently used.
+>
+> This is problematic, as it is logical to assume that should somebody wish
+> to operate upon a page table swap entry they should first check to see if
+> it is in fact one.
+>
+> It also implies that perhaps, in future, we might introduce a non-present=
+,
+> none page table entry that is not a swap entry.
+>
+> This series resolves this issue by systematically eliminating all use of
+> the is_swap_pte() and is swap_pmd() predicates so we retain only the
+> convention that should a leaf page table entry be neither none nor presen=
+t
+> it is a swap entry.
+>
+> We also have the further issue that 'swap entry' is unfortunately a reall=
+y
+> rather overloaded term and in fact refers to both entries for swap and fo=
+r
+> other information such as migration entries, page table markers, and devi=
+ce
+> private entries.
+>
+> We therefore have the rather 'unique' concept of a 'non-swap' swap entry.
+>
+> This series therefore introduces the concept of 'software leaf entries', =
+of
+> type softleaf_t, to eliminate this confusion.
+>
+> A software leaf entry in this sense is any page table entry which is
+> non-present, and represented by the softleaf_t type. That is - page table
+> leaf entries which are software-controlled by the kernel.
+>
+> This includes 'none' or empty entries, which are simply represented by an
+> zero leaf entry value.
+>
+> In order to maintain compatibility as we transition the kernel to this ne=
+w
+> type, we simply typedef swp_entry_t to softleaf_t.
 
-Arrays are in [] (see also some examples of arrays in the example-schema).
-[0, 0, 0, 0]
+Hi Lorenzo,
 
-And then it should work, but does not which I think is bug in dtschema.
-I think it works fine when you drop the "default:" completely, so please
-do so. I'll take a look at the issue.
+Sorry I was late to the party. Can you clarify that you intend to
+remove swp_entry_t completely to softleaf_t?
+I think for the traditional usage of the swp_entry_t, which is made up
+of swap device type and swap device offset. Can we please keep the
+swp_entry_t for the traditional swap system usage? The mix type can
+stay in softleaf_t in the pte level.
 
-enum should be in one line, btw.
+I kind of wish the swap system could still use swp_entry_t. At least I
+don't see any complete reason to massively rename all the swap system
+code if we already know the entry is the limited meaning of swap entry
+(device + offset).
 
-Your patchset has also blank line warnings.
+Timing is not great either. We have the swap table phase II on review
+now. There is also phase III and phase IV on the backlog pipeline. All
+this renaming can create unnecessary conflicts. I am pleading please
+reduce the renaming in the swap system code for now until we can
+figure out what is the impact to the rest of the swap table series,
+which is the heavy lifting for swap right now. I want to draw a line
+in the sand that, on the PTE entry side, having multiple meanings, we
+can call it softleaft_t whatever. If we know it is the traditional
+swap entry meaning. Keep it swp_entry_t for now until we figure out
+the real impact.
 
+Does this renaming have any behavior change in the produced machine code?
 
-Best regards,
-Krzysztof
+Chris
+
+>
+> We introduce a number of predicates and helpers to interact with software
+> leaf entries in include/linux/leafops.h which, as it imports swapops.h, c=
+an
+> be treated as a drop-in replacement for swapops.h wherever leaf entry
+> helpers are used.
+>
+> Since softleaf_from_[pte, pmd]() treats present entries as they were
+> empty/none leaf entries, this allows for a great deal of simplification o=
+f
+> code throughout the code base, which this series utilises a great deal.
+>
+> We additionally change from swap entry to software leaf entry handling
+> where it makes sense to and eliminate functions from swapops.h where
+> software leaf entries obviate the need for the functions.
+>
+>
+> v2:
+> * Folded all fixpatches into patches they fix.
+> * Added Vlasta's tag to patch 1 (thanks!)
+> * Renamed leaf_entry_t to softleaf_t and leafent_xxx() to softleaf_xxx() =
+as
+>   a result of discussion between Matthew, Jason, David, Gregory & myself =
+to
+>   make clearer that we abstract the concept of a software page table leaf
+>   entry.
+> * Updated all commit messages to reference softleaves.
+> * Updated the kdoc comment describing softleaf_t to provide more detail.
+> * Added a description of softleaves to the top of leafops.h.
+>
+> non-RFC v1:
+> * As part of efforts to eliminate swp_entry_t usage, remove
+>   pte_none_mostly() and correct UFFD PTE marker handling.
+> * Introduce leaf_entry_t - credit to Gregory for naming, and to Jason for
+>   the concept of simply using a leafent_*() set of functions to interact
+>   with these entities.
+> * Replace pte_to_swp_entry_or_zero() with leafent_from_pte() and simply
+>   categorise pte_none() cases as an empty leaf entry, as per Jason.
+> * Eliminate get_pte_swap_entry() - as we can simply do this with
+>   leafent_from_pte() also, as discussed with Jason.
+> * Put pmd_trans_huge_lock() acquisition/release in pagemap_pmd_range()
+>   rather than pmd_trans_huge_lock_thp() as per Gregory.
+> * Eliminate pmd_to_swp_entry() and related and introduce leafent_from_pmd=
+()
+>   to replace it and further propagate leaf entry usage.
+> * Remove the confusing and unnecessary is_hugetlb_entry_[migration,
+>   hwpoison]() functions.
+> * Replace is_pfn_swap_entry(), pfn_swap_entry_to_page(),
+>   is_writable_device_private_entry(), is_device_exclusive_entry(),
+>   is_migration_entry(), is_writable_migration_entry(),
+>   is_readable_migration_entry(), is_readable_exclusive_migration_entry()
+>   and pfn_swap_entry_folio() with leafent equivalents.
+> * Wrapped up the 'safe' behaviour discussed with Jason in
+>   leafent_from_[pte, pmd]() so these can be used unconditionally which
+>   simplifies things a lot.
+> * Further changes that are a consequence of the introduction of leaf
+>   entries.
+> https://lore.kernel.org/all/cover.1762171281.git.lorenzo.stoakes@oracle.c=
+om/
+>
+> RFC:
+> https://lore.kernel.org/all/cover.1761288179.git.lorenzo.stoakes@oracle.c=
+om/
+>
+> Lorenzo Stoakes (16):
+>   mm: correctly handle UFFD PTE markers
+>   mm: introduce leaf entry type and use to simplify leaf entry logic
+>   mm: avoid unnecessary uses of is_swap_pte()
+>   mm: eliminate is_swap_pte() when softleaf_from_pte() suffices
+>   mm: use leaf entries in debug pgtable + remove is_swap_pte()
+>   fs/proc/task_mmu: refactor pagemap_pmd_range()
+>   mm: avoid unnecessary use of is_swap_pmd()
+>   mm/huge_memory: refactor copy_huge_pmd() non-present logic
+>   mm/huge_memory: refactor change_huge_pmd() non-present logic
+>   mm: replace pmd_to_swp_entry() with softleaf_from_pmd()
+>   mm: introduce pmd_is_huge() and use where appropriate
+>   mm: remove remaining is_swap_pmd() users and is_swap_pmd()
+>   mm: remove non_swap_entry() and use softleaf helpers instead
+>   mm: remove is_hugetlb_entry_[migration, hwpoisoned]()
+>   mm: eliminate further swapops predicates
+>   mm: replace remaining pte_to_swp_entry() with softleaf_from_pte()
+>
+>  MAINTAINERS                   |   1 +
+>  arch/s390/mm/gmap_helpers.c   |  20 +-
+>  arch/s390/mm/pgtable.c        |  12 +-
+>  fs/proc/task_mmu.c            | 294 +++++++++-------
+>  fs/userfaultfd.c              |  85 ++---
+>  include/asm-generic/hugetlb.h |   8 -
+>  include/linux/huge_mm.h       |  48 ++-
+>  include/linux/hugetlb.h       |   2 -
+>  include/linux/leafops.h       | 620 ++++++++++++++++++++++++++++++++++
+>  include/linux/migrate.h       |   2 +-
+>  include/linux/mm_inline.h     |   6 +-
+>  include/linux/mm_types.h      |  25 ++
+>  include/linux/swapops.h       | 273 +--------------
+>  include/linux/userfaultfd_k.h |  33 +-
+>  mm/damon/ops-common.c         |   6 +-
+>  mm/debug_vm_pgtable.c         |  86 +++--
+>  mm/filemap.c                  |   8 +-
+>  mm/hmm.c                      |  36 +-
+>  mm/huge_memory.c              | 263 +++++++-------
+>  mm/hugetlb.c                  | 165 ++++-----
+>  mm/internal.h                 |  20 +-
+>  mm/khugepaged.c               |  33 +-
+>  mm/ksm.c                      |   6 +-
+>  mm/madvise.c                  |  28 +-
+>  mm/memory-failure.c           |   8 +-
+>  mm/memory.c                   | 150 ++++----
+>  mm/mempolicy.c                |  25 +-
+>  mm/migrate.c                  |  45 +--
+>  mm/migrate_device.c           |  24 +-
+>  mm/mincore.c                  |  25 +-
+>  mm/mprotect.c                 |  59 ++--
+>  mm/mremap.c                   |  13 +-
+>  mm/page_table_check.c         |  33 +-
+>  mm/page_vma_mapped.c          |  65 ++--
+>  mm/pagewalk.c                 |  15 +-
+>  mm/rmap.c                     |  17 +-
+>  mm/shmem.c                    |   7 +-
+>  mm/swap_state.c               |  12 +-
+>  mm/swapfile.c                 |  14 +-
+>  mm/userfaultfd.c              |  53 +--
+>  40 files changed, 1560 insertions(+), 1085 deletions(-)
+>  create mode 100644 include/linux/leafops.h
+>
+> --
+> 2.51.0
 
