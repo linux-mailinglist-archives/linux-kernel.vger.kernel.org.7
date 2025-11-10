@@ -1,217 +1,220 @@
-Return-Path: <linux-kernel+bounces-892914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F48C461AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:04:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E2DAC461BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:05:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADD671894220
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:05:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3160D4E782B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101A1305964;
-	Mon, 10 Nov 2025 11:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6E1307AFB;
+	Mon, 10 Nov 2025 11:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IL2wBUnZ"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sa6AQQ73"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25963081CB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC513074AF
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762772655; cv=none; b=Ue48I/5A4FKIKsOVIG365uuLwAF2wqYjdy1u/JDk18Lz1rkdl6RkugyHP6gX3vTKBqH11VX6c8kqbPFCNm7cs76E7iAcwvX8iX5SwHWoH8ifGKVBmmUN1PjqMKzLLY2z0ZlcyUhIWA63EIBkAYGW4eWnEE5Qa/v9wwCdgHGS5Nk=
+	t=1762772702; cv=none; b=BeB/1NXEARRjBDqg0G+du3aU13Twwg2bh0tN9epNa4+weeXdFZerA8Cwi9ZG0xM/3V6G60V1uThcOQZdGq4+kVSHIAOw1c+Imw2wN3aQTJjJjcHsDdeJ+Q+N9YurBvJOJGJesDp0bfpC11Qgm5G8WsSJiJdR3BhzT5wg9qiOlZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762772655; c=relaxed/simple;
-	bh=1Z+gaT40oj3T5r3ek/hMQ0J0ma0x2pMde1fuBz+MOWc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GHB6hOtbmJTtb8qK2HOjxQaQkPRczVp5stHHnghyvb4A2QKpZ+CX4GdtlWgUsMZsNndtISMHbtOhdF8uTuoKrMEXJ4ItxqdHsCvr/WkTvbSwV4aMFpGpuizR2v/LmAiq1hAYPYUHmAHfb+quSnOuBVWRJg+A/yBeudNA+7WaAvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IL2wBUnZ; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-42b3669ca3dso497753f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:04:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762772650; x=1763377450; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yIWnZ8dEqAIo6e04DNrTq+ZCsjQol4ZAc5Df0I8mreM=;
-        b=IL2wBUnZGYGVWNEpyCph9/ihdD+tX5BiyHigu9uHwImLuvHER+s21IVTwJxByNOF08
-         IFvBbqHjowPabtmwGtm0uyxuFXgyPhQWBj34PVJRWXl9JMeBQ1NHNZIxK9JI3e5eQwy+
-         RjWOtbEmfUGMGn5bkY89LCsOWdc8PF+x3CkBE5XiALHxJErI2NMutfBlpBcRjBqifYOL
-         kWMM5L8Fgs+KffgNNWNO0nqZ2pIb1y5GkTRBD43WZBd2DX/db9714XGUtoz1cnTVrrRD
-         46IGtLXprJxPW71shUaijrKUHLoXLGt5Oyo9/HhFRgyfHNMny9GZW3tdaXwkFx0xYivc
-         2djg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762772650; x=1763377450;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yIWnZ8dEqAIo6e04DNrTq+ZCsjQol4ZAc5Df0I8mreM=;
-        b=wlsHF7Tsp8tqMmCdYQz6NguUNmxidbLEyZ0FJFBPagF8//1r1BN+LhfKiJQ8EVtvtj
-         xorLoTq4iXHgW1DXSmZd6amKgChAsZrGTftPsKS8Ht/i4s3SJ51Gl9ghem9eNdf02iPf
-         Yg0rMxnakR/eI9G4glrwxVq5W+anNol5UpfjFVvoW4bewyGGBb0N0ZUXgH2p3s19gV5I
-         CEjko5lP9j44wu8YwK92Qo1hoPGce9fR7pmJhIze61ZCnwFjx5S0Ro3OUVLilDubXc6W
-         emW5knBFU4yihapXaQhi+kT/zpMdUD1c8Sh0Y4H9s01KOB3c1mLQZE6oJHApQiF2E+fR
-         hm3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWeXNkpiP/Qk+IcoAJTKYNZpVTJ98K6WFEo9NCxem8yAwLH5TiMCpxCpBQ7ESdJkev1Zjv/9VDUWj327vo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1RNVe0F3bbs5rhoXhgW/ire/0dSkJBvFBCd2+gtfgfPsDHY+1
-	mLX7hGczAQDQ6ZR0WZx6HUV6UwrMUpJ27gCwONlB/qXnigamTlm0zRZhyRl84Um103w=
-X-Gm-Gg: ASbGncs0SDiIF4Lpr4gYKHEwQWRxP1gkc+Qpk3iaGGBTSgwUs75AsdCgIh9gsP1BJuC
-	7tgdc5jw/KCRHGgw22i1jclEkJbA6/jGpDtAaskH+ojLsRoEjmhnBP+0+ttgKr4sIbT0n66+kbY
-	kTMuhx3rC6zYe2cALruuJSpaI09nDHLuEfduO5NjTdVpLvlVp1Cue3q3k8Eq8THOjhjfWfXPlwz
-	E8J/FIWcrqVkAH054rSxKKOcD87MaGl+AppzfVM2qyDn6qyVhAbjEkYBJBAo6tKxp2ZZmPn8l7m
-	h2g0bW+0FP8egLM5AfMJYfOGc19QUp0d/EfNxNG1MY2l2mX3CiOjtuSaXuaBo/v7kIINGfXeq1C
-	QsV+WLNxBL1U3Unlasc0xRWq493CgItU2cHg8ViP2Bv6QJhQwNTa7QuDIMSA33YqrqgwbHPa4dk
-	/QOFftctzTAd0gnrfmBCDFvkjB+NWiVPS8vaO68J6XCZJjyza1Nk06
-X-Google-Smtp-Source: AGHT+IH0yKFYlADFFoNgI+vt5Nvr3682vUUZksEIjYehH1HnbB5yCLv9XtMdyOspZEkknqy2NTGIgA==
-X-Received: by 2002:a05:600c:c84:b0:46e:3f75:da49 with SMTP id 5b1f17b1804b1-477732a1d2bmr55933905e9.37.1762772649975;
-        Mon, 10 Nov 2025 03:04:09 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:3d9:2080:f168:a23e:c1b2:ae61? ([2a01:e0a:3d9:2080:f168:a23e:c1b2:ae61])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e4f13dsm106249415e9.5.2025.11.10.03.04.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 03:04:09 -0800 (PST)
-Message-ID: <3c98a3f1-ca68-41ed-a8bb-f99a57ac57d7@linaro.org>
-Date: Mon, 10 Nov 2025 12:04:08 +0100
+	s=arc-20240116; t=1762772702; c=relaxed/simple;
+	bh=57vcXoVaGnG9l4Hdh9tDUE5rwfPZ24UgvbT3aVj/BUk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UtQ+tHYdRI7g648ClCu0DvNvscAxh55rpv1yPbysnIlinf4HyM2h3glkXZ3WRIgxbKXN4/zS7gAjTAZ+Mawjfpcnolj3QcdwezFER4G+kWB47vf1zBqFwNyr3QgoA/O0KiSFi29M5iHmQYKsrdfDJpqDdw12T0qr/1sjqieEyH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sa6AQQ73; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6140C19421
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:05:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762772701;
+	bh=57vcXoVaGnG9l4Hdh9tDUE5rwfPZ24UgvbT3aVj/BUk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sa6AQQ73O01w64nwho5tib1IxlyUdIJGtdtZ9Hkgxafn61iopBLbXLDF1Ba5V2i27
+	 WD6YFYVerjMnAIO9/muIJYDdpv8clNUqhwoewQ/kI6xBSZ7jVC6JHroti+9tXdEs20
+	 5EKZAMf9l+SFPX7I9+FCSHrvUm+bOAkz1wYS9nveGAjwkbxnr4Nd7GtPj5xjzuo5O4
+	 Fc7gKbOMrlamMfMeSGiNycyH/4IkhNBrCVvNpqk+BQzuNmMhCTvf5IxMmj7iK+EaLs
+	 ETWg/vuyz4jZTP7O28TnvbQhzcLZpoWBPH2g2qFYB1KLl4zsm3zT9ooSaICIThBSgK
+	 PLzO/EzPnjooQ==
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-63fc72db706so2607749d50.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:05:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXR81/PW1Ljsb7eJ5SlMHESg62PlVPCWokhGC8+LJ2X2Bjq9InzFZh1t1WBu439BH0zVm9ipQAGPgHc2EY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEirS91mMnYt6FMxkD6/YSyf2ZyGiQ+qniIUTZWuXytN/Geo5e
+	lXfVnY+hYybcyy1obUfrTrzJHVx6+EtexJIoJ94DjiBeH3b75D3lBspOTn8lBaUil9VxzDuy4x+
+	olhPJUzYZkoE41i57hG7sHEz0g1oIsahwnQRaZPXLgA==
+X-Google-Smtp-Source: AGHT+IGb5xn+sWB6zhZvawlKpKaY52jteK/NuAWw2b6kNJUT3KOwS3xUtwezxnsh77APdSOaFVEz79TEZy9y4Ini9II=
+X-Received: by 2002:a05:690e:2598:b0:63f:a089:ad11 with SMTP id
+ 956f58d0204a3-640d45e57f4mr5199456d50.47.1762772699777; Mon, 10 Nov 2025
+ 03:04:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] PCI: meson: Remove meson_pcie_link_up() timeout, message,
- speed check
-To: Bjorn Helgaas <helgaas@kernel.org>, Yue Wang <yue.wang@Amlogic.com>,
- Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Linnaea Lavia <linnaea-von-lavia@live.com>, FUKAUMI Naoki <naoki@radxa.com>,
- Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>, stable@vger.kernel.org
-References: <20251103221930.1831376-1-helgaas@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20251103221930.1831376-1-helgaas@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
+ <CACePvbVq3kFtrue2smXRSZ86+EuNVf6q+awQnU-n7=Q4x7U9Lw@mail.gmail.com> <5b60f6e8-7eab-4518-808a-b34331662da5@lucifer.local>
+In-Reply-To: <5b60f6e8-7eab-4518-808a-b34331662da5@lucifer.local>
+From: Chris Li <chrisl@kernel.org>
+Date: Mon, 10 Nov 2025 03:04:48 -0800
+X-Gmail-Original-Message-ID: <CACePvbUvQu+So7OoUbJTMLODz8YDAOgWaM8A-RXFj2U_Qc-dng@mail.gmail.com>
+X-Gm-Features: AWmQ_bl_ugrcb7Xqm2Eobi_WepJs_DP4Kj2CRqbuSy5_pOEO8kL68WELcSVKV30
+Message-ID: <CACePvbUvQu+So7OoUbJTMLODz8YDAOgWaM8A-RXFj2U_Qc-dng@mail.gmail.com>
+Subject: Re: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
+ entries, introduce leaf entries
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
+	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, 
+	damon@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/3/25 23:19, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Previously meson_pcie_link_up() only returned true if the link was in the
-> L0 state.  This was incorrect because hardware autonomously manages
-> transitions between L0, L0s, and L1 while both components on the link stay
-> in D0.  Those states should all be treated as "link is active".
-> 
-> Returning false when the device was in L0s or L1 broke config accesses
-> because dw_pcie_other_conf_map_bus() fails if the link is down, which
-> caused errors like this:
-> 
->    meson-pcie fc000000.pcie: error: wait linkup timeout
->    pci 0000:01:00.0: BAR 0: error updating (0xfc700004 != 0xffffffff)
-> 
-> Remove the LTSSM state check, timeout, speed check, and error message from
-> meson_pcie_link_up(), the dw_pcie_ops.link_up() method, so it is a simple
-> boolean check of whether the link is active.  Timeouts and and error
-> messages are handled at a higher level, e.g., dw_pcie_wait_for_link().
-> 
-> Fixes: 9c0ef6d34fdb ("PCI: amlogic: Add the Amlogic Meson PCIe controller driver")
-> Reported-by: Linnaea Lavia <linnaea-von-lavia@live.com>
-> Closes: https://lore.kernel.org/r/DM4PR05MB102707B8CDF84D776C39F22F2C7F0A@DM4PR05MB10270.namprd05.prod.outlook.com
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> Tested-by: Linnaea Lavia <linnaea-von-lavia@live.com>
-> Cc: stable@vger.kernel.org
-> ---
->   drivers/pci/controller/dwc/pci-meson.c | 36 +++-----------------------
->   1 file changed, 3 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-> index 787469d1b396..13685d89227a 100644
-> --- a/drivers/pci/controller/dwc/pci-meson.c
-> +++ b/drivers/pci/controller/dwc/pci-meson.c
-> @@ -338,40 +338,10 @@ static struct pci_ops meson_pci_ops = {
->   static bool meson_pcie_link_up(struct dw_pcie *pci)
->   {
->   	struct meson_pcie *mp = to_meson_pcie(pci);
-> -	struct device *dev = pci->dev;
-> -	u32 speed_okay = 0;
-> -	u32 cnt = 0;
-> -	u32 state12, state17, smlh_up, ltssm_up, rdlh_up;
-> +	u32 state12;
->   
-> -	do {
-> -		state12 = meson_cfg_readl(mp, PCIE_CFG_STATUS12);
-> -		state17 = meson_cfg_readl(mp, PCIE_CFG_STATUS17);
-> -		smlh_up = IS_SMLH_LINK_UP(state12);
-> -		rdlh_up = IS_RDLH_LINK_UP(state12);
-> -		ltssm_up = IS_LTSSM_UP(state12);
-> -
-> -		if (PM_CURRENT_STATE(state17) < PCIE_GEN3)
-> -			speed_okay = 1;
-> -
-> -		if (smlh_up)
-> -			dev_dbg(dev, "smlh_link_up is on\n");
-> -		if (rdlh_up)
-> -			dev_dbg(dev, "rdlh_link_up is on\n");
-> -		if (ltssm_up)
-> -			dev_dbg(dev, "ltssm_up is on\n");
-> -		if (speed_okay)
-> -			dev_dbg(dev, "speed_okay\n");
-> -
-> -		if (smlh_up && rdlh_up && ltssm_up && speed_okay)
-> -			return true;
-> -
-> -		cnt++;
-> -
-> -		udelay(10);
-> -	} while (cnt < WAIT_LINKUP_TIMEOUT);
-> -
-> -	dev_err(dev, "error: wait linkup timeout\n");
-> -	return false;
-> +	state12 = meson_cfg_readl(mp, PCIE_CFG_STATUS12);
-> +	return IS_SMLH_LINK_UP(state12) && IS_RDLH_LINK_UP(state12);
->   }
->   
->   static int meson_pcie_host_init(struct dw_pcie_rp *pp)
+On Mon, Nov 10, 2025 at 2:18=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Sun, Nov 09, 2025 at 11:32:09PM -0800, Chris Li wrote:
+> > Hi Lorenzo,
+> >
+> > Sorry I was late to the party. Can you clarify that you intend to
+> > remove swp_entry_t completely to softleaf_t?
+> > I think for the traditional usage of the swp_entry_t, which is made up
+> > of swap device type and swap device offset. Can we please keep the
+> > swp_entry_t for the traditional swap system usage? The mix type can
+> > stay in softleaf_t in the pte level.
+>
+> Ultimately it doesn't really matter - if we do entirely eliminate
+> swp_entry_t, the type that we are left with for genuine swap entries will
+> be _identical_ to swp_entry_t. As in bit-by-bit identical.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on BananaPi M2S
+In that case you might just as well leave it as swp_entry_t for the
+_actual_ swap code.
 
-Thanks !
+>
+> But I did think perhaps we could maintain this type explicitly for the
+> _actual_ swap code.
 
-Neil
+Exactly. Please do consider impact the actual swap
 
+> > I kind of wish the swap system could still use swp_entry_t. At least I
+> > don't see any complete reason to massively rename all the swap system
+> > code if we already know the entry is the limited meaning of swap entry
+> > (device + offset).
+>
+> Well the reason would be because we are trying to keep things consistent
+> and viewing a swap entry as merely being one of the modes of a softleaf.
+
+Your reason applies to the multi-personality non-present pte entries.
+I am fine with those as softleaf. However the reasoning does not apply
+to the swap entry where we already know it is for actual swap. The
+multi-personality does not apply there. I see no conflict with the
+swp_entry type there. I argue that it is even cleaner that the swap
+codes only refer to those as swp_entry rather than softleaf because
+there is no possibility that the swap entry has multi-personality.
+
+> However I am empathetic to not wanting to create _entirely_ unnecessary
+> churn here.
+>
+> I will actively keep you in the loop on follow up series and obviously wi=
+ll
+> absolutely take your opinion seriously on this.
+
+Thank you for your consideration.
+
+>
+> I think this series overall hugely improves clarity and additionally avoi=
+ds
+> a bunch of unnecessary, duplicative logic that previously was required, s=
+o
+> is well worth the slightly-annoying-churn cost here.
+>
+> But when it comes to the swap code itself I will try to avoid any
+> unnecessary noise.
+
+Ack.
+
+> One thing we were considering (discussions on previous iteration of serie=
+s)
+> was to have a union of different softleaf types - one of which could simp=
+ly
+> be swp_entry_t, meaning we get the best of both worlds, or at least
+> absolutely minimal changes.
+
+If you have a patch I would take a look and comment on it.
+
+> > Timing is not great either. We have the swap table phase II on review
+> > now. There is also phase III and phase IV on the backlog pipeline. All
+> > this renaming can create unnecessary conflicts. I am pleading please
+> > reduce the renaming in the swap system code for now until we can
+> > figure out what is the impact to the rest of the swap table series,
+> > which is the heavy lifting for swap right now. I want to draw a line
+> > in the sand that, on the PTE entry side, having multiple meanings, we
+> > can call it softleaft_t whatever. If we know it is the traditional
+> > swap entry meaning. Keep it swp_entry_t for now until we figure out
+> > the real impact.
+>
+> I really do empathise, having dealt with multiple conflicts and races in
+> series, however I don't think it's really sensible to delay one series
+> based on unmerged follow ups.
+
+If you leave the actual swap entry (single personality) alone, I think
+we can deal with the merge conflicts.
+
+> So this series will proceed as it is.
+
+Please clarify the "proceed as it is" regarding the actual swap code.
+I hope you mean you are continuing your series, maybe with
+modifications also consider my feedback. After all, you just say " But
+I did think perhaps we could maintain this type explicitly for the
+_actual_ swap code."
+
+> However I'm more than happy to help resolve conflicts - if you want to se=
+nd
+> me any of these series off list etc. I can rebase to mm-new myself if
+> that'd be helpful?
+
+As I said above, leaving the actual swap code alone is more helpful
+and I consider it cleaner as well. We can also look into incremental
+change on your V2 to crave out the swap code.
+
+>
+> >
+> > Does this renaming have any behavior change in the produced machine cod=
+e?
+>
+> It shouldn't result in any meaningful change no.
+
+That is actually the reason to give the swap table change more
+priority. Just saying.
+
+Chris
 
