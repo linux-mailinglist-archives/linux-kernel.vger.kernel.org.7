@@ -1,131 +1,76 @@
-Return-Path: <linux-kernel+bounces-894182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8EBBC496D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:37:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6BEC496D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:36:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 569494EA678
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:36:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C10D34E996A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A77330B12;
-	Mon, 10 Nov 2025 21:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b5oFjC3b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A9232C94C;
+	Mon, 10 Nov 2025 21:36:21 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC1232D0C4;
-	Mon, 10 Nov 2025 21:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF462BFC73
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762810608; cv=none; b=fy9p1oawr44vxupxfF9HXP0bLB+OJPUbkrWap0UvMMmpI2DE1FsttjRA/OESgjeEcUlzgybRsdz2L9dj+q+VA3PlAWcXysnsleHGbMu2lG+Vx6f1otCQ2gMbBAye+qaCKeS6JZqZs1xDXOA2PVLpQX+0hSSNNkcJte7baLAXvhc=
+	t=1762810581; cv=none; b=H/cYj0bnAUgAvuEZSQK41+h473fxpxaU50RvoMDnhMgQs0Qwb/KRQyPErpqYw166x1gNXv08yu0pdqO7yKQoMAYcDN8lgoRGAPQzHhNmxM/z5z4+dHXeKgycVPopBKUZvqvuUWwnMlFiImhAEB1bEqMhqkmnPKgEMvUxnMHzqHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762810608; c=relaxed/simple;
-	bh=CTJVkjrbUSqe+A8bpFZm82gYv0MPWLBXaF3q0pTBnqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FEGFbnoMHEroK0vvdtZri66uD+ldD3o2dshI0RyFU0lddUtxOb8N6uVn+AFocykctNGY2yQaOznG/uMBYTpjE/9Ch2kfq2cJNBVtt2kaPlIL/tMYWEikNQTVgzxc3VX/6JVYKNDoKaiGf8IJcNtGRzqSAZXn1GVfVVtjwIvIDgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b5oFjC3b; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762810606; x=1794346606;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CTJVkjrbUSqe+A8bpFZm82gYv0MPWLBXaF3q0pTBnqk=;
-  b=b5oFjC3bpyevWYXAAO5cWNKPGmWJf6HCbD78MimDXW4zkxIOxx5Q2I49
-   j+uVNawi+elyBSXmvVmO1uiqp7cwQLONABoNdWkvuYq9H2LRrOlOYT+/0
-   eFyqwtWESsVWe4nckXLirvVrZPHQgLKv/cszDKPmTwy8X2Jm0VsLQJDQe
-   g2XwFi2j7VrdTyMJLtdrJDk3U520sUIpsNutmKk+eURYgeGb9ePMbAF6V
-   PJDxO1kzOwtx2j2UoPgPJ4bfYKmNE+y4SQLzPQSDwyGPrwdmAOwo9QBXn
-   ND8CjE6TOiML78HxUYkOm4wRzNj8EzLf85THQ0zF8I+lBnkLeFoEcNB6x
-   Q==;
-X-CSE-ConnectionGUID: dwMsLpOLTiOYNuBeRKf7zQ==
-X-CSE-MsgGUID: k10d200rRPmZRQexztG1IQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="82264721"
-X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
-   d="scan'208";a="82264721"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 13:36:46 -0800
-X-CSE-ConnectionGUID: k7Cn/WjMRjOTV1b0bZTqYA==
-X-CSE-MsgGUID: HHkLK9uSSd+EfkQeZrcUFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
-   d="scan'208";a="193780548"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 10 Nov 2025 13:36:41 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vIZZ1-000139-25;
-	Mon, 10 Nov 2025 21:36:39 +0000
-Date: Tue, 11 Nov 2025 05:36:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Alice Ryhl <aliceryhl@google.com>
-Subject: Re: [PATCH 4/4] rust: io: add typedef for phys_addr_t
-Message-ID: <202511110532.BF1f9LTs-lkp@intel.com>
-References: <20251106-resource-phys-typedefs-v1-4-0c0edc7301ce@google.com>
+	s=arc-20240116; t=1762810581; c=relaxed/simple;
+	bh=0wQTgGrNNDVt2uFqYthktj/TJEnRI7WLaEb/wyTxack=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Xd7MG4E51mKoisLMlbCuHYNkbEu616ZX8D320lPothTUibtB8qb4OGPL/WN+c2uzoX6Cwz/ccb4D6F1SOvWVlgc1pzKZ73posDY37nIaTYbgpnKSgx2+QYSapNar6vlEzhQbljo3EMufSPis5eP5eQDi2T62WZNd6GM1cyHsNo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-948a2f950fcso169833439f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:36:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762810579; x=1763415379;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0wQTgGrNNDVt2uFqYthktj/TJEnRI7WLaEb/wyTxack=;
+        b=O1sCM9MyoxLYZIndrHanfYX7YZu6Zaqt35lkBoVuhHFPsCFO2tKJQraJHFNHZMjJmr
+         eZld3T1gLOwQ0Sab5lCvrwEGlk4l51tc4Cyn9dpGKyr8TKpqj2ddzOv66uT++EZD5wCs
+         CynXh6aNGmKAS7chd92/eevw4kp4E9hcodqHqyj5QB/uWiQX/O2YBYr4fiQCSOlFQHo3
+         xbTcRLB4cuUIXNW3jwzkCSurFcT9dKZ+N7Yy0qqx/CFuSmlHtp2UdTEjjce50zY463fz
+         w1HSSkuyXVka8ukUk6TX/3nCAfCCcsp0c/mNQThn2445C5maHqDUaFCcJHUeK2adaytX
+         1QOQ==
+X-Gm-Message-State: AOJu0YxUyyNBXN1RCa8dbmCSJZbUpLR5d1pwY4Zbnc2BgHj6gnuueayK
+	jPFSXXcULCvAoN8OpHl5CDQ2rxqfjPMl3VndTKz3OWwFhYn/aH+zMh8aNMpSKhH6JYTNZS8KFfL
+	yp7cPU2k+KZ8B35koBuo3+L1F5ra8PixVCX0cvPVW+uUqR0lcQxg73rv61Kg=
+X-Google-Smtp-Source: AGHT+IEyZaRyfhp2japiFG5idUQyGGV5eABQ1KfjSYtskTDRazkD09VXo1QDBWkmgn0lW2r2EBzPwVfI9R01dJQhyVbk3v8LAFe3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106-resource-phys-typedefs-v1-4-0c0edc7301ce@google.com>
+X-Received: by 2002:a05:6e02:2708:b0:433:2844:111e with SMTP id
+ e9e14a558f8ab-43367df3aa2mr143698675ab.14.1762810579249; Mon, 10 Nov 2025
+ 13:36:19 -0800 (PST)
+Date: Mon, 10 Nov 2025 13:36:19 -0800
+In-Reply-To: <68c58bfa.050a0220.3c6139.04d2.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69125ad3.a70a0220.22f260.010d.GAE@google.com>
+Subject: Forwarded: Re: kernel BUG in ext4_write_inline_data (3)
+From: syzbot <syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Alice,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-kernel test robot noticed the following build errors:
+***
 
-[auto build test ERROR on 211ddde0823f1442e4ad052a2f30f050145ccada]
+Subject: Re: kernel BUG in ext4_write_inline_data (3)
+Author: albinbabuvarghese20@gmail.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alice-Ryhl/rust-io-define-ResourceSize-as-resource_size_t/20251106-201954
-base:   211ddde0823f1442e4ad052a2f30f050145ccada
-patch link:    https://lore.kernel.org/r/20251106-resource-phys-typedefs-v1-4-0c0edc7301ce%40google.com
-patch subject: [PATCH 4/4] rust: io: add typedef for phys_addr_t
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20251111/202511110532.BF1f9LTs-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251111/202511110532.BF1f9LTs-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511110532.BF1f9LTs-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from kernel/sched/rq-offsets.c:5:
-   kernel/sched/sched.h:3743:18: warning: variable 'cpumask' set but not used [-Wunused-but-set-variable]
-   3743 |         struct cpumask *cpumask;
-   |                         ^
-   1 warning generated.
->> error: unknown start of token:   --> rust/kernel/io/resource.rs:17:19
-   |
-   17 |     ResourceSize, \
-   |                   ^^
-   |
-   = note: character appears once more
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+#syz test
 
