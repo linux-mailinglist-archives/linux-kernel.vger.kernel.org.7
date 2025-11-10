@@ -1,121 +1,143 @@
-Return-Path: <linux-kernel+bounces-892384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFFEC44F87
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:17:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FB5C44FB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A943B0704
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:17:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D0B188DFE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C672E7F03;
-	Mon, 10 Nov 2025 05:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95CA2E8B77;
+	Mon, 10 Nov 2025 05:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZpMBsTSr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Hmr3x5Vn"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B4B1B4F0A;
-	Mon, 10 Nov 2025 05:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894501A2C25;
+	Mon, 10 Nov 2025 05:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762751843; cv=none; b=CnB/BNid2rIZtiYHT5+e4IxA3BMT6fwC84rm9Cy+grCufCfu0MGez2GRDUak5Ir1DhUu1Q+tnW/OS7qoBcG5BcOn4dKMkW90EiThqhvy3lj7D1h6gyyuYj9U5wQeKgvVnZlJPKSiieNlYjrRhx/rVsYqwt6hhaadr9BvDcrM+90=
+	t=1762752016; cv=none; b=eT7wT8Mh9eNTZQaOpoCcExpOchYM8Q1KBogYIWntRJbHOxm0haaYow0jCeqkRZDfkqPp8UOeAxCOhLvXkxXVgrZGLrvZDgIVzzeGKTb5Mi+uD8ZX8RiVNb7FPUXXGvVJbzt/Kdv791+3lKsb1U8EjpuM0sZK53DoRc8KN6OfiXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762751843; c=relaxed/simple;
-	bh=B8xGLtXLk7UM8HEMQcyCyv4NJfNe+kYjKelm970TQKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fCGVBg7WWUaq7f+X+gXac4gggWytZiGTo51YPSz0+RIzytuKjf6ejMos2F3oMtEMluiagZxI4wOGE1MsZkmQ6Ut5utpSFRfdApNTO1bm6SHPp4K7ybiFjLmSyGyYoWCWw+rCwLzZ/ZSmwSFci5m7WcYK+1cXgLWXvUlTZzNEl60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZpMBsTSr; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762751842; x=1794287842;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=B8xGLtXLk7UM8HEMQcyCyv4NJfNe+kYjKelm970TQKg=;
-  b=ZpMBsTSr7r9kYCA1StwL4AWn59vtAz8WXCgfs32hYHx3vgCZGapty0f6
-   ShvNBKmf8nkI6MzEVKX4AZ7o6O7u1feQz2BCtCbAOZVYDJhJEfzzg4dmM
-   3kDhN5WmPSgxj0f1z3mbjs8UbHTlhtD3qdW5j0bUaWoCnuqjOR0SK7/cA
-   nWaeUlwPOZT/HVV+smII8KG65lwfb4yMvzX4IAv7d3lcfT9elZyNEK/li
-   xhnrGoa8uqf/Ld4wcmsx+pLzTiIlA2/YfuhHlinWXPUEeWkn9S7aj/ZIv
-   7RqWjCvOdnR8s371uI0k4doKVQ+55S9B4uxjnKKYRqZ2SPpxbhGXtsPQh
-   Q==;
-X-CSE-ConnectionGUID: xk+Kb4NTQa6+zpuG+wKPWg==
-X-CSE-MsgGUID: mzdPvdFpT0GjvJrDmGeBjg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="64834095"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="64834095"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 21:17:21 -0800
-X-CSE-ConnectionGUID: 8HR3QZV9S1OSgKIsy81Iug==
-X-CSE-MsgGUID: dGB8psDJRTite3V++mI7OQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="188323433"
-Received: from lkp-server01.sh.intel.com (HELO 6ef82f2de774) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 09 Nov 2025 21:17:18 -0800
-Received: from kbuild by 6ef82f2de774 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vIKHE-0002gL-0p;
-	Mon, 10 Nov 2025 05:17:16 +0000
-Date: Mon, 10 Nov 2025 13:16:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wanpeng Li <kernellwp@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH 05/10] sched/fair: Wire up yield deboost in
- yield_to_task_fair()
-Message-ID: <202511101338.8AICyae8-lkp@intel.com>
-References: <20251110033232.12538-6-kernellwp@gmail.com>
+	s=arc-20240116; t=1762752016; c=relaxed/simple;
+	bh=WICAjAkBcOzYNQw2QatcrHUjeNQPqwknDKC2jJuGTWY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=cGc48tZQyNeYzeBIy83efBCKdnv9LuIaI07GIajDOnsjMVTg9bbOSGvYuFJJRRtjtyh0zGP7ITLYhgcwvA3btd1P5U4gh2pwXQldponoAwfL84719/dUZGd9mI7HKNMDitsLexdW6TEi0JgZM4D/yjSmJ0Et4RymoTGgVQrz4Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Hmr3x5Vn reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AA5KAkq3346810
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sun, 9 Nov 2025 21:20:10 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AA5KAkq3346810
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762752011;
+	bh=ByLx4ga8mLNebyKIOpvPJefCgzhRahPFj+lLZbpqSnk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Hmr3x5VnB25CC5UOUzv+z4S+ujjkXbglZg8UkHG+meqM4WrueRcjiaLIA5TUshnPJ
+	 IvJ6vlC1XFbcc/qy4Jo/1l4DbTwv7tDP/jTAx4ce01xpXAoZFgm7PUppVa7WzH7MWh
+	 rdu/sfqZfEeY8ootCdBtAQeDru5aGioX3LRP3CVL+0u8VvHx5ToI07XcQKZ/nRrOdZ
+	 UjPlmXesbHXnXx/NbhyuBpMb60NrUfwKT9oueNisLKqqjGuwQFwFlARm3QYen6NU+e
+	 74jh+p+WynNdPqeRMGYE7/0FI6gbDvjn3MBwkpRnEqZQwbFexVMRMOqkYn0/Jva1Yo
+	 ufSWGkRcLuPbw==
+Date: Sun, 09 Nov 2025 21:20:09 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: "Theodore Ts'o" <tytso@mit.edu>
+CC: linux-serial@vger.kernel.org, linux-api@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20251107173743.GA3131573@mit.edu>
+References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com> <20251107173743.GA3131573@mit.edu>
+Message-ID: <17FF5500-54B4-4456-A870-E43E004589F1@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110033232.12538-6-kernellwp@gmail.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wanpeng,
+On November 7, 2025 9:37:43 AM PST, Theodore Ts'o <tytso@mit=2Eedu> wrote:
+>On Thu, Nov 06, 2025 at 11:53:23PM -0800, H=2E Peter Anvin wrote:
+>>=20
+>> I recently ran into a pretty serious issue due to the Unix/Linux
+>> (mis)behavior of forcing DTR and RTS asserted when a serial port is
+>> set, losing the pre-existing status in the process=2E
+>
+>There's a hidden assumption in your problem statement which is that
+>DTR / RTS has a "state" which can be saved when the serial port is not
+>active, where active is one or more file descriptors holding the
+>serial port open=2E  There may be certain hardware or drivers where this
+>is just not possible, because nothing is defined if the serial port is
+>not active=2E  It might make sense if you are using a 8250 UART, but not
+>all the world is the National Semiconductor (or clones) UART=2E
+>
+>Certainly the "state" will not be preserved across boots, since how we
+>autodetect the UART is going to mess with UART settings=2E  So
+>*presumably* what you are talking about is you want to be able to open
+>the serial port, mess with DTR / RTS, and then be able to close the
+>serial port, and then later on, re-open the serial port, have the DTR
+>/ RTS remain the same=2E  And it's Too Hard(tm) to have userspace
+>keeping a file descriptor open during the whole time?  (Which is
+>traditionally how Unix/Linux has required that applications do
+>things=2E)
+>
+>Is that a fair summary of the requirements?
+>
+>> It seems to me that this may very well be a problem beyond ttys, in
+>> which case a new open flag to request to a driver that the
+>> configuration and (observable) state of the underlying hardware
+>> device -- whatever it may be -- should not be disturbed by calling
+>> open()=2E This is of course already the case for many devices, not to
+>> mention block and non-devices, in which case this flag is a don't
+>> care=2E
+>
+>I think it's going to be a lot simpler to keep this specific to serial
+>ports and DTR / RTS, because the concept that the hardware should not
+>be changed when the file descriptor is opened may simply not be
+>possible=2E  For example, it might be that until you open it, the there
+>might not even be power applied to the device=2E  The concept that all
+>hardware should burn battery power once the machine is booted may not
+>make sense, and the assumption that hardware has the extra
+>millicent(s) worth of silicon to maintain state when power is dropped
+>may again, not be something that we can assume as being possible for
+>all devices=2E
+>
+>If that's the case, if you want to have something where DTR and RTS
+>stay the same, and for some reason we can't assume that userspace
+>can't just keep a process holding the tty device open, my suggestion is t=
+o use=20
+>
+>Given that DTR and RTS are secial port concepts, my suggesiton is to
+>set a serial port flag, using setserial(8)=2E  It may be the case that
+>for certain types of serial device, the attempt to set the flag may be
+>rejected, but that's something which the ioctl used by setserial
+>already can do and which userspace applications such as setserial
+>understand may be the case=2E
+>
+>Cheers,
+>
+>						- Ted
 
-kernel test robot noticed the following build errors:
+So let's separate out a few things here:
 
-[auto build test ERROR on kvm/queue]
-[also build test ERROR on kvm/next tip/sched/core tip/master linus/master v6.18-rc5 next-20251107]
-[cannot apply to kvm/linux-next tip/auto-latest]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+1=2E You are taking about using setserial(8), which is really ioctl(TIOCSS=
+ERIAL), which requires a file descriptor=2E This is exactly why I believe t=
+here should be a mechanism for acquiring a file descriptor which *by that a=
+ction itself* should not change whatever state is already available to the =
+kernel=2E
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wanpeng-Li/sched-Add-vCPU-debooster-infrastructure/20251110-114219
-base:   https://git.kernel.org/pub/scm/virt/kvm/kvm.git queue
-patch link:    https://lore.kernel.org/r/20251110033232.12538-6-kernellwp%40gmail.com
-patch subject: [PATCH 05/10] sched/fair: Wire up yield deboost in yield_to_task_fair()
-config: m68k-allnoconfig (https://download.01.org/0day-ci/archive/20251110/202511101338.8AICyae8-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251110/202511101338.8AICyae8-lkp@intel.com/reproduce)
+2=2E What, if anything, can be done on a device by device basis to improve=
+ the situation beyond what currently exists=2E=20
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511101338.8AICyae8-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
-
-   m68k-linux-ld: kernel/sched/fair.o: in function `yield_deboost_calculate_penalty':
->> fair.c:(.text+0x1588): undefined reference to `__udivdi3'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
