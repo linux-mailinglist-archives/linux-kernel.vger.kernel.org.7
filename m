@@ -1,595 +1,267 @@
-Return-Path: <linux-kernel+bounces-892278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0028EC44C02
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:05:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FADBC44C33
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:15:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 764E93AFBB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:05:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 574984E4893
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C93221F2F;
-	Mon, 10 Nov 2025 02:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8EF22157B;
+	Mon, 10 Nov 2025 02:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYsvUsrl"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZougBn1Q";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Fr7R7Eaw"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C4B217F33
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762740307; cv=none; b=RcKCH98+nULXxuk8023uqwQLiDihRVsTQT83FWE+ljk1NrHkLT68f+P0dMO9x7MzxQNT18pD6cSGQeQBvfwks99gie4shIuJplDGeEth39UAfIJaLX+g1q70cTQeRgAL1G1gFzfeS2U8icekWlVj2fjw3rAooNOFGeeqWw5kRfk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762740307; c=relaxed/simple;
-	bh=IY3NQ3RmUYv9tqFPuwIEvyN6n+5T0I/NemYjL/b9ZJw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bnylzV21Sa6UuhfUdtu+Ido36DvZgz7MIXmHhqKz5bgZCRlywU+8QKbLz7w2xcO9h3ydS00wwTUl/p19tIFIghMRnuAmr8UVBYcZKHQZ+2AwLWs8rB3rJ9btbjv9FmR+MgwM0OXgO3lanapxqULOp9go6pFE5SonevFfEVSyq70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYsvUsrl; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-640e9f5951aso3844333a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 18:05:04 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4126A2BB13;
+	Mon, 10 Nov 2025 02:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762740940; cv=fail; b=VG3YjKbZ8KNg4/Q7S/nRXZM2WtSsYTjuz37bmQ5RmVnD07c5JLoyqz0Mn7cex83dgZCgUVG9esiT/OmMOU6PDnAFeF+bEF2C8dOYNrZwmCGob0i9Qnd7iMdw4JAvuwtiIxgKdfb2ANal5SCPfBQPq3ab3DnOU8dnLJoRou2gS1w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762740940; c=relaxed/simple;
+	bh=lh+QBi+NS3nNFnjsQhe1o+H6i+lLrfoyo2AZlGWq6/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jhvz+rtPT7JWn/2Xx3D18KdF7gDqf2S40D1QNbD2sRgE79nsPgAOX2OD47FCsiwJ9541hYAKTEWqeMHcVrWTonehLssnGeiEI43Zp4MdxlggJD2hAlmRbj4Q3n2D1Is5oL/CY9o6Hd4HT48TrIz+hHNjO9zOo60GHfXcHrJffLM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ZougBn1Q; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Fr7R7Eaw; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AA1sTMO017224;
+	Mon, 10 Nov 2025 02:14:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=p92qH5pDIVaIGyVpyr
+	Sk90i0jnREKB12e/WncjoZCBI=; b=ZougBn1Q80cNODD8MhaZNUzCdmu0aelkVB
+	RwJQW2xbU+Wxerqkbfh1ie3RoQavWXW1ArtqDbLiPkTTxFz6JYAG77lUUTK/gpHL
+	vr6lLQxLr+wdjY5dYnplKbSm0aMtg3fvwkvMVWo/VGkDCUlZH33304WhGaWM1K6n
+	lTv26SX2VMJKc/mVeiT1JpmP2Ce7zTb5bmpVmcVKsUOr0eDKTCZe31RC8qlXlUnm
+	cJEXeK8eDDnrQ/gxQW+3yGjcIaFP1sJB2kE0DsgEOuKKfnQe4C+wnON6rneyX5qu
+	Mt80dg9bqUA9uyDTfF7pfl6+2fkaCRMJ9ADZUcGSHYhlrfvGmUjQ==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4ab1u1r9yh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Nov 2025 02:14:08 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AA01aXa012715;
+	Mon, 10 Nov 2025 02:14:07 GMT
+Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010022.outbound.protection.outlook.com [52.101.56.22])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vab2a02-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Nov 2025 02:14:07 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EAT+FNl1cnK/IdNNtCpH650uH/bj8lxwxBzGjxu/kKgCieK9EpM4IpmSe+LK+HjRkEc56s7EcqhCQoO4ABLWadO+gcS7fasWv4jEEWMLOTRt2pgNkyeTlQmTob+rC7T/ds3tBcUNE7ah7R5KNPdA8aj6rI1cyoCvjGpYCfX5lNwo1JueBnVyALiO0TyFeVk/UfzaLcROPTrXU/+FN2CghYMQaI4RWIzMkqWoyZC+G1zJZPrif1HeezQKRLtMvMJDimAdTRkovFBt0694GZaPmjO7sl0g/JmH4W+NGAYVJOEqcSao44EOJ0HkN3Khelljtc2Etq9y/4nvo7FchgWdSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p92qH5pDIVaIGyVpyrSk90i0jnREKB12e/WncjoZCBI=;
+ b=Wk8JS5766Wh2oMdOfvqM2RelUiwSBtaSRqEwtK+iKrZQEnabUZTLRwaZFceg+y+6Tp8ylw0J01YKNXdgZILBOfRt/ZvwtLXgt/vrOy0NYVY7LV4bdoAaq6EHodlmJZlQAUooqugez709rF7cg00U4QK8W9nwi+U75FZ2gQpuIRZlbPSQloioKfsbMrE5LVf2twPGjcYFpi+S+MdDQHnv9bI1HlzicrSAyZYZllzLCPkJefaFMhQWOakqFSSUj0OXXnpCS5qD9siMibU4AjWHfxGGezDZEGG73WZC9wcGQkA0zfWQGLizsf6v8BCNXHPddvtrz0FOon/Ae01lJ3KEjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762740303; x=1763345103; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7MfKTFvu1Ddt4mx9rsrPlWMJDbZL3NDxl4jBYOb6ntM=;
-        b=RYsvUsrl55m+sdJGIUziBMEXTBEitqZHZunAjeF+diQLUZeQyIQVQ/1GyJUj9kNoGK
-         B4PHjdOVfGyldoWYeRFvk1D8EQObgT/7FHq9J9TWlTarLDE85Rg5/lyE/76XOxS4fmFh
-         Xjg01T64jgs/zksuk0n8st0DY4g/J5TUlgos4piGrYQuJltm3dfvIUrmglGU2v0afqv3
-         CVGQZjB3dsoeXWaZmg6HfuhcakoKrE9k3d1rcq55I/JoivMz2qhaWMxU4o9RpdveX/U/
-         b2SRUg9QDJIMNGSfhRgJ9RKhQVdloy8RTHvT6OUPVo2VnoI9ZVvP0VAJ7PZul0bPjMK9
-         tXyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762740303; x=1763345103;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7MfKTFvu1Ddt4mx9rsrPlWMJDbZL3NDxl4jBYOb6ntM=;
-        b=SKbJxDfDJTBiGfdJQW9VAbDFYi8D7Zaj6VbvcQ/UjX5tRuORo/urdtKTWBYHpRoRBL
-         /wKirucapN+av10qUGp79P6L0cPcy7fqwGy08P7w6B6uzph0gFAfSURruuoQXQhr9G3v
-         +Wa2JfCDslPOZ8FKZd7ib5tNMnEfgZvvcDrCoiUMQCHGiP2vuBZXqvyhJcy5WAegl26y
-         JhTVroOG6xvpJyX1GPVCx8on7h6L412cQksFZ5ELdyL1FN1poTEDqduYg+nJixnNJsGd
-         jFkcBSZQC1sP4kfq3JPexkf7+hKN+bqVkI+z6TFpHNEd4QACbPgph+XYzBN9gYNs8N03
-         0J2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUCWW0UdD8LtHzroNz/JFh3TaZdWnmPAFO2cEMu1H9829EtnHgrmm9i1bB3B+bsnSQ6wrMWlZcMJSijMYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwKDeTRI8o20oGpNAWLpLoaXzcCDZHY9hI6bY+IgY9s8NPyIaI
-	Buf0YZ0JqepNEIe1ukGGfJ/gjgm9Fyg8Xr0id2md5gPEeWjRCdOfXp/pESM7N63xCXDlvkKPnBq
-	MubiyYun/g30Opkn8Dl0QuUjEoz+7Qyk=
-X-Gm-Gg: ASbGncs7RhCgfZeQ5OUv4zmC5NXDPj03W6fczmLc1yhvl8urLT3Sh4NlpIybg7BU/Sc
-	/Tyzw51LazeIDo/OSDxHdQRxaYUUUFESfFBjNfWj09OEqHUTvOAd12d+T6J18NxUKvRYYng87kx
-	e/keIeMEQQJkqHGdEVdzxBOMjAJ+iBw07yWRopHyqF1nySv8bKtl/QMXpBtJ2cgJXPs+9t680ij
-	h6m288nNKequlaIUQDdH0hwYPStzjJXEOcM+jApIIaTa8tS7IZfZ542z7qF6w==
-X-Google-Smtp-Source: AGHT+IGdpoX2obYyrTWTfrFqFe8H8gXPeLwwsj2b+aDOm7zHAXljJ1QWxDOzDltpzZ6EUJg9DO/Hn4u9LrQruPEhy9A=
-X-Received: by 2002:a17:906:3993:b0:b72:dcda:fe5a with SMTP id
- a640c23a62f3a-b72dcdb1330mr565136566b.5.1762740302590; Sun, 09 Nov 2025
- 18:05:02 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p92qH5pDIVaIGyVpyrSk90i0jnREKB12e/WncjoZCBI=;
+ b=Fr7R7EawIrlDhk8iOnFtQV5vm6pEUb4WgqDVrIf+fdh5IovPzoruq5hjBTCUs597KI5z5zfoqmuSwJS5bwID+mksfQpM8az6v13+CjYLh5uJuUAsDFbZFbAGGJ05oO3bPj2zjekx2ln3ooX+i+Ag3nFjdpR/fVh935dJeYuPJSw=
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
+ by DS0PR10MB6896.namprd10.prod.outlook.com (2603:10b6:8:134::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 02:14:05 +0000
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23%5]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 02:14:04 +0000
+Date: Mon, 10 Nov 2025 11:13:55 +0900
+From: Harry Yoo <harry.yoo@oracle.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Qi Zheng <qi.zheng@linux.dev>, hannes@cmpxchg.org, hughd@google.com,
+        mhocko@suse.com, roman.gushchin@linux.dev, muchun.song@linux.dev,
+        david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
+        imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
+        axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Clark Williams <clrkwllms@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
+Message-ID: <aRFKY5VGEujVOqBc@hyeyoo>
+References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
+ <97ea4728568459f501ddcab6c378c29064630bb9.1761658310.git.zhengqi.arch@bytedance.com>
+ <aQ1_f_6KPRZknUGS@harry>
+ <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
+ <aQ3yLER4C4jY70BH@harry>
+ <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
+X-ClientProxiedBy: SL2P216CA0171.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:1b::21) To CH3PR10MB7329.namprd10.prod.outlook.com
+ (2603:10b6:610:12c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
- <20251104134033.344807-4-dolinux.peng@gmail.com> <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
- <a2aa0996f076e976b8aef43c94658322150443b6.camel@gmail.com>
- <CAEf4Bzb73ZGjtbwbBDg9wEPtXkL5zXc3SRqfbeyuqNeiPGhyoA@mail.gmail.com>
- <7c77c74a761486c694eba763f9d0371e5c354d31.camel@gmail.com>
- <CAErzpmtu7UuP9ttf1oQSuVh6f4BAkKsmfZBjj_+OHs9-oDUfjQ@mail.gmail.com>
- <CAEf4Bzb3Eu0J83O=Y4KA-LkzBMjtx7cbonxPzkiduzZ1Pedajg@mail.gmail.com>
- <CAErzpmtJq5Qqdvy+9B8WmvZFQxDt6jKidNqtTMezesP0b=K8ZA@mail.gmail.com>
- <CAEf4BzZsgrKWwTZkdv-WviXvGkhV-ZyQbpb8wDqBGNventuRcg@mail.gmail.com>
- <CAErzpmu_FD_mHcU4uL0XpNU00XngY-1vN5OkKcBBfH2Mr-vY9A@mail.gmail.com> <CAEf4BzaqEPD46LddJHO1-k5KPGyVWf6d=duDAxG1q=jykJkMBg@mail.gmail.com>
-In-Reply-To: <CAEf4BzaqEPD46LddJHO1-k5KPGyVWf6d=duDAxG1q=jykJkMBg@mail.gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Mon, 10 Nov 2025 10:04:50 +0800
-X-Gm-Features: AWmQ_bks1RcWKzvfl1WQzjn4nzt-ALkOo4KxfroYjaDTt8E-wGGPUi2JezILKLM
-Message-ID: <CAErzpmvqH62be=V1dvLNX1Vah+7SgDHd-eFHsmRh=k2CiEvAxg@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 3/7] libbpf: Optimize type lookup with binary
- search for sorted BTF
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Eduard Zingerman <eddyz87@gmail.com>, ast@kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>, zhangxiaoqin@xiaomi.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|DS0PR10MB6896:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8525da8b-bc57-4f11-9d6f-08de1ffed226
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qZ9YfXAjr5bIlXvaFi92VltH6jCtBrCbi4E2xxBXJzyJRlV+9WPgt/Xtrm5P?=
+ =?us-ascii?Q?drJMVgY/JdEeZ5HKVdMDDbQuRjyKta+/hHy9FvhXiHcbyd1gc3vgsPXJ6esN?=
+ =?us-ascii?Q?MF9Xpy+S4gD/N/JkIlFGNzK0iAbeRjLruRDuciN2r72Qux3QBPvYzKwK/Exy?=
+ =?us-ascii?Q?YubTjT98Aqv+No9LQyQhMk1xXGl5DWBS40UHAGoWjDBNOrLPcogjB9NAJGKq?=
+ =?us-ascii?Q?Eq7VE//qDxHRGmK2dUUNA1+Jjj3MzPnwVQGV0BHqEOh6LRMEyARheNdL2edo?=
+ =?us-ascii?Q?1hGVwEBFatKg9l5RToQb1jbf3yXbtCWPrXsEeaE2+ogP/VIi0ikpPvSGL7R6?=
+ =?us-ascii?Q?QDzDvhCP1+OPCXiNd+LaTqKuqQF5HXMKkOjzpjra306ueXE3ggwXtIefq82X?=
+ =?us-ascii?Q?YbNGCCfTBM+eTpM0agAbKLSYhZJAq3ELpQ4/uR22uoetd+dknOd7NCNQqsfV?=
+ =?us-ascii?Q?RIn7D5G+GNdrAPtkNECXEA7memiGihi4w3IkXtoSo3sIsVbBWMn97E0D3Ufl?=
+ =?us-ascii?Q?cclrsbiYUwCGu+43/zdqrZcpqqe+O/sVQQduzzvEG8XRom5jRex3cQOek/2y?=
+ =?us-ascii?Q?6sKsHBYH26I77YIxzMpb3EECL4PwVhStubiouVYszBvK09q94cI5e75f+3r4?=
+ =?us-ascii?Q?kyEjdQBjIge4uVM/VDA71JEI8hWthl7mXmMAUoWYFkY6qQUlcnlNreojtTCx?=
+ =?us-ascii?Q?krrgEScRxAiOr6y4F3QOrZ4kpO75Jqj2Cu+rirkg1xqbWefeed8VZEc5jFRu?=
+ =?us-ascii?Q?H5qVfZisHkNUYpYLa3kg0/7FDSztB/Uq/lPsilYv8T4Ao8Tu0Abp9RZjPIT4?=
+ =?us-ascii?Q?7MSAE5e6etzADtBV+8Y3Q8E4mOLHbuaqCO775uckwYg9C1RrH/0Hro+MXwAF?=
+ =?us-ascii?Q?3ZtrtE0x9l8B9AoLMzubKQ771wqt3Linp6uC/Rw0qrEgKegxOEEUIvxpi6P2?=
+ =?us-ascii?Q?2bfkY52IAI/S5KzRR0MCyyAllfk3e5m0WecL3y3D9HiZ7SGzDX7aCNVhA5JO?=
+ =?us-ascii?Q?hIJKeGhNrZ+8zPW+UV06/Cgta7YIYs13vmOCvCERS0rze+Qibr0nFEGABSbS?=
+ =?us-ascii?Q?8MC+aYzAz2vw1g5cDwPENxnBAlyn6cBCaUWr7LwIrqCjUHGfI8bk7dp/kw6M?=
+ =?us-ascii?Q?7cndOLfS38NYcasV1CCpP07D74LaXRxkT/jqalD+LIvGgyBiOmQyRH0CjtlZ?=
+ =?us-ascii?Q?ZvYeZpw7RHnRzgVJL5OrA/MX9M2LpMOvsFycdwtyKjfanHOpAXRpBChBcCpQ?=
+ =?us-ascii?Q?dv/5oqcrVN/0IyFci9bvwLa7WBFU8LXhTBNaGJLxzVVCFg87NO4AnnyNum9K?=
+ =?us-ascii?Q?/bUUobt804h7DNL2mqWZoXabXTJuKGwUyA8a4It5is+Vk521QiCO/4Of53Aj?=
+ =?us-ascii?Q?iAfl89uMrKO60adHNCfKOWIpSpTzCJKV+wSiKIxT5kUw9Dcd7w0jB3lL94Vr?=
+ =?us-ascii?Q?8P9yVw21MfW3u+XanFWyl5h9UAIPYW/R?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?TuqIZWBBK9iD+pGz2lA1Cu5euZ4vvdfDJ2k7yCaCbMuE9qhcA0ELNP2F3PnZ?=
+ =?us-ascii?Q?UsCBJmECOeZXfNVt9E3iCcrHwQwrLfbYHjWfmeuKGzgqw5zRkyxtziGppCl/?=
+ =?us-ascii?Q?v2qwPArUXaQdAOK4oTkZFsJ/NmIbZe3Wr/3hn3/VZ6Vxmyb7p4nzK4dSYZsI?=
+ =?us-ascii?Q?jvW/ualqCV6PzsV1RNoXHub9JTBpopXY9p8wjtO4MtL0jkvX8TcukwtPxlwx?=
+ =?us-ascii?Q?pHJM3KLTdbU4s5LynjUjE1hvFkXilvTL0vflg5lDllLaQQnFYO0gnLHjaFs2?=
+ =?us-ascii?Q?XaaBUpUtwpLfhYrw5OJE6yilntUqLhGZxAZYBhJS+8lxqBXCyfi4E1e/GuFS?=
+ =?us-ascii?Q?S4NKgQiPVk1HGZ6b598Oixbukcsd60sApx7hd16cbijMm1MicX3M+miRXey3?=
+ =?us-ascii?Q?14El9FKLVPLH2WgMxPWGNmV5j/m9xW3RP5ERQoAiM06Y/AkPU4Je2OGR5IQe?=
+ =?us-ascii?Q?JglSA3fWSO+glIkR/ppveseeNuzudZ0rHEg1ZnPR3QIe/j/sxdLP1bTRr/eJ?=
+ =?us-ascii?Q?SNIpSw1uFH7Erw1YqMG/NxyuaiK5gWmwecVydWXIdMjZ2LjjWCMWQ1CtdaZy?=
+ =?us-ascii?Q?jinzx6y5LIkPdXiEx064nHm9oYA1qIBTYY+2eVHQxurgchvKEPgaf3zTEdD+?=
+ =?us-ascii?Q?7CK+6pSmVysoiubzmSoITR+S9AdSALxkZ7GuIcJye2LACzHNXo7GQ5u3fi7g?=
+ =?us-ascii?Q?l6pihAv1/hfMbM3ETl4GA+zskUeZ8JA900nILiOjaItTsjIKH5vF1trwbpgr?=
+ =?us-ascii?Q?EGHsuuJe/f20mbTTkwIp1q7IaKXNevu65uGThny2cQ3zajuKmcVh6vRaHFGp?=
+ =?us-ascii?Q?smHyj10cxuryu16F6yJlRA+WSbz+LFw9h88lQS1FQIPMI3n1VdAMLs8Vl++4?=
+ =?us-ascii?Q?5zcfksYxHzhOT28W1s9nS2j79ki9nC6rv9vyfZfX7GSWq06HjBcKLzB2243U?=
+ =?us-ascii?Q?S+C/ZtkT2GjtvrCDaYrDtXoF9c6x9PhIfCmo1yU1K9UvbpQk/X7cTeiJgmpP?=
+ =?us-ascii?Q?ezUJTTpnuoG61OfEqJXKwoMLWM3t3w3wVsP3xR7bR0cKXKtX7d0erFDuWCNw?=
+ =?us-ascii?Q?9yg4LPJTMA6/59PJekk62RcLYBnpAosd1h6+kRG/Nc82t8S64bAeLSLZTKnt?=
+ =?us-ascii?Q?mElg+AIvPZoZ0lPR+XiKPI/FaGbdKKXOO8+cfrJpVQlsV4g3iBfJSpEr0AMn?=
+ =?us-ascii?Q?dS+wxPEfDM6Uv38DzAfYpa9G3x/uK21v3idy0mmEAOaxmN7oO/x8q2B9unv5?=
+ =?us-ascii?Q?Nx772ze3VsFtoTq9/7xs/ycuuUS4IYf6P7meX4+ummvKND0ItwHbTWQgxxQ+?=
+ =?us-ascii?Q?w2lOftXQ15/ZmL+MVNy3qspXUqz+qOKAsuJlFJ+V/gKxZVaLqAyd1EBqQc5E?=
+ =?us-ascii?Q?y7wk/6P8U5gR8wF656keHjf621TiTC2EpMIVh6Mu6pUncrBKaEghw/5DokQo?=
+ =?us-ascii?Q?GP5SvkkAa1zhNynG4T7FFGFeVR9c69n0RSekYhjLrkiokbuQVx4cAgBz8w8t?=
+ =?us-ascii?Q?KOIVjJLpt18zxVK/WG4I4sFtqgN8zv278BAszMrmzXl49Ok7h4S4eEaw+fv7?=
+ =?us-ascii?Q?0UDcedVJOc1613lTPpxpaIT828NlyFdn4E6smzdg?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	rPnX6/1LylJ2I1gHlPZ4LU8Nb48RHYAeudGyfU0juNZpRK1Yb8ChqljZrZ7F3ShR4v9Sn8hT1KAopmqnCHDMRvhKo6UwsGGZ4zGLzIwqUCNw7irLnET/kxiu8vP6tmf3G9+yDDjFd7eluLZ8LrrAp1eyBAX8rOFvR7ltYQ3SzE4tMoKhvSaKLmLe5oALOQ7+Sqw6bccn6xwTdp5Hm7R+z2iSmAC4HM9wzSRuFvyvN3kmWfM2JWomjWmR3QzEEkI3HIVMg1IOBSNKNHQHOgY+ZhI/tqqk+9qnVboWFYdwssYhx59A9flzPb/nKrONXx70ljer+OneiHL5fN9EhQ+OoQejR852fuT2gQXbf8ceMpfkgh8I93CVuw7F9MM8OIGhqnO6mZGWjePxdNFgfryMC8/4N5LT3wmTnIRkatd5DNkAZ3EoaX7S9+XrQtKqywLp8ELDvW4tsmgr/gTvrL0HcsdisIAPtemdYqzOAeEoLZ3OQb+Vq8Q8Qd0NJxiIPCmCZ5YLOIoEztdhdJJ4MdvJGo5xRcs5O9QodovO+Ey+Y+OsEtCPYa4ZTQWxGEnLTWnjpsRUvN8nPO24OETupHkov4ubJ3PelDFjcf7l4VkzVAY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8525da8b-bc57-4f11-9d6f-08de1ffed226
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 02:14:04.6370
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bIYXhvsUtZ/5DTlTbpFu6qXRYQf7qNtFYebC5uQHs5tYg3ARvT8B0YDw2bYctdzUIsT9/WmjitXZAoVnOXnPfQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6896
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_01,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=584 mlxscore=0 spamscore=0
+ phishscore=0 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511100016
+X-Proofpoint-GUID: aa60BRYcKSRQzGLeypkgt4M0MKtkq9xm
+X-Proofpoint-ORIG-GUID: aa60BRYcKSRQzGLeypkgt4M0MKtkq9xm
+X-Authority-Analysis: v=2.4 cv=AKlJAtVy c=1 sm=1 tr=0 ts=69114a71 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=HfqzDRm77vvMm0GhDc0A:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12096
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA5MDE4MCBTYWx0ZWRfX3tmEXbPtFX6s
+ YNo4DCp1QqALZmFGRyMQRQ2HoMDwS4mBfxiNfspCG1xX5MzylZ6RfNJPH+xmLv/hhK1MwWT/Kb0
+ 9Zvlp+/8t9U2zc5Gh2fBQAt+CiL8AzkGbyfctUSqbX0DY2iiOZ7TQ1kbTHjQ/4qGQF3FPhJFstj
+ U2Cy8PQhTlf9Wi0n9G2e9ZBUTQldFLVuYz1Tv3VVcL6Yikz8krRqkb6Py2nff+RiDGeShzULinO
+ ZDyMy7kfx6/ypbf9TL4u4uwJZ+teKFD3k9K6U9o6Y9VhWrDs0A4f4XGnnNdV86e19mtvHQ0Pkrw
+ QthLeVfzMdvjn136E3Jz1NCO+t3gsbC8WheqbpwX3sA2I35JsrbhY7wTXeB9NJgxIcARUG8Fj12
+ qNz33pM/iFP83AiJcaIzb5SSTYyqOFhjqLSrptKfdKpbdBJDY+4=
 
-On Sat, Nov 8, 2025 at 1:01=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Thu, Nov 6, 2025 at 8:57=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.c=
-om> wrote:
-> >
-> > On Fri, Nov 7, 2025 at 1:31=E2=80=AFAM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > >
-> > > On Wed, Nov 5, 2025 at 11:49=E2=80=AFPM Donglin Peng <dolinux.peng@gm=
-ail.com> wrote:
-> > > >
-> > > > On Thu, Nov 6, 2025 at 2:11=E2=80=AFAM Andrii Nakryiko
-> > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > >
-> > > > > On Wed, Nov 5, 2025 at 5:48=E2=80=AFAM Donglin Peng <dolinux.peng=
-@gmail.com> wrote:
-> > > > > >
-> > > > > > On Wed, Nov 5, 2025 at 9:17=E2=80=AFAM Eduard Zingerman <eddyz8=
-7@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Tue, 2025-11-04 at 16:54 -0800, Andrii Nakryiko wrote:
-> > > > > > > > On Tue, Nov 4, 2025 at 4:19=E2=80=AFPM Eduard Zingerman <ed=
-dyz87@gmail.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
-> > > > > > > > >
-> > > > > > > > > [...]
-> > > > > > > > >
-> > > > > > > > > > > @@ -897,44 +903,134 @@ int btf__resolve_type(const st=
-ruct btf *btf, __u32 type_id)
-> > > > > > > > > > >         return type_id;
-> > > > > > > > > > >  }
-> > > > > > > > > > >
-> > > > > > > > > > > -__s32 btf__find_by_name(const struct btf *btf, const=
- char *type_name)
-> > > > > > > > > > > +/*
-> > > > > > > > > > > + * Find BTF types with matching names within the [le=
-ft, right] index range.
-> > > > > > > > > > > + * On success, updates *left and *right to the bound=
-aries of the matching range
-> > > > > > > > > > > + * and returns the leftmost matching index.
-> > > > > > > > > > > + */
-> > > > > > > > > > > +static __s32 btf_find_type_by_name_bsearch(const str=
-uct btf *btf, const char *name,
-> > > > > > > > > > > +                                               __s32=
- *left, __s32 *right)
-> > > > > > > > > >
-> > > > > > > > > > I thought we discussed this, why do you need "right"? T=
-wo binary
-> > > > > > > > > > searches where one would do just fine.
-> > > > > > > > >
-> > > > > > > > > I think the idea is that there would be less strcmp's if =
-there is a
-> > > > > > > > > long sequence of items with identical names.
-> > > > > > > >
-> > > > > > > > Sure, it's a tradeoff. But how long is the set of duplicate=
- name
-> > > > > > > > entries we expect in kernel BTF? Additional O(logN) over 70=
-K+ types
-> > > > > > > > with high likelihood will take more comparisons.
-> > > > > > >
-> > > > > > > $ bpftool btf dump file vmlinux | grep '^\[' | awk '{print $3=
-}' | sort | uniq -c | sort -k1nr | head
-> > > > > > >   51737 '(anon)'
-> > > > > > >     277 'bpf_kfunc'
-> > > > > > >       4 'long
-> > > > > > >       3 'perf_aux_event'
-> > > > > > >       3 'workspace'
-> > > > > > >       2 'ata_acpi_gtm'
-> > > > > > >       2 'avc_cache_stats'
-> > > > > > >       2 'bh_accounting'
-> > > > > > >       2 'bp_cpuinfo'
-> > > > > > >       2 'bpf_fastcall'
-> > > > > > >
-> > > > > > > 'bpf_kfunc' is probably for decl_tags.
-> > > > > > > So I agree with you regarding the second binary search, it is=
- not
-> > > > > > > necessary.  But skipping all anonymous types (and thus having=
- to
-> > > > > > > maintain nr_sorted_types) might be useful, on each search two
-> > > > > > > iterations would be wasted to skip those.
-> > > > >
-> > > > > fair enough, eliminating a big chunk of anonymous types is useful=
-, let's do this
-> > > > >
-> > > > > >
-> > > > > > Thank you. After removing the redundant iterations, performance=
- increased
-> > > > > > significantly compared with two iterations.
-> > > > > >
-> > > > > > Test Case: Locate all 58,719 named types in vmlinux BTF
-> > > > > > Methodology:
-> > > > > > ./vmtest.sh -- ./test_progs -t btf_permute/perf -v
-> > > > > >
-> > > > > > Two iterations:
-> > > > > > | Condition          | Lookup Time | Improvement |
-> > > > > > |--------------------|-------------|-------------|
-> > > > > > | Unsorted (Linear)  | 17,282 ms   | Baseline    |
-> > > > > > | Sorted (Binary)    | 19 ms       | 909x faster |
-> > > > > >
-> > > > > > One iteration:
-> > > > > > Results:
-> > > > > > | Condition          | Lookup Time | Improvement |
-> > > > > > |--------------------|-------------|-------------|
-> > > > > > | Unsorted (Linear)  | 17,619 ms   | Baseline    |
-> > > > > > | Sorted (Binary)    | 10 ms       | 1762x faster |
-> > > > > >
-> > > > > > Here is the code implementation with a single iteration approac=
-h.
-> > > > > > I believe this scenario differs from find_linfo because we cann=
-ot
-> > > > > > determine in advance whether the specified type name will be fo=
-und.
-> > > > > > Please correct me if I've misunderstood anything, and I welcome=
- any
-> > > > > > guidance on this matter.
-> > > > > >
-> > > > > > static __s32 btf_find_type_by_name_bsearch(const struct btf *bt=
-f,
-> > > > > > const char *name,
-> > > > > >                                                 __s32 start_id)
-> > > > > > {
-> > > > > >         const struct btf_type *t;
-> > > > > >         const char *tname;
-> > > > > >         __s32 l, r, m, lmost =3D -ENOENT;
-> > > > > >         int ret;
-> > > > > >
-> > > > > >         /* found the leftmost btf_type that matches */
-> > > > > >         l =3D start_id;
-> > > > > >         r =3D btf__type_cnt(btf) - 1;
-> > > > > >         while (l <=3D r) {
-> > > > > >                 m =3D l + (r - l) / 2;
-> > > > > >                 t =3D btf_type_by_id(btf, m);
-> > > > > >                 if (!t->name_off) {
-> > > > > >                         ret =3D 1;
-> > > > > >                 } else {
-> > > > > >                         tname =3D btf__str_by_offset(btf, t->na=
-me_off);
-> > > > > >                         ret =3D !tname ? 1 : strcmp(tname, name=
-);
-> > > > > >                 }
-> > > > > >                 if (ret < 0) {
-> > > > > >                         l =3D m + 1;
-> > > > > >                 } else {
-> > > > > >                         if (ret =3D=3D 0)
-> > > > > >                                 lmost =3D m;
-> > > > > >                         r =3D m - 1;
-> > > > > >                 }
-> > > > > >         }
-> > > > > >
-> > > > > >         return lmost;
-> > > > > > }
-> > > > >
-> > > > > There are different ways to implement this. At the highest level,
-> > > > > implementation below just searches for leftmost element that has =
-name
-> > > > > >=3D the one we are searching for. One complication is that such =
-element
-> > > > > might not event exists. We can solve that checking ahead of time
-> > > > > whether the rightmost type satisfied the condition, or we could d=
-o
-> > > > > something similar to what I do in the loop below, where I allow l=
- =3D=3D r
-> > > > > and then if that element has name >=3D to what we search, we exit
-> > > > > because we found it. And if not, l will become larger than r, we'=
-ll
-> > > > > break out of the loop and we'll know that we couldn't find the
-> > > > > element. I haven't tested it, but please take a look and if you d=
-ecide
-> > > > > to go with such approach, do test it for edge cases, of course.
-> > > > >
-> > > > > /*
-> > > > >  * We are searching for the smallest r such that type #r's name i=
-s >=3D name.
-> > > > >  * It might not exist, in which case we'll have l =3D=3D r + 1.
-> > > > >  */
-> > > > > l =3D start_id;
-> > > > > r =3D btf__type_cnt(btf) - 1;
-> > > > > while (l < r) {
-> > > > >     m =3D l + (r - l) / 2;
-> > > > >     t =3D btf_type_by_id(btf, m);
-> > > > >     tname =3D btf__str_by_offset(btf, t->name_off);
-> > > > >
-> > > > >     if (strcmp(tname, name) >=3D 0) {
-> > > > >         if (l =3D=3D r)
-> > > > >             return r; /* found it! */
-> > > >
-> > > > It seems that this if condition will never hold, because a while(l =
-< r) loop
-> > >
-> > > It should be `while (l <=3D r)`, I forgot to update it, but I mention=
-ed
-> > > that I do want to allow l =3D=3D r condition.
-> > >
-> > > > is used. Moreover, even if the condition were to hold, it wouldn't =
-guarantee
-> > > > a successful search.
-> > >
-> > > Elaborate please on "wouldn't guarantee a successful search".
-> >
-> > I think a successful search is that we can successfully find the elemen=
-t that
-> > we want.
-> >
->
-> Ok, I never intended to find exact match with that leftmost >=3D element
-> as a primitive.
->
-> > >
-> > > >
-> > > > >         r =3D m;
-> > > > >     } else {
-> > > > >         l =3D m + 1;
-> > > > >     }
-> > > > > }
-> > > > > /* here we know given element doesn't exist, return index beyond =
-end of types */
-> > > > > return btf__type_cnt(btf);
-> > > >
-> > > > I think that return -ENOENT seems more reasonable.
-> > >
-> > > Think how you will be using this inside btf_find_type_by_name_kind():
-> > >
-> > >
-> > > int idx =3D btf_find_by_name_bsearch(btf, name);
-> > >
-> > > for (int n =3D btf__type_cnt(btf); idx < n; idx++) {
-> > >     struct btf_type *t =3D btf__type_by_id(btf, idx);
-> > >     const char *tname =3D btf__str_by_offset(btf, t->name_off);
-> > >     if (strcmp(tname, name) !=3D 0)
-> > >         return -ENOENT;
-> > >     if (btf_kind(t) =3D=3D kind)
-> > >         return idx;
-> > > }
-> > > return -ENOENT;
-> >
-> > Thanks, it seems cleaner.
->
-> ok, great
->
-> >
-> > >
-> > >
-> > > Having btf_find_by_name_bsearch() return -ENOENT instead of
-> > > btf__type_cnt() just will require extra explicit -ENOENT handling. An=
-d
-> > > given the function now can return "error", we'd need to either handle
-> > > other non-ENOENT errors, to at least leave comment that this should
-> > > never happen, though interface itself looks like it could.
-> > >
-> > > This is relatively minor and its all internal implementation, so we
-> > > can change that later. But I'm explaining my reasons for why I'd
-> > > return index of non-existing type after the end, just like you'd do
-> > > with pointer-based interfaces that return pointer after the last
-> > > element.
-> >
-> > Thanks, I see.
-> >
-> > >
-> > >
-> > > >
-> > > > >
-> > > > >
-> > > > > We could have checked instead whether strcmp(btf__str_by_offset(b=
-tf,
-> > > > > btf__type_by_id(btf, btf__type_cnt() - 1)->name_off), name) < 0 a=
-nd
-> > > > > exit early. That's just a bit more code duplication of essentiall=
-y
-> > > > > what we do inside the loop, so that if (l =3D=3D r) seems fine to=
- me, but
-> > > > > I'm not married to this.
-> > > >
-> > > > Sorry, I believe that even if strcmp(btf__str_by_offset(btf,
-> > > > btf__type_by_id(btf,
-> > > > btf__type_cnt() - 1)->name_off), name) >=3D 0, it still doesn't see=
-m to
-> > > > guarantee that the search will definitely succeed.
-> > >
-> > > If the last element has >=3D name, search will definitely find at lea=
-st
-> > > that element. What do you mean by "succeed"? All I care about here is
-> >
-> > Thank you. By "successful search," I mean finding the exact matching
-> > element we're looking for=E2=80=94not just the first element that meets=
- the "=E2=89=A5"
-> > condition.
->
-> We don't have to find the exact match, just the leftmost >=3D element.
-> For search by name+kind you will have to do linear search *anyways*
-> and compare name for every single potential candidate (Except maybe
-> the very first one as micro-optimization and complication, if we had
-> exact matching leftmost element; but I don't care about that
-> complication). So leftmost >=3D element is a universal "primitive" that
-> allows you to implement exact by name or exact by name+kind search in
-> exactly the same fashion.
->
-> >
-> > Here's a concrete example to illustrate the issue:
-> >
-> > Base BTF contains: {"A", "C", "E", "F"}
-> > Split BTF contains: {"B", "D"}
-> > Target search: "D" in split BTF
-> >
-> > The current implementation recursively searches from the base BTF first=
-.
-> > While "D" is lexicographically =E2=89=A4 "F" (the last element in base =
-BTF), "D" doesn't
-> > actually exist in the base BTF. When the binary search reaches the l
-> > =3D=3D r condition,
-> > it returns the index of "E" instead.
-> >
-> > This requires an extra name comparison check after btf_find_by_name_bse=
-arch
-> > returns, which could be avoided in the first loop iteration if the
-> > search directly
-> > identified exact matches.
->
-> See above, I think this is misguided. There is nothing wrong with
-> checking after bsearch returns *candidate* index, and you cannot avoid
-> that for name+kind search.
->
-> >
-> > int idx =3D btf_find_by_name_bsearch(btf, name);
-> >
-> > for (int n =3D btf__type_cnt(btf); idx < n; idx++) {
-> >     struct btf_type *t =3D btf__type_by_id(btf, idx);
-> >     const char *tname =3D btf__str_by_offset(btf, t->name_off);
-> >     if (strcmp(tname, name) !=3D 0)  <<< This check is redundant on the=
- first loop
-> >                                                             iteration
->
-> Yes, I think this is absolutely OK and acceptable. Are you worried
-> about the overhead of a single strcmp()? See below for notes on having
-> single overall name and name+kind implementation using this approach.
->
-> > when a matching index is found
-> >         return -ENOENT;
-> >     if (btf_kind(t) =3D=3D kind)
-> >         return idx;
-> > }
-> > return -ENOENT;
-> >
-> > I tested this with a simple program searching for 3 in {0, 1, 2, 4, 5}:
-> >
-> > int main(int argc, char *argv[])
-> > {
-> >         int values[] =3D {0, 1, 2, 4, 5};
-> >         int to_find;
-> >         int i;
-> >
-> >         to_find =3D atoi(argv[1]);;
-> >
-> >         for (i =3D 0; i < ARRAY_SIZE(values); i++)
-> >                 printf("[%d] =3D %d\n", i , values[i]);
-> >
-> >         printf("To Find %d\n", to_find);
-> >
-> >         {
-> >                 int l, m, r;
-> >
-> >                 l =3D 0;
-> >                 r =3D ARRAY_SIZE(values) - 1;
-> >
-> >                 while (l <=3D r) {
-> >                         m =3D l + (r- l) / 2;
-> >                         if (values[m] >=3D to_find) {
-> >                                 if (l =3D=3D r) {
-> >                                         printf("!!!! Found: [%d] =3D=3D=
->
-> > %d\n", r, values[r]);
-> >                                         break;
-> >                                 }
-> >                                 r =3D m;
-> >                         } else {
-> >                                 l =3D m + 1;
-> >                         }
-> >                 }
-> >
-> >                 printf("END: l: %d, r: %d\n", l, r);
-> >         }
-> >
-> >         return 0;
-> > }
-> >
-> > Output:
-> > [0] =3D 0
-> > [1] =3D 1
-> > [2] =3D 2
-> > [3] =3D 4
-> > [4] =3D 5
-> > To Find 3
-> > !!!! Found: [3] =3D=3D> 4
-> > END: l: 3, r: 3
-> >
-> > The search returns index 3 (value 4), which is the first value =E2=89=
-=A5 3,
-> > but since 4 =E2=89=A0 3,
-> > it's not an exact match. Thus, the algorithm cannot guarantee a
-> > successful search
-> > for the exact element without additional checks.
->
-> It was never a goal to find an exact match, yes, additional checks
-> after the search is necessary to confirm name or name+kind match (and
-> the latter will have to check name for every single item, except maybe
-> the first one if we had exact match "guarantee", but I think this is
-> absolutely unnecessary). And this is unavoidable for name+kind search.
-> So instead of optimizing one extra strcmp() let's have uniform
-> implementation for both name and name+kind searches. In fact, you can
-> even have the same universal implementation of both if you treat kind
-> =3D=3D 0 as "don't care about kind".
+On Fri, Nov 07, 2025 at 10:32:52PM -0800, Shakeel Butt wrote:
+> On Fri, Nov 07, 2025 at 10:20:57PM +0900, Harry Yoo wrote:
+> > 
+> > Although it's mentioned in the locking documentation, I'm afraid that
+> > local_lock is not the right interface to use here. Preemption will be
+> > disabled anyway (on both PREEMPT_RT and !PREEMPT_RT) when the stats are
+> > updated (in __mod_node_page_state()).
+> > 
+> > Here we just want to disable IRQ only on !PREEMPT_RT (to update
+> > the stats safely).
+> 
+> I don't think there is a need to disable IRQs. There are three stats
+> update functions called in that hunk.
+> 
+> 1) __mod_lruvec_state
+> 2) __count_vm_events
+> 3) count_memcg_events
+> 
+> count_memcg_events() can be called with IRQs. __count_vm_events can be
+> replaced with count_vm_events.
 
-Thanks, I'll apply this suggestion in the next version.
+Right.
 
->
->
-> >
-> > > that binary search loop doesn't loop forever and it returns correct
-> > > index (or detects that no element can be found).
-> > >
-> > > >
-> > > > >
-> > > > > >
-> > > > > > static __s32 btf_find_type_by_name_kind(const struct btf *btf, =
-int start_id,
-> > > > > >                                    const char *type_name, __u32=
- kind)
-> > > > > > {
-> > > > > >         const struct btf_type *t;
-> > > > > >         const char *tname;
-> > > > > >         int err =3D -ENOENT;
-> > > > > >         __u32 total;
-> > > > > >
-> > > > > >         if (!btf)
-> > > > > >                 goto out;
-> > > > > >
-> > > > > >         if (start_id < btf->start_id) {
-> > > > > >                 err =3D btf_find_type_by_name_kind(btf->base_bt=
-f, start_id,
-> > > > > >                                                  type_name, kin=
-d);
-> > > > > >                 if (err =3D=3D -ENOENT)
-> > > > > >                         start_id =3D btf->start_id;
-> > > > > >         }
-> > > > > >
-> > > > > >         if (err =3D=3D -ENOENT) {
-> > > > > >                 if (btf_check_sorted((struct btf *)btf)) {
-> > > > > >                         /* binary search */
-> > > > > >                         bool skip_first;
-> > > > > >                         int ret;
-> > > > > >
-> > > > > >                         /* return the leftmost with maching nam=
-es */
-> > > > > >                         ret =3D btf_find_type_by_name_bsearch(b=
-tf,
-> > > > > > type_name, start_id);
-> > > > > >                         if (ret < 0)
-> > > > > >                                 goto out;
-> > > > > >                         /* skip kind checking */
-> > > > > >                         if (kind =3D=3D -1)
-> > > > > >                                 return ret;
-> > > > > >                         total =3D btf__type_cnt(btf);
-> > > > > >                         skip_first =3D true;
-> > > > > >                         do {
-> > > > > >                                 t =3D btf_type_by_id(btf, ret);
-> > > > > >                                 if (btf_kind(t) !=3D kind) {
-> > > > > >                                         if (skip_first) {
-> > > > > >                                                 skip_first =3D =
-false;
-> > > > > >                                                 continue;
-> > > > > >                                         }
-> > > > > >                                 } else if (skip_first) {
-> > > > > >                                         return ret;
-> > > > > >                                 }
-> > > > > >                                 if (!t->name_off)
-> > > > > >                                         break;
-> > > > > >                                 tname =3D btf__str_by_offset(bt=
-f, t->name_off);
-> > > > > >                                 if (tname && !strcmp(tname, typ=
-e_name))
-> > > > > >                                         return ret;
-> > > > > >                                 else
-> > > > > >                                         break;
-> > > > > >                         } while (++ret < total);
-> > > > > >                 } else {
-> > > > > >                         /* linear search */
-> > > > > > ...
-> > > > > >                 }
-> > > > > >         }
-> > > > > >
-> > > > > > out:
-> > > > > >         return err;
-> > > > > > }
+> For __mod_lruvec_state, the
+> __mod_node_page_state() inside needs preemption disabled.
+
+The function __mod_node_page_state() disables preemption.
+And there's a comment in __mod_zone_page_state():
+
+> /*                                                                      
+>  * Accurate vmstat updates require a RMW. On !PREEMPT_RT kernels,           
+>  * atomicity is provided by IRQs being disabled -- either explicitly    
+>  * or via local_lock_irq. On PREEMPT_RT, local_lock_irq only disables   
+>  * CPU migrations and preemption potentially corrupts a counter so          
+>  * disable preemption.                                                  
+>  */                                                                     
+> preempt_disable_nested();
+
+We're relying on IRQs being disabled on !PREEMPT_RT.
+
+Maybe we could make it safe against re-entrant IRQ handlers by using
+read-modify-write operations?
+
+-- 
+Cheers,
+Harry / Hyeonggon
+
+> Easy way would be to just disable/enable preemption instead of IRQs.
+> Otherwise go a bit more fine-grained approach i.e. replace
+> __count_vm_events with count_vm_events and just disable preemption
+> across __mod_node_page_state().
 
