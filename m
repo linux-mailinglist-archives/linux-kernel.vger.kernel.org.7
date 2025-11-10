@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-893067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B986C46705
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:04:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7F4C46771
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:08:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 309914EBAE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51CC71881C85
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726D930CD8E;
-	Mon, 10 Nov 2025 12:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92ADC309EF2;
+	Mon, 10 Nov 2025 12:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCGzzz2B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fRo1jBDN"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E8916CD33;
-	Mon, 10 Nov 2025 12:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09D03090D5
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762776226; cv=none; b=LDSC0NWzsBxWEXqhYkBpfGGt1/9If8NH+hP8Z3DLU3RX4qTM/9CGgaElBauTGZQLqEqWGKkmkrnDWp8Wm9njtrZNY1IJJ631lM10HL7d5TMsv9zNT4dkb006AcxGopZx9VMStQt//2EZpsSt3alKRaz6Nn98MQqT2+T3kla3J0s=
+	t=1762776264; cv=none; b=SGW5YAIN0NYNkB87Jli/bYgszgVCCY4cbrQaJpNzEjfE70tiSM2kopSRaX82hhCtpEB5MuYHCvIgC7E4O2LrnbSJZH3JozKpNjLqeguU2m6aVguyIOzwJPdhB7r+xa9rEzwnbw2mrvnQ3lyisNje3xlBmtqDtHT57E83qGT0xAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762776226; c=relaxed/simple;
-	bh=exuxjfiF+hl8JLjvfyMbiNZrRie/mRLZNK7fcvMzatU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bW08Ie20gpBdmOXCw/yuOGd7U+jbJo8n4wCc8B1EiI4bqfRepqeNMKvrt6ZXLAEKH2SSZWqCnfL8ARlBX1BXyc4gGzA049v6Y6pp8VWd3Y68hHshQTXeiCQo1dhbsJFX9ghDh8os1rmzlN8kz1EkyLIwlyV2NeAvr01QPLujuQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCGzzz2B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21BD3C4CEFB;
-	Mon, 10 Nov 2025 12:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762776226;
-	bh=exuxjfiF+hl8JLjvfyMbiNZrRie/mRLZNK7fcvMzatU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aCGzzz2B+iIhrbnKcTBUrTkJoaey5UBdodVT7is7nxq/bsuacn1mWrSFdPw3MeBK6
-	 xyCChGTKzwMwYsKPORp++PIQx+oQmfnNtOIos9jeZV/f3KCOAW/YIHLHG+zrRI0D6e
-	 5XH5FdLJGAwUvLTZVLwlgVxQ1U7uPHKNNvoNLC6NNar+pwcHwQZC3DJVH7mX0O2Buw
-	 o5ciXKyW4rtCR77dJnkpGTUBcVt/zSWq2O5mKY+hOtm1cwQ7WY2ytVWFfynHV2nPls
-	 ZowwPx5Vyjny8kAE/1ATpZ023Y3oTpA1RwB4kKLzJX4RqOsjBqx79J8tHgoonfuyVD
-	 asKXjznFT7D4g==
-Date: Mon, 10 Nov 2025 17:33:34 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: andersson@kernel.org, robh@kernel.org, krzk@kernel.org, 
-	helgaas@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	lpieralisi@kernel.org, kw@linux.com, conor+dt@kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree-spec@vger.kernel.org, quic_vbadigan@quicinc.com
-Subject: Re: [PATCH v2] schemas: pci: Document PCIe T_POWER_ON
-Message-ID: <gqvc3orlyk6l5jq2bpxsf5lvvafmtxcpdquffcpdqdiek3bldh@l3em25rqaldg>
-References: <20251110112947.2071036-1-krishna.chundru@oss.qualcomm.com>
+	s=arc-20240116; t=1762776264; c=relaxed/simple;
+	bh=eEgXHGzlAYOJl5c6fOfboUSe/VxaQBrlFhhrVppwDjc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d/Spr1kSVBgXKlrDwGPuBQYGFSgK1FVL59V6/kQspGaLJOhnojqpK3Md95tY+l76UDpVIGIuJmbKbqgrEUwNFZklJD8CyVgyL+CC+65t8OxD3Nagbh8Q+9IBwqF5Ap4LHw7it2K3wCGcsjjIZjfOn63ZcN8qgdZH6cU9GDDMeYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fRo1jBDN; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b9da0ae5763so225354a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:04:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762776261; x=1763381061; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eEgXHGzlAYOJl5c6fOfboUSe/VxaQBrlFhhrVppwDjc=;
+        b=fRo1jBDNOiODeONp2SpTugjWLgOK/efWMsHQLlQHcC39kP7+sh9HhPLPj8/JizonyG
+         7b+QCsSt3zqOWPgd+pwpn+79kM+Tr8XpShLgFpvK9sMrxUKcafSB+bvJWIr0APKJPJg7
+         FfGmp6mGdLDLVVDc/3CMatGQRzDhuP14hfaMDLh5eXTBTTKJpB2tfGfVMO8UGhsboMd8
+         0wN66lqOn9Lx8RL+khOb2Xs2xWJs92R3N/wyljDcWri9FjTgglb3XYeu1hzEG0LGrpMO
+         WNintcuhk3OKBHp6Bk8NmnCMaSr7/2x9d0tZpj+cQfVkCU+sDg1w2CE8Gmq4SmTzGKUa
+         fZlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762776261; x=1763381061;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=eEgXHGzlAYOJl5c6fOfboUSe/VxaQBrlFhhrVppwDjc=;
+        b=m4gfu4j5ESj+Y1KTjrz+HvUEr23cRdEgahO+ihWSQwre5lFN8O5DIc2xW/Py0Dvc/C
+         OO7dKGMzEtNuS3gOM2/XRAXSECpKDl1aRBQSm+3Gvd2CQlN6p0SbfjqMA5ETKEkWQ50Y
+         ejKtZxLiV1qtc8JGGEsRmbUjcs2pxOjCMRqGY9ubqEiTIhe6qfUWit/N8V0CJuv2krEJ
+         /kGv5Q99fixz32T+sTrYK91oKepTI51U5vQHIb8raE62N46sCjpS6cPp7avlDrlBojDq
+         4CXdd5VcAOZWgF7RN6IPh7SXDtKEafIGDEQwVq9tC2tQ19P99zy5RzdNy4Wp71zGZ95o
+         pAlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVV258OtYrHsW0d3uRD6U20AuKJltU2F7c0Hec53BIAooZIrPghI7qhuSlpQjOqqtwuHktlDjvzqQJFCrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi/pU4+O/kjHI6+IBagUI05L4DmMiPQiu8IaqnQVv3kFQyFGRO
+	quUdwuUZixUnuHIjfKguq/knT41a0DpU239loTRcySuU7hGBhx9bF+JEO39c9L2+jPBCY8NgOId
+	t2ThZFzaM7ycQNkmOC7jbSZLofS7PXco=
+X-Gm-Gg: ASbGncsT4FIze6dJOqFO0KbQWhM9zR/34C58Eniy+IQz60EZT9w2lwyt7J9QyyoE8GH
+	MYgE/pRxKqHaFswHiIktSQ7W6aI/7j2pnKmQeIZd1P7eclLcujQybGK2kJaz1sw0GYY4Ctw17aI
+	YAyVW4BLWWox4eZl+fAvXH7cbeTvTDgLn48ynVBqTwVFhSMnnTUZHbQV17wj5/DOL5b4eYaaoR0
+	QYeQw35q9A1hN67T4yv73HquKEFgkSjbJmx6Cm2mG7ncxH74bKcBijNRdbjmUAZcWJas6ZN0/Yo
+	nuPYP8n6yeF996kR6ihWAZyhhw/AUESjCbjsepGTwKa495+wYQ1qm9zWDpTYr2V+8lf17o+RmD6
+	aSEM90FhPRm+Bkg==
+X-Google-Smtp-Source: AGHT+IExnxjKRMhBvCvd9Nw1Vzpg0dilgRX0ilaQeygPAtmrJ/VO92XIw2N3ZJ7sb6hS/zOwLVLxlgfmv0VAGSAIzy8=
+X-Received: by 2002:a17:903:230f:b0:295:70b1:edd6 with SMTP id
+ d9443c01a7336-297e5643e76mr52737955ad.3.1762776260815; Mon, 10 Nov 2025
+ 04:04:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251110112947.2071036-1-krishna.chundru@oss.qualcomm.com>
+References: <20251110113528.1658238-1-ojeda@kernel.org> <aRHSLChi5HYXW4-9@google.com>
+In-Reply-To: <aRHSLChi5HYXW4-9@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 10 Nov 2025 13:04:08 +0100
+X-Gm-Features: AWmQ_bklNKkIpzDaIt0BmvJnv6iHBReLEFoejSD6lCAMShx-lppQSbZzdpW8AeA
+Message-ID: <CANiq72n29SUnmm3Dos_NvWbxW-vuX2Y2j7AAYROpa6ruQWguSw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: allow `unreachable_pub` for doctests
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Rae Moar <raemoar63@gmail.com>, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2025 at 04:59:47PM +0530, Krishna Chaitanya Chundru wrote:
-> From PCIe r6, sec 5.5.4 & Table 5-11 in sec 5.5.5 T_POWER_ON is the
-> minimum amount of time(in us) that each component must wait in L1.2.Exit
-> after sampling CLKREQ# asserted before actively driving the interface to
-> ensure no device is ever actively driving into an unpowered component and
-> these values are based on the components and AC coupling capacitors used
-> in the connection linking the two components.
-> 
-> This property should be used to indicate the T_POWER_ON for each Root Port.
-> 
+On Mon, Nov 10, 2025 at 12:53=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> Maybe we should also allow disallowed_names in doc tests?
 
-I'm not sure if we should restrict this property to just Root Ports. Defining a
-property in 'pci-bus-common.yaml' means, all PCI bridges could use it, but this
-value is applicable to endpoint devices also.
+Not sure -- I thought it may point people to try to come up with
+better names in examples. On the other hand, for abstract facilities,
+it is true that there may not be good names anyway.
 
-Also, you might want to add some info that the driver (or DT consumer) should
-derive the T_POWER_ON Scale and T_POWER_ON Value from this value.
-
-- Mani
-
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
-> Changes in v1:
-> - Updated the commiit text (Mani).
-> - Link to v1: https://lore.kernel.org/all/20251110112550.2070659-1-krishna.chundru@oss.qualcomm.com/#t
-> 
->  dtschema/schemas/pci/pci-bus-common.yaml | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/dtschema/schemas/pci/pci-bus-common.yaml b/dtschema/schemas/pci/pci-bus-common.yaml
-> index 5257339..bbe5510 100644
-> --- a/dtschema/schemas/pci/pci-bus-common.yaml
-> +++ b/dtschema/schemas/pci/pci-bus-common.yaml
-> @@ -152,6 +152,15 @@ properties:
->        This property is invalid in host bridge nodes.
->      maxItems: 1
->  
-> +  t-power-on-us:
-> +    description:
-> +      The minimum amount of time that each component must wait in
-> +      L1.2.Exit after sampling CLKREQ# asserted before actively driving
-> +      the interface to ensure no device is ever actively driving into an
-> +      unpowered component. This value is based on the components and AC
-> +      coupling capacitors used in the connection linking the two
-> +      components(PCIe r6.0, sec 5.5.4).
-> +
->    supports-clkreq:
->      description:
->        If present this property specifies that CLKREQ signal routing exists from
-> -- 
-> 2.34.1
-> 
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Cheers,
+Miguel
 
