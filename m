@@ -1,137 +1,100 @@
-Return-Path: <linux-kernel+bounces-894214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BD57C497CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:08:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3CFBC497D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:08:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AE4B4EE1BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:08:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48A003B05D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC962FD684;
-	Mon, 10 Nov 2025 22:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D0A2FF648;
+	Mon, 10 Nov 2025 22:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mJxT1Bq2"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5mLh+Z1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD18230274;
-	Mon, 10 Nov 2025 22:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1D1F50F;
+	Mon, 10 Nov 2025 22:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762812482; cv=none; b=lFpnanUaII+CVuN1JXBo8hvrQ6qCzVdh8sFOwn2SoEnemZdI70MHnCK7+G3X3XfE1lbtEQNnJIsXMGvzxLxjIwcrPal4KbtJBf8KrpgpJG6CD/zM7YV+CY4HFelj6cFHB29xEFnNj8JsY7x3WwrkLAAkxSzrriQxzga9JsGvbjM=
+	t=1762812490; cv=none; b=F73dg/sSU5AWO+zQUgRuYHszvUItx6kZzHHEzj5nVAmgPfCJ6MbrDLPBOh46TqKoUJE1az7l6dDogpKbPXp/fCfZ1qzZjDpK0Aku8UjHqJUzDuWLwMyORETRIyzUygXuAY/SndzaEtxmEhgtDU0KkOP28i4fEm3eqlwRizOzA6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762812482; c=relaxed/simple;
-	bh=0FSwDKxCfdjaaQDVegDktJ3ifH//AtGtcN9f1ncK/Eg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Nj1LVJpfxQw2Jg/dotvmEMho1cSkqIp3x+3LJXGk6ZWqciN5q94H3YoARmV0Wif0MWEyvIV4lxi7sjNiIq045AGXviU786bWPwt1iEG2Zwlx8y/TReNroAmEgxvp84HalEuv2OKQ9WD27X1nFNQI5X5sdPbBSlIF4gkoKEcPrb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=mJxT1Bq2; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1762812479;
-	bh=0FSwDKxCfdjaaQDVegDktJ3ifH//AtGtcN9f1ncK/Eg=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=mJxT1Bq2UYFcsDW2x1JJcYIrJf1H01a1QahcIXAThaSsg12o9lWSlSw20L8siO+IR
-	 PIkUsPUNmw2AjKJe7VvM0iyVEfTz7PSYJSIgFN0m1KdfaPSU7VGgJZjPbvzwW6thPk
-	 z+2os9wCKFJOvQL9adZckdI5txUbcZ87Z5Ac3N0U=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 50E5C1C00F6;
-	Mon, 10 Nov 2025 17:07:59 -0500 (EST)
-Message-ID: <9613a8a7b9fd77a48667a39ffde9e92b361c4fd1.camel@HansenPartnership.com>
-Subject: Re: [PATCH] [v2] Documentation: Provide guidelines for
- tool-generated content
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: "Luck, Tony" <tony.luck@intel.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "H. Peter Anvin"
- <hpa@zytor.com>, Mike Rapoport <rppt@kernel.org>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Christian Brauner
- <brauner@kernel.org>,  Dave Hansen <dave.hansen@linux.intel.com>, Vlastimil
- Babka <vbabka@suse.cz>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "workflows@vger.kernel.org"
- <workflows@vger.kernel.org>, "ksummit@lists.linux.dev"
- <ksummit@lists.linux.dev>,  "Williams, Dan J" <dan.j.williams@intel.com>,
- Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,  Jonathan
- Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, Shuah Khan
- <shuah@kernel.org>
-Date: Mon, 10 Nov 2025 17:07:58 -0500
-In-Reply-To: <SJ1PR11MB6083B928B445DF82EE5AE3EEFCCEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
-	 <653b4187-ec4f-4f5d-ae76-d37f46070cb4@suse.cz>
-	 <20251110-weiht-etablieren-39e7b63ef76d@brauner>
-	 <20251110172507.GA21641@pendragon.ideasonboard.com>
-	 <CAHk-=wgEPve=BO=SOmgEOd4kv76bSbm0jWFzRzcs4Y7EedpgfA@mail.gmail.com>
-	 <aRIxYkjX7EzalSoI@kernel.org>
-	 <CAHk-=wir-u3so=9NiFgG+bWfZHakc47iNy9vZXmSNWSZ+=Ue8g@mail.gmail.com>
-	 <A274AB1C-8B6B-4004-A2BC-D540260A5771@zytor.com>
-	 <CAHk-=whczwG=+-sAzoWoTY_VOwdFH3b5AkvQbgh+z98=p1iaXA@mail.gmail.com>
-	 <20251110145405.5bc87cc5@gandalf.local.home>
-	 <21622a5393ef21413cae91d9c8ebbb8425d2c193.camel@HansenPartnership.com>
-	 <20251110164225.4b343fe4@gandalf.local.home>
-	 <SJ1PR11MB6083B928B445DF82EE5AE3EEFCCEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1762812490; c=relaxed/simple;
+	bh=QcNOW5NQf3d2H3CU/o4Qj6FoGkQmNS1yvzWb9gL9UCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+SB8lgk1H0w9gapysp+lpX0Ujauo07qkkfKg2OYLaURo+ZL6j9S9Ctk40zMLXIqFgDKxP6+oVgDi2jYjECkDVgG2hgDeX9Ddw6Nzm2xCyA/WqLsFZerU+rx+u9SIrJdmrWdItEGI3u3F8aP9OFpWMs+mGHMmkH0iVCU9euqFLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R5mLh+Z1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE547C19425;
+	Mon, 10 Nov 2025 22:08:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762812489;
+	bh=QcNOW5NQf3d2H3CU/o4Qj6FoGkQmNS1yvzWb9gL9UCg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R5mLh+Z1XWUdD3M+2RuGujQYRrul92YMpJdXDykJdgxYf6yPNGx4Dwmrn/3dBv/N3
+	 1zdMhQC3t8ti+LDeBvIavQ1fJws5J4hzp8TUGxBblkUcZbQumulFx/nNntDQ6ZbrDk
+	 Xdi1SRa/puIkRVVzNjT3zw5xxrgaDTkN5KJVfGxkrSBw8/9wOivwfTP0VDBU1eei+n
+	 6W3yUjjfT7xAvFxAQ7gL/fMhEjZsEdL+L1tlf56yk5wyVBGJJ/oxS8jJs0Ihif+DiT
+	 N1lxZH9e6M0tQ5f7RWWPdyGfiGxiOilCA0kZzXtiXY7U5DTJHtp+49kL58PQ3PoH6d
+	 ja6+IYYN52ryQ==
+Date: Mon, 10 Nov 2025 12:08:07 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/13] sched_ext: Add scx_cpu0 example scheduler
+Message-ID: <aRJiR7H3RQHmgCct@slm.duckdns.org>
+References: <20251109183112.2412147-1-tj@kernel.org>
+ <20251109183112.2412147-12-tj@kernel.org>
+ <aRGkHhAWTWdWELAY@gpd4>
+ <aRIyfJWJ6fcW5frO@slm.duckdns.org>
+ <aRJT1dbGTmPRw4-p@gpd4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRJT1dbGTmPRw4-p@gpd4>
 
-On Mon, 2025-11-10 at 21:52 +0000, Luck, Tony wrote:
-> > I believe that's what is currently being argued in court. If AI is
-> > trained on human content and prints out something based on it, is
-> > it a non-human creation?
+Hello,
 
-So far (Bartz v. Anthropic and Kadrey v. Meta) the decisions have been
-that the output is transformative enough that that is, in fact, an
-independent creation.
+On Mon, Nov 10, 2025 at 10:06:29PM +0100, Andrea Righi wrote:
+> I agree that if a scheduler uses SCX_SLICE_DFL it shouldn't care too much
+> about the exact value.
+> 
+> My concern was more about those schedulers that are quite paranoid about
+> latency and even if something isn't handled properly (directly dispatching
+> to a wrong CPU, a task being rescheduled internally, etc.), we'd still have
+> a guarantee that a task's time slice can't exceed a known upper bound. But
+> this could be managed by being able to set a default time slice (somehow)
+> and it can be addressed separately.
+> 
+> So yeah, in this case the exact value of SCX_SLICE_DFL doesn't really
+> matter probably.
 
-> > =C2=A0 This isn't a case of a monkey taking a selfie, where the
-> > content provider is clearly non-human. This is a machine that uses
-> > human created content to derive new creations.
->=20
-> If the output were deemed copyrightable, who should own that
-> copyright?
->=20
-> Option 1 is "The human that crafted the prompt to generate it"
+AFAICS, all cases where we use the default slice can be avoided by setting
+the right SCX_OPS_ENQ_ flags and not letting through tasks with zero slice.
+ie. If the scheduler needs to control slice distribution closely, it can do
+so and, if something leaks, that can be detected through the events although
+it may be helpful to add a strict mode where these leaks can be tracked down
+more easily.
 
-This is possible, but so far hasn't been argued.
+This is not necessarily an argument against making the default slice
+configurable. The fact that we use the default slice for bypassing was a
+reason to be more cautious with exposing it (as that can affect system
+recoverability) but with bypass slice separated out, that's less of a
+concern too. So, yeah, I think making it ops configurable is fine too.
 
->=20
-> Option 2 is "The corporation that spent vast resources to create that
-> AI model"
+Thanks.
 
-This would require a change of law in the US to allow a non-human
-content creator to hold copyright; absent that there's nothing
-copyrightable the corporation can lay claim to (not that the AI
-industry might not be motivated to seek this eventually if they have
-trouble monetizing AI).
-
-> Option 3 is "The owners of the copyrighted material used to train the
-> AI".
-
-This is the derivative of training argument which has so far failed.
-
-Regards,
-
-James
-
+-- 
+tejun
 
