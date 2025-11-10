@@ -1,147 +1,368 @@
-Return-Path: <linux-kernel+bounces-893309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE98DC470AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:54:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C2DC470FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00BCC18926DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:54:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB00D3AA721
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011BA1F3B87;
-	Mon, 10 Nov 2025 13:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5FE225417;
+	Mon, 10 Nov 2025 13:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="zhH2UlpG"
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QHcR7FdZ";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PtKDwTuU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2855225417;
-	Mon, 10 Nov 2025 13:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041021F3B87
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762782838; cv=none; b=LNtO6WqXX9om4ydqWtRkPQOHHqK5Sv9IoE9EFOGPgWKMSpepNYK3+hxnEFkgi8Y1Rmkm/64inRn+8MQZHycXNOll2OSLcMTXmPp5SHiUQ71HwnbZE1uibWF+97ctQZldMPK84J17DQj+6u/FHyIda/cSOjgsoJurNvIZIH/3zB8=
+	t=1762782907; cv=none; b=Q23DLJGdznLxeO+CHtWF06SEewwdNp4UXP2xKDS2C4E7DRy8Eh0oolEk3sffdDX1NfGKqnUugcolz3DNCQVa1bBDgz4LtHWty8rPlNg/kW+EMP9616BmkXl1R2zo1NM/5qWf/h7F7A/354Tq8M3sF3ibj6QUSHVcdb1GX4QuVyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762782838; c=relaxed/simple;
-	bh=Ron+HvGkKg+JisLRgvoQjq5k1daRdv+R+0NlGR9OeQY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ANiFw9VwuCQMPXdTfuimtRm4lTctN3sBAVq6njSMbJEJ2eCf0xEoN+61yrp+QznwVweIBx3sOi2+AUpfzrDKkYLEVxX9xClxW9L3CjsvceVvYwOMP4vjhGavgkOJGJ9IYC+Mwun0TeTV99cjp+dmpbS8QxGOKQqhinPNWK2wvq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=zhH2UlpG; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=RKlfRV4djsyJngR6aGtPVAaq73trDTQOwc7Rfy0NYSE=;
-	b=zhH2UlpGBQqLdBbXBIOe9lAyzgJYhKDusvLOyVnmq43St3QIe8VK7jPTp56S1CMcP6WpHmiIx
-	KyW1998tuLOEzJHjFNp+9x6YVXpmvFORicDoWB9cH2l/8PYW7G8WXPx5o76X7971sGiOGHLBrfZ
-	qg1NZ2RoT9f+ziUAVu522I0=
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4d4rhG2qJsz1T4Gh;
-	Mon, 10 Nov 2025 21:52:30 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2EA8A180495;
-	Mon, 10 Nov 2025 21:53:51 +0800 (CST)
-Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 10 Nov
- 2025 21:53:50 +0800
-Message-ID: <e714ec6b-a412-4780-a8ac-27055dbccae3@huawei.com>
-Date: Mon, 10 Nov 2025 21:53:49 +0800
+	s=arc-20240116; t=1762782907; c=relaxed/simple;
+	bh=VtKxyTYXKVMwbRBYUok5IOxyJLWZmmmNlAIF+qIVSHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jByghMXJmLDZR4AyK1HFBJ0Pd/XWJHFcB5hlabmn2ALKgFrTWM6QZVEhU8Mdmd/7iL/Wp/0+WVChEqS2DVsrQ6HaelO4gaAyvFZYr9Lrkzv9+Z7+/a01LfaUWiFeUDlN/sGlIM5oMhu6TVYsBiF8bPqpUhOiwIfy5Yk3VrAbeHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QHcR7FdZ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PtKDwTuU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AA8BFlS1144629
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:55:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	92NAht9vmhdQg3F3B362/2P/Al82g/z14lX6OMb7wfc=; b=QHcR7FdZ7iL3uGAh
+	Bp6DM08tPcpmlSZ2h4EpnKsYiYAI1cIXs60eSrLP/Sx1zf+aUh6DQLSjaOyVrHc2
+	bU++9uszuOPhNyAPQ2W3ztDPIn4q2NY35hCpm32zwG1AJX1SoLFJKmWYaQK26+Uz
+	+5mbpKx4cS5qlJ9s7QoXN89Youoi3TfnXKw8/M0bfjfMQJ6zON8X5gvJRd8doNqY
+	FFdv0K5XYqHBoHN8+eXKaKRnTsfAov/Wb79Sdq2aoLyDwKuXIG34q4AhcJ46FCO2
+	zhP90/fOP5tHhgjflQJBVGN5yqCDevh/lWJQcTrojLPCyF/nBufq77HpDcISi1mz
+	+9Ji4g==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a9xvjcx35-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:55:04 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b98e6ff908aso6547873a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:55:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762782904; x=1763387704; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=92NAht9vmhdQg3F3B362/2P/Al82g/z14lX6OMb7wfc=;
+        b=PtKDwTuUpSNr2ol/MsFWg+PV4LHvP5ox/JyYo2N7cuZysNhyR+drC5Z83JQWqUormm
+         AJXa/UrxfUVS5f8usJ8BPN5DL/lqVN5ujzMlB+6yspWCEIlUZvmtR0pEUUg/ei8L4V8g
+         NvBDwKH90sFWgyD7Fx6qXhy8eDGjzZJPwj9GiarW8Qmu57iTHSldc6R8UF/jHsV7S6bc
+         8wIqKRAo+MnKHAgRcBPPxuS5hXa8Ih9Wia7568gsFVr2KqEj0c9Tl+pRkziUvn/iTvoT
+         KyJDqeGNCQm+cw9VEsGIQwcCaDlgt0qR3rz9xKzzr3XrsjjUtnVIHU/4KRdkjRmxbHos
+         qi+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762782904; x=1763387704;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=92NAht9vmhdQg3F3B362/2P/Al82g/z14lX6OMb7wfc=;
+        b=k5tfSlrqb9SwQ/EJZ7HBbx6+wk5eGVlXDk0rcleCDvkGE0/Lk+d4f3cn4+o5hA109y
+         5Pm5Ksc4u9uPd8WGHHDD5Q5gxFs7aAQWJsxOmLh8AWt8TpDf5u2tMcG4UiJuw1Z+Z2k8
+         rZtlvYpqrc3dPoQIvDTzeKyLaJMY38hPLO0lIQ2B7EjyFBa4CodK9YVLjqj1y3alsqnY
+         NdjCsfY3iceDE6nt9xu6RIObqfWcEIDqVs0gJ5YfOjhZeF0/UVqFtbCgLGImU30l37OQ
+         TVkuPAOqjexIOITp6cFBk37HNC840CxAEVqhPQrHIUFyzgAoQ5ENUFep/rJ1iv0U7tpn
+         qhxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgXldCGdbqC0fj1b3d8uTTJNUjW6ZQdqZQwenp1spR3IeRr1ja/Cx1ahuiccziGYKzDBLAVBBPhYjRaIk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkoxYeroDO4N24U7znjKDsKGggtC+xjPqYq9oMbJ54+/jFgkb+
+	+Ot/jLZ6xYqRjSF6dmAqy5ZbNs7RIC8Jk5MYjXYLzQ5Vo5XNkJnqjvS/HCnsYxW3nyHnjWIv74r
+	NnYKW27GlE86ff2w8DdY3Ug/AsAKoSwYc8m0Sqw3vtxe8yatyXyD0Kd0tPzYOkY17Hvs=
+X-Gm-Gg: ASbGncv/RmENDZPe5lKIUmp0rQc5iWoLI5GQXAI4I28UPl8eTlhoobCz04cqiCyJpqi
+	xDN6imsAV/yesTCCrGCrCVSNuwSAEyaH5flaNIke583MxBgF3WnqCiMCw8L/EswuUJw3bJirIwG
+	xDRITYb4yFSuQRtr9EJzufSqoFW++QhRYUXx8d+9HZuO5pdXT3dc1ftjplK9klOXQ0LAEnzG4Q8
+	xtqTqOdo3SXQrDWYdoPIXYPpYTCgS1YPdOvriNC7h9mINYcM5OX5fILrZETsaS/01MNQg1YFls7
+	eFu5EWIVF02gDCSR2jREwGDcb+sUossdgr+RVqHsVH6q+T2KMOh/PTlPq56TwGe4AF0+HQKZQ/b
+	t4Fcn/cl8U4kDxYMDOlUhhqAZvoNaY1Q=
+X-Received: by 2002:a05:6a20:4306:b0:34e:7bef:e816 with SMTP id adf61e73a8af0-353a1ae2947mr11700241637.35.1762782903529;
+        Mon, 10 Nov 2025 05:55:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFIBKl2qgrS/oNApP2Xt4xZhV9mgZMLUXTTjzVnFgpELSppcoQjGs791t09WSlCQ7C+ZhMFrw==
+X-Received: by 2002:a05:6a20:4306:b0:34e:7bef:e816 with SMTP id adf61e73a8af0-353a1ae2947mr11700183637.35.1762782902994;
+        Mon, 10 Nov 2025 05:55:02 -0800 (PST)
+Received: from [10.0.0.3] ([106.222.229.252])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba902207232sm12564983a12.32.2025.11.10.05.54.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 05:55:02 -0800 (PST)
+Message-ID: <361d26e6-3137-5378-1fe6-e5fc51148419@oss.qualcomm.com>
+Date: Mon, 10 Nov 2025 19:24:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/24] ext4: support large block size in ext4_readdir()
-Content-Language: en-GB
-To: Pankaj Raghav <kernel@pankajraghav.com>
-CC: <tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
-	<linux-kernel@vger.kernel.org>, <mcgrof@kernel.org>, <ebiggers@kernel.org>,
-	<willy@infradead.org>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
-	<libaokun@huaweicloud.com>, <chengzhihao1@huawei.com>,
-	<linux-ext4@vger.kernel.org>, Baokun Li <libaokun1@huawei.com>
-References: <20251107144249.435029-1-libaokun@huaweicloud.com>
- <20251107144249.435029-9-libaokun@huaweicloud.com>
- <af30cb7e-a59d-4937-8fc5-1b9c68685939@pankajraghav.com>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <af30cb7e-a59d-4937-8fc5-1b9c68685939@pankajraghav.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v5 3/6] media: qcom: iris: Add scale support for encoder
+Content-Language: en-US
+To: Wangao Wang <wangao.wang@oss.qualcomm.com>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>, quic_qiweil@quicinc.com,
+        quic_renjiang@quicinc.com
+References: <20251110-iris_encoder_enhancements-v5-0-1dbb19968bd5@oss.qualcomm.com>
+ <20251110-iris_encoder_enhancements-v5-3-1dbb19968bd5@oss.qualcomm.com>
+From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+In-Reply-To: <20251110-iris_encoder_enhancements-v5-3-1dbb19968bd5@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500013.china.huawei.com (7.185.36.188)
-
-On 2025-11-10 20:26, Pankaj Raghav wrote:
-> On 11/7/25 15:42, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> In ext4_readdir(), page_cache_sync_readahead() is used to readahead mapped
->> physical blocks. With LBS support, this can lead to a negative right shift.
->>
->> To fix this, the page index is now calculated by first converting the
->> physical block number (pblk) to a file position (pos) before converting
->> it to a page index. Also, the correct number of pages to readahead is now
->> passed.
->>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
->> Reviewed-by: Jan Kara <jack@suse.cz>
->> ---
-> Minor general comments below.
->
-> Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
-Thanks for the review!
->
->>  fs/ext4/dir.c | 8 ++++----
->>  1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
->> index d4164c507a90..256fe2c1d4c1 100644
->> --- a/fs/ext4/dir.c
->> +++ b/fs/ext4/dir.c
->> @@ -192,13 +192,13 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
->>  			continue;
->>  		}
->>  		if (err > 0) {
->> -			pgoff_t index = map.m_pblk >>
->> -					(PAGE_SHIFT - inode->i_blkbits);
->> +			pgoff_t index = map.m_pblk << inode->i_blkbits >>
->> +					PAGE_SHIFT;
-> It will be nice to have some common helper for this operation. We do something
-> similar in filemap.c as well.
-
-In patch 10, we introduced a macro to handle the conversion from lblk
-to page index. In this particular case, though, it is pblk, which has
-a different value range compared to lblk. As this is the only instance
-in the code, I applied a standalone modification here.
-
->
->>  			if (!ra_has_index(&file->f_ra, index))
->>  				page_cache_sync_readahead(
->>  					sb->s_bdev->bd_mapping,
->> -					&file->f_ra, file,
->> -					index, 1);
->> +					&file->f_ra, file, index,
->> +					1 << EXT4_SB(sb)->s_min_folio_order);
-> Just a personal opinion but it would be nice to have some variable for this instead of doing it
-> inline? It could be defined along with index.
->
-> unsigned long min_nr_pages = 1UL << EXT4_SB(sb)->s_min_folio_order;
->
-Thank you for the suggestion. This is indeed a bit easier to understand,
-but the space here is limited and the variable is only used once,
-so I prefer the current direct style.
+X-Authority-Analysis: v=2.4 cv=QuxTHFyd c=1 sm=1 tr=0 ts=6911eeb8 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=XTzlPML3CqmVTmx85CUA:9 a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: nD4QJaMY7F2WI-3ThVO_qIww7wWJHY5T
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDEyMSBTYWx0ZWRfX7S1NY1k97QvQ
+ fzlSoPg3uapaDj00UOT6hPedlgazjEU1wQtlDPQFm7/lKl/LDO5dU0eDvbXk2eP6+XpWJaVwtec
+ u+0JhLDn0nrJwXx7GYxoScz/Y4NDxqDBiT1tyYULbnYLcqb8PVB7ajPC7KDy21yp2WQZiCSh1ph
+ yQNE78AWhDK03ZOgim7dgIuOuRy0cKvnKPaIMz34fFMpk4kKljWMpeGhu5Vx5pPeVzOumCle/90
+ 49oVEpjyFGdDsghPVqzKYVoSk4tTAg0smOpxEZ3VvMI4MUOkHUm3ejr21TFJrcVHevpVtkyDMUJ
+ yux14q43F5PBy5NAYjgncwWYALPa+zI1ZAAr3B0IYbtmCBQaV0dbbPH1rIKkKCPXu+C9BMCAX1s
+ MW5qQMFkQMxnkytn3rt3toK+0eWTJw==
+X-Proofpoint-GUID: nD4QJaMY7F2WI-3ThVO_qIww7wWJHY5T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_05,2025-11-10_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 priorityscore=1501 adultscore=0 phishscore=0
+ spamscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511100121
 
 
-Cheers,
-Baokun
 
->>  			file->f_ra.prev_pos = (loff_t)index << PAGE_SHIFT;
->>  			bh = ext4_bread(NULL, inode, map.m_lblk, 0);
->>  			if (IS_ERR(bh)) {
->
+On 11/10/2025 3:53 PM, Wangao Wang wrote:
+> Add members enc_scale_width, enc_scale_height to the struct iris_inst to
+> support scale requirements.
+> 
+> Add output width and height settings in iris_venc_s_fmt_output to
+> enable scaling functionality.
+> 
+> Add VPSS buffer to platform data, which the scale function requires.
+> 
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
+> Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
+> ---
+>  .../platform/qcom/iris/iris_hfi_gen2_command.c     | 12 +++++------
+>  .../platform/qcom/iris/iris_hfi_gen2_response.c    |  2 ++
+>  drivers/media/platform/qcom/iris/iris_instance.h   |  4 ++++
+>  .../media/platform/qcom/iris/iris_platform_gen2.c  | 12 +++++++++++
+>  drivers/media/platform/qcom/iris/iris_venc.c       | 23 +++++++++++++++++++++-
+>  drivers/media/platform/qcom/iris/iris_vpu_buffer.c |  9 +++++----
+>  6 files changed, 51 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> index 30c0cbe22d1d34b5bbbc6bdbd3881dd43a6ff647..8945e94ec9e87750fc87bebf63f4fbb634d8571a 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> @@ -194,8 +194,8 @@ static int iris_hfi_gen2_set_bitstream_resolution(struct iris_inst *inst, u32 pl
+>  		payload_type = HFI_PAYLOAD_U32;
+>  	} else {
+>  		codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
+> -		resolution = ALIGN(inst->fmt_dst->fmt.pix_mp.width, codec_align) << 16 |
+> -			ALIGN(inst->fmt_dst->fmt.pix_mp.height, codec_align);
+> +		resolution = ALIGN(inst->enc_scale_width, codec_align) << 16 |
+> +			ALIGN(inst->enc_scale_height, codec_align);
+>  		inst_hfi_gen2->dst_subcr_params.bitstream_resolution = resolution;
+>  		payload_type = HFI_PAYLOAD_32_PACKED;
+>  	}
+> @@ -237,10 +237,10 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
+>  			left_offset = inst->crop.left;
+>  			top_offset = inst->crop.top;
+>  		} else {
+> -			bottom_offset = (ALIGN(inst->fmt_dst->fmt.pix_mp.height, codec_align) -
+> -					inst->fmt_dst->fmt.pix_mp.height);
+> -			right_offset = (ALIGN(inst->fmt_dst->fmt.pix_mp.width, codec_align) -
+> -					inst->fmt_dst->fmt.pix_mp.width);
+> +			bottom_offset = (ALIGN(inst->enc_scale_height, codec_align) -
+> +					inst->enc_scale_height);
+> +			right_offset = (ALIGN(inst->enc_scale_width, codec_align) -
+> +				       inst->enc_scale_width);
+>  			left_offset = 0;
+>  			top_offset = 0;
+>  		}
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> index 2f1f118eae4f6462ab1aa1d16844b34e6e699f1e..dc3e606b6ab429a1d15536fa8316afb1e384d674 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> @@ -54,6 +54,8 @@ static u32 iris_hfi_gen2_buf_type_to_driver(struct iris_inst *inst,
+>  			return BUF_SCRATCH_2;
+>  	case HFI_BUFFER_PERSIST:
+>  		return BUF_PERSIST;
+> +	case HFI_BUFFER_VPSS:
+> +		return BUF_VPSS;
+>  	default:
+>  		return 0;
+>  	}
+> diff --git a/drivers/media/platform/qcom/iris/iris_instance.h b/drivers/media/platform/qcom/iris/iris_instance.h
+> index a9892988c10bc28e9b2d8c3b5482e99b5b9af623..0b36092fe4e7296da2f66aecf9083f7f1edc5459 100644
+> --- a/drivers/media/platform/qcom/iris/iris_instance.h
+> +++ b/drivers/media/platform/qcom/iris/iris_instance.h
+> @@ -66,6 +66,8 @@ struct iris_fmt {
+>   * @hfi_rc_type: rate control type
+>   * @enc_raw_width: source image width for encoder instance
+>   * @enc_raw_height: source image height for encoder instance
+> + * @enc_scale_width: scale width for encoder instance
+> + * @enc_scale_height: scale height for encoder instance
+>   */
+>  
+>  struct iris_inst {
+> @@ -106,6 +108,8 @@ struct iris_inst {
+>  	u32				hfi_rc_type;
+>  	u32				enc_raw_width;
+>  	u32				enc_raw_height;
+> +	u32				enc_scale_width;
+> +	u32				enc_scale_height;
+>  };
+>  
+>  #endif
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index 36d69cc73986b74534a2912524c8553970fd862e..d3306189d902a1f42666010468c9e4e4316a66e1 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -729,6 +729,10 @@ static const u32 sm8550_dec_op_int_buf_tbl[] = {
+>  	BUF_DPB,
+>  };
+>  
+> +static const u32 sm8550_enc_ip_int_buf_tbl[] = {
+> +	BUF_VPSS,
+> +};
+> +
+>  static const u32 sm8550_enc_op_int_buf_tbl[] = {
+>  	BUF_BIN,
+>  	BUF_COMV,
+> @@ -816,6 +820,8 @@ struct iris_platform_data sm8550_data = {
+>  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+>  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+>  
+> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
+> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
+>  	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
+>  	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
+>  };
+> @@ -908,6 +914,8 @@ struct iris_platform_data sm8650_data = {
+>  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+>  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+>  
+> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
+> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
+>  	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
+>  	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
+>  };
+> @@ -989,6 +997,8 @@ struct iris_platform_data sm8750_data = {
+>  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+>  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+>  
+> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
+> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
+>  	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
+>  	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
+>  };
+> @@ -1077,6 +1087,8 @@ struct iris_platform_data qcs8300_data = {
+>  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+>  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+>  
+> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
+> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
+>  	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
+>  	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
+>  };
+> diff --git a/drivers/media/platform/qcom/iris/iris_venc.c b/drivers/media/platform/qcom/iris/iris_venc.c
+> index 7ad747d2272f029e69a56572a188a032f898a3fb..f573408a3fc66e1bbc7814a8fc7953158e043fce 100644
+> --- a/drivers/media/platform/qcom/iris/iris_venc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_venc.c
+> @@ -70,6 +70,8 @@ int iris_venc_inst_init(struct iris_inst *inst)
+>  
+>  	inst->enc_raw_width = DEFAULT_WIDTH;
+>  	inst->enc_raw_height = DEFAULT_HEIGHT;
+> +	inst->enc_scale_width = DEFAULT_WIDTH;
+> +	inst->enc_scale_height = DEFAULT_HEIGHT;
+>  
+>  	memcpy(&inst->fw_caps[0], &core->inst_fw_caps_enc[0],
+>  	       INST_FW_CAP_MAX * sizeof(struct platform_inst_fw_cap));
+> @@ -188,15 +190,32 @@ int iris_venc_try_fmt(struct iris_inst *inst, struct v4l2_format *f)
+>  
+>  static int iris_venc_s_fmt_output(struct iris_inst *inst, struct v4l2_format *f)
+>  {
+> +	const struct iris_fmt *venc_fmt;
+>  	struct v4l2_format *fmt;
+> +	u32 codec_align;
+>  
+>  	iris_venc_try_fmt(inst, f);
+>  
+> -	if (!(find_format(inst, f->fmt.pix_mp.pixelformat, f->type)))
+> +	venc_fmt = find_format(inst, f->fmt.pix_mp.pixelformat, f->type);
+> +	if (!venc_fmt)
+>  		return -EINVAL;
+>  
+> +	codec_align = venc_fmt->pixfmt == V4L2_PIX_FMT_HEVC ? 32 : 16;
+> +
+>  	fmt = inst->fmt_dst;
+>  	fmt->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+> +	/*
+> +	 * If output format size != input format size,
+> +	 * it is considered a scaling case,
+> +	 * and the scaled size needs to be saved.
+> +	 */
+> +	if (f->fmt.pix_mp.width != inst->fmt_src->fmt.pix_mp.width ||
+> +	    f->fmt.pix_mp.height != inst->fmt_src->fmt.pix_mp.height) {
+> +		inst->enc_scale_width = f->fmt.pix_mp.width;
+> +		inst->enc_scale_height = f->fmt.pix_mp.height;
+> +		fmt->fmt.pix_mp.width = ALIGN(f->fmt.pix_mp.width, codec_align);
+> +		fmt->fmt.pix_mp.height = ALIGN(f->fmt.pix_mp.height, codec_align);
+> +	}
+>  	fmt->fmt.pix_mp.num_planes = 1;
+>  	fmt->fmt.pix_mp.plane_fmt[0].bytesperline = 0;
+>  	fmt->fmt.pix_mp.plane_fmt[0].sizeimage = iris_get_buffer_size(inst, BUF_OUTPUT);
+> @@ -254,6 +273,8 @@ static int iris_venc_s_fmt_input(struct iris_inst *inst, struct v4l2_format *f)
+>  
+>  	inst->enc_raw_width = f->fmt.pix_mp.width;
+>  	inst->enc_raw_height = f->fmt.pix_mp.height;
+> +	inst->enc_scale_width = f->fmt.pix_mp.width;
+> +	inst->enc_scale_height = f->fmt.pix_mp.height;
+>  
+>  	if (f->fmt.pix_mp.width != inst->crop.width ||
+>  	    f->fmt.pix_mp.height != inst->crop.height) {
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> index 4463be05ce165adef6b152eb0c155d2e6a7b3c36..db5adadd1b39c06bc41ae6f1b3d2f924b3ebf150 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> @@ -1131,10 +1131,11 @@ static u32 iris_vpu_enc_arp_size(struct iris_inst *inst)
+>  
+>  inline bool is_scaling_enabled(struct iris_inst *inst)
+>  {
+> -	return inst->crop.left != inst->compose.left ||
+> -		inst->crop.top != inst->compose.top ||
+> -		inst->crop.width != inst->compose.width ||
+> -		inst->crop.height != inst->compose.height;
+> +	struct v4l2_pix_format_mplane *dst_fmt = &inst->fmt_dst->fmt.pix_mp;
+> +	struct v4l2_pix_format_mplane *src_fmt = &inst->fmt_src->fmt.pix_mp;
+> +
+> +	return dst_fmt->width != src_fmt->width ||
+> +		dst_fmt->height != src_fmt->height;
+>  }
+>  
+>  static inline
+> 
 
+Reviewed-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+
+Thanks,
+Dikshita
 
