@@ -1,178 +1,99 @@
-Return-Path: <linux-kernel+bounces-893049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3DAC466C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:00:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49BCFC465BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:47:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 932551890304
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:59:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9520C4E9B4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EF930F55C;
-	Mon, 10 Nov 2025 11:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02229309EE2;
+	Mon, 10 Nov 2025 11:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NYDM4NAv"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DddieZtr"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DD421772A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4462E9EB1
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762775921; cv=none; b=ClS47pI0lnugQ1iQGBhCgT0bqcYupXI1wEu4AFHh5jEY+ZWkVR+hPsEZpZzsJDZ/+xxQx+Vexrjz3bt/E+nSimd2CyKwizpT9gZc6VU7mDUEqAVua19QjShQr4VbkEhajpEbWljyS8cPgOObNby2dR2Z9MNhCmY3a9TUZHdw/AA=
+	t=1762775235; cv=none; b=qO5vHabg1+rWtsptBsExaEbBp+apU6Zi4mDGO0WOiMrAvFy6R/qhX2akxKrRKPfmn6CvvZKnbFELn9tmjyTHnw+hTytfSJLOiLTvS9bS/+4DrXeEPQm+n3llsyRIHpM2P+OX5og8SJ/YKNLA+HjB06nJlxs9aqVrTxRNiG6x18c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762775921; c=relaxed/simple;
-	bh=8CfEDA79lBcPx7H8WDnvleWLVndNz/te5099TGWHN+E=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Oo0I/zMPbU1Dc3r9j5vpPZZQT2GrzJriOopv8tV3xt3KXwrZUzIzwWe6XfnwjmqG7A6ipLQEBrNK6s+pJVbvwsEh6GK2Op+atsvfMe2oJiB4gDHzt/hUJACumGxk61/LfnxQyEJ2FuOYFXb5V0PgxNyWm0QZPKibcYy96nYJ7g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NYDM4NAv; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=gebqXZYQcid4lUxlN6M8ilOhWjiGcP2qN2BZztNPrlE=; b=NYDM4NAv+d5NFDK287Bxq/SqP5
-	7oCmpho+K8OJHEP0toBHNsKLMqQVKkFUGlH3Pwg6Ps/+soszw7IYQlGpAlsehfVQdsv2Vzrqz/Bxi
-	rgK5+or3uPjdaUwOZTJUoNONiBJGE6SSS/u9zXnB7W+0HuG7O5BPVnFix5ef6KPQg+zh/mbAqWK1J
-	D2e6POxChOmGaBAQQB9r5+jxy+ZMH442rI/xGuC6pGgQRxrQdJX9AHdcUeLwo+zJai/c2Da8FwUy4
-	EMYaad5b3DlCpdllw+f211dxlXWndzXWjuRn64cfaCFZEpw9JGdIIE+5jeU1wxhtKxWie8OH/CF67
-	+xVMw6IA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIPfv-0000000AZel-3cDm;
-	Mon, 10 Nov 2025 11:03:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 6DD26303061; Mon, 10 Nov 2025 12:58:33 +0100 (CET)
-Message-ID: <20251110115758.456717741@infradead.org>
-User-Agent: quilt/0.68
-Date: Mon, 10 Nov 2025 12:46:45 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
- peterz@infradead.org,
- kees@kernel.org,
- acarmina@redhat.com,
- jpoimboe@kernel.org,
- mark.rutland@arm.com,
- torvalds@linuxfoundation.org,
- maciej.wieczor-retman@intel.com
-Subject: [PATCH v2 12/12] x86_64/bug: Inline the UD1
-References: <20251110114633.202485143@infradead.org>
+	s=arc-20240116; t=1762775235; c=relaxed/simple;
+	bh=UHsZ8mNOG8p7kZWeRQbdvDX87iavcoicnA0ph7mCQpM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=U1sChejIWzk5MgqQrZxt7xMKF4aKYuoDvrW8wmVFkl0XoB1MaTbvkeoHmTboX+vE+iTqO7/s8lfsroay7AqnMUiFKJ6SVV3H2zj6R9IRyn7aYkCdRLT0rKlrXda4LsCu2oGgl63R1LuK8sRVgg04DrY/W7Gt4grtCDCXdBNq/ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DddieZtr; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-640bae7d83aso3049808a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:47:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762775232; x=1763380032; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wUCZuS6iBZ+Cb2EbxYt/LbW22Q1kNekqfCyN5WYEYrk=;
+        b=DddieZtr+YcRU6AGymXQ6+qbjn4EqfaO1LTBmOwgNdwd2GljS7zyb1RqN14kryvqia
+         N4CCnwoDamx2Y13a+sxDntiCwG14T10uI1J2PP2gs/++M8u8KmFDWeVPTkhGVJkd7MnX
+         /oPPoPxWLKuq2A52BHO8bifmzBZtHc3liXMbi/+mGONJAWn7rZvdMPNGtvI33lz2xU6u
+         ysPgqzNiiCIF6TMslrx6yVp6I+MC/7t7lzsZtPs0OPXVU7TcmmQeLvkTdztdQx04qOp3
+         vFq+6Tapi87i1kL1hJdKBMxmoC7UO9aI5evD46DVTYrG6830K8SRDB/frUImVwp3+4NW
+         P3dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762775232; x=1763380032;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wUCZuS6iBZ+Cb2EbxYt/LbW22Q1kNekqfCyN5WYEYrk=;
+        b=ZajAUpTZEdJUJEGFzCRTy1tgQfrE+6Ig+/N0WcarulZLqk5jSEIE7syj5CkV8zC/C9
+         WRGuoiOptBiZwLqrOgiAVfGi0bre5GFQ6WCV04hBlTbn5ozCxRXBMXFMNQ1fsOti9Ked
+         rbeukIA5JijbxT6AbQ6uTJlK+UWrpB7jsYhvgga3XSwxSXW8GqN7/0o5oue9r+k5ZmKd
+         6B+j4kv43gpvz/++YUWHVdmdXyjYO/KuSptTWUcGYWUnUiJq/Zzd+Bg0y4rVbUJ1DJZA
+         bfIk9qdH9edV2xYbkVtNfs2d8b9TwPXcsxZJZ0k7SBI2Aa6llrviIaEA03i5kSSqHjtQ
+         pUog==
+X-Forwarded-Encrypted: i=1; AJvYcCVRPj1Cv6sJzIJjx2rWJdc4y/YAQAarNX8+C53JeHArce9uCwCgOSYIWXuAlw6CQ0iVcVQV1HBFlf8Yb3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZYVWlJ9LcbeDax6YpDVzA0xiC2uYWu+r+ggghzWo3dWbvL5YZ
+	Ci0n22ooauFi/tJkaOgm4KngV1nvamH8ghDESdzxWCi1TNqrzESNe6QV/sR8P1StacXZuo7S6yM
+	QMF72eS84Pjtf+QxSlA==
+X-Google-Smtp-Source: AGHT+IHn/ARWRXnaz/QbEvpiXa66T27fjTbhbGtpITormFJQJJtBcOuO5FmSZ0Htawn8t+iKKDuDiXxfGYOF77I=
+X-Received: from edbin4.prod.google.com ([2002:a05:6402:2084:b0:641:8e3a:1196])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:2106:b0:640:ef03:82c9 with SMTP id 4fb4d7f45d1cf-6415dc11781mr6885792a12.11.1762775232291;
+ Mon, 10 Nov 2025 03:47:12 -0800 (PST)
+Date: Mon, 10 Nov 2025 11:47:11 +0000
+In-Reply-To: <20251110095025.1475896-17-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+References: <20251110095025.1475896-1-ojeda@kernel.org> <20251110095025.1475896-17-ojeda@kernel.org>
+Message-ID: <aRHQv14husHrYpl_@google.com>
+Subject: Re: [PATCH 16/18] rust: syn: remove `unicode-ident` dependency
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
 
-(Ab)use the static_call infrastructure to convert all:
+On Mon, Nov 10, 2025 at 10:50:21AM +0100, Miguel Ojeda wrote:
+> The `syn` crate depends on the `unicode-ident` crate to determine whether
+> characters have the XID_Start or XID_Continue properties according to
+> Unicode Standard Annex #31.
+> 
+> However, we only need ASCII identifiers in the kernel, thus we can
+> simplify the check and remove completely that dependency.
+> 
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-  call __WARN_trap
-
-instances into the desired:
-
-  ud1 (%ecx), %rdi
-
-eliminating the CALL/RET, but more importantly, fixing the
-fact that all WARNs will have:
-
-  RIP: 0010:__WARN_trap+0
-
-Basically, by making it a static_call trampoline call, objtool will
-collect the callsites, and then the inline rewrite will hit the
-special case and replace the code with the magic instruction.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/include/asm/bug.h    |    5 ++++-
- arch/x86/kernel/static_call.c |   13 +++++++++++--
- arch/x86/kernel/traps.c       |    4 ++++
- 3 files changed, 19 insertions(+), 3 deletions(-)
-
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -137,9 +137,12 @@ do {									\
- #ifdef HAVE_ARCH_BUG_FORMAT_ARGS
- 
- #ifndef __ASSEMBLY__
-+#include <linux/static_call_types.h>
- struct bug_entry;
- extern void __WARN_trap(struct bug_entry *bug, ...);
- 
-+DECLARE_STATIC_CALL(WARN_trap, __WARN_trap);
-+
- struct pt_regs;
- struct sysv_va_list { /* from AMD64 System V ABI */
- 	unsigned int gp_offset;
-@@ -171,7 +174,7 @@ extern void *__warn_args(struct arch_va_
- #define __WARN_print_arg(flags, format, arg...)				\
- do {									\
- 	int __flags = (flags) | BUGFLAG_WARNING | BUGFLAG_ARGS ;	\
--	__WARN_trap(__WARN_bug_entry(__flags, format), ## arg);		\
-+	static_call_mod(WARN_trap)(__WARN_bug_entry(__flags, format), ## arg); \
- 	asm (""); /* inhibit tail-call optimization */			\
- } while (0)
- 
---- a/arch/x86/kernel/static_call.c
-+++ b/arch/x86/kernel/static_call.c
-@@ -26,6 +26,11 @@ static const u8 xor5rax[] = { 0x2e, 0x2e
- 
- static const u8 retinsn[] = { RET_INSN_OPCODE, 0xcc, 0xcc, 0xcc, 0xcc };
- 
-+/*
-+ * ud1    (%ecx),%rdi -- see __WARN_trap() / decode_bug()
-+ */
-+static const u8 warninsn[] = { 0x67, 0x48, 0x0f, 0xb9, 0x39 };
-+
- static u8 __is_Jcc(u8 *insn) /* Jcc.d32 */
- {
- 	u8 ret = 0;
-@@ -69,7 +74,10 @@ static void __ref __static_call_transfor
- 			emulate = code;
- 			code = &xor5rax;
- 		}
--
-+		if (func == &__WARN_trap) {
-+			emulate = code;
-+			code = &warninsn;
-+		}
- 		break;
- 
- 	case NOP:
-@@ -128,7 +136,8 @@ static void __static_call_validate(u8 *i
- 	} else {
- 		if (opcode == CALL_INSN_OPCODE ||
- 		    !memcmp(insn, x86_nops[5], 5) ||
--		    !memcmp(insn, xor5rax, 5))
-+		    !memcmp(insn, xor5rax, 5) ||
-+		    !memcmp(insn, warninsn, 5))
- 			return;
- 	}
- 
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -31,6 +31,7 @@
- #include <linux/kexec.h>
- #include <linux/sched.h>
- #include <linux/sched/task_stack.h>
-+#include <linux/static_call.h>
- #include <linux/timer.h>
- #include <linux/init.h>
- #include <linux/bug.h>
-@@ -215,6 +216,9 @@ static inline unsigned long pt_regs_val(
- }
- 
- #ifdef HAVE_ARCH_BUG_FORMAT_ARGS
-+DEFINE_STATIC_CALL(WARN_trap, __WARN_trap);
-+EXPORT_STATIC_CALL_TRAMP(WARN_trap);
-+
- /*
-  * Create a va_list from an exception context.
-  */
-
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
