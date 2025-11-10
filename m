@@ -1,98 +1,101 @@
-Return-Path: <linux-kernel+bounces-893966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BFCC48EBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:12:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DF9C48F8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:21:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1762E1884F34
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:11:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53ABC3AF29D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5339A31B138;
-	Mon, 10 Nov 2025 19:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E1B32A3FE;
+	Mon, 10 Nov 2025 19:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gqw7NMWP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJqXI5pb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A297A320A10;
-	Mon, 10 Nov 2025 19:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DAD32274B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762801875; cv=none; b=u0EDvFvCum/10A88Yh/w2K+dAMVSuuKK1B4wqfXjCzDB+X44F40PcUA7upqJsANHYoVBzjSz/0bg9+t7zFUEex+wtFRAOhgR96vdZDGGO3K2VPo99pjdIk3dw3qoB+IzscThguTCJzvwMHO7HGL73k2FuFhXSSHWlSCBSTFlhyI=
+	t=1762801889; cv=none; b=evfCZqnOq87o3imlm4H/2E6q7ga/Z/CsW/0bsQae+NFLeVBREwtMUEoPfZ6Ri4CzA7yh/2aB0Ofuv7VbFm388VG/epocaWZHeFdrCDdTKbvlD1E6uIF4zyroKRrHkM/e4dxZj4ES+M/zuHkwDdDxfQ7mUkqB7RgvsqSj/hfo8yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762801875; c=relaxed/simple;
-	bh=4xtpdZqP7qlBWq1FJ4j1oAwsxkHN4/xEN7o0xy/g6sg=;
+	s=arc-20240116; t=1762801889; c=relaxed/simple;
+	bh=H4rp7RZQupzK9V1V6jWQ63JhkC5HQCmbB4coEew+cFg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MuFZhGwKneyNhTprrI2rUqZlwkrgvYfp5ssc5pccuxuSi/Eg+BFMzpqis/0M4hPgCgx8/hhoXi/szmabPhCk+fFToydZ13hLx1QUFsX36RveJfcOLmcTc8FHQc3qXPHq5UzPdMzTjP6lAWktgXEoAfqu5TunTez/52pP1UP+xYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gqw7NMWP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4925C4CEFB;
-	Mon, 10 Nov 2025 19:11:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DzjtfExiVf6cy8Uv2d+knkvyyRe3EAkO4dyG/8Ktvgw0VhBSq7u1Mv+oVBflTltTcayRfbPNMqU9ZXhrhnhvToIUQJC9soHKeQHuZx/6r8s53TkSDg93c2HwXUWyBnSiwJCx6rHGPrSyzb9l3M8AwdA8eBuBilZxM6munq0CJwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJqXI5pb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CA4DC4CEF5;
+	Mon, 10 Nov 2025 19:11:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762801875;
-	bh=4xtpdZqP7qlBWq1FJ4j1oAwsxkHN4/xEN7o0xy/g6sg=;
+	s=k20201202; t=1762801888;
+	bh=H4rp7RZQupzK9V1V6jWQ63JhkC5HQCmbB4coEew+cFg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gqw7NMWPqEbjILjwj7RNoCuFNgaVKzAHGY70xSIudtO6B/wQWZNI3RJ06V+F+AJwM
-	 h5k4uL0ErB3pXuBvOvyP1f2hxpAxvbePLwc/W9rKl7R55CXx1kNtsZTFSlj98Bmb2S
-	 syJYopyTibRkpGCSuLLW9qFPwVfOBwQMvFMrMuhue8JODFgx9ZJgkzgbg7YVF0941p
-	 1DJLMouoaPJ2zOJkH2AkWJNM5hcMDh6rp6la3zq51tzPbgnxcgjWj2GC0EtS1p+8B9
-	 D/kEdZuYLtzGZ+iPWTqEyJFhHu5q2/d1oLU8yt7fYTDwGSTgnhZeZphivXeVmy2Eyj
-	 4jLwTi5Qr5UNw==
-Date: Mon, 10 Nov 2025 19:11:10 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>
-Subject: Re: [PATCH v2 1/2] bindings: iio: adc: Add bindings for TI ADS131M0x
- ADCs
-Message-ID: <20251110-feminine-vineyard-8015082dab35@spud>
-References: <20251110061409.726028-1-o.rempel@pengutronix.de>
- <20251110061409.726028-2-o.rempel@pengutronix.de>
+	b=MJqXI5pbwcnDAHtxT5eqiavC/EURQOStdQ4WIkrjc1Kz0i9BrZ2i/tucEiqv7RgFl
+	 YzNEflTmwAgiTOCSR3hUrqZAs5f62inkGTj8HRtjZv9X+5b1M98VnxaeiegqYWpwV4
+	 58dWSPdCecWB0wsD9yg2SYOHUApR0zRKGmUVkB5i0GWzEtHZ773O07j6Ch2B9hQpjK
+	 vyLnCfgXcc2uDgKAiODOLEW14mPNpaIeFZoN6SZLziPS4I6Z6KLHUuS/RkFtaTQG25
+	 mdUqsliTIktZRlwb1/dnSNPph4+3E2LBBWYP9uvvwzN+Fxk0WATghBaDqUjQR2KSZA
+	 KHSS2SSg0lHiQ==
+Date: Mon, 10 Nov 2025 11:11:26 -0800
+From: Drew Fustini <fustini@kernel.org>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Johan Hovold <johan@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: Re: [PATCH] mailbox: th1520: fix clock imbalance on probe failure
+Message-ID: <aRI43i80Z5AdhGro@x1>
+References: <20251017055414.7753-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="P7W2lCZtskYuirUH"
-Content-Disposition: inline
-In-Reply-To: <20251110061409.726028-2-o.rempel@pengutronix.de>
-
-
---P7W2lCZtskYuirUH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20251017055414.7753-1-johan@kernel.org>
 
-On Mon, Nov 10, 2025 at 07:14:08AM +0100, Oleksij Rempel wrote:
-> +patternProperties:
-> +  "^channel@([0-7])$":
+On Fri, Oct 17, 2025 at 07:54:14AM +0200, Johan Hovold wrote:
+> The purpose of the devm_add_action_or_reset() helper is to call the
+> action function in case adding an action ever fails so drop the clock
+> disable from the error path to avoid disabling the clocks twice.
+> 
+> Fixes: 5d4d263e1c6b ("mailbox: Introduce support for T-head TH1520 Mailbox driver")
+> Cc: Michal Wilczynski <m.wilczynski@samsung.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
+>  drivers/mailbox/mailbox-th1520.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mailbox/mailbox-th1520.c b/drivers/mailbox/mailbox-th1520.c
+> index a6b2aa9ae952..626957c2e435 100644
+> --- a/drivers/mailbox/mailbox-th1520.c
+> +++ b/drivers/mailbox/mailbox-th1520.c
+> @@ -435,10 +435,8 @@ static int th1520_mbox_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	ret = devm_add_action_or_reset(dev, th1520_disable_clk, priv);
+> -	if (ret) {
+> -		clk_bulk_disable_unprepare(ARRAY_SIZE(priv->clocks), priv->clocks);
+> +	if (ret)
+>  		return ret;
+> -	}
+>  
+>  	/*
+>  	 * The address mappings in the device tree align precisely with those
+> -- 
+> 2.49.1
+> 
 
-This looks okay to me. One thing to mention is that you alternate
-between using channel@[] and channel@([]). The ()s are not needed, as
-evidenced by the former working ;)
-With those made consistent
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: changes-requested
+Acked-by: Drew Fustini <fustini@kernel.org>
 
---P7W2lCZtskYuirUH
-Content-Type: application/pgp-signature; name="signature.asc"
+Jassi - are you able to take this through your mailbox tree?
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRI4zgAKCRB4tDGHoIJi
-0tLEAP9RrLy7Xpr4zfSpCBhDA400xcH8tCqfSWnE/BddvBVXvAEAmTxUzq3UoJqE
-DBoCEVf1Jjqu53MXlbVvUhjt51/KuwA=
-=MALT
------END PGP SIGNATURE-----
-
---P7W2lCZtskYuirUH--
+Thanks,
+Drew
 
