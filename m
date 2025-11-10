@@ -1,174 +1,124 @@
-Return-Path: <linux-kernel+bounces-893549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE02DC47C44
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:06:14 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A1AC47A3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:49:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D2614F633C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:49:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 50F85349E32
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376F5272805;
-	Mon, 10 Nov 2025 15:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7776D274B4A;
+	Mon, 10 Nov 2025 15:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="WRKHJIxi"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b="D1Goflo9"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5159C153BD9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8069153BD9
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762789660; cv=none; b=FfnlNOcmsn/OP7JWhVVxmdVc+aLJSUXS8j9c7uL7vRB6ZGPbBKRhsdRnf1k5HWqYHDszwKSLoB6HIGNcqwb/E9vnqpggay5HhGujOv1EJx5ZC5iTuPxnhD7WiU+2I99TPUavZqGRLBdYmPZbhQQA84lNquBxmC6Ezb5EdHC0wkk=
+	t=1762789714; cv=none; b=ZMTkpJIhhH5Lz79I4WW3VQtEyNUoS2/M9fdU8DAdaR5ENhtN5SGYRut65V+uEd0yIBKTPZAmeGx9ACyqFXU+Hh9hA0/SsFQgK2vgoN97YvrapwDz13RSSHnRZ4KPLyjFDLwT7q+JXa6aZQ04j6h+BQOblHYwNivqwPdu2cpBw7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762789660; c=relaxed/simple;
-	bh=12V666E3AFy766fjyZgrIncfUetNRSW52IWC4IRWOrg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uadNdbwbU7FrxbcvO6zlMiSRlcZloWDRURkusXaIYbAGszUFKV5PrQPpHG0OfiktOv/u0DSDgmeVOyUvwFsQNrXL6p4B8wWCLAA5DEl7tcvy3j3IQ1OVa2mpgeSb4gykDGg2SXvtshXXv9L6sSB89uvvQQmdEc7PXqQan9ynUqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=WRKHJIxi; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id QGmKPo7zNG1lAXap; Mon, 10 Nov 2025 10:47:35 -0500 (EST)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=HRNToVGopdqhhaToJ2PhEQJtoYe/zyhc7iFsPx8kMIY=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=WRKHJIxi+AcuJYeA7ZGs
-	rOr0dBvf6b+tcHCOq/RS5ffQnIHzBXdbVO9J0tuWts5RRJF8aWAzzgv5COlWCGV9PA3IG6f9unx1u
-	nj/adBijel70ODnYDavDUPNcIpN0u1wAnBytI1QhoRembxH5IyS6OFJYOHL8vRwM/ksbipgxTU=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14272414; Mon, 10 Nov 2025 10:47:35 -0500
-Message-ID: <3a8022dc-bcfd-4b01-9f9b-7a9ec61fa2a3@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 10 Nov 2025 10:47:35 -0500
+	s=arc-20240116; t=1762789714; c=relaxed/simple;
+	bh=oclVIPwu+uT0JYbrNNdVGXO/Snxkslu/wcLttJWhJXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uzik52Q5fG2sbkBj/LGb8NICJ1I5tEoAM6onYzn/wTR4RIwQM8UEY40zpLGXVs7foIafWDlE+NvQEXSiXGESICmkx7HnIM/AsG17QxNAV3PGyLQnCqEQfh0m6ysDJoDVspvPUKCmLO56XH2O5n4OqNSKohSeFPF/0Hq0aMUtx74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in; spf=pass smtp.mailfrom=cse.iitm.ac.in; dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b=D1Goflo9; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.iitm.ac.in
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7b22ffa2a88so1316844b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:48:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cse-iitm-ac-in.20230601.gappssmtp.com; s=20230601; t=1762789711; x=1763394511; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RxG8U113OCt23H5vQ5qb7boZb0Fnj6MtbM9jk8M6/fE=;
+        b=D1Goflo9tHH2Z83nxCRDoenDV7ekPDm+AGdob2FDG0pmjobLSooY2XTNvL5UUnOph/
+         VapQ3mKn4MT+DAVSnjTn5p9Ou4p8XJjD1U0RFjvoBZIPQuLKL8Di4BAShGwA5uIJ6UnW
+         rb1pgEhChLqlOvajltF+cZESUBvjLNOsf6UMkE0qVtRLeT/2fvUP1qjcUtGLmAPetox6
+         5Ppo5bOHG/enIfKB+jo4Q/ZhXzgG7LcnrIE6wtS35BgMabQ95Hq3fz+3X8CywQvl/iWR
+         T5xLuH+gcYb3F/Vuhj1g9pi2OV8UZdu/NUJ6XWedFLIuMuZJPhe58+oknxKgdLjFfEsS
+         BF/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762789711; x=1763394511;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RxG8U113OCt23H5vQ5qb7boZb0Fnj6MtbM9jk8M6/fE=;
+        b=bIlLIVWoj5NNjKYR9Fp0bRR8ZGGETkwFuLO0ECh0oBFji4C2GNifh+t9CWUPh2XSyE
+         TrEwszsbcm9RXoDVPGw1upHXwiSFx5n03STNxiYQ/kzaOmCJGdLqdy6ZHh3VuZHouQKI
+         0HV5c1Gn4XKJMmJYA+c5UVnkIM0JGJvsQS/gn6CLVxk/ddD8O40f6EhfHjkcn5MhyPs5
+         psElJSIOeTQxu1vZ/40JV4tvkx9WF70e0rW9riNV4Vkjb7DYMfxHYZhTcx7eCLnmBBg1
+         vYHyZMgxGgfNkkPA3+bpPlwEBHI9f/8OXsRlmVKGR86rcpz0BLNmJfQM7924yGmLLdQu
+         /tGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVExFNrpmDm+1QI+KLngkehiwPA/+6isa2xP/K+GEpEhYIjLtrMbhsH4tKLH4Scb5T853DZ8ggT7aBKORQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5W730CqSF9ZRS+5AcgBfr+i9yZV2E3NYfotTNEyFDYkfWhcn0
+	QRG43O3d7ze4ExV29BHl+4sH1E8VBGYV79r3IfCIj/GrfsJEajmgp4yVMmwiOU7pU7A=
+X-Gm-Gg: ASbGncsF0YxbnZ/bOxj5FnmtfAh9m62PKkjQDvSYam4aFVeC7FVfR86ATWDPS0QNetU
+	N+6JGYACHVgWMKAvBXIh6QyKkAPgmsKvQU627QjZvbW964hWeNHcMetX2sd9krRpP5avxfRsgHB
+	ELU3QIFHf6vP78k2a4V1sEdfWxK2Cy/m92kYZq/gy1cBzDnKkkXzdIu1bIA6C6ze68ZryaaJCyx
+	vneVxeVMds8RnjDUXibguATwdUAmPAp3ZShrX6FrMjlXo9AIvWhxid8YHN2E9fn+ZT/Ey3dFWuQ
+	VBLoegXfvamxnKgEo1UnBaUYbLVPTGIcCpxU/fK7ku2C2oIlhXBqTaVF0DiQT7cfYCjkRHZMp3m
+	JZEifgt1ZrLF0skrYjVpFmr5wuTfKRx70PrOlcpTNrrDPeAl49MwNphYG2Y9c9oRe6p51JVHgl5
+	0aavsKDspq/BEFeQ==
+X-Google-Smtp-Source: AGHT+IGX0/sQPJZ9IFWURUjUR6+qkfpN6BmZpg4nLetcbOD7FksfDUtQyFd6hLj0vw2F7Br4vT6eeg==
+X-Received: by 2002:a05:6a00:2e25:b0:7ab:78be:3212 with SMTP id d2e1a72fcca58-7b2266a90abmr10078556b3a.19.1762789710801;
+        Mon, 10 Nov 2025 07:48:30 -0800 (PST)
+Received: from localhost.localdomain ([49.37.219.248])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7b0ccc59de7sm12151593b3a.65.2025.11.10.07.48.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 07:48:30 -0800 (PST)
+From: Abdun Nihaal <nihaal@cse.iitm.ac.in>
+To: zack.rusin@broadcom.com
+Cc: Abdun Nihaal <nihaal@cse.iitm.ac.in>,
+	bcm-kernel-feedback-list@broadcom.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/vmwgfx: Fix potential memory leak in vmw_fifo_create()
+Date: Mon, 10 Nov 2025 21:18:09 +0530
+Message-ID: <20251110154812.85766-1-nihaal@cse.iitm.ac.in>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v3 01/16] Revert "scsi: qla2xxx: Perform lockless command
- completion in abort path"
-Content-Language: en-US
-X-ASG-Orig-Subj: [PATCH v3 01/16] Revert "scsi: qla2xxx: Perform lockless command
- completion in abort path"
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Dmitry Bogdanov <d.bogdanov@yadro.com>,
- Xose Vazquez Perez <xose.vazquez@gmail.com>
-References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
-In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1762789655
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 3613
-X-ASG-Debug-ID: 1762789655-1cf439139110cbc0001-xx1T2L
+Content-Transfer-Encoding: 8bit
 
-This reverts commit 0367076b0817d5c75dfb83001ce7ce5c64d803a9.
+The memory allocated for fifo and fifo->static_buffer is not freed on
+one of the error paths. Fix that by freeing them.
 
-The commit being reverted added code to __qla2x00_abort_all_cmds() to
-call sp->done() without holding a spinlock.  But unlike the older code
-below it, this new code failed to check sp->cmd_type and just assumed
-TYPE_SRB, which results in a jump to an invalid pointer in target-mode
-with TYPE_TGT_CMD:
-
-qla2xxx [0000:65:00.0]-d034:8: qla24xx_do_nack_work create sess success
-  0000000009f7a79b
-qla2xxx [0000:65:00.0]-5003:8: ISP System Error - mbx1=1ff5h mbx2=10h
-  mbx3=0h mbx4=0h mbx5=191h mbx6=0h mbx7=0h.
-qla2xxx [0000:65:00.0]-d01e:8: -> fwdump no buffer
-qla2xxx [0000:65:00.0]-f03a:8: qla_target(0): System error async event
-  0x8002 occurred
-qla2xxx [0000:65:00.0]-00af:8: Performing ISP error recovery -
-  ha=0000000058183fda.
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-PF: supervisor instruction fetch in kernel mode
-PF: error_code(0x0010) - not-present page
-PGD 0 P4D 0
-Oops: 0010 [#1] SMP
-CPU: 2 PID: 9446 Comm: qla2xxx_8_dpc Tainted: G           O       6.1.133 #1
-Hardware name: Supermicro Super Server/X11SPL-F, BIOS 4.2 12/15/2023
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc90001f93dc8 EFLAGS: 00010206
-RAX: 0000000000000282 RBX: 0000000000000355 RCX: ffff88810d16a000
-RDX: ffff88810dbadaa8 RSI: 0000000000080000 RDI: ffff888169dc38c0
-RBP: ffff888169dc38c0 R08: 0000000000000001 R09: 0000000000000045
-R10: ffffffffa034bdf0 R11: 0000000000000000 R12: ffff88810800bb40
-R13: 0000000000001aa8 R14: ffff888100136610 R15: ffff8881070f7400
-FS:  0000000000000000(0000) GS:ffff88bf80080000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 000000010c8ff006 CR4: 00000000003706e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ? __die+0x4d/0x8b
- ? page_fault_oops+0x91/0x180
- ? trace_buffer_unlock_commit_regs+0x38/0x1a0
- ? exc_page_fault+0x391/0x5e0
- ? asm_exc_page_fault+0x22/0x30
- __qla2x00_abort_all_cmds+0xcb/0x3e0 [qla2xxx_scst]
- qla2x00_abort_all_cmds+0x50/0x70 [qla2xxx_scst]
- qla2x00_abort_isp_cleanup+0x3b7/0x4b0 [qla2xxx_scst]
- qla2x00_abort_isp+0xfd/0x860 [qla2xxx_scst]
- qla2x00_do_dpc+0x581/0xa40 [qla2xxx_scst]
- kthread+0xa8/0xd0
- </TASK>
-
-Then commit 4475afa2646d ("scsi: qla2xxx: Complete command early within
-lock") added the spinlock back, because not having the lock caused a
-race and a crash.  But qla2x00_abort_srb() in the switch below already
-checks for qla2x00_chip_is_down() and handles it the same way, so the
-code above the switch is now redundant and still buggy in target-mode.
-Remove it.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+Fixes: c451af78f301 ("drm/vmwgfx: Fail to initialize on broken configs")
+Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
 ---
+Compile tested only. Found using static analysis.
 
-v2 -> v3: no changes
+ drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v1 -> v2: no changes
-
- drivers/scsi/qla2xxx/qla_os.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index d4b484c0fd9d..a52293972e10 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -1862,12 +1862,6 @@ __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
- 	for (cnt = 1; cnt < req->num_outstanding_cmds; cnt++) {
- 		sp = req->outstanding_cmds[cnt];
- 		if (sp) {
--			if (qla2x00_chip_is_down(vha)) {
--				req->outstanding_cmds[cnt] = NULL;
--				sp->done(sp, res);
--				continue;
--			}
--
- 			switch (sp->cmd_type) {
- 			case TYPE_SRB:
- 				qla2x00_abort_srb(qp, sp, res, &flags);
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c
+index 8fe02131a6c4..a9fbdfd3a718 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c
+@@ -150,6 +150,8 @@ struct vmw_fifo_state *vmw_fifo_create(struct vmw_private *dev_priv)
+ 	if (unlikely(min >= max)) {
+ 		drm_warn(&dev_priv->drm,
+ 			 "FIFO memory is not usable. Driver failed to initialize.");
++		vfree(fifo->static_buffer);
++		kfree(fifo);
+ 		return ERR_PTR(-ENXIO);
+ 	}
+ 
 -- 
 2.43.0
-
 
 
