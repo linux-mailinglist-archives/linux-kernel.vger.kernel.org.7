@@ -1,212 +1,127 @@
-Return-Path: <linux-kernel+bounces-892620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C929C45774
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:56:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845B3C45777
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:56:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB133B2AE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:56:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2F0E3347616
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FDC2FD7A5;
-	Mon, 10 Nov 2025 08:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF492FE05D;
+	Mon, 10 Nov 2025 08:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tcrmv+F/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3vg2ila"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9CAA926;
-	Mon, 10 Nov 2025 08:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16858A926
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762764956; cv=none; b=Ps+Pl/oP0fjw7rRfT0L/4zqO6nyeYGxddlno6O4o6/T/1nbyhYIpYcMklGPlYPZ+i6INy03/7jvTFucu+wvWKSwyWHQAlQHfiLqL7E6XaHdGDW/DTFCjZACRpuewSD5RmVekV2Zu1aSM/bUngbqyujXWYrbH765ibqwmjtmkqIM=
+	t=1762764961; cv=none; b=Rdd6dLtudVYUPGlfslaUv0LxdxTHfwQdks7ma/K5G47xgRGRoIou+qzjB4tNxO/ewzJlbaiGBzomcxeXPYDSB166BpzXoeHt5MbUmhTVvHVHEn8X4KZPcyJFuqJXQ/3M5LmOelT0K5P47x64tL8/7MXsjfCRXeryhrQvfRiByBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762764956; c=relaxed/simple;
-	bh=mSP+xIU4+FoO0L+fWKO5RP9XDBbobaBLZF91BFx8IRY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=myaVB7QBm8fAhCswrNpnn6YSYFnfWd75JBWEO3q8hANjLbMyNn1sTNwhFbHiaqqs/bqU4tVeiqYT2XQiXeYjK2MfvKJzHjPXnTn45RaHnvIfrWiiEI6P8XSo9l7XW8lKfgXjTkSX+uFNlINwlF86hyE1IBuNLb2bm0/3RVf26qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tcrmv+F/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC9ABC19421;
-	Mon, 10 Nov 2025 08:55:52 +0000 (UTC)
+	s=arc-20240116; t=1762764961; c=relaxed/simple;
+	bh=2LCdArWEwWTdN30303pBPpEKqQtf6O5CcmuVlRGn3QM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WYzRF+QEX5qaqKz0C51dvinZdrvhxQ3xd8sBHa6nbbTix+5OzjuI03YeuhoKZOHsR37ZdGq3pMaPfQsKvVy0oTOYLpxp1fvfMhzooDJfOEKaD4S4b97b6KtGjZl9u54jXzx1zongOw2ma0ovr/eoN3NnknG6y4VrAIPAs7dVZUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B3vg2ila; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 874F3C4CEFB;
+	Mon, 10 Nov 2025 08:56:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762764956;
-	bh=mSP+xIU4+FoO0L+fWKO5RP9XDBbobaBLZF91BFx8IRY=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=Tcrmv+F/8Xfl77PApi/kITQFytI+3zCBcPHxSZ+M7pPm/KuPwar5zGbDtuMNpxqFp
-	 lBmOzP5doV4be+vEuV+8YwbfiEHnymUYtowVpX62rD2nWk5VqmvuoBQJqsX0ubsI07
-	 aW6quyKtPXdpwr01C8lWhQk72GyZvdE/4OKJlgIdiZ6gGvY853WqNmk1gUaGJe1X4Q
-	 Jt9iZq18ii+AOyGmQ0HjK6E0KrxoaYSEBlnBw/GE2lmTFv+hhjPwqaftGNmD2cVHmh
-	 DPwCaJAIkqU+2HMWQWqtpGY09HI7+2s3Lz1ppb3BgvPC8cI4DAAb4AD7ARcbFMbwBG
-	 06GRVgSS9/fPg==
-Message-ID: <affa667c-2d26-44a6-b575-0b147b4af273@kernel.org>
-Date: Mon, 10 Nov 2025 09:55:51 +0100
+	s=k20201202; t=1762764960;
+	bh=2LCdArWEwWTdN30303pBPpEKqQtf6O5CcmuVlRGn3QM=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=B3vg2ilamgq/qZZh6lfxIqac4n8jrv/5wTvyqaOfp/4KeaoNAnOohZM2WVBw8Mfqz
+	 vYXbnv9cccLlXaXQgXnlv3ruf6uNwAXGvFecL1bXX3RKFSOZexmEMNrw1bdmEc9MAv
+	 OWedkbjpam7nP+KMfuJy5kKtc72lZl5YvrBwXKH2dCceKd9aFOn/x0yHN60bT6ynjH
+	 AjomgJxpy3C+hzazySSjHsz4vd+6XXD+0xziwMrDe5uPVPwOLiBcdZswPhFWJA6Yz/
+	 R00K0s9U7yC2d6Uqi2Kh18hc7gEcwfLb1p8a2U+Un9H9zbs30pQCkNKepU4txc84Ou
+	 SAqQhSNoWMnng==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DE0CCF9E3;
+	Mon, 10 Nov 2025 08:56:00 +0000 (UTC)
+From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
+Date: Mon, 10 Nov 2025 16:55:59 +0800
+Subject: [PATCH RESEND] checkpatch: Suppress warnings when Reported-by: is
+ followed by Link:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH 08/18] media: platform: microchip: Add new histogram
- submodule
-To: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Eugen Hristev <eugen.hristev@linaro.org>, Chas Williams
- <3chas3@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Balakrishnan Sambath <balakrishnan.s@microchip.com>,
- Hans Verkuil <hverkuil@kernel.org>, Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Daniel Scally <dan.scally+renesas@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20251009155251.102472-1-balamanikandan.gunasundar@microchip.com>
- <20251009155251.102472-9-balamanikandan.gunasundar@microchip.com>
-Content-Language: en-US, nl
-In-Reply-To: <20251009155251.102472-9-balamanikandan.gunasundar@microchip.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251110-checkpatch-v1-1-d7ae9d46a376@uniontech.com>
+X-B4-Tracking: v=1; b=H4sIAJ6oEWkC/3WOsQ6CMBiEX8X8szVt0ZY6OcjqoKNhoO1f2xiBA
+ BIN4d0tjKLj3eW7uwFabAK2sF8N0GAf2lCVUbD1CowvyhuSYKMGTvmOKqaI8WjuddEZTyiXQqY
+ StdMIEagbdOE1l13hnF2y0xHy6PvQdlXznjd6Nqe/6npGGLFpqpRMVMJdcXiW8U2Hxm9M9ZgWJ
+ oxRusR04SgKttVK/MV4ssCckwnaGEkrvrB8HMcPSpY1Vh4BAAA=
+X-Change-ID: 20250919-checkpatch-0276787ebfbe
+To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
+ Dwaipayan Ray <dwaipayanray1@gmail.com>, 
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, niecheng1@uniontech.com, 
+ zhanjun@uniontech.com, Cryolitia PukNgae <cryolitia@uniontech.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762764959; l=1809;
+ i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
+ bh=FjYTg08j4724SsqIOglF1kA+dOmAY6fiyRP1YcvJG9I=;
+ b=rTvKvZXykNbHXYZkAOi1/37E0BNa04HyXdwPxvJxULHtnHBMqRXBqkel1I8P7CuwO3SzW+Ttp
+ tPm8Xlw/g+HA94YOXxKws9sUiKkG7agt8m5MCv3sAdyAW2Szwtp7uy6
+X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
+ pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
+X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
+ auth_id=474
+X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Reply-To: cryolitia@uniontech.com
 
-On 09/10/2025 17:52, Balamanikandan Gunasundar wrote:
-> From: Balakrishnan Sambath <balakrishnan.s@microchip.com>
-> 
-> Add new histogram submodule driver to export raw histogram statistics
-> and data to userspace.
-> 
-> Signed-off-by: Balakrishnan Sambath <balakrishnan.s@microchip.com>
-> ---
->  drivers/media/platform/microchip/Kconfig      |   2 +
->  drivers/media/platform/microchip/Makefile     |   2 +-
->  .../platform/microchip/microchip-isc-stats.c  | 549 ++++++++++++++++++
->  .../media/platform/microchip/microchip-isc.h  |  24 +
->  4 files changed, 576 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/media/platform/microchip/microchip-isc-stats.c
-> 
-> diff --git a/drivers/media/platform/microchip/Kconfig b/drivers/media/platform/microchip/Kconfig
-> index 4734ecced029..2864a57e2ff4 100644
-> --- a/drivers/media/platform/microchip/Kconfig
-> +++ b/drivers/media/platform/microchip/Kconfig
-> @@ -10,6 +10,7 @@ config VIDEO_MICROCHIP_ISC
->  	select MEDIA_CONTROLLER
->  	select VIDEO_V4L2_SUBDEV_API
->  	select VIDEOBUF2_DMA_CONTIG
-> +	select VIDEOBUF2_VMALLOC
->  	select REGMAP_MMIO
->  	select V4L2_FWNODE
->  	select VIDEO_MICROCHIP_ISC_BASE
-> @@ -26,6 +27,7 @@ config VIDEO_MICROCHIP_XISC
->  	depends on VIDEO_DEV && COMMON_CLK
->  	depends on ARCH_AT91 || COMPILE_TEST
->  	select VIDEOBUF2_DMA_CONTIG
-> +	select VIDEOBUF2_VMALLOC
->  	select REGMAP_MMIO
->  	select V4L2_FWNODE
->  	select VIDEO_MICROCHIP_ISC_BASE
-> diff --git a/drivers/media/platform/microchip/Makefile b/drivers/media/platform/microchip/Makefile
-> index bd8d6e779c51..94c64d3d242c 100644
-> --- a/drivers/media/platform/microchip/Makefile
-> +++ b/drivers/media/platform/microchip/Makefile
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  microchip-isc-objs = microchip-sama5d2-isc.o
->  microchip-xisc-objs = microchip-sama7g5-isc.o
-> -microchip-isc-common-objs = microchip-isc-base.o microchip-isc-clk.o microchip-isc-scaler.o
-> +microchip-isc-common-objs = microchip-isc-base.o microchip-isc-clk.o microchip-isc-scaler.o microchip-isc-stats.o
->  
->  obj-$(CONFIG_VIDEO_MICROCHIP_ISC_BASE) += microchip-isc-common.o
->  obj-$(CONFIG_VIDEO_MICROCHIP_ISC) += microchip-isc.o
-> diff --git a/drivers/media/platform/microchip/microchip-isc-stats.c b/drivers/media/platform/microchip/microchip-isc-stats.c
-> new file mode 100644
-> index 000000000000..d7813c9d95ac
-> --- /dev/null
-> +++ b/drivers/media/platform/microchip/microchip-isc-stats.c
-> @@ -0,0 +1,549 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Microchip ISC Driver - Statistics Subdevice
-> + * Raw Histogram Export for Userspace Applications
-> + *
-> + * Copyright (C) 2025 Microchip Technology Inc.
-> + *
-> + * Author: Balakrishnan Sambath <balakrishnan.s@microchip.com>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <media/v4l2-common.h>
-> +#include <media/v4l2-event.h>
-> +#include <media/v4l2-ioctl.h>
-> +#include <media/videobuf2-core.h>
-> +#include <media/videobuf2-vmalloc.h>
-> +#include "microchip-isc-regs.h"
-> +#include "microchip-isc.h"
-> +
-> +#define ISC_STATS_DEV_NAME	"microchip-isc_stats"
-> +#define ISC_STATS_MIN_BUFS	2
-> +#define ISC_STATS_MAX_BUFS	8
-> +
-> +/**
-> + * struct isc_stat_buffer - Raw histogram statistics buffer structure
-> + * @frame_number: Sequential frame number from capture
-> + * @timestamp: Frame capture timestamp in nanoseconds
-> + * @meas_type: Bitmask of measurement types available (ISC_CIF_ISP_STAT_*)
-> + * @hist: Array of histogram data for each Bayer channel
-> + * @hist.hist_bins: Raw 512-bin histogram data from hardware
-> + * @hist.hist_min: Minimum pixel value observed in channel
-> + * @hist.hist_max: Maximum pixel value observed in channel
-> + * @hist.total_pixels: Total number of pixels processed in channel
-> + * @valid_channels: Bitmask indicating which Bayer channels contain valid data
-> + * @bayer_pattern: Current Bayer pattern configuration (CFA_BAYCFG_*)
-> + * @reserved: Padding for future expansion and alignment
-> + *
-> + * This structure contains raw, unprocessed histogram data from the ISC
-> + * hardware for all four Bayer channels (GR, R, GB, B). No algorithmic
-> + * processing is performed - data is exported directly from hardware
-> + * registers for userspace processing applications.
-> + */
-> +struct isc_stat_buffer {
-> +	u32 frame_number;
-> +	u64 timestamp;
+From: Cryolitia PukNgae <cryolitia@uniontech.com>
 
-Swap the two fields above to avoid introducing holes due to alignment problems.
+> The tag should be followed by a Closes: tag pointing to the report,
+> unless the report is not available on the web. The Link: tag can be
+> used instead of Closes: if the patch fixes a part of the issue(s)
+> being reported.
 
-> +	u32 meas_type;
-> +
-> +	struct {
-> +		u32 hist_bins[HIST_ENTRIES];
-> +		u32 hist_min;
-> +		u32 hist_max;
-> +		u32 total_pixels;
-> +	} hist[HIST_BAYER];
-> +
-> +	u8 valid_channels;
-> +	u8 bayer_pattern;
-> +	u16 reserved[2];
-> +} __packed;
+Accroding to Documentation/process/submitting-patches.rst , Link: is
+also acceptable to followed a Reported-by:
 
-After swapping those two fields you probably can drop __packed, but I'm not certain.
-It's probably a good idea to check with the pahole utility if there are no holes in
-this structure.
+Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+---
+Link to previous: https://lore.kernel.org/r/20251023-checkpatch-v1-1-ff73ed1027d6@uniontech.com
+---
+ scripts/checkpatch.pl | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-This structure must be part of include/uapi/linux/, probably
-include/uapi/linux/media/microchip/something.h
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 92669904eecc..01c4e70b19a0 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3205,10 +3205,10 @@ sub process {
+ 			if ($sign_off =~ /^reported(?:|-and-tested)-by:$/i) {
+ 				if (!defined $lines[$linenr]) {
+ 					WARN("BAD_REPORTED_BY_LINK",
+-					     "Reported-by: should be immediately followed by Closes: with a URL to the report\n" . $herecurr . "\n");
+-				} elsif ($rawlines[$linenr] !~ /^closes:\s*/i) {
++					     "Reported-by: should be immediately followed by Closes: or Link: with a URL to the report\n" . $herecurr . "\n");
++				} elsif ($rawlines[$linenr] !~ /^(closes|link):\s*/i) {
+ 					WARN("BAD_REPORTED_BY_LINK",
+-					     "Reported-by: should be immediately followed by Closes: with a URL to the report\n" . $herecurr . $rawlines[$linenr] . "\n");
++					     "Reported-by: should be immediately followed by Closes: or Link: with a URL to the report\n" . $herecurr . $rawlines[$linenr] . "\n");
+ 				}
+ 			}
+ 		}
 
-Userspace must have access to this, otherwise it can't parse the metadata. Note
-that that also means that the HIST_ENTRIES and HIST_BAYER/ISC_HIS_CFG_MODE_B
-defines are in that uapi include as well.
+---
+base-commit: 98ac9cc4b4452ed7e714eddc8c90ac4ae5da1a09
+change-id: 20250919-checkpatch-0276787ebfbe
 
-> +
-> +/* Statistics measurement type flags */
-> +#define ISC_CIF_ISP_STAT_HIST		BIT(0)
-> +
+Best regards,
+-- 
+Cryolitia PukNgae <cryolitia@uniontech.com>
 
-Regards,
 
-	Hans
 
