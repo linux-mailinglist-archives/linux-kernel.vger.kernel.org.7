@@ -1,91 +1,82 @@
-Return-Path: <linux-kernel+bounces-892649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6682DC45897
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:10:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07010C458A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:12:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 276123476B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:10:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9C00188EB08
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1313F26299;
-	Mon, 10 Nov 2025 09:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224502FC89F;
+	Mon, 10 Nov 2025 09:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cptu4PoA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ojw/iH7y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C7B2FE58F;
-	Mon, 10 Nov 2025 09:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7771A2E8B8A;
+	Mon, 10 Nov 2025 09:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762765835; cv=none; b=lm/v4vud/ZtXSDzjmsFkCoY1AQG1egZwxGurmcrGh2oY4tG4+aehTjJLjzFIwg607CSeomrta2GawlleGRjTjce+LTrgZ5MQFW0jKJnmI8nM/3fD4z90JqbXoGH0d1CAEY7VKXSI2Fu2cAlAlUvo9sI2U2ETkUxC69k5szWi47E=
+	t=1762765965; cv=none; b=qbdE9LHulNifK+i0RLAoDD6ETv45sfF6ZSS+aDBkWXmgXpFTJBUTkEfd0/AE1ROLjDkwlN/Li0FZQF6mAEOsNxT2jwoeMhVsSbwsRHhzYY8wuorjwqJ9CytKE4PscwyUr+FSYWkUSVbEOeL1CR5v1P130Y6lOE410a5TURhiQgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762765835; c=relaxed/simple;
-	bh=JaMbg32qNbhqE9b3hup1M5vDrFPhQ1dnIjspZzUhRNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r6eeI3dJ/NRDLME29Q6w4Kgr+iC/b+39quTq9H5cb+eURcb5IZqWEXinwK78DYGkbyXhoO2t1jlKkQbvWSCoDVTSgbhOS05AiR639WaQIDf7jAJA5s6PnAbU55fdjZRwTz3erbd5IYNLeMD4O5/P3u1jvwfBVV5cDJkB5gJ6jWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cptu4PoA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E0ECC16AAE;
-	Mon, 10 Nov 2025 09:10:31 +0000 (UTC)
+	s=arc-20240116; t=1762765965; c=relaxed/simple;
+	bh=RKR9TJk/YCtpuDpz3O/iln8sLRNX40vYIfxcPiagOXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sjfQYhdEqPGR8LxV55XkCVCeUp5vBGICr/kmyZCsS4hHy0sqngHui+R2K3KevMqj58BpjwGpUo/dhWVizWv+ARCnKZs05j52DUNwrpZH7XAdLWpxw0k31JI0r+EQa13hThkpIY+Bx9CXemMn4AJMCzZp+i1z3ZvCK92uMmU3si0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ojw/iH7y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F218AC116D0;
+	Mon, 10 Nov 2025 09:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762765835;
-	bh=JaMbg32qNbhqE9b3hup1M5vDrFPhQ1dnIjspZzUhRNI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cptu4PoAElCXw/Zsn0aH/kXbacdIMrfama9GATWjRk3szHMgRzqgqYav4DVAcYKAO
-	 +Ai7kcqViE9GRpWGNvC77I7Cgu1Pxn97HPad9JS61bhTd0lVHmXzhRPxACQFybqExe
-	 WBylyMYyK5QGkuXYpgVk3DxUUIPPNVZ1P8ZOegkgEJ1iS7yLmg3mGO4cc7iy9v2ONh
-	 wROi4fErM1J3Uu//Eq81YktEHuLCdKMTkj9H/K8ZdGWsf02UBmP+lUFCLqIK6J41w/
-	 Z75xh9pDdLCX79oDp0JuFkooPrJQ977rIFInPleKWGmRCChskTWEL/XWL/5pF1zggT
-	 GK6F4Im+EGcqg==
-Message-ID: <de1fcdb7-3597-4d4f-ae77-79f79f9d2268@kernel.org>
-Date: Mon, 10 Nov 2025 10:10:30 +0100
+	s=k20201202; t=1762765965;
+	bh=RKR9TJk/YCtpuDpz3O/iln8sLRNX40vYIfxcPiagOXs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ojw/iH7y98/7WYICJ2J+SGVHv3fs9WK6ZrSShEx9oQPqU6g70zCsTuhJsw2lQOO55
+	 EVq0Kpi53Z5qnD7ZZmrotmCQCDSD7bPeCFhVJRCDAc8skjLGkQp+w7Ibu8YSu4TUpX
+	 niYSM0nQSROrfRpV6R6pvWFAmwu3EuOtUuC0uJLcZBMeECpodYgSe48AfQl4uLXtFE
+	 dn7MxS3mv+Hl+Ay1GXdGfehgulYkxWC2NannTRI2j67yR5VQmHg+uRQuk9bxDyFT1n
+	 gOoU0XgxFVDOcm+qAEuWO0FIg/OwfkIxG9/FyDthuCRxJRYfPx4XzRI1TQP6s65tvP
+	 ENbvi1YR0h3gA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vINx6-000000008EK-3EEf;
+	Mon, 10 Nov 2025 10:12:44 +0100
+Date: Mon, 10 Nov 2025 10:12:44 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	=?utf-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= Rojas <noltari@gmail.com>
+Subject: Re: [PATCH] phy: broadcom: bcm63xx-usbh: fix section mismatches
+Message-ID: <aRGsjF_IjnjdG6KB@hovoldconsulting.com>
+References: <20251017054537.6884-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftest/mm: fix pointer comparison in mremap_test
-To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20251108161829.25105-1-ankitkhushwaha.linux@gmail.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251108161829.25105-1-ankitkhushwaha.linux@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251017054537.6884-1-johan@kernel.org>
 
-On 08.11.25 17:18, Ankit Khushwaha wrote:
-> Pointer arthemitic with 'void * addr' and 'ulong dest_alignment'
-> triggers following warning:
+On Fri, Oct 17, 2025 at 07:45:37AM +0200, Johan Hovold wrote:
+> Platform drivers can be probed after their init sections have been
+> discarded (e.g. on probe deferral or manual rebind through sysfs) so the
+> probe function and match table must not live in init.
 > 
-> mremap_test.c:1035:31: warning: pointer comparison always evaluates to
-> false [-Wtautological-compare]
->   1035 |                 if (addr + c.dest_alignment < addr) {
->        |                                             ^
-> 
-> this warning is raised from clang version 20.1.8 (Fedora 20.1.8-4.fc42).
-> 
-> use 'void *tmp_addr' to do the pointer arthemitic.
-> 
-> Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+> Fixes: 783f6d3dcf35 ("phy: bcm63xx-usbh: Add BCM63xx USBH driver")
+> Cc: stable@vger.kernel.org	# 5.9
+> Cc: Álvaro Fernández Rojas <noltari@gmail.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 > ---
 
-Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
+Can this one be picked up for 6.19?
 
--- 
-Cheers
-
-David
+Johan
 
