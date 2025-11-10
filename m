@@ -1,235 +1,88 @@
-Return-Path: <linux-kernel+bounces-892791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37139C45D76
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:12:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7269C45D19
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:09:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F367F4EA7BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:08:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9129C3AA7BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6881302163;
-	Mon, 10 Nov 2025 10:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F3IgI36c";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BeHTpw9H"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A726301010;
+	Mon, 10 Nov 2025 10:09:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2382F6922
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05CD4A33
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762769313; cv=none; b=DDT8DWGnh1a9HWkHkGP5YG0SfY1lb1pzvGGtJbLFXnYKSwOpbmuVWwQpSWCUIuj/siPepg8Azy0GOZIB1E3pPK0/aLhaC+Ym9i5OZFTK3AwtA+xt+iYPOIXlAu/C05i6Tsyg6mgTPmKgFCwYQu0f8fLOenEQEZ+WclCYY9a1ajw=
+	t=1762769345; cv=none; b=LmXWae8OmnwCDXKq9Mo4ILU9APdGVL3gA1SIBfR46JUxgpWAkR2aR2XqLAksNyHDzCyLQVysUy45KFUoV7sGHCHBa3QVHO9aB3SS8fOrrjQikG1SzQihgVhX7cHifmuE6k+ThvhsVi8RaHVVH3oBBt++xoBo6+zuWqV2/BsGUCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762769313; c=relaxed/simple;
-	bh=0dbOoM1JgFEw8FONGDy+H2SN6rDl1TPboIDJvPZ2RZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=on1EdfMGBy6kKs75hmBPMGaJ9FciUfoBJ+4aISjCjnlRgLjwybBH7rlITskI0pPvBxyMEmu5IQxdZuQiF/Ise6iEbklWotbllql8sldFybdcABz70Syo1q29Z76av4G8WEuaCL/UZgfr5gSgopt5WutE4HxF65/mkXpt2HKbVu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F3IgI36c; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BeHTpw9H; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AA9ChxB3146440
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:08:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	z3KAbPP/h+63EoRNBS2Ni6wBbFMkQ1zOPX3P54o6wtg=; b=F3IgI36cgE4ZJveP
-	6RqM7bB3ScGFaZBzdgUpY7E9W4zUIIAOHAJkL39s1F6BaecBQvwQQEhZVCtRsxyn
-	U98hIFKeNaEFCxcpuSJi/5GIeWh2XSH8YOPr6dI9/56/A58hOjs8e87ReC0JJUTB
-	D08ieNxQ4mXOerb+pbcK8Xlom8/gBpunMeeCjQdiLHKuSrC8u6vkoqN9dMi3TRNn
-	SP7v9535gIbMp1q+4qvV47Wo8GYUtr7EDPncBqQyDloJIo+9xOfYJBsxj5SuIAjM
-	0BmEurNNYL69GKw4FFmsY93gsJU/lOklJejP0oji6fqlwJdsDA0yaDvy3YV4K/kZ
-	oNFqPQ==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abd7hr6j8-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:08:30 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-295b713530cso34544695ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:08:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762769310; x=1763374110; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z3KAbPP/h+63EoRNBS2Ni6wBbFMkQ1zOPX3P54o6wtg=;
-        b=BeHTpw9HgXOl1iWo2PzWMRmPdZ/MIfx78AllhM+/Pg48ukksMAFsZKVFaHns0A77Uc
-         Ro6TCEGoRiR6HBXaICHUICVxrOUgBKQiFk1dsipNaX4f4CVX5/gK6xnAV6U3LEFFEgp/
-         wPEg45CBQTVx6zDLgN4AqIk0mBgkZRUX0NfaYJtv6O+3xCu31+uYKIuAHtMgfEuf0Zhb
-         zuxeLWBf8JmOrd8BDlk1e6actpZ+pjIN4bwo7DUli0OVqUZRasDL/6Ax+O02jO6EDwwH
-         wP67Ed0N29/HepJxPKxfIMl7jcRR9y+g+Ndmnf3xbHK+ZfqWeQpY56QqkltfjGZHlPY4
-         qPIA==
+	s=arc-20240116; t=1762769345; c=relaxed/simple;
+	bh=zFAcacTaxgVY+nkDsQEaiKvwk5rOtVVTi/qxNz978hY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=M0tY3FddpZoIeZh9wD9lqC3zKtTqUQsdTDNnoNkF68zkzFH/74rVbe/XPHT6XNgQRMyf3NgrJpSqSebw618mb89WWC9gcJBdBQvh60N9MXg7H5ROTMrj50jiig+GfNmFBSwbx226XbivZfFn9zpNK1YQxWfsrlCEMgZ3u8gxm5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-43323ffc26bso21522705ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:09:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762769310; x=1763374110;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z3KAbPP/h+63EoRNBS2Ni6wBbFMkQ1zOPX3P54o6wtg=;
-        b=ecgu+AMLnhX6AJOyJZfY9TVkEYpFByDK58KlJQTsov6ISp7PAVpIRwDJaakieQn+qN
-         b9ZnHFyJC/zdahq3fFtAwBxkCggA39DNYB8TkC7HNa1uWv55ev8Zgr/WLZeq6UX1oF+F
-         nxST6p+UAgWGUsx/NohM5BNuaxyt8ygtCPQrIFHK7MwuCJyAUY0Q0/NXkxWFxTE8KucR
-         IlEo3KIS12z1UdELUWYQ3iJiMHEczJbSDSbxviwb6Z27tndtfrabusJmAPgPuC6OAqJj
-         2dqMbYBfZbciFdwd5ynBPQx/7Mp75/U/yTyDIx58B6RrXbx8rCxu8hW0O+tpu+58An4Q
-         LLEA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4t9yjtNNnMF1CHPTKq5Z8P0Bd9jhCsl653ZyCg/aCJPTmwufRNDRt6VMJAceY5fyshk5iY1/WHUvrfhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV2+EZdpow9WsZ4ivwVZ9m3ajG1pIj/Dcfk0bGhQ8dR8pZDX8t
-	pLVgaryjVgXXpdL+woJ0eRzHFznzGRSChPCzTStlBlmAGKuMbQjItRNR/a8VHFvVcx+68AAthIH
-	S7XglS+ilqBdjNv/hHfzCOEbaBh46sMyJkURwnHQAA/Db50owux4UkC2lBSsExFnSO1U=
-X-Gm-Gg: ASbGncvjqPXhsepJGmtXSgxIlhJcKXj9yuRzAQ0GK2GL9ZWMdHviK2WzavOabUiHPB/
-	1O7LAoRadAVqcvkQotCYKTJV01YREUjdiFGrGlzEFhMnnHfqaYTehYluUfrl7chVxQ+LJOteU+7
-	J7r0jnshLhC0b6DaGAyGKPZm8jtBlLWq88xSIzMMuybfxDPC2vXDaWirCrclHITMC5N2mCtOulg
-	2VQTQPgikRfdw3YxiKK4hjdpj+0NFOR3BqaJ8QPcUcf6JzYUj0VJpuFEkNV/3Ee8rdwZiYdsSsi
-	x3xTv0OnOdWoB+IRjso3MsT2n++W0UoTS4iULR+nW+eV8i71jkVbEE1zui1aiVcvgSiAm5/kpq7
-	osMnlvXc1EaNjRgeuG0A52imi7khiQ0s=
-X-Received: by 2002:a17:903:40c9:b0:297:d741:d28a with SMTP id d9443c01a7336-297e56c9eb4mr84302465ad.31.1762769309730;
-        Mon, 10 Nov 2025 02:08:29 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHyXqPJFzXxIoU0geQ41zcRiNCHrftpqqkDVpgzXcbP6SifdSRX3i0G9WOKxg+fHf1fYfI9Hw==
-X-Received: by 2002:a17:903:40c9:b0:297:d741:d28a with SMTP id d9443c01a7336-297e56c9eb4mr84302105ad.31.1762769309152;
-        Mon, 10 Nov 2025 02:08:29 -0800 (PST)
-Received: from [10.218.4.221] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c93cebsm140244045ad.90.2025.11.10.02.08.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 02:08:28 -0800 (PST)
-Message-ID: <8776d2ca-90b9-7e14-a278-01f20e81297a@oss.qualcomm.com>
-Date: Mon, 10 Nov 2025 15:38:22 +0530
+        d=1e100.net; s=20230601; t=1762769343; x=1763374143;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6uY+EM8i3DZwvN2wGbaARDs/Dgvk4ylCN2HCgZAGvvk=;
+        b=Y6bG4WOASOLjdCNOZ+8qBTNl2JqDk4Y55zrwRY4gh4aOlVlrzv6dbrW6/W7RffRZmq
+         ruC7IKzEdTFW5OsUQdHxeIceURrYaRn40f180ij06JHo8GbIyhTvRq7DBdqg9G7Ta/Qb
+         9VEP+rKo+YM4qf5btJPaoE81yLaMNRt29sP3ySNhKQsj95dogzJHkOm3XJYgTrawYxNs
+         eGpmGS7SZGRUYl+kQ5P7uBUmpoqDQoExN0wzPClaJlzoE6Nf/qV+4G2EfJGprdAHsqp8
+         94GH87lZr2+AvdRPuLEfvwaPRc6hTCfauvB9Qd6BIr/YPOWuGyzB0aLxRg/pkPsa3S1v
+         KVHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHyd/z4vEnynNVaXahkPMboiXkIXBx31G+cuMhEbttiqnRpZqk9dkGvzTxJiclvRSn4qMHc047gjWgx6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiLzEPX/Fw1xDgP8mlsF5GrX1XSh0x8k+qseOKxceqGwd1cEvx
+	G0vxWrbxS6I1MlGl56SpI7UyWQTvOvkD/d+VOxBevmu8LEqqWIjtbeXYtA9yxP1lfp/n1G+wB+o
+	6rXdc4D6psm6v+HvmuRLKPmdlS/nQMsVpQSHUXSCA7adF10jj2U7iSQyfeNM=
+X-Google-Smtp-Source: AGHT+IEC5+mGY0Xr1vqRvkCTPSHWrdzVoW0gyIb+l1PlDK52bcDj3mJeKthrwCwcyT9+HpfbFYmRyBqlkI40h/19RzmapLzIzguH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v6 0/6] can: mcp251xfd: add gpio functionality
-To: Manivannan Sadhasivam <mani@kernel.org>, mkl@pengutronix.de
-Cc: thomas.kopp@microchip.com, mailhol.vincent@wanadoo.fr, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
-        brgl@bgdev.pl, linux-can@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mukesh.savaliya@oss.qualcomm.com,
-        anup.kulkarni@oss.qualcomm.com
-References: <20251001091006.4003841-1-viken.dadhaniya@oss.qualcomm.com>
- <dvqn5hwvoi36djxkfte2sw2o2nnk7irh6tgt5vmtqgm6t2dbyc@snde7uwlzbia>
-Content-Language: en-US
-From: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-In-Reply-To: <dvqn5hwvoi36djxkfte2sw2o2nnk7irh6tgt5vmtqgm6t2dbyc@snde7uwlzbia>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: dsw_hDNpdeoPXkEs9EIReuCtvukWEzpC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDA4OCBTYWx0ZWRfX1B7zlHKH1k3C
- HM3qK2N8irxmJwurK6ARXA/bPqtiPiLMl23fjVxnus8mH9dRhj5irD1+TCgbfqIdx988OwJIVq5
- yUI3V1x9gehewY6gdFVND7N8gh+DO0qhwAYz3hiTpR+xSUohAz7+S9OoTzQ/tJ5g8u76vx8srNX
- Qz3rPvL1V6BiYGEppZXwMQP1WyaDU9CDz1i8vp9LjDVWp+MiJwBvIrm3Ul+4EC+WsxMftWq0a/A
- WXCobXjmQL3PGoJmrPtMOg/8bUFNDGQLzZb78wTqQjLzpbdwHBA/NjayAQzJJ1ZPBW/HQzddgxq
- hPo1dFvHnT5jeKhplaKEWmncZgkuY5OWASkh7v9gA0UfDAcvaFwLtveD+PaksEaN4+T6PsMV2sN
- rtN2uS5dzKa8h1UylDyburBhJirb4Q==
-X-Proofpoint-ORIG-GUID: dsw_hDNpdeoPXkEs9EIReuCtvukWEzpC
-X-Authority-Analysis: v=2.4 cv=Yt4ChoYX c=1 sm=1 tr=0 ts=6911b99e cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=8f9FM25-AAAA:8
- a=JNVGp1IlC4mDD8BcjtkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22 a=uSNRK0Bqq4PXrUp6LDpb:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_04,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 spamscore=0 phishscore=0 malwarescore=0
- impostorscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511100088
+X-Received: by 2002:a05:6e02:1a41:b0:433:7ec4:4b7b with SMTP id
+ e9e14a558f8ab-4337ec45086mr42790115ab.22.1762769343095; Mon, 10 Nov 2025
+ 02:09:03 -0800 (PST)
+Date: Mon, 10 Nov 2025 02:09:03 -0800
+In-Reply-To: <20251110-hufen-klang-9cf8ec9dda59@brauner>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6911b9bf.a70a0220.22f260.00de.GAE@google.com>
+Subject: Re: [syzbot] [lsm?] WARNING in put_cred_rcu
+From: syzbot <syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com>
+To: brauner@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, luto@kernel.org, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Marc
+Hello,
 
-I wanted to follow up on this patch series. I noticed it hasn’t been picked up yet,
-so I wanted to check if there are any remaining concerns or comments that need to be addressed.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thanks
-Viken Dadhaniya
+Reported-by: syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com
+Tested-by: syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com
 
-On 10/23/2025 10:46 AM, Manivannan Sadhasivam wrote:
-> On Wed, Oct 01, 2025 at 02:40:00PM +0530, Viken Dadhaniya wrote:
->> Hi all,
->>
->> The mcp251xfd allows two pins to be configured as GPIOs. This series
->> adds support for this feature.
->>
->> The GPIO functionality is controlled with the IOCON register which has
->> an erratum.
->>
->> Patch 1 from https://lore.kernel.org/linux-can/20240429-mcp251xfd-runtime_pm-v1-3-c26a93a66544@pengutronix.de/
->> Patch 2 refactor of no-crc functions to prepare workaround for non-crc writes
->> Patch 3 is the fix/workaround for the aforementioned erratum
->> Patch 4 only configure pin1 for rx-int
->> Patch 5 adds the gpio support
->> Patch 6 updates dt-binding
->>
->> As per Marc's comment on below patch, we aim to get this series into
->> linux-next since the functionality is essential for CAN on the RB3 Gen2
->> board. As progress has stalled, Take this series forward with minor code
->> adjustments. Include a Tested-by tag to reflect validation performed on the
->> target hardware.
->>
-> 
-> LGTM! For the series,
-> 
-> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
-> 
-> - Mani> 
->> https://lore.kernel.org/all/20240806-industrious-augmented-crane-44239a-mkl@pengutronix.de/
->> ---
->> Changes in v6:
->> - Simplified error handling by directly returning regmap_update_bits() result.
->> - Added Acked-By tag.
->> - Link to v5: https://lore.kernel.org/all/20250926133018.3071446-1-viken.dadhaniya@oss.qualcomm.com/
->>
->> Changes in v5:
->> - Removed #ifdef GPIOLIB and added select GPIOLIB in Kconfig
->> - Rebased patch on latest baseline
->> - Resolved Kernel Test Robot warnings
->> - Link to v4: https://lore.kernel.org/all/20250918064903.241372-1-viken.dadhaniya@oss.qualcomm.com/
->>
->> Changes in v4:
->> - Moved GPIO register initialization into mcp251xfd_register after enabling
->>   runtime PM to avoid GPIO request failures when using the gpio-hog
->>   property to set default GPIO state.
->> - Added Tested-by and Signed-off-by tags.
->> - Dropped the 1st and 2nd patches from the v3 series as they have already been merged.
->> - Link to v3: https://lore.kernel.org/linux-can/20240522-mcp251xfd-gpio-feature-v3-0-8829970269c5@ew.tq-group.com/
->>
->> Changes in v3:
->> - Implement workaround for non-crc writes
->> - Configure only Pin1 for rx-int feature
->> - moved errata check to .gather_write callback function
->> - Added MCP251XFD_REG_IOCON_*() macros
->> - Added Marcs suggestions
->> - Collect Krzysztofs Acked-By
->> - Link to v2: https://lore.kernel.org/r/20240506-mcp251xfd-gpio-feature-v2-0-615b16fa8789@ew.tq-group.com
->>
->> ---
->> Gregor Herburger (5):
->>   can: mcp251xfd: utilize gather_write function for all non-CRC writes
->>   can: mcp251xfd: add workaround for errata 5
->>   can: mcp251xfd: only configure PIN1 when rx_int is set
->>   can: mcp251xfd: add gpio functionality
->>   dt-bindings: can: mcp251xfd: add gpio-controller property
->>
->> Marc Kleine-Budde (1):
->>   can: mcp251xfd: move chip sleep mode into runtime pm
->>
->>  .../bindings/net/can/microchip,mcp251xfd.yaml |   5 +
->>  drivers/net/can/spi/mcp251xfd/Kconfig         |   1 +
->>  .../net/can/spi/mcp251xfd/mcp251xfd-core.c    | 273 +++++++++++++++---
->>  .../net/can/spi/mcp251xfd/mcp251xfd-regmap.c  | 114 ++++++--
->>  drivers/net/can/spi/mcp251xfd/mcp251xfd.h     |   8 +
->>  5 files changed, 335 insertions(+), 66 deletions(-)
->>
->> -- 
->> 2.34.1
->>
-> 
+Tested on:
+
+commit:         80156be0 ns: fixes for namespace iteration and active ..
+git tree:       https://github.com/brauner/linux.git work.namespace-6.19.fixes
+console output: https://syzkaller.appspot.com/x/log.txt?x=17fc5412580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e31f5f45f87b6763
+dashboard link: https://syzkaller.appspot.com/bug?extid=553c4078ab14e3cf3358
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
