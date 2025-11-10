@@ -1,113 +1,132 @@
-Return-Path: <linux-kernel+bounces-893039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA923C4667B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:56:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A287FC4667E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:57:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68A553BCEC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:56:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 49730343550
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62A13081C5;
-	Mon, 10 Nov 2025 11:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F1E307AD6;
+	Mon, 10 Nov 2025 11:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kY7ctgAR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pRC4uOmz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yZ8sbvzu"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EF22FE585
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092152FE585
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762775811; cv=none; b=Jd2YqEh4JUKcVHLWlAx/Qg/uAYb/FKXcAd1XTOHgIPoPD5Z853ydVQ0DLGpzuCVsnMAWwJokml0zA+nPmExOC34SSpG3ekg2GMwq3R1IDN5fDestfIrgYp+Vj2mGO0S+888sE62T8J6h4ygmzymHTPVi9Slvwk3XPLtN292P2Qk=
+	t=1762775815; cv=none; b=kk333P2L9m8pE2b8YTxKEbNfrW7S0QEtgnnA/omK+yWigWWYSTH1UI2U540AXz2v4NdIA2H8qsEdwkjYsc+n5R4miR6ZEUBl1tjqW/HENtW3gNIowPTEdcVdHEwYAju0m8v1tFdEMXvkyrEISU3zBN2c/npZSKGlVzxlMHBJvqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762775811; c=relaxed/simple;
-	bh=HxHsjc+P+REkvmdbWcZldA6yaRA3i5VZ1XGKbPUnJQg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y0I7fDMifXkIw/cRjvM5DYtrsemed5bz+aPUXurNB4LWOhNWmTm2ynU2ZaS6GM4f2RlwRer/VwhLvq3Mh2wRIEY0c36A7BZc9dkUt34sIRcoZYy8A3heGr3zBD+JeTiXPxVmV5GG5khsJJpySlg0FRKqsswAacVm6kHOvEF4q+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kY7ctgAR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pRC4uOmz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762775806;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=b4bLupQzkMhqg0W6n4NZA/lMojvhlsJtEpo02wNFuyI=;
-	b=kY7ctgARE7grL8Fz6GWeYmv1OUuHBdjvYx33jx7iku4qyA/aCFnm3PUn6M+bwL9J5ERpkw
-	VZS8AVIIiccL2JmpyOnz4O6dT0876Ztvzn34qRZMk2PYaeavEYTWtXIJULSHsv8Gt/Yuv3
-	KCqnlimFZrMPQMSBtgUfAq/RGdp+ErZFj3XONJZhkuseqAWFe3MdIAyjw+gtXMiixW2tWh
-	3/t+sLIKHf1711Cn37HeWvn662BgK51ml9EJMUUUQ/kOL8bjlEX9qOPBNLSzN77Pe1SKE2
-	MB5hmkgwGfDKnISGVNaW6ydBCB3tDMiO+ahdCeVJ8F4CrCZ7G/9S3o5btAetlA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762775806;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=b4bLupQzkMhqg0W6n4NZA/lMojvhlsJtEpo02wNFuyI=;
-	b=pRC4uOmzt3CCw81rrito5wkqJLGd7NEq+2cYOo0EDCoWbb0WNAkjWAzE8p0Hk62qhvC/5z
-	jVJSjbKuTiM+RxCg==
-Date: Mon, 10 Nov 2025 12:56:34 +0100
-Subject: [PATCH] random: drop check for static_key_initialized
+	s=arc-20240116; t=1762775815; c=relaxed/simple;
+	bh=oUgierYSU3dRBhCJGCsjS3J9M3HkXvV59r1SNiAzvk0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NJpx6PfaQfxoymiuI8idmki+H17Hi0pjrWNrRT2cYAjWxSILUonm6amJzrFJ7vGJo4PWSrHOZImaTZI6S1lLfeeuuRJTu5dB6KlNiG0Ctua4Ox18Busqs6JkC7bVuyjIIYNRGPNyoLBRa559OGKVA9T9ZcxVw5D8yGJB6rA1wNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yZ8sbvzu; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429ce7e79f8so2118695f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:56:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762775812; x=1763380612; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4g2z/CUdSCaQjy9LxpwOngAggO4WOQO9SBX2pApcNyk=;
+        b=yZ8sbvzuAGCw2mrF/znpax5qC41Ec7OITzSh/dmx2az4dedT5WWB6bpqwtSq1I4Nlr
+         oIpLrJxktDxHg06jbPw7jL2jKcc+0jSEAQd3c+S4v1KeOvQi/QSH90zJ/r6OyfXi506r
+         hmTKfE/X0/sdzVMa9BE+0dwJJQdEftjpNt6jt1tHT6/j6tfYT6HVn/algXMNXZKO3VB+
+         dRSM/3B6u/fUySKFFntvkD2WpNch/ElHnxg6XbZjgr8WjqdfdMpnrFgmL2piHu4dwSty
+         M8OWYVWlLYbBk3RJ3adi7uPuosp/yzM+ERCRJasi1lgQxCnJnXtKfsoEfV5hkEUCGeMw
+         hsWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762775812; x=1763380612;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4g2z/CUdSCaQjy9LxpwOngAggO4WOQO9SBX2pApcNyk=;
+        b=H87ujcMPkXeAQ+1YlWo/XEdfE1EL+sLNuMTOXR/VD1MVGsPIAPPAaDI1D5W6ZfTUiJ
+         lgVJGnwMtQWT2NHjaRNS61AJqSyMGDTp6JuC8c+qSk8ADjn339NQ4dYz7e4yg8Tn0g7h
+         zSIsKfnLcGol2gp1sG0ZgPNoeljxfwPYGE4rEEh5GIoklKD5Ni0RsAq3w9Adw3z5HLCs
+         Hw+8EMpIWJnka8+M92eWbH4nUqw98LNf1MDaxd8b57MjY6uOe3UI/Pp/3YRKKZL4Lt25
+         Z8GJU7O2OpSX/RDY2YtvJH/woFdozm1EcbPAZ7ljzE9u8l9SW7NHczRCA/QSEbzqOgkx
+         lTVw==
+X-Forwarded-Encrypted: i=1; AJvYcCU05yhmkQFH3gVcwoQvx5JH7JEWs9yXxWwrpu2LPFxcWSGwMckFYkLCRylBGvEu/o94LZE6wN1DpPdDUww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVcIrj6QSAg7+iy8ikY95W7S6C8iwU4i4M0wUMpTPb0LP0FoFa
+	gBZAKTTL8OyuV+pUlrdA1ekQMRBr4StR7UfTOgNtP5TcIW/HsxM1GBz+rcHJ3iZWJAc=
+X-Gm-Gg: ASbGncuOmBEevPdhA1smGg+qLjRsq96suXpk4DhnCXbRTOG8f1jwH0KGn+EumSYpOIb
+	JLULJEiSOczTPzj2YCm23DxSf0rgofmaGk686e0jxZuED6yjVOgnnpMm7clYYKp9clOilCLFSWC
+	eoaNKuIN90+s1FBdhYWDEgclsUYTMlbfCx0yjRR7milYCFyBxmdddyGn2Gl1qGaIv8gzFS+Y6SF
+	5vQ83W77ENNb3DLDvfelFkftlEgLp9FeeDkT3yTLmv/Xtu0lOsptvqch0AOrthVuC3N0O5nygGj
+	ZYvm++I3e+qi+bRH0m06Z35srsbT2FzfW+4em4woRGJzwoSga3TM4t07SarGvPbHRd03e2OEwTt
+	NJwzbd+eZUPy7ZGj//Ynr6ikW1GzFw3U1trrgXklu+/dE0RxyDpOMnbd+/73LlgABwjcKzfDc6T
+	G28WqVJ6WeqTuR+DxGlQn4vBvevg4euh5zaHJpECyi3VChilMjpy/aeZk=
+X-Google-Smtp-Source: AGHT+IFbcw4K9ivqGLQddDZa5CrYY9iwv64S3IIlLZWbi+XRwqAEU+75TumzHzlJ4CnXK9gTK1CTaA==
+X-Received: by 2002:a5d:5f42:0:b0:429:bca4:6b44 with SMTP id ffacd0b85a97d-42b2dc1f4e9mr6741662f8f.13.1762775812360;
+        Mon, 10 Nov 2025 03:56:52 -0800 (PST)
+Received: from ?IPV6:2a05:6e02:1041:c10:2b20:d700:6e9c:533c? ([2a05:6e02:1041:c10:2b20:d700:6e9c:533c])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-42ac679c5dcsm24735244f8f.44.2025.11.10.03.56.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 03:56:51 -0800 (PST)
+Message-ID: <d36f89d7-2d18-4c24-840c-243d4fa10de0@linaro.org>
+Date: Mon, 10 Nov 2025 12:56:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: thermal: r9a09g047-tsu: Document
+ RZ/V2H TSU
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>,
+ john.madieu.xa@bp.renesas.com, rafael@kernel.org, rui.zhang@intel.com,
+ lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20251020143107.13974-1-ovidiu.panait.rb@renesas.com>
+ <20251020143107.13974-3-ovidiu.panait.rb@renesas.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20251020143107.13974-3-ovidiu.panait.rb@renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251110-random-static_key_initialized-v1-1-5343715a5986@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAPHSEWkC/x3MTQqDMBAG0KvIrA04ivTnKiIyJtP2QxslCWIr3
- r2hy7d5B0UN0Ej34qCgGyIWn8FlQfYl/qkGLpvqqm6ZuTJBvFveJiZJsMOknwEeCTLjq8403Mj
- 1Mo7tzVnKxxr0gf3/d/15/gB9oA5BbwAAAA==
-X-Change-ID: 20251110-random-static_key_initialized-313a87bb59dc
-To: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762775806; l=1284;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=HxHsjc+P+REkvmdbWcZldA6yaRA3i5VZ1XGKbPUnJQg=;
- b=KsVEU8wFRlAZHvlO91iOON43lbssgi5Kkp1Bt7ZB4t+zywzLNO2r473iOH+bhAOI1L1SjgF3X
- JyvXS8cLj9pAi4uOYZtjO46UMS4x4kr9Ldf7OnqruBR9L4J1LI+6d1b
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Commit 77b644c39d6a ("init/main.c: Initialize early LSMs after arch code,
-static keys and calls.") changed the initialization sequence to call
-jump_label_init() before random_init_early(). This condition can therefore
-never be false.
+On 10/20/25 16:31, Ovidiu Panait wrote:
+> The Renesas RZ/V2H SoC includes a Thermal Sensor Unit (TSU) block designed
+> to measure the junction temperature. The device provides real-time
+> temperature measurements for thermal management, utilizing two dedicated
+> channels for temperature sensing.
+> 
+> The Renesas RZ/V2H SoC is using the same TSU IP found on the RZ/G3E SoC,
+> the only difference being that it has two channels instead of one.
+> 
+> Add new compatible string "renesas,r9a09g057-tsu" for RZ/V2H and use
+> "renesas,r9a09g047-tsu" as a fallback compatible to indicate hardware
+> compatibility with the RZ/G3E implementation.
+> 
+> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Remove the now unnecessary check.
+Applied patch 2/3
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- drivers/char/random.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index b8b24b6ed3fe436c8102968392278d5cb5544f06..1ab7f169780aee3537ecfde52f43daffc4dfc95b 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -741,7 +741,7 @@ static void __cold _credit_init_bits(size_t bits)
- 
- 	if (orig < POOL_READY_BITS && new >= POOL_READY_BITS) {
- 		crng_reseed(NULL); /* Sets crng_init to CRNG_READY under base_crng.lock. */
--		if (static_key_initialized && system_unbound_wq)
-+		if (system_unbound_wq)
- 			queue_work(system_unbound_wq, &set_ready);
- 		atomic_notifier_call_chain(&random_ready_notifier, 0, NULL);
- #ifdef CONFIG_VDSO_GETRANDOM
 
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20251110-random-static_key_initialized-313a87bb59dc
-
-Best regards,
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
