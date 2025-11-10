@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-892586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785F5C4563F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:38:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E63FC45645
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:40:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31CD93A5F0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:38:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5E8223470C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7912FB978;
-	Mon, 10 Nov 2025 08:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9C02FB60A;
+	Mon, 10 Nov 2025 08:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NxJFpJWy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YHA9LAJe"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741E61B4F0A;
-	Mon, 10 Nov 2025 08:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7651B4F0A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762763898; cv=none; b=VCKwO8LhRF32cr56/NWJBQ0uVT08qQmzkE/+0IP+OfwED+OMWxOQPxuQZO2pZiclWCEo7A+ZPGy9B0DMLdmVRl2NqQY3OLdoEpdKrCZx32wSJtGdWC+itdclirn02cIqZ2mFXoX9b8nYTMaTwxPQYHR+GGlbNgEEc+3h+uPTxYY=
+	t=1762764013; cv=none; b=nqXHp+cV5Ydg17t3dlV69GRzkl3kS6TCVG8QIa+9OB005jL8gqk+wIuvEVNvT4x8dU8KfKsB3WaZNtEEQ+9VJPNLGpNOo9yU3lTWYCbI/LYdCg3LEpJUE9q3MGz1LQfGfoXCajZlFWoDtL8XXEoIaSJMiKm91DcQFfQjmmufAQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762763898; c=relaxed/simple;
-	bh=BIZOwrOe4LYjx2fIqxPyppTlFEEUTwarm6Nbd4syHKw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Ewy+Ift2+TUBYMPrO/RoOVRY/0u1a6929g0G4zu1NY83CYdWk7cBC1vuZsGizNqu5NFlJxq3mK0L95EUEzzfuttlOBh0NToFjZJcjCGn7y1/CgqOOSxeiRmsaaCyKewQ2zVgFXRZECgw81iJaNNGW4wWEbIBnHdbH70LDro1erw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NxJFpJWy; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762763896; x=1794299896;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=BIZOwrOe4LYjx2fIqxPyppTlFEEUTwarm6Nbd4syHKw=;
-  b=NxJFpJWyoRePIZadYJjTIpfQUM4SDaNbNVHfKRk1b8Y7DfKn29ldbT78
-   WY/JfyL27yBWT85JT5cr2Wr/0WRfRbL9f0uRGPvbLpbgiEePFaWnx6Nqu
-   DIY0i1KK26t+vZe4KejdX8B1O1f01OEVAxbtIsy/ZzJ0BahwR9KK9Bw0a
-   UU5h6Ez/bwasPsieKOwg/m6F1Yhc1rlVU35VZ/y2bo8hByMmMxVEDyLNm
-   F1+TIntpNxNdcR2qCACQfGiutAaKPIyG6hqFPw6mOutPTYufxt9wYUYNQ
-   mhWRG0cWZt61Wc+vYkZogQqkcvsq7AO2YzDacLRJDv7g80VTd1P7kHEzQ
-   g==;
-X-CSE-ConnectionGUID: 52LXJSJoT76lUhP5NQXNFg==
-X-CSE-MsgGUID: l4i5K4auQLyLUlSfqnkW7w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="64850842"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="64850842"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 00:38:16 -0800
-X-CSE-ConnectionGUID: Q7E10UAwRr2xX0hgBTlqqQ==
-X-CSE-MsgGUID: TFS2UBxHSOqx5489UjC3Uw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="187924329"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.65]) ([10.124.232.65])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 00:38:11 -0800
-Message-ID: <c0648b32-e450-4036-aebe-5faab7edc1bd@linux.intel.com>
-Date: Mon, 10 Nov 2025 16:38:08 +0800
+	s=arc-20240116; t=1762764013; c=relaxed/simple;
+	bh=AP/y9RcqXn5HLw3tw4/mNpLqTSoouha1hEA2XdEUJ1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GtWH8SWWJlkHlzWIrqMNundER0U3g+BAtSFQRxvImUagAdMp23KO+IPvJhQbPb25EDi1yJQSrE993zIpjCw7rnjiUy3onXHkaXf2NbO8BeM3lze2eGCw5slnVMrjimN8WNOR9ZSPjYWAaCeMSqclYNeW9nFj5Mz0kpjHLmGAZnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YHA9LAJe; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9KjEar017554;
+	Mon, 10 Nov 2025 08:40:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=CoKoja
+	skLBR6PzEuZ4qSFL6ygxd9zLbisaOhoCbAjLM=; b=YHA9LAJeAu997JGQ76AmMi
+	XJ8xOvUXLaqdw7LLD2nqQZyXH9zoMHMhanYe7yYBGfR9vPxYIvBV3HOncBkjKtVJ
+	djxHk4jmtVd7vgJ4qfPllH4MfgaKi/1ux2LZ477LSVf735jx5E+z5ge2KAiOkBnh
+	dRSeKVwkU+OEs9xyyFh178p5Je7xp0D0nsa27HH3IpLDwlwv8aXcM/BhEzWIDLBw
+	n5yL0mZbEVBj6pgVPCwVETF8qjy3YJv2faeOqufyGsXhFg/8WxRUfZ1UqJw6yIQn
+	QGHayHlClwR3Ty+WraXVL+QIu2Z8RjXM2JOdKaeScpNUwYYvR0uKTjGS7rfeBkKg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk7y87p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 08:39:59 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AA8Mnw0017921;
+	Mon, 10 Nov 2025 08:39:59 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk7y87m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 08:39:59 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AA4g8rf008190;
+	Mon, 10 Nov 2025 08:39:57 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aah6mmp20-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 08:39:57 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AA8drjX30146954
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Nov 2025 08:39:53 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9C5172004B;
+	Mon, 10 Nov 2025 08:39:53 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9C5A020040;
+	Mon, 10 Nov 2025 08:39:50 +0000 (GMT)
+Received: from [9.109.204.116] (unknown [9.109.204.116])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 10 Nov 2025 08:39:50 +0000 (GMT)
+Message-ID: <09c4c181-eb4b-43ea-a439-04b83f4c20ba@linux.ibm.com>
+Date: Mon, 10 Nov 2025 14:09:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,176 +83,165 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/18] Switch the default perf stat metrics to json
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
- Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Sumanth Korikkar <sumanthk@linux.ibm.com>,
- Collin Funk <collin.funk1@gmail.com>, Thomas Falcon
- <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>,
- Levi Yun <yeoreum.yun@arm.com>, Yang Li <yang.lee@linux.alibaba.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Andi Kleen <ak@linux.intel.com>, Weilin Wang <weilin.wang@intel.com>
-References: <20251106231508.448793-1-irogers@google.com>
+Subject: Re: [PATCH v3 5/5] crash: export crashkernel CMA reservation to
+ userspace
+To: Baoquan he <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Aditya Gupta <adityag@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Young <dyoung@redhat.com>, Hari Bathini <hbathini@linux.ibm.com>,
+        Jiri Bohac <jbohac@suse.cz>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+        Pingfan Liu <piliu@redhat.com>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        Shivang Upadhyay <shivangu@linux.ibm.com>,
+        Vivek Goyal <vgoyal@redhat.com>, linuxppc-dev@lists.ozlabs.org,
+        kexec@lists.infradead.org
+References: <20251110043143.484408-1-sourabhjain@linux.ibm.com>
+ <20251110043143.484408-6-sourabhjain@linux.ibm.com>
+ <aRGPee9izxWPRHj5@MiWiFi-R3L-srv>
 Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20251106231508.448793-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+In-Reply-To: <aRGPee9izxWPRHj5@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfX/lFqTdb+Ix31
+ +ZxCwVkKK4eLHYKRdw/zlF4OBjYsPLlqSV25Ey2IeqS9NvBniaYxHkvF7FVO5m//S9NFjJtAr7c
+ x+zUQ3zVKM+8B0loekFp8s1iK6uvGGEvpheDNbSz7rbDNaglzi3KA8vStXj4M2VNK9JR1hg9r3X
+ 198c4gYtB0Y2BajB3OnPTSXEuq0i3ilYkad5nEI3C7JPuFId2TM375JeY7tDkXGYDGR+vft1/px
+ QGqA8ILewfwDDP/jSo3C052x1yR+0F2QGAocwZSt26JpIWE/KkD/WZKQnX+cSpRqfTEeAyVhaDv
+ flIRIJ8demq62mlo0xYXj2LfLlkswpcV9/2s3ZUex1CD0df7TobM+yqNS+oOxpJSoBTvKRP1Ua0
+ pfPdzQ51fWSodz1TMxO6uSB7k4aY4w==
+X-Authority-Analysis: v=2.4 cv=ZK3aWH7b c=1 sm=1 tr=0 ts=6911a4df cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=Z4Rwk6OoAAAA:8 a=20KFwNOVAAAA:8
+ a=pGLkceISAAAA:8 a=voM4FWlXAAAA:8 a=JfrnYn6hAAAA:8 a=nZ6l4sNALc67V84wghEA:9
+ a=QEXdDO2ut3YA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=IC2XNlieTeVoXbcui8wp:22
+ a=1CNFftbPRP8L7MoqJWF3:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: DwbPY7ohE7XwxBRgz3LrgMxK1K-_LihJ
+X-Proofpoint-GUID: PlH9k_X-djhYdUkQ_pkrIaAwTCZLBdtr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511080022
 
-Hi Ian,
 
-which commit is the patch-set based on? I tried to apply this patch-set on
-perf-tools-next branch, but it fails...
 
-Thanks,
+On 10/11/25 12:38, Baoquan he wrote:
+> On 11/10/25 at 10:01am, Sourabh Jain wrote:
+>> Add a sysfs entry /sys/kernel/kexec/crash_cma_ranges to expose all
+>> CMA crashkernel ranges.
+> I am not against this way. While wondering if it's more appropriate to
+> export them into iomem_resource just like crashk_res and crashk_low_res
+> doing.
 
--Dapeng
+Handling conflict is challenging. Hence we don't export crashk_res and
+crashk_low_res to iomem on powerpc. Checkout [1]
 
-On 11/7/2025 7:14 AM, Ian Rogers wrote:
-> Prior to this series stat-shadow would produce hard coded metrics if
-> certain events appeared in the evlist. This series produces equivalent
-> json metrics and cleans up the consequences in tests and display
-> output. A before and after of the default display output on a
-> tigerlake is:
+And I think conflicts can occur regardless of the order in which System 
+RAM and
+Crash CMA ranges are added to iomem.
+
+[1] 
+https://lore.kernel.org/all/20251016142831.144515-1-sourabhjain@linux.ibm.com/
+
+- Sourabh Jain
+
 >
-> Before:
-> ```
-> $ perf stat -a sleep 1
->
->  Performance counter stats for 'system wide':
->
->     16,041,816,418      cpu-clock                        #   15.995 CPUs utilized             
->              5,749      context-switches                 #  358.376 /sec                      
->                121      cpu-migrations                   #    7.543 /sec                      
->              1,806      page-faults                      #  112.581 /sec                      
->        825,965,204      instructions                     #    0.70  insn per cycle            
->      1,180,799,101      cycles                           #    0.074 GHz                       
->        168,945,109      branches                         #   10.532 M/sec                     
->          4,629,567      branch-misses                    #    2.74% of all branches           
->  #     30.2 %  tma_backend_bound      
->                                                   #      7.8 %  tma_bad_speculation    
->                                                   #     47.1 %  tma_frontend_bound     
->  #     14.9 %  tma_retiring           
-> ```
->
-> After:
-> ```
-> $ perf stat -a sleep 1
->
->  Performance counter stats for 'system wide':
->
->              2,890      context-switches                 #    179.9 cs/sec  cs_per_second     
->     16,061,923,339      cpu-clock                        #     16.0 CPUs  CPUs_utilized       
->                 43      cpu-migrations                   #      2.7 migrations/sec  migrations_per_second
->              5,645      page-faults                      #    351.5 faults/sec  page_faults_per_second
->          5,708,413      branch-misses                    #      1.4 %  branch_miss_rate         (88.83%)
->        429,978,120      branches                         #     26.8 K/sec  branch_frequency     (88.85%)
->      1,626,915,897      cpu-cycles                       #      0.1 GHz  cycles_frequency       (88.84%)
->      2,556,805,534      instructions                     #      1.5 instructions  insn_per_cycle  (88.86%)
->                         TopdownL1                 #     20.1 %  tma_backend_bound      
->                                                   #     40.5 %  tma_bad_speculation      (88.90%)
->                                                   #     17.2 %  tma_frontend_bound       (78.05%)
->                                                   #     22.2 %  tma_retiring             (88.89%)
->
->        1.002994394 seconds time elapsed
-> ```
->
-> Having the metrics in json brings greater uniformity, allows events to
-> be shared by metrics, and it also allows descriptions like:
-> ```
-> $ perf list cs_per_second
-> ...
->   cs_per_second
->        [Context switches per CPU second]
-> ```
->
-> A thorn in the side of doing this work was that the hard coded metrics
-> were used by perf script with '-F metric'. This functionality didn't
-> work for me (I was testing `perf record -e instructions,cycles`
-> with/without leader sampling and then `perf script -F metric` but saw
-> nothing but empty lines) but anyway I decided to fix it to the best of
-> my ability in this series. So the script side counters were removed
-> and the regular ones associated with the evsel used. The json metrics
-> were all searched looking for ones that have a subset of events
-> matching those in the perf script session, and all metrics are
-> printed. This is kind of weird as the counters are being set by the
-> period of samples, but I carried the behavior forward. I suspect there
-> needs to be follow up work to make this better, but what is in the
-> series is superior to what is currently in the tree. Follow up work
-> could include finding metrics for the machine in the perf.data rather
-> than using the host, allowing multiple metrics even if the metric ids
-> of the events differ, fixing pre-existing `perf stat record/report`
-> issues, etc.
->
-> There is a lot of stat tests that, for example, assume '-e
-> instructions,cycles' will produce an IPC metric. These things needed
-> tidying as now the metric must be explicitly asked for and when doing
-> this ones using software events were preferred to increase
-> compatibility. As the test updates were numerous they are distinct to
-> the patches updating the functionality causing periods in the series
-> where not all tests are passing. If this is undesirable the test fixes
-> can be squashed into the functionality updates, but this will be kind
-> of messy, especially as at some points in the series both the old
-> metrics and the new metrics will be displayed.
->
-> v2: Drop merged patches, add json to document target_cpu/core_wide and
->     example to "Add care to picking the evsel for displaying a metric"
->     commit message (Namhyung).
->
-> v1: https://lore.kernel.org/lkml/20251024175857.808401-1-irogers@google.com/
->
-> Ian Rogers (18):
->   perf metricgroup: Add care to picking the evsel for displaying a
->     metric
->   perf expr: Add #target_cpu literal
->   perf jevents: Add set of common metrics based on default ones
->   perf jevents: Add metric DefaultShowEvents
->   perf stat: Add detail -d,-dd,-ddd metrics
->   perf script: Change metric format to use json metrics
->   perf stat: Remove hard coded shadow metrics
->   perf stat: Fix default metricgroup display on hybrid
->   perf stat: Sort default events/metrics
->   perf stat: Remove "unit" workarounds for metric-only
->   perf test stat+json: Improve metric-only testing
->   perf test stat: Ignore failures in Default[234] metricgroups
->   perf test stat: Update std_output testing metric expectations
->   perf test metrics: Update all metrics for possibly failing default
->     metrics
->   perf test stat: Update shadow test to use metrics
->   perf test stat: Update test expectations and events
->   perf test stat csv: Update test expectations and events
->   perf tool_pmu: Make core_wide and target_cpu json events
->
->  tools/perf/builtin-script.c                   | 238 ++++++++++-
->  tools/perf/builtin-stat.c                     | 154 ++-----
->  .../arch/common/common/metrics.json           | 151 +++++++
->  .../pmu-events/arch/common/common/tool.json   |  12 +
->  tools/perf/pmu-events/empty-pmu-events.c      | 229 ++++++----
->  tools/perf/pmu-events/jevents.py              |  28 +-
->  tools/perf/pmu-events/pmu-events.h            |   2 +
->  .../tests/shell/lib/perf_json_output_lint.py  |   4 +-
->  tools/perf/tests/shell/lib/stat_output.sh     |   2 +-
->  tools/perf/tests/shell/stat+csv_output.sh     |   2 +-
->  tools/perf/tests/shell/stat+json_output.sh    |   2 +-
->  tools/perf/tests/shell/stat+shadow_stat.sh    |   4 +-
->  tools/perf/tests/shell/stat+std_output.sh     |   4 +-
->  tools/perf/tests/shell/stat.sh                |   6 +-
->  .../perf/tests/shell/stat_all_metricgroups.sh |   3 +
->  tools/perf/tests/shell/stat_all_metrics.sh    |   7 +-
->  tools/perf/util/evsel.h                       |   1 +
->  tools/perf/util/expr.c                        |   8 +-
->  tools/perf/util/metricgroup.c                 |  92 +++-
->  tools/perf/util/stat-display.c                |  55 +--
->  tools/perf/util/stat-shadow.c                 | 404 +-----------------
->  tools/perf/util/stat.h                        |   2 +-
->  tools/perf/util/tool_pmu.c                    |  24 +-
->  tools/perf/util/tool_pmu.h                    |   9 +-
->  24 files changed, 756 insertions(+), 687 deletions(-)
->  create mode 100644 tools/perf/pmu-events/arch/common/common/metrics.json
->
+>> This allows userspace tools configuring kdump to determine how much
+>> memory is reserved for crashkernel. If CMA is used, tools can warn
+>> users when attempting to capture user pages with CMA reservation.
+>>
+>> The new sysfs hold the CMA ranges in below format:
+>>
+>> cat /sys/kernel/kexec/crash_cma_ranges
+>> 100000000-10c7fffff
+>>
+>> Cc: Aditya Gupta <adityag@linux.ibm.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Baoquan he <bhe@redhat.com>
+>> Cc: Dave Young <dyoung@redhat.com>
+>> Cc: Hari Bathini <hbathini@linux.ibm.com>
+>> Cc: Jiri Bohac <jbohac@suse.cz>
+>> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+>> Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>
+>> Cc: Pingfan Liu <piliu@redhat.com>
+>> Cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>> Cc: Shivang Upadhyay <shivangu@linux.ibm.com>
+>> Cc: Vivek Goyal <vgoyal@redhat.com>
+>> Cc: linuxppc-dev@lists.ozlabs.org
+>> Cc: kexec@lists.infradead.org
+>> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+>> ---
+>> Changelog:
+>>   - Add the missing hunk to export crash_cma_ranges sysfs
+>>
+>> ---
+>>   .../ABI/testing/sysfs-kernel-kexec-kdump        | 10 ++++++++++
+>>   kernel/kexec_core.c                             | 17 +++++++++++++++++
+>>   2 files changed, 27 insertions(+)
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
+>> index 00c00f380fea..f59051b5d96d 100644
+>> --- a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
+>> +++ b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
+>> @@ -49,3 +49,13 @@ Description:	read only
+>>   		is used by the user space utility kexec to support updating the
+>>   		in-kernel kdump image during hotplug operations.
+>>   User:		Kexec tools
+>> +
+>> +What:		/sys/kernel/kexec/crash_cma_ranges
+>> +Date:		Nov 2025
+>> +Contact:	kexec@lists.infradead.org
+>> +Description:	read only
+>> +		Provides information about the memory ranges reserved from
+>> +		the Contiguous Memory Allocator (CMA) area that are allocated
+>> +		to the crash (kdump) kernel. It lists the start and end physical
+>> +		addresses of CMA regions assigned for crashkernel use.
+>> +User:		kdump service
+>> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+>> index 7476a46de5d6..da6ff72b4669 100644
+>> --- a/kernel/kexec_core.c
+>> +++ b/kernel/kexec_core.c
+>> @@ -1271,6 +1271,22 @@ static ssize_t crash_size_store(struct kobject *kobj,
+>>   }
+>>   static struct kobj_attribute crash_size_attr = __ATTR_RW(crash_size);
+>>   
+>> +static ssize_t crash_cma_ranges_show(struct kobject *kobj,
+>> +				     struct kobj_attribute *attr, char *buf)
+>> +{
+>> +
+>> +	ssize_t len = 0;
+>> +	int i;
+>> +
+>> +	for (i = 0; i < crashk_cma_cnt; ++i) {
+>> +		len += sysfs_emit_at(buf, len, "%08llx-%08llx\n",
+>> +				     crashk_cma_ranges[i].start,
+>> +				     crashk_cma_ranges[i].end);
+>> +	}
+>> +	return len;
+>> +}
+>> +static struct kobj_attribute crash_cma_ranges_attr = __ATTR_RO(crash_cma_ranges);
+>> +
+>>   #ifdef CONFIG_CRASH_HOTPLUG
+>>   static ssize_t crash_elfcorehdr_size_show(struct kobject *kobj,
+>>   			       struct kobj_attribute *attr, char *buf)
+>> @@ -1289,6 +1305,7 @@ static struct attribute *kexec_attrs[] = {
+>>   #ifdef CONFIG_CRASH_DUMP
+>>   	&crash_loaded_attr.attr,
+>>   	&crash_size_attr.attr,
+>> +	&crash_cma_ranges_attr.attr,
+>>   #ifdef CONFIG_CRASH_HOTPLUG
+>>   	&crash_elfcorehdr_size_attr.attr,
+>>   #endif
+>> -- 
+>> 2.51.1
+>>
+
 
