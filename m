@@ -1,82 +1,42 @@
-Return-Path: <linux-kernel+bounces-893428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0152C475EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:55:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDC4C4760F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:57:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2772534A113
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:55:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1C24B349D50
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A6E314B75;
-	Mon, 10 Nov 2025 14:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKs4Dt3l"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9541D314D3B;
+	Mon, 10 Nov 2025 14:57:27 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C622FE06C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92CA314B76;
+	Mon, 10 Nov 2025 14:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762786500; cv=none; b=KXJhtgzyzfqp+XKX0n3u7KxvWqzQwj5loXboPhkmzsK6Rxl7zL4K9MWIwdnYUqES52OFNKbUIml4Ky9WQF6KMTOn3S/N8o2+Szzc8UBCRMSkTcChDIg95QFg3dxGEr+4IGgIrYcuPhLROpQhhGrjKc+g+/SU+AL5GbuWGhn1ACM=
+	t=1762786647; cv=none; b=UYEbqnWdx7NnNoQQ2fGJ/ANutsSdBuVtiyM+ftZBcivu6EkTfkgCjJNihkXJJWJNwKbL+gyDSWzLj7qzInAZxMBd2if/udgu4nJPm/qnmdkQFEQYhClncOl8Akh0VYAlc/HNjmRLf3Jbr05Xz8/yMmYyO5Av0nwswJe1XqxDqyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762786500; c=relaxed/simple;
-	bh=rUU+f9PcX0qzROWhXtT3SwA2QFBOOJW99Rko/d/EA8k=;
+	s=arc-20240116; t=1762786647; c=relaxed/simple;
+	bh=ytkZLxUvZNz1oafWKGBnM5poTq2DgkQpU0drTR4RYJQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NXGNIZ2rSU4t/a/w9UoygjouSi+Bx8U9m6RkO7jkvTMJWcCTRlZbfNo/DA3Xz43jYgzX2aS0TRuoRxDOLq1WXoi9gS7WNQTaHNDqHzSi35k8Q4iS/P89iAsi13F6d67nKtG8slEj6veuA0N1NoiUSKCfUdFA9ABDnbfDWhAwUSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gKs4Dt3l; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42b3377aaf2so865655f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:54:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762786497; x=1763391297; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UtT4O7BewVOdeU11dvM5Ug5fQnG1uIMIXCN1qCElv4g=;
-        b=gKs4Dt3lupO4jFXFyhqlH4TmOdSJRTexG4WgQSCYNgQUXYOCp5R+F3aLvLmSSQzeWv
-         rG1CIyu9DbkThk6M2/8vHizTrAdi+2kYIDeW7KXIWlALbDzWJqCIe58L1Gx4tc8NnNHy
-         Ntee/Zcj3OTeVeUaX1PEzdP6KfO2HSdfRgwtP2sebACk4t7XW/CviSebkZJ6+io5Oadv
-         8dnBhi9Fj/jLO99xKv7dFq5HRm2n3fTny8uDUCJ3ivOdCqhpK15PO9PQHZywOy4adQBX
-         sAHhuMoHMM6ghE/HWKxOKfs21ZbaqbvzjGr85ACu4RHftRMKeN2k+fyPRM+KdHsoBO0Y
-         AGMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762786497; x=1763391297;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UtT4O7BewVOdeU11dvM5Ug5fQnG1uIMIXCN1qCElv4g=;
-        b=JWU2yR2RfqGEvfr7HkxjAtPX5D61LcyrGQCBZqOom/PwVLsyS5IFtEgFV1mmu1Bc1S
-         LTH+sG1wEo5v+8BvKkcfvrXboWqF6h7flGOduKymvZfgQs1QU0wmo3ggnkSRKuiHFq9K
-         SpwZ4spmGMuL1Yg15E9kdm2mqBaO+/nNYnmZ/zHm9gGv1gJKWPL2nVNkB5huvthnEHsv
-         3cp0TBTqUSNylVI4xWl3eHW69fQfcOErBeR5dampsGa1NnqYyT+7pQ2GrZOT6Uh4U7+N
-         HbpcZbQGE+d/stBEcAMT9MZbvYrnXK7UIiBad9BwHdtkzdtrKeDHBOj48rjYH4osB4O1
-         t3pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhaoDoyUk5yKWiu+FHvsazNXoGFlZsYgwixHgnFQmR5d94cyLUZYJxAu80WyCwmeXWnwSdkG5/JhAhrm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsRdTW/W0CV4k6zzIrvWJPEJPea93NgVkBnkW5DVionv2RdG/k
-	VOfB4pjiZdHqmbRqYXNBWH7fOp0JRfj+NKXp74dtUGQAGg2gBpIneuQ6
-X-Gm-Gg: ASbGncveftfho2JCPXyDIWehdSiYdhyxq1uyaPpDyMaewfeycVC2eSFq0GkL0dO73KQ
-	lTr0/8XDGUSuwzQ4G3TxsvtKQnA0hMwa30wgq/gUnj0M4UwDrye8iDO8ZvdPzhwRNtF6oFwJ9ct
-	Wn5l1JOIdSSbFnfpQeO7oSKfZPJ+x6fFpSiuwOhlCOPkHZFfiyTHwuNHCXjjZRAN33xUZl/FegE
-	GscY9Vw+FiITQfCzcIyOc92kBYqnNH7pt1ehT54kW/dPRy/CEfsvsCVTIONfT2kUJgwFMn9Sgd3
-	qulc51yXk8Gc6tH+td8k9/OMoUWSD0NJBi7s4FLv+st1BFKiqmy+8BS3FIV52CE1tpNlYWvPHhq
-	Y1wb8lfNKvizYP5JyLk+UQjwzFnsHdfzeeWKthjMy90/iyF6r3DC55Igj/luPDintKbT5cCnMXO
-	PV5RsdeDRKawR2QdSLL0nSH7gBajab4Tnfu70WlP9FgY1P+odakUTHcotM7my8EIX8U2Eng2YCS
-	ecVxrbqYSGEFhxUrJUBLXZq1KdLhsZBmc2JTSLWanT6EWewew==
-X-Google-Smtp-Source: AGHT+IFgYtF0Zf+P6CHYXSeBIt6XkOznTNcFaXqJDPZp+x8TaTAwDPOPyk8sB9F+rWpsk9Zy+d+pvA==
-X-Received: by 2002:a05:6000:2302:b0:429:c4bb:fbc4 with SMTP id ffacd0b85a97d-42b2dc24800mr7139287f8f.25.1762786497116;
-        Mon, 10 Nov 2025 06:54:57 -0800 (PST)
-Received: from ?IPV6:2003:d8:2f30:b00:cea9:dee:d607:41d? (p200300d82f300b00cea90deed607041d.dip0.t-ipconnect.de. [2003:d8:2f30:b00:cea9:dee:d607:41d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b316775f2sm12777750f8f.16.2025.11.10.06.54.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 06:54:56 -0800 (PST)
-Message-ID: <69884a4d-60cb-4a66-a225-38d3a17712c6@gmail.com>
-Date: Mon, 10 Nov 2025 15:54:55 +0100
+	 In-Reply-To:Content-Type; b=tzMIoXRT41im5zssPk/sKPPzfr0HsRRw+Stixisk+MTdP/Ug6mnFh3Ws6l0MMW/u8QaY85e5K037fN/DE5KL5BHK42J3mCi/oyN9cYs/tdIYmMZc4s7banEL70wKXSWf8Rorw29krUD1ro0fwT7RFTFoWo68670wfJ7gl/hTzlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id C523461CC3FED;
+	Mon, 10 Nov 2025 15:57:08 +0100 (CET)
+Message-ID: <8c5da0af-0c41-433e-894c-a7bb69a2e85a@molgen.mpg.de>
+Date: Mon, 10 Nov 2025 15:57:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,55 +44,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/khugepaged: do synchronous writeback for
- MADV_COLLAPSE
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Matthew Wilcox <willy@infradead.org>
-Cc: Shivank Garg <shivankg@amd.com>, Andrew Morton
- <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <lance.yang@linux.dev>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Zach O'Keefe <zokeefe@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- Branden Moore <Branden.Moore@amd.com>
-References: <20251110113254.77822-1-shivankg@amd.com>
- <aRHs3pA2kOr_uD3k@casper.infradead.org>
- <9b622374-778a-4459-aca9-4eb406a58516@gmail.com>
- <aRHwv3XzI4XHcLPP@casper.infradead.org>
- <2e6153c9-1729-463a-86b5-0973b3f56ea6@lucifer.local>
-From: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>
+Subject: Re: [PATCH v5 1/1] Bluetooth: btusb: add default nvm file
+To: Shuai Zhang <quic_shuaz@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, quic_chejiang@quicinc.com,
+ quic_jiaymao@quicinc.com, quic_chezhou@quicinc.com
+References: <20251110132225.2413017-1-quic_shuaz@quicinc.com>
+ <20251110132225.2413017-2-quic_shuaz@quicinc.com>
 Content-Language: en-US
-In-Reply-To: <2e6153c9-1729-463a-86b5-0973b3f56ea6@lucifer.local>
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20251110132225.2413017-2-quic_shuaz@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10.11.25 15:05, Lorenzo Stoakes wrote:
-> On Mon, Nov 10, 2025 at 02:03:43PM +0000, Matthew Wilcox wrote:
->> On Mon, Nov 10, 2025 at 03:00:32PM +0100, David Hildenbrand (Red Hat) wrote:
->>> On 10.11.25 14:47, Matthew Wilcox wrote:
->>>> On Mon, Nov 10, 2025 at 11:32:53AM +0000, Shivank Garg wrote:
->>>>> When MADV_COLLAPSE is called on file-backed mappings (e.g., executable
->>>>> text sections), the pages may still be dirty from recent writes. The
->>>>
->>>> That explanation derails my brain entirely.  Text isn't writable!  How
->>>> can the pages be dirty and file-backed text?
->>>
->>> Files are writable :)
->>
->> Well, if you're root ...
->>
->> -rwxr-xr-x 1 root root 158632 Jun  4 11:14 /bin/ls
->>
-> 
-> gcc foo.c -o foo && ./foo
-> 
-> Is more the issue I think
+Dear Shuai,
 
-Yeah, that's my understanding as well. I guess stuff like 
-package/container updates might similarly trigger it.
+
+Am 10.11.25 um 14:22 schrieb Shuai Zhang:
+> If no NVM file matches the board_id, load the default NVM file to ensure
+> basic Bluetooth functionality. The default NVM file may differ in
+> functionality and performance because specific NVM files enable certain
+> vendor commands based on chip capabilities. This fallback improves
+> compatibility when a dedicated NVM file is not available.
+> 
+> Also, pass board_id explicitly to select the correct NVM file. This is
+> required for proper NVM file determination.
+> 
+> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+> ---
+>   drivers/bluetooth/btusb.c | 28 +++++++++++++++++++---------
+>   1 file changed, 19 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index dcbff7641..09e81320c 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
+>   }
+>   
+>   static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
+> -					const struct qca_version *ver)
+> +					const struct qca_version *ver,
+> +					u16 board_id)
+>   {
+>   	u32 rom_version = le32_to_cpu(ver->rom_version);
+>   	const char *variant, *fw_subdir;
+>   	int len;
+> -	u16 board_id;
+>   
+>   	fw_subdir = qca_get_fw_subdirectory(ver);
+> -	board_id = qca_extract_board_id(ver);
+>   
+>   	switch (le32_to_cpu(ver->ram_version)) {
+>   	case WCN6855_2_0_RAM_VERSION_GF:
+> @@ -3517,14 +3516,14 @@ static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
+>   
+>   static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
+>   				    struct qca_version *ver,
+> -				    const struct qca_device_info *info)
+> +				    const struct qca_device_info *info,
+> +				    u16 board_id)
+>   {
+>   	const struct firmware *fw;
+>   	char fwname[80];
+>   	int err;
+>   
+> -	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
+> -
+> +	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id);
+>   	err = request_firmware(&fw, fwname, &hdev->dev);
+>   	if (err) {
+>   		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
+> @@ -3606,10 +3605,21 @@ static int btusb_setup_qca(struct hci_dev *hdev)
+>   	btdata->qca_dump.controller_id = le32_to_cpu(ver.rom_version);
+>   
+>   	if (!(status & QCA_SYSCFG_UPDATED)) {
+> -		err = btusb_setup_qca_load_nvm(hdev, &ver, info);
+> -		if (err < 0)
+> -			return err;
+> +		u16 board_id = qca_extract_board_id(&ver);
+>   
+> +		err = btusb_setup_qca_load_nvm(hdev, &ver, info, board_id);
+> +		if (err < 0) {
+> +			/* If the board-specific NVM file is not found, set board_id to 0
+> +			 * and load the default NVM file to ensure basic functionality.
+> +			 */
+> +			if (err == -ENOENT && board_id != 0) {
+> +				err = btusb_setup_qca_load_nvm(hdev, &ver, info, 0);
+> +				if (err < 0)
+> +					return err;
+> +			} else {
+> +				return err;
+> +			}
+> +		}
+>   		/* WCN6855 2.1 and later will reset to apply firmware downloaded here, so
+>   		 * wait ~100ms for reset Done then go ahead, otherwise, it maybe
+>   		 * cause potential enable failure.
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
