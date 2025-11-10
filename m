@@ -1,119 +1,124 @@
-Return-Path: <linux-kernel+bounces-892367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD8EC44F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:58:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E523DC44F0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0344B3A3FBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:58:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5430E3B0973
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D5C2D6E66;
-	Mon, 10 Nov 2025 04:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE3E2DCC1C;
+	Mon, 10 Nov 2025 05:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mpeSBHUr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="uEl/PbS0"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CE9F50F;
-	Mon, 10 Nov 2025 04:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5792DAFB9;
+	Mon, 10 Nov 2025 05:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762750728; cv=none; b=RLfNdHi73774F0LcfqeBLlGNUnGXN3i4i4sJ8EpmjcvFI7lAfZv6Ng4wBKnjctw+l0iOeymJCFGi05tq5RWIbBSReSeUKEV/hIgPNvMA/coIshgh2M/27gmzqbTo9QBMBJcAk235+8lElYV9VpPSeoeJ3oK4fIgA3zBOkQv9mKU=
+	t=1762750832; cv=none; b=CMiNb995P1rI/O/xaKC9eyB7HHzt5r/cnYyDZtnXNe+H++sy5McQRNa227WxIDui6LrvxBelt8b62eRyPxKZe0ZhqYOLwPa1TgUfIa36YPngHE/BAj4xq2SrYrdNJa/xRNtr4G7ivK1JBuwyQ/STC1/wSAr9joGqcPuA6EUDyEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762750728; c=relaxed/simple;
-	bh=nphcQOI1kfRbhu/YEFcCiq+ww3xH/5WIF7mQO+nNk/s=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ORucI6RfwuU7qMRtT3tpUeUvk7Tep6T7lBmY3ulPY1sdSIL6u9NMmYWEO5bJ53S1paK9leWCuW4ollmnqV7caaUl5deJR+/CeMZgAx4S8ioIy0v9LGkjLLecEwgIIyPMIJKoE9+cdOc+x21sZ4cvmSrz3OBR5GDYouMbqTl8WHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mpeSBHUr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1E88C4CEF5;
-	Mon, 10 Nov 2025 04:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762750728;
-	bh=nphcQOI1kfRbhu/YEFcCiq+ww3xH/5WIF7mQO+nNk/s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mpeSBHUrB/nAOomS9Mm987ApUXi1jovyAG4bwh99uEGzMB114QdOPyCRJQ9fuRbiy
-	 UbseNPen+CZyVShhms1MusQb73Tc3A1nNEtM0OqILMCVf0yx1zrsFwPYjIbKdvLMZd
-	 OkyB5VhJ1H55wWqlrAg7KcJELMO5u2v1DWbz26ILez61BWbKSmoqcaSGAg4YE5rPxS
-	 dHN0ZRmTThIuJ0cqZdxKsqG31LUYoUn6xR6Zb/wvxwiQngoWFlaKblpcwOG6wh4vwn
-	 Cf/7Qmi5D2h15g5XLyO0/gMlmPJOS7JKVtZJgfObUE+uF/8nGAtTwf4+LUjCDsYdaf
-	 Jqps5kxDE7Zsw==
-Date: Mon, 10 Nov 2025 13:58:44 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Kyle Huey
- <khuey@kylehuey.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
- <adrian.hunter@intel.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Will
- Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- linux-arm-kernel@lists.infradead.org, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>
-Subject: Re: [PATCH 0/2] tracing/wprobe: Fix to avoid inifinite watchpoint
- exception on arm64
-Message-Id: <20251110135844.1c205d59be44d76169fc5e54@kernel.org>
-In-Reply-To: <176179481538.959775.12326313742393696258.stgit@devnote2>
-References: <176179481538.959775.12326313742393696258.stgit@devnote2>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762750832; c=relaxed/simple;
+	bh=3WGfTCS9HxV5AsmfaNFxXV7MG/s7A4+FAIrFYvcWux0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Vgws4UBIBAERqrVbfY3STNsLRxMWYov2E4Y4o6avQcUFFV+bzInukgFgotWhqvjHVhzratDSt6Faa3t5eHRgPsjk7VgA5Qra0udPvKiipXD9RNlNHb6iDDfqxBBGj3jJvkbTGmM1daSZUIQ2vW1MtIL92cfXMNEqcRktG9y7o0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=uEl/PbS0 reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AA50Jku3337053
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sun, 9 Nov 2025 21:00:20 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AA50Jku3337053
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762750820;
+	bh=lNNqKYw6kdGWpkMXG8MHJl3KOvc86BBf+kihsnGzXkI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=uEl/PbS0VWLvG94RHvgZJMy/NQ/QGbaxL4ssT+bv79p3jd4TJxIt/FCpu7l7ERQjG
+	 3DTSJ2FUpcALRrTeSIRoGVltw9mh7pnj4g3ipw2UhLxBVTyJoJ96UCMpDktoDjxIzU
+	 tvfwqRycbKAmymUA03B5FHsLL1HQF48ReX7fNB/l34jMAk4ccuTtk2SiM4x9cVIEVy
+	 wGSAS3J/OZWIgPilFgn1d5WGIJYbRFWaoWRnNZBtU2wRT4EL6A2SGAsI7eiv392lZc
+	 BpfW9befC2EReGJoSq4g1u3MCXtRGmjbqUmYpUO7abr0YdgJJ+hhwUE9ovZR0HIeI4
+	 k4cXstZNLsfPw==
+Date: Sun, 09 Nov 2025 21:00:18 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: "Theodore Ts'o" <tytso@mit.edu>
+CC: linux-serial@vger.kernel.org, linux-api@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20251110033556.GC2988753@mit.edu>
+References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com> <20251107173743.GA3131573@mit.edu> <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com> <20251110033556.GC2988753@mit.edu>
+Message-ID: <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Ingo, Will, Ping?
+On November 9, 2025 7:35:56 PM PST, Theodore Ts'o <tytso@mit=2Eedu> wrote:
+>On Sat, Nov 08, 2025 at 06:25:20PM -0800, H=2E Peter Anvin wrote:
+>>=20
+>> The standard ESP32 configuration for its serial port is that asserting =
+RTS#
+>> even for a moment will cause a device reset, and asserting DTR# during =
+reset
+>> forces the device into boot mode=2E So even if you execute TIOCMSET imm=
+ediately
+>> after opening the device, you will have glitched the output, and only t=
+he
+>> capacitance of the output will save you, in the best case=2E
+>
+>IMHO, these more esoteric use cases should involve a custom kernel
+>driver which replaces the generic serial driver=2E  In practice, these
+>things aren't really a tty, but somethiung else weird, and trying to
+>do this in userspace seems really awkward=2E
+>
+>> setserial (TIOCSSERIAL) and termios (TCSETS*) both require file descrip=
+tors,
+>> so that is not suitable=2E The 8250 driver, but *not* other serial driv=
+ers,
+>> allows the setserial information to be accessed via sysfs; however, thi=
+s
+>> functionality is local to the 8250 driver=2E
+>
+>My suggestion of using setserial to turn on some "not really a tty;
+>but some weird networking / cheap debugging hack" flag should work,
+>because you would do this at boot up=2E  Note that the 8250
+>autoconfiguration code (see drivers/tty/serial/8250/8250_port=2Ec) is
+>going to mess with DTR / RTS=2E  This is why I asserted that trying to
+>claim that you can preserve "state" across reboots is Just Not
+>Possible=2E
+>
+>If you have some weird setup where DTR or RTS is wierd to the
+>"detonate the TNT" line, might I suggest that maybe we shouldn't be
+>using the tty / 8250 serial driver, but it should ***really*** be a
+>dedicated kernel driver?
+>
+>					- Ted
 
-I also found that Kyle made a change on this area recently.
+That is a completely unrealistic idea=2E And you are hardly the first one =
+to have it=2E Microsoft has been trying to get rid of serial and parallel p=
+orts since the 1990s for reasons like this=2E=20
 
-Thank you,
+Microsoft even have had to back off the requirement of having =2Eini text =
+file "drivers" for ACM serial ports=20
 
-On Thu, 30 Oct 2025 12:26:55 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+Yet they probably will still be with us when the 22nd century dawns, exact=
+ly *because* they are ubiquitous, supported by everything, and require no s=
+eparate kernel drivers=2E
 
-> Hi,
-> 
-> Here are patches which fixes a wprobe bug reported by Mark Brown on
-> arm64[1]. The root cause was that the infinite watchpoint exception on
-> the same instruction, because arm64 watchpoint exception happens before
-> the memory access has done, it needs to configure a single-step after
-> calling overflow handler. It does that only for the default overflow
-> handlers, and not for custom overflow handler registered via
-> hw_breakpoint interface.
-> 
-> [1] https://lore.kernel.org/all/aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk/
-> 
-> To fix this issue, this series introduces default_overflow_compatible
-> flag in the perf_event and use it for identifying default overflow
-> handlers instead of checking handler functions everytime[1/2], and
-> set it in wprobe[2/2].
-> 
-> Thank you,
-> 
-> ---
-> 
-> Masami Hiramatsu (Google) (2):
->       perf: Introduce default_overflow_compatible flag
->       tracing: wprobe: Make wprobe_handler default overflow_handler compatible
-> 
-> 
->  include/linux/perf_event.h  |    9 ++-------
->  kernel/events/core.c        |    2 ++
->  kernel/trace/trace_wprobe.c |    7 +++++++
->  3 files changed, 11 insertions(+), 7 deletions(-)
-> 
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+And these days these aren't the "esoteric" use cases at all=2E They are th=
+e norm=2E
 
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
