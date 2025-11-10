@@ -1,119 +1,126 @@
-Return-Path: <linux-kernel+bounces-893652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3DFC47F53
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:33:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A01AC480CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7331F188CCCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:33:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9EA93BD86F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6B527F4E7;
-	Mon, 10 Nov 2025 16:32:57 +0000 (UTC)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BED281369;
+	Mon, 10 Nov 2025 16:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHf0VWs4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F60126C399
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B8127FD56;
+	Mon, 10 Nov 2025 16:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762792377; cv=none; b=e+IV9ZL5S6rOqsKCb9ziaeEeUKZY3os35BO3fDal/m44W8GLi7Z8FBmk3lY3N3Srn/EB8GKL1IDZGs0R0jgxE2nkxe9/Gp27cQl7bLMHVKbDKTpOmA5OPXZ9CbozvMhSxvrw2EY2Ne3Kifseyscv43hq9KERtNROJkYJslD3crk=
+	t=1762792205; cv=none; b=ABJVLLe4fSAGvOEa559KVrI4W6BVMbjAEUFCvEntc6fusJAd4iRnjDq1aM16wNCMKvyOf4Ee/ujTzyfyr6zpFDQhsm/Hm+NkUvd20ImhZNlC2TynAYZFRO43iYXJjGMU8CkDEBxrcIEtVA4rzBLWEq3Hje/BUdiLPA95OlIUpwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762792377; c=relaxed/simple;
-	bh=vGMbit6ddUlwoxrUxi6IwHq4K44T3JViUun4qtrQOtk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KUxYmJkvIVNGsoocfKGldf3fuUTO6kK6W4uANNsX59wRHGZ6M7Welh4VB4tP3Nw0Ce4jGN4Ub5b65KRJ4w11NVSiTi5V1pZ0bcyBSFpOluKkCfF1nhAjo4vIcQtD19E0GxuFqT4Y+eK/9pXVrVVFzxDn54qC+W8f46g6lhiA6Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-54a8f6a2d80so714781e0c.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:32:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762792374; x=1763397174;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dHzMucwowrWDP2Qt+Y+UWKgurmYAh4juIylWzobpf/s=;
-        b=bg+YGzl/aU4A3jL24tAkxVjLxyylNZwUljOPnk8vOyw549zVn9N4VQCTd1OC37SNDL
-         hUzRaL6wOW7kVw93jOP06HnqXeZkJql4pcx9PGAgo0dmstg3lrODGeNRqgoVwN4ook58
-         /mI7nKZjRD4k0YM4s9SlJItsYVWSC7DYYHBzefVI7D/jcADyG/CclvVHPYjWrQHfI2eo
-         +GzqgjqJ1qTMXf9nR8Da/7CcnrnSofQKBAhRtTC0e5E7ygunhNKC2USQ+rJGxkwVFNb7
-         aK10RbxBx3/xeE6suioliuBwXdSn9FJGm6hzLaNevRH/h6OcyQL05mJd2aQajC4YxX8X
-         SXwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqgziQxOliQ9Nf8gpEk9eBaeaP3AAluBUvfQLLgh+xwcOQF47/bUrXsK6y33KF1dis1qyJdLP4qhekwCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/0OupU+lco6PhuYlips87o7y7skZuorrhTFn1tj9zatFW7p+Q
-	LTq6f2UC55louWQRBm/IEIk5JxOVbxeSS7jtWVEdYiLOjhiQsdRas9fA9tyC1Vr4
-X-Gm-Gg: ASbGncui1RfmjY+hp9RDivGTbi8Morymiqo0GobiW+gFNEVVAnrSJkQ1P2QuDDrI+Xk
-	wvMpSHb5TDeiNEis4SPg4y4sLXRe1NpqQFS/rNR0GregM4DReIEgBlWC3+yMJcx+f5PBVUNVnIf
-	ZuqVNsXz4XIO4w4+kbn4lIYVeyLNQQdyOGqEYOnrEnNlZxvoG9CTC7p7A9wi9i5T/sNAeGa5i/I
-	Zh6yvGWmHDhb24dp1BSgx5p+LlZWCdLCvMGBfwEU09y0cLubWY4YIlVnDWsmooQRx17zNZsEg+1
-	WCSz3dwSkZOKVoi9a05W946R2oOpoh8IPgtItfZflSvz+Zz6bLfAAud/Emn2b8dswDU2Lnz4drl
-	1s6/PYYvcv6waZNkvCcbMNGPB0M4ClKZG45PF0GmwgNYSRW+BJZFJCb8q/2zwOaGc0ZyJEavUay
-	DtcrKqCtsoax5PEmwIkZTaGFJI9ExOCIveqdmJslkGX6c7lUva
-X-Google-Smtp-Source: AGHT+IHryTVptWq6oTS7gMRfKpTwP+n1whZyKXo6pWgtFRWlRHnZgW3j6MoqZnDEssSTOAHqELgvoQ==
-X-Received: by 2002:a05:6122:8c0c:b0:54c:3fe6:627b with SMTP id 71dfb90a1353d-559b31f9c8cmr2853871e0c.3.1762792373969;
-        Mon, 10 Nov 2025 08:32:53 -0800 (PST)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-559957fb32csm7375824e0c.13.2025.11.10.08.32.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 08:32:52 -0800 (PST)
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-935356590ddso902188241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:32:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVnw2wpuUEgpoCCEVi4Cf9uZVt0+x4IjxtmcfusUrupJ/o1QkbpxOSMoDfo/om0pWlj3q5PB+j14xqau9M=@vger.kernel.org
-X-Received: by 2002:a05:6102:c8e:b0:519:534a:6c5e with SMTP id
- ada2fe7eead31-5ddd57eb0b0mr1693520137.33.1762792372340; Mon, 10 Nov 2025
- 08:32:52 -0800 (PST)
+	s=arc-20240116; t=1762792205; c=relaxed/simple;
+	bh=BENcJUva/mHHQYIayp0HLjQkCuTaKmej8Tu1JFzK0Is=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fEYEkhkfHfl06RIyEbe/eEOsL4Bop3+NeSHMiN+EBhQ0REs7RXQxgYG6CJS+ZRl6xEfpM5+3RCVvPBFQVciDksDyATDP29/Dzf+T1CorERnKeKpp9Mu/EkX6DLLEH165c1+UwEE3AqvWGhtGLue29tll2J+Qcr//C8QiJNTuqGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHf0VWs4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D62C116D0;
+	Mon, 10 Nov 2025 16:30:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762792204;
+	bh=BENcJUva/mHHQYIayp0HLjQkCuTaKmej8Tu1JFzK0Is=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YHf0VWs4SipvI5N7AaQ6K/3tRxLQgCT0CnlyFItJoneQ+JNsfdVG0M6Yk/jBN08xo
+	 AyIQ5tytEvx9KerdQJCFnfePes9C9oq8nuJsQJC7groB2UOAvBWt84OFutfFDbmwWv
+	 s7EPisfszp3zTP9OGVVRxvA9gZmfqK4/JSwsYym1bV+MMBXGP0GtkolMIXIe7q6Tk0
+	 OS///SXTGxp1jQSWLjdFbviBAGs2C9koNl9W72FNMm/KGamKe4mX6RyO4NpeJ7hNCd
+	 1VDVMLnQg6FFWLwD2BGYTHT8rforlQ3ozWPBydIkRDCCd2xtHJLKchuIR25tmUkrE5
+	 aESXY2FgTLRFw==
+Date: Mon, 10 Nov 2025 10:34:10 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Stefan Wahren <wahrenst@gmx.net>, Vinod Koul <vkoul@kernel.org>, 
+	Thomas Andreatta <thomasandreatta2000@gmail.com>, Caleb Sander Mateos <csander@purestorage.com>, 
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, Olivier Dautricourt <olivierdautricourt@gmail.com>, 
+	Stefan Roese <sr@denx.de>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Daniel Mack <daniel@zonque.org>, 
+	Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
+	Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, Michal Simek <michal.simek@amd.com>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 01/13] scatterlist: introduce sg_nents_for_dma() helper
+Message-ID: <bnkx654tvfekhgragyuwseg7sxcrgrnb4bvwe5bgxikaf7k2ew@kf7jb76zrf3r>
+References: <20251110103805.3562136-1-andriy.shevchenko@linux.intel.com>
+ <20251110103805.3562136-2-andriy.shevchenko@linux.intel.com>
+ <waid6zxayuxacb6sntlxwgyjia3w25sfz2tzxxzb4tkqgmx63o@ndpztxeh6o32>
+ <jea2owcqtjeomlbwkfopt3ujsnakn4p3xeyqhh7s4kowf7k7dr@deyg5pky5udo>
+ <aRIFyR0maAfZF7MN@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103141834.71677-1-herve.codina@bootlin.com> <20251103141834.71677-4-herve.codina@bootlin.com>
-In-Reply-To: <20251103141834.71677-4-herve.codina@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Nov 2025 17:32:41 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWFOQANqnBX7nNST+WRxYz2j3gznohEZXF1SC-GyjDuGw@mail.gmail.com>
-X-Gm-Features: AWmQ_bl9D3O0uVkd9QcrhvhsjRnIq7PDvVWO1-VB9dJdhU03nrwxJGeIcNitAIk
-Message-ID: <CAMuHMdWFOQANqnBX7nNST+WRxYz2j3gznohEZXF1SC-GyjDuGw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] ARM: dts: renesas: r9a06g032: Add the ADC device
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRIFyR0maAfZF7MN@smile.fi.intel.com>
 
-On Mon, 3 Nov 2025 at 15:19, Herve Codina (Schneider Electric)
-<herve.codina@bootlin.com> wrote:
-> The ADC available in the r9a06g032 SoC can use up to two internal ADC
-> cores (ADC1 and ADC2) those internal cores are handled through ADC
-> controller virtual channels.
->
-> Describe this device.
->
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, Nov 10, 2025 at 05:33:29PM +0200, Andy Shevchenko wrote:
+> On Mon, Nov 10, 2025 at 09:21:18AM -0600, Bjorn Andersson wrote:
+> > On Mon, Nov 10, 2025 at 09:05:26AM -0600, Bjorn Andersson wrote:
+> > > On Mon, Nov 10, 2025 at 11:23:28AM +0100, Andy Shevchenko wrote:
+> 
+> ...
+> 
+> > > >  int sg_nents(struct scatterlist *sg);
+> > > >  int sg_nents_for_len(struct scatterlist *sg, u64 len);
+> > > > +int sg_nents_for_dma(struct scatterlist *sgl, unsigned int sglen, size_t len);
+> 
+> 
+> ^^^
+> 
+> > > > +int sg_nents_for_dma(struct scatterlist *sgl, unsigned int sglen, size_t len)
+> > 
+> > All but two clients store the value in an unsigned int. Changing the
+> > return type to unsigned int also signals that the function is just
+> > returning a count (no errors).
+> 
+> The type is chosen for the consistency with the existing APIs.
+> So, I prefer consistency in this case, if we need to change type, we need to do
+> that for all above APIs I believe. And this is out of the scope here.
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.19.
+That makes sense, after a second look I agree with your decision.
 
-Gr{oetje,eeting}s,
+Regards,
+Bjorn
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Personally I was also puzzled of the choice as *nents members are all unsigned
+> int in the scatterlist.h.
+> 
+> ...
+> 
+> > > We need an EXPORT_SYMBOL() here.
+> 
+> Good catch! I'll add it in next version.
+> 
+> > > With that, this looks good to me.
+> > > 
+> > > Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+> 
+> Thanks!
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
