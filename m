@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-894350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1840BC49CFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:47:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2078BC49D13
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 229044E3DCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC332188D04E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D16304BD5;
-	Mon, 10 Nov 2025 23:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7655A305043;
+	Mon, 10 Nov 2025 23:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zvip/Va9"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bdzdViAu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C3A2FD7CA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B7A194A73;
+	Mon, 10 Nov 2025 23:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762818423; cv=none; b=Oucb7Fo4I5dUFNRO/1qnCVWK23bnGOUWG+VOapOeN5gfjYM/ksPLvkXs1iB5ZMtASt5JIy9ii1tdsARWSO0me9CBqdbLFZZD44Z4p+YXl9ukoMk4wWyFCMy/LIbd5REl6wS11X2m43CTjSy66GXbEKxVjdCEy7bRs2vaOH6CUNc=
+	t=1762818644; cv=none; b=p50UvB7IpozEht1VKUU4YXvAR1VQzoERH6yuEL8oTM1CGJ1gWzcXRh3WWXtMWYo28sSth4fGCJvfaXgMJfzX59HkpgV8xYSgfHQYHq7hdaYdiJgbJvNZx6zL2Tu8O6dhjG1Z+j/zcYF4VeT2L6OS9ZrJAe2rQF2+SGPNUKTPkZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762818423; c=relaxed/simple;
-	bh=Gc4vjWJyen6pi7OfvcExBoeP+RP69p6S28dmjIeZ+L0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZLTBYUT0GfqUn40NNdKgM3URGRLfpcRUAlB7bXUUcy/Qv2zWhjj3sGrg/IulX2Q2NWJ8CHuhHNyg6qVa/+qRPmh3baUxESOkS7xhp0fOz44Y/6ewyQ16/np9iY7ixR6c3HY5JSZtAHl1/9+anEYy5mC0HEB1Vz3AqG5A1EHh53Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zvip/Va9; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5943b62c47dso3216751e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:47:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762818420; x=1763423220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EdSyniY2TEhD2jr7Knryt0myief09VrFFo+8PkG04XY=;
-        b=zvip/Va9Tf5Mzcx16SLrFEczDml/xLoOJF9tB8F4J9DB8F5vTG5LLSU+CfnvwM4Fey
-         HhF/Fkprp3aESsrVQW1jaMhkpWHveNg7QnsOUvFrMAaX0VWpkovkdvZONp19ypAkMH7C
-         QiB+Z7Ajp1/CgpkOnsAbNmptERySi5Wk4QcWp+lkrrFl9b9X74RNL4Vl2IChbvUOpMX+
-         NDLdVJRUptwuk/y9Ltvl4CNC1gO4ILPTok2Nxs92GslOBmmU4jT/Fu+nRTZIa3NFLljF
-         jdLK9xSmYv8DK4IACVUAUh3sC+3UO859goZ0I+Fy1d9Vxwa4HdhzYE8bsoB2Vy1quumN
-         k3aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762818420; x=1763423220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EdSyniY2TEhD2jr7Knryt0myief09VrFFo+8PkG04XY=;
-        b=BboN46kX8r/RSB6n/AzbGiFrR3wWDkGJbveWe7QlvDu0YL8VJ0J0kNtUal/D1xhNlC
-         K0Iuap+qyMUwAkx4R4G9atPn+pVzOFmM85wdjhBsXhCbGx0W3276mGeEru/FXmxjBD34
-         9CicN4Ug3L+1lkjM8tlqKcB/1VhwSPsGgD6cEetMYgcoT9MASbxlZqdV8TbKQJks0zb4
-         W6xyTqvut4m4BjKBolk7z1rs++HrrSUjCxfTCqz83+7ML47JB4gfWj586tyxl5TqEvk+
-         rKbwAX1IiqMAlKDZ3/5sFzTeNUd51ADbigLabcqMqytJr288moYc1glfsfkypQGNu0qZ
-         ChVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGD5wkfdy5MyVbSIMCTcaqfdGHDjNQhjuYIALi8npY7q23eWuDgZ1yZta1nvNKen5WQ/JYHFix16DJxPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR9V2+TdHgcuthklj7VR6CYeOlK2f/Md9dbo9TGjtgi2SbDqmi
-	e2uSyN4RYY9Cpxi3RooSNfkH+WjXCPLz+MpuZprREn/DhQ4jhL3CzCFNgtoH5hIuWOpEJpfRWxh
-	cFTRq+W4kiNxMbEQhtoCTwIighiD6TvWStz2EAP6zcCZFeUu/M6GINvg=
-X-Gm-Gg: ASbGncv+ABEqTFAJxJL+esm1b2EhE++GJ9iUXHSTxMDIb/NErn1focU5+V8D+myctKf
-	TxB+WPVaZ6tjrottNHL7UkZSbAXvJgczPaFG2lqvUvPRYwdjUa+x3vbmdP368lysFNkNhjzVsZj
-	754lDMa90+rawU1VCq9blwt4fEZqw601FLlbkP5K4eLUR1+4FZzX4IZdgM4YOSS0oR0GK2gAogb
-	5+Ukrf3vSDCaRKB95Wc7E9560gNTgf4W/d4/7oKqrMDDD7okKfnyO4VzJLsytBAzc2FCr1QM5uX
-	HoseOw==
-X-Google-Smtp-Source: AGHT+IEYlHtlcaIbYzh4uIcS3eRGPuN1bn7uG7yYIbKkIFRYhenhwAQ61nxtn9INckW1qFWU7tGOevIpEsnyQ+lU0tE=
-X-Received: by 2002:a05:6512:b96:b0:594:5545:b743 with SMTP id
- 2adb3069b0e04-5945f1f4346mr2601951e87.27.1762818419930; Mon, 10 Nov 2025
- 15:46:59 -0800 (PST)
+	s=arc-20240116; t=1762818644; c=relaxed/simple;
+	bh=29gaiYI3dWNEWIACZ9XRwKB433NzhJewEGqvUDHbs5c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V91a5+cSv8Mm8dhy7iY/6YbbDhEUVKGiC90w7vXpCjASV6fFD8RuP1J3vIKeetcngjLvYcEHpZ0+cOyLDeWeYEA3OpcO+N/RREARzkFAxblQKi6FlyG5fFB0HUcfJHp+kg8BddFIj6SvWcqeqZ/hd2xHTSd94o5uNqQC1EbnXyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bdzdViAu; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762818643; x=1794354643;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=29gaiYI3dWNEWIACZ9XRwKB433NzhJewEGqvUDHbs5c=;
+  b=bdzdViAuTkHv4lSsIcN5fkJ1LF0SzC7I9EEiwNqW0caoQugzNMHuaa30
+   IZ8TkgvlYLZQi2uuQP7sG/maZHLxk7v/dv0X/I0m7Ebtvbz3QIrEqz7pr
+   ko/tvGjbDMOiwElna0ZnuND2tgJ8nXW9YPHeIK1Jraa6McJcBV1Odd0AJ
+   coOC48YG6JqoXIDl65wLHHKHrlDj7VnlDa3eYaO2YWqr8ZEV9+iECqYGo
+   rJVNAn3byue7OnPVzlRyHMU9dVgCVlb6bbDe+5WWjYZDC7Om5oF/f2GVe
+   CDHpR+t6f53XCXbo9689wmpwtAmFFYh7sDZecx6qMix4Nrq54pCU3rokc
+   A==;
+X-CSE-ConnectionGUID: YJF+iwTrR/6ULUp7gLpFoQ==
+X-CSE-MsgGUID: Lpi0JM1aTiivtpFn/FnAoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="64910716"
+X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
+   d="scan'208";a="64910716"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 15:50:42 -0800
+X-CSE-ConnectionGUID: v0/8y6UUT1OeyU+Cf1Kd2A==
+X-CSE-MsgGUID: vDFYy77vQXaNq+urdOQq0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
+   d="scan'208";a="188772879"
+Received: from spandruv-desk.jf.intel.com ([10.54.55.20])
+  by orviesa007.jf.intel.com with ESMTP; 10 Nov 2025 15:50:42 -0800
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: alexhung@gmail.com,
+	hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] platform/x86/intel/hid: Add Nova Lake support
+Date: Mon, 10 Nov 2025 15:50:41 -0800
+Message-ID: <20251110235041.123685-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106235713.1794668-1-ansuelsmth@gmail.com>
-In-Reply-To: <20251106235713.1794668-1-ansuelsmth@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 11 Nov 2025 00:46:48 +0100
-X-Gm-Features: AWmQ_bmWEn6D47GtrYlRXbtf5iV6J32LnDgS7NEk87vjG42kQgZzdgtZdTywXVE
-Message-ID: <CACRpkdYOXSm5BaHgij_=L32kq+fkx_ggSJ7G5a=064FDvMR4EQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] pinctrl: airoha: add Airoha AN7583 support
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 7, 2025 at 12:57=E2=80=AFAM Christian Marangi <ansuelsmth@gmail=
-.com> wrote:
+Add ACPI ID for Nova Lake.
 
-> This small series introduce support for Airoha AN7583 pinctrl
-> support.
->
-> Most of the changes are generalization and cleanup of the Airoha
-> pinctrl driver. These are needed as all the array in the inner
-> function were hardcoded to EN7581 and didn't reference stuff
-> from the priv groups.
->
-> Everything is changed to match_data and priv struct so
-> adding AN7583 is just a matter of adding the structs.
->
-> Also the schema is generalized where needed to address
-> for the small difference between AN7583 and EN7581.
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ drivers/platform/x86/intel/hid.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-All looks good and bindings ACK:ed so patches applied!
+diff --git a/drivers/platform/x86/intel/hid.c b/drivers/platform/x86/intel/hid.c
+index f25a427cccda..9c07a7faf18f 100644
+--- a/drivers/platform/x86/intel/hid.c
++++ b/drivers/platform/x86/intel/hid.c
+@@ -55,6 +55,7 @@ static const struct acpi_device_id intel_hid_ids[] = {
+ 	{ "INTC10CB" },
+ 	{ "INTC10CC" },
+ 	{ "INTC10F1" },
++	{ "INTC10F2" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, intel_hid_ids);
+-- 
+2.51.0
 
-Suggestion: since this driver has:
-
-1. Exactly one group per pin
-2. Use some accelerated GPIO operation, .gpio_set_direction
-   in struct pinmux_ops
-
-Have you considered implementing the new .function_is_gpio()
-callback in struct pinmux_ops to tighten up the GPIO strictness?
-
-Yours,
-Linus Walleij
 
