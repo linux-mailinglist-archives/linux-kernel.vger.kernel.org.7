@@ -1,244 +1,419 @@
-Return-Path: <linux-kernel+bounces-893470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7A9C4782B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:25:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5D3C4782E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 729534F1C90
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:17:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2ED044F1DEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0706313546;
-	Mon, 10 Nov 2025 15:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e20M9q2+"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010013.outbound.protection.outlook.com [52.101.61.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9955315D2A;
+	Mon, 10 Nov 2025 15:17:08 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B68026F287;
-	Mon, 10 Nov 2025 15:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787813; cv=fail; b=Sp+oInv+9fvWdxrY3CNEcThp+GbJ1K/ZYmU991SBjA7JYzeJyJnpBU1jotuaWSZSRh6dpggLcyOaKj0IwE9zInNdo9yxJi5ofwhYlAbgk+eBfm3RgUOo7EOxUeCMY0FCKI2mYFUOTwjm2sMgZfxSChl7HR0QzlCB6gxiWE75lD8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787813; c=relaxed/simple;
-	bh=pUh4UAViell0QcrKNtj4Nn58ObupZk1yar6sGkRd9xE=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mqeyzIPpQXvMPG2zEibjB2vQpI/VQEy5CvNGXkBHbwnhcSuYvYrvsmLPVeIlu8sB0X7GaLDtadSHqeU52U6S1mmaAJzaDzGSu2CLpqMqdY6jKCugIl6vBADadLvNeFbAAquH6gnnDQW2wQ9FMQqZNNhhuIu/GVazCgzsx+0O5Ow=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e20M9q2+; arc=fail smtp.client-ip=52.101.61.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x1tHoiUAABE8kodMXUCeyBrphdu9vTI4PeKuHEOYBqXYcu7SpC5ZndhuT9S7eoPo/GS2+/iPxzeNH/LwREJsp0Ksg9ojE6JB0CR98ny4BJpx7VlpU2c8p46NVNODO6CPSyvBBVju+xDWwQx7XzEFD96w6VLc5l59Zc62Jk6Ob1C6F0owgj1U8zVreVmyH6p4PWMUAWecxABj3tmK47Wev3Out8GfT7/rl0UcHey7u/rd8398yziSGnHpJNqr/r60Srd4NhvG68eLGJuA5FzMU/Nk8WFP8jUslf4xCQDFSXmhUxOQzMm0yKSBCYMxTTcBaQAN/o+zGe/aPCU9ZWTfAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qighp2L/6APX379gKD1ZCJt7ld6eHyNxcHDX4XIiOn8=;
- b=K/TxcvBObHR6EzPkqDVPiBdwgLfQ0PtqNotBj/qYm7e3WReJ9N4XEKmOrnhTa7m7bFgvEnlATmNpt/VLJdz1M+jF7O+p9PI4kIUcf4EvCNEdbZUd9EdWS1waPamGqmE3iAgHZip4IuBoHMfixnGTpL2sXUgRvdoq/+KjY1Fn8TwIkd26Otit06ku+iAicMikTPX+Jd1uuyehf7rucBrMm1JApm3E6TxOH0AQxhg9DbKXsym0jx2DEcvW2yUwZuJT9gimjo8nwsSo63eDc479eqN2luWEGisjKUD3TkbwfmeguIDFf2ShfTPNbANlg0gwNh7TudDhxxbCljR+jduikg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qighp2L/6APX379gKD1ZCJt7ld6eHyNxcHDX4XIiOn8=;
- b=e20M9q2+RvI6IHrcs2TKy2evDK6k9McbQIEwt2onqDoF8YrckkIY31BBIJRd5YZKmIKXlXl32JeZwgFedhcgIpu65SzAKM8lc6hbbW2lwAJZVc0lczVphMCReyDrOZsb6+/rD1n4ODaKeuzjbRXK8ZoX0JpdsaN1nwBeXLTb6UCbC8+SdtcoRPO3chP2Vf+N58nXAwXWzAdJiMvsqd6l+JUJZ4vx9M1OEMEaxBVPqzr0W3kl3Khxsag9CBRdAdBVCm38Ft000y2BP548/7Mtvcw9VIBH0ERt+TOUc7iEa3wQcPuKMEQsVbBigt8fA7gh9dQFpxjJaN2dAoxY38fk3g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by IA1PR12MB9531.namprd12.prod.outlook.com (2603:10b6:208:596::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 15:16:48 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 15:16:48 +0000
-Message-ID: <b07b21e8-5dd4-4d40-bcad-dd8dc4fbaef4@nvidia.com>
-Date: Mon, 10 Nov 2025 10:16:45 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/12] nova-core: sequencer: Add register opcodes
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Timur Tabi <ttabi@nvidia.com>, John Hubbard <jhubbard@nvidia.com>
-Cc: "dakr@kernel.org" <dakr@kernel.org>, "lossin@kernel.org"
- <lossin@kernel.org>, "ojeda@kernel.org" <ojeda@kernel.org>,
- "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
- "a.hindborg@kernel.org" <a.hindborg@kernel.org>,
- "simona@ffwll.ch" <simona@ffwll.ch>, "tmgross@umich.edu"
- <tmgross@umich.edu>, "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
- "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
- "gary@garyguo.net" <gary@garyguo.net>,
- "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "aliceryhl@google.com" <aliceryhl@google.com>,
- Alexandre Courbot <acourbot@nvidia.com>,
- "joel@joelfernandes.org" <joel@joelfernandes.org>,
- Alistair Popple <apopple@nvidia.com>, Steven Rostedt <rostedt@goodmis.org>
-References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
- <20251102235920.3784592-9-joelagnelf@nvidia.com>
- <d6c9c7f2-098e-4b55-b754-4287b698fc1c@nvidia.com>
- <0FF9536C-8740-42C3-8EF1-5C8CD5520E49@nvidia.com>
- <93c758298250d2be9262256a698c243343b64ebc.camel@nvidia.com>
- <3c625930-348a-4c96-a63a-6a3e98e59734@nvidia.com>
- <acc56fbb56c3f40119e5a6abf9f13093d7f4c7e7.camel@nvidia.com>
- <ac85d8be-3cbd-4a51-a627-3a1a9926d801@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <ac85d8be-3cbd-4a51-a627-3a1a9926d801@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MN2PR07CA0023.namprd07.prod.outlook.com
- (2603:10b6:208:1a0::33) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2445D23D7DE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762787827; cv=none; b=HjffosnioqGXJCO4Ha1hsmD85WodYo3tQH41tyDGi6zWSob0qxbvrybpODPlgwtt1EgP6ZIpFid98uBsp22OYC1ptSScBvVXfpyGoUI7iItknoV0mybn0rapsKWjMoo4YbnPPoLmg2mWnaec4A9kDxBlobCxhDUdOafxJ0Zemys=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762787827; c=relaxed/simple;
+	bh=hTR2eRoA9IaD5SwCwC1XZAu15kpG3H/hpCJoeXY/NUc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rZuwaGlZcQilo9nT1sxEBMHay4NA9GaxLRA3Z9FSlLQ/QfLh6dTtgcXM/FoJU5TPXRqpgIGHsE9tkF/Z8nGG0NPBLC4N8cgbd28NXXBXh8AELkmZafCYx9RgC6yBLIfl9v+xuzj8u46devkYZmHG10IimisPmfX+WLx/8+g6qe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-94895e290f3so192362239f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:17:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762787824; x=1763392624;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HHAPnYIadeTRfoQn0fqCyJuowvxOpaPE7sm9AepTyPw=;
+        b=RcfBFxOwUvaU1mmDgOfSOWpai0DHeZWYz6oiAIfm+0AVZXFyvlJpmEWvZuBBWCOM+w
+         RS47nUiaoq9wJg89OwweWXEhc4dbYp6OgfGEUtSzt2CujhUHKnOy6x7iNdeDv/9XjhK8
+         w/f7QF73nsLDYFA0FJxMDqcnteESaWslVvSsPBHctRCaD1Hs+K5+o+bLdvks9JWY8wx6
+         mR2zRJG94C2cMvT8UR/VXG2meCOTaxo/Ic9LSWkSkBVi2/O5RijosF7e1fJgF7plU1EN
+         4WrWlynv7YSXyiMNWKhwX3dnjZ+MbnYks2ncMLFC+vuGpTi+bn7PTwFCR5rMuvMMlQ15
+         C2gg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzlUmIA2pZL0a4sTXyU0jDKNDX+Vdc4Ao5dNRV9c4ISmk0t9uR5zMSQc+Vq+8v3jUY4oujMFqOzPoc0EU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmauTekPZhLJtm7KW/1QCzeX40/4jPkFkfoX/ENMvAkjXD3L7G
+	VOJu0y5/kLHS670148dwaKBAeHTGIJjLNKf2dCg/x5e3kAMLwBYeK5Usix1jq2yjA+RHNfjLi6c
+	IXAU9cFbOAuZsWdpYnSC0BwebDcpkb0RXrFLk6lzGP5MzFqHiyWZtvx+D5cQ=
+X-Google-Smtp-Source: AGHT+IHdHpWt/oOhZg5oTnRUqcPDrPHKOLr/J02iuJtvpOzFzj/XRoCfZ2U/bUx/sbpCvI1hmrCp+hCtE22kgfIMp01jGA+HYe8r
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|IA1PR12MB9531:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1be2b8ae-6801-4dd5-62b5-08de206c2adf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bXBXWi81WFJXQ3pBRVdkaTBVRU9PdE1DYlVzY3FZYmlJekpRZFc3WlI2Y0xt?=
- =?utf-8?B?UkNrK0R3SU55Vk9HSTNuekpwb2FSN20rZ2YwV1pLcXJXaHRxRWtRZS80WkFS?=
- =?utf-8?B?bXp1NzBUQ0hrOGFFOWd2eXNydHdSOGlkREVGeldPU05LbVhOakEyblJHdUZT?=
- =?utf-8?B?K1RPMlFidmovcjdkTjdadDJEQ09NRGkwOG1uN2ZvWDdIRXpWYjBLOVlLSG5z?=
- =?utf-8?B?Sm43ZUZIbk1lWitGZ1llZXkybFlKcHJBbWdwQVBpTkZtOFNJcHJnZkdnMGtL?=
- =?utf-8?B?L2xQaE5RdjRkQU9TaFZZTzhQSTBKQnp6V3BPVXMrZXVGcnpJVjErVlBEUDdJ?=
- =?utf-8?B?cmVIRS94dkk0RldNTm42RkJjRWZmQ0hJb1lJaWdMU3hQNnFUenFWUU9DaHN6?=
- =?utf-8?B?WmRIblZiUjM5YjJQaXQwVFpQc0FuSWppQXJ4SUZ6dUdwbC80RGNhNE5hT25v?=
- =?utf-8?B?RmF0ZVBHdmFCSlJrUS8ycG1nbDh5K2kvTmMwZ1BlSUEvZ3J5YUMvejdYcWNn?=
- =?utf-8?B?aHovYXdqZmlSVExsOUJsREtTeC9md25VWXNRdHdJU2w0WGg5d0xtell6STBa?=
- =?utf-8?B?UFh6Y09LYUthVE9LSXlTMmd4TUlTTENQcHdJWVZZWlpUOFdMMTcxbHhNeFEz?=
- =?utf-8?B?L2FKcUs4bUlVTmlScEZ4OVVxNEd3THlYd3JiUTQ0bzVCZTZEK1FnaE1vaVN4?=
- =?utf-8?B?cmloTTBybE1abGhHaVc5SU1UREU0UlZmT3l5c1hoallyTjNkNFg3TjI3M1ha?=
- =?utf-8?B?U2E2SkNPNTVGeTBZdjB3S3BjSEFaOWExQXlMTDlLanlsN1paeStIZUI0T3hG?=
- =?utf-8?B?MDhIYXMyM1BVeERLTVU1R1NFQ2t5bXFBTHJQdzlVbW9hN3hVQmd0ZXNyVWls?=
- =?utf-8?B?NVVCTGY1RHR4bHY4YW5WZFNRUjQ2U1E1akoyN1p2a0hoaXVLS3FlZjJQVkF0?=
- =?utf-8?B?dHlRWElib1lVZmpaemxzT2gveklMNXYwSDBMRGM5cndrdksxMEttUWplMWRE?=
- =?utf-8?B?R1NjSUtrYkp4L0RwU2hhN3ZTU2FwdWZPS1FNQnBkenJ1NUNhOUJUZmN6UC9r?=
- =?utf-8?B?YnZrWDR2TW4wR2pucE5kN2hMSEVxbHZlcWhLdTNXRDdtcGxmYnNzMmUyRWVk?=
- =?utf-8?B?Y2Z2b1ZKTVhhVmdzTWw3SVpaMFhkdkQwaXNhQzN3S3JVQnhqQ1RzL3FOaTc1?=
- =?utf-8?B?cmU1Zk44MGhGMlhSUW9PZlgyYWlIYmVYMlZkbWZseHZCdDlmMkNORklnb0FJ?=
- =?utf-8?B?c1pTazNXRTU2Vm55bGpPczl0Y09WdEV3ZXNrSVZjWXo4TzJnKzVITGI3RFdD?=
- =?utf-8?B?Y2FwRW96M0NWUWZTZVBJc1JCRk13czVzQS8xanlURTJ2WEYrZ1hkSFdwTytT?=
- =?utf-8?B?RzVGMkZrZWJjeVR5bXV1UEhESGY0dFNsMWlTVVl6WWpUdEVZaUxiRVFTYlJ4?=
- =?utf-8?B?UVFXYzVBMnZXaXFVUUU3UGh4UWhCc09YVDJxMURMeEdyd1Vya3ZTOUZzYTFn?=
- =?utf-8?B?MEl5alIxdXhzdkJENUk2NGNrS3RBYmJIWXIvcmhPc3lhT1BaMityb0xZS1ds?=
- =?utf-8?B?SFlYeVJtTFBKZHdNZ1BsR1RzMStjUVppcDJZUllBdXk4TE8zMUZZNitUcUFx?=
- =?utf-8?B?NjNaMGNPMlZvZzI3S1JqMlNoMTYwYVNUTTJqbHdEalUrSEhrNlB1QUoyNG1n?=
- =?utf-8?B?UHpwUUZoZDg5bllGZCtGMnl1MnQrc29iM2lxNEVLMTgzU2ExZnFOV2ZEQjJN?=
- =?utf-8?B?UlBpYWd5UEpNZEtlQ1FFbTVjWjNNb0xwazJ1VmxZS05XQWZ4R3pBRXczc0dh?=
- =?utf-8?B?UEdidGQ5ZVkyRGRYOEpQVFRLNWRNUFBIZTRGKzVPeDlTNW5majNuYzlCWlR4?=
- =?utf-8?B?WExrZ0RBWE1zTDFBTEtTWjdGeHk3VUw4Z0JROHFsSjN2eldVd1owR1NYdUlI?=
- =?utf-8?Q?x0ZCDCUsuuN8MbYSjTTWQt8Ql3Wqzx2A?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?S1pTeGU2Q1JxT2lRdGtwaXB5S2VkRW40bVROd1JiYzR2WDBNYUdTdHhxTk80?=
- =?utf-8?B?RGNLYkVyb1ByUGYrMlNaTC9PZWQ0YUpVaW5oenFQekIxOEpCZXhBL3JKL1lr?=
- =?utf-8?B?dnlCZmYwSHFwT1FtRFBhdFl4SVdvSW1TeE4rR1dvY241KzdZUG9Hd3NKZkFE?=
- =?utf-8?B?ZDVIMHZweWt3b0NZcXoyTkpEdWl0ck9icVl6YzF0VW9MdVZpRnpPTDlUdnJu?=
- =?utf-8?B?U1pEdnJVYlNjbGJuU2ZVUkp3T0FMYlJCeHhuUDhjR3U1ck5ML1NmdlEyNjlV?=
- =?utf-8?B?ZkRJN2t3RG1Sb1ZIc2VuaFJaeGtXc2JsT0pWaHhFTUlZTU5DSExsK2VjV3Ar?=
- =?utf-8?B?SmFQZ2NER3Nhd2VvMXp2Yzl5cmoybVRybnhPYjFHd1JkczkwNXVYQ3hoeit1?=
- =?utf-8?B?YkVHYW1MRHlYR2E4Z1NpMVlLUmdoRmFpbUFFZlRKeW1uUG5BZkYwbkNQUk9T?=
- =?utf-8?B?U3VXYWxJOWNGNU5MMlhYUjZvbzhKWXJCSkJ4RFpNUjhoYnI4NW52dlFleFpE?=
- =?utf-8?B?dGFOMVJ5NXl5SVlxRTNIRFlPU2tVWWZSWWdDbUtvZlZheUNFdjlGeTFtZ2xv?=
- =?utf-8?B?bW5xSFNESXdST1Fma05sdXpEK3cvbEplV25ReUJ6QUhYTlhPbTdmYnFsaSs3?=
- =?utf-8?B?dFhmOEhhUXZwUjFMUmYza1QvSlg1UmpaQk4xbWVsK1dGK01GQTZoZUM5Qlo5?=
- =?utf-8?B?Vk4vcGdNNzMvUXEvUGpvbUQ3dzNlbmZGMnNLNUt1RFE5OE1WWkljQTlNWWJ5?=
- =?utf-8?B?b0RocFJDSmZ4SC9BRW44ZFk5TXpYV3VwYmVKNmM1UWlGb1JvMVhQQVBXeHRN?=
- =?utf-8?B?dHZGVFZwQ0p2NnBlYk9CcEdmY0JjY3VBaEtHd015eHV4YWNPL2xpdGcvbkt4?=
- =?utf-8?B?aVluSWpPdHFESHovUU9nRlB5WHZQbGZ0YTZXV1RUdUpTeGxvN0VZOXYxd2FL?=
- =?utf-8?B?V0RQVitKSUM1OFhCVG02S2xsSUk5SVNXQVg1eUI0V0o5Q0lrUE4wbFpPV29v?=
- =?utf-8?B?MlB6T1E1Wmc1Y1IydE9mazcwVkorN0lHb1NjYWJKaXoxZ3djTGt4NVoyZnhy?=
- =?utf-8?B?dFZPY252YUFVSzJ5ZHVkY3FGbnRwcndqRkpUWG5rSDBwMEllMkRXMWFFb21Q?=
- =?utf-8?B?Vk92TVZsTEN1amRHN1hnY2tLc0kwcmxYaXBjdmtsNEFJZkpxaFA2UmhWcnVY?=
- =?utf-8?B?UUVwK3BmK1U0cmx0eWc4b1hWd1lHWVl6T1d3THl3bE9xcmpZTlBwWkZsZkVP?=
- =?utf-8?B?YlFiWHhKNDI2MmZLMjZPRXZwUnE5dkpvMnk4R2UvN21rTWFoUVdlbjNqdEZG?=
- =?utf-8?B?WWU3bVd4amY2cjBEMXVRN0laZ1Vmd0FiT0FZQUx5N0p3bWF0ekJHRFJONXk5?=
- =?utf-8?B?aGVNdnkyZU8zTExTb3dTQ2dybzFUbXF0bk52VU92YUxlcll1UDdBY1VLQ0hM?=
- =?utf-8?B?Si9YM1J1ZGxFOWVKam5CYUZRWmEybjcyZjB3MWlFTGhmVk5JSERwVGRzenVw?=
- =?utf-8?B?Y3VRa0M5d2dzL3RYQ0g4Zzl2WEVoeGtyc0wzeWRrS2JnWEVtd256VDBkSnZx?=
- =?utf-8?B?N3djSzdnS0FqNWcxNEFnUlJSei9JdGFOTk9VS0RHWmdsRDErL2VrODA2Q0pZ?=
- =?utf-8?B?NDVCT252bUJvanJDVnFERFZSa002K0k2WTQ4MWh1cDBUR29LL2pzbUM0eUJz?=
- =?utf-8?B?NVFLUWkvMkNDQjVxam5sdVNVOG84SXhCWlIxTUFnTjlFdkRoeHowc3FrdVV4?=
- =?utf-8?B?aFRSSk9zSkErOU1OL3QwQUlXb3RwUlRkdDYxSFg5RjI2QjJTNkMzVkFPbW4x?=
- =?utf-8?B?ZVhwZzA1dXdvek5Gc2xCUXNXbU5VNXhKZWM5NzNTaGx1czBsR0tUK3AxWUkv?=
- =?utf-8?B?cUFJT1RQdVNuckxuUEJuWkdWOHVLcC9CbFVGMnBIMXVwTDVWZFRaQmg3aFdS?=
- =?utf-8?B?VmJPZS8rQ0RCTHFGVXhkMW1LYVJQQjkzbjdNdDBCZ08wcXV5aHlpbVFNMjF3?=
- =?utf-8?B?N2Zkc2g5bExZamRLbUdiaHlzMm5JY1pSdlZpOFVPU1V6OUwzTW1tRFBuMHIv?=
- =?utf-8?B?QnhlVFJMbHpRU2VWZkpIZ1YySnlFQTV4QkJybmNWTHVncGUyeVF0eExENlZz?=
- =?utf-8?Q?YUxq7X1VDG/qBJU5iHbeqoxfn?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1be2b8ae-6801-4dd5-62b5-08de206c2adf
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 15:16:48.3759
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: O/R05JXla7OZ12sjK2lQXgMvPoFgWlLypky4sTChXiNlS/xnYnodKMPgllaHImCCLtbKLNhrrOKSluoeNrdFIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9531
+X-Received: by 2002:a05:6602:1492:b0:948:a28c:fa00 with SMTP id
+ ca18e2360f4ac-948a28cfd90mr608512939f.1.1762787824130; Mon, 10 Nov 2025
+ 07:17:04 -0800 (PST)
+Date: Mon, 10 Nov 2025 07:17:04 -0800
+In-Reply-To: <tencent_D1BC2D0D6C889484EB5AEC9ECC9C78766C0A@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <691201f0.a70a0220.22f260.00f6.GAE@google.com>
+Subject: Re: [syzbot] [block?] general protection fault in rtlock_slowlock_locked
+From: syzbot <syzbot+08df3e4c9b304b37cb04@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-really +Steve Rostedt this time.
+Hello,
 
-On 11/10/2025 10:16 AM, Joel Fernandes wrote:
-> On 11/5/2025 6:19 PM, Timur Tabi wrote:
->> On Wed, 2025-11-05 at 13:55 -0800, John Hubbard wrote:
->>>> #define nvdev_trace(d,f,a...) nvdev_printk((d), TRACE,   info, f, ##a)
->>>> #define nvdev_spam(d,f,a...)  nvdev_printk((d),  SPAM,    dbg, f, ##a)
->>>
->>> ...and those are unusable, unfortunately. I've tried.
->>
->> This works great for me:
->>
->> modprobe nouveau dyndbg="+p" modeset=1 debug="gsp=spam" config=NvGspRm=1
->>
->> I get all sequencer messages when I boot with these options.
->>
->>> ftrace/bpftrace, maybe those are the real way to "trace"...or something
->>> other than this.
->>
->> You could say the same thing about most dev_dbg() statements.
->>
->> I agree that dev_dbg for sequencer commands is excessive, and that implementing new debug levels
->> just to get sequencer prints is also excessive.  But Nouveau implement nvkm_trace for a reason.  And
->> we all know that because of ? in Rust, NovaCore does a terrible job at telling us where an error
->> actually occurred.  So there is a lot of room for improvement.
-> 
-> IMO, the best way to do this is the tracing subsystem. It is the lowest overhead
-> runtime kernel logging system that I know off, lockless, independent of the
-> serial console etc, next to no runtime overhead when off, etc.
-> 
-> I recommend we use the tracing subsystem for "trace" and even "spam" level
-> logging levels for Nova. The brave souls can always ask the tracing subsystem to
-> also spam to kernel logs if they so wish.
-> 
-> ++ Tracing Czar Steven Rostedt as well. Steve, Nova is a new modern Nvidia GPU
-> driver.
-> 
-> I guess we have to decide how to do this - what kind of tracepoints do we need
-> for Nova. One use case that just came up is RPC message buffer dumps for
-> debugging communication with the firmware.
-> 
-> thanks,
-> 
->  - Joel
-> 
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: task hung in lbmIOWait
+
+INFO: task syz-executor:6322 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:21000 pid:6322  tgid:6322  ppid:1      task_flags:0x400140 flags:0x00080003
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5325 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6929
+ __schedule_loop kernel/sched/core.c:7011 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7026
+ io_schedule+0x81/0xe0 kernel/sched/core.c:7871
+ lbmIOWait+0x189/0x6a0 fs/jfs/jfs_logmgr.c:2152
+ lbmLogShutdown fs/jfs/jfs_logmgr.c:1863 [inline]
+ lmLogShutdown+0x43e/0x850 fs/jfs/jfs_logmgr.c:1683
+ lmLogClose+0x28a/0x520 fs/jfs/jfs_logmgr.c:1459
+ jfs_umount+0x2ef/0x3c0 fs/jfs/jfs_umount.c:114
+ jfs_put_super+0x8c/0x190 fs/jfs/super.c:194
+ generic_shutdown_super+0x135/0x2c0 fs/super.c:642
+ kill_block_super+0x44/0x90 fs/super.c:1722
+ deactivate_locked_super+0xbc/0x130 fs/super.c:473
+ cleanup_mnt+0x425/0x4c0 fs/namespace.c:1327
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3488f909f7
+RSP: 002b:00007fff27296f08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007f3489011d7d RCX: 00007f3488f909f7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fff27296fc0
+RBP: 00007fff27296fc0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007fff27298050
+R13: 00007f3489011d7d R14: 000000000002bbc3 R15: 00007fff27298090
+ </TASK>
+INFO: task syz-executor:6326 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:21768 pid:6326  tgid:6326  ppid:1      task_flags:0x400140 flags:0x00080003
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5325 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6929
+ __schedule_loop kernel/sched/core.c:7011 [inline]
+ rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7307
+ rt_mutex_slowlock_block+0x5ba/0x6d0 kernel/locking/rtmutex.c:1647
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked kernel/locking/rtmutex.c:1760 [inline]
+ rt_mutex_slowlock+0x2b1/0x6e0 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ __mutex_lock_common kernel/locking/rtmutex_api.c:536 [inline]
+ mutex_lock_nested+0x16a/0x1d0 kernel/locking/rtmutex_api.c:547
+ lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+ jfs_umount+0x2ef/0x3c0 fs/jfs/jfs_umount.c:114
+ jfs_put_super+0x8c/0x190 fs/jfs/super.c:194
+ generic_shutdown_super+0x135/0x2c0 fs/super.c:642
+ kill_block_super+0x44/0x90 fs/super.c:1722
+ deactivate_locked_super+0xbc/0x130 fs/super.c:473
+ cleanup_mnt+0x425/0x4c0 fs/namespace.c:1327
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f00d3ed09f7
+RSP: 002b:00007ffebb033f08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007f00d3f51d7d RCX: 00007f00d3ed09f7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffebb033fc0
+RBP: 00007ffebb033fc0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffebb035050
+R13: 00007f00d3f51d7d R14: 000000000002c600 R15: 00007ffebb035090
+ </TASK>
+INFO: task syz-executor:6328 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:21672 pid:6328  tgid:6328  ppid:1      task_flags:0x400140 flags:0x00080003
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5325 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6929
+ __schedule_loop kernel/sched/core.c:7011 [inline]
+ rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7307
+ rt_mutex_slowlock_block+0x5ba/0x6d0 kernel/locking/rtmutex.c:1647
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked kernel/locking/rtmutex.c:1760 [inline]
+ rt_mutex_slowlock+0x2b1/0x6e0 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ __mutex_lock_common kernel/locking/rtmutex_api.c:536 [inline]
+ mutex_lock_nested+0x16a/0x1d0 kernel/locking/rtmutex_api.c:547
+ lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+ jfs_umount+0x2ef/0x3c0 fs/jfs/jfs_umount.c:114
+ jfs_put_super+0x8c/0x190 fs/jfs/super.c:194
+ generic_shutdown_super+0x135/0x2c0 fs/super.c:642
+ kill_block_super+0x44/0x90 fs/super.c:1722
+ deactivate_locked_super+0xbc/0x130 fs/super.c:473
+ cleanup_mnt+0x425/0x4c0 fs/namespace.c:1327
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff3df4b09f7
+RSP: 002b:00007ffd1a51e4a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007ff3df531d7d RCX: 00007ff3df4b09f7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffd1a51e560
+RBP: 00007ffd1a51e560 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffd1a51f5f0
+R13: 00007ff3df531d7d R14: 000000000002bde0 R15: 00007ffd1a51f630
+ </TASK>
+INFO: task syz-executor:6332 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:21000 pid:6332  tgid:6332  ppid:1      task_flags:0x400140 flags:0x00080003
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5325 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6929
+ __schedule_loop kernel/sched/core.c:7011 [inline]
+ rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7307
+ rt_mutex_slowlock_block+0x5ba/0x6d0 kernel/locking/rtmutex.c:1647
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked kernel/locking/rtmutex.c:1760 [inline]
+ rt_mutex_slowlock+0x2b1/0x6e0 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ __mutex_lock_common kernel/locking/rtmutex_api.c:536 [inline]
+ mutex_lock_nested+0x16a/0x1d0 kernel/locking/rtmutex_api.c:547
+ lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+ jfs_umount+0x2ef/0x3c0 fs/jfs/jfs_umount.c:114
+ jfs_put_super+0x8c/0x190 fs/jfs/super.c:194
+ generic_shutdown_super+0x135/0x2c0 fs/super.c:642
+ kill_block_super+0x44/0x90 fs/super.c:1722
+ deactivate_locked_super+0xbc/0x130 fs/super.c:473
+ cleanup_mnt+0x425/0x4c0 fs/namespace.c:1327
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fee8a9909f7
+RSP: 002b:00007ffd370c5f48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007fee8aa11d7d RCX: 00007fee8a9909f7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffd370c6000
+RBP: 00007ffd370c6000 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffd370c7090
+R13: 00007fee8aa11d7d R14: 000000000002c444 R15: 00007ffd370c70d0
+ </TASK>
+INFO: task syz-executor:6334 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:21128 pid:6334  tgid:6334  ppid:1      task_flags:0x400140 flags:0x00080002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5325 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6929
+ __schedule_loop kernel/sched/core.c:7011 [inline]
+ rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7307
+ rt_mutex_slowlock_block+0x5ba/0x6d0 kernel/locking/rtmutex.c:1647
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked kernel/locking/rtmutex.c:1760 [inline]
+ rt_mutex_slowlock+0x2b1/0x6e0 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ __mutex_lock_common kernel/locking/rtmutex_api.c:536 [inline]
+ mutex_lock_nested+0x16a/0x1d0 kernel/locking/rtmutex_api.c:547
+ lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+ jfs_umount+0x2ef/0x3c0 fs/jfs/jfs_umount.c:114
+ jfs_put_super+0x8c/0x190 fs/jfs/super.c:194
+ generic_shutdown_super+0x135/0x2c0 fs/super.c:642
+ kill_block_super+0x44/0x90 fs/super.c:1722
+ deactivate_locked_super+0xbc/0x130 fs/super.c:473
+ cleanup_mnt+0x425/0x4c0 fs/namespace.c:1327
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f54847409f7
+RSP: 002b:00007ffffb9ab768 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007f54847c1d7d RCX: 00007f54847409f7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffffb9ab820
+RBP: 00007ffffb9ab820 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffffb9ac8b0
+R13: 00007f54847c1d7d R14: 000000000002c760 R15: 00007ffffb9ac8f0
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/38:
+ #0: ffffffff8d5aa840 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8d5aa840 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ #0: ffffffff8d5aa840 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
+2 locks held by getty/5556:
+ #0: ffff88823bf520a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90003e8b2e0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x444/0x1400 drivers/tty/n_tty.c:2222
+2 locks held by syz-executor/6322:
+ #0: ffff8880378700d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff8880378700d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff8880378700d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
+ #1: ffffffff8d9dfab8 (jfs_log_mutex){+.+.}-{4:4}, at: lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+2 locks held by syz-executor/6326:
+ #0: ffff8880234ac0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff8880234ac0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff8880234ac0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
+ #1: ffffffff8d9dfab8 (jfs_log_mutex){+.+.}-{4:4}, at: lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+2 locks held by syz-executor/6328:
+ #0: ffff88805973a0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff88805973a0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff88805973a0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
+ #1: ffffffff8d9dfab8 (jfs_log_mutex){+.+.}-{4:4}, at: lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+2 locks held by syz-executor/6332:
+ #0: ffff8880322ce0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff8880322ce0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff8880322ce0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
+ #1: ffffffff8d9dfab8 (jfs_log_mutex){+.+.}-{4:4}, at: lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+2 locks held by syz-executor/6334:
+ #0: ffff8880591020d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff8880591020d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff8880591020d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
+ #1: ffffffff8d9dfab8 (jfs_log_mutex){+.+.}-{4:4}, at: lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+2 locks held by syz-executor/6887:
+ #0: ffff8880326a40d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff8880326a40d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff8880326a40d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
+ #1: ffffffff8d9dfab8 (jfs_log_mutex){+.+.}-{4:4}, at: lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+2 locks held by syz-executor/6890:
+ #0: ffff88803ba640d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff88803ba640d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff88803ba640d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
+ #1: ffffffff8d9dfab8 (jfs_log_mutex){+.+.}-{4:4}, at: lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+2 locks held by syz-executor/6910:
+ #0: ffff8880387200d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff8880387200d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff8880387200d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
+ #1: ffffffff8d9dfab8 (jfs_log_mutex){+.+.}-{4:4}, at: lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+2 locks held by syz-executor/6911:
+ #0: ffff8880570960d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff8880570960d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff8880570960d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
+ #1: ffffffff8d9dfab8 (jfs_log_mutex){+.+.}-{4:4}, at: lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+2 locks held by syz-executor/6912:
+ #0: ffff888061dcc0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff888061dcc0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff888061dcc0d0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
+ #1: ffffffff8d9dfab8 (jfs_log_mutex){+.+.}-{4:4}, at: lmLogClose+0xb4/0x520 fs/jfs/jfs_logmgr.c:1443
+2 locks held by kworker/u8:11/7073:
+5 locks held by kworker/u8:12/7077:
+2 locks held by syz.4.255/7597:
+3 locks held by syz.3.256/7599:
+2 locks held by syz.0.257/7601:
+2 locks held by syz.1.258/7603:
+2 locks held by syz.2.259/7605:
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 38 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:332 [inline]
+ watchdog+0xf60/0xfa0 kernel/hung_task.c:495
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 7077 Comm: kworker/u8:12 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Workqueue: events_unbound nsim_dev_trap_report_work
+RIP: 0010:arch_irqs_disabled_flags arch/x86/include/asm/irqflags.h:146 [inline]
+RIP: 0010:check_preemption_disabled+0x5c/0x120 lib/smp_processor_id.c:19
+Code: 04 e2 06 48 3b 4c 24 08 0f 85 cc 00 00 00 48 83 c4 10 5b 41 5e 41 5f 5d e9 d1 a3 03 00 cc 48 c7 04 24 00 00 00 00 9c 8f 04 24 <f7> 04 24 00 02 00 00 74 c8 65 4c 8b 3c 25 08 90 a2 91 41 f6 47 2f
+RSP: 0018:ffffc9000598f2c0 EFLAGS: 00000046
+RAX: 0000000000000001 RBX: 0000000000000000 RCX: 0000000080000000
+RDX: 0000000000000000 RSI: ffffffff8cda17fc RDI: ffffffff8b3ddd60
+RBP: ffffffff81737c15 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffc9000598f4c8 R11: fffff52000b31ea5 R12: 0000000000000002
+R13: ffffffff8d5aa840 R14: 0000000000000000 R15: 0000000000000246
+FS:  0000000000000000(0000) GS:ffff888126ef7000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2cf74bd000 CR3: 000000003573c000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ lockdep_recursion_inc kernel/locking/lockdep.c:465 [inline]
+ lock_acquire+0xe7/0x360 kernel/locking/lockdep.c:5867
+ rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ class_rcu_constructor include/linux/rcupdate.h:1195 [inline]
+ unwind_next_frame+0xc2/0x2390 arch/x86/kernel/unwind_orc.c:479
+ __unwind_start+0x5b9/0x760 arch/x86/kernel/unwind_orc.c:758
+ unwind_start arch/x86/include/asm/unwind.h:64 [inline]
+ arch_stack_walk+0xe4/0x150 arch/x86/kernel/stacktrace.c:24
+ stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
+ kasan_save_stack mm/kasan/common.c:56 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:77
+ __kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:587
+ kasan_save_free_info mm/kasan/kasan.h:406 [inline]
+ poison_slab_object mm/kasan/common.c:252 [inline]
+ __kasan_slab_free+0x5c/0x80 mm/kasan/common.c:284
+ kasan_slab_free include/linux/kasan.h:234 [inline]
+ slab_free_hook mm/slub.c:2539 [inline]
+ slab_free mm/slub.c:6634 [inline]
+ kfree+0x197/0x950 mm/slub.c:6841
+ skb_release_data+0x62d/0x7c0 net/core/skbuff.c:1087
+ skb_release_all net/core/skbuff.c:1152 [inline]
+ __kfree_skb net/core/skbuff.c:1166 [inline]
+ consume_skb+0x9e/0xf0 net/core/skbuff.c:1398
+ nsim_dev_trap_report drivers/net/netdevsim/dev.c:836 [inline]
+ nsim_dev_trap_report_work+0x7fa/0xbc0 drivers/net/netdevsim/dev.c:866
+ process_one_work kernel/workqueue.c:3263 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+Tested on:
+
+commit:         e9a6fb0b Linux 6.18-rc5
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10b79a58580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=08df3e4c9b304b37cb04
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=152e1a92580000
 
 
