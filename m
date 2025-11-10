@@ -1,142 +1,179 @@
-Return-Path: <linux-kernel+bounces-892275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F685C44BE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:42:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E89C44BEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:43:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C20154E40C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 01:42:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72BF44E3E2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 01:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8206122B5AD;
-	Mon, 10 Nov 2025 01:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C7622FDEA;
+	Mon, 10 Nov 2025 01:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RZscf/x9"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eS3vIvpS"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42CCC133;
-	Mon, 10 Nov 2025 01:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B607715A85A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762738926; cv=none; b=Raoj/Eo+utzI7VPPUsrav2qPP9+z2qRO6LliUGQ48aJSIHamNoIj8bgyDXV3xcFkHxX8cbhttgbymqvCJn3svi8VeiX+yF9oyUn2pN8UCof1jxYTIbWU7sf2Rp7WTrqXoScdnrZjCNiYZ9Tq/QjTju0LCe5uYDv6RUnvBjfro4w=
+	t=1762738980; cv=none; b=a678HyiCBOSu9StXFha8fYRpyVtvxwGABqP6yvu2/F+tx+KojeLQw2yATtuMZ0bucJ6pOhBXFRDvm8MOt+b0lcI3rg1Q4DB+uulhujLI+AWj6QCRx5iEUE5PpLbCmUZjgjcEIpuhst+f4ycUDoBDVEZJVvQ+dw1GSAfiVVb1DNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762738926; c=relaxed/simple;
-	bh=QnfMvaPTMRSHfNakYl6JhID6E7Ylz4P5ZDkx8TBftPg=;
-	h=Date:From:To:Cc:Subject:References:Mime-Version:Message-ID:
-	 Content-Type; b=FrrFJlKe8rbRGU0KOZGbwr/Y282oZnjHyfyX4qyRpKU26JCyaiW2zbH7+UEvvjJUfrVOqGv2T2KxovTg+gn+bxasGfqBt91cJDuHFbum9KYFO2BA+SqoJX963ZUG5dPSl5Wnmk8SzxIrfdrAmG7wY2Dj9iSGEst5au8m+HbigDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RZscf/x9; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Mime-Version:Message-ID:
-	Content-Type; bh=QnfMvaPTMRSHfNakYl6JhID6E7Ylz4P5ZDkx8TBftPg=;
-	b=RZscf/x9G5+VfNxfnp16vHXj90R7gT/gO3R2C8fW8C6OOA5egufnWVBZyZxeyB
-	nyN7dFn7OKDcBbC1QZouf5V3dIKUEcw7RGAEc+z4faWzCyENlygHwwLJEaxLLrt3
-	xOHXxBTV0s8cDJw6jKDKPCl5snar5yAKcEgU2lsgcVIgs=
-Received: from ccc-pc (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgBXcvHFQhFpJ7ubDQ--.63164S2;
-	Mon, 10 Nov 2025 09:41:26 +0800 (CST)
-Date: Mon, 10 Nov 2025 09:41:25 +0800
-From: "ccc194101@163.com" <ccc194101@163.com>
-To: stern <stern@rowland.harvard.edu>, 
-	"Benjamin Tissoires" <benjamin.tissoires@redhat.com>, 
-	"Alan Swanson" <reiver@improbability.net>
-Cc: gregkh <gregkh@linuxfoundation.org>, 
-	linux-usb <linux-usb@vger.kernel.org>, 
-	usb-storage <usb-storage@lists.one-eyed-alien.net>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	chenchangcheng <chenchangcheng@kylinos.cn>
-Subject: Re: [PATCH] usb: usb-storage: No additional quirks need to be added to the ECD819-SU3 optical drive.
-References: <20251107061046.32339-1-ccc194101@163.com>, 
-	<c7bf59b5-8078-4b47-b56a-7b5568272d07@rowland.harvard.edu>
-X-Priority: 3
-X-GUID: 01AFFED0-E363-49A2-9672-038AE8F694B6
-X-Has-Attach: no
-X-Mailer: Foxmail 7.2.25.375[cn]
+	s=arc-20240116; t=1762738980; c=relaxed/simple;
+	bh=roeKHosmV5a9D0vtB00ZurrUNmOU0pldpLOfqIPJE1M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LLdZscJK3wKQF+96Xp5kAHrZR83wH/w/Fc0wosSjDLkpV2A12RK/hE+iQzZYpDeZun1dR05uOVxxm2xuKhxa0TViV5gBARIOTsiEpbkGLDcsNBH+wa0KGZo3yYsOE+AZUja9qFeM0NTm3+ev4vrJpuBK55zODExMKdb1LZ4IAEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eS3vIvpS; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b7277324054so350167366b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 17:42:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762738977; x=1763343777; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JP3DVa4WnhcXTOt0TA+45TQS+vl712XR/n54d7dvW4k=;
+        b=eS3vIvpSX6YkRrMDggJ5LsLm8rc/HDINAe1c7i8O9tjmOzsIuU5HmLiYQiGYV5+tgM
+         palilX0twSPr8UkOVnxJo/Reaq1BZpTk4Ucm1YS8e+9PEnufoovc9FSqmrxtHkSyTnhG
+         ujOOXcRql/4yCuT/WDNI/7s3mjd+EGJFLmNRwroE8IN7NSAVjoHLQzKdvR0fkFrEuf10
+         Me8xXN25PMBUCeJAs85rUgkXGGqAijFEiNQ4MHpRtjV6peRNqF8S4hzGaYcsz1IhbQmo
+         P7Jn9rKATGjj4trer7PWTu1VnuJHBt6bGOjoQ8L2XBoZVq6d4ux9CAfiDw2QTg+lksGY
+         CoUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762738977; x=1763343777;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JP3DVa4WnhcXTOt0TA+45TQS+vl712XR/n54d7dvW4k=;
+        b=igb5EI3AEhGbsnsCFoKjScesWZjxMwr3ucOJC4d9HeZjU1cUnyvmhmE2TGnj1g60z8
+         klB1a5tS8XceCApiL32r2rG5WtQ3Bhu8lWs3/V7lAPx++6n62dzg6/sXxpXqtw/ea+gt
+         c/bfGp1mLL2+Z0SRG054G40WhVYH6XbUcpuAGSKfgjVdLa5ou+vARBcKthW6ndVcHgcF
+         h92igYhQKn1xHsBFLaXzOTQpXOXTgHuOgjsADbUaImkKod12RoczUQ6xVqMlaiRmQNi4
+         cvW1zSu0sGANzKFxVBsAWpTxU8LyJvLiZU7ie7WqvHP7wMd2/LOiIGqMzXXWvEpYsqmC
+         MuQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXb9QdiE+m+hqkvTFT8SjxL17ljoUIe3r8xXm6QAlVIghB16K1qIXkjb0DBSUmUzeW8W9p1owWl9GBlyig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH5aVpc1j+QO7ll0I1DsPIcxvZwfVlZzJFlGyE1LtIcRBro70B
+	G5okgsPVyeXaNuX1mEOeXpczWgSTgN6oxYDPI8s7cN/jysjUagCvXUZdEtLRbW/wnzddZrVq1zc
+	HOOI0JlQO5aTTeP1mePFpoSXD1bJs+VQ=
+X-Gm-Gg: ASbGncuHAH72NCIhU16vHzXLN9RUzKeBc+nI1IzWnKyM2I69KbC2QVjzcYmoqRjZpED
+	a8CL4S83Z/dZr67JzZKSfeLykZCHjU4DQLCQjeFuXSl+kenKLMNpbGwQ++wUhdQy7hFJCyXf7Au
+	ue5zVnpY+tDCIWuEdBi49+18DymO3xPRLxIb2l/iCevQJ9ZO4NsMSsKUcBEV1+Az1Ymde5KVdkK
+	AjKkm1nokEhXhmDJkxG9jtyWE2hYYz3XECORSJJxsDNP8eJ5KIbumWdJbQ/PvmGw/E8zf+b
+X-Google-Smtp-Source: AGHT+IHxalHuUl0diHbHbqSgdtteSP39RbhhDJcfDrHDQLwiewaAgReJxi8MSmaTfP49jHGdIaJy8QVnIJfdydncSCI=
+X-Received: by 2002:a17:907:960f:b0:b6d:573d:bbc5 with SMTP id
+ a640c23a62f3a-b72e05216a8mr651354766b.37.1762738976855; Sun, 09 Nov 2025
+ 17:42:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <202511100941253989454@163.com>
-Content-Type: text/plain;
-	charset="GB2312"
-Content-Transfer-Encoding: base64
-X-CM-TRANSID:PigvCgBXcvHFQhFpJ7ubDQ--.63164S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXry5XryrJF4UGFW8KFyUWrg_yoWrJFW8pr
-	WUta1DCrWkGF1fGwn2yr1UuFyFq3WkAFn5GayUG3y5Xr1Y93WkJr4UAw4UJa4UCrs3ZF1I
-	9ayqvr9rKFW8CaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ua9aPUUUUU=
-X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/1tbiQRgB3mkQG10v6wACs-
+MIME-Version: 1.0
+References: <20251106131956.1222864-7-dolinux.peng@gmail.com>
+ <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
+ <CAErzpmtRYnSpLuO=oM7GgW0Sss2+kQ2cJsZiDmZmz04fD0Noyg@mail.gmail.com>
+ <74d4c8e40e61dad369607ecd8b98f58a515479f0.camel@gmail.com>
+ <CAADnVQLkS0o+fzh8SckPpdSQ+YZgbBBwsCgeqHk_76pZ+cchXQ@mail.gmail.com>
+ <5a8c765f8e2b4473d9833d468ea43ad8ea7e57b6.camel@gmail.com>
+ <CAADnVQKbgno=yGjshJpo+fwRDMTfXXVPWq0eh7avBj154dCq_g@mail.gmail.com> <6cbeb051a6bebb75032bc724ad10efed5b65cbf7.camel@gmail.com>
+In-Reply-To: <6cbeb051a6bebb75032bc724ad10efed5b65cbf7.camel@gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Mon, 10 Nov 2025 09:42:44 +0800
+X-Gm-Features: AWmQ_bl_xaW29RwtOH8GX4T2QXaqHNL_zJ_DvR2CHtswjBcenwUdIazXf1_6bMs
+Message-ID: <CAErzpmtViehGv3uLMFwv5bnRJi4HJu=wE6an6S0Gv2up3vncgA@mail.gmail.com>
+Subject: Re: [PATCH v5 6/7] btf: Add lazy sorting validation for binary search
+To: Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Ihor Solodrai <ihor.solodrai@linux.dev>
+Cc: bot+bpf-ci@kernel.org, Alexei Starovoitov <ast@kernel.org>, zhangxiaoqin@xiaomi.com, 
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, Chris Mason <clm@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Cgo+T24gRnJpLCBOb3YgMDcsIDIwMjUgYXQgMDI6MTA6NDZQTSArMDgwMCwgY2NjMTk0MTAxQDE2
-My5jb20gd3JvdGU6Cj4+IEZyb206IENoZW4gQ2hhbmdjaGVuZyA8Y2hlbmNoYW5nY2hlbmdAa3ls
-aW5vcy5jbj4KPj4gCj4+IFRoZSBvcHRpY2FsIGRyaXZlIG9mIEVDRDgxOS1TVTMgaGFzIHRoZSBz
-YW1lIHZpZCBhbmQgcGlkIGFzIElOSUMtMzA2OSwKPj4gYXMgZm9sbG93czoKPj4gVDo/IEJ1cz0w
-MiBMZXY9MDIgUHJudD0wMiBQb3J0PTAxIENudD0wMSBEZXYjPT8gMyBTcGQ9NTAwMCBNeENoPSAw
-Cj4+IEQ6PyBWZXI9IDMuMDAgQ2xzPTAwKD5pZmMgKSBTdWI9MDAgUHJvdD0wMCBNeFBTPSA5ICND
-ZmdzPT8gMQo+PiBQOj8gVmVuZG9yPTEzZmQgUHJvZElEPTM5NDAgUmV2PSAzLjEwCj4+IFM6PyBN
-YW51ZmFjdHVyZXI9SEwtRFQtU1QKPj4gUzo/IFByb2R1Y3Q9IERWRCstUlcgR1Q4ME4KPj4gUzo/
-IFNlcmlhbE51bWJlcj00MjMzNDk1MjRFNEUzODMwMzMzODMyMzQzOTIwMjAyMAo+PiBDOiogI0lm
-cz0gMSBDZmcjPSAxIEF0cj04MCBNeFB3cj0xNDRtQQo+PiBJOiogSWYjPSAwIEFsdD0gMCAjRVBz
-PSAyIENscz0wOChzdG9yLikgU3ViPTAyIFByb3Q9NTAgRHJpdmVyPXVzYi1zdG9yYWdlCj4+IEU6
-PyBBZD04MyhJKSBBdHI9MDIoQnVsaykgTXhQUz0xMDI0IEl2bD0wbXMKPj4gRTo/IEFkPTBhKE8p
-IEF0cj0wMihCdWxrKSBNeFBTPTEwMjQgSXZsPTBtcwo+PiAKPj4gVGhpcyB3aWxsIHJlc3VsdCBp
-biB0aGUgb3B0aWNhbCBkcml2ZSBkZXZpY2UgYWxzbyBhZGRpbmcKPj4gdGhlIHF1aXJrcyBvZiBV
-U19GTF9OT19BVEFfMVguIFdoZW4gcGVyZm9ybWluZyBhbiBlcmFzZSBvcGVyYXRpb24sCj4+IGl0
-IHdpbGwgZmFpbCwgYW5kIHRoZSByZWFzb24gZm9yIHRoZSBmYWlsdXJlIGlzIGFzIGZvbGxvd3M6
-Cj4+IFs/IDM4OC45Njc3NDJdIHNyIDU6MDowOjA6IFtzcjBdIHRhZyMwIFNlbmQ6IHNjbWQgMHgw
-MDAwMDAwMGQyMGMzM2E3Cj4+IFs/IDM4OC45Njc3NDJdIHNyIDU6MDowOjA6IFtzcjBdIHRhZyMw
-IENEQjogQVRBIGNvbW1hbmQgcGFzcyB0aHJvdWdoKDEyKS9CbGFuayBhMSAxMSAwMCAwMCAwMCAw
-MCAwMCAwMCAwMCAwMCAwMCAwMAo+PiBbPyAzODguOTY3NzczXSBzciA1OjA6MDowOiBbc3IwXSB0
-YWcjMCBEb25lOiBTVUNDRVNTIFJlc3VsdDogaG9zdGJ5dGU9RElEX1RBUkdFVF9GQUlMVVJFIGRy
-aXZlcmJ5dGU9RFJJVkVSX09LIGNtZF9hZ2U9MHMKPj4gWz8gMzg4Ljk2Nzc3M10gc3IgNTowOjA6
-MDogW3NyMF0gdGFnIzAgQ0RCOiBBVEEgY29tbWFuZCBwYXNzIHRocm91Z2goMTIpL0JsYW5rIGEx
-IDExIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwCj4+IFs/IDM4OC45Njc4MDNdIHNyIDU6
-MDowOjA6IFtzcjBdIHRhZyMwIFNlbnNlIEtleSA6IElsbGVnYWwgUmVxdWVzdCBbY3VycmVudF0K
-Pj4gWz8gMzg4Ljk2NzgwM10gc3IgNTowOjA6MDogW3NyMF0gdGFnIzAgQWRkLiBTZW5zZTogSW52
-YWxpZCBmaWVsZCBpbiBjZGIKPj4gWz8gMzg4Ljk2NzgwM10gc3IgNTowOjA6MDogW3NyMF0gdGFn
-IzAgc2NzaSBob3N0IGJ1c3kgMSBmYWlsZWQgMAo+PiBbPyAzODguOTY3ODAzXSBzciA1OjA6MDow
-OiBOb3RpZnlpbmcgdXBwZXIgZHJpdmVyIG9mIGNvbXBsZXRpb24gKHJlc3VsdCA4MTAwMDAyKQo+
-PiBbPyAzODguOTY3ODM0XSBzciA1OjA6MDowOiBbc3IwXSB0YWcjMCAwIHNlY3RvcnMgdG90YWws
-IDAgYnl0ZXMgZG9uZS4KPj4gCj4+IFNpZ25lZC1vZmYtYnk6IENoZW4gQ2hhbmdjaGVuZyA8Y2hl
-bmNoYW5nY2hlbmdAa3lsaW5vcy5jbj4KPj4gLS0tCj4+PyBkcml2ZXJzL3VzYi9zdG9yYWdlL3Vu
-dXN1YWxfdWFzLmggfCA2ICsrKysrKwo+Pj8gMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygr
-KQo+PiAKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL3N0b3JhZ2UvdW51c3VhbF91YXMuaCBi
-L2RyaXZlcnMvdXNiL3N0b3JhZ2UvdW51c3VhbF91YXMuaAo+PiBpbmRleCAxNDc3ZTMxZDc3NjMu
-LjZkMzJiNzg3YmZmOCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy91c2Ivc3RvcmFnZS91bnVzdWFs
-X3Vhcy5oCj4+ICsrKyBiL2RyaXZlcnMvdXNiL3N0b3JhZ2UvdW51c3VhbF91YXMuaAo+PiBAQCAt
-OTcsNiArOTcsMTIgQEAgVU5VU1VBTF9ERVYoMHgxMjVmLCAweGE5NGEsIDB4MDE2MCwgMHgwMTYw
-LAo+Pj8gCQlVU0JfU0NfREVWSUNFLCBVU0JfUFJfREVWSUNFLCBOVUxMLAo+Pj8gCQlVU19GTF9O
-T19BVEFfMVgpLAo+Pj8gCj4+ICtVTlVTVUFMX0RFVigweDEzZmQsIDB4Mzk0MCwgMHgwMzEwLCAw
-eDAzMTAsCj4+ICsJCSJJbml0aW8gQ29ycG9yYXRpb24iLAo+PiArCQkiZXh0ZXJuYWwgRFZEIGJ1
-cm5lciBFQ0Q4MTktU1UzIiwKPj4gKwkJVVNCX1NDX0RFVklDRSwgVVNCX1BSX0RFVklDRSwgTlVM
-TCwKPj4gKwkJTlVMTCksCj4+ICsKPj4/IC8qIFJlcG9ydGVkLWJ5OiBCZW5qYW1pbiBUaXNzb2ly
-ZXMgPGJlbmphbWluLnRpc3NvaXJlc0ByZWRoYXQuY29tPiAqLwo+Pj8gVU5VU1VBTF9ERVYoMHgx
-M2ZkLCAweDM5NDAsIDB4MDAwMCwgMHg5OTk5LAo+Pj8gCQkiSW5pdGlvIENvcnBvcmF0aW9uIiwK
-Pgo+SXQncyB1bnByZWNlZGVudGVkIHRvIGhhdmUgdHdvIHF1aXJrcyB3aXRoIHRoZSBzYW1lIFZJ
-RCBhbmQgUElELCB3aGVyZSAKPnRoZSBzZWNvbmQgYXVnbWVudHMgdGhlIGZpcnN0IGJ5IHZpcnR1
-ZSBvZiBpdHMgd2lkZXIgcmFuZ2Ugb2YgYmNkRGV2aWNlIAo+dmFsdWVzLgo+Cj5BcyBleHBsYWlu
-ZWQgaW4gY29tbWl0IDg5ZjIzZDUxZGVmYyAoInVhczogQWRkIFVTX0ZMX0lHTk9SRV9SRVNJRFVF
-IGZvciAKPkluaXRpbyBDb3Jwb3JhdGlvbiBJTklDLTMwNjkiKSwgdGhlIG9yaWdpbmFsIEluaXRp
-byBDb3Jwb3JhdGlvbiAKPnF1aXJrIGluIHVudXN1YWxfdWFzLmggd2FzIGFkZGVkIGFzIGEgY29w
-eSBvZiB0aGUgY29ycmVzcG9uZGluZyBxdWlyayBpbiAKPnVudXN1YWxfZGV2cy5oLCB3aGljaCBh
-cHBsaWVzIG9ubHkgdG8gYmNkRGV2aWNlID0gMHgwMjA5Lj8gU2hvdWxkIHdlIAo+c2ltcGx5IGxp
-bWl0IHRoZSBleGlzdGluZyB1bnVzdWFsX3Vhcy5oIHF1aXJrIGluIHRoZSBzYW1lIHdheT8KPgo+
-QmVuamFtaW4gYW5kIEFsYW4sIHlvdSB0d28gYXBwZWFyIHRvIGJlIHRoZSBwZW9wbGUgd2hvIG9y
-aWdpbmFsbHkKPnJlcG9ydGVkIHRoZSBuZWVkIGZvciB0aGlzIHVhcyBxdWlyay4/IERvIHlvdSBo
-YXZlIGFueSBvYmplY3Rpb24gdG8gCj5jaGFuZ2luZyB0aGUgYmNkRGV2aWNlIHJhbmdlIGZyb20g
-MHgwMDAwIC0gMHg5OTk5IHRvIDB4MDIwOSAtIDB4MDIwOT8/IAo+T3IgY2FuIHlvdSBzdWdnZXN0
-IGEgcmFuZ2UgdGhhdCBkb2VzIG5vdCBpbmNsdWRlIDB4MDMxMD8KPgo+QWxhbiBTdGVybgoKT2Yg
-Y291cnNlLCB3ZSBjYW5ub3QgaGF2ZSB0d28gcXVpcmtzIG9uIGRldmljZXMgd2l0aCB0aGUgc2Ft
-ZSBQSUQgYW5kIFZJRC4gCkhvd2V2ZXIsIHNpbmNlIHdlIGRvIG5vdCBoYXZlIHRoZSBJTklDLTMw
-NjkgVVNCIGRldmljZSBoZXJlLCB3ZSBjYW5ub3QKZGV0ZXJtaW5lIGhvdyB0byBuYXJyb3cgZG93
-biB0aGUgc2NvcGUuIEFzIHlvdSBzdWdnZXN0ZWQsCml0IHdvdWxkIGJlIGJlc3QgdG8gbmFycm93
-IHRoZSBiY2REZXZpY2UgcmFuZ2UgdG8gMHgwMjA5IC0gMHgwMjA5LgoKQ2hlbiBDaGFuZ2NoZW5n
-Cgo=
+On Sat, Nov 8, 2025 at 3:51=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com>=
+ wrote:
+>
+> On Fri, 2025-11-07 at 11:01 -0800, Alexei Starovoitov wrote:
+> > On Fri, Nov 7, 2025 at 10:58=E2=80=AFAM Eduard Zingerman <eddyz87@gmail=
+.com>
+> > wrote:
+> > >
+> > > On Fri, 2025-11-07 at 10:54 -0800, Alexei Starovoitov wrote:
+> > >
+> > > [...]
+> > >
+> > > > > > > > @@ -610,7 +674,7 @@ s32 btf_find_by_name_kind(const
+> > > > > > > > struct
+> > > > > > > > btf
+> > > > > > > > *btf, const char *name, u8 kind)
+> > > > > > > >                       goto out;
+> > > > > > > >       }
+> > > > > > > >
+> > > > > > > > -     if (btf->nr_sorted_types !=3D BTF_NEED_SORT_CHECK) {
+> > > > > > > > +     if (btf_check_sorted((struct btf *)btf)) {
+> > > > > > >                                   ^
+> > > > > > >
+> > > > > > > The const cast here enables the concurrent writes discussed
+> > > > > > > above.
+> > > > > > > Is
+> > > > > > > there a reason to mark the btf parameter as const if we're
+> > > > > > > modifying it?
+> > > > > >
+> > > > > > Hi team, is casting away const an acceptable approach for our
+> > > > > > codebase?
+> > > > >
+> > > > > Casting away const is undefined behaviour, e.g. see paragraph
+> > > > > 6.7.3.6
+> > > > > N1570 ISO/IEC 9899:201x Programming languages =E2=80=94 C.
+> > > > >
+> > > > > Both of the problems above can be avoided if kernel will do
+> > > > > sorted
+> > > > > check non-lazily. But Andrii and Alexei seem to like that
+> > > > > property.
+> > > >
+> > > > Ihor is going to move BTF manipulations into resolve_btfid.
+> > > > Sorting of BTF should be in resolve_btfid as well.
+> > > > This way the build process will guarantee that BTF is sorted
+> > > > to the kernel liking. So the kernel doesn't even need to check
+> > > > that BTF is sorted.
+> > >
+> > > This would be great.
+> > > Does this imply that module BTFs are sorted too?
+> >
+> > Yes. The module build is supposed to use the kernel build tree where
+> > kernel BTF expectations will match resolve_btfid actions.
+> > Just like compiler and config flags should be the same.
+>
+> There is also program BTF. E.g. btf_find_by_name_kind() is called for
+> program BTF in bpf_check_attach_target(). I think it would be fine to
+> check program BTF for being sorted at the BTF load time.
 
+[[Resending in plain text format - previous HTML email was rejected]
+
+Thanks for the feedback. Based on the previous discussions, I plan
+to implement the following changes in the next version:
+
+1. Modify the btf__permute interface to adopt the ID map approach, as
+    suggested by Andrii.
+
+2. Remove the lazy sort check and move the verification to the BTF
+    parsing phase. This addresses two concerns: potential race conditions
+    with write operations and const-cast issues. The overhead is negligible
+     (approximately 1.4ms for vmlinux BTF).
+
+3. Invoke the btf__permute interface to implement BTF sorting in resolve_bt=
+fids.
+
+I welcome any further suggestions.
+
+Thanks,
+Donglin
 
