@@ -1,207 +1,150 @@
-Return-Path: <linux-kernel+bounces-892349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516EEC44E7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:31:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B056C44E71
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:30:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4843AE4CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:31:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB56188D0F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E304028CF6F;
-	Mon, 10 Nov 2025 04:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AF3274B50;
+	Mon, 10 Nov 2025 04:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hKGvFpC/"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QrKMgcjb"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E711E9B3A;
-	Mon, 10 Nov 2025 04:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB962757EA
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762749080; cv=none; b=ZseB3EpIhjyn0g2PiY/8bgn2y+XtaBx2tHXi8KqwmUHy2bJODzb8ZdPW2GnrB2ICgY/I7nCrJCmD6G0l9pLGUA+abD5ukEpcREmUOo2raMiexYTbqJRThUdRPtbK5GEcgoRiYKvqEqwe0TAvbBH3UUnewVaCCDwbdlj8DbDEI10=
+	t=1762749035; cv=none; b=LhXa1iC3OKEa+fHsY/uTQnfTI6Ztun1B9FRhzyIKeclVsg+POSQKPEwJarcAmHB8mHAC/rWoCLGawaXXUcwY9tdvEqM/WAsxp1vII9eZUDF0/cgNutqu7z9E5AgZwLwdnZwlkUgJS7T8K+20E9qLNZWktWtluGC+3vrFdL05Yeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762749080; c=relaxed/simple;
-	bh=LCAm0UvZlUUKFUUv5Yr8pWyndZnTuYx3ZgJv//Fb2WQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jLQ1zrEipItSU9p8t+WAg46ioWYfY+pw0O3NHmKd9tBD1G8Sp5oA9jMktv0CvkTDNxtv5llvyvz/KgVIS01cwxlxFPlPZ6/s1kpNw6GSZl3AiynV36tqM4L+ceCKxcYEiuMDJt8QquLxybop45ns+UIHRcyK/rQhvs4+2nVrn/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hKGvFpC/; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=jw
-	i5NjaG+BZxYwnYkTFis237SkItp4NthhMjihbLSLQ=; b=hKGvFpC/iuSL6PJ8Tt
-	yr3ZKU4uxaG485Nks0SU8LzqW1NLTURbrvPf0YhN8VNgjx0U8Xhq3HD5oAXpF0a0
-	Yn4sLJqiv6GW74RfqGx0RHInwY++E3pBlIcdKkbA3Q26/pwnJUndUGllV+12c2qX
-	4Vyc+fZXjAVXZ8bRF6c68UD3g=
-Received: from smtp.163.com (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wBXDa0WaBFpd_l9Cw--.39686S4;
-	Mon, 10 Nov 2025 12:20:39 +0800 (CST)
-From: Vanillan Wang <vanillanwang@163.com>
-To: johan@kernel.org,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vanillan Wang <vanillanwang@163.com>
-Subject: [PATCH v3] USB: serial: option: add support for the Rolling RW101R-GL modules.
-Date: Mon, 10 Nov 2025 12:20:41 +0800
-Message-ID: <20251110042041.13873-1-vanillanwang@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762749035; c=relaxed/simple;
+	bh=j3o1PVMLua/Gnsl0SBuyqCBAYrO7OxpEAe/BvmQDT1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TaY5PYwkHCnVtBNvPluiIVXNCzGAfrycGJHfVDL1WlcPQADXTnuYqAWBbRNAh6JU+aiAPUUFiZlBxP9xrV/4xbtM8SOKQMyEFTg8q2ptvulpTTEAZ57WSy91KBKO85yqnkxRFVnLQUWmTdWecqI5f0xdIO3dq4d5HRQCSxYDKVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QrKMgcjb; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762749017;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VM4mtZug8xE4ghkhPgkEdlWdDR6+a0E4+YRze3eMGSI=;
+	b=QrKMgcjb+M+1F+KOE1U1Kz2oPhiC+29MYWaxjYCseEb9dCjF/qm7ht2OVhV3hu6Ni8yXAS
+	0k2iLbwHoKMIxa4K4ZUwxl+IOfLx4O354NnSpcjicDEqtBtrjS0hjI2H/wZRxnioVCq0s9
+	yXbOo+3DumqD4576zhhXeGXKJJNoBrE=
+Date: Mon, 10 Nov 2025 12:30:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBXDa0WaBFpd_l9Cw--.39686S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW3XF1UWF47JF1xJFyftF1fZwb_yoWxCrWDpF
-	48Aa1aqFWrXFyYqFnxCr1fZFWFgas7ur17CayDZr4SqFWSyws7Gr1jyrZ2gF1qkr4Syr4q
-	q3yDG3y8Ka97JFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zEX_-QUUUUU=
-X-CM-SenderInfo: pydqxz5odq4tlqj6il2tof0z/xtbBdRECUmkRZUtHbwAAsK
+Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
+To: Harry Yoo <harry.yoo@oracle.com>, Shakeel Butt <shakeel.butt@linux.dev>
+Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+ roman.gushchin@linux.dev, muchun.song@linux.dev, david@redhat.com,
+ lorenzo.stoakes@oracle.com, ziy@nvidia.com, imran.f.khan@oracle.com,
+ kamalesh.babulal@oracle.com, axelrasmussen@google.com, yuanchu@google.com,
+ weixugc@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ Muchun Song <songmuchun@bytedance.com>, Qi Zheng
+ <zhengqi.arch@bytedance.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-rt-devel@lists.linux.dev
+References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
+ <97ea4728568459f501ddcab6c378c29064630bb9.1761658310.git.zhengqi.arch@bytedance.com>
+ <aQ1_f_6KPRZknUGS@harry> <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
+ <aQ3yLER4C4jY70BH@harry>
+ <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
+ <aRFKY5VGEujVOqBc@hyeyoo>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Qi Zheng <qi.zheng@linux.dev>
+In-Reply-To: <aRFKY5VGEujVOqBc@hyeyoo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-- VID:PID 33f8:0301, RW101R-GL for laptop debug M.2 cards(with MBIM
-interface for /Linux/Chrome OS)
-0x0301: mbim, pipe
-Here are the outputs of usb-devices:
-T:  Bus=04 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  2 Spd=5000 MxCh= 0
-D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=33f8 ProdID=0301 Rev=05.04
-S:  Manufacturer=Rolling Wireless S.a.r.l.
-S:  Product=Rolling RW101R-GL Module
-S:  SerialNumber=3ec4efdf
-C:  #Ifs= 3 Cfg#= 1 Atr=a0 MxPwr=896mA
-I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-E:  Ad=81(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=40 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
 
-- VID:PID 33f8:01a8, RW101R-GL for laptop debug M.2 cards(with MBIM
-interface for /Linux/Chrome OS)
-0x01a8: mbim, diag, AT, ADB, pipe1, pipe2
-Here are the outputs of usb-devices:
-T:  Bus=04 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  2 Spd=5000 MxCh= 0
-D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=33f8 ProdID=01a8 Rev=05.04
-S:  Manufacturer=Rolling Wireless S.a.r.l.
-S:  Product=Rolling RW101R-GL Module
-S:  SerialNumber=3ec4efdf
-C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=896mA
-I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-E:  Ad=81(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:  If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:  If#= 5 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=40 Driver=option
-E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=86(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=87(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 6 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=40 Driver=option
-E:  Ad=05(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=88(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=89(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
 
-- VID:PID 33f8:0302, RW101R-GL for laptop debug M.2 cards(with MBIM
-interface for /Linux/Chrome OS)
-0x0302: mbim, pipe
-Here are the outputs of usb-devices:
-T:  Bus=03 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  6 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=33f8 ProdID=0302 Rev=05.04
-S:  Manufacturer=Rolling Wireless S.a.r.l.
-S:  Product=Rolling RW101R-GL Module
-S:  SerialNumber=3ec4efdf
-C:  #Ifs= 3 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-E:  Ad=81(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-E:  Ad=0f(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=8e(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=40 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+On 11/10/25 10:13 AM, Harry Yoo wrote:
+> On Fri, Nov 07, 2025 at 10:32:52PM -0800, Shakeel Butt wrote:
+>> On Fri, Nov 07, 2025 at 10:20:57PM +0900, Harry Yoo wrote:
+>>>
+>>> Although it's mentioned in the locking documentation, I'm afraid that
+>>> local_lock is not the right interface to use here. Preemption will be
+>>> disabled anyway (on both PREEMPT_RT and !PREEMPT_RT) when the stats are
+>>> updated (in __mod_node_page_state()).
+>>>
+>>> Here we just want to disable IRQ only on !PREEMPT_RT (to update
+>>> the stats safely).
+>>
+>> I don't think there is a need to disable IRQs. There are three stats
+>> update functions called in that hunk.
+>>
+>> 1) __mod_lruvec_state
+>> 2) __count_vm_events
+>> 3) count_memcg_events
+>>
+>> count_memcg_events() can be called with IRQs. __count_vm_events can be
+>> replaced with count_vm_events.
+> 
+> Right.
+> 
+>> For __mod_lruvec_state, the
+>> __mod_node_page_state() inside needs preemption disabled.
+> 
+> The function __mod_node_page_state() disables preemption.
+> And there's a comment in __mod_zone_page_state():
+> 
+>> /*
+>>   * Accurate vmstat updates require a RMW. On !PREEMPT_RT kernels,
+>>   * atomicity is provided by IRQs being disabled -- either explicitly
+>>   * or via local_lock_irq. On PREEMPT_RT, local_lock_irq only disables
+>>   * CPU migrations and preemption potentially corrupts a counter so
+>>   * disable preemption.
+>>   */
+>> preempt_disable_nested();
+> 
+> We're relying on IRQs being disabled on !PREEMPT_RT.
 
-- VID:PID 33f8:01a9, RW101R-GL for laptop debug M.2 cards(with MBIM
-interface for /Linux/Chrome OS)
-0x01a9: mbim, diag, AT, ADB, pipe1, pipe2
-Here are the outputs of usb-devices:
-T:  Bus=03 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=33f8 ProdID=01a9 Rev=05.04
-S:  Manufacturer=Rolling Wireless S.a.r.l.
-S:  Product=Rolling RW101R-GL Module
-S:  SerialNumber=3ec4efdf
-C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-E:  Ad=81(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-E:  Ad=0f(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=8e(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:  If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:  If#= 5 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=40 Driver=option
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 6 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=40 Driver=option
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=89(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+So it's possible for us to update vmstat within an interrupt context,
+right?
 
-Signed-off-by: Vanillan Wang <vanillanwang@163.com>
----
-Changelog:
-v3:
-- Modify the commit summary.
-- Keep the entries sorted by VID/PID.
----
- drivers/usb/serial/option.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+There is also a comment above __mod_zone_page_state():
 
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index fc869b7f803f..8e575716136b 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -2417,6 +2417,12 @@ static const struct usb_device_id option_ids[] = {
- 	  .driver_info = RSVD(5) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x33f8, 0x0802, 0xff),			/* Rolling RW350-GL (laptop MBIM) */
- 	  .driver_info = RSVD(5) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x33f8, 0x0301, 0xff) },			/* Rolling RW101R-GL (laptop MBIM) */
-+	{ USB_DEVICE_INTERFACE_CLASS(0x33f8, 0x01a8, 0xff),			/* Rolling RW101R-GL (laptop MBIM) */
-+	  .driver_info = RSVD(4) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x33f8, 0x0302, 0xff) },			/* Rolling RW101R-GL (laptop MBIM) */
-+	{ USB_DEVICE_INTERFACE_CLASS(0x33f8, 0x01a9, 0xff),			/* Rolling RW101R-GL (laptop MBIM) */
-+	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x3731, 0x0100, 0xff, 0xff, 0x30) },	/* NetPrisma LCUK54-WWD for Global */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x3731, 0x0100, 0xff, 0x00, 0x40) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x3731, 0x0100, 0xff, 0xff, 0x40) },
--- 
-2.43.0
+/*
+  * For use when we know that interrupts are disabled,
+  * or when we know that preemption is disabled and that
+  * particular counter cannot be updated from interrupt context.
+  */
+
+BTW, the comment inside __mod_node_page_state() should be:
+
+/* See __mod_zone_page_state */
+
+instead of
+
+/* See __mod_node_page_state */
+
+Will fix it.
+
+> 
+> Maybe we could make it safe against re-entrant IRQ handlers by using
+> read-modify-write operations?
+
+Isn't it because of the RMW operation that we need to use IRQ to
+guarantee atomicity? Or have I misunderstood something?
+
+> 
 
 
