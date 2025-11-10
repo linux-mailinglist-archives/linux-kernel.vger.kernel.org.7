@@ -1,143 +1,177 @@
-Return-Path: <linux-kernel+bounces-892385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0FB5C44FB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:20:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B977C44FFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:22:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D0B188DFE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:20:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5967188DCF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95CA2E8B77;
-	Mon, 10 Nov 2025 05:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377572E6CBB;
+	Mon, 10 Nov 2025 05:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Hmr3x5Vn"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRrQ4ig1"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894501A2C25;
-	Mon, 10 Nov 2025 05:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B36119F13F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762752016; cv=none; b=eT7wT8Mh9eNTZQaOpoCcExpOchYM8Q1KBogYIWntRJbHOxm0haaYow0jCeqkRZDfkqPp8UOeAxCOhLvXkxXVgrZGLrvZDgIVzzeGKTb5Mi+uD8ZX8RiVNb7FPUXXGvVJbzt/Kdv791+3lKsb1U8EjpuM0sZK53DoRc8KN6OfiXs=
+	t=1762752162; cv=none; b=NXXYs5Ykff4x/0wB54tlzlJyjhWSi5TVhKrVHAYfv9xiwygRsMc1QQZ3G1YKKbOwybLHxYBNQiSlfHcPOCkvvxt9dz+gHIHGa3RKfsJfvUW03/Gl7+ba3zCV0yyDdINggVxUKIdVNLa2iy3S5CuNUbCTMyZvToW9+n8mY4c/HLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762752016; c=relaxed/simple;
-	bh=WICAjAkBcOzYNQw2QatcrHUjeNQPqwknDKC2jJuGTWY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=cGc48tZQyNeYzeBIy83efBCKdnv9LuIaI07GIajDOnsjMVTg9bbOSGvYuFJJRRtjtyh0zGP7ITLYhgcwvA3btd1P5U4gh2pwXQldponoAwfL84719/dUZGd9mI7HKNMDitsLexdW6TEi0JgZM4D/yjSmJ0Et4RymoTGgVQrz4Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Hmr3x5Vn reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AA5KAkq3346810
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sun, 9 Nov 2025 21:20:10 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AA5KAkq3346810
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762752011;
-	bh=ByLx4ga8mLNebyKIOpvPJefCgzhRahPFj+lLZbpqSnk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Hmr3x5VnB25CC5UOUzv+z4S+ujjkXbglZg8UkHG+meqM4WrueRcjiaLIA5TUshnPJ
-	 IvJ6vlC1XFbcc/qy4Jo/1l4DbTwv7tDP/jTAx4ce01xpXAoZFgm7PUppVa7WzH7MWh
-	 rdu/sfqZfEeY8ootCdBtAQeDru5aGioX3LRP3CVL+0u8VvHx5ToI07XcQKZ/nRrOdZ
-	 UjPlmXesbHXnXx/NbhyuBpMb60NrUfwKT9oueNisLKqqjGuwQFwFlARm3QYen6NU+e
-	 74jh+p+WynNdPqeRMGYE7/0FI6gbDvjn3MBwkpRnEqZQwbFexVMRMOqkYn0/Jva1Yo
-	 ufSWGkRcLuPbw==
-Date: Sun, 09 Nov 2025 21:20:09 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: "Theodore Ts'o" <tytso@mit.edu>
-CC: linux-serial@vger.kernel.org, linux-api@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20251107173743.GA3131573@mit.edu>
-References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com> <20251107173743.GA3131573@mit.edu>
-Message-ID: <17FF5500-54B4-4456-A870-E43E004589F1@zytor.com>
+	s=arc-20240116; t=1762752162; c=relaxed/simple;
+	bh=6MAGRIH5WEH+fMjOR2/tlElu/d29Oz7xmVfA9gjEHmQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JXpPN91iVFw24GivrvtGSpqVJS3Jw7prXgIFEURCpFtpMa/4411b1eI+X/HDWwr0GCQF+BjCMCEpOp+ghwX0BQw2F4PLocOEhpHsugx1YGdbW23YwYSSoWHy3rsZB597QpdBv16Lc6L96T9ThLUgKLfYXAaV263AviWPp9CrsDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FRrQ4ig1; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5dd8988d098so895280137.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 21:22:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762752159; x=1763356959; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tVbcQdsxhGJ251GekmogRgMgrAHB7EALgaSbuq0BgLg=;
+        b=FRrQ4ig1rWd6k5szKlAfhB5MZL+nttmAtvfziX8ItT+kZBqh9ZLoVGwmU8Aa6QcurK
+         l7aYV2SDGrZLQiLCxtZAQVFTc7vPXFooxjflIxjMLKRgsvw6xrnMJ5rJXIVuIPoFqyUm
+         9bXmMZsLP50+HHMBI3EeELTZXeOlZ8NvXouItYt0ay5c0l+eTs5EhYebzbap1c74H9bQ
+         CvZBKfcPpwa/4Xkrp4qRWj/soJojbz4ORSa4dUWHhiOi2mJBrgi9zWraQCr3FBoQ0SFD
+         SR2cHtzF6JC00RKnTYo9H6rklOmnf3LTHPmfAalgx0jwvLt2GmwvK4MPiV3z1R6pig0N
+         SrbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762752159; x=1763356959;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=tVbcQdsxhGJ251GekmogRgMgrAHB7EALgaSbuq0BgLg=;
+        b=q8fmSZp9oDf0TALZYtAdHKJPnpwCYjhGhfMoHKbDiO2+IuKsNXLpaQCSrY+2pKDFob
+         i4MWELvajpx6nrFg994AQxjaNkVELQCw0wZ9al1IZtnNK7XrIb/KuZ8MA4kcEdufRDss
+         sK1bARH74jmx+3h54kfoTEDXXanJsQiuo+MSsrPnhVKPZT7svSpks4L7/URacekABgXY
+         VAFAHGgHRTAgNc5blSlUTCl8V3+4Rio2BqR4b5rNgkTMQfSkw/i9MYeAaEb9+LxRRhfP
+         4pEVXZN2YcZ7r5flONYUTtbMDxjOmbKkdipP/qMGX9N5TvcyGPR5P3br6dS4VUehIEUE
+         bsbg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0p7KlXcfmUJma86gR0vliy2woKOucIguL7qOovW9jO4zwziWkkhzdsKBz62gMRcjjPL6QG3M8TlMbU1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGTneK8kyFztzg7eaPvt5D8Mi8OP/MsvdeI3J3IEzU4ckgdH+a
+	JKD8VrjLueS71qfE8jRj+fXTUEIoZ4WjeJpeHcVFo7mD54ybKQVBGiGalDKG75lFXl9BDgB6ulZ
+	SPuK5BAA0Bs670zsr2L3ql97EzWcHej8=
+X-Gm-Gg: ASbGncsLEuwbDR9xTNSyW18qhbsus/VcqCN7iOONcQDAxC/55nQuM/AbkocCPQuMqKD
+	AJDoigE/LuM5M3KgrUAcMFsRWpvrflhL1zBwsQAwL8QXmHvwXrxiFs5WlaqC7jwuZhUkKjElFCW
+	tz39qKDE3zNq8XwIboSO+ca6H7TuY6O8M3+PHNwpPlxZtUb1ct1Fc3e35WvReu1kfga5qgUlo/6
+	vdsELWyu59kjEKclOdA+tf52Ud50b+PI7tRHwpcrKQwlnEkdPvdqTk0f+4=
+X-Google-Smtp-Source: AGHT+IEeFVULUntPJGmAB60bMxKjcERl9eTW1jbOHV8XuGq9ZMrcrkcUimjG5F2o26/OwntJmcCh8HHKGulh3BYrYP4=
+X-Received: by 2002:a05:6102:390f:b0:5dd:8c81:d7ab with SMTP id
+ ada2fe7eead31-5ddc452d062mr2218860137.0.1762752159000; Sun, 09 Nov 2025
+ 21:22:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <CGME20250929042917epcas2p2569e213500997dfa6ba43c8f361f50f7@epcas2p2.samsung.com>
+ <20250929043110.3631025-1-hy_fifty.lee@samsung.com> <20250929043110.3631025-3-hy_fifty.lee@samsung.com>
+In-Reply-To: <20250929043110.3631025-3-hy_fifty.lee@samsung.com>
+From: Inki Dae <daeinki@gmail.com>
+Date: Mon, 10 Nov 2025 14:22:01 +0900
+X-Gm-Features: AWmQ_bnqaqpr6mbii-XcWKvzW_ttKXH-Eb8J1UjIIWLeqzt5jQH_vRs30wQTWl8
+Message-ID: <CAAQKjZNCpK4rq6DFUtiQ2rxCeb_34Mp54quVto+9LRJMH3=ZhQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] drm/exynos: Convert to drmm_mode_config_init() and
+ drop manual cleanup
+To: Hoyoung Lee <hy_fifty.lee@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On November 7, 2025 9:37:43 AM PST, Theodore Ts'o <tytso@mit=2Eedu> wrote:
->On Thu, Nov 06, 2025 at 11:53:23PM -0800, H=2E Peter Anvin wrote:
->>=20
->> I recently ran into a pretty serious issue due to the Unix/Linux
->> (mis)behavior of forcing DTR and RTS asserted when a serial port is
->> set, losing the pre-existing status in the process=2E
+2025=EB=85=84 9=EC=9B=94 29=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 1:54, H=
+oyoung Lee <hy_fifty.lee@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
->There's a hidden assumption in your problem statement which is that
->DTR / RTS has a "state" which can be saved when the serial port is not
->active, where active is one or more file descriptors holding the
->serial port open=2E  There may be certain hardware or drivers where this
->is just not possible, because nothing is defined if the serial port is
->not active=2E  It might make sense if you are using a 8250 UART, but not
->all the world is the National Semiconductor (or clones) UART=2E
+> Switch mode-config initialization to drmm_mode_config_init() so that the
+> lifetime is tied to drm_device. Remove explicit drm_mode_config_cleanup()
+> from error and unbind paths since cleanup is now managed by DRM.
 >
->Certainly the "state" will not be preserved across boots, since how we
->autodetect the UART is going to mess with UART settings=2E  So
->*presumably* what you are talking about is you want to be able to open
->the serial port, mess with DTR / RTS, and then be able to close the
->serial port, and then later on, re-open the serial port, have the DTR
->/ RTS remain the same=2E  And it's Too Hard(tm) to have userspace
->keeping a file descriptor open during the whole time?  (Which is
->traditionally how Unix/Linux has required that applications do
->things=2E)
+> No functional change intended.
 >
->Is that a fair summary of the requirements?
+> Signed-off-by: Hoyoung Lee <hy_fifty.lee@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >
->> It seems to me that this may very well be a problem beyond ttys, in
->> which case a new open flag to request to a driver that the
->> configuration and (observable) state of the underlying hardware
->> device -- whatever it may be -- should not be disturbed by calling
->> open()=2E This is of course already the case for many devices, not to
->> mention block and non-devices, in which case this flag is a don't
->> care=2E
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/ex=
+ynos/exynos_drm_drv.c
+> index 6cc7bf77bcac..1aea71778ab1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -257,7 +257,7 @@ static int exynos_drm_bind(struct device *dev)
+>         dev_set_drvdata(dev, drm);
+>         drm->dev_private =3D (void *)private;
 >
->I think it's going to be a lot simpler to keep this specific to serial
->ports and DTR / RTS, because the concept that the hardware should not
->be changed when the file descriptor is opened may simply not be
->possible=2E  For example, it might be that until you open it, the there
->might not even be power applied to the device=2E  The concept that all
->hardware should burn battery power once the machine is booted may not
->make sense, and the assumption that hardware has the extra
->millicent(s) worth of silicon to maintain state when power is dropped
->may again, not be something that we can assume as being possible for
->all devices=2E
+> -       drm_mode_config_init(drm);
+> +       drmm_mode_config_init(drm);
 >
->If that's the case, if you want to have something where DTR and RTS
->stay the same, and for some reason we can't assume that userspace
->can't just keep a process holding the tty device open, my suggestion is t=
-o use=20
+>         exynos_drm_mode_config_init(drm);
 >
->Given that DTR and RTS are secial port concepts, my suggesiton is to
->set a serial port flag, using setserial(8)=2E  It may be the case that
->for certain types of serial device, the attempt to set the flag may be
->rejected, but that's something which the ioctl used by setserial
->already can do and which userspace applications such as setserial
->understand may be the case=2E
->
->Cheers,
->
->						- Ted
+> @@ -297,7 +297,6 @@ static int exynos_drm_bind(struct device *dev)
+>  err_unbind_all:
+>         component_unbind_all(drm->dev, drm);
+>  err_mode_config_cleanup:
+> -       drm_mode_config_cleanup(drm);
 
-So let's separate out a few things here:
+In the current implementation, there is a potential dereference issue
+because the private object may be freed before to_dma_dev(dev) is
+called.
+When drmm_mode_config_init() is invoked, it registers
+drm_mode_config_cleanup() as a managed action. This means that the
+cleanup function will be automatically executed later when
+drm_dev_put() is called.
 
-1=2E You are taking about using setserial(8), which is really ioctl(TIOCSS=
-ERIAL), which requires a file descriptor=2E This is exactly why I believe t=
-here should be a mechanism for acquiring a file descriptor which *by that a=
-ction itself* should not change whatever state is already available to the =
-kernel=2E
+The problem arises when drm_dev_put() is called without explicitly
+invoking drm_mode_config_cleanup() first, as in the original code. In
+that case, the managed cleanup is performed later, which allows
+to_dma_dev(dev) to be called after the private object has already been
+released.
 
-2=2E What, if anything, can be done on a device by device basis to improve=
- the situation beyond what currently exists=2E=20
+For reference, the following sequence may occur internally when
+drm_mode_config_cleanup() is executed:
+1. drm_mode_config_cleanup() is called.
+2. During the cleanup of FBs, planes, CRTCs, encoders, and connectors,
+framebuffers or GEM objects may be released.
+3. At this point, Exynos-specific code could invoke to_dma_dev(dev).
 
+Therefore, the private object must remain valid until
+drm_mode_config_cleanup() completes.
+It would be safer to adjust the code so that kfree(private) is
+performed after drm_dev_put(drm) to ensure the private data remains
+available during cleanup.
 
+Thanks,
+Inki Dae
+
+>         exynos_drm_cleanup_dma(drm);
+>         kfree(private);
+>         dev_set_drvdata(dev, NULL);
+> @@ -317,7 +316,6 @@ static void exynos_drm_unbind(struct device *dev)
+>         drm_atomic_helper_shutdown(drm);
+>
+>         component_unbind_all(drm->dev, drm);
+> -       drm_mode_config_cleanup(drm);
+
+Ditto.
+
+>         exynos_drm_cleanup_dma(drm);
+>
+>         kfree(drm->dev_private);
+> --
+> 2.34.1
+>
+>
 
