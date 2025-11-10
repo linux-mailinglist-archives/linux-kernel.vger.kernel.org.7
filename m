@@ -1,198 +1,109 @@
-Return-Path: <linux-kernel+bounces-893578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71995C47E9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:24:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1F8C47C53
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BA413B2E31
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:55:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A63B04F8DAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12642765E2;
-	Mon, 10 Nov 2025 15:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F97276028;
+	Mon, 10 Nov 2025 15:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="uukvdMjr"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkEcibiS"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84016274B44
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2857F153BD9
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790051; cv=none; b=b1bzj1v7iE0Av3C3Vnmt+PcybZHCOSwOFP0SxqWP79m8bI/UAKU37hGTj1g6md2ZsH+ow+YBBguEM2Ek39Hp4RP9pQyyRKbRYH5TiZ63EZSEH/zB0xLt+myh7I+P+ke+hapmLVown64FPxjgDX+CrWKOvR4bofv3gxg/+pOoOIQ=
+	t=1762790108; cv=none; b=fr0b6M/849aTHwu6B9eH5ilu9HHIlCYoo1utNRL/ABvubdi5PF2t0cv+UuAVpeIC2azG7bl5iSCzUYCOcOeeF23abLU1K+wJ8/kBeIl9mWXmRNqBeHQBMcu0mt4hXg6s0czsiJV2AU5XbuXmTjKpGQ4UYqn4TB/Iv8DYZ32xgQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790051; c=relaxed/simple;
-	bh=aBlBadCDo4jvS2t/xfKllS/OSshvWCm5WkY+vvGthz8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VXsOPVB1gofwa3JK/UWeY2IZp1CSgQJIy+g6XPf1E3thQC83RAyszAGDdQPfA/olUH0h/ZUZ17fz+LTlTdp2odPaDm/9b4K1i/C3WhXn5s8VT21YymE9Rhw5/ECX/f7MQWmtjGa7Tnxhj9F2uoMtzAjwAoTvjfZmEC0yDO0fGYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=uukvdMjr; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id zXuXQP7jDdVtO64Z; Mon, 10 Nov 2025 10:54:08 -0500 (EST)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=7DIf7QZ4vnXO7OepTCyx9SQG+Ol4HqEKsoV4eUbPbq4=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=uukvdMjrHv2AlOI1AZRN
-	I7nGyMAlWcFozYwmIgejAhj/3ytS1DAArI7fz4vfQEou+b1AEZGQO8D++PY2YBbUGSU2wcQuPXhaX
-	8o1bgosRPfpQSznaSMd0oCe0WkRZZxSLoJi3Xp7LYdncr1svkokBt4TN2gyyw3yqlxOj8c7jdQ=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14272430; Mon, 10 Nov 2025 10:54:07 -0500
-Message-ID: <22f8a0b6-0e24-474d-9f28-9d65c9b7af03@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 10 Nov 2025 10:54:07 -0500
+	s=arc-20240116; t=1762790108; c=relaxed/simple;
+	bh=UIjh5OHK+/m1SacpjkCMs9vMDSevjykGUGOzGYpUTAE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XeaQp1DMc2Vo66YvXF3mwCOwWeO+dxOrgwjzR8pTWxX9AXPNpc88Y23ACqYtca/NBn6vgsNzkUp4ROXOwJOzBubcFwDHWuAtEFPCt6oXeMp6TkUwlEqky26TPbqlXSgtHwoAlUGND10UQA6b4z/q9NiPmwXnTJZ61+UsPXBuGGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FkEcibiS; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-340c1c05feeso2634683a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:55:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762790106; x=1763394906; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6R6wcVAFeAUcZ6mJYKCCW0Bji6CCIjd7Ps1e8q5bT4A=;
+        b=FkEcibiSNDFhNrAHibdnFVvu88HjyjVWY7EAdCoWSDGir1vSkuPocBJrwXrBhbMXD9
+         wsIjT579AV5dRQ0p//O9/pKfTvYgg4W453FUFfb9bRdd06x5S2pU8MswRAUk87vtTpCv
+         ogYM9+V5rnhDxhN/PCmHAyuF4gbA6czzk9YGT/5vtM74mjdvUSSVoWsg9PCMISGWk4ph
+         oU196O2PWIdenwioZMMSRMbc1siiqq93NsTwP7gLyXKpwZGy/ewqwRFoLpbMSOHYDmEr
+         RoSf+WjsaXFOJ40O3rGiK4n6+eBNG/erZRFY1dLIs1R9O5OSaZoM9HJlIlRCuzyus+h5
+         IrDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762790106; x=1763394906;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6R6wcVAFeAUcZ6mJYKCCW0Bji6CCIjd7Ps1e8q5bT4A=;
+        b=B1UIy5k6TiFH44xqs480lV73MeHrIDMAJDaio3AAF3VvlCzwbdnnodIdWymcW/j4Ew
+         Nzx7LBtu5U2QhublBLbCwvsFAKGDxFPZ+yUNQjTSi0x5xjm8R2gyHIsz3UXydUJLH/5s
+         u8ZNV2DFEY0WIaPmoL3pnISzzLp/1OCbz+DnUP2BM303x3h3brnnbJlqh7D6sNpmKsoP
+         7/BJ0q12RwijF8uN05BZDQC1jiu9yMl6apUGjogDe2uiTucQkRXeogqwdw5UDphlWRYe
+         SVEvTY+ioMAHNKiY3cvatN20okxZNdXxcev+/RdR+9TTfT+peZMiRNBLINQ/0HBhWqA/
+         E6bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVZA8LmzqCd4rDSw3r3vEDrvx67Yzq9NHIUjM+inK1A3xwcRJRrcpU6ryZcu041yU/ePw6n4muTxN/emA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvN/HbYK/BHUWkCo2CuteDnFo2G3uwTrOZCtBvY2ofgN5NAPW9
+	7V0IsZ3A1PoQqIR1s732fFcI3Yq9bneQ0ZOKTeZWne9VfL+I5VbN2/MZAzPP3gjOV33IKqjuiad
+	ObHXNbJlv+sUYXIofqAVGmfClilWuXL8=
+X-Gm-Gg: ASbGncsC68HQL6RWM/oWF4YuRf3Fa68XggGqB05f75G8J2nkS2o5Gcyoa92TEsgcwFm
+	nz18iLRUpnLt1sc2FZJpmFk7T8Zu79LcJxPO2DL8qDHSoc5Rp8xt5wIcxF5EAivRKiGwVRKrXeh
+	1so8d81xraIBzwBWdrQm8eO65J+jPvaPftpUUKf7/buiNAUawdXJh1dJ6s3V8np792n7Of/WEuO
+	ehvP9banqkWjqHWr+BtwGMadInbbPaRscwTdsGMv8WWQ7YG1XqBHaZGkPg=
+X-Google-Smtp-Source: AGHT+IHCrQU0UlElplZd+YPzXUqH9miCN+y+iRChbMn/h7fN73CjNrmEf5PFWQKDUy/hBQwfC1VOyq54JxIn8cvEg2E=
+X-Received: by 2002:a17:90b:54c3:b0:33e:2334:ef05 with SMTP id
+ 98e67ed59e1d1-3436cd06506mr9221689a91.28.1762790106437; Mon, 10 Nov 2025
+ 07:55:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v3 06/16] scsi: qla2xxx: improve debug output for term
- exchange
-Content-Language: en-US
-X-ASG-Orig-Subj: [PATCH v3 06/16] scsi: qla2xxx: improve debug output for term
- exchange
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Dmitry Bogdanov <d.bogdanov@yadro.com>,
- Xose Vazquez Perez <xose.vazquez@gmail.com>
-References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
-In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1762790048
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 4064
-X-ASG-Debug-ID: 1762790047-1cf439139110cd20001-xx1T2L
+References: <20250630202703.13844-1-gert.wollny@collabora.com>
+ <20251110144625.18653-1-gert.wollny@collabora.com> <20251110144625.18653-2-gert.wollny@collabora.com>
+In-Reply-To: <20251110144625.18653-2-gert.wollny@collabora.com>
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Date: Mon, 10 Nov 2025 16:54:54 +0100
+X-Gm-Features: AWmQ_bm2wmrOPItOxwhoBd9H4sTLBEoxQE9s611ak2i40wnU7FFtiRLd5trLVSQ
+Message-ID: <CAH9NwWcYOfrjbL==PBZ8z-Ta-C9EVQSypovqturj4=ROCfxpqQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] drm/etnaviv: Add command stream definitions
+ required for a PPU flop reset
+To: gert.wollny@collabora.com
+Cc: Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-(target mode)
+>
+> From: Gert Wollny <gert.wollny@collabora.com>
+>
+> v2: move some defines that resided in etnaviv_flop_reset.c
+>     into the header as well
+>
+> v3: fix spacing/tab stops
+>
+> Signed-off-by: Gert Wollny <gert.wollny@collabora.com>
 
-Print better debug info when terminating a command, and print the
-response status from the hardware.
+Reviewed-by: Christian Gmeiner <cgmeiner@igalia.com>
 
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
-
-v2 -> v3: no changes
-
-v1 -> v2: no changes
-
- drivers/scsi/qla2xxx/qla_dbg.c    |  2 +-
- drivers/scsi/qla2xxx/qla_target.c | 40 +++++++++++++++++++++++++++----
- 2 files changed, 36 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_dbg.c b/drivers/scsi/qla2xxx/qla_dbg.c
-index 5136549005e7..ff4124eccc9c 100644
---- a/drivers/scsi/qla2xxx/qla_dbg.c
-+++ b/drivers/scsi/qla2xxx/qla_dbg.c
-@@ -54,7 +54,7 @@
-  * | Misc                         |       0xd303       | 0xd031-0xd0ff	|
-  * |                              |                    | 0xd101-0xd1fe	|
-  * |                              |                    | 0xd214-0xd2fe	|
-- * | Target Mode		  |	  0xe081       |		|
-+ * | Target Mode		  |	  0xe084       |		|
-  * | Target Mode Management	  |	  0xf09b       | 0xf002		|
-  * |                              |                    | 0xf046-0xf049  |
-  * | Target Mode Task Management  |	  0x1000d      |		|
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index df5c9aac5617..72c74f8f5375 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -1909,6 +1909,10 @@ static void qlt_24xx_retry_term_exchange(struct scsi_qla_host *vha,
- 	 * ABTS response. So, in it ID fields are reversed.
- 	 */
- 
-+	ql_dbg(ql_dbg_tgt_mgt, vha, 0xe082,
-+	    "qla_target(%d): tag %u: Sending TERM EXCH CTIO for ABTS\n",
-+	    vha->vp_idx, le32_to_cpu(entry->exchange_addr_to_abort));
-+
- 	ctio->entry_type = CTIO_TYPE7;
- 	ctio->entry_count = 1;
- 	ctio->nport_handle = entry->nport_handle;
-@@ -3620,16 +3624,24 @@ static int __qlt_send_term_exchange(struct qla_qpair *qpair,
- {
- 	struct scsi_qla_host *vha = qpair->vha;
- 	struct ctio7_to_24xx *ctio24;
--	struct qla_hw_data *ha = vha->hw;
- 	request_t *pkt;
- 	int ret = 0;
- 	uint16_t temp;
- 
--	ql_dbg(ql_dbg_tgt, vha, 0xe009, "Sending TERM EXCH CTIO (ha=%p)\n", ha);
--
- 	if (cmd)
- 		vha = cmd->vha;
- 
-+	if (cmd) {
-+		ql_dbg(ql_dbg_tgt_mgt, vha, 0xe009,
-+		    "qla_target(%d): tag %lld: Sending TERM EXCH CTIO state %d cmd_sent_to_fw %u\n",
-+		    vha->vp_idx, cmd->se_cmd.tag, cmd->state,
-+		    cmd->cmd_sent_to_fw);
-+	} else {
-+		ql_dbg(ql_dbg_tgt_mgt, vha, 0xe009,
-+		    "qla_target(%d): tag %u: Sending TERM EXCH CTIO (no cmd)\n",
-+		    vha->vp_idx, le32_to_cpu(atio->u.isp24.exchange_addr));
-+	}
-+
- 	pkt = (request_t *)qla2x00_alloc_iocbs_ready(qpair, NULL);
- 	if (pkt == NULL) {
- 		ql_dbg(ql_dbg_tgt, vha, 0xe050,
-@@ -3920,6 +3932,7 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
- 	struct se_cmd *se_cmd;
- 	struct qla_tgt_cmd *cmd;
- 	struct qla_qpair *qpair = rsp->qpair;
-+	uint16_t ctio_flags;
- 
- 	if (handle & CTIO_INTERMEDIATE_HANDLE_MARK) {
- 		/* That could happen only in case of an error/reset/abort */
-@@ -3931,11 +3944,28 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
- 		return;
- 	}
- 
-+	ctio_flags = le16_to_cpu(ctio->flags);
-+
- 	cmd = qlt_ctio_to_cmd(vha, rsp, handle, ctio);
--	if (cmd == NULL)
-+	if (unlikely(cmd == NULL)) {
-+		if ((handle & ~QLA_TGT_HANDLE_MASK) == QLA_TGT_SKIP_HANDLE &&
-+		    (ctio_flags & 0xe1ff) == (CTIO7_FLAGS_STATUS_MODE_1 |
-+		     CTIO7_FLAGS_TERMINATE)) {
-+			u32 tag = le32_to_cpu(ctio->exchange_address);
-+
-+			if (status == CTIO_SUCCESS)
-+				ql_dbg(ql_dbg_tgt_mgt, vha, 0xe083,
-+				    "qla_target(%d): tag %u: term exchange successful\n",
-+				    vha->vp_idx, tag);
-+			else
-+				ql_dbg(ql_dbg_tgt_mgt, vha, 0xe084,
-+				    "qla_target(%d): tag %u: term exchange failed; status = 0x%x\n",
-+				    vha->vp_idx, tag, status);
-+		}
- 		return;
-+	}
- 
--	if ((le16_to_cpu(ctio->flags) & CTIO7_FLAGS_DATA_OUT) && cmd->sess)
-+	if ((ctio_flags & CTIO7_FLAGS_DATA_OUT) && cmd->sess)
- 		qlt_chk_edif_rx_sa_delete_pending(vha, cmd->sess, ctio);
- 
- 	se_cmd = &cmd->se_cmd;
 -- 
-2.43.0
+greets
+--
+Christian Gmeiner, MSc
 
-
+https://christian-gmeiner.info/privacypolicy
 
