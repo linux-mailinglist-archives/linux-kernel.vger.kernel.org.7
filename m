@@ -1,100 +1,179 @@
-Return-Path: <linux-kernel+bounces-894215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3CFBC497D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:08:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8D2BC497F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:16:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48A003B05D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:08:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5903D1888AA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D0A2FF648;
-	Mon, 10 Nov 2025 22:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF2D2F549C;
+	Mon, 10 Nov 2025 22:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5mLh+Z1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KzJGKVat";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="d7LA0ueK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1D1F50F;
-	Mon, 10 Nov 2025 22:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69907285CB4
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 22:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762812490; cv=none; b=F73dg/sSU5AWO+zQUgRuYHszvUItx6kZzHHEzj5nVAmgPfCJ6MbrDLPBOh46TqKoUJE1az7l6dDogpKbPXp/fCfZ1qzZjDpK0Aku8UjHqJUzDuWLwMyORETRIyzUygXuAY/SndzaEtxmEhgtDU0KkOP28i4fEm3eqlwRizOzA6Q=
+	t=1762812982; cv=none; b=I7UxpXYua46hv452e1PIm5ORYEM7SxMqSLu3mX0SWPBOXDBcL6n2W9U7B2rXB5ERJ/9uTNBaawKrD11kzx+EuFyQJFqcaYb87mvILnMLLajGi+W4kslLneGgL5Y7ueyKcQzj54vHDrbgWmgZMU5QB5oyXWuhFXj+2575bMP6BtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762812490; c=relaxed/simple;
-	bh=QcNOW5NQf3d2H3CU/o4Qj6FoGkQmNS1yvzWb9gL9UCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m+SB8lgk1H0w9gapysp+lpX0Ujauo07qkkfKg2OYLaURo+ZL6j9S9Ctk40zMLXIqFgDKxP6+oVgDi2jYjECkDVgG2hgDeX9Ddw6Nzm2xCyA/WqLsFZerU+rx+u9SIrJdmrWdItEGI3u3F8aP9OFpWMs+mGHMmkH0iVCU9euqFLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R5mLh+Z1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE547C19425;
-	Mon, 10 Nov 2025 22:08:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762812489;
-	bh=QcNOW5NQf3d2H3CU/o4Qj6FoGkQmNS1yvzWb9gL9UCg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R5mLh+Z1XWUdD3M+2RuGujQYRrul92YMpJdXDykJdgxYf6yPNGx4Dwmrn/3dBv/N3
-	 1zdMhQC3t8ti+LDeBvIavQ1fJws5J4hzp8TUGxBblkUcZbQumulFx/nNntDQ6ZbrDk
-	 Xdi1SRa/puIkRVVzNjT3zw5xxrgaDTkN5KJVfGxkrSBw8/9wOivwfTP0VDBU1eei+n
-	 6W3yUjjfT7xAvFxAQ7gL/fMhEjZsEdL+L1tlf56yk5wyVBGJJ/oxS8jJs0Ihif+DiT
-	 N1lxZH9e6M0tQ5f7RWWPdyGfiGxiOilCA0kZzXtiXY7U5DTJHtp+49kL58PQ3PoH6d
-	 ja6+IYYN52ryQ==
-Date: Mon, 10 Nov 2025 12:08:07 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Dan Schatzberg <schatzberg.dan@gmail.com>,
-	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] sched_ext: Add scx_cpu0 example scheduler
-Message-ID: <aRJiR7H3RQHmgCct@slm.duckdns.org>
-References: <20251109183112.2412147-1-tj@kernel.org>
- <20251109183112.2412147-12-tj@kernel.org>
- <aRGkHhAWTWdWELAY@gpd4>
- <aRIyfJWJ6fcW5frO@slm.duckdns.org>
- <aRJT1dbGTmPRw4-p@gpd4>
+	s=arc-20240116; t=1762812982; c=relaxed/simple;
+	bh=73ueMr3Pr96Ipfgbfr1DzJtn1K1avfkmy6mQN1KumAg=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qpldKTGpu1vUjpm80jHdKlzNXF31pYMLGFNWH2Zup8G9VDqVzJi3enIBSGQDduvYbXQN51vBoRzc6YgzGFb4poYbuAdMVyiTBnuf44CNSsWCG9uVWqpwndsx9wlgqbAIqkqz9sjBoRQW1isq15pn5rfyLpoEDnVCaKCzeRESiyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KzJGKVat; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=d7LA0ueK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762812979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=McuuBQVyR0vl9LwWyFVAj98fKa0KbUhb567SrQgA7Sg=;
+	b=KzJGKVatKfH6ojc+uIMDq6k1skYaFmUNZzpNxAW+Vgn4iaNfYq9jjgquVUaY+5evaI6if8
+	DGQttpkB6K3ycCIrLYZoN5FAnD60yvOzuR7n54CQD0Jw3U8/7E1Zz//9qCCvWcaEumA8BW
+	SKhFDT1U9tNelJ2TJTpKkT1PxmWfaV8=
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
+ [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-171-1-a5MBauMNCz-Kf2UqTFXA-1; Mon, 10 Nov 2025 17:16:18 -0500
+X-MC-Unique: 1-a5MBauMNCz-Kf2UqTFXA-1
+X-Mimecast-MFC-AGG-ID: 1-a5MBauMNCz-Kf2UqTFXA_1762812977
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-44daa038f50so4063643b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:16:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762812977; x=1763417777; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=McuuBQVyR0vl9LwWyFVAj98fKa0KbUhb567SrQgA7Sg=;
+        b=d7LA0ueKCbpfErFOlAgwDtclBgRmUqdLVt5TqIje5yeY1RQDF5xMe2iDzJEYAVlB3O
+         ln3RAIvNgMtkxzM6WE6ghxTIqiz0hBu9/qLdL6ZUTh4DildaPRqZrY9mwqYmXE0DYfeK
+         kuggHC5t9hUSm+K5BYnbBycKrciZg9aFDXABQpWQpv0+6DwoUwiaxfTU29RwMfAx7hZG
+         hIwfcFggdUTXYSKOiykdjOZ3GftxDIM3dF+sLBNWlRpCY69O+jTBmOtjOY38PLq7CEOx
+         bCeF96DhAiQs0e619/3/SpPqrmfkbwP2isG/W7s6rqDH9nxM2JaZFo8AVcLgeHq/Cf9D
+         dOPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762812977; x=1763417777;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=McuuBQVyR0vl9LwWyFVAj98fKa0KbUhb567SrQgA7Sg=;
+        b=O1S9AbeEh4LXVTVJC9GzO3007C04ItKSBgn6o3Xkgib4BskjWpGYFDmg3Oq4mVW2WF
+         KVvdaKPau8aADOgaeQPw0WZ6Rwr5mOGrckB7iPRVBcz2OTouurJRJnItcIiCauamtO70
+         a/PGdTNeQY6Gk7PQWT+U51/ByI8K806IGUhfgfgEkt5y1EFRjWaYbvTx0P/p/BzUEO/r
+         4JqvSRnFzT5v7jDFLzzPwzHpuxu0Pu6n8YaZC7JYEkWy6hPABNJYYFv1k6jADsoWMII/
+         fwgACrdAVi2lNvqgi2c0nNwfNYfW8Ypt/VURtSJ32tosms98R4MgabxgXmsRgZBkANCy
+         KuNg==
+X-Gm-Message-State: AOJu0YywfjilxEQ95Nhlu+AuSQlwIqifCl0bA+VaZqlMzr1YpaLFO38k
+	8d4CK0A9B1Oa10vCowdP2qGgqlpBzINd7A1E+xNwSErwtGTR9vNQY3Obq7SWZSaDYKAHISr+H5V
+	I3efa5UP6RVpOx/eh+SuWimh4QuvzILOUfBX1MDnbDuTKM6lcGpaxq3uW+sQ+/N+c5ENou2MHMQ
+	==
+X-Gm-Gg: ASbGncuYoTcRuTgHcIZjGXwHqqiJccsKpHSGN1+J7wqGihz9yIkFLGIgNdh7GmgYe5C
+	p6DnduGJjsOAsVZ1h581h8CwNDLI6LB/hsxBJPtHzwOiVVp6YHC460UFuC9nh/a+zfjWAuMEDs3
+	E0sgGV+T2l0YsLBP0CmoRytlhlydRYCGBZQSKrqL2RV0cG3cXRWxnoQVo44i8TUZakgWjBKaIIF
+	UeR1SHAjk1Kk2pzhCI3IUE1Nuwzc8nIUzgavj/YMc/y/fA6n/pTk3W4lxJaKuZ94SOSH+fCg8ZT
+	K1/CmuM2w2A/oTdXkmDNHNNznGCXYxlJW3eFg+GVRzgn/9wZJPlODQxpPZhXWHa6HiQXlzY8Mq5
+	4rtq45fggv1L0z74+iybdN+pRrv61NJ4b6LXT4phOkItnLg==
+X-Received: by 2002:a05:6808:1889:b0:450:4628:e3ce with SMTP id 5614622812f47-4504628f033mr3487569b6e.15.1762812977057;
+        Mon, 10 Nov 2025 14:16:17 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHvxltUBPkDinXjT1uuMSFLLNGXfzZBB2k/tbk8+MIS3PKM+ctmVXcXFZP9/gmTshh1tnvL8A==
+X-Received: by 2002:a05:620a:1065:b0:8ad:3bc8:3cdf with SMTP id af79cd13be357-8b257f0515emr1014004285a.29.1762812538644;
+        Mon, 10 Nov 2025 14:08:58 -0800 (PST)
+Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b23580c7f9sm1087396385a.44.2025.11.10.14.08.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 14:08:58 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <d42cd14d-46da-41b4-b580-f112baf0dfdb@redhat.com>
+Date: Mon, 10 Nov 2025 17:08:56 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRJT1dbGTmPRw4-p@gpd4>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv5] sched/deadline: Walk up cpuset hierarchy to decide root
+ domain when hot-unplug
+To: Juri Lelli <juri.lelli@redhat.com>, Pingfan Liu <piliu@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Chen Ridong <chenridong@huaweicloud.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+References: <20251110014706.8118-1-piliu@redhat.com>
+ <aRHJHxfEI-tnotRe@jlelli-thinkpadt14gen4.remote.csb>
+ <5e0bb3f1-2efc-4302-aff0-80d5999c7700@redhat.com>
+Content-Language: en-US
+In-Reply-To: <5e0bb3f1-2efc-4302-aff0-80d5999c7700@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 11/10/25 4:07 PM, Waiman Long wrote:
+> On 11/10/25 6:14 AM, Juri Lelli wrote:
+>> Hi,
+>>
+>> Looks like this has two issues.
+>>
+>> On 10/11/25 09:47, Pingfan Liu wrote:
+>>
+>> ...
+>>
+>>> +/*
+>>> + * This function always returns a non-empty bitmap in @cpus. This 
+>>> is because
+>>> + * if a root domain has reserved bandwidth for DL tasks, the DL 
+>>> bandwidth
+>>> + * check will prevent CPU hotplug from deactivating all CPUs in 
+>>> that domain.
+>>> + */
+>>> +static void dl_get_task_effective_cpus(struct task_struct *p, 
+>>> struct cpumask *cpus)
+>>> +{
+>>> +    const struct cpumask *hk_msk;
+>>> +
+>>> +    hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
+>>> +    if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
+>>> +        if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
+>>> +            /*
+>>> +             * CPUs isolated by isolcpu="domain" always belong to
+>>> +             * def_root_domain.
+>>> +             */
+>>> +            cpumask_andnot(cpus, cpu_active_mask, hk_msk);
+>>> +            return;
+>>> +        }
+>>> +    }
+>>> +
+>>> +    /*
+>>> +     * If a root domain holds a DL task, it must have active CPUs. So
+>>> +     * active CPUs can always be found by walking up the task's cpuset
+>>> +     * hierarchy up to the partition root.
+>>> +     */
+>>> +    cpuset_cpus_allowed(p, cpus);
+>> Grabs callbak_lock spin_lock (sleepable on RT) under pi_lock
+>> raw_spin_lock.
+> I have been thinking about changing callback_lock to a raw_spinlock_t, 
+> but need to find a good use case for this change. So it is a solvable 
+> problem. 
 
-On Mon, Nov 10, 2025 at 10:06:29PM +0100, Andrea Righi wrote:
-> I agree that if a scheduler uses SCX_SLICE_DFL it shouldn't care too much
-> about the exact value.
-> 
-> My concern was more about those schedulers that are quite paranoid about
-> latency and even if something isn't handled properly (directly dispatching
-> to a wrong CPU, a task being rescheduled internally, etc.), we'd still have
-> a guarantee that a task's time slice can't exceed a known upper bound. But
-> this could be managed by being able to set a default time slice (somehow)
-> and it can be addressed separately.
-> 
-> So yeah, in this case the exact value of SCX_SLICE_DFL doesn't really
-> matter probably.
+Actually, we don't need to acquire the callback_lock if cpuset_mutex is 
+held. So another possibility is to create a cpuset_cpus_allowed() 
+variant that doesn't acquire the callback_mutex but assert that 
+cpuset_mutex is held.
 
-AFAICS, all cases where we use the default slice can be avoided by setting
-the right SCX_OPS_ENQ_ flags and not letting through tasks with zero slice.
-ie. If the scheduler needs to control slice distribution closely, it can do
-so and, if something leaks, that can be detected through the events although
-it may be helpful to add a strict mode where these leaks can be tracked down
-more easily.
+Cheers,
+Longman
 
-This is not necessarily an argument against making the default slice
-configurable. The fact that we use the default slice for bypassing was a
-reason to be more cautious with exposing it (as that can affect system
-recoverability) but with bypass slice separated out, that's less of a
-concern too. So, yeah, I think making it ops configurable is fine too.
-
-Thanks.
-
--- 
-tejun
 
