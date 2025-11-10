@@ -1,465 +1,336 @@
-Return-Path: <linux-kernel+bounces-893624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6672DC47EDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:27:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66FDC480A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:40:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3B703A5169
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:16:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F9F426BE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442DE27586C;
-	Mon, 10 Nov 2025 16:16:45 +0000 (UTC)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEA1270ED2;
+	Mon, 10 Nov 2025 16:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WRlZN1Dt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HtQdFl7J";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WRlZN1Dt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HtQdFl7J"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F23274659
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3551D279DB4
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762791404; cv=none; b=iF4Xoa42Lto1O/amWcoSPV7wAI6TfHhAOtRXVHgffPyENZ2txobVrNbj4rhrCSOFwMc4DAtSQ7um88Mgpm5Tbi4vY4UX75UWWJDNMtSRSOwAtr1PgDT3435L13kdpYQ7XB+beu7bA+qFnnKQFuIcgotYDku3bUQG4DRtewtmJtc=
+	t=1762791439; cv=none; b=FOV1aGYsfqN7ZNhKfFsQA8j+dzS4IO69/xSQiIW2uiP1RWtXvGUPzPZdT+EdOZzZLKKGzCn0vq7zxXe/on77itD4KOM3zEidcbklJonyUnvvZW8RuIoDBdyVKzahYB+AYZiwzoAs9hH4PQy5INRr9gzCmgOwj83Ojgq+xhEo5XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762791404; c=relaxed/simple;
-	bh=Oj+MACFttgL4DFd5A7ViUQbdwBnwgGwGclfbbcanDRc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fFvbB8MCognaGDDZxPeH5HWCe5yl7rYiJoI6u/rCbqBaGbFufBw/96ebwvFZs8X6se/lt36yLTQVV6yL3GTTcoZex1wESbElK9GyeA7VZpvZJ/wVGZicQG4vYhlhw4kbIPH/+jc6a97T0qhC4YtLuK8qMnLI9Bg3VdvY1W9Su7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5dd83dec0b3so1077915137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:16:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762791399; x=1763396199;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d/lLSXjoHK4s9dqtzRhXw91kDvxvE9lMfjhCOgxWsIE=;
-        b=R9gdW8S4EUPViBu2UWnMRwVfw9RuyuRQSCt6D0Z0/il6naaOSS4b7On5t038RL8Vtl
-         yjX4gWOyGmM+DmPcOWrKFWshhSdRNpXvAzFfg0lC9dh8cX5RIOpyoeLIYYizmfkxb2wp
-         EWLq77qFbBssLrVdoXN/uYsEClxTboKAfSSdYqgnB9H2d7Tf+2Z8BFb2QDSKeYwxIlei
-         XQlNfmEyQ4I9kvx2rvG248tNLlealUqqdMb4O7ykMdczmNU26Tb3tbp9Tjf52KnAhzYW
-         J6e2U9H6yGpHtW++GtxoVxZL/DhRn4zBUoKpGsCCMVPTb3C9X03vPHnd0TyJcdevH+xj
-         /HlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsJabghm0rev7cUpEyIjb6xOBAxdL0MOfuGMqaxvqXbJowUNIR5GZQRvAFqYMaOxVqj1b2uR0jOKLNYlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8k8oIsiTKCTJPZTWu0WUcMd4KhD3+Vlb3dmhWst8zY3VD+9Rp
-	tNbCVXqIRthddsRb5nhwTZnAVNuf/r3pU6cERjQsO1q5fNRU9Au5byz3mRVyxYY0
-X-Gm-Gg: ASbGncvXyvWDkFJlZy/lPyWwHpjTaVF4CPdWV8FmW5K8ccgcOiT3twljaQRVdEruqb1
-	7O2iK1Xvg9xuivivxM0E98SsvRCU5cuEI43WHSlLiHsYKAEtxQQJ9czKv3L2ijeo4O6jSp5eHCW
-	I3YbeTk1l2Scjybj8H0GNrmJ5IsbzQuYH/mHYNV0ONuXC4sKmBqyZ9618Gov5OPgsN2cICgjxqS
-	U0os9+BOK/HvqbUqA+72/QSmxlFsQ87K7CLF7BJ4krgrOxWS2s2wad1ey54baY4x+6ZbZiXL5SG
-	kYxTVnblcuA5jLKEpLo8mme8U0Ew0/hmY0JDSG8pgcGUDuLa9nWDuyN2zs9iCoy1E7rkMkBd4OK
-	tyQOmVhJmsg2zYYUs+y/QHaobGtLyaJQWLPU6ejbAgTMyFz92UygBOdyXQcjCFNIrT5Y5StIL93
-	ROtx71xYRazk4wqJhlRYBllSgjEv+as9ZS62xGtA==
-X-Google-Smtp-Source: AGHT+IF37kxSnPyJmh+h1If5kTzpanXRC3sMh19WRSwypZoR/t0iItkakbUtB8JdbQ/AIuwZFWTK0w==
-X-Received: by 2002:a05:6102:3584:b0:5dd:8819:e68a with SMTP id ada2fe7eead31-5ddc477e66fmr2606800137.36.1762791398795;
-        Mon, 10 Nov 2025 08:16:38 -0800 (PST)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-93708522abcsm6063712241.0.2025.11.10.08.16.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 08:16:38 -0800 (PST)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5dbe6304b79so1245124137.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:16:38 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUxDrtKYYm93ruTgw5z3rlx6ssW+hzWKy/kBEW0W78T+0H7XGAwm6ZoXleqz3I/T+PLeFXpXK0/MeGzo4U=@vger.kernel.org
-X-Received: by 2002:a05:6102:3706:b0:5db:debf:658f with SMTP id
- ada2fe7eead31-5ddc4677cafmr2517889137.19.1762791398206; Mon, 10 Nov 2025
- 08:16:38 -0800 (PST)
+	s=arc-20240116; t=1762791439; c=relaxed/simple;
+	bh=BOICJgjEM8TZaqRMVH1oCsKEHOrwjoYHghZGGNdXB40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o9yyfzpn3PR2yVYCMhuwlrC8e0SkSYUmaYnlp3hJyJlxTYG3m1WNVUazT4UBfpl1G6/D3ovmCSbkXFU/Y/M4jkSxKZZ9zKDvgZ9wiSDixgTsrwLjvsoLoh1/Y6E8SCEpI4Nv/ce2jCYczEtrxDoI5E0QTS20L6HWkInaZ4I/yhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WRlZN1Dt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HtQdFl7J; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WRlZN1Dt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HtQdFl7J; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 56DAF1F81C;
+	Mon, 10 Nov 2025 16:17:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762791434; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YrOBspxCbbKPnxtqzlAEE5iWqhCmDcU42GABocD1amU=;
+	b=WRlZN1DtAqT+PMxHhs21FZZKglAss9orVBCok9BiUdcNVF4BWPbgREkiQMWHjTRr9M0jhB
+	YfXTlaczmrbDJb2qkrIxWTTPohaYFMZDzP/Exu8cPjZTFfov/RQwflcvIWIlsbRXt+Y/b4
+	yBQqeggkkz8kar6oqBcLfhkKGVlMZPA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762791434;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YrOBspxCbbKPnxtqzlAEE5iWqhCmDcU42GABocD1amU=;
+	b=HtQdFl7J5kPMtvohpN3txIm0DYVUFWOXvTD07pOuox8uLKCNTa0lKyC3EF5/ttsrd6zbNJ
+	3m9tkwg2kKysFpAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762791434; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YrOBspxCbbKPnxtqzlAEE5iWqhCmDcU42GABocD1amU=;
+	b=WRlZN1DtAqT+PMxHhs21FZZKglAss9orVBCok9BiUdcNVF4BWPbgREkiQMWHjTRr9M0jhB
+	YfXTlaczmrbDJb2qkrIxWTTPohaYFMZDzP/Exu8cPjZTFfov/RQwflcvIWIlsbRXt+Y/b4
+	yBQqeggkkz8kar6oqBcLfhkKGVlMZPA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762791434;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YrOBspxCbbKPnxtqzlAEE5iWqhCmDcU42GABocD1amU=;
+	b=HtQdFl7J5kPMtvohpN3txIm0DYVUFWOXvTD07pOuox8uLKCNTa0lKyC3EF5/ttsrd6zbNJ
+	3m9tkwg2kKysFpAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1885C144A2;
+	Mon, 10 Nov 2025 16:17:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wEKnBQoQEmmDewAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 10 Nov 2025 16:17:14 +0000
+Message-ID: <2bbccc79-d64e-4ace-a528-37295e3f8a4d@suse.cz>
+Date: Mon, 10 Nov 2025 17:17:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028175458.1037397-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251028175458.1037397-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20251028175458.1037397-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Nov 2025 17:16:26 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU4YTdy7zCiTyYbTY_t84q_xjjf0+XpDcyuGqB-zv6r5g@mail.gmail.com>
-X-Gm-Features: AWmQ_bnUV9390k-yS-D893D2ukJvmbPbtHpKrPkw-Xw6URCIb2kBicAa71zpzl8
-Message-ID: <CAMuHMdU4YTdy7zCiTyYbTY_t84q_xjjf0+XpDcyuGqB-zv6r5g@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: renesas: rzt2h-n2h-evk: Enable
- Ethernet support
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/8] mm: set the VM_MAYBE_GUARD flag on guard region
+ install
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Andrei Vagin <avagin@gmail.com>
+References: <cover.1762531708.git.lorenzo.stoakes@oracle.com>
+ <99ce6131e27592c92b43ac866da48b4c2a568298.1762531708.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <99ce6131e27592c92b43ac866da48b4c2a568298.1762531708.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lwn.net,redhat.com,oracle.com,kernel.org,google.com,suse.com,goodmis.org,efficios.com,suse.de,nvidia.com,linux.alibaba.com,arm.com,linux.dev,vger.kernel.org,kvack.org,gmail.com];
+	R_RATELIMIT(0.00)[to_ip_from(RL37wz1aou84on4nnr4peu14t5)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-Hi Prabhakar,
+On 11/7/25 17:11, Lorenzo Stoakes wrote:
+> Now we have established the VM_MAYBE_GUARD flag and added the capacity to
+> set it atomically, do so upon MADV_GUARD_INSTALL.
+> 
+> The places where this flag is used currently and matter are:
+> 
+> * VMA merge - performed under mmap/VMA write lock, therefore excluding
+>   racing writes.
+> 
+> * /proc/$pid/smaps - can race the write, however this isn't meaningful as
+>   the flag write is performed at the point of the guard region being
+>   established, and thus an smaps reader can't reasonably expect to avoid
+>   races. Due to atomicity, a reader will observe either the flag being set
+>   or not. Therefore consistency will be maintained.
+> 
+> In all other cases the flag being set is irrelevant and atomicity
+> guarantees other flags will be read correctly.
+> 
+> Note that non-atomic updates of unrelated flags do not cause an issue with
+> this flag being set atomically, as writes of other flags are performed
+> under mmap/VMA write lock, and these atomic writes are performed under
+> mmap/VMA read lock, which excludes the write, avoiding RMW races.
+> 
+> Note that we do not encounter issues with KCSAN by adjusting this flag
+> atomically, as we are only updating a single bit in the flag bitmap and
+> therefore we do not need to annotate these changes.
+> 
+> We intentionally set this flag in advance of actually updating the page
+> tables, to ensure that any racing atomic read of this flag will only return
+> false prior to page tables being updated, to allow for serialisation via
+> page table locks.
+> 
+> Note that we set vma->anon_vma for anonymous mappings. This is because the
+> expectation for anonymous mappings is that an anon_vma is established
+> should they possess any page table mappings. This is also consistent with
+> what we were doing prior to this patch (unconditionally setting anon_vma on
+> guard region installation).
+> 
+> We also need to update retract_page_tables() to ensure that madvise(...,
+> MADV_COLLAPSE) doesn't incorrectly collapse file-backed ranges contain
+> guard regions.
+> 
+> This was previously guarded by anon_vma being set to catch MAP_PRIVATE
+> cases, but the introduction of VM_MAYBE_GUARD necessitates that we check
+> this flag instead.
+> 
+> We utilise vma_flag_test_atomic() to do so - we first perform an optimistic
+> check, then after the PTE page table lock is held, we can check again
+> safely, as upon guard marker install the flag is set atomically prior to
+> the page table lock being taken to actually apply it.
+> 
+> So if the initial check fails either:
+> 
+> * Page table retraction acquires page table lock prior to VM_MAYBE_GUARD
+>   being set - guard marker installation will be blocked until page table
+>   retraction is complete.
+> 
+> OR:
+> 
+> * Guard marker installation acquires page table lock after setting
+>   VM_MAYBE_GUARD, which raced and didn't pick this up in the initial
+>   optimistic check, blocking page table retraction until the guard regions
+>   are installed - the second VM_MAYBE_GUARD check will prevent page table
+>   retraction.
+> 
+> Either way we're safe.
+> 
+> We refactor the retraction checks into a single
+> file_backed_vma_is_retractable(), there doesn't seem to be any reason that
+> the checks were separated as before.
+> 
+> Note that VM_MAYBE_GUARD being set atomically remains correct as
+> vma_needs_copy() is invoked with the mmap and VMA write locks held,
+> excluding any race with madvise_guard_install().
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-On Tue, 28 Oct 2025 at 18:55, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Enable Ethernet support on the RZ/T2H and RZ/N2H EVKs.
->
-> Configure the MIIC converter in mode 0x6:
->   Port 0 <-> ETHSW Port 0
->   Port 1 <-> ETHSW Port 1
->   Port 2 <-> GMAC2
->   Port 3 <-> GMAC1
->
-> Enable the ETHSS, GMAC1 and GMAC2 nodes. ETHSW support will be added
-> once the switch driver is available.
->
-> Configure the MIIC converters to map ports according to the selected
-> switching mode, with converters 0 and 1 mapped to switch ports and
-> converters 2 and 3 mapped to GMAC ports.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-Thanks for your patch!
+Small nit below:
 
-I found the mapping between GMACx, ETHy, PHYz, and board connector
-rather hard to follow.  Some suggestions for improvement are included
-below...
+> @@ -1778,15 +1801,16 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+>  			spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+>  
+>  		/*
+> -		 * Huge page lock is still held, so normally the page table
+> -		 * must remain empty; and we have already skipped anon_vma
+> -		 * and userfaultfd_wp() vmas.  But since the mmap_lock is not
+> -		 * held, it is still possible for a racing userfaultfd_ioctl()
+> -		 * to have inserted ptes or markers.  Now that we hold ptlock,
+> -		 * repeating the anon_vma check protects from one category,
+> -		 * and repeating the userfaultfd_wp() check from another.
+> +		 * Huge page lock is still held, so normally the page table must
+> +		 * remain empty; and we have already skipped anon_vma and
+> +		 * userfaultfd_wp() vmas.  But since the mmap_lock is not held,
+> +		 * it is still possible for a racing userfaultfd_ioctl() or
+> +		 * madvise() to have inserted ptes or markers.  Now that we hold
+> +		 * ptlock, repeating the anon_vma check protects from one
+> +		 * category, and repeating the userfaultfd_wp() check from
+> +		 * another.
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-> @@ -149,7 +149,77 @@ &i2c1 {
->         status = "okay";
->  };
->
-> +&phy2 {
-> +       /*
-> +        * PHY2 Reset Configuration:
-> +        *
-> +        * SW6[1] = OFF; SW6[2] = ON; SW6[3] = OFF;
-> +        * P17_5 is used as GMAC_RESETOUT2#
-> +        */
-> +       reset-gpios = <&pinctrl RZT2H_GPIO(17, 5) GPIO_ACTIVE_LOW>;
-> +};
+The last part of the comment is unchanged and mentions anon_vma check and
+userfaultfd_wp() check which were there explicitly originally, but now it's
+a file_backed_vma_is_retractable() check that also includes the guard region
+check, so maybe could be updated?
+
+>  		 */
+> -		if (likely(!vma->anon_vma && !userfaultfd_wp(vma))) {
+> +		if (likely(file_backed_vma_is_retractable(vma))) {
+>  			pgt_pmd = pmdp_collapse_flush(vma, addr, pmd);
+>  			pmdp_get_lockless_sync();
+>  			success = true;
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 67bdfcb315b3..de918b107cfc 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1139,15 +1139,21 @@ static long madvise_guard_install(struct madvise_behavior *madv_behavior)
+>  		return -EINVAL;
+>  
+>  	/*
+> -	 * If we install guard markers, then the range is no longer
+> -	 * empty from a page table perspective and therefore it's
+> -	 * appropriate to have an anon_vma.
+> -	 *
+> -	 * This ensures that on fork, we copy page tables correctly.
+> +	 * Set atomically under read lock. All pertinent readers will need to
+> +	 * acquire an mmap/VMA write lock to read it. All remaining readers may
+> +	 * or may not see the flag set, but we don't care.
+> +	 */
+> +	vma_flag_set_atomic(vma, VM_MAYBE_GUARD_BIT);
 > +
-> +&phy3 {
-> +       reset-gpios = <&pinctrl RZT2H_GPIO(32, 3) GPIO_ACTIVE_LOW>;
-> +};
-> +
->  &pinctrl {
-> +       /*
-> +        * ETH2 Pin Configuration:
-> +        *
-> +        * SW2[6] = OFF: MDC and MDIO of Ethernet port 2 are connected to GMAC2
-> +        * SW2[7] = ON:  Pins P29_1-P29_7, P30_0-P30_4, and P31_2-P31_5 are used for Ethernet port 2
+> +	/*
+> +	 * If anonymous and we are establishing page tables the VMA ought to
+> +	 * have an anon_vma associated with it.
+>  	 */
+> -	err = anon_vma_prepare(vma);
+> -	if (err)
+> -		return err;
+> +	if (vma_is_anonymous(vma)) {
+> +		err = anon_vma_prepare(vma);
+> +		if (err)
+> +			return err;
+> +	}
+>  
+>  	/*
+>  	 * Optimistically try to install the guard marker pages first. If any
 
-Please split this long line.
-
-> +        */
-> +       eth2_pins: eth2-pins {
-
-Perhaps s/eth2/gmac2/, to make the mapping easier to follow?
-
-> +               pinmux = <RZT2H_PORT_PINMUX(29, 1, 0xf)>, /* ETH2_TXCLK */
-> +                        <RZT2H_PORT_PINMUX(29, 2, 0xf)>, /* ETH2_TXD[0] */
-> +                        <RZT2H_PORT_PINMUX(29, 3, 0xf)>, /* ETH2_TXD[1] */
-> +                        <RZT2H_PORT_PINMUX(29, 4, 0xf)>, /* ETH2_TXD[2] */
-> +                        <RZT2H_PORT_PINMUX(29, 5, 0xf)>, /* ETH2_TXD[3] */
-
-The documentation doesn't use square brackets in the signal names.
-
-> +                        <RZT2H_PORT_PINMUX(29, 6, 0xf)>, /* ETH2_TXEN */
-> +                        <RZT2H_PORT_PINMUX(29, 7, 0xf)>, /* ETH2_RXCLK */
-> +                        <RZT2H_PORT_PINMUX(30, 0, 0xf)>, /* ETH2_RXD[0] */
-> +                        <RZT2H_PORT_PINMUX(30, 1, 0xf)>, /* ETH2_RXD[1] */
-> +                        <RZT2H_PORT_PINMUX(30, 2, 0xf)>, /* ETH2_RXD[2] */
-> +                        <RZT2H_PORT_PINMUX(30, 3, 0xf)>, /* ETH2_RXD[3] */
-> +                        <RZT2H_PORT_PINMUX(30, 4, 0xf)>, /* ETH2_RXDV */
-> +                        <RZT2H_PORT_PINMUX(31, 2, 0xf)>, /* ETH2_TXER */
-> +                        <RZT2H_PORT_PINMUX(31, 3, 0xf)>, /* ETH2_RXER */
-> +                        <RZT2H_PORT_PINMUX(31, 4, 0xf)>, /* ETH2_CRS */
-> +                        <RZT2H_PORT_PINMUX(31, 5, 0xf)>, /* ETH2_COL */
-> +                        <RZT2H_PORT_PINMUX(30, 5, 0x10)>, /* ETH2_MDC */
-> +                        <RZT2H_PORT_PINMUX(30, 6, 0x10)>, /* ETH2_MDIO */
-
-The documentation calls these GMAC2_{MDC,MDIO}.
-
-> +                        <RZT2H_PORT_PINMUX(31, 0, 0x02)>; /* ETH2_REFCLK */
-
-Please settle on a common convention for formatting pinmux settings:
-either use 0x2 here (no leading zero), or 0x0f in the other entries.
-
-> +       };
-> +
-> +       /*
-> +        * ETH3 Pin Configuration:
-> +        *
-> +        * SW2[8] = ON, P27_2, P33_2-P33_7, P34_0-P34_5, P34_7 and P35_0-P35_5
-
-P27_2 and P35_3-P35_5 don't seem to be muxed by SW2[8]?
-
-> +        * are used for Ethernet port 3
-> +        */
-> +       eth3_pins: eth3-pins {
-> +               pinmux = <RZT2H_PORT_PINMUX(33, 2, 0xf)>, /* ETH3_TXCLK */
-> +                        <RZT2H_PORT_PINMUX(33, 3, 0xf)>, /* ETH3_TXD[0] */
-> +                        <RZT2H_PORT_PINMUX(33, 4, 0xf)>, /* ETH3_TXD[1] */
-> +                        <RZT2H_PORT_PINMUX(33, 5, 0xf)>, /* ETH3_TXD[2] */
-> +                        <RZT2H_PORT_PINMUX(33, 6, 0xf)>, /* ETH3_TXD[3] */
-> +                        <RZT2H_PORT_PINMUX(33, 7, 0xf)>, /* ETH3_TXEN */
-> +                        <RZT2H_PORT_PINMUX(34, 0, 0xf)>, /* ETH3_RXCLK */
-> +                        <RZT2H_PORT_PINMUX(34, 1, 0xf)>, /* ETH3_RXD[0] */
-> +                        <RZT2H_PORT_PINMUX(34, 2, 0xf)>, /* ETH3_RXD[1] */
-> +                        <RZT2H_PORT_PINMUX(34, 3, 0xf)>, /* ETH3_RXD[2] */
-> +                        <RZT2H_PORT_PINMUX(34, 4, 0xf)>, /* ETH3_RXD[3] */
-> +                        <RZT2H_PORT_PINMUX(34, 5, 0xf)>, /* ETH3_RXDV */
-> +                        <RZT2H_PORT_PINMUX(34, 7, 0xf)>, /* ETH3_TXER */
-> +                        <RZT2H_PORT_PINMUX(35, 0, 0xf)>, /* ETH3_RXER */
-> +                        <RZT2H_PORT_PINMUX(35, 1, 0xf)>, /* ETH3_CRS */
-> +                        <RZT2H_PORT_PINMUX(35, 2, 0xf)>, /* ETH3_COL */
-> +                        <RZT2H_PORT_PINMUX(26, 1, 0x10)>, /* ETH3_MDC */
-> +                        <RZT2H_PORT_PINMUX(26, 2, 0x10)>, /* ETH3_MDIO */
-> +                        <RZT2H_PORT_PINMUX(34, 6, 0x02)>; /* ETH3_REFCLK */
-> +       };
-> +
->         /*
->          * I2C0 Pin Configuration:
->          * ------------------------
-> diff --git a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> index d698b6368ee7..7ebc89bafaf1 100644
-> --- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> @@ -186,7 +186,86 @@ &i2c1 {
->         status = "okay";
->  };
->
-> +&phy2 {
-> +       /*
-> +        * PHY2 Reset Configuration:
-> +        *
-> +        * DSW8[1] = ON; DSW8[2] = OFF
-> +        * DSW12[7] = OFF; DSW12[8] = ON
-> +        * P03_1 is used as GMAC_RESETOUT2#
-> +        */
-> +       reset-gpios = <&pinctrl RZT2H_GPIO(3, 1) GPIO_ACTIVE_LOW>;
-> +};
-> +
-> +&phy3 {
-> +       /*
-> +        * PHY3 Reset Configuration:
-> +        *
-> +        * DSW12[5] = OFF; DSW12[6] = ON
-> +        * P03_2 is used as GMAC_RESETOUT3#
-> +        */
-> +       reset-gpios = <&pinctrl RZT2H_GPIO(3, 2) GPIO_ACTIVE_LOW>;
-> +};
-> +
->  &pinctrl {
-> +       /*
-> +        * ETH2 Pin Configuration:
-> +        *
-> +        * DSW5[6] = OFF, P21_4-P21_5 are used for Ethernet port 2
-
-MDC and MDIO of Ethernet port 2 are connected to GMAC2
-
-> +        * DSW5[7] = ON, P29_1-P29_7, P30_0-P30_4, P30_7, P31_2, P31_4
-> +        * and P31_5 are used for Ethernet port 2
-> +        */
-> +       eth2_pins: eth2-pins {
-
-Perhaps s/eth2/gmac2/, to make the mapping easier to follow?
-
-> +               pinmux = <RZT2H_PORT_PINMUX(29, 1, 0xf)>, /* ETH2_TXCLK */
-> +                        <RZT2H_PORT_PINMUX(29, 2, 0xf)>, /* ETH2_TXD[0] */
-> +                        <RZT2H_PORT_PINMUX(29, 3, 0xf)>, /* ETH2_TXD[1] */
-> +                        <RZT2H_PORT_PINMUX(29, 4, 0xf)>, /* ETH2_TXD[2] */
-> +                        <RZT2H_PORT_PINMUX(29, 5, 0xf)>, /* ETH2_TXD[3] */
-> +                        <RZT2H_PORT_PINMUX(29, 6, 0xf)>, /* ETH2_TXEN */
-> +                        <RZT2H_PORT_PINMUX(29, 7, 0xf)>, /* ETH2_RXCLK */
-> +                        <RZT2H_PORT_PINMUX(30, 0, 0xf)>, /* ETH2_RXD[0] */
-> +                        <RZT2H_PORT_PINMUX(30, 1, 0xf)>, /* ETH2_RXD[1] */
-> +                        <RZT2H_PORT_PINMUX(30, 2, 0xf)>, /* ETH2_RXD[2] */
-> +                        <RZT2H_PORT_PINMUX(30, 3, 0xf)>, /* ETH2_RXD[3] */
-> +                        <RZT2H_PORT_PINMUX(30, 4, 0xf)>, /* ETH2_RXDV */
-> +                        <RZT2H_PORT_PINMUX(31, 2, 0xf)>, /* ETH2_TXER */
-> +                        <RZT2H_PORT_PINMUX(31, 3, 0xf)>, /* ETH2_RXER */
-
-31, 1, 0xf
-
-> +                        <RZT2H_PORT_PINMUX(31, 4, 0xf)>, /* ETH2_CRS */
-> +                        <RZT2H_PORT_PINMUX(31, 5, 0xf)>, /* ETH2_COL */
-> +                        <RZT2H_PORT_PINMUX(30, 5, 0x10)>, /* ETH2_MDC */
-> +                        <RZT2H_PORT_PINMUX(30, 6, 0x10)>, /* ETH2_MDIO */
-
-The documentation calls these GMAC2_{MDC,MDIO}.
-
-> +                        <RZT2H_PORT_PINMUX(31, 0, 0x02)>; /* ETH2_REFCLK */
-
-> +
-> +       };
-> +
-> +       /*
-> +        * ETH3 Pin Configuration:
-> +        *
-> +        * DSW5[8] = ON, P00_0-P00_2, P33_2-P33_7, P34_0-P34_6, are used for Ethernet port 3
-> +        * DSW12[1] = OFF;DSW12[2] = ON, P00_3 is used for Ethernet port 3
-> +        */
-> +       eth3_pins: eth3-pins {
-
-Perhaps s/eth3/gmac1/, to make the mapping easier to follow?
-
-> +               pinmux = <RZT2H_PORT_PINMUX(33, 2, 0xf)>, /* ETH3_TXCLK */
-> +                        <RZT2H_PORT_PINMUX(33, 3, 0xf)>, /* ETH3_TXD[0] */
-> +                        <RZT2H_PORT_PINMUX(33, 4, 0xf)>, /* ETH3_TXD[1] */
-> +                        <RZT2H_PORT_PINMUX(33, 5, 0xf)>, /* ETH3_TXD[2] */
-> +                        <RZT2H_PORT_PINMUX(33, 6, 0xf)>, /* ETH3_TXD[3] */
-> +                        <RZT2H_PORT_PINMUX(33, 7, 0xf)>, /* ETH3_TXEN */
-> +                        <RZT2H_PORT_PINMUX(34, 0, 0xf)>, /* ETH3_RXCLK */
-> +                        <RZT2H_PORT_PINMUX(34, 1, 0xf)>, /* ETH3_RXD[0] */
-> +                        <RZT2H_PORT_PINMUX(34, 2, 0xf)>, /* ETH3_RXD[1] */
-> +                        <RZT2H_PORT_PINMUX(34, 3, 0xf)>, /* ETH3_RXD[2] */
-> +                        <RZT2H_PORT_PINMUX(34, 4, 0xf)>, /* ETH3_RXD[3] */
-> +                        <RZT2H_PORT_PINMUX(34, 5, 0xf)>, /* ETH3_RXDV */
-> +                        <RZT2H_PORT_PINMUX(0, 0, 0xf)>, /* ETH3_TXER */
-> +                        <RZT2H_PORT_PINMUX(0, 1, 0xf)>, /* ETH3_RXER */
-> +                        <RZT2H_PORT_PINMUX(0, 2, 0xf)>, /* ETH3_CRS */
-> +                        <RZT2H_PORT_PINMUX(0, 3, 0xf)>, /* ETH3_COL */
-> +                        <RZT2H_PORT_PINMUX(26, 1, 0x10)>, /* ETH3_MDC */
-> +                        <RZT2H_PORT_PINMUX(26, 2, 0x10)>, /* ETH3_MDIO */
-
-The documentation calls these GMAC1_{MDC,MDIO}.
-
-> +                        <RZT2H_PORT_PINMUX(34, 6, 0x02)>; /* ETH3_REFCLK */
-> +       };
-> +
->         /*
->          * I2C0 Pin Configuration:
->          * ------------------------
-> diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-> index 924a38c6cb0f..c608d97586ff 100644
-> --- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-> @@ -7,10 +7,14 @@
->
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/net/mscc-phy-vsc8531.h>
-> +#include <dt-bindings/net/renesas,r9a09g077-pcs-miic.h>
->  #include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
->
->  / {
->         aliases {
-> +               ethernet0 = &gmac1;
-
-Is this the port labeled "Ethernet(ETH3) Connector" in the Board's
-User Manual?  Shouldn't that be "ethernet3"?
-
-> +               ethernet1 = &gmac2;
-
-Is this the port labeled "Ethernet(ETH2) Connector" in the Board's
-User Manual?  Shouldn't that be "ethernet2"?
-
->                 i2c0 = &i2c0;
->                 i2c1 = &i2c1;
->                 mmc0 = &sdhi0;
-> @@ -70,10 +74,34 @@ &ehci {
->         status = "okay";
->  };
->
-> +&ethss {
-> +       status = "okay";
-> +
-> +       renesas,miic-switch-portin = <ETHSS_GMAC0_PORT>;
-> +};
-> +
->  &extal_clk {
->         clock-frequency = <25000000>;
->  };
->
-> +&gmac1 {
-> +       pinctrl-0 = <&eth3_pins>;
-> +       pinctrl-names = "default";
-> +       phy-handle = <&phy3>;
-> +       phy-mode = "rgmii-id";
-> +       pcs-handle = <&mii_conv3>;
-> +       status = "okay";
-> +};
-> +
-> +&gmac2 {
-> +       pinctrl-0 = <&eth2_pins>;
-> +       pinctrl-names = "default";
-> +       phy-handle = <&phy2>;
-> +       phy-mode = "rgmii-id";
-> +       pcs-handle = <&mii_conv2>;
-> +       status = "okay";
-> +};
-> +
->  &hsusb {
->         dr_mode = "otg";
->         status = "okay";
-> @@ -87,6 +115,48 @@ eeprom: eeprom@50 {
->         };
->  };
->
-> +&mdio1 {
-> +       phy3: ethernet-phy@3 {
-
-Ah, the "3" corresponds to the PHY address in this mdio node...
-Perhaps "mdio1_phy", to make it easier to match mdio and phy nodes?
-
-> +               compatible = "ethernet-phy-id0007.0772", "ethernet-phy-ieee802.3-c22";
-> +               reg = <3>;
-> +               vsc8531,led-0-mode = <VSC8531_LINK_ACTIVITY>;
-
-VSC8531_ACTIVITY?
-
-> +               vsc8531,led-1-mode = <VSC8531_LINK_ACTIVITY>;
-> +               reset-assert-us = <2000>;
-> +               reset-deassert-us = <15000>;
-> +       };
-> +};
-> +
-> +&mdio2 {
-> +       phy2: ethernet-phy@2 {
-
-mdio2_phy?
-
-> +               compatible = "ethernet-phy-id0007.0772", "ethernet-phy-ieee802.3-c22";
-> +               reg = <2>;
-> +               vsc8531,led-0-mode = <VSC8531_LINK_ACTIVITY>;
-
-VSC8531_ACTIVITY?
-
-> +               vsc8531,led-1-mode = <VSC8531_LINK_ACTIVITY>;
-> +               reset-assert-us = <2000>;
-> +               reset-deassert-us = <15000>;
-> +       };
-> +};
-> +
-> +&mii_conv0 {
-> +       renesas,miic-input = <ETHSS_ETHSW_PORT0>;
-> +       status = "okay";
-> +};
-> +
-> +&mii_conv1 {
-> +       renesas,miic-input = <ETHSS_ETHSW_PORT1>;
-> +       status = "okay";
-> +};
-> +
-> +&mii_conv2 {
-> +       renesas,miic-input = <ETHSS_GMAC2_PORT>;
-> +       status = "okay";
-> +};
-> +
-> +&mii_conv3 {
-> +       renesas,miic-input = <ETHSS_GMAC1_PORT>;
-> +       status = "okay";
-> +};
-> +
->  &ohci {
->         dr_mode = "otg";
->         status = "okay";
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
