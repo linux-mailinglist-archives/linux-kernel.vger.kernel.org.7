@@ -1,109 +1,111 @@
-Return-Path: <linux-kernel+bounces-893145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9007C46A12
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:36:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E093DC46A18
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 29FA54EB39E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:36:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8488C3A36FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD17430E0F6;
-	Mon, 10 Nov 2025 12:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB4D30CD8E;
+	Mon, 10 Nov 2025 12:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQnfRAJv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aA0Tu+fI"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3287923EA88;
-	Mon, 10 Nov 2025 12:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BFE23EA88
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762778167; cv=none; b=Mjjw+dRFxwYbJEXNQF2wHbp+1ExMhapGgcO6hCsEcdgMeNE2XeuRGKkFzj2zcZo8TTnl6pb6uVKl5ciHQ1Zqdx0Om3AjLkTb8MmLhSlHrQjNhkklK9KkmDSa1iPdX4RngGDME5UOhpBTuli7fTo+WUgFy/Xx/pPNEOy+uzn93SI=
+	t=1762778191; cv=none; b=Ho3zC5DqeIzNyrETmdp69TpboE7X2lFqPDL8np7AZnDmXrJM5809jaYznGN2j4ev9/yqNty017dQgXa8OY/kNjXMO1gBqfo1TML5hFe4/HR5IMmbpeqOHYLCiOQu7hcooLPcmVkyNgx62oYzbQwBdvvuZoLxNfO1BcafSSR7hes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762778167; c=relaxed/simple;
-	bh=5y8I8nhnPfdGddmx1zRY5sajFbNRe4oAnoyYuhJzI3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kCSM3MOPHyLZvelpD5G4lak2JjXXioaStKFo2EeooAbLdJf1gdHN89dm2T5rE2fd0ShdEggVmB0A5W18WhVkwSW6WJ1HAYuboUulu7BWMDkN3Ia+x7VBFmcYwN81wecikKWrPhJzKUJAUFNUT05Zi0yziVgiYjZG8OIuQiy6iek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQnfRAJv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1932C116B1;
-	Mon, 10 Nov 2025 12:36:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762778165;
-	bh=5y8I8nhnPfdGddmx1zRY5sajFbNRe4oAnoyYuhJzI3s=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=lQnfRAJvrLSkoAVLPppVyq53Ci6ucOj+dGozBajSsoqdRwKBj4ZOe57cbpl4mCToK
-	 vWBeE/v64Xeh0K8d19cNSPpknfpulCn78KVdWyLtYnoia2717P8xOUp4jLBSS6geGH
-	 wDkDr3hRkQaSSfhYk3Vpj8qhHz707Du8xm/B9WfbeNkhWJhC0osMbduWdil2J22Wao
-	 5K04yMEohCxk+a1QnvjJNqPjpW5eyOLLfxlDOJDle/poTQd3UZT45Ey8H94lqGNwIq
-	 K91TTSA64iV9bpocdVzVqzIv/hzTQ3yl6pYI00Hjh5AhiBYIrYiZ/jlKi8TAAUwgdr
-	 +7rzCUI2jNb6g==
-Message-ID: <03d6086f-0a84-4cca-b668-5b8902cd866f@kernel.org>
-Date: Mon, 10 Nov 2025 06:36:03 -0600
+	s=arc-20240116; t=1762778191; c=relaxed/simple;
+	bh=UbMT84qlh+bGRnpLEEVxdC7496rODSCE09cq6dsWS5Y=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=W2W+V/lcm8GvFWtYGRyOagS0NGPZn2FAI1wdzzX+tZoCSiFUBiE3UuMl9tkLB1ZhOFTVakScgYC/A2xrg3ZRo9Ie29DkxSlsgFvZjk8Oy2Vx7cc97PvCsXktadXqedt35vuhjo4Y9+rbbmdZgXIeJIBCZkTcp6IUri62oMH6JRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aA0Tu+fI; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4777b59119dso9195645e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:36:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762778188; x=1763382988; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UbMT84qlh+bGRnpLEEVxdC7496rODSCE09cq6dsWS5Y=;
+        b=aA0Tu+fI9RSJVsGqkgCbZZOrqPluyC2PWw1rdbn34Eg2hjQ3Wh5CDcLtXrItcg/qFD
+         reqr0/5ykpNghYlC8uZNOfoY46fkDmS/1Y7KViliYavex/jg4xu2hpa9kQOWB9dBJkSX
+         Cugi77Ncc2z9Jr7XAt6tVzfnpzPnxmoPi+Wh3HiNDt6VxXR+aJEUZMP0PjcPqJMaJCGO
+         gZWU/NOQPrNsE4+TMYHXXLGGBtzp1QIGDlESyqz2tVjBPQ0HuKz9zUWddBTCLF6gAm6i
+         KB7RHmRYyaT8iCo/1yqPAohtVjEczpqkJIUQOX4N/TyrzoftnrBap5/UF0z6Mme2vnkk
+         WvsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762778188; x=1763382988;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UbMT84qlh+bGRnpLEEVxdC7496rODSCE09cq6dsWS5Y=;
+        b=EoKXOyFEV8D1212n7b0g1YTeC2zTaKwaU8uEmJmgodFj9G81hO7MpIyD3tU/omK2SI
+         yTzMxlvhUffwjS7EXmI59EwPSfMYqY6p28FgSLPUNUvuCfzLaQmeVXNZgD25y0NCbFn4
+         O5JBb4dgRg6UZ7dWOWCfZAQjWnfVX6KUyUJvmzhLJaSVSVeB04jToFing6NpauruK/q+
+         TJamWKPVp1BcOKpOp/ohshgXM2hBIwxi974yL0ITX2xfDqA5KqSLMI2l1l5X6r5IIYx8
+         LHL/rDzXPdOkHhCkk3iVso0NkrivvDzvEM4VIZ4tV5BwhTaaq7XfmfGONZvZQXKKaXgY
+         5IbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqSwPTkfQjoHn0qdGIV6Pf6P9xhPd0758gXRTpLg7hhcEqM++a2jiOZ53kktsyT3CTwVJBUOmrGbkv1bM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8WKe1JK2bDPNAvguRhWhC5jlpe8gQMjBvfY9un+A+iWucekgc
+	pwDMqXw3ZKLM+Z6hH+LPqPKLIOaZix9/55wcqU2beSBVev+sjc/V1/L6H9QRNHbYxxGG1qFIzwY
+	EKWzWcyQ6cgft4w==
+X-Google-Smtp-Source: AGHT+IFkqQ2JCO92rMhGqtD55gQ/qLw5jqO2mnH6sKx9F7OKDrhIFhpPWQqX+8AONg1NiXXzOHJAZNv39LHjig==
+X-Received: from wmpo21.prod.google.com ([2002:a05:600c:3395:b0:477:7efa:f807])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:474c:b0:477:54cd:200e with SMTP id 5b1f17b1804b1-47773228b80mr56455815e9.1.1762778188545;
+ Mon, 10 Nov 2025 04:36:28 -0800 (PST)
+Date: Mon, 10 Nov 2025 12:36:27 +0000
+In-Reply-To: <20251110113834.GWaRHOuqnXgNa0UiFn@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: intel: Add Agilex3 SoCFPGA board
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- niravkumarlaxmidas.rabara@altera.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1762756191.git.niravkumarlaxmidas.rabara@altera.com>
- <51ecc7f4eb7e419c00ee51fc26156e25686dfece.1762756191.git.niravkumarlaxmidas.rabara@altera.com>
- <1c879d71-a4a5-4241-a0db-bfd2c61bf32c@kernel.org>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <1c879d71-a4a5-4241-a0db-bfd2c61bf32c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
+ <20250924-b4-asi-page-alloc-v1-3-2d861768041f@google.com> <20251025114801.GWaPy48dhlZ_EVoqKi@fat_crate.local>
+ <DDSLXKU87HTE.G0XUZ5BG5M8K@google.com> <20251110113834.GWaRHOuqnXgNa0UiFn@fat_crate.local>
+X-Mailer: aerc 0.21.0
+Message-ID: <DE50PRYPTPD5.3MAJLOSJFMA37@google.com>
+Subject: Re: [PATCH 03/21] x86/mm: factor out phys_pgd_init()
+From: Brendan Jackman <jackmanb@google.com>
+To: Borislav Petkov <bp@alien8.de>, Brendan Jackman <jackmanb@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, <peterz@infradead.org>, 
+	<dave.hansen@linux.intel.com>, <mingo@redhat.com>, <tglx@linutronix.de>, 
+	<akpm@linux-foundation.org>, <david@redhat.com>, <derkling@google.com>, 
+	<junaids@google.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, 
+	<reijiw@google.com>, <rientjes@google.com>, <rppt@kernel.org>, 
+	<vbabka@suse.cz>, <x86@kernel.org>, <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon Nov 10, 2025 at 11:38 AM UTC, Borislav Petkov wrote:
+> On Sun, Oct 26, 2025 at 10:29:23PM +0000, Brendan Jackman wrote:
+>> Per Dave's feedback I am still slightly hopeful I can find a way to
+>> come in and refactor this code so that it's gets cleaner for you guys
+>> and then ASI becomes a natural addition. So far I don't come up with
+>> anything in init_64.c but I'm still planning to stare at set_memory.c a
+>> while longer and see if anything comes to mind. So maybe we'll be able
+>> to reduce the yuck factor a bit.
+>
+> Cleanups like that are always more than welcome!
+>
+> :-)
 
+In that case, I will advertise this (less ambitious) cleanup which is
+awaiting review:
 
-On 11/10/25 01:53, Krzysztof Kozlowski wrote:
-> On 10/11/2025 07:47, niravkumarlaxmidas.rabara@altera.com wrote:
->> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
->>
->> Add compatible for Agilex3 SoCFPGA board.
-
->>
->> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
->> ---
->>   Documentation/devicetree/bindings/arm/intel,socfpga.yaml | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml b/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
->> index cf7a91dfec8a..e706c4eff019 100644
->> --- a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
->> +++ b/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
->> @@ -21,6 +21,11 @@ properties:
->>                 - intel,socfpga-agilex-n6000
->>                 - intel,socfpga-agilex-socdk
->>             - const: intel,socfpga-agilex
->> +      - description: Agilex3 boards
-> 
-> Agilex3?
-> 
-
- From what I understand, the Agilex3 is the same chip as the Agilex5, 
-minus 2 CPU cores. So I recommended to Nirav, just to add the binding in 
-the Agilex5 context.
-
->> +        items:
->> +          - enum:
->> +              - intel,socfpga-agilex3-socdk
->> +          - const: intel,socfpga-agilex5
-> 
-> Or Agilex5? Decide. Cannot be both.
-> 
- From the explanation above, could we document the agilex3 socdk this way?
-
-Thanks,
-Dinh
+https://lore.kernel.org/all/20251003-x86-init-cleanup-v1-4-f2b7994c2ad6@google.com/
 
