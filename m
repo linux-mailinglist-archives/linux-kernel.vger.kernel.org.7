@@ -1,176 +1,203 @@
-Return-Path: <linux-kernel+bounces-893533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E1E6C47D45
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:15:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B90BC47B42
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:55:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815DF3BDF63
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:45:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D234259D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C87C26FA77;
-	Mon, 10 Nov 2025 15:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4FB313E34;
+	Mon, 10 Nov 2025 15:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mkRT/c49"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VtMJ9ZVm"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C72126AA94
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59AB257859
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762789421; cv=none; b=kEG/PVPzDE+YfJR1iPhMhmuAl6nf2FYWtijpMWTcEoo6XDxjlH5ceLBEae3rO6xu2upuny1re6vvqJ/rHEDNZ4iidZYDlxKALjLdrb3/UCbpzKtBfXpn4kg4YWNEoBYf+wKh6ra7MxgAK/9vN3i/H3izw83OJgIiSkc8okQlBLg=
+	t=1762789314; cv=none; b=aIj5fgdKm5GAdfbUS6XXVFPTZmGe5GCrNvy+QjeL6boM4uRpFueK8fJS89C+71tKPMWsoTVE39/eQjq0q1f4QCa7HCuYvjAz6RbSYSG0aujTmt6F0Pn35LU4IxtzuLwVaYMeTp+cxlUr2p/TcAXNzdB4eKOD3deWrSkOVPbZruo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762789421; c=relaxed/simple;
-	bh=lJGQMZvZZc4KMFQn1KPcnjNaqLnQgvkqHDsdmDw6EPk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mgjKKThP5qxbDB1kOiU8j6F7GrV3Vj145vwx1xAnNDY25KdltT7RdwYssD8orsb378DsMiaxtvsgOkCvSEYjFK5C8RgakhL9XxCgixh76KKl+yiawrwLXCONO4sUW6G5E3ZEoeHK4UjRmf9HX/Kc2ntOJ3Z9mLieA9/f/kB0Ohc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mkRT/c49; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1762789314; c=relaxed/simple;
+	bh=IBEHosaYIw4Uy2q8CYzcuC+/MKjcxH+HXLEgyNLHiEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IBvonMsJXBkoQc4kbu2xXFFFfGgtilMXObzZdY/6R9EuKZDn29XA4cv2RcjWDqk+orcUJJaqJH+3VJOTFIphocbWym+69EiHnnpk78uiNNLkRjBoM9agvvmlI9DmCNrtY73EOhWp0gHGPci80Q7k3KHrudWcNL7/xfIaRsWW7fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VtMJ9ZVm; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-29808a9a96aso13112255ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:43:40 -0800 (PST)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7af603c06easo2908828b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:41:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762789419; x=1763394219; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gLAK+1utwDQJnW79jqnXsBU1gEdDxofO6NOCNqDBYAA=;
-        b=mkRT/c49ATaJmYRGOCcdSx3Rr7VjO5+jPdDXtzpbvc9iY4QftAbWyBGfpLQPl5pIBX
-         sJzAiuV0qbShW417k65mSybcc6F/0IXDieBkSkNBSdrhZh9gMQN1LdLhl3glO+pTUIht
-         sg4wQMkRDFrE20VfmXUsqh2up7ZYEYWPu/CD8yPSQAaWQoHcPn5RN3Ay0C8ZdCTS1w7D
-         5OIOVabfYLAVjeqmx9hsVGIQR13zqF9S8qOjvGlQfN4wiujfgZ4i85fvYEP/ipOZZZdL
-         8x6pQxTkYFBgfnLIppUtxXOmxlIS6kfVe1xpoAHAwIQEShLDf9MFJhDCojb/hVO7zJTC
-         dTqA==
+        d=gmail.com; s=20230601; t=1762789312; x=1763394112; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ylq5ip16KIlNEm4q5Drc6EevlzHi/eE660ukaOSOxw=;
+        b=VtMJ9ZVmyhkYlREYDhuIP/MGHIeqIrH8d9SKCs4YNq6LqjSPiaIAjiKoPLnmDhvbTX
+         OknozvPCaRJOSApwEiqdz0D3Swz6niOUIKUDq85P6q8R1PVTfK2YIe4N/RIhH3JnMkeO
+         ck/BBOYNtHsxdb5j3YkqFgL9odOF3fOFYxHujKxXXJ5vcKRzFpSmW3qf8zEgNEpes3qr
+         03FpkWFAgbfgiojS14yLcN5QgRcZuIEcdgOqRaIG2WWuPQbYS6h0o/OEikWMfgzDv1ep
+         Zi4XwmUJUw/Y6v8TAtEYjPN5OP67B9FvgKnzNhwq6QZBKOyJu1I+aXRob/AYt0QB+zpD
+         OYgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762789419; x=1763394219;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gLAK+1utwDQJnW79jqnXsBU1gEdDxofO6NOCNqDBYAA=;
-        b=Rj5+UXMtxNCSNtoEpLAANo2V7SjPfe7IY9Z5AiDVE+EGBmj5OmzJeJcwvpDONax7ab
-         605HG/pp6Z7kgjmnuIqtU2mqM4XodujMPZn3SVztlnQ+ct4hSnoFBtlLHQLR+zS719U6
-         SA0hlJ4zk1rgyRiXLzgPa0qPDDaZyBx5iJJQN5irAdlllTVaasF0Pba1AuowqAKygIGX
-         xYaKQ5Fu43e10Yv0D2/ZibkIHG54td4ABJ2ZqdWo+i/hMVZDLtpqj3El5L0z7AJxTxJl
-         5FjfPLQuxWyVfu6kOdZPTNBfQljIAtmWWAhLQUNrlYC93VkIoCh1TdwNpE08TIP8We2B
-         lgbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuhOfxWM4+8Qe6gBsbXib5Oc6pwLMpA+COipTjdRwbfruCCD/+KYu8KfTeuKaRpBqHYk1VApJR+YWVh3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy6zvN28U9jtLrAwM6U9iRFFDqisQO/T498wFqssZcPYuN6qfO
-	CsJdPVsjUDB1MIPY4VJ0RMnpQ7h/QVfOQf/oWj4c9sv8pLlJ2ZPURbzM
-X-Gm-Gg: ASbGncsYUW+mL+YtjmwSeN+2kt3Wp+EDk1GzsS0eaA1dP7oSW/NasyS8+wEr9o/Th9O
-	+lStwns7v16R/3o7/M7j0oaDSwcuhE207+A6PYrWOQHT0tpuH9eLezjPFX+N/SLoqaI6fbVSZqX
-	ZeLoyzuCfNQg4In54pfWenu81q1zULGKts1UIVzqrtqjmyp9mzFMeQkhpEd9u7fDMOKLiGJ1vK/
-	TMbpxe5erjurWSMwyvuMhMBn790FjTsNylrlNA/IdPBdEwmkQm7Xg6pFZJ41n8pUhbU2c2UnOk5
-	kEyhV6OTSkl/JqKtHKms6h2jvPMCTCtUFnKz/UomMhFx+P8RNZiR6sdpLgjpqd4ONGgoVp8eQt9
-	X4anQfMlwW3xgW7DTrr65xXWgaciq3mxGpJtd8eg/FsO33lddmqKC4DVpIyCDJrsGcbiM9TcsKZ
-	tfmdMgciVKcoy/AQeWCzxaz0OpYjNdau5D9eA=
-X-Google-Smtp-Source: AGHT+IFhicyH9W7Mg5DiwE8MVpN4/er0oaakdgICmjAbGBgQnJD5pAHwQ51RtSmFFQvyQKJ0R4B9cg==
-X-Received: by 2002:a17:902:ea09:b0:269:ed31:6c50 with SMTP id d9443c01a7336-297e5408bbdmr106752805ad.10.1762789419238;
-        Mon, 10 Nov 2025 07:43:39 -0800 (PST)
-Received: from DESKTOP-8TIG9K0.localdomain ([119.28.20.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-297d6859a92sm101566725ad.88.2025.11.10.07.43.12
+        d=1e100.net; s=20230601; t=1762789312; x=1763394112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/ylq5ip16KIlNEm4q5Drc6EevlzHi/eE660ukaOSOxw=;
+        b=BkfmBGhUq4Ie7jf3bd9LI1bhxHAKVsddAfDaslZomCMh6RwSgPuvsS0s/pkYpcXLq7
+         MAb3n4Dp2psE/chKDADfVzsSt8gaP+ULHDmdHc04tdI7/OJKBwMv+gkshicyYF/5XZP3
+         4XLnBL0vwEjLYUZhWTM7Hfx5FTYHgHZxSIpe4EIRFyhwY0HBj7PKsKPdBDbw0+a5U4gc
+         sGU1C9XJ91ArRH9DjAw5p1FY6g33OsMF4CPkVFlWlMaDO6W7OXdy9aV36VAUQ3cydBR1
+         npiU2N70hrFASfESBQzJNu314PdZ4tNZuFcArdenwTVQIzmSUrAu/KoOd+POP5tzjAIn
+         blmA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6MQjzfNfV0vr9iR9yxpRCZ0eucfZ0x165ihgA2Ro5xvg56l+A7TW+nsQmGKnFWF7gR2TpCVaFgud/Phk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyanvQSDPdTSqq1dICy3ReMBJPQCP+j6m0YcL15miVgvZbWNBEL
+	niJJTGR7KaPGu75yDcTS2em/2YkgaB4/Wl73reVeLv6bfBPbrLXH22SH
+X-Gm-Gg: ASbGncvkPVvEbSd6+Ar0ZChVyVZbDTTpl8hp+B7FQPdIv+WTc5N5u/dZo5DjgntALFT
+	aHAa/kTntHtozvO0SjsF4xTKeMEVZYx+f6jkmbciUab/AT4yNSP9v3KNednFtbUYRbNSy3rsSbA
+	vjdPppyoZPKEE37392OV7d79iekRnwdqhTh9/PiuYL4tOcxHSdz+1tZ2KZ22hk3pRrTCCCKZhmx
+	+jeB2Lk1M1i3enpRqvgR44NNIUD9Adsvu28LggJBsH8yubZ3XPjHjSIIAXd8z6IHzpLanQ6vS8O
+	6fzRpIHT+pecJZQWI7D0AWTEN9S9U4YdzgnrECnPS4B5caW+m3Hg8xaRPs+JomscJ4vy6d6kVFJ
+	Q3sa9zgipyVKlOgkw8XBwEU1h5j7ZwoG4cviwEZ+m10lP5nTWUAth82Tt55NeUQ4o0IFBQKFL0/
+	YppSdjUQncHA==
+X-Google-Smtp-Source: AGHT+IH2AanJ/xvo0tNEHTz1Ql1SAqJGcv6JRo7rtSuZftddi6C1S80+uwRJGFeK0pubFMUbdbyzbA==
+X-Received: by 2002:a05:6a00:3213:b0:7ae:b13f:37c2 with SMTP id d2e1a72fcca58-7b14a1206aemr10855026b3a.10.1762789312083;
+        Mon, 10 Nov 2025 07:41:52 -0800 (PST)
+Received: from localhost ([2804:30c:1661:8a00:578a:911c:ac25:24a6])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7b0cc76c0dbsm12121713b3a.51.2025.11.10.07.41.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 07:43:38 -0800 (PST)
-From: Xie Yuanbin <qq570070308@gmail.com>
-To: arnd@arndb.de,
-	david@redhat.com,
-	tglx@linutronix.de,
-	segher@kernel.crashing.org,
-	riel@surriel.com,
-	peterz@infradead.org,
-	linux@armlinux.org.uk,
-	mathieu.desnoyers@efficios.com,
-	paulmck@kernel.org,
-	pjw@kernel.org,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	hca@linux.ibm.com,
-	gor@linux.ibm.com,
-	agordeev@linux.ibm.com,
-	borntraeger@linux.ibm.com,
-	svens@linux.ibm.com,
-	davem@davemloft.net,
-	andreas@gaisler.com,
-	luto@kernel.org,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	james.clark@linaro.org,
-	anna-maria@linutronix.de,
-	frederic@kernel.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	morbo@google.com,
-	justinstitt@google.com,
-	qq570070308@gmail.com,
-	thuth@redhat.com,
-	brauner@kernel.org,
-	jlayton@kernel.org,
-	aalbersh@redhat.com,
-	akpm@linux-foundation.org,
-	david@kernel.org,
-	lorenzo.stoakes@oracle.com,
-	max.kellermann@ionos.com,
-	ryan.roberts@arm.com,
-	nysal@linux.ibm.com,
-	urezki@gmail.com
-Cc: x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	llvm@lists.linux.dev,
-	will@kernel.org
-Subject: Re: [PATCH v2 3/4] Provide the always inline version of some functions
-Date: Mon, 10 Nov 2025 23:43:01 +0800
-Message-ID: <20251110154301.1930-1-qq570070308@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <a034a57e-d9f1-4c56-87f0-e9126246849d@app.fastmail.com>
-References: <a034a57e-d9f1-4c56-87f0-e9126246849d@app.fastmail.com>
+        Mon, 10 Nov 2025 07:41:51 -0800 (PST)
+Date: Mon, 10 Nov 2025 12:43:09 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jic23@kernel.org, nuno.sa@analog.com,
+	dlechner@baylibre.com, andy@kernel.org,
+	Michael.Hennerich@analog.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, corbet@lwn.net, cosmin.tanislav@analog.com
+Subject: Re: [PATCH v1 0/3] iio: adc: Add AD4134 minimum I/O support
+Message-ID: <aRIIDTUR5Pyz1Rxi@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1762777931.git.marcelo.schmitt@analog.com>
+ <aRHgaXxxnD5YsIQQ@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRHgaXxxnD5YsIQQ@smile.fi.intel.com>
 
-On Sun, 09 Nov 2025 18:35:23 +0100, Arnd Bergmann wrote:
-> You can mark the caller as __attribute__((flatten)) to force all
-> functions to be inlined into that one if possible. I don't know
-> if that would be helpful or desired here though.
-Thanks, you made me aware of this attribute for the first time, it is
-really a great attribute, and it has been already added to the kernel
-public header. However, it's rarely used in the kernel, which I really
-think is a pity.
+Hi Andy,
 
-Perhaps, I can try adding this attribute to some hot functions in
-another patch. For this patch, I think this is sufficient. There are some
-cold if branches inside `__schedule`, __flatten will inline the function
-calls in this part of the code, which may cause some unexpected
-performance degradation.
+On 11/10, Andy Shevchenko wrote:
+> On Mon, Nov 10, 2025 at 09:44:56AM -0300, Marcelo Schmitt wrote:
+> > This patch series adds basic support for ad4134. AD4134 is a very flexible
+> > device that can be configured in many different ways. This series aims to
+> > support the simplest way of interfacing with AD4134 which is called minimum I/O
+> > mode in data sheet. This is essentially usual SPI with the addition of an ODR
+> > (Output Data Rate) GPIO which functions as conversion start signal in minimum
+> > I/O mode. The CS pin may be connected to a host controller CS pin or grounded.
+> > 
+> > This set provides just one feature:
+> > - Single-shot ADC sample read.
+> > 
+> > [PATCH 1] Device tree documentation for AD4134.
+> > [PATCH 2] IIO Linux driver for AD4134.
+> > [PATCH 3] Initial IIO documentation.
+> > 
+> > There is a driver by Cosmin on ADI Linux tree that supports AD4134 in wiring
+> > configurations suited for high speed data transfers. Even though the minimum I/O
+> > support was initialy based on that high speed transfer driver, the result ended
+> > up becoming entirely different. Also, because the different wiring
+> > configurations are likely going to use different resources and software
+> > interfaces, the code for AD4134 support was split into ad4134-spi.c,
+> > ad4134-common.h, and ad4134-common.c.
+> 
+> The cover letter misses the answer to: "Why do we need a brand new driver?
+> Don't we have anything similar already in IIO that can be expanded to cover
+> this one?"
 
->     Arnd
+Ah sorry about that, let me provide more context.
 
-Xie Yuanbin
+ADI has a design called AD4134 which people would like to use with Linux.
+This is another fast sample rate ADC that would need SPI offload support to
+reach maximum sample rate. The driver I mentioned above provides support for the
+SPI offload use case but, it has not been reviewed nor merged to mainline Linux
+(at least as far as I'm aware of). I also searched the lore and found no
+previous matches for ad4134. So, we currently have no driver supporting AD4134
+on mainline Linux.
+
+Why not just upstreaming the SPI offload support driver for AD4134? To achieve
+the highest sample rates, the AD4134 provides a dedicated set of lines (DOUT0 to
+DOUT3) to output ADC sample data. We would need to describe and manage an
+additional bus this part (an SPI bus for configuration, and a data bus to read
+ADC conversions). In ADI tree + HDL, the data bus is read through SPI-Engine
+as usual SPI data and a second SPI controller interface is used for normal SPI
+commands. The setup actually uses two AD4134 devices and is more or less like
+the diagram below.
+
+::
+
+                                                              +-------------+
+  +----------------------+                                    |  DATA HOST  |
+  |       AD4134         |                                    | (SPI-ENGINE)|
+  |                      |                                    |             |
+  |Data interface  DOUT0 |----------------------------------->| GPI0        |
+  |for ADC data    DOUT1 |----------------------------------->| GPI1        |
+  |read back       DOUT2 |----------------------------------->| GPI2        |
+  |                DOUT3 |----------------------------------->| GPI3        |
+  |                DCLK  |<--------------+        +---------->| GPI4        |
+  |                ODR   |<------------+ |        | +-------->| GPI5        |
+  |                      |             | |        | | +------>| GPI6        |
+  |                      |             | |        | | | +---->| GPI7        |
+  | SPI interface   CS   |<-------+    | +--------|-|-|-|-+---| DCLK        |
+  | for register    SCLK |<-----+ |    |          | | | | |   |             |
+  | access          SDI  |<---+ | |    |          | | | | |   | TRIGGER     |
+  |                 SDO  |--+ | | |    |          | | | | |   +-------------+
+  +----------------------+  | | | |    +----------|-|-|-|-|-+     ^
+                            | | | |               | | | | | |     |
+  +----------------------+  | | | | +-----------+ | | | | | | +---+
+  |       AD4134         |  | | | | |   HOST    | | | | | | | |
+  |                      |  | | | | |(ZED PS SPI) | | | | | | |  +------------+
+  | SPI interface   CS   |<-|-|-|-+-| CS        | | | | | | | |  | PULSE      |
+  | for register    SCLK |<-|-|-+---| SCLK      | | | | | | | |  | GENERATOR  |
+  | access          SDI  |<-|-+-----| MOSI      | | | | | | | |  |(AXI PWM GEN)
+  |                 SDO  |--+------>| MISO      | | | | | | | |  |            |
+  |                      |          +-----------+ | | | | | | +--| OUT0       |
+  |                      |                        | | | | | +----| OUT1       |
+  |Data interface  DOUT0 |------------------------+ | | | | |    +------------+
+  |for ADC data    DOUT1 |--------------------------+ | | | |
+  |read back       DOUT2 |----------------------------+ | | |
+  |                DOUT3 |------------------------------+ | |
+  |                DCLK  |<-------------------------------+ |
+  |                ODR   |<---------------------------------+
+  +----------------------+
+
+
+Luckily, for handling the dedicated data bus, we might benefit from the multi-bus
+support [1] in the future. Though, the high speed setup has other implied
+intricacies such as an additional periodic signal (ODR) being required to sample
+data in addition to DCLK.
+
+[1]: https://lore.kernel.org/linux-iio/20251107-spi-add-multi-bus-support-v2-0-8a92693314d9@baylibre.com/
+
+Although we got that working on ADI tree, there are some aspects of the high
+speed driver that could be improved before upstreaming, IMHO.
+So, to start with something less overwhelming, I thought of trying the minimum
+I/O mode first (a.k.a. usual SPI interface). Note that the -common parts of the
+driver are intended to be reusable by the high speed driver when we get to
+upstreaming that. Also, by the way, that high speed driver doesn't support
+minimum I/O mode and the intent is that the drivers will provide complementary
+ways of interfacing with AD4134.
+
+With best regards,
+Marcelo
 
