@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-892666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD7DC45953
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:17:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82753C45949
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:17:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772A93B619B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:16:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 25CFA4E9DF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EC4301710;
-	Mon, 10 Nov 2025 09:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58C730215F;
+	Mon, 10 Nov 2025 09:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bL02WzZo"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9PhwnKG"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979D42FFFA4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD81301031
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766133; cv=none; b=ROCbZfRyDPR5kBOqCq5Epl9NZ/xXewsvdHrN5CBfLITEcgZQQZ/MVr8XtLewWaKy2qcubUyyydOR4tjoyVgx+whMNaP8w0v6AnbjBJeJTRjhN3c8w7vfzulqZPA970xHimeMRU0Vus1Rf5dFDJgAFgoBiWp3qY68Fu9Ve/EY8Bc=
+	t=1762766135; cv=none; b=QXJ6rlCS/JwtDc3KTMbJ5VrsZNzDlzQFn2fVwn5P0VxSZeUSnhVRQJc9KoQea/1GuT3HaJwTPL5IRVOi7htuKx+fE8EI2i7M2eapwanLu9+VEtekJDuwfmwc7wwh7f/w/yoMwY7y6tfCZH9HfkZIhyNVSdYD6dEC3oqZW5H9hRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766133; c=relaxed/simple;
-	bh=kEk5LNotciAZWjxbpPSAlsjwVvH/hQCIwHrwOOjX+Ls=;
+	s=arc-20240116; t=1762766135; c=relaxed/simple;
+	bh=459dlBPh3LInR8NOH/R4UDIusnkt1kveYPqleYn7ivo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OEjgbLqhtc4EfP/pvY0H58JV+gmNY2P+cKiUcQVYbGLwDYKHLc4eyO87SKYwBQ4v5MYc2PkVk3aqrGelITBfvW9S8+u/6q9zKdks8hhSb/ngw1x2PDnqFWW++EF/aYuBXruujasvK/bp8GNnsc/5RI2G+UnFhiWtpTVqrhfW3dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bL02WzZo; arc=none smtp.client-ip=209.85.167.42
+	 MIME-Version; b=eSrd3GxDeE3xtcq4SyjMKkDNNFej0QN0+q30FE8VZHdfB1JM3iDiqPqUqUhbRRfYty4SAA91H29he2ojI6Q90zC7tTnjVvlLj8/n5RhiMVLT7IpgipRUu/urlVXkAQmD4PNnVrIuhTXq/7Pqs3h3Rv6VWoMzXdl96abdUbGKLvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9PhwnKG; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5942e61f001so2502104e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:15:31 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-59457f79859so3036198e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:15:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762766130; x=1763370930; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762766131; x=1763370931; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RAf6EGQeqIJGv2EMJ3digEJ7PV9lZXWnKBDi4CC+hkM=;
-        b=bL02WzZo38Qm2DoYCbD/JJ8g1hVIWbKZz1cmHrVSeOZ5qxNBeT5j/ziRrufn+wvCvM
-         8SQIPeJWO/BTmkdBUCrbUvWmF5R7dHqriQRZobl4R1y8b4IZ5LfIovB5C/WWhPbYPbWf
-         IVognFVnWJAyStQ6+XdCYKg5VdjbKM+0eE4NwehW/sFgafA1F/OnuGwXZsOFyL3Ac6nZ
-         qCfRnxBGFycAmChkL/xxeFhGcBF7vgW+J0j1GK/j/nE3UbZyRHrNh9qstRfdN/Hlm6ib
-         KPvC2WcK9ny2JHvmABfSI5xDA/PY22zY6ezrew8nF+/8dml2fGcb2u2th4FzRDWyifyb
-         293Q==
+        bh=0+a5/f/Fx6IMBMc0auLZUB4h0ES81R10KOuZfrxfUU8=;
+        b=h9PhwnKGqK8eooZcjVt/bP7w6Cn6tMOMKltrRTOCBsqSMihDpCO7i+p5CmMJEKwIEo
+         GMRuBjNes1OTTMqzCKHrTzvpPGMQV6pM7iqHSz+OFVGM69ofKmN8X3en7h3yylfP8aZA
+         q+xSihJy2i6+3o8Ka9Um1HYQc34ZG5a74HAnRccoZjrzyBH/M19GuSTzvrkbAQCdJMPP
+         diZ04qk4v67Rrumj5qLL4tgyGaSy8WnHHVJji7pVkM0oRwCYvchPYya0UaejVuXznWmY
+         8SLKML3xlQdqqq35f2RtrUx81qmSnd4bd5+aMWrqVR8MGOPWSzwayDfsXep3YUokYGfx
+         Fm1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762766130; x=1763370930;
+        d=1e100.net; s=20230601; t=1762766131; x=1763370931;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=RAf6EGQeqIJGv2EMJ3digEJ7PV9lZXWnKBDi4CC+hkM=;
-        b=EbVQh+DjXDmfli5vELFoTGVQ6Ps9L0NkN0dZn+vUqlAAFFeg358Y+NDpdYFdFWVZBW
-         pXoG4q6sS/eCmbzJaiYP5fDA823WCHSbAjA8WvKKOaK1o1/o07HoxO6N9A7R5Qdwsuu/
-         SdQTd8GorTqMDQ9MvQivXEL801asOGnnbcuhxjb7eqqmS9vmUOLUp8f3fAGtu34PKo70
-         JTNWy3t8FkvbjRoKTcLVo1cDjARMrVGwsxG0FetQYxn83mSjuFRIss4i0EZ/6+z35e61
-         apDJmjEmJUypsrO/Qy6yyntIteqJd+uvGFnkCGmnYQ3jGvJCdNJ8msSQL77BKVbPHjDS
-         tSQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAgPnHruCn3Fqu8kEYhhMunnr7Ecm4/z5DvzsIs8MEEyMuvXY7rNYTr/JyDLp6Jg6oM6NL3Cq1jLkhv/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWouRP9Ifs8CWt8v12ar9Ei5IXvr/Yagva8jEYPf+xxGKkKS6y
-	LRFnBBZO2NHOOI+UppT7vbkU8RgY8wPJSi3O4AamdEvVNSqtLCNDQp5D
-X-Gm-Gg: ASbGncttZCwl7yNFoLv67Gbi0m8weMPlGt9bnTpHz5OM4IVcrhypB8Js2vJJKr6ses3
-	/jKKtPK6zS4b2ZbFrpP3QIGF9ZGHADSf3s266q2gs5B7jvv/BmdO9CpKj17/Rdn8Xo2Opcfx4A7
-	UvxyCunQNGcmi3BRo6EuDBmkt7zdL8mRrZE+RItiI/Jrln9H9FgD3PrgR1FCzUKkd7WNcqDSb/y
-	1Nr/5e9HcabkQjmQPibgGUZxM5reOZGRObj4tVT2l/mdv7xBjVm7rdVVyV5cYBHcxE5r+j6yFoz
-	JpbnRNp8lkJJTOgPqEYDBKRYJ270+1lkKBxIEF238g/cM2UJfp4AGSMjMvsYX0kKqIswnrQw5HA
-	K28IH4e3TYuJ5qTKl81VGfsVopBMXTaon+pIgLKv+EECMBGlVHo6fj6DnzIqh+W1Y+EhpOns2Os
-	xfrL/Ejlj1pg==
-X-Google-Smtp-Source: AGHT+IHKVA2KBHA8B796GKRYtFtqhfXw7u6AasCbdjSjaT+/hAWyiSuW0TYURDuTx8uldyGjv94z6w==
-X-Received: by 2002:a05:6512:308c:b0:594:34b9:a7f4 with SMTP id 2adb3069b0e04-5945f1b6d56mr1751014e87.29.1762766129518;
-        Mon, 10 Nov 2025 01:15:29 -0800 (PST)
+        bh=0+a5/f/Fx6IMBMc0auLZUB4h0ES81R10KOuZfrxfUU8=;
+        b=oAb/ZOQ0W4SmfC8Cm84bl8Jg8w4ey0NOIH7HF0j8oTm1mBCr6vKKu+AWDp+rrhilFN
+         dOwhGvpWUCdl6TfSar8LK+yImtIRhwSqlDFKXdhFSfd7K0cp6+g2+/pSYCfqXLnFdZzy
+         z8qt549TvIWT6MQ2NczQK+xVXdSnKgEpF9LQ5vJPGMbJlh5lUe9roJ3vMORk8r3KIETm
+         Sjf8Up4RuC4zxXTtx9v2NDOV58wmIED7uL7fMlm6c/09z0DLkqqy5seUgxd+9ud54w4g
+         JTQwWeEq9oU0XAnwp9XGkJwB/Ti0eo+yT7XLBN7P9enkAqw0bOtTLjk3S+AXFZjMZx5F
+         9V1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXxe2S/UL2T2juR8dwZjg+FEepxW5e/X1ir8xW22Voe18TTvM9scbVrS2H8dFqXB7eYuZ4nSf7+vTeaqfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUpoHiyu1n/x0O7wh2aTOLWMGsHxnmPRz4FXNZOV2k1xdOJRKm
+	qzDEtiT/WwhX9LEF/VUSZlLu43AffDojR9TNU/0aVgpuxIEBvLveThdy
+X-Gm-Gg: ASbGncthNhHYOqiogfZUmNs1TaA/XdGtU23eL+2wzHpuGiWJWBCkZPVkou++K/KpzOe
+	Xmeu8kkdrFCZDu9jZbIFqIqvFSDa1YUymsr/yBJujS3J3GYCrotMbEMs0aN9XyagHuqygfomWWl
+	RJEha+q/2UmjMciq+rqqstIdkizMSOS8rlrYEZAhdJlAB+ZYYKUiXNDToQRP5CaF4QDB9An7z5R
+	BXkDsgAYk7r3kj3IrgGkvaWVCK/cecE7Q0vEd41uOZ66VdFWUF/MFPjkIX12V7j20Ew7RKWbfw3
+	I0SjN3fI8sMi3IPNFiclieAfwt3KYHlXyJ7mUZYBgkn7clRtpKvjCJ1kuDFD6wKOd4/T3jcTQDC
+	SiaGB6+THTGT0vOqL/I62v+Mfdkiv38zfFb03oabqPmV05GEMeNp4yOjc197IPOZR
+X-Google-Smtp-Source: AGHT+IGz/i0ncWwddIJ+2HVNMQhgm/XQg8Srr9UXcEYDpRdQ63zZfLAICmPWS4NS9Y2VhpYWQE8GAw==
+X-Received: by 2002:a05:6512:158c:b0:594:341a:ab1e with SMTP id 2adb3069b0e04-5945f1b74afmr2232518e87.31.1762766130847;
+        Mon, 10 Nov 2025 01:15:30 -0800 (PST)
 Received: from xeon ([188.163.112.74])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a0b76f4sm3852006e87.73.2025.11.10.01.15.28
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a0b76f4sm3852006e87.73.2025.11.10.01.15.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 01:15:29 -0800 (PST)
+        Mon, 10 Nov 2025 01:15:30 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -92,9 +91,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v3 5/7 RESEND] gpu/drm: panel: simple-panel: add Samsung LTL106AL01 LVDS panel support
-Date: Mon, 10 Nov 2025 11:14:35 +0200
-Message-ID: <20251110091440.5251-6-clamor95@gmail.com>
+Subject: [PATCH v3 6/7 RESEND] dt-bindings: display: panel: document Samsung LTL106HL02 MIPI DSI panel
+Date: Mon, 10 Nov 2025 11:14:36 +0200
+Message-ID: <20251110091440.5251-7-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251110091440.5251-1-clamor95@gmail.com>
 References: <20251110091440.5251-1-clamor95@gmail.com>
@@ -106,66 +105,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Samsung LTL106AL01 is a 10.6" FWXGA (1366x768) simple LVDS panel found in
-Microsoft Surface RT tablet.
+Samsung LTL106HL02 is a simple DSI which requires only a power supply and
+an optional reset gpio.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 34 ++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ .../devicetree/bindings/display/panel/panel-simple-dsi.yaml     | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 6369e5828189..bdb53824e3ed 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -4223,6 +4223,37 @@ static const struct panel_desc samsung_ltl101al01 = {
- 	.connector_type = DRM_MODE_CONNECTOR_LVDS,
- };
- 
-+static const struct display_timing samsung_ltl106al01_timing = {
-+	.pixelclock = { 71980000, 71980000, 71980000 },
-+	.hactive = { 1366, 1366, 1366 },
-+	.hfront_porch = { 56, 56, 56 },
-+	.hback_porch = { 106, 106, 106 },
-+	.hsync_len = { 14, 14, 14 },
-+	.vactive = { 768, 768, 768 },
-+	.vfront_porch = { 3, 3, 3 },
-+	.vback_porch = { 6, 6, 6 },
-+	.vsync_len = { 1, 1, 1 },
-+	.flags = DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW,
-+};
-+
-+static const struct panel_desc samsung_ltl106al01 = {
-+	.timings = &samsung_ltl106al01_timing,
-+	.num_timings = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 235,
-+		.height = 132,
-+	},
-+	.delay = {
-+		.prepare = 5,
-+		.enable = 10,
-+		.disable = 10,
-+		.unprepare = 5,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
-+	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-+};
-+
- static const struct drm_display_mode samsung_ltn101nt05_mode = {
- 	.clock = 54030,
- 	.hdisplay = 1024,
-@@ -5390,6 +5421,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "samsung,ltl101al01",
- 		.data = &samsung_ltl101al01,
-+	}, {
-+		.compatible = "samsung,ltl106al01",
-+		.data = &samsung_ltl106al01,
- 	}, {
- 		.compatible = "samsung,ltn101nt05",
- 		.data = &samsung_ltn101nt05,
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
+index f9f1e76a810c..01ac0af0e299 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
+@@ -52,6 +52,8 @@ properties:
+       - panasonic,vvx10f004b00
+         # Panasonic 10" WUXGA TFT LCD panel
+       - panasonic,vvx10f034n00
++        # Samsung ltl106hl02 10.6" Full HD TFT LCD panel
++      - samsung,ltl106hl02-001
+         # Samsung s6e3fa7 1080x2220 based AMS559NK06 AMOLED panel
+       - samsung,s6e3fa7-ams559nk06
+         # Samsung s6e3fc2x01 1080x2340 AMOLED panel
 -- 
 2.48.1
 
