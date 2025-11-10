@@ -1,189 +1,319 @@
-Return-Path: <linux-kernel+bounces-892582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A76BC45631
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:35:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C20C45639
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:37:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5426E3B2419
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25833A35D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5140B2FABE6;
-	Mon, 10 Nov 2025 08:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D402FB970;
+	Mon, 10 Nov 2025 08:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="A121KGlo"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ov2zhITS"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251BD1DF723;
-	Mon, 10 Nov 2025 08:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB107082F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762763707; cv=none; b=SL8Dfk1sU/XXHXUB3s15EeGr95Rdm17LKvk8uCKrpl/1qyNqb/QvPnIAKLTE6qxKDDc/LmwuJ8+sZI/ts1d+oU5urCPLF1yrru1TG9iat3y/HjjFZoRSguHycsyoP5OnMOMdmdd/0Uh1869vLvhTD6JRxsCQjYJMrKIwg5nayYo=
+	t=1762763815; cv=none; b=h3pfiQGLksRCQGDp8Je7XrBzcTDfqx710pdAzOacW46K7+wOY3LAup/ewyYDTUwxXHKnw+Of5uhdb59e41hf5LYmLl/pcdbnzxCU4ZcyWQ553tdQxmXkH014qLJDfCMy5S3PkGkpDOqsqtXMYXv7AdDJQreA7uy5lKB1pgylb14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762763707; c=relaxed/simple;
-	bh=+ijNI65W+ZEFvK4Ew06TjA+hc0H10nDb/fRorO6fxqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q6HtVtXysgArRscS6X/x7F48CkrMXPPNeYyuUHvewLR3xWuk/eS/SkbmNbq7kxtqZidTWBA7wM4XlaLVQs+LQ3hmXceILPhKUx3Es8NZ44VYTBo1KKApRx0fGb7COpU9CcDZJifLnZ3OyWwBg5r/+6l6QUt4jX8FO3+DS2sntI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=pass smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=A121KGlo; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B2E6843A97;
-	Mon, 10 Nov 2025 08:34:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1762763697;
+	s=arc-20240116; t=1762763815; c=relaxed/simple;
+	bh=0821OJoO9v1zdMJoDbcQKYvr7EfGnWEOrTrYjU7dXGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhmzynk4jKIqxwZ+azQEMWHqXSZVUpfh5Jutmb3JBYIhujX9dAAsZSZQllzT17ZCKmlPaX1gvgHBNgWvRAZXmw/PMUkb98gUB24VesZMywpw7WymdF7uG+K1P49IJ51UtiO/A8dIQXhyFMGPsPpszm3VTlJmtZYNaQ7cVMPuLkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ov2zhITS; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 10 Nov 2025 09:36:46 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762763811;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=z6wRniPCN18DmCkPRn+D/brzx7dyupMuJ1WbzWmkjT4=;
-	b=A121KGloifIUhJ77Bap/KOBzqy308FGX0YX9ci0cAfs5CYooKQhgPPLMF1FQtVjbVTJ6lv
-	2lkQ0FW1JGeCS0eKxh0frvsNIaLNqpPNws2awkS2/MJyc4KARgpqDsE4jl12Q2Qt1rrX+W
-	jbp/RnR1Ocsz1u0G0OWIrPDKObMSirSACifE1/RV3AEJIe38uDeYmvSc3qfOXS/kKzmvd4
-	Ffv/q8r/dhI+l0dkUO4pftTJslWKs5/tWVbNxZx9hquw9PWMEuhWxtXtbiEXBXJFHZb8W0
-	OR30Ia18TDhJPUsRXlm/wFCKiJGuqAt4xrkO+eynqfGwvm0qYuBr0i4a0y2ZkA==
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Greg Ungerer <gerg@linux-m68k.org>, Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, linux-m68k@lists.linux-m68k.org,
- linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] m68k: coldfire: Add RNG support for MCF54418
-Date: Mon, 10 Nov 2025 09:34:42 +0100
-Message-ID: <12779401.O9o76ZdvQC@jeanmichel-ms7b89>
-In-Reply-To:
- <CAMuHMdWL76hY-Pv30ooSM1J6XkVWbRXSLTDCjfpPOvhFN4tKyA@mail.gmail.com>
-References:
- <20251107-b4-m5441x-add-rng-support-v2-0-f91d685832b9@yoseli.org>
- <20251107-b4-m5441x-add-rng-support-v2-2-f91d685832b9@yoseli.org>
- <CAMuHMdWL76hY-Pv30ooSM1J6XkVWbRXSLTDCjfpPOvhFN4tKyA@mail.gmail.com>
+	bh=I+VBD76g2XS7+HhQ07AhRyPzDR05ambIwPaE1MqxW2Q=;
+	b=ov2zhITSZf+F/wPKSEZtGmSbh/cEGOIKirZb8V0PxaKncCQXYjaelM5eAnE5n2mjr09Qja
+	Yh30zcSr2Wc4RJdM8dBwEXIo5HHVB5H7IQ4Yics9O5xO9uHqSjA/YqCOPG3IrrxWYujmK+
+	w6paRuzAGV5/WsybxgDeO//xgLiXj6g=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Andrea Righi <andrea.righi@linux.dev>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/13] sched_ext: Add scx_cpu0 example scheduler
+Message-ID: <aRGkHhAWTWdWELAY@gpd4>
+References: <20251109183112.2412147-1-tj@kernel.org>
+ <20251109183112.2412147-12-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduleejkeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtqhertddttdejnecuhfhrohhmpeflvggrnhdqofhitghhvghlucfjrghuthgsohhishcuoehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrgheqnecuggftrfgrthhtvghrnhepffevhfduvdeludeugfdtleduuedvhfeuvdevgfeiieefieevteektdettdeifeetnecukfhppedvrgdtudemvgdtrgemudeileemjedugedtmedvrgegtdemfhefrggrmeejudejvgemudefsgdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmeduieelmeejudegtdemvdgrgedtmehffegrrgemjedujegvmedufegsvddphhgvlhhopehjvggrnhhmihgthhgvlhdqmhhsjegskeelrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrghdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepghgvrhhgsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopeholhhivhhir
- gesshgvlhgvnhhitgdrtghomhdprhgtphhtthhopehhvghrsggvrhhtsehgohhnughorhdrrghprghnrgdrohhrghdrrghupdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhm
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251109183112.2412147-12-tj@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Geert,
+Hi Tejun,
 
-Le lundi 10 novembre 2025, 09:15:11 heure normale d=E2=80=99Europe centrale=
- Geert=20
-Uytterhoeven a =C3=A9crit :
-> Hi Jean-Michel,
->=20
-> On Fri, 7 Nov 2025 at 11:29, Jean-Michel Hautbois
->=20
-> <jeanmichel.hautbois@yoseli.org> wrote:
-> > Add platform device support for the MCF54418 RNGB hardware with clock
-> > enabled at platform initialization.
-> >=20
-> > The imx-rngc driver now uses devm_clk_get_optional() to support both
-> > Coldfire (always-on clock) and i.MX platforms (managed clock).
-> >=20
-> > Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
->=20
-> Thanks for your patch!
->=20
-> > --- a/drivers/char/hw_random/Kconfig
-> > +++ b/drivers/char/hw_random/Kconfig
-> > @@ -270,12 +270,13 @@ config HW_RANDOM_MXC_RNGA
-> >=20
-> >  config HW_RANDOM_IMX_RNGC
-> > =20
-> >         tristate "Freescale i.MX RNGC Random Number Generator"
-> >         depends on HAS_IOMEM
-> >=20
-> > -       depends on SOC_IMX25 || SOC_IMX6SL || SOC_IMX6SLL || SOC_IMX6UL=
- ||
-> > COMPILE_TEST +       depends on SOC_IMX25 || SOC_IMX6SL || SOC_IMX6SLL =
-||
-> > SOC_IMX6UL || M5441x || COMPILE_TEST
-> Is the same RNG present in other Coldfire SoCs?
+On Sun, Nov 09, 2025 at 08:31:10AM -1000, Tejun Heo wrote:
+> Add scx_cpu0, a simple scheduler that queues all tasks to a single DSQ and
+> only dispatches them from CPU0 in FIFO order. This is useful for testing bypass
+> behavior when many tasks are concentrated on a single CPU. If the load balancer
+> doesn't work, bypass mode can trigger task hangs or RCU stalls as the queue is
+> long and there's only one CPU working on it.
+> 
+> Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
+> Cc: Emil Tsalapatis <etsal@meta.com>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> ---
+>  tools/sched_ext/Makefile       |   2 +-
+>  tools/sched_ext/scx_cpu0.bpf.c |  84 ++++++++++++++++++++++++++
+>  tools/sched_ext/scx_cpu0.c     | 106 +++++++++++++++++++++++++++++++++
+>  3 files changed, 191 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/sched_ext/scx_cpu0.bpf.c
+>  create mode 100644 tools/sched_ext/scx_cpu0.c
+> 
+> diff --git a/tools/sched_ext/Makefile b/tools/sched_ext/Makefile
+> index d68780e2e03d..069b0bc38e55 100644
+> --- a/tools/sched_ext/Makefile
+> +++ b/tools/sched_ext/Makefile
+> @@ -187,7 +187,7 @@ $(INCLUDE_DIR)/%.bpf.skel.h: $(SCXOBJ_DIR)/%.bpf.o $(INCLUDE_DIR)/vmlinux.h $(BP
+>  
+>  SCX_COMMON_DEPS := include/scx/common.h include/scx/user_exit_info.h | $(BINDIR)
+>  
+> -c-sched-targets = scx_simple scx_qmap scx_central scx_flatcg
+> +c-sched-targets = scx_simple scx_cpu0 scx_qmap scx_central scx_flatcg
+>  
+>  $(addprefix $(BINDIR)/,$(c-sched-targets)): \
+>  	$(BINDIR)/%: \
+> diff --git a/tools/sched_ext/scx_cpu0.bpf.c b/tools/sched_ext/scx_cpu0.bpf.c
+> new file mode 100644
+> index 000000000000..8626bd369f60
+> --- /dev/null
+> +++ b/tools/sched_ext/scx_cpu0.bpf.c
+> @@ -0,0 +1,84 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * A CPU0 scheduler.
+> + *
+> + * This scheduler queues all tasks to a shared DSQ and only dispatches them on
+> + * CPU0 in FIFO order. This is useful for testing bypass behavior when many
+> + * tasks are concentrated on a single CPU. If the load balancer doesn't work,
+> + * bypass mode can trigger task hangs or RCU stalls as the queue is long and
+> + * there's only one CPU working on it.
+> + *
+> + * - Statistics tracking how many tasks are queued to local and CPU0 DSQs.
+> + * - Termination notification for userspace.
+> + *
+> + * Copyright (c) 2025 Meta Platforms, Inc. and affiliates.
+> + * Copyright (c) 2025 Tejun Heo <tj@kernel.org>
+> + */
+> +#include <scx/common.bpf.h>
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +const volatile u32 nr_cpus = 32;	/* !0 for veristat, set during init */
+> +
+> +UEI_DEFINE(uei);
+> +
+> +/*
+> + * We create a custom DSQ with ID 0 that we dispatch to and consume from on
+> + * CPU0.
+> + */
+> +#define DSQ_CPU0 0
+> +
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+> +	__uint(key_size, sizeof(u32));
+> +	__uint(value_size, sizeof(u64));
+> +	__uint(max_entries, 2);			/* [local, cpu0] */
+> +} stats SEC(".maps");
+> +
+> +static void stat_inc(u32 idx)
+> +{
+> +	u64 *cnt_p = bpf_map_lookup_elem(&stats, &idx);
+> +	if (cnt_p)
+> +		(*cnt_p)++;
+> +}
+> +
+> +s32 BPF_STRUCT_OPS(cpu0_select_cpu, struct task_struct *p, s32 prev_cpu, u64 wake_flags)
+> +{
+> +	return 0;
+> +}
+> +
+> +void BPF_STRUCT_OPS(cpu0_enqueue, struct task_struct *p, u64 enq_flags)
+> +{
+> +	if (p->nr_cpus_allowed < nr_cpus) {
 
-According to the RM, it is only present in MCF54416 and MCF54418.
+We could be even more aggressive with DSQ_CPU0 and check
+bpf_cpumask_test_cpu(0, p->cpus_ptr), but this is fine as well.
 
->=20
-> >         default HW_RANDOM
-> >         help
-> >        =20
-> >           This driver provides kernel-side support for the Random Number
-> >           Generator Version C hardware found on some Freescale i.MX
-> >           processors. Version B is also supported by this driver.
-> >=20
-> > +         Also supports RNGB on Freescale MCF54418 (Coldfire V4e).
-> >=20
-> >           To compile this driver as a module, choose M here: the
-> >           module will be called imx-rngc.
-> >=20
-> > diff --git a/drivers/char/hw_random/imx-rngc.c
-> > b/drivers/char/hw_random/imx-rngc.c index
-> > 241664a9b5d9ac7244f15cbe5d5302ca3787ebea..44f20a05de0a425cb6ff7b2a347b1=
-11
-> > 750ac3702 100644 --- a/drivers/char/hw_random/imx-rngc.c
-> > +++ b/drivers/char/hw_random/imx-rngc.c
-> > @@ -353,12 +353,19 @@ static const struct of_device_id imx_rngc_dt_ids[=
-] =3D
-> > {>=20
-> >  };
-> >  MODULE_DEVICE_TABLE(of, imx_rngc_dt_ids);
-> >=20
-> > +static const struct platform_device_id imx_rngc_devtype[] =3D {
-> > +       { .name =3D "imx-rngc" },
->=20
-> I believe this is identical to KBUILD_MODNAME, so the .name below
-> should be sufficient for binding?
->=20
-> > +       { /* sentinel */ }
-> > +};
-> > +MODULE_DEVICE_TABLE(platform, imx_rngc_devtype);
->=20
-> Or do you need this mainly for the addition of MODULE_DEVICE_TABLE(),
-> i.e. the module is not auto-loaded based on just KBUILD_MODNAME?
+> +		stat_inc(0);	/* count local queueing */
+> +		scx_bpf_dsq_insert(p, SCX_DSQ_LOCAL, SCX_SLICE_DFL, 0);
 
-Yes, exactly. If you have a better way, I will happily apply it :-).
+And this is why I was suggesting to automatically fallback to the new
+global default time slice internally. In this case do we want to preserve
+the old 20ms default or automatically switch to the new one?
 
-Thanks !
-JM
+Apart than these minor details that we can address later:
 
->=20
-> > +
-> >=20
-> >  static struct platform_driver imx_rngc_driver =3D {
-> > =20
-> >         .driver =3D {
-> >        =20
-> >                 .name =3D KBUILD_MODNAME,
->=20
->                   ^^^^^^^^^^^^^^^^^^^^^^^
->=20
-> >                 .pm =3D pm_ptr(&imx_rngc_pm_ops),
-> >                 .of_match_table =3D imx_rngc_dt_ids,
-> >        =20
-> >         },
-> >=20
-> > +       .id_table =3D imx_rngc_devtype,
-> >=20
-> >  };
-> > =20
-> >  module_platform_driver_probe(imx_rngc_driver, imx_rngc_probe);
->=20
-> Gr{oetje,eeting}s,
->=20
->                         Geert
+Reviewed-by: Andrea Righi <arighi@nvidia.com>
 
+Thanks,
+-Andrea
 
-
-
+> +		return;
+> +	}
+> +
+> +	stat_inc(1);	/* count cpu0 queueing */
+> +	scx_bpf_dsq_insert(p, DSQ_CPU0, SCX_SLICE_DFL, enq_flags);
+> +}
+> +
+> +void BPF_STRUCT_OPS(cpu0_dispatch, s32 cpu, struct task_struct *prev)
+> +{
+> +	if (cpu == 0)
+> +		scx_bpf_dsq_move_to_local(DSQ_CPU0);
+> +}
+> +
+> +s32 BPF_STRUCT_OPS_SLEEPABLE(cpu0_init)
+> +{
+> +	return scx_bpf_create_dsq(DSQ_CPU0, -1);
+> +}
+> +
+> +void BPF_STRUCT_OPS(cpu0_exit, struct scx_exit_info *ei)
+> +{
+> +	UEI_RECORD(uei, ei);
+> +}
+> +
+> +SCX_OPS_DEFINE(cpu0_ops,
+> +	       .select_cpu		= (void *)cpu0_select_cpu,
+> +	       .enqueue			= (void *)cpu0_enqueue,
+> +	       .dispatch		= (void *)cpu0_dispatch,
+> +	       .init			= (void *)cpu0_init,
+> +	       .exit			= (void *)cpu0_exit,
+> +	       .name			= "cpu0");
+> diff --git a/tools/sched_ext/scx_cpu0.c b/tools/sched_ext/scx_cpu0.c
+> new file mode 100644
+> index 000000000000..1e4fa4ab8da9
+> --- /dev/null
+> +++ b/tools/sched_ext/scx_cpu0.c
+> @@ -0,0 +1,106 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2025 Meta Platforms, Inc. and affiliates.
+> + * Copyright (c) 2025 Tejun Heo <tj@kernel.org>
+> + */
+> +#include <stdio.h>
+> +#include <unistd.h>
+> +#include <signal.h>
+> +#include <assert.h>
+> +#include <libgen.h>
+> +#include <bpf/bpf.h>
+> +#include <scx/common.h>
+> +#include "scx_cpu0.bpf.skel.h"
+> +
+> +const char help_fmt[] =
+> +"A cpu0 sched_ext scheduler.\n"
+> +"\n"
+> +"See the top-level comment in .bpf.c for more details.\n"
+> +"\n"
+> +"Usage: %s [-v]\n"
+> +"\n"
+> +"  -v            Print libbpf debug messages\n"
+> +"  -h            Display this help and exit\n";
+> +
+> +static bool verbose;
+> +static volatile int exit_req;
+> +
+> +static int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args)
+> +{
+> +	if (level == LIBBPF_DEBUG && !verbose)
+> +		return 0;
+> +	return vfprintf(stderr, format, args);
+> +}
+> +
+> +static void sigint_handler(int sig)
+> +{
+> +	exit_req = 1;
+> +}
+> +
+> +static void read_stats(struct scx_cpu0 *skel, __u64 *stats)
+> +{
+> +	int nr_cpus = libbpf_num_possible_cpus();
+> +	assert(nr_cpus > 0);
+> +	__u64 cnts[2][nr_cpus];
+> +	__u32 idx;
+> +
+> +	memset(stats, 0, sizeof(stats[0]) * 2);
+> +
+> +	for (idx = 0; idx < 2; idx++) {
+> +		int ret, cpu;
+> +
+> +		ret = bpf_map_lookup_elem(bpf_map__fd(skel->maps.stats),
+> +					  &idx, cnts[idx]);
+> +		if (ret < 0)
+> +			continue;
+> +		for (cpu = 0; cpu < nr_cpus; cpu++)
+> +			stats[idx] += cnts[idx][cpu];
+> +	}
+> +}
+> +
+> +int main(int argc, char **argv)
+> +{
+> +	struct scx_cpu0 *skel;
+> +	struct bpf_link *link;
+> +	__u32 opt;
+> +	__u64 ecode;
+> +
+> +	libbpf_set_print(libbpf_print_fn);
+> +	signal(SIGINT, sigint_handler);
+> +	signal(SIGTERM, sigint_handler);
+> +restart:
+> +	skel = SCX_OPS_OPEN(cpu0_ops, scx_cpu0);
+> +
+> +	skel->rodata->nr_cpus = libbpf_num_possible_cpus();
+> +
+> +	while ((opt = getopt(argc, argv, "vh")) != -1) {
+> +		switch (opt) {
+> +		case 'v':
+> +			verbose = true;
+> +			break;
+> +		default:
+> +			fprintf(stderr, help_fmt, basename(argv[0]));
+> +			return opt != 'h';
+> +		}
+> +	}
+> +
+> +	SCX_OPS_LOAD(skel, cpu0_ops, scx_cpu0, uei);
+> +	link = SCX_OPS_ATTACH(skel, cpu0_ops, scx_cpu0);
+> +
+> +	while (!exit_req && !UEI_EXITED(skel, uei)) {
+> +		__u64 stats[2];
+> +
+> +		read_stats(skel, stats);
+> +		printf("local=%llu cpu0=%llu\n", stats[0], stats[1]);
+> +		fflush(stdout);
+> +		sleep(1);
+> +	}
+> +
+> +	bpf_link__destroy(link);
+> +	ecode = UEI_REPORT(skel, uei);
+> +	scx_cpu0__destroy(skel);
+> +
+> +	if (UEI_ECODE_RESTART(ecode))
+> +		goto restart;
+> +	return 0;
+> +}
+> -- 
+> 2.51.1
+> 
 
