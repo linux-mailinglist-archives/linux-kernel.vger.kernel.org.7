@@ -1,197 +1,100 @@
-Return-Path: <linux-kernel+bounces-892802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04268C45D7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:13:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5D8C45DFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:18:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E19A3B48BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:13:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 805614EB8B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCE13054D2;
-	Mon, 10 Nov 2025 10:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FC33054D2;
+	Mon, 10 Nov 2025 10:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QPcECu9h";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ME3JoNIl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QPcECu9h";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ME3JoNIl"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pk5Rwci9"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4F03009C3
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65ED8305064;
+	Mon, 10 Nov 2025 10:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762769612; cv=none; b=sK53V0+JHLcIqGG/S+Jz8ASjPdLGcnkkr+qVUFomDQSt2Yk9SMdE4rDTCwKpcffaA5UrEw0IPcbIO/5XjFnOOwTG1OMOtLeEREqIQcDKuqus80IOI0kMImFiVz9cLg2V//km7jhmzzFPeB9hRVHhEI7bG9crtLKVH+JmbqR2kV0=
+	t=1762769636; cv=none; b=N+2K5JI6ctvIprlF04UyCBzqkvjCgKOMyWRFWactZe+HmFJhET+XQSVFbN45W4+6yObWo8JIxEXVTcxN+YyGXroYcsZ4ZW/YuCiepVO0pNPRtehPohouHsptzTj6NPvcPB/s9EqaQCSVMR+7VJmHNI7fvql//SD/it9bSePHd54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762769612; c=relaxed/simple;
-	bh=6r3+j54nyKwVownR7KapugfNiNMxvXONIqyELoZMdu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pqvI3eUHUjW+bFnPkTxbZsb9Gga1oE2pjo5o10CE0WTXSfN8pQA9CG2PoQ3JOEMu32J6KF51gjlN/Sb4T/wYRZPcAJgUsXaQAcXCWEu8awIpen5Ml1DjTipKM934IOG7TitQ8sCk7+sbl55k9p+NLVNJQSva73uRKQ034jIg1uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QPcECu9h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ME3JoNIl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QPcECu9h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ME3JoNIl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 79A621F397;
-	Mon, 10 Nov 2025 10:13:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762769607; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lvh+XCJafqeUVSunEd+raRyN0k8OSWXEG3aHNUQ5kbA=;
-	b=QPcECu9hLRuSudjMFhkwegcoE4q66+/0evbCCemii9/iqgoLPh2d59ykAwNVyS2thmqsCN
-	aynH+FEZ/ahvTwgLza3VVR/9tP7iKhrbJs2Upa+qTLKlYvCfKb7CmU5dm22yEP1UM8frOx
-	t8ARu/20n3DINNHRIWZv/wBXQQ36nvY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762769607;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lvh+XCJafqeUVSunEd+raRyN0k8OSWXEG3aHNUQ5kbA=;
-	b=ME3JoNIl8ST81NuYcvtcnWp7A5uIwmSAm1Qg5RgeCJyJ4SDVxcmaP1XXxjIC+uflSqtP9a
-	eYH2GsVJp+XHDiAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762769607; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lvh+XCJafqeUVSunEd+raRyN0k8OSWXEG3aHNUQ5kbA=;
-	b=QPcECu9hLRuSudjMFhkwegcoE4q66+/0evbCCemii9/iqgoLPh2d59ykAwNVyS2thmqsCN
-	aynH+FEZ/ahvTwgLza3VVR/9tP7iKhrbJs2Upa+qTLKlYvCfKb7CmU5dm22yEP1UM8frOx
-	t8ARu/20n3DINNHRIWZv/wBXQQ36nvY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762769607;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lvh+XCJafqeUVSunEd+raRyN0k8OSWXEG3aHNUQ5kbA=;
-	b=ME3JoNIl8ST81NuYcvtcnWp7A5uIwmSAm1Qg5RgeCJyJ4SDVxcmaP1XXxjIC+uflSqtP9a
-	eYH2GsVJp+XHDiAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C3F614336;
-	Mon, 10 Nov 2025 10:13:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Q/dnGse6EWntFAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 10:13:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 20E17A28B1; Mon, 10 Nov 2025 11:13:23 +0100 (CET)
-Date: Mon, 10 Nov 2025 11:13:23 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	tytso@mit.edu, torvalds@linux-foundation.org, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] fs: speed up path lookup with cheaper handling of
- MAY_EXEC
-Message-ID: <x4ngquwvecmlnbhesqowetnidvad57f34xnlhom6qurxr3qsng@uiy7hvlspfjd>
-References: <20251107142149.989998-1-mjguzik@gmail.com>
- <20251107142149.989998-2-mjguzik@gmail.com>
- <qfoni4sufho6ruxsuxvcwnw4xryptydtt3wimsflf7kwfcortf@372gbykgkctf>
- <CAGudoHGz6PXi+DLiWjzwLuYq=c+oiA1cWTUt1RmHw5QOt6DAsA@mail.gmail.com>
+	s=arc-20240116; t=1762769636; c=relaxed/simple;
+	bh=32LJX2VLqXeDA+NwDzryxUK5OVfSIb04Y5pgFBaY5Fo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GA+NNkCeomFPh1+cfXiAYy35vANt6lPhv4u2i/0NyQmXTEs2M+HMQZ1I6QzYJJzjOzXTfDRg1U7S3/ZFKTbPYzd1yOoUvpKeh5clJMWxHK/Tx4hQygkuaWahJAtWfgvI9yCpBSfEtRrroDFr1RyPb40lmReap4pHvOR/gVrTcjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pk5Rwci9; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f287af12be1d11f08ac0a938fc7cd336-20251110
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=EoD/aHhTgmIXFon5njzMGTKFSwgtLbPy4kqkBH4hVb4=;
+	b=pk5Rwci9z/+wDZH7jcJxxiN06ix9Q966gnCL4gWDuL56TJBlJUBtjWT/eitMpLgAMHltN98gPyRPv2mJKv3+t9vuyB4wN2Bz5VqIiPrE4PkJCydtziNiGC4j6PgBkqTeRfQQPFIvVCss4Y+bu6AtfwCkYssIhzFX13fX0LvIj7k=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:7be6c4e7-cd3d-45d8-9d9a-a32ec0374101,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:40eaa1ba-0c02-41a0-92a3-94dc7dc7eeca,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
+	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: f287af12be1d11f08ac0a938fc7cd336-20251110
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <huayu.zong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1033637022; Mon, 10 Nov 2025 18:13:48 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 10 Nov 2025 18:13:46 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.26 via Frontend Transport; Mon, 10 Nov 2025 18:13:45 +0800
+From: Huayu Zong <huayu.zong@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"Matthias Brugger" <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Huayu Zong
+	<huayu.zong@mediatek.com>
+Subject: [PATCH v3 0/3] Add support for MT8189 SCP and device tree bindings
+Date: Mon, 10 Nov 2025 18:13:28 +0800
+Message-ID: <20251110101342.24261-1-huayu.zong@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHGz6PXi+DLiWjzwLuYq=c+oiA1cWTUt1RmHw5QOt6DAsA@mail.gmail.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+Content-Type: text/plain
 
-On Mon 10-11-25 10:46:38, Mateusz Guzik wrote:
-> On Mon, Nov 10, 2025 at 10:32 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Fri 07-11-25 15:21:47, Mateusz Guzik wrote:
-> > > The generic inode_permission() routine does work which is known to be of
-> > > no significance for lookup. There are checks for MAY_WRITE, while the
-> > > requested permission is MAY_EXEC. Additionally devcgroup_inode_permission()
-> > > is called to check for devices, but it is an invariant the inode is a
-> > > directory.
-> > >
-> > > Absent a ->permission func, execution lands in generic_permission()
-> > > which checks upfront if the requested permission is granted for
-> > > everyone.
-> > >
-> > > We can elide the branches which are guaranteed to be false and cut
-> > > straight to the check if everyone happens to be allowed MAY_EXEC on the
-> > > inode (which holds true most of the time).
-> > >
-> > > Moreover, filesystems which provide their own ->permission routine can
-> > > take advantage of the optimization by setting the IOP_FASTPERM_MAY_EXEC
-> > > flag on their inodes, which they can legitimately do if their MAY_EXEC
-> > > handling matches generic_permission().
-> > >
-> > > As a simple benchmark, as part of compilation gcc issues access(2) on
-> > > numerous long paths, for example /usr/lib/gcc/x86_64-linux-gnu/12/crtendS.o
-> > >
-> > > Issuing access(2) on it in a loop on ext4 on Sapphire Rapids (ops/s):
-> > > before: 3797556
-> > > after:  3987789 (+5%)
-> > >
-> > > Note: this depends on the not-yet-landed ext4 patch to mark inodes with
-> > > cache_no_acl()
-> > >
-> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> >
-> > The gain is nice. I'm just wondering where exactly is it coming from? I
-> > don't see that we'd be saving some memory load or significant amount of
-> > work. So is it really coming from the more compact code and saved several
-> > unlikely branches and function calls?
-> 
-> That's several branches and 2 function calls per path component on the
-> way to the terminal inode. In the path at hand, that's 10 function
-> calls elided.
+  This patch series adds support for the System Companion Processor (SCP)
+on MediaTek MT8189, including device tree bindings and driver support.
 
-OK, the path lookup is really light so I guess 10 function calls are visible
-enough. I guess this is hot enough path that the microoptimization is worth
-the code duplication. So feel free to add:
+Huayu Zong (3):
+  remoteproc: mediatek: Support platform reg offsets in mtk_scp_of_data
+  remoteproc: mediatek: Add MT8189 SCP platform data
+  dt-bindings: remoteproc: mediatek: Add MT8189 SCP binding
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
+ .../bindings/remoteproc/mtk,scp.yaml          |  2 ++
+ drivers/remoteproc/mtk_common.h               | 10 ++++++
+ drivers/remoteproc/mtk_scp.c                  | 36 +++++++++++++++++--
+ 3 files changed, 46 insertions(+), 2 deletions(-)
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.45.2
+
 
