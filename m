@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-893201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00634C46C65
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:07:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF28CC46C6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:08:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 980871888236
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:07:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22EDB4EBFB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636313128AA;
-	Mon, 10 Nov 2025 13:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ECA31282C;
+	Mon, 10 Nov 2025 13:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SC8EaUiS"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wPvVM0CQ"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936DB3126C1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1636531282D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762779982; cv=none; b=iPQVkRQPhXQlhw7Ahxtg7Q3aCtV2nbKn5LqEsq7VisyYVuSXdHK/GuGU7xAr8WBOFBwxnS+F02n+I2fpYG5DU9Ma3LT+Fs7UftTh5tlKYVSGsZknq++i/kMLgtPK1N5OqInZUjtrFepdq5r2DXg1YC66EmnIRCsir2L62iQmMek=
+	t=1762779983; cv=none; b=KBuLby/Qpy8BIxQ71Y0g5n4BnrKzw/LwH3kKCTXLEjnX81PhzskIN1icmbO+h47YgwYzYupvtDyh+oN6YqW3tswEuA6bfjbszjkmnMXI1cqt89UX/Xz6ORQq4PBanQwfNVa60nuCGVj7iE53KrkcxjTHNEo90BJDs6HcyQVEU+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762779982; c=relaxed/simple;
-	bh=b0mct7fLXCpWtZ5UlM9V32efA0UtDjJ5A0aIjp+AVik=;
+	s=arc-20240116; t=1762779983; c=relaxed/simple;
+	bh=7993m8OvBem5aU3JmUxqvYCw1dEJgILWjzrL2R/Lw9k=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=M5KnJEyBXybnRLUZEZZcoyzkTtf6IVo5LQvKGtlH29zaNSiCOgqGEG4sOWsySVhRSpmhZHh9sAqQCSbC0LekkGpCnXN1GufZEzJ/AIbF5iUpUR9zmj40V4EovoqFdHg4NQS4mLLKfZoI0FcAvg6scKq0+tpnGPRBIVw9LiZ/bbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SC8EaUiS; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=gaF8ctpbb3fHcgAC0LZuIN/6EBCBA5+b+ZYmVzgyio9xBE8AkSpkoDvxJ77M7PU/jEfZXQnG5CFK2E9Eo/pLKOn8cqhOOgw2LvdNDZjvAWcvwTxdXWE9Ypididgona74DtU8RYzyZHZqNnGlsQpk+z7evNHT/Q/tA+QkGCKCIOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wPvVM0CQ; arc=none smtp.client-ip=209.85.218.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e47d14dceso15138945e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:06:20 -0800 (PST)
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b6d7405e6a8so317466766b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:06:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762779979; x=1763384779; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762779980; x=1763384780; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A6UuyAXvOZMvot7FtB2GRmNDvVWwg415dKxaxe3i4KE=;
-        b=SC8EaUiSujswPby+ZHtuvihAJOOrcrCpu/XALRXdIMmEoMbdO6k383UH2+vZGY9nKY
-         HudWQ1pxKtU8eKb4NVGkA5s6dbkzhDxRjoVJyagn6qfEpkUzNTpq8FjkBdiKmtYrCvO3
-         vFfXSfxB+0hHakz3PBDcJrpCO2e6bphuXHC6i5HAkVlA1TwcEY0nvi79SzLS2RkV1fEj
-         rnUfG1w0bOjFvUoTJTpxm9X3vCVcmQlWp8iKxfJhsxjhcPz5ePWtTuiTPQbLlzq2oKdN
-         C9l4GKqXSvcA0Fc4G3gcxp6iOd03Ne02h6Mfhzem4jLzag5/QcirPomFSj7wO+LhRwbF
-         ZutA==
+        bh=tSGXuP7AugTGZlYmteSMimkU/xIm9yUQuBQEE4/o9H4=;
+        b=wPvVM0CQVbQQT2J3iJR/Gw44Xu+nVqLy5nF2102cvBohp+JbndFDYl6GXaj3cf7BW4
+         gTsP3CYlupQd+JxEngRODvxh8r5SLegef0UBwOXAhB4hruQ70J08mTV7gi8Fu6NOOpDG
+         tV9cWmyhIxwqDpzWqNx4teIvn4EHcv9b8XHGqnEIDB20kBL1sPrmywgTN2Xgk2nH5Vqd
+         FYPgZu+axFlnLi9vf6w1L4A24ylFrwy7YsNcidhAtkYIaTdAihwAYBy7rCDUjkgtW4G2
+         kEeX+Wh3hwwkw3fDFr7J/FW5QHIwf4AyDnMr5USYJop8i3CIps67oDaj0GXL2RtuL8+e
+         CjLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762779979; x=1763384779;
+        d=1e100.net; s=20230601; t=1762779980; x=1763384780;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A6UuyAXvOZMvot7FtB2GRmNDvVWwg415dKxaxe3i4KE=;
-        b=T7UaFZD7MsfpdUR6Ojm+W0pp9Mcl3NLEUypWm5oWqiqo0rFUf2UAy4zRqjPYQRxI/F
-         ExV3XWqPFwF1daUAt5+bZugHgj83o3I85FFIEYvWQq7+x/VxSKJ2ieF8I6Iebhr9Oi0f
-         6w/Xy0ddx4U6XOZS/xak81+I4r6Jyci6SjyXbWmMKUP1tAKbLuibgcQxlhMGF4TU0er3
-         pjLCB3Q9BDBhZu5xXomMJhEXCbt11V7YUaxknT4EBO+tRMgZOxwncxhO34iz5CyG7Lv4
-         jc2Lsyjg1p+apZET38BJp2Bt/p5MGMX1rxZpIW/356z5PaIpnNCWfOvXAtF+u4IHJHea
-         RtHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvvNOmMcB9+DoPChelBezhJwJHI32CanqWd56skh2nDGwlgxqtmVl22UDbvga9SacG2u34L4OPoMuxZD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKvwNDSgEIpnIAYe5PZSDSiUFBR4L5YXdPOKxx18sbW7402udx
-	U2uZgwQn+u5RdtwBB6H8Egur+A5JsudmyQP3OYqOQoQZv5PzoqM0sNFI+1SQMHqiIhpbEiJiX2L
-	UdMVo1tjvOt8a8mw2aw==
-X-Google-Smtp-Source: AGHT+IGPU27McRwqoat0Pmv9Cv7PBWj4obujNzeOpWEVAv2UcJ7bUkvlnarUt9oIbaab3TKEEvmUwT+2VlWRZMA=
-X-Received: from wmju17.prod.google.com ([2002:a7b:cb11:0:b0:477:4a46:9980])
+        bh=tSGXuP7AugTGZlYmteSMimkU/xIm9yUQuBQEE4/o9H4=;
+        b=C8qUMcYTzz+RyG8Yva4j7IlPe6PLW3OlPxWgEkISHAbXosvNWnDcJEhS2NK5hcKDDP
+         xj4udjSjBxdpgDljORGfsJdS/1EohHkPdJsxHKmdJULCIGVmdr7WcndOSVao43+t4oJO
+         a69ebZ5sYM/PBxqSra8V2axNfB9Ce97mUmldRbyF1NjYmJBTPhgS0KBLoMQeuVDc/nLk
+         q8z6RBWjADY2kshWgRkSmv8dvZI/ydKlLhO6r1oci3ntdRlLOGJKAbJwnBtOxava7DlW
+         7b8/m8+Mms46md4pL9QCeI0x/PwBMjhFjwiJVVE4X2qRCO6IJIZ4KVzayCk2IhjXObJY
+         2xHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWt0drqDf/Uu2DbfB4gmoi+KqbSVMsgn8ewm6fDPA/xkEgk6Xu7ReA7+yixBffSYDfSwSUPsKrsEo6eNN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQGVyx88s0MHcpS+6kavbvn8WpyxnOnGgC9Ga6LZXufnF0+Tu/
+	T2mqOcRmbiqlT1R6wgafCNLcmKhsQ6st5WV3u39NwqCHTx7yTbNYTYoU549xWIXMB18bE70g8O9
+	mtJZwRMYULBCkwL/zxw==
+X-Google-Smtp-Source: AGHT+IHOFRtzj17r98BrZnYhPDH7BcIr6LDvYu4u4o4VD9su1BOVPDC9ImKEK33//ppmHMOfYOGZsDg3neBj2Us=
+X-Received: from ejra23.prod.google.com ([2002:a17:906:4697:b0:b72:99b5:37df])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:35c9:b0:477:7b9a:bb0a with SMTP id 5b1f17b1804b1-4777b9abc33mr43733225e9.21.1762779979194;
- Mon, 10 Nov 2025 05:06:19 -0800 (PST)
-Date: Mon, 10 Nov 2025 13:05:58 +0000
+ 2002:a17:907:96a6:b0:b71:d742:5148 with SMTP id a640c23a62f3a-b72dff5fe26mr813962066b.31.1762779980520;
+ Mon, 10 Nov 2025 05:06:20 -0800 (PST)
+Date: Mon, 10 Nov 2025 13:05:59 +0000
 In-Reply-To: <20251110-binder-bitmap-v4-0-5ed8a7fab1b9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,22 +73,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251110-binder-bitmap-v4-0-5ed8a7fab1b9@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4865; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=b0mct7fLXCpWtZ5UlM9V32efA0UtDjJ5A0aIjp+AVik=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpEeNDqIx9uMc8a3ltMlM0rubrKicf0Ye9pdw/C
- MgxsYNu54OJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaRHjQwAKCRAEWL7uWMY5
- Rv6UD/9jGQ5w6hzpirGqKTn82O9NRR+qspGk5ZtuGaLq80obEXHaW8C8cSQyMnqwpn33RhOfAqR
- vWhPDDTpyuQM+pDsD4Zpu4Z6pzouMK11+To9RRgwA8/IQj+ncoYu1CIxamYXmtvV6MujVSDcLV8
- xq065vMM5MHo6jGXj/E1fu1VPmR2XdwXa1j55s9tE1kLl84zsucX/Ie/YVJwJZFQkBW1uUFpP/b
- Ifi/fFK5QJYkmRgqjeVbJE0qC+n0UO+S4//zhaN7Dviz4qIiCDUxiKXQ74Q2BAJGL0iUC+JH3e+
- gIq9x6n5BRm7sginXukcXx9r/BkAuAKo/tHqM1S05M5C0EQhpxjmgUhS6vbfT4AvOx89tgcQERI
- 0yFimvKkz//oNqFxsgBjHFRxO9xvnUswjckZ2d5HPu4DjR3BeE3k1fd+4l8AgCvDj2jw1fExgFV
- Q2SyZMUW940Z0WHR33MCwsvfrMEuXQellesggAAiBSlefzIzR8T6CIawssLip8VYCYWfAzMwShU
- pK4lGEb/V5YmWUErFfzZW6vPsH2nDIrK1/OtN8NkPPdWyiZcxmt9oLfmdFrrzTqe1hVxlrzJ26s
- fR0YM9xdnpy1Yn2Up0j2g5dQSEugsfC9DWdY7eLerJvXEtKfKY4yFRh3Syxi4Uj0WCVF3h6TYxn 2dA6QGKqi9FquvQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6263; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=7993m8OvBem5aU3JmUxqvYCw1dEJgILWjzrL2R/Lw9k=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpEeNEMpMJqOpS6vIvvgVJKQWGpTEXjHrw5nnLe
+ DBhh9GwD8mJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaRHjRAAKCRAEWL7uWMY5
+ RsTlD/4yqoxdmXqu0CysOfbItj6bzfgoWbW4mYKEwrHO0xdwfBI2NyzZGGvy5l3jRI0q+iDf2Bi
+ L5dmkNwuzmb4mgo8EaQgMnG1LzOSLw9Xxo7cY0v/pyO0y8VqkOqfMzGjj6jWe8Nn3MVSbEdcpa8
+ 0kRmzy5JT3HnIr7C6BgopF3HIxu+dFHZCIvAiEw6DCRjlizXmd8W+xShEP1/5gOLeBAEBlTVQoV
+ BAvVcJuUuP/+V/jzAaVPAQSPatevA5owydUoWSu16/ctbTmCsOvpjkIIz0YDHyAg5B1CLLzj7kA
+ Y4R12Nb2+YerF+wjgReex+60s9KyOkMxbBKsDjlT4kauvsPjrl2vVYl7dlFCRU+B4PJotXCtTWd
+ 87jQ19xNFHOH4w0XtqmVc7zzaxAk73BuDq5hz2HiJTdMsCbdFW49+z/8kNmN4XrNZWV9dNJxHBC
+ hcuMJzLB6WoUgkYA4g5maa1tf6/HJRI7wsGe8bIz/hwfCKAUBd7bdXUaJMv3OK98/KySdzE9fzF
+ gDc4ZtPPAhDeZPg+T75Efnwqd+OWniKhDq42Bi0RisKy4nt/+QoEEpEYdL2iNn32nN8kJFZP3nV
+ 4Es8cNR7O4bSiHziscyy0hSIi4SLHehvE/bHY5s4N0gi8ma70X+oNOUZVUd63ZWsiEpCyzJeiSJ tD6nGm7fXBHiAvg==
 X-Mailer: b4 0.14.2
-Message-ID: <20251110-binder-bitmap-v4-5-5ed8a7fab1b9@google.com>
-Subject: [PATCH v4 5/6] rust: id_pool: do not immediately acquire new ids
+Message-ID: <20251110-binder-bitmap-v4-6-5ed8a7fab1b9@google.com>
+Subject: [PATCH v4 6/6] rust_binder: use bitmap for allocation of handles
 From: Alice Ryhl <aliceryhl@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yury Norov <yury.norov@gmail.com>
 Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
@@ -102,145 +102,149 @@ Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@
 	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-When Rust Binder assigns a new ID, it performs various fallible
-operations before it "commits" to actually using the new ID. To support
-this pattern, change acquire_next_id() so that it does not immediately
-call set_bit(), but instead returns an object that may be used to call
-set_bit() later.
+To find an unused Binder handle, Rust Binder currently iterates the
+red/black tree from the beginning until it finds a gap in the keys. This
+is extremely slow.
 
-The UnusedId type holds a exclusive reference to the IdPool, so it's
-guaranteed that nobody else can call find_unused_id() while the UnusedId
-object is live.
+To improve the performance, add a bitmap that keeps track of which
+indices are actually in use. This allows us to quickly find an unused
+key in the red/black tree.
+
+This logic matches the approach used by C Binder. It was chosen
+partially because it's the most memory efficient solution.
 
 Reviewed-by: Burak Emir <bqe@google.com>
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+Acked-by: Carlos Llamas <cmllamas@google.com>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/id_pool.rs | 75 ++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 60 insertions(+), 15 deletions(-)
+ drivers/android/binder/process.rs | 63 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 46 insertions(+), 17 deletions(-)
 
-diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
-index 6f607f04331c9bd3fc79c6d91d04005bd0685839..bf1aad1d7fcc54794b79484d1cf8861c328f02fb 100644
---- a/rust/kernel/id_pool.rs
-+++ b/rust/kernel/id_pool.rs
-@@ -25,8 +25,8 @@
- /// Basic usage
- ///
- /// ```
--/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
--/// use kernel::id_pool::IdPool;
-+/// use kernel::alloc::AllocError;
-+/// use kernel::id_pool::{IdPool, UnusedId};
- ///
- /// let mut pool = IdPool::with_capacity(64, GFP_KERNEL)?;
- /// for i in 0..64 {
-@@ -34,13 +34,13 @@
- /// }
- ///
- /// pool.release_id(23);
--/// assert_eq!(23, pool.acquire_next_id(0).ok_or(ENOSPC)?);
-+/// assert_eq!(23, pool.find_unused_id(0).ok_or(ENOSPC)?.acquire());
- ///
--/// assert_eq!(None, pool.acquire_next_id(0));  // time to realloc.
-+/// assert!(pool.find_unused_id(0).is_none());  // time to realloc.
- /// let resizer = pool.grow_request().ok_or(ENOSPC)?.realloc(GFP_KERNEL)?;
- /// pool.grow(resizer);
- ///
--/// assert_eq!(pool.acquire_next_id(0), Some(64));
-+/// assert_eq!(pool.find_unused_id(0).ok_or(ENOSPC)?.acquire(), 64);
- /// # Ok::<(), Error>(())
- /// ```
- ///
-@@ -54,8 +54,8 @@
- /// fn get_id_maybe_realloc(guarded_pool: &SpinLock<IdPool>) -> Result<usize, AllocError> {
- ///     let mut pool = guarded_pool.lock();
- ///     loop {
--///         match pool.acquire_next_id(0) {
--///             Some(index) => return Ok(index),
-+///         match pool.find_unused_id(0) {
-+///             Some(index) => return Ok(index.acquire()),
- ///             None => {
- ///                 let alloc_request = pool.grow_request();
- ///                 drop(pool);
-@@ -216,18 +216,18 @@ pub fn grow(&mut self, mut resizer: PoolResizer) {
-         self.map = resizer.new;
-     }
+diff --git a/drivers/android/binder/process.rs b/drivers/android/binder/process.rs
+index f13a747e784c84a0fb09cbf47442712106eba07c..933b0f737b38ffac536b19c9330dfc63ffc72f2b 100644
+--- a/drivers/android/binder/process.rs
++++ b/drivers/android/binder/process.rs
+@@ -19,6 +19,7 @@
+     cred::Credential,
+     error::Error,
+     fs::file::{self, File},
++    id_pool::IdPool,
+     list::{List, ListArc, ListArcField, ListLinks},
+     mm,
+     prelude::*,
+@@ -367,6 +368,8 @@ impl ListItem<{Self::LIST_NODE}> for NodeRefInfo {
+ struct ProcessNodeRefs {
+     /// Used to look up nodes using the 32-bit id that this process knows it by.
+     by_handle: RBTree<u32, ListArc<NodeRefInfo, { NodeRefInfo::LIST_PROC }>>,
++    /// Used to quickly find unused ids in `by_handle`.
++    handle_is_present: IdPool,
+     /// Used to look up nodes without knowing their local 32-bit id. The usize is the address of
+     /// the underlying `Node` struct as returned by `Node::global_id`.
+     by_node: RBTree<usize, u32>,
+@@ -381,6 +384,7 @@ impl ProcessNodeRefs {
+     fn new() -> Self {
+         Self {
+             by_handle: RBTree::new(),
++            handle_is_present: IdPool::new(),
+             by_node: RBTree::new(),
+             freeze_listeners: RBTree::new(),
+         }
+@@ -775,7 +779,7 @@ pub(crate) fn get_node(
+     pub(crate) fn insert_or_update_handle(
+         self: ArcBorrow<'_, Process>,
+         node_ref: NodeRef,
+-        is_mananger: bool,
++        is_manager: bool,
+     ) -> Result<u32> {
+         {
+             let mut refs = self.node_refs.lock();
+@@ -794,7 +798,32 @@ pub(crate) fn insert_or_update_handle(
+         let reserve2 = RBTreeNodeReservation::new(GFP_KERNEL)?;
+         let info = UniqueArc::new_uninit(GFP_KERNEL)?;
  
--    /// Acquires a new ID by finding and setting the next zero bit in the
--    /// bitmap.
-+    /// Finds an unused ID in the bitmap.
-     ///
-     /// Upon success, returns its index. Otherwise, returns [`None`]
-     /// to indicate that a [`Self::grow_request`] is needed.
-     #[inline]
--    pub fn acquire_next_id(&mut self, offset: usize) -> Option<usize> {
--        let next_zero_bit = self.map.next_zero_bit(offset);
--        if let Some(nr) = next_zero_bit {
--            self.map.set_bit(nr);
+-        let mut refs = self.node_refs.lock();
++        let mut refs_lock = self.node_refs.lock();
++        let mut refs = &mut *refs_lock;
++
++        let (unused_id, by_handle_slot) = loop {
++            // ID 0 may only be used by the manager.
++            let start = if is_manager { 0 } else { 1 };
++
++            if let Some(res) = refs.handle_is_present.find_unused_id(start) {
++                match refs.by_handle.entry(res.as_u32()) {
++                    rbtree::Entry::Vacant(entry) => break (res, entry),
++                    rbtree::Entry::Occupied(_) => {
++                        pr_err!("Detected mismatch between handle_is_present and by_handle");
++                        res.acquire();
++                        continue;
++                    }
++                }
++            }
++
++            let grow_request = refs.handle_is_present.grow_request().ok_or(ENOMEM)?;
++            drop(refs_lock);
++            let resizer = grow_request.realloc(GFP_KERNEL)?;
++            refs_lock = self.node_refs.lock();
++            refs = &mut *refs_lock;
++            refs.handle_is_present.grow(resizer);
++        };
++        let handle = unused_id.as_u32();
+ 
+         // Do a lookup again as node may have been inserted before the lock was reacquired.
+         if let Some(handle_ref) = refs.by_node.get(&node_ref.node.global_id()) {
+@@ -804,20 +833,9 @@ pub(crate) fn insert_or_update_handle(
+             return Ok(handle);
+         }
+ 
+-        // Find id.
+-        let mut target: u32 = if is_mananger { 0 } else { 1 };
+-        for handle in refs.by_handle.keys() {
+-            if *handle > target {
+-                break;
+-            }
+-            if *handle == target {
+-                target = target.checked_add(1).ok_or(ENOMEM)?;
+-            }
 -        }
--        next_zero_bit
-+    #[must_use]
-+    pub fn find_unused_id(&mut self, offset: usize) -> Option<UnusedId<'_>> {
-+        // INVARIANT: `next_zero_bit()` returns None or an integer less than `map.len()`
-+        Some(UnusedId {
-+            id: self.map.next_zero_bit(offset)?,
-+            pool: self,
-+        })
+-
+         let gid = node_ref.node.global_id();
+         let (info_proc, info_node) = {
+-            let info_init = NodeRefInfo::new(node_ref, target, self.into());
++            let info_init = NodeRefInfo::new(node_ref, handle, self.into());
+             match info.pin_init_with(info_init) {
+                 Ok(info) => ListArc::pair_from_pin_unique(info),
+                 // error is infallible
+@@ -838,9 +856,10 @@ pub(crate) fn insert_or_update_handle(
+         // `info_node` into the right node's `refs` list.
+         unsafe { info_proc.node_ref2().node.insert_node_info(info_node) };
+ 
+-        refs.by_node.insert(reserve1.into_node(gid, target));
+-        refs.by_handle.insert(reserve2.into_node(target, info_proc));
+-        Ok(target)
++        refs.by_node.insert(reserve1.into_node(gid, handle));
++        by_handle_slot.insert(info_proc, reserve2);
++        unused_id.acquire();
++        Ok(handle)
      }
  
-     /// Releases an ID.
-@@ -237,6 +237,51 @@ pub fn release_id(&mut self, id: usize) {
-     }
- }
- 
-+/// Represents an unused id in an [`IdPool`].
-+///
-+/// # Invariants
-+///
-+/// The value of `id` is less than `pool.map.len()`.
-+pub struct UnusedId<'pool> {
-+    id: usize,
-+    pool: &'pool mut IdPool,
-+}
+     pub(crate) fn get_transaction_node(&self, handle: u32) -> BinderResult<NodeRef> {
+@@ -905,6 +924,16 @@ pub(crate) fn update_ref(
+                 let id = info.node_ref().node.global_id();
+                 refs.by_handle.remove(&handle);
+                 refs.by_node.remove(&id);
++                refs.handle_is_present.release_id(handle as usize);
 +
-+impl<'pool> UnusedId<'pool> {
-+    /// Get the unused id as an usize.
-+    ///
-+    /// Be aware that the id has not yet been acquired in the pool. The
-+    /// [`acquire`] method must be called to prevent others from taking the id.
-+    ///
-+    /// [`acquire`]: UnusedId::acquire()
-+    #[inline]
-+    #[must_use]
-+    pub fn as_usize(&self) -> usize {
-+        self.id
-+    }
-+
-+    /// Get the unused id as an u32.
-+    ///
-+    /// Be aware that the id has not yet been acquired in the pool. The
-+    /// [`acquire`] method must be called to prevent others from taking the id.
-+    ///
-+    /// [`acquire`]: UnusedId::acquire()
-+    #[inline]
-+    #[must_use]
-+    pub fn as_u32(&self) -> u32 {
-+        // CAST: By the type invariants:
-+        // `self.id < pool.map.len() <= BitmapVec::MAX_LEN = i32::MAX`.
-+        self.id as u32
-+    }
-+
-+    /// Acquire the unused id.
-+    #[inline]
-+    pub fn acquire(self) -> usize {
-+        self.pool.map.set_bit(self.id);
-+        self.id
-+    }
-+}
-+
- impl Default for IdPool {
-     #[inline]
-     fn default() -> Self {
++                if let Some(shrink) = refs.handle_is_present.shrink_request() {
++                    drop(refs);
++                    // This intentionally ignores allocation failures.
++                    if let Ok(new_bitmap) = shrink.realloc(GFP_KERNEL) {
++                        refs = self.node_refs.lock();
++                        refs.handle_is_present.shrink(new_bitmap);
++                    }
++                }
+             }
+         } else {
+             // All refs are cleared in process exit, so this warning is expected in that case.
 
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
