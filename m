@@ -1,82 +1,47 @@
-Return-Path: <linux-kernel+bounces-892615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CA7C4574A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:53:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C929C45774
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:56:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E769188FE1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:54:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB133B2AE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5ED22FD7A5;
-	Mon, 10 Nov 2025 08:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FDC2FD7A5;
+	Mon, 10 Nov 2025 08:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5J6sHeF"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tcrmv+F/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E7B24E4B4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9CAA926;
+	Mon, 10 Nov 2025 08:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762764823; cv=none; b=sLE81N7r7/FljLoYS7upLxnCvQqO5yPfwL/nsI2cKVRHdKarp3EngL3SB9eUqaf9x45DHI77W8UcW0TrSLJ6U+y9EYqfCODaeE6su8JXnswxrqhaCzkOCqz9xO3ZjaqfbdFO4/pkB0536RAG89nN4pdC2/fIA465qXEzRJnnsjI=
+	t=1762764956; cv=none; b=Ps+Pl/oP0fjw7rRfT0L/4zqO6nyeYGxddlno6O4o6/T/1nbyhYIpYcMklGPlYPZ+i6INy03/7jvTFucu+wvWKSwyWHQAlQHfiLqL7E6XaHdGDW/DTFCjZACRpuewSD5RmVekV2Zu1aSM/bUngbqyujXWYrbH765ibqwmjtmkqIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762764823; c=relaxed/simple;
-	bh=xT2FUP3MNs8+53gxJ4yLvrYObNqX1XJmIh259aRbrM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V++rOJA5iAxJx9eViwDuxBmtW0CZFuNxw3YaE2I5q6D9JJ/mD2RS4nWQRXjxq54kftHyI03FgyFePscGe79yS25va3w0yGKfEAulR+FhglovcSuICGpltg6NXnGEqvzUFaeI+Y05WM+rk0FFPN4KUwQbcVc21JZTAOookbU3pOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M5J6sHeF; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso20946795e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 00:53:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762764820; x=1763369620; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/Ldu9p98EP72Lub2LnfLE7D8p6c6NaHeByWpsFXZ1WI=;
-        b=M5J6sHeFJmBgG4wNPSOlQTIw68fBPQABQveNZz8h7+JoBolQQppDGEcbdSqqlPg8Yw
-         0aW55G8TX3vO/sapMUjyroIGFZoJFWZJUJMg24i4AO+exDh7xra7zw2qpu83/IX9/pEE
-         aM+64lLH7irC/56dRsmso5FiaWGk4SdA3BtZ8wB88j1Dt85+WoDVuqulGYcaCE+jIouZ
-         AFqGWlZgmRoVV8IM0UWMMe27Mk8KdD5haFJ0tK7ZS6CHq+eXy57Cu8ehSdc1g/kS0635
-         U+WGDoKcL00D3Itru3EoC1DuaTlej3pTxvP25L/UUgBtwL2Bsto17yS5DnZy41Or6p2l
-         ReZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762764820; x=1763369620;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/Ldu9p98EP72Lub2LnfLE7D8p6c6NaHeByWpsFXZ1WI=;
-        b=Pb2jiKiC17BqMV6LOlCjZ2kAbkM9eLzdZQ6We9ear/IV0Jq/5Qe301UgRXqT+bhTwT
-         MFH1rtMVEMOm4bf6OocnpP0+xEqmVLlbVoEYQ/bzUYrocOZyrOw+ocv3qGhdnhcxfRt2
-         rLaXgeB18Rfa67mQLV10tQb8xer78DEPC0kwCNwNykdW72lXaRceO1wgLMROkOfzV2Gm
-         Rf4NmY4+biQmfotoXM/Fp7I5voRhBeSZ1/5Ii9VZIq7S4obx+ZXZ7nw7/1rGixxpgt61
-         zoDobx02StqtRW1E/eN3Sixhr97j0krTcfIaRrzq+PZVYFvPAukTAbnbOOTtYJnuSJ0G
-         bHag==
-X-Forwarded-Encrypted: i=1; AJvYcCUKbXo5o+9E7znmwN/4HXmxUR8Nr/6MeBvyWTHJYtlAzPZGn4ar7aKyysxixUaan8wIfJ7NpkxkACw7XOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPCUBnvZVIjeYI0EJCqskEjwdU8nVQ4unH7lqnDIacYVH+t/18
-	y2pssxN8qXUxI2IF3ckQeYMJBYP74EwGY7Q7Md0931so8SAd4qPmY5K+
-X-Gm-Gg: ASbGncsl8LCdyxKaP9bhDl08gXhW3hJRRvX/VBcgZZ6MJJElTsRMSptpDcEq6g6SRXe
-	F/xKQWmWnR7KxjdY4KXN/tAbnVbP18qsXMXWAJ2dLTL4G210axgSg9Nx1+o6RhwmVq3ucjd1doe
-	+5xR7nZJeYnApxW+5UW4RB05e9d6jnBeTIXzuTgwdK3YQhbh+4kXE+3frTLFo59gUA9469kc3R+
-	OkSWCLCkDa3DUlP1yHj6SQfvuNCWFGCIJLnXeeAyqMyOZlTRFJMRdoYx75puaZv9wCP5tjXG/Li
-	O0pwDxEzVMfhWFdkSHe9tN+zLiCeS26/aatHA4w5gIwJKPCDeqEsk3Utlw07c51P7tz46T1XT27
-	rEji+7C8W9KQJFwO8gDZXbTkNUFJBobG7kYyDyNf4VZWCpxLkpQtTMWco2HxBx6ymJl21UUK83j
-	aQ0Ybjkh0c+TFPxMPZFJcT/njo6+H4WEkUAHkBku6upYZ4W0CN6Kvd9lr+r0YMEDRlPkG39Ylq4
-	3vIREGC4tySW63NOvAEURXi4hJpfY9I1xYDfMtVLu5Xml/yIFgGj/AMaKpV
-X-Google-Smtp-Source: AGHT+IHOWXilb/YcUOqkNvD5jv1JX4N6N7v+d1KUcRwDS+nMZxJhbeCpIXfmOsG8KxaFsorMfkvdQw==
-X-Received: by 2002:a05:600c:a6a6:b0:477:79cf:89d4 with SMTP id 5b1f17b1804b1-47779cf8b43mr25246935e9.31.1762764819414;
-        Mon, 10 Nov 2025 00:53:39 -0800 (PST)
-Received: from ?IPV6:2003:d8:2f30:b00:cea9:dee:d607:41d? (p200300d82f300b00cea90deed607041d.dip0.t-ipconnect.de. [2003:d8:2f30:b00:cea9:dee:d607:41d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b2dd927d5sm14179020f8f.24.2025.11.10.00.53.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 00:53:39 -0800 (PST)
-Message-ID: <048f6173-f538-46eb-b0dd-70f1aaa79562@gmail.com>
-Date: Mon, 10 Nov 2025 09:53:38 +0100
+	s=arc-20240116; t=1762764956; c=relaxed/simple;
+	bh=mSP+xIU4+FoO0L+fWKO5RP9XDBbobaBLZF91BFx8IRY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=myaVB7QBm8fAhCswrNpnn6YSYFnfWd75JBWEO3q8hANjLbMyNn1sTNwhFbHiaqqs/bqU4tVeiqYT2XQiXeYjK2MfvKJzHjPXnTn45RaHnvIfrWiiEI6P8XSo9l7XW8lKfgXjTkSX+uFNlINwlF86hyE1IBuNLb2bm0/3RVf26qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tcrmv+F/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC9ABC19421;
+	Mon, 10 Nov 2025 08:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762764956;
+	bh=mSP+xIU4+FoO0L+fWKO5RP9XDBbobaBLZF91BFx8IRY=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=Tcrmv+F/8Xfl77PApi/kITQFytI+3zCBcPHxSZ+M7pPm/KuPwar5zGbDtuMNpxqFp
+	 lBmOzP5doV4be+vEuV+8YwbfiEHnymUYtowVpX62rD2nWk5VqmvuoBQJqsX0ubsI07
+	 aW6quyKtPXdpwr01C8lWhQk72GyZvdE/4OKJlgIdiZ6gGvY853WqNmk1gUaGJe1X4Q
+	 Jt9iZq18ii+AOyGmQ0HjK6E0KrxoaYSEBlnBw/GE2lmTFv+hhjPwqaftGNmD2cVHmh
+	 DPwCaJAIkqU+2HMWQWqtpGY09HI7+2s3Lz1ppb3BgvPC8cI4DAAb4AD7ARcbFMbwBG
+	 06GRVgSS9/fPg==
+Message-ID: <affa667c-2d26-44a6-b575-0b147b4af273@kernel.org>
+Date: Mon, 10 Nov 2025 09:55:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,70 +49,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/ptdesc: Derive from the compound head in page_ptdesc()
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: vishal.moola@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org
-References: <20251110063725.3118037-1-anshuman.khandual@arm.com>
-From: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20251110063725.3118037-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH 08/18] media: platform: microchip: Add new histogram
+ submodule
+To: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Eugen Hristev <eugen.hristev@linaro.org>, Chas Williams
+ <3chas3@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Balakrishnan Sambath <balakrishnan.s@microchip.com>,
+ Hans Verkuil <hverkuil@kernel.org>, Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Daniel Scally <dan.scally+renesas@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20251009155251.102472-1-balamanikandan.gunasundar@microchip.com>
+ <20251009155251.102472-9-balamanikandan.gunasundar@microchip.com>
+Content-Language: en-US, nl
+In-Reply-To: <20251009155251.102472-9-balamanikandan.gunasundar@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10.11.25 07:37, Anshuman Khandual wrote:
-> struct ptdesc (including all relevant helpers) support multi order compound
-> pages. But page_ptdesc() coverts given page into its own ptdesc rather than
-> deriving from its compound head as would have been expected otherwise. Just
-> change the macro to fetch the struct ptdesc from the compound head instead,
-> so that the same struct ptdesc is reached from all tail pages.
+On 09/10/2025 17:52, Balamanikandan Gunasundar wrote:
+> From: Balakrishnan Sambath <balakrishnan.s@microchip.com>
 > 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> Add new histogram submodule driver to export raw histogram statistics
+> and data to userspace.
+> 
+> Signed-off-by: Balakrishnan Sambath <balakrishnan.s@microchip.com>
 > ---
-> This applies on v6.18-rc5
+>  drivers/media/platform/microchip/Kconfig      |   2 +
+>  drivers/media/platform/microchip/Makefile     |   2 +-
+>  .../platform/microchip/microchip-isc-stats.c  | 549 ++++++++++++++++++
+>  .../media/platform/microchip/microchip-isc.h  |  24 +
+>  4 files changed, 576 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/media/platform/microchip/microchip-isc-stats.c
 > 
-> Found via code inspection. Apparently struct ptdesc could represent a page
-> table page which is multi order looking into helpers as ptdesc_nr_pages(),
-> __pagetable_ctor/dtor() and pagetable_free() etc. Am I missing something ?
-> 
->   include/linux/mm_types.h | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 90e5790c318f..f7107bc55d1e 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -604,9 +604,9 @@ static_assert(sizeof(struct ptdesc) <= sizeof(struct page));
->   	const struct ptdesc *:		(const struct folio *)(pt),	\
->   	struct ptdesc *:		(struct folio *)(pt)))
->   
-> -#define page_ptdesc(p)			(_Generic((p),			\
-> -	const struct page *:		(const struct ptdesc *)(p),	\
-> -	struct page *:			(struct ptdesc *)(p)))
-> +#define page_ptdesc(p)			(_Generic((p),					\
-> +	const struct page *:		(const struct ptdesc *)_compound_head(p),	\
-> +	struct page *:			(struct ptdesc *)_compound_head(p)))
+> diff --git a/drivers/media/platform/microchip/Kconfig b/drivers/media/platform/microchip/Kconfig
+> index 4734ecced029..2864a57e2ff4 100644
+> --- a/drivers/media/platform/microchip/Kconfig
+> +++ b/drivers/media/platform/microchip/Kconfig
+> @@ -10,6 +10,7 @@ config VIDEO_MICROCHIP_ISC
+>  	select MEDIA_CONTROLLER
+>  	select VIDEO_V4L2_SUBDEV_API
+>  	select VIDEOBUF2_DMA_CONTIG
+> +	select VIDEOBUF2_VMALLOC
+>  	select REGMAP_MMIO
+>  	select V4L2_FWNODE
+>  	select VIDEO_MICROCHIP_ISC_BASE
+> @@ -26,6 +27,7 @@ config VIDEO_MICROCHIP_XISC
+>  	depends on VIDEO_DEV && COMMON_CLK
+>  	depends on ARCH_AT91 || COMPILE_TEST
+>  	select VIDEOBUF2_DMA_CONTIG
+> +	select VIDEOBUF2_VMALLOC
+>  	select REGMAP_MMIO
+>  	select V4L2_FWNODE
+>  	select VIDEO_MICROCHIP_ISC_BASE
+> diff --git a/drivers/media/platform/microchip/Makefile b/drivers/media/platform/microchip/Makefile
+> index bd8d6e779c51..94c64d3d242c 100644
+> --- a/drivers/media/platform/microchip/Makefile
+> +++ b/drivers/media/platform/microchip/Makefile
+> @@ -1,7 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  microchip-isc-objs = microchip-sama5d2-isc.o
+>  microchip-xisc-objs = microchip-sama7g5-isc.o
+> -microchip-isc-common-objs = microchip-isc-base.o microchip-isc-clk.o microchip-isc-scaler.o
+> +microchip-isc-common-objs = microchip-isc-base.o microchip-isc-clk.o microchip-isc-scaler.o microchip-isc-stats.o
+>  
+>  obj-$(CONFIG_VIDEO_MICROCHIP_ISC_BASE) += microchip-isc-common.o
+>  obj-$(CONFIG_VIDEO_MICROCHIP_ISC) += microchip-isc.o
+> diff --git a/drivers/media/platform/microchip/microchip-isc-stats.c b/drivers/media/platform/microchip/microchip-isc-stats.c
+> new file mode 100644
+> index 000000000000..d7813c9d95ac
+> --- /dev/null
+> +++ b/drivers/media/platform/microchip/microchip-isc-stats.c
+> @@ -0,0 +1,549 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Microchip ISC Driver - Statistics Subdevice
+> + * Raw Histogram Export for Userspace Applications
+> + *
+> + * Copyright (C) 2025 Microchip Technology Inc.
+> + *
+> + * Author: Balakrishnan Sambath <balakrishnan.s@microchip.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <media/v4l2-common.h>
+> +#include <media/v4l2-event.h>
+> +#include <media/v4l2-ioctl.h>
+> +#include <media/videobuf2-core.h>
+> +#include <media/videobuf2-vmalloc.h>
+> +#include "microchip-isc-regs.h"
+> +#include "microchip-isc.h"
+> +
+> +#define ISC_STATS_DEV_NAME	"microchip-isc_stats"
+> +#define ISC_STATS_MIN_BUFS	2
+> +#define ISC_STATS_MAX_BUFS	8
+> +
+> +/**
+> + * struct isc_stat_buffer - Raw histogram statistics buffer structure
+> + * @frame_number: Sequential frame number from capture
+> + * @timestamp: Frame capture timestamp in nanoseconds
+> + * @meas_type: Bitmask of measurement types available (ISC_CIF_ISP_STAT_*)
+> + * @hist: Array of histogram data for each Bayer channel
+> + * @hist.hist_bins: Raw 512-bin histogram data from hardware
+> + * @hist.hist_min: Minimum pixel value observed in channel
+> + * @hist.hist_max: Maximum pixel value observed in channel
+> + * @hist.total_pixels: Total number of pixels processed in channel
+> + * @valid_channels: Bitmask indicating which Bayer channels contain valid data
+> + * @bayer_pattern: Current Bayer pattern configuration (CFA_BAYCFG_*)
+> + * @reserved: Padding for future expansion and alignment
+> + *
+> + * This structure contains raw, unprocessed histogram data from the ISC
+> + * hardware for all four Bayer channels (GR, R, GB, B). No algorithmic
+> + * processing is performed - data is exported directly from hardware
+> + * registers for userspace processing applications.
+> + */
+> +struct isc_stat_buffer {
+> +	u32 frame_number;
+> +	u64 timestamp;
 
-Well, this adds overhead :)
+Swap the two fields above to avoid introducing holes due to alignment problems.
 
-The real question is when we would be converting from a tail page to a 
-ptdesc.
+> +	u32 meas_type;
+> +
+> +	struct {
+> +		u32 hist_bins[HIST_ENTRIES];
+> +		u32 hist_min;
+> +		u32 hist_max;
+> +		u32 total_pixels;
+> +	} hist[HIST_BAYER];
+> +
+> +	u8 valid_channels;
+> +	u8 bayer_pattern;
+> +	u16 reserved[2];
+> +} __packed;
 
-Take a look at pmd_ptdesc()->pmd_pgtable_page() where we avoid looking 
-up a tail page in the first place.
+After swapping those two fields you probably can drop __packed, but I'm not certain.
+It's probably a good idea to check with the pahole utility if there are no holes in
+this structure.
+
+This structure must be part of include/uapi/linux/, probably
+include/uapi/linux/media/microchip/something.h
+
+Userspace must have access to this, otherwise it can't parse the metadata. Note
+that that also means that the HIST_ENTRIES and HIST_BAYER/ISC_HIS_CFG_MODE_B
+defines are in that uapi include as well.
+
+> +
+> +/* Statistics measurement type flags */
+> +#define ISC_CIF_ISP_STAT_HIST		BIT(0)
+> +
+
+Regards,
+
+	Hans
 
