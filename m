@@ -1,89 +1,64 @@
-Return-Path: <linux-kernel+bounces-894290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DA6C49B09
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:03:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA7AC49B15
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:04:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C4A33AAAF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:02:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EC353A8A1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6B7302CCA;
-	Mon, 10 Nov 2025 23:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97A72FF648;
+	Mon, 10 Nov 2025 23:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hnFkdTkv"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b="A9ijqw1p"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC103019D8
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A169122B8B6
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762815759; cv=none; b=qwtQeh5yepSAjo9KS4NsH3EUEmElwQj6LzPCEcDiWhCGbSITOpyBpGwZMmK822qpsGUntc6duwZO3AWPuuSnPeHY7qV8fTWTCqHNosEB9KGYCw8GFpSiKPYU2abML4MR2/XvejE8fMkfKVgm3wEq1squdyXj+ZaNxQeJskKchLA=
+	t=1762815834; cv=none; b=g5i9ys2UuIlv/15JFszOYxU5xWa89s7mS6kXvGVOGgsTyo4P3SMrPKlJ2NbGqzZtB8Jz5ahMcA/vKY8yDuZIcSGxwPkTvMAhQnHNJ6aruGV1LS59SfJujqBEUWWoGjhwYAwsb6mdzelf7WMw5oaNfJ3M693GpRah2CKVU1AVT7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762815759; c=relaxed/simple;
-	bh=6TNXJq+rMH9dVRYVDgjIiVOlEcVoFw99/BJYAESuZUs=;
+	s=arc-20240116; t=1762815834; c=relaxed/simple;
+	bh=SpBXcCXhucc4vOTbhq3IyeNwX9Ph+ezvTLGmCPeyPVI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JBaVWFWqUgqqIdIavDsESX+vyaImo/WUMj8GSj4ATAIoIBrOPXem7vZD+tdFFmOSL7fs6852nXEJok94nGZnuPS41U8RvJovhg/xZTacQ+FsgBVr1fz1e9siF9eC8m2k/2aIxIIXIz3jwcVgExHOxbW7F5fJAskVJ6hi3DxLHXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hnFkdTkv; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b593def09e3so2239236a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:02:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762815757; x=1763420557; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2oZbUXm17MlJJYs7nTRrwTniBYsG7HY04j7c8fnXzJ4=;
-        b=hnFkdTkvMaN57K7ORUi3hT7ZDpAL5GOlbZezkvxGvKafYoDxqHe8SxYo2drgtwvplM
-         soL4d9nV4nCfJIdv/patpxjbZZTyQVLsHuR0ogMGRJGVJsFlhb3GuyGYQerpeaX114+t
-         NKYdqB3FgtdqL+TRlj4QY98izv38oSfKwUZiWbjS3cJ5HQ2xLCi5Eoja3ZToflzYLAgc
-         2M/BsrPC+/opdV+72JzFctLFOPDIndU/lFnHIZo/Sv1ZHLcydOYeT5S4+Bs3DP726vAT
-         t7vORiTQHeK25mTkkQ5G8PCVZH+C/J8wsn+Hlj8DkqymwJACag1ckbQRtgXmthwHX8Zn
-         bKYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762815757; x=1763420557;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2oZbUXm17MlJJYs7nTRrwTniBYsG7HY04j7c8fnXzJ4=;
-        b=jEQ6DJ8ElUv2z109nYkN4S58qKe/c2V5HdyEBRf0hD9cri1jwuxCMO/A9U5eOsdmpb
-         u17jac5EXQ0SMxcJYUoegP1sXGA3vKv+gMshntE596GVjY9+XhYbOik70Hf+PkipxEg3
-         EwBlZciNSqQEzRL+KiyPShV2BMeCCZSQpF7ydFwljHUrKQmUPQjnVrd3LioMvIeNyQRC
-         nUosfeF8IKMptpu617TtqprQOuvjsMZbdwPbu9ekfC4ZC8+k00oiH8ZH2zF430CsRjsq
-         a2CMdSc+ISfIbu2DC/eso8MgHLGiAsqilMfdgL9xiMin83eEr04zxch18U87PC8UThCY
-         fA2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVdYWCrrJA8DlyMlql64t25kJi7AgENn3+DwDth51Qtw4vTz/6lUzTEwiAwpWjzVaH6amHPgCujfkNCY6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywyg+Y9Fpq7SiLveHnOxzBj3NHi68gNMmJ5Knu/mNlaWQn6LWNa
-	BuAbMPjNuakcPIbIcQ4IVaMR/DpMn+nc/X/H492fNE9PnfYKSiQGNggWAFuwflrhmw==
-X-Gm-Gg: ASbGncvqdsBPPpGq6qvL0Q5g4lfsGb7HT5Rvk9B9FA6xjUpx6CH0UoUe4fy7/cWgZZz
-	7X09Z1VxyOgiatj0sX5HxirC9N6HrOTqxKI6xPnsykQFK3sH3CGAvg5QcGpO1ypdjOhVU5j/zxh
-	P8GqZ3aNdEVpsp0967jBpb8V5HGRI4bDAcFQd59prCF92xVzC4IOilWhkxhSDXzxv6Viivfjfuh
-	4xONZq29Pr7hT9YdoUGnxABlZiG0crYuOfXERPPOghMi9AqTRTKmi/RcZIofY7K20O98P/gXjUx
-	PH5YDxGT9l3BEzm3/pDUB7oB7F2pK1pepqvqhB2xP2IF6VPrQWpIGKR6mJ9oHc0QnLFuiEOKzf6
-	YvONE8vJ3jcPvUU3uw9wqBKZiNgQ7IwGWevX6TcQsrqPF0RP2VGfkYqtdK82TsiJhjauEVQ7qhq
-	bSe7Z70chfKhHs3U1tcCJvq31wAcXSCJ2fPviHJPjfv0VzKQsHRKtu+ZbXDtUo4Ps=
-X-Google-Smtp-Source: AGHT+IHoKo9/+Pwh3K40r/l8V5QU5Uk2a1RS5slNOQYfptjWO4tqmkHSZfI1hg8lgbKPM7wXJRriYg==
-X-Received: by 2002:a17:902:d485:b0:295:7454:34fd with SMTP id d9443c01a7336-297e56adac0mr148711535ad.39.1762815757123;
-        Mon, 10 Nov 2025 15:02:37 -0800 (PST)
-Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c9c310sm159853455ad.87.2025.11.10.15.02.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 15:02:36 -0800 (PST)
-Date: Mon, 10 Nov 2025 23:02:32 +0000
-From: David Matlack <dmatlack@google.com>
-To: Alex Mastro <amastro@fb.com>
-Cc: Alex Williamson <alex@shazbot.org>, Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH 1/4] vfio: selftests: add iova range query helpers
-Message-ID: <aRJvCK-4cG9zPN8k@google.com>
-References: <20251110-iova-ranges-v1-0-4d441cf5bf6d@fb.com>
- <20251110-iova-ranges-v1-1-4d441cf5bf6d@fb.com>
- <aRJhSkj6S48G_pHI@google.com>
- <aRJn9Z8nho3GNOU/@devgpu015.cco6.facebook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UJWzKwzcxUNAFsP+/ZSNRTgNg0mLhMAucvlAMaCimIL34gSYenaXgXf5/pO0A7ANEYLG6dpStyGKJT9grMRkw2R0eIgy7gAD/ceN/mL24Efb0VzLzq3A/1hQDZ2oST9P9YrIIXOMyaz18JNqj2xvfUqAhxYU+yv7VgJm/hho4gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com; spf=pass smtp.mailfrom=gvernon.com; dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b=A9ijqw1p; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gvernon.com
+Date: Mon, 10 Nov 2025 23:03:57 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gvernon.com; s=key1;
+	t=1762815828;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PqdKJLsgz2wpHczRCT84sJa40n6KuIUNVZ83IxQxhI8=;
+	b=A9ijqw1pL8UsQDLt09M5yWaNkOxZZs3w2n/hJKCSDEOoJQtfrfqr1f9FXTYEZB+3V5BKbl
+	8hnHF+QyjocsFwB5e9MP53PAUIuF+dvBApji7K/1Iymd/b0LJs/xMy6H7B3tSsI1QsPu19
+	cKSvlVg2Ex/PHP+w8pTnIWejlyV0g+Ul6uwT7BEkZuUkaD7km6RT62AEKjW2Kv5r0LkZNM
+	KUnq4K/n2R94lR4AnHaDB+5k2SvgITC6BzQthfthvxc2MAR+LoZ+F0uha4cDYnWBbwDOPb
+	EkPaXiaHNCIaftkFawrYP4AqnWt+CTYNmtzu4HI3UYvDgCqDB8AQ08kXGpnDkg==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: George Anthony Vernon <contact@gvernon.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"frank.li@vivo.com" <frank.li@vivo.com>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel-mentees@lists.linux.dev" <linux-kernel-mentees@lists.linux.dev>,
+	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com" <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>
+Subject: Re: [PATCH v2 2/2] hfs: Update sanity check of the root record
+Message-ID: <aRJvXWcwkUeal7DO@Bertha>
+References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
+ <20251104014738.131872-4-contact@gvernon.com>
+ <ef0bd6a340e0e4332e809c322186e73d9e3fdec3.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,29 +67,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aRJn9Z8nho3GNOU/@devgpu015.cco6.facebook.com>
+In-Reply-To: <ef0bd6a340e0e4332e809c322186e73d9e3fdec3.camel@ibm.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-11-10 02:32 PM, Alex Mastro wrote:
-> On Mon, Nov 10, 2025 at 10:03:54PM +0000, David Matlack wrote:
-> > On 2025-11-10 01:10 PM, Alex Mastro wrote:
-> > > +
-> > > +	hdr = vfio_iommu_info_cap_hdr(buf, VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE);
-> > > +	if (!hdr)
-> > > +		goto free_buf;
+On Tue, Nov 04, 2025 at 11:01:31PM +0000, Viacheslav Dubeyko wrote:
+> On Tue, 2025-11-04 at 01:47 +0000, George Anthony Vernon wrote:
+> > syzbot is reporting that BUG() in hfs_write_inode() fires upon unmount
+> > operation when the inode number of the record retrieved as a result of
+> > hfs_cat_find_brec(HFS_ROOT_CNID) is not HFS_ROOT_CNID, for commit
+> > b905bafdea21 ("hfs: Sanity check the root record") checked the record
+> > size and the record type but did not check the inode number.
 > > 
-> > Is this to account for running on old versions of VFIO? Or are there
-> > some scenarios when VFIO can't report the list of IOVA ranges?
+> > Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b  
+> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > Signed-off-by: George Anthony Vernon <contact@gvernon.com>
+> > ---
+> >  fs/hfs/super.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> > index 47f50fa555a4..a7dd20f2d743 100644
+> > --- a/fs/hfs/super.c
+> > +++ b/fs/hfs/super.c
+> > @@ -358,7 +358,7 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+> >  			goto bail_hfs_find;
+> >  		}
+> >  		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
+> > -		if (rec.type != HFS_CDR_DIR)
+> > +		if (rec.type != HFS_CDR_DIR || rec.dir.DirID != cpu_to_be32(HFS_ROOT_CNID))
 > 
-> I wanted to avoid being overly assertive in this low-level helper function,
-> mostly out of ignorance about where/in which system states this capability may
-> not be reported.
+> This check is completely unnecessary. Because, we have hfs_iget() then [1]:
+> 
+> The hfs_iget() calls iget5_locked() [2]:
+> 
+> And iget5_locked() calls hfs_read_inode(). And hfs_read_inode() will call
+> is_valid_cnid() after applying your patch. So, is_valid_cnid() in
+> hfs_read_inode() can completely manage the issue. This is why we don't need in
+> this modification after your first patch.
+> 
 
-Makes sense, but IIUC a failure here will eventually turn into an
-assertion failure in all callers that exist today. So there's currently
-no reason to plumb it up the stack.
+I think Tetsuo's concern is that a directory catalog record with
+cnid > 15 might be returned as a result of hfs_bnode_read, which
+is_valid_cnid() would not protect against. I've satisfied myself that
+hfs_bnode_read() in hfs_fill_super() will populate hfs_find_data fd
+correctly and crash out if it failed to find a record with root CNID so
+this path is unreachable and there is no need for the second patch.
 
-For situations like this, I think we should err on asserting at the
-lower level helpers, and only propagating errors up as needed. That
-keeps all the happy-path callers simple, and those should be the
-majority of callers (if not all callers).
+> But I think we need to check that root_inode is not bad inode afterwards:
+> 
+> 	root_inode = hfs_iget(sb, &fd.search_key->cat, &rec);
+> 	hfs_find_exit(&fd);
+> 	if (!root_inode || is_bad_inode(root_inode))
+> 		goto bail_no_root;
+
+Agreed, I see hfs_read_inode might return a bad inode. Thanks for
+catching this. I noticed also that it returns an int but the return
+value holds no meaning; it is always zero.
+
+> Thanks,
+> Slava.
+>
+
+Many thanks again,
+
+George
 
