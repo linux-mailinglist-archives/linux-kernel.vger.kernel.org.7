@@ -1,106 +1,132 @@
-Return-Path: <linux-kernel+bounces-893290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB446C47080
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:52:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58EA5C47002
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:47:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3373B8794
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:46:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D34418890A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955A922156F;
-	Mon, 10 Nov 2025 13:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGr1PmZR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6281B6CE9;
-	Mon, 10 Nov 2025 13:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1A121E098;
+	Mon, 10 Nov 2025 13:46:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649451DE8B5;
+	Mon, 10 Nov 2025 13:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762782357; cv=none; b=Kafi10boIiU5E75lXZoL4XsXeFiqbVlZz16grtfv8jd4iPO84aLtOvwPJG+q5vcTI3G6cMIJhr8Mnf+16TIjzBNFJXRS7F3V6kaItuUjvDOMK722PQGVmOmjbwEul062iSPiW4dSpbxBIVbW+AMUyDkyKi++EC6XgWMiKQ1lqKU=
+	t=1762782410; cv=none; b=pS1yE05Rt25FgnI9YZGuP3BOq45CmKwO6cngZyzpjfPZ0bc7dqDjMjJruzZ9T3NxDve85rWWJaR4j47BgcelHRXmuzuZ2jXmAWklyYBlzcjE09RsdB9G3zqQd+18QOFeAGbSCvsGOvoAzXRDJaGpuJSEJSIYYRxIQxhWDHpmB2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762782357; c=relaxed/simple;
-	bh=BfZlbtmgRdgYv7hKoZSzpQyyse54YgiwBUgsuLLVOEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b6Q7rCuklgl3ROg3awe6TIjURykYhyqDkPMXkU0R55VLifA0SSCyVR/lZW28RgjobjlZ2do3CeDUj6PT9M8ijL/YqkqSoL5DTbE7ZkKAEFP4K5jSFSVAQKz/DgrXSP5lNdyHl8LMawi4kImlVAlzupxLaE/KhzcCzj8au2LjzsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGr1PmZR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 835D4C2BCAF;
-	Mon, 10 Nov 2025 13:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762782356;
-	bh=BfZlbtmgRdgYv7hKoZSzpQyyse54YgiwBUgsuLLVOEo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pGr1PmZRLwYBt/uM1R1jlsuy0hADBTEbyD6JFYM/9qUmH/OSBiahCYGGplFS1TzUF
-	 fzlRKv1LJnDjYZ9SoLa9wINK0OmUliXSttYyrAzFwGa1MlYTb4z8ik8fU4as9WOPdW
-	 Ozt/nUh+2gA0m/XJ3p5Ms1fbTcA9DkgYyfPdwnVAWGUHuMdVQa28g5QWxudt1OOjct
-	 Jzvlm8a9BwvM+gi1kTO+AiMKpvXjCc4FMQYFeyBF29yT77ji9HSTO9MkBjVjrO8lI/
-	 DzpyQh8F6WHUcnGAG7YOkh7LNk9iGs6JMyerz1X/pCSGtUKnS8wn9ZQivYcOHm4RGQ
-	 OH8bedllMvOGg==
-Date: Mon, 10 Nov 2025 13:45:50 +0000
-From: Lee Jones <lee@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Yixun Lan <dlan@gentoo.org>, Alex Elder <elder@riscstar.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-i2c@vger.kernel.org, linux-rtc@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: (subset) [PATCH v2 1/4] mfd: simple-mfd-i2c: remove select I2C_K1
-Message-ID: <20251110134550.GE1949330@google.com>
-References: <20251027-p1-kconfig-fix-v2-1-49688f30bae8@linux.spacemit.com>
- <176244506110.1925720.10807118665958896958.b4-ty@kernel.org>
- <71DB25E553BE0B04+aQ1LlKzeR-FkZA83@kernel.org>
+	s=arc-20240116; t=1762782410; c=relaxed/simple;
+	bh=pGInTelnFne7TBdJF+TcCBM++QQIqd7Kw3BwWi6MhkI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZWdjI1sPTldpXszN3qdIul5Qf24r7+nNuOA6IHptf8Ei+DfrkcX5lU3NRkS4F3ssoM8U9yqE/1SH41RSvR42GDUvV1KIkNc+TribyanJGsoqQklzdeQIKuFuRVIiVhXIfeP3ujl6A4zG6AXiyUlwSk1BNSrbNV42QTS50bD2D14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 171C42F;
+	Mon, 10 Nov 2025 05:46:40 -0800 (PST)
+Received: from [10.164.136.34] (Mac.blr.arm.com [10.164.136.34])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E67353F63F;
+	Mon, 10 Nov 2025 05:46:42 -0800 (PST)
+Message-ID: <4ab54ae0-2607-443d-8698-788d8e951bdd@arm.com>
+Date: Mon, 10 Nov 2025 19:16:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <71DB25E553BE0B04+aQ1LlKzeR-FkZA83@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] mm/khugepaged: return EAGAIN for transient dirty
+ pages in MADV_COLLAPSE
+To: Shivank Garg <shivankg@amd.com>, Andrew Morton
+ <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Zach O'Keefe <zokeefe@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20251110113254.77822-1-shivankg@amd.com>
+ <20251110113254.77822-3-shivankg@amd.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <20251110113254.77822-3-shivankg@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 07 Nov 2025, Troy Mitchell wrote:
 
-> On Thu, Nov 06, 2025 at 04:04:21PM +0000, Lee Jones wrote:
-> > On Mon, 27 Oct 2025 13:48:05 +0800, Troy Mitchell wrote:
-> > > select will force a symbol to a specific value without considering
-> > > its dependencies. As a result, the i2c-k1 driver will fail to build
-> > > when OF or COMMON_CLK are disabled.
-> > > 
-> > > The reason for removing I2C_K1 instead of adding a depends on condition
-> > > is to keep the possibility for other SoCs to use this PMIC.
-> > > 
-> > > [...]
-> > 
-> > Applied, thanks!
-> > 
-> > [1/4] mfd: simple-mfd-i2c: remove select I2C_K1
-> >       commit: ecf6bc474ae97c404e2125b413eb0ef3627b03c5
-> Hi Lee,
-> 
-> I think you didn't notice this reply [1]
-> (Maybe because he was replying to the cover letter).
-> 
-> As Aurelien mentioned, the current shutdown/reboot (and possibly the regulator
-> as well) intends to use the `default MFD_SPACEMIT_P1`.
-> So if there’s no `default m if ARCH_SPACEMIT`,
-> the default value in subdevices may not make much sense.
-> 
-> But don’t worry — to make things easier for you, I’ll send an additional
-> patch based on your branch (in this series).
-> 
-> How does that sound?
+On 10/11/25 5:02 pm, Shivank Garg wrote:
+> When MADV_COLLAPSE encounters dirty file-backed pages, it currently
+> returns -EINVAL, this is misleading as EINVAL suggests invalid arguments,
+> whereas dirty pages are a transient condition that may resolve on retry.
+>
+> Introduce SCAN_PAGE_DIRTY and map it to -EAGAIN. For khugepaged, this
+> is harmless as it will revisit the range after async writeback completes.
 
-Go for it.
+Taking a cursory look at enum scan_result, I am sure there are other error
+codes as well which redirect to -EINVAL when they actually should to something
+else...
 
--- 
-Lee Jones [李琼斯]
+>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> ---
+>   include/trace/events/huge_memory.h | 3 ++-
+>   mm/khugepaged.c                    | 4 +++-
+>   2 files changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/trace/events/huge_memory.h b/include/trace/events/huge_memory.h
+> index dd94d14a2427..9014a9bbe64c 100644
+> --- a/include/trace/events/huge_memory.h
+> +++ b/include/trace/events/huge_memory.h
+> @@ -38,7 +38,8 @@
+>   	EM( SCAN_PAGE_HAS_PRIVATE,	"page_has_private")		\
+>   	EM( SCAN_STORE_FAILED,		"store_failed")			\
+>   	EM( SCAN_COPY_MC,		"copy_poisoned_page")		\
+> -	EMe(SCAN_PAGE_FILLED,		"page_filled")
+> +	EM(SCAN_PAGE_FILLED,		"page_filled")			\
+> +	EMe(SCAN_PAGE_DIRTY,		"page_dirty")
+>   
+>   #undef EM
+>   #undef EMe
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index d08ed6eb9ce1..7df329c9c87d 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -60,6 +60,7 @@ enum scan_result {
+>   	SCAN_STORE_FAILED,
+>   	SCAN_COPY_MC,
+>   	SCAN_PAGE_FILLED,
+> +	SCAN_PAGE_DIRTY,
+>   };
+>   
+>   #define CREATE_TRACE_POINTS
+> @@ -1967,7 +1968,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+>   				 */
+>   				xas_unlock_irq(&xas);
+>   				filemap_flush(mapping);
+> -				result = SCAN_FAIL;
+> +				result = SCAN_PAGE_DIRTY;
+>   				goto xa_unlocked;
+>   			} else if (folio_test_writeback(folio)) {
+>   				xas_unlock_irq(&xas);
+
+Now that you are at it, it would make sense to redirect this folio_test_writeback()
+branch also to -EAGAIN, and call the common error code SCAN_PAGE_UNDER_WRITEBACK.
+
+> @@ -2747,6 +2748,7 @@ static int madvise_collapse_errno(enum scan_result r)
+>   	case SCAN_PAGE_LRU:
+>   	case SCAN_DEL_PAGE_LRU:
+>   	case SCAN_PAGE_FILLED:
+> +	case SCAN_PAGE_DIRTY:
+>   		return -EAGAIN;
+>   	/*
+>   	 * Other: Trying again likely not to succeed / error intrinsic to
 
