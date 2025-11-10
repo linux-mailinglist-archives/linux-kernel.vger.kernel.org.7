@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-893198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A510FC46C62
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:07:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 026F8C46C5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:07:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F1954ECAC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:06:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 77D52348FD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646B231197C;
-	Mon, 10 Nov 2025 13:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6C630C609;
+	Mon, 10 Nov 2025 13:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4jFeWqDv"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YUchCdrJ"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04034310627
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC013112C9
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762779978; cv=none; b=AkITxVt2/hwu0oZZ+ewZTt/i2yDmNn2chNAMQafD83mYyzF40pI4JyRur8ENsTuqrfefJyCfrdKcQLlVi0J7z9JRY3uSBluDcFohGcGa+SgAsqEBYMsM7tAIZsh4kv5YJi22mTQ4FWKY3b81LMVOSi+279B7St9wFK9EQdjcBe8=
+	t=1762779980; cv=none; b=ck1XxAhprCCyY2M7fvgrZGz+051eWjwY3s3w6fzwiBGP3I6utGeGvy0BYN+3//A65EV9Rv0gE+XMtdOdUQfgIBYgR6pBgqgtH9CKYta6805uIw6etEKwcMzFmrLdJqAn4/yoFhCPh7MPH1YzbrQhpWzVhKd7NePV//L2UrpNRrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762779978; c=relaxed/simple;
-	bh=5yWWXBJ/seWzcBWVusBVihezy0B+tB+i4oi0yNZtcHI=;
+	s=arc-20240116; t=1762779980; c=relaxed/simple;
+	bh=m1vVqdokFGJjs0Wc5xiNelJgyQeXsj1xAzq9sutLqvQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=alj9oqotrkcsAYTTPVwY0hzdTPCEfcTinK91SiOA3DbH2lJKaoXSNkqK3pgq2MZBX5kpxxt+xjYn6kCQzVkhQxdJ8GKDyMJDYWlwrUoYOg9ekjW7VF4M0x9ZkVwZMBjYqfi+HeWBPmCWceFyCC0muOiDVupG+K6jD+NZyxZXr84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4jFeWqDv; arc=none smtp.client-ip=209.85.218.73
+	 To:Cc:Content-Type; b=qFQoDUOq48B1F48LDRK2/LLQBffpwvTSSwHHw8MvDaTmf0jzLqYvZO7hqHk2iNbKl4mnBRTrzGGCDFWirpkpac9RAMmva3ejSqRrEWIBQEfIwk4g/iNw5HLvzZ8j06GqW5POBUDGU9aIT35i10BFX9Tq/yzgGBZmCcXO0yF1qZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YUchCdrJ; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b479e43ad46so212610066b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:06:16 -0800 (PST)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47777158a85so18884775e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:06:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762779975; x=1763384775; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762779977; x=1763384777; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pHwGxOsEvh8XnVa20cTuA1Ds9gHFTZACgOX8iktePx0=;
-        b=4jFeWqDvGgm0nOScpVbFGNmAd53ZAgUpzIvtOFAzOgH6RcSuRLQRymoNJHYFhTc3DT
-         Bc6Gp5xXGMd9HRFOhz9BaGTas4odhKkK5l1w+jqanY0KLMPGHdASL1cAuNW39cjcZvk3
-         fzEM/2g3+mTRgeTA+QLeOKpT8uNXuYZ82PqZaySmqxqJAqSpFyNAHD9+ANr3tyEgkeRu
-         JotrQkjxnTff3erKHe0jVgmaBrvCS+4OWrpNEmNKHn81gDYRUeJI38BTrVO3OJW7Va8c
-         OO38F3oLgKjs0mdIeFomUXmpgFVRSFktMVo4I5ChF8dbLGLkmElfEN+blx7Y6DWFJj9+
-         raCw==
+        bh=cdy78GHJToK/JjNyIhLRtXUU+0hlDX8vDSmxqOI6fJE=;
+        b=YUchCdrJTDw7QdmT5W4FwiyV3QbE+cJ/qegMxg9Mxty5DtwKTH1JN+8M460LYhzdWu
+         TONoy9BFNpLSn+vgdVWI+juusSHKgSUu8FiL5wnTeSNe9/eNl5nzz4r43ofFQb4x1z66
+         I8Dzx+sBHCDk5F0GpeMlyQZFM0el+8wTBazp/0p4drCV3eTEClXPTKga3TEf9MB0DgfO
+         SvHghrqfS2Nv6hQc8B5L8KcHRvS7jcvo5dBVte2Ndndv5yrYeUY46vrsnOy6UFVea0Vr
+         7SSekyxMPJnSRkUljBFKqKPyJXgTvK/e6JGCH42p1By5821Ck5E4oawMjWi9fTUaWvNu
+         tfFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762779975; x=1763384775;
+        d=1e100.net; s=20230601; t=1762779977; x=1763384777;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pHwGxOsEvh8XnVa20cTuA1Ds9gHFTZACgOX8iktePx0=;
-        b=LT2kjMxtWEVjnEq69sB68Z5nhSUsM9MO5KDTSfDyu4hKGazaTLq7nuOOIfyIyIAkyn
-         7/refOgC9bWiPfzZvTRVXXiQ+rdFMDuHcBX8E4+y9+PlE8gllmzjR94ejBpZ/Eb/m+Bj
-         wKwbE9ydrbgabytqfpHfsRuh/+llTbOYmoT+OHhCePsVVZKh3SAbauR2RH2cbZ4J1eYP
-         5nO/gUHXv78S/LC7bTOCo2PuRIFRm77Pq3CAUyGyWg/mSHHXC1Z6yXc6Xon+9Gr4/U4n
-         ht/+wMrXL9hBkSRVx8v7ILdEqsKwGnd83h9ziLiUiklfAVc3um7DDJYaZBGabx+TfiZv
-         wTiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWB70yDuNI8vzk5aeBzWHnGSGlrfVxj5mNLTUN6kHMZ9ruTMfz5bdmg/TCbI/JbC2okLwQdISY8ZNCWoZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjwNm92+9prwtfzGwpDhLyWUq5SKKptqtqTGr6XuIZMrY/kil2
-	XVWzyWOK71UuueNJfvTGO3T+95srU+6bb0ck6tSjGY9cfI4XJ8J3Ec5AyJn50mqTTXe0ShPm49h
-	vzTbVzoOksVS2qttvkA==
-X-Google-Smtp-Source: AGHT+IE7fsNymb3cAzuCb6+5n3SmW/7Uo40AyZT2QxxNiGyJJ40x5ZPnFv3m67RlqsP8fqRJkgKNNkgdGcvQVuw=
-X-Received: from ejctm14.prod.google.com ([2002:a17:907:c38e:b0:b71:5dd0:8e42])
+        bh=cdy78GHJToK/JjNyIhLRtXUU+0hlDX8vDSmxqOI6fJE=;
+        b=cLH3vFw80hJvUnnnEhOf/r1Yo9QDo7SyzOSI0T+QkacKrarYX9pfhgEN1BuuomDXHv
+         bl+sHqguZWxY96WF4D6DsRuQwRqK+U3L+9MvvjqAdcymdr2KkFTsFAjAKsjMvKmRr/uC
+         7YBndMv9SSJVHrnWxQZ/qCVcqYhVHiF0GNsIvjBIKd9HDpUnEoPoJ3w8pfqm2ux1v7Pm
+         8nlOYS/32OSSc5S6ePHb9LVujVJEOSSPuO1poRnMOqhF/5h+6dN6MpityyqFTo/tuYjs
+         fsA6LLxsZQSouDd19+dMbpW2SRkfj1rG9f04Cy922vY4irslTaUnBTI2m6HTzxJrDAec
+         m+pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoqVO93OvWuMOR3OC5V3sv9FM+2/uJcIpf5CKSIsA6gdxSmUNKMUALquvvhrN/9G+r+tX59DCk7eOM9Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH1tyvjDYySUkgErWa/V7v1FuaBE6xAPAF8W7FUODZpzLNsDA5
+	aJAdU31mTs5dVcURgLYA2Oa7Qnmrb6NMS28iJHva2w0oiOJpkQ/Rlqvk59tdlgrvS4P4xP40Ype
+	lFrcsIP1H9FVk617otA==
+X-Google-Smtp-Source: AGHT+IEc22nyf0SxRXO1MsTddRElJjOhoLrCVVBkpsoGR23XRROluM5qaNXAmsmXS0MF8ilFDXjhtNk6g+l6jOU=
+X-Received: from wmmr22.prod.google.com ([2002:a05:600c:4256:b0:477:5b53:e6e6])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:7246:b0:b72:aab5:930e with SMTP id a640c23a62f3a-b72e030953amr903743166b.16.1762779975531;
- Mon, 10 Nov 2025 05:06:15 -0800 (PST)
-Date: Mon, 10 Nov 2025 13:05:55 +0000
+ 2002:a05:600c:35c8:b0:477:7c45:87b2 with SMTP id 5b1f17b1804b1-4777c458895mr25242705e9.16.1762779976819;
+ Mon, 10 Nov 2025 05:06:16 -0800 (PST)
+Date: Mon, 10 Nov 2025 13:05:56 +0000
 In-Reply-To: <20251110-binder-bitmap-v4-0-5ed8a7fab1b9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,22 +73,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251110-binder-bitmap-v4-0-5ed8a7fab1b9@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1290; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=5yWWXBJ/seWzcBWVusBVihezy0B+tB+i4oi0yNZtcHI=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpEeNDKRkmT+eOFgF8qJNPqMuq73VthlH6qF02U
- gm/b3pc2m2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaRHjQwAKCRAEWL7uWMY5
- RgovD/9UPkoV9/Kw5N2FJvKeN4yQg2mNamCxIoxCg410jOoQTCh67qNkiYf86ZwyW8r8GG3MWqY
- qH8f4IONzFImNn7/0e628fJWiKwDyMWkQ/ne/UMTmbENtdNE86kce3vUnV8JoxwP14mu4UwBg3T
- ZnL8zCmdXaUWCqarCQXv22vYx+cwSQhk4SnAFcrCNwmVZwWzd7ieh1CLNULkL+4q/IdN3TuZP+4
- JWEm2ff3E9XX/FjdMKLTRJN6iWfj5Yntx2kjpS2fNLNUpK9rOkjO6xc7FZj6UiPH9Fba1GssHsI
- wDfcPe3Wj1arPK7027CA7WAQcthCNJRhDzkgRQMGg07pVXzgmLVAkNsuQ4DNcozA816NuogzeQv
- Y8V/x0Guce+xnkXHeNXpeQ/2XpmGu33+o0J8bVMDGcOWh7suzreLkADlMzrK7My4auA94o8zPPG
- W2KuCFc6XnQhunaHw6c7PbwAdzgBErEnSFUyo3rOPLivmudr3S/fwX3bN+C3fNEwoCuKSWEnZUm
- MaRlwvcZDl7grb3g3xW4qeDEBRJNZuJeZ6aAWucXPikb1i0kjTZLiOsjfTqK8Az8AezfOWaBH4/
- v8AfosvP2PI3ebNlvZZpVGirKDdh/CB5AkB5l+8VMCxZcA3LA/IZrVPudctSuBcqrS3GYjXaExA voaqrbMLunNLsgw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2473; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=m1vVqdokFGJjs0Wc5xiNelJgyQeXsj1xAzq9sutLqvQ=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpEeNDj0+4b38ogh/01MXmXpq9AWMLVEfFTgFI4
+ ELaPwWpxTCJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaRHjQwAKCRAEWL7uWMY5
+ Ru5BEACjYUnsofpWcJ0H+hy5wsR6XrOYJ9I5zDeaF/4c1fr515jbIpNwBsjIJkijkqdipOllZ+T
+ pi1JSDpE9A3FK6Ee8C14sITKmi7zvM1UXdlvwRo/LDrJgrWikJ6huduz+LhlQnL7VOL6nVVUAUs
+ 3woqAMAzCaZ+5cNO+p/FCTQBK5Kkt178AbIa091Jodjk32CGLs1bWa1HenYvfbZSV8LvClIbMel
+ t3Uw/lQz9z95IeORgsZWqSPoCeaukP3phxLR2dSgD/b6weJcLX57ey/gsrNhNhPzmbvsOFU9StT
+ OVgWATZ9Zd1i/jMDEpEZlKsVsIxgeCa7eHAmxChZMV6tjYdiBS2idR3PnhoHfznIs4rQR91MkMI
+ cpkY3ceEVKdhUh2ovjfp9Wzg94k8zlWTaggpA74/DmFoVcObQ8GA6PDcebHbGE2gC2JvCPPU2n+
+ nlMG3sNfC3V8Jg9V301jYDpJdYAaSF3cMsxnNBptfGUJ6g5kYzsKZvb5mW9PF2LGhN9oLqhww1H
+ LMReh/32jqtU0wQUIGWrawdrF7SeVdbPTJEdoPXQsDH0b9LOyNCdXDKbCFwXln5TyUGSXtCwatQ
+ 8EZP7BoptWrI6yT1IrA3KswC+dRGVxGjACRKqF5Gxj9mBtw9Xso45AS0TogcObsb3w8B2ebQ6/d 8CV9FBblUsXQUWQ==
 X-Mailer: b4 0.14.2
-Message-ID: <20251110-binder-bitmap-v4-2-5ed8a7fab1b9@google.com>
-Subject: [PATCH v4 2/6] rust: bitmap: add BitmapVec::new_inline()
+Message-ID: <20251110-binder-bitmap-v4-3-5ed8a7fab1b9@google.com>
+Subject: [PATCH v4 3/6] rust: bitmap: rename IdPool::new to with_capacity
 From: Alice Ryhl <aliceryhl@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yury Norov <yury.norov@gmail.com>
 Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
@@ -102,38 +102,61 @@ Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@
 	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-This constructor is useful when you just want to create a BitmapVec
-without allocating but don't care how large it is.
+We want to change ::new() to take no parameters and produce a pool that
+is as large as possible while also being inline because that is the
+constructor that Rust Binder actually needs.
 
-Acked-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-Reviewed-by: Burak Emir <bqe@google.com>
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+However, to avoid complications in examples, we still need the current
+constructor. So rename it to with_capacity(), which is the idiomatic
+Rust name for this kind constructor.
+
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/bitmap.rs | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ rust/kernel/id_pool.rs | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
-index 15fa23b45054b9272415fcc000e3e3b52c74d7c1..f385a539a90ba87a7b9f6d686e150e95e358bbef 100644
---- a/rust/kernel/bitmap.rs
-+++ b/rust/kernel/bitmap.rs
-@@ -232,6 +232,16 @@ impl BitmapVec {
-     /// The maximum length that avoids allocating.
-     pub const NO_ALLOC_MAX_LEN: usize = BITS_PER_LONG;
+diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
+index a41a3404213ca92d53b14c80101afff6ac8c416e..5942f678db015e902fa482eb64c38512a468e449 100644
+--- a/rust/kernel/id_pool.rs
++++ b/rust/kernel/id_pool.rs
+@@ -28,7 +28,7 @@
+ /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
+ /// use kernel::id_pool::IdPool;
+ ///
+-/// let mut pool = IdPool::new(64, GFP_KERNEL)?;
++/// let mut pool = IdPool::with_capacity(64, GFP_KERNEL)?;
+ /// for i in 0..64 {
+ ///     assert_eq!(i, pool.acquire_next_id(i).ok_or(ENOSPC)?);
+ /// }
+@@ -95,14 +95,14 @@ pub fn realloc(&self, flags: Flags) -> Result<PoolResizer, AllocError> {
+ }
  
-+    /// Construct a longest possible inline [`BitmapVec`].
-+    #[inline]
-+    pub fn new_inline() -> Self {
-+        // INVARIANT: `nbits <= NO_ALLOC_MAX_LEN`, so an inline bitmap is the right repr.
-+        BitmapVec {
-+            repr: BitmapRepr { bitmap: 0 },
-+            nbits: BitmapVec::NO_ALLOC_MAX_LEN,
-+        }
-+    }
-+
-     /// Constructs a new [`BitmapVec`].
+ impl IdPool {
+-    /// Constructs a new [`IdPool`].
++    /// Constructs a new [`IdPool`] with space for a specific number of bits.
      ///
-     /// Fails with [`AllocError`] when the [`BitmapVec`] could not be allocated. This
+-    /// A capacity below [`BITS_PER_LONG`] is adjusted to
+-    /// [`BITS_PER_LONG`].
++    /// A capacity below [`NO_ALLOC_MAX_LEN`] is adjusted to
++    /// [`NO_ALLOC_MAX_LEN`].
+     ///
+-    /// [`BITS_PER_LONG`]: srctree/include/asm-generic/bitsperlong.h
++    /// [`NO_ALLOC_MAX_LEN`]: BitmapVec::NO_ALLOC_MAX_LEN
+     #[inline]
+-    pub fn new(num_ids: usize, flags: Flags) -> Result<Self, AllocError> {
++    pub fn with_capacity(num_ids: usize, flags: Flags) -> Result<Self, AllocError> {
+         let num_ids = core::cmp::max(num_ids, BITS_PER_LONG);
+         let map = BitmapVec::new(num_ids, flags)?;
+         Ok(Self { map })
+@@ -126,7 +126,7 @@ pub fn capacity(&self) -> usize {
+     /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
+     /// use kernel::id_pool::{ReallocRequest, IdPool};
+     ///
+-    /// let mut pool = IdPool::new(1024, GFP_KERNEL)?;
++    /// let mut pool = IdPool::with_capacity(1024, GFP_KERNEL)?;
+     /// let alloc_request = pool.shrink_request().ok_or(AllocError)?;
+     /// let resizer = alloc_request.realloc(GFP_KERNEL)?;
+     /// pool.shrink(resizer);
 
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
