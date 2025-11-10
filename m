@@ -1,161 +1,172 @@
-Return-Path: <linux-kernel+bounces-894071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE83C4933E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:17:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B7BC4934A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7EF53A741F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:17:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD80188F9C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954A82E7F05;
-	Mon, 10 Nov 2025 20:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72EB2E8B95;
+	Mon, 10 Nov 2025 20:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1zttPkl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dDZdHH/k"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8846256C87;
-	Mon, 10 Nov 2025 20:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5915256C87
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762805843; cv=none; b=cXAUDfHzzckl+6AN0sXUMKNXTaDdDHNLF48Bw8RUWCw2aZiDahSfsTghZiveSG5NxaPYHu2QgUVJgCNsCf0TQihgs4nkiyzdyMDy1csgJvFbzymUIPA3yXZ86UcnqaaqGqJRzieFxuaXuy9MsqEdNDxYx+KkdfJjaJcX9aXbN7E=
+	t=1762805968; cv=none; b=ato2l93agPEbAbiMZPXO1aqiCski60SX4Qc4XQuHZaM6jrikC5sxY8vgHiupogqWM1pjVhQ6XAHLR54/7U+8/kjiH4UopjGUkAkynP/372kAkvjYHb6zgqSlmR9foXj8Sr0D5euYTv0qtC97PYTppqTc17fk1cV5K2MnMQsPNwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762805843; c=relaxed/simple;
-	bh=JqEVLdOgxRLejv+3IarHFSQHC/EXmUN4JyQjqZ7nUWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cl+EljsQ1rBHirH8l3zCFrCEdIrIBUZkE5AtBJOXYv/SlgJr42lmrgzDVmo/nvpLx/072TmJKhNhAe0ldB0FtKaLLSQEsYWSwRviQAZwxyTI4SKqzeah+TsG4Hr7HIXwMyUK7fya5M+hmKKvgy+ejAdBq8g+2WasQnpzaaao1Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1zttPkl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C96A8C116B1;
-	Mon, 10 Nov 2025 20:17:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762805842;
-	bh=JqEVLdOgxRLejv+3IarHFSQHC/EXmUN4JyQjqZ7nUWM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h1zttPklcqOT9xQoCSVb3QHH6wXMwmGCfOOhvFl9pFz2TY1gh1otbV+yMHNZVY8Bb
-	 32129YPkjozjDKX8rGgQft087/Qb13Cfom9kUfS8FAW4Cx6bsKuCeUDJ+SPHN6sYvD
-	 x2fx7plbIolsjW9brIVXDOMmh0o3rrKYvrcjjFaoSxgM8NmS74riuA92ICzuNdj/69
-	 y0nJUsqGPW8wK1+3mMcdO9Ntz3bxuTWy0EytSv+4S2qpVS1W9DXDx62ZlLuVMHQZB/
-	 poOecWEaM/D60uusLo7RVxbuzd7Dm8yhDggsaLk5QYuEmDCNSNfNW5JzUz/aUk+Ot2
-	 EgyaFg2KTMWxg==
-Message-ID: <e00ba144-c5fc-47eb-8a9c-b6f33fa9704c@kernel.org>
-Date: Mon, 10 Nov 2025 21:17:15 +0100
+	s=arc-20240116; t=1762805968; c=relaxed/simple;
+	bh=UWfWbE2YkWvUZqhgvPTAog2KAzm0EdoRBGtcNUv/b/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pLHICV1ENuI68WFTp6lZnTsC3j6+YLHCSq3B2illCgFQEZqisH7cwmDDhLhY7AGiCOUzYGa+nZld8OBiBTVNLXGTKcmPNUe5BaTvsyIzsO5cftmuVPHfDFfTKW4dkfsX5DgdjBr//opB8GHfAwY1Y6cK8an2+HuedybcQhPo0yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dDZdHH/k; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 10 Nov 2025 20:19:04 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762805953;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GUAtP+bOC5fLBEO7OxWohIhZ/kKSaZK8V4CE4mNGeCE=;
+	b=dDZdHH/kUkiRo3SsSNquTHnsNNN5J1Hk+BaJBgf32qqXkT9h85QIiDkbubM9dJ0mnW2sJI
+	m1tCceGb4xcU/Fsn4Th82hnSW3LDELgBS33j4ATEEaZ2qp0rTfOXLwrGL86r/sDmFKxpSa
+	HdMxQ1gJ8Hm1xuXfedgVL8bXwbUNMx0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Leon Huang Fu <leon.huangfu@shopee.com>
+Cc: shakeel.butt@linux.dev, akpm@linux-foundation.org, 
+	cgroups@vger.kernel.org, corbet@lwn.net, hannes@cmpxchg.org, inwardvessel@gmail.com, 
+	jack@suse.cz, joel.granados@kernel.org, kyle.meyer@hpe.com, 
+	lance.yang@linux.dev, laoar.shao@gmail.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mclapinski@google.com, mhocko@kernel.org, 
+	muchun.song@linux.dev, roman.gushchin@linux.dev
+Subject: Re: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
+Message-ID: <fwthn4zl6uppdjdckjkmglxwnby42x2rd57i3m22pbqamjzaxy@aso4l7xyvhek>
+References: <blygjeudtqyxk7bhw5ycveofo4e322nycxyvupdnzq3eg7qtpo@cya4bifb2dlk>
+ <20251110063757.86725-1-leon.huangfu@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: freescale: add support for NXP i.MX93
- FRDM
-To: Joseph Guo <qijian.guo@nxp.com>, Fabian Pflug <f.pflug@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, Haidong Zheng <haidong.zheng@nxp.com>,
- Danwei Luo <danwei.luo@nxp.com>, Lei Xu <lei.xu@nxp.com>,
- Justin Jiang <justin.jiang@nxp.com>
-References: <20251022-fpg-nxp-imx93-frdm-v3-0-03ec40a1ccc0@pengutronix.de>
- <20251022-fpg-nxp-imx93-frdm-v3-2-03ec40a1ccc0@pengutronix.de>
- <aRF9xlvWU/27+80K@lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aRF9xlvWU/27+80K@lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110063757.86725-1-leon.huangfu@shopee.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 10/11/2025 06:53, Joseph Guo wrote:
-> On Wed, Oct 22, 2025 at 04:05:23PM +0200, Fabian Pflug wrote:
->> The FRDM i.MX 93 development board is a low-cost and compact development
->> board featuring the i.MX93 applications processor.
->>
->> It features:
->> - Dual Cortex-A55
->> - 2 GB LPDDR4X / LPDDR4
->> - 32 GB eMMC5.1
->> - MicroSD slot
->> - GbE RJ45 x 2
->> - USB2.0 1x Type C, 1x Type A
->>
->> This file is based upon the one provided by nxp in their own kernel and
->> yocto meta layer for the device, but adapted for mainline.
->>
->> Signed-off-by: Haidong Zheng <haidong.zheng@nxp.com>
->> Signed-off-by: Danwei Luo <danwei.luo@nxp.com>
->> Signed-off-by: Lei Xu <lei.xu@nxp.com>
->> Signed-off-by: Fabian Pflug <f.pflug@pengutronix.de>
-> Hi Fabian,
+On Mon, Nov 10, 2025 at 02:37:57PM +0800, Leon Huang Fu wrote:
+> On Fri, Nov 7, 2025 at 7:56 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> > On Thu, Nov 06, 2025 at 11:30:45AM +0800, Leon Huang Fu wrote:
+> > > On Thu, Nov 6, 2025 at 9:19 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> > > >
+> > > > +Yosry, JP
+> > > >
+> > > > On Wed, Nov 05, 2025 at 03:49:16PM +0800, Leon Huang Fu wrote:
+> > > > > On high-core count systems, memory cgroup statistics can become stale
+> > > > > due to per-CPU caching and deferred aggregation. Monitoring tools and
+> > > > > management applications sometimes need guaranteed up-to-date statistics
+> > > > > at specific points in time to make accurate decisions.
+> > > >
+> > > > Can you explain a bit more on your environment where you are seeing
+> > > > stale stats? More specifically, how often the management applications
+> > > > are reading the memcg stats and if these applications are reading memcg
+> > > > stats for each nodes of the cgroup tree.
+> > > >
+> > > > We force flush all the memcg stats at root level every 2 seconds but it
+> > > > seems like that is not enough for your case. I am fine with an explicit
+> > > > way for users to flush the memcg stats. In that way only users who want
+> > > > to has to pay for the flush cost.
+> > > >
+> > >
+> > > Thanks for the feedback. I encountered this issue while running the LTP
+> > > memcontrol02 test case [1] on a 256-core server with the 6.6.y kernel on XFS,
+> > > where it consistently failed.
+> > >
+> > > I was aware that Yosry had improved the memory statistics refresh mechanism
+> > > in "mm: memcg: subtree stats flushing and thresholds" [2], so I attempted to
+> > > backport that patchset to 6.6.y [3]. However, even on the 6.15.0-061500-generic
+> > > kernel with those improvements, the test still fails intermittently on XFS.
+> > >
+> > > I've created a simplified reproducer that mirrors the LTP test behavior. The
+> > > test allocates 50 MiB of page cache and then verifies that memory.current and
+> > > memory.stat's "file" field are approximately equal (within 5% tolerance).
+> > >
+> > > The failure pattern looks like:
+> > >
+> > >   After alloc: memory.current=52690944, memory.stat.file=48496640, size=52428800
+> > >   Checks: current>=size=OK, file>0=OK, current~=file(5%)=FAIL
+> > >
+> > > Here's the reproducer code and test script (attached below for reference).
+> > >
+> > > To reproduce on XFS:
+> > >   sudo ./run.sh --xfs
+> > >   for i in {1..100}; do sudo ./run.sh --run; echo "==="; sleep 0.1; done
+> > >   sudo ./run.sh --cleanup
+> > >
+> > > The test fails sporadically, typically a few times out of 100 runs, confirming
+> > > that the improved flush isn't sufficient for this workload pattern.
+> >
+> > I was hoping that you have a real world workload/scenario which is
+> > facing this issue. For the test a simple 'sleep 2' would be enough.
+> > Anyways that is not an argument against adding an inteface for flushing.
+> >
 > 
-> I'm maintainer of the NXP mainline for FRDM board.
-
-No, you are not.
-
-$ git grep 'Joseph Guo'
-$ git grep qijian.guo@nxp.com
-
-
-> Thanks for your contribution for FRDM board upstreaming.
-> imx93 frdm board official name is FRDM-IMX93. Please change
-> the name in commit message from FRDM i.MX 93 development board
-> to FRDM-IMX93 board.
+> Fair point. I haven't encountered a production issue yet - this came up during
+> our kernel testing phase on high-core count servers (224-256 cores) before
+> deploying to production.
 > 
+> The LTP test failure was the indicator that prompted investigation. While
+> adding 'sleep 2' would fix the test, it highlights a broader concern: on these
+> high-core systems, the batching threshold (MEMCG_CHARGE_BATCH * num_online_cpus)
+> can accumulate 14K-16K events before auto-flush, potentially causing significant
+> staleness for workloads that need timely statistics.
 
-Huh? How does it matter? Why are you pointing such nits? This is not
-helpful and consider that your naming in NXP does not matter.
+The thresholding is implemented as a tradeoff between expensive flushing
+and accurate stats, and it aims to at least provide deterministic
+behavior in terms of how much the stats can deviate.
 
-Please kindly trim the replies from unnecessary context. It makes it
-much easier to find new content.
+That being said, it's understandable that some use cases require even
+higher accuracy and are willing to pay the price. Although I share
+Shakeel's frustration that the driving motivation is tests where you can
+sleep for 2 seconds or alter the tests to allow some bound deviation.
 
+The two alternatives I can think of are the synchronous flushing
+interface, and some sort of tunable that determines the needed accuracy.
+The latter sounds like it would be difficult to design properly and may
+end up with some of the swappiness problems, so I think the synchronous
+flushing interface is probably the way to go. This was also brought up
+before when the thresholding was implemented.
 
-Best regards,
-Krzysztof
+If we ever change the stats implementation completely and lose the
+concept of flushes/refreshes, the interface can just be a noop, and we
+can document that writes are useless (or even print something in dmesg).
+
+So no objections from me.
+
+> 
+> We're planning to deploy container workloads on these servers where memory
+> statistics drive placement and resource management decisions. Having an explicit
+> flush interface would give us confidence that when precision matters (e.g.,
+> admission control, OOM decisions), we can get accurate stats on demand rather
+> than relying on timing or hoping the 2-second periodic flush happens when needed.
+> 
+> I understand this is more of a "preparing for future needs" rather than "fixing
+> current production breakage" situation. However, given the interface provides
+> opt-in control with no cost to users who don't need it, I believe it's a
+> reasonable addition. I'll prepare a v3 with the dedicated memory.stat_refresh
+> file as suggested.
+> 
+> Thanks,
+> Leon
 
