@@ -1,108 +1,114 @@
-Return-Path: <linux-kernel+bounces-892409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E98DC4507D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:37:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C934C4508F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A58188E28C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5604D3AE6E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FE22E7BAD;
-	Mon, 10 Nov 2025 05:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8782E973D;
+	Mon, 10 Nov 2025 05:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I5hdn3hp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MQERsYcW";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="sGQDrgz+"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F8A214812;
-	Mon, 10 Nov 2025 05:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62562E8DE6;
+	Mon, 10 Nov 2025 05:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762753032; cv=fail; b=X1D5ghfbAS11c9Zzl9+Qqa95byROBV2D/w1o2ygdy18iU18xarm4+CLiu3seKIeIkeAxjOVGRlUKAdnyJZeMgRT/DxrzgyfIJZhDOePoRaUaOnZDhU2sgfZIfBT4TB3dB8UuNGkoTa24puvRVq9Wl+ehigDEYsiUzLgaERFBpTQ=
+	t=1762753510; cv=fail; b=iWiGTugj04KKw9tpY+YNTdB2Xh8CPlyGDNAfTLFyuLP5TGtLxGZaeGjFkk20cREsng1q9m/7cj45csCCchwnlGoeZ+iEI+N2MFPvMNS2S1m3KxunUuf6bC+hyaO9kFUkQw5J8pRY7fHa6zFTyBNHwU2+ZFvkc+BZ59epG0gNe40=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762753032; c=relaxed/simple;
-	bh=wqrwX5bEctnwvgC25Z+IdwzYCZvp0e0xFsurH8AaNOk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=mXAJG7nYgOGUTS/C1YgK790y0u2vQT/13PVSUhWVRyccPlrOi/9TjMkXVvcA7hzU/qxRjP6E6BmKm6j7pEqeIeveC90TSXKtqo73WPtOtDpUZnV/PcFJaAccxfNm6IydiESkc1VuvAKJdpjgUh2Dd2XDifdQ3N4PBAdU2V/qwMg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I5hdn3hp; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762753031; x=1794289031;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=wqrwX5bEctnwvgC25Z+IdwzYCZvp0e0xFsurH8AaNOk=;
-  b=I5hdn3hpGiyTvUc2Aa0WOOgJZbIUG+jw/3v6Sv/opoTEr3jvA+TfvwwQ
-   prk20X2Ab8wseHN4vuDnWixcs0ucDqOiV3k51xtjSoidORRCwVPbkrgbp
-   YzPVRX9lh2ywoBoM0uKQf3foKLlRGGzvfFFXx6ntd+5Sy2ljLABQPWmzh
-   xRdkDgSvT5fNPDCUtGyUeIEUXzHb7mhIqJd0oe7N+lhjV11wH/cOm5VoE
-   FciAUcWHHx5eZLQtxsdYdt+N5cTv0n2oGyfQGyWPrh/ReV1fNQlBbwTAL
-   oCr316noWaKgqw1S5tat308rv5l3F4P3p1db8mYTOwQbrIV/YIraU1KR6
-   g==;
-X-CSE-ConnectionGUID: u69vr6F/SpObh9jffIc+Gg==
-X-CSE-MsgGUID: WS7QYy9GSg6HAlM0GsrybA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="68659609"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="68659609"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 21:37:10 -0800
-X-CSE-ConnectionGUID: KBF7G2CoR2id45z2qPlMgg==
-X-CSE-MsgGUID: JLdyDxVFTGmhjHIE+LZQGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="193764768"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 21:37:10 -0800
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Sun, 9 Nov 2025 21:37:09 -0800
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Sun, 9 Nov 2025 21:37:09 -0800
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.56) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Sun, 9 Nov 2025 21:37:09 -0800
+	s=arc-20240116; t=1762753510; c=relaxed/simple;
+	bh=h+CrOH24M8ZzhWFFTBw0UIoN4/tFMRuJrBWsOAkkroU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RC2sF4VdPtnfcNAx/TrTgCginf4Ry6C4B4JJ8DlYKhwRXNEW4FABSDBlMP51Gj+zCyyemG5mv8RXGWRNDG02xAkMM32edi/4umf9+t7MPl7iuF3q8xyQ0o2EowkVmbUJb1hl9NGQwqGWlhl2I4AhexEL7pwkpg84IuQrtZ74nXk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MQERsYcW; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=sGQDrgz+; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AA5Qrh2009057;
+	Mon, 10 Nov 2025 05:43:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=fZEphYdvH379W6y+2O
+	+OMuF+VGwpnrGZ/UviXgBRG4U=; b=MQERsYcWg+oWCnYEp6y9rV5opvkby/NVVH
+	IAtq7tMcQuOm3VBYel1m1npUdwdBP9OMRuC87pg5unKTZYVK6izlYjuOYPsQqFXC
+	vU8EfVDODm+WpnTRmzd5pthOj2v82Ngkew6u/qYXB2uRU3joKHyU2zvV7nDXrHBz
+	b23HMXHNoqs06qwyq3uFqjkZcXUMoE7JUE4ESh7SD+Q4LuD7J6uLgyn2wMR32BKC
+	w3gRBx1oWvCM5nGIsDOrIh7M8OJVoqRqVL3M4urGx9qv9unug/HX9Hyv9nfKIgzX
+	2nM/t8IjDJFG2BosZ4oxhc9fBRvMRH2gmnvh99o+sV+j6W0fhQaA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4ab0qv8j57-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Nov 2025 05:43:36 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AA52REE007534;
+	Mon, 10 Nov 2025 05:43:35 GMT
+Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazon11010063.outbound.protection.outlook.com [52.101.61.63])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9va87evc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Nov 2025 05:43:35 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HwClnsjI1mMMlJNNDq4e0GftB6dtbiDEzxdJNq9EhLs5urQ6szv/kvnt+ocd7o2MT1Arb9nedU6mdct3WrsrFPBIi1H61qM2L9efem7IjtDsk0oF+rCK2KLR/e/w5/zC/4LbOmMLp8/wRTXmWm112sHX90fVZIaRbZZU8pAdAx4dvk8pjchM1Hq0kdXuTBIjkEnqz8MSyO3hrZtusppRLn9pd1UkxAv9xHSAyxiHMZwX+ZpIQxja9U3eYu2tGW0jJ8/LuHkXxYyi5ZsZOL5Cdn0+9GztzAnkL11HbZAZIpCiaJF0V4AipsLqs2Ju655dhLStSv+WnNqljqonh3dIeA==
+ b=veRMb9jL3zpQ+PZGq+CGSvJ87W2qeTItVwA/doQ7l1oQzlUFsj7bwxO7bcEMtWCrgryg/zrG+HpJgt26ltw3N7Yv2iU5qMQ4plmMVB9aEs0sE5GgWNLzYldwAZjFfOjFpq78Imn7m1gEq9M8v6NAtjtgHv9UhTh3X8luLOoOkYFKUoBgvClbaGZ+rdycr+E+6yKp7AjavNuUT4InHRcvIPNFerFNl02D4dydN7BjcyWdlANx7SyZgKv+9bjFfyZrKxwn+94yhmE9akpswqdqsdsOoXcOsI7DTprhfvWSHgupbvKzSBfbkYylsf+WA5lqGRyEw0DfQBL2OcU8ufHEeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RnQyzcBoBJ76/XXoPxrZ0ksrySrSO16msCNPQUT16Cc=;
- b=INH14iVIKQiMFlQOaBI8H6yoBSeWZIaGdJT0ak53Nxr65nBIjjB4nK2k8tBvsSIPOuRcPthXKjDaCBhiJa1BubcZOszqK5UR0MVDmT5c+U4JADMbBTifv0neUboqyVkSmgMjYWkZ8Ip+3SU39r4Ijw3m7LDOGQhPPs787NTj/97tJp8pXGJ2/BF98OPuaNhPr9Jq7HMFuGssm+LQESx8tYvTcA3dvk9LMSAlCfEv+7kZcVaqJa1eKy5aYsryyZNO+7L/Zo+0PnmTKvfB31kepYo/hxLFzliaiuX6jwJDLDJhmv41KEjq5IcnFtZE1ZmO3CqXIKiUd/6mvBm91GzcZA==
+ bh=fZEphYdvH379W6y+2O+OMuF+VGwpnrGZ/UviXgBRG4U=;
+ b=M229DYVadeGRFZwM7eFV7fHiGXii9UWFk8oWQkWUKfdf4ZEpHslQDox/zXa6BF3unrMB54Fj0EJXvlVxhLqCPidT8cdwb4djI7iYOrs+Ps91IVCqcT1R6JQoEWJR7l/dBwuv7o/crYBzMaayBePMRJ14xM16wO3EYRlGByJdk90QEjbRcW6W7JUC6s0S31Ixwia6n4CDz4cw2zYCQzBdoBtzq6x7kPoXczEw916jeviLB8TbipP3WAaeLkg8rxWMx94C24z+Nh9syGhG4jbeJJzjR+4RWFdM+uHM4Uh1sahIqTJdmrvDeCMdhsxsvBNZfLOLd1VCAZhLnm0RIlitXA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by PH8PR11MB7046.namprd11.prod.outlook.com (2603:10b6:510:216::5) with
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fZEphYdvH379W6y+2O+OMuF+VGwpnrGZ/UviXgBRG4U=;
+ b=sGQDrgz+YplsjcdObLEOYGuqSHaG5coxVcg/E/L46NfwVyDhRHK+Twqj26mEU/lsfFDLeuf2B5ZYoUrG1fWB5Pxw+CKFmNL5VlgxLYw7gqTyWMKroyXbh/Q+JUL9tg2Nw9OSWjZwZj6maOObtSOAPeAieF+lOKeJ1pEBv9g4hIU=
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
+ by LV8PR10MB7848.namprd10.prod.outlook.com (2603:10b6:408:1f0::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Mon, 10 Nov
- 2025 05:37:07 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 05:37:07 +0000
-Date: Mon, 10 Nov 2025 13:36:59 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] KVM: x86: Enforce use of EXPORT_SYMBOL_FOR_KVM_INTERNAL
-Message-ID: <aRF5+3NW4V1z8oSi@intel.com>
-References: <20251106202811.211002-1-seanjc@google.com>
-Content-Type: text/plain; charset="us-ascii"
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 05:43:33 +0000
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23%5]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 05:43:33 +0000
+Date: Mon, 10 Nov 2025 14:43:21 +0900
+From: Harry Yoo <harry.yoo@oracle.com>
+To: Qi Zheng <qi.zheng@linux.dev>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, hannes@cmpxchg.org,
+        hughd@google.com, mhocko@suse.com, roman.gushchin@linux.dev,
+        muchun.song@linux.dev, david@redhat.com, lorenzo.stoakes@oracle.com,
+        ziy@nvidia.com, imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
+        axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Clark Williams <clrkwllms@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
+Message-ID: <aRF7eYlBKmG3hEFF@hyeyoo>
+References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
+ <97ea4728568459f501ddcab6c378c29064630bb9.1761658310.git.zhengqi.arch@bytedance.com>
+ <aQ1_f_6KPRZknUGS@harry>
+ <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
+ <aQ3yLER4C4jY70BH@harry>
+ <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
+ <aRFKY5VGEujVOqBc@hyeyoo>
+ <2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251106202811.211002-1-seanjc@google.com>
-X-ClientProxiedBy: SGBP274CA0002.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::14)
- To CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+In-Reply-To: <2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
+X-ClientProxiedBy: SL2P216CA0170.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:1b::12) To CH3PR10MB7329.namprd10.prod.outlook.com
+ (2603:10b6:610:12c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,204 +116,188 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|PH8PR11MB7046:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6afacc46-2971-4b01-b8a1-08de201b300c
+X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|LV8PR10MB7848:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d580c24-b0c3-4ac4-7cda-08de201c1593
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?RTSbElVDLieEppz+aJUBUXNeLJUDcucvSGFVqGKAorKUhZ7ud9AoxslkVcRv?=
- =?us-ascii?Q?Zu0IGhoWol3VMc80tTxho0TyUNJqXrU9BmPUB6UbtpE2Cv5cUQXf2EXMXnGN?=
- =?us-ascii?Q?KMqN4ksQXYozHGlL+BwdLp6I3umGyC/HKjZjn87Q5Cku/aGKHzmzW0cf/zEe?=
- =?us-ascii?Q?mWlVbM8tXfNWfuSUWOVp11Nyu8XRn0t9umYqyIBQV3nRndZD8guokYs091Pr?=
- =?us-ascii?Q?5sSnina5QYLUDrqVUfAHVgujOI/FhVyZMe4TnsyNfuobqMs24etpFkkapcXp?=
- =?us-ascii?Q?ePySeYq/robh96RgzPMNv2EPcVb+1QcwV4NpVEPN8OK9m/wb3xtVyDho/v6q?=
- =?us-ascii?Q?LU3kHrdpUVpLBufGMeN0hllAG8cb6qL/Vmj3JPjj5jb+XAp/sKOMzawtcbQY?=
- =?us-ascii?Q?FRu9yi7fBX7pHntBWw1LOHi28Je18qLytQjFt/2C5l3LBoRn9Y5dSV7UcsVm?=
- =?us-ascii?Q?COZYPJjV18Me5/xgOO2jB1MihwB6oew+ASx+cdSy+5DdRqfT6erwRunnRCGt?=
- =?us-ascii?Q?YkRlhA0nMKVmnSb/lSfEwbgcpcLUh23gMOVHuLexSwuhRG1jZWAbFt4XyncJ?=
- =?us-ascii?Q?rIah0g8E9EJillUOS1ysYFYXHGRdr5Z1uC5QV7vFEknEI4vG7QFBtXjJwKBt?=
- =?us-ascii?Q?K8tXdV/CVFzgFWsK9o4vZv3XXJCWne+cLYfInALe+/SPCe7XY+i8WC1zPDNM?=
- =?us-ascii?Q?gDscUGEL1jCuBBxutJzjkReXMwRTUGas3T1azllMkjcOu/0LWZMg3m1A1pY+?=
- =?us-ascii?Q?rQEQLF7ItqfBUIgtNNgw6rNbTyfbtBNgQO6/qvate99GFGytQOzdQNWL4z2H?=
- =?us-ascii?Q?EqAWaCapxNtE6bv1FtzVgzYwKCKZlDlT+4BbvQeN71RqXG4/TRBlFFHakn/I?=
- =?us-ascii?Q?XEEYCqdjFjolgRnKU4bt7Pb3TNKL46up6k3GjxLi/O7lyLCa2yqbPErsWgep?=
- =?us-ascii?Q?7A03h7e2VHjRkLkcn1vZWNFJRyAsgjGIs24hhH4jrm7jfucVtPm89BVpYLzp?=
- =?us-ascii?Q?qhs1W9e/fyRVg87Gw7I5RE33iA94N7Cw6mEJy3rBa7YGS35iRLryzGudRQ3T?=
- =?us-ascii?Q?1OpPYp5BuZHZ0rpDqhOUOuo/SwUba96niVM6BqEsWK8zP4+sZOQv3U1Y96Gf?=
- =?us-ascii?Q?jKFIrPEx/pSnK3/91vlbmnfJOOvwQr9Gg3n32zGNfBXgF86FClRkY+7F7hHZ?=
- =?us-ascii?Q?+msS1sehDC2UGIHSVT1HiDUKzzJEFQu0pPUu8/ikDkvrmAzbAiPr+KELhGws?=
- =?us-ascii?Q?y2oJjAPLrUOMWZgo2L0DnTtpPZhItBVyoE5oMs1g5k/XOVsPvHXPM5/hGIXz?=
- =?us-ascii?Q?9IpTX7HPCG5OrEqQzKrFlYsMCOc6Liyb0NRC5UoaV0eBWIzNeQK57UwEcSR5?=
- =?us-ascii?Q?K+fep3umHy5WCp0URyf26JiTAn5g/hTd1SBfygowKZVygLjUSiviDdFKUebm?=
- =?us-ascii?Q?KaIMCWk8vnT9Iy4e+UNBjrf/G55ZxEGo?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dXe4c0wUMmywUg+p7JAdR6dIN1YRa413lA3UK3xJrZsjauobPnLviILdJn7f?=
+ =?us-ascii?Q?sktocmB079ZbT4HYMwT7pzFyluO3AKlxlY+ivUeCGzM1G9iI0/sPPPNty6Ah?=
+ =?us-ascii?Q?puWInIKtAyyJYj9oYO90xZ9sX3rOJJArU3rj/tMfKmY4gvCLRjveYfuwYvK/?=
+ =?us-ascii?Q?oQehtYs4c9wHtvJZhaZ5Tl9Csplu1JoDwfH90n9swSZfI6kW9zotqVaM5Ovn?=
+ =?us-ascii?Q?QDXnlFm33oTvsUlgr95PZCYG2s55+t2YIl5GroNyraPgg55K7bzIOckauboT?=
+ =?us-ascii?Q?gHKy6lp/2lb6bfbnXhK1SySJeyh8hJacU6gZvnG8ZCVnBi2FeZWgjUi3tHb1?=
+ =?us-ascii?Q?ZVB0g3gYGRdo+/nqr+f9KFLt3cw3vsoqPC4kuQiL0dAHuVmQ3pCpGyC6VyOM?=
+ =?us-ascii?Q?gQfASSMl5aNqc03Ka/tEOEUpavLsY/bJ9eJmLEhwN4X1Ika0nLmu0Ij9TDRZ?=
+ =?us-ascii?Q?nxyQUx5362V7+LqROPB0Pr4yxKH9N3C7Z1ShXZh51Uut0YekfmZ0sY3kHIID?=
+ =?us-ascii?Q?HuLmu4SzuQAGoXufgvfC+JyCTyZA2cF1Ubo/FRVTcaLLuwibtz/mF5mHMw2d?=
+ =?us-ascii?Q?g+6TZLIniWp5d0tlZxKIOSFcqI83ZA6ItbPLWD452ES/eUxwXNzw4w9DMfB7?=
+ =?us-ascii?Q?AiW0txjlFEtSUBEka7uYn3Pk0mdcn9jlyhTtML6taeX4o3v9PFq+re2vLHGh?=
+ =?us-ascii?Q?oYTAbYwa776MT3t5eoa1IkbSdEPAKw1qH+2ZG8z32M1SD61OJkicxPwhb9fr?=
+ =?us-ascii?Q?D1VMAzYS75k7wheF/EJEa6uGJIA52IBW9NQFrEfLqMlvCttQ92J5XXL5WZh2?=
+ =?us-ascii?Q?Qsr+oiE6kS85QNYZ1kjnR1eB12Ra9ke053v4cgeWMJGCad8vFV9IMKv5OwJW?=
+ =?us-ascii?Q?mw1m1IM1NFzV9TJVw6x0qCuIAbdz8x182HwQo6JgEBZIo/5Kq7N00bo2Zp/n?=
+ =?us-ascii?Q?BZ+X6HaZckjSEUnccW47gUM5eaJzQuSbE60R6R2lHEPOIaBXuQx4uW4S9piU?=
+ =?us-ascii?Q?9VJ2ebzi5/GinIDqamvvELnX8dmRz6tbZob44lrhGTlduin+Q7zJCxlYN7cv?=
+ =?us-ascii?Q?DGifGf8usXfeKykT90uN3kuDX2MB24E5Ow4sv7aeXVwjRkMIfk8ffDYnfcLi?=
+ =?us-ascii?Q?y6W+xyv3ILXJpan5GlH1i5kRmykmFkGnc5UsUyqLOb5DqFXiUtC6bIqD98O9?=
+ =?us-ascii?Q?fsb4+xAvxE04m7JheeoMF7w9/w+UwEhMCDehqtP6CrsIJlcGNBzzHffA6Oq9?=
+ =?us-ascii?Q?dSHy9tmoDUxdVuSSc7J5p+iyP53niJifpM+4I7FcD+ydsuctYAKJKzbcJz9N?=
+ =?us-ascii?Q?RqP3KqeZhe3Cwf5EjZPChzHAawti26Hz7lcmWyT4Q9oXVIul41maTc6JclJq?=
+ =?us-ascii?Q?pmou4zFPtOlwaoDkcUdMrtX1Le5mmx1BJmfVKeZOWo4PMIq5yAVWyMzsq7M1?=
+ =?us-ascii?Q?aLYOBE21EI1ip0llDO6iE2ZtGlnseitk?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+VPC6Ewo1utKdXnPikZtRlVNeATBpV0dloQ4uuhjrE1LRJW6TwwCl1hNhQjM?=
- =?us-ascii?Q?D86VOlE4mX+QEW6U3AOGHOps8jG5ZLk2VwjgHORTcwi3W8FnwUc2BJ2N9mIv?=
- =?us-ascii?Q?RFd/oK8e6VerPrOHaxONZtw6ps2KCeFbnDu+nJh4Jc9W1iROXlmxBpPmwNjX?=
- =?us-ascii?Q?KIRQzl1cAkA9r6pc11JFTY2zwsDYIvyxheNXUdll3PSZK47Gc0KiMcX74dn5?=
- =?us-ascii?Q?bHmDNbPdHYrQzSLjJjXXowaA27tESymza/6Ujn58QxEbWifnwQ0pwAUiajbn?=
- =?us-ascii?Q?5kd1vUxhPj0f2WkTHLefYgl2d+8o7opKbrE6Vm8uNpbvDDao9RXdgCbXoOaF?=
- =?us-ascii?Q?7p9F9qthpjsPgyS7w/9Vyf8XF3hkTrRECOpFDuoupOt7vlR8+hL9/dFIXl+T?=
- =?us-ascii?Q?B4zaS7LMi9wdhYVdRG7e9Vlm1UnmiiQa5C58nql/lMEvgW0dj4hlJUVkp06X?=
- =?us-ascii?Q?UlBLV1F8E92jditH1cQ04Z/w1urkMM/6rlkJ6Xkoj6+lyIg97Bt+w56nQZ/W?=
- =?us-ascii?Q?UvRmrsm+7Xk+t7YAdG8ttgfNI7M84iTTXU9yH5ssYfM6O/ZCsm9GM6wbwQA5?=
- =?us-ascii?Q?/WSyB3mzGQR81+dJFwJa5uZhyo14ZqoQ/ilYDqaOtZt4OY8+DfUseSwAnGDQ?=
- =?us-ascii?Q?iIjamEGEuVoF0KyerbT2z0GTPfpnSLICI+BgE1U3d4/G7wIQKeRMb90Vf5xa?=
- =?us-ascii?Q?JrPRlx9W/PJG8QljycE+sIGCQkYNvUEllqMb3XpVgDCXqdKPHSh0Az9Q1XOP?=
- =?us-ascii?Q?GTK+ql/HRaRvacABU9z2XcFpPsjSKmH8bN1fey0L4W0sm5nbkWHg0K6ADWZR?=
- =?us-ascii?Q?dKbknkcB8aITwiVCiOuBvqrIFvXWjLSHQ8Z5kzXm7FABiyAecK2t20dKRHNf?=
- =?us-ascii?Q?n67LvgrVEnI9bM/yLtB5VyX83EL/OKejLzzAuv/ti/DiaHfr49Xhh9kHq8Z7?=
- =?us-ascii?Q?XgTVUQwcRzSnHx6iHVy9931+F7UyOplcET1kPtYW4XqDF6yd0luKNHhXHOkP?=
- =?us-ascii?Q?VGNULvYcQyMEhhCIcegq8Wlv9oNpDsH8pNEro2aV09f0/IFS7Yd2aHM1ntbn?=
- =?us-ascii?Q?xywUXP2n1w1jMYWzO7x4g8LkkyyuckfpP3AsYlzU9c0VZYw5ft19IEcrYaoT?=
- =?us-ascii?Q?g7ZzBP+VK77bo6QZPJN/SDFA43uSRqnoxFR3LxpF5zs5pC8Z5A+snGbX7G2N?=
- =?us-ascii?Q?RYuomZDgDn36ViRlZnq4LWIyEE5fmUamL7YkJUhxlECTheDWs/FsuQUCgwNH?=
- =?us-ascii?Q?uM3m/lGVjPprLyw4jvtoYSAJQBtWcF+Qle2dIeADlQgDnu07JouFKj1P2Otn?=
- =?us-ascii?Q?sTwkR8YKqS5PDaGF4/+mprQ0hq7g4v7b43wZGgRicu/zEfPL37ahKWx56SP8?=
- =?us-ascii?Q?bwgFuQ34RaKGJ19qsIjAAWrJRk/vu6QzGHWywOrwWeJVguOHLkbjh3MGtJua?=
- =?us-ascii?Q?iMdTadoo2rwxNbb4Gts+si9zKG05BwfzH23/95Xykhc1mO4JAQPMXvh1mtTw?=
- =?us-ascii?Q?5lVsLkf6LY96RWKlunjTXRfoy2mn3MENMLRH5eHq3dY/3j0InelyXpQ1BLNC?=
- =?us-ascii?Q?AyYiH1HC38/Cc6gSQiEEay/uN39si6ePM3PRdOOX?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6afacc46-2971-4b01-b8a1-08de201b300c
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Luo1RioyeSYt+bo0m9vfcOLOmbEHAOY8k6aZ4y6lyGAfmB8MCeB6pEvxrMh2?=
+ =?us-ascii?Q?bKjaERpUseU2Rcx3jJ7bl31sqtURCYN9qgqggzgI21aUjyrZEOuaFXUGmq3i?=
+ =?us-ascii?Q?dpmJ00XjjUeeEDFO7zwJE6lVeaelXrPmLm3sej5/SneoWggUZtiHyLLKEEs0?=
+ =?us-ascii?Q?SxCPdYaFGxB7MKBJDxx7p1wPo29fdw+XS8FzFgZKU33iakbYh67Q1eks0m6I?=
+ =?us-ascii?Q?HDpU3MgzlflHu7smcqW9usP0yS4OEMTWw6WIIpNvxD2mHUUioJyYLVHdd7H/?=
+ =?us-ascii?Q?QG9RTzlfRRUseeBf/X32IBDJS4141ojgAeibXi8qMnoKDb9RSqyuXD8+CF3U?=
+ =?us-ascii?Q?VcYnOooPwTLr5QSohfGzeSeepp2NGbVNFZ58w3a1dKWYjzSqu9/z2ob/bYnD?=
+ =?us-ascii?Q?c8YCHn9VJ9nLzc/W47euVYxovIquHoGJSffZOtiAuKRFjz2fhWd2nJ0I37BH?=
+ =?us-ascii?Q?RSj16Nxq80Gza9dYYQDZbXNW4s7Daadi5nZ6X/jD11vSNOw9NE6IBiumjo+v?=
+ =?us-ascii?Q?r7WtLHIPaeVVLMwd761duXfP/ZVDpXgReQ8c6dr3E8T+fUzPIrEdJYOt+wtY?=
+ =?us-ascii?Q?YWqR3b8T0g4kLy0OqL6DeGgHSAKVm5upMVGRiIcg4Pvp4pQRyCL6BJj3b9fX?=
+ =?us-ascii?Q?LWxdBR2oPRXDrRxh8JmxsM6MP5tHFBzZFsB1iEnzVaONjTc47GKlIO+e2Dao?=
+ =?us-ascii?Q?1ZtjsUmtzpCIEvtkdYMnluz+UuZCMZ17fgOCNr2cYZbAE5UGtam6079mWLwQ?=
+ =?us-ascii?Q?6sa9F4TsgRo+IhhtK1422oqedcyg8HLwB208QJemWPmP7gqBnkIYb1DFY6v5?=
+ =?us-ascii?Q?qWRzZogLsBNhSIU0gsIt9fCVHlfN5WrRXanh4cY6kqrAvg4UMvdjocIQfVVJ?=
+ =?us-ascii?Q?Ktb0EiqDU+1AGSiZOdakf3b8M50Yyo2z4BrmEtzsIZ86VMpUVO+YLSN8Mjmm?=
+ =?us-ascii?Q?6yEVoGGYSaR/XXZbhcGGp3if4IirvQPuX+LdjIUqsFGbzCoiom+disYsc2WH?=
+ =?us-ascii?Q?GHu5NdvnsAVFwbNlQcCuIGjQJaFiWNKvmykutpJ7fe0jOw7bD2u8vBRKh60a?=
+ =?us-ascii?Q?0dVMz9zjIujWH+lGPzjIlGxBj+uBjw2AV7BOJf6eWe771gYdLzqLmPzW1aSf?=
+ =?us-ascii?Q?/Xj51sGbE2ppfxphbgAZkXUsZhrt4lRwrRjcS1ItPgqw5Z2QB2KNJ5J+Vm8b?=
+ =?us-ascii?Q?l9+jx5Q6NTK5Ft/KdoigNd9kw0T5QsYRKtycAuAqcP87+QM2YBPv8t/Ktrii?=
+ =?us-ascii?Q?ULiBFhkyXlZ3+bX8ajvr2Unhsj/BdPTvm8Bfxraox0kbbRumNT7H+V3aMPa4?=
+ =?us-ascii?Q?WZerDM5hTyKzYD2ScqMDmYw/1Gkj5b15bIhgEqnxA10r+Oq3hdHYCp+IQbF/?=
+ =?us-ascii?Q?nccZRvZaqGaSvVzrPG+31ownDFrTltoA4GZDES2hQMAxe4QjoNgpSKn2gGq7?=
+ =?us-ascii?Q?xM8kzyYrf+Lhk6NcYmbLVJzz52iXYnlHfP7TikdSJAdRCs6HV4xQo/0FEF8I?=
+ =?us-ascii?Q?Z8AgUtNFNujoHKwPu5ZXRaGc3tGH15Gu7H09n9sdSlJex7vxx/WjU4fs/omJ?=
+ =?us-ascii?Q?6wfRL3vb8DeBUHSm5Ix1uMab6NTmiHlUYQD8hvu4?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ZlMwfJKXFGteaWgI7Q4DgKNhZw0+8xFC2U5vZImHNPZUHsc4xnqpkxPWi6mSn+ZIWnORJog45I5Jsp0KZOL0/K58CfyCPjZC8puxiMMWSF0DYGNHwRyBfkIb9Hs/TBmDfpVhmtMYeyKhSPY/bgsinsza32qURWY5XVKEL4YWbi3ymCcZO9Z3TPCCbWj8et51bpm0pSSsbcKZWQZpF7z1eORb+K7MoClKQ/00WPttuvh27/2kM19RTKaFVnaEe4+tmeGDHQuKddi5mdwwC/Mnqjq1B67bfVDP1qZDfh6RkRvEFESkemD9NHPETjUcdEz5NYCVnpFk5umEE6KEg5GlntFppShWhq70+N/MRpmdXWRywCeahx6urqgT7gEXe7weB6b9hkz7On6TeTzMiFPv4v4QOJvzkmdGZIFLAfqPq4nEHAGNp1EZaxW31VFWDM1IM8GT6mFeuR8w8i8vDubMlEDNKpQjFZz0gNag5TD1ul95Pu+FmRNpIlFbleH1sWK7AOE2CSIWzz3fOhfqFuw2pggviFW3IH11hpwskbbg2nDXPdQrpVjKKLpvYOUl8tTKUyY6zmiioUgXyKjX8oAC9n5ySL8KpIzsRWP7TVn6kNM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d580c24-b0c3-4ac4-7cda-08de201c1593
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 05:37:07.7829
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 05:43:32.9719
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eHCRmDNwPehN56eJK44mCEJouG0Pprr2QMKZ2n6GWWXooIpesDc/FxmQY1OcCy4/tXrVyuqgyZHba4zpOROJpQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB7046
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: AX7v0dJW8WzmOvajH5fV8tM5B0H1KdqAiVjSslCzdfjXQJ0KfMr3vP7k+GG/vLMyg3fzq4F4CbUDSNe+jTtMYw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR10MB7848
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_02,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
+ mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=773 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511100048
+X-Authority-Analysis: v=2.4 cv=GagaXAXL c=1 sm=1 tr=0 ts=69117b88 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=M_ZqdjHjPgEKiPzJVg4A:9 a=CjuIK1q_8ugA:10 a=nl4s5V0KI7Kw-pW0DWrs:22
+ a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-GUID: aqet1d515HvxLaRsTBGw3mL9zRwi4Z84
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA5MDE2OSBTYWx0ZWRfX5cBZ1d14BItR
+ Llpj0e/gdU0HB+iAtDHKDXCsIXai/iVSATRSe4dr0B5h/Bh8Z9ed/2E5ZazhkrdacTVaNFxjFd6
+ k30GuvFTlSZQXKKSo5gDTt8ypL5fYQREgzIxubjyhjopEQ+YgqY7J6tZjKeQ11K7pnqd/etZOCZ
+ Iwx6JOyQ/LcPfkBHCj8rPEOZqWCyqxTzF/a35BwS3CalrOEPHIsSjSZ8t3HjfXV/bs1h3Asl9/c
+ 94OMXgHr6w5RQELwJ6NdBFHcwvYyNzzK0RDCwadrafZV21e7RGs2oV28+hTa955k9rGud2heyDw
+ OM+pgoq49UD133TtkZpVqxg/x7QzP1J/4+8wAzoE47UgouyiZ2vO00GekpCr1+D8kJsQN+XrtB3
+ GbejPyQPJtsBhfWdZVj00KGk4lWxIg==
+X-Proofpoint-ORIG-GUID: aqet1d515HvxLaRsTBGw3mL9zRwi4Z84
 
-On Thu, Nov 06, 2025 at 12:28:11PM -0800, Sean Christopherson wrote:
->Add a (gnarly) inline "script" in the Makefile to fail the build if there
->is EXPORT_SYMBOL_GPL or EXPORT_SYMBOL usage in virt/kvm or arch/x86/kvm
->beyond the known-good/expected exports for other modules.  Remembering to
->use EXPORT_SYMBOL_FOR_KVM_INTERNAL is surprisingly difficult, and hoping
->to detect "bad" exports via code review is not a robust long-term strategy.
->
->Jump through a pile of hoops to coerce make into printing a human-friendly
->error message, with the offending files+lines cleanly separated.
->
->E.g. where <srctree> is the resolution of $(srctree), i.e. '.' for in-tree
->builds, and the absolute path for out-of-tree-builds:
->
->  <srctree>/arch/x86/kvm/Makefile:97: *** ERROR ***
->  found 2 unwanted occurrences of EXPORT_SYMBOL_GPL:
->    <srctree>/arch/x86/kvm/x86.c:686:EXPORT_SYMBOL_GPL(__kvm_set_user_return_msr);
->    <srctree>/arch/x86/kvm/x86.c:703:EXPORT_SYMBOL_GPL(kvm_set_user_return_msr);
->  in directories:
->    <srctree>/arch/x86/kvm
->    <srctree>/virt/kvm
->  Use EXPORT_SYMBOL_FOR_KVM_INTERNAL, not EXPORT_SYMBOL_GPL.  Stop.
->
->and
->
->  <srctree>/arch/x86/kvm/Makefile:98: *** ERROR ***
->  found 1 unwanted occurrences of EXPORT_SYMBOL:
->    <srctree>/arch/x86/kvm/x86.c:709:EXPORT_SYMBOL(kvm_get_user_return_msr);
->  in directories:
->    <srctree>/arch/x86/kvm
->    <srctree>/virt/kvm
->  Use EXPORT_SYMBOL_FOR_KVM_INTERNAL, not EXPORT_SYMBOL.  Stop.
->
->Put the enforcement in x86's Makefile even though the rule itself applies
->to virt/kvm, as putting the enforcement in virt/kvm/Makefile.kvm would
->effectively require exempting every architecture except x86.  PPC is the
->only other architecture with sub-modules, and PPC hasn't been switched to
->use EXPORT_SYMBOL_FOR_KVM_INTERNAL (and given its nearly-orphaned state,
->likely never will).  And for KVM architectures without sub-modules, that
->means that, barring truly spurious exports, the exports are intended for
->non-KVM usage and thus shouldn't be using EXPORT_SYMBOL_FOR_KVM_INTERNAL.
->
->Cc: Chao Gao <chao.gao@intel.com>
->Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-Tested-by: Chao Gao <chao.gao@intel.com>
-
->---
-> arch/x86/kvm/Makefile | 56 +++++++++++++++++++++++++++++++++++++++++++
-> 1 file changed, 56 insertions(+)
->
->diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
->index c4b8950c7abe..357138ac5cc6 100644
->--- a/arch/x86/kvm/Makefile
->+++ b/arch/x86/kvm/Makefile
->@@ -47,3 +47,59 @@ $(obj)/kvm-asm-offsets.h: $(obj)/kvm-asm-offsets.s FORCE
+On Mon, Nov 10, 2025 at 12:30:06PM +0800, Qi Zheng wrote:
 > 
-> targets += kvm-asm-offsets.s
-> clean-files += kvm-asm-offsets.h
->+
->+
->+# Fail the build if there is unexpected EXPORT_SYMBOL_GPL (or EXPORT_SYMBOL)
->+# usage.  All KVM-internal exports should use EXPORT_SYMBOL_FOR_KVM_INTERNAL.
->+# Only a handful of exports intended for other modules (VFIO, KVMGT) should
->+# use EXPORT_SYMBOL_GPL, and EXPORT_SYMBOL should never be used.
->+ifdef CONFIG_KVM_X86
->+define newline
->+
->+
->+endef
->+
->+# Search recursively for whole words and print line numbers.  Filter out the
->+# allowed set of exports, i.e. those that are intended for external usage.
->+exports_grep_trailer := --include='*.[ch]' -nrw $(srctree)/virt/kvm $(srctree)/arch/x86/kvm | \
->+			grep -v -e kvm_page_track_register_notifier \
->+				-e kvm_page_track_unregister_notifier \
->+				-e kvm_write_track_add_gfn \
->+				-e kvm_write_track_remove_gfn \
->+				-e kvm_get_kvm \
->+				-e kvm_get_kvm_safe \
->+				-e kvm_put_kvm
->+
->+# Force grep to emit a goofy group separator that can in turn be replaced with
->+# the above newline macro (newlines in Make are a nightmare).  Note, grep only
->+# prints the group separator when N lines of context are requested via -C,
->+# a.k.a. --NUM.  Simply request zero lines.  Print the separator only after
->+# filtering out expected exports to avoid extra newlines in the error message.
->+define get_kvm_exports
->+$(shell grep "$(1)" -C0 $(exports_grep_trailer) | grep "$(1)" -C0 --group-separator="AAAA")
->+endef
->+
->+define check_kvm_exports
->+nr_kvm_exports := $(shell grep "$(1)" $(exports_grep_trailer) | wc -l)
->+
->+ifneq (0,$$(nr_kvm_exports))
->+$$(error ERROR ***\
->+$$(newline)found $$(nr_kvm_exports) unwanted occurrences of $(1):\
->+$$(newline)  $(subst AAAA,$$(newline) ,$(call get_kvm_exports,$(1)))\
->+$$(newline)in directories:\
->+$$(newline)  $(srctree)/arch/x86/kvm\
->+$$(newline)  $(srctree)/virt/kvm\
+> 
+> On 11/10/25 10:13 AM, Harry Yoo wrote:
+> > On Fri, Nov 07, 2025 at 10:32:52PM -0800, Shakeel Butt wrote:
+> > > On Fri, Nov 07, 2025 at 10:20:57PM +0900, Harry Yoo wrote:
+> > > > 
+> > > > Although it's mentioned in the locking documentation, I'm afraid that
+> > > > local_lock is not the right interface to use here. Preemption will be
+> > > > disabled anyway (on both PREEMPT_RT and !PREEMPT_RT) when the stats are
+> > > > updated (in __mod_node_page_state()).
+> > > > 
+> > > > Here we just want to disable IRQ only on !PREEMPT_RT (to update
+> > > > the stats safely).
+> > > 
+> > > I don't think there is a need to disable IRQs. There are three stats
+> > > update functions called in that hunk.
+> > > 
+> > > 1) __mod_lruvec_state
+> > > 2) __count_vm_events
+> > > 3) count_memcg_events
+> > > 
+> > > count_memcg_events() can be called with IRQs. __count_vm_events can be
+> > > replaced with count_vm_events.
+> > 
+> > Right.
+> > 
+> > > For __mod_lruvec_state, the
+> > > __mod_node_page_state() inside needs preemption disabled.
+> > 
+> > The function __mod_node_page_state() disables preemption.
+> > And there's a comment in __mod_zone_page_state():
+> > 
+> > > /*
+> > >   * Accurate vmstat updates require a RMW. On !PREEMPT_RT kernels,
+> > >   * atomicity is provided by IRQs being disabled -- either explicitly
+> > >   * or via local_lock_irq. On PREEMPT_RT, local_lock_irq only disables
+> > >   * CPU migrations and preemption potentially corrupts a counter so
+> > >   * disable preemption.
+> > >   */
+> > > preempt_disable_nested();
+> > 
+> > We're relying on IRQs being disabled on !PREEMPT_RT.
+> 
+> So it's possible for us to update vmstat within an interrupt context,
+> right?
 
-any reason to print directories here? the error message already has the file
-name and the line number.
+Yes, for instance when freeing memory in an interrupt context we can
+update vmstat and that's why we disable interrupts now.
 
->+$$(newline)Use EXPORT_SYMBOL_FOR_KVM_INTERNAL, not $(1))
->+endif # nr_kvm_exports != expected
+> There is also a comment above __mod_zone_page_state():
+> 
+> /*
+>  * For use when we know that interrupts are disabled,
+>  * or when we know that preemption is disabled and that
+>  * particular counter cannot be updated from interrupt context.
+>  */
 
-nit: "expected" in the tailing comment is not defined anywhere; maybe use 0 instead.
+Yeah we don't have to disable IRQs when we already know it's disabled.
 
->+undefine exports_advice
+> BTW, the comment inside __mod_node_page_state() should be:
+> 
+> /* See __mod_zone_page_state */
+> 
+> instead of
+> 
+> /* See __mod_node_page_state */
+> 
+> Will fix it.
 
-exports_advice is not defined.
+Right :) Thanks!
 
->+undefine nr_kvm_exports
->+endef # check_kvm_exports
->+
->+$(eval $(call check_kvm_exports,EXPORT_SYMBOL_GPL))
->+$(eval $(call check_kvm_exports,EXPORT_SYMBOL))
->+
->+undefine check_kvm_exports
->+undefine get_kvm_exports
->+undefine exports_grep_trailer
->+undefine newline
->+endif # CONFIG_KVM_X86
->
->base-commit: a996dd2a5e1ec54dcf7d7b93915ea3f97e14e68a
->-- 
->2.51.2.1041.gc1ab5b90ca-goog
->
+> > Maybe we could make it safe against re-entrant IRQ handlers by using
+> > read-modify-write operations?
+> 
+> Isn't it because of the RMW operation that we need to use IRQ to
+> guarantee atomicity? Or have I misunderstood something?
+
+I meant using atomic operations instead of disabling IRQs, like, by
+using this_cpu_add() or cmpxchg() instead.
+
+-- 
+Cheers,
+Harry / Hyeonggon
 
