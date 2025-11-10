@@ -1,174 +1,81 @@
-Return-Path: <linux-kernel+bounces-893799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE589C4863F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:42:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F05C486A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3B869341C7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3875D189049D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9F92D97AF;
-	Mon, 10 Nov 2025 17:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lBHP9s28"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249C62DE1E6;
+	Mon, 10 Nov 2025 17:48:05 +0000 (UTC)
+Received: from blackbird.sr71.net (blackbird.sr71.net [198.145.64.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806262DE714
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CFB28643C;
+	Mon, 10 Nov 2025 17:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.145.64.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762796510; cv=none; b=TT/hARXd80s+6QtEqjIaSGKTo7QdF02qfCzeSTA42CCELBwG+owbFeSX4BQXHyz5zZ5wQpfOND3+UZIUiuACKI7GS2DfirAJlXEn+vw/S8FNSeqd21MlMOkUWiDIRFVSEu3Iv619Gslz/ObGfnDyin4+vE0IyGAKcp1zQ9r5HJc=
+	t=1762796884; cv=none; b=dsgoewsKc8og7P3PSWXSI+Tmnsxqq/qyUaGoC+sy15/eFEwosnu8Vtup2eFZodXvVtPxvmnrwkhvZZep/ICYUAe2C2ozR3y85Eu6MCH0/xHZIeebfO3b5p6VWXzn2GrmktIGSUFMcOWFZ7CxJmYkvP+wp2UczlbbnA/S/CjrNaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762796510; c=relaxed/simple;
-	bh=01dlGr5yNF89ID01yy7JEyF1mqdeq7pHF47t5S9oyvw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XfaA4XMd88Ozkgd5msGg3hz0zJTMhqg8Iz01NXfUsbgn2RNnp1Rb8J9MRFr1M0NlvoxdeddfesU/1NtoBNV5stz21WmNMiIcm/QbKuRHNnBwVjle89FmcNPXzRF4Yl27JN9LpIandiQX51Nv+DNtC+xwMYR/DctKwY2tv89WnKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lBHP9s28; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-43337f526dbso325ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:41:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762796507; x=1763401307; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uCN02yrRrm29VoLhm6qdIaJ6qOTD6tpswHT/4wW9b3I=;
-        b=lBHP9s28n16XembK1gV4YMm+SZbiXI04phc1VG8pEUyk2A80vO/VkQvGMdwG7dLeWH
-         zvL2tg01J4pD0CJLsEYXhSy4IlhnwsHTPWmI3Sk8hacLDJ+GC+c69MkWoxsLbQJgDP7F
-         ltoVdrpQDEW/KgbDKI1WPZVg1/Xl2PiY7beX0cPPNuljaUGY+vidyL4J4ewIfzIbyHpC
-         RfZ4cHmL9dJCUJpcfmJezx56A0g7cDv/dJD3ziGklmyoogOetXIhK3xAYybbat//unCh
-         RgL59AgDEhvQH1ovtOEgpyTUlA1SsF0c39p2/BS7Vjx4rvbhflvgUoWChxUS4N+m+uJ/
-         12QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762796507; x=1763401307;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=uCN02yrRrm29VoLhm6qdIaJ6qOTD6tpswHT/4wW9b3I=;
-        b=fx/UYcU47AMiKvu7o4XrEDjJ2uyTEhQllTaFBUJy2dKyLYT0Ye4Kb8haTzHLi1eFzf
-         4spD8UtKROxfvjI8BUf33g0/t8QY3HJA3aiOhZ8uzPlunSGfiehaBGs65IayTGPbF6pr
-         cIGxFByHUiPlxdm4LfzXOfxjC7w3KYO1VNUmijHH81P6O+4huFrQR6KVbJmenXA2posS
-         5H1qRkNCY+ZLu1qNEgCif+l7FSIXKFhecJdZUqNoydfvMx58A2IDtP96vgK0eXAXomch
-         Vvu347sevA5JXK8byMyqCWfV/+TCPtYWEIgzA60VCRsyYFenTk2kAbWSGStwGFGNkxnn
-         B0iw==
-X-Forwarded-Encrypted: i=1; AJvYcCWk9QFbnH9/8tOTZgZ9iYDCgthCq8ZKpAI5NrqwsQkVAv0njbSTK0qxU5raHQOT6k+6jX+qqecrCdYoqws=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+LcQxXu88sssLawv+FDvxSujZCLtGRikwlOgc297FsD/ATO4+
-	pDaOtVE7x04/62JjPSFv3tImOPnscUihjEdrc0j5kISogPcLMeoLlx2K16ITqQb/NtCMa/7jZjo
-	4slb/LDVJ95sF8gfBpv7xtpqvfwcrcuNKqZxkhw0U
-X-Gm-Gg: ASbGncuIRyJYsm2Y6DNaJv1CR/u63PKlHHSbWs5DPe3b+flgllzoqD176AZExEqNp7f
-	rCB1VUVRzjHs7EcAIl0BY8mCJCfzypP8ayg1KtSxXFLwpQFnCwsLC6LBvfrmwwV36r3CQP3X3be
-	BkQ5A3DH9CT36Bx+Zhisg7yTbAv3LGm3sxc34hg1kqeJpFtKoIpi7U8tGMJZpvmVOzJX8DMXBS6
-	G5I31s18QgrxIh0+lvUUbl/QBNZz+FWQA1BY578eLvgal/m8zTABCBLVf1kN9z9Ghb9cbafbIwo
-	iQ8naAnuCfMXP5Gct/bfI5KhziY=
-X-Google-Smtp-Source: AGHT+IHBszWXqdmegF9jDz3JdqQDbm8MYTV0aj0bqa37sU1cyBKp/p7V6BTPvfRkJX2omWXmFuxPpOdX1NkrpUUy3u8=
-X-Received: by 2002:a05:622a:1981:b0:4b7:9b06:ca9f with SMTP id
- d75a77b69052e-4edc9d77fa9mr1301871cf.2.1762796506738; Mon, 10 Nov 2025
- 09:41:46 -0800 (PST)
+	s=arc-20240116; t=1762796884; c=relaxed/simple;
+	bh=4iJ0iHDZd+yoC6UHBTaQrxmaV6kxPQ/saCltDKoD8bM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=We/7UK97CSqQMWHN70UzmGFyLaLUCL10LaH1rmDfTbYqkbIbJCtuIWRuThTsoO27KIf71lnQMdyR01145bovIc4QHFGebS4Sccvxo5wUlFdueVTd1bWoaCKsBozZJ9aysuQZSh8RBlG+D0tk80pg8Fx4MSP+41pxSP2J5dhPmZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sr71.net; spf=pass smtp.mailfrom=sr71.net; arc=none smtp.client-ip=198.145.64.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sr71.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sr71.net
+Received: from [0.0.0.0] (unknown [134.134.139.75])
+	(Authenticated sender: dave)
+	by blackbird.sr71.net (Postfix) with ESMTPSA id E283D2019E;
+	Mon, 10 Nov 2025 09:41:55 -0800 (PST)
+Message-ID: <b9eb9f19-9b77-4ece-ac54-9e25a801c565@sr71.net>
+Date: Mon, 10 Nov 2025 09:41:54 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013185903.1372553-1-jiaqiyan@google.com> <20251020144646.GT316284@nvidia.com>
-In-Reply-To: <20251020144646.GT316284@nvidia.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Mon, 10 Nov 2025 09:41:33 -0800
-X-Gm-Features: AWmQ_bn8laNbI6x-97h0sYyX9fmwMMmvt4fgKNBEt3tvZG9iGI46wWrBFKgKfqM
-Message-ID: <CACw3F528D6odL3MJWb28Y4HVOLo56tMQXBpvti5nhczdpMxOdQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] VMM can handle guest SEA via KVM_EXIT_ARM_SEA
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, duenwen@google.com, 
-	rananta@google.com, jthoughton@google.com, vsethi@nvidia.com, 
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
-	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
-	shuah@kernel.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] [v2] Documentation: Provide guidelines for tool-generated
+ content
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+ Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+ "workflows@vger.kernel.org" <workflows@vger.kernel.org>,
+ "ksummit@lists.linux.dev" <ksummit@lists.linux.dev>,
+ Steven Rostedt <rostedt@goodmis.org>, Dan Williams
+ <dan.j.williams@intel.com>, Theodore Ts'o <tytso@mit.edu>,
+ Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Kees Cook <kees@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Shuah Khan <shuah@kernel.org>
+References: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
+ <653b4187-ec4f-4f5d-ae76-d37f46070cb4@suse.cz>
+ <20251110-weiht-etablieren-39e7b63ef76d@brauner>
+ <20251110172507.GA21641@pendragon.ideasonboard.com>
+From: Dave Hansen <dave@sr71.net>
+Content-Language: en-US
+In-Reply-To: <20251110172507.GA21641@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 20, 2025 at 7:46=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
->
-> On Mon, Oct 13, 2025 at 06:59:00PM +0000, Jiaqi Yan wrote:
-> > Problem
-> > =3D=3D=3D=3D=3D=3D=3D
-> >
-> > When host APEI is unable to claim a synchronous external abort (SEA)
-> > during guest abort, today KVM directly injects an asynchronous SError
-> > into the VCPU then resumes it. The injected SError usually results in
-> > unpleasant guest kernel panic.
-> >
-> > One of the major situation of guest SEA is when VCPU consumes recoverab=
-le
-> > uncorrected memory error (UER), which is not uncommon at all in modern
-> > datacenter servers with large amounts of physical memory. Although SErr=
-or
-> > and guest panic is sufficient to stop the propagation of corrupted memo=
-ry,
-> > there is room to recover from an UER in a more graceful manner.
-> >
-> > Proposed Solution
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > The idea is, we can replay the SEA to the faulting VCPU. If the memory
-> > error consumption or the fault that cause SEA is not from guest kernel,
-> > the blast radius can be limited to the poison-consuming guest process,
-> > while the VM can keep running.
-> >
-> > In addition, instead of doing under the hood without involving userspac=
-e,
-> > there are benefits to redirect the SEA to VMM:
-> >
-> > - VM customers care about the disruptions caused by memory errors, and
-> >   VMM usually has the responsibility to start the process of notifying
-> >   the customers of memory error events in their VMs. For example some
-> >   cloud provider emits a critical log in their observability UI [1], an=
-d
-> >   provides a playbook for customers on how to mitigate disruptions to
-> >   their workloads.
-> >
-> > - VMM can protect future memory error consumption by unmapping the pois=
-oned
-> >   pages from stage-2 page table with KVM userfault [2], or by splitting=
- the
-> >   memslot that contains the poisoned pages.
-> >
-> > - VMM can keep track of SEA events in the VM. When VMM thinks the statu=
-s
-> >   on the host or the VM is bad enough, e.g. number of distinct SEAs
-> >   exceeds a threshold, it can restart the VM on another healthy host.
-> >
-> > - Behavior parity with x86 architecture. When machine check exception
-> >   (MCE) is caused by VCPU, kernel or KVM signals userspace SIGBUS to
-> >   let VMM either recover from the MCE, or terminate itself with VM.
-> >   The prior RFC proposes to implement SIGBUS on arm64 as well, but
-> >   Marc preferred KVM exit over signal [3]. However, implementation
-> >   aside, returning SEA to VMM is on par with returning MCE to VMM.
-> >
-> > Once SEA is redirected to VMM, among other actions, VMM is encouraged
-> > to inject external aborts into the faulting VCPU.
->
-> I don't know much about the KVM details but this explanation makes
-> sense to me and we also have use cases for all of what is written
+On 11/10/25 09:25, Laurent Pinchart wrote:
+>>>> + - Purely mechanical transformations like variable renaming
+> Mechanical transformations are often performed with Coccinelle. Given
+> how you mention that tool below, I wouldn't frame it as out of scope
 > here.
->
-> Thanks,
-> Jason
 
-Thanks for your feedback Jason. And thanks for the comments from Jose,
-Randy, and Marc.
+The key here isn't which tool is used, it's how it's used.
 
-Just wondering if there are any concerns or comments on the API and
-implementation? If no, I will fix the typos in 1/3 and 3/3 then send
-out v5.
+If you go use Coccinelle for pure variable renaming, you don't need to
+mention it. Same as if you use perl or vim to do a s/foo/bar/.
 
-Thanks,
-Jiaqi
+That said, if you choose to attach your trivial variable renaming
+Coccinelle script, everyone will be better off for it.
 
