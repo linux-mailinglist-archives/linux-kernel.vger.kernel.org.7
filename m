@@ -1,102 +1,235 @@
-Return-Path: <linux-kernel+bounces-894077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266F8C4939E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:28:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB47C493AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18123B00E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:28:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A2B3B00F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F042ECD37;
-	Mon, 10 Nov 2025 20:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0BA2ECEA7;
+	Mon, 10 Nov 2025 20:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCUQg3vL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="0DXESfE9"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52CD2E8B60;
-	Mon, 10 Nov 2025 20:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A2B2EC569
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762806475; cv=none; b=EczMQSO73kB4KrZkymW3b6y8D2utYLctfHcDCl8yyP+2CtVNwnSIIhkc1qZ4HbfQGSeyKQqHRkm/yFRoDJYEgjyHBWxL30soxd8t5VzfGYDdTanFpKQSP37okXl3bd0po0/241I4pjs42rMSrOTuTeUk4jfk7mBtTelz1pq2rHI=
+	t=1762806506; cv=none; b=Ms+nKOK+6DAfl/jPvJfSAh1rxl7ElyilUJPiwyOI2gxNDod2xJ4xSwbX/Ze1ct5JfYfSETtBNUx989dUj3UaVDWB9ieakdNF6TDfhnioIB1S/XU4Eyr23vYN/LM94tcDMzgv7mk0Ra6e9GMlI9eg4hgHAw8o6IOblrPFOcj0VaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762806475; c=relaxed/simple;
-	bh=xqht5VPTMHaX/GKxsh9FtHie1CtnNQDDC8CGQ8gGXr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QdiEvg2iQnxpose2uqHX6C8x5sxjOozzX9uAMvo2FgZgvhW/XbpyDme4Z333MRJjoXxCaH0AWp+HPQV1VtvnJrGzKcbWwg2fcms/obOZ7vpeSMySbYVoYhpRFgEElGxdYB+kdVOPclbvI2U4Zngmi2WDqSPdaRmhTR8OQ8hDFew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCUQg3vL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34040C19423;
-	Mon, 10 Nov 2025 20:27:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762806475;
-	bh=xqht5VPTMHaX/GKxsh9FtHie1CtnNQDDC8CGQ8gGXr4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=HCUQg3vLPwQzlucTGF4oM4w6xX3PkWVbCkeeYQ3xDLcMdKXVI+rx1Hqc6906H2/oS
-	 ffkOChOrZQ7EJ/WXuQkCxksbLlIXswN1RxFDub1facaE5Ij1kX2EigYLiecaNHleTD
-	 LP35Joo5tOBsh8Wtn+x4bPap3wxpBb+gbqF/Jkq4EG2Reagb9whF00/ZjP0Bf/UVCt
-	 n29Qky/NBvtjSzAY2TfGPp/dFB2/JOoYeqCiIHVwVB5hb4Nxr1+uet/kIxVAy+391V
-	 lHBSX6jMVP9M4KORxi2nAOT2n5D54npZkX2UN3Q8G5hf4+coDwyVqYTu7X5dlyOpa5
-	 IIzBgTOc8dgTw==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [GIT PULL] pinctrl: samsung: drivers for v6.19
-Date: Mon, 10 Nov 2025 21:27:48 +0100
-Message-ID: <20251110202748.10090-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1762806506; c=relaxed/simple;
+	bh=U2KPE+a4Gjk2w8tXO3gOnH3+aIIjVM+sZqVcF9kbiaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GOR0SfC2lAFIqPSIEF8CtK4l4fHxrc4OlxXjIH7qm9odMjC/QbxjrARUL1LNm5So9f6sAtcgBhn4FQaQ+lUkeIc3osJb1ifeeYLlrg8ZWieknm70iMPTRnlt8cgCpNFZqEpji65RtVPrci1frZgggjVG+9+SngdgjuK4x2NDu6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=0DXESfE9; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7aae5f2633dso4113841b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:28:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1762806504; x=1763411304; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/v36x1hAUlyKd1IieWoklJ8pc6DivsQnj+M0ePT6nI=;
+        b=0DXESfE9IgF6uIMHPBfVhT9MYO+Z/zPM9nYObFd6wb7gLGzb8ZLekHfT8BI8+vA7yr
+         46cdVNBO0kTI6DdJU+k9wLHyk4DAs/A0p0sxjXuZVUKzWFRE65xSPsLNVit5H/n2Ddhv
+         hoCX0C2cYzbicMfZeFYjvnmox4Qqqdv92C/xmaX+O51kOAQEG6QSHAuFVFUN0EeSntOL
+         JfN6WXtzX0r1BFI1UJu4rFi/8UgfbGM8v5vvUnyj54k2hjuqxysPmvxvpNp7ecCLJVi4
+         wKE6B1+n9ehk7mhdrtPJPJnp9/bNyi+D+oYRiQ1GClslcmi2tBKXH6BLNmeiE650kITd
+         rFQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762806504; x=1763411304;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q/v36x1hAUlyKd1IieWoklJ8pc6DivsQnj+M0ePT6nI=;
+        b=KI0ZXpsnJFGdbOrJtKCSuzCEaViVS0bvrIDgPHD9fqiAmiZbBVXpHgymjCy+eoJEsd
+         X4ai+YgNIx0OCU2Hg6tQ1zAUAr8C+Cr6k5ydMsAat2z5Nz9oJexSsyIHGiI9mTIDu6mX
+         h53H69s7nPDZBBwX1j/7YawYWa2eKUj++ITxT4QGO4RV3QTkid4uPYi4+IdY7Ch4KGp2
+         OMwZmVmBfRo5bnNdgKtYKxblSlA0TwGNsQw9QMF76IHrM+gX6tr8G1FcgkUbLRoQJ6jL
+         2EnWAkXrnrHoLlfZ+H7WfSGQwrYj2YK9QuG2xunZEF9edYC0CJcSUNPYTPpUn+Mm0k5X
+         CvQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjnX4DYUkdEmd8+XjdHezQAXyfoDyICWjuoVV1Rlo2QxJ1biV5eDbojTC1qLL2OtfmQZ1kWbAlB9+La3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw/7rN1CM+l85bgPen4dTufgkIYdO+OjPGQW6gAdttQaG/0EFb
+	HGLgCINzzqlig6btJEg73mdDy5/KpAQON/j93NraNe2UhXa2RZSqaALv6DnKzfZbJsaiZti1w8L
+	N/IzD
+X-Gm-Gg: ASbGnctx+b98bD9Llrtfj7dRgjukgWOwlmHo8SPhsSiH69optmJpWBopfA3dHG0u+hQ
+	4cDhtfPqZxrfU6yR9o9zSguAv+StlAc/bkiKZOsAa4BM7FdYNC3uPsr/OlzaP2VV61aQUt91Swp
+	TxbUQPx/qSdhYjgoSlIUSc5h2oP2semSt+1XpplOZiNIXf9FqyAotrNTVD8FP57PDP4/YjECU32
+	5fZ/N7qRGtua4XhHp4Ui90qEQ0Q+sJ7qR5MW6YQPrfqGFikFLm+N0ajQyWOoblmp9FVgL45P5um
+	OFJRFpuea/Q4q3JJ9gDN+LAj0JsF/8Cn2fJaiG00+V34KFihvv+NI/V+p3IJupU02Rd0g2Y0SUg
+	A2vqb2Kf2Cgg69PCk+bvdy2cfr/M+MC1quAKIz6QiXgTW1QRNF+Urpd/EaooH3ydR0hvldUXD/A
+	mDESo03j+r6Y0TGO3+DTx38TUq6ybCm2PTAcZTyb0wtx3vtmEvRrF6KQtUvKRodw==
+X-Google-Smtp-Source: AGHT+IH39E62oY2rb1DPACln6LUbVJT652sq3AEwuo4V3SoBL2oWZyT4qZRjdpQUUFk3spj6hUT/4Q==
+X-Received: by 2002:a05:6a20:6a1d:b0:340:fce2:a15c with SMTP id adf61e73a8af0-353a0ba080amr10349273637.9.1762806504055;
+        Mon, 10 Nov 2025 12:28:24 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-58-136.pa.nsw.optusnet.com.au. [49.181.58.136])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0c953d0a6sm12689594b3a.12.2025.11.10.12.28.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 12:28:23 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1vIYUu-000000094pP-2u7e;
+	Tue, 11 Nov 2025 07:28:20 +1100
+Date: Tue, 11 Nov 2025 07:28:20 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>, Matthew Wilcox <willy@infradead.org>,
+	Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
+	Carlos Maiolino <cem@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+Message-ID: <aRJK5LqJnrT5KAyH@dread.disaster.area>
+References: <20251106133530.12927-1-hans.holmberg@wdc.com>
+ <lhuikfngtlv.fsf@oldenburg.str.redhat.com>
+ <20251106135212.GA10477@lst.de>
+ <aQyz1j7nqXPKTYPT@casper.infradead.org>
+ <lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
+ <20251106170501.GA25601@lst.de>
+ <878qgg4sh1.fsf@mid.deneb.enyo.de>
+ <aRESlvWf9VquNzx3@dread.disaster.area>
+ <lhuseem1mpe.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1609; i=krzk@kernel.org; h=from:subject; bh=xqht5VPTMHaX/GKxsh9FtHie1CtnNQDDC8CGQ8gGXr4=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpEkrEmX3ZkmzBioa40xqUoItANOt8+TThg8hQP SBHRD59ALCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaRJKxAAKCRDBN2bmhouD 1z5mD/4lksCWQrylzIsRpv9BV8fo0E2sLlWT/KHglodP+t+Qa9oz7X3LDDvbzEqVhRfhqaM8Uh4 WIU+ARcRyvtOKfFM1N/+cOOS7X9+CP1JFtjKwicjlDu+hvT29NwudnUDoaRDEDhxqAgJpN65m6Y ZpFOeSIFCn5eI4COVsIPTBtpmuwcYFOx7kmT22jKxpZNRWTRu8pQMOCssdf2NcNi5CWjaIORb8k GBTM1op3GNFpK/9v2HpwURHHhXuq/zZMGDFYcSdFqThtCN45vJixBiXpJqUU1iYeE+FK2a9NNyS jnwP11IVEPnyOVVCFFVnRY86eeLMupAKu2hoJi7mAY5gR/pj611EegK0JSx2KDujjkspZQsRtBN 4GZjUHx1FlnQqT0s/oncObxD974VeRo2lv9RzmUHP6MPqgR9tVr/em1KbRi6S7R7RJSepxZXx5O QVCzX+QlK0REKj7CSlEwBTOl3jW/o83JAAHbk0OF6qGbR8XtYiH3knbRIvO7njolWUFWpcOqyts MPEaHzGrcEg2hACDrN9jP6K2jUpRpFxYDrSLE/gDyY4yM5ArboV5wr/2x6KG+ZGbtsfX7nWA9H3 Y9tOdeIiPQEs6J2ACsI9P/fTX3OcqvDFRuzJ3qXL6as7g+69Ja1fy4tWZ9bGwqUJLYWiljs4mSO HJeIm/FzxegdlQw==
-X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lhuseem1mpe.fsf@oldenburg.str.redhat.com>
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+On Mon, Nov 10, 2025 at 06:27:41AM +0100, Florian Weimer wrote:
+> * Dave Chinner:
+> 
+> > On Sat, Nov 08, 2025 at 01:30:18PM +0100, Florian Weimer wrote:
+> >> * Christoph Hellwig:
+> >> 
+> >> > On Thu, Nov 06, 2025 at 05:31:28PM +0100, Florian Weimer wrote:
+> >> >> It's been a few years, I think, and maybe we should drop the allocation
+> >> >> logic from posix_fallocate in glibc?  Assuming that it's implemented
+> >> >> everywhere it makes sense?
+> >> >
+> >> > I really think it should go away.  If it turns out we find cases where
+> >> > it was useful we can try to implement a zeroing fallocate in the kernel
+> >> > for the file system where people want it.
+> >
+> > This is what the shiny new FALLOC_FL_WRITE_ZEROS command is supposed
+> > to provide. We don't have widepsread support in filesystems for it
+> > yet, though.
+> >
+> >> > gfs2 for example currently
+> >> > has such an implementation, and we could have somewhat generic library
+> >> > version of it.
+> >
+> > Yup, seems like a iomap iter loop would be pretty trivial to
+> > abstract from that...
+> >
+> >> Sorry, I remember now where this got stuck the last time.
+> >> 
+> >> This program:
+> >> 
+> >> #include <fcntl.h>
+> >> #include <stddef.h>
+> >> #include <stdio.h>
+> >> #include <stdlib.h>
+> >> #include <sys/mman.h>
+> >> 
+> >> int
+> >> main(void)
+> >> {
+> >>   FILE *fp = tmpfile();
+> >>   if (fp == NULL)
+> >>     abort();
+> >>   int fd = fileno(fp);
+> >>   posix_fallocate(fd, 0, 1);
+> >>   char *p = mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+> >>   *p = 1;
+> >> }
+> >> 
+> >> should not crash even if the file system does not support fallocate.
+> >
+> > I think that's buggy application code.
+> >
+> > Failing to check the return value of a library call that documents
+> > EOPNOTSUPP as a valid error is a bug. IOWs, the above code *should*
+> > SIGBUS on the mmap access, because it failed to verify that the file
+> > extension operation actually worked.
+> 
+> Sorry, I made the example confusing.
+> 
+> How would the application deal with failure due to lack of fallocate
+> support?  It would have to do a pwrite, like posix_fallocate does to
+> today, or maybe ftruncate.  This is way I think removing the fallback
+> from posix_fallocate completely is mostly pointless.
+> 
+> >> I hope we can agree on that.  I expect avoiding SIGBUS errors because
+> >> of insufficient file size is a common use case for posix_fallocate.
+> >> This use is not really an optimization, it's required to get mmap
+> >> working properly.
+> >> 
+> >> If we can get an fallocate mode that we can use as a fallback to
+> >> increase the file size with a zero flag argument, we can definitely
+> >
+> > The fallocate() API already support that, in two different ways:
+> > FALLOC_FL_ZERO_RANGE and FALLOC_FL_WRITE_ZEROS.
+> 
+> Neither is appropriate for posix_fallocate because they are as
+> destructive as the existing fallback.
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+You suggested we should consider "implement a zeroing fallocate",
+and I've simply pointed out that it already exists. That is simply:
 
-are available in the Git repository at:
+	fallocate(WRITE_ZEROES, old_eof, new_eof - old_eof)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-6.19
+You didn't say that you wanted something that isn't potentially
+destructive when a buggy allocation allows multiple file extension
+operations to be performed concurrently. 
 
-for you to fetch changes up to 3cfc60e09bdc95483875f0b63cfdc23aea67135b:
+> > You aren't going to get support for such new commands on existing
+> > kernels, so userspace is still going to have to code the ftruncate()
+> > fallback itself for the desired behaviour to be provided
+> > consistently to applications.
+> >
+> > As such, I don't see any reason for the fallocate() syscall
+> > providing some whacky "ftruncate() in all but name" mode.
+> 
+> Please reconsider.  If we start fixing this, we'll eventually be in a
+> position where the glibc fallback code never runs.
 
-  pinctrl: samsung: Add ARTPEC-9 SoC specific configuration (2025-10-13 03:02:21 +0200)
+Providing non-destructive, "truncate up only" file extension
+semantics through fallocate() is exactly what
+FALLOC_FL_ALLOCATE_RANGE provides.
 
-----------------------------------------------------------------
-Samsung pinctrl drivers changes for v6.19
+Oh, wait, we started down this path because the "fake" success patch
+didn't implement the correct ALLOCATE_RANGE semantics. i.e. the
+proposed patch is buggy because it doesn't implement the externally
+visible file size change semantics of a successful operation.
 
-Add pin controller support for Samsung Exynos8890 and Axis ARTPEC-9
-SoCs.  The latter is a newer design of Artpec SoCs made/designed by
-Samsung, thus it shares most of the core blocks with Samsung Exynos,
-including the pinctrl.
+IOWs, there is no need for a new API here - just for filesystems to
+correctly implement the file extension semantics of
+FALLOC_FL_ALLOCATE_RANGE if they are going to return success without
+having performed physical allocation.
 
-----------------------------------------------------------------
-Ivaylo Ivanov (3):
-      dt-bindings: pinctrl: samsung: add exynos8890 compatible
-      dt-bindings: pinctrl: samsung: add exynos8890-wakeup-eint compatible
-      pinctrl: samsung: add exynos8890 SoC pinctrl configuration
+IOWs, I have no problems with COW filesystems not doing
+preallocation, but if they are going to return success they still
+need to perform all the non-allocation parts of fallocate()
+operations correctly.
 
-SeonGu Kang (2):
-      dt-bindings: pinctrl: samsung: Add compatible for ARTPEC-9 SoC
-      pinctrl: samsung: Add ARTPEC-9 SoC specific configuration
+Again, I don't see a need for a new API here to provide
+non-destructive "truncate up only" semantics as we already have
+those semantics built into the ALLOCATE_RANGE operation...
 
- .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   1 +
- .../bindings/pinctrl/samsung,pinctrl.yaml          |   6 +-
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 206 +++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c          |   4 +
- drivers/pinctrl/samsung/pinctrl-samsung.h          |   2 +
- 5 files changed, 218 insertions(+), 1 deletion(-)
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
