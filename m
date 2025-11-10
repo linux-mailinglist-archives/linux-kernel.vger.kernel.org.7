@@ -1,254 +1,290 @@
-Return-Path: <linux-kernel+bounces-893273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0462C46F45
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:39:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360DDC470C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:56:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 34FD334976F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:39:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 894561893624
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C9C3128B9;
-	Mon, 10 Nov 2025 13:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4608430FC31;
+	Mon, 10 Nov 2025 13:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="OcCweNw3"
-Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OFU0s504";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rRHnzvin"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9806C30E823;
-	Mon, 10 Nov 2025 13:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.164
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762781819; cv=none; b=OoNqOPRPnIXI9L6vY+iIO5rg2J9neafWzenuJq78Mswf0r2UKF8gGjdQyhJlOTSw09QEd0xI+IyipF+VkDTBsFerD9HGIDpIf4eT/75Hutak16z2RPdfNGwHWgwXDB2sDdUB0Tt+j4+XOgMEYCAAiKtouq51wzvMGVaYBUEI0vc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762781819; c=relaxed/simple;
-	bh=TTVRf7PvrZHkwz5xS/sAIoR5ffgGm4Qc1T4+hdwRy6U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ADK4SBpXUzbZ0AI55DDQ30DUaZNLvfNerZG6Yysegnc0gx5cuME7j+FYFv1kFIK84aZmxZuSU0I8OQV2/BE9bwCe0e++TYemvNkcZYbRxEHtJWiT52caqUsglMJnN8AisfwrIQKhdVRavCzGa+nYbIB2VEhs68EDud4Ut1srsWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=OcCweNw3; arc=none smtp.client-ip=91.103.66.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202505; t=1762781809;
-	bh=Z24k+LQZs05VjiiN2ltNPT89oDxAmQ/6P/qF1hm3qv4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=OcCweNw3vb9jy2lz7l6GQ8gmv0I+gcRQhVDkwPCpSDwr08Q3rHXVnJ7RBtgUnxbCQ
-	 O6i98Wt5XZdzXHgPmhdKwsyETn8WoruSckkFRovH7HbL1pucmgeFe6E9GTNLKf4d7c
-	 7Ls+iLFAVufN+zfDhUfdFEf5m5dNn7sFRqFSL6g3cprwx2FGOAQ4pm+vyx2D1Xrlo6
-	 ppfDT5lv7papwnVmUdLnQ8Z/MG8y9RRY/GMnX9sPOm5/pZnDhmgS1BcY6gAM4R/fTh
-	 wCIFliiGwCT2AFpzjys9p4h8/JMgZdGr10TmsJ5frMHSy41AFZ2Aibt8udJtlGleSS
-	 MfgjQJ6TaZRRg==
-Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
-	by relay13.kaspersky-labs.com (Postfix) with ESMTP id 8C2263E24E5;
-	Mon, 10 Nov 2025 16:36:49 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 86E023E21DC;
-	Mon, 10 Nov 2025 16:36:48 +0300 (MSK)
-Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV2.avp.ru
- (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Mon, 10 Nov
- 2025 16:36:29 +0300
-From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
-To: " Chunfeng Yun  " <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>
-CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] usb: gadget: pxa27x_udc: add proper errors hanling
-Date: Mon, 10 Nov 2025 16:36:09 +0300
-Message-ID: <20251110133612.159057-1-Pavel.Zhigulin@kaspersky.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B0D3126AC;
+	Mon, 10 Nov 2025 13:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762782946; cv=fail; b=Js+y86VTGVwU8P8BivBENim+TOv9AvEyLooP/ABYj5ojrH+I4PPdNry2XVY20tOa5yth/EbnhGIYdEGtkts2+4kfrebCSrCVGSPUlahrodF1LxCq0fPad37ED9tdga2Y0DPFlgCJr/qB6ZOrZtS2zMb2Mn8tUMDIsRCyYQI7X/w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762782946; c=relaxed/simple;
+	bh=7oS0LgHKjh9hv8C2QcmMb0MuCqIQFYgGmuVLEjk/Y9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YesERAhfoYfcuekGNJg63I7igQZ2K2cece36V7zmsFIaGKUPyQOi6piZxAI0X+LRHfx6q8TAvw9Du+OKVcwZ0wXGKsP1Cp6zh1Clg7kRBj7fYAgkBwQbjRhgJVxEXfB9bFH4ZBZ2mvwmwOgoljmti8SrTT/hy1DbQ5OPBID2mNc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OFU0s504; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rRHnzvin; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AADj7Jm021571;
+	Mon, 10 Nov 2025 13:54:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=iC2s76TZhSqG9VO/Pp
+	mRZmj+s3DgG+16W+SGvWRRVFg=; b=OFU0s504QfP0XcVtcNPtAaJZ4SdkFnd5eY
+	awCFgz9QL17X+qg2MTmCqZB9ZCFu7Ba0Hu26fT9FviKpe017MpJ0fmEXQWCzxeJE
+	2zyaJG+KHkqg1iYyIsmN/QofdvG6StYTdU0gg0S4Y/7DylAr8x1l8dKywAZhnlff
+	A3TDcXu9eoEZcI66zJNKqiX0skBQFW0N2dBboY8mANxZxzGSzjn2QjEf5peIDpQh
+	BrdVMdq29ATemNv0sxdFn31iENXL5yDgn0/6fvwhEu4KMtHFMsX0XmPtyczjr5UJ
+	IaTmrOVsNmVqGto5B10M9ZTPI0cwhSovVyBJgdRE4mN1TD8RR9DQ==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4abh7700sr-4
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Nov 2025 13:54:30 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AABpW2F012544;
+	Mon, 10 Nov 2025 13:36:17 GMT
+Received: from sn4pr0501cu005.outbound.protection.outlook.com (mail-southcentralusazon11011058.outbound.protection.outlook.com [40.93.194.58])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vabn92w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Nov 2025 13:36:17 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vTvSibMo0SDhmWw/tZlDiBVrS5wrDyRpsKpuFjRC/xyym+xApgN0j2mPY3VJ5BjOqS7/ZtkkYNeB2BymK2OPIGueK8SzVtbZBX8uaBIHxfCMzZspGD2kkflf6g/WMSfJdsAGtY8WVcLPBJaUHD3CnPnJEEZTJubcm3zqx3TqDoNUJT0bHUw1YaFF66B4lJMosc6dKda0bowozec2yznHtapulBV4mKRbGcYzroE34CDDEjdBCqA0AlKNDefje1qjUE4Arjo7gO3aGfX3/pXHsNW9cU1CPiRhUu5ee9FkR8zbiy4tV/fbaQ/modTG8lGzWtDVG+nPjCJBiIyd+nbDgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iC2s76TZhSqG9VO/PpmRZmj+s3DgG+16W+SGvWRRVFg=;
+ b=dSDdw4DyoTNOw/GOkB7gGU+q1UWWgXvFjBP2pGFRoXOd8hjkVKUl/Py5Lx33pCLPlKcCm0NvX16VJEFNtfU25StSex6AksOTh49gTJ8ygprHDwSqDy+R5n2FR6+2ZwyBX3ZgPT5+si0jnSob8LukHrRB9k2rVWWStqUYeLjw+H6f7ZfrBh9pyOUwlsC3hIJSr8R9BYm5BBGzUFAkzktkRK9aFT1TSTU43MbpXXsW8hZKV+33XJljr1S81BY/ngxRu4emNL1TFqUvSBptM2YJVOf080burx9E8yO2jwZciuTwVBakJrsZvP9jPesWDH/JQjE1AJkjY9qeekrk3LLX1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iC2s76TZhSqG9VO/PpmRZmj+s3DgG+16W+SGvWRRVFg=;
+ b=rRHnzvin8sSYsGms4cYmuxdkCaTJ1bWJd+dDd5DsWaOFH4utrEEic30xJpSalC2aRLz7DQOmVm4VBnZjzIgY2ULrAo49kb5ceeUeQuOXyKrfL6j4uLY9e09g941fRV1IKSPeOq1fZmM2O+85iSsWeUSaDUbmzDSHPWHh8ttq6xI=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by IA4PR10MB8398.namprd10.prod.outlook.com (2603:10b6:208:56d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 13:36:12 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9298.010; Mon, 10 Nov 2025
+ 13:36:12 +0000
+Date: Mon, 10 Nov 2025 13:36:10 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Dev Jain <dev.jain@arm.com>
+Cc: Shivank Garg <shivankg@amd.com>, Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Zach O'Keefe <zokeefe@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        Branden Moore <Branden.Moore@amd.com>
+Subject: Re: [PATCH 1/2] mm/khugepaged: do synchronous writeback for
+ MADV_COLLAPSE
+Message-ID: <312bfcbd-d31a-40d3-8b9c-edc7b6166113@lucifer.local>
+References: <20251110113254.77822-1-shivankg@amd.com>
+ <f21b37bb-7a2b-412b-be76-e8968b4c375d@lucifer.local>
+ <3f5f8a48-fa3b-4985-95e1-dd0ac21b5dcc@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3f5f8a48-fa3b-4985-95e1-dd0ac21b5dcc@arm.com>
+X-ClientProxiedBy: LO4P123CA0143.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:193::22) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: HQMAILSRV3.avp.ru (10.64.57.53) To HQMAILSRV2.avp.ru
- (10.64.57.52)
-X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/10/2025 13:26:37
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 197932 [Nov 10 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 75 0.3.75
- aab2175a55dcbd410b25b8694e49bbee3c09cdde
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: zhigulin-p.avp.ru:5.0.1,7.1.1;kaspersky.com:5.0.1,7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/10/2025 13:28:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 11/10/2025 12:24:00 PM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/11/10 10:58:00 #27905202
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA4PR10MB8398:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd79a80f-517c-465f-d226-08de205e1d1d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VzcCA9fq4tmHSS80/PFpfMu5RMhmbMkFEzWgI66mlMjLs/C/SUxpItLpIcoQ?=
+ =?us-ascii?Q?PUiiPuxO72cSy6LEZMFRseSHNAwUBFCoMx9LYcMHQliUT/Ob5JvSpeEON2nJ?=
+ =?us-ascii?Q?y3JA8FI4Nw/cRmd9wxKrJFb6dFlrX1zEvYt0nuh0gP8393PEwkGaLx6P+bI2?=
+ =?us-ascii?Q?rpctAGjV8YADtkfglCY2ajS5d1lBL0tlbfeuA8YWucGqrkTFlS2G4pEdw2Ug?=
+ =?us-ascii?Q?Zqbv18/kU4p5U33TiISjwRswcNNCU+YgQbfuUonixrqNgF4BmuHNNihzHQ5e?=
+ =?us-ascii?Q?fkJmgckCQ1SgffofVDDlrQqjRebCq0YxtUjCnHd5gN58gqnCuJLM0tQGZUed?=
+ =?us-ascii?Q?GhORbuzLQ3+JTOWZZsZSDbWUIYtvfrzLmOcj6cIZrReAg/gFp1BP5ig0VORg?=
+ =?us-ascii?Q?FLjz+aukry1q8Zgc6uay9egtofq9sbNjb7IndMW/A8vqmVkzI3uoQo9F5WsZ?=
+ =?us-ascii?Q?RZ4+mzWTEaNoA2v4OKaEfJm2qUT92o+WiHmIAdPKKltEwev/utR8Q5eWwm5g?=
+ =?us-ascii?Q?oFGyFSY1jv2HoM6uDp4T98WoXcdlvP114OJ5mmqfHfogVcduc2ki+6fPJ+5+?=
+ =?us-ascii?Q?Z27vQgIQNdID+ouEJAH6ovpQxgq8vFdEyLt+bNb2IuPKEOjLnjgDrdlu3n/D?=
+ =?us-ascii?Q?JYgzmd1PUJPkr2Xf0m85gZMxr9GvgG4Cv4fvinanHaiSxRQK1qlkfdMyVeRf?=
+ =?us-ascii?Q?Ig3y7vkeV5QvSBIDXXOSxpYFSPu1xfcqcZs2f1ePr79BKsqqX0mRSJ8Tfqjg?=
+ =?us-ascii?Q?B3noOMCkJO8F5cJVmMXdayaR6kjOkuYkY8WxGnC1nlKObjZovho8aQPY9Mcz?=
+ =?us-ascii?Q?Rv+lIwowoI4XADVnkZlqscg1SxvnVMsC7f5UGQ3SH9TnMAVAKgetGuNBuHE2?=
+ =?us-ascii?Q?Wk5EebO91pdwPgaZqXVa7gh3ap3nRwSl89bgIzuuoZzYl9FXjwpdZhuCSaLx?=
+ =?us-ascii?Q?RRblsd8pPfzc+XoraD/scFzvamXRjm6h6ceS0DOc7ooFq+OkSQ6XEw9O5103?=
+ =?us-ascii?Q?O0cOcYBEzw/MQgnPKZ06vakedujD9vcf6JosDZa8AlBnAEVshWr8uKBzNZDR?=
+ =?us-ascii?Q?4nGzNZCky+up/K7Tbi6+6JK80UVCOGYKKtO3t+/pMiE9b+2aMyRq5yJZJ39o?=
+ =?us-ascii?Q?IqhOgsSX4x4i4FKYuMwROV4QU8NqFmygsE9HiCz3Q405ZHdAB91P4T4N40HV?=
+ =?us-ascii?Q?ZAnCWwU8x1pB8P7E761ywuMDgSlX4dn1sYILaickcO1zYfGWS8zQkIaUxjRK?=
+ =?us-ascii?Q?k2mf4CJ10M5+cyCRK2LFhAZuQ8EYK8/LPJh8C88ShkSsR9aT7juVRRR0QtrN?=
+ =?us-ascii?Q?LyIwdIDp8aldQt+9shDSZqo28yrd+pkdT6+jIio0t2ATSIfl7+EUrmAqmaYP?=
+ =?us-ascii?Q?c+zh2sJL4hp65Ad1VfUM0rttPpYjVesVQ0pQb0AL188nNZb+pTgKFre1Suds?=
+ =?us-ascii?Q?eV17KLvppyRPACUXHEyr48mH+3HXR7xg?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pihkEvpYSEkdKzyvhZ94xmHNRpJzgmP5x1vSRqJLBVW+Nln7xUYpEcoS5+tm?=
+ =?us-ascii?Q?v7f6ygOIUKTvCtSR1mte6HtqLpp0x6dTlmYNs4My81bLTnZibNu4td+U6v0v?=
+ =?us-ascii?Q?girPQR5AeEmcC7xW1EUv4/lPQHS0NTvzulMjiemN0hFppwW427f8Nmik0Wen?=
+ =?us-ascii?Q?9TkXckmml1LhF+a5ZKcLi0HhmOsKOVGJLdExljmlNkIohXW5ronREEFjCcgm?=
+ =?us-ascii?Q?7MuzyL0hESOJcNIythPJWfQufMLnd8ukqFDiUqCE3tI9wMfsIlWj4GK7P2Ed?=
+ =?us-ascii?Q?iLUOwe5RNkSfxrW7DP8H0zW87hzGVLaYN1HvTDwVwlIJlz0YEoDeoX3cdzvR?=
+ =?us-ascii?Q?pHsA5fkL2mlefI+ZE6aazF0yPHfCrsmlewikfwQD1xozlM0BCfUW/wlvtTxH?=
+ =?us-ascii?Q?XFwpFatie59032RnsicINixNbKCiLo1mZLskxxl9gxYDNPe1ku0OUv66Km22?=
+ =?us-ascii?Q?VlYEVUiD/QldDVYZc7l46y1TS0BlpWnnlG8V6P8aJsafnyubzw/+fj3Unip1?=
+ =?us-ascii?Q?LGbg5FPWudZWNwLXvPqdnvLpBmVAJ3tzE4vTkdukqWFJ3pTqvwFEKjeoG7xW?=
+ =?us-ascii?Q?QflIRS/NK5nJseTaNyPydcbOO+xLtMmKC5c1O1pii5TMbStUT3PT2b6KTbDl?=
+ =?us-ascii?Q?41VuGNZoV10y1P+2hTWIpUCmBOiaqx55neHfgJ8F54wcCzkRnJfSvCOSUX52?=
+ =?us-ascii?Q?UtSGsKu1HUVoy0SnYKFauQn0q1FRzzcZLuJbv6AoZ6P/fMbEyJe1F/zuvL0C?=
+ =?us-ascii?Q?60mcKDFAXUhhXKK/UYM62ziOewW4R/1KMXbykx3NUjw0CT6M3YbIpYzIPbeH?=
+ =?us-ascii?Q?HImITTpR/UxkpG6PuartPIAOz3NaBAYavpmVV+rD139J7hmb7/Hu025WKFuY?=
+ =?us-ascii?Q?zLY/iilbWSLVYB+HRumOev9Pr4eLwumqVW6Nohnm8K1zX1U0bDKwZemMlg5n?=
+ =?us-ascii?Q?8vNlUdcNOfE/yi936jZzc44VMgog4bRXAOPC/dD2kVBL4/NDVNoAjxCR7pXD?=
+ =?us-ascii?Q?0YeAmtN+AR3xRhjD7bIPzNVrX13PjZXWtmMhIvZ/+aw0NT3aT/PySvnxM4zE?=
+ =?us-ascii?Q?VR+OOxijBndrNcQMuYtvjri6UMlIw3lqCMK5uNeunWXc/vmBF1gJFi+uxf/P?=
+ =?us-ascii?Q?9fhneC0CYRWD5pqUMTvJpHrHN7QefuPO2ksDK8+17l/gLCbRCqRBSaScu1qe?=
+ =?us-ascii?Q?hftVsKPz0i6J+I8QsH4iooN3mknYtohCzOMMueeGBSem6+7rgU+UzIkhoK2W?=
+ =?us-ascii?Q?Jn7ltlzURPUflrmuB8f9gzeApHv+o1qNxuTF0HNlG8z800DhSbPYiHTAC2Qv?=
+ =?us-ascii?Q?eL3k/FFSQFMEtPDnlyet7OEgdKvJLAx4k+bkuR8N0z3GZ5MYurH3hOvqhE9H?=
+ =?us-ascii?Q?YiBJg9kUPKQJn04SNQPDE/waX8vDODYnQarikTf137cq6G3phOYJsi/mD92M?=
+ =?us-ascii?Q?N0IMQfrKm+lcoDnfIt5JlmWFb5z/V+s2szUeWXf7WBrXodb+ns79PNV7kpF3?=
+ =?us-ascii?Q?nr5T1KAX6pF3munnoZ+JqkQU4KdLQBghZ4xuBp4m5mpcefFK6kCCQgqWDQC1?=
+ =?us-ascii?Q?XI0/3lpI5xc4HeiWoEdEGwNnvGhvGah5n2TbDQsIP+4LU3BvLUsN1mX7r88M?=
+ =?us-ascii?Q?Cg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	xPL3YlikUcgGmFFtKUZuws1VXc0ElxlV8SHkv789FW+wedYo3bWIL6iPPZd72U2TImWb7dE8sH+jgPtQx3/m9Jqqz0swuJhhYCAF6ebG7/xgJV7mF9vo0S5hLpk3GXziNDSmlKxHAwxcV0krrOWOl9lfsDlAxz7sPsg15qLVafobBB0ux3K76QJUfWUvee9MthvCuMURDMm5eYjX2DEQAZpRfn9HXQsd5ckb0mySv8YYYb0L6204gddFMPvW8BWXWroNkVNgEeL9KgajM2tC4lf7Qr3ygx00xwVMtl1BC3HLMbJf2BRmB8TGzjHxVx9VqQhN9odbtSQ/K3nP6ZvoCsw1JInm1niClqGMWReWZRWKN39BpIp35KXm9cV0Xlkym3PMs6FcXFgFO1bfP2grJvlWJpIRBAN0j75o9REe5Nx/85Kf+XA4p38vtOdaT36MDyats13Nzl1hWVvO08yPFQnx4bvGTKl5LAtzG6o/jBPFZ75Dn9DE84gM1Eid8gKu8eaPfLV49Brl+LUwgiFeRyM8Wu9Au0lc+E1c2nOs2V3tGwTPWMVunckVAwT6xKfM2bRc0TtMFWGc9MNTNFnK0rR3tm/SDz348nWJ2vYbVHU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd79a80f-517c-465f-d226-08de205e1d1d
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 13:36:12.2290
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: i1RZmVaAf8QPuTXorpWjCYNC+L/yQaR7zw2P+vRzgvGV0HpsT3V0sR8vkXFhgUtPhftjtUqkrFbTtd/3c/Xm0pub5v+18ISTQZNJLwEVD58=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR10MB8398
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_05,2025-11-10_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=422 mlxscore=0 spamscore=0
+ phishscore=0 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511100118
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDExOSBTYWx0ZWRfX9PsYdLpfDFW0
+ 6RiBjBwsAKGFr85o9CZQ/crRI7qILS7vyVIlPsKhVjirGq1FjxxNS1cfJHkuVdnP3Rm1i2nDrf4
+ NiaatfpEm7ep4b9XO8CmbWSjMOItilxDRAfvF+QRttIAW7EEY5YsmYwyntcvkTHgJcLLxxJ+FbZ
+ pbPaMjDqO2bQJCxSQnwBLqoFW66TRLZc83ECxU/skE7ENHDGq7UrJBmNxSMt5F6sVnhDS+M/lhj
+ Q5oX4gk4CRkV1jikjr298xEF13PcdzzPF9I07X1Ne8e450WojAo8IDNytC561OhzwOM2rVf+DVm
+ eGn2OXloJj5WTXUhWIgmkn/pHOdslrYB7kEQQWZVL/lPFfppBYAUOdonkcbAJ1RgF+yq9FlDUkK
+ EgXM6lRFymbaULx+SHlXaxz3b/AtVutYfPOb3/CM2YJGw+Q/n1Y=
+X-Proofpoint-GUID: BPjEZmrBajVvCgEW2gtfRxDE6VTV6Trs
+X-Proofpoint-ORIG-GUID: BPjEZmrBajVvCgEW2gtfRxDE6VTV6Trs
+X-Authority-Analysis: v=2.4 cv=YMWSCBGx c=1 sm=1 tr=0 ts=6911ee96 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=IRMTovPIFS4hysGKdU8A:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12099
 
-The udc_enable() function previously returned void and ignored
-potential errors from clk_enable(). This patch changes it to return
-int and propagates clock enable errors back to the caller.
+On Mon, Nov 10, 2025 at 06:54:57PM +0530, Dev Jain wrote:
+>
+> On 10/11/25 5:31 pm, Lorenzo Stoakes wrote:
+> >
+> > ofc you are addressing this with the !cc->is_khugepaged, but feels like we'd be
+> > better off just doing it in madvise_collapse().
+>
+> I suppose the common case is that writeback is not needed, and I don't know what
+> is the overhead of filemap_write_and_wait_range() in that case, but your
 
-pxa_udc_pullup() now handles these return values correctly.
+Low.
 
-Also, both pxa27x_change_configuration() and pxa27x_change_interface()
-now check and log negative return codes from the gadget driver’s .setup()
-callback to aid debugging of failed reconfiguration events.
+> suggestion will force that unconditional overhead and skip all the early exits
+> possible in hpage_collapse_scan_file()?
 
-No functional behavior change expected under normal conditions.
+Which are?
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+PMD-mapped folio at start of range, scan abort, non-LRU, spurious ref count
 
-Fixes: eb50702539f9 ("USB: pxa27x_udc: factor pullup code to prepare otg transceiver")
-Fixes: f4fd094cdfd1 ("usb: gadget: pxa27x_udc: fix clock prepare and enable")
-Fixes: d75379a53870 ("usb: pxa27x_udc driver")
-Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
----
- drivers/usb/gadget/udc/pxa27x_udc.c | 42 ++++++++++++++++++++++-------
- 1 file changed, 32 insertions(+), 10 deletions(-)
+I don't think this matters.
 
-diff --git a/drivers/usb/gadget/udc/pxa27x_udc.c b/drivers/usb/gadget/udc/pxa27x_udc.c
-index 897f53601b5b..58b7f85667bd 100644
---- a/drivers/usb/gadget/udc/pxa27x_udc.c
-+++ b/drivers/usb/gadget/udc/pxa27x_udc.c
-@@ -1462,7 +1462,7 @@ static int pxa_udc_wakeup(struct usb_gadget *_gadget)
- 	return 0;
- }
+And we're trading for putting _yet more_ logic that belongs elsewhere in the
+wrong place.
 
--static void udc_enable(struct pxa_udc *udc);
-+static int udc_enable(struct pxa_udc *udc);
- static void udc_disable(struct pxa_udc *udc);
+I mean I'd actually be pretty good with us putting it literally in madvise.c,
+but since we defer the collapse to khugepaged.c then madvise_collapse().
 
- /**
-@@ -1519,17 +1519,21 @@ static int should_disable_udc(struct pxa_udc *udc)
- static int pxa_udc_pullup(struct usb_gadget *_gadget, int is_active)
- {
- 	struct pxa_udc *udc = to_gadget_udc(_gadget);
-+	int ret = 0;
+>
+> > I wonder also if doing I/O without getting the mmap lock again and revalidating
+> > is wise, as the state of things might have changed significantly.
+> >
+> > So maybe need a hugepage_vma_revalidate() as well?
+>
+> The file collapse path (apart from collapse_pte_mapped_thp) is solely concerned
+> about doing the collapse in the page cache, for which information about the mm or
+> the vma is not needed, that is why no locking is required. The get_file() in
 
--	if (!udc->gpiod && !udc->udc_command)
--		return -EOPNOTSUPP;
-+	if (!udc->gpiod && !udc->udc_command) {
-+		ret = -EOPNOTSUPP;
-+		goto out;
-+	}
+The user has asked specifically to collapse pages in a VMA's range. Yes you can
+go check the mapping of a pinned file which you're keeping pinned during this
+operation (wise? Not sure it is).
 
- 	dplus_pullup(udc, is_active);
+This would be the first time in this operation we are doing a _synchronous_ I/O
+operation where we sleep holding a pin.
 
- 	if (should_enable_udc(udc))
--		udc_enable(udc);
-+		ret = udc_enable(udc);
- 	if (should_disable_udc(udc))
- 		udc_disable(udc);
--	return 0;
-+out:
-+	return ret;
- }
+So no, I think we really do need to revalidate.
 
- /**
-@@ -1691,12 +1695,18 @@ static void udc_init_data(struct pxa_udc *dev)
-  * Enables the udc device : enables clocks, udc interrupts, control endpoint
-  * interrupts, sets usb as UDC client and setups endpoints.
-  */
--static void udc_enable(struct pxa_udc *udc)
-+static int udc_enable(struct pxa_udc *udc)
- {
-+	int ret = 0;
-+
- 	if (udc->enabled)
--		return;
-+		goto out;
+'Collapse some random file we no longer map at this address' is probably not
+great semantics, also of course, we are revalidating at each PMD anyway.
 
--	clk_enable(udc->clk);
-+	ret = clk_enable(udc->clk);
-+	if (ret < 0) {
-+		dev_err(udc->dev, "failed to enable clock=%d\n", ret);
-+		goto out;
-+	}
- 	udc_writel(udc, UDCICR0, 0);
- 	udc_writel(udc, UDCICR1, 0);
- 	udc_clear_mask_UDCCR(udc, UDCCR_UDE);
-@@ -1726,6 +1736,8 @@ static void udc_enable(struct pxa_udc *udc)
- 	pio_irq_enable(&udc->pxa_ep[0]);
+Maybe even do a addr -= HPAGE_PMD_SIZE; continue + take it from the top?
 
- 	udc->enabled = 1;
-+out:
-+	return ret;
- }
+Maybe David has thoughts...
 
- /**
-@@ -2078,6 +2090,7 @@ static void handle_ep(struct pxa_ep *ep)
- static void pxa27x_change_configuration(struct pxa_udc *udc, int config)
- {
- 	struct usb_ctrlrequest req ;
-+	int setup_result;
+> khugepaged_scan_mm_slot() seems to be serving the same function as maybe_unlock_mmap_for_io().
+> So I don't think this is needed?
 
- 	dev_dbg(udc->dev, "config=%d\n", config);
+We're talking about the MADV_COLLAPSE case so don't understand this? I may be
+missing something here (happens a lot ;)!
 
-@@ -2092,7 +2105,11 @@ static void pxa27x_change_configuration(struct pxa_udc *udc, int config)
- 	req.wLength = 0;
 
- 	set_ep0state(udc, WAIT_ACK_SET_CONF_INTERF);
--	udc->driver->setup(&udc->gadget, &req);
-+
-+	setup_result = udc->driver->setup(&udc->gadget, &req);
-+	if (setup_result < 0)
-+		dev_dbg(udc->dev, "driver setup failed=%d\n", setup_result);
-+
- 	ep_write_UDCCSR(&udc->pxa_ep[0], UDCCSR0_AREN);
- }
+>
+> >
+> >
+> > > +
+> > >   	result = alloc_charge_folio(&new_folio, mm, cc);
+> > >   	if (result != SCAN_SUCCEED)
+> > >   		goto out;
+> > >
+> > > base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
+> > > --
+> > > 2.43.0
+> > >
+> > Thanks, Lorenzo
 
-@@ -2108,6 +2125,7 @@ static void pxa27x_change_configuration(struct pxa_udc *udc, int config)
- static void pxa27x_change_interface(struct pxa_udc *udc, int iface, int alt)
- {
- 	struct usb_ctrlrequest  req;
-+	int setup_result;
-
- 	dev_dbg(udc->dev, "interface=%d, alternate setting=%d\n", iface, alt);
-
-@@ -2121,7 +2139,11 @@ static void pxa27x_change_interface(struct pxa_udc *udc, int iface, int alt)
- 	req.wLength = 0;
-
- 	set_ep0state(udc, WAIT_ACK_SET_CONF_INTERF);
--	udc->driver->setup(&udc->gadget, &req);
-+
-+	setup_result = udc->driver->setup(&udc->gadget, &req);
-+	if (setup_result < 0)
-+		dev_dbg(udc->dev, "driver setup failed=%d\n", setup_result);
-+
- 	ep_write_UDCCSR(&udc->pxa_ep[0], UDCCSR0_AREN);
- }
-
---
-2.43.0
-
+Cheers, Lorenzo
 
