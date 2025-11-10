@@ -1,47 +1,81 @@
-Return-Path: <linux-kernel+bounces-893008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C374C46513
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:39:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C55C46525
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:40:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1ADB3B6CC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:38:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8A24189539A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA4F3081CD;
-	Mon, 10 Nov 2025 11:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080F5309EF9;
+	Mon, 10 Nov 2025 11:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJaSqtLg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aDasOyGa"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4296309EF9;
-	Mon, 10 Nov 2025 11:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973852FBDF3
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762774733; cv=none; b=B25m6qX86xDtccCrRbmFD7qv1EIRkiz3jTJnNmWO9ijJ1UapZHb3xuHafxoOYUbVav/vMlQdhUh6UeQqHRM1QaY4jifdOTAlgMUYcjYLLbOYkJovIAwqlTjXyhNIJ9nzsGSmhgqyOzdpN0VLhODg0gXphEt4b9GgZqN+7zHeKok=
+	t=1762774737; cv=none; b=Q/aE/6Y9vBjEcDOdzhhx6maxLToxVHHrACpQup0rYaZs9rI2LewXu8wbJX/JP16Bb42SWuT9TQPIHTtE1bUAOPb5ELXlTN9fhY+nbKtnWBAHa2ncbFD3jDyW2PypKKmjegbAUPJkDW+0MamyF1cOd9tgy04HX6UnW6HQgmEHFfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762774733; c=relaxed/simple;
-	bh=AgqRNHlM28QFo1a1gtxVwTp0nGA/pHQtS0abwMu9VOc=;
+	s=arc-20240116; t=1762774737; c=relaxed/simple;
+	bh=442tawppyk6VW4zUh6UCP/rG01cfIHZsqjC14wtPq6I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NHRu4JSUlicgqFKEJamTL/kuU9su4ljDZuM2gnq2C9y9N7hKpXd7HUvnRzXrNZ+p5yTkz+1cFwgxrBQIa1ZUFtwNl1ppEyfwjV+v4jT5P7mN68I5HTdCEUgVp0Ir/3K0YeZIfo1Kw+73W87jW79C0dGUsUVz/dXDm6QnCmJeDAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJaSqtLg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01475C116D0;
-	Mon, 10 Nov 2025 11:38:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762774732;
-	bh=AgqRNHlM28QFo1a1gtxVwTp0nGA/pHQtS0abwMu9VOc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EJaSqtLgJoBnUagiGNQVs62D7nvbF1c6hPdzeseRRY0g4NowPmn0yP2ilFRqTGqUW
-	 sPzkkTwJN5cjPQUratvqSN/q4oUc88lzC+xgup0xuMr47TNPr85oYO4t0K8e79SH5D
-	 ruSwgoiq59BcaR0tj0vsS65NNiWAPw1gwHLyExzon9keUMMA8f+r7l7qifUYC2Gi+d
-	 mF3mBDe4tSInlDj1+LN0ADjIht/yti36STMl1jUDDEq6SDnTJNUFZbx59UwbDrMoig
-	 jdDJS0HlpPJS0ysSAD9mfFsm9LvUEmrRe1v7u9afR9zdxlTsvSINT1gbgQewAVAa26
-	 Shp8A7TPwDztQ==
-Message-ID: <6a57032b-3726-4074-9212-f0f16269f11c@kernel.org>
-Date: Mon, 10 Nov 2025 12:38:47 +0100
+	 In-Reply-To:Content-Type; b=bMeiN6wpITs8atRx6+VLogaloL6oTx2sSXR23G/dnvhbzBwUot+ACVK3A4CizASARV4XQYvukhLPtOfLdklVWRVF/TbdNK86MeV/Ah1HGIQIPAoaRbOzglWwdivYVqIYea3Q/yD+EStp0tEZGjXR+wvxWyizoliwOtRtGP+8/no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aDasOyGa; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4775ae77516so34783225e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:38:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762774733; x=1763379533; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PDGyqZKTc6nb0bCAbSIQ1bmZ2i6gcCfwYTLcd5wNs/k=;
+        b=aDasOyGavf9cMAYOVFCg8V0Bts9qDcLZ0U4MZWY5IBd1UjKRuD8Bk7J6p3+XsWOZ7J
+         An45SH6ebNL+8/Dgnj6jkLoJ5YCEdMudgRmr4una4/tsPeAfOgJ87uDsdiMsSfTLvoJO
+         GowvWZl8np0p3ky+/Mn3BbXl4i3W1+wtaoMrZissmKo0t3L3DZKDBqcwDq9J2H/vKdOX
+         Z5RBf6E1o8/7TLhawbW2eSvMgzs8v8wTz09bmiem9BAG3elJ4yqHT3ot5GqwBjJ9hp4E
+         fHWXJSKRegWjDFMcMasqoGfifk47kx4mdjO0FX2s2iVifHJF+ei2Iiq3JncykkQLVORs
+         sJoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762774733; x=1763379533;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PDGyqZKTc6nb0bCAbSIQ1bmZ2i6gcCfwYTLcd5wNs/k=;
+        b=JkU8HXOYhC5bkU4Uh/vj3qJ16A3eGIbXtj67eGOH7PAnEwZyrDAe6Tj7z4aYFlRy1X
+         7PJNSgKHgto8dbZZsAj4CjzEjjtmj2FwSiRKrJZ5LWdZO3GOjJ36gmrjsNz9X0oghPoE
+         M3h6CsIfll41ckZfCcfjA6Hfay+nM60NVKt8akTSSy1fD8LUa1BCMRZMIxtB0UcyQ4SN
+         l+cUxK/vRPT0yD67FJTR4xJV3gHqqpaQS5CGSbrIlbVe3mD7ermicE9VKpBSWzUJYjre
+         rkfPnfpWD7J510qNWVxG1fVTqcWeRyNB5DTDxAgP/Lg+n43XFKmOkGN8SjrYAd9oGZjT
+         D9dA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFDytTAHzxGdhxXpgb/Vx+z6UDFsWXgoE0XpPTL1dw62I47h3n7gmIStykePu8l1jmUzpc/AD+GkUQ4Jw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7p4mKLyIXXaV9ItfEYm0Yu9DolIp4lmCfGFD9m2d0Rd57j2Ut
+	SAVWIpquY1tBBUU3SuMM2CvF+/Gm1jmKcbWDu8omeCGzjkiRbcBvrswpixidqFpRDYg=
+X-Gm-Gg: ASbGncvsKj73iJf+2bj9uL1zJnHY//2jBjDjVJF5NCI2BlNx5aIG33CWFd/nzg+L216
+	ny3KTLX1RsuX6VVNBS50EMAxeROk/zgkvupA5OWVxd5LwxTysASW2GS1P/j98TjL2m5KgRlJnqc
+	bDIe3CabBn83XOxSv1KdIJrm2GvjHEeEsJ9cHE7sj93BgFCzyksIXgc6vzVpHu/S8UITzcwdXWg
+	bo6OtKnXs7kt2afe2/BXrKM8XO9yv90u5/itB0KnV8xD+BrO3ktl3mclt9AgjunN6agOlnsHBhX
+	6er5dv9kMt11aOksJ0JjAUVsXSAZpAktPfKx0bG75BNm1JubWtgZVAwPZxX9uRHhUdsuryXJhHr
+	rgQ6YPzKWXV1bALjylBEKQ6TZmjAk82Gl2rfkjRvJvP2tmmQwm786LTMiXABVWnypY9VoUVY+Sk
+	TDia1RAJKo73q+DbgWqoMQ3/iPHmAy9FhuAwR+7rbljA==
+X-Google-Smtp-Source: AGHT+IG+JUAf6UVQVsqEmCn1XhFTq5TWQOptKskoiqVgM/FKW2sNC6jwfwM3QRHOYWASpaXOTouW+A==
+X-Received: by 2002:a05:600c:4fcb:b0:46e:5b74:4858 with SMTP id 5b1f17b1804b1-477732341e9mr73691505e9.13.1762774732654;
+        Mon, 10 Nov 2025 03:38:52 -0800 (PST)
+Received: from [192.168.0.21] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce20ee3sm314783285e9.9.2025.11.10.03.38.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 03:38:52 -0800 (PST)
+Message-ID: <150cee0d-6c5f-4380-8c3b-ff29c4ca679b@linaro.org>
+Date: Mon, 10 Nov 2025 11:38:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,127 +83,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTog5Zue5aSNOiBbUEFUQ0ggMi8zXSBSZXNldDogY2l4?=
- =?UTF-8?Q?=3A_add_support_for_cix_sky1_resets?=
-To: Gary Yang <gary.yang@cixtech.com>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- cix-kernel-upstream <cix-kernel-upstream@cixtech.com>
-References: <20251107033819.587712-1-gary.yang@cixtech.com>
- <20251107033819.587712-3-gary.yang@cixtech.com>
- <69efdb9a-c03a-42f4-a78e-18c8a2b29322@kernel.org>
- <PUZPR06MB58875805D441AF3213189979EFCEA@PUZPR06MB5887.apcprd06.prod.outlook.com>
- <38e8e068-d06b-41f0-9cae-5dfdf0fcce6f@kernel.org>
- <PUZPR06MB588726F24E6193ADD6CF224CEFCEA@PUZPR06MB5887.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH RFC 5/8] media: qcom: camss: Initialize lanes after lane
+ configuration is available
+To: david@ixit.cz, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Luca Weiss <luca.weiss@fairphone.com>, Petr Hodina <phodina@protonmail.com>,
+ Casey Connolly <casey.connolly@linaro.org>, "Dr. Git" <drgitx@gmail.com>
+Cc: Joel Selvaraj <foss@joelselvaraj.com>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org
+References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
+ <20251109-qcom-cphy-v1-5-165f7e79b0e1@ixit.cz>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <PUZPR06MB588726F24E6193ADD6CF224CEFCEA@PUZPR06MB5887.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251109-qcom-cphy-v1-5-165f7e79b0e1@ixit.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10/11/2025 12:32, Gary Yang wrote:
-> Hi krzysztof:
+On 09/11/2025 09:39, David Heidelberg via B4 Relay wrote:
+> From: Petr Hodina <phodina@protonmail.com>
 > 
->> -----邮件原件-----
->> 发件人: Krzysztof Kozlowski <krzk@kernel.org>
->> 发送时间: 2025年11月10日 19:22
->> 收件人: Gary Yang <gary.yang@cixtech.com>; p.zabel@pengutronix.de;
->> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org
->> 抄送: devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
->> linux-arm-kernel@lists.infradead.org; cix-kernel-upstream
->> <cix-kernel-upstream@cixtech.com>
->> 主题: Re: 回复: [PATCH 2/3] Reset: cix: add support for cix sky1 resets
->>
->> EXTERNAL EMAIL
->>
->> On 10/11/2025 12:18, Gary Yang wrote:
->>>>
->>>>> +static struct platform_driver sky1_reset_driver = {
->>>>> +     .probe  = sky1_reset_probe,
->>>>> +     .driver = {
->>>>> +             .name           = KBUILD_MODNAME,
->>>>> +             .of_match_table = sky1_reset_dt_ids,
->>>>> +     },
->>>>> +};
->>>>> +static int __init reset_sky1_init(void) {
->>>>> +     return platform_driver_register(&sky1_reset_driver);
->>>>> +}
->>>>> +subsys_initcall(reset_sky1_init);
->>>>
->>>> This should be rather just module_platform_driver. Does not look like
->>>> part of subsystem, but looks like regular driver.
->>>>
->>>
->>> Some modules depend reset module. When boot system, these modules
->> can't probe before register reset.
->>
->> Which modules? You statement is so imprecise that my only answer is:
->> sorry, deferred probe is old thing now and everyone should use it.
->>
->>> To make these modules probe earlier, we use subsys_initcall() to
->>> instead of module_platform_driver(). Do you have better suggestions?
->>
->> Look how deferred probe works.
->>
+> The lanes must not be initialized before the driver has access to
+> the lane configuration, as it depends on whether D-PHY or C-PHY mode
+> is in use. Move the lane initialization to a later stage where the
+> configuration structures are available.
 > 
-> Yes, you're right. But deferred probe needs to take more time on booting.
-> To make the boot faster, better experiences, we have to use subsys_initcall()
+> Signed-off-by: Petr Hodina <phodina@protonmail.com>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>   .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     | 70 ++++++++++++----------
+>   1 file changed, 37 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> index 348b8cd18327e..c2adbde6b4e0d 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> @@ -1101,6 +1101,42 @@ static void csiphy_lanes_enable(struct csiphy_device *csiphy,
+>   	u8 val;
+>   	int i;
+>   
+> +	switch (csiphy->camss->res->version) {
+> +	case CAMSS_845:
+> +		regs->lane_regs = &lane_regs_sdm845[0];
+> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sdm845);
+> +		break;
+> +	case CAMSS_2290:
+> +		regs->lane_regs = &lane_regs_qcm2290[0];
+> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_qcm2290);
+> +		break;
+> +	case CAMSS_7280:
+> +	case CAMSS_8250:
+> +		regs->lane_regs = &lane_regs_sm8250[0];
+> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8250);
+> +		break;
+> +	case CAMSS_8280XP:
+> +		regs->lane_regs = &lane_regs_sc8280xp[0];
+> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sc8280xp);
+> +		break;
+> +	case CAMSS_X1E80100:
+> +	case CAMSS_8550:
+> +		regs->offset = 0x1000;
+> +		break;
+> +	case CAMSS_8650:
+> +		regs->lane_regs = &lane_regs_sm8650[0];
+> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8650);
+> +		regs->offset = 0x1000;
+> +		break;
+> +	case CAMSS_8300:
+> +	case CAMSS_8775P:
+> +		regs->lane_regs = &lane_regs_sa8775p[0];
+> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sa8775p);
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+>   	settle_cnt = csiphy_settle_cnt_calc(link_freq, csiphy->timer_clk_rate);
+>   
+>   	if (c->cphy) {
+> @@ -1160,47 +1196,15 @@ static int csiphy_init(struct csiphy_device *csiphy)
+>   		return -ENOMEM;
+>   
+>   	csiphy->regs = regs;
+> -	regs->offset = 0x800;
+>   
+>   	switch (csiphy->camss->res->version) {
+> -	case CAMSS_845:
+> -		regs->lane_regs = &lane_regs_sdm845[0];
+> -		regs->lane_array_size = ARRAY_SIZE(lane_regs_sdm845);
+> -		break;
+> -	case CAMSS_2290:
+> -		regs->lane_regs = &lane_regs_qcm2290[0];
+> -		regs->lane_array_size = ARRAY_SIZE(lane_regs_qcm2290);
+> -		break;
+> -	case CAMSS_7280:
+> -	case CAMSS_8250:
+> -		regs->lane_regs = &lane_regs_sm8250[0];
+> -		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8250);
+> -		break;
+> -	case CAMSS_8280XP:
+> -		regs->lane_regs = &lane_regs_sc8280xp[0];
+> -		regs->lane_array_size = ARRAY_SIZE(lane_regs_sc8280xp);
+> -		break;
+>   	case CAMSS_X1E80100:
+> -		regs->lane_regs = &lane_regs_x1e80100[0];
+> -		regs->lane_array_size = ARRAY_SIZE(lane_regs_x1e80100);
+> -		regs->offset = 0x1000;
+> -		break;
+>   	case CAMSS_8550:
+> -		regs->lane_regs = &lane_regs_sm8550[0];
+> -		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8550);
+> -		regs->offset = 0x1000;
+> -		break;
+>   	case CAMSS_8650:
+> -		regs->lane_regs = &lane_regs_sm8650[0];
+> -		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8650);
+>   		regs->offset = 0x1000;
+>   		break;
+> -	case CAMSS_8300:
+> -	case CAMSS_8775P:
+> -		regs->lane_regs = &lane_regs_sa8775p[0];
+> -		regs->lane_array_size = ARRAY_SIZE(lane_regs_sa8775p);
+> -		break;
+>   	default:
+> +		regs->offset = 0x800;
+>   		break;
+>   	}
+>   
+> 
 
-Again, imprecise statement. How faster? With such arguments - twice
-(first list of unspecified modules and now of unspecified boot faster)
-the answer is the same. And I will not wait for third imprecise
-argument, because this is not a ping pong game.
+Agreement in principle.
 
-Anyway, manual core ordering is not the solution.
-
-Best regards,
-Krzysztof
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
