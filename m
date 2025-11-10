@@ -1,255 +1,293 @@
-Return-Path: <linux-kernel+bounces-893753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0FB3C4841D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:17:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 590E7C4842C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32F2E422EA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:09:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F083B2E0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462AA3043A5;
-	Mon, 10 Nov 2025 17:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PNeR0wvt";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="oUz+Oxo8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C262FC011;
+	Mon, 10 Nov 2025 17:10:50 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD932FFFB6
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F05828B7DB;
+	Mon, 10 Nov 2025 17:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762794552; cv=none; b=PCIBnBaOMW/MnXdx41oUDDPVdcP67Kw5zki4139y9/qZS+2BJnuUB2/lA3SMeUkZsNuK3KyxqN3qo25PPPYsP7MQ+XR3Dnkh+CRoAgfCXwmlL9Ip+VoJY+458Ys492INrig9ycTAa2/Ad3h6gMRjYi4gPdVpB19/LaqAnuDFXGE=
+	t=1762794650; cv=none; b=k3byTsrG/xzmcSaeEe2ykftYAqCmRCGxCvxISjJhd/QrTq6FjkIwBY2p7djV9eP4nEVvGedrkc7rTL9Idu68fyJ0RGRQKfEVpnAM1T0vxX/IaJbXkPLCghrq3/O9Hs3UV0/yGJ8vf4NBahsWdzpEWDSUuf1pEXFMkpNDVU4/ls0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762794552; c=relaxed/simple;
-	bh=y919u5LpJ/ng2ULs0nXVXtfDEME3QQNPvsxBqatTXGE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=VaOOIeE32BLmSdulelIna/+fCd/762fk0xxNWypisByTXT9M70tRSoqwapD/dNq+NECqk9XCmduLRHZ7Cxsbvip+wgJXJQu7amyyaY0MwccnjxyVN9VxX+p1SYXfk+zcGW/1KugEa+RF5CBsTxZeXiYJF7ETz5i01kb20DBoj5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PNeR0wvt; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=oUz+Oxo8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762794549;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y919u5LpJ/ng2ULs0nXVXtfDEME3QQNPvsxBqatTXGE=;
-	b=PNeR0wvt2WwxLdCYOivzg4uekIBE55+Uj6autn6zyj1kZr4eMvUUMpG/nHcaU3J+26aqe+
-	fTvx2WnxNoNZEvmnhB9wG5+USAY9yCTlj5cJPUErdd4usyreIL+U1SKY127272HXbP0HkB
-	tf++qiFCJ3AL2AOJwcFOcTcLU9drwaY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-643-jWSxuwj1PUmvCBiLlKd1hw-1; Mon, 10 Nov 2025 12:09:06 -0500
-X-MC-Unique: jWSxuwj1PUmvCBiLlKd1hw-1
-X-Mimecast-MFC-AGG-ID: jWSxuwj1PUmvCBiLlKd1hw_1762794545
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-477563e531cso39627695e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:09:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762794545; x=1763399345; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y919u5LpJ/ng2ULs0nXVXtfDEME3QQNPvsxBqatTXGE=;
-        b=oUz+Oxo81kiNJqL5EjUlDxFsdgX5aQUeQKzVw3+JVaXz2+61AEK1AI/b78JPVY2OjX
-         RaVCzyrcFAUNeyLYRvyu3pyACMphVSTgX6XhkQw81jSC5TRU+Ag2mTu3xg1vZ6+k9k83
-         NtADh4ZSSjAL3OfkgI6Ki7JQPJXppstQvLbXYUlCytLeco4tRH/a7bM3bllXWcOwQChS
-         3gMkU4/bYP51if773sk+fxyOXUiP8kL5FtAGPiavjFUwjXZqyoGox1zlcoH4vcZy/YkN
-         gaY6ylEcwjFWRXfuATd65eAH6erE7WeBqS89b0Cub+zMLIfFiO0IWDVN5X1tCU0WCwxH
-         k6aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762794545; x=1763399345;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y919u5LpJ/ng2ULs0nXVXtfDEME3QQNPvsxBqatTXGE=;
-        b=UyTlmkY+8z2SGWH/W35+B6smiqn5bIp81oqo7id2wQ8tYwvIAzTTHkA9b7G0WS96Ir
-         g2wgIh6495jg0zw9AE3p0oqWOlU6K5CnJHniHjcKMkeGivuqans2KD4qjFefRMW2iE82
-         WKblxnGPqmiWaZpw8YwOkYlkX/0m5AWoh8aMj5+wo8R9ARW5jdeTslVOlP1+KrD//c6Q
-         SJszjZpeebcr5TSNYy56BnGqSySSF3gy82XPH4X4eil9oGpGF26VGpASyPVUKS+DvobF
-         MI7BnCUnkrj7wVZBFgqDlmOX7c9zhd0NGCkvb4IaxQEfOrkTHMMLkbqv+lcbfBRrfC/R
-         5eDA==
-X-Gm-Message-State: AOJu0Ywy1neVFIbp/aMPJ9F+8VPCrXSkDovtUtW4SIvrdcUaUU39bKwS
-	gNis61ebi14oG4RrycqL9+/ac0feeJfm4l1VZtVUH5qNMvAiG0sf3TyyZtwihbMUl2JTmWfQory
-	YegKEWYyqeoTWjZBrUjfGO/5g3HeqFfSxWdMzCFOTLQFk8npwj+6EMNUsuBmWeWqPhQ==
-X-Gm-Gg: ASbGncuC6SKUh/HpOthdnDyfM/pidMESB6bD0ok7OceNT7ZCBfN0scdSUTyE/f7lq6I
-	ZN4sCYYKUuU8Ext9i9xKtUJJZ6bm+Pr74LhEncCXpF10+8Fqu45p+ZsxiImn6nKzZm5UNiL+2Iz
-	b4MCXNFEbXfil5tGNeXGfN8J6L67P3mofJMej/ko5VJ80Mc5eJXDQLzI5WmOIvFdUyVsSDqfiZL
-	jQvo5AOD4x7LDHjXDV4IRNEF0ZdC0ndPrPS6jblEdvJyblJaFQcbchsVwTWJP8HWPHGdg1RXQEu
-	eOAO3nSKZWFTdYoPdPGczjHQgEzs1Crky82bGf++2X4Q5XLY4FXRMmTQwiuY9qkfuH+asHDb
-X-Received: by 2002:a05:600c:4f94:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-47773293992mr86093135e9.33.1762794544745;
-        Mon, 10 Nov 2025 09:09:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGZg5/RAVSkqkpDICudKn+ff9OeOo9p+414Q06CSsgaxuUoNodwPLbkil89LoGQFNp/u5NXeQ==
-X-Received: by 2002:a05:600c:4f94:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-47773293992mr86092695e9.33.1762794544297;
-        Mon, 10 Nov 2025 09:09:04 -0800 (PST)
-Received: from [127.0.0.1] ([195.174.132.194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4777f1b61acsm33575555e9.3.2025.11.10.09.09.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 09:09:03 -0800 (PST)
-Date: Mon, 10 Nov 2025 17:09:01 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Jeanson <mjeanson@efficios.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Florian Weimer <fweimer@redhat.com>, Tim Chen <tim.c.chen@intel.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>
-Message-ID: <d6848897-f918-44ff-bf1c-393ad855b4c1@redhat.com>
-In-Reply-To: <20251029123717.886619142@linutronix.de>
-References: <20251029123717.886619142@linutronix.de>
-Subject: Re: [patch V3 00/20] sched: Rewrite MM CID management
+	s=arc-20240116; t=1762794650; c=relaxed/simple;
+	bh=Ye6ocu0lmBSHiBTs1d/lW5RA6u4Q8y6J4PsoIWQwW6c=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CXZ4zycPEI8FxUbKE9KfcTw2mJMwZ0uxH4OG1JbRz3nGQDUfVeMWcxuM/mZyr6wp/lMztO+dCznstV6U2sC9S0VKrsZyUir0b7ZidyNrR71GPOwwcvXIK7sTZ+ffQIQhYdcqDuSM0bAmh4RACcDWxk+ufXAxTF/qV9mnhAVjVrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4x4h1wTRzHnGfG;
+	Tue, 11 Nov 2025 01:10:28 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id BA68B14033C;
+	Tue, 11 Nov 2025 01:10:43 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 10 Nov
+ 2025 17:10:42 +0000
+Date: Mon, 10 Nov 2025 17:10:41 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Ben Horgan <ben.horgan@arm.com>
+CC: <james.morse@arm.com>, <amitsinght@marvell.com>,
+	<baisheng.gao@unisoc.com>, <baolin.wang@linux.alibaba.com>,
+	<bobo.shaobowang@huawei.com>, <carl@os.amperecomputing.com>,
+	<catalin.marinas@arm.com>, <dakr@kernel.org>, <dave.martin@arm.com>,
+	<david@redhat.com>, <dfustini@baylibre.com>, <fenghuay@nvidia.com>,
+	<gregkh@linuxfoundation.org>, <gshan@redhat.com>, <guohanjun@huawei.com>,
+	<jeremy.linton@arm.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
+	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
+	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
+	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
+	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
+	<xhao@linux.alibaba.com>, "Shaopeng Tan" <tan.shaopeng@jp.fujitsu.com>
+Subject: Re: [PATCH 11/33] arm_mpam: Add the class and component structures
+ for firmware described ris
+Message-ID: <20251110171041.00000a0d@huawei.com>
+In-Reply-To: <20251107123450.664001-12-ben.horgan@arm.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+	<20251107123450.664001-12-ben.horgan@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <d6848897-f918-44ff-bf1c-393ad855b4c1@redhat.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-2025-10-29T13:09:04Z Thomas Gleixner <tglx@linutronix.de>:
+On Fri,  7 Nov 2025 12:34:28 +0000
+Ben Horgan <ben.horgan@arm.com> wrote:
 
-> This is a follow up on V2 series which can be found here:
->
+> From: James Morse <james.morse@arm.com>
+> 
+> An MSC is a container of resources, each identified by their RIS index.
+> Some RIS are described by firmware to provide their position in the system.
+> Others are discovered when the driver probes the hardware.
+> 
+> To configure a resource it needs to be found by its class, e.g. 'L2'.
+> There are two kinds of grouping, a class is a set of components, which
+> are visible to user-space as there are likely to be multiple instances
+> of the L2 cache. (e.g. one per cluster or package)
+> 
+> Add support for creating and destroying structures to allow a hierarchy
+> of resources to be created.
+> 
+> CC: Ben Horgan <ben.horgan@arm.com>
+Hi Ben,
 
-I confirm this series passes the selftest in [1] consistently and the obser=
-ved latency spikes caused by task_mm_cid_work are gone.
+Remember to clear out CC'ing yourself.
 
-Tested-by: Gabriele Monaco <gmonaco@redhat.com>
-
-Thanks,
-Gabriele
-
-[1] - https://lore.kernel.org/lkml/20250929114225.36172-5-gmonaco@redhat.co=
-m
-
-> =C2=A0=C2=A0=C2=A0 https://lore.kernel.org/20251022104005.907410538@linut=
-ronix.de
->
-> The V1 cover letter contains a detailed analyisis of the issues:
->
-> =C2=A0=C2=A0=C2=A0 https://lore.kernel.org/20251015164952.694882104@linut=
-ronix.de
->
-> TLDR: The CID management is way to complex and adds significant overhead
-> into scheduler hotpaths.
->
-> The series rewrites MM CID management in a more simplistic way which
-> focusses on low overhead in the scheduler while maintaining per task CIDs
-> as long as the number of threads is not exceeding the number of possible
-> CPUs.
->
-> The series is based on the V6 series of the rseq rewrite:
->
-> =C2=A0=C2=A0=C2=A0 https://lore.kernel.org/20251027084220.785525188@linut=
-ronix.de
->
-> which is also available from git:
->
-> =C2=A0=C2=A0=C2=A0 git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.=
-git core/rseq
->
-> The series on top of the tip core/rseq branch is available from git as
-> well:
->
-> =C2=A0=C2=A0=C2=A0 git://git.kernel.org/pub/scm/linux/kernel/git/tglx/dev=
-el.git rseq/cid
->
-> Changes vs. V2:
->
-> =C2=A0=C2=A0 - Rename to cpumask/bitmap_weighted_or() - Yury
->
-> =C2=A0=C2=A0 - Zero the bitmap with length of bitmap_size(nr_possible_cpu=
-s()) -
-> =C2=A0=C2=A0=C2=A0=C2=A0 Shrikanth
-> =C2=A0=C2=A0
-> =C2=A0=C2=A0 - Move cpu_relax() out of for() as that fails to build when =
-cpu_relax()
-> =C2=A0=C2=A0=C2=A0=C2=A0 is a macro. - Shrikanth
->
-> =C2=A0=C2=A0 - Picked up Reviewed/Acked-by tags where appropriate
->
-> Thanks,
->
-> =C2=A0=C2=A0=C2=A0 tglx
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Tested-by: Peter Newman <peternewman@google.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
 > ---
-> Thomas Gleixner (20):
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Revert the complex CID manage=
-ment
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Use proper data structures
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Cacheline align MM CID storag=
-e
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched: Fixup whitespace damage
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Move scheduler code out of gl=
-obal header
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Prevent pointless work in mm_=
-update_cpus_allowed()
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cpumask: Introduce cpumask_weighted_or()
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Use cpumask_weighted_or()
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cpumask: Cache num_possible_cpus()
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Convert mm CID mask to a bitm=
-ap
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 signal: Move MMCID exit out of sighand loc=
-k
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Move initialization out of li=
-ne
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Provide precomputed maximal v=
-alue
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Serialize sched_mm_cid_fork()=
-/exit() with a mutex
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Introduce per task/CPU owners=
-hip infrastrcuture
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Provide new scheduler CID mec=
-hanism
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Provide CID ownership mode fi=
-xup functions
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 irqwork: Move data struct to a types heade=
-r
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Implement deferred mode chang=
-e
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched/mmcid: Switch over to the new mechan=
-ism
->
-> include/linux/bitmap.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 15
-> include/linux/cpumask.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
-=C2=A0 26 +
-> include/linux/irq_work.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
-=A0=C2=A0 9
-> include/linux/irq_work_types.h |=C2=A0=C2=A0 14
-> include/linux/mm_types.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 125 =
-------
-> include/linux/rseq.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0=C2=A0 27 -
-> include/linux/rseq_types.h=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 71 +++
-> include/linux/sched.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0=C2=A0 19
-> init/init_task.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 3
-> kernel/cpu.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 15
-> kernel/exit.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1
-> kernel/fork.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 7
-> kernel/sched/core.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0 815 +++++++++++++++++++----------------------
-> kernel/sched/sched.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 395 ++++++++-----------
-> kernel/signal.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 2
-> lib/bitmap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 6
-> 16 files changed, 727 insertions(+), 823 deletions(-)
+> Changes since v3:
+> Jonathan:
+> Code reordering.
+
+I'm guessing I may have sent things in a slightly less than ideal directly.
+
+Why can't we have ordering as follows (with no forwards declarations)
+
+mpam_class_alloc()
+mpam_class_destroy()
+//maybe other mpam_class stuff here
+mpam_component_alloc()
+mpam_component_destroy() - needs mpam_class_destroy()
+//maybe other mpam_component stuff here
+mpam_vmsc_alloc()
+mpam_vmsc_destroy() - needs mpam_component_destroy()
+//other mpam_vmsc here
+mpam_ris_create_locked() - needs all the destroys.
+mpam_ris_destroy() - needs mpam vmsc_destroy()
+
+I may well have missed a more complex dependency chain.
+
+Other than that, LGTM. Given any change in ordering can be trivially verified
+by building it and Gavin's comments seem simple to resolve.
+
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+
+> Comments.
+> ---
+>  drivers/resctrl/mpam_devices.c  | 393 +++++++++++++++++++++++++++++++-
+>  drivers/resctrl/mpam_internal.h |  94 ++++++++
+>  include/linux/arm_mpam.h        |   5 +
+>  3 files changed, 491 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index 6c6be133d73a..48a344d5cb43 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -36,6 +36,384 @@ struct srcu_struct mpam_srcu;
+>   */
+>  static atomic_t mpam_num_msc;
+>  
+> +/*
+> + * An MSC is a physical container for controls and monitors, each identified by
+> + * their RIS index. These share a base-address, interrupts and some MMIO
+> + * registers. A vMSC is a virtual container for RIS in an MSC that control or
+> + * monitor the same thing. Members of a vMSC are all RIS in the same MSC, but
+> + * not all RIS in an MSC share a vMSC.
+> + * Components are a group of vMSC that control or monitor the same thing but
+> + * are from different MSC, so have different base-address, interrupts etc.
+> + * Classes are the set components of the same type.
+> + *
+> + * The features of a vMSC is the union of the RIS it contains.
+> + * The features of a Class and Component are the common subset of the vMSC
+> + * they contain.
+> + *
+> + * e.g. The system cache may have bandwidth controls on multiple interfaces,
+> + * for regulating traffic from devices independently of traffic from CPUs.
+> + * If these are two RIS in one MSC, they will be treated as controlling
+> + * different things, and will not share a vMSC/component/class.
+> + *
+> + * e.g. The L2 may have one MSC and two RIS, one for cache-controls another
+> + * for bandwidth. These two RIS are members of the same vMSC.
+> + *
+> + * e.g. The set of RIS that make up the L2 are grouped as a component. These
+> + * are sometimes termed slices. They should be configured the same, as if there
+> + * were only one.
+> + *
+> + * e.g. The SoC probably has more than one L2, each attached to a distinct set
+> + * of CPUs. All the L2 components are grouped as a class.
+> + *
+> + * When creating an MSC, struct mpam_msc is added to the all mpam_all_msc list,
+> + * then linked via struct mpam_ris to a vmsc, component and class.
+> + * The same MSC may exist under different class->component->vmsc paths, but the
+> + * RIS index will be unique.
+> + */
+> +LIST_HEAD(mpam_classes);
+> +
+> +/* List of all objects that can be free()d after synchronise_srcu() */
+> +static LLIST_HEAD(mpam_garbage);
+> +
+> +static inline void init_garbage(struct mpam_garbage *garbage)
+> +{
+> +	init_llist_node(&garbage->llist);
+> +}
+> +
+> +#define add_to_garbage(x)				\
+> +do {							\
+> +	__typeof__(x) _x = (x);				\
+> +	_x->garbage.to_free = _x;			\
+> +	llist_add(&_x->garbage.llist, &mpam_garbage);	\
+> +} while (0)
+> +
+> +static void mpam_free_garbage(void)
+> +{
+> +	struct mpam_garbage *iter, *tmp;
+> +	struct llist_node *to_free = llist_del_all(&mpam_garbage);
+> +
+> +	if (!to_free)
+> +		return;
+> +
+> +	synchronize_srcu(&mpam_srcu);
+> +
+> +	llist_for_each_entry_safe(iter, tmp, to_free, llist) {
+> +		if (iter->pdev)
+> +			devm_kfree(&iter->pdev->dev, iter->to_free);
+> +		else
+> +			kfree(iter->to_free);
+> +	}
+> +}
+> +
+> +static struct mpam_vmsc *
+> +mpam_vmsc_alloc(struct mpam_component *comp, struct mpam_msc *msc)
+> +{
+> +	struct mpam_vmsc *vmsc;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	vmsc = kzalloc(sizeof(*vmsc), GFP_KERNEL);
+> +	if (!vmsc)
+> +		return ERR_PTR(-ENOMEM);
+> +	init_garbage(&vmsc->garbage);
+> +
+> +	INIT_LIST_HEAD_RCU(&vmsc->ris);
+> +	INIT_LIST_HEAD_RCU(&vmsc->comp_list);
+> +	vmsc->comp = comp;
+> +	vmsc->msc = msc;
+> +
+> +	list_add_rcu(&vmsc->comp_list, &comp->vmsc);
+> +
+> +	return vmsc;
+> +}
+> +
+> +static void mpam_component_destroy(struct mpam_component *comp);
+> +
+> +static void mpam_vmsc_destroy(struct mpam_vmsc *vmsc)
+> +{
+> +	struct mpam_component *comp = vmsc->comp;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	list_del_rcu(&vmsc->comp_list);
+> +	add_to_garbage(vmsc);
+> +
+> +	if (list_empty(&comp->vmsc))
+> +		mpam_component_destroy(comp);
+> +}
+> +
+> +static struct mpam_vmsc *
+> +mpam_vmsc_find(struct mpam_component *comp, struct mpam_msc *msc)
+> +{
+> +	struct mpam_vmsc *vmsc;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	list_for_each_entry(vmsc, &comp->vmsc, comp_list) {
+> +		if (vmsc->msc->id == msc->id)
+> +			return vmsc;
+> +	}
+> +
+> +	return mpam_vmsc_alloc(comp, msc);
+> +}
+> +
+> +static struct mpam_component *
+> +mpam_component_alloc(struct mpam_class *class, int id)
+> +{
+> +	struct mpam_component *comp;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	comp = kzalloc(sizeof(*comp), GFP_KERNEL);
+> +	if (!comp)
+> +		return ERR_PTR(-ENOMEM);
+> +	init_garbage(&comp->garbage);
+> +
+> +	comp->comp_id = id;
+> +	INIT_LIST_HEAD_RCU(&comp->vmsc);
+> +	/* affinity is updated when ris are added */
+> +	INIT_LIST_HEAD_RCU(&comp->class_list);
+> +	comp->class = class;
+> +
+> +	list_add_rcu(&comp->class_list, &class->components);
+> +
+> +	return comp;
+> +}
+
+
 
 
