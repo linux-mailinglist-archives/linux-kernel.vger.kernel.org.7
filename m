@@ -1,187 +1,148 @@
-Return-Path: <linux-kernel+bounces-892478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99295C452CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:09:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CC5CC452D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:09:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7BCA84E8744
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:09:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6729D4E8B35
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E014D2EAB6B;
-	Mon, 10 Nov 2025 07:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FD52EAD15;
+	Mon, 10 Nov 2025 07:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f/rZ/COQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiHWJ5Ii"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457AE2EB86C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF702E9EAC;
+	Mon, 10 Nov 2025 07:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762758540; cv=none; b=iDaJ+3UsyJzR2w9PAShv71PdsJKiwx0R66CdijjIGcGyykUipKtrzbLZVyQMvwvm4o0l7gixdKKLaVU+tbpjtZeV+F3Eva6bYDq5YF+WZ39c+cwMEYz6TRnl7CNPZamEv4k//MfOXwfoCTcDD0m6gSlOuZ9GuuitzLZZhcGPOos=
+	t=1762758563; cv=none; b=FYtzzoNoWTCmXRsecwZ0O9Gd6A3IKZmiBG+f4rgFoR44r5tz3AZe27tTOM4mEpS9AT2LdcFf40Clf83UKdkDUYK7wEEWOk5ky3m8/me+DUnmw/kq9mBoQgDbg6j76bR00XLj83q0B9ohKzIYGpq712QBbbY/UMnwU3K95vnNNzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762758540; c=relaxed/simple;
-	bh=U1cUjkcPhRCPd7EEVlnS26KUneits1XjUS600vahWoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rmx+aNi0RhundaeOdCuI2txFKFJEoTEm40Nugh9tQ3Y3WX20x4ZSx6URIqBNBKWCLF5mosnahTGe7BRjrZYkP8NOTcdF14U82LVpplR6ssXSfARcd2TVbGsaJTPKEHjca7z+jz5/YnPwKNbYmwTScwqYKn83sRsZYpN45sen4Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f/rZ/COQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762758536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FQeFfemk8R9pFVPJVE7vGo0yI2GmBM6W7T4hZkmc8fU=;
-	b=f/rZ/COQx53+jEPS0DMLIJs01tNJZU+sHaEu1MUyj3DEFLSqcPR5VP4qI4HIOsem5Bk4tR
-	fdor4GUMCE8jdBNqbjvyljLgMrXnwK1H0NBLRCjpuwnZkI2pZrUxAsH6RbXNPnoFloeRNC
-	TJXAqxJBX5E/VXOcxSdto4VeJnljO5o=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-37-eeRdVSlDPZqYg8Icnng9Iw-1; Mon,
- 10 Nov 2025 02:08:53 -0500
-X-MC-Unique: eeRdVSlDPZqYg8Icnng9Iw-1
-X-Mimecast-MFC-AGG-ID: eeRdVSlDPZqYg8Icnng9Iw_1762758531
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 65A95195608F;
-	Mon, 10 Nov 2025 07:08:50 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.59])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B262E19560A7;
-	Mon, 10 Nov 2025 07:08:47 +0000 (UTC)
-Date: Mon, 10 Nov 2025 15:08:41 +0800
-From: Baoquan he <bhe@redhat.com>
-To: Sourabh Jain <sourabhjain@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, Aditya Gupta <adityag@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dave Young <dyoung@redhat.com>,
-	Hari Bathini <hbathini@linux.ibm.com>, Jiri Bohac <jbohac@suse.cz>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Pingfan Liu <piliu@redhat.com>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	Shivang Upadhyay <shivangu@linux.ibm.com>,
-	Vivek Goyal <vgoyal@redhat.com>, linuxppc-dev@lists.ozlabs.org,
-	kexec@lists.infradead.org
-Subject: Re: [PATCH v3 5/5] crash: export crashkernel CMA reservation to
- userspace
-Message-ID: <aRGPee9izxWPRHj5@MiWiFi-R3L-srv>
-References: <20251110043143.484408-1-sourabhjain@linux.ibm.com>
- <20251110043143.484408-6-sourabhjain@linux.ibm.com>
+	s=arc-20240116; t=1762758563; c=relaxed/simple;
+	bh=qDVewr2PZ91zstRoM3mDnHlEOMzFupzrbMTA7jUsgi0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PPI7n8LEkNSP8X3qyou+ECmjvagA0eTUXF51tUzc1/LPjMjObwusM47jsk3K8yTaPV4vloTb+1UeY124Xb5RYbD/kFHzAryv8iP0qdhQFFI8KxVkF/naX/Xa9foK0Y5fZqsFNaqC7RFFbLXA43vgEUFQGEvlb+UBPWi22HUqc+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZiHWJ5Ii; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CEC7C116D0;
+	Mon, 10 Nov 2025 07:09:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762758563;
+	bh=qDVewr2PZ91zstRoM3mDnHlEOMzFupzrbMTA7jUsgi0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZiHWJ5Ii4o/8mJKH60HLhEEpc4S9QBje7Zi9DXb7UmsrUAr07uN3bAMJrDTUTJ7+N
+	 UvYq+vzf32bzuiV8f1aC3R6zGQdOArh5V/vEyPNmauQpqtg8q1GVodRSNj9fnfZvnN
+	 8fEGT6OLCm15b6o9eo6ebDrms31nKQv1E91uE9BnOxi12ABEvxE1XI2+rTXTsXTRvZ
+	 MHJFBAC5TvrxAPW84G1g0PEiFdj1MY+uysc6aGIsomlQEp0QYjwMpsToE6V8rPxH6H
+	 1UbUmXhCKmSy63YIV2i+mn4nZQh313vMoA0nLAi0JZQVC4WrKqCnrwrkneT08z1TYM
+	 sxl8VRzvyboyQ==
+Message-ID: <abab58ae-ff34-4092-b40a-7f249bd09358@kernel.org>
+Date: Mon, 10 Nov 2025 08:09:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110043143.484408-6-sourabhjain@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/4] arm64: dts: qcom: sm8750: Add SDC2 nodes for
+ sm8750 soc
+To: Sarthak Garg <sarthak.garg@oss.qualcomm.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
+ quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
+ quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
+References: <20251026111746.3195861-1-sarthak.garg@oss.qualcomm.com>
+ <20251026111746.3195861-3-sarthak.garg@oss.qualcomm.com>
+ <3170ad12-0d79-4cb1-aedc-d2c9f1da366f@kernel.org>
+ <0fccd9f6-f833-4192-b7ac-cadc4a048cad@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <0fccd9f6-f833-4192-b7ac-cadc4a048cad@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/10/25 at 10:01am, Sourabh Jain wrote:
-> Add a sysfs entry /sys/kernel/kexec/crash_cma_ranges to expose all
-> CMA crashkernel ranges.
+On 10/11/2025 08:06, Sarthak Garg wrote:
+> 
+> On 10/27/2025 8:02 PM, Krzysztof Kozlowski wrote:
+>> On 26/10/2025 12:17, Sarthak Garg wrote:
+>>> Add SD Card host controller for sm8750 soc.
+>>>
+>>> Signed-off-by: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/sm8750.dtsi | 54 ++++++++++++++++++++++++++++
+>>>   1 file changed, 54 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+>>> index a82d9867c7cb..50e1fa67c093 100644
+>>> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+>>> @@ -2060,6 +2060,60 @@ ice: crypto@1d88000 {
+>>>   			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
+>>>   		};
+>>>   
+>>> +		sdhc_2: mmc@8804000 {
+>> Completely messed ordering.
+> 
+> 
+> Do you mean the property order within the sdhc_2 device tree node ?
+> 
+> What ordering do we need to follow here ?
 
-I am not against this way. While wondering if it's more appropriate to
-export them into iomem_resource just like crashk_res and crashk_low_res
-doing.
+The one from coding style.
 
-> 
-> This allows userspace tools configuring kdump to determine how much
-> memory is reserved for crashkernel. If CMA is used, tools can warn
-> users when attempting to capture user pages with CMA reservation.
-> 
-> The new sysfs hold the CMA ranges in below format:
-> 
-> cat /sys/kernel/kexec/crash_cma_ranges
-> 100000000-10c7fffff
-> 
-> Cc: Aditya Gupta <adityag@linux.ibm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Baoquan he <bhe@redhat.com>
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: Hari Bathini <hbathini@linux.ibm.com>
-> Cc: Jiri Bohac <jbohac@suse.cz>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>
-> Cc: Pingfan Liu <piliu@redhat.com>
-> Cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Cc: Shivang Upadhyay <shivangu@linux.ibm.com>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: kexec@lists.infradead.org
-> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
-> ---
-> Changelog:
->  - Add the missing hunk to export crash_cma_ranges sysfs
-> 
-> ---
->  .../ABI/testing/sysfs-kernel-kexec-kdump        | 10 ++++++++++
->  kernel/kexec_core.c                             | 17 +++++++++++++++++
->  2 files changed, 27 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-> index 00c00f380fea..f59051b5d96d 100644
-> --- a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-> +++ b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-> @@ -49,3 +49,13 @@ Description:	read only
->  		is used by the user space utility kexec to support updating the
->  		in-kernel kdump image during hotplug operations.
->  User:		Kexec tools
-> +
-> +What:		/sys/kernel/kexec/crash_cma_ranges
-> +Date:		Nov 2025
-> +Contact:	kexec@lists.infradead.org
-> +Description:	read only
-> +		Provides information about the memory ranges reserved from
-> +		the Contiguous Memory Allocator (CMA) area that are allocated
-> +		to the crash (kdump) kernel. It lists the start and end physical
-> +		addresses of CMA regions assigned for crashkernel use.
-> +User:		kdump service
-> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-> index 7476a46de5d6..da6ff72b4669 100644
-> --- a/kernel/kexec_core.c
-> +++ b/kernel/kexec_core.c
-> @@ -1271,6 +1271,22 @@ static ssize_t crash_size_store(struct kobject *kobj,
->  }
->  static struct kobj_attribute crash_size_attr = __ATTR_RW(crash_size);
->  
-> +static ssize_t crash_cma_ranges_show(struct kobject *kobj,
-> +				     struct kobj_attribute *attr, char *buf)
-> +{
-> +
-> +	ssize_t len = 0;
-> +	int i;
-> +
-> +	for (i = 0; i < crashk_cma_cnt; ++i) {
-> +		len += sysfs_emit_at(buf, len, "%08llx-%08llx\n",
-> +				     crashk_cma_ranges[i].start,
-> +				     crashk_cma_ranges[i].end);
-> +	}
-> +	return len;
-> +}
-> +static struct kobj_attribute crash_cma_ranges_attr = __ATTR_RO(crash_cma_ranges);
-> +
->  #ifdef CONFIG_CRASH_HOTPLUG
->  static ssize_t crash_elfcorehdr_size_show(struct kobject *kobj,
->  			       struct kobj_attribute *attr, char *buf)
-> @@ -1289,6 +1305,7 @@ static struct attribute *kexec_attrs[] = {
->  #ifdef CONFIG_CRASH_DUMP
->  	&crash_loaded_attr.attr,
->  	&crash_size_attr.attr,
-> +	&crash_cma_ranges_attr.attr,
->  #ifdef CONFIG_CRASH_HOTPLUG
->  	&crash_elfcorehdr_size_attr.attr,
->  #endif
-> -- 
-> 2.51.1
-> 
-
+Best regards,
+Krzysztof
 
