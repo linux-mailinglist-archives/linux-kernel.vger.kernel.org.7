@@ -1,144 +1,172 @@
-Return-Path: <linux-kernel+bounces-892422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BD8C450F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:11:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE09C450FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:12:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0AB3B052B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:11:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F324C4E03B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2B922A4E1;
-	Mon, 10 Nov 2025 06:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC512E8E10;
+	Mon, 10 Nov 2025 06:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CuhWz8WU"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pyAN4c8D"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822D09475
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE49216E32
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762755071; cv=none; b=hiOKjkCb+oojCGDCL5+JCi/Gw/ATn1GJtbhovn8GyrI8K7XDy78TmxA4t7bvku5mwQM7bCZ97Z6hlrj237FJo3L83qrCrSLIA2hdZWcBcf/G4awRKDrSkAnbQ1LgqTDJO+SXbEk2mG4CLTbVBzr6OlBOVdT3KH6TOhAy2EGCVMk=
+	t=1762755144; cv=none; b=rMMPe/l39j4NrG5hux/c6SbXwhnW1gne0T2FjISYR5uX5kt36NNKm6xvEhSbgOBbKiHhltvSiXjWl0nsLu5AxiL7xEBaSrDMAlkXQ4bvAAPha9SO55ph8WKLvq8VSGy4Mh++/DtfE7pYSj+pBGFhxuZ8I8Yw3GzGpWsUPjBc19w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762755071; c=relaxed/simple;
-	bh=kn7bWMOD1w4Il6cZ+/+8OIjb+KNu8oGX9vG5kAdhzKQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=diRsPQ5T5RgZZ7pKnZAlBvDSTRqJNUlXcspkmew+2CN1BPp/Z/vU9wOFA719sJtHPWSWHqyIpSJCHGWR8aeiIHI/z00MEmx6Kmv8U5W/OL74yB7eTw4xlsQhKgnOfPGRtlToR8YehwANZGUkhc+gXOSsO2YSpcJr4J8A8bOGZDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CuhWz8WU; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b679450ecb6so2066555a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 22:11:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762755064; x=1763359864; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lm2jnslt3Rb7Zmho9VIECUwBmVAIkgs9O0pQrldOzUQ=;
-        b=CuhWz8WUmf5xKzHrEG8cGqHEWQz8O3yNldaXHpPxfrh6/fWspRTawweuzYB6U9eqqD
-         I+tiRcNxJ0gV4/JGcUJLeQHkyQtObmE4OoJJ0eQVBSbQeilv903vnYWNkTbEBPxXfkRo
-         Hu37+uMM7SLVy4iQZnRO84d87sm72So3/NfCIlfAhuA7JNubHiTI6Lg49dxpXeAaIDYO
-         Y2EkMPHdbzTNAEGAwmmAmmzpoDsjtDErcx4pKytAnbNVB9ijpniqw8u7D/uX14zPhrKw
-         fiYXg+5hukCorzY+Ii6qT5BRfVi6co2+XMNlWW+IMod1+P6C+f/gcO5kJhXqSUISBVFx
-         P16Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762755064; x=1763359864;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lm2jnslt3Rb7Zmho9VIECUwBmVAIkgs9O0pQrldOzUQ=;
-        b=FPpwHsuG3+tA7xA2oSZfYK9Msd4rU3yZZ//tyCqIl49tXvg4tg6NjLWA+hwgHnXJgI
-         +HJUAlNxu4w0fGXSSkMcJH50Li2GGu5N3bl+BOK1aJzlMWJykPhAvPpINHaoWWIEGSJW
-         fF58UTOrPmt3wv8tEEIxur1M/GPUjdHnBCnb0m6VZJSty3UYIkjQq3BE7w49+VK1KoTI
-         UBoweGqmG5KIUzHsDNSz/o2fRp/hAB70ZIaT+o1SDXvHVNX1uxYLbg5WFQdazQk3ncHz
-         DnC6ncKqVFt0ztxWEtUADS9HdnmfAoJsYfUZIvwPXDsVsvy3NxiJ7h9SIQjIM74+HaKT
-         hSdQ==
-X-Gm-Message-State: AOJu0Yw7ygfyaWr8jSIxd1Sm1F4ziHuLEFzsep9a7WPZcEp1+ZqO6VVI
-	h4Canj/zjekHSBsahYwhpMHszg45AdYoIMjv+qP3eJJXMIlWSTU1d9CI
-X-Gm-Gg: ASbGncsKXjfSz2x4iFHtPLJcDoY0ClkkVeFM5yTC1R6lmt95r9wPI87OKV/qH/GenkM
-	TF9qvbdop166Bw2LxKpamLWY++cCPaea9XF/qvFsU8vPpRz5rPUfeceyGjktY+7FxeFHe4hZzkJ
-	Rz8OtassmRrsjZBo4oc2sYsxG7WVBczow4M6+DjQAC1FGXxuxZmT1HxqwGp+CFsYfzJ7O45caYM
-	mImAHoWHsd0GeYjeC9/HAjzqB+LRsSM56xDMC9tU1Xh8S1wyZd1ivR1gko7369CKH8Gr0YBK+Qz
-	ndLfZWL0skVzc1uviPT9EzgeCExiwI3VlMQB6JTVjaq0rBXIQ59SKt+xbCXx7hk0hrazllDcAg7
-	rYeOvgIV/ZXl40acMbc63jPKtgPR3pyNIT/nTr4XOfTJAzkRnA1DZys22dlhXSJ+h6r17RV1i
-X-Google-Smtp-Source: AGHT+IHMrL7oM7MbUgXsz6PpnwSGEtNBy0/tjXziTJLhpBmiF1bAtTotF1PSodiPyR5ul8CseM+lbw==
-X-Received: by 2002:a17:902:da4d:b0:297:dd30:8f07 with SMTP id d9443c01a7336-297e56e127bmr97197115ad.50.1762755063528;
-        Sun, 09 Nov 2025 22:11:03 -0800 (PST)
-Received: from localhost ([2408:841b:d00:77aa:94d1:35c7:872e:dcbe])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba901959a47sm11206095a12.28.2025.11.09.22.11.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 22:11:03 -0800 (PST)
-From: Encrow Thorne <jyc0019@gmail.com>
-Date: Mon, 10 Nov 2025 14:10:37 +0800
-Subject: [PATCH v3] reset: fix BIT macro reference
+	s=arc-20240116; t=1762755144; c=relaxed/simple;
+	bh=SKzxiJe8Vf2TaHzdLS7X3O/aj+2n2Ru2BTWsVVQe4cs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BR8U854ihdTZScxIniLew4oMTcr/6KoA3VCDXOzYRvyqO/TD3tlNtGLG0lJHl4KplLPo44z8oKQnqGANdVaAbolwabslRFgIomejAWjNr3XOcPxDwyTcAbG51QdJ3al9zRfNIT5JCQM1w9NMyI8gHYRpzPAMSt4AOk123vV5n0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pyAN4c8D; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <79ba4e0c-eac8-420e-b6b2-b7cdede5dcfc@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762755129;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TVI42Ht4KJq3XQAXSl87HHit5RIvDqcfLhp3PfZoCwg=;
+	b=pyAN4c8DF7ukkFGezZGvuyGuPkdtfhlCZrR120hxx6n2B1ZrtYQFeoh9xaUxAvVhlX2p5R
+	mH+pNLp+RF8MNwIpi7g0gd++ZzHw9smbam92okspni+o12Co6uwIClrFQrzMrsLPO8NZXe
+	ZSadIjKfb+qAhPAwJ2VlAmxj3HswspY=
+Date: Mon, 10 Nov 2025 14:11:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, hannes@cmpxchg.org,
+ hughd@google.com, mhocko@suse.com, roman.gushchin@linux.dev,
+ muchun.song@linux.dev, david@redhat.com, lorenzo.stoakes@oracle.com,
+ ziy@nvidia.com, imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
+ axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
+ akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, Muchun Song <songmuchun@bytedance.com>,
+ Qi Zheng <zhengqi.arch@bytedance.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-rt-devel@lists.linux.dev
+References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
+ <97ea4728568459f501ddcab6c378c29064630bb9.1761658310.git.zhengqi.arch@bytedance.com>
+ <aQ1_f_6KPRZknUGS@harry> <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
+ <aQ3yLER4C4jY70BH@harry>
+ <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
+ <aRFKY5VGEujVOqBc@hyeyoo> <2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
+ <aRF7eYlBKmG3hEFF@hyeyoo>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Qi Zheng <qi.zheng@linux.dev>
+In-Reply-To: <aRF7eYlBKmG3hEFF@hyeyoo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-rfc-reset-include-bits-v3-1-39614338fd43@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANyBEWkC/43NzQqDMAzA8VeRnpdhq6Vsp72H7NCmUQN+jNaVD
- fHdVz3ttl0C/0B+WUWkwBTFtVhFoMSR5ylHdSoE9nbqCNjnFqpUWspSQ2gRAkVagCccnp7A8RK
- hJjSqqmsvbSXy8SNQy68Dbu65e47LHN7HnyT37U8ySZDgDUnnME/rbt1oeTjjPIqdTOo/RmWmV
- Qa1cUbbS/nNbNv2AdVtVpkDAQAA
-X-Change-ID: 20251105-rfc-reset-include-bits-4ec72344d1a3
-To: Philipp Zabel <p.zabel@pengutronix.de>, 
- Troy Mitchell <troy.mitchell@linux.dev>
-Cc: linux-kernel@vger.kernel.org, Encrow Thorne <jyc0019@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762755055; l=1297;
- i=jyc0019@gmail.com; s=20251009; h=from:subject:message-id;
- bh=kn7bWMOD1w4Il6cZ+/+8OIjb+KNu8oGX9vG5kAdhzKQ=;
- b=/2zhvMZNvZM7Lw68Xq35SJQCg9YliTKFKWru7VI+d2qiAMdjCz6rhb3eftKFD4r5Bu8hqHCj8
- j4O1xXDwRVkB/XyTwjvfJnXa4/exTQkWOwlGfekz3NwuFQre5l5lZh5
-X-Developer-Key: i=jyc0019@gmail.com; a=ed25519;
- pk=nnjLv04DUE0FXih6IcJUOjWFTEoo4xYQOu7m5RRHvZ4=
+X-Migadu-Flow: FLOW_OUT
 
-RESET_CONTROL_FLAGS_BIT_* macros use BIT(), but reset.h does not
-include bits.h. This causes compilation errors when including
-reset.h standalone.
 
-Include bits.h to make reset.h self-contained.
 
-Suggested-by: Troy Mitchell <troy.mitchell@linux.dev>
-Reviewed-by: Troy Mitchell <troy.mitchell@linux.dev>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Encrow Thorne <jyc0019@gmail.com>
----
-Changes in v3:
-- Fix commit message.
-- Link to v2: https://lore.kernel.org/r/20251105-rfc-reset-include-bits-v2-1-f27c57b75a90@gmail.com
+On 11/10/25 1:43 PM, Harry Yoo wrote:
+> On Mon, Nov 10, 2025 at 12:30:06PM +0800, Qi Zheng wrote:
+>>
+>>
+>> On 11/10/25 10:13 AM, Harry Yoo wrote:
+>>> On Fri, Nov 07, 2025 at 10:32:52PM -0800, Shakeel Butt wrote:
+>>>> On Fri, Nov 07, 2025 at 10:20:57PM +0900, Harry Yoo wrote:
+>>>>>
+>>>>> Although it's mentioned in the locking documentation, I'm afraid that
+>>>>> local_lock is not the right interface to use here. Preemption will be
+>>>>> disabled anyway (on both PREEMPT_RT and !PREEMPT_RT) when the stats are
+>>>>> updated (in __mod_node_page_state()).
+>>>>>
+>>>>> Here we just want to disable IRQ only on !PREEMPT_RT (to update
+>>>>> the stats safely).
+>>>>
+>>>> I don't think there is a need to disable IRQs. There are three stats
+>>>> update functions called in that hunk.
+>>>>
+>>>> 1) __mod_lruvec_state
+>>>> 2) __count_vm_events
+>>>> 3) count_memcg_events
+>>>>
+>>>> count_memcg_events() can be called with IRQs. __count_vm_events can be
+>>>> replaced with count_vm_events.
+>>>
+>>> Right.
+>>>
+>>>> For __mod_lruvec_state, the
+>>>> __mod_node_page_state() inside needs preemption disabled.
+>>>
+>>> The function __mod_node_page_state() disables preemption.
+>>> And there's a comment in __mod_zone_page_state():
+>>>
+>>>> /*
+>>>>    * Accurate vmstat updates require a RMW. On !PREEMPT_RT kernels,
+>>>>    * atomicity is provided by IRQs being disabled -- either explicitly
+>>>>    * or via local_lock_irq. On PREEMPT_RT, local_lock_irq only disables
+>>>>    * CPU migrations and preemption potentially corrupts a counter so
+>>>>    * disable preemption.
+>>>>    */
+>>>> preempt_disable_nested();
+>>>
+>>> We're relying on IRQs being disabled on !PREEMPT_RT.
+>>
+>> So it's possible for us to update vmstat within an interrupt context,
+>> right?
+> 
+> Yes, for instance when freeing memory in an interrupt context we can
+> update vmstat and that's why we disable interrupts now.
 
-Changes in v2:
-- Add header in alphabetical order.
-- Link to v1: https://lore.kernel.org/r/20251105-rfc-reset-include-bits-v1-1-d7e1bbc7e1ab@gmail.com
----
- include/linux/reset.h | 1 +
- 1 file changed, 1 insertion(+)
+Got it.
 
-diff --git a/include/linux/reset.h b/include/linux/reset.h
-index 840d75d172f6..44f9e3415f92 100644
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -2,6 +2,7 @@
- #ifndef _LINUX_RESET_H_
- #define _LINUX_RESET_H_
- 
-+#include <linux/bits.h>
- #include <linux/err.h>
- #include <linux/errno.h>
- #include <linux/types.h>
+> 
+>> There is also a comment above __mod_zone_page_state():
+>>
+>> /*
+>>   * For use when we know that interrupts are disabled,
+>>   * or when we know that preemption is disabled and that
+>>   * particular counter cannot be updated from interrupt context.
+>>   */
+> 
+> Yeah we don't have to disable IRQs when we already know it's disabled.
+> 
+>> BTW, the comment inside __mod_node_page_state() should be:
+>>
+>> /* See __mod_zone_page_state */
+>>
+>> instead of
+>>
+>> /* See __mod_node_page_state */
+>>
+>> Will fix it.
+> 
+> Right :) Thanks!
+> 
+>>> Maybe we could make it safe against re-entrant IRQ handlers by using
+>>> read-modify-write operations?
+>>
+>> Isn't it because of the RMW operation that we need to use IRQ to
+>> guarantee atomicity? Or have I misunderstood something?
+> 
+> I meant using atomic operations instead of disabling IRQs, like, by
+> using this_cpu_add() or cmpxchg() instead.
 
----
-base-commit: 8fec172c82c2b5f6f8e47ab837c1dc91ee3d1b87
-change-id: 20251105-rfc-reset-include-bits-4ec72344d1a3
+Got it. I will give it a try.
 
-Best regards,
--- 
-Encrow Thorne <jyc0019@gmail.com>
+Thanks,
+Qi
+
+> 
 
 
