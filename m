@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-894070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267D0C49337
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:14:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE83C4933E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:17:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E98F4188B0AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:15:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7EF53A741F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33C6340274;
-	Mon, 10 Nov 2025 20:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954A82E7F05;
+	Mon, 10 Nov 2025 20:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QaSjMTdV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1zttPkl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F0B22CBE6;
-	Mon, 10 Nov 2025 20:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8846256C87;
+	Mon, 10 Nov 2025 20:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762805685; cv=none; b=IbEFTC/RAIU8xVRz3POxQ8N51A+eEUa1fAOaSrjr5rT+JuT/jirJTRimIS2JLWQxU+OOdx+2p5QU4BeHsh7a1rv6XwRAa5hsv4qNw01K6YJFKUmo3QUE7G8B3S8u6GbMf4Wr9P2Qh8YSYMjZlM+zinQCNNv0eOACn6bZijzK0bU=
+	t=1762805843; cv=none; b=cXAUDfHzzckl+6AN0sXUMKNXTaDdDHNLF48Bw8RUWCw2aZiDahSfsTghZiveSG5NxaPYHu2QgUVJgCNsCf0TQihgs4nkiyzdyMDy1csgJvFbzymUIPA3yXZ86UcnqaaqGqJRzieFxuaXuy9MsqEdNDxYx+KkdfJjaJcX9aXbN7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762805685; c=relaxed/simple;
-	bh=Lupy7O4W+k+uh9+zTvU4xkbcskLPQ1XA14roUqmkzek=;
+	s=arc-20240116; t=1762805843; c=relaxed/simple;
+	bh=JqEVLdOgxRLejv+3IarHFSQHC/EXmUN4JyQjqZ7nUWM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L66O4umAI+bcd8c1zJaCYeS0qb3Oja0z0Xsw6cO6ggM3+Jsl+AeUjO6tSR0EIkveS1nkzSyvzcTkvcf9cERgpLcxfPFCBhLtSWzhHqn/P4ufs2WXAP1bLXLJMRv9Fgp2FNgDHJFIyKVvhdffDxIIZPE8paag32lj6vjbMlguupc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QaSjMTdV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033F1C4CEFB;
-	Mon, 10 Nov 2025 20:14:38 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=cl+EljsQ1rBHirH8l3zCFrCEdIrIBUZkE5AtBJOXYv/SlgJr42lmrgzDVmo/nvpLx/072TmJKhNhAe0ldB0FtKaLLSQEsYWSwRviQAZwxyTI4SKqzeah+TsG4Hr7HIXwMyUK7fya5M+hmKKvgy+ejAdBq8g+2WasQnpzaaao1Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1zttPkl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C96A8C116B1;
+	Mon, 10 Nov 2025 20:17:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762805684;
-	bh=Lupy7O4W+k+uh9+zTvU4xkbcskLPQ1XA14roUqmkzek=;
+	s=k20201202; t=1762805842;
+	bh=JqEVLdOgxRLejv+3IarHFSQHC/EXmUN4JyQjqZ7nUWM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QaSjMTdVh9UzbpKfTMK3IPYlI8Ih9ctPdQp92V12KlfaB8NA7/rW3Z1N4GV/xqyzA
-	 pYUKo6pcU3d/bnyAWZ+288VtshS7EZ7hVM1pajquWEN3nYZvbMrFy/QqgN3myBMKFq
-	 lRQ2EV6hw/eqVtRwCWhpaSsbwpp8gr3ppklOWiciHtLM1oz1Y2R8xmPgGiNZcY0w+y
-	 W3YqlMI+FKDZVdksNvlvgguml3S3e5cjPG0sMIZ8/3lKkzriwz5heynfKzjuvFZlQM
-	 BQr1VfwcNTfK4AtbKtgt/rWlJQsYHkCcwQ0uxpfbNTxNKMq6dssJGUocldiLAWx6I1
-	 Xr6Ip87mvXaYw==
-Message-ID: <8d02ef66-54d4-415f-86d6-96b9c5b75bfa@kernel.org>
-Date: Mon, 10 Nov 2025 21:14:37 +0100
+	b=h1zttPklcqOT9xQoCSVb3QHH6wXMwmGCfOOhvFl9pFz2TY1gh1otbV+yMHNZVY8Bb
+	 32129YPkjozjDKX8rGgQft087/Qb13Cfom9kUfS8FAW4Cx6bsKuCeUDJ+SPHN6sYvD
+	 x2fx7plbIolsjW9brIVXDOMmh0o3rrKYvrcjjFaoSxgM8NmS74riuA92ICzuNdj/69
+	 y0nJUsqGPW8wK1+3mMcdO9Ntz3bxuTWy0EytSv+4S2qpVS1W9DXDx62ZlLuVMHQZB/
+	 poOecWEaM/D60uusLo7RVxbuzd7Dm8yhDggsaLk5QYuEmDCNSNfNW5JzUz/aUk+Ot2
+	 EgyaFg2KTMWxg==
+Message-ID: <e00ba144-c5fc-47eb-8a9c-b6f33fa9704c@kernel.org>
+Date: Mon, 10 Nov 2025 21:17:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: add support for NXP i.MX8MP FRDM board
-To: Joseph Guo <qijian.guo@nxp.com>,
- Rogerio Pimentel <rpimentel.silva@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, alexander.stein@ew.tq-group.com,
- dario.binacchi@amarulasolutions.com, marex@denx.de,
- Markus.Niebel@tq-group.com, y.moog@phytec.de, joao.goncalves@toradex.com,
- frieder.schrempf@kontron.de, josua@solid-run.com,
- francesco.dolcini@toradex.com, primoz.fiser@norik.com, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Xiaofeng Wei <xiaofeng.wei@nxp.com>,
+Subject: Re: [PATCH v3 2/2] arm64: dts: freescale: add support for NXP i.MX93
+ FRDM
+To: Joseph Guo <qijian.guo@nxp.com>, Fabian Pflug <f.pflug@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, Haidong Zheng <haidong.zheng@nxp.com>,
+ Danwei Luo <danwei.luo@nxp.com>, Lei Xu <lei.xu@nxp.com>,
  Justin Jiang <justin.jiang@nxp.com>
-References: <20251109214515.121742-1-rpimentel.silva@gmail.com>
- <20251109214515.121742-2-rpimentel.silva@gmail.com>
- <aRF0++cUigbETuPs@lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com>
+References: <20251022-fpg-nxp-imx93-frdm-v3-0-03ec40a1ccc0@pengutronix.de>
+ <20251022-fpg-nxp-imx93-frdm-v3-2-03ec40a1ccc0@pengutronix.de>
+ <aRF9xlvWU/27+80K@lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,37 +109,52 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <aRF0++cUigbETuPs@lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com>
+In-Reply-To: <aRF9xlvWU/27+80K@lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/11/2025 06:15, Joseph Guo wrote:
-> On Sun, Nov 09, 2025 at 04:45:15PM -0500, Rogerio Pimentel wrote:
->> The FRDM-i.MX8MP is an NXP development platform based on the i.MX8M Plus
->> SoC, featuring a quad Cortex-A53, Cortex-M7 co-processor, 4GB LPDDR4,
->> 32GB eMMC, Wi-Fi 6/Bluetooth 5.4/802.15.4 tri-radio, Ethernet, HDMI/MIPI
->> display interfaces, camera connectors, and standard expansion headers.
+On 10/11/2025 06:53, Joseph Guo wrote:
+> On Wed, Oct 22, 2025 at 04:05:23PM +0200, Fabian Pflug wrote:
+>> The FRDM i.MX 93 development board is a low-cost and compact development
+>> board featuring the i.MX93 applications processor.
 >>
->> Based on the device tree found in the NXP repository at github
->> https://github.com/nxp-imx-support/meta-imx-frdm and on imx8mp-evk
->> board kernel mainline device tree.
+>> It features:
+>> - Dual Cortex-A55
+>> - 2 GB LPDDR4X / LPDDR4
+>> - 32 GB eMMC5.1
+>> - MicroSD slot
+>> - GbE RJ45 x 2
+>> - USB2.0 1x Type C, 1x Type A
+>>
+>> This file is based upon the one provided by nxp in their own kernel and
+>> yocto meta layer for the device, but adapted for mainline.
+>>
+>> Signed-off-by: Haidong Zheng <haidong.zheng@nxp.com>
+>> Signed-off-by: Danwei Luo <danwei.luo@nxp.com>
+>> Signed-off-by: Lei Xu <lei.xu@nxp.com>
+>> Signed-off-by: Fabian Pflug <f.pflug@pengutronix.de>
+> Hi Fabian,
 > 
-> Hi Rogerio,
-> 
-> I'm maintainer of NXP mainline code for FRDM boards now.
-> Thanks for your contribution for FRDM boards upstreaming.
-> The imx8mp frdm board official name is FRDM-IMX8MP,
-> so please change the name from FRDM-i.MX8MP to FRDM-IMX8MP
-> in commit message.
-> 
-> The code you refer in meta-imx-frdm is based on 6.6.36 kernel which
-> is pretty old. Our new code based on 6.12 you can refer this link:
-> https://github.com/nxp-imx/linux-imx/blob/lf-6.12.y/arch/arm64/boot/dts/freescale/imx8mp-frdm.dts
+> I'm maintainer of the NXP mainline for FRDM board.
+
+No, you are not.
+
+$ git grep 'Joseph Guo'
+$ git grep qijian.guo@nxp.com
 
 
-It is still downstream, unfortunately we do not care about it. Don't use
-it as arguments, please, it really does not matter what is happening in
-the downstream in NXP.
+> Thanks for your contribution for FRDM board upstreaming.
+> imx93 frdm board official name is FRDM-IMX93. Please change
+> the name in commit message from FRDM i.MX 93 development board
+> to FRDM-IMX93 board.
+> 
+
+Huh? How does it matter? Why are you pointing such nits? This is not
+helpful and consider that your naming in NXP does not matter.
+
+Please kindly trim the replies from unnecessary context. It makes it
+much easier to find new content.
+
 
 Best regards,
 Krzysztof
