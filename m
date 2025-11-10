@@ -1,148 +1,146 @@
-Return-Path: <linux-kernel+bounces-893506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F390C4799B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:41:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7687C479A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:42:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D4C3B00A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:33:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B1393B59E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468EE279DB7;
-	Mon, 10 Nov 2025 15:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A020A26AA94;
+	Mon, 10 Nov 2025 15:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mary.zone header.i=@mary.zone header.b="XPBJ//qL"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UbOW3SK3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF4D260578
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7911D416C;
+	Mon, 10 Nov 2025 15:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762788789; cv=none; b=t92HKfSSZ8EyJQzgDBTwKxZMuao+CP5xmgaD2pF9DXRhVKjLWxPczOOBNLfyvm9KiYCEomLsdGJxzIvyWewvr5LppPZL9g2m3ktgpZ2USxubho++5uSaiOl+eFXQ/i2pmOV+qx2t9gUa/nf+z/qAsCrPXas/ZWhpVTlKLdGkKa4=
+	t=1762788828; cv=none; b=HbIUavC2w4Yk1yNMo8ec8FLp/szJWHP30UjfDy9XCik6n5ztR+ubC8vW9mBTxFbDVCytFpcRZ2hN1SOC/Ps5Z0tLBXB0sv3Tjp8ocep08D+dKQF61NhQVKQrb69AtTu56MKWMbMELtKa/7clu5VZtVyMtwc8rOOXbDIO0qsgtIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762788789; c=relaxed/simple;
-	bh=WX0BeKRqqoqX5Vz6JdrGMG9EsGgjvEElvI9dByZWdD4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QCIlFxcmwlqeTNdjW/polruEOPz6+v9wF5Q5eij4bWag5hEewMTSEA+qV3IPsIP54FBJOsspXNgyTLn+Y1y4rIXhwNnx2kGuOg1mETqmW8T5q9rbXkRGRB8poK1qQCyNOs1gBW6Y35L3l1dZMFNPbLw+zLkSIYfeT2ODn5Kn8UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mary.zone; spf=none smtp.mailfrom=mary.zone; dkim=pass (2048-bit key) header.d=mary.zone header.i=@mary.zone header.b=XPBJ//qL; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mary.zone
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mary.zone
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640c6577120so5784807a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:33:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mary.zone; s=google; t=1762788786; x=1763393586; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MhhZbSaUsVQtnfyfSsZMoa+Z0ZmaAqoEvexpVHXnJtU=;
-        b=XPBJ//qLWIAuCdZW+XAErkgpONyXftJUvo9C1b6jN2PO3gyRJK5JAki/oaEFh0FFRp
-         khjXEMDIScp78MzditPLZL1zAU5Etuq2zxzqmLhC/Casv4UqF044OHUinqHDOofcvXpI
-         obm1AaRNtiYnt75GGfGV+HUDG/4gSki+HBzG2ATzWQV4P73vbwL+yuyYihlnMH/Vo9+H
-         kwzUZwGfyG9jxC5U+6Miog8s/b6RAbSeR5DWELXmDjxQkEFn9qEfBju6vuCZi1TLmd/L
-         i055CdSQlbp1AwpglCdnt8JVhOeFPqI82iQMV0OMHNLvc9ezdfK/mVTLAlAMBTuxckt6
-         9gnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762788786; x=1763393586;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MhhZbSaUsVQtnfyfSsZMoa+Z0ZmaAqoEvexpVHXnJtU=;
-        b=LYvOJGMtpUk/xZK88OfF2ZI16wg1sCXP+hat3gGshSr4+Y89G7N1OM5MWsT+XDPfbc
-         2Cu6+UxdjAiQqlH+EiXdNvk9MG9x2D+YzuJy4l/95yH91yP8sxnY32hHP+yvK8ZFtMNo
-         aSFShDm397Ew6pbKrL0VgirxOKC5s9oQs4z6KDMEmQ4O4KPYbu4ZXG748G0yY1lowV8F
-         k0+XAGxwl1x3P+bOCUMlDli38mnuMfOT7WV7520M8TdR1TRqUnPQsG2D6Jae4EkJtK4Y
-         YiyyeO52wwZbPUH7Toy/BljkdcIH8KYfRlcTK4tUEgOZiwd1Npk9ucmuRYB+6SP7Z4zL
-         ezgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbmS03uPRoslxH09RBN/bfxtQ3TOOPOnudxiOcSJXsihFB18VkIG+wBa/qioQL6+NPzYgQPRb7AbppU54=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1BwabM1+u0coXpNHMijr7zeromzipTuZe1hXbktKxio8su23T
-	IwyZFWanh6eeywZqbWgswoPqAZGqhC3msNSRz1aI+kI4B9r+8SwmwJ+lTuvDSBAyhYQ=
-X-Gm-Gg: ASbGnctXWGwmJC27XUk/S0WThZX+zB16vFHo2Mdqk9aGiAkuEY6/v4QeIs2SCt1eV+l
-	PrIs9C9u1tU7f9j14jAfKqRgN5t5ywp/t1Fo0p/VIMVPNsb1GJKtVfQUwZmNoWny8f1EDSnhRSp
-	oU2XCMEN7YnDY5QwM9syjVu9zbqb3BLN+fet8cRrq25/87lHZ6i3dOGpr8j/TBPbaWMkR5c2kNZ
-	lkLy2pGfKvPjru5RYkCTQhysgmd9yRNl1HYciKS9gu6d1b+jm4Ko+i60Et9uoaF9Bn+AqKU2kvO
-	2NKKK8O37FGBrZpWVkIf3kmMv+gNH0mZeZw/4cU+vvsTuLbEQVRrr0b4rDhj6jvdCGN5qQxHCUk
-	iTsmig95GqpSLDvYGFV+4AIMWH83TUKqoE1a1ZNErOiE664gUBgaHg7onqIeqJL8KQPSRrwW7y+
-	/84bims6vLT0G2/tyCSNoHGNV0QVALuerDM61Bt3H00Ej20FBvE/GAhgmDRTP0
-X-Google-Smtp-Source: AGHT+IGuCDl8/NKwayI0umUFRt4zezOzmyPdXdzg64sqFdiOt0b+BRNMtdKq/wRK1BA8tF9mTTYKDA==
-X-Received: by 2002:a17:907:7fa6:b0:b70:c6ee:894b with SMTP id a640c23a62f3a-b72e055ffe0mr832947066b.51.1762788786091;
-        Mon, 10 Nov 2025 07:33:06 -0800 (PST)
-Received: from [192.168.1.42] (2a01cb0405e83a000cb38cfe29807c1e.ipv6.abo.wanadoo.fr. [2a01:cb04:5e8:3a00:cb3:8cfe:2980:7c1e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf7231dcsm1115978466b.31.2025.11.10.07.33.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 07:33:05 -0800 (PST)
-From: Mary Guillemard <mary@mary.zone>
-Date: Mon, 10 Nov 2025 16:33:00 +0100
-Subject: [PATCH v6 5/5] drm/nouveau/drm: Bump the driver version to 1.4.1
- to report new features
+	s=arc-20240116; t=1762788828; c=relaxed/simple;
+	bh=+rymyB2H1GCpplFZN98ExnpzW0O9nCkV8E0c0HQjmWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uuJcQbQ1lHRtr0l1FxPEniXCdPrvXmugWm3KQAfZFoJRcmkRKGeV8YgPwN3MJJuCoCZbOY/LyA5Co5bDzQkQWgiVPWIZrNlTlecQ9/cDhrxmnDgJ2VK6rHc3yzcc68RMijDs65Arjzf1vFA+icxzaNcyJeQnr+co6YdcML7nG2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UbOW3SK3; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762788826; x=1794324826;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+rymyB2H1GCpplFZN98ExnpzW0O9nCkV8E0c0HQjmWE=;
+  b=UbOW3SK3fZRqEhqvS0xR8aj0rQFNGsXYJNhWFvrHN37ppp9EXmAfzI5m
+   y6VMyXcKEDObbAMQ/56auh9nQk4pY5CMGFBIv/YfYSjM/nDaewc0fBlgR
+   tAUtrJMGpvQKO2LisIHdUAbi3KamcWHYe4fnReASai1QMfzNsf2ekMlOV
+   J8LvC/at8btzoS2YD29iPDrazsT1QlJl+qp/VcmaIsSdeQ6E4rZlg/Q/L
+   r0u/tkfeuPfZ1OkrRdtrouOCJevfLqWMldpldtDOUbYofNh8HOU03Flxr
+   vcpy1kch5KWbJMmd+Oj9LpwEliX4/V2Hf7q6lgIaxNuq8GyqZYvPK9xPT
+   A==;
+X-CSE-ConnectionGUID: cADGsg1wSXqZSRXQBd8VmA==
+X-CSE-MsgGUID: +Yg0UMphRsmL9Pdq9yuVlA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="82237648"
+X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
+   d="scan'208";a="82237648"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 07:33:38 -0800
+X-CSE-ConnectionGUID: IwSUOry/SDKpLQ2tpxmPnA==
+X-CSE-MsgGUID: fQundh82RRibb0QT8W8jhQ==
+X-ExtLoop1: 1
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.235])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 07:33:33 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vITtZ-00000007V6M-2rxB;
+	Mon, 10 Nov 2025 17:33:29 +0200
+Date: Mon, 10 Nov 2025 17:33:29 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Stefan Wahren <wahrenst@gmx.net>, Vinod Koul <vkoul@kernel.org>,
+	Thomas Andreatta <thomasandreatta2000@gmail.com>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	Olivier Dautricourt <olivierdautricourt@gmail.com>,
+	Stefan Roese <sr@denx.de>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>,
+	Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 01/13] scatterlist: introduce sg_nents_for_dma() helper
+Message-ID: <aRIFyR0maAfZF7MN@smile.fi.intel.com>
+References: <20251110103805.3562136-1-andriy.shevchenko@linux.intel.com>
+ <20251110103805.3562136-2-andriy.shevchenko@linux.intel.com>
+ <waid6zxayuxacb6sntlxwgyjia3w25sfz2tzxxzb4tkqgmx63o@ndpztxeh6o32>
+ <jea2owcqtjeomlbwkfopt3ujsnakn4p3xeyqhh7s4kowf7k7dr@deyg5pky5udo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-nouveau-compv6-v6-5-83b05475f57c@mary.zone>
-References: <20251110-nouveau-compv6-v6-0-83b05475f57c@mary.zone>
-In-Reply-To: <20251110-nouveau-compv6-v6-0-83b05475f57c@mary.zone>
-To: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>, 
- James Jones <jajones@nvidia.com>, Lyude Paul <lyude@redhat.com>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Mary Guillemard <mary@mary.zone>
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <jea2owcqtjeomlbwkfopt3ujsnakn4p3xeyqhh7s4kowf7k7dr@deyg5pky5udo>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
+On Mon, Nov 10, 2025 at 09:21:18AM -0600, Bjorn Andersson wrote:
+> On Mon, Nov 10, 2025 at 09:05:26AM -0600, Bjorn Andersson wrote:
+> > On Mon, Nov 10, 2025 at 11:23:28AM +0100, Andy Shevchenko wrote:
 
-The HW can only do compression on large and huge pages, and enabling it on
-4K pages leads to a MMU fault. Compression also needs kernel support for
-handling the compressed kinds and managing the compression tags.
+...
 
-This increments the nouveau version number which allows NVK to enable it
-only when the kernel actually supports both features and avoid breaking
-the system if a newer mesa version is paired with an older kernel version.
+> > >  int sg_nents(struct scatterlist *sg);
+> > >  int sg_nents_for_len(struct scatterlist *sg, u64 len);
+> > > +int sg_nents_for_dma(struct scatterlist *sgl, unsigned int sglen, size_t len);
 
-For the associated userspace MR, please see !36450:
-https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36450
 
-Signed-off-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-Signed-off-by: Mary Guillemard <mary@mary.zone>
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: James Jones <jajones@nvidia.com>
----
- drivers/gpu/drm/nouveau/nouveau_drv.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+^^^
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drv.h b/drivers/gpu/drm/nouveau/nouveau_drv.h
-index 84a275b06295..0e409414f44d 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drv.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_drv.h
-@@ -10,7 +10,7 @@
- 
- #define DRIVER_MAJOR		1
- #define DRIVER_MINOR		4
--#define DRIVER_PATCHLEVEL	0
-+#define DRIVER_PATCHLEVEL	1
- 
- /*
-  * 1.1.1:
-@@ -35,6 +35,8 @@
-  *        programs that get directly linked with NVKM.
-  * 1.3.1:
-  *      - implemented limited ABI16/NVIF interop
-+ * 1.4.1:
-+ *      - add variable page sizes and compression for Turing+
-  */
- 
- #include <linux/notifier.h>
+> > > +int sg_nents_for_dma(struct scatterlist *sgl, unsigned int sglen, size_t len)
+> 
+> All but two clients store the value in an unsigned int. Changing the
+> return type to unsigned int also signals that the function is just
+> returning a count (no errors).
+
+The type is chosen for the consistency with the existing APIs.
+So, I prefer consistency in this case, if we need to change type, we need to do
+that for all above APIs I believe. And this is out of the scope here.
+
+Personally I was also puzzled of the choice as *nents members are all unsigned
+int in the scatterlist.h.
+
+...
+
+> > We need an EXPORT_SYMBOL() here.
+
+Good catch! I'll add it in next version.
+
+> > With that, this looks good to me.
+> > 
+> > Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+
+Thanks!
 
 -- 
-2.51.1
+With Best Regards,
+Andy Shevchenko
+
 
 
