@@ -1,236 +1,287 @@
-Return-Path: <linux-kernel+bounces-893650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1C5C48041
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:39:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB330C47F1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:30:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 886874F1C87
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:32:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 60C5B34A2AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E2C27F4E7;
-	Mon, 10 Nov 2025 16:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB94427FD71;
+	Mon, 10 Nov 2025 16:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="faR5NPf/"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010003.outbound.protection.outlook.com [52.101.84.3])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SJJxqtq2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C3E280329;
-	Mon, 10 Nov 2025 16:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762792331; cv=fail; b=F+h9wYDiDyZsO7kqmbhLzn+4x5LxQwdZ6wOsmsGL7tvMY4fOyQruruv/3V5Xu9ie5yNhOGPWadjoIhzLaZXXGAIGLBF+PZipU79tqsuTQkuuGP0W/NBs6zaaTJ71fV2S0ksOcJ3MaAvyjJJ6AXSF6rwHV+n+rDcPip6IQKPfYhY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762792331; c=relaxed/simple;
-	bh=xQ9SyvVYuFTy86FUlt+i3eOeoMiLBqI948DWj05j1C4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qb3wnRQXFD+gxPXcmXjXlaB4JViLAQCICZMa9jCBLxvz6MHou9ZD4zVP2a0dlfVQEIbYTc1oqDFaqnvATyrM08nKWILgqkPQVhkNprizNaa3p9b9Bv+E+FJCBivuHCOZARFDhglxipS+9LuPlvyLVMLe67hKYgvngjXGlRbq+Co=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=faR5NPf/; arc=fail smtp.client-ip=52.101.84.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Mu7H50TQ4Qjoqlby5CZbx9aRcVUd2PQ3itGZBLAtaeU3W4+uW3rvrEk6U49oleUy7y2ev514H/qz7RHMVinm2cL0El2/UnOdLtxRzJMn41BzusQgdpaYOsvYxrvUj0n6NW2ILCgshGyQTotePOdiKI2zPjFuGZV/Z3kQH9FTO0V2fTeiJjI89I7B1VmFOWGZhTtGcmK89Jd+XTb0Upk4aJ1Ot+Joim8LQLelVPPAEtFXwP4g4VV0S5PFn0carSrH9Lvqzw/GP/EFfnYiXOzhpmiBbwODF7e9nSz8KgiE98shGaRxRa+HJGguzTw2xJT4izVGhUqKSYQdo3gjs5+yDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DkHIsNy9Rw6ja30HvOPfGgUuX7DJankAOaUgJVCd2EM=;
- b=xzGtN0UMDLZg1f7BYJ3zN0hIzogXSEL+mzlHWchyYqvsjQrAFPXAs7CJCFUUj0XDdLAe6/l3KiXBzeVYt5kWd58gV5Ma8JkcRy+LABpBGw84W4bEeCqzkNDdkCIYxqaMHnkDnvsf13PGUnQEFyImNttBuQgGnChvNK8aSgGwa9dswvXb/LBhnqS9ozkBj2LudJUwrFEVpBAMiKVvhpIpnje9nlH0OOWBCCEqLoEUOlRTXxOU+QBnzPfJTWYS5KFubRsjSnEmL+qMfcAy9GoRyTK5fJbezWQdUXWUkNQvq+Pi06Sor6Nt0BTUe4SgreraYSNBTDjQluyL17tjOfdAaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DkHIsNy9Rw6ja30HvOPfGgUuX7DJankAOaUgJVCd2EM=;
- b=faR5NPf/DeE/iwriHXNn6bokmGQk8An/1m5lhtBPguxRxrW7qLKSOmhLlqepZghTycff/rkooa0fSkrHrESplfH33d7l2241Y1YMIp1mI99i92jrJ5c9aWJvLBD+jqmVXPGQQEqSX7gXVV++VwOmgLCQ9m0zwuKlvkf0ew2dWHQcPZScERaFeXPtPlAANHj2ztZM6DnO6LIcRAOW2fK6VBbPQaJASDyqJUSBeizfVc54dqK1aEmVpzb4+yXfPPvC0L5tVn9SjAjaGsTCpTnlmkLXY440FRkqiFl8gKBDXPnMT+QoQFCvXX4IwoE8l08WuYTqXzgMyV7eY0IQVNGHBw==
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by GVXPR04MB11478.eurprd04.prod.outlook.com (2603:10a6:150:287::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 16:30:48 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612%5]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 16:30:29 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Jonathan Corbet
-	<corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-Thread-Topic: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-Thread-Index: AQHcUl9T+LTfJNsvJUmc0OfY3rguew==
-Date: Mon, 10 Nov 2025 16:30:29 +0000
-Message-ID:
- <PAXPR04MB9185F5CC1FEE1557B6AD320889CEA@PAXPR04MB9185.eurprd04.prod.outlook.com>
-References: <20251104203315.85706-1-shenwei.wang@nxp.com>
- <20251104203315.85706-4-shenwei.wang@nxp.com>
- <9fd8ccd9-560a-43b4-a48d-f7a3eaa07eb1@lunn.ch>
- <PAXPR04MB9185C4A4B91F863CFD49718E89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <0be8c911-3c31-40da-b431-e5a24339c0f9@lunn.ch>
- <PAXPR04MB9185D9EBE8F46715FD114A2989C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <cadcbbc7-2024-413a-8e9b-bde5fa233df5@lunn.ch>
- <PAXPR04MB9185E2C3E50D365F64F10E3A89C3A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <0980eb35-b3fd-4383-af86-433769a4fd97@lunn.ch>
- <PAXPR04MB9185156672C7B334E717F11789CEA@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <638dac3d-ddcb-4d53-b06d-e0bd3d9077c3@lunn.ch>
-In-Reply-To: <638dac3d-ddcb-4d53-b06d-e0bd3d9077c3@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|GVXPR04MB11478:EE_
-x-ms-office365-filtering-correlation-id: 288d4ea8-d379-48e8-a733-08de20767675
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|19092799006|376014|7416014|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?pqhalxytzkGwflzrF+R4IcZ/kfABI7VJWVvD6k0Uv7fEnKYpTtn+lzT6+JXd?=
- =?us-ascii?Q?xqSIetw3/KmvBYKGf92wbFxKcHs66etb17R6DIFlrz1R8WJsuRl190VEif/F?=
- =?us-ascii?Q?P5pXlGspmneHi2d3hx7mzMiKW4qfJFWBOieQ4VTA7Eh/fXONk9cm0AK2tH3y?=
- =?us-ascii?Q?ID1NuNZQqtUJ449TlIfmPYo4JlSKlid8C3YKueufQLUQf4OJFRlnEirSAYZP?=
- =?us-ascii?Q?2fYuZsd/vBcbydFaIdlBbL17FnHOcQRB/7TiqTSH5hgDvYVvBty/JbdGkA7o?=
- =?us-ascii?Q?x00hPcsUGQHw1aMvPiOQCK9V2RfR1yTrIKU7t1r55w2mVCG89cvwAQkMQi98?=
- =?us-ascii?Q?DuHVeFGZiGqQavSbJ0HwdaiGjbd6cIhxLfSmDnmKcF8PaQ4njJ288RuyY/h4?=
- =?us-ascii?Q?AYurKUxQGoCeFZzny75sKVtFKWLRVTTyxuhty458+Q4QZi/Bwt5mIGVoH26x?=
- =?us-ascii?Q?pANfW102NOoIx3lIC/9W9u32OvvExgCZb168Ujd7LnXrSGPoNhbJKYfa2VH1?=
- =?us-ascii?Q?qw1TN4wNoLkyNp7JjN4lbgnxdHeKiOulxOpiYeaXqjxIK1M/N7FoEzG9pvHe?=
- =?us-ascii?Q?nVAMqJK2jSWx5W15zbrcDrmwZsk1u3Bdqf34RygMcBdC8kRFkM55mu/88g21?=
- =?us-ascii?Q?wAG2OJ2RWzYO1sObCD/fg/D8yCJyuEDG3jjW891EJJSzcwtRayDaUsYmK2p8?=
- =?us-ascii?Q?V3Sij1WHqMh2AcLcWyk8psLPayv1vhi71ZddtBwyrZcL+ieTPFjuRvTCtjpA?=
- =?us-ascii?Q?hvSG5XZ3WYg3NTObzNs+lYHKbDQzqsuF5bHMt2Jf40NyCL9fXa7vFOXjAtG0?=
- =?us-ascii?Q?Zxtd5dJGStvawws+jQfUQL4y2IM8iwv0u1BMRM5l+UMQvH2FV93RCtiew3Py?=
- =?us-ascii?Q?ym31IlXe1ueEg6TdoFKk0Mn7XTnF3uIqmm5HfiH63If2qmy0bhbD/g1b3yn/?=
- =?us-ascii?Q?ZBw3+4XTbIPul461VkFvGLpkJdunsA6VMc1sEus4dHNMWv8ifZb6noTz2rWp?=
- =?us-ascii?Q?pzVnxt98lAUc8PZBJPtaax7C8nvMljuoXktwkJVc+mi/4OTqfqgPlGM2U8V2?=
- =?us-ascii?Q?6iiOmFnmk1dOTgt7181vGoRCl98i076JD9Xx9Uq8DJpHYusVq+pP28cTn8/x?=
- =?us-ascii?Q?dM+0nA+Bl4TV6t7AXgdBKiwpuciWSHCofyTVNBwYTsb3oHa5+Rvl9Mv2uOj0?=
- =?us-ascii?Q?e9R3zSUI0AjUAXE3dw4wwx0q5lc6EmBGcz8WFSUjeCVRdXmR2AZZ0q3S4HfJ?=
- =?us-ascii?Q?wgHPRYVZzogC9UlenfTsF1H1Xk+XsXJYt3flCYPh7EhwSv9LNlHcoDPsqZJL?=
- =?us-ascii?Q?ZXX0BwxA25v6UZ3NWcLgWVgu4tkfPaQXxnK7Icw8ipXG1cy1xPiGz92k0t0o?=
- =?us-ascii?Q?5t2+qtFGtOspBIwvt5i1FTxuFGS+xPjJS1f4iBTBfWdvcQbCoStXUS4RyVA9?=
- =?us-ascii?Q?G6MmxbD/4d9jed4/d0qMxq7ptw/ntF7SekymN1WJ8xlzHh/bmxJnZlyxLAdv?=
- =?us-ascii?Q?couJhtxLL4EBLFFONvs1uV0jSh98NsdHI5cx?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(376014)(7416014)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?jvXuQswQgQ66610QtO7cmvDxhAqRF75gHeLBohiTJxK4Bb8ydIXKeAV8XeQC?=
- =?us-ascii?Q?LWMSgEe9xwLV/kZSc7qhihiQshAQgwOliqDdm9EenKqVupqaPEXqR3+vIpxQ?=
- =?us-ascii?Q?fR2YCLoz4AVS+vQuiH4TiyN1Oyxi0nhVs+GdYvJVWAB3Ky8tGswrSBq0mGvq?=
- =?us-ascii?Q?PemdSyD5N2Nwd+GVzR8ID0VKxUSOkQxrJ4LoMGo+ykWEIhRdLYX9gRSC//Aw?=
- =?us-ascii?Q?G1fH3iOYFfZnb/lUYznEvKpLm6tKV4Z4PfVU5DORzowgEh5YfBRWMgmjesHF?=
- =?us-ascii?Q?NvQLgD0BFTUS/XBuGQHzE4eBruFt1CGJTfACY9FMV6jY7FJ3FP4m2eUsS6kM?=
- =?us-ascii?Q?ua5prUjcXxLDTZpWFmk1gJ7PskKbNM0H3fFz9WqjIjeSQmukk5gzuibpT69m?=
- =?us-ascii?Q?jl37aXKpsJxDyvSWkELQW4flM3SXtmvw4YwjY949Tj1xOv3IKNkLxsU+Z6Yz?=
- =?us-ascii?Q?o6InHC8e1MqrD6ooGM6T3jWXrFlo8Yq22TN5Az2XrLuuSRg4f3pEIQzh5sKj?=
- =?us-ascii?Q?oFBU+3m0wtRF2fDr1GkuTnyOhblEDLjiYLBRs4xaaVyVRjyYg11NuRbQzrxn?=
- =?us-ascii?Q?IhmHbt1BwYaYxIBgdB71gpkEC3ZzC+nkphwH2hQMgm2sJPaUJeHnRi9CJgxR?=
- =?us-ascii?Q?BCt/rP4FD5yqa75j5u9xaVD+IE8G7bwQhDdv7/5RQf9mqTA9ODnqZSy+cZKf?=
- =?us-ascii?Q?hAs7T0nFiwBJ2G57TEWQxEz/FXYRfdN4dSuMnMpFMgnt+aU40dlCzFWXGYpr?=
- =?us-ascii?Q?jpx6NeOfVLJsDPSvBtveHPCMxqoRf4D4Sy2SjlidiNINBx6xj7/Pj4gP//fR?=
- =?us-ascii?Q?nPKfjNsEJUeFXLobf33C8PaD5QPd1ouO08Ljc4554lz1QRPsjFpMNGwmOmIG?=
- =?us-ascii?Q?wnMNz/tFpv3lUjLkLiK6cBD1RCW4jd0UcpfRWQyV58ygW+iIprKCD9St/5SO?=
- =?us-ascii?Q?pAn756eisvOVnl4ghXcpQTw0TRaX1d57sc3LyhBiRAWiwn5El/rptPYsAjF3?=
- =?us-ascii?Q?swpwM+b7Fsrdg3Pq0AtTpCZxcnr7vFXn1nq4ODpBHHp09/uHBSmki8FWqWvq?=
- =?us-ascii?Q?k+NxOZyu92s08+WBWyMbG0BTnYWs9Qu1AqXoCLq/0cIt7zImHFYPk+hvLTF6?=
- =?us-ascii?Q?Bdn3lgLMvPh+1spXFO017byfz8Al3YtfuxsuJCBbrlhZz8u/JUfTuHoOTBoT?=
- =?us-ascii?Q?6nq0DHaaQM87ezPEiWzX8FveuYpR86j5jEgiS8HdQBB0NkKcNJtdFl51gdS0?=
- =?us-ascii?Q?BgucgVSybysQK/sR8LH1Gxeq8RT1ij0nPpJbmzp8C3xUlobXM+fKQjJSIwaI?=
- =?us-ascii?Q?i2gX257jLD2pT5i1rDjw1Yi0DO1/rSvdZ381mHE5AR1lGDYgeoELY37FWNfa?=
- =?us-ascii?Q?BHYykjzfGjrWXEZzEA95thlRqspeYaqWkEq21DVPaw7sWrYtiSQkiTPfysF9?=
- =?us-ascii?Q?ptJyfWqHqxDna97UrC5RmKLlEf0vXUUy3tOsQcAvYlC4OM9inT8DMmUyTMq8?=
- =?us-ascii?Q?6JVNg3U1rLZP5MCC2PbKE6oMUS9be+N2Ou7Ge9xcgEgtZdqLzv4TakONiIJA?=
- =?us-ascii?Q?f2/oBmAaV5UDyvRL6B+QMalitfoRRMLqLP1LCz9x?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5132A24A047;
+	Mon, 10 Nov 2025 16:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762792247; cv=none; b=nFTAwkr0MzOdNMWWv8Aw/559O7nhNvUEBX1dByVr9YS/OGXnpdlVmvzqkdLJf7kJ3RlT7+IZ932gURNrHVLE2VO7/3607p29ycSB97oAFzfuxGOvCEg6iKSH/uSwdDmEviUIXiHJPh5ig6c0t8FT9ol6NRR1FeJS14rsqnUd75U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762792247; c=relaxed/simple;
+	bh=iK8XFCALGc6e4f7zZ9iu7zB1u7W0l9CGAnuy8SPnocM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=baexp9MpaJph+MaioHbvdKs+6JtXBk1nWb8eYnIdHyOOjpfl02occliRDcHDGOa8RQ72H7tIy0+4unyAcwmbmlyirpp4aLXVE6aSGt/uOI5TvEwVWXjLIwnB1fUplVvHvgkCBpzD4CLh7oCk69USU5NMqdMOWbvWq251p0W1duA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SJJxqtq2; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762792245; x=1794328245;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iK8XFCALGc6e4f7zZ9iu7zB1u7W0l9CGAnuy8SPnocM=;
+  b=SJJxqtq2aMgXfsOkyhJAGolSlw7Z9jVJAyslZvUnniEJe23HF3ZVnEY8
+   upC6NeFePMfWjnc8uPrWyRx2URGwJgP477hTSz7drY2h0Krwp+/sSzXlw
+   nG6f/DetcYfdRph5CUPETaesXuZxjiFjSzKNCUtq2InqhHv5OxVh+vIUt
+   U/1KDbBxZVxxAwHnVVZVbALR9FFqteuoYsv5cehovdccJMsWv4MzBu48x
+   JBBI1nMMDHd7ioWsm2jOSFVKUcwGX/RGKCbRyUi+O8YRYPxUu8lzaVIj8
+   J+mBtl7ismGgHRFmT5GeUh6NOfmq3l/TJ17RFnU1hnwoZtSnjW0zinq2x
+   Q==;
+X-CSE-ConnectionGUID: HblRJgNTT2O9Az3+se8UUA==
+X-CSE-MsgGUID: CiNx93ZOSQyY4rh4t5K0kQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="76295808"
+X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
+   d="scan'208";a="76295808"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 08:30:44 -0800
+X-CSE-ConnectionGUID: eSpEjy7KRDiex35tTq0k7Q==
+X-CSE-MsgGUID: pFUbbmtyStqKLqRsQ5KHXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
+   d="scan'208";a="189436364"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.235])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 08:30:40 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vIUms-00000007Vsw-0rMZ;
+	Mon, 10 Nov 2025 18:30:38 +0200
+Date: Mon, 10 Nov 2025 18:30:37 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: rodrigo.alencar@analog.com
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 1/3] iio: frequency: adf41513: driver implementation
+Message-ID: <aRITLaJir-2IoclU@smile.fi.intel.com>
+References: <20251110-adf41513-iio-driver-v1-0-2df8be0fdc6e@analog.com>
+ <20251110-adf41513-iio-driver-v1-1-2df8be0fdc6e@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 288d4ea8-d379-48e8-a733-08de20767675
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2025 16:30:29.8224
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: t2BPNIe7nPVnYjyYgrAPZrxCTG9vh51bxFuYl1ur8wE/jkGHOz0NV0dJFAz+ijADgOuTTnlyShgbss9ygZvIjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB11478
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110-adf41513-iio-driver-v1-1-2df8be0fdc6e@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
+
+On Mon, Nov 10, 2025 at 03:44:44PM +0000, Rodrigo Alencar via B4 Relay wrote:
+> 
+> - ADF41513: 1 GHz to 26.5 GHz frequency range
+> - ADF41510: 1 GHz to 10 GHz frequency range
+> - Integer-N and fractional-N operation modes
+> - Ultra-low phase noise (-235 dBc/Hz integer-N, -231 dBc/Hz fractional-N)
+> - High maximum PFD frequency (250 MHz integer-N, 125 MHz fractional-N)
+> - 25-bit fixed modulus or 49-bit variable modulus fractional modes
+> - Programmable charge pump currents with 16x range
+> - Digital lock detect functionality
+> - Phase resync capability for consistent output phase
+> - Clock framework integration for system clock generation
+
+It is like a list from the marketing material. Please
+1) make sure you are writing the commit message;
+2) implement minimum basic functionality and split features to the next
+patches, 1.5kLoCs is hard to review.
+
+...
+
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/sysfs.h>
+> +#include <linux/math64.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/property.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/spi/spi.h>
+
+At least types.h is missing. Follow IWYU. Have you passed internal review? I
+believe we need to start asking Analog Devices to provide a Rb tag of known
+developers on the submitted code to make sure it was passed the internal
+review.
+
+...
+
+> +/* Specifications */
+> +#define ADF41513_MIN_RF_FREQ			1000000000ULL	/* 1 GHz */
+> +#define ADF41510_MAX_RF_FREQ			10000000000ULL	/* 10 GHz */
+> +#define ADF41513_MAX_RF_FREQ			26500000000ULL	/* 26.5 GHz */
+
+We have HZ_PER_MHZ, also you can move HZ_PER_GHZ to the units.h and use it here.
+
+> +
+> +#define ADF41513_MIN_REF_FREQ			10000000U	/* 10 MHz */
+> +#define ADF41513_MAX_REF_FREQ			800000000U	/* 800 MHz */
+> +#define ADF41513_MAX_REF_FREQ_DOUBLER		225000000U	/* 225 MHz */
+> +
+> +#define ADF41513_MAX_PFD_FREQ_INT_N_HZ		250000000U		/* 250 MHz */
+> +#define ADF41513_MAX_PFD_FREQ_FRAC_N_HZ		125000000U		/* 125 MHz */
+> +#define ADF41513_MAX_PFD_FREQ_INT_N_UHZ		250000000000000ULL	/* 250 MHz */
+> +#define ADF41513_MAX_PFD_FREQ_FRAC_N_UHZ	125000000000000ULL	/* 125 MHz */
+
+Ditto.
+
+...
+
+> +#define ADF41513_MIN_CP_VOLTAGE_MV		810
+> +#define ADF41513_MAX_CP_VOLTAGE_MV		12960
+
+_mV
+
+...
+
+> +#define ADF41513_MAX_LD_BIAS_UA			40
+> +#define ADF41513_LD_BIAS_STEP_UA		10
+
+_uA
 
 
+...
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Monday, November 10, 2025 9:59 AM
-> To: Shenwei Wang <shenwei.wang@nxp.com>
-> Cc: Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier
-> <mathieu.poirier@linaro.org>; Rob Herring <robh@kernel.org>; Krzysztof
-> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn
-> Guo <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
-> Jonathan Corbet <corbet@lwn.net>; Linus Walleij <linus.walleij@linaro.org=
->;
-> Bartosz Golaszewski <brgl@bgdev.pl>; Pengutronix Kernel Team
-> <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Peng Fan
-> <peng.fan@nxp.com>; linux-remoteproc@vger.kernel.org;
-> devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-
-> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
-> doc@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
-> Subject: [EXT] Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rp=
-msg bus
-> > The remote firmware does not need to know whether Linux is asleep. The
-> > GPIO is not used to wake Linux directly; instead, it serves as a
-> > wake-up source for the remote firmware if configured accordingly. Once
-> > the remote firmware is awake, it sends a notification message to Linux.=
- This
-> notification is the actual event that wakes Linux.
-> >
-> > This works because there is always a physical interface connecting Linu=
-x and
-> the remote firmware.
-> > On i.MX platforms, this interface is the MU block. When the remoteproc
-> > driver is running, the MU block is automatically configured as a
-> > wake-up source for Linux by default. As a result, the notification mess=
-age can
-> wake the Linux system if it is asleep.
->=20
-> You need to add a lot more documentation to the specification to make thi=
-s
-> clear. As you said, the firmware and Linux have different sleep/wake life=
- cycles.
-> How does the firmware know it is safe to go to sleep, if it has no idea L=
-inux is
-> running or suspended?
->=20
+> +#define ADF41513_MAX_MOD2			((1 << 24) - 1)	/* 2^24 - 1 */
 
-The remoteproc driver is responsible for managing the remote firmware. The =
-GPIO driver=20
-operates independently of this process and functions transparently on top o=
-f it.=20
-So the GPIO driver does not require to know the firmware's running states.
+Why not BIT()?
 
-Thanks,
-Shenwei
+...
 
->         Andrew
+> +/* Frequency conversion constants */
+> +#define ADF41513_HZ_TO_UHZ			1000000ULL	/* Convert Hz to uHz */
+
+Put it to units.h.
+
+...
+
+> +enum {
+> +	ADF41513_FREQ,
+> +	ADF41513_POWER_DOWN,
+> +	ADF41513_FREQ_RESOLUTION,
+> +	ADF41513_FREQ_REFIN
+
+Doesn't sound like a terminator to me, add a comma.
+
+> +};
+> +
+> +enum adf41513_pll_mode {
+> +	ADF41513_MODE_INTEGER_N,
+> +	ADF41513_MODE_FIXED_MODULUS,
+> +	ADF41513_MODE_VARIABLE_MODULUS,
+> +	ADF41513_MODE_INVALID
+
+Ditto.
+
+> +};
+
+...
+
+> +struct adf41513_data {
+
+Run `pahole` and act accordingly.
+
+> +	u64 power_up_frequency;
+> +
+> +	u8 ref_div_factor;
+> +	bool ref_doubler_en;
+> +	bool ref_div2_en;
+> +
+> +	u32 charge_pump_voltage_mv;
+> +	bool phase_detector_polarity;
+> +
+> +	u8 muxout_select;
+> +	bool muxout_1v8_en;
+> +
+> +	u8 lock_detect_precision;
+> +	u8 lock_detect_count;
+> +	u8 lock_detect_bias;
+> +	bool fast_lock_en;
+> +
+> +	u16 phase_resync_clk_div[2];
+> +	bool phase_resync_en;
+> +	bool load_enable_sync;
+> +
+> +	u64 freq_resolution_uhz;
+> +};
+> +
+> +struct adf41513_pll_settings {
+> +	enum adf41513_pll_mode mode;
+> +
+> +	u64 target_frequency_uhz;
+> +	u64 actual_frequency_uhz;
+> +	u64 pfd_frequency_uhz;
+> +
+> +	/* pll parameters */
+> +	u16 int_value;
+> +	u32 frac1;
+> +	u32 frac2;
+> +	u32 mod2;
+> +
+> +	/* reference path parameters */
+> +	u8 r_counter;
+> +	u8 ref_doubler;
+> +	u8 ref_div2;
+> +	u8 prescaler;
+> +};
+
+...
+
+> +static const u32 adf41513_cp_voltage_mv[] = {
+> +	810, 1620, 2430, 3240, 4050, 4860, 5670, 6480, 7290, 8100,
+> +	8910, 9720, 10530, 11340, 12150, 12960
+
+Make it power-of-two items per line, even with the comments to show
+the indexing, like
+
+	810, 1620, 2430, 3240, 4050, 4860, 5670, 6480,	/* 0 - 7 */
+
+> +};
+
+...
+
+> +static int adf41513_parse_uhz(const char *str, u64 *freq_uhz)
+
+My gosh, please, try to check what kernel already has. We try hard to avoid Yet
+Another Best Parser in the World to happen, really.
+
+...
+
+In any case, I stopped my review here, you have more than enough to fix.
+Please, come next time with a tag from one whose name is in the MAINTAINERS.
+From now on it will be my requirement as a reviewer of IIO subsystem.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
