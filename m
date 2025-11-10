@@ -1,120 +1,177 @@
-Return-Path: <linux-kernel+bounces-893179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536C5C46B7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:54:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B0CC46B80
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:54:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0AE1885F67
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:54:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 48F444E8D4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D039230FC29;
-	Mon, 10 Nov 2025 12:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DBD30FC0D;
+	Mon, 10 Nov 2025 12:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O9NW65S6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WMWwPWWS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0CF28B415;
-	Mon, 10 Nov 2025 12:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C62E28B415;
+	Mon, 10 Nov 2025 12:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762779251; cv=none; b=h+34IX9hiVbILFePHUBGR/nuhbcHLK9YimaMZhj5zT/QO8zvfQ9gNsRiFDFf2Fx9B7UBT0zY1QPIbvFd8Ve76rEr9ZJ47KlAXZwWPIth9vnpobzmIWIbeKyNftNO80SA6Yt5mnPJpPvNGqICd2vdfsh4Y34Xvr4hE8HSRpQkn3Y=
+	t=1762779260; cv=none; b=CbUhhDLOAxCwV2J5cdR08voXMdw8gT2b3PXjdPJ38BZJFj4bGtjnI9/KH4UZ5u2qSPnuA4/39jUtWEAG6c2BXAti1QFRzlxizEXQ0jUnuFs4dV/UVTrODFAsn/KSAZSNh4q1LgeBc5EPPnbbqWQZ+10+734CvrL63gQXQVpPKm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762779251; c=relaxed/simple;
-	bh=Z/w5BvGlJ6S3Y78v5wnf1cn1h8pvJ5oWK1cCIxL/Wzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S8ekM1H2ik99tyY1EGt6EPskgBGI7VugiQOVshEWeqn6F1ho9czIZSNSFRrTnsqq+meqb9UHx7K7S0O3zdMDlxv8DIWukQ2j4XqxCEEeX6UKnyMxSkbDXpitl1UdPQEz+A3jNH9wkbo1D3oB1C6eSK0xVN7OMQWw6HNKUI0ts4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O9NW65S6; arc=none smtp.client-ip=198.175.65.10
+	s=arc-20240116; t=1762779260; c=relaxed/simple;
+	bh=uETkF9u5gsTRV+eVwBh9Qos7gH0lYI7CXbAjujKKzL4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EaM2LBHRaIAujXiDpMnC8zJHVbUad+LWY4epVzxUsp80MUQUBCr6nfXZSDfq8k1OokQEdgTayKVBNnKjPM4bsXBvS0iDJOMplIB98g8IuT5U+XFnMNdPiDWTOPJ7BllUjW7ESQRzt+bWYNthzLxPyTSbaYGXYC4cSH1KyfUV1wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WMWwPWWS; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762779250; x=1794315250;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Z/w5BvGlJ6S3Y78v5wnf1cn1h8pvJ5oWK1cCIxL/Wzk=;
-  b=O9NW65S6svWyiOrF+T8b/mhBZTUYoykncnt0xeB8KGkTfTAq+08HWb+u
-   omvY+UQktiykOUQc7Mqw73Jnm96LxAAhwpKGP+AJtNDvo1wYG0J3Nzviw
-   T+gY9JvhVCxmGBMfrL8jo5YgQUz13GOzBY4d3NN0UpmD4ODexkATwRiOn
-   UREPMRFMSoWc+/plCjvGHqv96FdZg2I6fDyRXEtw7ThfPwt7bpYo/Rcbg
-   sMBmDzQu1t4f/APdnMmXbwHObiGYQhGYasbPBzJ9tkd7niOhesym0BYPe
-   O14smIioGtnh0+nsjffBq0ztwf3bFM9Jd4G1hB8uoKRmtStVK4gJktvUd
-   w==;
-X-CSE-ConnectionGUID: J3EniCoqReCLo456qC1kmw==
-X-CSE-MsgGUID: ueXCOewiR8Sjhtmltz82jg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="82224960"
+  t=1762779259; x=1794315259;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=uETkF9u5gsTRV+eVwBh9Qos7gH0lYI7CXbAjujKKzL4=;
+  b=WMWwPWWSNplEbnb07zmALZ5gq5dUMb1MtAW0VrJyZm0K02gyZEr3kyBR
+   fMSf62VOCeJkuxpiIdg1qTv4WdhdaDWoLIpR1o71+SJmUnk/LmojqsfCb
+   MT15RrfyP6AeDItLsPFq8ZM7hbap9CQbz/uSJUooRp9quBUSljt86YQOM
+   cqE3ZwNbrhQqUA6KWCmGsJPDHtIgovfFiUtlRnr4NydNWky4k16R85Fss
+   EfEQn/G5FxFpeR+O2Vz9GrIa3MfuIBHiOMYXDofdb3D32+sS+EyNadsWQ
+   tXTkumQ+Wyt8V3g72JjBj/97DzdQh/GbCy0y2JfgIbzwYvtBjiBHLCAAe
+   Q==;
+X-CSE-ConnectionGUID: mlRIuzQhQZSWIajjF5z50Q==
+X-CSE-MsgGUID: EMplrzYgRgGIkNlrfonCAw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="68686166"
 X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="82224960"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:54:09 -0800
-X-CSE-ConnectionGUID: PLVia+OkQsaKhN9quXcB1A==
-X-CSE-MsgGUID: fxthXgjHSrGsTrJlNqurfg==
+   d="scan'208";a="68686166"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:54:19 -0800
+X-CSE-ConnectionGUID: +EL8QiMWQemBIFPw7/grvA==
+X-CSE-MsgGUID: Gf6CuqPSSVqrYMoBMViEjQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="192777077"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.235])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:54:05 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vIRPF-00000007Snr-3tiy;
-	Mon, 10 Nov 2025 14:54:01 +0200
-Date: Mon, 10 Nov 2025 14:54:01 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jic23@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
-	andy@kernel.org, Michael.Hennerich@analog.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
-	cosmin.tanislav@analog.com, marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v1 0/3] iio: adc: Add AD4134 minimum I/O support
-Message-ID: <aRHgaXxxnD5YsIQQ@smile.fi.intel.com>
-References: <cover.1762777931.git.marcelo.schmitt@analog.com>
+   d="scan'208";a="188622188"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.240.49]) ([10.124.240.49])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:54:15 -0800
+Message-ID: <afadfe85-413b-44fc-afa6-5770413a0488@intel.com>
+Date: Mon, 10 Nov 2025 20:54:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1762777931.git.marcelo.schmitt@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] KVM: x86: Add a helper to dedup loading guest/host
+ XCR0 and XSS
+To: Binbin Wu <binbin.wu@linux.intel.com>, seanjc@google.com,
+ pbonzini@redhat.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, chao.gao@intel.com
+References: <20251110050539.3398759-1-binbin.wu@linux.intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20251110050539.3398759-1-binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 10, 2025 at 09:44:56AM -0300, Marcelo Schmitt wrote:
-> This patch series adds basic support for ad4134. AD4134 is a very flexible
-> device that can be configured in many different ways. This series aims to
-> support the simplest way of interfacing with AD4134 which is called minimum I/O
-> mode in data sheet. This is essentially usual SPI with the addition of an ODR
-> (Output Data Rate) GPIO which functions as conversion start signal in minimum
-> I/O mode. The CS pin may be connected to a host controller CS pin or grounded.
+On 11/10/2025 1:05 PM, Binbin Wu wrote:
+> Add and use a helper, kvm_load_xfeatures(), to dedup the code that loads
+> guest/host xfeatures.
 > 
-> This set provides just one feature:
-> - Single-shot ADC sample read.
+> Opportunistically return early if X86_CR4_OSXSAVE is not set to reduce
+> indentations.
 > 
-> [PATCH 1] Device tree documentation for AD4134.
-> [PATCH 2] IIO Linux driver for AD4134.
-> [PATCH 3] Initial IIO documentation.
+> No functional change intended.
 > 
-> There is a driver by Cosmin on ADI Linux tree that supports AD4134 in wiring
-> configurations suited for high speed data transfers. Even though the minimum I/O
-> support was initialy based on that high speed transfer driver, the result ended
-> up becoming entirely different. Also, because the different wiring
-> configurations are likely going to use different resources and software
-> interfaces, the code for AD4134 support was split into ad4134-spi.c,
-> ad4134-common.h, and ad4134-common.c.
+> Suggested-by: Chao Gao <chao.gao@intel.com>
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-The cover letter misses the answer to: "Why do we need a brand new driver?
-Don't we have anything similar already in IIO that can be expanded to cover
-this one?"
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+> ---
+> v2:
+> - Pass a bool to distinguish guest/host. [Chao, Xiaoyao]
+> - Fix a typo in the short log. [Chao]
+> - Opportunistically return early if X86_CR4_OSXSAVE is not set to reduce
+>    indentations.
+> 
+> v1:
+> - https://lore.kernel.org/kvm/20251106101138.2756175-1-binbin.wu@linux.intel.com
+> ---
+>   arch/x86/kvm/x86.c | 33 ++++++++++-----------------------
+>   1 file changed, 10 insertions(+), 23 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 9c2e28028c2b..2c521902e2c6 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -1219,34 +1219,21 @@ void kvm_lmsw(struct kvm_vcpu *vcpu, unsigned long msw)
+>   }
+>   EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_lmsw);
+>   
+> -static void kvm_load_guest_xfeatures(struct kvm_vcpu *vcpu)
+> +static void kvm_load_xfeatures(struct kvm_vcpu *vcpu, bool load_guest)
+>   {
+>   	if (vcpu->arch.guest_state_protected)
+>   		return;
+>   
+> -	if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
+> -		if (vcpu->arch.xcr0 != kvm_host.xcr0)
+> -			xsetbv(XCR_XFEATURE_ENABLED_MASK, vcpu->arch.xcr0);
+> -
+> -		if (guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVES) &&
+> -		    vcpu->arch.ia32_xss != kvm_host.xss)
+> -			wrmsrq(MSR_IA32_XSS, vcpu->arch.ia32_xss);
+> -	}
+> -}
+> -
+> -static void kvm_load_host_xfeatures(struct kvm_vcpu *vcpu)
+> -{
+> -	if (vcpu->arch.guest_state_protected)
+> +	if (!kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE))
+>   		return;
+>   
+> -	if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
+> -		if (vcpu->arch.xcr0 != kvm_host.xcr0)
+> -			xsetbv(XCR_XFEATURE_ENABLED_MASK, kvm_host.xcr0);
+> +	if (vcpu->arch.xcr0 != kvm_host.xcr0)
+> +		xsetbv(XCR_XFEATURE_ENABLED_MASK,
+> +		       load_guest ? vcpu->arch.xcr0 : kvm_host.xcr0);
+>   
+> -		if (guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVES) &&
+> -		    vcpu->arch.ia32_xss != kvm_host.xss)
+> -			wrmsrq(MSR_IA32_XSS, kvm_host.xss);
+> -	}
+> +	if (guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVES) &&
+> +	    vcpu->arch.ia32_xss != kvm_host.xss)
+> +		wrmsrq(MSR_IA32_XSS, load_guest ? vcpu->arch.ia32_xss : kvm_host.xss);
+>   }
+>   
+>   static void kvm_load_guest_pkru(struct kvm_vcpu *vcpu)
+> @@ -11333,7 +11320,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+>   	if (vcpu->arch.guest_fpu.xfd_err)
+>   		wrmsrq(MSR_IA32_XFD_ERR, vcpu->arch.guest_fpu.xfd_err);
+>   
+> -	kvm_load_guest_xfeatures(vcpu);
+> +	kvm_load_xfeatures(vcpu, true);
+>   
+>   	if (unlikely(vcpu->arch.switch_db_regs &&
+>   		     !(vcpu->arch.switch_db_regs & KVM_DEBUGREG_AUTO_SWITCH))) {
+> @@ -11429,7 +11416,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+>   	vcpu->mode = OUTSIDE_GUEST_MODE;
+>   	smp_wmb();
+>   
+> -	kvm_load_host_xfeatures(vcpu);
+> +	kvm_load_xfeatures(vcpu, false);
+>   
+>   	/*
+>   	 * Sync xfd before calling handle_exit_irqoff() which may
+> 
+> base-commit: 9052f4f6c539ea1fb7b282a34e6bb33154ce0b63
 
 
