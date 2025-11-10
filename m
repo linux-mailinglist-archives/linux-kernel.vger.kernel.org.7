@@ -1,148 +1,250 @@
-Return-Path: <linux-kernel+bounces-892361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A7C1C44ED1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:44:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B4EC44ED7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:48:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FB264E7269
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0CA13B00CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260AD28CF6F;
-	Mon, 10 Nov 2025 04:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1D020E704;
+	Mon, 10 Nov 2025 04:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s7WkGRgT"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="InQWitEP"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013032.outbound.protection.outlook.com [40.93.196.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAA28F7D;
-	Mon, 10 Nov 2025 04:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762749868; cv=none; b=hI96WEmzu46JyWPBCACN28SfugmX8HRowi0XXhCtRDkMWvQ2BQJmHJfnAGNAbbhPvdD1s1CoCznY3KtLChWrjmAM3dAdK+IgVCvEmWF4hgCa0WNa87Gv8QMAvTNpjtlafnrn5UWJvu5mid/qlGfCT8Hv2EfXQrCil2IGozDxg/8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762749868; c=relaxed/simple;
-	bh=Wg1BQVZmTgBecIjkx8wabSuTRo5FSqplDgtolJxTVPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QaBbzRNN4hIESzFY6Tof3T/p/ec958RoAbtoL2G+BnokGDaSK/g07HhPGbjMrReLC8RWt1yOHvYkopUWgFXmUS/Qcy/Frf+6cjuM30elocdpG+oACsZ+CGvJ3sI/i7ZuWkHWpJZTqCQBV74fnbfer1k4JtDUoYRBFwM6kWY36xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s7WkGRgT; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9JNDLh019381;
-	Mon, 10 Nov 2025 04:44:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=iLOa2c00F111K6/ewY+KuYeVS5jPBT
-	xjJdw+OjbJPXs=; b=s7WkGRgTYVUdso/+OntinDJ4LtLMswECC+RqhZfECdeQDC
-	u3yfAWcTgDP3GWo+n9UMncQ+6dwvPymntm+Dde00nfKnKI5InEYt8F7rMjdfZv8Y
-	ApzuDSQ7i54q/LfnCGrtR9BmwFBWuRgQoy5sHFmN4o7PhBrUeZ+jTefrVd8TvQpC
-	qK1Sy4O/+3W4SXSYRPk0c9tUx5Agj6mK89+aFXXymGAT/d3F7mvvegnBkgg6hqTu
-	KrTnJ0/2mLFiIMmKusHJTJfQAYZWZlTKNkszF9ncMQ7FojzAWCRFRd4NtrUR3u8o
-	G0dnvfgeBijU3NzVECssDbFPZIq+JkGut4fQPf4g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5tjmer7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 04:44:21 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AA4fxK1023851;
-	Mon, 10 Nov 2025 04:44:21 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5tjmer6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 04:44:21 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9NJJ15011605;
-	Mon, 10 Nov 2025 04:44:20 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aajw13m84-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 04:44:18 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AA4iExJ61341968
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 04:44:15 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D810D20043;
-	Mon, 10 Nov 2025 04:44:14 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A124F20040;
-	Mon, 10 Nov 2025 04:44:13 +0000 (GMT)
-Received: from mac.in.ibm.com (unknown [9.43.55.27])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 10 Nov 2025 04:44:13 +0000 (GMT)
-Date: Mon, 10 Nov 2025 10:14:08 +0530
-From: Amit Machhiwal <amachhiw@linux.ibm.com>
-To: Gautam Menghani <gautam@linux.ibm.com>
-Cc: maddy@linux.ibm.com, npiggin@gmail.com, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS : Add myself as reviewer for PPC KVM
-Message-ID: <20251110101329.ec2380a2-c0-amachhiw@linux.ibm.com>
-Mail-Followup-To: Gautam Menghani <gautam@linux.ibm.com>, 
-	maddy@linux.ibm.com, npiggin@gmail.com, linuxppc-dev@lists.ozlabs.org, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251103094243.57593-1-gautam@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D62319ABC6
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762750089; cv=fail; b=H2p2sBPrZ9IyWuuvTmsGQp5iGwxpDakOUQxH8sDsqB+FDxCpF/82UKsbu+DglH4NPxrdWzSmaF54z7T2xtdHMh6JNhBzG2m8wBs12UBsUFPDF67M50cksOpM2DqAtCg11CdiU3MgCe5JEE4IBNr0p18vU0AywmJ6vuON1IVhNho=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762750089; c=relaxed/simple;
+	bh=6UfV1BiPoBY4g2ADXiVxvNwIjeEoInPz2d9FUGtSPd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=i21qIIOVr2Mj/O8bPBkZLhytbGRzpZFlqK2x5UUNCiSIAIDDo3cEXMH/UacW9D5gAdufT4m2RAS+cSoW/hOyelbNEwsHl3O8Bi7qsmxGF6Eb7QpY9M++3yR6o2/TolvId3twVhABQLkoDVjnMIMPsw4BgA1Ok/C6VuIN/hwaYlA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=InQWitEP; arc=fail smtp.client-ip=40.93.196.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=apreeuSrT65mIt0v0UElzuzB3Hz5pgAHnPGbTpOVfmihmWgX9lLCcbXOMpyaifaRNkGXyn9Ngkp5NIVlyEkdACGkY2vzvGrS+lnfKUOvUxCQcV6l3jllvTzz20tqtKhbRa/ypMlUh67xkdQxXSDnO0O+Kab3kFhR4WvwiwrkivQvKk8lS8DZshW8K57vNo/1Db5Wg6u6ocXcyaDBkyEZUsgv/65uN/xoLBuJKeOTIacnup0DxhxvarslxyYCF/gJDMX9PU/54b1xW8yFGL9lm46IjQUBXkRzJr8sji2pPkMOi/WkUW75YgwcwLVEreIH3EaMtgEAi1dYG8JtsPgAkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cFJDhRY1N7HFBql8tV4IQAlVg+pj+djikouLufEP+gI=;
+ b=tHuui2yGg9vY4POGoUrM3oLiNb6XXIH4jUVBvQbrMXSvjw252ICqYkOA8oleAsYS4A3sorUQNibbnBlaHm6lr5Erwoy5FXAqAvsEK3SmnEn+BXJdOe8HqvwzcFoahuhUBsWUPhZffOlNTTCTsowPVCwcQd/mx9N/mELFIndVs58GqHKxfPBmu4R1NtFlSClFPg1dhn0GVM1YL9x9985MUEoBgkZc1Xp+L9OBPamj/k2Ok8Mpl1846MOhesZt+xa8a62mP9Svod/AqhaV46n98D4pJkBMlBPhgsE2laPP6KYtu9VKT0KUSpWJz8VzASENSqDYMHlEDxH9cZu64Ku1Jw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cFJDhRY1N7HFBql8tV4IQAlVg+pj+djikouLufEP+gI=;
+ b=InQWitEPM9DvyLxqq0FPoCL8IXJiSi1SsqcgPvdfPDIWxhNJoUFJtyEsbk5qsOWj8ASOcbuls3oNma/KF3vw8CfV5fx2aCBniyad6QwuMwn+uLB2VKNjWD8Cc2SrrjbQspj/GjWqWL98b1o//dOu9f5L9R0wvHaSAikuN2vDffY=
+Received: from SA9PR13CA0020.namprd13.prod.outlook.com (2603:10b6:806:21::25)
+ by BN3PR12MB9593.namprd12.prod.outlook.com (2603:10b6:408:2cb::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 04:47:59 +0000
+Received: from SN1PEPF000397B5.namprd05.prod.outlook.com
+ (2603:10b6:806:21:cafe::7a) by SA9PR13CA0020.outlook.office365.com
+ (2603:10b6:806:21::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.14 via Frontend Transport; Mon,
+ 10 Nov 2025 04:47:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ SN1PEPF000397B5.mail.protection.outlook.com (10.167.248.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Mon, 10 Nov 2025 04:47:58 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Sun, 9 Nov
+ 2025 20:47:58 -0800
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 9 Nov
+ 2025 22:47:58 -0600
+Received: from [172.31.184.125] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Sun, 9 Nov 2025 20:47:51 -0800
+Message-ID: <b75d5eab-3211-43d4-8534-987707559710@amd.com>
+Date: Mon, 10 Nov 2025 10:17:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103094243.57593-1-gautam@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: xlrIlckMt4y5ynY84qLoBuCmi1S9PTM4
-X-Proofpoint-ORIG-GUID: TbGYaeb4lm2bDUaIRysIET2x0FmuPnzT
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA5OSBTYWx0ZWRfX285U4tSFwe4P
- txlWA1vHP42EKGgLrAkoPVhPMLUHm+EhCViZrkzEYleX+dhc3XfO5/DHlWfhDiKGMuXs32EHyXK
- vdfpex+5FoXF/0Hlor//5Lctr+HyxOfMarHccxI8QWUFDfegyDmp/otdeSjNxZEUvu1oxs/1rsN
- Db84NOtK5XqPMQ21FXd+Nk81owJK7lPa8X3ugN/HX4EcqwXw4kYtgQRiFFYHvv5IfHTvC/RF4lN
- cRRuKLboDCD6vCwo0a7pkINdTPAtMXF+wmOIibIm0vt8Wr8mTnZVMdb6Gvqd0nJUKbtoYuB3c7z
- pX4IIr8RAXZwAtmPd2fTlJpDw7ilCOKN2Gaan6H3vQcR/XcTfIEgR7bJSyvpsGMO1GOTQwA6PT0
- +zsGaJJTc4t7T4UREiO1LF6CTdSX7g==
-X-Authority-Analysis: v=2.4 cv=V6xwEOni c=1 sm=1 tr=0 ts=69116da5 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=pGLkceISAAAA:8 a=voM4FWlXAAAA:8 a=VwQbUJbxAAAA:8
- a=tdM2vFJyyvqnMuV-wiAA:9 a=CjuIK1q_8ugA:10 a=IC2XNlieTeVoXbcui8wp:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_01,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 lowpriorityscore=0 adultscore=0 malwarescore=0 impostorscore=0
- suspectscore=0 priorityscore=1501 phishscore=0 bulkscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080099
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v23 6/9] sched: Handle blocked-waiter migration (and
+ return migration)
+To: John Stultz <jstultz@google.com>
+CC: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes
+	<joelagnelf@nvidia.com>, Qais Yousef <qyousef@layalina.io>, Ingo Molnar
+	<mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
+	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider
+	<vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall
+	<bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman
+	<mgorman@suse.de>, Will Deacon <will@kernel.org>, Waiman Long
+	<longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney"
+	<paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, Xuewen Yan
+	<xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, "Daniel
+ Lezcano" <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>,
+	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
+	<kernel-team@android.com>
+References: <20251030001857.681432-1-jstultz@google.com>
+ <20251030001857.681432-7-jstultz@google.com>
+ <0c337bca-4ecf-4654-9256-df766573c7de@amd.com>
+ <CANDhNCpOdnmC+dB+uwt82XrxFuzx72d+5w1j21eFovSeFr8pDw@mail.gmail.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <CANDhNCpOdnmC+dB+uwt82XrxFuzx72d+5w1j21eFovSeFr8pDw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B5:EE_|BN3PR12MB9593:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6221a0ab-2e2f-481a-4dc5-08de20145295
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|7416014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QzZTN3AzSUdyblIwWUJVaTltMURBTmZFNmYyS0dXVmgrbmZlaUFlWnRib1hj?=
+ =?utf-8?B?MG82NDZMRGF6NTBFL3R1dFJRbmZycFJ2R25nbFd2UUYyZTVCby93MGRJb2o5?=
+ =?utf-8?B?bGNUREU2ZmJ3Qml1a3VVODlBVCt5ZzAzeGhBQm5HT2xQV1VpYmd6WUNvU3Z1?=
+ =?utf-8?B?ZmJ3ZUtjLzJIZDMrdHp3dENmU0paU1JpVVllU3JNeWtyL2V0TFZ3Z29QSk5J?=
+ =?utf-8?B?eGg3ZndrQWEvZG45bTZXdUZjTmFZTHMybDVtR3o0ZDZzWjJUaXBJSWhHV05j?=
+ =?utf-8?B?c2dBd2d6ZVlqckRnZ2tadG1ZU09ZeUpQSnpjb0R1M0M1WUN4OGZPenMvQzNt?=
+ =?utf-8?B?L2pSakJvKzNtaWgrUCtmM09XdXczOUxwcm5TVU1oVmUraklMWEcybWZzb0VR?=
+ =?utf-8?B?QkhEbUl2NGc0elovSGM0am1UVzJKbXpuYWg1ZXNLejMxZnE5QlBqYnVQbzVZ?=
+ =?utf-8?B?VDVFVk1JSGJYcnd6MFJObEZkNTRoS1l2TlRFd2E2ejM4SzZSaGtwNFg4amUw?=
+ =?utf-8?B?Y3VpMFJWa25BTi9LRnVaeGZabHVXRFVhQllBYy8rRW1UaUZvd1M3RlNqd0ov?=
+ =?utf-8?B?cG1MZVUzVHFJVnlZTXNXK0xycFFJUDAxNXFGNHRXY0RpYS8wb0xEekV2TWxH?=
+ =?utf-8?B?WGF6YnUwZ0xoMjRIR2FiUnBlNXh5amtXbm16djNTTUthMDFOMkVBTlhhTG5u?=
+ =?utf-8?B?NW5WdWszc01DVFlxMDhyQkFLTTNEN3QraXo1U2ZSZTcrN3FVUlE5dS9Fb2Ir?=
+ =?utf-8?B?QmViVFNtdWpjMEZIWmlkWnRLUmthUGJaUlZpVU1TdlY1cVpRRVdIOEkzcHBa?=
+ =?utf-8?B?ZUhRYWZMQXpPbDJhVEhEM0hsa3ZBOWdSakUxSWJ1b2VhSGp1WWVtS1NRNmhu?=
+ =?utf-8?B?QVJjTng5OTQzMTc2aVBIZVFGQWtYZm8zVHpiemhTc1FLZFcwMEE2U1FWTkV6?=
+ =?utf-8?B?Qi82OHNvTzZkL1ZZQ1FEcktBRElRd3phUTBQdmpSZmpzRVh0RXpoZ0JFM240?=
+ =?utf-8?B?QXg1RnJWWUhnK09HRTN3V29tajdXYU5rU3FVRER5a2x4cVVBM05jbkVvbTdp?=
+ =?utf-8?B?bmd1OU1uMmFpK2grRStUTFRjMWJ6dHRrQXNaZXBXbjg0bFFrbFpGMWc2ZnRX?=
+ =?utf-8?B?RjdDSEd6QmxFUGlKNCt5WWNaSnRwUitoSEhmV1VqbVh0VFYxeFBzNG96VmMx?=
+ =?utf-8?B?dEwvdlUzaUVUY0NrWDZBR0JUekRaOGRudXR1L1ZkSDhMcWE5Z1lwUTB5NEVn?=
+ =?utf-8?B?Y0pXVnY2T1Z4MkJRYTI1QU5uKzNSYnNmMGhhTVk3SjZCVC9tVmVwRWg4aUl5?=
+ =?utf-8?B?RzV3N3B3czMyUkhGbzRURjBWWitURzdScGxIVnlpTyt6c3lKUHFkckZFQjBk?=
+ =?utf-8?B?MFhHYnErVUJoZjVYS0dTcXlFZ28zVGg2QytJM1lRZG82Q2hadXFvNUtnZGhy?=
+ =?utf-8?B?dnU2SnVWdkdCWDYzdUtjeExuOEo3aGxlMk5vOC9vckpyMDI5SEo2MG94aWto?=
+ =?utf-8?B?TzVDK1lBUm9YcDRLdnMwOE8zWm1tbll6ZmxFaHpJNFAwaWYyTFZsOTRKd2wy?=
+ =?utf-8?B?Q1NtSzMwRUc2WTMvMmMvN3lTajdpTFA4UjM3UXp5WWYxZUl3Wm1aTDViRGlX?=
+ =?utf-8?B?QU5SVEJRK1p4cnRVeW1tQjZNU2djSUNDRURUekMvYVlocnRRTGYzZkh0bkd1?=
+ =?utf-8?B?czJQcXFWRmgwYnprbm0yTzNJWncrSTZxektnUFozcnJaM1VzSU1uZ1pGT0hY?=
+ =?utf-8?B?T0FyTTNhK3czdS92Yk9ISUNRWGhvc0NIaUZZbFRxT3VhcFIyV0dJVUVWalRz?=
+ =?utf-8?B?U2JESXcvalZMWjlxWmY4ZGJ6NHMvMThIczZMMGRxaGNZZmJDaVlLeEF6YnJo?=
+ =?utf-8?B?QjNzeG52TldsVklYMzRrOTdLQWJHQ2lKSGp2QW40cUtkK1NLNGFwcldLNHFL?=
+ =?utf-8?B?bFY0OEsyekgvaTk3OGxRWnlEQjFEdkpWTE5Pc1FNQVgzeUN0R0ptWFk3VHdY?=
+ =?utf-8?B?MUNaMnpML1hPTEY2aDJHeVkvUHByUTZFVjI1T1Q0aGpCSjVuc0pYVEZ3cDFp?=
+ =?utf-8?B?S3dMcHZqNzFudWFGZDhWK2FTajY3djFrcCs0QnZaZWJDZzZaNEQ2WXlQTVRr?=
+ =?utf-8?Q?Mk8o=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(7416014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 04:47:58.9744
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6221a0ab-2e2f-481a-4dc5-08de20145295
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B5.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR12MB9593
 
-On 2025/11/03 03:12 PM, Gautam Menghani wrote:
-> I have been contributing to PPC KVM for sometime now and would like to get
-> notified of incoming changes to help with code reviews as well.
-> 
-> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+Hello John,
 
-Reviewed-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+On 11/8/2025 4:48 AM, John Stultz wrote:
+>>> @@ -6689,26 +6834,41 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
+>>>                       return NULL;
+>>>               }
+>>>
+>>> +             if (task_current(rq, p))
+>>> +                     curr_in_chain = true;
+>>> +
+>>>               owner = __mutex_owner(mutex);
+>>>               if (!owner) {
+>>>                       /*
+>>> -                      * If there is no owner, clear blocked_on
+>>> -                      * and return p so it can run and try to
+>>> -                      * acquire the lock
+>>> +                      * If there is no owner, either clear blocked_on
+>>> +                      * and return p (if it is current and safe to
+>>> +                      * just run on this rq), or return-migrate the task.
+>>>                        */
+>>> -                     __clear_task_blocked_on(p, mutex);
+>>> -                     return p;
+>>> +                     if (task_current(rq, p)) {
+>>> +                             __clear_task_blocked_on(p, NULL);
+>>> +                             return p;
+>>> +                     }
+>>> +                     action = NEEDS_RETURN;
+>>> +                     break;
+>>>               }
+>>>
+>>>               if (!READ_ONCE(owner->on_rq) || owner->se.sched_delayed) {
+>>
+>> Should we handle task_on_rq_migrating() in the similar way?
+>> Wait for the owner to finish migrating and look at the
+>> task_cpu(owner) once it is reliable?
+> 
+> Hrm. I'm not quite sure I understand your suggestion here. Could you
+> expand a bit here? Are you thinking we should deactivate the donor
+> when the owner is migrating? What would then return the donor to the
+> runqueue? Just rescheduling idle so that we drop the rq lock
+> momentarily should be sufficient to make sure the owner can finish
+> migration.
 
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 46bd8e033042..3f2f60486222 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13701,6 +13701,7 @@ F:	arch/mips/kvm/
->  KERNEL VIRTUAL MACHINE FOR POWERPC (KVM/powerpc)
->  M:	Madhavan Srinivasan <maddy@linux.ibm.com>
->  R:	Nicholas Piggin <npiggin@gmail.com>
-> +R:	Gautam Menghani <gautam@linux.ibm.com>
->  L:	linuxppc-dev@lists.ozlabs.org
->  L:	kvm@vger.kernel.org
->  S:	Maintained (Book3S 64-bit HV)
-> -- 
-> 2.51.0
-> 
-> 
+In find_proxy_task() we have:
+
+  if (!READ_ONCE(owner->on_rq) || owner->se.sched_delayed) {
+    /* Returns rq->idle or NULL */
+  }
+
+  /*
+   * Owner can be task_on_rq_migrating() at this point
+   * since it is in turn blocked on a lock owner on a
+   * different CPU.
+   */
+
+  owner_cpu = task_cpu(owner); /* Prev CPU */
+  if (owner_cpu != this_cpu) {
+    ...
+    action = MIGRATE;
+    break;
+  }
+
+
+So in the end we can migrate to the previous CPU of the owner
+and the previous CPU has to do a chain migration again. I'm
+probably overthinking about a very unlikely scenario here :)
+
+Unfortunately, I don't really have a great way to detect it
+unless we have another member in the task_struct that follows
+task_cpu() for most part and is set to the "owner_cpu" as
+soon as we know we are going for the "MIGRATE" action when we
+are still under the "wait_lock"/"blocked_on_lock".
+
+-- 
+Thanks and Regards,
+Prateek
+
 
