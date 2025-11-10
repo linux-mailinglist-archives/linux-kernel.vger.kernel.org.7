@@ -1,155 +1,135 @@
-Return-Path: <linux-kernel+bounces-893041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F66BC46687
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:57:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38A3C4669C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:58:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0398E343D1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:57:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8068D345C7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EA030DD19;
-	Mon, 10 Nov 2025 11:56:59 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734DA30BF6C;
+	Mon, 10 Nov 2025 11:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MoiDHZvB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C116B30C606;
-	Mon, 10 Nov 2025 11:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0E8191;
+	Mon, 10 Nov 2025 11:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762775819; cv=none; b=SEJGqeoMpwp6nwapfsEakVoA8fCXSXZmsCiquaolna7WC+RrjT/ou6AodYJTpPi1ZQko0Os629gr2ohG8hxL1FdSgLD3Ym+cegfLFCWReAtr6jI+kz4JMm274zUajpcwCTgXbtjgxtWsCJSUg5fsKc/gUZObCXB76VDoNC5j1Mo=
+	t=1762775905; cv=none; b=oOTY159pyR9P0rBYdhydmoMHeFRUnNivgBzLtihtHZgEbsm7JWrbrrchlnA+4ZwnsXv5q/rNx8RHUUeRd8u0yGyvNqhRg6zb5B4IuHEG4vfrLuSg90Agmv61DNf4j5H7Iu3cl/pknQcTlpoKSdwGpgRVVC6SbTIHbj4jD1uINh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762775819; c=relaxed/simple;
-	bh=Y/jAnkngLZQo+uWruFgZLanl3mb34pYToR6q/XAXuS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CqaElTBCbOgpzHeaMYBANpjjJ2wVJclqPVoVPS4/KAx6FqqwR18XI+BPWGKEY7hEvGtQTW3Bgm8C9o5/wHqaiqFm3QvUJwEW5xka1H5LdhNvr3SSnudllmEqSXjUMmIobO2kvYxSlYPin4dgORK/O9c9LSIKh6LIDTBrHmzVolI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d4p6P2zknzYQtyD;
-	Mon, 10 Nov 2025 19:56:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 6CFA91A018C;
-	Mon, 10 Nov 2025 19:56:54 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP2 (Coremail) with SMTP id Syh0CgD3VHsC0xFpdVoLAQ--.11444S3;
-	Mon, 10 Nov 2025 19:56:52 +0800 (CST)
-Message-ID: <ae9fde4f-eaf3-b5a2-4fea-8d83cad42ae4@huaweicloud.com>
-Date: Mon, 10 Nov 2025 19:56:50 +0800
+	s=arc-20240116; t=1762775905; c=relaxed/simple;
+	bh=ZD83DAb+g6PcbTujbUx65UVhtLIpRaDtT784P8vOs3w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EIz54EuIodg5ijxkF6mGRyGV3mxRnBMv6ITcuxY7TTIU+MHZPqO1JOvXbc2DgPzjWJGuslqy2asBoEtgnITPOyPewDqTAKBjTIdxudn5O7bEKbJ3jrFcAW9EiexRIuEwoUxIbdlAOpTwkMCxaJ8pFZhMq1JKFIveDJ8epz0NmCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MoiDHZvB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AA8kGZJ1930709;
+	Mon, 10 Nov 2025 11:58:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Q/f7Q+wlI2H9VeH/agtbbd
+	o1vlrv/b5zEz2MGy/ya5g=; b=MoiDHZvBYeoCduIiXPaWA5M4tbk0QkuVw6v+DB
+	53DoJUAQDkSaJEUTwtySbdpH0MDgobM55csGVt/tQTo4V8p0p6ZlmT6uBxI8gBrB
+	4RnBN1ZgtHbQdWecMRgbYBAloQRzu8bcbFUH10z2gvlMsEgrJkOPMOKf9CBe7nc6
+	Alethdm8Q/iwnj1ycMLjVfXcb5tdAtvVELWoZoRX1ow5EEf0fMOLSE0UWJw7ruJ4
+	Xt6/ewvVXmfneEXJ/S2a0qriNMbXuejlmy4Ny6SQGthirGTmOaARtwhI0XAi3au4
+	ZSPwCklKc9zOE7SkHPqYqugfufvZ+ey6QtYcOcLOYgnNjIfg==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4aaue0jfe6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 11:58:16 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AABwDx7023599;
+	Mon, 10 Nov 2025 11:58:13 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a9xxkqeha-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 11:58:13 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5AABwDEO023593;
+	Mon, 10 Nov 2025 11:58:13 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-amitsi-hyd.qualcomm.com [10.213.97.115])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 5AABwDek023591
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 11:58:13 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4648853)
+	id 703665A8; Mon, 10 Nov 2025 17:28:12 +0530 (+0530)
+From: Amit Singh <quic_amitsi@quicinc.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
+        kishon@kernel.org, lumag@kernel.org, neil.armstrong@linaro.org,
+        quic_wcheng@quicinc.com
+Cc: Amit Singh <quic_amitsi@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com,
+        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com
+Subject: [PATCH 0/3] add vdda-aux regulator support for QMP PHY on QCS6490
+Date: Mon, 10 Nov 2025 17:28:03 +0530
+Message-Id: <20251110115806.2379442-1-quic_amitsi@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2 03/11] md/raid1,raid10: return actual write status in
- narrow_write_error
-To: yukuai@fnnas.com, linan666@huaweicloud.com, song@kernel.org,
- neil@brown.name, namhyung@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, xni@redhat.com,
- k@mgml.me, yangerkun@huawei.com, yi.zhang@huawei.com
-References: <20251106115935.2148714-1-linan666@huaweicloud.com>
- <20251106115935.2148714-4-linan666@huaweicloud.com>
- <63857ce2-0521-4f38-b3d4-d95c8eafc175@fnnas.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <63857ce2-0521-4f38-b3d4-d95c8eafc175@fnnas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgD3VHsC0xFpdVoLAQ--.11444S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ary3ur43Gry3Zw17CFW5GFg_yoW8uw45p3
-	yqgF9IyFyDWry5u3WDXFy5WFyFy397KFW2yr4xJwnxur9Yyr93GF40qryYgFykur9xKa10
-	qr4qgrZxuF1jyFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
-	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
-	vtAUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: soIA_42K_hLV2fE3Ei-l2g11dvKDAVC1
+X-Authority-Analysis: v=2.4 cv=BfDVE7t2 c=1 sm=1 tr=0 ts=6911d358 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=ufmSwEaVCh0XMAsaoOsA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: soIA_42K_hLV2fE3Ei-l2g11dvKDAVC1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDEwNCBTYWx0ZWRfX7xg4rBaaFrC+
+ nAx1WWhI63IAV+M8eN80nX5Xh3BatICf30tBj4VmXP4Qm1n38Ef5MRuc6y3NgPHyBhqYik8/WHt
+ vwWanfLeeMbEQ90lAUmgoYbyZ7KXEELkNvBqb51zsOGlwoCsC1GJPZ293XMJlCwXjKYBzrICEQ0
+ 8MxiRK3MYnVAikfCgJk9KSeZXOsQsJ+A2IsdFgqkp1d2CJqPgOTbb/SYB+ZzqZTduPJRiDYa1zd
+ 6ZM/yQElSsmD4ZUzBf9pi/eLQsMFSuvpP84WrC3GLJqgs3Xv2NNQuVIqtridKm+FmDc6O4br/SL
+ 3Qccrv7v3hQg1lX25kbJIngAO4eRXziQUUqSq4bLtNbzO1ttXxLQazNbYIPeZ8wfVCEZRXqEUQm
+ BzRZmxrYZeGo45PmnGYeKriULiom8g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_04,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 impostorscore=0 spamscore=0
+ phishscore=0 lowpriorityscore=0 clxscore=1011 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511100104
 
+The `vdda-aux` supply is necessary for proper power sequencing and reliable
+USB enumeration on platforms that provide this rail.
 
+This series adds support for the `vdda-aux` regulator to the QMP PHY driver
+and updates the QCS6490 RB3 Gen2 device tree to provide the required
+auxiliary 3.0 V rail for stable USB PHY operation.
+Platforms that do not define `vdda-aux` remain unaffected.
 
-在 2025/11/8 18:07, Yu Kuai 写道:
-> Hi,
-> 
-> 在 2025/11/6 19:59, linan666@huaweicloud.com 写道:
->> From: Li Nan <linan122@huawei.com>
->>
->> narrow_write_error() currently returns true when setting badblocks fails.
->> Instead, return actual status of all retried writes, succeeding only when
->> all retried writes complete successfully. This gives upper layers accurate
->> information about write outcomes.
->>
->> When setting badblocks fails, mark the device as faulty and return at once.
->> No need to continue processing remaining sections in such cases.
->>
->> Signed-off-by: Li Nan <linan122@huawei.com>
->> ---
->>    drivers/md/raid1.c  | 17 +++++++++--------
->>    drivers/md/raid10.c | 15 +++++++++------
->>    2 files changed, 18 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->> index e65d104cb9c5..090fe8f71224 100644
->> --- a/drivers/md/raid1.c
->> +++ b/drivers/md/raid1.c
->> @@ -2541,11 +2541,15 @@ static bool narrow_write_error(struct r1bio *r1_bio, int i)
->>    		bio_trim(wbio, sector - r1_bio->sector, sectors);
->>    		wbio->bi_iter.bi_sector += rdev->data_offset;
->>    
->> -		if (submit_bio_wait(wbio) < 0)
->> +		if (submit_bio_wait(wbio)) {
->>    			/* failure! */
->> -			ok = rdev_set_badblocks(rdev, sector,
->> -						sectors, 0)
->> -				&& ok;
->> +			ok = false;
->> +			if (!rdev_set_badblocks(rdev, sector, sectors, 0)) {
->> +				md_error(mddev, rdev);
->> +				bio_put(wbio);
->> +				break;
->> +			}
->> +		}
->>    
->>    		bio_put(wbio);
->>    		sect_to_write -= sectors;
->> @@ -2596,10 +2600,7 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
->>    			 * errors.
->>    			 */
->>    			fail = true;
->> -			if (!narrow_write_error(r1_bio, m))
->> -				md_error(conf->mddev,
->> -					 conf->mirrors[m].rdev);
->> -				/* an I/O failed, we can't clear the bitmap */
->> +			narrow_write_error(r1_bio, m);
-> 
-> Now that return value is not used, you can make this helper void.
-> 
-> Thanks,
-> Kuai
-> 
+Tested on RB3 Gen2 (QCS6490) platform to ensure proper USB enumeration and
+PHY stability.
 
-Hi, Kuai
+Amit Singh (3):
+  dt-bindings: phy: qcom: qmp-combo: add support for vdda-aux regulator
+  phy: qcom: qmp-combo: add vdda-aux regulator
+  arm64: dts: qcom: qcs6490-rb3gen2: add vdda-aux supply for USB QMP PHY
 
-In v1, I changed return type of narrow_write_error() to void.
-But a better return value will help Akagi's fix:
-https://lore.kernel.org/all/8136b746-50c9-51eb-483b-f2661e86d3eb@huaweicloud.com/
+ .../devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml  | 2 ++
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts                    | 1 +
+ drivers/phy/qualcomm/phy-qcom-qmp-combo.c                       | 1 +
+ 3 files changed, 4 insertions(+)
 
 -- 
-Thanks,
-Nan
+2.34.1
 
 
