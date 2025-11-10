@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-893779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F899C4858B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:31:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5114C48597
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584E53A9CF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:30:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4301F4E10DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A042C0264;
-	Mon, 10 Nov 2025 17:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD8F2C0276;
+	Mon, 10 Nov 2025 17:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b="qiuyIjfV"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4OHUePh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396BF2BDC2C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C485283682;
+	Mon, 10 Nov 2025 17:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762795795; cv=none; b=NibXlHStrnt/bU22xmBTqXxK0D+r9RZ/jcbI3glhtXaOol82zH1lwFCpf40b3QkLMgLpAVpfp/KNka9Dnpm1V3vYEjRWCjpyGEqCnAGLAA+vvyWLAMhvAWeVLc8gXBlBWSCcaMUPnjWXTdcuz3d89rOun2wYetAFqL/GJmkWI2E=
+	t=1762795784; cv=none; b=TvSui1LXQRuiIHWu9XR98bYe9lmXmMHWCUmUqyRiwmK+57zrnEJwEgCtnY/fZZci8LIV5mPCrePE98CB7nnxR+LfCz0HEV3OpYrUAcCiW2T+j476dBs0yYBw6CrDzbNKruFxhZ3htTmqGdO85VxHSmuFCcqlcxsZVCfiqKo8fLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762795795; c=relaxed/simple;
-	bh=yivdRpurit05WrU2cZrJ+Ef2/cgeGJsEFkDdt6uHfcg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=joAtqaHAz3kI7s3K6cNz/vgUt8Yx8f/GeJHPjBh7RBWPX/L0AbnwJTS+xf56T5OfvwKW3tXXSjpq9RkUwKVunfIHJcRUTuAn6hQJ5C+keUI1PFNCrJml54gsbCw6ZEaBpkEtnIYbrux6KtdgaYKYtUWirsG8deZw2uSIWftKjHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in; spf=pass smtp.mailfrom=cse.iitm.ac.in; dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b=qiuyIjfV; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.iitm.ac.in
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-297dc3e299bso22886725ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:29:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cse-iitm-ac-in.20230601.gappssmtp.com; s=20230601; t=1762795792; x=1763400592; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5OL3Y3kmUNvDH8rRKkSC7um10A74MfKVea7Y92HY7Fo=;
-        b=qiuyIjfVaXwGW78FQF6Fb5PzPCf3XbUBqfkb3aHZUrZdF4zi3orXp9MEEhHcDOojzn
-         XZrP3OUZDps9VI/UEDC5Z1cYeN7tG0h4j69FCyT+guQ2wXXLVMnJpTKjNtF4wcFPtcsn
-         7+TtMxfxzM04EeN6WYdyvQTBPX/+RnwAQ15Lyn9sUveauekvP/CfllHuDeQontB0curl
-         4btUTe+jLYCH5r2+lS6J0YNyJcZAl2bwXbNPn5L3Do9MvAKPkcTjoc+fbQZrszqeoY5f
-         RHUBAPuIt7DrrnIjKxMrpMh3V5VW10bT/oXZAAltWHrlmM9s2pF/AiRxceppC/xkHvRl
-         NGHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762795792; x=1763400592;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5OL3Y3kmUNvDH8rRKkSC7um10A74MfKVea7Y92HY7Fo=;
-        b=uPHjhrsj2bsVp4yCb1z6zNwM8iV7uEa4JQfsDlFXj2ItV+X+o7iqGOp2dEpVcmp7fd
-         nA19lzwHnW3PGqXvI02Rw8K6dvk1X1NVYfxrivYjeS0pOBoavfwkenjqL3MQN6mPq3tv
-         LlPzowxqUVrsjRl/0Q8t5EIuq2BlslLmm4WXPmDAf8rhFWU8VL4fqVIeaWurOOwzVbA3
-         7F4qm/Le5P1QzPP1GW1JV4lzgmqbkUDVSqAHHtYzETmtL7Odb1bdf5ZiGjawx6RdTaKb
-         P5QDc35bAtEvCBQUyfR4rX9hHD9thTS09ncM5FxkvSn1FK9JlPWjbHgfpmzQlNRHAR9c
-         ODZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWorvdBd0paXCMOmyypQlLfy58xnmU2+FYTpOfMofe2g4YPQRg4nZWBZgTVw5nZr3FNLDx2+vlVbXyfLI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv2rPtOUrW/g2H4/TNzvFlkCR7QUlrTGIHPXFVpM8zE7DgIJ+T
-	zg+X67Z+mfCtou+W+MA3iMV0DD5VMum4AqrHYjHpo9v1A+HdsA8LOEix4HH7fQ8BjTU6IGZCVBg
-	Q2H3Tocg=
-X-Gm-Gg: ASbGncsW+AMWZONbWUBQICsJshtMZhKzUEcKD0TmjI1yjeZ3sZMxq1MEXGkPFxEtw33
-	9UuqboS1KHQ0rEb6pys5h/0wlMihB8tCC2BdOuqEUBww3Gitq2hiRZjEbGFa1RXhnPk//VXK3Ql
-	R7E1pgkBBVcSsmEilVW5XMxEi1xOevqFWn4NmqBVFPAAhuITQPQR+FSxltq6knZje3sDxz4yrAu
-	Fs4XfI96Skjfd3n9/k5nNLnm3lhYgDgnu61vf/x1YUee5crEU8+Xy5BnNEHcvz+3iicLJwdmIZb
-	Tprik4SA4IE1/IXdtQb43gffy5aLrliHr1Kc8raMzeIXoc8mmCbI/Ms4fY5hHdb8oZDOrSHBbI5
-	RR7KTJPClSpnrwOtwOU1v1DuPKxDhfMASijsvn/dSX7PiV2uHK2Llp166VPHsjZDMflbQVO88zW
-	QeB4CZnN1e8u34ag==
-X-Google-Smtp-Source: AGHT+IHBptCxQ+7XGOLeOR1X/58AtZt0orE0We0oyv3It40DgetpuVdWDUw0jLaNMWE6eOOOHMBwBg==
-X-Received: by 2002:a17:902:cf42:b0:295:8da4:6404 with SMTP id d9443c01a7336-297e56f9154mr118234675ad.40.1762795792464;
-        Mon, 10 Nov 2025 09:29:52 -0800 (PST)
-Received: from localhost.localdomain ([49.37.219.248])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-29650c5eb35sm152495085ad.38.2025.11.10.09.29.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 09:29:51 -0800 (PST)
-From: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-To: jikos@kernel.org
-Cc: Abdun Nihaal <nihaal@cse.iitm.ac.in>,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: uclogic: Fix potential memory leak in error path
-Date: Mon, 10 Nov 2025 22:59:41 +0530
-Message-ID: <20251110172943.99887-1-nihaal@cse.iitm.ac.in>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762795784; c=relaxed/simple;
+	bh=irSNmNU33uoNE+xtcXh4F9V8GNWZBQMnuLEnS4K0yYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhgHTEzdQ9CfkcwKJNcRuZT1DkrYD/r5EhdkqmjYbJZuNtgEzkQk3SDz3izGrxN0Te545aDSz5P+xsTAQtN1az6I2iFJovgnJTVdeqqDsVbWxP7+rWUkWbSBwh+tBsJOLFzoECoAUKTGQBvuSuMblLerPR1Is8ixGSvfErlTRho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4OHUePh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BEEFC4CEF5;
+	Mon, 10 Nov 2025 17:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762795784;
+	bh=irSNmNU33uoNE+xtcXh4F9V8GNWZBQMnuLEnS4K0yYc=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=K4OHUePh1JIsul5wTckByN1KX/imTS4vSvdMW+PZoScGRsl31xGewJCuQm6s4E0KS
+	 z7oXMfRhvjcoC+Zbm98jZBfe/DoOaIA08oq9qGMG5jbZh/+/UZOcV+EGk2M1E6Pt+l
+	 N6SktXEKUtDTREzGJDNVPwrSwOhfB/tMIz/HygZvk2TXZ2wS+WQifhL1PJF+++YNyj
+	 QLEB+vHDw17Lcm8XEHxe9XytipxMSKEU+fdg5egk2S/sBK0+s2tgVbPy6wxclE1Ial
+	 LJh2kNZZQqQVx8Bf8xixbBuKug/ddARm23lNi8DvLONJLIlQW9JsKWfgNFfjIapzDp
+	 gU7fYw5Qdmehg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3B6DECE0D0D; Mon, 10 Nov 2025 09:29:43 -0800 (PST)
+Date: Mon, 10 Nov 2025 09:29:43 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
+	frederic@kernel.org
+Subject: Re: [PATCH v2 15/16] srcu: Optimize SRCU-fast-updown for arm64
+Message-ID: <ab6cd1c2-39c5-4b39-9585-6123835a6229@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
+ <20251105203216.2701005-15-paulmck@kernel.org>
+ <aQ9AoauJKLYeYvrn@willie-the-truck>
+ <d53a5852-f84a-4dae-9bf4-312751880452@paulmck-laptop>
+ <aRHLV8lLX0fxQICR@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRHLV8lLX0fxQICR@willie-the-truck>
 
-In uclogic_params_ugee_v2_init_event_hooks(), the memory allocated for
-event_hook is not freed in the next error path. Fix that by freeing it.
+On Mon, Nov 10, 2025 at 11:24:07AM +0000, Will Deacon wrote:
+> On Sat, Nov 08, 2025 at 10:38:32AM -0800, Paul E. McKenney wrote:
+> > On Sat, Nov 08, 2025 at 01:07:45PM +0000, Will Deacon wrote:
+> > > On Wed, Nov 05, 2025 at 12:32:15PM -0800, Paul E. McKenney wrote:
+> > > > Some arm64 platforms have slow per-CPU atomic operations, for example,
+> > > > the Neoverse V2.  This commit therefore moves SRCU-fast from per-CPU
+> > > > atomic operations to interrupt-disabled non-read-modify-write-atomic
+> > > > atomic_read()/atomic_set() operations.  This works because
+> > > > SRCU-fast-updown is not invoked from read-side primitives, which
+> > > > means that if srcu_read_unlock_fast() NMI handlers.  This means that
+> > > > srcu_read_lock_fast_updown() and srcu_read_unlock_fast_updown() can
+> > > > exclude themselves and each other
+> > > > 
+> > > > This reduces the overhead of calls to srcu_read_lock_fast_updown() and
+> > > > srcu_read_unlock_fast_updown() from about 100ns to about 12ns on an ARM
+> > > > Neoverse V2.  Although this is not excellent compared to about 2ns on x86,
+> > > > it sure beats 100ns.
+> > > > 
+> > > > This command was used to measure the overhead:
+> > > > 
+> > > > tools/testing/selftests/rcutorture/bin/kvm.sh --torture refscale --allcpus --duration 5 --configs NOPREEMPT --kconfig "CONFIG_NR_CPUS=64 CONFIG_TASKS_TRACE_RCU=y" --bootargs "refscale.loops=100000 refscale.guest_os_delay=5 refscale.nreaders=64 refscale.holdoff=30 torture.disable_onoff_at_boot refscale.scale_type=srcu-fast-updown refscale.verbose_batched=8 torture.verbose_sleep_frequency=8 torture.verbose_sleep_duration=8 refscale.nruns=100" --trust-make
+> > > > 
+> > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > > > Cc: Will Deacon <will@kernel.org>
+> > > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > > > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > > > Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > > > Cc: <linux-arm-kernel@lists.infradead.org>
+> > > > Cc: <bpf@vger.kernel.org>
+> > > > ---
+> > > >  include/linux/srcutree.h | 51 +++++++++++++++++++++++++++++++++++++---
+> > > >  1 file changed, 48 insertions(+), 3 deletions(-)
+> > > 
+> > > I've queued the per-cpu tweak from Catalin in the arm64 fixes tree [1]
+> > > for 6.18, so please can you drop this SRCU commit from your tree?
+> > 
+> > Very good!  Adding Frederic on CC since he is doing the pull request
+> > for the upcoming merge window.
+> > 
+> > But if this doesn't show up in -rc1, we reserve the right to put it
+> > back in.
+> > 
+> > Sorry, couldn't resist!   ;-)
+> 
+> I've merged it as a fix, so hopefully it will show up in v6.18-rc6.
 
-Fixes: a251d6576d2a ("HID: uclogic: Handle wireless device reconnection")
-Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
----
-Compile tested only. Found using static analysis.
+Even better, thank you!!!
 
- drivers/hid/hid-uclogic-params.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-uclogic-params.c b/drivers/hid/hid-uclogic-params.c
-index 59ea71299438..e28176d9d9c9 100644
---- a/drivers/hid/hid-uclogic-params.c
-+++ b/drivers/hid/hid-uclogic-params.c
-@@ -1372,8 +1372,10 @@ static int uclogic_params_ugee_v2_init_event_hooks(struct hid_device *hdev,
- 	event_hook->hdev = hdev;
- 	event_hook->size = ARRAY_SIZE(reconnect_event);
- 	event_hook->event = kmemdup(reconnect_event, event_hook->size, GFP_KERNEL);
--	if (!event_hook->event)
-+	if (!event_hook->event) {
-+		kfree(event_hook);
- 		return -ENOMEM;
-+	}
- 
- 	list_add_tail(&event_hook->list, &p->event_hooks->list);
- 
--- 
-2.43.0
-
+							Thanx, Paul
 
