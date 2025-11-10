@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-892480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FA7C452DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:11:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3EEC452E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:12:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6AE3B1D47
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:11:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D351346CF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F2A2E92C3;
-	Mon, 10 Nov 2025 07:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED662EAB61;
+	Mon, 10 Nov 2025 07:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIdHUP18"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYRWg4vB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF4A194A73;
-	Mon, 10 Nov 2025 07:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807D1194A73;
+	Mon, 10 Nov 2025 07:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762758686; cv=none; b=ha0CmEJdkkfbS3JJatgfoAmA48Ru/+nriccrIuI59JQ1ddbbIZgN3Mz/mGj7DtgP4a+bDJZ2YYmiAkPIi88rfxTQJ7JJy1shBchHJRW1mYfB4zjBtQaOcdyakOJNlzENE2jElr1YwfgujozRcadFKh2TKfPS+Ip1CDDTMS6GkZo=
+	t=1762758757; cv=none; b=iezq5rNgZNHhv6Ry8aSYWMFzEIjlvLc4oSXXVy1ZzvmToYbVY0p8f1KQN7i+Por9LBim/uHy2VNzCJSigK5lWFhDpjONBvwkb0q+mUTvBkgrZ66hqfrzRsaI8Y/CM9nAkWYiU4f7SeFP52AcdD0aEFLZmokDJFhhCMB6WyAP408=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762758686; c=relaxed/simple;
-	bh=i3ixvy3dtnAud9Pvop/L2zluxy+BTZOe44XToPg2igA=;
+	s=arc-20240116; t=1762758757; c=relaxed/simple;
+	bh=npf91q97ByS7kwwU6n9XRA4EAmt/gK94VxWAq/bBNt0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cBwAzRpkKPibrqYrVWIVJ6jwtPH4c9f6Pv2BSB68wo/Mj12pj46FvR8AOjwlA2jp6Q1DV15Gj3KhNKSEwP3XIpz9RJaQiWvKTlQZsE4CYpUwykhxEvPXECG4mFdjzWISBf3htZBwE5PUWgcrSeoscQmBFqBjIWsCjHgAS9XQzLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIdHUP18; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24D4DC116B1;
-	Mon, 10 Nov 2025 07:11:21 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=u4YgpA0VD3l02F0MXHvZ5i29Fn1sxU/FG71gCHaurOkHcMVEzKJdYKi75WSwAuxH1DSVR3dHDK1t1IY8NsaF8IaRDsUpieeY7PSs3dLkMGD3GTzticdnlaR+d4XhcnkShgYUCpzutGIfHMQ707iDgU8RLMngyeDduiULfD/LigE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYRWg4vB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E61D4C16AAE;
+	Mon, 10 Nov 2025 07:12:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762758686;
-	bh=i3ixvy3dtnAud9Pvop/L2zluxy+BTZOe44XToPg2igA=;
+	s=k20201202; t=1762758756;
+	bh=npf91q97ByS7kwwU6n9XRA4EAmt/gK94VxWAq/bBNt0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SIdHUP18CMAw64bvEC3TvcCEk2Gl/1sWt88+nJhalk344r/dDyx8Z+0i/Ac6cyZ8S
-	 SnKmrRB70ZjUbK0QrPiC6rb7fB4szyL+jg3rZFad27Wh//us/bqFR1v8iWv+ugZNF/
-	 kZ5cktwKfsWrGBdxs8juVnGbfTcjSdl/UZnD3UTL2pRSHuasxkOMH//4CZcakjI3sI
-	 Wo8nc1eA11vTOHcGDhNV/gs7rkmBArwTZRbrVYeSiLEUxGb7ijO9rhYpUCFCyav7F8
-	 ZbpG2gNReoiHSfISLrMgbKBXabWN7dxUnIX106G+9/9YehqL6KImr8xqLqfFg2pwL/
-	 57vFJetKIN1LQ==
-Message-ID: <035d6c35-c27a-4f5c-8603-ea5857d78e63@kernel.org>
-Date: Mon, 10 Nov 2025 08:11:20 +0100
+	b=dYRWg4vB/FzAf8I+IjRQXfYssgHBIZ2tyxhq3HsPZOHlbGHkqPRTxaAcJdp+6lHlW
+	 7XzRnIUT2Dqqjm83O7zvcE2wm/8F8DEoahSH+OkIJXgg7nVjP18SJbRirxNcouKaHG
+	 uDy/3uHqgQjPqrS9KdV2W0YJtFQGts+O3a7aQSiILbNt4ir6CZl0CGb0z5BIdqIiC7
+	 ve0I2RvQrFqEHOcCXggO5SuQJHruDRQUosy+3NVXpSfXDpLIRbNnyDJ+iyKj/cM3jK
+	 GbtVBKPmGh3th4uKVNABVLQKrCDTc8qfjssCBKE7oKD4eL0o09bE4tzshAdS6/bWD7
+	 CWlPlpE96C1Fg==
+Message-ID: <19169092-78f8-4b86-9f43-ea7a2ea20b9f@kernel.org>
+Date: Mon, 10 Nov 2025 08:12:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,29 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add
- TAS2568/5806M/5806MD/5830 support
-To: "Xu, Baojun" <baojun.xu@ti.com>
-Cc: "broonie@kernel.org" <broonie@kernel.org>, "tiwai@suse.de"
- <tiwai@suse.de>,
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- "13916275206@139.com" <13916275206@139.com>,
- "Ding, Shenghao" <shenghao-ding@ti.com>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "Yi, Ken" <k-yi@ti.com>, "Lo, Henry" <henry.lo@ti.com>,
- "Chen, Robin" <robinchen@ti.com>, "Wang, Will" <will-wang@ti.com>,
- "jim.shil@goertek.com" <jim.shil@goertek.com>,
- "toastcheng@google.com" <toastcheng@google.com>,
- "chinkaiting@google.com" <chinkaiting@google.com>
-References: <20251108110759.2409-1-baojun.xu@ti.com>
- <20251108110759.2409-2-baojun.xu@ti.com>
- <20251109-heavenly-observant-quetzal-b1bead@kuoka>
- <ecc69a98a23d406ea1eada62144415fc@ti.com>
+Subject: Re: [PATCH 1/2] arm64: dts: rockchip: Simplify usb-c-connector port
+ on rk3566-pinenote
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Diederik de Haas <diederik@cknow-tech.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Samuel Holland <samuel@sholland.org>
+Cc: hrdl <git@hrdl.eu>, phantomas <phantomas@phantomas.xyz>,
+ Dragan Simic <dsimic@manjaro.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251109-rk3566-pinenote-dt-fixes-upstream-v1-0-ed38d200cc04@cknow-tech.com>
+ <20251109-rk3566-pinenote-dt-fixes-upstream-v1-1-ed38d200cc04@cknow-tech.com>
+ <a726fac9-afe5-4639-b06a-4bccc256d98f@kernel.org> <5024969.GXAFRqVoOG@diego>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -117,46 +107,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <ecc69a98a23d406ea1eada62144415fc@ti.com>
+In-Reply-To: <5024969.GXAFRqVoOG@diego>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/11/2025 06:29, Xu, Baojun wrote:
->>
->> ________________________________________
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 10 November 2025 01:17
->> To: Xu, Baojun
->> Cc: broonie@kernel.org; tiwai@suse.de; andriy.shevchenko@linux.intel.com; 13916275206@139.com; Ding, Shenghao; linux-sound@vger.kernel.org; linux-kernel@vger.kernel.org; lgirdwood@gmail.com; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; devicetree@vger.kernel.org; Yi, Ken; Lo, Henry; Chen, Robin; Ji, Jesse; Wang, Will; jim.shil@goertek.com; toastcheng@google.com; chinkaiting@google.com
->> Subject: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add TAS2568/5806M/5806MD/5830 support
->>
->> On Sat, Nov 08, 2025 at 07:07:59PM +0800, Baojun Xu wrote:
->>> TAS5806M, TAS5806MD and TAS5830 is in same family with TAS58XX.
->>> TAS2568 is in family with TAS257X.
+On 09/11/2025 23:16, Heiko Stübner wrote:
+> Am Sonntag, 9. November 2025, 18:37:26 Mitteleuropäische Normalzeit schrieb Krzysztof Kozlowski:
+>> On 09/11/2025 18:05, Diederik de Haas wrote:
+>>> The USB-C connector on the PineNote has only 1 port, so there's no need
+>>> for a 'ports' node with address-/size-cells properties as a single
+>>> 'port' node suffices.
 >>>
->>> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
->>> ---
->>>  .../devicetree/bindings/sound/ti,tas2781.yaml | 25 +++++++++++++++++++
->>>  1 file changed, 25 insertions(+)
+>>> This fixes the following DT validation issue:
 >>>
+>>>   Warning (graph_child_address): /i2c@fe5c0000/tcpc@60/connector/ports:
+>>>     graph node has single child node 'port@0',
+>>>     #address-cells/#size-cells are not necessary
 >>
->> Please organize the patch documenting compatible (DT bindings) before their user.
->> See also: https://urldefense.com/v3/__https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst*L46__;Iw!!G3vK!SQ5aH9VZhZ2QzKdtYIs5BX7OarVmt1XzwB9XxqFgAGN0ONvsEoAjHsuoZWrrmetzH_xlxeSfWA$
-
-What's with this link?
-
+>> This is not a DT validation, but DTC warning which we do not really fix.
 > 
-> Hi Krzysztof,
-> 
-> Thanks for your review.
-> Do you mean I need to add a text file,
-> for example "ti,tas2781.txt", include the required properties,
-> and the example of the devicetree node?
-> 
+> That is good to know. Is the same true for other dtc warnings?
+>
 
-Did you read the actual resources I pointed you? I don't know how to
-express it clearer.
-
+No, depends, the same for compiler warnings. That's the only warning I
+remember we considered moving from W=1 to W=2.
 
 Best regards,
 Krzysztof
