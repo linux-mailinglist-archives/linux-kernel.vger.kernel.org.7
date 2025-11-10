@@ -1,129 +1,138 @@
-Return-Path: <linux-kernel+bounces-892400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87A9C45035
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:28:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87170C45083
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:39:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 808B418868F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:28:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 290A93466A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C282E9757;
-	Mon, 10 Nov 2025 05:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9BD2D738A;
+	Mon, 10 Nov 2025 05:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MnT/khbH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="IzwP2xyK"
+Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7DE2E92D0;
-	Mon, 10 Nov 2025 05:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6B525A2CF;
+	Mon, 10 Nov 2025 05:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762752488; cv=none; b=Osn2rbVmRAdXIHIlWE4RxUe8+GPnl8jM5h6Lb4ruWf0Vm0MG738jfOWbyj5Q5Q7bI1NdCx9aXs02AZKP5GsXGQMbM3gE8m0o7vIqYWLstW4Dx1QAORHLSbv2tKtHdXN3HadBNzBch0kAylQ9Ax0b47A2KwUlyW4xntQmtSeumVE=
+	t=1762753144; cv=none; b=ACJ8xa5po6NDsRLzzqv914d7xjN3rGtSw2qagGX1PY/aDN8qCVylWi62G0fIFEa9PcC4k75np70RkMgFPLEGmtenm1S62ze092wSq33HetDxc09F2YMF5e+oD0Ubcw+TPwyhfboRDoJniN0DVRB0EG1WD9LxaJAjyOqLS8eZo64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762752488; c=relaxed/simple;
-	bh=cJ+BeV/2f/O/DthNjrR3bgLiwFS/tTEB3azrEgPiDEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XSnX0vGZI8w5ollkSC255oXaZJoO2zpBp0VkOh994t4A045C3Mt8R/tP1roryHuQXhJpOOOnOygo1AAYHE6YXzxTcStxR2va2Io7Ye+A6fBtXyLlhpzf8Zt7i2D8e932WMuB5CikWLqcnQ5gsTiqgcErp01XWVy5sTRzCtOfRio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MnT/khbH; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762752488; x=1794288488;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cJ+BeV/2f/O/DthNjrR3bgLiwFS/tTEB3azrEgPiDEg=;
-  b=MnT/khbHM1as5zbSqhSe3gCkvTcILlNZZBcZp/nw7Kgncdk/p/ajmmlq
-   jMfZIdWnfhbdRzrd4w3zwr4kOZD5ePBHZ9KbRVZb5iX8wKMh1P1ivY6vT
-   b4b4L9/4Y2ApheuCt7/O31xmsEpvdMLHxHK8h3hHLdGiYg4Qo2lrVVMRM
-   DONPHsJJxqC9gyfG9cc2TU5vB+gIpWZh28ZP2iltKmyHUMT2rNB9XJjKk
-   sUV1xgkv4y03HZWi8sOiTlFglTbhjiyP/sPU3sCYmbcYfvaY7s49acD+f
-   +TcpIcKQkhzyN8CWSF5HpCMk2CWRTNGcp9r47ZwLJIROlLv4HnzVKj157
-   w==;
-X-CSE-ConnectionGUID: h3YSaOK6TjCMRErzX4BLZg==
-X-CSE-MsgGUID: GQ0kqVjLQPiFRKSumGOo+Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="64680211"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="64680211"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 21:28:07 -0800
-X-CSE-ConnectionGUID: F3zFX+7sQJ+4TRfZ0xEt/w==
-X-CSE-MsgGUID: 7eV2wQTMQKimrwIkzPDj3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="188420652"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.185])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 21:28:05 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vIKRe-00000007LnW-06pt;
-	Mon, 10 Nov 2025 07:28:02 +0200
-Date: Mon, 10 Nov 2025 07:28:01 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Subject: Re: [PATCH v4 2/2] iio: trigger: fix device initialization order in
- viio_trigger_alloc
-Message-ID: <aRF34dlvZaD-stgt@smile.fi.intel.com>
-References: <20251110035838.37029-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1762753144; c=relaxed/simple;
+	bh=E+Pm7pdDMh90+fF29fw6R0gB3tfpSocyxbkdzPQ9xP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KavaGBAqQfV4yXm4xD76uW4GhAefLkXLv3mXxPKREibVoltIodRcrG6sXavMjFi9zRyNndYqetC1kj2IJKxroGfk7eUu2+7hp0OtfoD4nl4Mvjc7jtg9oEFcfmgcrUfj2Nc4mxfiz5XDDunw9CoV+7nHwAVB2NbxzMTk0MHyzVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=IzwP2xyK; arc=none smtp.client-ip=178.154.239.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-97.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-97.vla.yp-c.yandex.net [IPv6:2a02:6b8:c15:2804:0:640:a3ea:0])
+	by forward500a.mail.yandex.net (Yandex) with ESMTPS id 3A840C8C09;
+	Mon, 10 Nov 2025 08:28:24 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-97.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id HSFYr2nLPuQ0-UdKGMpmU;
+	Mon, 10 Nov 2025 08:28:23 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1762752503;
+	bh=biS8KNKz+z3Vv1nm/H1IA1VrosznGIxigi0eXn5deAo=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=IzwP2xyKy5gssoJPwzMCN5TWdI+xyp3AgAJJ5dKlu3IBwScHbIQNq+teoddVmpTX1
+	 /u/6m9ikiV1HtfnDuBReBZYfrQL+E8YSAy3rbKKqGYA7FwPrb64sXt64uOBlsJJr95
+	 jYWSH52/RMDU1laj69gII91nB2UF1UWh39opi2+0=
+Authentication-Results: mail-nwsmtp-smtp-production-main-97.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Mon, 10 Nov 2025 08:28:14 +0300
+From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
+To: rust-for-linux@vger.kernel.org
+Cc: lossin@kernel.org, lyude@redhat.com, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+ dakr@kernel.org, peterz@infradead.org, mingo@redhat.com, will@kernel.org,
+ longman@redhat.com, felipe_life@live.com, daniel@sedlak.dev,
+ bjorn3_gh@protonmail.com, daniel.almeida@collabora.com,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/6] rust: add `ww_mutex` support
+Message-ID: <20251110082814.428ead91@nimda.home>
+In-Reply-To: <20251101161056.22408-1-work@onurozkan.dev>
+References: <20251101161056.22408-1-work@onurozkan.dev>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110035838.37029-1-make24@iscas.ac.cn>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2025 at 11:58:38AM +0800, Ma Ke wrote:
-> Move device initialization to the end of viio_trigger_alloc() to
-> simplify error handling. This follows the pattern used in similar
-> functions like spi_alloc_device(), where device_initialize() is called
-> only after all resources have been successfully allocated.
-> 
-> This change eliminates the need for complex cleanup in error paths and
-> ensures that the device release callback only runs when the device was
-> fully initialized.
-> 
-> By moving device_initialize() after all resource allocations, we can
-> use simple kfree() in error paths instead of put_device(), making the
-> code more straightforward and less error-prone.
-> 
-> Found by code review.
+On Sat,  1 Nov 2025 19:10:50 +0300
+Onur =C3=96zkan <work@onurozkan.dev> wrote:
+
+> Changes in v7:
+>   - Split Class and AcquireCtx into separate modules.
+>   - Removed "Ww" prefixes from type names.
+>   - Renamed exec.rs -> lock_set.rs and ExecContext -> LockSet.
+>   - Removed transmute logic from LockSet (formerly ExecContext).
+>   - Improved various doc-comments.
+>   - Marked certain AcquireCtx functions as unsafe.
+>   - Added from_raw constructors for Mutex, MutexGuard, AcquireCtx
+>     and Class.
+>   - LockSet::cleanup_on_deadlock no longer triggers reallocations when
+>     reinitializing AcquireCtx.
+>   - Incorporated various minor improvements suggested on the v6
+> series.
+>=20
+> Changes in v6:
+>   - Added `unpinned_new` constructor for `WwClass` and updated
+>     global macros.
+>   - Changed all tests (and docs) to use Arc/KBox instead of
+>     `stack_pin_init` for `WwMutex` and `WwAcquireCtx`.
+>   - Added `LockKind` and `lock_common` helper to unify locking logic.
+>   - Added context-based and context-free locking functions for
+> `WwMutex`.
+>   - Added `ww_mutex/exec` module, a high-level API with auto `EDEADLK`
+>     handling mechanism.
+>=20
+> Changes in v5:
+>   - Addressed documentation review notes.
+>   - Removed `unwrap()`s in examples and KUnit tests.
+>=20
+> Onur =C3=96zkan (6):
+>   rust: add C wrappers for ww_mutex inline functions
+>   rust: implement `Class` for ww_class support
+>   rust: error: add EDEADLK
+>   rust: ww_mutex: add Mutex, AcquireCtx and MutexGuard
+>   rust: ww_mutex: implement LockSet
+>   rust: add test coverage for ww_mutex implementation
+>=20
+>  MAINTAINERS                                   |   1 +
+>  rust/helpers/helpers.c                        |   1 +
+>  rust/helpers/ww_mutex.c                       |  39 ++
+>  rust/kernel/error.rs                          |   1 +
+>  rust/kernel/sync/lock.rs                      |   1 +
+>  rust/kernel/sync/lock/ww_mutex.rs             | 440
+> ++++++++++++++++++ rust/kernel/sync/lock/ww_mutex/acquire_ctx.rs |
+> 211 +++++++++ rust/kernel/sync/lock/ww_mutex/class.rs       | 156
+> +++++++ rust/kernel/sync/lock/ww_mutex/lock_set.rs    | 410
+> ++++++++++++++++ 9 files changed, 1260 insertions(+)
+>  create mode 100644 rust/helpers/ww_mutex.c
+>  create mode 100644 rust/kernel/sync/lock/ww_mutex.rs
+>  create mode 100644 rust/kernel/sync/lock/ww_mutex/acquire_ctx.rs
+>  create mode 100644 rust/kernel/sync/lock/ww_mutex/class.rs
+>  create mode 100644 rust/kernel/sync/lock/ww_mutex/lock_set.rs
+>=20
+
+I forgot to include the Zulip discussion link [1], which I believe
+would be quite useful. I am adding this as a self-review note to make
+sure I include it in the next version.
+
+[1]:
+https://rust-for-linux.zulipchat.com/#narrow/stream/x/topic/x/near/547854930
 
 
-Thanks for the update, my comments below.
-
-...
-
-> -	trig->dev.parent = parent;
-> -	trig->dev.type = &iio_trig_type;
-> -	trig->dev.bus = &iio_bus_type;
-> -	device_initialize(&trig->dev);
-> -	INIT_WORK(&trig->reenable_work, iio_reenable_work_fn);
-
-
-> +	/* Initialize device only after all resources are allocated */
-> +	trig->dev.parent = parent;
-> +	trig->dev.type = &iio_trig_type;
-> +	trig->dev.bus = &iio_bus_type;
-> +	device_initialize(&trig->dev);
-
-> +	INIT_WORK(&trig->reenable_work, iio_reenable_work_fn);
-
-Why has this been moved?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Onur
 
