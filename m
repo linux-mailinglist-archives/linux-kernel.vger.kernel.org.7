@@ -1,81 +1,112 @@
-Return-Path: <linux-kernel+bounces-893384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9734C47382
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:33:50 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7991AC47394
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:34:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B95B3A2761
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:32:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DB547343A34
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19352EBBB2;
-	Mon, 10 Nov 2025 14:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176BC30BB96;
+	Mon, 10 Nov 2025 14:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="jJz54ThO"
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unLtZ9wS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F041E885A;
-	Mon, 10 Nov 2025 14:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCBE2BB13;
+	Mon, 10 Nov 2025 14:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762785161; cv=none; b=eCtZZ+wYKUM55kt+qESDmOKyMYGxAznZItutwPaA/cMug/5PrFuO+4MjA0fP/GLy/n3tzWdT/BonSGOlBGvkgA7luYMh7jxvsSo3w5EhY1FEWJavhz6M79Ahuwr4vp5FMLWT7+7E4YGNLwKdE2v9Wy0zLvftSZWBjESM3000wq0=
+	t=1762785270; cv=none; b=i2r47Itin0jMKrZCO83ob2s1C6EuwhRdlD+Y0QmUaFIpBFDULS7I4BXK741SpwPYUePYYYnc1ySedXfvWHWhC8j+Umsgn3hiWMos6PaE8M1bLPgHYhBkapaYAn7HmZgSJjc2JL6IqS84QxwcWGDT/ZIarWyGI0jtlOpdOMQuwEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762785161; c=relaxed/simple;
-	bh=xWYWQZkqX3vZXhVv/npQp2hwjkNijYbT6+VFmFzuNSg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GyJ4oY25XXV1iV6Yh8U8+6V1otlc6GN1WAGXwd6kBT65bUMbrr5C2To45VSm9JcWQPjMNK+DBhXW+qjrUoBkh3d0+vFmDxriyGFQOFXJQL3ppbvC0u438giJUb/DEPCGCuBLqHNUWH69RCAmbVlJ/0JFdnsIZfit9Mypr/ngQSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=jJz54ThO; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=rPLSFIy9b6yqaAJ8GRX9t5GUuly6QBcZcQLWafIe5RM=; b=jJz54ThO0+6/2qdNHBFs234YyP
-	DyCQbq2vhJWivO8StidkOd4J1OENCDTQdYqGGluO0PKM8T1ikkM4uRTcX0QeDsbenrGXn16IZ+ehb
-	33VwCE37T4sznNWV7sKi/1A/oulSsiePvc6gZZzq3oXmW/ADQyetQBX/HL/coMVFTZqJsjAIA9BUE
-	mw01yxzDv3f5kKdvibTLkSx6jijL27alnUL2hdfsPBfdIgoB43XQpaPL6ePd4QJEAYjRlm1KrtJ5L
-	HQdv23VUM4jtdizjWgskb1QA90+iyUo7vvDY0wfl0Jall1JWorsOyKN9ScvkAToXb49NkonZ7o9cF
-	S2Kpmi6P4t1aJJaM88vS6fk/+LVj/1+Al4h8EoFzIULr+CdQAG+P0PX5LpUuO27sk+oyBdH8NhETG
-	Smp7zv1BXZzkd4JrtkUOBuOPli05W8IIaCFs/F+ktpMAe6WVVIqmZUhDiWyN9H4BfvOdEZj9dIFxt
-	YHJGHfzHcLvY0HjTka5n2g2SHmllaKqi4PSdhNo6YKSYunTSEjKsyBCMrQqwpFW/RUEnqEbOl76cw
-	35AlhppiBxOjilyb3k5gjle4mSV3C/niWLySjM6DAaEqQe6MQVdyEm8yvGt/CFUubzZfb9BAMqmkI
-	lihUHXHiUeSMwz6JGH6ym4GJHZoFBz+WWPfaDHTh0=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>, asmadeus@codewreck.org
-Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
- Dominique Martinet <asmadeus@codewreck.org>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] net/9p: cleanup: change p9_trans_module->def to bool
-Date: Mon, 10 Nov 2025 15:32:29 +0100
-Message-ID: <62958427.AAQ67ucbvc@silver>
-In-Reply-To: <20251103-v9fs_trans_def_bool-v1-1-f33dc7ed9e81@codewreck.org>
-References: <20251103-v9fs_trans_def_bool-v1-1-f33dc7ed9e81@codewreck.org>
+	s=arc-20240116; t=1762785270; c=relaxed/simple;
+	bh=aX7K3JAhfHPmsSB4e6UXe2Yw6nVe4RMBF3FIzB64hM0=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=uNqvAaKdjKtZUUsahWwYLHkFc1SnO7NFGWUiE0ox+7LNZlHERJnikW841pXrK2OZ4Vv/p5KaH5hFG8lhD4FTpoH/4i+W5dlKYSWMOLItgcFmaJ/nvzmfFXXfKCZizoEdhWvuUP4rzpZjIYFvSgTpkMMXj2YLmptqwbiDdBtG534=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unLtZ9wS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBA73C4CEFB;
+	Mon, 10 Nov 2025 14:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762785270;
+	bh=aX7K3JAhfHPmsSB4e6UXe2Yw6nVe4RMBF3FIzB64hM0=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=unLtZ9wS4gYJjNZAEGqGQy8q8bRZbZBj7fXqm6RFICktbtM2DuFAeX2eu3fNWvu/t
+	 bLAG5rf6gPr8uRTzsFXBEt2vgMKgE8kSWcLc7hNuW8BKgGmqISgOwyr0h/xD6DlaAx
+	 M5fl77oH3zcC+uQPDVIGP8rulfueC9TN12bTbUXJCmBb6TVq9y1SVURJ1aEWeUHpqO
+	 KS6jk30J9aInS2NbsnTOzsz/qx2R0raOm6ho/6mEjByy3UNEBUbrP/htS2F07izqKs
+	 c4DbYTsahFoQRpLF6LFagT8Oc8SFZCVp944G28n0RiN1QO5WPE/lsM/FpY+gnfw+vW
+	 /gN2fYTKh5MYg==
+Date: Mon, 10 Nov 2025 08:34:28 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>
+To: Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>
+In-Reply-To: <20251107-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v1-1-8ba83b58fca7@oss.qualcomm.com>
+References: <20251107-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v1-1-8ba83b58fca7@oss.qualcomm.com>
+Message-Id: <176278493057.154520.2194294987680641552.robh@kernel.org>
+Subject: Re: [PATCH] arm64: dts: qcom: hamoa-iot-evk: Enable TPM (ST33) on
+ SPI11
 
-On Monday, November 3, 2025 8:42:36 AM CET Dominique Martinet via B4 Relay wrote:
-> From: Dominique Martinet <asmadeus@codewreck.org>
+
+On Fri, 07 Nov 2025 20:02:25 +0530, Khalid Faisal Ansari wrote:
+> Enable ST33HTPM TPM over SPI11 on the Hamoa IoT EVK by adding the
+> required SPI and TPM nodes.
 > 
-> '->def' is only ever used as a true/false flag
-> 
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>
 > ---
+> Testing:
+> - TPM detected via tpm_tis_spi
+> - Verified functionality using tpm2-tools (e.g. tpm2_getrandom, tpm2_rsadecrypt)
+> 
+> Thanks for reviewing.
+> ---
+>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
 
-Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
 
-/Christian
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: 9c0826a5d9aa4d52206dd89976858457a2a8a7ed (use --merge-base to override)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20251107-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v1-1-8ba83b58fca7@oss.qualcomm.com:
+
+arch/arm64/boot/dts/qcom/hamoa-iot-evk.dtb: tpm@0 (st,st33htpm-spi): compatible: ['st,st33htpm-spi'] is too short
+	from schema $id: http://devicetree.org/schemas/tpm/tcg,tpm_tis-spi.yaml
+
+
+
 
 
 
