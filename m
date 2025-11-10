@@ -1,108 +1,106 @@
-Return-Path: <linux-kernel+bounces-894127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B49C49569
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:58:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFDC8C49572
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:59:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 114E93A3314
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7405F3A82C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3272F5A07;
-	Mon, 10 Nov 2025 20:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE8A2F6165;
+	Mon, 10 Nov 2025 20:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8NhlwoO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKeG5noB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304B72F532C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30732F60C0;
+	Mon, 10 Nov 2025 20:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762808195; cv=none; b=MEHkwqwZydl0kq5Ivo+BnMwCok467CDJZzPqoWJpWqRZDGeDXlyeZQ5UmiPKbry8ido6+4RvMsXKspax8zCt24p1PGRYvSZd5KURQLDzwhaBeMWffBxpiVbxya6wHA37P5Xo1FMSxqboaaF8Lh3Fu20Rpeg/WeSL0eSWgpjr7hU=
+	t=1762808198; cv=none; b=TBqWDEDC3qKHvMZTd1yiOv3qjo+HcgZ7GK8DkfqzddFV+xyPa5ZHfl7Vi0oztmDLpkNLDdMb0d5iyOLmLZWpD1YffwcuW2NAt0pVP1716Xvs72fVO9A1IhaS2PW9REPdSs5TNUfcSgyTVTj/qyD1vzJphdc6V0CMGuvHK04r6y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762808195; c=relaxed/simple;
-	bh=nzONvQzcT0llpH+eHhBSyHjuk/OUfjr2rQUOpvgixH8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ILiLH1Pr2Y8yEGxPjy09Zwp9qB1bX7ntdTvVPn3nLy90gGwhqOk+zzTP3EoEiDU4QJmDmO2z1Ks4tcdP56tzRXTOpfoR7hE0SeKoKR6wQq4kSvSO0TWfK8NIC1RbcArsh/Xq61PFK6SLTDPJ/0XPYDRgFnESYVy76jBLN6Au+o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8NhlwoO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB4CEC2BC86
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:56:34 +0000 (UTC)
+	s=arc-20240116; t=1762808198; c=relaxed/simple;
+	bh=H5PKEBoHV3HMMxx7TTlepJ6CAJEwkpwJkeXhwF2qtRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jAQCdAzlRcoBYgtBBNKzn5Hxrl6Y6HwOELBeDJobmFZ2aIQ+DRWqkoyQ/Iq/A/K5NJeOC1d5l9ejx8xKf2yube0ucKOPpFf117N+cplbYyOfaTz1rS7GTKnsGDkXjmi/n2UrkJ0NBk4X5/HDyRtf9EIm8klUTxFOCTxOo/mA5Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKeG5noB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F89DC116B1;
+	Mon, 10 Nov 2025 20:56:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762808194;
-	bh=nzONvQzcT0llpH+eHhBSyHjuk/OUfjr2rQUOpvgixH8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=G8NhlwoOC9R1N/WHZGjSUGqnXPNeQE9SMcW+Akv2hGLqZGqSsy2NHf1454ExZ73u2
-	 nZdgt8yjhN2gnFXlGoOKlqv8gaJgZyl5JjfVF/dECAqH31hpVwV67nBD3BLkVP2BwE
-	 31Ek/JsYbvW9/9vr7JlaOE22Gz7xdiPap0ad+BaUpr3+BxGtoH5B46dnh2t4y7muwE
-	 U+0uGVXJemTUIAyyl7KAvOP10h6UySMtzUEv8Xn1RLPEvASOMeuL2EO+0/HeayBgnf
-	 HI18s9R8m9/SDMtA0ferjnSVGs+12Uw1KE83FJx+7yp07aTDg1RU5Jr8Y+RxySgwBP
-	 TDS8czEp1aCRg==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-65366485678so1707638eaf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:56:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWMJtiEXprUB/47x6d3tMC6fRjMX0qePc12ax0PcKqGRUUdMMxIv5rwtZ5PehjmmzhtjRUBpcSaXBtqoOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxERquO7/hw5lgLkfxGXguxjcj48MeuWdOCdf2zh1b5TbEoxKif
-	jb0/CzGtLEE+982Ufkwj/6k+l5li/gYmFjBwY0iKqTsczYAg1ftY3YXnMdFeBps5J1EK3eKZAQh
-	+pOxl2xtHPXLM3J1zMRVgdlBeucrPQ5o=
-X-Google-Smtp-Source: AGHT+IG9Pjhham/qiDKmpchvbrQfXUjTk8mGOJBEgwPxvNy79OZ7viUKrocFLv1OXkrYVlSrLtSQL71+JS5eADJZCUE=
-X-Received: by 2002:a05:6820:2188:b0:656:735e:9f25 with SMTP id
- 006d021491bc7-656d8e88d10mr4580147eaf.8.1762808193960; Mon, 10 Nov 2025
- 12:56:33 -0800 (PST)
+	s=k20201202; t=1762808198;
+	bh=H5PKEBoHV3HMMxx7TTlepJ6CAJEwkpwJkeXhwF2qtRk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tKeG5noBM/BRny02DEbXnzQHt1Cd6fGY+pEaOcoZ9JTEQa/8lnNk0UduTrTc9uXiP
+	 c65Xk72zSK3li/Cz51amqJyvObyjyc1kj/b+7FICaODesbyg6avKYCDAUaxIqSANG5
+	 JnBtJxMPkjt02geJsYhzYF6XByhKpu8gGrl/0meh9Fretd8l26EpWiRFYGw5rdttVb
+	 lWCM4Lk9HxBYo6aqILLXKp55WQ06Qut9ks1wbV9XiPlXXNa70NF58ude9q2UEJ72AK
+	 sjcli5YExmV2BEbRN76+nxqtCgJYvbuzd0DqaAekBnNsgZWB1Duapceu90B66yB8a+
+	 idRyy6fU51VBA==
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>,
+	Andrea Righi <andrea.righi@linux.dev>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Emil Tsalapatis <etsal@meta.com>,
+	sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH v2 01/14] sched_ext: Don't set ddsp_dsq_id during select_cpu in bypass mode
+Date: Mon, 10 Nov 2025 10:56:23 -1000
+Message-ID: <20251110205636.405592-2-tj@kernel.org>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251110205636.405592-1-tj@kernel.org>
+References: <20251110205636.405592-1-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016-rneri-wakeup-mailbox-v6-0-40435fb9305e@linux.intel.com>
- <20251016-rneri-wakeup-mailbox-v6-2-40435fb9305e@linux.intel.com>
- <20251027141835.GYaP9_O1C3cms6msfv@fat_crate.local> <20251027205816.GB14161@ranerica-svr.sc.intel.com>
- <20251029111358.GDaQH29lURT0p_WWsb@fat_crate.local> <20251030054350.GA17477@ranerica-svr.sc.intel.com>
- <20251103134037.GOaQiw1Y6Iu_ENu6ww@fat_crate.local> <20251110174938.GA26690@ranerica-svr.sc.intel.com>
- <20251110194638.GCaRJBHrJgwjRY5aQr@fat_crate.local>
-In-Reply-To: <20251110194638.GCaRJBHrJgwjRY5aQr@fat_crate.local>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 10 Nov 2025 21:56:22 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jmu4onvrp_it=xTHsScE98AjDkCg00Tdhhtiz93b=aqw@mail.gmail.com>
-X-Gm-Features: AWmQ_blbmx2tUH8jtiT6HsqvdY-s9EsP0qINVvRWzIyPuM-EMjwcy7mK231nDL4
-Message-ID: <CAJZ5v0jmu4onvrp_it=xTHsScE98AjDkCg00Tdhhtiz93b=aqw@mail.gmail.com>
-Subject: Re: [PATCH v6 02/10] x86/acpi: Move acpi_wakeup_cpu() and helpers to smpwakeup.c
-To: Borislav Petkov <bp@alien8.de>, Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Michael Kelley <mhklinux@outlook.com>, 
-	Saurabh Sengar <ssengar@linux.microsoft.com>, Chris Oo <cho@microsoft.com>, 
-	"Kirill A. Shutemov" <kas@kernel.org>, linux-hyperv@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ricardo Neri <ricardo.neri@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Yunhong Jiang <yunhong.jiang@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 10, 2025 at 8:47=E2=80=AFPM Borislav Petkov <bp@alien8.de> wrot=
-e:
->
-> On Mon, Nov 10, 2025 at 09:49:38AM -0800, Ricardo Neri wrote:
-> > I apologize for my late reply. Also, I am sorry I was not clear. I need=
-ed to
-> > consult with a few stakeholders whether they could live with the increa=
-se in
-> > size resulting from having CONFIG_ACPI=3Dy. They can.
-> >
-> > If it is OK with Rafael, I plan to post a new version that drops this p=
-atch and
-> > adds the necessary function stubs for the !CONFIG_ACPI case.
->
-> Sounds good to me.
+In the default CPU selection path used during bypass mode, select_task_rq_scx()
+sets p->scx.ddsp_dsq_id to SCX_DSQ_LOCAL to emulate direct dispatch. However,
+do_enqueue_task() ignores ddsp_dsq_id in bypass mode and queues to the global
+DSQ instead, rendering the setting unnecessary.
 
-Yeah, sounds good.
+Don't set ddsp_dsq_id from bypass. Just return the selected CPU, which has the
+effect of waking up the picked idle CPU. Later patches will implement per-CPU
+bypass DSQs to resolve this issue in a more proper way.
 
-> It is the simplest thing to do. If the size increase bothers someone, we =
-can
-> always do the more involved refactoring later.
+v2: Removed incorrect bug fix claim about dangling ddsp_dsq_id triggering
+    WARN_ON_ONCE(). dispatch_enqueue() always clears ddsp_dsq_id even in bypass
+    mode (Andrea).
 
-So long as they have a good enough justification for it that is.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Andrea Righi <andrea.righi@linux.dev>
+---
+ kernel/sched/ext.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 652a364e9e4c..cf8d86a2585c 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -2521,12 +2521,8 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
+ 		s32 cpu;
+ 
+ 		cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, NULL, 0);
+-		if (cpu >= 0) {
+-			refill_task_slice_dfl(sch, p);
+-			p->scx.ddsp_dsq_id = SCX_DSQ_LOCAL;
+-		} else {
++		if (cpu < 0)
+ 			cpu = prev_cpu;
+-		}
+ 		p->scx.selected_cpu = cpu;
+ 
+ 		if (rq_bypass)
+-- 
+2.51.2
+
 
