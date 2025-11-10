@@ -1,171 +1,239 @@
-Return-Path: <linux-kernel+bounces-894170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C35C49676
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:29:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96543C49670
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:29:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB91188BC24
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:30:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6EE824E4E27
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FC6305979;
-	Mon, 10 Nov 2025 21:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A436A2FD7B8;
+	Mon, 10 Nov 2025 21:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GmZY1rUD";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="RyHEiRPU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J9WJRqN7";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="WZYrhWB2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F1C2FE577
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BC92FE577
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762810173; cv=none; b=eFgU4H1Q4GMxYC8fD45My97yRvaFAb+n6Ptm7TmWa8/lMm6AajRwXh6B9V3b0aMWTNpNKSteUrvn5hBKVXoYgzLWor6OVQtASCngZO536PK5e8V/StIIyD6fwZLGwcAW93iQnGfCDf9fyDboOJpo303B6F3RKOqBs3LRf2C5ywM=
+	t=1762810135; cv=none; b=LTTbMg+HMGUHciiK4j7CcAVfIF5ELAVuNIa0UnWXDbWah8fg+6YdI6kYzzIonCJs+8ou3G4j3oktvLIr9PsDbgubtqTfGiz0PhTLC2bnQSmoX9OgDRaxcBAzi10xTtTfBRjR8q5G6Mjv/2yGskOAeX3Hy9bk6BBpFY0O55a3FoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762810173; c=relaxed/simple;
-	bh=g+y6MSy72euGXPhtDEt4v9F2/OTUfa2+S7jFbeHaTz0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oelhNFngzUVeXTBVuLDRz1ROtMho6jUW90RiZBHRiD3wihYoZD3xOG/+b+A96NL7bNhxVpxh75PyqEMi6AuEYJwL40T6XJOPVyYFzYP9265Nmql7jsPnRS1gTEN4oxFMg0gUAhB8pCikF2SuffFqGLladGkJSnH+JP0BhkeTEYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GmZY1rUD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=RyHEiRPU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AAKI4iT212391
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:29:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Zjm8QOGOt6wRLYUzXj/zuV
-	GSGpLuzn17DWxZW+DBPow=; b=GmZY1rUDXKZpodDpaa53tQVEKjvCp++ltB4StH
-	KFPq4Yh8+6H/qMsDU+UMJzAep1WV13Fcs2+lbQbjZuSglypbxLGAYnx6WF4Lc8Xa
-	clyRCE249k6cyq1dm7IIx6IU8KLGL24q7TYIS3ktDtZxgdG2qBfLfX4K1m2dDjf/
-	PiYOkycWnhQtenTI3kLsMqP2Ltfk5XP4SehEzjqYY3nHUDk6ADBGJ7Ka7RQ7eZ94
-	XpGcFxCECbeCnz9/t+ZdGs29TCQa8rN5D4iw3cg+78Au2QfPeW7MCKu9C9/yw2Mo
-	imQMnZEcTHiYubEZACm8Fwn9AQ3Npdg1dwODKljeiAJWFliA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abpy8g4tx-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:29:29 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-297f48e81b8so3477355ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:29:29 -0800 (PST)
+	s=arc-20240116; t=1762810135; c=relaxed/simple;
+	bh=hJV1ZGAGyaUl9lXmqxzKnqSPBe2fYFE359oyXqNyhj8=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tBvMVIyBl8nR9GZ561Pxf+InRAiSY/7YhCuMIk0i8IHZnXCcMd/xTK+ObYit4YVNvnB3HKFpPF2zeSYndTpThaEDgkwy7xyBoDinVz+jHB8NwaXY0XgVh/xtZETtYPdngq/9SVF0h3WAG/ovwAY+QyXQvys0kThv61/jZv9yjRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J9WJRqN7; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=WZYrhWB2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762810133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9PAQvyhYw9Rcq7EQwkG/D+2q+HFJhzkXgLDAIQIi4rE=;
+	b=J9WJRqN7Ecpv4Z3nwdiV7nH7Y+vQahiGmD+dflm8sQ7ZS1APP4L3RcdngwOL5Kj35ehYnb
+	yM+qJd9PxgZ8HrH+YuzF+VvXQBA/zT7ijxn/g31kPsoVtshMx/Tza3AO0aRZftMp6E3W2w
+	E+I7TSnm65UtMlg9d1Alp3dPOKPTTgQ=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-623-YHgVPW97MDaUd5WqFHESuA-1; Mon, 10 Nov 2025 16:28:51 -0500
+X-MC-Unique: YHgVPW97MDaUd5WqFHESuA-1
+X-Mimecast-MFC-AGG-ID: YHgVPW97MDaUd5WqFHESuA_1762810131
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4edb7c81e0fso35985031cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:28:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762810169; x=1763414969; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zjm8QOGOt6wRLYUzXj/zuVGSGpLuzn17DWxZW+DBPow=;
-        b=RyHEiRPUA5jmjxjfW4NO51pJxA54xneGxbJDzZNyRXGMYm+1VuHpr/b13KHHdh9bXG
-         OlnDFpJLrmIQHIFUOpGhgZcYmavQIW1AAVG7MksdwTw2nguMRslJMfAik2uAN3TwgUBO
-         sjYgYd4taKz/GZHtByzj44PS89ldUYGUPulf9988EefqILAmbrdFfqFCdNdclBcqaLhv
-         CXWbMyU8cHa28udnr0PJap+Pfs+wXLHF7cqjEvxojaZ9HAQkLvyXmPyXDW5Z3pTGBfLV
-         89piYi4z6KgiWYFggyU+7PUHv50C0rl3qzpv+VdS+zH0pyYwmoVfOJ3d+RmhX3T+f8j2
-         P8eA==
+        d=redhat.com; s=google; t=1762810131; x=1763414931; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9PAQvyhYw9Rcq7EQwkG/D+2q+HFJhzkXgLDAIQIi4rE=;
+        b=WZYrhWB2AzYYQ4wIWZ9In5UwRyXkg6cKcPGuiElQY5+fjjCzIh3uwCyW/t79GX3G2X
+         /0zjZR+jVR8g3F4yQsrx/vnwDph0a0mLl3tlYICF5y9m2D2Yi++EShkOezzea6cFiZUt
+         NRrORbz0BRSIMH9dJGZ1MBhvVTzrz4LMfkZQc5SSalR71D9TseaTLdi5Ki7APpiXgUcc
+         xYeRwk1m3mRXDKEQzKmwCstpbVGkrkTswY1qRd9T34//lW4YpyqdwpfiXxxaTeFLh5+r
+         8IWJPjbx/39vCSVktdoqzDbwZJdSU7rZ5MRlMaCBiNA7R/nhZgkSiSFDIdnIj6wBILtP
+         YS1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762810169; x=1763414969;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zjm8QOGOt6wRLYUzXj/zuVGSGpLuzn17DWxZW+DBPow=;
-        b=SE0qi6qsLamnWNsYAzawnoVun7BXYRkBL16upOdjGJXFzv5sVGIGFD2dEeO4skWoX3
-         BJGVR9+8h9ergd1O0VGvNcJ7VQ1sMbG6wTxlH5ouMQ0ywt8DUaD+as8MJpZHnvy75O7p
-         00ICJGj4HrrSCvso5RGcpLIR+ogP9lt/kBLTuzXemCy1aawdF5mV1qgVlyJKfVn5tDwl
-         mzngokx4EiIaCAsF5ujar2iMU9r0gMphrMO5uHfxq9LrFf/VwNPR1uZ+bQfUqVuT9CxL
-         b3p2SHvEU703uzwQdcwiEB2E223uoGASGKoq1iOAaueb9rx1aVSCBZswBMtIK5kuUQXG
-         swKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgsvyiqrKSsn1hVhomyZonTGhPnK95MuGooPKnTJlYzJ+WG7xNjlqZDuUvqL8HE6fRIlr5MhZjOeJSQ94=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3ivPa4G039be1+ZIb6sLXUsWGxdeTVRg2j7coNFcZzC5i+3HR
-	NEMW1oN5/tcvsCY9ctJFFXM90tLk+Jxn0gyeHo1Wsk9lx2GM/3aRuFXBzzaZelXgl36WJAnxriR
-	WsCzplEb35B+L2Kro0VOv/C9kf9kMFu7IKdmpe8Ywei7+G3NVdO13UUWdUNOsKT8VYg==
-X-Gm-Gg: ASbGncvwwba96bWoQRQRkQ5Bk2x8t5dhGktfhsflDnY+YJJ59todgPQgpJIrn2C35dG
-	pMtHUMJBMWdp6cGUq5MFA0LLAIsq9zcxA7fRSSzGQds9LZvJwsBgw8Bwlu9zfO3KvtHKms7clGE
-	KbiBB0HGP5RYhmb5mc330PQr8nxHWdGfqM7xhIPtZ1rpjVJekGCCNlzEfTP1HkpFuhDT0dEbd1m
-	VpryMisVrzdLUYxZqmkXj2DByZnzkAB8oLY6mL5jS0A1bXIBiLDEruNxWTzk+4hCYCV7F8/W3xF
-	8oArMTOJ/YcZDJ1rJ73tx+tcI1TfGM4qlr8jT7D1gxsPYj4gU94qP4xx1ggvcR2RDVDJR8xmPTe
-	JRxBOsdsFa/CbZ6R/Bpv9xhfeM2LSJXRhm3S88pSIgsrxsUCnIZv73Ca4oA==
-X-Received: by 2002:a17:903:2286:b0:266:57f7:25f5 with SMTP id d9443c01a7336-298407daaacmr10730485ad.7.1762810169246;
-        Mon, 10 Nov 2025 13:29:29 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHIuV+1SxMchLbxTlgtjAKcFCy/+6NTWvSU6efADcUbKDtqkuQ+bij8jy109pZykyKrrcsPkg==
-X-Received: by 2002:a17:903:2286:b0:266:57f7:25f5 with SMTP id d9443c01a7336-298407daaacmr10730325ad.7.1762810168681;
-        Mon, 10 Nov 2025 13:29:28 -0800 (PST)
-Received: from hu-azarrabi-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651cb47dbsm156444415ad.96.2025.11.10.13.29.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 13:29:28 -0800 (PST)
-From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-Date: Mon, 10 Nov 2025 13:28:32 -0800
-Subject: [PATCH] tee: qcom: initialize result before use in release worker
+        d=1e100.net; s=20230601; t=1762810131; x=1763414931;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9PAQvyhYw9Rcq7EQwkG/D+2q+HFJhzkXgLDAIQIi4rE=;
+        b=EekTEIeS31CLr4K5JamRZk9tGJY4J3ifejudw5x/pB1sfR6zurM9tosWAdCY6godSX
+         2WAoM/MrD8q6qszUd5/B7+3Q22Rppqn/HSERz/C/HH/rCI7Ot1r+7tbm9/qddrsg98yP
+         OmJ5cPeJyBKEmRqhCGwxfTw1JlOYDlQ4VSxG8W+VV9pvPymWsfWcvm/q9DM8JiYrUq25
+         8fzrVD1J3d69pfOdtDa8bL4M1IG7jMkZF9psdx1ZlyWbhh2HA3rfFBbnaU0T+HdxfcG3
+         aNyD79RCt9hLdRMXW1GGAcu+Q60GPynsj8clz12zjIzQ6chRjr/ftmS7joig/no3MZXZ
+         VRBQ==
+X-Gm-Message-State: AOJu0YyiM3ThIGKOK6cF/TrkU0q25GE7fSymNF5xVPvMpSMIKes1ILi5
+	qGsK525d5UZwI99yeIjl8zTY+rRkFiW5A+CCezp4xj3VX6JI2AQgcr2jrK8rSRjoBkJ7o9/L5Ys
+	0KdUQJnIA2hR4df7lB926mzuYzd51BPbCXb+B/vKLVMWSXKpdSAB3UIvYzc0fBJO4Yg==
+X-Gm-Gg: ASbGncsDG+EMfLre71K65VPjzqQl5vjMuy7cyRcKvp9FyUfopPD5GH8UXS9Q+AuxWwN
+	vH8EcNoa5mQFABOmmv7u8KnOnGFY23+qGQDL1WlYIlce0r1VDnb0K1tBfDOcxQJ0cuy8209hxgD
+	h/ZmIt0KxzRi/LBUTqRg8f3g1hmULz0TsvXi7f9KjyF6TY2w90Rl+nkgPlef6RDhzNetYcqaSCy
+	eKptySrYc/9h4WUxrUcqqpVVphcMopU6qhRmZT+UCp0MV2nrdysA91XETvt0OGI2etFPNj2OMpv
+	AjQPyAzYIn8z6rI6ROzkDpMU34hqgyOKLq6riZSilsJzOIs0PEMpQKd/zefqSEIoVCZU5zZ8N+k
+	cQAAwqKpyDF/STh4Cso4m8J1bi563kZ0T5lk8JbcFxa35WQ==
+X-Received: by 2002:a05:622a:1915:b0:4ed:6032:f644 with SMTP id d75a77b69052e-4eda4fd55damr116622631cf.79.1762810131201;
+        Mon, 10 Nov 2025 13:28:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFeDJRiEDLUmd4/GMwSqIKz3yYFvy4/XOQH4UdNBPihOyrWzNsSl7rb/Zzqwa2yi59lEXN2JA==
+X-Received: by 2002:a05:622a:1915:b0:4ed:6032:f644 with SMTP id d75a77b69052e-4eda4fd55damr116622341cf.79.1762810130666;
+        Mon, 10 Nov 2025 13:28:50 -0800 (PST)
+Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4edb774e8d6sm33504041cf.5.2025.11.10.13.28.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 13:28:50 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <5d3d80dd-00ca-464d-bebf-c0fd4836b947@redhat.com>
+Date: Mon, 10 Nov 2025 16:28:49 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-qcom-tee-fix-warning-v1-1-d962f99f385d@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAP9YEmkC/x2MQQqAIBAAvyJ7biGtSPpKdBDdag9paVQQ/j3pO
- AwzLySKTAkG8UKkixMHX0BWAuxq/ELIrjCoWnVSyhoPGzY8iXDmB28TPfsFG9dp17dGKaehpHu
- kov/tOOX8ATQgbvZmAAAA
-To: Jens Wiklander <jens.wiklander@linaro.org>,
-        Sumit Garg <sumit.garg@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-        linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>,
-        Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-X-Mailer: b4 0.13.0
-X-Proofpoint-ORIG-GUID: gvTiUwDmNVYxECjMgvXOeJS1t8aDdeka
-X-Authority-Analysis: v=2.4 cv=AYW83nXG c=1 sm=1 tr=0 ts=69125939 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=hYfsqUzT0y0sb8bvQO0A:9 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDE4MyBTYWx0ZWRfX1MkGlRgIxgQN
- sjDZfzgzCVj//MTFeN8EDozPbeOPu3hsU4A4vL80EiKVCKi7gzp6O0bx45chYWAW09obo/Xz0Tc
- ArJ6w88JjBm3VpZZ2UtHKBVL7FQLDmKiEkM5EtnxKk9I3sw6EhOKgyRqMIAHXzrUO0Ac7a/m+L0
- /S+Zeb9tw1rOvckruDdq842r8Y+vOEyFwrRC2m8LXYVhLhrgWpzT661iliIWfVrmZ+kK80noZuB
- PRoF6KWuOB2IYSpcfzJtenrLtaYjlvFX9iQJANTFUaVTu/RKJtQlpLnZrJMmzTtMHlf0VazNY7/
- DQ8AhNZouO37iy5y8cbgLfPlYtRrYgWrCyfgxDtfNTH0PTqr0qc5lQjSafNd+tvXK/hhIEiYXNS
- c7yy8tzqk6F16Fs7jP+uBaIT90Vg9Q==
-X-Proofpoint-GUID: gvTiUwDmNVYxECjMgvXOeJS1t8aDdeka
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_07,2025-11-10_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 malwarescore=0 adultscore=0 clxscore=1015
- suspectscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511100183
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] genirq: Fix IRQ threads affinity VS cpuset isolated
+ partitions
+To: Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Marco Crivellari <marco.crivellari@suse.com>, cgroups@vger.kernel.org
+References: <20251105131726.46364-1-frederic@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251105131726.46364-1-frederic@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Initialize result to 0 so the error path doesn't read it
-uninitialized when the invoke fails. Fixes a Smatch warning.
+On 11/5/25 8:17 AM, Frederic Weisbecker wrote:
+> When a cpuset isolated partition is created / updated or destroyed,
+> the IRQ threads are affine blindly to all the non-isolated CPUs. And
+> this happens without taking into account the IRQ thread initial
+> affinity that becomes ignored.
+>
+> For example in a system with 8 CPUs, if an IRQ and its kthread are
+> initially affine to CPU 5, creating an isolated partition with only
+> CPU 2 inside will eventually end up affining the IRQ kthread to all
+> CPUs but CPU 2 (that is CPUs 0,1,3-7), losing the kthread preference for
+> CPU 5.
+>
+> Besides the blind re-affinity, this doesn't take care of the actual
+> low level interrupt which isn't migrated. As of today the only way to
+> isolate non managed interrupts, along with their kthreads, is to
+> overwrite their affinity separately, for example through /proc/irq/
+>
+> To avoid doing that manually, future development should focus on
+> updating the IRQs affinity whenever cpuset isolated partitions are
+> updated.
+>
+> In the meantime, cpuset shouldn't fiddle with IRQ threads directly.
+> To prevent from that, set the PF_NO_SETAFFINITY flag to them.
+>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> ---
+>   kernel/irq/manage.c | 33 ++++++++++++++++++++-------------
+>   1 file changed, 20 insertions(+), 13 deletions(-)
+>
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index 400856abf672..5ca000c9f4a7 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -176,7 +176,7 @@ bool irq_can_set_affinity_usr(unsigned int irq)
+>   }
+>   
+>   /**
+> - * irq_set_thread_affinity - Notify irq threads to adjust affinity
+> + * irq_thread_update_affinity - Notify irq threads to adjust affinity
+>    * @desc:	irq descriptor which has affinity changed
+>    *
+>    * Just set IRQTF_AFFINITY and delegate the affinity setting to the
+> @@ -184,7 +184,7 @@ bool irq_can_set_affinity_usr(unsigned int irq)
+>    * we hold desc->lock and this code can be called from hard interrupt
+>    * context.
+>    */
+> -static void irq_set_thread_affinity(struct irq_desc *desc)
+> +static void irq_thread_update_affinity(struct irq_desc *desc)
+>   {
+>   	struct irqaction *action;
+>   
+> @@ -283,7 +283,7 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+>   		fallthrough;
+>   	case IRQ_SET_MASK_OK_NOCOPY:
+>   		irq_validate_effective_affinity(data);
+> -		irq_set_thread_affinity(desc);
+> +		irq_thread_update_affinity(desc);
+>   		ret = 0;
+>   	}
+>   
+> @@ -1035,8 +1035,23 @@ static void irq_thread_check_affinity(struct irq_desc *desc, struct irqaction *a
+>   		set_cpus_allowed_ptr(current, mask);
+>   	free_cpumask_var(mask);
+>   }
+> +
+> +static inline void irq_thread_set_affinity(struct task_struct *t,
+> +					   struct irq_desc *desc)
+> +{
+> +	const struct cpumask *mask;
+> +
+> +	if (cpumask_available(desc->irq_common_data.affinity))
+> +		mask = irq_data_get_effective_affinity_mask(&desc->irq_data);
+> +	else
+> +		mask = cpu_possible_mask;
+> +
+> +	kthread_bind_mask(t, mask);
+> +}
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/op-tee/7c1e0de2-7d42-4c6b-92fe-0e4fe5d650b5@oss.qualcomm.com/
-Fixes: d6e290837e50 ("tee: add Qualcomm TEE driver")
-Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
----
- drivers/tee/qcomtee/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This function seems to mirror what is done in 
+irq_thread_check_affinity() when the affinity cpumask is available.  But 
+if affinity isn't defined, it will make this irq kthread immune from 
+changes in the set of isolated CPUs. Should we use IRQD_AFFINITY_SET 
+flag to check if affinity has been set and then set PF_NO_SETAFFINITY 
+only in this case?
 
-diff --git a/drivers/tee/qcomtee/core.c b/drivers/tee/qcomtee/core.c
-index b6715ada7700..ecd04403591c 100644
---- a/drivers/tee/qcomtee/core.c
-+++ b/drivers/tee/qcomtee/core.c
-@@ -82,7 +82,7 @@ static void qcomtee_do_release_qtee_object(struct work_struct *work)
- {
- 	struct qcomtee_object *object;
- 	struct qcomtee *qcomtee;
--	int ret, result;
-+	int ret, result = 0;
- 
- 	/* RELEASE does not require any argument. */
- 	struct qcomtee_arg args[] = { { .type = QCOMTEE_ARG_TYPE_INV } };
+Cheers,
+Longman
 
----
-base-commit: ab40c92c74c6b0c611c89516794502b3a3173966
-change-id: 20251110-qcom-tee-fix-warning-3d58d74a22d8
-
-Best regards,
--- 
-Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+>   #else
+>   static inline void irq_thread_check_affinity(struct irq_desc *desc, struct irqaction *action) { }
+> +static inline void irq_thread_set_affinity(struct task_struct *t,
+> +					   struct irq_desc *desc) { }
+>   #endif
+>   
+>   static int irq_wait_for_interrupt(struct irq_desc *desc,
+> @@ -1221,6 +1236,7 @@ static void wake_up_and_wait_for_irq_thread_ready(struct irq_desc *desc,
+>   	if (!action || !action->thread)
+>   		return;
+>   
+> +	irq_thread_set_affinity(action->thread, desc);
+>   	wake_up_process(action->thread);
+>   	wait_event(desc->wait_for_threads,
+>   		   test_bit(IRQTF_READY, &action->thread_flags));
+> @@ -1405,16 +1421,7 @@ setup_irq_thread(struct irqaction *new, unsigned int irq, bool secondary)
+>   	 * references an already freed task_struct.
+>   	 */
+>   	new->thread = get_task_struct(t);
+> -	/*
+> -	 * Tell the thread to set its affinity. This is
+> -	 * important for shared interrupt handlers as we do
+> -	 * not invoke setup_affinity() for the secondary
+> -	 * handlers as everything is already set up. Even for
+> -	 * interrupts marked with IRQF_NO_BALANCE this is
+> -	 * correct as we want the thread to move to the cpu(s)
+> -	 * on which the requesting code placed the interrupt.
+> -	 */
+> -	set_bit(IRQTF_AFFINITY, &new->thread_flags);
+> +
+>   	return 0;
+>   }
+>   
 
 
