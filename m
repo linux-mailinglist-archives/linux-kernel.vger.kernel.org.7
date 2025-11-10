@@ -1,143 +1,98 @@
-Return-Path: <linux-kernel+bounces-892658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39D5C458DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:15:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C98C45924
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:16:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B70A189037E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:15:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3A1C3B5A5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352042FE568;
-	Mon, 10 Nov 2025 09:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vQoamAS+"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993752FFFB2;
+	Mon, 10 Nov 2025 09:15:31 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB661E492D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A10A2FF653
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766104; cv=none; b=nlixj/axdXZb2Z6l7slLwH1kqIz4PWyYjC2hVCU7Ll6raXus4pUwlRplpgC9BgRR0iY7+Y2HogTQEnHKTA8KYYqTlRzW4xuOyxtn1g6KIpV8RBDGBOrCFiU3RjxC+741dy1k0tE6SB5dZjJ+aju6j8OLcMECpenQe5dD/YcJfMg=
+	t=1762766131; cv=none; b=PcYeiPEukm6xfk5OaAo9QsG/A3K2LYukCcLIs5bkvE4BfITFguAgjw+CDDoDDEHH/Imw2FBexlvjAU5yEYFrcOkkj9LjiSRP9uGQ3kxU+Hcy+z9j6cdf6QdC1Y/Xstw77m/0xmq0QxW+7BHV6feu5vopJrD42jklW47nfYMqZ/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766104; c=relaxed/simple;
-	bh=2+PqvTsIgaNTk/7uCk6kfDMTr3xQc57xAYsQHUDudqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l2poz10TEZiq0j+FHbBJSBBSATs3W7dt4BygLq6PsSxR6cR2QrE4fxST8mLryT2rjIbf6VDd8ObNm5lBspfBsJnok+tQF5yc1c34JOREZXqcPjGPhpgckCl8xYrVjIXT7XP8x20xIiks4d+OIlNo44K/AE3WJGXFa9QJgYQqykU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vQoamAS+; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-640a503fbe8so5004771a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:15:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762766100; x=1763370900; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NXFnmmWcp+T86M4X7Xk/v6jPWKY4nv9UjyUBijcqLEQ=;
-        b=vQoamAS+F6pl8KkrO4lJUya+bpcXEx8dhbKTFpTLD+It+F8omkDa8RI+2okKpdY6QB
-         VSWW434xasv65TJG9tI/z8ZigUUcm9NM372aCXsb+RnA6OZjZAWe40iQCMGPOLX+1SRF
-         /aZuGzH7tqG6ATJsXY7zpeiYSb4tdxthPOyPkuiLesZj/AT+4bD84pp+otQIuChATLTa
-         Wbuv0xsGlzBav0wTKFJMkUWlvNlxWqXsBmlyKnc3XC4fAyusM5WlPuf3ZyvT2WWX5Aa0
-         J1+fVcTxXOjuFtcDGhCGK7uLw2CSnmKodnUBpuuNZQIT6oreu58No8/Tnh1txiziwCiW
-         LQqA==
+	s=arc-20240116; t=1762766131; c=relaxed/simple;
+	bh=hU8lRhHBVaW8VtmWXIeuWHXSF+wMCmFrP+xe5ussH24=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PA/Y3wfAqei1mFxlUTB4+hsYVjHg24qp3Lw0rdEzbQnMipt3zYihN0GoVB8NA6Ydm5XaFdQnnmVkuRefq1vt0n+5nvbLwjV8M81jefBLq87leIUSxUb0teDSC6R/zPwIBvZT+q/SLck7mTDKPtM9w2mrAm4z8wNIpLnRKHbNmzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-9486f0954daso426216539f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:15:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762766100; x=1763370900;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NXFnmmWcp+T86M4X7Xk/v6jPWKY4nv9UjyUBijcqLEQ=;
-        b=Gl/vYXF58lg1kZuCNr8xiL5skAHI2PcnoQfBbxnmIqG+T28BHzo4q1PZcmHCVbhKsl
-         ZHGIEX/jVuraNoh8dfVqSouRIFapIoshhdTYjcFpLBQ4/hjUEfszJ9EG279QbPpdpXmn
-         JtbVm7xuo75WFcZ7Qf04ftcpcM6Ivya7PG4PLyr9hWd5RORdu2Ciedu2D0OTeEYPF6r3
-         IjvDlV8hGE3nO9WJfgL6I+U2isy1Pe7Ub26rM0QpV4T4dGrreOSBaGSEwzBTazT3oCGX
-         40Uiq/IwnpraSmfEF4tP5l0g6C572KZ+gLSJZ4jd1aM40eqKUAin4bykFRPuddRftuHc
-         q79g==
-X-Forwarded-Encrypted: i=1; AJvYcCWN/Mrz5m25HQ1/MKKPiqXWZ55PmdOuHcVzf80v48L/WYlOf1iyK8kWuzmNiYSdwARjI8sJvx9Np6fEaUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4KkRxm7ArovmbpwuRxIbh5BrXloLaTm5axF8MKAte8QBIMg2c
-	IDRNWlJWQFssUkB01L3OZUZHcNLFxZ/GQ2kkaEqkKObin999ynQCsVkPeCw+xD2QMpOdWEaBtbI
-	J/2+xQf9aI3aTbZeOcoENV0pc4nER1HtM+2FT5ed+sA==
-X-Gm-Gg: ASbGncu+fYHo0Prlpsop4vurR9ADQjTFtuT+WA6C+4bhW/s53QHyaZn3LYWqLcXT0oc
-	xQMWMMf0tu1xGulcA6rTwgmh6aocIdGCdbWRp2PXpiWcv+tAWVXXkPZLpgGcpFTWNlOlMGw5a/d
-	N+4kTBIV1vWjGOLzxV8lc7l8FukGZcxD/+dXgOys1J4WJLgz1DiKeeCzOxe2lpzHe2UQ0IotXKq
-	Lhk5sYD9Jw0omMP0qEgiQ8Ztacf2d7xRqN+7vKvbaG0o0+RiimRY1XBM8VaYjpymcvusSAaubpq
-	gGzqDPeE7oJS+UFu/CZgNQojPG3CpFbLvGU=
-X-Google-Smtp-Source: AGHT+IG5jsntiKbL9XDoTScxbX6sK0/o8ty8iuXm+qmOqxUowPC2iS+ovEiKsBoSdXQkOeKy6r5NlaZELkfmqB0OJxc=
-X-Received: by 2002:a05:6402:26d0:b0:640:cd2a:3cc1 with SMTP id
- 4fb4d7f45d1cf-6415db564bbmr5934589a12.0.1762766100006; Mon, 10 Nov 2025
- 01:15:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762766128; x=1763370928;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9uDtDaHnWs0NiVdeiClq6v4P14hxaHVQylJMPj15OWw=;
+        b=Y8YUSSXl6HXiEeuWSLMy2bpTrhi+GXOJnS2DlLEUNhXl6tcNb1umGhuF3wTcLBD9CR
+         O74Tu6IYKnvgW8XbyljoJ2GUwl2Hf1H8/XEUEORjWtZjeUQq1lahCoPyA76GSgvkNVvY
+         EN64jHRSWQXLSglBqjMEru8zUBI/yzgKZkFtrnpVh4aABC4Ii4AzGDqUiNFNDrRZo8Yl
+         8BdGIpmrH6AVf1orcxQg0pDCU+lAeyX9Z5UT9AEdQDVFXq7xD5aFfJMONmCVIiLOxcl1
+         NuuOHW0nsXFp/MyIG3U/e0oTBrXjT03BRLVO8RQkzhCL9W1MGqTM85favbbhunSWeVd7
+         ZE6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVdCZ5TufIO8rwEvT6AltLPYBalsfUvO+uGkSXhzyUvJaOxiAm0qp57CDu2G8LeG+VITmDLGBmikVDjoE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc6+Ecb/LL8pcPhCdTSQ0bHJc/cod8RGEJuWHqgLiiaOoxwvqo
+	JAfYaRVqxLHvLBPSDVATvFkZOYHAGqn7BPHhH6uinajvBRI/nLomGhWp4CIzR6zr5iLhs6KGWhl
+	O3a3lJneyvPIjrMZzYw89W4xu8a/nZgKdnGHDWdOxPaKX3T8CmRuExKcXaDA=
+X-Google-Smtp-Source: AGHT+IHLVT7tJwSCEaz15LXZUteGNdEXBsFeAbZlRm/KWQUI5sotn3DXPvEgIO7b4idr93wHM078RCeCnBkYXZ1l21AOk8QE4uyH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKfTPtC87w7RVSDAXWXRX1sjgo4s=_Z_k62+mfTXrMZwmkEpFg@mail.gmail.com>
- <20251106173853.GA1959661@bhelgaas>
-In-Reply-To: <20251106173853.GA1959661@bhelgaas>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 10 Nov 2025 10:14:48 +0100
-X-Gm-Features: AWmQ_bmdJnu871GRec3avwkB2KMRGJUSatF4zpeqoF6tG3-YU67MrrGvp-or-eI
-Message-ID: <CAKfTPtD3UUXq=PwBJKx2q5VEBbAie-M1XgTbx3hmxZV1yQGBww@mail.gmail.com>
-Subject: Re: [PATCH 1/4 v3] dt-bindings: PCI: s32g: Add NXP PCIe controller
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, chester62515@gmail.com, mbrugger@suse.com, 
-	ghennadi.procopciuc@oss.nxp.com, s32@nxp.com, bhelgaas@google.com, 
-	jingoohan1@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com, 
-	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com, Frank.li@nxp.com, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	cassel@kernel.org, Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+X-Received: by 2002:a05:6602:2d90:b0:948:83b9:a347 with SMTP id
+ ca18e2360f4ac-9489603d373mr962485739f.13.1762766128307; Mon, 10 Nov 2025
+ 01:15:28 -0800 (PST)
+Date: Mon, 10 Nov 2025 01:15:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6911ad30.a70a0220.22f260.00da.GAE@google.com>
+Subject: [syzbot] Monthly kvm report (Nov 2025)
+From: syzbot <syzbot+list1971c68c6b629b221d3f@syzkaller.appspotmail.com>
+To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 6 Nov 2025 at 18:38, Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> [+cc Senchuan]
->
-> On Thu, Nov 06, 2025 at 09:09:01AM +0100, Vincent Guittot wrote:
-> > On Thu, 6 Nov 2025 at 08:12, Manivannan Sadhasivam <mani@kernel.org> wrote:
-> > > On Wed, Oct 22, 2025 at 07:43:06PM +0200, Vincent Guittot wrote:
-> > > > Describe the PCIe host controller available on the S32G platforms.
->
-> > > > +            phys = <&serdes0 PHY_TYPE_PCIE 0 0>;
-> > >
-> > > PHY is a Root Port specific resource, not Root Complex. So it
-> > > should be moved to the Root Port node and the controller driver
-> > > should parse the Root Port node and control PHY. Most of the
-> > > existing platforms still specify PHY and other Root Port
-> > > properties in controller node, but they are wrong.
-> >
-> > Yeah, we had similar discussion on v1 and as designware core code
-> > doesn't support it, the goal was to follow other implementations
-> > until designware core is able to parse root port nodes.  I can add a
-> > root port node for the phy and parse it in s32 probe function but
-> > then If I need to restrict the number of lane to 1 instead of the
-> > default 2 with num-lanes then I have to put it the controller node
-> > otherwise designware core node will not get it.
->
-> I think it's better to put the PHY info, including num-lanes, in Root
-> Port DT nodes now even thought the DWC core doesn't explicitly support
-> that yet because it's much easier to change the DWC core and the
-> driver code than it is to change the DT structure.
->
-> That will mean a little extra code in the s32g driver now, but we will
-> be able to remove that eventually.  If we leave the PHY in the DT
-> controller node, we may eventually end up having to support two s32g
-> DT structures: the single RP style with PHY in the controller, and a
-> multiple RP style with PHY in the RP.
->
-> We'll likely have both structures for many existing drivers, but I
-> think it will be simpler if new drivers can avoid the old one.
+Hello kvm maintainers/developers,
 
-Okay, i will add a RP node
+This is a 31-day syzbot report for the kvm subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/kvm
 
->
-> The eic7700 driver is an example of num-lanes support in the driver:
-> https://lore.kernel.org/linux-pci/20251030083143.1341-1-zhangsenchuan@eswincomputing.com/
->
-> Bjorn
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 3 issues are still open and 64 have already been fixed.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 657     Yes   WARNING: locking bug in kvm_xen_set_evtchn_fast
+                  https://syzkaller.appspot.com/bug?extid=919877893c9d28162dc2
+<2> 31      Yes   WARNING in __kvm_gpc_refresh (3)
+                  https://syzkaller.appspot.com/bug?extid=cde12433b6c56f55d9ed
+<3> 4       Yes   WARNING in kvm_read_guest_offset_cached
+                  https://syzkaller.appspot.com/bug?extid=bc0e18379a290e5edfe4
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
