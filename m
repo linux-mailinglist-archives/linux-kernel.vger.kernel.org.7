@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-894310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864BEC49BA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:21:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6DDC49BC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:23:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 32B3434B7B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEEC11883AE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B67C2FF672;
-	Mon, 10 Nov 2025 23:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53515302165;
+	Mon, 10 Nov 2025 23:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="DaJYgJ1j"
-Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="rjYuoLzl"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F823019C4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0161A23504B;
+	Mon, 10 Nov 2025 23:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762816851; cv=none; b=XLdEoO2de9UN/GcpkvM6UOabzpVubllCjkYO+HYfwC3G+mD9rqFds0bonXmj19f+AH93YV6jSjS6uf6L7GbdmXzPkyPjINgTD61dkGjmgHmU1fG+HAD1+FZRwpp7cNqJDQp6WEvkPfWJCoPlOhE/uOTEW5w+bbEEyofe3ik4f6E=
+	t=1762817007; cv=none; b=StPhlC9hfDxzl/hPY1tmbrC4vutt4+Fe26zT+G8BqMUgedTg/vjmq1DmbDMC332JWg+grXERbliYRfZrZMy6BDAa9gGy0X8LcYFdB81yHxG28zMweBqv+g/0PuGz4OlTAVXWEp7/OSjs6CkS7Wt7ImeWX7ZQe5bUvvv/wtvcnjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762816851; c=relaxed/simple;
-	bh=DRPVTiEbF8rDOUsldWwR5CrUjbBRZ9f1ZOlWtgf0tjE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=j/u+iVq792VM0CbmCiKXAfs9EiS4VR0130i48hLjTDab6OvMFisDZ5/CMCNn40ONRPXxvhYn1M0cdJUj9s9p4mIBTVVqsAz0oFS1TF1oHQ55lHZEOJJdsjuDqnWvpy34BEeSy4wt9IADQLkw+s0MIczYA9Ny2SS7lAWzI+Cna1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=DaJYgJ1j; arc=none smtp.client-ip=203.205.221.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1762816845; bh=G1r8siuDyGrxBMK9ojSHRX8Jmr7CvZa8fAJu6Nj23JE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=DaJYgJ1j3f/xNkbaPpspV8LQGpAae7XTXkK/niJ0LV87FC8mbtiOl0RvRiOms+I6s
-	 gAAeeCamSiKu5hmcC5Tyff6YtOd2VxZcqu494MHKVQ5VzT/4LmRFaoA1ulG2onakWQ
-	 ZgIP7JxVaKgFV9JgQscosb3qlKQ80veJ1a4OlFys=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.201.7.117])
-	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
-	id 52BBA672; Tue, 11 Nov 2025 07:20:43 +0800
-X-QQ-mid: xmsmtpt1762816843t2x9djp3y
-Message-ID: <tencent_D9EC2EDB4C9167E306CDD2F1C64A49B2AE06@qq.com>
-X-QQ-XMAILINFO: OVFdYp27KdlJVWewuF83wv+7TxGxVC1bmmRN8ZjR3VrF7RtFg0L0HaQraRrfyy
-	 RSn5HDLKuObaN/m5+l1RuMNYx2dEan2foy7pXBJERGJIktjIQbjciqMEMwi8KHDDtKTt7Q6xWu4y
-	 WiE82incLc4tVKFOqHuow8TYLnRr/IERGPt/rCubJso6L8WzC4+ntvpLlDz5KIPJNQJElYhF9HqM
-	 IHHs1BxAtW73yTuLohCIBrnc7d52Z5PTBJqAnR5TPP4P2+C5IPYNEggXPLiVjvIDkYsDnUIH3hFJ
-	 ryetsLiy7RVHptC5x/QRkVNaikMZHpk0qyIAhoR89/CVyXxD2XQJf42jKxfhRajF40dRhE4OAOaQ
-	 cVCQ2r7sIgC1q0luIEkjaenacJT0bX2i7vMSO3/eqH0dbTioWpNNro+q077g2garOp839U4jsu8i
-	 FNp8MsHRmloSw6t4TkpUPAEdk3xjlv6VwNSsR1VZMlVBPH4wvjz4Cvgc1DH3WnU1OBznwwPjxflq
-	 DyMyOlzbdfauu2mT+FIzNxnMWfCAOl44YW3yfwMSspxB7LLIdFBCmeTUxuD81tvhQilAEI0us7IH
-	 XXftuQxLmas2wREzbDd/02tV2n9EtqhKFgHPnbBz2QK7gof+6a+Wdgfi6TCtO2uth6Ba/279fU1R
-	 OgaBt/bSuYHdjEnMEyQLAEGmwwZd/NrUj5LXnVMYKqmgKqMTiZrBPyYutC4L6cS1gx84ec6/5NEm
-	 iiyPppSFD5bAij58jfJ08xNZVP/+zvt62URXxDXGH+/I2WBsonGvz8EGJCzPWuO3hC8G9gS4984+
-	 CpR1ON+6rGyo5/8mD12UaYkmWIgsBLFqj8YvZoc/yl0tqFi4EsMlap4e7vIMY0nBd/7Y1WFFEaSK
-	 nqYWVOKycDWrjuqXqhMR7nJ2GFHmuRn+vjA2EO1X1IN1Jr+M1qcsoTKnvwrnuhijtvCbDgI5ONYu
-	 uBF8DTjUXO2GRWXN8k5F8JrqIpuWvA+OJRhHxg9K0fo3wrqS91yg==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+08df3e4c9b304b37cb04@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [block?] general protection fault in rtlock_slowlock_locked
-Date: Tue, 11 Nov 2025 07:20:44 +0800
-X-OQ-MSGID: <20251110232043.1602331-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <690ec096.a70a0220.22f260.0070.GAE@google.com>
-References: <690ec096.a70a0220.22f260.0070.GAE@google.com>
+	s=arc-20240116; t=1762817007; c=relaxed/simple;
+	bh=lgcoh9p9TCLcPD8PGPy9BtJzRmki9rWnfrJ00klkhMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ENIn/QWUSGNfCGx7phI1cNiRHanqJ5Yxjz6QNK/T6ntkwU7Q62ZnEis4MzXXfswoHkcN62IyifiGH4aXCiKqqwnnn+omgLxVSh65J1zwTMdOND2qBVUG8W43I23oe6nxXuivQ/LG+aWvpPIXdKcIfb/W94fT3S2HUDAAsvz/a2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=rjYuoLzl; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9484:a4ce:2dbc:ef8e:acc2] ([IPv6:2601:646:8081:9484:a4ce:2dbc:ef8e:acc2])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AANLvc93880957
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 10 Nov 2025 15:21:58 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AANLvc93880957
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762816923;
+	bh=BsN8VBFD5PAgYi4bwE42pnqSTmd+qcr29mOqQybepiA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rjYuoLzlgViwlHxmQg2QGfpz9LPJDhOQAbw4/6aIGNHbpNN57PZ51RsVPdOwQA6yB
+	 2eNjlZzKfZya7G4KhhWgguyHM00AgCEGTcGmu22T0V87nzs1CGXLylHaQ1B7bKomCf
+	 4yz/0LhiJbU3IVmkAeDaty+clqMjGVgwRilI7qypUsrfnmUZvKS2i/+F35IPLAcw7f
+	 BuHueJostF0V0GWeV+jp1PoPSmefFxcdjXd9xrdrNwYM/y51ZIXY3w9UdXd+X2Dg8x
+	 SQzYlmvO8N1yVdVU38QI6EboQsWVZ7uNLIiYngGzemAcHknbmnXkOfw56rFOGv28uz
+	 uQr7m3HHG+8FA==
+Message-ID: <128b82ff-d304-41d6-b914-a44706d8781f@zytor.com>
+Date: Mon, 10 Nov 2025 15:21:52 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] Provide the always inline version of some
+ functions
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Xie Yuanbin <qq570070308@gmail.com>, david@redhat.com, tglx@linutronix.de,
+        segher@kernel.crashing.org, riel@surriel.com, linux@armlinux.org.uk,
+        mathieu.desnoyers@efficios.com, paulmck@kernel.org, pjw@kernel.org,
+        palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+        hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net,
+        andreas@gaisler.com, luto@kernel.org, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, acme@kernel.org, namhyung@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        james.clark@linaro.org, anna-maria@linutronix.de, frederic@kernel.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, vschneid@redhat.com, nathan@kernel.org,
+        nick.desaulniers+lkml@gmail.com, morbo@google.com,
+        justinstitt@google.com, thuth@redhat.com, brauner@kernel.org,
+        arnd@arndb.de, jlayton@kernel.org, aalbersh@redhat.com,
+        akpm@linux-foundation.org, david@kernel.org,
+        lorenzo.stoakes@oracle.com, max.kellermann@ionos.com,
+        ryan.roberts@arm.com, nysal@linux.ibm.com, urezki@gmail.com,
+        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, llvm@lists.linux.dev,
+        will@kernel.org
+References: <20251108172346.263590-1-qq570070308@gmail.com>
+ <20251108172346.263590-4-qq570070308@gmail.com>
+ <04CA2D22-4DE2-4DE1-A2BC-AACE666F5F93@zytor.com>
+ <20251109115152.GD2545891@noisy.programming.kicks-ass.net>
+Content-Language: en-US, sv-SE
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <20251109115152.GD2545891@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-#syz test
+On 2025-11-09 03:51, Peter Zijlstra wrote:
+> On Sat, Nov 08, 2025 at 02:14:44PM -0800, H. Peter Anvin wrote:
+> 
+>>> +static struct rq *finish_task_switch(struct task_struct *prev)
+>>> +{
+>>> +	return finish_task_switch_ainline(prev);
+>>> +}
+>>> +
+>>> /**
+>>>  * schedule_tail - first thing a freshly forked thread must call.
+>>>  * @prev: the thread we just switched away from.
+>>
+>> There is, in fact: you have to have an always_inline version, and wrap it in a noinline version.
+> 
+> Yes, but all of this is particularly retarded, there are exactly _2_
+> callers of this function. Keeping an out-of-line copy for one while
+> inlineing the other makes 0 sense.
+> 
+> Also, the amount of crap he needs to mark __always_inline doesn't make
+> much sense to me, is he building with -Os or something?
 
+That's another issue -- unless the second instance of the function is on a
+slow path which wants to be isolated from the rest of its function (unlikely.)
 
-diff --git a/fs/jfs/jfs_lock.h b/fs/jfs/jfs_lock.h
-index feb37dd9debf..ab798de87202 100644
---- a/fs/jfs/jfs_lock.h
-+++ b/fs/jfs/jfs_lock.h
-@@ -29,7 +29,7 @@ do {							\
- 		if (cond)				\
- 			break;				\
- 		unlock_cmd;				\
--		io_schedule();				\
-+		io_schedule_timeout(HZ);		\
- 		lock_cmd;				\
- 	}						\
- 	__set_current_state(TASK_RUNNING);			\
-diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-index b343c5ea1159..ee6e9ed5e3af 100644
---- a/fs/jfs/jfs_logmgr.c
-+++ b/fs/jfs/jfs_logmgr.c
-@@ -1860,6 +1860,7 @@ static void lbmLogShutdown(struct jfs_log * log)
- 	lbuf = log->lbuf_free;
- 	while (lbuf) {
- 		struct lbuf *next = lbuf->l_freelist;
-+		lbmIOWait(lbuf, 0);
- 		__free_page(lbuf->l_page);
- 		kfree(lbuf);
- 		lbuf = next;
+I was merely commenting on the claim that there is no way to control inlining
+on a call site basis - there is.
+
+	-hpa
 
 
