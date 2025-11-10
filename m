@@ -1,213 +1,241 @@
-Return-Path: <linux-kernel+bounces-892585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7030C4563C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:37:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785F5C4563F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:38:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4CC533440EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:37:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31CD93A5F0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D077B2F7AC6;
-	Mon, 10 Nov 2025 08:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7912FB978;
+	Mon, 10 Nov 2025 08:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NI3zpFjW"
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012047.outbound.protection.outlook.com [40.107.209.47])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NxJFpJWy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895DC1B4F0A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762763853; cv=fail; b=BKIL2PfN/ylC/Q3yf6QFEA4vbhUD8spffiW6eviY3EE40X06snMnaz5wTWwTEA4EU1O06QQSCv7+RoaLME3R8FxB0UYjsO146d1ERCLZ+ZIS07k/am5MEObWLyPNmqWcH5hXJfStwzPu9eLretlbNj6Wdtbx0RQXczskJMZsJfw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762763853; c=relaxed/simple;
-	bh=Ok/OFhV+SJIKiDYKodIfMEuW1OjPUR7XUfipmRJ3Wgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kEAN16GIZz9lmirxr/dJBXO4Meal/sudOE98n02bPwTrVmaehVa9OfgcNh+3EKx53ceXXijo8lZBdVwfe8TBzgTdcsXWLdUFCQ+J66DQCpat+DOiyCmRG/WvBlOM0kaiUGKdrwI+qANSTG+xGSTymcRT4hRudDYI1gyDsGKoRD4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NI3zpFjW; arc=fail smtp.client-ip=40.107.209.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FIYJeMRgt/GoJtC+/bkNYt8MmHZjZ7U/UlYT3JqxY7oL9WfXyF8Rg2oxKqzhUhEPBQYZf4ApFdz2NkgDQeiYGWmz6sf2Vu8bxdhQC1ceT5P/oRfAeuIPyEKb0NU7qv1Pk9dklwmsNGX6GiwHwqcUMuSEHSzQ9+l+UK5EGthPMEEP0pnOYg9FUDkAHa068zWySt9niXmCwBOrEZbt9kv8dZ67ang/b0PRcctC6LDlf21SW+MGGBaCr4jyrUn6IPaicKcJxpWxLMsuSxTTVoUtK6h82XFf8fb0BGNSO3UTgSMSJH5cYlTiL1bVqo72LCe2x4iAKhyoQGy3FgJ+rX1KaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7dGs6Dh/qlzGE4dHGnVbx7Nu13jz4WN6Xeudkh/TQnI=;
- b=OtQgeu6EIEVeihGPD10rQv3Cnmqp5b1bkri7hYyQ4Vb5mcFaddikSXj2Hc4QvclajC6movx/BjI4bO88Q5goiggtgRwqJrJxPXjb3z4qbMK8J4lkUORFvh0H1G8wQdgeS00gG9ZudZj6jqtUG47bBM7hmEteOOwG/BsWRj5CRUyxpbolO49hcKuK/s7E+RYSWy/CFDc1nupi+v0jvC7VSoCjm9zQP7pSoU/myWM1izYDtt6oNUYIeiWsa1rwpkvB8tRNAk1oogdViGRZDduKqke+QaHptjWWFPmsGPB4W8yc/jzwrOknsR0WJlmOsVQ/5uS77nXZaUVPY4dgwa9rtg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7dGs6Dh/qlzGE4dHGnVbx7Nu13jz4WN6Xeudkh/TQnI=;
- b=NI3zpFjWo4xLO8Ln02+bS4K99vsigvoKlFzNOJiWbihxhjh0XetTV5E1nqkSlbi+wQ8Vg41kVZWkA9NOXJ4xrIOjMrMm5BPdYrBueBp2fBzAA5XTZ42GxGnfnW2rYGHe1zF9z7v0YYg+G/vUQQLjxbomRcuJ38qdgjwOmYMpSK3aQpm2w2nl9a7s+sh1OgO6HIerd+DCgR8HFZG4FgEtuGC/9ek5CVJmW56G1UaAv4ah5dKdPczSdUC1QK8Jr7gt4K2vaO/yV5nPqHA2hbKyNbzStsCJtDUuS6C2vQrWQKjVPGNoLgMWof6RpVLjNdWgc6xdtYi2DUNhK4b2w8UkGQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by CH3PR12MB8911.namprd12.prod.outlook.com (2603:10b6:610:169::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 08:37:28 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 08:37:28 +0000
-Date: Mon, 10 Nov 2025 09:37:21 +0100
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Dan Schatzberg <schatzberg.dan@gmail.com>,
-	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/13] sched_ext: Factor out scx_dsq_list_node cursor
- initialization into INIT_DSQ_LIST_CURSOR
-Message-ID: <aRGkQe7H2VNfVqwA@gpd4>
-References: <20251109183112.2412147-1-tj@kernel.org>
- <20251109183112.2412147-13-tj@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251109183112.2412147-13-tj@kernel.org>
-X-ClientProxiedBy: MI0P293CA0012.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:44::20) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741E61B4F0A;
+	Mon, 10 Nov 2025 08:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762763898; cv=none; b=VCKwO8LhRF32cr56/NWJBQ0uVT08qQmzkE/+0IP+OfwED+OMWxOQPxuQZO2pZiclWCEo7A+ZPGy9B0DMLdmVRl2NqQY3OLdoEpdKrCZx32wSJtGdWC+itdclirn02cIqZ2mFXoX9b8nYTMaTwxPQYHR+GGlbNgEEc+3h+uPTxYY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762763898; c=relaxed/simple;
+	bh=BIZOwrOe4LYjx2fIqxPyppTlFEEUTwarm6Nbd4syHKw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ewy+Ift2+TUBYMPrO/RoOVRY/0u1a6929g0G4zu1NY83CYdWk7cBC1vuZsGizNqu5NFlJxq3mK0L95EUEzzfuttlOBh0NToFjZJcjCGn7y1/CgqOOSxeiRmsaaCyKewQ2zVgFXRZECgw81iJaNNGW4wWEbIBnHdbH70LDro1erw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NxJFpJWy; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762763896; x=1794299896;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=BIZOwrOe4LYjx2fIqxPyppTlFEEUTwarm6Nbd4syHKw=;
+  b=NxJFpJWyoRePIZadYJjTIpfQUM4SDaNbNVHfKRk1b8Y7DfKn29ldbT78
+   WY/JfyL27yBWT85JT5cr2Wr/0WRfRbL9f0uRGPvbLpbgiEePFaWnx6Nqu
+   DIY0i1KK26t+vZe4KejdX8B1O1f01OEVAxbtIsy/ZzJ0BahwR9KK9Bw0a
+   UU5h6Ez/bwasPsieKOwg/m6F1Yhc1rlVU35VZ/y2bo8hByMmMxVEDyLNm
+   F1+TIntpNxNdcR2qCACQfGiutAaKPIyG6hqFPw6mOutPTYufxt9wYUYNQ
+   mhWRG0cWZt61Wc+vYkZogQqkcvsq7AO2YzDacLRJDv7g80VTd1P7kHEzQ
+   g==;
+X-CSE-ConnectionGUID: 52LXJSJoT76lUhP5NQXNFg==
+X-CSE-MsgGUID: l4i5K4auQLyLUlSfqnkW7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="64850842"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="64850842"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 00:38:16 -0800
+X-CSE-ConnectionGUID: Q7E10UAwRr2xX0hgBTlqqQ==
+X-CSE-MsgGUID: TFS2UBxHSOqx5489UjC3Uw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="187924329"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.65]) ([10.124.232.65])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 00:38:11 -0800
+Message-ID: <c0648b32-e450-4036-aebe-5faab7edc1bd@linux.intel.com>
+Date: Mon, 10 Nov 2025 16:38:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CH3PR12MB8911:EE_
-X-MS-Office365-Filtering-Correlation-Id: f4a86ec5-fe15-42e1-d2c6-08de203461bc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4bnJGux+zaxWZSC7UXUXgMNrOX3ExyuhgFjKXd6+oF81kOdLU7XArO+cJnSv?=
- =?us-ascii?Q?8vmOKyYaz4hVLeX9UFBuYeh5OdjkWLC+aj6nI1WevXAq6wzQsejCgBjYQ2GV?=
- =?us-ascii?Q?GDdtc9i187s16gOEMunlGV9X+OpEI1iseHVtnkwPYqQPnOpMhuqSHgGgMAOT?=
- =?us-ascii?Q?zsmyTF/Nk9MZGrBQ0VAMG97VzGe/gwtqYJ7sffDGLyMc9sZSqTSfpRYxtlIX?=
- =?us-ascii?Q?rQk6RA/cYS3UVyQI13gCM7y6ZgnYn2LUen3kn2J9cuRLPOEY89w0QTD/DYVt?=
- =?us-ascii?Q?If8YKDu66MxrV7RajtOmc/DPHRZrf3tIkIZM9Mhys3aMXyrehncA4/zLdeLz?=
- =?us-ascii?Q?/CP+8n08o6HPKYOsWid4TBQT5nhhWrkdcqI/Or8kzD2+irjUywNMzB8iFj6O?=
- =?us-ascii?Q?zjcHa3jSXXxP5+Jn7PtYQZpS1i5sw3ycuPMAgBAxC8Jb+eEM5z1hDoXEz3ID?=
- =?us-ascii?Q?svRczjNwdkGi0Abg2EtICF+vbKopfcs9U1DPTjoLXzMbgxsV1LxXt4k4VT60?=
- =?us-ascii?Q?91BTRgfyIND48/q96BtnYbuAFlZNcUg63jo4FYgjBj+0Ti3r13uOXLTtlz2x?=
- =?us-ascii?Q?Gnw3VdU6tS0IBLjcwKdIOQAxRC6ztksVV/mK9vNcgYFJKen96HMiN9qUUIqH?=
- =?us-ascii?Q?bKgIPbRRiPy23NGkxfyB8x5qFsCL4GjneuHFV7i//CvIQ9yu2Ct/5p5ZMNlJ?=
- =?us-ascii?Q?KbkBETecaKDOvCnim7ym05U61erKCtR5r42KOqaqp/oWOdxCv2zEXWuIXpRC?=
- =?us-ascii?Q?GBF9+1B0N9vmfJuVSjwVgzZZ9/daCZbxm0VVAb6pR9GozqG1DAK6ATSDIV5r?=
- =?us-ascii?Q?W5A0nwytj1bE7NnWo75tt+TDDRfpZqG/0rGTgLbsZp0h2FecfHloVMOR2USt?=
- =?us-ascii?Q?JoOZAtz/9SWmgE8XZrHco/V58bbd9e9TCZa3rEj9MuMhI2Fw5l8n1bkLGwSW?=
- =?us-ascii?Q?eUewVXjw80LDwRLZDpCyjckpJqO0WkItLj/KNY0n8RrnQvFYek5/TpqyDpkO?=
- =?us-ascii?Q?9KZZdWyt3g2NpSq8fOPOEAhhr88fU6C4TfrjhWV5QSFqfng0KsIDhbJkrK+3?=
- =?us-ascii?Q?WGIRXc2MAo3g4aVeorvLBn/95FDPxDUt3XN3arXSyLb1zfNHEjaVkUZLmWna?=
- =?us-ascii?Q?x7ObnEXnjtDC0ZipxZqfkZIXMAxqQAu5vwhzt0Xq/rHWt55hfFu27CltBbBX?=
- =?us-ascii?Q?K4hCgTVmvJYOgZJBkRdCtLVx9RrDpKE5/OOx450+zwFBVJH9gWxF2jxz3DAb?=
- =?us-ascii?Q?qXrVr7o9936L5BvBHa767WlVhIGjkYh9PsJx2aLvYcyuHb03J8nxelUSzpPg?=
- =?us-ascii?Q?KbU6QOx+AQ0FcpkpXPWuOkbYPZNTAMLqlNSX2gyU7OjihAI3NMv7IgCdlJ7S?=
- =?us-ascii?Q?9tPe8m7MDTMBlJCtQulFERWKLF7ZJNM1BA8DuzBvOJTzw1m3gbVXkjKHPjoH?=
- =?us-ascii?Q?0Vk7sIT2WChToU6bZUDzMCCuM39uQ3vw?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?K2gfDjX9rRY425EAsy3cQHJf6YW+ChAqRpzj6eBoXRyTig/FLPXD4Fm7NxPv?=
- =?us-ascii?Q?t+4wb8TnEvZ2LkQ8WBibRH0ArdeDK4TWQy3qfLVZjy663Um14IzgA5uv7LX+?=
- =?us-ascii?Q?zZJ3a1MlGczKpX/1AfsNU1MXKoNfUkVyyJipD57RXhPfaP2qQ+l6N8RDP/IM?=
- =?us-ascii?Q?08GTUgvQtMR9d5gb05zoptZOmissTq9Vm6vtJd/1SoRGG62MsnnlDN4ddkVA?=
- =?us-ascii?Q?YNIOlFsjOb7aWbxjHoFLUHaEX1v4gG0eOvfLu4z3Fncs0+mrTGfzvuQHcAXM?=
- =?us-ascii?Q?u7zLal7qNHlqOSY0VasLVTlGgQRngE4qOUpVPe3JgsE8bK1hFJN0XDhQFG2f?=
- =?us-ascii?Q?is7J+SuYhwCPdyDawwblGMXheg5o1UqKi02aBT1Kt2Lxmc328WI04f2Tjgnt?=
- =?us-ascii?Q?A5bdLjXN9DYq06xf14jRsRZcBdFRIqEdjApokqX3AEPofK49DcgT/acZUknx?=
- =?us-ascii?Q?8Ha6k8C11NhuB8II6Xe2AfZidTiVUAZuYj4JQ1cOh/06sJFnm7FOS8Sk0hnY?=
- =?us-ascii?Q?IWIbZEofa1rslN2HAIRQe2aMl85ckmmmJ1F5GTh7Qy+IFRDZoj7wdiho3pHm?=
- =?us-ascii?Q?v2T+2fuQ56Rf61Nvy9TcikHQocIG/qTcYb4O4D9FrKtf13Ys28DVltwPy/vi?=
- =?us-ascii?Q?xjvBTlwQeha83c3SGJr64v+hCOimsSehjyj0jPfdqNS6oRCZHjJJjvI+XFyu?=
- =?us-ascii?Q?Fcv5rhpxj3jmGGHvvv+7oafY/JRi5j1HBpJsMIawSLpYQ5yCCT1LDs+ZEfhP?=
- =?us-ascii?Q?RPi8PsozVOvkR+6YMIf/6ojhg1z1i844dcB4rb1pjUCBTdtT2RI5aGdxu/xc?=
- =?us-ascii?Q?JuQltK57bxpDdJOjWQdIeAoZvHpkrKlsRtDn1y9DaqNJiRjQBxzManO156P4?=
- =?us-ascii?Q?0paKZZdT5beZL4dq4Cn0WFFcEA6kTor3hukYE4BHLwQFoAx8F2/jQwAWzOJy?=
- =?us-ascii?Q?8tgszIz+YTonKAWCH69G81RMR7gVN4y9VP/uvyn4qw3OW7gwk/Kw+UKDcYrG?=
- =?us-ascii?Q?HFFNZzCkxjVJRwHl49iGinsstvBRdzEckxHyqvtSISb3gpaLm84Y1/zbynSw?=
- =?us-ascii?Q?BP6eESkAY2aTdwL2Erf+Q7LuPhybJ2UacQyDK1wXvuvtqTX7UxkLBrGSZsBh?=
- =?us-ascii?Q?MXX2pQFXZ2dLnElLnQbkcfGHlyIeHq52rbFxF1/d0RA0Uj1Z4I/DI19adFa6?=
- =?us-ascii?Q?n57dXNOPIORwSlXLkeHZrsTtbvnT4j0PnTmn/jIRufvhKygOc9aCdLoFPnQH?=
- =?us-ascii?Q?EaOiGBpqYWZHseI/XYPDwhfGmsR+UGP9GA1NaPOSW+AwaV22AImibulkQ3ne?=
- =?us-ascii?Q?OLHuc3hQ+g6DhTrZ2429UsRxPggtvQJe/+CSA8W8oQqbUBFNodywvnnhbBpn?=
- =?us-ascii?Q?n1KsPkfss7YMgu3MT8XmdCdivasjfzkh7wBq3tsxIaorWrZbI0eE898cr+Hv?=
- =?us-ascii?Q?Sz2H8yp2TP/SUemqMqN2W3J5jg0KJXxRuIo5uCJPGzpKRbU81e5NqR5TszDM?=
- =?us-ascii?Q?PHksj9tKMYei7JHOOybEnqHBBKxrl2L4OUoJmo2dkPXi2AFkIO75gznXa1Ig?=
- =?us-ascii?Q?x6zm5xVxZKsHi2bW7hXUxMWSRzbbHkJ1dx8w82dL?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4a86ec5-fe15-42e1-d2c6-08de203461bc
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 08:37:28.8478
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ovyl93bA8vhypifnp7VVKqiH9elSRTkTTgcuVaEY4xPyKyP2V20dsVLogVDDNwp56p8yL3VeJE2nWQnjPoGdVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8911
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/18] Switch the default perf stat metrics to json
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+ Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>,
+ Sumanth Korikkar <sumanthk@linux.ibm.com>,
+ Collin Funk <collin.funk1@gmail.com>, Thomas Falcon
+ <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>,
+ Levi Yun <yeoreum.yun@arm.com>, Yang Li <yang.lee@linux.alibaba.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Andi Kleen <ak@linux.intel.com>, Weilin Wang <weilin.wang@intel.com>
+References: <20251106231508.448793-1-irogers@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20251106231508.448793-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 09, 2025 at 08:31:11AM -1000, Tejun Heo wrote:
-> Factor out scx_dsq_list_node cursor initialization into INIT_DSQ_LIST_CURSOR
-> macro in preparation for additional users.
-> 
-> Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
-> Cc: Emil Tsalapatis <etsal@meta.com>
-> Signed-off-by: Tejun Heo <tj@kernel.org>
+Hi Ian,
 
-Acked-by: Andrea Righi <arighi@nvidia.com>
+which commit is the patch-set based on? I tried to apply this patch-set on
+perf-tools-next branch, but it fails...
 
 Thanks,
--Andrea
 
-> ---
->  include/linux/sched/ext.h | 7 +++++++
->  kernel/sched/ext.c        | 5 ++---
->  2 files changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/sched/ext.h b/include/linux/sched/ext.h
-> index 12561a3fcee4..280828b13608 100644
-> --- a/include/linux/sched/ext.h
-> +++ b/include/linux/sched/ext.h
-> @@ -149,6 +149,13 @@ struct scx_dsq_list_node {
->  	u32			priv;		/* can be used by iter cursor */
->  };
->  
-> +#define INIT_DSQ_LIST_CURSOR(__node, __flags, __priv)				\
-> +	(struct scx_dsq_list_node) {						\
-> +		.node = LIST_HEAD_INIT((__node).node),				\
-> +		.flags = SCX_DSQ_LNODE_ITER_CURSOR | (__flags),			\
-> +		.priv = (__priv),						\
-> +	}
-> +
->  /*
->   * The following is embedded in task_struct and contains all fields necessary
->   * for a task to be scheduled by SCX.
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index bd66178e5927..4b2cc6cc8cb2 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -6252,9 +6252,8 @@ __bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id,
->  	if (!kit->dsq)
->  		return -ENOENT;
->  
-> -	INIT_LIST_HEAD(&kit->cursor.node);
-> -	kit->cursor.flags = SCX_DSQ_LNODE_ITER_CURSOR | flags;
-> -	kit->cursor.priv = READ_ONCE(kit->dsq->seq);
-> +	kit->cursor = INIT_DSQ_LIST_CURSOR(kit->cursor, flags,
-> +					   READ_ONCE(kit->dsq->seq));
->  
->  	return 0;
->  }
-> -- 
-> 2.51.1
-> 
+-Dapeng
+
+On 11/7/2025 7:14 AM, Ian Rogers wrote:
+> Prior to this series stat-shadow would produce hard coded metrics if
+> certain events appeared in the evlist. This series produces equivalent
+> json metrics and cleans up the consequences in tests and display
+> output. A before and after of the default display output on a
+> tigerlake is:
+>
+> Before:
+> ```
+> $ perf stat -a sleep 1
+>
+>  Performance counter stats for 'system wide':
+>
+>     16,041,816,418      cpu-clock                        #   15.995 CPUs utilized             
+>              5,749      context-switches                 #  358.376 /sec                      
+>                121      cpu-migrations                   #    7.543 /sec                      
+>              1,806      page-faults                      #  112.581 /sec                      
+>        825,965,204      instructions                     #    0.70  insn per cycle            
+>      1,180,799,101      cycles                           #    0.074 GHz                       
+>        168,945,109      branches                         #   10.532 M/sec                     
+>          4,629,567      branch-misses                    #    2.74% of all branches           
+>  #     30.2 %  tma_backend_bound      
+>                                                   #      7.8 %  tma_bad_speculation    
+>                                                   #     47.1 %  tma_frontend_bound     
+>  #     14.9 %  tma_retiring           
+> ```
+>
+> After:
+> ```
+> $ perf stat -a sleep 1
+>
+>  Performance counter stats for 'system wide':
+>
+>              2,890      context-switches                 #    179.9 cs/sec  cs_per_second     
+>     16,061,923,339      cpu-clock                        #     16.0 CPUs  CPUs_utilized       
+>                 43      cpu-migrations                   #      2.7 migrations/sec  migrations_per_second
+>              5,645      page-faults                      #    351.5 faults/sec  page_faults_per_second
+>          5,708,413      branch-misses                    #      1.4 %  branch_miss_rate         (88.83%)
+>        429,978,120      branches                         #     26.8 K/sec  branch_frequency     (88.85%)
+>      1,626,915,897      cpu-cycles                       #      0.1 GHz  cycles_frequency       (88.84%)
+>      2,556,805,534      instructions                     #      1.5 instructions  insn_per_cycle  (88.86%)
+>                         TopdownL1                 #     20.1 %  tma_backend_bound      
+>                                                   #     40.5 %  tma_bad_speculation      (88.90%)
+>                                                   #     17.2 %  tma_frontend_bound       (78.05%)
+>                                                   #     22.2 %  tma_retiring             (88.89%)
+>
+>        1.002994394 seconds time elapsed
+> ```
+>
+> Having the metrics in json brings greater uniformity, allows events to
+> be shared by metrics, and it also allows descriptions like:
+> ```
+> $ perf list cs_per_second
+> ...
+>   cs_per_second
+>        [Context switches per CPU second]
+> ```
+>
+> A thorn in the side of doing this work was that the hard coded metrics
+> were used by perf script with '-F metric'. This functionality didn't
+> work for me (I was testing `perf record -e instructions,cycles`
+> with/without leader sampling and then `perf script -F metric` but saw
+> nothing but empty lines) but anyway I decided to fix it to the best of
+> my ability in this series. So the script side counters were removed
+> and the regular ones associated with the evsel used. The json metrics
+> were all searched looking for ones that have a subset of events
+> matching those in the perf script session, and all metrics are
+> printed. This is kind of weird as the counters are being set by the
+> period of samples, but I carried the behavior forward. I suspect there
+> needs to be follow up work to make this better, but what is in the
+> series is superior to what is currently in the tree. Follow up work
+> could include finding metrics for the machine in the perf.data rather
+> than using the host, allowing multiple metrics even if the metric ids
+> of the events differ, fixing pre-existing `perf stat record/report`
+> issues, etc.
+>
+> There is a lot of stat tests that, for example, assume '-e
+> instructions,cycles' will produce an IPC metric. These things needed
+> tidying as now the metric must be explicitly asked for and when doing
+> this ones using software events were preferred to increase
+> compatibility. As the test updates were numerous they are distinct to
+> the patches updating the functionality causing periods in the series
+> where not all tests are passing. If this is undesirable the test fixes
+> can be squashed into the functionality updates, but this will be kind
+> of messy, especially as at some points in the series both the old
+> metrics and the new metrics will be displayed.
+>
+> v2: Drop merged patches, add json to document target_cpu/core_wide and
+>     example to "Add care to picking the evsel for displaying a metric"
+>     commit message (Namhyung).
+>
+> v1: https://lore.kernel.org/lkml/20251024175857.808401-1-irogers@google.com/
+>
+> Ian Rogers (18):
+>   perf metricgroup: Add care to picking the evsel for displaying a
+>     metric
+>   perf expr: Add #target_cpu literal
+>   perf jevents: Add set of common metrics based on default ones
+>   perf jevents: Add metric DefaultShowEvents
+>   perf stat: Add detail -d,-dd,-ddd metrics
+>   perf script: Change metric format to use json metrics
+>   perf stat: Remove hard coded shadow metrics
+>   perf stat: Fix default metricgroup display on hybrid
+>   perf stat: Sort default events/metrics
+>   perf stat: Remove "unit" workarounds for metric-only
+>   perf test stat+json: Improve metric-only testing
+>   perf test stat: Ignore failures in Default[234] metricgroups
+>   perf test stat: Update std_output testing metric expectations
+>   perf test metrics: Update all metrics for possibly failing default
+>     metrics
+>   perf test stat: Update shadow test to use metrics
+>   perf test stat: Update test expectations and events
+>   perf test stat csv: Update test expectations and events
+>   perf tool_pmu: Make core_wide and target_cpu json events
+>
+>  tools/perf/builtin-script.c                   | 238 ++++++++++-
+>  tools/perf/builtin-stat.c                     | 154 ++-----
+>  .../arch/common/common/metrics.json           | 151 +++++++
+>  .../pmu-events/arch/common/common/tool.json   |  12 +
+>  tools/perf/pmu-events/empty-pmu-events.c      | 229 ++++++----
+>  tools/perf/pmu-events/jevents.py              |  28 +-
+>  tools/perf/pmu-events/pmu-events.h            |   2 +
+>  .../tests/shell/lib/perf_json_output_lint.py  |   4 +-
+>  tools/perf/tests/shell/lib/stat_output.sh     |   2 +-
+>  tools/perf/tests/shell/stat+csv_output.sh     |   2 +-
+>  tools/perf/tests/shell/stat+json_output.sh    |   2 +-
+>  tools/perf/tests/shell/stat+shadow_stat.sh    |   4 +-
+>  tools/perf/tests/shell/stat+std_output.sh     |   4 +-
+>  tools/perf/tests/shell/stat.sh                |   6 +-
+>  .../perf/tests/shell/stat_all_metricgroups.sh |   3 +
+>  tools/perf/tests/shell/stat_all_metrics.sh    |   7 +-
+>  tools/perf/util/evsel.h                       |   1 +
+>  tools/perf/util/expr.c                        |   8 +-
+>  tools/perf/util/metricgroup.c                 |  92 +++-
+>  tools/perf/util/stat-display.c                |  55 +--
+>  tools/perf/util/stat-shadow.c                 | 404 +-----------------
+>  tools/perf/util/stat.h                        |   2 +-
+>  tools/perf/util/tool_pmu.c                    |  24 +-
+>  tools/perf/util/tool_pmu.h                    |   9 +-
+>  24 files changed, 756 insertions(+), 687 deletions(-)
+>  create mode 100644 tools/perf/pmu-events/arch/common/common/metrics.json
+>
 
