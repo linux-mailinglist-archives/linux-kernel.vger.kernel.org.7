@@ -1,154 +1,217 @@
-Return-Path: <linux-kernel+bounces-894146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF71C495B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:06:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C07FCC495B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F5A14E530A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:06:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A0993AA3E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2132FA0F3;
-	Mon, 10 Nov 2025 21:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1362F6917;
+	Mon, 10 Nov 2025 21:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="WY5x0sTK"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HrIxpZ+P"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010071.outbound.protection.outlook.com [52.101.85.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D058E2F261F;
-	Mon, 10 Nov 2025 21:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762808766; cv=none; b=dVzcFB0A4mB8dvcskinwLG3UgTHqaXmww3FguYBRXhYmJZWqRXxxFxeJUFALzN5eNSurBQmmkNFNqyoeykgf7/PFOZAYNzbbQfl9FQhMDStaNUyaWdlHAVYyjUawFI57/k3Ui+sQZKhTRrpxCVkyoZ9mVQKOaF8urupDFeL9N4o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762808766; c=relaxed/simple;
-	bh=9cfxn/oUsGlRr4HORwfIBaS2O2MvzZRemJYtt1/icec=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=hI2z+0Ir30L/PfFhRK9rkSeDH53NoXMN+w0LenTs70rOl1iSBo+Dt6yyeKM6xr0t5fXUfURT627Z/U5TAOWaCAN1sMLW2AisB47tMPVwu+PQizWmmKWr3HHiklVQltwADyMRm1I6MQLNEp1uBxI0cbq+aKhDv6tgcVOg35edDxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=WY5x0sTK reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AAL5tBY3818165
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 10 Nov 2025 13:05:56 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AAL5tBY3818165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762808756;
-	bh=9T8fcuIV2S3fsjbzreBB9AjatC5kysDZWffRB4veUGk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=WY5x0sTKR6Vy5BGK6oSm5iUWbpO6dXlVg8+0v9rKk1wc+Uh/b8Js48FYKxngpaqaC
-	 Rrc2+NkMBMniG2FFFcUnWy1VxnP0D9x8szFXk8HiFdlPAy4tKAWm+9u6MVBCxsxjQP
-	 wtN4PKbX88cC6/CRQj73ayvrhiavbBA2eoLAf2vz3p7DFeXVWBh2V+NpCTgvKwDpdb
-	 +dyu4EF6jjToRLxcMjpxVB3NxCcDyT5f6QlF145fl22LwQYNDD5qsW8yuNsrdD0LvV
-	 bP5VCTz/OekOmCBBDQriIkLbbgtEdEx767zOUD7PD5FFjI78jmlTGiuDUaMAnEX8m7
-	 wCY1xUvqkB/mg==
-Date: Mon, 10 Nov 2025 13:05:55 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: "Theodore Ts'o" <tytso@mit.edu>, Maarten Brock <Maarten.Brock@sttls.nl>
-CC: "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20251110201933.GH2988753@mit.edu>
-References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com> <20251107173743.GA3131573@mit.edu> <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com> <20251110033556.GC2988753@mit.edu> <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com> <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com> <20251110201933.GH2988753@mit.edu>
-Message-ID: <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772082F693E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762808804; cv=fail; b=ofngQdO/mrcer2RyVYoFDqnOpEnrau8uCPcOkpu7ceTV/iQ198ATKvu2+9tCn4IDe7bBymyCtKEVSB+/uIT9yFmcM3WCeEzVDyM6ZsH3KCbo+0wT24Z3EIg9yXeibsq0sqC4hU7VQoAZE201T17BF4iJ8D0Q9s4HZW3IUU/R9Lg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762808804; c=relaxed/simple;
+	bh=OejzDTh2XeUs2TM/gMNw2kZDoAJ7V65Vh2UoHgff5Hc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=WDulFuL+uww7f0Uy6TZtGfgxXkiiDA+tLZlwwjOFRy/fz1bomAYreaR8mf/gtGXIDk4GYwDlydpDawdmx4Fs+SFvV9Tipq8Sj/eEdAdoL1fiT7e6iEO5MK5ctplgp6mygt9/Qd9VFpqx+0ogmIh80crqufmI9PvdkzHIQZXrXnQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HrIxpZ+P; arc=fail smtp.client-ip=52.101.85.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mRoIbwzvbBRpOnws5GJH8CGoT0mmW3vWTJStUCEKdyJ9Sx1n+GP5YCAk7kGROOcmVbIiYkKIhbeZtrYgFM4D/LV1TKilVaKO87yElpwiL2q7qOXjVm0LJaN2662/zokFAoySGGN+QrAFQcWZ1OEzOh/8BirE/Bjsj+0MEv1cJWKsEERGGAudToQeChNjQmJSSxs2hhO6cPv4vpV89aF6v5yYUpKAxZ1zEK24t2NkuQTqBkpuVJy8FfFhPNF/f5yELP+WbxGf5/K0yOxKaYoz0VCahkhhf1jDUJPUBqUQ+FuuR57AU4LMsdnXTjPr5oH2EuXUCyxnt4b1lfE8aZOO6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u7iVZ1DWomWemeivLoaaQPL2XrO4ATQY7VFHGCnj1ys=;
+ b=vpFIb8WQAwyd0IvdK/7HFePlVwwSZSV584q5yWLDC9k9dXLVF6uH8N52Q3L9GRgJhJ0acCfo662KOMocfbav70LcVshatfBC/xTsdBAxAO0F2GNStaASDcUyD9QhKxI8cDRPROS7UGnwfMGL2wJbdQ7crqzVjwBrM8pfSrnVWIlI/mXlE9bM6+qmXaCz10FnDtLl4IOuLtlNzahLYy8xLZ6Afn+GE9ecS7LE8WDFrs/hsR5GylO81SQ4C4Ip/aBmycv3G3i0dbflf7KbjTpuuXK5ZSY5agUJXc8ZfVvrgontS35PfmrQPT3HdohsEpik/ww+l15ARwK9XmF0LiOjeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u7iVZ1DWomWemeivLoaaQPL2XrO4ATQY7VFHGCnj1ys=;
+ b=HrIxpZ+PGjx57IaF4Mgk30WWPd3dKi6p0RPGYlNIewG9jX4+JqBx9USZj1CMOy4e8zLMkTpVu5NVh2BSTXdPc4dZ3eN/gHu3WF6kppi1acTcnkuOh7qdyofftXbUCtLDY7qCWB+3LGRmIuTpzvsxxVFGmFFgz8JcOsannH81a0AYGeeDLAEHlA8wAbJyyhmb0AL29pZ2CGvg0jWPkk1LXIdSvYGh3E22lVUqFyoCXtcR8nyMFLWZBO+GZ/kdvHsv1P6oCNwgf2Vclrr9l8+QmZzgbZei9EJf2iWRXc0+cKvOqWOrpU2mfwF6XeCNhSyStSnUEdXsU9yyz/gquveHQg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by SJ0PR12MB7066.namprd12.prod.outlook.com (2603:10b6:a03:4ae::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 21:06:38 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 21:06:37 +0000
+Date: Mon, 10 Nov 2025 22:06:29 +0100
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/13] sched_ext: Add scx_cpu0 example scheduler
+Message-ID: <aRJT1dbGTmPRw4-p@gpd4>
+References: <20251109183112.2412147-1-tj@kernel.org>
+ <20251109183112.2412147-12-tj@kernel.org>
+ <aRGkHhAWTWdWELAY@gpd4>
+ <aRIyfJWJ6fcW5frO@slm.duckdns.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRIyfJWJ6fcW5frO@slm.duckdns.org>
+X-ClientProxiedBy: MI0P293CA0002.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:44::7) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SJ0PR12MB7066:EE_
+X-MS-Office365-Filtering-Correlation-Id: c402d988-cfb6-418f-86d7-08de209d0977
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?T/6KFzh8+Zrq5RLybFzi6l5ANKWC22ZfC/Vi8lk0KFD+T8+FIPsD2w6OuF7Z?=
+ =?us-ascii?Q?B98TtfFIFgv1IAYmlPGSZcfw1somM9+rNMEjI0VM6SsyKy4yZvDipJ23nNr8?=
+ =?us-ascii?Q?TgOlTboUKEzlXVbgDcjcq10v5fevKi8wQsk86aS6ibGMmaW7QY43cnXFN2gH?=
+ =?us-ascii?Q?hMDZFvuxE+BkX/a3pFGc8wug0mTl6V02/hAXj+ATCj6YgzBl5n8WJsPxLR0r?=
+ =?us-ascii?Q?5hIewbIuSMtwFm030/QaQMFXLf532u/3lL3Eir9l+dWs2vWCCdqyGeUIX84g?=
+ =?us-ascii?Q?o76E7Kuh8gOvZNX9TNpx/nCl7t1br9KSzMGSdIWSMvq14PQJPxU2m0SULJPB?=
+ =?us-ascii?Q?Ph+M2nm4aLv5zCvMWEWrG5lWr7HtYAb/SOHr0S1rmgdNEFKtQ5KATQBNdYvR?=
+ =?us-ascii?Q?H7v2TwgWhueUq0JzsdsygP52cUvHmBiQIJI2EWB0ukjV8+YG8ibituU8M3D7?=
+ =?us-ascii?Q?QHvBMAEEM+tVQ/jq0mEPJFZphIhc+DBtoFmu/WJe4VC21z6Uha8mB+NwcKIY?=
+ =?us-ascii?Q?5pD8JveLXAUM5fxyiTtvZ7gQh70/Qy+ExNK+7/5DBBLZdE4+ZG3upjb5dCyD?=
+ =?us-ascii?Q?GaSlhhhtz+Y7XjFwmvM2ihrEZzpAwYFfE1Oo1SRW2R2RLTsNwOfm6vmWgEoB?=
+ =?us-ascii?Q?djYm9ZRjrIsj3Dgtbik7sbBMZYnLnHlnnDF/2pPxOrtYXvsuT3igSSZEq7BK?=
+ =?us-ascii?Q?NX+9tti1B34antx7WUL40EQpebQ82Im+e9r0JRrXZophyjzkjtLDdH10+QsX?=
+ =?us-ascii?Q?fYiICe2O6VYRuGF5dsUt+omGj2UgWxwx3muTIxU1udhvrYVY8cBhz0GQ6n20?=
+ =?us-ascii?Q?ybpeqlmUVsJKVmPsdTtVxmLtNt8glB7OIlxCyinFXYO4t8xBCsQh0m6ITB6h?=
+ =?us-ascii?Q?3GicWAIUd+hwES4bcKQdBzcG4cDi88jfjPy4JdiMFKzhortLJ023CZbspbRZ?=
+ =?us-ascii?Q?mpdLx7fi4pY9cVox3DG+eb76xBffyuuP4cl+7PQT09f9AqyCLOu91gmhV6wv?=
+ =?us-ascii?Q?GNTj/GfVSgu96AJiQgJH3+4MVDMr/A1rIXA36BggY8qQAZJpoleFDZENJA7Y?=
+ =?us-ascii?Q?qucn9+/5e3sF+t3rx5WHf4AaM+sn5QCoK3XhyP+48Cmqj0pcX9AN2dVzoiQJ?=
+ =?us-ascii?Q?rbQHOBl/+fNKwDX3U+VrcFIGYh9ykRQnwtsDitfaMAFUOc5i5fYyetjPDG+f?=
+ =?us-ascii?Q?g6AuGIYcsE5eEij8OaWKGYaFByoY3ztkkGWyYKCD6OoJa3WThNrQFHh4TTSt?=
+ =?us-ascii?Q?+F4C0mgr1Xkxi3AJ1SPMT7ctgSpBHQ0NV0fzP3td+Iza9L3kurbPKmG4t4Zd?=
+ =?us-ascii?Q?ldtL3pmuge7QUhPk2Jt2fYJk4lQLXWbtV7wG7xqG/3z5HgANiGeos/l5QUzS?=
+ =?us-ascii?Q?rW+kYzsFRZYhTL6sB5GxQz6wNsCkOrNc9ODylSaI9yEdwMxrDETZ8fn0TgDN?=
+ =?us-ascii?Q?IoC5kPLBz0PyidjUsY8A+gRzGZ3ukwVD?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SHoKTgyL9zIECkE4ZsggcP/AiUmTy3UleOeDBZhM545GEVvdMT0vZi4WfreS?=
+ =?us-ascii?Q?9mW7swbeL6sg4EPWVKehS1emnvciscjac8uzR46HkHsyk2XVv4cAe0+9l1yU?=
+ =?us-ascii?Q?1ugrMhmqzSNl5ppFtTDmbCX5e2idPluw1Tmc/3jWUWw2J82GbCNRST8XZ3ec?=
+ =?us-ascii?Q?0sicG6wgh6C19S3s3vahn8q0XAdEtV/RAIwd2NOTkTHIyFg37Z2Pxg6lvCO5?=
+ =?us-ascii?Q?mNazCjMVSF38815QtW28zipZCF/zaIykOKVxmasYneuJfhE+zOiBs1FKRuTL?=
+ =?us-ascii?Q?cMYcLM/48SFV9ELuvOg1kOfiw0HjnbkdfSF09j0OZlUKgy+Spt6EcNhUT7C+?=
+ =?us-ascii?Q?2MqGtRu0Owaz53KSUIVVVpzYRbJ6LQUw0nrVwtTu0X505ZB5ORL0WAVoSIQf?=
+ =?us-ascii?Q?rJ0+c0U3cxT3VRLquiIi7pNbVrvRlkDZbzm3bcAMto5qmwMrrSk1B1kj9G2V?=
+ =?us-ascii?Q?YlgY5Go1bXpD5RcpE5jbziFsZ+g8Iph6IfUcjh0sYm9vT+9vDYW7OqzDB4wr?=
+ =?us-ascii?Q?gufH2fmgzq0ZDNoIpwD3I+m07PGrpS16Rld/wnLEQQOslF55AwnQ6518sjip?=
+ =?us-ascii?Q?XBFuzukFZZCeeSgIdyjznAmZ1Mjq723J6XvB9DlgRZKKdNR63xDIv/SDaUaG?=
+ =?us-ascii?Q?WUR2j3V4+4oHlQaZzCJ102+mS/n3yMUcMBIsk08iorECARQx9Dar5JRAKXUR?=
+ =?us-ascii?Q?GfEbA2Rmrln6FgpO0RPzrOeqgkEQ/o65E/fKaFybGohJdmLeROA/4O03B5AX?=
+ =?us-ascii?Q?guIg5cdZcP5It+jEFXJm7Yhd/n1t9trh7wSInfYGJC9kvhpmiVvvE32M2VbE?=
+ =?us-ascii?Q?3agY3a9NxBHj/l++9x5w8rtjvIUfvCBAxkRhg208HHYH7YJbD83eUUjLPIoR?=
+ =?us-ascii?Q?gDwtOflgxGAmItXbVsnK+T18JaNjYF8zXlxBiXwiwvFVb8zSyktjvRs9konF?=
+ =?us-ascii?Q?3qgTgnhJhlNv3xND6Qjald1YkRgDUCQvvkxDi6Wbzp9h2LO5tdRc9qiQOZwW?=
+ =?us-ascii?Q?3j+SOv+fOMZfK6yyeo02B5DWqrDg/Kmw5kpxhtotCid9ILVb3POK2ynabZDZ?=
+ =?us-ascii?Q?l2fQqyPCSFSHmR46GlSmd6QEsZB1kkieYcFwVQ4iojP0EXe8gUjkqBIHt/zN?=
+ =?us-ascii?Q?LHMAIinFiQcswoOrTTjyrLgfDOX7unIlytzgT49gcUec6iRv5VaqDdf+fDrt?=
+ =?us-ascii?Q?DJPBtM5Q0SY6NfjrYsuJwgqpJdxH6tfPtxqHfrzsYOdogfxnWK+zGjuASJDE?=
+ =?us-ascii?Q?YjxwcRi1e+IogwUZbrahvozkTbAY9hSyA49VWF+PSP+Sbw4BCoNqv08eIASE?=
+ =?us-ascii?Q?uCbz9rMrJglur5qy9jKAwOaxd6jaPudnZafVWUqhp4FQEMuvSucimbgjgLEm?=
+ =?us-ascii?Q?CpfXFAGOiFpPgmmW4auQU6CiM6BypDm9cDt4iMjaQWy4VzUZ6t5PQ0uWL236?=
+ =?us-ascii?Q?Ec2mKsV2UiYqmzkek5Sy6kKFizXDHJ68bk1TTVAGp3syOM5A141BQ69iinoe?=
+ =?us-ascii?Q?UlLQIn2toDg1rClk15PvV1Eem2r86PxRI0Q1CQ4z7VF3SD4mI85dKEhV3tVs?=
+ =?us-ascii?Q?f9GgUt+yVv/Ef2uQkuqeIZ3QGuAByy6i22Mtdlqd?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c402d988-cfb6-418f-86d7-08de209d0977
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 21:06:37.7547
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ls1GAsg2kJEueBbshaxEtE0YWFNGD9TMwLyV15Y9SE9CQAI5+vTH5gDEJiQFSwsfBuPOtKvTy8FVUzFVlQTBFQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7066
 
-On November 10, 2025 12:19:33 PM PST, Theodore Ts'o <tytso@mit=2Eedu> wrote=
-:
->On Mon, Nov 10, 2025 at 10:06:02AM +0000, Maarten Brock wrote:
->> I fully agree that you cannot expect users that wired something like RS=
-485 Driver
->> Enable or a microcontroller reset to RTS or DTR to write their own kern=
-el driver=2E
->> And you need to open the port to make the appropriate settings=2E But o=
-pening a
->> port should not e=2Eg=2E claim the RS485 bus and mess up whatever commu=
-nication
->> was going on there=2E
->
->Again, the existing seral driver code *will* mess with RTS and DTR at
->boot up because that's part of the autoconfiuration code, and that was
->added because it was needed for some number of serial ports=2E
->
->If that's going to "mess up" the RS485 bus, maybe we need accept that
->RS-232 !=3D RS-485 and have a different driver for the two=2E  That's
->going to be a lot simpler than trying to make the same code work for
->both RS-232 and RS-485, and claiming that the existing RS-232 code is
->"fundamentally buggy" when it interacts poorly with something that has
->very different requirements than the historical RS-232 use cases=2E
->
->              	  	     	    - Ted
+On Mon, Nov 10, 2025 at 08:44:12AM -1000, Tejun Heo wrote:
+> On Mon, Nov 10, 2025 at 09:36:46AM +0100, Andrea Righi wrote:
+> > > +void BPF_STRUCT_OPS(cpu0_enqueue, struct task_struct *p, u64 enq_flags)
+> > > +{
+> > > +	if (p->nr_cpus_allowed < nr_cpus) {
+> > 
+> > We could be even more aggressive with DSQ_CPU0 and check
+> > bpf_cpumask_test_cpu(0, p->cpus_ptr), but this is fine as well.
+> 
+> I did the following instead:
+> 
+>   void BPF_STRUCT_OPS(cpu0_enqueue, struct task_struct *p, u64 enq_flags)
+>   {
+>           /*
+>            * select_cpu() always picks CPU0. If @p is not on CPU0, it can't run on
+>            * CPU 0. Queue on whichever CPU it's currently only.
+>            */
+>           if (scx_bpf_task_cpu(p) != 0) {
+>                   stat_inc(0);	/* count local queueing */
+>                   scx_bpf_dsq_insert(p, SCX_DSQ_LOCAL, SCX_SLICE_DFL, 0);
+>                   return;
+>           }
+> 
+>           stat_inc(1);	/* count cpu0 queueing */
+>           scx_bpf_dsq_insert(p, DSQ_CPU0, SCX_SLICE_DFL, enq_flags);
+>   }
+> 
+> This should be safe against migration disabled tasks and so on.
 
-I didn't say it was fundamentally buggy; if I did or implied it I apologiz=
-e=2E It is most definitely not; however, in some cases it is undesired or u=
-ndesirable *due to shifts in usage patterns=2E*
+Looks good.
 
-This isn't a bug at all but an enormous strength=2E That a 65-year-old sta=
-ndard =E2=80=94 both hardware and software =E2=80=94 designed for teletypes=
- and dumb terminals can still be useful today is almost the definition of s=
-uccess=2E And, yes, some glitches in that process are going to be inevitabl=
-e =E2=80=94 like the mistake of retaining the termio Bxxx emumeration const=
-ants in the termios interface=2E But we deal with it by gradual evolution o=
-f interfaces=2E=20
+> 
+> > > +		stat_inc(0);	/* count local queueing */
+> > > +		scx_bpf_dsq_insert(p, SCX_DSQ_LOCAL, SCX_SLICE_DFL, 0);
+> > 
+> > And this is why I was suggesting to automatically fallback to the new
+> > global default time slice internally. In this case do we want to preserve
+> > the old 20ms default or automatically switch to the new one?
+> 
+> Maybe SCX_SLICE_DFL can become runtime loaded const volatile but anyone
+> who's using it is just saying "I don't care". As long as it's not something
+> that breaks the system left and right, does it matter what exact value it
+> is?
 
-One such example is RTS itself: the RS485 definition is, in fact, the orig=
-inally intended meaning of RTS: it is a request to the DCE to negotiate tra=
-nsmission privilege and activate transmission mode over a half duplex chann=
-el, after which it asserts CTS=2E RTS/CTS flow control was a nonstandard ad=
-aption to allow for binary transparent flow control over full duplex links =
-=E2=80=94 it wasn't formally standardized until 1991, and the signal is for=
-mally named RTR when used that way=2E However, RTR and RTS share hardware i=
-n nearly all existing implementations, and share pins in the standard =E2=
-=80=94 so whether or not you are using RTR or RTS is a property of the DCE,=
- not DTE, and needs to be configured into the DTE=2E
+I agree that if a scheduler uses SCX_SLICE_DFL it shouldn't care too much
+about the exact value.
 
-Requiring new drivers for the gajillion different hardware devices already=
- supported and then having the problem of which drivers claim it isn't real=
-ly any better of a solution; one could in fact argue it is *exactly* equiva=
-lent to being able to indicate to the driver what mode one wants it to oper=
-ate in before it does its configuration=2E
+My concern was more about those schedulers that are quite paranoid about
+latency and even if something isn't handled properly (directly dispatching
+to a wrong CPU, a task being rescheduled internally, etc.), we'd still have
+a guarantee that a task's time slice can't exceed a known upper bound. But
+this could be managed by being able to set a default time slice (somehow)
+and it can be addressed separately.
 
-The parport driver layer is kind of similar to this, in some ways, but in =
-the tty layer that is mostly handled by line disciplines instead=2E (The pa=
-rport hardware was generally abused on a much lower level, as a substitute =
-for GPIOs, so even the notion of a byte stream wasn't there=2E)
+So yeah, in this case the exact value of SCX_SLICE_DFL doesn't really
+matter probably.
 
-*If* I'm reading the code correctly =E2=80=93 which is a little complicate=
-d due to the sheer number of abstraction layers =E2=80=93 hardware initiali=
-zation is already deferred until first open, which would mean that disablin=
-g autoconfiguration (one of the features in TIOCSSERIAL) would again be a v=
-alid reason for wanting to be able to communicate with a device driver befo=
-re requiring that it puts the underlying hardware in the state expected for=
- operation *in the mode configured* (catch-22)=2E
-
-As I stated, this is inherently going to be a best effort=2E For some devi=
-ces that may mean simply leaving the power on default in place (in this spe=
-cific case, presumably, DTR# and RTS# deasserted=2E) However, once the stat=
-e is already known to the kernel then there is no such issue for any hardwa=
-re=2E=20
-
-As far as naming is concerned: O_RAW is really suboptimal, as it has exact=
-ly the same implications as O_DIRECT (I/O goes straight to the device with =
-no buffering=2E) I don't like the idea of abusing O_DIRECT at all; I only b=
-rought it up as a fallback alternative=2E I genuinely do believe that if we=
- assign a new open flag it will find use cases outside the tty/serial port =
-subsystems, and if there is anything Unix has done right it is to generaliz=
-e interfaces as much as possible, case in point descriptors=2E=20
-
-
-
+-Andrea
 
