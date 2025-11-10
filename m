@@ -1,192 +1,157 @@
-Return-Path: <linux-kernel+bounces-893194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE37BC46C4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:06:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F1F2C46C56
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:06:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A0CF18871A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:06:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2A5F9348E3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27872FFDC9;
-	Mon, 10 Nov 2025 13:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FD31FE451;
+	Mon, 10 Nov 2025 13:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zHxosS5Y"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gVI/2DZb";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mc3RADKx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BD81FE451
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE73630C609
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762779973; cv=none; b=IdJ7SHErZg7rpBGtGd5Ls50l/nSPXLD7uGVUtE+cMqonONWpLByjDPBuzb8GcMxI4yX3Nb8sL8ZcDmBy23bWLUiIHwtjoziX8TmHANiflnqdSRy1ae0Q5eXepR0gyd/XRY8ElPPiYYlcbqjWjdo62Mrnz0/wOD2+pNckbEtVMVM=
+	t=1762779976; cv=none; b=uraov9OW8GZxo1mBqOjFGwFOvS/ftDDg2K5p+XKmpfKauu5FK5WFjWj/Z+RMUODfqrKgOqQEggoRwFxQIgI/7F3iFKI1WkXRoBS3CSJ38EEJfH6Zl0lxKKvEF4Y50Qn3DtiyDNFWKPevKoiniOCq2H5HoThz51GRqJAfrRmqdFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762779973; c=relaxed/simple;
-	bh=EFduA5IK5SFrmlRbhZan0kyK7crRwbF+SBZ8qjksjNg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eIheaahDiVndKFaXIlV12MyBcKM4S8XKLRSvLbiTCyKW3HFLJDVS5s0QYJiPLtyAOEluTFoLYOrGb7veYv3nk6QbfXIC9SboyWr2AWbPuUOlbkBJkFQupyeCDD9NxYxkUZpSK0YSrhnfol1ffnIc1P5oecKfgchQ/HzpCrxDaeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zHxosS5Y; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4710022571cso29204975e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:06:10 -0800 (PST)
+	s=arc-20240116; t=1762779976; c=relaxed/simple;
+	bh=HRY4a37l2JxHAPzxhzYm7gZlhdN8iEBcuGE3GfxMbBI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ryvWSGa+VwZfOJ6mTwoHXwKLLKndlBZb1f6GlS37FQq/ZQnUiCXWBdsAHvI2UjF9C4ndsVNSrYX70xQb2pXuW60SAYggON8zQiSfop+dIrDA5B05LEVvi0WAfB0JasPG6ytx0cjZRugklDI0Ae9oOLcqOHLk02QUFlBdiNc8xso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gVI/2DZb; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mc3RADKx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762779973;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HRY4a37l2JxHAPzxhzYm7gZlhdN8iEBcuGE3GfxMbBI=;
+	b=gVI/2DZb8FUOinbVZF7lPXkxX4n/RR8kWQ5Gyup27kvmvNLdwtDAg5JZggUBqm7HHETf9G
+	rLvrsuDnwDlEiavuRv2YGqFc9LTKy2mlkwx6qkbMQkdJuGDOZ9YjTiuTKo/E+LJZK5nCd4
+	4myycy5hF3kxiZYMVGOoY0xeb3cHTS4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-198-TXFenKGQMPueKwQSnRKNSA-1; Mon, 10 Nov 2025 08:06:12 -0500
+X-MC-Unique: TXFenKGQMPueKwQSnRKNSA-1
+X-Mimecast-MFC-AGG-ID: TXFenKGQMPueKwQSnRKNSA_1762779970
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-47754e6bddbso22869855e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:06:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762779969; x=1763384769; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IFcBbXPwvkiMGC/UX+vL3kGptND9Aa39FQ9X5eJiJ0I=;
-        b=zHxosS5Y1Fu6z7SFNXxbBteAPLE9jFKuvxopE4oAdg3/UxSWDXPMADzsVVPic3M5iJ
-         4b5EjgE1B6swH5nP8pDTaJIQUzlyAlCSpYmrrJYN74Wd4q5GbTkpetahmR3b+lQZ0MK2
-         hT2pZv79IQNZvAnP6u7jrae426vMzTfKI86z8tuWKAMA4NWqUvMTGGeIuKXU676YADDI
-         cN1YDSp1JUyIpbXAiRaqWFw3aHS3JJfNOqcmSfGCX8c6mTvc4M6MYk+ssMldaCHU1RD4
-         +tV8jZ9Fj/pjhWxeE/ZLRkX7rG1Wf405XSqzlRYpkx40Se0BUngl1dc2yhVkAXjTTi6k
-         LCuQ==
+        d=redhat.com; s=google; t=1762779970; x=1763384770; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HRY4a37l2JxHAPzxhzYm7gZlhdN8iEBcuGE3GfxMbBI=;
+        b=Mc3RADKxm6TnYLktuhs1b1AE7mYqJUP8t9FbEar0F4ydYRCkBByfo/Cv/7M/pQ6LUl
+         E24OXXOC+l4rvuALPJJL9d1R61jHlRCZItSW9S4sMXvxWHuATb9lnKQls8cHBkcQUIge
+         IXOPe5gjm5z0AzBJ466UP1MqgqttlgNGtJy4iIPKIcI9PAhDjChWACzTuTzx55P9fhY9
+         S0IHbe8UrPw3s974BnBJf9eXc0cipMzRWyWNSErhGgpcyij1iN3T8hj6nhWK3vNaA4O3
+         STCozOElArlzuO1uyYXlxwG1e6Hw6jjCaHfhr/mSwvFp7B5TNItX4gjK2IgeZ3njVSm8
+         gfKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762779969; x=1763384769;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IFcBbXPwvkiMGC/UX+vL3kGptND9Aa39FQ9X5eJiJ0I=;
-        b=hNuGaYewCJZkO4S2Zmpn4aCua7xWdQCUMV+J6MyqsKAWuLFiBKYUFF+aPn+NZaGGGp
-         NURIwauFTwAEc+nluBiHA1qiQhpdZWM67LnLlBHxy3IVYSoC8csOxWNNByd/P8G4hRHU
-         WEvlR6DmmdqRKaizY9Z5u3aTdgqtOzSDErHiQczPcU906Ljipb+MeKWuuXtI+lw98Y64
-         2o+QjGg+WvkeOJGbkjQWfoxY3IpxurIoQGs/VeNN88nfiZicV1Ei6xSI/dl9e+If1Szj
-         hxArbHXsnnKt0u1tQX4/Gh34XzSXHJpQr6uPvEdqFSlo9JvzfUIa7HQMVWv4msQNNPsT
-         RYTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKVtGdAwgqmSDI5U3CfykSbdw52a0IXyZ3M7FIWWJ83TU5xlfx/HLQo0B2JJLt9hPKJ+tbYwfaBwq7hF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSnwCyfvSWWhnIKPrrIByp3KUispHZaampHefbVilkKaU5SCyW
-	0JiDepKa7yj8npH1NU0ko6+glK+wPsuGq6E9j1cwafzmNpmIx8SQZTlXaASBwqAkKak=
-X-Gm-Gg: ASbGnct3qSAfncW8xIL2/lzPeXyObQcmxPAU0Oyegi/NzdhPgGUBISyNT1Y2wbrufgl
-	nET3SLZXYTPEqmJs91x1C0mnWw2/t9tVB0yme9o12fawkQ7BqPzAiUNhwtswCjWXJbN4gWD+Wsd
-	MXprI8XRy3pCtbT6IX3eTqLGyjQ29gEOcs/zLwcHruzgNo7tYd6e/aFATphUKfE3nU1YjCZehlk
-	laZfj3MZe84jqwS7nDrtfJOafx38JtbmGiP9oE56kNEOrrkoItD+zt34fi8o7bCE7/cj2MvPARM
-	7uvZz2Saq3M2facSO0XaCNFVIpuKyHyxo86BzFt5/FxfootS1B018k1QjaOh1aHu/Akakby3XXo
-	a0wBkY3oKy+juGToO4hsJIeXFE65/8bwNtwqAu67raFUBO0fng9M+U1vZrhVS7u6hjRK533p7ln
-	cQ7tu+cgIoYP5GReOA8odU0PORvd7msbLfpIvxDwNbBkDeKaxojbVTgwM=
-X-Google-Smtp-Source: AGHT+IFtXNJpzD2gW9iSn0NztWrLxTZvcOLBaFBOCFqkmNRmqw71Iuc2gfKNjESDEOfAEahNU8T56w==
-X-Received: by 2002:a05:600c:4f8b:b0:477:569c:34e9 with SMTP id 5b1f17b1804b1-47773271a62mr83156425e9.23.1762779969396;
+        d=1e100.net; s=20230601; t=1762779970; x=1763384770;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HRY4a37l2JxHAPzxhzYm7gZlhdN8iEBcuGE3GfxMbBI=;
+        b=kvV0tfxw0C6Ju0RFRDKPEP/0nNjYy8cdO5b9tUBju5MFamymudXApj+/jIK+nmN2hg
+         O5FXN0d8/jJ7pyyRElhsjvEjEheJTD04NBSUSOqsQw3WekESVX8OUgCmxsAoxztGzUM0
+         lBRuKadzMUqZCUwOgydkfZQBKY7IzN5k7Z7g1rjhGTgSPBMQpt5RSCMnP/TgWtWWtkEy
+         5vtKZAZN1PB1bldMW8LY2TXk8g8ZI2wvnPMB6YHX9+2H85+/BsNvIyYLxCo117ko41pY
+         BPwLay0VY7M5AHP71KJt5vx+5Tl3h/Sglr6zhzwDRBDUkAij+L1KpuF1B7X69b43AMQU
+         YcxQ==
+X-Gm-Message-State: AOJu0YysQPH+O5m869OcursFj2VH7HYccO+51+0i2L+5J6KuIf8eA5FH
+	ffEw74xuuUztK1d2tKdc1sb25k7KbfBieXhiP8aZokJkxqyaqTmKmTTCUCJWa6gvNvDTlTWw142
+	sH+ZsFSqK3JRjg2Ghel9x8bsvMF2OZpCItaWMhXdDv6mmKX+VCKZ6xycvNh6NU300qovrGiJSQr
+	AmjCWgHzuJ8U1fU8iGlvNdBknIjMS/UFJHwFA1Z/Ez565ylFR91OE=
+X-Gm-Gg: ASbGncti6T4c7hFpN/KBhaZ+YWo5qBCK7AbPogNl5TqMzoSgNHpGMOQyl0bJmVm5c5E
+	W80DHaO0uVbq27shnT5fp1jytPmABpdwbCbFNNw4+qXVIBe+HtKlk7Vtc/0uSDDj1h9GQjQ4W4q
+	13cTxy4/YqN2auSxdbDr44/4DLBNiJliadKZi+fRTPS9khEJUPWf6Z5LrgSIdWvyUVHDWiXapEE
+	6Ya0+nHKtDABUMEII5Cm2kZYpY+6RdqF8tSfJqcPkCpuHxF/HZqYGuGXhBm8L/wtItOLqHm7QUJ
+	tdPJf5M1DKPfT5ZUhGE346I1lkrzAIzTDc8Rv3TUVAu64unN6yVTZ3AXmQOMKEeiUJS83puvt3u
+	/ricMn0yYRsNmZjv2qCpJPWRP
+X-Received: by 2002:a05:600c:1f88:b0:471:d2f:7987 with SMTP id 5b1f17b1804b1-4777327e861mr50552095e9.26.1762779970292;
+        Mon, 10 Nov 2025 05:06:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHa1bZhWZYpIRiHXf08xUrmaK6WFN6PjAsFMQbeMPuCsS2qh4FZGf8Bcb7s0JX7DPe5Zs3MLQ==
+X-Received: by 2002:a05:600c:1f88:b0:471:d2f:7987 with SMTP id 5b1f17b1804b1-4777327e861mr50551785e9.26.1762779969827;
         Mon, 10 Nov 2025 05:06:09 -0800 (PST)
-Received: from ?IPV6:2a05:6e02:1041:c10:2b20:d700:6e9c:533c? ([2a05:6e02:1041:c10:2b20:d700:6e9c:533c])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4776bcfcfc7sm240169015e9.12.2025.11.10.05.06.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 05:06:08 -0800 (PST)
-Message-ID: <1e0545da-5d24-4ca4-863d-0d5671902d0b@linaro.org>
-Date: Mon, 10 Nov 2025 14:06:07 +0100
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bccd35asm198789785e9.1.2025.11.10.05.06.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 05:06:09 -0800 (PST)
+Message-ID: <f47a6827fa07db12581d2a6b8c1cfe1ce467aa21.camel@redhat.com>
+Subject: Re: [PATCH v14 7/7] timers: Exclude isolated cpus from timer
+ migration
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>,  Frederic Weisbecker	 <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Waiman Long	 <llong@redhat.com>
+Cc: "John B . Wyatt IV" <jwyatt@redhat.com>, "John B . Wyatt IV"
+	 <sageofredondo@gmail.com>
+Date: Mon, 10 Nov 2025 14:06:08 +0100
+In-Reply-To: <20251104104740.70512-8-gmonaco@redhat.com>
+References: <20251104104740.70512-1-gmonaco@redhat.com>
+		 <20251104104740.70512-8-gmonaco@redhat.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 4/9] thermal: mediatek: lvts: Add platform ops
- to support alternative conversion logic
-To: Laura Nao <laura.nao@collabora.com>, srini@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
- rui.zhang@intel.com, lukasz.luba@arm.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com
-Cc: nfraprado@collabora.com, arnd@arndb.de, colin.i.king@gmail.com,
- u.kleine-koenig@baylibre.com, andrew-ct.chen@mediatek.com,
- lala.lin@mediatek.com, bchihi@baylibre.com, frank-w@public-files.de,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com,
- Fei Shao <fshao@chromium.org>
-References: <20251016142158.740242-1-laura.nao@collabora.com>
- <20251016142158.740242-5-laura.nao@collabora.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20251016142158.740242-5-laura.nao@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 10/16/25 16:21, Laura Nao wrote:
-> Introduce lvts_platform_ops struct to support SoC-specific versions of
-> lvts_raw_to_temp() and lvts_temp_to_raw() conversion functions.
-> 
-> This is in preparation for supporting SoCs like MT8196/MT6991, which
-> require a different lvts_temp_to_raw() implementation.
-> 
-> Reviewed-by: Fei Shao <fshao@chromium.org>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
-> ---
->   drivers/thermal/mediatek/lvts_thermal.c | 27 ++++++++++++++++++++++---
->   1 file changed, 24 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-> index 4ef549386add..df1c0f059ad0 100644
-> --- a/drivers/thermal/mediatek/lvts_thermal.c
-> +++ b/drivers/thermal/mediatek/lvts_thermal.c
-> @@ -125,8 +125,14 @@ struct lvts_ctrl_data {
->   			continue; \
->   		else
->   
-> +struct lvts_platform_ops {
-> +	int (*lvts_raw_to_temp)(u32 raw_temp, int temp_factor);
-> +	u32 (*lvts_temp_to_raw)(int temperature, int temp_factor);
-> +};
+On Tue, 2025-11-04 at 11:47 +0100, Gabriele Monaco wrote:
+> The timer migration mechanism allows active CPUs to pull timers from
+> idle ones to improve the overall idle time. This is however undesired
+> when CPU intensive workloads run on isolated cores, as the algorithm
+> would move the timers from housekeeping to isolated cores, negatively
+> affecting the isolation.
+>=20
+> Exclude isolated cores from the timer migration algorithm, extend the
+> concept of unavailable cores, currently used for offline ones, to
+> isolated ones:
+> * A core is unavailable if isolated or offline;
+> * A core is available if non isolated and online;
+>=20
+> ...
+>=20
+> +/* Enabled during late initcall */
+> +DEFINE_STATIC_KEY_FALSE(tmigr_exclude_isolated);
 > +
->   struct lvts_data {
->   	const struct lvts_ctrl_data *lvts_ctrl;
-> +	const struct lvts_platform_ops *ops;
->   	const u32 *conn_cmd;
->   	const u32 *init_cmd;
->   	int num_cal_offsets;
-> @@ -300,6 +306,7 @@ static int lvts_get_temp(struct thermal_zone_device *tz, int *temp)
->   	struct lvts_ctrl *lvts_ctrl = container_of(lvts_sensor, struct lvts_ctrl,
->   						   sensors[lvts_sensor->id]);
->   	const struct lvts_data *lvts_data = lvts_ctrl->lvts_data;
-> +	const struct lvts_platform_ops *ops = lvts_data->ops;
->   	void __iomem *msr = lvts_sensor->msr;
->   	u32 value;
->   	int rc;
-> @@ -332,7 +339,7 @@ static int lvts_get_temp(struct thermal_zone_device *tz, int *temp)
->   	if (rc)
->   		return -EAGAIN;
->   
-> -	*temp = lvts_raw_to_temp(value & 0xFFFF, lvts_data->temp_factor);
-> +	*temp = ops->lvts_raw_to_temp(value & 0xFFFF, lvts_data->temp_factor);
 
-Don't do this in each functions. It does not help for the readability.
+I forgot to mark this as static:
 
-May be something like:
++static DEFINE_STATIC_KEY_FALSE(tmigr_exclude_isolated);
 
-int lvts_raw_to_temp(u32 raw_temp, const struct lvts_ctrl_data)
-{
-	return data->ops->lvts_temp_to_raw(raw_temp, data->temp_factor);
-}
+will send a new version after getting a review/comments.
 
-or
+Frederic, Thomas, besides that, does this series look ready to you?
 
-int lvts_raw_to_temp(u32 raw_temp, const struct lvts_ctrl_data)
-{
-	int temperature;
+Thanks,
+Gabriele
 
-	if (data->ops->lvts_temp_to_raw)
-		return data->ops->lvts_temp_to_raw(raw_temp, data->temp_factor);
-
-	temperature = ((s64)(raw_temp & 0xFFFF) * temp_factor) >> 14;
-         temperature += golden_temp_offset;
-
-         return temperature;
-}
-
-... and get rid of all the lvts_platform_ops_v1
-
-(btw _v1 is confusing, it suggests there multiple versions of the same SoC)
-
-[ ... ]
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
