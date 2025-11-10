@@ -1,152 +1,159 @@
-Return-Path: <linux-kernel+bounces-892549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267D2C45562
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:16:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA96C45574
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:19:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C8AA4E6D29
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:16:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF825188F349
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC89C2253EB;
-	Mon, 10 Nov 2025 08:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327162512FF;
+	Mon, 10 Nov 2025 08:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KJUv0V2d"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TiT8gxSm"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7F71E492D;
-	Mon, 10 Nov 2025 08:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85FF239573
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762762571; cv=none; b=bUFq5YWDPQOeFpInIOctko1CJbwNzOZrRs610dOWM2Y6LsMtkv+f5Ev+c25AlR4odfNwiCSNjLWJUJKUJa/oNQa82LJV5eZLm0oHIYJc+uaYrswLMBdu7QSciGXkjw3qwWyXk9TQqi9hk2/orvgrSQZGL691UJRQipevGlbWDfc=
+	t=1762762743; cv=none; b=hdvqn43MHjf8+9DUkxs+xQ/L1kR431AzOeejEX1kQNIzfPVou7y9OW4rBk8yw3EoRdCACJT62MwoZqwNXvZh7CDBiGYy/xi7/0oL6hyBksNFGLrhNivSyMybfgcuviw2byhDXZJF7g2Wt1wxwAI/17a8mnG9PJEm29mxdoRantk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762762571; c=relaxed/simple;
-	bh=z3E6CYqiFhwSS9Guwnxfu2nbMrN67DSOuGk+BvTGPWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kz7PQZV+RK1VkOQETX4ntJOmAr51D9fwVoNXqv/JsQhU6FhAyFIZxsbayc/aKCJ9LYzb9ICA/b9JAltKywkRiurGTcHvgzc2Un3aF+Lvy1y1yGrrorhXePoohi4GT9bko5UX6Hm/A7UPEmod2MN0vkZmKA+asgFNJTnP7ZeS/qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KJUv0V2d; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762762569; x=1794298569;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z3E6CYqiFhwSS9Guwnxfu2nbMrN67DSOuGk+BvTGPWk=;
-  b=KJUv0V2dqdUfB25P5Z7mvbcwidrLzMnhuDAgVUgm4PoVdIM4WDUlREdz
-   57UIY9qDR7o5URfvzEg13j4oNQRNkMwEXuoGMYrJH6bw3BhKRla3LKNRN
-   fS0oyURs8eGruRczhvCUJPMdDpdwTOvo6d14/FaEFtUTYWnnGnwhZ0kK5
-   3aguPi39W7DMlGSZvaPP2HX0+aGYtvMSEiDpUT5Ce6gZ2BnCg14QyW+w4
-   Z/GeqEsjVcD4UifaEzRGGYbPxnSozxvsESezvz6nCxWr9KhD9cVW2gZv8
-   yA4C3AJZZ29n2vtHeg6bFBtirgX3T9p+8cuYdt865t5o7rfTbPL+/NRvx
-   g==;
-X-CSE-ConnectionGUID: ClfA5vQrThenvjBw4qVPog==
-X-CSE-MsgGUID: NA6ndUpOQjC00Rwa0upzWg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="75496069"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="75496069"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 00:16:07 -0800
-X-CSE-ConnectionGUID: KVsy8Z28SW2LS9FTFSRebw==
-X-CSE-MsgGUID: oHm9W1/sR9q2b/uStU2mLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="219269685"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.222.208])
-  by orviesa002.jf.intel.com with SMTP; 10 Nov 2025 00:16:05 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 10 Nov 2025 10:16:03 +0200
-Date: Mon, 10 Nov 2025 10:16:03 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Peter Korsgaard <peter@korsgaard.com>, javier.carrasco@wolfvision.net,
-	neal@gompa.dev, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: tipd: drop double register read in
- tps6598x_interrupt
-Message-ID: <aRGebbVWwNV0cK1x@kuha.fi.intel.com>
-References: <20251106164850.1703648-1-peter@korsgaard.com>
- <2025110750-diminish-film-f952@gregkh>
- <87bjld51h3.fsf@dell.be.48ers.dk>
- <2025110840-varnish-exhale-c362@gregkh>
+	s=arc-20240116; t=1762762743; c=relaxed/simple;
+	bh=ojUOoEItR7KCiJLi015etUtiBjINyYKP3aW/L3B+dq8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ajqZTIQL0sLJpGic1+tM5dcHdgtnOCuclZuNLQMrC+uhN2BTsNgvOUNQnXh7oRL0z1OigwyQ1vn9Hp6wSjzK2dyqml0bGwVD3NijGBa3qtjqDM95j5WM/0hzhouz8Lo734ZQQQ0gqUPqT3ZeBcRBg/jZmkLyF+Y47cdcCQVyltk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TiT8gxSm; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762762737;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=aA2NOzQse06x9i0m2QrR5DmKV75xHASn1pyl9aKwEzM=;
+	b=TiT8gxSmIZ81WzRtRKz6SsqUMzqS8jbj/Jsn3CvPn926nv44UROFAlB1rctkkIP52Jt9Zo
+	c+RcFMv1f3HcRg80wUVx3Qzb5d6POUdtNRk0c1qnOEFX+coIum6yru0jdCMcjY/uW52xrr
+	2He9M1IqjoI9TMFwjTggRFv2dD4Pomc=
+From: Qi Zheng <qi.zheng@linux.dev>
+To: hannes@cmpxchg.org,
+	hughd@google.com,
+	mhocko@suse.com,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	ziy@nvidia.com,
+	harry.yoo@oracle.com,
+	baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	lance.yang@linux.dev,
+	akpm@linux-foundation.org,
+	richard.weiyang@gmail.com
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH v6 0/4] reparent the THP split queue
+Date: Mon, 10 Nov 2025 16:17:54 +0800
+Message-ID: <cover.1762762324.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025110840-varnish-exhale-c362@gregkh>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Sat, Nov 08, 2025 at 09:43:14AM +0900, Greg KH kirjoitti:
-> On Fri, Nov 07, 2025 at 04:03:36PM +0100, Peter Korsgaard wrote:
-> > >>>>> "Greg" == Greg KH <gregkh@linuxfoundation.org> writes:
-> > 
-> >  > On Thu, Nov 06, 2025 at 05:48:49PM +0100, Peter Korsgaard wrote:
-> >  >> Commit 409c1cfb5a80 ("usb: typec: tipd: fix event checking for tps6598x")
-> >  >> added (by accident?) a double read of the TPS_REG_INT_EVENT1 register.  Drop
-> >  >> that.
-> > 
-> >  > Are you sure?  Sometimes 2 reads are required.  How was this tested?
-> > 
-> > Hard to be 100% sure, but the code did not have a double read before the
-> > above commit and sticking a printk in the driver like this:
-> > 
-> > diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-> > index 01db27cbf1d1..6687d192dbd4 100644
-> > --- a/drivers/usb/typec/tipd/core.c
-> > +++ b/drivers/usb/typec/tipd/core.c
-> > @@ -536,8 +536,9 @@ static irqreturn_t tps6598x_interrupt(int irq, void *data)
-> >                 intev_len = TPS_65987_8_INTEVENT_LEN;
-> > 
-> >         ret = tps6598x_block_read(tps, TPS_REG_INT_EVENT1, event1, intev_len);
-> > -
-> > +       printk(KERN_ERR "1st: %llx %llx\n", event1[0], event1[1]);
-> >         ret = tps6598x_block_read(tps, TPS_REG_INT_EVENT1, event1, intev_len);
-> > +       printk(KERN_ERR "2nd: %llx %llx\n", event1[0], event1[1]);
-> >         if (ret) {
-> >                 dev_err(tps->dev, "%s: failed to read event1\n", __func__);
-> >                 goto err_unlock;
-> > 
-> > 
-> > and (un)plugging the USB cable I see:
-> > 
-> > [ 3267.257341] 1st: 3000008 0
-> > [ 3267.262097] 2nd: 3000008 0
-> > 
-> > [ 3267.345179] 1st: 1000000 0
-> > [ 3267.350512] 2nd: 1000000 0
-> > 
-> > [ 3267.388947] 1st: 1000000 0
-> > [ 3267.393707] 2nd: 1000000 0
-> > 
-> > [ 3267.912112] 1st: 1000000 0
-> > [ 3267.916872] 2nd: 1000000 0
-> > 
-> > [ 3268.049505] 1st: 1000000 0
-> > [ 3268.054773] 2nd: 1000000 0
-> > 
-> > [ 3269.105173] 1st: 1000000 0
-> > [ 3269.109970] 2nd: 1000000 0
-> > 
-> > [ 3280.049111] 1st: 3000008 0
-> > [ 3280.053865] 2nd: 3000008 0
-> > 
-> > So I am fairly sure it is not needed.
-> 
-> Sometimes hardware requires it, even if it is not noticed by the actual
-> read value, so I would like to get an ack from the original author on
-> this before accepting it.
+From: Qi Zheng <zhengqi.arch@bytedance.com>
 
-The hardware should not require it. Javier, can you comment on this?
-If there really is need to do double read, then there needs to be a
-comment explaining why IMO.
+Changes in v6:
+ - collect Reviewed-bys
+ - rebase onto the next-20251110
 
-thanks,
+Changes in v5:
+ - fix the softlockup issue in deferred_split_scan() (Zi Yan)
+ - modify the commit message in [PATCH v4 3/4] (Shakeel Butt)
+ - move memcg_is_dying() to memcontrol.h (Shakeel Butt)
+ - collect Acked-bys and Reviewed-bys
+ - rebase onto the next-20251014
+
+Changes in v4:
+ - add split_queue_lock*() and let folio_split_queue_lock*() to use them.
+   (I have kept everyone's Acked-bys and Reviewed-bys. If you need to discard
+    it, please let me know.)
+ - let deferred_split_scan() to use split_queue_lock_irqsave(), which will fix
+   the race problem in [PATCH v3 4/4].
+   (Muchun Song)
+ - collect Reviewed-bys
+ - rebase onto the next-20251002
+
+Changes in v3:
+ - use css_is_dying() in folio_split_queue_lock*() to check if memcg is dying
+   (David Hildenbrand, Shakeel Butt and Zi Yan)
+ - modify the commit message in [PATCH v2 4/4]
+   (Roman Gushchin)
+ - fix the build error in [PATCH v2 4/4]
+ - collect Acked-bys and Reviewed-bys
+ - rebase onto the next-20250926
+
+Changes in v2:
+ - fix build errors in [PATCH 2/4] and [PATCH 4/4]
+ - some cleanups for [PATCH 3/4] (suggested by David Hildenbrand)
+ - collect Acked-bys and Reviewed-bys
+ - rebase onto the next-20250922
+
+Hi all,
+
+In the future, we will reparent LRU folios during memcg offline to eliminate
+dying memory cgroups, which requires reparenting the THP split queue to its
+parent memcg.
+
+Similar to list_lru, the split queue is relatively independent and does not need
+to be reparented along with objcg and LRU folios (holding objcg lock and lru
+lock). Therefore, we can apply the same mechanism as list_lru to reparent the
+split queue first when memcg is offine.
+
+The first three patches in this series are separated from the series
+"Eliminate Dying Memory Cgroup" [1], mainly to do some cleanup and preparatory
+work.
+
+The last patch reparents the THP split queue to its parent memcg during memcg
+offline.
+
+Comments and suggestions are welcome!
+
+Thanks,
+Qi
+
+[1]. https://lore.kernel.org/all/20250415024532.26632-1-songmuchun@bytedance.com/
+
+Muchun Song (3):
+  mm: thp: replace folio_memcg() with folio_memcg_charged()
+  mm: thp: introduce folio_split_queue_lock and its variants
+  mm: thp: use folio_batch to handle THP splitting in
+    deferred_split_scan()
+
+Qi Zheng (1):
+  mm: thp: reparent the split queue during memcg offline
+
+ include/linux/huge_mm.h    |   4 +
+ include/linux/memcontrol.h |  20 +++
+ mm/huge_memory.c           | 250 +++++++++++++++++++++++++------------
+ mm/memcontrol.c            |   1 +
+ 4 files changed, 194 insertions(+), 81 deletions(-)
 
 -- 
-heikki
+2.20.1
+
 
