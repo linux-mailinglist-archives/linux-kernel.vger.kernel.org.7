@@ -1,39 +1,51 @@
-Return-Path: <linux-kernel+bounces-893573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A10C47BF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:02:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A78C47C3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:05:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552CA188B954
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:55:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A39334EC6DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C320927B34F;
-	Mon, 10 Nov 2025 15:52:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DF5274FC1;
-	Mon, 10 Nov 2025 15:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1F527E07A;
+	Mon, 10 Nov 2025 15:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="A+DHQIJV"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2634A1925BC
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762789926; cv=none; b=qrBLFGuXEffYnJrfm5oasZ5tKXPMgM9EDOsBN2BiuaKnTMTRHbhxYQsgqmIEiQy1v37LWC9fTCJcQV/zwSghOVtmjEN64KSwm8yxDp9NufJcWfWXtfOrrOygqTde2ueP7ktiejJhbQBSsA1EQ+uuHjnhaHrfpPvfK2E3OXc9e0A=
+	t=1762789973; cv=none; b=N96Kp6cOCsG04jy4iaChqckqP5TccORLJbIFtYFkLbQt2EPJczqI79jhlj5jlKCxKDOb69FP+aZ6ooM10D9/6WYxVH3H0oH2bGkA8aODREp89oIq2l0qB32Jufaa2k5wPi+f2wL7u61GiirFtAHcLv8nkADmkIE1HVky4FkcBAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762789926; c=relaxed/simple;
-	bh=xdEbNKFWPSwfwj0BOf5/HLomw0fzTbpFjodjnfrwQwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qwhQ9rXOLe6mTfqgnXrwUvHPoru6q0Bg1EXpznnz20bJIIGWlWAP7/oU+lcF2pZAQxmTcsy1HD5D2f+4lepExTDL5QguCyuI3/u1EXS4NuICRGFTPcPLS00tkrQAUlITCruZ6HZAUmX0n18vfV4qqSx1LW/l51HQ3XmsrsQNHF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65B902F;
-	Mon, 10 Nov 2025 07:51:55 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 812F73F66E;
-	Mon, 10 Nov 2025 07:51:58 -0800 (PST)
-Message-ID: <374f53a9-6ff5-4c37-bd41-9e746eaec1da@arm.com>
-Date: Mon, 10 Nov 2025 15:51:57 +0000
+	s=arc-20240116; t=1762789973; c=relaxed/simple;
+	bh=EacGFIAMHCxTCWrK6DvfS6+8MkMCjXdrGnli80zNq1g=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TVQkYHscbWb8JyKFmRFr35fjTyDKegB2wt1Lei1vjI/18hHmtiXpEfif7bBwiTBug4PgUO7yTUyT+wHSar1LxNMmcvU74MB7h2Kh3meVqoGSTHdP/1zdL8A/f3JgtxN+AEvnqLz3U+f5D4bGb4SQV8BYxJ98Lmz4bgOPW+HjI88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=A+DHQIJV; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id mnzLNpMLSm3w5soT; Mon, 10 Nov 2025 10:52:49 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=yjsCdL8ouw87tHf4qzCFGr3AYXHhR8tAd+jfwFAtwug=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=A+DHQIJV7qil2JN+4b9+
+	OWEo5FjBtiOupVH4nFS3UEzfJ3ZtjTFoR3A9OD20jJ9DXDTXf1EFiBVpthBuIhGtugoK+A5f7h1XF
+	Wa6gW+W7kQpBIebFVxXXz0ZwLfbQzBQekyVe+kZqBkHxZcQ11kjwmbA123ihOyDYOi0+l2K264=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14272391; Mon, 10 Nov 2025 10:52:49 -0500
+Message-ID: <cb006628-e321-4e30-a60b-08b37b8685a5@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 10 Nov 2025 10:52:49 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,121 +53,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/33] ACPI / PPTT: Add acpi_pptt_cache_v1_full to use
- pptt cache as one structure
-To: Gavin Shan <gshan@redhat.com>, james.morse@arm.com
-Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, guohanjun@huawei.com,
- jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-4-ben.horgan@arm.com>
- <04f4c2f6-19ff-413f-96fb-86432d53830e@redhat.com>
-From: Ben Horgan <ben.horgan@arm.com>
+Subject: [PATCH v3 05/16] scsi: qla2xxx: remove code for unsupported hardware
 Content-Language: en-US
-In-Reply-To: <04f4c2f6-19ff-413f-96fb-86432d53830e@redhat.com>
+X-ASG-Orig-Subj: [PATCH v3 05/16] scsi: qla2xxx: remove code for unsupported hardware
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1762789969
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 2743
+X-ASG-Debug-ID: 1762789969-1cf439139110ccc0001-xx1T2L
 
-Hi Gavin,
+(target mode)
 
-On 11/8/25 04:54, Gavin Shan wrote:
-> Hi Ben,
-> 
-> On 11/7/25 10:34 PM, Ben Horgan wrote:
->> In actbl2.h, struct acpi_pptt_cache describes the fields in the original
->> cache type structure. In PPTT table version 3 a new field was added at
->> the
->> end, cache_id. This is described in struct acpi_pptt_cache_v1. Introduce
->> the new, acpi_pptt_cache_v1_full to contain both these structures. Update
->> the existing code to use this new struct. This simplifies the code,
->> removes
->> a non-standard use of ACPI_ADD_PTR and allows using the length in the
->> header to check if the cache_id is valid.
->>
->> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
->> ---
->> Changes since v3:
->> New patch
->> ---
->>   drivers/acpi/pptt.c | 104 ++++++++++++++++++++++++--------------------
->>   1 file changed, 58 insertions(+), 46 deletions(-)
->>
-> 
-> Two nitpicks below. LGTM in either way.
-> 
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> 
->> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
->> index 1027ca3566b1..1ed2099c0d1a 100644
->> --- a/drivers/acpi/pptt.c
->> +++ b/drivers/acpi/pptt.c
->> @@ -21,6 +21,11 @@
->>   #include <linux/cacheinfo.h>
->>   #include <acpi/processor.h>
->>   +struct acpi_pptt_cache_v1_full {
->> +    struct acpi_pptt_cache        f;
->> +    struct acpi_pptt_cache_v1    extra;
->> +} __packed;
->> +
->>   static struct acpi_subtable_header *fetch_pptt_subtable(struct
->> acpi_table_header *table_hdr,
->>                               u32 pptt_ref)
->>   {
->> @@ -50,10 +55,24 @@ static struct acpi_pptt_processor
->> *fetch_pptt_node(struct acpi_table_header *tab
->>       return (struct acpi_pptt_processor
->> *)fetch_pptt_subtable(table_hdr, pptt_ref);
->>   }
->>   -static struct acpi_pptt_cache *fetch_pptt_cache(struct
->> acpi_table_header *table_hdr,
->> -                        u32 pptt_ref)
->> +static struct acpi_pptt_cache_v1_full *fetch_pptt_cache(struct
->> acpi_table_header *table_hdr,
->> +                            u32 pptt_ref)
->>   {
->> -    return (struct acpi_pptt_cache *)fetch_pptt_subtable(table_hdr,
->> pptt_ref);
->> +    return (struct acpi_pptt_cache_v1_full
->> *)fetch_pptt_subtable(table_hdr, pptt_ref);
->> +}
->> +
->> +#define ACPI_PPTT_CACHE_V1_LEN sizeof(struct acpi_pptt_cache_v1_full)
->> +
->> +/*
->> + * From PPTT table version 3, a new field cache_id was added at the
->> end of
->> + * the cache type structure.  We now use struct acpi_pptt_cache_v1_full,
->> + * containing the cache_id, everywhere but must check validity before
->> accessing
->> + * the cache_id.
->> + */
->> +static bool acpi_pptt_cache_id_is_valid(struct
->> acpi_pptt_cache_v1_full *cache)
->> +{
->> +    return (cache->f.header.length >= ACPI_PPTT_CACHE_V1_LEN &&
->> +        cache->f.flags & ACPI_PPTT_CACHE_ID_VALID);
->>   }
->>   
-> 
-> This function is nice fit to 'inline'. Besides, I'm not sure if we can just
-> use sizeof(*cache) instead of ACPI_PPTT_CACHE_V1_LEN, which is used for
-> once
-> in pptt.c
+As far as I can tell, CONTINUE_TGT_IO_TYPE and CTIO_A64_TYPE are message
+types from non-FWI2 boards (older than ISP24xx), which are not supported
+by qla_target.c.  Removing them makes it possible to turn a void * into
+the real type and avoid some typecasts.
 
-Yes, the define is unnecessary and the function can be inlined. Thanks
-for pointing it out. I'm likely to rework this patch though.
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
 
-Thanks,
+v2 -> v3: no changes
 
-Ben
+v1 -> v2: no changes
+
+ drivers/scsi/qla2xxx/qla_target.c | 32 +++++--------------------------
+ 1 file changed, 5 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 1e81582085e3..df5c9aac5617 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -3913,7 +3913,8 @@ static void *qlt_ctio_to_cmd(struct scsi_qla_host *vha,
+  * ha->hardware_lock supposed to be held on entry. Might drop it, then reaquire
+  */
+ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+-    struct rsp_que *rsp, uint32_t handle, uint32_t status, void *ctio)
++	struct rsp_que *rsp, uint32_t handle, uint32_t status,
++	struct ctio7_from_24xx *ctio)
+ {
+ 	struct qla_hw_data *ha = vha->hw;
+ 	struct se_cmd *se_cmd;
+@@ -3934,11 +3935,8 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 	if (cmd == NULL)
+ 		return;
+ 
+-	if ((le16_to_cpu(((struct ctio7_from_24xx *)ctio)->flags) & CTIO7_FLAGS_DATA_OUT) &&
+-	    cmd->sess) {
+-		qlt_chk_edif_rx_sa_delete_pending(vha, cmd->sess,
+-		    (struct ctio7_from_24xx *)ctio);
+-	}
++	if ((le16_to_cpu(ctio->flags) & CTIO7_FLAGS_DATA_OUT) && cmd->sess)
++		qlt_chk_edif_rx_sa_delete_pending(vha, cmd->sess, ctio);
+ 
+ 	se_cmd = &cmd->se_cmd;
+ 	cmd->cmd_sent_to_fw = 0;
+@@ -4007,7 +4005,7 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 			    *((u64 *)&crc->actual_dif[0]),
+ 			    *((u64 *)&crc->expected_dif[0]));
+ 
+-			qlt_handle_dif_error(qpair, cmd, ctio);
++			qlt_handle_dif_error(qpair, cmd, crc);
+ 			return;
+ 		}
+ 
+@@ -5816,26 +5814,6 @@ static void qlt_response_pkt(struct scsi_qla_host *vha,
+ 	}
+ 	break;
+ 
+-	case CONTINUE_TGT_IO_TYPE:
+-	{
+-		struct ctio_to_2xxx *entry = (struct ctio_to_2xxx *)pkt;
+-
+-		qlt_do_ctio_completion(vha, rsp, entry->handle,
+-		    le16_to_cpu(entry->status)|(pkt->entry_status << 16),
+-		    entry);
+-		break;
+-	}
+-
+-	case CTIO_A64_TYPE:
+-	{
+-		struct ctio_to_2xxx *entry = (struct ctio_to_2xxx *)pkt;
+-
+-		qlt_do_ctio_completion(vha, rsp, entry->handle,
+-		    le16_to_cpu(entry->status)|(pkt->entry_status << 16),
+-		    entry);
+-		break;
+-	}
+-
+ 	case IMMED_NOTIFY_TYPE:
+ 		ql_dbg(ql_dbg_tgt, vha, 0xe035, "%s", "IMMED_NOTIFY\n");
+ 		qlt_handle_imm_notify(vha, (struct imm_ntfy_from_isp *)pkt);
+-- 
+2.43.0
+
 
 
