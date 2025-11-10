@@ -1,119 +1,130 @@
-Return-Path: <linux-kernel+bounces-892851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4ECC45F2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:33:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53CC5C45F24
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF276188F20F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:31:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 455F23A5C25
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9194530216D;
-	Mon, 10 Nov 2025 10:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8832FFDFA;
+	Mon, 10 Nov 2025 10:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wVT8DuZt"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4JOMTZp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3240F288C22
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305EB22A4E1;
+	Mon, 10 Nov 2025 10:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762770663; cv=none; b=C+tPKW/B5blS6ubHzGVxxRALWKy4KCejOoQI0/sA+r7GR5vujcphfo20za+A8WVsvTLkBkviRqpGw+X6PDHa13QaMqCMnQyUy5bwpMDrDKhLwQad2FEWqoGfcY8kzEmzxbzM99ZvbZItuBbiIJmwylVbFglAiZP/sFHoby+eL4k=
+	t=1762770800; cv=none; b=FIRygB2J1mcbsJGhpWhblr6UMJtY/2r6php7rznEkpoD3TlvstdE2cwvZYIM6e95eYFdCc6gWR3yZndEULz/oovllL4bSiy9dob3F+AVEHPGjhU4KKCj+Tc7W9oMJyjkXoj4Sg1bYefQD7r8xeachbKH6Xn80/O4leHwa2T1wt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762770663; c=relaxed/simple;
-	bh=GISx0LVyM2/QgivELlFUbtboVFx5/0Ttdw8BgePqXok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SosQ0dMroXTaalNKnI/PL1gC/9SxvOQpkuCgaYrgr/4H/FdmXeNCL6tKjN/JEM/WJhjJdVBTgH6osMmDsEpZw+LMT9WFaYlJ98WcEFBLP1VYcbAHB8KikeElV4hnCm+kqTqoKGyM46vnLuoqDCqLTbCyBqzCKlV4GlVOWkp83K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wVT8DuZt; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-58b025fce96so2362603e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:31:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762770659; x=1763375459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QU08++yZFWV12YufiFjJiqJethik/+S6rZcQDhNnBws=;
-        b=wVT8DuZtYqJGoFHtBH+2Yw8BycLbNfKvuz7XIoCaZ2aYIEJABKzAS9INK3go7kiOXO
-         0x/EvkIXjfJxrIMvEmTROhOjkITQ136CY2l6r3qYLISernAVQeFJYpAF7bnJHI5wP4/A
-         zh1ayRfklvpvp7vxCd34uTLQoyg777PuNg6tRlcc5EynL2eQEmy1rFeXSK4zcxiYSLdL
-         BgMfSF0S/GS83DqGvO7YdqNkyLrMnYuJu4j8xteFM+Pseof4PvStY2PabnNFdtz5YHmK
-         4CNNILVl64/8gR6uTlGZk3B6oXytOaqv9ZuF259AqNf2yiy9x9P+hCPFm7IqpjpPH3xY
-         LYiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762770659; x=1763375459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QU08++yZFWV12YufiFjJiqJethik/+S6rZcQDhNnBws=;
-        b=MEltxjFnE5w7oqdsNW2oi6frgLXc/JOBaSkN3LVdPLOkRgg6EGBGREKbFyZD+JKClV
-         Y9uCBJ6ZWB2mbxRnomajsBQ79L+q7a0/c5Wv7yBYFFbJNQPoNhKQgJir3mm9zi4j8TSc
-         waMaYL5+eimkhKhhdaHSUQ/Qmrv8K5iovPh5ovapQHGzJgOE1tjyUDjP0ojV9vbBIDXb
-         1LKHD0gPeT2GUXTifvqaev/jMsFYFqZZ97zxDagQZ1FvursqGbc/LeUHqFCJtzixW6AX
-         /hFqXY0UcGZ08IOkM0LMXnvv1yycvAvlwOUKWDRe00s89McauZ71M26GgZtnLVQImX2d
-         VGSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULrWettrmvjIvo9Twm62JS36AXkCqKpjUleeDrkIxeKlmPwFDMv7sNKjZK7T2+MqEgMZsOPeWH9Xkw+6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJKryqPr1ZQqgjsVkV+lubRfko4Kxrw0tt1PorKFCtX3W6W12v
-	e0OS0W5NkNYQZWvr7aQz7bKPSs7c0DG3MXhD92O5HhYu7lt58nOTP+3n3At6nd3mXYzDWtLwem8
-	FX44pvlekQgfsrGY6iP3ZTfIqEc+FGZIQHc68klqtwBcDkw4DQ152
-X-Gm-Gg: ASbGncu4ccTijsKzlk8fcdbUQNzn0S6nqfj0EwsYRDWI3Yr6M/BRj4oy1IVS902x34R
-	f31Rl8QfGQGGvWELB6TAdZKQDt975r3B0FFgR0p26CmFuFXw+OmFBg9uBcrRzXKzZZlNXXz+QRf
-	HRTxb8GjL8t4qntSl4R7SZlUwvxpuonmQgmK1CcIzdzMP7OTf5M2LxYR+lNmekAGlM3lxw+hP+U
-	ZAyaFA2ayyEMy6nZ9eGxMx+6CwZl4cbs6+8/svw9jq853qulFAUijcAHOLjaCSzNtvdx8w=
-X-Google-Smtp-Source: AGHT+IGIXbIku+5fYyzKohAAT6RG/P8U2C7G8e9kXvVMEvCfF8edHPq84Zw+IaV6jNgp67Ypm1mnZzGXPUSxOGgBk6I=
-X-Received: by 2002:a05:6512:3d05:b0:57e:c1e6:ba8 with SMTP id
- 2adb3069b0e04-5945f146395mr2089860e87.12.1762770659287; Mon, 10 Nov 2025
- 02:30:59 -0800 (PST)
+	s=arc-20240116; t=1762770800; c=relaxed/simple;
+	bh=XGdAZQMoYX6Us3MCpLM/NxmAUfTsARkCljiFE1chCCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJdL1LF36HA2S8Vw5umCQPnIBvWZfwwxGhoHuMse4VhUjpyiOhpSJMscmcuGsaKc0s3QseWsFeKyVcydTjVKskcme1xCvT5RFG+jkau6TYC4xtgpMu0C0KKxZ3GARibwCaKND+IRsJJf905yDKXj8+WWgu4+pfUke06nvouxdYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4JOMTZp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70E38C4CEFB;
+	Mon, 10 Nov 2025 10:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762770799;
+	bh=XGdAZQMoYX6Us3MCpLM/NxmAUfTsARkCljiFE1chCCw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J4JOMTZpT9f7JobhPkEEVtMbrvMHN/QmyRT6CkgFjCdJG5tsJTSz8geO6tHzfz4MZ
+	 GOtCv9QmePCfHi7gUxydKyaNAHExL86jJuMscDVKgAWHZ7EJQr57EVkxmdLu75Y+fa
+	 0e1xo+JMgJNAA5omFi7cogT0zgMR1tsoDvsDgs7KZw1EhYLo4SQ8Go6krZUCmuxhX+
+	 TlUwbp/UOOC/EQHwOjQ9q8LN4U6NTRoMDnhC0LYEYxbZTExqiiDH/Y7wbBEyqMfYlr
+	 r1v9Pp87oj1/1F+lROk+yyvElmJFs/KQ/dMSJPduQqa1ttaRNf6qVKNo4lb44QhkeA
+	 ibjK5TaviSRAQ==
+Date: Mon, 10 Nov 2025 12:33:11 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] selftest/mm: fix pointer comparison in mremap_test
+Message-ID: <aRG_Z7p1jwEUsRy5@kernel.org>
+References: <20251108161829.25105-1-ankitkhushwaha.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031160710.13343-1-antoniu.miclaus@analog.com> <20251031160710.13343-3-antoniu.miclaus@analog.com>
-In-Reply-To: <20251031160710.13343-3-antoniu.miclaus@analog.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 10 Nov 2025 11:30:33 +0100
-X-Gm-Features: AWmQ_bn6eI5FE_ScZi7BjkTK0y0_CSDlwCtPcUJZzvZroFx81ufpj8BGANUbJDU
-Message-ID: <CACRpkdYdtcnxyP4xVsqVK+geurEOEURqZO5eLC96YMqh1sE5Sw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: adg1712: add driver support
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251108161829.25105-1-ankitkhushwaha.linux@gmail.com>
 
-Hi Antoniu,
+On Sat, Nov 08, 2025 at 09:48:29PM +0530, Ankit Khushwaha wrote:
+> Pointer arthemitic with 'void * addr' and 'ulong dest_alignment'
+> triggers following warning:
+> 
+> mremap_test.c:1035:31: warning: pointer comparison always evaluates to
+> false [-Wtautological-compare]
+>  1035 |                 if (addr + c.dest_alignment < addr) {
+>       |                                             ^
+> 
+> this warning is raised from clang version 20.1.8 (Fedora 20.1.8-4.fc42).
+> 
+> use 'void *tmp_addr' to do the pointer arthemitic.
+> 
+> Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+> ---
+> Changelog:
+> v2:
+> - use 'void *tmp_addr' for pointer arthemitic instead of typecasting
+> 'addr' to 'unsigned long long' as suggested by Andrew.
+> 
+> v1: https://lore.kernel.org/linux-kselftest/20251106104917.39890-1-ankitkhushwaha.linux@gmail.com/
+> ---
+>  tools/testing/selftests/mm/mremap_test.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/mm/mremap_test.c b/tools/testing/selftests/mm/mremap_test.c
+> index a95c0663a011..308576437228 100644
+> --- a/tools/testing/selftests/mm/mremap_test.c
+> +++ b/tools/testing/selftests/mm/mremap_test.c
+> @@ -994,7 +994,7 @@ static void mremap_move_multi_invalid_vmas(FILE *maps_fp, unsigned long page_siz
+>  static long long remap_region(struct config c, unsigned int threshold_mb,
+>  			      char *rand_addr)
+>  {
+> -	void *addr, *src_addr, *dest_addr, *dest_preamble_addr = NULL;
+> +	void *addr, *tmp_addr, *src_addr, *dest_addr, *dest_preamble_addr = NULL;
+>  	unsigned long long t, d;
+>  	struct timespec t_start = {0, 0}, t_end = {0, 0};
+>  	long long  start_ns, end_ns, align_mask, ret, offset;
+> @@ -1032,7 +1032,8 @@ static long long remap_region(struct config c, unsigned int threshold_mb,
+>  	/* Don't destroy existing mappings unless expected to overlap */
+>  	while (!is_remap_region_valid(addr, c.region_size) && !c.overlapping) {
+>  		/* Check for unsigned overflow */
+> -		if (addr + c.dest_alignment < addr) {
+> +		tmp_addr = addr + c.dest_alignment;
 
-thanks for your patch!
+Nit: tmp_addr can be declared here.
 
-On Fri, Oct 31, 2025 at 5:08=E2=80=AFPM Antoniu Miclaus
-<antoniu.miclaus@analog.com> wrote:
+Other than that
 
-> Add driver support for the ADG1712, which contains four independent
-> single-pole/single-throw (SPST) switches and operates with a
-> low-voltage single supply range from +1.08V to +5.5V or a low-voltage
-> dual supply range from =C2=B11.08V to =C2=B12.75V.
->
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-So tying into the binding discussion:
+> +		if (tmp_addr < addr) {
+>  			ksft_print_msg("Couldn't find a valid region to remap to\n");
+>  			ret = -1;
+>  			goto clean_up_src;
+> --
+> 2.51.1
+> 
 
-GPIO means "general purpose input/output".
-
-I am really confused as whether this is:
-
-- General purpose - seems to be for the purpose of switching
-  currents and nothing else.
-
-- Input/Output - It's switching something else and not inputting
-  or outputting anything and this makes the driver look strange.
-
-Yours,
-Linus Walleij
+-- 
+Sincerely yours,
+Mike.
 
