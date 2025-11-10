@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-894332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C15C49C27
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:30:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A55AC49C33
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:31:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9DD2E4EF982
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:30:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 24B044EE4F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A056344044;
-	Mon, 10 Nov 2025 23:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CC53446C8;
+	Mon, 10 Nov 2025 23:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hsALnKYI"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BwWIMQVa"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7201B339B58
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D66343D8C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762817247; cv=none; b=phnLC9ru6EsWDCJbg8qgfxFNrbrh1p6/ggLp5I4w5Y5hfK6nHK4ebYEf8LMLu81PVOyfdtxx/rlSVNB3AgaSHBOoyOy6X9gGlZglgzaPoTTVuhSrocebCXncmICwsUANURn5Angm1WKASaUId+8IhixsPN50SlEKjGrfkrK1SRg=
+	t=1762817249; cv=none; b=szWirUQpsUuUzQcRbvvIQjyV05z2lrnRJUFRfVP9OlVfmA1WaIc9ybAZc6DD19Rau8mDYL6pK5C84tc3ZXCBPMCaqbfD4ang8XiRoWKq3OSG3Y9cFL0rp6qGnbOoqBf5mtAvpEsTIqdju/rGfCcOlZwI/BQOHSo1GYfgAcL+uOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762817247; c=relaxed/simple;
-	bh=6cMSkWiFcxCeUdr+GFhK5aJIyWWK4/bAle6E3Rq/rYg=;
+	s=arc-20240116; t=1762817249; c=relaxed/simple;
+	bh=1nnldSyEvUMxdV3DKPZB9q5uBddTFGvYWQ+A5Gk4ElM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ii5EoGixM6eaOU7clrseZeoZ6y6mZPV8qXtuWsZur+juYZYewlnro/sceElO4wlR3QF+4VolMhR/6RiPMNUYyGTiObmJpOhdaVJXLfkhwc5i+btfkAJ1XoZlWRGOc4U1RMbCU8COxC+S0yMr/EkxSEmJUWjckZg7eHAA0y6/Pw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hsALnKYI; arc=none smtp.client-ip=91.218.175.179
+	 MIME-Version; b=lyc3Sky4W5LOD0lNgt4X7lRGA72n6iP7601qGgGF+crsrn5RQ76bOM3kQzhcy+rw0iN3DygWolDOt9l6FNoegOzEnEw5g2myk2vfHSknj9r10EPoD/dI8v8E0I62mK9MuIChX7K6pXeMZRXM3JFIrrUSigytzSJqSQW4+w7xFWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BwWIMQVa; arc=none smtp.client-ip=91.218.175.185
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762817243;
+	t=1762817245;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RFlZ027NSXi28xsnB5O4aQTD9p2O2sueEXLrszMepZA=;
-	b=hsALnKYIK6Zg7jwDtnqJ6ONAuEjzQaOwHKV6R4UNEHU5M4VVE6FVKJ1J+9uD4b2CU/WUyT
-	X5UqZWK/2iTzVoQmljw8jcW0plF3JPcNESfFHYq8zC8tr3BSCVlt7I8voxoPT+v01nEiN7
-	Sdjt/Lsidft8m0pJIB+7hehSOVlF8pU=
+	bh=3vRe2/SJRKLIb78m7r5C5J3c6BhgOIpUIxQ+bEHV9RQ=;
+	b=BwWIMQVaAl13BoMv9/NJv+GhfuwUnn53OtluxqiPKy/xZVYaz+kcjuibSOhBmIewv4ha/6
+	ePzp2J1uFwPxYgauZZB0McSZofHSDHBpOFy3mSs/5Gq+U/qPXEr2yq6oUyOw3s/cufKUxG
+	NNC4GbQlmwkD9yqNTZjTg5HAWC9RTGw=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: Sean Christopherson <seanjc@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>,
@@ -48,9 +48,9 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>,
 	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH v3 13/14] x86/svm: Add more LBRV test cases
-Date: Mon, 10 Nov 2025 23:26:41 +0000
-Message-ID: <20251110232642.633672-14-yosry.ahmed@linux.dev>
+Subject: [PATCH v3 14/14] x86/svm: Rename VMCB fields to match KVM
+Date: Mon, 10 Nov 2025 23:26:42 +0000
+Message-ID: <20251110232642.633672-15-yosry.ahmed@linux.dev>
 In-Reply-To: <20251110232642.633672-1-yosry.ahmed@linux.dev>
 References: <20251110232642.633672-1-yosry.ahmed@linux.dev>
 Precedence: bulk
@@ -62,145 +62,115 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Add tests exercising using LBR, disabling it, then running a guest which
-enables and uses LBR but does not disable it.
-
-Make sure that when LBRV is disabled by virtual host, the guest state
-correctly leaks into virtual host, but not when LBRV is enabled.  This
-also exercises KVM disabling intercepts for LBRs in L2 but re-enabling
-them when exiting to L1.
+Rename nested_ctl and virt_ext to misc_ctl and misc_ctl2, respectively,
+to match new names in KVM code.
 
 Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 ---
- x86/svm_tests.c | 80 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+ x86/svm.c       |  2 +-
+ x86/svm.h       |  6 +++---
+ x86/svm_tests.c | 12 ++++++------
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
+diff --git a/x86/svm.c b/x86/svm.c
+index de9eb19443caa..c40ef154bcacd 100644
+--- a/x86/svm.c
++++ b/x86/svm.c
+@@ -200,7 +200,7 @@ void vmcb_ident(struct vmcb *vmcb)
+ 	ctrl->msrpm_base_pa = virt_to_phys(msr_bitmap);
+ 
+ 	if (npt_supported()) {
+-		ctrl->nested_ctl = 1;
++		ctrl->misc_ctl = 1;
+ 		ctrl->nested_cr3 = (u64)pml4e;
+ 		ctrl->tlb_ctl = TLB_CONTROL_FLUSH_ALL_ASID;
+ 	}
+diff --git a/x86/svm.h b/x86/svm.h
+index 264583a6547ef..00d28199f65f5 100644
+--- a/x86/svm.h
++++ b/x86/svm.h
+@@ -94,12 +94,12 @@ struct __attribute__ ((__packed__)) vmcb_control_area {
+ 	u64 exit_info_2;
+ 	u32 exit_int_info;
+ 	u32 exit_int_info_err;
+-	u64 nested_ctl;
++	u64 misc_ctl;
+ 	u8 reserved_4[16];
+ 	u32 event_inj;
+ 	u32 event_inj_err;
+ 	u64 nested_cr3;
+-	u64 virt_ext;
++	u64 misc_ctl2;
+ 	u32 clean;
+ 	u32 reserved_5;
+ 	u64 next_rip;
+@@ -370,7 +370,7 @@ struct __attribute__ ((__packed__)) vmcb {
+ 
+ #define MSR_BITMAP_SIZE 8192
+ 
+-#define LBR_CTL_ENABLE_MASK BIT_ULL(0)
++#define SVM_MISC_CTL2_LBR_CTL_ENABLE BIT_ULL(0)
+ 
+ struct svm_test {
+ 	const char *name;
 diff --git a/x86/svm_tests.c b/x86/svm_tests.c
-index 33c92b17c87db..47a2edfbb6c9b 100644
+index 47a2edfbb6c9b..49b5906965b7e 100644
 --- a/x86/svm_tests.c
 +++ b/x86/svm_tests.c
-@@ -3031,11 +3031,14 @@ static __always_inline void get_lbr_ips(u64 *from, u64 *to)
- 
- extern u64 guest_branch0_from, guest_branch0_to;
- extern u64 guest_branch2_from, guest_branch2_to;
-+extern u64 guest_branch3_from, guest_branch3_to;
- 
- extern u64 host_branch0_from, host_branch0_to;
- extern u64 host_branch2_from, host_branch2_to;
- extern u64 host_branch3_from, host_branch3_to;
- extern u64 host_branch4_from, host_branch4_to;
-+extern u64 host_branch5_from, host_branch5_to;
-+extern u64 host_branch6_from, host_branch6_to;
- 
- u64 dbgctl;
- 
-@@ -3095,6 +3098,23 @@ static void svm_lbrv_test_guest2(void)
- 	asm volatile ("vmmcall\n");
- }
- 
-+static void svm_lbrv_test_guest3(void)
-+{
-+	/*
-+	 * This guest expects LBR to be disabled, it enables LBR and does a
-+	 * branch, then exits to L1 without disabling LBR or doing more
-+	 * branches.
-+	 */
-+	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
-+	TEST_EXPECT_EQ(dbgctl, 0);
-+
-+	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);
-+	DO_BRANCH(guest_branch3);
-+
-+	/* Do not call the vmmcall() fn to avoid overriding the last branch */
-+	asm volatile ("vmmcall\n\t");
-+}
-+
- static void svm_lbrv_test0(void)
- {
+@@ -3139,7 +3139,7 @@ static void svm_lbrv_test1(void)
  	u64 from_ip, to_ip;
-@@ -3156,6 +3176,33 @@ static void svm_lbrv_test2(void)
- 	TEST_EXPECT_EQ((u64)&guest_branch2_to, to_ip);
- }
  
-+/*
-+ * Test that without LBRV enabled, enabling LBR in the guest then exiting will
-+ * keep LBR enabled and 'leak' state to the host correctly.
-+ */
-+static void svm_lbrv_test3(void)
-+{
-+	u64 from_ip, to_ip;
-+
-+	svm_setup_vmrun((u64)svm_lbrv_test_guest3);
-+	vmcb->control.virt_ext = 0;
-+
-+	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);
-+	DO_BRANCH(host_branch5);
-+	wrmsr(MSR_IA32_DEBUGCTLMSR, 0);
-+
-+	SVM_BARE_VMRUN;
-+	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
-+	wrmsr(MSR_IA32_DEBUGCTLMSR, 0);
-+	TEST_EXPECT_EQ(dbgctl, DEBUGCTLMSR_LBR);
-+
-+	TEST_EXPECT_EQ(vmcb->control.exit_code, SVM_EXIT_VMMCALL);
-+
-+	get_lbr_ips(&from_ip, &to_ip);
-+	TEST_EXPECT_EQ((u64)&guest_branch3_from, from_ip);
-+	TEST_EXPECT_EQ((u64)&guest_branch3_to, to_ip);
-+}
-+
- /* Test that with LBRV enabled, guest LBR state doesn't leak (1) */
- static void svm_lbrv_nested_test1(void)
- {
-@@ -3217,6 +3264,37 @@ static void svm_lbrv_nested_test2(void)
- 	TEST_EXPECT_EQ((u64)&host_branch4_to, to_ip);
- }
+ 	svm_setup_vmrun((u64)svm_lbrv_test_guest1);
+-	vmcb->control.virt_ext = 0;
++	vmcb->control.misc_ctl2 = 0;
  
-+/*
-+ * Test that with LBRV enabled, enabling LBR in the guest then exiting does not
-+ * 'leak' state to the host.
-+ */
-+static void svm_lbrv_nested_test3(void)
-+{
-+	u64 from_ip, to_ip;
-+
-+	if (!lbrv_supported()) {
-+		report_skip("LBRV not supported in the guest");
-+		return;
-+	}
-+
-+	svm_setup_vmrun((u64)svm_lbrv_test_guest3);
-+	vmcb->control.virt_ext = LBR_CTL_ENABLE_MASK;
-+	vmcb->save.dbgctl = 0;
-+
-+	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);
-+	DO_BRANCH(host_branch6);
-+	wrmsr(MSR_IA32_DEBUGCTLMSR, 0);
-+
-+	SVM_BARE_VMRUN;
-+	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
-+	TEST_EXPECT_EQ(dbgctl, 0);
-+
-+	TEST_EXPECT_EQ(vmcb->control.exit_code, SVM_EXIT_VMMCALL);
-+
-+	get_lbr_ips(&from_ip, &to_ip);
-+	TEST_EXPECT_EQ((u64)&host_branch6_from, from_ip);
-+	TEST_EXPECT_EQ((u64)&host_branch6_to, to_ip);
-+}
+ 	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);
+ 	DO_BRANCH(host_branch1);
+@@ -3160,7 +3160,7 @@ static void svm_lbrv_test2(void)
+ 	u64 from_ip, to_ip;
  
- // test that a nested guest which does enable INTR interception
- // but doesn't enable virtual interrupt masking works
-@@ -3622,8 +3700,10 @@ struct svm_test svm_tests[] = {
- 	TEST(svm_lbrv_test0),
- 	TEST(svm_lbrv_test1),
- 	TEST(svm_lbrv_test2),
-+	TEST(svm_lbrv_test3),
- 	TEST(svm_lbrv_nested_test1),
- 	TEST(svm_lbrv_nested_test2),
-+	TEST(svm_lbrv_nested_test3),
- 	TEST(svm_intr_intercept_mix_if),
- 	TEST(svm_intr_intercept_mix_gif),
- 	TEST(svm_intr_intercept_mix_gif2),
+ 	svm_setup_vmrun((u64)svm_lbrv_test_guest2);
+-	vmcb->control.virt_ext = 0;
++	vmcb->control.misc_ctl2 = 0;
+ 
+ 	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);
+ 	DO_BRANCH(host_branch2);
+@@ -3185,7 +3185,7 @@ static void svm_lbrv_test3(void)
+ 	u64 from_ip, to_ip;
+ 
+ 	svm_setup_vmrun((u64)svm_lbrv_test_guest3);
+-	vmcb->control.virt_ext = 0;
++	vmcb->control.misc_ctl2 = 0;
+ 
+ 	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);
+ 	DO_BRANCH(host_branch5);
+@@ -3214,7 +3214,7 @@ static void svm_lbrv_nested_test1(void)
+ 	}
+ 
+ 	svm_setup_vmrun((u64)svm_lbrv_test_guest1);
+-	vmcb->control.virt_ext = LBR_CTL_ENABLE_MASK;
++	vmcb->control.misc_ctl2 = SVM_MISC_CTL2_LBR_CTL_ENABLE;
+ 	vmcb->save.dbgctl = DEBUGCTLMSR_LBR;
+ 
+ 	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);
+@@ -3244,7 +3244,7 @@ static void svm_lbrv_nested_test2(void)
+ 	}
+ 
+ 	svm_setup_vmrun((u64)svm_lbrv_test_guest2);
+-	vmcb->control.virt_ext = LBR_CTL_ENABLE_MASK;
++	vmcb->control.misc_ctl2 = SVM_MISC_CTL2_LBR_CTL_ENABLE;
+ 
+ 	vmcb->save.dbgctl = 0;
+ 	vmcb->save.br_from = (u64)&host_branch2_from;
+@@ -3278,7 +3278,7 @@ static void svm_lbrv_nested_test3(void)
+ 	}
+ 
+ 	svm_setup_vmrun((u64)svm_lbrv_test_guest3);
+-	vmcb->control.virt_ext = LBR_CTL_ENABLE_MASK;
++	vmcb->control.misc_ctl2 = SVM_MISC_CTL2_LBR_CTL_ENABLE;
+ 	vmcb->save.dbgctl = 0;
+ 
+ 	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
