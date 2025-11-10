@@ -1,220 +1,219 @@
-Return-Path: <linux-kernel+bounces-893478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0ECEC4787C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:28:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A70C4786D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:27:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF7904F5A6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:19:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E33D33B4E47
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2299323D7DE;
-	Mon, 10 Nov 2025 15:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FSf2bZdP";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="J6SfizIQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0C525C6F9;
+	Mon, 10 Nov 2025 15:19:20 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779E01A5B92
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AC12475CE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787934; cv=none; b=iKlwlMYaC+9Y3qVqkCxIYXPxE6WhEUWHymypKDgLuWNff9aPnjroPPhcEIMPVltVKWuMRwB081GbykJJjLGkmn5zDkT4e3IUYiRyW31AZjshiOLMU9BkxnQISp78h4n+PKVOibiaLBXrEMW/osMT331Z5cl1Rc3zckMzpHWT8Xw=
+	t=1762787960; cv=none; b=IwzTBXfXWo+NAD+0bdBEoeFxVbgtUKNc5/RYuJo9MSIaAi6e/wHl+TjwWUWDE7G1oRK/dYBsU4xhtHFHEMbXGR0V64NBXr1vXlDBq1+BCmSGeWUCJ1iIv1ZOiC1qhHmmU4zlfKTrj7DaXvyqSagieOKsyxJhTzxfwY5udb9yUdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787934; c=relaxed/simple;
-	bh=ipX76GJ+E+MU92+t7o//0oqh+sfpvzqejU1G4XYNo1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MwhMH/e3W72I1Bj8zqAKfqn6a9MdiIizBWT13LFgCkjy9CqPP0O9LxoIgI1LE1/D1G3yGntZYR+WEln/pJiVqUyKmfVWU9+sTOrgO6wYYfenDcX+mq+MRQT0n306vce81DY9kYUrtPUWEzPWNs9L0C3LCOjrfO1+s/vyot2e9eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FSf2bZdP; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=J6SfizIQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762787931;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=AlA+x0tRAsBDGTDa9nRiETe1XJez8KQz5PhSrdYv6ys=;
-	b=FSf2bZdPyXz4BPBHFx70cWxbGN5oqjZFP/4/s+5rV9tvJf5Ys+vLlwtVrQcUReeQ/YO6dx
-	B0PRLQr+xiBig08K+msob//izGRcuZaMmtL/g6YcbWo7AhZVYTwCAkb/Xyg2q973KvcZ5A
-	d+or1Tg+OvpDW5OHx7uigg1VpC/gTck=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-rYjBlg84NcyMcSXgyrtuSg-1; Mon, 10 Nov 2025 10:18:50 -0500
-X-MC-Unique: rYjBlg84NcyMcSXgyrtuSg-1
-X-Mimecast-MFC-AGG-ID: rYjBlg84NcyMcSXgyrtuSg_1762787928
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7a9fb6fcc78so2458469b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:18:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762787928; x=1763392728; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=AlA+x0tRAsBDGTDa9nRiETe1XJez8KQz5PhSrdYv6ys=;
-        b=J6SfizIQTfgOSs7RVTnbI68sLJ8L3ozByVForhOJDam7Jlh0cETc2kakFalNEWYXxx
-         sQr4OqlUXPVISE3r3MWNxQbtxQv16SDfIKv+l2FnOiWBQyBY/+V89atJ4mK8bhD1MCnW
-         UlPiToOZLxv0zjA2gHEIAFw/jxRbxplXB4k+PswjR9sG8CyCgUsscc6AYvM0dg43dAbQ
-         N/RtsOal5RZZTbdclUDWfej+3KBZHCVNbuuf9u8Z98VDJYhKj4FedoQ9VYhxmCYvNKzl
-         L0K0Suw4uhQI8aRAUwRdzQhsXAoWCmblbIsXwBVTj+PLbKBUkM2t0jH6X1/OAeyknBL2
-         g7GA==
+	s=arc-20240116; t=1762787960; c=relaxed/simple;
+	bh=c1DO/0QTjCGAhqXJ6RVRv00rey+X7TfUveEq6Q4CklQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=uZ/mBWJuOwT3z9TK/ds9CotHKk4LtCAWlK7VtIp5XLsHMRtAQRexTwx6v5ws+IYnC2XtY+UhvBzru4VZf/wf5WYRDDd9nd59/27aZ5I/orCFYhAm/FV5QsyAlk92m4a4M2QOqP+xfEZ5EjE39qxEIMMbuX4xLTkT9CNeajXWOz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-43328dcdac1so100205905ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:19:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762787928; x=1763392728;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AlA+x0tRAsBDGTDa9nRiETe1XJez8KQz5PhSrdYv6ys=;
-        b=AClIBGaB5Rj3BJiHYFjctwD0kmOPvau4HBbfyv1cnTcx4yVNLd1OhDQmTr/59XNh1+
-         /AbUKvIyF9WQ/Ilet3vesloxwlD1blE52mNkIpfUd/FHJeAMA9UiwFmv7fy5fJcyioI3
-         mSMSoZwQ3cJZ5U7rPH08JtdTjbPe7gLf+D6626YPP1Aj8k8504YaiInRG47+/aE0sKe3
-         7luizE2efw+9tP5LdP9+t8Tx+pQpjtTeMuuhrhTgmv+ZOiV6lB2m97HyEWuMFeK5n7Ax
-         afqXk69rEr1lfsW0GulJU+zWOZML19oC3RlzkjI1YBvGlZN4iRG8R+h88sYAzLr8b6Tc
-         2UdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUD0jq4TlVh6lldDquuzvRhUkNDryrmVs2CyrCGautKeYp3mRL4YYZPqVncx5ZP+Myjt/IHoeo8ZVS8Dk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQfN1iQOo2jPrIsJjXmQYQKBLoRaDEwb1fpxbQg0deRhrdXaL9
-	Pacg1GPNmiHeUN1lMHfnTNRhum1/2Nd6bxOMbmVIJIFlqsYbVMHP8bN8Ezo+PipQWjIdcz4U0nj
-	4V6lbKIfDtoVofQTrnOKl6DqFz3IyaIivs2hpL4A23NRnwkEWFU9CGl2A8fJE//B1SA==
-X-Gm-Gg: ASbGncs1guTCuhfmCqJ5Oyift+zN+hAQvsi4h4Cr7m3BBcYGKcKz1JdoXzKD0Y7fvUb
-	eP4gXVBZO/TgLS3Ljr7EjpKXCs5Tcuppj2gTijF5hzVHA0ghdphRv3OUa0ONGuvqwVhOg+qzESC
-	+bN9Rn5ilpOYeXddoBI/R93ppk4Ibji2t+bylrt6GSG2YCmAq4NcX1ofP+OW4d7WeuzztBspdqE
-	PaG4b1jjOOzf//qlB/aye1o3xhJkvcl/40OoVF5jwjJlCNsBg2OFexkK4dbv1WDtns1wVusvdjO
-	nqA50eZMNyTwKUVvWS7xJwLvc8G8730w6+p3C6UIkdCgU9BfvosT9nh1uOkKK2DWVTGK5LdB9AH
-	v9K7HAZJe8GFJAyjTN3BTzuXnOv0HDvce8OSDIplzf0eZizuDRgAYeZSuKxZr1mTAcSzseBZxzw
-	UUVH45TRDdZr0XldtQB3VQdX8EGUYj
-X-Received: by 2002:a05:6a20:5483:b0:342:873d:7e62 with SMTP id adf61e73a8af0-353a2d42046mr10053486637.29.1762787928214;
-        Mon, 10 Nov 2025 07:18:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH2rcG42hzb4L/Vmwsv1WFpuCX/wTouXy7m9UtumHSxM2ed5rjvQJY8JW0zkSSyPLbwhXkjug==
-X-Received: by 2002:a05:6a20:5483:b0:342:873d:7e62 with SMTP id adf61e73a8af0-353a2d42046mr10053435637.29.1762787927572;
-        Mon, 10 Nov 2025 07:18:47 -0800 (PST)
-Received: from [10.201.49.111] (nat-pool-mxp-u.redhat.com. [149.6.153.187])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7b0c953d0a6sm12124750b3a.12.2025.11.10.07.18.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 07:18:46 -0800 (PST)
-Message-ID: <e47c4e56-d279-4aa8-8e78-ca1fe77b9f3e@redhat.com>
-Date: Mon, 10 Nov 2025 16:18:38 +0100
+        d=1e100.net; s=20230601; t=1762787957; x=1763392757;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fZ2NWlZ546cks4M6j4DNqCc2vYjUuH0vrlSlhM9Y2K8=;
+        b=IoepdFHXFl0+grD8RwGqQQ3Vqa37MZih2UXwK9sFaLWAesZqHgbQGjItYCl4vrTF9J
+         UF1NPvpXJo7ZwcLxfuQtzlMikY3ITtIVuNTG+f2LQ9BWLaEhvBTnM6RsxUHiUIRPbs0Q
+         XOtgSRj2fh1JM2bB2x5kba7kQH8Q0+oAnwCa/dAXU1suY5ZTr//XTKcBiWncFmasJsha
+         oV2QKI7EAgANtQgY3cOcTAZM6969KB4INrRrBWZDHAy0w7BjGjB8VNgVuTVZbzaU/0be
+         zBj0DhFIp0+bPqp1N9zGOsmZkm+5yGixwaTSOWJydZiy9/QbSL+ATMx0/zxLqn/4dV1L
+         QYKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUd47NHJI3dHM56ucbI+hywYYly4uO5CHsVYfY5dg0sUXhB5n3ORKafGMDqVUi686Mb9l5NhA5tKAYZn1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6nvYIvfaA9w7msx1b40bfDeu8j5zJptcTLoVcHqRZ1s4M6Dat
+	YisOMWyiRCZltwQCS2CsmV5lNue4yxBrqd78Xb1Lo2d4NxwrvFwq8U02sSH3zRn6SF/rQaoiDLQ
+	uZurU8twflsixUNKT5WcsRm08yRvGGBU8pz6B4QfvkS2vKae9Ef3DuuKCQ2o=
+X-Google-Smtp-Source: AGHT+IFT43QlM8pcln8U+Eww+O0zzAExm6XXgPQBWfT6KRG7VIkvfXjO0jztElePth8ZM3wp+BZTjgkncLB2kVRNvkTts8Hag2iy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: x86: Enforce use of EXPORT_SYMBOL_FOR_KVM_INTERNAL
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chao Gao <chao.gao@intel.com>
-References: <20251106202811.211002-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20251106202811.211002-1-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:cccd:0:b0:433:7310:f5bf with SMTP id
+ e9e14a558f8ab-4337310f94amr69754165ab.22.1762787957532; Mon, 10 Nov 2025
+ 07:19:17 -0800 (PST)
+Date: Mon, 10 Nov 2025 07:19:17 -0800
+In-Reply-To: <20251110111553.88384-1-lance.yang@linux.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69120275.a70a0220.22f260.00f7.GAE@google.com>
+Subject: [syzbot ci] Re: mm/hugetlb: fix possible deadlocks in hugetlb VMA
+ unmap paths
+From: syzbot ci <syzbot+ci4b465da2e9479793@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, david@redhat.com, lance.yang@linux.dev, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, muchun.song@linux.dev, 
+	osalvador@suse.de, syzbot@lists.linux.dev, syzbot@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/6/25 21:28, Sean Christopherson wrote:
-> +# Fail the build if there is unexpected EXPORT_SYMBOL_GPL (or EXPORT_SYMBOL)
-> +# usage.  All KVM-internal exports should use EXPORT_SYMBOL_FOR_KVM_INTERNAL.
-> +# Only a handful of exports intended for other modules (VFIO, KVMGT) should
-> +# use EXPORT_SYMBOL_GPL, and EXPORT_SYMBOL should never be used.
-> +ifdef CONFIG_KVM_X86
-> +define newline
-> +
-> +
-> +endef
+syzbot ci has tested the following series
 
-$(newline) is already defined in scripts/Kbuild.include, is it necessary 
-here?
+[v2] mm/hugetlb: fix possible deadlocks in hugetlb VMA unmap paths
+https://lore.kernel.org/all/20251110111553.88384-1-lance.yang@linux.dev
+* [PATCH v2 1/1] mm/hugetlb: fix possible deadlocks in hugetlb VMA unmap paths
 
-> +# Search recursively for whole words and print line numbers.  Filter out the
-> +# allowed set of exports, i.e. those that are intended for external usage.
-> +exports_grep_trailer := --include='*.[ch]' -nrw $(srctree)/virt/kvm $(srctree)/arch/x86/kvm | \
-> +			grep -v -e kvm_page_track_register_notifier \
-> +				-e kvm_page_track_unregister_notifier \
-> +				-e kvm_write_track_add_gfn \
-> +				-e kvm_write_track_remove_gfn \
-> +				-e kvm_get_kvm \
-> +				-e kvm_get_kvm_safe \
-> +				-e kvm_put_kvm
-> +
-> +# Force grep to emit a goofy group separator that can in turn be replaced with
-> +# the above newline macro (newlines in Make are a nightmare).  Note, grep only
-> +# prints the group separator when N lines of context are requested via -C,
-> +# a.k.a. --NUM.  Simply request zero lines.  Print the separator only after
-> +# filtering out expected exports to avoid extra newlines in the error message.
-> +define get_kvm_exports
-> +$(shell grep "$(1)" -C0 $(exports_grep_trailer) | grep "$(1)" -C0 --group-separator="AAAA")
+and found the following issue:
+possible deadlock in unmap_vmas
 
-Maybe replace AAAA with something less goofy like !SEP! or similar?
+Full report is available here:
+https://ci.syzbot.org/series/3106300b-af9f-40dc-985b-33cb937712aa
 
-> +endef
-> +
-> +define check_kvm_exports
-> +nr_kvm_exports := $(shell grep "$(1)" $(exports_grep_trailer) | wc -l)
-> +
-> +ifneq (0,$$(nr_kvm_exports))
-> +$$(error ERROR ***\
-> +$$(newline)found $$(nr_kvm_exports) unwanted occurrences of $(1):\
-> +$$(newline)  $(subst AAAA,$$(newline) ,$(call get_kvm_exports,$(1)))\
-> +$$(newline)in directories:\
-> +$$(newline)  $(srctree)/arch/x86/kvm\
-> +$$(newline)  $(srctree)/virt/kvm\
-> +$$(newline)Use EXPORT_SYMBOL_FOR_KVM_INTERNAL, not $(1))
-> +endif # nr_kvm_exports != expected
-> +undefine exports_advice
-> +undefine nr_kvm_exports
-> +endef # check_kvm_exports
-> +
-> +$(eval $(call check_kvm_exports,EXPORT_SYMBOL_GPL))
-> +$(eval $(call check_kvm_exports,EXPORT_SYMBOL))
-> +
-> +undefine check_kvm_exports
-> +undefine get_kvm_exports
-> +undefine exports_grep_trailer
-> +undefine newline
+***
 
-(if the definition is not needed above, remember to remove the 
-"undefine" here too).
+possible deadlock in unmap_vmas
 
-Thanks,
+tree:      mm-new
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/akpm/mm.git
+base:      02dafa01ec9a00c3758c1c6478d82fe601f5f1ba
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/089d8dad-bc85-4724-8a79-2ad934becf17/config
+C repro:   https://ci.syzbot.org/findings/3dded3f6-aef2-4f4c-9dba-b23214df5e12/c_repro
+syz repro: https://ci.syzbot.org/findings/3dded3f6-aef2-4f4c-9dba-b23214df5e12/syz_repro
 
-Paolo
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.0.17/5963 is trying to acquire lock:
+ffff88816cbda8e8 (&resv_map->rw_sema){+.+.}-{4:4}, at: hugetlb_zap_begin include/linux/hugetlb.h:257 [inline]
+ffff88816cbda8e8 (&resv_map->rw_sema){+.+.}-{4:4}, at: unmap_vmas+0x23d/0x580 mm/memory.c:2098
 
+but task is already holding lock:
+ffff888172c80418 (&hugetlbfs_i_mmap_rwsem_key){+.+.}-{4:4}, at: i_mmap_lock_write include/linux/fs.h:548 [inline]
+ffff888172c80418 (&hugetlbfs_i_mmap_rwsem_key){+.+.}-{4:4}, at: __hugetlb_zap_begin+0x2aa/0x3a0 mm/hugetlb.c:5331
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&hugetlbfs_i_mmap_rwsem_key){+.+.}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+       i_mmap_lock_write include/linux/fs.h:548 [inline]
+       hugetlb_change_protection+0x56a/0x18c0 mm/hugetlb.c:6439
+       change_protection+0x386/0x38c0 mm/mprotect.c:655
+       mprotect_fixup+0x6fe/0x9c0 mm/mprotect.c:774
+       do_mprotect_pkey+0x8c5/0xcd0 mm/mprotect.c:930
+       __do_sys_mprotect mm/mprotect.c:951 [inline]
+       __se_sys_mprotect mm/mprotect.c:948 [inline]
+       __x64_sys_mprotect+0x80/0x90 mm/mprotect.c:948
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&resv_map->rw_sema){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+       hugetlb_zap_begin include/linux/hugetlb.h:257 [inline]
+       unmap_vmas+0x23d/0x580 mm/memory.c:2098
+       exit_mmap+0x23e/0xb30 mm/mmap.c:1277
+       __mmput+0x118/0x430 kernel/fork.c:1133
+       exit_mm+0x1da/0x2c0 kernel/exit.c:582
+       do_exit+0x648/0x2300 kernel/exit.c:954
+       do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
+       __do_sys_exit_group kernel/exit.c:1118 [inline]
+       __se_sys_exit_group kernel/exit.c:1116 [inline]
+       __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1116
+       x64_sys_call+0x21f7/0x2200 arch/x86/include/generated/asm/syscalls_64.h:232
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&hugetlbfs_i_mmap_rwsem_key);
+                               lock(&resv_map->rw_sema);
+                               lock(&hugetlbfs_i_mmap_rwsem_key);
+  lock(&resv_map->rw_sema);
+
+ *** DEADLOCK ***
+
+2 locks held by syz.0.17/5963:
+ #0: ffff88810e0f8ca0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_lock include/linux/mmap_lock.h:365 [inline]
+ #0: ffff88810e0f8ca0 (&mm->mmap_lock){++++}-{4:4}, at: exit_mmap+0x126/0xb30 mm/mmap.c:1262
+ #1: ffff888172c80418 (&hugetlbfs_i_mmap_rwsem_key){+.+.}-{4:4}, at: i_mmap_lock_write include/linux/fs.h:548 [inline]
+ #1: ffff888172c80418 (&hugetlbfs_i_mmap_rwsem_key){+.+.}-{4:4}, at: __hugetlb_zap_begin+0x2aa/0x3a0 mm/hugetlb.c:5331
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 5963 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+ hugetlb_zap_begin include/linux/hugetlb.h:257 [inline]
+ unmap_vmas+0x23d/0x580 mm/memory.c:2098
+ exit_mmap+0x23e/0xb30 mm/mmap.c:1277
+ __mmput+0x118/0x430 kernel/fork.c:1133
+ exit_mm+0x1da/0x2c0 kernel/exit.c:582
+ do_exit+0x648/0x2300 kernel/exit.c:954
+ do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
+ __do_sys_exit_group kernel/exit.c:1118 [inline]
+ __se_sys_exit_group kernel/exit.c:1116 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1116
+ x64_sys_call+0x21f7/0x2200 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6bb058efc9
+Code: Unable to access opcode bytes at 0x7f6bb058ef9f.
+RSP: 002b:00007ffedbb6b2f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f6bb058efc9
+RDX: 0000000000000064 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000003 R08: 00000002dbb6b3ef R09: 00007f6bb07b1280
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f6bb07b1280 R14: 0000000000000003 R15: 00007ffedbb6b3b0
+ </TASK>
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
