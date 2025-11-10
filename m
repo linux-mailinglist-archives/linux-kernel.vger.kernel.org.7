@@ -1,247 +1,663 @@
-Return-Path: <linux-kernel+bounces-892587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E63FC45645
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:40:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B631C45657
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5E8223470C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91971888517
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9C02FB60A;
-	Mon, 10 Nov 2025 08:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C915E2FC89F;
+	Mon, 10 Nov 2025 08:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YHA9LAJe"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b="XyhUO7r8"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11023095.outbound.protection.outlook.com [40.107.159.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7651B4F0A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762764013; cv=none; b=nqXHp+cV5Ydg17t3dlV69GRzkl3kS6TCVG8QIa+9OB005jL8gqk+wIuvEVNvT4x8dU8KfKsB3WaZNtEEQ+9VJPNLGpNOo9yU3lTWYCbI/LYdCg3LEpJUE9q3MGz1LQfGfoXCajZlFWoDtL8XXEoIaSJMiKm91DcQFfQjmmufAQ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762764013; c=relaxed/simple;
-	bh=AP/y9RcqXn5HLw3tw4/mNpLqTSoouha1hEA2XdEUJ1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GtWH8SWWJlkHlzWIrqMNundER0U3g+BAtSFQRxvImUagAdMp23KO+IPvJhQbPb25EDi1yJQSrE993zIpjCw7rnjiUy3onXHkaXf2NbO8BeM3lze2eGCw5slnVMrjimN8WNOR9ZSPjYWAaCeMSqclYNeW9nFj5Mz0kpjHLmGAZnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YHA9LAJe; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9KjEar017554;
-	Mon, 10 Nov 2025 08:40:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=CoKoja
-	skLBR6PzEuZ4qSFL6ygxd9zLbisaOhoCbAjLM=; b=YHA9LAJeAu997JGQ76AmMi
-	XJ8xOvUXLaqdw7LLD2nqQZyXH9zoMHMhanYe7yYBGfR9vPxYIvBV3HOncBkjKtVJ
-	djxHk4jmtVd7vgJ4qfPllH4MfgaKi/1ux2LZ477LSVf735jx5E+z5ge2KAiOkBnh
-	dRSeKVwkU+OEs9xyyFh178p5Je7xp0D0nsa27HH3IpLDwlwv8aXcM/BhEzWIDLBw
-	n5yL0mZbEVBj6pgVPCwVETF8qjy3YJv2faeOqufyGsXhFg/8WxRUfZ1UqJw6yIQn
-	QGHayHlClwR3Ty+WraXVL+QIu2Z8RjXM2JOdKaeScpNUwYYvR0uKTjGS7rfeBkKg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk7y87p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 08:39:59 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AA8Mnw0017921;
-	Mon, 10 Nov 2025 08:39:59 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk7y87m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 08:39:59 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AA4g8rf008190;
-	Mon, 10 Nov 2025 08:39:57 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aah6mmp20-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 08:39:57 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AA8drjX30146954
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 08:39:53 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9C5172004B;
-	Mon, 10 Nov 2025 08:39:53 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9C5A020040;
-	Mon, 10 Nov 2025 08:39:50 +0000 (GMT)
-Received: from [9.109.204.116] (unknown [9.109.204.116])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 10 Nov 2025 08:39:50 +0000 (GMT)
-Message-ID: <09c4c181-eb4b-43ea-a439-04b83f4c20ba@linux.ibm.com>
-Date: Mon, 10 Nov 2025 14:09:49 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE4E2F5479;
+	Mon, 10 Nov 2025 08:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762764037; cv=fail; b=iIt0pT8dTY6SDz3o70fkc/o9yCSJ9MgbWrCXwwyKY8W3gtAVh5qQ5UUSxLK9mehKBYLWBiWMUstGAIMxCuirWRfKPOMc928LKNGFN72izsvr28nIFg9yVnLEugxS5yQQq/M/RmxjBF9wxY4jI1M4SF2jP0CXQCT1NA8rMQY48CA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762764037; c=relaxed/simple;
+	bh=WKHQTKPF2X8xxO7xh8CjSxmG9v0sHlS96nBS9xCbfog=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ldU2i6C656f9dTey9B9vamEbgcwLbELSQwPC08oMCji2jH3xbfKMwEr8CUdw13kBri6gqutns6XEhi/fiVvh1M6yu7l8erOoTjaQdogYH7NfnOuvPbK8NYGD69r5m3YqC945IWJeDR5ZQlbsoZgbLqPZsgTvoHLXzRkFUK00ETk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com; spf=pass smtp.mailfrom=gocontroll.com; dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b=XyhUO7r8; arc=fail smtp.client-ip=40.107.159.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gocontroll.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KqoyIrm6uF9y7/VWUFEM+Xct6guB98A9AGr7euY3Xba6UWK7meew6gndAGu5P9JAL4lwmv8sxizASWHjBspQI13DIK9DnQROBXq47bxOuTdpnAY3SowpTKCE1cMBg7Rqi3Qbvw/0/s8C7AdE57DwXk67wNG0h69YEjsul3yo8Sz+je+SuNrnhSDJYV/dCDY75vXSCqNerNo++crAtAMHoqvpzj2wT/IjMRxSjctYnKPl3ajOZQM1lLYY9iYXWeiiGA+CRSLBCgj/pPK2mSQDpY6EREf5BMpODDU6Oz9fALEjXJ4l7R/ZEhmCM/+PZ3Se1x6nKysXyCLpdz/bHwtXGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AU+n+XzuE71zXeu5uHHFGL8vrsv7zYPrYvRP74DcnGA=;
+ b=kU8fFqcFkZrV7341n/qkJw6cos6TBDwgH4CErk1q45akFLFZbjwyKPSfTH1pIrHIH3Zp8PesGBwfjlzlJl2UZ3nCfcgatWiNGEudT0PjKAXKvPN8bK9LZvx43HTsheTy6ummBD53YCLiMzjhAQ1YdTgHOzeWyGwE3On6NZR4D1R72qMdvJQD5MF6jrvAFpyxzhwi9KgXCmSm6KyU729Gsd2ndyjLRU9LQlQmQkeS/mntI0/sMwgL/HRLg5qk2QkzHwmrdBdGfKWLbxOxMF9z8q55fBDR6TSQu5E2uLw+P3BIBY2uUnOyu+8k01CSEUd4BFTemLJHQY9a6sMhnYRTJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=gocontroll.com; dmarc=pass action=none
+ header.from=gocontroll.com; dkim=pass header.d=gocontroll.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gocontrollcom.onmicrosoft.com; s=selector1-gocontrollcom-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AU+n+XzuE71zXeu5uHHFGL8vrsv7zYPrYvRP74DcnGA=;
+ b=XyhUO7r8wME+1q09D13ZXFgY26im3K0ZuIF61jEj672oJcySILOs25fnwtCLy+RrTLo57vWisgIeOx2darIJmwrQsNtqctZ8K79m4SXV+rH4u0B+qlE7hPkOHQ+WIbTXI3WFTResfUCw5N5J+P7NkK02zjbqU3jvBoJU+ofsymm0jJr+V6rpeeuOdxQn8kwEApRcM7QvfwzjP/1FH1emNU47C7oAbZrLcek5T0q3YqRpQe9ErZeYg9C8nhE5JZr8/TXA0o4k5lB5qaM/bkRSE2awnpZNcllAeGydh+8MXQ9jZSNI9Ad73NCdIUNYNG7OFLkeAGOezf9KYsWObNJIig==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=gocontroll.com;
+Received: from AMBPR04MB11741.eurprd04.prod.outlook.com (2603:10a6:20b:6f3::7)
+ by DU2PR04MB8663.eurprd04.prod.outlook.com (2603:10a6:10:2de::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 08:40:29 +0000
+Received: from AMBPR04MB11741.eurprd04.prod.outlook.com
+ ([fe80::c39b:dab3:ae88:c5ba]) by AMBPR04MB11741.eurprd04.prod.outlook.com
+ ([fe80::c39b:dab3:ae88:c5ba%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 08:40:29 +0000
+Message-ID: <f4e52cc1-9c5f-4069-9079-83be794ab2b3@gocontroll.com>
+Date: Mon, 10 Nov 2025 09:40:07 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/4] backlight: add max25014atg backlight
+To: Daniel Thompson <daniel@riscstar.com>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+ Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20251107-max25014-v5-0-9a6aa57306bf@gocontroll.com>
+ <20251107-max25014-v5-2-9a6aa57306bf@gocontroll.com>
+ <aQ4a2SBDldYgQb56@aspen.lan>
+Content-Language: en-US
+From: Maud Spierings <maudspierings@gocontroll.com>
+In-Reply-To: <aQ4a2SBDldYgQb56@aspen.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4P250CA0023.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5e3::11) To AMBPR04MB11741.eurprd04.prod.outlook.com
+ (2603:10a6:20b:6f3::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] crash: export crashkernel CMA reservation to
- userspace
-To: Baoquan he <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Aditya Gupta <adityag@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Young <dyoung@redhat.com>, Hari Bathini <hbathini@linux.ibm.com>,
-        Jiri Bohac <jbohac@suse.cz>, Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-        Pingfan Liu <piliu@redhat.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        Shivang Upadhyay <shivangu@linux.ibm.com>,
-        Vivek Goyal <vgoyal@redhat.com>, linuxppc-dev@lists.ozlabs.org,
-        kexec@lists.infradead.org
-References: <20251110043143.484408-1-sourabhjain@linux.ibm.com>
- <20251110043143.484408-6-sourabhjain@linux.ibm.com>
- <aRGPee9izxWPRHj5@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-In-Reply-To: <aRGPee9izxWPRHj5@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfX/lFqTdb+Ix31
- +ZxCwVkKK4eLHYKRdw/zlF4OBjYsPLlqSV25Ey2IeqS9NvBniaYxHkvF7FVO5m//S9NFjJtAr7c
- x+zUQ3zVKM+8B0loekFp8s1iK6uvGGEvpheDNbSz7rbDNaglzi3KA8vStXj4M2VNK9JR1hg9r3X
- 198c4gYtB0Y2BajB3OnPTSXEuq0i3ilYkad5nEI3C7JPuFId2TM375JeY7tDkXGYDGR+vft1/px
- QGqA8ILewfwDDP/jSo3C052x1yR+0F2QGAocwZSt26JpIWE/KkD/WZKQnX+cSpRqfTEeAyVhaDv
- flIRIJ8demq62mlo0xYXj2LfLlkswpcV9/2s3ZUex1CD0df7TobM+yqNS+oOxpJSoBTvKRP1Ua0
- pfPdzQ51fWSodz1TMxO6uSB7k4aY4w==
-X-Authority-Analysis: v=2.4 cv=ZK3aWH7b c=1 sm=1 tr=0 ts=6911a4df cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=Z4Rwk6OoAAAA:8 a=20KFwNOVAAAA:8
- a=pGLkceISAAAA:8 a=voM4FWlXAAAA:8 a=JfrnYn6hAAAA:8 a=nZ6l4sNALc67V84wghEA:9
- a=QEXdDO2ut3YA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=IC2XNlieTeVoXbcui8wp:22
- a=1CNFftbPRP8L7MoqJWF3:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: DwbPY7ohE7XwxBRgz3LrgMxK1K-_LihJ
-X-Proofpoint-GUID: PlH9k_X-djhYdUkQ_pkrIaAwTCZLBdtr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 adultscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511080022
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMBPR04MB11741:EE_|DU2PR04MB8663:EE_
+X-MS-Office365-Filtering-Correlation-Id: 55dd2270-6e34-4c8a-5df2-08de2034cdae
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|10070799003|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VEZMTFN6OEZRTEpOSWdLV0FGeG5SQklUSzFZYUNLTnU5d2c3emExOVg4dFpG?=
+ =?utf-8?B?L3l1NytjRlltVWdBN09ISTVEVHgxcVFpaXFIL1VnU1dyMlZ0TkI1R0dJaVRN?=
+ =?utf-8?B?QWMwVzZRVTA4bWtHKzFYUWJuckpQV2x6cGpzTDloZzNoZEpmTEQwWFlqanlM?=
+ =?utf-8?B?OHg2WEwrUU56dFV2WGhmR3djUExPN1JZVkgrY0FGcklsMUtMMUlnbGRtTFdo?=
+ =?utf-8?B?TzBiZ3JpeVBISjltUFJzOVBmb2tnQ2VUQ0VZYzFQVnhjMm9RV1hOekVLUkNu?=
+ =?utf-8?B?c3hCeWZmNzZxYUQ2bE9TM1RiT2NEd0w1U29Ldit4UG5kUnNKR3Vsa3lYVEV0?=
+ =?utf-8?B?RTFyaUVaUlpMaXl2d0RxUHY5ZWxFcjduK2VHT3RJbS9yNlVMeG1tSkMvR2xq?=
+ =?utf-8?B?eVpKV2FySkk3WkkySmUwVWx5NE9vSk9Wbk9CemdjeXZra1pqR202amRGUzhQ?=
+ =?utf-8?B?TWRHNU82TEoySm4zc0dJL3I4Ni9LZXUxNWY2VThnWjVsWDFUcXF0dXA5NklX?=
+ =?utf-8?B?Z1JKK2ZteDRoSEE4bDRSZy82Z1p2SWs1UXF0eGIweExlUHBIQ2thN0lURDVR?=
+ =?utf-8?B?MzEyWkhsVS9FT000aWZiRXVmdXpsaWdma0JFTTJSbjRUdHNmbDdTNEdCVGtJ?=
+ =?utf-8?B?L08zbFhKZERsSGRXSHJQdUxjUnFhZEt4QldzYUFkMmRhOTlkZ2c0VlpqZld3?=
+ =?utf-8?B?eEhLMDRGS29vSnhrOXlFNEJ1ZDJOY2ppSTZvT0c0VDlCU3NyTDM2VmZiWE1R?=
+ =?utf-8?B?bTZVS3hXWUJwb29HOTZSLzhnUDdMaTUrdXE0ejhlNUpkc3g3Y09CSUM2R2Fq?=
+ =?utf-8?B?bFQvOTd6UUMwUzVoRWl0TzNRZVBFb0xlcWY5dW1kZms2enRXM0dtZWE2WXBT?=
+ =?utf-8?B?VlZzU29pREJkd0RTNjQ1cnFCKzVmM3B2M0ZpUENOVVllSEF5WkN4LzYveDhj?=
+ =?utf-8?B?L2wxWFpKa0xTTnljeWtkVDQvaE55c3AwOGRHTDZHSnVRdVJwZDZ6d2ovNHhW?=
+ =?utf-8?B?VW5vWXNtb0tWVG1wakY1WTlpY2NHTE8wR2c0UUhOb29IQ0dWTWRSV1RycFhG?=
+ =?utf-8?B?VVE4TzZqTE5wMnAzODU5WmtDS1ZMNXU3R0FNUnBXYkdFRklLYjVnSVYvZ3lD?=
+ =?utf-8?B?SjdtZGdBOFBjME9DZmpVUmFhZWZ0eUJ2VWIxRm40bHp4eG4xMkRnOFY2N0xX?=
+ =?utf-8?B?TFdxSEZTSUZPR2Y0VDUwbEdXU1g3UzJYTUdzQjBadnBNY1FlVG9sSFVLY0lR?=
+ =?utf-8?B?dFR6eEcxcVQ3WFc0ODh2T1d3NlB3NlltakdELzgzT0tJaEhSSWxSejR4Q3Zq?=
+ =?utf-8?B?VkFudmp1aVlpOHh1dEE2TDdyMXVpSXhQNnB6ckY2UEpnWXVYNm81U2EvOWMv?=
+ =?utf-8?B?L0xKMW5XQVMvTFJLejAzRTZlUENhK2NxYkdmMjJnYmErMStDVmF6cm03ZHpo?=
+ =?utf-8?B?TXdpMkxnQTVpWW1aRnVBdzNYWkVrb09VUnMzaDA5cnplMkkremJEWUdXaTMz?=
+ =?utf-8?B?QWFLZ3pldnAyY09SN1J5WUV3QjlnVDhZMXVDcUlZRzJsMHN5RFVaWm9GSlV4?=
+ =?utf-8?B?Q0YvQUdPWDcxL0MycERjMzJjcks5aUF0WXBwdmZBNFZkUFJydUdPbnBzZFEx?=
+ =?utf-8?B?UkFNN24xTE9oZ0k4SHFoR3hKL3FpM0EveGZERDVoQ1Q2RzlhSjdoSFdVRll3?=
+ =?utf-8?B?MWRwUmplVWd6TjczL08ySlVvWTdiY3g3djQybjBRTjgrMU9MZVlmNVgreHJS?=
+ =?utf-8?B?MlRqc0ROS05RRVY1OEc0WThKWnVDQzNNRFFyOUQybUFFQ2ZDUFBDMnV4eDI0?=
+ =?utf-8?B?SDVENExSdGgrN1RaVWtBcGZhempDQm9JVFFucWpTN21pcEdmS25TK2JWVmxW?=
+ =?utf-8?B?YmhFNHBzcGhjMFlVOVZuazZQc2lGVWJoQXhqZ0d3Nll6NUE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AMBPR04MB11741.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(10070799003)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VkdHN1lKR2VDMk1HUms5ek5qbDlvejBSNE0xK1Fhd3ludDRuVmNrVVVrTk1K?=
+ =?utf-8?B?L0N1WjdGY0JrTTFBVEpNdk1melk4RXFnanZBZTd5blZiN25wSGVPbVBaN2NQ?=
+ =?utf-8?B?WjBjYXRrcFlMTWFjVHF3T25NSm9ESE5tWWpwN0I1czRVWThqSnNHUjhta1Jx?=
+ =?utf-8?B?ODVkaThtbWJnWHcvWnI5ZEUxc04vYlZUdmduc1Boc1ZUR2VIL0FIcTZYM1gy?=
+ =?utf-8?B?WHVJRmhsVGQ1MVU3amcrNEl1SnVXVVVub1lxdEpvNnA2UkRCRkhzWmI4b3RN?=
+ =?utf-8?B?NjVadjk0N0pmSGRJUTZFMEpBRms0bTljeFMxU0R4amFISmhPYzdCNkRpM3hM?=
+ =?utf-8?B?Z1YzSnJqNnFOYjJHTGVHNzdUVHU0MzJnWWZlR00wOXdaeVI0UnJidG1sU2ZP?=
+ =?utf-8?B?cFpnaks4OElONmVWSG1WZlppZ1Y2Y2pOS3cyUTlXU2NFOVJnRUxPNFBqUkg2?=
+ =?utf-8?B?SmlyNW1CQ1BvZ0RhQUxtL3BPeHVGM0txL2gzM1pESGRodnYyMDJLOHZJRHJT?=
+ =?utf-8?B?N05ZSVVpRkRxWXZwTjJXOVFCU3gwT2lMb1NGc0R4bUgzNmtYZTVyWTgvWHV5?=
+ =?utf-8?B?bld1bkt0RTZhUElvNTV0b25FV0MxalkyVWdLVWhNOW1JVmJDeDd1bXU4b1U0?=
+ =?utf-8?B?NjZ5T0JPMlErOEwrd3dOT2grVUlzSk9UcTM0eFRSMWpqVW5QRHIxQW1NMlYy?=
+ =?utf-8?B?WFRtZUlrU2FVcE1DT3VYVHc0R0xpZzRJT3ZreWxqVUtkbzNUa1MxSHJVTkEw?=
+ =?utf-8?B?T2t4QVBSTW9HZk4wd3BmeFVYTEhXVU5TY095a3BZeEpTb2dtMFZnZVd6cjlF?=
+ =?utf-8?B?cTZ0SjJ2TTlJdThDQ1daWEhKVWt0LzFDUVQ4TElsdTk2bjNFeEJ5OFZyRzV4?=
+ =?utf-8?B?eG5Cb3NkQ1QvSVJNWjg4bUR2SkhaQlh1S29lUnBsSXk4RUtGeUpScWxvV0Yz?=
+ =?utf-8?B?bS92VEw5dmR5ZFhXTzFHVkhDN1FUUXVQTVZuSWtkb1NveG15YzBBSEJ3a2Z2?=
+ =?utf-8?B?OGxoUks1alo0dW5ycldaWTJYdGdIdHR2dFFHTjk0UEd2cDF6RHpXWFRKcUcx?=
+ =?utf-8?B?NnZ1N3IyKzI5dkxBaVk4K2M5NTFFRU13K1BZaThNNW41MktjUEFhaWhzUVpy?=
+ =?utf-8?B?OUw1ejNNTmxBQ0hLRW1iZ08yRUxuRHdIYjZjM01MaVYwZUtiQTJrZ1pqYVpn?=
+ =?utf-8?B?bDN1WmlTWkJ4VDdERitYaFhwMncrSGo5MXpnYS9UQXFiQUFTTGFHY3lMTDZa?=
+ =?utf-8?B?Y0NDM3VrWEZHZWVLczRlSERoU1g0Z29ZV0hpZTdMUWl2TEVnZzFNUG14dm85?=
+ =?utf-8?B?OEJTc3gyblBwaE1QaUFNV09Sdys2UFQyUDRiTnQ0ZThkVDFGOUZBZkFUaUcx?=
+ =?utf-8?B?cTl4emkwN2tCeld2VUVkbGxheUliaStJK3dXbzJIZkNtMWRFN1BIVFhYeUpi?=
+ =?utf-8?B?TmE5dGRFeHh6V05TSkxyMXY4UjQ1Zkk3bmgyeG00TC84UnBlaXU5Z20yRDYv?=
+ =?utf-8?B?dGttRFR5NTRjR0E5OE5SbG9Pa3lrMThPUVdxNVhseUZheHNBQjZFaUJLdlRL?=
+ =?utf-8?B?cnUzVUF1UmNGQ1Y0RjRVcE5HR2lXenpRc0ttMkNsUDZLOVBwa2Y5R2c2M09j?=
+ =?utf-8?B?cEN6WjV5TXkzTnFlUDAvai9YM1djdDBVUWRzMlRPeDdrbkdOM1BtQXF2dThh?=
+ =?utf-8?B?eHVnNHNjYXdpMWxzQTNOYWxwRTFUVnRSTkZSaHRrbEp4MU1zT2hQeUZHMHNI?=
+ =?utf-8?B?bXA3eitBMDZ6YXlGVlZnMlpXaFpXSEZveE94SGNCbVp4ci9XNU8zMGdHVllV?=
+ =?utf-8?B?WjZaOGhYSVdsL1BmS3RKSE5PMDRHajJsRDBiNVF2S2NLYnZPL0Yxb2JTNWxV?=
+ =?utf-8?B?SURqS1JjcXAyV1lxUkFjOEh0V2ROR2RIMUltV0hNTWhYRkNSYWxiWHNWNzBJ?=
+ =?utf-8?B?SDdoem1GUmRVMno4UW4xQXUwL1FEQWNQeDF0bmRBNFgwVUdsVGRGT2VPMTlw?=
+ =?utf-8?B?bU8wTkVnRWNtNCtQQXB5bjVLQkVBcjQ3eFFKTzdxUjhaRDdUSFM1Zlg5QjhD?=
+ =?utf-8?B?bHdUd3NIMHJJa3YxTFdqejFvVTQ3S0hQaFphcU1SckhaakV1SnB3T2ZFei83?=
+ =?utf-8?B?ajBZUU56aURreE9ES2s5bEg4eXUzNFh6Nm9LWGFlT0ZUZUdlN2R0WXhzZHRm?=
+ =?utf-8?B?Y2U0V0tDSDBmeWlZQVJrRGFEcy90bUF6WlVMWnRhMUk1MTU1YUVzVkc4cE1x?=
+ =?utf-8?B?MmU0RWtkNHJyUDExMXczYUZwMHFRPT0=?=
+X-OriginatorOrg: gocontroll.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55dd2270-6e34-4c8a-5df2-08de2034cdae
+X-MS-Exchange-CrossTenant-AuthSource: AMBPR04MB11741.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 08:40:29.5395
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4c8512ff-bac0-4d26-919a-ee6a4cecfc9d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0UnDyIQBzwSGXtkTVMpGnTrHB0zcG4y8zcG4VfwQsSYjv9inRMvB7XuYvs5HA7Q6ffJIGrjyBGF40apK5/vYvNlB8Ke39aHNQLz8XTixCEU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8663
 
-
-
-On 10/11/25 12:38, Baoquan he wrote:
-> On 11/10/25 at 10:01am, Sourabh Jain wrote:
->> Add a sysfs entry /sys/kernel/kexec/crash_cma_ranges to expose all
->> CMA crashkernel ranges.
-> I am not against this way. While wondering if it's more appropriate to
-> export them into iomem_resource just like crashk_res and crashk_low_res
-> doing.
-
-Handling conflict is challenging. Hence we don't export crashk_res and
-crashk_low_res to iomem on powerpc. Checkout [1]
-
-And I think conflicts can occur regardless of the order in which System 
-RAM and
-Crash CMA ranges are added to iomem.
-
-[1] 
-https://lore.kernel.org/all/20251016142831.144515-1-sourabhjain@linux.ibm.com/
-
-- Sourabh Jain
-
->
->> This allows userspace tools configuring kdump to determine how much
->> memory is reserved for crashkernel. If CMA is used, tools can warn
->> users when attempting to capture user pages with CMA reservation.
+On 11/7/25 17:14, Daniel Thompson wrote:
+> On Fri, Nov 07, 2025 at 01:49:59PM +0100, Maud Spierings via B4 Relay wrote:
+>> From: Maud Spierings <maudspierings@gocontroll.com>
 >>
->> The new sysfs hold the CMA ranges in below format:
+>> The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
+>> with integrated boost controller.
 >>
->> cat /sys/kernel/kexec/crash_cma_ranges
->> 100000000-10c7fffff
->>
->> Cc: Aditya Gupta <adityag@linux.ibm.com>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Baoquan he <bhe@redhat.com>
->> Cc: Dave Young <dyoung@redhat.com>
->> Cc: Hari Bathini <hbathini@linux.ibm.com>
->> Cc: Jiri Bohac <jbohac@suse.cz>
->> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
->> Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>
->> Cc: Pingfan Liu <piliu@redhat.com>
->> Cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> Cc: Shivang Upadhyay <shivangu@linux.ibm.com>
->> Cc: Vivek Goyal <vgoyal@redhat.com>
->> Cc: linuxppc-dev@lists.ozlabs.org
->> Cc: kexec@lists.infradead.org
->> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
->> ---
->> Changelog:
->>   - Add the missing hunk to export crash_cma_ranges sysfs
->>
->> ---
->>   .../ABI/testing/sysfs-kernel-kexec-kdump        | 10 ++++++++++
->>   kernel/kexec_core.c                             | 17 +++++++++++++++++
->>   2 files changed, 27 insertions(+)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
->> index 00c00f380fea..f59051b5d96d 100644
->> --- a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
->> +++ b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
->> @@ -49,3 +49,13 @@ Description:	read only
->>   		is used by the user space utility kexec to support updating the
->>   		in-kernel kdump image during hotplug operations.
->>   User:		Kexec tools
+>> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+>> diff --git a/drivers/video/backlight/max25014.c b/drivers/video/backlight/max25014.c
+>> new file mode 100644
+>> index 000000000000..36bae508697e
+>> --- /dev/null
+>> +++ b/drivers/video/backlight/max25014.c
+>> @@ -0,0 +1,409 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Backlight driver for Maxim MAX25014
+>> + *
+>> + * Copyright (C) 2025 GOcontroll B.V.
+>> + * Author: Maud Spierings <maudspierings@gocontroll.com>
+>> + */
 >> +
->> +What:		/sys/kernel/kexec/crash_cma_ranges
->> +Date:		Nov 2025
->> +Contact:	kexec@lists.infradead.org
->> +Description:	read only
->> +		Provides information about the memory ranges reserved from
->> +		the Contiguous Memory Allocator (CMA) area that are allocated
->> +		to the crash (kdump) kernel. It lists the start and end physical
->> +		addresses of CMA regions assigned for crashkernel use.
->> +User:		kdump service
->> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
->> index 7476a46de5d6..da6ff72b4669 100644
->> --- a/kernel/kexec_core.c
->> +++ b/kernel/kexec_core.c
->> @@ -1271,6 +1271,22 @@ static ssize_t crash_size_store(struct kobject *kobj,
->>   }
->>   static struct kobj_attribute crash_size_attr = __ATTR_RW(crash_size);
->>   
->> +static ssize_t crash_cma_ranges_show(struct kobject *kobj,
->> +				     struct kobj_attribute *attr, char *buf)
+>> +#include <linux/backlight.h>
+>> +#include <linux/gpio/consumer.h>
+>> +#include <linux/i2c.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#define MAX25014_ISET_DEFAULT_100 11
+>> +#define MAX_BRIGHTNESS            100
+>> +#define MIN_BRIGHTNESS            0
+>> +#define TON_MAX                   130720 /* @153Hz */
+>> +#define TON_STEP                  1307 /* @153Hz */
+>> +#define TON_MIN                   0
+>> +
+>> +#define MAX25014_DEV_ID           0x00
+>> +#define MAX25014_REV_ID           0x01
+>> +#define MAX25014_ISET             0x02
+>> +#define MAX25014_IMODE            0x03
+>> +#define MAX25014_TON1H            0x04
+>> +#define MAX25014_TON1L            0x05
+>> +#define MAX25014_TON2H            0x06
+>> +#define MAX25014_TON2L            0x07
+>> +#define MAX25014_TON3H            0x08
+>> +#define MAX25014_TON3L            0x09
+>> +#define MAX25014_TON4H            0x0A
+>> +#define MAX25014_TON4L            0x0B
+>> +#define MAX25014_TON_1_4_LSB      0x0C
+>> +#define MAX25014_SETTING          0x12
+>> +#define MAX25014_DISABLE          0x13
+>> +#define MAX25014_BSTMON           0x14
+>> +#define MAX25014_IOUT1            0x15
+>> +#define MAX25014_IOUT2            0x16
+>> +#define MAX25014_IOUT3            0x17
+>> +#define MAX25014_IOUT4            0x18
+>> +#define MAX25014_OPEN             0x1B
+>> +#define MAX25014_SHORT_GND        0x1C
+>> +#define MAX25014_SHORT_LED        0x1D
+>> +#define MAX25014_MASK             0x1E
+>> +#define MAX25014_DIAG             0x1F
+>> +
+>> +#define MAX25014_IMODE_HDIM       BIT(2)
+>> +#define MAX25014_ISET_ENABLE      BIT(5)
+>> +#define MAX25014_ISET_PSEN        BIT(4)
+>> +#define MAX25014_DIAG_HW_RST      BIT(2)
+>> +#define MAX25014_SETTING_FPWM     GENMASK(6, 4)
+>> +
+>> +struct max25014 {
+>> +	struct i2c_client *client;
+>> +	struct backlight_device *bl;
+>> +	struct regmap *regmap;
+>> +	struct gpio_desc *enable;
+>> +	struct regulator *vin; /* regulator for boost converter Vin rail */
+>> +	uint32_t iset;
+>> +	uint8_t strings_mask;
+>> +};
+>> +
+>> +static const struct regmap_config max25014_regmap_config = {
+>> +	.reg_bits = 8,
+>> +	.val_bits = 8,
+>> +	.max_register = MAX25014_DIAG,
+>> +};
+>> +
+>> +/**
+>> + * @brief control the brightness with i2c registers
+>> + *
+>> + * @param regmap trivial
+>> + * @param brt brightness
+>> + * @return int
+>> + */
+>> +static int max25014_register_control(struct regmap *regmap, uint32_t brt)
+> 
+> This isn't a good name for a function. It doesn't really say what it
+> does. Please find a more descriptive name.
+
+Having a lot of difficulties find a succinct name that fits better, 
+max25014_register_brightness_control()?
+max25014_i2c_brightness_control()?
+
+> 
 >> +{
+>> +	uint32_t reg = TON_STEP * brt;
+>> +	int ret;
+>> +	/*
+>> +	 * 18 bit number lowest, 2 bits in first register,
+>> +	 * next lowest 8 in the L register, next 8 in the H register
+>> +	 * Seemingly setting the strength of only one string controls all of
+>> +	 * them, individual settings don't affect the outcome.
+>> +	 */
 >> +
->> +	ssize_t len = 0;
->> +	int i;
->> +
->> +	for (i = 0; i < crashk_cma_cnt; ++i) {
->> +		len += sysfs_emit_at(buf, len, "%08llx-%08llx\n",
->> +				     crashk_cma_ranges[i].start,
->> +				     crashk_cma_ranges[i].end);
->> +	}
->> +	return len;
+>> +	ret = regmap_write(regmap, MAX25014_TON_1_4_LSB, reg & 0b00000011);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +	ret = regmap_write(regmap, MAX25014_TON1L, (reg >> 2) & 0b11111111);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +	return regmap_write(regmap, MAX25014_TON1H, (reg >> 10) & 0b11111111);
 >> +}
->> +static struct kobj_attribute crash_cma_ranges_attr = __ATTR_RO(crash_cma_ranges);
 >> +
->>   #ifdef CONFIG_CRASH_HOTPLUG
->>   static ssize_t crash_elfcorehdr_size_show(struct kobject *kobj,
->>   			       struct kobj_attribute *attr, char *buf)
->> @@ -1289,6 +1305,7 @@ static struct attribute *kexec_attrs[] = {
->>   #ifdef CONFIG_CRASH_DUMP
->>   	&crash_loaded_attr.attr,
->>   	&crash_size_attr.attr,
->> +	&crash_cma_ranges_attr.attr,
->>   #ifdef CONFIG_CRASH_HOTPLUG
->>   	&crash_elfcorehdr_size_attr.attr,
->>   #endif
->> -- 
->> 2.51.1
->>
+>> +static int max25014_check_errors(struct max25014 *maxim)
+>> +{
+>> +	uint8_t i;
+>> +	int ret;
+>> +	uint32_t val;
+>> +
+>> +	ret = regmap_read(maxim->regmap, MAX25014_OPEN, &val);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +	if (val > 0) {
+>> +		dev_err(&maxim->client->dev, "Open led strings detected on:\n");
+>> +		for (i = 0; i < 4; i++) {
+>> +			if (val & 1 << i)
+>> +				dev_err(&maxim->client->dev, "string %d\n", i + 1);
+>> +		}
+>> +		return -EIO;
+>> +	}
+>> +
+>> +	ret = regmap_read(maxim->regmap, MAX25014_SHORT_GND, &val);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +	if (val > 0) {
+>> +		dev_err(&maxim->client->dev, "Short to ground detected on:\n");
+>> +		for (i = 0; i < 4; i++) {
+>> +			if (val & 1 << i)
+>> +				dev_err(&maxim->client->dev, "string %d\n", i + 1);
+>> +		}
+>> +		return -EIO;
+>> +	}
+>> +
+>> +	ret = regmap_read(maxim->regmap, MAX25014_SHORT_GND, &val);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +	if (val > 0) {
+>> +		dev_err(&maxim->client->dev, "Shorted led detected on:\n");
+>> +		for (i = 0; i < 4; i++) {
+>> +			if (val & 1 << i)
+>> +				dev_err(&maxim->client->dev, "string %d\n", i + 1);
+>> +		}
+>> +		return -EIO;
+>> +	}
+>> +
+>> +	ret = regmap_read(maxim->regmap, MAX25014_DIAG, &val);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +	/*
+>> +	 * The HW_RST bit always starts at 1 after power up.
+>> +	 * It is reset on first read, does not indicate an error.
+>> +	 */
+>> +	if (val > 0 && val != MAX25014_DIAG_HW_RST) {
+>> +		if (val & 0b1)
+>> +			dev_err(&maxim->client->dev,
+>> +				"Overtemperature shutdown\n");
+>> +		if (val & 0b10)
+>> +			dev_err(&maxim->client->dev,
+>> +				 "Chip is getting too hot (>125C)\n");
+>> +		if (val & 0b1000)
+>> +			dev_err(&maxim->client->dev,
+>> +				"Boost converter overvoltage\n");
+>> +		if (val & 0b10000)
+>> +			dev_err(&maxim->client->dev,
+>> +				"Boost converter undervoltage\n");
+>> +		if (val & 0b100000)
+>> +			dev_err(&maxim->client->dev, "IREF out of range\n");
+>> +		return -EIO;
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +/*
+>> + * 1. disable unused strings
+>> + * 2. set dim mode
+>> + * 3. set initial brightness
+> 
+> How does this code set the initial brightness? It doens't set the
+> MAX25014_TON* registers.
+
+Yep forgot to remove that, I discovered the backlight core takes care of 
+the default brightness, so I removed it from here.
+
+> 
+>> + * 4. set setting register
+>> + * 5. enable the backlight
+>> + */
+>> +static int max25014_configure(struct max25014 *maxim)
+>> +{
+>> +	int ret;
+>> +	uint32_t val;
+>> +
+>> +	ret = regmap_write(maxim->regmap, MAX25014_DISABLE,
+>> +			   maxim->strings_mask);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +
+>> +	ret = regmap_write(maxim->regmap, MAX25014_IMODE, MAX25014_IMODE_HDIM);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +
+>> +	ret = regmap_read(maxim->regmap, MAX25014_SETTING, &val);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +
+>> +	ret = regmap_write(maxim->regmap, MAX25014_SETTING,
+>> +			   val & ~MAX25014_SETTING_FPWM);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +
+>> +	ret = regmap_write(maxim->regmap, MAX25014_ISET,
+>> +			   maxim->iset | MAX25014_ISET_ENABLE |
+>> +			   MAX25014_ISET_PSEN);
+>> +	return ret;
+>> +}
+>> +
+>> +static int max25014_update_status(struct backlight_device *bl_dev)
+>> +{
+>> +	struct max25014 *maxim = bl_get_data(bl_dev);
+>> +
+>> +	if (backlight_is_blank(maxim->bl))
+>> +		bl_dev->props.brightness = 0;
+>> +
+>> +	return max25014_register_control(maxim->regmap,
+>> +					 bl_dev->props.brightness);
+>> +}
+>> +
+>> +static const struct backlight_ops max25014_bl_ops = {
+>> +	.options = BL_CORE_SUSPENDRESUME,
+>> +	.update_status = max25014_update_status,
+>> +};
+>> +
+>> +static int max25014_parse_dt(struct max25014 *maxim,
+>> +			     uint32_t *initial_brightness)
+>> +{
+>> +	struct device *dev = &maxim->client->dev;
+>> +	struct device_node *node = dev->of_node;
+>> +	struct fwnode_handle *child;
+>> +	uint32_t strings[4];
+>> +	int res, i;
+>> +
+>> +	if (!node) {
+>> +		dev_err(dev, "no platform data\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	child = device_get_next_child_node(dev, NULL);
+>> +	if (child) {
+>> +		res = fwnode_property_count_u32(child, "led-sources");
+>> +		if (res > 0) {
+>> +			fwnode_property_read_u32_array(child, "led-sources",
+>> +						       strings, res);
+>> +
+>> +			/* set all strings as disabled, then enable those in led-sources*/
+>> +			maxim->strings_mask = 0xf;
+>> +			for (i = 0; i < res; i++) {
+>> +				if (strings[i] <= 4)
+>> +					maxim->strings_mask &= ~BIT(strings[i]);
+>> +			}
+>> +		}
+>> +
+>> +		fwnode_property_read_u32(child, "default-brightness",
+>> +					 initial_brightness);
+>> +
+>> +		fwnode_handle_put(child);
+>> +	}
+>> +
+>> +	maxim->iset = MAX25014_ISET_DEFAULT_100;
+>> +	of_property_read_u32(node, "maxim,iset", &maxim->iset);
+>> +
+>> +	if (maxim->iset < 0 || maxim->iset > 15) {
+>> +		dev_err(dev,
+>> +			"Invalid iset, should be a value from 0-15, entered was %d\n",
+>> +			maxim->iset);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (*initial_brightness < 0 || *initial_brightness > 100) {
+>> +		dev_err(dev,
+>> +			"Invalid initial brightness, should be a value from 0-100, entered was %d\n",
+>> +			*initial_brightness);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int max25014_probe(struct i2c_client *cl)
+>> +{
+>> +	struct backlight_device *bl;
+>> +	const struct i2c_device_id *id = i2c_client_get_device_id(cl);
+>> +	struct max25014 *maxim;
+>> +	struct backlight_properties props;
+>> +	int ret;
+>> +	uint32_t initial_brightness = 50;
+>> +
+>> +	maxim = devm_kzalloc(&cl->dev, sizeof(struct max25014), GFP_KERNEL);
+>> +	if (!maxim)
+>> +		return -ENOMEM;
+>> +
+>> +	maxim->client = cl;
+>> +
+>> +	ret = max25014_parse_dt(maxim, &initial_brightness);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	maxim->vin = devm_regulator_get_optional(&maxim->client->dev, "power");
+> 
+> I would have expected to see devm_regulator_get() here. Why do you care
+> whether you get a real regulator or a dummy if you just NULL check
+> maxim->vin everywhere?
+> 
+> 
+>> +	if (IS_ERR(maxim->vin)) {
+>> +		if (PTR_ERR(maxim->vin) == -EPROBE_DEFER)
+>> +			return -EPROBE_DEFER;
+>> +		maxim->vin = NULL;
+>> +	}
+>> +
+>> +	if (maxim->vin) {
+> 
+> If you had called devm_regulator_get() there would be no need for a NULL
+> check here.
+> 
+> 
+>> +		ret = regulator_enable(maxim->vin);
+>> +		if (ret < 0) {
+>> +			dev_err(&maxim->client->dev,
+>> +				"failed to enable Vin: %d\n", ret);
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>> +	maxim->enable = devm_gpiod_get_optional(&maxim->client->dev, "enable",
+>> +						GPIOD_ASIS);
+>> +	if (IS_ERR(maxim->enable)) {
+>> +		ret = PTR_ERR(maxim->enable);
+>> +		dev_err(&maxim->client->dev, "failed to get enable gpio: %d\n",
+>> +			ret);
+>> +		goto disable_vin;
+>> +	}
+>> +
+>> +	if (maxim->enable)
+>> +		gpiod_set_value_cansleep(maxim->enable, 1);
+> 
+> No need for NULL pointer check here (see
+> https://elixir.bootlin.com/linux/v6.18-rc4/source/drivers/gpio/gpiolib.c#L358-L363 ).
+> 
+> 
+>> +
+>> +	/* Enable can be tied to vin rail wait if either is available */
+>> +	if (maxim->enable || maxim->vin) {
+>> +		/* Datasheet Electrical Characteristics tSTARTUP 2ms */
+>> +		usleep_range(2000, 2500);
+>> +	}
+> 
+> If you really want to keep the devm_regulator_get_optional() I guess
+> maybe you could persuade me it's need to avoid this sleep... although
+> I'd be fairly happy to remove the NULL checks here too!
+
+Just wait unconditionally?
+
+kind regards,
+Maud
+
+> 
+>> +
+>> +	maxim->regmap = devm_regmap_init_i2c(cl, &max25014_regmap_config);
+>> +	if (IS_ERR(maxim->regmap)) {
+>> +		ret = PTR_ERR(maxim->regmap);
+>> +		dev_err(&maxim->client->dev,
+>> +			"failed to initialize the i2c regmap: %d\n", ret);
+>> +		goto disable_full;
+>> +	}
+>> +
+>> +	i2c_set_clientdata(cl, maxim);
+>> +
+>> +	ret = max25014_check_errors(maxim);
+>> +	if (ret) { /* error is already reported in the above function */
+>> +		goto disable_full;
+>> +	}
+>> +
+>> +	ret = max25014_configure(maxim);
+>> +	if (ret) {
+>> +		dev_err(&maxim->client->dev, "device config err: %d", ret);
+>> +		goto disable_full;
+>> +	}
+>> +
+>> +	memset(&props, 0, sizeof(props));
+>> +	props.type = BACKLIGHT_PLATFORM;
+>> +	props.max_brightness = MAX_BRIGHTNESS;
+>> +	props.brightness = initial_brightness;
+>> +	props.scale = BACKLIGHT_SCALE_LINEAR;
+>> +
+>> +	bl = devm_backlight_device_register(&maxim->client->dev, id->name,
+>> +					    &maxim->client->dev, maxim,
+>> +					    &max25014_bl_ops, &props);
+>> +	if (IS_ERR(bl))
+>> +		return PTR_ERR(bl);
+>> +
+>> +	maxim->bl = bl;
+>> +
+>> +	return 0;
+>> +
+>> +disable_full:
+>> +	if (maxim->enable)
+>> +		gpiod_set_value_cansleep(maxim->enable, 0);
+> 
+> Again, NULL check isn't needed.
+> 
+>> +disable_vin:
+>> +	if (maxim->vin)
+>> +		regulator_disable(maxim->vin);
+>> +	return ret;
+>> +}
+>> +
+>> +static void max25014_remove(struct i2c_client *cl)
+>> +{
+>> +	struct max25014 *maxim = i2c_get_clientdata(cl);
+>> +
+>> +	maxim->bl->props.brightness = 0;
+>> +	max25014_update_status(maxim->bl);
+>> +	if (maxim->enable)
+>> +		gpiod_set_value_cansleep(maxim->enable, 0);
+> 
+> Lose the NULL check.
+> 
+>> +	if (maxim->vin)
+>> +		regulator_disable(maxim->vin);
+>> +}
+>> +
+>> +static const struct of_device_id max25014_dt_ids[] = {
+>> +	{ .compatible = "maxim,max25014", },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, max25014_dt_ids);
+>> +
+>> +static const struct i2c_device_id max25014_ids[] = {
+>> +	{ "max25014" },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(i2c, max25014_ids);
+>> +
+>> +static struct i2c_driver max25014_driver = {
+>> +	.driver = {
+>> +		.name = KBUILD_MODNAME,
+>> +		.of_match_table = of_match_ptr(max25014_dt_ids),
+>> +	},
+>> +	.probe = max25014_probe,
+>> +	.remove = max25014_remove,
+>> +	.id_table = max25014_ids,
+>> +};
+>> +module_i2c_driver(max25014_driver);
+>> +
+>> +MODULE_DESCRIPTION("Maxim MAX25014 backlight driver");
+>> +MODULE_AUTHOR("Maud Spierings <maudspierings@gocontroll.com>");
+>> +MODULE_LICENSE("GPL");
+> 
+> 
+> Daniel.
 
 
