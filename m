@@ -1,690 +1,259 @@
-Return-Path: <linux-kernel+bounces-894274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A9DC49A53
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:47:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82516C49A3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:44:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB4E24F128C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:41:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419A73A90EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19752F39B1;
-	Mon, 10 Nov 2025 22:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE442F531F;
+	Mon, 10 Nov 2025 22:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="f5LUk2Xo"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="m6JF0VQ5"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011016.outbound.protection.outlook.com [52.101.125.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD872E62C4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 22:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762814508; cv=none; b=OK3SFWbhAL8yvepxAooacz9Qp6eypYY4uV+nmd7G+AV6B8Bc3QogKsbMuQS3CzOn7yHz1sdAsI/rFjNH3u/tvnH8EVKKfNiCyGvJMbdCcwGsC2oawCOygohb72T58ryOoRoCapBzX9uaV5KgE9m/J4Xxq79bSjClnIr1JsNp8ro=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762814508; c=relaxed/simple;
-	bh=4JoY9MfyCZiwDVg4KONMXEGjLSYiXMfaGfpiIP0U9NM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i4aWja+t7XGfbIzSNPPIhnlSCJ4kpBmdBZOjoaGBbEJJV4PvR8yELzrqmBi7B5lGZNyDKDzLXcElXC9xfWae0F7eRSPHT6Mgn3r4lswcVxRu/LoqyTRzFFWHab/pilJjES6PnuKL/cd+GwHyBPNR0htchQm6P1NO2DQbaSVy2d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=f5LUk2Xo; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=DeA+xRGDRwX5FZJEbvO5br11Fxzt7VrJZ+CdH7mkv84=; b=f5LUk2XoxeftulqsMYS0qZhrMV
-	D33Qcoa0qsSO+jFSuayHLqmxEo3cW6jBfksVGvwJE/z3vabkc2SJwxl3EjOxq2p9mWucqxj0ZE5du
-	ugMeoZwTLRfUyNjqNVP27O4PJoiCIHbPqBZdm6A4Le9s/UVwO2tnyWIS8Vdv7eP0Uwal9BCoonuWA
-	qQTbPhlhuAEsUiXPiLZweAQ2/wNRo0ZExFWaPB39S0hwHuyJw96uYDb8WZXMFudqURwTH7fMDd+PP
-	2CMYJyUlguco62buE6sOBk3gl2eHsc0wZosw32CsSo/HCCjL2UFhyjqo3zwOS9h8KfT5bEmMG9mTY
-	89G2koBA==;
-Received: from [191.8.29.151] (helo=steammachine)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vIaZx-004mkf-PL; Mon, 10 Nov 2025 23:41:42 +0100
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: linux-kernel@vger.kernel.org
-Cc: Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	kernel-dev@igalia.com,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v6] selftests/futex: Create test for robust list
-Date: Mon, 10 Nov 2025 19:41:30 -0300
-Message-ID: <20251110224130.3044761-1-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.51.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7CB21B196;
+	Mon, 10 Nov 2025 22:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762814644; cv=fail; b=igh/h18RQYRpLCHCkwrA70Pg5rIWq1hPSWPpZSzCGR2D3hhHFHqEhO9Zfdpaker1OpyeONMaHg6v2kCAdhIb9e3XMp4s4/5rcIprhXcZ9THVGw1CeBGz7B3YgJpSOB91Ifys8BRQkz+A7+Nz7jjBLHrfq398/WvnwoqOKzGVB2k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762814644; c=relaxed/simple;
+	bh=sj77rn9t38BJ6me4ou49BKlV+6bEayQwWqpGnOlNAPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Ve4VKBolqYAWXmKME/7KE2GV6+RI3chylqKjOlPBIHZeByZRHcW3xT7TBolxFNzPiuZc39HCAxGVmyVMALUI9e+CXJM84PJjNwRLIk3sv0zjMIxIJZGBTEp6Pkow8YC1B8nxFY2fgNcnNZXaKdTOpmnQLct5aOanpIrzaFPNZZk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=m6JF0VQ5; arc=fail smtp.client-ip=52.101.125.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gL+wl1zd1cfO16IVPS/Ga6a2wGPYkWZJw1pRENIIO7YkO8j2ZFsdHxV4qr81FFQ+bcOnAzqiu57cD5/8THbIaV8jPUhYbDyX/VU1Ij2FEUFeOgAOZjwuvxtqgNOpTmL9asumZo09BrTOpq7BVpw2+YhbUZzE/FTNN5E7VFedIw3fWlUc9UNf9GJKhyg7m9gyBvcjNID6Tz284pwMrRidZVOdIuvmbqK9jna9f9jnM5JdPzG25huL1dG3pluVFaqg5BVKtcr+7fk3z7g7GAf2UW8lCcHW9d+l4PTL886ygWr1wWMW+gVZA49xhOtTY/X69SBoLb0gYGUsmr20Z9ln2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q8cuSaCSYEvWX1WbsM9sOn8yV7tKHxPqAn/rGCUQFzo=;
+ b=oRc0kONelyb/hhN9lhbtCBDLhDZThqCuRU/m6yoVUJm4ib2HuokEilecWXmYpNH9ayLssDEP+v+cnsYk/pKmooIzayUzBEN/1iptRZqc15uk0edCgCRV30IVm+iYxlk3OU13N2NynTQzEcNSpK+2Y9a0n7G+4t4xu+abh8933X9yqCfYTl9RyxCBnAgrHZUxarzBhJ9DzKpUr/HzPEho3tR0OTdXsh8YhDJv64scMRQE/cB5I/U7YGwIpcmPzkzRc30h2s/xjqQX+7hIHGGI1UjdQN30tT5kmkludoXgOX6hX2fwX8LMijUlx964EOzfB4irz9d9eeVdnsfbjezaVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q8cuSaCSYEvWX1WbsM9sOn8yV7tKHxPqAn/rGCUQFzo=;
+ b=m6JF0VQ5VayEd0Yp7eWVPqrfRS18HkxgDWqcMQDU5dgOG1hig4PurhVz2nRiyHZlHJ+Z2B1Anc2Tbd499Oi+QBHbXpNCitFbvcZ1+4cXOLqiM6Mdvm3jvATA5RVCjYNFJWTFFWGU+E/bzF0ENdhqKiVVrul9DqVKyDDzAjWdaDw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
+ by TY6PR01MB17512.jpnprd01.prod.outlook.com (2603:1096:405:35e::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.14; Mon, 10 Nov
+ 2025 22:43:57 +0000
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::63d8:fff3:8390:8d31]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::63d8:fff3:8390:8d31%6]) with mapi id 15.20.9320.013; Mon, 10 Nov 2025
+ 22:43:57 +0000
+Date: Mon, 10 Nov 2025 23:43:37 +0100
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	biju.das.jz@bp.renesas.com, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Peter Rosin <peda@axentia.se>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 04/21] dt-bindings: reset: renesas,rzv2h-usb2phy:
+ Document VBUS_SEL mux
+Message-ID: <aRJqfh7p9M3NHfCS@tom-desktop>
+References: <cover.1762773720.git.tommaso.merciai.xr@bp.renesas.com>
+ <8fba0b7235bd398d41329fd087d68f7e98bbbaca.1762773720.git.tommaso.merciai.xr@bp.renesas.com>
+ <20251110-resonate-strict-c3d6c42f3e0d@spud>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110-resonate-strict-c3d6c42f3e0d@spud>
+X-ClientProxiedBy: FR0P281CA0101.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a9::19) To TYCPR01MB11947.jpnprd01.prod.outlook.com
+ (2603:1096:400:3e1::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TY6PR01MB17512:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9ef3437-ccb2-43d1-050d-08de20aaa1fe
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3kSUrYUOqoJtOST3ceTzbSLPgJ3Ho5viAcsu0Vs/PeDYBHa/Pug+/3V4d1vk?=
+ =?us-ascii?Q?ss7PlKqsf5vRMBA7Fqjam/zdyhrTeqGPGl9HGqQRz/3As8WDeD/K+s6YFZMC?=
+ =?us-ascii?Q?i6lNZJdg1JmV2tb6eWPy8C2ghjyF/WhMBq/HHUWLL4xHJ+Kbkc2M2O27esos?=
+ =?us-ascii?Q?eG5rPN7ltVchpbgg11JNCEZccY17GpC9cMAYZ7Q4D4kV8ghTVKXM1sEn5bWz?=
+ =?us-ascii?Q?mfEK3I0ori4koJNLd6hGv06xGuGkg4i/gnUrm+YttB5IOQGs3VvP6eHTguY7?=
+ =?us-ascii?Q?U1szLPhS9+zeMP8x2SDDC9bPXTgc9BBbcWh51v62ljoBWpVM7uF9hAx6FGA5?=
+ =?us-ascii?Q?m1yDdtta0NnMi4iInd5QkQQBgh2xbRKusej043jCDOR6XofouzUvw7z4WOjT?=
+ =?us-ascii?Q?wFYCFtMXNiDFqcbMoUtgjfrJqbrZvS1yr8dJauQVVhGzI8qWRTunHIcyyjjx?=
+ =?us-ascii?Q?3AtQXk+v73/x4Ev2jKXfTTOJOIEz8E4e+mO0id9O+cIauIN6cSwP/v1C8MWS?=
+ =?us-ascii?Q?5rwLY3bJoN5+4E+OfKE++TOnmDDABV9lTSvPxrAq5eJ+IUuoSZO4YknmBqyF?=
+ =?us-ascii?Q?Q7/p1wmY/AgCo5bv9HBTeL9Akc2ScZDSSApc5JO8BYXNL2VcYowEMNs4e2HV?=
+ =?us-ascii?Q?wVGaJEq8fFMWKZ61fzbkTHCUyWEbkLKywjYiRv6UplpxRdKLWY+krddtVZJU?=
+ =?us-ascii?Q?O9EY3aE0kQnZhtbIkJ3p/jYhbf1ITSDCTS84vkWKfZTMrlDtpGVOELwvJvi9?=
+ =?us-ascii?Q?cwUaHbJ9Tt9Lfjt1oqWp6/18RHV7eZL5T+teWDe5eIGgGwLdMVGzyBAS3UEh?=
+ =?us-ascii?Q?ufwD+pglYiPUww4p2lKtyiDsanXrPih1KX2EDMpU0MtocTM6f/xasU/CJTym?=
+ =?us-ascii?Q?IIquUYWefa6rh47FWMDmSpHwP5rGowO31rc3t8AQ1rta2cusSx7BRNmYhFN8?=
+ =?us-ascii?Q?mh5B3J9cj2f9kYb/N41mHCs/ybwILNY40R+YcDXipASrPkNNxNuhtLHCqDdJ?=
+ =?us-ascii?Q?ckN5q9Ro1M9bTua4hRKh380cOWft0Q1e6zqho9oLeL1ocI/lPsK9KJpJQNq/?=
+ =?us-ascii?Q?eqE5Phv0qpSEW+rtPjdV5EIGbuHD+J09lywbrG+aZhkqblwN3mfBghmKKGP8?=
+ =?us-ascii?Q?m8/8ZAQsnDi7PivZiVxlkAINTcfpiYoFNLEmmMEw45SpVnJodMRh86X5brsZ?=
+ =?us-ascii?Q?omMrrkIfESAYVAuEbn6wKZBTGx3ZC2f9mUIyDM5I1DFv1w0w2xS8KM75kqHW?=
+ =?us-ascii?Q?kaFSjW8GtcAl9FvrVfp1ENnei+NP8zEWIh9739mINRq7+CpnE++y2/OkfFtn?=
+ =?us-ascii?Q?OtZoQW89MtkNfqitrAViHj/3ZBZ1R7PIk7gZqeN3Ul6iWrud5iwnobYWMc6C?=
+ =?us-ascii?Q?kmdrhwKosmFhLR1rE6vInF772A8Bvc3pqV0y+V8ye6nHMnTxPmqTPyUzHZCd?=
+ =?us-ascii?Q?H+1TFTZ3IkFuYhFs+EmlXrrJS9fr5j+6WkQFPfOXkyIEASErMkv1fZd9v27g?=
+ =?us-ascii?Q?lLhYlCFB71k+PIwyrZbmwqITDZxr8muj/iJP?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3YpOma1U2M3WDmsikBavoBmgp5Oqzl0zovjVCvruI7c9ne/zKyY9MS1cgagX?=
+ =?us-ascii?Q?qIuLzceNB1a+YQ9izmmrAov+LfpDjHT2ucZlmqk3Abe2Xy0ZdB0L1WUe3+IZ?=
+ =?us-ascii?Q?rhHSP3Sey7FXo0dhfQ3Ve1N24Hic8/RNTdfiRxVmxYKhZq182jYv+J5MAZK0?=
+ =?us-ascii?Q?VHnGFsGNW6FCJ1OHY65nBeNLm+iBsJPUNLPzEUI3VtFYXjfXLpDJsnWRdcEB?=
+ =?us-ascii?Q?aqmm9MKf+FzTETaq5QwimxNdUJHNqmcYnHXKr6WewexIOKb75vTN1PpfhOed?=
+ =?us-ascii?Q?yDGy3gMn9WPfjVlCQhJ2r3sSFXF2YCnSZIDEm948FANZMM4cNGmuTje145pT?=
+ =?us-ascii?Q?LyTRdqiseruoCu3vb4+LqOzKyr7ejnCs9vzq81v4eA0RyGcCbXGENloyErRd?=
+ =?us-ascii?Q?vZjUWa8IQpuH4d86gaILqZNuOiIE301VlGsf9E9/cru9WSvv1TVOL7mWq9R0?=
+ =?us-ascii?Q?vbMismEtKhM5fZUDBOjLPmcydYlcBwk7D/ZBGCRGdAJqUoOxRD8+mikdaHqR?=
+ =?us-ascii?Q?zPLGIF2s4Q3zyAwxSlHvm9oXve02JLgUcJMHzNiGFBK8DgvErkfTwkRV9nQW?=
+ =?us-ascii?Q?Zhcqk1TLdijJYYnoB5cNd9OfO6uCnGt/i+7H9ctfrq1SnMfQbEHSJ/8D3r/l?=
+ =?us-ascii?Q?/+M0Q17YY8riIWn1eEUXbSrkYRILDYTIn0x7o3LQ4hVrsjRCK5sN2J8YaV4Q?=
+ =?us-ascii?Q?PxCSuT/e23mmSyTisdA4ScD4h6Dyo49twfeea1XcU7owcda9IDSoN26YQ+qQ?=
+ =?us-ascii?Q?NFoqicTQoSyKaAchNs93rAkGKw0eQQpKbAKf4phAVY1+sQ5ibHfvjKFLsbxp?=
+ =?us-ascii?Q?gTiuIfd7V9ai6hjo9+NZ4+08C+bpcCmmHxH/j1Sk+VW5IlXdTVgcBayXOunL?=
+ =?us-ascii?Q?PxbLW2ZdmQAG6ZKPS81PLoj47SNdYZsAcHskI1dR8TwqU2CL0a0bhfVNpSBa?=
+ =?us-ascii?Q?U7mEhQi0wIu/ruSpOEr7BocApY8vb+AX5Q1NcdGrRRE8Qp+DQMQG8m78TQLV?=
+ =?us-ascii?Q?qcxGU7bqGM8UW2HNf4oHWKPcRmiAdFE85OFYiIxeIzb76g0E4HXNYWhJihzb?=
+ =?us-ascii?Q?stdwgLyI+RliPczrIHj2jipoMRXapmBmpofk2cksfPy5GscEGyaqP6lpMwrY?=
+ =?us-ascii?Q?pYUwpiUdWIzAf8zecyrZ8TZefhhzEhoYJD8ZtiVzyD07NWubHMkE/QF6VDWI?=
+ =?us-ascii?Q?mD11JAoz9zwLCfWzVRduSN5DWaeszPb8qb5oK5BE33HfKDBqdsE7w8OnKPRM?=
+ =?us-ascii?Q?eAWsY3FSXOTj40++ZHHhWAvFLWo4Hu/cFcTyPHz3vohuWNmgJDXG4q4s77/V?=
+ =?us-ascii?Q?znUei8vY44yjc5CjYJCv2sm55mMe9cc+T+aKo+5XSHltupMdKQLSEU0HQPMN?=
+ =?us-ascii?Q?f++UpSO4ujNwysPQyr5qHMcIrbFn/gOyvSafOopNG5Y0eIR+2HbPm4foHQCe?=
+ =?us-ascii?Q?jsm/DrR0UcBfn20ZeolhTgcbEYG16xAPujtdyDF9UfF9q4s+I4M+KZMCjg77?=
+ =?us-ascii?Q?FXRiBOdysiePvMFJ57PzfmeGck94W/JQkBqtrxTzQ3Jj3wqPXPF/Uik/kN58?=
+ =?us-ascii?Q?th38I/OK1wP0/XmW1l5E4BM1gSnKWmtR6GGtg/RrTU+YVkyJ1yQPI4p31REq?=
+ =?us-ascii?Q?gv5GYgyhSpsUF1sJZIfgaO0=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9ef3437-ccb2-43d1-050d-08de20aaa1fe
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 22:43:57.0689
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GJY84llQD78MNQu/b3GIQegISCDxOFMYGWHIBOTHVvceA3h6kZQOlIkFyZCCxhD3Rx9fnJzVqM2ptaN4+doBAbXOxal6JocX4tFtJVz8ffKgYJweIgncFt8fWyVmm2L6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY6PR01MB17512
 
-Create a test for the robust list mechanism. Test the following uAPI
-operations:
+Hi Conor,
+Thanks for your comment!
 
-- Creating a robust mutex where the lock waiter is wake by the kernel
-  when the lock owner died
-- Setting a robust list to the current task
-- Getting a robust list from the current task
-- Getting a robust list from another task
-- Using the list_op_pending field from robust_list_head struct to test
-  robustness when the lock owner dies before completing the locking
-- Setting a invalid size for syscall argument `len`
-- Adding multiple elements to a robust list wait waiting for each of
-  them
-- Creating a circular list and checking that the kernel does not get
-  stuck in an infinity loop
+On Mon, Nov 10, 2025 at 06:56:31PM +0000, Conor Dooley wrote:
+> On Mon, Nov 10, 2025 at 01:08:04PM +0100, Tommaso Merciai wrote:
+> > Document the 'mux-controller' child node in the Renesas RZ/V2H(P)
+> > USB2PHY reset binding to support describing the USB VBUS_SEL
+> > multiplexer as a mux-controller.
+> > 
+> > This is required to properly configure the USB PHY VBUS source on
+> > RZ/V2H(P), RZ/G3E SoCs.
+> > 
+> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> > ---
+> > v2->v3:
+> >  - Manipulate mux-controller as an internal node.
+> 
+> Why is it a child node, rather than just putting the cell in the parent
+> reset node?
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-Changes from v5:
+Getting "make dt_binding_check errors" [1] in v2
+Adding #mux-state-cells = <1> into:
 
-- use kselftest_harness.h
-- make functions local
-- removed casting of void pointers
-- whenever a child thread fails, returns -1 immediately
-- parent thread checks child returns for test success
-- sleep(1) -> usleep(100)
-- Use reverse tree ordering, and tabular arrangment
-- ASSERT(*futex | FUTEX_OWNER_DIED) -> ASSERT(*futex & FUTEX_OWNER_DIED)
----
- .../selftests/futex/functional/.gitignore     |   1 +
- .../selftests/futex/functional/Makefile       |   3 +-
- .../selftests/futex/functional/robust_list.c  | 552 ++++++++++++++++++
- 3 files changed, 555 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/futex/functional/robust_list.c
+	usb20phyrst: reset-controller@15830000
+	usb21phyrst: reset-controller@15840000
 
-diff --git a/tools/testing/selftests/futex/functional/.gitignore b/tools/testing/selftests/futex/functional/.gitignore
-index 776ad658f75e..23b9fea8d190 100644
---- a/tools/testing/selftests/futex/functional/.gitignore
-+++ b/tools/testing/selftests/futex/functional/.gitignore
-@@ -12,3 +12,4 @@ futex_wait_uninitialized_heap
- futex_wait_wouldblock
- futex_waitv
- futex_numa
-+robust_list
-diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-index 490ace1f017e..af7ec309ea78 100644
---- a/tools/testing/selftests/futex/functional/Makefile
-+++ b/tools/testing/selftests/futex/functional/Makefile
-@@ -22,7 +22,8 @@ TEST_GEN_PROGS := \
- 	futex_priv_hash \
- 	futex_numa_mpol \
- 	futex_waitv \
--	futex_numa
-+	futex_numa \
-+	robust_list
- 
- TEST_PROGS := run.sh
- 
-diff --git a/tools/testing/selftests/futex/functional/robust_list.c b/tools/testing/selftests/futex/functional/robust_list.c
-new file mode 100644
-index 000000000000..e7d1254e18ca
---- /dev/null
-+++ b/tools/testing/selftests/futex/functional/robust_list.c
-@@ -0,0 +1,552 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (C) 2025 Igalia S.L.
-+ *
-+ * Robust list test by André Almeida <andrealmeid@igalia.com>
-+ *
-+ * The robust list uAPI allows userspace to create "robust" locks, in the sense
-+ * that if the lock holder thread dies, the remaining threads that are waiting
-+ * for the lock won't block forever, waiting for a lock that will never be
-+ * released.
-+ *
-+ * This is achieve by userspace setting a list where a thread can enter all the
-+ * locks (futexes) that it is holding. The robust list is a linked list, and
-+ * userspace register the start of the list with the syscall set_robust_list().
-+ * If such thread eventually dies, the kernel will walk this list, waking up one
-+ * thread waiting for each futex and marking the futex word with the flag
-+ * FUTEX_OWNER_DIED.
-+ *
-+ * See also
-+ *	man set_robust_list
-+ *	Documententation/locking/robust-futex-ABI.rst
-+ *	Documententation/locking/robust-futexes.rst
-+ */
-+
-+#define _GNU_SOURCE
-+
-+#include "futextest.h"
-+#include "../../kselftest_harness.h"
-+
-+#include <errno.h>
-+#include <pthread.h>
-+#include <signal.h>
-+#include <stdatomic.h>
-+#include <stdbool.h>
-+#include <stddef.h>
-+#include <sys/mman.h>
-+#include <sys/wait.h>
-+
-+#define STACK_SIZE (1024 * 1024)
-+
-+#define FUTEX_TIMEOUT 3
-+
-+#define SLEEP_US 100
-+
-+static pthread_barrier_t barrier, barrier2;
-+
-+static int set_robust_list(struct robust_list_head *head, size_t len)
-+{
-+	return syscall(SYS_set_robust_list, head, len);
-+}
-+
-+static int get_robust_list(int pid, struct robust_list_head **head, size_t *len_ptr)
-+{
-+	return syscall(SYS_get_robust_list, pid, head, len_ptr);
-+}
-+
-+/*
-+ * Basic lock struct, contains just the futex word and the robust list element
-+ * Real implementations have also a *prev to easily walk in the list
-+ */
-+struct lock_struct {
-+	_Atomic(unsigned int)	futex;
-+	struct robust_list	list;
-+};
-+
-+/*
-+ * Helper function to spawn a child thread. Returns -1 on error, pid on success
-+ */
-+static int create_child(int (*fn)(void *arg), void *arg)
-+{
-+	char *stack;
-+	pid_t pid;
-+
-+	stack = mmap(NULL, STACK_SIZE, PROT_READ | PROT_WRITE,
-+		     MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
-+	if (stack == MAP_FAILED)
-+		return -1;
-+
-+	stack += STACK_SIZE;
-+
-+	pid = clone(fn, stack, CLONE_VM | SIGCHLD, arg);
-+
-+	if (pid == -1)
-+		return -1;
-+
-+	return pid;
-+}
-+
-+/*
-+ * Helper function to prepare and register a robust list
-+ */
-+static int set_list(struct robust_list_head *head)
-+{
-+	int ret;
-+
-+	ret = set_robust_list(head, sizeof(*head));
-+	if (ret)
-+		return ret;
-+
-+	head->futex_offset = (size_t) offsetof(struct lock_struct, futex) -
-+			     (size_t) offsetof(struct lock_struct, list);
-+	head->list.next = &head->list;
-+	head->list_op_pending = NULL;
-+
-+	return 0;
-+}
-+
-+/*
-+ * A basic (and incomplete) mutex lock function with robustness
-+ */
-+static int mutex_lock(struct lock_struct *lock, struct robust_list_head *head, bool error_inject)
-+{
-+	_Atomic(unsigned int) *futex = &lock->futex;
-+	unsigned int zero = 0;
-+	pid_t tid = gettid();
-+	int ret = -1;
-+
-+	/*
-+	 * Set list_op_pending before starting the lock, so the kernel can catch
-+	 * the case where the thread died during the lock operation
-+	 */
-+	head->list_op_pending = &lock->list;
-+
-+	if (atomic_compare_exchange_strong(futex, &zero, tid)) {
-+		/*
-+		 * We took the lock, insert it in the robust list
-+		 */
-+		struct robust_list *list = &head->list;
-+
-+		/* Error injection to test list_op_pending */
-+		if (error_inject)
-+			return 0;
-+
-+		while (list->next != &head->list)
-+			list = list->next;
-+
-+		list->next = &lock->list;
-+		lock->list.next = &head->list;
-+
-+		ret = 0;
-+	} else {
-+		/*
-+		 * We didn't take the lock, wait until the owner wakes (or dies)
-+		 */
-+		struct timespec to;
-+
-+		to.tv_sec = FUTEX_TIMEOUT;
-+		to.tv_nsec = 0;
-+
-+		tid = atomic_load(futex);
-+		/* Kernel ignores futexes without the waiters flag */
-+		tid |= FUTEX_WAITERS;
-+		atomic_store(futex, tid);
-+
-+		ret = futex_wait((futex_t *) futex, tid, &to, 0);
-+
-+		/*
-+		 * A real mutex_lock() implementation would loop here to finally
-+		 * take the lock. We don't care about that, so we stop here.
-+		 */
-+	}
-+
-+	head->list_op_pending = NULL;
-+
-+	return ret;
-+}
-+
-+/*
-+ * This child thread will succeed taking the lock, and then will exit holding it
-+ */
-+static int child_fn_lock(void *arg)
-+{
-+	struct lock_struct *lock = arg;
-+	struct robust_list_head head;
-+	int ret;
-+
-+	ret = set_list(&head);
-+	if (ret) {
-+		ksft_test_result_fail("set_robust_list error\n");
-+		return ret;
-+	}
-+
-+	ret = mutex_lock(lock, &head, false);
-+	if (ret) {
-+		ksft_test_result_fail("mutex_lock error\n");
-+		return ret;
-+	}
-+
-+	pthread_barrier_wait(&barrier);
-+
-+	/*
-+	 * There's a race here: the parent thread needs to be inside
-+	 * futex_wait() before the child thread dies, otherwise it will miss the
-+	 * wakeup from handle_futex_death() that this child will emit. We wait a
-+	 * little bit just to make sure that this happens.
-+	 */
-+	usleep(SLEEP_US);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Spawns a child thread that will set a robust list, take the lock, register it
-+ * in the robust list and die. The parent thread will wait on this futex, and
-+ * should be waken up when the child exits.
-+ */
-+TEST(test_robustness)
-+{
-+	struct lock_struct lock = { .futex = 0 };
-+	_Atomic(unsigned int) *futex = &lock.futex;
-+	struct robust_list_head head;
-+	int ret, pid, wstatus;
-+
-+	ret = set_list(&head);
-+	ASSERT_EQ(ret, 0);
-+
-+	/*
-+	 * Lets use a barrier to ensure that the child thread takes the lock
-+	 * before the parent
-+	 */
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+
-+	pid = create_child(&child_fn_lock, &lock);
-+	ASSERT_NE(pid, -1);
-+
-+	pthread_barrier_wait(&barrier);
-+	ret = mutex_lock(&lock, &head, false);
-+
-+	/*
-+	 * futex_wait() should return 0 and the futex word should be marked with
-+	 * FUTEX_OWNER_DIED
-+	 */
-+	ASSERT_EQ(ret, 0);
-+
-+	ASSERT_TRUE(*futex & FUTEX_OWNER_DIED);
-+
-+	wait(&wstatus);
-+	pthread_barrier_destroy(&barrier);
-+
-+	/* Pass only if the child hasn't return error */
-+	if (!WEXITSTATUS(wstatus))
-+		ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+/*
-+ * The only valid value for len is sizeof(*head)
-+ */
-+TEST(test_set_robust_list_invalid_size)
-+{
-+	struct robust_list_head head;
-+	size_t head_size = sizeof(head);
-+	int ret;
-+
-+	ret = set_robust_list(&head, head_size);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = set_robust_list(&head, head_size * 2);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	ret = set_robust_list(&head, head_size - 1);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	ret = set_robust_list(&head, 0);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+/*
-+ * Test get_robust_list with pid = 0, getting the list of the running thread
-+ */
-+TEST(test_get_robust_list_self)
-+{
-+	struct robust_list_head head, head2, *get_head;
-+	size_t head_size = sizeof(head), len_ptr;
-+	int ret;
-+
-+	ret = set_robust_list(&head, head_size);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = get_robust_list(0, &get_head, &len_ptr);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(get_head, &head);
-+	ASSERT_EQ(head_size, len_ptr);
-+
-+	ret = set_robust_list(&head2, head_size);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = get_robust_list(0, &get_head, &len_ptr);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(get_head, &head2);
-+	ASSERT_EQ(head_size, len_ptr);
-+
-+	ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+static int child_list(void *arg)
-+{
-+	struct robust_list_head *head = arg;
-+	int ret;
-+
-+	ret = set_robust_list(head, sizeof(*head));
-+	if (ret) {
-+		ksft_test_result_fail("set_robust_list error\n");
-+		return -1;
-+	}
-+
-+	/*
-+	 * After setting the list head, wait until the main thread can call
-+	 * get_robust_list() for this thread before exiting.
-+	 */
-+	pthread_barrier_wait(&barrier);
-+	pthread_barrier_wait(&barrier2);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Test get_robust_list from another thread. We use two barriers here to ensure
-+ * that:
-+ *   1) the child thread set the list before we try to get it from the
-+ * parent
-+ *   2) the child thread still alive when we try to get the list from it
-+ */
-+TEST(test_get_robust_list_child)
-+{
-+	struct robust_list_head head, *get_head;
-+	int ret, wstatus;
-+	size_t len_ptr;
-+	pid_t tid;
-+
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ret = pthread_barrier_init(&barrier2, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+
-+	tid = create_child(&child_list, &head);
-+	ASSERT_NE(tid, -1);
-+
-+	pthread_barrier_wait(&barrier);
-+
-+	ret = get_robust_list(tid, &get_head, &len_ptr);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(&head, get_head);
-+
-+	pthread_barrier_wait(&barrier2);
-+
-+	wait(&wstatus);
-+	pthread_barrier_destroy(&barrier);
-+	pthread_barrier_destroy(&barrier2);
-+
-+	/* Pass only if the child hasn't return error */
-+	if (!WEXITSTATUS(wstatus))
-+		ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+static int child_fn_lock_with_error(void *arg)
-+{
-+	struct lock_struct *lock = arg;
-+	struct robust_list_head head;
-+	int ret;
-+
-+	ret = set_list(&head);
-+	if (ret) {
-+		ksft_test_result_fail("set_robust_list error\n");
-+		return -1;
-+	}
-+
-+	ret = mutex_lock(lock, &head, true);
-+	if (ret) {
-+		ksft_test_result_fail("mutex_lock error\n");
-+		return -1;
-+	}
-+
-+	pthread_barrier_wait(&barrier);
-+
-+	/* See comment at child_fn_lock() */
-+	usleep(SLEEP_US);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Same as robustness test, but inject an error where the mutex_lock() exits
-+ * earlier, just after setting list_op_pending and taking the lock, to test the
-+ * list_op_pending mechanism
-+ */
-+TEST(test_set_list_op_pending)
-+{
-+	struct lock_struct lock = { .futex = 0 };
-+	_Atomic(unsigned int) *futex = &lock.futex;
-+	struct robust_list_head head;
-+	int ret, wstatus;
-+
-+	ret = set_list(&head);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = create_child(&child_fn_lock_with_error, &lock);
-+	ASSERT_NE(ret, -1);
-+
-+	pthread_barrier_wait(&barrier);
-+	ret = mutex_lock(&lock, &head, false);
-+
-+	ASSERT_EQ(ret, 0);
-+
-+	ASSERT_TRUE(*futex & FUTEX_OWNER_DIED);
-+
-+	wait(&wstatus);
-+	pthread_barrier_destroy(&barrier);
-+
-+	/* Pass only if the child hasn't return error */
-+	if (!WEXITSTATUS(wstatus))
-+		ksft_test_result_pass("%s\n", __func__);
-+	else
-+		ksft_test_result_fail("%s\n", __func__);
-+}
-+
-+#define CHILD_NR 10
-+
-+static int child_lock_holder(void *arg)
-+{
-+	struct lock_struct *locks = arg;
-+	struct robust_list_head head;
-+	int i;
-+
-+	set_list(&head);
-+
-+	for (i = 0; i < CHILD_NR; i++) {
-+		locks[i].futex = 0;
-+		mutex_lock(&locks[i], &head, false);
-+	}
-+
-+	pthread_barrier_wait(&barrier);
-+	pthread_barrier_wait(&barrier2);
-+
-+	/* See comment at child_fn_lock() */
-+	usleep(SLEEP_US);
-+
-+	return 0;
-+}
-+
-+static int child_wait_lock(void *arg)
-+{
-+	struct lock_struct *lock = arg;
-+	struct robust_list_head head;
-+	int ret;
-+
-+	pthread_barrier_wait(&barrier2);
-+	ret = mutex_lock(lock, &head, false);
-+
-+	if (ret) {
-+		ksft_test_result_fail("mutex_lock error\n");
-+		return -1;
-+	}
-+
-+	if (!(lock->futex & FUTEX_OWNER_DIED)) {
-+		ksft_test_result_fail("futex not marked with FUTEX_OWNER_DIED\n");
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Test a robust list of more than one element. All the waiters should wake when
-+ * the holder dies
-+ */
-+TEST(test_robust_list_multiple_elements)
-+{
-+	struct lock_struct locks[CHILD_NR];
-+	pid_t pids[CHILD_NR + 1];
-+	int i, ret, wstatus;
-+
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+	ret = pthread_barrier_init(&barrier2, NULL, CHILD_NR + 1);
-+	ASSERT_EQ(ret, 0);
-+
-+	pids[0] = create_child(&child_lock_holder, &locks);
-+
-+	/* Wait until the locker thread takes the look */
-+	pthread_barrier_wait(&barrier);
-+
-+	for (i = 0; i < CHILD_NR; i++)
-+		pids[i+1] = create_child(&child_wait_lock, &locks[i]);
-+
-+	/* Wait for all children to return */
-+	ret = 0;
-+
-+	for (i = 0; i < CHILD_NR; i++) {
-+		waitpid(pids[i], &wstatus, 0);
-+		if (WEXITSTATUS(wstatus))
-+			ret = -1;
-+	}
-+
-+	pthread_barrier_destroy(&barrier);
-+	pthread_barrier_destroy(&barrier2);
-+
-+	/* Pass only if the child hasn't return error */
-+	if (!ret)
-+		ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+static int child_circular_list(void *arg)
-+{
-+	static struct robust_list_head head;
-+	struct lock_struct a, b, c;
-+	int ret;
-+
-+	ret = set_list(&head);
-+	if (ret) {
-+		ksft_test_result_fail("set_list error\n");
-+		return -1;
-+	}
-+
-+	head.list.next = &a.list;
-+
-+	/*
-+	 * The last element should point to head list, but we short circuit it
-+	 */
-+	a.list.next = &b.list;
-+	b.list.next = &c.list;
-+	c.list.next = &a.list;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Create a circular robust list. The kernel should be able to destroy the list
-+ * while processing it so it won't be trapped in an infinite loop while handling
-+ * a process exit
-+ */
-+TEST(test_circular_list)
-+{
-+	int wstatus;
-+
-+	create_child(child_circular_list, NULL);
-+
-+	wait(&wstatus);
-+
-+	/* Pass only if the child hasn't return error */
-+	if (!WEXITSTATUS(wstatus))
-+		ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+TEST_HARNESS_MAIN
--- 
-2.51.2
+Nodes.
+
+Please correct me if I'm wrong.
+
+Thanks & Regards,
+Tommaso
+
+
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/961741af7d4ec945945164759fe0d78bb3cf4d9d.1762354366.git.tommaso.merciai.xr@bp.renesas.com/
+
+> 
+> >  - Improved commit body.
+> > 
+> > v1->v2:
+> >  - New patch
+> > 
+> >  .../bindings/reset/renesas,rzv2h-usb2phy-reset.yaml   | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.yaml b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.yaml
+> > index c1b800a10b53..03da74ff2d08 100644
+> > --- a/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.yaml
+> > +++ b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.yaml
+> > @@ -37,6 +37,12 @@ properties:
+> >    '#reset-cells':
+> >      const: 0
+> >  
+> > +  mux-controller:
+> > +    $ref: /schemas/mux/mux-controller.yaml#
+> > +    description: Mux controller for USB VBUS source selection.
+> > +    type: object
+> > +    unevaluatedProperties: false
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -44,6 +50,7 @@ required:
+> >    - resets
+> >    - power-domains
+> >    - '#reset-cells'
+> > +  - mux-controller
+> >  
+> >  additionalProperties: false
+> >  
+> > @@ -58,4 +65,8 @@ examples:
+> >          resets = <&cpg 0xaf>;
+> >          power-domains = <&cpg>;
+> >          #reset-cells = <0>;
+> > +
+> > +        mux-controller {
+> > +          #mux-state-cells = <1>;
+> > +        };
+> >      };
+> > -- 
+> > 2.43.0
+> > 
+
 
 
