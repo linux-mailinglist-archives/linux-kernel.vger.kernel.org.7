@@ -1,170 +1,162 @@
-Return-Path: <linux-kernel+bounces-893024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B98C46606
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:50:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8839C46630
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 250BB3A79B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:50:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1388C4E9C9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BBF30C606;
-	Mon, 10 Nov 2025 11:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8703230C36F;
+	Mon, 10 Nov 2025 11:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MybNDpjY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="H27i6ARB"
+Received: from mx-relay48-hz3.antispameurope.com (mx-relay48-hz3.antispameurope.com [94.100.134.237])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC19630ACEE;
-	Mon, 10 Nov 2025 11:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762775399; cv=none; b=HFCc6oLcin3sfiZUZi8V5EIBwePG5h4WESnUUJkoMGtSkCzPJG/VfZUAXIiPNf+BKwIm75tBrZ7hj3wD7ZIu6tlcbxeqUgd8jHJDzaNW2I9pU+/itc/gntVH3gARwEUky9i8It2mc6jjJ07H9ZtRB+uTDwc9RAdpvEroFwj8n64=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762775399; c=relaxed/simple;
-	bh=kgLvGqGW6Y2MVxPS0dVKx+QUBt0U5B7prEs50cqFkU4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=cHchF+3SJs7n+nnBrL5JSJxU/LYj51e1j+Qc1y4n6t4WWiVQ05TcyGDM9JabhHMvvxvOxPpxfto4uETLWRiSjVwtqCKiHDnk4hfx6OuO6M5e5vqlAKPjbjt6mp2wFZGBjOnP3VrM1UrlSomBeCTWh3xpNaSg/iUHKbegrjZl5RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MybNDpjY; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762775398; x=1794311398;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=kgLvGqGW6Y2MVxPS0dVKx+QUBt0U5B7prEs50cqFkU4=;
-  b=MybNDpjYgKJzlFJE1XlpRif5sw8WHu5Oa0DPp+7PPcrvsdcoEou2DCsA
-   nquc7AEVVNrIdcfV0p8X+fVSJJ2s5K6UjkbYi5X6xyb/iRbwnVjFLa2KX
-   mUbdG6XTlJgOz7H3b1N0+b1qfvHFcpVJ40pB0DS+RgzpZrYDR/A8Ui9Bi
-   E6FGEqNksD6qGPooTKNnZsSrn3UnlOn+SMCGgisksA9sl9etTKgVAbSR4
-   zEexw75QcZkFksiEb7l+GbvPSNiK2pN0yZC3uRMTGlyIGWjwacAWEoxQF
-   fuGD/FtPIFSgzt/kofTi1XRcIY+zeOz137dj9ZqKlbQTVUbDsyOVYq1z6
-   w==;
-X-CSE-ConnectionGUID: W1fT316HSnm/TQmGTWuvYw==
-X-CSE-MsgGUID: IrTEIptmT+C0026QS1VRsw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="52381235"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="52381235"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 03:49:57 -0800
-X-CSE-ConnectionGUID: Sj9MWXvmSo6S4AGtYTK6HQ==
-X-CSE-MsgGUID: q0aaSUIcTOWst/+WBvw2kg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="193665319"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.13])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 03:49:46 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 10 Nov 2025 13:49:42 +0200 (EET)
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, 
-    Viresh Kumar <viresh.kumar@linaro.org>, 
-    Matthias Brugger <matthias.bgg@gmail.com>, 
-    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-    Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@kernel.org>, 
-    Jernej Skrabec <jernej.skrabec@gmail.com>, 
-    Samuel Holland <samuel@sholland.org>, 
-    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-    Daniel Lezcano <daniel.lezcano@linaro.org>, 
-    Bjorn Andersson <andersson@kernel.org>, 
-    Konrad Dybcio <konradybcio@kernel.org>, 
-    Thomas Gleixner <tglx@linutronix.de>, 
-    Nicolas Ferre <nicolas.ferre@microchip.com>, 
-    Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-    Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, Hans de Goede <hansg@kernel.org>, 
-    Daniel Lezcano <daniel.lezcano@kernel.org>, 
-    Thierry Reding <thierry.reding@gmail.com>, 
-    Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, 
-    linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-    linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-    platform-driver-x86@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 09/13] platform: surface: Simplify with
- of_machine_get_match_data()
-In-Reply-To: <20251106-b4-of-match-matchine-data-v1-9-d780ea1780c2@linaro.org>
-Message-ID: <4986f752-ba21-6a5f-641a-e0dadb4abd11@linux.intel.com>
-References: <20251106-b4-of-match-matchine-data-v1-0-d780ea1780c2@linaro.org> <20251106-b4-of-match-matchine-data-v1-9-d780ea1780c2@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453A7309EFF
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.237
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762775467; cv=pass; b=UM9g6XKzvh4x2iMhOY27DFMpbT79X9XXtrrkaPdLOX3Gte4N9c/iQMk5gusPHjhVYAGgzfdnTiBm9T94MjVQQ6yDmGDq5V6Jdd5E9/D81flt7nT/2MVptfFdcgWvfga0mg6MKlLAg8O3i4JpoyLf23d9dcLQDeMnt43eU0u9eMo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762775467; c=relaxed/simple;
+	bh=8ANnxTZGB0qdq9OA0+LforOl8pHytTMeo+uUVALYyx4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P1bYsQbTl/KgChFFzKWUEZ04zeah09YZOaLKDypFcanNbfI9Y0vw1UuGAlR/dqTTyKRy4d3wOuQtDYohPLth8uS2bouVO9QmFcd6vsiEYhhSPyfHhou3tB3pIaU2v+wojgk84vtF7ya+zpAF//eVfwF3l787fnMbXLxag2AH54k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=H27i6ARB; arc=pass smtp.client-ip=94.100.134.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+ARC-Authentication-Results: i=1; mx-gate48-hz3.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out01-hz1.hornetsecurity.com;
+ dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=6+JY7AOKey3FDjj6FvnrDJHIL5n0tWzWiuTW9DK4ln0=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1762775422;
+ b=npImvd+OGGbR5vJ6swHagiqHtwKJQpr3sNcCp4wq7veMER39xbR9/fwola+jQ6LvZWdLWNb6
+ C6kVZw+Zv6N1NBQg5tipo90v4J7RFj/6bX1BQPBnz0gIkTFI6AMgb0UEbnFID1Xq4uwlvjgoT9i
+ USqf1doJ+x9nDBuBtohApODQY2CBFXMs8nB95ACt4/FXY9o1HmUMUqh1RuA4QJ5GvLW1AD0CAzZ
+ LBg8LA8w5NV3s/i2pyuxA7etzyz0WyYHimw8IqTiBFA9EO375vR+83GMVppk3IFpSjBnDAajKPF
+ J2zmXgq6lOrJycn0j9ltgQ4ssZ5NFqqOGz1Fo5nqMHZoQ==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1762775422;
+ b=jk9DwqmQqexVR6Mn+sWDGlJceS8N2bLSq0C6MAfZohrka3VoMLFCKwQ6MCwBsMzLn6w40dJt
+ /deELrNuxLJchaYl3Uj1zeqECl24T/k2TqJNzoRr7f7vYwA21QFFKjXNv5q2XnnsGtgUUnOpBvk
+ sEp3tnxspt4tKp6cGEOOTmLBpHNBi0/wxpoMqaG5gGHjUiBnIEY7xobN6IzPyjI/a0EMOWbPwnU
+ zU9/+fpeRgkhwmQYzhS9Avpnet9NZ27bF3zDcDboiAPbFnYzaYsHm2bEkrR82wLOQbnCR2YTYmJ
+ ux/Hww/sM0v43shm4PFG3gUYaeWwqg7YsrHoFJyP7kc7Q==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay48-hz3.antispameurope.com;
+ Mon, 10 Nov 2025 12:50:22 +0100
+Received: from schifferm-ubuntu.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
+	by smtp-out01-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 8EFB1A41305;
+	Mon, 10 Nov 2025 12:50:05 +0100 (CET)
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux@ew.tq-group.com,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH v4 0/2] TQ-Systems TQMa62xx SoM and MBa62xx board
+Date: Mon, 10 Nov 2025 12:49:44 +0100
+Message-ID: <cover.1762775119.git.matthias.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1580227820-1762775382=:1060"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-cloud-security-sender:matthias.schiffer@ew.tq-group.com
+X-cloud-security-recipient:linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay48-hz3.antispameurope.com with 4d4nz22xmnz1kNh54
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:1af9115dd2db95f7ea9e58f71e1f2d89
+X-cloud-security:scantime:1.819
+DKIM-Signature: a=rsa-sha256;
+ bh=6+JY7AOKey3FDjj6FvnrDJHIL5n0tWzWiuTW9DK4ln0=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1762775422; v=1;
+ b=H27i6ARB3PqsecSRefko1S+LVbNyFNKVgdTMYg6FzJ+Ek7UpDqzaG24jSuk2LmpmqqPu6002
+ XihgSM3YqhaSnqzvmtsG6QEbkBX6Q9hKGjBSbRaVm+HGEemFdpulvhSk8luAO4Y+0rMxkOkHJPy
+ 5eMQziyKZGActjzx+zDHthalMehLTTqhNijl0WCYUKt8p/TfA72Py0jaPL3k4Wj89zLcnfuekYl
+ jIj+JRDRcctXdW9i4wTBfg62mhkg8E/ZMrofqe9IU9TQKGAs8DRu4MZnTprCneVtA6p/05OxtUV
+ 7fllpdvveuJLXSEJT4c164OqpE8jXUAMVOLRHayctbLqA==
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+This adds Device Trees for our AM62x-based SoM TQMa62xx and its
+reference carrier board MBa62xx.
 
---8323328-1580227820-1762775382=:1060
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Not yet included are overlays to enable LVDS display output and MIPI-CSI
+camera input.
 
-On Thu, 6 Nov 2025, Krzysztof Kozlowski wrote:
+Changes in v4:
+- Rebase onto latest ti-k3-dts-next
+- Reorder boot phase tags after other standard DT properties
+- Add missing supply regulators in SPI-NOR flash and USB hub
+- Set status = "okay" in &cpsw3g, as it is disabled in k3-am62-main.dtsi
+  now
+- Add disabled 1400MHz OPP entry (will be enabled by bootloader if
+  supported by PMIC configuration)
+- Update copyright years in new files
 
-Please change the prefixes to:
+Changes in v3:
+- Rebased onto ti-k3-dt-for-v6.18
+- 3 of the 5 patches in v2 have been applied already and are dropped
+- Include k3-am62-ti-ipc-firmware.dtsi, drop now redundant configuration
+- Change node name for MCU reserved memory to 'memory'
+- Use rgmii-id PHY mode
+- Drop now redundant ti,rx-internal-delay
+- Update simple-audio-card,name to match other TQ SOMs with compatible
+  configuration
+- Reference dss_pins in dss node (actual display support will be added
+  in a follow-up patch series)
+- Consistently use GPIO_ACTIVE_HIGH define
+- Drop unneeded usb0 quirk flags
+- Add boot phase tags
 
-platform/surface: aggregator_registry: ...
+Changes in v2:
+- Collected acks and reviews
+- Rebased onto v6.13-rc1
 
-Once that is changed,
+Matthias Schiffer (2):
+  dt-bindings: arm: ti: Add compatible for AM625-based TQMa62xx SOM
+    family and carrier board
+  arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and MBa62xx carrier board
+    Device Trees
 
-Acked-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+ .../devicetree/bindings/arm/ti/k3.yaml        |   7 +
+ arch/arm64/boot/dts/ti/Makefile               |   1 +
+ .../boot/dts/ti/k3-am625-tqma62xx-mba62xx.dts | 930 ++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am625-tqma62xx.dtsi | 331 +++++++
+ 4 files changed, 1269 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am625-tqma62xx-mba62xx.dts
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am625-tqma62xx.dtsi
 
---=20
- i.
-
-> Replace open-coded getting root OF node, matching against it and getting
-> the match data with new of_machine_get_match_data() helper.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->=20
-> ---
->=20
-> Depends on the first OF patch.
-> ---
->  drivers/platform/surface/surface_aggregator_registry.c | 13 +-----------=
--
->  1 file changed, 1 insertion(+), 12 deletions(-)
->=20
-> diff --git a/drivers/platform/surface/surface_aggregator_registry.c b/dri=
-vers/platform/surface/surface_aggregator_registry.c
-> index a594d5fcfcfd..78ac3a8fbb73 100644
-> --- a/drivers/platform/surface/surface_aggregator_registry.c
-> +++ b/drivers/platform/surface/surface_aggregator_registry.c
-> @@ -491,24 +491,13 @@ static const struct of_device_id ssam_platform_hub_=
-of_match[] __maybe_unused =3D {
->  static int ssam_platform_hub_probe(struct platform_device *pdev)
->  {
->  =09const struct software_node **nodes;
-> -=09const struct of_device_id *match;
-> -=09struct device_node *fdt_root;
->  =09struct ssam_controller *ctrl;
->  =09struct fwnode_handle *root;
->  =09int status;
-> =20
->  =09nodes =3D (const struct software_node **)acpi_device_get_match_data(&=
-pdev->dev);
->  =09if (!nodes) {
-> -=09=09fdt_root =3D of_find_node_by_path("/");
-> -=09=09if (!fdt_root)
-> -=09=09=09return -ENODEV;
-> -
-> -=09=09match =3D of_match_node(ssam_platform_hub_of_match, fdt_root);
-> -=09=09of_node_put(fdt_root);
-> -=09=09if (!match)
-> -=09=09=09return -ENODEV;
-> -
-> -=09=09nodes =3D (const struct software_node **)match->data;
-> +=09=09nodes =3D (const struct software_node **)of_machine_get_match_data=
-(ssam_platform_hub_of_match);
->  =09=09if (!nodes)
->  =09=09=09return -ENODEV;
->  =09}
->=20
->=20
---8323328-1580227820-1762775382=:1060--
+-- 
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
 
