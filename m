@@ -1,110 +1,112 @@
-Return-Path: <linux-kernel+bounces-893853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0770C48836
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:17:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16407C48868
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C86531890B1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:18:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71CD64E8678
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE6331D37C;
-	Mon, 10 Nov 2025 18:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D2E329E6F;
+	Mon, 10 Nov 2025 18:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFyXs1Td"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NfmALfXQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F1D318146;
-	Mon, 10 Nov 2025 18:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542313218B2;
+	Mon, 10 Nov 2025 18:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762798657; cv=none; b=lY2X0Ni0uJ7pJ+rk7L3ujkdaFDZEZS3mCfxoiEPBcSShtvy3RpU5s8F8E9lrbHJd1EeC8Kmkki6PTNCRvG+XsNvp2CzsEuz0u5Uqh/LbdQbtm1oJIUaw4UhJ5S3PTHiiH8fCZSNZ78iNurrP0bjYD3+SY0NVd/tIE9b+OPigZ0U=
+	t=1762799048; cv=none; b=g9CIn/RtX8SU63OSHyDaNQP6L7htf6eB0pNTLajLE/nphpMLEJGGjWt7MPfeJQ5b+XegW92dnXuvmSAQ5gJUI0BNqquFZjbICy5A5IRzV1NwIX23NXCzmtq8p2Mobivc//uluMborKPkF7x3qt6xsRWdMwavrMFPi23rwvmFwu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762798657; c=relaxed/simple;
-	bh=TkDygIMReA0SstkB5OvgzehqDlcij0Z0ZMvUqL6Rj74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hPjj1ow8gPDNhWW1+gryN0kezikFUae0DLBC4IRLFrtZulLPNTxtalhvaRl8s7xYP/ByqIPuwQOaYD+rpoS2dFrlcSLRhc36tIJVosomsJzCf1tVoqmTL57kZ4Zm0fKu8TesTCLakP8fsBr1VRgT31A0H1C/wHfZIeqbKV8DOjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFyXs1Td; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B0E5C4CEFB;
-	Mon, 10 Nov 2025 18:17:35 +0000 (UTC)
+	s=arc-20240116; t=1762799048; c=relaxed/simple;
+	bh=QcmGZgGER1WlXItZoFVk7+ynEwglcHKP6PhNd97EWUE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=j9nDYX358rQ3j88ajCJTb3TWUzm6SFQUGUqvjxdxIX3eydYkCdLc5GfTjM/Xh83uPiyZPZY8WtjTQg0bBoq7v5hLVEG4iEBkZ1NSwhraTvzv7tGV5Ay9aqsV9xkL7gUjSxwEID6PZMmmXjBEnsk30by8r4ucnM3GZHXhCsCjiPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NfmALfXQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74819C116B1;
+	Mon, 10 Nov 2025 18:24:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762798657;
-	bh=TkDygIMReA0SstkB5OvgzehqDlcij0Z0ZMvUqL6Rj74=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DFyXs1Td95alAV9mBklla3aaLsx4v3Zb0tF2w/SldWPWrmvaZwljumavflQt/+pJS
-	 /78H7RWWWx9eK3Y1Vr5qr3Pilt/9rVcdguILnUC3c5kAUqeANq/U6wfqWVRBRRYbaB
-	 ksiKkzM88zCFbEoJtaDQUztIGco4nsjm0JGV5YLvg09vYCxntLJWnr1qz8/VhRg7iH
-	 no31Y0kixnMoaHlZcfic5LQ1OCKI7vTH6tfFq9pM9SktkHcjlDMzkizEVqQkYQ3Qos
-	 bW7YzVRByJuvxQbg8C77SYSe1V0gpcqk5biJUkJnMEY+kb9jQm4GyWaQa0ri1Afwpg
-	 qYCdQmSeVbvjA==
-Date: Mon, 10 Nov 2025 12:21:43 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com, 
-	quic_mrana@quicinc.com, quic_vpernami@quicinc.com, mmareddy@quicinc.com, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v8 0/5] PCI: dwc: Add ECAM support with iATU
- configuration
-Message-ID: <zovd3p46jmyitqyr5obsvvmxj3sa3lcaczmnv4iskhos44klhk@gk6c55ndeklr>
-References: <20250828-ecam_v4-v8-0-92a30e0fa02d@oss.qualcomm.com>
- <176160465177.73268.9869510926279916233.b4-ty@kernel.org>
- <e9306983-e2df-4235-a58b-e0b451380b52@oss.qualcomm.com>
+	s=k20201202; t=1762799047;
+	bh=QcmGZgGER1WlXItZoFVk7+ynEwglcHKP6PhNd97EWUE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=NfmALfXQnMY1e1gphmkgHCGJX2FyaE3AQpzFkPx8ZuKsEE0lYZFtTUWDsAFji4iLz
+	 nYIgxoId+qggpDtBM+7E3hFrNWhhKm3BLcpY0D9OKUnv6TS05xoI7i7ai6pXw0DvTV
+	 OQEO6h8kDcM8nIatGfkG2TwZYK9c5v56s3EDxmnORNEPn1KdYJ47YNDnbuxpJmht+G
+	 jfLSzwGefMlu471CSSUkMd6FpPLnXzL7BcFGIy1Vsr99QW6teTkd+jmVJYQdkqxYpp
+	 ywAplWyYBYbq2kM1mzuoFKgNzFAUv+3YNTsN4+Q/Bk4pAVjbQXLty9YsxD6GkVGGU+
+	 7LD+BaIiToeyQ==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net 0/6] selftests: mptcp: join: fix some flaky tests
+Date: Mon, 10 Nov 2025 19:23:39 +0100
+Message-Id: <20251110-net-mptcp-sft-join-unstable-v1-0-a4332c714e10@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9306983-e2df-4235-a58b-e0b451380b52@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKstEmkC/x3MQQqDMBBA0avIrB0woSnSqxQXSRzrSDuGTJSCe
+ HeDy7f4/wClzKTwag7ItLPyKhWmbSDOXj6EPFaD7awzputRqOAvlZhQp4LLyoKbaPHhS+i87eM
+ YnuTdA+ohZZr4f9/fUEMYzvMCytfIqXIAAAA=
+X-Change-ID: 20251108-net-mptcp-sft-join-unstable-5a28cdb6ea54
+To: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1496; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=QcmGZgGER1WlXItZoFVk7+ynEwglcHKP6PhNd97EWUE=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDKFdPdmM1285CYsLx54W3PC6frJZ/t3ONzNehEye7v6v
+ ZyztjNXd5SyMIhxMciKKbJIt0Xmz3xexVvi5WcBM4eVCWQIAxenAEykx57hn3Wr7ve3lYlWiywK
+ rFzfFZ9TWzR57rzzh8OSn50LPHza+hbDP/WVd30Wqf21/C51Osx38/Z9K8otT24y4Zsnxzp7lgG
+ vBzMA
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On Tue, Oct 28, 2025 at 11:12:23PM +0530, Krishna Chaitanya Chundru wrote:
-> 
-> On 10/28/2025 4:07 AM, Bjorn Andersson wrote:
-> > On Thu, 28 Aug 2025 13:04:21 +0530, Krishna Chaitanya Chundru wrote:
-> > > The current implementation requires iATU for every configuration
-> > > space access which increases latency & cpu utilization.
-> > > 
-> > > Designware databook 5.20a, section 3.10.10.3 says about CFG Shift Feature,
-> > > which shifts/maps the BDF (bits [31:16] of the third header DWORD, which
-> > > would be matched against the Base and Limit addresses) of the incoming
-> > > CfgRd0/CfgWr0 down to bits[27:12]of the translated address.
-> > > 
-> > > [...]
-> > Applied, thanks!
-> > 
-> > [1/5] arm64: dts: qcom: sc7280: Increase config size to 256MB for ECAM feature
-> >        commit: 03e928442d469f7d8dafc549638730647202d9ce
-> 
-> Hi Bjorn,
-> 
-> Can you revert this change, this is regression due to this series due to
-> that we have change the logic,
+When looking at the recent CI results on NIPA and MPTCP CIs, a few MPTCP
+Join tests are marked as unstable. Here are some fixes for that.
 
-How is that possible? This is patch 1 in the series, by definition it
-doesn't have any outstanding dependencies.
+- Patch 1: a small fix for mptcp_connect.sh, printing a note as
+  initially intended. For >=v5.13.
 
+- Patch 2: avoid unexpected reset when closing subflows. For >= 5.13.
 
-I've reverted the change.
+- Patches 3-4: longer transfer when not waiting for the end. For >=5.18.
 
-Regards,
-Bjorn
+- Patch 5: read all received data when expecting a reset. For >= v6.1.
 
-> we need to update the dtsi accordingly, I will send a separate for all
-> controllers to enable this ECAM feature.
-> 
-> - Krishna Chaitanya.
-> 
-> 
-> > Best regards,
+- Patch 6: a fix to properly kill background tasks. For >= v6.5.
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Matthieu Baerts (NGI0) (6):
+      selftests: mptcp: connect: fix fallback note due to OoO
+      selftests: mptcp: join: rm: set backup flag
+      selftests: mptcp: join: endpoints: longer transfer
+      selftests: mptcp: join: userspace: longer transfer
+      selftests: mptcp: connect: trunc: read all recv data
+      selftests: mptcp: join: properly kill background tasks
+
+ tools/testing/selftests/net/mptcp/mptcp_connect.c  | 18 +++--
+ tools/testing/selftests/net/mptcp/mptcp_connect.sh |  2 +-
+ tools/testing/selftests/net/mptcp/mptcp_join.sh    | 90 +++++++++++-----------
+ tools/testing/selftests/net/mptcp/mptcp_lib.sh     | 21 +++++
+ 4 files changed, 80 insertions(+), 51 deletions(-)
+---
+base-commit: 96a9178a29a6b84bb632ebeb4e84cf61191c73d5
+change-id: 20251108-net-mptcp-sft-join-unstable-5a28cdb6ea54
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
