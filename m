@@ -1,150 +1,181 @@
-Return-Path: <linux-kernel+bounces-892348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B056C44E71
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:30:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B08C44E83
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:32:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB56188D0F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:31:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FE104E120F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AF3274B50;
-	Mon, 10 Nov 2025 04:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A3025D527;
+	Mon, 10 Nov 2025 04:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QrKMgcjb"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d1oMl/bb"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB962757EA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C38941C63
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762749035; cv=none; b=LhXa1iC3OKEa+fHsY/uTQnfTI6Ztun1B9FRhzyIKeclVsg+POSQKPEwJarcAmHB8mHAC/rWoCLGawaXXUcwY9tdvEqM/WAsxp1vII9eZUDF0/cgNutqu7z9E5AgZwLwdnZwlkUgJS7T8K+20E9qLNZWktWtluGC+3vrFdL05Yeg=
+	t=1762749135; cv=none; b=KAXUSDE8x6wQ2/jL6mdeinNrMS27ehirQFQacobwZEeIxxMirpgNVmwiy0LBzysrM8piinqrVCvy53USAoWgefTp/EB/KnuggssngTxr3p5EpptgqLYfnL+U2swuzHThB21WGUgalJGQz40ADGwsNXjuB1iCTpFf3RBpDG3UAkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762749035; c=relaxed/simple;
-	bh=j3o1PVMLua/Gnsl0SBuyqCBAYrO7OxpEAe/BvmQDT1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TaY5PYwkHCnVtBNvPluiIVXNCzGAfrycGJHfVDL1WlcPQADXTnuYqAWBbRNAh6JU+aiAPUUFiZlBxP9xrV/4xbtM8SOKQMyEFTg8q2ptvulpTTEAZ57WSy91KBKO85yqnkxRFVnLQUWmTdWecqI5f0xdIO3dq4d5HRQCSxYDKVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QrKMgcjb; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762749017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VM4mtZug8xE4ghkhPgkEdlWdDR6+a0E4+YRze3eMGSI=;
-	b=QrKMgcjb+M+1F+KOE1U1Kz2oPhiC+29MYWaxjYCseEb9dCjF/qm7ht2OVhV3hu6Ni8yXAS
-	0k2iLbwHoKMIxa4K4ZUwxl+IOfLx4O354NnSpcjicDEqtBtrjS0hjI2H/wZRxnioVCq0s9
-	yXbOo+3DumqD4576zhhXeGXKJJNoBrE=
-Date: Mon, 10 Nov 2025 12:30:06 +0800
+	s=arc-20240116; t=1762749135; c=relaxed/simple;
+	bh=79PN5C83DCTvQ2DVc3D1FtqNYspXR7zIgfPFL1yBors=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tOiCaX2gQACP+sKpVM/Dhp51JuJJtVgigTP+Crtj95DCpYwKFIthdL79RU1PRBxHW83guwiJa3V57H3CH5vDk8rY4F34O9TLOw1EUYJjWkq5JzBF1+rKQ59I5yM/ihbQlB7yxpVhcSDJKuZdQmJ1uORjMsw7u9p3uKrDp4y3r14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d1oMl/bb; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9Ks8gK031322;
+	Mon, 10 Nov 2025 04:31:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=GSIHS5tTjaggwFqe1bEYD18tRhEzWsnsjL5fO1RIu
+	M0=; b=d1oMl/bbsV9WTfESm9eYZ4FsoslcY2Ne8I3y5t2vPS3gO8qPxDHAyBMsj
+	Px1c5rc+MJBvaa6s8uIFo+aGlpaLYGQU5p4TeLosq9DRqJiDq8HrnYyFjqvM8a95
+	mVzPY0VJTgfO0YXBpscZIkkJbGzCw+JprvS8jz6XO/96Tj/BADhFeItOD4suGGVP
+	ldTT77eIXkhtKaDIp7AQl3EpxrtSMI1woSaWY/8QLVZNDc9ou0kTfag/YUbJpacb
+	KdJP6JBrSNOAoRQjiJnJnnuNkrrbQXiOuu/cSQHo9j0aNmYGV+ncBK20eKw3+JMa
+	Z/6ISlmvo8eHyurV7UEGXjh+0rDdQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk7xdv7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 04:31:56 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AA4Vtdr020451;
+	Mon, 10 Nov 2025 04:31:55 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk7xdv4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 04:31:55 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9NJFnQ007325;
+	Mon, 10 Nov 2025 04:31:54 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aajdj3nb5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 04:31:54 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AA4VotJ41550178
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Nov 2025 04:31:51 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0609A2004E;
+	Mon, 10 Nov 2025 04:31:50 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8E62A20040;
+	Mon, 10 Nov 2025 04:31:46 +0000 (GMT)
+Received: from li-4f5ba44c-27d4-11b2-a85c-a08f5b49eada.in.ibm.com (unknown [9.109.204.116])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 10 Nov 2025 04:31:46 +0000 (GMT)
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Sourabh Jain <sourabhjain@linux.ibm.com>,
+        Aditya Gupta <adityag@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, Baoquan he <bhe@redhat.com>,
+        Dave Young <dyoung@redhat.com>, Hari Bathini <hbathini@linux.ibm.com>,
+        Jiri Bohac <jbohac@suse.cz>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+        Pingfan Liu <piliu@redhat.com>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        Shivang Upadhyay <shivangu@linux.ibm.com>,
+        Vivek Goyal <vgoyal@redhat.com>, linuxppc-dev@lists.ozlabs.org,
+        kexec@lists.infradead.org
+Subject: [PATCH v3 0/5] kexec: reorganize sysfs interface and add new kexec sysfs
+Date: Mon, 10 Nov 2025 10:01:38 +0530
+Message-ID: <20251110043143.484408-1-sourabhjain@linux.ibm.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
-To: Harry Yoo <harry.yoo@oracle.com>, Shakeel Butt <shakeel.butt@linux.dev>
-Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
- roman.gushchin@linux.dev, muchun.song@linux.dev, david@redhat.com,
- lorenzo.stoakes@oracle.com, ziy@nvidia.com, imran.f.khan@oracle.com,
- kamalesh.babulal@oracle.com, axelrasmussen@google.com, yuanchu@google.com,
- weixugc@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- Muchun Song <songmuchun@bytedance.com>, Qi Zheng
- <zhengqi.arch@bytedance.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- linux-rt-devel@lists.linux.dev
-References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
- <97ea4728568459f501ddcab6c378c29064630bb9.1761658310.git.zhengqi.arch@bytedance.com>
- <aQ1_f_6KPRZknUGS@harry> <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
- <aQ3yLER4C4jY70BH@harry>
- <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
- <aRFKY5VGEujVOqBc@hyeyoo>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Qi Zheng <qi.zheng@linux.dev>
-In-Reply-To: <aRFKY5VGEujVOqBc@hyeyoo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfX1rnJ0LuOdoxy
+ 7CJJcOI6ZLPP/T9i6lF8wmz+oCImw/xCTq3dhARayCL+SYoQK/6x6qkVvOf/wr3Bf+vjUVW1OBl
+ zkCHme4SDnP/BbrlWFajK9Nwg2RyCKiEVvPcw9r2ldDgUDKh3Q9NOD3lzoXYon3CSgjdY3WeejP
+ C2l63rPV6ffSasjw1PE6vuLv34sOwqPh7O1s/s5ZPFyVrbNI4zARR6Y/8e3cPhrVVRLJwtN0+Bk
+ wkcOHcsTMcxlCw0DY3ypqce+ZvJLWs2d66efuCjkw1xTmtYP88e1sJMy7+NJQHR3jzLvbnPf3rP
+ PNRcD9sLG1w6/iFLf0KY1nQMhA1K9uZBG1fmdg8aVeTXbVSMaSOF0ivib4NHcSdM1khuFDa7Y4l
+ LUWCu+IBKl6qsylfesR8pUjsAuhaKA==
+X-Authority-Analysis: v=2.4 cv=ZK3aWH7b c=1 sm=1 tr=0 ts=69116abc cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8 a=Z4Rwk6OoAAAA:8
+ a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=voM4FWlXAAAA:8 a=JfrnYn6hAAAA:8
+ a=LRU2jnFezOS3J6eLL00A:9 a=HkZW87K1Qel5hWWM3VKY:22 a=IC2XNlieTeVoXbcui8wp:22
+ a=1CNFftbPRP8L7MoqJWF3:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: uzFoxsjBYnAGMCBSO5nLYhimKGjpbOQl
+X-Proofpoint-GUID: o0rWVqbWpvX2ZpFvuTjHOykWXzciUBWy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_01,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511080022
 
+All existing kexec and kdump sysfs entries are moved to a new location,
+/sys/kernel/kexec, to keep /sys/kernel/ clean and better organized.
+Symlinks are created at the old locations for backward compatibility and
+can be removed in the future [02/05].
 
+While doing this cleanup, missing ABI documentation for the old sysfs
+interfaces is added, and those entries are marked as deprecated
+[01/05 and 03/05]. New ABI documentation is also added for the
+reorganized interfaces. [04/05]
 
-On 11/10/25 10:13 AM, Harry Yoo wrote:
-> On Fri, Nov 07, 2025 at 10:32:52PM -0800, Shakeel Butt wrote:
->> On Fri, Nov 07, 2025 at 10:20:57PM +0900, Harry Yoo wrote:
->>>
->>> Although it's mentioned in the locking documentation, I'm afraid that
->>> local_lock is not the right interface to use here. Preemption will be
->>> disabled anyway (on both PREEMPT_RT and !PREEMPT_RT) when the stats are
->>> updated (in __mod_node_page_state()).
->>>
->>> Here we just want to disable IRQ only on !PREEMPT_RT (to update
->>> the stats safely).
->>
->> I don't think there is a need to disable IRQs. There are three stats
->> update functions called in that hunk.
->>
->> 1) __mod_lruvec_state
->> 2) __count_vm_events
->> 3) count_memcg_events
->>
->> count_memcg_events() can be called with IRQs. __count_vm_events can be
->> replaced with count_vm_events.
-> 
-> Right.
-> 
->> For __mod_lruvec_state, the
->> __mod_node_page_state() inside needs preemption disabled.
-> 
-> The function __mod_node_page_state() disables preemption.
-> And there's a comment in __mod_zone_page_state():
-> 
->> /*
->>   * Accurate vmstat updates require a RMW. On !PREEMPT_RT kernels,
->>   * atomicity is provided by IRQs being disabled -- either explicitly
->>   * or via local_lock_irq. On PREEMPT_RT, local_lock_irq only disables
->>   * CPU migrations and preemption potentially corrupts a counter so
->>   * disable preemption.
->>   */
->> preempt_disable_nested();
-> 
-> We're relying on IRQs being disabled on !PREEMPT_RT.
+Along with this reorganization, a new sysfs file,
+/sys/kernel/kexec/crash_cma_ranges, is introduced to export crashkernel
+CMA reservation details to user space [05/05]. This helps tools determine the
+total crashkernel reserved memory and warn users that capturing user
+pages while CMA is reserved may cause incomplete or unreliable dumps.
 
-So it's possible for us to update vmstat within an interrupt context,
-right?
+Changlog:
+---------
 
-There is also a comment above __mod_zone_page_state():
+v2 -> v3:
+ - Add the missing hunk to export crash_cma_ranges sysfs [05/05]
+ - Declare kexec_kobj static [02/05]
 
-/*
-  * For use when we know that interrupts are disabled,
-  * or when we know that preemption is disabled and that
-  * particular counter cannot be updated from interrupt context.
-  */
+Cc: Aditya Gupta <adityag@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Baoquan he <bhe@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Hari Bathini <hbathini@linux.ibm.com>
+Cc: Jiri Bohac <jbohac@suse.cz>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>
+Cc: Pingfan Liu <piliu@redhat.com>
+Cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Cc: Shivang Upadhyay <shivangu@linux.ibm.com>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: kexec@lists.infradead.org
 
-BTW, the comment inside __mod_node_page_state() should be:
+Sourabh Jain (5):
+  Documentation/ABI: add kexec and kdump sysfs interface
+  kexec: move sysfs entries to /sys/kernel/kexec
+  Documentation/ABI: mark old kexec sysfs deprecated
+  kexec: document new kexec and kdump sysfs ABIs
+  crash: export crashkernel CMA reservation to userspace
 
-/* See __mod_zone_page_state */
+ .../ABI/obsolete/sysfs-kernel-kexec-kdump     |  59 ++++++++
+ .../ABI/testing/sysfs-kernel-kexec-kdump      |  61 ++++++++
+ kernel/kexec_core.c                           | 135 ++++++++++++++++++
+ kernel/ksysfs.c                               |  68 +--------
+ 4 files changed, 256 insertions(+), 67 deletions(-)
+ create mode 100644 Documentation/ABI/obsolete/sysfs-kernel-kexec-kdump
+ create mode 100644 Documentation/ABI/testing/sysfs-kernel-kexec-kdump
 
-instead of
-
-/* See __mod_node_page_state */
-
-Will fix it.
-
-> 
-> Maybe we could make it safe against re-entrant IRQ handlers by using
-> read-modify-write operations?
-
-Isn't it because of the RMW operation that we need to use IRQ to
-guarantee atomicity? Or have I misunderstood something?
-
-> 
+-- 
+2.51.1
 
 
