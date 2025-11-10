@@ -1,94 +1,90 @@
-Return-Path: <linux-kernel+bounces-892811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D409AC45DDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:16:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49608C45E44
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83ECC3A7957
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:16:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E611A4ED83A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFEA2FF661;
-	Mon, 10 Nov 2025 10:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bkt29zTo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3567B3E1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A5D302144;
+	Mon, 10 Nov 2025 10:17:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF522F7AAC
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762769775; cv=none; b=sgsvNP7SdWRxwTWlcNnt7j+VFEj+n3U0DOZNDYhvk/d/o1QCuO7X9DZBLGfiMKXLRyeziSlsla0wrCYEmLyiDkj9cJEO78ehA1sLCY4jmFEYQjfzjVygR1aHoHMrOhVtJZqWGZcJCkoo1ST/S/xoRi7rs67lkAwzR3egrTLDPDQ=
+	t=1762769828; cv=none; b=XqaxJvXw5K6LxxAtS7jy0KwaD5r7R9GpQUwqasuSPCdkppRpFpE/pq1qdTnQy0P3ILoaf1y/IQzthtCMtVCP4082/kyV+drg2Q91tPgZlfl/jeLVdY6/VcY1IhINmtG+zQPdRebiR/UUR1UZG4A5CESzBU291LqCwYtw3fHAM3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762769775; c=relaxed/simple;
-	bh=DJA5Aa/vg9m7bpPMnFdOHwCVKA+4Me+gV58laoWd5cI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FulByfq3AFop6ZfH9NZ7V9rdyYN8NpREPUQn8r2I/v7UEIlURdfG/SztbKzDBkSYCOlVaZ1ECdybyGKJ6lKfyCZV+BXQmHEGtDzuxDCYWXZ0PuvSf0K0SGvpaKwYoMnqW5C4zCSJE56w/lkAb/T7+ROhSEhQnjzi48bMRJSxsa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bkt29zTo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 098BFC19422;
-	Mon, 10 Nov 2025 10:16:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762769774;
-	bh=DJA5Aa/vg9m7bpPMnFdOHwCVKA+4Me+gV58laoWd5cI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Bkt29zTo+SOJmqLIOVUOauthXmJqxSbhtbJDQ6lq4RuVobrP4yqQm/DV0WxvAU2e2
-	 YKR0KaEAc6P07f6hLk2zya+gbDBK9Q+pPM++fbtGt9VKfEz+phBFiFLcdoMTP5NHCr
-	 XMBR7Z+O8kWe4s88tvYrUH5nHvWaUAwlGIL7z/o6foHUAuRSafviGk11byqrLaiKpk
-	 zVWkt/FCkf5YGdAP1UfZWboGADAi8CtjebRmoXQMwCa3RuElCWl3OiAgyLvKnY9fsH
-	 /ywJh5dO2ElrqnMtWZUw/GxjMsLPtc3npybpTnqYvL6RbbKkQpuDMUgdj5HZUN5PeG
-	 kGtaJ98xkCfKQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Sean Anderson <sean.anderson@linux.dev>,  Pratyush Yadav
- <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,
-  linux-mtd@lists.infradead.org,  Richard Weinberger <richard@nod.at>,
-  linux-kernel@vger.kernel.org,  Miquel Raynal <miquel.raynal@bootlin.com>,
-  Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH] mtd: spi-nor: Enable locking for n25q00a
-In-Reply-To: <31d01667-e80e-423c-bdab-8d05831d575d@linaro.org> (Tudor
-	Ambarus's message of "Mon, 10 Nov 2025 09:08:07 +0200")
-References: <20251006223409.3475001-1-sean.anderson@linux.dev>
-	<mafs0ecreontu.fsf@kernel.org>
-	<4888cefa-e8be-4f0d-9d4a-c82f9ff6cda0@linux.dev>
-	<mafs05xcpo9sz.fsf@kernel.org>
-	<26a795ac-e6ff-4363-a8b9-38793a9be794@linux.dev>
-	<mafs0ikgnn07u.fsf@kernel.org>
-	<d00d42ce-4262-4736-8c73-5d2544e86d33@linux.dev>
-	<33cbbac1-c247-4644-b555-998eea6e8305@linaro.org>
-	<92e99a96-5582-48a5-a4f9-e9b33fcff171@linux.dev>
-	<31d01667-e80e-423c-bdab-8d05831d575d@linaro.org>
-Date: Mon, 10 Nov 2025 11:16:11 +0100
-Message-ID: <mafs0v7ji9or8.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762769828; c=relaxed/simple;
+	bh=7+wa0Na3uuR6yJOHetga/16MlOnQUqTrcJ9pKchrYBU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lAaxZVmWal2udyiHA9FQmW5LpdSeLuEHXVXh9Cc1IOy4lrNF/GyqtphiFUtYrMZKU1Qm8D3eVk50dK6dpZd5dC2AWbFP5Kjezg4uZXnLfNMSSML7juzydmTH324lNjASyaUYaz6k+OrcSi4riHeUHtZI2phQ9zkkvcnohXyb8cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 870C72B;
+	Mon, 10 Nov 2025 02:16:57 -0800 (PST)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D100E3F66E;
+	Mon, 10 Nov 2025 02:17:03 -0800 (PST)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
+	Carl Worth <carl@os.amperecomputing.com>,
+	Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Leo Yan <leo.yan@arm.com>
+Subject: Re: [PATCH v2 0/3] coresight: replace the void pointer with coresight_path pointer
+Date: Mon, 10 Nov 2025 10:16:55 +0000
+Message-ID: <176276979719.511921.7702735480657824829.b4-ty@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250925-fix_helper_data-v2-0-edd8a07c1646@oss.qualcomm.com>
+References: <20250925-fix_helper_data-v2-0-edd8a07c1646@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-On Mon, Nov 10 2025, Tudor Ambarus wrote:
-
-> The locking tests look fine to me:
->
-> Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
-Thanks for reviewing Tudor.
-
-I would like a re-roll with the commit message updated before applying
-this.
-
->
-> Sean, if you care you can extend the documentation on how to test locking.
-> Also, you may drop the non SFDP data from the flash's static definition as
-> a follow up patch.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
+On Thu, 25 Sep 2025 18:42:30 +0800, Jie Gan wrote:
+> Patch 1:
+> Fix the issue that the catu cannot correctly read the handle of the AUX
+> event which is caused by the commit[1].
+> 
+> [1] 080ee83cc361 ("Coresight: Change functions to accept the coresight_path")
+> 
+> Exeception call trace:
+>      tmc_etr_get_buffer+0x30/0x80 [coresight_tmc] (P)
+>      catu_enable_hw+0xbc/0x3d0 [coresight_catu]
+>      catu_enable+0x70/0xe0 [coresight_catu]
+>      coresight_enable_path+0xb0/0x258 [coresight]
+> 
+> [...]
+
+Applied, thanks!
+
+[1/3] coresight: tmc: add the handle of the event to the path
+      https://git.kernel.org/coresight/c/aaa5abcc9d44
+[2/3] coresight: change helper_ops to accept coresight_path
+      https://git.kernel.org/coresight/c/94baedb51dea
+[3/3] coresight: change the sink_ops to accept coresight_path
+      https://git.kernel.org/coresight/c/b139702a8896
+
+Best regards,
 -- 
-Regards,
-Pratyush Yadav
+Suzuki K Poulose <suzuki.poulose@arm.com>
 
