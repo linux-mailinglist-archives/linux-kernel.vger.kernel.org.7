@@ -1,89 +1,100 @@
-Return-Path: <linux-kernel+bounces-892884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F59C46097
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:47:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E783AC4609D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 246CC347D53
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:47:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C4ABE4E4456
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086E2301034;
-	Mon, 10 Nov 2025 10:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578723081A5;
+	Mon, 10 Nov 2025 10:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="agia5V3S"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D5z2Zj3k";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g/FryuTa";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D5z2Zj3k";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g/FryuTa"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE88730217E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC09F306499
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762771631; cv=none; b=dSVcanoiDD2bp2byawPLbbHy4Tjdswj9vI0mefMQjteCgi+Q26w316ziXTOrL6HWmK6DuiH3jolTZSBRZoKdjV/+SWIhF/biGMCegJCLi169UxztXs59C0MbnaV0Xh3Irls5oq2F+No2L5A1exMWtuVg7ZV1jaT2PfNz8qgvrYc=
+	t=1762771632; cv=none; b=I7d4sRPWsGfyzI8cd+RW7xxMyh1c3B/iRSOabby9Z3QZGbfxfYtkKoUZtmDd5zT746wheIcNQ/JyPxwGtmXvAQMYjclXv/dxftMGPrOtF34klXk47rclugM01tnNV6n/m+wmITtSUqiUDp+G29Mzb5IHvcLtj+aI0Ns6M05x4rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762771631; c=relaxed/simple;
-	bh=KWD0dSUvwuItAstvLunIOIEZaKlPBNCzkWHJb6tbpAw=;
+	s=arc-20240116; t=1762771632; c=relaxed/simple;
+	bh=6kB2xULq4VPSE5R+aPnRvDtU8g6MexsPT65jN9gJrQI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ES30UU2Wqe1PZAybydFeWSdKDZh5IZwWY6JdfQILFi/MR+9ICC9lRgkuTl/eYHHwMZ28+bkqDgD5ty9wkGZVqLG85YWE76cpDRK9D0y5CwA9XFnaim/zFb6O2lqozgfhNOTZOIlKyRK7r25lCzooblOfB3yCdwth34jsRb3zJPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=agia5V3S; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b6ce6d1d3dcso1617054a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:47:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762771628; x=1763376428; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XQGzwKFQ+Rtg1mWaUwQhxw/U0dzqmCy2pKOiipYqOes=;
-        b=agia5V3S5b6p8rNCtswM2bwpKA2BcIZN3zwGq/H4x9Reiy+69Mrag/JDp8TKRYhX2k
-         JXgFq4h90CGcbWwlHOvicKRM4IQwVxLlpF6UIaL5RLSQf0RoH8KPvApcPoQ3gHW1HU6S
-         RKUoOJrCH2/iQUIm8yNqen2ZfcHKhVOnj1fWhgUp/sXw4YFPUQ93IUT3WLK5zqNxiAvM
-         JWc6kChJfnR82ToN812xj+HuHKuoOl0A8nJEltYzU1hLP+XIJ4x04DyMmNWCEWCUoDWN
-         KNh0f8YDC5xz5+xiBclkanJA5vzHjvDCbKG5Yi9CB7kpxI+bhRkFl8UTugirGfReI41l
-         WXBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762771628; x=1763376428;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XQGzwKFQ+Rtg1mWaUwQhxw/U0dzqmCy2pKOiipYqOes=;
-        b=D1JJBHEYynQHvSnONkCkNfv7RuFWZ+BAyPsrm2L/EZklZLHFOMAHAAbqPHDZwIUDjo
-         ZXrBnuzPoctUjYSCozQVkw5avsb2bxuXhR4bRG0TiWhExwvCL19Djr+gaK80BPhSH5UE
-         RmgI2pWZg1eOObNqfwYYuzs8sZAytSNTQs2qWqt912DhiPIjwfxzna7t6Cc5xRIu56uY
-         9lkv2MJkaW9bD4OeKeWnPln48RCpyjGCqSAPfH0TjQY2l+aNldHZEDLdb2DGAEzZdYaM
-         1/S3HLEg/ZaudgAKJ2O//g2LN6yX+reGSUGSbxlRC0MR67rtcw5Rfcm8jqYpze+Gi3f4
-         Tj5g==
-X-Forwarded-Encrypted: i=1; AJvYcCW10mt5C6zEKTkif8zvPN/QS5lbLPal2jBcxepQQ66Mv2g3vXroUTt4tCwFnWKhgisHR7Ks06qyu8zxp4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzLHWQE341F7fLnUFH3B9PYtRXmLrGfSDf1uFXEkZLd4xPzy83
-	c4vVcGHzyOVuqp5/cH3cjfj75DiQ36hN6MI5eGzznYWAuJz6B51ZZQb9Ie4Etz//5dQ=
-X-Gm-Gg: ASbGncvgQPd5NY6/te7we5AsgY2efquF7yMMt3Xyz9r6i6lXjHggUXrGwvwrE2DJEON
-	QQ3vVaDBCgg7I0erzFf0fg65MXgAiDlSdVbhp29O0yu+jpLq0j7g+fXCo/0GLGu/alEdzJ0BIB2
-	wmznzHBKG6YhmYqhrgzTNptKNZFEE+f5XIAsIPcFDRAMn02FHfDHG2uu/IlV7cGXUZEONTcAZat
-	NJhH+0XQu2x3P3/rFD5dsxtbeNCl67B77Igyz/8wApZf5qb2aUgKpfS4nKhcMCzvrdhsjLunu7C
-	jSwDgWJxpXzfP6veDcMyfa2rvSuNIBEr7Yi5axBx+RnP8sBFeKvF3BCHe9RgfDQglx42BMYU9bv
-	BxH95CpVDl9vSV3WZQkENm1i1/R8eBpUd4ru0rp2i8eAHU9S+DOZm6wAXrTcpjozVfTFjz0OJw+
-	dxfJscRCT5HaM=
-X-Google-Smtp-Source: AGHT+IHg+DThhk+gJUORdYe/ePATJKcs+WA9A2y1rPJPIsw5mDbwrRCWQvQPcr7jYbijEjp+p5km1w==
-X-Received: by 2002:a17:902:e888:b0:295:1aa7:edf7 with SMTP id d9443c01a7336-297e56be1c6mr87877225ad.30.1762771627875;
-        Mon, 10 Nov 2025 02:47:07 -0800 (PST)
-Received: from localhost ([122.172.86.94])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc179f77sm11235385b3a.34.2025.11.10.02.47.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 02:47:07 -0800 (PST)
-Date: Mon, 10 Nov 2025 16:17:04 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Ilia Lin <ilia.lin@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v4 1/1] cpufreq: qcom-nvmem: add compatible fallback for
- ipq806x for no SMEM
-Message-ID: <y4ys4cp42vp3air2lnlbcglfbh42siguh5zpo3hxugqswwzrdy@qz7mrdzzmhnt>
-References: <20251105112136.371376-1-ansuelsmth@gmail.com>
- <20251105112136.371376-2-ansuelsmth@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aGGlphr3tsRV8+BqpynSdaWe+9z137/TNwA7TIQ3eV7JksV+5Mm0IlhSmeBROpreJ80Vq7d080pj4ZTe9h0S724puUVmt8GPHbIrsZH5qF3o7nvChM5qivKJfKgU+Wjz0nGPvDhdGVWaZrzZZBfluQigbt4TjdPvPf99aAuOyns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D5z2Zj3k; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g/FryuTa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D5z2Zj3k; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g/FryuTa; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B105C1F397;
+	Mon, 10 Nov 2025 10:47:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762771628; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oSaZ6VaP53rMXohoSY8aRFtwHLcuaZ0UuLm83kEe00Q=;
+	b=D5z2Zj3kBt9WgPrnaB2gQFSfdAhMb3jBFz8mhv9valKRwfzqAHOVZxXtnxximDNt3uR6d0
+	6X5Xp5BWQrSwj+UF2I5zH3B7zP/jOkRo7UVZYG6HS3N0HJNud5xfsD3Yk9IqIzm5PdEKAA
+	Pjt+QLHoEGK2GzT0dDAb+oeC504ciIE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762771628;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oSaZ6VaP53rMXohoSY8aRFtwHLcuaZ0UuLm83kEe00Q=;
+	b=g/FryuTai35RXBh9o//OftRdb3bEZnSTDyiOwWDJtu2nUjF8SOZ6gG7dNGmnKU0CYuQQsY
+	WmfhSIYkE7pdz7Cw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=D5z2Zj3k;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="g/FryuTa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762771628; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oSaZ6VaP53rMXohoSY8aRFtwHLcuaZ0UuLm83kEe00Q=;
+	b=D5z2Zj3kBt9WgPrnaB2gQFSfdAhMb3jBFz8mhv9valKRwfzqAHOVZxXtnxximDNt3uR6d0
+	6X5Xp5BWQrSwj+UF2I5zH3B7zP/jOkRo7UVZYG6HS3N0HJNud5xfsD3Yk9IqIzm5PdEKAA
+	Pjt+QLHoEGK2GzT0dDAb+oeC504ciIE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762771628;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oSaZ6VaP53rMXohoSY8aRFtwHLcuaZ0UuLm83kEe00Q=;
+	b=g/FryuTai35RXBh9o//OftRdb3bEZnSTDyiOwWDJtu2nUjF8SOZ6gG7dNGmnKU0CYuQQsY
+	WmfhSIYkE7pdz7Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A53E914359;
+	Mon, 10 Nov 2025 10:47:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id po9SKKzCEWkmNQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 10:47:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5F44CA28B1; Mon, 10 Nov 2025 11:47:08 +0100 (CET)
+Date: Mon, 10 Nov 2025 11:47:08 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: move inode fields used during fast path lookup
+ closer together
+Message-ID: <x72nqrebxd5ng6gfxkmod2arzoplm27su2lscyhk6pp2e54zmm@nvnfxzr4lxss>
+References: <20251109121931.1285366-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,27 +103,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251105112136.371376-2-ansuelsmth@gmail.com>
+In-Reply-To: <20251109121931.1285366-1-mjguzik@gmail.com>
+X-Rspamd-Queue-Id: B105C1F397
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-On 05-11-25, 12:21, Christian Marangi wrote:
-> On some IPQ806x SoC SMEM might be not initialized by SBL. This is the
-> case for some Google devices (the OnHub family) that can't make use of
-> SMEM to detect the SoC ID (and socinfo can't be used either as it does
-> depends on SMEM presence).
+On Sun 09-11-25 13:19:31, Mateusz Guzik wrote:
+> This should avoid *some* cache misses.
 > 
-> To handle these specific case, check if the SMEM is not initialized (by
-> checking if the qcom_smem_get_soc_id returns -ENODEV) and fallback to
-> OF machine compatible checking to identify the SoC variant.
+> Successful path lookup is guaranteed to load at least ->i_mode,
+> ->i_opflags and ->i_acl. At the same time the common case will avoid
+> looking at more fields.
 > 
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> struct inode is not guaranteed to have any particular alignment, notably
+> ext4 has it only aligned to 8 bytes meaning nearby fields might happen
+> to be on the same or only adjacent cache lines depending on luck (or no
+> luck).
+> 
+> According to pahole:
+>         umode_t                    i_mode;               /*     0     2 */
+>         short unsigned int         i_opflags;            /*     2     2 */
+>         kuid_t                     i_uid;                /*     4     4 */
+>         kgid_t                     i_gid;                /*     8     4 */
+>         unsigned int               i_flags;              /*    12     4 */
+>         struct posix_acl *         i_acl;                /*    16     8 */
+>         struct posix_acl *         i_default_acl;        /*    24     8 */
+> 
+> ->i_acl is unnecessarily separated by 8 bytes from the other fields.
+> With struct inode being offset 48 bytes into the cacheline this means an
+> avoidable miss. Note it will still be there for the 56 byte case.
+> 
+> New layout:
+>         umode_t                    i_mode;               /*     0     2 */
+>         short unsigned int         i_opflags;            /*     2     2 */
+>         unsigned int               i_flags;              /*     4     4 */
+>         struct posix_acl *         i_acl;                /*     8     8 */
+>         struct posix_acl *         i_default_acl;        /*    16     8 */
+>         kuid_t                     i_uid;                /*    24     4 */
+>         kgid_t                     i_gid;                /*    28     4 */
+> 
+> I verified with pahole there are no size or hole changes.
+> 
+> This is stopgap until someone(tm) sanitizes the layout in the first
+> place, allocation methods aside.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+
+Looks sensible. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  drivers/cpufreq/qcom-cpufreq-nvmem.c | 35 ++++++++++++++++++++++++++--
->  1 file changed, 33 insertions(+), 2 deletions(-)
-
-Applied. Thanks.
-
+> 
+> > Successful path lookup is guaranteed to load at least ->i_mode,
+> > ->i_opflags and ->i_acl. At the same time the common case will avoid
+> > looking at more fields.
+> 
+> While this is readily apparent with my patch to add dedicated MAY_EXEC
+> handling, this is already true for the stock kernel.
+> 
+>  include/linux/fs.h | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index bd0740e3bfcb..314a1349747b 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -790,14 +790,13 @@ struct inode_state_flags {
+>  struct inode {
+>  	umode_t			i_mode;
+>  	unsigned short		i_opflags;
+> -	kuid_t			i_uid;
+> -	kgid_t			i_gid;
+>  	unsigned int		i_flags;
+> -
+>  #ifdef CONFIG_FS_POSIX_ACL
+>  	struct posix_acl	*i_acl;
+>  	struct posix_acl	*i_default_acl;
+>  #endif
+> +	kuid_t			i_uid;
+> +	kgid_t			i_gid;
+>  
+>  	const struct inode_operations	*i_op;
+>  	struct super_block	*i_sb;
+> -- 
+> 2.48.1
+> 
 -- 
-viresh
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
