@@ -1,173 +1,151 @@
-Return-Path: <linux-kernel+bounces-894212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7B8C497BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:06:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A438DC49929
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4A86188A36A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:07:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C6E18842D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C052F5A3C;
-	Mon, 10 Nov 2025 22:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A38E33FE24;
+	Mon, 10 Nov 2025 22:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b="qQZPj31e"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b="sLaXz4b6"
+Received: from skyblue.cherry.relay.mailchannels.net (skyblue.cherry.relay.mailchannels.net [23.83.223.167])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E819E28980A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 22:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762812400; cv=none; b=FKrWKssZQEQSFuBJv2j/F+HKg6eTHZ9IvHvcB9hKogk93lW4BUSejxoI0r5lOxKL0EH4bREkS8sby8tyRUfUt5fn0syaRHwUDaWxtD1iRXvIKIcHsAt2UhKENHxfRYpfIR5ydHRLXXaiJGPVuF3WDSKhdl1oo/yloeh1SxOvNgo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762812400; c=relaxed/simple;
-	bh=rYhUBnvwT+ub027fXUx5R6wsKiOlOm+VBlO4fl6AhFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s4RMgyk1P5S3HGgBd6KF2l34lr+3edj3Br0oPag8ixfmZKDbqSYmjLDz3AV0TP9OgiZodzyjG1SxXw3nRgKNi5pmvWei653aB0SUqx33aIFm5BMrOklMqZ07VTyfHVbg8y608eNgWjB4NDcTXNO3hFntwvf5bH2yOvYRFtRnYb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com; spf=pass smtp.mailfrom=etsalapatis.com; dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b=qQZPj31e; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etsalapatis.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-786943affbaso26775017b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:06:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=etsalapatis-com.20230601.gappssmtp.com; s=20230601; t=1762812395; x=1763417195; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V4f9Zy+Xxr8e4Nr+RON0+4DZk9ZxxU3ItskZZmBVohc=;
-        b=qQZPj31eNP9l/okgyltIVFWSQC7i1dKDsYslXbsAwC/8x45ar5FCQQo8E+UVs8868L
-         xOnQGozp7w8f4uBcvN+hd81jNsbQwirPYtc8EVV5DMCjU1fOxj5nkaa8YWDTQOFEdquO
-         FN6WwXw4sW2fAPKJaM/Bt+zpSAWDOIabGbbXR4+2fyfH+Xa3kRTWh7fNtXCNIg0n0Dve
-         dpP9Fn/q3ler80nv5zRYtI5EKqUkAp6XB+IvT5btxQpgekr2UPDWEGEr4/Ypuct7Fr3+
-         xpy5XnOyPtr9EUDcKJ15Lsyr6K5VK8QXpS1GuLepzyEhwZGqz61Wn+gomxgmNlZQ1MdV
-         2Jsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762812395; x=1763417195;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=V4f9Zy+Xxr8e4Nr+RON0+4DZk9ZxxU3ItskZZmBVohc=;
-        b=Zdi2YHv59O10IVEYfpbJK/LTOAp+OjgJ6t3y9uukLcBjbrZs1uRkPsKoyNVNw26jrx
-         QsgSqW9j4Z5nW7mpGo/JNbzzNjebunOYtCM8GN46F0HZcVk+aiuZ4PEiQ90mi1qapwRa
-         RBnPyAI6rDrdKCT28KNlSOKbyeczX+RVGtIYiJI56/yxl/ixvHHLZ421FjId+GY8zWh9
-         AAu9enUKZEDC+BnCDrNtan/79hhiT1gJ9Po1lU5iQPqGRLhFHPkRqe42e7k39MURFbLY
-         YbBmB+S/wJC03sYgytXsFxmZOCrjWrjXJ0q5apDSvDIJg1PXK++9sntpaTSrUVQV4D2t
-         D8Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1dh6LILApuWGSkfAgGIEwtYVBis4rIstDbROo416DPcreDuZ+wdND21+zI+yZeVQI8G46p/sS0yAfH5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEIvmuIeoN9EcnDHJABNZYbAzPnjoSYVie5YvotJ6YDrv5PmS3
-	Jho3jZfjhg/yrm2MDmpwVKDfXr1BtbhZTg+d5mEfhEDh2YLtrygU9gEccevmkYho8xwXQZqPJLM
-	vr8pA4VYpEHqCaD6yKTMxMpcjyRua6PpLwkRt6fYaCw==
-X-Gm-Gg: ASbGncvJ7SJr8CGePGiS0PQVmRcHFDDsqUarrJoWsT0NSIyPfDPJR3GOXiTQcJZsd6i
-	Gpj6a7Hj+fifv5X4rBV0Zp5ONHxQGzk8ei8jC5Y+quqF9syReBLXG4Wz6QN6oa8uUC+WuLrSY7C
-	Rd8SXV6QKvXPHYQQFkl+PXzRZvUdlIpdd68qW8o7vF1GLsx/096ag3a/I8kntzHmJjN8L0+9pTq
-	0YuUjuI8XLt5wPmTLPzcrZvFENSySqHB2ZlrvZxYQjs3mxPgYp01eq9blp0YjNZNHHoYY3VRg==
-X-Google-Smtp-Source: AGHT+IEqKxEQusQc/mEf1PmchCpojHyKOU/NUBIfL+zGYTHhwKG7RuZt2UrTDFinoTIQeRfak7YI8kK8uxQLm3HA6bg=
-X-Received: by 2002:a05:690c:dc1:b0:786:4f0d:46be with SMTP id
- 00721157ae682-787d534d0c5mr106568497b3.3.1762812394823; Mon, 10 Nov 2025
- 14:06:34 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93654333730;
+	Mon, 10 Nov 2025 22:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.167
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762813540; cv=pass; b=SF15kib+J1D3jqHRut2BtOZEtUAoS3wCYUWuHX1hfLF5fz/yREl4zuNfC/5Y36mTWXw/CsXeViU5+c0kz0Wq6cvDt61I044sQJrt9MHCOVaROoEVkv4VyTfSe4CCKxI1LK78kbQ/ClEMflKRTzY5QunD4I+Af8cb97yWTZge8e8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762813540; c=relaxed/simple;
+	bh=CiXjRnp4/+6UB9oDhNwLpZHPknYGlmH/xEkMUzF15NQ=;
+	h=From:To:Cc:Subject:Message-ID:In-Reply-To:References:MIME-Version:
+	 Date; b=N89ydReGhG5oDV5hzf3WGuBfLVHqVIziqkNUsbX+lyqANEawihFM/TAinKsJwqFQOEDWmF6Ay4cmxaR7CXrrod98MYQ1/oskrB39B2gOj2w7onXS1lIMqLVjDCmYrbrrJfDYE/vl3Fg9Y5YTDmgGw9voBljpJ9ebsjx8bLe8o9E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com; spf=pass smtp.mailfrom=rootcommit.com; dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b=sLaXz4b6; arc=pass smtp.client-ip=23.83.223.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rootcommit.com
+X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 1586E721F04;
+	Mon, 10 Nov 2025 22:06:54 +0000 (UTC)
+Received: from fr-int-smtpout26.hostinger.io (100-123-217-111.trex-nlb.outbound.svc.cluster.local [100.123.217.111])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 5F9B3721F21;
+	Mon, 10 Nov 2025 22:06:51 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1762812413; a=rsa-sha256;
+	cv=none;
+	b=P0OmOKroYME9rn0jlx/I4YDK6spwy3J+RhPoAPcCUhRIHlq1iNPHQ1nG9xA1l43zShFBe9
+	K3vUrh92hKMOTvODFwwgITWMt5ELBu8ofKye78hJ5lIucFJ6AV6lWXHvntcCJ+sYx+oWfe
+	uuwGS/rs+V73IXEMP4WeuuDdCuvAUarvI0jhW2fweZfwlpKCa9DOugRcX9arP8DIDBf6le
+	UB78gDy0X+DOFuo/kpQPbSGZXtQI+JkEsf6jpzCoNnF+/8fPzYurRBGXKPA4qj9WIUY/SB
+	xAENP/ChDWyZ+HhJmuzMRPJwOjBm1OYQHy8jhV59HnW5ANucHU/TuDsioK9NBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1762812413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=0Kc2cGqghawWgDT4UIWY86Y98oRPWDu+9tb+KQMDdQY=;
+	b=JQ4XtvB03vG/i0YphL04NoIYXtwQdZx9yRlxCHMbBtN9Vgz8lk8cDA9LErzoWQk6+Krm/O
+	6se5aoJZHWAgwNQeT+d7nn4tsFSM/ky4NPlQhiuTRi9Qpwf8gRoPLNZzP18x+vZiZCvrs/
+	Ir3Wfkho8NeUc4hU1B7REb6n7Kzc8QH2w2521zEVoD9Y2HwCQj5qdgp1OAQVItW1SgWDjW
+	nkCWQ3LHykS2MdBnqEA0VFJlF1IePm8wAhI9Tphq0SAL8wpG69OjvKgIC4HGGJ1sWfQ1NW
+	t88z+z0ab5HsG0RHd/4Zo4AyqiRg6zuVdUm+JnvF5pTrcfHbsCJAgma0M9+rFA==
+ARC-Authentication-Results: i=1;
+	rspamd-77bb85d8d5-srwqq;
+	auth=pass smtp.auth=hostingeremail
+ smtp.mailfrom=michael.opdenacker@rootcommit.com
+X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId:
+ hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
+X-MailChannels-Auth-Id: hostingeremail
+X-Continue-Befitting: 0cab41722ae4e3b9_1762812413903_1501683741
+X-MC-Loop-Signature: 1762812413903:1491620757
+X-MC-Ingress-Time: 1762812413903
+Received: from fr-int-smtpout26.hostinger.io (fr-int-smtpout26.hostinger.io
+ [148.222.54.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.123.217.111 (trex/7.1.3);
+	Mon, 10 Nov 2025 22:06:53 +0000
+Received: from localhost.localdomain (unknown [IPv6:2001:861:4450:d360:31e9:b9de:fe42:7704])
+	(Authenticated sender: michael.opdenacker@rootcommit.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4d53fc6lmKz1y02;
+	Mon, 10 Nov 2025 22:06:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rootcommit.com;
+	s=hostingermail-a; t=1762812409;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Kc2cGqghawWgDT4UIWY86Y98oRPWDu+9tb+KQMDdQY=;
+	b=sLaXz4b6B5pmJ9QPNIOp4xc2yCHCIBis4XEMNHVhTwqQqXUaCF1U9VrTXdcDpseKurpuw/
+	cKDazQJMdsxOfr+N+ZED5mLk5UM2kU8cTznckQrDqwZSO0GzjTo5wz2ZCese+hICIe88KY
+	+TMw/eachL4HF2aOop9V5PwVPsy+kHsd6UVU9dJIOM8lyNipzn8eOX3WlvzStnnQCbD6xj
+	fhPFlRScRwHpF56SalcfIc1auFITj5MsQL3FR+Gu+/+4vmbVJRh63QY8flJiqTstoF0rlI
+	x4GK2aDeXIYHZDA/6xVG5fjErCLNeqqPHsYPuFtgUNROGHdZCMLqofWroLsexw==
+From: michael.opdenacker@rootcommit.com
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Yixun Lan <dlan@gentoo.org>,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Yangyu Chen <cyy@cyyself.name>
+Cc: Michael Opdenacker <michael.opdenacker@rootcommit.com>,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] dt-bindings: riscv: spacemit: Add OrangePi R2S board
+Message-ID: <20251110220641.1751392-2-michael.opdenacker@rootcommit.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251110220641.1751392-1-michael.opdenacker@rootcommit.com>
+References: <20251110220641.1751392-1-michael.opdenacker@rootcommit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110205636.405592-1-tj@kernel.org> <20251110205636.405592-4-tj@kernel.org>
-In-Reply-To: <20251110205636.405592-4-tj@kernel.org>
-From: Emil Tsalapatis <linux-lists@etsalapatis.com>
-Date: Mon, 10 Nov 2025 17:06:24 -0500
-X-Gm-Features: AWmQ_bmy4aLQoNCiZ7KPQEb20_Z93-ZWMhtAodbv3pzouiv5G_qhwQFn1xmSKp4
-Message-ID: <CABFh=a5e0jAfLV7m8VBsDwUEOziMpeHDvyAf-9oTPYqsk3N6_g@mail.gmail.com>
-Subject: Re: [PATCH v2 03/14] sched_ext: Refactor do_enqueue_task() local and
- global DSQ paths
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Andrea Righi <andrea.righi@linux.dev>, 
-	Changwoo Min <changwoo@igalia.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
-	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Andrea Righi <arighi@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Date: Mon, 10 Nov 2025 22:06:48 +0000 (UTC)
+X-CM-Envelope: MS4xfKP0gciVqc2IA6yni3wIkwZuDcNJkZbkAZhCjphAKff66NAq6961DC0WcO0J8Q8w9WXhOvqC7zYR0XKq53ctAvp9tvKLqhcHpsufdoY/LtCUzvmCUIUn Nu5qfkiSPtZfqI5k31+XZ+QRQ2lz81v+9WXYIKhpnhxuXIBd5i45VlZ5Vwlh/CB1XICBNylW7T05VlV9uYfnSorHDR7cken3E3F09gwXGttBJcJu0WbKa1qQ 1LPtmoLHQ3eWwB7DB2c5nRSHQHSzvb/mZYW9UxRCpiVVH9OEWhj9nDDEoOPd+d4N+VDl8m2WCf9xdHejyHzguM5V/47CithR1ph60gPYNxOW1DaPPwNUsm9t pfpDs4wkMiHPOWErEr2/gmDpSmL8uL/tJXaL5UJlXyBaV3RrBiLYahyXUMY3jH0thZrGXt7JULGH2Ea8BWyhZ+2HtbggE3ytxCsRtxWdllbXem5wsE5zS37+ jDvtCs1stNb8QvT9D4eYLTaRiT+pAn7qWG3SgqSR0raA5IZU+nXIojg0e2KZf4AQUUuvLzOOFBq6+XBdlYRkUE/GYd/X/P7/NDi+Lch/ddyvfTL7+TjrAIFz Cbiec333lkJhWK5bss1GXoBKEubuh3rOa13wa3/wv/CpSmhWQdPSmF6e75Hpj4zPKakZg/ZYOdUwgTKIbiP1Lc7aePzVTbOA5ZFSr3hoZfrEiN5RseS3UZ3w b0JDSZRW+lI=
+X-CM-Analysis: v=2.4 cv=NuiDcNdJ c=1 sm=1 tr=0 ts=691261f9 a=6hOvbz5PeP13GDnUra1LTQ==:617 a=xqWC_Br6kY4A:10 a=5dAzR5NRAAAA:8 a=lv0vYI88AAAA:8 a=d70CFdQeAAAA:8 a=ahLzFxuTVLoCwVWoPR8A:9 a=9STjDIb-X-UA:10 a=ZKAZAlVgJm32z6MX8p4a:22 a=9qqun4PRrEabIEPCFt1_:22 a=NcxpMcIZDGm-g932nG_k:22
+X-AuthUser: michael.opdenacker@rootcommit.com
 
-On Mon, Nov 10, 2025 at 3:57=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
-> The local and global DSQ enqueue paths in do_enqueue_task() share the sam=
-e
-> slice refill logic. Factor out the common code into a shared enqueue labe=
-l.
-> This makes adding new enqueue cases easier. No functional changes.
->
-> Reviewed-by: Andrea Righi <arighi@nvidia.com>
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> ---
+From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
 
-Reviewed-by: Emil Tsalapatis <emil@etsalapatis.com>
+Document the compatible string for the OrangePi R2S board [1], which
+is marketed as using the Ky X1 SoC but is in fact identical to
+the SpacemiT K1 SoC [2].
 
->  kernel/sched/ext.c | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
->
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index abf2075f174f..b18864655d3a 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -1279,6 +1279,7 @@ static void do_enqueue_task(struct rq *rq, struct t=
-ask_struct *p, u64 enq_flags,
->  {
->         struct scx_sched *sch =3D scx_root;
->         struct task_struct **ddsp_taskp;
-> +       struct scx_dispatch_q *dsq;
->         unsigned long qseq;
->
->         WARN_ON_ONCE(!(p->scx.flags & SCX_TASK_QUEUED));
-> @@ -1346,8 +1347,17 @@ static void do_enqueue_task(struct rq *rq, struct =
-task_struct *p, u64 enq_flags,
->  direct:
->         direct_dispatch(sch, p, enq_flags);
->         return;
-> -
+Link: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-R2S.html [1]
+Link: https://www.spacemit.com/en/key-stone-k1 [2]
+Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+---
+ Documentation/devicetree/bindings/riscv/spacemit.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Nit: Similar to the note for the next patch, we could inline the
-dispatch_enqueue where the goto local_norefill statement is (though
-the current code is pretty easy to follow - all the dispatch
-statements are organized into what is basically a big switch
-statement, with the goto labels doubling as documentation).
-
-> +local_norefill:
-> +       dispatch_enqueue(sch, &rq->scx.local_dsq, p, enq_flags);
-> +       return;
->  local:
-> +       dsq =3D &rq->scx.local_dsq;
-> +       goto enqueue;
-> +global:
-> +       dsq =3D find_global_dsq(sch, p);
-> +       goto enqueue;
-> +
-> +enqueue:
->         /*
->          * For task-ordering, slice refill must be treated as implying th=
-e end
->          * of the current slice. Otherwise, the longer @p stays on the CP=
-U, the
-> @@ -1355,14 +1365,7 @@ static void do_enqueue_task(struct rq *rq, struct =
-task_struct *p, u64 enq_flags,
->          */
->         touch_core_sched(rq, p);
->         refill_task_slice_dfl(sch, p);
-> -local_norefill:
-> -       dispatch_enqueue(sch, &rq->scx.local_dsq, p, enq_flags);
-> -       return;
-> -
-> -global:
-> -       touch_core_sched(rq, p);        /* see the comment in local: */
-> -       refill_task_slice_dfl(sch, p);
-> -       dispatch_enqueue(sch, find_global_dsq(sch, p), p, enq_flags);
-> +       dispatch_enqueue(sch, dsq, p, enq_flags);
->  }
->
->  static bool task_runnable(const struct task_struct *p)
-> --
-> 2.51.2
->
->
+diff --git a/Documentation/devicetree/bindings/riscv/spacemit.yaml b/Documentation/devicetree/bindings/riscv/spacemit.yaml
+index 52fe39296031..9c49482002f7 100644
+--- a/Documentation/devicetree/bindings/riscv/spacemit.yaml
++++ b/Documentation/devicetree/bindings/riscv/spacemit.yaml
+@@ -23,6 +23,7 @@ properties:
+               - bananapi,bpi-f3
+               - milkv,jupiter
+               - spacemit,musepi-pro
++              - xunlong,orangepi-r2s
+               - xunlong,orangepi-rv2
+           - const: spacemit,k1
+ 
 
