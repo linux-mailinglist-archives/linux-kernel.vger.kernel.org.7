@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-894069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2340C49331
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:13:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 267D0C49337
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:14:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D26141886B3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:13:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E98F4188B0AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B13340273;
-	Mon, 10 Nov 2025 20:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33C6340274;
+	Mon, 10 Nov 2025 20:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ilNgqaJd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QaSjMTdV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D729422CBE6;
-	Mon, 10 Nov 2025 20:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F0B22CBE6;
+	Mon, 10 Nov 2025 20:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762805579; cv=none; b=L6Lhp0vcek6UeLY1Bbxl2t1OC2XVLQRJ65s6d7s8uaQ+oU7DxYfiEdHcbNXAQIKAyXH1NVt1Bamn6nbzdHU+yrm2SxjPnhjzMQ5nDKIgklcpIsfWcSrkmOtI/Ug7cUkeepjjU0AjVAgzXfGEQKDdX7oiLk3AzC8OaQPq7cgWKGQ=
+	t=1762805685; cv=none; b=IbEFTC/RAIU8xVRz3POxQ8N51A+eEUa1fAOaSrjr5rT+JuT/jirJTRimIS2JLWQxU+OOdx+2p5QU4BeHsh7a1rv6XwRAa5hsv4qNw01K6YJFKUmo3QUE7G8B3S8u6GbMf4Wr9P2Qh8YSYMjZlM+zinQCNNv0eOACn6bZijzK0bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762805579; c=relaxed/simple;
-	bh=O9rnl79hbPs1HFcQ9kIxtulxAsC+3fysGH/Ss5j0rUk=;
+	s=arc-20240116; t=1762805685; c=relaxed/simple;
+	bh=Lupy7O4W+k+uh9+zTvU4xkbcskLPQ1XA14roUqmkzek=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OdUPMj2TL+ec+I/Pw1MVqjiPD8QLYBExA//5hCE9IxB4Zuznk34zZspT/U6c/03JcIT8WinD34TetgHI5zeQHEg3Kf0a/uUFh6o7/f5jUsmx5W58eBXx93zOkzzIGwks6yMyylb6c85xiPlEZ9Y2MRFgGdglXC/tJVuE/qF3ZZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ilNgqaJd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B054EC4CEFB;
-	Mon, 10 Nov 2025 20:12:53 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=L66O4umAI+bcd8c1zJaCYeS0qb3Oja0z0Xsw6cO6ggM3+Jsl+AeUjO6tSR0EIkveS1nkzSyvzcTkvcf9cERgpLcxfPFCBhLtSWzhHqn/P4ufs2WXAP1bLXLJMRv9Fgp2FNgDHJFIyKVvhdffDxIIZPE8paag32lj6vjbMlguupc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QaSjMTdV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033F1C4CEFB;
+	Mon, 10 Nov 2025 20:14:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762805578;
-	bh=O9rnl79hbPs1HFcQ9kIxtulxAsC+3fysGH/Ss5j0rUk=;
+	s=k20201202; t=1762805684;
+	bh=Lupy7O4W+k+uh9+zTvU4xkbcskLPQ1XA14roUqmkzek=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ilNgqaJdwQhBh1LhBPlOYNkHDKo2KYHjgNeUtN531XazgWS+yqHBrEP1cz6XXQNIj
-	 fLD+/sM7hAfNbF7w5OBH9G6yWgC+G4590XyT72Bc4hZDInMFF56rSyZGvbpGG1fHva
-	 bg2I9aYQ2PmGWSS3nFbpnyqJxUzP8nV/1EAmU4Llmrc6xXvjP/oTkvaS91MD1x4PJU
-	 PZzzhUPuGo35XyRxrYBTcHWYCGq3bZMlqoZRZ/bAj+J8AKk9fi05DwL8Rz6RWAZcun
-	 v+/2ycQjJxKmMW4DazpZlhxUz46EZEsimAJvY4sfxephQIVGPd+J/vDI6hwc+TDPnJ
-	 cmiuH2hYVp7iw==
-Message-ID: <9d48a54c-0585-4524-b9d5-30696f5ecc8b@kernel.org>
-Date: Mon, 10 Nov 2025 21:12:51 +0100
+	b=QaSjMTdVh9UzbpKfTMK3IPYlI8Ih9ctPdQp92V12KlfaB8NA7/rW3Z1N4GV/xqyzA
+	 pYUKo6pcU3d/bnyAWZ+288VtshS7EZ7hVM1pajquWEN3nYZvbMrFy/QqgN3myBMKFq
+	 lRQ2EV6hw/eqVtRwCWhpaSsbwpp8gr3ppklOWiciHtLM1oz1Y2R8xmPgGiNZcY0w+y
+	 W3YqlMI+FKDZVdksNvlvgguml3S3e5cjPG0sMIZ8/3lKkzriwz5heynfKzjuvFZlQM
+	 BQr1VfwcNTfK4AtbKtgt/rWlJQsYHkCcwQ0uxpfbNTxNKMq6dssJGUocldiLAWx6I1
+	 Xr6Ip87mvXaYw==
+Message-ID: <8d02ef66-54d4-415f-86d6-96b9c5b75bfa@kernel.org>
+Date: Mon, 10 Nov 2025 21:14:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,19 +50,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v4 2/2] arm64: dts: add support for NXP i.MX8MP FRDM board
-To: Rogerio Pimentel <rpimentel.silva@gmail.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
- s.hauer@pengutronix.de
-Cc: kernel@pengutronix.de, festevam@gmail.com,
- alexander.stein@ew.tq-group.com, dario.binacchi@amarulasolutions.com,
- marex@denx.de, Markus.Niebel@tq-group.com, y.moog@phytec.de,
- joao.goncalves@toradex.com, frieder.schrempf@kontron.de,
- josua@solid-run.com, francesco.dolcini@toradex.com, primoz.fiser@norik.com,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Xiaofeng Wei <xiaofeng.wei@nxp.com>
+To: Joseph Guo <qijian.guo@nxp.com>,
+ Rogerio Pimentel <rpimentel.silva@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, alexander.stein@ew.tq-group.com,
+ dario.binacchi@amarulasolutions.com, marex@denx.de,
+ Markus.Niebel@tq-group.com, y.moog@phytec.de, joao.goncalves@toradex.com,
+ frieder.schrempf@kontron.de, josua@solid-run.com,
+ francesco.dolcini@toradex.com, primoz.fiser@norik.com, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xiaofeng Wei <xiaofeng.wei@nxp.com>,
+ Justin Jiang <justin.jiang@nxp.com>
 References: <20251109214515.121742-1-rpimentel.silva@gmail.com>
  <20251109214515.121742-2-rpimentel.silva@gmail.com>
+ <aRF0++cUigbETuPs@lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,56 +110,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251109214515.121742-2-rpimentel.silva@gmail.com>
+In-Reply-To: <aRF0++cUigbETuPs@lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/11/2025 22:45, Rogerio Pimentel wrote:
-> The FRDM-i.MX8MP is an NXP development platform based on the i.MX8M Plus
-> SoC, featuring a quad Cortex-A53, Cortex-M7 co-processor, 4GB LPDDR4,
-> 32GB eMMC, Wi-Fi 6/Bluetooth 5.4/802.15.4 tri-radio, Ethernet, HDMI/MIPI
-> display interfaces, camera connectors, and standard expansion headers.
+On 10/11/2025 06:15, Joseph Guo wrote:
+> On Sun, Nov 09, 2025 at 04:45:15PM -0500, Rogerio Pimentel wrote:
+>> The FRDM-i.MX8MP is an NXP development platform based on the i.MX8M Plus
+>> SoC, featuring a quad Cortex-A53, Cortex-M7 co-processor, 4GB LPDDR4,
+>> 32GB eMMC, Wi-Fi 6/Bluetooth 5.4/802.15.4 tri-radio, Ethernet, HDMI/MIPI
+>> display interfaces, camera connectors, and standard expansion headers.
+>>
+>> Based on the device tree found in the NXP repository at github
+>> https://github.com/nxp-imx-support/meta-imx-frdm and on imx8mp-evk
+>> board kernel mainline device tree.
 > 
-> Based on the device tree found in the NXP repository at github
-> https://github.com/nxp-imx-support/meta-imx-frdm and on imx8mp-evk
-> board kernel mainline device tree.
+> Hi Rogerio,
 > 
-> This is a basic device tree supporting:
+> I'm maintainer of NXP mainline code for FRDM boards now.
+> Thanks for your contribution for FRDM boards upstreaming.
+> The imx8mp frdm board official name is FRDM-IMX8MP,
+> so please change the name from FRDM-i.MX8MP to FRDM-IMX8MP
+> in commit message.
 > 
->  - Quad Cortex-A53
->  - 4GB LPDDR4 DRAM
->  - PCA9450C PMIC with regulators
->  - Two NXP PCAL6416 GPIO expanders
->  - RGB LEDs via GPIO expander
->  - I2C1, I2C2, I2C3 controllers
->  - UART2 (console) and UART3 (with RTS/CTS)
->  - USDHC3 (8-bit eMMC)
->  - SNVS power key (onboard power button)
-> 
-> Signed-off-by: Rogerio Pimentel <rpimentel.silva@gmail.com>
-> Signed-off-by: Xiaofeng Wei <xiaofeng.wei@nxp.com>
-
-Incorrect DCO chain. Please look at submitting patches which explain
-what is DCO and how it should be organized.
-
-> ---
-> 
-> Changes in v4:
+> The code you refer in meta-imx-frdm is based on 6.6.36 kernel which
+> is pretty old. Our new code based on 6.12 you can refer this link:
+> https://github.com/nxp-imx/linux-imx/blob/lf-6.12.y/arch/arm64/boot/dts/freescale/imx8mp-frdm.dts
 
 
-
-
-> +
-> +	pinctrl_pmic: pmicgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO03__GPIO1_IO03	0x000001c0
-> +		>;
-> +	};
-> +
-> +	pinctrl_pcal6416_0_int: pcal6416_0_int_grp {
-
-
-Don't use underscores in node names. See DTS coding style.
+It is still downstream, unfortunately we do not care about it. Don't use
+it as arguments, please, it really does not matter what is happening in
+the downstream in NXP.
 
 Best regards,
 Krzysztof
