@@ -1,152 +1,150 @@
-Return-Path: <linux-kernel+bounces-893528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A260C479AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:43:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A86C8C479BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:44:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8DB9F348EB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:43:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 54F9C349037
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3DD242D8B;
-	Mon, 10 Nov 2025 15:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DE7314B85;
+	Mon, 10 Nov 2025 15:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yXaG3Q68";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="720y12/j";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yXaG3Q68";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="720y12/j"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azUTF718"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F9A26ED3D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C6E21E098;
+	Mon, 10 Nov 2025 15:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762789246; cv=none; b=WuUhYN9sJ5U35KMPsYfAzgPfRH03iJbUu2nsxHMeslCU5zLCfpcEShJVSNsgaFdjQxg97fB7yyY3WyF4rLJZVYCBVZV2Yu+ezrdccx5CPaG5385OAk3EMvDto57tsMk2TfLay5KrNci3dGypt6cqxoJJv7FyQaWbsR8bxQIFP8c=
+	t=1762789362; cv=none; b=Cv+QN9VJN3ADQiRzit3rSZqcqhvPfoJFGBvkl3x5+PqYIYAF1ZXH8rrP6aEAe4QVMRNWgvR87yc8DL/w+4ax1N3gmxc8sMhL27Rn3cuYFWlz7Im0NfrCyeKIvV+tgAMmpwToOHacTaZ5sD3suLwuXCkRfh2PL9TCSZeJbKlR/Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762789246; c=relaxed/simple;
-	bh=bakk/x+7ivr5WFpTz4ZoP8PZs34SMamXYUTpTCCzxQI=;
+	s=arc-20240116; t=1762789362; c=relaxed/simple;
+	bh=+z6nPNDQoci6L+17sEABsPEjN8WBFRZLVVqzzwX8ixw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DB+MxZF5gAwW8dY52C34bP6zUIKyxhDN9EosO6GGBaUme+LalJcDz45Hp0OK5ZOg5v9SJRyfojvizsrltmsoxxB9NeBqkMXskBqESWfjRQJ5egqEHg03164wT3rb6hSDLCkVPUIo0wtwwKJ0vIIT0tk8Tux6djzhWrlJeKJzu/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yXaG3Q68; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=720y12/j; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yXaG3Q68; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=720y12/j; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C982333808;
-	Mon, 10 Nov 2025 15:40:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762789241;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vlrsgtG09qGxjpAiJIYhoUiJYVdUj4Y2K3a+i4ch7w8=;
-	b=yXaG3Q68faWw+PJet4VjKz/N90j3Zyv0h81QrYibJsWUhPlHNlVWU040Ag7+BcJvZYctUv
-	ILapRWLX0HSFR28/hjWTu/qIl9CkRypv11TWs1SF+ViB/uVnJaBnp/tO83IDqcDOj9a3gF
-	K61iM7Rvu6dRCe/mKC3G17NW+Nadjz8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762789241;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vlrsgtG09qGxjpAiJIYhoUiJYVdUj4Y2K3a+i4ch7w8=;
-	b=720y12/jGmSEA4LtosPDCijz87kMQDrMdien6pV8aJ/CNH47ouqvxo5Qwken1WQZcxsqWk
-	A1Zt3q807NRUGJDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762789241;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vlrsgtG09qGxjpAiJIYhoUiJYVdUj4Y2K3a+i4ch7w8=;
-	b=yXaG3Q68faWw+PJet4VjKz/N90j3Zyv0h81QrYibJsWUhPlHNlVWU040Ag7+BcJvZYctUv
-	ILapRWLX0HSFR28/hjWTu/qIl9CkRypv11TWs1SF+ViB/uVnJaBnp/tO83IDqcDOj9a3gF
-	K61iM7Rvu6dRCe/mKC3G17NW+Nadjz8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762789241;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vlrsgtG09qGxjpAiJIYhoUiJYVdUj4Y2K3a+i4ch7w8=;
-	b=720y12/jGmSEA4LtosPDCijz87kMQDrMdien6pV8aJ/CNH47ouqvxo5Qwken1WQZcxsqWk
-	A1Zt3q807NRUGJDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ACA131447D;
-	Mon, 10 Nov 2025 15:40:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /DP5KXkHEmlfVwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 10 Nov 2025 15:40:41 +0000
-Date: Mon, 10 Nov 2025 16:40:32 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, tytso@mit.edu,
-	torvalds@linux-foundation.org, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] btrfs: utilize IOP_FASTPERM_MAY_EXEC
-Message-ID: <20251110154032.GY13846@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20251107142149.989998-1-mjguzik@gmail.com>
- <20251107142149.989998-3-mjguzik@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WvKsQmmHai970+rJVHc7hrruQFsv3Xn1VVrsRWprrb3Yb0piIc1DlifqPLHJOOqIylIoltCwu998p+1OEk6YruWYOZBDbRsQ/0+8Cv5tzP41mAQvy58xj3xThwhX7mDQntP7DMX2KH4S+lpj3SFQpRWO9Ak70wwojk98ePKeYgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azUTF718; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74B8CC116D0;
+	Mon, 10 Nov 2025 15:42:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762789362;
+	bh=+z6nPNDQoci6L+17sEABsPEjN8WBFRZLVVqzzwX8ixw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=azUTF718yb41geT6GhIMIL2hPXrKR7arrdLlwXoAYxhhqQz0qz8tKh0d3wW3Gm1Z6
+	 IQ4pQ6NGI0FFBA+ewPeS78RRfdEiPQK6ezZDQsBIu/lJHKNVGpdbu2wW5BmsRPMCJB
+	 vLLbS/5k/83f0AOIatH8+9B12TaWX/3/M7618aUtrYy9PuYEi0x2Lz3HM9rPrupBn+
+	 gP1Q2/iA49WLe6vcMzd1Y/uJ3MjXKc/OJzvB4YgIM6Wn1XNwfgfDWK8YCtmGjQSaLt
+	 ciF96GEMgsbMOwJ13kw/uyMxzYjWSQqStfab0G/YPCG44u98b+s8zy21G5P2Doa7Y9
+	 NOIlmQJuv4mog==
+Date: Mon, 10 Nov 2025 16:42:39 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Daniel Gomez <da.gomez@kernel.org>
+Cc: Daniel Gomez <da.gomez@samsung.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Sami Tolvanen <samitolvanen@google.com>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
+Message-ID: <26c7zdxc4nv3wx25xferlggtjipigtd3tc6fk554g4tmqsuvmr@e6cll772nz2r>
+References: <20251104104827.1de36ea0@canb.auug.org.au>
+ <20251104105415.68bfb090@canb.auug.org.au>
+ <f374sh5rsbxvboowft6xpiimxlzw264i32txgiok53on2vxxu7@lpetaklaofzb>
+ <ad9c5b79-8a33-4183-a048-48ba516e6aaf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ylliqf7wpspa7avi"
 Content-Disposition: inline
-In-Reply-To: <20251107142149.989998-3-mjguzik@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto,suse.com:email,twin.jikos.cz:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
+In-Reply-To: <ad9c5b79-8a33-4183-a048-48ba516e6aaf@kernel.org>
 
-On Fri, Nov 07, 2025 at 03:21:48PM +0100, Mateusz Guzik wrote:
-> Root filesystem was ext4, btrfs was mounted on /testfs.
-> 
-> Then issuing access(2) in a loop on /testfs/repos/linux/include/linux/fs.h
-> on Sapphire Rapids (ops/s):
-> 
-> before: 3447976
-> after:	3620879 (+5%)
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-Thanks.
+--ylliqf7wpspa7avi
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
+MIME-Version: 1.0
 
-Acked-by: David Sterba <dsterba@suse.com>
+Hello Daniel,
+
+On Mon, Nov 10, 2025 at 02:59:15PM +0100, Daniel Gomez wrote:
+> On 07/11/2025 17.44, Uwe Kleine-K=F6nig wrote:
+> > Hi Daniel,
+> >=20
+> > On Tue, Nov 04, 2025 at 10:54:15AM +1100, Stephen Rothwell wrote:
+> >> [adding the modules tree contacts]
+> >>
+> >> On Tue, 4 Nov 2025 10:48:27 +1100 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+> >>>
+> >>> Today's linux-next merge of the pwm tree got a conflict in:
+> >>>
+> >>>   rust/macros/module.rs
+> >>>
+> >>> between commits:
+> >>>
+> >>>   3809d7a89fe5 ("rust: module: use a reference in macros::module::mod=
+ule")
+> >>>   0b24f9740f26 ("rust: module: update the module macro with module pa=
+rameter support")
+> >>>
+> >>> from the modules tree and commit:
+> >>>
+> >>>   927687809649 ("rust: macros: Add support for 'imports_ns' to module=
+!")
+> >=20
+> > I reshuffled my tree such that the import_ns commit sits directly on top
+> > of 6.18-rc1. The new commit-id is 739ad9be61e5.
+> >=20
+> >>> from the pwm tree.
+> >>> [...]
+> >>>  -    if let Some(imports) =3D info.imports_ns {
+> >>> ++    if let Some(imports) =3D &info.imports_ns {
+> >>> +         for ns in imports {
+> >>> +             modinfo.emit("import_ns", &ns);
+> >>> +         }
+> >>> +     }
+> >=20
+> > Given that the conflict resolution is non-trivial and we already know
+> > what to do, I suggest you merge my commit into the modules tree.
+>=20
+> Do you mean creating a separate branch that includes the conflict resolut=
+ion, to
+> be used as an example when sending the PR?
+
+If I were the module maintainer I'd pull
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git rust-mo=
+dule-namespace
+
+into my tree and include that into the v6.19-rc1 pull request. That way
+the merge conflict doesn't happen at all for Linus.
+
+Best regards
+Uwe
+
+--ylliqf7wpspa7avi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkSB+wACgkQj4D7WH0S
+/k5/1gf9GNyfxrJ5kn+azC98fohuov0UFGmof+1oViNSMxNauOe/5YavGYgUu3NV
+npXN5uxmCwwM4DvfnCjDE/XhCGwJf+GcIg0kKNiWLds2dp9uPHKLRICtraMzsmmk
+mJl7qJTBnBP+fgsPs0NwwU87VtA9RXS4Wx97ucEehq3QGW7QIl4ofWkm2ebzeFwq
++bg6J0/yhLEfheQ5hy2agpuDR/ICTS825+qjYzR2+YIXHEOuFy1LtkzRrUex/oXG
+SaQ28GUFzPBbkzdy1yhdaCUIcB1lqTf/tfO0t8bpI5KP3LyR8f/NrOkcWCFrjD6f
+ABQNMdRmA3rN2+UDXaYr/yYfpGxqGg==
+=Yg5l
+-----END PGP SIGNATURE-----
+
+--ylliqf7wpspa7avi--
 
