@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-892479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC5CC452D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:09:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FA7C452DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:11:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6729D4E8B35
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:09:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6AE3B1D47
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FD52EAD15;
-	Mon, 10 Nov 2025 07:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F2A2E92C3;
+	Mon, 10 Nov 2025 07:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiHWJ5Ii"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIdHUP18"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF702E9EAC;
-	Mon, 10 Nov 2025 07:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF4A194A73;
+	Mon, 10 Nov 2025 07:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762758563; cv=none; b=FYtzzoNoWTCmXRsecwZ0O9Gd6A3IKZmiBG+f4rgFoR44r5tz3AZe27tTOM4mEpS9AT2LdcFf40Clf83UKdkDUYK7wEEWOk5ky3m8/me+DUnmw/kq9mBoQgDbg6j76bR00XLj83q0B9ohKzIYGpq712QBbbY/UMnwU3K95vnNNzc=
+	t=1762758686; cv=none; b=ha0CmEJdkkfbS3JJatgfoAmA48Ru/+nriccrIuI59JQ1ddbbIZgN3Mz/mGj7DtgP4a+bDJZ2YYmiAkPIi88rfxTQJ7JJy1shBchHJRW1mYfB4zjBtQaOcdyakOJNlzENE2jElr1YwfgujozRcadFKh2TKfPS+Ip1CDDTMS6GkZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762758563; c=relaxed/simple;
-	bh=qDVewr2PZ91zstRoM3mDnHlEOMzFupzrbMTA7jUsgi0=;
+	s=arc-20240116; t=1762758686; c=relaxed/simple;
+	bh=i3ixvy3dtnAud9Pvop/L2zluxy+BTZOe44XToPg2igA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PPI7n8LEkNSP8X3qyou+ECmjvagA0eTUXF51tUzc1/LPjMjObwusM47jsk3K8yTaPV4vloTb+1UeY124Xb5RYbD/kFHzAryv8iP0qdhQFFI8KxVkF/naX/Xa9foK0Y5fZqsFNaqC7RFFbLXA43vgEUFQGEvlb+UBPWi22HUqc+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZiHWJ5Ii; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CEC7C116D0;
-	Mon, 10 Nov 2025 07:09:19 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=cBwAzRpkKPibrqYrVWIVJ6jwtPH4c9f6Pv2BSB68wo/Mj12pj46FvR8AOjwlA2jp6Q1DV15Gj3KhNKSEwP3XIpz9RJaQiWvKTlQZsE4CYpUwykhxEvPXECG4mFdjzWISBf3htZBwE5PUWgcrSeoscQmBFqBjIWsCjHgAS9XQzLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIdHUP18; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24D4DC116B1;
+	Mon, 10 Nov 2025 07:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762758563;
-	bh=qDVewr2PZ91zstRoM3mDnHlEOMzFupzrbMTA7jUsgi0=;
+	s=k20201202; t=1762758686;
+	bh=i3ixvy3dtnAud9Pvop/L2zluxy+BTZOe44XToPg2igA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZiHWJ5Ii4o/8mJKH60HLhEEpc4S9QBje7Zi9DXb7UmsrUAr07uN3bAMJrDTUTJ7+N
-	 UvYq+vzf32bzuiV8f1aC3R6zGQdOArh5V/vEyPNmauQpqtg8q1GVodRSNj9fnfZvnN
-	 8fEGT6OLCm15b6o9eo6ebDrms31nKQv1E91uE9BnOxi12ABEvxE1XI2+rTXTsXTRvZ
-	 MHJFBAC5TvrxAPW84G1g0PEiFdj1MY+uysc6aGIsomlQEp0QYjwMpsToE6V8rPxH6H
-	 1UbUmXhCKmSy63YIV2i+mn4nZQh313vMoA0nLAi0JZQVC4WrKqCnrwrkneT08z1TYM
-	 sxl8VRzvyboyQ==
-Message-ID: <abab58ae-ff34-4092-b40a-7f249bd09358@kernel.org>
-Date: Mon, 10 Nov 2025 08:09:17 +0100
+	b=SIdHUP18CMAw64bvEC3TvcCEk2Gl/1sWt88+nJhalk344r/dDyx8Z+0i/Ac6cyZ8S
+	 SnKmrRB70ZjUbK0QrPiC6rb7fB4szyL+jg3rZFad27Wh//us/bqFR1v8iWv+ugZNF/
+	 kZ5cktwKfsWrGBdxs8juVnGbfTcjSdl/UZnD3UTL2pRSHuasxkOMH//4CZcakjI3sI
+	 Wo8nc1eA11vTOHcGDhNV/gs7rkmBArwTZRbrVYeSiLEUxGb7ijO9rhYpUCFCyav7F8
+	 ZbpG2gNReoiHSfISLrMgbKBXabWN7dxUnIX106G+9/9YehqL6KImr8xqLqfFg2pwL/
+	 57vFJetKIN1LQ==
+Message-ID: <035d6c35-c27a-4f5c-8603-ea5857d78e63@kernel.org>
+Date: Mon, 10 Nov 2025 08:11:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/4] arm64: dts: qcom: sm8750: Add SDC2 nodes for
- sm8750 soc
-To: Sarthak Garg <sarthak.garg@oss.qualcomm.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
- quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
- quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
-References: <20251026111746.3195861-1-sarthak.garg@oss.qualcomm.com>
- <20251026111746.3195861-3-sarthak.garg@oss.qualcomm.com>
- <3170ad12-0d79-4cb1-aedc-d2c9f1da366f@kernel.org>
- <0fccd9f6-f833-4192-b7ac-cadc4a048cad@oss.qualcomm.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add
+ TAS2568/5806M/5806MD/5830 support
+To: "Xu, Baojun" <baojun.xu@ti.com>
+Cc: "broonie@kernel.org" <broonie@kernel.org>, "tiwai@suse.de"
+ <tiwai@suse.de>,
+ "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+ "13916275206@139.com" <13916275206@139.com>,
+ "Ding, Shenghao" <shenghao-ding@ti.com>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "Yi, Ken" <k-yi@ti.com>, "Lo, Henry" <henry.lo@ti.com>,
+ "Chen, Robin" <robinchen@ti.com>, "Wang, Will" <will-wang@ti.com>,
+ "jim.shil@goertek.com" <jim.shil@goertek.com>,
+ "toastcheng@google.com" <toastcheng@google.com>,
+ "chinkaiting@google.com" <chinkaiting@google.com>
+References: <20251108110759.2409-1-baojun.xu@ti.com>
+ <20251108110759.2409-2-baojun.xu@ti.com>
+ <20251109-heavenly-observant-quetzal-b1bead@kuoka>
+ <ecc69a98a23d406ea1eada62144415fc@ti.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,38 +117,46 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <0fccd9f6-f833-4192-b7ac-cadc4a048cad@oss.qualcomm.com>
+In-Reply-To: <ecc69a98a23d406ea1eada62144415fc@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/11/2025 08:06, Sarthak Garg wrote:
-> 
-> On 10/27/2025 8:02 PM, Krzysztof Kozlowski wrote:
->> On 26/10/2025 12:17, Sarthak Garg wrote:
->>> Add SD Card host controller for sm8750 soc.
+On 10/11/2025 06:29, Xu, Baojun wrote:
+>>
+>> ________________________________________
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: 10 November 2025 01:17
+>> To: Xu, Baojun
+>> Cc: broonie@kernel.org; tiwai@suse.de; andriy.shevchenko@linux.intel.com; 13916275206@139.com; Ding, Shenghao; linux-sound@vger.kernel.org; linux-kernel@vger.kernel.org; lgirdwood@gmail.com; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; devicetree@vger.kernel.org; Yi, Ken; Lo, Henry; Chen, Robin; Ji, Jesse; Wang, Will; jim.shil@goertek.com; toastcheng@google.com; chinkaiting@google.com
+>> Subject: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add TAS2568/5806M/5806MD/5830 support
+>>
+>> On Sat, Nov 08, 2025 at 07:07:59PM +0800, Baojun Xu wrote:
+>>> TAS5806M, TAS5806MD and TAS5830 is in same family with TAS58XX.
+>>> TAS2568 is in family with TAS257X.
 >>>
->>> Signed-off-by: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+>>> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
 >>> ---
->>>   arch/arm64/boot/dts/qcom/sm8750.dtsi | 54 ++++++++++++++++++++++++++++
->>>   1 file changed, 54 insertions(+)
+>>>  .../devicetree/bindings/sound/ti,tas2781.yaml | 25 +++++++++++++++++++
+>>>  1 file changed, 25 insertions(+)
 >>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
->>> index a82d9867c7cb..50e1fa67c093 100644
->>> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
->>> @@ -2060,6 +2060,60 @@ ice: crypto@1d88000 {
->>>   			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
->>>   		};
->>>   
->>> +		sdhc_2: mmc@8804000 {
->> Completely messed ordering.
-> 
-> 
-> Do you mean the property order within the sdhc_2 device tree node ?
-> 
-> What ordering do we need to follow here ?
+>>
+>> Please organize the patch documenting compatible (DT bindings) before their user.
+>> See also: https://urldefense.com/v3/__https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst*L46__;Iw!!G3vK!SQ5aH9VZhZ2QzKdtYIs5BX7OarVmt1XzwB9XxqFgAGN0ONvsEoAjHsuoZWrrmetzH_xlxeSfWA$
 
-The one from coding style.
+What's with this link?
+
+> 
+> Hi Krzysztof,
+> 
+> Thanks for your review.
+> Do you mean I need to add a text file,
+> for example "ti,tas2781.txt", include the required properties,
+> and the example of the devicetree node?
+> 
+
+Did you read the actual resources I pointed you? I don't know how to
+express it clearer.
+
 
 Best regards,
 Krzysztof
