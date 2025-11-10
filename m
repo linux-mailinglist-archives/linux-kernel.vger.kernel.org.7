@@ -1,144 +1,169 @@
-Return-Path: <linux-kernel+bounces-894189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8918EC49709
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:43:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACDA9C49715
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:45:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E1933A5A35
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:43:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F32C84ED45A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718E2199E89;
-	Mon, 10 Nov 2025 21:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794AB2F60A7;
+	Mon, 10 Nov 2025 21:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTB/W/EN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMnLplU4"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF641FF61E;
-	Mon, 10 Nov 2025 21:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857F021B9FD
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762811034; cv=none; b=Ef2A0CwJsBOgkLiZ+eVZnLfr/34G6u3KohW/FGlkWkXhxB1dE9UURKCs+8L89ljwN25dGS9YzyLT8hPfiU9GN3lC1NzBWeVWNLOYnd2ZiHVBm9sfUqlY/pV6fuzue1Msb9BD9/w1pSVP3kVU7ByRu5NY0QenFMnF0zcDua2H84E=
+	t=1762811119; cv=none; b=oM3/4iu2RyXTQEgreioZjfsZuSjj3RvEZDA30VvM6vDYem2fwtKgHk2J+OrmCwXFKooeRrcuB/bkGgOFX0DIffpmZgBxHDm3tN8AMf23BSkHz/D04Qpa/Tt/KmFg8c4kUninv1yelMJ1dEkVqCXGm0BwLIj3t5WXskSS967TW/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762811034; c=relaxed/simple;
-	bh=qLsh4xwJFcm7ZBPTELrv5HlI3dadasyJWn9EEI6vM8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fLGQk0v9qRF0JTdCZbAHa9igEn7tE9qsJSCVKaQGXfTjf4BheyDWhZ3aqQGLAy0QbVIVgs0zQh/Yup5ACiEW17k5Nzk4JZ3sAgiGK1jK4zpkGEp0rHkuVa4oIohCdY5sG25Ask76OBmq+z+9oKPXOAhtMqSH3IO3u9PpLiOSVhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTB/W/EN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC532C116B1;
-	Mon, 10 Nov 2025 21:43:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762811034;
-	bh=qLsh4xwJFcm7ZBPTELrv5HlI3dadasyJWn9EEI6vM8Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VTB/W/ENaZyWqwN3+1JS39b2RHZU0mVzd+iX5zXnJ6OoHc80SN0wrgaz/WIvM6Y77
-	 0dYcTeQlruQ7+v0pSvqoEsOHFlc4fXmZIMPBFmrz8H3LqzxQen+v/v8WRHWMNqmQb8
-	 2LiRM0jBjhSRh584eNaIXPZRqftXWByMhTDaIH7Rk7LitC1Gy1RRsBSREWb3SQPP3c
-	 YljSbH+HHxNKJvBbpjkbRilCUSwqwsOME1fxIuh3C3gwyanU/PhpkLlsuNEma24Pww
-	 uMGlOkYblxl+rwD8gC0QEGBRFsfHSVzFaVMrfAoc4BgVm7yuqOKEcg6+TOoj1h9LoD
-	 f85WUmDtXeziA==
-Date: Mon, 10 Nov 2025 14:43:49 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"David Hildenbrand (Red Hat)" <david@kernel.org>,
-	Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1762811119; c=relaxed/simple;
+	bh=dHwTe00j1MV9dgQgcUWIMhhJ7OdyBnhAZ0pGNCeydWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iGFiFekXvBTmtWHEtHZVJd5He23e8J3mqRMtyy5wmEy6GFBtte4b9E0qsL5Hyuq6xaC2CHL0Kk35KorrNweJptPWb2Q1cZhOc6tKHIfAmxHj9/bk1mMfE8GqYp+azPzQZKJeNLMFhr4n31n21b+HYaBgjHeO+j+uc6H8KrlEWhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bMnLplU4; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b7272012d30so653168266b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:45:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762811116; x=1763415916; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KiFNjiZ4X2EvOoUrngxyK7bRgO5ZFSxeJZ13R5Tmu5A=;
+        b=bMnLplU4DiovrGil+UN3G4mfT22q2bHV3WKMkW2E2O9t1/PZYbKeLrRYODyv0Rme60
+         9wAe4zAt3UrKRekIvIR2NcWu7MvIkibn5+g5U9V1Glv0sGSj7/FZvtb1B5xWrdNEgwlm
+         Un7n2xkMVWNO/f2aRi++DEPNWbUJQSPptoE6scpWoemNw84UwgjPKhE7BwqGkGzleTVF
+         YWSqas7/TOcMbKVpJffrXmAb+76Mf6MOnf3cJ/S6oD7XEeBaA4sWVx/9ij0tzExyYY3+
+         2l0vQe0FPNY8/vTmpLx8E7ZGGhSIWpaC3RtuasnRTFGGd7b5bGYz6ManD/OeWxgWeLAc
+         jdSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762811116; x=1763415916;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KiFNjiZ4X2EvOoUrngxyK7bRgO5ZFSxeJZ13R5Tmu5A=;
+        b=BG5mgwIrwq6SQTWy79LG0Kx1wtFDp804QksnWqIUgIq6q0MGjn+YufNe340r7OiuK9
+         mC2eQSkcJL0Jp7ULAWaYdDlS1tpqN1NU08hLSVWQuOpWrHp9rw3qxIs12ODB2CuJ06HQ
+         zDVJzn68x9lHk8sK70r/aTAlYK5U5wsHms9B1/pgttO7OWdBhhpTue7fnSjBop+RMVAd
+         /SVBR7hJ/gWV6R7kVpM2k1FWQB8d/grCVlHr00fOV+rKlFZOBMah53Pdj72RpV/IEBJf
+         2rB5pAW6q+553+wrqrejCyvNf0L0Ksj4dbXJv3McgW+GqfzESlT4c/fhyyBT1Susufpv
+         JMdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW37wn89C1jHUTAKH3hvagqcRvHlOXobb3cGnBjW4I/7BeQa646UzJB+hQGlar0iyNmEjzdpeT6EE3+wew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0890rczWFC6SEZLCprHWwiti8MKKKSGnRr/3i/ClOgSiZtgqt
+	Q1iF9uayGaPpHd22HHwC77Wj3zZNhjGEA6DAg0pBwF5m5pUKBhw5IN9E
+X-Gm-Gg: ASbGncv8bdUfR4LMewKZusdJxAv/wZXLIZ93pr+D3fmUwn+W2yzXLVz6tWSQxTUtJt0
+	AFoOY4QDhl2Ph42DPQJpqVG7gmV88JkyQslYZ6DFoVT5bOdJctZFM3+Q2i1oyUQ3AMLxXNWhcgC
+	UdDgn5o6k0+mTGLgA3LV5ya4csCrLHno5A6EK9NhqAlAuV+BIO4eCNyS2MZ2QWtfKSUeZMgjCdT
+	vbnnNkUGcgo0/5HuKWnJd7sVnIjWm9x/VMjvTByzT2Ecq0/Y5blE9Y+Ao83vJlJwCSSYKiUUYlD
+	lc6HyiEKeeQ717WwLdT2gyamuYHg6047B2W7UuBeW5OKbbw9xCQlKSBtGET0et26DreA9dt795x
+	qvEt8TSdL2Gm7VMqAQ/HoJilNf3xPakoxTUXKQ6VKRNIOzIHslX7vtxGFA2ZMsB+5vHdWIyRkj6
+	rllq+/6KFrklgw2vpJ4tYKfacKmDv49paZE8TRSpedh4uq1rBAUWHmqQhL
+X-Google-Smtp-Source: AGHT+IGg2UVCwGUPO2ALg7EHaUKW+Wi+Pkw0XTmmfXGNkVW/r/qLutpXRxnKp37lcMUpt8E4SQus8A==
+X-Received: by 2002:a17:907:8688:b0:b6d:3a00:983a with SMTP id a640c23a62f3a-b72e041024cmr973604866b.38.1762811115633;
+        Mon, 10 Nov 2025 13:45:15 -0800 (PST)
+Received: from localhost (dslb-002-205-018-238.002.205.pools.vodafone-ip.de. [2.205.18.238])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72d1b4916dsm1075671766b.15.2025.11.10.13.45.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 13:45:14 -0800 (PST)
+From: Jonas Gorski <jonas.gorski@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftest/mm: fix pointer comparison in mremap_test
-Message-ID: <20251110214349.GC302594@ax162>
-References: <20251106104917.39890-1-ankitkhushwaha.linux@gmail.com>
- <fc051006-5cb2-49e1-bb27-7839837439cd@kernel.org>
- <aQyOZ6eYng-IjxS_@fedora>
- <6e07949b-d86f-46d8-a68c-9717cfb26084@kernel.org>
- <20251107160855.58891ac6df6854a3b608185f@linux-foundation.org>
- <aRA6lEQmmrvmj2DX@kernel.org>
- <a7034e0c-a2ab-425a-8472-ef0a87a17681@suse.cz>
+Subject: [PATCH RFC net-next 0/3] net: dsa: deny unsupported 8021q uppers on bridge ports
+Date: Mon, 10 Nov 2025 22:44:40 +0100
+Message-ID: <20251110214443.342103-1-jonas.gorski@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7034e0c-a2ab-425a-8472-ef0a87a17681@suse.cz>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 09, 2025 at 08:11:09PM +0100, Vlastimil Babka wrote:
-> >> > >>> Pointer arthemitic with 'void * addr' and 'unsigned long long dest_alignment'
-> >> > >>> triggers following warning:
-> >> > >>>
-> >> > >>> mremap_test.c:1035:31: warning: pointer comparison always evaluates to
-> >> > >>> false [-Wtautological-compare]
-> >> > >>>    1035 |                 if (addr + c.dest_alignment < addr) {
-> >> > >>>         |                                             ^
-> >> > >>>
-> >> > >>> typecasting 'addr' to 'unsigned long long' to fix pointer comparison.
-...
-> >> I must say, applying this would be an unhappy life event.
-> >> 
-> >> 	if (void* + ulong < void*)
-> >> 
-> >> makes perfect sense in a world which permits void* arithmetic (ie,
-> >> ours).  So what the heck is clang doing??
-> 
-> My (not very informed) guess would be something about undefined behavior
-> because pointer arithmetic is strictly speaking only valid within an array,
-> so void* + ulong is also still in the same array, and thus can't become
-> smaller by an overflow, because overflow can't happen if we're still within
-> the same valid array...
+Documentation/networking/switchdev.rst is quite strict on how VLAN
+uppers on bridged ports should work:
 
-It is indeed due to undefined behavior but more so that without
--fwrapv-pointer (set via -fno-strict-overflow for the kernel build), the
-addition of an unsigned index and a pointer cannot wrap. This warning is
-a result of the following change in clang-20:
+- with VLAN filtering turned off, the bridge will process all ingress traffic
+  for the port, except for the traffic tagged with a VLAN ID destined for a
+  VLAN upper. (...)
 
-https://github.com/llvm/llvm-project/commit/6d34cfac53b993a6cdf3d6669e017eac3a2296c8
-https://godbolt.org/z/hvMoPYb17
+- with VLAN filtering turned on, these VLAN devices can be created as long as
+  the bridge does not have an existing VLAN entry with the same VID on any
+  bridge port. (...)
 
-which I made sure respected the value of -fwrapv-pointer in
+Presumably with VLAN filtering on, the bridge should also not process
+(i.e. forward) traffic destined for a VLAN upper.
 
-https://github.com/llvm/llvm-project/commit/f0dcf3240dffe3767c7f3a2e2da5b92ae9fd1bef
+But currently, there is no way to tell dsa drivers that a VLAN on a
+bridged port is for a VLAN upper and should not be processed by the
+bridge.
 
-But it looks like the mm selftests do not build with
--fno-strict-overflow. Maybe it should?
+Both adding a VLAN to a bridge port and adding a VLAN upper to a bridged
+port will call dsa_switch_ops::port_vlan_add(), with no way for the
+driver to know which is which. But even so, most devices likely would
+not support configuring forwarding per VLAN.
 
-> But I don't know if this strictness is only applied to the warning itself or
-> to the actual compilation too (does it eliminate everything as dead code then?)
+So in order to prevent the configuration of configurations with
+unintended forwarding between ports:
 
-Yes, it would turn that
+* deny configuring more than one VLAN upper on bridged ports per VLAN on
+  VLAN filtering bridges
+* deny configuring any VLAN uppers on bridged ports on VLAN non
+  filtering bridges
+* And consequently, disallow disabling filtering as long as there are
+  any VLAN uppers configured on bridged ports
 
-  if (addr + c.dest_alignment < addr) {
+An alternative solution suggested by switchdev.rst would be to treat
+these ports as standalone, and do the filtering/forwarding in software.
 
-into just
+But likely DSA supported switches are used on low power devices, where
+the performance impact from this would be large.
 
-  if (false) {
+While going through the code, I also found one corner case where it was
+possible to add bridge VLANs shared with VLAN uppers, while adding
+VLAN uppers shared with bridge VLANs was properly denied. This is the
+first patch as this seems to be like the least controversial.
 
-based on the above Godbolt link.
+Sent as a RFC for now due to the potential impact, though a preliminary
+test didn't should any failures with bridge_vlan_{un,}aware.sh and
+local_termination.sh selftests on BCM63268.
 
-> >> If we do
-> >> 
-> >> 	void *addr2 = addr + c.dest_alignment;
-> >> 	if (addr2 < addr)
-> >> 		...
-> >> 
-> >> then which statement warns, and why?
-> 
-> As the answer was that nothing warns, I'd think it just isn't able to warn
-> if it's no longer part of the same statement. Whether it also means it's not
-> eliminated as dead code anymore, dunno.
+A potential selftest for bridge_vlan_{un,}aware.sh I could think of
 
-Based on the above Godbolt link, it appears it will be optimized the
-same way, just without the warning letting you know something is up.
+- bridge p3, p4
+- add VLAN uppers on p1 - p4 with a unique VLAN
+  if refused, treat as allowed failure
+- check if p4 sees traffic from p1
 
-Cheers,
-Nathan
+If p1 and p4 are isolated (so implicitly p2 and p3), its fine, and if
+the configuration is rejected is also fine, but forwarding is not.
+
+Jonas Gorski (3):
+  net: dsa: deny bridge VLAN with existing 8021q upper on any port
+  net: dsa: deny multiple 8021q uppers on bridged ports for the same
+    VLAN
+  net: dsa: deny 8021q uppers on vlan unaware bridged ports
+
+ net/dsa/port.c | 23 +++------------
+ net/dsa/user.c | 80 ++++++++++++++++++++++++++++++++++++++++++--------
+ 2 files changed, 71 insertions(+), 32 deletions(-)
+
+-- 
+2.43.0
+
 
