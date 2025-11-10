@@ -1,114 +1,187 @@
-Return-Path: <linux-kernel+bounces-892766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F922C45C1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:55:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD15C45C25
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:55:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8F71891295
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:55:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16445189191A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB0A30149E;
-	Mon, 10 Nov 2025 09:54:15 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278AA301711;
+	Mon, 10 Nov 2025 09:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jSAF2P+6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iESxL7B0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jSAF2P+6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iESxL7B0"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911C92FD1C1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25B730215E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762768455; cv=none; b=bBfNRdXktOKy/1hoshRqufnUz7r5yx88IsGrXsou5bUsVcMEzpHt1IGmlY6U9J2lA0b3a+syvZx0SSy3G57t49VN6mzcd0GN/R+3LK/O+rZoYtcTUejSZu0O5QwGIjST36cqX3hM1qyOxghAzn2mL0htjzJxFejYtV4ksiwr9Ms=
+	t=1762768465; cv=none; b=PZnxaCiqgcYsR4Ki0CxYsrGHdBnN0ISCUFcDrWvwPfWYd/9oKzp9bKb7qShPYNnYasBCAS1bvlgAHX8sX8vYCMeHaJXg3+onQSG8PhmI7JRfRGkPiTLUnLg9R0ruKYl/W/CkoXl1YevCCyi22XvmZ1UNbzQOEfFObtFeDRue3B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762768455; c=relaxed/simple;
-	bh=PVXLDkuHHFvyZQz+1o4/lWragmCZ5hrUErTyRjPbQpg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=POGRndI1ir/2EIVUwenZzbodjUhPSvnlhAGw7xwXBRlWv4mwPaFkFiAsTawJoBtwee3ZGrfKmfbQAo2oI3XoIKilmEC58pwjxC1q/MoyGXMT8EHA5vR4m+JKn1rU02ygYBm6f5A3pBnSqVjHWyolqqeDZ3GSBrKOcUZphcVoFtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vIOav-0007E6-9l; Mon, 10 Nov 2025 10:53:53 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vIOas-00802Y-2g;
-	Mon, 10 Nov 2025 10:53:50 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vIOas-000000006yf-36Uu;
-	Mon, 10 Nov 2025 10:53:50 +0100
-Message-ID: <802768a286aa167f7fdc80857508180964ac7f8c.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] thermal/drivers/mediatek/lvts_thermal: Add MT8189
- support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Hanchien Lin <hanchien.lin@mediatek.com>, "Rafael J . Wysocki"	
- <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui	
- <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring	
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Balsam CHIHI <bchihi@baylibre.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
- raymond.sun@mediatek.com, 	Irving-CH.lin@mediatek.com
-Date: Mon, 10 Nov 2025 10:53:50 +0100
-In-Reply-To: <20251110094113.3965182-3-hanchien.lin@mediatek.com>
-References: <20251110094113.3965182-1-hanchien.lin@mediatek.com>
-	 <20251110094113.3965182-3-hanchien.lin@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1762768465; c=relaxed/simple;
+	bh=ZhWR3Wrkp+3Z1huRjqAI+OfnCH5SAft4JZ8yHhoE2E8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z66FUF3v5XATU0eXqBmHPtpcu2ZJjaHg9+cnEs5ZaIrYj0IIDn7t/6jc5cuLGN1Rur20fiT9ZiHFbVv+e/Y6B3b7H+wT44Ei3C4VnjoOTDZ7WkDRBs/VL4KKmLPM7omm505ARX+UKFP9rULO484/mpc7vDLvpDsuoq2s5+78Ycw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jSAF2P+6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iESxL7B0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jSAF2P+6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iESxL7B0; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BDFB71F397;
+	Mon, 10 Nov 2025 09:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762768461; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UM/+mK+newb7k/lcBeTy8j+deEzzj0M/xyHWaI/PHGk=;
+	b=jSAF2P+6gq5LuyVFUSDCUKE6WXwE4sjQRbPEFdYJQM3aRhfphbjok3gesBk+UqstsbmjSQ
+	p1gmTDTmieeg7KOuhoRg7YROnW7v5SRxTkDb8/5tdwWKU/fEALsPqbd9KaX9r6ekveUKbY
+	5+OGNDfyAvfwhzPZ9Ss39lY0rl2pYsc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762768461;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UM/+mK+newb7k/lcBeTy8j+deEzzj0M/xyHWaI/PHGk=;
+	b=iESxL7B0+NzKuRQj0uR794+ud+LXEIhsyfiR3Dy8G9tgkTcid2KL36Iun3fNkhkFYCsqvz
+	JlIf2GiNrD3cNuDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jSAF2P+6;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iESxL7B0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762768461; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UM/+mK+newb7k/lcBeTy8j+deEzzj0M/xyHWaI/PHGk=;
+	b=jSAF2P+6gq5LuyVFUSDCUKE6WXwE4sjQRbPEFdYJQM3aRhfphbjok3gesBk+UqstsbmjSQ
+	p1gmTDTmieeg7KOuhoRg7YROnW7v5SRxTkDb8/5tdwWKU/fEALsPqbd9KaX9r6ekveUKbY
+	5+OGNDfyAvfwhzPZ9Ss39lY0rl2pYsc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762768461;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UM/+mK+newb7k/lcBeTy8j+deEzzj0M/xyHWaI/PHGk=;
+	b=iESxL7B0+NzKuRQj0uR794+ud+LXEIhsyfiR3Dy8G9tgkTcid2KL36Iun3fNkhkFYCsqvz
+	JlIf2GiNrD3cNuDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B19031431D;
+	Mon, 10 Nov 2025 09:54:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZadVK022EWmcAgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 09:54:21 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 689F4A28B1; Mon, 10 Nov 2025 10:54:21 +0100 (CET)
+Date: Mon, 10 Nov 2025 10:54:21 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, ebiggers@kernel.org, willy@infradead.org, yi.zhang@huawei.com, 
+	yangerkun@huawei.com, chengzhihao1@huawei.com, libaokun1@huawei.com
+Subject: Re: [PATCH v2 22/24] ext4: support verifying data from large folios
+ with fs-verity
+Message-ID: <tyeh5ds2dezr4hrqxs46riwi3ps7ugwhcx46fqmpzarughiokz@q26eyruagm6v>
+References: <20251107144249.435029-1-libaokun@huaweicloud.com>
+ <20251107144249.435029-23-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107144249.435029-23-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.21 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	BAD_REP_POLICIES(0.10)[];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[huawei.com:email,suse.cz:dkim,huaweicloud.com:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_DN_NONE(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,huaweicloud.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: BDFB71F397
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -0.21
 
-On Mo, 2025-11-10 at 17:40 +0800, Hanchien Lin wrote:
-> Add support for the MediaTek MT8189 SoC to the LVTS thermal driver.
->=20
-> Signed-off-by: Hanchien Lin <hanchien.lin@mediatek.com>
-> ---
->  drivers/thermal/mediatek/lvts_thermal.c | 155 ++++++++++++++++++++++--
->  1 file changed, 144 insertions(+), 11 deletions(-)
->=20
-> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/me=
-diatek/lvts_thermal.c
-> index ab55b20cda47..8c15fdaac48c 100644
-> --- a/drivers/thermal/mediatek/lvts_thermal.c
-> +++ b/drivers/thermal/mediatek/lvts_thermal.c
-[...]
-> @@ -1334,9 +1359,15 @@ static int lvts_probe(struct platform_device *pdev=
-)
->  	if (IS_ERR(lvts_td->base))
->  		return dev_err_probe(dev, PTR_ERR(lvts_td->base), "Failed to map io re=
-source\n");
-> =20
-> -	lvts_td->reset =3D devm_reset_control_get_by_index(dev, 0);
-> -	if (IS_ERR(lvts_td->reset))
-> -		return dev_err_probe(dev, PTR_ERR(lvts_td->reset), "Failed to get rese=
-t control\n");
-> +	if (!lvts_data->reset_no_need) {
-> +		lvts_td->reset =3D devm_reset_control_get_by_index(dev, 0);
+On Fri 07-11-25 22:42:47, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> Eric Biggers already added support for verifying data from large folios
+> several years ago in commit 5d0f0e57ed90 ("fsverity: support verifying
+> data from large folios").
+> 
+> With ext4 now supporting large block sizes, the fs-verity tests
+> `kvm-xfstests -c ext4/64k -g verity -x encrypt` pass without issues.
+> 
+> Therefore, remove the restriction and allow LBS to be enabled together
+> with fs-verity.
+> 
+> Cc: Eric Biggers <ebiggers@kernel.org>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-This should be devm_reset_control_get_exclusive(dev, NULL) instead of
-devm_reset_control_get_by_index(dev, 0).
+Nice!
 
-No need to use by_index for a single reset control.
+> @@ -5175,7 +5173,8 @@ void ext4_set_inode_mapping_order(struct inode *inode)
+>  		return;
+>  
+>  	if (test_opt(inode->i_sb, DATA_FLAGS) == EXT4_MOUNT_JOURNAL_DATA ||
+> -	    ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA))
+> +	    ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA) ||
+> +	    ext4_has_feature_verity(inode->i_sb))
+>  		max_order = EXT4_SB(inode->i_sb)->s_min_folio_order;
+>  	else
+>  		max_order = EXT4_MAX_PAGECACHE_ORDER(inode);
 
-regards
-Philipp
+Is there a reason why fsverity needs the folio order to match the block
+size? I didn't find any by a quick glance. If yes, please state it in
+the changelog. If no, then I'd just use EXT4_MAX_PAGECACHE_ORDER() because
+it will give us some performance e.g. for mmapped executables protected by
+fsverify...
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
