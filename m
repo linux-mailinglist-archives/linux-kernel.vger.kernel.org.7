@@ -1,194 +1,112 @@
-Return-Path: <linux-kernel+bounces-893229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D2BC46DAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:22:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DD7EC46DB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:23:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 640594E7368
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:22:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1DAA4EB6EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F72D3112DB;
-	Mon, 10 Nov 2025 13:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3023112DB;
+	Mon, 10 Nov 2025 13:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZIpzju3F"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Burq4hu4"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD501EE7C6;
-	Mon, 10 Nov 2025 13:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7776F31076A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762780955; cv=none; b=jsLPkkEhXLb3WEXH5E5qILCn1Fir33/c+gi6/BGidQIBPO8Nd4rStHe0DPu7SA76UzM/fgS1f5q55wSi//P7pIG2yvfGtUZ9qGNCL5FWTa46r46x7xg1o03+eyzazKRHQJh7Qm4YyNzx2Gwf73u5j9GnIddmVly7cxYNIWpynIs=
+	t=1762780989; cv=none; b=lj5Bod2NnyDcKV0RSNiN0wAQ97tqa8Bkd4AzuwFc0a3AZlm8DSWhlgyFhkQEwKDwIxPHWcMdo2+fA5/++70ebw50ECriqYodKHdY/1k+po6GC9+Evant6YnQ1xnGngfcZ/b6y7q7uEc5ehn6bj0VJ5hPZYurzWAyI3MHZT+kiN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762780955; c=relaxed/simple;
-	bh=vieobzLTaB2LRgIRcNoGdXwyx/JpUJutZXz+L91IMTw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UwRwySUxxb6zni48bD2Mfe/gut1yuAsmA0D0soANTdrSyNkBSXZP433nmxJgY9FSZScAUhxYwkXZGkOl7H2R9bMsumapQ8RERQBZ9aY1uFhyPZsX916xPBH94c+9lL73ljFAMD/J/DVwz5JSXnI7jFN5TIGvICDt/QpbE+lCtbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZIpzju3F; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AA9CgYM3146225;
-	Mon, 10 Nov 2025 13:22:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=0W6NTvN40zE
-	ct9E/LO34i1M9nFTSpRVPIDz47hG4RXw=; b=ZIpzju3FS3Moxh3r9Cyy4dwLIS5
-	l85IQpSh1YshR1dy2XRmCMMQ3C9s7Iq3B9tx/zc1bLiscuoX1noqGud5n3RHnJd4
-	/uDybx9Z+2rb5TwmnC2yWZyT7s99vVhZDCC8zE/bqKNpm5WujVAYv5KtLuB5Ezrq
-	ogOgXIMtXCYI+96N7fOB1Xy+NstoXyyLz/trHt19glI7h0KQ6jmf9gsBMb1g0ZHn
-	mYJeSKIz/BESQRj+E7KBF24PS138rqpYpGwE1zCy1TkBGG8RPJEOj2zywRX6GCE+
-	Kg323MuHQ1yUwuQuEf3V6iv2/hPak4Yy166pCFZ+kuALIHDC6UAWAK62Zow==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abd7hrqkp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 13:22:30 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AADMR80013303;
-	Mon, 10 Nov 2025 13:22:27 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 4a9xxm9qa0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 13:22:27 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5AADMReH013296;
-	Mon, 10 Nov 2025 13:22:27 GMT
-Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 5AADMRSc013294
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 13:22:27 +0000
-Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
-	id 25C6B22D6C; Mon, 10 Nov 2025 21:22:26 +0800 (CST)
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, quic_chejiang@quicinc.com,
-        quic_jiaymao@quicinc.com, quic_chezhou@quicinc.com,
-        Shuai Zhang <quic_shuaz@quicinc.com>
-Subject: [PATCH v5 1/1] Bluetooth: btusb: add default nvm file
-Date: Mon, 10 Nov 2025 21:22:25 +0800
-Message-Id: <20251110132225.2413017-2-quic_shuaz@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251110132225.2413017-1-quic_shuaz@quicinc.com>
-References: <20251110132225.2413017-1-quic_shuaz@quicinc.com>
+	s=arc-20240116; t=1762780989; c=relaxed/simple;
+	bh=C3acuH7QCQn6p/xm12ErSwRFYfxoFjG9C3ZXOi4OU58=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jH3qSEAXUNk6BpDMcuvX87YC6moNRoYHvH56jmbbboUDErpBcITbbK5A5r5b4icvMsInIxMlXe6U2G1zYXMjKJMzMZEvHVgK9EFX1qtu6fjqUGtB66jL6a+NURJENjrPDgkhpjQfWNt2sJOfqaR0GF/7Ey0CjeMofw7KTPAv3qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Burq4hu4; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297f5278e5cso3691205ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:23:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762780987; x=1763385787; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C3acuH7QCQn6p/xm12ErSwRFYfxoFjG9C3ZXOi4OU58=;
+        b=Burq4hu4SRCBWq8IvkWShcKVmRVrUTLWS7G9dZOSs2N/qYDza1aDQqyf03HNvmGacX
+         Sxnkm3AHK/y3AJlQsp9K9x7l0K9IYHDPfOIxZ4MVx7MAeBknIpXWlOoRDPO3soEdB3L1
+         Q116CAnfikEAhQDMoh+oaOngx/ylvAjIa2depsQOaWxLllXoH3qbHDVFbelkeKXMipVL
+         mUTFT155DQzvatbbU2jndpqmroGdOvyLfMXZ/6UDbcmkmi6QosoBrgx1upouDCM78V6U
+         sJUjml6KJvwAn/YiQXbtUIL3sX6pRMmbLwF+fUljKRjJDnmzXxrDfB1j4+NRjQAFUl9/
+         +v8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762780987; x=1763385787;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=C3acuH7QCQn6p/xm12ErSwRFYfxoFjG9C3ZXOi4OU58=;
+        b=nT2dclfSiNE1lEhBx8FRvUMakeWJq7RGp82WwSsuXhLlyWB3ig849NLjkzjNvx/fmL
+         aWIk5eOWJ+arQ487BvfMW052Kr6pilsIdAzRcUkYpmaz2dVeIcIr05ElLxKz1flEO3VA
+         tnLDvN50r/IgiGqs2el5KzO7Q27y572ljF9kw5Deta57u3TKG6mQa+jDJ1E+vP4fvCd4
+         oYZII0GJt1Rf66pbdA845A37MDHOwUZZJ1HYsfGx+SeS6S8BkQLjj7SKSgZbgku4H+sf
+         t+P9VNapvlG4tXMvyHzzive2JUcwQHZgUrq5ryOpfqSTYHi0YmyxM1TrmFFQTiXsH5sP
+         xjJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqdvbkL8VaPBrahZp/pjeSCYepC9HmjkK47SfO3xCr7pFdTxDvBD9uZgedHZJzi/BRbtvSg7oe6B7iXhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0ldUaT3wi6ddQ5Mj8Ma/hJEQvXNohI3Byqs24ObCBgb1SIa68
+	me8HnpxAVAZVy5R76d3PntZ8VXJghMIAtvRXAS5KX7FkWZPo2XBa/pVahdvrSEPuXKuHtqbg5to
+	Au/z1K66VWl0Qyu8VjllaUyn6dbOr4Ao=
+X-Gm-Gg: ASbGncsWK1o2Gx1gfxFnVy4B5erG7z0aPEt86LfSCtuT0+/ZxzKICL+oGn90u3Hfn2N
+	R2bMk6fpuLlwt23MJnn6WJI4oPopAQsHEisy//1sAOdJREJjq8P5rlFgSpKmxd5jqDX5iVr3ivl
+	bg3uAIEs2E1gL6ldGdg1E+s1KV6BmM7S/dzFvMtBcohnC8YVFCxDe0aYBHWTGXq2tngkaI3MfWD
+	fRLYu+GOJFMLjBp/pBhemDtzICUpEDQHGJAb6QmWQT02jo7N/IoPwJLH7Y9bDBUH0daTtFy2jJx
+	maWt6sYwmWVDZ5YQFY5+XAzXbiyTnZQehbEn6pn+MyEiEcNnhhE1+pPIhciokIZxjPX/rQXjtlg
+	M1ek=
+X-Google-Smtp-Source: AGHT+IHgHDi3q6OyQUJsolTQIPR9Fj/+81SVNx0MCb8IGd9foxsR78ymwzqgxKrlTwxxt2S941IeTNAE2DlJ0icIPNk=
+X-Received: by 2002:a17:902:e809:b0:297:f2a0:fad6 with SMTP id
+ d9443c01a7336-297f2a0fc40mr54637915ad.9.1762780986630; Mon, 10 Nov 2025
+ 05:23:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YWECupguSjpaC591pChfR6WZv09p8o8p
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDExNyBTYWx0ZWRfX5R2yg76Z+SfH
- jfoukmrqX2PPOcHfjUTJRgsbXJqvwC7g6WMAopX4DxlhmNeJ5vECqSAl1TGrYd6Yumvw3U1hSiW
- EfLwQczSGkmDJ4KBYNr8Bf/TiUkSH71j+JwNgw7acRKWEiA4O3SGraBN+28wJHa5JfwHNj3ANXR
- hztLPvqeiwF9kEmq6fu3MNUptqHridQLPdQr8IUbY36Zv4txj26zqkS3JGPPLg2PwCpaoIAYs+y
- BB0VYPNIv8lqy1GJWKOuzHCLIQGWuMi0zYaYzRp+oL5ei0UEzjsNWJwY3BsbIoHzLyTszTUw9ls
- Oo8nfBJoP31ksm2hACTgxY6ZBE7PQyL8coKRRQ3oP89+t5jQRTuTI5RvkAYBWKQb6H7HF3Dxm3L
- 4Y4zUgKYlk3kI+lDojPsKVquJO/BzA==
-X-Proofpoint-ORIG-GUID: YWECupguSjpaC591pChfR6WZv09p8o8p
-X-Authority-Analysis: v=2.4 cv=Yt4ChoYX c=1 sm=1 tr=0 ts=6911e716 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8
- a=J2RAPmYWl02GzY4tkNoA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_05,2025-11-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 spamscore=0 phishscore=0 malwarescore=0
- impostorscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511100117
+References: <20251110095025.1475896-1-ojeda@kernel.org> <20251110095025.1475896-14-ojeda@kernel.org>
+ <aRHQA6FEoxACerIQ@google.com> <20251110131326.309545df@eugeo>
+In-Reply-To: <20251110131326.309545df@eugeo>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 10 Nov 2025 14:22:53 +0100
+X-Gm-Features: AWmQ_blPKQ1VNfZu1Ux9YpaOP8DxeSL_ehdyoNT5qQqWUnszwlBjdrKVMppjRig
+Message-ID: <CANiq72nkjWbtEktSU_TrEfY2Agy7FK0-OLBWPLqTvp_p-CkBUg@mail.gmail.com>
+Subject: Re: [PATCH 13/18] rust: quote: enable support in kbuild
+To: Gary Guo <gary@garyguo.net>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If no NVM file matches the board_id, load the default NVM file to ensure
-basic Bluetooth functionality. The default NVM file may differ in
-functionality and performance because specific NVM files enable certain
-vendor commands based on chip capabilities. This fallback improves
-compatibility when a dedicated NVM file is not available.
+On Mon, Nov 10, 2025 at 2:13=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+>
+> This is to be able to skip over edition flags for `quote` when building
+> the rusttestlib?
 
-Also, pass board_id explicitly to select the correct NVM file. This is
-required for proper NVM file determination.
+Yes, it is needed to support skipping the flags, which isn't needed
+until this patch.
 
-Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
----
- drivers/bluetooth/btusb.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+It can be done earlier separately since it doesn't hurt -- a simpler
+option is just to mention it here in the log.
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index dcbff7641..09e81320c 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
- }
- 
- static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
--					const struct qca_version *ver)
-+					const struct qca_version *ver,
-+					u16 board_id)
- {
- 	u32 rom_version = le32_to_cpu(ver->rom_version);
- 	const char *variant, *fw_subdir;
- 	int len;
--	u16 board_id;
- 
- 	fw_subdir = qca_get_fw_subdirectory(ver);
--	board_id = qca_extract_board_id(ver);
- 
- 	switch (le32_to_cpu(ver->ram_version)) {
- 	case WCN6855_2_0_RAM_VERSION_GF:
-@@ -3517,14 +3516,14 @@ static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
- 
- static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
- 				    struct qca_version *ver,
--				    const struct qca_device_info *info)
-+				    const struct qca_device_info *info,
-+				    u16 board_id)
- {
- 	const struct firmware *fw;
- 	char fwname[80];
- 	int err;
- 
--	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
--
-+	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id);
- 	err = request_firmware(&fw, fwname, &hdev->dev);
- 	if (err) {
- 		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
-@@ -3606,10 +3605,21 @@ static int btusb_setup_qca(struct hci_dev *hdev)
- 	btdata->qca_dump.controller_id = le32_to_cpu(ver.rom_version);
- 
- 	if (!(status & QCA_SYSCFG_UPDATED)) {
--		err = btusb_setup_qca_load_nvm(hdev, &ver, info);
--		if (err < 0)
--			return err;
-+		u16 board_id = qca_extract_board_id(&ver);
- 
-+		err = btusb_setup_qca_load_nvm(hdev, &ver, info, board_id);
-+		if (err < 0) {
-+			/* If the board-specific NVM file is not found, set board_id to 0
-+			 * and load the default NVM file to ensure basic functionality.
-+			 */
-+			if (err == -ENOENT && board_id != 0) {
-+				err = btusb_setup_qca_load_nvm(hdev, &ver, info, 0);
-+				if (err < 0)
-+					return err;
-+			} else {
-+				return err;
-+			}
-+		}
- 		/* WCN6855 2.1 and later will reset to apply firmware downloaded here, so
- 		 * wait ~100ms for reset Done then go ahead, otherwise, it maybe
- 		 * cause potential enable failure.
--- 
-2.34.1
-
+Cheers,
+Miguel
 
