@@ -1,188 +1,146 @@
-Return-Path: <linux-kernel+bounces-892624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113D6C45786
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:57:58 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDFBAC457FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:04:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671923B4301
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:57:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7216434798B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A001823DD;
-	Mon, 10 Nov 2025 08:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC7D2FD1D3;
+	Mon, 10 Nov 2025 09:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xJ4JLcO8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UonIxuOO";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xJ4JLcO8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UonIxuOO"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="NUWIWey8"
+Received: from mail-m3298.qiye.163.com (mail-m3298.qiye.163.com [220.197.32.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188B42F25F1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06272F83BB
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762765064; cv=none; b=jkJIm2twHUOEfX3mlp1XVCDtqlgoRcC5v3BmlXq0E2G0NrKAWb4tPKThkyWBHJA4WEEttzC5nrIl3tMwf16ju41UYFTPqg5EgCSi3rAZBQ63C5IhCz9kPw4kMCcFyhVqpwrUzsdlBsmO/Urn7XYefHDg7iYzrwRcvUFfeA+5HF4=
+	t=1762765444; cv=none; b=Bi9o1JyKm4Rwup/wj6P72tCTHYALBRGW8mKEaqAxBooPnRBfDcYWd+KvYpCMng7caQB+XzcvFseU1wrCwTGFbrXAcXiIKsd1aBCFM3rlhtToEoT9Vge48TTumbrviQS6hpFytZPnorMOnKq1APosaYucRJxaW3lFmRv3ivDbzPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762765064; c=relaxed/simple;
-	bh=Mf7DE0/QBl+8uf+v8GafQrwvTH2VYLwYYYYQGolrc1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JTH4NERBgp0iMR28Mh0UUddVLyiMpSWIjhxU46KJKS/XEC+elibiF+SAwjT/aHUqv+Jk2p4bSYiPFKmiskupYW5VMsL/LG9GrLNmz23sTQVm1ErL4nq0tyCPOEvM192K6Wl5NoiXEwc8bfcBvhzBg102zRu1MGzz8xzrMczuNAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xJ4JLcO8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UonIxuOO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xJ4JLcO8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UonIxuOO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 478D91F399;
-	Mon, 10 Nov 2025 08:57:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762765061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=siZRVH70jFKzKR490A0VZN08CJotwp+m2xqJ3CjFvic=;
-	b=xJ4JLcO8x28CraL5R6Q64huVUOrph3Pwm32nv+eUvApWcUKQuLRmp85Q1BsSeUB1fJQasT
-	O/mmdZ/KhPEacYuPo/H9Gl4vbClSCWR7qeslHCK51awvaGP1HEQ2pMOqiWxM7C+wCs9NUM
-	koM9D4IISA84n6X8lUYH55WEun+j+V4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762765061;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=siZRVH70jFKzKR490A0VZN08CJotwp+m2xqJ3CjFvic=;
-	b=UonIxuOOV7xWL0FJW6uBv67cBpSDSg2R4yzHuc5rwFn7uqq18aKyhVEaKAMU7RwUNdswIa
-	2p/hYY/rox1EEjBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762765061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=siZRVH70jFKzKR490A0VZN08CJotwp+m2xqJ3CjFvic=;
-	b=xJ4JLcO8x28CraL5R6Q64huVUOrph3Pwm32nv+eUvApWcUKQuLRmp85Q1BsSeUB1fJQasT
-	O/mmdZ/KhPEacYuPo/H9Gl4vbClSCWR7qeslHCK51awvaGP1HEQ2pMOqiWxM7C+wCs9NUM
-	koM9D4IISA84n6X8lUYH55WEun+j+V4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762765061;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=siZRVH70jFKzKR490A0VZN08CJotwp+m2xqJ3CjFvic=;
-	b=UonIxuOOV7xWL0FJW6uBv67cBpSDSg2R4yzHuc5rwFn7uqq18aKyhVEaKAMU7RwUNdswIa
-	2p/hYY/rox1EEjBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 241DB13BCF;
-	Mon, 10 Nov 2025 08:57:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id l8VxCAWpEWlzSwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 10 Nov 2025 08:57:41 +0000
-Message-ID: <ba25b398-b63e-4bd2-b613-ee1f783524e4@suse.cz>
-Date: Mon, 10 Nov 2025 09:57:40 +0100
+	s=arc-20240116; t=1762765444; c=relaxed/simple;
+	bh=O98FhgpPH9AmIUQ8MrpeFFgnfOqvIBLEm8/jN4cQmbg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jQtsdkFAdxSRyDomhfWNdLf0HZil+GIxji18d/dEj70aXOKSAg1pvp1rLkPOzCXtl8IRXfTNUhtfKzF3GTj7PbzNlV7DhviT2CvKMmyujRzYALiKgjMGPTygbPw5C1y2bCUDCAGGyu7duQ+nA/3WoOKb1IKNvyjxbvplQ/3bAKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=NUWIWey8; arc=none smtp.client-ip=220.197.32.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 29068b50b;
+	Mon, 10 Nov 2025 16:58:43 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dmitry.baryshkov@oss.qualcomm.com,
+	dianders@chromium.org,
+	m.szyprowski@samsung.com,
+	andy.yan@rock-chips.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v3 1/4] drm/bridge: analogix_dp: Apply DP helper API drm_dp_dpcd_read_link_status()
+Date: Mon, 10 Nov 2025 16:58:20 +0800
+Message-Id: <20251110085823.1197472-2-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251110085823.1197472-1-damon.ding@rock-chips.com>
+References: <20251110085823.1197472-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: memcg: dump memcg protection info on oom or alloc
- failures
-Content-Language: en-US
-To: Shakeel Butt <shakeel.butt@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, David Rientjes <rientjes@google.com>,
- linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>
-References: <20251107234041.3632644-1-shakeel.butt@linux.dev>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20251107234041.3632644-1-shakeel.butt@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a6cfd2f3e03a3kunm91e8d29910ac565
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkhMGFZCS0JJS04fTU5CQ05WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=NUWIWey8vWlRCm2+/SQQjN/ucK09iFzZZuILU2h+TBiT4BBAfo68c2CMBpW0Pd3BIxl4Ewy4HhPh4F71PPN+AmqSoYa9/yr2AyCxw8FZjmQzBa4XPAAZAJFXPJY849+PKkiAzD8EOkLnUzTMICMj95dKW1xe6k9bsk/mYPvofbM=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=og7lZ+NbbOS0YUmwxs59NRtyf8yZrXQ1o4bVbOZgqkU=;
+	h=date:mime-version:subject:message-id:from;
 
-On 11/8/25 00:40, Shakeel Butt wrote:
-> Currently kernel dumps memory state on oom and allocation failures. One
-> of the question usually raised on those dumps is why the kernel has not
-> reclaimed the reclaimable memory instead of triggering oom. One
-> potential reason is the usage of memory protection provided by memcg.
-> So, let's also dump the memory protected by the memcg in such reports to
-> ease the debugging.
-> 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+Use existing DP helper API to read link status related DPCDs.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index efe534977d12..7bd91f186ff7 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -388,13 +388,13 @@ static int analogix_dp_process_clock_recovery(struct analogix_dp_device *dp)
+ {
+ 	int lane, lane_count, retval;
+ 	u8 voltage_swing, pre_emphasis, training_lane;
+-	u8 link_status[2], adjust_request[2];
++	u8 link_status[DP_LINK_STATUS_SIZE], adjust_request[2];
+ 
+ 	usleep_range(100, 101);
+ 
+ 	lane_count = dp->link_train.lane_count;
+ 
+-	retval = drm_dp_dpcd_read(&dp->aux, DP_LANE0_1_STATUS, link_status, 2);
++	retval = drm_dp_dpcd_read_link_status(&dp->aux, link_status);
+ 	if (retval < 0)
+ 		return retval;
+ 
+@@ -454,13 +454,13 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
+ {
+ 	int lane_count, retval;
+ 	u32 reg;
+-	u8 link_align, link_status[2], adjust_request[2];
++	u8 link_align, link_status[DP_LINK_STATUS_SIZE], adjust_request[2];
+ 
+ 	usleep_range(400, 401);
+ 
+ 	lane_count = dp->link_train.lane_count;
+ 
+-	retval = drm_dp_dpcd_read(&dp->aux, DP_LANE0_1_STATUS, link_status, 2);
++	retval = drm_dp_dpcd_read_link_status(&dp->aux, link_status);
+ 	if (retval < 0)
+ 		return retval;
+ 
+@@ -619,7 +619,7 @@ static int analogix_dp_full_link_train(struct analogix_dp_device *dp,
+ static int analogix_dp_fast_link_train(struct analogix_dp_device *dp)
+ {
+ 	int ret;
+-	u8 link_align, link_status[2];
++	u8 link_align, link_status[DP_LINK_STATUS_SIZE];
+ 
+ 	analogix_dp_set_link_bandwidth(dp, dp->link_train.link_rate);
+ 	ret = analogix_dp_wait_pll_locked(dp);
+@@ -661,8 +661,7 @@ static int analogix_dp_fast_link_train(struct analogix_dp_device *dp)
+ 			return ret;
+ 		}
+ 
+-		ret = drm_dp_dpcd_read(&dp->aux, DP_LANE0_1_STATUS, link_status,
+-				       2);
++		ret = drm_dp_dpcd_read_link_status(&dp->aux, link_status);
+ 		if (ret < 0) {
+ 			DRM_DEV_ERROR(dp->dev, "Read link status failed %d\n",
+ 				      ret);
+-- 
+2.34.1
 
 
