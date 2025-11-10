@@ -1,327 +1,173 @@
-Return-Path: <linux-kernel+bounces-894198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF49BC4975A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:55:41 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55FEC49766
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:56:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F37B1888491
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:56:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5904434BB04
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CB9331A74;
-	Mon, 10 Nov 2025 21:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2DD331A74;
+	Mon, 10 Nov 2025 21:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5Mg0PhK"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FSyFxxxQ";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hWjXIBTM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B640306D57
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793FF32AAD4
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762811734; cv=none; b=lD3+27gOVjIzsvaRpOIAdwz4FGe2YBNhsvpW+5ewG/TiVOcB9kaoQwFvsJmkoQlnmBxJ3UBDst2f8jd7jf60GIldkbD8394hdHq5eVfoh13IXHJWoGOA5Jjm8ezZ7KwJVMgPxpTxy3ZfUB4w32ZQVQW/xVjXfINK6tYPuCwW19w=
+	t=1762811778; cv=none; b=JbNmRelS+3aa37HvG9eEdqrS8y7twivVPrli2Bh1DvdzIIUKhxaKpakgaL4N/NwV1FL2kn+37JPRVGP4oNmFWygXcwX5J+QX0QWIl3tAXHHyBz2T4eMNZFUJZPIkrvPYaVfPxy98R+cvbaD/DSVeny9q0sGAsuZXTKZi6wK7LbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762811734; c=relaxed/simple;
-	bh=ObSsB7738pOMEqJYJlXGe5i/m6TYZQwPOJNWMg4oBrc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KdKR2V2kEQybBcuAlp1LtRimW+HZkzV3KMSrsV5wJbmct6cIlAmJvTgIYmYp7dOXcSeahZKIHP/zR50GsSIIcl0aaYteTah0cA6y4BB/ByRR6h39v8pLZbOjbWSjY7qlOCkJIAABaznLKVUGNwmqmb5xhVeBLc4qMJvCE/3K1OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5Mg0PhK; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-591ec7af7a1so3067766e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:55:32 -0800 (PST)
+	s=arc-20240116; t=1762811778; c=relaxed/simple;
+	bh=+gLMHZJ1MVCJEZNzctPQIZyLyMOD5NMDBOGpVXPW/bs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WmQ/mdGzqo8IGWzYSvI/fhgMTcPJ5PjmpdEmhtMVRcLtrYbYbqtAe8Z9Cx/5V+zFIsGbWqsIgcbXScS2xFmjucX5pzndLB4xlyF5FnFYQsSeHNtFmL3F8pmhtuhEBaIblS3csXw22W3mV3UPiijCMsnQXBh+lY6JWDD5ibAT2Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FSyFxxxQ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hWjXIBTM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AAFhS9h3985095
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:56:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HVzpJnOu8qlzWxb31lw2UdzGclobAcdGiMa8rZnaHHQ=; b=FSyFxxxQfo5UZvu+
+	O7AxvEKICwnx1g/06XMJyfT8LqJLC7nDuBBmgBmd1K+aebpnihAAWy3wm37VVvcY
+	2Y08fPZUA7OKLnkD5SjX9VZ60Y5Ip4Yhdvv5XXqpBgs10FmLgkzST6GgoUMUZLkC
+	GDqNI9nCv6+7skSt7xA9MlZvdusz29Q/gxvHXJFs83107wUt/egJ1o0mHZJvTyhn
+	jWp4nIiegh+yU1gGm5LMHOumIublRcA2dP7zvsXAYzJ3dKZoJ5EdgwUPujG0cvAy
+	wv4Q+3PCfoFeoGJQsAxJcvI0Eao0zMh1epnC6FiEvI67LLbp1wpKVW6/nonunMeJ
+	sOmOJw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abjxqh1vd-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:56:14 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-298389232c4so7653125ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:56:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762811730; x=1763416530; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=75zkR/UZ6TOt6Wc437IRuw+KGuA25dggT8vLsbM0934=;
-        b=G5Mg0PhKFXkSttuyCwB4VSyZZdz7nMIyOX8q0lK8/IYRc2QZ0anF/vook14ra5TbNu
-         7KtV4wBBq/GF+WXZGCHPxwBewqjAUUxVZXc1GTTGbInUTpzGYIEntbwl7iFUV96hj8YB
-         7Q0+R5Zb1+zpElLkzTAT/qmsKPRIG/d0Au8IXeRIEJ7lZwwk15G62t0g0FhB+Hx5nDzg
-         cEasd1LFE40kUiiXMSLkkK4K3Z688ibhKeWKxYx5EYvu1DliCvQL+uBEDShxvwKddbdS
-         b8FjRVfxxKSDGZM8MCpIsariSSisU9+7C1a7Rci30YYSjcaaHwGgNKPVSiIl55bFTmT0
-         xAmg==
+        d=oss.qualcomm.com; s=google; t=1762811773; x=1763416573; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HVzpJnOu8qlzWxb31lw2UdzGclobAcdGiMa8rZnaHHQ=;
+        b=hWjXIBTMiHoaDUvTmwQdG3DYRXZJSfJLf4/4hBYPXPBFJeIKnRXaM7vT+4LaNEfoWT
+         lagriod2aOSqXm6DJrF4HBiH8hTwZb0cTF274C3KKHs1NA5mo6U+ypuWOYhv/Uup153e
+         515IIqxxdSz+MKs+nFu+DBU9LzOMK96DZBWfApfQrAItk/lC3swl4b5XaCxC53sTg5+F
+         O7ix7AQjdEWOaYSDBwCD/JM2fLr168eiJTJZFpkmujYnjH8b4/PUQ+r1FE2AIXdPeQ+F
+         k2CiTxnuCdG+/Gm+ujaOICCOilUrVlmuXamWoO6W8ZrLzTLvMtIyuu2BqUgP6YJDWak8
+         v0iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762811730; x=1763416530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=75zkR/UZ6TOt6Wc437IRuw+KGuA25dggT8vLsbM0934=;
-        b=AKvAuzQAkNE0LLYhedkEZGe19WR2I97rXMGRnMvAths4vKVqqgMYFJOtcO4aYHG9hZ
-         wi0YNcEH4K0eNVCQUuX4TqITm88Xt7m6gZ4xUX7vi7Sdp/kf/K2kib2HnqcI4Z3gp+cf
-         MZMyk2IYFPlH9hqVsTt3VmNtadJbI73nuQ7p3Q3fiP4XcoSEx5qTT7GQxNtjSRPnk07r
-         HDw1Mz7AQIN46P/lTJtL1b2NdDMJsEOAmESvBRVSdhfgsHm/438ZXaX4vixmRhtz/IN2
-         EkVpmsDbjqtst6Q7ZyomEwCbvdnPJUdXRutmWI4Y0zfrF0WAoHxwGkF/JCv8VbspI1g2
-         O8ag==
-X-Forwarded-Encrypted: i=1; AJvYcCVNkM0QxjnZZf8h3eFDqJ5xaSwpWdwHIIBvqP/ZzQINzawyAKiOxrJKW5ENCSSL4KYvY8abSxY1a593gVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRIenxctSnh8ow24yDivf7d1wnKY5W5Wd4OajqszNnjgNbnYG8
-	nEORCuj4lQlUfjm96WhCY+pl36Kzbwm0yWxwNCojF4cKFBcLbr/UGPaflPqMQVDom3AOVhdTXPt
-	pDySCuIm9OplV9Al55J4J6kJuyTy22i0=
-X-Gm-Gg: ASbGnctbDlHDmyVV3VDzL41BEDQjdhQqzRB0SNqVzfT749xi3/ZflytgAMLD0xjt1wU
-	m/BnsW9niTQ1xungUFNNk5K6ODz33axYax6TuAe6/PoIU9kJToBcNfKEu91YIZxgYkmYm1BGRxW
-	JMQIoRCW65RBJXN7WLmO9LsLcUNZzEZVXqXqJDqf3Jz5nW1mAFZRCparxF+1BseEVBThHh6kBg4
-	V6ty/Fx67/5wx/VCY3FB7bAkjiRUf7qGWAcymRbtigwT9YQ4+qgmRb8yVeu
-X-Google-Smtp-Source: AGHT+IHGiQpBuoltSAmsRa5cYFCPTxfS3hi7kI1V+OfnP7UhcRFGs7NRrD6L+fCJ0Ns0YLNDxAqXXNnXTspeBlSNLa8=
-X-Received: by 2002:a05:6512:239a:b0:594:18cf:14c6 with SMTP id
- 2adb3069b0e04-5945f15c1b6mr2432185e87.21.1762811730218; Mon, 10 Nov 2025
- 13:55:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762811773; x=1763416573;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HVzpJnOu8qlzWxb31lw2UdzGclobAcdGiMa8rZnaHHQ=;
+        b=UqjPsH3G6wodB9dBck3u1c9uU56/Sxkke0H/319h540yk+gLKVuUEtY3OQmYjCnNmf
+         qyP+wz8wv8H/uZEKpTqGTTak6bPqmz40TKgZURBCDV8iEKuJXv1NESVts4OOPamjBaFa
+         mttLixzf2mdMl6sOJAEKGuSPt6Pq+WpbvLBZIh9i/APM7gjI2CxhAbqb8cjZ2dBHASOs
+         E29wC9bONyxg8rFdD/f1/DhkPRNLKmAxgf9Cw+3lbrBPbE1BawbSA2n3HTowBnzjcy4/
+         l9yBzhn4XnfAyBfGYUfBjCMc2jebSdRDlHh8ACveNBEG+AOo+QmxibW4ItXiCgp0V1GH
+         Pa1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXqBc4zdla+M0pcoMNCBVemKzzJDFhrMIZclZ8SopZQsGcPWcjmn9rW7YcVVHotuq6+D60AISrW+9Zp77w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPuxpxa8zFyI+pUWwa4qIMRsZjyArkdJJK/FE3SkvhWRGWcgnv
+	3CFUbXzHCU41VC5Sy1xKqJrxmBvpnaVYHNEnUl8aoocALIj6M2wSSwZ6CKylT1LyeOYtZXqioH1
+	zo6iBBWLTDyVlq9066panT/21mQYH1FGeWsTbXPuqtF8rfBV/DnVvCegfS2myOE5ReJw=
+X-Gm-Gg: ASbGnct1IEVNObsATlP++krl5VJMir2rAZBeFyaI0Ij6ETY6aPa34Lt2F3+ebHIN0ZG
+	BwSQZlTVnOXOVyKfO1EEI1bneFdrqa639284UEBHvCT/YB985CJHcIi8YFwRIGCLj82Kj4AEL/A
+	/dCIxczl44p6fmLeGMbBU8T4IO9zfXaLePzsnZDJTBSnV1mcGEZjhx5CJBYMGz9j/SG2hlgryic
+	z28/iZmGv76dvT7gAMmRxoNymMsS7UmfS8QJ8BiILyPfmgZDOYVtI4JkOjYUSbHIU6t69DW1f+1
+	I4wGAAyI5Y1Ty4Th5gkpi3GAu0/25DZmEIrAwrQ6qfv86sRy9tu4mR9LmO+wSEEmiG6nI0hpt38
+	0IzcdDoBkz+by0Eul370RWeaDEHwKXYOuGxVBBgXJic0avnEksHWE
+X-Received: by 2002:a17:902:da4b:b0:27e:f018:d2fb with SMTP id d9443c01a7336-297e540dbf8mr119018685ad.6.1762811773291;
+        Mon, 10 Nov 2025 13:56:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEJz1FxgkaYCgwsCACY9rd9PpdJD5YgwnReoVj/md8159Dmv3H/XV3LqN2vti//V++K3E5rsA==
+X-Received: by 2002:a17:902:da4b:b0:27e:f018:d2fb with SMTP id d9443c01a7336-297e540dbf8mr119018315ad.6.1762811772804;
+        Mon, 10 Nov 2025 13:56:12 -0800 (PST)
+Received: from [10.226.59.182] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc866319sm12832672b3a.54.2025.11.10.13.56.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 13:56:12 -0800 (PST)
+Message-ID: <e6c4eaf8-1484-41ab-a37b-047ef2484e30@oss.qualcomm.com>
+Date: Mon, 10 Nov 2025 14:56:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
- <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com> <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
-In-Reply-To: <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 10 Nov 2025 15:55:17 -0600
-X-Gm-Features: AWmQ_bmCgGj-BBdH4Veqo9w6LfhIAvjjDwwgCxeeYiZ0ZFChwSDrN20zwBdXnlQ
-Message-ID: <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] accel/qaic documentation fixes
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Linux ARM MSM <linux-arm-msm@vger.kernel.org>,
+        Linux DRI Development <dri-devel@lists.freedesktop.org>
+Cc: Carl Vanderlip <carl.vanderlip@oss.qualcomm.com>,
+        Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Youssef Samir <youssef.abdulrahman@oss.qualcomm.com>,
+        Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
+        Zack McKevitt <zachary.mckevitt@oss.qualcomm.com>,
+        Aswin Venkatesan <aswivenk@qti.qualcomm.com>
+References: <20251110035952.25778-2-bagasdotme@gmail.com>
+Content-Language: en-US
+From: Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+In-Reply-To: <20251110035952.25778-2-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDE4NiBTYWx0ZWRfX0S5F1H9HngLT
+ eXPO67iFg2n8DTIs14m5ubXzTMpQavy9tG3av2O2J4qV0/kT6zQ6yip00e36LyEVDwc89qnPWYj
+ uXoY3LsBgiDs1tZ3h8UAneuoV3OpYN1/nmaxuzvVDjQGmmwojCXbSZDfjapceEieFz3sp0ouWZ0
+ fFmEcMFnWau/GEJCvcp/MT7YADuNrWeiTfRGpxWt2qiiUJ4RIwHa3S30sAjIxG8prarUFSJ2oW3
+ zUNS7fKya7m7jRtwY9mq65hE8nhh+x9x8Bu1EtFWuoqvWlSwTfPdsFo7ahq4bs69F6fr6Bnz37y
+ QMtW16T2NsGt4wnXhCCLgSVtQIJVcJJfuVcY4ptxdptBIRwFe0zFhC9d3RJPrujpOCfmQjDOO+f
+ 7dbPwsb9LP8tNMRNzyU7/S0Rtg1kNw==
+X-Authority-Analysis: v=2.4 cv=CsKys34D c=1 sm=1 tr=0 ts=69125f7e cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=rOUgymgbAAAA:8
+ a=wQdz1tM6fslYZEmrDPIA:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+ a=MP9ZtiD8KjrkvI0BhSjB:22 a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-ORIG-GUID: WrYC5sIOv7KrNervaMpIYcvDKCFfFLW3
+X-Proofpoint-GUID: WrYC5sIOv7KrNervaMpIYcvDKCFfFLW3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_07,2025-11-10_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 impostorscore=0 bulkscore=0 clxscore=1015 phishscore=0
+ adultscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511100186
 
-On Mon, Nov 10, 2025 at 3:25=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 27/10/2025 18:55, Aaron Kling via B4 Relay wrote:
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > This adds support for dynamic frequency scaling of external memory on
-> > devices with bpmp firmware that does not support bwmgr.
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >   drivers/memory/tegra/tegra186-emc.c | 132 +++++++++++++++++++++++++++=
-++++++++-
-> >   1 file changed, 130 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra=
-/tegra186-emc.c
-> > index 9959ad5804b444b269456d1fbae87b4bc111661b..74be09968baa7a0fbdce435=
-9f470ce56b18acb10 100644
-> > --- a/drivers/memory/tegra/tegra186-emc.c
-> > +++ b/drivers/memory/tegra/tegra186-emc.c
-> > @@ -18,6 +18,17 @@ struct tegra186_emc_dvfs {
-> >       unsigned long rate;
-> >   };
-> >
-> > +enum emc_rate_request_type {
-> > +     EMC_RATE_DEBUG,
-> > +     EMC_RATE_ICC,
-> > +     EMC_RATE_TYPE_MAX,
-> > +};
-> > +
-> > +struct emc_rate_request {
-> > +     unsigned long min_rate;
-> > +     unsigned long max_rate;
-> > +};
-> > +
-> >   struct tegra186_emc {
-> >       struct tegra_bpmp *bpmp;
-> >       struct device *dev;
-> > @@ -33,8 +44,90 @@ struct tegra186_emc {
-> >       } debugfs;
-> >
-> >       struct icc_provider provider;
-> > +
-> > +     /*
-> > +      * There are multiple sources in the EMC driver which could reque=
-st
-> > +      * a min/max clock rate, these rates are contained in this array.
-> > +      */
-> > +     struct emc_rate_request requested_rate[EMC_RATE_TYPE_MAX];
-> > +
-> > +     /* protect shared rate-change code path */
-> > +     struct mutex rate_lock;
-> >   };
-> >
-> > +static void tegra186_emc_rate_requests_init(struct tegra186_emc *emc)
-> > +{
-> > +     unsigned int i;
-> > +
-> > +     for (i =3D 0; i < EMC_RATE_TYPE_MAX; i++) {
-> > +             emc->requested_rate[i].min_rate =3D 0;
-> > +             emc->requested_rate[i].max_rate =3D ULONG_MAX;
-> > +     }
-> > +}
-> > +
-> > +static int emc_request_rate(struct tegra186_emc *emc,
-> > +                         unsigned long new_min_rate,
-> > +                         unsigned long new_max_rate,
-> > +                         enum emc_rate_request_type type)
-> > +{
-> > +     struct emc_rate_request *req =3D emc->requested_rate;
-> > +     unsigned long min_rate =3D 0, max_rate =3D ULONG_MAX;
-> > +     unsigned int i;
-> > +     int err;
-> > +
-> > +     /* select minimum and maximum rates among the requested rates */
-> > +     for (i =3D 0; i < EMC_RATE_TYPE_MAX; i++, req++) {
-> > +             if (i =3D=3D type) {
-> > +                     min_rate =3D max(new_min_rate, min_rate);
-> > +                     max_rate =3D min(new_max_rate, max_rate);
-> > +             } else {
-> > +                     min_rate =3D max(req->min_rate, min_rate);
-> > +                     max_rate =3D min(req->max_rate, max_rate);
-> > +             }
-> > +     }
-> > +
-> > +     if (min_rate > max_rate) {
-> > +             dev_err_ratelimited(emc->dev, "%s: type %u: out of range:=
- %lu %lu\n",
-> > +                                 __func__, type, min_rate, max_rate);
-> > +             return -ERANGE;
-> > +     }
-> > +
-> > +     err =3D clk_set_rate(emc->clk, min_rate);
-> > +     if (err)
-> > +             return err;
-> > +
-> > +     emc->requested_rate[type].min_rate =3D new_min_rate;
-> > +     emc->requested_rate[type].max_rate =3D new_max_rate;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int emc_set_min_rate(struct tegra186_emc *emc, unsigned long ra=
-te,
-> > +                         enum emc_rate_request_type type)
-> > +{
-> > +     struct emc_rate_request *req =3D &emc->requested_rate[type];
-> > +     int ret;
-> > +
-> > +     mutex_lock(&emc->rate_lock);
-> > +     ret =3D emc_request_rate(emc, rate, req->max_rate, type);
-> > +     mutex_unlock(&emc->rate_lock);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int emc_set_max_rate(struct tegra186_emc *emc, unsigned long ra=
-te,
-> > +                         enum emc_rate_request_type type)
-> > +{
-> > +     struct emc_rate_request *req =3D &emc->requested_rate[type];
-> > +     int ret;
-> > +
-> > +     mutex_lock(&emc->rate_lock);
-> > +     ret =3D emc_request_rate(emc, req->min_rate, rate, type);
-> > +     mutex_unlock(&emc->rate_lock);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> >   /*
-> >    * debugfs interface
-> >    *
-> > @@ -107,7 +200,7 @@ static int tegra186_emc_debug_min_rate_set(void *da=
-ta, u64 rate)
-> >       if (!tegra186_emc_validate_rate(emc, rate))
-> >               return -EINVAL;
-> >
-> > -     err =3D clk_set_min_rate(emc->clk, rate);
-> > +     err =3D emc_set_min_rate(emc, rate, EMC_RATE_DEBUG);
-> >       if (err < 0)
-> >               return err;
-> >
-> > @@ -137,7 +230,7 @@ static int tegra186_emc_debug_max_rate_set(void *da=
-ta, u64 rate)
-> >       if (!tegra186_emc_validate_rate(emc, rate))
-> >               return -EINVAL;
-> >
-> > -     err =3D clk_set_max_rate(emc->clk, rate);
-> > +     err =3D emc_set_max_rate(emc, rate, EMC_RATE_DEBUG);
-> >       if (err < 0)
-> >               return err;
-> >
-> > @@ -217,6 +310,12 @@ static int tegra186_emc_get_emc_dvfs_latency(struc=
-t tegra186_emc *emc)
-> >       return 0;
-> >   }
-> >
-> > +static inline struct tegra186_emc *
-> > +to_tegra186_emc_provider(struct icc_provider *provider)
-> > +{
-> > +     return container_of(provider, struct tegra186_emc, provider);
-> > +}
-> > +
-> >   /*
-> >    * tegra186_emc_icc_set_bw() - Set BW api for EMC provider
-> >    * @src: ICC node for External Memory Controller (EMC)
-> > @@ -227,6 +326,33 @@ static int tegra186_emc_get_emc_dvfs_latency(struc=
-t tegra186_emc *emc)
-> >    */
-> >   static int tegra186_emc_icc_set_bw(struct icc_node *src, struct icc_n=
-ode *dst)
-> >   {
-> > +     struct tegra186_emc *emc =3D to_tegra186_emc_provider(dst->provid=
-er);
-> > +     struct tegra_mc *mc =3D dev_get_drvdata(emc->dev->parent);
-> > +     unsigned long long peak_bw =3D icc_units_to_bps(dst->peak_bw);
-> > +     unsigned long long avg_bw =3D icc_units_to_bps(dst->avg_bw);
-> > +     unsigned long long rate =3D max(avg_bw, peak_bw);
-> > +     const unsigned int ddr =3D 2;
-> > +     int err;
-> > +
-> > +     /*
-> > +      * Do nothing here if bwmgr is supported in BPMP-FW. BPMP-FW sets=
- the final
-> > +      * Freq based on the passed values.
-> > +      */
-> > +     if (mc->bwmgr_mrq_supported)
-> > +             return 0;
-> > +
-> > +     /*
-> > +      * Tegra186 EMC runs on a clock rate of SDRAM bus. This means tha=
-t
-> > +      * EMC clock rate is twice smaller than the peak data rate becaus=
-e
-> > +      * data is sampled on both EMC clock edges.
-> > +      */
-> > +     do_div(rate, ddr);
-> > +     rate =3D min_t(u64, rate, U32_MAX);
-> > +
-> > +     err =3D emc_set_min_rate(emc, rate, EMC_RATE_ICC);
-> > +     if (err)
-> > +             return err;
-> > +
-> >       return 0;
-> >   }
-> >
-> > @@ -329,6 +455,8 @@ static int tegra186_emc_probe(struct platform_devic=
-e *pdev)
-> >       platform_set_drvdata(pdev, emc);
-> >       emc->dev =3D &pdev->dev;
-> >
-> > +     tegra186_emc_rate_requests_init(emc);
-> > +
-> >       if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_EMC_DVFS_LATENCY))=
- {
-> >               err =3D tegra186_emc_get_emc_dvfs_latency(emc);
-> >               if (err)
-> >
->
->
-> FYI, this patch is causing a boot regression on Tegra194 devices. I
-> noticed that tegra194-p2972-0000 and tegra194-p3509-0000+p3668-0000 are
-> no longer booting and bisect is pointing to this. I will have a closer
-> look and try to see why this is.
+On 11/9/2025 8:59 PM, Bagas Sanjaya wrote:
+> Hi,
+> 
+> Here are two documentation (indentation) fixes for accel/qaic as reported in
+> linux-next ([1], [2]).
+> 
+> Enjoy!
+> 
+> [1]: https://lore.kernel.org/linux-next/20251110132401.200d88bd@canb.auug.org.au/
+> [2]: https://lore.kernel.org/linux-next/20251110135038.29e96051@canb.auug.org.au/
+> 
+> Bagas Sanjaya (2):
+>    accel/qaic: Separate DBC_STATE_* definition list
+>    accel/qaic: Format DBC states table in sysfs ABI documentation
+> 
+>   Documentation/ABI/stable/sysfs-driver-qaic | 17 ++++++++++-------
+>   Documentation/accel/qaic/aic100.rst        |  1 +
+>   2 files changed, 11 insertions(+), 7 deletions(-)
+> 
+> 
+> base-commit: a2b0c33e9423cd06133304e2f81c713849059b10
 
-Interesting. Both were booting for me during my verification, though
-my use case involves the dt changes that I don't believe have been
-picked up yet. Thought I had explicitly verified without the dt
-changes too, though. Since I was asked to do so on this or one of the
-other similar series. I will try to check linux-next as-is soon.
+Pushed to drm-misc-next.
 
-Aaron
+-Jeff
 
