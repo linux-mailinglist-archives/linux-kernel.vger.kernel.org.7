@@ -1,216 +1,88 @@
-Return-Path: <linux-kernel+bounces-892763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A53C45C37
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:56:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 573E7C45CB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A526B3B8552
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:54:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399DC3A45C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF94D306491;
-	Mon, 10 Nov 2025 09:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ao0rH2kS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B3F303A30;
+	Mon, 10 Nov 2025 09:52:36 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFD2303A30;
-	Mon, 10 Nov 2025 09:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD6B301707;
+	Mon, 10 Nov 2025 09:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762768339; cv=none; b=lm3xvSknORRb/D/I58wrIeAlwdbUVGTk89UBY7FQsj9+TzM4y3oK/OnNnuI1Yw9Bo0/AKF68L/lYaw6df1IwKnHg7j9W7m6E+R0OY40+IYFZhiHFDRWDiw4P0rmNwOWT4bpncyhrwwlhZjCd/EidAhnOZ6OKJIGPhove3AD/f08=
+	t=1762768356; cv=none; b=XeoweLypwmynM029Jq9zqEFNRd/NTxRa1LR9J4yEAs/sqkxS4ghoU4xrOZQfQMIDSdD0DPYbfXbDZHfKlINVSklvLJcFIzYtVwdL5py3slDggcl9UFd557zvApC82axjP6fgIe+gJQ8L5d0Mv6gdb7/UUh0oexzIbhlKucjClx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762768339; c=relaxed/simple;
-	bh=sJxHoJvbFU1LMibajb8bXzGcqPfSp1Etmu7xj9wrwPw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hCSlsB9FNMLVE/qswCePmvrMVvirOmNHLC+lGCInhneGq+79VjsSszPOa+K2O8RTJxRJobI8l+3unBSw0gX/B+7/L24pKmT7DTpC+dy+ZrlY2WJWbWya08NannKHZ4MvG5L+Okqx8F+m8MauWIzEQ9Smla7B/NvQscojLFHyT3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ao0rH2kS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1499C4CEF5;
-	Mon, 10 Nov 2025 09:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762768338;
-	bh=sJxHoJvbFU1LMibajb8bXzGcqPfSp1Etmu7xj9wrwPw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ao0rH2kSETu9RiyqlWjrIq5CEj8dkZS7z4t40W3Z9Dct7N2HvjikDvNP0hGgjoE1G
-	 dZzYdNDlXrOq3Oa1SxygeDCfhIlV+tHkf2qGkdrdF0s0nwL2XphMs/K34R+rP4ZnJP
-	 ZohMMWKLj6oUIVDszvj1O5FV0sE6WnX4CPmMzF1rqLftP/YolNSTecI1aEekYukBlV
-	 B4PnwjFvSyOYMazLBvEuegC81CqbnoGYO3vBrjQn3zdi7mh25fI3FWVW76VDfGDJK4
-	 2Ly5imRC3dnwjZ3wX+9OG1lSmvJI3veqlQfCg9GG/UaYSygJPgbonSYypwDeQeH0/2
-	 ve4eqvStkwaxg==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH 18/18] rust: syn: enable support in kbuild
-Date: Mon, 10 Nov 2025 10:50:23 +0100
-Message-ID: <20251110095025.1475896-19-ojeda@kernel.org>
-In-Reply-To: <20251110095025.1475896-1-ojeda@kernel.org>
-References: <20251110095025.1475896-1-ojeda@kernel.org>
+	s=arc-20240116; t=1762768356; c=relaxed/simple;
+	bh=MPWOn1EHVfNtQ9OEeCM4Aca03T/vWKRPOdqIwl/ZYEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MmEXiZQtqP/eq0PmmGmKeVIui5ZRx05hUf31EgHtty30IbMEKbrKPT9so7/45x0EvOp8LcBszfwRhH8wNZjllBw2a1VsIALg97vZ2nJDeTX8Gg7pvawzX/aMJDS4MyecqLu9+eRSH7Rgd86li6X6VuFdTjo6xxxMIb9Qj22Q5j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 12EED227A87; Mon, 10 Nov 2025 10:52:29 +0100 (CET)
+Date: Mon, 10 Nov 2025 10:52:28 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>, Matthew Wilcox <willy@infradead.org>,
+	Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
+	Carlos Maiolino <cem@kernel.org>,
+	Dave Chinner <david@fromorbit.com>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+Message-ID: <20251110095228.GA24387@lst.de>
+References: <20251106133530.12927-1-hans.holmberg@wdc.com> <lhuikfngtlv.fsf@oldenburg.str.redhat.com> <20251106135212.GA10477@lst.de> <aQyz1j7nqXPKTYPT@casper.infradead.org> <lhu4ir7gm1r.fsf@oldenburg.str.redhat.com> <20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de> <20251110093140.GA22674@lst.de> <lhubjlaz08f.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lhubjlaz08f.fsf@oldenburg.str.redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-With all the new files in place and ready from the new crate, enable
-the support for it in the build system.
+On Mon, Nov 10, 2025 at 10:49:04AM +0100, Florian Weimer wrote:
+> >> Maybe add two flags, one for the ftruncate replacement, and one that
+> >> instructs the file system that the range will be used with mmap soon?
+> >> I expect this could be useful information to the file system.  We
+> >> wouldn't use it in posix_fallocate, but applications calling fallocate
+> >> directly might.
+> >
+> > What do you think "to be used with mmap" flag could be useful for
+> > in the file system?  For file systems mmap I/O isn't very different
+> > from other use cases.
+> 
+> I'm not a file system developer. 8-)
+> 
+> The original concern was about a large file download tool that didn't
+> download in sequence.  It wrote to a memory mapping directly, in
+> somewhat random order.  And was observed to cause truly bad
+> fragmentation in practice.  Maybe this something for posix_fadvise.
 
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- Makefile                          |  1 +
- rust/Makefile                     | 39 +++++++++++++++++++++++++++----
- scripts/generate_rust_analyzer.py |  7 ++++++
- 3 files changed, 43 insertions(+), 4 deletions(-)
+In general smart allocators (both the classic XFS allocator, and the
+zoned one we're talking about here) take the file offset into account
+when allocating blocks.  Additionally the VM writeback code usually
+avoids writing back out of order unless writeback is forced by an
+f(data)sync or memory pressuere.  So it should not be needed here,
+although I won't hold my hand into the fire that fallocate won't help
+with simpler allocators or really degenerate I/O patterns, but
+there is nothing mmap-specific about that.
 
-diff --git a/Makefile b/Makefile
-index f1b38b7fed1e..5364b3ad3600 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1833,6 +1833,7 @@ rustfmt:
- 		\( \
- 			-path $(srctree)/rust/proc-macro2 \
- 			-o -path $(srctree)/rust/quote \
-+			-o -path $(srctree)/rust/syn \
- 		\) -prune -o \
- 		-type f -a -name '*.rs' -a ! -name '*generated*' -print \
- 		| xargs $(RUSTFMT) $(rustfmt_flags)
-diff --git a/rust/Makefile b/rust/Makefile
-index 801a8cbf3bdd..984aec608c27 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -27,7 +27,7 @@ endif
- 
- obj-$(CONFIG_RUST) += exports.o
- 
--always-$(CONFIG_RUST) += libproc_macro2.rlib libquote.rlib
-+always-$(CONFIG_RUST) += libproc_macro2.rlib libquote.rlib libsyn.rlib
- 
- always-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated.rs
- always-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated_kunit.c
-@@ -101,6 +101,22 @@ quote-flags := \
-     --extern proc_macro2 \
-     $(call cfgs-to-flags,$(quote-cfgs))
- 
-+# `extra-traits`, `fold` and `visit` may be enabled if needed.
-+syn-cfgs := \
-+    feature="clone-impls" \
-+    feature="derive" \
-+    feature="full" \
-+    feature="parsing" \
-+    feature="printing" \
-+    feature="proc-macro" \
-+    feature="visit-mut"
-+
-+syn-flags := \
-+    --cap-lints=allow \
-+    --extern proc_macro2 \
-+    --extern quote \
-+    $(call cfgs-to-flags,$(syn-cfgs))
-+
- # `rustdoc` did not save the target modifiers, thus workaround for
- # the time being (https://github.com/rust-lang/rust/issues/144521).
- rustdoc_modifiers_workaround := $(if $(call rustc-min-version,108800),-Cunsafe-allow-abi-mismatch=fixed-x18)
-@@ -164,11 +180,16 @@ rustdoc-quote: private skip_flags = $(quote-skip_flags)
- rustdoc-quote: $(src)/quote/lib.rs rustdoc-clean rustdoc-proc_macro2 FORCE
- 	+$(call if_changed,rustdoc)
- 
-+rustdoc-syn: private rustdoc_host = yes
-+rustdoc-syn: private rustc_target_flags = $(syn-flags)
-+rustdoc-syn: $(src)/syn/lib.rs rustdoc-clean rustdoc-quote FORCE
-+	+$(call if_changed,rustdoc)
-+
- rustdoc-macros: private rustdoc_host = yes
- rustdoc-macros: private rustc_target_flags = --crate-type proc-macro \
-     --extern proc_macro
- rustdoc-macros: $(src)/macros/lib.rs rustdoc-clean rustdoc-proc_macro2 \
--    rustdoc-quote FORCE
-+    rustdoc-quote rustdoc-syn FORCE
- 	+$(call if_changed,rustdoc)
- 
- # Starting with Rust 1.82.0, skipping `-Wrustdoc::unescaped_backticks` should
-@@ -240,6 +261,10 @@ rusttestlib-quote: private rustc_target_flags = $(quote-flags)
- rusttestlib-quote: $(src)/quote/lib.rs rusttestlib-proc_macro2 FORCE
- 	+$(call if_changed,rustc_test_library)
- 
-+rusttestlib-syn: private rustc_target_flags = $(syn-flags)
-+rusttestlib-syn: $(src)/syn/lib.rs rusttestlib-quote FORCE
-+	+$(call if_changed,rustc_test_library)
-+
- rusttestlib-macros: private rustc_target_flags = --extern proc_macro
- rusttestlib-macros: private rustc_test_library_proc = yes
- rusttestlib-macros: $(src)/macros/lib.rs FORCE
-@@ -497,19 +522,24 @@ $(obj)/libquote.rlib: private rustc_target_flags = $(quote-flags)
- $(obj)/libquote.rlib: $(src)/quote/lib.rs $(obj)/libproc_macro2.rlib FORCE
- 	+$(call if_changed_dep,rustc_hostlibrary)
- 
-+$(obj)/libsyn.rlib: private skip_clippy = 1
-+$(obj)/libsyn.rlib: private rustc_target_flags = $(syn-flags)
-+$(obj)/libsyn.rlib: $(src)/syn/lib.rs $(obj)/libquote.rlib FORCE
-+	+$(call if_changed_dep,rustc_hostlibrary)
-+
- quiet_cmd_rustc_procmacro = $(RUSTC_OR_CLIPPY_QUIET) P $@
-       cmd_rustc_procmacro = \
- 	$(RUSTC_OR_CLIPPY) $(rust_common_flags) $(rustc_target_flags) \
- 		-Clinker-flavor=gcc -Clinker=$(HOSTCC) \
- 		-Clink-args='$(call escsq,$(KBUILD_PROCMACROLDFLAGS))' \
- 		--emit=dep-info=$(depfile) --emit=link=$@ --extern proc_macro \
--		--crate-type proc-macro \
-+		--crate-type proc-macro -L$(objtree)/$(obj) \
- 		--crate-name $(patsubst lib%.$(libmacros_extension),%,$(notdir $@)) \
- 		@$(objtree)/include/generated/rustc_cfg $<
- 
- # Procedural macros can only be used with the `rustc` that compiled it.
- $(obj)/$(libmacros_name): $(src)/macros/lib.rs $(obj)/libproc_macro2.rlib \
--    $(obj)/libquote.rlib FORCE
-+    $(obj)/libquote.rlib $(obj)/libsyn.rlib FORCE
- 	+$(call if_changed_dep,rustc_procmacro)
- 
- $(obj)/$(libpin_init_internal_name): private rustc_target_flags = --cfg kernel
-@@ -534,6 +564,7 @@ rust-analyzer:
- 		--cfgs='core=$(core-cfgs)' $(core-edition) \
- 		--cfgs='proc_macro2=$(proc_macro2-cfgs)' \
- 		--cfgs='quote=$(quote-cfgs)' \
-+		--cfgs='syn=$(syn-cfgs)' \
- 		$(realpath $(srctree)) $(realpath $(objtree)) \
- 		$(rustc_sysroot) $(RUST_LIB_SRC) $(if $(KBUILD_EXTMOD),$(srcroot)) \
- 		> rust-project.json
-diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index 4faf153ed2ee..5b6f7b8d6918 100755
---- a/scripts/generate_rust_analyzer.py
-+++ b/scripts/generate_rust_analyzer.py
-@@ -100,6 +100,13 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs, core_edit
-         cfg=crates_cfgs["quote"],
-     )
- 
-+    append_crate(
-+        "syn",
-+        srctree / "rust" / "syn" / "lib.rs",
-+        ["proc_macro", "proc_macro2", "quote"],
-+        cfg=crates_cfgs["syn"],
-+    )
-+
-     append_crate(
-         "macros",
-         srctree / "rust" / "macros" / "lib.rs",
--- 
-2.51.2
-
+> 
+> Thanks,
+> Florian
+---end quoted text---
 
