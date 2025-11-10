@@ -1,109 +1,158 @@
-Return-Path: <linux-kernel+bounces-893286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC20C46FCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:44:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5319C4705C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C314E1884D97
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:43:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7011F3B10A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E9B30DD35;
-	Mon, 10 Nov 2025 13:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B3230E0C5;
+	Mon, 10 Nov 2025 13:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WYsteZKI"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="g2wP67Cz"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8338F30FF2E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762782152; cv=none; b=DPvNcI58QNmDvQRkEwlzdoFxh5NbNkVQZyxSQ0EhtMWJXYruDoNGWIjba7xLVe+FQS6oLUmBL87EgzS4irGRmCgPllv+HHdkYnMhZUAeX7T85eOuC7gSPGP1dEPC/Trda4QGQIkKDbbNejwIGUCaxruUSbonfj3Ct6vJs4mSpU8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762782152; c=relaxed/simple;
-	bh=PAdjbqg0ugnMG+0+hkw0gIL4xG3r5RPuYT8bL7baWBs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ggM/zg4Ph7CST0daElLzFw2pF2GXr38jweVr7IjiJ+4wFcmZaIBE2nafap4knJlChyNq1lCJExY0CUaUfMPnpLgLVHUyaUY21i2xFWBb9Xewtlfs+/QLZcWPaWS8HQnUmcNDpOOiEWlKZyVLj75t37dU8BLFhM6ELwHvzfzDcMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WYsteZKI; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-42b3c965ce5so573068f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:42:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762782148; x=1763386948; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PAdjbqg0ugnMG+0+hkw0gIL4xG3r5RPuYT8bL7baWBs=;
-        b=WYsteZKI9i4v4if8baaqBjwkLKPAp7E4xHC906b6CGLP7Gj2G6qsLuYy5YYpHF2t65
-         fZPBF0qQWttyAav1lvcoR6ZaVKtcYMdjtJ7kDzVKOGsczC9sYBTIYxBGz4umM0OcK5GP
-         yl5Zacr4jenfO30SSii2Z7VDinrObqQYY+imR81ogbE+YpokuHD9aoJiAq1xaM8L9HAs
-         bY7AFE7hC8So2fgsPzHT0fE4joeMMvyYQOATj26gI9eUR65tim1TWcFlcxmB3T1wJmoe
-         oACoXphst43rMMAN6ttgelZYZ+fW+BJ2dxknu785mJ+fHRSrrRk+7amcq/7XbwruV4pF
-         8wug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762782148; x=1763386948;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PAdjbqg0ugnMG+0+hkw0gIL4xG3r5RPuYT8bL7baWBs=;
-        b=nz5mg3twdA+MOU522duQnVO1qSWuM53BjcL3rdZMQyxmHfRy16/FWEujE8Q5xCiUPT
-         UVZYH98kSeQ0TyDoznbu0KXPjhDSvdvGHQgmziK7U3Trt4qCduBuJnAozM3U56leH0ua
-         aZlhtkSqqER5x1+soT5kViZHuELua1RBbeebjiFQ2qdNFxUoWsFS1mIdglf/NcU1HNaH
-         bBzwZjFLHd+A54eoiswFH/YdJbAph19ClZzD2VCq5gqABbs0xPwCW9SAvf+swUCXBmg8
-         tV6UOLEoKbW3JERu1aAiEUckukjNwN9w3M20fWfAox0BFsR4RlayPwQTQT5yRoKG7Xjs
-         /sCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKlS5Wx97E93leciWjw2qZvzLhRtbZH2l8RVzxF44tjvDDwO4xuQg2XZDLSl21g7K0yiPi/FKHbGuUP40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXzQto0JT1lDxZH8Szhgr/ZI6rYZq8d2sqkrL0GCcGpEMf0pwh
-	R1o4o/8dPoJmiFDwLrCNixF6GtUje8973WXdViaDKYWIYsyafloep6fZAQ9buLBX9dOHX+Aam3j
-	IenfKQsJM7rXHvU95BQ==
-X-Google-Smtp-Source: AGHT+IGdYLsMwQu7IW6P9IMv+n1Ga2zIS4ZW4YRMrMw3h6aVj+LGhXmv8UdaVn1QueN1sB3azN/HLRdoRa7dYS4=
-X-Received: from wrxf7.prod.google.com ([2002:a05:6000:1287:b0:429:de3f:827d])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:5f87:0:b0:425:8bc2:9c43 with SMTP id ffacd0b85a97d-42b2dc12867mr7026361f8f.1.1762782147990;
- Mon, 10 Nov 2025 05:42:27 -0800 (PST)
-Date: Mon, 10 Nov 2025 13:42:27 +0000
-In-Reply-To: <CANiq72msN1B8c8QFuH2VK40xXY3=uGiGL=YgAo68o92LTO=kLw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A82121E098;
+	Mon, 10 Nov 2025 13:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762782252; cv=pass; b=lk2m7t+XCVnE0PllzMD99FoQj7m6byCP00DQzV/bn493ZTVvrm0Ji7wfw8pEyjGSUZ1ulr6TwpZy7jJE2tDS7indPY/Ysm32ezT31BLAAY6B2d9yzBXbmUucj8zqTYm+zURcf7O8ni1dJT12Znf/N59vdISmjx+WToeBPFUjHIk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762782252; c=relaxed/simple;
+	bh=wK41s9TTPsH+XSrQvGcL1ScrZIeDVdkh9D+PCpggJgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=srTLTU7FhtgGobXN0hfmagaNUEVffu5ADinAFt/A3y3ibYBMoCSEoRRA0tuA5Gq5pPuomP2O6j07Wkni3uvw34wWf/JHSe/pwRgL+78ql/ZELpDvbO4gDaead6AYSWZt9I/VJfc4t/IeacJQiQfvatEP9faO9J7CJWcuYvESIyY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=g2wP67Cz; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1762782225; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HSdRTwjaAi6bgsxuRDSbZsLF0DPeI+LOlnd1y9igvc4gNPWWf4KKlKpPdEAOfTaQstq/Elrkm4nlxsua8YS7r7TQxGzcIUoGFmye99W2XQCDmhFlZL65IHe2jlJ6uXaeHnPfVprdqTJExRxDG4IsmXGErXhcno5ygCrqceoO4G4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762782225; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=NaQSEtGafus0sgJYl14H1AHyjnLimFCe/otE/1Mn3kw=; 
+	b=gSarWGs90VIKXpnYnCyXBQUZ1/4+5W7W9NV0vwShHeZv7ylmf6NpN8vejvFMXe7Umw9ZBIvlETJNJYjYD642RIKS5sf/TDqS8LPPdl19sj70wSBxCoL0kU0QFGdIfHpCshg5gxXEpjiT5BbV8kp7ycPF9soTskb2PS4EAzXMJ6w=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762782225;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=NaQSEtGafus0sgJYl14H1AHyjnLimFCe/otE/1Mn3kw=;
+	b=g2wP67Cz3+CvMMmpD6hniCswHIQj5NnpT7xiqlt6FzX71FphZCGERnSiHweKixQ4
+	ws7tgOQ/wENJ3VHs3Ta3tls2Lw5z6dK6AoaEpYV26oedR9I5DvnUyCjreOa6+5cMfJf
+	Gpnsfu5X6FF82r/e8Vf5k0I6Bv8G3+gFJvTYmnXQ=
+Received: by mx.zohomail.com with SMTPS id 1762782223271450.25151316746724;
+	Mon, 10 Nov 2025 05:43:43 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id D8FC2180735; Mon, 10 Nov 2025 14:43:32 +0100 (CET)
+Date: Mon, 10 Nov 2025 14:43:32 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, kernel@collabora.com, 
+	Yifeng Zhao <yifeng.zhao@rock-chips.com>
+Subject: Re: [PATCH v2 1/2] mmc: sdhci-of-dwcmshc: Add command queue support
+ for rockchip SOCs
+Message-ID: <hjxwedwtwksog67mz4unm4jita2q5vvp4vkdrtpznc6mllz7q4@7a7nn3c5l7fv>
+References: <20251031-rockchip-emmc-cqe-support-v2-0-958171f5edad@collabora.com>
+ <20251031-rockchip-emmc-cqe-support-v2-1-958171f5edad@collabora.com>
+ <abb4a253-6f4b-4547-a238-db6f60ee3244@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251110095025.1475896-1-ojeda@kernel.org> <20251110095025.1475896-19-ojeda@kernel.org>
- <aRHRYbHIfxMQ77eh@google.com> <CANiq72msN1B8c8QFuH2VK40xXY3=uGiGL=YgAo68o92LTO=kLw@mail.gmail.com>
-Message-ID: <aRHrw2p2YX5TyDYq@google.com>
-Subject: Re: [PATCH 18/18] rust: syn: enable support in kbuild
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ladnhwyx55vra2te"
+Content-Disposition: inline
+In-Reply-To: <abb4a253-6f4b-4547-a238-db6f60ee3244@intel.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.5.1/262.770.93
+X-ZohoMailClient: External
+
+
+--ladnhwyx55vra2te
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/2] mmc: sdhci-of-dwcmshc: Add command queue support
+ for rockchip SOCs
+MIME-Version: 1.0
 
-On Mon, Nov 10, 2025 at 02:38:58PM +0100, Miguel Ojeda wrote:
-> On Mon, Nov 10, 2025 at 12:49=E2=80=AFPM Alice Ryhl <aliceryhl@google.com=
-> wrote:
-> >
-> > This change seems unrelated?
->=20
-> It is needed to actually use them in proc macros, e.g. to build the
-> new `pin-init`. We could move it to that patch series, but then it
-> means it is harder to use this series (e.g. someone was waiting to
-> port other macros).
->=20
-> I can put it in a final patch or perhaps just mention it in the log,
-> similar to the `quote` one.
+Hi,
 
-With that mentioned in the commit message:
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+On Mon, Nov 10, 2025 at 09:58:24AM +0200, Adrian Hunter wrote:
+> On 31/10/2025 17:58, Sebastian Reichel wrote:
+> > This adds CQE support for the Rockchip RK3588 and RK3576 platform. To
+> > be functional, the eMMC device-tree node must have a 'supports-cqe;'
+> > flag property.
+> >=20
+> > As the RK3576 device-tree has been upstreamed with the 'supports-cqe;'
+> > property set by default, the kernel already tried to use CQE, which
+> > results in system hang during suspend. This fixes the issue.
+> >=20
+> > Co-developed-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
+> > Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+>=20
+> One question below, otherwise:
+>=20
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+Thanks,
+
+[...]
+
+> > @@ -687,6 +757,9 @@ static void rk35xx_sdhci_reset(struct sdhci_host *h=
+ost, u8 mask)
+> >  	}
+> > =20
+> >  	sdhci_reset(host, mask);
+> > +
+> > +	/* Enable INTERNAL CLOCK */
+> > +	sdhci_writel(host, MISC_INTCLK_EN | extra, DECMSHC_EMMC_MISC_CON);
+>=20
+> rk35xx_sdhci_reset() is in sdhci_dwcmshc_rk35xx_ops.
+> sdhci_dwcmshc_rk3576_pdata also uses sdhci_dwcmshc_rk35xx_ops but isn't
+> supporting CQE ops.  Is this change OK for rk3576?
+
+How did you come to the conclusion, that rk3576 does not support CQE
+ops? Have you read the cover letter? :)
+
+Greetings,
+
+-- Sebastian
+
+--ladnhwyx55vra2te
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmkR7AAACgkQ2O7X88g7
++poq/g/6Av018KZfLynGwjZMNoFxVnLTbPCij+47pv7hWC/61IeB3Wo3ZKuWOZaT
+mJgj8ttbiE8caqUP8EusAjZpnLwmYIeoEfewsXr7mlhwzzKR1wR8xtKzkSYvSOPg
+2vjagIjI0QWubTnuyrvBihngKhpXjl9wSgWKBeY3o4PmYB5b9kHuqjBs1hoa8445
+fCu0u4zt+2BsxNQYFjCeGbM06pa4kzD00SyNW+Zl3uGPX64SaaUnGeo1k+GFyVzw
+h6Q7QmJFLY0kkXr5H5fysSQMWxuMgWyBp/hrcVrdYEx8/EaWddQVOXRIJHK7MVgB
+uTi3zilX/3+8Hx8ij+4k2Elp8ywBdoAL92ufUeaZm9va2r+iB1V0kO7YznDU4L3N
+AeDqFOG75McYdgKYD/HATaQ9gjut+13TBCvNmajPyFtu0iPww8Tg55lgvfBNOmxF
+ZTw2L3OAcfFiVpDzOZ2P5kzQ6S54yMHUE8El7OHQCvfRD3kaLXSJYBswahfh4hW6
+1Rq5uosLvZ/59EG6eGkA66xQLEam6Fgq+LmvS7XMagRZdR9EbdFHht5myxXF6lXs
+GWwqjJkHBaXFYdUa2jzF7hitnpJBMFOmwh9DjzbyVNPJKSG3504lOyb1UC+2L70R
+AMnnkw1ljj57dHDPZ+26sJZA3a37eaWbWjfPiTG/zavQCYzjaLw=
+=iosp
+-----END PGP SIGNATURE-----
+
+--ladnhwyx55vra2te--
 
