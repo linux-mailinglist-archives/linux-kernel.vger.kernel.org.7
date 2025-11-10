@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-893421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A396EC47585
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:51:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504F9C475EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:56:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72314188FC27
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F8E53B30C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E383E3148BE;
-	Mon, 10 Nov 2025 14:50:55 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2FD303A0B;
+	Mon, 10 Nov 2025 14:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="w/WWhxpf"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A869A1E885A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E302EA755
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762786255; cv=none; b=u0WYgxUn+hW0s4z9Y610wRMsqMcbxdqYldfTJkaiwdIFt+DGVSh5d7ZCJcjSYSOWu3pAIPBJN3WJYDwCQmWy+tl3DzBdsYftg8ndL/VdFCV2GzQmtAzHj1JmUczw2WFpnGPtpuGEoYFJglAwwE7WKoYMTKweqTaR6/zu8EctLdA=
+	t=1762786553; cv=none; b=gqv5ZTiJ2n5t26iLJ4g+0Jm5I4vZ+Nwk+Rm5kppJdn0RunUCQqGFEN2cOBU54jGRmwr+AhFRkg3oZN3fadMuRZalGe7mCxfN1sx8w8OnDcTwwvnfwX4romsF7NghEkWAnhg4o+Guf30gSJaoahH7hX1fsXJ1dwodJnc7ZBzRNtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762786255; c=relaxed/simple;
-	bh=IMhWei8UUtQyD2IeaxfNo1cout9WByPftYAKndZJ3d8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ELgF7PUxKQIYmixOVRjFpfqZ6HH0wP3M+5v4mdiNFsiKtvcpHtn40ZvKCsK506r5hyk6aph9VJGJMEGY5EkPCKo2xpyzXdxa0i6RAwV04MMqMWOEKCsZXvuXFjJczlJU5o3Um6hiTxxzFlEmjJR1NXlo7ujEf5Sr81j37DS0OBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5598b58d816so2061224e0c.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:50:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762786252; x=1763391052;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r6W+AZvJNrL0mTuGS4dpQpITz95eoR4mgvv8GabBfNw=;
-        b=YPOl2qTmAnmg1yaBYximwvU5uRHisdkCr1FatCKVe68C7cLlE4aSpDi+IFXFgyGIow
-         orJaNutkimFlB2qvbIsNUoxtraSb1ZdgmmsAKM4s7x6wpwdWyrgux3+1Se2l64x7sSb/
-         sH35fobTvIngjfHKeix+JPzpFP9Ex8WT4Clq0kCQxGEPas22GxkjDBL3h2RDkWWw1t3x
-         +Z1fRfX6L7KjkAvk32En4gTCsTFtSLQ7umifRZWNUq+P0Fl0Vi2ArobwagsxW9N3tk8G
-         /YYkqgvym8d8xeYokEQybETaxoEgwhTo68F55j7DLsdx/zCCuzj2gtGyBZT0Qsc0YiAH
-         2pEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUi28Dbof7oaEbqtDeENXKv/i4474as7WSIuKy9hJgIJMyeo2tUpfo1o7PArVLXCA4GYdmy8NB4gFM7zwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRIlK5D+oVG25snCr+EEBquxssb79SI3CJu+Tq+X8Jvt+7t+l3
-	K5FxLQhnuCiJxTTZnWsQuRfdFQ+H610TvbTOyohRMuJ4CJHAmJH8+u+aGfhQHkeB
-X-Gm-Gg: ASbGncvVxhsBrIjQ6kHFcK4/r894249RbFEm9ZYdbgjQ0snezk+FdzAtGfL3M5/4O9i
-	RBX7iAk294MUEudnBkfm1c30+9kTONRssnnFK7KLh6Hd0VjO+F0Gyj40p/sdX17yY6s1w5VpGYS
-	JC42rpjq7SvQVo0RxfVBN9ozgn5//NO6QC0YFFf+/INAt9ie3bbQGsVwoqNoJpc3lwMIOI2F4Xt
-	1haLh8CJqLBwbmLGKIZxzHWfWp0Vq4NfjepQqJjQnzEuInhlahd9Bozc2U36PZBc+ob61zPHk6Q
-	4CGp9GITbrmeEwntTkEMqmg29zuCF4opi6z4jbQVNmsqo8QfIQSzx2vIaIBMqGI393cy5rVeMLl
-	JcZO29uwzm3qUbzEsebjDSYT9W8bIPrEdvL9Qiibpm+LAmyN7mv0oSf8773k9Iw347lpTVjsllN
-	hPBCI1TAqZPUz8NkU/d2bqL8VqpPZ1DDmF/CPqF/55pRNxWtOm
-X-Google-Smtp-Source: AGHT+IFy4PU5mLz2YxVkptqcEgVqaztpAoZRjhyHVxm5KBxg54adSi/HojSOATEyF4DxzKUQihva0Q==
-X-Received: by 2002:a05:6122:8c0c:b0:559:6b7f:b110 with SMTP id 71dfb90a1353d-559b3207318mr3095298e0c.2.1762786252519;
-        Mon, 10 Nov 2025 06:50:52 -0800 (PST)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5599582860asm7612374e0c.16.2025.11.10.06.50.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 06:50:51 -0800 (PST)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5dbcd54d2d8so2689105137.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:50:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7ehsat92BxhB5NJP+j04R0pT280fbVsztZz0zeteUZvLP8ZI09ZLYIGjFcNsVBj0YCdU8Rmaw6iGrxRE=@vger.kernel.org
-X-Received: by 2002:a05:6102:ccb:b0:5d5:f79b:e93b with SMTP id
- ada2fe7eead31-5ddc4781079mr3199460137.32.1762786251015; Mon, 10 Nov 2025
- 06:50:51 -0800 (PST)
+	s=arc-20240116; t=1762786553; c=relaxed/simple;
+	bh=oQxI3t2kGK7me1VfX7U5M6w2q43EKnI7jbkKpZqk5/U=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Tw+s50GPe/PTg6jZsbmAN1a6yQ/ohbCTR9px9Uir20/rB5tcdlkwDuMf0dFF8QW7I+Bv8/8Ljhn+/f91BA72LuhaTbvWgKNShZqGnRohxhZVqnW6aEoAvILS/cgPxMYcFrGlUt6tay67wnfXl41OhouUXYFSDgV9ObEaaWS5Wmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=w/WWhxpf; arc=none smtp.client-ip=43.163.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1762786245; bh=CevAv9dXwnrxkz6QLEjCwdwMUcKew+4c76u/8Vt6yr8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=w/WWhxpfDnOWiPwUD7heEcZNM/el+yO6hLpq5X9dS46SlI+cBh9WwRhQzgXgusyo7
+	 h0S7lsqcr1j09QO/6buwiVDsdCEd3AyOtU+bkD1e5l/Az7e1IiL2xyEHNF0/Ac4aEW
+	 uRk7ey4T7fqp9QMClbdPAnc9WyX2dbYq4oja0PTc=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.201.7.117])
+	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
+	id CAB90273; Mon, 10 Nov 2025 22:50:43 +0800
+X-QQ-mid: xmsmtpt1762786243tml3qfiij
+Message-ID: <tencent_D1BC2D0D6C889484EB5AEC9ECC9C78766C0A@qq.com>
+X-QQ-XMAILINFO: N/WmRbclY25GIo417eizgj/eMEN9um80WIgvCHBDOnEhGjJSv5CAmZ0Q5a5fBj
+	 MI3m9gohPtr7tufJKwWTi8gOAFLfstNc0xFmcttt7hA9wRc/kH6cA8xE8oKB+uPF0C4OP/JJP0OF
+	 A67j/iTYvjWZNwzeZw6CgSA5CGzp3oUJXaIRskqFT78bpvD5qSmd/klaYmjxA1998vZmrDBiKIOH
+	 cJVBgDFQbaBep6n6JV/VANUz3jdH1HBrZgzQU8K+nCu2+ZOCP4X+w/MCYfAtYdEs8r2a1f8QuDrT
+	 FvsGuwBB/CE/wFTOjpfdkFgXHfIxD9FmWBMOSI/jtL0aoOimduhbMk6TzfL1DuMNOqfoirYf0a3h
+	 7DxKMFWNcCykp86fynEs0qcBuK7GNFLIBIZ3zarp4R9X7RkpB45wezJ+EW7lSOr40lP8U4m2qTQV
+	 CJ/e9m5yDcEw5yVsTBixDpnvKPd86ZM2x9K+ibqgHkf2iYnK7cNbsdsIKz5LszoyMvjfHn/v7NVi
+	 1cN/+M+i9MqEnMNozvrN96sRNND+zaX6ipaOTOq9IZZ9b1f0g+mCWVc169nOc7w1q1khE7ms3xrP
+	 fZ26p/olCe+oXr79MPA7nhyPBALchnvQfW+j1z4vuHw92wZgqq+Qj4KGns1Kv53eJlNpkhjc3nip
+	 dXY/M6ms8MpnVv5jZ84QXD7Tke9auJ+t2WetVIXvjlGH7z/2dpxMEsnagkGZhcfRbTkifR9NtWaR
+	 5KMYI9WkM7gFGRfxroa5CLCvWoEjtIMuTb5SJT6lEZCOnHWy1WctCDKwBhBAa4FKrHIkDWETZWv+
+	 XanQpmORcdEcxw28iLpPSvZUqNX6VS75I3fvqjTFWMrDWLHaKkizMCXKEzDSOdJWGKBhWgIoqA8v
+	 KtI4U6jcYVFQqDZTxqTZXLvPSxq7TW+0x5IhqB8lkKGSKrtHuxM/jnv+OzxCEc9oujRpWE5PsSKQ
+	 Qffyb3T1GYcaXw0VmOOlsnHhUMwxxbXXWParS41hUGk+4xNjbOGyihVSrG/oxXXbn/u7EsTV8NdW
+	 WZOzk6w7LavToD4bTcmu2u/0NNQdr5nLvqUpBR0A==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+08df3e4c9b304b37cb04@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [block?] general protection fault in rtlock_slowlock_locked
+Date: Mon, 10 Nov 2025 22:50:44 +0800
+X-OQ-MSGID: <20251110145043.1580882-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <690ec096.a70a0220.22f260.0070.GAE@google.com>
+References: <690ec096.a70a0220.22f260.0070.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028175458.1037397-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251028175458.1037397-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20251028175458.1037397-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Nov 2025 15:50:40 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVyMZe_6tCBaWJrHm5oEnFmYQtYjeEw8-4T3KqZOSwdBA@mail.gmail.com>
-X-Gm-Features: AWmQ_bkDbMYfwCmJo4-5lhRxl2GtT1PU_uiGdBZlvXcWTikgK8Rjt2psKny3OQw
-Message-ID: <CAMuHMdVyMZe_6tCBaWJrHm5oEnFmYQtYjeEw8-4T3KqZOSwdBA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] arm64: dts: renesas: r9a09g077: Add ETHSS node
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 28 Oct 2025 at 18:55, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add an Ethernet Switch Subsystem (ETHSS) device node to the RZ/T2H
-> (R9A09G077) SoC. The ETHSS IP block is responsible for handling MII
-> pass-through or conversion to RMII/RGMII.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+#syz test
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.19.
+diff --git a/fs/jfs/jfs_lock.h b/fs/jfs/jfs_lock.h
+index feb37dd9debf..6aa5ff62ca7c 100644
+--- a/fs/jfs/jfs_lock.h
++++ b/fs/jfs/jfs_lock.h
+@@ -19,7 +19,7 @@
+  *
+  * lock_cmd and unlock_cmd take and release the spinlock
+  */
+-#define __SLEEP_COND(wq, cond, lock_cmd, unlock_cmd)	\
++#define __SLEEP_COND(wq, cond, lock_cmd, unlock_cmd, idle)	\
+ do {							\
+ 	DECLARE_WAITQUEUE(__wait, current);		\
+ 							\
+@@ -29,7 +29,10 @@ do {							\
+ 		if (cond)				\
+ 			break;				\
+ 		unlock_cmd;				\
+-		io_schedule();				\
++		if (idle)				\
++			schedule_timeout_idle(HZ);	\
++		else					\
++			io_schedule();			\
+ 		lock_cmd;				\
+ 	}						\
+ 	__set_current_state(TASK_RUNNING);			\
+diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
+index b343c5ea1159..e70bde3b7f40 100644
+--- a/fs/jfs/jfs_logmgr.c
++++ b/fs/jfs/jfs_logmgr.c
+@@ -113,11 +113,11 @@ static DEFINE_SPINLOCK(jfsLCacheLock);
+ /*
+  * See __SLEEP_COND in jfs_locks.h
+  */
+-#define LCACHE_SLEEP_COND(wq, cond, flags)	\
++#define LCACHE_SLEEP_COND(wq, cond, flags, idle)	\
+ do {						\
+ 	if (cond)				\
+ 		break;				\
+-	__SLEEP_COND(wq, cond, LCACHE_LOCK(flags), LCACHE_UNLOCK(flags)); \
++	__SLEEP_COND(wq, cond, LCACHE_LOCK(flags), LCACHE_UNLOCK(flags), idle); \
+ } while (0)
+ 
+ #define	LCACHE_WAKEUP(event)	wake_up(event)
+@@ -711,7 +711,7 @@ int lmGroupCommit(struct jfs_log * log, struct tblock * tblk)
+ 	tblk->flag |= tblkGC_READY;
+ 
+ 	__SLEEP_COND(tblk->gcwait, (tblk->flag & tblkGC_COMMITTED),
+-		     LOGGC_LOCK(log), LOGGC_UNLOCK(log));
++		     LOGGC_LOCK(log), LOGGC_UNLOCK(log), 0);
+ 
+ 	/* removed from commit queue */
+ 	if (tblk->flag & tblkGC_ERROR)
+@@ -1860,6 +1860,7 @@ static void lbmLogShutdown(struct jfs_log * log)
+ 	lbuf = log->lbuf_free;
+ 	while (lbuf) {
+ 		struct lbuf *next = lbuf->l_freelist;
++		lbmIOWait(lbuf, 0);
+ 		__free_page(lbuf->l_page);
+ 		kfree(lbuf);
+ 		lbuf = next;
+@@ -1881,7 +1882,7 @@ static struct lbuf *lbmAllocate(struct jfs_log * log, int pn)
+ 	 * recycle from log buffer freelist if any
+ 	 */
+ 	LCACHE_LOCK(flags);
+-	LCACHE_SLEEP_COND(log->free_wait, (bp = log->lbuf_free), flags);
++	LCACHE_SLEEP_COND(log->free_wait, (bp = log->lbuf_free), flags, 0);
+ 	log->lbuf_free = bp->l_freelist;
+ 	LCACHE_UNLOCK(flags);
+ 
+@@ -2148,7 +2149,8 @@ static int lbmIOWait(struct lbuf * bp, int flag)
+ 
+ 	LCACHE_LOCK(flags);		/* disable+lock */
+ 
+-	LCACHE_SLEEP_COND(bp->l_ioevent, (bp->l_flag & lbmDONE), flags);
++	LCACHE_SLEEP_COND(bp->l_ioevent, (bp->l_flag & lbmDONE), flags,
++			  bp->l_flag & (lbmWRITE | lbmSYNC | lbmDIRECT));
+ 
+ 	rc = (bp->l_flag & lbmERROR) ? -EIO : 0;
+ 
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
