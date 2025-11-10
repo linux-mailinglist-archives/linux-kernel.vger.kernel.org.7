@@ -1,102 +1,102 @@
-Return-Path: <linux-kernel+bounces-893313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C92AEC4710A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:00:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E9EC470D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:57:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A883AE88D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:55:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20C8B4ECEF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6B53126B8;
-	Mon, 10 Nov 2025 13:55:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3A420D4FC
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B733112A5;
+	Mon, 10 Nov 2025 13:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="rSQSFlpi"
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD79B26FA6E;
+	Mon, 10 Nov 2025 13:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762782945; cv=none; b=kRdDpQR0yceuZqNPOqKT3uFMFqY3HbNt8tYRe4QrItmKChNSyFDSIVDRxukQ7NbuBQX4KCbox1hCgHsjaTZ/hMoJGJCqDZjrRGGSx4IQW5rca3LdbaV/Nv4Me+s241MhR5sYJZ1RQm7Xtn5pSJeZcVmtxBTUtbbgMw/1HxDnQz0=
+	t=1762782980; cv=none; b=rquMJ8qE60tIC2TL18hHxPu2Le0XBqQcun5Gr3mIXSC+QzU/E07BfSzsjIZeYm6/NIlufDJdv/CWXAnC9w3LPXwMnnyLLVyxPo/iAutILwbzL8EfN4noeyM/6Xm4yQZBn4A2dCkJnfLvyScSopDAD9+srZXVgBnYdtV2MtjFL28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762782945; c=relaxed/simple;
-	bh=Q55XP2cihs0ttF7sccUQCdpYM2FPw+v4l8tiSBLfKss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SMJ/dIEhpCYpVXsBy9nUxFGwmQaWvfsKYNboqlIo74Dx5LVXUCAPFjRrlRkbbUKDBZ9qXRQ8nCty19iCdQCM+h9qEnGQieDi4br7PkP/ntXecvnxqfqzIOLJcmvOBpq+myJhbpH0HQU82laLKooo2bPANFyuK7536yowm0DL5RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D917FEC;
-	Mon, 10 Nov 2025 05:55:35 -0800 (PST)
-Received: from [10.57.88.175] (unknown [10.57.88.175])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E2EB3F66E;
-	Mon, 10 Nov 2025 05:55:40 -0800 (PST)
-Message-ID: <341aef79-43fd-43a6-b5b7-ad4689ba394e@arm.com>
-Date: Mon, 10 Nov 2025 14:55:40 +0100
+	s=arc-20240116; t=1762782980; c=relaxed/simple;
+	bh=WZthTSRRxN8gy7lhEOAEnTUT3BefHPEJLx9aVZRzhlg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GnqnjcF1temZB9KFaquzZ/qn1qsus1lPBkU0TdPM4bdRPiib4IWY9ie4gO+fccJJg2I/Kr6frl48TLeMm9MkHZawledcEy3u42g1bzKgHggSeTg8krnCCKP29SAryXBRLm1iYnnUplAQtHdUd9KhEPDiwWdnDmPsZfi9ccriJko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=rSQSFlpi; arc=none smtp.client-ip=113.46.200.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=6YVriz2KZ1EznNsOH+pegKT/7wMm4efl/7F6W+EQ5xc=;
+	b=rSQSFlpiPkyKaWZyyZNNegmdI6KI6/RmH4/k/slb6qGzeijS5rs7+8oCVFcfSVswpf+2U/16J
+	8LFPr8NksbpswYoQJ//bSP2kqwBndUOFFqy3mmLBwQvvaCu6bM6mAV0T2nsWmVJpXKf0IYhmgxd
+	nY9I0SS+Sl8cQzIL/EXmZsA=
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4d4rkf6qhCzmV6v;
+	Mon, 10 Nov 2025 21:54:34 +0800 (CST)
+Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
+	by mail.maildlp.com (Postfix) with ESMTPS id 77FFD1402C1;
+	Mon, 10 Nov 2025 21:56:13 +0800 (CST)
+Received: from [10.174.178.24] (10.174.178.24) by
+ kwepemf100008.china.huawei.com (7.202.181.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 10 Nov 2025 21:56:11 +0800
+Message-ID: <d7b70950-f85c-e072-3a48-ee82eb1a2c43@huawei.com>
+Date: Mon, 10 Nov 2025 21:56:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] sched/fair: Proportional newidle balance
-To: Peter Zijlstra <peterz@infradead.org>, Chris Mason <clm@meta.com>,
- Joseph Salisbury <joseph.salisbury@oracle.com>,
- Adam Li <adamli@os.amperecomputing.com>,
- Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>, Josh Don <joshdon@google.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, linux-kernel@vger.kernel.org
-References: <20251107160645.929564468@infradead.org>
- <20251107161739.770122091@infradead.org>
-Content-Language: en-GB
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-In-Reply-To: <20251107161739.770122091@infradead.org>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 00/33] arm_mpam: Add basic mpam driver
+Content-Language: en-US
+To: Ben Horgan <ben.horgan@arm.com>, <james.morse@arm.com>
+CC: <amitsinght@marvell.com>, <baisheng.gao@unisoc.com>,
+	<baolin.wang@linux.alibaba.com>, <bobo.shaobowang@huawei.com>,
+	<carl@os.amperecomputing.com>, <catalin.marinas@arm.com>, <dakr@kernel.org>,
+	<dave.martin@arm.com>, <david@redhat.com>, <dfustini@baylibre.com>,
+	<fenghuay@nvidia.com>, <gregkh@linuxfoundation.org>, <gshan@redhat.com>,
+	<guohanjun@huawei.com>, <jeremy.linton@arm.com>,
+	<jonathan.cameron@huawei.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
+	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
+	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
+	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
+	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
+	<xhao@linux.alibaba.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+From: Zeng Heng <zengheng4@huawei.com>
+In-Reply-To: <20251107123450.664001-1-ben.horgan@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemf100008.china.huawei.com (7.202.181.222)
 
-On 07.11.25 17:06, Peter Zijlstra wrote:
-> Add a randomized algorithm that runs newidle balancing proportional to
-> its success rate.
+
+On 2025/11/7 20:34, Ben Horgan wrote:
+
 > 
-> This improves schbench significantly:
+> The expectation is this will go via the arm64 tree.
 > 
->  6.18-rc4:			2.22 Mrps/s
->  6.18-rc4+revert:		2.04 Mrps/s
->  6.18-rc4+revert+random:	2.18 Mrps/S
+> This series is based on v6.18-rc4, and can be retrieved from:
+> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/driver/v4
 > 
-> Conversely, per Adam Li this affects SpecJBB slightly, reducing it by 1%:
-> 
->  6.17:			-6%
->  6.17+revert:		 0%
->  6.17+revert+random:	-1%
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Results with OLTP 'hammerdb - mysqld' on Arm64 VMs
+Run booting and kunit test on Huawei's Kunpeng machine. The result looks 
+fine.
 
-				NOPM		P50 latency
+Tested-by: Zeng Heng <zengheng4@huawei.com>
 
-6.18-rc4			baseline	baseline
-
-6.18-rc4+revert-155213a2aed4	+13%		-8.8%
-
-6.18-rc4+patchset		+11%		-8.2%
-
-6.18-rc4+patchset+NO_NI_RANDOM	+13%		-8.6%
-
-Pretty consistent with the results on the previous version. Although I
-hadn't tested NI_TARGET+NI_RANDOM back then.
-
-http://lkml.kernel.org/r/f6379aa6-459d-4205-96ea-9848e55d7f9c@arm.com
-
-In case (pure wakeup) schbench configs are the only workloads profiting
-from NI_RANDOM, make NO_NI_RANDOM the default?
-
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-
-[...]
+Best Regards,
+Zeng Heng
 
