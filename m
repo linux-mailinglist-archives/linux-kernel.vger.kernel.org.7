@@ -1,248 +1,241 @@
-Return-Path: <linux-kernel+bounces-892541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5A4C45513
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:08:11 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA51C4550D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:07:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 428FC4E8CD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:08:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C86C1346892
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994742F7464;
-	Mon, 10 Nov 2025 08:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qBlCgP2g";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="VRJvXrWN"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6802EB873;
+	Mon, 10 Nov 2025 08:07:50 +0000 (UTC)
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEED254AFF;
-	Mon, 10 Nov 2025 08:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762762070; cv=fail; b=X3X+Wrfx7xiLkmfqmMhF5Q3YU179bs6de3Ixi0DD8iJkb1JIAp+MenkhsBOqB7641GHziVo4REgA3QJUoruH8yD5/7c+ebdl8z6H0PEt1skNlaypWAUr3kPW7tvBOX0+4+v4D0CyZvtprRbEi7S772E6kZrliMrSrqOhwbE+hpw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A575222FE11
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762762070; cv=none; b=jQInjIQLRMKt46zQmw1Oj7vcNR9nzxBSYk7g5p7gZg8VognNyRWIyusRgwVUjYCQOe6ZD8UhF3C63VFwcuL3Q01c1PUtGIqHZB7HxeGayAZTeEeN5+MswKP299CYGzLYY+EvwvEfduvONi/FRUcEkC8d+nme0z1p/LdrnHVpubM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762762070; c=relaxed/simple;
-	bh=QwZyElD7egKJHeSUzw2Cy94YdBKVFTJf7+yLlJdypPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=n79gi8m3EAXnYzDii9ub5GCSRXsO+tkpqewu74HcjLj9cU7RUVs5uy1IBJ5ObaRZaB+ba0emWbkkoM8cp1PbTOMxY+67R061FEXXWqU1tdf9DxfPDQCQ+buTT58M8QZG0SMMzzBbIu69n6ed47pAb4rkZQ4MvZr1971D9zvKNO8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=qBlCgP2g; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=VRJvXrWN; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AA756Cg029668;
-	Mon, 10 Nov 2025 08:06:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=t8WnBxXRKqrBV85LOE
-	EDB6HuGTKUvTe9oerm4xKf1jg=; b=qBlCgP2gRKj5Pu9CkCquBl2zYHcFFsEWwB
-	WCOvXZ+Zf/hW63EhirUEfr2VpoZfp4SYynPE54YKqK0tqSFk+0ApD2dXDcDttqD9
-	F/2X7PJofOuUP7S9axU1m3Wfrw8hUCFkRziBxHfCkMbyoHFLaZee+bQwsLEGoIBu
-	qzQFaDdh7ETvjoHO7j2MSb8ZZJ+mmjGHTVyxwvBtqzeBKrjNUCuG8ymBFtmT3ZU3
-	Dlix/AKK//yGCoWlRSozS76+7Rz7jr3Uelj4imeMcEx+vXL1DOxpzf6H8MYQHsNS
-	uJ69njrgV5bwdZ61kNFgXpYi2eU97gPfvP/dYQfWl6aZHxODdwyg==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4abbbp03s4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 08:06:32 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AA6TY2G000958;
-	Mon, 10 Nov 2025 08:06:31 GMT
-Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011071.outbound.protection.outlook.com [40.107.208.71])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vabufxs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 08:06:31 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xtZujNKuZxTgmJEJK9W2djpxULWk1VHzsYwota7H2ibLegyrDirQzbq9F6XbNvjqn0zAN4acRT7rFjewcOy1tSXO77xeQVHGcugK+AeZb0jMlp2RWooBibnpdoSydvZoUKbA87+uImY7dMp/o6QhXrMXTf49NaCj82eIQYR4cgOIdAOfdRduFzgO76FzWVe3zex75l4dsygr8+xE4c19x20UnqVXdWHhhtfynzXeIAZPzKEPSR37AmdLZAwVl59GdvPACWeL01DT8iRFwVN2Vr7c85GKDPD5jQAFre5NBGZHyDNJtJeX+j5BJBQpaaqQAafkSvvJyVyHa3qDn9R3ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t8WnBxXRKqrBV85LOEEDB6HuGTKUvTe9oerm4xKf1jg=;
- b=GMgJKV7sqtUIvAJOFfT1Y2b2Q+tNHjFQtrrx2CeVrRQkgra3JIqfM+AN0YpSaxsqEaNq23A53yDLE+IIK+tKsLY0j/JlKHzLHmGXtzn3JH/EQeWTcM43GvhAWEOQsT6cTCTvzsGkU+2cTHM+OfTdqSuaN6i763jxTdbt54dw1YgQC1b2efIy6gJabrCGBGSjV5GQmF+/X2k6dqgZ43pijxVv6lWzpXWRjTP7mp0YfhVOC0wpayiw1G903Lp6jziSiStBy7ZbMKAFU8xPuN/Pigy62++RXUf1bSJahgkQNWVsqTE7muWGyUBuFpswiqqBVBmY7G6wt7MkVdKSXLZa8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t8WnBxXRKqrBV85LOEEDB6HuGTKUvTe9oerm4xKf1jg=;
- b=VRJvXrWNBB/XU2Mue9jhWeZiaDgLo/NWm3VymFgmxNJ2SS/xdO9k7lVimnGndoHVQLetR3umgf/NdfcTq+cUqhtNJ1xe8zThIxkKjIq6ED8pqvOVgcOozJPXJmBMBBkI33KTzLWZqlGzfIvdx/105sIrAl9BrQO2ZKHO1HSg8Aw=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by MW4PR10MB5702.namprd10.prod.outlook.com (2603:10b6:303:18c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 08:06:28 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%5]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 08:06:28 +0000
-Date: Mon, 10 Nov 2025 17:06:16 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@gentwo.org>,
-        David Rientjes <rientjes@google.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alexei Starovoitov <ast@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        kasan-dev@googlegroups.com, Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH 2/5] slab: move kfence_alloc() out of internal bulk alloc
-Message-ID: <aRGc-CV4FklELekl@hyeyoo>
-References: <20251105-sheaves-cleanups-v1-0-b8218e1ac7ef@suse.cz>
- <20251105-sheaves-cleanups-v1-2-b8218e1ac7ef@suse.cz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105-sheaves-cleanups-v1-2-b8218e1ac7ef@suse.cz>
-X-ClientProxiedBy: SEWP216CA0077.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:2bc::19) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+	bh=XE9rNfbtCppOOc0ESV6MaPT1yxtFjl74Aj5Fvi0xTWk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=qh3SXHFzpCDQBj5PmARCd2ayQ2yVFt/UYcslS3CtmqJY1r1WSz9agJHv7I0j1x1L6VRm1mpimdAc+hgOGNTne/ITbJBJ/Xqyy4t5XPHhRSxf6ZmekAH/VNtaV2HKD1DCbg1ctiq7d3aYjgoqXlxrIAMZENc3B8QfamAdVfvCAG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=net-swift.com; spf=pass smtp.mailfrom=net-swift.com; arc=none smtp.client-ip=43.154.197.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=net-swift.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=net-swift.com
+X-QQ-mid: esmtpgz11t1762762011t8ad1da07
+X-QQ-Originating-IP: jebWHaXc8UD+0OL/OQ3Y8YwrWHEn+o3ibGGGhb14+uU=
+Received: from smtpclient.apple ( [125.120.180.10])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 10 Nov 2025 16:06:50 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1781396948337886877
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|MW4PR10MB5702:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77f8c177-2886-4094-8927-08de20300cb5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kcPMEtPPaiw950RP90vYTrzK4kr+mfG/dEVPjjziTMkQS5v7xFyMEwBqsAdi?=
- =?us-ascii?Q?3MFxf8fuT/r1jdMZMXidnZKUuVkDurkcr0zqlf+/wUJBe/0lJXWVTyRGR/qr?=
- =?us-ascii?Q?DZPU45hs9BBDUAmBGkeEVRMMn4Zg+Vovqooe/KqPagjg5MlGtYz5T4a5r75/?=
- =?us-ascii?Q?+6Ft3rqDy/qJIlQ2jo+wELv5sXkAxmPqTIKwUKKYbWZvcyqyxHyFVW+vnmfj?=
- =?us-ascii?Q?0H6rbsJylJZn/hhJq9xVUlJzV4vtzczE1JditBtB8qlEFrYKqYaV20Wg+7nI?=
- =?us-ascii?Q?v5NQTUY07b8CcsBnKt50GomWHrp8rRGbe1IDjaEPbNziufhWl5ukkdOudFEB?=
- =?us-ascii?Q?RCKkvUxOkm0RXO6aYWtM/cZwDq1Y+w1fbotKTuwCYDKAciy8/Okpn5W8ESKR?=
- =?us-ascii?Q?3Go6W7Wppv9eCKJfdEfv6ZPP5tuNnHzOfFVVdThnHwnJ4fRGJuOdUXlbNaRv?=
- =?us-ascii?Q?zf19zcTgSpSq2w6+hYoTv98+KcvTAI5tH4CiMQkcO9JdNb46H/IcrRt5uCHh?=
- =?us-ascii?Q?uj/AOow87l1/DKNuZjNW9do7BEOZXa35LcmJdP0GsvTO+dq/5BHyn0xqY14e?=
- =?us-ascii?Q?1x67IJWK5e77Ac5WnzQavdRBlwQ7EhYFVkXfhLUg9A9E5+HPOVNjNnDuCHX4?=
- =?us-ascii?Q?OOsOFIRkZGoww1GCevhatVvEC9HtQFVY2M/EAfQEjCbMjR+K6rm1nFrd6+Ty?=
- =?us-ascii?Q?m1buLsyGxSBI0+fz6Itz5ysf/74bppKIpyBq9O7lPuCdRuVZeVenPbSlKkEj?=
- =?us-ascii?Q?OikrGraafIZWHvOnDmjqJm9AORk17QmnqY6oj3tlLqbVbTTSEu/MVH3hmO/X?=
- =?us-ascii?Q?FljtOzDxgSu+qE7fPZmlLdP3GZGQirSq0GSuj0dCaH7rP+gGn3F0vwIUr8cc?=
- =?us-ascii?Q?ToH7ZWyCEi7oSc7xOx3p4NRou5rLN5KQwLFhGfBwuRhh+V+P7VkuTKZZm3Gb?=
- =?us-ascii?Q?8hBHgS3qg83bfVjt46oWX+mP3BJkrvXpHK0gdNV8q0ScYkyyvOSRK5NifDeD?=
- =?us-ascii?Q?gz9TjqI5v4EkmX7dRt/3yZM3KQ1N2VkrlEmrCB3/xHeaLtwr8W5syuufiUmY?=
- =?us-ascii?Q?6IbAowVS2I5QimCindRNXEdetBrbIBHyaV1/Q4i+qlgZDe8fthRYDYdsXqML?=
- =?us-ascii?Q?faOBIaLWpHsKOlnF0EmfzSWrWDEExsSCT+8SgeliZZLIchZ8NBgR/xoMH40v?=
- =?us-ascii?Q?nfoVA2D9DybEZu2pUmqo6xNRB+A/xRvHV4iO04UMgShnfdgkm8rOZA6S8rUj?=
- =?us-ascii?Q?e+TPiCCxXtlbjkhmtR+vHGzhLMcjySC5Ntkw44z37bzNYHCh+Jd6t5EVaBBt?=
- =?us-ascii?Q?NqFp4lwtC8KqP4JhcqhuxILHHpBuLsR52bLeY9kRPkWazJWX9vhTDRyEJVO9?=
- =?us-ascii?Q?Taiq4JJWylTlZRp+3GssndVP80LnTBay+RH7P7QOPsZT2QITHjbme71h8C8t?=
- =?us-ascii?Q?LGDSSCosO/UHMPDzGl4VIljWo320zDlq?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?t6n6p14EJ3uszObZv38f62RFSNm6BL944beVPpQjNvy9K2KCHMHgeRBelWDF?=
- =?us-ascii?Q?KMyciF34jFtP8PGEfbguCmkQRcirSE5Yzm4OsETSlyJ3skf+r4GyoKyOJuzz?=
- =?us-ascii?Q?pJzXB/i9vg6bIpcW0sdt9HV/TtCxbYDa3RQCF0pduoT+ZlklgpQyp8ZLMqMq?=
- =?us-ascii?Q?25CyJtyv4l/Bt7FNxtk1DqEXdXX3Ytr88FMsqAJ/n++0QvhpeTOWn8F/vkyP?=
- =?us-ascii?Q?av5WcQgU7x7YJNlkrubqGY9DoeD2Fd1hpx386cYxSnPxocUO5/GS77Pf/fHg?=
- =?us-ascii?Q?DEjPgoORHoCqt/VcQYMTN6mWnC/WEeZuGbOsiBSP6sgy2z+88TGM7MXLnj2L?=
- =?us-ascii?Q?IgaTWHmbaZKuD89I+pkdwmjrsY/vo+fzBHgZCIeGrvw9eDihKvH5TayWVEH5?=
- =?us-ascii?Q?xQV9d1/WYCOySqJthH/t0fycru8+aCzcY/iVrHW6LQpGeCYwKWlnAAR/ZFJf?=
- =?us-ascii?Q?iM7WkXJ9JgootHDc+GAKw8NmbtFGRmJI64wD7q+xY5qbb2M5pZVTOusQn/CB?=
- =?us-ascii?Q?lz9FJ0Z7t5ZzjqjdEzW3xne4FAGeRW0RzL02YB/hlfoy38Y/CPeP5HlLY9R4?=
- =?us-ascii?Q?ekPUk2Ag1KR+fQU7AEsiZhADNeFaSvbNEQ+tTU5MvmXJdhdqqnQXitRwIsNh?=
- =?us-ascii?Q?B2RiHmTcPWftUS7DOvpf5j6La2UTDS7r/GFYxZ5SaT1QwTReKVOKaxj1SH7V?=
- =?us-ascii?Q?y7HKK4N/AQiYTj6aAJjEvnJU8kT8OohZrEYPyGlBCRfZ6yosPvy2pXFzQoWS?=
- =?us-ascii?Q?7MjuoBuDsDHmKfOUDcX0qTqguyOROpu1UmOEvZpF4/U8xJydLulwqJgmsjut?=
- =?us-ascii?Q?356286Te41TF/dbL6JVmxge9kRxwxJrQCzuSNOw+jCuAK4g/CVjjYst5kWLs?=
- =?us-ascii?Q?Jt2t4bBoeqZdvKlanYjxr32XZDM7RqYMwH7mhJP32zPKDDmxQTE4mh1MVSG1?=
- =?us-ascii?Q?33EIksgOAGVL/18DyQzPtRzF9wyRCKonfb8I1uCBEBHBiqdrhjWm5D2FXI+x?=
- =?us-ascii?Q?38lDI9zH2YxqYlCUYB0qeg6MU2/9VdFyAPTvF1KLFX7Tw3rYnRv1Y8U4aZRo?=
- =?us-ascii?Q?iuCyb7C+nF+iuzye2ygWlTRhMy7uloENfEKSmdyf6GCleaB1mY6KuRt6FHcN?=
- =?us-ascii?Q?2eP2WGjRb0v0ZwSyV/tTfK2kwojVmxTdtWckwMFlmAgmMqcREpSUc9Po6AJa?=
- =?us-ascii?Q?XxX8wt9xmVK+imYIOZMB9hohKVlqqnWPakodi8IZ/o+8f5JLFI/qM1f7j+bu?=
- =?us-ascii?Q?/vDG7iRA2bxc0tXRpSttuc5+XQraGETTZW8Wqlr2iA+enxKfY1GOU0WD7FKU?=
- =?us-ascii?Q?s/ZHvngYfLX9pj4owPtet/GCufUT7+sk4l6XpqGqcVdfXhzcxCL/UVmuOaVv?=
- =?us-ascii?Q?pXXrDj6MzDYais9JQXVLPDF325ViEu2bqedFk99L14iOssn3FUxu1QPMpew+?=
- =?us-ascii?Q?z1/1/H1vF9zjIjkdpSEV2FVSO2wf/GKRYxu9SIfsJQa+zWYjet9BCKKVfDF7?=
- =?us-ascii?Q?qSG/2L/zAcKnp64s5Ku+keloS7MbUyEYr4XAC+CLKKr1aOcVXVkBumynhVY5?=
- =?us-ascii?Q?PkfC6CeEfx1kYBhPwtmczq2Be7zqzdpvuvUV5y6A?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Y1FAb1wZDerytE9AUTfhowTajcFie1zQ2nQ5ULU6sjriGzujV8SITIv5xlH09UkYyS/WlxTqm6v9Y8ccn5j9a/TOqLPCsCwsyNyM4/viJjTrr2UWx3pv0a2yS1YO76Sp63A2PH4V6DIjISLHF0QnukVLigk64HKRr4fWE6W+SfjuXLLQxCkiqKUuvbQEfRN8OSRISCAPqcsGPGvsDuZ043j2dzOCcK2Nvb3AisL1xIdi5U/hgAqyld7fJbvSR/fO3TdgOgq9gWHKbjbHjGKlc4VX6xGpjzuvOfVncSx1gmRx/InsunPZqFDVrOd6UkZtiRH1ojUt7S7BHtXUbiWkBkTwtUFS8uB8bZYwouR8nJybhxa4LlJnaA7Oma7UdjkKp4TKoEwtu9kaHdrXQrmhYGHhtDSmxo9SH9eKglDZ6s/Apot7a8/Twb8nu++2VUafCFX2ev+xoR8dRQNrX3z4K/q3/do7pNrMZ/tSp5eOt+GEebGUK/+khrpdXFxMjlLICuABb2I3rBkcNBS0w/MJdgd97K/v6wLVjoUeyFXjYLZ0yemUXybT/8BQvLKlCR2+Uw14R5STuQwsQKwvhZ2tBBjrFt/b5GJxUDYNlY3Z6zg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77f8c177-2886-4094-8927-08de20300cb5
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 08:06:28.2574
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7d61dAA/W/biuyZXHYBgoYmasKxiuVNtF9Tnw96ABZUmlTq3hchhkO3pQusg3UzpM9ON4LkByyC84z20K4M1Bg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB5702
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
- malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510240000 definitions=main-2511100070
-X-Proofpoint-GUID: udjYCla82JYAHFEk-Lh1sJiDy_0SBzTm
-X-Authority-Analysis: v=2.4 cv=FIgWBuos c=1 sm=1 tr=0 ts=69119d08 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=1XWaLZrsAAAA:8 a=yPCof4ZbAAAA:8 a=fuAzT1JCOia5qPoTQrIA:9 a=CjuIK1q_8ugA:10
- cc=ntf awl=host:13629
-X-Proofpoint-ORIG-GUID: udjYCla82JYAHFEk-Lh1sJiDy_0SBzTm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDA1OSBTYWx0ZWRfX+3y3u7S2MePF
- bQiDz+eN1YbTkyG2oqB+JUtDiMA7gCGtINN4AgtyWtTgV2PlXS4Gz55ClGI38sjDZPHrcVeKf2Y
- ezDPtRJ0ULOlgs3pqHgyQZKtRQN5td81ZY/VTmqKjR9eN4bg2xX3U0S+20C31/8Tdd1Y8bZrkfc
- g4jhtL77f3Dis084L9PReujRrCbWunIID7APbTf0Mfd5+0Bt4nvyFmRb00+woYbDoevF0SIN+QY
- Baslnulp+cjMXVMYUrntZIhXLukp+f54FVUPCKCz3F1vzW1zw/3KydVAqZhQNjZxKOgcoQyf7gj
- kOQvsljllzN9PU33vAYlkcT34CJGpQlMQusZ6RRHziKKwXZCgqoSf0jAeWFKX+3sKua6J0dF5G8
- MPCsiH7E61w+JGoxVynKUZyemo60iVvykcNcer6/HsOp4SaW0wo=
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
+Subject: Re: drivers/net/ethernet/wangxun/libwx/wx_ethtool.c:225:undefined
+ reference to `phylink_ethtool_nway_reset'
+From: "mengyuanlou@net-swift.com" <mengyuanlou@net-swift.com>
+In-Reply-To: <202511101227.KAE47Twi-lkp@intel.com>
+Date: Mon, 10 Nov 2025 16:06:39 +0800
+Cc: oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9C57250E-E666-4AE0-8B88-25DB073B005B@net-swift.com>
+References: <202511101227.KAE47Twi-lkp@intel.com>
+To: kuba@kernel.org
+X-Mailer: Apple Mail (2.3864.100.1.1.5)
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:net-swift.com:qybglogicsvrgz:qybglogicsvrgz5b-1
+X-QQ-XMAILINFO: NehG/3ADkt1fzPl4nbBHnDAaSJ4T/wnSPI3SmxoVMcqmaSl46z+t4v/t
+	FiCvkPLsgSAoVLcBc7lnF6gvk83q7n6iI7eR6IEwpoPu7jKMAaBiaLoBJ5t/vXQSwsHdHm5
+	AqgrHuHiZQw6ydou//qWfEwwwNsuVQqwt2tgpgPK4lQAJh603GcCTmRiqWq0895x0vYBzxN
+	EA1qr5sAqRlbZi8c4PNHNAQXxd7C21oRl6yd25XRo+Y2rVG4wJHjCoaIqoztLntTq+wqRrh
+	o2kk1jxo5obU3XmbP52WOndbmWglTMABBfQExhyMLy6mzn0gzLVpPPifSt6jG5jhNiEoXul
+	hGoqVmcauOChVcDe0uJ4i9TXiUZL9hw7hgq7Ot3wxixhT0DqODw36Esz9tpO0b/MAiz6CA+
+	20ivfklHc9tJt9ETMXaXGIUX4xNXX2WUT2CY4XddAXWQi+lKd9HKEHslebn8+F4kCp1HJWI
+	fAfFt87NYsPsDS2lRbveoK/0kC/GifTBmyrTt7XJZDS7IVzEnxlKn6m1ccLK862BLp5jqSF
+	nJsj+ktScvpUv9YgKmMM79AxRiRcRtb68kQPDrGAvlrsz/MiePEOK3v4YaXXFoIiMem9nji
+	pluXWF0B7k9f7tvptSHnc6X8fKJOAQg4kydjBsiOD07qJhQIWpxjbY8SmO2wNot2rBErV5w
+	Ltdhlzt5s6zPqkbh3+sOHLnyHjk6m4YvMgswlIK92SPnTMLbQBUyRJzHz1NQuh9NQXGCJiI
+	/e9c6iMzJUNepcr3yEejK0ln4+h4DP5wvNCFBQ7aanzFwP6OY0dWDonYn1OXQoaN2filU87
+	vqM8apC3KIzB+Cf2hWj/gI72HmX83UTf2nzzA+B7LFiNqeG4DCUIH0kVAosqonP/1wDnrM0
+	tQx28DkEgr9+D6yTT5NW7J6c6Yds/Q3hMdMVH0RV5cmN0Q3631aq43EzurOYgy6S+zf6Vj/
+	2mEuN0GIBFMZ9yB3TMeF4HL3IfFrRFYOwfB7G7g/iSo7mDlZU8UYstQFMx2sikG7FTSa1JW
+	KfvlWoDfSLFw9jaUdfz2SpgwS5/moaQPPYcBWB9L3WLuSU5KmD
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-On Wed, Nov 05, 2025 at 10:05:30AM +0100, Vlastimil Babka wrote:
-> SLUB's internal bulk allocation __kmem_cache_alloc_bulk() can currently
-> allocate some objects from KFENCE, i.e. when refilling a sheaf. It works
-> but it's conceptually the wrong layer, as KFENCE allocations should only
-> happen when objects are actually handed out from slab to its users.
-> 
-> Currently for sheaf-enabled caches, slab_alloc_node() can return KFENCE
-> object via kfence_alloc(), but also via alloc_from_pcs() when a sheaf
-> was refilled with KFENCE objects. Continuing like this would also
-> complicate the upcoming sheaf refill changes.
-> 
-> Thus remove KFENCE allocation from __kmem_cache_alloc_bulk() and move it
-> to the places that return slab objects to users. slab_alloc_node() is
-> already covered (see above). Add kfence_alloc() to
-> kmem_cache_alloc_from_sheaf() to handle KFENCE allocations from
-> prefilled sheafs, with a comment that the caller should not expect the
-> sheaf size to decrease after every allocation because of this
-> possibility.
-> 
-> For kmem_cache_alloc_bulk() implement a different strategy to handle
-> KFENCE upfront and rely on internal batched operations afterwards.
-> Assume there will be at most once KFENCE allocation per bulk allocation
-> and then assign its index in the array of objects randomly.
-> 
-> Cc: Alexander Potapenko <glider@google.com>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
+Hi,
 
-Looks good to me,
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+ A fix patch has already been submitted.
 
--- 
-Cheers,
-Harry / Hyeonggon
+Commit id : a86eb2a60dcc2e23d86d24272d474f0ddecc824e
+=
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commit=
+/drivers/net/ethernet/wangxun?id=3Da86eb2a60dcc2e23d86d24272d474f0ddecc824=
+e
+
+
+> 2025=E5=B9=B411=E6=9C=8810=E6=97=A5 12:12=EF=BC=8Ckernel test robot =
+<lkp@intel.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> tree:   =
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git =
+master
+> head:   e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
+> commit: a0008a3658a34a54e77f2568bdaa2626233b1459 net: wangxun: add =
+ngbevf build
+> date:   4 months ago
+> config: x86_64-randconfig-072-20251110 =
+(https://download.01.org/0day-ci/archive/20251110/202511101227.KAE47Twi-lk=
+p@intel.com/config)
+> compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+> reproduce (this is a W=3D1 build): =
+(https://download.01.org/0day-ci/archive/20251110/202511101227.KAE47Twi-lk=
+p@intel.com/reproduce)
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new =
+version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: =
+https://lore.kernel.org/oe-kbuild-all/202511101227.KAE47Twi-lkp@intel.com/=
+
+>=20
+> All errors (new ones prefixed by >>):
+>=20
+>   ld: drivers/net/ethernet/wangxun/libwx/wx_ethtool.o: in function =
+`wx_nway_reset':
+>>> drivers/net/ethernet/wangxun/libwx/wx_ethtool.c:225:(.text+0x1ea0): =
+undefined reference to `phylink_ethtool_nway_reset'
+>   ld: drivers/net/ethernet/wangxun/libwx/wx_ethtool.o: in function =
+`wx_get_link_ksettings':
+>>> drivers/net/ethernet/wangxun/libwx/wx_ethtool.c:234:(.text+0x1ef7): =
+undefined reference to `phylink_ethtool_ksettings_get'
+>   ld: drivers/net/ethernet/wangxun/libwx/wx_ethtool.o: in function =
+`wx_set_link_ksettings':
+>>> drivers/net/ethernet/wangxun/libwx/wx_ethtool.c:246:(.text+0x1f74): =
+undefined reference to `phylink_ethtool_ksettings_set'
+>   ld: drivers/net/ethernet/wangxun/libwx/wx_ethtool.o: in function =
+`wx_set_pauseparam':
+>>> drivers/net/ethernet/wangxun/libwx/wx_ethtool.c:270:(.text+0x2014): =
+undefined reference to `phylink_ethtool_set_pauseparam'
+>   ld: drivers/net/ethernet/wangxun/libwx/wx_ethtool.o: in function =
+`wx_get_pauseparam':
+>>> drivers/net/ethernet/wangxun/libwx/wx_ethtool.c:258:(.text+0x27a4): =
+undefined reference to `phylink_ethtool_get_pauseparam'
+>=20
+>=20
+> vim +225 drivers/net/ethernet/wangxun/libwx/wx_ethtool.c
+>=20
+> e8e138cf7383cf Jiawen Wu 2024-01-03  217 =20
+> e8e138cf7383cf Jiawen Wu 2024-01-03  218  int wx_nway_reset(struct =
+net_device *netdev)
+> e8e138cf7383cf Jiawen Wu 2024-01-03  219  {
+> e8e138cf7383cf Jiawen Wu 2024-01-03  220   struct wx *wx =3D =
+netdev_priv(netdev);
+> e8e138cf7383cf Jiawen Wu 2024-01-03  221 =20
+> 39709fe4bacda6 Jiawen Wu 2025-05-21  222   if (wx->mac.type =3D=3D =
+wx_mac_aml40)
+> 2e5af6b2ae8532 Jiawen Wu 2025-02-21  223   return -EOPNOTSUPP;
+> 2e5af6b2ae8532 Jiawen Wu 2025-02-21  224 =20
+> e8e138cf7383cf Jiawen Wu 2024-01-03 @225   return =
+phylink_ethtool_nway_reset(wx->phylink);
+> e8e138cf7383cf Jiawen Wu 2024-01-03  226  }
+> e8e138cf7383cf Jiawen Wu 2024-01-03  227  =
+EXPORT_SYMBOL(wx_nway_reset);
+> e8e138cf7383cf Jiawen Wu 2024-01-03  228 =20
+> e8e138cf7383cf Jiawen Wu 2024-01-03  229  int =
+wx_get_link_ksettings(struct net_device *netdev,
+> e8e138cf7383cf Jiawen Wu 2024-01-03  230    struct =
+ethtool_link_ksettings *cmd)
+> e8e138cf7383cf Jiawen Wu 2024-01-03  231  {
+> e8e138cf7383cf Jiawen Wu 2024-01-03  232   struct wx *wx =3D =
+netdev_priv(netdev);
+> e8e138cf7383cf Jiawen Wu 2024-01-03  233 =20
+> e8e138cf7383cf Jiawen Wu 2024-01-03 @234   return =
+phylink_ethtool_ksettings_get(wx->phylink, cmd);
+> e8e138cf7383cf Jiawen Wu 2024-01-03  235  }
+> e8e138cf7383cf Jiawen Wu 2024-01-03  236  =
+EXPORT_SYMBOL(wx_get_link_ksettings);
+> e8e138cf7383cf Jiawen Wu 2024-01-03  237 =20
+> e8e138cf7383cf Jiawen Wu 2024-01-03  238  int =
+wx_set_link_ksettings(struct net_device *netdev,
+> e8e138cf7383cf Jiawen Wu 2024-01-03  239    const struct =
+ethtool_link_ksettings *cmd)
+> e8e138cf7383cf Jiawen Wu 2024-01-03  240  {
+> e8e138cf7383cf Jiawen Wu 2024-01-03  241   struct wx *wx =3D =
+netdev_priv(netdev);
+> e8e138cf7383cf Jiawen Wu 2024-01-03  242 =20
+> 39709fe4bacda6 Jiawen Wu 2025-05-21  243   if (wx->mac.type =3D=3D =
+wx_mac_aml40)
+> 2e5af6b2ae8532 Jiawen Wu 2025-02-21  244   return -EOPNOTSUPP;
+> 2e5af6b2ae8532 Jiawen Wu 2025-02-21  245 =20
+> e8e138cf7383cf Jiawen Wu 2024-01-03 @246   return =
+phylink_ethtool_ksettings_set(wx->phylink, cmd);
+> e8e138cf7383cf Jiawen Wu 2024-01-03  247  }
+> e8e138cf7383cf Jiawen Wu 2024-01-03  248  =
+EXPORT_SYMBOL(wx_set_link_ksettings);
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  249 =20
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  250  void =
+wx_get_pauseparam(struct net_device *netdev,
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  251         struct =
+ethtool_pauseparam *pause)
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  252  {
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  253   struct wx *wx =3D =
+netdev_priv(netdev);
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  254 =20
+> 39709fe4bacda6 Jiawen Wu 2025-05-21  255   if (wx->mac.type =3D=3D =
+wx_mac_aml40)
+> 2e5af6b2ae8532 Jiawen Wu 2025-02-21  256   return;
+> 2e5af6b2ae8532 Jiawen Wu 2025-02-21  257 =20
+> 2fe2ca09da953b Jiawen Wu 2024-01-03 @258   =
+phylink_ethtool_get_pauseparam(wx->phylink, pause);
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  259  }
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  260  =
+EXPORT_SYMBOL(wx_get_pauseparam);
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  261 =20
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  262  int wx_set_pauseparam(struct =
+net_device *netdev,
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  263        struct =
+ethtool_pauseparam *pause)
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  264  {
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  265   struct wx *wx =3D =
+netdev_priv(netdev);
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  266 =20
+> 39709fe4bacda6 Jiawen Wu 2025-05-21  267   if (wx->mac.type =3D=3D =
+wx_mac_aml40)
+> 2e5af6b2ae8532 Jiawen Wu 2025-02-21  268   return -EOPNOTSUPP;
+> 2e5af6b2ae8532 Jiawen Wu 2025-02-21  269 =20
+> 2fe2ca09da953b Jiawen Wu 2024-01-03 @270   return =
+phylink_ethtool_set_pauseparam(wx->phylink, pause);
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  271  }
+> 2fe2ca09da953b Jiawen Wu 2024-01-03  272  =
+EXPORT_SYMBOL(wx_set_pauseparam);
+> 883b5984a5d290 Jiawen Wu 2024-01-03  273 =20
+>=20
+> :::::: The code at line 225 was first introduced by commit
+> :::::: e8e138cf7383cf820419fcbec63992e75a01467b net: libwx: add =
+phylink to libwx
+>=20
+> :::::: TO: Jiawen Wu <jiawenwu@trustnetic.com>
+> :::::: CC: David S. Miller <davem@davemloft.net>
+>=20
+> --=20
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+>=20
+
 
