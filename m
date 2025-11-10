@@ -1,106 +1,110 @@
-Return-Path: <linux-kernel+bounces-893890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B707C48970
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:36:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B801AC489AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:38:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E1C44F41DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:32:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A14B3BA66B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4991F330303;
-	Mon, 10 Nov 2025 18:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853BB332902;
+	Mon, 10 Nov 2025 18:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZronPL2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Xo2Nsqbw";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="NvqIc479"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F71831BCBD
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 18:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798B4329E67;
+	Mon, 10 Nov 2025 18:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762799367; cv=none; b=jPOTePTHVG5P5dhuNedZArmLDuqpNMptYdhZsT3Xp6N72epwDk/bSat8qTW2Tl74xBhEpy02rzflvxK8xlE63QcRwhwh7MnTYS6jZoDEuGbM+SeKybZBgavZpk8Nk6i4B6OAvKCEleNxR+2EksLA6nWTdhx1kyaAiVG/MuF7CGg=
+	t=1762799450; cv=none; b=eM9rG8LcHzDxa+1/McHBgNmtFVXcKsdZvj0min+TXgWLxmt92gsrEOB3cfRIK9zsftr4qKMlB9lKKlRN1QWCw8eu+gfezY0Rp9BHfs82x7zWIEHCpEyMGpylCk7JEXwhwjTXgm2xOHxNd5I60PHMja4oLzETNSDDwvWm++Fe5Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762799367; c=relaxed/simple;
-	bh=vnrR8EFpufqGwq1f5pDV0cFkGbmnECjWMICT4b0JH7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nb9xV94Zl9JXKfpLklSHBjCRiYEBH/fuAOds4klXmPKnKy4IK4ykp8EWnaFy/D7huCXO6m781h893eIWxqEz1C7J/HPiFvYUXk9uJGWgrivL3IvPHPPZSORSNuhKH+JcxNc4MaPvBuippxIs/Dqkob/ILju1yx+mk9tNV1xTcKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZronPL2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B14F8C116B1;
-	Mon, 10 Nov 2025 18:29:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762799367;
-	bh=vnrR8EFpufqGwq1f5pDV0cFkGbmnECjWMICT4b0JH7A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HZronPL2JFd0m3EVOakqveMN0/VpvlI0Hr9SxZxRe8KASYthT2jZ2rKJ6xHcVWGhc
-	 jrN0x/CbOpU4mjGorNKiX6KhJ3JDEK5WB0WLC89Zn5ofFvyIeCX957WVtJULeMvaa0
-	 b3nLdNd8JdoqI7mIfssUKcRqkXaIzFuiOrk+og9hcKbMg2zaQKqe+4wIxNzqZoOJdJ
-	 4RZGLeGUxSfpeIsPT3if0GlEWFKrEcg/Ml0BmyJ9jUJo3R9PuZaelTy9OUZVlpeRL6
-	 c9dmDjF2CBZxRwoVxEV2kr7vBXsL1MGp2OCry/K+K2WHLs5XASJR5dOBf4pjmZ1ITy
-	 /y+tODM2PyvNA==
-Message-ID: <760aef03-54c6-452e-b507-6210433f9943@kernel.org>
-Date: Mon, 10 Nov 2025 19:29:22 +0100
+	s=arc-20240116; t=1762799450; c=relaxed/simple;
+	bh=r6hjCFY7ZDfh8HONhlJU3D/wYlGjhLFGXKeOM2SCKyY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BsU+TTLe8lf9SJEEL3E7GJW9Uj05JA5DvIAQtyCpisAsYn4RSLR5JcriyG0u7IdaQ6U+ROdZrXpwtzWIdXF1sNTyqCahs/9hmuTPbJWlbgFaMEEgoUb4usNC7MDWi4HrlIzlJlMkvk1pT+uM6qLy3w3+bf8OfYv3M7QXfPTapR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Xo2Nsqbw; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=NvqIc479; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1762799389; bh=31Nk15njuGNIYaJvc37e73N
+	QXmUsWSKUyoBRg+NCptg=; b=Xo2NsqbwNspgbJaG/FeBgd8/X0SMKwTgngQNC3h0aiMGgOFJFF
+	IuDcSVur0Ee1drhmJaUnjL3oE7wE38n2VHRukRFFiI3lyd/ar5GbThC1TkvEDgyq7Uz99ELK7h7
+	7mtG6Xza/BGCumoLn0plCChY14z2tYToJ4xlwvObGGsbet8i6ejkCtESUJfy3jhTSrBbYLuHwpA
+	u8nTL2ON3qGLncJtmW5mcliFp3YkjixoUo8oB9M/4E42cVDv1C0lr7bho7yqGjXigIyFDlcvfxk
+	IlvWUGFrRs1kopxLcFWsz6W77/tEUzcDLUj7BeKqVQ94JSugw1vSmYG4WbQUtM++Mpg==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1762799389; bh=31Nk15njuGNIYaJvc37e73N
+	QXmUsWSKUyoBRg+NCptg=; b=NvqIc479J2hlHJFLojgrh5XyxhLrPVBWyl6OetjooMq0O8rqkZ
+	Lq1PTP5ZNPdWX/6msyItHMp0PThWWFePixAA==;
+From: Nickolay Goppen <setotau@mainlining.org>
+Subject: [PATCH v3 0/3] Add SDM660 cDSP support
+Date: Mon, 10 Nov 2025 21:29:42 +0300
+Message-Id: <20251110-qcom-sdm660-cdsp-v3-0-cc3c37287e72@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm/madvise: allow guard page install/remove under
- VMA lock
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Jann Horn <jannh@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1762795245.git.lorenzo.stoakes@oracle.com>
- <cca1edbd99cd1386ad20556d08ebdb356c45ef91.1762795245.git.lorenzo.stoakes@oracle.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <cca1edbd99cd1386ad20556d08ebdb356c45ef91.1762795245.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABYvEmkC/33NTQrCMBCG4auUrB1J0jamrryHuMif7YBNaiJBK
+ b27aVeC4vL9YJ6ZSXIRXSLHaibRZUwYfIl6VxEzKN87QFuacMpbRpmEuwkjJDsKQcHYNEHbKds
+ KKQ6KSVLOpuiu+NzI86X0gOkR4mv7kNm6/sEyAwq04Y7L2mre6dOo0N/Qo+/3IfZkFTP/VLofC
+ l8VW2ujGyGto1/KsixvrQPQT/sAAAA=
+X-Change-ID: 20251018-qcom-sdm660-cdsp-59ad56867a18
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, 
+ Nickolay Goppen <setotau@mainlining.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762799388; l=1097;
+ i=setotau@mainlining.org; s=20250815; h=from:subject:message-id;
+ bh=r6hjCFY7ZDfh8HONhlJU3D/wYlGjhLFGXKeOM2SCKyY=;
+ b=fcdDXLO0PLxddxH6w0ZXBjGqx18n7GGwDSgBV3tNeZXhwEpmnSwf4mpHiIE8Q2FUSI30AP1lz
+ Eq5MXPiQ0thAJqTIWfBPrHgRc4Zpm0fMnUBN5FOpmUVPMVq/7lV48yp
+X-Developer-Key: i=setotau@mainlining.org; a=ed25519;
+ pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
 
-On 10.11.25 18:22, Lorenzo Stoakes wrote:
-> We only need to keep the page table stable so we can perform this operation
-> under the VMA lock. PTE installation is stabilised via the PTE lock.
-> 
-> One caveat is that, if we prepare vma->anon_vma we must hold the mmap read
-> lock. We can account for this by adapting the VMA locking logic to
-> explicitly check for this case and prevent a VMA lock from being acquired
-> should it be the case.
-> 
-> This check is safe, as while we might be raced on anon_vma installation,
-> this would simply make the check conservative, there's no way for us to see
-> an anon_vma and then for it to be cleared, as doing so requires the
-> mmap/VMA write lock.
-> 
-> We abstract the VMA lock validity logic to is_vma_lock_sufficient() for
-> this purpose, and add prepares_anon_vma() to abstract the anon_vma logic.
-> 
-> In order to do this we need to have a way of installing page tables
-> explicitly for an identified VMA, so we export walk_page_range_vma() in an
-> unsafe variant - walk_page_range_vma_unsafe() and use this should the VMA
-> read lock be taken.
-> 
-> We additionally update the comments in madvise_guard_install() to more
-> accurately reflect the cases in which the logic may be reattempted,
-> specifically THP huge pages being present.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
+This series adds an ability to load and boot the cDSP remoteproc
+found in the SDM660 SoC.
 
-Looks good to me
+Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
+---
+Changes in v3:
+- Resend after 2 weeks passed with R-b's and T-b's added.
+- Link to v2: https://lore.kernel.org/r/20251019-qcom-sdm660-cdsp-v2-0-0d3bcb468de0@mainlining.org
 
-Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
+Changes in v2:
+- Added missing constrains for both aDSP and cDSP.
+- Link to v1: https://lore.kernel.org/r/20251018-qcom-sdm660-cdsp-v1-0-042e283db29b@mainlining.org
 
+---
+Nickolay Goppen (3):
+      dt-bindings: remoteproc: qcom: adsp: Add missing constrains for SDM660 ADSP
+      dt-bindings: remoteproc: qcom: adsp: Add SDM660 CDSP compatible
+      remoteproc: qcom: pas: Add support for SDM660 CDSP
+
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 8 ++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c                          | 1 +
+ 2 files changed, 9 insertions(+)
+---
+base-commit: 93f3bab4310d4ff73027cc4f87174284d4977acf
+change-id: 20251018-qcom-sdm660-cdsp-59ad56867a18
+
+Best regards,
 -- 
-Cheers
+Nickolay Goppen <setotau@mainlining.org>
 
-David
 
