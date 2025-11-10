@@ -1,91 +1,77 @@
-Return-Path: <linux-kernel+bounces-894038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDE1C49214
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:48:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C628AC4921A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:48:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17E7188C883
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:48:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D46504ED231
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F45633F373;
-	Mon, 10 Nov 2025 19:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF0B33BBAE;
+	Mon, 10 Nov 2025 19:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ZtdsBlIk"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="LAtEwdky"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D94433EB01;
-	Mon, 10 Nov 2025 19:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BA12FC87E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762804101; cv=none; b=LEfaFIQO2y66spTgznuW+k4zrfbv3ODcmTSUnVAS6nKwKnH0VcmVQNKLGCaGJNAI+6vke2wr7N9iTu+moZLIAxui3wGsSbVkNSbULM+W5xflzsCraAbjVR1ieuaJL/bgTYj7leh3ba2WUKty6MD2YTl2GfvI9tmbyoWE9+nkwuY=
+	t=1762804114; cv=none; b=SkAB/jrdnvu5AxoKE3c+WrzYxr2uZP6qxQ5KqWn7fENuqXNbXCKVd+QbAkwwUeolP19XGEGfPIX5DRGnfyUm7FMLMkXDz4TNLf3i5ZVVArM898uwLj9PIyLs+hO9S8cqUPr5IhuA6s1rs1d9xVwuWunhgm/0fpEv/7RDOEdYX3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762804101; c=relaxed/simple;
-	bh=VDzQK+8HEtStJHehqNgBXiWFKNe0ld8GDs4pPNyXcr8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=q7JwtNIn1qvzNPMenJkI9GUiC3TVz3+PybH38yxp+NvWmxOK1YpWZe3tkB1MvBsAO9ToSK1TYAdYqkC6Hp1BGZfqtx3t9AsV/toJxfzrycN/e0ra2wia4d0CxYzWnaUSK5N2PZe+WQObXW0RQ6dDuf7H4JanVL9YB7nMnAeaK7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ZtdsBlIk; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 8B21F40AFB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1762804099; bh=60XE0n4ktcWn8stcg6+J2/wZdP/C+HhifbPKQu61aC4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ZtdsBlIkYOVn8oc/8L7e4N1UD8nrN0Z4mHSPFi2UB39PrXOzy7PFL1lZTbk+CS3Zt
-	 iQK7p44VcFbqboFkBseYpjOxk1tMwuRKYgmbzuYR7ulgvNpxHL64EOlT+WKEfqoDG7
-	 /O3J7GKEGc06rLLWdiOshAdtvn9qaKC8bSummX9dWKLPhIkVcVhRRhlgmgC4sso5B9
-	 HqC1idyjFyYCeEhZtu2I8eMzdHHRLZw63GWMORxzZ7VnQXDjtaCGe2M9JyE1gmANQy
-	 ANkYG40AaWHNQD2opJAGWRfwQ2+i9R93E6X04+j8VsKMop4KvMg7e9v5JP9XU/VL9X
-	 KFOnaxhh+5Y6A==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 8B21F40AFB;
-	Mon, 10 Nov 2025 19:48:19 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux ARM
- <linux-arm-kernel@lists.infradead.org>, linux-actions@lists.infradead.org
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Andreas =?utf-8?Q?F?=
- =?utf-8?Q?=C3=A4rber?=
- <afaerber@suse.de>, Manivannan Sadhasivam <mani@kernel.org>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: Re: [PATCH] Documentation: parport-lowlevel: Separate function
- listing code blocks
-In-Reply-To: <20251105124947.45048-1-bagasdotme@gmail.com>
-References: <20251105124947.45048-1-bagasdotme@gmail.com>
-Date: Mon, 10 Nov 2025 12:48:18 -0700
-Message-ID: <87ecq5y8hp.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1762804114; c=relaxed/simple;
+	bh=FJ0z1Pw91C1KXDxkISNCpi29zWmCs/T2mvQmzcQzaNE=;
+	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=UrFaXvGEvOUtjcjxqXnUDHCoWpqBTWka+3DNR+DrLJXHfHdGMrLNVc4649mN08+taW1GGD1K9Zd2qX2ZBUMzN8ThyyZewUV37X4HtT8oxaoc5TFH+WADpwWjHPtAf1dKPOpA9GRWTl57qqTVvA28V6CbiAGpsUVFbbZzN8UhBhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=LAtEwdky; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1762804105; x=1763063305;
+	bh=WOoEZbPGGZXaVMi7xthSdL2YB8sqg8DisbydO2JNEoA=;
+	h=Date:To:From:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=LAtEwdkyUV4bPJqsFmQfTfXzlkX9FfSEidSg+IHW79ZLypng7I1eC/PwUr3VCOC1b
+	 OAg0V2wwT0ebZl1X5boTo4qbO2p1eXAupxAxpwZwx/q+STSMxq0jaX9CIbBFuctiy6
+	 PkAJs6NWL0rihcYJo25n/AQKxCtj+9vXPexJbMvNcOMctRGvXt8mG00MBggVISsPM5
+	 p4DKuhvu6ptk1sdpdF6q0OpA45Fb5d8hMEv7Drzy3aqP36Ks2ievfIlhBb4trMmhAA
+	 5yj3XOI1/3gZn0Lu9W0D9Tj9zGasClETTlh61+g9vOC7JsRSg+Ns8tdOZI3SrWMQVP
+	 kLjH8fCu0q4rQ==
+Date: Mon, 10 Nov 2025 19:48:19 +0000
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, Michael Straube <straube.linux@gmail.com>
+From: Bryant Boatright <bryant.boatright@proton.me>
+Subject: [PATCH v2 0/3] Checkpatch cleanup patches
+Message-ID: <cover.1762803720.git.bryant.boatright@proton.me>
+Feedback-ID: 74848953:user:proton
+X-Pm-Message-ID: d6dde83950adc7690176f56a37f26c0281a061e0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Bagas Sanjaya <bagasdotme@gmail.com> writes:
+Correct camel case names reported by checkpatch.
 
-> Commit be9d0411f1608a ("parport-lowlevel.txt: standardize document
-> format") reSTify parport interface documentation but forgets to properly
-> mark function listing code blocks up. As such, these are rendered as
-> long-running normal paragraph instead.
->
-> Fix them by adding missing separator between the code block marker and
-> the listing.
->
-> Fixes: be9d0411f1608a ("parport-lowlevel.txt: standardize document format")
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
->  Documentation/driver-api/parport-lowlevel.rst | 5 +++++
->  1 file changed, 5 insertions(+)
+These patches are not required to be applied in any order.
 
-Applied, thanks.
+Bryant Boatright (3):
+  staging: rtl8723bs: Rename camel case enumeration
+  staging: rtl8723bs: Rename camel case argument
+  staging: rtl8723bs: Rename camel case variiable
 
-jon
+ .../staging/rtl8723bs/core/rtw_ieee80211.c    | 40 +++++++++----------
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  2 +-
+ drivers/staging/rtl8723bs/include/ieee80211.h |  6 +--
+ 3 files changed, 24 insertions(+), 24 deletions(-)
+
+--=20
+2.43.0
+
+
 
