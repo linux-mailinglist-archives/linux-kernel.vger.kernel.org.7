@@ -1,191 +1,91 @@
-Return-Path: <linux-kernel+bounces-893617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8EDC47CC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:10:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73CBEC47CAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:09:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1D40C34A130
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:10:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 17B7334A0F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F13B2857C7;
-	Mon, 10 Nov 2025 16:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA65D28152A;
+	Mon, 10 Nov 2025 16:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cns/P4eR"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXfklI48"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EAF2848A4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256F4273810;
+	Mon, 10 Nov 2025 16:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790952; cv=none; b=A8NgCH1j5JiJpqIwb+3kSTpIQSEB1vcrpiF6e8tMa5tfu+ZwtO/0kuyrYjJF7nDKEuKj/FP1sq4is0b/6rsVP/HfhJnHcfkkL7X2AtYVMq9uPonydRPeptq6R929JLU7lyfxDk+H1bSBJoSGxNKrDOEdlHqpljyVfw92Rkm+88A=
+	t=1762790940; cv=none; b=HIRDse4I0ezGk6Ged73m+LF3N0AE9t7BzEhiVl0+7feVcAdhi401TCqyoSK3/0e6rpSM0jfoqaLyrjIlsIIl83tPSfBt02INisEXGBpdr25sML+TlSds2U+S04yXJ/WU58CoOKYOeW+vnbgMiqpblACqECnc39Ra10KAvxZezZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790952; c=relaxed/simple;
-	bh=OKZOzwPNbZ0eA/RzD6GT+kbo2DW/QUWT3Vl/4pt9v6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JiwKgSHQEF73kOO9dmrILHlUsd/bCektTGGEAS7Phte/PdB+OubmFyYW7SlGyCe/NVv+ioZUIrBvEzQwZZllq3+3+HjnrOWbJBkmkNkrgN69QUPeQEb01dqlhlPF6JffhI/DQg+N+gCRFNH9Q8foNlF1vwG/ia84SH+2yLFaN0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cns/P4eR; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b679450ecb6so2529435a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:09:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762790949; x=1763395749; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s031glNNGPLU3pRhUQF/ls9Tz5E2v6rbM7VrNj/wX3k=;
-        b=Cns/P4eRZdvAKqqYulMy3O1Se0Q8vGE+7/KHmQttIzBeZCAOQ3gDDvSz3+XnUlGKlA
-         ppSKeNsijOTb87pYJLJ5k50or0OD1zAuKx/P/eWX4037TVlQqVFL7riJfGpFR9PAw+yw
-         i35r/J2t++VuZnABkylXNQyFo7vmT/bIkC+03kUsYMfoOuA7srfNplO+MWMCLOUdocys
-         kRK/1v7Xiv6BFDNMUQPEYULvJr7NvgOzNoNfsVhFwskwuZScbX19Hu9fVDnvws6rf1/r
-         DA+gIfmMJ73YHlRbfF1hWRILx2jnva0+aojFy/GW3Cs+8rmIhzmtKqGnwi/roZpbzNmm
-         7H8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762790949; x=1763395749;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=s031glNNGPLU3pRhUQF/ls9Tz5E2v6rbM7VrNj/wX3k=;
-        b=c8MC+eNOTbOZe24vCPhAd03e400yheWp9k/Pn/x1YCc2RQLXqYtn7wCJiQl9ReUf5q
-         5lontaNE7x8h2bCNxQDQegKhIThadXydCWhLBGByVZ9f5uvR1lzpPI7BKnOwoVi7+leU
-         XecAJqday1Po5xgfY8JHn9cUIlkPERzHx/o42ba+HMDFlAx8bDf7n/hLDWpnS4cFjxfx
-         8TqNfv2iWQfJKa5J/6EXN78OnfJ/DMalej6bGlKXBQ98nPRltxzwZkUL3PVGnu2iwhFb
-         guDrIFdXvAbgs6+y8g1f0anPX7CeuDhaUpP5lR89F3rbisp0nYjNpXUv6xBElOQbTYHw
-         tWXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUc0B07nrUTLmoplJC2bumGHXGc5ev/tAr3GvBwZ/rBGiK2Sci3YFFFAx2TL+9F9okp9Sths8CG6PbDq9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz8/jBYosZH8dxjf7WfHLe00wJEh1gqeWp5KvOlRUGQAVziEXO
-	t+KESrR5S/XnV7a/uMDem/fW43a2YtK2BFpcpNZsVnJLvJeQWI37Gl08mm03F5secDaOMc890GZ
-	U7q614OFUMSwTWOQCPyWIZjRVk9WwTIU=
-X-Gm-Gg: ASbGncu+rU3RCQstGTwfood42piw7uxzuqfspPCSLxEnflxkWU3RiXpLuwE0v4E0iD4
-	q6yylukLK0i/z1GlH22ncQpnaQdHrqX43fniknImDA0/ROr+AEbsp0KV6YpDMnC0M01M8klicd1
-	zPUBIn+fBorHp1a5o9skrncc4gg4L7Wpf8nGfTx3TSkURwT7vh2AoTDD19MW27Eb6FYlD7yKCOM
-	VHAdF3oFSgC0RQ6B3zXgyal75Og2oRJD5CSW6Aat4XjUa50MdZN/ujnggyyyt2qzLTzMiI=
-X-Google-Smtp-Source: AGHT+IHOYPI89bvNijFudu8ipuYpe33+VB7nbqJZeXEdLg498kOVR3mmjHBZOcylAlfsBqli+DO2uzjCmhEfT9se4Vs=
-X-Received: by 2002:a17:902:fc4f:b0:298:2237:a2eb with SMTP id
- d9443c01a7336-2982237a409mr51261425ad.16.1762790948766; Mon, 10 Nov 2025
- 08:09:08 -0800 (PST)
+	s=arc-20240116; t=1762790940; c=relaxed/simple;
+	bh=NBpmB+hnjguA3i8RznuHTjw2pYgzLf3scts8qyLJMp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXr/0XN3xwADwVzsTe/BIne/Uy/bNB0ViL14P2ZMuEaWOm1PbTKcJ+8QsfJ58b7TWNYgBMbBnZa0cEeu9Rxi3tTd0nLIRnizuiVyR5GSihIgr9+Hmblv/2fxoFxsLnTamENN8OUDwTjMMrB7JiPzc42gTGxFaFrJKfuCZItcsv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXfklI48; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 814E9C4CEF5;
+	Mon, 10 Nov 2025 16:08:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762790939;
+	bh=NBpmB+hnjguA3i8RznuHTjw2pYgzLf3scts8qyLJMp0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SXfklI48xka0u1XmkPhtnSmR1XEDxmu+7Taf8hYhiJ7QRil2tCKIyZtMwR4tWraN3
+	 iC05e2irCvyqiahWc0SzhpdYkG1SETpyhLw+q60RUZy5VV+Q7PLG+Q4rsRDAo2oyGJ
+	 KeSg0nlhWIkLLZ9fxs5dKTQuyFDmVj3JN8b95snltBjqiiMKelwj5t7VG+vnwLODC7
+	 aQzd+VztkmpRN+DrUKNCN728sml9i9uYoJdgAutBp+4FkppZYOlzVvYqoEpR/uYMk8
+	 hn3hp614soPecuUjiOfaL/3M9y2u5P0oPbrcqdeYlvR1OV2L/+bydl6eEOrZlEJZrt
+	 +pEnLKy21BO3A==
+Date: Mon, 10 Nov 2025 06:08:58 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Patrick Lu <patlu@meta.com>
+Subject: Re: [PATCH 01/13] sched_ext: Don't set ddsp_dsq_id during select_cpu
+ in bypass mode
+Message-ID: <aRIOGt4S42czxMAT@slm.duckdns.org>
+References: <20251109183112.2412147-1-tj@kernel.org>
+ <20251109183112.2412147-2-tj@kernel.org>
+ <aRGMzjXMkOsU-2le@gpd4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106005333.956321-1-neilb@ownmail.net> <20251106005333.956321-12-neilb@ownmail.net>
-In-Reply-To: <20251106005333.956321-12-neilb@ownmail.net>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Mon, 10 Nov 2025 11:08:57 -0500
-X-Gm-Features: AWmQ_bnsQdAKOPc2sWsQJTL6A89EPTloA4MsBf1tbsCjlSWDuuet8e3lOwk-mCw
-Message-ID: <CAEjxPJ528Ou4dvRwHo+kXjWreGicda8BOXkQRvq3vMED6JQKOQ@mail.gmail.com>
-Subject: Re: [PATCH v5 11/14] Add start_renaming_two_dentries()
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
-	David Howells <dhowells@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Chuck Lever <chuck.lever@oracle.com>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>, 
-	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRGMzjXMkOsU-2le@gpd4>
 
-On Wed, Nov 5, 2025 at 7:56=E2=80=AFPM NeilBrown <neilb@ownmail.net> wrote:
->
-> From: NeilBrown <neil@brown.name>
->
-> A few callers want to lock for a rename and already have both dentries.
-> Also debugfs does want to perform a lookup but doesn't want permission
-> checking, so start_renaming_dentry() cannot be used.
->
-> This patch introduces start_renaming_two_dentries() which is given both
-> dentries.  debugfs performs one lookup itself.  As it will only continue
-> with a negative dentry and as those cannot be renamed or unlinked, it is
-> safe to do the lookup before getting the rename locks.
->
-> overlayfs uses start_renaming_two_dentries() in three places and  selinux
-> uses it twice in sel_make_policy_nodes().
->
-> In sel_make_policy_nodes() we now lock for rename twice instead of just
-> once so the combined operation is no longer atomic w.r.t the parent
-> directory locks.  As selinux_state.policy_mutex is held across the whole
-> operation this does open up any interesting races.
->
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: NeilBrown <neil@brown.name>
->
-> ---
-> changes since v3:
->  added missing assignment to rd.mnt_idmap in ovl_cleanup_and_whiteout
-> ---
+Hello,
 
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index 232e087bce3e..a224ef9bb831 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -539,22 +540,30 @@ static int sel_make_policy_nodes(struct selinux_fs_=
-info *fsi,
->         if (ret)
->                 goto out;
->
-> -       lock_rename(tmp_parent, fsi->sb->s_root);
-> +       rd.old_parent =3D tmp_parent;
-> +       rd.new_parent =3D fsi->sb->s_root;
->
->         /* booleans */
-> -       d_exchange(tmp_bool_dir, fsi->bool_dir);
-> +       ret =3D start_renaming_two_dentries(&rd, tmp_bool_dir, fsi->bool_=
-dir);
-> +       if (!ret) {
-> +               d_exchange(tmp_bool_dir, fsi->bool_dir);
+On Mon, Nov 10, 2025 at 07:57:18AM +0100, Andrea Righi wrote:
+> On Sun, Nov 09, 2025 at 08:31:00AM -1000, Tejun Heo wrote:
+> > In the default CPU selection path used during bypass mode, select_task_rq_scx()
+> > set p->scx.ddsp_dsq_id to SCX_DSQ_LOCAL to emulate direct dispatch. However,
+> > do_enqueue_task() ignores ddsp_dsq_id in bypass mode and queues to the global
+> > DSQ, leaving ddsp_dsq_id dangling. This triggers WARN_ON_ONCE() in
+> > mark_direct_dispatch() if the task later gets direct dispatched.
+> 
+> The patch makes sense and I was actually testing something similar to fix
+> https://github.com/sched-ext/scx/issues/2758.
+> 
+> However, in dispatch_enqueue() we're always clearing p->scx.ddsp_dsq_id
+> (SCX_DSQ_INVALID), even when we're targeting the global DSQ due to bypass
+> mode, so in this scenario we shouldn't see a stale ddsp_dsq_id. Am I
+> missing something?
 
-I would recommend an immediate goto out if ret !=3D 0; we don't want to
-silently fall through and possibly reset ret on the next
-start_renaming_two_dentries() call, thereby ultimately returning 0 to
-the caller and acting as if nothing bad happened.
+I think you're right. The bug fix part was a wrong assumption on my part.
+Will update the description.
 
->
-> -       swap(fsi->bool_num, bool_num);
-> -       swap(fsi->bool_pending_names, bool_names);
-> -       swap(fsi->bool_pending_values, bool_values);
-> +               swap(fsi->bool_num, bool_num);
-> +               swap(fsi->bool_pending_names, bool_names);
-> +               swap(fsi->bool_pending_values, bool_values);
->
-> -       fsi->bool_dir =3D tmp_bool_dir;
-> +               fsi->bool_dir =3D tmp_bool_dir;
-> +               end_renaming(&rd);
-> +       }
->
->         /* classes */
-> -       d_exchange(tmp_class_dir, fsi->class_dir);
-> -       fsi->class_dir =3D tmp_class_dir;
-> +       ret =3D start_renaming_two_dentries(&rd, tmp_class_dir, fsi->clas=
-s_dir);
-> +       if (ret =3D=3D 0) {
-> +               d_exchange(tmp_class_dir, fsi->class_dir);
-> +               fsi->class_dir =3D tmp_class_dir;
->
-> -       unlock_rename(tmp_parent, fsi->sb->s_root);
-> +               end_renaming(&rd);
-> +       }
->
->  out:
->         sel_remove_old_bool_data(bool_num, bool_names, bool_values);
-> --
-> 2.50.0.107.gf914562f5916.dirty
->
+Thanks.
+
+-- 
+tejun
 
