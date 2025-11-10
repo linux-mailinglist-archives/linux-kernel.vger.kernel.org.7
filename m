@@ -1,321 +1,83 @@
-Return-Path: <linux-kernel+bounces-893592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78696C47C86
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:08:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AE6C47D0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:13:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A9E1894CB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:01:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53DFC4A5CDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F9C2749CE;
-	Mon, 10 Nov 2025 16:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A37B277C9E;
+	Mon, 10 Nov 2025 16:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="S5EO/EVs"
-Received: from mail.cybernetics.com (mail.cybernetics.com [173.71.130.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYkm0xuV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23737205AA1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.71.130.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C15266B67;
+	Mon, 10 Nov 2025 16:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790468; cv=none; b=NJN87CIQLnLgHcmqNdE4LcK8TPR0vtnaznHiyUkiMrBTaiY5ENlzqSADIFbXHPKhQX+wy38pvYA6oOphvZqqWPQGeKps5X1tWVbwBC3PBWp1lub+5tbYEv3QHeoUtVMdUZ3AxlRN1KUHoXWK7ZF6msUmBXqhbFY0b3A1TObW/+Y=
+	t=1762790515; cv=none; b=j6M3F1buZHGj7IoGmgTfDbz2tZ5+H07AoG5nuGfi4hy+uG7zPPMOe0OanpySqr2uLB8O5EXGOaESdzwtbc2/F6Jc6KvY/YCIh78Dtbd6Sq0zKmLyHpXV/xiVphg8lwLc1wkh1KFaxwfavHomdcZTLwKrAJc3ZQSJ20Bv/BziRcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790468; c=relaxed/simple;
-	bh=yswNP2HBey/qkwfkCMi2Z3pmTM7ZgIEEAIyXhXyY/yU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eXPWzjuY9V1gVwPwzSJGODyOhJ3YcOugKpOK8nmuAE9rUkfdeyELQ2pfMIaCFQxErrwvv9o9M7NGy0Q+r7nAKOcs3fqER3GYXda8D9YzRy+G4kREKDmQ+CZwh1RGTovKHw0rYs9+BXJfJhlBeVrlyG44wLENGsv0IQ3Riyy3R8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=S5EO/EVs; arc=none smtp.client-ip=173.71.130.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id mdoZ5TB3RaFU90XA; Mon, 10 Nov 2025 11:01:00 -0500 (EST)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=q52zS9raBJ2XcOVrJrp7DtNn3xebhzouyqAJQaTvWLI=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=S5EO/EVs3955k+O+7umd
-	oqRFECYO/Zy0SIiAgjnmAPnJZGdCajgd6JpIATENKEQ/s91V1dI2Ha95yKW/6BOx791IO2QZ9EBWn
-	ieatLwskMrUff9fnJuFRx3zlygBSTSMPKV5VLNBjLBaRCz7qNN+eI45dHsaTYEO66+9kJzqZQY=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14272461; Mon, 10 Nov 2025 11:01:00 -0500
-Message-ID: <306a9d0b-3c89-42fc-a69c-eebca8171347@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 10 Nov 2025 11:01:00 -0500
+	s=arc-20240116; t=1762790515; c=relaxed/simple;
+	bh=H3NzdekXo1UQ4hcp/ZKn7Ol5GFdG7uTg3XxzFPfkbRo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bY04llu3kjth1N0bCu+2xxLu93+4nMNM8MB53WVB1f1TiMYBNVlqBDp+FUlotddQDBXLOe7Z3jNpGUPun3wIIwSILFJZ4UAN+B2kXYnFLX25GzZQqtrSirNK0E96FFxusJUjFxT4PC06Tnr+mQHXe9M/bSWqQw4veTInx+ZfV7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYkm0xuV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85F3CC4AF09;
+	Mon, 10 Nov 2025 16:01:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762790515;
+	bh=H3NzdekXo1UQ4hcp/ZKn7Ol5GFdG7uTg3XxzFPfkbRo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cYkm0xuVNWAlGseBVO9lGJaJ02l/6r0SQAffp1TGc2D3yBWtDSGPzi8OeJIeCaRtM
+	 S+gJi9KlHnOyxQo4xHV2gX+5SklCzTu9vfJ9Mvs7uJZ8pJm3ak1gpSNyfR0iG/3Wxz
+	 bAG921OEMcsk4Xn4umAJZh5mXROIX295g6hl2RLJe0k8OFKptDUTEmylzt6lPDDw4p
+	 TldzfWLbUkXlctCY5eDxKv2UkKFPcouC2qx4ppuB9DwwFjx9BtZZlLyw7Z89Bwv9i6
+	 F5Fo74rsN2dOGhGzsRT986mo6T1Pis9aLwJRNIhmMYbRWLHA/gzlHZgBjfZIR/TeYG
+	 lC8l7f1moRETQ==
+From: Daniel Gomez <da.gomez@kernel.org>
+To: mcgrof@kernel.org,
+	petr.pavlu@suse.com,
+	da.gomez@kernel.org,
+	samitolvanen@google.com,
+	Aaron Tomlin <atomlin@atomlin.com>
+Cc: Daniel Gomez <da.gomez@samsung.com>,
+	linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Add myself as reviewer for module support
+Date: Mon, 10 Nov 2025 17:01:29 +0100
+Message-ID: <176279045446.4004696.4134618363007891892.b4-ty@samsung.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251018180210.347619-1-atomlin@atomlin.com>
+References: <20251018180210.347619-1-atomlin@atomlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v3 12/16] scsi: qla2xxx: fix invalid memory access with big
- CDBs
-Content-Language: en-US
-X-ASG-Orig-Subj: [PATCH v3 12/16] scsi: qla2xxx: fix invalid memory access with big
- CDBs
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Dmitry Bogdanov <d.bogdanov@yadro.com>,
- Xose Vazquez Perez <xose.vazquez@gmail.com>
-References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
-In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1762790460
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 7492
-X-ASG-Debug-ID: 1762790460-1cf439139110ce90001-xx1T2L
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-(target mode)
+From: Daniel Gomez <da.gomez@samsung.com>
 
-struct atio7_fcp_cmnd is a variable-length data structure because of
-add_cdb_len, but it is embedded in struct atio_from_isp and copied
-around like a fixed-length data structure.  For big CDBs > 16 bytes,
-get_datalen_for_atio() called on a fixed-length copy of the atio will
-access invalid memory.
 
-In some cases this can be fixed by moving the atio to the end of the
-data structure and using a variable-length allocation.  In other cases
-such as allocating struct qla_tgt_cmd, the fixed-length data structures
-are preallocated for speed, so in the case that add_cdb_len != 0,
-allocate a separate buffer for the CDB.  Also add memcpy_atio() as a
-safeguard against invalid memory accesses.
+On Sat, 18 Oct 2025 14:02:10 -0400, Aaron Tomlin wrote:
+> Voluntering as a reviewer for Module support.
+> 
+> 
 
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
+Applied, thanks!
 
-v2 -> v3: no changes
+[1/1] MAINTAINERS: Add myself as reviewer for module support
+      commit: 1ddac5cd7f278345b2e8298c930e4bffe0911a45
 
-v1 -> v2: no changes
-
- drivers/scsi/qla2xxx/qla_target.c | 83 ++++++++++++++++++++++++++++---
- drivers/scsi/qla2xxx/qla_target.h |  7 ++-
- 2 files changed, 81 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index 69ccba3436ec..c2876b442a08 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -210,6 +210,10 @@ static void qlt_queue_unknown_atio(scsi_qla_host_t *vha,
- 	struct qla_tgt_sess_op *u;
- 	struct qla_tgt *tgt = vha->vha_tgt.qla_tgt;
- 	unsigned long flags;
-+	unsigned int add_cdb_len = 0;
-+
-+	/* atio must be the last member of qla_tgt_sess_op for add_cdb_len */
-+	BUILD_BUG_ON(offsetof(struct qla_tgt_sess_op, atio) + sizeof(u->atio) != sizeof(*u));
- 
- 	if (tgt->tgt_stop) {
- 		ql_dbg(ql_dbg_async, vha, 0x502c,
-@@ -218,12 +222,17 @@ static void qlt_queue_unknown_atio(scsi_qla_host_t *vha,
- 		goto out_term;
- 	}
- 
--	u = kzalloc(sizeof(*u), GFP_ATOMIC);
-+	if (atio->u.raw.entry_type == ATIO_TYPE7 &&
-+	    atio->u.isp24.fcp_cmnd.task_mgmt_flags == 0)
-+		add_cdb_len =
-+			((unsigned int) atio->u.isp24.fcp_cmnd.add_cdb_len) * 4;
-+
-+	u = kzalloc(sizeof(*u) + add_cdb_len, GFP_ATOMIC);
- 	if (u == NULL)
- 		goto out_term;
- 
- 	u->vha = vha;
--	memcpy(&u->atio, atio, sizeof(*atio));
-+	memcpy(&u->atio, atio, sizeof(*atio) + add_cdb_len);
- 	INIT_LIST_HEAD(&u->cmd_list);
- 
- 	spin_lock_irqsave(&vha->cmd_list_lock, flags);
-@@ -3829,6 +3838,13 @@ void qlt_free_cmd(struct qla_tgt_cmd *cmd)
- 		qlt_decr_num_pend_cmds(cmd->vha);
- 
- 	BUG_ON(cmd->sg_mapped);
-+
-+	if (unlikely(cmd->cdb != &cmd->atio.u.isp24.fcp_cmnd.cdb[0])) {
-+		kfree(cmd->cdb);
-+		cmd->cdb = &cmd->atio.u.isp24.fcp_cmnd.cdb[0];
-+		cmd->cdb_len = 16;
-+	}
-+
- 	cmd->jiffies_at_free = get_jiffies_64();
- 
- 	if (!sess || !sess->se_sess) {
-@@ -4128,7 +4144,6 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
- 	struct qla_hw_data *ha = vha->hw;
- 	struct fc_port *sess = cmd->sess;
- 	struct atio_from_isp *atio = &cmd->atio;
--	unsigned char *cdb;
- 	unsigned long flags;
- 	uint32_t data_length;
- 	int ret, fcp_task_attr, data_dir, bidi = 0;
-@@ -4144,7 +4159,6 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
- 		goto out_term;
- 	}
- 
--	cdb = &atio->u.isp24.fcp_cmnd.cdb[0];
- 	cmd->se_cmd.tag = le32_to_cpu(atio->u.isp24.exchange_addr);
- 
- 	if (atio->u.isp24.fcp_cmnd.rddata &&
-@@ -4162,7 +4176,7 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
- 	    atio->u.isp24.fcp_cmnd.task_attr);
- 	data_length = get_datalen_for_atio(atio);
- 
--	ret = ha->tgt.tgt_ops->handle_cmd(vha, cmd, cdb, data_length,
-+	ret = ha->tgt.tgt_ops->handle_cmd(vha, cmd, cmd->cdb, data_length,
- 				          fcp_task_attr, data_dir, bidi);
- 	if (ret != 0)
- 		goto out_term;
-@@ -4183,6 +4197,11 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
- 	qlt_send_term_exchange(qpair, NULL, &cmd->atio, 1);
- 
- 	qlt_decr_num_pend_cmds(vha);
-+	if (unlikely(cmd->cdb != &cmd->atio.u.isp24.fcp_cmnd.cdb[0])) {
-+		kfree(cmd->cdb);
-+		cmd->cdb = &cmd->atio.u.isp24.fcp_cmnd.cdb[0];
-+		cmd->cdb_len = 16;
-+	}
- 	cmd->vha->hw->tgt.tgt_ops->rel_cmd(cmd);
- 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
- 
-@@ -4306,18 +4325,43 @@ static void qlt_assign_qpair(struct scsi_qla_host *vha,
- 	cmd->se_cmd.cpuid = h->cpuid;
- }
- 
-+/*
-+ * Safely make a fixed-length copy of a variable-length atio by truncating the
-+ * CDB if necessary.
-+ */
-+static void memcpy_atio(struct atio_from_isp *dst,
-+	const struct atio_from_isp *src)
-+{
-+	int len;
-+
-+	memcpy(dst, src, sizeof(*dst));
-+
-+	/*
-+	 * If the CDB was truncated, prevent get_datalen_for_atio() from
-+	 * accessing invalid memory.
-+	 */
-+	len = src->u.isp24.fcp_cmnd.add_cdb_len;
-+	if (unlikely(len != 0)) {
-+		dst->u.isp24.fcp_cmnd.add_cdb_len = 0;
-+		memcpy(&dst->u.isp24.fcp_cmnd.add_cdb[0],
-+		       &src->u.isp24.fcp_cmnd.add_cdb[len * 4],
-+		       4);
-+	}
-+}
-+
- static struct qla_tgt_cmd *qlt_get_tag(scsi_qla_host_t *vha,
- 				       struct fc_port *sess,
- 				       struct atio_from_isp *atio)
- {
- 	struct qla_tgt_cmd *cmd;
-+	int add_cdb_len;
- 
- 	cmd = vha->hw->tgt.tgt_ops->get_cmd(sess);
- 	if (!cmd)
- 		return NULL;
- 
- 	cmd->cmd_type = TYPE_TGT_CMD;
--	memcpy(&cmd->atio, atio, sizeof(*atio));
-+	memcpy_atio(&cmd->atio, atio);
- 	INIT_LIST_HEAD(&cmd->sess_cmd_list);
- 	cmd->state = QLA_TGT_STATE_NEW;
- 	cmd->tgt = vha->vha_tgt.qla_tgt;
-@@ -4337,6 +4381,29 @@ static struct qla_tgt_cmd *qlt_get_tag(scsi_qla_host_t *vha,
- 	cmd->vp_idx = vha->vp_idx;
- 	cmd->edif = sess->edif.enable;
- 
-+	cmd->cdb = &cmd->atio.u.isp24.fcp_cmnd.cdb[0];
-+	cmd->cdb_len = 16;
-+
-+	/*
-+	 * NOTE: memcpy_atio() set cmd->atio.u.isp24.fcp_cmnd.add_cdb_len to 0,
-+	 * so use the original value here.
-+	 */
-+	add_cdb_len = atio->u.isp24.fcp_cmnd.add_cdb_len;
-+	if (unlikely(add_cdb_len != 0)) {
-+		int cdb_len = 16 + add_cdb_len * 4;
-+		u8 *cdb;
-+
-+		cdb = kmalloc(cdb_len, GFP_ATOMIC);
-+		if (unlikely(!cdb)) {
-+			vha->hw->tgt.tgt_ops->free_cmd(cmd);
-+			return NULL;
-+		}
-+		/* CAUTION: copy CDB from atio not cmd->atio */
-+		memcpy(cdb, atio->u.isp24.fcp_cmnd.cdb, cdb_len);
-+		cmd->cdb = cdb;
-+		cmd->cdb_len = cdb_len;
-+	}
-+
- 	return cmd;
- }
- 
-@@ -5484,13 +5551,15 @@ qlt_alloc_qfull_cmd(struct scsi_qla_host *vha,
- 
- 	qlt_incr_num_pend_cmds(vha);
- 	INIT_LIST_HEAD(&cmd->cmd_list);
--	memcpy(&cmd->atio, atio, sizeof(*atio));
-+	memcpy_atio(&cmd->atio, atio);
- 
- 	cmd->tgt = vha->vha_tgt.qla_tgt;
- 	cmd->vha = vha;
- 	cmd->reset_count = ha->base_qpair->chip_reset;
- 	cmd->q_full = 1;
- 	cmd->qpair = ha->base_qpair;
-+	cmd->cdb = &cmd->atio.u.isp24.fcp_cmnd.cdb[0];
-+	cmd->cdb_len = 16;
- 
- 	if (qfull) {
- 		cmd->q_full = 1;
-diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
-index 223c40bc9498..97aa6d9cfc27 100644
---- a/drivers/scsi/qla2xxx/qla_target.h
-+++ b/drivers/scsi/qla2xxx/qla_target.h
-@@ -830,11 +830,13 @@ struct qla_tgt {
- struct qla_tgt_sess_op {
- 	struct scsi_qla_host *vha;
- 	uint32_t chip_reset;
--	struct atio_from_isp atio;
- 	struct work_struct work;
- 	struct list_head cmd_list;
- 	bool aborted;
- 	struct rsp_que *rsp;
-+
-+	struct atio_from_isp atio;
-+	/* DO NOT ADD ANYTHING ELSE HERE - atio must be last member */
- };
- 
- enum trace_flags {
-@@ -925,8 +927,9 @@ struct qla_tgt_cmd {
- 	uint8_t scsi_status, sense_key, asc, ascq;
- 
- 	struct crc_context *ctx;
--	const uint8_t	*cdb;
-+	uint8_t		*cdb;
- 	uint64_t	lba;
-+	int		cdb_len;
- 	uint16_t	a_guard, e_guard, a_app_tag, e_app_tag;
- 	uint32_t	a_ref_tag, e_ref_tag;
- #define DIF_BUNDL_DMA_VALID 1
+Best regards,
 -- 
-2.43.0
-
-
+Daniel Gomez <da.gomez@samsung.com>
 
