@@ -1,120 +1,147 @@
-Return-Path: <linux-kernel+bounces-892709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086B1C45A99
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:34:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43ABC45AA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:35:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C83684E9877
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:31:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F2024ECE48
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CCF1C860A;
-	Mon, 10 Nov 2025 09:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XY3ljPL/"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989C62F7AA2;
+	Mon, 10 Nov 2025 09:31:55 +0000 (UTC)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0286621CC64
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A499121CC64
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762767087; cv=none; b=T5MKIgpXtFU7S8ukcC/6sLVKe1+jqRQ/vdgHVpbyE7qdKf8MYqQxQGthIRhjdfiBtr7HtJSykUNZWhPlvNP1tAL4mvAtPtcUmraF0wTIH/pbG6PwPQb7iqM60rVJnvO3idCQ5PfUEm3enp8XK/PAms723ra2ySOaYgBGE/73H+E=
+	t=1762767115; cv=none; b=KO0KojtVwfx+++XCXrHN684Pxgu4GOpx1rzSiGkgTNrssjHi0HXCgynzoJqM7rx6HD/0zsSHN2PBpc+Bf1nDnEiJI2WKoM24v44+YQ34K+9JpM1D7Wp62KJlsA0mNzca3eeJxhmSU32f58AeSEvd4PP+sNVN11RGcUtR4uI9hhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762767087; c=relaxed/simple;
-	bh=m/QU9kQD+zT8DY4zIk3dOkJ1ZJpquGhCSedUwO/1RWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QaapHo4gzF4+vSXYQYyYZcTPx80lySTIri2N8O1GV1ZYH1l7mpCTcJolVlRAPMnva7Jc7+JxrrWswPttQevzeNp9ritaUYR/1/12GaAzh8ARDOtSZlSAwGtt/lvS7cfc3vBkldAdoSD7DNDarW476qeN5cDV4EdMCDhMEEWt1qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XY3ljPL/; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-641677916b5so2389436a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:31:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762767084; x=1763371884; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=amfX240/D0izGpL77kjzwIZmsTrj0WyJRpbOWOmEfmw=;
-        b=XY3ljPL/xz1PQLkTjPFNbhtiMBR5eX9KKnZQv5AyRYFMxUWJ6VLil4Y1DxchnMjhll
-         Z6Thdyt6ZTKoDRU8m+7LF+v+WIZLu0MNuQ+l7vb9kgrYO+2Raz37L9sl14Yg4kLBmTS6
-         Xqc7RBHzOECH85qlwdkAKDh1VsrPu01H5K8zYypoBFUTUJjNqq9RUk7rvb/uORuRgdhJ
-         0/fPp+EhkZOnkdvs7O+pN7NtttOAw9/OHDyR3QZcKp6ry65UbYDMTaUkguZWzSwRVRNO
-         Q4o5zW9ZpgYFS5tnZiekPs94bXeFh4EAh2ZxSQLhxeY6yOrZgeAADEccH0blVkqIDSY8
-         cLRQ==
+	s=arc-20240116; t=1762767115; c=relaxed/simple;
+	bh=/fJzjpPCho25zV5kgp+Mt+JXbM7T0RiVyjwGWi7iCBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ApgY/6uGLXBoWUb0kp9rpNbhbsi2YhGW3nzb/AxiSIWhrRQKU97ehoSvx3AuGzT6kkMpovERmQI+/sTLoghtWaShBZsOlfr8ION4RqtlbmUFU8P0QjiO12dWu3X0enoZ2/QbgocEd4vFzbmdC9F8e0faCUDXEZaYeV7swqaPyv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-93728bac144so896081241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:31:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762767084; x=1763371884;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=amfX240/D0izGpL77kjzwIZmsTrj0WyJRpbOWOmEfmw=;
-        b=gut7gWC38akgbo7zk3vjgp4Lmd5020J453LirtCZp+zaKytIwMTo91qUfQGWo63Y5e
-         HpDvRSt3IFG/3YnwEUtFX3plykRnjoiZ1YXilJfG463uYjvHI9S/1IeTqEUdYDx4XRYa
-         Jk3NvjHvoYh2oeNTvSjBWEbS1rpVzGtXgsnaqWjnYnHTLLHgw7BJz6XjOwHNy5viwBel
-         9LDIvYvtwoRuQTfD+Cs8XnHijB3BMfmHt3+nmh4fwpM0QLEggDSrCRlLEmrzFSKoE7+g
-         BmYtWnu6dizP+7UFSisUv814AsAen9pHeE8RapLUeqMcxnxUHhEJy/JkGFW1+jGm/RVo
-         gw5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUtf/qknHaewQGCypnzE7RLRY0g0BfaKc0ROWWTybt1j/pk7QAlXGzNVxKnCauUaU25CwjoKW1MeReKLW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX2bxBd4IeilE3KGCYrueRRWIhDTPMBMO3YAv5jSX219igOMxk
-	BDibcRCh87cco3bYj5izXW/bkQDe81blaCh16dzHiFHhr4A4PnGSkrdIfGikDIPGMxw=
-X-Gm-Gg: ASbGncsEODpz3kYZ12yCruiBnYENqIaH7K6AM5/EmOw+bAYNIo1RJzCV99654fNzrUS
-	z5FVIud/eyUal/bJmEYeptmlGijkhXo9hV8QpczGTlRFndDZZJQ2YWc6NueyuhYKrJ/gC/L/BRC
-	XI4QI3K76WhGcUlOymQ82qhQBex6a1rjYAs+jldwKeDv30DNqWyg7GfrhPjDJZ0nt4AN+kv9Hc6
-	I5GID/PirzmYXEg/zuMP7Qnv/z3ar0i8KOmL1z4PqL5YlP1zQXNE8tIV5/4gAj5esQWxhAyPsXk
-	RJJNVp8FK7DHSb+uBiNFH2Efc/vokLu+fuAH7gmqF1WykYnSTbvzYecPsa+ppihnGCI4++FcABS
-	uhGZ8TJnxOSPBbsd99/CNzvdSP5T73KfOsCGc1MYY/GGziL6wPJtUGLUdFOUGKnspfbP6tXIwAR
-	wJZpY+9y0BrPRl4g==
-X-Google-Smtp-Source: AGHT+IE/txm/8jWMiSkfFFCpyrIegQ7dxW+BtDPga3eQ9vjewsDB6p7h+vXBqAcuv9gNMfcv8ZCOVw==
-X-Received: by 2002:a05:6402:278e:b0:640:976f:13b0 with SMTP id 4fb4d7f45d1cf-6415dc11776mr5564134a12.12.1762767084330;
-        Mon, 10 Nov 2025 01:31:24 -0800 (PST)
-Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64184b6c7e4sm3018332a12.24.2025.11.10.01.31.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 01:31:23 -0800 (PST)
-Date: Mon, 10 Nov 2025 10:31:22 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, bpf@vger.kernel.org,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	Song Liu <song@kernel.org>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 14/23] mm: allow specifying custom oom constraint for
- BPF triggers
-Message-ID: <aRGw6sSyoJiyXb8i@tiehlicka>
-References: <20251027232206.473085-1-roman.gushchin@linux.dev>
- <20251027232206.473085-4-roman.gushchin@linux.dev>
+        d=1e100.net; s=20230601; t=1762767112; x=1763371912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=hRtPdzI1Yw78zykFlB0XCziKqeVOXzigJtW+jsiVzcI=;
+        b=Yq9x9y4C1Eqx1NZgv+VyFC9xsm9aIv0HP/HHWPbuS3eCNfxFDHIuZ0LjTFljgAiZZp
+         vSFTVc0MjTq3u1+3HF2qBPqzQQX2lzkORHE/OSueyHda+UtcHxNAb9711TCP0aoY371v
+         9dioTZYzTISJW8xiFqgDlG75GM/CXYu+ANIcqOAm6JK0TymGfQmwH9YfLUk6pI89uFtn
+         wLO8B8CrytmLVdSkfObGsOz5Xn0tyFMtkghhRdk4vYWv4yTLcTw1j7HMR8Ru5C237+0/
+         pabKR470Jlj8Rxth71qpKxYbStk+t6PtCigDCVEkHedjd6C7//hrVFabOXGUgqmX46by
+         i1EA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoIkQewBgtUJBh8XQv0A1045nXGBGMlOV8vjPA81Vy2J16r4mbhLtsDZw+FWj88mvz/nSmxVe1IhbtSEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYOe4V0Lo5SM+NE6tZz6llLOrex/oyrlUCZY7Bk//f16hZsI+3
+	eHASaKp3391H9KD9LtSCMUu+BKVVr5uQhelHFNBqyMAKP7fLJpiyz3jdpI97kzpN
+X-Gm-Gg: ASbGncsAwmoPAnsAg8xVM4I9y5oA6NWwDaUIhWgQurufgVcOHiS/R1yk5ZrvycdeSch
+	BsRP2dnlzemYKSoImLJyhw1ZYJCAaT6luR/6m82o7FlkcI5Z28HWGDsD8r+YOri3jZod1cvwFCR
+	tuL/jVU1++lBVMEas8Rgw3lbtbHDE7A9BCSm5jLbebkVUEQQ27x/f4cF5PyGlwctJstwC4qCxU4
+	m2FiMo5JQ0LF0Au2VRIDC3x8eJMrozrNkEucVzU7TTozFqEV4zvMKLR1+nRCdQSTVK0g714IWks
+	80jT8PaJ8rsC9pKhtNdXXFqb/fryVNcO/of1QnvAwGCk1gQ5n7AuQc4QdVJz10tvD6IenuflgJf
+	F9/DIZHTeAIbu1LiEJuDQvWxySXh6YI3faGnJYqZvgQqnbiojnlbt3yPpbl8cDwumFK5NvQMYY5
+	WYf/FgJ7aym9h+5e6xjfTHkZhN3gUWNOGNQhNGopxwOBCjpA+zr0ka
+X-Google-Smtp-Source: AGHT+IG5Vp0xzxbCiYDpAa+JVIHtZeOL1Se1ib3jhgG2rrdY7Y5iwBn2y6Yi8VKjcbIbRcn5WN0s0g==
+X-Received: by 2002:a05:6102:2ac7:b0:5db:d07c:218e with SMTP id ada2fe7eead31-5ddc47e44e7mr2429135137.41.1762767112365;
+        Mon, 10 Nov 2025 01:31:52 -0800 (PST)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5dda1d06baesm5554719137.2.2025.11.10.01.31.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 01:31:50 -0800 (PST)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-937268fe284so895365241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:31:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWeU/8tJmTYHjmRNDB2iaDGvQI0fDgB2MiNwTNZ0dZbOGPnFuhNZsjOK+zljuX1x3rEOmZwt2God1R0HZ8=@vger.kernel.org
+X-Received: by 2002:a05:6102:c04:b0:520:dbc0:6ac4 with SMTP id
+ ada2fe7eead31-5ddc46497a0mr2779273137.2.1762767109934; Mon, 10 Nov 2025
+ 01:31:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027232206.473085-4-roman.gushchin@linux.dev>
+References: <20251107-b4-m5441x-add-rng-support-v2-0-f91d685832b9@yoseli.org>
+ <20251107-b4-m5441x-add-rng-support-v2-2-f91d685832b9@yoseli.org>
+ <CAMuHMdWL76hY-Pv30ooSM1J6XkVWbRXSLTDCjfpPOvhFN4tKyA@mail.gmail.com> <12779401.O9o76ZdvQC@jeanmichel-ms7b89>
+In-Reply-To: <12779401.O9o76ZdvQC@jeanmichel-ms7b89>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Nov 2025 10:31:37 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW26uKBUnYB5c3XAzKPKFVGNoOOwra_u_NOjPCV20Y-AA@mail.gmail.com>
+X-Gm-Features: AWmQ_blSVM0mC21k2j7-_pQqo1T8ZhoFgD5EPrlyILfYI73Lumvke_itdhGi4eY
+Message-ID: <CAMuHMdW26uKBUnYB5c3XAzKPKFVGNoOOwra_u_NOjPCV20Y-AA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] m68k: coldfire: Add RNG support for MCF54418
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: Greg Ungerer <gerg@linux-m68k.org>, Olivia Mackall <olivia@selenic.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 27-10-25 16:21:57, Roman Gushchin wrote:
-> Currently there is a hard-coded list of possible oom constraints:
-> NONE, CPUSET, MEMORY_POLICY & MEMCG. Add a new one: CONSTRAINT_BPF.
-> Also, add an ability to specify a custom constraint name
-> when calling bpf_out_of_memory(). If an empty string is passed
-> as an argument, CONSTRAINT_BPF is displayed.
+Hi Jean-Michel,
 
-Constrain is meant to define the scope of the oom handler but to me it
-seems like you want to specify the oom handler and (ab)using scope for
-that. In other words it still makes sense to distinguesh memcg, global,
-mempolicy wide OOMs with global vs. bpf handler, right?
+On Mon, 10 Nov 2025 at 09:34, Jean-Michel Hautbois
+<jeanmichel.hautbois@yoseli.org> wrote:
+> Le lundi 10 novembre 2025, 09:15:11 heure normale d=E2=80=99Europe centra=
+le Geert
+> Uytterhoeven a =C3=A9crit :
+> > On Fri, 7 Nov 2025 at 11:29, Jean-Michel Hautbois
+> > <jeanmichel.hautbois@yoseli.org> wrote:
+> > > Add platform device support for the MCF54418 RNGB hardware with clock
+> > > enabled at platform initialization.
+> > >
+> > > The imx-rngc driver now uses devm_clk_get_optional() to support both
+> > > Coldfire (always-on clock) and i.MX platforms (managed clock).
+> > >
+> > > Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/drivers/char/hw_random/Kconfig
+> > > +++ b/drivers/char/hw_random/Kconfig
+> > > @@ -270,12 +270,13 @@ config HW_RANDOM_MXC_RNGA
+> > >
+> > >  config HW_RANDOM_IMX_RNGC
+> > >
+> > >         tristate "Freescale i.MX RNGC Random Number Generator"
+> > >         depends on HAS_IOMEM
+> > >
+> > > -       depends on SOC_IMX25 || SOC_IMX6SL || SOC_IMX6SLL || SOC_IMX6=
+UL ||
+> > > COMPILE_TEST +       depends on SOC_IMX25 || SOC_IMX6SL || SOC_IMX6SL=
+L ||
+> > > SOC_IMX6UL || M5441x || COMPILE_TEST
+> > Is the same RNG present in other Coldfire SoCs?
+>
+> According to the RM, it is only present in MCF54416 and MCF54418.
 
--- 
-Michal Hocko
-SUSE Labs
+I guess that is sufficient to make it depend on COLDFIRE?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
