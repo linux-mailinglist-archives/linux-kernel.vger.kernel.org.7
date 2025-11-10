@@ -1,129 +1,63 @@
-Return-Path: <linux-kernel+bounces-894294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0DAC49B3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:07:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E70C49B44
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 27FE74E2BC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:07:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3A8D3A8CE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78C3301716;
-	Mon, 10 Nov 2025 23:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n3r9yfSy"
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8FC303A30;
+	Mon, 10 Nov 2025 23:07:37 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AACA2F5A18
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246112F657F;
+	Mon, 10 Nov 2025 23:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762816052; cv=none; b=rtW+obPKOVkkJqKbXB25h9lrE7zsWb0Y0gmIaBCFpPHn7Tey8E8Ed0FGCPM9Kep+JRCMUvsdyUwd8Rx6QY0ZWc6azq3qDzmfw82z1CpPIQKtQAfp1STnmB1TE4hwnbsae6+4Iuh0FZF7i50CpVAm9Vmai4a5B6NDaVg8Jfts/fg=
+	t=1762816057; cv=none; b=uEXlt/Kf6yuCWR6B35/2iDCPRUccuvUib9ZMYUnRWMg1rNroWLxkVxsnOrMCdZlN+y4N0xT65eZUcnkzDVdFarj8NoEYqnX52V+AyekGrTUtiVcIs8mvBqU7NTS2fr+ygXDafC+q1OyApb4fkVKv3fodTy2+i8kcDcUzy8UNZac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762816052; c=relaxed/simple;
-	bh=ifTxb2fd80Nni8oK6meGxFKTiLW9n9nNKijfIBRIngE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yzx6OdpgqmnknXMxjUFjSnhad7yQly+J5GmeWfbUN8pGwPL2rgU04Stf+YOZ/xSTaNcXQ7n4bcbziBMF3Dm9L9GsIcRm49ARpyquU39PNGpfvgRzqwBpOX4H7/9vP6qXOvDtpTlf6hjUVKt8K9rX28jFjV/3T/FBxlgWea5qpG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n3r9yfSy; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-89018e9f902so1741474241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:07:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762816049; x=1763420849; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A+TEDRVllKiGheH9iPhSOnW7gc7oRa0YYtno5v9NCzU=;
-        b=n3r9yfSyKE3IzQL9ORE1ZGcbG2uG7P5DX/Kqy/pLHe7WgBgeA2/PDMV+QyC1dFX2sx
-         aIYtfX15fX2KuU0DwHQMlNT4rISWqVJyj9DEN+bwXDPP4djO+vQ85KQY7ZGGpzmgpNas
-         3IVs8UZCbOmw9pfLkfNVerRp0fi3nhtDBFtM2MpDo0anbd0HoKpduCQTjuxZ26i5ycUD
-         PKBGTo61avn4/6a3kUTl0hmDxTcPLsSKUmkDC80dQPEPQYn//TRKRZ31k0ZPGlUIt99v
-         jfEdJFncRUavicFX8KUK5Jo6qv7iCoY6RbHVa8NBELvUwy8WSAXLGCKU9NcMOgDfs08c
-         qECA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762816049; x=1763420849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=A+TEDRVllKiGheH9iPhSOnW7gc7oRa0YYtno5v9NCzU=;
-        b=eWRdfdSRjU0BePG/ROlztDN0vqCxcsmZfCHenIObHsABWVKtVQYrQ8SntVODFAIQ56
-         B8ixXhY5i9QFyEAIbUnSk0sAOAIYpAAw3s0TC9/n6ug3MvBN6PnP4BX2TvkiTpu6ijfW
-         IsGdUm7JGmBCayIIN9ghdsV+tgliGko1mNJ2py1J4tpQ68ZGbg8BsOdXKLjI3xu4oax6
-         xoaaQjYml8QkHsc+okO742wcp5QmJ+ojCPtBhDs9/79pNz6eSwtrixcAUw7jRFly+QVM
-         2qMza6WCMCOWUaTgPS6VNzrgWYnS9634VaQPRexRYIejg4KpYcxDXS6XOdNwm5g7VvJP
-         s1cg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2fHQAz1oE4q9D3nhsMwY5ekWpRKv4pvH2pzuQ78SYEfbAwOuMRbx6tnDLO/2KtEYJZnQPkjMdShdGdjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdD2ip+EslkcajcAr3jJmGQuMgUCg+Y8LmjawxJO2TL1xXLulj
-	bXgghOpwnQSlTDeGs4YV7ndx0d7SOY95DKBNkVyPofM18HBMOC0YscXr0w+L+J5t3VbO6vusLim
-	AE8vpzKdidiTjy+mSLzT3k2RcdQEgDJfGhZG0TJEsIfpl20XxWVd7pCK1
-X-Gm-Gg: ASbGnctsaG3T/uygg27Oj/zOwTwW/0pExLoIZ9ppuWBRhiKw/go7AEwvm2306zwCjWZ
-	w4NC0CxcTWkcnTXbEznNj3gyztbMpS4Tn8CX6v7ecfF3CNmutcXiV92DVE3LJyk+TZHGnahVnUx
-	v5OhF0jaCp952QY9V/wOPuCOBIwYDrXA1PlDv0s2hqDxU06vlmc9rjcegfJk7PJFQI5ENqzNxVh
-	qStPPWQDV9p0M6dj2pxuq055EEexV8wZSBNjjOb654v3rk206Hibsm6OIjhZJnnmNe0uXCLbcb7
-	xl4YsA==
-X-Google-Smtp-Source: AGHT+IHjmwJDAFc2cXjg3msYUZA3lWk7d5XqAZpIUjQ6p7MF9o2gzZJ/MDrxTGoDvltOyMfSpTaTasHvkcT8023OaSE=
-X-Received: by 2002:a05:6102:c88:b0:5db:e0fe:984a with SMTP id
- ada2fe7eead31-5ddc469b7f0mr3590347137.19.1762816049213; Mon, 10 Nov 2025
- 15:07:29 -0800 (PST)
+	s=arc-20240116; t=1762816057; c=relaxed/simple;
+	bh=F4RtX9NIUHeK91wJx6rcDdmNWSMKqC2dtdzRh71/w/U=;
+	h=From:Subject:Date:Message-ID:To; b=Mk0/bZaciLc2PjI6kJdNGpHYwUMGdL6d+q06P+8E8djUMMLmb+oltYP1S4Vi4qDp0ggALD7w9jUoowx33sVcJtjzL3kw1n3DipWfHiOK+Iz9bMhOGUC9AZt/8fPjj3/bMLrC6Jlm2n0Sd2UvA9KJAPdwCELHRi2ZvubXaG4v5is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E7EC19424;
+	Mon, 10 Nov 2025 23:07:36 +0000 (UTC)
+From: Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 6.1.158-rt58
+Date: Mon, 10 Nov 2025 23:07:02 -0000
+Message-ID: <176281602239.304272.17205819242969938414@demetrius>
+To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@oracle.com>,Luis Claudio R. Goncalves <lgoncalv@redhat.com>,Stable RT List <stable-rt@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251110-iova-ranges-v1-0-4d441cf5bf6d@fb.com>
-In-Reply-To: <20251110-iova-ranges-v1-0-4d441cf5bf6d@fb.com>
-From: David Matlack <dmatlack@google.com>
-Date: Mon, 10 Nov 2025 15:06:58 -0800
-X-Gm-Features: AWmQ_blpug0sXFFcDvfwK6kurgehZgkyn7cusv2Dm36toryt7-1iUtP1-uzEui4
-Message-ID: <CALzav=e5JD4_4+vqa6udd0dSymW7W-=8Fnf-q0VaBv20+BvXBQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] vfio: selftests: update DMA mapping tests to use
- queried IOVA ranges
-To: Alex Mastro <amastro@fb.com>
-Cc: Alex Williamson <alex@shazbot.org>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jason Gunthorpe <jgg@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2025 at 1:11=E2=80=AFPM Alex Mastro <amastro@fb.com> wrote:
->
-> Not all IOMMUs support the same virtual address width as the processor,
-> for instance older Intel consumer platforms only support 39-bits of
-> IOMMU address space.  On such platforms, using the virtual address as
-> the IOVA and mappings at the top of the address space both fail.
->
-> VFIO and IOMMUFD have facilities for retrieving valid IOVA ranges,
-> VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE and IOMMU_IOAS_IOVA_RANGES,
-> respectively.  These provide compatible arrays of ranges from which
-> we can construct a simple allocator and record the maximum supported
-> IOVA address.
->
-> Use this new allocator in place of reusing the virtual address, and
-> incorporate the maximum supported IOVA into the limit testing.  This
-> latter change doesn't test quite the same absolute end-of-address space
-> behavior but still seems to have some value.  Testing for overflow is
-> skipped when a reduced address space is supported as the desired errno
-> is not generated.
->
-> This series is based on Alex Williamson's "Incorporate IOVA range info"
-> [1] along with feedback from the discussion in David Matlack's "Skip
-> vfio_dma_map_limit_test if mapping returns -EINVAL" [2].
->
-> Given David's plans to split IOMMU concerns from devices as described in
-> [3], this series' home for `struct iova_allocator` is likely to be short
-> lived, since it resides in vfio_pci_device.c. I assume that the rework
-> can move this functionality to a more appropriate location next to other
-> IOMMU-focused code, once such a place exists.
+Hello RT-list!
 
-Yup, I'll rebase my iommu rework on top of this once it goes in, and
-move the iova allocator to a new home.
+I'm pleased to announce the 6.1.158-rt58 stable release.
 
-And thanks for getting this out so quickly. We've had an unstaffed
-internal task to get rid of iova=3Dvaddr open for a few months now, so
-I'm very happy to see it get fixed.
+You can get this release via the git tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v6.1-rt
+  Head SHA1: 7f90be9bd646f3b3ba239d08fdfe6d90744cae07
+
+Or to build 6.1.158-rt58 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.1.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.1.158.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/6.1/patch-6.1.158-rt58.patch.xz
+
+
+Enjoy!
+Clark
 
