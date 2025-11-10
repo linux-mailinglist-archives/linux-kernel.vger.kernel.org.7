@@ -1,120 +1,115 @@
-Return-Path: <linux-kernel+bounces-893127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CB3C4695E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:28:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D27E6C46968
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:28:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C363BF41E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB92B3BFEDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B733FBE5E;
-	Mon, 10 Nov 2025 12:24:39 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1211918626
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079BF30AD1F;
+	Mon, 10 Nov 2025 12:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXBvDD/a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555CD2EBB8C;
+	Mon, 10 Nov 2025 12:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762777479; cv=none; b=EOkpnee5EWTEUehaC1Sxr59a2hHO09D81f9mvKy2/tC/s3zSmHRj93bezkp9PEuHtxlXKhx8SxKj/aRywqJslOq+drdE8YBAITZPMocLghGBfMneKUzwr26bGFQHUe6ELbILs2CjWIDbhoBUKIYomBLChjQyfDIWJ0Erk3O9uFs=
+	t=1762777502; cv=none; b=bWdQSV1ln6t/ZTY48WYaUXMqZVFy9xI8Wp3likOnLlBEHPBxfCoXqk8iWnRisUchbuSj7pdv/mKd0cjoH3V/7SNriyjE70x6zlHXA5km4zPx81CAWgcISCzf+mGQl0fkSIHNGTucUAEXUOn0rUKrB+oj5WFXD0t4dHAplqfBuPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762777479; c=relaxed/simple;
-	bh=5F52AzEPXsCHU2TlETR3GM8Gqw/rYkrelJ/fFBb3pdo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=uTBOO10kcabPxw1DElo+ASmtb8jM5n3GN5T7TLavToNs/nUno1LwSP6QmHIhlWpGvHmnv4Jc/68oLP1vF1rJ8MdwZX2oveWf+oHYJvR3Bu2CoFWPbOXJITH4N1oflPeRehW/fSq+DM+OJ6haW11NyiqsEHbyM4a6JCW130H1Xdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.10.40.23])
-	by gateway (Coremail) with SMTP id _____8CxL9N82RFpWnchAA--.5948S3;
-	Mon, 10 Nov 2025 20:24:28 +0800 (CST)
-Received: from [10.10.40.23] (unknown [10.10.40.23])
-	by front1 (Coremail) with SMTP id qMiowJCxG8F52RFpzx0uAQ--.32684S3;
-	Mon, 10 Nov 2025 20:24:25 +0800 (CST)
-Subject: Re: [PATCH v2 0/2] LoongArch: Refine init_hw_perf_events()
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, vishal.moola@gmail.com, arnd@arndb.de
-References: <20251110025906.17096-1-yangtiezhu@loongson.cn>
- <CAAhV-H4=ZfYfRFE8VYmxyKxTAi8E=YKysG1fzed4kZRWnMUoeA@mail.gmail.com>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <4deb96d9-509c-3b3f-934f-58de8d29241b@loongson.cn>
-Date: Mon, 10 Nov 2025 20:24:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1762777502; c=relaxed/simple;
+	bh=NpY2AUK7VY2YVw/7RA2XeEy8IORez96b9m5ykP2PP/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FyDP+mfqPAQRgt/7iHLtWntGyrKsvtKGkwgPnrmV2O7Lbqcm/lG/xpwWWiPqd4BMVGpHHGRdH/fzDg+VLFBw9E2/xcn9DFHUn2qzGtVL/QX+rjSTFJacK46smjQHiWgfm7Ojt8pglkjVY0kiBB3BksuMeC/uv4hUX90DXJ5HK44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXBvDD/a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62DE2C19421;
+	Mon, 10 Nov 2025 12:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762777502;
+	bh=NpY2AUK7VY2YVw/7RA2XeEy8IORez96b9m5ykP2PP/Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HXBvDD/aZVkfwuX9K2/DMLirATxDvc4HlIZV1o0NPBYcxFeAJfG81bWW0Fwa7ce9K
+	 inDbHKJ1tVDlE+Iq/VSTnnxUijQMHHRirHLWUurbWj5o59lZMJAzF7QRTvXf9DhUoV
+	 YCwSZZDwdVUZaZ4vIPwXEOHsZuacJZzX1V3y8xKBcS7luFvC7Un1hgmablEeDaJWM0
+	 PdhhJwElTPtCbSKTX2aiK8NAU/3YbZaKyNY6oWWYoIAzrjBiFYhEFmhrIvfTzQg7Bn
+	 ncIszN6i1X4fztPA99vc5rnRadadGOLPqfZlq6rbws2vt7+Y68oBblyk1jzRcVjalx
+	 z7dph5F8Esh9w==
+Date: Mon, 10 Nov 2025 12:24:56 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "Xu, Baojun" <baojun.xu@ti.com>, "tiwai@suse.de" <tiwai@suse.de>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	"13916275206@139.com" <13916275206@139.com>,
+	"Ding, Shenghao" <shenghao-ding@ti.com>,
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"Yi, Ken" <k-yi@ti.com>, "Lo, Henry" <henry.lo@ti.com>,
+	"Chen, Robin" <robinchen@ti.com>, "Wang, Will" <will-wang@ti.com>,
+	"jim.shil@goertek.com" <jim.shil@goertek.com>,
+	"toastcheng@google.com" <toastcheng@google.com>,
+	"chinkaiting@google.com" <chinkaiting@google.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add
+ TAS2568/5806M/5806MD/5830 support
+Message-ID: <aRHZmMDW3UIydHZ-@finisterre.sirena.org.uk>
+References: <20251108110759.2409-1-baojun.xu@ti.com>
+ <20251108110759.2409-2-baojun.xu@ti.com>
+ <20251109-heavenly-observant-quetzal-b1bead@kuoka>
+ <ecc69a98a23d406ea1eada62144415fc@ti.com>
+ <035d6c35-c27a-4f5c-8603-ea5857d78e63@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H4=ZfYfRFE8VYmxyKxTAi8E=YKysG1fzed4kZRWnMUoeA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxG8F52RFpzx0uAQ--.32684S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7tFWUuw13AFW7Aw4kZw15WrX_yoW8XFyfpF
-	WDAFsI9r4DGrn7ZF4qga18WFyjqF1kWr9IgFy8J3s8uFWDZ3Wvvw18ur4xuF97Xr98KF1j
-	qFyfXa4kuFyUA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
-	twAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
-	k0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUc0eHDUUUU
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NyXJEyfyRbw6LOaj"
+Content-Disposition: inline
+In-Reply-To: <035d6c35-c27a-4f5c-8603-ea5857d78e63@kernel.org>
+X-Cookie: You dialed 5483.
 
-在 2025/11/10 下午2:48, Huacai Chen 写道:
-> V1 was applied last week and now in linux-next, don't do meaningless work.
-> 
-> Huacai
-> 
-> On Mon, Nov 10, 2025 at 10:59 AM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
->>
->> This version is based on 6.18-rc5, use the proper patch title
->> to make it clear.
->>
->> Tiezhu Yang (2):
->>    LoongArch: Use CPUCFG6_PMNUM_SHIFT to get PMU number
->>    LoongArch: Detect PMU bits via CPUCFG instruction
->>
->>   arch/loongarch/include/asm/loongarch.h | 1 +
->>   arch/loongarch/kernel/perf_event.c     | 7 ++++---
->>   2 files changed, 5 insertions(+), 3 deletions(-)
 
-I do not like to argue with you, but I do not think what you said is
-right, there are double standards here.
+--NyXJEyfyRbw6LOaj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The code are rebased frequently by you in linux-loongson.git, the latest
-is after 6.18-rc5 that is in this week, my patch is also rebased.
+On Mon, Nov 10, 2025 at 08:11:20AM +0100, Krzysztof Kozlowski wrote:
+> On 10/11/2025 06:29, Xu, Baojun wrote:
 
-You accepted the suggestion of your patch v1 title [1] and send v2 [2]
-although v1 has been applied by Andrew, because you think it is a good
-suggestion.
+> >> See also: https://urldefense.com/v3/__https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst*L46__;Iw!!G3vK!SQ5aH9VZhZ2QzKdtYIs5BX7OarVmt1XzwB9XxqFgAGN0ONvsEoAjHsuoZWrrmetzH_xlxeSfWA$
 
-I just do the similar and right thing,  but your reply is not polite
-and friendly, and also do not do the thing what you should to do as a
-maintainer.
+> What's with this link?
 
-[1] 
-https://lore.kernel.org/linux-mm/20251108084724.3e389b6597294900347b0476@linux-foundation.org/
+Some e-mail systems rewrite incoming links to ensure that if anyone
+clicks on them they get pushed through some checks for them being
+malicious at the time they're being viewed, narrowing the window where
+something nasty could be provided.
 
-[2] 
-https://lore.kernel.org/linux-mm/20251109021817.346181-1-chenhuacai@loongson.cn/
+--NyXJEyfyRbw6LOaj
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[3] 
-https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git/commit/?h=loongarch-fixes&id=4c8a7c982772
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Tiezhu
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkR2Y0ACgkQJNaLcl1U
+h9DqpQf/S9mDPJpZUTDC7qPQhSAN8/2l8sGvL4j7tIMAbtdzThq6EQXA8C9rmBOM
+mB4PtBgyh5jJO82gnV+dL3nqhircuP1ItiWkEMkzRZBHSlLPj5hTl29W7aNxH6Go
+EQu/MvYJpvFzT8aNFVJG/eESSv6YHQGcs1JcO0mre0lonI1mVH745uKGpL83DtEU
+nQ+o8n3ASEqW/sZlUGtyXIkm8K8FcptCVn2ZpMYnpWgG2WX5w8jMDM4aGfV+G6sv
+MUABYoUYk6HvdTKo+xANHDmeFWQ+gDioxeCB2OHrQ7iDBP1r3oqYl77X2+/Zk6ba
+ptBLzgHjTbYT8l0qmURI1a/eTLeQjw==
+=y+xq
+-----END PGP SIGNATURE-----
 
+--NyXJEyfyRbw6LOaj--
 
