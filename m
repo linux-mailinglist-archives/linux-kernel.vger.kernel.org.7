@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-894192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93CEFC49721
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:46:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A7DC49724
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D685188A86B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:46:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ECEE534BA8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9BE23A9B3;
-	Mon, 10 Nov 2025 21:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDA233FE24;
+	Mon, 10 Nov 2025 21:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="erDTu0KC"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PyVPY69Z"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C78331A4F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D2F337BA6
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762811122; cv=none; b=Ym4de0B2LXV6LI++R732y8xN6Y5o+aoaQgVoHlerOSL6gyiTHoqxpLhEdl6eadSYPuhXER7fkiKsXo6KJd3e2r8JyPeXde1rGsOZHcpq8Y7ohaFMpT7DF8m5m9tCPEKQ2TEtjWhfB6dlonzYZQKdhdKUo9H9qFzP/hSr4uxNRnI=
+	t=1762811123; cv=none; b=oO01zXKrRoYbaOpGpqQ4YcX8TALdLMR0D5esEd5eBUHpe8zw/CWSOmbJ/b2OKuYDZnbbzHfofUa6GBBthWL46nPqNtauBRX1WmXTm2cWGUNCcN6n/YqWXye1xT0jFapAgw0+7EpdqkVdFAnlx+0sVEtyZoYNFwE5wLrmrJ8llgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762811122; c=relaxed/simple;
-	bh=4JXbHE4jomV2cfwYF80hI5yre6LwFMYOFIy0n9rH/fg=;
+	s=arc-20240116; t=1762811123; c=relaxed/simple;
+	bh=w8tUjMrod+NxWocX37Ssa+027kG45dXf54w7jwYksSA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mCG66EYyJfe5Tq9ax00lQHK/DrqA/7vgkW1x0JeXUoGTzsYUR5thg3cd6X0vsfceSCG2x1E41pbVQpsOvapEZ+5r9Lt78iRvDsAiF2ERUG06gS71pBwo+vQlzFKp9KaPK5bn/UAPr46IyqLqxe75hQWiJQh6K65A/qdbkgE6MhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=erDTu0KC; arc=none smtp.client-ip=209.85.218.51
+	 MIME-Version; b=dOA26ytvsecJTbpwYiN5MHM1MClZCv1Zwwb+qdfkC+inQQZNgDv6Tgds+mhNZ9xBjy5qmIIYpBQcrNOM8PLu/TQwrrnQ39L0EuyNPdk/O0CedbdCfZu0PBQIlXMeSZnHsBjD5d/dBF6fwgcau2GIg/ChhccYXTW+d3tKGTxw3ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PyVPY69Z; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b7321b03aecso3707366b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:45:19 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b72e43405e2so37064566b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:45:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762811118; x=1763415918; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762811120; x=1763415920; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=840dLR3TffmVB9X6YIETKfX5Uiq2NyaIKt8jaa7Xq4E=;
-        b=erDTu0KCqQLNZOBANn5of3UYM692MKqExlk4BCFGlcwVQfcUBevJtj6pp8kVAQSTfk
-         2YHQ3wSoy1B5AeoAyzlz3AkDjLdxYamZ21Gx2zM29Kr56PIWMQXYDvi63igbdzVhhzCw
-         PB83p9H/idov9/DMOvNcZzgnM83co1LxU+IbA0iGHkcxxS87x4VHj5xjo4yvxT/6xC2R
-         9IxbeCyOmSldhBXKDvSvLGbA5pQgvrAnsukiIhOV+eAr40KEAaT4F6aCDI/DowG6BIza
-         F6eClCObqPDVtmfMrfmfrLcHaWKgFmOee9gDqq6P11fKhfMtc2M1xBuqrqcLL3Z/tjyn
-         Dn2Q==
+        bh=Ysp/qagZkvMXUd9HzXpEknh2ZcUQT5LP/QY/YxZSToE=;
+        b=PyVPY69ZCuCnF4lBmuVQ1bkQWitC+2ZPoABvfxoAYyyd3x3HJe9D2pyl7tAWUz5wFH
+         f8gQ7FDM7hxvg5Zi8qwUo4rYrRQNOHvQIghL0GmYuFNuovoWVucC0Ml9JUkghBlGwD5I
+         YHkRkbFhKIY7yjb1Y5Sj8ryVFcz502i34WT+5v6vKI14Wj2mNI5Y2g3lALsfJPMWJCOy
+         GE325tZJPylNc6WvYZ+f56L+uehCtQRJ/q8cgELsCqNx8X5TdtYtxm3Iy/2gjXH83X3H
+         RV7au06JdFwzJg4ONQWKgsrvSMocTQ9O4No2gVZf6jQgKpFzzzXMSys15p0J6zyk57gr
+         Oc5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762811118; x=1763415918;
+        d=1e100.net; s=20230601; t=1762811120; x=1763415920;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=840dLR3TffmVB9X6YIETKfX5Uiq2NyaIKt8jaa7Xq4E=;
-        b=qI7cyUI9eqvDReV+4wtjruss7XJXqUTvv6PrXz9zZlcL9nBuMJzLOx2w3jNwBaO1ZX
-         1P8zh3GbWPzxqpxgRrzC90CHoPHywIYlaSWcv0OSHzVQyLUwTP50r5DwIUccQiySsYL5
-         0nvXuw+hvMmG4nmVLoElj8FfK7rf5iQFzWXAJBTs+F+uAiEeS3Q8thiJPJiQduqGvqqd
-         AD219u6FwO8eIR/aZ68veuzBXFCvO9kZIsSojvx3R7FRCKXgj9nm+w0rVHFXbIu8UKdS
-         GfM3GzHQTcUa4QNhL7ozDgK/Hb4kyadJKub1Qj9wlzdoJOIQLeHaADNxiKA3kLTb9gxq
-         +g1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXd8CpqefZ2rOtHz1BBnlmmOa4LlyPzC70P51s47m0lUkTqPaBhlYuXOawudfVDdT9j3YRjX1o6PoB9Txo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXxpzvYUi8XsHugUcMqNTzCDzrOrLkibcBuTQ7vJ4TbN6mkLUt
-	FJt8qEtH+O3ckMR6C5DE7c+EQLyttjZ6d+uWgKdUwKNs7sEcD/Np5GjH
-X-Gm-Gg: ASbGncvb718XBNAG0uMZt4T2Du0mhnJdDFaKZPOMl9cVjrR4hpZs1hP3oqX1cfy+0LA
-	iEB2w1svBW41E510v8XCfIt8Qcn1sdKBlJv4nWmkoNN8hXgCrZWYJZoJtPZl70+zAB1pCIvByYj
-	FvN0IbsUgOErQJvgSznW8uris8kQ6QSsldf7jSV6xQFFHgdzREenURC1ye+oMU52v9T4ozVZ/Wu
-	zfVPlJlcQ2P2kWgn0M41sT3nU39OiYlVXSPDjVfqC0V0BhmBBq9fj8bEZaLAacdmc7e0YkpbMeb
-	/8MrYqUbKsk0zXDFVqDRSg0Uq4jagm0UNZ7EdHnUYPOc0oRwI3MWJoEeVhr8m8grrntky91CHIg
-	VHEwO1V/F9rZUTCy6KxshnZh8dOV0bvnnNX3fdxYLxnH9FVQm9Fe635LGhUeAn9dVOogX9bXBko
-	D6n//yOqN/eSQJXv8TzIoAn93IEJdQhbG7c02PrJE6NLS0dzX9XnkYwxYfDGDrho8sbFk=
-X-Google-Smtp-Source: AGHT+IFhtB35qNO40KIb+McYDI8DuYUDh30HMzmkWInvkJciIVeFC/FNvZaoK/NXqRGDmTtF5HjxIw==
-X-Received: by 2002:a17:907:3f99:b0:b72:58b6:b26f with SMTP id a640c23a62f3a-b72e04e368bmr815459966b.42.1762811118270;
-        Mon, 10 Nov 2025 13:45:18 -0800 (PST)
+        bh=Ysp/qagZkvMXUd9HzXpEknh2ZcUQT5LP/QY/YxZSToE=;
+        b=kx/zk/lb09yoga6I3Rulhr3X7QNu49I28wzyRncLGCQexheRJMxNiUeLVl2UZ3x5iw
+         hC1hDGwmf4qVvjhwEMlmpXlOEwVN+L/uJKSzEffHYm8DDWdmU1AeUvgoysbQKWafvTJW
+         lSX/wCUuMNnUDoK8rqIiJ8ITg/SyQUD3T/YnTX/mtYDpyFIdtrgoNU/rVOHITuET+dv/
+         Cvd3gGZ1xQUPP1jZRz96hfvysHpCjkhBvgGQoyUaAT6unKCfIzo2OS/KurbYpf2vLaXy
+         8vFoxODae7Ds3uWC7dhS/a6LzszLMuKoB6r/LCroiuEszpvwxSP7Xy0h5YqnMBfqm0Pa
+         akzw==
+X-Forwarded-Encrypted: i=1; AJvYcCW85iqEt+XYmKqxXKAg1/hqopsg5CN6Lj9dptld+goz3/NuyR0GiJG5Uy1A5TBSE8mpwDFbyXmG1iSJGSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWDt6aN1wpnK1jW2yA0bU2zm3EyA0Wpn02utLiUwq0Xmx3mBCV
+	lGxLU4NcJoz1bUBcfzeRTViI9FZ4JA0A37ekOjP8YRlnjn9+rq5lC1CJ
+X-Gm-Gg: ASbGncsqxw0Ts1DS/ilvOEVcIFrPqfDECbfo96LUloaLl/JBbLgDISmZheREQQz1ufk
+	1Qc27Epg22MNg2+L0BGgs4t4BqIp4WkY2CeQNV6fzSoUtDaXHBKbxuLXbqA4nTVJVNF0FTHv2ns
+	3GNv4nZi9hTJxni3v8Y6F1kBmcwkfegg9XEflAmzyKKaonjmUscZorVpGUYSTEhKbvt898zuWtb
+	mUD5Ap9DqJMCoEvibyQ+5CN5gPzZVVw3WD/llNb6myXCMTsrPtPBie0NG6Vc5HvUmPXKnDSPLjk
+	vVJ6v9GHMcs3+smkG97sGaIrqPq5pWPgLzhocLR0LmNJHNoXGnW+A9apXvxRecqAEpQfgyWX71Y
+	a2PEjzej4gNuRpgmJDOIrJz/sm3KAjDqfZPPeQUln7JUUhTeYANaj6cK0ZsoDOKse4tkgyHxhF6
+	2g0DWj1AdtpjXc3a4koalsSOZWcCFYPZONBWw/p9XFa0UBGf25LJOvLNH+
+X-Google-Smtp-Source: AGHT+IH8183W3yRA3AVXbVExZKH9s5MO4/1/56KjZdmHqYG52tHaQAanioLg7jwkN+w4uh1I1H509g==
+X-Received: by 2002:a17:906:f586:b0:b72:f82c:a628 with SMTP id a640c23a62f3a-b731d37484dmr81219866b.27.1762811119675;
+        Mon, 10 Nov 2025 13:45:19 -0800 (PST)
 Received: from localhost (dslb-002-205-018-238.002.205.pools.vodafone-ip.de. [2.205.18.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97e447sm1260901666b.42.2025.11.10.13.45.17
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b73108b0937sm266556666b.3.2025.11.10.13.45.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 13:45:17 -0800 (PST)
+        Mon, 10 Nov 2025 13:45:18 -0800 (PST)
 From: Jonas Gorski <jonas.gorski@gmail.com>
 To: Andrew Lunn <andrew@lunn.ch>,
 	Vladimir Oltean <olteanv@gmail.com>,
@@ -85,9 +85,9 @@ To: Andrew Lunn <andrew@lunn.ch>,
 Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC net-next 2/3] net: dsa: deny multiple 8021q uppers on bridged ports for the same VLAN
-Date: Mon, 10 Nov 2025 22:44:42 +0100
-Message-ID: <20251110214443.342103-3-jonas.gorski@gmail.com>
+Subject: [PATCH RFC net-next 3/3] net: dsa: deny 8021q uppers on vlan unaware bridged ports
+Date: Mon, 10 Nov 2025 22:44:43 +0100
+Message-ID: <20251110214443.342103-4-jonas.gorski@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251110214443.342103-1-jonas.gorski@gmail.com>
 References: <20251110214443.342103-1-jonas.gorski@gmail.com>
@@ -99,92 +99,129 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When creating 8021q uppers on bridged ports on a vlan filtering bridge,
-we will configure the VLAN on the ports. For the dsa driver, there is no
-difference between a 8021q upper on bridged port and a port vlan
-configured within the bridge.
+Documentation/networking/switchdev.rst says:
 
-For that reason, if we configure a second 8021q upper for the same VLAN
-on a different port of the bridge, we implicitly enable forwarding
-between these ports on that VLAN.
+- with VLAN filtering turned off, the bridge will process all ingress
+  traffic for the port, except for the traffic tagged with a VLAN ID
+  destined for a VLAN upper.
 
-This breaks the requirement for 8021q uppers for the VLAN to be
-consumed, so we need to reject these configurations. Reuse
-dsa_user_vlan_check_for_8021q_uppers() and change its argument to just
-the vlan id.
+But there is currently no way to configure this in dsa. The vlan upper
+will trigger a vlan add to the driver, but it is the same message as a
+newly configured bridge VLAN.
 
-Before:
-
-$ ip link add br0 type bridge vlan_filtering 1
-$ ip link set swp1 master br0
-$ ip link set swp2 master br0
-$ ip link add swp1.100 link GbE1 type vlan id 100
-$ ip link add swp2.100 link GbE2 type vlan id 100
-$
-
-After:
-
-$ ip link add br0 type bridge vlan_filtering 1
-$ ip link set swp1 master br0
-$ ip link set swp2 master br0
-$ ip link add swp1.100 link GbE1 type vlan id 100
-$ ip link add swp2.100 link GbE2 type vlan id 100
-RTNETLINK answers: Resource busy
+Therefore traffic tagged with the VID will continue to be forwarded to
+other ports, and therefore we cannot support VLAN uppers on ports of a
+VLAN unaware bridges.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
- net/dsa/user.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ net/dsa/port.c | 23 ++++-------------------
+ net/dsa/user.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 41 insertions(+), 20 deletions(-)
 
-diff --git a/net/dsa/user.c b/net/dsa/user.c
-index fa1fe0f1493a..e8c6452780b0 100644
---- a/net/dsa/user.c
-+++ b/net/dsa/user.c
-@@ -653,8 +653,7 @@ static int dsa_user_port_attr_set(struct net_device *dev, const void *ctx,
- 
- /* Must be called under rcu_read_lock() */
- static int
--dsa_user_vlan_check_for_8021q_uppers(struct dsa_port *dp,
--				     const struct switchdev_obj_port_vlan *vlan)
-+dsa_user_vlan_check_for_8021q_uppers(struct dsa_port *dp, u16 other_vid)
+diff --git a/net/dsa/port.c b/net/dsa/port.c
+index 082573ae6864..d7746885f7e0 100644
+--- a/net/dsa/port.c
++++ b/net/dsa/port.c
+@@ -728,35 +728,20 @@ static bool dsa_port_can_apply_vlan_filtering(struct dsa_port *dp,
  {
  	struct dsa_switch *ds = dp->ds;
  	struct dsa_port *other_dp;
-@@ -674,7 +673,7 @@ dsa_user_vlan_check_for_8021q_uppers(struct dsa_port *dp,
- 				continue;
+-	int err;
  
- 			vid = vlan_dev_vlan_id(upper_dev);
--			if (vid == vlan->vid)
-+			if (vid == other_vid)
- 				return -EBUSY;
- 		}
- 	}
-@@ -702,7 +701,7 @@ static int dsa_user_vlan_add(struct net_device *dev,
+-	/* VLAN awareness was off, so the question is "can we turn it on".
++	/* VLAN awareness was on, so the question is "can we turn it off".
+ 	 * We may have had 8021q uppers, those need to go. Make sure we don't
+ 	 * enter an inconsistent state: deny changing the VLAN awareness state
+ 	 * as long as we have 8021q uppers.
  	 */
- 	if (br_vlan_enabled(dsa_port_bridge_dev_get(dp))) {
- 		rcu_read_lock();
--		err = dsa_user_vlan_check_for_8021q_uppers(dp, vlan);
-+		err = dsa_user_vlan_check_for_8021q_uppers(dp, vlan->vid);
- 		rcu_read_unlock();
- 		if (err) {
- 			NL_SET_ERR_MSG_MOD(extack,
-@@ -3185,6 +3184,16 @@ dsa_user_check_8021q_upper(struct net_device *dev,
- 		return notifier_from_errno(-EBUSY);
- 	}
+-	if (vlan_filtering && dsa_port_is_user(dp)) {
+-		struct net_device *br = dsa_port_bridge_dev_get(dp);
++	if (!vlan_filtering && dsa_port_is_user(dp)) {
+ 		struct net_device *upper_dev, *user = dp->user;
+ 		struct list_head *iter;
  
-+	rcu_read_lock();
-+	err = dsa_user_vlan_check_for_8021q_uppers(dp, vid);
-+	rcu_read_unlock();
-+
-+	if (err) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "This VLAN already has an upper configured on a bridge port");
-+		return notifier_from_errno(err);
-+	}
-+
+ 		netdev_for_each_upper_dev_rcu(user, upper_dev, iter) {
+-			struct bridge_vlan_info br_info;
+-			u16 vid;
+-
+-			if (!is_vlan_dev(upper_dev))
+-				continue;
+-
+-			vid = vlan_dev_vlan_id(upper_dev);
+-
+-			/* br_vlan_get_info() returns -EINVAL or -ENOENT if the
+-			 * device, respectively the VID is not found, returning
+-			 * 0 means success, which is a failure for us here.
+-			 */
+-			err = br_vlan_get_info(br, vid, &br_info);
+-			if (err == 0) {
++			if (is_vlan_dev(upper_dev)) {
+ 				NL_SET_ERR_MSG_MOD(extack,
+-						   "Must first remove VLAN uppers having VIDs also present in bridge");
++						   "Must first remove VLAN uppers from bridged ports");
+ 				return false;
+ 			}
+ 		}
+diff --git a/net/dsa/user.c b/net/dsa/user.c
+index e8c6452780b0..35265829aa90 100644
+--- a/net/dsa/user.c
++++ b/net/dsa/user.c
+@@ -3156,6 +3156,30 @@ dsa_prevent_bridging_8021q_upper(struct net_device *dev,
  	return NOTIFY_DONE;
  }
  
++/* Must be called under rcu_read_lock() */
++static int
++dsa_user_vlan_check_for_any_8021q_uppers(struct dsa_port *dp)
++{
++	struct dsa_switch *ds = dp->ds;
++	struct dsa_port *other_dp;
++
++	dsa_switch_for_each_user_port(other_dp, ds) {
++		struct net_device *user = other_dp->user;
++		struct net_device *upper_dev;
++		struct list_head *iter;
++
++		if (!dsa_port_bridge_same(dp, other_dp))
++			continue;
++
++		netdev_for_each_upper_dev_rcu(user, upper_dev, iter) {
++			if (is_vlan_dev(upper_dev))
++				return -EBUSY;
++		}
++	}
++
++	return 0;
++}
++
+ static int
+ dsa_user_check_8021q_upper(struct net_device *dev,
+ 			   struct netdev_notifier_changeupper_info *info)
+@@ -3167,10 +3191,22 @@ dsa_user_check_8021q_upper(struct net_device *dev,
+ 	int err = NOTIFY_DONE;
+ 	u16 vid;
+ 
+-	if (!br || !br_vlan_enabled(br))
++	if (!br)
+ 		return NOTIFY_DONE;
+ 
+ 	extack = netdev_notifier_info_to_extack(&info->info);
++
++	if (!br_vlan_enabled(br)) {
++		rcu_read_lock();
++		err = dsa_user_vlan_check_for_any_8021q_uppers(dp);
++		rcu_read_unlock();
++		if (err) {
++			NL_SET_ERR_MSG_MOD(extack,
++					   "VLAN uppers not supported with non filtering bridges");
++			return notifier_from_errno(err);
++		}
++	}
++
+ 	vid = vlan_dev_vlan_id(info->upper_dev);
+ 
+ 	/* br_vlan_get_info() returns -EINVAL or -ENOENT if the
 -- 
 2.43.0
 
