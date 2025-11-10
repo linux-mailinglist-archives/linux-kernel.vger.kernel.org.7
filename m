@@ -1,202 +1,163 @@
-Return-Path: <linux-kernel+bounces-893237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACB7C46E10
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:26:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF83CC46E52
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D0E6189197F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:26:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5514C3A0424
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E74E22579E;
-	Mon, 10 Nov 2025 13:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727C5310779;
+	Mon, 10 Nov 2025 13:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lB7I03t3"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZMOehkiy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2F8310779;
-	Mon, 10 Nov 2025 13:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38882EBB9C;
+	Mon, 10 Nov 2025 13:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762781138; cv=none; b=L8kuyhaqzOsoeO+wyk1pSw7KxW3LHwXWNigR41XQLOUKevN5CXjiOwCBEg14EbN8IYA+LXmv76tAFL+Zpc9bEum79HhhS0EcEuOyoSbcJl0zdP2KsSsa+bNvh3jeDzz+/R2ctTrf0hW5fwR7pv3hGlxyWKO0b4j4PPyVzDuNvjY=
+	t=1762781213; cv=none; b=IXAjw2Z7hf9QcD5GscxwzRJl8v7nLn+nkeS6XcExR6OXb69NrHh0ZcntKfXua4UYWvwPp7uRTX9Gg5JNzzpLZGNJ6XzttHRgHFX49/ovEfsZDjlDwucO+OaAPkgLTVIE2EbAHBRws427Woy4gtowXKMANG2tEwcfov/HhDOhkP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762781138; c=relaxed/simple;
-	bh=buCQpEO2NNmWTUOFyhFhZmBVaAUqa8QS4fFecvMK6ZM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MFK7RB3g46jr/fA6OWjb/62AJQYuVt0lQtLGKe6N0U25cFILvHWDqRK5A2xomlS81PkSQb4dmbIl72ouWZ4yGUwBVP0k4AGGTvnJBonZkh7CoHyo563elpYNbPOUS8f2AWvl8CoRnTw6Z2ohJ1ZJQdA4/KI5FY7/VN21N6YSL50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lB7I03t3; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9Jt3PD015833;
-	Mon, 10 Nov 2025 13:25:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=1e6Cs4
-	nDenanGEYowVzx/aUetXHV0nHaCcSJvLKIxgQ=; b=lB7I03t3IMMgVTGNiSltdW
-	jgVPc4JDSTJXHiRkEwrEjcrgMvsnZl6kHIQ0T0qmb/lSgFKs4PIJl13l3csClvmk
-	mowUztby4GWk7wQ7whhf3QqSTca8GjBPAHAACzMSwPNX/43Hcphs84V78C5U/SCs
-	onGfu1AG/2XLUbodeenXzGy7L5GWFPDK4Kgsk9bKm5aq3UTsOwkHEKMu30xc/Mbf
-	l9oti86ZaRTO6V1LtCcKbWYmExlTfgxAziUzVXwcj7olXj6BArxbf12gZeZFcbG1
-	EVmSHXk1LH4K8qPgihbH12wcgYrL67HtkuqzEA3Xbsyywh+VevcUpEIVJMv9RI5w
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa3m7xk13-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 13:25:28 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AADJ6Fn004570;
-	Mon, 10 Nov 2025 13:25:27 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa3m7xk0u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 13:25:27 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAD5Rh1011600;
-	Mon, 10 Nov 2025 13:25:26 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aajw15fnf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 13:25:26 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AADPNK925166380
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 13:25:23 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 15F512004B;
-	Mon, 10 Nov 2025 13:25:23 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E4E9120043;
-	Mon, 10 Nov 2025 13:25:22 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 10 Nov 2025 13:25:22 +0000 (GMT)
-From: Gerd Bayer <gbayer@linux.ibm.com>
-Date: Mon, 10 Nov 2025 14:25:06 +0100
-Subject: [PATCH 2/2] PCI: AtomicOps: Fix logic in enable function
+	s=arc-20240116; t=1762781213; c=relaxed/simple;
+	bh=gqluEsxLQlbV3vngbeO8V//CEUVe0NkM4sEqKyJqBVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U2Uehh2rXRuOqC3SlwuM2b1y6Fu53EDudxeaoB44bPkvs1cTCn3IB1+0QPQV64ttyi5iS3I1WForPfnncxbXGjOYFBEb0Kc2zLqBmtVYl45Xy48uoRjHkaDh2aJ996ARFxeHh6/BZA3nK+TGrCffOlhUv1ZBBRHVCuYpO6Ik6E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZMOehkiy; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762781211; x=1794317211;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gqluEsxLQlbV3vngbeO8V//CEUVe0NkM4sEqKyJqBVc=;
+  b=ZMOehkiyNZMJdT6wlKz1eQlP7EdIaGli/KwkhbSmCQ3BMgsy3w+agHIk
+   C0EZgiSvmDOO66ptfkAa+3s3SbbAIRcDwtw5KNV/wR2O3W7c4WWiesCS0
+   JKbnCNdSZFtdLMHaN2/9y152apuH/tmLU02/1D765dVUw8O21QPCZTOz8
+   GB3H/K33ESwD/Wh7x2kSbzwEmnP17TJ0ZPKsYfJBKWjSDPnn7Lxd9xgB/
+   YPE7hWfU5FG2g2uWqDOgQCyAUjmUUms3T8do0PlMcQ3LwdOeeqhEZNtXg
+   R8OzmVF+okqZPXqZKqT/5Ii97dihSPcBX6y2rj/aG4vQldLNFuEUTwr83
+   w==;
+X-CSE-ConnectionGUID: EmQbSs3RTVGKJCJuQ7mtcg==
+X-CSE-MsgGUID: 0ytpoQ/8Q/iGDw8Ap7NvEw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="67436098"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="67436098"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 05:26:51 -0800
+X-CSE-ConnectionGUID: t+LJONLVQHSZACIPcylDHg==
+X-CSE-MsgGUID: TMq45V+1QXibCa/0AnAzug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="192932412"
+Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 10 Nov 2025 05:26:45 -0800
+Received: from kbuild by 7b01c990427b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vIRuu-0000Sp-2q;
+	Mon, 10 Nov 2025 13:26:44 +0000
+Date: Mon, 10 Nov 2025 21:26:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Youngjun Park <youngjun.park@lge.com>, akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chrisl@kernel.org, kasong@tencent.com, hannes@cmpxchg.org,
+	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, shikemeng@huaweicloud.com, nphamcs@gmail.com,
+	bhe@redhat.com, baohua@kernel.org, youngjun.park@lge.com,
+	gunho.lee@lge.com, taejoon.song@lge.com
+Subject: Re: [PATCH 3/3] mm/swap: integrate swap tier infrastructure into
+ swap subsystem
+Message-ID: <202511102100.y6n1mtle-lkp@intel.com>
+References: <20251109124947.1101520-4-youngjun.park@lge.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-fix_pciatops-v1-2-edc58a57b62e@linux.ibm.com>
-References: <20251110-fix_pciatops-v1-0-edc58a57b62e@linux.ibm.com>
-In-Reply-To: <20251110-fix_pciatops-v1-0-edc58a57b62e@linux.ibm.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, Jay Cornwall <Jay.Cornwall@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>
-Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
-        Alexander Schmidt <alexs@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gerd Bayer <gbayer@linux.ibm.com>, stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=MtZfKmae c=1 sm=1 tr=0 ts=6911e7c8 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ud980_RLCRqylQVSWKAA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: 5rk5i6UE4fy0sTbxzVXFbAhpWiKfgyqt
-X-Proofpoint-ORIG-GUID: tzQ8cJIvoEU-h7xw_d8Qjuu2k8LU-t_c
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA3OSBTYWx0ZWRfX9MtzRoJieOPK
- 0rkmm0DJoCWIpqpcu6gpaWwfutv/Bv/hv0zfCuD9lUbodiygx26R1jKlpcJPW9xK1cXItwbX/+7
- Hlb9yVp6zSZkdOOBsMEAIp9/3qcWIg1RuxXpakIKCdkv9XaCDsiIpt7c77eBj1OyWnQHn8X48vl
- VyXIDoOLtW1KYgu57qFO/sF6j99wNTqJtie048MYWzLstlaePy/+vOfgJxSGzGuYj1ftPqaLhhF
- q16i9rF2QnNTKEFqg+3QyhWGH8CO70nJejBff+MI9a+iQMgIZ86mnCYBBkVpAVEYv/LAAktY6Hd
- EP8gNTtiQ3Xq7yIRr5sRlTAcy03NU6z3pmhkngy80iywTcL5dQ1BKCuyaCs87zL3NfpDkaVM9wF
- TwuF9uhNqDWxWFVvdxR6EUtXwJsiWA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_05,2025-11-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- suspectscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251109124947.1101520-4-youngjun.park@lge.com>
 
-Move the check for root port requirements past the loop within
-pci_enable_atomic_ops_to_root() that checks on potential switch
-(up- and downstream) ports.
+Hi Youngjun,
 
-Inside the loop traversing the PCI tree upwards, prepend the switch case
-to validate the routing capability on any port with a fallthrough-case
-that does the additional check for Atomic Ops not being blocked on
-upstream ports.
+kernel test robot noticed the following build errors:
 
-Do not enable Atomic Op Requests if nothing can be learned about how the
-device is attached - e.g. if it is on an "isolated" bus, as in s390.
+[auto build test ERROR on akpm-mm/mm-everything]
 
-Reported-by: Alexander Schmidt <alexs@linux.ibm.com>
-Cc: stable@vger.kernel.org
-Fixes: 430a23689dea ("PCI: Add pci_enable_atomic_ops_to_root()")
-Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
----
- drivers/pci/pci.c | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Youngjun-Park/mm-swap-introduce-swap-tier-infrastructure/20251109-215033
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20251109124947.1101520-4-youngjun.park%40lge.com
+patch subject: [PATCH 3/3] mm/swap: integrate swap tier infrastructure into swap subsystem
+config: riscv-randconfig-001-20251110 (https://download.01.org/0day-ci/archive/20251110/202511102100.y6n1mtle-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 996639d6ebb86ff15a8c99b67f1c2e2117636ae7)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251110/202511102100.y6n1mtle-lkp@intel.com/reproduce)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 597bf419c3a6867f8df7ebdc14fc8ca47d0958a6..9a188fe8639d8a3d05e73e65114ce241d0f88bbf 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3823,7 +3823,7 @@ int pci_rebar_set_size(struct pci_dev *pdev, int bar, int size)
- int pci_enable_atomic_ops_to_root(struct pci_dev *dev, u32 cap_mask)
- {
- 	struct pci_bus *bus = dev->bus;
--	struct pci_dev *bridge;
-+	struct pci_dev *bridge = NULL;
- 	u32 cap, ctl2;
- 
- 	/*
-@@ -3861,29 +3861,27 @@ int pci_enable_atomic_ops_to_root(struct pci_dev *dev, u32 cap_mask)
- 		switch (pci_pcie_type(bridge)) {
- 		/* Ensure switch ports support AtomicOp routing */
- 		case PCI_EXP_TYPE_UPSTREAM:
--		case PCI_EXP_TYPE_DOWNSTREAM:
--			if (!(cap & PCI_EXP_DEVCAP2_ATOMIC_ROUTE))
--				return -EINVAL;
--			break;
--
--		/* Ensure root port supports all the sizes we care about */
--		case PCI_EXP_TYPE_ROOT_PORT:
--			if ((cap & cap_mask) != cap_mask)
--				return -EINVAL;
--			break;
--		}
--
--		/* Ensure upstream ports don't block AtomicOps on egress */
--		if (pci_pcie_type(bridge) == PCI_EXP_TYPE_UPSTREAM) {
-+			/* Upstream ports must not block AtomicOps on egress */
- 			pcie_capability_read_dword(bridge, PCI_EXP_DEVCTL2,
- 						   &ctl2);
- 			if (ctl2 & PCI_EXP_DEVCTL2_ATOMIC_EGRESS_BLOCK)
- 				return -EINVAL;
-+			fallthrough;
-+		/* All switch ports need to route AtomicOps */
-+		case PCI_EXP_TYPE_DOWNSTREAM:
-+			if (!(cap & PCI_EXP_DEVCAP2_ATOMIC_ROUTE))
-+				return -EINVAL;
-+			break;
- 		}
--
- 		bus = bus->parent;
- 	}
- 
-+	/* Finally, last bridge must be root port and support requested sizes */
-+	if ((!bridge) ||
-+	    (pci_pcie_type(bridge) != PCI_EXP_TYPE_ROOT_PORT) ||
-+	    ((cap & cap_mask) != cap_mask))
-+		return -EINVAL;
-+
- 	pcie_capability_set_word(dev, PCI_EXP_DEVCTL2,
- 				 PCI_EXP_DEVCTL2_ATOMIC_REQ);
- 	return 0;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511102100.y6n1mtle-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from mm/page_io.c:29:
+>> mm/swap_tier.h:71:1: error: expected identifier or '('
+      71 | {
+         | ^
+   1 error generated.
+--
+   In file included from mm/swapfile.c:52:
+>> mm/swap_tier.h:71:1: error: expected identifier or '('
+      71 | {
+         | ^
+>> mm/swapfile.c:1309:31: error: no member named 'tier_idx' in 'struct swap_info_struct'
+    1309 |                 if (swap_tiers_test_off(si->tier_idx, mask))
+         |                                         ~~  ^
+   2 errors generated.
+
+
+vim +71 mm/swap_tier.h
+
+c17fe68325c921 Youngjun Park 2025-11-09  41  
+c17fe68325c921 Youngjun Park 2025-11-09  42  void swap_tiers_init(void);
+c17fe68325c921 Youngjun Park 2025-11-09  43  int swap_tiers_add(struct tiers_desc desc[], int nr);
+c17fe68325c921 Youngjun Park 2025-11-09  44  int swap_tiers_remove(struct tiers_desc desc[], int nr);
+c17fe68325c921 Youngjun Park 2025-11-09  45  ssize_t swap_tiers_show_sysfs(char *buf);
+c17fe68325c921 Youngjun Park 2025-11-09  46  void swap_tiers_show_memcg(struct seq_file *m, struct mem_cgroup *memcg);
+c17fe68325c921 Youngjun Park 2025-11-09  47  void swap_tiers_assign(struct swap_info_struct *swp);
+c17fe68325c921 Youngjun Park 2025-11-09  48  void swap_tiers_release(struct swap_info_struct *swp);
+c17fe68325c921 Youngjun Park 2025-11-09  49  int swap_tiers_get_mask(struct tiers_desc *desc, int nr, struct mem_cgroup *memcg);
+c17fe68325c921 Youngjun Park 2025-11-09  50  void swap_tiers_put_mask(struct mem_cgroup *memcg);
+c17fe68325c921 Youngjun Park 2025-11-09  51  static inline bool swap_tiers_test_off(int tier_idx, int mask)
+c17fe68325c921 Youngjun Park 2025-11-09  52  {
+c17fe68325c921 Youngjun Park 2025-11-09  53  	return TIER_MASK(tier_idx, TIER_OFF_MASK) & mask;
+c17fe68325c921 Youngjun Park 2025-11-09  54  }
+c17fe68325c921 Youngjun Park 2025-11-09  55  int swap_tiers_collect_compare_mask(struct mem_cgroup *memcg);
+c17fe68325c921 Youngjun Park 2025-11-09  56  #else
+c17fe68325c921 Youngjun Park 2025-11-09  57  static inline void swap_tiers_init(void)
+c17fe68325c921 Youngjun Park 2025-11-09  58  {
+c17fe68325c921 Youngjun Park 2025-11-09  59  }
+c17fe68325c921 Youngjun Park 2025-11-09  60  static inline void swap_tiers_assign(struct swap_info_struct *swp)
+c17fe68325c921 Youngjun Park 2025-11-09  61  {
+c17fe68325c921 Youngjun Park 2025-11-09  62  }
+c17fe68325c921 Youngjun Park 2025-11-09  63  static inline void swap_tiers_release(struct swap_info_struct *swp)
+c17fe68325c921 Youngjun Park 2025-11-09  64  {
+c17fe68325c921 Youngjun Park 2025-11-09  65  }
+c17fe68325c921 Youngjun Park 2025-11-09  66  static inline bool swap_tiers_test_off(int tier_off_mask, int mask)
+c17fe68325c921 Youngjun Park 2025-11-09  67  {
+c17fe68325c921 Youngjun Park 2025-11-09  68  	return false;
+c17fe68325c921 Youngjun Park 2025-11-09  69  }
+c17fe68325c921 Youngjun Park 2025-11-09  70  static inline int swap_tiers_collect_compare_mask(struct mem_cgroup *memcg);
+c17fe68325c921 Youngjun Park 2025-11-09 @71  {
 
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
