@@ -1,384 +1,211 @@
-Return-Path: <linux-kernel+bounces-893467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08171C477BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:20:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7F3C4787F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:28:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDDC518968A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FFF03BE07F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439AB3195FB;
-	Mon, 10 Nov 2025 15:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C8031B11E;
+	Mon, 10 Nov 2025 15:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SyaI/WiP"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010041.outbound.protection.outlook.com [40.93.198.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t9Of1YLS"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218F818CBE1;
-	Mon, 10 Nov 2025 15:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787655; cv=fail; b=P2ZCuVaYX+mYem684NOZWSlBc+zbCNcasF16E+7f6a29I5XbUz8knm6szzj3umD4zF6g5xSCcxtLZ/GkBYc+5CGe88mycwUgNf4mzfmBPdEsk9k40LopqlOhzCpPVw7hpS1W1SkvnjatSVdZ55ocQIhu/9uJAeCdsBofKgHpX8k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787655; c=relaxed/simple;
-	bh=lvj5VL3I2Jpbj7tUNWx3tCwNeaH+xTtK2UUzw2EW4dU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hgEXh0omk6bm3p50/NLNHz0css64Y/xfNEd7KZFLD6B27oEKuSCg4xrFeIJG3HEPV1w2Or1wA77HPVi2IvySCM+EyvIE1jgj99mRdOQ/La6bTijClZI4THuoFa7OsCDxrwbiGQA29fSK/WHdl2PlkuS1o8qIZR1vf3mchgMKcNo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SyaI/WiP; arc=fail smtp.client-ip=40.93.198.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I/xFHQZ8IKJUNWrSMJ3Kkk8LS14jS8fVMQG3t6M17gE4D676pd3GvZV6MKGUNhzoun07GQDo3ZZ+OwgzQ19Sbw4HZFHja8FUmijCVNZIyvJ4J5K+xFkpNpJJiofGZh/konhpU+5qVs6g8djwcEGRseiNPCkzuBnw0L65PbdpD/AEW433QCDprFxON5vRvesa3FvGRetj8D/0hOYkNZd7IybuBRuNl+PBxSjkprt5xH3daqBStGGQMVCPKDJsPZ1oURf79CHFy/w6U9LQSbR/0ip2LUZU7mw+SqaV89raKhO/4SMkvkpP7aOj8ueeA5lZ8H49GKHrjoflbppGh+Jkcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SEecxwXvDIa6KB3hy15esZIRlpcAWWkRpYJ4viarbNQ=;
- b=iTQfrUD5xJrRR6i2s3kjK1gMJ6STkE6HZSa9qs1qFCIqrU0InqMP9MVZX9jODZc3UjoGiDaq8Gdp+aOaHMBW3FLDMMihB5LLp9H/1FbLKF1AuGoSqGRmQvDGXxpO0g9JVuLS+2PLKTLCiusfxacN9JXcX3/j/T6vhxjJGT44x1rtPtS4OFJUwFFxd3q424FrflFoVlnQg4OCP0EKTPu1zNed24oOs2y8HEA/sc7cR9jFdkhQIPoDJbi3Ar6LoDAhSWTIC4eHLc+CYQw6txlGTwf9GfvXcXo9uWqB0EsglqmxSOjJO9+84t++Mkkf1OvWyrDU4Cmz/JeOeVfMLfSelQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SEecxwXvDIa6KB3hy15esZIRlpcAWWkRpYJ4viarbNQ=;
- b=SyaI/WiPg0zYrr+OPwnt8X1tUQWcTZHTWPhD9Jllwbq1yq9Cky/7IQuWl8PktSr0O+22mI/3MTJOZXdkMaNMUX0X21RH/eWGW+O3XqwygHMsjzbyS5vqtwvJjVLUvOo/3kxZL0t8h7S7nTfmfrlsbisJ0utqpiBoMPwLmlWvZx0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by CYYPR12MB8854.namprd12.prod.outlook.com (2603:10b6:930:b8::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 15:14:10 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 15:14:10 +0000
-Message-ID: <05603d39-0aeb-493e-a1ed-8051a99dfc41@amd.com>
-Date: Mon, 10 Nov 2025 16:14:04 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sched: Fix UB in spsc_queue
-To: phasta@kernel.org, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>,
- Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>, dakr@kernel.org,
- Matthew Brost <matthew.brost@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20251110081903.11539-2-phasta@kernel.org>
- <ee63ca7d-77d2-44d8-973b-7276f8c4d4a5@amd.com>
- <ee9fe54f3764bc0ee4ebafe5c10ad4afe748ef19.camel@mailbox.org>
- <2c72eb6e-7792-4212-b06f-5300bc9a42f9@amd.com>
- <987527ead1fe93877139a9ee8b6d2ee55eefa1ee.camel@mailbox.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <987527ead1fe93877139a9ee8b6d2ee55eefa1ee.camel@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR2P281CA0177.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9f::13) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A4731329C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762787708; cv=none; b=VTiekyiDx8cf94lfac4zYzxjam8D5kfrnX+9ZtQXwvG/3SNVL68NvP3n2pJ4KSv+a2/LaldV/1chERGFWmLT4l2fAUCeS4oeonLm79FUj91fjowMZFO2JdEIS26AIBx5W/2smNIYMYfBNfIBKF3LlpmUsTOuwoEWQ3kCdfxj4w8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762787708; c=relaxed/simple;
+	bh=lhjELXmZSS3q6E2+rnaT59zCj87rpxz5eWYDWSZrjfo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hWKXqDJA+vX9oXFMNMKdDyZyG/0hGC2jims7xC5N9yFLGnI1uj5FCtSqsgHodwTXwZty/mapFLDU0DPRKvvy90OOQIJYxYq4mSPoIBZ/yWpjUrxjEcKBnw1/VfLs+vbRKqlsshUCOwOKar43ViH2xu4m+PDTYAlzd7jcjDv6Dw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t9Of1YLS; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b729f239b39so674439066b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:15:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762787704; x=1763392504; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tO2FkW94sB9AYPaQQFnYI79pge/7kyoIm3imhrG5Wd8=;
+        b=t9Of1YLS6U+pcaO1lkopLQkFhBLmH9l0uWwSzAO37O9OwEKWoVAk0T7b7V/5ceAfc0
+         eV/F6BPLuR/PVPNOpLDaCsvSmSNvFDEwdIRCEdtNacm6lr30BZNB73YmFn8JSMdb2iAx
+         2ICuvW4Kiimf2fQQTNXMd/lXOlkL80kv0DcdEvg6P6Ih56OQtFbeLkjgc7u3DZqERBV0
+         QiChfp3ux1mpfdu6dpRnDoHhqPhK5cquQWB/jZLnyVdGH8Hi7eM0pOK4bW+sOkn/ZU3I
+         jqQo8oBX7b/SHOHuh40Sr43KAOnh/qSUZ2pjUXwnf9E21wLy/64qoCSt9+xusxqYwRFA
+         dJWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762787704; x=1763392504;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tO2FkW94sB9AYPaQQFnYI79pge/7kyoIm3imhrG5Wd8=;
+        b=v3pR+a891n1LMJa7EvBsNCpHf3reuChXBdPiTFg9vzi95XuBAVnV4kDRWSm06Y0PW7
+         dTbiB4R79WEUxffBTSrTD0tSpWY2S+UaTWqdjfmoKo06xvnVm3qoh/QCQcMfnJzsFH33
+         CH+XHws9nD5UhAg4Ne/TXJmlcr460b6J7zO0xpxBZZdeKac5XnmqVjJ5wnzWDvkWierP
+         YJxXHCZ0yMUP/stYcDjw7yfe5F37cKMnZ6A9uaBRg9PypY9R4dCsrGiZSsGB8/3yOIZM
+         LnvnVGd1VBt9W8ZnPSFIhg7C4vIPCYAG+jcq1N4LMucRLyg87GmtpBkSOgyP8h6wgaxI
+         vzeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUb8CJenb+vHCmfk07E1+HHdMGUeBPcAL5qo4ofUFstc/0Nzi9bkmVIBbO87RboUz0jwlEc4OFvLMQzgBc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwifPAzQjOSRoqGxZuaTlhjr7lGrRsG3kUPSPe2DCp0nW123rWt
+	3Y9Ru7VmvMmbYBNF7Fi9Sf6BZTL7rzO9a0uqzjxHA5YNhOPUTCjGfZs0BqLGQz+4Vqj9+1y67L0
+	43Ef7QgmgBf+KXZ1VNeHqdqn+dtvduB6zIEZpZMeOtg==
+X-Gm-Gg: ASbGnct9XHco2OACigAgwpsWUh0Oldcw5veblw9rKcKpB0JFyj4OSRKkh0/opBY/iYD
+	/y1mySg3aDH4GAuglZSZJhlGLC2od9qnE0NP7uMD83aingWKB7qRElzHonKC39nMQ0NFLCbtqu2
+	p1WLNGnKBWOU25UOBDHSwqYNwEyqq+PW5qP8J/yI+ADw83Mhf+q8gw7erExbWu8YVi5bUHL3z0m
+	dLOQsyZ86Qw2fyUE3ljfBnfDQlcxVQ7jb5sXb2RWN8tkZo3SCB+wbF1D0WHXoqwFltPCqLpVahf
+	QLCtumwhiOvbDY8O3U3Y+mTdVU5INCpuskjK1g==
+X-Google-Smtp-Source: AGHT+IF0JiR17k2tNdQIY29GGeZp6tuwfTPaU+/ksYYCINL8GaZCSCzoJNug8wrqVngyVxyRmshkBrZF3f3+WWM6Cjg=
+X-Received: by 2002:a17:907:9408:b0:afa:1d2c:bbd1 with SMTP id
+ a640c23a62f3a-b72dff5f6b2mr1002486166b.30.1762787704214; Mon, 10 Nov 2025
+ 07:15:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CYYPR12MB8854:EE_
-X-MS-Office365-Filtering-Correlation-Id: e7bd7059-f61e-44a1-3989-08de206bcc95
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?am5FUVVsdFdqN1IxeFpMV0dsdDV2cHEvcmlWOEZBS3JxLzdKVkpqcW9JQ1dv?=
- =?utf-8?B?Q1FKeDFDYlZLakszdmVlbUNtL3M2eGRUWVRMOXV6aFlIYVhWejR0TGRPWDh6?=
- =?utf-8?B?ZHNEM3hXeVhpd1Y4TVI5MUtNR1g4UThYS2owaW84eFJ2RUcyRFdCa1pEdTBR?=
- =?utf-8?B?Yk5zZEVHSFRxdG5Xc2NvaUhvUWJsTmNzT0M1dCtwTVZ0MWp0b3pVcjVCT2FC?=
- =?utf-8?B?UTkyVFhjeGdtcGgxRURzUzJzTE5ac3ZGYVIzWXN1TFl1TE11VG5RSzRCcWxO?=
- =?utf-8?B?YVNTZFRaTitWczhGTy9JVWxQSlFIdkhiT25aM3JZdTdxY1RWRU9rSnZMYkJi?=
- =?utf-8?B?cmhnd2dWOVBzR0wxWkE0RWZSZTEzeFI5T01EUElDM2JnWWt4OXRXcjBSdEp5?=
- =?utf-8?B?Q3p1WEg3OTE4K3NCdkdjOTN0WEdtcXlHbUtIOFdyZjErMm4rNTYzV2NIa2pV?=
- =?utf-8?B?SXVNakUzYTNnd2I4akhnM0lZUUJVSWZEb3c5WjAyQzJMbEVac2VpS1RZUFVn?=
- =?utf-8?B?aG5UZHA0NGVicWZJSGlIdWl4d3pTckJoV1YreVFPd2FSTFc4VnJvSEtqa0ZM?=
- =?utf-8?B?OVcwTkEraGs0bWdKZ3JmaW1GY002WTZPV0dEODJ1WXU0aS9RaUYwSVVSOUpB?=
- =?utf-8?B?bmUwcSsrWUpGRDNkVFZIRTFkcXkwbDQxWTB6SGVFdWM1MzEwZU1OM29NV1BQ?=
- =?utf-8?B?OWhIZmZpRitEREdXcDQza21QK0JDWWhhWGpKLzFsRnZBdCtTZWIxZmg5MnZt?=
- =?utf-8?B?UlFYSi9UWjhaTlgxQ2VVMnRhZklRbVZJcDl2cGdvdmRZVlZSQmpsREFyTENt?=
- =?utf-8?B?VVhJbVBuYnNrM1A2UkhYZlBNV0RPQ3RTM1lWN2s2bzNYWGNsZjRsNi9yaWR2?=
- =?utf-8?B?YVl6bDY0YTRhTmgySmhHaDZFK3l2ZS9HWnF3RFN3Q3NHenE2dG1CbEg2YmNo?=
- =?utf-8?B?T2oxSUh4dEFIVmdPbWFlS1dJQ2hValdkcktjSUNPdmdkVWtQbWUzNEk3akRN?=
- =?utf-8?B?ZENGSzBDRTdESUdXTHRZUkdsaGNSUllobWRqbytNdkMzNnl1N2xlb1ZOOGM4?=
- =?utf-8?B?VXVnMURSUVFPaThPdTh2N3pjc1hPOHo4c1dZbTBZMkE3aDFlWW1JRkNNUGFF?=
- =?utf-8?B?T2NNN0ZKWmJTakVCUnpTb0R3WkR1WTdCdFRsd2N5aUFibDk0STlOVU5DR2Vr?=
- =?utf-8?B?dEcreVlEMlJ0MWpKQUZhTExHbE8vbnI1ZGtvam83OUQ0bFJVbXFWMWJBSW92?=
- =?utf-8?B?L2Q4Y25ST00wUnVhUDRaZ04rK0wvY3BEL3R0WFhhUkM3eTd2dEZybnpLMkI4?=
- =?utf-8?B?b0dvVitrSFQyUzAzMmgybEdlSi8vK0FEczBpbFlGbjZvN08rSlBlOXRwdFV4?=
- =?utf-8?B?dHcrb1Y4TEwxcjVzVlpmVFJyNnl5SHQ5ZUdFMjNHU2RKcWRQOHFmRTlNQk5y?=
- =?utf-8?B?aU5UNVladzFFbXNiWDhmdm5aSnNpN1p1aHVSWEd6Uk5ia2VJZDZYTGorZmV2?=
- =?utf-8?B?T1RxK0NSWTRlTUJNeFV3V3hHblBMbGxQMGhDOTZnM0FIT29oWDBvbGZJZitC?=
- =?utf-8?B?aTJqK0wzVkc5ZmE1VkFBbmlHREk3ZWREMjFZSDhUWDJQQUpTMDZodThFazJI?=
- =?utf-8?B?RHY4ZTFWc1NvRENuSXliOGlId3AyMGFFOUJiNEhxTWtHUXZkeEhrcy96SHp0?=
- =?utf-8?B?ckxURTR6Wm5YMFZ6TkdtK0h2Q0x0NDIvL05TOEFLbjB5NEl0WFFJNTJvYUZE?=
- =?utf-8?B?TnVXNWN2ZWJNRXJlQ01UZlgrMGZ1T2xxRFNJcGw3MDlxVHlpWHNyV0pQYjJG?=
- =?utf-8?B?UFlEVkNCWU4wSkVVOWt6LzJUY3dIZlpFN2E2VWN5VDduYTRwbzFhbnBHdkVi?=
- =?utf-8?B?R21vbFRSbmE5YUxaNHhOTmxxdmNiNll6dWlkU1ZmMFMxMlE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UzJ1RHFESXRobFFTWUp4SUpwUkMrVGJERWVVOC9Mc0xQL2t6VXBUNjc5MWg2?=
- =?utf-8?B?cUczZTdnMVRTMGVKZFkvNTZDMGF0VGtObHlYVUJuR0NteURCbWNKcjRvWXVr?=
- =?utf-8?B?ZklvMXFRWWNKNjZ0WENRWjRYLzIvSHRNZWcrVWNBcUNkbXNjMEVvM1grSncy?=
- =?utf-8?B?eldzcDZnUWRiVjY5cTdLSG5vakFCMUtkTkIyRWR3ZVczU3NiaWtoWjQ3Nmhn?=
- =?utf-8?B?aEllM2NnUzU4T3pEV3owYlFxUnZ2MTdrdEsrMHRPRnhkQmlYWFBVd2pxS21o?=
- =?utf-8?B?cHNTT2ZPTk84ZWQ3WlpwZnpJZTVFVmlsaCtIa1JEZmFuc3M4UFBDVTdZSGtx?=
- =?utf-8?B?VXJSTHNuTDl3MjZVbTZ1ekhVSGhoNHpYUTd3eE1ITmIxZEhTQWZhVHVteTlw?=
- =?utf-8?B?dEx6UmlNa2o0U0dMcGhqRHg2NVR2T1Rzc2piTFE5OW5NOU51WWlsK2VsOU5M?=
- =?utf-8?B?aW01SHBvRHovOVpOYjRPRGRaSTlrUjNaSWU1a3NDczhUeUo2a3NCOHM3bnQ1?=
- =?utf-8?B?UkZJakFFRk1talhla0ppelA0WmZRclZRRGxkTnhVMXZFVlBLV3dRMW9ubDUr?=
- =?utf-8?B?NlQzeFpNM2NhVHQ0ZmhlUXpXTEI5LytqbHVzazBGUFlGVld6QVc0L2h5RG14?=
- =?utf-8?B?TUtPTElWR3I4Mlh3azJReFdGK3lQa0RaR01ncW90azdlbUZidW1kbktFSkt0?=
- =?utf-8?B?TG40NHdOV0lyejEwQTZRbTZ1UjlCN1hueWNTWnBHY1o0Tkcwb0tIMUpVSHNY?=
- =?utf-8?B?TktvN0w4V2hxUHBrVlBhUmsvclo5bWsyNXBUbVF2VmtyaUdqNkdaMzREaVdi?=
- =?utf-8?B?VjNtWXVpb0d0QVlKR0xTRTloVWlsUVVSR2ZUNk5aaWF1dFJJclR2QXZkaElY?=
- =?utf-8?B?ZFNwNmxqbC9rUGZzOWwzY1VNcFpFbXRFOWRlR3JsR3MzS0ZLSm1HclI3NmVX?=
- =?utf-8?B?em5QTjcwR09GNXJOUW1NNWdxcUpnZWhXODArOTZBeVp0d2N2ZktTM1NDV2Q5?=
- =?utf-8?B?SDh1Z3NGSmQ3RXVDUjU2YTdxWGZ5QkpJd1FKanVXVmRXOXJqN25wRGpIYWU4?=
- =?utf-8?B?ajhaSHlTWG5jOU44YkFyTlhGcnN1c2FEa1NHVjJzNEtMU3NwM1FqTUpiUDha?=
- =?utf-8?B?RmlQZUo3ZGZJcVFNVWdMKzRpUlBtdmY3TGV1c3QzaDhMM2h3eWFPUHY1T2pw?=
- =?utf-8?B?UjNXSDZkenBrQU1mNDE1b2EwTDgyTmtpSmtnbXN5VzZ6TlFGdDZSOXRnVGE1?=
- =?utf-8?B?bkl2N0FZeHI3QTBqK0Z1REZZbVZ5SUQ3bXpha3hSOG5oVkFGL1c0WXhxSnFu?=
- =?utf-8?B?MVZxQkpaMVNzRE1pV1Fjb2t2OHlUa2hsSkROejdLZkRuQjhmSnBSaFJBcU83?=
- =?utf-8?B?RWJDOVBoUm1FK1FDR0paVDV6RlRCTzdCdkxHU2lUbmJKK1dsUVNaMUNPeklM?=
- =?utf-8?B?VUZIdzJJSW15TDZnMjJDbnFVYU9SZERvSmxEbFRiMmFBNWdBc1I0MmxuZldG?=
- =?utf-8?B?MUFyK01HdStZcXRORmJLUXpjc3ozMkF5cmtSbWFaeTZ0NHFxNGFnY2VJaUgy?=
- =?utf-8?B?S2RjQ2RIcTdsNG5XNElFS3J3MERyV2FVeTd0TmNwSzFiR3FJNElXTFQzYjlu?=
- =?utf-8?B?YzhiZktHODN3a1pjQlptWnQ5bHJ0UG1VNkZlbEpNbndUN09pR3pTcWg5MVoz?=
- =?utf-8?B?SUM1Vmxzc3RBYUtsZUxWZ2VCSHdEaFhHZXlDV1lYcVVPZzYvdzJ6bHJ6M29D?=
- =?utf-8?B?ZWdQSTZ0VmdjcWlRNFNZTzZjU1NGMG1Ub3FlSXBHZlV2THdGWUNtYWdnZGN5?=
- =?utf-8?B?THpuZVVxWkZaTnVXVmt0Zzgxb0x0bWdYNDBXcVIxc3dKbEdGbWdWeG5HK2Zt?=
- =?utf-8?B?a3ZFUFdNUk5wL0h1UlA2dkZwdWc0eXBUclBuVS8yU3RFSTlaMVFsUml1UVlZ?=
- =?utf-8?B?akc5dkV4MnVPUlM1RWNrbDVFTExOYUk1RU5GMk9kaUhHeGp5blJ2b09BQVBj?=
- =?utf-8?B?SGZxVmxMei9KSVhPbm1oZ3JTWUs1SGtSNWhIeWs0SHNrWWFpck1nSGxZRUxD?=
- =?utf-8?B?VlZxZFhXMVJLNzhWU1Rnelc5aE1wdUpCRW5JbEVrWVBHMlRDUktrVU5Xb001?=
- =?utf-8?Q?3P2/Q0XpFNWF9vvqkiOc2jE+c?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7bd7059-f61e-44a1-3989-08de206bcc95
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 15:14:10.3020
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SDuRRXoXIpFb+CtxvXOYF1FM4QKq84jgfsWPStsX+sw3/uGiXHMdvHwqJDMPZ/Rb
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8854
+References: <20251109-arm-psci-system_reset2-vendor-reboots-v17-0-46e085bca4cc@oss.qualcomm.com>
+ <20251109-arm-psci-system_reset2-vendor-reboots-v17-5-46e085bca4cc@oss.qualcomm.com>
+In-Reply-To: <20251109-arm-psci-system_reset2-vendor-reboots-v17-5-46e085bca4cc@oss.qualcomm.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Mon, 10 Nov 2025 16:14:53 +0100
+X-Gm-Features: AWmQ_bnHJgzy3SDXUbMU9BaI_OynoJofd0BXy7gUevgAAiWJJ2om5cI31VC5pf4
+Message-ID: <CACMJSesMK37D7Qy+rVq7w6bUt6bYGXykUid6bUKXvh7M9mntZA@mail.gmail.com>
+Subject: Re: [PATCH v17 05/12] power: reset: reboot-mode: Expose sysfs for
+ registered reboot_modes
+To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Souvik Chakravarty <Souvik.Chakravarty@arm.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andy Yan <andy.yan@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Vinod Koul <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Moritz Fischer <moritz.fischer@ettus.com>, John Stultz <john.stultz@linaro.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, Stephen Boyd <swboyd@chromium.org>, 
+	Andre Draszik <andre.draszik@linaro.org>, 
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	Elliot Berman <quic_eberman@quicinc.com>, Xin Liu <xin.liu@oss.qualcomm.com>, 
+	Srinivas Kandagatla <srini@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/10/25 15:20, Philipp Stanner wrote:
-> On Mon, 2025-11-10 at 15:07 +0100, Christian König wrote:
->> On 11/10/25 13:27, Philipp Stanner wrote:
->>> Please don't top-post :(
->>> FDFY:
->>>
->>>
->>>> On 11/10/25 09:19, Philipp Stanner wrote:
->>>>> The spsc_queue is an unlocked, highly asynchronous piece of
->>>>> infrastructure. Its inline function spsc_queue_peek() obtains the head
->>>>> entry of the queue.
->>>>>
->>>>> This access is performed without READ_ONCE() and is, therefore,
->>>>> undefined behavior. In order to prevent the compiler from ever
->>>>> reordering that access, or even optimizing it away, a READ_ONCE() is
->>>>> strictly necessary. This is easily proven by the fact that
->>>>> spsc_queue_pop() uses this very pattern to access the head.
->>>>>
->>>>> Add READ_ONCE() to spsc_queue_peek().
->>>>>
->>>>> Cc: stable@vger.kernel.org # v4.16+
->>>>> Fixes: 27105db6c63a ("drm/amdgpu: Add SPSC queue to scheduler.")
->>>>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
->>>>
->>>>
-> 
-> […]
-> 
->>>> Are illegal since you don't have the correct memory barriers any more.
->>>
->>> I can't follow. Are you saying that spsc_queue_peek() is correct
->>> because you know for sure that when it's used no one else might be
->>> changing that pointer?
->>
->> Correct, yes. That's the whole idea. I mean SPSC stands for single producer single consumer.
->>
-> 
-> I know that it means that (although it's not documented and, funnily
-> enough, I one day realized the meaning while standing under the shower
-> after work).
-> 
-> Anyways, it's not documented that a user must not call
-> drm_sched_entity_push_job() in parallel. It currently basically just
-> works by the coincidence of no one doing that or rather no one running
-> into the race.
+On Sun, 9 Nov 2025 at 15:38, Shivendra Pratap
+<shivendra.pratap@oss.qualcomm.com> wrote:
+>
+> Currently, there is no standardized mechanism for userspace to
+> discover which reboot-modes are supported on a given platform.
+> This limitation forces tools and scripts to rely on hardcoded
+> assumptions about the supported reboot-modes.
+>
+> Create a class 'reboot-mode' and a device under it to expose a
+> sysfs interface to show the available reboot mode arguments to
+> userspace. Use the driver_name field of the struct
+> reboot_mode_driver to create the device. For device-based
+> drivers, configure the device driver name as driver_name.
+>
+> This results in the creation of:
+>   /sys/class/reboot-mode/<driver>/reboot_modes
+>
+> This read-only sysfs file will exposes the list of supported
+> reboot modes arguments provided by the driver, enabling userspace
+> to query the list of arguments.
+>
+> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+> ---
+>  drivers/power/reset/reboot-mode.c | 62 ++++++++++++++++++++++++++++++++++++++-
+>  include/linux/reboot-mode.h       |  2 ++
+>  2 files changed, 63 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/reboot-mode.c
+> index 873ac45cd7659b214b7c21958f580ca381e0a63d..582aa7f8ed7fa485c5a67877558c9b15d3600ef4 100644
+> --- a/drivers/power/reset/reboot-mode.c
+> +++ b/drivers/power/reset/reboot-mode.c
+> @@ -6,6 +6,7 @@
+>  #define pr_fmt(fmt)    "reboot-mode: " fmt
+>
+>  #include <linux/device.h>
+> +#include <linux/err.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+>  #include <linux/list.h>
+> @@ -23,6 +24,8 @@ struct mode_info {
+>         struct list_head list;
+>  };
+>
+> +static struct class *rb_class;
+> +
 
-Yeah, completely agree.
+I know C is a spartan language but the rb_ prefix makes me think of
+the red-black tree. Please call it reboot_mode_class.
 
-> 
->>>
->>> Even if that were true this design is highly fragile.
->>>
->>>>
->>>> Took me an eternity to understand that as well, so bear with me that I didn't previously explained that.
->>>
->>> s/explain/document :)
->>>
->>> As discussed few weeks ago with Sima and Tvrtko, what we really need to
->>> move to in all of DRM is this development pattern:
->>>
->>>    1. For parallel code, at first by default use a boring, horribly
->>>       slow (sarcasm) spinlock. BTW I'm not even convinced that a
->>>       spinlock is slower than lockless tricks. Paul's book states that
->>>       a CAS atomic instruction takes about 60 cycles, and taking a lock
->>>       takes 100.
->>
->> The problem isn't the burned CPU cycles, but rather the cache lines moved between CPUs.
-> 
-> Which cache lines? The spinlock's?
-> 
-> The queue data needs to move from one CPU to the other in either case.
-> It's the same data that is being moved with spinlock protection.
-> 
-> A spinlock doesn't lead to more cache line moves as long as there's
-> still just a single consumer / producer.
+>  static u64 get_reboot_mode_magic(struct reboot_mode_driver *reboot, const char *cmd)
+>  {
+>         const char *normal = "normal";
+> @@ -65,6 +68,51 @@ static int reboot_mode_notify(struct notifier_block *this,
+>         return NOTIFY_DONE;
+>  }
+>
+> +static ssize_t reboot_modes_show(struct device *dev, struct device_attribute *attr, char *buf)
+> +{
+> +       struct reboot_mode_driver *reboot;
+> +       struct mode_info *info;
+> +       ssize_t size = 0;
+> +
+> +       reboot = (struct reboot_mode_driver *)dev_get_drvdata(dev);
 
-Looking at a couple of examples:
+No need for the cast.
 
-1. spinlock + double linked list (which is what the scheduler used initially).
+> +       if (!reboot)
+> +               return -ENODATA;
+> +
+> +       list_for_each_entry(info, &reboot->head, list)
+> +               size += sysfs_emit_at(buf, size, "%s ", info->mode);
+> +
+> +       if (size) {
+> +               size += sysfs_emit_at(buf, size - 1, "\n");
+> +               return size;
+> +       }
 
-   You have to touch 3-4 different cache lines, the lock, the previous, the current and the next element (next and prev are usually the same with the lock).
+This is a weird logic inversion. Just do:
 
-2. kfifo (attempt #2):
+if (!size)
+    return -ENODATA;
 
-   3 cache lines, one for the array, one for the rptr/wptr and one for the element.
-   Plus the problem that you need to come up with some upper bound for it.
+return size + sysfs_emit_at(buf, size - 1, "\n");
 
-3. spsc (attempt #3)
+> +
+> +       return -ENODATA;
+> +}
+> +static DEVICE_ATTR_RO(reboot_modes);
+> +
+> +static int create_reboot_mode_device(struct reboot_mode_driver *reboot)
+> +{
+> +       int ret = 0;
+> +
+> +       if (!rb_class) {
+> +               rb_class = class_create("reboot-mode");
+> +               if (IS_ERR(rb_class))
+> +                       return PTR_ERR(rb_class);
+> +       }
 
-   2-3 cache lines, one for the queue (head/tail), one for the element and one for the previous element (but it is quite likely that this is pre-fetched).
+Why the lazy initialization here? Is there any reason you can't
+statically define the class? Don't you need synchronization here if
+multiple drivers try to do this?
 
-Saying this I just realized we could potentially trivially replace the spsc with an single linked list+pointer to the end+spinlock and have the same efficiency. We don't need all the lockless stuff for that at all.
-
->>
->> Keep in mind that you can rather do a fused multiple add for a full 4x4 matrix before you take a single cache line miss.
->>
->>>    2. If you want to do parallelism without locks, you need to justify
->>>       it really well. "rmb() so list_empty() works without a lock"
->>>       doesn't qualify, but real use case speedups.
->>>    3. If you write lockless infrastructure, you need to document it
->>>       really well. In particular you need to state:
->>>          1. How it works
->>>          2. What the rules are
->>>
->>> See llist.h as an example. It clearly states when you need a lock and
->>> when you don't.
->>
->> The llist.h is actually pretty similar to the SPSC. I'm wondering why they don't have the same issues? E.g. is xchg() providing the memory barriers?
-> 
-> I think that some atomic instructions contain barriers. But I'd have to
-> check.
-> 
->>
->>
->>> Or RCU. No one could use it without such good
->>> documentation.
->>>
->>> I have no idea whether spsc_queue is correctly implemented (I doubt
->>> it), and if even a highly experienced dev like you takes "an eternity"
->>> (quote) to understand it, one is really tempted to dream of spinlock_t,
->>> which has very clear semantics and is easily understood even by
->>> beginners.
->>>
->>>>
->>>> Question is what should we do?
->>>
->>> Easy!
->>>
->>> Mid-term, we should replace spsc_queue with a boring, locked, super-
->>> slow linked list ^_^
->>
->> That's what the scheduler started with and the reason why that linked list was replaced with first a KFIFO and than the SPSC was because of lacking performance.
-> 
-> Such performance measurements must be included in the commit message,
-> since they justify the entire commit.
-> 
-> Yet this is the entire justification given:
-> 
-> commit 27105db6c63a571b91d01e749d026105a1e63bcf
-> Author: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>
-> Date:   Thu Oct 12 16:41:39 2017 -0400
-> 
->     drm/amdgpu: Add SPSC queue to scheduler.
->     
->     It is intended to sabstitute the bounded fifo we are currently
->     using.
->     
->     Signed-off-by: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>
->     Reviewed-by: Christian König <christian.koenig@amd.com>
->     Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-> 
-> 
->>
->> We could go back to the KFIFO design again, but a (double?) linked list is clearly going to show the same performance problems which originally triggered moving away from it.
->>
->>>
->>> The spsc_queue was designed and – perhaps – perf-measured when RR was
->>> the only scheduling policy.
->>>
->>> Since the FIFO rework, where FIFO became the default policy, we now
->>> access our super efficient super fast lockless queue most of the time
->>> with the spinlock being taken immediately afterwards anyways. So we
->>> almost have a locked lockless queue now.
->>>
->>> https://elixir.bootlin.com/linux/v6.18-rc4/source/drivers/gpu/drm/scheduler/sched_entity.c#L502
->>
->> That is not that relevant.
-> 
-> If the lock being there is not relevant, then why can't we just take it
-> and get rid off all those barriers and READ_ONCE's once and for all?
-
-I think so, yes.
-
->>
->>> Only push_job() often (?) still runs locklessly, but I'm not at all
->>> convinced that this is worth it. Not even performance-wise.
->>
->> That is what is relevant. And yes the difference was totally measurable, that's why this was originally implemented.
->>
->>>
->>> If you look at spsc_queue_push() you see that it
->>>    1. disables preemption,
->>>    2. uses atomic instructions and
->>>    3. has a ton of memory barries
->>>
->>> – in other words, this is almost literally a manual re-implementation
->>> of a spinlock, just without mutual exclusion…
->>
->> The problem is really to separate the push from the pop side so that as few cache lines as possible are transferred from one CPU to another. 
-> 
-> With a doubly linked list you can attach at the front and pull from the
-> tail. How is that transferring many cache lines?
-
-See above.
-
-We have some tests for old and trivial use cases (e.g. GLmark2) which on todays standards pretty much only depend on how fast you can push things to the HW.
-
-We could just extend the scheduler test cases to see how many submissions per second we can pump through a dummy implementation where both producer and consumer are nailed to separate CPUs.
-
-Regards,
-Christian.
-
-> 
-> 
-> P.
-
+Bart
 
