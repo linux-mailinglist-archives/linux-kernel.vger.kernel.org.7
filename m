@@ -1,102 +1,116 @@
-Return-Path: <linux-kernel+bounces-893153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D374FC46A36
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:38:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5047C46A85
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:42:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71CC44EB5CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:38:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAF111888534
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340B430F7F2;
-	Mon, 10 Nov 2025 12:38:28 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019EB30E0F6;
+	Mon, 10 Nov 2025 12:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F1h2Bser"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5813B30CDA1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B413E30BF77;
+	Mon, 10 Nov 2025 12:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762778307; cv=none; b=keEaDBal+okKvzWX9b7RN3I/YbWcxY9gLPDoBXvWG0Txlizd4D3QM3VUNxgcq0apAO5RfMzm7bf4lwnPuJCK0I756HhOMxQcltboaCEf3Eq+FLwf2wZzUIw1wpSGfxBl9QXdvwX16rKXArPoibRmicPv3haC8zlfoZ0uHkB4PLQ=
+	t=1762778343; cv=none; b=uxJCD8sdkVQOHj348DRmUzWmX2SAvz6FAagTvxQXsTYbFlowoNzt1Nc1eZ874wvEjWA25WcbzJQ8QnRqeA9d7QPPsbSKh9eLl/6A5PLZYVb6MISavLLcvS7VKOcwFGMfLUSMCxpVHpwbgNXsqx+IAgz1lSc2s/RWRvKlnqv0mVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762778307; c=relaxed/simple;
-	bh=xTFQJUL0lkezhYAsgGSIUDLeIxSvIp5EbM5Uvpm9yqU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=k4p1ZPTxyHqe1Zxsc8+LprhIg6Qu0qgBY/cNLOMkkojQp6n59W0fOYSD/k8sJkhWHYedMvkq86OCjWsPSTLbZzqMIj7slP978EtjrHglBJEQTU/D7FWhhQmCcEwpShRvEFaWCDgUFp748q606VYgqzLRJlDslKDbE3otM0eTK1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e7b0584c9so261511139f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:38:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762778305; x=1763383105;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pfeuF7t9W0tZyiOKHRfcCmdh/gFU/KWuvzDJl6kuhGI=;
-        b=IQiQDblXx/xjuAZnYpObQmrkBJvEpb5eSa6CmriT7pzKI4vzh6SQAvxos4UBFx9ZAd
-         KDhB3s+l84Jw2scsceMWfCHgHrNcyHzjl+CMc0nssflLEl89c1QaKOuk7EgIXhPiYIV2
-         LkaBUOqUn4iffc/zJe13qYy6IpPGxeCmnkSqL4KH4CBtKJ4rzSU2rbSwbY/k4zaKCLVO
-         E5T1se51sAeyuspYCJAoQB3wsTAhyIhmhgjxJA4aAcu3j/GerwIC3agGdg0ZxivLeVut
-         U8r6qDjK+5ZXHEIV6tpVTa+F6iZfMzhBMyS7CApOgmJvl06cMaOQKlngPPa844nzDCCQ
-         OuWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHVmL5soUPCj/TtYFzlZh+lrws0Vu92+UURvZSEqHvk8ZdhzhGO83oDNLyBX7bPYE/2bHnpAijK4DxGcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyJb3xuZtrkosZRlzzv4EW2lLC4bLF7VrdLRpSfHpY48TOR2ag
-	F+3P97bzY/OO/U8esqnhpm6tdMPDZOUNOwEk/M4w95QaTfdz8cm34dr9Z2RONzHnJIXad+ONUqe
-	SWgnot/ks16R+RKjpwLDU6pYbKg982t4/yM0ZkBxKKpZB5reF53l9FOLDATc=
-X-Google-Smtp-Source: AGHT+IGtuLGpBtrmikrQ9Ic4MmXUZMZWF+Y3kzEQnrlfWw9N/Yc4msFn9uKoKTYkQC1V9aXzMzhsOkvyWhzdv4VkCDcqwVS4X2eK
+	s=arc-20240116; t=1762778343; c=relaxed/simple;
+	bh=cyd/HokQ3LboIHX5k9KD1bhTFpADMt86OvrjFVV8VbM=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=QXqR4WFbJi0MP9l+TDIwlAwCo4qLka1VZ45zisZkW6xaV0S1ZAwSW+wt3TAhpz1NWDGNKzLmc6wbdbCRrlXp7njq4CYXHKuV0sMkTKsDlY6H7vDhX0hLacWLpMKF77Alh3YYAODHqssNIPLWsM/yBruwlqtu06hgq5239dwRTmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F1h2Bser; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762778341; x=1794314341;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=cyd/HokQ3LboIHX5k9KD1bhTFpADMt86OvrjFVV8VbM=;
+  b=F1h2BseroUk1D/hATb53ertBrSDcr6NCye8aeVEtnH5j4HHWPySTbBxP
+   Pu+oQOikgZX2nHSbab1zPNapc6NWJDQzzacleGOaPwR6l5Tc9uDVu3vZx
+   RK3/ISNimdEMytD4AKqNrJ5OiNnlAMs2OSMsO8GKOAvw+RlcGxcYB4V7g
+   XSfH6rMGm7/snJPR3LqidwksrwRYu612ijDMgzO2cCCDgq0bBgwLJ4JSY
+   otDG+64ytd7U4/3zQawrrRrnkWiDX1YVgpV0nUCdaRrMNr5UZlKSaSRlY
+   fTsBNG04xYKoKFtKF1dWyddrK8b9icNlAVefAANP/RA4DFmCSdA/uEGZq
+   A==;
+X-CSE-ConnectionGUID: xyg8dhEQRiG8BomBZCgI4Q==
+X-CSE-MsgGUID: vgtzyRgvS6C+UqKe/EJwrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="64866678"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="64866678"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:39:01 -0800
+X-CSE-ConnectionGUID: kHUwkUgaRROLAKTSMeX+FQ==
+X-CSE-MsgGUID: 9p4oXBtYRHKqpaXzuY5T/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="193846944"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.13])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 04:38:59 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 10 Nov 2025 14:38:55 +0200 (EET)
+To: Marcos Vega <marcosmola2@gmail.com>
+cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] platform/x86: hp-wmi: Moved Omen MAX 16-ah0xx board
+ name
+In-Reply-To: <20251108114739.9255-3-marcosmola2@gmail.com>
+Message-ID: <28e9526a-9f3d-7d25-4263-4da1f8933904@linux.intel.com>
+References: <63905a5b-1dc5-e0d1-6c8d-e590c7e7c7f5@linux.intel.com> <20251108114739.9255-3-marcosmola2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a6f:b0:433:2390:d556 with SMTP id
- e9e14a558f8ab-43367e4c6f5mr103496525ab.26.1762778305300; Mon, 10 Nov 2025
- 04:38:25 -0800 (PST)
-Date: Mon, 10 Nov 2025 04:38:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6911dcc1.a70a0220.22f260.00ee.GAE@google.com>
-Subject: [syzbot] Monthly nfc report (Nov 2025)
-From: syzbot <syzbot+listf1e3e59758b3b8109ede@syzkaller.appspotmail.com>
-To: krzk@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-Hello nfc maintainers/developers,
+On Sat, 8 Nov 2025, Marcos Vega wrote:
 
-This is a 31-day syzbot report for the nfc subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/nfc
+> Fixed placement of board 8D41 so its categorized adequately in victus_s_thermal_profile_boards.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 6 issues are still open and 28 have already been fixed.
+Thanks. I've applied this now to the review-ilpo-fixes branch.
 
-Some of the still happening issues:
+I ended up fixing this changelog text myself by taking part of the text 
+you had in v1.
 
-Ref Crashes Repro Title
-<1> 1029    Yes   INFO: task hung in nfc_rfkill_set_block
-                  https://syzkaller.appspot.com/bug?extid=3e3c2f8ca188e30b1427
-<2> 518     Yes   INFO: task hung in rfkill_unregister (3)
-                  https://syzkaller.appspot.com/bug?extid=bb540a4bbfb4ae3b425d
-<3> 145     Yes   KMSAN: uninit-value in nci_ntf_packet (3)
-                  https://syzkaller.appspot.com/bug?extid=3f8fa0edaa75710cd66e
-<4> 87      Yes   INFO: task hung in rfkill_sync_work
-                  https://syzkaller.appspot.com/bug?extid=9ef743bba3a17c756174
-<5> 23      Yes   WARNING in nfc_rfkill_set_block
-                  https://syzkaller.appspot.com/bug?extid=535bbe83dfc3ae8d4be3
+--
+ i.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> Signed-off-by: Marcos Vega <marcosmola2@gmail.com>
+> ---
+> Thank you for all the tips on proper kernel writing, I'll try to do it properly and learn for my next patch.
+> 
+> v4:
+> - Added trailing comma
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+>  drivers/platform/x86/hp/hp-wmi.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
+> index e10c75d91f24..ad9d9f97960f 100644
+> --- a/drivers/platform/x86/hp/hp-wmi.c
+> +++ b/drivers/platform/x86/hp/hp-wmi.c
+> @@ -96,6 +96,7 @@ static const char * const victus_thermal_profile_boards[] = {
+>  static const char * const victus_s_thermal_profile_boards[] = {
+>  	"8BBE", "8BD4", "8BD5",
+>  	"8C78", "8C99", "8C9C",
+> +	"8D41",
+>  };
+>  
+>  enum hp_wmi_radio {
+> 
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+-- 
+ i.
 
-You may send multiple commands in a single email message.
 
