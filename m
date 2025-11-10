@@ -1,123 +1,159 @@
-Return-Path: <linux-kernel+bounces-893614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F99CC47DE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:18:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274A9C47D33
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:14:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6D934F5086
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:09:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7EA91890B15
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C1627FD71;
-	Mon, 10 Nov 2025 16:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910B12773F4;
+	Mon, 10 Nov 2025 16:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VAhUz7+c"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjywY3vc"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C501427CB04
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F43205AA1
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790916; cv=none; b=AOXrbbQCTjEzmx2t24PQUcrztVVQen86JG4eH3MAxkSvow0yTBoYjUm+t/3ThweGJ9l3mPMVj5zV9JO4ewEqUkP8gURxtR3z1uHoG1yyxRn9kOlp+j4ZujMtZ3/2IiwjGdshFa0NPQ4ZQDUOIs4j2/edoobAYT+ZNX5cJO6JqA8=
+	t=1762790739; cv=none; b=DZep2Jrw0znhIMmPexz96sLeqjhmxjruLJ0beXyfKOGUvTMh8r2e/dKiCbtkZDRRMLMhYUxzRm4G8k74OS/zGT76DqU+93Zt+ubVdGFqBkDc6m9em6G8LJ1DXwXAZgYC5+ImRnTSUgV3IKfp44yfWBgDNiTu6nbw3N/M1KajBYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790916; c=relaxed/simple;
-	bh=j+A69YO9GPyr0gWQ3u5mkLwW0l6/fn1S8Q13eXcie+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fHCfgHBiYxpAKKOKHY4TS8xhIWuAZjxnJx48ZDK0pHoKRMw13BIZdkL97K+shEpFOMS6clspzVsVf2AI/1/TYUoADPmAVOue5GLF8vOLub5EMRZme2PKdS6c8G/u4wMPwPm73dPocuwqPbwmPSHI79D8y4oh8IUjuJtYh5LW0nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VAhUz7+c; arc=none smtp.client-ip=209.85.216.48
+	s=arc-20240116; t=1762790739; c=relaxed/simple;
+	bh=onmwgzWvrykN1fzVZiejcYemdHDzwD/isE77f44YfsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZpP/duRWydAHLnkeZTaHQeRYevqs568rLhIutFbJ+MYvQxVjLq60zM60GO+CVUHOu8BuCBiSuwlpS+jfl8ybwtAtu8LUPLrB2gzTuCnz5Gj7hS33y+/UuWiEYr8TUmSRUshPL2elshNoFtS4x1rkPtLgKHPIXy3IpF0FmpEvK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjywY3vc; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-34361025290so2079672a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:08:34 -0800 (PST)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7aa9be9f03aso2788470b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:05:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762790914; x=1763395714; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FuKiYqKXaLoC/HHi2F0UDEkiOMPWnRzm7yH74kwlVYw=;
-        b=VAhUz7+cB744WDIjMdpLWRHtOyHixJB3ushc15ds7a5ETYLKmE83qn78jNHMX+BEq7
-         hjjPnd1oynAxPHTaP73MKClrOUm6u5SRLifHgQVjxHnWc+xaEIN398p69jfftzWOVdSK
-         +TIBUBvDb+epT0FqSe5na4EBog0cMlMFSVBiKZbzValpEkBw5qnL9Cm1LJYtF6WlqGsY
-         9lSz0XeguumeXvlZ+Ju7xD7Xwkk5FMSobZEhGTrv7SLkqLdPyO0VfT7lh/LVOM2Xi17Z
-         761PEQn8uNfWJfrxo9x/385DFejm+4W+zTw9nQB5uRp/ip2tt1iHvj2GQU/GHv4JgFbZ
-         EvJg==
+        d=gmail.com; s=20230601; t=1762790737; x=1763395537; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TgZgArONH6lr9XvODSMICWYyuVWCZCYNoJZs+MKJ66o=;
+        b=TjywY3vcQXDoDhOBL2QUPL3GrA9bfCkCgSDkEN0ZkZ6QUTpCX2HfscTf7vUlOejh2g
+         yGFpKy7Iv3SR+lxHXIrxE3fIEjJtKsLBe0UAkGofwtSPUihwUfEN0JpTE93NTf7XpPt5
+         WjlBK0qsBbipX+zh5dUAy6p/Tn/ay/UbU+vmReprN4QBeRJuPTLHloueGF/yXZd/7fb0
+         M2DRdOrSsiyNULogKUUgFr53pA9Y3sIDfURklD0RF5RW6XWY6sLeqa1z1JxBhHAnZqfD
+         8jT9emaNuxMfzvFBwLpzcxfSE0/IUWRN5D0MAxLeygtGdoQBGl27tx5cH17RaE1oeBTm
+         3pAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762790914; x=1763395714;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=FuKiYqKXaLoC/HHi2F0UDEkiOMPWnRzm7yH74kwlVYw=;
-        b=bw38vrqFpcjwHakXr0rW0Em7DWLK0oz/EXhslQr4z+GBcYvJC1OrazM4ddaxikgiAZ
-         y23oZvJPHMaTGlnVItuvyOb8zz8xvnAu4C4eccpG0FZ0EA47JXJfgS//9pNSvwNaoouX
-         GP7Pgx3Gs3fdrA4yb5WzqZgqZLMSI/cxaCb29PMgrZK7RwngXkJixLMicWQhBjVLDKlY
-         AbSHvITvSWtsz/rPH3UgQ+VTuw5V+ySX6OyFMVm1dxmQq26tPYgJ7mrWLypJ3R8ahbSO
-         sObpLW8W1Nzj1UL86EHpErCRqXlnmgKMswHJpu4Xw3xhhjpUu72a34Sv7lJ4or8g7SfO
-         yHEw==
-X-Gm-Message-State: AOJu0YzfcbjPJdgr37LHaPL6lCQvJY+lMIHjrLKAXyRiSOE3SQJ9/3di
-	Ac24DE4kaxtuj8yMUZwo1L3ZJmaMa/k0kDPgpIQqMCnPaJ7vf7g7K1Ngufkvd0pq
-X-Gm-Gg: ASbGncvoUW1R/ok1753j7buvJDPEreN+zaWk6I8+bNB6l35Q6kVVTVeO4kEYCTnbhvR
-	Oo9gx3mdLUGshHL79wrkJ8DpfBuF2UWVEbWUXl3RKCptuMYFQYsUg+MePTvgyQ0PyByDyN+odhS
-	DBQew9RYY0oKiRiUPSgNnMAfANGiMO/++vlVs//Ms+iNipxD3wcEP3DXOys1XdGo9UuAyGXfsVZ
-	esTjCH4kTeBKDcarwB4YlFtdnvU9KuZFGktpKdEwterUVGysD+lflSEc+EIDV/7l7YvIyUj+sYI
-	4Rdgh9Nms8gr0JjTrFv3JEQM/8yhq+3prF12N8+dQfzEe5LTdLXjG0MDytMTr/++ib1kYl5dc55
-	4irhbjMUBuVt/E74xeS4/xDFcrpW6pxaEwC6B+MWHKiwhyrc1xzZerHIhna6mqXF2MJoNf72CTu
-	O13vlj0O+7WOfB2QG9RanT2rH5To59zvVUvCoc04GY19A=
-X-Google-Smtp-Source: AGHT+IFxL86gMO8C+HEUrlebZRsB/XS5G9BUSOq9q06RQ47+OUHEKa103lg0GYFY88+iDHCfSgaIwA==
-X-Received: by 2002:a17:90b:1c0b:b0:330:7a32:3290 with SMTP id 98e67ed59e1d1-3436cd1cb48mr12509736a91.37.1762790913565;
-        Mon, 10 Nov 2025 08:08:33 -0800 (PST)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-34362f1f231sm9308893a91.10.2025.11.10.08.08.32
+        d=1e100.net; s=20230601; t=1762790737; x=1763395537;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TgZgArONH6lr9XvODSMICWYyuVWCZCYNoJZs+MKJ66o=;
+        b=VrVpRM7MiHjnBRa8FX141D1r4hD6wKHCkbqwP1RPZOb8yK7BPZUUznkkeBhMFk2BrA
+         rkNXhMTwzbUvyNeNK1WznhCocs2iMBZOSKKaiR6D7mlddgkKiH1Wx89qt+rbUipW9eJG
+         ZvNg9rUJjA2Zj7K2amWb68xThtaSzhgJQbBoCb8+TrnombWDTalNqp+Q2LncGG2bUETb
+         zZSo+cMYuGQW6st+GBpCji45Cex6F4BP/OPb+ToZu2guFZTOteRwFJRvl/Yn/bdBmli3
+         ZEmTottj1p7I/01dtbpCP8FYBNzqBoOKNy4wcAfef3R/O9obrL+OtMjrtKZaCMGm38eb
+         jFKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvPGM3saPUE8o0mBKpMXhEfHbg+4Gnf2E2puW2cUoj8qKuuCv2tJbIkE98oh+x38SioOPrDVBtYGeydME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYhRFBnIq9owLmbKtjgviA8nK9NahyVnZ0+hkUtTyhiGH/POXe
+	KgOPzYjg2zRp+D6nzQ9QWo0e+wqRxJgXKxnp06AGuxYJU9Ou+htSYiAC
+X-Gm-Gg: ASbGncts7+NibJ9DBNrIAQ+cGVVSw/ES4GT1O+BnoYdadMGR20IYqrs91ZwXzIqksXi
+	yiuUS/c+xnQHzF98y/Bt+X7yX4M9sEo01O4UOkXH25IqJ36v+HrUIIcf+b+Kx1C6OO7y/Llr+Qy
+	L+hePm/B2ielDUkiqDTFEAYL+uTCGcF7TtcXUXURpqHjUJWCXFyg50HD0fzDStP4sHlXgAkr23s
+	subk2YTfM0d0Cg7VAEhSF1qbq146OXIWxMnCe/eHliGN9Qw6SEsmKiJ0oCaBiQybri5T1WKy/Ab
+	PT309d7DWb9gJ5WUz4EVkKCVYLhZGstjZXduXyVxXGH9xTdFG80vv0fsQG2NLP8r9Ew+T0X1+HQ
+	NckQZSmfTfdYPNqoc87BjVzOh8wKpkIQ73fPRYCfdKMoO+VuSMaSyW35OC8SkvuBhGFUtGK1mWx
+	bSndfRnlw=
+X-Google-Smtp-Source: AGHT+IF6WNNBzThjDgikYB/HqeiGseOlAPwbhWtHTRN1quM7bZZi7LqL9mv+idqwSvzAApOMFvrtbQ==
+X-Received: by 2002:a05:6a20:1584:b0:344:bf35:2bfa with SMTP id adf61e73a8af0-353a31550dfmr9952656637.33.1762790736506;
+        Mon, 10 Nov 2025 08:05:36 -0800 (PST)
+Received: from localhost ([2408:841b:d00:77aa:3e0a:b50e:a68d:6665])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba902207227sm13072965a12.33.2025.11.10.08.05.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 08:08:32 -0800 (PST)
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH 4/4] mm/vmalloc: cleanup gfp flag use in new_vmap_block()
-Date: Mon, 10 Nov 2025 08:04:57 -0800
-Message-ID: <20251110160457.61791-5-vishal.moola@gmail.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251110160457.61791-1-vishal.moola@gmail.com>
-References: <20251110160457.61791-1-vishal.moola@gmail.com>
+        Mon, 10 Nov 2025 08:05:36 -0800 (PST)
+Date: Tue, 11 Nov 2025 00:05:29 +0800
+From: Encrow Thorne <jyc0019@gmail.com>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: spacemit: fix comment typo
+Message-ID: <20251110160529.GA18666@hailin-HP-Pavilion-Laptop-14-dv0xxx>
+References: <20251029-b4-fix-ccu-mix-typo-v1-1-caddb3580e64@gmail.com>
+ <20251029223337-GYA1549833@gentoo.org>
+ <20251110141251-GYD1651402@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251110141251-GYD1651402@gentoo.org>
 
-The only caller, vb_alloc(), passes GFP_KERNEL into new_vmap_block()
-which is a subset of GFP_RECLAIM_MASK. Since there's no reason to use
-this mask here, remove it.
+On Mon, Nov 10, 2025 at 10:12:51PM +0800, Yixun Lan wrote:
+> Hi Encrow,
+> 
+> On 06:33 Thu 30 Oct     , Yixun Lan wrote:
+> > Hi Encrow,
+> > 
+> > On 00:05 Wed 29 Oct     , Encrow Thorne wrote:
+> > > ccumix.h was copied from ccudiv.h and the comment after #endif was not
+> > > updated.
+> > > 
+> > > This patch fixes the incorrect comment to match the filename.
+> > 
+> > Just describe in imperative mode, see
+> > (since this is trivial, I could amend it before apply the patch,
+> > so no need to resend)
+> > https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
+> > 
+> I have no other clock patch queued this cycle, so how about you respin a v2
+> then let's ping Stephen directly for inclusion?
+> 
+> for commit message, I'd suggest simply as below (short/clean, also enough):
+> 
+> Fix incorrect comment to match the filename.
+> 
+ Thanks for your feedback.
+ I’ll send out v2 soon.
 
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- mm/vmalloc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 970ee6756909..eb4e68985190 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2699,8 +2699,7 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
- 
- 	node = numa_node_id();
- 
--	vb = kmalloc_node(sizeof(struct vmap_block),
--			gfp_mask & GFP_RECLAIM_MASK, node);
-+	vb = kmalloc_node(sizeof(struct vmap_block), gfp_mask, node);
- 	if (unlikely(!vb))
- 		return ERR_PTR(-ENOMEM);
- 
--- 
-2.51.1
-
+ 		- Encrow
+> > > 
+> > > Signed-off-by: Encrow Thorne <jyc0019@gmail.com>
+> > > ---
+> > >  drivers/clk/spacemit/ccu_mix.h | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
+> > > index 54d40cd39b27..c406508e3504 100644
+> > > --- a/drivers/clk/spacemit/ccu_mix.h
+> > > +++ b/drivers/clk/spacemit/ccu_mix.h
+> > > @@ -220,4 +220,4 @@ extern const struct clk_ops spacemit_ccu_div_gate_ops;
+> > >  extern const struct clk_ops spacemit_ccu_mux_gate_ops;
+> > >  extern const struct clk_ops spacemit_ccu_mux_div_ops;
+> > >  extern const struct clk_ops spacemit_ccu_mux_div_gate_ops;
+> > > -#endif /* _CCU_DIV_H_ */
+> > > +#endif /* _CCU_MIX_H_ */
+> > > 
+> > > ---
+> > > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> > > change-id: 20251028-b4-fix-ccu-mix-typo-038c19fe30c4
+> > > 
+> > > Best regards,
+> > > -- 
+> > > Encrow Thorne <jyc0019@gmail.com>
+> > > 
+> > 
+> > -- 
+> > Yixun Lan (dlan)
+> > 
+> 
+> -- 
+> Yixun Lan (dlan)
 
