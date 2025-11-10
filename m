@@ -1,84 +1,215 @@
-Return-Path: <linux-kernel+bounces-892527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C43E5C4548F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:00:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9041C45489
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:59:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EA01188F67D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:00:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C8804E8827
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C48E2F39D7;
-	Mon, 10 Nov 2025 07:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034EE238C0D;
+	Mon, 10 Nov 2025 07:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ahumAj/a"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nF7nczR4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A6C2F5321
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA8A2F3605;
+	Mon, 10 Nov 2025 07:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762761588; cv=none; b=JMw37DyBYawtFIM232PJUFqJs7M80M/gw/4YbGZXfJmmA08il/1ZxW/5OS3kd9q+keWXRbkD548SM01f2zkTRQzZhi5Wk9v8hvCs5H+IUIbjEodxtKKRSX7N8rqAqcBECLybUAMMmpZ9gmHmfr1rBIfmTJbknuCk6eLx4CwO7P0=
+	t=1762761579; cv=none; b=li/SM8yV9FA7YOT/AcoWUEuw7ASErb2HGHuSMAtkKS4oaHf5k0/DyZwBQFXp+cMG2fRT5Xnc84UEDik56v5CM1fGFMBNEwXxsKFXi/yv/TREU7EIK6pIX5e78Ynj8yRSbH4OV7fUPlfs6y+D+0WlDJbB1gy/dWBOuSEM3qAQ26A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762761588; c=relaxed/simple;
-	bh=l6rAjgIfDlhOHg/0Bv9x+4BwfAtvCUpo+tG/vXOpkuA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=IIhIRaN5aS7/lDBG51xs6XZbG4V6BeO3gZKBBbpScLVQmdVI6KUpibocf5FBYkOAH4UKYd+QTmw9t7NLpZxkYH2/z2awjyFiNAYG6QuAWn9tSxWpH1PFZu0bEpeKj2yXI3r6rLzQyN6r74ITBBWr20bC6hegvp0z+L/MZoUsn5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ahumAj/a; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id CF36D4E415FF
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:59:35 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A5633606F5;
-	Mon, 10 Nov 2025 07:59:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9934A103718A5;
-	Mon, 10 Nov 2025 08:59:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762761575; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=l6rAjgIfDlhOHg/0Bv9x+4BwfAtvCUpo+tG/vXOpkuA=;
-	b=ahumAj/aDXbJoRdvrKUIbCnZrAHisypL1ca1YI2jBWh+OI62ou9c/hikOW1bqE3UHJxe/C
-	+Ja6VUru+WVsULqRORDzKvj3Eje16Kx+TNEw+b5ZoXhBAWpSPFny/3+DlOWpNxGd67URgl
-	rMW3bOd9gDpbe9eVa6IHj8f9yarfIG02jRvd0Umd6RGi646YBzF9lj518YtjM0HiiiA73q
-	uzG6OQz04mXBl83NZGTm29039oLQ4sKUzNR3FwVHmxu6jGwJdOFNEYH9/FMP3lZV2gQcD5
-	QSSO1kT/2jHx3reTsa1vVOWAhmDB0MLAIs65CimKc88KqfQ7IpMkoO/S5J7tKg==
+	s=arc-20240116; t=1762761579; c=relaxed/simple;
+	bh=Ky4ZUbF427UA1ak5hD3hxfs9YMIHo7w0v8HQSA52ZSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+vaTy+Xe+n/ttzNO3T5QBN0ombtrz5JYQVtPZJLHfa80xNuInVabbNJwPtsCwYocFA50YWnryvkU/NyYjEJda6GGvPYlH8wpj5WDw9uPrtkGD4RR+jm1OshKSvyOWzd5cyvhk0ijz2ew+8HUjyAePsSZD6w2qCqNQvmMIdkf48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nF7nczR4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D6F1C4AF0B;
+	Mon, 10 Nov 2025 07:59:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762761578;
+	bh=Ky4ZUbF427UA1ak5hD3hxfs9YMIHo7w0v8HQSA52ZSo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nF7nczR4VaS5idOtiTinYLTvd5C1dCOOK9Ot68JAgL+Le+7WryMEjUTLPVwzzZP5x
+	 Q/XTjtI2E99bTUFOW60XU4BMh8wGgbeVsZkro5xlokTDnRt6iS021RT9aLk1J28kyJ
+	 ATua9Lpc3wRUBayBCVtjM2EN/5eJrz7RcseWwEgdLnL/QK4TN5h7W+PMFUlBFXs4Q6
+	 Zic+84U3r4LHLypMc/41px3sPHf5FVmgahgfaB4nfFvR4gXIcEZAMkcajsQ1REqUBR
+	 l5gX+IY0wmCBZhE9gS4CrpNDoAOpRLKJwi3UPv3aoNvF7KvhQZvq6s202d6fo/vF6u
+	 +noU7jxGRS+bw==
+Date: Mon, 10 Nov 2025 08:59:36 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ajith Anandhan <ajithanandhan0406@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adc: Add TI ADS1120 binding
+Message-ID: <20251110-curly-ultra-coucal-d7cc32@kuoka>
+References: <20251109141119.561756-1-ajithanandhan0406@gmail.com>
+ <20251109141119.561756-2-ajithanandhan0406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 10 Nov 2025 08:59:33 +0100
-Message-Id: <DE4UTRD2E5EW.2APL4DF6P6GUU@bootlin.com>
-Cc: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ASoC: dapm-graph: Handle sound card with space in
- name
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-To: "Yiwei Lin" <s921975628@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20251107171302.2228-1-s921975628@gmail.com>
-In-Reply-To: <20251107171302.2228-1-s921975628@gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251109141119.561756-2-ajithanandhan0406@gmail.com>
 
-On Fri Nov 7, 2025 at 6:13 PM CET, Yiwei Lin wrote:
-> When the name of the sound card has a space
-> between, the script will fail to output the
-> dot file. Consider the case to generate it
-> correctly.
->
-> Signed-off-by: Yiwei Lin <s921975628@gmail.com>
+On Sun, Nov 09, 2025 at 07:41:18PM +0530, Ajith Anandhan wrote:
+> Add device tree binding documentation for the Texas Instruments
+> ADS1120.
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+A nit, subject: drop second/last, redundant "binding". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> 
+> The binding defines required properties like compatible, reg, and
+> SPI configuration parameters.
+
+Drop sentence, completely redundant. We can read the diff.
+
+> 
+> Signed-off-by: Ajith Anandhan <ajithanandhan0406@gmail.com>
+> ---
+>  .../bindings/iio/adc/ti,ads1120.yaml          | 109 ++++++++++++++++++
+>  1 file changed, 109 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
+> new file mode 100644
+> index 000000000..2449094af
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
+> @@ -0,0 +1,109 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/ti,ads1120.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments ADS1120 4-channel, 16-bit, 2kSPS ADC
+> +
+> +maintainers:
+> +  - Ajith Anandhan <ajithanandhan0406@gmail.com>
+> +
+> +description: |
+> +  The ADS1120 is a precision, 16-bit, analog-to-digital converter (ADC)
+> +  that features two differential or four single-ended inputs through a
+> +  flexible input multiplexer.
+> +
+> +  Datasheet: https://www.ti.com/lit/gpn/ads1120
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,ads1120
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 2
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +      Interrupts for the DRDY (data ready) pin(s). The device can output
+> +      DRDY on a dedicated pin or multiplex it with DOUT. If both pins are
+> +      wired, both interrupts can be specified.
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      enum:
+> +        - drdy
+> +        - dout
+
+No, this cannot be flexible so much. Look at existing examples how this
+is supposed to be written.
+
+minItems: 1
+items:
+ - enum
+ - const
+
+> +
+> +  avdd-supply:
+> +    description: |
+
+
+Do not need '|' unless you need to preserve formatting.
+
+
+> +      Analog power supply, typically 2.3V to 5.5V.
+> +
+> +  vref-supply:
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +      Optional external voltage reference. Can be connected to either
+> +      REFP0/REFN0 or REFP1/REFN1 pins. If not supplied, the internal
+> +      2.048V reference is used.
+> +
+> +  ti,avdd-is-ref:
+> +    type: boolean
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +      If present, indicates that the AVDD supply voltage is of sufficient
+> +      quality and stability to be used as the voltage reference instead of
+> +      the internal reference. This allows the driver to select AVDD as the
+> +      reference source for potentially better performance.
+
+Driver? Aren't you just describing the case when AVDD is connected to
+REF pins?
+
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +      Optional external clock input. If not specified, the internal
+
+Drop first sentence, completely redundant. Schema defines what is
+optional, not your description. Can it be something else than external
+clock input? No, it cannot. Please write informative descriptions, not
+just inflate the text.
+
+> +      oscillator is used.
+> +
+> +  spi-max-frequency:
+> +    maximum: 4000000
+> +
+> +  spi-cpha: true
+> +
+> +  "#io-channel-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+
+avdd-suply
+
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +unevaluatedProperties: false
+
+Best regards,
+Krzysztof
+
 
