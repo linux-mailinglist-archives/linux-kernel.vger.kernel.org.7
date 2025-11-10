@@ -1,122 +1,147 @@
-Return-Path: <linux-kernel+bounces-893203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B412DC46C68
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:08:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1F5C46C6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:08:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 60BBB3454D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:08:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD2018897BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79AC30C609;
-	Mon, 10 Nov 2025 13:07:08 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1F3310629;
+	Mon, 10 Nov 2025 13:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vf/otQfw"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142D0307482
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35892FCC12
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762780028; cv=none; b=lm67d4UcP+E17N9m23P+YvuGyVZ4aW0CCYIaMSAPxnX7IHy3Uh/zksnPQBGx6RJSmU55/B78aXIJw+0LZgWRhYL68UBlse+OddTng3X1jJZOcBCp1fZdIn3+6VY9EFmS2T1NlmMFvSdhH1htn7Ytk0kUA4mNR6jF4hs+eoNvHco=
+	t=1762780051; cv=none; b=afXiVIZuVJm+a2EkiajU1bn9/nB8pInRXcC62uzxe4MInPPuJqyWgEEk3SYdYqeg8NwlMCbTWXHE4Ui6YOPoqYCl+MPlk7qnk/MFccb640eMj4sXx7Ebp4v+QkAUuMYXcd83b77OyGu0AS0KvR/lY8lngU5XXg+PPPcYlXMKqbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762780028; c=relaxed/simple;
-	bh=6qGFH5HDfCMxYD4WKwQAYalH85XXMYVZ/ZsIl7iata8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KAntIGWkFaO1Ba0TJd+fa4sx+raeijDVR6CUj++Xa7aqXmkC0g0eCVlktTLQAObR+MmylSgLoAevvUdf5Y4RPDPW5dNSCBg72BLIN2qPT0cnVICgnFvIwCg9rm0ijDuan2gTr74cbZJ9TRvTiJKNYWPC8yws2cCzmoZwZmsTmHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-948af64c58dso33364739f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:07:04 -0800 (PST)
+	s=arc-20240116; t=1762780051; c=relaxed/simple;
+	bh=xLE0g0V6VtstEXCgX58na2I3K9PHtFDdOQGN69zLTms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PwMtfnrOd7YnFP437sWDo9DFmkFOCj2u+S3iTAv6xgqkeABYNOSxiq4NTirE3MmIbv0qiM1yLPRFvrxNN772irU3tZpEEw0HLbbansG5iH5cWTsvgJpT7uNNKq9PefKKBoWuSyDDwij/0Fw1ckVG2dOJTIowIXPHOZZZJvbgROk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vf/otQfw; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47721743fd0so14470265e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:07:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762780048; x=1763384848; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B4cJaSvdyQCbEMb76mhwbw00KVaPl98c0awaqdZ3M8o=;
+        b=vf/otQfwqJttX7Cmx+sZy3Ed8WICcoJ58/hUXTGsHageFxn4m3AQAESc2NMFRZBGSJ
+         Xasiu0RwIeVSI1pJ2bnUpy4PtKtU+/r74rWsLn1myMLYuzUd/emun1AHYDYPNq44V1ti
+         2t4v7MjAZQAIyHg0mNe8tGhTRCUS/brU1c6R9eJWKmE7Qg3oAbwfcUqCLCv/iMV2Hwr1
+         VMcPJhe6ECBZdbzqhfMcuyDjLeZCUkl6/dEAo3ysNHSTcEHj9qiML7bJjW1ukYDTGZuR
+         tWWBOBvYtpSnIrNg5PoUcLi1gUFxJe6/C96L5Q0PKweRcR//W8iJFl1z+HsQJgsLC5ud
+         okvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762780022; x=1763384822;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FKNKGGxh9kfvtglH61quUSLnkQl2GBNH6gWhaXGNHmc=;
-        b=XlnVMbTFqZta7rhQ74mDz5qNRpUa+3u2a6SCVmat9z/W4/FvQ6iEhg43T87zkaP7X/
-         2p2i4bGqqiwFUOmB6q8UReKt0L37y99iqnKjoPYwopmrB69vBPZxN4DmY/NLpIilIQ/U
-         4EbeYGzvCoFin+EoXehOymyE5ZaUkNRQdZu8IeLmZezes5BWOrvG9/bJriQt00YGXIMc
-         nQjKRDyFPKsDNpBFUHsXeKygSBNZXug+OvCVe5iPiDVLdvedhMWS6lhvGoX+OQENVXZy
-         jnlF7WDO9GsbjmgWKDsQT1l0PdZUKmn6HDLjd4gOkvzonyZOPpaHnG2h+gpMnK1TRrZ1
-         QN/A==
-X-Gm-Message-State: AOJu0YyspLZUBzByOS+paD77aJGpknp2UiKfHZLNHWm8tATo1B2a6CuM
-	2gsB0vm13e8qv5Pbg+Jcu6N6pXsyoDr5FOpdfUwmdSUITa+xtfOpbmFqbpHYTohdE8MtEhozn/r
-	5UZO8uDlY/fpy/eGL078mKEFAeMZ1Pf87E+Kra1k4aNKyzZx6gxh3nWhQuMU=
-X-Google-Smtp-Source: AGHT+IHmI2ikfG2wlNrmcw9qKRIU2v/D3k9y0LrNkFNjrWXIM4MmfTz0T4NRDXstLj3fQpK6Cp7k6+nTDZYX/2o8INj2jZw6c3W4
+        d=1e100.net; s=20230601; t=1762780048; x=1763384848;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B4cJaSvdyQCbEMb76mhwbw00KVaPl98c0awaqdZ3M8o=;
+        b=gQmZDNnasHhw2Bmk+jmYc/o/hdrJXwX2iVTQbAvulLuC0e+r5Y9jIs4Ws4cEJScBWB
+         hiIok9j3JMLNlv7axeiUCeD0ubtoSuDbexM/+2c0YrduFpAkwGiFk7oG6/su3+H+QB0A
+         /eAA10Spuo2F3eEtJOwExAnihPx/J3GjVH5DqShGGm9UNQZbzQ7cyi9ZMi8u0wkUxM8p
+         dcmn5PgiisP+5NHSq3Ov+kRHyQ1tlnVOV2YOVOAFh5yBt8slOSaJoVTTkp1ybk9qZ4Rz
+         tm/p4X9vrw6K1ivQD9qyRZa7tBg1afuX8XI/BL/WeCf3pO94xBQ8mkDqUPCOSYwDDAzw
+         0egg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQNcLes8G8iOtvjuCaO0jh46yoBZuAJa58SiRfIDrttTDNIkW/aXr/8nOsFcINTp7YWlwF+ZcPDmYQzb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywya4et8Q9JagGdWZ3CxpzUo/eypJQDWjfYjy6kUjD+OiFMt15X
+	cSuJ+kmJTP1glI7oYzt+S95Rtyd+xWydYK0X0+T0FUma7JCCiV7pbsMzHZ+Gw4ZfDP8=
+X-Gm-Gg: ASbGncshFtE53TURZXR92bjVUotargt1xbpw69G348SvSqIcfEvMrUzRT4JPuvfLzOR
+	ttbfIRJY0sdjn03/4J5p2rMiBMazHlUv24ziwyPJXrb/HXjz3WfZLyPGZQWQiL8x9b/EdcYsh0X
+	dF710CcIDAyt3C2GOPHh9mJ7uta16BiS1p8uaubykXLOra6rgAO/4Bk5oUoJBKDpBv47gWOKVEM
+	D1dpES/11VKJosnIYvi/vClrFWvpLwyS26JJeaWsmWHnfr3Et9oEGtbCsgkkmRvVO9bmqfMXTJH
+	IlLn+eSwYuEq5/MOnyPD2JOnoWY5s5BarBHWiKabFRIRbjZ4jhhX2U7R+hgA3qfWiAg1g9fWH7c
+	KMsY/oeaxIlcNkRD8dBDirWeIRC359TI6eVrRj4N6ZW9fSOEnPGQw0fIUk13gQVOETvvmaxCu2L
+	/iBe8S/6tD0QB+SNV/zMtvXkWBFKgafm5/SSyqwIwMzfRYGhOsmecVfoE=
+X-Google-Smtp-Source: AGHT+IHcCOONTIlqmfkXgQ46x6qRMAz8cIzqeP6tpBIy8/x9/ya7VMOfAxTxh9tydHHTLgqTp1lvxg==
+X-Received: by 2002:a05:600c:3b8d:b0:477:641a:1402 with SMTP id 5b1f17b1804b1-477732308acmr85105745e9.4.1762780047939;
+        Mon, 10 Nov 2025 05:07:27 -0800 (PST)
+Received: from ?IPV6:2a05:6e02:1041:c10:2b20:d700:6e9c:533c? ([2a05:6e02:1041:c10:2b20:d700:6e9c:533c])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4776bd084d4sm252075645e9.14.2025.11.10.05.07.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 05:07:27 -0800 (PST)
+Message-ID: <adceca49-acbc-4ae6-984c-5a8916aba8be@linaro.org>
+Date: Mon, 10 Nov 2025 14:07:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3b86:b0:433:7964:d83a with SMTP id
- e9e14a558f8ab-4337964dacfmr62609845ab.8.1762780022019; Mon, 10 Nov 2025
- 05:07:02 -0800 (PST)
-Date: Mon, 10 Nov 2025 05:07:02 -0800
-In-Reply-To: <912d60c8-e898-4113-b167-9549bc15f026@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6911e376.a70a0220.22f260.00f0.GAE@google.com>
-Subject: Re: [syzbot] [jfs?] general protection fault in txCommit (2)
-From: syzbot <syzbot+9489c9f9f3d437221ea2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	yun.zhou@windriver.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v3 5/9] thermal/drivers/mediatek/lvts: Add
+ lvts_temp_to_raw variant
+To: Laura Nao <laura.nao@collabora.com>, srini@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
+ rui.zhang@intel.com, lukasz.luba@arm.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com
+Cc: nfraprado@collabora.com, arnd@arndb.de, colin.i.king@gmail.com,
+ u.kleine-koenig@baylibre.com, andrew-ct.chen@mediatek.com,
+ lala.lin@mediatek.com, bchihi@baylibre.com, frank-w@public-files.de,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, kernel@collabora.com,
+ Chen-Yu Tsai <wenst@chromium.org>, Fei Shao <fshao@chromium.org>
+References: <20251016142158.740242-1-laura.nao@collabora.com>
+ <20251016142158.740242-6-laura.nao@collabora.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20251016142158.740242-6-laura.nao@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 10/16/25 16:21, Laura Nao wrote:
+> MT8196/MT6991 require a different version of lvts_temp_to_raw(),
+> specifically the multiplicative inverse of the existing implementation.
+> Introduce a variant of the function with inverted calculation logic to
+> match this requirement.
+> 
+> This ensures accurate raw value generation for temperature
+> thresholds, avoiding spurious thermal interrupts or unintended hardware
+> resets on MT8196/MT6991.
+> 
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Reviewed-by: Fei Shao <fshao@chromium.org>
+> Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> ---
+>   drivers/thermal/mediatek/lvts_thermal.c | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
+> index df1c0f059ad0..31796a5b8858 100644
+> --- a/drivers/thermal/mediatek/lvts_thermal.c
+> +++ b/drivers/thermal/mediatek/lvts_thermal.c
+> @@ -300,6 +300,18 @@ static u32 lvts_temp_to_raw(int temperature, int temp_factor)
+>   	return div_s64(raw_temp, -temp_factor);
+>   }
+>   
+> +static u32 lvts_temp_to_raw_v2(int temperature, int temp_factor)
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-UBSAN: array-index-out-of-bounds in dtInsertEntry
-
-loop0: detected capacity change from 0 to 32768
-UFO tlock:0xffffc900034f9048
-------------[ cut here ]------------
-UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dtree.c:3707:8
-index -1 is out of range for type 'struct dtslot[128]'
-CPU: 0 UID: 0 PID: 6833 Comm: syz.0.58 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
- __ubsan_handle_out_of_bounds+0xe9/0xf0 lib/ubsan.c:455
- dtInsertEntry+0x936/0x1430 fs/jfs/jfs_dtree.c:3707
- dtInsert+0x931/0x6000 fs/jfs/jfs_dtree.c:894
- jfs_create+0x6c8/0xa80 fs/jfs/namei.c:137
- lookup_open fs/namei.c:3796 [inline]
- open_last_lookups fs/namei.c:3895 [inline]
- path_openat+0x1500/0x3840 fs/namei.c:4131
- do_filp_open+0x1fa/0x410 fs/namei.c:4161
- do_sys_openat2+0x121/0x1c0 fs/open.c:1437
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_creat fs/open.c:1530 [inline]
- __se_sys_creat fs/open.c:1524 [inline]
- __x64_sys_creat+0x8f/0xc0 fs/open.c:1524
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa2c965f6c9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa2c8cce038 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-RAX: ffffffffffffffda RBX: 00007fa2c98b5fa0 RCX: 00007fa2c965f6c9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000200000000580
-RBP: 00007fa2c96e1f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fa2c98b6038 R14: 00007fa2c98b5fa0 R15: 00007ffe646c1968
- </TASK>
----[ end trace ]---
+Same comment as the previous patch ... _v2 ...
 
 
-Tested on:
 
-commit:         e9a6fb0b Linux 6.18-rc5
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17265412580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
-dashboard link: https://syzkaller.appspot.com/bug?extid=9489c9f9f3d437221ea2
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11bbb084580000
 
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
