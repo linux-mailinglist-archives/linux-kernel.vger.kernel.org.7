@@ -1,120 +1,122 @@
-Return-Path: <linux-kernel+bounces-893552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A59C47C99
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:09:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9173AC47B57
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:56:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 643494F2BA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:49:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2CD018821EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA74E279DCE;
-	Mon, 10 Nov 2025 15:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA2627B34F;
+	Mon, 10 Nov 2025 15:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wJ0M+0La"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="BoQyEBP8"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074FE153BD9;
-	Mon, 10 Nov 2025 15:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF5527A460
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762789725; cv=none; b=bTBS+UfuaejFlKhV7g79QT05b4rT6QsK93LCYkSgADfSkdKsaVDDbFxBW59staLNVuixFjBpj43mywOrbepdTwvV0SCXnyDftnzTHhVhE4opezR1iR3Ta8lVyJK9GiHN2orsvVkxNvYeCPRBxYyatA5tT2VkxyxrKiyXoaGWLkw=
+	t=1762789728; cv=none; b=c3iQ+kh82mTkAOgKWy2v/Md7lIJwgIOzocQwlh6LE7duVVGBoC0s1NULsn92NSJOeXHiZJ+hHRkREmRkew0vpaFpjTD3m1x1oGDHUaM6C6GcphrqBIVkwlNScIMR/MPbN9QX3a92/KHHlmy/SpZ9u9DIUJw48atP+LSexScvt3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762789725; c=relaxed/simple;
-	bh=Bn2Zyt+aIDLf4tjfg1cxJuUuA6zwIk1XsFG7lBgkeHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KniyQYUvpAE53kH/LMEGdSgTy6u/Tl4ocaocxe5zDhezh8bRg3MalilQjgXDpsY2kuCzwFKPWh0WDXyyLqsvSqxuhIxKcUPQ9scS8WFhzwyG1F5q85+F8soKNaRuDray/eifc6MA17r6Mgfm0F226duMrQk3AK/h9hJT7fHyC8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wJ0M+0La; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=C67O4LVeg8WMDJ8KU9F1/iW0QK6epKrLMnUjULyR+wE=; b=wJ0M+0LacOP1OLv0g4ScRMqglS
-	LJK9h7xh6K4qf0modj5inMpydmTdGbcMa7u9oY50NBpmiUWjjm5opruYL1W72Y/GSXDF7DHO25qvl
-	586Dr6AONOKccWRf436bm2xB571dWjwNdOivv0ZI/CfrO4M/nk0JrLuNmgUUCwJIjsx7OGodPSPQe
-	phSKMDJo6WAUVBX4EMKgDFu58GhCxYg0ZomDpAcyLYAzI8slSTAwij3VIviu89UTMFO0YE+gtPFnF
-	WqwJJegK0lW/mea8+L2aG91IiywF2Z/9h726ZmklZ5XudGqzHMoitlRUo7gWB+t5NQNkaMGgzzgTU
-	eyvGuy2Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIU85-000000016gd-0EKo;
-	Mon, 10 Nov 2025 15:48:29 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id DE6E330029E; Mon, 10 Nov 2025 16:48:27 +0100 (CET)
-Date: Mon, 10 Nov 2025 16:48:27 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v9 2/5] perf: arm_spe: Add support for filtering on data
- source
-Message-ID: <20251110154827.GA278048@noisy.programming.kicks-ass.net>
-References: <20251029-james-perf-feat_spe_eft-v9-0-d22536b9cf94@linaro.org>
- <20251029-james-perf-feat_spe_eft-v9-2-d22536b9cf94@linaro.org>
+	s=arc-20240116; t=1762789728; c=relaxed/simple;
+	bh=3TZvGenUxA0A1VCJO743YS9UkcpHz5yUPoxxCOCiw/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PKiwOXM4oNXBIyvMuAEJDA/cA8X3GDAjrvdOpwwT7CC6klPW0Ev3ks7ux6J2ri4kGBRSwXzFnfwTRy7OzVYn2YmsuMYUiBg7way0vJrojZHlKIL6Y70f9Ohystjo0ENTWJxLgYuGUZyFB/lHT2wCaazBr73mzMDEDGQefW+CX4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=BoQyEBP8; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id nqxrwobn8hmD9X3a; Mon, 10 Nov 2025 10:48:45 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=4NjKkbORxP8fLQufIbJg6HJYBMW/fqijXIGcWKXlbGs=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=BoQyEBP8azBPRRoylzUc
+	QnFFdS7BQa6QUQthf8Y4RxwVRCrkAyUVe1GZgtZeg8hS1uRKTBSKRhein0viVC58xBx53r/fC6gE/
+	L0JiGZnFbSbHynVO1RjK9eRF9Z/JWjiJ8CbiRHv1bV9+Bm8NURI4xGqx2AB/pd3/B3S7q4WoZY=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14272418; Mon, 10 Nov 2025 10:48:45 -0500
+Message-ID: <1715ec14-ba9a-45dc-9cf2-d41aa6b81b5e@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 10 Nov 2025 10:48:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029-james-perf-feat_spe_eft-v9-2-d22536b9cf94@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v3 02/16] scsi: qla2xxx: fix initiator mode with
+ qlini_mode=exclusive
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH v3 02/16] scsi: qla2xxx: fix initiator mode with
+ qlini_mode=exclusive
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1762789725
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 0
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 1198
+X-ASG-Debug-ID: 1762789725-1cf439139110cc00001-xx1T2L
 
-On Wed, Oct 29, 2025 at 03:46:02PM +0000, James Clark wrote:
-> SPE_FEAT_FDS adds the ability to filter on the data source of packets.
-> Like the other existing filters, enable filtering with PMSFCR_EL1.FDS
-> when any of the filter bits are set.
-> 
-> Each bit maps to data sources 0-63 described by bits[0:5] in the data
-> source packet (although the full range of data source is 16 bits so
-> higher value data sources can't be filtered on). The filter is an OR of
-> all the bits, so for example clearing bits 0 and 3 only includes packets
-> from data sources 0 OR 3.
-> 
-> Invert the filter given by userspace so that the default value of 0 is
-> equivalent to including all values (no filtering). This allows us to
-> skip adding a new format bit to enable filtering and still support
-> excluding all data sources which would have been a filter value of 0 if
-> not for the inversion.
+When given the module parameter qlini_mode=exclusive, qla2xxx in
+initiator mode is initially unable to successfully send SCSI commands to
+devices it finds while scanning, resulting in an escalating series of
+resets until an adapter reset clears the issue.  Fix by checking the
+active mode instead of the module parameter.
 
-So from that I'm reading the config4 field will only have like 16 bits,
-but here:
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
 
-> +#define ATTR_CFG_FLD_inv_data_src_filter_CFG	config4	/* inverse of PMSDSFR_EL1 */
-> +#define ATTR_CFG_FLD_inv_data_src_filter_LO	0
-> +#define ATTR_CFG_FLD_inv_data_src_filter_HI	63
+v2 -> v3: no changes
 
-you claim all 64 bits.
+v1 -> v2: no changes
 
-Also, afaict:
+ drivers/scsi/qla2xxx/qla_os.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-  #define ATTR_CFG_FLD_min_latency_CFG            config2 /* PMSLATFR_EL1.MINLAT */
-  #define ATTR_CFG_FLD_min_latency_LO             0
-  #define ATTR_CFG_FLD_min_latency_HI             11
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index a52293972e10..f0b77f13628d 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -3438,13 +3438,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		ha->mqenable = 0;
+ 
+ 	if (ha->mqenable) {
+-		bool startit = false;
+-
+-		if (QLA_TGT_MODE_ENABLED())
+-			startit = false;
+-
+-		if (ql2x_ini_mode == QLA2XXX_INI_MODE_ENABLED)
+-			startit = true;
++		bool startit = !!(host->active_mode & MODE_INITIATOR);
+ 
+ 		/* Create start of day qpairs for Block MQ */
+ 		for (i = 0; i < ha->max_qpairs; i++)
+-- 
+2.43.0
 
-Still has more than 16 bits left.
 
-
-So why exactly are we needing config4? Can we please get a more solid
-argument?
 
