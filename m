@@ -1,103 +1,144 @@
-Return-Path: <linux-kernel+bounces-893891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E699C4898B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:37:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA963C489BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:39:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7613AD73A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:32:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92D6B3BB2E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BB3330B17;
-	Mon, 10 Nov 2025 18:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0213A32AAC9;
+	Mon, 10 Nov 2025 18:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="gbK26n6j";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="KYRnURah"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdYG5yJL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC9732C93C;
-	Mon, 10 Nov 2025 18:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A1631D72D;
+	Mon, 10 Nov 2025 18:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762799403; cv=none; b=cj3RWSp3tkctlXhZlpiLRDE3eqw8W1KzPP+MAbmzdwrQnntaSZDhFyxT2nNgf3qLERw5XcvM32C+Z9ZZGxswEQojxKp0geV6IT7Hsiai+SJRzByOPAra3TumUlMos20yoTEtguv2Yl+nQMAFYyY+pRNbm2/LaOceWM5OF0VplK8=
+	t=1762799531; cv=none; b=eBClc9G7OG5TPlFZ8ZCdq/RZABLwZrKrCTxZz4ucIdZqj/G2Hwx7LutLwfnAU6CURY1ygpWKfyy1fzlXSizXa7QzotOlaeo6lHbdLYHcO81DaCVE4xS0hjq9rcjNinRSxN7xv2xjP2b9SljXJeLoBOM2AB6+IjZ6y6pNGyKEyD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762799403; c=relaxed/simple;
-	bh=6fInuB/1LJqGr9jEjfnJRvv1hxhaA0dDoP/Oy8mHJXo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K3u0+vXyrlmkyQJ3XDJB3S1o4mWrCvwB3I+nckpIm+x9sCN8w4tIAJorPL3GCqbWUGG6mfNS8veV3Kv29h8ziuEAcCdQcT5koC6CYEZ/AtRI0nEvil6cQWu6O64xUiEP218wH2O8QgzOKy/LYogQdkodZ4xYjeqYHfEwiWVNfL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=gbK26n6j; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=KYRnURah; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1762799392; bh=b4/2A9IZo4Q3EDqyqKQz++M
-	JL9/nqE/AO5cujHVnDu4=; b=gbK26n6juiU3k877M8g33ljW3mSUZxdRxf0UhzlKBP0UfTNDZm
-	WdlupI4yHLCplDllUkp87+tueYd7BobpB90rQ/O99D7SBPgYPiqPq7JyEqceexSzBUzXIT8Tdxn
-	P603S1a6/OJ5dmoWt56rkZBHTJXdEYt/tQ7V9oJhcWtj9X4shVJgABcZPdDeL5IzKO4R4w/h/nx
-	FWoWtG2MX8xQAZykwn8+6cZYpEgZP758V2iUUOLc82YFlH81lyYfVt1ia8kIzmUEJ5XRZU6VQMo
-	ltkmmrT5gH404cH0WoVQfxzwejffKyev47jIMXwrClJ0SqlczVaB4AJcwEaLpZozX2g==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1762799392; bh=b4/2A9IZo4Q3EDqyqKQz++M
-	JL9/nqE/AO5cujHVnDu4=; b=KYRnURahJRxysCEVPIYOz3eUfrCV6lZZ3AWAgylWxgF0rFORTQ
-	OUMISHixy8Vf9qMJw8vjYG8rgB/dOtlhibBw==;
-From: Nickolay Goppen <setotau@mainlining.org>
-Date: Mon, 10 Nov 2025 21:29:45 +0300
-Subject: [PATCH v3 3/3] remoteproc: qcom: pas: Add support for SDM660 CDSP
+	s=arc-20240116; t=1762799531; c=relaxed/simple;
+	bh=BTRplCCHPczrZhMIDCxF5mqdQYsf+JH2XCbk3qFQ6N0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DwRDj24BB0fSOATHEwoWoLXZfnL0EF3sionnAH0xGEqpKGqD55eVVYyCIW1qCuuZk5CIZEOC5ggnM8qHa+7rAhouAhaI1MWHnbG9t75qiIZurAz54TEVh3pSSFvzycgJ5oZXM+A6D02PqZVMKWlCEi3NZzk/4TT+Jyf4WcAmeZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdYG5yJL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 520E5C113D0;
+	Mon, 10 Nov 2025 18:32:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762799530;
+	bh=BTRplCCHPczrZhMIDCxF5mqdQYsf+JH2XCbk3qFQ6N0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IdYG5yJL3Fz3o7Tdm6oYFGRFwqlvLC6LbCgJwDbFWk7OkYbjnfM/BMxOiD4PNSKvw
+	 vnMGjjmgbv088ZqB8U1JoIA+lO5mxPvfFY8UNo5Ixxb6JSOazGOeraJC8VSlGtdGBb
+	 ceLVuXdDC8rsGign0NQs/YGzK5BQQMjCDQVZdg7vKZZvFHnLykn9o3BnUrvTmgmQ5E
+	 szmaiTchR+NAO/SsMdQrZeBGzQCWxGrbZgOiRBtSNGgGrq7zY6FGgiSOxwUkB64q1u
+	 dq1vFgtIjnIEPpqvALYJcDa7uOyKMs4EK8ytUQcMrChxtwHpS9G7biEzA2kcv+toDB
+	 cwQ8f1tdPFXkQ==
+Date: Mon, 10 Nov 2025 19:32:05 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Daniel Gomez <da.gomez@kernel.org>
+Cc: Daniel Gomez <da.gomez@samsung.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Sami Tolvanen <samitolvanen@google.com>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
+Message-ID: <6ydyoh5yfqk3qwha2lysmqohvh3ffhmv52yph4aqzq46eaa7t2@clpm2eqydmpi>
+References: <20251104104827.1de36ea0@canb.auug.org.au>
+ <20251104105415.68bfb090@canb.auug.org.au>
+ <f374sh5rsbxvboowft6xpiimxlzw264i32txgiok53on2vxxu7@lpetaklaofzb>
+ <ad9c5b79-8a33-4183-a048-48ba516e6aaf@kernel.org>
+ <26c7zdxc4nv3wx25xferlggtjipigtd3tc6fk554g4tmqsuvmr@e6cll772nz2r>
+ <2b53a2d1-3e86-4558-ba7f-5ce3b1368f0f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-qcom-sdm660-cdsp-v3-3-cc3c37287e72@mainlining.org>
-References: <20251110-qcom-sdm660-cdsp-v3-0-cc3c37287e72@mainlining.org>
-In-Reply-To: <20251110-qcom-sdm660-cdsp-v3-0-cc3c37287e72@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, 
- Nickolay Goppen <setotau@mainlining.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762799388; l=1216;
- i=setotau@mainlining.org; s=20250815; h=from:subject:message-id;
- bh=6fInuB/1LJqGr9jEjfnJRvv1hxhaA0dDoP/Oy8mHJXo=;
- b=uWuc8bk1akkBd9vVJ8V0pRHXHh0FBFB5JoTwCLNazcn8dbLg9QgxqoJBy2rR94B1Er7nyWB6q
- LdmHBvinsdsAYgEkDrggfK6TPqX39AQw8F/wtH8oTzkrh57M1uLz9VF
-X-Developer-Key: i=setotau@mainlining.org; a=ed25519;
- pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7rfnzqrclml6k2z3"
+Content-Disposition: inline
+In-Reply-To: <2b53a2d1-3e86-4558-ba7f-5ce3b1368f0f@kernel.org>
 
-Compute DSP in SDM660 is compatible with generic cdsp_resource_init
-descriptor.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> # ifc6560
-Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 1 +
- 1 file changed, 1 insertion(+)
+--7rfnzqrclml6k2z3
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
+MIME-Version: 1.0
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 158bcd6cc85c..781eac6aa6bf 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1488,6 +1488,7 @@ static const struct of_device_id qcom_pas_of_match[] = {
- 	{ .compatible = "qcom,sc8280xp-nsp0-pas", .data = &sc8280xp_nsp0_resource},
- 	{ .compatible = "qcom,sc8280xp-nsp1-pas", .data = &sc8280xp_nsp1_resource},
- 	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init},
-+	{ .compatible = "qcom,sdm660-cdsp-pas", .data = &cdsp_resource_init},
- 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init},
- 	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init},
- 	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource_init},
+Hello Daniel,
 
--- 
-2.51.2
+On Mon, Nov 10, 2025 at 04:54:01PM +0100, Daniel Gomez wrote:
+> On 10/11/2025 16.42, Uwe Kleine-K=F6nig wrote:
+> > On Mon, Nov 10, 2025 at 02:59:15PM +0100, Daniel Gomez wrote:
+> >> On 07/11/2025 17.44, Uwe Kleine-K=F6nig wrote:
+> >>> Given that the conflict resolution is non-trivial and we already know
+> >>> what to do, I suggest you merge my commit into the modules tree.
+> >>
+> >> Do you mean creating a separate branch that includes the conflict reso=
+lution, to
+> >> be used as an example when sending the PR?
+> >=20
+> > If I were the module maintainer I'd pull
+> >=20
+> > 	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git rus=
+t-module-namespace
+> >=20
+> > into my tree and include that into the v6.19-rc1 pull request. That way
+> > the merge conflict doesn't happen at all for Linus.
+>=20
+>=20
+> That's not my understanding on how to deal with conflicts:
+>=20
+> https://docs.kernel.org/maintainer/rebasing-and-merging.html#merging-from=
+-sibling-or-upstream-trees
 
+Note the "don't" described in the docs isn't what I suggested to do
+here. The rust-module-namespace is a change that belongs into the
+modules tree and that I build upon in my tree.
+
+So this is (somewhat) the case "Another reason for doing merges of
+upstream or another subsystem tree is to resolve dependencies". Only the
+merge direction is wrong because the usual expectation is that a change
+to rust/macros/module.rs originates in the modules (or some rust) tree.
+But for the justification and also the resulting commit topology that
+doesn't matter.
+
+Also "[back merges] will significantly increase your chances of
+encountering bugs from elsewhere in the community and make it hard to
+ensure that the work you are managing is stable and ready for upstream."
+doesn't apply because by merging the suggested tag you only get a single
+commit and not my complete pwm tree.
+
+If you want to convince yourself this is in fact quite usual I suggest
+looking at https://lore.kernel.org/all/?q=3Ds%3APULL+AND+s%3AImmutable.
+
+Best regards
+Uwe
+
+--7rfnzqrclml6k2z3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkSL6IACgkQj4D7WH0S
+/k4FoQgAqzJC4KCpwOTjrF2iXkDPYEi+ohaej7Y7xLMCuKBxGSY38wFFFo/Xov0c
+L8spyKy7vezgh6WTxVzLTgaNUdGVgfIycC0fzYiQ4gWn4BUO7I6FhUTCrzLT4uKw
+pAYrfYe8pb6+NhyixRMx5DCzru8wAWBLEsXjYs+2mUqcTGCtViRnHR3CJkjYlBda
+uill8bZlR2W5xR4gR1TmAbXzjRpf1lVL2ReRcNbk/chgmn6TJH1OwFcw03E+KGIf
+jQxy6AgFyLCjGm8QGhFWPIEMudNJmUaHAVHz7DbCp0MrH8ETBTiC43DA1sQ0LSeL
+xS2HvQXIKbvHn0LvDqJwy5zaJU1QYA==
+=Xd5P
+-----END PGP SIGNATURE-----
+
+--7rfnzqrclml6k2z3--
 
