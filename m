@@ -1,166 +1,195 @@
-Return-Path: <linux-kernel+bounces-892591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B77DC45669
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:42:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BADC45681
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:44:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B32D188E6B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:42:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE59C3A307B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCF22FD1C6;
-	Mon, 10 Nov 2025 08:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8315A2FCC12;
+	Mon, 10 Nov 2025 08:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIqCEH/u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZtUO7Ng1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B371B4F0A;
-	Mon, 10 Nov 2025 08:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B872727EB;
+	Mon, 10 Nov 2025 08:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762764122; cv=none; b=hfkElAtwl+frVs/hbp44ucifvtqGB1IvB329OYgiKfJtQdcLl7Y92SXLJYHI99YKZLROHp1HcY0olDT3tBdZNT2nsn8K/q3Rjc3vY1Zjka6wDrEFLcKehSMLzMOrOl6N//8ei7qy7xNhQPa5gmAW78VDQxxr39AFPEMdWN+brq4=
+	t=1762764231; cv=none; b=GUkO0rckjkr9QUHrYW00QWpRmNaKR3eq7ZeCr7gR5w+YHWr+W/VuAB67MUUN71LfzhHoE5/Gd7HblRe99IgFDRUFSnV7jii8H7GZEqXilE0TUzbuXDTYGFS+/L4uzdrI1WvsKvrZxiXuxXLYG5/j/wl8NfMTviP0P8E7+FIIU/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762764122; c=relaxed/simple;
-	bh=Hl8qSW/ynv3e2GvL2ympO60rSHhPRV7/xX+BMQkuvPk=;
+	s=arc-20240116; t=1762764231; c=relaxed/simple;
+	bh=BZIz3Z5lFEoz3mPVfqf21yTcEuTnJH/qD2n8KFXgBnw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pmo6Y0hEQQ4ou0wNe18j+B+AivGuqfk75gRsth6O4N/VGvqvemuCJFLCrJmsNTVQWSF7LN0byHgnRXDzvN5n1QKwqw8PzLuLDDIlqyx8jB+yO7ET9Ig62wVy5A2bdWB2LzUdrQuyip4sEZ7/zh0L6pLJyi+qxWQodON1FbNanko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIqCEH/u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6C60C116D0;
-	Mon, 10 Nov 2025 08:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762764121;
-	bh=Hl8qSW/ynv3e2GvL2ympO60rSHhPRV7/xX+BMQkuvPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GIqCEH/uaB0FOh5958ftF+Qbb+FOyNoILmyF2X6xZBMNamcWuFZVDgdu8O43RIBbF
-	 9J4LJ0bLJRP9J/5Wt9wPjoGg/d8Xca293Y6/Q5qteH7nvrEDIpgwOhZPTj2QWuMS1K
-	 PSk+G5Zy/ewCqTMTjg7FQRB7jHGnkSJ7+WbpNMKBjqJ7+RoSHNBI5Z5rr9Xx8ZFZCP
-	 6Xl8m65MRA8x4+Xj5abWiqmXsUc7nrew/6ztTQ0CKE+mkDcnrqebOBGpDORWAUW+6z
-	 wwKrkyG9hIPGZ3TLhMTIl2suaxUx/U2OGKLsG9snaG1mQNtI1MTuEecNzesjFaqJAe
-	 kAjx0X7NfxVhw==
-Date: Mon, 10 Nov 2025 09:41:56 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Hillf Danton <hdanton@sina.com>
-Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
-	syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
-Subject: Re: [PATCH 0/8] ns: fixes for namespace iteration and active
- reference counting
-Message-ID: <20251110-elastisch-endeffekt-747abc5a614a@brauner>
-References: <20251109-namespace-6-19-fixes-v1-0-ae8a4ad5a3b3@kernel.org>
- <20251109225528.9063-1-hdanton@sina.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KFmey80+mQz1yuU9l3fDW1t+DDANrF48jQ6wDY9w/yGFKj+BvYx8m40arUK9pwebrbvcEwjlDhMbvF1XmCpHGv54cTLPCa9lPSb24pPw2VJlhLKP03E01vmtpYTc1KTMyBrkYrZNrN65QNYc57Wr5zFXMQpLuv+chZr3Nhn3iYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZtUO7Ng1; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762764230; x=1794300230;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BZIz3Z5lFEoz3mPVfqf21yTcEuTnJH/qD2n8KFXgBnw=;
+  b=ZtUO7Ng10cizJ0IG+ALYwMt5uV6KezW/m0tSzdisz5ophl6z7C1MDeaB
+   Om3A7c0VnqbAd96I/aUyhi45mJ5hcOr109l9XcEhO2pAY5CXDffdv0v+Y
+   qGhVCT6mwAQOsEkw2d68OMdDjgyp9RsvG69s6IsmRbjAJ/hR6xTJ1BAl1
+   dHCrJrPKBTre4ijBo81fNhsvjzG5YCnrrq0syxGJ7bAnsms8JmwkM7l3V
+   HVKPWtFdKXL7fyNQsCiCcvvABzvTzN0Sj+g2eYikxE4Ew2ZSzt0X9BbGv
+   ofmWuqsto15YfJGG/5NArCn389H6Fo0TCzmC7Xe29ce2SUTIqxomGKnAt
+   Q==;
+X-CSE-ConnectionGUID: FPaPhBe+RgmFqy57RWM24Q==
+X-CSE-MsgGUID: nLjgBoflSHa3848cDQSamQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="75421180"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="75421180"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 00:43:48 -0800
+X-CSE-ConnectionGUID: sNsYiFy4T+uyIn2RzpR7ZQ==
+X-CSE-MsgGUID: maDAue3fSwqWlY0B6+ZFow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="188455479"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.238])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 00:43:42 -0800
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id A55521205FC;
+	Mon, 10 Nov 2025 10:43:41 +0200 (EET)
+Date: Mon, 10 Nov 2025 10:43:41 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Michael Riesch <michael.riesch@collabora.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Gerald Loacker <gerald.loacker@wolfvision.net>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Collabora Kernel Team <kernel@collabora.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Alexander Shiyan <eagle.alexander923@gmail.com>,
+	Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Mehdi Djait <mehdi.djait@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bryan O'Donoghue <bod@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v14 00/18] media: rockchip: add a driver for the rockchip
+ camera interface
+Message-ID: <aRGlvQRVoQs0WjyA@kekkonen.localdomain>
+References: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
+ <aQ4tJg8r_j4NyKhv@kekkonen.localdomain>
+ <074cd08e-0412-49f9-8dd9-b1f96eb11717@collabora.com>
+ <20251107185441.GG5558@pendragon.ideasonboard.com>
+ <13c43edb-9592-4779-a39a-7856bb0f964d@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251109225528.9063-1-hdanton@sina.com>
+In-Reply-To: <13c43edb-9592-4779-a39a-7856bb0f964d@collabora.com>
 
-On Mon, Nov 10, 2025 at 06:55:26AM +0800, Hillf Danton wrote:
-> On Sun, 09 Nov 2025 22:11:21 +0100 Christian Brauner wrote:
-> > * Make sure to initialize the active reference count for the initial
-> >   network namespace and prevent __ns_common_init() from returning too
-> >   early.
-> > 
-> > * Make sure that passive reference counts are dropped outside of rcu
-> >   read locks as some namespaces such as the mount namespace do in fact
-> >   sleep when putting the last reference.
-> > 
-> > * The setns() system call supports:
-> > 
-> >   (1) namespace file descriptors (nsfd)
-> >   (2) process file descriptors (pidfd)
-> > 
-> >   When using nsfds the namespaces will remain active because they are
-> >   pinned by the vfs. However, when pidfds are used things are more
-> >   complicated.
-> > 
-> >   When the target task exits and passes through exit_nsproxy_namespaces()
-> >   or is reaped and thus also passes through exit_cred_namespaces() after
-> >   the setns()'ing task has called prepare_nsset() but before the active
-> >   reference count of the set of namespaces it wants to setns() to might
-> >   have been dropped already:
-> > 
-> >     P1                                                              P2
-> > 
-> >     pid_p1 = clone(CLONE_NEWUSER | CLONE_NEWNET | CLONE_NEWNS)
-> >                                                                     pidfd = pidfd_open(pid_p1)
-> >                                                                     setns(pidfd, CLONE_NEWUSER | CLONE_NEWNET | CLONE_NEWNS)
-> >                                                                     prepare_nsset()
-> > 
-> >     exit(0)
-> >     // ns->__ns_active_ref        == 1
-> >     // parent_ns->__ns_active_ref == 1
-> >     -> exit_nsproxy_namespaces()
-> >     -> exit_cred_namespaces()
-> > 
-> >     // ns_active_ref_put() will also put
-> >     // the reference on the owner of the
-> >     // namespace. If the only reason the
-> >     // owning namespace was alive was
-> >     // because it was a parent of @ns
-> >     // it's active reference count now goes
-> >     // to zero... --------------------------------
-> >     //                                           |
-> >     // ns->__ns_active_ref        == 0           |
-> >     // parent_ns->__ns_active_ref == 0           |
-> >                                                  |                  commit_nsset()
-> >                                                  -----------------> // If setns()
-> >                                                                     // now manages to install the namespaces
-> >                                                                     // it will call ns_active_ref_get()
-> >                                                                     // on them thus bumping the active reference
-> >                                                                     // count from zero again but without also
-> >                                                                     // taking the required reference on the owner.
-> >                                                                     // Thus we get:
-> >                                                                     //
-> >                                                                     // ns->__ns_active_ref        == 1
-> >                                                                     // parent_ns->__ns_active_ref == 0
-> > 
-> >     When later someone does ns_active_ref_put() on @ns it will underflow
-> >     parent_ns->__ns_active_ref leading to a splat from our asserts
-> >     thinking there are still active references when in fact the counter
-> >     just underflowed.
-> > 
-> >   So resurrect the ownership chain if necessary as well. If the caller
-> >   succeeded to grab passive references to the set of namespaces the
-> >   setns() should simply succeed even if the target task exists or gets
-> >   reaped in the meantime.
-> > 
-> >   The race is rare and can only be triggered when using pidfs to setns()
-> >   to namespaces. Also note that active reference on initial namespaces are
-> >   nops.
-> > 
-> >   Since we now always handle parent references directly we can drop
-> >   ns_ref_active_get_owner() when adding a namespace to a namespace tree.
-> >   This is now all handled uniformly in the places where the new namespaces
-> >   actually become active.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >
-> FYI namespace-6.19.fixes failed to survive the syzbot test [1].
+Hi Michael, Laurent,
+
+On Fri, Nov 07, 2025 at 09:51:37PM +0100, Michael Riesch wrote:
+> Hi Laurent,
 > 
-> [1] Subject: Re: [syzbot] [lsm?] WARNING in put_cred_rcu
-> https://lore.kernel.org/lkml/690eedba.a70a0220.22f260.0075.GAE@google.com/
+> On 11/7/25 19:54, Laurent Pinchart wrote:
+> > On Fri, Nov 07, 2025 at 07:41:59PM +0100, Michael Riesch wrote:
+> >> On 11/7/25 18:32, Sakari Ailus wrote:
+> >>> On Fri, Oct 24, 2025 at 02:51:29PM +0200, Michael Riesch via B4 Relay wrote:
+> >>>> Habidere,
+> >>>>
+> >>>> This series introduces support for the Rockchip Camera Interface (CIF),
+> >>>> which is featured in many Rockchip SoCs in different variations.
+> >>>> For example, the PX30 Video Input Processor (VIP) is able to receive
+> >>>> video data via the Digital Video Port (DVP, a parallel data interface)
+> >>>> and transfer it into system memory using a double-buffering mechanism
+> >>>> called ping-pong mode.
+> >>>> The RK3568 Video Capture (VICAP) unit, on the other hand, features a
+> >>>> DVP and a MIPI CSI-2 receiver that can receive video data independently
+> >>>> (both using the ping-pong scheme).
+> >>>> The different variants may have additional features, such as scaling
+> >>>> and/or cropping.
+> >>>> Finally, the RK3588 VICAP unit constitutes an essential piece of the
+> >>>> camera interface with one DVP, six MIPI CSI-2 receivers, scale/crop
+> >>>> units, and a data path multiplexer (to scaler units, to ISP, ...).
+> >>>
+> >>> I understand both RK3568 and RK3588 include an ISP. Do you have insight on
+> >>> how would this work, should the support for the ISP be added later on?
+> >>
+> >> Short answer: Yes and yes.
+> >>
+> >> Long answer:
+> >>
+> >> The patch series at hand adds support for the PX30 VIP and the RK3568
+> >> VICAP. I cannot really say something about the PX30, but on the RK3568
+> >> VICAP and ISP are orthogonal (the ISP features its own MIPI CSI-2
+> >> receiver, different from that introduced in this series). Thus, ISP
+> >> support can be introduced anytime (whenever someone is motivated ;-)).
+> > 
+> > Won't they both be connected to the same sensor though, and probably the
+> > same D-PHY in the SoC ? They don't seem entirely separate to me.
+> 
+> The MIPI CSI-2 DPHY is shared, indeed. Thus, they *maybe technically
+> could be* connected to the same sensor, but I don't know whether that
+> works and fail to see why anyone would to such a thing (if it is about
+> raw capture, the MIPI CSI-2 receiver in the ISP can do that on its own).
+> 
+> The DPHY can be operated in split mode, with two lanes for VICAP and two
+> lanes for ISP. This is not implemented yet, but can be done at a later
+> stage on PHY level (not media related). In this case, ISP and VICAP can
+> receive data from different subdevices via CSI-2.
 
-This used a stale branch that existed for testing:
+The two would be part of the same media graph in that case and as there are
+two CSI-2 receivers and a single PHY, the PHY would probably need to have a
+sub-device as well, to allow link configuration to be used to select where
+the PHY is connected.
 
-Tested on:
+I don't think we have such a setup elsewhere, and supporting this would
+require changes in the MC framework.
 
-commit:         00f5a3b5 DO NOT MERGE - This is purely for testing a b..
+How does the media graph look like for the device at the moment?
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> BTW the ISP is able to process the data captured by VICAP, but
+> apparently this includes a RAM round trip (VICAP captures to memory, ISP
+> operates in mem2mem mode).
+> 
+> > A block diagram that shows connections between the CSI-2 pins, D-PHY,
+> > CSI-2 receivers, VICAP and ISP could help.
+> > 
+> >> Once this patch series is merged, I'll push out changes that introduce
+> >> support for the RK3588 VICAP. We can discuss the integration of any
+> >> RK3588 ISP in this scope then -- and there may be some things to discuss
+> >> as there the VICAP and the ISP(s) are directly connected by means of a
+> >> MUX unit in the VICAP.
+> >>
+> >> Alright?
+> > 
 
-git tree:       https://github.com/brauner/linux.git namespace-6.19.fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=17a46a58580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e31f5f45f87b6763
-dashboard link: https://syzkaller.appspot.com/bug?extid=553c4078ab14e3cf3358
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+-- 
+Kind regards,
 
-Note: no patches were applied.
+Sakari Ailus
 
