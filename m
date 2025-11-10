@@ -1,51 +1,47 @@
-Return-Path: <linux-kernel+bounces-893553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9173AC47B57
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:56:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E4BC47D4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:15:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2CD018821EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:50:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3A8423287
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA2627B34F;
-	Mon, 10 Nov 2025 15:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941E1275AFF;
+	Mon, 10 Nov 2025 15:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="BoQyEBP8"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkDGoHUt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF5527A460
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08742749ED
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762789728; cv=none; b=c3iQ+kh82mTkAOgKWy2v/Md7lIJwgIOzocQwlh6LE7duVVGBoC0s1NULsn92NSJOeXHiZJ+hHRkREmRkew0vpaFpjTD3m1x1oGDHUaM6C6GcphrqBIVkwlNScIMR/MPbN9QX3a92/KHHlmy/SpZ9u9DIUJw48atP+LSexScvt3g=
+	t=1762789736; cv=none; b=Vz8rtcug4ZddA6MxlhJStRIjEcv3pJ4X7u0K/Y4P36ldq6ufgSAk4QShulgWLBi/jW3vN2yeygLj3HLfs7X+irs/i6lvnyknXVaxdYHz+LI9IevHKDGa8w65Fsh9rHLcBmUhz7t3i9L85nlmnp0lrT7q1LRTQou/F9a8puwFqhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762789728; c=relaxed/simple;
-	bh=3TZvGenUxA0A1VCJO743YS9UkcpHz5yUPoxxCOCiw/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PKiwOXM4oNXBIyvMuAEJDA/cA8X3GDAjrvdOpwwT7CC6klPW0Ev3ks7ux6J2ri4kGBRSwXzFnfwTRy7OzVYn2YmsuMYUiBg7way0vJrojZHlKIL6Y70f9Ohystjo0ENTWJxLgYuGUZyFB/lHT2wCaazBr73mzMDEDGQefW+CX4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=BoQyEBP8; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id nqxrwobn8hmD9X3a; Mon, 10 Nov 2025 10:48:45 -0500 (EST)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=4NjKkbORxP8fLQufIbJg6HJYBMW/fqijXIGcWKXlbGs=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=BoQyEBP8azBPRRoylzUc
-	QnFFdS7BQa6QUQthf8Y4RxwVRCrkAyUVe1GZgtZeg8hS1uRKTBSKRhein0viVC58xBx53r/fC6gE/
-	L0JiGZnFbSbHynVO1RjK9eRF9Z/JWjiJ8CbiRHv1bV9+Bm8NURI4xGqx2AB/pd3/B3S7q4WoZY=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14272418; Mon, 10 Nov 2025 10:48:45 -0500
-Message-ID: <1715ec14-ba9a-45dc-9cf2-d41aa6b81b5e@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 10 Nov 2025 10:48:45 -0500
+	s=arc-20240116; t=1762789736; c=relaxed/simple;
+	bh=7usNNwK1oc17KCZRQqTRb/jOrzz/mLzKHFv/CibFkeo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y//jphaWrNFBUAeGQOUVnDgpDdnSmsmCNwahStrenCUEeK3D/nP8dEb/OSfFhkoCT9TBdHryVhHOkHj5WgU4S6ZzyYZnHgsvMsOeEzTNMUL7wRlFFFZpuc6CP7Uo5ndvYuh96JoXBD7i5ujwplN0gTnkc9zO9wEXaE3T/J5vkrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkDGoHUt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13125C4CEF5;
+	Mon, 10 Nov 2025 15:48:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762789735;
+	bh=7usNNwK1oc17KCZRQqTRb/jOrzz/mLzKHFv/CibFkeo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LkDGoHUtlL8QYpGw4ssnW9I1tDmONc4GV/GO/tQBHXeFFR5yPpVf/tXZxGcf3mzH4
+	 loJlkqn3ALuwlm3wFCbm2t7gFrDDJsflbmdJuICFfvXfphGisNrEYHOmy2xdHpEy7t
+	 vI2WK3v9FsDIvMDCpvjbORMZTOwQjU0y6aBdWPlKagw2cMPNtMeKdjrarMqqlGWxdu
+	 Eg6e6m8AWcs5/lIzTp8vTBKvNXWwwD4okmCMe/mKu91/wECnkLCk6VFbMLrA7Vsixd
+	 v4TA8fDYJoPg+THe6BniVVBWlUBB93nnDgMstLqijd672t2AXdSJQDR9W+Y5EZyBY5
+	 C3qs9WcXC+1Kg==
+Message-ID: <f7a69885-7bf6-456b-81fe-3c6a5a29b470@kernel.org>
+Date: Mon, 10 Nov 2025 16:48:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,70 +49,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH v3 02/16] scsi: qla2xxx: fix initiator mode with
- qlini_mode=exclusive
+Subject: Re: [PATCH 1/2] mm: rename walk_page_range_mm()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Jann Horn <jannh@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1762686301.git.lorenzo.stoakes@oracle.com>
+ <2e48c7ffbd2ecec8ac189569636173fb44ed3631.1762686301.git.lorenzo.stoakes@oracle.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
 Content-Language: en-US
-X-ASG-Orig-Subj: [PATCH v3 02/16] scsi: qla2xxx: fix initiator mode with
- qlini_mode=exclusive
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Dmitry Bogdanov <d.bogdanov@yadro.com>,
- Xose Vazquez Perez <xose.vazquez@gmail.com>
-References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
-In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <2e48c7ffbd2ecec8ac189569636173fb44ed3631.1762686301.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1762789725
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 0
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 1198
-X-ASG-Debug-ID: 1762789725-1cf439139110cc00001-xx1T2L
 
-When given the module parameter qlini_mode=exclusive, qla2xxx in
-initiator mode is initially unable to successfully send SCSI commands to
-devices it finds while scanning, resulting in an escalating series of
-resets until an adapter reset clears the issue.  Fix by checking the
-active mode instead of the module parameter.
+On 09.11.25 12:16, Lorenzo Stoakes wrote:
+> Make it clear we're referencing an unsafe variant of this function
+> explicitly.
+> 
+> This is laying the foundation for exposing more such functions and
+> maintaining a consistent naming scheme.
 
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
+IIUC, the "unsafe" variants only bypass the check_ops_valid() check, 
+correct?
 
-v2 -> v3: no changes
+Staring at the code, I wonder if we should then rename check_ops_valid() 
+to something like "are_ops_safe()" [or something similar along the lines 
+of safe vs. unsafe]
 
-v1 -> v2: no changes
+Because now we will have valid vs. unsafe which is a bit confusing, at 
+least for me.
 
- drivers/scsi/qla2xxx/qla_os.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index a52293972e10..f0b77f13628d 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -3438,13 +3438,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 		ha->mqenable = 0;
- 
- 	if (ha->mqenable) {
--		bool startit = false;
--
--		if (QLA_TGT_MODE_ENABLED())
--			startit = false;
--
--		if (ql2x_ini_mode == QLA2XXX_INI_MODE_ENABLED)
--			startit = true;
-+		bool startit = !!(host->active_mode & MODE_INITIATOR);
- 
- 		/* Create start of day qpairs for Block MQ */
- 		for (i = 0; i < ha->max_qpairs; i++)
 -- 
-2.43.0
+Cheers
 
-
+David
 
