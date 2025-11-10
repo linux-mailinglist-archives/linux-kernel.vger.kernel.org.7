@@ -1,115 +1,132 @@
-Return-Path: <linux-kernel+bounces-894143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC97C49591
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:01:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92584C495A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E07274EF075
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:59:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 565F73A8C55
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06272F5A34;
-	Mon, 10 Nov 2025 20:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRxCRWZr"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530902F617C;
+	Mon, 10 Nov 2025 20:58:38 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE22A2F5A11
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F132F3638
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762808268; cv=none; b=uxj62XOFVy36QZfJZuJFK2nZYJ8uKLR6U+acZD+tUEbL0k/Q331TXuDnoc/HIfgrqxSXEl4Q0iwFqmkwqmjlaqXTZZdcsuqhE9GvPYs5kZ7W5L+aoqjlOUoqHuYFIJ/AuJDv5YKlV45RVQkGX4aEDXkA2snNSOZmEGLdOI2f1dk=
+	t=1762808317; cv=none; b=Gq0au8iYjCIRzQWWthSNhwAtMms3tQ2GxpMdInvrd6y5w1ECm71MNQZHE42HBbDGionwfkz8EbW6A+w/kRUlRf6xhANdW37r9cwHaMgRZJf92kXoTlPHPvZS6SxcW8BRWPzW8laFSRyKRM/kh2FT7Hb3pXO6wa2QgLN/gdW0nvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762808268; c=relaxed/simple;
-	bh=EMkFach/QW4lYNE6AmvM9HnCCahChKAdwsSK9+U2fRc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oEE+hSqbEgRlf7Q5oVQOhJlGJ0iJf900D+TVumTf/fbvcnY5EsqCl+vIVrT14Ua4SBzUtkYolb8Oha1n5vMb8F3dBzQaqbvPyqR9aQl+fMPquZF31cJPIGzzPTpo302VhtXy2hiiIwVgxdLbzICBzVuf6HiJSkedyLNWNz8LdSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NRxCRWZr; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-37775ed97daso1617431fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:57:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762808263; x=1763413063; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mh/JsKiFmpvDenrO2RV6pyacRnngWdajIKt4QMpWgfw=;
-        b=NRxCRWZrHXnwtg6qXEtxxQ+QMCxgBV9+plu1durTIcxBiM7+2UXavjPov9hOqOv5mu
-         4dVdgTTvswiNadLbAKzX1oJEBfaRz8Ug/SKcCUkbPrQQj9foRQB0z3JHhESku0vxfw+c
-         tzC3N/oCcoGD+mq9Z0MwI2/lYUbtoPKWsmretsoyPDUFGqDXa+c0Gwkl6POiEPnflJ7c
-         85/rweXlKlreJ//KppqbmBNvZoSAi6peMnSFaCxryGFQPQTJ8PXHyey/qAYvuNCt5GvB
-         CefYiSRfPdBmZw0NiYFgBF7zwJQpWc0/CWHnMxzcMDQCmJpBQIWhquvlu25DVS653mNY
-         7rQw==
+	s=arc-20240116; t=1762808317; c=relaxed/simple;
+	bh=851bXe5aQTwdZty53jaIVbICFA09xB27jhrqcmzMOeo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PviEH+sBsPouLUW0p/e16PYkcQLBiN1WxSMId90eSuyfldPPKh9liXpbsGPOVPCoz2iUIq1caC8lk1NVr0ioK6fEUcjkZwPubEbItb3aodxZwGq9lKHTMm3ydOZTMsdNH6o79+uNLw55hUtN7w91LdoF3HG4DNitSaeGnQGo8IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4337853ffbbso24296595ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:58:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762808263; x=1763413063;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=mh/JsKiFmpvDenrO2RV6pyacRnngWdajIKt4QMpWgfw=;
-        b=A3WpuA17oMuhQ3LOFC/T7A/bURjVwrll6hSufZ1qzXCXEr4ZOGLV8KcsHIhObyU4RH
-         Z9C1r3qH5KhaStrTVyv7P6NzYMjhKHyQTKe/dP5qHN5v10W1YOiKBDew5j84bODSV5CH
-         FKrnau6uRWxSbeqmuWw3uvKZMbLzIbVp4ZVEbeP0Sc61EX870KpIW28vbfUI5mMBJ/E7
-         uw4OeklijHRQoO4MtYQCq72TcuIDS+wvvq61dJfHOMz2v6FCCd6o6d9AN0mZNOuRp0iy
-         mleKRD4utoAmKAOlUIRtm98Rnj+vjZnF0bZAvRx+fyAc2xxokhb60TjyEc/LPJ2Pvaoi
-         sBEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgplmWQ3MPYUVVjgnMsv1eC9bh4MahvX+AaOMXvZiXbXDCjbUAACPzDsDSiMzYmgUQb1KHL6kZDSBoDgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjsEyRXAiGnpEyp9H3HtnwAd/KE7mvqceAxFyul9FBI/hLtP6Q
-	2/7B+hPupEFQDLrwVYA2tqg2iJRhytmEhH1dKw00Ewb/tM8eG0mhs36/pKGfmaZYmAPpSrsh9DU
-	zIq9oH5iXKNWzkPo6053FJ06A8mI/bcQxQlEU5G78dg==
-X-Gm-Gg: ASbGncuPYseSE0vD5X4/k9R52qaFaMDIwBQjefnMWxDyCsFM9OdYMZTVJp/+xIV9ze+
-	hPT7OunciRAvX4+kYf1weOVOBJRkDeopyEHwlcRmjJSiyubIUBE+jHeSRl/Y+7r0CetnAQDVyxD
-	Z83v9Bz16+Q2n1e+s6V0ArvNP35AwYBhqyfiUJamieyitv+tV/GNyWjqw2TF5/easCjL9d5chzx
-	OAks/Oz9yF3yLeLn06O8dx65Rtouj2o+mGfP/e8pqsGWxurGOLI067UziK5l67jQDyx2gk=
-X-Google-Smtp-Source: AGHT+IFHiFVtHs99mXmuYb2B2m+2rnv0hdsnrgmUGdiZxDbZObBH5hPXt0Fy2L1RfDUF3gekviGcSla2Cs8MXuCvEww=
-X-Received: by 2002:a05:6512:31d1:b0:594:5d87:af7f with SMTP id
- 2adb3069b0e04-5947459355bmr191945e87.4.1762808263115; Mon, 10 Nov 2025
- 12:57:43 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762808315; x=1763413115;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ewq5bkR2w0X36y1ORHARtnHAU9dh8AjYpqdGWpuZkcU=;
+        b=FPreqNnOGzm4aXr/IO9RczURiWp/K0NIzechasE008O90B3txpJvA1XlLvZKlC1hri
+         9rC2bAPHpcSD3gAUgTMopVZzP/K0VaeV7yfNnXEhNpk7zs6YAk+xZqa7DnO8g9DujMaD
+         zc5rL2TZDXEXcQ1hlQI42UK0L1HlJCTexDA+ZCJpWvQ42boYCFYz/FE7J9tiKUFcEqlN
+         /6lNcePVkbyaPPR3OH/oCDPqkshmHyh/JzY3w/qEnlaEWbn026fTRhRBBiujZAG4Zy2n
+         9bJEdQ7dWlezv43DdF6+XMN9Xa12tPl2EzGRY4al+6kz+yyBMG5FEcULr/nsouE4TTkU
+         4KhA==
+X-Gm-Message-State: AOJu0YwkfxjIO1OQjcFqvIZAjJTI0HIC/QirMlLYmWR/ChULhduWeisu
+	Cj2ZOSjOVNM/KHVEf9xlV1JbZLceEVxLpl48VBqHCT5oYn/eZtT7HN8vS7VF03KsyQ0iUhAZs18
+	NqtiEVaqHiqhipzM21P/O94hOMZX2BKD/ECJxSM106eVqkgp2SlrTRqX1XbPKoQ==
+X-Google-Smtp-Source: AGHT+IFs8PmXv1l0MCHu7y8xC2O43VtMVeNlEDUBcALH6HzyoOfwZVS0gNRgK5upRzWjAbyu1RXZ+96miWUetA8+MKFhyqLGl75K
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110202748.10090-2-krzk@kernel.org>
-In-Reply-To: <20251110202748.10090-2-krzk@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 10 Nov 2025 21:57:28 +0100
-X-Gm-Features: AWmQ_bmB5CQero0WghGpIbdSZsMKfEtwVkS8ALsJg7LOxphzKT9kTeNJBD-rCAM
-Message-ID: <CACRpkdYvPS=WDLuUiEovtSsY=3JDqjb+8kKDZK2=FTj4n+qs-g@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: samsung: drivers for v6.19
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
+X-Received: by 2002:a92:c265:0:b0:433:7b4f:f8c3 with SMTP id
+ e9e14a558f8ab-4337b502724mr85243475ab.17.1762808314620; Mon, 10 Nov 2025
+ 12:58:34 -0800 (PST)
+Date: Mon, 10 Nov 2025 12:58:34 -0800
+In-Reply-To: <691231dc.a70a0220.22f260.0101.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <691251fa.a70a0220.22f260.010a.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [bpf?] KASAN: stack-out-of-bounds Write in __bpf_get_stack
+From: syzbot <syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2025 at 9:27=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df567=
-87:
->
->   Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tag=
-s/samsung-pinctrl-6.19
->
-> for you to fetch changes up to 3cfc60e09bdc95483875f0b63cfdc23aea67135b:
->
->   pinctrl: samsung: Add ARTPEC-9 SoC specific configuration (2025-10-13 0=
-3:02:21 +0200)
+***
 
-Pulled in, nice to see some conclusion of the ARTPEC work.
-Thanks for handling the Exynos pin control!
+Subject: Re: [syzbot] [bpf?] KASAN: stack-out-of-bounds Write in __bpf_get_stack
+Author: listout@listout.xyz
 
-Yours,
-Linus Walleij
+On 10.11.2025 10:41, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    f8c67d8550ee bpf: Use kmalloc_nolock() in range tree
+> git tree:       bpf-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=121a50b4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d1b7fa1092def3628bd7
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12270412580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=128bd084580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/d9e95bfbe4ee/disk-f8c67d85.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/0766b6dd0e91/vmlinux-f8c67d85.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/79089f9e9e93/bzImage-f8c67d85.xz
+> 
+> The issue was bisected to:
+> 
+> commit e17d62fedd10ae56e2426858bd0757da544dbc73
+> Author: Arnaud Lecomte <contact@arnaud-lcm.com>
+> Date:   Sat Oct 25 19:28:58 2025 +0000
+> 
+>     bpf: Refactor stack map trace depth calculation into helper function
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1632d0b4580000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1532d0b4580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1132d0b4580000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com
+> Fixes: e17d62fedd10 ("bpf: Refactor stack map trace depth calculation into helper function")
+> 
+> ==================================================================
+> BUG: KASAN: stack-out-of-bounds in __bpf_get_stack+0x5a3/0xaa0 kernel/bpf/stackmap.c:493
+> Write of size 168 at addr ffffc900030e73a8 by task syz.1.44/6108
+
+#syz test
+
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 2365541c81dd..885130e4ab0d 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -480,6 +480,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 	}
+ 
+ 	trace_nr = trace->nr - skip;
++	trace_nr = min_t(u32, trace_nr, size / elem_size);
+ 	copy_len = trace_nr * elem_size;
+ 
+ 	ips = trace->ip + skip;
+
+-- 
+Regards,
+listout
 
