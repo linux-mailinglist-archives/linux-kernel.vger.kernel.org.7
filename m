@@ -1,492 +1,115 @@
-Return-Path: <linux-kernel+bounces-894142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81777C495A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:01:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC97C49591
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:01:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E073B545C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:58:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E07274EF075
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216B02F9D8C;
-	Mon, 10 Nov 2025 20:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06272F5A34;
+	Mon, 10 Nov 2025 20:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYc5nKa/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRxCRWZr"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB96A33437F;
-	Mon, 10 Nov 2025 20:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE22A2F5A11
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762808212; cv=none; b=Cscw8bFcI9sMLpTy7T+ybDJfM8esVk9kXg9V3yJlOYOAOH0RRRbdg6pbQrfkuv8XbFV1E2bLwWSMkIwFhL84GGgimQYH4slY7gawlcm0026sEgwj6PLmC4cou1Z9CLCPsNNKeNqmCYscA9IT6j6CFohq/BY+sOVkIBNEMkOjuGk=
+	t=1762808268; cv=none; b=uxj62XOFVy36QZfJZuJFK2nZYJ8uKLR6U+acZD+tUEbL0k/Q331TXuDnoc/HIfgrqxSXEl4Q0iwFqmkwqmjlaqXTZZdcsuqhE9GvPYs5kZ7W5L+aoqjlOUoqHuYFIJ/AuJDv5YKlV45RVQkGX4aEDXkA2snNSOZmEGLdOI2f1dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762808212; c=relaxed/simple;
-	bh=6KAnSha4ge5acM3Ryx9RgGUnMDds9TCDwguxaBPQoSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HqE2CRBe2TySSs6gfD9vbWak6PW74M+VAuZpg1TGfSP6WbdAholBeIAgjj9Zy/BNJ6jO2KK6pOhzCA8FeWG7GMFZX38as9kwJNsMOXdNYPmp8zv8Wp0IVmrgcC6bcWSguyLZTwxZyYNTFMV8WfeW7mEk8PfkyotI+4qzL4+aIEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MYc5nKa/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E082C4CEF5;
-	Mon, 10 Nov 2025 20:56:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762808212;
-	bh=6KAnSha4ge5acM3Ryx9RgGUnMDds9TCDwguxaBPQoSw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MYc5nKa/Oyl/TWE1nQtZYqZAZbq3u2vpoA3eyZOScFt1hJ5G51fWRQgdRR1zPQdzH
-	 g1PnJL3w4JVyY+yhNBnCiq9tF8Wh7KtOkb/dhRJ22FjlhWuC7KcSX9Ezwj718zpP83
-	 logrFoEUU6dhrTDfgxXT3rAWFTTJOHiiXlRDFP25VPQWYlEG9gSlDG0mh26y6WZmgi
-	 V4viw656wbEfJ25TvbQMm8i+WRUYDBzdmYdYaZp5ObvZ3jrpPQXZXXh0WSJAchd38Y
-	 A3d62XfqVgqhodTunRMM7ohX+zvPRfH+9x/VocL+nXoJ4tFtpa/xl3fV2KW/fXZ2LN
-	 WWeKXuBd162mA==
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>,
-	Andrea Righi <andrea.righi@linux.dev>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: Dan Schatzberg <schatzberg.dan@gmail.com>,
-	Emil Tsalapatis <etsal@meta.com>,
-	sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>,
-	Andrea Righi <arighi@nvidia.com>
-Subject: [PATCH v2 14/14] sched_ext: Implement load balancer for bypass mode
-Date: Mon, 10 Nov 2025 10:56:36 -1000
-Message-ID: <20251110205636.405592-15-tj@kernel.org>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251110205636.405592-1-tj@kernel.org>
-References: <20251110205636.405592-1-tj@kernel.org>
+	s=arc-20240116; t=1762808268; c=relaxed/simple;
+	bh=EMkFach/QW4lYNE6AmvM9HnCCahChKAdwsSK9+U2fRc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oEE+hSqbEgRlf7Q5oVQOhJlGJ0iJf900D+TVumTf/fbvcnY5EsqCl+vIVrT14Ua4SBzUtkYolb8Oha1n5vMb8F3dBzQaqbvPyqR9aQl+fMPquZF31cJPIGzzPTpo302VhtXy2hiiIwVgxdLbzICBzVuf6HiJSkedyLNWNz8LdSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NRxCRWZr; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-37775ed97daso1617431fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:57:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762808263; x=1763413063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mh/JsKiFmpvDenrO2RV6pyacRnngWdajIKt4QMpWgfw=;
+        b=NRxCRWZrHXnwtg6qXEtxxQ+QMCxgBV9+plu1durTIcxBiM7+2UXavjPov9hOqOv5mu
+         4dVdgTTvswiNadLbAKzX1oJEBfaRz8Ug/SKcCUkbPrQQj9foRQB0z3JHhESku0vxfw+c
+         tzC3N/oCcoGD+mq9Z0MwI2/lYUbtoPKWsmretsoyPDUFGqDXa+c0Gwkl6POiEPnflJ7c
+         85/rweXlKlreJ//KppqbmBNvZoSAi6peMnSFaCxryGFQPQTJ8PXHyey/qAYvuNCt5GvB
+         CefYiSRfPdBmZw0NiYFgBF7zwJQpWc0/CWHnMxzcMDQCmJpBQIWhquvlu25DVS653mNY
+         7rQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762808263; x=1763413063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=mh/JsKiFmpvDenrO2RV6pyacRnngWdajIKt4QMpWgfw=;
+        b=A3WpuA17oMuhQ3LOFC/T7A/bURjVwrll6hSufZ1qzXCXEr4ZOGLV8KcsHIhObyU4RH
+         Z9C1r3qH5KhaStrTVyv7P6NzYMjhKHyQTKe/dP5qHN5v10W1YOiKBDew5j84bODSV5CH
+         FKrnau6uRWxSbeqmuWw3uvKZMbLzIbVp4ZVEbeP0Sc61EX870KpIW28vbfUI5mMBJ/E7
+         uw4OeklijHRQoO4MtYQCq72TcuIDS+wvvq61dJfHOMz2v6FCCd6o6d9AN0mZNOuRp0iy
+         mleKRD4utoAmKAOlUIRtm98Rnj+vjZnF0bZAvRx+fyAc2xxokhb60TjyEc/LPJ2Pvaoi
+         sBEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgplmWQ3MPYUVVjgnMsv1eC9bh4MahvX+AaOMXvZiXbXDCjbUAACPzDsDSiMzYmgUQb1KHL6kZDSBoDgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjsEyRXAiGnpEyp9H3HtnwAd/KE7mvqceAxFyul9FBI/hLtP6Q
+	2/7B+hPupEFQDLrwVYA2tqg2iJRhytmEhH1dKw00Ewb/tM8eG0mhs36/pKGfmaZYmAPpSrsh9DU
+	zIq9oH5iXKNWzkPo6053FJ06A8mI/bcQxQlEU5G78dg==
+X-Gm-Gg: ASbGncuPYseSE0vD5X4/k9R52qaFaMDIwBQjefnMWxDyCsFM9OdYMZTVJp/+xIV9ze+
+	hPT7OunciRAvX4+kYf1weOVOBJRkDeopyEHwlcRmjJSiyubIUBE+jHeSRl/Y+7r0CetnAQDVyxD
+	Z83v9Bz16+Q2n1e+s6V0ArvNP35AwYBhqyfiUJamieyitv+tV/GNyWjqw2TF5/easCjL9d5chzx
+	OAks/Oz9yF3yLeLn06O8dx65Rtouj2o+mGfP/e8pqsGWxurGOLI067UziK5l67jQDyx2gk=
+X-Google-Smtp-Source: AGHT+IFHiFVtHs99mXmuYb2B2m+2rnv0hdsnrgmUGdiZxDbZObBH5hPXt0Fy2L1RfDUF3gekviGcSla2Cs8MXuCvEww=
+X-Received: by 2002:a05:6512:31d1:b0:594:5d87:af7f with SMTP id
+ 2adb3069b0e04-5947459355bmr191945e87.4.1762808263115; Mon, 10 Nov 2025
+ 12:57:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251110202748.10090-2-krzk@kernel.org>
+In-Reply-To: <20251110202748.10090-2-krzk@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 10 Nov 2025 21:57:28 +0100
+X-Gm-Features: AWmQ_bmB5CQero0WghGpIbdSZsMKfEtwVkS8ALsJg7LOxphzKT9kTeNJBD-rCAM
+Message-ID: <CACRpkdYvPS=WDLuUiEovtSsY=3JDqjb+8kKDZK2=FTj4n+qs-g@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: samsung: drivers for v6.19
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In bypass mode, tasks are queued on per-CPU bypass DSQs. While this works well
-in most cases, there is a failure mode where a BPF scheduler can skew task
-placement severely before triggering bypass in highly over-saturated systems.
-If most tasks end up concentrated on a few CPUs, those CPUs can accumulate
-queues that are too long to drain in a reasonable time, leading to RCU stalls
-and hung tasks.
+On Mon, Nov 10, 2025 at 9:27=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 
-Implement a simple timer-based load balancer that redistributes tasks across
-CPUs within each NUMA node. The balancer runs periodically (default 500ms,
-tunable via bypass_lb_intv_us module parameter) and moves tasks from overloaded
-CPUs to underloaded ones.
+> The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df567=
+87:
+>
+>   Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+>
+> are available in the Git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tag=
+s/samsung-pinctrl-6.19
+>
+> for you to fetch changes up to 3cfc60e09bdc95483875f0b63cfdc23aea67135b:
+>
+>   pinctrl: samsung: Add ARTPEC-9 SoC specific configuration (2025-10-13 0=
+3:02:21 +0200)
 
-When moving tasks between bypass DSQs, the load balancer holds nested DSQ locks
-to avoid dropping and reacquiring the donor DSQ lock on each iteration, as
-donor DSQs can be very long and highly contended. Add the SCX_ENQ_NESTED flag
-and use raw_spin_lock_nested() in dispatch_enqueue() to support this. The load
-balancer timer function reads scx_bypass_depth locklessly to check whether
-bypass mode is active. Use WRITE_ONCE() when updating scx_bypass_depth to pair
-with the READ_ONCE() in the timer function.
+Pulled in, nice to see some conclusion of the ARTPEC work.
+Thanks for handling the Exynos pin control!
 
-This has been tested on a 192 CPU dual socket AMD EPYC machine with ~20k
-runnable tasks running scx_cpu0. As scx_cpu0 queues all tasks to CPU0, almost
-all tasks end up on CPU0 creating severe imbalance. Without the load balancer,
-disabling the scheduler can lead to RCU stalls and hung tasks, taking a very
-long time to complete. With the load balancer, disable completes in about a
-second.
-
-The load balancing operation can be monitored using the sched_ext_bypass_lb
-tracepoint and disabled by setting bypass_lb_intv_us to 0.
-
-v2: Lock both rq and DSQ in bypass_lb_cpu() and use dispatch_dequeue_locked()
-    to prevent races with dispatch_dequeue() (Andrea Righi).
-
-Cc: Andrea Righi <arighi@nvidia.com>
-Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
-Cc: Emil Tsalapatis <etsal@meta.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- include/trace/events/sched_ext.h |  39 +++++
- kernel/sched/ext.c               | 239 ++++++++++++++++++++++++++++++-
- kernel/sched/ext_internal.h      |   6 +
- 3 files changed, 281 insertions(+), 3 deletions(-)
-
-diff --git a/include/trace/events/sched_ext.h b/include/trace/events/sched_ext.h
-index 50e4b712735a..d1bf5acd59c5 100644
---- a/include/trace/events/sched_ext.h
-+++ b/include/trace/events/sched_ext.h
-@@ -45,6 +45,45 @@ TRACE_EVENT(sched_ext_event,
- 	)
- );
- 
-+TRACE_EVENT(sched_ext_bypass_lb,
-+
-+	TP_PROTO(__u32 node, __u32 nr_cpus, __u32 nr_tasks, __u32 nr_balanced,
-+		 __u32 before_min, __u32 before_max,
-+		 __u32 after_min, __u32 after_max),
-+
-+	TP_ARGS(node, nr_cpus, nr_tasks, nr_balanced,
-+		before_min, before_max, after_min, after_max),
-+
-+	TP_STRUCT__entry(
-+		__field(	__u32,		node		)
-+		__field(	__u32,		nr_cpus		)
-+		__field(	__u32,		nr_tasks	)
-+		__field(	__u32,		nr_balanced	)
-+		__field(	__u32,		before_min	)
-+		__field(	__u32,		before_max	)
-+		__field(	__u32,		after_min	)
-+		__field(	__u32,		after_max	)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->node		= node;
-+		__entry->nr_cpus	= nr_cpus;
-+		__entry->nr_tasks	= nr_tasks;
-+		__entry->nr_balanced	= nr_balanced;
-+		__entry->before_min	= before_min;
-+		__entry->before_max	= before_max;
-+		__entry->after_min	= after_min;
-+		__entry->after_max	= after_max;
-+	),
-+
-+	TP_printk("node %u: nr_cpus=%u nr_tasks=%u nr_balanced=%u min=%u->%u max=%u->%u",
-+		  __entry->node, __entry->nr_cpus,
-+		  __entry->nr_tasks, __entry->nr_balanced,
-+		  __entry->before_min, __entry->after_min,
-+		  __entry->before_max, __entry->after_max
-+	)
-+);
-+
- #endif /* _TRACE_SCHED_EXT_H */
- 
- /* This part must be outside protection */
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 3bb0e179b512..7c5072f3e305 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -34,6 +34,8 @@ DEFINE_STATIC_KEY_FALSE(__scx_enabled);
- DEFINE_STATIC_PERCPU_RWSEM(scx_fork_rwsem);
- static atomic_t scx_enable_state_var = ATOMIC_INIT(SCX_DISABLED);
- static int scx_bypass_depth;
-+static cpumask_var_t scx_bypass_lb_donee_cpumask;
-+static cpumask_var_t scx_bypass_lb_resched_cpumask;
- static bool scx_aborting;
- static bool scx_init_task_enabled;
- static bool scx_switching_all;
-@@ -149,6 +151,7 @@ static struct kset *scx_kset;
-  */
- static u64 scx_slice_dfl = SCX_SLICE_DFL;
- static unsigned int scx_slice_bypass_us = SCX_SLICE_BYPASS / NSEC_PER_USEC;
-+static unsigned int scx_bypass_lb_intv_us = SCX_BYPASS_LB_DFL_INTV_US;
- 
- static int set_slice_us(const char *val, const struct kernel_param *kp)
- {
-@@ -160,11 +163,23 @@ static const struct kernel_param_ops slice_us_param_ops = {
- 	.get = param_get_uint,
- };
- 
-+static int set_bypass_lb_intv_us(const char *val, const struct kernel_param *kp)
-+{
-+	return param_set_uint_minmax(val, kp, 0, 10 * USEC_PER_SEC);
-+}
-+
-+static const struct kernel_param_ops bypass_lb_intv_us_param_ops = {
-+	.set = set_bypass_lb_intv_us,
-+	.get = param_get_uint,
-+};
-+
- #undef MODULE_PARAM_PREFIX
- #define MODULE_PARAM_PREFIX	"sched_ext."
- 
- module_param_cb(slice_bypass_us, &slice_us_param_ops, &scx_slice_bypass_us, 0600);
- MODULE_PARM_DESC(slice_bypass_us, "bypass slice in microseconds, applied on [un]load (100us to 100ms)");
-+module_param_cb(bypass_lb_intv_us, &bypass_lb_intv_us_param_ops, &scx_bypass_lb_intv_us, 0600);
-+MODULE_PARM_DESC(bypass_lb_intv_us, "bypass load balance interval in microseconds (0 (disable) to 10s)");
- 
- #undef MODULE_PARAM_PREFIX
- 
-@@ -962,7 +977,9 @@ static void dispatch_enqueue(struct scx_sched *sch, struct scx_dispatch_q *dsq,
- 		     !RB_EMPTY_NODE(&p->scx.dsq_priq));
- 
- 	if (!is_local) {
--		raw_spin_lock(&dsq->lock);
-+		raw_spin_lock_nested(&dsq->lock,
-+			(enq_flags & SCX_ENQ_NESTED) ? SINGLE_DEPTH_NESTING : 0);
-+
- 		if (unlikely(dsq->id == SCX_DSQ_INVALID)) {
- 			scx_error(sch, "attempting to dispatch to a destroyed dsq");
- 			/* fall back to the global dsq */
-@@ -3740,6 +3757,207 @@ bool scx_hardlockup(void)
- 	return true;
- }
- 
-+static u32 bypass_lb_cpu(struct scx_sched *sch, struct rq *rq,
-+			 struct cpumask *donee_mask, struct cpumask *resched_mask,
-+			 u32 nr_donor_target, u32 nr_donee_target)
-+{
-+	struct scx_dispatch_q *donor_dsq = &rq->scx.bypass_dsq;
-+	struct task_struct *p, *n;
-+	struct scx_dsq_list_node cursor = INIT_DSQ_LIST_CURSOR(cursor, 0, 0);
-+	s32 delta = READ_ONCE(donor_dsq->nr) - nr_donor_target;
-+	u32 nr_balanced = 0, min_delta_us;
-+
-+	/*
-+	 * All we want to guarantee is reasonable forward progress. No reason to
-+	 * fine tune. Assuming every task on @donor_dsq runs their full slice,
-+	 * consider offloading iff the total queued duration is over the
-+	 * threshold.
-+	 */
-+	min_delta_us = scx_bypass_lb_intv_us / SCX_BYPASS_LB_MIN_DELTA_DIV;
-+	if (delta < DIV_ROUND_UP(min_delta_us, scx_slice_bypass_us))
-+		return 0;
-+
-+	raw_spin_rq_lock_irq(rq);
-+	raw_spin_lock(&donor_dsq->lock);
-+	list_add(&cursor.node, &donor_dsq->list);
-+resume:
-+	n = container_of(&cursor, struct task_struct, scx.dsq_list);
-+	n = nldsq_next_task(donor_dsq, n, false);
-+
-+	while ((p = n)) {
-+		struct rq *donee_rq;
-+		struct scx_dispatch_q *donee_dsq;
-+		int donee;
-+
-+		n = nldsq_next_task(donor_dsq, n, false);
-+
-+		if (donor_dsq->nr <= nr_donor_target)
-+			break;
-+
-+		if (cpumask_empty(donee_mask))
-+			break;
-+
-+		donee = cpumask_any_and_distribute(donee_mask, p->cpus_ptr);
-+		if (donee >= nr_cpu_ids)
-+			continue;
-+
-+		donee_rq = cpu_rq(donee);
-+		donee_dsq = &donee_rq->scx.bypass_dsq;
-+
-+		/*
-+		 * $p's rq is not locked but $p's DSQ lock protects its
-+		 * scheduling properties making this test safe.
-+		 */
-+		if (!task_can_run_on_remote_rq(sch, p, donee_rq, false))
-+			continue;
-+
-+		/*
-+		 * Moving $p from one non-local DSQ to another. The source rq
-+		 * and DSQ are already locked. Do an abbreviated dequeue and
-+		 * then perform enqueue without unlocking $donor_dsq.
-+		 *
-+		 * We don't want to drop and reacquire the lock on each
-+		 * iteration as @donor_dsq can be very long and potentially
-+		 * highly contended. Donee DSQs are less likely to be contended.
-+		 * The nested locking is safe as only this LB moves tasks
-+		 * between bypass DSQs.
-+		 */
-+		dispatch_dequeue_locked(p, donor_dsq);
-+		dispatch_enqueue(sch, donee_dsq, p, SCX_ENQ_NESTED);
-+
-+		/*
-+		 * $donee might have been idle and need to be woken up. No need
-+		 * to be clever. Kick every CPU that receives tasks.
-+		 */
-+		cpumask_set_cpu(donee, resched_mask);
-+
-+		if (READ_ONCE(donee_dsq->nr) >= nr_donee_target)
-+			cpumask_clear_cpu(donee, donee_mask);
-+
-+		nr_balanced++;
-+		if (!(nr_balanced % SCX_BYPASS_LB_BATCH) && n) {
-+			list_move_tail(&cursor.node, &n->scx.dsq_list.node);
-+			raw_spin_unlock(&donor_dsq->lock);
-+			raw_spin_rq_unlock_irq(rq);
-+			cpu_relax();
-+			raw_spin_rq_lock_irq(rq);
-+			raw_spin_lock(&donor_dsq->lock);
-+			goto resume;
-+		}
-+	}
-+
-+	list_del_init(&cursor.node);
-+	raw_spin_unlock(&donor_dsq->lock);
-+	raw_spin_rq_unlock_irq(rq);
-+
-+	return nr_balanced;
-+}
-+
-+static void bypass_lb_node(struct scx_sched *sch, int node)
-+{
-+	const struct cpumask *node_mask = cpumask_of_node(node);
-+	struct cpumask *donee_mask = scx_bypass_lb_donee_cpumask;
-+	struct cpumask *resched_mask = scx_bypass_lb_resched_cpumask;
-+	u32 nr_tasks = 0, nr_cpus = 0, nr_balanced = 0;
-+	u32 nr_target, nr_donor_target;
-+	u32 before_min = U32_MAX, before_max = 0;
-+	u32 after_min = U32_MAX, after_max = 0;
-+	int cpu;
-+
-+	/* count the target tasks and CPUs */
-+	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
-+		u32 nr = READ_ONCE(cpu_rq(cpu)->scx.bypass_dsq.nr);
-+
-+		nr_tasks += nr;
-+		nr_cpus++;
-+
-+		before_min = min(nr, before_min);
-+		before_max = max(nr, before_max);
-+	}
-+
-+	if (!nr_cpus)
-+		return;
-+
-+	/*
-+	 * We don't want CPUs to have more than $nr_donor_target tasks and
-+	 * balancing to fill donee CPUs upto $nr_target. Once targets are
-+	 * calculated, find the donee CPUs.
-+	 */
-+	nr_target = DIV_ROUND_UP(nr_tasks, nr_cpus);
-+	nr_donor_target = DIV_ROUND_UP(nr_target * SCX_BYPASS_LB_DONOR_PCT, 100);
-+
-+	cpumask_clear(donee_mask);
-+	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
-+		if (READ_ONCE(cpu_rq(cpu)->scx.bypass_dsq.nr) < nr_target)
-+			cpumask_set_cpu(cpu, donee_mask);
-+	}
-+
-+	/* iterate !donee CPUs and see if they should be offloaded */
-+	cpumask_clear(resched_mask);
-+	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
-+		struct rq *rq = cpu_rq(cpu);
-+		struct scx_dispatch_q *donor_dsq = &rq->scx.bypass_dsq;
-+
-+		if (cpumask_empty(donee_mask))
-+			break;
-+		if (cpumask_test_cpu(cpu, donee_mask))
-+			continue;
-+		if (READ_ONCE(donor_dsq->nr) <= nr_donor_target)
-+			continue;
-+
-+		nr_balanced += bypass_lb_cpu(sch, rq, donee_mask, resched_mask,
-+					     nr_donor_target, nr_target);
-+	}
-+
-+	for_each_cpu(cpu, resched_mask) {
-+		struct rq *rq = cpu_rq(cpu);
-+
-+		raw_spin_rq_lock_irq(rq);
-+		resched_curr(rq);
-+		raw_spin_rq_unlock_irq(rq);
-+	}
-+
-+	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
-+		u32 nr = READ_ONCE(cpu_rq(cpu)->scx.bypass_dsq.nr);
-+
-+		after_min = min(nr, after_min);
-+		after_max = max(nr, after_max);
-+
-+	}
-+
-+	trace_sched_ext_bypass_lb(node, nr_cpus, nr_tasks, nr_balanced,
-+				  before_min, before_max, after_min, after_max);
-+}
-+
-+/*
-+ * In bypass mode, all tasks are put on the per-CPU bypass DSQs. If the machine
-+ * is over-saturated and the BPF scheduler skewed tasks into few CPUs, some
-+ * bypass DSQs can be overloaded. If there are enough tasks to saturate other
-+ * lightly loaded CPUs, such imbalance can lead to very high execution latency
-+ * on the overloaded CPUs and thus to hung tasks and RCU stalls. To avoid such
-+ * outcomes, a simple load balancing mechanism is implemented by the following
-+ * timer which runs periodically while bypass mode is in effect.
-+ */
-+static void scx_bypass_lb_timerfn(struct timer_list *timer)
-+{
-+	struct scx_sched *sch;
-+	int node;
-+	u32 intv_us;
-+
-+	sch = rcu_dereference_all(scx_root);
-+	if (unlikely(!sch) || !READ_ONCE(scx_bypass_depth))
-+		return;
-+
-+	for_each_node_with_cpus(node)
-+		bypass_lb_node(sch, node);
-+
-+	intv_us = READ_ONCE(scx_bypass_lb_intv_us);
-+	if (intv_us)
-+		mod_timer(timer, jiffies + usecs_to_jiffies(intv_us));
-+}
-+
-+static DEFINE_TIMER(scx_bypass_lb_timer, scx_bypass_lb_timerfn);
-+
- /**
-  * scx_bypass - [Un]bypass scx_ops and guarantee forward progress
-  * @bypass: true for bypass, false for unbypass
-@@ -3783,7 +4001,9 @@ static void scx_bypass(bool bypass)
- 	sch = rcu_dereference_bh(scx_root);
- 
- 	if (bypass) {
--		scx_bypass_depth++;
-+		u32 intv_us;
-+
-+		WRITE_ONCE(scx_bypass_depth, scx_bypass_depth + 1);
- 		WARN_ON_ONCE(scx_bypass_depth <= 0);
- 		if (scx_bypass_depth != 1)
- 			goto unlock;
-@@ -3791,8 +4011,15 @@ static void scx_bypass(bool bypass)
- 		bypass_timestamp = ktime_get_ns();
- 		if (sch)
- 			scx_add_event(sch, SCX_EV_BYPASS_ACTIVATE, 1);
-+
-+		intv_us = READ_ONCE(scx_bypass_lb_intv_us);
-+		if (intv_us && !timer_pending(&scx_bypass_lb_timer)) {
-+			scx_bypass_lb_timer.expires =
-+				jiffies + usecs_to_jiffies(intv_us);
-+			add_timer_global(&scx_bypass_lb_timer);
-+		}
- 	} else {
--		scx_bypass_depth--;
-+		WRITE_ONCE(scx_bypass_depth, scx_bypass_depth - 1);
- 		WARN_ON_ONCE(scx_bypass_depth < 0);
- 		if (scx_bypass_depth != 0)
- 			goto unlock;
-@@ -7048,6 +7275,12 @@ static int __init scx_init(void)
- 		return ret;
- 	}
- 
-+	if (!alloc_cpumask_var(&scx_bypass_lb_donee_cpumask, GFP_KERNEL) ||
-+	    !alloc_cpumask_var(&scx_bypass_lb_resched_cpumask, GFP_KERNEL)) {
-+		pr_err("sched_ext: Failed to allocate cpumasks\n");
-+		return -ENOMEM;
-+	}
-+
- 	return 0;
- }
- __initcall(scx_init);
-diff --git a/kernel/sched/ext_internal.h b/kernel/sched/ext_internal.h
-index dd6f25fb6159..386c677e4c9a 100644
---- a/kernel/sched/ext_internal.h
-+++ b/kernel/sched/ext_internal.h
-@@ -23,6 +23,11 @@ enum scx_consts {
- 	 * scx_tasks_lock to avoid causing e.g. CSD and RCU stalls.
- 	 */
- 	SCX_TASK_ITER_BATCH		= 32,
-+
-+	SCX_BYPASS_LB_DFL_INTV_US	= 500 * USEC_PER_MSEC,
-+	SCX_BYPASS_LB_DONOR_PCT		= 125,
-+	SCX_BYPASS_LB_MIN_DELTA_DIV	= 4,
-+	SCX_BYPASS_LB_BATCH		= 256,
- };
- 
- enum scx_exit_kind {
-@@ -963,6 +968,7 @@ enum scx_enq_flags {
- 
- 	SCX_ENQ_CLEAR_OPSS	= 1LLU << 56,
- 	SCX_ENQ_DSQ_PRIQ	= 1LLU << 57,
-+	SCX_ENQ_NESTED		= 1LLU << 58,
- };
- 
- enum scx_deq_flags {
--- 
-2.51.2
-
+Yours,
+Linus Walleij
 
