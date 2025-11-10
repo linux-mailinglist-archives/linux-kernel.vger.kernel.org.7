@@ -1,267 +1,436 @@
-Return-Path: <linux-kernel+bounces-893225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75579C46D83
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:20:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83687C46D8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ED86C3494DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:20:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1034B3B4116
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118C630FC19;
-	Mon, 10 Nov 2025 13:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B06630CD8E;
+	Mon, 10 Nov 2025 13:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YSjH+mId";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SHCpTg/B"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SALqeAnv";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UJeyGfTc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD49C30100C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F160303A39
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762780817; cv=none; b=cdIW1Kq7ntInkwt4LDf6sGvRiUMT+tvHGK/vFIJNeYIZ57pqGqXftNuUyiMzwjUqSoRSGi39D1TltMSS1HpZDcSqlzhb8a35fUxRib8oW6m1z/aGcUyltJWxePrYHYa4UAiFDoHGT4j13SguuPmRJQnsQAzNdkBMSqSftTRi2ac=
+	t=1762780854; cv=none; b=e3HqF+kR8/TbpXRYMIc8DNeM94gmn/a2ZA1vkYINYMXdXvwe++u3YAqvYoFD/r6knz5FAL3SkDeCHk58j2qhoa75Pc/XJ+WOBwQcl/bFcpvG5GUlSuYEmq+krd/202TcoVc9Jsyee3F/bfWbgIN+lnBO9G/xFdZJl+VHR7/Yfnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762780817; c=relaxed/simple;
-	bh=9VScjyjKud5P25axVXhej/7B7c/JyF+EhHBfcxj2J7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VLXLZ2KhQmNpKcMVPZXRBa6pVKa4cVHEjvmtSkW9/2kFf/R/kknrUmiM0PG+2Q19w4MX5dYeZfhzIMnCthk4GHSWM5ivbCvKEHApiA0ug6VjGEY+if4zXg6B7J8lfTk0W8yj5PcvMec/u+Ue3k605/EtB1QY5lg6epyFyq/dWEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YSjH+mId; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SHCpTg/B; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AAAi2i02546912
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:20:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aS5NUTTv3FdBLmHBPmYyttDzcW9cweq8QpTX4mKQofw=; b=YSjH+mIdOYFs2Mxh
-	eEgTOHYlQYj4B2WIumQaiocY59afZzEYa2jfmodQal7oMbx6Hz1QrR8IEju6v8CM
-	h2GI/W0DS8pzYC6D+qyGES+HZybkMClZJN6D0cnGN+ntODjCUNeyb4xyu4o/pmSL
-	LXl4TEsqL4EsHk5OCgcoI8mIdaR5XOL5O2kRyvu7Du3aQV5/7CovPXl+UhUyJlD/
-	6uBEHMs8lzPZvhaWbwxO2aXey2Bjql001ayuVH48S9vf5rbiGhHVU+7PApme7Faw
-	jzavIpXn/moLfI8hNDLQGysbglrqgHDOlDGf68V723uHjEnrfkgeFdL85pAUcIJe
-	gkoxgA==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ab8ea9jtv-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:20:14 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b969f3f5c13so2932788a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:20:14 -0800 (PST)
+	s=arc-20240116; t=1762780854; c=relaxed/simple;
+	bh=vEBH9XPc2rKbCjMaVjOOuA3NRcebjaC+ZlxyGTwiRu8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hIxffDn830ar+TqAygEc5P688AmbznUwcqOhqk+6Fs0bFriad4PNRkTKdikF3mpoZ29vSEeG1xv+oPCCiWifae7erRtux0tWOIyLSaQFMwHM+Vz7RO8uBylO/bj+P+VXJOB06xIFOPPRt7jnmv19uWGChqqTt+a1ggd8sCupROE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SALqeAnv; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UJeyGfTc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762780850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=urxiosn/NbwpEI7+7ewd9/gyn1msOWD8+3UzRaHmJoM=;
+	b=SALqeAnvicRZgRuMq6VsXc1UhXdD07tryneCy7IflZ8GOId3OrhbERjgHB1FpSJzZEvK7b
+	o3HnqgcJM6PzlpAQ1Ezdx1rpWsFt8klS04RD4dqSeZFQslwnt0+xzUGTtnrMbg0vNAEvE1
+	sKVe+w90xMAMPsC1EonB13aEeFNV8sE=
+Received: from mail-yx1-f70.google.com (mail-yx1-f70.google.com
+ [74.125.224.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-449-ZcReIBLyOTaSbK5sBfnsFQ-1; Mon, 10 Nov 2025 08:20:49 -0500
+X-MC-Unique: ZcReIBLyOTaSbK5sBfnsFQ-1
+X-Mimecast-MFC-AGG-ID: ZcReIBLyOTaSbK5sBfnsFQ_1762780848
+Received: by mail-yx1-f70.google.com with SMTP id 956f58d0204a3-63d34257de6so905459d50.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:20:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762780814; x=1763385614; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aS5NUTTv3FdBLmHBPmYyttDzcW9cweq8QpTX4mKQofw=;
-        b=SHCpTg/B/Ovgy7MAF/ifTXbqzpVi4147k6xk0M2kEfBo603ivOVbGWCBY06mVXl/Xq
-         zTSgBq1Nw1RT4A7DOH/AogKFimOhzs7R1xkEe70KjVJkWGxrPbYyxgg9kQWmoMTNKG7I
-         aEXPr39i44K4rIOs2LC3ap3srKh86oLNtkkBkFNNGGPBu+xpX7iSXnIfNSoNk2lTGbZ0
-         iYzjgvhBLcTmMYoBlambL1bjB2DC0/EDh5gEbmxnODSduBAnfQZVPTwhrGVMdJtZ8n37
-         eE6YBx1yribtfXBIn5gfcbFlPbQ/EM0vj21/N0lCd7QJE3g9x9UtJa5gZhzIgCep0qFw
-         zLAA==
+        d=redhat.com; s=google; t=1762780848; x=1763385648; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=urxiosn/NbwpEI7+7ewd9/gyn1msOWD8+3UzRaHmJoM=;
+        b=UJeyGfTczElG5yyCN77yurFDXqLR5BCV1UNRgs4y3d5VhWDbG3oQIo+lSZpEmkw8yh
+         FNEheOC+r1ODmEZuE6NWzI1Dn8Mp+OAUpWHpIVl2LBrpTcNyEyVo+54zg/tl90SgdNTL
+         cVVZOlO0UlZZWU8o59mcYwy5YIQJUNQozSmXmgk+IKgSsBwmCFOnU1upqQDmijupoK91
+         4kN8AAx5CbKvOXgf+O+U82sVL8i+TfVzC+BT4mYorolSsMFJ2SXrcrTpXE/xmld/JuJI
+         Lf3If5QlsTyBPDIhvRgKEwUmRuxwUTk2RHlJWZcVN1fTFJjtQqAibh6KcSf4iYjzpSPZ
+         j4Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762780814; x=1763385614;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aS5NUTTv3FdBLmHBPmYyttDzcW9cweq8QpTX4mKQofw=;
-        b=WBBjkbvB3iZtRSq6JCAeb3zFd1oNLOzSBuwWO7r7Duo4/p6YY6rRxxj3YOh6rqR5Gj
-         9H4S+04koZu+dErBSEij1wJtLq05cM2L/+LVy9AHsGjvegDEa29OYYoMMjQlPQMuNqLx
-         ltRF19+dMU+e5QysmPV3MZfIuNOU3IIknZsePj4P5FHcJwJfy9YuuRiLXnUa0Jq5+EHM
-         YoafrVuLBn9H62OFn5wh2a//9fnQrefBVpdOcJStTa1E3lDNGBYpqKmiQhaBjR0ATEN+
-         WrTbSA1X1Q0mvKVtefYolf3tZI6Wg1u2UiuuHTCFv3Y6pT3LHcsY68nxVB0Hj5dk0pDj
-         QbFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcX4WVnUq1Z1XPcRzvMNu7K99aGyo5LUkVOcb9vDqGyo3uUq6DXAeiOIu3hCIeRj6DFJgREvzmwIrm9Ws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwagXbZknk9E5jXJbpf8HmOAG+J+/2YYWFwAnR7u1lRC1lF39bQ
-	CRJpd6H4K7yUpKzOCbihqfxDtdWDt6aJu7oOXf1lplVg0xTXV8XU5xFKRNOCpYgq47qPliKCPlK
-	qxiTt1xZniGBuDT6Y1xKRHTBN3HvDjYAC7S3L0uptSsOr7bhGVF8qySNMrjdC9BYwJJE=
-X-Gm-Gg: ASbGncu5LTVUVbM2jTqT63MH8IXtoV+Vb0QvXzX33fnUgkqXyYK7vPCLJ01QOZ/YrAt
-	9a4ehUmRy1sgQzyfXNOP04xL5JnLqkWUNfbjRsMKfP6kJCUkyQIkH4SfOKiXD+l6/2eUXo3DQv8
-	zhBeCb78KnCKPfnIVTvQEqFY3dqi1OiwgDwT+2QUZnKwRPtKDscy3U/NsLRneASyGNBzoc8S/z5
-	uw1sQaS3sdEukd5GUsLsIGjMhxK9SxV0nIACDNKk30p6zSER0drfz72r3jwF7vN49w9KoE5ztpz
-	EhjLLe71hMZgguct628vz1uAV/OFTFNRgThkGlFEO69RAnxCZ2rVcrLhyO6JLHySTrNTe7ZkLP6
-	58UAGiBDH5I9w1O+ah/vFvbycDp11K0M9
-X-Received: by 2002:a17:902:f690:b0:298:321b:2694 with SMTP id d9443c01a7336-298321b2b47mr16560865ad.19.1762780813055;
-        Mon, 10 Nov 2025 05:20:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGTU/9CTN1kUz0aU6N4B5Am7ZyLyMmtt5oyD6FCGHb0vg/r8pz70jik7u/krNQAcxQRtx7PiQ==
-X-Received: by 2002:a17:902:f690:b0:298:321b:2694 with SMTP id d9443c01a7336-298321b2b47mr16560465ad.19.1762780812519;
-        Mon, 10 Nov 2025 05:20:12 -0800 (PST)
-Received: from [10.219.57.23] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5c72esm145613585ad.33.2025.11.10.05.20.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 05:20:12 -0800 (PST)
-Message-ID: <c3dc392c-eff3-199b-c047-7fabe155ae98@oss.qualcomm.com>
-Date: Mon, 10 Nov 2025 18:50:02 +0530
+        d=1e100.net; s=20230601; t=1762780848; x=1763385648;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=urxiosn/NbwpEI7+7ewd9/gyn1msOWD8+3UzRaHmJoM=;
+        b=FHOM3xAo962cQv1O6CUjd07L3RiBEOjHHEYBtZLnM4+aHSwavHMsF3jhlFzHO88K2F
+         7v2iL5XPyOgTgHcdwR1x2pafdurj401ItGq4l14aUQNk78D/WRdGeooopenihufqKyNC
+         fChJ148Krh94IfQutnhuFUA3+8bzDGeuQXr0oiiNHA2iHvPorTuQ/Z+HDfh6OasQZ+5G
+         iGklUewx7X6Z1Tvj+etWa2qnDKzTwKMn+VDQxx8+0J9omQ85E5avjxPSnSRbFqmxe63K
+         L4R176Zq2hSvXEboOyA5PKzTgx812GBS/dTsT3PnFRdYhR70aU4WzcqFJWu7t8hNrEsu
+         ZKiA==
+X-Gm-Message-State: AOJu0Yyj3OX28ewZmm1ppsPjzKwtmEg/M6WKscauDzAKTYY1JKPsFwfb
+	IhUThSBfjvPl+TmSmlVU3B3TnkcfgerqUcWV3Xn0kSw+/vQGV5Pbu0NAUlk9Ze2Oc3TH7isl3oA
+	eYeAwwhPgHN2C1RtNfpH7kr8OGurwprxkC00WU0qZz7uR4TwRO/UI6Lq8oEJQvCjQCOrXY5TogD
+	pVlZGjMjyTnyvbLb5loxe7QUMY7IMY0jwVpJM5givr
+X-Gm-Gg: ASbGncu5LlLAKOrqIdmzkbZ3LOfzaqWxY5dlNt56vP1dxn47Aedtd21uiSD2CRSYpCj
+	NweebfAdilYBjEmZkcYelPyIJq1h92qxnfUq/G/ycnCgAorergajAJu2qEEDY21rhMJMH/KQhtw
+	FrBWbxxh3ld2xeYuFZQGOMDJvWMLAsB/OIYT18ZMBGVXe5OWpCvfn7dwFBOFK1H0ZAgSSH4w==
+X-Received: by 2002:a05:690e:4294:10b0:63e:2269:42eb with SMTP id 956f58d0204a3-640d45e44c7mr6043612d50.45.1762780848421;
+        Mon, 10 Nov 2025 05:20:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHTRQESUUA3UUwtC2W4YtCmQg9mhvjmQTjoTx734yFEd98HC1RArMhT0g1T28Uas2i8mqc5JggC/bkNFhlknoM=
+X-Received: by 2002:a05:690e:4294:10b0:63e:2269:42eb with SMTP id
+ 956f58d0204a3-640d45e44c7mr6043563d50.45.1762780847954; Mon, 10 Nov 2025
+ 05:20:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v17 01/12] power: reset: reboot-mode: Remove devres based
- allocations
-Content-Language: en-US
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Moritz Fischer <moritz.fischer@ettus.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andre Draszik
- <andre.draszik@linaro.org>,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Xin Liu <xin.liu@oss.qualcomm.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-References: <20251109-arm-psci-system_reset2-vendor-reboots-v17-0-46e085bca4cc@oss.qualcomm.com>
- <20251109-arm-psci-system_reset2-vendor-reboots-v17-1-46e085bca4cc@oss.qualcomm.com>
- <20251110130159.pzfmh7mr3p7xz5o7@hu-mojha-hyd.qualcomm.com>
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <20251110130159.pzfmh7mr3p7xz5o7@hu-mojha-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: ycTdgIz11m4TZVoeVci84rkjvF6TWGAw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDExNiBTYWx0ZWRfXyUkCQ+lbiPoH
- Juux6Ba9gN8TYjoZ6eztX70EnHpLfPMWJOUAYa1X1F2ddm3SVpLwcl0zB7KUtVgdAcDWXuY/BnL
- r/+U72hG57c+MSZezB+ZQ5kBTYwuqliYRplclCeU2+MbqpwdNfva4//HN8xEDGDMoYa3pIcqx4e
- Kxx7mDfYMvDjJu/MFU+sBtXR6O+uUJRQPaT/QsvIE5MdVnf/YeNcvmYZQU28TUlny83RiuxvpCk
- rs58EP7C7yBzVTVrLviJCZANSOhoHdT3xfOg6GvlABMtN327GgwVuXx9gBOxZ+IzCHDVc61QVGe
- M9vagXPIdrKZb13ib+jni0CrRYPlW8epnm+1po28JQCOameu1YHLM76S/OhzxjtRRjhc6Qikd5o
- BDdfaCBvg9pE2CMsKZl6q3UDrIBZBg==
-X-Proofpoint-ORIG-GUID: ycTdgIz11m4TZVoeVci84rkjvF6TWGAw
-X-Authority-Analysis: v=2.4 cv=QLxlhwLL c=1 sm=1 tr=0 ts=6911e68e cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=otca4u8OHQj9NKxAAEcA:9
- a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_05,2025-11-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 phishscore=0 bulkscore=0 impostorscore=0
- adultscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511100116
+References: <20251022183717.70829-1-npache@redhat.com> <20251022183717.70829-6-npache@redhat.com>
+ <c006138d-6d12-4f91-8a06-da279ae3795a@lucifer.local>
+In-Reply-To: <c006138d-6d12-4f91-8a06-da279ae3795a@lucifer.local>
+From: Nico Pache <npache@redhat.com>
+Date: Mon, 10 Nov 2025 06:20:21 -0700
+X-Gm-Features: AWmQ_blTm6w8ib4f4NzgbzKAoQLgTz4lR-RJcVNY7GnUdXc1WfEKmfLTDuAagMs
+Message-ID: <CAA1CXcBefDp4hzU6-jLf6XEWEaZaaX4SdCN0awxm1qz9RAWQFg@mail.gmail.com>
+Subject: Re: [PATCH v12 mm-new 05/15] khugepaged: generalize
+ __collapse_huge_page_* for mTHP support
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, david@redhat.com, 
+	ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, 
+	ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, 
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org, 
+	peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com, 
+	sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, kas@kernel.org, 
+	aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com, 
+	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org, 
+	dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, jglisse@google.com, 
+	surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com, 
+	richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz, 
+	rppt@kernel.org, jannh@google.com, pfalcato@suse.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Oct 27, 2025 at 10:02=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Wed, Oct 22, 2025 at 12:37:07PM -0600, Nico Pache wrote:
+> > generalize the order of the __collapse_huge_page_* functions
+> > to support future mTHP collapse.
+> >
+> > mTHP collapse will not honor the khugepaged_max_ptes_shared or
+> > khugepaged_max_ptes_swap parameters, and will fail if it encounters a
+> > shared or swapped entry.
+> >
+> > No functional changes in this patch.
+> >
+> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > Co-developed-by: Dev Jain <dev.jain@arm.com>
+> > Signed-off-by: Dev Jain <dev.jain@arm.com>
+> > Signed-off-by: Nico Pache <npache@redhat.com>
+>
+> Thanks for addressing the v10 stuff (didn't check at v11).
+>
+> Overall LGTM, so:
+>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
+Thanks!
+>
+> Few minor nits below.
+>
+> > ---
+> >  mm/khugepaged.c | 78 ++++++++++++++++++++++++++++++-------------------
+> >  1 file changed, 48 insertions(+), 30 deletions(-)
+> >
+> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> > index 36ee659acfbb..4ccebf5dda97 100644
+> > --- a/mm/khugepaged.c
+> > +++ b/mm/khugepaged.c
+> > @@ -537,25 +537,25 @@ static void release_pte_pages(pte_t *pte, pte_t *=
+_pte,
+> >  }
+> >
+> >  static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+> > -                                     unsigned long start_addr,
+> > -                                     pte_t *pte,
+> > -                                     struct collapse_control *cc,
+> > -                                     struct list_head *compound_pageli=
+st)
+> > +             unsigned long start_addr, pte_t *pte, struct collapse_con=
+trol *cc,
+> > +             unsigned int order, struct list_head *compound_pagelist)
+>
+> This series isn't the right place for it, but god do we need helper struc=
+ts in
+> this code... :)
 
-On 11/10/2025 6:31 PM, Mukesh Ojha wrote:
-> On Sun, Nov 09, 2025 at 08:07:14PM +0530, Shivendra Pratap wrote:
->> Devres APIs are intended for use in drivers, and they should be
->> avoided in shared subsystem code which is being used by multiple
->> drivers. Avoid using devres based allocations in the reboot-mode
->> subsystem and manually free the resources.
->>
->> Replace devm_kzalloc with kzalloc and handle memory cleanup
->> explicitly.
->>
->> Fixes: 4fcd504edbf7 ("power: reset: add reboot mode driver")
->> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
->> ---
->>  drivers/power/reset/reboot-mode.c | 30 ++++++++++++++++++++----------
->>  1 file changed, 20 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/reboot-mode.c
->> index fba53f638da04655e756b5f8b7d2d666d1379535..ac4223794083f36960b2bd37a601b7e1f1872de5 100644
->> --- a/drivers/power/reset/reboot-mode.c
->> +++ b/drivers/power/reset/reboot-mode.c
->> @@ -3,6 +3,8 @@
->>   * Copyright (c) 2016, Fuzhou Rockchip Electronics Co., Ltd
->>   */
->>  
->> +#define pr_fmt(fmt)	"reboot-mode: " fmt
->> +
->>  #include <linux/device.h>
->>  #include <linux/init.h>
->>  #include <linux/kernel.h>
->> @@ -71,6 +73,7 @@ static int reboot_mode_notify(struct notifier_block *this,
->>  int reboot_mode_register(struct reboot_mode_driver *reboot)
->>  {
->>  	struct mode_info *info;
->> +	struct mode_info *next;
->>  	struct property *prop;
->>  	struct device_node *np = reboot->dev->of_node;
->>  	size_t len = strlen(PREFIX);
->> @@ -82,29 +85,27 @@ int reboot_mode_register(struct reboot_mode_driver *reboot)
->>  		if (strncmp(prop->name, PREFIX, len))
->>  			continue;
->>  
->> -		info = devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
->> +		info = kzalloc(sizeof(*info), GFP_KERNEL);
->>  		if (!info) {
->>  			ret = -ENOMEM;
->>  			goto error;
->>  		}
->>  
->>  		if (of_property_read_u32(np, prop->name, &info->magic)) {
->> -			dev_err(reboot->dev, "reboot mode %s without magic number\n",
->> -				info->mode);
->> -			devm_kfree(reboot->dev, info);
->> +			pr_err("reboot mode %s without magic number\n", info->mode);
->> +			kfree(info);
-> 
-> This as well could be avoided if we move the above memory allocation
-> after of_property_read_u32()
+Well we have collapse_control! I can spend some time in a follow up
+series to better leverage this struct.
 
-ok. Will re-order the code to avoid the kfree(info) here.
+>
+> >  {
+> >       struct page *page =3D NULL;
+> >       struct folio *folio =3D NULL;
+> >       unsigned long addr =3D start_addr;
+> >       pte_t *_pte;
+> >       int none_or_zero =3D 0, shared =3D 0, result =3D SCAN_FAIL, refer=
+enced =3D 0;
+> > +     const unsigned long nr_pages =3D 1UL << order;
+> > +     int max_ptes_none =3D khugepaged_max_ptes_none >> (HPAGE_PMD_ORDE=
+R - order);
+>
+> Nit, but we should const-ify this too.
 
-> 
->>  			continue;
->>  		}
->>  
->>  		info->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
->>  		if (!info->mode) {
->>  			ret =  -ENOMEM;
->> -			goto error;
->> +			goto err_info;
->>  		} else if (info->mode[0] == '\0') {
->>  			kfree_const(info->mode);
->>  			ret = -EINVAL;
->> -			dev_err(reboot->dev, "invalid mode name(%s): too short!\n",
->> -				prop->name);
->> -			goto error;
->> +			pr_err("invalid mode name(%s): too short!\n", prop->name);
->> +			goto err_info;
->>  		}
->>  
->>  		list_add_tail(&info->list, &reboot->head);
->> @@ -115,9 +116,14 @@ int reboot_mode_register(struct reboot_mode_driver *reboot)
->>  
->>  	return 0;
->>  
->> +err_info:
-> 
-> free_info ?
+This gets converted to collapse_max_ptes_none in the future.
 
-Ack.
+>
+> >
+> > -     for (_pte =3D pte; _pte < pte + HPAGE_PMD_NR;
+> > +     for (_pte =3D pte; _pte < pte + nr_pages;
+> >            _pte++, addr +=3D PAGE_SIZE) {
+> >               pte_t pteval =3D ptep_get(_pte);
+> >               if (pte_none_or_zero(pteval)) {
+> >                       ++none_or_zero;
+> >                       if (!userfaultfd_armed(vma) &&
+> >                           (!cc->is_khugepaged ||
+> > -                          none_or_zero <=3D khugepaged_max_ptes_none))=
+ {
+> > +                          none_or_zero <=3D max_ptes_none)) {
+> >                               continue;
+> >                       } else {
+> >                               result =3D SCAN_EXCEED_NONE_PTE;
+> > @@ -583,8 +583,14 @@ static int __collapse_huge_page_isolate(struct vm_=
+area_struct *vma,
+> >               /* See collapse_scan_pmd(). */
+> >               if (folio_maybe_mapped_shared(folio)) {
+> >                       ++shared;
+> > -                     if (cc->is_khugepaged &&
+> > -                         shared > khugepaged_max_ptes_shared) {
+> > +                     /*
+> > +                      * TODO: Support shared pages without leading to =
+further
+> > +                      * mTHP collapses. Currently bringing in new page=
+s via
+> > +                      * shared may cause a future higher order collaps=
+e on a
+> > +                      * rescan of the same range.
+> > +                      */
+>
+> Yeah, I wish we could find a way to address this in some other way but gi=
+ven the
+> mire of THP code putting this comment here for now is probably the only s=
+ensible
+> way.
+>
+> > +                     if (order !=3D HPAGE_PMD_ORDER || (cc->is_khugepa=
+ged &&
+> > +                         shared > khugepaged_max_ptes_shared)) {
+> >                               result =3D SCAN_EXCEED_SHARED_PTE;
+> >                               count_vm_event(THP_SCAN_EXCEED_SHARED_PTE=
+);
+> >                               goto out;
+> > @@ -677,18 +683,18 @@ static int __collapse_huge_page_isolate(struct vm=
+_area_struct *vma,
+> >  }
+> >
+> >  static void __collapse_huge_page_copy_succeeded(pte_t *pte,
+> > -                                             struct vm_area_struct *vm=
+a,
+> > -                                             unsigned long address,
+> > -                                             spinlock_t *ptl,
+> > -                                             struct list_head *compoun=
+d_pagelist)
+> > +             struct vm_area_struct *vma, unsigned long address,
+> > +             spinlock_t *ptl, unsigned int order,
+> > +             struct list_head *compound_pagelist)
+> >  {
+> > -     unsigned long end =3D address + HPAGE_PMD_SIZE;
+> > +     unsigned long end =3D address + (PAGE_SIZE << order);
+> >       struct folio *src, *tmp;
+> >       pte_t pteval;
+> >       pte_t *_pte;
+> >       unsigned int nr_ptes;
+> > +     const unsigned long nr_pages =3D 1UL << order;
+> >
+> > -     for (_pte =3D pte; _pte < pte + HPAGE_PMD_NR; _pte +=3D nr_ptes,
+> > +     for (_pte =3D pte; _pte < pte + nr_pages; _pte +=3D nr_ptes,
+> >            address +=3D nr_ptes * PAGE_SIZE) {
+> >               nr_ptes =3D 1;
+> >               pteval =3D ptep_get(_pte);
+> > @@ -741,13 +747,11 @@ static void __collapse_huge_page_copy_succeeded(p=
+te_t *pte,
+> >  }
+> >
+> >  static void __collapse_huge_page_copy_failed(pte_t *pte,
+> > -                                          pmd_t *pmd,
+> > -                                          pmd_t orig_pmd,
+> > -                                          struct vm_area_struct *vma,
+> > -                                          struct list_head *compound_p=
+agelist)
+> > +             pmd_t *pmd, pmd_t orig_pmd, struct vm_area_struct *vma,
+> > +             unsigned int order, struct list_head *compound_pagelist)
+> >  {
+> >       spinlock_t *pmd_ptl;
+> > -
+> > +     const unsigned long nr_pages =3D 1UL << order;
+> >       /*
+> >        * Re-establish the PMD to point to the original page table
+> >        * entry. Restoring PMD needs to be done prior to releasing
+> > @@ -761,7 +765,7 @@ static void __collapse_huge_page_copy_failed(pte_t =
+*pte,
+> >        * Release both raw and compound pages isolated
+> >        * in __collapse_huge_page_isolate.
+> >        */
+> > -     release_pte_pages(pte, pte + HPAGE_PMD_NR, compound_pagelist);
+> > +     release_pte_pages(pte, pte + nr_pages, compound_pagelist);
+> >  }
+> >
+> >  /*
+> > @@ -781,16 +785,16 @@ static void __collapse_huge_page_copy_failed(pte_=
+t *pte,
+> >   */
+> >  static int __collapse_huge_page_copy(pte_t *pte, struct folio *folio,
+> >               pmd_t *pmd, pmd_t orig_pmd, struct vm_area_struct *vma,
+> > -             unsigned long address, spinlock_t *ptl,
+> > +             unsigned long address, spinlock_t *ptl, unsigned int orde=
+r,
+> >               struct list_head *compound_pagelist)
+> >  {
+> >       unsigned int i;
+> >       int result =3D SCAN_SUCCEED;
+> > -
+> > +     const unsigned long nr_pages =3D 1UL << order;
+> >       /*
+> >        * Copying pages' contents is subject to memory poison at any ite=
+ration.
+> >        */
+> > -     for (i =3D 0; i < HPAGE_PMD_NR; i++) {
+> > +     for (i =3D 0; i < nr_pages; i++) {
+> >               pte_t pteval =3D ptep_get(pte + i);
+> >               struct page *page =3D folio_page(folio, i);
+> >               unsigned long src_addr =3D address + i * PAGE_SIZE;
+> > @@ -809,10 +813,10 @@ static int __collapse_huge_page_copy(pte_t *pte, =
+struct folio *folio,
+> >
+> >       if (likely(result =3D=3D SCAN_SUCCEED))
+> >               __collapse_huge_page_copy_succeeded(pte, vma, address, pt=
+l,
+> > -                                                 compound_pagelist);
+> > +                                                 order, compound_pagel=
+ist);
+> >       else
+> >               __collapse_huge_page_copy_failed(pte, pmd, orig_pmd, vma,
+> > -                                              compound_pagelist);
+> > +                                              order, compound_pagelist=
+);
+> >
+> >       return result;
+> >  }
+> > @@ -985,13 +989,12 @@ static int check_pmd_still_valid(struct mm_struct=
+ *mm,
+> >   * Returns result: if not SCAN_SUCCEED, mmap_lock has been released.
+> >   */
+> >  static int __collapse_huge_page_swapin(struct mm_struct *mm,
+> > -                                    struct vm_area_struct *vma,
+> > -                                    unsigned long start_addr, pmd_t *p=
+md,
+> > -                                    int referenced)
+> > +             struct vm_area_struct *vma, unsigned long start_addr,
+> > +             pmd_t *pmd, int referenced, unsigned int order)
+>
+> Nit, super nit really, but since other __collapse_huge_page_*() functions=
+ have
+> ..., order, param) as their last parameters, perhaps worth flipping refer=
+enced +
+> order here?
+>
+> Not a big deal though.
+>
+> >  {
+> >       int swapped_in =3D 0;
+> >       vm_fault_t ret =3D 0;
+> > -     unsigned long addr, end =3D start_addr + (HPAGE_PMD_NR * PAGE_SIZ=
+E);
+> > +     unsigned long addr, end =3D start_addr + (PAGE_SIZE << order);
+> >       int result;
+> >       pte_t *pte =3D NULL;
+> >       spinlock_t *ptl;
+> > @@ -1022,6 +1025,19 @@ static int __collapse_huge_page_swapin(struct mm=
+_struct *mm,
+> >               if (!is_swap_pte(vmf.orig_pte))
+> >                       continue;
+> >
+> > +             /*
+> > +              * TODO: Support swapin without leading to further mTHP
+> > +              * collapses. Currently bringing in new pages via swapin =
+may
+> > +              * cause a future higher order collapse on a rescan of th=
+e same
+> > +              * range.
+> > +              */
+>
+> Same comment as above re: this, i.e. that it's a pity but probably unavoi=
+dable
+> for now.
+>
+> > +             if (order !=3D HPAGE_PMD_ORDER) {
+> > +                     pte_unmap(pte);
+> > +                     mmap_read_unlock(mm);
+> > +                     result =3D SCAN_EXCEED_SWAP_PTE;
+> > +                     goto out;
+> > +             }
+> > +
+> >               vmf.pte =3D pte;
+> >               vmf.ptl =3D ptl;
+> >               ret =3D do_swap_page(&vmf);
+> > @@ -1142,7 +1158,7 @@ static int collapse_huge_page(struct mm_struct *m=
+m, unsigned long address,
+> >                * that case.  Continuing to collapse causes inconsistenc=
+y.
+> >                */
+> >               result =3D __collapse_huge_page_swapin(mm, vma, address, =
+pmd,
+> > -                                                  referenced);
+> > +                                                  referenced, HPAGE_PM=
+D_ORDER);
+> >               if (result !=3D SCAN_SUCCEED)
+> >                       goto out_nolock;
+> >       }
+> > @@ -1190,6 +1206,7 @@ static int collapse_huge_page(struct mm_struct *m=
+m, unsigned long address,
+> >       pte =3D pte_offset_map_lock(mm, &_pmd, address, &pte_ptl);
+> >       if (pte) {
+> >               result =3D __collapse_huge_page_isolate(vma, address, pte=
+, cc,
+> > +                                                   HPAGE_PMD_ORDER,
+> >                                                     &compound_pagelist)=
+;
+> >               spin_unlock(pte_ptl);
+> >       } else {
+> > @@ -1220,6 +1237,7 @@ static int collapse_huge_page(struct mm_struct *m=
+m, unsigned long address,
+> >
+> >       result =3D __collapse_huge_page_copy(pte, folio, pmd, _pmd,
+> >                                          vma, address, pte_ptl,
+> > +                                        HPAGE_PMD_ORDER,
+> >                                          &compound_pagelist);
+> >       pte_unmap(pte);
+> >       if (unlikely(result !=3D SCAN_SUCCEED))
+> > --
+> > 2.51.0
+> >
+>
 
-thanks,
-Shivendra
 
