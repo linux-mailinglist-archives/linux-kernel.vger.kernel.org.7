@@ -1,107 +1,196 @@
-Return-Path: <linux-kernel+bounces-892879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A263AC46076
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:46:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EDBC4607C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:46:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0DC53A4702
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:45:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBD8188652B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D39288C22;
-	Mon, 10 Nov 2025 10:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tC88qsCi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65E8305066;
-	Mon, 10 Nov 2025 10:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12236219A71;
+	Mon, 10 Nov 2025 10:45:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43702FD678;
+	Mon, 10 Nov 2025 10:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762771502; cv=none; b=m6AIOhh2xUOol0HkFLXVKJMJIoAK5ct6n48IZJ3VL+pgQH8GVSeKVbjGMbwLICqUESG9DVzUsCKHBMcAB0OywbgetNncfye9VdOCYmTP3X0hgwQDj6szJ6SZne7GIX9533/ATDXAeLI94INYUaMY6WtnVH82gIybcLxKu4DAKV8=
+	t=1762771513; cv=none; b=RgVWnScZlTROtFceqP5LgONx8TaON2+65cZJtigsizu4QFxITdSukz5Iney2wn5rh9soVsLoT6xnnb7TgWEKKI8ZEeiilZWSYM7f4jB1ZecwP138ImzM0voPrt1i3AEoQioW1ull87uzf0+MMdf06Fw0+6SrWvtBGDngbJMaOmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762771502; c=relaxed/simple;
-	bh=D4tyGM1CQgI1ziG0RQbhNZECmbMmY5A11qAo6a2a2e4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ItGQ5GHyjkGQt44pgPkFc3sp3qT82QGBfDVFM10Z9nOgXEO26o4c+MvONlyVO5FODim3/jQIznOFzSFQwFOd7FVhIHxJONtd23fu0b+FgPLYR/GuL5osnKSPJTv33cP4hwDXpNAehomzjGSmq/vczI7nc9fQ3O0cfIZitsGkXiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tC88qsCi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 291B8C4CEF5;
-	Mon, 10 Nov 2025 10:44:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762771502;
-	bh=D4tyGM1CQgI1ziG0RQbhNZECmbMmY5A11qAo6a2a2e4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tC88qsCi9k6L11GefVVW93h2kX10rCM4CGhI/FrZelUkSG+DGSi5jA07TGBQsILya
-	 E//UR9X52n4YzJrPtXggzh259gXb+zfHkquUgkQgwDmvdUem2AJFBhcnOujHTKdmQ1
-	 KZScj0QcQ/Jh4Ru34+n4Amw/rDjWqSTi1XGoeXJMl4hulRv/i0GoJGjQOVA0cuo7D9
-	 CiegkGp2nycTepeZww+v7I37a+UQgQhv2AeXjE6gsywxJSzLQLggjHmxj28JUAee++
-	 RYP3OwlRmX/PROMxPhVIK6OKyFCTNukVRmpQCUUMYCt1eJ6nt+osHf7TaaCtK1EJBk
-	 grAKquaynQtNg==
-Date: Mon, 10 Nov 2025 19:44:56 +0900
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] crypto: drbg - Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <aRHCKMGDbWkXIY8f@kspp>
+	s=arc-20240116; t=1762771513; c=relaxed/simple;
+	bh=9+yMw3OYCsl/uBweznL5F7y7kHXKfV68oggXms9oRVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nyDpRpiD1b167kW5Sf68FTdRMqitZwb49cqjqPTMyrKTvRSywXh8KYt2/NbwlgWWhhCvwp4/tT5x5pHKp7FE7BiV8k+Srr0r/BRbRVypsR1JLFw7j5aUeA4KnWBWeV7+zHWZRWXFR/u0VDGkB+sRZ4fK7+Sq09ytFKwdLEhtdnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DC26497;
+	Mon, 10 Nov 2025 02:45:03 -0800 (PST)
+Received: from [10.57.39.147] (unknown [10.57.39.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 78B2F3F66E;
+	Mon, 10 Nov 2025 02:45:03 -0800 (PST)
+Message-ID: <b44825dd-aef9-4d3e-91fd-a44122264c23@arm.com>
+Date: Mon, 10 Nov 2025 11:45:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/12] mm: introduce generic lazy_mmu helpers
+To: Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
+ <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-7-kevin.brodsky@arm.com>
+ <71418b31-aedb-4600-9558-842515dd6c44@arm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <71418b31-aedb-4600-9558-842515dd6c44@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On 07/11/2025 14:26, Ryan Roberts wrote:
+> On 29/10/2025 10:09, Kevin Brodsky wrote:
+>> [...]
+>>
+>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+>> index b8d37eb037fc..d9c8e94f140f 100644
+>> --- a/arch/arm64/mm/mmu.c
+>> +++ b/arch/arm64/mm/mmu.c
+>> @@ -731,7 +731,7 @@ int split_kernel_leaf_mapping(unsigned long start, unsigned long end)
+>>  		return -EINVAL;
+>>  
+>>  	mutex_lock(&pgtable_split_lock);
+>> -	arch_enter_lazy_mmu_mode();
+>> +	lazy_mmu_mode_enable();
+>>  
+>>  	/*
+>>  	 * The split_kernel_leaf_mapping_locked() may sleep, it is not a
+> This is a bit unfortunate, IMHO. The rest of this comment explains that although
+> you're not supposed to sleep inside lazy mmu mode, it's fine for arm64's
+> implementation. But we are no longer calling arm64's implementation; we are
+> calling a generic function, which does who knows what.
+>
+> I think it all still works, but we are no longer containing our assumptions in
+> arm64 code. We are relying on implementation details of generic code.
 
-Use the new TRAILING_OVERLAP() helper to fix the following warning:
+I see your point. The change itself is still correct (and required
+considering patch 8), but maybe the documentation of the generic
+interface should be clarified to guarantee that the generic layer can
+itself cope with sleeping - without any guarantee regarding the
+behaviour of arch_*_lazy_mmu_mode.
 
-crypto/drbg.c:1445:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>> [...]
+>>
+>> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+>> index e33df3da6980..14fd672bc9b2 100644
+>> --- a/arch/x86/include/asm/pgtable.h
+>> +++ b/arch/x86/include/asm/pgtable.h
+>> @@ -117,7 +117,8 @@ extern pmdval_t early_pmd_flags;
+>>  #define pte_val(x)	native_pte_val(x)
+>>  #define __pte(x)	native_make_pte(x)
+>>  
+>> -#define arch_end_context_switch(prev)	do {} while(0)
+>> +#define arch_end_context_switch(prev)	do {} while (0)
+>> +#define arch_flush_lazy_mmu_mode()	do {} while (0)
+> Andrew converted over the default version of this (which you have removed with
+> this commit) to be static inline instead of the do/while guff. Perhaps you
+> should try to preserve that improvement here?
+>
+> See Commit d02ac836e4d6 ("include/linux/pgtable.h: convert
+> arch_enter_lazy_mmu_mode() and friends to static inlines")
 
-This helper creates a union between a flexible-array member (FAM) and a
-set of MEMBERS that would otherwise follow it.
+Good point, I suppose I could also convert arch_end_context_switch()
+while at it.
 
-This overlays the trailing MEMBER char ctx[]; onto the FAM struct
-shash_desc::__ctx,[] while keeping the FAM and the start of MEMBER
-aligned.
+>>  #endif	/* CONFIG_PARAVIRT_XXL */
+>>  
+>>  static inline pmd_t pmd_set_flags(pmd_t pmd, pmdval_t set)
+>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>> index fc35a0543f01..d16ba1d32169 100644
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+>> @@ -2703,7 +2703,7 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
+>>  		return 0;
+>>  	}
+>>  
+>> -	arch_enter_lazy_mmu_mode();
+>> +	lazy_mmu_mode_enable();
+>>  
+>>  	if ((p->arg.flags & PM_SCAN_WP_MATCHING) && !p->vec_out) {
+>>  		/* Fast path for performing exclusive WP */
+>> @@ -2773,7 +2773,7 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
+>>  	if (flush_end)
+>>  		flush_tlb_range(vma, start, addr);
+>>  
+>> -	arch_leave_lazy_mmu_mode();
+>> +	lazy_mmu_mode_disable();
+>>  	pte_unmap_unlock(start_pte, ptl);
+>>  
+>>  	cond_resched();
+>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+>> index 9894366e768b..b5fdf32c437f 100644
+>> --- a/include/linux/pgtable.h
+>> +++ b/include/linux/pgtable.h
+>> @@ -231,10 +231,31 @@ static inline int pmd_dirty(pmd_t pmd)
+>>   * held, but for kernel PTE updates, no lock is held). Nesting is not permitted
+>>   * and the mode cannot be used in interrupt context.
+>>   */
+>> -#ifndef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>> -static inline void arch_enter_lazy_mmu_mode(void) {}
+>> -static inline void arch_leave_lazy_mmu_mode(void) {}
+>> -static inline void arch_flush_lazy_mmu_mode(void) {}
+>> +#ifdef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>> +static inline void lazy_mmu_mode_enable(void)
+>> +{
+>> +	arch_enter_lazy_mmu_mode();
+>> +}
+>> +
+>> +static inline void lazy_mmu_mode_disable(void)
+>> +{
+>> +	arch_leave_lazy_mmu_mode();
+>> +}
+>> +
+>> +static inline void lazy_mmu_mode_pause(void)
+>> +{
+>> +	arch_leave_lazy_mmu_mode();
+>> +}
+>> +
+>> +static inline void lazy_mmu_mode_resume(void)
+>> +{
+>> +	arch_enter_lazy_mmu_mode();
+>> +}
+> It would be good to add documentation blocks for each of these.
 
-The static_assert() ensures this alignment remains, and it's
-intentionally placed inmediately after the corresponding structures --no
-blank line in between.
+I considered it, but then realised that these functions are much better
+explained together (see comment added above in patch 7). Maybe a short
+description for each that refers to the big comment above? That wouldn't
+work well for the generated kernel-doc though...
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- crypto/drbg.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/crypto/drbg.c b/crypto/drbg.c
-index 511a27c91813..e9f9775c237f 100644
---- a/crypto/drbg.c
-+++ b/crypto/drbg.c
-@@ -1442,9 +1442,12 @@ static void drbg_kcapi_set_entropy(struct crypto_rng *tfm,
- 
- #if defined(CONFIG_CRYPTO_DRBG_HASH) || defined(CONFIG_CRYPTO_DRBG_HMAC)
- struct sdesc {
--	struct shash_desc shash;
--	char ctx[];
-+	/* Must be last as it ends in a flexible-array member. */
-+	TRAILING_OVERLAP(struct shash_desc, shash, __ctx,
-+		char ctx[];
-+	);
- };
-+static_assert(offsetof(struct sdesc, shash.__ctx) == offsetof(struct sdesc, ctx));
- 
- static int drbg_init_hash_kernel(struct drbg_state *drbg)
- {
--- 
-2.43.0
-
+- Kevin 
 
