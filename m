@@ -1,177 +1,447 @@
-Return-Path: <linux-kernel+bounces-892386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B977C44FFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:22:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B21AC44FFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5967188DCF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:23:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43F753B0A17
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377572E6CBB;
-	Mon, 10 Nov 2025 05:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A992E5B3D;
+	Mon, 10 Nov 2025 05:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRrQ4ig1"
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2b/0FO/W"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010064.outbound.protection.outlook.com [52.101.193.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B36119F13F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762752162; cv=none; b=NXXYs5Ykff4x/0wB54tlzlJyjhWSi5TVhKrVHAYfv9xiwygRsMc1QQZ3G1YKKbOwybLHxYBNQiSlfHcPOCkvvxt9dz+gHIHGa3RKfsJfvUW03/Gl7+ba3zCV0yyDdINggVxUKIdVNLa2iy3S5CuNUbCTMyZvToW9+n8mY4c/HLY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762752162; c=relaxed/simple;
-	bh=6MAGRIH5WEH+fMjOR2/tlElu/d29Oz7xmVfA9gjEHmQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JXpPN91iVFw24GivrvtGSpqVJS3Jw7prXgIFEURCpFtpMa/4411b1eI+X/HDWwr0GCQF+BjCMCEpOp+ghwX0BQw2F4PLocOEhpHsugx1YGdbW23YwYSSoWHy3rsZB597QpdBv16Lc6L96T9ThLUgKLfYXAaV263AviWPp9CrsDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FRrQ4ig1; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5dd8988d098so895280137.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 21:22:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762752159; x=1763356959; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tVbcQdsxhGJ251GekmogRgMgrAHB7EALgaSbuq0BgLg=;
-        b=FRrQ4ig1rWd6k5szKlAfhB5MZL+nttmAtvfziX8ItT+kZBqh9ZLoVGwmU8Aa6QcurK
-         l7aYV2SDGrZLQiLCxtZAQVFTc7vPXFooxjflIxjMLKRgsvw6xrnMJ5rJXIVuIPoFqyUm
-         9bXmMZsLP50+HHMBI3EeELTZXeOlZ8NvXouItYt0ay5c0l+eTs5EhYebzbap1c74H9bQ
-         CvZBKfcPpwa/4Xkrp4qRWj/soJojbz4ORSa4dUWHhiOi2mJBrgi9zWraQCr3FBoQ0SFD
-         SR2cHtzF6JC00RKnTYo9H6rklOmnf3LTHPmfAalgx0jwvLt2GmwvK4MPiV3z1R6pig0N
-         SrbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762752159; x=1763356959;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tVbcQdsxhGJ251GekmogRgMgrAHB7EALgaSbuq0BgLg=;
-        b=q8fmSZp9oDf0TALZYtAdHKJPnpwCYjhGhfMoHKbDiO2+IuKsNXLpaQCSrY+2pKDFob
-         i4MWELvajpx6nrFg994AQxjaNkVELQCw0wZ9al1IZtnNK7XrIb/KuZ8MA4kcEdufRDss
-         sK1bARH74jmx+3h54kfoTEDXXanJsQiuo+MSsrPnhVKPZT7svSpks4L7/URacekABgXY
-         VAFAHGgHRTAgNc5blSlUTCl8V3+4Rio2BqR4b5rNgkTMQfSkw/i9MYeAaEb9+LxRRhfP
-         4pEVXZN2YcZ7r5flONYUTtbMDxjOmbKkdipP/qMGX9N5TvcyGPR5P3br6dS4VUehIEUE
-         bsbg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0p7KlXcfmUJma86gR0vliy2woKOucIguL7qOovW9jO4zwziWkkhzdsKBz62gMRcjjPL6QG3M8TlMbU1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGTneK8kyFztzg7eaPvt5D8Mi8OP/MsvdeI3J3IEzU4ckgdH+a
-	JKD8VrjLueS71qfE8jRj+fXTUEIoZ4WjeJpeHcVFo7mD54ybKQVBGiGalDKG75lFXl9BDgB6ulZ
-	SPuK5BAA0Bs670zsr2L3ql97EzWcHej8=
-X-Gm-Gg: ASbGncsLEuwbDR9xTNSyW18qhbsus/VcqCN7iOONcQDAxC/55nQuM/AbkocCPQuMqKD
-	AJDoigE/LuM5M3KgrUAcMFsRWpvrflhL1zBwsQAwL8QXmHvwXrxiFs5WlaqC7jwuZhUkKjElFCW
-	tz39qKDE3zNq8XwIboSO+ca6H7TuY6O8M3+PHNwpPlxZtUb1ct1Fc3e35WvReu1kfga5qgUlo/6
-	vdsELWyu59kjEKclOdA+tf52Ud50b+PI7tRHwpcrKQwlnEkdPvdqTk0f+4=
-X-Google-Smtp-Source: AGHT+IEeFVULUntPJGmAB60bMxKjcERl9eTW1jbOHV8XuGq9ZMrcrkcUimjG5F2o26/OwntJmcCh8HHKGulh3BYrYP4=
-X-Received: by 2002:a05:6102:390f:b0:5dd:8c81:d7ab with SMTP id
- ada2fe7eead31-5ddc452d062mr2218860137.0.1762752159000; Sun, 09 Nov 2025
- 21:22:39 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D359D2747B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762752255; cv=fail; b=pBo0SR09lFRyaLF0VGorjUn7F4+PB/uaVM+FMVil+gAIfIyqOXD8qhO6IGcyQeHkNZXEwNZJMszJkSMYhxC2hxQhrRzDfBY6/BILJy5r37HAT24cEUqhwHaqkk71FQH8N/dudNhH7ZqIQ0I8GzcUhBcVrVeX1MA4JKJ/XRpCyGM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762752255; c=relaxed/simple;
+	bh=s4Dxnz/vfsYcohKPOjL+sC7qOUcNI65ZX+J+FVE+MpI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fObRMW+yazwDdPyp17+JK5BUEHw96ngEJ/TJlvSOlrveWMp403SrnN+04XYkJFdo5/f+VQOJUmG7x66hw5sVqfU1qksM1nCw9caVYLjpIE4rPlZrWIVebnJ9LHk07sONHCIx5kVj6BqPqzc15UO7XDcPldvZOtWz2uuHhfs/RVk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2b/0FO/W; arc=fail smtp.client-ip=52.101.193.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DM2gFmw+tKhwly320sLG08jy+9vWrQ0bns/f+yZJL96QckCM1csKdcQ4hXFq395FrsaKLAcfHAI2ChNtTLWODmT3vjSFfcfxGquMwuG/IsK1FQRiDs13colj9EwYD40YkIzK2BnpfZSqLO1t7CN/t2Tb35cIUvmL9WocEuVcpCpZNe42YV2h6wogjmm8g9K9esErGlc1iwEdGmgk+do02GapVzkqCzH0k5250qYKGFX/sw4x/+dPypWSXqoRE0EzaWUtJHkfZx7i/YFUFi3Cz4PrXJeBYKm2v5SL9rXljy09OLknCf4XDXHopFkuyTxE6S4w317pam5HM6bkD1BBJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6f77WuQFVOI3Wy79jpUlifALDd2tBwA/m02GWw+4I24=;
+ b=e7dpMJxQY28h5UGddITgsdRtYWkvfuXvfr3JNk6nJzjIeglBM8n3QA231jd2bF5NCUA53aXYC3YtpDb+aLk+WVx3awCJbX1c/aHGkbU8JbevGaVxfbb6BVLTStdaP3iwGra8Wb+ETebuZVlgAXTfOcP2ZCz7lCaJAGk+9pTGMtw3OMLzn1a0AYctWuIXSnp6qBo65tbW+T2gZejjwuqMPSeiPMTBSEUdF8egNLnLDIHrC7FEcMVH753RODPm5sHHwfmEqEqkbWNCHy3PZyL6ZeAHYrIw4P2k8kZT4Otlz+R9NUZ0KxBp1QbaCvoXUEXgICphMcc69PMfNO4AjoKXig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6f77WuQFVOI3Wy79jpUlifALDd2tBwA/m02GWw+4I24=;
+ b=2b/0FO/WTU+bGh6sjGd7ca+sswbDaJMZCoN4Y3/LaoXaNb7YjQXTEGOmmtIexlAzvkl9Rq0CoF6Gpz7mbF/PuXMLFzLzY8l9FVjyldxVwoezPM/a6GGL876QHWhJE9GjPXtm/yWcl7TvnqN+70oAPw+t7XhmmoAVHpqKwu3EwYs=
+Received: from IA4P220CA0005.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:558::9)
+ by CH3PR12MB8260.namprd12.prod.outlook.com (2603:10b6:610:12a::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 05:24:09 +0000
+Received: from BN2PEPF000044AB.namprd04.prod.outlook.com
+ (2603:10b6:208:558:cafe::c7) by IA4P220CA0005.outlook.office365.com
+ (2603:10b6:208:558::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Mon,
+ 10 Nov 2025 05:24:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BN2PEPF000044AB.mail.protection.outlook.com (10.167.243.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Mon, 10 Nov 2025 05:24:08 +0000
+Received: from BLR-L-BHARARAO.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Sun, 9 Nov
+ 2025 21:23:59 -0800
+From: Bharata B Rao <bharata@amd.com>
+To: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
+CC: <Jonathan.Cameron@huawei.com>, <dave.hansen@intel.com>,
+	<gourry@gourry.net>, <mgorman@techsingularity.net>, <mingo@redhat.com>,
+	<peterz@infradead.org>, <raghavendra.kt@amd.com>, <riel@surriel.com>,
+	<rientjes@google.com>, <sj@kernel.org>, <weixugc@google.com>,
+	<willy@infradead.org>, <ying.huang@linux.alibaba.com>, <ziy@nvidia.com>,
+	<dave@stgolabs.net>, <nifan.cxl@gmail.com>, <xuezhengchu@huawei.com>,
+	<yiannis@zptcorp.com>, <akpm@linux-foundation.org>, <david@redhat.com>,
+	<byungchul@sk.com>, <kinseyho@google.com>, <joshua.hahnjy@gmail.com>,
+	<yuanchu@google.com>, <balbirs@nvidia.com>, <alok.rathore@samsung.com>,
+	<shivankg@amd.com>, Bharata B Rao <bharata@amd.com>
+Subject: [RFC PATCH v3 0/8] mm: Hot page tracking and promotion infrastructure
+Date: Mon, 10 Nov 2025 10:53:35 +0530
+Message-ID: <20251110052343.208768-1-bharata@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250929042917epcas2p2569e213500997dfa6ba43c8f361f50f7@epcas2p2.samsung.com>
- <20250929043110.3631025-1-hy_fifty.lee@samsung.com> <20250929043110.3631025-3-hy_fifty.lee@samsung.com>
-In-Reply-To: <20250929043110.3631025-3-hy_fifty.lee@samsung.com>
-From: Inki Dae <daeinki@gmail.com>
-Date: Mon, 10 Nov 2025 14:22:01 +0900
-X-Gm-Features: AWmQ_bnqaqpr6mbii-XcWKvzW_ttKXH-Eb8J1UjIIWLeqzt5jQH_vRs30wQTWl8
-Message-ID: <CAAQKjZNCpK4rq6DFUtiQ2rxCeb_34Mp54quVto+9LRJMH3=ZhQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] drm/exynos: Convert to drmm_mode_config_init() and
- drop manual cleanup
-To: Hoyoung Lee <hy_fifty.lee@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044AB:EE_|CH3PR12MB8260:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e135adc-b43e-4dfa-92f3-08de20195ff0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|7416014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tuuflDwNDKAZsSGvRv2ggnnchnUF5WfokbjN4ZSwbb1/ve+myUVDbZt28ZPR?=
+ =?us-ascii?Q?889Qjutdg19WhZAlDNm/wnOTk4CsA0lwehXOmvUqNBSUQvDZ3/+2jQ85bCJi?=
+ =?us-ascii?Q?+ahRki8AlVnHeIbQwZct+Nw1Ytn4LP7ffkAC86E6N6FOz1WVc6gQ4FuAnQ2w?=
+ =?us-ascii?Q?BUG/ukr9fnQQdYbWX7qzQ9c/0aR1URskY4GGffEmiYCILMlX4FIfDQlhDDpr?=
+ =?us-ascii?Q?aU1oOPXqPM9jCIpIbwrPEAwj9i+01MrpTK7B1zS/Yi7bP11MELg1391GzXKP?=
+ =?us-ascii?Q?LKIgxqWlifkGf64rrkfkKxVAWuIQ2dUvqNrBg6GTf8OYwP7ylfIVeKJ2163Z?=
+ =?us-ascii?Q?smtC93W+VvPEIc00XxwZ8GNO+7Q21tAoKqRTYJ+jtVlPt12xO1TTS2yLAZYE?=
+ =?us-ascii?Q?OxgoBuGuwLRYpxb1XG4qv5ZB6vIAo9fuw3Z/lSsOkuD71Vd9yqXyWOQzdSOl?=
+ =?us-ascii?Q?NUyiGRC/al6opnH6MePF29+tk1f3YZzUB/gms66QwWGi9H2BGvkawvc6Oqju?=
+ =?us-ascii?Q?/07ZYcNy2Lg68u3lQdP94XfTrSpZVaL0MtrxCP8k2secIOgJxm5d8mKhm9nS?=
+ =?us-ascii?Q?EYR4CPZ5CQry1F7yV7FIVlvm+nMhEmvJki6aQhYk7IlB6bNx5hZq8V8tff/g?=
+ =?us-ascii?Q?LYAQusgWJhD3GXc1cLlj9hCCRpRvxxEQWy2yKc7aq1NJ/TIChfcbPfYSPKJ7?=
+ =?us-ascii?Q?uzk3duosdwq3vA6pQwRFnFi6u1jluTiHm5jihDPJDL/0EWyb6PYHOkURq5s1?=
+ =?us-ascii?Q?GeaOXhgrs02If4tH0JktQfZOZIqheZ5HGayTn5C64uVzAz92zZxKMzB2B7fV?=
+ =?us-ascii?Q?nTnLWdnqaEOVm6dATVjsWI46iy4gH5NGTRkpA/MIyhWOnJH21ICC6bEs9MA3?=
+ =?us-ascii?Q?pEDqaze14SNnNs0xvYaoR6IRwi2vuKEAXlbqIib9FQGwRlaZdoBnHALRO1rM?=
+ =?us-ascii?Q?oNQnmhBquI1XmVUEF1qpP9oTF2sZQWMA1K3gzYy15mQi3rw3QzCO7htpRx7P?=
+ =?us-ascii?Q?pLNRENVq7u/R1oE3TEWmYXsyhXEXQsuGliI306gTwX5QtFtxhUIi0r/aIjIo?=
+ =?us-ascii?Q?9ZSz6F/6gMLJFMOmb5tMAyJiD+7+otk4Y4AJkSE78lkOOAJjXdcr74kX6VwL?=
+ =?us-ascii?Q?UNk6jHtUyGOfQHBeAR/2c42uteXV+gYYyW4CDp0i3hy5YddK9dusr/4JiW0I?=
+ =?us-ascii?Q?VZmYvxk9RlWc/6nCEjfwQDpCFWV3yiABxDpVv7fa7kBscrM4+Tqo0HacFHFb?=
+ =?us-ascii?Q?WaaE8nVJ8xpF4aQHwxgWMiX7TImJM19Pwvt6Ma1ouoA14TvO7htzb3n1zTDU?=
+ =?us-ascii?Q?XAUwd52cIc0eE7heDuz8s17Jx6IOMSCQabZa2pu0FDqCv14N7std/pi8c8DC?=
+ =?us-ascii?Q?QJ/OighFTzTxRNXHRrSBMwZIYdilV0eTZpwzYMp5r0/kGh8tH56ge9Zb0OHu?=
+ =?us-ascii?Q?Tnwzct4zVqE6FiODvaedpAsxP5qZyT6iQ6lHn08Uzc34MHv+zt474dmIKaQ1?=
+ =?us-ascii?Q?UckZYxv1NvcT6kAWswc7EvNxmlMDgQfn6vggR0pOmbdt5ZK8vqz5QFT/Wlwn?=
+ =?us-ascii?Q?m5haQPsdIuvCIKfc/F8qCd7TVXvzaWjk/NsXtMPA?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(7416014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 05:24:08.8644
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e135adc-b43e-4dfa-92f3-08de20195ff0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044AB.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8260
 
-2025=EB=85=84 9=EC=9B=94 29=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 1:54, H=
-oyoung Lee <hy_fifty.lee@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> Switch mode-config initialization to drmm_mode_config_init() so that the
-> lifetime is tied to drm_device. Remove explicit drm_mode_config_cleanup()
-> from error and unbind paths since cleanup is now managed by DRM.
->
-> No functional change intended.
->
-> Signed-off-by: Hoyoung Lee <hy_fifty.lee@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_drv.c
-> index 6cc7bf77bcac..1aea71778ab1 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -257,7 +257,7 @@ static int exynos_drm_bind(struct device *dev)
->         dev_set_drvdata(dev, drm);
->         drm->dev_private =3D (void *)private;
->
-> -       drm_mode_config_init(drm);
-> +       drmm_mode_config_init(drm);
->
->         exynos_drm_mode_config_init(drm);
->
-> @@ -297,7 +297,6 @@ static int exynos_drm_bind(struct device *dev)
->  err_unbind_all:
->         component_unbind_all(drm->dev, drm);
->  err_mode_config_cleanup:
-> -       drm_mode_config_cleanup(drm);
+[If someone wants to be off the CC-list, pls drop me a note. Will remove from
+the next iteration]
 
-In the current implementation, there is a potential dereference issue
-because the private object may be freed before to_dma_dev(dev) is
-called.
-When drmm_mode_config_init() is invoked, it registers
-drm_mode_config_cleanup() as a managed action. This means that the
-cleanup function will be automatically executed later when
-drm_dev_put() is called.
+Hi,
 
-The problem arises when drm_dev_put() is called without explicitly
-invoking drm_mode_config_cleanup() first, as in the original code. In
-that case, the managed cleanup is performed later, which allows
-to_dma_dev(dev) to be called after the private object has already been
-released.
+This patchset introduces a new subsystem for hot page tracking and
+promotion (pghot) with the following goals:
 
-For reference, the following sequence may occur internally when
-drm_mode_config_cleanup() is executed:
-1. drm_mode_config_cleanup() is called.
-2. During the cleanup of FBs, planes, CRTCs, encoders, and connectors,
-framebuffers or GEM objects may be released.
-3. At this point, Exynos-specific code could invoke to_dma_dev(dev).
+- Unify hot page detection from multiple sources like hint faults, page table
+  scans, hardware hints (IBS).
+- Decouple detection from migration.
+- Centralize promotion logic via per-lowertier-node kernel thread.
+- Move migration rate limiting and associated logic in NUMAB=2 (current NUMA
+  Balancing based hot page promotion) from scheduler to pghot sub-system to
+  enable broader reuse.
+  
+Currently, multiple kernel subsystems detect page accesses independently.
+This patchset consolidates accesses from these mechanisms by providing:
 
-Therefore, the private object must remain valid until
-drm_mode_config_cleanup() completes.
-It would be safer to adjust the code so that kfree(private) is
-performed after drm_dev_put(drm) to ensure the private data remains
-available during cleanup.
+- A common API for reporting page accesses
+- Shared infrastructure for tracking hotness at PFN granularity
+- Per-lowertier-node kernel threads for promoting pages.
 
-Thanks,
-Inki Dae
+Here is a brief summary of how this subsystem works:
 
->         exynos_drm_cleanup_dma(drm);
->         kfree(private);
->         dev_set_drvdata(dev, NULL);
-> @@ -317,7 +316,6 @@ static void exynos_drm_unbind(struct device *dev)
->         drm_atomic_helper_shutdown(drm);
->
->         component_unbind_all(drm->dev, drm);
-> -       drm_mode_config_cleanup(drm);
+- Tracks frequency, last access time and accessing node for each recorded
+  access.
+- These hotness parameters are maintained on a per-PFN in an unsigned long
+  variable within the existing mem_section data structure.
+  Bits 0-31 are used to store nid, frequency and time.
+  Bits 32-62 are unused now.
+  Bit 63 is used to indicate the page is ready for migration.
+- Classifies pages as hot based on configurable thresholds.
+- Pages classified as hot are marked as ready for migration using the ready bit.
+- Per-lowertier-node kmigrated threads periodically scan the PFNs of lower tier
+  nodes, checking for the migration-ready bit to perform batched migrations.
 
-Ditto.
+Three page hotness sources have been integrated with pghot subsystem on
+experimental basis:
 
->         exynos_drm_cleanup_dma(drm);
->
->         kfree(drm->dev_private);
-> --
-> 2.34.1
->
->
+1. IBS
+2. klruscand (based on MGLRU page table walks)
+3. NUMA Balancing (mode 2).
+
+Major change in v3
+==================
+The major design change in this version is to move away from the hash and heap
+based hot page records management and instead use statically allocated
+per-PFN unsigned long variable for storing hotness parameters. This was the
+approach that I had used in what was called the kmigrated patchset [1]. While
+earlier I had used extended page flags, here mem_section data structure is used
+to store per-PFN hotness information for PFNs spanning the section.
+
+Advantages of this approach:
+
+- Eliminates the need for dynamic allocation and deallocation of hot page
+  records. Also, no more atomic context allocations.
+- Removes the requirement for special data structures (like hash lists and heap)
+  to manage hot page records.
+- Considerable space savings per hot page record (Just an unsigned long now
+  instead of 40 bytes per record in the earlier approach)
+- Fixed complexity for looking up the hot page record of a PFN.
+- No locking complexity but just atomic updates to per-PFN record.
+
+Downsides:
+
+- Not easily possible to obtain top N hot pages list but a kernel thread will
+  periodically scan the hotness records of its corresponding lower tier to
+  obtain the hot pages for promotion.
+- A page may become cold by the time kmigrated gets to act on it.
+
+Space overhead:
+
+- One pointer overhead for each memory section to store hotness array pointer.
+  With a section size of 128MB resulting in 8192 sections per TB of node memory,
+  there will be 64KB of memory used per TB. Currently I am using mem_section to
+  store the hotness array pointer instead of creating a parallel data structure.
+  If the latter method is preferred, then hotness array pointers are required
+  only for the lower tier nodes.
+- With 4K PFNs, there can be 32768 PFNs in a section and hence with 8 bytes
+  (unsigned long) per PFN, hotness array will consume 2GB per TB of node memory.
+  This will be for lower tier nodes only.
+
+Other changes in v3
+===================
+- Migration thread is renamed to kmigrated (earlier called kpromoted).
+- Most code cleanups as suggested by Jonathan Cameron.
+- NUMAB mode 2 is now fully enabled as hotness source to pghot sub-system with
+  off-loading of large pages migration to kmigrated.
+- Sysctl knobs to enable access recording from different sources independently.
+
+Results
+=======
+System details
+--------------
+3 node AMD Zen5 system with 2 regular NUMA nodes (0, 1) and a CXL node (2)
+
+$ numactl -H
+available: 3 nodes (0-2)
+node 0 cpus: 0-95,192-287
+node 0 size: 128460 MB
+node 1 cpus: 96-191,288-383
+node 1 size: 128893 MB
+node 2 cpus:
+node 2 size: 257993 MB
+node distances:
+node   0   1   2 
+  0:  10  32  50 
+  1:  32  10  60 
+  2:  255  255  10
+
+Microbenchmark details
+----------------------
+Multi-threaded application with 64 threads that access memory at 4K granularity
+repetitively and randomly. The number of accesses per thread and the randomness
+pattern for each thread are fixed beforehand. The accesses are divided into stores
+and loads.
+
+Benchmark threads run on Node 0, while memory is initially provisioned on
+CXL node 2 before the accesses start. There are three modes in which the
+benchmark is run:
+
+Mode 1: Regular 4K page accesses. The memory is provisioned on CXL node using
+mmap(MAP_POPULATE). 50% loads and 50% stores.
+
+Mode 2: mmapped file 4K accesses. The memory is provisioned on CXL node using
+mmap(fd, MAP_POPULATE|MAP_SHARED). 100% loads.
+
+Mode 3: 2M THP page accesses. The memory is provisioned on CXL node using mmap,
+madvise(MADV_HUGEPAGE) and move_pages(to cxl node). 50% loads and 50% stores.
+
+Repetitive accesses results in lowertier pages becoming hot and kmigrated
+detecting and migrating them. The benchmark score is the time taken to finish
+the accesses in microseconds. The sooner it finishes the better it is. All the
+numbers shown below are average of 3 runs.
+
+Hotness sources
+---------------
+NUMAB0 - Without NUMA Balancing in base case and with no source enabled
+	 in the patched case. No migrations occur.
+NUMAB2 - Existing hot page promotion for the base case and
+	 use of hint faults as source in the patched case.
+pgtscan - Klruscand (MGLRU based PTE A bit scanning) source
+hwhints - IBS as source
+
+Results summary
+---------------
+Performance Impact:
+- NUMAB2: 4.5% regression in Mode 1 and 19.8% regression in Mode 2.
+- Hardware hints (IBS): Shows close to original NUMAB2 performance.
+- Page table scanning: Good performance, comprehensive migration.
+
+Migration Effectiveness:
+- NUMAB2 and pgtscan achieve similar migration counts to baseline.
+- THP migration significantly improved with new sources.
+- Hardware hints show some sampling limitations.
+
+Mode 1 - Time taken (microseconds, lower is better)
+------------------------------------------------------
+Source		Base		Patched		Change
+------------------------------------------------------
+NUMAB0		115,668,771	117,775,032	+1.8%
+NUMAB2		102,894,589	107,576,615	+4.5%
+pgtscan		NA		111,399,698	NA
+hwhints		NA		103,232,152	NA
+------------------------------------------------------
+
+Mode 1 - Pages migrated (pgpromote_success)
+------------------------------------------------------
+Source		Base		Patched		Change
+------------------------------------------------------
+NUMAB0		0		0		0%
+NUMAB2		2097144		2097152		+0.0%
+pgtscan		NA		2097152		NA
+hwhints		NA		1269467		NA
+------------------------------------------------------
+
+Mode 2 - Time taken (microseconds, lower is better)
+------------------------------------------------------
+Source		Base		Patched		Change
+------------------------------------------------------
+NUMAB0		110,273,416	113,801,899	+3.2%
+NUMAB2		71,859,123	86,098,560	+19.8%
+pgtscan		NA		71,545,031	NA
+hwhints		NA		71,857,476	NA
+------------------------------------------------------
+
+Mode 2 - Pages migrated (pgpromote_success)
+------------------------------------------------------
+Source		Base		Patched		Change
+------------------------------------------------------
+NUMAB0		0		0		0%
+NUMAB2		2097152		2080128		-0.8%
+pgtscan		NA		2097152		NA
+hwhints		NA		2097115		NA
+------------------------------------------------------
+
+Mode 3 - Time taken (microseconds, lower is better)
+------------------------------------------------------
+Source		Base		Patched		Change
+------------------------------------------------------
+NUMAB0		30,944,794	30,537,137	-1.3%
+NUMAB2		29,773,930	31,184,442	+4.7%
+pgtscan		NA		28,580,878	NA
+hwhints		NA		28,732,128	NA
+------------------------------------------------------
+
+Mode 3 - Pages migrated (thp_migration_success)
+------------------------------------------------------
+Source		Base		Patched		Change
+------------------------------------------------------
+NUMAB0		0		0		0
+NUMAB2		3754		1278		-65.9%
+pgtscan		NA		33032		NA
+hwhints		NA		32768		NA
+------------------------------------------------------
+
+Results Analysis TODO
+---------------------
+- Regression in NUMAB2 needs further analysis. The overhead of pghot path and
+  effect of batched migration needs to be identified. It is seen that
+  migrations get kicked off a bit later in kmigrated-NUMAB2 case compared to
+  base-NUMAB2 case. This also needs further investigation.
+
+This v3 patchset applies on top of upstream commit e53642b87a4f and
+can be fetched from:
+
+https://github.com/AMDESE/linux-mm/tree/bharata/pghot-rfcv3
+
+v2: https://lore.kernel.org/linux-mm/20250910144653.212066-1-bharata@amd.com/
+v1: https://lore.kernel.org/linux-mm/20250814134826.154003-1-bharata@amd.com/
+v0: https://lore.kernel.org/linux-mm/20250306054532.221138-1-bharata@amd.com/
+
+TODOs
+=====
+- Check if the page is still within the hotness time window when
+  kmigrated gets to it.
+- Per-zone or per-section indicators to walk only zones or sections that
+  have hot PFNs instead of kmigrated walking all the PFNs of the lower
+  tier node.
+- Bulk access reporting may be desirable for sources like IBS.
+- Take care of memory hotplug for allocation/freeing of mem_section->hot_map.
+- Currently I am defaulting to node 0 if target NID isn't specified by the
+  source. The best fallback target node may have to determined dynamically.
+- Provide compatibility alias for the sysctls moved from sched to pghot.
+- Wider testing and benchmark coverage.
+- Address Ying Huang's comment about merging migrate_misplaced_folio()
+  and migrate_misplaced_folios_batch() and correctly handling memcg
+  stats counting properly in the latter.
+
+[1] kmigrated approach: https://lore.kernel.org/linux-mm/20250616133931.206626-1-bharata@amd.com/
+
+Bharata B Rao (5):
+  mm: migrate: Allow misplaced migration without VMA too
+  mm: Hot page tracking and promotion
+  x86: ibs: In-kernel IBS driver for memory access profiling
+  x86: ibs: Enable IBS profiling for memory accesses
+  mm: sched: Move hot page promotion from NUMAB=2 to pghot tracking
+
+Gregory Price (1):
+  migrate: implement migrate_misplaced_folios_batch
+
+Kinsey Ho (2):
+  mm: mglru: generalize page table walk
+  mm: klruscand: use mglru scanning for page promotion
+
+ arch/x86/events/amd/ibs.c           |  11 +
+ arch/x86/include/asm/entry-common.h |   3 +
+ arch/x86/include/asm/hardirq.h      |   2 +
+ arch/x86/include/asm/ibs.h          |   9 +
+ arch/x86/include/asm/msr-index.h    |  16 +
+ arch/x86/mm/Makefile                |   3 +-
+ arch/x86/mm/ibs.c                   | 343 +++++++++++++++++
+ include/linux/migrate.h             |   6 +
+ include/linux/mmzone.h              |  19 +
+ include/linux/pghot.h               |  55 +++
+ include/linux/vm_event_item.h       |  21 +
+ kernel/sched/debug.c                |   1 -
+ kernel/sched/fair.c                 | 152 +-------
+ mm/Kconfig                          |  19 +
+ mm/Makefile                         |   2 +
+ mm/huge_memory.c                    |  26 +-
+ mm/internal.h                       |   4 +
+ mm/klruscand.c                      | 110 ++++++
+ mm/memory.c                         |  31 +-
+ mm/migrate.c                        |  41 +-
+ mm/mm_init.c                        |  10 +
+ mm/page_ext.c                       |  11 +
+ mm/pghot.c                          | 571 ++++++++++++++++++++++++++++
+ mm/vmscan.c                         | 181 ++++++---
+ mm/vmstat.c                         |  21 +
+ 25 files changed, 1427 insertions(+), 241 deletions(-)
+ create mode 100644 arch/x86/include/asm/ibs.h
+ create mode 100644 arch/x86/mm/ibs.c
+ create mode 100644 include/linux/pghot.h
+ create mode 100644 mm/klruscand.c
+ create mode 100644 mm/pghot.c
+
+-- 
+2.34.1
 
