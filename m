@@ -1,105 +1,145 @@
-Return-Path: <linux-kernel+bounces-893000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69EDC4650A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:38:49 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F84FC464D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E704B4EA2CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:35:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F04183480F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C734B309DA0;
-	Mon, 10 Nov 2025 11:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A89330CD9C;
+	Mon, 10 Nov 2025 11:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgzK6Y7m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yh5WZxVb"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F28306B00;
-	Mon, 10 Nov 2025 11:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B125030ACE5
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762774539; cv=none; b=K2wvJmsgFskRjAUi2/8/Jrqz6+9lBCVZ51gm7jYu3uXvOseHWfZPmvrqsOLvi+w8LWAX9ew4OiHl37jDXX3nt6aAFBvIjimD3UE9LVS6GrbRI+S6a8jI+eN6y9hSHi4XQVV+bdcpK2KyFyMZbVdBJZkfDNfeByHWF8bCuH/9pn0=
+	t=1762774556; cv=none; b=NKkbvJDncYL1FCpPKjBkHAp/rXFo3+KtpWMKvBsRs71xc8RZjiA0BeX5fX84+Kt/60FJDiP3MDvmdT49bSzZddboPx+nh0AXQFVz+wMrWr0g9qwybLj3o8fkHzLLXYA2ESy6o/vKwU4rphlKADsSeYWcDr0MLUWOBBHqw9T/2B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762774539; c=relaxed/simple;
-	bh=SNEWfGWtz9L7IEsYxYZpjMWPSLVHPgbfQEK+3vF7bLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ssLqgAorK1nq7Jk5EDo2gNS2nAEyyghQ19wLloSi1N7xfACeOlnFgnWzI+WcbawVOX3AvdRtUmpGkqc92Enp5fFux0GRSiJsgXCT65Q04Fi+m/YIkr5/Xl+UA6jFx0RHmqK9P/kd6iY8orNuTiNlbvNvyMvfnwx3l1TRCqyRo48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lgzK6Y7m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 581DBC19422;
-	Mon, 10 Nov 2025 11:35:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762774538;
-	bh=SNEWfGWtz9L7IEsYxYZpjMWPSLVHPgbfQEK+3vF7bLI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lgzK6Y7m7FuPWjrrfDTmAjUmV1GcMU34NORO+zUK5vjlLHU6WqPVwqqugk5HI11qV
-	 IpvYyL1zWvduHHS5F7yPtR1f+/dvrapkxZCCJ0rE9MZeIzJkPwRc7AHhHWBYtnM/+u
-	 Wg6vIdpyMFTha2mky5f00aw3Rff9NG8VUabw/kQ6btHY28wyrycD1BZBoniqF5GEEu
-	 Vw7aVGrmowuEgwz8HDSkKydu666hT1FKYbPvDvi8PtoaLD2kSPwt6sBaglDbmG9Gg3
-	 66dQ/4Orb20VEUEQkX3hw8x1lSzViqfOzKwbEZSYPzB5vEsC6OVsmT7k8B0UbgiQi7
-	 TzbemqVkX/nzA==
-Date: Mon, 10 Nov 2025 20:35:31 +0900
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] iommufd/iommufd_private.h: Avoid
- -Wflex-array-member-not-at-end warning
-Message-ID: <aRHOAwpATIE0oajj@kspp>
+	s=arc-20240116; t=1762774556; c=relaxed/simple;
+	bh=AL9VUTAnPmoOffKlIJNa0kvWod/v0SpUxAnrML35V+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iAZ4eZ33ZVzsgpol8xJoPIP+Ai8XNavbq2hVzOA4jDAF4YKk5Mi7ozMoTIFFOXHACpluAm2EW0sNoYHEII2fZHbPWqwj3sssyIYdZEkY8kJwiRkIIWZ2KcjNPV9deh5qNUs1mjJSrHLTDrRiz/dIMMpBfO3urCHbRRA55KC3/e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yh5WZxVb; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4777a9aeedaso9996095e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:35:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762774553; x=1763379353; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5y6wCAKSaMKPZ+2wBt9jzrpJq7K1/r6VCG/1Dr2iUWQ=;
+        b=Yh5WZxVbt8FkT4g7ceHlcT4nG5nZjs4aiwypFKjbTCkX4X/A7PTlFZgdKCgBy4bsjI
+         IAdI7RzbOVCCZKN22E+8M2FoNQxxnrE9NwjhhVDsUfae17K2xnpD+Fys49MMiogXY8q9
+         2+hAhXk8nJCM30P8pG6PyS8GSwwEryLyCcq4PfEMpVO/dLSwyCVAE3s66SQgIiInHu92
+         79W9KicD6e2eyArPu1op2ekeVsWKWGZ+UAp/z1rmGwuInIU1makD1Meewzx7ePplk40u
+         fuTLVj3q5bXLLlh0kCL1B2egFwivheaMznl6P2fWBPrJSdAf228vdUrHvhLdceBgjyx2
+         VI8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762774553; x=1763379353;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5y6wCAKSaMKPZ+2wBt9jzrpJq7K1/r6VCG/1Dr2iUWQ=;
+        b=gdXGObqJRVvaB3cBusiU5mGtTZMuJQ70kCWEQW7LT7nrtYa3GxJEXI36Mpy0/qv7A1
+         Tk9PRQZ4e7ys2NwGdrNMZbY1F2da6VMecZ02SFM/Qpn3kmlP/iFYw6/60Hc6fOqDNAf/
+         R2QLdhm7YNTPLZx4zBlMo9+1GCLVRQDAPMct/AAe/O97EOvjiHznzauYutF7eMndOiP+
+         cLp8BMxLknqNvNBgAmVz1tHfs/95X3hTg2DSO/QULI5qjV3lWi4W8pJWafxu7hnMBk86
+         5cghMoL1fQFq2gs2MaSgnBz4Y8VGseZj+a5dF6GZpqkEMXRtIe2DucfY7PPmdlA1LrKw
+         bPHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsYxNogGKS17E9zG39OdfDnefjpFlh71j2e/SdarP1o/KzU0m1LbU1Cq91dAU7Vshp+wxizo7F4IEPtE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8SMC2q/pGGHe7QplcbDF/DhEuG3o1s4tKfvOOsbR6d6STF5+u
+	J/NNNueYhaEFllKj4Pp53v01DzCJHMPAKxOCvw8wpsHp666RNQtdvzfuLHhT07/CL4g=
+X-Gm-Gg: ASbGncuiqFPYscgUzrh1h/XsQ1uN/s59YTmv336GcwuafPQlLz1F2C1e0QD0vFdIZYO
+	EIWYTiMgMRCdmme049H6siyR8y/Y7dx+CPEYR3Qi2lUeMn9OKSCSi5V7NKenncR4UREmvy3AHQ2
+	StHR0uI0hLQ3k1CPiG5B3ebypSjuAVOD3M6pQpKUgJluNSyrjcSS37QdpnPixDx8xnhsb06dsLc
+	TuZtgF6KrzKDyTHnq4Ij1iGIWDsDpHYB3sjNmsAo0epFQIqfK1sxM0vJTX+loZKN5tePljG9BTr
+	WS5x4xs9HndhBZGCg+Vg0lU3rmcuy10frwydcTHZpQaw2/QhcEO7Pqvgip4qv8FVlSSeWaMIDXl
+	Yxvra0k8/QLcjzr9cRy7Gec13PuT9ILM0MpDDxPTWsq52PmG3dtRfxa1hyzsBrfIw2EwsncVsT6
+	QslGUaXoOUCD3YkwDJFuDud3Xj+/BrteXvncXhNK2Czg==
+X-Google-Smtp-Source: AGHT+IH7a4ZIA6K1hyshUjilyezxAd12GR80z/y8NgV7hZhcHkivP2UCzIhZhQjPDXMAGanfBiROLA==
+X-Received: by 2002:a05:600c:4704:b0:477:a9e:859b with SMTP id 5b1f17b1804b1-4777327cb50mr60888925e9.24.1762774552976;
+        Mon, 10 Nov 2025 03:35:52 -0800 (PST)
+Received: from [192.168.0.21] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bccd41bsm197008495e9.2.2025.11.10.03.35.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 03:35:52 -0800 (PST)
+Message-ID: <26bc458f-1db1-44e3-937a-f3ee7c1027be@linaro.org>
+Date: Mon, 10 Nov 2025 11:35:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/8] media: qcom: camss: csiphy: Introduce C-PHY
+To: david@ixit.cz, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Luca Weiss <luca.weiss@fairphone.com>, Petr Hodina <phodina@protonmail.com>,
+ Casey Connolly <casey.connolly@linaro.org>, "Dr. Git" <drgitx@gmail.com>
+Cc: Joel Selvaraj <foss@joelselvaraj.com>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org
+References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
+ <20251109-qcom-cphy-v1-2-165f7e79b0e1@ixit.cz>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20251109-qcom-cphy-v1-2-165f7e79b0e1@ixit.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On 09/11/2025 09:39, David Heidelberg via B4 Relay wrote:
+> From: David Heidelberg <david@ixit.cz>
+> 
+> Read C-PHY from the device-tree bus-type and save it into the csiphy
+> structure for later use.
+> 
+> For C-PHY, skip clock line configuration, as there is none.
+> 
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>   drivers/media/platform/qcom/camss/camss-csiphy.h | 2 ++
+>   drivers/media/platform/qcom/camss/camss.c        | 8 ++++++--
+>   2 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
+> index 895f80003c441..8f7d0e4c73075 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy.h
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
+> @@ -28,11 +28,13 @@ struct csiphy_lane {
+>   
+>   /**
+>    * struct csiphy_lanes_cfg - CSIPHY lanes configuration
+> + * @cphy:     true if C-PHY is used, false if D-PHY is used
+>    * @num_data: number of data lanes
+>    * @data:     data lanes configuration
+>    * @clk:      clock lane configuration (only for D-PHY)
+>    */
+>   struct csiphy_lanes_cfg {
+> +	bool cphy;
 
-Move the conflicting declaration to the end of the corresponding
-structure. Notice that struct iommufd_vevent is a flexible
-structure, this is a structure that contains a flexible-array
-member.
+Should be an integer from
 
-Fix the following warning:
+include/dt-bindings/phy/phy.h
 
-drivers/iommu/iommufd/iommufd_private.h:621:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+- PHY_TYPE_DPHY
+- PHY_TYPE_CPHY
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+this should be indicated in the dt and latched here.
+
 ---
- drivers/iommu/iommufd/iommufd_private.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-index 627f9b78483a..85d0843ed07b 100644
---- a/drivers/iommu/iommufd/iommufd_private.h
-+++ b/drivers/iommu/iommufd/iommufd_private.h
-@@ -614,7 +614,6 @@ struct iommufd_veventq {
- 	struct iommufd_eventq common;
- 	struct iommufd_viommu *viommu;
- 	struct list_head node; /* for iommufd_viommu::veventqs */
--	struct iommufd_vevent lost_events_header;
- 
- 	enum iommu_veventq_type type;
- 	unsigned int depth;
-@@ -622,6 +621,9 @@ struct iommufd_veventq {
- 	/* Use common.lock for protection */
- 	u32 num_events;
- 	u32 sequence;
-+
-+	/* Must be last as it ends in a flexible-array member. */
-+	struct iommufd_vevent lost_events_header;
- };
- 
- static inline struct iommufd_veventq *
--- 
-2.43.0
-
+bod
 
