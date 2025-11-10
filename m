@@ -1,50 +1,101 @@
-Return-Path: <linux-kernel+bounces-892742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA983C45BA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:49:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F933C45B96
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C5CF3B80D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:48:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4F03B7CD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8ED9301483;
-	Mon, 10 Nov 2025 09:48:42 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DC42EA485;
+	Mon, 10 Nov 2025 09:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EctUO5bI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zsbE4z7V";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EctUO5bI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zsbE4z7V"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B563310F1;
-	Mon, 10 Nov 2025 09:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A60D2264A8
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762768122; cv=none; b=eYR8B7n8SyLlnfniTyePIt/miEihIgFVV+81ZPm01ppba8JoN0Pi/fLuSp6bKb6LbejvYuuKybMFf8QlFefBFt+b+XsXiENE9KZlznazJRsEqbyjEIqnl9JK/8MO6FwGrYxq111ZnF35NB+pEqZE8DfhB4ED6V8dxJGAs9JuuuI=
+	t=1762768121; cv=none; b=XEQy1A7Cu25o5JuLQJJNZo9lTABA1KoWjWPwTJqZQubWd208AFinxn5U3GmKHImIBWZhbDSDH0t1LtELr6y2uM8Wz6lUu1u8twbW568UBvOzBiRiickoszIQU6I54j0NSZE0KRSLK+7YGQf8K/MLjX/S/C/QJ03ExDiyP1JoQ4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762768122; c=relaxed/simple;
-	bh=1DjRNZxFtuPeyaCM+BTZgQhWC2kIMmjGBedH0BhikCI=;
+	s=arc-20240116; t=1762768121; c=relaxed/simple;
+	bh=DZgbW9BFBWg1TIR5Jl2wOLgWABb4QAUC4Oy4kmBFxQM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2PD1UGYv3gMg8J8indGazX1bCVCPz5R2dNqL9t+pM6r+sQdJFx8nZNi+6euqg1/0auqzx8AwKM+F1lS6H4SiXqMktBQCj7R1cF7A9gIjnPUV2vCzKvexyk7WQn+OkwjfODDhtw2R9OyeLZMfgCGjAt2qTQceTaUKmDZ++ZLF9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 8BF80227A87; Mon, 10 Nov 2025 10:48:31 +0100 (CET)
-Date: Mon, 10 Nov 2025 10:48:29 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Florian Weimer <fw@deneb.enyo.de>
-Cc: Christoph Hellwig <hch@lst.de>, Florian Weimer <fweimer@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
-	Carlos Maiolino <cem@kernel.org>,
-	Dave Chinner <david@fromorbit.com>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, libc-alpha@sourceware.org
-Subject: truncatat? was, Re: [RFC] xfs: fake fallocate success for always
- CoW inodes
-Message-ID: <20251110094829.GA24081@lst.de>
-References: <20251106133530.12927-1-hans.holmberg@wdc.com> <lhuikfngtlv.fsf@oldenburg.str.redhat.com> <20251106135212.GA10477@lst.de> <aQyz1j7nqXPKTYPT@casper.infradead.org> <lhu4ir7gm1r.fsf@oldenburg.str.redhat.com> <20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de> <20251110093140.GA22674@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7EhzBC18XALTkCIIoShILg9+GvJF7G4EEPST8hfcfTdtxerRaYTi4SPfgBYfXKAsHaUyolQ6jYi2NDEY2znlgraKrq9BXZg/vr/tjIYGt52B1pQ24K8V9PjkPOYAPmHaVXqhVv+dikN+IZVOGQZqKNuVpOf30JDgrZjhPMMznU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EctUO5bI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zsbE4z7V; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EctUO5bI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zsbE4z7V; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 73DE31F397;
+	Mon, 10 Nov 2025 09:48:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762768116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WU7G98rrEt7tXe5E2faQc4Poi7KzUxvIQKpI3xwvQy4=;
+	b=EctUO5bIAqq0Tpzus55v7D/Q4OyISy7k3m2Y7AcIqN0N7NXFBFohwY1Oz50JbNa3US30WV
+	gosCT4C2VVuPlAkZHO6BtKC7WCDWPnLWH4E7W/4HMtn9iKtAlATphCGNb74yUj0Y4elXI5
+	HRu7GTZa3oyoaI8EPqBKmks47kuEdao=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762768116;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WU7G98rrEt7tXe5E2faQc4Poi7KzUxvIQKpI3xwvQy4=;
+	b=zsbE4z7VqB+E7a+RYrwvPy9Gjl+7k9oqr+lX2PKuoc4zrfbf/C97FRMjmcYolIHSscqWk9
+	I0n1OZhE/h4zRWAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762768116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WU7G98rrEt7tXe5E2faQc4Poi7KzUxvIQKpI3xwvQy4=;
+	b=EctUO5bIAqq0Tpzus55v7D/Q4OyISy7k3m2Y7AcIqN0N7NXFBFohwY1Oz50JbNa3US30WV
+	gosCT4C2VVuPlAkZHO6BtKC7WCDWPnLWH4E7W/4HMtn9iKtAlATphCGNb74yUj0Y4elXI5
+	HRu7GTZa3oyoaI8EPqBKmks47kuEdao=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762768116;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WU7G98rrEt7tXe5E2faQc4Poi7KzUxvIQKpI3xwvQy4=;
+	b=zsbE4z7VqB+E7a+RYrwvPy9Gjl+7k9oqr+lX2PKuoc4zrfbf/C97FRMjmcYolIHSscqWk9
+	I0n1OZhE/h4zRWAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 67FC71431B;
+	Mon, 10 Nov 2025 09:48:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +CRjGfS0EWnTewAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 09:48:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1F6B9A28B1; Mon, 10 Nov 2025 10:48:36 +0100 (CET)
+Date: Mon, 10 Nov 2025 10:48:36 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, ebiggers@kernel.org, willy@infradead.org, yi.zhang@huawei.com, 
+	yangerkun@huawei.com, chengzhihao1@huawei.com, libaokun1@huawei.com
+Subject: Re: [PATCH v2 21/24] ext4: make data=journal support large block size
+Message-ID: <4xsntqfuxy3xiezmztf26qytijdfi3zwxjjgvkpsmxnumkpsf5@2gr4h36mti3g>
+References: <20251107144249.435029-1-libaokun@huaweicloud.com>
+ <20251107144249.435029-22-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,32 +104,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251110093140.GA22674@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20251107144249.435029-22-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.30 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email,huaweicloud.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.30
 
-On Mon, Nov 10, 2025 at 10:31:40AM +0100, Christoph Hellwig wrote:
-> fallocate seems like an odd interface choice for that, but given that
-> (f)truncate doesn't have a flags argument that might still be the
-> least unexpected version.
+On Fri 07-11-25 22:42:46, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> > Maybe add two flags, one for the ftruncate replacement, and one that
-> > instructs the file system that the range will be used with mmap soon?
-> > I expect this could be useful information to the file system.  We
-> > wouldn't use it in posix_fallocate, but applications calling fallocate
-> > directly might.
+> Currently, ext4_set_inode_mapping_order() does not set max folio order
+> for files with the data journalling flag. For files that already have
+> large folios enabled, ext4_inode_journal_mode() ignores the data
+> journalling flag once max folio order is set.
 > 
-> What do you think "to be used with mmap" flag could be useful for
-> in the file system?  For file systems mmap I/O isn't very different
-> from other use cases.
+> This is not because data journalling cannot work with large folios, but
+> because credit estimates will go through the roof if there are too many
+> blocks per folio.
+> 
+> Since the real constraint is blocks-per-folio, to support data=journal
+> under LBS, we now set max folio order to be equal to min folio order for
+> files with the journalling flag. When LBS is disabled, the max folio order
+> remains unset as before.
+> 
+> Additionally, the max_order check in ext4_inode_journal_mode() is removed,
+> and mapping order is reset in ext4_change_inode_journal_flag().
+> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-The usual way to pass extra flags was the flats at for the *at syscalls.
-truncate doesn't have that, and I wonder if there would be uses for
-that?  Because if so that feels like the right way to add that feature.
-OTOH a quick internet search only pointed to a single question about it,
-which was related to other confusion in the use of (f)truncate.
+...
 
-While adding a new system call can be rather cumbersome, the advantage
-would be that we could implement the "only increase file size" flag
-in common code and it would work on all file systems for kernels that
-support the system call.
+> @@ -6585,6 +6590,7 @@ int ext4_change_inode_journal_flag(struct inode *inode, int val)
+>  		ext4_clear_inode_flag(inode, EXT4_INODE_JOURNAL_DATA);
+>  	}
+>  	ext4_set_aops(inode);
+> +	ext4_set_inode_mapping_order(inode);
+>  
+>  	jbd2_journal_unlock_updates(journal);
+>  	ext4_writepages_up_write(inode->i_sb, alloc_ctx);
+
+I think more needs to be done here because this way we could leave folios
+in the page cache that would be now larger than max order. To simplify the
+logic I'd make filemap_write_and_wait() call in
+ext4_change_inode_journal_flag() unconditional and add there
+truncate_pagecache() call to evict all the page cache before we switch the
+inode journalling mode.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
